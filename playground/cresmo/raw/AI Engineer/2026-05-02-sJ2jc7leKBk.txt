@@ -1,0 +1,98 @@
+---
+video_title: "I Gave an AI Agent the Keys to My Life (Here's What Happened) — Radek Sienkiewicz (@velvetshark-com)"
+video_id: sJ2jc7leKBk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=sJ2jc7leKBk
+video_date: 2026-05-02T22:00:06+00:00
+video_description: |
+  An honest look at what happens when a personal AI agent is allowed to operate around the clock. Over months, one permission at a time, it went from reading files to handling email, backing up its own memory at 2am, monitoring its own health, and drafting real business replies. This talk covers the permission creep, the overnight cron ecosystem, self-monitoring and recovery, trust boundaries, and the surprising value of giving an agent a personality that disagrees with its owner.
+  
+  Speaker info:
+  - https://x.com/velvet_shark
+  - https://www.linkedin.com/in/radeksienkiewicz/
+  - https://github.com/velvetshark
+  
+  Timestamps
+  0:15 Radek's path to OpenClaw
+  2:17 The philosophy of incremental growth and system updates
+  4:51 Integrating the Obsidian knowledge base
+  8:59 Ambient operations and overnight automation
+  11:02 Core job types for the AI agent (Ambient Operations, Attention Filtering, Execution)
+  13:03 Deep dive into specific Discord integration channels
+  14:54 System architecture: LLMs, scripts, and memory management
+  16:28 Challenges: Bad memory, brittle automations, and noisy nodes
+  17:19 Conclusion: Optimizing for the future self
+---
+[música]
+
+Prontos para começar? Tudo bem, sim. Por favor, recebam Radek, pessoal. [aplausos] Ei. Sou Radek e um dos mantenedores do Open Claw .
+
+E eu quero falar sobre o que aconteceu na minha vida com o Open Claw, quando praticamente entreguei as chaves da minha vida para o Open Claw. É quase como se fosse literalmente isso. E o que isso realmente significa? Então, isso acontece passo a passo. Não foi tudo ao mesmo tempo, mas ele consegue acessar meus e-mails, minhas anotações, arquivos, calendários, ferramentas e meu sistema operacional. Então, as automações se
+
+baseiam na memória de tudo o que eu faço no computador. Então, ele pode fazer qualquer coisa que seja possível fazer com um computador. Mas nem tudo aconteceu num grande salto. Então eu instalei o Open Claw e agora ele simplesmente controla minha vida e faz tudo por mim. [bufa] Ah, isso seria uma bobagem, ou até mesmo uma bobagem esperar que isso pudesse funcionar. Então,
+
+o que aconteceu foi que eu tentei instalar, como todo mundo faz, com apenas um canal. Acho que no início era só o WhatsApp. Depois migrei para o Telegram. Agora estou no Discord. Mas era só o WhatsApp, apenas uma função, como conversar.
+
+Ok, então chegamos lá. O que podemos fazer a seguir? Vamos fazer algo como um fluxo de trabalho simples ou uma tarefa muito simples que você possa realizar. Uma vez que chegarmos lá, vamos para o próximo passo. Então, foi assim que cheguei onde estou hoje, onde eu costumava pensar que tinha uma configuração bastante simples com meu OpenCL e o que ele fazia, porque nunca fiz nenhuma grande alteração. Mas
+
+quando me deparei com diferentes tópicos no Twitter, vídeos no YouTube ou conversando com outras pessoas sobre como elas configuraram seus sistemas, percebi que a minha configuração tem tudo o que elas têm e muito mais, além de ser, em sua maioria, mais sofisticada do que as que vejo por aí. Isso me surpreendeu bastante, porque eu achava que era apenas um pequeno passo de cada vez. Tenho uma configuração bem simples, que funciona para mim, mas é isso que eu quero mostrar: como tudo aconteceu e como está hoje. Então, vocês já tiveram muitas conversas sobre como a linguiça é feita e como estamos aprimorando o processo. Você terá mais conversas sobre o funcionamento interno do OpenCL. Quero mostrar como fica do
+
+outro lado, primeiro do ponto de vista do usuário comum e depois do usuário avançado. Agora também sou responsável pela manutenção. Você não precisa necessariamente se tornar um mantenedor , mas quando eu estava testando um dos fluxos de trabalho, encontrei alguns erros e simplesmente enviei o primeiro PR, depois o segundo, depois dei uma olhada no Discord e você acabou se envolvendo. Agora sou responsável pela manutenção lá. Então, foi como dar um passo de cada vez.
+
+Então, esse é o passo... Esses são os passos que geralmente acontecem, que eu vejo... eu vejo a necessidade.
+
+Hum, eu resolvo isso de uma maneira muito simples. E então eu adiciono mais etapas. E é por isso também que geralmente não tenho os grandes problemas que as pessoas têm, do tipo: "Ok, agora estragou meu computador." Ou simplesmente parou de funcionar completamente durante a atualização. Porque eu dou todos esses pequenos passos. Se algo
+
+quebra, eu simplesmente dou um pequeno passo para trás, conserto, vejo o que não funciona, entendo por que não funcionou, crio uma solução para que isso nunca mais aconteça e, então, dou mais um passo adiante. Então, [bufa] bem, onde começou a ser cada vez mais útil e meio que a controlar minha vida foi quando eu compartilhei meu conhecimento com ele. Então, eu tinha muita coisa no meu Obsidian, que fui acumulando ao longo de anos. Então, neste momento tenho cerca de 3.000 páginas ou notas, arquivos markdown no meu Obsidian.
+
+E isto é tudo. Isso inclui coisas do trabalho, coisas pessoais, tarefas, projetos, pesquisas, e o que mais? Artigos, tipo uma caixa de entrada de links que eu vou colocando lá, e aí o programa encontra as conexões e as coloca em perspectiva e contexto com outras coisas que eu tenho. Portanto, tudo isso agora está acessível através da minha garra aberta com uma busca muito boa. Tenho capacidade de busca e memória. Eu tenho uma busca normal. Eu
+
+tenho o QMD procurando por Obsidian. Tenho memórias diferentes para o meu espaço de trabalho. E tudo isso está interligado. E é aí que a mágica acontece. E quando vi isso recentemente, foi aí que me dei conta de que provavelmente não tenho uma configuração simples.
+
+Recentemente, vi um tweet do Andrej Karpathy que viralizou, onde ele fala sobre bases de conhecimento de mestrado em Direito (LLM). Eu estava lendo isso e pensei: "É exatamente o que eu tenho". Tipo, o que tem de super revolucionário nisso? E então eu entendi, ok, então cheguei lá passo a passo. Para mim, funciona. Então, provavelmente
+
+vale a pena, sei lá, compartilhar, contar mais sobre isso, mostrar como funciona, mostrar como você também pode chegar a esse ponto. [bufa] Uh e uh por exemplo, para Obsidian uh Do we
+
+Sim, isto [bufa] é como esta é a captura de tela real do meu cofre e todas as notas e estes são clusters diferentes. Algumas provavelmente estão relacionadas a projetos, como os grandes clusters. Algumas peças únicas. Hum, provavelmente são mais como marcadores de livros. E uma das tarefas que estou realizando é que, quando adiciono algo à caixa de entrada, o aplicativo pega o link que adicionei e verifica o que tem lá. Pode ser um tweet,
+
+uma thread, um artigo, um vídeo do YouTube; analiso, adiciono tags, contexto, verifico o que já existe sobre o assunto no meu acervo, como pode ser útil em outras áreas e estabeleço conexões. Então, o que antes eram apenas marcadores do Twitter que você adicionava aos favoritos e nunca mais consultava, agora adiciona mais contexto, amplia minha base de conhecimento e é muito mais útil, inclusive mostrando para mim, quando adiciono um marcador, coisas como: "Ok, você já tinha isso, isso e aquilo sobre este assunto, e é assim que se conecta." Talvez você devesse dar uma olhada nessas anotações. E muitas vezes é tipo, "É, eu tinha me esquecido completamente disso". E essa é uma boa fonte de conhecimento e de reflexão sobre o assunto. Ah, porque esse foi
+
+o motivo pelo qual adicionei este marcador. Então, é aí que começa a ser super, super útil. Além disso, [bufa] também, às 4h da manhã, tipo, 4h da manhã é só um exemplo que eu tenho, acontece provavelmente entre 3h e 6h, mais ou menos. Então, é isso que acontece quando estou dormindo. Então, enquanto estou dormindo, meu agente faz tudo para que tudo funcione bem. Ele indexa tudo. Faz backup de
+
+tudo, de forma que, na pior das hipóteses, se eu perder alguma coisa, perco talvez algumas horas de trabalho, de conteúdo ou de qualquer outra coisa. Atualiza todos os índices do QMD, da memória e do meu cofre Obsidian. E eu recomeço do zero pela manhã, com o que quer que me espere. Talvez um resumo dos e-mails, do calendário, tudo atualizado, a versão mais recente do Open Claw está me esperando, o que também foi feito passo a passo. Tenho alguns scripts configurados para que o sistema saiba o que fazer e o que não fazer durante a atualização, o que pode dar errado, por que dá errado e como verificar antes de atualizar ou reiniciar o gateway, para que ele possa voltar a ficar online.
+
+Assim, tudo isso também é automatizado, e quando eu acordo, já está tudo pronto e à minha espera para começar o dia. E cada Open Claw é tipo, eu não sou muito fã de compartilhar exatamente qual é a minha configuração. Porque essa configuração exata é muito específica para mim, para o que preciso agora, para o que precisarei em um futuro próximo, para os erros que encontrei, para os problemas que quero resolver, mas para te dar algumas ideias, para que possamos falar mais sobre detalhes específicos e não apenas de forma geral. Então, essas são cinco áreas ou cinco tipos de trabalho que meu agente realiza. A primeira delas são as operações ambientais.
+
+Então, foi isso que eu acabei de te mostrar. Então, ele faz todas as atualizações, toda a parte hidráulica, tudo o que precisa ser feito, mas que eu não preciso e não quero ter que pensar. A segunda é a filtragem da atenção. Então, isso também é super útil porque tem acesso a tudo e a todo o contexto do conteúdo. Por exemplo, quando chega um e-mail importante ou urgente, o sistema sabe, pelo Obsidian, qual é o contexto e o histórico por trás dele.
+
+Eu mantenho tudo no Obsidian, todos os projetos, tudo mais. Assim, ele pode me avisar proativamente. Acho que tenho aqui três exemplos bem específicos que tive recentemente: quando o sistema percebe que algo é importante e urgente, ele me avisa. Por exemplo, um pagamento da Netflix que falhou por algum motivo (mas foi resolvido em 5 minutos) e a renovação do domínio (eu provavelmente perderia esse e-mail, mas o sistema o detectou e me enviou uma mensagem no Discord informando sobre a renovação do domínio). E-mails que já vêm com contexto suficiente sobre o projeto, por exemplo, o sistema consegue ler o e-mail, entender o que está acontecendo, entender o que já foi feito no projeto e simplesmente redigir a resposta. E
+
+já está na pasta de rascunhos para eu aceitar, excluir ou fazer alterações. Então, esses são alguns exemplos de filtragem de atenção e suporte à execução. Sim, então, o Draft Synthesis é a caixa de entrada. E estes estão à direita: são os canais que tenho no meu Discord que se relacionam mais ou menos a esses tipos de trabalho. O canal "Geral" é onde tenho tudo.
+
+Eu simplesmente inicio as conversas, vejo para onde elas vão e, se eu tiver um certo tipo de conversa com frequência suficiente, adiciono um canal específico para ela. Então, essas são capturas de tela reais de hoje de manhã. Ah, a caixa de entrada é onde eu simplesmente compartilho links e isso constrói minha base de conhecimento . A consultoria é para clientes de todas as áreas, pois conhece todos os projetos. Agora ele conhece todas as cotações, prazos, tarefas, próximos passos, tudo mais. A pesquisa em vídeo serve
+
+para o YouTube, para pesquisar o que existe por aí e me ajudar com o próximo episódio. "Uh briefing" é para briefings matinais, Instagram para postagens em redes sociais, YouTube é para criar vídeos. O canal Open Claw é para tarefas de manutenção, e também há um canal de testes que muda dependendo do dia, do mês ou da necessidade. É para testes. Normalmente, testo um modelo diferente, um espaço de trabalho diferente, uma forma diferente de configurar os arquivos importantes, como memória e tudo mais. Então, eu simplesmente experimento,
+
+vejo o que funciona. Se algo funciona, eu promovo. Se não funcionar, eu descarto. E tudo isso funciona porque não é apenas um sistema, é um sistema com muitas partes móveis que funcionam bem juntas. Então, o LLM serve para desenvolver o discernimento, como entender o e-mail, compreender o contexto e fazer conexões. Depois, há todos os
+
+arquivos, as ferramentas e os scripts que eu desenvolvi. Os scripts são basicamente assim: se isso acontecer, faça aquilo. Está feito. Você nem precisa de formação em direito, então o mestrado em direito (LLM) é até dispensado. E o mais importante é otimizar seu arquivo de memória, seu arquivo MD.
+
+Uh, eu também tenho regras críticas MD, porque mesmo que eu tivesse algo no MD do agente ou no MD da alma, ainda assim consegui esquecer algo ou não fazer algo. Bem, com regras críticas, ter regras críticas ajuda e tê-las mencionadas em destaque no arquivo MD do agente . Ah, então isso também é uma melhoria. Hum, eu experimentei algumas configurações diferentes de memória, onde eu tinha apenas um arquivo de memória. Agora que eu tenho toda a pasta de memórias, você também tem o recurso de sonhos, onde nós promovemos as memórias.
+
+Portanto, é importante trabalhar com esses arquivos, e é fácil fazer isso no OpenCog porque tudo é inspecionável. Estes são os nossos arquivos finalizados, editáveis; você pode visualizá-los, lê-los e compreendê-los. E funciona, funciona bem. O que se complica ainda mais é o acúmulo de erros de memória. Se a memória não estiver configurada corretamente e seu cofre, seus nós e suas memórias crescerem para milhares, você terá um problema, então precisa trabalhar ativamente nisso.
+
+Automações frágeis, especialmente quando se trata de automações de 10 etapas, podem falhar e provavelmente irão falhar em algum momento. Então, novamente, ou dividimos em partes mais simples ou implementamos mecanismos de proteção mais eficazes. Ah, nós ruidosos, ah, estou me livrando deles, ah, limpando, hum, limpando regularmente. E limites fracos, então esses são todos os arquivos essenciais e tudo mais que é importante otimizar para suas necessidades. Então, o que eu quero que vocês entendam com isso é que façam o que eu fiz e, em algum momento, vocês vão perceber: "É, isso é incrível e me ajuda muito."
+
+Comece com um problema recorrente, vá aumentando a confiança aos poucos, construa a base de conhecimento, mova tudo, ou o máximo que puder ou quiser, para arquivos Markdown e comece a fazer essas conexões. A inspeção do sistema, como esperado, é fácil de fazer com a garra aberta. E otimize para o seu futuro. E é com isso que quero encerrar. Então, uns [risos] anos atrás eu escrevi um artigo sobre o meu eu do passado, o meu eu do presente e o meu eu do futuro. E o meu
+
+eu do passado era exatamente como esse cara completamente estúpido. Ele não faz nada. Ele é preguiçoso. Ele não quer fazer nada. Então, agora eu me apresento e preciso fazer tudo para que eu faça como fazia no passado. E o meu
+
+eu do futuro, o meu eu do futuro é como uma espécie de criatura divina. Ele pode fazer qualquer coisa. Ah, aquela criatura é tipo, onipotente. E assim como se eu não fizer algo hoje, não tem problema se aquela outra criatura fizer isso por mim. Então, esse era o problema e [bufa] uh, meu trabalho é me tornar amigo do meu eu do futuro.
+
+Tratar essa pessoa como alguém que eu quero ajudar. E essa é a função do agente. Então, eu não preciso fazer tanto quanto antes, porque o agente ajuda o meu eu do futuro o máximo possível, de forma que, quando eu acordar amanhã, tudo o que poderia ser feito já terá sido feito por outra pessoa, e não por mim. Então, esse é o objetivo principal dessa configuração, pelo menos para mim. Não sei, para você pode ser diferente. Então, é com isso que eu
+
+quero deixar vocês. Obrigado. [bufos e aplausos]
+
+[música]

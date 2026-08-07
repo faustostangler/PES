@@ -1,0 +1,131 @@
+---
+video_title: "Your Insecure MCP Server Won't Survive Production — Tun Shwe, Lenses"
+video_id: BurJvbqFr4c
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BurJvbqFr4c
+video_date: 2026-04-08T07:31:01+00:00
+video_description: |
+  Tun Shwe and Jeremy Frenay from Lenses.io address the critical security and design challenges involved in moving Model Context Protocol (MCP) servers from local development to enterprise production. Effective agentic design is inseparable from security and here we propose five core principles such as shrinking the attack surface, constraining inputs and returning only essential data. Standard local setups fail under professional workloads, necessitating a shift to remote MCP servers and robust authentication frameworks. Detailed technical flows are provided for OAuth 2.1, comparing Dynamic Client Registration (DCR) with the more advanced Client ID Metadata Document (CIMD) approach for managing agent identities. Come learn how to adopt the correct mindset for building enterprise-grade agentic AI systems with MCP.
+  
+  https://github.com/lensesio/lenses-mcp
+  
+  https://lenses.io/
+  
+  Tun Shwe - Staff AI Engineer, Lenses.io
+  
+  Tun is a Staff AI Engineer at Lenses.io, where he leads AI strategy. He is focused on helping companies imagine and implement their strategic vision with agentic AI systems fuelled with real-time context. He was previously a Head of Data and Data Engineer at high growth startups and has spent 20 years building data-intensive applications and leading T-shaped teams. In his spare time, Tun goes surfing, plays guitar and tends to his analogue cameras.
+  
+  --
+  
+  Jeremy Frenay is an AI Engineer at Lenses.io, where he works on bringing AI-assisted engineering to the Apache Kafka ecosystem. Previously, Jeremy co-founded Arcane, an AI copilot for marketers, and led data operations engineering at Babylon Health, scaling data platforms for one of the world's largest healthtech unicorns.
+  
+  Socials:
+  https://lenses.io/
+  https://github.com/lensesio/lenses-mcp
+  https://www.linkedin.com/in/tunshwe/
+  https://www.linkedin.com/in/jeremy-frenay/
+  
+  Slides:
+  https://drive.google.com/file/d/1zLzkVO7_kBoV6bI7lhYIi3AxUH6j7xH_/view?usp=sharing
+---
+Olá pessoal, obrigado por participarem desta sessão sobre por que seu servidor MCP inseguro não sobreviverá em produção. Meu nome é Tin Shway e lidero a área de IA na Lenses. No meu dia a dia, trabalho como engenheiro de IA e você pode se conectar comigo aqui no LinkedIn. E eu sou Jeremy Fronae. Eu trabalho com engenharia de IA na Lenses.
+
+Primeiramente, uma breve nota sobre onde trabalhamos. Lenses é uma estrutura operacional de dados que fica entre seus agentes e é a camada de dados de streaming padrão para fornecer contexto confiável em tempo real para IA orientada a agentes. As empresas trabalham conosco porque priorizamos a governança, a segurança e a escalabilidade. Apresentamos aqui uma seleção de nossos clientes, o que nos proporciona exposição a diversos casos de uso em larga escala em diferentes setores . E estamos aqui hoje, claro, porque temos um servidor MCP de código aberto ao qual estamos aplicando o que aprendemos em campo. Então, por favor, dê-nos uma estrela para
+
+acompanhar o projeto. E aqui está o que abordaremos nesta sessão. Os principais pontos que queremos que você absorva são as maneiras de pensar sobre o design de servidores MCP e, na verdade, de qualquer interface, para torná-la robusta para sistemas de IA com agentes. E já que esta palestra é sobre MCP, vamos garantir que você tenha dicas sobre como proteger seu serviço de MCP para produção. Eu abordarei as primeiras seções e, nas seções dele, Jeremy explicará os fluxos do OAuth.
+
+Então, vamos direto ao ponto: por que a maioria dos servidores MCP não são bons? Gostei da forma como Jeremy Lowin, criador do Fast MCP, colocou isso. Ele disse que os agentes merecem sua própria interface, otimizada para seus casos de uso. Abordar o design para agentes através de uma perspectiva de engenharia de produto. Quero levar essa abordagem um passo adiante.
+
+Um servidor MCP mal projetado também é um servidor mal seguro. Projeto ruim e segurança deficiente se agravam mutuamente. Jeremy propôs três dimensões que diferenciam humanos e agentes, e sugeriu que essas três dimensões sejam consideradas ao projetar para MCP ou qualquer interface com agentes. A camada extra que eu queria enfatizar é a segurança, pois cada uma delas projeta uma sombra de segurança. Primeiro, há a descoberta.
+
+Ao usar a nova API, você acessa a documentação, dá uma olhada rápida, encontra os três endpoints de que precisa e nunca mais precisa consultar a documentação . Um agente não pode fazer isso. Sempre que se conecta a um servidor MCP, ele enumera todas as ferramentas e lê todas as suas descrições. E isso custa caro em tokens. Mas aqui está a sombra do conjunto de segurança.
+
+Cada uma dessas descrições de ferramentas é uma superfície para o envenenamento por ferramentas. Os atacantes podem inserir instruções ocultas em descrições que são invisíveis na interface do usuário, mas o modelo as seguirá sem questionar. Mais ferramentas significam maior área de superfície para injeção. Em segundo lugar está a iteração. Se o seu script falhar, execute-o novamente. Leva um
+
+segundo. Quando um agente tenta novamente, ele envia todo o histórico da conversa pela rede. E aqui está sua sombra de segurança. Um agente que itera sobre um servidor MCP com escopo inadequado está transmitindo seus dados a cada nova tentativa. Todo o histórico da conversa é transmitido pela rede, incluindo quaisquer dados sensíveis retornados por chamadas de ferramentas anteriores. Cada
+
+viagem de ida e volta representa uma oportunidade para vazamento de dados. Terceiro, o contexto. Você e eu compartilhamos décadas de memórias, experiências e intuição. Um agente possui aproximadamente 200.000 tokens, e só.
+
+A sombra de segurança é detalhada na lista dos 10 principais MCP da OWASP, que recomendo a todos que leiam. E lá está listado como número 10, injeção de contexto e compartilhamento excessivo. Se o seu servidor despejar dados não filtrados nesse período limitado, você estará entregando informações pessoais identificáveis, credenciais e detalhes internos do sistema a um modelo que pode ser enganado para extraí-los. Um agente precisa carregar todo o contexto antes de poder tomar uma decisão. Isso torna o sistema adequado para encontrar coisas específicas, mas tem como custo a latência e o excesso de contexto. Então,
+
+você pensa nisso como procurar uma agulha num palheiro. Se parte desse feno estiver envenenado, o agente simplesmente não vai perceber. Portanto, você deve pensar em curadoria. Selecione as ferramentas MCP disponíveis para o agente e procure expor a menor quantidade possível de informações. Quanto menos você se expuser, menos poderá ser atacado. E aqui, menos é mais.
+
+A seguir, abordarei o que considero cinco regras fundamentais para o design de agentes seguros. Pensar como um engenheiro de produto e aplicar esse conhecimento aos servidores MCP é fundamental. O que eu quero que vocês retenham desta seção é que um bom projeto de MCP e uma boa segurança de MCP são a mesma disciplina. Se você errar no projeto, nenhuma quantidade de OAuth vai te salvar. Apresento aqui cinco princípios que oferecem proteção contra as 10 principais vulnerabilidades do OWASP MCP antes mesmo de você escrever uma única linha de código OAuth.
+
+Então, em primeiro lugar, reduza a superfície de ataque por meio do projeto. Pense em termos de resultados. A ideia aqui é condensar todas as operações detalhadas ou chamadas de API subjacentes em uma única operação de granularidade grossa que produza o resultado desejado. Cada ferramenta que você expõe é uma porta. Não dê ao agente acesso para excluir usuários quando tudo o que ele precisa é verificar um pedido.
+
+Consolidar operações relacionadas em uma única chamada de ferramenta com um resultado bem definido . Assim, você tem uma única verificação de permissão, uma única entrada no log de auditoria e um único local para aplicar a autorização. Então, pense em menos portas com menos fechaduras para gerenciar. Número dois, restrinja suas entradas no nível do esquema. Você precisa aceitar os elementos primitivos de nível superior, como os enums; essa será a melhor abordagem. Dicionários
+
+também são aceitáveis, desde que não sejam aninhados, e para introduzir maior rigor, você pode usar uma biblioteca de tipagem como o Pydantic. O objetivo é rejeitar payloads aninhados de formato livre para evitar falhas de injeção de comandos, cuja causa raiz é quase sempre a passagem de argumentos de string sem restrições para um shell, um mecanismo de consulta ou uma API. Dados de entrada com restrições são mais fáceis de validar e mais difíceis de explorar. Número três: trate sua documentação como uma camada defensiva. O envenenamento de ferramentas é o terceiro item na lista do guia OWASP MCP e funciona incorporando instruções maliciosas nas descrições das ferramentas, que são invisíveis na interface do usuário, mas executadas pelo modelo.
+
+Se você não escrever instruções claras e completas , a descrição de uma ferramenta controlada por um atacante em um servidor MCP vizinho pode ocultar a sua. Se a sua documentação for completa e inequívoca para cada ferramenta, ela ocupará o espaço que um servidor vizinho infectado tentaria preencher. Número quatro, devolva apenas o que o agente precisar. O compartilhamento excessivo de dados nas respostas das ferramentas é o número 10 no guia MCP da OWASP e transforma a janela de contexto do agente em uma vulnerabilidade. Informações pessoais identificáveis ​​( PII), identificadores internos, credenciais, detalhes do sistema, tudo armazenado no contexto, estão a apenas uma injeção de prompt de distância da exfiltração. Portanto,
+
+reduza suas cargas úteis ao mínimo. Se o agente não precisar de um dado para sua tarefa imediata, não o retorne. E número cinco, minimize o raio da explosão. Defina o escopo das permissões no nível da ferramenta e do recurso , não no nível da sessão. Use a anotação MCP somente leitura para ferramentas não destrutivas, permitindo que os clientes definam limites. Se uma ferramenta MCP
+
+for destinada a ter acesso somente leitura, considere transformá-la em um recurso MCP. Lembre-se também de que cada ferramenta que você remove é um vetor de ataque que você elimina.
+
+E você está criando uma interface, não uma ferramenta. Portanto, essa é a mentalidade com que devemos entrar . Um agente usará com confiança qualquer informação que você lhe fornecer , portanto, você precisa fornecer essa camada de confiança. Então, agora você projetou bem o seu servidor . Você seguiu os cinco princípios.
+
+Agora você precisa efetivamente implantá-lo, e é aqui que a maioria das equipes se depara com o que eu chamo de " abismo da segurança". Se você estiver executando o MCP no modo de E/S padrão , a vida é bem tranquila. É um processo local, de usuário único, sem exposição à rede e sem necessidade de autenticação. O host MCP comunica-se diretamente com o processo do servidor na sua máquina. É um ambiente fechado e funciona maravilhosamente bem para a produtividade de desenvolvedores que jogam sozinhos .
+
+Mas a produção exige algo completamente diferente. Você precisa do transporte HTTP streamable. Isso permite a implantação remota, com vários clientes se conectando ao mesmo servidor. Você pode expandir horizontalmente e centralizar sua governança. E é aqui que o MCP se torna verdadeiramente valioso para uma organização, permitindo que uma equipe passe de um desenvolvedor trabalhando em um laptop para uma capacidade compartilhada que pode ser utilizada por toda uma equipe ou frota de agentes. O
+
+MCP se torna a interface única que todos os clientes podem usar sem se preocupar se estão usando a versão mais recente de uma API ou com os recursos necessários para escalabilidade. O problema é que não há uma rampa de acesso gradual. Você passa de uma superfície de segurança nula para uma enorme lista de preocupações, tudo de uma vez. De repente, você precisa de OAuth, gerenciamento de tokens, configuração CORS, TLS, limitação de taxa e muito mais. E você precisa de tudo isso ao mesmo tempo. Portanto, não existe
+
+meio-termo, porque não é possível produzir um pouco. Ou você está atrás do muro ou está em campo aberto. E você não pode simplesmente ficar na sua região e esperar pelo melhor. O Stack Lock realizou testes de baixa complexidade no transporte de E/S padrão e os resultados foram desastrosos. Das 22 solicitações, 20 falharam com apenas 20 conexões simultâneas. A entrada/saída padrão falha no
+
+momento em que se adiciona concorrência. Portanto, se você quiser expandir, terá que atravessar o abismo. E como começar a atravessar esse abismo? Vou passar a palavra para Jeremy para que ele continue. Sim, implementar um servidor de autorização para MCP não é tão simples assim.
+
+Vamos analisar a lista de RFCs a serem implementadas. Com o fluxo principal, a descoberta do cliente OAuth , os metadados e o gerenciamento do ciclo de vida do token, já temos mais de 10 especificações para implementar. Agora, digamos que lemos todos esses RFCs e estou pronto para implementar um servidor de autorização [limpa a garganta] para MCP. Como é a autorização de nível empresarial ? Vamos começar revisando as configurações de servidor MCP local e remoto e seus respectivos fluxos OAuth.
+
+Tune falou sobre o jardim murado, o servidor MCP local executado em E/S padrão com uma chave de API. Vamos analisar o fluxograma. O servidor MCP está sendo executado na minha máquina. O cliente se conecta através de E/S padrão. O usuário deve definir a chave como um parâmetro na configuração do cliente MCP.
+
+E o parâmetro será armazenado como uma variável de ambiente passada pelo servidor MCP com sua solicitação ao serviço externo.
+
+Isso pode ser bom para configurações locais, mas eu preciso provisionar, armazenar e manter a chave. Essa chave tem longa duração, raramente é rotacionada e não está limitada às ações específicas que meu cliente executa. Pior ainda, essas chaves costumam ser compartilhadas entre sistemas. Portanto, a chave é armazenada em um arquivo de configuração, uma variável de ambiente, e não é verificada pelo servidor MCP. Agora, vamos analisar um servidor MCP remoto.
+
+Neste caso, o servidor MCP é executado em um servidor remoto. O cliente se conecta via HTTP. O usuário deve definir a chave no cabeçalho de autorização HTTP. Novamente, podemos ver a configuração do cliente MCP aqui na tela. Assim, a primeira fase consiste na geração do token e na configuração do cliente.
+
+Na segunda etapa, em tempo de execução, podemos ver o cliente realizando uma solicitação e anexando essa chave de API no cabeçalho de autorização. Essa chave de API é validada ou não pelo próprio servidor MCP e será repassada para a API upstream, onde será verificada desta vez. Independentemente de a chave da API ser validada ou não, receberemos uma resposta 200 ou 401, caso em que o usuário precisará rotacionar o token manualmente. É assim que a maioria dos servidores MCP remotos estão configurados atualmente. A chave é de longa duração e não está limitada à ação específica do meu agente . A chave é armazenada em um
+
+arquivo de configuração e nem sempre é verificada pelo servidor MCP. Ou a chave é simplesmente repassada para a API, criando uma vulnerabilidade de proxy reverso confuso , onde clientes maliciosos obtêm autorização sem o devido consentimento do usuário, ou, em alguns casos, a chave pode ser mapeada para outra chave e token para o próprio acesso à API. Agora, temos uma única credencial compartilhada que serve a vários usuários. Essa credencial é ainda mais poderosa, mais difícil de revogar por usuário e, se vazada, compromete a todos. Essa abordagem funciona para configurações de credenciais de longa duração e sem escopo definido. Ainda
+
+representa mais de 50% dos servidores MCP existentes. Mas o que vemos o ecossistema adotar são tokens de curta duração e com escopo definido, via OAuth 2.1. Vemos até mesmo troca de tokens para acesso com privilégios mínimos. O OAuth tradicional pressupõe que você conheça seus clientes de antemão.
+
+Você os registra em um portal de desenvolvedores, obtém um ID de cliente e segue em frente. Isso funciona quando você tem de cinco a dez aplicativos conectados ao seu serviço. Mas com o MCP, esse fluxo é completamente interrompido. Pense em como é, de fato, a arquitetura do MCP . Qualquer cliente, seja Cloud Desktop, Cursor, VS Code, uma ferramenta de linha de comando ou um agente qualquer, pode descobrir e se conectar a qualquer servidor MCP em tempo de execução. O
+
+pré-registro exige muito esforço em um cenário altamente viável. Trata-se de um número ilimitado de clientes conectados a um número ilimitado de servidores. Não é possível exigir que cada desenvolvedor registre manualmente seu aplicativo em todos os servidores MCP com os quais ele possa vir a precisar se comunicar . É aí que entra o registro dinâmico de clientes. Nesse caso, ainda temos um servidor MCP rodando em um servidor remoto, mas agora ele está protegido por um servidor de autorização OAuth.
+
+O cliente pode se registrar automaticamente no servidor de autorização e receberá um novo ID de cliente a cada registro. Assim, na fase um, a descoberta, nosso cliente MCP, neste caso Cursor, fará uma solicitação no MCP contra o servidor MCP. Podemos ver o servidor MCP retornando uma resposta 401 porque ainda não temos um token para passar, mas ele também passa um cabeçalho WWW-Authenticate contendo os metadados do recurso que podem ser usados ​​pelo nosso cliente para descobrir o servidor MCP e seus metadados. O documento em si tem mais ou menos a seguinte aparência . Ele descreve o recurso que estamos tentando acessar e o servidor de autorização que o protege.
+
+Isso permite que nosso cliente aponte para o próprio servidor de autorização e descubra, desta vez, os metadados expostos pelo próprio servidor de autorização . Agora que nosso cliente sabe como se autorizar para acessar um servidor MCP , ele precisa se registrar no servidor de autorização. Isso é feito por meio de uma solicitação, uma solicitação POST no registro {slash}. Como mencionado anteriormente, o servidor de autorização irá gerar e armazenar em disco um novo ID de cliente e retorná-lo ao cliente. Agora sabemos com quem estamos falando.
+
+Em seguida, é hora de autorizar nosso cliente no servidor de autorização. E para isso, a especificação MCP exige o uso do PKCE, a chave de prova para o protocolo de troca de código. Portanto, nosso cliente MCP primeiro gera um verificador de código e um desafio de código que ele passa por meio de uma solicitação para {slash} authorize a fim de obter um código de autorização. Nosso servidor de autorização validará esta solicitação e o desafio de código. Como ainda não temos uma sessão ativa para este usuário, ele será redirecionado para o provedor de identidade, que é o formulário de login único , para que possa fazer login.
+
+Após o login bem-sucedido, o usuário será redirecionado para uma página de consentimento onde poderá conceder diferentes permissões ao seu cliente. Agora que emitimos um código de autorização válido para o cliente, é hora de usá-lo para obter um token, um token de acesso. Isso é feito enviando uma solicitação no token {slash} e passando o código de autorização e o verificador de código que geramos anteriormente para o protocolo PKCE . O servidor de autorização validará o desafio PKCE e o código de autorização e, em seguida, criará um novo token. Neste caso, estamos usando tokens web JSON para retornar um token de acesso para que o cliente possa usar o servidor MCP.
+
+O passo final é, na verdade, usar o servidor MCP. É nesse momento que seu cliente MCP irá executar uma chamada de ferramenta, por exemplo. Podemos ver que ele passará o token de acesso que acabamos de emitir na autorização como o valor de portador. Nosso servidor MCP validará este token, verificará os escopos válidos e, em seguida, executará o fluxo de troca de tokens para alterar este token de delegação para um token de sessão. Isso significa que nosso servidor MCP agora é, na verdade, um cliente OAuth para um novo servidor de recursos, nossa API, mas está usando exatamente o mesmo servidor de autorização para obter um token.
+
+Portanto, esse é o fluxo de troca de tokens definido na RFC 8693. E, ao concluirmos o fluxo, nosso servidor MCP pode usar esse novo token de sessão para realizar uma chamada de API, ignorando o token no cabeçalho de autorização. Assim, o DCR resolve o problema do autorregistro, o registro dinâmico do cliente, de forma que o usuário não precise se pré-registrar, pré-gerar credenciais estáticas e configurá-las no cliente, mas isso também apresenta seus próprios problemas. Primeiro, sempre que um usuário conecta um cliente a um servidor MCP, um novo registro é criado. Os registros não são portáteis, portanto, usar o Cloud no Windows e depois no macOS cria dois registros de cliente distintos . O
+
+DCR é vulnerável a ataques de phishing porque não oferece uma maneira confiável de verificar a identidade dos clientes. Qualquer pessoa pode enviar mensagens para esse endpoint, o endpoint de registro {slash}, incluindo atacantes. Por fim, o servidor simplesmente confia nos metadados que o cliente afirma por si próprio. Significa que um cliente malicioso pode se passar por Cloud, e o servidor não tem como saber o contrário. Assim, a comunidade MCP teve que encontrar uma maneira melhor de permitir que os clientes se cadastrassem sozinhos.
+
+E esse é o CIMD, o documento de metadados de identificação do cliente . Neste caso, ainda temos um servidor de autorização na frente do nosso servidor MCP, mas o proprietário do cliente expõe o ID do cliente em um URL público. Isso permitirá que nosso servidor MCP obtenha o ID do cliente durante a autorização. Vamos dar uma olhada no diagrama. Portanto, a primeira fase ainda é a da descoberta.
+
+Nosso cliente acessa o servidor MCP sem um token, recebe uma resposta 401 e, bem, a URL dos metadados do recurso. Ele pode seguir este URL, descobrir o servidor MCP e, em seguida, descobrir o servidor de autorização. Mas desta vez, o servidor de autorização não está mencionando que precisa de uma solicitação de registro com barra. Significa que o cliente, o cliente MCP, pode ir diretamente para a fase de autorização. Geramos novamente o verificador de código PKCE e realizamos uma solicitação de autorização com barra. Mas desta vez, nosso
+
+cliente nos envia seu ID exclusivo, e podemos vê-lo aqui. Trata-se, na verdade, de uma URL válida onde os metadados do cliente estão sendo expostos. Isso permite que nosso servidor de autorização busque esses metadados e registre um novo cliente com um ID exclusivo, que é uma URL exposta pelo proprietário do cliente. E podemos passar para a fase de autenticação. Novamente, o servidor de autorização redirecionará para o provedor de identidade, aguardará um login válido do lado do usuário, apresentará uma tela de consentimento para que o usuário conceda algumas permissões e, então, estaremos prontos para emitir o token de delegação e o token de sessão para uso pelo servidor MCP.
+
+Assim, neste caso, a CIMD não tem uma base de dados crescente de registo de clientes para manter. Provar que você controla https://cloud.ai é significativo, ao contrário de provar que você pode publicar no endpoint de registro. Os URIs de redirecionamento que são explicitamente vinculados ao cliente em seu documento de metadados dificultam a inserção de callbacks maliciosos por parte dos atacantes . E o servidor de autorização pode permitir ou negar o acesso de clientes seletivamente.
+
+Resumindo, o DCR é um bom começo, mas cria problemas. O CIMD representa um grande avanço e é a abordagem preferida desde novembro de 2025. Mas atingir o nível empresarial exige a adição de outras camadas de segurança e confiança. Para permissões, os escopos do OAuth resolvem parte do problema , mas estão limitados à sessão. O verdadeiro controle de acesso baseado em funções de nível empresarial significa definir permissões no nível da ferramenta e do recurso individual, e não apenas no nível da sessão. A
+
+mascaramento de dados é a forma como você lida com os campos de informações pessoais identificáveis, como e-mail, telefone e números de seguro social. Pode ser necessário mascará-los antes que o agente os veja, pois os agentes nunca devem ser expostos a dados que não lhes competem manipular.
+
+Você precisará registrar o que está acontecendo em cada interação. Qual agente chamou qual ferramenta, com quais parâmetros e quais dados foram retornados. Para cumprir regulamentações como a Lei de IA da UE, os reguladores esperam esse nível de transparência e detalhamento para sistemas autônomos de IA. Por fim, você precisará ser capaz de observar a solicitação completa. Isso significa a validação da solicitação do cliente por meio da execução, recuperação de dados e resposta gerada.
+
+Se você não consegue rastrear as ações de um agente do início ao fim, não consegue governá-lo. O rastreamento para IA agente segue os mesmos princípios da observabilidade de sistemas distribuídos , mas aplicado à tomada de decisões autônomas. Muito obrigado, Jeremy, e obrigado a todos por acompanharem esta sessão. Gostaríamos muito de saber como está sendo sua experiência com a implementação de serviços MCP em produção, então, por favor, deixe um comentário ou envie-nos uma mensagem. Você sabe onde nos encontrar.
+
+E, por favor, dê uma olhada no nosso servidor MCP e nos dê uma estrela. Então, espero que nos vejamos novamente em breve. Obrigado e até logo. Obrigado.

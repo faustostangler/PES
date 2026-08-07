@@ -1,0 +1,489 @@
+---
+video_title: "Vibe Engineering Effect Apps — Michael Arnaldi, Effectful"
+video_id: Wmp2Tku2PrI
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Wmp2Tku2PrI
+video_date: 2026-05-07T15:00:06+00:00
+video_description: |
+  What if the best way to get coding agents to use a library well is not better prompts, but giving them the library's actual code? In this workshop, Michael Arnaldi walks through a practical approach to building with Effect and LLMs by cloning the Effect repo into the project, extracting patterns directly from the source, and using those patterns to guide agent behavior.
+  
+  Starting from an empty repository, the session shows how to set up an Effect-based app with tests, strict TypeScript diagnostics, agent instructions, and a simple HTTP API, while also exploring the broader problem of how to make agents effective in unfamiliar codebases. If you're building with coding agents and care about reliability, structure, and real-world Effect workflows, this is a useful hands-on framing.
+  
+  Speaker info:
+  - https://x.com/MichaelArnaldi
+  - https://www.linkedin.com/in/michael-arnaldi-52858114a/
+  
+  Timestamps
+  
+  0:15 – Introduction and context setting for the workshop
+  0:47 – Interactive audience poll on experience with Effect and AI tooling
+  3:16 – Discussing the core philosophy: "Just clone the repo" for AI context
+  5:59 – Understanding LLMs vs. the human brain and context window limitations
+  13:13 – Project setup: Starting from an empty repository
+  14:20 – Initializing the project with Bun, Vitest, and TypeScript
+  19:18 – Adding Effect beta and configuring TSGo for the compiler
+  30:30 – Configuring strict diagnostics for AI-assisted development
+  35:20 – Adding the Effect repository as a git subtree for better agent access
+  37:07 – Creating agents.md to establish rules and available commands
+  41:40 – Researching Effect patterns for building an HTTP API
+  43:08 – Discussing "Spec-Driven Development" and avoiding plan-mode limitations
+  54:02 – Drafting the plan for the Todo HTTP API
+  1:05:07 – Implementing the SQL client and migration patterns
+  1:13:42 – Reviewing API schemas and handling identified code duplication
+  1:18:14 – Starting the API server and verifying OpenAPI documentation
+  1:20:56 – Cleaning up test suites and enforcing best practices for layers
+  1:38:08 – Concluding remarks on workflows, clustering, and future stability in Effect
+---
+Então, sejam todos bem-vindos. Bem, estou apenas contextualizando o workshop. Eu tinha muitas ideias para preparar, mas no final pensei que, para ser autêntico, precisávamos criar algo do zero, então não preparei absolutamente nada. Isso significa que podemos seguir qualquer caminho que quisermos e vamos torcer para que seja real o suficiente. Antes de mais nada, gostaria de saber da plateia: vocês já têm experiência com IA? Qual o
+
+nível de familiaridade de vocês com ferramentas de IA? Perguntas desse tipo. Felizmente, não somos muitos, então espero que isso seja o mais interativo possível. Talvez possamos começar. Olá, Chris.
+
+Olá, familiaridade com IA e com o Effect Sun? Ok, ótimo. Executando a versão V4 em produção. Executando a versão V4 em produção. Aliás, isso contraria os conselhos.
+
+Bom. Bom.
+
+Minha mão deste ano fazendo tudo e a razão pela qual estou particularmente interessado no efeito é que ele está incentivando muita segurança, então meus agentes não podem se tornar pequenos e a razão pela qual eu quero o efeito é que tínhamos um cliente de API que eu transcrevi
+
+e agora estou mais interessado em como você torna o efeito mais descoberto pelos agentes, ok, eu vi a ideia de ter o ley, mas não estou convencido com isso, então estou curioso. Bom. Bom. E você? Sim, mas ouvi falar muito sobre o efeito.
+
+Parece bom. Parece bom.
+
+Bom. Uma plateia bastante homogênea, toda interessada em saber como usar agentes de forma eficaz, com o perdão do trocadilho . Você destacou algo muito bom, que é a clonagem, ou seja, dar acesso ao repositório e, consequentemente, ao agente . Na verdade, esta sessão deveria se chamar simplesmente "clone o maldito repositório, baixe e pronto". E, na verdade, eu também não tenho programado manualmente desde o final do verão. Já faz
+
+bastante tempo. Comecei a programar quando tinha 12 anos. É uma sensação bastante estranha chegar ao ponto em que você sabe que não está mais escrevendo código manualmente. E a maior parte do meu trabalho envolve programação em nível de biblioteca. Portanto, geralmente se trata de um tipo de funcionamento bastante complexo e de baixo nível, que costumava exigir um ótimo entendimento da linguagem de como o usuário interage com o software e assim por diante. Isso
+
+não diminui em nada o desenvolvimento de alto nível, apenas significa que a maneira como você trata uma linguagem ao construir uma biblioteca é geralmente muito diferente da maneira como você a trata ao construir um aplicativo . Às vezes, no mundo dos aplicativos, você tem os mesmos requisitos que no mundo das bibliotecas, especialmente quando precisa generalizar e abstrair alguns padrões, torná-los repetíveis, remover a verbosidade das repetições e assim por diante. Então, há alguns cruzamentos por ali, mas eu definitivamente pensei que a IA seria mais útil nas terras altas. E não observei muita utilização em nível de biblioteca . E eu estava completamente enganado, porque não estou escrevendo código manualmente. Já faz um tempo que não
+
+escrevo uma única linha de código manualmente . E eu fiz isso em Typescript. Eu já fiz isso em Rust. E o mais curioso é que, como geralmente escrevo bibliotecas, costumo interagir com bases de código que não têm nenhuma documentação, que não têm nenhuma boa prática disponível online. Portanto, não pude simplesmente usar a abordagem usual de adicionar um servidor MCP para acessar a documentação ou esperar que os modelos tivessem sido treinados o suficiente com base na documentação para serem diretamente úteis.
+
+E a realidade é que, com os LLMs, as pessoas os tratam como se fossem cérebros humanos, mas eles são muito diferentes. Aprendemos continuamente. Esta é uma experiência de aprendizagem. Assim que sairmos desta sala, espero que você já saiba um pouco mais sobre o ponto de partida em relação a quando entrou, e que seu cérebro continue funcionando e internalize cada vez mais padrões ao longo do tempo. Então você vai dormir. Seu cérebro
+
+limpa um pouco da bagunça de informações irrelevantes que você recebeu durante o dia. E existe todo esse processo de transformação da experiência. Assim, as palavras que vivenciamos todos os dias são armazenadas na memória de longo prazo com o auxílio dos LLMs. Isso não acontece com os LLMs. passa por uma fase de pré-treinamento onde os LM são treinados em todo o conhecimento existente no mundo. Geralmente,
+
+eles recebem treinamento sobre toda a internet. Em seguida, eles se especializam em algumas tarefas e depois há toda a fase pós-treinamento, onde os modelos são ajustados para agir em situações específicas. Por exemplo, agentes de codificação são modelos genéricos que foram reforçados por meio de ciclos de aprendizado por reforço para operar em bases de código. Toda a fase pós-treinamento de um grande modelo de linguagem dedicado à codificação consiste em deixar o modelo processar bases de código e realizar avaliações que informam à fase de treinamento como o modelo está se saindo. Está indo bem? Está indo mal? O
+
+código compila após essa alteração? O código deixa de compilar após essa alteração? E assim por diante. Mas uma vez feito isso, está feito. Não se adiciona mais conhecimento ao modelo todos os dias. Então,
+
+se você interagir com um modelo hoje e disser algo para ele, como: "Ei, quero que você faça isso de uma maneira muito específica", amanhã ele não vai se lembrar. Então, como você faz para que isso se lembre? Essa é a grande questão, e com os modelos você precisa pensar neles como se estivesse conversando com eles, mas na realidade você está basicamente adicionando mensagens a uma matriz de tamanho fixo, chamada janela de contexto, e a janela de contexto é limitada. Atualmente, existem modelos com uma janela de contexto de 1 milhão de tokens, o que não é necessariamente uma boa ideia, pois a janela de contexto do modelo é o que é enviado para a rede neural, e a rede neural tentará prever o que virá a seguir. Portanto, se você inserir mais informações, há uma grande chance de confundir o modelo, e é por isso que uma janela de contexto de 1 milhão não é necessariamente útil, especialmente se você estiver realizando várias ações no mesmo contexto.
+
+Isso significa que, na prática, precisamos projetar nossa arquitetura em torno de um processo de descarte. Precisamos projetar nossa arquitetura em torno de uma máquina que, na melhor das hipóteses, tinha conhecimento de apenas seis meses atrás, e que não vai se lembrar de tudo, porque mesmo que você tenha um trilhão de parâmetros no modelo, ou mesmo 10 trilhões, isso não é suficiente para armazenar todo o conhecimento humano. Então, você sempre terá conhecimento comprimido e, no melhor cenário, terá alguma capacidade de generalização no modelo, de modo que ele possa dizer: "Ei, eu sei que AB, talvez eu possa fazer C porque é semelhante a A e B". E você terá alguma forma de comportamento emergente e capacidade de raciocínio sobre novos problemas. Mas os modelos se tornaram muito bons, eu mesmo já disse isso. Não escrevo código
+
+manualmente há pelo menos seis ou oito meses. Isso significa que, mesmo que a máquina seja " burra", ela já está no ponto em que podemos aproveitá-la para fazer o bem. Mas como fazemos isso? Se partirmos do pressuposto de que o modelo possui conhecimento desatualizado, precisamos de uma maneira para que ele adquira novos conhecimentos. E dissemos que esses modelos que usamos para codificação foram reforçados, passaram por aprendizado por reforço para serem capazes de entender sua própria base de código, fazer alterações em sua própria base de código e replicar padrões que existem em sua própria base de código.
+
+Eles não foram realmente treinados para ler documentos escritos por humanos. Eles não receberam treinamento para usar um servidor MCP que nunca viram. Eles foram treinados principalmente para consumir e produzir código. Então, oito meses atrás, eu estava pensando: e se eu simplesmente desse ao modelo acesso ao código? Isso significa que, se eu quiser usar um efeito, vou adicionar o repositório de efeitos ao meu diretório. Estou
+
+apenas disfarçando a base de código do efeito como se fosse minha própria base de código e talvez consiga enganar o modelo, fazendo-o pensar que se trata de uma grande base de código, que ele explorará e usará progressivamente para adquirir o conhecimento necessário e, de certa forma, clonar os padrões. Existem várias maneiras de fazer isso. Poderíamos argumentar que o modelo já tem acesso ao código da biblioteca por tê-lo no npm, nos módulos do Node.js, mas os agentes de codificação foram treinados para se concentrarem no seu próprio código, e não no código que está nos módulos do Node.js. Portanto, se você o tiver
+
+em módulos do Node, o modelo estará otimizado. Não vai analisar isso com a mesma frequência com que analisa o seu próprio código. Se o arquivo estiver em um diretório `gignored`, os modelos foram treinados para não analisar arquivos que foram ignorados (`gignored`). Por exemplo, o cursor não indexa itens que são ignorados pelo Git. Então, existem todos esses tipos de restrições aleatórias que descobrimos durante o desenvolvimento.
+
+E a única maneira que encontrei para que os modelos funcionassem bem, independentemente da linguagem ou do que você usa, é simplesmente clonando o repositório, que é o objetivo deste trabalho. Portanto, este é um projeto completamente vazio. Tenho algumas ideias de como poderíamos desenvolver isso. Minha ideia seria configurar um repositório BUN, usar o Vest para testes, construir algum tipo de servidor HTTP, idealmente fornecendo uma documentação de API aberta para consumo, e criar um tipo de cliente com tipagem estática para interagir com o backend. Bem, espero que, se tivermos tempo suficiente, não tenho certeza... explorar o conceito de
+
+fluxos de trabalho e clustering para operações persistentes no back- end, mas na verdade não configurei nada ainda. Então, como costumo começar? Bem, eu gostaria que você começasse sendo gentil com a modelo, mas assim que as coisas desandarem, você verá que começarei a insultá-la. É divertido porque não consegue realmente te responder. Se você não gostar da resposta, pode simplesmente desligá-la. Não é como um ser humano que se
+
+ofende. Talvez eu queira configurar um projeto que também inclua a configuração do Vest e o script de verificação de tipo.
+
+Estou usando o GPT 5.4. Quando comecei essa jornada, estava usando o conjunto 4. Há muitas diferenças entre o conjunto 4 e o GPT 5.4, principalmente a sensação de estar correndo pela casa com uma faca . Esse é um exemplo que
+
+vem de Joffrey Huntley, o autor de Ralph Loops. Mas mesmo quando criança, correndo pela casa com uma faca, isso já era suficiente para me motivar a programar. e clínico geral. Agora temos modelos como o Opus 4.5 e o GPT 5.4
+
+que são muito, muito melhores. Mas um elemento muito interessante a se considerar é que os modelos de pesos abertos estão, de certa forma, atrasados ​​em três a seis meses em comparação com os modelos de vanguarda. Isso significa que agora já temos modelos abertos que são mais inteligentes em comparação com o conjunto 4, que eu já usei no desenvolvimento em nível de biblioteca. Quanto tempo levaria para que esses modelos de peso livre se tornassem bons o suficiente para serem usados ​​em nossas operações diárias? Não sei.
+
+É apenas um pensamento que tenho tido cada vez mais ultimamente, especialmente porque a antropologia está impondo restrições arbitrárias sobre como usamos seus modelos. Portanto, na verdade, não quero usar modelos entrópicos. Open AAI é uma boa opção por enquanto. Quem sabe o que eles vão fazer daqui a um ano ou dois. E eu gosto de software livre, claro.
+
+OK. Eu não criei um repositório g. Crie um repositório g vazio. Aliás, se tiverem perguntas, se quiserem me interromper, isto deve ser interativo. Estou aqui para entretê-los por mais uma hora e meia.
+
+Inicialize o repositório. Ok, isso está feito. É incrível que usar o GPT 5.4 com código aberto crie por padrão um código MD. Acho que isso é do Bun, sim, vamos descartar isso. Não
+
+tem absolutamente nada a ver com essa
+
+estratégia de marketing perfeita. Além disso, eles disseram que não era um tolo de verdade e dois dias depois anunciaram o MAS como o novo modelo. OK. Eu crio um diretório de origem e um diretório de teste.
+
+Vamos ver o que foi criado. OK. Modo de agrupamento de tipos. Sem emissão. Isso é bom.
+
+Ignorar rigorosamente a verificação labial. Isso é bom. Substituição implícita. Isso é bom. Sim.
+
+Além disso, mova os arquivos para o diretório correto.
+
+Movendo o arquivo de entrada. Bom. Parece bastante inteligente. Executa um teste básico de fumaça. OK.
+
+OK. Então, esse é um bom ponto de partida. Verificamos com o teste de corrida de bun, verificação do tipo de corrida de bun. Bom. Queremos adicionar o efeito beta.
+
+Vamos usar o efeito v4. Ainda não foi lançado para uso em produção, exceto pelo fato de ele já estar sendo usado em produção. Então, se eu tiver algum problema, vou te perguntar. Está tudo bem. Sim, o efeito é pequeno.
+
+Pequeno porque costumava ser pequeno e evoluiu para se tornar maior. Ainda muito, muito fino no tamanho do pacote. Ok, 1% de 14 mil. Ainda há bastante contexto disponível. Queremos adicionar o efeito beta e usar o efeito test para escrever os testes.
+
+Eu vou. Eu vou. Isso é o próximo passo. Isso é o próximo passo. E por falar nisso, quero tentar usar a versão TSGO .
+
+Eu nunca usei isso. Então,
+
+como eu nunca usei e não sei como usar, vamos configurar o compilador e o tipo. Consulte o arquivo "leia-me" e configure-o. Não tenho certeza se isso vai funcionar ou não.
+
+Ah, o compilador base propriamente dito.
+
+Sim. Eu não sei se Matia
+
+permitiu. Sim, faz sentido. A questão é que ele não o utiliza e poderíamos simplesmente fazer uma instalação por alias. Então, ele instalou o TypeScript como algo diferente, mas não tenho certeza se foi isso que ele fez. Talvez devêssemos seguir a prática normal. Vamos instalar o TypeScript
+
+Go em vez do Typescript. Seria possível fazer isso? Quem sabe?
+
+Descobriremos. Descobriremos.
+
+Este é o pacote? Não, acho que este não é o pacote.
+
+Acho que eles acabaram de roubar minha carteira de criptomoedas. Só que eu não tenho nenhum. Então,
+
+verifique a partir daqui.
+
+Ah, o pacote npm TypeScript Go é apenas um pacote de segurança provisório . Então eu uso o compilador de pré-visualização real que fornece o binário TSGO. Bem, provavelmente foi uma boa ideia. Uh script ts go no emit. Vamos ver como o pãozinho se comporta exatamente . OK.
+
+OK. Verificação de tipo.
+
+Verificação de tipo. OK. Configure o VS Code para usar DSGO VS Go LSP, talvez funcione.
+
+Sim, é disso que preciso.
+
+Pronto. Pré-visualização nativa. É isso.
+
+Ok, eu instalei. Provavelmente preciso recarregar a janela. Vamos
+
+. Ok, talvez tenha funcionado. Então vamos por aqui.
+
+Sim, eu deveria ser capaz de fazer isso. Mas também há uma opção interessante:
+
+não será carregado se arquivos forem especificados. Configuração da linha de comando para ignorar este erro.
+
+Vou passar essa informação para o agente daqui a pouco.
+
+Provavelmente é o pão que está causando problemas. Talvez não. Sim, é um pãozinho. Então deixe-me parar com isso. Selecione a configuração TS para configurar esta. Este outro é um pacote JSON
+
+que instala dependências de desenvolvimento. Selecionar tudo.
+
+O que é isso?
+
+Isso é código falso. Isso é bom.
+
+Isso precisa de muito trabalho.
+
+Temos o padrão de efeito instalado? Nossa! De
+
+onde vem isso? Quem sabe? OK. OK. OK.
+
+Um. Instalar. OK. Está instalado. Vamos ver se detecta alguma coisa.
+
+Importar.
+
+do efeito 100. Não, esse é um efeito pendente. Acho que consegui
+
+. Você quer dizer o preparado? Sim , eu fiz. Hum, talvez eu precise recarregar. Recarregue a página em seguida.
+
+Sim, foi fácil. A solução do Windows acabou de reiniciar. Ok, então nós temos. E
+
+agora, queremos ter alguma noção de gravidade do diagnóstico, sugestão, aviso e assim por diante. Para IA, gostaríamos de transformar tudo em um erro, de forma que o LLM não possa aceitar código que tenha qualquer semelhança remota com um erro. Portanto, este é um projeto em que usaremos muita inteligência artificial. Desejamos que todos os diagnósticos disponíveis sejam definidos como erro.
+
+Devo mudar de assunto, passando de "
+
+O que o modelo está fazendo?" A
+
+atualização da configuração do TS foi realizada? Não aconteceu.
+
+Ah, estou atualizando a configuração do TS. OK.
+
+Não, não, não. Ah, e esse é outro ponto interessante. Ah, as soluções de efeito. Hum, existe um site chamado effect.solutions.
+
+É um site muito bom. O Kit Langton fez isso e é uma espécie de guia rápido para começar a usar o Effect em um projeto de IA. Ele instala o serviço de linguagem, define políticas padrão rígidas e assim por diante. Mas aí ele usa uma CLI para dar ao modelo acesso ao repositório de efeitos, e o modelo precisa saber como usar a CLI. É como se o cachorro estivesse batendo o próprio rabo.
+
+Sim. Sim, mas existem alguns arquivos Markdown, só que não funcionam tão bem. E se você ler com atenção, em algum momento vai ver que diz que você deve simplesmente clonar o repositório. Ok, isto é exatamente o que eu tinha em mente. Portanto, todos os diagnósticos estão configurados como erro.
+
+O que é bom. É exatamente o que queremos. Carregar janela. OK. Eu também quero ativar a
+
+formatação automática ao salvar, simplesmente porque, caso contrário, é irritante. OK. Excelente observação. Uh, confirme o atual.
+
+Agora quero adicionar efeitos mais como uma subárvore.
+
+Ok, está confirmado. Bom. Agora crie uma pasta com o nome "repos" e adicione-a como uma subárvore "g" sem o efeito de "history squashed uh" nos repositórios .
+
+Quem sabe se isso vai funcionar . Pelo menos foi assim. Certo, aqui está. Por que está tentando? Ok.
+
+Ok, já temos. Vamos verificar o log do git. Sim, houve auditoria. OK. E agora chegamos ao ponto em que podemos começar nossa pesquisa. Por
+
+exemplo, dissemos que queríamos criar uma API HTTP. Eu limparia isso. Abra uma nova sessão para evitar poluição visual. Você tem acesso ao repositório de efeitos em repos. Na verdade, vamos fazer outra coisa antes de configurarmos um arquivo agents.mmd. O
+
+arquivo setup.m.m lista os comandos disponíveis, como um comando de execução, e especifica que você tem acesso ao repositório de efeitos em repos effect e que deve usá-lo para extrair as melhores práticas. Esta análise mostra como as coisas funcionam, etc.
+
+Agora, o arquivo agents.mmd. Vamos obter um protótipo inicial. Conforme você trabalha no projeto, você o aprimorará, adicionando mais comandos e regras quando perceber que alguns padrões de comportamento são criados no código. Uma coisa que ainda não configuramos é um llinter. O
+
+llinter será uma peça essencial do loop de contrapressão, que ajuda o modelo a seguir na direção correta. Se você quiser uma configuração totalmente funcional , eu tenho um repositório que uso por diversão, chamado Accountability. Neste repositório você pode encontrar muitas coisas, mas, por exemplo, eu tenho uma configuração do ESLint com várias regras personalizadas, e essas regras são arbitrárias. Por exemplo, eu não quero que o modelo faça uma asserção de tipo explícita em alguns elementos; eu quero que o modelo use o esquema para verificar o formato; eu tenho regras que proíbem o uso de X como Z; eu tenho regras que proíbem o uso de qualquer tipo desconhecido. Basicamente, estou tentando evitar que o modelo faça coisas idiotas que percebi que ele estava fazendo no meu código.
+
+Não. Sim. O mesmo vale para o desconhecido. E o engraçado é que inicialmente eu proibi o tipo desconhecido porque queria que o modelo não fizesse algo tão desconhecido quanto X. Ele descobriu que nunca é um tipo inferior. Então
+
+você pode fazer isso como nunca fez X. Eu gosto, ok, então eu vou banir como e agora está indo melhor. Ah, ok, vamos ver o que isso gerou. Ok, isto é breve. Use um pãozinho. OK.
+
+Comandos de projeto disponíveis. Isso é bom. Teste, isso vai causar problemas. Eu já sei disso porque o modelo vai tentar executar isso e vai ficar travado. O mesmo vale para os servidores de desenvolvimento.
+
+Repositórios de referência de fatos. Bom. Consulte o documento para obter orientações específicas. Ok, isso já é um bom começo, pois menciona no arquivo agents.m MD que você nunca deve tentar executar comandos no modo de observação. Por exemplo, você
+
+não tem permissão para executar um servidor de desenvolvimento. Caso contrário, tentará executar o servidor de desenvolvimento como primeira coisa e ficará travado.
+
+OK. O que eu gosto nos modelos da OpenAI é que eles são muito mais concisos em comparação com os modelos entrópicos. A mesma tarefa com o Opus provavelmente teria resultado em 200 linhas de código MD para os agentes, mas isso é bom. Isso já basta para começar. Então, voltamos à estaca zero. Dissemos que
+
+queríamos criar uma API HTTP. Não sei nada sobre efeitos. Portanto, gostaria de criar uma API HTTP que tenha documentação OpenAPI e que o tipo de cliente de salvamento seja gerado por padrão. Explore o repositório de efeitos para encontrar padrões de como fazer isso. Salve sua pesquisa em padrões http api.md.
+
+Faça-me qualquer pergunta que precisar.
+
+Repito, parto do princípio de que não tenho ideia de como fazer isso na prática.
+
+Não, eu acho o modo de planejamento problemático, pois o modelo limita bastante o acesso às ferramentas. Portanto, não consegue realizar facilmente as mesmas funções que realiza fora do modo de planejamento. Então, não, eu não o utilizo muito. Normalmente, utilizo o que se chama de desenvolvimento orientado a especificações, no sentido de que a primeira tarefa que realizo com o modelo é discutir com ele como criar uma especificação para algo. Em seguida, a especificação é persistida como um arquivo Markdown, que é efetivamente meu plano, e então instruo o modelo a implementá-la.
+
+Normalmente, o segundo passo é realizado em um loop real, pois, como você deve ter notado, já reiniciei o OpenCode algumas vezes para limpar a janela de contexto. Fazer isso manualmente é tedioso e geralmente você acaba reutilizando a mesma janela de contexto para várias coisas, o que eventualmente desotimiza o modelo, pois a janela de contexto é limitada. Você vai inserir muita informação e a informação inicial vai confundir o modelo em relação à informação posterior. Então, eu uso um script bash muito simples que instrui o modelo a escolher uma pequena tarefa, executá-la e, em seguida, encerrar o processo. E eu executo esse script em um loop.
+
+É engraçado como, com IA, muitas vezes menos é mais. É possível ter arquiteturas muito complexas em torno do gerenciamento de contexto e assim por diante. No final, a coisa mais idiota de todas acaba funcionando melhor. E estamos realizando pesquisas por conta própria e parece que, na verdade, existem margens de melhoria muito boas ao reduzir o número de ferramentas às quais o modelo tem acesso. Por exemplo, temos estado a experimentar um agente de codificação que possui uma única chamada de ferramenta chamada execute, capaz de executar código TypeScript arbitrário, incluindo chamadas ao Bosch através do TypeScript.
+
+E nesse cenário, o modelo sequer tem acesso a um patch. Não é possível alterar arquivos diretamente. É necessário escrever um arquivo TypeScript que altere o código e, em seguida, ele acaba realizando transformações TypeScript baseadas em APIs . É fantástico como você reduz as coisas que o modelo pode fazer e ele as executa melhor. Então vamos ver como salvar a pesquisa na API HTTP. Bom. A principal conclusão
+
+deste repositório é que o padrão de efeito padrão mais forte consiste em definir a API HTTP compartilhada . Você tem toda a razão. Derivar uma API aberta a partir disso. Monte os documentos. OK.
+
+Abra o gerador de API somente quando precisar dos artefatos do cliente gerados. Não sabemos. Nós não precisamos disso. Antes de prosseguir com qualquer coisa, só tenho uma pergunta . Você deseja que o padrão principal aqui seja uma API HTTP compartilhada com um cliente de API HTTP ?
+
+Não, para mim está ótimo usar uma API HTTP compartilhada. Não preciso de um cliente comprometido no próprio repositório. Vamos ver o que aconteceu aqui com este repositório do workshop. A melhor parte. Ok, isso lhe fornece os arquivos upstream relevantes .
+
+Bom. Parece que está fazendo testes. Legal.
+
+Ok, isso parece razoável . Provavelmente deveríamos dizer a ele o que queremos fazer. Mas estes são apenas padrões genéricos que usaremos como referência. Então, liste os arquivos em padrões no MD dos agentes. Assim, o agente, que possui um contexto de existência, não se preocupa com a gramática.
+
+E eu acho que muitas pessoas levantam a questão de que um modelo não é bom em algo se não tiver um bom desempenho por padrão. Não acho que haja nada mais errado nessa afirmação. O modelo é bom quando consegue operar em uma base de código de grande escala usando padrões e não falha em grande escala. O problema de ir do zero ao um não é bem um problema; é um problema que persiste durante os primeiros 10 dias ou 10 horas, dependendo do que você está construindo. E como programadores, se nosso trabalho não é escrever código, nosso trabalho deve ser configurar os repositórios de forma que os modelos possam funcionar bem neles. Então, o que estou fazendo agora é
+
+semelhante à maioria das coisas que faço quando opero um agente de codificação em escala em uma base de código, mesmo que essa base não tenha nenhum conceito de IA. Por exemplo, se eu começar em um projeto com uma base de código existente de cinco a dez anos, sem nenhum contexto, a primeira coisa que faço é deixar o modelo explorar o código, clonar as principais bibliotecas utilizadas (se você estiver usando um framework como o T-Stack, por exemplo), clonar o código do roteador T-Stack ( se estiver usando o Zvel), clonar a base de código, pedir ao modelo para gerar arquivos de boas práticas e assim por diante. Depois de ter tudo isso, o modelo será muito mais eficiente. Agora que temos um pouco de contexto sobre APIs HTTP, podemos começar a implementar uma. Quero verificar algo rapidamente, porque estou usando BUN e VEST.
+
+Existe uma opção de execução do VEST: o VEST usa o BUN como runtime ou usa o NOT? Porque, se bem me lembro, havia uma tag que eu precisava passar para o VEST para permitir o uso do BUN, e eu não quero usar o NOT. nossa configuração de teste para adiar do nosso uh
+
+o que está fazendo? Não, adicione ao teste V que ele deve ignorar qualquer coisa nos repositórios. Estava executando os testes de efeito que havia encontrado.
+
+Sim, não havia nenhuma configuração de teste V. Bom.
+
+Adicione ao teste algo que utilize uma API BUN.
+
+Sinto que consegui aqui. Então eu deveria ficar com este
+
+. OK. Eu estava usando o recurso de anotações? Provavelmente
+
+você deveria esperar que isso fosse definido,
+
+porque agora cometemos um dos erros de SQL. Tinha que passar no teste. A prova foi alterada para que o teste fosse aprovado.
+
+Uau.
+
+OK.
+
+Ok, consegui. Vamos agora começar a implementação da nossa API HTTP . Portanto, queremos implementar uma API HTTP seguindo os padrões descritos em pattern st HTTP API. Queremos que a API exponha uma funcionalidade de lista de tarefas onde você possa: 1) criar tarefas com descrição e título;
+
+2) atualizar tarefas, alterar o título, etc.; 3) marcar uma tarefa como concluída ou não. para lista de tarefas.
+
+Ah, eu deveria ter feito outra coisa. Discuta o plano comigo e criemos um plano para a API MD. Aqui, estou instruindo o LLM a ler o arquivo de padrões que criamos anteriormente, onde ele coletará conhecimento genérico sobre as maneiras eficazes de fazer as coisas. Ainda tem acesso ao código-fonte original do efeito, se assim o desejar. Mas agora estou criando um plano específico para implementar a API que eu gostaria de implementar.
+
+elaborando o plano. OK. Fazer a
+
+barba. Isso é bom.
+
+estratégia de armazenamento inicial. Vamos fazer algo diferente para o armazenamento. Utilize o efeito SQL e o armazenamento SQite. Explore o repositório de efeitos para saber como fazer isso. e criar padrões
+
+SQL MD. Percebo que precisamos de uma estratégia persistente e eu não tenho uma.
+
+Sei que esse efeito tem algo a ver com SQL e, novamente, estou usando o mesmo processo em que primeiro gero alguns padrões para ele. Isso também é útil porque você pode querer usar algo do efeito, mas talvez não queira usar tudo do efeito. Portanto, se enviássemos todos os padrões para o seu repositório por padrão, você acabaria usando tudo, mesmo que não quisesse. Isso é uma espécie de auto-seleção. Então você pode escolher o que quiser usar.
+
+Especialmente em projetos de revitalização de áreas degradadas. Isso é muito importante porque você não vai querer refatorar tudo o que já tem.
+
+Por exemplo, aqui eu poderia ter escolhido o diesel para obter a mesma persistência .
+
+Muito provavelmente, vamos desenvolver algum tipo de interface de linha de comando (CLI) onde você poderá pré-carregar alguns padrões que já estão disponíveis e ainda assim escolher os que preferir. E também queremos automatizar esse tipo de processo de exploração, criando padrões a partir dele, porque os padrões que temos como melhores práticas podem não se adequar exatamente às suas necessidades. Então, talvez você ainda precise atualizá-los como uma segunda etapa. O modelo que eu uso pode não ser tão bom quanto, por exemplo, aqueles PRs em que você lê o código e alguns deles são simplesmente gerados automaticamente. Os
+
+autores da biblioteca não fornecem habilidades específicas de software, mas esse tipo de padrão é como soluções eficazes, embora oficialmente distribuídas pelo pacote alocado localmente. Em geral, acho que é uma boa ideia, mas há algumas ressalvas. Por exemplo, mesmo o padrão agents.mmd não é exatamente um padrão, porque a forma de solicitar informações na nuvem e a forma de solicitar informações no GPT são diferentes. Por exemplo, você deve ter reparado que eu nunca escrevi nada em letras maiúsculas.
+
+Se eu estivesse usando código, escreveria muita coisa em letras maiúsculas. O motivo é que o GPT se assusta se você gritar com ele. Eu nem sei como chamar o modelo. E se você gritar com ele, ele vai desotimizar e ficar passivo, concordando com tudo. Não é isso que você quer. Bem, com código,
+
+se você gritar com ele, ele vai prestar atenção àquela frase específica. Isso também se reflete nesses padrões compartilhados. Acredito que os padrões deveriam ser praticamente gerados junto com o modelo que você usa, em vez de serem modelos predefinidos . Agora podemos fazer isso para os três principais modelos de vanguarda. Todos os membros da família GPT são muito semelhantes. 5.3, 5.4, 4 5.2
+
+não há tantas diferenças. O conjunto Oppus e o Haiku também são muito semelhantes, então, idealmente, poderíamos ter a CLI onde ela perguntasse qual modelo você usa e otimizasse o contexto para este em vez do contexto para aquele. É irritante porque obviamente você gostaria de ter um padrão. Eu adoraria mantê-lo, sim. Sim, é muito trabalhoso manter essas coisas.
+
+Nossa abordagem consiste em tornar o código o mais claro e autoexplicativo possível, com exemplos e tudo o que for necessário para que qualquer modelo utilizado possa gerar esses exemplos, e então a CLI os geraria instantaneamente para o modelo em uso. Essa é uma abordagem. Pode falhar, e em seis meses forneceremos modelos para tudo e apenas diremos para você usar um ou dois. Outro argumento muito interessante é o de ajustar um modelo de código aberto para usar padrões de efeitos por padrão. Pensamos nesse
+
+tipo de coisa, ok, vamos ver a atualização v htt não, se você quiser que eu atualize para o próximo passo, sim, faça isso. Essa é a parte irritante dos modelos GPT: eles vão pedir constantemente sua entrada para continuar. A OPUS teria simplesmente feito isso. Mas às vezes, se feito incorretamente, você precisa repetir o procedimento três vezes durante a sessão. É por isso que eu uso o GPT 5.4. Bem, eu gostaria de
+
+algum tipo de fusão, sabe, uma fusão consanguínea de modelos entrópicos e modelos de IA aberta, para que não me pergunte o tempo todo, porque o GPT geralmente, especialmente em tarefas complexas, leva tempo, mas no final o resultado é bom. Com Opus está certo. Às vezes, ele gosta de usar esses atalhos. E o mais curioso é que, se você deixar um processo em estado de espera, ele vai se repetir, assim como acontece se você deixar qualquer outro processo em estado de espera no seu código. E se você tiver o Opus, ele vai se repetir o tempo todo. É tipo, ah, eu não consigo fazer
+
+isso. Deixe-me fazer isso para tudo. Preciso disso para compilar. Vamos remover o código. Sim. É por isso que, neste projeto e
+
+para fins de prestação de contas, eu estava usando o UOS e tenho um arquivo lint com milhares de linhas de código para impedir qualquer atalho. Posso começar a implementar isso em seguida. Sim, por favor, considere que já dedicamos tempo suficiente a isso, então
+
+vamos ver o que acontece.
+
+Veja, é isso mesmo, está procurando corretamente no repositório de efeitos da documentação de IA por ideias. É
+
+muito provável que isso leve um tempinho, o que é positivo.
+
+Em alguns projetos, o esquema era usado por padrão e eu não precisava de muita pressão de retorno para isso. Às vezes, sim. Um exemplo é a regra
+
+de responsabilidade que tenho no lint para SQL, uma
+
+regra personalizada que proíbe o tipo SQL porque ele escreveria uma consulta SQL. Isso criaria uma interface e seria exatamente a mesma coisa que um casting, e eu tive que banir completamente esse padrão, e usar parâmetros de tipo com um modelo SQL literalmente não fornece nenhuma validação em tempo de execução . Utilizar esquema SQL. Encontre um. E você verá que a regra acaba sugerindo o uso do esquema SQL.
+
+Então, basicamente, eu apenas observo o que o modelo produz e, se houver algo de que eu não goste, acabo escrevendo regras vinculadas para proibir esse padrão específico. Por exemplo, em um esquema, muitas vezes haveria um ID de usuário como uma string e outro ID também como uma string, e você obviamente não teria nenhuma segurança de tipo, e o código tentaria passar um para o outro. Então, eu forçaria todos os identificadores a serem tipos de marca e proibiria o uso de conversão de tipo, porque, caso contrário, aconteceria algo como: "isso requer um ID de usuário, então eu uso 'como ID de usuário'", e é inútil, você deveria validar os dados. Então, eu baniria o uso de `as` e os forçaria a usar construtores `u`. Então, em vez de usar 100 como ID de usuário, use `user_id_domake` ou proíba o uso de construtores em locais onde a validação é necessária.
+
+Por exemplo, um caso que encontrei foi o de usar strings simples na camada da API e, em seguida, usar construtores dentro do manipulador para criar os objetos, o que anula o propósito. Então eu escreveria regras para o modelo para escrever a validação diretamente nos esquemas. Então, basicamente, o que eu estava dizendo é que se você usar um construtor dentro do manipulador, muito provavelmente estará errado. Você deve aprimorar o esquema inicial para fornecer a validação na borda. É como cuidar de um desenvolvedor júnior com uma faca correndo pela cozinha, em vez de uma criança correndo pela cozinha com a faca.
+
+E isso ainda continua.
+
+Ambos os modelos são excepcionais. Às vezes um modelo te deixa louco e você experimenta o outro. Não existe uma regra muito definida. Ultimamente, tenho usado mais modelos de IA abertos porque não gosto de ficar limitado quanto ao nível de dificuldade que posso usar. Ah, a própria CLI. Quero usar código aberto.
+
+Quero usar meus próprios arquivos TypeScript que interagem nativamente com o SDK de IA, mas isso me é proibido pela Anthropic. Até alguns meses atrás, quando isso foi permitido, eu usava principalmente o Oppus. Quando eles reforçaram suas políticas contra código aberto, mudei para os modelos do OpenAI e agora, na maior parte do tempo, uso apenas os modelos do OpenAI. Existem alguns pequenos casos específicos, por exemplo, quando se trata de interface do usuário, o Oppus é muito melhor que o Codex. Então, para algumas coisas específicas, um é claramente melhor que o outro, mas para a maioria das tarefas, eles são iguais. Por exemplo, acabei de ter uma experiência em
+
+que o GPT ficou pensando por meio dia em um bug que eu tinha e não chegou a lugar nenhum, enquanto o OPPU tentou a solução de primeira, mas também tive a experiência oposta. Então é muito difícil saber qual é qual.
+
+Ok, vamos ver o que isso está criando? Ah, ok. Criou um cliente SQL. A camada parece
+
+correta. Hum, tem migrações. A empresa decidiu incorporar
+
+as migrações. Ok, essa é uma escolha válida.
+
+Ok, forneceu corretamente a camada SQL ativa para as camadas de migração.
+
+Parece que já foi publicado. Há uma clara duplicação entre o que usei para criar isso. Às vezes, também é possível refatorar o código, deixando apenas uma parte dele intacta, como se nunca tivesse sido exportada nos mesmos blocos `catch`. Ok, bom saber. Estamos em fase de experimentação. Outra
+
+coisa que estamos fazendo é usar a busca semântica de código, porque percebemos que muitas vezes o modelo reimplementa as mesmas funcionalidades por não as encontrar. E com a busca semântica de código, ele encontra . Bom, tudo bem. Aqui há uma duplicação . Provavelmente, informe que há uma duplicação em algum ponto.
+
+Deseja verificar a API? Exatamente. Como você pode ver, ele está usando strings simples como identificadores. Então, uma das coisas que talvez queiramos fazer no futuro é instruí-lo a usar conteúdo de marca.
+
+OK. OK. Para corrigir a falha "não encontrado", foi adicionada uma notação de esquema para sinalizar que "não encontrado" deve retornar um erro 404.
+
+Isso parece adequado. Hum, não entendo por que às vezes ele cria strrus em vez de classes. Pessoalmente, prefiro usar classes. Então, no futuro, eu criaria uma prática recomendada para priorizar classes ou, dependendo do nível de rigor que eu quiser, criaria uma regra de lint para proibir o uso de schema.struct em arquivos específicos e coisas do tipo.
+
+Por enquanto, obviamente está tudo bem. Não precisa.
+
+Não tenho certeza. Pode haver, mas não está sinalizando nada aqui. Então, e o LSP
+
+verifica todos os arquivos vinculados a quê? Não temos um linter instalado. Boa observação. Nós também não temos um formatador "um" instalado. Vamos ignorar isso por enquanto.
+
+Vamos ver.
+
+OK. cliente com URL base. Isso é bom. Temos o manipulador em funcionamento. O
+
+índice do servidor está simplesmente exportando tudo.
+
+O arquivo index.ts provavelmente está executando o servidor em vez de exportar tudo. Faça essa
+
+verificação de condição para garantir que o arquivo seja o principal. Portanto, ele não é executado quando você importa o arquivo.
+
+Eu também criei alguns testes. O
+
+que? O que está fazendo aqui?
+
+Criou-se uma conexão arbitrária com HTTP para executar um efeito. Faça o teste HTTP entrar em produção. Certo, é mão única.
+
+O teste realmente passa? Vamos. Executar teste. Eu ficaria surpreso. Uau.
+
+Hum, existe algum comando para iniciar? Adicione um comando para iniciar o servidor da API e indique onde posso encontrar a documentação da API aberta .
+
+Ok, ele realmente gosta desse padrão. Para o futuro, provavelmente eu simplesmente diria para usar a camada em vez de usar o repositório de largura e outras coisas. Mas vamos ver se pelo menos funciona. Uma corrida de largada.
+
+Boa audição para eles.
+
+Vamos verificar a API aberta. Bom. Existe uma API aberta. criado. Parece razoável para uma primeira impressão.
+
+Escolha os esquemas adequadamente. Bom. OK. Então, deixe-me ver. De fato, foi
+
+criado um banco de dados aqui. Talvez eu consiga ignorar todo o processo de banco de dados para banco de dados
+
+. Você tem razão.
+
+Sim, já não consigo escrever nada à mão.
+
+Sim. Ok, vamos dar uma melhorada nos testes .
+
+Tão limpo. Veja bem, estou me enganando ao querer usar a mesma sessão repetidamente . É aí que os loops de Ralph se tornam realmente úteis. Fizemos muita bagunça. Você causou muita confusão nos testes.
+
+Limpe tudo. Este deve ser o código mais limpo que você já viu. Não como o código Python ruim com o qual você foi treinado. Não utilize padrões como este;
+
+simplesmente use-os camada por camada
+
+e coloque os utilitários em sua própria pasta. Sem querer ofender os desenvolvedores de Python, é claro.
+
+Provavelmente. Agora, agora estou improvisando. Vou ver se é possível. Se funcionar, assim que estiver pronto, vou criar um padrão a partir disso. Mas sim, teria sido uma boa ideia.
+
+Por isso, automatizar o processo é muito importante, porque somos preguiçosos. Tipo, agora eu estava com tanta preguiça que não quis criar um padrão para isso. Talvez eu use camadas de teste. Talvez. Talvez.
+
+Ah, o padrão da cama. Basicamente, criou uma função para adicionar uma camada a um efeito. A camada foi criada manualmente. Isso envolvia tudo, em termos de efeito. O escopo irá fechar a camada assim que isso for concluído.
+
+E eu imagino que isso aconteceu porque esse padrão é usado para testar algumas estruturas internas em camadas no código-fonte. Mas aqui é completamente desnecessário. Mas se você analisar o arquivo, mesmo sem conhecer os detalhes do efeito, verá que é péssimo. Tem algo errado. Agora limpou tudo . Então,
+
+quando você vê algo que não está certo, geralmente pergunta ao modelo por que ele fez aquilo, se existe alguma alternativa. Nesse caso, eu sabia que para fornecer uma camada no teste, deveríamos simplesmente usar a camada `it`, então meio que ignorei essa parte. Mas, na realidade, se eu não tivesse percebido, teria discutido com o modelo que não gostava de ver aquela coisa repetida por todo o lugar. E às vezes é necessário. Às vezes você está errado e o modelo está certo. É assim que se faz
+
+. Neste caso, foi completamente desnecessário.
+
+Não, acho que temos isso para fazer o que temos. Assine . Então você faria isso como uma camada superior, passando a camada como `layer` qualquer, e então no bloco de código `do it.scribe`, `describe`. Provavelmente também seria possível adicionar um `describe` como uma forma abreviada de modelar, já que não nos importamos com código verboso.
+
+Por que deveríamos torná-lo menos prolixo? Ele realiza alguma limpeza? Sim.
+
+Sim. Sim, mas você ainda pode fazer isso por prova. Agora, isso contamina os outros testes.
+
+A outra alternativa é fornecer essa camada em cada teste. Na realidade, sempre que você usa um banco de dados, neste caso o SQLite. Portanto, a discussão é meio irrelevante. Mas se eu fosse usar o PostgreSQL em um projeto com centenas de arquivos e centenas de testes, iniciar uma instância do PostgreSQL para cada teste aumentaria o tempo de execução dos testes para dois dias, talvez. Normalmente, o que acabo fazendo é criar testes que podem ser executados e que realizam a limpeza automática. Por
+
+exemplo, eu executo um teste dentro de uma transação e reverto a transação assim que o teste termina, para que elas sejam atômicas, já que não vazam informações. Esse seria outro padrão que podemos instruir o modelo a executar. Bastaria criar a transação e depois revertê-la. Mas existem alternativas e
+
+bibliotecas.
+
+Não, adicionamos o código-fonte do efeito em uma pasta do repositório. Criamos um arquivo agents.mmd que faz referência ao repositório de efeitos e, para os recursos que queríamos usar, pedimos ao modelo que criasse padrões analisando o repositório e investigando como as coisas são feitas lá, como uma espécie de conhecimento geral. Neste caso, fizemos um para SQL e outro para API. O ponto positivo é que nesta sessão abordamos as melhores práticas de teste. Então vamos criar o arquivo
+
+patterns/testing.md.
+
+Deve incluir todas as melhores práticas de teste de código baseado em efeitos, incluindo o uso da camada de calor, etc. Também vou atualizar o arquivo agents.m MD para referenciar todos os padrões em do patterns e a próxima coisa que você faria para automatizar o fluxo é, por exemplo, usar o OpenCode, que permite criar comandos de barra, e o SlashCommandCode permite fazer o mesmo. Você otimiza para o novo padrão, o que quiser, e pode criar habilidades e marcá-las. Habilidades são muito úteis para esse tipo de coisa.
+
+Eu sou meio contra habilidades em geral, não para essas coisas, elas são ideais, mas muitas pessoas pensam que só adicionando uma habilidade você vai tornar o modelo bom em React, vai tornar o modelo bom em Next.js. Na realidade, se você adicionar uma skill para cada função interna do Nex.js, você vai poluir o contexto e não chegar a lugar nenhum. Portanto, as skills têm uma ótima aplicação prática, que é esse tipo de aplicação, e eu acho que elas são mais gerais do que os comandos de barra. Por isso,
+
+costumo usar comandos de barra porque geralmente utilizo um único agente de codificação. Mas definitivamente, se você estiver, por exemplo, em uma equipe onde todos são livres para usar seu próprio agente, talvez algumas pessoas usem cursor, outras usem código aberto, outras usem habilidades de código. Vamos ver os padrões de teste: use o teste de efeito para todos os testes baseados em efeito, use-o para todos os efeitos, use-o na camada. Evite wrappers personalizados que chamam `layer.build`.
+
+Esta é uma regra muito específica. Um amigo meu me disse que sempre que você lê um livro de regras, um livro de regras legais, ou encontra aquelas regras específicas, como quando você entra em um bar e vê algo como " não ande de skate em cima da parede", você se pergunta: "por que essa regra existe?". Porque alguém fez isso. Por que essa regra existe? Porque o
+
+modelo fez isso. Por que esse padrão? Ok, você vê os arquivos relevantes. Estão todos interligados.
+
+Sim. E tem um amigo meu que está escrevendo um plugin para o llinter que verifica se já existem referências. Então, quando você adiciona uma alteração no código, o CI é executado e avisa: "Ei, esta referência está quebrada".
+
+Sim. Sim. O fullome barra qualquer coisa. Sim. Sim.
+
+Como você escreveria um teste para um padrão?
+
+Você quer dizer escrever um arquivo de fato?
+
+Acho que essa poderia ser uma solução. Às vezes, o código contido nos padrões não é realmente executável. Acho que tem prós e contras. É definitivamente uma ideia interessante. Por exemplo, talvez com uma tag adicional como `TS execute these` para sinalizar quais padrões você realmente deseja executar ou, como em ` references`, quais arquivos você deseja que sejam referenciados, porque às vezes menciona arquivos como exemplos. Por exemplo, se você
+
+escrever essa funcionalidade, use um arquivo chamado ABC, e isso não é uma referência concreta. Então você não quer que seu programa falhe porque leu isso.
+
+Isso está mais relacionado às avaliações. Assim evolui. Sim, isso em grande escala. Isso é muito bom. Descobri que fazer isso por projeto acaba sendo mais eficiente.
+
+O que estamos pensando em fazer no repositório de efeitos é, por exemplo, executar os testes Evolve uma vez por dia e gerar relatórios. Assim, sempre que fazemos alterações na biblioteca ou adicionamos mais documentação e exemplos, podemos ver exatamente se os resultados são melhores ou piores. Às vezes, em situações difíceis, é muito complicado, como quando um antrópico escreveu um post no blog há algum tempo, cujo resumo era que realmente não sabemos quando um código é bom ou ruim, porque um código mais conciso é melhor, um código mais verboso também é melhor, e existem algumas propriedades em que podemos afirmar que algo é definitivamente melhor do que nada. Por exemplo, um código que verifica tipos é melhor do que um código que não verifica. Provavelmente verdade.
+
+Mas quando se trata de estilo, quando se trata de saber se esta estrutura de arquivos é melhor do que outra e ambas transmitem significado, você meio que precisa de uma pessoa no final para dizer: "Sim, eu prefiro esta." E se você pegar 100 humanos, terá uma divisão de 80/20. Então, agora temos o mesmo problema em definir padrões de efeito, porque estamos lidando com males, e males são, de certa forma, nossa opinião sobre o que é bom, e não uma verdade absoluta. Vamos colocar desta forma.
+
+Temos códigos de melhores práticas escritos por humanos. Geramos o código e depois temos um LLM que o compara e diz se os dois são diferentes ou não? Dê-nos uma nota. E é basicamente assim que se usa o EVO. Não é uma maneira muito agradável de executar o programa, mas estamos tentando resolver isso porque estamos pensando em ajustar o modelo com base no efeito, e para a parte de aprendizado por reforço, precisaremos de bons resultados.
+
+Portanto, isso faz parte do que estamos pesquisando agora. Não existe resposta certa ou errada. Se existisse um modelo único, todos teriam o mesmo desempenho, pois todos teriam os mesmos problemas, todos teriam as mesmas coisas. Mas agora temos todos os modelos que queremos. Então, acho que chegamos ao ponto de dizer para confirmar isso.
+
+Vou criar um repositório e enviá-lo para que pelo menos você tenha acesso a ele. Nossa, eu sou muito grande. Novo repositório.
+
+É público? Por favor, escolha um proprietário. Claro.
+
+Adicione mais laranja e envie
+
+o repositório final. Então, espero que não tenhamos chegado ao ponto de fazer agrupamento e fluxos de trabalho. Apenas compartilhando algumas palavras sobre por que você gostaria de ter esses aspectos em seu código. Essa API de lista de tarefas é muito ruim. Uma coisa que eu gostaria de acrescentar seria a autenticação e o cadastro. Por exemplo, quando você tem
+
+um cadastro, o processo geralmente consiste em inserir algo no banco de dados e depois enviar um e-mail ou um código por e-mail e aguardar a confirmação. Sempre que você realiza duas operações não relacionadas, não há transação entre elas, nem transação de banco de dados, e seu servidor pode falhar em qualquer ponto aleatório do seu código. Portanto, é muito difícil garantir que o e-mail tenha sido realmente enviado, e é por isso que muitas vezes, em um procedimento de registro, você vê a frase " se o e-mail não chegar em 30 minutos, tente novamente". Por que eu deveria tentar novamente se não recebi o e-mail? Isso é sintoma de um sistema mal projetado que não consegue garantir que duas operações tenham ocorrido.
+
+Para fazer isso, você tem várias maneiras. Uma maneira é implementar dicas e assim por diante. Outra forma é usar algo como fluxos de trabalho. Você tem soluções como a ingestão temporal. Existem muitas soluções de fluxo de trabalho. O Effect tem uma
+
+implementação baseada no que é chamado de Effect Cluster, onde basicamente você executa um cluster de instâncias de nós e o próprio sistema garante que, uma vez iniciado um procedimento, ele será concluído, mesmo que o servidor falhe, ele será movido para um local diferente. Eu faria da mesma forma que fiz agora: pediria ao modelo para explorar o repositório, extrair os melhores padrões sobre como usar o Effect Cluster, como usar os fluxos de trabalho do Effect e, a partir daí, você simplesmente seguiria em frente. É muito interessante. Ainda está na fase instável do efeito, mas vai se estabilizar muito em breve. E nós acreditamos que, especialmente se você integrar IA ao seu aplicativo, isso será ainda mais importante, porque com IA todos os processos se tornam mais demorados, como, por exemplo, as respostas a questionários de nível básico (LLMs), que levam minutos para serem obtidas. Muitas
+
+coisas podem dar errado em um minuto. Se o tempo médio de resposta for de 10 milissegundos, é muito improvável que o servidor falhe nesse período de 10 milissegundos. Se esses 10 milissegundos se transformarem em um minuto, sim, você pode ter quase certeza de que o servidor vai falhar em algum momento durante esse minuto. E geralmente, antes das empresas que usavam fluxos de trabalho, eram empresas de grande escala, porque em grande escala cada caso extremo acontece duas vezes por dia, com um tempo de resposta mais longo , mesmo que você tenha 10 usuários, você provavelmente terá interrupções. Se o seu processo médio leva um minuto, você terá falhas em todos os lugares, e é por isso que, por exemplo, a inteligência artificial temporal se tornou muito mais interessante nos últimos 12 meses, porque agora todos estão implementando IA em seus próprios produtos. Então eles têm chatbots,
+
+têm qualquer tipo de processo orientado por IA e, com isso, você obtém fluxos de trabalho, agrupamento, integrações de IA, integrações com Discord, Slack e assim por diante. Portanto, seu sistema é realmente componível e os modelos são bastante decentes nele. Temos uma API funcional. Já faz cerca de uma hora e meia que estou falando e comecei sem saber nada sobre gordura. Era um repositório vazio, e é por isso que eu queria chamar este workshop de "apenas clone o maldito repositório".
+
+É basicamente isso. Se você tiver alguma dúvida ou qualquer outra coisa, terei prazer em discutir isso com você mais tarde. E vamos configurar a próxima caixa de som. Muito obrigado.

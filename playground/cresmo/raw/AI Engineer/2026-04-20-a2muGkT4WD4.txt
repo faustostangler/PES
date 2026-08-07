@@ -1,0 +1,71 @@
+---
+video_title: "Running LLMs on your iPhone: 40 tok/s Gemma 4 with MLX — Adrien Grondin, Locally AI"
+video_id: a2muGkT4WD4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=a2muGkT4WD4
+video_date: 2026-04-20T21:53:25+00:00
+video_description: |
+  See more: https://x.com/adrgrondin/status/2040512861953270226
+  
+  Speaker info:
+  - https://x.com/adrgrondin
+---
+[música]
+
+Ok, olá a todos. Vou [limpa a garganta] mostrar a vocês hoje como executar o Gemma 4 no iPhone com o MLX. Então, primeiro deixe-me apresentar-me. Meu nome é Adria. Você pode me encontrar no Twitter se quiser saber mais sobre tudo relacionado a dispositivos. Sou desenvolvedor do
+
+Locally AI, então talvez você já tenha visto o aplicativo. Portanto, o Locally AI é um chatbot que permite a execução em diversos modelos de dispositivos, como o seu iPhone, com o MLX. Então, vou explicar o que é MLX em poucos segundos. Basicamente, como eu disse, é um chatbot. É totalmente nativo. Você também pode conversar com a
+
+Apple Foundation por meio dele. E muitos outros modelos como esse são compatíveis com o MLX. E um desses modelos é o Gemma 4. Então, basicamente, [limpa a garganta] o Gemma 4, da Google, tem vários modelos e alguns deles podem rodar em iPhones, como os menores, e são muito bons. Talvez você tenha visto em uma das minhas postagens no Twitter que eu deveria demonstrar o aplicativo funcionando no iPhone. É
+
+muito rápido. Funciona muito bem no MLX. E por trás do aplicativo, ele usa [limpa a garganta] MLX. MLX é uma estrutura criada pela Apple e otimizada para o Apple Silicon. Então, principalmente o chip [limpa a garganta] no iPhone, mas também os chips no Mac. O
+
+aplicativo Locally está disponível para iPad. Também funciona muito bem neste dispositivo e no Mac OS. E tudo foi projetado para ser o mais otimizado possível nesses dispositivos. Então, se você quiser executar um modelo de linguagem no iPhone, o Gemma funciona bem, mas existem muitos outros modelos que você também pode usar. O modelo Quen e o pequeno modelo LM da Hugging Face. O lugar que você deve procurar
+
+é o GitHub, no repositório MLX Swift LM. Não vou entrar em detalhes sobre como implementar o repositório. Acho que vou deixar seu agente implementar isso para você, mas é um repositório que você precisa instalar se estiver desenvolvendo um aplicativo para iOS, macOS ou iPadOS. E você pode usar isso para simplesmente baixar o modelo e executá-lo. A API é muito direta e muito simples de implementar. Em menos de 10 minutos, você
+
+pode ter um aplicativo iOS com um modelo que esteja funcionando no seu dispositivo. É muito simples de fazer. Como mencionado, MLX é o MLX Swift LM, mas se você prefere aplicativos Python ou aplicativos para Mac OS, também pode executar o MLX VLM a partir do Prince. Talvez você já o tenha visto trabalhando em dispositivos de áudio com o modelo de áudio MLX e visual com o MLX VLM, além do MLX Video, para executar modelos de geração de imagem ou vídeo. O ecossistema MLX está crescendo, está ficando cada vez maior, está realmente ótimo agora. Você pode fazer praticamente
+
+tudo como nos modelos omnidirecionais. Como eu disse, texto para fala, fala, fala para fala. Há muitas coisas que você pode fazer com um modelo. Basicamente, digamos que você integre este modelo. Você não pode simplesmente executar qualquer modelo nele. Como você precisa, você precisa adquirir
+
+alguns modelos, e um bom lugar para conseguir modelos é a Hugging Face. Tenho quase certeza de que todo mundo já ouviu falar de Hugging Face. E no Hugging Face, você deve procurar pela comunidade MLX. É aqui que serão carregados todos os dados, incluindo o peso do modelo, o peso quantizado e o tamanho total. Então, você poderá simplesmente acessar esta comunidade e procurar pelos modelos. Acho que neste momento já
+
+existem quase 4.000 ou 5.000 modelos carregados. Portanto, a comunidade é realmente muito ativa nisso. Quando um modelo é lançado por um laboratório, você o recebe imediatamente, em cerca de 30 minutos após o lançamento, quantizado em 4 bits, 6 bits e em todas as resoluções imagináveis. Aqui você tem um exemplo
+
+para Gemma 4 de 8 bits, que é o que eu uso no meu iPhone. Há muitas variantes disso, desde o BF16 até o MXFP4 [limpa a garganta], como 5 bits, 6 bits, tem de tudo. Então, você baixa o MLX Swift LM, instala com seu agente ou algo do tipo. Em seguida, você acessa a comunidade MLX, escolhe o modelo que deseja executar e, com o ID, basta passá-lo para a estrutura, que será integrada diretamente ao Hugging Face para baixar o modelo com o MLX Swift LM. Então, você só precisa pegar o ID e passá-lo para o framework.
+
+Normalmente, ao executar o modelo no iPhone, o que você deseja fazer é selecionar uma versão quantizada do modelo, pois o tamanho total seria muito grande. O que eu recomendo é tentar, dependendo do tamanho, entre 3 bits e 8 bits. Normalmente, entre 4 e 8 bits. Normalmente, em resoluções abaixo de 4 bits, isso começa a ter um impacto significativo na saída. E os modelos geralmente não são tão bons . 4 bits é o mínimo que eu usaria.
+
+E 8 bits é o máximo que eu recomendaria se você estiver usando modelos realmente pequenos. E no meu aplicativo, por exemplo, eu tenho um modelo maior como o Gemma 4, mas também tenho um modelo líquido com 300 ou 350 parâmetros, e ele pode ser executado em atalhos. Portanto, é possível realizar muitos tipos de automação, pois os modelos são realmente rápidos e eficientes para esse tamanho, realizando processamento de texto e tarefas semelhantes. E no iPhone mais recente, por exemplo, se você pegar o Gemma 4, quantizado em 8 bits e convertido para 4 bits, ele é extremamente rápido. Assim, ele pode funcionar facilmente a 40 tokens por segundo. Vou apenas atualizar
+
+o slide, pois removi um slide onde havia o vídeo, mas talvez eu possa adicioná-lo de volta, já que tenho um pouco mais de tempo. Eu simplesmente gosto disso. Então, só para mostrar em uma demonstração o que significa 40 tokens por segundo. E isso está rodando ao vivo offline. E como você pode ver, é muito rápido. Cerca de 40 tokens por segundo é mais
+
+do que aceitável para muitos casos de uso. Isso é, obviamente, streaming. Você também pode optar por não fazer streaming e criar uma interface de usuário que simplesmente aguarde 4 segundos. E aqui a saída é bastante longa. Portanto, está gerando muitos tokens. Em
+
+dispositivos com MLX, está funcionando. Está aqui. Não é nada fácil, mas também não é nada difícil de integrar. Como eu disse, se você for ao repositório MLX Swift LM, a instalação é muito fácil . Além disso, como já disse, funciona muito bem nos iPhones mais recentes, mas também funciona com iPhones mais antigos. Por exemplo, você
+
+não conseguirá 40 tokens por segundo, o que é bastante rápido, mas mesmo que consiga 20 tokens por segundo, já é ótimo e útil para muitas aplicações e casos de uso que você gostaria de realizar com seu aplicativo. Você pode acessar e escanear este código QR se quiser experimentar por si mesmo. Se você tiver um iPhone, o aplicativo está disponível na App Store. É gratuito. A única coisa é que você terá que baixar o modelo, que geralmente tem cerca de 1 gigabyte ou 3 gigabytes. Depende muito do
+
+modelo, mas essa é a maior barreira no momento. É o tamanho do modelo, mas isso também está melhorando. Os modelos estão ficando menores ou mais inteligentes, e o iPhone também está ficando melhor. Então, em segundo lugar, o próximo iPhone, tudo está atingindo uma usabilidade realmente excelente, pelo que posso ver. E além disso, talvez você tenha ouvido as notícias de ontem. Foram adquiridos localmente pela
+
+LM Studio. Se você não conhece o LM Studio [limpa a garganta], é basicamente uma espécie de estúdio de IA para todos os seus modelos locais. Assim, você pode baixar qualquer modelo compatível com o LM Studio diretamente do site da Hugging Face. Você pode executá- los e pode abrir um servidor. Você pode executá-los com Llama CPP, mas também com MLX.
+
+Assim, você pode realmente comparar os diferentes motores e ver como eles funcionam. Como eu disse, você pode abrir um servidor localmente e conectar seu aplicativo a esse servidor hospedado, com vários tipos de resposta diferentes. Por exemplo, o tipo de resposta Open API ou [limpa a garganta] ou o tipo de resposta Anthropic para streaming de qualquer coisa permite que você execute qualquer modelo com muita facilidade. Então, quero agradecer. Essa foi uma breve introdução sobre como você pode fazer o mesmo e executar qualquer modelo, como no Gemma 4, se quiser, no seu iPhone.
+
+Se você tiver alguma dúvida também. [aplausos]
+
+Isso suporta chamadas de ferramentas? Desculpe? Sim, é isso mesmo, eu tinha me esquecido disso. Portanto, oferece suporte à chamada de ferramentas. Não é geração personalizada nem estruturada ainda.
+
+Existem alguns pacotes adicionais ao MLX Swift LM que tentam fazer com que isso funcione. Bem, vou deixar você saber que a Hugging Face está fazendo isso, mas você pode encontrá-los facilmente online. Mas o MLX Swift LM, sim, ele suporta chamadas de ferramentas. Isso é realmente útil se você quiser fazer chamadas de ferramentas e chamadas sobre o sistema. E o modelo também está ficando melhor na chamada de ferramentas.
+
+Eles não eram tão bons como há um ano. Agora está melhorando bastante. Vejo que você mencionou duas coisas. Primeiro foi o repositório do GitHub. Sim. E a
+
+segunda coisa foi o aplicativo. Então, você tem o repositório do GitHub para o MLX Swift LM. Esse é o pacote que será instalado no seu aplicativo. E então você precisa ir para o modo de jogo e obter o peso do modelo. Mas para um usuário comum, basta baixar o aplicativo pelo site. Ah, e
+
+sim, se você quiser experimentar meu aplicativo, pode fazê-lo agora mesmo, sem precisar instalar nada. E você pode escolher qualquer modelo de código aberto dentro disso. Hum, existe uma seleção que não é... não é como se eu estivesse garantindo que
+
+todos os modelos funcionem corretamente no iPhone, porque nem todos funcionam bem. Muito obrigado.
+
+[música]

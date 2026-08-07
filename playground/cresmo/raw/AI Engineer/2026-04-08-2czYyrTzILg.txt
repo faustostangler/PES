@@ -1,0 +1,178 @@
+---
+video_title: "From Chaos to Choreography: Multi-Agent Orchestration Patterns That Actually Work — Sandipan Bhaumik"
+video_id: 2czYyrTzILg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=2czYyrTzILg
+video_date: 2026-04-08T10:23:12+00:00
+video_description: |
+  One AI agent is a feature. Fifty agents is a distributed systems problem nobody's discussing. I've seen this pattern: teams build one agent, then five, then drown in coordination problems unrelated to LLMs. Agent handoffs fail silently. Data goes stale. Decisions become untraceable. Drawing from Databricks production deployments, I'll expose orchestration anti-patterns killing multi-agent systems and show agent handoff protocols that work—state management, data contracts, failure modes. You'll see when to choreograph versus orchestrate and live multi-agent workflow with proper observability. This applies distributed systems engineering to agents: the infrastructure layer everyone needs but nobody's building.
+  
+  Sandipan Bhaumik - Data & AI Tech Lead, Databricks
+  
+  Sandipan Bhaumik has spent 18 years building data and AI systems inside environments that can't afford them to fail - NHS, Tier 1 banks, and large enterprises across EMEA. At AWS and now Databricks, he's seen firsthand where multi-agent systems break down between architecture and production. He is a regular speaker on data and AI system architecutr ebest practices, runs a community of AI practitioners, and he's here to talk about what actually holds together when you scale agentic AI systems in production.
+  
+  Socials:
+  https://www.linkedin.com/in/sandipanbhaumik
+  
+  Slides:
+  https://drive.google.com/file/d/18LqVzhfVS3iULYuy2EshWoMLmQt3rdpT/view?usp=sharing
+---
+Olá a todos, eu sou a Sandy. Passei 18 anos construindo sistemas de dados, sendo que grande parte desse tempo foi dedicada à construção e ao dimensionamento de sistemas de dados distribuídos na nuvem. Já fiz isso para sistemas multi-inquilinos para empresas de software e SaaS, e também para escalar plataformas de dados e IA em setores regulamentados, como serviços financeiros e saúde. Aprendi muito sobre sistemas distribuídos de nível de produção enquanto trabalhava na AWS e agora na Databricks. Nos últimos dois anos, tenho implementado sistemas de IA multiagentes em produção. E eu já vi
+
+engenheiros brilhantes cometerem os mesmos erros repetidas vezes . Eles acham que adicionar mais agentes é o mesmo que adicionar mais funcionalidades. Não é. Trata-se da construção de um sistema distribuído. E hoje, vou mostrar a vocês os padrões que realmente funcionam quando vocês fazem a transição. Essas são lições
+
+que aprendi trabalhando na linha de frente, e hoje estou aqui para compartilhá-las com vocês. Eis o que vamos abordar hoje. Primeiro, o problema. Vou compartilhar com vocês uma história bem básica sobre problemas de produção e por que a complexidade explode quando se passa de um para cinco agentes. Bem, vou falar sobre os padrões, a coreografia e os padrões de orquestração para a coordenação de agentes. Vou falar
+
+sobre gerenciamento de estado, sobre recuperação de falhas e como podemos projetar para falhas em sistemas de produção. E então, compartilharei como será uma arquitetura de nível de produção, da maneira mais simples possível. E também mostrarei um exemplo de como construímos isso no Databricks. Então, vamos lá . Veja bem, um único agente funciona maravilhosamente bem. Você tem seu LLM, alguns
+
+prompts, talvez um pipeline de geração aumentada por recuperação, talvez algumas chamadas de ferramentas. A demonstração é ótima. A liderança adora isso. Você se sente feliz e sua equipe também . E então, o produto retorna com uma solicitação que muda tudo. Eles
+
+querem mais cinco agentes. E eis o que acontece. Você pensa: "Ok, eu sei como criar agentes, e vou adicionar mais cinco." Só que agora você tem problemas de coordenação. O agente A produz dados que o agente B precisa. O Agente C está aguardando
+
+tanto o Agente A quanto o Agente B. O Agente D acabou de atualizar o estado compartilhado que o Agente B estava lendo, e o Agente E travou, derrubando todo o fluxo de trabalho. Isso não é mais um problema de IA. Este é um problema de sistema distribuído. E a maioria de vocês não se candidatou para ser engenheiro de sistemas distribuídos. Deixe-me contar sobre
+
+uma implementação em produção onde isso deu muito errado. Criamos um sistema de tomada de decisões de crédito para uma empresa de serviços financeiros. O primeiro agente, o cálculo da pontuação de crédito, funcionou perfeitamente. Funcionou perfeitamente nas demonstrações, duas semanas em produção, sem nenhum problema. Em seguida, adicionamos mais quatro agentes: verificação de renda, avaliação de risco, detecção de fraudes e aprovação final.
+
+Nós implantamos todos os cinco. Em três dias , começamos a ver aprovações estranhas. Em 20% das decisões, as avaliações de risco estavam incorretas. Clientes que deveriam ter sido sinalizados estavam sendo aprovados. A equipe comercial entrou em pânico. Demoramos
+
+dois dias para descobrir o que estava acontecendo. O agente de pontuação de crédito calculou uma pontuação de 750 e registrou a informação no banco de dados. O agente de avaliação de risco, por outro lado, leu os dados da base de dados 500 milissegundos depois e obteve uma pontuação de 680 para o mesmo cliente. Por que isso aconteceu? Porque tínhamos uma camada de cache para os registros dos clientes. A gravação no
+
+SQL do PostgreSQL foi bem-sucedida, mas o cache não foi invalidado. O agente de risco leu dados do cache e obteve informações desatualizadas. Usei a pontuação errada e tomei a decisão errada. Este é um problema clássico de sistemas distribuídos. Tínhamos uma camada de cache entre os agentes e o banco de dados. A invalidação do cache falhou e
+
+o agente estava lendo valores obsoletos. A condição de corrida não estava no banco de dados, mas sim na arquitetura. Múltiplos agentes, cache compartilhado, nenhuma coordenação na invalidação do cache. Levou bastante tempo para encontrarmos o padrão. Isso causou atrasos na entrega e levou a decisões erradas. E aqui está a lição que
+
+aprendemos. O problema, obviamente, não estava no modelo. O problema não estava nas instruções. O problema foi que construímos um sistema distribuído sem pensar como um sistema distribuído. E é isso que acaba com os projetos multiagentes, não a IA ruim, mas a arquitetura ruim. Agora, vou mostrar a vocês
+
+a arquitetura que funciona. Também analisaremos uma arquitetura de nível de produção . Mas primeiro, vamos entender por que essa complexidade explode tão rapidamente. Agora, quando você passa de um sistema com um único agente para um sistema com múltiplos agentes, digamos, cinco agentes, a dificuldade não aumenta apenas cinco vezes. Fica 25 vezes mais complexo. A complexidade da coordenação
+
+cresce exponencialmente. Um dos agentes não apresenta nenhum problema de coordenação. Dois agentes possuem pelo menos uma conexão. Cinco agentes possuem pelo menos 10 conexões e contatos potenciais. Cada conexão é um ponto de falha, uma condição de corrida, um problema de sincronização de estado . Você não está apenas criando cinco
+
+agentes, você está criando um problema de coordenação que envolve múltiplos relacionamentos e a possibilidade de múltiplos modos de falha. E é por isso que a complexidade aumenta muito, muito rapidamente. Agora, vou mostrar a vocês dois padrões críticos. O primeiro padrão trata de como coordenar múltiplos agentes. Em seguida, falaremos sobre como você pode gerenciar o estado. E depois falaremos sobre
+
+como você pode se recuperar e projetar para lidar com falhas. Esses padrões são fruto de vários anos de trabalho com sistemas distribuídos e posso aplicá-los diretamente em sistemas de IA multiagentes. Depois de dominar os conceitos básicos, é muito difícil não perceber esses padrões ao construir uma arquitetura de IA multiagente . A primeira decisão que você precisa tomar é sobre coreografia ou orquestração. Esses são os dois padrões fundamentais para a coordenação distribuída. Coreografia significa que os agentes
+
+se coordenam por meio de eventos. Eles são descentralizados, eles são autônomos. Orquestração significa que um coordenador central gerencia o fluxo de trabalho. Isso é centralizado e controlado. A maioria das equipes escolhe uma instintivamente e depois se arrepende . Deixe-me mostrar quando usar cada um.
+
+Vamos começar pela coreografia. A coreografia é orientada por eventos. O agente de pesquisa termina a pesquisa e publica um evento de pesquisa concluída em um barramento de mensagens. O agente B se inscreve nesse barramento de mensagens e fica à escuta do tipo de evento que lhe interessa. O agente de análise se inscreve nesse tipo de evento, o captura, realiza a análise e publica o resultado como pronto. Em seguida, o agente de relatório
+
+seleciona esse evento pronto para análise e gera o relatório. Não existe um coordenador central aqui. Cada agente é autônomo, monitorando eventos que lhe interessam e publicando quando termina. Essa é a beleza da coreografia. Os agentes estão fracamente acoplados.
+
+É fácil adicionar novos agentes e configurá- los para se inscreverem nos eventos de seu interesse. Isso proporciona alta autonomia e escalabilidade. No entanto, o pesadelo da coreografia é a depuração. Quando algo dá errado, você fica bancando o detetive sem ter a menor ideia do que está acontecendo. Qual agente deixou de publicar?
+
+O evento foi consumido? O evento foi consumido duas vezes? É preciso uma visibilidade impecável para que a coreografia funcione. Mesmo com a propagação de eventos, você precisa de fortes garantias na entrega desses eventos. Sem isso, a depuração se torna muito difícil. Então, quando
+
+você deve usar coreografia? Você usa coreografia quando seu fluxo de trabalho é naturalmente orientado a eventos, quando os agentes precisam operar de forma independente, quando você adiciona agentes com frequência e não deseja atualizar um coordenador central. Mas é importante entender que isso só é possível se você tiver forte observabilidade. Se você não consegue rastrear eventos através do seu sistema, a coreografia vai te destruir. Já vi equipes optarem pela coreografia por considerá-la mais assertiva, mais autônoma. Então eles
+
+passam meses apagando incêndios porque não conseguem depurar fluxos de eventos distribuídos. Não cometa esse erro. Agora, vamos analisar a alternativa: a orquestração. A orquestração é centralizada. Você tem um orquestrador de fluxo de trabalho que chama cada agente diretamente. O agente A corre primeiro. A
+
+orquestração chama o Agente A, aguarda o resultado e recebe o resultado de volta. Em seguida, o orquestrador chama os agentes B e C em paralelo, caso sejam agentes que precisem ser executados em paralelo. O orquestrador gerencia o paralelismo, não os agentes. B e C retornam seus resultados ao orquestrador. Em seguida, o orquestrador chama o Agente D com os resultados combinados de B e C. Cada chamada passa
+
+pelo orquestrador. Os agentes nunca ligam uns para os outros. O orquestrador é a única fonte da verdade. Conhece todo o grafo de execução. Ele gerencia o estado. Ele
+
+lida com novas tentativas. Ele registra cada passo. Os agentes são burros. Eles simplesmente recebem a entrada, realizam o trabalho e retornam a saída. O orquestrador realiza toda a coordenação inteligente. No Databricks, uma
+
+forma de implementar esse padrão seria com o LangGraph integrado à estrutura de agentes de IA como orquestrador. Mas qualquer fluxo de trabalho que ofereça DAGs (grafos acíclicos direcionados) e mecanismos adequados de repetição se encaixaria nesse tipo de padrão de orquestração. Você utiliza a orquestração quando tem dependências complexas que precisam de gerenciamento centralizado, quando precisa reverter alterações, compensar falhas, quando deseja um painel que mostre todo o estado do sistema e quando seu fluxo de trabalho é relativamente estável. Nos serviços financeiros, por exemplo, usamos a orquestração quase que exclusivamente. Por que? Porque proporciona
+
+facilidade de depuração e a capacidade de reverter alterações , e isso importa mais do que a autonomia nesse tipo de indústria. Quando algo dá errado com uma decisão de crédito, por exemplo, precisamos saber exatamente qual agente fez a ligação, em que ordem e com quais dados. A orquestração nos proporciona isso. A coreografia não. Então, como escolher? Aqui está o seu quadro de decisão.
+
+Dois eixos. Complexidade do fluxo de trabalho, de simples a complexo. Requisitos de autonomia, de baixo a alto. Fluxo de trabalho simples, alta autonomia, você cria a coreografia. Se você precisa de um fluxo de trabalho complexo com baixa tolerância à autonomia, opte pela orquestração. O
+
+quadrante interessante é o superior direito, onde você precisa de um fluxo de trabalho complexo, mas os agentes precisam de autonomia. É aqui que você usa padrões híbridos. Coreografia com padrões de saga para compensação. Falarei sobre esse padrão mais tarde nesta sessão também. Ferramentas como o Agent Bricks no Databricks estão começando a empacotar esses padrões de orquestração para casos de uso comuns de múltiplos agentes. Assim, você não
+
+precisa reconstruí-los todas as vezes. Isso torna a criação desses padrões muito fácil em ambientes de produção. Agora, eu uso as métricas de decisão sempre que preciso tomar decisões com os clientes, com base em seus casos de uso. Bem, vale a pena tirar uma captura de tela. Tenho certeza de que você fará referência a isso. Deixe-me mostrar
+
+como uma orquestração de produção realmente se parece na fase final da sessão. Tudo bem. Agora, escolhemos um padrão de coordenação de chamadas. Agora, vamos falar sobre o que realmente acontece quando você escala. Estado. Como os
+
+agentes compartilham dados sem condições de corrida? Sem leituras obsoletas? Sem insetos misteriosos? Eis o que a maioria das pessoas faz primeiro, e está errado. Estado mutável compartilhado . Vários agentes escrevendo nos
+
+mesmos registros do banco de dados ao mesmo tempo. O agente A lê a pontuação de crédito, calcula o valor e o registra. O agente B faz a mesma coisa ao mesmo tempo. Ambos leem 680. O agente A escreve 750. O agente B escreve 720. A última escrita
+
+vence. A atualização do Agente A desaparece. Atualização perdida. Ah, entendi. Sim, os bancos de dados modernos possuem proteções, como bloqueios de linha, níveis de isolamento, etc. Mas é preciso
+
+usá-las corretamente. Transações explícitas exigem que você construa um isolamento serializável. Você precisa se certificar de selecionar a opção para atualizar. E muitas equipes não fazem isso. Eles usam isolamento padrão. Eles
+
+não usam bloqueios explícitos e enviam condições de corrida para a produção. Nós conseguimos. Cometemos esse erro, e isso resultou em atraso na geração de valor para o negócio. Partimos do princípio de que o banco de dados lidaria com essas condições, mas não lida. Quando a situação fica realmente complexa, é preciso lidar com ela explicitamente no código. Agora,
+
+veja o que funciona. Instantâneos de estado imutáveis com versionamento. O agente A produz uma versão de estado, digamos, a versão um. Está lacrado. É imutável. Ninguém pode modificá-lo. O estado
+
+é armazenado no banco de dados do orquestrador como um log somente para anexação. Essas são operações de inserção, não de atualização. O agente A entrega a versão um do estado ao agente B. O agente B valida o esquema e verifica se o contrato de dados corresponde às suas expectativas. Ele processa e produz a versão dois do estado. Também imutável. O agente
+
+B insere a versão dois como a nova linha. Não atualiza a versão um. E então entrega ao agente C. A mesma coisa. Rastreamento de versões de validação de esquema, garantia de imutabilidade em cada transferência. O
+
+agente C falha. Agora, se o agente C falhar, você reverte para a versão dois. Se precisar depurar, substitua a evolução do estado da versão um até a versão N. Você poderá ver exatamente o que cada agente recebeu e produziu. Isso elimina as condições de corrida. Não é permitida nenhuma
+
+modificação simultânea no mesmo registro. Cada agente adiciona uma nova versão em vez de atualizar o estado compartilhado. Agora, é claro, se você quiser salvar esses instantâneos de estado, eles podem ser registrados em qualquer tipo de armazenamento somente para acréscimo, para fins de auditoria e reprodução, mas nunca são compartilhados para leitura ou gravação. Agora, veja como isso fica no código. A classe de estado do agente , congelada ou imutável em Python. Possui um número de versão, a
+
+carga útil de dados e quem a criou. A função de transferência realiza três tarefas. Primeiro, ele valida o esquema. Bem, isto é o cumprimento do contrato. Estamos verificando se a saída do agente A corresponde ao contrato de entrada do agente B. Isso
+
+é crucial, e voltaremos a esse assunto . Segunda versão incremental. Crie um novo objeto de estado imutável com a versão N mais um. Terceiro, execute o próximo agente com esse estado imutável. O agente não pode modificar o estado de entrada.
+
+Só pode produzir um novo estado. Isso impede toda uma classe de bugs. Isso evita condições de corrida em estados compartilhados. Nada de leituras obsoletas. Isso fornece uma linhagem clara. Cada estado tem uma
+
+versão, e você sabe quem a criou . Quando algo dá errado, você pode rastrear a origem do problema através da evolução do estado. A versão sete apresentou resultados incorretos; verifique a versão seis que foi incluída no agente. Veja a versão cinco anterior a essa. Você pode usar a busca binária no histórico do seu estado para descobrir onde as coisas deram errado.
+
+E isso se torna realmente muito poderoso. Agora, a gestão estatal representa metade da batalha. Os contratos de dados são a outra metade. O agente A pode simplesmente enviar dados aleatórios para o agente B e esperar que funcione. Não funciona dessa forma. Eles
+
+precisam de um contrato formalizado. Neste exemplo, o agente de pesquisa promete fornecer resultados, pontuação de confiança, fontes, registro de data e hora, etc. O agente de análise declara que requer a saída do agente de pesquisa com o tipo e o primeiro elemento especificados. E isso valida. Se o nível de confiança for inferior a 0,7, a transferência será rejeitada.
+
+Este é o contrato. Se o agente de pesquisa tentar entregar dados de baixa qualidade, o contrato o interceptará no limite. Você descobre imediatamente, não três agentes adiante, quando o relatório gerado é considerado lixo. Quando trabalhamos com nossos clientes usando o Databricks, uma das maneiras de fazer isso é registrando esses esquemas de entrada e saída no Catálogo do Unity. Então, o contrato de cada agente é versionado e gerenciado em um único documento. Tudo bem.
+
+Conversamos sobre padrões de coordenação. Conversamos sobre gestão estatal. Agora, vamos falar sobre outra coisa que você precisa ter em mente, que é o fracasso e a recuperação. E a razão pela qual isso é importante é porque os agentes irão falhar. Isso é inevitável. O
+
+LLM expirará por tempo indeterminado. A API irá limitar a sua taxa de utilização. O agente irá falhar no meio do fluxo de trabalho. O que acontece depois? O que acontece em seguida é o que você precisa planejar e projetar no sistema. Vamos falar
+
+sobre alguns padrões. Vamos falar sobre o primeiro padrão, que é um padrão de disjuntor, e este vem diretamente dos sistemas distribuídos. Quando o agente A liga para o agente B, essa chamada é encapsulada em um disjuntor. Se o agente B falhar repetidamente, digamos cinco vezes seguidas, o disjuntor se abre. Agora, em vez de esperar que o tempo limite seja atingido todas as vezes, você basicamente falha rapidamente.
+
+Circuito aberto, agente B inativo, tente novamente mais tarde. Você não está bombardeando o agente B com solicitações. Você está protegendo seu sistema. Após um período de tempo limite , digamos 60 segundos, o circuito fica semiaberto. Em seguida, teste o agente B novamente com uma solicitação. Se a operação for
+
+bem-sucedida, o circuito de partida se fecha e o funcionamento normal é retomado. Se falhar, o circuito abre novamente e o temporizador é reiniciado. Isso impede que falhas em cascata se espalhem pelo sistema. A indisponibilidade de um agente não paralisa todo o seu fluxo de trabalho. Você se degrada com elegância . Talvez seja melhor ignorar esse agente e
+
+continuar com uma funcionalidade reduzida. Talvez você esteja usando resultados em cache. Talvez você precise alertar um humano. Mas você não interrompe todo o fluxo de trabalho. Os disjuntores são o padrão de recuperação de falhas mais importante para sistemas multiagentes. Cada chamada de agente deve ser
+
+encapsulada com um. Aplicamos essas políticas de disjuntor na camada de serviço do Databricks por meio do fornecimento de modelos ou do AI Gateway. Veja como fica no código. Você monitora a contagem de falhas e monitora o estado. Ao ligar para um agente, você verifica primeiro o estado . Se estiver aberto, você falha rapidamente. Você nem
+
+tenta. Se estiver fechado, você faz a ligação. Se a chamada for bem-sucedida, você redefine a contagem de falhas e permanece fechado. Se falhar, você incrementa a contagem de falhas. Se você atingir o limite, o circuito é aberto. Após o período de tempo limite
+
+, você passa para a posição semiaberta. Você testa uma solicitação. Se funcionar, você fecha o circuito. Se falhar, abra novamente. Este é um padrão simples, mas que tem um impacto enorme. E no
+
+Databricks, você pode registrar cada transição de abertura e fechamento no MLflow, permitindo identificar quando um agente começou a apresentar falhas . Agora, vamos falar sobre outro padrão. Chamamos isso de padrão de compensação. Também chamado de padrão saga. Todo agente possui dois métodos: executar e compensar. Executar realiza o trabalho.
+
+A compensação reverte a ação, desfaz a mudança. Os agentes orquestradores executaram suas tarefas. Se o agente de execução falhar, o orquestrador percorre os agentes executados na ordem inversa . E isso compensa cada um deles. O agente de análise compensa, excluindo do sistema a recomendação preliminar que ele próprio havia elaborado. E então
+
+o agente de pesquisa compensa isso limpando os dados de pesquisa armazenados em cache que havia coletado anteriormente. Então, você voltou ao estado inicial. Não são permitidas transações parciais. Sem fluxos de trabalho travados. Este é um padrão de rollback simples que você pode implementar em um sistema multiagente.
+
+A compensação beneficia os agentes distribuídos. Não é nada glamoroso, mas é assim que os sistemas de produção lidam com falhas parciais. Todo fluxo de trabalho orquestrado precisa desse tipo de padrão de compensação, e você precisa planejá-lo dependendo do que estiver fazendo com seus fluxos de trabalho. Veja como a compensação se apresenta no código. Como mencionei anteriormente, cada agente possui dois métodos: o método de execução e o método de compensação. A execução realiza
+
+o trabalho, a compensação o desfaz. Ah, esse é o contrato. Toda operação deve ser reversível. O orquestrador rastreia quais agentes foram executados com sucesso e mantém uma lista. O agente A executa o comando e é adicionado. O
+
+agente B executa o comando e é adicionado. O agente C falha, agora percorremos a lista na ordem inversa. O agente B compensa primeiro, desfazendo o trabalho que realizou. Em seguida, o Agente A compensa, desfaz o trabalho que realizou e retorna ao estado inicial. Este é o padrão saga de bancos de dados distribuídos.
+
+Os serviços financeiros exigem isso. Agora que já abordamos esses diferentes padrões, gostaria de mostrar a vocês como seria uma arquitetura de produção ao reunir todos esses elementos. Você tem o orquestrador do lado esquerdo. É o cérebro do fluxo de trabalho. Ele contém o mecanismo de fluxo de trabalho, contém o armazenamento de estado que guarda as versões de zero a n, e pode acessar a camada de observabilidade. Ela gerencia os
+
+dados de observabilidade. Todas as chamadas passam pelo orquestrador. O orquestrador chama o Agente A, o Agente B, e o Agente A retorna a versão de estado um para o orquestrador. O Orchestrator então chama os Agentes B e C em paralelo, caso seja necessário executá-los simultaneamente. Ambos recebem a versão de estado um do orquestrador. Eles retornam resultados. O
+
+Orchestrator armazena nas versões três, dois e três. Finalmente, o orquestrador chama D com esses resultados combinados. Os agentes nunca ligam uns para os outros. Toda a coordenação ocorre através do orquestrador. E é isso que nos dá controle, capacidade de observação e a possibilidade de reverter a situação.
+
+Este processo funciona 24 horas por dia, 7 dias por semana, em bilhões de transações, porque o orquestrador é a única fonte de verdade. Muito bem, aqui está uma arquitetura de produção que você pode implementar com a plataforma Databricks Data Intelligence. Na camada de orquestração, você pode integrar o LangGraph ao Mosaic AI Agent Framework. Ele lida com a orquestração multiagente. Ele gerencia o gráfico do fluxo de trabalho e sabe quais agentes chamar e em que ordem. Cada agente é implementado como
+
+uma função do Catálogo Unity. Poderia ser escrito em SQL ou Python, ou poderia ser um modelo registrado em um catálogo do Unity. Sim, quando você registra esses recursos no Catálogo da Unity, eles ficam disponíveis para descoberta centralizada em toda a organização. Eles podem ser gerenciados em um único local e podem ser versionados, o que é realmente crucial em termos de operação desses fluxos de trabalho em produção. Nós expomos esses agentes por meio de um Databricks Model Serving ou Function Serving, e é aí que aplicamos essas políticas de disjuntor, como novas tentativas, tempos limite ou limites de taxa, na camada de serviço, normalmente por meio da configuração do AI Gateway.
+
+Quando falamos da camada de dados, o Delta Lake armazena tudo. Ele não apenas armazena as versões de estado do agente, mas também dados do cliente e, você sabe, todos os dados necessários para que seus fluxos de trabalho funcionem. Falando sobre os snapshots do estado da cobra, a tabela Delta é imutável e versionada. Para nós, essas versões de estado são apenas linhas em uma tabela Delta. Nós nunca os atualizamos no local. Cada execução do agente é vinculada a uma
+
+versão de estado por meio de rastreamentos do MLflow, permitindo-nos percorrer a evolução quando algo dá errado. Bem, eu só queria falar um pouco sobre o Catálogo da Unity. Ele controla tudo: controle de acesso, linhagem e trilha de auditoria, tanto para dados quanto para agentes. O MLflow nos oferece recursos de avaliação de rastreamento por agente com LLM integrado como avaliadores e métricas em cada chamada. E como mencionei anteriormente, ferramentas como o Agent Bricks são a forma mais avançada que o Databricks utiliza para empacotar esses padrões de orquestração para casos de uso comuns com múltiplos agentes, evitando a necessidade de recriá-los a cada vez.
+
+Para concluir este fluxo de trabalho, vejo que o orquestrador LangGraph chama o Agente A, uma função ou modelo do Catálogo Unity. Obtém um resultado e grava o estado da versão um no Delta. Em seguida, o sistema chama o Agente B com a versão de estado um, grava a versão dois e assim por diante. O MLflow rastreia cada chamada, latência, entradas, saídas e uso de tokens. Um disjuntor na camada de serviço protege cada chamada. Caso o Agente C falhe, o LangGraph
+
+aciona a lógica de compensação e retrocede, chamando as funções de compensação para as etapas bem-sucedidas anteriores. Esse tipo de padrão se repete na produção diariamente. Então, obrigada por me ouvirem. Você pode entrar em contato comigo pelo LinkedIn. Você pode usar essa palavra-chave para acessar diretamente meu perfil no LinkedIn. Bem,
+
+eu gostaria de deixar vocês com três considerações finais. Em primeiro lugar, o caos entre os agentes é inevitável. Ao expandir para além de um único agente, você encontrará problemas de coordenação, condições de corrida e falhas em cascata. Isso é garantido. A curva de complexidade não mente. A coreografia que você define com seu agente é uma
+
+escolha sua. É possível construir sistemas com padrões adequados, orquestração, coreografia, estado imutável, disjuntores, padrões de compensação e contratos de dados. Certifique-se de compreender esses padrões e incorporá-los à sua arquitetura de produção. Fazendo isso, você conseguirá construir sistemas, não apenas demonstrações. As demonstrações são fáceis. Você usa um LLM para mostrar
+
+algo legal. Qualquer pessoa pode fazer isso. Essas coisas não funcionam em produção. Na produção, você precisa construir sistemas, e sistemas são difíceis. Os sistemas são o que criam valor para as empresas.
+
+Tudo o que mostrei hoje, coreografia versus orquestração, estado imutável, disjuntores, tudo isso faz parte do trabalho de infraestrutura, que não tem nada de glamoroso. Você não receberá aplausos por implementar um disjuntor, mas tornará seus sistemas mais confiáveis. Eles não falham às 2h da manhã. É isso que as pessoas percebem com o tempo. Seja um engenheiro de sistemas. Os padrões aqui funcionam.
+
+Aplique esses padrões em sua arquitetura de produção. Muito obrigado por assistir. Tchau.

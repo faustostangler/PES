@@ -1,0 +1,278 @@
+---
+video_title: "Agentic Search for Context Engineering — Leonie Monigatti, Elastic"
+video_id: ynJyIKwjonM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ynJyIKwjonM
+video_date: 2026-05-08T13:00:06+00:00
+video_description: |
+  Getting context into an LLM is not just a retrieval problem. It is a search problem. This workshop digs into the part of context engineering that usually gets waved away: how agents actually decide what to pull from files, databases, memory, and the web, and why that choice often matters more than the model itself.
+  
+  Across semantic search, general-purpose database tools, shell-based retrieval, and agent skills, Leonie Monigatti shows where each search interface works, where it breaks, and how to combine them into a more effective retrieval stack. If you're building agents and trying to make retrieval less brittle, this is a practical guide to the real mechanics behind agentic search.
+  
+  Workshop repo: https://github.com/iamleonie/workshop-agentic-search
+  
+  Speaker info:
+  - https://x.com/helloiamleonie
+  - https://www.linkedin.com/in/804250ab/
+  
+  Timestamps:
+  0:00:00 - Introduction and Welcome
+  0:00:51 - Defining Context Engineering and the role of Search
+  0:02:21 - Historical context: From RAG to Agentic RAG
+  0:04:30 - Context sources (local files, memory, databases, web)
+  0:06:30 - Introduction to the Shell tool and its versatility
+  0:08:50 - Failure modes in agentic search
+  0:10:41 - The importance of tool descriptions and parameter design
+  0:13:53 - Code Demo: Simple semantic search and its limitations
+  0:23:26 - Code Demo: General purpose database query (ESQL)
+  0:28:36 - Code Demo: Adding Agent Skills for better interaction
+  0:34:42 - Code Demo: Using the Shell tool for file system retrieval
+  0:41:26 - Code Demo: Integrating custom CLIs (Gina Grap)
+  0:44:42 - Practical recommendations for building a search tool stack
+  0:49:16 - Q&A Session begins
+---
+Todos prontos? Sim. Incrível. Bem-vindo(a) ao AI Engineer. Obrigado por participar da minha sessão.
+
+Hoje vamos falar sobre busca agencial para engenharia de contexto. Meu nome é Leonei. Eu trabalho na Elastic, a empresa por trás do Elastic Search. E geralmente gosto de falar sobre recuperação de dados no Twitter. Hoje estou super animado por fazer isso pessoalmente. Hum,
+
+algumas questões administrativas. Se você quiser acessar os slides e o código que vamos analisar, pode escanear o código QR. Então, vamos começar explicando por que estou entusiasmado com busca e recuperação de dados e, espero, por que você também estará entusiasmado com isso ao final deste workshop. Quem aqui já construiu um agente ou algo semelhante ? Incrível. Então você provavelmente
+
+não se sente intimidado por essa imagem. Você provavelmente já viu alguma alternativa a esta antes. Essencialmente, é assim que funciona a engenharia de contexto . Então, a engenharia de contexto, quando falamos dela, é a arte ou as técnicas de engenharia que definem como, dentre todas as fontes de contexto possíveis , decidimos o que entra na janela de contexto para que nossos modelos de aprendizagem possam gerar as melhores respostas. Frequentemente, quando falamos sobre isso, nos referimos à curadoria de contexto e, em especial, a essa pequena seta que liga as fontes de contexto à janela de contexto. Mas, na minha opinião, não estamos
+
+dando o devido crédito a essa pequena seta, porque o que a alimenta é a ferramenta de busca, ou ferramentas de busca, que decidem o que vai das fontes de contexto para a janela de contexto. E hoje vamos analisar as diferentes ferramentas de busca que temos. Essa é a minha opinião pessoal, que ainda é bastante polêmica . Eu gosto de dizer que a engenharia de contexto é cerca de 80% busca agentiva, porque é essa pequena caixa aqui. Muito bem, vamos começar com um pouco de história. E quando digo história, me
+
+refiro aos últimos três anos. Trapo. Quando começamos com o rag, a ideia original era ter um pipeline de recuperação fixo. Assim, a mensagem do usuário geralmente seria usada, mais ou menos literalmente, como uma consulta de pesquisa, normalmente como uma consulta de pesquisa vetorial para extrair alguns dados ou blocos de um banco de dados, juntamente com um contexto recuperado. A mensagem do usuário seria exibida na janela de contexto e, em seguida, encaminhada para o LLM.
+
+Legal. Isso claramente apresenta muitas limitações. Como se trata de um fluxo de trabalho fixo, independentemente de você precisar ou não de contexto, você ainda estará recuperando informações adicionais e, no pior dos casos, isso pode confundir seu LLM. Certo? Por outro lado, se você estiver recuperando dados apenas uma vez, digamos que precise de uma recuperação com múltiplos saltos, esteja consultando seu LLM sobre algo mais complexo, e se estiver recuperando dados apenas uma vez, talvez os fragmentos recuperados revelem alguma informação sobre outra consulta de pesquisa que você precise. Nesse caso, você provavelmente
+
+desejaria realizar uma segunda rodada de pesquisa, certo? Por isso, passamos a usar o pano de chão. Assim, substituímos o pipeline fixo por uma ferramenta de busca. Assim, o agente agora pode decidir por si mesmo se deve ou não chamar a ferramenta de busca e recuperar algumas informações. Assim, não temos mais o problema de "eu realmente preciso de alguma informação?" e ​​"quando eu realmente
+
+obtenho informações, elas são relevantes?". Preciso recuperar mais alguma coisa? Hum, preciso mesmo recuperar alguma informação, reescrever a consulta de pesquisa? Sim .
+
+Portanto, neste caso, ainda temos apenas uma fonte de contexto, um banco de dados. Agora, quando analisamos a engenharia de contexto, o contexto está presente em muitos lugares diferentes, certo? Portanto, temos fontes de contexto em arquivos locais. Então, quando você pensa no seu agente de codificação, provavelmente tem seu projeto de codificação ou arquivos de código espalhados pelo seu sistema de arquivos local, talvez esteja usando algum tipo de memória de trabalho, como um bloco de notas. Então você está planejando com seu agente o que deseja fazer. Então você provavelmente tem
+
+algo como um arquivo MD de planejamento. Quando você possui habilidades de agente, elas geralmente também ficam armazenadas em alguma pasta local . Ainda temos bancos de dados porque muitas empresas armazenam seus dados em bancos de dados. Bem, temos a internet como outra fonte de contexto. E eu sei que esta é uma imagem super controversa, porque eu não me comprometi a ter a memória de longo prazo no sistema de arquivos local ou no banco de dados. Acho que este é um assunto que está sendo
+
+muito discutido atualmente. Podemos abordar isso na seção de perguntas e respostas, se você quiser. Mas também temos a memória de longo prazo como outra fonte de contexto. Certo? Então, como realmente recuperamos o contexto a partir disso? Normalmente temos um conjunto de,
+
+digamos, ferramentas de busca nativas baseadas no contexto . Então, para os arquivos locais, geralmente você tem algo como uma ferramenta de busca de arquivos. Para habilidades, geralmente existe uma ferramenta de carregamento de habilidades. Quando pensamos em bancos de dados, temos algumas ferramentas um pouco mais personalizadas. Então, algo como uma ferramenta de busca semântica . Talvez você também tenha algo mais... de
+
+propósito geral, como uma ferramenta que permita executar consultas de pesquisa completas em um banco de dados, como SQL, por exemplo. Para a web, você tem ferramentas de busca na web e, para a memória, você tem algo como uma ferramenta dedicada à memória. Se isso não for suficientemente avassalador, agora também temos algo chamado ferramenta shell. Bem, a Langchain chama isso de ferramenta de shell. A Anthropic chama isso de ferramenta bash. Se
+
+você já teve alguma experiência com o OpenCloud, ele se chama ferramenta exec. Mas o que todas essas ferramentas fazem é permitir que seu agente execute comandos no terminal. E isso, na verdade, os torna super versáteis, porque agora você pode permitir que seu agente use CLIs para navegar e explorar seus arquivos locais. Assim, você pode simplesmente executar o comando `ls` e usar o comando `grab` para encontrar dados no seu sistema de arquivos local. Se o seu banco de dados tiver uma CLI personalizada, você pode permitir que o agente também use a ferramenta de shell `um` e interaja com o banco de dados.
+
+Você também pode permitir que seu agente escreva um script de pesquisa completo do zero, como conectar-se ao seu banco de dados e executar uma consulta de pesquisa. Bem, se o seu banco de dados estiver exposto via HTTPS, você pode simplesmente executar um comando curl e interagir com o banco de dados através da ferramenta de linha de comando. Falando em comandos curl, você também pode fazer buscas na web, se quiser. Então, essa ferramenta de shell é super versátil, certo? Então, a pergunta e o tópico de hoje é: de qual ferramenta de busca realmente precisamos?
+
+Precisamos apenas de uma ferramenta de shell? Preciso de tudo isso? E se você puder levar apenas uma coisa para casa hoje, é que fazer uma boa pesquisa é incrivelmente difícil e é por isso que temos muitas técnicas diferentes para realizar pesquisas. Certo? Temos busca vetorial, busca por palavra-chave e, mesmo na busca vetorial, temos incorporações densas, incorporações esparsas e incorporações multivetoriais.
+
+Em seguida, temos muitas técnicas de indexação diferentes . Portanto, dependendo dos seus requisitos de pesquisa e de latência , você precisará montar seu próprio conjunto de ferramentas de busca. Certo? Então, hoje vamos analisar alguns desses itens. Infelizmente, só temos uma hora, então não posso mostrar todos eles para vocês. Bem,
+
+antes de entrarmos no código, eu gostaria de apresentar alguns fundamentos para a construção de boas ferramentas de busca, porque a busca ativa, à primeira vista, parece muito simples. O usuário faz uma solicitação. O agente aciona a ferramenta correta com os parâmetros corretos. Vejo alguém rindo. Bem, a ferramenta de recuperação fornece a resposta da ferramenta e, em seguida, seu agente responde com a resposta correta.
+
+Na Elastic, ajudamos muitas equipes internas e externas a criar agentes para interagir com os dados do Elasticsearch. E a realidade é que isso pode se romper de muitas maneiras diferentes. Hoje vou mostrar apenas três para vocês. Então, a primeira coisa é que o agente não chama nenhuma ferramenta. Isso significa que o agente decide que eu realmente posso responder a essa pergunta com base no meu conhecimento paramétrico. Não preciso
+
+usar nenhuma ferramenta de recuperação de contexto. E o outro problema é que o agente está chamando a ferramenta errada. Recentemente, conversando com um colega, perguntei qual foi o aspecto mais desafiador do projeto dele, e ele me disse: "Você não vai acreditar, mas foi muito difícil fazer o agente não usar a ferramenta de busca na web, mas sim a ferramenta de busca no banco de dados. E, dependendo da complexidade dos parâmetros de busca, também pode ser bastante desafiador fazer o agente gerar os parâmetros de busca corretos, não é?" Existem muitos outros casos de falha, mas hoje vamos nos limitar a estes três. Então,
+
+pessoalmente, detesto este slide porque acho que todos nesta sala provavelmente sabem que a descrição da ferramenta é o aspecto mais importante, mas sempre que vejo uma descrição de ferramenta, parece que foi feita com o mínimo de esforço, uma frase só, e depois você fica se perguntando por que seu agente não está acionando a ferramenta certa. Portanto, pode-se argumentar que esta é uma descrição de ferramenta muito longa. Não estou dizendo que você precisa escrever assim . Só estou dizendo que se você começar com um objetivo central, e se funcionar bem, ótimo. Mas se você adicionar mais parâmetros ou mais ferramentas e seu agente começar a ter dificuldades para chamar a ferramenta correta, talvez seja hora de adicionar alguma condição de gatilho.
+
+Quando devo usar essa ferramenta? Quando essa ferramenta não deve ser usada? Principalmente se você tiver várias ferramentas. Bem, adicionar algo como relacionamentos é extremamente importante, tipo, primeiro ligar para essa habilidade do agente antes de realmente ligar para essa ferramenta ou obter alguma confirmação antes de ligar para essa ferramenta. Se você tiver a descrição perfeita da ferramenta e seu agente ainda não estiver chamando a ferramenta correta, reforce isso no prompt do sistema do agente. Isso deve
+
+ajudar na maioria dos casos. Em seguida, gostaria de abordar rapidamente alguns aspectos da complexidade dos parâmetros. Se você tiver uma ferramenta de busca muito simples, como por exemplo, obter o cliente por ID, deve ser relativamente fácil para o agente gerar um parâmetro de ID, desde que seja um ID válido. O mesmo vale para uma busca semântica, certo? Gerar uma string válida não deve causar nenhum problema. Mas
+
+digamos que você queira uma ferramenta de busca semântica e, em vez de apenas fornecer um tópico, queira também definir algumas condições de filtro, talvez definindo os K principais resultados. Nesse caso, você começa a ter mais parâmetros, certo? Aqui não é muito complexo, mas quanto maior for a lista de parâmetros, mais difícil será para o agente gerar os parâmetros corretos. E acho que uma situação muito complexa para um agente é quando você tem algo de propósito mais geral, como permitir que o agente execute consultas de pesquisa completas em um banco de dados. Aqui tenho ESQL, que é a linguagem de consulta do Elasticsearch, mas também poderia ser SQL . Portanto, permitir que o agente escreva uma
+
+consulta SQL inteira do zero pode ser bastante desafiador. A maioria é muito boa, mas algumas não são. Então, tenha em mente que, digamos, a complexidade do parâmetro também é uma espécie de modo de falha e você pode precisar ajudar o agente com alguns desses parâmetros, caso sejam mais complexos. Bom. Vamos analisar um pouco de código.
+
+Ok,
+
+então, por favor, levantem as mãos rapidamente. Quem aqui já construiu algum tipo de trapo agencial, ou onda agencial, antes? Certo, mais ou menos metade. Isso é bom. Bem, vamos analisar três coisas. Bem, vou fazer um
+
+breve resumo ou introdução à demonstração de busca por agentes, que é bem básica. E então vou mostrar como é fácil quebrar essa demonstração comum. E então vamos substituir a ferramenta de busca semântica por algo de propósito mais geral. Então, estamos permitindo que o agente escreva uma consulta de pesquisa inteira do zero. E para esses dois exemplos, usaremos um cluster local do Elasticsearch como fonte de contexto. E então, na
+
+terceira parte, vou mudar de assunto e mostrar como funciona a busca no sistema de arquivos local com a ferramenta bash. E depois também vou mostrar a ferramenta shell. E depois vou mostrar algumas limitações da ferramenta de shell e como você pode expandi-la com CLIs personalizadas. Tudo bem. O exemplo que veremos hoje é o seguinte: tenho aqui os dados das sessões desta conferência.
+
+E deixe-me começar a mostrar-lhe este . Só para recapitular rapidamente. Temos um banco de dados Elasticsearch e vamos desenvolver uma ferramenta de busca semântica. E no banco de dados eu já tenho a sessão da conferência dividida em partes. Você provavelmente já sabe como dividir e armazenar dados em um banco de dados. Então vamos pular essa parte.
+
+Esse não é o aspecto importante. Então, o que precisamos para ser um agente, um mestrado em Direito ( LLM)? Ah, desculpe. Vamos usar o encadeamento de linguagens nesta sessão porque ele simplifica bastante a complexidade e, ao mesmo tempo, nos permite concentrar nos conceitos de alto nível. Também possui alguns recursos integrados interessantes, como a ferramenta de shell, que já vem inclusa, e alguns exemplos de código para ferramentas de carregamento de habilidades, que veremos mais adiante.
+
+Ok, voltando ao assunto. Estou usando o GPT 5.4 Nano para esta demonstração. Em seguida, estamos definindo um prompt de sistema muito simples . Então, normalmente você é um agente de busca encarregado de responder perguntas.
+
+Você tem acesso a diferentes ferramentas de recuperação de contexto e, antes de responder a uma pergunta, decide se precisa ou não recuperar contexto adicional para ajudar um pouco o agente. Eu tenho algumas informações sobre como os dados estão estruturados no Elasticsearch. Aqui temos um campo de texto. É composto pelo título de cada sessão e pela descrição de cada sessão, e o campo de texto é o que realmente é incorporado como os vetores de incorporação para a busca semântica. Além disso, também tenho alguns campos de metadados. Por exemplo, o dia,
+
+a hora, a sala, o nome do orador . Como os metadados não estão incorporados, só posso aplicar filtros neles, mas não realizar uma busca semântica, apenas para sua informação. Ok, agora vem a parte interessante: vamos construir uma ferramenta de busca semântica. Então, como isso funciona na cadeia de linguagem? Primeiro, preciso definir um modelo de incorporação. Neste caso, estou
+
+usando o novo modelo de incorporação genômica v5 . Isso é usado para incorporar as consultas de pesquisa no momento da consulta, e o modelo de incorporação que estou inserindo no meu armazenamento do Elasticsearch, juntamente com os dados do Elasticsearch, para criar um armazenamento vetorial. Assim, posso criar uma ferramenta de pesquisa. Nesse caso, tudo o que preciso fazer é chamar o método de busca por similaridade. A função recebe uma consulta de pesquisa e, neste caso, estou definindo o limite, ou os K melhores resultados, para três.
+
+Isso é um pequeno prenúncio, pois estou limitando as capacidades desta ferramenta para retornar apenas três resultados de pesquisa. Certo? Outra coisa interessante no Langchain é que, ao usar o decorador de ferramenta aqui em cima, você pode converter qualquer função Python em uma ferramenta de busca... quer dizer, em uma
+
+ferramenta de agente. Por padrão, ele usa o nome da função Python como nome da ferramenta e a string do Dock aqui embaixo será convertida na descrição da ferramenta. Como podem ver, estou quebrando minha própria regra ao apresentar uma descrição muito breve da ferramenta . Isso funciona porque eu só tenho uma ferramenta de busca aqui, certo? Como vocês verão, adicionarei algumas coisas mais tarde, mas não entrarei em muitos detalhes nesta demonstração.
+
+Agora podemos executar um teste e verificar se ele corresponde a uma consulta de pesquisa sobre restrições regulatórias. E você pode ver que encontrou uma palestra do meu amigo B sobre engenharia de sistemas de IA sob restrições de servidor, além de outras palestras. Um por TAS e um por Pedro. Muito bem, vamos conectar. Então, vamos conectar o LM, o prompt do sistema e a ferramenta de busca. Estou deixando de lado a
+
+memória. Obviamente, este seria outro componente essencial de um agente. Neste caso, estou omitindo para manter o texto conciso. Agora posso fazer uma pergunta simples, como por exemplo, quais sessões discutem restrições regulatórias em sistemas de IA. E você pode ver que o agente primeiro chama minha ferramenta de busca semântica.
+
+Na minha opinião, gerou uma consulta de pesquisa bastante extensa, mas funciona. Bem, encontra a palestra certa de Bili. Então, aparentemente, isso não era suficiente. Então, ele reescreveu a consulta de pesquisa. Hum, mas decidi, e obtive resultados de pesquisa muito semelhantes. Então, depois disso,
+
+decidiu que, desculpe, decidiu que agora é capaz de responder com as falas corretas. É aqui que a maioria das demonstrações de busca com agentes falha. Mas isso é muito frágil. Alguém tem alguma ideia de como podemos quebrar isso?
+
+Sim, é uma boa ideia. Algo mais? Seria
+
+ótimo se você pudesse perguntar algo que não está no banco de dados. E se perguntássemos algo em que a busca semântica realmente falha? Talvez algo em que queiramos procurar uma palavra-chave, uma palavra-chave específica. Também estou usando algum tipo de filtro, porque estamos nesta ferramenta de busca e não temos nenhum filtro implementado, certo? Então, minha escolha de consulta de busca é: quais sessões devo visitar para aprender mais sobre GEA?
+
+Nem sei direito como se pronuncia "Ga", desculpe, nem sei se estou pronunciando corretamente. É por isso que preciso definitivamente participar desta sessão. Então, o que você pode ver é que o agente agora chama a ferramenta de busca semântica e desta vez está procurando por GPA. Até aqui tudo bem, mas agora você pode ver que na verdade está retornando uma conversa para os modelos Gemma da Deep Minds . Acho que, do ponto de vista da tokenização, poderia ser semelhante ao GDPA ou JPA. Não sei ao certo. Depois,
+
+retorna algo sobre engenharia de engate, mas não tenho certeza se isso está necessariamente relacionado. E então, um terceiro ponto... claramente nenhum deles está relacionado ao GDPA.
+
+Alerta de spoiler: sei que há uma discussão sobre GDPA ou JPA novamente, acho que logo depois desta. Então, podemos ver a ferramenta de busca que acabamos de criar. Não é muito útil, ou pelo menos só é útil para um conjunto muito restrito de casos de uso. Certo? E se permitíssemos que o agente escrevesse uma consulta de pesquisa inteira do zero? Deixe-me
+
+mostrar como podemos fazer isso. Portanto, agora estamos substituindo a ferramenta de banco de dados que tínhamos por uma ferramenta de execução de consultas. Então, estamos permitindo que o agente não apenas receba uma pesquisa como um tópico, mas desta vez estamos fornecendo a ele toda a ferramenta de busca, uma consulta de pesquisa completa. E vou mostrar para vocês, porque isso é bastante difícil para um agente. Ah, também estamos combinando isso com uma ferramenta de carregamento de habilidades.
+
+Então, fazendo a mesma coisa. Estou a organizar o meu mestrado em Direito ( LLM). Você provavelmente já percebeu que estou mudando para um modelo um pouco mais potente. Então, estou trocando o GPT 5.4 Nano pelo Mini porque agora prevejo que escrever consultas de pesquisa será um pouco mais difícil. Portanto, o
+
+nano provavelmente não é potente o suficiente. Estou usando exatamente o mesmo prompt do sistema de antes. E agora estou criando uma ferramenta de consulta de banco de dados de uso geral. Como estou usando o Elasticsearch, vou usar a linguagem de consulta do Elasticsearch, que é uma linguagem de consulta em formato de pipe para filtrar, transformar e analisar dados. Tem mais ou menos a seguinte aparência . Talvez isso lhe
+
+faça lembrar de SQL. É um pouco diferente. Possui diferentes capacidades. Não é importante para esta sessão. Bem, você pode ver que quando me conecto ao meu cliente e uso esse método de consulta da classe SQL e executo essa consulta, você pode ver que há uma sessão do Samuel que fala bastante sobre GPA. Você pode ver que aqui há uma
+
+correspondência. Aqui está mais uma partida. Então vamos integrar isso em uma ferramenta de busca. Como
+
+você pode ver, desta vez eu usei novamente o método de consulta e o agente recebe a consulta ESQL como parâmetro. Em seguida, troquei a descrição da ferramenta por algo que diz " executar uma consulta ESQL no índice de agendamento de conferências no Elasticsearch". Você notou alguma diferença na forma como escrevi esta ferramenta de busca em comparação com a outra?
+
+Desta vez, adicionei um bloco try-except para tratamento de erros. De um modo geral , você deve ter um sistema de tratamento de erros. Mas como prevejo que escrever uma boa consulta ESQL, ou uma consulta válida, causará mais problemas para a ferramenta, não quero que o agente simplesmente falhe e que todo o sistema entre em colapso. Então, em vez disso, retorno a resposta de erro para o agente para que ele possa se autocorrigir e reescrever a consulta. De um modo geral, é super importante ter isso, certo? Assim, o agente pode se
+
+autocorrigir. Portanto, quando pudermos testar isso aqui, isso não será importante. Então, estou conectando o LLM, o prompt do sistema e minha ferramenta de busca (que não é nova) ao agente novamente. E quando eu fizer exatamente a mesma pergunta de antes, qual sessão devo visitar para aprender mais sobre o GDPR? Você pode ver que ele chama a ferramenta de execução de consulta ESQL e gera algo que parece ser um ESQL válido.
+
+Não espero que ninguém esteja muito familiarizado com ESQL. O problema é que o ESQL não usa o sinal de porcentagem como caractere curinga. E em ESQL, você usaria o asterisco. Nesse caso, o algoritmo está procurando por sinais de porcentagem, GPA e sinais de porcentagem nos dados como uma correspondência exata. É por isso que, na verdade, está retornando zero resultados de pesquisa.
+
+E é justamente ao trabalhar com ferramentas de busca que isso também é extremamente importante considerar. Retornar zero resultados de pesquisa é realmente uma resposta válida ou é um sinal de falha? Certo? OK. Como posso superar isso? Eu
+
+provavelmente poderia escrever uma descrição mais detalhada da ferramenta, dar um pouco mais de ajuda sobre como escrever parâmetros melhores. Eu poderia reforçar isso no prompt do sistema, dando mais instruções por lá. Ou eu poderia usar uma habilidade de agente, porque você precisa de mais documentação do que apenas uma linha de código, certo? Agora vou mostrar como adicionar uma habilidade de agente. Então, neste caso, vou escrever minha própria habilidade de agente personalizada, bem curta. Uma
+
+pergunta rápida. Com quem você já usou e interagiu com habilidades de agente? Ok, uma boa quantidade. Então, vou escrever um texto bem curto aqui. Existem habilidades oficiais do agente Elasticsearch disponíveis caso você queira experimentá-las . Nesse caso, estou
+
+usando os meus próprios, personalizados. Então, funciona assim: você tem o nome da habilidade e também a descrição da habilidade, que são inseridos no prompt do sistema. Então, apenas se você escrever em Markdown, é o meta front-end que é injetado no prompt do sistema e, quando você precisa, mais informações sobre a habilidade do agente são carregadas na janela de contexto. Isso é chamado de divulgação progressiva, onde você adiciona mais informações sobre a habilidade conforme necessário. Neste caso, tenho algumas instruções mínimas, como a estrutura básica de uma consulta ESQL.
+
+O ESQL usa aspas duplas para literais de string. Apenas algumas regras de sintaxe muito básicas. E também adicionei mais informações sobre o padrão curinga para que esse erro não se repita. E como mencionei, o Langchen possui um código padrão que você pode simplesmente copiar e reutilizar para usar com habilidades de agente. Então vou pular essa parte. Tudo que você precisa
+
+saber é que temos uma ferramenta, uma ferramenta de carregamento de habilidades, e ela é injetada... desculpe, ela é combinada com algo chamado middleware de habilidade. Vamos pular esta parte, pois não é relevante para a nossa sessão.
+
+E agora tudo que eu preciso fazer é adicionar e editar a descrição da minha ferramenta de busca de uso geral. Então, esta é exatamente a mesma ferramenta que eu tinha antes, exceto que desta vez estou adicionando uma relação: estou dizendo para sempre usar a habilidade ESQL do Elasticsearch para gerar a consulta ESQL antes de usar esta ferramenta, porque, caso contrário, se o agente ainda usar esta ferramenta primeiro sem usar a habilidade do agente, isso seria uma pena. Certo, estou fazendo exatamente a mesma coisa. Portanto, estou reforçando isso agora no prompt do sistema. Estou dizendo a mesma coisa: use primeiro a habilidade de agente do Elasticsearch antes de chamar a ferramenta de busca de propósito geral. E agora estou conectando-o
+
+ao agente novamente. Dessa vez, o sistema LLM solicitou a ferramenta de carregamento de habilidades . Tenho a habilidade de middleware e também minha ferramenta de consulta ESQL de uso geral. E agora, quando eu pergunto ao agente qual sessão devo visitar para saber mais sobre o GA, você pode ver que primeiro ele carrega a habilidade. Então, na verdade, ele carrega tudo o que está na parte principal da habilidade para a minha janela de contexto.
+
+E então, desta vez, ele gera um SQL perfeitamente válido, com o asterisco representando minha porcentagem e usando-o como caractere curinga. E você pode ver que ele realmente encontra a sessão correta. E agora me informa que às 10h40, ou seja, depois desta sessão, eu devo ir a esta outra sessão para aprender mais sobre GPA e como pronunciá-lo corretamente. Ok, o que também é legal nisso é que agora o agente pode fazer muitas coisas, certo? Também pode realizar agregações.
+
+Então, se eu perguntar algo como "quantas sessões existem em 8 de abril?", você pode ver que ele carrega novamente a ferramenta ESQL do Elasticsearch. E então ele escreve uma consulta ESQL. Ops. Escreve uma consulta ESQL que utiliza um filtro. Portanto, está filtrando para 8 de abril.
+
+E depois também faz uma agregação, uma contagem, e me diz que hoje há 27 sessões. Isso é ótimo porque, se eu fizer uma busca, digamos, pedindo para ver quais sessões são do dia 8 de abril, ele só fará uma busca filtrada, certo? Então imagine que isso me desse uma lista de todas as 27 sessões de hoje e deixássemos o agente contar quantas sessões existem. Isso provavelmente não seria muito bom, porque todos sabemos que os agentes ou os sistemas de gestão de aprendizagem (LMS) são notoriamente ruins em contabilizar coisas. E também preencheria a janela de contexto, certo? Então, ao deixar o
+
+agente fazer seus próprios cálculos, ou seja, ao terceirizar a parte do cálculo para a ferramenta de busca, é uma maneira bastante eficiente de fazer isso, certo? Alguma pergunta até agora?
+
+Ok, vamos mudar de assunto. Hum, esse é um assunto muito em voga no momento. Talvez você já tenha ouvido a discussão sobre como um agente só precisa de uma ferramenta de linha de comando e um sistema de arquivos. Então, eu trabalho na Elastic, mas não discrimino ninguém. Vamos analisar os sistemas de arquivos e como fazer isso, porque acho que é um tópico muito interessante em geral.
+
+Então, o que eu fiz aqui foi preparar os dados, desta vez, em um sistema de arquivos local. Então, eu tenho uma pasta chamada "dados da sessão" e dentro dela tenho os dados de cada tipo de sessão, como palestras e workshops. Tenho outra pasta e nela, para cada sessão, há um arquivo com a seguinte aparência . Então, com um título, alguns metadados e a descrição. E agora vou mostrar como você pode usar a ferramenta shell com isso.
+
+Então, estou voltando para o GPT 5.4 nano porque os LM são geralmente bons em navegar por sistemas de arquivos e escrever comandos de shell. Portanto, o GPT 5.4 nano é suficiente. Neste caso, eu defino outro prompt do sistema. Então, a
+
+primeira parte da mensagem do sistema é exatamente a mesma que tínhamos antes. E o que estou fazendo desta vez é, em vez de explicar como os dados estão estruturados no Elasticsearch, explicar como os dados estão estruturados no meu sistema de arquivos local. Certo, então vamos usar a ferramenta de shell. Preciso fazer uma ressalva. Utilizar a ferramenta de shell pode ser arriscado, já que dar acesso a um terminal ao seu agente pode fazer com que ele exclua arquivos ou execute outras ações indesejadas. Portanto, é
+
+sempre recomendável usá-lo em um ambiente de sandbox. Além disso, o langun não possui nenhuma proteção por padrão. Portanto, tenha cuidado ao usar este produto. Mas fora isso, é muito fácil de usar. Então você pode simplesmente importar a ferramenta shell e instanciá-la aqui. E
+
+aqui você pode ver como usá-lo. Portanto, ele recebe o parâmetro de comandos. Então, quando eu digo "echo hello world", você pode ver aqui embaixo que ele realmente imprime "hello world" no meu terminal. E então tudo o que você precisa fazer é conectar novamente o LLM, o prompt do sistema e a ferramenta de shell. E agora você pode perguntar exatamente a mesma coisa que perguntamos antes. Então,
+
+existem sessões sobre GPA? E você pode ver aqui que se chama terminal, mas é o agente que usa a ferramenta shell e que, na verdade, escreve alguns comandos. Primeiro, ele analisa a estrutura de pastas e depois executa alguns comandos de captura. Portanto, está procurando o GPA nos dados da sessão e acho que está procurando as primeiras 50 entradas. Como você pode ver, ele analisou a estrutura de pastas e também encontrou a sessão da qual estávamos falando anteriormente.
+
+Mas como eu estava analisando apenas as primeiras 50 sessões e encontrei apenas uma, o sistema decidiu que provavelmente deveria analisar os dados de toda a sessão. Assim, ele encontra exatamente a mesma sessão novamente. Então, desta vez, ele decide: "Ok, então provavelmente devo analisar o conteúdo desta sessão." Agora ele lê todo o conteúdo do arquivo. E aqui você pode ver as informações da sessão como uma resposta da ferramenta.
+
+E então, no final, o agente me informa qual sessão devo visitar. OK. O Grab funciona com base em correspondências exatas, certo? E um reg. E eu só quero mostrar isso para vocês porque acho engraçado como agentes surpreendentemente bons se saem com bash, já que eles meio que conseguem "trapacear" na busca semântica.
+
+Deixe-me mostrar-lhe isto.
+
+Então, quando pergunto quais sessões discutem o tratamento de restrições regulatórias, essa foi a nossa consulta de busca semântica desde o início. Você pode ver que ele analisa novamente a estrutura de pastas e, em seguida, no primeiro comando ou na primeira pesquisa que realiza, procura por "regulate". É justo. Está em busca de regulamentação para fins regulatórios. Acho que isso já é um bom começo. Mas
+
+aí a coisa foi adiante e agora só fica juntando um monte de sinônimos. Portanto, busca conformidade. Está à procura de restrições. Está procurando por GDPR. Está em busca de governança.
+
+Sim, acho que é justo. Hum, acho que na verdade ele encontra várias sessões. Então, é tipo, ok, deixa eu tentar vários outros sinônimos. Então, agora está buscando novamente regulamentação, conformidade, GDPR, RP, soenity. Hum, acho que sim, a lista continua. Ele
+
+simplesmente analisa uma série de sinônimos diferentes e, na verdade, consegue fazer isso com sucesso, encontrando a sessão ao construí-la e retornando as informações da sessão, e então consegue responder corretamente. Acho que funciona. Essa é a maneira mais eficiente de fazer isso? Provavelmente não. Quero dizer, apenas como um exemplo.
+
+Então, digamos que você queira pesquisar algo como filmes com super-heróis animais ou algo do tipo. Você realmente quer que seu agente procure uma lista de todos os animais possíveis? Você encontrará todos os filmes de super-heróis com super-heróis animais? Provavelmente não. Então, funciona.
+
+É o melhor? Deixo a decisão para você. Atualmente, existem muitas alternativas diferentes de busca semântica disponíveis. Hum, acho que tem um da Llama Index chamado Sam Tools. Existe um muito interessante da Light chamado Coal Grap, baseado em incorporações multivetoriais.
+
+Há também uma da nossa própria Gina, chamada Gina Grap. Bem, hoje vou mostrar a vocês como é fácil usar isso em conjunto com o seu agente. Então, tudo o que você precisa fazer é instalar o Gina CLI e, em seguida, informar ao seu agente que ele agora tem acesso a essa ferramenta ou ao CLI. Portanto, esta é exatamente a mesma mensagem do sistema que eu tinha antes. Agora, com a diferença que estou explicando, é que ele funciona da maneira correta.
+
+Aqui estão alguns exemplos de como você pode usar Gina Grap. Apenas um aviso: Gina Grap tem muitos estilos diferentes. Você pode usá-lo para classificação de um. Você pode usá-lo para reclassificação. Hoje vou mostrar apenas como usá-lo para busca semântica.
+
+E no final, também explico ao agente quando ele deve usar o comando "grap" e quando deve usar o comando "gina grab". Só para que ele saiba que, para correspondências exatas, você provavelmente ainda vai querer usar o grap. E para uma pesquisa semântica mais aprofundada ou consultas aproximadas, use ` gina grap`. E depois, conectando isso ao meu agente novamente. E agora, quando executo exatamente a mesma consulta de pesquisa semântica que tínhamos anteriormente. Então,
+
+quais sessões discutem como lidar com restrições regulatórias? Você pode observar o mesmo comportamento. Então, ele chama a ferramenta de terminal. Primeiro, ele explora a estrutura de pastas e, em seguida, consegue usar o comando `gina grab` corretamente na primeira tentativa . Então, ele está procurando por restrições regulatórias e, de repente, encontra a sessão do Bill na primeira tentativa.
+
+Encontra alguns outros porque está procurando por 10. Hum, diz que retornou os k melhores de 10 e então consegue me responder corretamente. Legal. Tudo bem. Alguma pergunta até agora?
+
+Bom. Então eu volto atrás.
+
+Então, hoje estávamos analisando várias ferramentas diferentes. Percebemos a imensidão do panorama de ferramentas disponíveis. Bem, eu mostrei algumas das ferramentas de busca que temos. Agora, algumas recomendações práticas sobre quando usar cada tipo de produto. Então, talvez possamos começar por aqui. Se você está
+
+procurando uma solução milagrosa, provavelmente esse não é o caminho certo. Novamente, se você parar para pensar, fazer uma boa pesquisa é incrivelmente difícil. Idealmente, você deve ter ou selecionar o conjunto certo de ferramentas de busca para os comportamentos de busca de seus agentes, combinando ferramentas especializadas com ferramentas de uso geral. Assim, ferramentas especializadas são algo que o agente pode usar imediatamente. Algo com um parâmetro muito simples, algo em que você não precise de um LLM muito poderoso.
+
+Sabe, o agente não vai cometer muitos erros. O agente pode usar essa ferramenta imediatamente, sem precisar configurá-la. Na Elastic, gostamos de pensar nisso como ter um limite mínimo baixo. Portanto, este é um conceito da experiência do usuário, onde o agente pode simplesmente usar uma ferramenta sem cometer muitos erros. Além disso, é eficiente, pois não precisa executar a ferramenta várias vezes. Você pode pensar nisso como a
+
+ferramenta de busca semântica que tínhamos antes. Talvez você precise pesquisar clientes por ID com frequência. Nesse caso, ter uma ferramenta especializada para essa operação específica seria útil. Mas, ao mesmo tempo, você também quer dar ao agente um teto de possibilidades elevado. Isso significa que, para consultas inesperadas, para perguntas complexas, você quer que o agente ainda seja capaz de lidar com essas perguntas, certo? E não ficar
+
+limitado a essas ferramentas especializadas e pensar: " Eu não consigo resolver isso". Nesse caso, algo como uma ferramenta de linha de comando ou aquela ferramenta de execução de consultas de uso geral que tínhamos antes seria muito útil. Mas o problema com a ferramenta de execução de consultas ou a ferramenta de shell que você viu anteriormente é que, como ela é de propósito geral, o agente às vezes pode precisar de várias iterações para chegar à resposta correta. Certo? Portanto, esta é a minha recomendação prática de ter um conjunto equilibrado de ferramentas de busca, com um limite mínimo de exigência e um potencial máximo de sucesso .
+
+Tudo isso é ótimo quando você já conhece o comportamento dos seus agentes, mas se você ainda não conhece o comportamento de consulta dos seus agentes , recomendo começar com uma ferramenta de uso geral. Em seguida, registre o comportamento do seu agente. De modo geral, é recomendável registrar o comportamento de seus agentes . Mas, se você reparar, talvez seu agente esteja atendendo quatro ou cinco ligações para cada pergunta. São muitas chamadas de ferramentas. Então, provavelmente
+
+isso indica que a ferramenta que seu agente possui é muito difícil para ele usar. Então, definitivamente, analise o que o agente está tentando resolver, talvez seja melhor procurar algo mais especializado nesse caso, certo? Além disso, se você notar comportamentos específicos de consultas UM , foi isso que eu pessoalmente fiz com meu teste de abertura de garra. Eu estava usando a ferramenta exec e comecei a registrar seu comportamento, e obviamente estava mexendo com bancos de dados. Então, depois de três dias, perguntei que tipo de padrões interessantes ele observava e ele me recomendou implementar algumas ferramentas de busca específicas para interagir com o banco de dados, porque, por padrão, ele só usava a ferramenta exec.
+
+Tudo bem. Comece com ferramentas de uso geral se você ainda não conhece o comportamento dos seus usuários . Interrupções de registro e interfaces de aplicativos criadas especificamente para esse fim. É, foi muita informação para assimilar. Hum, tenho certeza de que vocês têm muitas perguntas, então vou abrir para perguntas e respostas. E
+
+, na saída, não se esqueça de pegar alguns adesivos. E muito obrigada por participar da minha sessão.
+
+Acho que vem aí um microfone. Obrigado. Então, você diria que o conjunto de ferramentas necessário também depende principalmente do modelo que você está disposto a usar? Então, se você estivesse usando um modelo muito bom, usar a ferramenta de shell ou a ferramenta de busca poderia ser suficiente, mas um modelo muito pequeno e um agente leve podem precisar de ferramentas mais especializadas. Sim, na verdade, acho que em nossos testes internos percebemos que uma ferramenta mais poderosa reduz a taxa de erro dos parâmetros em uma quantidade significativa, não sei os números exatos, mas foi uma redução considerável . Portanto, ter um modelo mais robusto
+
+definitivamente ajuda para ferramentas de uso geral, mas acho que não se pode esperar que, só porque você tem um modelo muito robusto, não haverá erros, se é que isso faz sentido. Sim.
+
+Obrigado pela ótima conversa. Hum, eu tenho uma pergunta. Talvez seja um pouco fora do assunto, mas, bem, agora estamos falando de um rack genérico, porém ele tem a desvantagem de apresentar uma latência maior em comparação com um rack típico. Então, você recomendaria ter um segundo caminho para perguntas simples, para respostas rápidas? E como você orientaria o agente a escolher a opção correta, já que acho difícil dizer qual pergunta deve ser respondida por um profissional ou por um especialista?
+
+Essa é uma boa pergunta. Não acho que tenha uma boa resposta agora. Acho que talvez eu estivesse envolvido em algo relacionado. Recentemente me perguntaram se, caso eu tenha um sistema de pano, deveria substituí-lo por um pano sintético. E acho que isso meio que segue a mesma linha de raciocínio sobre quando você realmente precisa de um pano antibacteriano, certo?
+
+Provavelmente para muitos casos de uso. Sei que o pano já foi descontinuado muitas vezes, mas acredito que, na realidade, ele ainda é muito eficaz para diversos casos de uso. Como você alternaria entre um pano e um pano agético? Não tenho certeza, porque presumo que seja necessário algum tipo de lógica quase agentiva para alternar entre eles. Então, não tenho certeza. Desculpe.
+
+Em casos como, por exemplo, quando você tem um caractere curinga no GAPA, por que não podemos simplesmente usar uma ferramenta híbrida que busque e substitua os caracteres curinga incorretos comuns provenientes do SQL pelos corretos, por exemplo? Não tenho certeza se entendi sua pergunta corretamente. Quer dizer, existem casos em que o agente não sabe como escrever a consulta correta porque talvez ele pense que os marcadores de posição vindos do SQL se aplicam ao ESQL, mas então por que não usamos uma ferramenta híbrida que detecte e substitua o marcador de posição incorreto, o símbolo de porcentagem, pelo asterisco? Sim, na verdade, o exemplo que eu te mostrei usando a habilidade do agente não era necessariamente a solução ideal. Você também pode adicionar algumas instruções muito simples para ESQL: não use o sinal de porcentagem como caractere curinga.
+
+Funciona mesmo. Eu experimentei quando estava criando a demonstração. Mas aí, quando o agente for executado na próxima edição, você começa a adicionar a próxima parte da documentação. Então você pode começar a escrever toda a documentação ESQL do zero no prompt do sistema. Sim, para fins de demonstração teria funcionado, mas provavelmente não é a maneira ideal de fazer isso ao construir algo mais robusto, certo? Porque se
+
+você simplesmente adicionar pequenos curativos sempre que encontrar um erro, o que acontecerá quando se deparar com o próximo caso extremo? Faz sentido? Sim.
+
+Olá, muito obrigada pela apresentação maravilhosa. Tenho uma pergunta. Na demonstração, mostramos como fazer uma busca ativa com a ferramenta DB Curious e também com uma ferramenta de shell. Na prática, você recomendaria combinar as duas ferramentas, validar os resultados de cada uma e, em seguida, adicionar a confiança obtida pelo modelo de linguagem? Você recomendaria fazer isso em um contexto prático?
+
+Sim. Sim. Essa é uma ótima pergunta. Além disso, estou meio que trapaceando nesta demonstração, certo? Porque estou mostrando apenas uma ferramenta por demonstração. Na realidade, você
+
+teria algo mais parecido com um conjunto de ferramentas diferentes, onde você teria que decidir, ou o agente teria que decidir, qual ferramenta usar. Acho que houve uma postagem muito interessante no blog da Versel, se não me engano, e eles fizeram um experimento. Acho que se chama, se você quiser pesquisar, " testing is all you need" (testar se o bash é tudo o que você precisa) é o título, se não me engano, da postagem do blog. E eles realmente fizeram uma espécie de teste comparativo ou avaliação de um agente com uma ferramenta bash, um agente apenas com ferramentas de busca de arquivos, se não me engano, e um agente com ferramentas de banco de dados . E no final, eles também tinham um agente com uma ferramenta bash e a ferramenta de banco de dados . E eles perceberam que aquilo era
+
+superinteressante. Bem, para um conjunto específico de consultas, onde você tem consultas analíticas, este é um caso de uso específico. Na verdade, a ferramenta de banco de dados foi mais eficaz, mas, por outro lado, a ferramenta de busca de arquivos é muito eficaz, como você viu, para encontrar coisas rapidamente. Mas o aspecto mais interessante foi que o agente híbrido, com a ferramenta bash e a ferramenta de banco de dados UM, alcançou a maior precisão, pois acredito que primeiro utilizou a ferramenta de banco de dados e depois verificou os resultados com o shell, usando a ferramenta de shell. Isso levou o agente a obter uma precisão melhor. Então, acho que essa
+
+foi uma maneira muito interessante de observar o comportamento dos agentes. Obrigado por compartilhar. Só uma
+
+perguntinha rápida. Bem, se usarmos a ferramenta de busca semântica, acho que na prática provavelmente usaríamos algum tipo de limite para filtrar os resultados e não obter algo se não houver resposta. Mas, no regime agentivo, você diria então: "Ok, vamos definir um limite conservador para não confundir nosso agente", ou diria que o agente é inteligente o suficiente para perceber isso mesmo se obtivermos resultados que não sejam realmente relevantes ? Sim, essa é uma ótima pergunta. Bem , nos exemplos que você provavelmente viu, o agente estava retornando.
+
+Acho que no último exemplo do genograph, você pode ver que ele está retornando os K melhores resultados, sendo que apenas o primeiro é o realmente relevante. E eu acho que, como o agente faz um pequeno raciocínio sobre se os resultados da pesquisa são relevantes para a consulta, acho que hoje em dia ele é muito melhor em filtrar o que não é relevante. Mas aí você corre o risco, se tiver conversas mais longas, de que esses resultados de pesquisa permaneçam na sua janela de contexto por muito tempo, o que pode confundir seu agente a longo prazo. Então, acho que depende do seu caso de uso, de como o seu agente pode lidar com resultados de pesquisa irrelevantes. De um modo geral, com base nos resultados da pesquisa, é possível filtrar o que é irrelevante.
+
+Ah, obrigado pela conversa. Incrível. Você está utilizando subagentes para essas consultas de pesquisa? Porque, sim, se deixarmos que eles decidam, será relevante usar uma pergunta como "sim, isso é feito no framework Reggas, por exemplo, para avaliação"? Quero dizer, subagentes ajudariam muito.
+
+Você tem alguma experiência com eles? Infelizmente não. Ainda não experimentei com subents. Posso apenas dizer que sei, por exemplo, que no Cloud Code eles usam subentidades para realizar tarefas de busca específicas. Acho que havia uma postagem no blog sobre como eles estão usando um subagente para responder a perguntas específicas sobre o código Claw, porque é um tipo de pergunta de nicho que um usuário faria. Nesse
+
+caso, eles meio que terceirizaram sua expertise para um subagente. Então, ter um subagente para questões específicas de nicho seria interessante, eu acho, mas não tenho muita experiência nisso. Ok. Obrigado. Hum, posso fazer mais uma pergunta?
+
+Claro. Puxa, esqueci . Desculpe, tentarei responder mais tarde. Sim
+
+, eu meio que me desviei do assunto, mas você falou sobre habilidades e a grande vantagem das habilidades é ter a descrição no prompt do sistema e, sempre que necessário, podemos carregar a habilidade completa. Você tem alguma recomendação sobre quando e como limpar o aviso do sistema novamente? Então, como queremos manter a janela de contexto pequena, e talvez para uma sessão longa, possamos ter até 10 habilidades completas no contexto, e sim, não tenho certeza, Joe, você tem uma resposta melhor, alguma ideia? Então, o que fazemos é aprender as habilidades, mas depois terceirizamos algumas tarefas. Então, quando o contexto é
+
+muito pequeno, mas... sim, a maneira como estamos fazendo isso nos bastidores é fornecendo esse tipo de divulgação progressiva de habilidades. Então, estamos fornecendo os nomes e descrições das habilidades, a localização dentro do armazenamento de arquivos e, a partir do armazenamento de arquivos, carregamos a habilidade na janela de contexto quando precisamos dela e a descarregamos assim que o programa, você sabe, a janela de contexto avança antecipadamente em torno disso. Então temos
+
+esse tipo de opção mais sob demanda . E o mesmo se aplica à nossa compactação, como a compilação de contexto, e é isso que eu aconselharia você a fazer. Como algumas das perguntas sugerem, tente usar o armazenamento de arquivos o máximo possível e tenha essas ferramentas também, como a capacidade de acessar o armazenamento de arquivos quando quiser ver resultados de ferramentas anteriores e, em seguida, usá-los a partir daí. Agradeço também ao meu colega Joe, da Elastic .
+
+Incrível. Se não houver mais perguntas, vou deixar vocês irem para o intervalo do café. Mais uma vez, não se esqueçam de pegar alguns adesivos e ficarei feliz em conversar nos corredores se alguém estiver interessado. Muito obrigado.

@@ -1,0 +1,551 @@
+---
+video_title: "Full Walkthrough: Writing & Using Skills — Nick Nisi and Zack Proser"
+video_id: pFsfax19yOM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=pFsfax19yOM
+video_date: 2026-05-06T17:00:06+00:00
+video_description: |
+  Write once, run in Claude, Codex, Cursor, and your own agents
+  
+  Every developer using AI tools has the same problem: they prompt the same way, for the same tasks, over and over. Skills fix this. A skill is a portable unit of agent behavior that teaches any AI tool how to do a specific job. Write one, drop it into your editor, and it just works. Across tools. Across teams.
+  
+  Most people don't know this primitive exists. In this hands-on workshop, you'll write real skills, test them live, and see how one file can power Claude.ai, Claude Code, Cursor, and Codex without changing a line.
+  
+  Then we'll go deeper. You'll see how one CLI uses this same pattern to power 15 framework integrations — each one a skill composed with others, wired into an agent that installs and configures auth!
+  
+  
+  What you'll do:
+  
+  Write 2+ skills for tasks you actually do at work
+  
+  Install and test them across AI tools in real time
+  
+  Learn the craft of good skill writing — specificity, constraints, composability
+  
+  See how skills compose and scale inside a real CLI powered by the Claude Agent SDK
+  
+  Speaker info:
+  - Nick Nisi  |  https://nicknisi.com/about/
+  - Zach Proser  |  https://zackproser.com/
+---
+Este workshop vai abordar o desenvolvimento de habilidades em larga escala. Estamos muito felizes por estarmos aqui com vocês hoje. Haverá uma parte interativa e também queremos que vocês se sintam à vontade para nos interromper e fazer perguntas ao longo da apresentação. Sim, vamos mostrar esse slide novamente com o código QR e as instruções para clonar o repositório. Esse repositório contém as habilidades em que estamos trabalhando, além dos slides que vamos apresentar. Assim,
+
+você terá tudo isso como material de referência. Eu sou Nick Nisi. Sou engenheiro de experiência do desenvolvedor na WorkOS. Meu nome é Zach Prosser. Também sou engenheiro de experiência do desenvolvedor na WorkOS e fazemos parte da equipe de IA aplicada.
+
+E isso é como trabalhar com agentes, é exatamente o que fazemos agora. Zach, quando foi a última vez que você escreveu uma linha de código sozinho? Acho que gravei um CD em formato de diretório recentemente. Caso contrário, já devem ter se passado uns seis ou oito meses. Talvez por mais tempo. Sim.
+
+Mesmo. Mesmo. Estamos no início da era do Opus 3.5. De copiar e colar em interfaces gráficas até os dias de hoje.
+
+Melhorou bastante e eu não sei. Existe um mito por aí de que vai ficar ainda melhor. Somos a WorkOS e, se você estiver interessado em obter segurança MCP, por exemplo, ou simplesmente em configurar o sistema para essa nova startup de agentes em que você está trabalhando, entre em contato conosco. Há vários de nós aqui vestindo essas camisetas e teríamos prazer em conversar. Também estamos contratando. Então,
+
+agradeço também ao instalador de IA que o Nick criou. Você nem precisa mais configurar e instalar nada por conta própria. Ele pode fazer isso por você. É muito fácil começar. Claro que sim.
+
+Tudo bem. Como você sabe, quando se trabalha com esses sistemas, cada conversa começa do zero. É como se você estivesse sempre passando novas informações para ele. Você precisa reiterar como faz as coisas e Claude, por exemplo, nunca se lembra de ter falado com você. É como se fosse uma conversa que se prolonga, e por isso temos que fornecer essas informações de forma atualizada a cada vez.
+
+Sim. Então, por exemplo, digamos que você tenha uma habilidade ou que esteja conversando em abas de terminal diferentes. Você analisa diferentes bases de código ao longo de uma semana. Toda vez que você começa a falar com isso, precisa primeiro recarregar todo esse contexto e dizer: " É com isso que eu me importo." É assim que fazemos as coisas por aqui. É com isso que estamos
+
+particularmente preocupados, certo? Isso acaba consumindo muito tempo e te atrasando. Sim. E, claro, existem arquivos como agent.md ou Claude.md, nos quais você pode
+
+inserir informações sobre o repositório ou sobre sua forma de trabalhar, como em um diretório global, para que o sistema possa se lembrar disso e entender as configurações sempre que necessário. Você está dando essa instrução a cada vez, como se estivesse acrescentando algo, para que o programa se lembre: "Ah, neste projeto, usamos Vtest e PNPM, então você deve usá-los sempre". Então, isso pode ser uma forma de dar alguma memória para que ele entenda como proceder. Mas ainda pode errar. Ainda assim, pode decidir não seguir as coisas que você definiu. Com certeza já me deparei com casos
+
+em que eu dizia "faça isso, isso e depois aquilo" e o programa pulava uma etapa no meio, e eu me perguntava "por que você pulou isso?". Foi tipo, ah sim, você me mandou fazer isso. Eu não estava com vontade, e é assim que você sabe que é um engenheiro de verdade. Sim, uma das vantagens das habilidades é que você pode pensar nelas como uma unidade de trabalho discreta, onde você pode codificar tudo o que é super importante para você. Tudo aquilo que você não
+
+quer perder. Tudo aquilo que você não quer repetir. É quase como levar o padrão seco para a era da inovação, sem se repetir. Como veremos, isso se torna incrivelmente poderoso, independentemente de você ser um desenvolvedor solo trabalhando em sua própria startup com 12 agentes ou se estiver em uma equipe de desenvolvimento tradicional com 12 membros. Sim. Ele não sabe o que você sabe, então
+
+você precisa ser muito específico e minucioso sobre o que deseja que ele saiba, porque nem sempre ele vai descobrir sozinho . Às vezes parece mágica, porque simplesmente acontece, mas muitas vezes é preciso esforço para que isso aconteça. E é isso que são arquivos de memória como o claw.md e outros arquivos de memória. Ele até possui recursos como o Claw, por exemplo, que tem sua própria memória interna, onde registra informações que considera pertinentes à sua forma de trabalhar ou ao projeto em que está trabalhando, e as salva automaticamente.
+
+Sim. E, claro, isso também funciona em um contexto de projeto único com alguns daqueles arquivos que o Nick mencionou, mas, novamente, o problema é que você ainda está vinculado a esse repositório. É preciso que os membros da sua equipe se lembrem de atualizar essa habilidade específica do projeto caso queiram ter acesso ao contexto. Não existe necessariamente uma execução de script integrada . Então, como se chega a um resultado determinístico quando se está tendo uma conversa não determinística com um mestre em Direito? E eventualmente
+
+isso começa a ficar bem nojento. Sim. Então. E existem desvantagens nisso, especificamente nesses arquivos de memória, que podem estar vinculados aos repositórios em que você está trabalhando ou se você precisar colocá-los globalmente, afetando tudo. E você não pode fazer coisas como, por exemplo, dar mais inteligência a ele, tipo, executar esse script. Você pode, mas não é algo que vem
+
+integrado, por assim dizer. Mas é que as coisas que você coloca lá nem sempre são transferíveis ou portáteis para outros projetos em que você esteja trabalhando, então precisamos de uma maneira melhor de fazer isso. E as habilidades são o próximo passo. Sim, com certeza. É uma forma de tornar as coisas mais portáteis, e você pode usar scripts para injetar dados reais, e pode torná-los componíveis, de forma que sejam muito pequenos e focados exatamente no que você quer que façam.
+
+Dessa forma, eles ocupam pouco espaço na sua janela de contexto, mas você também pode criá-los de forma que só sejam aplicáveis quando você realmente quiser fazer o que aquela habilidade foi configurada para fazer. Assim, você não fica sobrecarregando o contexto com tudo desde o início, como acontece com o claw.md. Sim. Então, se você nunca viu ou ouviu falar de uma habilidade antes, basta nivelá-la rapidamente. Poderia ser algo tão simples quanto um
+
+único arquivo Markdown estático, sem nenhum script. Mas vamos analisar a diferença do que poderia acontecer. Vamos imaginar que estamos realizando um "roasing" em um repositório ou integrando um novo membro à equipe. Queremos garantir que eles estejam bem informados sobre como as coisas funcionam por aqui. Sem uma habilidade, se você estiver conversando com qualquer agente genérico sem nenhum contexto específico inserido, você vai ouvir: "Ok, parece muito bom." Serão
+
+conselhos genéricos. Pode ser que encontre algumas oportunidades fáceis . Se, em vez disso, você usar apenas 30 linhas de Markdown específicas para o seu caso de uso, suas convenções e suas restrições. Você pode começar a receber feedbacks muito, muito específicos sobre " É assim que lidamos com o roteamento neste projeto. Seguimos commits semânticos e tudo mais.
+
+E temos desvios no README aqui, o que é inaceitável, certo?" Portanto, pode ser necessário apenas 30 linhas de Markdown ou menos. E essa é uma das primeiras coisas que torna as skills incrivelmente poderosas: o investimento necessário é mínimo, podendo ser algo tão simples quanto um pequeno arquivo Markdown que se transforma em uma unidade de trabalho componível, compartilhável entre diferentes bases de código e com sua equipe. Sim. E você está codificando exatamente o que deseja que ele faça e tem a liberdade de se expressar exatamente da maneira que quiser. E
+
+existem diversas maneiras e técnicas diferentes que abordaremos ao longo deste workshop. Mas é muito melhor ter essas habilidades e saber que elas existem, e saber não apenas que você pode usá-las, mas também estruturá-las de forma que o mestrado em Direito possa decidir usá-las quando fizer sentido. E isso vai te dar uma única maneira repetível de fazer essa coisa da forma que você espera. Se eu simplesmente disser algo genérico como: "Olha isso e me diga o quão bom é esse repositório." Dependendo do modelo que você estiver usando, e talvez da quantidade de processamento que você ativou, etc., ele pode fornecer
+
+mais ou menos informações, mas nunca será exatamente a mesma coisa todas as vezes. Se você quer algo em um formato muito específico, se quer este relatório exatamente desta forma, é para isso que serve uma habilidade. Você está ensinando o aluno de mestrado em Direito (LLM) a fazer algo da maneira que você espera que seja feito, e então ele seguirá isso muito mais de perto. Muito bem, vamos dar uma olhada em como uma habilidade típica pode ser estruturada. Então, novamente, poderia ser skill.md, algo tão simples
+
+quanto um arquivo Markdown. Na parte superior, você notará uma seção introdutória. Então, pense em qualquer outro lugar onde você tenha usado um sistema baseado em YAML, quase como cabeçalhos, certo? Em outros idiomas ou formatos. Mas você tem um nome, uma descrição, e essa descrição é incrivelmente poderosa e carregada de significado. É isso que o
+
+LLM usará em tempo de execução para, essencialmente, realizar o roteamento e determinar se essa habilidade é relevante para a tarefa que você lhe atribuiu. Então, é mais ou menos assim que a IA encontra e direciona você para sua habilidade. Além disso, você pode fornecer contexto adicional e até mesmo roteiros, de forma que considere isso como uma opção ou uma porta de entrada para intercalar o determinismo com a conversa não determinística do LLM. Sim. Portanto, o mais importante aqui é exatamente o que Zach disse: o nome e a descrição.
+
+É um equívoco pensar que as habilidades se resumem a um único arquivo Markdown. Claro que podem ser, mas são mais como uma pasta com um arquivo skill.md dentro. E aí eles podem colocar qualquer outra coisa lá dentro também. E nós conversaremos sobre isso, mas eles podem ter referências a outras coisas que queiram saber. Podem existir scripts que
+
+devem ser executados, imagens e todo tipo de coisa diferente. E depois use isso de diferentes maneiras. Mas, desde o início, a parte mais importante é a descrição, sobre a qual falaremos. Vamos também falar sobre restrições. Uma das coisas que não é muito intuitiva é que pode ser mais eficaz simplesmente definir algumas restrições em vez de ser excessivamente prescritivo sobre exatamente como você quer que a tarefa seja feita. Portanto, se você fornecer apenas três
+
+restrições e disser: "Nunca seja vago." Ou "Ao citar um código, ele sempre precisa conter uma linha específica e uma referência de commit do Git ." Então você terá um desempenho melhor do que se acabar, sabe, divagando no meio de um arquivo Markdown, transformando-o em um romance. Na verdade, esse é um erro comum no desenvolvimento de habilidades. Então, hoje vamos juntar tudo isso em uma habilidade que vamos desenvolver aqui na oficina, chamada simplesmente de "repo roast". Tentamos pensar em uma
+
+habilidade genérica e divertida que seja aplicável a qualquer pessoa que trabalhe com JavaScript ou outras linguagens, mas também, mesmo que você não tenha muita noção do que é um repositório GET, isso ainda pode ser útil para você. Então, de certa forma, transcende tudo isso e geralmente é algo útil para todos, além de ser divertido. Podemos levar isso mais ou menos a sério enquanto implementamos, o que permitirá bastante criatividade ao longo do processo. E sinta-se à vontade para usar isso também como um espaço para inserir as restrições ou requisitos reais que você tem no trabalho e com os quais está tendo dificuldades ou que está testando. Então, vamos estabelecer uma base e, a partir daí, você poderá começar a personalizar. Teremos
+
+tempo para compartilhar e discutir as alterações mais tarde. Então, este é aquele slide do início. Se ainda não o fez, faça o download, clone este repositório e trabalhe nele. Já dominamos o básico dessa habilidade. E o que vamos fazer é simplesmente configurar tudo para que você possa personalizar do seu jeito. Temos algumas
+
+diretrizes gerais e dicas a seguir, mas a parte divertida será ter uma sala cheia de pessoas com diferentes perspectivas sobre o assunto, e também compartilhar essas perspectivas. Nesse repositório, há um arquivo share.sh que você pode executar. Ele simplesmente pedirá seu nome e, em seguida, o armazenará em um repositório KB. Depois, posso baixá-lo rapidamente para minha máquina e executá-lo em alguns repositórios, como os que estão na tela, para que possamos compartilhá-los no final do dia.
+
+Sim, vai ser uma forma divertida de experimentar diferentes abordagens para a mesma habilidade. Então, falando em carregar habilidades, devemos falar sobre como as habilidades são carregadas. A gente geralmente conversa do jeito que você ouve o Zach, e eu sempre dizemos "Claude" quando estamos conversando. Porque costumamos usar Claude. Quantos aqui usam o Claude como seu carro do dia a dia? Bom, tudo bem. É mais ou menos o que
+
+esperávamos. É tipo 91% do mercado. E aí tem todo mundo que usa Cursor e eu que andamos experimentando o Raspberry Pi. Pi é incrível. Ah, mas a Anthropic também não me deixa usar meu "eu". Não
+
+está claro. Posso usar minha assinatura com ele? Não sei. Talvez eu descubra hoje ou esta semana. Você pode pagar mais por isso. Sim, você pode
+
+. Pague mais em créditos por isso. Isso é bom. Claro que sim. Mas quando você usa essas ferramentas, o principal motivo pelo qual estamos tão entusiasmados com as habilidades é que elas são geralmente aplicáveis ​​a todos os principais modelos. Portanto, o Codex
+
+os suporta, o Claude os suporta, o Cursor os suporta. Os aplicativos de desktop, como o Claude Desktop, são compatíveis com isso. Então, mesmo que você não seja da área técnica, você pode desenvolver habilidades, compartilhar habilidades e usar habilidades. Qual foi a habilidade que você praticou na semana passada com a equipe de recrutamento na área de trabalho? Sim, eu estava trabalhando com nossa equipe de recrutamento, eles estavam em um processo seletivo presencial e eu participei de uma reunião por Zoom com eles, ajudando-os a desenvolver uma ferramenta que pudesse pegar informações de candidatos, formatá-las de maneiras específicas, entender o que eles procuram em diferentes aspectos e gerar relatórios automaticamente. Então, são coisas
+
+que eles poderiam fazer de forma bem simples, mas, graças à praticidade do Claude Desktop e a todos os conectores que ele possui, ele poderia simplesmente acessar o Slack e obter informações de lá. Poderia acessar o Notion, coletar essas informações e combiná-las com o software de recrutamento que eles usam, compilando tudo em um único relatório que pode ser compartilhado para dar continuidade ao projeto. Então não era como se este fosse o relatório final que usaríamos para tudo. Este é um elemento básico que eles podem usar para fazer coisas diferentes em lugares diferentes. Sim .
+
+E por isso foi realmente muito impactante. E assim que você lhes dá essa habilidade, todos na equipe passam a executá-la de maneira uniforme. Sim. Esse é também o seu poder. Claro que sim.
+
+E então, para onde vão essas habilidades? Bem, o lugar mais básico é se você tiver um repositório. Você pode simplesmente colocar um diretório `.Claude`, depois um diretório `skills`, dentro de uma pasta com o nome da habilidade e, por fim, um arquivo `skill.md` ( tudo em maiúsculas) dentro dele. Assim,
+
+essa será a habilidade associada ao repositório, e qualquer pessoa que usar o repositório a carregará automaticamente e saberá como usá-la. Você também pode ter esse mesmo diretório .cloud em seu diretório pessoal e colocar essas habilidades lá, e então elas serão geralmente aplicáveis ​​em qualquer lugar onde você usaria o Claude. O mesmo acontece lá, existe uma espécie de padronização maior para todos os outros em .agents. Eu gostaria que existisse algo como
+
+agents.md em vez de claude.md e .agents em vez de .cloud, mas talvez cheguemos lá um dia. Então
+
+você pode colocá-los lá e, se você já usou a ferramenta MPX skills da Vercel, ela basicamente cria links simbólicos para todos esses diretórios diferentes, e assim as skills são geralmente aplicáveis ​​em qualquer lugar. Essa é uma maneira fácil de carregá-los e instalá- los, e é por isso que é tão popular. Sim. Mas o ciclo principal de desenvolvimento consiste em editar a habilidade, salvá-la, invocá-la, verificar a saída e, em seguida, repetir todo o processo para testá-la. Se você também estiver usando o Claude, ele vem com uma habilidade fantástica de criação de habilidades, que é ótima para analisar suas habilidades, configurando-as da maneira que o Claude espera e até mesmo avaliando-as, algo que abordaremos mais adiante.
+
+Muito bem, então vamos começar deixando você trabalhar e construir a base, para que você já tenha esse repositório e possamos começar a usá- lo. Portanto, o principal que você precisa fazer é criar uma descrição adequada para isso. Lembre-se que esta descrição não se destina a humanos. A descrição serve mais para o LLM, para que ele saiba quando deve usar a habilidade automaticamente. Então você quer configurar isso de alguma forma. Recomendamos que isso seja feito de alguma forma, como se
+
+descrevesse algo como " vamos criticar este repositório", e que o usuário queira fazer uma análise, uma análise divertida, ou algo do tipo. Seja criativo e divirta-se com isso. Mas aí você deveria poder simplesmente abrir o Claude e dizer " detone este repositório". Criptografe meu repositório e ele fará isso. Sim. E lembre-se que, em geral,
+
+recomenda-se que, em vez de ser excessivamente prescritivo sobre como fazer algo, você apresente suas restrições . Digamos que estamos usando este formato neste repositório, ou seguimos estas convenções de codificação, ou nunca fazemos X ou Y, e então permitimos que o LLM faça a determinação correta em tempo de execução. Sim. Sim, definitivamente gosto de encerrar assim . Não prescreva o que ele deve fazer. Dê conselhos sobre
+
+o que ele não deve fazer e deixe-o ser mais criativo. Mas você também pode mudar isso e ser mais assertivo em relação às coisas que você sabe que quer de uma maneira específica. Então vamos trabalhar nisso. Bem, algumas dicas que queremos abordar nesta primeira seção são, e acho que isso pode ser bastante aplicável apenas ao Claude neste momento. Perguntei ao Raspberry Pi se ele conseguia fazer isso e ele simplesmente criou uma extensão que fez funcionar. Então, isso é incrível.
+
+Mas se você usar o ponto de exclamação e depois crases para uma chamada de script, o Claude fará uma interpolação disso. Assim como o JavaScript tem o símbolo do dólar, a chave de abertura e a chave de fechamento. Será como se, em vez de ter o que estava lá antes, como isto, onde dizia "tarefas pendentes" e depois dava um comando para executar. Isso será simplesmente substituído por uma lista de tarefas pendentes, pois o comando grep será executado e, em seguida, todos esses redirecionamentos serão feitos para diversos outros programas. Isso definitivamente não é sugar chaves nem nada do tipo. Sim
+
+. Mas você pode imaginar o quão poderoso isso é, digamos, se você estiver fazendo seu relatório matinal, seu relatório de status. Qualquer elemento que você queira gerar de forma determinística é um caso de uso ideal para esse tipo de interpolação de script. Sim . Isso é realmente ótimo porque você não está dizendo para pegar os commits mais recentes ou os 10 commits mais recentes e me dar algumas informações sobre eles.
+
+Você está dizendo: aqui estão os 10 commits mais recentes, exatamente no formato que eu espero que você os entenda; vá e faça algo com essa informação. Portanto, não se trata de adivinhação, e não será algo não determinístico a cada vez. Vai começar a partir dessa base determinística e depois seguir a partir daí. Também economiza muitos tokens se você já disse: "Vá e descubra como fazer 10 commits." E se você já executou isso mais de uma vez ou em três abas diferentes do terminal , sabe, as duas primeiras podem funcionar perfeitamente, mas a terceira fica girando e lendo "get docs" até finalmente funcionar. Então,
+
+é uma forma de dizer: "Depois de formalizar uma parte do seu fluxo de trabalho, você pode simplesmente codificá-la e dizer: 'Execute este script exatamente'". Sim. Sim, como dissemos, sem scripts, a IA fica apenas especulando sobre o que você quer dizer quando diz: "Vá buscar os commits mais recentes ". Sim, e lembre-se que as descrições são regras de roteamento, certo? Elas são menos para nós e mais para a IA determinar quando usá- las. Um bom exemplo disso é que você pode
+
+ter algumas habilidades diferentes de geração de imagens, e elas estão meio que espalhadas pelos projetos e talvez até mesmo nas suas habilidades globais. Talvez uma delas seja mais aplicável ao seu blog pessoal e você diga: "No meu blog pessoal, eu sempre publico pixel art. Então, se estivermos escrevendo sobre esse domínio, essa é a habilidade a ser usada, certo?" "Se quisermos que funcione, isso precisa ser formalizado e precisamos usar um sistema de geração de imagens completamente separado ou buscar imagens apenas no S3." É aí que você pode meio que codificar isso na sua descrição.
+
+E, aliás, se você ainda tiver dúvidas, pode sempre perguntar ao Claude. Outro tipo de truque secreto desta era que todos esquecem é que, muitas vezes, os modelos são suficientemente capazes para que você possa perguntar a eles: "Fiz isso certo? Ou quando isso se aplicaria?" Então, você pode fazer um teste perguntando: "Em que condições isso seria carregado atualmente? Se eu quiser que funcione apenas nessas condições, essa é a melhor descrição para mim?"
+
+Sim. E um ótimo exemplo disso foi quando estávamos construindo isso, eu perguntei ao Claude: "Ei, eu sei que posso fazer isso, mas você realmente suporta habilidades chamando habilidades?" E foi tipo, "Ah, deixa eu ir lá conferir." E carregou como uma habilidade de análise de código do Claude para obter essa informação, fazer a pesquisa e voltar dizendo: "Talvez". Sim . Foi tipo, "Mais ou menos, mas você
+
+provavelmente não quer fazer isso." Então. Então , agora é a sua vez. O que nós vamos fazer é reservar um tempo para fazer isso. Sim .
+
+Ah, até você ir fazer isso. E quando fazemos esses intervalos, também é um ótimo momento para vocês perguntarem ou sugerirem temas para discussão . Estamos tentando preencher o vazio deixado por você estar trabalhando nisso com tópicos mais gerais. Então, se houver algo que você queira que digamos em voz alta. Ah, tudo bem.
+
+OK. Bem, se houver algo sobre o qual você queira que conversemos, podemos definitivamente fazer isso. Caso contrário, temos alguns tópicos de discussão que pensamos que poderíamos abordar. Sim. Ah, mas se você tiver alguma dúvida ou algo do tipo, com certeza posso ir até o microfone e ficar à vontade para gritar qualquer pergunta.
+
+Sim. Bem, sim, se for diferente, fique à vontade para começar por aqui. E se tiverem alguma dúvida, entrem em contato.
+
+Sim, uma pergunta. Você quer executá-los? Desculpe. Onde está a pergunta?
+
+Hum, você falou um pouco sobre isso no início. Mas sempre me pergunto onde traçar a linha divisória entre codificar instruções em regras como o cloud.md, etc., e criar uma habilidade para algo. Então, estou curioso para saber qual é o seu modelo mental para tomar essa decisão?
+
+Você já pousou em algum lugar? Tipo, você sempre começa com a regra e depois cria uma habilidade, se conseguir torná-la específica o suficiente? Ou você sempre começa com uma habilidade? Como se faz isso? Sim, ótima pergunta.
+
+Ótimapergunta. Bem, geralmente eu espero, tipo, a regra número um que você tem que lembrar é que as habilidades, quer dizer, o arquivo cloud.md ou agents.md, serão carregadas todas as vezes. Ao iniciar o Claude, isso preencherá sua janela de contexto. E se estiver enchendo
+
+com um monte de bobagens que não são realmente aplicáveis ​​ao que você está fazendo especificamente, então provavelmente você não vai querer isso lá. Hum, posso mostrar um exemplo do meu... como é mesmo? ponto Claude
+
+Uh, e então acho que Claude.md, se eu souber escrever. Este é o meu Claude.md. É extremamente pequeno. É como se
+
+eu quisesse que as coisas fossem um pouco mais concisas. Não estrague o oito. Só quero saber exatamente o que você está dizendo. Seja extremamente conciso. E também tenho esse plugin no qual estou trabalhando.
+
+Na verdade, é uma habilidade chamada ideação. E aqui eu coloquei algumas configurações para que todos os projetos, basicamente, coloquem os artefatos gerados no meu cofre do Obsidian. Assim, fica tudo organizado para que eu possa encontrar as conexões entre as coisas com mais facilidade. Mas, tirando isso, é extremamente pequeno. E isso é um dos fatores que contribuem para isso. Se for relevante apenas para
+
+o repositório em si, como por exemplo, estou cansado de usar o npm quando queria usar o pnpm. Vou colocar isso ali como uma única linha que simplesmente diz que usamos pnpm aqui. E qualquer outra coisa, como testes mais específicos ou algo do tipo, eu deixo isso para as habilidades, para que só sejam carregadas quando eu estiver realmente escrevendo testes. Respondendo também à segunda parte da sua pergunta, e falaremos sobre isso um pouco mais tarde, outra coisa muito divertida de fazer é basicamente esperar uma semana enquanto trabalho nisso e depois voltar e pedir ao Claude para analisar o meu trabalho da semana. E quais são as habilidades que eu devo selecionar com base nisso? Sim
+
+. Então, mais uma vez, peça ao sistema para te ajudar a fazer isso. Outra pergunta aqui. Sim, senhor. OK. Você consegue
+
+me ouvir, não é? Sim? Sim. Então, me interrompa se você pretende falar sobre isso mais tarde. Eu estava pensando sobre as habilidades globais que compartilharemos entre os colegas.
+
+Então, neste momento, temos cerca de 60 engenheiros. As pessoas estão descrevendo suas próprias habilidades. Estamos conversando no Slack. Ah, eu tenho essa grande habilidade. É muito bom. Então, obviamente, os
+
+gerentes de engenharia pensam: "Bem, deveríamos compartilhar isso." Onde fica? Onde guardamos isso? Onde os armazenamos no repositório? Hum, o que é a nossa biblioteca de artefatos? E
+
+outros disseram: "Não, não queremos isso porque se eu apresentar minha habilidade e alguém disser: 'Ah, vou mudar isso.'" Depois, teremos solicitações de MR (Request for Modification) e, em seguida, precisaremos revisar as alterações nas habilidades." Sim . Então, alguém vai dizer: "Bem, eu gosto dessa habilidade, mas agora vou enviar minha versão dela com uma descrição muito semelhante para o repositório compartilhado, que todos vão receber." E de repente, temos 10 habilidades de UX em 10 áreas. Sim
+
+. E aí todos eles são os agentes, "Qual deles eu devo usar?" Sim . E estamos nos perguntando se vocês já chegaram a esse ponto de saber como fazer a manutenção. E então, três meses depois, surge um novo modelo, e essas habilidades são, na verdade, um pouco prolixas demais.
+
+Hum. Então, quem está avaliando as habilidades, verificando-as e dizendo: "Ok, vamos cortar isso do pacote global porque agora você entende o que estou dizendo? É aqui que estamos com isso ." E muitos engenheiros simplesmente dizem: " Não." Sem habilidades. Cada um faz isso por conta
+
+própria. " Não estamos compartilhando nada." Então, isso foi um pouco de desabafo. Você entende meu ponto de vista , né? Ótima pergunta. Vou tentar responder primeiro
+
+. Estou interessado em ouvir o que o Nick tem a dizer. Publicamos, talvez você queira acessar, as habilidades do GitHub Work OS. Esse foi um dos primeiros lugares onde começamos a publicar habilidades genéricas. E isso tem sido incrivelmente útil porque, por exemplo, eu estava criando pipelines genéricos do Rag e descobrimos que a chamada de ferramentas agentic tinha um desempenho melhor. Então, eu
+
+posso carregar manualmente essas habilidades que o Nick colocou lá, que são específicas para determinados documentos. Isso resolve o problema de engenheiros individuais que dizem: "Eu quero uma versão ligeiramente modificada disso." Eu diria que, nesse caso, legal. Você tem uma habilidade modificada que mantém localmente. E , respondendo à sua pergunta sobre avaliar a habilidade, acho que perguntar ao Claude, com o modelo atual, para analisar a habilidade usando o construtor de habilidades, é uma boa ideia. Ela está adequada para truncamento ou
+
+há extensões adicionais que precisamos agora? Mas também gostaria de compartilhar que estamos sentindo Essa mesma dor que tenho certeza que todos os outros sentem, e acho que a camada de gestão está simplesmente migrando para esse tipo de abordagem. Mas eles pensam que mesmo se você perguntar " Sim, não , está tudo bem", mesmo se você perguntar ao Claude, digamos, uma semana depois, um mês depois: "Ei, revise nossas habilidades", há 30 habilidades para revisar e surgem muitas sugestões. Então você tem que abrir uma solicitação de merge para possivelmente uma ou duas pessoas, ou talvez possamos definir automaticamente que a pessoa que escreveu essa habilidade originalmente precisa ser um dos revisores. Vocês já chegaram a esse ponto?
+
+Nós... Acho que ainda não chegamos a esse nível com as nossas habilidades, porque começamos a formalizar a documentação em categorias que eram facilmente carregáveis ​​em diferentes sistemas. Hum, isso parece doloroso. Estou curioso
+
+para saber o que você acha disso, Nick. As pessoas simplesmente previram que isso ia acontecer, então estão nos impedindo de usar habilidades compartilhadas no trabalho. Certo? Porque elas acham que isso vai ser...
+
+O problema. Sim. Literalmente. Estamos pensando demais nisso . Deveríamos simplesmente fazer e tentar, mas ainda estou interessado em ouvir o que vocês acham . Com certeza. E eu também acho que vai
+
+evoluir rapidamente, certo? Como estamos vendo, eles ainda não chegaram ao limite do treinamento LLM, certo? Então, haverá recursos adicionais sendo disponibilizados, e sim, como será daqui a 6 meses? Poderíamos reduzir ainda mais as habilidades e obter o mesmo desempenho ou até melhor ? Sim, mas sim, eu diria que isso é...
+
+Sim, isso soa como um problema humano típico de "minha habilidade, sua habilidade", certo? Sim. Temos várias maneiras de construir em cima disso, temos várias maneiras de resolver isso. Como o Zach disse, o repositório de habilidades, são nossas habilidades públicas que você pode instalar com o comando " mx skills add", e todas estão disponíveis. Mas também temos algumas habilidades internas.
+
+Habilidades que são mais geralmente aplicáveis ​​a engenheiros que trabalham com sistemas operacionais, como especialista em autenticação, especialista em experiência do desenvolvedor, redator fantasma, entre outras . Além disso, tenho meu próprio marketplace de plugins, onde coloco várias habilidades relevantes para mim. Então, eu simplesmente carrego de todos esses marketplaces de diferentes maneiras. Também temos um grande monorepo onde a maioria dos engenheiros trabalha, e muitas habilidades acabam lá se forem específicas para esse monorepo. Sim, é um lugar muito mais fácil, mas o problema é o mesmo: você precisa de uma revisão, o que parece meio estranho, já que você está adicionando isso ao trabalho que já está fazendo. É como um complemento,
+
+o que não fica muito bem no PR. Se eu fizer uma engenharia reversa do sistema de plugins, acho que é isso que eles estão tentando fazer. Para abordar isso, já que você também pode instalar uma versão de um plugin da mesma forma que instala um pacote NPM, certo? Então, talvez essa seja a interface sobre o repositório, e a ferramenta que vejo todo mundo criando repetidamente é aquela que lê um repositório e instala funcionalidades em vários lugares, facilitando o processo. Mas isso pode ser uma solução até certo ponto, onde é tipo, legal, existe essa versão principal , mas estou usando esta versão porque preciso deste fork. E
+
+não é tão ruim quanto parece, porque existe uma API padronizada com a interface do plugin. E tudo é versionado. Sim. Não, não, isso é ótimo. Quando você usa MPX, você tem flags?
+
+Você usa flags como "MPX público" para front-end, UX ou produto? Isso me veio à mente. Nunca pensei nisso. Você já fez isso? É...
+
+Não, não. Hum, eu não usei MPX para isso. Eu usei o Marketplace da Nuvem, o plugin Marketplace, e contanto que sua instância na Nuvem possa acessar um repositório Git interno, ele pode simplesmente puxar de lá. E é isso que ele faz. Ele puxa todas as skills, mesmo aquelas que você não precisa porque você é front-end e não quer as skills de back-end .
+
+Ah, sim. Sim. Isso quase me parece uma questão de empacotamento, mas eu acho que você está em boa companhia, no sentido de que temos três marketplaces super relevantes, separados ou adicionais às skills específicas do projeto, certo? E aí acaba sendo uma questão de preferência de cada engenheiro, que decide usar esta versão da skill. Mas a interface de plugins é a maneira de... Você tem uma abordagem uniforme para
+
+isso, que você poderia até mesmo documentar para integração, dizendo algo como: " Adicione o plugin a esses três marketplaces quando você entrar na equipe". E se você estiver em uma equipe de front-end, por exemplo, "Instale o plugin a partir do marketplace de front-end" ou algo semelhante. Mas, no fim das contas, no back-end, ainda se trata de gerenciamento de repositórios. Certo? É similar a como funciona com código.
+
+Sim. Sim. Ótimas perguntas. Hum, sim, senhor. Desculpe.
+
+Esqueci o que ia perguntar. Sim. Então, na verdade, são duas perguntas. A primeira é: vocês fazem alguma avaliação formal de habilidades, tipo um benchmark de habilidades, para que, conforme vocês lançam modelos, saibam quais habilidades são relevantes? Sim. Hum,
+
+especificamente em relação às habilidades públicas, aquelas que eu uso internamente, eu sou um pouco menos formal . Mas as que nós realmente lançamos, nós lançamos sim. Onde está? Nós temos um framework de avaliações completo que desenvolvemos para garantir... que atenda aos
+
+padrões que temos. E vamos falar um pouco sobre isso , mas basicamente consiste em executar vários testes onde o Claude é carregado sem a habilidade e solicitado a realizar uma tarefa, e depois é carregado com a habilidade. Então, o sistema usa uma espécie de rubrica de confiança ou uma nota que atribui, e o personagem falha se essa nota for menor com a habilidade do que sem ela. Ele também falha se tentar atingir, acho que, 80% ou mais. Então, tipo, 80% das vezes, ou talvez 90%.
+
+Ele acerta com a habilidade e às vezes acerta sem ela. Então, a habilidade pode adicionar apenas 1 ou 2% ao resultado, mas isso é algo que monitoramos e acompanhamos à medida que novos modelos são lançados. Sim. Ok. Sim.
+
+É uma matemática um tanto imprecisa, mas é quase como se, ao estabelecer essa base de referência, você pudesse Pelo menos teste dessa forma. Sim. Faz sentido. E a segunda pergunta era sobre...
+
+Desculpe, um segundo.
+
+Certo. Aquisição de habilidades. Então, se você adquire muitas habilidades, os modelos podem ignorar uma habilidade ou decidir "Eu não preciso de uma habilidade. Vou simplesmente fazer isso." Qual é a sua experiência com isso?
+
+Tipo, testar, encontrar e então talvez melhorar? Sim. Ótima pergunta. Sabemos que isso é um problema, e quanto mais habilidades você adquire, mais conflitantes podem ser as habilidades. Então, qual será escolhida?
+
+A solução para isso, especificamente para o sistema operacional de trabalho, é manter... para esses sistemas públicos, tentamos manter bem genérico, mencionando todas as siglas e coisas que esperamos que sejam cobertas. Isso fará com que ele carregue. E
+
+geralmente funciona muito bem. Você também pode... se estiver em uma habilidade... ou...
+
+desculpe, em Claude, você pode simplesmente usar o comando `workOS`, por exemplo, se quiser. Muitas vezes, sugerimos algo como `workOS`, por exemplo, e ele será carregado. Também uso o nome de uma skill se precisar de algo específico, como geração de imagens . Por exemplo, uso a skill "superpoderoso brainstorm" para elaborar um plano melhor.
+
+Mas, se algo não estiver funcionando como esperado, é por isso que se usa o ponto de exclamação (`:`) e um comando.
+
+Eu tinha uma pergunta sobre como decidir quando criar um subagente em vez de uma skill. E é possível reutilizar uma skill em um subagente? Às vezes, crio uma skill e penso: " Talvez eu devesse ter criado um CLI, porque, afinal, por que eu criei uma skill?". Criar uma skill, para começar? E eu fiquei em dúvida
+
+entre essas três coisas. Essa é uma ótima pergunta. Skills podem usar subagentes? Na verdade, estou com um branco sobre isso. Então, estou perguntando ao Claude.
+
+E você pode ver que ele carregou a skill do guia de código do Claude para verificar . Este é um ótimo exemplo de como fazer isso e teremos a resposta em um instante. Mas essa é uma ótima pergunta. Subagentes são algo que não abordamos muito neste workshop, mas é algo extremamente valioso. E a principal coisa que eu acho importante ao pensar em quando executar um subagente em vez de uma skill é: eu quero que ele tenha seu próprio contexto independente para que possa realizar várias tarefas em algo sem ocupar a janela de contexto da tarefa principal que estamos executando?
+
+Dessa forma, ele pode apenas fazer uma verificação. Por exemplo, eu tenho este plugin de ideação. É como um planejador ou um... É tipo um superpoder, algo que eu gosto de
+
+fazer. E como parte disso, estou realmente focado em loops de feedback para que o sistema não precise ficar me incomodando o tempo todo com perguntas do tipo "Ei, isso parece correto?" ou " Ah, está pronto quando na verdade não está". Eu quero que ele me prove, sem que eu precise analisar o código, que fez o trabalho que eu esperava. E muitas vezes isso significa alimentar o sistema com as informações que eu procuraria, fazendo- o entrar em um loop repetidamente. Ouvi
+
+dizer que haverá um workshop sobre loops Ralph depois deste. Então você deveria conferir. Mas, nesse caso, quando ele está fazendo essas revisões, elas podem complicar as coisas, então eu executo um subagente para fazer essas revisões e ele simplesmente reporta: "Aqui estão alguns problemas encontrados". E então ele tem uma lista desses problemas e pode retroalimentar o sistema para fazer o mesmo novamente. Assim, eu não preciso consumir toda a janela de contexto o tempo todo. Sim.
+
+Agora também estou mais confuso com as equipes de agentes, que são diferentes de alguns agentes, certo? Ah, sim. Outra pergunta. Obrigado. E sim. Tenho outra pergunta
+
+aqui. Sim. Hum, tenho uma pergunta sobre as substituições em uma habilidade. Por exemplo, você define um padrão e diz algo como "o usuário decide", mas acho que é muito aleatório ou não consigo reproduzir isso, e às vezes as substituições não funcionam. Você tem alguma ideia ou eu só quero descobrir o que está acontecendo .
+
+Hum, minha melhor sugestão é perguntar ao Claude. Por que você escolheu isso em vez da outra coisa? E como posso melhorar isso de alguma outra forma? Tipo, você consistentemente, ou com frequência suficiente, escolhe a opção errada ou não respeita minha substituição. Por que isso acontece?
+
+O que posso fazer para melhorar? Hum, gostaria de ter uma resposta mais inteligente, mas geralmente é só perguntar... Sim. É só perguntar ao Claude. Ele é bom o
+
+suficiente. Obrigado. Ótima pergunta.
+
+Pergunta? Hum, você chamou... "Superpowers" era uma biblioteca de habilidades que você mencionou.
+
+Existem outras bibliotecas de habilidades além da de vocês que vocês usam atualmente? Sim. Com certeza. "Superpowers" é uma que eu, na verdade, não usava até ontem, quando o Zach me mostrou. Eu a instalei. Ela tem várias
+
+habilidades diferentes que são bem úteis. Estes slides foram escritos em Slide Dev, e você pode notar... Bem, talvez não, não sei se eu fiz o commit.
+
+Deixa eu ir ao repositório completo aqui. Mas aqui, tem um diretório "agents", um diretório " skills" e uma habilidade "Slide Dev", e o Claude pode ter ajudado a escrever estes slides. O que é muito legal. Vamos falar um pouco sobre isso, mas acho que alguns dos verdadeiros superpoderes são quando você os atribui a tarefas que não envolvem programação, porque você realmente sente essa mágica. E vamos mostrar uma demonstração da habilidade "remotion". Aquela me impressionou
+
+. Ele criou um vídeo baseado em um prompt. E agora eu uso isso como meu... Então, toda sexta-feira,
+
+quando temos a reunião geral, é tipo: "Que demonstração rápida do que vocês fizeram esta semana?". Ele simplesmente lê meu histórico de tarefas da semana e cria um vídeo sobre isso. Todo mundo já estava cansado disso na terceira semana, e eles não vão parar. Eles só vão ter mais... tipo, vou
+
+apresentar personagens, e vai ficar horrível. Mas, uh, sim, a remoção é incrível. Ele até abre um editor web baseado no Chrome onde você pode ir e dizer: "Ah, cortar e aparar, e adicionar alguns efeitos de transição, certo?". Hum, isso é insano. E então, meu recurso favorito, que
+
+provavelmente foi o que mais aproveitei desde a instalação, foi um... Eu o construí com Claude, um simples wrapper em Python para o Nano Banana. Hum, o modelo de geração de imagens do Google, que continua a melhorar. Então, eu... Basta
+
+dizer: "Ei, agora está na versão 3, atualize." E mostraremos algo mais tarde, mas, basicamente, com isso, a maioria das imagens que gero leva menos de 7 segundos em um único comando. Mas, usando esse mesmo modelo, consegui pegar uma única string do usuário, digamos, uma criança correndo por um campo. Primeiro, ele cria a imagem. Depois, usa a API de vídeo VEO, passa essa imagem estática para ele e diz: "Anime esta imagem estática da maneira mais óbvia possível."
+
+Então, um comando do usuário de uma criança correndo por um campo, nada existe, e 30 segundos depois você tem um vídeo dela correndo. E consegui usar esse mesmo método para fazer todas as cenas de transição que precisava em um filme de 32 minutos. E eu não sou especialista em vídeo. Quer dizer, gosto de usar o DaVinci Resolve e editar coisas, mas não sou animador, e consegui fazer tudo isso em... Tipo, talvez
+
+uma hora. Hum, então... essas coisas são bem estranhas também. Hum, se você quiser ir muito
+
+fundo, tipo, eu tenho o Claude lendo meus dados biométricos e tal, e me pressionando e me dizendo para pegar leve esta tarde porque eu não dormi nada. Então, hum, mas ainda não existe necessariamente uma habilidade para isso. Eu acho que as que são realmente poderosas são quando o Claude, outro dia, me deixou de boca aberta dizendo que também eram superpoderes: "É mais fácil para mim mostrar as variantes se eu simplesmente as simular em um navegador da web." "Você prefere isso?" E eu disse: "Sim, por favor."
+
+E então me mostrou todas as opções e eu pensei: "Ah, vai." E então fomos construindo a partir daí, economizando inúmeros tokens apenas com texto, como em iterações. E estou usando isso em uma skill de banana agora, mas, uh, acabei de executar o plugin {slash} e estou olhando os marketplaces que tenho instalados. E alguns dos mais importantes para mim, eu acho, são o plugin oficial do Claude Claude Claude . Uh, acho que é lá que ele tem uma ótima função de revisão ou criação de skills , uh, que é realmente muito boa. Uh, o Obsidian
+
+é algo que eu uso o tempo todo. Uh, então ter as skills do Obsidian e saber como usá-las... Uh, então é baseado no que eu quero, mas também tem um que, uh, é realmente muito bom. Uh, onde foi
+
+parar? Plugin. Uh, são as skills do Codex. Marketplaces. Não sei por quê. Não está mostrando.
+
+Ali, os do OpenAI Codex. Hum, não está rolando para baixo. Mas enfim, é tipo, o Claude faz todo esse trabalho. O Codex é muito bom em revisar. Então, essa é uma skill da OpenAI que simplesmente envia isso para o Codex e diz: "Revise isso".
+
+E ele revisa e depois entrega de volta para o Claude. E eu me livrei daquele jogo de copiar e colar onde o Claude dizia isso e o Codex dizia aquilo, e ficava indo e voltando em splits do tmux. Então, estou muito feliz com isso. Eu diria que a Vercel tem skills bem avançadas. Eles têm um monte de CLIs e outras coisas bem interessantes. Eles
+
+foram meio que os primeiros a usar algumas das coisas do marketplace, então, dê uma olhada nas skills de código aberto deles também. Ótima pergunta. Obrigado. Ok. É isso que a Anna Banana acabou de fazer.
+
+Quase. Quase. Sim. Incrível. Mas o legal disso é que você pode pedir qualquer estilo. Então, você
+
+pode dizer, tipo, eu faço mais pixel art. Hum, então, eu vou dizer, sabe, pixel art old school e é muito divertido. Sim. Certo. Chegamos à hora desta parte. Alguém criou uma
+
+primeira versão do repo roast skill que queira compartilhar? Sim? Legal . Ótimo. Se quiser executar, digite ./share.sh.
+
+Ah, legal. Ótimo. Este cara, certo, ganhou a oficina. Certo. Você é o Sharif?
+
+Você é o Sharif? Ok. Você é...
+
+Ok. Vou executar... bem, vou sair da mesa rapidinho. Então, vou
+
+executá-los no skill, ou melhor, nesta oficina. Ah, o que eu fiz? É bem seguro. Você não quer executar no sistema operacional do trabalho ou algo assim, ou na linha de comando? Ah, sim, acabei de perceber que carregou. localmente
+
+neste, não globalmente. Ah. Uh, posso fazer isso. Ok. Desculpe.
+
+Vou usar a CLI do nosso sistema operacional de trabalho e depois vou dizer " repo roast Zack B" na CLI do repositório. Vamos ver o que acontece. É um novo verbo, defender o pássaro herói. Ah, sim. Você pode... você pode
+
+personalizar esses verbos. Muitos dos meus verbos de rotação são inspirados em Senhor dos Anéis ou The Office. Então você verá coisas como "defender Giliath" e coisas assim.
+
+Eu não achei que funcionaria, mas tudo bem. Está rodando neste repositório da oficina. Ok, tudo bem.
+
+Então está executando todos os comandos que você deu e, enquanto fazemos isso, vou mostrar a
+
+skill do Zach. Ótima descrição. Analisa a saúde do repositório executando scripts get e de sistema de arquivos para encontrar tarefas obsoletas , alterações... Pontos críticos. Sim, isso é
+
+bom. E então ele diz especificamente como encontrar tarefas antigas, incrível, arquivos de ponto crítico , arquivos maiores. Legal. Restrições. Nunca seja vago quanto às evidências.
+
+Nunca apresente uma descoberta sem uma saída de script ou dados que a sustentem. É provavelmente por isso que ainda está rodando. Ah, legal. Hum, sim. Escopo.
+
+Ok, Zachby. Ok. Legal . Boa habilidade. Você não disse para ela ser simplesmente má com você. Então, é "
+
+Seja super má com Nick e Zach enquanto eles estão no palco". Incrível. Oi, Amy. Você parece bem má às vezes. Certo.
+
+Incrível. Vamos executar mais desses. Temos mais coisas para analisar e faremos isso de novo e testaremos outro. Sim. Então, passando para a próxima seção, vamos tornar essa habilidade mais inteligente.
+
+A primeira coisa que você pode fazer para tornar sua habilidade inteligente é fornecer mais informações a ela. Mas isso nos leva ao problema de O arquivo claw.md permite que você seja extremamente detalhista e forneça muitas informações sobre seu repositório, o que acaba sobrecarregando a janela de contexto, já que informações desnecessárias não são relevantes. É possível fazer o mesmo em skills, mas de uma maneira melhor, especificamente com a divulgação progressiva. Acredito que isso também seja possível em um claw.md. Basicamente, basta
+
+dizer algo como: "Ei, se você está pensando em realizar testes para o Excuse me, por exemplo, leia o arquivo testing.md." E você fornece o caminho local para o arquivo testing.md. Dessa forma, ele só será carregado se estiver executando uma skill ou tarefa de teste como parte da execução da skill. Caso
+
+contrário, ele será ignorado. Assim, você pode especificar algo como: " Neste exemplo, se você estiver realizando uma avaliação, execute o script de avaliação, carregue a rubrica de avaliação e leia-a." Explicamos como pontuar corretamente. Se não estivermos fazendo pontuação, você não precisa carregar isso e não precisamos preencher a janela de contexto com todo esse conteúdo. Sim. Isso também responde à
+
+pergunta daquele senhor lá atrás, sobre como você pode imaginar esse padrão escalando. E de fato, ele escalou, inclusive em nosso repositório público de habilidades do WorkOS, que você pode conferir. Temos vários scripts de migração que publicamos para diferentes usuários. Então, se você está vindo do Off Zero, ficaremos felizes em ajudá-lo a migrar do Off Zero para o WorkOS. E existem vários concorrentes para os quais temos scripts de migração. Nesse caso, você
+
+poderia dizer: aqui está a habilidade de migração, e a habilidade de migração é um ponteiro para a referência específica. Assim, você não está sobrecarregando sua janela de contexto. Ela carrega apenas os dois arquivos Markdown necessários. Sim. E se você olhar para a habilidade do WorkOS, nós a chamamos de roteador de habilidades, e ela tem um mapa de referência. Então, se você for
+
+instalar o Off Kit, ele... Para usar o Next.js, você provavelmente deve carregar o arquivo `work.os.offkit.next.js.md` do Next.js.
+
+Se você não estiver usando o Next.js, não queremos carregar esse arquivo e torná-lo inflado. Só o carregamos quando necessário. Este arquivo contém o caminho para as informações pertinentes que você precisa.
+
+Outra maneira... Isso é, em certa medida, matemática aproximada por baixo dos panos, certo? Se você analisar multiplicação de matrizes, por exemplo, outra forma de melhorar o desempenho é forçar uma pontuação de confiança. Um dos
+
+motivos pelos quais o plugin de ideação do Nick, que é de código aberto e você pode conferir, funciona tão bem é que ele tem um contador interno de confiança, que indica o quão perto estou de preencher todas as variáveis necessárias para a tarefa antes de executá-la. Ele então força um loop iterativo, fazendo perguntas adicionais continuamente até chegar ao ponto em que... "Estou 95% ou mais confiante." Eu mapeei a maior parte
+
+desse espaço problemático na minha cabeça, e agora podemos começar a trabalhar." E o resultado, como você sabe, é que a saída provavelmente será melhor. Então, esse mesmo conceito se aplica aqui quando você está desenvolvendo habilidades; você pode adicionar essa mesma funcionalidade e dizer: "Para este aspecto específico da base de código, você deve sempre encontrar esta evidência e chegar a um ponto em que os testes tenham este nível de cobertura ou este nível de confiança em A, B ou C." E essa é outra maneira de aumentar o desempenho das habilidades. Sim. É muito importante, como o
+
+Zach estava dizendo, não é como tirar um número do nada. Se você perguntar: "Qual é o seu nível de confiança?" e a resposta for: "Tenho certeza de que tenho confiança." Bem, por quê? E conforme você pede para a habilidade mostrar mais do seu trabalho para justificar essa confiança, ela pode responder: "Ah, espere, não tenho tanta certeza assim." "Na verdade, tão confiante quanto eu
+
+pensava." Então, a questão é tentar fazê-lo pensar mais. Em termos de habilidade de ideação, o que ele faz é usar isso para avaliar se compreendeu completamente o que estou tentando dizer, porque tenho um problema em não fornecer informações suficientes. Eu tenho as informações. Eu sei o que quero. É difícil para mim
+
+expressar isso para a máquina de uma maneira que ela espera. Então, ele usa essa pontuação de confiança para dizer: "Não tenho uma compreensão completa" e carrega uma espécie de rubrica sobre o que significa estar confiante em algo. Mas, se não estiver confiante, ele usa a ferramenta de perguntas integrada do Claude para me fazer uma série de perguntas e extrair essas informações de mim, em vez de eu dizer: "Ah, você não está confiante." Deixe-me tentar explicar melhor." É como se eu dissesse: "Não, não me sinto confiante por causa dessas coisas." E
+
+então, aqui está como você pode me ajudar a ficar mais confiante respondendo a essas perguntas. E muitas vezes, a pergunta é de múltipla escolha, tipo: " Você quer isso?" É isso que você quer dizer? Essa é a abordagem recomendada que eu seguiria, mas se você quiser ir por outro caminho, podemos fazer assim." E então temos esse diálogo constante , mas tudo se baseia na confiança que a ferramenta tem de que entende o que eu quero e como fazer o que eu quero.
+
+Ah, sim, e isso nos leva de volta à prática, como isso funciona, ou pelo menos como funcionou para mim, e o que recomendamos é criar uma habilidade inicial. Talvez você mesmo faça isso em Markdown. Talvez você use o construtor de habilidades do Claude e diga: "Preciso de uma habilidade para fazer X". Você cria e usa essa habilidade por algumas iterações, talvez alguns dias, talvez uma semana. Você observa o que ela produz e, lembre-se, conforme você tem várias conversas com o Claude ao longo de uma semana, todas essas conversas são salvas localmente, em certa medida, em arquivos JSONL.
+
+Assim, você pode ser honesto na fase de avaliação e perguntar se isso realmente está melhorando as coisas. Não é? Onde a habilidade falha ? Quais são os casos extremos que ela não está capturando atualmente? Qual é o problema irritante que descobri depois de 7 dias de uso e que está faltando? E então você itera. Mas,
+
+novamente, você ainda está indo mais rápido porque retorna a um estado que já está funcionando e pensa: "Esses três casos extremos estão me enlouquecendo". E você também precisa revisar seus próprios PRs no futuro, certo? Assim que esse ciclo for concluído, você terá uma habilidade significativamente mais poderosa e poderá continuar a partir daí. Mas é como se eles estivessem evoluindo com o tempo. Então, eu os vejo como unidades organizacionais, onde se coloca uma espécie de inteligência de trabalho. E então, com o tempo, se
+
+você fizer isso direito, eles vão melhorando. Sim . Quando as habilidades foram lançadas pela primeira vez, Zach e eu estávamos juntos em um treinamento presencial em São Francisco. E aí, tipo, a gente acordou uma manhã e eles disseram: "Ah, vamos apresentar habilidades." E nós ficamos tipo, "Bem, isso parece com qualquer outro arquivo Markdown que eles forneceram.
+
+Qual é a diferença?" E, mais tarde naquele dia, fizemos uma apresentação sobre habilidades, tipo, umas 4 horas depois. E a que eu criei para apresentar era uma habilidade do Claude, uma habilidade do Claude que analisaria...
+
+não analisaria sua habilidade em execução, porque ninguém tinha habilidades com apenas 4 horas de existência, mas analisaria: "Ah, você acabou de realizar esta tarefa com o Claude. Vamos analisar e identificar o que poderia ter sido feito, o que poderíamos encapsular em uma habilidade para que ela possa fazer isso de uma maneira mais fácil." E desde então, surgiram habilidades meta e coisas do tipo que analisam o desempenho de como você está usando o Claude ou como você está usando as habilidades do Claude. E então pode usar isso para fornecer feedback, como o Zach estava dizendo, apenas olhando para esses arquivos JSONL, que são registros das conversas que você está tendo com o Claude. E isso pode dar informações sobre como melhorar as coisas. Por exemplo, como no caso do repo
+
+roast, se ele estiver apresentando problemas na forma como está obtendo as informações de log, adicionar o comando específico que você deseja executar para obter as informações de log é uma maneira de melhorá-lo, para que não precise iterar sobre isso e você não precise voltar e dizer: "Não, não era isso que eu queria. Eu queria assim." Assim como você, você pode ser mais explícito e isso pode ser melhor detalhado revisando o desempenho que você teve na primeira vez ou nas primeiras vezes. A intuição que vou compartilhar é que, na minha experiência recente, são justamente aquelas coisas incômodas que me oferecem maior resistência cognitiva semanal que preciso transformar em habilidades. Então, um momento decisivo para mim foi perceber que alternar entre o Slack, focar no código e depois abrir chamados no Linear era tão disruptivo que eu precisava que o Claude fizesse isso. Então agora ele apenas
+
+monitora e, quando alguém me pede algo novo no Slack, ele verifica meu histórico de chamados e, se ainda não houver um chamado para isso, ele remove as duplicatas, adiciona um novo chamado e, assim, eu não saio do meu fluxo de trabalho, certo? Ainda consigo me concentrar. Então, essa é a intuição que tenho agora, que você pode classificar... Acho que é realmente
+
+poderoso, e acho que estamos apenas no começo disso, analisando seu próprio fluxo de trabalho ao longo do tempo, fornecendo mais informações sobre como você realmente trabalha e, em seguida, deixando os LLMs fazerem o que fazem de melhor e comprimir esse tempo.
+
+Existe alguma habilidade que você recomendaria para revisar suas conversas anteriores e sugerir melhorias? Existe algum que você use ou usaria? Não existe um específico para isso, mas eu mesmo não fiz isso da última vez. Isso foi tipo semana passada, mas o que eu deveria ter feito era dizer: "Ei, Claude, use o construtor de habilidades você mesmo." Porque o Claude tem essa habilidade inata de construir hífens, eu acho.
+
+Use o Skill Builder para analisar meu fluxo de trabalho e identificar os pontos menos eficientes. Certo? E isso também envolve a inclusão de conectores, pois existe um conector Slack e um conector Linear. Então é aí que o Markdown pode estar indicando que você deve sempre usar o conector do Slack para importar isso, e eu só me importo com esses canais e menções diretas ao meu nome, certo? Mas sim, acho que em alguns casos pode até ser mais rápido simplesmente dizer: "Aqui é onde eu trabalho. Esta é a ferramenta
+
+que usamos para nos comunicar. Crie uma habilidade para mim que faça isso." É meio louco também. Acho que era exatamente isso que eu estava pensando: Claude Botiscal, que ajuda a configurar o Claude, incluindo a configuração das habilidades. Acho que este é o que eu usei, mas como o Zach disse, eu também já pedi para ele avaliar o próprio desempenho e partir daí para ver o que acontece.
+
+Uma coisa muito legal é que eu criei uma ferramenta bem bacana e queria escrever um post no blog sobre ela. E tudo foi construído com a ajuda de Claude, então eu pude simplesmente chegar e perguntar para ele: "Ei, lembra daquela vez que fizemos uma coisa divertida juntos?" Vamos relembrar esse momento, e nós simplesmente conversamos sobre ele, o que levou a essas anedotas que eu adicionei à postagem do blog, das quais eu tinha me esquecido completamente, mas Claude gostava muito daquele momento entre nós. Não é isso que está acontecendo. Você não entende isso. OK.
+
+Não, eu não tenho. Por baixo do capô, não é isso que está acontecendo. Não minta para mim. Você utiliza alguma habilidade de memorização para manter um estado de memória semelhante ao do Claude? Ótima pergunta.
+
+Claude tem memória própria e também aquela função de sonho automático. Não sei se isso já é real ou se é algo que está por vir, mas vai realmente "podar" a memória. Então, tenho me concentrado em construir em torno disso, mas especificamente no Raspberry Pi.
+
+Criei o que seria necessário para ser um engenheiro de experiência do desenvolvedor na WorkOS, como um agente completo usando o Raspberry Pi. Chama-se CASE e usa memória internamente, como arquivos memory.md, e funciona em todos os nossos repositórios de código aberto. Então ele conhece coisas como React, React Router, Next, TanStack Start e todas essas outras . Então, ele tem arquivos de memória gerais e arquivos de memória específicos do framework, e entra nesses arquivos, limpando-os e atualizando-os, fazendo uma retrospectiva no final e analisando seu próprio desempenho, e então dizendo: "Ah, dei uma volta em círculos um pouco com isso." Assim que eu chegasse
+
+lá, poderia salvar isso na memória para saber qual comando executar na próxima vez e obter as informações necessárias. E simplesmente mantém o controle disso. Eu ainda não implementei a função completa de sonho, que elimina esses elementos, mas estou experimentando. Sim, e também quero explorar mais o conector Obsidian porque acho que ele seria extremamente poderoso. Eu tinha o hábito, no passado, de usar o Obsidian e simplesmente criar uma lista de tarefas diárias com a data como título. E então,
+
+penso que escrever e ler esses arquivos permite imaginar e dizer: "Relembrando a última semana". A semana passada se traduz em quais são essas datas reais? Ele busca esses arquivos diretamente, certo? E também pode gravar memórias consolidadas. Também vale a pena experimentar coisas como o Open Claw, o que eu fiz porque o sistema de memória que vem com ele é surpreendentemente bom, melhor do que muitas das opções padrão do Clouder Open AI. E
+
+então, vendo como isso acontece com coisas como diários (journal.md) e memórias consolidadas, que eu acho que o lance dos sonhos meio que aponta para isso, é como consolidar a memória ao longo do tempo. Sim. Mas, muitas vezes, o mais curioso é que a resposta mais rápida é que o pedido de uma rodada com o Construtor de Habilidades é o jeito mais rápido. Aponte para " Sim".
+
+Este é um bom repositório para testá-lo. Sim. 100%. Sim. Então, vamos passar para a próxima etapa do seu trabalho, que é adicionar fases e pontuação de confiança. Então, adicionar a
+
+divulgação progressiva, eh, adicionar uma pontuação de confiança, dizendo tipo, o quão confiante você está nisso ? Ou tipo, nós temos alguns exemplos disso, sabe qual seria um bom exemplo? Hum, quão confiante você está nisso? Sabe, você instalou o Kick corretamente? Sim, mas eu me refiro a algo como um repositório.
+
+Ah, Rust. Ah, para o repositório Rust? Você sabe, você me deu uma nota ruim em, sei lá , commits do Git. Por que é que? Tipo, ok.
+
+Faça com que a questão se aprofunde mais do que apenas um " Sim". Ah, esse é o nosso padrão de como usamos os commits do Git. Nossas mensagens são sempre assim. Estamos seguindo essas convenções. Com base nisso , qual é o seu nível de confiança de que isso está correto em relação ao nosso repositório?
+
+Por exemplo, você pode usar commits convencionais no seu trabalho. E se você encontrar commits que não sejam assim, ou se encontrar um monte de commits de merge ali, que vergonha. Ah, sim, como diferentes coisas assim, você pode adicionar detalhes e ter isso como uma espécie de rubrica progressivamente divulgada que pode ser seguida para essas coisas. Só um aviso rápido, caso por algum motivo você esteja atrasado ou se sinta atrasado: você pode executar o setup.sh e depois o checkpoint dois para chegar ao mesmo ponto em que estamos agora.
+
+Sim. Certo. E então, sim, se tiverem mais alguma dúvida, podem gritar que eu vou lá responder . Microfone. Vamos dedicar cerca de 5 minutos aqui e depois passaremos para a próxima seção, só para garantir que temos tempo suficiente.
+
+Você quer conversar sobre algum desses assuntos, Zach? Posso falar sobre quando a confiança, quando, bem, sim, a pontuação baseada na confiança nos salvou. Sim, o que é isso? Foi nessa época que estávamos trabalhando no "hum", quando a pontuação de confiança nos salvou. Bem, isso já estava meio que incorporado nas avaliações que escrevemos. Por exemplo, o Claude agora vem com uma
+
+estrutura de avaliação completa que você pode usar, e ele cria uma interface gráfica para você ou um relatório HTML, permitindo que você veja o antes e o depois, obtendo informações detalhadas sobre o desempenho das suas habilidades e se elas estão realmente melhorando ou piorando o desempenho do Claude na tarefa. Mas antes disso existir, eu estava escrevendo o meu próprio para fazer isso e tudo era baseado nisso. Então, deixe-me mencionar a habilidade de ideação. E eu só vou dizer: vamos ver. Vamos acessar a interface de linha de comando (CLI).
+
+E eu vou dizer: Para dar contexto, esta é a nossa CLI Workless que estamos desenvolvendo, sim. Estou no ramo principal disso. Eu uso árvores de trabalho para isso. Hum, que funcionalidade gostaríamos de adicionar? Quero adicionar um comando divertido de amigo {slash} semelhante à forma como o código Claude o implementou no Dia da Mentira.
+
+Usei uma ferramenta chamada WhisperFlow para me transformar completamente no Wally e nem sequer digitar mais nada . E eu só aperto um botão. É assim que eu programo agora. Você prefere esse modo ao modo de voz do Claude? Sim , eu concordo. Uso o WhisperFlow
+
+há mais ou menos um ano e o que eu gosto nele é que ele permite entrada de dados em qualquer lugar do Mac. Então, sabe, se você estiver em algum site antigo e meio estranho no Chrome, funciona lá. Funciona no Safari. Funciona em qualquer aplicativo que você tenha, contanto que consiga focar o cursor nele. Você pode inserir texto ali. E também é
+
+otimizado para termos técnicos. Então, você pode dizer ao usuário " Um", você pode referenciar arquivos, etc. Então, é ótimo. Quer dizer, imagino que cada vez mais ferramentas vão ganhar sua própria voz nativa e, com o tempo, isso se tornará uma interface dominante, mas agora o WhisperFlow oferece uma experiência muito boa . Sim.
+
+Ativei o modo rápido para que ele funcione mais rapidamente. Sim, também faz coisas legais, tipo, quando você estiver ditando no Slack, você pode dizer para ser mais informal. Ao ditar um e-mail, seja mais formal e o programa, de certa forma, reconhecerá o contexto na formatação do texto, como se soubesse que você está no Gmail ou que está escrevendo código, por exemplo . Ou solicitando o código. Então, este é um exemplo da escala de ideação. Eu dei esse
+
+comando simples e agora ele está dizendo algo como: "Ah, o que você gosta? Não entendi muito bem o que você quis dizer. Que tipo de diversão você está procurando?" Eu diria, hum, uma piada visual.
+
+Ah, galeria de arte ASCII, claro. Ovo de Páscoa escondido. Sim, vamos listar tudo, mas de forma sutil. Então, tipo, eu resumi em uma frase. E aí eu fico tipo, "Bem, o que você quer dizer com isso?" E é como se estivessem arrancando tudo isso de dentro
+
+de mim. Pensar tem valor. É como, sabe, a mesma forma que um bom engenheiro, numa sessão de brainstorming com um quadro branco, conseguiria extrair de você as mesmas informações . Sim. E assim, ali mesmo, calculou essa pontuação de confiança. Baseia-se na
+
+clareza do problema, tem 20. Definição de objetivo 18. Critérios de sucesso, não sabe realmente o que estou pedindo. Então, essa é a mais baixa. Limites de escopo e consistência. Então,
+
+tudo isso soma 100 e eu tirei 90 de 100. Então não vai ser simplesmente tipo, "Ok, eu sei o que você quer." Vai me perguntar mais algumas coisas. Tipo, "Ah, vamos fazer isso e teremos um aumento mínimo de atividade." Eu diria que não preciso de nenhuma configuração. Só quero que seja
+
+rápido. Então agora estou com 96 de 100. Isso significa que ele entendeu o que eu quero e agora vai redigir um contrato para eu ler. Eu leio e reviso o contrato e, a partir daí, ele vai construir essas fases que posso executar, ou essas especificações que posso executar em fases, e então prosseguir a partir daí, para que eu possa limpar o contexto para cada uma e ter um contexto novo em andamento. Sim, a forma como eu diria isso é: os cálculos aqui estão corretos? Não.
+
+Hum, isso importa? Não, porque o valor está no ciclo iterativo de esclarecer e aprimorar o próprio pensamento ao responder. Sim . Ops. Então, existe um contrato que está sendo carregado.
+
+E isso explica o que significam os critérios de sucesso, os limites do escopo, o que está incluído, o que está especificamente fora do escopo, quaisquer considerações futuras e como planejamos executar o projeto. Essa é fácil , apenas uma fase. Então, ele vai criar essa especificação para mim, o que aconteceu aqui. E então eu poderia executar isso e ir embora. E assim tudo dependia desse índice de confiança.
+
+Legal. Tudo bem. Você quer participar? Sim, vamos lá. Tudo bem.
+
+Bem, vamos pular para a próxima seção e teremos mais uma coisa para compartilhar depois disso. Então, indo além da questão do editor, nós refletimos sobre isso e nos perguntamos: será que esse título faz sentido? Habilidades que vão além do editor, porque na verdade não estamos em um editor, mas, para nós, é como se estivéssemos . Tipo, eu não abro o NeoVim com tanta frequência quanto antes . Então, eu perdi um pouco da minha identidade. Mas
+
+sim, essas habilidades realmente funcionam em muitos lugares diferentes. Outra coisa que você pode fazer é aprimorar suas habilidades de diversas maneiras. Então, por exemplo, para esse post sobre críticas ao repositório, você poderia perguntar: " Quero saber quem são as pessoas do 'bus factor'". Então, use algo como um log curto para entender quem está fazendo mais commits e quem está fazendo mais commits em seções específicas da base de código. E , sabe, liste o que é o fator ônibus e o quão vulneráveis ​​somos a isso.
+
+Cometer crimes. Bem, isso se aplicaria a pessoas que simplesmente escrevem mensagens de commit ruins. É muito fácil. Você simplesmente diz para o Claude confirmar e ir embora. Ah, galhos de zumbi. Você poderia ter,
+
+sabe, listado todos os ramos que nunca deram em nada ou que ainda estão por aí . Quem vai se comprometer às 3h da manhã? Quem é que está por dentro das últimas novidades e nos fazendo passar vergonha? E então, esta é definitivamente algo que você deveria adicionar, e é o meu "Leia-me". Sim.
+
+Meu arquivo "leia-me" é real? Isso explica ou descreve coisas reais?
+
+Sim, e mais uma vez, a razão pela qual isso é tão poderoso é que não está mais restrito a nenhum provedor de modelo fundamental, certo? Você pode definir essas habilidades e usá-las localmente no código Claude, mas também pode compartilhá-las com sua equipe, como já mencionamos, por meio da arquitetura de plugins. Mas agora você também pode inseri-los no Claude para desktop e na web, como conversamos com a equipe de recrutamento. Pessoas que se identificam como completamente não técnicas estão carregando habilidades específicas e executando-as em suas próprias sessões. E compartilhá-las.
+
+E compartilhá-las, certo? E agora, como estamos descobrindo, o uso de agentes está se tornando cada vez mais relevante, e coisas como o Pi, que é o sistema operacional do OpenClaw , também podem ser carregadas lá. Portanto, o valor reside realmente em definir o bloco de trabalho específico e, em seguida, descobrir exatamente quais ajustes o tornam a descrição mais eficaz da execução desse trabalho. E então, sabe, compartilhar com seus amigos e colocar em diferentes dispositivos sem ter que fazer muito mais do que escrever um pouco de Markdown e, possivelmente, alguns scripts. Sim. E quanto às habilidades? Se você pegar um
+
+arquivo de habilidade, como o arquivo "repo roast", com o arquivo " skill.md" e quaisquer scripts, referências e tudo mais, e compactá-lo em um arquivo .zip, você obterá um arquivo .zip de volta, certo? Renomeie o arquivo de .zip para .skill e agora um
+
+colega de equipe sem conhecimento técnico poderá arrastá-lo para o Cloud Desktop e usar essa habilidade. E é assim que elas são compartilhadas. Essa é uma maneira muito fácil de compartilhá- los. Não é uma maneira muito fácil de versioná- los. Ainda há questões delicadas a serem consideradas, como lidar com informações sensíveis , como credenciais, nesse caso, você não faz dessa forma. Por favor,
+
+não coloque isso no arquivo zip. Mas, sabe, está evoluindo. Então. Mas você também pode usar esses mercados. Assim como o Cloud Marketplace funciona no Cloud Desktop, Essa é uma maneira fácil de compartilhar habilidades, caso elas sejam aplicáveis ​​a fluxos de trabalho que não envolvam programação.
+
+Claro que sim. Então, como já falamos sobre isso, uma das coisas que eu realmente queria enfatizar é que a CLI do Work OS é uma interface de linha de comando genérica que você pode usar para executar comandos do Work OS, mas seu principal recurso é a capacidade de simplesmente executar o comando `install`. Então, se você tiver um projeto que não tenha autenticação ou que utilize outro tipo de autenticação que não seja o WorkOS, basta executar `workos install` e ele removerá cuidadosamente a outra autenticação que você possa ter instalado. Em seguida, adicionará a autenticação necessária com base no que você estiver usando, como Next.js, Stack Start ou qualquer outra coisa. O WorkOS identificará
+
+e carregará a autenticação necessária para você. A CLI utiliza o SDK do Cloud Agent, que é um código programático em nuvem que você pode distribuir pela CLI. A inteligência por trás disso são as skills presentes no diretório de skills do WorkOS, então o WorkOS já conhece todas as funcionalidades. Fizemos isso para matar dois coelhos com uma cajadada só: criamos a skill, aprimoramos sua funcionalidade e, em seguida, comprovamos sua eficácia executando-a pela CLI. A beleza da CLI é a sua simplicidade: basta executar ` npx workos install` e nós encaminhamos todos os comandos para o Claude. que ele acessa nosso
+
+token de API e, portanto, é uma maneira fácil de, digamos, "aqui está uma maneira sem atrito de se configurar com ele". Ele até cria uma conta de sistema operacional de trabalho para você, e você pode voltar a ela mais tarde e reivindicá-la. Então, são cinco minutos e você está configurado, e tudo isso é totalmente baseado em habilidades. Sim, outro lugar onde estamos vendo grande aproveitamento disso é na escrita de blogs. Muitas pessoas na equipe, à medida que ela cresce, querem escrever posts de blog de forma uniforme, mas não sabem exatamente como nosso CMS funciona, o tom, o formato e as convenções que usamos.
+
+Esse é o tipo de coisa que você costumava colocar em um documento do Notion e torcer para que pudesse inserir no Slack de alguém e obrigá-lo a ler antes de escrever algo. É muito mais fácil definir isso como uma habilidade para que eles possam interagir com ela e chegar a 80% do artefato sem precisar consultar outra pessoa. Essencialmente, revisão de código e geração de imagens. Com a geração de imagens também, você pode adicionar parâmetros adicionais. Obtenha estilos específicos, assim como pipelines de CI, e como mencionei anteriormente na palestra, depois que Nick publicou o repositório público de habilidades de SO de trabalho, o pipeline rag conseguiu começar a carregá-las como chamadas de ferramentas agentivas e o desempenho em todas essas consultas simplesmente deu um salto em relação a simplesmente dividir todos os documentos em partes e colocá-los em um banco de dados vetorial, por exemplo.
+
+E você viu a lagosta gigante lá fora quando entrou, não é? Assim como tudo isso também pode ser baseado em habilidades. Portanto, as habilidades são apresentadas de forma uniforme, transcendendo o código na nuvem ou o Codex, e podem ser carregadas em qualquer lugar, independentemente do nível de habilidade técnica . Sim. É muito fácil. Bem,
+
+nós falamos sobre avaliações, como medir essas coisas, que são importantes. Com habilidades específicas, como a de instalação do Next.js, descobri através das minhas avaliações que estava piorando as coisas porque estava prescrevendo demais o que fazer com o Next.js. O CloudCode já era inerentemente bom em trabalhar com o Next.js, e eu estava piorando a situação
+
+sendo muito dogmático sobre o que eu queria que ele fizesse. Isso levou a uma queda de cerca de 30% na precisão geral, com base nesses números que eu inventei. Mas eu consegui usar isso e penso muito em avaliações, de várias maneiras, como meu Apple Watch. Ele me informa, por exemplo, minha frequência cardíaca e quantas calorias estou queimando ao longo do dia. É preciso? Não,
+
+claro que não. Mas isso me dá uma noção geral de que estou mais ativo hoje do que ontem, e posso usar isso para avaliar meus próximos passos . É preciso refletir o que eu gosto e basear minha vida nisso? Não, mas é um vetor geral que eu posso observar e ver se estou melhorando ou piorando as coisas. Sim.
+
+Então, algumas habilidades que você desenvolveu, Zach, são algumas que não estão relacionadas especificamente a código, mas são bem impressionantes. Sim, era disso que eu estava falando antes, só para mostrar o que mais me empolga: pegar um fluxo de trabalho que parece incrivelmente complexo e disponibilizá-lo como uma habilidade. Então, este é um exemplo em que tenho um avatar do Slack que eu criei, que foi gerado para mim há alguns meses, e eu simplesmente o entreguei a essa habilidade de animação e disse: "Animem isso da maneira mais óbvia possível". Veremos se isso é realmente óbvio. Então, pegue uma bola gigante de energia e faça uma careta para ela, como se faz normalmente.
+
+Mas a questão é que aquilo era apenas uma mensagem de texto. Tipo, fazer essa pessoa parecer que está em Fallout segurando uma bola de energia e depois animá-la. Esta aqui é exatamente a mesma habilidade. Então, o mesmo arquivo Markdown e dois scripts Python dizendo, você sabe, o prompt era " child running through a field" (criança percorrendo um campo). E também tem som nisso, porque está usando a API de voz (VO API). Então, novamente,
+
+primeiro, você sabe, Claude lê a skill Markdown e diz: "Ok, entendi o que é isso. É uma sequência de duas chamadas de API que vou fazer. A primeira chamada de API é o prompt do usuário para criar a imagem estática. A segunda chamada de API é a saída disso, a imagem estática, e então um novo prompt que eu escrevo dizendo: 'Anime isso da maneira mais óbvia possível'. Acionando a API VO com isso e recebendo uma animação de volta, mas, você sabe, isso leva cerca de 30 segundos de tempo de geração. E eu uso
+
+exatamente esse mesmo fluxo de trabalho para fazer todas as cenas de transição em um filme recentemente. E outro exemplo, eu mencionei isso antes, mas a skill de remoção... Eu sou péssimo em edição de vídeo.
+
+Não sei nada sobre isso. Mas quando eu estava trabalhando no CLI do sistema operacional, pensei: "Ah, seria legal fazer um vídeo divertido que eu pudesse usar no..." "O Twitter, tipo, para demonstrar ou falar sobre isso." E aí, alguém
+
+mencionou o Remotion e eu pedi para ele fazer isso. E ele montou praticamente assim. Tipo, eu pedi para usar nosso logo real em vez de um inventado. Mas ele até entendeu a saída da CLI e juntou tudo isso em um vídeo de demonstração que mostra o que ele pode fazer. E eu não precisei fazer nada disso e fiquei super impressionado sem saber nada sobre vídeo. E também,
+
+quando eu disse "faça isso", ele carregou um localhost:3000 no meu navegador que era um editor de vídeo completo do Remotion. E eu podia ver o vídeo rodando em loop e ele estava fazendo coisas, e eu pensei: "Ah, você não usou nosso logo real. Use esse." E eu só disse para o Claude fazer isso e ele atualizou em tempo real. Foi muito legal.
+
+Sim. Então imagine integrar isso ao seu fluxo de CI/CD do GitHub e, no final de um grande projeto ou sempre que... Um marco é mesclado, você atualiza automaticamente, sabe, qualquer documento e até inclui uma demonstração. Hum,
+
+isso pode se tornar bem poderoso se você orquestrar habilidades bem definidas.
+
+É esta habilidade? É exatamente assim que ela funciona internamente. Então, você pode imaginar aquela que eu mostrei com os dois vídeos do YouTube. Se ela se chama " imagem animada", a primeira vai gerar uma imagem estática minimalista e depois pegar essa imagem e animá-la por meio de um vídeo. E você tem apenas dois scripts.
+
+Um para gerar a imagem e outro para gerar o vídeo. Hum, mas o arquivo da habilidade em si tem umas 30 linhas de Markdown. Sim. E aquela do Nano Banana que eu executei antes, era só criar um prompt criativo o suficiente, tipo, pegar a ideia que eu tinha, desenvolver o prompt, e então passar para um arquivo TypeScript que chamava a API do Nano Banana e recebia a imagem de volta. Então, essa habilidade é basicamente um wrapper LLM simples em torno disso... em torno de um
+
+script TypeScript que usa a API deles para fazer isso. Então, também é amplamente aplicável a fluxos de trabalho. Não é só coisa de desenvolvedor, certo? Você pode imaginar se a equipe de vendas tem uma maneira muito específica de entrar em contato com as pessoas ou se sempre há um tipo de relatório que você está gerando para clientes ou potenciais clientes, etc. Tudo isso é excelente para uso com skills.
+
+Então, alguém tem uma skill Replit que gostaria de compartilhar? Sim. Ok. Sim, a skill Amy and Wolf da Raven Wolf, experimente. Você precisa ver os resultados.
+
+Qual é? Número dois. Eu carreguei outra. Número seis é a usada. Usada.
+
+Ok. Usada. Áudio número seis. Certo
+
+, enquanto isso está rodando... Não, executamos a errada. Pronto.
+
+Enquanto isso está rodando, vamos dar uma olhada. Oh, legal. Ok. Honestidade implacável. Eu adoro.
+
+Brutalmente honesto. Com um coração de ouro. Incrível. Eu adoro o contexto. Muitos...
+
+Seis Arquivos, muito bom. Excelente. E aqui, a detecção de público. Você disse para carregar o arquivo audience guide.md. Aqui está a
+
+divulgação progressiva sobre isso. Isso também ajuda a manter seus arquivos Markdown gerenciáveis. Esta é uma habilidade nota 10. Sim. Muito bom.
+
+Isso é incrível. Certo, vamos ver se nos ajudou em algo. Então, está avaliando o workshop em si. Seis de 10. Sinto isso.
+
+Achei que tínhamos algo promissor, mas
+
+espero que você nos dê uma nota um pouco melhor do que essa. Isso é incrível. Um feedback crítico. Incrível porque não existe. Sim, isso é ótimo.
+
+1.200 linhas de monolito, certo? Sim. Crise de identidade. Zach é duas pessoas. É assim que me
+
+sinto também. Segredo codificado, tudo bem. Não é realmente um segredo. Isso é incrível. Adorei.
+
+Super legal. Certo, temos 3 minutos restantes. Alguma pergunta ou...
+
+Alguém mais quer compartilhar uma habilidade?
+
+Então, esta é uma habilidade que você pode usar, mas, mais importante, são técnicas que você pode usar para desenvolver suas habilidades e aprimorá-las de diferentes maneiras. Há muitos tópicos mais avançados que podemos abordar também. Mencionamos, por exemplo, os subagentes. Subagentes são uma ótima maneira de estender essas habilidades sem sobrecarregar o contexto e sem que elas executem tarefas pontuais e depois desapareçam. E para levar isso a um nível superior, eu realmente recomendo ter o criador de habilidades do Claude instalado, porque você pode simplesmente dizer: "Ei, eu tenho esta habilidade." É
+
+bom?" E isso lhe dará dicas. Ou você pode dizer: "Execute algumas avaliações". E ele executará um conjunto completo de testes de avaliação e dirá: "Sim, é bom" ou "Não, é ruim". Sim.
+
+E você pode partir daí. E então, como o Zach estava dizendo, reflita sobre as transcrições, reflita sobre como você está realmente usando as habilidades e você pode usar isso como uma visão de como melhorar as habilidades e a execução delas. Por exemplo, se alguém inicia uma habilidade e ela está sempre fazendo perguntas sobre algo específico, talvez isso seja algo que você possa fornecer antecipadamente. Ou se você vir algo como: "Ah, está fazendo umas 10 chamadas de ferramentas". Talvez você possa condensar para uma ou duas chamadas de ferramentas e fornecer essa informação antecipadamente para que não precise fazer isso toda vez.
+
+Sim. A recomendação adicional sobre o criador de habilidades interno e a outra coisa que ele sugere, quer dizer, sugere que você faça novamente. O momento é para pensar em como você gerencia seu contexto, até mesmo coisas que você costumava considerar descartáveis, certo? Então, na era pré-LLM, a gente podia passar a semana inteira desenvolvendo intensamente no teclado, como eu costumava fazer, e aí, finalmente, no sábado, apagava tudo para poder usar o GitHub para mim. Agora, todo esse contexto é ouro.
+
+A conversa, principalmente o que falhou, o que não deu certo, o que foi frustrante, porque agora tudo isso é um contexto muito rico para um criador ou refinador de habilidades explorar e, então, construir uma ferramenta personalizada que vai resolver esse problema sem problemas na semana que vem. Sim. E você também pode pensar em habilidades como se pudesse usar essa divulgação progressiva para revelar informações para diferentes públicos. Por exemplo, dependendo de quem está executando a habilidade, você poderia pedir para obter o e-mail do usuário e descobrir quem é esse usuário. Ou você poderia perguntar: "Quantos commits esse usuário tem?" Eles têm
+
+10.000 commits aqui. Ok, podemos pegar pesado com eles." Mas essa outra pessoa que tem quatro commits, provavelmente é uma recém-contratada. Talvez seja melhor pegar mais leve com ela. Não a assuste e a afaste
+
+desse projeto que ela começou na segunda semana. Uma pergunta, sim. Rapidamente, Zach. Você poderia me explicar novamente o que você disse sobre a troca de contexto que você conectou ao Claude com o Slack e o Linear? Então, parece que ele consegue ler constantemente o que o Slack está fazendo.
+
+Exatamente. Eu uso o Claude Co-Work ou o Claude... Usamos o Cursor, então não sei se temos a mesma coisa.
+
+Entendi. Sim, estou usando o Claude Code agora. É possível fazer isso no Claude Code e no Claude Desktop, mas basicamente eu só tenho o conector no Slack, então eu preciso usar o GitHub ou o OAuth com o Slack, e aí ele consegue ler minhas mensagens do Slack. Agora você pode executar o comando loop, pelo menos no Claude Code, para que ele faça isso a cada 15 minutos, se quiser. E então você diz no prompt: "Se ainda não houver um ticket Linear correlativo, crie um novo para mim." Se houver alguma
+
+solicitação adicional, como " solicitar atualização do Linear", e você tem uma segunda aba do terminal que está em loop, verificando o estado do seu Linear. Kathleen trabalha na WorkOS. Kathleen, você está usando protetores auriculares. Estou trabalhando muito, de verdade . E você tem essa segunda aba que está em loop, verificando suas tarefas do Linear e, basicamente, fazendo o trabalho para você.
+
+Mas o ponto principal era... bem, desculpe, nosso tempo acabou . O ponto principal era automatizar esses loops. Então, é isso.
+
+Muito obrigado, pessoal. Obrigado por serem uma plateia incrível. Obrigado por todas as ótimas perguntas. Agradeço muito. Obrigado.

@@ -1,0 +1,229 @@
+---
+video_title: "Bending a Public MCP Server Without Breaking It — Nimrod Hauser, Baz"
+video_id: U00AOI1eJUE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=U00AOI1eJUE
+video_date: 2026-04-08T00:45:06+00:00
+video_description: |
+  Public MCP servers often look ready-to-use, until the reality of production hits. You might find your agents ignoring perfectly good tools, unwanted side-effects exhausting your container's disk space, or worse, security concerns like multi-tenant leaks wreaking havoc. What begins as a ""simple integration"" can quickly become a source of friction and unexpected failure.
+  
+  In this talk, we'll share a hands-on guide to adapting third-party MCP servers for real-world applications. You'll learn practical processes to identify friction points and strategies to modify MCP servers so they integrate seamlessly with your specific agents and architecture. Real-world lessons, trade-offs, and production-tested solutions included.
+  
+  Using a concrete example, we'll walk through the journey of transforming a brittle setup into production-ready infrastructure. We'll cover editing tool definitions, optimizing agentic context, and layering deterministic validations—all while preparing for scale. This iterative debugging process will provide you with a repeatable framework to make any MCP integration resilient, secure, and production-ready.
+  
+  Nimrod Hauser - Founding Software Engineer, Baz
+  
+  Nimrod is a Principal Engineer at Baz, building AI-powered code review agents. A “jack of all trades” across backend, data engineering, and data science, he has worked at the intersection of software and data throughout his career. He began as a data analyst in the military, helped lay the foundations of Salesforce’s Einstein platform, and later became the first data scientist at cybersecurity startup BlueVoyant. He went on to lead data and architecture at Solidus Labs in the crypto-regulation space before joining Baz. Nimrod thrives on building systems from scratch and turning ideas into scalable products.
+  
+  Socials:
+  https://www.linkedin.com/in/nimrod-hauser-03776a31/
+  https://x.com/NimrodHauser
+  
+  Slides:
+  https://prezi.com/view/TSBwBXLNcXzzWrLbRiit/?referral_token=4jzLrblnB3FN
+---
+Olá a todos e sejam bem-vindos à nossa palestra de hoje sobre como dobrar um servidor MCP público sem quebrá-lo. Mas hoje talvez tenhamos estragado tudo, porque nosso servidor MCP parece ter pegado fogo. Que bom que você está aqui. Precisamos de toda a ajuda possível. Vamos repassar nossa conversa e ver como podemos melhorar o que está acontecendo aqui. Eu sou Hauser. Eu trabalho na Buzz. Nos últimos anos, temos
+
+desenvolvido revisores de código com inteligência artificial, além de várias outras funcionalidades — tudo o que possa facilitar e melhorar a vida das pessoas na área de P&D, sejam elas desenvolvedores, gerentes de produto ou qualquer outra função. Se for Agentech, provavelmente estamos fazendo alguns ajustes . Mas vamos direto ao assunto e começar a analisar o que está acontecendo com o nosso servidor MCP. Suspeito que sejam as ferramentas. Vamos falar sobre ferramentas de terceiros e por que elas podem prejudicar nossos aplicativos. Em
+
+primeiro lugar, sou eu. Como eu disse, Nimrod Hauser, um dos engenheiros fundadores da Buzz. Estou na empresa desde a sua fundação em 2023. Trabalho com dados de back-end há cerca de 20 anos. Na minha carreira, tive uma breve passagem pela Salesforce e, desde então, tenho trabalhado principalmente com startups, nas áreas de cibersegurança, criptomoedas e, agora, ferramentas para desenvolvedores.
+
+Atualmente, quero conversar com vocês principalmente sobre as ferramentas da Agentech. Tudo bem. Ferramentas da Agentech, e especificamente ferramentas de terceiros. Podem ser uma grande vantagem, um excelente complemento à nossa aplicação, mas nem sempre funcionam de imediato. Esperamos que eles melhorem nossa aplicação . Às vezes, veremos
+
+degradação. E vamos tentar entender por que isso acontece. Em seguida , exploraremos um conjunto de cinco boas práticas que podemos seguir para reverter essa situação e fazer com que nosso aplicativo seja um sucesso absoluto. Ao longo do processo, esperamos consertar o servidor MCP com defeito que acabamos de ver, apagar o incêndio, fazê-lo funcionar e garantir que nossos agentes se comportem da maneira desejada. É, a situação está ficando bem ruim.
+
+Acho que devemos começar por aí. Então, vamos falar sobre as ferramentas da Agentech. Quando usamos servidores MCP, obtemos ferramentas provenientes do servidor MCP. Então, já que estamos falando de ferramentas de terceiros, não me importa se elas vêm de um servidor MCP, de uma biblioteca, ou se as copiamos e colamos de algum outro lugar. Se forem ferramentas da Agentech, e tiverem sido escritas por uma equipe diferente, são relevantes para esta discussão.
+
+Então, o que são essas ferramentas? Essencialmente, as ferramentas são apenas funções que podem ser chamadas, envoltas em uma descrição clara. A descrição é importante porque permite que os agentes saibam quando e como usar o código. E vamos analisar em detalhes esses aspectos da descrição. Mas, novamente, é como um código de integração sofisticado escrito por terceiros. Na
+
+palestra de hoje, usaremos o servidor MCP do Playwright como exemplo. Basicamente, estamos analisando o código de integração escrito pela excelente equipe do Playwright, envolto em suas descrições. E veremos como podemos fazer com que essas ferramentas funcionem melhor, adaptando-as ao nosso caso de uso. Sim, ferramentas de terceiros têm seus desafios. Em primeiro lugar, isso pode fazer com que nossos agentes se comportem de maneira inesperada.
+
+Sabe, os agentes já são coisas não determinísticas e imprevisíveis. Você lhes dá ferramentas e obtém imprevisibilidade em grande escala. Mas também podem prejudicar o desempenho. Você pode querer que o agente faça algo específico, e obter resultados abaixo do esperado, resultados incorretos, ou talvez ele simplesmente faça a tarefa, mas de uma forma que não seja a ideal. E, por meio das melhores práticas atuais, esperamos poder perceber como podemos aprimorar significativamente a implementação de ferramentas de terceiros em nossos fluxos de trabalho da Agentech . Por último, mas não menos importante, esses
+
+desempenhos ruins, esse comportamento inesperado, também podem significar problemas de segurança graves . Quer dizer, imagine um cenário, um cenário bem clássico, tipo uma arquitetura multi-inquilino, e seu agente talvez não saiba tudo sobre a sua arquitetura e a divisão em pastas, bancos de dados e esquemas. Não possui as salvaguardas adequadas e pode vazar dados de um cliente para outro, e assim por diante . É fundamental proteger seus agentes, e isso se torna ainda mais importante ao lidar com ferramentas de terceiros que desconhecem sua arquitetura. Então, também abordaremos esse assunto .
+
+Tudo bem. Acho que estamos quase prontos para analisar um caso de uso. Para dar uma olhada em algum código, na verdade. Mas precisaremos de um caso de uso e, com sua permissão, escolheremos um dos nossos. Então, hoje nosso caso de uso será o revisor de especificações do Buzz. Então, o que é um
+
+analista de especificações? É um dos nossos produtos, que é essencialmente um revisor da Agentech capaz de comparar requisitos com implementação. Então, como primeiro passo, é preciso coletar os requisitos. O sistema irá acessar seus sistemas de tickets, como Jiras, Linear ou similares, e lerá o ticket. E também pode acessar o Figma e analisar designs visuais de uma forma multimodal. Na verdade, ele verá
+
+o projeto pretendido, e essa parte são os requisitos. Assim que entender a tarefa atribuída a um desenvolvedor, o servidor MCP do Playwright será acionado para abrir um navegador, acessar o sistema, verificar a ramificação, analisar a implementação e avaliar se ela atende aos requisitos. Isso nos dará uma espécie de veredicto. O sistema tira uma foto como prova de que a exigência foi cumprida ou não, e faz tudo isso automaticamente, o que pode economizar muito tempo para as pessoas, principalmente para os gerentes de produto, que não precisam mais realizar tarefas repetitivas de validação . Então, construímos um exemplo simplificado do nosso revisor de especificações e vamos ver como utilizamos as ferramentas para tirar o máximo proveito dele.
+
+Espero que isso faça sentido. Em linhas gerais, acho que é hora de analisarmos o código e, com sorte, tudo ficará muito, muito mais claro. Tudo bem. Então, temos um exemplo simplificado do nosso revisor de especificações. Vamos passar por isso rapidamente.
+
+Não precisamos nos aprofundar em todos os aspectos disso . É um projeto bem pequeno. E vamos ver o que está acontecendo e nos concentrar nas partes que nos interessam. Então, vamos começar aqui com nossa função principal. E nós temos um diretório onde queremos salvar os instantâneos. Falaremos disso mais
+
+tarde. Mas, de cara, já temos a configuração do nosso servidor MCP. Só temos um. Estamos usando apenas o servidor MCP do Playwright. Isso é bastante comum.
+
+Então, temos um MCP. Ao abordarmos nossa função principal, você pode ver que estamos definindo nosso cliente MCP. E vamos usá-lo daqui a pouco . Vamos encaminhar isso ao nosso agente, mas quero me concentrar nisto. É aqui que a magia desta palestra acontece.
+
+Criamos uma classe base para obter as ferramentas. E tudo o que faz é ter uma função chamada obter ferramentas. Ao longo da palestra, iremos abordar temas de crescente complexidade e aprimorar a forma como lidamos com as ferramentas provenientes do nosso servidor MCP de terceiros. Então, aqui está. Estamos começando com uma base de referência. Vamos
+
+analisar isso em um instante. E, ao iniciarmos nossa sessão, é aqui que essa herança vai acontecer. Cada vez que executarmos isso, as ferramentas farão algo um pouco mais avançado. Então, começamos o que queremos iniciar em nosso fluxo. Temos uma função chamada "login no Buzz", porque, para esta apresentação, nosso exemplo será o login em nosso sistema, e falaremos sobre o porquê de precisarmos dela mais adiante. Há,
+
+na verdade, um ponto interessante aqui. Vamos definir o que é um LLM. Vamos criar um agente. Vamos enviar uma mensagem ao sistema e uma mensagem humana para iniciar o processo . Essas são as mensagens que ele vai receber. E nós o
+
+invocaremos. Hum, você provavelmente está se perguntando, talvez queira ver um pouco mais sobre o funcionamento interno, talvez dar uma olhada nos prompts. Então, isso deve ser relativamente simples, sabe? Mensagem do sistema, geralmente gerada por IA, dizendo coisas como "você é um agente de controle de qualidade meticuloso". Você precisa revisar os requisitos do ticket, bem como realizar a verificação visual. Tudo o que
+
+discutimos em linhas gerais está aqui. Algumas orientações: primeiro, leia o ticket, entenda-o, navegue pelo sistema e, no final, como dissemos, ele precisa nos dar um veredito de aprovado ou reprovado, observações específicas e referenciar tudo com uma captura de tela como evidência. O prompt humano é muito semelhante. Possui, sim, um aspecto multimodal, em que captamos imagens e as incorporamos no estímulo humano. Mas hoje em dia é muito simples, e qualquer programador pode fazer isso para você se precisar. Por falar em
+
+imagens, temos duas imagens aqui. Temos um bilhete do qual tiramos uma foto . Nosso produto real não considera ingressos como instantâneos. Nós estávamos apenas com preguiça. Mas, bem, o agente certamente consegue ler isso e entender a exigência.
+
+Existe um desenho complementar, que é este aqui. Portanto, o ticket indica que desejamos ter um painel de configuração para o nosso revisor de especificações em nosso sistema no Buzz. Explica como deve ser a aparência e apresenta um modelo. Portanto, o agente deve entender que está procurando uma gaveta dentro da nossa aba de agentes para o revisor de especificações, e ela deve ter uma aparência semelhante a esta. Incrível.
+
+Acho que já está na hora de colocarmos isso em prática, e espero que isso torne tudo muito mais claro. Temos um ponto de interrupção aqui, logo após obtermos as ferramentas. Quase me esqueci. Nosso primeiro teste será com esta versão V0, a versão de referência. Qual é o nosso parâmetro de comparação? Se
+
+formos às nossas ferramentas de configuração, veremos que o que fazemos para a versão V0 é o padrão clássico, sem necessidade de configurações adicionais. Nós simplesmente usamos o método de carregamento das ferramentas MCP do LangChain . É isso aí. Na primeira rodada, não vamos mexer em nada com as ferramentas . Vamos ver como se comporta na versão original.
+
+Tudo bem.
+
+OK. Então, isto está a começar, e nós temos as nossas ferramentas. Vejamos o que temos aqui. Logo de cara , o pessoal da Playwright nos deu 21 ferramentas, e tudo o que tem a ver com manipular o navegador, fechar o navegador, redimensionar a janela, mensagens do console, lidar com diálogos, fazer upload de arquivos, preencher formulários, instalar tudo pressionando a tecla. E então podemos analisar as descrições. Qual é
+
+a descrição de uma ferramenta chamada "pressionar tecla"? Pressione uma tecla no teclado. Qual é a descrição de algo como redimensionar? Redimensione a janela do navegador. Fechar navegador? Feche a página. Essas observações
+
+parecem muito superficiais e genéricas, mas não as culpamos. O pessoal da Playwright não sabe qual é o nosso caso de uso específico. Este servidor MCP precisará atender a uma infinidade de casos de uso diferentes . Tem que ser genérico. Mas, para nós, usando isso, e veremos isso no futuro, talvez queiramos inserir nossas próprias descrições que sejam realmente adaptadas ao nosso caso de uso, mas ainda não chegamos lá. Ainda estamos na fase inicial.
+
+Então, vamos continuar. E veremos que isso está funcionando. OK. Então, o dramaturgo está em cartaz. Está abrindo um navegador.
+
+Agora, ele vai fazer login. E assim que o login for efetuado, o agente assumirá o controle e começará a ser executado de acordo com as instruções. E aí começa a corrida. Está abrindo... está logado. Esta é a
+
+nossa página inicial, que é a tela de alterações. E agora precisará encontrar a página relevante, que é a aba de agentes. Portanto, será necessário explorar um pouco o sistema. Pode funcionar, pode não funcionar. Lembre-se, as ferramentas ainda não estão otimizadas . E está feito. Vamos ver como
+
+foi. Analisando os resultados, constato que o requisito não foi implementado e o status é de reprovação. Isso me fornece uma observação e me informa que o requisito não foi atendido, pois não foi possível navegar até uma página aparentemente fictícia chamada buzz.co/spec-reviewer . Isso pode ser uma alucinação, um lapso de julgamento por parte do agente, ou uma série de outras coisas. E isso fornece uma evidência de uma
+
+captura de tela de erro 404, que provavelmente foi feita e que podemos verificar em nossa pasta de capturas de tela. Nem sequer conseguiu tirar a captura de tela corretamente. Então, muitas coisas deram errado, e este é, na verdade, um ótimo resultado para o início de uma palestra cujo conceito principal é otimizar o uso de ferramentas de análise de agentes. Então, vamos ver o que podemos fazer para melhorar nossas ferramentas, e vamos executar isso novamente para ver se conseguimos inverter a situação. Tudo bem. Legal.
+
+Nosso servidor MCP já está começando a apresentar uma aparência um pouco melhor. O fogo foi apagado. É apenas essa faísca agora. E isso provavelmente acontece porque já analisamos algum código. Estamos começando a entender o problema, mas ainda precisamos começar a implementar nossas melhorias e ver o que pode ser feito para realmente aprimorar o sistema .
+
+Então, chegou a hora de apresentar os cinco conceitos que vamos abordar. Vamos analisar como podemos selecionar ferramentas de terceiros, encapsular essas ferramentas com nossas próprias descrições e talvez alguns recursos adicionais, adicionando salvaguardas determinísticas sempre que acharmos necessário, e daremos um exemplo de criação de novas ferramentas a partir das ferramentas existentes, usando-as como blocos de construção. E, por último, sempre existe a opção de tratar as ferramentas como funções simples, apenas chamando-as e usando-as como aquele código de integração que mencionamos, escrito para nós pela excelente equipe da Playwright. Sabe, podemos tirar algumas partes do fluxo de trabalho do fluxo de agentes sempre que acharmos necessário. Falaremos sobre isso mais para o final.
+
+Portanto, é também uma ferramenta em nosso arsenal. Eu meio que dividi isso em duas categorias. Uma se enquadra mais no âmbito da engenharia de contexto, a outra em diretrizes determinísticas. Na verdade, não importa. No fim das contas, o que importa é que nossa aplicação funcione da maneira que queremos .
+
+Então, agora vamos analisá-los um por um, observando o código, para ver como podemos melhorar o exemplo simples que acabamos de ver. Começando pelo nosso primeiro ponto, a curadoria de ferramentas de terceiros. Tudo bem. Vamos ver como fica este. Muito bem, estamos de volta ao nosso projeto já conhecido. E, graças à magia
+
+da edição de vídeo, conseguimos importar a versão 1. Era originalmente a versão V0 original. Agora está na versão V1, com curadoria. A única diferença, como vimos, é que agora temos isso como V1, e isso, como dissemos, é a classe que herda da classe base. Antes, bastava obter as ferramentas padrão usando a função do LangChain. Agora podemos ver
+
+o que implementamos aqui. Então, nós entramos e costumávamos devolver isso, certo? Mas agora, temos essa grande lista com todos os nomes de ferramentas que obtemos do nosso Playwright MCP. E essa pequena lista, isso é bem, você sabe, coisas padrão em Python. Um exercício de compreensão de lista. Então, acabamos de criar
+
+esta lista de ferramentas que queremos excluir. Acabamos de analisá-las e conhecemos as ferramentas. Já faz um tempo que estamos usando este servidor MCP e decidimos que, para o nosso caso de uso, talvez não precisemos redimensionar o navegador. Não queremos que nosso agente prolongue o processo. Não queremos executar código dentro do navegador de forma independente.
+
+Essas não são tarefas que nosso revisor de especificações precisa realizar como parte de suas operações. Talvez isso seja necessário para o seu caso específico , mas para o nosso, nem tanto. Então, tudo o que fazemos é pegar todas as ferramentas e, em vez de simplesmente devolvê- las, excluímos aquelas que não queremos. Então, há vários aqui, seis aqui, que simplesmente não vamos usar. Vamos ligar isso.
+
+Temos nosso ponto de ruptura e, em vez das 21 ferramentas que tínhamos antes, espero ver menos. E assim, temos 16. Incrível. Então, isso significa que nossa janela de contexto já tem menos ferramentas. Nosso agente tem menos opções. Assim, tudo poderá
+
+ficar mais simples. Veremos que nem todas as diretrizes que vamos seguir necessariamente reduzirão o conteúdo da janela de contexto. Alguns irão, de fato, acrescentar algo, mas tudo isso faz parte dessa troca, desse malabarismo que vamos discutir. Passando para o próximo ponto, a prática de integrar ferramentas de terceiros. Isso é incrível. Conversamos sobre
+
+como as descrições, especificamente as provenientes do Playwright MCP, são extremamente superficiais e muito genéricas, e que isso é totalmente compreensível, pois precisam atender a todos os casos de uso possíveis no mundo que possam querer usar o navegador. Mas, se você realmente quer otimizar, talvez seja melhor começar a adaptar as coisas ao seu caso específico. Vamos ver como isso acontece. Ok, isso já está se tornando algo familiar . E como sempre, graças à magia da edição de vídeo, importamos e finalizamos a versão V2. Então,
+
+desta vez vamos embalar as ferramentas. Descendo um pouco, vemos que estamos chamando a classe V2, que implementará o método `getTools`, e veremos o que está acontecendo aqui. Se eu for para a versão 2 (V2 wrapped), vejo que, como antes, temos todas as ferramentas, mas agora temos essa nova classe chamada `tool wrapper`, que possui um método que chamamos de ` wrap Playwright tools`. Vamos ver o que está acontecendo aqui. Assim como antes, ainda temos esta lista com todos os nomes das ferramentas. Vamos refinar
+
+um pouco mais a filtragem, mas em vez de apenas os nomes das ferramentas, também temos todas essas descrições. Assim, para cada ferramenta, queremos especificar o que precisa acontecer. E, com base na experiência, temos nossa própria ênfase específica que queremos dar ao nosso agente. Poderíamos dizer, sabe, que antes de chamar a ferramenta do navegador, primeiro chamaríamos esta outra ferramenta. Essa ferramenta se mostrou particularmente útil. É... tem um
+
+nome um tanto enganoso. Chama-se ferramenta de captura instantânea. Na verdade, não se trata de uma representação visual. É o instantâneo de acessibilidade que [bufa] meio que mostra todos os diferentes botões e todos os diferentes itens de menu em texto. E acreditamos que o agente realmente consegue entender bem o conteúdo de uma página quando utiliza essa ferramenta. Então, nós dizemos isso para várias
+
+ferramentas, sabe, em vez de usar ` hover`, `click`, por favor, use esta ferramenta antes. Assim, podemos realmente influenciar seu comportamento. Podemos aumentar a vontade de escolher uma ferramenta em detrimento da outra. Podemos fazer várias coisas. Por exemplo, esta é a ferramenta de que acabei de falar, o instantâneo de acessibilidade. Sempre preferiremos
+
+isso a tirar uma foto de verdade, que é o que esta ferramenta faz. Portanto, você pode realmente dar muitas orientações com base em sua própria experiência para o seu caso de uso específico . E isso é muito, muito poderoso. Aqui temos este dicionário, que simplesmente mapeia os nomes das ferramentas com suas novas descrições aprimoradas. Ainda assim, temos nossas ferramentas para filtrar. Por fim, temos
+
+a função que chamamos de "wrap Playwright tools", que simplesmente percorre todas as ferramentas que o Playwright oferece por padrão. Filtramos o que precisa ser filtrado. E para outras ferramentas, obtemos nossa descrição aprimorada com base no nome da ferramenta, criamos essa ferramenta e a adicionamos à lista de ferramentas encapsuladas. Assim, obtemos ferramentas aprimoradas. Que método é esse que cria uma ferramenta aprimorada? Bem,
+
+é um método que obtém a ferramenta original e a descrição aprimorada, cria uma nova ferramenta e a retorna. Então, o que essa nova ferramenta incrível faz? Exatamente o que a ferramenta antiga fazia. Simplesmente invoca a ferramenta original. Possui apenas uma descrição aprimorada.
+
+Então, se executarmos isso, voltando ao método principal, e executarmos isso novamente, e ainda tivermos nosso ponto de interrupção, podemos ver que ainda temos menos ferramentas do que queríamos antes, na verdade, temos ainda menos, pois filtramos muito mais. Mas quando olhamos para as descrições, vemos que elas são muito mais longas, e são exatamente as que queríamos. Por exemplo, aqui está a ferramenta de que falamos, o instantâneo do navegador, que captura um instantâneo de acessibilidade da página atual, blá blá blá, tudo o que mencionamos. Se analisarmos outro exemplo, o clique no navegador, aqui está nossa diretriz: primeiro, chame a outra ferramenta e, em seguida, chame esta . Agora, nosso agente sabe como queremos que ele se comporte.
+
+Muito bem, vamos para o próximo. Em primeiro lugar, o nosso servidor MCP, não sei se vocês conseguem notar, mas as coisas estão ainda melhores. Algumas das interfaces parecem funcionar, as luzes piscam, os dispositivos disparam, mas ainda estamos longe da reta final. Vamos passar para o ponto número três e continuar aprimorando isso. Agora, estamos entrando no domínio das salvaguardas determinísticas. Isso significa
+
+impor salvaguardas determinísticas, assumindo o controle de aspectos sensíveis ou críticos para a missão de nossas tarefas com uma lógica determinística que não está sujeita à tomada de decisões por agentes. Às vezes, existem aspectos das suas tarefas que são simplesmente demasiado sensíveis para serem deixados nas mãos dos agentes. Já falamos antes sobre cenários como arquitetura multi-inquilino e situações em que o agente pode não estar totalmente ciente da sua arquitetura, coisas desse tipo. E, claro, você precisa especificar tudo o que puder nas descrições das ferramentas e nos avisos, mas às vezes você realmente quer garantir que ela não faça nada de estranho. Sabe, os agentes são entidades não determinísticas e, às vezes, eles vão te ignorar. Conhecemos todos
+
+esses fenômenos, como a busca por uma agulha no palheiro e a sensação de estar perdido no meio dele, além de muitos casos em que os agentes simplesmente não funcionam como você espera . É aqui que você deve implementar alguma forma de aplicação determinística. Fizemos isso em torno da ferramenta que tira fotos instantâneas reais. Não o instantâneo de acessibilidade de que falamos antes, mas sim os instantâneos visuais propriamente ditos. Tínhamos uma pasta que definimos e dissemos: "Esta é a pasta de saída.
+
+É aqui que queremos que você coloque as imagens." Mas existe a possibilidade de os agentes se tornarem desonestos e simplesmente armazenarem imagens em outros locais. Portanto, é aí que queremos traçar a linha e garantir que isso nunca aconteça. OK. Então, como sempre, temos agora a versão 3, que é a que queremos analisar. Então,
+
+voltando ao assunto principal, vemos que temos isso aqui, os guarda-corpos V3. Ao analisarmos o conteúdo, percebemos que temos novamente nossas ferramentas do Playwright embaladas. Obviamente, desta vez vai acontecer algo um pouco diferente à medida que incrementamos a cada vez. Então, ainda temos os nomes, ainda temos as descrições, e... indo, indo, indo,
+
+indo. Aliás, já podemos ver que, além do V3 que sempre tivemos, que se parece com isso, e do wrapper da ferramenta, que já tínhamos antes, agora temos outra classe chamada validação de caminho. Vamos ver onde o utilizamos . Então, estamos descendo, descendo, descendo. Estamos indo além do dicionário, além das ferramentas de filtragem. Estamos no
+
+método que sempre importamos, que envolve as ferramentas do Playwright. E, como antes, o pacote de ferramentas do Playwright percorre todas as ferramentas originais que obtivemos do nosso MCP do Playwright, filtra o que precisa ser filtrado, fornece a descrição aprimorada para cada uma das ferramentas, se as encontrarmos, e então, como antes, temos a mesma função auxiliar para criar um pacote de ferramenta do Playwright, que recebe uma ferramenta, fornece a descrição aprimorada e cria uma nova ferramenta a partir dela. Mesma funcionalidade, nova descrição. Vamos ver o que mudou agora. Então, quando quisermos criar a nova ferramenta, certo? Então, esta é a ferramenta que estamos
+
+criando; como dissemos, uma ferramenta é simplesmente uma função que pode ser chamada, com alguma descrição. Apresentamos a nova descrição, e antes tínhamos essa parte porque dizíamos: "O que a nova ferramenta faz? Exatamente o que a antiga fazia." Mas nós adicionamos esta parte. Estamos dizendo: "Se a ferramenta que está sendo ativada agora, se for a ferramenta de captura de tela, e nós pesquisamos a ferramenta e sabemos que ela usa internamente o caminho ou o nome do arquivo como palavras-chave, pelo menos as palavras-chave relevantes para nós.
+
+Então, se você estiver tentando invocar a ferramenta e for esta ferramenta, encontre essas palavras-chave e valide-as. E temos algumas funções auxiliares. Essa validação de caminho são apenas funções auxiliares. Não precisamos entrar em muitos detalhes sobre elas, mas são apenas lógica determinística onde pegamos o caminho que a ferramenta escolheu e pegamos o caminho onde queremos garantir que os arquivos sejam armazenados. Chamamos isso de raiz da captura de tela.
+
+E usamos esse método. Queremos saber se esse caminho é relativo à captura de tela - o caminho escolhido é relativo ao caminho da captura de tela. Então, é uma maneira determinística: uma vez que entendemos onde a ferramenta pretende armazenar a imagem, sabemos se ela está na pasta correta. Então, voltando à nossa função auxiliar..." Na
+
+função, sempre que a ferramenta é invocada, antes mesmo de ela ser invocada, extraímos o caminho que ela pretende usar para salvar os dados. [bufa] Tentamos validar o caminho e, se não for válido, a invocação não ocorrerá . Um erro será gerado. Portanto, esta é uma maneira determinística de interromper a ferramenta imediatamente, com uma proteção determinística. Outro ponto importante é que, embora possamos gerar uma exceção, não a retornamos. Não queremos que
+
+todo o processo do agente falhe. Em vez disso, lidamos com isso de forma adequada, criando uma explicação clara para o agente. E o erro que o agente receberá é esta mensagem clara: "Escute, acesso negado." Você não pode salvar lá. Você precisa salvar aqui. "Por favor, forneça um
+
+nome de arquivo e um caminho corretos." Um agente que recebe esta mensagem provavelmente tentará novamente, mas alinhado. Esta é a nossa maneira de alinhá- lo, e ele tentará novamente, fornecerá um caminho correto, conseguirá percorrer o caminho , chegará aqui e salvará a imagem. Então, é exatamente isso que queremos que aconteça nesses cenários críticos de segurança. Isso é incrível.
+
+Ok. Pessoalmente, adoro este ponto. Acho que é tão comum e uma ferramenta que todos devem ter em seu arsenal. Mas é hora de avançar. Temos mais duas.
+
+Esta pode ser um pouco mais específica, mais avançada, mas vale a pena conferir, sabendo que é uma possibilidade. Ela fala sobre compor novas ferramentas a partir de ferramentas existentes. E o local onde fizemos isso foi interessante. Na verdade, também tinha a ver com a mesma ferramenta de captura de instantâneo . Sentimos que às vezes queremos tirar instantâneos em geral. É algo
+
+genérico. Mas quando tiramos capturas de tela no contexto de evidências no final do fluxo, Sentimos que talvez fosse apropriado ter uma ferramenta separada para isso . Por quê? Podemos criar uma nova ferramenta cuja funcionalidade é essencialmente a mesma da ferramenta de captura de instantâneos , mas, como terá descrições separadas, o agente pode escolher entre uma ou outra. E também podemos instruí-lo a se comportar de maneira ligeiramente diferente em cada caso. Além disso,
+
+podemos adicionar algumas ações extras, talvez até mesmo ações determinísticas, antes de invocar a ferramenta original. Então, criamos um novo agente chamado " ferramenta de evidências". Vamos ver o que fizemos.
+
+Muito bem. Desta vez, importamos o V4, como já esperávamos . Podemos então analisar o V4 e ver como ele implementa a obtenção de ferramentas. Entramos e isso se abre. Parece muito semelhante ao anterior. Na verdade, tudo parece
+
+semelhante. Temos o wrapper da ferramenta, temos a validação do caminho, muito, muito semelhante. Qual é a diferença? Bem, injetamos uma nova ferramenta. Então, dentro do wrapper da ferramenta, temos o que já esperávamos. Temos os
+
+nomes das ferramentas, a ferramenta. Descrições, o dicionário. Temos nossas ferramentas de filtragem. Tudo é igual. E então temos a mesma ferramenta de direitos de reprodução de sempre , que itera sobre todas as ferramentas, filtra o que precisa ser filtrado e cria quaisquer ferramentas que precisemos criar com descrições aprimoradas. Mas, então, era isso que tínhamos
+
+. Finalizamos o loop e temos isso. Temos essa parte injetando uma ferramenta totalmente nova. Escolhemos, e você não precisa seguir o mesmo caminho, mas dissemos, como isso se baseia na ferramenta de captura de tela, criar essa nova ferramenta somente se a ferramenta de captura de tela não tiver sido filtrada. Totalmente opcional, apenas o que escolhemos fazer neste caso de uso específico.
+
+E então, temos nossa nova descrição para esta nova ferramenta. E criamos uma nova ferramenta. Vamos dar uma olhada na captura de tela. E, desculpe, na descrição. Então, é uma descrição como você pode esperar de uma descrição desse tipo de ferramenta.
+
+Tirar uma captura de tela especificamente para fins de evidência. E como o prompt, ao descrever o fluxo, informa que isso termina com a captura de uma imagem. Para capturas de tela como evidência, o agente provavelmente saberá escolher esta ferramenta em vez da ferramenta padrão de captura de tela. Nós o instruímos a usar esta ferramenta somente ao capturar imagens para fins de evidência. Também especificamos como proceder com a coleta de evidências. Dizemos, por exemplo, que ao
+
+criar uma imagem e armazená-la, o agente deve identificar o ticket relevante e incluir o número do ticket no nome do arquivo salvo. Assim, você pode ver um exemplo de como teremos duas ferramentas. O agente saberá diferenciar quando usar uma ou outra, especificamente no contexto da coleta de evidências. E quando ele escolher essa ferramenta para esse fim, isso fará com que ele considere critérios diferentes ao escolher o nome da imagem, por exemplo. Você pode fazer várias outras coisas.
+
+Pode adicionar restrições ou ações determinísticas específicas para esta ferramenta, por exemplo. Então, realmente, o céu é o limite, o mundo é sua ostra, divirta-se! Isso foi tudo. Passando para o nosso quinto e último ponto. Veja isto. Nosso servidor. Todos os incêndios foram apagados
+
+. O sistema está inicializando. Parece...
+
+E ainda temos um último ponto, que na verdade mencionamos no início da apresentação. Trata-se de tratar as ferramentas como funções determinísticas ou funções chamáveis. Às vezes, recebemos todas essas funções maravilhosas, todo esse código, das equipes de terceiros. No nosso caso, a equipe do Playwright nos forneceu todo esse código muito bom, e podemos simplesmente chamar esse código fora do fluxo agentivo. Simplesmente chamá-lo. Simplesmente
+
+ignorar a descrição e usar a função que eles nos deram. Onde usamos isso? Não sei se vocês se lembram, mas quando olhamos o código pela primeira vez, tínhamos uma função chamada ` login to Buzz`, e dissemos que voltaríamos a ela. Isso é como se estivéssemos fechando esse ciclo. Vamos dar uma olhada.
+
+Ok. De volta ao topo do nosso arquivo principal. Descemos, descemos, descemos, descemos, descemos, descemos, descemos, descemos, descemos, descemos. Aqui está o V4 importado, mas hoje estamos interessados ​​em outra coisa, que é esta parte. Quando começamos, definimos o cliente MCP, definimos uma classe que implementa o método `getTools`, obtemos nossas ferramentas e, a primeira coisa que fazemos é criar uma função determinística chamada `loginToBuzz`. Somente após o login
+
+no Buzz é que criamos um agente, fornecemos a ele todas as mensagens necessárias e o invocamos. Então, por que o registro de logs é determinístico aqui? Bem, o registro de logs pode ser complicado, pois este é apenas um exemplo simplificado, mas em um produto real, precisamos fazer login em nosso sistema e nos sistemas dos clientes. Cada cliente pode ter um mecanismo de registro de logs diferente, que pode ser complexo, envolver segredos e muitas outras coisas que podem complicar o processo . Portanto, por um lado, é complicado, mas por outro, é uma ação que sempre queremos realizar. Não existe um fluxo de agentes para o
+
+Spec Reviewer que não comece com um login. Usamos ferramentas que obtivemos do servidor MCP para alcançar esse objetivo. Simplesmente não deixamos o agente tentar fazer isso, porque vimos que os resultados eram insatisfatórios. Portanto, para esses casos de uso muito específicos, às vezes você pode querer tomar as rédeas da situação. Aqui, se formos para a função, não há muita coisa acontecendo.
+
+Novamente, este é um exemplo simples; o produto real se comporta de maneira muito diferente, mas aqui eu apenas ocultei alguns tokens JWT como variáveis ​​de ambiente e, você sabe, esta função aceita todas as ferramentas do servidor MCP. Nós selecionamos as que queremos. E a essência é que vamos injetar esses tokens JWT no armazenamento local do navegador e, quando clicarmos no botão de login, faremos login como mágica. Fazemos isso deterministicamente. Depois de fazer login, assumimos o controle e o entregamos ao agente. Dizemos:
+
+"Você está logado, pode começar a usar ". E é assim que liberamos o agente de sua responsabilidade. Dessa ação um tanto desajeitada que precisa ser executada, podemos simplesmente tirar isso de suas mãos, sem incomodá-la, e seu contexto . Legal. Então, isso simplifica as coisas, pelo menos para nós.
+
+Ah, quase me esqueci. Ainda te devo uma última coisa. Acho que devemos executar isso agora com todas as melhorias e ver onde chegamos. Falhamos na execução anterior, não é? Ok. Vamos ver como funciona.
+
+Então, voltando à base de código familiar , nosso main, Nope. E executamos isso. Não precisamos mais do breakpoint. Acho que o removi. Sim. E isso está
+
+rodando. Ok. Então, isso vai começar fazendo toda aquela mágica do JWT nos bastidores, que agora sabemos como funciona. E vamos ver como vai. Vou aproveitar para lembrar que demos a ele um ticket e um design, e ele precisa ver este drawer. É isso que ele está fazendo
+
+agora. Ok. Então, ele meio que Recarregou. Acho que talvez os tokens JWT tenham entrado em ação . Ele está indo para nossa página inicial chamada "Alterações" e provavelmente fará um pequeno raciocínio, precisando encontrar o caminho para navegar pelo sistema até a guia "Agentes".
+
+Nem sempre mostra. Tem bastante latência e atraso, pelo menos de acordo com nossa experiência, mas tira uma captura de tela como evidência. Terminou. Vamos ver o que aconteceu. Então, diz que passou. Diz que afirma que o
+
+painel de configuração está presente e inclui as seções necessárias . Tem uma captura de tela. A captura de tela tem um nome de arquivo que inclui o ticket, como dissemos. Tem uma justificativa. Vamos dar uma olhada na captura de tela. Então, você vê que a imagem que
+
+fornecemos estava no modo escuro, e ele estava navegando no modo claro, e parece ótimo. Parece que terminou e está correto. Agora, devo dizer que ele encontrou um painel de configuração. Ele viu tudo o que deveria estar lá. Pode não ser perfeito em pixels, mas a verificação de precisão de pixels é algo em que trabalhamos muito em nosso produto real. Então,
+
+fora deste exemplo simples, a precisão de pixels funciona, porque é extremamente importante para validações de front-end, garantindo que o preenchimento, as margens e todo o estilo estejam exatamente como deveriam. Incrível. Então, com isso feito, acho que... bem, já
+
+dissemos... está quase na hora da despedida. Então, acho que todos nós estamos começando a nos preparar para encerrar. Olhem
+
+para o nosso servidor. Olhem para ele. É incrível. É lindo. Está funcionando.
+
+Luzes verdes piscando. Motores rugindo. GPUs trabalhando a todo vapor. Milhões de revisores de especificações sendo executados e uma ótima taxa de aceitação. Obrigado por toda a ajuda.
+
+Vamos fazer este resumo final antes de cada um seguir seu caminho. Então, como dissemos, analisamos ferramentas agentivas hoje, sejam elas provenientes de bibliotecas, servidores MCP ou qualquer outro lugar. Percebemos que, às vezes, as ferramentas falham logo de cara. Elas podem ser muito genéricas. Podem não ser adequadas o suficiente para o nosso caso de uso. E personalizá-
+
+las é o que fará nossos agentes se destacarem. Às vezes, queremos selecionar as ferramentas e aliviar a carga na janela de contexto. Outras vezes, queremos descrições longas e ferramentas mais detalhadas. Portanto, não existe uma solução única. É principalmente uma questão de como moldar as ferramentas para melhor se adequarem ao meu caso de uso. Às vezes,
+
+elas serão determinísticas. Às vezes, serão flexíveis. Depende. E você precisará experimentar, adaptá-las e buscar a melhor configuração possível para atingir seus objetivos. Espero que isso tenha dado algumas dicas, coisas que vocês podem experimentar.
+
+Foi incrível e muito divertido. Vou subir um pouco agora porque quero fazer uma propaganda descarada depois de agradecer por ouvirem. Então, sintam-se sempre à vontade para entrar em contato. Vejo vocês na próxima! Próximo. Saúde!

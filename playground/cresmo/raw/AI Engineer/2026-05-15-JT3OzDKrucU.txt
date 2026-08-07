@@ -1,0 +1,97 @@
+---
+video_title: "Combine Skills and MCP to Close the Context Gap — Pedro Rodrigues, Supabase"
+video_id: JT3OzDKrucU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JT3OzDKrucU
+video_date: 2026-05-15T15:00:07+00:00
+video_description: |
+  Agents working with Postgres will confidently create a view over a table with row-level security enabled and silently bypass that security in the process. Not because they can't reason. Because they don't know about the security_invoker flag, and nobody told them. Pedro Rodrigues from Supabase ran this exact test: same agent, same task, MCP alone versus MCP plus a skill. The one without the skill shipped a query that exposed data it shouldn't have.
+  
+  The talk covers what Supabase learned building their agent skill from scratch: critical security rules go directly in skill.md because agents will reliably skip reference files, skills should point to living documentation rather than duplicate it, and opinionated workflow guidance matters more than comprehensive coverage. Their evals ran across Claude and GPT models in three conditions and the result was unanimous. Skills without MCP underperform. MCP without skills misses environment-specific constraints. Together they close the gap that makes agents unreliable on real production systems.
+  
+  Speaker info:
+  - https://x.com/rodriguespn23
+  - https://www.linkedin.com/in/pedro-neves-rodrigues/
+  - https://github.com/Rodriguespn
+---
+Muito bem, entendi que tenho sinal verde, então podemos começar. Olá pessoal. Você deve ter notado que os títulos mudaram um pouco em relação aos que constam na programação. Isso porque, quando submeti a proposta da apresentação, o debate sobre MCP versus habilidade ainda estava em andamento e era um tópico em discussão. Acho que agora chegamos à conclusão de que ambos são diferentes.
+
+Cada um tem seu próprio papel e agora acho que o debate gira mais em torno do MCP versus CLI. Então, achei que seria mais útil vir aqui e explicar como escrevemos nossa habilidade Superbase e as lições que aprendemos ao escrever este documento, porque nunca passei tanto tempo escrevendo um único documento desde que escrevi minha dissertação de mestrado, ok? Eu sei que escrever uma skill parece simples, mas pode ser muito complexo, especialmente quando se tem um produto complexo como o Superbase. Para começar, eu sou Pedro. Sou engenheiro de ferramentas de IA na Superbase. Sou um entusiasta de MCP e IA em
+
+geral. Fique à vontade para se conectar comigo no LinkedIn. Também sou cofundador da Lisbon AI Week, em Lisboa. Será no final de outubro deste ano. E se estivermos falando de mim agora, geralmente prefiro fazer isso no modo mais escuro possível. Não sei quantos de
+
+vocês preferem o modo escuro ao modo claro. A maioria. Eu pensei assim. Então, vamos fazer esta apresentação no modo escuro. Então, acho que todos podemos concordar que os agentes já são inteligentes o suficiente, certo?
+
+Eles são muito capazes de realizar tarefas simples por conta própria. Mas quando você apresenta uma tarefa sobre algo que eles ainda não viram ou que você atualizou desde o treinamento deles, como o seu produto, por exemplo, eles precisam da orientação correta. Por exemplo, percebemos que o Superbase geralmente ignorava algumas falhas de segurança que identificamos, como instruções de segurança em nível de linha que precisam ser configuradas para, basicamente, não expor o aplicativo. Eles geralmente operam com base em conhecimento desatualizado proveniente de seus dados de treinamento e são muito preguiçosos e teimosos para admitir que não sabem e que precisam buscar novas informações. Além disso, gostaríamos de orientá-los sobre fluxos de trabalho específicos que consideramos mais otimizados para os agentes em nossos produtos. Para começar,
+
+quantos de vocês conhecem ou já descreveram alguma habilidade por escrito? Ok, então o que vou dizer provavelmente não é novidade para a maioria de vocês, mas é só para dar uma ideia geral das habilidades. Então, as habilidades são pastas que contêm instruções, scripts e recursos que os agentes descobrem, certo? Eles vão descobrindo progressivamente. Este é o principal argumento de venda das habilidades, e eles têm esse envelope chamado " formulário introdutório" onde incluem o nome e a descrição. É assim que o agente
+
+vai decidir quando carregar a habilidade. Em seguida, eles têm as instruções propriamente ditas dentro do arquivo principal chamado skill.md e, opcionalmente, recursos adicionais como scripts para executar ações ou arquivos de referência que o arquivo principal pode usar para obter mais informações que não precisam ser carregadas imediatamente no contexto. Então, fizemos um teste na Superbase, onde aplicamos a
+
+mesma instrução para uma tarefa simples ao mesmo agente, neste caso o Claude Sonnet 4.6. É como se tivéssemos um aplicativo de colaboração e quiséssemos criar uma nova visualização SQL, certo? Além da tabela que já tinha a segurança em nível de linha ativada. Assim, os usuários só podiam ver as informações que lhes pertenciam .
+
+Nós demos a eles apenas o MCP sob uma condição, e o MCP mais as habilidades dos agentes. E o resultado foi exatamente o esperado. Caso você não saiba, no Postgres, se você criar uma skill sobre uma tabela que já possui RLS habilitado, e não passar explicitamente o parâmetro `security invoker` como `true`, o RLS será ignorado . Basicamente, a visualização irá expor dados que não são expostos por padrão na tabela. Assim, o agente com a habilidade e o conhecimento necessários conseguiu implementar essa informação de forma correta e segura, enquanto aquele que tinha acesso apenas à integração com a ferramenta MCP não conseguiu. Então,
+
+para isso, decidimos que queríamos capacitar os agentes a trabalhar corretamente com o Superbase. Então, decidimos, na verdade estamos anunciando hoje, essa habilidade de agente da Superbase na qual tenho trabalhado nos últimos meses, e para oficializar as coisas, vou finalmente testar algo. Espere. Vou fazer uma cobertura ao vivo pelo Twitter durante o palco. Então, está ao vivo.
+
+Tudo bem. Então, do que se trata exatamente essa habilidade e que lições posso compartilhar com vocês? Então, se você estiver desenvolvendo uma habilidade para o seu produto, pode criar uma como fizemos e ficaremos felizes em discutir todos os detalhes, já que este é um texto livre e ainda não definimos um padrão para ele. Ficarei muito feliz em conversar sobre isso mais tarde. Então, vamos detalhar alguns princípios aos quais convergimos. A primeira é
+
+não duplicar informações. Sim, é como tratar as habilidades como uma documentação pessoal, assim você não vai duplicar a sua documentação, certo? Você já possui documentação sobre o seu produto. Basta indicar ao agente a versão mais atualizada. É preciso ser muito persistente com o modelo para pedir que eles pesquisem na internet ou na sua documentação. Forneça a orientação.
+
+Indique onde e como encontrar a documentação, mas seja muito persistente ao insistir para que você a obtenha . Também realizamos alguns experimentos, e isso ainda é, como eu disse, um experimento,
+
+ainda estamos definindo os detalhes, mas anunciamos recentemente, e você pode conferir em nosso blog. Basicamente, estamos expondo nossa documentação via SSH. O principal motivo é que agora os agentes podem procurar a documentação como se fosse um sistema de arquivos. Portanto, eles estão muito familiarizados com sistemas de arquivos em geral, navegando por eles, encontrando arquivos e informações sobre o uso de ferramentas baseadas em Linux . Se disponibilizarmos essa interface para que eles também possam fazer isso remotamente, nossa premissa é que eles terão facilidade em navegar pelo agente. Gostaria muito,
+
+também, após a palestra ou durante a conferência, de ver e ouvir suas opiniões sobre essa ideia. O segundo princípio que entendo e que apresento para vocês é que, se algo puder ser ignorado, será ignorado. O que quero dizer com isso é que, além de novas informações serem obtidas por meio de buscas online, os agentes também podem usar ferramentas para buscar informações na internet ou fazer chamadas, o que é caro para eles. Portanto, eles geralmente recorrem aos dados de treinamento. O mesmo se aplica aos arquivos de referência.
+
+Notamos que, mesmo que o agente carregue a habilidade e haja arquivos de referência presentes, ele será muito lento ao carregá-los. E mesmo que carregue um arquivo de referência, se o seu problema exigir mais de uma informação, ou seja, se essa informação estiver em mais de um arquivo, provavelmente não carregará dois arquivos, certo? É quase impossível, e nem sequer começando com três ou quatro. Portanto, você precisa ser muito criterioso com o que coloca no seu arquivo skill.md desde o início. Você
+
+insere informações que provavelmente não mudarão, como no nosso caso, uma lista de verificação de segurança sobre o Superbase que não queríamos que o agente deixasse passar de jeito nenhum. Então decidimos que isso não pode estar em um arquivo de referência. Na verdade, começamos colocando um arquivo de referência, mas ele geralmente não o via. Então, nós o incluímos na própria habilidade. Portanto, se você tiver alguma informação que o agente não pode perder e que defina seu produto, consulte o arquivo skill.md. Não tenho dinheiro
+
+para incluí-lo em um arquivo de referência. E, por último, o terceiro princípio que tenho para você ao escrever uma descrição de produto é: seja opinativo. Você conhece seu produto melhor do que ninguém. Você sabe como trabalhar com isso. Você sabe, ou deveria saber, como seus usuários estão usando o produto. Não tenha
+
+receio de orientar os agentes sobre os fluxos de trabalho que você considera mais eficazes ao trabalhar com o seu produto. No nosso caso, por exemplo, estamos gerenciando um esquema de banco de dados, certo? Na verdade, eu não perguntei isso e deveria ter perguntado desde o início. Quantos de vocês conhecem o Superbase e o que ele faz? Ok, então, para quem não sabe, somos basicamente um backend como serviço. Fornecemos um banco de dados de armazenamento,
+
+autenticação e outros recursos necessários para criar um back-end pronto para uso. Então, como eu disse, nós fornecemos um banco de dados e o agente pode interagir e manipular seu esquema, certo? Constatamos que este era o melhor fluxo de trabalho para a nossa plataforma, permitindo que os agentes gerenciassem o esquema de forma eficiente. Então, neste caso, execute operações DDL diretas, como alterar o esquema livremente em seu banco de dados de desenvolvimento ou de teste. Assim que você estiver satisfeito, disponibilizamos um consultor para identificar quaisquer problemas de segurança ou desempenho que o banco de dados possa apresentar, corrigi-los e, somente então, criar o arquivo de migração.
+
+Assim, isso impedirá que o agente crie um arquivo de migração sempre que alterar o esquema. Descobrimos que este é o melhor fluxo de trabalho para gerenciar o esquema. Então, para nós, isso deve estar na habilidade de trabalhar com o Superbase. Como testamos essa habilidade? Portanto, estamos vivendo tempos muito interessantes, em que agora podemos fazer testes gratuitos. Agora podemos testar os
+
+documentos. Agora podemos testar a documentação, certo? Hum, seria completamente absurdo pensar nisso anos atrás. Bem, basicamente estive testando um arquivo Markdown. E como fizemos isso? Uh, através de
+
+avaliações. Então, para aqueles que não conhecem, avaliações (ou evaluations, abreviação de evaluations) são basicamente testes que você pode executar da mesma forma que executaria em sua integração contínua (CI), mas agora, em vez de avaliar código, você está avaliando um agente e o LLM (Learning and Learning Machine) e seu comportamento, quais ferramentas ele está chamando, qual é o seu raciocínio, certo? Assim, numa fase inicial, executamos um conjunto de seis cenários específicos para o Superbase. Então, projetos Superbase em andamento em diferentes cenários, certo? E executamos o teste com quatro agentes diferentes de dois fornecedores, em três condições de teste. Então,
+
+queríamos testar em uma configuração básica, sem MCP, sem skills, apenas com o servidor MCP e com o servidor MCP mais a skill. Tudo isso foi feito com base em uma pontuação de completude do teste, quatro pontuações classificadas, uh, a execução no Braintrust. Se você não os conhece, eles estão por aí, são patrocinadores desta conferência. Vá até o estande deles e fale sobre isso. É um produto muito legal. Então, os resultados estão aí
+
+fora. As habilidades, juntamente com o MCP, superam quaisquer outras condições em todos os modelos que testamos. Testamos no Claude Code para Opus 4.6 e Sonnet 4.6, bem como no Codex para GPT 5.4 e GPT 5.4
+
+mini. Então, acho que podemos concluir que é praticamente unânime que as habilidades estavam realmente melhorando o desempenho e a pontuação de conclusão do teste, porque estavam fornecendo a orientação correta ao agente. Então, nós já tínhamos as ferramentas. Já tínhamos um servidor MCP. Precisávamos apenas da orientação correta sobre como operar com o Superbase. É independente do agente. A
+
+maioria dos agentes está adotando cada vez mais esse padrão aberto em relação às habilidades. Bem, como eu disse no início, o ponto crucial não é o contexto, mas sim a orientação. Então, se você puder tirar alguma lição desta palestra, ao desenvolver uma habilidade para o seu produto, é que ela deve priorizar sua única fonte de verdade. Basicamente, indique a sua documentação. Seja opinativo. Você conhece o seu produto.
+
+Não tenha medo de mostrá-lo. E comece com o mínimo. Qualquer fornecedor de modelos, digamos, seja a Anthropic, a OpenAI, em qualquer postagem de blog sobre habilidades, você lerá: comece com o mínimo, comece devagar e depois itere, expanda, não tenha medo de criar novas versões. Então, se você quiser saber mais sobre isso, nós escrevemos um post no blog. É ao vivo hoje. Você pode conferir no meu
+
+Twitter ou no blog do Superbase, ou pode simplesmente executar esses comandos e instalar no seu projeto e começar a usar agora mesmo. Isso é tudo. Estarei por aqui e, mais uma vez , muito obrigado.
+
+Tenho mais uma coisa para lhe mostrar. Então, estamos realizando um sorteio. Se você quiser ter a chance de ganhar um Mac mini, basta escanear o código QR, se cadastrar no Superbase e boa sorte. Tenho tempo para responder a quaisquer perguntas, se houver alguma? Sim . OK.
+
+Eu só queria perguntar uma coisa. Então, já que estamos todos nos organizando em fileiras, certo? Gostaria de saber qual a demanda que vocês observam atualmente pelo banco de dados vetorial Superbase? Hum. Hum, é uma pergunta interessante. Então,
+
+quer dizer, depende do tipo de pessoa sobre a qual você está perguntando, tipo, quantos clientes temos, e esse número tem aumentado cada vez mais com o passar dos dias. Tipo, os casos de uso para vetores são principalmente para incorporações, certo? Sim. E, semânticamente, existem muitos casos de uso para embeddings. A que mais me interessa é a busca semântica, certo? Você poderia
+
+usar isso para fornecer ainda mais contexto. Por exemplo, ao expor a documentação via SSH, em vez de simplesmente permitir a navegação com as ferramentas bash, você pode ampliar as ferramentas bash já conhecidas para fornecer algum tipo de busca semântica. Portanto, vejo um grande potencial nos vetores. Com base em nossos dados, definitivamente os clientes têm explorado mais essa solução. Obrigado pela pergunta. Sim
+
+. Obrigado pela palestra. Muito interessante. Como você distribui as habilidades dentro da sua organização? Você simplesmente os ignora? Você tem um
+
+repositório? Você tem um repositório ou algum gerenciador de pacotes? Essa é uma pergunta incrível, porque atualmente uma das desvantagens, ou melhor, uma das limitações do uso de habilidades é o sistema de distribuição, certo? Uh, ainda estamos descobrindo que ainda há alguns jogadores tentando recuperar o registro ou a forma de distribuí-lo. Então, a Vercel criou o pacote de habilidades. Estamos vendo
+
+plugins, certo, que podem ser incluídos em servidores MCP e outras coisas. Mas eles variam de acordo com o modelo. Portanto, o objetivo é distribuir habilidades em geral. O fato de ainda não termos resolvido esse problema já é um problema em si mesmo. Internamente, estamos empacotando as habilidades nos próprios repositórios.
+
+Então, se você quiser criar um plugin, você simplesmente cria um plugin dot Claude ou um plugin dot cursor ou algo parecido nesse repositório, certo? E então, se estiver disponível ou puder ser descoberto, se o repositório for de código aberto ou se você tiver acesso a ele, você pode usar o pacote skills para obtê-lo. Então, sim, é assim que tenho visto outras empresas distribuindo as habilidades, como um repositório, uma habilidade, tentando empacotar as habilidades no conhecimento. Obrigado. Obrigado. Há
+
+mais algum? Acho que ainda temos tempo para mais um. Sim . Sim. Recentemente, desenvolvi habilidades de autoaperfeiçoamento.
+
+Deveríamos fazer uma colaboração? Claro. Vamos conversar depois. Tudo bem. Então, mais uma vez, muito obrigado. Foi um prazer estar aqui.
+
+Estarei por perto. Obrigado.

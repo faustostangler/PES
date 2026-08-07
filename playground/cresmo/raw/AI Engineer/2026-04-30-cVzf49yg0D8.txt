@@ -1,0 +1,682 @@
+---
+video_title: "Building Conversational Agents — Thor Schaeff and Philipp Schmid, Google DeepMind"
+video_id: cVzf49yg0D8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=cVzf49yg0D8
+video_date: 2026-04-30T16:00:06+00:00
+video_description: |
+  Thor Schaeff and Philipp Schmid show how to build conversational agents with Google DeepMind's Gemini APIs, from tool-using coding agents to realtime voice interfaces. The session covers the new Interactions API, agent skills, server-side state, and the Live API workflow for streaming audio, video, and tool calls into multimodal assistants.
+  
+  Speaker info:
+  - https://x.com/_philschmid
+  - https://x.com/thorwebdev
+  
+  Timestamps
+  0:14 - Introduction and speaker introductions
+  6:15 - Audience interaction and project discussions
+  8:38 - Introduction to building conversational agents
+  28:17 - Discussion on Gemini Flash for coding and agentic use
+  36:28 - Coding agent implementation and tool calling demonstration
+  42:55 - Overview of the Interactions API and state management
+  49:05 - Introduction to the Gemini Live API
+  50:02 - Live Jukebox demo with music generation
+  54:49 - Deep dive into Gemini Flash Live features (multimodality, latency, tools)
+  1:06:54 - Technical setup and implementation of the Live API using WebSockets
+  1:25:14 - Session management and context window compression
+  1:26:57 - Real-world business use cases for conversational agents
+  1:35:02 - Multimodal grounding and handling audio inputs
+  1:40:00 - Discussion on personalization and speaker identification
+---
+Olá pessoal.
+
+É que eu e o Philip éramos alemães, então achamos que seria engraçado se pudéssemos fazer isso em alemão. Na verdade, parece que tem uma equipe alemã lá, o que é ótimo. Ah, não, sem problemas. Faremos isso em inglês. Vamos tentar em alguns idiomas diferentes, talvez assim a gente descubra. Temos outros idiomas falados na
+
+sala? Outras nacionalidades? Sim, o que temos? Grite bem alto. Italiano.
+
+Então, italiano, espanhol. Alguém fala islandês? Não. Então tudo bem, feche, feche. Romeno, legal.
+
+Holandês, qualquer Holanda? OK. Qualquer uma delas? Sim, hindu, tudo bem. Canadá?
+
+Não, tudo bem. Bangalore? Não. Ah, farsi, tudo bem, legal. Tcheco, sim. Brilhante. Ok, isso é
+
+fantástico. Bem, muito obrigado a todos por terem vindo até aqui com seus respectivos idiomas. Agradeço muito. Hoje podemos realmente colocar o modelo à prova, o que é ótimo. Sim, oi. Meu nome é Thor, ou Torsten
+
+para os falantes de alemão que estão entre vocês. Olá , eu sou Philip. Só o Philip. Então, antes de falar alemão e inglês, sim, é legal. Nós trabalhamos na experiência do desenvolvedor no Google DeepMind, abrangendo amplamente a API Gemini e também o Google AI Studio, uma ferramenta para que os desenvolvedores possam testar os modelos rapidamente, além das interfaces da API.
+
+Para usar a API, você precisa de uma chave de API. Aliás, quem já tem uma chave de API? API Gemini? Certo, algumas pessoas. Alguém já usou o AI Studio antes?
+
+Google AI Studio? Certo, pessoal, vamos lá . Talvez possamos fazer isso rapidinho. Desculpe? Antigravidade.
+
+Sim, isso é bom. Bem, na verdade você não precisa de uma chave de API para o Anti-Gravity, mas... Então, se você não tiver uma chave de API, sim, se você tiver seu computador por perto, espero que tenha . É uma oficina prática. Peço
+
+desculpas por terem retirado suas mesas. Então, é uma situação bem típica de quem usa laptop. Tipo, literalmente, um laptop. Hum, espero que você não tenha trazido seu Mac mini ou algo do tipo . Então, sim, se você acessar ai.dev
+
+... E quero dizer, você também pode acessar ai.studio, ai.studio.com,
+
+mas pagamos muito dinheiro pelo ai.dev, então, por favor, use esse. Hum, ele simplesmente redireciona para ai.studio, mas...
+
+Deixa eu ver... Então, ai.dev/Chave da API ?
+
+Ah sim, ou no canto esquerdo, há um botão para obter a chave da API e depois as chaves da API {dash}. Dessa forma você pode Schlüssel. Ah, sim, é minha conta pessoal e não podemos alterar o idioma. Você só precisa de uma conta do Google, então nada de cartão de crédito, nada disso. Tudo o que vamos fazer está incluído no plano gratuito.
+
+Então, se você acessar o AI Studio ou o ai.dev e houver um formulário de login, você pode usar seu Gmail sem problemas, não cobraremos nada. E então, nas chaves de API, você normalmente encontra no canto superior direito algo chamado "Criar chave de API" ou "Criar chave de API". E quando você fizer isso pela primeira vez, você pode precisar... Então, similar para mim, eu
+
+posso importar meus projetos ou posso criar meus projetos. Eu posso simplesmente clicar em criar e dar qualquer nome. Quer dizer, podemos chamar isso de uh i e. ou seja. oficina.
+
+E então crie o projeto. Precisamos traduzir isso para o inglês. Leva alguns segundos e depois você poderá criar a chave. E essa chave será usada para as demonstrações ou atividades práticas que faremos mais tarde. Espere, ele mostra a chave da API.
+
+Sim, vou apagar, então não copie. Mas você pode, assim como eu, ser muito rápido. Sim . Obrigado. Você pode usar essa chave. Você pode, por exemplo,
+
+colocar isso no seu arquivo bash RC ou zshrc, ou mais tarde pode inseri-lo diretamente no arquivo, como preferir. Se você tiver um, pode usar este. E já que temos mais alguns minutos, queremos garantir que todos que desejam acompanhar, façam isso com calma e criem sua chave de API. Se aparecer algum erro ou se algo não estiver funcionando, não hesite em levantar a mão. Tor virá até você e o ajudará.
+
+E sim, só para lembrar, trata-se de uma chave de API secreta. Não mostre. Não faça o que o Philip está fazendo ali. É por isso que eu apago minha chave de novo. Sim. Então, ouvimos muito isso, que as
+
+pessoas vazam suas chaves de API. Na maioria das vezes, trata-se de um código de relógio que funciona como um envio de chaves de API para ativar o sistema. Portanto, recomendo que você não faça isso. Não, estou só brincando. Lembre-se, trata-se de uma chave de API secreta.
+
+Então, trate isso como um segredo. Não compartilhe isso com seu vizinho. Sim. Sim , crie essa chave de API agora mesmo e lhe daremos alguns minutos para isso. E enquanto você faz isso, ou, sabe, depois de terminar de criar sua chave de API, eu adoraria que você se apresentasse brevemente, se quiser, e nos contasse o que você gostaria de obter com o workshop. Talvez
+
+você esteja trabalhando em um caso de uso específico . Sim, nós também adoraríamos conhecer um pouco mais vocês. Então, enquanto você cria suas chaves de API, se quiser, fique à vontade para mencionar seu nome ou apelido e falar sobre o que está trabalhando e o que espera obter do workshop. Sim, somos da Rebel World, do podcast Thursday I, trabalhamos para a Corvus Racing e somos grandes fãs da Gemma, e sim, da Gemma 4 e da Gemini. Sou um dos poucos que também o utilizam para programação e outras coisas. Eu realmente uso
+
+e também o executo nas aulas . Oh legal. Hum, e eu quero ver mais disso, sabe? OK. E eu quero os óculos do Google.
+
+OK. Sim, vamos ver se conseguimos terminar os óculos até o final da oficina. Desculpe. Sim. Se tiver um lugar à sua direita, pode sentar-se para que possamos ocupar os lugares aqui do lado? Isso torna mais fácil para as pessoas
+
+encontrarem um. E enquanto esperamos, lançamos algo legal no Chrome, que eu ainda não ativei, mas quando você for na barra de abas, clicar com o botão direito, agora você pode mover as abas para o lado e temos abas verticais agora, então é isso . Então, mais tela, isso é bom. Legal. Ok, legal. Então,
+
+óculos. Hum, você está... você está... você está
+
+correndo... o que você está fazendo com o vidro? Bem, tecnicamente estamos ao telefone, certo?
+
+Era o software que tínhamos. Você usou o Gemini, que chamou de Open Claw. Legal. E aí é só usar o Gemini Life através do websocket no celular, certo? Sim, legal. Sim, isso é
+
+legal. Sim, Vision Claw, se você não conhece, é um projeto de código aberto bem divertido. E eu acho que você pode executá-lo, sim, mais ou menos no... Bem, agora que a Meta
+
+abriu o SDK para o Meta Ray-Ban, você pode realmente integrar algo como a API Gemini Life nos óculos. Bem, os óculos se conectam ao seu telefone e o telefone se conecta ao Gemini Life, o que é muito legal. Mas, bem, isso mostra o que será possível. Sim, legal. Teve algum problema ao criar as chaves de API?
+
+Todo mundo tem uma chave de API? Devemos verificar? OK. Mais alguém? Tem algo específico que sim?
+
+Michael, trabalho para a Digital Guide em Zurique. Estamos construindo nosso primeiro agente de suporte ao cliente com inteligência artificial, então, que legal! Só queria saber em geral como vocês fazem isso, para comparar. OK. Legal.
+
+Legal. Última chance, mais alguém? OK. Tudo bem. Então, podemos começar. Antes de começarmos a
+
+sessão prática, tenho uns 10 a 15 minutos de slides para dar um pouco de contexto sobre o que vamos usar para construir. A primeira sessão, que eu vou conduzir, será mais focada na criação de um agente sem nenhuma entrada de áudio ao vivo. É aí que o Thor vai assumir mais tarde, e depois vamos criar alguns agentes conversacionais muito interessantes. Então, quem de vocês já usou a API do Gemini para fazer uma chamada de API para o Gemini? São alguns. Alguém aqui já usou
+
+a API de Interações? Um, ok. Dois, ok. Pelo menos algumas pessoas. Portanto, a API de Interações é uma nova API que lançamos em dezembro em versão beta e que esperamos que em breve substitua a API de Geração de Conteúdo. É uma API unificada para usar
+
+com modelos e agentes, e está muito mais alinhada com o setor, eu diria . Portanto, muito mais próximo do que você já conhece dos modelos abertos da API Chat Completions, da Anthropic ou da OpenAI. Então, vamos apresentar os slides, depois construir um agente de codificação, como um pequeno código na nuvem, capaz de ler e gravar arquivos, executar comandos bash e, no final, teremos um tempo para perguntas. Em seguida, faremos uma pequena pausa para ir ao banheiro, tomar algo e, depois, a sessão com o Tor continuará. Todos nós temos uma chave de API. Como eu disse,
+
+queremos construir uma API que funcione tanto para modelos quanto para agentes. E quando lançamos a API de interações, também iniciamos uma pesquisa aprofundada. Então, talvez você já tenha usado pesquisa aprofundada no Chat GPT ou no aplicativo Gemini, onde basicamente você inicia com uma consulta, recebe um plano de retorno e, em seguida, o modelo realiza uma pesquisa aprofundada por 10 a 15 minutos, visitando centenas de sites. E a API suporta tanto modelos quanto agentes, sendo muito simples alternar entre eles. Basicamente, você define um modelo, que pode ser o Gemini pré-flash, ou define seus agentes, que podem ser de pesquisa aprofundada. E estamos trabalhando nisso
+
+para que você possa trazer seu próprio agente ou definir seu próprio agente, que poderá personalizar todos esses comportamentos. E é a mesma superfície. Então, veremos mais tarde, mas quando você envia uma solicitação para o Nano Banana para gerar uma imagem, você pode basicamente encadear essas interações a um modelo Flash para fazer algo mais com o Luria, como gerar áudio e, quem sabe em breve, até mesmo vídeo. E a interface é muito semelhante à que você vê nos produtos da OpenAI. Então, agora temos basicamente esses blocos de conteúdo. Portanto, toda
+
+entrada que você fornecer e toda saída que você fornecer serão do mesmo tipo. Possui um campo de tipo que pode ser uma chamada de função, uma assinatura de pensamento, um texto, áudio, vídeo ou imagem, o que esperamos que facilite a sua criação com a API Gemini. E eu diria que é menos "marcado" pelo Google, menos específico para um protocolo, menos gRPC, para facilitar a criação de conteúdo pelos desenvolvedores. Além de simplificar os elementos básicos da API de interações, também introduzimos o estado no servidor, que será usado para construir nossos agentes. Assim, não precisamos gerenciar nosso loop e sempre enviar todo o histórico de volta. Muito semelhante à
+
+API de respostas, agora você tem um ID de interação anterior que pode fornecer, o qual basicamente se vincula ao histórico existente, permitindo que você simplesmente envie uma nova entrada. Como mencionado, temos um agente com ampla experiência e conhecimento especializado, então você pode iniciar sua pesquisa, consultar o sistema ou, em breve, usar webhooks para ser notificado quando sua pesquisa for concluída, sem precisar manter a conexão aberta. Temos os blocos de tipo e também o mesmo padrão de streaming, muito típico para desenvolvimento web usando SSE, o que, esperamos, também facilitará a sua criação. Todos nós damos suporte às ferramentas integradas, mas agora também temos suporte para MCP remoto, e acho que há duas semanas lançamos a combinação de ferramentas, então agora você pode combinar a pesquisa do Google com sua própria função personalizada, que era um dos principais recursos que as pessoas pediam há anos, eu acho. E agora você pode fazer isso.
+
+E para resumir novamente as diferenças entre... Então, gerar conteúdo é o que temos hoje. A API de Interações é o que teremos amanhã. Teremos um sistema de
+
+gerenciamento de estado no servidor, mas você não precisa usá-lo. Então, se você disser: "Ei, eu quero gerenciar meus turnos. Eu quero gerenciar meu contexto. Eu não confio em você, ou preciso fazer algo como engenharia de contexto. Vou precisar remover certas partes." Você consegue fazer isso.
+
+Você pode enviar informações de forma muito mais fácil, basicamente. Temos agentes integrados. Também oferecemos suporte em segundo plano, para que você possa obter execução assíncrona. Todos nós vemos que, com agentes, quando você envia uma solicitação, ela pode levar de 1 a 4 minutos para ser concluída, e manter solicitações ou conexões HTTP abertas por mais de 10 segundos não é uma boa prática. Portanto, é recomendável usar chamadas assíncronas para receber notificações ou verificar quando a operação for concluída. E é menos
+
+voltado para protótipos, o que eu realmente prefiro. É muito mais parecido com o que as pessoas conhecem do ecossistema de desenvolvedores. Além disso, um efeito colateral do gerenciamento de estado é que o cache implícito da API é muito melhor. Então, para quem não sabe o que é cache implícito, quando você envia uma solicitação ao modelo, o modelo precisa codificar todos os seus tokens de entrada. E você pode armazenar em cache essas codificações para solicitações subsequentes, economizando custos. E acho que as requisições em cache são 90%
+
+mais baratas para os tokens de entrada. E quando você precisa gerenciar seu estado ou contexto por conta própria, você pode acabar removendo quebras de linha, removendo certas partes, e isso quebra o cache. E, ao usar o estado do lado do servidor, o servidor mantém o contexto, aumentando consideravelmente a probabilidade de acerto do cache. E vemos taxas de cache duas a três vezes melhores nas startups que usam a API Interactions atualmente. Um exemplo rápido de código para ilustrar o que queremos dizer com " simplificar". Assim, do lado esquerdo,
+
+você tem as partes de entrada únicas e específicas do protótipo, com dados ou texto embutidos, onde o campo basicamente descreve o tipo. E do lado direito, parece bastante semelhante a outras APIs, eu diria, então deve ser muito mais fácil se você decidir experimentá-la após o workshop . Bem, imagino que todos vocês saibam mais ou menos o que é um agente. Temos um cérebro, ou nosso modelo, que decide o que quer fazer, acionando uma ferramenta, gerando texto, fazendo outra coisa. Temos ferramentas que basicamente dão ao nosso cérebro mãos e olhos para interagir com o ambiente em que se encontra. Temos o
+
+contexto; é basicamente tudo o que o modelo sabe: o que tem que fazer, o que pode fazer, se existem certas preferências, se existem certas restrições. E então temos o loop que basicamente combina nosso modelo com as mãos e as ferramentas e o executa até que o modelo não precise mais acionar as ferramentas e gere um texto. Então, alguns exemplos rápidos de como usar a API e depois passamos para a parte prática, que é bem interessante. Assim, o uso básico de chat com estado do lado do servidor torna-se muito fácil porque temos nossa chamada de criação de interações . Então, definimos nosso modelo, definimos nossa entrada: Qual é a capital da França?
+
+Obtemos o resultado e, em seguida, podemos simplesmente continuar fornecendo o ID anterior. E o modelo nos bastidores, ou como o servidor nos bastidores, basicamente tem a entrada do usuário, a saída do modelo e, em seguida, anexa a nova entrada do usuário que você não precisa ter, como um objeto de histórico do lado do cliente, onde você anexa as jogadas do usuário, as jogadas do modelo e, em seguida, a jogada do usuário novamente. Isso se torna muito útil ao criar agentes que precisam executar loops e sempre necessitam adicionar dados inseridos pelo usuário. E, como mencionado anteriormente, isso também funciona para agentes e modelos. Portanto, queremos muito construir essa interface unificada onde você possa continuar suas conversas, independentemente do modelo que utilizou. Neste
+
+exemplo, basicamente executamos uma pesquisa aprofundada sobre agentes de IA para pesquisa em 2026 e, em seguida, utilizamos o resultado da pesquisa e continuamos com o modelo Nano Banana para gerar uma visualização. São apenas quatro linhas de código, sem que você precise se preocupar com o contexto ou como fornecer a entrada, o que, esperamos, torna tudo muito mais fácil. Mas, como já foi dito, você não precisa fazer isso. Assim, o campo de entrada também aceita o mesmo array com o usuário de função, o modelo de função e todas as entradas. Bem, para o uso de ferramentas, espera-se que agora seja muito mais fácil. Temos uma
+
+função de tipo, o nome da função que queremos usar, descrevê-la e, em seguida, os parâmetros que o modelo precisa gerar. E então, aqui está mais ou menos o que vamos construir. Então, fazemos nossa chamada de API com as ferramentas e, em seguida, verificamos qual é o resultado da interação. Então, "requer ação" significa basicamente que você, como cliente, precisa fazer algo. Portanto, a saída gerou alguma chamada de função ou algum objeto ao qual você precisa reagir.
+
+Iteramos sobre nossos tipos de saída, verificamos a chamada da função, executamos a função, anexamos o resultado, enviamos uma nova interação até que o modelo não decida mais chamar uma função e gere um texto ou algo semelhante. OK. Na última vez que ministrei um workshop, ainda estávamos todos programando manualmente. Então, essa foi a primeira vez que participei de um workshop prático onde pelo menos não precisei programar muito manualmente. Não sei bem como se faz isso. Então, o que faremos hoje
+
+é não programar manualmente. Vamos usar a sua IDE, agente e CLI de preferência . Não sei quantos de vocês estão acompanhando, mas para facilitar, criamos habilidades para agentes que nossos agentes podem usar. Então, se você acessar o Gemini, poderá pesquisar por agentes de codificação da documentação da API do Gemini . Ah, sim. Desculpe, claro.
+
+Hum, eu também consigo. Você consegue ver? Sim, acho que você também pode simplesmente pesquisar no Google . Sim . Quer dizer, eu tenho
+
+habilidades de agente Gemini. OK.
+
+Sim, acho que este aqui deve ser o de configurar seu agente de codificação com o Gemini MCP e as habilidades necessárias. Isso deve nos trazer até aqui. E eu realmente? Sim. Caso contrário, você pode acessar a documentação e, em seguida, no lado esquerdo, na seção "Primeiros passos", encontrará a configuração do agente de codificação.
+
+Você está bem-sucedido? Nós estamos? OK. Só uma pergunta. Devo instalar essa habilidade globalmente ou apenas para o projeto?
+
+Você pode. Não precisa instalá-lo globalmente. Essa é uma boa pergunta. Então, como se instala? Portanto, temos múltiplas habilidades. Então, temos a habilidade de desenvolvimento da API Gemini
+
+. Não vamos usar este. Isso se refere à API de geração de conteúdo. Se você quiser usar essa API ou se já estiver familiarizado com ela, fique à vontade. Mas nós temos a API Gemini Life. É isso que o
+
+Tor vai usar mais tarde. Portanto, nós também não instalamos isso. Mas, então, temos a API de interações Gemini. Aqui você pode escolher o primeiro comando ou o segundo comando, dependendo do que deseja. E então, é só copiar e abrir seu espaço de trabalho, onde você está trabalhando.
+
+Eu já fiz isso, mas você pode adicionar o comando NPX install. Em seguida, um assistente deverá aparecer solicitando que você instale o programa. Existem muitos pré-selecionados. Não se confunda com isso. Significa apenas que todos esses agentes são compatíveis com a pasta .agents.
+
+Então você pode ter uma API de interações Gemini com habilidades de agentes (ponto). E aí reside a nossa habilidade. Sim . Deixe-me também...
+
+Então, eu testei com o cursor e um antigravidade, além do Gemini CLI. Portanto, se você estiver usando um desses três, está tudo bem. Se você estiver usando o Cloud Code, acredito que também funcionará. Não tenho certeza se eles seguem as melhores práticas dos agentes ponto. Se não, quero dizer, tenho certeza que você pode.
+
+Hum. Sim, as habilidades, mas acho que eles só olham para a nuvem de pontos. Hum, acho que eles não levam em consideração os agentes. Mas acho que agora isso se integra às habilidades. Não sei. OK. Então,
+
+tenho certeza que sim. Sim, se você instalar a skill NPX com a nuvem como agente. Ok, sim. Pergunta. Você mostrou dois comandos diferentes.
+
+Uma diz que as habilidades nessa idade e a outra, no contexto dos sete anos, funcionam da mesma forma. Mas o que é o Contact Seven, então? Então, o Contact Seven é, creio eu, um produto desenvolvido no andar de cima. Então, o Contact Seven possui um servidor MCP e nossa CLI de habilidades, que você pode usar para acessar habilidades como essas. É como um repositório público.
+
+Portanto, o arquivo skills.sh é o mesmo, de acordo com o resultado. OK. Então é como se funcionasse em ambos os sistemas, funciona no GitHub. Portanto, o Google Gemini é um repositório do GitHub dedicado às habilidades do Gemini.
+
+E o repositório do GitHub inclui todas as habilidades que documentamos. Então você também pode ir lá e encontrar lá. Existem também os comandos de instalação e distribuição, o que torna tudo muito mais fácil do que clonar o repositório e garantir que ele esteja no diretório correto. E então, para garantir que nossa habilidade funcione, podemos simplesmente perguntar ao nosso agente: "Quais habilidades você pode usar?" E então, se você o instalou corretamente, deverá ver: "Sim, temos nossa API de interações especializada".
+
+Então, a antigravidade aqui captou nossa habilidade na pasta de habilidades {dot} agents {slash} . OK. Como estamos indo? Você pode dar um zoom só um pouquinho? Dá para ampliar mais? Mais
+
+uma, sim. Acho que só lá atrás. OK. Melhorar? Sim .
+
+Bem, eu estava usando o Telegram com meus aplicativos e, como resultado, ele estava sendo executado no sistema. Então, eu teria que executá-lo? Não, você pode, tipo, você deveria conseguir fazer isso no seu OpenClock e coisas do tipo. Se você instalar a API de interações e depois apenas o produto final do workshop, funcionará? Sim, deve funcionar. É um
+
+script em Python que vamos executar mais tarde. Como estou executando apenas o programa básico, isso deve funcionar. OK. Teve alguma dificuldade para instalar a skill? Tem alguma dúvida sobre o que é uma habilidade ?
+
+Todos estão familiarizados com habilidades? OK. Talvez possamos dar algumas dicas sobre a habilidade que criamos ou o que ela contém, certo? A importância de criar habilidades reside no fato de que elas devem ser algo que o modelo não consegue fazer de forma confiável, ou se você tiver preferências pessoais, como a maneira correta de executar um determinado fluxo de trabalho, ou, sei lá, você sempre precisa executar testes usando o Bundler ou algo semelhante. E o que fizemos com nossa habilidade foi garantir que o agente soubesse quais modelos da Gemini estavam disponíveis. Um
+
+problema comum que observamos anteriormente é que o Gemini sempre usava a versão 1.5, que já não é a mais recente. Incluímos também os agentes aqui. Temos algumas informações de alto nível sobre como funciona, mas não incluímos toda a documentação. Em vez disso, você deverá ver um link para nossa documentação, que está disponível em formato Markdown. Assim, em vez de
+
+precisarmos atualizar constantemente nossa habilidade, como por exemplo, adicionamos um novo recurso à API de interações para combinar ferramentas. Teríamos que atualizar nossas habilidades e, em seguida, todos vocês também precisariam atualizar as suas para poder usá-las, e assim não estaríamos progredindo muito em termos de conhecimento . Em vez disso, fornecemos as informações como parte da habilidade. Então, todos os agentes agora têm ferramentas de busca na web, para que possam consultar as informações com base na habilidade, e aí só precisamos manter a documentação, que está praticamente atualizada. Sim.
+
+Como você encontra eficiência nesse fluxo de trabalho ? Desculpe? Como você avalia a eficiência do fluxo de trabalho, como a utilização de ferramentas e outros aspectos semelhantes ? Você acha estranho ter que buscar a página? Quero dizer, normalmente você a forneceria como uma referência em seu arquivo local, certo? Portanto, é necessário realizar uma
+
+chamada de leitura de arquivo ou uma chamada de busca na web, o que, em termos de custo, eu diria que é praticamente a mesma coisa . E funciona muito bem. OK. Então, como primeiro exemplo, já que não estamos fazendo programação básica, vamos construir algo mais substancial. Não estamos apenas dizendo para criar um agente, queremos ser mais específicos.
+
+Então, queremos criar uma classe de agente com um construtor e um método de execução. O construtor cria um cliente GenAI. Portanto, o cliente GenAI é o nome que daremos ao nosso modelo. Nós também precisamos dos arquivos do modelo. E também precisamos do
+
+ID de interação anterior global e, em seguida, no método principal, executar um exemplo. Faça tudo isso na oficina. OK. OK.
+
+Então, como podemos ver, o modelo, neste caso, ou o agente, como primeiro passo, lê nossa habilidade, analisa nosso arquivo principal e implementa a habilidade. Ok, verifique. Provavelmente vai falhar. Sim, porque estou usando luz UV. Então, eu paro e digo para usar UV a partir do espaço de trabalho.
+
+E então deixamos que gere raios UV. Ok, ele verifica se temos alguma biblioteca instalada. Sim, temos. Então, talvez no seu caso, o agente ainda tente instalar o Google GenAI. Caso contrário, você pode fazer isso manualmente com comandos como `pip install` ou `UE pip install um google-genai` e depois certifique-se de clicar em "OK". Então,
+
+temos nossa classe de agentes inicial. Temos o nosso cliente GenAI. Já temos o ID do nosso modelo. Por padrão, utiliza o flash gratuito Gemini. Ele nunca teria usado o Gemini Free Flash por padrão se não tivesse lido a skill, certo? Porque aí ficamos
+
+presos ao Gemini 1.5. Temos o nosso método run que chama o método uh, que por sua vez chama o método interactions.create . Já temos o texto de entrada. Temos o
+
+ID da nossa interação anterior. Definimos nosso novo ID de interação anterior e, em seguida, retornamos o texto e, então, " legal" como um exemplo principal. Hum, que abordaremos daqui a pouco. Criamos nosso agente. Estamos na primeira rodada. Então, meu nome
+
+é Phil. E então o agente executa o processo. E então, qual é o meu nome? Agora, podemos verificar se o nosso agente Gemini criado funciona com a API de interações e multiturn. Você poderá ver um aviso semelhante ao que eu recebi aqui. O uso da interação Uh é
+
+experimental. Isso ocorre porque ainda estamos em fase beta. Estamos trabalhando muito para tirar a API da versão beta e garantir que você possa usá-la em produção. E nossa ligação foi bem-sucedida. Olá, Phil.
+
+Prazer em conhecê-lo. Bem, talvez não tenhamos tido sucesso. Na verdade, eu não tenho um nome. Além disso, qual é o meu nome? Hum.
+
+Talvez devêssemos verificar. Fizemos tudo corretamente? Quer dizer, meu nome é talvez...
+
+Ah, ok. Essa continua sendo a decisão. Desculpe. Perguntei: "Qual é o seu nome?" Quer dizer, é um modelo de linguagem treinado pelo Google, faz sentido. E qual é o meu
+
+nome? Seu nome é Philip. Como posso ajudá-lo? Então, sim. Você está usando o Gemini 3 Flash como modelo de codificação?
+
+Sim. Respeito. Quer dizer, funciona muito bem se você fornecer boas instruções, com boas habilidades e um bom contexto, e não espere que isso, sei lá, cure o câncer. Por exemplo, se você tiver um bom entendimento do que está tentando construir, o Gemini 3 Flash é muito rápido. Quer dizer, não demorou muito mais.
+
+Não consumiu créditos, certo? Todos nós estamos, de certa forma, limitados em termos de representatividade neste momento. E funciona muito bem. OK. Usar para um fim genérico? Sim, mas para
+
+planejamento e programação... É, não, funciona. Quer dizer, vamos usar água de poço gratuita. Quer dizer, ele
+
+também pergunta se quer executar, então estamos fechando o ciclo, mesmo que, como no caso do Gemini 3 Flash, ele tente executar nosso script para garantir que funcione. E então continuaremos daqui a pouco. Como estamos indo? Alguém está conseguindo fazer ligações com sucesso ? Sim?
+
+Ok, perfeito. Última fila. OK. Algum problema? Algum erro? Alguma
+
+pergunta? Sim . Estou usando TypeScript. OK. Funciona? Sim
+
+. Legal. Ótimo. Nem tanto. Hum. Incrível. Até programar em um celular, então, tudo
+
+bem. Então, normalmente, o próximo passo para o nosso agente é esse, certo? Agora temos uma versão bem básica , podemos conversar com o modelo. Agora precisamos adicionar ferramentas a isso. E queremos construir algum tipo de agente de codificação, então as primeiras ferramentas que vamos adicionar são ferramentas de leitura e gravação de arquivos, e continuamos com a nossa thread principal do agente. É
+
+tipo, ok. Em seguida, precisamos adicionar uma ferramenta de leitura de arquivo e uma ferramenta de gravação de arquivo. Crie uma implementação básica em Python. E também a definição do esquema JSON. Então, quando você usa chamadas de função ou ferramentas , certo? Precisamos criar um
+
+esquema JSON que forneceremos ao modelo. Assim, o modelo entende o que precisa gerar. Uma vez gerado esse esquema, também precisamos de algum tipo de implementação de código que possamos executar no cliente. Então, pedimos que crie uma implementação em Python e também o esquema JSON. " Uh" e "uh" correspondem ao
+
+esquema de vírgula da função chave e chave. OK. Vamos ver o que vai aparecer. OK.
+
+É um pouco de trapaça. Então, eu tenho uma pasta de soluções e ela procurou a implementação. Sim. Quer dizer, é por isso que ainda é importante revisar o seu trabalho. Eu gostei, encontrei a solução e pensei: "Ah, encontrei um ótimo exemplo em Python no arquivo solution.h para
+
+me guiar. A tarefa é implementar a leitura e a escrita de arquivos." Esse é, sem dúvida, um modelo inteligente. Sim. Então, o que recebemos de volta foram duas novas implementações de arquivo muito, muito básicas mesmo . Então, temos uma ferramenta de leitura de arquivo que recebe
+
+o caminho do arquivo e usa a sintaxe do Python para abri-lo e lê-lo, e temos uma ferramenta de escrita de arquivo que recebe o caminho do arquivo e o conteúdo e o escreve. E então temos nosso esquema de arquivo de leitura. Um lê um arquivo e retorna o conteúdo. Escrever arquivo, grava o arquivo e retorna o conteúdo. E isso fez algumas atualizações em nosso agente. Então, o que mudou? Ok, nossa
+
+entrada agora é uma string de texto e uma lista. Faz sentido, já que agora precisamos retornar a chamada da função. Verificamos. O que devemos fazer? Ok, vamos criar uma definição de ferramenta para o nosso modelo, que é o esquema T. Então, esse é o esquema do nosso mapa de ferramentas
+
+. E então temos o nosso loop, que você talvez já conheça do slide que mostrei. Então, depois de executarmos nossa solicitação, verificamos as interações. saídas. Assim, as interações.saídas incluem todos os
+
+eventos gerados pelo modelo. E como Gemini é um modelo de raciocínio, ele também inclui, por exemplo, os pensamentos e as assinaturas de pensamento, que precisamos retornar. Como estamos usando o ID de interação anterior no estado do lado do servidor, isso é feito por nós. E nós só precisamos verificar, ok, se temos uma chamada de função? Temos um bom programa de depuração, então podemos verificar .
+
+E para a nossa saída, ou seja, para a chamada da nossa função, verificamos as nossas ferramentas. Temos a ferramenta necessária ou não? Quer dizer, talvez o modelo queira editar o arquivo, mas não temos uma ferramenta para editar o arquivo. Nós o pegaríamos aqui. Ele chama nosso modelo.
+
+E então ele gera os resultados da ferramenta. Portanto, para a chamada de função, temos o resultado da função. Isso também faz parte da mudança. Queremos mesmo facilitar ao máximo. Bem, veremos mais tarde, quando usarmos a Busca do Google , que haverá uma chamada de Busca do Google e um resultado de Busca do Google com o mesmo esquema. E então
+
+usamos recursão. Portanto, se tivermos resultados da ferramenta, basicamente nos chamamos novamente de método de execução própria. Se não tivermos resultados da ferramenta, retornamos o texto da interação. E também atualizou nosso exemplo, escrevendo " olá" do agente para um arquivo chamado hello.text e retornando-o. Então, quero
+
+dizer, as mudanças em linhas gerais me parecem boas . Podemos tentar executá-lo, então você executará o comando `python workshop main`. O que ganhamos com isso? Recebemos a chamada da nossa ferramenta com o comando "gravar arquivo". Obtivemos o resultado da nossa ferramenta.
+
+Recebemos novamente uma chamada para leitura de arquivo e, em seguida, a resposta final do agente. O arquivo de texto "hello agent" foi criado com sucesso com o conteúdo. OK. Os agentes não são apenas como singletons, certo? Talvez quiséssemos responder. Então, o
+
+próximo passo é basicamente muito ambicioso, dizer que eu quero ter algo contínuo, não sei. ficou em fase de implementação para ser testado. Vamos ver. Vamos ver como isso vai continuar. Não, não, espero que pelo menos atualize nossa função principal, onde temos uma entrada, um loop while, basicamente aguardando a entrada usando nossos agentes. Então, sim. Então, temos a
+
+entrada do usuário. E então, sempre continuamos com o método de execução do agente, que, dentro do agente, executa seus loops internos até que não haja mais chamadas de ferramenta. E se houver um resultado, basicamente recebemos nossa resposta de volta. OK. Vamos ler rapidamente.
+
+Será que estamos muito rápidos ou ainda estamos dentro do cronograma ? É rápido. É rápido? Sim . OK. Quer dizer, compartilharemos o código
+
+mais tarde. Também terei muito prazer em responder a perguntas. Temos muitos posts em blogs e exemplos disso online, então, se você estiver interessado, pode reconstruí-lo mais tarde com menos rapidez. Mas vou tentar ser um pouco mais lento, e também quero dar tempo suficiente para o Tor falar. Então, o que podemos fazer agora, já que nosso agente implementou um loop while para receber entradas, é dizer algo como "olá", certo? Normalmente,
+
+não deveríamos fazer nenhuma chamada de ferramenta agora, porque "hello" é como se nosso agente entendesse corretamente, ou o Gemini, neste caso, entendesse "hey, hello"; não é nada que eu precise resolver com um arquivo de leitura ou gravação. Então, eu posso dizer: "Olá, como posso te ajudar? Você pode escrever ou talvez criar um arquivo CSV com um ' joinha'?"
+
+Pode demorar um pouco. Então, ele processa as informações, chama a função e pronto. OK. Claro, aqui está um arquivo CSV, blá blá blá. Ok . Você consegue
+
+gravar isso no disco? Sim
+
+, posso, se você quiser. Espere, talvez nosso modelo não tenha as ferramentas que precisamos. Vamos verificar. Aqui está o mapa das ferramentas. Sim, faz.
+
+Por que não está usando nossas ferramentas? Que ferramentas você pode usar?
+
+Ok, ele tem o arquivo de leitura. Sim, talvez não estejamos sendo suficientemente explícitos. E o que podemos fazer para melhorar isso em 1 segundo é adicionar uma instrução do sistema para dizer ao modelo: "Ei, você é um agente de codificação. Você pode usar ferramentas para escrever e interagir com o arquivo CSV. Ok, aqui está a chamada da ferramenta correta. Legal.
+
+Como vimos nosso erro, não podemos dizer ao modelo: "Ei, adicione instruções do sistema para a chamada da API de interações e adicione um prompt de exemplo para um agente de codificação." Pronto. E o que é realmente ótimo agora é que, como carregamos a skill da API de interações no início, o modelo ainda tem a consciência de: "Ok, como adiciono as instruções do sistema à API de interações?" E o que posso garantir é que o flash do Gemini 3 nunca viu nenhum código da API de interações, porque o modelo foi treinado antes mesmo de lançarmos a API. Então, todo o trabalho que fizemos até agora é baseado nas skills e na infraestrutura de codificação e fez parte do treinamento. Ok, então, o que conseguimos?
+
+Hum, ok, podemos fornecer isso no comando de execução ou já temos um quando o criamos . Isso é bom. Ok, agente de codificação, você é um engenheiro de software especialista e um assistente de codificação prestativo. Você tem acesso ao sistema de arquivos local . Ok.
+
+Vamos aceitar. Vamos iniciar nosso agente novamente. Digamos: "Olá".
+
+Ok, olá. Como posso ajudá-lo com suas tarefas de engenharia de software e codificação ? Quero dizer, definitivamente melhor do que tínhamos até agora. E o que enviamos antes? Dissemos: "Você pode criar um SVG com um polegar para cima?"
+
+Então, você pode criar um SVG com um polegar para cima? E agora vamos ver se ele responde "sim". E agora, neste momento, recebemos a chamada da ferramenta de arquivo correta. E também recebemos um "ei, eu criei um arquivo SVG com um polegar para cima com um ícone de polegar simples contornado". Então, hum, posso...
+
+Sim, aqui está. Temos um ícone de polegar para cima. Legal. Hum, e claro, o que está faltando para o agente de codificação, certo? Precisamos obter algumas ferramentas bash.
+
+Elas não fazem parte da pasta de soluções. Então, vamos ver como vamos obtê- las. Ferramenta bash. Agora, uma ferramenta similar de execução de comandos que permite ao modelo executar comandos bash. Ok.
+
+Cria um plano de implementação.
+
+Acho que há uma pergunta. Sim.
+
+Sim. Ok. Então, temos nossa ferramenta de execução de comandos que usa um subprocesso, o que, neste caso, acho que está bom. Não nos preocupamos muito com segurança neste exemplo. E então, nossa saída se destaca.
+
+Hum, funciona. Editar. Temos nossa ferramenta de execução de comandos. Sim, ela até atualizou nosso prompt do sistema e agora vamos parar isso. Vamos limpar.
+
+Executar novamente. Hum, alguma sugestão sobre o que devemos testar? Não seria uma banana para criar uma imagem? Não tenho certeza se isso funcionará porque não temos as habilidades ou informações necessárias. Hora?
+
+Hora, sim, acho que sim. Hum. Do bash. Obter a hora. Ferramenta chamada de execução de comandos data.
+
+Quarta-feira, 8 de abril. Parece bom. Hum, sim, legal. Esse é o nosso pequeno agente de codificação. Excluir todos os arquivos.
+
+Não, quer dizer, não vamos fazer isso. Mais alguma pergunta? Ideias? Temos mais ou menos de 5 a 7 minutos. Sim.
+
+Só uma pergunta rápida. Então, como o estado é mantido na barra lateral, é possível criar um fork do histórico? Sim. Sim, então...
+
+O que você sempre pode fazer é o seguinte: usamos sempre o ID da interação anterior, da rodada anterior. Basicamente, empilhamos os IDs e você sempre pode voltar a qualquer índice da pilha e ramificar a partir daí. Se você mantiver os IDs de interação no lado do cliente, poderá usá-los para ramificar e, por exemplo, fazer uma pesquisa básica na web e usar isso como base para cinco solicitações paralelas, realizando outras tarefas. Você sempre pode obter o contexto. Temos um método `interactions.get`
+
+que você pode usar para recuperar a interação e também obter o ID da interação anterior. Assim, você pode voltar ao início e obter todo o seu estado, se quiser salvá-lo para mais tarde. O padrão para essas interações é armazená-las no servidor para os planos gratuitos e, futuramente, para os planos pagos. O período de uso é de 55 dias no momento. Sim, você tinha uma pergunta.
+
+Desculpe? Ok, perfeito. Mais perguntas, certo?
+
+Ah, não. Então, quando os modelos Gemini tiverem um contexto de um milhão de tokens, o que aconteceria se você atingisse esse limite? Você receberia um erro. Mas estamos trabalhando em técnicas de compactação de contexto, embora seja mais fácil falar do que fazer, e ainda é algo que você precisa manter no seu lado do cliente.
+
+Não, não. Então, quando você envia a solicitação, você recebe um ID, o ID de interação. E o ID de interação armazena sua entrada e a saída do modelo. No plano gratuito, a entrada, a saída e o ID são armazenados por 1 dia. Isso significa que, se você enviar a solicitação agora e continuar 8 horas depois, o estado ou o contexto ainda estará disponível.
+
+Se você enviar uma solicitação amanhã, basicamente dirá: "Não foi possível encontrar a solicitação com o ID de interação antigo porque ela é removida após um dia". Mas, se você usar uma chave de API paga, ela é armazenada por 55 dias, e a API de interações também está chegando em breve. Vertex, e acho que pode haver um pouco mais de flexibilidade em termos de quanto tempo você quer armazenar ou personalizar. Sim?
+
+Ainda não temos, mas esperamos que em breve. Sim?
+
+Desculpe?
+
+E também podemos usar o Gemini, que tem um modelo TTS, que pode falar. Mas, falando e ouvindo, quero dizer, a ferramenta mostrará muitas coisas legais. Alguma pergunta sobre a API de interações neste pequeno agente? Não? Ok, então você tem 8 minutos.
+
+São 5 minutos. Ok, 5 minutos. Intervalo para ir ao banheiro e depois voltaremos aqui para fazer seu agente falar. Sim. Legal.
+
+Legal. Obrigado.
+
+Funcionou muito bem. Ótimo. Sim.
+
+Eu usei a versão antiga e estou muito feliz que agora haja uma nova . Hum. Era a 2.5 antes. Sim. Sim, já faz um tempo.
+
+Sim. Quão melhor? Sim, muito melhor. Muito. Aí está . Nem pagamos a ele por
+
+isso. Aí está. Grande atualização. Grande atualização, sim. Hum. Sim
+
+, talvez... eu sei. Ainda faltam alguns minutos, mas posso fazer uma pergunta enquanto esperamos?
+
+Cache? Sim. Sim. É. Como funciona?
+
+Os elementos são armazenados em cache no nível do elemento da matriz de contexto ou o contexto inteiro? Tipo, quando adicionamos os elementos à interação, cada um deles é armazenado em cache individualmente? Essa é uma boa pergunta. Provavelmente precisamos chamar o Philip para responder. Na verdade, eu não sei.
+
+Philip, pergunta sobre cache. Sim. Os tokens de entrada. Sim. O que era?
+
+O contexto é armazenado em cache no nível da interação individual ou é o contexto inteiro? Não é no nível da interação. É mais no nível do objeto. Por exemplo, quando você fornece uma entrada sem ID de interação, primeiro um PDF com 4.000 tokens e uma entrada de texto com 10 tokens, e você faz uma chamada de interação subsequente.
+
+Talvez apenas o PDF seja armazenado em cache e não o outro, como o texto curto. E então, se você fizer outra, talvez o PDF e as interações subsequentes sejam armazenados em cache. Então é mais no nível do objeto. Mas já que você...
+
+Quer dizer, como é? É muito fácil cometer um erro no cache se você fizer a menor alteração no seu prompt, removendo espaços em branco ou quebras de linha, e isso pode quebrá-lo. Então, ter isso dependendo do servidor para manter o cache é mais garantido e pode ser tão simples quanto: "Ei, meu usuário disse que há uma quebra de linha em branco no final. Ok, eu a removo e uso esse histórico novamente, e aí ele falha."
+
+Sim. Idealmente, mas depende de onde sua solicitação chega e da velocidade com que você a processa, mas a taxa de cache deve ser bem alta. Legal. Talvez para começar, possamos dar uma olhada em um dos exemplos que podemos construir com a API Life, o novo modelo. Este é o Gemini 3.1 Flash Life, que foi lançado
+
+há duas semanas, eu acho. Muito empolgante. Já faz um tempo. Acho que o modelo anterior, Native Audio 2.5, foi lançado em dezembro. Então, já faz um tempo. O
+
+motivo é que fizemos uma grande reformulação na arquitetura subjacente. Trabalhamos para... Idealmente, teríamos menor latência e melhor escalabilidade no futuro, conforme o projeto crescesse.
+
+Isso é muito empolgante. Além disso, estamos trabalhando para integrar a API Life à API Interactions . Philip e eu estamos trabalhando nisso no momento. Ainda não chegamos lá , então precisamos usar a API Life por enquanto, mas vamos fazer uma pequena demonstração. Esta demonstração usa a API Life em combinação com o Lyra 3.
+
+Alguém já experimentou o Lyra na API Gemini? O novo modelo do Lyra é, na verdade, um modelo de geração de música. O Lyra 3 agora pode gerar músicas, incluindo músicas com letras. Este é o modelo de clipe, que gera um clipe de 30 segundos. Mas também temos um modelo de música completa , onde você pode gerar músicas inteiras. A ideia é que
+
+tenhamos nosso agente conversacional, que é como o DJ com quem você interage, E aí o DJ tem uma ferramenta chamada para gerar música, certo? Hum. Então, sabe, eu sou originalmente alemão, mas, sabe, cresci aprendendo inglês com Harry Potter e a BBC Radio 1. E se você se lembra, antigamente dava para ligar e pedir uma música. Então, essa é a ideia da experiência aqui.
+
+Certo, você está no Live Jukebox. Que som incrível vamos tocar hoje? Me diga, em qual gênero estamos nos inspirando e que tipo de vibe você está buscando? Vamos lá. Podemos ter um techno schlager alemão bem energético sobre a cena de IA no Reino Unido?
+
+Techno schlager alemão sobre IA no Reino Unido? Isso é absolutamente genial, cara. No melhor estilo Radio 1. Alguma letra ou tema específico que você queira incluir ? Vou te surpreender. Vamos lá.
+
+Certo, que beleza. Vamos fazer essas caixas de som vibrarem. Prepare-se para uma explosão de caos mecânico. Lá vem o techno schlager alemão sobre... Cena UKAI.
+
+Vamos lá. Muito bem. Em Londres, o futuro é brilhante e promissor. Os robôs mais inteligentes que você já viu. Os computadores usam um elegante chapéu coco, e os androides desfrutam de uma conversa agradável. Eles tomam
+
+chá de pedreiro com elegância digital, um sorriso britânico feliz em cada rosto metálico. Oh, maravilhoso, a IA é super linda. Sim, super linda.
+
+Sim. Hum, os TPUs gostam quando você aplaude, então, hum, agradeço. Alguém tem alguma ideia para outra? Podemos fazer mais uma. É só gritar. Algum idioma?
+
+Algum gênero? Podemos ter uma música sobre amamentação em suaíli? Uma música sobre amamentação? Música, sim. Em suaíli.
+
+Suaíli. Ok. Certo, então. Bem-vindos à jukebox ao vivo. Vocês estão no ar comigo.
+
+Podemos ter uma música sobre amamentação em suaíli, por favor? Uma música sobre amamentação em suaíli. Brilhante. Isso é algo que não ouvimos todos os dias. Para torná-la um sucesso absoluto, que tipo Que tipo de vibe a gente quer? Animada
+
+e festiva ou algo mais relaxante e suave? E quais trechos específicos sobre amamentação a gente deve incluir? Me avisa, e eu vou dar um gás nessa música. É, techno hardcore.
+
+Techno hardcore em suaíli sobre amamentação. Sensacional. Preparem-se para estourar as caixas de som. Estou ajustando agora. Preparem-se para um som incrível, pessoal.
+
+Bom, a gente consegue ver isso nos olhos das crianças também, sabe, adivinha a casa de áudio. Ok. Esse é o DJ DJ da jukebox ao vivo . Se você quiser, está ligado. Então, isso foi totalmente construído com o Google AI Studio.
+
+É um pequeno código de demonstração. Eu também publiquei no AI Studio, então vocês podem experimentar. Vocês vão precisar de uma chave de API paga para isso, porque a geração de música requer uma conta de faturamento. Então, se vocês tiverem uma conta com créditos, podem usar, por exemplo. Legal. Aqui, Gemini
+
+3.1 Flash Live, sabe, benchmarks. Obviamente, benchmarks não revelam a realidade por completo. Eles são ótimos para testes, mas o mundo real, especialmente em áudio ao vivo, costuma ser um pouco diferente. Então, o ideal seria testarmos nós mesmos. O Gemini 3.1 Flash
+
+Live é o modelo que agora está no Gemini Live do seu celular. Se você usa o aplicativo Gemini no seu celular, está se comunicando com esse modelo. Acho que o Google Search Live também o utiliza agora. Se você se comunica com a Busca do Google, acho que é o mesmo modelo. E você pode criar aplicativos usando esse modelo na API Live.
+
+A API Live é uma API WebSocket com estado. Você pode enviar feeds de texto, áudio e vídeo em tempo real para o modelo. O áudio é enviado em um formato...
+
+Sabe, os buffers de áudio em tempo real são transmitidos em fluxo contínuo. Você está transmitindo isso . O vídeo pode ser transmitido a uma taxa máxima de um quadro por segundo. Então, isso pode ser, você sabe, a transmissão de uma câmera. Isso pode ser uma tela.
+
+Então, pode ser como o compartilhamento da sua tela, certo? Então, você pode compartilhar a tela com o modelo. Por exemplo, a Shopify usa isso no Shopify Sidekick, que funciona como um suporte técnico guiando você , por exemplo, se você perguntar: " Como configuro um domínio personalizado para minha loja Shopify?". Ele basicamente te guiará passo a passo .
+
+E consegue ver onde você está na tela, ingerindo os quadros da tela. E, em troca, o WebSocket envia eventos em tempo real. Então, esses são basicamente buffers de áudio transmitidos em fluxo contínuo. E você também pode obter a transcrição do áudio. Esse é basicamente o texto . E então temos
+
+chamadas de ferramentas integradas. O Google Search Ground já vem integrado por padrão. Então, se você precisar de informações meteorológicas em tempo real , também poderá acessá-las . Sim. Alguns recursos principais. O que é realmente
+
+interessante nesse modelo é que ele é um modelo de áudio nativo. Isso significa que não estamos processando o texto. Não é um pipeline em cascata onde você transcreve o texto, o processa por um LLM e gera a fala. Em vez disso, o próprio modelo vai de token de som para token de som. E a inteligência está integrada a esse modelo de áudio. Ele é baseado no
+
+Gemini 3.1, que é bastante inteligente. Você tem diferentes níveis de processamento que podem ser ativados. E o melhor disso é o suporte multilíngue. Acho que 97 idiomas são suportados em versão prévia no momento.
+
+E o mais legal é que, por ser um modelo de áudio nativo , ele já tem o entendimento de áudio do Gemini integrado. Então, ele consegue entender uma mistura de idiomas diferentes. Ele consegue entender, por exemplo, o "Denglish", que é uma mistura de alemão, alemão e inglês, certo? Então, ele consegue alternar naturalmente entre diferentes idiomas, o que é ótimo. Ah, e tem a detecção automática de atividade de voz integrada ao modelo. Então, você pode interrompê-
+
+lo. Você viu isso antes com o Jay. Eu estava tentando ter uma conversa, mas estamos tentando fazer com que ele use a ferramenta. O uso da ferramenta é outro ponto importante. Então, teremos grandes melhorias no uso da ferramenta e no seguimento de instruções com esse modelo. E
+
+você pode criar coisas muito legais com ele. Então, atualmente, só oferecemos uma API WebSocket. Então, isso é uma desvantagem. Se você usa algo como GPT em tempo real, sabe, você tem uma infraestrutura WebRTC direta , o que pode ser útil. Então, nós fizemos parceria com vários parceiros de integração, como LifeKit, Pipecast, Software Mansion ( na Polônia, que criou um ótimo serviço chamado Fish Jam), Vision Agents e Vox Implants. Esses parceiros
+
+integraram a API em tempo real diretamente e oferecem integrações WebRTC fáceis, caso você queira ou precise disso para o seu sistema. Vamos experimentar. Você pode experimentar você mesmo, e seria interessante se todos nós experimentássemos ao mesmo tempo nesta sala. Vamos ver como funciona. Mas, novamente, usando ai.studio ou ai.dev e barra {slash}
+
+life, você pode experimentar o modelo. E você pode, sabe, importar a imagem da sua webcam aqui como Bem, então, podemos fornecer o sinal da nossa webcam. Aguarde um pouco e, então, podemos enviar mensagens de texto também. Por exemplo, poderíamos perguntar: " Como está minha roupa?".
+
+Nesse caso, você sabe, não estou ingerindo nada. Você está usando uma jaqueta verde sobre uma camiseta azul, combinada com um boné preto. A combinação parece casual e confortável. Há alguma ocasião específica em mente? Sim, ok. Então, isso obviamente
+
+está um pouco distante do nosso DJ animado, com sotaque britânico-australiano. O que podemos fazer é ajustar nossa voz através das instruções do sistema. Agora, em termos de vozes base, não temos muitas. Existem cerca de 30 vozes base diferentes. Tem algum projeto em mente?
+
+E elas são, você sabe, bastante genéricas, mas como o Gemini tem um conhecimento de áudio muito profundo, podemos modificar a voz por meio de comandos, por meio de instruções do sistema. Então, podemos fornecer uma instrução ao sistema. Aqui, por exemplo, podemos simplesmente dizer: "Ok, fale com um sotaque irlandês amigável, certo?" E então, agora temos essa voz base, Puck. E falando com um sotaque irlandês amigável.
+
+Ei, você consegue me ouvir? Bem, olá. Alto e claro, então consigo. O que posso fazer por você neste belo dia? O que você acha da minha roupa?
+
+Bem, você está muito elegante, sim . Essa jaqueta verde combina muito bem com você, devo dizer. Um look casual elegante. Você estava pensando em sair ? Ah, não, estou aqui como engenheiro de IA.
+
+Ok, enfim. Então, percebi que não coloquei... Então, o que eu também queria mostrar a vocês é... essa base com a
+
+Busca do Google. Então, o que podemos fazer é... você sabe, obviamente o modelo em si é treinado até uma certa data limite de conhecimento. E então, você sabe, se
+
+precisarmos de informações em tempo real, como este clima maravilhoso, ninguém acreditaria em nós. O modelo não acreditaria em nós, sabe, se... Não tínhamos o suporte da Busca do Google. Mas agora,
+
+sabe, podemos ter o suporte da Busca do Google . Também podemos ter diferentes níveis de raciocínio. Então, nenhum raciocínio é, na verdade, um raciocínio mínimo. Mas isso significa que o modelo responderá mais rápido. A latência é menor porque quanto mais raciocínio tivermos, obviamente mais etapas de raciocínio estarão envolvidas e isso aumentará a latência.
+
+Então, você pode ver nos benchmarks também que há níveis de raciocínio alto, raciocínio baixo, diferentes níveis de raciocínio. Mas agora, se ativarmos a Busca do Google aqui, ah, olá. Em que tipo de travessuras posso te ajudar hoje? Qualquer coisa, é só chamar. Ah, sim, como está o tempo em Londres agora?
+
+Bem, agora parece que está cerca de 9° e nublado em Londres. Pode estar um pouco frio, então você com certeza vai querer um casaco. Mais alguma coisa que você precise saber sobre O que está acontecendo por lá? Do que você está falando? Pode verificar novamente? Que dia é hoje?
+
+Ah, desculpe. Acho que me precipitei . Hoje é quarta-feira, 8 de abril de 2026. Há algo específico que você precisava saber sobre hoje? Sim, agora veja a previsão do tempo para hoje.
+
+Certo. Para quarta-feira, 8 de abril de 2026, em Londres, você deve ver Com temperaturas entre 5 e 13° e uma boa probabilidade de chuva, não se esqueça do guarda-chuva. Tem mais alguma coisa em mente? Tudo bem. Aqui estamos. Parece que eu
+
+não rezei aos deuses das demos. Ok, parece que algo está acontecendo. Será que cometemos algum erro na interface do usuário? Deveria funcionar muito melhor do que isso. Acho que, por algum motivo, o rastreamento de resultados de pesquisa do Google não está funcionando. Então, o que
+
+podemos fazer agora é, obviamente, testar isso nós mesmos em um aplicativo. Então, a maneira mais fácil de fazermos isso seria, sabe, como o DJ do Life Jukebox, usar o Google AI Studio para orientar nossa integração em tempo real. Então, temos aqui essa pílula que é chamada de, você sabe, conversa por voz, voz em tempo real com, você sabe, a API Gemini Life. E então poderíamos dizer, hum, construir uma espécie de assistente de entrevistas multilíngue que me permita, sabe, treinar para entrevistas em diferentes idiomas, como alemão, inglês, espanhol e, você sabe, o que mais .
+
+Então, agora podemos dar início a isso . Portanto, isso utiliza a pré-visualização em flash do Gemini 3 . No momento, está limitado a ambientes JavaScript full stack. Então, acho que você pode escolher entre Next.js e Angular.
+
+Existem também elementos básicos de XR (Realidade Estendida) se você estiver desenvolvendo para óculos ou experiências de RV (Realidade Virtual) para a web. Então, sabe, fique à vontade para disparar um desses agora mesmo, ou você também pode clonar o DJ do Life Jukebox que eu compartilhei com você antes e experimentar. Vai demorar um pouco e você ouvirá um pequeno sinal quando estiver pronto. Então, enquanto isso, o que podemos fazer é... bem, se
+
+você for à documentação da API Gemini Life, Gemini Life API. Ah, aqui estamos. Então, sabe, nós fizemos isso. Fizemos alguns testes com a API Life no Google AI Studio. Também podemos usar a habilidade de agente de codificação . Então, o Phil te mostrou isso mais
+
+cedo. Temos também agentes de programação especializados na API Gemini Life, então você pode instalá-la. Isso vai ajudar, sabe, seu agente de codificação a integrar a API Life de forma mais fácil e rápida. Mas também temos ótimos exemplos de aplicativos no GitHub, que podem ser muito úteis. Então, o que você pode fazer é clonar esses aplicativos de exemplo.
+
+Então, no GitHub, você sabe, você pode... como você faz no GitHub, Bryce. Você pode clonar isso. Então, vamos abrir um novo
+
+terminal. E sim, fique à vontade para acompanhar. Faça isso um pouco maior. Vamos criar um novo diretório. Vamos chamar isso de Engenharia de IA.
+
+Uh, Europa. Gosto que chamem de Europa, Bryce, mas... quer dizer, acho que sim, o Reino Unido ainda faz parte da Europa, só que não da UE. Justo.
+
+Então, vamos entrar lá e fazer um clone do nosso aplicativo usando o Git. Então , agora temos nosso aplicativo aqui. Bem , na verdade, existem alguns exemplos diferentes que podemos usar aqui. Então, se você estiver usando o Anti-Gravity, existe um comando AGY muito útil para abrir seus exemplos no Anti-Gravity. Então podemos, sabe, analisar nossos diferentes exemplos aqui e como precisamos configurar isso. Então temos,
+
+sabe, dois cenários diferentes. Assim, o exemplo Gemini Life GenAI em Python utiliza a API Gemini Life no servidor. Então, ele cria uma conexão web socket do seu servidor para, você sabe, a API Gemini Life. E então, na sua interface, você basicamente configura um proxy para encaminhar a conexão WebSocket para o lado do cliente, certo? Porque a janela do seu navegador é como o seu cliente, e é ela que captura o seu fluxo de áudio e o seu fluxo de vídeo.
+
+Portanto, neste exemplo, estamos usando apenas a Fast API. Bem , basicamente estamos configurando uma espécie de websocket aqui para que nosso cliente possa se conectar e, em seguida, estamos recebendo nossos sinais de áudio e vídeo do lado do cliente. Ah, ou, sabe, nossa fila de entrada de texto também. Ah, e então estamos recebendo isso. Em seguida, vamos agendar uma sessão de vivência. Então
+
+, estamos usando nosso cliente Gemini, e meio que abstraímos toda a API Life neste arquivo Gemini Life aqui. E você pode ver que, ao iniciar a sessão, estamos basicamente configurando o nosso ambiente de conexão. Talvez eu encerre isso por agora. Ah, então você pode ver isso. Bem, estamos configurando algumas instruções do sistema, então isso foi, você sabe, como disse um assistente prestativo anteriormente . Também dissemos,
+
+por exemplo, para falar com um sotaque irlandês amigável. Bem, sabe, é aqui que colocamos as instruções do nosso sistema, nossas diretrizes de segurança. Podemos estender bastante o assunto, abrangendo tudo o que queremos. E então podemos definir o tipo de ferramentas que usaremos aqui. Então, basicamente, estamos configurando nossa sessão, que é uma sessão WebSocket, e recebendo os sinais de áudio e vídeo do lado do cliente. E
+
+encaminhando isso por meio de um proxy. Então, essa é uma abordagem possível, a abordagem servidor para servidor. E sabe, estamos usando apenas luz ultravioleta aqui. Então, se estivermos configurando isso pela primeira vez, podemos usar este exemplo em Python do Gemini Life GenAI. Assim, podemos configurar nosso ambiente virtual. Podemos então
+
+ativar nossa fonte aqui. Podemos instalar nossas dependências.
+
+Ok, talvez isso seja uma parte divertida da
+
+segurança de laptops do Google.
+
+Vamos. Tudo bem, simplesmente desvie o olhar. Não olhe, não olhe para isso. E então, sim, instale os requisitos. Portanto, precisaremos de uma chave de API.
+
+Então, a chave da API, você pode ver aqui como está a configuração. Basicamente, precisamos apenas da nossa chave da API Gemini. E precisamos configurar uma variável de ambiente para isso. Como você pode ver, temos um arquivo de exemplo aqui. Não tem muita coisa lá dentro porque é basicamente só isso.
+
+Então podemos copiar nosso arquivo .env.example para o nosso arquivo .env aqui. E depois, você se lembra de como obter sua chave de API?
+
+Onde você obtém sua chave de API? Sim, AI.dev. Aqui estamos. Fantástico.
+
+Adoro. Ok, AI.dev. Então, é aí que você obtém sua chave de API. Hum, acho que tenho algumas chaves de API. Leva um
+
+tempinho para carregarem aqui. Qual deles? Talvez usemos este . Então, depois de criar sua chave de API, você pode copiá-la daqui. Bem, na verdade, talvez eu devesse criar uma nova, porque mais tarde precisarei excluir esta. Então, vamos chamar de motor de IA
+
+Europa. Bem, temos alguns projetos aqui. Vamos usar...
+
+Qual deles? Qual vamos usar? Projetos demais. Certo, vamos usar essa aqui. Bem , eu realmente não gosto que isso retorne a chave da API em texto simples.
+
+Acho que aprendemos algo hoje. Ok, vamos guardar isso. Então, agora já temos nossa chave de API configurada. E agora o que podemos fazer é executar nossa demonstração, que era apenas o arquivo main.py.
+
+E assim, agora nossa demonstração estará funcionando em localhost, na porta 8000. Então, podemos ver que é apenas uma demonstração básica. E quando nos conectarmos, bom dia para você. Eu sou Lloyd, de Gêmeos. Uma pequena demonstração do que esta API pode fazer. Que tal experimentar alguns
+
+recursos divertidos, como me ouvir falar com diferentes sotaques?
+
+Sim, consigo ver todos vocês perfeitamente. Você está aí sentado com seu lindo rosto olhando diretamente para mim.
+
+Desculpe? Ah, sim, sim, sim, mas não transcreveu. Certo . Estamos descobrindo muitas coisas aqui para melhorar, o que é ótimo. Bem, sim, então o que podemos ver é que... você
+
+pode notar que a latência está um pouco pior porque estamos tendo esse salto do nosso cliente para o nosso servidor. Eu adoraria culpar o Wi-Fi, mas, com a configuração servidor-para-servidor, você acaba tendo essa latência adicional por passar pelo seu cliente. Então, o que também podemos fazer é ir diretamente do nosso cliente para o servidor. E este é outro exemplo que temos. Qual deles é este aqui, que usa tokens efêmeros?
+
+Então, para tokens efêmeros, podemos simplesmente analisar a configuração aqui. Ah, muito parecido, vamos apenas voltar. Bem , deixe-me pegar um novo terminal aqui. Então, vamos chamar de tokens efêmeros. Portanto, nossos tokens efêmeros são basicamente tokens de curta duração que geramos com nossa chave de API no lado do servidor. Em seguida, enviamos esse
+
+token efêmero para o nosso cliente, ou seja , nosso telefone, nosso navegador, para que ele inicie a conexão websocket diretamente do cliente para a API em tempo real . Novamente, configuração semelhante aqui. Queremos um ambiente virtual. Em seguida, ativamos nosso ambiente virtual. E instalamos nossas dependências.
+
+Precisamos da nossa chave de API novamente. Então, acho que o que podemos fazer é simplesmente usar o mesmo. Então, vamos copiar este aqui e colar. Tem tamanho suficiente? Não sei. As
+
+pessoas conseguem ver isso? Talvez possamos ampliar um pouco mais. Então, agora também temos a nossa chave aqui . Agora que temos as dependências instaladas, podemos executar o servidor. Então, podemos dar uma olhada rápida no nosso servidor aqui.
+
+Então, esse servidor é basicamente um backend bem enxuto que contém apenas a nossa chave de API do Gemini. E então ele gera um token efêmero para nós. Portanto, em vez de tokens efêmeros atualmente presentes na API alfa V1. Portanto, você precisará usar uma API diferente no momento para isso. E então você deixaria passar esse tempo de expiração. Porque,
+
+idealmente, o token deve ter vida curta. Então, caso o token vaze, você sabe, não deve ser muito caro porque ele expirará em breve. Então, é isso. Esse é o nosso símbolo. E então devolvemos o token ao nosso cliente. Então, na nossa interface,
+
+temos aqui a nossa integração com o Gemini Life . Portanto, este é um exemplo de uma integração WebSocket pura, sem qualquer SDK. Então, sabe, você pode usar qualquer tipo de framework WebSocket aqui. E você pode ver, de certa forma, como todos os diferentes tipos de eventos brutos do WebSocket são tratados. Então, como você pode ver aqui, temos...
+
+esta é a nossa API WebSocket. Então, aqui precisamos usar uma espécie de V1 Alpha. E então, este é o bidi, ou seja, bidirecional, estamos transmitindo em ambas as direções. E aqui passamos nosso token de acesso, que é nosso token de curta duração. Ah, ótimo. Então, o que podemos fazer agora é colocar
+
+nosso serviço em funcionamento. Então, podemos ver essa bela interface aqui, que foi feita à mão. Sabe, nenhum agente esteve envolvido na criação disso naquela época . Assim, podemos ver todos os diferentes botões que temos aqui. Então, vamos tentar também esse tipo de abordagem baseada no Google. E,
+
+com sorte, era exatamente o que precisávamos corrigir na interface do usuário. Aqui está o nosso modelo de pré-visualização do Flash Life. Então, isso dá 3,1 dias de vida útil do flash. E então podemos nos conectar aqui. Assim, podemos observar os eventos do servidor. Hum, na verdade, deixe-me talvez...
+
+fazer isso de novo. Então, sugerimos ativar o rastreamento de pesquisa do Google e conectar. Então, o que podemos ver é uma espécie de configuração do nosso WebSocket . Então, se analisarmos a rede, veremos que temos aqui uma espécie de conexão WebSocket. Então, podemos ver que temos nosso token de acesso. Então, nossa
+
+solicitação de token para o back-end... Deixe-me ver isso? OK. Como você pode ver, estamos apenas obtendo
+
+nosso token. Então, a resposta foi apenas o nosso token de autenticação e, quando ele expira, o que enviamos em termos de carga útil, onde está a nossa carga útil? Bem , na verdade não havia carga útil. Ah, sim, estamos apenas recebendo uma pequena quantia de volta. Então, depois de obtermos nosso token, configuramos nosso web socket e podemos ver nossas mensagens aqui. Então, basicamente,
+
+a primeira mensagem em nosso web socket é a nossa configuração. Então, como você pode ver , estamos enviando nosso modelo como uma pré-visualização em flash do Gemini 3.1. Temos algumas informações em tempo real ali. Nós temos a ferramenta. Então,
+
+espero que agora a busca do Google funcione. Então, agora o que podemos fazer é... iniciar o nosso áudio.
+
+Ei, você consegue me ouvir? Sim, consigo te ouvir alto e claro. Como posso te ajudar hoje? Bem, estou em Londres agora e gostaria de saber se preciso levar um guarda-chuva? Como está o tempo hoje?
+
+Não estou conseguindo obter a previsão do tempo atual para Londres. Desculpe por isso. A melhor opção provavelmente é consultar rapidamente um aplicativo de previsão do tempo no seu celular ou fazer uma busca online. Isso lhe dará as informações mais recentes sobre a chuva. Ah, você está me matando. Basta usar a
+
+busca do Google. Me desculpe. Parece que estou tendo alguma dificuldade para acessar isso agora. Eu sei que isso é frustrante. Você pode obter a previsão do tempo facilmente, basta perguntar ao seu telefone ou pesquisar online. Vou tentar resolver
+
+isso por aqui. Vamos lá, por que você está fazendo isso comigo? Eu entendo sua frustração. Às vezes a tecnologia nos prega peças, e peço desculpas por não ter conseguido obter a previsão do tempo para você agora. Estou sempre aprendendo, então espero que da próxima vez seja mais tranquilo.
+
+Havia mais alguma coisa em que eu pudesse te ajudar ? Muito bem, isso foi doloroso. Ah, peço desculpas por isso. Ok, então definitivamente algo está acontecendo. Isso não é bom. Não é desagradável.
+
+Hum, vamos ver se temos mais sorte com as ferramentas personalizadas. Então, também estamos passando... Será que estamos passando algumas ferramentas personalizadas, ou será que existe algum problema com o nosso...
+
+uh, ta-da!
+
+Ei, você pode me mostrar um alerta de "Olá, mundo!" ?
+
+Pronto. Uma mensagem de "Olá, mundo!" foi exibida. Posso ajudar com mais alguma coisa? Sim, você pode mudar a cor de fundo da página para verde, por favor?
+
+Você entendeu. A cor de fundo agora deve ser verde. Avise-me se precisar de mais alguma coisa . Sim, você pode me dizer como está o tempo agora em Londres? Entendo que você está perguntando sobre o clima em Londres, mas infelizmente é necessário ativar o Google Grounds, mas por algum motivo está funcionando.
+
+Então, com o Google Grounds ativado, deve funcionar. Então, fico pensando se fiz alguma besteira. Sem problema algum. Não consigo obter as informações meteorológicas agora, mas se você tiver outras dúvidas ou precisar de ajuda com outras funções, fique à vontade para perguntar. Vamos tentar novamente.
+
+Ei, você consegue me ouvir?
+
+Ah, sim, precisamos de áudio. Ei, você pode mudar o fundo de volta para branco, por favor? Eu gostaria de poder fazer isso, mas na verdade não tenho controle sobre as suas configurações de exibição. Você pode precisar acessar o menu de configurações do seu dispositivo para alterar isso. Há mais alguma coisa em que eu possa ajudar?
+
+Ah, não, desculpe, fora da página. O fundo da página volta a ficar branco. Oh, eu vejo. Infelizmente, ainda não posso mudar isso para você. Essas configurações de aparência fazem parte do site ou aplicativo que você está usando.
+
+Ah, sim, você tem razão. Não, mas pensei: "Ok". Bem, desative as ferramentas personalizadas. Isso não deveria mais acontecer. Tudo bem.
+
+Hum, muito trabalho a fazer. Mas, então, é assim que você pode começar a usar. Alguém conseguiu fazer funcionar no seu computador? Sim? O recurso de rastreamento de pesquisa do Google está funcionando?
+
+Não, de forma alguma. OK. Que pena. Tudo bem. Hum, o que mais temos? Então, precisamos corrigir
+
+vários pontos importantes disso. Sim, caso você não tenha recebido o link, aqui está o link para os exemplos da API Life . Então, eles também incluem links na documentação. Então, se você acessar a documentação da API do Gemini Life , você pode encontrá-los lá. Hum,
+
+meus slides acabaram? Acho que sim , nós também temos as habilidades de agente. Então, quer dizer, se você for à documentação do Gemini Life, à API do Gemini Life, e na documentação principal, nós a linkamos lá em cima . Experimente a API Life, o Google AI Studio, os exemplos do GitHub ou use suas habilidades de programação. Então, é isso. Sim, é assim que você pode
+
+começar. Legal. Não era bem assim que eu esperava que as coisas acontecessem. Sim, vamos descobrir o que deu errado, mas agradeço a todos por participarem e, sim, responderemos às perguntas. Sim, então, eu estava apenas me perguntando se...
+
+Sim, então você pode dar uma olhada no gerenciamento de sessão. Então, na verdade , a API Life tem uma espécie de compressão de janela de contexto. Então, sem compressão, as sessões apenas de áudio são limitadas a 15 minutos. As sessões de áudio e vídeo têm duração máxima de 2 minutos. Então, o que isso significa é que a sessão será encerrada. Vai emitir uma espécie de
+
+sinal sonoro de "vá embora". E o que você pode fazer é habilitar a compressão da janela de contexto. Então, a compressão da janela de contexto é como uma janela deslizante, onde você basicamente diz: "Quero manter essa quantidade de contexto na minha janela". E conforme a conversa progride, ela acaba meio que esquecendo o contexto anterior àquele momento. Então, sim, a compressão da janela de contexto é algo que você pode habilitar para ter essa janela deslizante e, assim, prolongar a duração das sessões. Mas aí,
+
+sabe, o contexto é limitado, dependendo da taxa de quadros que você está usando em termos de imagens, dependendo, sim, principalmente são as imagens. O áudio é basicamente uma sessão exclusivamente de áudio. É possível manter mais tipos de contexto na janela. Mas aí, conforme você vai adicionando quadros de vídeo, ele acaba comprimindo, sim. Ah, sim
+
+. Sim, sim. Hum, existe algum caso de uso real e criativo disso, do ponto de vista empresarial? O que você viu e fez hoje foi muito divertido. Mas, aplicando isso aos negócios, será que existem empresas que estão realmente fazendo isso com sucesso agora?
+
+Sim, quer dizer, a Shopify já tem isso em produção com o Shopify Sidekick. Hum. Bem, tem um monte de coisas. Então, tipo, um que eu gosto muito é o blog da API Gemini Life. Bem, tínhamos uma espécie de estudo de caso, que era esta startup. Sim, quer
+
+dizer, o Stitch também está usando. Você pode curtir o código Vibe com o design Vibe usando sua voz no Stitch. Mas, como você sabe, o Stitch foi desenvolvido pelo Google. Então, sabe, provavelmente você tem que desconsiderar isso. A Waymo também está integrando isso. Então,
+
+sabe, primeiro nos livramos dos motoristas nos carros. E então, sabe, se você quiser conversar com alguém no carro, poderá falar com Gemini no futuro. Então, eles estão trabalhando nisso. Eu gosto desse. Então, este é... Ei,
+
+Otto. É uma ótima startup da Argentina. Então, eles estão criando esses assistentes de voz para idosos, em combinação com um aplicativo para cuidadores ou filhos, que podem receber notificações caso o idoso murmure algo. É uma interação muito interessante, onde o multilinguismo realmente se destaca, porque na Argentina, por exemplo, grande parte seria em espanhol, mas há um bom exemplo que você pode conferir, o que é realmente encantador. Sim . Você pode, você pode, você pode analisar
+
+isso no seu próprio tempo. E acho que depois houve mais um. Então, sim, é mais um caso de uso futuro para música, considerando algumas das arestas e limitações. Acho que, por enquanto, se você estiver em um caso de uso comercial real, talvez seja melhor usar um pipeline em cascata, porque ele oferece observabilidade em cada etapa do processo. Bem, com o áudio nativo em tempo real, você não tem esse controle e observabilidade tão precisos em termos de, digamos, reescrever a resposta antes que ela seja dita. Bem, obviamente,
+
+isso traz certos benefícios em termos do fluxo natural da conversa, mas para certos casos de uso comercial, talvez ainda não seja o ideal. Então, de certa forma, é um bastião do futuro, de como serão as interações conversacionais em tempo real no futuro. Bem , dependendo do seu caso de uso atual, pode não ser a melhor opção neste momento. Todas as transcrições estão armazenadas e podem ser baixadas? Não, então você está na sessão e não pode recuperá-los. Portanto, você teria que
+
+armazená-los no seu servidor. Bem , é aí que entram os parceiros de integração. Então, por exemplo, o LifeKit e o Pipecast oferecem ótimas soluções para armazenar todo o áudio, bem como a transcrição completa, além de fornecer ferramentas adicionais de observabilidade . Então, não é algo que esteja disponível apenas no site do Google. Então, atualmente estamos contando com as integrações de parceiros para oferecer essa funcionalidade adicional. Sim
+
+. O problema que sempre vejo é: Ah, desculpe. Atrás de você. Sim. Você quer ir primeiro?
+
+Não sei. Talvez seja para acontecer, né? Então, você disse que isso não está, sabe, super pronto para uso comercial em casos de uso mais complexos, mas quais são seus pensamentos, por exemplo, sobre substituir entrevistas presenciais em processos de recrutamento usando isso? Sim, quer dizer, não tenho certeza se substituiria todo o processo de entrevistas por isso, mas acho que é um ótimo cenário para certas etapas do processo seletivo ou para poder selecionar mais candidatos, por exemplo. Sim .
+
+Você acha que ainda não está pronto? Acho que está pronto? Porque também é importante levar em conta o contexto , certo? Principalmente se for uma primeira tela ou as telas rápidas que você mencionou, ainda é importante estabelecer alguns critérios que orientem a condução da conversa. E a segunda parte disso também funciona, por exemplo, se minha empresa usa um ambiente do Google, como o Google Meet, certo? No momento, temos
+
+transcrições automáticas, então você consegue integrar essas ferramentas? Sim , então é uma prévia. Portanto, é algo que você pode usar na produção. Dependendo do seu caso de uso, acho que você precisa avaliar se precisa de um SoC 2, por exemplo. Há várias coisas que você precisa desenvolver para que isso se adapte ao seu caso de uso comercial . Então, sim
+
+. Está pronto para experimentação. Isso ajuda? Quer dizer, acho que é isso que estamos fazendo bastante na conferência, e é para o nosso projeto. Sim . Sim
+
+. Ah , sim. Um problema que sempre enfrento é quando estou demonstrando assistentes de voz: muitas pessoas estão falando e o sistema não consegue diferenciar os falantes uns dos outros. Existe alguma solução para isso? Tipo, encontrar em uma amostra de voz ou algo assim.
+
+Acontece que é como identificar os diferentes falantes? Sim, então ele só te obedece se for o seu agente, por exemplo. Ah, interessante. Ele só te ouve. Imagine que você tem um agente de codificação e alguém faz uma brincadeira, dizendo para ele apagar o arquivo ou algo do tipo. Você não
+
+quer isso. Sim, não, isso é interessante. Não, não acho que exista uma habilidade específica para dizer algo como "apenas me escute" . Então, existe uma espécie de áudio proativo em que você pode configurá-lo para responder apenas em determinados contextos. Então, ignore coisas que não sejam relevantes para a conversa. Bem,
+
+até certo ponto isso funciona. Hum, mas não acho que seja muito confiável no momento, a ponto de você poder dizer tipo "só me escute e ignore todo mundo". Eu já fiz isso com o Parakeet da Nvidia, onde você pode treiná-lo por uns 10 segundos e ele consegue diferenciar o falante dessa forma, mas seria ótimo ter algo em que você falasse com ele e ele reconhecesse sua voz e ignorasse as outras vozes pelo resto da sessão. Hum, que legal. Essa é uma ótima ideia. Sim, obrigado.
+
+Ah, sim, acho que sim. Como se manifesta o pensamento? Será que pensa em texto ou também pensa em fala? Sim, então você só entende o raciocínio por texto. Então, existem eventos de texto no canal do WebSocket que permitem que você opte por receber o conteúdo em formato de texto. Sim.
+
+Não expressaria o pensamento. Sim . Ah, obrigado pela demo e por ter a coragem de enfrentar os deuses das demos. Hum, eu fiz uma espécie de pergunta sobre o aspecto da multimodalidade. Uma das áreas em que eu realmente quero bons modelos de conversão de texto em texto, ou melhor, de fala em texto, é que eles sejam fundamentados no que estou observando. Tipo, quando eu estou
+
+programando, eu quero simplesmente, sabe, vomitar palavras no cursor, tipo, Attic Gravity, e que ele entenda o contexto e, sabe, quando eu digo algo que é um nome de classe específico, ele deveria simplesmente usar isso. Como isso funciona dentro dessa estrutura? Seria essa uma forma de realmente fazer esse aterramento, ou você recomendaria alguma outra API para isso? Bem, isto serve para... Então, de
+
+um modo geral, os modelos Gemini são muito bons na compreensão de áudio. Então, se o seu caso de uso não exige transcrição totalmente em tempo real, eu recomendaria usar o Gemini 3 Flash para transcrever, mas também para inferir o contexto e obter uma transcrição contextualizada. Sim
+
+, existe. Então, dependendo do seu caso de uso, se você precisar de uma conversa totalmente em tempo real , então sim, você pode usar texto para inserir informações adicionais ou imagens, se fizer sentido, mas isso reduz o tamanho da janela de contexto. Ou, sabe, se você não precisa de algo totalmente em tempo real, então usar o Gemini, por exemplo, com o recurso de
+
+transcrição Flash, é muito bom. Se você usar esse contexto
+
+como entrada, fale por 5 segundos e não envie uma imagem adicional; assim, você não estará utilizando muito contexto. Acho que uma única imagem tem cerca de 1200 tokens. Então, não muito. Então, se você estiver no seu editor e quiser informações em tempo real, basicamente pode usar a API. O primeiro comando é enviar uma imagem em tempo real, seguido do envio de áudio em tempo real. Depois disso, o processo para
+
+e o modelo recebe a imagem e o áudio como entrada, podendo responder a eles. Portanto, não há necessidade de transmitir a imagem continuamente se ela não mudar ou se você não precisar que ela reaja a ela. Sim .
+
+Legal. Sim. Acho que temos um pouco mais de tempo lá atrás. Sim, como fazemos para te passar o microfone? Ou você só quer gritar ? Oh sim.
+
+Nós faremos isso. Obrigado pela sua interessante apresentação. Tenho uma pergunta sobre personalização ou adaptação. O sistema consegue reconhecer o nível de conhecimento do falante durante a interação e, com base nesse conhecimento, produzir um resultado? Desculpe, pode repetir? Será que
+
+preciso que o sistema reconheça o conhecimento ou o contexto do interlocutor durante a interação para produzir uma resposta baseada nesse conhecimento, ou algo do tipo, para se personalizar ? Então, você quer absorver uma espécie de contexto inicial, é isso que você está dizendo? Não é contexto. Por exemplo, suponha que eu esteja conversando com alguém sobre engenharia civil. O sistema consegue reconhecer que sou engenheiro civil e, com base no meu conhecimento, produzir o resultado usando a palavra-chave avançada em engenharia civil ou não?
+
+Com base no meu conhecimento. Então, se for um conhecimento especializado, você teria que compartilhá-lo para ter acesso a ele. Ah, isso significa que não tem memória para reconhecer o histórico do humano ou para encontrar o contexto principal da informação da interação e, com base nisso, produzir o próximo resultado. Então, de alguma forma você precisa incorporar esse conhecimento. Então, você pode fazer isso antes,
+
+por exemplo, ao configurar a sessão, absorvendo o conhecimento como contexto inicial, e assim o sistema terá esse contexto para discutir, ou você pode fornecer chamadas de função para acessar o conhecimento durante a sessão, enquanto conversa. Sim , entendi. Obrigado. Então. Sabe, eu queria descobrir que, olhando para o GPT, por exemplo, durante algumas interações ele consegue identificar o conhecimento prévio do falante ou do usuário, ou o conceito principal da informação, e com base nisso o GPT pode gerar alguns resultados. Isso significa que, passo a passo, a
+
+conversa será gradualmente adaptada ao seu contexto principal. Então, minha pergunta é: será que o sistema consegue se personalizar passo a passo de acordo com o contexto principal da interação e, em seguida, produzir um resultado que indique o ano? Então, desde que o contexto permaneça dentro da janela de contexto durante essa conversa. Sim, ele consegue identificar diferentes interlocutores e lembrar o que foi dito na conversa, como por exemplo, se a pessoa se apresentar com o nome, ele consegue lembrar o nome dela. Então, sim, essa é a função de compreensão de áudio do Gemini.
+
+Obrigado. OK. Legal. Ah, sim, você quer passar adiante? Eu avancei. Sim
+
+. Ah, obrigado pela ótima apresentação. Você poderia compartilhar um pouco da sua experiência sobre como avaliar aplicativos de voz ao vivo, pois imagino que seja bem mais complicado do que os aplicativos comuns? Sim, eu tenho. Então, definitivamente depende do seu caso de uso em termos de, tipo, quais são os seus requisitos em termos de , você tem HIPAA? Você tem
+
+SOC 2? Por exemplo, qual é a quantidade de chamadas de função, a quantidade de mecanismos de proteção. Então, definitivamente há muito a ser feito. Essas demonstrações são legais e divertidas, mas para trazer isso para um contexto de negócios, há muitos outros passos envolvidos, e é aí que entram as integrações com parceiros. A LifeKit construiu todo o seu negócio em torno de fornecer todas as ferramentas necessárias para assistentes de voz, então eu recomendo que você considere as integrações com parceiros para casos de uso reais em negócios .
+
+Obrigado. Legal. Sim . Espero que não se importe se eu fizer uma pergunta simples sobre a API de Interações, retomando a conversa anterior. Sim, por favor.
+
+Quando isso estará disponível no Vertex? Espero que em breve. Quer dizer, se você falar com alguém do Google Cloud ou da Vertex, quanto mais você disser que precisa da solução no Google Cloud, mais fácil fica. Faremos isso . Sim, certamente não está sob nosso controle.
+
+Ok, sim, justo. É justo. Quer dizer, a API será a mesma, então você pode começar hoje mesmo a usar a API Gemini e começar a testar. Se você precisar de limites de taxa mais altos ou de qualquer outra coisa, pode sempre entrar em contato. Se você precisar dos recursos específicos para empresas da Vertex, talvez seja necessário aguardar um pouco.
+
+Posso perguntar, em relação a informações pessoais identificáveis ​​(PII) em qualquer histórico de conversas, como elas são armazenadas em termos de soberania de dados? Você pode especificar suas próprias fontes de dados, ou isso é tudo gerenciado no back-end, dentro da API? Portanto, você sempre pode desativar o armazenamento de qualquer coisa. Então, temos uma flag `store = false`, portanto não armazenaríamos nada. Mas, não armazenar significa que não haverá estado no servidor. Portanto, se você quiser
+
+usar isso, é um pouco difícil. Para outros recursos do Vertex em termos de soberania de dados, onde você chama o modelo, eu esperaria que fossem semelhantes à geração de conteúdo. Portanto, se eles têm isso hoje, também terão no futuro. Ok, legal. Isso é ótimo. Obrigado.
+
+Agradeço.
+
+Legal. Só mais uma. Não? OK. Ah, desculpe.
+
+Não, por favor. Obrigado. Então, eu tenho uma pergunta sobre alucinações. Então, nós...
+
+Desculpe, o quê? Alucinações. Sim. Então, você mostrou alguns exemplos com relação ao clima que não funcionaram tão bem. Mas como seus clientes lidam com isso na prática, durante a produção? Porque consigo imaginar que, em
+
+alguns exemplos que vimos aqui, isso seja aceitável, mas na vida real a história é outra. Você poderia compartilhar algumas boas práticas ou dicas de como lidar com isso? Sim, com certeza. Então, quero dizer, nas demonstrações, definitivamente há uma falta de boas práticas em termos de instruções do sistema e, sabe, há muito que se pode fazer com instruções de sistema melhores para que o agente realmente siga as instruções do sistema e não, sabe, saia por aí alucinando com o clima, por exemplo. Sim , acho que tivemos algumas conversas sobre boas práticas.
+
+Então eu recomendaria dar uma olhada neles . Também temos um exemplo de como estruturar o prompt do seu sistema e incluir suas diretrizes, regras e definições de ferramentas. Assim que essa estrutura é construída, o agente se torna muito melhor em seguir as instruções do sistema e em se manter dentro desses parâmetros.
+
+Legal. Legal. Sim, muito obrigada a todos. Peço desculpas pelos contratempos, mas aprendemos algo e vamos melhorar. Mas sim, adoraria que todos vocês testassem e me contassem o que acharam nos próximos dias.
+
+Estarei por perto para acompanhar suas descobertas e te darei meu feedback. Obrigado. Saúde.
+
+Hum.

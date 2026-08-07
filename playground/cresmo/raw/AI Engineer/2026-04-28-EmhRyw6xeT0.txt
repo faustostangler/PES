@@ -1,0 +1,141 @@
+---
+video_title: "One Login to Rule Them All: Cross-App Access for MCP — Garrett Galow, WorkOS"
+video_id: EmhRyw6xeT0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=EmhRyw6xeT0
+video_date: 2026-04-28T14:00:06+00:00
+video_description: |
+  Connecting a coding agent to multiple services often means facing a dozen OAuth consent screens, a dozen token lifecycles, and a dozen chances for something to break. Despite having Single Sign-On, users still find themselves signing in repeatedly.
+  
+  This talk explores how Cross-App Access leverages a three-way trust between the MCP client, the MCP server, and the organization's Identity Provider to simplify authentication. Through the Identity Assertion Authorization Grant flow, a single SSO login is transformed into access tokens across every MCP server, offering seamless access to all applications. The session will also highlight what this pattern enables for agent identity beyond MCP.
+  
+  Speaker info:
+  https://www.linkedin.com/in/garrett-galow/
+---
+Tudo bem. Bom dia a todos. Obrigado por terem vindo a esta palestra. Espero que sua manhã tenha sido agitada. Consegui assistir a um pequeno trecho da apresentação principal.
+
+Não consegui ver tudo, mas foi muito bom. Hum, meu nome é Garrett Gallo. Hoje vou falar sobre um sistema de login que vai governar todos os outros. Ou, ainda, acesso entre aplicativos para MCP, caso você não tenha ouvido falar disso. Hum, uma breve apresentação sobre mim. Bem, eu gerencio o
+
+produto na WorkOS. Venho construindo plataformas de desenvolvimento empresarial nos últimos quase 15 anos. Bem, inicialmente trabalhei no Microsoft Azure, depois na Cloudflare por um longo tempo e agora estou na WorkOS. Se você ainda não conhece o WorkOS, nós preparamos seu aplicativo e seus agentes para o ambiente corporativo. Bem, nós desligamos para projetos como Anthropic, Cursor e OpenAI. Portanto, se você
+
+já fez login no Cursor, por exemplo, seja com nome de usuário e senha ou como um provedor de identidade corporativo, você usou o WorkOS. Bem, hoje vou falar sobre o MCP e o login através de ferramentas como Anthropic e Cursor. Bem, primeiro, se você já usou o MCP extensivamente, sabe que isso significa telas de consentimento em cima de telas de consentimento em cima de telas de consentimento. Quem aqui usa servidores MCP regularmente? Ok, a maioria de vocês.
+
+Bem, se você nunca experimentou isso antes, aqui está o Cursor que eu configurei. E se você quiser usar servidores MCP com o Cursor, você os adiciona e tem o pequeno arquivo de configuração, e então em cada um deles, se quiser usá-lo, você precisa se conectar. Uma janela será exibida. Tem essa pequena tela de consentimento que você não vai ler. Você simplesmente vai dizer "ok".
+
+E você será redirecionado de volta. E você precisa fazer isso para cada ferramenta individualmente, o que, francamente, é bastante irritante. E às vezes você precisa fazer isso de novo. Às vezes, você realmente não sabe por que precisa fazer isso de novo. Às vezes parece esquecer que você já fez isso.
+
+Sim, e então isso é algo que você precisa fazer, uh, toda vez que quiser usar, uh, esses servidores MCP. E, hum, isso não é nada divertido. Mas como se trata de uma empresa com muitos desenvolvedores, não é apenas um inconveniente de uma pessoa só . Bem, como usuário, você pode fazer login em meia dúzia ou uma dúzia de servidores MCP. Bem, quando você junta tudo isso em sua equipe, basicamente tem dezenas e dezenas de pessoas gastando todo esse tempo gerenciando essas telas de consentimento, clicando nesses botões, sem realmente se importar por que precisam fazer isso.
+
+Bem, isso é um resquício de muita tecnologia que a MCP decide usar. Ele usa o OAuth como camada de autenticação subjacente. Então, a ideia do OAuth foi meio que inventada em torno da seguinte questão: você não confia, sabe, esses dois sistemas não confiam um no outro, então você precisa dar esse consentimento para dizer, sim, o Cursor pode ter acesso à minha conta do Figma. Sim, o Cursor pode ter acesso à minha conta do Notion. Bem, a realidade é que não é bem assim que as coisas funcionam hoje em dia.
+
+Não é assim que as empresas funcionam. Bem , nós temos um recurso chamado login único. A maioria das pessoas usa esse sistema se você tem uma empresa, pois o login é feito por meio de algo como Okta ou Microsoft Entra, um sistema semelhante. Bem, e essa ideia de usar um único login para acessar todos esses aplicativos funcionou muito bem. Mas o MCP quebra esse modelo, certo? Isso meio que
+
+pressupõe que, sabe, nenhum desses aplicativos sabe nada sobre os outros. Não há como saber se você é a mesma pessoa, se, sabe, você deveria ter acesso a esses sistemas. Então, você tem que passar por esses fluxos repetidamente . Isso é realmente irritante. Bem, talvez isso por si só já seja um problema que valha a pena resolver, mas, sabe, os humanos toleram muitos incômodos se obtiverem algum benefício com isso.
+
+O verdadeiro problema surge, hum, para a equipe de TI. Assim como as pessoas que gerenciam todos esses aplicativos, o MCP não funciona da maneira que elas gostariam. Sabe, o departamento de TI não consegue realmente dizer qual serviço MCP você está ou não usando. Você está se conectando a essas coisas arbitrárias. Você não está necessariamente passando por esse provedor de identidade (IDP) para se conectar a eles, o que é problemático.
+
+Basicamente, eles não conseguem determinar, sabe, quais agentes de IA você pode realmente usar, certo? Bem, em teoria, você pode usar qualquer cliente MCP, sabe, pode ser um Cursor, mas você poderia estar usando, hum, algo como um DeepSeek ou alguma dessas outras ferramentas que talvez sua equipe de TI não queira que você use. E, hum, você terá acesso a esses sistemas sensíveis, certo? Sabe, você tem muitos dados em plataformas como Figma ou Notion que, talvez, o departamento de TI não queira que nenhum agente de IA tenha acesso. Outro ponto importante é o acesso e a segurança em si . Hum, não sei quantas
+
+pessoas ficaram sabendo que o pacote Axios do NPM foi lançado há cerca de uma semana. Ah, infelizmente, eu fui atingido por isso. Ainda não tenho certeza exatamente de qual pacote NPM eu usei que tinha essa dependência, mas, bem, nossa equipe de TI ficou ciente desse problema. Eles conseguiram detectar que, sabe, meu computador havia sido comprometido. Eles conseguiram cortar o acesso à rede do meu computador. Eles poderiam
+
+invalidar minhas sessões do Okta em todos os aplicativos, o que ajudaria a proteger minha conta e os dados da nossa empresa. Mas, sabe, na minha máquina local, eu tinha servidores MCP conectados. Eu tinha chaves de API que usava para certas coisas. Tipo, essa é a realidade pela qual tivemos que passar e fazer tudo isso, sabe? Eu estava olhando para o meu laptop e pensando: "A que estou conectado?" Que
+
+serviços poderiam exigir algum tipo de credencial diferente daquela fornecida pelo IDP e que, você sabe, corre o risco de vazar? Como podemos revogar isso? Como podemos garantir que, você sabe, meu sistema seja seguro? Bem, hoje em dia, o MCP usa OAuth, então, se algo assim acontecer, ou se você sair de uma empresa e o departamento de TI revogar seu login único (SSO) por meio do seu provedor de identidade (IdP) para esses aplicativos, você ainda terá esses tokens de acesso, esses tokens de atualização, que na maioria dos casos lhe dão acesso permanente a esses serviços. Isso significa que você poderá ter acesso por, hum, dias, semanas ou até meses.
+
+Sabe, muitas empresas não usam ferramentas como o SCIM, que permite revogar completamente o acesso, mas isso significa que existe um problema de acesso persistente sobre o qual o departamento de TI não tem visibilidade. E aí, de novo, toda vez que alguém entra para a equipe, tem que passar por todo esse processo em que, bem, o departamento de TI pode até configurar automaticamente os servidores MCP que você está usando em algo como o Cursor ou o Claude , mas você ainda precisa passar por toda essa autenticação e gerenciar todas essas conexões por conta própria. Então, hum, obviamente isso não é bom. Então, o que estamos fazendo a respeito? Muito bem, qual é a solução para isso?
+
+A solução é o acesso entre aplicativos, também conhecido como XAA. O XAA é basicamente uma forma pela qual o provedor de identidade pode atuar como um intermediário, um provedor de confiança entre aplicativos. Então, digamos que eu tenha um cursor. Esse é o meu cliente MCP. Ah, o Figma é o servidor MCP ao qual eu quero me conectar.
+
+E o Okta é o provedor de identidade (IDP) que usamos na nossa empresa para fazer login. Então, tanto o Cursor quanto o Figma já possuem essa relação de confiança com a Okta, certo? Para acessar o Cursor, eu uso o Okta. Para acessar o Figma, eu uso o Okta. Então, ambos os aplicativos conhecem o workos.okta.com.
+
+Eles sabem que eu tenho acesso a esses aplicativos. O que o acesso entre aplicativos faz é ajudar a preencher a lacuna entre o Cursor e o Figma, fornecendo uma maneira para o Cursor se comunicar com o Figma. Ambos podem confiar na Okta e obter credenciais sem intervenção manual ou humana. Então, deixe-me mostrar um pouco como isso funciona. Então, vou acessar meu terminal e torná-lo maior e mais visível.
+
+Então, aqui à esquerda, nesta aba, eu tenho o código Claude padrão configurado e, se eu verificar meus servidores MCP, verá que conectei o servidor Figma aqui. Obviamente, é necessária autenticação. Eu poderia passar por isso. Sabe, vai aparecer uma tela de consentimento. Hum, esse é o fluxo padrão.
+
+Bem, nesta janela aqui, temos uma versão do código Claude que é compatível com XAA. Basicamente, implementei o XAA aqui. Então, a primeira coisa que eu faço é mostrar, já que esta é uma espécie de implementação beta disso, que eu configurei, dentro do código Claude, esta conexão com meu ambiente Okta. E a primeira coisa que vou fazer aqui é entrar na minha conta . Então, estou fazendo login no Okta.
+
+Vou fazer login no meu ambiente Okta. Sabe, isso é algo que você precisa fazer uma vez para, por exemplo, se você estivesse configurando o Claude pela primeira vez, você precisaria fazer login no Okta. Ok, agora está tudo pronto. Bem, e agora, se eu iniciar o Claude e verificar meus servidores MCP, notaremos que o Figma se conecta automaticamente. Deixe-me tentar aumentar um pouco o tamanho.
+
+Então, eu não precisei fazer nada, não precisei clicar em nada. Não precisei ver nenhuma tela de consentimento. Ah, o Figma se conecta automaticamente e agora, seja com o Figma ou com uma lista de servidores MCP, eu consigo fazer tudo isso. Eu sei que isso parece mágica. Eu não precisei clicar em nada.
+
+Eu fiz alguma coisa de fato? Prometo que sim . Deixe-me falar um pouco sobre o que realmente acontece nos bastidores. O objetivo disso tudo é que você não precisa fazer nada, certo? Então, não parece ser algo automático.
+
+Mas, bem, funciona assim. Então, nessa situação, temos basicamente quatro sistemas. O cliente, que nesse caso era o código Claude que eu estava usando. O provedor de identidade é a Okta. O servidor de autorização de recursos, que neste caso é gerenciado pelo Figma, está separado do servidor de recursos em si, que é a API do Figma.
+
+Bem, se você não está familiarizado com o MCP, você terá o servidor de recursos, que é como o seu servidor MCP. O sistema fará uma chamada para um local separado para realizar a autorização e emitir os tokens. Então, a primeira coisa que eu fiz foi entrar no Octa, certo? Assim, o usuário passa pelo SSO para acessar o IdP. E isso retorna um token de ID e um token de atualização. Portanto, neste caso, Claude
+
+fica com essas fichas. E consegue usar isso na próxima etapa para solicitar o que é chamado de token ID Jag. Então, ID Jag é o nome da especificação na qual toda essa tecnologia se baseia. Significa concessão de autorização JWT de identidade. É um nome bem grande.
+
+Na prática, significa apenas um token emitido por um provedor de identidade (IDP) que pode ser usado em vários serviços para gerenciar o acesso. Então, o cliente volta ao IdP e diz: "Ei, eu tenho este token de atualização para Garrett. Você poderia me fornecer este token ID Jag que funcionará com o Figma?" Octa basicamente sabe sobre Claude, sabe sobre Figma. Ele pode verificar: "Ei, o Garrett é membro de ambos os aplicativos?
+
+Hum, eu tenho permissão para fazer isso? Eu tenho permissão para emitir tokens para o Claude em nome do Figma?" A resposta é sim. Octa enviará de volta este token ID Jag para o código Claude. Em seguida, Claude envia isso para o Figma, neste caso, para o servidor de autorização do Figma. Diz:
+
+"Olá, tenho este token ID Jag para Garrett da instância WorkOS Octa. Você poderia validá-lo e me fornecer um token de volta?" O Figma, por ter essa relação com o Octa, verifica o ID do Jag. Uma vez verificado e correto, o sistema poderá emitir esse token de acesso de volta para o código Claude. E nesse ponto, o quarto passo aqui é o desligamento normal do MCP. Então, ele simplesmente começa a se comunicar
+
+com o servidor MCP. Está usando um token de acesso OAuth padrão. Não se trata de um novo tipo de credencial. E então, sabe, agora eu consigo falar com o servidor MCP. A Figma emitirá respostas e a corrida começará.
+
+Hum, algumas coisas que são importantes aqui. Os passos dois e três aqui são totalmente invisíveis para o usuário, certo? Depois que eu fizer login no IdP, o que não preciso fazer com muita frequência, sabe, pode ser, sei lá, uma vez por dia. Isso depende do departamento de TI, sabe, das políticas da sua empresa. Talvez seja uma vez hoje, talvez seja uma vez por semana. Depois de
+
+fazer esse login, você não precisará repeti-lo . As etapas dois e três são realizadas nos bastidores. E então, o quarto passo é simplesmente a solicitação de token de acesso normal que você está fazendo para o servidor MCP. Outro ponto a considerar é que, no caso desse token de acesso que está sendo emitido, ele pode ter uma validade muito curta. Assim, a maioria das aplicações emite tokens de acesso em cerca de 5 minutos.
+
+Então, o que acontece é que o token expira após 5 minutos, mas você não precisa que o humano faça nada. Basicamente, você pode executar novamente esse fluxo do ID Jag, incluindo a troca, e obter um novo token de acesso conforme necessário. Assim, enquanto sua sessão SSO estiver ativa, você poderá continuar obtendo esses tokens ID Jag e trocá- los por tokens de acesso. Assim, você terá uma postura de segurança melhor, pois se algo acontecer e, por exemplo , meu acesso for removido por algum motivo ou minha sessão for bloqueada com o Octa, uma vez que o token de acesso expirar, não conseguirei mais entrar. Não conseguirei me reconectar ao servidor MCP.
+
+Então, eu gostaria de explicar um pouco como isso se apresenta na parte de configuração? Por exemplo, o que o seu administrador de TI precisa fazer? Se você estiver executando um cliente MCP, o que precisa fazer? Se você estiver executando um servidor MCP, o que precisa fazer? Do ponto de vista da TI, na verdade é bem simples, não é? Você
+
+já terá um aplicativo como o Claude Code ou o Cursor Octa criado. Você já vai criar o aplicativo Figma SSO, certo? Serão coisas que sua empresa já possui. Dentro de um sistema como o Octa, existe esse novo tipo de portal de conexões gerenciadas . Basicamente, você entra e pergunta: "Qual aplicativo eu quero conceder a capacidade de solicitar acesso a este outro aplicativo?" Então, neste caso, estamos dizendo que o
+
+Cursor pode solicitar acesso ao Figma. E essa política significa que, se o Cursor aparecer e disser: "Ei, Octa, posso ter um token ID Jag para o Figma?" Parte do pedido é especificar a qual sistema eu quero ter acesso. Octa pode verificar isso e dizer: "Sim, na verdade, o Cursor tem permissão para solicitar esse acesso fora do Figma." E emitiremos esse token. Então, isso é
+
+tudo o que você realmente precisa fazer na área de TI. Depois de fazer isso, todo o resto funciona normalmente, por exemplo, o usuário precisa estar cadastrado em ambos os aplicativos. Você está basicamente aplicando o mesmo tipo de política de gestão que costuma fazer. No cliente MCP, ou seja, no seu código Claude, no seu Cursor, ou se você estiver criando seu próprio cliente MCP, há algumas coisas que você precisa fazer. Primeiro, você precisa ter uma conexão SSO compatível com XAA. Então, sabe, em
+
+geral, se você oferece suporte a SSO (Single Sign-On) em seu aplicativo ou cliente, isso é o padrão. O suporte a XA é relativamente novo, então o Octa suporta, mas com algumas ressalvas. Eles estão analisando esses casos. Estamos trabalhando com outros parceiros do setor, como a Microsoft, para que eles também deem suporte a isso. Mas você precisa disso, e a conexão IdP desse cliente precisará ter o suporte a XAA habilitado.
+
+Seu cliente solicita esse token ID Jag do provedor de identidade. Você recebe esse token de volta. Você precisa fazer essa solicitação de troca para o servidor MCP, então você precisa dar suporte a esse fluxo de tokens. E depois disso, o quarto passo é simplesmente comunicar com um servidor MCP. Portanto, nada de novo .
+
+Bem, nós criamos suporte para quem fornece serviços de autenticação para nossos clientes, e criamos suporte para os itens um, dois e três aqui. Portanto, se você estiver criando um cliente MCP, podemos lidar com todo esse fluxo. Bem, na verdade, somos a forma como a Cursor e a Anthropic fazem isso, porque elas nos usam para suas conexões SSO. No lado do servidor MCP, que provavelmente é mais relevante para a maioria das pessoas, imagine que sua empresa tenha um servidor MCP que você queira que seus clientes usem. Há também algumas coisas que você precisa fazer para dar suporte a isso da sua parte.
+
+A primeira é que existe esse novo tipo de portador JWT que você precisa suportar. Então, basicamente, isso é como anunciar que agora você oferece suporte a esse fluxo ID Jag e que aceitará esses tipos de tokens. Então, obviamente, os clientes MCP vão te enviar esses tokens. Você precisa aceitá-los. E depois você precisa verificá-los. Então,
+
+há uma etapa em que você acessa o provedor de identidade, o URL do Octa, e pergunta algo como: "Ei, este token é válido?" É basicamente um JWT assinado. É como validar um JWT em qualquer outro contexto, você está fazendo a mesma coisa aqui. E por último, o que deveria ser o procedimento normal, é emitir o token de acesso, certo? Então, você validou tudo. Agora você quer fornecer a eles um
+
+token de acesso. Se você quiser saber mais sobre como isso funciona, eu, sabe, apresentei isso como uma visão geral de alto nível. Obviamente, existe toda uma especificação que define o ID Jag e os detalhes de como ele deve funcionar. Bem, esse é um exercício que deixo para você, leitor, se quiser explorar as especificações. Bem, eu diria que o Claude é muito bom em explicar a especificação, então essa pode ser uma maneira mais fácil de se familiarizar com ela sem ter que ler, você sabe, a nomenclatura da IETF. Bem,
+
+aqui temos uma postagem no blog que detalha tudo sobre o ID Jag, como ele funciona e muitos outros aspectos técnicos, caso você tenha interesse. Então, sim, você pode conferir isso para saber mais. E com isso, terei prazer em responder a quaisquer perguntas que as pessoas tenham. Sim . Então, isso pode resolver o problema de autenticação, mas será que também resolve o problema de autorização? Digamos que, no caso do
+
+Figma, você tenha diferentes escopos de token. Isso também resolve a questão da autorização? Sim. Então, só para vocês saberem, vou repetir as perguntas para que as pessoas que estão ouvindo a gravação possam ouvi-las. A questão é que isso resolve a autenticação, não a autorização.
+
+Isso ajuda em alguma coisa? Por padrão, não. Então, isso se refere basicamente à parte de autenticação. Bem , você ainda está acessando o Figma com sua conta, então você está obtendo as permissões que possui no Figma. Uma das coisas que estamos discutindo é como estender isso para poder definir acesso com escopo. Então, talvez,
+
+sabe, o Octa esteja dizendo: "Sim, vou conceder acesso entre aplicativos a essa ferramenta, mas há ressalvas quanto às permissões que vou conceder." Isso não é algo que faça parte das especificações atuais. Mas obviamente é algo importante que precisamos considerar. Obrigado. É a mesma pergunta, mas com uma segunda parte. Sim. Como é que o
+
+cliente MCP sabe qual aplicativo usar dentro do Octa? A questão é: como o cliente MCP sabe qual aplicativo ele está solicitando acesso no Octa? A resposta é baseada em algo como um URL de público-alvo. Então, você usaria, neste caso, algo como, sabe, mcp.figma.com.
+
+Sabe, é o servidor MCP do Figma. Esse público será conhecido dentro do Octa. Então, o seu Cursor fará uma solicitação à sua instância do Octa e dirá: "Ei, aqui está o público que estou procurando." Isso está configurado dentro do Octa para indicar, por exemplo, que o aplicativo Figma abrange esse público. E então, é assim que ele verifica a solicitação de acesso. Então, o que impede
+
+você de usar isso para hackear escopos? Não, acho que não daria para usar isso para hackear escopos, porque é apenas "audience" (público-alvo), que é uma espécie de terminologia padrão do OAuth . Então, é, essa é a questão, o Cursor sabe qual público-alvo ele está tentando atingir com base no servidor MCP. O Octa está configurado para reconhecer, neste aplicativo, o público-alvo que ele controla. E então, obviamente, você sabe, o Figma conhece seu público e está verificando a validade do JWT com o Octa.
+
+Legal. Sim . Você oferece suporte ao Azure? Um Intra. Yeah, yeah. O Intra é
+
+compatível? A Microsoft ainda não adicionou suporte a XAA no Intra. Hum, isso é algo em que estamos trabalhando com eles . Se você tem contatos, pressione, porque queremos que isso seja adotado de forma mais ampla. Sim, de forma mais geral, hoje em dia com o Octa, isso é suportado para conexões baseadas em OIDC. Mas eles também vão dar
+
+suporte a isso para conexões baseadas em SAML. A especificação define que tudo o que você enviar para o IdP será um token de atualização, um token de ID ou uma declaração SAML. Então, é algo que comprova que o usuário tem uma sessão no seu aplicativo. Bem, essa é a única parte que se importa com o tipo de conexão SSO que você tem. Mas sim, por enquanto é só a Okta. Esperamos que isso aconteça em breve.
+
+Ok, então não há introdução no momento. Não, eles ainda não oferecem suporte a isso. Então, posso confirmar? Claro. Assim, com a Microsoft, deparei-me com vários problemas de fragmentação do protocolo do cliente. OK.
+
+Ocorreu um problema com um parâmetro de recurso no Cloud Code ao enviar o recurso. Hum, o Entra valida, mas precisa corresponder ao escopo. Bem, a forma como a Codex faz isso é completamente diferente. A forma como o Cloud Desktop faz isso também é diferente. Desculpe, a que parte do fluxo isso se refere? Ou
+
+quando o Cursor ou a Nuvem se comunicam com a Microsoft, é para o logon único ou para a comunicação via chat? OK. Então, existe um RFC 9728. O que o que o que a descoberta inicial representa? Sim .
+
+O recurso, o escopo e o recurso precisam corresponder; caso contrário, o Entra o rejeita. Sim. E diferentes protocolos exigem um conjunto diferente de...
+
+Sim, talvez possamos conversar depois que executarmos este. Está um pouco confuso. Sim, quer dizer , se for uma conexão baseada em OIDC, então sim, os escopos que o cliente está solicitando precisam corresponder ao que o servidor permite. E se houver alguma incompatibilidade , existem diferentes maneiras de lidar com isso, mas obviamente você não deve conceder escopos que não foram, você sabe, permitidos. Bem, talvez possamos conversar sobre isso e ver se esse é o problema. Sim, o Entra
+
+não suporta DCR. Hum, sim. Configure um proxy e volte a usar. Agora é preciso estar ciente de qual cliente está se conectando para, eh, ajustar alguns cabeçalhos antes de enviar a mensagem pela rede. Será que a questão era que o Entra não suporta DCR, o que causa problemas?
+
+Sim, esse é, hum, acho que um problema geral no mundo real é, você sabe, quais clientes e quais servidores suportam tudo, conforme a especificação MCP se desenvolve. Bem, eu diria que a maioria dos clientes e servidores suporta DCR atualmente, mas obviamente nem todos suportam e não há muito o que fazer se um deles não o suportar. Você precisa, tipo, se cadastrar, sabe, e se não for DCR, você precisa pré-cadastrar esse cliente. Bem, você sabe, CIMD é como o novo padrão que meio que substitui o DCR. É tipo, comando, ou melhor, esqueci o que significa CI . São metadados, é como um
+
+documento de metadados que define os clientes antecipadamente, para que você não precise criar os clientes todas as vezes. Hum, mas essa tem ainda menos apoio no ecossistema porque , sabe, ela tem apenas três meses . Hum, mas é uma experiência melhor. Então, sim, ainda há um pouco de atraso no ecossistema para, você sabe, dar suporte à especificação mais recente. Vou alcançar vocês. Legal, sim.
+
+Ótimo. Bem, muito obrigado a todos pelo tempo dedicado. Tenha um ótimo restante de conferência.

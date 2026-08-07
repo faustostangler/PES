@@ -1,0 +1,101 @@
+---
+video_title: "Two Roads to Durable Agents: Replay vs. Snapshot — Eric Allam, CEO, Trigger.dev"
+video_id: svCnShDvgQg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=svCnShDvgQg
+video_date: 2026-05-10T20:00:06+00:00
+video_description: |
+  Replay-based durability — wrapping every step in a journal, replaying on recovery, requiring deterministic code — is how everyone makes agents durable today. It works until it doesn't: the journal grows with every turn, the structure starts constraining how you write code, and an agent that needs to run for hours starts looking less like a transaction and more like a session.
+  
+  This talk separates the problem in two: context durability (the append-only log of everything the LLM saw, which already fits in a database) and execution durability (the files, memory, and subprocesses that live in the compute layer, which don't). The answer to the second half isn't a smarter log — it's OS-level snapshot and restore. Eric Allam walks through how Trigger.dev built this on Firecracker microVMs, getting snapshots down to 14 megabytes compressed with sub-second save and hundred-millisecond restore times, and why IBM mainframes in 1966 got there first.
+  
+  Speaker info:
+  - https://x.com/maverickdotdev
+  - https://www.linkedin.com/in/eric-allam/
+  - https://github.com/ericallam
+---
+[música]
+
+Como estão todos? É uma sala cheia. Olha só isso. [risos] Ok, vamos começar. Ok . Então, aqui está o nosso, você sabe,
+
+agente. Sabe, tem o loop de curva, tem o loop LM. Sabe, este pequeno exemplo funciona razoavelmente bem rodando na sua própria máquina, mas e se quisermos implantar esses dois backends de produção e executá- los em nossos servidores? Então, o que queremos que eles façam, certo? Quando são executados em nossos servidores, queremos que realizem, sabe, um trabalho significativo e de longa duração. Uh deve ser durável em diferentes
+
+versões do nosso código e deve ser capaz de se recuperar de erros. Então, eu sou Eric, um dos fundadores da trigger.dev, e nos últimos anos temos nos dedicado a facilitar a implantação desses tipos de agentes em produção. O que eu gosto nesse pequeno meme aqui é: qual deles é o agente e qual é o humano? Acho que acho .
+
+[risos] Sim. Ah, sim . Então, esta palestra trata da mudança fundamental que os agentes representam para a infraestrutura de back-end e de algumas ideias sobre como alcançar esses agentes duráveis. Então, antes de entrarmos nesse assunto, quero dar uma pequena aula de história. Vamos dar um passo atrás e ver como chegamos até aqui. Então, o primeiro
+
+backend web dinâmico foi o CGI, lá em 1993. Alguém aqui já trabalhou com CGI? [risos] Legal. Legal. Bem , o modelo era realmente simples. Quando uma
+
+requisição HTTP é recebida, o servidor inicia um processo completamente novo. Os dados da solicitação são inseridos, o processo executa algumas tarefas, em seguida, grava a resposta na saída padrão e, por fim, o processo é encerrado. Então, é completamente apátrida. Pouco tempo depois disso, surgiu o PHP, que acabou se transformando na pilha LAMP. Hum, e opa.
+
+Então, de certa forma, a pilha LAMP reutilizava o processo PHP, certo? Mas, de certa forma, manteve o princípio de que tudo o que você precisava fazer para criar uma resposta era a solicitação, algum estado do banco de dados, e então a solicitação seria feita. Assim, a segunda solicitação chegaria, executaria todo o mesmo trabalho novamente e produziria a resposta. Então, essa estrutura de requisição mais banco de dados igual à resposta ficou conhecida como arquitetura "sem compartilhamento", certo? Então, olhando por outro ângulo, " nada compartilhado" significa que a camada de computação não tem estado, certo? Não há
+
+nada. Não existe nenhum estado significativo como no computador. O estado está no banco de dados, certo? Então, essa se tornou a infraestrutura de backend dominante nos últimos 30 anos, certo? Tudo que veio depois disso, como Ruby on Rails, Node.js,
+
+serverless, tudo segue o mesmo paradigma, certo? À medida que os aplicativos da web se tornaram mais complexos e sofisticados, eles começaram a executar esses tipos de efeitos colaterais fora do ciclo de vida da solicitação e do banco de dados. Esses efeitos colaterais são tarefas assíncronas. Então, eles começaram de forma simples: enviar um e-mail, cobrar um cartão de crédito, redimensionar uma imagem. Mas logo se tornaram uma espécie de efeitos colaterais em várias etapas, não é? É
+
+como este exemplo de ordem de processo aqui. É como se você fizesse as coisas em sequência, certo? Você logo se depararia com um problema sobre como lidar com falhas em algo assim , certo? Então, se o envio do recibo falhar, você não pode simplesmente tentar processar o pedido novamente sem cobrar o cartão de crédito duas vezes, o que é ruim. Então, há uns 10 a 15 anos, os mecanismos de fluxo de trabalho e de execução durável foram adotados para resolver esse problema, certo?
+
+Então, você escreveria seu código assim agora, onde você meio que envolve cada efeito colateral em uma etapa que é armazenada em cache à medida que é executada. Então, agora isso resolve o problema de forma satisfatória. Quando você dá a ordem de execução pela segunda vez, você pula as etapas que já realizou e então faz o que queria fazer originalmente, certo? E você não cobra duas vezes no cartão de crédito. Então, eu chamo esse modelo de modelo de repetição .
+
+Então, ele constrói uma execução durável em cima da arquitetura de computação sem estado existente , que foi como eu expliquei , é assim que tudo funciona, certo? Então, sabe, você obtém esse efeito colateral positivo de ter um histórico de execução, um registro de auditoria de tudo o que aconteceu. E também, ao poder retomar de um ponto específico no tempo, você pode... Sim, você pode se recuperar de uma
+
+falha, mas também pode esperar que algo mais aconteça, certo? Então, você pode esperar que um humano faça algo e, em seguida, pode retomar a execução. Uma das desvantagens desse sistema de replay é que agora você precisa encapsular tudo nessas etapas, e tudo que está fora das etapas precisa ser determinístico, o que acaba criando uma estrutura rígida. Você precisa escrever seu código de uma determinada maneira, ou as coisas quebram. E também, como o registro em diário de reprodução, o versionamento do registro em diário de reprodução é meio complicado se você implantar uma nova versão.
+
+Então, essa é uma espécie de história muito simples e resumida do estado do mundo em 2023, quando os mestrados em Direito (LLMs) surgiram. No início, eles se encaixavam perfeitamente nesse paradigma, não é? Eles se tornariam apenas mais uma etapa em um fluxo de trabalho, certo? Eles classificavam algum texto ou algo assim, mas ainda estávamos naquela era antiga de fluxo de trabalho, certo? Não muito tempo depois disso, começamos a usar a chamada de ferramentas, e essa chamada ficou boa, e fomos apresentados ao loop do agente, certo? A grande diferença é que o
+
+código, de certa forma, não está mais orquestrando o LLM. O LLM meio que orquestra o código, certo? Então, estamos de volta ao nosso ciclo de agentes, certo? E tipo, o que acontece se nós... É, você
+
+pode ver isso. Bem, se pudermos , basicamente queremos tornar esse loop do agente durável, e podemos fazer isso com esse modelo de repetição, certo? Como isso se parece? Então, como isso se parece? Cada chamada do LLM, certo, se torna um passo na repetição do diário. Bem,
+
+cada chamada de ferramenta se torna uma etapa. Bem, resumindo, você sabe, a função é executada novamente por cima e meio que reproduz tudo aquilo, certo? Então, depois de uma única rodada em que o LLM não faz muita coisa, o registro de replay fica mais ou menos assim , certo? E conforme você continua interagindo com o agente, o registro vai crescendo cada vez mais . Em determinado momento, você pode se deparar com algum tipo de limite fundamental do seu sistema de replay. Isso pode ser devido ao
+
+excesso de inscrições ou ao tamanho excessivo das inscrições . Mas é , isso meio que desmorona quando você atinge esse limite. E existe uma espécie de indicador de quanto tempo os agentes conseguem, de fato, realizar um trabalho significativo, e aparentemente esse tempo está dobrando a cada 4 a 7 meses. Então, agora estamos falando de algumas horas, mas não muito tempo depois, estaremos falando de vários dias de duração, à medida que esses agentes forem sendo desenvolvidos para realmente realizar um trabalho significativo. Então, sabe, o replay nos deu essas transações meio que duráveis, mas um agente não é como uma transação, é como uma sessão, certo? E dura o tempo que
+
+o usuário desejar . Os fluxos de trabalho com várias etapas têm um início e um fim, e as sessões continuam pelo maior tempo possível. Então, se dermos um passo atrás e pensarmos no que um agente precisa para ser durável, partindo dos princípios básicos, eu o vejo como tendo essas duas metades, certo? A primeira metade é o contexto. Então, isso inclui todas as suas mensagens de sistema, mensagens de usuário, chamadas de ferramentas, resultados de ferramentas e respostas do assistente, certo? Então, este é o
+
+contexto real, tudo o que entrava e saía do LLM. Bem , isto é extremamente valioso, obviamente. Você quer que isso seja durável, certo? Mas você também tem essa espécie de camada de execução. E como os agentes estão ficando mais complexos, fazendo mais coisas, eles meio que querem uma máquina, certo? Eles
+
+querem poder fazer coisas como fariam no seu laptop, certo? Eles querem poder escrever arquivos, usar memória, como criar subprocessos. Então, eu considero ambas como peças de estado extremamente valiosas, mas elas podem ser tratadas separadamente. Então, o contexto é o primeiro e o mais importante, e é basicamente um registro de tudo o que aconteceu, sem possibilidade de atualização, certo? Como eu disse.
+
+E você pode tornar esse registro durável usando qualquer tipo de recurso primitivo já existente, como um banco de dados, armazenamento de objetos ou um sistema de arquivos distribuído. Sabe, existem muitas tecnologias surgindo que são especializadas em tornar esse tipo de coisa durável, certo? E quando isso for durável, quando esse registro de contexto for salvo em algum lugar, você poderá ter durabilidade entre versões do seu código, certo? Então, se você atualizar seu arnês, ainda poderá usar o mesmo contexto, certo? Talvez o computador trave, mas você ainda tenha o jogo salvo em algum lugar, então pode continuar de onde parou, certo? Os
+
+logs de acréscimo único e os logs somente de anexação escalam muito bem. Mas e quanto a tornar esse tipo de execução durável, certo? Bem, para esses, como eu estava dizendo, os tipos de agentes que estão realizando trabalho significativo agora, há muito estado que ocorre na camada de computação que talvez queiramos salvar. Talvez você tenha clonado um repositório do GitHub, instalado alguns pacotes, tenha alguns conjuntos de dados na memória e esteja executando um servidor de desenvolvimento, certo? Você cria um ambiente isolado (sandbox) em um subprocesso, seja lá o que for, certo?
+
+Não dá para fazer algo durável usando apenas um tronco. E como fazemos para isso funcionar, certo? Então, você precisa esperar um certo tempo para receber a próxima mensagem do usuário, certo? E não podemos simplesmente manter a máquina funcionando. Seria bom, mas não podemos. Seria muito caro.
+
+Portanto, em vez de recriar o estado de execução a partir de um log, devemos usar o recurso de snapshot e restauração. Então, isso nos permite criar um instantâneo da máquina, desligá-la, salvá- lo no disco e, quando a mensagem do usuário chegar, restaurá-lo, certo? Isso nos dá durabilidade nas curvas. Então, quando o usuário for almoçar, certo? Não precisamos manter a máquina ligada o tempo todo. Isso
+
+nos permite preservar tudo o que o agente estava fazendo. E, sabe, comparado a manter a máquina funcionando ao vivo, é bem mais barato. Então, acho que se você combinar essas duas coisas, você acaba obtendo um agente durável, certo? Bem, você tem o contexto, então você meio que...
+
+sim, você tem durabilidade de contexto e durabilidade de execução, certo? E isso também permite que você se recupere de erros. Então, um dos principais objetivos dessas garantias de durabilidade é justamente a recuperação, certo? Portanto, dependendo do que aconteceu, do que deu errado, você pode se recuperar de diferentes maneiras. Então, digamos que o LLM não esteja funcionando por algum motivo. Isso
+
+nunca acontece, mas nunca se sabe, pode acontecer. Hum, e demora muito para tentar novamente. Talvez apareça uma mensagem como " espere, espere, sabe, 15 minutos", para que você tente enviar a próxima mensagem novamente. Bem, você não quer esperar na memória, então você tira um snapshot e restaura quando puder tentar novamente. Mas, se houver algum problema com a máquina, talvez você tenha enviado um bug, ou talvez haja simplesmente um problema com a máquina, certo? O programa
+
+trava. Você tem o registro de contexto e pode recuperá-lo. Então, acho que, sabe, durante 30 anos tivemos essa computação sem estado como uma espécie de núcleo da infraestrutura de back-end . E eu acho que os agentes estão meio que forçando essa mudança para se tornarem computação com estado. Então, e no cerne disso, eu acho, terá que ser esse instantâneo e a restauração da capacidade.
+
+Hum, mas, sabe, isso não é exatamente uma novidade. Bem, este é um mainframe da IBM de 1966, e ele possui recursos de checkpoint e restauração. É que eles executavam essas tarefas super caras por horas e, sabe, algo dava errado e eles não tinham dinheiro para executar tudo de novo, então adicionavam esses pontos de verificação no código, certo?
+
+Avançando para 2011, algo chamado CRIU foi, digamos, desenvolvido. Era uma forma de suspender e restaurar um processo a partir do espaço do usuário. Então, basicamente, seria como injetar um processo com isso, como se fosse um parasita. Então eles forçavam o processo a despejar tudo na memória, e isso removia todos os vestígios do parasita, e realmente funcionava. Bem, em 2024, nós lançamos isso, e já fizemos milhões de restaurações de snapshots desde então. Sabe, é
+
+transparente para o processo, então o processo não precisa participar dele, e é compatível com os ambientes de execução de contêineres, o que é bom. Então, a desvantagem é que você só pode fazer checkpoints como em um processo. Então, se você estiver usando ferramentas como o FFmpeg, ou se tiver uma instância do Chrome em execução, ou qualquer outra coisa, certo? Não funciona muito bem. Bem, ele só captura arquivos abertos, então se você estiver trabalhando com o sistema de arquivos, ele precisa estar aberto no momento da captura do instantâneo, ou você não conseguirá capturá-lo. E também, se
+
+você... sim, é bom que seja compatível com contêineres, mas uma vez que você é compatível com contêineres, você precisa trabalhar com registros e enviar e receber dados , e aí fica muito lento. Bem , no ano passado migramos para, hum, micro VMs do Firecracker.
+
+E isso nos permite tirar uma espécie de instantâneo da máquina inteira, certo? Então, tudo o que está em uma máquina virtual, podemos criar um snapshot e depois restaurá-lo, e ele continua exatamente de onde parou, independentemente do que estava acontecendo na máquina, certo? Mas, se você fizer isso, de uma forma ingênua, pode acabar sendo bem caro. Então, digamos que você tenha um tamanho de máquina padrão de 512 megabytes, sabe, se você fizer um snapshot, ele terá 512 megabytes no disco. Então, isso não é bom. Bem
+
+, obviamente você tem custos de transferência de rede, custos de armazenamento e muita memória que não está sendo usada. Bem , na verdade resolvemos isso comprimindo o arquivo. Hum, na verdade usamos uma compressão com recurso de busca . Bem, quando restauramos, na verdade não restauramos todas as páginas de memória de uma só vez. Na verdade, gostamos de capturar os dados quando precisam ser restaurados, e também de descomprimir aquele pequeno trecho que precisa ser restaurado de vez em quando.
+
+Também temos algumas outras técnicas para sobrepor o instantâneo, e conseguimos reduzir o tamanho do instantâneo para cerca de 14 megabytes comprimidos. E isso é como um botão que você pode ajustar, e , dependendo de como você executa o tipo de desempenho que deseja. Hum, você pode comprimir mais ou menos. Bem, basicamente era só isso que tínhamos que fazer além de tudo isso. E depois que fizemos isso, conseguimos tempos de captura e restauração super rápidos.
+
+Então, este é um gráfico meio bobo, comparando o CRIU e o Firecracker, mas basicamente a moral da história é que os snapshots levam pouco menos de um segundo, e as restaurações levam algumas centenas de milissegundos. Bem, na verdade, reunimos tudo isso em uma ferramenta que em breve será de código aberto. Ah, chama-se FC Run, ou F Crun, dependendo de quem você perguntar. Então, isso permite que você use uma interface de linha de comando semelhante ao Docker, como um substituto para o comando Docker, para executar contêineres em máquinas virtuais do Firecracker, além de criar snapshots e restaurá-los. Por exemplo, você pode executar o Alpine, que é extremamente rápido, e pode criar snapshots de uma máquina virtual em execução, que também é extremamente rápida.
+
+Você pode criar um fork de uma máquina virtual, o que também é muito rápido. Bem, este é um pequeno parâmetro de referência para o TTI, que basicamente indica quanto tempo leva para a máquina virtual se tornar, eh, interativa com a internet. Então, estamos fazendo cerca de 15.000 inicializações de máquinas virtuais por minuto. Hum, você quase consegue renderizar, tipo, um vídeo. A taxa de quadros por segundo (FPS) seria de aproximadamente
+
+30 FPS. Bem, é extremamente rápido. Bem , isso vai alimentar nossa futura camada de computação, mas é de código aberto. Hum, ainda não, mas muito em breve. Bem , voltando ao ponto de partida com nosso pequeno loop de agente, conseguimos torná-lo mais robusto fazendo duas coisas diferentes: registro de contexto e instantâneo de execução. Então,
+
+conseguimos durabilidade entre versões, durabilidade entre turnos, em meio a falhas, e acho que isso levará a um futuro de computação com estado. É isso. Sim . [aplausos]
+
+[música]

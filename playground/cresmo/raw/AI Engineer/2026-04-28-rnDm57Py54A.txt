@@ -1,0 +1,385 @@
+---
+video_title: "Building your own software factory — Eric Zakariasson, Cursor"
+video_id: rnDm57Py54A
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=rnDm57Py54A
+video_date: 2026-04-28T18:00:06+00:00
+video_description: |
+  Most of us are pair-programming with one agent and stopping there. There's a lot more on the table. This workshop is about going from one agent to many. We'll start with codebase setup, the foundational work that makes agents effective on their own. Then we'll scale up to running agents in parallel, kicking off async work that keeps going while you context-switch to something else, and setting up automations for the things you're still doing by hand.
+  
+  Speaker info:
+  - https://x.com/ericzakariasson
+  - https://www.linkedin.com/in/ericzakariasson/
+  - https://github.com/ericzakariasson
+  
+  Timestamps:
+  0:00:00 - Workshop introduction and vision for autonomous software factories
+  0:01:26 - Frameworks and stages of agentic autonomy
+  0:08:58 - Establishing scalable, reproducible dev environments for agents
+  0:10:00 - Importance of verifiable systems and automated testing pipelines
+  0:10:47 - Cursor 3 walkthrough: Redesigned agent-first interface
+  0:15:26 - Cloud agents: Scaling via dedicated VMs and computer control
+  0:19:17 - Managing asynchronous workflows and frontloading context
+  0:24:45 - Automating repetitive tasks to build feedback loops
+  0:29:28 - Continual learning: Extracting rules from chat transcripts
+  0:30:48 - Scaling management: Moving to nested agent orchestration
+  0:31:08 - Strategic takeaways: Human accountability and observability
+  0:33:39 - Q&A: Addressing code quality and architectural guardrails
+  0:53:07 - Best practices for human-to-agent collaboration and handoffs
+  1:03:05 - Maintaining the factory: Managing documentation and specs
+  1:10:06 - Integrating Linear and Slack for automated issue triage
+  1:14:14 - Local execution: Leveraging Cursor harness locally
+---
+Hum, ok. Então, vamos começar cinco minutos mais cedo. Olá a todos. Eu sou Eric. Sou engenheiro e trabalho principalmente com experiência do desenvolvedor e produto. E hoje eu queria
+
+conversar com vocês sobre minhas experiências trabalhando na Cursor, testando o produto internamente, e sobre como chegar a um ponto em que você pode construir sua própria fábrica de software, e o que isso exige e os passos práticos para alcançar esse objetivo. Sinceramente, não acho que tenhamos chegado lá ainda. Assim como subpartes do produto e subpartes da empresa, estas funcionam de maneira bastante autônoma. Mas construir uma fábrica de software dá muito trabalho. Quero dizer, veja fábricas da vida real produzindo hardware. Existem muitas
+
+linhas de montagem. Há muita gente envolvida nisso, muita gestão, observabilidade e tudo mais. E há muitos conceitos que podemos aproveitar desse mundo e aplicar no mundo do software. Bem, aqui vão minhas observações após fazer isso. Bem, primeiro, quero falar sobre a pauta, tipo, os níveis de autonomia, precursores da fábrica, sem trocadilho. Construir a
+
+fábrica, operar a fábrica e, em seguida, expandir a fábrica. E para finalizar, gostaria de abrir para perguntas e respostas de qualquer tipo . Certo, então, sobre os níveis de autonomia, Dan Shapiro publicou um post no blog, acho que em janeiro ou fevereiro, explicando seis estágios diferentes de autonomia na automação de software. A Carpathia também já usou o cursor como exemplo de como alternar entre abas e agentes, mas acho que isso resume tudo muito bem. Então temos esse recurso de autocompletar interessante no início, e é mais ou menos onde o cursor começou em 22 ou 23, tipo, há muito tempo atrás. E nós fomos
+
+subindo gradualmente na hierarquia, tornando a criação de software mais autônoma e permitindo que os agentes realizassem mais tarefas. E eu acho que a maioria das pessoas que adotam as ferramentas de IA estão em algum lugar entre o nível dois e o nível três, onde você tem um programador em dupla, basicamente trocando informações com o agente, fazendo perguntas, recebendo sugestões, pedindo ao agente para realizar tarefas e, eventualmente, concluindo- as. E o passo seguinte seria ter a IA gerando a maior parte do código, o que podemos ver aqui no nível três do desenvolvedor. Bem, onde você, como humano, meio que revisa, meio que dentro do loop, seguindo os rastros e tudo mais, mas conforme você progride, você se torna cada vez mais um gerente, e falaremos mais sobre isso depois, mas eventualmente, tipo, nível quatro, acho que é onde estou neste ponto, na maioria dos projetos de software, onde delego o máximo de trabalho possível para agentes e provavelmente reviso as saídas antes de revisar o código, porque ainda dou uma olhada no código às vezes. E, por último, temos a fábrica de software, que é essencialmente uma caixa preta. Um Dan Shapiro chama isso de "
+
+fábrica escura", onde você realmente não tem nenhuma noção do que está acontecendo. É como se os agentes estivessem por aí fazendo o trabalho deles, tipo enviando o código, testando o código, compilando o código, tudo isso. E você, como gerente, apenas fornece a intenção, as instruções e o objetivo, ou seja, o que você espera da fábrica. OK. Sim . Então, por que você quer
+
+construir uma fábrica? Primeiramente, em termos de produtividade, você provavelmente vai querer criar mais código com menos recursos. Você pode operar agentes 24 horas por dia, 7 dias por semana. Você não precisa depender de humanos que precisam dormir, comer e tudo mais. Você pode simplesmente ter mais agentes. Outra
+
+característica da fábrica é que existem linhas de montagem, e as linhas de montagem produzem resultados consistentes. Portanto, se você construir sua fábrica corretamente, provavelmente conseguirá uma produção muito consistente. Bem, em algum momento você inicialmente sente que, se não tiver uma configuração vermelha, os agentes podem ficar cada vez mais probabilísticos e você pode perder muito determinismo. Bem, porque eles simplesmente saem por aí fazendo coisas aleatórias. Hum, o que provavelmente é um sinal de que você precisa construir mais guarda-corpos para a fábrica. E creio que
+
+isso também seja uma função das capacidades do modelo. À medida que os modelos melhoram, eles conseguem seguir instruções com mais precisão e executar exatamente o que você quer que eles façam. E em terceiro lugar, você pode querer ter uma fábrica porque assim poderá aproveitar melhor o seu paladar. Hum, você pode aproveitar melhor sua criatividade. Hum, em vez de simplesmente esperar que você, como ser humano, os crie e produza esse software que você está criando. Hum,
+
+e depois, obrigatoriamente, como naquela época e agora. Era assim que costumava ser. Isso me lembra uma fábrica da Tesla de alguns anos atrás. E é mais ou menos isso que estamos buscando aqui. Ok, vamos direto ao assunto. Então, para
+
+construir uma fábrica, do que você realmente precisa? Bem, eu gosto de pensar nisso como elementos primitivos e padrões. Então, como você estrutura o código? Hum, é como uma base de código modularizada? Hum, você tem isso espalhado por toda parte?
+
+É código co-localizado, etc.? Porque, tipo, a distância na localização, tipo, se você tiver um agente listando uma pasta, ele pode descobrir todos os arquivos relevantes de uma vez, em vez de ter que usar o comando `gp` e pesquisar em toda a base de código. Pode ser muito isolado, permitindo trabalhar dentro de uma única parte do código-fonte. E o mesmo se aplica aos seres humanos. Por exemplo, se você
+
+tem facilidade para se adaptar a uma nova base de código, um agente provavelmente também terá. A segunda coisa são os padrões de uso. Você possui métodos e serviços específicos para autenticar um usuário? Você tem scripts de inicialização? Você tem alguma forma de escrever testes, etc.? Você já instalou essa placa padrão
+
+? Porque se você fizer isso, pode direcionar o agente para referências existentes e simplesmente pedir que ele reproduza o problema ao longo do tempo. Esses são alguns dos elementos primitivos e estruturas da base de código. A segunda opção seriam os guarda-corpos. Então, talvez você queira dar liberdade aos agentes, mas não liberdade excessiva. Então, você
+
+quer ter algumas regras, verificações e mecanismos de controle em vigor. Por exemplo, um gancho que você pode querer ter é aquele que acessa uma parte específica do código-fonte. Talvez o agente não devesse ser capaz de alterar para algo como criptografia de dados sensíveis, autenticação ou algo do tipo, onde um erro poderia ser muito, muito, muito custoso para a empresa ou para você como ser humano, etc. Regras são provavelmente o conceito mais mal compreendido desde que lançamos as regras de cursor. Existe um diretório de cursores que inicia uma boa coleção de regras diferentes. E a suposição
+
+geralmente era que você deveria instalar todas as regras possíveis, dependendo do conjunto de softwares que você estava usando. Por exemplo, se você estiver usando o NexJS, talvez você deva ter regras específicas para o NexJS. Mas o que eu descobri e o que estou vendo entre nossos usuários e internamente é que as regras deveriam surgir dinamicamente. Por exemplo, se você perceber que alguns agentes estão se comportando de forma inadequada, provavelmente deveria criar uma regra para isso. E deveria ser algo como um Procedimento Operacional Padrão (POP) da SA, para mostrar aos agentes o que eles podem e não podem fazer. E,
+
+mais uma vez, os modelos estão ficando tão bons em seguir regras específicas que geralmente não saem mais dos trilhos. E acho que isso é uma espécie de extrapolação ao longo do tempo também. E claro, testes como: o agente consegue verificar o próprio trabalho? Ele consegue executar testes para saber se, por exemplo, cometeu um erro ou fez uma alteração em uma área específica do código, mas o teste ainda passa? Ele consegue ser executado e a verificação parece correta?
+
+E por último, o que eu acho que é provavelmente o mais empolgante, são os facilitadores. Que tipo de ação você pode permitir que os agentes façam para que eles realmente sejam livres? Habilidades são boas para isso. Basicamente, estamos dando aos agentes mais capacidades, habilidades e MCPS. Um acesso semelhante ao contexto externo. É
+
+como entender como implementar determinada coisa. Hum, vou mostrar isso para vocês mais tarde, no código-fonte do cursor. O que estamos fazendo, por exemplo, é o uso de sinalizadores de recursos. Podemos dar aos agentes uma habilidade para adicionar um sinalizador de recurso? Então, quando lançarmos as funcionalidades de forma autônoma, eles podem simplesmente sinalizar as alterações feitas, mesclar o PR e nos retornar com algo como: "Ei, se vocês quiserem testar, basta ativar essa opção. Se não gostarem, podemos
+
+reverter para o PR. Se gostarem, podemos expandir para mais usuários." E por último, em que tipo de ambiente você está permitindo que os agentes sejam executados? Hum, seus agentes conseguem iniciar o ambiente de desenvolvimento? Você pode simplesmente pedir para eles, tipo, "Ei, hum, comecem meu projeto", e deixar que eles façam isso sem precisar de nenhuma intervenção humana?
+
+Bem, se for esse o caso, você provavelmente pode executá-los, pode escalá-los infinitamente em VMs separadas. Bem , essa lista de verificação é o que eu geralmente sigo quando penso em construir a fábrica em si. Hum, e parte disso é tipo, será que funciona? Hum, tem um erro de digitação aqui. A culpa é do meu sueco. Hum, existe um
+
+contexto acessível que os agentes precisam ter? Hum, será que eles conseguem interagir com o Linear, o Notion, o DataDog, o Slack etc., só para entender e ver qual é o contexto mais amplo disso, a intenção do usuário? E, por último, algo em que acho que as pessoas deveriam investir muito mais tempo é construir sistemas verificáveis. Como os próprios agentes podem verificar seu próprio trabalho, seja por meio de testes unitários, testes de integração ou testes de interface do usuário, clicando no DOM e tentando reproduzir o que realmente acontece para o usuário final? Bem, isso é indiscutivelmente mais fácil
+
+para sistemas de backend onde não há interface de usuário propriamente dita e você pode ter contratos e limites claros sobre o que deve funcionar e o que não deve. Bem, já para a web, interfaces de usuário e tudo mais, você precisa clicar e verificar se as coisas funcionam. Os botões têm um indicador de carregamento, etc. Ok, então isso faz parte da construção da fábrica. Então, se mudarmos para o cursor aqui, hum, não tenho certeza se você já viu isso, mas este é o cursor três.
+
+Lançamos isso há algumas semanas e é uma reescrita completa do cursor. O VS Code não existe mais. A maioria de vocês provavelmente está familiarizada com esse tipo de cursor, onde você tem arquivos, barras laterais e várias outras coisas. Bem, enquanto isso é um pouco mais simplificado para um fluxo de trabalho focado no agente, e falaremos sobre o motivo de termos criado isso mais tarde, mas eu queria mostrar algumas partes, algumas regras, etc. Vamos ver onde as coloquei.
+
+Então, por exemplo, eu criei este projeto de agente musical e, se você já usou o Ableton antes, provavelmente reconhecerá isso. Sim . Sim . Sim. Sim, vou expandir isso ainda
+
+mais. Bom. OK. Sim
+
+. Então, se você já usou o Ableton ou qualquer outro software de produção musical, provavelmente reconhecerá essa interface. Ops. Hum, não está funcionando muito bem em termos de tamanho. Bem, o que eu basicamente pedi ao agente para fazer aqui foi: "Você pode iniciar um servidor de desenvolvimento local?", e podemos ver que
+
+funcionou por um tempo. Ele analisou alguns arquivos, leu o JSON do pacote e, com base nisso, criou um script de inicialização. Então, tipo, o pacote JSON e todos esses arquivos de dependência estão tão distribuídos nos modelos que eles sabem que devemos ir imediatamente ao pacote JSON se houver um projeto JS ou se ele existir, para procurar um script de inicialização. Este é um bom exemplo de ter um padrão predefinido e tornar sua base de código mais distribuída, porque agora é muito fácil para o agente entender, tipo, "ah, eu devo simplesmente entrar aqui e iniciar o servidor". Então, um servidor foi iniciado. Está rodando
+
+em localhost 3000. E vamos ver aqui. Podemos ver que temos o arquivo MD deste agente. Então, os agentes MD são como regras superficiais. Serve para diversos tipos de arreios.
+
+E o que eu queria realizar com este projeto era essencialmente construir uma fábrica em torno da ideia de criar uma ferramenta online para criação de música . E para fazer isso, eu me forcei a nunca escrever código, a não olhar muito para o código também, e apenas tento descobrir quais são os sistemas e as estruturas de que preciso para isso. E imediatamente ficou bastante claro que precisávamos de uma maneira de iniciar o projeto. Precisamos de uma forma para o agente verificar o próprio trabalho. Então, o agente criou esses testes de ponta a ponta usando um Playright, para que ele possa simplesmente abrir navegadores, acessar a raiz, clicar em vários lugares e obter meu ID de teste. E
+
+garantir que, para cada alteração que eu fizer, por exemplo, o botão de reprodução continue funcionando ou que eu possa adicionar notas a este projeto aqui, sem que nada seja quebrado. Bem , esses são alguns exemplos de como você pode criar resultados verificáveis ​​como esses. Hum, ok. Hum, temos o teste V, temos isso, etc. Então, vejamos aqui. Se você voltar,
+
+hum, ah sim, outra opção aqui, navegar casualmente no Twitter. Uma forma diferente de verificar o trabalho é usando, tipo, uma automação para revisão de código. Você pode pedir ao agente para revisar as alterações que ele fez. Ou você pode usar uma ferramenta mais integrada, como o Bugbot, que temos no Cursor, que analisa diferentes solicitações de pull no GitHub, as revisa e retorna um retorno. E isso é como uma peça de um processo fabril completo, que deve ter várias etapas diferentes onde você planeja, produz, revisa e essencialmente segue todo o ciclo de vida do produto, mas automatiza e codifica esse trabalho. Vamos
+
+ver aqui. Sim. Sim, eu queria te mostrar isso também. Então, lançamos agentes de nuvem atualizados . Nas últimas semanas, atribuímos a cada agente sua própria máquina virtual, permitindo que eles criem um ambiente altamente reproduzível na nuvem. Isso
+
+possibilita uma escalabilidade praticamente infinita. Mas também demos ao agente uma ferramenta para testar seu próprio trabalho, controlando o computador. Por exemplo, temos o Glass aqui, que é a interface, e eu pedi ao agente para...
+
+vejamos aqui... os agentes do Glass ainda estão com dificuldades com a guia de controle do teclado, etc., como uma melhor acessibilidade e o uso do teclado para navegar entre os agentes. Bem, eu pedi
+
+para fazer a alteração e depois gravar isso com o editor completo, porque o primeiro era apenas uma barra lateral. Então, o que recebemos aqui foi apenas um vídeo do agente testando seu próprio trabalho. Assim, podemos ver que possui essa linha destacada. Não sei se você consegue ver isso. Bem, só para eu, como ser humano, ter um contexto que permita verificar o trabalho. Hum, e depois é
+
+só clicar e usar o teclado para navegar. Então, com isso, estamos chegando bem longe na fábrica, em relação ao estágio em que nos encontramos. Assim como muitas coisas são automatizadas, a revisão também é automatizada. Os testes são automatizados. Hum, temos algumas regras para orientar os agentes, etc.
+
+Mas ainda há muito, muito mais a fazer. Então, acho que quando você tem isso implementado, a coisa mais importante que você pode fazer é mudar sua mentalidade. É como se você fosse olhar muito menos para o código. Então você vai passar de operário a gerente. Em vez de você mesmo fazer o trabalho, você supervisiona vários agentes que fazem o trabalho para você. Então, isso também significa
+
+passar de síncrono para assíncrono, porque a maior parte do trabalho acontecerá em segundo plano e você ainda poderá interagir e ver o que está acontecendo com diferentes agentes, mas quanto mais agentes você criar ao longo do tempo, mais difícil será entender o que está acontecendo em cada um deles. Então você precisa de uma maneira de agregar essas mudanças, como por exemplo, de baixo para cima. E eu acho muito interessante que seja exatamente como na organização humana, os mesmos princípios se aplicam. Você ainda começa com uma equipe muito pequena e depois vai adicionando mais e mais pessoas porque precisa aumentar a produtividade e, de repente, precisa de um gerente para supervisionar as coisas, e então adiciona mais gerentes e, por fim, precisa de um gerente de gerentes. E é basicamente isso que vai acontecer também com os agentes. Mas você vai continuar subindo
+
+os níveis de abstração do laboratório. Então, quando você é gerente, precisa começar a pensar em como delimitar e otimizar o trabalho. Porque você quer obter uma taxa de transferência maior. Mas algumas coisas não são necessariamente...
+
+não é bom fazer todas as mudanças de uma vez. Por exemplo, se você tiver duas tarefas diferentes trabalhando na mesma parte do código-fonte, haverá conflitos de mesclagem. Então você ainda precisa planejar o escopo e paralisar o trabalho. E, assim como uma unidade de trabalho, um agente pode sempre representar um único agente. Então, como você pega uma longa lista de coisas que quer fazer e realmente aproveita ao máximo essa lista, executando o máximo de agentes possível?
+
+E para isso, acho importante preservar o conhecimento tácito do código-fonte, de forma que você ainda entenda o que está acontecendo nos diferentes sistemas. Sabe, como os dados fluem, o que os usuários querem, quais partes são críticas e quais não são, então não terceirizar muito para os agentes, mas ser bem direto e gerenciá- los muito bem. E quando você passa de síncrono para assíncrono, você precisa confiar muito mais nos agentes, porque você vai enviá-los para executar tarefas cada vez mais longas e, quando faz isso, precisa obter mais contexto antecipadamente. Então, você meio que fornece o contexto aos agentes antecipadamente, seja por meio de um plano ou de uma especificação detalhada, e então os envia e os deixa trabalhar. E quando você começar a fazer isso regularmente, você vai começar a sentir os agentes. Você vai gostar de
+
+entender os modelos. Você vai perceber que essas são as fraquezas. Essas são as vantagens. E você vai criar um alinhamento semelhante com os modelos. Assim você sabe como incentivá- los e que intenção transmitir a eles. E,
+
+novamente, à medida que os modelos continuam a melhorar, você precisa fornecer a eles instruções cada vez mais curtas ou em menor quantidade do que fazia antes. Mas você ainda precisa deixar clara a intenção e ser muito claro sobre o que você quer que os agentes façam com a mudança . E não, não há atalho para isso, pelo que descobri e pelo que a equipe descobriu. É só gerar um monte de agentes e deixar eles fazerem o trabalho para ver o que acontece. E desde que você tenha boas proteções laterais de segurança, pode simplesmente deixá-los fazer isso. Então,
+
+provavelmente você não deveria deixar que eles insistissem logo de cara . Desculpe, só uma pergunta. Você também multiplica os ambientes de trabalho ou permite que todos os agentes trabalhem em paralelo no mesmo ambiente de desenvolvimento? Então, isso se resume a ... pessoalmente, eu sempre uso
+
+ambientes isolados, em VMs diferentes. Aliás, acabei de twittar sobre isso porque, por um lado, se você compartilha o espaço de trabalho, pode ter árvores de trabalho do Git, onde você tem cópias superficiais do código-fonte na mesma máquina e pode reutilizar serviços. Mas você ainda vai precisar criar branches para cada banco de dados, cache ou gerenciamento de usuários para ter ambientes separados e reproduzíveis. Se você for fazer muitas alterações de uma vez, precisa ter certeza de que elas são puras e não têm efeitos colaterais em outros branches. É por isso que descobri que usar agentes na nuvem, onde eu crio uma VM e essa VM pode executar um banco de dados, ferramentas internas, bancos de dados e outras coisas, além do próprio aplicativo Cursor, e então o agente funciona nesse ambiente isolado, é muito melhor. É mais caro.
+
+Vai exigir muito mais trabalho configurar sua fábrica ou seu ambiente para suportar isso. Mas, uma vez configurado corretamente, você pode expandir isso para até 100 ou mil agentes. Não sei ao certo quantas estamos produzindo hoje, mas aposto que são milhares por dia. São apenas agentes que rodam no mesmo código-fonte ou em cópias semelhantes. Então, é isso que eu recomendaria.
+
+Sim, então quando você é gerente, seu trabalho muda bastante. Então, você precisa analisar o seu sistema como um todo. Você precisa pensar em qual é o papel do ser humano nesse processo. Por exemplo, você tem um serviço de registro de logs como o DataDog e precisa copiar e colar os logs no código-fonte, colá-los e executar os agentes para identificar e rastrear problemas? Ou você tem feedback de usuários que precisa copiar e colar do Twitter para outro lugar e deixar os agentes processarem essas informações ? Hum, você tem algum tipo de ferramenta de edição
+
+onde você guarda todas as suas especificações e precisa copiar e colar um arquivo ou exportá-las para Markdown e agentes de design? Provavelmente existe uma maneira de automatizar todas essas coisas diferentes. Ou são habilidades para MCPS, ou são automações separadas. Então pense em onde a intervenção humana é necessária e tente automatizar essas etapas. A segunda coisa é tipo, como você pode pegar agentes agindo de forma descontrolada, sem fazer o que eles realmente queriam que fizessem?
+
+Hum, e este é tipo o volante perfeito para melhorar sua fábrica também. Se você consegue ver agentes criando esquemas incorretos em seus bancos de dados porque não estão seguindo as convenções de nomenclatura, etc., provavelmente existe alguma regra nesse sentido. Ou, se eles estiverem produzindo interfaces de usuário realmente feias, provavelmente há uma maneira de você criar um sistema de design e permitir que os agentes tomem conhecimento desse sistema, para que possam incorporá-lo e usá-lo na próxima iteração. Então, você pega todo esse aprendizado e o usa para melhorar a fábrica.
+
+E, em terceiro lugar, vem a questão de escalar a fábrica. Agora que você configurou seu ambiente, tudo está pronto. Você sabe como ser um gerente, tipo, gerenciar uma equipe de agentes. Você define o escopo da tarefa e faz tudo isso. Então, como você faria para passar de cinco agentes para dez agentes, depois para cinquenta e, finalmente, para cem agentes?
+
+E a questão é que não precisar analisar o código será uma realidade se os modelos melhorarem, e eles estão melhorando. Então, observando os resultados, é mais ou menos a mesma coisa que antes, tipo, onde eles se desviam do caminho, o que eles estão produzindo, quais são os artefatos, etc. Como você pode fazer para que os agentes também possam verificar seu próprio trabalho e o resultado que produzem? Você deveria configurar automações e analisar novamente as tarefas que realiza repetidamente. Bem, uma coisa que poderíamos fazer, por exemplo, é ir até o cursor e acessar novamente o agente de música e perguntar, olhando para o meu histórico de bate-papo, quais tarefas repetitivas estou realizando?
+
+Então podemos pedir ao agente para dar uma olhada nisso e identificar possíveis oportunidades. Então, está pesquisando as transcrições do AENT e produzindo algum tipo de artefato disso. É , vamos ver como isso vai ser. Bem, na verdade eu transformei isso em um plugin. Ah, vejamos aqui. Hum, loops de execução de planos
+
+, reiniciando a direção do produto. Hum, vejamos aqui. Iteração de interface de usuário semelhante ao Ableton . Talvez eu devesse colocar isso numa regra dizendo algo como "deixe com a aparência do Ableton". ferramentas, organização, etc., etc. Então,
+
+este produto tem uma vida útil muito curta, mas se você estiver analisando algo em produção real, onde houve muitos ajustes ao longo do tempo, provavelmente encontrará coisas que você faz de forma recorrente. E eu quero mostrar algumas coisas que estamos fazendo na Cursor, que estamos automatizando. Hum, e algumas delas nem sempre são tão óbvias , mas uma delas é, por exemplo, vejamos aqui. Ah, essa não. Hum, vejamos aqui. Por exemplo,
+
+revisão diária. Então, eu tenho essa automação para verificar minha própria avaliação diária. Então, isto vai dar uma olhada no Slack. Vai consultar o GitHub e me enviar um resumo das coisas que fiz no último dia. Antes, eu fazia isso anotando minhas ideias, pensando no que tinha feito naquele dia, ou executando um agente com acesso ao MCP, mas agora posso simplesmente agendar e automatizar o processo. Hum, eu
+
+quero te mostrar um diferente, por exemplo, ler os comentários do PR de mesclagem. Isso também é uma forma de você aprender com o tempo. Então, para todos os PRs que mesclamos em nosso repositório principal, podemos analisar os comentários e ver o que os humanos realmente revisaram e o que disseram sobre as alterações que fiz. Porque se um humano realmente entra e revisa um PR e deixa um comentário, provavelmente há muito valor, um sinal forte e uma intenção clara nesse comentário, e podemos armazená-lo posteriormente para que os agentes aprendam com o tempo. Hum, temos mais uma, que posso te mostrar aqui.
+
+Hum, este aqui . Sim. Novamente, os responsáveis ​​pelo código. Bem, isso nos permite... essencialmente
+
+tínhamos esse problema em que tínhamos donos do código em nossa base de código e eles estavam certos na maioria das vezes, tipo 80% das vezes, mas nesses 20% das vezes eles causavam muitos gargalos internos para nós, como ficar bloqueados na fusão do PR, precisávamos que outra pessoa revisasse para nós e talvez essa pessoa estivesse em um fuso horário diferente. Então, o que começamos a fazer foi construir essa coisa de proprietário de código agente, e o que ela essencialmente faz é analisar os PRs e verificar, em primeiro lugar, qual é o risco disso? Qual é o nível de risco? É possível fazer isso da mesma forma que mudar o nome de uma variável? Será que está alterando uma constante, como a duração de uma assinatura de teste ou algo do tipo?
+
+E se for de baixo risco, podemos simplesmente aprovar o PR, porque não queremos bloquear nossos próprios engenheiros nessas coisas. Mas se for, podemos ver que é um PR de alto risco e então podemos descobrir quem fez alterações anteriormente e aproveitar ao máximo isso. Em primeiro lugar, devemos tornar o código seguro e não invadir sistemas, mas também manter o usuário que fez a alteração inicial informado e atualizado sobre o que está acontecendo. Então, é como se fosse uma via de mão dupla . Hum, e sim, vários anúncios de valor agregado ao fazer isso.
+
+Hum, vamos ver se há mais uma avaliação. Não, acho que foi basicamente isso. Hum, ou sim, eu tenho mais uma coisa chamada aprendizado contínuo. Então, continuar aprendendo é outro tipo de automação que eu criei há algumas semanas e, essencialmente, faz o que fizemos com o agente. Analisamos as transcrições anteriores e podemos extrair memórias e aprendizados do que foi dito anteriormente, como por exemplo, se estivermos corrigindo o agente para fazer algo específico, como usar este componente em vez daquele, ou sempre se referir a mim, sempre ter descrições muito detalhadas das coisas que está fazendo. Em vez de eu ter que entrar toda vez
+
+e pedir para o agente fazer isso, eu poderia criar uma regra, mas sou meio preguiçoso, então acabo não me lembrando de criar uma regra. Então, em vez disso, podemos ter esse plug-in de aprendizado contínuo que analisa as transcrições e armazena isso como uma regra para você . Então, esses são todos exemplos de sistemas que permitem automatizar tarefas e automatizar ações que um agente pode realizar para você. E eu acho que essa é a parte importante de construir essas fábricas: como identificar os mecanismos e ciclos de inovação onde você pode se automatizar construindo sistemas? Hum, ok, e sim, você vai avançar para níveis mais abstratos.
+
+Então, agora você está gerenciando de cinco a dez agentes, mas amanhã você pode estar gerenciando um agente que gerencia outros agentes. E isso só vai aumentar. É como se você tivesse vários subagentes trabalhando para você. Hum, legal. Então, sim, o que eu quero que vocês entendam com isso é que tenham muita clareza sobre a intenção e que pensem realmente sobre qual é o problema que precisa ser resolvido aqui.
+
+O que queremos obter com isso? Hum, não terceirize decisões importantes. Por exemplo, certifique-se de estar a par das decisões importantes. Bem, seja em relação à segurança, proteção, bancos de dados, pagamentos ou autenticação, algumas coisas são realmente importantes e não devem ser decididas por agentes, mas sim por humanos. Um construa ferramentas e sistemas, tente encontrar esses volantes, codificá-los e integrá-los aos seus sistemas, permitindo que o agente tenha acesso a eles.
+
+Armazene o contexto para uso posterior, seja em transcrições de agentes ou em artefatos de coisas que você acha que ficam boas. Porque isso vai ajudar o agente a saber como é o bom e o ruim ao longo do tempo, e isso vai mudar. Então, armazenar o contexto, construir as ferramentas e mantê-las atualizadas é mais importante do que realmente executar o trabalho, porque isso fornecerá a estrutura e as diretrizes para os agentes. E , por último, deixem os agentes livres. Pense no que eles precisam.
+
+Hum, eu tenho um amigo na Lovable. Ele mencionou que criaram um canal no Slack, ou melhor, deu uma ferramenta para os agentes, uma ferramenta de desabafo, para que eles pudessem reclamar de coisas enquanto o sistema estivesse em funcionamento. E o agente começou a reclamar, tipo, "ei , eu não consigo acessar essa imagem". Hum, estou muito frustrado com isso. E então a publicação foi feita diretamente em um canal do Slack. E então eles configuraram tudo como uma
+
+brincadeira, mas depois começaram a navegar e perceberam que aquilo era realmente valioso. Talvez devêssemos dar ao agente acesso para ler imagens. E deram. Aí o agente começou a reclamar de outro problema com o dispositivo. Então, encontrar maneiras de deixar os agentes livres é algo muito importante.
+
+Acho que é isso. E essa é uma direção que descobrimos, como construir o cursor e direcioná-lo para uma fábrica de software. Espero que você tenha aprendido uma coisa ou duas e que possa levar algo disso consigo . Ficarei feliz em responder a quaisquer perguntas sobre qualquer assunto relacionado a cursores. Sim. Ou melhor,
+
+agora temos os microfones chegando aqui.
+
+Muito obrigado. Tenho uma pergunta sobre a qualidade do código ou a qualidade da arquitetura. Então, quando os agentes enviam toneladas de código e você mal consegue revisá-lo, como você garante que o código seja extensível e assim por diante? Quer dizer, você pode estabelecer parâmetros ou limites para coisas mensuráveis, como, por exemplo, o número de linhas no arquivo não deve ser maior que um determinado valor, mas a arquitetura não é medida dessa forma. Então, os agentes têm esse viés de conclusão. Eles querem terminar a
+
+tarefa o mais rápido possível e não pensam no futuro. Eles não têm uma visão clara de como o código irá evoluir no futuro . Eles só querem terminar a tarefa agora. E, sim, obrigado. Sim, é uma boa pergunta. Bem, acho que
+
+nós, como seres humanos, temos o mesmo problema, só que leva muito mais tempo para o descobrirmos. Um dos pontos positivos de agentes e modelos serem essencialmente como máquinas de autocompletar é que eles simplesmente analisam as referências existentes e continuam seguindo o mesmo caminho. Portanto, se você já tiver recursos para os quais possa direcioná-los, acho isso muito importante. Caso contrário, acho que existe um cenário em que você permite que os agentes façam implementações pontuais aqui e ali e, eventualmente, você tem outro agente para refatorar o código, assim como nós, humanos, também fazemos . Então, é como generalizar e construir abstrações e todas essas coisas.
+
+Então, como você pode construir um sistema para detectar isso e verificar se as abstrações que estão sendo construídas também são boas e estão de acordo com o que você deseja fazer? Hum, mas acho que vai ser muito mais como uma análise arquitetônica para humanos. hum, e escopo, e planejamento de como a arquitetura deve ser, e projeto do sistema. Sim, é um problema difícil. Obrigado.
+
+Olá Eric. Obrigado pela palestra. Bem, quando se trata das atividades de construção da fábrica, uma coisa que observo, por exemplo, ao criar regras em equipe, é que, por ser algo tão novo, quase todos pensam: "Ah, essa regra é só para mim e não quero impô-la aos outros". E percebo a criação de silos, onde cada engenheiro acaba tendo sua própria fábrica separada. Você tem alguma sugestão de como chegar ao ponto em que toda a equipe esteja contribuindo para a criação da fábrica?
+
+É uma ótima pergunta. Hum, acho que é difícil. Acho que também é algo muito cultural . Bem, quero dizer, nós, desenvolvedores, sempre criamos nossas próprias ferramentas e queremos ter nossa própria configuração personalizada. Mas em certos momentos precisamos nos unificar e definir uma determinada estrutura. Então,
+
+acho que historicamente temos revisões de PR e todo esse tipo de coisa como uma espécie de cerimônia para alinhar o código que está sendo produzido e garantir que ele seja consistente. Acho que precisamos pegar os mesmos princípios e aplicá-los também às ferramentas que estamos construindo, como as diretrizes, os facilitadores e os elementos básicos. Então, acho que não sei, criar algum tipo de fórum onde possamos discutir essas coisas e planejar, tipo, como queremos que a fábrica seja? Quais são os componentes de que precisamos? Quais são as integrações de que precisamos? Você tem
+
+algum exemplo de algo específico que as pessoas estejam fazendo? É algo relacionado ao sabor ou são mudanças maiores que os agentes estão implementando? O que eu percebo em relação às regras é que elas são criadas, tipo, "ah, eu quero", por exemplo, uma pessoa quer fazer a prova primeiro e eles criam a regra para que essa pessoa faça a prova primeiro, mas eles sabem que outra pessoa não quer fazer dessa forma. Assim, eles só têm as regras na máquina deles. E eles não compartilham isso porque é algo muito singular, que define quem eles são. Então, eles estão colaborando, toda a
+
+equipe está colaborando na criação da base de código, mas a colaboração na criação da fábrica envolve pensar: "Bem, vamos decidir agora que a fábrica escreve o teste primeiro ou não?". Essa é uma decisão importante, difícil de alinhar e fazer com que todos aceitem, pois, com todas essas regras, nem todos vão concordar completamente e, na maioria dos casos, não importa quando se cede um pouco, mas é difícil... sim,
+
+acho que é um problema humano e uma mudança humana que precisa ser feita. Sim, essas, mas é uma boa pergunta. Vou pensar um pouco sobre isso. Obrigado.
+
+Obrigado pela conversa. Hum, muitos dos padrões me parecem familiares. Bem, eu estava me perguntando o que é necessário, que tipo de padrões você pode sugerir para levar isso ao próximo nível se você trabalha em sistemas empresariais de missão crítica já existentes que não podem falhar. Eles não podem se sentir inseguros. Se analisarmos os recentes ataques à cadeia de suprimentos e considerarmos que você fornece ambientes de teste (sandboxes) aos seus agentes, talvez isso nem seja suficiente.
+
+Bem, então os humanos continuam sendo responsáveis. Sim . E não podemos dizer: "Ah, não é minha culpa que meu agente tenha feito isso." Então, você tem algum padrão extra que... hum...
+
+ou... ou é simplesmente inerente ao fato de termos que continuar lendo o código, o que pode parecer ler linhas de montagem dos anos 80 ou algo assim? Acho que se você puder investir bastante poder computacional e tokens antecipadamente, antes mesmo de você, como ser humano, precisar se envolver, melhor.
+
+Acho que esse é um padrão que consideramos bastante eficaz. Uma coisa que fazemos é escrever testes manualmente para partes muito críticas dos sistemas. E aí, simplesmente deixando os agentes executarem as tarefas várias vezes . A segunda parte é como criar automações para nossa equipe de segurança. Eles criaram uma espécie de sentinela de segurança, que é uma automação que procura especificamente por invariantes muito específicas do sistema, e executam cerca de 10 dessas em determinados PRs que alteram certos arquivos. Hum, e então,
+
+sim, acho que também depende um pouco do contexto, mas sim, gastar muitos tokens antes e tentar encontrar variantes diferentes, quase como um time vermelho. Então, uma coisa que eu fiz foi, em vez de me concentrar na velocidade e na produtividade, concentrar-me na qualidade. Desculpe, o quê? Utilizo IA para focar na qualidade, aprimorar os testes e deixar tudo completamente pronto para IA. Sim, acho isso muito bom porque, se você, como ser humano, confia nos testes, provavelmente também confiará no resultado, mesmo sem precisar analisar o código. E é mais ou menos para onde
+
+estamos caminhando. Eu penso.
+
+Oi. Então, obrigado pela ótima apresentação. Hum, eu me vejo meio que pecando e relaxando no uso de guias, principalmente réguas e ganchos. Em parte porque, historicamente, o conhecimento de como fazer isso corretamente era muito disperso e descentralizado por toda a internet. Então você teria esses repositórios exóticos do GitHub, que tentavam centralizar esse conhecimento, ou talvez alguns artigos no Medium, ou talvez a empresa Cursor publicasse um post no blog sobre isso, certo? Mas ainda assim, tudo estava em constante evolução, e
+
+as capacidades dos próprios modelos, especialmente em relação ao seguimento de instruções, também estavam evoluindo e melhorando nesse aspecto. E sempre parecia uma gambiarra. para mim. Então, basicamente, eu me pergunto: podemos usar IA para nos ajudar com isso? Isso significa que o cursor poderia, por exemplo, nos fornecer agentes proativos ou talvez alguma nova configuração, ou assistentes, onde poderíamos identificar nosso fluxo de trabalho e, em seguida, ajudar a IA a construir regras, diretrizes e todos esses artefatos de regras para nós. Então talvez seja como um
+
+agente proativo. Então, talvez precisássemos de um agente que analisasse nosso fluxo de trabalho globalmente e nos ajudasse a construir esses artefatos. O que você acha disso? E vocês, da empresa, pensam sobre isso ? Talvez você trabalhe nisso?
+
+Sim, com certeza. Hum, acho que agora existem dois lugares onde você pode fazer isso. Uma delas é como no próprio produto, com todo o processo de aprendizado contínuo. Hum, vejamos aqui. Ih, não o tenho instalado. Hum, podemos ir
+
+ao mercado. Sim, com um plugin de aprendizado contínuo para analisar suas transcrições e extrair regras, memórias e tudo mais. Essa é uma das maneiras de fazer isso. Existe também um outro mundo onde você altera os pesos do modelo dependendo da estrutura do seu código e do trabalho que seus engenheiros estão realizando em uma equipe específica. E você concilia as informações, e é como se fosse um aprendizado contínuo de verdade, não um plugin improvisado.
+
+Na verdade, isso está integrado ao modelo, então eles realmente sabem quais são suas preferências, etc. Mas é totalmente baseado em memória, regras e tudo mais. Acho que isso vai se tornar cada vez mais importante com o tempo. Hum, porque é exatamente isso que está faltando. É mais ou menos isso que me impede de confiar muito nos agentes às vezes, porque eu digo alguma coisa e eles esquecem . Ah, mas eles são como
+
+máquinas sem estado. Então, como capturamos esse conhecimento? Bem, acho que deveríamos investir muito mais tempo e esforço na construção desses sistemas. Se me permite dar continuidade a esse assunto. Então, você diz que primeiro parece iniciar um projeto ou mergulhar em um projeto já existente na base de código e, em seguida, construir regras em cima disso. Que tal se primeiro definirmos as
+
+regras e quisermos começar uma nova base de código, um novo projeto? Como, de fato, ter essas boas regras para nós? Você acha que os humanos ainda devem fazer isso ou podemos automatizar esse processo? E temos novos fluxos de trabalho ideais para isso? Acho difícil porque, na minha perspectiva, as regras são como uma ponte entre o comportamento do modelo e o comportamento humano, e como podemos direcionar os modelos para que eles me sigam como ser humano, fazendo o que eu quero fazer.
+
+Hum, e em um produto novo, eu realmente não tenho certeza do que quero fazer. Tipo, eu meio que quero terceirizar isso para o modelo, tipo, ver o que eles estão fazendo aqui? Posso executar modelos diferentes? Eles querem combinar as ideias ou eu quero descartar tudo? Bem, acho que é difícil, mas o melhor exemplo de regra que consigo pensar internamente é para um bot de detecção de bugs.
+
+Então, quando fazemos migrações de banco de dados , geralmente não usamos chaves estrangeiras no banco de dados por motivos de desempenho. E os modelos sugerem que a maneira correta de fazer isso é usando chaves estrangeiras, certo? Bem, eles sempre vão adicionar uma chave estrangeira. Bem, quando a alteração chega ao GitHub e um PR é criado, o Bugbot nos considera como responsáveis ​​pela revisão. Tipo, ah, eu tenho uma regra que diz que nunca devemos usar chaves estrangeiras. Então, isso é
+
+sinalizado. Então, essa é a diferença entre o humano e o modelo, entre o que nós queremos, a intenção desejada que temos, e o que eles têm. Portanto, acredito que as regras deveriam surgir dinamicamente ao longo do tempo. Hum, e antes disso você provavelmente deveria ajustar essas coisas efêmeras, como especificações e planos. Hum, ah sim, tem um ali. Ah sim. Ah,
+
+sim, não funciona. Funcionou. Então, obrigado Eric pela conversa. Um, assim como a avaliação evolutiva e a confiança, é um ponto muito importante. Gostaria de saber como automatizar de forma eficaz os testes de interface gráfica (GUI) e os testes de aceitação do usuário (UAT).
+
+Se puder, mostre algo como parte do seu fluxo de trabalho. Com certeza, a melhor maneira, ou melhor, a principal maneira que eu uso para fazer isso é... vejamos aqui. Ah sim,
+
+eu tenho este aqui, por exemplo. A principal forma que eu uso é o agente Cursor Cloud, em conjunto com o computador que temos disponível . Então vou publicar isto. Oh não, isso é ruim. Hum, acho que não vamos fazer isso.
+
+Tenho um site com sete componentes, como botões, menus suspensos, etc. Estou gerando cada um deles com um modelo diferente para comparar a aparência do menu suspenso do Composer com a do GPD54. Coloquei tudo em uma grade, mas ao criar o site, ocorreu um erro no botão "Exibir código", que não funcionava porque o modelo não incluía o código. Ao clicar em "Exibir código" em um componente, aparece a mensagem de erro "Não foi possível carregar o código". A descrição do erro é bem curta. Então, o que o Aiden fez...
+
+você pode ver aqui, ele gerou meu servidor local. Começou como se eu estivesse clicando em alguns lugares e apertando Enter. Podemos ver o cursor aqui em cima, criando uma espécie de gravação no estilo do Screen Studio, cortando, acelerando, dando zoom, etc. Então, demorou um pouco porque o uso do computador é relativamente lento. Bem, está consumindo muitos tokens e podemos ver que temos este botão "Ver código" e agora podemos ver que está funcionando também. Bem, como
+
+isso é praticamente um produto secundário para mim, não vou analisar o código. Vou apenas verificar se isso funciona e depois vou mesclar. Mas você pode continuar instruindo o modelo a fazer coisas muito específicas para você, como seguir instruções específicas, como um fluxo de login, por exemplo, clicar no botão e fazer login. Os passos de login do modelo provavelmente são tão distribuídos que você pode simplesmente instruí-lo a acessar este URL e clicar em " login" ou "fazer login", e ele entenderá quais etapas precisa seguir. Mas então você pode pedir ao modelo para inserir uma senha incorreta ou um e-mail incorreto e ver quais são os resultados do site. Talvez o
+
+site esteja fornecendo credenciais incorretas, e então o agente entenderá que precisa inserir as credenciais corretas. Então, assim como você contrataria um consultor, tipo um consultor de controle de qualidade, e daria instruções a ele, você daria as mesmas instruções ao agente. Então, essa é uma das maneiras de fazer isso. Bem, acho que outra maneira seria usar algo como o Playright Puppeteer e automatizar uma coisa no navegador, o que é um pouco mais determinístico, já que você pode revisar, aprovar e permitir que outras pessoas reutilizem. Isso responde à pergunta?
+
+Minha pergunta era mais sobre testes de aceitação do usuário para verificar se a aparência está correta, porque, tipo, testar um login pode ser automatizado, você precisa de um agente para isso, mas o site parece correto? É consistente em todas as páginas geradas? Coisas assim. Sim, sim. Eu uso bastante o Cloud Agents para isso. Teve
+
+um, não me lembro agora, mas acho que fiz algumas alterações na documentação e pedi para abrir cada instância onde essa palavra é mencionada, tirar uma captura de tela e me enviar . Então eu poderia simplesmente olhar para todas as capturas de tela diferentes, tudo parecia bem e então eu poderia mesclar o código. Então, deixe que os agentes façam a navegação, cliques e testes para você. Hum, acho que funciona surpreendentemente bem. Foi um momento muito marcante para mim, quando lançamos isso internamente no ano passado . Então, você já
+
+teve a oportunidade de experimentar agentes em nuvem no Cursor? Você deveria estar curioso para receber seu feedback. Eu sei que você tem...
+
+Qual deles? Este. O agente gosta de gerar tudo isso, nos dando a pergunta inicial? Quanto tempo levou ou Sim. Não, entendi. Mas quão caro
+
+seria para algo tão simples? Como eu fiz neste caso, não configurei nada específico para o nosso próprio repositório, onde, ao executar o Cursor, podemos reproduzir este exemplo aqui, que executa todos os serviços de backend do Cursor, incluindo todos os serviços de frontend. E isso envolve muitas coisas diferentes. A máquina virtual é bem robusta, mas, contanto que você dê as instruções corretas, funciona muito bem. O que fizemos foi criar um C5 interno que o agente pode usar para executar comandos como ` cursor dev tool`, `cursor dev tool backend start` e `cursor dev tool frontend start`.
+
+Isso abstrai tudo o que precisa ser acessado, como o Orbstack, o ClickHouse, o PostgreSQL e o Reddit, e o frontend, que roda Electron e Glass. Assim, os dois processos coexistem, e o agente tem acesso a tudo, assim como um humano faria. Hum, e você pode ter o agente autenticado se armazenar um snapshot onde ele está autenticado, etc. Sim, mais caro em dólares, tipo, ah, desculpe, desculpe, desculpe. Ok, ok, ok.
+
+Ah, foi mal, foi mal. Hum, sim, essa eu não tenho, mas provavelmente posso pesquisar. Eu diria que custa cerca de 1 dólar, algo assim. Hum, só mais uma volta. Provavelmente, para uma rodada, a inicial seria de 1 dólar. Ah, e
+
+aos outros eu simplesmente pedi que regravassem várias coisas diferentes. Hum, algo como "posso pesquisar isso mais tarde". Com certeza. Eu fico oscilando entre "
+
+Sim". E acho que também depende do modelo que você está usando. OK. OK. Minha pergunta é sobre a transferência de informações entre humanos e agentes quando se utilizam ferramentas diferentes.
+
+Na minha configuração atual, tenho um dono do produto e um analista funcional que trabalham com código na nuvem e criam protótipos muito rapidamente, basicamente sem se preocuparem muito com o back-end, as escolhas arquitetônicas ou qualquer outra coisa. Depois, eles passam o controle para a equipe de entrega, que usa cursores e precisa fazer tudo funcionar de verdade. Quais são as melhores práticas que você sugere para garantir um fluxo de trabalho adequado entre pessoas que não sabem exatamente o que estão fazendo do ponto de vista técnico, é claro, e as pessoas que precisam lidar com situações que talvez tenham sido mal planejadas, como usar aquele banco de dados ou migrar do SuperBase para o Torso ou qualquer outro banco de dados sofisticado que esteja naquele ambiente? E então, como fazer isso com escolhas arquitetônicas sólidas, migrando do CloudCode para o Cursor? Acho que o que fazemos internamente é o seguinte: temos um ou dois gerentes de produto e eles estão criando vários protótipos diferentes. Às vezes, está presente
+
+no próprio produto. Eles provavelmente estão usando agentes na nuvem e apenas enviando comandos para eles. Eles recebem um vídeo como este com as alterações e pensam: "Ah, ficou parecido com o que eu queria", e então ajustam um pouco os designs, mas o código pode estar muito ruim ou não seguir as melhores práticas. Bem, se eles tivessem uma boa fábrica, provavelmente sim. Bem, se for esse o caso, nós repassamos um link para os agentes na nuvem. A gente simplesmente copia
+
+o link e envia para os engenheiros, tipo, "Ei, isso é algo que a gente quer construir". Hum, isso faz sentido? Tipo, podemos fazer isso? E aí você já expressou muitas intenções. Mas no outro caso, como no caso do PMS, eles têm um repositório separado chamado "protótipos", que é basicamente um arquivo HTML, tipo um arquivo HTML enorme, que reproduz a interface do cursor ou o painel de controle. Sim
+
+. O problema é a migração. Então, para dar um exemplo prático, eu pedi para minha equipe de PO e equipe funcional criarem uma demonstração bem sofisticada usando Prisma, Torso e um banco de dados qualquer, armazenando os dados no Versel Blob Storage. Depois, minha equipe de desenvolvimento teve que migrar isso para usar SQL Server, C# e Aspire no backend, e a migração foi realmente dolorosa. Isso porque, mesmo quando o agente é usado livremente, sem restrições, às vezes ele decide usar Next.js, outras vezes Vite, e outras
+
+vezes... E impor restrições na forma de regras dentro desse agente molda esse processo. Mas o problema é que precisamos escrever muitas regras e torná-las consistentes, e não é fácil gerenciar todo o fluxo de trabalho. Então, estamos transferindo grande parte do
+
+esforço de ter pessoas escrevendo código para ter pessoas escrevendo diretrizes, regras e tudo o mais, e fazendo com que todas as peças se comuniquem entre si. Eu vejo. Sim. Sim. Sim. Acho que,
+
+se os gerentes de projeto e de ponto de venda não tiverem acesso ao código-fonte real, entregar um artefato é o mínimo viável. Poderia ser algo interativo, como antigamente os protótipos do Figma, sabe? Você clica e tem uma ideia de como funciona. Agora, você pode ter protótipos de fidelidade ainda maior, com tecnologia web, sem mexer no backend. Não precisa ser algo funcional de verdade, se for só um protótipo interno, mas o suficiente para os engenheiros entenderem: "Ah, isso é o que deveria acontecer se eu clicar aqui, ou se eu digitar um texto aqui e clicar em enviar, uma linha deve aparecer aqui".
+
+Acho que tudo isso pode ser feito no frontend, tipo um hackathon. Você não precisa migrar o protótipo para algo que se torne produção, mas sim reescrevê- lo. Sim, acho que sim. Acho que reescrever o documento e definir expectativas claras, desde os engenheiros até os gerentes de produto e de produto, sobre o que os engenheiros esperam da organização de produto e o que é mais útil para eles, é importante. Então talvez programar produtos SAS completos não seja a coisa mais eficiente a se fazer .
+
+Isaac, obrigado pela apresentação. Bem, minha pergunta é: à medida que construímos cada vez mais agentes e eles se tornam parte de nossos processos críticos em termos de tempo, como você vê os apagões e blecautes como um novo risco? E qual a sua opinião sobre como isso pode ser mitigado e o impacto reduzido? Sim, é uma ótima pergunta. É uma ótima pergunta. Acho que tudo se resume
+
+ao que conversamos: os humanos ainda são responsáveis ​​pelas coisas que são enviadas. Então, os humanos precisam construir sistemas de observabilidade e monitoramento em torno das mudanças que estão sendo feitas. E eu acho que isso ainda se resume a entender quais são as áreas críticas do código-fonte. Garantir que você tenha boa capacidade de observação e compreensão de tudo o que acontece. Talvez cada linha devesse ser escrita por um ser humano nesses textos críticos, ou pelo menos sempre revisada por uma ou duas pessoas. Hum, e sim, é bem
+
+próximo da vibe. É fácil se conectar com o código perto do sol e voar perto demais. Bem , acho que também é uma questão cultural, em que é preciso garantir que os humanos continuem sendo responsáveis ​​pelas mercadorias que são enviadas. Ah, sim , estabelecer bons sistemas para entender as mudanças que estão sendo feitas. Acho isso importante e também os testes.
+
+Olá Eric, muito obrigado pela palestra e presumo que você seja uma das pessoas no mundo que melhor entende como usar essas tecnologias. Então, esta questão nos afasta um pouco da tecnologia e dos processos, focando em como você se gerencia durante o expediente. Gostaria de saber quanto tempo você leva para se ausentar dos seus agentes sem precisar ficar supervisionando-os constantemente, e como você investe esse tempo. Digamos que você tenha cinco, dez ou quinze minutos, como você aproveita ao máximo o seu tempo? E quantos agentes você tem em execução simultaneamente?
+
+Como você gerencia seus processos mentais? Obrigado. Sim, é uma ótima pergunta e acho que, depois que você curte, existem duas alavancas para puxar. Uma delas é como o alcance da mudança. Quanto maior o escopo, mais tempo os agentes ficarão em execução e, se você quiser que eles rodem por um longo período, precisará de um sistema verificável para que possam checar o próprio trabalho, etc.
+
+Outro ponto importante é o grau de paralelização, ou seja, quantos agentes podem ser criados? Bem, acho que a triste realidade, de certa forma, é que haverá muita mudança de contexto. Hum, provavelmente trabalho em quatro repositórios diferentes ou em quatro áreas diferentes do código-fonte ao mesmo tempo. Hum, seja através de uma única funcionalidade que requer front-end, back-end, banco de dados , testes, etc. Ou talvez sejam cinco coisas completamente diferentes.
+
+Poderia ser como os médicos. Podem ser projetos paralelos que estou explorando. Pode ser a correção de um erro relatado por um usuário do Twitter. Mas geralmente variam de cinco a dez agentes, cinco agentes executando de forma assíncrona na nuvem o tempo todo. E enquanto espero por isso, fico ou navegando no Twitter ou lendo coisas como " É verdade". Agora também temos o navegador e o
+
+cursor, então posso simplesmente ficar aqui e fazer isso, ou posso ter uma tarefa síncrona em andamento, onde fico alternando entre as telas. Talvez seja como corrigir um pequeno detalhe no código-fonte, ou talvez seja como planejar o próximo passo. Talvez eu esteja usando o Notion e o Slack para buscar informações e criar uma especificação no Cursor usando um modelo. Então, eu gosto de planejar de forma síncrona e depois executar os planos de forma assíncrona, e assim que isso terminar, um dos meus agentes na nuvem provavelmente também terminará. Então posso voltar e revisar isso, continuando a sugerir algumas coisas, talvez mesclando, e algumas partes eu ainda preciso testar manualmente, tipo, talvez eu precise baixar uma cópia do Glass ou do Cursor 3, testar manualmente, e isso me parece bom. Vamos lá, vou te fazer
+
+uma perguntinha rápida. Este edifício fabril nos deixa com um ecossistema disperso de muitos arquivos Markdown. Existe uma maneira fácil de organizar esses arquivos e manter uma visão geral da fábrica que você realmente construiu? A manutenção de uma fábrica exige que você tenha uma visão geral dos processos pelos quais deseja que seus agentes de codificação passem. Que ferramentas você utiliza? Que métodos
+
+você recomenda? Como você mantém um mapa mental da fábrica que construiu? E como você faz a manutenção? Sim, é uma ótima pergunta. Acho que isso também permanece um problema sem solução.
+
+Bem, uma das razões pelas quais reconstruímos o cursor para ter essa aparência em vez do ID tradicional é o fato de estarmos usando mais agentes e precisarmos de um painel de controle melhor, onde seja possível visualizar todos os agentes, gerenciá-los, iniciá-los etc. Então, o que vai acontecer com o cursor 3? Hum, esta é tipo a primeira aba de orquestração multi-ent . Bem, o que vai acontecer é que esses serão como agentes aninhados. Então você vai abrir isso aqui e vai ter uns 10 agentes aqui dentro.
+
+Então, você ainda pode fazer uma introspecção sobre eles, ver o que está acontecendo e seguir os rastros. Mas provavelmente você também encontrará aqui algum tipo de visualização do projeto, onde poderá ver uma atualização de status consolidada. Então, aqui está o que todos estão trabalhando e aqui está a versão mais recente, e aqui está o que você, como ser humano, precisa revisar. Então, acho que essas são funcionalidades do produto que vamos incorporar ao cursor. Bem, para definir as especificações da fábrica, eu provavelmente gostaria de ter uma pasta no seu código-fonte. Hum,
+
+onde você descreve como certas coisas devem funcionar. Hum, talvez seja algo como arquivos Markdown contendo algumas boas práticas. Hum, talvez sejam as regras. Hum, e estabelecer algum tipo de conselho para decidir o que entra na fábrica e o que não entra, e o que nos falta para melhorar a fábrica. Bem, desde que seja algo que o agente possa entender e ler, que são arquivos, provavelmente é isso que eu faria e os armazenaria como, é, em algum lugar do seu código-fonte.
+
+Obrigado. Hum, estou pensando em times do futuro. Bem, sabe, há um ou dois anos, era muito razoável ter uma equipe de engenharia com centenas ou até milhares de pessoas. Hum, o que isso significa para isso e quais são os papéis e funções em uma equipe de engenharia, certo? Isso é meio que como se tornar algo entre um gerente de produto e um arquiteto. Então, quais são os papéis dos
+
+engenheiros? Sim, acho que isso é muito preciso. É difícil prever quais serão os efeitos de segunda, terceira e quarta ordem disso acontecer. E definitivamente se trata de escrever menos código, analisar menos código e gerar mais agentes. Bem, vai ser tipo, como você lida com isso, porque ainda estamos desenvolvendo software principalmente para humanos. Então, como
+
+sabemos o que outros seres humanos querem? Como é que nos comunicamos com os nossos clientes? Como comercializamos o que estamos construindo? Como fazemos todas essas coisas e as trazemos para a fábrica de verdade? Hum, quem define a direção? Qual é a intenção? Todas
+
+essas coisas vêm de algum lugar. Ou é uma ideia criativa que surgiu da cabeça de outra pessoa, ou é realmente uma demanda do usuário. Então, ter alguém assim fazendo isso será muito importante. Ter alguém assim para alinhar as diferentes pessoas na organização, eu acho que será importante. Bem, ter pessoas construindo os andaimes para os outros agentes e, tipo, construindo as linhas de montagem onde os agentes podem realmente operar. Acho que isso também
+
+será importante, mas em que magnitude e quantas pessoas estarão envolvidas? Não sei, é muito difícil dizer. Dá para fazer muita coisa com os modelos atuais com uma equipe bem pequena, se você tiver a estrutura certa. E depende da área em que você trabalha. Você tem alguma previsão? Eu
+
+vejo problemas, tipo, de uma perspectiva trabalhista. Se você trabalha em um ambiente extremamente orientado para a autonomia, qual é a sua necessidade em relação ao treinamento e à contratação de recém-formados? E, dessa perspectiva, o que acontece com a política interna e a apropriação de terras, sabe? Porque, basicamente, seu valor agora reside na sua capacidade de configurar e estruturar sua própria equipe automatizada, e não mais na sua capacidade de programar e ser produtivo. O engenheiro 10x não se preocupa mais com, você sabe, palavras por minuto. É como dar um
+
+lembrete. Sim . Sim . Uso de tokens Tok. Sim . Eu sou pago com fichas? Sou eu, sou eu, sim, placar,
+
+sabe, hum, tenho que maximizar os tokens, sou eu que recebi uma quantia e então, tipo, o uso dos meus tokens reduz isso, sabe, como você otimiza, sabe, porque temos que treinar os modelos para serem mais políticos, acho que essa é a solução, certo? Precisamos de mais conversas informais, acho que teremos mais disso se os agentes estiverem fazendo nosso trabalho. Oi Eric, olá para sua palestra, hum, eu estava me perguntando, hum, provavelmente, você está usando algum tipo de ferramenta de rastreamento de problemas como Atlassian ou Gyra Jira. OK. Hum, você está usando... eu estava me perguntando se você
+
+está usando... agentes para verificar automaticamente...
+
+e ler tarefas diretamente do... Jara, por exemplo, e criar...
+
+subagentes para executar o trabalho, ou se sempre há um humano que... inicia o trabalho usando o cursor? Então, estamos usando o Linear para gerenciamento de problemas e também temos essa integração própria. Assim, para cada
+
+ticket criado no Linear, nós criamos um agente na nuvem. Bem, uma situação em que eu mais interajo com isso é quando temos uma funcionalidade específica que é implementada e, se ela estiver disponível por duas semanas com 100% de cobertura, Bem, o sistema meio que nos sinaliza, tipo, ei, você pode, essa é uma funcionalidade obsoleta no momento, você pode removê-la. Então, temos isso para criar um problema automático no Linear e, como isso está conectado ao cursor, aciona um agente na nuvem para remover o sinalizador de recurso. Então, é praticamente automático assim que o sistema percebe que a atualização foi implementada para todos, e eu posso simplesmente olhar o código e dizer: " Ok, podemos mesclar isso, o recurso não está mais ativo". E fazemos isso para praticamente tudo. Então, assim que você posta
+
+algo no Slack, temos um agente do Slack que analisa a mensagem ou uma automação com cursor para analisá-la, triá-la e procurar duplicatas ou, se for considerado simples, começar a implementar uma correção imediatamente. E este é um exemplo de uma situação em que um ser humano está envolvido no processo, mesmo que isso não seja necessário. Seria como eu entrar no Twitter e ver um tweet dizendo que algo está quebrado com o menu suspenso do modo de planejamento . Posso copiar isso para o Slack e então pedir para o agente executar o trabalho. Mas provavelmente existe uma maneira de obtermos esse feedback imediatamente, sem que eu precise analisá-lo, triá-lo e copiá-lo e colá-lo. Então,
+
+é mais ou menos assim que trabalhamos com gerenciamento linear e de problemas . Bem, sim , nós também pensamos, já que estamos criando uma nuvem de anúncios para cada coisa, isso nos proporciona uma boa maneira de testar o produto internamente e ver como ele funciona . Mas não tenho certeza se recomendaria isso para todos, pois pode ser bastante caro.
+
+pois os agentes em nuvem são um pouco caros. Vocês têm algo planejado para executar algo localmente? Estou pensando em uma alternativa chamada contêineres de desenvolvimento e em abrir algo neles, mas vocês têm algo planejado para isso? Bem, acho que a coisa mais próxima que você pode fazer é provavelmente pedir para o Aiden correr por um longo tempo. É mais ou menos a mesma coisa que executar modelos locais. Bem, e o motivo é que
+
+eu tentei, provavelmente uma vez por mês, usando o melhor modelo local de código aberto para ver como funciona no cursor, mas nunca é a mesma experiência que usar ferramentas como GPT, Claude ou Composer. Hum, e o mesmo acontece ao executar tarefas muito longas localmente. Descobri que não funciona muito bem, pois se estiver em execução por muito tempo, provavelmente começará a usar seu banco de dados local e outros arquivos locais. E isso vai te impedir de realizar outros trabalhos localmente, a menos que você crie uma máquina virtual no seu próprio computador. Hum, hum, e se você fizer isso, provavelmente poderá...
+
+Espera, deixa pra lá. Simplesmente ignore tudo o que eu disse. Iniciamos os trabalhadores de cursor. Então, o cursor worker foi lançado ontem. É uma forma de você executar a mesma infraestrutura e camada de orquestração que usamos para mecanismos em nuvem, mas em qualquer máquina que você tenha. Então, você
+
+pode fazer tipo, não agora, uh, podemos fazer o cdvoom. Sim
+
+. Então você pode se tornar um agente. Então, temos a CLI do agente e agora existe um worker, e você pode chamar o comando `worker start`. Então, a partir daqui, temos um trabalhador em execução. E esse funcionário vai aparecer aqui. Vamos ver. Assim, podemos usar
+
+hospedagem própria. Vejamos aqui.
+
+Ah, acho que ainda não está machucado. É uma conta diferente que estou usando , mas basicamente você pode executar isso em qualquer tipo de máquina e acessar isso pelo Cursor Cloud. Assim, você pode executar várias dessas instâncias em sua própria máquina, ou pode usar um Mac mini, ou ainda ter uma máquina virtual em qualquer provedor de plataforma em nuvem. Certo. Só para dar seguimento a isso. Então
+
+você está dizendo que podemos ter ambientes isolados localmente usando esse comando. Sim . Então, ainda chamamos de modelos abertos, modelos de fronteira ou modelos de compositor. Sim. Exatamente. Então, isso vai aproveitar
+
+o recurso de controle do cursor, mas vai funcionar onde quer que você esteja invocando esse demônio. Sim . É interessante. Obrigado. Então eu construí essa espécie de garra de cursor . Bem, eu tenho um rodando no meu
+
+Mac Mini, que tem acesso ao iMessage, ao calendário e a todas essas outras coisas, e ontem lançamos também as automações. Assim, posso receber um relatório diário ou semanal de tudo o que está acontecendo na minha máquina, com base em uma frequência específica que eu queira saber. E como ele funciona como um agente, você terá acesso a ele no Slack, na web e no aplicativo móvel que será lançado em breve, para
+
+iPads, algo que muitas pessoas pediram. Ele usará SwiftUI, então provavelmente será compatível com iPad também.
+
+Acho que as duas versões do iOS e do iPadOS são, na verdade, duas coisas diferentes .
+
+Entendi. Sim. Legal. Sim. Eu só quero fazer uma pergunta bem simples, tipo, quando você tem mais de um desenvolvedor na sua empresa e está criando centenas e centenas de agentes para fazer vários tipos diferentes de trabalho. Como garantir que vocês não atrapalhem
+
+uns aos outros ao realizarem o mesmo tipo de trabalho, mesmo que isso signifique manter laços estreitos e até mesmo trabalharem internamente da mesma forma? Você ainda usa o Scrum ou metodologias ágeis de trabalho? Sabe, até isso já foi por água abaixo . Sim , o que estamos fazendo? Na verdade, não estamos seguindo nenhuma metodologia tradicional nesse sentido. Sim,
+
+temos metas mensais e uma lista de coisas que queremos enviar. Mas acho que, como todos têm tanto poder ao alcance dos dedos com os agentes, isso faz com que as pessoas tenham um senso de controle extremo sobre certas coisas. Então, durante muito tempo, havia um cara construindo o MCP, as regras e todo tipo de acessibilidade sozinho. E agora temos talvez uma pessoa focada no MCP, mas ela pode ser responsável por tudo relacionado ao MCP e não precisa interagir muito com outras equipes. Mas em algum momento isso também vai quebrar. Bem, até agora
+
+na história do cursor, encontramos maneiras de contornar isso. A questão do proprietário do código "agente" foi provavelmente um ponto em que nos desentendemos, pois os proprietários do código estavam mal configurados. Então, em vez de termos algo determinístico, poderíamos simplesmente envolver as pessoas relevantes no momento certo? Então, algo parecido provavelmente vai acontecer com outros problemas que surgirem no futuro. Obrigado.
+
+Uma pergunta sobre as selfies. Então, teremos acesso a todos os benefícios que esses painéis de vídeo oferecem? Acho que o uso de computadores é a única coisa que ainda está em fase inicial de desenvolvimento. Acho que ainda não enviamos a versão GA , mas ela com certeza chegará em breve. Portanto, isso deve ser totalmente equivalente à nuvem. Sim
+
+. Você pode descrever o perfil deles? Eles descrevem o perfil desse tipo de combinação entre gerentes de produto e engenheiros que assumem essa responsabilidade. Sim . Então, acho que os arquétipos que temos são como o de um gerente de produto. Eles se comunicam muito
+
+internamente, no cursor, por exemplo, com a equipe de lançamento no mercado, com a equipe de vendas, com os engenheiros, com os usuários, gerenciam o produto e mantêm tudo organizado, além de proteger os engenheiros de várias coisas. E depois temos os designers. O trabalho dos designers, eu diria que atualmente é dividido meio a meio entre Figma e código. Assim como todos eles, eles programam . Todos eles gostam de pressionar para a produção. Mas é muito
+
+trabalho exploratório, tipo, como deveria ser, como ficaria quando você tivesse uns 10 subagentes aninhados. E você não consegue realmente sentir isso no Figma, tipo, você precisa desenvolver e prototipar de verdade. E eles trabalham, trabalham com gerentes de produto e também temos os engenheiros, é claro, mas acho que a Cursor tem muita sorte de poder construir um produto voltado para desenvolvedores. Então, os desenvolvedores estão criando produtos para desenvolvedores e é como se eles tivessem bom gosto. Eles sabem distinguir o bem do mal. Eles sabem o
+
+que os desenvolvedores querem e o que não querem. E acho que por causa disso eles podem se apropriar tanto do conceito e ir muito, muito longe. Bem, enquanto o gerente de produto pode estar definindo mais os aspectos comerciais e a direção geral abrangente, os engenheiros e designers colaboram para definir como isso se parecerá na prática no código, mas também como deve ser a experiência e a aparência para um desenvolvedor. Faz sentido. Hum, existem analistas envolvidos nisso também, ou essa tarefa é dos gerentes de produto? Ah, sim, isso é
+
+ótimo. Então, temos uma equipe de dados também, com cientistas e analistas de dados, que trabalham em estreita colaboração com os gerentes de produto, é claro, para entender como os usuários utilizam o produto, onde estão os gargalos, e também com os engenheiros, instrumentando o código da maneira correta e entendendo os recursos e sinalizadores (feature flags), além de entender por que certos usuários acessam determinados caminhos e outros não. Todos trabalham juntos. E a estrutura da nossa equipe é basicamente por domínio: extensibilidade pode ser uma equipe, nuvem pode ser outra, e a nuvem ainda deve ser extensível. Então eles também têm que trabalhar juntos, mas tentamos manter tudo modular e não terceirizar muito da nossa organização.
+
+Obrigado. Legal. Acho que só me resta uma última pergunta, se houver alguma.
+
+Então, de vez em quando eu cometia erros e iniciava um agente na nuvem em um repositório errado ou algo assim, ou simplesmente me perdia em um assunto paralelo e, uma hora depois, voltava a ele tentando desesperadamente obter acesso àquele repositório. Existe alguma maneira de identificar esses agentes que simplesmente não agregam valor? Eles continuam fazendo as coisas, mas não estão realmente progredindo. Sim, acho que a responsabilidade é nossa, com certeza. Ao longo do último ano, fizemos muitas melhorias nos agentes em nuvem. Inicialmente,
+
+quando funcionavam, eram extremamente úteis, mas na maioria das vezes não eram. Então, mais uma vez, os agentes em nuvem também surgem dessa necessidade interna nossa de simplesmente querer executar coisas de forma assíncrona. E por causa disso, também nos esforçamos muito para fazer com que nossa própria base de código funcione muito bem em ambientes de nuvem. Então, talvez tenhamos que, às vezes, criar novos projetos, experimentar outros produtos e conversar com nossos clientes para entender onde essas coisas estão falhando. Tentamos ter instrumentos para verificar se o agente está em execução por um determinado número de horas ou minutos, se ele acessa algum arquivo ou se está em loop, além de realizar detecção de loops e coisas do tipo. Hum, e isso faz parte
+
+da observabilidade da qual eu estava falando antes. A maior parte disso deve acontecer do nosso lado. Mas sempre haverá situações contextuais muito específicas, como, por exemplo, se você for o proprietário do código-fonte, precisará configurar certas coisas. Sim, estamos trabalhando nisso, melhorando o sistema, e se você tiver algum exemplo, por favor, me avise que eu tentarei dar uma olhada. Acho que o pior foi quando iniciei em um repositório único e ele simplesmente tentou acessar o Slack MCP de 10 maneiras diferentes, e falhou. Sim
+
+. Sim. Sim . Poderíamos melhorar isso. Que bom que você está trabalhando nisso.
+
+Tudo bem. Obrigado a todos por terem vindo. Hum,
+
+eu também estarei por aqui nos próximos dois dias . Então, por favor, me chame se quiser discutir qualquer coisa relacionada a cursores ou qualquer outro assunto, na verdade.

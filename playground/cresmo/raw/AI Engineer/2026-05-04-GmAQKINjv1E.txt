@@ -1,0 +1,372 @@
+---
+video_title: "Skill Issue: How We Used AI to Make Agents Actually Good at Supabase — Pedro Rodrigues, Supabase"
+video_id: GmAQKINjv1E
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=GmAQKINjv1E
+video_date: 2026-05-04T16:00:06+00:00
+video_description: |
+  Writing Agent Skills is easy. Writing ones that actually improve agent performance is not.
+  
+  In this hands-on workshop, you’ll build, test, and iterate on Agent Skills against real Supabase workflows using a prebuilt environment with MCP, CLI tooling, and an eval harness powered by Braintrust.
+  
+  You’ll start by writing a simple Skill and observing how it changes agent behavior. Then we’ll push further: you’ll modify the Skill, introduce bad patterns, and see how performance shifts — sometimes improving, sometimes getting worse, and sometimes doing nothing at all. Along the way, we’ll surface common failure modes, like Skills that aren’t used, misleading instructions, or changes that look good but don’t hold up under evaluation.
+  
+  The core loop of the workshop is simple: write a Skill, run evals, inspect results, and iterate. By the end, you’ll have a practical understanding of how to validate Skills, how to avoid common pitfalls, and how to design Skills that actually help agents perform better in real systems.
+  
+  If you’re working with agents, this workshop will give you the tools to move beyond guesswork and start measuring what actually works.
+  
+  And if you want to see how these patterns hold up at scale, the follow-up talk on the 9th dives into our eval results and what actually moved the needle in production.
+  
+  Speaker info:
+  - https://supabase.com/blog/authors/pedro_rodrigues
+  - https://www.linkedin.com/in/pedro-neves-rodrigues/
+---
+Olá pessoal. Todos estão animados para a conferência? Sim. Incrível. Temos casa cheia aqui.
+
+É com muita alegria que me sinto aqui, uma grande honra em poder ministrar a oficina de abertura, ou uma das oficinas de abertura. Bem, hoje, como vocês já devem ter reparado, o título é um pouco diferente do que está na programação. Basicamente, fiz uma reformulação da marca, mas o tema do workshop permanecerá o mesmo. Passamos de um problema de habilidade para a questão de como aprimorar suas habilidades. Decidi transferir o título da questão sobre habilidades para a palestra principal que darei amanhã. Bem, se você
+
+tiver tempo, poderá saber mais sobre o que será a palestra principal. Bem, principalmente, é este workshop. Basicamente, este workshop é o que tenho feito nos últimos dois meses na Superbase, escrevendo nossas próprias habilidades, e amanhã vou apresentar como colocamos isso em produção e as lições que aprendemos. Então, para todos que têm prestado mais atenção, vocês provavelmente notaram que estou executando esta apresentação de slides no localhost. Alguns de vocês já perceberam. Isso não é nenhuma coincidência
+
+. Eu basicamente criei a apresentação com base na minha intuição. Então, se você notar algo estranho, não foi minha culpa. Era Claude. Mas, se você não acredita em mim, pode ver que não é possível, ou você teria que ser um verdadeiro expert em Apresentações Google para ativar o modo escuro. Sinceramente, eu gosto
+
+mais deste layout. Então acho que vamos optar pelo modo escuro. Se houver algum fã de iluminação no modo claro ou se a maior parte do ambiente estiver no modo claro, terei prazer em voltar ao modo normal. Mas por agora, vamos ficar com esta . Então, para me apresentar um pouco antes de começar o workshop, meu nome é Pedro. Sou
+
+de Portugal, Lisboa, e trabalho na Superbase como engenheiro de ferramentas de IA. Basicamente, meu trabalho diário consiste em pensar em como podemos tornar a Superbase o mais amigável possível para os agentes e melhorar a experiência deles. Então, provavelmente você já ouviu falar sobre desenvolver a experiência de desenvolvimento, o DX. Estamos mais focados no AX, que é a mesma coisa, mas para agentes. Neste workshop, vamos falar um pouco sobre habilidades, porque é essencialmente assim que temos melhorado o desempenho dos agentes em torno de um produto como o Superbase, ou de uma empresa como o Superbase, que possui vários produtos.
+
+O segredo do sucesso sempre foi a habilidade. Então, vamos explorar como escrever um, como testá-lo primeiro manualmente e, em seguida, como automatizar os testes com avaliações. Para começar, quantos de vocês já ouviram falar em habilidades? Tudo bem. Então, praticamente qualquer pessoa, todo mundo.
+
+Então, o que vou dizer provavelmente não é novidade para você. Basicamente, as habilidades são pastas com instruções e arquivos para você executar fluxos de trabalho, fluxos de trabalho repetidos ou fornecer informações personalizadas aos seus agentes, ou ainda um novo conjunto de ferramentas, digamos, na forma de scripts. Existe, portanto, um certo equívoco em relação às habilidades. Normalmente, o arquivo skill.md, o arquivo principal, ganha destaque, mas as habilidades podem ser mais do que apenas o arquivo principal, certo?
+
+Então, o arquivo principal é basicamente um arquivo Markdown chamado skill.md, onde essencialmente se encontram as informações principais sobre a habilidade. É composto por este cabeçalho no topo, que essencialmente pode ter vários campos, mas os dois obrigatórios são o nome, que basicamente identifica a habilidade, e a descrição, que informa ao agente o que a habilidade faz. O principal diferencial que essas habilidades trazem e que ferramentas como o MCP não trazem é esse conceito de divulgação progressiva. A divulgação progressiva ocorre basicamente quando o agente ou todas as informações sobre um sujeito não são apresentadas diretamente ao contexto.
+
+Em vez disso, você carrega apenas a quantidade exata de informações que permite ao agente optar por carregar o restante das informações quando realmente precisar delas. Então, neste caso, o arquivo skill.md está formatado assim . Assim, o front matter será carregado primeiro no contexto do agente, e não o conteúdo do arquivo. Isso funciona como um envelope, de forma que o agente saiba pela descrição o que a habilidade faz e quando deve carregar o restante.
+
+Ou seja, quando deve procurar as informações dentro do arquivo. Dentro deste arquivo, você também pode fazer referência a outros arquivos. Normalmente, esses outros arquivos são arquivos Markdown ou scripts em Bash, Python, ou qualquer outro formato que você queira usar como referência. Começando pelos arquivos de referência, geralmente você os coloca dentro de uma pasta de referência, onde eles fornecem mais informações. Você pode pensar em uma habilidade nesse formato como um livro. O arquivo skill.md pode ser considerado
+
+um índice turbinado, pois além de conter links para outros arquivos, você pode imaginá-lo como as páginas de um livro ou outros capítulos. Você terá informações personalizadas e poderá referenciá-las em outros arquivos. Os arquivos de referência não têm nada de especial. Eles são basicamente como um arquivo Markdown normal. Você pode pensar em uma habilidade semelhante à que eu uso no arquivo, mas em vez de ser a principal, é aquela que...
+
+essa referência. Ah, por incrível que pareça, você também pode referenciar arquivos dentro de arquivos de referência. Então, basicamente, você pode criar um gráfico a partir de uma habilidade. E quanto aos roteiros, eu já falei sobre como o nosso MCP e as nossas habilidades diferem entre si, e basicamente estamos comparando coisas completamente diferentes quando se trata de MCP e habilidades. Uma das ideias erradas que provavelmente já existia antes encerrou o debate, agora a questão principal é MCP versus CLI. Mas quando as habilidades
+
+foram lançadas, acho que em novembro ou outubro do ano passado, basicamente começou esse debate sobre se deveríamos usá-las em vez do MCP, porque se eu pudesse fornecer mais informações e contexto ao agente sem precisar carregar todas as ferramentas para o contexto, como acontece com o MCP, e também pudesse ter telas com ações semelhantes às das ferramentas do MCP, deveríamos usá-las? E a resposta é que, para ser sincero, você deveria usar ambos. Se você estiver desenvolvendo algo que envolva integração, deve usar o MCP, certo? Qualquer coisa que seu agente não tenha acesso ao bash, você deve usar o MCP para integrar ao seu serviço. As habilidades, na verdade, apenas fornecem mais contexto ao agente, certo? E você pode
+
+definir fluxos de trabalho para tudo aquilo que não teria espaço para definir nas ferramentas MCP. Bem , as descrições podem ser definidas com base nas habilidades. Um, também em relação à comparação e ao debate entre habilidades, scripts e as ferramentas MCP, a principal diferença é que as ferramentas não precisam de um ambiente para serem executadas. O agente pode simplesmente chamar uma ferramenta, sabe como chamar uma ferramenta, especialmente se o servidor MCP for remoto e a ferramenta for executada no lado do servidor. Bem, os scripts, basicamente, são carregados na sua máquina. Eles funcionam no seu
+
+ambiente local. E eles estão ligados a qualquer ambiente em que você esteja. Portanto, se você estiver usando Linux, eles precisam ser compatíveis com Linux. Você está usando o Mac OS, igualzinho. Windows, nem vou começar a falar sobre isso. Bem,
+
+basicamente, essas são as principais diferenças entre as ferramentas MCP e os scripts. Ih, tudo claro? Se você tiver alguma dúvida, fique à vontade para perguntar. Vou fazer uma pequena demonstração. Este workshop será mais um tutorial do que uma aula de programação propriamente dita, mas sinta-se à vontade para participar.
+
+Eu preparei um repositório no GitHub, então você poderá visitá-lo e explorá-lo. Mas se vocês tiverem alguma dúvida em qualquer momento do workshop, fiquem à vontade para me interromper ou levantar a mão. Então, passando para See, exatamente isso. Então , testei isso em uma tela menor e funcionou. Você pode ver que foi codificado ao vivo. Então, como você testa suas
+
+habilidades, certo? Então, se isso é apenas um arquivo Markdown, como você testa seus arquivos Markdown, basicamente? Então, para testar um aplicativo, um trecho de código, é...
+
+é bem simples, certo? Nós já sabemos que você tem todo tipo de teste. Você tem testes unitários, testes de integração, para poder testar todo o fluxo, o que chamamos de teste de ponta a ponta . Bem, basicamente, quando você está testando um arquivo Markdown, você pode fazer exatamente a mesma coisa. Você pode ser tão específico quanto quiser.
+
+Bem, geralmente, como temos um mestre em Direito envolvido, você terá algo chamado avaliações. Então, para aqueles que não ouviram falar de avaliações, ou evals para abreviar, elas são essencialmente uma forma não determinística de testar a saída ou o comportamento de um agente ou modelo. É possível testar tanto um LLM quanto um agente com avaliações. Essencialmente, a estrutura mais comum que apresentarei a vocês no final é um framework para testarem suas avaliações, algo bem simples para começarem. Depois, vou me aprofundar nas avaliações, mas basicamente, elas geralmente consistem em uma entrada e uma saída esperada, como em um teste comum. Entre elas
+
+, vocês podem avaliar os passos que o agente seguiu, o raciocínio e as ferramentas que ele utilizou. Normalmente, é mais interessante e fácil avaliar isso do que simplesmente rejeitar com base na saída exata, já que isso não é determinístico. Então, basicamente existe uma estrutura que você pode seguir para testar suas habilidades. Essa solução foi proposta pela OpenAI em seu sistema, em uma postagem no blog intitulada " Avaliar sistematicamente as habilidades dos agentes". Acho que eles lançaram isso em janeiro ou fevereiro, então não faz tanto tempo assim , mas tudo isso é relativamente novo, é basicamente pré-história.
+
+Então, você começa definindo suas métricas, ou seja, o que você deseja avaliar em suas habilidades. Se você estiver criando uma habilidade para o seu produto, por exemplo, o que exatamente você quer que a habilidade destaque para o seu agente? Será necessário encaminhar isso para a documentação. Você está fornecendo instruções específicas, um fluxo de trabalho específico? Assim, dependendo do que você deseja avaliar, você inicia esse desenvolvimento orientado à avaliação. Então, nesse
+
+desenvolvimento orientado a testes, você começa definindo as métricas. O que exatamente significa "bom" quando se trata dessa habilidade? Então você cria a habilidade em si, certo? Então, você escreve o arquivo skill.md.
+
+Então, você escreve o arquivo skill.md, quaisquer scripts que o acompanhem e os arquivos de referência, se desejar. São todos opcionais. O único arquivo necessário é o skill.md.
+
+E então você passou para a parte de testes. Então, você executa as avaliações ou executa manualmente. Hum, ouvi recentemente o CEO da Braintrust durante o podcast. Não sei quantos de vocês conhecem a Braintrust? OK. Não tanto quanto não
+
+tão populares quanto as habilidades, mas então, para aqueles que não conhecem o Braintrust, é uma plataforma que permite executar avaliações sistematicamente e fornece uma visão completa do comportamento do agente durante o cenário de avaliação, certo? Hum, estou tentando pensar em outra plataforma para comparar, mas, para ser sincera, esta é bem nova. Bem , você pode pensar nisso como uma ferramenta de observabilidade para verificar o comportamento do seu agente durante um cenário de controle específico, que são as avaliações. Então, você passa para a parte de testes. Basicamente, você executa um conjunto de cenários de avaliação.
+
+Como esses elementos são definidos pelas ferramentas de entrada e saída esperadas que devem ser chamadas. Basicamente, como você espera que seu agente se comporte? E depois você passa para a parte da avaliação. Então, como se saiu o agente? Bem, essencialmente, isso é muito semelhante a um ciclo de testes, certo?
+
+Mas agora, em vez de termos uma saída determinística, podemos ter uma saída não determinística. É um mestrado em Direito (LLM) intermediário. Mas você ainda pode ter partes determinísticas para avaliar. E então você basicamente itera e repete o processo. É por isso que é um ciclo. Bastante semelhante a qualquer um dos
+
+ciclos de desenvolvimento de testes que temos atualmente. Muito bem, então vamos direto ao que faremos durante este workshop. Então vamos escrever uma habilidade. Preparei um pequeno aplicativo de demonstração, um aplicativo de demonstração. Será um processo de avaliação de desempenho envolvendo quatro, creio eu, quatro funcionários.
+
+Um funcionário, dois gerentes e um representante de RH. Basicamente, vamos encontrar e corrigir alguns erros no banco de dados. Vamos desenvolver uma habilidade para ajudar os agentes a corrigir esses problemas, certo? E então, no final, como eu disse, tenho uma estrutura para testar automaticamente o mesmo cenário que vamos testar manualmente usando um cofre. Antes de passarmos à demonstração, quantos de vocês já ouviram falar ou usaram o Superbase?
+
+Muito bem, praticamente todo mundo conhece ou já usou o Superbase. Eu já vi alguns, sem dúvida, então vou dar uma breve descrição. Assim, o Superbase é essencialmente um back-end como serviço. Você pode pensar nisso como a versão de código aberto do... hum...
+
+eu tenho... eu tenho... eu simplesmente não consigo...
+
+Obrigado, Firebase. A única coisa que me veio à mente foi um navio incendiário, desculpe. Para o Firebase. E se você não conhece o Firebase, provavelmente está vivendo em uma caverna. Não, mas na verdade é o back-end como serviço. Você pode usá-lo para
+
+construir qualquer back-end da maneira que desejar, sem precisar de nenhuma configuração adicional . Fornecemos um banco de dados que você pode simplesmente integrar ao seu aplicativo e executar no Postgres, uma das soluções de código aberto mais populares, senão a mais popular, para bancos de dados. Você pode integrar facilmente, incluindo autenticação, em seu aplicativo, executando um armazenamento para salvar arquivos e muitas outras coisas, como funções de borda, que são funções Lambda para aqueles que vêm do ambiente AWS e assim por diante. Então, o aplicativo de demonstração que eu desenvolvi foi construído sobre o Superbase, é claro. E assim você pode acompanhar.
+
+Aqui está o código QR. Na parte de trás, todos podem escanear o código QR. Então, devo aumentar o tamanho disso? Maior, né? Esse.
+
+Ok, só para que todos possam ver. Basicamente, estou editando a apresentação neste exato momento. Vamos ver o que a roupa tem para nos oferecer.
+
+Maior?
+
+Essa é a parte legal de eu apresentar nossas apresentações. Eu realmente recomendo. Hum, provavelmente gastei o mesmo tempo, ou até mais, do que se tivesse usado algo como o Google Slides, mas pelo menos é mais divertido. Ah, e a Entropic certamente ficará muito entusiasmada com isso. Tudo bem. Me avise quando todos estiverem lá. É
+
+possível ver o repositório? Se você não consegue ver ou escanear o código QR, provavelmente devo aumentar o tamanho do link também.
+
+Então, você pediu uma demonstração. Aqui está a demonstração nos meus slides. Então, basicamente todos vocês aqui nesta sala usaram Habilidades, então provavelmente não precisarei convencê-los do poder das Habilidades. Mas se você ainda está um pouco cético em relação ao Skills, toda essa apresentação, com ou sem Skills, será bem desagradável, digamos assim. Seria muito mais feio, em certo sentido. Ok, provavelmente você deveria
+
+ver isso agora. Então, basicamente, navega até o GitHub Rodrigues PN, que é meu apelido, e para o workshop de aprimoramento de habilidades da AIEE Europa. É um nome muito longo. Tudo bem. Então, todos estão no repositório do GitHub neste momento? OK.
+
+Ninguém teve problemas. Tudo bem. Então, não essa. Certo. Portanto, este é o repositório que você deve consultar.
+
+Basicamente, eu sei que é um repositório grande, mas vamos lá, vamos dividi-lo em partes. Hum, na verdade vou me mudar.
+
+OK. Vou migrar para o VS Code. Tudo bem. Então, aqui temos, eh, temos dois aplicativos Next.js. Na verdade,
+
+os slides também estão incorporados aqui. O aplicativo Next.js que importa está na demonstração, certo? Para você ter uma ideia de como isso funciona, é basicamente o seguinte. Portanto, é um aplicativo muito simples. É
+
+possível perceber que se trata de um aplicativo que transmite uma sensação de bem-estar , para ser sincero. O layout não tem nada de especial. Bem, como descrevi anteriormente, você tem vários funcionários dessa empresa fictícia. E você pode pensar nisso como uma internet ou um aplicativo de avaliação de desempenho onde você, como funcionário de RH, tem todas as informações sobre você e sobre os outros funcionários da empresa. E você pode alterar, para fins de apresentação, você pode alternar entre usuários, certo? Então,
+
+o que vamos fazer é, primeiro sem nenhuma habilidade, tentar implementar uma nova visualização aqui. Vamos implementar uma visualização de relatórios. Essencialmente, este relatório, que faz parte da candidatura, irá mostrar tanto o salário quanto a avaliação média de desempenho de cada departamento. Então, o RH pode saber o que está acontecendo e ter uma visão geral de toda a empresa. Então, antes de começarmos a falar de códigos, porque durante esta apresentação, nestes workshops, ninguém mais escreve código de verdade.
+
+Ah, então, claro, vou codificar isso de acordo com a minha intuição. Vamos analisar essa aplicação passo a passo. Então, se navegarmos até o painel de controle, não há nada de especial para ver. Você tem... É
+
+basicamente a página, a primeira página, a página principal que você já viu. E então você tem aqui os relatórios onde deveríamos ter, uh, sim. O local onde você deveria ter essa visualização definida existe. Isso vai...
+
+Então, eu preparei a parte de trás. Vamos criar a visualização no back-end como uma view SQL no banco de dados e, em seguida, poderemos visualizá-la no aplicativo. Então, eu preparei. Onde fica? Sim. Então,
+
+preparei o enunciado.
+
+Vamos testá-lo ao vivo. Tomara que isso funcione. Espere. Primeiro, deixe-me acessar o
+
+aplicativo.
+
+OK. Vamos ver onde temos mais controle. Tudo bem. Então, basicamente, nós somos os que estão lá atrás. Bem, vou pedir ao Claude para criar uma visualização das estatísticas do departamento que mostre o número de funcionários e o salário médio discriminados por departamento, tudo bem? Assim, o departamento de
+
+RH precisa ter uma visão completa do que está acontecendo na empresa. Então, vamos seguir a sugestão e esperar para ver o que ela deve apresentar. Ah, certo . Eu tinha me esquecido dessa parte. Eu tenho este servidor MCP configurado.
+
+Se você... você realmente tem...
+
+eu pulei completamente... o leia-me. Ah, se você está acompanhando, desculpe por isso. Se você estiver
+
+acompanhando, poderá seguir o guia de configuração para iniciar seu aplicativo localmente. Basicamente, o processo consiste em clonar o repositório, instalar as dependências e iniciar o projeto Superbase localmente. Você não precisa ter a CLI instalada e estamos usando o NPX para começar a executá-lo como um binário. Ele apenas redefine o estado do banco de dados, então você começa do zero com os dados iniciais e depois executa o aplicativo. O comando `NPM run dev` deve estar disponível em `localhost 3000/dashboard`.
+
+Você também terá este arquivo MCP .json preparado. Essencialmente, isso aponta para o servidor MCP que habilitamos no Superbase para projetos locais. Nenhuma autenticação é necessária, então seu agente poderá carregá-lo sob demanda. Este servidor MCP expõe um conjunto de ferramentas.
+
+Não sei se muitos de vocês já usaram o servidor Superbase MCP, mas acho que atualmente temos algo em torno de 20 ou 29 ferramentas para a versão de produção. Esta é uma versão menor com 20 ferramentas, mas você pode basicamente executar quase tudo o que a versão para conectar ao seu projeto remoto faz: listar as tabelas que você tem, executar SQL diretamente no seu banco de dados, aplicar migrações, executar os assistentes de banco de dados e assim por diante. Então, basicamente, o que eu pensei em fazer era listar minhas tabelas. Então, solicitei uma análise do esquema que já implementei. Então, vou deixar você fazer isso.
+
+E agora, a ferramenta de aplicação de migração será executada para criar a visualização. Basicamente, está realizando uma alteração de esquema no meu banco de dados e criando a visualização. Se inspecionarmos a visualização, basicamente estamos criando , ou substituindo, uma visualização de estatísticas de departamentos, com o nome que demos. E nós estamos, hum , buscando todas as informações, hum, acho que do departamento exatamente, hum, não, dos perfis exatamente e agrupando por departamento. OK?
+
+Grito. Cometi um erro, vou tentar novamente. Ok, vamos testar. Na verdade, algo que eu realmente gosto em... Certo, então aqui está a
+
+nossa visão do banco de dados. Então, atualmente temos isso no banco de dados. Vamos ver se isso também está habilitado no aplicativo. Hum. Não, não é. Então, vamos lá
+
+rapidinho, eu editei o SQL com o nome que eu dei. Esse é essencialmente o problema com as visualizações ao vivo. Como geralmente não dá certo na primeira tentativa. Bem , vou repetir ,
+
+e vamos ver se isso funciona. Caso contrário, podemos simplesmente executar a consulta SQL para você ver como diferentes usuários , para que você possa verificar se tudo está funcionando corretamente. Então, por enquanto, vamos implementar isso na próxima aplicação JS para que possamos ter uma interface amigável para verificar os resultados. Preciso habilitar tudo. Vou ativar o modo automático para poder continuar falando.
+
+Então, essencialmente, o agente criou a visualização. Testado. Disse que tudo está funcionando conforme o esperado. Não deveríamos considerar que o aplicativo era o recurso implementado. Tudo certo.
+
+Vamos ver se ele está realmente bem, se está tudo certo ou não. Então, vamos dar um pouco de espaço para ele, sem pressioná-lo a criar o recurso. Vamos esperar mais um pouco. Enquanto isso, se você estiver acompanhando, também pode experimentar. Ah, mude o layout.
+
+Na verdade, estou usando o código em nuvem. Não sei, estou apenas fazendo uma breve pesquisa aqui durante o workshop. Quantos de vocês também usam código na nuvem ? Ah, praticamente todo mundo. OK.
+
+Quantos de vocês estão usando o cursor? Com código na nuvem ou com um plugin ou Ok, sim. Pelo menos uma pessoa. Hum, teremos alguns...
+
+pessoal do cursor aqui. Penso também na perspectiva antropológica. A OpenAI estará presente como Gemini. É claro que o Google DeepMind está patrocinando o evento. Então, basicamente, teremos toda a turma aqui. Ah, ok
+
+. Então, eu confio na palavra dele. Tudo bem. Então, parece que agora devemos ter exibido corretamente as estatísticas do departamento, então vamos ver se isso é realmente verdade. Parece que sim. Sim, então
+
+agora temos esses cartões com a visão completa da empresa. Então, estou entrando como Julia, do RH. Podemos ver que temos cinco pessoas na equipe de engenharia com um salário médio de 107 mil. O departamento de RH também terá apenas uma pessoa, que será a Julia, e o departamento de produto tem quatro pessoas, e esse é o salário médio. Até agora, tudo bem. Parece estar tudo
+
+bem. Vamos ver. Então, essas são informações sensíveis, os relatórios, certo? Esperamos que os outros funcionários não tenham acesso a elas, e que apenas os gerentes de seus departamentos tenham acesso a elas. Vamos ver se é esse o caso. Então vamos navegar até
+
+Bob. Bob é o chefe de engenharia. Oh. Certo, então o Bob também consegue ver as avaliações de desempenho, tanto das informações de RH quanto do produto. Bem, não é que não seja tão ruim assim, né?
+
+Não é o ideal, mas pelo menos ele é um técnico, certo? Então, de qualquer forma, ele deveria ter acesso a informações privilegiadas, e quem não gosta de uma empresa transparente? Vamos ver se o nosso inferno está bom assim. Ok, isso é problemático. Então, basicamente, criamos uma visualização. Claude disse que
+
+tudo está funcionando porque, como você pode ver, as informações estão aqui. Foi criado. Mas faltou algo nos dados de treinamento, basicamente algo específico do Postgres: quando você cria uma nova visualização e sua tabela tem a segurança em nível de linha habilitada. Para quem não sabe, a segurança em nível de linha permite definir quem pode ver as informações de uma linha específica no banco de dados. Assim, sem precisar confiar no aplicativo, você pode filtrar diretamente no banco de dados. Então, neste
+
+caso, devemos limitar a visualização das linhas por ID de usuário, certo? E a função do usuário. Então, se um usuário tem um funcionário e, como tal, não deveria ter acesso às linhas que não lhe pertencem, certo? Temos a segurança em nível de linha ativada. Se você navegar até nossas migrações do Superbase, poderá ver que habilitamos a segurança em nível de linha tanto nos perfis quanto nas revisões de desempenho, certo?
+
+E numa avaliação de desempenho, deveria ser mais ou menos isso, certo? Portanto, temos o ID do avaliador igual à configuração atual. Então, deve funcionar. Por que não está funcionando? Bem, quando você cria uma view no Postgres, por padrão, as permissões são criadas com as permissões ou credenciais do usuário que criou a view e não com as credenciais da tabela, digamos, com a segurança em nível de linha . Então, basicamente, por padrão, ele
+
+ignora a segurança em nível de linha que você já tenha implementado em sua tabela. Portanto, para que isso não aconteça, precisamos adicionar um invocador de segurança. Bem, precisamos usar um sinalizador de invocação de segurança para transferir as políticas de segurança em nível de linha ou para habilitar as políticas RLS na própria visualização. Então, é por isso que atualmente todos conseguem ver o conteúdo de todos, porque as políticas de segurança em nível de linha foram basicamente ignoradas na visualização. Então, para fins de demonstração nesta oficina, eu já criei uma habilidade.
+
+Uh, uh, eu preparei a habilidade, uh, para a apresentação. Essencialmente, a habilidade consiste em três pontos principais de segurança sobre o Postgres, que o mecanismo deve levar em consideração durante a apresentação. Neste caso específico, eu acabei ajustando demais o modelo à visualização exata que estamos criando, mas os modelos atuais são inteligentes o suficiente para generalizar isso e, se eu quisesse criar uma nova visualização, você também poderia. Basicamente, precisa ser criado com essa flag. Bem, desde a versão 15 do Postgres, essa flag foi habilitada e, sempre que ela é habilitada, as políticas RLS em nível de linha também são habilitadas na view. Bem,
+
+como você pode ver, são documentos bastante legíveis para humanos . Bem , a maioria de vocês já tem habilidades de escrita, então eu não vou me aprofundar muito nisso. Bem , como você pode ver, nós dois temos o título. Hum, deixa eu só mover isso. Nós temos o título. Eu chamei de
+
+Superbase Security, e a descrição usa o verbo "usar". Essa é uma percepção que obtive a partir de alguns experimentos que fiz usando verbos, principalmente o uso do verbo, que aumenta as chances da habilidade ser carregada, pelo menos no caso do Claude. Não sei se esse é o comportamento padrão do Claude, se ele foi treinado para reconhecer verbos com mais facilidade, na verdade é "usar", mas achei mais eficiente escrever "usar" e depois o propósito da habilidade . E então temos uma lista Markdown normal, o caso de visualização ali, mas também outra lista de verificação com pontos de segurança para RLS. Portanto, os esquemas públicos devem ter a segurança RLS ativada por padrão.
+
+Esquemas públicos ou esquemas expostos são os esquemas de banco de dados que fornecerão informações para o aplicativo, que o usuário poderá visualizar. Assim, por exemplo, a tabela de usuários, os perfis, as avaliações de desempenho, todas essas informações serão obtidas pelo front-end. É totalmente seguro porque o Supabase garante a segurança permitindo que você obtenha informações diretamente da interface. Mas o ponto crucial aqui é que, se você não habilitar a segurança em nível de linha, não terá esse filtro na tabela e precisará depender da lógica do aplicativo para criar o filtro. Assim, habilitar a segurança em nível de linha torna o trabalho mais seguro para você, como engenheiro de back-end, pois você expõe desde o início apenas as informações que realmente deseja.
+
+E depois mais algumas coisas que eu não curto. Então, se pudermos instalar essa habilidade neste projeto executando o comando... Onde encontro esse comando?
+
+NPX, sim. Grito. Então, eu vou dizer " Oh". Vou usar "Onde está a habilidade?" OK. Vou
+
+usar o pacote NPM do Vercel chamado skills. Tenho curiosidade em saber como vocês têm apresentado suas habilidades. Você já usou este pacote? Você está usando plugins? Apenas esta.
+
+Sim, principalmente esta. Sim, ficou muito popular há alguns meses.
+
+Sim, você pode instalá-lo globalmente e também no seu projeto específico. Sim, e também para suporte a múltiplos agentes. Por enquanto, os plugins ainda estão vinculados ao agente que irá carregá-los. Portanto, o Cursor possui plugins, o Cloud Code também possui plugins. Acho que outros fornecedores também têm, mas são distribuídos e fabricados especificamente para esses modelos específicos.
+
+Então, estamos usando este para instalar. Você pode instalar qualquer skill de um repositório online que possua um arquivo skill.md, ou pode usá-lo para instalar uma skill localmente. Ele detectará automaticamente a localização de onde você está tentando obter os dados, com base no formato. Portanto, neste caso, não temos nenhum GitHub, não temos nenhum protocolo HTTP. Então,
+
+temos um ponto e uma barra. Então, ele reconhecerá que é um... é um local. E para isso, eu
+
+vou, hum, passar para o cara principal, sim. E, à moda antiga, vamos correr na festa. Então, vai aparecer essa janela, perguntando em qual agente eu quero instalar . Eu uso o Cloud Code, então vou instalá-lo no Cloud Code. Se você estiver usando qualquer outro agente, Arnes, também poderá instalá-lo, desde que seja compatível. Bem, vou
+
+instalá-lo no nível do projeto, então, neste caso, ele vai criar uma pasta ".agent" com a skill e, em seguida, vinculá-la à minha pasta ".cloud/skills", para que o Cloud saiba onde encontrá-las. Vou fazer a vinculação de chip e já estamos prontos para instalar. Então, se não revelarmos minha chave...
+
+Hum, vou apagar isso só para a oficina, então apagarei depois. Fique à vontade para usar meu crédito gratuito, por enquanto. Mas, essencialmente, criou os, os , uh, uh, agentes ponto, uh, onde está? Sim. Então, eu também tenho mais algumas coisas que veremos depois, mas o essencial é a habilidade que já demonstrei anteriormente. Sim, aí está. É a
+
+habilidade, e também criou um sim, um simlink, um link simbólico para a nuvem de pontos. Bem, é assim que o pacote funciona, e desta forma o Cloud pode pesquisar tanto em ".agents", que está se tornando o padrão, quanto na pasta ".cloud", que ele possui. Então, vejamos, vamos executar o mesmo comando novamente em uma nova sessão.
+
+Hum, deixe-me voltar à demonstração dos aplicativos. Sim . E inicie uma nova sessão. Devemos ativar esta opção. Sim, aí está. Então, Claude agora está ciente da
+
+habilidade de segurança da Superbase. Para você executar habilidades, você pode simplesmente executar o comando e torcer para que o Claude importe sua habilidade com base na descrição que você forneceu. Você pode incluir as palavras-chave e o nome da habilidade que você possui no prompt, e isso carregará sua habilidade em quase 100% dos casos . Ou, se você estiver usando o código do Claude , basta fazer uma barra e escrever o nome da sua habilidade. E isso garante 100% que Claude vai importar a habilidade. Então, para o nosso
+
+caso de uso, para a apresentação, eu vou fazer isso porque não posso me dar ao luxo de não carregar a
+
+habilidade. Vamos esperar, eu preciso... eu preciso reiniciar o banco de dados para recriar a visualização.
+
+Um para estar na oficina. E é uma reinicialização do banco de dados do NPX Superbase. Sim.
+
+Estou apenas reiniciando o banco de dados e aplicando as migrações desde o início. Não, não criou nenhum arquivo de migração. Ele aplicou a migração diretamente ao banco de dados. Então, agora devemos estar prontos para começar. O programa irá desativar o banco de dados e criar um novo com base no esquema que definimos nos arquivos de migração e nos dados iniciais.
+
+Sim.
+
+Sim, é um ponto válido. Então, toda a sua pergunta ou observação é que a promessa inicial de habilidades que a Anthropic apresentou a eles era...
+
+Sim, então, já que isso é do
+
+lado do agente, certo? O agente decide quando carregar isso. A melhor coisa que você pode fazer, sem usar explicitamente o comando de barra ou o nome da habilidade no prompt, é experimentar e testar diferentes descrições, seja manualmente ou automaticamente, para verificar o que realmente funciona e não o comportamento esperado do agente, certo? Então, você define uma série de cenários em que acha que a habilidade deve ser carregada e quando as habilidades não devem ser carregadas. Você testa.
+
+Você pode testar em sua máquina, como neste cenário: não quero que a skill seja carregada, então, por exemplo, verifique se a skill foi carregada ou não através da CLI. E então, experimente diferentes descrições para ver o que realmente funciona e o que não funciona. Assim, sem precisar chamar a habilidade explicitamente. Essa é a melhor coisa que você pode fazer para testar se a habilidade está sendo carregada corretamente ou não. Sim, ainda estamos no início, num estágio muito inicial, em termos de habilidades. Mesmo
+
+para o MCP, com todas essas coisas de agente, é algo relativamente novo. Então, ainda estamos padronizando as coisas. Hum, ainda estamos descobrindo o que funciona e o que não funciona. A transparência progressiva era algo sobre o qual ninguém falava há 6 meses, e agora é justo dizer que é um dos pilares do desenvolvimento dos agentes. Então, daqui a 6 meses provavelmente será outra coisa. Então, nossas habilidades podem ser
+
+o padrão, ou talvez a Anthropic, a OpenAI ou outra empresa tenha encontrado uma maneira mais eficiente de gerenciar o contexto ou fornecer mais contexto ao agente. Bem, basicamente veremos. Muito bem, então o banco de dados foi reiniciado. OK. Então, pelo menos agora temos a visualização, mas não temos as informações do seu banco de dados. Então,
+
+agora devemos ser capazes de executar o mesmo comando novamente, mas com a habilidade. Então, se editarmos o prompt, você verá que foi bastante rápido, eu acho. Sim, mas não criou nenhum. Ok, deixe-me tentar outra coisa. Em vez disso
+
+, vamos usar para criar. Vamos ver se agora funciona. Sim , tudo bem. Então, a habilidade foi carregada. Portanto, agora pelo menos deve haver o contexto para que o sinalizador RLS ou o invocador de segurança seja incluído ao criar a visualização.
+
+E os passos devem seguir o restante do fluxo de trabalho, que deve permanecer o mesmo. Então, ele vai listar minhas tabelas, certo? As tabelas foram identificadas com precisão. E agora, se olharmos com atenção, podemos ver que agora temos esta bandeira aqui, que estará na migração. Então, vamos ver se, com a flag, este é o resultado esperado.
+
+É isso que acontece quando você apaga o código de uma CLI, sabe? Eu tenho a interface do usuário duplicada. Certo, então ele criou a visualização. Deveríamos ser capazes de ver isso. Mas Alice não deveria.
+
+Então, o que está acontecendo? Espere, ok. Então, preciso reiniciar? Não. Hum .
+
+Interessante. Deveria ter outro. Hum, provavelmente. Deixa eu ver se tenho aqui. Hum, onde foi que eu coloquei?
+
+Deixe-me pesquisar na conta. Vou trapacear aqui. Vamos supor que tanto o
+
+funcionário quanto o gerente possam ver as informações para visualizar o salário e o bônus.
+
+Vamos assumir o controle. Ok. Basicamente, resolução de problemas da vida real. Por que isso não está acontecendo? Provavelmente decorrente de uma política diferente daquela que defini aqui.
+
+Mas agora vai solucionar o problema. Vamos ver se essa habilidade realmente melhora os esforços. Caso contrário, tenho uma carta na manga, porque, se você não sabe, o Superbase basicamente possui consultores de banco de dados que você pode usar para tentar identificar precocemente algumas vulnerabilidades potenciais ou esquemas com informações expostas que podem ser comprometidas antes que o sistema entre em produção. Então, se você não conseguir descobrir sozinho, vou incluir na habilidade a execução dos consultores para verificar. Então, a principal habilidade é que você pode... Ah,
+
+isso é... Você pode ver bem, é uma candidatura muito mal escrita. Deixe-me dizer.
+
+É basicamente a parte principal das habilidades. Não se trata de saber se essa demonstração específica funciona ou não, mas sim se o comportamento mudou depois que a habilidade foi carregada, certo? Foi criado com a segurança nas partes vocais. E com isso, eles mostram o quão poderoso é o fato de você poder criar, alterar o comportamento ou guiar o agente sob demanda, com base nas informações que você fornece. Você pode pensar na habilidade MDS como um modelo de instruções que você pode fornecer ao seu agente. Então, vamos
+
+resolver o problema rapidamente. Ah, está até oferecendo a opção de realizar uma migração. Vamos ver se isso não quebra meu aplicativo. Tudo bem. Portanto, parece muito complicado, muito complexo. Enfim, vou me
+
+mudar. O que é isso? A mesa separada. É isso. RH de qualquer forma. Você poderia dar uma olhada no
+
+contexto, tipo " contexto de barra", só para ver como o seu contexto está organizado? Boa observação. Tenho bastante habilidade, como você pode ver, tenho praticado bastante com elas. Eu também tenho alguns servidores MCP pré-instalados que o Superbase permite. Bem, essencialmente, seria mais interessante se eu comparasse o contexto de antes e depois de carregar a habilidade. Então,
+
+neste momento, as habilidades ocupam 1,3 mil tokens no meu contexto, certo? Como você viu, eu tenho mais do que apenas essa habilidade. Mas, como a habilidade foi carregada, todas as informações contidas em skills.md foram carregadas no contexto. Se limparmos e executarmos o contexto novamente, os valores de habilidade serão os mesmos. Então, essa habilidade
+
+não é suficiente para você perceber. Mas, como você pode ver, as habilidades ocupam bem menos espaço do que o MCP ocuparia. Tudo bem. Oh, tudo bem. Eu tenho uma versão mais recente do código na nuvem. Então, para aqueles
+
+que não sabem, a Anthropic lançou recentemente a ferramenta de busca de ferramentas, que é um mecanismo para o Cloud Code carregar ferramentas sob demanda. Então, basicamente não carrega divulgação progressiva, mas sim ferramentas MCP, certo? A principal diferença entre essa divulgação progressiva e a ferramenta de busca de código e habilidades na nuvem é que a divulgação progressiva foi projetada especificamente para habilidades. Então, é como se já estivesse incorporado à estrutura da instância da habilidade, enquanto no MCP ainda não é um padrão para todas as ferramentas. Portanto, funciona para código na nuvem, mas não funcionará para muitos outros clientes. Isso simplesmente carregará todas as
+
+ferramentas diretamente no seu contexto. Então, por enquanto, isso é algo apenas para o Cloud Code. Se você estiver interessado, teremos o fundador ou um dos cofundadores do MCP falando no dia 10, sexta-feira, e ele dará uma breve visão geral do roteiro do MCP. Se algo mudou desde a semana passada, quando ele apresentou isso em Nova York no MCP Dev Summit, ele deve incorporar essa parte de divulgação progressiva às ferramentas e ao próprio protocolo. Sim , então . Bem, digamos que temos um
+
+banco de dados muito grande e precisamos carregar o esquema desse banco de dados no contexto, porque precisamos consultá-lo usando agentes. Hum. OK. Na sua opinião, é melhor usar uma habilidade, um MCP ou algo semelhante para carregar esse esquema progressivamente? OK. É possível usar esse
+
+esquema para revelar progressivamente o esquema desse grande banco de dados? Na sua experiência. Sim . Sim. OK. Então, sua pergunta é
+
+mais sobre como devemos acessar os dados ou sobre a arquitetura completa desse pipeline para importá-los progressivamente? Para solicitar a um agente que consulte o banco de dados, é necessário que o agente conheça o esquema do banco de dados previamente . Como posso ensinar o agente a consultar o banco de dados? Hum. Utilizando as habilidades, usando um servidor MCP ou algo semelhante. OK. E
+
+se você usar as habilidades para carregar os contatos dos agentes com o esquema do banco de dados, é possível carregar o esquema progressivamente dentro do contexto? Hum. OK. Entendi. Então, deixe-me explicar a situação para você.
+
+Aqui você terá essencialmente duas partes. Uma delas é o que estará presente no contexto, ou seja, o que será carregado, e as informações específicas que você deseja ter em seu cenário. E a segunda parte é o mecanismo propriamente dito, o mecanismo de extração que você usará para carregar as informações do banco de dados. Então, para a segunda parte, que é carregar as informações do banco de dados, você pode usar um script, ou seja, uma habilidade que invoca um script, ou uma ferramenta MCP. Eu aconselharia o uso de uma ferramenta MCP porque você pode usá-la tanto em produção quanto em projetos remotos, sem depender do seu ambiente local, sem precisar gerenciar chaves, e porque a ferramenta já é padronizada e a autenticação já está integrada ao protocolo. Portanto, o agente
+
+nunca gerencia o token do aplicativo. Ele simplesmente executa a ferramenta e funciona para ele. Para a divulgação progressiva, as informações no banco de dados, você terá que...
+
+você pode incluí-las em uma habilidade. Sim, você usará a ferramenta MCP. Então, na skill você provavelmente vai especificar que deve usar essa ferramenta para carregar e, na implementação da ferramenta, você precisa habilitar a opção para não carregar progressivamente, certo? Então, para carregar em partes. Talvez seja o suficiente, considerando os parâmetros da ferramenta.
+
+O agente deveria perceber sozinho que, se você adicionar um parâmetro chamado buffer, por exemplo, ele deveria ser capaz de carregá-lo em partes, certo? Em vez da tabela inteira, mas se você quiser ter 100% de certeza de que ela será carregada em partes e usada corretamente, eu também a incluiria em uma skill e descreveria nossa intenção de usar essa ferramenta. Então, é assim que as habilidades e o MCP funcionam em conjunto. É a ferramenta que permite essa conexão, essa integração, e a habilidade para descrever como usá-la. Sim, é assim que eu implementaria esse tipo de sistema. Ah, obrigado pela
+
+pergunta, e ela me deu a oportunidade de falar sobre como usar as habilidades e o MCP sem colocá-los em conflito . Bem, como prometido, devemos prosseguir. Hum, preciso de mais tempo para entender, porque basicamente durante o workshop, quando estava preparando o conteúdo, eu identifiquei várias vulnerabilidades. Então, se eu mantivesse tudo simples, a demonstração provavelmente funcionaria. Bem, como tenho mais vulnerabilidades expostas, se eu tivesse tempo, tentaria resolvê-las.
+
+Não, por enquanto não, mas você viu que em ambos os cenários o primeiro não tinha o sinalizador de segurança, o sinalizador do invocador de segurança, e o segundo tinha. Então, pelo menos podemos insinuar que a habilidade estava fazendo alguma coisa. O agente visualizou as informações sobre a habilidade. Ele se fundiu com o prompt do sistema ou o armazenou próximo ao prompt do sistema e alterou o comportamento de acordo. Para testar isso, então, se você quiser mover essa parte da habilidade para produção, certo? Então funciona na sua máquina.
+
+É uma história mais antiga que o tempo: está funcionando na minha máquina, mas não sei se vai funcionar nos seus agentes, na sua máquina, no seu ambiente. Então, para testar ou automatizar esses testes, podemos desbloquear a possibilidade de ter um pipeline. Por exemplo, se você alterar algo em sua skill, como pode ter certeza de que ela continua funcionando como esperado e não interrompe o fluxo anterior? Então, se eu alterar uma das listas de verificação, como posso garantir que as outras continuarão funcionando corretamente? É aí que as avaliações podem entrar em cena.
+
+Bem, avaliações é um termo muito amplo. Você pode avaliar basicamente qualquer coisa. Como se trata de um arquivo Markdown, é um arquivo de texto livre, você pode avaliar praticamente qualquer coisa. Portanto, é bastante difícil para você, e a parte mais difícil de criar avaliações, eu diria, é na verdade elaborar os cenários, porque primeiro você precisa saber qual é o comportamento esperado do seu agente. Então, criar cenários representativos e realmente bons que abranjam uma quantidade razoável de casos de uso que você deseja construir é o mais difícil.
+
+E ainda não existe uma estrutura padronizada para criar avaliações. Você pode testá-lo importando uma série de prompts e a saída esperada de um arquivo CSV ou de um arquivo JSON. Você pode usar ferramentas como Brain Trust ou LangFuse para testá-lo e adicionar uma camada de análise e observabilidade. Para esta apresentação, segui as diretrizes
+
+definidas pelo padrão Agent Skills Open Standard para elaborar os casos de teste. Então, caso você não conheça este site, esta é a página inicial do Agent Skills Open Standard, que busca padronizar o que é uma habilidade e como ela deve se comportar. E eles basicamente propõem uma estrutura local muito simples para testar as habilidades, organizadas da seguinte forma: você terá um arquivo eval.json que essencialmente contém um conjunto de avaliações, ou seja, uma matriz de cenários de avaliação. Você deverá inserir o comando que deseja fornecer ao agente e a saída esperada do agente. Isso só se aplica se você tiver um mestrado em Direito (
+
+LLM) para atuar como juiz. Essa é uma técnica utilizada para avaliação não determinística. Em vez de um humano, você pode fornecer os resultados de uma execução de avaliação para outro LLM. Digamos que defina critérios de sucesso e deixe que o especialista em Direito, cujo papel é julgar neste caso. Por isso se chama LLM para juiz.
+
+Basicamente, para atribuir uma nota. Portanto, esta é uma parte que você pode automatizar em suas avaliações para fluxos de trabalho não determinísticos. Você pode verificar se uma ferramenta foi chamada ou pode fornecer os resultados a um LLM e tentar, de forma não determinística, fazer com que os agentes avaliem o desempenho dos outros agentes. Basicamente, temos agentes avaliando outros agentes. Então, eu segui essa estrutura.
+
+Eu dei a mesma contribuição aqui, certo? Então, o agente que vai executar essa avaliação receberá a mesma entrada que nós tínhamos. O resultado esperado é que o invocador de segurança, uh, é verdade, então está presente no aplicativo. Ah, desculpe, sobre o programa The View. E eu tenho, e então eu tenho um monte de afirmações que neste caso, hum, hum, eu vou verificar se é, hum, deterministicamente, certo? Preparei um
+
+script em Python que basicamente redefine o estado do banco de dados. Assim, como estamos executando isso localmente e não em um contêiner isolado, como um contêiner Docker, por exemplo, precisamos garantir que o sistema sempre inicie do mesmo ponto de partida. Portanto, vou reiniciar o aplicativo. Se você também quiser executar as avaliações, precisa escolher sua própria chave antrópica e criar uma cópia dela. Você pode seguir as instruções do arquivo readme dentro do Superbase Security. Aqui você encontrará instruções de como configurar
+
+isso. Bem, então eu vou executar o código CLI do Claude, acho que é no modo de impressão ou não me lembro como chamavam, mas basicamente eu vou executá-lo como um binário sem interface gráfica. Então, o agente receberá as instruções que estão na avaliação, bem como a tarefa a ser executada. E também vou apresentar a condição. Vamos testar duas condições, uma com a habilidade e outra sem ela.
+
+E essencialmente , para você ver quais são as condições de Claude, é aqui que o código de Claude será executado. E se a condição for relacionada à habilidade, vamos carregar o arquivo skill.md no prompt do sistema, certo? Bem, se você realmente quiser imitar esse comportamento, você executaria isso em um contêiner Docker. Você colocará as habilidades do agente no diretório `.cloud` (barra) `skills`
+
+dentro do contêiner Docker e deixará que o código na nuvem as encontre e as utilize automaticamente. Bem, para esta apresentação, a configuração é muito simples. Basicamente, adicionei isso ao prompt do sistema. Então,
+
+vamos realizar as avaliações. Eu tenho o outro? Sim, eu tenho. Ok, acho que vamos executar isso no Firebase. Oh.
+
+Não está encontrando a skill
+
+Firebase. Por que não está encontrando a skill Firebase? Não. Ok .
+
+Ah, sim, eu tenho o Wait. Eu sei o que está acontecendo. Eu inseri o nome errado. Vou mudar isso. Muito
+
+bem, então começamos executando a habilidade. Então, o primeiro resultado que devemos obter é o da habilidade. Parou. Agora, está funcionando sem ele. E então, vamos comparar.
+
+Isso gerará uma iteração do espaço de trabalho em uma pasta "um", e poderemos comparar as saídas com e sem a habilidade . Enquanto a versão sem habilidade está carregando, vamos dar uma olhada rápida no que a versão com habilidade apresentou como resultado. E basicamente, você pode ver que ele criou essa visualização com o invocador de segurança. E então, temos este arquivo grading.json com várias informações, como as asserções que definimos na função eval.json. Hum, nós os temos
+
+aqui. E podemos ver que, neste caso, foi classificado como reprovado, embora... Onde está?
+
+Não encontrado. Ah, a visualização como configuração de segurança. Oh. OK. Na verdade, estou avaliando algo de forma errada. Então, o problema aqui agora é
+
+com a... Sim, será que é a habilidade? Hum, veja.
+
+Então, como eu esperava que isso criasse uma classe PG com opções RL em vez de apenas inspecionar a visualização, está me dando a mensagem de que falhou. Mas, a parte crucial: já terminou? Ainda não terminou. Ainda em funcionamento. Está demorando muito.
+
+Pode ser. OK.
+
+E agora, podemos inspecionar.
+
+OK. Então, uh, isso é realmente uma boa observação. Então, com esses resultados, essa é a parte complicada da escrita: como ela evolui. Então, como em testes normais, os resultados dependerão de como você os implementa, certo? É apenas código.
+
+Então, se você estiver avaliando algo errado, ou se o comportamento não for o esperado , você terá resultados errados. Pode não ser porque o sistema não está funcionando. Então, nós testamos manualmente e vimos que com a habilidade criada com a flag de segurança, podemos inspecioná-la aqui com a habilidade criada. Vamos ver se, desta vez, surpreendentemente, funcionou. É um comportamento não determinístico de Claude. Mas
+
+, já que eu estava avaliando algo errado, certo? Eu esperava que criasse o esquema meta ou inspecionasse o esquema meta para verificar se a visualização ou o invocador de segurança estava presente ou não, em vez de apenas inspecionar a visualização diretamente. Os resultados ficaram um pouco aquém do esperado. Então, o sistema indicou que a habilidade falhou. E com o " hum", sem a habilidade, passou. Então, se
+
+analisarmos as duas saídas, elas são basicamente iguais. Então, fizemos isso apenas para mostrar como é complicado escrever testes evolutivos, porque, embora isso possa acontecer com os testes regulares, é mais fácil de detectar porque a saída é determinística, certo? É apenas código. Bem, se você estiver entregando um trabalho para um mestre em Direito avaliar, às vezes tudo pode parecer alucinatório. Então, para finalizar, já que também estamos quase sem tempo.
+
+Resumindo a estrutura, esta é a que eles recomendam. Acho muito fácil de implementar e começar a usar. Mais tarde, você pode passar para cenários de avaliação mais complexos, como executar em um Docker ou em um sandbox, para garantir que você obtenha um ambiente novo com apenas uma habilidade que está testando em seu conjunto de ferramentas. Mas basicamente você colocaria duas condições, uma com e outra sem a habilidade, compararia os resultados e executaria o teste no ambiente de agentes desejado, comparando os resultados obtidos. Basicamente, este é o seu primeiro pipeline de avaliação para testar uma habilidade automaticamente.
+
+Da minha parte, é tudo. Espero que você tenha achado este workshop útil para aprimorar suas habilidades e se preparar para produções. Como eu disse no início, amanhã farei uma apresentação principal sobre como implementamos e criamos a skill Superbase para o próprio produto, como a mantemos de fácil manutenção, garantindo ao mesmo tempo que ela agrega valor, e como a estamos testando em produção. Obrigado.
+
+Alguém tem alguma dúvida ou pergunta? Sim, eu também estarei. Então, eu tenho uma pergunta sobre a quantidade de habilidades que vocês normalmente instalam no ambiente, porque com essa divulgação progressiva, parece que podemos continuar adicionando habilidades diferentes e o agente as encontrará automaticamente . Você tem alguma recomendação sobre quantas habilidades devemos ter, ou existe algum limite, ou devemos simplesmente continuar adicionando? E vai funcionar magicamente.
+
+Provavelmente não sou a pessoa mais indicada para falar sobre isso, porque é fácil se perder nesse labirinto, especialmente quando se está experimentando e adquirindo várias habilidades. Como você viu, eu tinha muitas delas instaladas globalmente, e acho justo dizer que não as uso todas diariamente. Mas depende se você os está usando em sua máquina local. Acho que seria muito fácil criar um ambiente confuso onde todos ou a maioria deles estão instalados. Para analisar o ambiente local, eu não recomendaria, por enquanto, já que é algo muito experimental. Na minha opinião, eu
+
+não me limitaria a questões como gerenciamento de espaço ou gerenciamento de contexto . A divulgação progressiva é algo muito poderoso que você pode explorar neste caso. Você tem certeza de que, se tiver habilidades que não usa, elas vão ocupar espaço na sua janela de contexto, mas as descrições são tão pequenas que você pode se dar ao luxo de não excluí-las, se não quiser. Em produção, trate- os como qualquer outro artefato que você teria em seu ambiente de integração contínua . Portanto, mantenha tudo limpo em seu ambiente de CI (Integração Contínua) desde a fase de produção.
+
+Eu manteria apenas as habilidades exatas que você está usando naquele caso específico. Outra informação que posso te dar sobre a parte de produção é que está cada vez mais comum exportar habilidades ou disponibilizá-las em seus repositórios como uma espécie de documentação. Portanto, trate as habilidades que você coloca em produção como documentos reais, da mesma forma que você leria uma documentação. Portanto, é importante mantê-los atualizados, incluindo-os no fluxo de trabalho de atualizações em sua plataforma de P&D na nuvem ou na plataforma de P&D do seu agente. Assim, você garante que, se algo mudar, você também atualizará essa habilidade, da mesma forma que faria na documentação. Se uma funcionalidade ou fluxo de trabalho for
+
+alterado, você também pode criar uma tarefa periodicamente para verificar se a habilidade ainda está executando um fluxo de trabalho adequado. Se de alguma forma você pudesse verificar se a habilidade foi carregada pelos seus usuários. E, se um site não foi carregado pelos seus usuários por um longo tempo, ainda faz sentido mantê-lo lá? Então, sim, basicamente esse é o conselho que eu posso te dar sobre habilidades para produções, baseado na minha experiência. Para saber o resto, você terá que comparecer à palestra amanhã para descobrir como estamos implementando isso na Superbase.
+
+Mais alguma pergunta? Estarei presente durante todo o evento. Então, se você me encontrar, se nossos caminhos se cruzarem, fique à vontade para me perguntar qualquer coisa. Conte-me sobre o que você está construindo. Adoraria saber se é com a Superbase, e ficarei ainda mais animado ao saber disso.
+
+E, por mim, mais uma vez, muito obrigado. Você tem sido adorável hoje, às 9h da manhã. Uma energia muito boa e agradável. Então, da minha parte, aproveitem o resto da conferência e nos vemos por aí . Obrigado.
+
+Uau!

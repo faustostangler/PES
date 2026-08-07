@@ -1,0 +1,146 @@
+---
+video_title: "FLUX, Open Research, and the Future of Visual AI — Stephen Batifol, Black Forest Labs"
+video_id: x8Yb4RidLgM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=x8Yb4RidLgM
+video_date: 2026-05-08T15:00:06+00:00
+video_description: |
+  FLUX started as an image model story, but this talk makes the larger ambition clear: visual intelligence, not just image generation. From FLUX.1 through Kontext, FLUX.2, and FLUX.2 Klein, Black Forest Labs has been pushing fast, open releases while building toward models that understand images, video, audio, actions, and eventually the physical world itself.
+  
+  Along the way, Stephen Batifol walks through the research behind that direction, including BFL's work on self-supervised multimodal training, real-time generation and editing, and the path from generative media toward world models and robotics.
+  
+  Speaker info:
+  - https://x.com/stephenbtl
+  - https://www.linkedin.com/in/stephen-batifol/
+---
+[música]
+
+Obrigado a todos por terem vindo hoje. Agradeço muito . Obrigado por comparecerem a esta palestra sobre o Flux Open Research da Black Rice Labs e o futuro da IA ​​visual. Vou começar rapidamente com uma breve apresentação pessoal. Meu nome é Stefan Batyfull, desculpe. Sou
+
+engenheiro de relações com desenvolvedores na BFL. E eu gostaria de começar com duas perguntas. Primeiro, quem aqui conhece a BFL? Levante a mão. Ok, quem aqui conhece Flux?
+
+Certo, na verdade são praticamente as mesmas pessoas. Mas para quem não conhece o BFL, vou fazer uma breve introdução para que vocês não fiquem perdidos. Mas, resumindo, a BFL é a equipe por trás dos modelos Stable Diffusion, Latent Diffusion e Flux. Nossa equipe possui mais de 200.000 citações acadêmicas.
+
+E não apenas construímos modelos, como também trabalhamos em conjunto com empresas e clientes para apresentá-los. Alguns de nossos clientes são a Microsoft, a Adobe, a Canva, a Mistral e muitos outros. E tudo começou em agosto de 2024 com o Flux 1. O Flux 1 foi o primeiro grande avanço, sabe? Era o modelo que competia de igual para igual com a Difusão Estável naquela época, e foi realmente o ponto de virada que fez as pessoas pensarem : "Nossa, esse modelo é muito legal ". Nós o lançamos como código aberto em
+
+primeiro lugar. Na verdade, essa era a única que convertia apenas texto em imagem e você podia executá-la no seu laptop. Isso também mudou tudo, e a anatomia era realmente boa em comparação com os outros modelos, especialmente em comparação com outros modelos que eram muito maiores. Foi aí que realmente tivemos um grande avanço, e a Clem, da Hugging Face, até nos mencionou na época. Isso é bem antigo, mas o Flux era, na verdade, o modelo mais popular da Hugging Face naquela época. Isso não é
+
+mais verdade, mas naquela época era realmente o que havia de mais moderno, e foi algo muito bom e realmente importante para uma empresa que estava, sabe, surgindo do nada e lançando esse modelo. Em seguida, lançamos o Flux Context, que foi o primeiro modelo de edição de código aberto do mundo a combinar a conversão de texto em imagem com a edição de imagens . Agora, o que estou mostrando aqui, o que estou mostrando aqui, você sabe, é óbvio porque agora temos modelos de edição em todos os lugares, mas naquela época foi um grande avanço poder fazer tanto a conversão de texto em imagem quanto a geração de imagem ao mesmo tempo. Se eu tiver um exemplo aqui, temos esta imagem de entrada e, em seguida, você remove este floco de neve do rosto, sabe, você pode ver que a consistência do personagem foi mantida, mas também pode mover essa pessoa para Freiburg, que é onde fica nossa sede. Sabe, ela está relaxando, tirando uma selfie nas ruas de Freiburg, e aí você pode fazer uma edição local, mudando o fundo para nevar, e também colocar neve no rosto dela e tudo mais. Era também
+
+um dos modelos mais rápidos daquela época . Você sabe, se você se lembra, foi nessa época que surgiu a primeira imagem GPT, que levava uns 40 ou 50 segundos para gerar ou editar imagens. Enquanto que o Contexto, se bem me lembro, durava cerca de 7 a 8 segundos. Contar histórias também foi muito útil . Tenho visto muitos casos de uso de nossos parceiros e clientes em que eles começam com uma imagem de entrada e depois criam um storyboard como vemos aqui. Temos aqui a famosa gaivota,
+
+sabe, que está usando óculos de realidade virtual e tomando uma cerveja em um bar. Mas aí você pode criar outras coisas. Você pode convidar um amigo para participar e beber com ele. Sabe, acho que eles beberam um pouco demais e estão usando chapéus no bar. Então eles vão sair. E então,
+
+sabe, essa é a história que você poderia criar e que era realmente útil para modelos de vídeo ou para modelos de animação. Sabe, você forneceria essas imagens como quadros de entrada ou como quadros finais, e então o modelo de vídeo poderia criar conteúdo diferente. Em novembro, lançamos o Flux 2, que representa nossos passos em direção ao que chamamos de inteligência visual. Flux 2 era, bem, nossa base, ainda nossa base, nosso melhor modelo, desculpe. Bem, esses são exemplos, que eu não sei se vocês conseguem ver claramente, mas na minha opinião, são exemplos realmente incríveis e é praticamente impossível dizer que foram gerados por IA. Se você observar as mãos, as
+
+veias e as pulseiras da pessoa à esquerda, pessoalmente, não há como eu dizer que foi gerado por IA. O mesmo vale para as tartarugas que você vê à direita, e também para o cachorro ou gato que está na banheira; seria muito, muito difícil obter uma amostra assim. Mas esses são gerados por IA. E você tem mais opções também, então não são só pessoas ou animais, sabe, você poderia fazer uma fotografia de produto profissional. Você pode ver isso com um waffle aqui no canto inferior direito, ou pode fazer algumas imagens muito fofas como essa pessoa, sabe, à esquerda, que está dirigindo a motoneta com alguns balões. E foi isso que lançamos
+
+em novembro, mas não se trata apenas de um modelo de geração de imagens, e sim também de um modelo de edição de imagens . Como você pode ver à esquerda, temos seis imagens que entregamos à modelo, e minha instrução foi literalmente: crie um look com essas imagens. A modelo é inteligente o suficiente para, sabe, criar algo que faça sentido. Assim como o paletó, sabe, deve ser usado corretamente, o mesmo vale para a gravata. E do lado direito, temos um caso de uso um pouco mais simples, onde você tem o sofá e precisa imaginar, digamos, que você seja um site de comércio eletrônico ou um fabricante de sofás e queira que as pessoas imaginem como ele ficaria em seu apartamento ou como realmente seria se você o comprasse.
+
+E esses casos de uso são realmente muito importantes e são os principais casos de uso que temos atualmente para o Flux 2. Mas ele também aceita até 10 imagens simultaneamente, então você pode editar muitas imagens ao mesmo tempo e criar coisas incríveis. É muito boa em manter a consistência de personagem, produto e estilo. E o que quero deixar claro é que, para a BFL, como empresa e como laboratório de pesquisa, o primeiro princípio operacional é lançar modelos de última geração. É nisto que queremos concentrar-nos. É isso que queremos
+
+fazer como empresa, sabe? Queremos elevar o padrão de qualidade a cada lançamento. Então, nós já fizemos isso no passado, sabe, com o Flux 1 quando ele foi lançado. Fizemos isso levando em consideração o contexto. Nosso Flux 2 foi o nosso melhor modelo de imagem até o momento. É o primeiro que lançamos
+
+que também é multirreferencial . Era o que havia de mais moderno no mundo do código aberto. Portanto, era o que havia de mais moderno em termos de conversão de texto em imagem e edição de imagens. Em janeiro, lançamos o Flux 2 Klein, que representa um passo em direção à edição interativa e à geração interativa de imagens. Ele gera e edita imagens em menos de um segundo. Falarei um pouco mais sobre isso mais tarde,
+
+durante a palestra. Mas acho que o mais rápido que ele consegue, se bem me lembro, é 500 milissegundos para edição e 300 milissegundos para geração. Basicamente, em tempo real. Mas não é isso. Temos ainda mais novidades a caminho, e é sobre isso que quero falar hoje.
+
+Então, eu mencionei isso. Somos, antes de tudo, uma empresa de pesquisa. Publicamos as coisas de forma aberta. Publicamos o artigo. Queremos mesmo garantir que o setor esteja avançando conosco, sabe? Esse também é o nosso
+
+principal foco. Portanto, trata-se de um modelo de última geração, que publica as coisas de forma aberta, e é isso que queremos fazer. Mas primeiro quero dar um passo atrás e falar um pouco sobre como treinar modelos, e especialmente como gerar modelos que geram conteúdo, imagens e tudo mais. Sabe, quando eles geram coisas, quando você os treina, eles na verdade não entendem o que estão gerando, sabe, eles não entendem que meu copo aqui deveria estar no estábulo. Eu não deveria passar por isso.
+
+Como você os treina, você tem imagens e, em seguida, adiciona algum ruído aleatório a essas imagens e tenta remover o ruído. É isso que você faz. É isso que esses modelos estão fazendo. E quando você remove o ruído das imagens, você nunca aprende, sabe, que meu vidro não deveria passar por aqui. Você nunca aprendeu que, sabe, se você se senta na cadeira, não deve passar por isso.
+
+Então, o que você faz? É isso que você faz, o que é chamado de alinhamento de representação. Então, você usa um modelo externo que realmente sabe disso, e esse modelo é um codificador, como um codificador de imagem, que ensina ao nosso modelo: "Ei, ele está sentado na cadeira. Ele não deveria passar por ela." Esses modelos são externos e são treinados para segmentar imagens, enquanto os nossos modelos são treinados para gerar imagens, vídeos ou áudio. E você tenta
+
+alinhá-los para que tenham o mesmo objetivo, de modo que nosso modelo generativo aprenda: "Ok, você não deve atravessar a cadeira. Meu copo deve ficar nesta mesa." E isso é ótimo, porque realmente melhora o funcionamento dos modelos generativos . Podemos ver aqui à direita que a convergência e a redução de perdas são 70 vezes mais rápidas quando se utiliza esse alinhamento externo. Então você pensa: "Ok, isso é ótimo."
+
+Mas, como de costume, se algo está funcionando bem, também existem contrapartes. Então, a primeira é que você tem um limite máximo de escala. Imagine que você está trabalhando com um modelo externo, que foi treinado em um ponto de verificação, e que você não está mais alterando-o . E se você treinar um novo modelo e tiver um modelo generativo que deseja ampliar? Você ainda está limitado por esse codificador que você tem ao lado, sabe? Dessa forma, você nunca consegue aumentar a escala
+
+completamente. Além disso, eles são especializados em modalidades. Você tem um encoder, por exemplo, o DinoV2, e outro que não me lembro. É especializada exclusivamente em imagens. E se você quiser que seu modelo gere imagens, áudio, vídeo e muito mais? Você
+
+precisaria de codificadores para todos eles, e você pode imaginar que isso resultaria em uma configuração tipo Frankenstein, sabe, nada faria muito sentido. E os objetivos também não estão alinhados, como já disse antes. Queremos gerar conteúdo. Queremos gerar imagens ou áudio. O outro está aqui para segmentar as coisas. Então, é como se eles
+
+tivessem objetivos diferentes e você estivesse tentando fazê-los trabalhar juntos. E funciona muito bem, mas também não é perfeito. Aqui, como você pode ver à direita, temos o DinoV2 e o DinoV3. O DinoV3 é um modelo tecnicamente melhor, em si, do que o DinoV2. Mas quando você treina seu modelo e obtém desempenhos piores, sabe, o DinoV3 está aqui, bem em vermelho e verde.
+
+E, portanto, você está obtendo desempenhos piores. Então você pensa: "Ok, este modelo deveria ser melhor . Mas, quando eu o treino para gerar resultados, ele piora." E também não existem regras que expliquem por que certos codificadores devem funcionar ou não. Então, como podemos resolver isso?
+
+Como você pode ensinar, sabe, uma representação de modelo diretamente sem esse codificador externo? Isto é o que publicamos há cerca de um mês e meio, que é um artigo de pesquisa. Você pode ler isso. Chama-se Autofluxo. Está à vista de todos. Lançamos isso
+
+para garantir que estamos realmente fazendo o setor avançar novamente e que não somos os únicos a nos beneficiar disso. E é basicamente uma abordagem escalável para o treinamento de modelos generativos multimodais. Então, eles usam aprendizado autossupervisionado, então você não precisa de nenhum outro modelo para treiná-lo. E vou tentar entrar em um pouco mais de detalhes. Mas combinamos aprendizado de representação e geração no mesmo fluxo.
+
+E você pode ver aqui à esquerda, vídeos, imagens ou áudio. Você tem diferentes modalidades. O que você costuma fazer quando treina um modelo? Você adiciona um pouco de ruído, adiciona um ruído aleatório, tenta remover o ruído e depois alinha com o codificador, sabe? Como fazemos isso então?
+
+Na verdade, adicionamos dois tipos diferentes de ruídos, ambos aleatórios e distintos entre si. A primeira coisa que estamos adicionando é, na verdade, muito ruído aos ativos. Então, esta é a que você vê na parte superior. E a outra que estamos adicionando é uma pequena quantidade de ruído. Isto é o que você vê na parte inferior.
+
+E a ideia é que, dessa forma, tenhamos dois modelos que realmente funcionem em conjunto. Temos a versão para estudantes, que sempre recebe as imagens com mais ruído e tenta removê-lo. E então a imagem do professor, que é basicamente uma versão mais estável da imagem do aluno, está sempre recebendo imagens com baixo nível de ruído. E então o aluno, na verdade, está tentando aprender duas coisas ao mesmo tempo. O objetivo é minimizar a perda para a geração e a perda de representatividade. E
+
+é assim que você trabalha, de fato, em diferentes modalidades. Sabe, nesse caso você só tem um modelo, não tem nada externo, e se você ampliar seu modelo, estará ampliando seu aluno, estará ampliando seu professor. E você não precisa mais se preocupar com o codificador que fica na lateral. E é nisso que estamos trabalhando. Isso é algo que, você sabe, estamos usando atualmente para diferentes modelos que estamos treinando. E é aqui que
+
+acreditamos que o futuro nos levará, a nos livrarmos desses codificadores que temos. Na verdade, nós treinamos modelos. Então, atenção, esses são modelos de pesquisa, não devem ser lançados em produção. Mas, na verdade, lançamos apenas um modelo para todas essas modalidades. À esquerda, estamos comparando o método de correspondência de fluxo, que é a forma usual de treinar modelos, com o nosso.
+
+E vocês podem ver que somos melhores em áudio. Então, é isso que você vê em laranja no lado direito. E, além disso, também nos saímos melhor em imagens. Portanto, as linhas tracejadas representam a linha de base. E então, somos como a linha completa, onde podemos ver que também somos melhores em imagens.
+
+E também sou melhor em vídeo. Assim, com essa abordagem, sem a necessidade do codificador e do modelo externo com os quais você pode ter dificuldades, você na verdade melhora em todas as modalidades em que está treinando seu modelo. Além disso, está convergindo mais rapidamente. Como você pode ver à direita, a linha de base está convergindo, na verdade, atingindo um platô. Enquanto isso, estamos convergindo mais rapidamente.
+
+E ainda estamos, sabe, diminuindo o prejuízo. E tenho quase certeza de que, se chegássemos a 2 milhões de passos, a linha de base atingiria um platô e não melhoraria mais . Talvez até piore. Mesmo assim, ainda teríamos prejuízo. E essa é a diferença entre os dois.
+
+Se você já usou o Flux no passado ou se usou modelos diferentes para gerar conteúdo, talvez tenha notado que o texto pode não estar perfeito ou que as coisas não fazem muito sentido. Isto é o que você vê na parte superior. À esquerda, parece que o futuro está em constante mudança. Mas você pode ver, sabe, que faltam algumas letras ou talvez haja duas letras em algumas palavras, por exemplo, dois "L"s em vez de um. Já com essa abordagem atual, na abordagem de Fluxo Celular, você pode ver que na parte inferior tudo faz sentido. É
+
+como se eles aprendessem sobre representação, sabe, eles aprendem que o Flux e as letras devem ficar uma ao lado da outra. E o mesmo no espelho, o mesmo na árvore. E é aqui que acreditamos que reside o futuro. Mas, além disso, podemos observar algumas comparações aqui. À esquerda está a linha de base. Mais uma vez, as
+
+letras estão erradas. À direita, você pode ver que as letras estão corretas. O mesmo se aplica à anatomia. Onde você vê à esquerda, sabe, tem um rosto que parece um pouco estranho. Vamos colocar dessa forma. E à direita, este é o que tem o
+
+Cell Flow. E, novamente, este não é um modelo de produção onde, sabe, você espera que o rosto seja perfeito, mas você pode ver que a anatomia é muito melhor do que a que você tem à esquerda. O que eu também quero mostrar para vocês é uma geração diferente, caso carregue. Sim, obrigado. Isso também é possível.
+
+Isso também é possível para geração de vídeo. Portanto, este é o mesmo modelo que foi treinado com imagens. Agora também é possível gerar vídeos. À esquerda, você vê a linha de base. Então, uma maneira estranha de fazer flexão. Vamos colocar
+
+dessa forma. Já à direita, a forma é perfeita . Sabe, os braços estão corretos. O cabelo também está correto e não há nada de errado com ele. E esta é, sabe, uma forma de realmente corrigir todos aqueles artefatos que você normalmente vê em gerações.
+
+O mesmo se aplica aos pássaros. Ops. Meu erro. Sim, obrigado. Ah, aqui é a mesma coisa para os pássaros.
+
+Obrigado. Onde você vê no lado esquerdo, está a linha de base. Há muita oscilação na imagem. Estão acontecendo muitas coisas estranhas porque o modelo estava usando esse codificador e tentando alinhar os elementos. Já do lado direito, o Flurry que vendemos faz isso perfeitamente, como se o pássaro estivesse andando no chão, sem nenhuma oscilação ou algo do tipo.
+
+Mas não se trata apenas de imagens, vídeos ou áudio. Vocês treinam isso em conjunto. Então, vocês também podem gerar coisas em conjunto. Temos aqui um exemplo de vídeo e áudio onde a ideia é mostrar alguém dizendo "Olá da Floresta Negra". Bem, vou reproduzi-las e você ouvirá a diferença. Novamente, este não é
+
+um modelo pronto para produção. Então, não é perfeito, mas espero que você consiga perceber a diferença. Olá da Floresta Negra para sempre. Olá da Floresta Negra. Olá da Floresta Negra para sempre. Então, essa
+
+era a base, onde, se você ouvir corretamente, se tentar prestar atenção no que ele está dizendo, você ouve algo como "Olá da Floresta Negra". Tem umas coisas meio estranhas no final. Olá da Floresta Negra, pela primeira vez. Olá da Floresta Negra. Enquanto que do lado direito você pode ver, sabe, a mensagem é basicamente "diga olá da Floresta Negra" e termina aqui.
+
+Sim, este é o mesmo modelo que foi treinado com aquelas imagens que já vimos antes em vídeo e em vídeo e áudio. Olá da Floresta Negra! Mas isso é legal e ótimo. Mas e se também fosse possível ensinar robôs a usar isso? Este também é o mesmo modelo. Este é treinado em
+
+ações e não apenas em imagens, vídeos ou áudios. Assim, também pode prever ações. E o que vou mostrar agora é um robô que está tentando pegar uma lata e trazê-la para mais perto de nós. À esquerda, temos a linha de base. Novamente, você vê algo como uma oscilação. Você vê,
+
+parece que o braço está fazendo coisas estranhas. Já à direita, com a mesma quantidade de passos, você pode ver como o robô pega o braço diretamente e o aproxima. E é para esse caminho que estamos caminhando, assim como a empresa. É aqui que realmente estamos interessados: não apenas na geração de imagens ou vídeos, mas também na execução de ações e em outras atividades relacionadas à IA física. E tem mais.
+
+E também como podemos tornar nossos modelos mais rápidos? Porque isso é realmente importante para nós. Esta é uma demonstração do Klein, que é, você sabe, como uma edição quase em tempo real. Você pode ver isso do lado direito. Isso foi gerado com o Klein na Coreia, onde você vê as edições, e não se trata de um modelo de vídeo. Essas são imagens
+
+que estão sempre sendo editadas em tempo real. Não só são mais rápidos, como também são, na verdade, pelo menos equivalentes ou melhores do que outros modelos. E meu tempo está quase acabando. Ah, eles acrescentaram 5 minutos. Então, não sei se estou bem, legal. Então, ainda tenho tempo. Assim
+
+posso relaxar. Então, sim, aqui à esquerda podemos ver, sabe, o Klein, que é 4B e 9B, em comparação com outros modelos de código aberto. Então, pelo menos está no mesmo nível, enquanto a latência, sabe, é tipo 0,5 segundos, enquanto a do Kwen é tipo uns 15 segundos, sabe? E se você estiver no mesmo nível e for muito mais rápido, isso é realmente muito bom para nós. O mesmo vale para as imagens; você pode ver a edição. Para o Klein 9B, estamos em
+
+pouco mais de 0,5 segundos, enquanto o Kwen ainda está em torno de 15 segundos. E o mesmo acontece com a referência múltipla: você a adiciona, mas ainda estamos em menos de um segundo, enquanto Kwen está mais próximo dos 20 segundos. E isso é o que é realmente muito importante para nós, porque você realmente quer gerar coisas em tempo real. É aqui que acreditamos que o mundo se voltará para a inteligência visual. É para este caminho que estamos caminhando como empresa no futuro.
+
+E por que isso importa? Como mencionei, a geração é em tempo real , então você pode imaginar que consegue renderizar protótipos tão rápido quanto pensa. Sabe, você não precisa esperar, não precisa esperar 10 segundos, 20, um minuto ou dois. Você realiza ações em tempo real e pode orientar em tempo real. É também para lá que vamos. Você pode
+
+pensar, por exemplo, em motores visuais interativos para jogos ou filmes, onde você realmente renderiza um filme conforme as instruções são dadas. Além disso, também existem modelos mundiais. A ideia por trás dos modelos do mundo e por que eles são importantes para nós é que você treina seus modelos para entender e simular a geometria, as relações e as diferentes interações do mundo. E você pode pensar: "Ok, isso é legal do ponto de vista da pesquisa. Por que nos importamos com isso?"
+
+O motivo são os robôs. É por isso que nos importamos. É por isso que, sabe, a robótica e a automação são o caminho que estamos trilhando com a BFL, e é por isso que também queremos avançar em direção a modelos mundiais: treinar agentes nesses mundos generativos para escalar a direção autônoma e automatizar toda a manufatura. E acho que é isso. Muito obrigado.
+
+[aplausos] Podemos responder a perguntas? Sim, acho que podemos . Sim, eu tenho algo como...
+
+Você quer dizer os dados? Não dá mesmo. Ah, isso é segredo comercial. Quero dizer, os dados são muito sensíveis, como você pode imaginar. Então, não posso compartilhar isso.
+
+Estamos firmando parcerias com muitas pessoas para isso.
+
+Hum. Bem, é isso que o modelo está aprendendo. É basicamente como se essa representação, sabe, o modelo estivesse aprendendo isso por si só como se fosse o estado, e tivesse algum tipo de memória. E é assim que fazemos.
+
+Não, é sim, é a janela de contexto que você tem, sabe, você treina e depois tem os tokens e aí eles vão dizer: "Ah, olha, eu me movi. Aqui é onde eu devo estar em seguida."
+
+Defina "longo". Como se chama "longo"? Indefinidamente. Hum, disso eu não tenho certeza. Quer dizer, sempre haverá um limite. Então, você pode ter, sabe,
+
+uma janela de correr. Mas é assim que vemos as coisas. Obrigado.
+
+[música]

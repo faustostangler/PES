@@ -1,0 +1,438 @@
+---
+video_title: "Demand-Driven Context: A Methodology for Coherent Knowledge Bases Through Agent Failure"
+video_id: _QAVExf_1uw
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_QAVExf_1uw
+video_date: 2026-05-05T13:00:06+00:00
+video_description: |
+  Enterprise teams spend a lot of time trying to guess what AI agents need to know. This workshop flips that around. Instead of curating context top-down, Raj Navakoti shows how to build a demand-driven context base by giving agents real problems, watching where they fail, and using those failures to reveal exactly what knowledge is missing.
+  
+  Using practical exercises and real examples from IKEA Digital, the session walks through how to grow a knowledge base problem by problem, structure it in Markdown, and use agents with different roles and reasoning boundaries against the same shared context. If you're building enterprise AI systems and want a more grounded way to create useful context, this is a strong practical framework.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/raj-navakoti-529880b1/
+  
+  Timestamps:
+  0:00 - Introduction and speaker background
+  2:47 - The situation: Analogy to the movie Memento and AI's memory constraints
+  3:55 - Evolution of AI: From prompt engineering to deep agents
+  4:33 - Enterprise AI challenge: Why productivity isn't moving
+  5:33 - The problem: Green (general), Orange (taught), and Red (institutional/tribal) knowledge
+  10:11 - The Monolith: Why institutional knowledge is often outdated or missing
+  11:24 - Solution introduction: Demand-driven context
+  13:05 - The "Pull" strategy: Learning by doing vs. pushing information
+  14:48 - The agent lifecycle: Problem to discovery to documentation
+  17:46 - Demo introduction: Using a framework for context management
+  19:12 - Live demo: Incident root cause analysis and context discovery
+  24:05 - Scaling: 14 incidents to show confidence level improvement
+  26:27 - Automated scale: Validating knowledge across the monolith
+  33:01 - Storage strategy: Why GitHub is preferred for knowledge repositories
+  34:47 - The Meta Model: Navigating domain relationships
+  36:27 - Value proposition: Knowing the unknown and managing knowledge
+  39:02 - Summary: The 80/20 rule and cache-based context blocks
+  40:15 - Workshop takeaways: Repositories and scanners
+  43:33 - Q&A Session: Addressing scalability, tooling, and cost
+---
+Ah, obrigada. Talvez possamos começar. Primeiramente, muito obrigado por ter vindo ao workshop. Principalmente aqueles que não conseguiram a vaga. Hum, eu prometo que farei o meu melhor para tornar isso divertido, especialmente para você. Para
+
+sentar. Ah, muito obrigada. Para nos oferecer como voluntários, certo? Sim. Na verdade, faz sentido. Então agora eu
+
+sei por que os ingressos esgotaram, né? Qual oficina, afinal, teve os ingressos esgotados? Então, vamos começar com a minha apresentação. Então, eu sou Raj. Bem, eu trabalho como engenheiro de software na IKEA.
+
+Eu trabalho em uma área chamada entregas e serviços. Basicamente, somos mais de 100 engenheiros e seis equipes da Pedics ao todo . É como uma miniempresa dentro da própria empresa. Hum, tenho muito interesse em arquitetura, neurociência e linguística. E agora, IA. Então, se alguém tiver algum
+
+projeto interessante, porque todo mundo está criando projetos interessantes hoje em dia, por favor, me procure depois da reunião. Então, uma rápida checagem de pulso com a plateia. Quem está visitando Londres pela primeira vez? Ok, legal. Bem-vindo a Londres.
+
+Quem aqui tem formação em engenharia ? Também com codificação wipe e prototipagem. Não, tudo bem. Então, quem usa ativamente agentes como o Copilot? Ok, isso vai ser difícil para mim então.
+
+Então, extensões? Ok, então todo mundo é profissional. Ok, tudo bem. Não tanto quanto eu gostaria. Ok, quanta tensão agora.
+
+Então você vai ficar sentado aqui nesta sala quente por mais de uma hora. Então, primeiro vou fazer uma breve introdução sobre o que vou apresentar hoje. Basicamente, tudo depende do agente e do gerenciamento de contexto. Hum, eu divido em três partes. Bem, a primeira é a situação, que todos vocês já conhecem, então vou ser breve e conciso, em cerca de 5 minutos.
+
+Então, vou falar sobre o problema. É aqui que vou dedicar um pouco mais de tempo aos slides, porque acho que ninguém está realmente analisando o problema a sério. E eu quero mencionar isso. Então, menos slides e mais atividades práticas . Bem, como funciona, na prática, o contexto orientado pela demanda.
+
+Tudo certo? OK. Então, vamos começar com o primeiro . Quantos de vocês já viram esse filme? Lembrança.
+
+OK. OK. OK. Legal. Então, vou dar um resumo do filme. Então, esse cara
+
+é muito habilidoso, muito talentoso. O único problema que ele tem é que ele não consegue reter informações por mais de 15 minutos. Então, a cada 15 minutos ele tem que pegar o caderno, observar as tatuagens que ele fez e descobrir, ok, o que eu estava fazendo antes dos 15 minutos. E ele faz isso repetidamente. Se você se identifica com a inteligência artificial e os agentes de IA, isso se encaixa perfeitamente com o filme e com a forma como os agentes estão atualmente.
+
+Se você assistir a este filme, não precisará recorrer ao YouTube ou a blogs para entender agentes e o MCP. Este filme, na verdade, conta tudo. Literalmente. E como esse cara tem um problema de memória, da mesma forma que a IA que nos foi apresentada há alguns anos é muito boa em raciocínio, computação e geração de código. É considerado acima da média.
+
+O único problema é o conhecimento institucional, certo? O conhecimento que você possui sobre o assunto. Essa é a única coisa que temos que é um pouco problemática. Então, da IA ​​ao agente, se você observar a evolução, ela foi exponencial. Então, tudo começou com a engenharia de resposta rápida.
+
+Depois vieram os trapos, os MCPs e, em seguida, os agentes múltiplos. Agora, são agentes de infiltração. Descobri recentemente que, usando o Replit, é possível criar um aplicativo completo em 10 minutos. Isso significa que, quando você terminar de fazer o macarrão instantâneo, já terá um aplicativo milionário funcionando no seu laptop. Então, chegamos a este ponto.
+
+Tipo, é extraordinariamente bom. Isso sim é IA e agentes. Então, vamos falar sobre IA empresarial. OK. Não sei quantas pessoas já fizeram essa pergunta, mas a maioria das empresas que vejo questionando isso é: "Ok, a IA é muito inteligente. Ela
+
+gera código, cria aplicativos full-stack, revisa seus pull requests , gerencia incidentes e tudo mais. Certo? Então, se a IA faz tudo isso, por que os tickets ou épicos do Jira não estão sendo atualizados no painel? Por que eu não vejo a entrega, na verdade? Todo mundo fala: 'Em 3 minutos, tudo está pronto.'
+
+Sim, ok, tudo bem. Por que meus épicos do Jira não estão sendo atualizados? Porque isso define a entrega para o negócio e o retorno sobre o investimento, certo? E como você pode ver, segundo a McKinsey deste ano, 88% das empresas usam IA, mas só veem cerca de 6% de criação de valor.
+
+Ok. Então, acho que esse é o problema que temos. Tenho quatro tickets no Jira, diferentes alguns exemplos. E você pode ver os verdes que eu marquei como sendo basicamente o que o LLM já sabe ou já treinou, como os padrões APS ou coisas que eles já conhecem, é um conhecimento geral, certo? Tudo bem.
+
+Essas tarefas do ticket eles podem pegar e fazer. Agora, há a segunda parte, os laranjas, que precisamos ensinar a eles. Então, você sabe isso, mas faça isso desta maneira. Então, todas essas coisas em laranja se encaixam na extensão do seu agente, como habilidades ou...
+
+Mas os vermelhos representam o conhecimento institucional, que reside dentro da empresa e das pessoas. Então, a menos que ele pegue uma tarefa, se ele pegar um ticket, ele tem que cumprir todas elas. Ele é muito bom com os verdes e laranjas, mas tem dificuldades com os vermelhos, com o conhecimento institucional. E o que eu acredito é que, agora, os agentes de codificação estão ficando muito melhores. Eu sinto que, se houver uma IAG (Inteligência Artificial Geral) chegando, a primeira IAG será uma... Com certeza, um agente de codificação
+
+.
+
+Então, para resolver o problema de fornecer o conhecimento institucional aos agentes, já temos uma solução do mercado. Basicamente, o retorno do investimento em um pipeline de IA será assim, certo? Você tem a qualidade do modelo LLM, os agentes e a infraestrutura para os agentes. E o conhecimento institucional fica armazenado no Confluence, Jira, SharePoint, GitHub e outras plataformas. Basicamente, a camada de recuperação é o que o mercado nos diz que resolverá esse problema. Você
+
+constrói uma camada de recuperação que busca todas essas informações e as fornece a um agente, que deve ser capaz de processá-las, certo? Basicamente, 40% de precisão factual pode ser alcançada por meio de RAGs ou grafos de conhecimento, com uma base de conhecimento documentada.
+
+Agora, se você construir uma camada de recuperação, ela precisa funcionar, certo? Deixe-me fazer uma pergunta: quantas camadas de recuperação você já construiu, como RAGs e MCPs? Legal. Todos eles. Ok, agora a pergunta é: quantos você construiu?
+
+Quantos MCPs você construiu? Quantos você construiu, pelo menos mais de 20 MCPs ? Ok. Ok, então ninguém bate meu recorde. O que eu vejo é que, principalmente em organizações corporativas, as pessoas estão construindo de 10 a 15 ou até 20 servidores MCP, ou grafos de conhecimento, sobre o conhecimento institucional e para o agente, certo? Então, a suposição
+
+é que, se eu conseguir construir todos esses servidores MCP e fornecer a esse agente, ele não precisará fazer nada, como se nada tivesse acontecido. Mas o problema é que, quando você conecta esses servidores MCP, basicamente todos os dados que saem são, em sua maioria, indeterminísticos. São não confiáveis ​​e não testados, certo? Então, especialmente em engenharia, ninguém faz avaliações de engenharia. Na verdade, é mais um conceito de aprendizado de máquina de dados, mas não fazemos avaliações de engenharia. Então, para
+
+mim, se você conectar um MCP ou algo assim... O que vemos é apenas um pano e tudo o que importa é se o resultado está chegando ou não, em vez de avaliar se ele é realmente valioso . Será que realmente resolve o problema? Esse é o principal
+
+problema que vejo. Não estou apontando o dedo para outras pessoas, porque eu já estive nessa situação. Eu pensava: "Ok, vou construir todos os servidores MCP, aplicar meu conhecimento institucional. Vou provar que os agentes podem, de forma semiautônoma, continuar preenchendo os tickets do Jira e finalizá-los, certo?" Mas, toda vez que eu construía esses servidores MCP, em 10%, 20%, 30% das vezes o resultado era preciso, mas no resto do tempo eu estava fazendo o trabalho de entrada de dados para eles. Então, eu
+
+estava preenchendo as lacunas, fazendo as perguntas. Basicamente, eu estava trabalhando mais do que trabalhando. Acho que esse é o principal problema. E eu estava nessa quarta etapa, onde literalmente comecei a escrever o contexto do domínio à mão . Então, pensei: "Ok, vou escrever tudo e pronto", mas fiquei realmente exausto de fazer isso.
+
+Então, não sei quantos de vocês se identificam com este gráfico de pizza. Bem, a maior parte do conhecimento institucional corporativo é mais ou menos assim: 20% está desatualizado, 20% é pouco confiável, 20% está sempre duplicado em diferentes lugares e 10% é o principal problema: 40% do conhecimento é conhecimento tácito, ou seja, as pessoas sabem como as coisas funcionam, mas nunca é documentado. Então , nessa situação de uma empresa, se você construir, digamos, 100 servidores MCP e conectá-los a esse monolito, não importa quantos você construa, não vai funcionar porque, basicamente, todo o seu conhecimento institucional é um monolito. Acho que, como vocês são da área de engenharia, já conhecem a transformação de sistemas legados monolíticos para microsserviços, certo? Da mesma forma, a menos que dividamos essa base de conhecimento monolítica em blocos de contexto que sejam úteis, não conseguiremos utilizá-la. Só assim poderemos
+
+tornar isso útil para os agentes. Para os agentes, é preciso torná-los semi-autônomos para que possam realizar as tarefas. Então, é isso. Neste workshop, falaremos principalmente sobre esse monolito, como quebrá-lo, qual a abordagem para quebrá-lo e como ele se torna útil depois de quebrado. Essa é uma tarefa que precisamos realizar, pois os provedores de LLM (Learning Learning Management) se concentrarão na qualidade do modelo LLM. Os
+
+agentes se concentrarão na integração de recursos, e existe um grande mercado de recuperação de dados de 9 bilhões. Eles estão focados na recuperação de dados. Mas ninguém virá à sua empresa e consertará sua base de conhecimento. Você terá que consertá-la sozinho, certo? Então, como podemos fazer isso?
+
+O contexto orientado à demanda é a solução que eu estava tentando propor. Certo? Basicamente, se eu tiver que resumir, temos um monolito de serviços e temos esse processo de quebrá-lo em microsserviços. Temos o modelo em cascata. modelo que transformamos em ágil. Da mesma forma, quando você tem um
+
+monolito de conhecimento institucional, como você o transforma em blocos de contexto usando uma abordagem? Então, esta é uma abordagem de como podemos fazer isso. Antes de começar, é importante ressaltar que não se trata apenas de uma ideia. Já testamos com alguns conjuntos de dados e tentamos comprovar que essa abordagem funciona. Em março, publicamos um preprint no RXP. Se alguém estiver interessado em
+
+ler artigos acadêmicos, pode encontrá- los no contexto orientado à demanda ou posso fornecer o link após o workshop. Certo. Então, como funciona na prática? Quando fornecemos conhecimento institucional aos agentes, basicamente, o que estamos tentando fazer é uma estratégia de "push", certo? Construímos tudo e enviamos para eles.
+
+Nesta abordagem, é mais uma abordagem de "pull". Isso significa que, por exemplo, digamos que um novo funcionário entrou na sua empresa. Como você integra essa pessoa? Você a integra. Eles ficam conosco por um ou dois dias. Você
+
+dá uma orientação inicial e depois diz coisas como: "Ok, estes são os links da conferência, este é o GitHub, esta é a documentação que vocês precisam seguir e tudo mais". Então, você simplesmente atribui uma tarefa à pessoa. Mas você não vai dizer: "Ok, vá se formar neste conhecimento e volte, aí eu te dou o trabalho", certo? Então, você apenas atribui um item de trabalho. E quando você atribui o item de trabalho, a pessoa começa a fazer perguntas, preenche as lacunas. Se a pessoa gosta muito de
+
+documentação, ela também a preencherá para você. Ela gradualmente adquire o conhecimento institucional, certo? Da mesma forma, não impomos todo o conhecimento ao agente, mas começamos a dar problemas aos agentes, como itens de trabalho, e deixamos que eles extraiam as informações de nós. E, uma vez que extraiam as informações, também pedimos que as documentem. De uma maneira melhor do que em uma estrutura monolítica.
+
+Então, se você... Então, essas são as quatro camadas. Você tem um monolito, uma estrutura e... Na verdade, ele extrai e
+
+cria blocos de contexto melhores . Você pode relacioná-lo diretamente a um monolito legado ou a microsserviços, se precisar de uma analogia . Então, é assim que funciona. Este é um ciclo de como
+
+um problema é apresentado a um agente, e na primeira tentativa o agente falhará em resolvê-lo. Ele dirá: " Você me deu um problema, mas não consegui encontrar nada na documentação. Não consegui resolvê-lo." Então, ele fornece uma lista de tarefas que precisa realizar para concluir a tarefa . Cumprimos a lista de verificação.
+
+Assim que o problema é resolvido, o agente utiliza esse conhecimento e o atualiza, ou seja, o organiza em um local específico para que possa ser reutilizado em outras regiões . Este é um ciclo. A ideia é que, se pudermos fazer isso em várias sessões com vários problemas, o agente irá gradualmente organizar o conhecimento. base de conhecimento monolítica , e também documentá-la para você. Você também pode relacioná-la ao TDD. Então,
+
+quantos usam TDD? Ninguém odeia TDD, certo? Antes, antes de eu... sim. Ok. Ok. Então, da
+
+mesma forma, certo? Em uma abordagem TDD, o que fazemos é escrever os casos de teste que falham. Não construímos o produto primeiro. Apenas escrevemos os casos de teste que falham. Vemos qual código está faltando para que o caso de teste com falha passe e simplesmente fornecemos esse código e gradualmente construímos o produto com base nos casos de teste com falha. Da mesma forma,
+
+damos problemas que o agente certamente falhará e gradualmente preenchemos essas lacunas e, em certo ponto, ele se torna semiautônomo com um bom conhecimento institucional já estabelecido. Ok. Então, acho que posso começar com algum tipo de demonstração. Então, Vou usar o terminal, então não me odeiem. Acho que todos vocês têm formação em engenharia, então acho que vão gostar do terminal.
+
+Deixa eu mudar para o terminal.
+
+Ok.
+
+Ok. Então, bem à esquerda, o que vocês veem é como ele funciona internamente. Quando você recebe um problema, como o agente falha? Como ele solicita o conhecimento necessário para resolver o problema? E um humano, como um especialista no assunto, preenche essas lacunas e então o sistema cria uma nova base de conhecimento para você, o que é muito melhor. E então o agente
+
+tem sucesso e você pode repetir o processo para os próximos problemas. É assim que um ciclo funciona. Ele pode ser implementado usando qualquer agente. Pode ser implementado na nuvem ou no Copilot, porque é uma abordagem que você pode usar da maneira que preferir. No trabalho, eu uso o Copilot. Então,
+
+implementei isso usando o Copilot, mas acredito que todos preferem a nuvem. Então, eu criei esta demonstração com o CloudCode e você pode ver que é apenas uma combinação de habilidades, regras, agentes e hooks, além de um local para salvar a base de conhecimento. No painel do meio, o que você vê na parte superior é basicamente o seu monolito. Esta é uma representação do seu Confluence, Slack, GitHub e tudo mais, mas apenas para fins de demonstração, eu coloquei alguns arquivos simples que se parecem com eles. Então, é assim que sua base de conhecimento monolítica ficará. Na parte inferior, o que você
+
+vê é o funcionamento em tempo real. Ou seja, quando um problema está sendo resolvido, como o novo conhecimento é adicionado. Então, deixe-me...
+
+O que eu vou fazer é ir até o agente.
+
+Ok, vou basicamente fornecer um incidente para fazer a análise da causa raiz , certo? Então, o que eu fiz foi... você se lembra do slide anterior, onde mostrei exemplos de tickets do Jira? É uma
+
+combinação de conhecimento documentado e não documentado. Então, este incidente também representa o mesmo tipo de combinação. Há conhecimento já documentado no seu monolito, mas parte dele não está lá, está desatualizado ou algo do tipo. E a maior parte, não é possível encontrar porque nunca foi registrada por escrito. Então, quando apresentei este problema, ele utiliza as habilidades que desenvolvi com essa abordagem. Ele tentará
+
+primeiro acessar o seu monolito, a base de conhecimento, e buscar informações sobre o que está lá. Pense nisso da seguinte forma: a primeira parte é a recuperação. Isso significa que ele já faz o que o arrastar e o MCP fazem. A primeira parte. Mas o que ele faz depois de buscar os dados é o que ele fará com eles.
+
+Essa é a parte que falta. Por exemplo, quando você fornece links para uma nova conferência a um novo funcionário, ele acessa o link, procura informações, mas não encontra nada . Mas ele não para por aí. Ele continua fazendo perguntas para resolver o problema e, assim, adiciona mais conhecimento e outras informações. Faltam os próximos passos neste momento. Paramos na
+
+recuperação. Então, estes são os próximos três passos que ele executa . Como você pode ver, a pontuação de confiança é quase de um a cinco porque diz: "
+
+Estas são as terminologias específicas. Eu realmente não entendo essas terminologias. E essas lógicas de negócios não são necessárias." Portanto, uma coisa que você precisa observar aqui é que, seja o que for que esteja escrito, esta é a informação não documentada. Isso significa que nunca foi escrita.
+
+Então, a menos que você faça desta forma, você nunca saberá o que não está documentado. Por exemplo, se alguém disser: "Ok, falta documentação." Precisamos escrever." Certo, o que você quer que eu escreva exatamente? Há tanta coisa na cabeça das pessoas. Eu
+
+não consigo escrever tudo. De alguma forma, isso precisa vir à tona. Então, quando você apresenta um problema, isso realmente revela o que não está documentado. E me diz: "Ok, isso está faltando." "Preciso de uma nova informação lá."
+
+Então, o que farei é executar todas as três etapas. Então, o que farei é... Eu já tenho uma resposta pré-preparada. Uma
+
+resposta pré-preparada de alto nível. Eu a forneci. Tipo, qual é a informação que falta? Então, ok, esta é a informação que falta. Você me pediu para resolver este problema. Você consegue resolver
+
+este problema agora? Eu não esperava por essa. Ok. Notificações: sim, vou dizer sim.
+
+Se essa é a única resposta, qual nome fictício devo usar? Ok, eu não vi . Veja, quando fiz o teste, ele não me fez as perguntas. Deixa eu ver... Ele sabe que é uma demonstração e
+
+eu o treinei para reconhecer. Ok. Não, ele já está fazendo isso. Então, você pode ver ao vivo que ele já está adicionando as entidades, que a nova base de conhecimento foi inserida .
+
+Então, a base de conhecimento é gerenciada como um sistema de arquivos, certo? Ou como arquivos do sistema? Na demonstração, estou mostrando como um sistema de arquivos, mas basicamente são seus servidores MCB. Os dados ficarão no Confluence, Slack ou outros serviços. Você pode simplesmente conectar e usar os mesmos servidores MCP ou rack e tudo mais. Então, não precisa ser um
+
+arquivo plano. Trate isso como o slide do seu sistema para este agente. Certo? É como um mapa. Você usa alguma ferramenta de gerenciamento de memória para isso? Sim,
+
+mostrarei no próximo slide como vou salvar. Ok
+
+. Então, começou com 56 entidades ou algo assim, certo? Agora, um problema revelou seis entidades que nunca foram documentadas. E quando forneci essa informação, ele conseguiu descobrir e organizar outras cinco ou seis novas entidades que nunca foram documentadas. Então, ele descobre as lacunas. Ele
+
+também recebe informações minhas e armazena informações, novas informações e tudo mais. Este é um exemplo, ok? Próximo, vamos ver. Esta é uma janela movimentada. Eu tentei fazer algumas coisas... Mas não
+
+funcionou. Ok. Então, o que você está vendo na janela são 14 incidentes. Você viu um problema que eu resolvi com um agente, certo? Na comunicação. E se eu pegasse esses 14
+
+incidentes e repetisse o processo 14 vezes? Se você olhar no lado esquerdo, este é o primeiro incidente, certo? Nesse momento, a confiança é de 1,5. E tudo é crítico. Basicamente, nada está documentado.
+
+Tudo é crítico, de alta prioridade e faltam dados. Então, comecei a dar respostas no primeiro incidente, repeti o processo para o segundo e o terceiro, e assim por diante, até completar 14 incidentes. Mas, nesses 14 incidentes, o sistema conseguiu atingir um nível de confiança de 4,4, porque a cada instante ele obtinha uma lista de respostas e documentava tudo. Então, gradualmente, o nível de confiança melhorou de 1,4 para quase 5. Se você comparar com o modelo tradicional, verá que ele é capaz de fornecer uma lista de respostas a cada instante e documentar tudo. Na abordagem
+
+tradicional, resolvemos todos os problemas de contexto. Certo? Primeiro, precisamos lidar com eles e depois passá-los para o agente. Nesta abordagem, estamos transformando o agente de consumidor em gestor de conhecimento. Então, você não apenas consome informações minhas, mas também gerencia todo o conhecimento, que passa a ser sua responsabilidade .
+
+Ok, acho que podemos voltar aos slides. Como vimos, executei um ciclo e também mostrei como fica após 15 ou 16 ciclos diferentes. Mas fazer isso manualmente seria muito trabalhoso, porque, após 15 ciclos, ninguém gostaria de ficar sentado com um agente, mesmo tendo um incidente, sem que ele fique fazendo perguntas e explicando o problema. É extremamente trabalhoso. Mas podemos automatizar esse processo. É aqui que a coisa fica
+
+realmente interessante. É o seguinte. Todos nós já temos todos os itens de trabalho, certo? Temos o Jira. Temos incidentes.
+
+Temos tickets de suporte ao cliente, e por aí vai. Todos esses tipos de itens de trabalho já estão arquivados, certo? Então, por que não podemos pegá- los e usar a estrutura para validar em nossa base de conhecimento, executar uma automação e ver qual é o estado atual?
+
+Ok, deixe-me mostrar como funciona . Então, em vez de fazer tudo manualmente em grande escala, se usarmos essa abordagem, como fica? A demonstração que você está vendo é quase como se tudo estivesse predefinido. Por exemplo, tenho um agente de operações da plataforma e estou dizendo: "Ok, estes são os incidentes recentes." Digamos que eu tenha 20 incidentes recentes. Algo como um
+
+arquivo MD ou JSON, certo? Ele contém todos os detalhes da descrição, comentários e tudo mais. O restante dos arquivos é a sua base de conhecimento. É um sistema de arquivos, mas você também pode integrá-lo com o Confluence e outras plataformas. Para fins de demonstração, estou mostrando apenas arquivos simples. O que estou
+
+tentando fazer é pegar todos esses incidentes e validar cada um deles na minha base de conhecimento, perguntando ao agente: " Qual a porcentagem da documentação que é boa, qual a porcentagem que não é confiável, ou seja, antiga ou desatualizada, e qual a porcentagem que está faltando, ou seja, não documentada de acordo com este incidente?". Deixe-me executar. Isso levará algum tempo. Serão três etapas. Primeiro,
+
+ele gera sondagens, que são testes básicos que ele cria para testar sua base de conhecimento. Depois, ele executa esses testes. E então analisar as lacunas.
+
+Ok.
+
+Está um pouco quente aqui .
+
+Vou identificar as lacunas. Uh, ok. Por exemplo, digamos que você tenha um incidente chamado "o serviço de notificação não está enviando mensagens SMS para o cliente" , certo? Então, o serviço de notificação... você menciona que o agente
+
+verifica se há documentação relacionada ao serviço de notificação. Se não encontrar, significa que você nunca escreveu uma documentação sobre o serviço de notificação. Eu entendo o que são os SMS para o cliente e tudo mais. O serviço de notificação do cliente, quando você menciona, é uma lacuna porque nunca foi documentado. Ou então, ele pega o serviço de notificação do cliente , vai para o Confluence e verifica a documentação, verificando a idade dela. Se
+
+estiver escrito que tem um ano, por exemplo, ele dirá: "Veja, eu verifiquei." Tem cerca de 1 ano. "Não sei se devo confiar nesta documentação ou não." Ou algo como documentação incompleta. Então, se você observar, para cada incidente, ele analisou toda a base de conhecimento conectada e consolidou uma lista de pontuação.
+
+Os agentes conseguem lidar parcialmente com os casos extremos básicos dos incidentes que você fornece, porque sua base de conhecimento está incompleta. Isso mostrará quanto do conhecimento tácito está faltando, informações do sistema, processos de negócios, o que realmente está faltando em seu conhecimento institucional quando algo não está documentado. Essas são as sondagens.
+
+E também identificará o que é crítico e o que é de alta prioridade. Isso é realmente importante porque, digamos que haja um exemplo de serviço de notificação, que mencionei, certo? Ele aparece repetidamente em cerca de 20 incidentes, e você não tem...
+
+Este é o primeiro passo que você precisa dar, conforme sua documentação. Então, isso também nos ajudará a entender quando você está analisando sua Para ter uma base de conhecimento, você precisa entender o que é realmente crítico, no que você precisa se concentrar primeiro, o que agrega valor. Então, vamos organizar em crítico, alto e médio.
+
+Isso é o que mostrei nos arquivos planos, mas você também pode conectar às várias fontes de dados que temos. O primeiro passo é basicamente a extração de demandas. Isso significa que, para cada incidente, ele extrairá a lista de verificação das informações que estão faltando. O segundo passo é consolidar tudo o que está faltando. Ele criará sistemas e APIs e tudo mais, e indicará quantos estão limpos, quantos estão desatualizados, quantos estão incompletos, quantos estão totalmente faltando, quantos estão triviais.
+
+Esse tipo de classificação também será feito. E um quadro Kanban será criado para você. Então, o que acontece é o seguinte: se você quiser corrigir sua base de conhecimento institucional , basicamente, você simplesmente cria tickets no Jira e nós os finalizamos. Precisamos documentar essas informações faltantes e tudo mais. E, no momento em que você começa a...
+
+Então, ele também salva no contexto, construindo sua própria base de conhecimento. base. E você pode ver o desempenho. Então, uma vez que você esteja corrigindo os tickets no Kanban, o
+
+conhecimento institucional...
+
+Então, o como... O que vimos foi a abordagem, em primeiro lugar, que significa não a abordagem pull-push, mas a abordagem pull, como fazer. Um ciclo ou vários ciclos, como funciona . Mas, se você colocar isso em uma escala de
+
+automação, quão valioso seria.
+
+Ok. Agora, a pergunta importante é:
+
+Devo fazer uma narração mais tarde ?
+
+Eu tenho paciência. Quem tem paciência? Por um segundo. Então, a questão é: eu estava falando o tempo todo sobre, ok, recebe o contexto, nós fornecemos as informações, ele as armazena. Mas, a questão é onde ele realmente as armazena? Então, eu
+
+tenho uma opinião muito forte. Me escutem. Eu prefiro que vá para um repositório do GitHub porque eventualmente alguém vai criar uma solução SaaS financiada com 20 milhões de dólares em startups. Mas, antes disso, eu prefiro colocar no GitHub como um repositório. Por quê? Porque Se você analisar
+
+em escala, se quiser fazer isso, haverá vários agentes, várias equipes contribuindo para a mesma base de conhecimento. E haverá conflitos e resoluções, certo? Então, a maneira mais fácil de fazer isso é usando o GitHub, porque ele já vem com processos de PR (Pull Request), processos de revisão e tudo mais integrados. Portanto, se vários especialistas do domínio estiverem enviando arquivos ou agentes estiverem contribuindo , a maneira mais eficiente de gerenciar é no GitHub, com uma estrutura como esta. Outra vantagem é que, se você colocar no GitHub, também poderá publicar no Confluence posteriormente, ou no Slack, onde quiser, na solução que desejar usar.
+
+Eu prefiro manter no GitHub, mas se você quiser integrar diretamente ao Confluence, também pode . O próximo passo é o metamodelo. Quantos conhecem o termo metamodelo? Ok, posso mostrar rapidamente como ele se parece. Um metamodelo é basicamente algo assim , certo? Então,
+
+como o seu ... O domínio é estruturado em torno de processos de negócios e sua relação com um sistema. Como os sistemas se relacionam com as APIs.
+
+E como o jargão de negócios ou o jargão técnico estão vinculados a cada um deles. Portanto, esse tipo de metamodelo de relacionamento é realmente importante. Não é necessário para a abordagem que propus, mas é um complemento. E por que você precisa dele? Pense nisso como um mapa. No momento, seus agentes
+
+não têm um mapa para navegar em sua base de conhecimento. Basicamente, você está despejando vários arquivos e precisa descobrir qual arquivo precisa acessar, certo? Mas sua estrutura de arquivos é, na verdade, uma representação do seu metamodelo. Ele sabe como navegar. Por exemplo, digamos que você possa consertar este sistema. Ele entenderá se eu
+
+fizer alterações, quais processos de negócios serão afetados e quais APIs preciso modificar ou acessar . Portanto, também é importante ter um metamodelo. Se você o tiver, Então, isso gerará mais valor. Por isso, prefiro fortemente ter um metamodelo junto com essa abordagem.
+
+Ok. Então, a última parte é: qual o valor que isso criou? Bem, você já viu muitos slides e demonstrações. Então, pessoalmente, preciso compartilhar o valor que percebi ao usar essa abordagem, ou o feedback que outras pessoas com quem compartilhei me deram . Primeiro, o mais valioso é conhecer o desconhecido. O
+
+que nunca é documentado pode ser revelado apenas por essa abordagem. Caso contrário, você acabará em um quadro infinito do Miro, adicionando tickets como "ok, isso está faltando, isso está faltando, preciso adicionar, preciso adicionar" e assim por diante. Essa é a maneira mais rápida e melhor de descobrir, com seus itens de trabalho anteriores, o que nunca foi documentado . Segundo, basicamente, agora posso delegar tarefas aos agentes em vez de eu mesmo fazer isso. Fazer tudo . Tipo, em vez de eu
+
+dar todas essas informações aos agentes, deixo que o sistema gerencie meu conhecimento. Eu não quero ser o gestor de conhecimento disso. Então, deixo que ele faça. Esses são os dois grandes valores que observei. Se você quiser usar, acho que também verá esses dois como os mais valiosos.
+
+Mas essas são as outras coisas que observei.
+
+Agora, ok. Também preciso falar sobre as desvantagens de usá-lo, certo? Primeiro, se você vem de uma equipe pequena ou se diz "não, não, não, minha documentação, minha base de conhecimento é realmente boa", fico muito feliz por você. Vocês são os sortudos neste mundo com agentes. Para vocês, pode não ser muito relevante, a menos que tenham uma documentação muito, muito complexa .
+
+Segundo, como já mencionei, fazer tudo manualmente é muito trabalhoso. Não recomendo que ninguém faça isso. Se quiserem, podem tentar. Para fins de teste, você também pode fazer isso. Mas, a automação é a melhor maneira de usar isso.
+
+Esta abordagem ainda está em fase inicial. Então, amanhã de manhã, alguém no YouTube já terá postado algo diferente, melhor do que eu. Na era da IA, ninguém sabe por quanto tempo uma tese, uma abordagem ou um aplicativo sobreviverá. Por enquanto, considero esta a melhor abordagem. Ok, então, começamos o workshop com um pipeline, certo? Sobre o ROI.
+
+O contexto orientado à demanda fica entre este monolito e a camada de recuperação. Ele ajuda a criar blocos de contexto selecionados. Você pode pensar nele como um banco de dados de cache. Assim, seu agente não precisa vasculhar o mundo para corrigir um problema. Em vez disso, se você tiver um Um bom bloco de contexto com informações, na maioria das vezes, 80% das vezes, pode ser usado. Porque
+
+eu também acredito que sempre vale a regra 80/20. Então, 20% da sua documentação é mais útil. Os outros 80% são casos específicos que você precisa analisar. Portanto, em vez de fornecer 100% das informações, você precisa descobrir quais são os 20% que são realmente úteis para o agente e usar isso como um banco de dados de cache, o bloco de contexto para utilizá-lo. E o restante você pode deixar como links. Assim, sempre que o
+
+agente precisar de mais informações, ele poderá consultar todo o conhecimento institucional monolítico. Ok, então, o que você pode levar deste workshop são três coisas. Primeiro, espero ter deixado essa abordagem clara. Há um repositório no GitHub onde detalhei tudo e também um guia introdutório, caso você queira ir para casa e... Experimente e veja como funciona
+
+. Você já sabe como a estrutura funciona. Então, se quiser ir para casa e remixar toda a abordagem, pode fazer isso e me avisar também. Vou deixar isso aqui e me junto a vocês para contribuir. Vocês têm um scanner de lacunas contextuais que eu mostrei, que já está disponível com presets. Acho que
+
+adicionei uns 20 dólares a ele. Então, usem bastante. Certo? Ok, ok. Depois dos 20 dólares, quem chegar primeiro leva.
+
+Vocês podem usar esses três recursos neste workshop. Ok, como este é um workshop, eu também gostaria que vocês experimentassem algo. Vocês podem experimentar três coisas. Uma delas é: se você disser, tipo, "Sabe de uma coisa? Já são quase quatro horas, está quase na hora de ir para uma festa.
+
+Não quero fazer isso", você pode simplesmente usar o scanner de lacunas contextuais. Tudo aqui é um preset. Você pode experimentar e ver como funciona. Se achar que pode ser melhorado, me avise. Podemos trabalhar com isso.
+
+Ou, digamos que eu seja muito técnico e queira saber como funciona internamente, este é um repositório do GitHub. Está aqui... talvez eu só tire isso daqui.
+
+Este é um repositório do GitHub e tem todas as informações. Além disso, há um guia introdutório, caso você queira experimentar. Mas, se você ainda acha que não, que prefere algo mais simples,
+
+também pode tentar este. Então, você não precisa fazer nada. Basicamente, pegue este prompt. Pegue um dos seus tickets ou incidentes do Jira que você tem agora. Se você já configurou servidores MCP, ou qualquer outra coisa do tipo, basta usar esse prompt, passar para o seu agente, junto com o incidente ou o ticket do Jira, e perguntar: "Dê-me a qualidade da base de conhecimento que eu tenho para este incidente ou ticket do Jira" e veja quanto aparece em vermelho, o que nunca acontece. documentado. Então, você
+
+também pode tentar esta versão simples. Vou deixar assim mesmo. Talvez você possa tirar uma foto. Talvez eu possa mudar para o slide se alguém quiser.
+
+Legal.
+
+Este é o seu slide. Pode ir. Sim, vejo alguns problemas nessa abordagem, mas a acho muito interessante. Então, minha primeira pergunta é: você já usou essa forma de trabalhar em grande escala ou, porque vimos principalmente exemplos simples, certo? Sim. Sim.
+
+Uh, eu usei, uh, não em grande escala. Uh, comecei com algo mais simples porque você também precisa ver qual é o escopo. Digamos que eu tenha uma empresa e tente fazer isso em nível empresarial, não consigo porque são vários domínios, coisas e tudo mais. Mesmo se eu fizer em nível de domínio, preciso entender que tentei em nível de domínio. Então, mesmo em nível de domínio, há tanta expertise de domínio que preciso preencher e cobrir essas lacunas. Então, novamente, reduza para
+
+talvez qual seja a menor equipe que eu tenho e o Jira da menor equipe. tickets, a instância da equipe menor e a página do Confluence da equipe. Com um escopo um pouco mais amplo. Se eu detalhar o escopo, acho que fica mais rápido e útil. Mas se eu fizer com um escopo maior, o que acontece é que nenhuma pessoa tem todo o conhecimento do domínio. Então, basicamente,
+
+alguém precisa vir e cinco ou seis pessoas precisam se sentar e começar a fazer essas coisas. Sim, estou um pouco preocupado que isso possa causar um ataque de negação de serviço aos membros da sua equipe, porque nossos LLMs são ajustados para continuar coletando informações, para obter mais informações de nós, para fazer perguntas de acompanhamento. Então, acho que será difícil para os engenheiros que tiverem que responder às perguntas. E, em segundo lugar, o scanner é bom, mas ainda se baseia na premissa de que todos os membros da sua equipe e o resto da empresa ainda estão usando a TI corporativa corretamente, conforme planejado, que estão preenchendo seus tickets com todos os detalhes etc. E eu sei por experiência própria que isso não acontece. Na
+
+maioria das vezes, não é o caso. É verdade. Concordo com você. Mesmo que eu peça apoio da liderança, tipo, "Ei, vocês podem me dar mais tempo?" ou "Preciso que essas pessoas se dediquem a resolver o problema do contexto", acho que ninguém fará isso agora. Mas acredito que isso
+
+acontecerá, porque estamos caminhando lentamente para gerentes de agentes, onde os agentes estão se tornando semiautônomos ou autônomos, e nós os gerenciamos. Mas, em determinado momento , alguém terá que resolver essa lacuna de conhecimento, porque ela não virá de lugar nenhum. É preciso. Então, o foco da empresa mudará para essa lacuna. Era isso que eu estava dizendo: acho que ninguém está analisando o problema ainda. Todos estão muito focados
+
+em quão bom o agente é, quão boa é a recuperação de informações, mas não em quão bom é o contexto . Acho que, daqui a um ano ou mais, as pessoas perceberão a importância disso e do quadro Kanban. Com certeza se tornará realidade muito em breve. Sim, obrigado. Sim, acho que na verdade estão indo pelo mesmo preço. Acho que quando olhamos para o panorama
+
+geral, a fonte da verdade não é a documentação, mas sim o código. Só por curiosidade, você aplicou isso à base de código? Sim, apliquei. Também apliquei à base de código. Mas obtive um resultado misto. Então, o que
+
+aconteceu é o seguinte: quando uso apenas a base de código, funciona particularmente bem, ou quando uso apenas o Confluence ou dados textuais, dá bons resultados, mas quando combino os dois, de alguma forma entra em conflito porque cria uma teoria a partir do repositório do GitHub, mas a documentação do mesmo repositório do GitHub também está no Confluence. Então, surge um conflito: qual é a fonte da verdade? O código diz isso. Devo implementar desta forma, conforme a documentação? Então, preciso criar uma habilidade ou regra adicional, como, por exemplo, qual é a classificação que você precisa atribuir? Se você observar em
+
+um GitHub, isso significa que é a fonte da verdade. Ou, se você não vê, então precisa procurar as informações no Confluence e em outros lugares. Mas ainda estou tentando corrigir essas coisas. Então, estou vendo as lacunas e corrigindo esses problemas, mas definitivamente vejo esse problema ao combinar os dois. E a segunda pergunta é: Curiosamente, ao aplicarmos a mesma abordagem e habilidades, descobrimos que o processo começa com a execução de agentes, que trazem um contexto e identificam as habilidades certas que precisam ser usadas, certo? Então
+
+você executa a tarefa e falha, certo? E quando você falha, identifica o que precisa ser resolvido. Você volta, seleciona, corrige, mas aí você está corrigindo a base de conhecimento. O que descobrimos é que, se voltarmos e corrigirmos a habilidade, isso incrementa a próxima situação. Desculpe. Então, não tenho certeza se a habilidade
+
+poderia Também pode ser uma habilidade, mas habilidade faz parte do... Sim. Habilidade faz parte do ciclo de iteração ou algo assim.
+
+Acho que, no momento, a habilidade que desenvolvi é estática, mas o que você está propondo, se não me engano, é uma habilidade evolutiva, certo? Se a habilidade falhar, ela precisa evoluir, certo? Concordo com você. Nunca tentei, mas acho que precisa ser assim. Porque também estou me concentrando em como fazer isso em escala. O motivo também é que
+
+eu quero que o contexto seja fixado antes da própria recuperação, não durante a operação. Então, quando comecei, eu fazia durante a operação, o que significa: tenho um item de trabalho, atribuo a ele, ele falha, e então começo a fornecer o contexto e tudo mais, mas isso leva muito tempo. Exige muita paciência da minha parte. Então, em vez de fazer isso, sabe o quê? Vou fixar o contexto antes da recuperação.
+
+Se eu pudesse... enquanto respondia à sua pergunta, se você tiver uma equipe, o contexto que precisa ser corrigido é muito pequeno. Então, você pode usar uma ferramenta de análise de lacunas de contexto.
+
+E talvez, se você tiver um bom especialista no domínio, acho que em algumas semanas você consegue corrigir a documentação. Não 100%, mas pelo menos uns 60, 70, 80% de uma boa qualidade que você já consegue construir. Então, minha proposta seria sempre: não faça isso em nível operacional, em tempo real, mas sim antes da própria recuperação da informação. Essa abordagem é muito melhor. Sim. Ah, sim, tenho uma pergunta
+
+que é relevante, especialmente em grande escala. Se você tem muita documentação e essa documentação está em um repositório do GitHub, você pode ter situações em que faz perguntas que exigem, sei lá, cinco ou seis documentos diferentes. Então, você vai ter que ir lá e ler todos os documentos. Isso leva tempo para recuperar a informação e depois...
+
+Também é necessário muito contexto para o ... Bem, agora, depois que o Claude anunciou 1 milhão de tokens na janela de contexto, não sei... Não, não tenho nenhum
+
+problema. Então, eu calculei. Em média, são cerca de 96 mil tokens, porque eu testei com diferentes domínios. Por domínio, vejo cerca de 96 mil tokens se eu consolidar tudo, como o Confluence e tudo mais. Então, cabe facilmente na janela de contexto. Eu tentei
+
+fazer alguns experimentos com um gráfico de barras, colocando-os lá em vez de simplesmente pegar todos os arquivos, usar um gráfico de barras e entender a intenção. Mas, para mim, colocar todo o contexto na janela agora dá mais resultados do que usar um gráfico de barras. A menos que você tenha um contexto muito grande, quase um milhão de tokens, que você queira incluir. Talvez aí você precise usar alguns mecanismos de recuperação adicionais, mas, fora isso, acho que deve funcionar bem. Hum, tenho uma pergunta.
+
+Abri seu artigo e você poderia explicar este gráfico, tipo, a comparação entre diferentes técnicas como estratégia de conhecimento de domínio e acesso ao conhecimento? Qual delas? Sim, claro. Esta aqui. Ok. Então, eu também fiz as citações de
+
+outros artigos. Ok. Não é diretamente relacionado, mas você tem o artigo do AS, que também faz algo semelhante. Mas o AS não se concentra exatamente em...
+
+como se diz, descoberta e curadoria, na verdade? Se me lembro bem , talvez eu precise refrescar a memória, você quer dizer a diferença entre conhecimento de domínio e conhecimento estratégico? Ok. Então, conhecimento estratégico, ok. Então, o que a AS e outras empresas fazem é o seguinte: quando você tenta ter uma conversa com a IA, como você pode ver no portal na nuvem, ela atualiza sua memória. Ou algo parecido com a
+
+relação que você tem com as suas coisas, né? Então, e também a partir do histórico do chat, ele entende qual é o contexto mais importante que eu preciso lembrar, esse tipo de coisa. Então, quando você está em comunicação com ele, essas conversas operacionais com a IA propõem melhorias. Portanto, minha proposta não se baseia em sua conversa com uma IA, mas sim em seu conhecimento de domínio, que está devidamente documentado. Sim .
+
+Hum, alguém mais tem uma pergunta. Desculpe. Quando você está tentando acessar conhecimento remoto, como no Confluence e coisas do tipo , como garantir que seu agente aponte apenas para a documentação atualizada ou relevante? Porque no seu sistema de arquivos local, você tem tags como "desatualizado" e coisas assim, mas remotamente é mais difícil marcar, certo? Então.
+
+OK. Então, quando escrevi um pipeline para extrair dados do Confluence, ele também permite obter a data e o nome do criador da última atualização, além de fornecer uma espécie de análise sobre o espaço. Então você pode usá-lo para definir um limite, tipo, ok, nessa data específica, qualquer coisa que seja antiga, considere como desatualizada. E me avise. Não considere isso apenas como um documento desatualizado; me avise, pois às vezes um documento pode ficar obsoleto por muito tempo, mas pode ser um documento importante . Então, isso te informa, mas não te permite
+
+tomar decisões imediatas sobre isso. Então, você decide qual está velho e qual não está. Você não tem uma camada intermediária onde, no repositório, você armazena isso; ainda é um despejo de dados. OK. Assim, ao organizar o contexto, ele também atualiza a data e o estado do documento, como obsoleto, ativo e limpo. Então,
+
+também verifica se algo está desatualizado, se não vai ser alterado, e simplesmente procura por outros documentos novos que estejam presentes neste. Você pensou em como gerenciar o acesso ou as permissões a esse conhecimento posteriormente? Mas se você tiver algum conhecimento na empresa, tudo
+
+bem. Então, como não é um produto ou uma solução SaaS, é basicamente o GitHub. Para mim, neste momento, permissões e outras coisas não são difíceis de implementar porque o GitHub, por padrão, me mostra a quem posso dar permissão para acessar este repositório, quem pode ter direitos de leitura, quem pode fazer merge, e tudo mais. Mas, caso isso se transforme em um produto, como por exemplo, um scanner de lacunas contextuais, e eu queira que vocês o testem, porque o motivo de eu ter usado presets neste workshop, em vez de pedir que vocês enviassem os arquivos, é justamente para não coletar seus dados de IP, certo? Então, a menos que se torne um produto, você não terá problemas com o GitHub e tudo mais, mas se você tiver uma solução SaaS para isso, a questão é como a solução SaaS irá gerenciar isso agora. Mas a abordagem não tem
+
+nada a ver com acesso a essas coisas. A forma como você implementa esse acesso ao conhecimento depende de você. Você tem alguma pergunta? Então, isso tem a ver com documentação, claro, mas você considerou a possibilidade de usá-la em alguma ferramenta central que uma empresa utilizaria? Por exemplo, digamos que você tenha uma equipe de plataforma e uma CLI (linha de comando e controle) que as diferentes equipes utilizam.
+
+Hum. E agora ele é usado por diferentes agentes, certo? OK. Assim, os agentes também podem pensar: "Bem, esta ação está disponível para um recurso, mas não quero fazer 500 chamadas só porque tenho uma lista de 500 recursos." OK.
+
+Seria ótimo se a ferramenta pudesse fazer isso. Não sei se você já considerou essa possibilidade. Acho que é assim que deve funcionar em uma organização. Você precisa de uma solução centralizada para isso. Mas a forma como você deseja implementar a solução depende da organização. Por exemplo,
+
+estamos usando a metodologia Agile, certo? Então, o Agile pode ser feito por meio de Scrum, Kanban, ou algo como Lean, ou algo similar. E você também pode usar diferentes aplicativos para isso. O processo é o mesmo, mas a forma como você o realiza, o método que escolherá e o aplicativo que sua organização utilizará são diferentes. Da mesma forma, o que discutimos foi a abordagem.
+
+Se você quiser implementar isso na organização, pode usar essa abordagem e pode fazê-lo da maneira que preferir. Meu ponto é mais ou menos assim, você consegue identificar lacunas na sua documentação. Uhum . Certo? Você poderia usá-lo para identificar lacunas em suas ferramentas?
+
+OK. Bem, quando você diz ferramentas, está se referindo às ferramentas internas do agente, que eu não sei, talvez uma equipe esteja desenvolvendo para o resto da empresa. Infraestrutura em geral, certo? Talvez. Sim.
+
+Hum, você poderia me dar um exemplo de como, digamos , você construiria algum tipo de abstração sobre o Kubernetes? Uhum , ok. Você não quer necessariamente que seus desenvolvedores saibam o que fazer com isso. E aí você usa uma CLI diferente ou tem alguma coisa parecida, certo? Mas, como eu disse, não sei, talvez você tenha pensado que eles alugariam um de seus aplicativos personalizados ou aplicativos corporativos, um por um.
+
+Mas uma equipe cresceu e passou a usar mais essa ferramenta, e de repente tem muitas ligações e não quer mais fazê-las, ou talvez o agente até pense: "Bem, isso é ineficiente. Eu gostaria que essa ferramenta interna funcionasse de uma maneira diferente." OK. Dessa forma, seria possível identificar lacunas na ferramenta ou oportunidades de melhoria de desempenho, algo semelhante a essas tarefas de documentação. Na verdade, poderia ser ampliado.
+
+Então, porque também vimos os processos de negócios, certo? Portanto, também pode documentar processos de negócios. O processo de negócio nada mais é do que a forma como o processo na aplicação é executado e realiza as ações, certo? Assim, você pode estender isso para também descobrir as lacunas no processo de negócios ou como ele funciona. Poderia ser uma extensão disso. OK. Sim
+
+. Obrigado. Como você garantiria que a manutenção não o mataria? Desculpe? Como você garantiria que a manutenção não o mataria?
+
+Porque o conhecimento de uma empresa muda com o tempo. Sim. Portanto, se a resposta para uma pergunta hoje for B, amanhã poderá ser outra. Na sexta-feira pode ser C, certo? Hum. Portanto,
+
+você precisa verificar se é necessário identificar B1 e B e sobrescrevê-los. Se estiver armazenado como texto, isso é um problema. OK. Então, quando mostrei o analisador de lacunas de contexto , você também viu um indicador de duplicação, certo? Então, se hoje você tem um documento, amanhã você tem a versão 2.0 e outra coisa, na verdade,
+
+o sistema encontrará as mesmas informações em três versões diferentes . Se você tiver apenas uma versão, ela será alterada; o sistema usará a versão mais recente, pois você, como humano, a modificou. Então, vai considerá-la como uma fonte de verdade, certo? Mas se você tiver três versões do mesmo documento, haverá uma duplicata, e ele será sinalizado como tal. Mas, mas é um problema de busca. Como
+
+garantir o desempenho? Bem, digamos que você tenha um documento de 100.000 palavras. Uhum. E você simplesmente muda uma palavra, como uma senha, por exemplo. Não estará lá por aí,
+
+por exemplo, certo? Se você simplesmente alterar "Ok". Então, você tem que encontrar essa palavra específica, comparar essas poucas palavras em três documentos, Mhm. Encontre-os e substitua-os, então eles estão...
+
+Como isso é viável? Quais ferramentas você usaria para garantir que o projeto não fosse extremamente caro? Hum, na verdade, não entendi muito bem a sua pergunta . É o uso de tokens que te preocupa? Assim como usamos tantos tokens, qual é a economia de custos?
+
+Sim, exatamente. Se isso crescer, hum. Exatamente o que você precisa, e se houver muitas alterações, você teria que manter todo esse banco de dados, certo? Então, você tem "Mhm". OK. a estrutura.
+
+Não conheço muitas regras gramaticais sobre as quais eu não vá falar , certo? Bem, a minha pergunta é a seguinte: o que você apresentou é uma espécie de caminho ideal, onde existe uma lacuna, você a preenche e depois a reutiliza. Mas, daqui a pouco, você terá um problema maior, em que fingirá ter preenchido essa lacuna, mas na verdade ela não contém informações atualizadas sobre o que precisa ser feito. Contém informações incorretas, certo? Então, você quer preservar isso. Ah, ok
+
+. OK. Então, pode sinalizar de acordo com a data de criação ou a última atualização. Você pode configurar esse tipo de filtro. Mas digamos que você tenha um documento recente com informações incorretas.
+
+Certo? Mas você não sabe disso, né? Não, isso é verdade. Mas, por exemplo, como ser humano, certo? Então, você vai e consulta a documentação. Você pediu para alguém consultar a
+
+documentação. E a pessoa consultou a documentação e, de acordo com ela , isso está sendo implementado desta forma. A pessoa vai fazer isso, certo? Não se trata de um problema com o agente ou com o ser humano. OK.
+
+Hum.
+
+OK.
+
+OK.
+
+Por exemplo, desculpe, você está dizendo isso,
+
+mas eu não acho que custará tanto quanto eu disse. Como eu disse, quando foi testado, nenhum dos domínios ultrapassou 100 mil tokens, na verdade. Então, não acho que iremos, por exemplo, realizar um levantamento de lacunas, certo? Acho que você não precisa fazer isso diariamente nem nada do tipo. Mesmo que você execute diariamente cerca de 100 tokens e faça uma única varredura.
+
+Por exemplo, certo? Se você tentar atingir todos eles, todos vocês, o scanner de lacunas de contexto, acho que você não vai gastar nem um dólar, eu acho. Se não me engano, já tinha algo como "ah, você está pronto, ok". Ok, vou cancelar a assinatura. Mas eu...
+
+Hum.
+
+domínio específico Mhm. Portanto, no momento em que você expandir, terá que resolver essa questão de custos. OK. Isso também vai depender da rapidez com que as coisas acontecem , ou seja, da velocidade com que os dados mudam, o que eu acho que na maioria das vezes não é tão rápido. Então, no momento em que você chega a uns 80% ou 90%, você simplesmente continua envolvido na última etapa. Sim.
+
+Ah, entendi. Cada caso de uso é diferente. Sim, caso a caso , sim. Sim. Mais alguma pergunta?
+
+Sim, eu estava curioso, então executei esse jogo para um desses domínios, certo? OK. OK. E contém várias recomendações. Como sei que isso é suficiente? Bem,
+
+na verdade, tenta detalhar o máximo possível. No momento, eu não revelei todas as funcionalidades, apenas para fins de interface do usuário. Mas, na verdade, o que ele encontra por ticket é algo como 100 ou 150 linhas de arquivos Markdown e os salva em algum lugar. Isso lhe dá mais detalhes, caso você queira saber de fato. Então, para a demonstração, eu apenas adicionei os elementos de UX mais interessantes , mas você também tem informações detalhadas aqui.
+
+Mais alguém tem alguma pergunta? Posso pedir outro? Ah, sim, claro. Prossiga. Certo, então você é fácil, né? Vou
+
+tentar. Sim, acho que você começou com o trabalho para clientes, ou seja, 40%. Sim . E se eu estiver interpretando a documentação corretamente, sua alegação é bastante complexa. Não isso. Como você disse, em algumas
+
+semanas, tipo, algumas semanas, e você terá preenchido isso. Não preencher as lacunas, mas descobrir. Mas se você reduzir o escopo para uma equipe, em poucas semanas você consegue fazer isso. Certo, porque, quer dizer, se você não preenchesse e tivesse que continuar fazendo essas perguntas, então...
+
+Sim, você faz isso uma vez. Bem, em primeiro lugar, ou tipo, várias vezes no começo. Primeiramente, veja o quadro completo. Qual é o estado atual da sua base de conhecimento? Primeiro, corrija o problema nesse nível. Depois você entra
+
+na área de operações, certo? Você ainda pode continuar fazendo isso com o agente que possui habilidades.
+
+Sim. Uhum
+
+.
+
+Hum.
+
+OK. Então você quer dizer que também é possível fornecer todas as transcrições em vez de fazer o ciclo completo, é isso? Hum, isso também pode ser feito. Se você só tiver tempo para uma discussão durante a reunião. Tudo está documentado na própria transcrição da reunião. Mas não acho que seja o
+
+mesmo caso para todos, pelo menos não em relação
+
+ao tempo que as pessoas passam em equipes. Se você usar as transcrições, na verdade, são essas que têm mais tokens. Há muitas reuniões inúteis. Bem, as transcrições
+
+poderiam ser... Novamente, isso depende de instituição para instituição, certo? Então, você prefere reuniões onde os problemas são resolvidos durante as conversas? E essas conversas
+
+têm dados? Ou, por exemplo, se a sua conferência ou algo do tipo tiver dados. Se você tiver acesso a essas transcrições, utilize-as como base de conhecimento. E ao mesmo tempo, a compressão realmente funciona . Isso é mais útil. Sim
+
+.
+
+Mais alguém? Alguma pergunta? Não? Tudo certo? Ah, muito obrigado por comparecer a esta sessão.

@@ -1,0 +1,407 @@
+---
+video_title: "TLMs: Tiny LLMs and Agents on Edge Devices with LiteRT-LM — Cormac Brick, Google"
+video_id: BKWpYIWvAo4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BKWpYIWvAo4
+video_date: 2026-05-03T22:00:06+00:00
+video_description: |
+  Tiny LLMs are making on-device agents much more practical. In this workshop, Cormac Brick walks through how LiteRT-LM brings language models to edge devices, with a focus on Gemma, agent skills, and the real engineering tradeoffs behind running LLM workflows on phones and other constrained hardware. The session covers performance across edge devices, on-device function calling, fine-tuning and deployment, platform support across Android and iOS, and the memory, safety, and UX constraints that shape edge-native AI systems. If you're building local agents or want a practical look at where edge LLMs are headed, this is a useful hands-on overview.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/cbrick/
+  
+  Timestamps
+  
+  (0:00:00) Intro: AI on the Edge, Small Language Models, and Gemma
+  (0:04:51) Enabling App Development: MediaPipe, LiteRT, and System Services
+  (0:09:09) Small Language Models: Performance, Reach, and Fine-tuning
+  (0:11:30) Gemma 4: Sizes (E2B and E4B) and AI Core Roadmap
+  (0:16:10) Gemma on Edge Runtime: Performance Benchmarks
+  (0:18:34) Agent Skills: Google AI Gallery, Mood Tracker, and Wikipedia Lookup
+  (0:23:38) Skill Architecture: Efficiency, Progressive Disclosure, and Tool Loading
+  (0:27:34) Reliability: Constrained Decoding and Tool Usage
+  (0:29:18) Community and Custom Skills
+  (0:31:30) Skill Development Deep Dive: Orchestrator and Registry
+  (0:33:30) Rapid Skill Prototyping: Using Gemini CLI and ADB
+  (0:38:35) Open Source: AI Edge Gallery and Community Engagement
+  (0:41:00) Deploying Tiny Models (sub-1B parameters) In-App
+  (0:47:44) Third-Party Models: Fast VLM and Hardware Acceleration
+  (0:50:17) Model Examples: Function Gemma, Mobile Actions, and Embedding Gemma
+  (0:55:41) AI Edge Eloquent: Transcription and Text Polishing
+  (0:59:07) Modularity Playbook: ASR and Text Polishing Engines
+  (1:01:23) Synthetic Data Workflows for Tiny Models
+  (1:06:36) Web Support and Fine-tuning Documentation
+  (1:08:20) Summary and Key Takeaways
+  (1:12:49) Q&A: Multi-skill Execution, Context Windows, and Future Roadmap
+---
+[música]
+
+Ei, meu nome é... Cormbrick. Eu trabalho no Google AI Edge, que é uma forma de levar modelos para a borda da rede.
+
+Isso é algo que usamos internamente para nossos próprios produtos. É algo que também disponibilizamos como produtos de código aberto. Como parte disso, também trabalhamos em estreita colaboração com a equipe da Gemma, pois eles publicam muitos modelos voltados para dispositivos de borda. Hum, sim, um pouco sobre mim. É , eu tenho me concentrado no Edgi nos últimos, nossa, talvez uns 10 anos . Bem, tudo começou em 2016, quando eu estava
+
+usando o Google Net em um acelerador de hardware USB conectado a um Raspberry Pi, durante o Nurips 2016. Então, sim, tem sido muito divertido ao longo dos anos. Em seguida, entrei para a Intel e trabalhei liderando a arquitetura da NPU que está presente em todos os seus laptops atualmente. Há três anos, entrei para o Google para trabalhar como líder técnico em Edge AI . Ah, sim, e tem sido muito divertido, foram alguns anos loucos, como você pode imaginar. Sim, fico feliz em compartilhar o ponto em
+
+que estamos e também dar uma visão geral. Como parte disso, também podemos abordar a história de onde está a IA móvel hoje, qual é o estado da arte e quais são os diferentes padrões que vemos para a implantação de modelos. Então, as duas coisas em que quero me concentrar nesta apresentação são os pequenos LLMs e as habilidades de agentes. Os pequenos LLMs são modelos muito, muito pequenos. As habilidades de agentes agora são possíveis em dispositivos, mas modelos maiores são necessários para que funcionem de forma fluida no dispositivo. Mas ambas são
+
+novas direções empolgantes que só recentemente se tornaram possíveis. Então, ainda na semana passada, quando lançamos o Gemma 4, em parceria com a equipe do DeepMind, nós os apoiamos com um aplicativo para Android e iOS, o que abriu novas possibilidades para o que podemos fazer em dispositivos móveis. Então, também vamos nos aprofundar nisso, assim como analisar que tipos de coisas podemos fazer com modelos minúsculos. o tipo de apresentação dividida em duas metades. Ok, então essa é a introdução. Então, sim, era mais ou menos isso que eu
+
+estava dizendo. Então, primeiro, dê uma visão geral de como é a IA na borda, analisando, por exemplo, pequenos modelos de linguagem e modelos de linguagem muito pequenos . Então, vamos dar uma olhada nos modelos Gemma, porque isso é um assunto bastante atual, e nos tipos de desempenho que observamos para os modelos Gemma em vários tipos de dispositivos de borda, já que é basicamente isso que nossa equipe faz. Então, analisando as habilidades do agente, que construímos com base na última geração de modelos Gemma, que podem ser executadas tanto no Android quanto no iOS, bem como em muitas outras plataformas. E então, na segunda parte, vamos analisar modelos pequenos, ou melhor, como você pode ajustar e implantar um modelo pequeno em dispositivos de borda. E, finalmente, tenho
+
+um exemplo de um aplicativo que nossa equipe construiu, um aplicativo real, não apenas um aplicativo de exemplo, mas sim um aplicativo criado com Tiny LLMs baseados na tecnologia Gemma . OK. OK. Então, em primeiro lugar, sim, imagino que vocês, que já estão nesta sala, provavelmente estejam interessados ​​em IA de borda. Isso provavelmente é óbvio, mas... bem, existem
+
+muitos benefícios em executar na borda. Há melhorias de latência ou de experiência do usuário para algumas coisas realmente sensíveis no processo, como tradução de voz ao vivo, por exemplo. Ah, isso é algo que nossa equipe lançou no Pixel no ano passado, que permite fazer tradução de voz ao vivo. É muito difícil fazer isso com a latência necessária usando um serviço em nuvem. Portanto, ser capaz de fazer isso offline e na borda da rede é fundamental para atender aos requisitos de latência ou de experiência do usuário. A privacidade
+
+é algo muito importante também. Tipo, nós fazemos algumas coisas... sim, tem gente que usa IA em aplicativos de mensagens, por exemplo, e as pessoas gostam que suas mensagens fiquem criptografadas e totalmente privadas no celular. Então, esse
+
+é um bom exemplo de onde estamos vendo os Modelos de Linguagem de Aprendizado (LLMs) sendo implementados: auxiliando em alguns desses tipos de casos de uso, onde a privacidade é realmente importante... uso offline, sim, isso é meio óbvio, e também economia... sim,
+
+vemos isso se tornando cada vez mais relevante para usuários de laptops, onde há uma tendência de pessoas, pelo menos, experimentarem com... modelos de linguagem simples para criar alguns tipos de tokens que possam usar com o fluxo de trabalho de agentes em seus desktops. Então, algumas pessoas também estão interessadas em exportar economias. Sim.
+
+OK. Então, é isso que fazemos, como equipe, capacitamos as pessoas a criar aplicativos. Bem, nós usamos o MediaPipe e o Lighter TLM, que é um runtime LLM que funciona em dispositivos móveis e na borda, e o Lighter T, que é um framework de inferência padrão, conhecido há muito tempo como TensorFlow Light. Esses são os tipos de recursos que usamos ao longo dos anos, como o MediaPipe, que já vem integrado ao Fotos e ao Onlur. Os vídeos curtos do YouTube também usam o MediaPipe, e se você já usou algum dos efeitos engraçados dos vídeos curtos do YouTube, saiba que nossa equipe também os desenvolveu em conjunto com a equipe do YouTube, usando o MediaPipe e vários modelos de rastreamento de aprendizado profundo. E
+
+isso também é baseado na mesma tecnologia MediaPipe e LightT. E sim, executamos isso em praticamente todos os celulares Android atuais, que usam isso como parte dos serviços do sistema, ou em aplicativos de terceiros que utilizam uma versão da pilha que vem com o Android. Mas nossa pilha também funciona muito além do Android. Bem, mesmo estando disponível como um serviço do sistema no Android, você também pode pegar o mesmo arquivo TF Light e enviá- lo para iOS, Mac OS, Linux, Windows, web ou dispositivos IoT, tudo a partir desse mesmo arquivo. Então , sim, é por isso que o processo de implantação é útil. Uma ressalva:
+
+esse mesmo arquivo é executado tanto na CPU quanto na GPU. Para NPU, precisamos realizar uma compilação especial, o que resulta em um arquivo NPU específico. Mas certamente, mesmo para os modelos Gemma que publicamos na semana passada, é verdade que um único arquivo pode funcionar tanto na CPU quanto na GPU em uma ampla variedade de dispositivos. Então, sim, algumas das coisas que estamos vendo para LLMs em dispositivos são focadas em privacidade, como agentes de voz e agentes locais, e a chamada de ferramentas é um fluxo de trabalho muito popular. E, dentro da nossa pilha, o Lighter TLM é algo que veremos mais adiante e que nos ajuda a executar LLMs pequenos em dispositivos multiplataforma, e é rápido porque oferecemos suporte a todos os diferentes aceleradores de hardware.
+
+Oh sim. Então, este é um conceito importante: vemos duas tendências acontecendo hoje em dia. Uma delas é que vemos uma espécie de genai em nível de sistema. Então, para modelos muito, muito grandes , a forma como eles tendem a aparecer em telefones celulares não é que, ao abrir um único aplicativo, ele baixe um modelo de quatro bilhões de parâmetros só para ajudar você a encontrar um bom restaurante em qualquer aplicativo que esteja usando, certo? Em vez disso, a tendência é incorporar modelos maiores ao sistema operacional. Então, chamamos isso de
+
+AAI de geração em nível de sistema. Esses modelos costumam ter entre dois e cinco bilhões de parâmetros, certo? Depende do sistema operacional e outras coisas. Mas essa é uma das escolhas que vemos tanto na equipe do Android, com quem trabalhamos em estreita colaboração, quanto na equipe de inteligência da Apple. Vemos escolhas semelhantes sendo feitas por ambos os fornecedores de sistemas operacionais móveis, onde há um modelo central integrado, como no Android, chamado AI Core, e recursos como APIs de sumarização e um conjunto crescente de APIs disponíveis para desenvolvedores, incluindo uma API de prompts que pode ser usada.
+
+Isso está disponível em dispositivos Android premium e também em dispositivos Apple premium. Obviamente, a Apple tem seu próprio recurso de inteligência artificial, mas, como tendência, isso é realmente relevante, não é? Então, se você quiser aproveitar um modelo integrado, esta é uma ótima opção. Então, outra tendência que observamos é a interação no aplicativo ( in-app genai), onde os pequenos módulos de aprendizagem de baixo nível (LLMs) ou módulos de aprendizagem de alto nível (TLMs), como os chamamos nesta apresentação, são mais relevantes. A interação do sistema (system genai) geralmente é personalizada por meio de prompts ou skills, como veremos mais adiante, e é um modelo básico pré-carregado no dispositivo. Já a interação do aplicativo (
+
+app genai) geralmente é personalizada para tarefas e é carregada com o aplicativo ou com a página da web. Também implementamos algumas dessas campanhas na web, e geralmente elas são direcionadas a um público mais amplo. Portanto, isso pode funcionar não apenas em dispositivos premium, mas em todos os dispositivos, porque o alcance dos aplicativos é realmente importante para muitas das equipes de desenvolvimento de aplicativos com as quais trabalhamos. E, surpreendentemente, você pode fazer com que os LLMs, se ajustados para uma única tarefa, tenham um desempenho realmente muito bom em tarefas simples, como resumo, transcrição ou coisas do tipo voz para ação. Podemos obter um
+
+desempenho realmente confiável de modelos na faixa de 100 a 500 milhões de parâmetros, dependendo da complexidade da tarefa, certo? Um bom exemplo disso é a função Gemma, que lançamos em dezembro. Era um modelo com 270 milhões de parâmetros dedicado à chamada de funções, e conseguimos demonstrar isso realizando 10 chamadas de voz diferentes para 10 funções relevantes para desenvolvedores Android. Em nossas avaliações internas, alcançamos uma confiabilidade de 85 a 90% usando esse modelo pequeno, que foi amplamente implementado em dispositivos iOS e Android. Você pode experimentar isso em um aplicativo de exemplo que analisamos mais adiante. Então, esse é um exemplo de uma
+
+pequena, digamos, utilização de um modelo LLM bem pequeno. Mas estamos vendo um interesse maior das equipes de desenvolvimento de aplicativos em aprimorar modelos para implantação como integração no aplicativo. Então, a diferença aqui é que à esquerda, sim, você meio que... a personalização à
+
+esquerda é feita por meio de prompts ou personalização de habilidades, à direita, como nós encorajamos as pessoas a fazerem algum tipo de ajuste fino para fazer um OLM pequeno funcionar na prática, tipo... sim, certamente abaixo de 500 milhões de parâmetros, isso é verdade. Talvez para 500 milhões de parâmetros ou mais, possamos realizar tarefas de propósito mais geral com um modelo, mas para modelos realmente muito pequenos, certamente menos de 500, em nossa experiência, é necessário um ajuste fino para obter uma confiabilidade de nível de produção.
+
+OK. Então, agora vou falar sobre o Gemma 4. Hum, e o Gemma 4, os modelos que foram lançados na semana passada, se enquadram nessa categoria de candidato a sistema Genai, certo? Então podemos fazer muitas coisas poderosas com o Gemma 4, como vocês verão. Ok, primeiro vamos falar sobre os tamanhos. Existem dois
+
+tamanhos pequenos, que são os dois primeiros: E2B e E4B. O E2B é chamado assim porque precisa de apenas cerca de dois bilhões de parâmetros na RAM para executar o modelo, porque um dos fatores limitantes que vemos com esses modelos é a quantidade de RAM necessária em um dispositivo para executá-lo de forma confiável. O Uh E4B foi otimizado para funcionar com quatro bilhões de parâmetros no dispositivo. Bem, existem mais parâmetros usados ​​pelo modelo, mas os outros parâmetros que o modelo usa são...
+
+você pode conferir as palestras da DeepMind sobre isso mais tarde nesta semana, então você pode ir lá para obter mais detalhes, mas, resumindo, os outros parâmetros do modelo são usados ​​para... incorporações por camada . Portanto, em nosso ambiente de execução, não precisamos carregar todos esses parâmetros. Portanto, precisamos mantê-los
+
+assim como os slots 2B e 4B, eles precisam permanecer residentes na RAM. Os outros que normalmente preferimos mapear na memória, e só precisamos carregar uma linha da tabela de incorporação da camada paralela, e a tabela de incorporação uma vez no loop auto-regressivo, e na verdade só precisamos carregar algumas centenas ou milhares de bytes disso para fazer a próxima inferência de token. Assim, ao realizar a inferência, você nunca precisa carregar toda a tabela PLE na memória e, dependendo do sistema operacional, ele fará um trabalho razoavelmente bom ao liberar a memória usada por tokens PL mais antigos. Então é por isso que temos essa ideia de eficácia. Então, os modelos menores funcionam em... sim, você pode ver
+
+à direita que eles funcionam em diversas plataformas. um dos modelos E2B e E4B. Esses modelos fazem parte do roteiro principal de IA. Então, esses modelos que estão disponíveis agora para experimentação, no momento apropriado no futuro, a equipe do Android os integrará ao núcleo de IA e eles estarão disponíveis de forma mais ampla em uma gama maior de dispositivos. E haverá outra palestra na próxima semana, ou talvez uma palestra esta semana, com o Olli, da equipe principal de IA, que provavelmente compartilhará mais detalhes sobre como será esse roteiro . E também, sim, o
+
+Omar vai fazer uma análise mais aprofundada do universo Gemma, feita pela equipe da GDM. Os dois modelos inferiores são apenas para referência. Esses aspectos também são relevantes para a borda. Eles não são exatamente o foco da minha palestra hoje. Porque são relevantes para as pessoas executarem em laptops. Os tamanhos foram
+
+otimizados para funcionar muito bem em laptops de consumo. Hum, embora talvez aqueles que tenham, você sabe, 32 gigabytes de RAM. Mas, sim, é isso que estes... Portanto, vou me
+
+concentrar menos nesses outros dois modelos, embora eles sejam muito poderosos e úteis. Sim, então podemos ver que certamente o modelo E4B, assim como os modelos E2B e E4B, têm um excelente desempenho em uma ampla gama de aspectos. Hum, sim, sobre conhecimento e raciocínio. Bem, uma das grandes melhorias, na minha perspectiva, em relação à geração anterior, é que os modelos agora possuem chamadas de função integradas, o que é excelente, além de raciocínio integrado. Essa combinação de raciocínio e chamada de funções é o que nos permite executar habilidades diretamente no dispositivo. Bem, como
+
+você verá em um instante, podemos descrever uma habilidade, atribuí-la ao modelo, e o modelo pode simplesmente pegá-la e usá-la. Isso nos permite usar esse tipo de padrão, que se mostrou muito popular nos últimos meses, para levá-lo aos dispositivos móveis, o que possibilita novos tipos de experiências móveis. Ah, e também para o E2B e o E4B, que são multimodelos, eles suportam áudio, imagem e texto. Os modelos maiores suportam apenas imagem e texto. Ah, e outra mudança do ponto de vista da implementação é que esta é a primeira vez que os modelos gerais são lançados com uma licença padrão Apache 2.0, o que significa que são
+
+mais acessíveis a um número maior de pessoas. Bem, vocês ouvirão mais sobre isso na palestra de Omar . Só queria mencionar isso aqui. OK. Então, essa é a Gemma em geral. Agora,
+
+Gemma, vamos nos aprofundar em nosso ambiente de execução e em nossa plataforma. Então, sim, aquele mesmo tipo de imagem de antes, certo? Temos um único arquivo TLM mais leve, que é um arquivo RT leve com elementos como o tokenizador e outras coisas que precisamos em um único pacote para executar um modelo. Esse modelo único funciona em todas essas classes de dispositivos, sejam eles móveis, desktops ou embarcados. E sim, estamos bastante animados para fazer mais na área de sistemas embarcados.
+
+Há muito a considerar, especialmente com relação à entrada de imagens. Há muito espaço para novos casos de uso da IoT. Ok, agora vamos fazer um teste de acuidade visual, mas só para analisar o desempenho. Então, eu diria que isso é um retrato do momento atual. Bem, isso é algo em que continuamos trabalhando, tanto internamente, nós e nossa equipe, quanto com vários parceiros que temos em toda a empresa, como a Intel, com a equipe do Raspberry Pi, e a equipe da Qualcomm. Continuamos a
+
+otimizar todos esses números. Mas podemos ver que certamente podemos fazer isso, sabe, para o modelo de dois bilhões de parâmetros, podemos obter um desempenho realmente convincente em um telefone Android de última geração, que pode processar milhares de tokens por segundo em uma GPU, e também milhares de tokens por segundo em um MacBook, ou, mas nas duas últimas linhas, em um Raspberry Pi, podemos obter cerca de 133 tokens por segundo, o que é suficiente para realizar casos de uso simples de análise de imagem com latência razoável. E a imagem de baixo mostra a gente rodando em um acelerador de hardware. Esta é uma plataforma de desenvolvimento de robótica IoT da Qualcomm, e podemos ver um desempenho bastante convincente nela, pois utilizamos a NPU, que oferece um desempenho muito melhor. E, como você pode imaginar, temos um desempenho correspondente no modelo E4B, que funciona em uma ampla gama de dispositivos, embora com um desempenho de pré-carregamento e decodificação proporcionalmente menor, certo?
+
+Considerando o tamanho e o número de parâmetros que precisamos buscar. Mas sim, de forma geral, estão disponíveis em diversas plataformas. Certo, então o que podemos fazer agora com esses modelos? Hum, muitas coisas, né? Então, uma das coisas sobre as quais eu queria falar mais, porque é algo totalmente novo, em vez de apenas mostrar a vocês nossa análise de imagem, transcrição de áudio ou tradução de áudio, certo? Há muitas coisas que temos
+
+conseguido fazer com os modelos, do meu ponto de vista, há algum tempo, e esses modelos Gemma 4 são muito melhores do que seus antecessores nesses aspectos. Bem, a coisa mais recente, do meu ponto de vista, são as habilidades do agente no dispositivo. Então, nós temos um aplicativo... não
+
+sei se vocês já viram. Está disponível tanto para iOS quanto para Android com o nome de Google AI Gallery. E isso permite que você faça várias coisas diferentes, como realizar funções básicas de bate-papo com IA, fazer perguntas a partir de uma imagem ou realizar casos de uso de transcrição ou tradução, começando com áudio ou, por exemplo, chamadas de áudio para funções . Mas a segunda da esquerda, a habilidade de agente, é sobre a qual vou me aprofundar hoje. OK. Espero que funcione.
+
+Oh, tudo bem. Isso é muito irritante. Desculpe. Eu corrigirei isso antes de postarmos os slides. Ah , espere. Deixe-me ver se isso
+
+vai funcionar. Manhã. Vamos registrar uma nova entrada no diário de humor para a escola. Está tocando, mas o som não está funcionando. Dormi oito horas e estou ansioso para passar um tempo com a Amy hoje.
+
+Então, este é um aplicativo de diário ou um rastreador de humor que registra o humor e o sono. E então, analise perfeitamente a tendência do meu humor nos últimos sete dias.
+
+OK. Então, o que está acontecendo aqui é que, com o aplicativo de rastreamento de humor, ele registra seus humores ou observações em um diário, e então o LLM consegue acessar e resumir o conteúdo que você consulta no seu calendário. O interessante aqui é que se trata apenas de uma lista com marcadores. Ok, não vou repetir isso mais vezes. OK. O
+
+interessante aqui é a forma como isso é feito, que vamos analisar com mais detalhes. Isso não é um tipo de ajuste fino personalizado. Trata-se apenas de fornecermos uma escala específica com um pouco de JavaScript, que o modelo pode acessar e, por meio de uma interface de texto livre, permitir que o modelo utilize e selecione essa escala. Portanto, também é possível chamar...
+
+na verdade, há duas habilidades acontecendo aqui. Uma é a habilidade de rastreamento de humor e a outra é... Você pode consultar a Wikipédia para obter as informações mais recentes ?
+
+A outra é a habilidade de mapa, e agora está usando uma habilidade de consulta à Wikipédia para buscar as informações mais recentes sobre o Oscar. Então, em vez de ter um modelo que esteja simplesmente fixo no tempo, agora fica muito mais fácil estender o modelo com habilidades como pesquisa em mapas, algo como um diário interativo, ao qual você pode adicionar e remover entradas por voz, bem como fazer consultas, e também adicionar conhecimento mais moderno ou conhecimento relevante. Então, estamos mostrando...
+
+você consegue combinar essa vibe com... estamos mostrando a Wikipédia neste caso. Hum, ah, esta é outra habilidade interessante que alguém da equipe também desenvolveu: a escala de música para criar atmosfera, que utiliza um serviço online para compor música com base em uma única imagem e a reproduz. Então,
+
+sim, ele consegue compor uma espécie de música low-fi para acompanhar o café da manhã de alguém, por exemplo, mas é um novo paradigma, digamos assim, e mostra como podemos estender os modelos com muita facilidade e de uma forma bem minimalista, como vocês verão daqui a pouco quando analisarmos como isso funciona internamente . Ok, então, aqui estão alguns exemplos, e eu não vou reproduzir todos esses vídeos. Hum, talvez para poupar tempo, porque acho que você já viu muitos deles. Uma das possibilidades é ampliar a base de conhecimento, e esse foi um padrão que consideramos interessante. Podemos produzir conteúdo interativo rico, como flashcards para visualizações, e, sim, em vez de pedir para resumir algo em três tópicos, podemos usar uma habilidade em JavaScript para exibir esses tópicos como um cartão. Então, você pode
+
+simplesmente dizer algo como "resumir" e mostrar um cartão, tipo "resumir isso", e se achar que a exibição do cartão será mais útil para o usuário, isso será usado, tipo, síntese musical. Ok, então vou pular um pouco das demonstrações para como [bufa] nós as construímos. OK. Então, o que realmente está acontecendo é que a maneira como desenvolvemos as habilidades é eficiente. Então, as instruções podem ser carregadas sob demanda. Então, isso usa um princípio
+
+que você pode ter visto em outro lugar, de uma espécie de revelação progressiva da profundidade condicional. Então, em vez de, como em um fluxo de trabalho MCP, onde você precisa descrever tudo sobre todas as funções necessárias, a forma como estruturamos as habilidades é com uma descrição de uma linha. Essa descrição é o que o agente vê e, se achar interessante, pede mais informações. A mensagem pede para carregar a habilidade. É como se ensinássemos uma habilidade para carregar outra habilidade. E então ele entra
+
+e carrega a habilidade e descobre todos os detalhes sobre como usá-la, quais chamadas de função ele pode usar para executar essa habilidade. Então, esse padrão é particularmente importante para a eficiência de tokens e, francamente, para a confiabilidade em modelos de borda, porque se tivéssemos que carregar todos os detalhes de todas as habilidades no modelo de borda, isso seria muito contexto para o modelo processar, e em um modelo mais leve como esse, isso acabaria prejudicando o desempenho, certo? Porque os modelos mais leves são ótimos para serem executados em dispositivos, mas em termos de razoabilidade em janelas de contexto muito longas, a confiabilidade é comprometida. Se você puder ter uma janela de contexto mais condensada, isso aumentará sua taxa de acerto em termos das métricas de qualidade que você está analisando para lançar um determinado aplicativo. A segunda parte é o acesso às ferramentas. Isso nos ajuda a
+
+integrar novas ferramentas de forma dinâmica. Então, coisas como um carro, como pensamos neles em termos de um conjunto de ferramentas de entrada, como obter mais informações, que podem ser consultando a Wikipédia, um serviço meteorológico ou algo do tipo. Há um conjunto de... e
+
+há um conjunto de... coisas que são úteis para apresentar novas informações ao usuário, como mostrar algo em mapas ou exibir algo por meio de cartões. Assim, você pode ter habilidades tanto para ampliar a entrada quanto para ampliar a saída, conhecendo os padrões de saída que um modelo pode produzir. E também
+
+nos ajuda a incorporar bases de conhecimento específicas do domínio. Então, essa habilidade que meio que chama a Wikipédia, você poderia facilmente imaginar que também chamaria algum CRM de clientes interno ou pediria dados de um sistema local . OK. Então, sim, dentro da nossa estrutura de habilidades, temos o arquivo skill.md e, opcionalmente, scripts ou recursos. O skill.md contém os
+
+metadados que sempre processamos. Por exemplo, o exemplo aqui mostra a extração de texto e tabelas de um PDF, e o gatilho para extração é o PDF. As instruções são carregadas somente quando o modelo considera que essa habilidade é necessária. Esse padrão é particularmente importante. Então, dentro dos scripts, também damos suporte para que as pessoas escrevam JavaScripts personalizados que podem ser renderizados dentro do aplicativo, porque essa é uma maneira muito fácil de estender o aplicativo tanto em sistemas iOS quanto Android.
+
+OK. Então, analisando mais a fundo, temos dentro do nosso prompt do sistema, temos nosso próprio prompt do sistema que é distribuído com o aplicativo. Em seguida, há um conjunto de descrições de habilidades que são adicionadas ao prompt do sistema. E então, quando o usuário pede algo, o modelo decide acionar a habilidade lendo seus metadados. Em seguida, ele chama o aplicativo de carregamento de habilidades que temos internamente.
+
+A resposta da ferramenta a essa chamada de função é então o conteúdo do arquivo skill.mg. Ah, que então está na janela de contexto. Agora ele conhece essas funções. E então ele chama a corrida. Oh sim. Então, isso
+
+também contém algum JavaScript e, em seguida, chamamos a ferramenta "executar JavaScript", que executa o JavaScript que pegamos do arquivo skill e, em seguida, chamamos uma resposta para isso também. Hum, outra coisa que gostaria de mencionar como parte desse fluxo de trabalho é que, ao gerar relatórios de confiabilidade para a função Gemma, implementamos uma decodificação restrita em tempo de execução, ajustada para se aplicar somente à saída gerada durante a chamada de uma ferramenta. E nós também podemos usar a decodificação de restrições para restringir o uso apenas à ferramenta específica que você deve usar. Assim, neste sistema, em vez de termos apenas restrições JSON genéricas, sabemos que existe um conjunto finito de ferramentas que o modelo deve ser capaz de usar. Assim, podemos ter uma decodificação de restrições mais robusta. Isso também
+
+nos ajuda a ter um sistema mais confiável no geral, usando uma decodificação de restrições mais robusta. Bem, descobrimos que isso é menos importante, pois descobrimos que ajuda bastante em modelos com dois bilhões de parâmetros. À medida que os modelos se tornam mais complexos, percebemos que a margem obtida com esse tipo de decodificação de restrições rigorosas, como a chamamos, torna-se menos essencial ao executar um modelo muito grande, como um modelo com 10 bilhões de parâmetros. Mas para modelos realmente pequenos, essa é uma ferramenta muito útil que nos ajuda a ter diretrizes mais robustas para o modelo, permitindo aumentar a qualidade e obter algo útil em produção. Então, vamos apoiar a Wonder e esperar para ver se isso funciona para nós. Em seguida, oferecemos
+
+suporte dentro do aplicativo, permitindo que você ative ou desative as habilidades que deseja usar. Então, mesmo nas descrições das habilidades, você pode decidir quantas descrições de habilidades deseja ter ativas em um determinado momento. Então, isto está carregando uma escala para tocar piano, um piano virtual, que fará suas coisas. Você pode tocar nas teclas e reproduzir sons. Sim , isso é só mais uma coisa relacionada a JavaScript. Mas
+
+também podemos carregar habilidades personalizadas. Assim, você pode criar uma skill você mesmo e carregá-la a partir de uma URL, o que é bem divertido. Se você quiser experimentar criar um protótipo de uma habilidade com a Gemma para uma ideia de aplicativo que você tem, esta é uma opção. Ah, e ali atrás as habilidades também podem ter uma chave de API. É como uma chave secreta. Então, se você precisar usar um
+
+serviço web, isso é algo que você pode solicitar ao usuário que insira. Isso mostra o exemplo da música ambiente. de novo . Mas nós temos uma seção de discussão no GitHub, na qual os usuários compartilham habilidades que eles mesmos desenvolveram. E as habilidades da comunidade que gostamos, podemos então destacar e exibir como habilidades em destaque no aplicativo. Então, se
+
+algo se desenvolver de forma que as pessoas desenvolvam habilidades úteis, poderemos ter uma maneira de mostrá-las à comunidade em geral. Isso está sendo analisado em escala de terceiros. Acho que isso vai nos mostrar algo. Ok, isso adiciona uma escala introdutória de animais . Isso é coisa de criança.
+
+É muita coisa para o aplicativo. Sim
+
+. Mas sim, o ponto principal aqui é que existe uma barreira muito, muito baixa para expandir o modelo, certo? e para estender o modelo de uma forma que seja, você sabe, relevante para os usuários do aplicativo subsequente . Então, isso é muito, muito fácil, e agora vamos nos aprofundar um pouco mais para ver o quão fácil é. Se o controle remoto for a sua praia.
+
+OK. Então, sim, então, habilidade, sim, então, arquitetura de habilidades, quando nos aprofundamos um pouco mais, isso é meio relevante. Então, nós temos nosso próprio tipo de orquestrador. Ele possui um registro de habilidades e usamos o comando "carregar habilidade" para carregar as habilidades. E dentro das habilidades, existe, por exemplo, a habilidade em JavaScript. Existem
+
+intenções nativas. Então, pelo menos dentro do sistema Android, podemos chamar intents do sistema Android ou intents nativos, e você pode simplesmente chamá- los em sua escala. Então, coisas como se você quisesse ligar e desligar o Wi-Fi ou algo assim. Portanto, você certamente pode usar intents que estejam expostos a todos os dispositivos Android e que estejam disponíveis em JavaScript . Bem, então existe uma espécie de roleplay, o skill.md, que contém os dados da persona e do
+
+cenário, e depois há a escala e os recursos específicos do exemplo. Como eu disse antes, isso pode incluir... pode ser apenas JavaScript, que roda inteiramente localmente, proporcionando uma experiência totalmente offline, ou, como no caso do compositor musical, nós usamos uma API da web que exigia uma chave de API, a qual era solicitada ao usuário. Isso
+
+também funciona dentro da galeria. Ah, então sim, as ferramentas predefinidas que temos internamente, só para dar uma ideia de como funciona, são: carregar habilidades, executar JavaScript ou executar intents. E o orquestrador, usando apenas essas três habilidades, consegue fazer o sistema como um todo funcionar. Então, este é mais um teste para avaliarmos a nossa eficácia. Este é um comentário do nosso gerente de produto Gemini, mostrando que é uma boa ideia incluir "restaurante".
+
+Por favor, responda-me em inglês. Esta é uma habilidade para jogar roleta em restaurantes. Sim, na verdade, foi muito fácil desenvolver habilidades usando... usando... usando a
+
+antigravidade, certo? Ou Gemini CLI. Na verdade, fizemos a equipe executar cerca de 80 desses exercícios. Então tínhamos muitas, muitas coisas para fazer. Tínhamos muitas opções em termos do que mostrar, e foi muito divertido para as pessoas desenvolverem essas ideias.
+
+Então, aqui podemos entrar e simplesmente observar a estrutura em si da roleta de restaurante. Hum, sim, esta é a parte que fica sob o capô. Portanto, isso requer segredo verdadeiro. OK. Queríamos obter uma chave de API e a busca retorna 10 restaurantes. Hum, e
+
+então retorna em "Sim". OK. Retorna locais de culinária. Ah, e este é o arquivo JS index.j.js, onde podemos
+
+ter uma espécie de visualização web simples que renderizamos para exibir a roda real. Você pode, obviamente, codificar tudo isso por conta própria, certo? Há o código-fonte completo aqui para os exemplos em Cloud Code. Sim, eu nunca cheguei a publicar isso, mas funciona muito bem em Cloud Code também. Temos tanto o código-fonte do exemplo quanto uma especificação de habilidades para começar.
+
+Mas e daí? Há instruções completas no GitHub se você quiser tentar escrever sua própria escala. Mas esse era o padrão que realmente usávamos com mais frequência. Estava usando habilidades semelhantes para desenvolver habilidades de escrita. Então, usando algo como o Gemini CLI, o Cloud Code ou o Anti-Gravity. Bem, esse era o nosso
+
+padrão favorito, onde simplesmente dizíamos: "Ei, quero escrever uma habilidade para a galeria de IA Edge". Bem, este exemplo funciona no Gemini CLI, onde simplesmente dizemos: " Ei, esta é a documentação, aqui estão alguns exemplos de algumas habilidades que você pode consultar." Então, esta é a habilidade que eu quero desenvolver, que é um arquivador ARC offline . Ah, sim, a ideia é que, quando você... bem, você
+
+pode... uau, com base em fotos que você tirou em Londres, por exemplo, o aplicativo seria capaz de te dizer: "Ali está aquela estátua legal do Churchill por onde eu passei" . Então, de certa forma, poderia pesquisar um pouco sobre Churchill para você, e depois, no voo de volta, você poderia acessar essa balança novamente e ela teria várias informações sobre as coisas que você viu, que você poderia ler durante o voo, por exemplo. Acho que essa
+
+foi a inspiração para esta. É, então, basicamente, ele busca conteúdo da Wikipédia, armazena localmente e depois cria um índice. Aqui, com a CLI, também podemos perguntar, pois temos uma skill ADB no Gemini CLI. Podemos pedir para ele testar a própria skill, dizendo: "Ei, você tem acesso a um telefone conectado via ADB". Então, o Gemini CLI usa sua skill ADB para Android para entrar e testar se o aplicativo realmente funciona e se a skill está fazendo o que promete.
+
+Podemos simplesmente adicionar isso a um prompt e pedir para ele iterar. Ele fará algumas validações básicas e retornará o resultado. Ah, sim . Então, acho que se isso funcionar, será um exemplo de como fazer isso. Eu também poderia ter feito isso. Sim
+
+. Então, este é um exemplo de como usamos o Gemini CLI para fazer isso. E isso funcionou de forma realmente eficaz. Penso que, das cerca de 80 competências que a equipa desenvolveu internamente, talvez mais de metade fossem competências com um estilo definido, pelo menos inicialmente, o que reduz bastante a barreira para as pessoas expandirem um mestrado em Direito e fazerem coisas novas de uma forma que seja útil para o seu público. Um,
+
+assuma o controle da tela. Sim. Sim. Vá em frente . Todos os exemplos aqui estão sendo executados no modelo mais pequeno, seja no aplicativo ou no dispositivo?
+
+Todos os exemplos aqui estão usando o modelo padrão, o que responde à pergunta. Então, a pergunta para a gravação é: todos os exemplos estão sendo executados no modelo mais simples? Neste caso, os exemplos estão sendo executados no modelo 4B. Certo. O modelo 2B, as habilidades também funcionarão com o modelo 2B e você pode experimentá-lo. Mas é... sim, a
+
+sua experiência pode variar bastante, com habilidades mais simples, menos habilidades, esse tipo de coisa, certo? Mas todos os exemplos que você viu estão rodando no modelo 4B. Experimente o painel de controle do Chrome. Tente fazer uma versão de habilidades no Chrome. Sim . Então, é como usar o Chrome CVP
+
+com a escala para usar um modelo local para trabalhar na sua sobrancelha. Não, nós não temos. Não. Sim. É algo interessante para experimentar.
+
+OK. Oh sim. E aqui vai um rápido agradecimento a este link. Bem, algumas coisas sobre a galeria que eu também deveria mencionar são o tempo de check-in rápido. Algumas coisas sobre o Gallery que eu também deveria mencionar são: primeiro, o Gallery é um projeto de código aberto, e o próprio projeto de código aberto se baseia em ferramentas como o Light ou TLM, que você viu anteriormente como parte da introdução. Então, o próprio aplicativo,
+
+além de ser algo divertido de usar, permite que você prototipe ideias de aplicativos ou veja, tipo, "nossa, isso é possível em um celular?", "quão rápido seria se eu executasse em um celular?", "esse tipo de funcionalidade é realmente viável?". Além de poder criar protótipos de modelos, você também tem acesso completo ao código-fonte. E
+
+os modelos também permitem, ou melhor, se baseiam na mesma infraestrutura, como a infraestrutura de aceleração de código aberto Lighter T e Lighter TLM, que fica por baixo dos panos. Então, se você vir algo que goste na galeria, sabe, sim, você também pode usar o modelo Gemma de outra forma . Mas se você quiser ter a mesma experiência ou a mesma velocidade, pode simplesmente usar as APIs de código aberto subjacentes e extrair um modelo da nossa página do Hugging Face, que veremos mais adiante, e executá-lo diretamente também. Então, como parte disso, também temos uma série de discussões sobre a galeria. hum, na galeria que mostra algumas das habilidades da comunidade que foram enviadas, desde entretenimento com gatos até blackjack, certo?
+
+Eu acho. Então, essas habilidades... você também pode... pessoas que já postaram essas
+
+habilidades. Então, se você desenvolver alguma habilidade, sinta-se à vontade para publicá-la aqui, e isso tornará mais fácil para outras pessoas da comunidade encontrá-la. E então, aquelas que parecem interessantes ou úteis para muitas pessoas, podemos adicionar à nossa lista de habilidades preferenciais de terceiros no aplicativo, para que as pessoas possam descobri-las mais facilmente. Sim, então, isso é algo que vimos ter uma quantidade razoável de atividade durante o fim de semana e que só está disponível desde a última quinta-feira. OK. Uma rápida verificação de horário. Ok, então, em seguida,
+
+eu queria mudar de assunto. Então, tudo o que vimos em relação às habilidades, de certa forma, se aplica à sua pergunta, assim como aos modelos 2B e 4B, que, principalmente em celulares, serão destinados a sistemas como o System Generation, onde realmente aparecerão em produção. Certamente, para IoT, desktop ou aplicações de borda, você poderia simplesmente carregar esse modelo e executar esses casos de uso em produção em plataformas como a Qualcomm IoT, que vimos anteriormente, por exemplo. Mas para implantar modelos em aplicativos hoje e enviá-los para produção, estamos vendo cada vez mais pessoas usando modelos menores, que chamamos de modelos minúsculos, ou seja, modelos com menos de 1 bilhão de parâmetros. São esses tipos de coisas que implementamos com as equipes para implantar LLMs em seus aplicativos. E são esses tipos de
+
+coisas que estamos vendo. Então, eu gostaria de dar uma olhada rápida em como é esse fluxo de trabalho. Então, o TLM mais leve é ​​o mecanismo que alimenta a galeria, certo? E ele próprio é um projeto de código aberto que possui APIs em C++ e Java. APIs em Swift estarão disponíveis em breve. Também possui uma API em Python desde a
+
+semana passada, o que é bastante relevante para desenvolvedores de IoT que gostam de trabalhar com Python. Hum, e isso requer um arquivo LLM e possui os componentes necessários para executar completamente um loop auto-regressivo e expô- lo por meio de APIs fáceis de usar. Sim . Portanto, são APIs C++ multiplataforma e, quando relevante, a mesma API pode ser usada com aceleração de hardware, como no exemplo da Qualcomm. Hum, hum, também publicamos no passado modelos menores...
+
+hum, ainda não publicamos para o Gemma 4, mas no passado também publicamos modelos que funcionam com silício da MediaTek e da Intel . Então, sim, ao longo do ano, e conforme mais e mais modelos menores forem disponibilizados, veremos um suporte mais amplo para NPU. Então, o fluxo de trabalho é, você sabe, você começa com os transformadores. Usamos um pacote chamado Lighter T Torch que pode fazer isso e possui algumas otimizações nativas do Pyro que otimizam a luz ou o T, além de ter quantização integrada ao fluxo de trabalho. Isso resulta em um arquivo TLM mais leve. Hum, e você pode
+
+então implantar isso... você pode prototipar com o aplicativo de galeria ou simplesmente implantar diretamente... no seu
+
+caso de uso candidato à produção, usando TLM mais leve em qualquer plataforma com a qual você queira trabalhar. Sim , esta é outra perspectiva desse fluxo, eu acho. Sim, para casos de uso realmente avançados, temos a API generativa Light ou Ttor Torch . Portanto, se você realmente quiser escrever o seu próprio modelo, se quiser criar um pequeno modelo do zero e treiná-lo do zero, nós oferecemos suporte a esse fluxo de trabalho, bem como ao ajuste fino de fluxos de trabalho padrão. E existe uma API chamada API generativa do PyTorch que permite, basicamente, que ela tenha blocos de construção para LLMs, que suportam muitos LLMs nativos do PyTorch e que, de certa forma, oferecem um desempenho muito bom quando executados em dispositivos.
+
+E sim, esse é o fluxo. Nossa, isso já está ficando bem complicado . Então, esta é a nossa pilha de tecnologias para implantação em NPUs. As principais conclusões que podemos tirar deste slide são talvez duas. Uma delas é que, nos bastidores, investimos muito trabalho em bibliotecas de otimização. Então temos o X, que é uma
+
+biblioteca de otimização para CPU, e o ML Drift, que é uma biblioteca de otimização para GPUs. Por isso, temos equipes que trabalham nessas áreas para garantir que ambas tenham um desempenho excelente. Muitos dos aplicativos OneP do Google dependem dessas duas bibliotecas. Então, estamos muito empenhados em garantir que eles tenham um desempenho excelente e funcionem na maior variedade possível de dispositivos. E estes utilizam o que chamamos de fluxo de trabalho JIT, onde produzimos um único artefato chamado arquivo leve ou TLM, ou arquivo leve ou T, que pode funcionar tanto na CPU quanto na GPU e ser implantado em diversos tipos de dispositivos.
+
+Para a NPU, precisamos de algo um pouco mais especializado. Para a NPU, precisamos chamar um plug-in de compilador do fornecedor antecipadamente, o que utiliza um fluxo de trabalho de compilação antes do tempo. Portanto, você precisa produzir um artefato específico para uma determinada NPU. E então, dentro do nosso ambiente de execução, nós... nós
+
+chamamos uma função de despacho para uma API específica que tem permissão para despachar trabalho para o driver do dispositivo NPU. Mas, tipo, ambos estão disponíveis através de uma API consistente. Portanto, embora o caminho JIT versus AOT afete o tipo de fluxo de trabalho de compilação, o fluxo de trabalho de desenvolvimento do aplicativo em si é muito semelhante, seja em NPU, CPU ou GPU. Exportar e inferir informações é muito simples. Hum, temos um isqueiro TT para exportação. Bem, eu sei que tenho falado muito
+
+sobre a Gemma Models porque é como se fosse a semana da Gemma para nós. Então, estamos muito animados com a Gemma neste momento. Vale a pena mencionar que também oferecemos suporte a modelos de terceiros. Então, existe um modelo de parâmetros Quen 6b que você tem aí, e esses modelos Quen também funcionam no aplicativo, certo? É isso que você verá no lado direito.
+
+O aplicativo também suporta o carregamento de qualquer arquivo TLM mais leve, sua execução e a obtenção de estatísticas de benchmark, que esperamos ver no vídeo em instantes. Então, você pode executar o programa, digamos, na GPU, e então usar o último pixel que você está simulando aqui. Uau. Na verdade, essa é uma ótima pergunta. Sinceramente, eu não sei disso. Fazemos
+
+muitos testes no Pixel e também muitos testes no S25, certo? Então, presumo que seja um desses dois dispositivos, certo? Hum, mas não sei ao certo. Bem, na verdade não mostramos isso lá porque, recentemente, na última versão, adicionamos um ícone opcional embaixo de cada chat e, se você clicar nele, ele mostra as estatísticas de decodificação pré-preenchidas para o modelo. Então, se você quiser, pode encontrar qualquer modelo que tenhamos no Hooking Face, carregá-lo no aplicativo e executá-lo para ver as estatísticas de benchmark desse modelo em um telefone específico.
+
+Então, sim, você pode... e também na linha de comando, tipo, se você estiver executando em um computador, você também pode...
+
+usar um TLM mais leve, se quiser fazer alguma prototipagem em um computador para entender como os modelos funcionam em um computador. Você também pode fazer isso. E então, sim, acho que este é outro...
+
+este é outro modelo de terceiros, este é o Fast VLM, este é um modelo da... este é um modelo da Apple, na verdade, é um modelo VLM muito bom, com apenas 500 milhões de parâmetros. E, literalmente, isso está rodando com aceleração de hardware da Qualcomm, e é por isso que está funcionando tão rápido. E isso está rodando, sim,
+
+está rodando em um S25, eu acho, porque é um processador Qualcomm, e estamos literalmente com ele em loop, dizendo "descreva a cena, descreva a cena", com entrada de vídeo, e roda, sim, roda muito, muito rápido. Bem , este é um bom exemplo do que é possível com um modelo que seja viável de implementar em um dispositivo. Como não fizemos neste caso, não implementamos a quantização de 4 bits , mas presumo que, se tivéssemos tido motivação suficiente, poderíamos tê-la feito e, então, teríamos algo que exigiria apenas cerca de 250 ou 260 megabytes extras no aplicativo para proporcionar esse tipo de experiência. Sim , certamente são viáveis. E isso foi quando eu estava falando sobre modelos como este, que é um exemplo de um modelo de propósito geral com 500 milhões de parâmetros, treinado em um conjunto bastante restrito de coisas, como descrições de cenas ou simplesmente conversão de imagem em descrição. Então é como se fosse um
+
+caso de uso específico, mas ainda assim de propósito geral, certo? Então, este é um bom exemplo de modelos maiores, embora pequenos, como o GMA 3270M, por exemplo. Esses modelos normalmente exigem ajustes finos para executar uma tarefa específica. Ah, mas sim, este é um bom exemplo, por isso o incluí. É um bom exemplo de um modelo pequeno de uso geral que é muito útil. Bem,
+
+também vale a pena notar, e acho que não incluí na apresentação, outros exemplos de modelos pequenos de propósito geral incluem muitos modelos de transcrição muito pequenos, ou alguns modelos de tradução par a par específicos disponíveis atualmente, muitos dos quais nós suportamos e muitos dos quais estão em nossa página do Hugging Face, caso você queira dar uma olhada. Há várias coisas disponíveis no Hugging. Ah, sim, então o próximo slide mostra apenas alguns dos modelos sobre os quais eu queria falar. Então, a função Gemma é uma que publicamos em parceria com a GDM no ano passado. Esta é a função Gemma, um modelo de propósito geral que você pode refinar ainda mais para chamadas de função.
+
+Existem notebooks do Colab disponíveis para consulta, como formatar conjuntos de dados e como refinar a chamada de funções. As duas próximas, acima dessas, são ações móveis em jardins minúsculos. As ações para dispositivos móveis são um exemplo, como mencionei anteriormente, das 10 ações diferentes que ajustamos e com as quais alcançamos, creio eu, cerca de 86% ou 70% de confiabilidade . Uh, Tiny Garden é outro exemplo, é um jogo que criamos dentro do aplicativo Gallery e que você também pode jogar. É apenas mais um exemplo de uma função de voz que chama um modelo de ajuste fino, que você pode usar como sufixo, ou seja, uma instrução ajustada com precisão. Então, nós,
+
+nos modelos, quando a GDM publica modelos, às vezes eles têm o sufixo PT e às vezes têm o sufixo it. Um PT é quando publicamos um modelo logo após o pré-treinamento, antes do ajuste fino. Isso é bastante útil para usuários mais experientes, pois permite que eles façam todos os ajustes finos de suas instruções. Você pode controlar totalmente a personalidade do modelo e não precisa desaprender nenhum ajuste fino que fizemos neste caso. A forma como ensinamos o modelo a fazer chamadas de função é, na verdade, através do próprio ajuste fino das instruções. Assim,
+
+quando publicamos um modelo para ajustes adicionais na chamada de funções, ele já possui uma personalidade semelhante à de chamada de funções, e é exatamente isso que queríamos publicar. Então, neste caso, este modelo serve para ajustes mais precisos, mas é um modelo de TI. Normalmente, se você observar modelos maiores, como os da família Gemma 3, tínhamos pontos de verificação de TI e de desempenho, dependendo do volume de dados e da necessidade de realizar ajustes finos completos. Acredito que há uma discussão à parte sobre casos de uso de IA soberana que alguns membros da equipe da DeepMind irão abordar ainda esta semana. Imagino que começaremos com nosso ponto de verificação pré-cadeia e, em seguida, adicionaremos um enorme conjunto de dados soberanos ou empresariais para que possamos ajustar completamente um modelo com 27 bilhões de parâmetros para realizar diversas tarefas. Sim. Ah,
+
+outro exemplo aqui é a incorporação de Gemma. Bem, eu sei que tecnicamente não é um LLM, mas o Gemma faz incorporações de texto. É um modelo de incorporação de texto que publicamos com a equipe do Gemma em setembro passado e que realiza incorporações de texto para casos de uso do tipo ragtime. Mas isso também se assemelha a um modelo de incorporação muito, muito robusto que utiliza apenas 300 milhões de parâmetros. É mais um exemplo de um tipo de dispositivo de alta utilidade... hum, sim,
+
+acho que tecnicamente não é um LLM, mesmo que seja um transformador por dentro, mas é mais um exemplo de um modelo minúsculo que é muito útil para casos de uso em dispositivos. OK. Sim. Bem, acho que já abordei esse assunto. Temos, sim, ambos: AOT (Aceleração de Tempo de Otimização). A compilação AOT é o nosso
+
+fluxo de trabalho para aceleração de hardware no dispositivo e é ideal para distribuir modelos pequenos para diversas plataformas. Hum, ok, sim, e eu meio que abordei isso também. O próprio Light TLM é construído sobre o Lightorty e suporta todos esses tipos de modelos, e você também pode encontrar modelos que não são LLM no Hugging Face. Isso é relevante porque, normalmente, ao desenvolver um aplicativo mais complexo, você precisa de alguns recursos relacionados a um LLM, como um modelo de detecção de atividade de voz ou um modelo de redução de ruído. Muitos desses modelos também estão disponíveis usando apenas o runtime mais leve, como o TLM mais leve, que é o runtime que possui o loop auto-regressivo completo. Ele incorpora elementos
+
+mais leves e há um conjunto de modelos LLM disponíveis para uso com o TLM mais leve, mas há muitos modelos de suporte, como se diz, modelos não auto-regressivos disponíveis para uso com a API leve, que são relevantes para a implantação e que normalmente são usados ​​para implantar um aplicativo completo. OK. E isso era algo que eu estava dizendo antes, sobre para uso avançado você poder personalizar totalmente os modelos. Então, se você quiser escrever sua própria variante de llama, moonshine, fi ou quen, você pode usar o diretório codance. OK. Provavelmente vou conseguir
+
+terminar um pouco mais cedo, eu diria. OK. Então, é isso em termos de exemplos de modelos pequenos e fluxos de trabalho. Então, há muita coisa e haverá, sim, há muita coisa que podemos fazer agora com modelos muito pequenos. Os modelos MClass 500 estão disponíveis com alguns recursos padrão para LLMs menores. Tivemos muito
+
+sucesso em aprimorá-los para aplicativos. E o que vou mostrar a seguir é um exemplo de um aplicativo que construímos usando pequenos LLMs. Então, este é um aplicativo que está disponível apenas para iOS por algum motivo, chamado AI Edge Eloquent. Bem, isto é uma espécie de modelo de transcrição, mas, como você deve ter notado, como palestrante, eu uso muitos "ss" e "armas", certo? Se você pegasse a transcrição desta apresentação, não seria uma transcrição perfeita, haveria muitas interjeições. Este programa eloquente
+
+foi desenvolvido para esse tipo de uso de transcrição, onde ele realiza a ditagem, mas também possui uma etapa separada de polimento automático, na qual pode remover todas as interjeições e palavras. Então, se você quiser ditar uma mensagem para usar mais tarde, é possível, sabe, corrigir expressões idiomáticas. Outra coisa que também possui é uma lista de viés. Uma das coisas que percebemos foi que, se estivéssemos falando de mestrados em Direito (LLM), você perguntaria: "Ah, você já formou uma Laura para isso ou tem alguém assim?". E qualquer
+
+serviço de transcrição padrão, quando você diz Laura, ele traduziria isso para o nome Lau ou A, é o que normalmente acontece. Você também pode fornecer uma lista de palavras-chave ou termos técnicos. E aí o modelo vai meio que... hum... tender para essas palavras,
+
+certo? Porque é assim que pessoas reais escrevem. Então, uma das principais características aqui é que funciona completamente offline. B. Ele possui seu próprio tipo de dicionário de viés, se você quiser chamar assim. E aí, de certa forma,
+
+o texto fica mais limpo, se você observar, no meio, tem esse acabamento mais refinado, né? E no geral, sim, isso proporciona uma experiência offline bem legal , sem custo algum, certo? Isso remete à motivação inicial de custo, já que existem alguns serviços pagos que fazem isso. Mas isso pode te dar um texto realmente limpo e organizado. Essa última etapa é feita alterando elementos como tokens especiais ou sobrepondo um mapa ou algo do tipo? Qual é o
+
+último passo? É isso? Vamos mostrar dois slides e eu responderei à sua pergunta. Mas sim, boa pergunta. A pergunta sobre a gravação da raiz era se o polimento é feito internamente, no modelo principal, ou externamente, e como o bias é aplicado. Vamos responder em dois
+
+slides, espero. Sim, personalização. Sim, esta é a personalização. Então você pode adicionar coisas como Laura, que é o exemplo que sempre usamos porque é algo muito especial para nós. Então, se você quiser, ele permite que você o conecte à sua conta do Google, importe dados do Gmail ou de algum outro lugar e procure palavras incomuns, adicionando-as à lista de palavras-chave, ou você pode adicioná- las manualmente. As
+
+pessoas geralmente colocam aqui nomes, porque, tipo, modelos costumam errar nomes incomuns com frequência, né? Bem como termos técnicos, certo? Assim como Gianning, que é surreal. Essas são duas pessoas da equipe que desenvolveram o aplicativo. Ah, sim, então não é surpresa, esse é o exemplo que temos.
+
+OK. Então é aqui que... sim, o que estamos chamando de mecanismo de polimento de texto nesta etapa. Então, temos duas
+
+etapas aqui. É importante notar que ambos, bem, primeiro vou descrever e depois falarei sobre os modelos. Assim, o sinal captado pelo microfone é enviado para um mecanismo de reconhecimento de voz que fornece uma transcrição sem filtros. Na metade inferior, temos um fluxo de personalização onde você obtém um conjunto de palavras incomuns ou exclusivas que são então traduzidas em termos relativos. Ambos entram em um mecanismo de polimento de texto, que por sua vez é um mini LLM dedicado apenas para polimento de texto, certo?
+
+Provavelmente poderíamos ter criado um único LLM para fazer tudo isso, certo? Mas, na verdade, uma das realidades do desenvolvimento mobile é que, às vezes, mesmo com modelos pequenos, existe essa questão da modularidade. Então, esse mesmo mecanismo de transcrição no seu aplicativo pode ter outro caso de uso para ele, e você pode não querer pagar... sabe,
+
+você pode recuperar o custo desses pesos usando-os em vários lugares, certo? Portanto, esse é um padrão que vemos emergir à medida que construímos mais aplicativos desse tipo: essa espécie de manual de modularidade. Sim, em teoria esses dois modelos poderiam ser combinados. Na prática, ter modelos separados é uma escolha mais pragmática. Isso também oferece mais profundidade. Sim
+
+. E você também pode inspecionar o que está acontecendo no meio. É mais fácil depurar, certo? Bem, vemos algo semelhante com a função de voz para chamadas, como você sabe, mas isso é assunto para outro dia. Mas é... sim. Então, ok, outra
+
+coisa a destacar é o mecanismo de reconhecimento automático de fala (ASR) e a geração de texto. Eles têm um pequeno... não sei se você reconhece o logotipo da Gemma no canto. Esses não são
+
+modelos Gemma oficialmente publicados, mas basicamente usamos o mesmo fluxo de trabalho que recomendamos para outras pessoas. Usamos os modelos Gemma, o modelo Gemma menor, certo? Isso seria um derivado, algo como " da linhagem Gemma 3270M", essa seria a melhor maneira de descrever, certo? E basicamente pegamos esse modelo e fizemos um ajuste fino para ter um mecanismo de transcrição e um mecanismo de aprimoramento de texto. Hum, nós os ajustamos. De forma geral,
+
+para dar uma ideia melhor, esse fluxo de trabalho consiste em usar um LLM (Learning Learning Machine) muito mais robusto na nuvem para gerar uma grande quantidade de dados sintéticos que correspondam ao tipo de dado que desejamos. E então, quando você tiver alguns milhões ou dezenas de milhões de dados sintéticos, dependendo do quão ambicioso você quiser ser, você os coloca em um fluxo de trabalho de ajuste fino e refina o pequeno modelo básico com o qual está trabalhando para obter um modelo derivado. E você sabe, esse mesmo fluxo de trabalho que estamos mostrando aqui... você sabe, você
+
+pode usá-lo... nós o usamos internamente para lançar um aplicativo de anotações mais robusto, certo? Mas esse mesmo fluxo de trabalho é...
+
+o motivo de eu estar mostrando aqui é como um exemplo da vida real de como estamos usando o Gemma para derivar pequenos modelos a fim de construir novos aplicativos de produção. E estamos usando esse fluxo para muitos outros casos de uso internamente também, dando suporte a produtos do Google One e de muitas outras maneiras que esses produtos provavelmente explicarão por si mesmos com o tempo, certo? Mas sim, modelos menores do Gemma são realmente muito poderosos para esse tipo de caso de uso, e estamos vendo bons resultados com isso. Vou combiná-lo com o teclado, porque é muito útil. Sim, é isso que o mecanismo de polimento de texto faz. Como parte disso,
+
+nós... Uau. Como se o mecanismo de mensagens de texto tivesse sido treinado, instruído e ajustado, eu acho, para ter uma espécie de aviso do sistema do tipo, "Ei, essas são suas palavras especiais". Uh, por favor, uh, por favor, corrijam
+
+tudo que soe como estas palavras para estas palavras. E também remova interjeições, falta de clareza ou até mesmo coisas como "esqueci de dizer isso" ou " risque aquilo", coisas desse tipo. Provavelmente uma habilidade. Sim . Não, neste caso não se trata de uma escala, pois é uma maquete em miniatura. Na
+
+verdade, acabamos de treinar esse comportamento no modelo. É verdade que, com um modelo de quatro bilhões de parâmetros, talvez exista uma versão disso que possa ser feita em maior escala, o que seria um projeto paralelo interessante. Sim, talvez exista uma versão disso que você possa fazer em escala, mas para os modelos pequenos, a estratégia que geralmente vemos ser muito útil é a geração de dados sintéticos com um modelo maior e, em seguida, escolher um modelo pronto como o Gemma 327M, certo? ou algo semelhante, e continue com isso, fazendo ajustes finos, e então, combinado com a quantização, você pode lançar um recurso específico bastante atraente para um conjunto muito amplo de usuários, tudo isso alimentado por um LLM que funciona em diversos dispositivos. Você tem algum repositório no GitHub com um fluxo de trabalho para o ajuste fino?
+
+Porque não é só um ajuste fino, certo? Você precisa aquecer o treinamento e depois começar. Sim, temos um notebook colaborativo para a publicação do Gemma 3270M. Tanto o Gemma 327M quanto o Gemma Functional têm notebooks colaborativos que mostram como realizar o ajuste fino completo dos modelos. Sim.
+
+OK. Então, em relação aos ajustes finos, qual é a sua experiência? Bem, vamos pegar o exemplo da chamada de função. Sim . E você disse que tinha 80% de chance de acertar as 10 funções.
+
+Nós terminamos isso. Isso provavelmente ocorre após ajustes finos. Sim . E você poderia mencionar alguns números antes de explicarmos do que se trata? Nossa!
+
+Estamos conversando? Nossa! São 10%? tipo 40 e poucos por cento, 40 e poucos por cento a 86%, bem dentro desses 86% também, certo? Porque eu não quero... hum,
+
+teve uma... nossa, tínhamos 10 funções e talvez duas dessas funções puxaram nossa média para baixo bastante. Tinha tipo oito funções simples que estavam acima de 90, tipo 93%, então, em funções muito simples, tínhamos uma confiabilidade realmente muito alta. E aí, é,
+
+eu só esqueci os detalhes exatos, mas tinha umas duas que meio que puxaram a média para baixo, tipo uns 86%, que é onde terminamos. Há também uma postagem no blog que você pode ler para obter mais detalhes. Sim. Hum, mas veremos isso em... Sim, vemos isso o
+
+tempo todo com modelos menores. É como se nossa experiência se baseasse em uma determinada avaliação, e o ajuste fino ocorresse entre 20 e 40 pontos na avaliação. Então é uma vitória realmente muito significativa para os modelos em miniatura, certo? Tipo, quando estamos falando de 200 milhões de parâmetros, certo? Ou 270, certo? Como publicamos com a 3M, sim. O
+
+ajuste fino deles é essencial para a maioria das coisas, certo? A menos que você tenha um modelo que já foi publicado para realizar uma tarefa específica, certo? Por exemplo, você encontrará modelos de transcrição por aí que têm esse tamanho, funcionam muito bem em uma tarefa e não exigem ajustes adicionais, mas isso porque eles foram projetados para realizar essa tarefa específica desde o início, certo? Mas se você quiser realizar sua própria tarefa específica, sim. Certo, e enviar algo para muitos e muitos dispositivos, então sim, o ajuste fino é, pelo menos por enquanto, o fluxo de trabalho preferido. Sim, isso
+
+pode mudar. Conseguimos um laboratório de programação que pode usar a internet.
+
+Essa é uma boa pergunta. Então, temos uma colaboração para acertar a iluminação ou o arquivo .t. Nosso suporte para TLM na web ainda está em desenvolvimento, certo? É isso aí!
+
+Por favor, dê uma olhada no nosso GitHub para ver o status mais recente. Então, teremos um manual de ajustes finos para o Gemma 4 por acaso? O Gemma 4, anunciado na semana passada, era compatível com modelos pequenos e médios, certo? No passado, para o GEMO 3, também publicamos modelos pequenos, certo? Então, hum, mas esses foram os primeiros modelos que enviamos para o Gemma 4 na semana passada, certo? Então, imagino que haverá mais modelos de OGM
+
+no futuro, certo? Bem, já existem algumas opções de ajuste fino disponíveis para os modelos maiores, certo? Mas para os modelos minúsculos que publicamos até o momento, certo? E se alguém estiver lendo ou ouvindo esta palestra daqui a alguns meses, por favor, procure na internet as informações mais recentes. Mas, até o momento, os modelos em miniatura que publicamos são os modelos Gemma 3. Hum,
+
+e eles têm para a função Gemma e para a Gemma 327M, existem fluxos de trabalho de ajuste fino disponíveis para a Gemma 4, que foi lançada na semana passada. Existem alguns fluxos de trabalho, existem receitas de ajuste fino no Vert.Ex e em outros lugares, acredito, para isso, mas confira as outras palestras da Gemma mais tarde nesta semana e você verá e ouvirá mais. Ah, sim, então o aplicativo Eloquent está disponível para iOS, caso alguém queira experimentar, mas não na Europa. Sim, eu não consegui. Ah, ok,
+
+sim, você pode encontrar no navegador, mas não na loja. Uau. Portanto, isso precisa ser ativado. Acho que esse feedback é realmente útil. Vou repassar essa informação. OK. Ah, sim, e depois encerre
+
+. Sim, os principais pontos a serem considerados são os modelos de tamanho médio, ou modelos pequenos, como os chamamos, certo? Um vai aparecer de alguma forma em um dispositivo móvel perto de você. Esses mesmos modelos são excelentes para uso em sistemas embarcados e plataformas embarcadas. Bem, pelo menos por enquanto, considerando a memória que temos em celulares, que não parece que vai aumentar tão cedo devido ao custo, os modelos pequenos são o que há de mais moderno para a implementação em larga escala.
+
+Esperamos facilitar cada vez mais o desenvolvimento desses dispositivos, assim como esperamos disponibilizar modelos cada vez mais potentes por meio da parceria com a JDM. Também queremos simplificar ao máximo os fluxos de trabalho de ajuste fino para tornar tudo isso mais acessível. Mas sim, fico feliz em compartilhar o que temos feito nessas duas frentes. Acho que temos nove minutos. Se alguém mais quiser fazer alguma pergunta, fique à vontade. Com
+
+prazer. Sim. Sim
+
+. OK. Sim . Ótima pergunta. Então, surgem dúvidas sobre a segurança em modelos de borda. Primeiramente,
+
+a equipe da Gemma dedica muito tempo a isso, e eu encaminharia vocês a eles para todas as perguntas sobre segurança dos modelos que foram publicados na semana passada, mas eles realmente priorizam esse assunto, dedicando muito tempo à segurança desses modelos. Além disso, para o sistema Genai dentro do núcleo de IA, por exemplo, o que é efetivamente enviado, e você provavelmente ouvirá mais sobre isso de outras pessoas, é que dentro do sistema Genai, quando ele é enviado como parte do pacote dos EUA, não como um modelo bruto como o que publicamos na semana passada, o fornecedor do sistema normalmente terá algum tipo de verificador de segurança de entrada e saída no modelo, certo? Hum, como uma espécie de acessório pós-venda, porque há coisas específicas que eles querem e coisas que não querem para o produto, certo? Então, essa é mais uma camada para modelos menores e, para modelos realmente pequenos, a segurança é muito importante. Mas, geralmente, pelo menos para nós, a maneira como implantamos modelos pequenos é dentro de uma API ou tarefa muito específica. Como você pode imaginar com o
+
+Eloquent, o aplicativo que você viu, o perfil de risco ali é, tecnicamente, mais parecido com um aplicativo regenerativo do que um aplicativo generativo, se você me entende. Ele não vai inventar tudo dinamicamente. Então, tentamos... sim, então...
+
+você pode analisar o escopo do que o modelo está tentando fazer, a superfície da API e a superfície funcional. Normalmente, modelos pequenos precisam fazer um modelo pequeno funcionar, o que geralmente tem um escopo funcional mais restrito, o que permite... você ainda precisa se preocupar com a segurança, mas é um problema mais específico que você precisa resolver quando analisa a situação, certo? É isso que eu
+
+diria, sim. Existe algum lugar onde eu possa encontrar informações sobre como implantar modelos gem pequenos, um pouco maiores, em uma API 5090, porque eu tenho um... 5090, vou implantá-lo nele e depois testá-lo. Existe alguma
+
+forma de eu pesquisar isso? Ah, então, ok, então, sobre a 5090, eu acredito... não tenho certeza se temos... então, eu sei que não temos
+
+documentação específica para isso, mas nossa ferramenta suporta GPUs da Nvidia. A Nvidia também é parceira da Gemma, certo? Eles já deram suporte a alguns lançamentos da Gemma no passado, então pode ser que...
+
+se você olhar na página da Nvidia, você pode encontrar algo sobre isso através do TensorTLM deles. Bem, eu sei que eles já deram suporte a alguns lançamentos do Gemma no passado, mas não podemos indicar a documentação específica da resposta rápida, mas existem dois lugares onde eu verificaria. Sim . OK. Desculpe.
+
+Sim, tudo bem. Então, os exemplos que você mostra para habilidades de agente são obviamente de execução de uma única habilidade, você executa a habilidade, que é uma única habilidade no s. Você mudaria a arquitetura para multi? É uma questão de... então, nós realmente
+
+suportamos execução multi-kill, certo? Hum, é algo... [bufa] Então, dentro do aplicativo, se você baixar o aplicativo, você pode definir...
+
+você pode definir... as habilidades que deseja carregar, certo? E você pode simplesmente ativá-los ou desativá-los, certo? E aí
+
+você pode facilmente dizer, por exemplo, se for muito específico na sua pergunta, tipo, "uau, tipo, se você for muito específico na sua pergunta, tipo, sabe, pesquise esse tópico na Wikipédia, resuma em três tópicos e depois mostre como se fossem cartões de memorização". Se você for bem específico, isso vai funcionar, certo? Bem , francamente, só temos esse modelo há algumas semanas, então ainda estamos testando diferentes modelos e vendo quais são os limites de quanto podemos acumular e encadear habilidades, certo? Então, sim, nós ainda estamos literalmente na fase de acumular quilometragem. Então, a maioria dos exemplos que publicávamos eram de escala única, mas mesmo no aplicativo de diortização, certo? Se você se
+
+lembra, Alice, a pessoa que fazia isso, pediu para eu resumir meu humor ou a que horas eu ia me encontrar com a Amy, e então a Wikipédia ia aparecer e perguntar blá blá blá. Assim, nesse exemplo, ela conseguiu demonstrar, em uma única conversa, turnos individuais utilizando habilidades específicas. Sim, mas, tipo, acumulação de habilidades dentro de um prompt individual, acredito que já vimos isso funcionar quando você é bem explícito, mas também, francamente, ainda estamos aprendendo os limites do que é possível com essas classes de modelos. Desculpe, pergunta seguinte. Sim. Então, trata-se de tomar
+
+a decisão de identificar quais habilidades são importantes para o problema, considerando que é um modelo pequeno. Você gosta de fazer ajustes de instruções a partir de um modelo maior para construir essa inteligência, ou ele já é muito bom nisso? Bem, o modelo foi modificado para ser muito bom em fluxos de trabalho agentes, muito bom em chamadas de função, certo? Ele não foi treinado especificamente para o nosso padrão de habilidade, certo? Isso surgiu depois, quando recebemos o modelo e começamos a testá-lo, e pensamos: "Uau, isso funciona! Podemos fazer isso?".
+
+Então, foi mais esse tipo de fluxo de trabalho. Não houve treinamento específico para a nossa estrutura de habilidade, certo? Mas, sabe, a equipe passou muito tempo pensando em soluções de propósito geral e definindo funções, certo? Bem, a equipe do GDM fez um ótimo trabalho para nos fornecer um modelo de propósito geral realmente robusto, mas não há nada de específico para o nosso aplicativo, certo? Então, se você tivesse uma visão um pouco diferente sobre as habilidades e talvez uma arquitetura de habilidades melhor do que a que mostramos hoje, certo? É
+
+totalmente possível. É, você pode esperar ter bastante sucesso, certo? Não existe nenhum ingrediente secreto ou segredo escondido no que mostramos. Sim . Ah, faça aula, desculpe, acho que você talvez seja o próximo. Sim. Estou
+
+construindo algo como uma anedota.
+
+O primeiro grande desafio é o contexto. Como você sabe, especialmente quando começa a
+
+falar um pouco sobre a janela de contexto do " Sim, E2B". OK. Sim , eu encaminharia você à equipe da Gemma para obter orientações oficiais. Por exemplo, os modelos de tamanho médio têm uma janela de contexto de 128K, e eu precisaria verificar novamente os modelos menores, certo? 32 mil.
+
+32 mil. Sim, era isso que eu queria saber, se eram 32 mil. Então, na nossa implementação na galeria, usamos por padrão 8K ou 12K, por motivos de desempenho, certo? Mas os modelos suportam até E2B e 4B, que suportam até 32K, e os outros modelos suportam até 128K. Com 32K, você usa muita memória.
+
+Nossa, eu me pergunto se temos as estatísticas disso no cartão do modelo. É para o modelo E2B e o E4B. A pegada de memória para um contexto maior... não é
+
+tão ruim quanto você pensa, certo? Na verdade, a equipe otimizou bastante essa métrica para esses modelos porque ela era voltada para casos de uso extremos. Portanto, a quantidade de cache KV necessária para cada token de entrada foi otimizada. Portanto, os modelos se comportam muito bem nesse aspecto. Não tenho um número de cabeça, tipo, bytes por token de entrada, para te dar, mas é... é... é bom para a
+
+classe do modelo, eu diria. Sim . E uma segunda pergunta. Você tem a versão para iOS? Sim, a galeria AI Edge funciona tanto no iOS quanto no Android, sendo de código aberto. Acho que
+
+a versão Mac OS... bem, esse é um bom ponto. Vou adicionar isso à lista de "em breve".
+
+Certo. Com certeza, um dos itens da nossa lista de tarefas, já que publicamos o aplicativo para iOS pela primeira vez em janeiro. Bem, o aplicativo para Android já está disponível desde o verão passado, certo? Mas a nossa intenção é proporcionar aos desenvolvedores uma experiência "o que você vê é o que você obtém" , certo? Então você pode usar o aplicativo, se divertir, experimentar os modelos e também obter o código-fonte, ver como ele foi construído, etc. Certo. Sim,
+
+essa é certamente a nossa intenção. Sim . Provavelmente a última pergunta, porque estamos na questão de se existe uma relação de compromisso entre o ajuste fino de modelos individuais para uma tarefa específica e a quantidade real de memória que eles consomem nos dispositivos. Então é como se você estivesse encadeando modelos . Para esclarecer, a que modelo se refere a sua pergunta? Acabei de
+
+baixar o E2B, seja lá qual for o modelo E2B. Sim . Então, se você tiver vários modelos, presumivelmente sim, para o E2B nós recomendamos a personalização por meio de habilidades ou sugestões, e não por meio de ajustes finos. Certo. Para os modelos menores publicados, recomendamos a personalização por meio de habilidades e prompts, certo? Para modelos muito pequenos,
+
+recomendamos a personalização por meio de ajustes finos, caso você esteja implantando um modelo menor. Outra opção disponível para modelos médios e pequenos é o ajuste fino do Laura, certo? Sei que a Apple oferece suporte a isso em sua estrutura Foundation Model. Você pode verificar com o porta-voz do núcleo de IA se isso está no roadmap deles. Há um porta-voz do núcleo de IA que fará um AMA em breve; você pode perguntar a ele sobre o roadmap para isso. Mas certamente, se você estiver
+
+implantando isso em um sistema embarcado, por exemplo, se alguém me perguntasse sobre a implantação do 2B em uma plataforma robótica, eu diria que você deve ajustar os Lauras para cada uma de suas tarefas. Nosso runtime oferece suporte ao carregamento do modelo e à troca dinâmica de adaptadores Laura, então você nem precisa carregar e descarregar o modelo para carregar e descarregar os adaptadores Laura. Ele foi desenvolvido para esse caso de uso específico, como em plataformas de robótica ou IoT. Hum, e esses loras então são tipo, talvez, sim, depende dos radicos que você escolher, mas eles são muito menores. É como se fosse algo entre 16 e 100 megabytes, dependendo do sistema de coordenadas, ou até mesmo menor, como entre 8 e 100 megabytes, nessa faixa, dependendo das bases numéricas que você usar. Sim
+
+. Muito obrigado. Sim . Legal. Tudo bem. É isso aí. Vou
+
+deixar que todos almoçem. Sim. [aplausos] Obrigado.
+
+[música]

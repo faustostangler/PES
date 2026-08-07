@@ -1,0 +1,105 @@
+---
+video_title: "Agents Don't Do Standups: Building the Post-Engineer Engineering Org — Mike Spitz, PFF"
+video_id: VMemhtlsoNk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VMemhtlsoNk
+video_date: 2026-05-15T17:00:06+00:00
+video_description: |
+  PFF ran a three-month case study: two engineers against a team of ten, same codebase, same customers. The two shipped five times a day. The ten shipped once every five days. Output measured by ticket complexity came out at 10x. Customer satisfaction went up, not down. Mike Spitz, their CTO, started with one reframe: stop asking how to help engineers go faster and ask how to make the agents faster instead.
+  
+  The talk covers what that reframe actually dismantled. Standups went away because tickets auto-update from PR state. Sprint planning went away because estimates are irrelevant when the bottleneck is no longer human. Code review got split: agents handle style and naming, engineers handle system design. The spec to lightweight design doc to auto-generated ticket to PR flow replaced most of the coordination overhead entirely. What survived is a short huddle every other day, a strong opinion about which engineers thrive in this setup, and a QA agent that spins up on staging after every merge and checks acceptance criteria against the ticket.
+  
+  Speaker info:
+  - https://x.com/mikespitz_uk
+  - https://www.linkedin.com/in/mike-spitz-89741243/
+  
+  Timestamps:
+  0:00 Introduction to the case study at PFF
+  1:47 The shift: optimizing for agent speed rather than engineer speed
+  2:28 Results: 25x increase in deployment frequency
+  3:16 Measuring success through ticket complexity and customer satisfaction
+  4:53 Dismantling Scrum and traditional development processes
+  5:58 The new development workflow (Spec → LDD → Ticket → PR)
+  6:51 Eliminating coordination overhead (no sprint planning or standups)
+  8:28 Best practices for implementation and team selection
+  10:09 Utilizing agents for deterministic tasks and code reviews
+  12:00 Viewing the engineering lifecycle as a factory
+  13:06 Automated QA and the future of self-healing systems
+  14:10 Where human oversight remains essential
+  14:48 Strategic advice for scaling AI-driven engineering
+---
+[música] Muito bem
+
+. Então, estou na fila antes dos lanches. Estou aqui para falar sobre a organização de engenharia anfitriã e um estudo de caso que desenvolvemos na PFF, iniciado em janeiro e concluído em março. A PFF é uma empresa de dados esportivos. Ajudamos equipes da NFL e da NCAA a descobrir o que devem fazer e também temos um braço voltado para o consumidor que oferece fantasy football, apostas esportivas e, para aqueles que conhecem futebol americano, haverá um draft no final do mês, permitindo que as pessoas joguem como se fossem um desses times. Somos uma
+
+equipe de engenharia totalmente distribuída. Então, temos engenheiros na Índia, temos engenheiros na Espanha e em todos os estados da América. Mas primeiro vamos analisar algumas estatísticas. Portanto, temos 100 milhões de visualizações de página anualmente. Realizamos 9 milhões de rascunhos anualmente. É uma ferramenta bastante popular
+
+. E o problema que tínhamos era que, com 200 funcionários e cerca de 20 engenheiros, estávamos ficando para trás em relação aos nossos concorrentes. Estávamos focados em apostas esportivas, mas muitos dos nossos consumidores se interessaram por isso e, com o lançamento do Cloud Ops, comecei a experimentar por volta de novembro, em nível pessoal, e depois o projeto foi distribuído para dois engenheiros. Um deles era o nosso melhor engenheiro de front-end e o outro era um dos nossos melhores engenheiros full-stack. Então, na verdade, a pergunta que se faz é: em vez de descobrirmos como podemos ajudar os engenheiros a produzir mais, como podemos ajudar os agentes a serem mais rápidos? Certo. Então, acho que se
+
+pensarmos historicamente na engenharia de software, temos o Manifesto Ágil e o artesanato de software. Bem, nós, engenheiros, temos muitas vantagens e benefícios excelentes, desde mesas de pebolim a cápsulas para dormir, praticamente todas as regalias que a maioria das outras indústrias não oferece. Isso acontece porque somos o gargalo, e se as empresas conseguirem otimizar esse aspecto, terão muitos benefícios. Mas agora as coisas estão mudando. Então, quero ir direto ao ponto e explicar como o estudo de caso terminou. Portanto, tivemos
+
+25 vezes mais implantações. Então, os dois engenheiros estavam realizando cinco implantações por dia, e a outra equipe era composta por cerca de 10 engenheiros. Eles estão fazendo isso praticamente uma implantação a cada cinco dias. Há uma grande e óbvia ressalva aqui, certo? Equipes de engenharia menores sempre serão mais rápidas do que as grandes .
+
+Portanto, existe um elemento desse multiplicador que provém simplesmente do fato de ser uma equipe de engenharia menor. No entanto, essa equipe menor ainda precisava coordenar todas essas operações diárias com a equipe maior. Então, esse tipo de problema ainda persistia. E esta é sempre difícil. Como você valida se a saída é realmente útil? E o número de PRs não é
+
+útil. A quantidade de código não é útil. Então, basicamente, combinamos o número de tickets com a complexidade do código e descobrimos que o resultado foi 10 vezes maior. Tenho mais um slide que pode parecer um pouco confuso, mas tenha paciência . Então, essas foram as funcionalidades que desenvolvemos com esses dois engenheiros. Eles levaram menos de
+
+dois meses. Se você for fazer isso antes, estimamos que levará quatro meses. O ponto principal que você provavelmente pode observar na metade superior é que um dos engenheiros consegue resolver o problema em menos de um mês e, em seguida, começa a desenvolver outras coisas. Enquanto que no método antigo, ambos ficavam bloqueados por três meses, o que resultava num efeito cumulativo de aumento de desempenho, não apenas acelerando o processo, mas também permitindo realizar muito mais coisas do que antes. E a única coisa que eu realmente quero destacar, do básico ao básico, é que não importa se a saída for maior.
+
+Não importa se o número de implantações for maior. O que realmente importa é se os nossos clientes estão felizes. Então, fizemos pesquisas estatisticamente significativas e a pontuação média de qualidade foi de 8,6 em 10. O interessante é que, antes da IA, provavelmente teríamos uma média de sete ou sete e meio. Então, na verdade, não estávamos entregando o que os clientes queriam .
+
+Por isso, o Scrum não sobreviveu. Estávamos basicamente analisando não apenas o ponto de vista da engenharia e todos os ganhos de desempenho que isso acarreta, mas também o processo em si. Assim, não há necessidade de um gerente de projeto. Não precisamos ficar jogando telefone sem fio várias vezes, e tudo o que estamos fazendo é otimizar para sermos o mais rápidos possível. Os engenheiros não são o gargalo. Portanto,
+
+não precisamos mais realizar todas as cerimônias antigas que tínhamos antes. Então, o que tínhamos? Parece bem básico. Basicamente, fazíamos reuniões em grupo. Então, essas reuniões aconteciam basicamente dia sim, dia não. Seria algo
+
+como meia hora, talvez uma hora. Estariam presentes os engenheiros, alguém da equipe de produto, alguém da equipe de design, e vocês falariam sobre as coisas que vêm desenvolvendo nos últimos dias. Você recebe feedback instantâneo. Tentaremos implementar em produção o mais rápido possível em um estado MVP e também obter o máximo de feedback possível. E esse fluxo de desenvolvimento consiste em termos de especificações. Acho que a maioria de nós já está
+
+bastante familiarizada com isso, mas pedimos ao agente que venha nos entrevistar. Recebemos feedback sobre essa especificação e, em seguida, criamos um documento de projeto simplificado. Isso é feito pelo agente. Então, temos uma espécie de habilidade, e o interessante é que ela analisa como fizemos todos os LDDs (Design de Desenvolvimento de Liderança) anteriores, e assim tudo o que construímos está alinhado com a mesma filosofia de tudo o que já foi desenvolvido. Então, não é um código em nuvem.
+
+Não é algo específico para código em nuvem . E então esses LDDs são distribuídos e recebemos feedback de todos os engenheiros. E então, nessa etapa, criamos automaticamente todos os tickets e, em seguida, os PRs (Pull Requests). Então, o planejamento de sprints... não temos
+
+mais planejamento de sprints porque não precisamos de uma hora dedicada basicamente a estimar tarefas, já que essas estimativas não fazem muita diferença. Algo que não estamos fazendo no momento, mas que provavelmente teremos que fazer quando o subsídio aos tokens terminar, é estimar o gasto com tokens para ver se realmente queremos investir essa quantia. Não precisamos mais fazer as reuniões diárias de acompanhamento, pois todos esses tickets são atualizados automaticamente. Isso é específico para o status do RP. Então, com os PRs abertos, o processo entra em andamento automaticamente.
+
+Se entrar em revisão, será atualizado, será integrado e, por fim, será fechado. Obviamente, essas tarefas eram administráveis antes, mas tudo ficou um pouco mais fácil. Não precisamos fazer o refinamento do sprint, pois isso acontece na especificação e no fluxo LDD. Quando criamos automaticamente todos os tickets, estruturamos tudo de forma que nenhum deles bloqueie o outro. Se houver algum bloqueio, essa informação é sinalizada e destacada.
+
+E, olhando em retrospectiva, isso pode ser um pouco controverso, mas nós nos baseamos na satisfação do cliente, na pesquisa de satisfação do cliente. Essa é a principal coisa, na verdade, e depois você tem as métricas normais de desenvolvimento, como a frequência de implantação. Pedimos a todos os nossos engenheiros que sinalizem imediatamente qualquer problema identificado, em vez de esperarem até o final do sprint para relatá-lo, algo que talvez todos nós já tenhamos sentido ao perceber que nosso feedback não foi realmente ouvido, principalmente em sprints anteriores. Ops, desculpe. Então, por onde começamos? Você
+
+precisa escolher os engenheiros que têm o melhor conhecimento do sistema e acho que toda equipe de engenharia provavelmente tem um ou mais engenheiros que, se alguém ficar preso ou com dificuldades em alguma coisa, podem te ajudar . Eles conseguirão resolver isso. A outra é que você deve ir devagar. Então, existe uma vontade de dar a todos toda a assistência em programação e abrir tudo, mas acho que, neste caso, é melhor adotar uma abordagem gradual. E então você deve experimentar em sistemas não críticos. Então, foi isso que eu
+
+fiz em novembro, nos dois meses que antecederam o estudo de caso. Eu estava criando pequenas funcionalidades de prova de conceito e as implementando em produção. Não despertou muita atenção. Então, se houvesse algum bug ou erro, não importava muito, e depois nós o transferíamos para o projeto que, posteriormente, alcançava 100 milhões de visualizações de página . Mas o grande problema aqui é que nem todo mundo consegue dirigir um carro esportivo.
+
+E tudo bem. Não é um grande problema, mas acho que todos precisam ser um pouco honestos com a organização e a equipe de engenharia. E essa nova era vai ser difícil para alguns engenheiros. E eu acho que o tipo de engenheiro que realmente vai se destacar lá é aquele que é curioso. É o engenheiro que, se ainda não descobriu a solução, vai dedicar um tempo para descobrir como algo foi construído. Eles
+
+ainda serão capazes de destruir isso facilmente. O estilo antigo de engenharia, que precisa de algo realmente prescritivo como especificação, acho que vai ter dificuldades. Portanto, na área da engenharia, você precisa de tarefas verificáveis, verificáveis ​​e determinísticas. Acho que muita gente falou sobre isso hoje. Portanto, abrange tudo, desde os mais diversos tipos de tarefas.
+
+Mas também existem aspectos específicos do seu produto ou da sua organização. Então, para nós, é um recurso opcional, porque fazemos um desenvolvimento baseado no tronco principal. Ou talvez esteja gerando os elementos interativos. Um gera as análises para os elementos interativos. A próxima etapa é a revisão de código agentivo.
+
+Então, no nosso caso, não gostávamos muito da ideia de depender de agentes para fazer revisões de código para o projeto do sistema, algo que normalmente seria feito por engenheiros. Utilizamos agentes para realizar as revisões de código que os engenheiros detestam receber, mesmo que seja apenas feedback . Então, é como os nomes das variáveis; isso não se encaixa no estilo, ou esse tipo de opinião pessoal é muito mais fácil de descartar. E aí você pode eliminar todo esse aspecto emocional da coisa. E então você simplesmente permite que os engenheiros se concentrem no panorama geral.
+
+Ainda precisamos de pessoas envolvidas. Mas é muito focado nas especificações, muito focado no LDD, o documento de projeto simplificado onde você define como vamos construir isso. E algo que ainda não abordei é o produto. Estamos numa era em que todos são capazes de criar qualquer coisa em uma hora. Mas muitas dessas ferramentas têm a aparência e a sensação de produto de algo que foi criado com código na nuvem. Portanto, se você
+
+realmente quer tirar o máximo proveito disso, precisa garantir que a equipe de engenharia esteja dedicando tempo para assegurar que o produto continue a ter a mesma sensação de todos os outros produtos da empresa. Então, como eu recomendaria abordar isso? Você deveria encarar o ciclo de vida do desenvolvimento de engenharia como uma espécie de fábrica. Então, imagine que você está em uma fábrica. Como você divide isso em cada pequeno elemento que pode ser composto? Então,
+
+em uma fábrica de automóveis, uma coisa é construir uma porta, outra é instalar um volante. A mesma coisa acontece na engenharia, certo? Então, você tem o nome da branch, você tem a criação de feature flags com desenvolvimento baseado em trunk , você tem a ideia de que, se você construir APIs com um padrão de design de software específico , você deve abstrair isso em uma skill composable. A única coisa que eu gostaria de destacar é que não sou muito fã de se apropriar das habilidades de outras pessoas se elas tiverem opiniões fortes sobre software que sejam contrárias à mentalidade atual das empresas de engenharia, porque isso só vai acabar gerando problemas. Portanto, você só precisa garantir que todas as habilidades que estão sendo combinadas ainda sejam compatíveis.
+
+E sim, neste momento praticamente tudo é totalmente autônomo em relação à especificação, LDD, ticket e PR. Ah, nós também temos um processo de controle de qualidade. Então, o que acontece é que, sempre que fazemos o merge de um PR, ele é automaticamente implantado no ambiente de staging. Após a implantação no ambiente de teste, ativaremos um agente de controle de qualidade (QA) que analisará todos os chamados recebidos , verificará os critérios de aceitação e, em seguida, realizará o QA com base nesses critérios . E se tudo correr bem, ótimo. E se algo ainda
+
+não estiver correto, o sistema indicará quais são esses itens . E a parte que ainda não implementamos , mas que pretendo fazer nos próximos meses, é ter um agente analisando esses tickets, identificando onde os critérios de aceitação não foram atendidos e, em seguida, criando automaticamente as solicitações de pull request. Então, você entra nesse fluxo onde os agentes basicamente conseguem se autorregenerar. E o mais interessante disso é que nos permite fazer várias coisas em paralelo, porque agora estamos numa posição em que basicamente também confiamos em agentes . Onde é que você ainda usa pessoas? Quer
+
+dizer, eu já passei por isso, mas eles gostam de usar atalhos. Então, precisamos garantir que a parte de segurança esteja funcionando corretamente. A sensação que o produto transmite, eu mencionei isso um pouco antes. E, considerando a escala e a complexidade de engenharia da tarefa, o LDD (Large Development Driver, ou Desenvolvimento de Liderança) serve justamente para auxiliar nesse aspecto . Então, acho que todos nós já passamos pela experiência de criar mil linhas de código ou de complicar demais algo. Se
+
+você for realmente específico no documento de engenharia desde o início, poderá evitar que isso aconteça. Então, quais são os seus objetivos ? Você deve começar com tarefas repetitivas e entediantes, idealmente coisas que os engenheiros detestam, pois é assim que você conseguirá o maior engajamento. Elimine o máximo possível de processos redundantes . Eu sei que pode parecer estranho, depois de fazer algo por mais de duas décadas, simplesmente jogar tudo fora , mas eu gostaria de perguntar: qual é o propósito desta reunião? Qual é o
+
+objetivo deste processo? É só porque todo mundo já fez isso antes, ou é porque realmente ajuda? Certifique-se de que sua equipe tenha uma cultura de engenharia pessoal e que os padrões estejam incorporados às habilidades. Então, se existem padrões de projeto de software que você realmente utiliza, no nosso caso, sempre que criamos uma API, nos concentramos no padrão de repositório de serviços . Certifique-se de que seus mecanismos de segurança estejam totalmente funcionais antes de entrar em um fluxo autônomo.
+
+E você deve começar com os melhores engenheiros. Uma coisa que você não deve fazer é tentar integrar todos exatamente ao mesmo tempo. Acho que um dos principais motivos pelos quais muitas dessas coisas não deram certo é porque demos a todos um guia de código na nuvem e promovemos um hackathon, pensando: "Ótimo, fizemos tudo. Agora eles devem ser capazes de resolver tudo sozinhos ." Não é tão simples assim. Cada
+
+organização de engenharia é completamente diferente, e o estilo de cada organização de engenharia também é muito diferente. E você só precisa adotar uma abordagem gradual para garantir que essa transição ocorra sem problemas. E é por isso que acho que essas pequenas empresas têm uma enorme vantagem sobre as grandes empresas, porque é muito fácil para mim expandir isso quando tenho 20 engenheiros. Seria muito difícil para mim dimensionar isso, seja eu responsável por 100, 1.000 ou 10.000 engenheiros. Então,
+
+hum, mas você não quer ser muito tímido(a). Você não quer ser muito conservador, porque a verdade é que existem muitas outras empresas que estão a todo vapor. E, bem, para nós, mesmo da nossa perspectiva, eu me senti alguns meses atrasado e meio que estava sentindo isso. E acho que, se você pensar no efeito cumulativo de que falei no início, isso simplesmente vai continuar acontecendo. Então, estar alguns meses atrasado agora pode estar seis meses atrasado daqui a alguns meses, ou talvez 12 meses atrasado um pouco depois. E, mais uma vez, simplesmente
+
+vá com calma. É necessário adotar uma abordagem faseada e confiar que seus engenheiros irão informar se você pode acelerar o processo ou se precisa de mais tempo. Sei que falei com você sobre muitas funcionalidades que desenvolvemos, mas não mostrei nenhuma delas. Se alguém quiser dar uma olhada, fique à vontade para escanear o código QR e conferir tudo . Ah, legal. Obrigado a todos.
+
+[aplausos]

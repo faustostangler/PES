@@ -1,0 +1,296 @@
+---
+video_title: "Everything You Need To Know About Agent Observability — Danny Gollapalli & Zubin Koticha, Raindrop"
+video_id: -aM2EDTiaMs
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-aM2EDTiaMs
+video_date: 2026-05-07T13:00:06+00:00
+video_description: |
+  Agent failures do not look like normal software failures. In this workshop, the Raindrop team breaks down what it actually takes to monitor production agents, from explicit signals like tool errors, latency, and cost to fuzzier signals like user frustration, refusals, task failure, and capability gaps.
+  
+  The session covers how to move beyond evals toward real production observability, how to use classifiers, regex, and experiments to catch regressions, and how to instrument self-diagnostics so agents can report their own failures and strange behavior. If you're running agents in production, this is a practical framework for understanding what is going wrong and how to catch it early.
+  
+  Speaker info:
+  - https://x.com/benhylak
+  - https://www.linkedin.com/in/zkoticha
+  - https://www.linkedin.com/in/joseph-daniel-gollapalli-a371a4138/
+  
+  Timestamps
+  
+  0:14 Introduction and the problem of agent failures
+  1:48 Moving from evals to production monitoring
+  3:33 The two types of signals: explicit and implicit
+  4:47 Using classifier signals for observability
+  6:38 Leveraging regex for signal detection
+  7:30 Using experiments to validate improvements
+  9:42 Q&A session: Statistical relevance and experimental design
+  16:07 Introduction to self-diagnostics
+  20:15 Workshop: Coding agent demonstration
+  24:01 Live demo: Triggering and handling tool failure
+  30:26 Best practices for self-diagnostic implementation
+  32:20 Q&A: Real-world use cases and triage
+  40:02 Q&A: Managing fast-paced experimentation
+  44:21 Q&A: Trace visualization and data export
+---
+Certo. Olá a todos. Então, hoje vamos falar sobre um tópico bastante interessante que se torna cada vez mais importante: tudo o que você precisa saber sobre observabilidade de agentes. Então, um pouco sobre nós. Então, eu sou Zubin.
+
+Sou o CEO e cofundador da Raindrop. Eu sou Danny. Então, eu sou o engenheiro de back-end da Raindrop e também trabalho bastante com o SDK por lá. E, essencialmente, o Raindrop ajuda os engenheiros de IA a encontrar, rastrear e corrigir problemas em agentes de produção. E temos a sorte de trabalhar com algumas das equipes mais interessantes da área . As
+
+falhas de agentes são muito diferentes das falhas tradicionais de software. Portanto, os agentes não são determinísticos. Eles são ilimitados. Existe um espaço infinito de entradas que você pode inserir. Existe um espaço infinito de saídas que elas podem retornar. E eles podem usar
+
+ferramentas, às vezes, para afetar outros sistemas de forma arbitrária. E esse problema de falhas de agentes e de monitorá-las, garantindo que possamos compreendê-las, torna-se cada vez mais importante com o tempo. Está piorando porque A, os agentes estão se tornando mais complexos. B, eles estão tendo, sabe, as sessões podem ficar mais longas. Às vezes, os agentes podem funcionar durante horas a fio sem qualquer intervenção do usuário. E, por fim, os riscos
+
+estão ficando cada vez maiores. Isso ocorre porque agentes estão sendo implantados nas áreas da saúde, finanças e até mesmo nas forças armadas, onde as consequências de um problema são catastróficas . O paradigma tradicional de que temos falado é o das avaliações, certo? Quando você tem esse tipo de entrada de teste e quer ver qual é a saída que o agente produz. Você tem um conjunto desses, sabe, talvez você o chame de conjunto de dados de ouro. Mas as avaliações,
+
+simplesmente, não são suficientes com esse novo paradigma. À medida que os agentes se tornam cada vez mais capazes, surgem cada vez mais comportamentos indefinidos interessantes. Assim, por exemplo, os agentes podem fazer chamadas a partir de um conjunto de ferramentas diferentes. Às vezes, o número de ferramentas cresce exponencialmente. Eles podem fazer chamadas a partir de diferentes fontes de memória. Eles podem chamar seus próprios
+
+subagentes, que por sua vez possuem suas próprias ferramentas e fontes de memória, e recursivamente podem ter seus próprios subagentes. Portanto, com o passar do tempo, a situação só se torna mais complicada. E com esse tipo de espaço de entrada combinatório , ter apenas um conjunto de testes para entrada e saída já não é suficiente . Não há como você contemplar todos os casos extremos que gostaria aqui. Assim, passamos de um paradigma de testes e avaliações para um paradigma de monitoramento. E se você pensar em desenvolvimento de
+
+produtos antes de agentes, sabe que os testes sempre foram muito importantes. É importante ter seus testes unitários, etc. Mas monitorar a produção é infinitamente mais importante, e permite que você se mova mais rápido e seja melhor em detectar problemas de longo prazo. E achamos que, de certa forma, isso é muito controverso, mas temos chamado isso de o último problema da humanidade . Quando os humanos não forem mais capazes de monitorar agentes e encontrar problemas neles, então eles estarão muito à frente de nós, certo? Assim,
+
+um dos problemas mais importantes da nossa época é a detecção de problemas nos agentes de produção. Portanto, para construir agentes confiáveis ​​em produção e garantir que você possa monitorá-los, você precisa de um bom conjunto de sinais. Então, o que são sinais? Existem dois tipos principais que consideramos: sinais implícitos e sinais explícitos. Os sinais implícitos lidam com a natureza semântica do que está acontecendo.
+
+E os sinais explícitos lidam com a realidade objetiva, coisas que são verificáveis ​​como verdadeiras ou falsas. Por exemplo, sinais explícitos são coisas como a taxa de erro. É muito importante monitorar a taxa de erros da sua ferramenta e outros erros que estejam ocorrendo. Ou latência. Ou usuários se regenerando. Ou
+
+o custo. Se alguma dessas coisas disparar, certo? Se você observar um aumento repentino na taxa de erros do seu agente, isso geralmente é um bom sinal de que algo está errado. E se você o vir plano, isso também pode significar algo . O mesmo se aplica à latência, regenerações ou custo.
+
+Os sinais implícitos são interessantes. Na minha opinião, são ainda mais interessantes e ainda mais difíceis de encontrar. Então, o primeiro são os sinais regex, sobre os quais falarei em um instante. O segundo são os classificadores. E por último, o autodiagnóstico.
+
+Então, vamos analisar esses tipos de sinais de classificação. Os melhores sinais implícitos são aqueles que detectam problemas. Eles não são necessariamente mestres em Direito (LLM) no sentido de julgarem resultados. Por exemplo, quão boa é a resposta do modelo XYZ? Ou avalie ABC em uma escala de 1 a 10? Não é tão eficaz quanto ter
+
+um conjunto muito sólido de problemas que você está procurando. E uma espécie de classificadores binários que indicam se a taxa de ocorrência de problemas está aumentando ou diminuindo. Então, alguns sinais implícitos comuns que são valiosos em diversos produtos de agentes são coisas como recusas, certo? Então, a assistente disse algo como: "Não posso fazer isso. Desculpe."
+
+Ou falha na tarefa, onde algo dá errado e, portanto, o agente não consegue concluir a tarefa. Frustração do usuário, moderação de conteúdo, conteúdo impróprio para menores, desbloqueio de sistema (jailbreaking), e mesmo assim você pode ter vitórias. Portanto, também há sinais positivos. E essas são as coisas que o Raindrop também oferece logo de cara . Mas, deixe-me mostrar rapidinho como isso é. Por
+
+exemplo, todos conseguem ver isto? Talvez eu faça um pouco maior. Assim, você consegue ter uma ideia, dia após dia, de quais são os tipos de eventos que estão causando frustração ao usuário. Observamos um aumento repentino na taxa de falha de tarefas, preguiça e recusas, que também estamos vendo aumentar hoje. E ter um bom conjunto desses realmente ajuda no seu produto. Você
+
+pode configurar isso você mesmo, ou nós fornecemos pronto para uso. Então, vamos analisar a frustração do usuário. Como você pode ver aqui, isso não está correto. Você não disse "eu prometo", então diga . Ou você está enganado, eu não te perguntei isso. É possível observar aqui todos os tipos de
+
+frustração dos usuários. E você pode ver a taxa, a porcentagem, todos os dias. Se houver um pico, é algo que você realmente vai querer monitorar. Então, você pode adicionar um alerta aqui rapidinho. E essa é uma maneira de avaliar a saúde do seu agente ao longo do tempo.
+
+Não se trata apenas disso, expressões regulares também podem ser um excelente indicador. Então, quando o código-fonte do Claude vazou alguns dias atrás, uma coisa interessante foi esse arquivo ` user prompt keywords.ts`, que era basicamente uma longa string de expressão regular que procurava indícios de problemas. Que droga, isso é péssimo, horrível. Todos nós já fomos culpados de dizer esse tipo de coisa para o Claude Code. Portanto,
+
+é um sinal muito, muito útil. O que aconteceria depois disso é que esse valor booleano negativo seria invertido para verdadeiro e, então, todos os dias e após cada lançamento de produto, essa taxa de frustração seria registrada ao longo do tempo. E essa foi uma maneira muito fácil para a equipe de programação do Claude descobrir qual era a taxa real de problemas. Se fizermos uma alteração, algo estará errado? E era uma forma muito barata de fazer isso também. Portanto, expressões regulares são muito poderosas.
+
+Por último, temos os experimentos. Então, o que você faz depois de ter um conjunto de bons sinais? Então, a primeira coisa é, como mostrei antes, que você pode configurar alertas. A próxima coisa que você pode fazer é usá-lo para criar produtos de forma mais rápida e melhor. Então, a maneira de fazer isso é, digamos, se você quiser lançar alguma melhoria ou algum tipo de correção. Você
+
+deseja alterar o modelo. Você deseja alterar o prompt ou talvez algo relacionado à estrutura do agente. Você deseja adicionar uma nova ferramenta. Independentemente das alterações que você fizer, o que você pode fazer é enviar a atualização para uma porcentagem de usuários e, em seguida, manter seu grupo de controle existente. E isso te dá uma boa noção, uma vez que você tenha um bom conjunto de sinais, recusas, frustração do usuário, etc.
+
+Se essas taxas de problemas aumentarem, essas taxas de sinais aumentarem depois que você lançar essa nova coisa, isso é um bom sinal de que o que você lançou não é realmente bom, certo? É algo parecido com um teste A/B , mas usando nossos sinais semânticos, etc., que mencionamos anteriormente. Então, por exemplo, seria assim no Raindrop, mas basicamente digamos que eu lance uma nova versão do prompt, o prompt 2.4.
+
+Você consegue ver, sabe, qual é o nível de frustração do usuário? Caiu substancialmente, de 37% para 9%. É muito melhor. O mesmo se aplica a reclamações sobre estética ou problemas relacionados à implantação. Todos esses números caíram, o que me diz algo muito interessante, não é?
+
+Em seguida, observamos que o número médio de ferramentas utilizadas aumentou bastante. Isso não indica necessariamente que haja um problema, mas é um dado muito interessante para se ter em mente ao realizar esse tipo de experimento. Assim, o paradigma antigo, que ainda é útil, é algo como avaliações. Você implementa uma alteração aqui e vê como isso afeta minhas avaliações, mas nada se compara a ver o que acontece na produção real. Vou fazer uma pausa aqui antes de passarmos para a próxima seção, que é mais voltada para o workshop, para perguntas e respostas rápidas, caso alguém tenha alguma dúvida. Podemos fazer uma
+
+pequena rodada de alguns minutos disso aqui. De quantos dados você precisa para que esses experimentos tenham relevância estatística ? Sim, é uma ótima pergunta. O que vimos no Raindrop é que, assim que você tem algumas centenas de eventos e não consegue mais ler todos eles, ele começa a ser útil. Nem sempre é estatisticamente significativo do ponto de vista científico, mas se você observar um aumento na taxa de frustração do usuário, talvez seja algo a se analisar e, então, você poderá perceber que "Ok, tudo está relacionado a uma falha específica de uma ferramenta".
+
+Então, assim que se torna praticamente impossível ler todas as entradas e saídas, é aí que percebemos que isso começa a ser útil .
+
+Mais alguma pergunta? Sim. Você acompanhou os diferentes lançamentos de recursos? Como vocês acompanham o lançamento de novas funcionalidades? Isso pode ser feito de diferentes maneiras.
+
+Dentro do Raindrop, se você alterar qualquer tipo de metadado, se enviar , por exemplo, um novo nome de ferramenta ou até mesmo um sinalizador que diga "Aqui está o experimento um ou o experimento dois" ou qualquer que seja a versão , você pode configurar um experimento automaticamente no Raindrop com muita facilidade. É assim que fazemos. Mas sim, existem diferentes maneiras. Você utiliza testes A/B? Desculpe? Você utiliza testes A/B?
+
+Sim, então é isso. Bem, a forma como fazemos no Raindrop é que outras pessoas configuram seus experimentos e variáveis, as outras condições, e depois nos enviam esses metadados, e então podemos ajudar você a entender. Também podemos ajudar você a enviar esses dados para o Statsig ou para outro lugar. Sim . Tudo bem. Sim.
+
+O uso de gráficos para detectar respostas, emoções e narrativas de usuários não é confiável. Mas se o usuário não fala inglês, por exemplo, você está usando LLMs para detectar esses sinais o tempo todo ou está tentando ser inteligente a respeito? Ok, então, quer dizer, é uma boa pergunta. Então, expressões regulares nem sempre funcionam, certo? Mas se você observar isso em um conjunto de coisas que estou procurando, por exemplo, pessoas dizendo "Você é péssimo" ou "Isso é horrível" ou algo do tipo , se isso aumentar para milhões de usuários e subir 10%, é um sinal muito útil. Portanto,
+
+mesmo que seja um caso específico ou uma situação extrema em que não funcione, no geral, ter esses sinais de expressão regular é incrivelmente valioso. Bem, a segunda coisa é que a forma como o classificador sinaliza — como recusas, frustração do usuário, falha na tarefa, que mostrei no Raindrop — e as pessoas fazem isso de maneiras diferentes, mas nós treinamos modelos para procurar esses sinais. Então, será frustração do usuário independentemente do idioma. Na verdade, ele usa inteligência artificial para encontrar isso, essencialmente. Ah, sim.
+
+Não é possível executar um modelo de regressão logística (LLM) em todas as saídas, então treinamos modelos para fazer isso de forma muito barata e em grande escala. Bem, se você executar um LLM em cada um deles, basicamente dobrará seus gastos com IA, e isso é insustentável. Sim . Na verdade, estou fazendo isso com a nuvem, executando tudo pela nuvem, e é fácil. Não é tão caro, mas tem suas limitações, não é? Sim.
+
+Começa a ficar caro em escala de replicação, sabe? É por isso que você precisa treinar pequenos modelos personalizados para fazer isso melhor e mais rápido. Sim, é uma maneira muito útil de colocar os dados em funcionamento. Sim . Outras perguntas?
+
+Hum, você teria exemplos de casos de uso que seus clientes estão utilizando e dos quais poderíamos aprender, como por exemplo, o que é considerado um ótimo desempenho por parte das empresas e como elas configuraram o Raindrop para obter o máximo valor da plataforma? Sim, podemos fazer isso. Quer dizer, posso te dizer o nível geral. Então, algumas das coisas pelas quais estou passando são: "Ah, deixa esse cara ir embora". " Uh" é mais ou menos o nível mais alto disso.
+
+Então, trata-se de coisas como, sabe, analisar os diferentes sinais semânticos de que estamos falando, ter um conjunto deles, e depois ter um sistema de alertas realmente bom, que você pode configurar no Raindrop. Outra coisa muito interessante, que também temos, é basicamente permitir que os agentes observem esse tipo de sinal. Então, temos um agente, que chamamos de agente de triagem, e basicamente ele funciona analisando todos os dias todos os sinais que você configurou. Então, para lidar com a frustração do usuário , o sistema analisará todos esses sinais de expressão regular que você configurou, etc. E se detectar algum pico, iniciará uma investigação. E possui todo um conjunto de
+
+ferramentas que pode analisar, e pode examinar todos os rastros e, de certa forma, dar uma ideia de como detectar problemas que você desconhecia, por exemplo. Então, essa é uma coisa que também consideramos incrivelmente valiosa, se é que me entende. Tudo bem. Mais alguma pergunta antes de eu ir? Ah, é possível executar vários experimentos em paralelo? Sim. E se você os combinar,
+
+poderá observar, sabe, efeitos cumulativos? Como ainda se utilizam experimentos com dados de identificação pessoal? Sim, é uma ótima pergunta. Então, existem diferentes maneiras pelas quais as pessoas fazem isso. Uma maneira é através de uma API de consulta, onde as pessoas costumam usar nossa API e enviar os resultados para o BigQuery, Statsig, etc. Elas nos enviam
+
+dados que são categorizados em sinais, e elas recebem esses dados de sinalização como resultado, podendo então executar experimentos conforme desejarem. Esse é um fluxo muito comum para pessoas que têm coisas mais complicadas, se é que me entende. Sim. Tudo bem. Eu voltarei. Acho que talvez possamos
+
+ir para a seção de oficina de trabalho e depois voltaremos para a última pergunta. Então, devemos fazer essa última pergunta? Tudo bem. Ah, muito obrigada. Gostaria de saber se isso ocorre principalmente em casos de interação por chat com o usuário, ou se também se aplica a casos em que o aplicativo não envolve chat e funciona de forma independente. Sim. Não,
+
+é uma ótima pergunta. Portanto, o nosso foco principal são os agentes de múltiplas operações . Bem, há muito mais que você pode obter a partir de muitos desses sinais. Dito isso, se você estiver analisando taxas de erro de ferramentas, ou, por exemplo, recusas do agente, etc., tudo isso também funcionará para agentes de turno único.
+
+Se isso fizer sentido. Portanto, existe um conjunto de sinais que também funcionará para isso . Legal . Vou passar a palavra para o Danny para que ele também fale sobre autodiagnóstico. Então, uma das coisas interessantes é que nossos modelos ficaram maiores e, sim, ao treiná-los em raciocínio, eles se tornaram bastante bons em auto-introspecção, de certa forma.
+
+De muitas maneiras. Uma das inspirações para isso foi basicamente um artigo/post da OpenAI de dezembro passado sobre como eles estavam treinando os modelos para que eles mesmos reconhecessem quaisquer problemas de desalinhamento. Então, eles estavam usando isso para flagrar desonestidade, esquemas, alucinações e até mesmo atalhos não intencionais. Acho que a última opção é bastante comum, principalmente se você usa código mental e coisas do tipo. Então, o problema mais comum que você pode encontrar é o programa corrigir um teste unitário, corrigir um bug e, em seguida, simplesmente eliminar todo o teste unitário. Mas, ao mesmo tempo,
+
+se você pedir para ele dar uma dica simples, tipo, para confessar tudo o que fez, ele é bem honesto e meio que confessa: "Ei, eu não consertei o teste S3. Eu simplesmente o removi." Então, isso foi meio que a inspiração por trás do autodiagnóstico para mim, pessoalmente. Bem, eu diria que o autodiagnóstico é bastante abrangente, pois não detecta apenas problemas implícitos, como a frustração do usuário e coisas do tipo. Você também pode detectar falhas em ferramentas semelhantes. Então, se você já viu um
+
+agente, algo como o rastreamento de raciocínio de um agente que possui uma ferramenta que está falhando repetidamente, basicamente ele começaria a reclamar sobre a ferramenta estar falhando repetidamente. Portanto, está ciente de que a ferramenta está falhando repetidamente. Assim, você pode até detectar falhas nas ferramentas com ele. E então, obviamente, se você estiver chateado com isso, começa a responder de forma diplomática. Portanto, está ciente da frustração do usuário.
+
+E a terceira questão são as lacunas de capacidade. Então, você tem um agente genérico para seu aplicativo, e as pessoas estão tentando usá-lo para configurar alertas, por exemplo, mas você não tem a ferramenta para isso. Então, o sistema sabe que o usuário deseja uma funcionalidade específica, como configurar um alerta, mas o próprio agente não tem a capacidade de configurá-lo para ele. Então, isso pode funcionar como uma espécie de solicitação de recurso integrada. E então, a autocorreção. Isso pode
+
+ser bom e ruim ao mesmo tempo. Então, acho que a maioria das pessoas já deve ter percebido que, por exemplo, o Codex ou o Cloud Code, quando estão em um ambiente isolado (sandbox), tentam acessar a rede, falham e aí a gente pensa: " Ok, deixa eu escrever um script em Python para contornar isso e resolver o problema." Então, é bom no sentido de que, se a tarefa for concluída, é bom, mas em certos casos também pode ser ruim por motivos de segurança. Então, você pode aprender com o comportamento e também identificar esse desalinhamento. Então, por que você quer configurar um autodiagnóstico? Então, é bastante
+
+simples. Basicamente, tudo o que você precisa fazer é escrever uma ferramenta simples e gratuita que possa ser chamada e, em seguida, adicionar uma linha simples no prompt do sistema para incentivá-lo a chamar essa ferramenta. Se quiser, você pode alterar as diretrizes para que o sistema seja acionado em muito mais casos, ou, se preferir algo mais restrito, pode incentivar o acionamento apenas quando necessário. Isso revela informações muito interessantes , eu diria, depois que você configura tudo e basta um único comando e um prompt do sistema para realizar a tarefa. E você nem precisa usar o Raindrop para configurar, o que é a melhor parte, de certa forma, porque a ferramenta simplesmente envia uma mensagem para o seu Slack e pronto.
+
+Então, provavelmente é a forma mais simples de implementar observabilidade de agentes, que exige o mínimo de esforço. Então, aqui vem a parte da oficina. Então, eu tenho um repositório Git configurado no código do AI Talk . Portanto, é um repositório público. E então precisamos de uma chave de API da OpenAI. Então,
+
+eu gerei uma chave para vocês. Então, se vocês quiserem organizar isso, podemos fazer . Sim
+
+.
+
+Vou colocá-lo ao lado. OK. Vou mostrar a todos que entenderam. Basta colocar algo assim. Talvez você possa explicar para eles o que vamos fazer. OK. Basta explicar,
+
+em linhas gerais, o que vamos fazer. Tudo bem. Então, o tema da oficina será algo como: vou me concentrar em agentes de programação por enquanto. Então, no repositório, eu tenho esse agente de codificação bem básico que meio que funciona . Então, ele só tem umas quatro ferramentas diferentes para editar o código. Deixa eu ir aqui. Sim. Então,
+
+ele tem apenas algumas ferramentas para ler, escrever, manipular e editar. Sim . OK. Um segundo. Sim .
+
+Então, meio que me perdi um pouco aí, mas...
+
+ok. Então, o que vamos fazer é o seguinte: para que ele acione um autodiagnóstico, vou mexer na
+
+ferramenta correta para que ele receba um erro genérico de permissão e, em seguida, configuraremos uma ferramenta de autodiagnóstico para relatar qualquer comportamento interessante que observar. E então, de certa forma, veja, brinque com o prompt também, já que o autodiagnóstico nem sempre é acionado. E tem um detalhe interessante sobre as próprias modelos: elas não gostam de se autoincriminar. Então, os modelos são treinados para serem muito refinados em seus resultados. Então, você meio que precisa experimentar com o nome da ferramenta, a descrição da própria ferramenta, para conseguir que ela relate comportamentos interessantes.
+
+Então, se as pessoas que estão configurando o repositório estiverem de acordo, provavelmente podemos começar.
+
+OK. Deixe-me apresentar-lhe rapidamente o agente. Então, é bem básico, tipo,
+
+eu vou pedir para ele escrever um script em Python. Acho que estou
+
+bem. Pronto. Portanto, trata-se de um agente de codificação bastante básico, que possui apenas quatro ferramentas diferentes. Portanto, cumpre mais ou menos a função da demonstração. Então, eu simplesmente pedi para escrever um script em Python e funcionou. Então,
+
+acho que você sabe, para mostrar a parte de autodiagnóstico, vamos tentar desativar as ferramentas de gravação, de forma que sempre que tentar gravar um arquivo, simplesmente lançará um erro de permissão, tentando usar a ferramenta bash para contornar a falha, certo? E então, de certa forma, queríamos fazer um auto-relato de que isso havia sido feito, contornando a ferramenta de escrita, sabe, usando a ferramenta bash. Então, deixe-me fazer isso rapidamente.
+
+Acho que a primeira coisa que provavelmente queremos fazer é... deixa eu configurar para que falhe apenas as chamadas corretas. É uma permissão de mutação, então basta inserir um sinalizador simples e, assim, estaremos basicamente gerando uma exceção de permissão.
+
+Hum, deixe-me mostrar-lhe o comportamento dos agentes. Ainda não configuramos a ferramenta de relatórios, mas acho que vale a pena ver o que ela faz. Hum,
+
+acho que não é compatível.
+
+Um segundo.
+
+Acho que ainda não recebeu a aprovação. Deixa eu fazer uma coisa rapidinho.
+
+Acho que estou enfrentando alguns problemas. Deixa eu só...
+
+Ok. Então, tínhamos a ferramenta certa, mas ela apresentou um erro de permissão e, instintivamente, usou a sintaxe here doc no bash para criar o arquivo. E então tínhamos uma ferramenta de geração de relatórios configurada, que era bem minimalista. E tipo, ok. Criei o arquivo ip.py público via bash porque o arquivo correto
+
+falhou. Então, eu experimentei diferentes nomes para a ferramenta e categorias para os problemas. E geralmente, se você der um nome à ferramenta como " uso inseguro do bash" ou algo parecido, ela não se incrementará, pois, na opinião dela, como cumpriu sua função, está tudo bem. Então, a principal maneira é ter uma ferramenta bem genérica. Hum, deixa eu meio que... tipo,
+
+abrir rapidinho o...
+
+Sim. OK. Portanto, tudo o que adicionamos para o autodiagnóstico completo foi simplesmente uma ferramenta muito básica . E a descrição é bastante direta. Então, é uma ferramenta de denúncia e basicamente estamos pedindo para ela enviar um breve relatório ao criador. Então, é como se fosse
+
+a estrutura de escrever notas para o seu criador, de certa forma. Então, se você estruturar a situação em torno do agente dando feedback aos seus criadores, funciona muito bem. E aí você pode meio que brincar com os cenários sobre os quais você quer que ele reporte problemas. E é basicamente isso, eu diria. E então, no prompt do sistema, precisamos meio que incentivá-lo um pouco. Então, se você
+
+não adicionar o prompt do sistema, as vezes em que ele é acionado são bem poucas. O que é desejável em certos casos. Especialmente se você estiver trabalhando em uma escala muito grande . Mas,
+
+no nosso caso, eu simplesmente pedi para verificar, antes de dar a resposta final, se a ferramenta de relatório deveria destacar algo relevante para os criadores. Então, foi só isso que fizemos. Ok
+
+. Hum, alguma pergunta até agora?
+
+OK.
+
+Tudo bem. Então, alguns pontos importantes aqui são que os agentes e os modelos geralmente são treinados para terem uma aparência muito refinada. Assim, em muitos casos, eles se mostram menos dispostos a admitir culpa . Então, incentivar, de certa forma, enquadrar isso como o modelo, dando feedback aos seus próprios criadores, é algo bom para fazer isso funcionar. Então,
+
+se você quiser criar algo assim, a nomenclatura da ferramenta também importa bastante. Então, você queria que fosse apresentado como um relatório, em vez de algo como " uso inseguro de ferramenta inadequada" ou algo do tipo, mas aí o sistema simplesmente não aceita. Então , é basicamente isso. Você já pensou em adicionar habilidades para suprimir ou, melhor ainda, para incentivar a autocorreção? Você pode, mas acho que, se você quiser realmente detectar usos inseguros, um classificador adequado seria útil. Acho que
+
+isso funciona muito bem para identificar lacunas de capacidade e coisas do tipo. Então o modelo pensa: "Ok". Está tudo bem. Então, acho que o principal problema é que isso só tem força quando acha que vai se meter em encrenca. Então, além disso, na maioria dos casos, funcionará perfeitamente sem precisar de nenhuma configuração adicional.
+
+Talvez devêssemos... deveríamos voltar à sessão de perguntas e respostas, ou o que você acha? Sim.
+
+Quer dizer, vamos deixar mais alguns minutos para mais algumas perguntas e depois acho que, depois disso, terminaremos. Alguma pergunta da plateia? Você poderia nos explicar como se fosse um estudo de caso? Sim . Hum, o que especificamente seria útil?
+
+Que peça específica você está procurando? Sim . Bem, não posso falar sobre nenhum cliente específico, mas muita gente usa para isso, então, acho interessante, não é? Então, muitas pessoas têm suas configurações de avaliação em outros lugares, por exemplo. Mas, a forma como as pessoas geralmente nos usam é para monitoramento da produção.
+
+Então, eles nos enviam... Você pode encontrar nossa documentação em raindrop.ai/docs. Basicamente, eles
+
+nos enviam toda a transcrição , qualquer ferramenta utilizada, etc., toda a trajetória através do hotel ou qualquer outra forma de integração. E quando eles fazem isso, nós temos um conjunto de dados. Eles configuraram sinais no Raindrop para procurar coisas que lhes interessam. Então, o que importa para as pessoas é muito diferente, não é? O que interessaria a um agente de codificação
+
+e o que interessaria a um, digamos, acompanhante ou a um aplicativo para advogados. O que importa para cada um deles é algo muito diferente. Portanto, existe um conjunto diferente de sinais. Uma coisa que você pode fazer e que eu ainda não mencionei no Raindrop é configurar um novo sinal que não existia antes. Assim, temos algo chamado busca profunda. Assim, você pode usar a
+
+linguagem natural. E você pode dizer algo como: "Ei, encontre para mim tudo o que estiver dentro do produto." Ou então, encontre-me todas as vezes em que o agente causou o problema XYZ, certo? Assim, eles criam um novo sinal com base nisso. E você pode basicamente criar um novo Raindrop que permitirá criar um classificador binário barato e implantá-lo facilmente com base nisso. E
+
+então eles têm seu conjunto de sinais de classificação que realmente lhes interessam . Então eles usam isso para gerar uma espécie de ciclo de feedback. E o ciclo de feedback consiste em aprimorar os prompts, melhorar os modelos, alterar algo na estrutura do agente, etc. E então verificar se isso realmente melhora o desempenho, ou seja, se há menos frustração do usuário em produção agora? Existe menos desses pequenos problemas estranhos que eu tinha antes? É
+
+como se fosse um conjunto inteiro de coisas. Outra coisa para a qual muitas pessoas nos usam, e eu falei um pouco sobre isso, é o agente, mas você também pode usar esses sinais para descobrir para que as pessoas estão usando meu agente? Que tipo de uso intensivo do usuário é esse? Quais são os casos de uso? E você pode fazer uma espécie de análise de agrupamento disso. Ok, muita
+
+gente está usando para criar aplicativos relacionados ao React. Muita gente usa para Python, e alguns usam para depurar sistemas muito complexos que já possuem. Outras pessoas estão usando isso para construir algo do zero. Sinta a vibe, então crie algo do zero. E então você pode ver uma coisa no Raindrop que eu acho realmente interessante: para cada um desses diferentes casos de uso ou intensidade de usuário, você consegue ter uma noção de qual é a taxa de problemas.
+
+Qual é o nível de frustração do usuário em produção? E além de ter esse volante de inércia, muita gente tem alertas. Assim, todos os dias eles recebem uma espécie de resumo dos problemas que estão ocorrendo hoje com o produto. Você pode pensar nisso como algo um pouco parecido com Sentry, nesse sentido. Quais são os problemas que estão ocorrendo com meu produto hoje? Qual é a diferença entre
+
+hoje e ontem? Isso se aplica apenas a ferramentas específicas ou também a comandos específicos? O que está causando isso? Então, esse é o tipo de caso de uso completo que as pessoas usam , se é que isso faz sentido. Sim . Sim
+
+. Hum, acho que estamos entrando na era em que as pessoas estão trabalhando com observabilidade em agentes. Sim. Eu diria que isso é um nível ou um passo além. Qual você considera o principal fator que influencia o comportamento das pessoas? A
+
+observabilidade normal não é suficiente? Deixe- me saber. Sim . Acho que é realmente justo e estou curioso para saber o que você pensa sobre isso. Acho que, na verdade, os agentes estão mais loucos do que nunca, né?
+
+Mais ferramentas, mais contatos, muito mais inteligência, mais decisões concretas que eles podem tomar. E estão sendo usadas por grupos de pessoas muito, muito maiores. Assim, quando você tem essa quantidade enorme de dados em produção, ter um bom monitoramento e observabilidade, como a importação, torna-se ainda mais importante do que antes, e, na minha opinião, torna esse bom monitoramento e observabilidade mais importantes do que apenas testes ou avaliações. Mesmo que você tenha algumas avaliações online, na minha opinião, é necessário ter um monitoramento de ponta a ponta realmente muito bom de todo o sistema. Gostaria de saber se você também tem alguma opinião sobre isso .
+
+Portanto, acho que outra questão importante é que as questões desconhecidas são ainda mais relevantes. Então, acho que ter um classificador genérico de frustração do usuário é realmente muito poderoso. Sim. Por exemplo, temos também outra funcionalidade chamada " problemas", que basicamente funciona como um agente que busca problemas recém-ocorridos, certo? Por exemplo, o Sentry tem algo semelhante ao Sentry, onde ocorre uma nova exceção e ele te alerta sobre isso. Então, digamos, por exemplo, que você esteja
+
+programando um provedor de serviços e, de repente, alguns provedores comecem a falhar. Nesse caso, o sistema consegue identificar um aumento repentino na frustração dos usuários e, assim como um operador humano faria, começa a investigar se há algum padrão por trás desse aumento . E então, poderia descobrir que, ok, pessoas que estão, digamos, por exemplo, lidando com um fornecedor específico de serviços pós-corrida começam a enfrentar problemas. Bem, nós vimos isso acontecer ao vivo com alguns de nossos clientes, em que o provedor de banco de dados deles apresentou falhas, e então criamos automaticamente um problema para eles. Sim, basicamente, uma vez que você tenha um bom conjunto de sinais, como um bom classificador de frustração do usuário, como o Danny disse, você pode basicamente fazer um agrupamento para descobrir quais são as causas principais. Sim
+
+.
+
+Você quer conversar sobre integrações? Acho que talvez tenhamos um SDK bem básico para isso. Então, nosso suporte para Python ainda é bem fraco, mas temos um SDK bastante bom integrado. O SDK até possui autodiagnóstico embutido, então injetamos a ferramenta para você, sem que você precise fazer nada. Mas isso vai melhorar. Lançamos
+
+cerca de 10 casos de teste diferentes no último mês e temos uma pessoa trabalhando ativamente nos SDKs , então vai melhorar. Tenho uma pergunta sobre experiência, sobre como realizar experimentos. Tenho curiosidade em saber como a sua plataforma ajuda a resolver esses problemas. Tenho uma equipe de cerca de 10 pessoas construindo minha plataforma de agentes de IA. E estamos constantemente mudando as coisas, o tempo todo. E temos muitas opções de configuração (feature
+
+flags), e algumas delas são experimentais. E a taxa de mudança é tão grande, que tudo muda todos os dias. Eu simplesmente não consigo comparar os registros, as sessões dos usuários, porque não tenho tempo suficiente para isso, sabe? Sim. Preciso ter um sistema básico e depois executá-lo por alguns dias com uma parte dos usuários, com um recurso ativado, para que eu possa comparar os dados, analisá-los e obter algumas informações, mas simplesmente não tenho tempo suficiente para fazer isso, entende? Sim
+
+. Então, como você está, como você está se sentindo agora? É tipo o Velho Oeste, sabe? Sim . Por isso eu disse que uso principalmente o Claude, porque eu simplesmente dou tudo a ele, faço perguntas e tento descobrir as ideias que ele tem a oferecer, mas não é bem assim . Entendi o que você está dizendo.
+
+Então, algumas coisas aí. A primeira é que você pode usar experimentos se quiser manter a velocidade de envio, sem precisar executar experimentos longos de vários dias. Você pode enviar algo e, se tiver um tamanho de amostra suficiente, poderá ver rapidamente se há alguma regressão ou não. Tipo, talvez a diferença seja de apenas 1% ou 2%. Isso basta para você pensar: "Ok, tudo bem. Não é
+
+nada drástico." A outra coisa é mais ou menos o que o Danny estava falando . Temos um agente que, basicamente, expõe todos esses sinais para Claude tomar decisões sobre se as coisas estão melhores ou não, e também estamos pensando em como fechar esse ciclo. Talvez você tenha um conjunto realmente bom de sinais e, essencialmente, um agente que possa analisar todos esses sinais e encontrar problemas com base nisso, o que está mudando, etc. Então, ele pode criar um PR (Pull Request) com base nisso e executar novos experimentos a partir desses novos PRs, e isso pode se tornar um ciclo de autoaperfeiçoamento infinito . Hum, o que é muito
+
+interessante, mas é algo em que penso. Não sei se você tem mais alguma consideração a fazer. Porque você precisa implantar em produção e esperar que alguns dados sejam coletados. Sim. Sim .
+
+Depende da quantidade de dados que você tem. Bem, é...
+
+Sim, depende muito do tamanho dos grupos de amostra, etc. Às vezes, dá para perceber em poucos minutos , mas às vezes eles querem esperar mais tempo. Sim . Sua plataforma ajuda a habilitar experimentos em sessões, por exemplo? Então talvez você possa ativar o " Mhm" automaticamente. alguns experimentos, para que você possa
+
+cuidar da lógica de que cada sessão tenha apenas um experimento. Sim. Assim, você pode compará-lo facilmente com a base ou algo do tipo. Estamos trabalhando ativamente em coisas assim , mas sim, está a caminho. Obrigado.
+
+Bem, estamos armazenando os dados nos traços originais e, em seguida, implementamos minha nova fonte de sinal, chamada por um martelo ou algo do tipo. Se você conseguir fazer com que falhe, ótimo. sinal para os traços originais, para que eu possa fazer algum tipo de análise post-mortem. Sim. Fazemos isso para que você possa importar todos os seus dados históricos e, quando você cria um sinal, nós executamos uma espécie de preenchimento rápido dos últimos dois dias. Sim
+
+, isso definitivamente tem respaldo. Obrigado.
+
+Existe algum plano gratuito para experimentar? Sim, temos um período de teste gratuito. Vamos tentar fazer isso agora, em duas semanas. Hum, provavelmente vou aumentar isso em breve, mas se você me mandar uma mensagem direta, eu posso...
+
+se você... posso ter... devo... Ah, você
+
+quer abrir isso para que eu possa ter nossas coisas? Sim , mas se você... Então, estamos contratando. Isso é
+
+algo que nos deixa muito animados, como tentar aumentar consideravelmente o tamanho da equipe. E se você me mandar uma mensagem no Twitter ou me enviar um e-mail, posso te oferecer um período de teste gratuito mais longo. Sim . Internamente, usamos LogRocket, Sentry e outros. Hum, como vocês... tipo, imagino que
+
+vocês também usem essas ferramentas. Sim. Sim . Batidas de gota de chuva. Pelo que eu entendi e pelos beats, você está criando sinais com seus próprios modelos, seja lá o que você estiver usando, então sim. Tornar mais fácil para nós identificar
+
+sinais e, tipo, intenções maliciosas e comportamentos de usuários. Hum, mas, como você poderia dar um exemplo de como funciona toda a estrutura com o Sentry e o LogRocket, e talvez onde haja sobreposições, onde você opta diretamente por esses concorrentes? Então, se você estiver enviando todos os dados de telemetria, podemos encontrar quaisquer exceções nos rastreamentos, erros de ferramentas, etc., e isso é algo que você também pode rastrear no Raindrop. Esse é um sinal explícito, então, existem sinais implícitos e explícitos, e esse se torna um sinal explícito. Bem,
+
+você... então, acho que a maioria das plataformas de observabilidade fornece o rastreamento do agente, o uso do token, se a chamada da ferramenta falhou ou não, mas acho que onde nos destacamos é na parte imprecisa, nas falhas imprecisas, certo? Onde o usuário está frustrado, o que eu acho que importa mais do que o sinal explícito que você recebe do Sentry. Quer dizer, obviamente, esses aspectos
+
+também são importantes, mas nos concentramos um pouco mais no lado menos preciso do espaço de falhas, eh, mas ao mesmo tempo, também temos uma visão de rastreamento. Acho que também temos um recurso muito interessante chamado trajetórias, que meio que visualiza, se você quiser encontrar, um rastreamento que tenha três falhas diferentes de chamadas de ferramentas . Então você pode, na verdade. Ok. É só entrar.
+
+Assim você pode descrever o tipo de traço que deseja analisar. Então vamos ver. Espero que tenhamos dados semelhantes a este. Você pode descrever, mais ou menos, o tipo de trajetória que deseja ver, em vez de apenas configurá-la. Então, de certa forma, fazemos as duas coisas. Então você pode,
+
+obviamente, configurar para que as ferramentas que estão falhando também sejam coloridas. Assim, você pode simplesmente pesquisar por qualquer trajetória. Então, sim, você pode ver que essa é mais ou menos a ordem em que as ferramentas estão sendo chamadas. Você pode ver quais deles têm erros. Ao clicar neles, você pode ver a entrada e a saída da ferramenta específica, como por exemplo, o que exatamente deu errado.
+
+E você pode ver, ok, é interessante que isso seja assim, ninguém permite que você veja ferramentas desse tipo, este é praticamente o único lugar onde você pode visualizá-las. Mas você pode ver aqui que consegue ter uma ideia da forma e da topologia do que está acontecendo. E você consegue ver quando há outros que parecem semelhantes, você consegue perceber, ok, isso parece um pouco com aquilo, e isso te dá uma ideia. Você pode fazer uma busca por isso. Novamente, temos um agente que pode analisar esses dados e dar uma ideia do que está dando errado, o que facilita muito a identificação de problemas nos agentes. Sim.
+
+Legal. Algo mais? Não. Alguma outra pergunta? Os dados de trajetória? Sim.
+
+Hum, o que você gostaria de exportar? Apenas os logs de rastreamento brutos ou o quê ? Então, acho que normalmente o que nossos clientes fazem é já ter um serviço de streaming configurado, certo? Então, no fim das contas, acabamos nos tornando apenas mais um alvo, eu acho. Mas, ao mesmo tempo, eles querem que gostemos dos sinais de exportação que rotulamos. Por isso, oferecemos suporte a plataformas como
+
+BigQuery e Snowflake. Assim, exportamos o evento e outros sinais que foram classificados para esse evento. Última pergunta? Podemos analisar os sinais?
+
+Mostre um período de tempo mais longo. Vamos repassar o último mês.
+
+Assim, você pode ver coisas como recusas e, ao clicar em qualquer uma delas, consegue ter uma noção da evolução ao longo do tempo. Falha na tarefa, jailbreak, como exatamente o que está acontecendo, e também existem os diagnósticos automáticos. Uma lacuna de competências, etc. Legal. E vocês têm dados abertos sobre o número de opções que vocês estão analisando?
+
+Porque parece que, com seus clientes, a ferramenta é extremamente valiosa quando esses agentes são adotados em larga escala, então imagino que vocês tenham muitos dados. Você tem alguma ideia? Sim, começa a ser... Sua pergunta é tipo
+
+qual é o menor valor em que isso é útil ou qual é o volume de todos os dados que você está recebendo, processando e gerando sinal, tipo, quantos jailbreaks você vê em todos os clientes? Ah, será que temos algum tipo de... tipo, deveríamos fazer algo assim?
+
+Isso seria realmente muito interessante. Não temos nada parecido. Acho que existem opiniões divergentes sobre isso. É como se, de certa forma, funcionasse, né? As pessoas geralmente têm uma reação negativa a isso. Talvez seja diferente
+
+aqui, mas ao mesmo tempo, se os nossos clientes querem que façamos isso, é outra questão também, certo? Sim, adoraríamos, mas acho que existem questões de conformidade que nos impedem de divulgar os dados dos clientes. Legal. Algo mais? Tudo bem.
+
+Obrigado a todos.

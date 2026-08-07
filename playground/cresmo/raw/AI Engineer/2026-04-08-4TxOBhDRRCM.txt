@@ -1,0 +1,96 @@
+---
+video_title: "OpenRAG: An open-source stack for RAG — Phil Nash"
+video_id: 4TxOBhDRRCM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4TxOBhDRRCM
+video_date: 2026-04-08T11:00:16+00:00
+video_description: |
+  There are many variables in building RAG applications, from document parsing to the language model you pick for generation and everything in between. Combining Docling for document parsing, OpenSearch for retrieval, and Langflow for orchestration, plus local and remote models, OpenRAG is an opinionated, agentic, open-source stack for building the RAG application of your dreams.
+  
+  Just because it has opinions doesn't make it inflexible though. In this talk we'll look at how OpenRAG gives you a great baseline for RAG and how you can tune it and evaluate the outcomes to create RAG applications that work well with your data. You'll learn how to get the best out of your documents with Docling, how OpenSearch provides more than just vector search, and how Langflow makes it easy to customise your pipeline to interact with your data the way you want to. You’ll leave with a playbook of options to improve your RAG app and a stack you can extend without reinventing everything.
+  
+  Phil Nash - Developer relations engineer, IBM
+  
+  Phil is a developer relations engineer for DataStax and Google Developer Expert living in Melbourne, Australia. He's been working in developer relations for a decade, speaking at conferences since 2012, and writing JavaScript since before jQuery. Away from the keyboard, Phil enjoys travel, live music, and hanging out with his mini sausage dog, Ruby.
+  
+  Socials:
+  https://x.com/philnash
+  https://linkedin.com/in/philnash
+  https://philna.sh
+  https://github.com/philnash
+---
+Olá. Meu nome é Ash e sou engenheiro de relações com desenvolvedores na IBM. Tenho trabalhado em ferramentas relacionadas à IA e à computação gráfica nos últimos dois anos e tenho algo que gostaria de mostrar a vocês hoje. Primeiro, já ouvi dizer que o jornalismo investigativo está morto muitas vezes, e tenho certeza que você também. As janelas de contexto estão enormes hoje em dia, então você pode simplesmente despejar todas as suas informações lá.
+
+Não levo esse tipo de coisa muito a sério. Se cada empresa tiver menos de um milhão de tokens em dados, então sim, o ragtime está morto e provavelmente todas essas empresas também. É claro que nem todo mundo fica feliz em ter que pagar um milhão de tokens de entrada cada vez que quer fazer uma pergunta. Em vez disso, ouço dizer que a questão do pano está morta, mas na verdade é mais uma questão de o pano estar resolvido, certo? Achamos que entendemos o processo e podemos simplesmente aplicar o pano quando necessário.
+
+Você simplesmente reúne todos os seus dados não estruturados, extrai o texto, divide-o em blocos, incorpora-o e o joga em um banco de dados vetorial. E então, quando você quiser fazer uma pergunta ao seu agente, basta incorporar essa pergunta, pesquisar no banco de dados, selecionar os K melhores resultados e passá-los para um modelo como contexto. É apenas uma nota de rodapé no contexto da engenharia atualmente. Mas acontece que o pano é na verdade duro, e é duro por diferentes razões, dependendo do projeto. Você sabe que PDFs são um problema, estratégias de fragmentação são complicadas e alterá- las e testá-las é difícil. As
+
+tecnologias de incorporação continuam a melhorar, o que é ótimo para o setor, mas não tão bom quando se usa uma versão de 6 meses ou um ano atrás. Há sempre novas técnicas de busca surgindo, além de ajustes que você pode adicionar ao seu fluxo de trabalho para melhorar os resultados, como adicionar resumos aos blocos de dados, realizar a expansão de blocos, usar um codificador cruzado para reescrever resultados, reescrever consultas e muito mais. Rag é bastante complexo. Na verdade, os documentos de cada pessoa são diferentes, cada sistema terá usuários diferentes, perguntas diferentes, padrões de interação diferentes e expectativas diferentes. Embora cada sistema de limpeza com pano seja diferente em todos os aspectos, existem, sem dúvida, alguns componentes essenciais que são indispensáveis.
+
+Ao construir um sistema de retalhos, é útil ter uma base de alta qualidade como ponto de partida . É nisso que temos trabalhado na IBM. Reunimos três projetos de código aberto já existentes para criar uma pilha de ferramentas poderosa, fácil de usar e fácil de estender. E o projeto se chama Open Rag. E utiliza o docling de código aberto para processamento de documentos, o OpenSearch para indexação de buscas e o LangFlow para orquestração visual e agentes.
+
+Open Rag é um projeto de código aberto que você pode experimentar hoje mesmo para construir seu próprio sistema de rastreamento poderoso, personalizável e fácil de usar. Quero apenas detalhar a estrutura para você, para que entenda os componentes, como eles funcionam juntos e como criam uma estrutura flexível o suficiente para atender às suas necessidades modernas de automação . Vamos começar analisando o lado da ingestão do pano. Vamos começar pelo começo de tudo: o processamento de documentos. Ingerir PDFs, HTML, documentos do Word, slides e outros formatos pode ser um transtorno, mas o maior transtorno de todos, sem dúvida, são os PDFs.
+
+Docling é um projeto de código aberto. Foi desenvolvido a partir de pesquisas da IBM em Zurique e processa e analisa todos os tipos de documentos, desde HTML, Markdown e documentos do Word até slides e planilhas, áudio e vídeo, e até mesmo o inimigo de todos os sistemas de arquivos, os PDFs. O Docling possui diversos fluxos de trabalho diferentes que lidam com diferentes tipos de arquivo. Isso permite flexibilidade na forma como recebe documentos e precisão em sua saída. Existe, portanto, um fluxo de trabalho simples que lida principalmente com documentos de texto simples, como Markdown, HTML e Word. Isso simplesmente extrai o texto, o transforma
+
+em uma hierarquia e gera um documento. Para áudio e vídeo, existe um pipeline de reconhecimento automático de fala (ASR). E para PDFs, existem dois fluxos de trabalho disponíveis. O pipeline padrão possui diversos modelos pequenos e específicos que realizam tarefas diferentes, como extrair texto, tabelas e imagens de PDFs. Você pode até escolher um mecanismo de reconhecimento óptico de caracteres (OCR) para ler o texto, o que é particularmente útil para documentos digitalizados que não contêm texto real.
+
+Assim, essa coleção de pequenos modelos em um pipeline executa tarefas como análise de layout, extração de tabelas, extração de imagens e descrições. Isso oferece uma ampla gama de opções para você aproveitar ao máximo esses documentos. Existe também um VLM, um pipeline de modelo de linguagem de visão que usa o modelo de visão Granite Docling de 258 milhões de visualizações para extrair tudo isso de uma só vez. Este é um pipeline mais recente, mas é mais simples, pois se trata de um modelo único, treinado especificamente para esta tarefa. O Docling extrai o texto e, em seguida, produz uma representação intermediária, um documento Docling, que modela a estrutura do documento em um formato semelhante ao XML, chamado de tags de documento.
+
+Essas tags de documento podem então ser convertidas para diversos formatos, incluindo Markdown, HTML e JSON. E o docling também possui um fragmentador que usa a hierarquia gerada pelas pausas e incorporada nessas tags de documentação para produzir blocos de texto hierarquicamente compreendidos . Passando para os embeddings, o OpenRag, na verdade, não é muito prescritivo nesse aspecto . Ele oferece suporte a diversos provedores externos, incluindo OpenAI, What's Next AI e Ollama para incorporações hospedadas localmente. Na verdade, todo o OpenRag pode ser executado offline usando modelos hospedados localmente. O Docling em si
+
+pode ser executado offline, permitindo sua operação em ambientes isolados da internet (air gap). Não precisa desses serviços externos. Depois de incorporar esses trechos de código, eles serão indexados na pesquisa aberta. O OpenSearch é, naturalmente, o fork de código aberto do Elasticsearch e é um banco de dados poderoso para realizar buscas vetoriais e por palavras-chave, além de ser altamente configurável, oferecendo também opções de filtragem e agregação. O OpenRag, por padrão, utiliza o OpenSearch para uma busca híbrida, combinando vetores e palavras-chave, e expõe essa filtragem sofisticada para buscas mais direcionadas.
+
+Também oferece suporte à busca vetorial em múltiplos modelos de incorporação. Isso irá tornar a busca por vetores mais lenta na prática, mas é útil caso você decida migrar seus modelos de incorporação como parte do seu sistema. O Open Rag também implementa a busca aberta com um quarto projeto secreto de código aberto. O plugin padrão de busca de vizinhos mais próximos do OpenRAG oferece opções para índices vetoriais HNSW ou IVF, mas o OpenRAG usa o plugin JVector KNN por padrão. O JVector é um índice vetorial de código aberto que oferece indexação em tempo real e, por ser baseado na arquitetura KNN em disco, não precisa ocupar todo o espaço do índice na memória, proporcionando mais opções para dimensionar os servidores de dados.
+
+Tudo isso é então integrado pelo LangFlow. O LangFlow é um editor visual do tipo "arrastar e soltar" para fluxos de IA que integra documentação, pesquisa aberta e todos esses modelos de incorporação, além de enriquecimento de dados, como parte do processo e pipeline de ingestão. Voltaremos mais tarde para analisar o LangFlow com mais profundidade. Isso é ingestão e indexação. E quanto ao lado geracional do ragtime?
+
+[bufa] No que diz respeito à geração, normalmente não precisamos nos preocupar com a ingestão de documentos e já sabemos que a busca aberta está lidando com essa busca híbrida multivetorial para nós. Mas precisamos ressaltar que o OpenRAG usa recuperação agentiva para realizar a busca. Isso também é feito no LangFlow e, novamente, dá acesso a todos os tipos de modelos que o LangFlow disponibiliza. Então, de forma bem direta, isso se resume a IA aberta, Anthropic, Ollama, What's Next AI. O que significa busca agentiva? Bem,
+
+um pipeline tradicional de geração de rags pegaria uma consulta do usuário, a incorporaria , a usaria para realizar a busca do vizinho mais próximo nos blocos e apresentaria os K blocos principais ao LLM, esperando que a resposta esteja contida neles e que o modelo seja inteligente o suficiente para extraí-la. Com a recuperação assistida por agentes, em vez disso, fornecemos a consulta do usuário a um agente, juntamente com instruções e ferramentas que ele pode usar para realizar quantas pesquisas forem necessárias. Na verdade, o modelo é responsável por decidir quais buscas realizar e o que fazer com os resultados. Então vamos ver isso na prática. Tenho o OpenRag aberto no meu laptop e vamos dar uma olhada rápida no que ele pode fazer.
+
+Assim que você concluir o processo de integração com o OpenRag e configurá-lo, você entra em um chat e a primeira coisa que pergunta é: o que é o OpenRag? E como você pode ver aqui, já obteve uma resposta, mas também pode ver que já executou algumas chamadas de ferramentas. Acontece que a resposta para "o que é 'open rag'" está dentro do prompt do agente por padrão, então ele não precisa realmente fazer nenhuma consulta de pesquisa. Mas também verificou a data atual por precaução, o que é uma gentileza da parte dele. Assim, podemos ver que obtemos uma resposta, mas também recebemos sugestões sobre os próximos passos.
+
+São apenas pequenos incentivos. Isso também é possível graças ao LangFlow e, se perguntarmos sobre isso para explorar o papel do LangFlow na construção de agentes de IA , o próprio agente consultará a documentação e encontrará uma resposta por conta própria. Como podem ver, o agente modelo utilizou algumas ferramentas novamente. Chegou a uma conclusão. Também surgiram mais incentivos.
+
+Então vamos dar uma olhada na seção de conhecimento. É aqui que você efetivamente carrega seus dados, seus documentos, e você pode fazer isso adicionando um arquivo inteiro ou uma pasta inteira. Aqui também há um botão de sincronização. Veremos isso em um minuto. E você também pode inspecionar seus objetos, seus documentos e seus blocos de dados aqui. Como
+
+você pode ver, eles estão dividindo as coisas em blocos, como seria de se esperar. É também aqui que você pode criar filtros de conhecimento. Então, isso aproveita a filtragem na pesquisa aberta. Você pode criar filtros com base em uma série de opções diferentes relacionadas aos dados que você tem em seu sistema. E isso permite que você, no chat, use esses filtros para conversar apenas com documentos específicos. Então,
+
+essa é a seção de conhecimento. E então, nas configurações, podemos explorar as opções de personalização. Então, logo no topo, temos os conectores de nuvem, mas para usar os conectores de nuvem você precisa de um modelo de usuário ou algum tipo de autenticação. No momento, configuramos isso com o Google OAuth. Então você precisa de um cliente OAuth e uma chave secreta. Depois de
+
+configurar isso, você poderá se conectar ao Google Drive, ao SharePoint e ao OneDrive. E isso permite que seus usuários se conectem a diretórios de seus próprios documentos e permitam que o OpenRag os sincronize diretamente. Acho isso realmente impactante. Isso evita que você precise ficar enviando arquivos várias vezes. Você pode simplesmente sincronizar com este repositório de documentos externo e ele estará sempre atualizado.
+
+Aqui podemos ver nossos fornecedores de modelos. Configure aqueles baseados em API ou no Ollama. Como eu disse, isso serve para executar coisas localmente. Ah, e eu estou usando o Ollama, e você pode ver que atualmente estou usando o Granite 4 3B. Esse é um dos modelos da IBM.
+
+Este é o nosso modelo de linguagem e você também pode ver as instruções reais do agente. Então você pode configurar o prompt do sistema ali. E então, na seção de ingestão, você pode ver novamente que estou executando o Queen 3 embedding, com 0,6B para meu modelo de embedding. Também disponível em Ollama. E você pode definir o tamanho do bloco e a sobreposição entre blocos. E então,
+
+essas últimas partes são configurações do Docling, onde definimos se queremos capturar a estrutura da tabela. Sim, atualmente. Hum, queremos executar o OCR? Não, agora não. Isso está desligado.
+
+E queremos extrair descrições das imagens? Hum, atualmente está desativado, mas é uma função útil se você quiser extrair informações de imagens também. É claro que adicionar mais modelos ao processo torna as coisas um pouco mais lentas. Então, por enquanto, eles estão de folga . E logo abaixo estão as chaves da API. E é aqui que você pode
+
+configurar o acesso ao OpenRag como uma API. Assim, você pode implementar e usar sua busca ou seu agente dentro do seu próprio aplicativo. Mas vamos mergulhar ainda mais fundo, onde podemos personalizar as coisas ainda mais. Você pode clicar neste botão "Editar no LangFlow" e isso o levará à implementação real do seu agente. Então, vamos dar um zoom. Podemos
+
+ver aqui o nosso agente. Então, este é o fluxo de geração do chat. E o nosso agente recebe as informações dessa entrada de chat, que passa por um modelo de prompt rápido, adicionando informações sobre filtros de conhecimento, caso você os tenha utilizado. E o agente tem várias ferramentas à sua disposição. Essas ferramentas incluem um servidor MCP para ingestão de URLs. Na
+
+verdade, isso é apenas mais um fluxo dentro do LangFlow. Ah, tem uma calculadora porque eu acho que agentes e modelos não deveriam fazer cálculos aritméticos. São modelos de linguagem, não modelos matemáticos. Então, uma calculadora é sempre útil. E, por fim, o último é o recurso de incorporação multimodelo do OpenSearch . E assim, os provedores de incorporação
+
+estão todos aqui. Podemos editar isso. Se você puder entrar aqui, desbloquear o fluxo e salvar isso, podemos fazer mais com ele. Então, por exemplo, podemos pegar essa entrada do chat e talvez queiramos implementar algumas medidas de segurança . Então podemos pegar os guarda-corpos do nosso conjunto de componentes à esquerda.
+
+E então precisamos analisar o resultado disso. Então podemos simplesmente obter um analisador sintático. Então, se a análise for bem-sucedida, passamos o texto pelo analisador sintático, obtemos o texto original que foi enviado e, em seguida, o repassamos para o nosso modelo de prompt. Acho que, se falhar, podemos enviar uma mensagem de erro para o nosso chat . Ah, tudo bem. Então, agora
+
+adicionamos grades de proteção à nossa estrutura. Bem, também podemos usar nossos modelos de lhama lá. E então, isso é tão extensível quanto o LangFlow pode ser para você. Hum, tem mais uma coisa. Existe um servidor MCP disponível para o OpenRag, bem como uma API. Assim, você pode usar isso
+
+e entregar também aos seus outros agentes . Então, o problema RAG foi resolvido? Bem, isso ainda depende de você, dos seus dados e dos seus usuários. Mas o OpenRag foi criado para ajudar. É uma plataforma opinativa, porém proativa, e de código aberto para RAG. Como mencionei anteriormente,
+
+ele combina Docling, OpenSearch e LangFlow para criar este poderoso sistema RAG básico composto por componentes de código aberto . E isso deixa bastante espaço para personalizar dentro dessa estrutura, para que você possa construir o melhor RAG (Grupo de Ação Rastreável) para seus dados e fornecer o melhor contexto para seus agentes. Atualmente está na versão 0.4.0 e está pronto para você usar.
+
+Então, este link, ou melhor, o código QR, levará você ao projeto. E adoraríamos que você experimentasse o OpenRag, deixasse uma estrela no GitHub e nos contasse o que achou. Ah, e também é de código aberto, certo? A interface ( front-end) é uma aplicação Next.js.
+
+Todo o resto é um aplicativo em Python. E se você gostou da aparência do OpenRag, também agradeceríamos seu feedback e suas contribuições para o próprio projeto. Os componentes do OpenRag também são abertos, é claro. Assim, você também pode se envolver com o Docling, com o OpenSearch ou com o LangFlow. E juntos, sabe, podemos construir uma plataforma RAG que funcione para todos.
+
+Oferece opções quando você precisa e toma boas decisões quando faz sentido. Podemos fazer isso com componentes de código aberto, de forma transparente. É isso que eu gostaria de ver. Ah, muito obrigada por ouvirem. Bem, meu nome é Tom Nash.
+
+Sou engenheiro de relações com desenvolvedores na IBM e estou tentando ajudar a construir o OpenRag e esse ecossistema aberto de aplicativos com agentes. E mal podemos esperar para ver o que você vai construir com o OpenRag. Muito obrigado.

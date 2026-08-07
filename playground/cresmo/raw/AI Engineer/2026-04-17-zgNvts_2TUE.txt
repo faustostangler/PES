@@ -1,0 +1,242 @@
+---
+video_title: "State of the Claw — Peter Steinberger"
+video_id: zgNvts_2TUE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zgNvts_2TUE
+video_date: 2026-04-17T15:30:06+00:00
+video_description: |
+  Peter Steinberger gives the 5 month update on OpenClaw, the fastest growing open source project in history, and what it's like as a maintainer, from security to community. Keynote followed by audience Q&A moderated by @swyx.
+  
+  Speaker info:
+  - https://x.com/steipete
+  - https://www.linkedin.com/in/steipete/
+  - https://openclaw.ai/
+  
+  
+  Timestamps
+  0:00 Project Growth and Statistics
+  2:23 Management Challenges and the OpenClaw Foundation
+  3:47 Addressing Security Advisories and Vulnerabilities
+  10:33 Misinformation and Media Fearmongering
+  14:50 The Burden of Open Source Maintenance
+  16:12 OpenAI Involvement and Future Independence
+  18:57 Audience Q&A Begins
+  19:53 OpenClaw's Relationship with OpenAI
+  22:28 The Importance of Open and Local Models
+  24:57 Coding Workflow and Agent Interactions
+  28:28 Defining 'Taste' in AI Development
+  30:31 Developing Personality for AI Agents
+  33:22 Future Vision: Ubiquitous Agents and Smart Homes
+  35:58 Addressing Prompt Injection Risks
+  38:33 Future Vision: Implementing 'Dreaming' and Modularity
+  40:24 Life as a Maintainer and Future Skills
+---
+Nosso
+
+próximo apresentador [de música] é o criador do Open Claw, a IA de código aberto que mais cresce no mundo. Ele se juntou recentemente à OpenAI para trabalhar no projeto de levar agentes a todos. Por favor, juntem-se a mim para dar as boas-vindas ao palco a Peter Steinberger.
+
+Bom dia a todos. [aplausos] Então, a Swiss me pediu para fazer um vídeo sobre o estado da garra. Quem aqui está jogando com a estratégia de garra aberta? Me dê uma mãozinha. Ah, é tipo 30 ou 40%. Muito bom. Sim, já faz
+
+alguns meses. Bem, o projeto já tem cinco meses. Acho que já podemos afirmar, sem medo de errar, que somos o projeto de crescimento mais rápido na história do GitHub. Bem, se você viu o gráfico, geralmente alguns projetos parecem um taco de hóquei, mas o nosso era como uma linha reta, e um amigo o chamou de "grosseiro como um poste de stripper", o que traz seus próprios desafios. Então, acho que agora temos o maior número de estrelas no GitHub. Existem
+
+alguns que são maiores, mas são basicamente voltados para o público educacional. Nenhum outro projeto de software é tão grande. São cerca de 30.000 commits. Estamos nos aproximando de 2.000 colaboradores, que em
+
+breve serão 30.000 PRs. Bem, veja, e não estamos diminuindo o ritmo. Então, você vê que é uma rampa, mas sabe, só temos o dia 9 de abril. Então, a velocidade continua sendo boa.
+
+E ao mesmo tempo, não tem sido fácil. Sabe, eu tinha dois caminhos quando decidi o que queria fazer, e acabei criando minha própria empresa . Eu pensei: "Não quero fazer isso de novo." E então eu entrei para a OpenI, mas também criamos a Open Cloud Foundation. E agora eu meio que tenho dois empregos.
+
+E gerir a fundação é como gerir uma empresa no modo difícil, porque você tem todas as coisas com que precisa se preocupar, mas também tem muitos voluntários que você não consegue realmente direcionar. Então, um dos meus objetivos tem sido trabalhar no fator "no ônibus", tipo quem faz cometas. E você percebe que está melhorando aos poucos. Vincent está falando depois de mim, mas ainda não chegamos lá. Bem, nos últimos meses conversei com muitas empresas.
+
+Agora temos pessoas da Nvidia a bordo. Temos um representante da Microsoft a bordo para ajudar com o MS Teams, que funciona como um aplicativo do Windows. Hum, temos alguém da Red Hat que está nos ajudando bastante com segurança e dockerização. Trabalhamos com muitas empresas chinesas. Temos pessoas da Tencent e da Biteance.
+
+Bem, na verdade, eles têm um número de usuários muito maior do que em qualquer outro continente, e sim, pessoas de praticamente todo o mundo. Mas o principal que eu quero abordar é a insegurança do OpenClaw. Você já viu os memes do tipo "OpenClaw convida os bandidos"? E provavelmente também viu empresas como a Nvidia fazendo o NemoClaw, e todo mundo com pequenas lagostas. Então você também percebe que, nos últimos dois ou três meses, houve muitos lançamentos em que algumas coisas deram errado.
+
+Basicamente, fui enganado por avisos de segurança. Então foi isso que eu fiz e no que me concentrei. Até o momento, recebemos 1.142 alertas. Isso dá cerca de 16,6 por dia. 99
+
+são críticos. Publicamos cerca de 469 e fechamos 60% deles. Esses números parecem absolutamente aterrorizantes. Se compararmos, por exemplo, com outros grandes projetos, como o kernel do Linux, que recebe cerca de oito ou nove atualizações por dia. Recebemos o dobro, e o curl já tem 600 relatórios, então temos o dobro do curl.
+
+Então, sempre que recebo um incidente de segurança, a regra é: quanto mais eles gritam sobre a criticidade, maior a probabilidade de ser algo descuidado. Como nós... quer dizer, você provavelmente também já viu as notícias... estamos
+
+caminhando muito rapidamente para um mundo onde precisamos mudar a forma como desenvolvemos software, porque todas essas ferramentas de IA estão ficando tão boas em identificar até mesmo as vulnerabilidades mais complexas e vamos acabar quebrando todo o software existente. Vou dar um exemplo: a Nvidia lançou o Neimoclaw, que é um plug-in e uma camada de segurança para o OpenClaw. Você pode colocá-lo em uma caixa de areia. A palestra principal foi na segunda-feira. Eles me convidaram no domingo para trabalhar com eles. Eu o conectei ao sistema de segurança Codex.
+
+Descobriu cerca de cinco maneiras diferentes de escapar do ambiente de segurança isolado (sandbox) em meia hora. Isso porque, ao usar esse produto, você tem acesso a um modelo exclusivo que é consideravelmente mais inteligente em termos de segurança cibernética do que aquele disponível ao público em geral. Exatamente. Porque é perigoso. Mas sim, também, toda essa indústria, para essas pessoas, é como um crédito, certo?
+
+Quanto mais problemas encontram, mais percebem. Então, tipo, o OpenClaw era o produto inseguro que todo mundo tentava quebrar, literalmente centenas de pessoas usando seus computadores para tentar quebrar o OpenClaw. A superfície de ataque típica é execução remota de código, burla de aprovação, injeção de código, travessia de senha. Hum, tudo isso parece muito perigoso, e eu vou te dar um exemplo concreto. Um Gshjp.
+
+Isso tem um CVSS de 10. Então é a coisa mais assustadora que você pode fazer. É um problema que ocorre quando, por exemplo, você sincroniza o aplicativo para iPhone que ainda nem foi lançado, mas está em desenvolvimento, e concede a ele apenas permissão de leitura. Isso pode acabar quebrando o sistema e obtendo também permissão de gravação. Então, este era tão crítico que, eu sei que este é realmente diferente, em todos os aspectos práticos, nem chega a ser um incidente, porque nos casos de uso típicos você o instala em sua máquina, seja na nuvem ou, se necessário, em um Mac mini. Parei de lutar contra isso, estou
+
+apenas deixando as pessoas se divertirem agora, mas em 99% dos casos você terá acesso ao seu gateway ou não terá acesso ao gateway. Em minha defesa, foi um erro meu tentar criar um modelo mais permissivo . Por exemplo, se você tiver dispositivos que se concentrem na fala e, em seguida, leiam apenas determinadas coisas. Então, existem casos de uso em que um sistema de permissões reduzidas faria sentido. Mas ninguém está usando isso. Mas
+
+isso não importa, porque as regras de como se criam os números CVSS não contribuem em nada para isso. E eu tento seguir as regras. Portanto, é nota 10 de 10. E o mundo está enlouquecendo por incidentes que, na prática, não afetarão as pessoas. Existem outras coisas que afetam as pessoas. Temos estados-nação
+
+tentando hackear pessoas. Existia um programa chamado Ghost Claw, que provavelmente veio da Coreia do Norte, e que basicamente confundia as pessoas com um pacote NBN diferente. Se você acessasse um site errado e tentasse baixá-lo, acabava instalando um rootkit. Isso está fora do nosso controle. Isso acontece com outras pessoas também. Bem,
+
+também tem a questão do Axios, que curiosamente, nós não usamos o Axios, mas sim o MS Teams ou o Slack como dependência, e eles usam o XIS e não nos bloquearam. E claro, como é assim que funcionam os ataques à cadeia de suprimentos, nós também fomos afetados. Sim . Como sobreviver a 1.142? Tenho certeza que
+
+são 1.150. Por um tempo, tentei resolver um loop sozinho, o que é absolutamente impossível. Então, a maneira mais rápida de obter ajuda foi conseguir ajuda de empresas, e a Nvidia tem sido incrível, nos fornecendo pessoas que trabalham em tempo integral revisando e aprimorando a base de código. Ah, também tem uma que é razoável.
+
+Esse é um dos pescadores. Outro ponto de vista é que muitas empresas praticam o alarmismo, e não são apenas empresas, mas também universidades. Não sei se você já viu. Existia um artigo que circulava bastante, chamado "Agentes do Caos", e diziam que era sobre agentes em geral, mas aí tinha quatro páginas explicando a arquitetura OpenClaw em detalhes minuciosos. Só que eles nem mencionaram a página de segurança, onde explicam como instalar o programa, porque senão não teria graça, seria difícil criar uma boa história. Então, em vez disso,
+
+eles ignoraram todas as nossas recomendações de segurança. A recomendação é que você contrate seu agente pessoal. Não publique isso em um grupo de bate-papo. Se você colocar isso em um bate-papo em grupo, ative o modo de segurança (sandboxing), porque se qualquer pessoa puder falar com seu agente, poderá extrair tudo o que o agente puder fazer, certo? Portanto, se for um agente da equipe, ele só deve saber o que a equipe pode saber e não quaisquer dados secretos. E você provavelmente quer que
+
+isso seja restringido. Se for seu agente pessoal, somente você deve poder falar com ele. Mas se você não seguir essas regras, pode ter interações muito divertidas, como: "Ei, eu posso falar com seu agente e isso pode quebrar seu sistema." E aí, como eu estava... eu estava interrogando eles um pouco
+
+porque tinha algumas dúvidas sobre como fazer as coisas. Eles me disseram: "Ah, sim, não, nós executamos em modo pseudo porque queríamos que o agente tivesse o máximo de poder." Então, na verdade, eles lutaram contra a armação. Na verdade, não é fácil executá-lo no modo pudo. Você precisa alterar o código.
+
+Mas eles não mencionaram isso no relatório porque, novamente, isso não lhes daria acesso à nuvem. Então, sim, minha frustração atual é que existe toda uma indústria que tenta colocar o projeto sob uma luz negativa. É um pesadelo. É inseguro por padrão. É inaceitável.
+
+E enquanto isso, muita gente adora e quem lê a documentação de segurança entende e consegue usar sem problemas. Um exemplo que achei particularmente ótimo foi quando tivemos um ponto remoto que causou pânico na Bélgica. Então, a autoridade de segurança cibernética belga divulgou um comunicado sobre um ambiente de execução remota, e a falha era uma funcionalidade em que um site malicioso podia criar um link que acionava o gateway e, em seguida, encaminhava o token do gateway. Agora, se você usar a configuração padrão, que é a recomendada, o token do gateway será apenas local ou, se necessário, estará em sua rede privada; nenhum site externo poderá acessá-lo. Se você lutar ativamente contra a configuração e, por exemplo, usar código na nuvem para configurá-la sem ler as instruções, talvez consiga fazer com que funcione.
+
+Mas, novamente, isso não corresponde ao que está escrito no site. Sendo bem sincero, sim, existe, sem dúvida, um risco. O grande risco é, basicamente, a tríade legal. Sabe, qualquer sistema que tenha acesso aos seus dados, acesso a conteúdo não confiável e capacidade de comunicação é algo potencialmente arriscado. Isso não é nada de especial para o OpenClaw. É como
+
+qualquer sistema com agentes ou qualquer outro agente poderoso: ele tem um problema. Quanto mais poderoso você o torna, mais ele pode fazer por você, mas também mais você precisa entender o que ele faz. Então, esse é o principal problema, mas as pessoas não falam sobre isso. Sim. E também, hum, alguma parte sobre manutenção.
+
+Então, o problema é o seguinte: se você recebe todos esses avisos de segurança, sabe que a maioria deles é criada por agentes, mas você ainda precisa usar o cérebro para lê-los, porque ainda não chegamos ao ponto em que podemos confiar plenamente que o agente vai descobrir o problema. Portanto, isso representa um enorme fardo em termos de tempo, e nunca se sabe o que pode acontecer. Quer dizer, às vezes você pode...
+
+muitas vezes dá para perceber, sabe? Sempre que a reputação é boa demais ou quando alguém pede desculpas, é muito provável que seja IA, porque geralmente as pessoas da área de segurança não pedem desculpas. Mas é um problema enorme e é algo que vejo cada vez mais projetos de código aberto reclamando ou tentando quebrar. Alguns, como o ffmpeg, são bem públicos quanto a isso . Normalmente você recebe o relatório. É muito
+
+raro você receber um relatório e uma solução. Se você receber um relatório e uma correção, geralmente é uma correção muito ruim. Se você fizer tudo com pressa , como eu às vezes fazia no começo por estar sobrecarregado, certamente vai estragar seu produto.
+
+[limpa a garganta] Sim. Portanto, isso é algo muito difícil de se realizar apenas com voluntários. Então, em que estamos trabalhando? Em primeiro lugar, as pessoas dizem que a OpenAI comprou a OpenClaw, mas isso não é verdade. Eles podem ter comprado minha alma.md,
+
+mas eles entendem muito bem que, para o que o mundo precisa, é de mais pessoas que interajam com IA para entender o que ela pode fazer, tanto os riscos quanto as possibilidades. Eles entendem que, se você, ou alguém que nunca interagiu com IA, de repente estiver em casa e usar o OpenClaw, essa pessoa virá para o trabalho e perguntará por que não temos IA no trabalho. Então, eles entendem muito bem que apoiar esse projeto é muito útil e, para que ele seja bem-sucedido, não pode estar sob o controle de uma única empresa. Portanto, estou meio que construindo a Suíça com a fundação Open Glove e tenho a ajuda de Dave nisso . Hum, está quase pronto. A
+
+última coisa que nos mantém funcionando é o sistema bancário americano, que é um pouco lento e muito confuso quando você não é americano. Bem, foi inspirado no que o Ghosti fez. E isso, na verdade, nos ajudará a contratar pessoas em tempo integral para manter o ritmo, melhorar a qualidade e liberar parte do meu tempo para que eu possa voltar a trabalhar em coisas legais.
+
+E essa é a minha pequena atualização sobre State of the Claw. Estarei disponível mais tarde para uma sessão de perguntas e respostas. Obrigado por ouvir. [aplausos] Ok, ótimo. Obrigado pelo grito de incentivo. Adoro o grito de
+
+alegria. Hum, excelente. Ok, você escolheu a faixa "claw" para começar nossos exercícios de fuga e vai ser ótimo. Acho que vai ser uma boa sessão. Bem, vamos ouvir falar sobre várias coisas diferentes relacionadas ao OpenClaw e à assistência pessoal por IA em geral. Haverá alguns
+
+colaboradores do OpenClaw, mantenedores do OpenClaw, competidores do OpenClaw e criadores do OpenClaw aqui no palco. Bem, na verdade, vamos continuar com isso até a hora do almoço. Ah, aí está. Conseguimos ver lá de cima . Então, são cerca de uma hora e meia de sessões, sessões um pouco mais curtas do que antes, eu acho. Bem,
+
+vamos começar com uma sessão de perguntas e respostas . Você chegou. Você viu o Peter mais cedo, mas terá a oportunidade de fazer perguntas e haverá uma pequena conversa com o Peter e o Swix. Então, para começarmos, acho que vou simplesmente convidar o Swix para dar início às coisas. Então, por favor, recebam-no no palco. Swix, suba aqui
+
+. Swix. [aplausos] Muito bem . Na verdade, vocês podem ir juntos. Vocês podem sair juntos. Não há
+
+segredo. Peter, seja bem-vindo. Todo mundo ali está [aplausos] Ok, então a ideia aqui é fazer um AMA (Ask Me Anything - Pergunte-me Qualquer Coisa). A ideia principal é que eu já gerenciei seis desses engenheiros de IA e, sempre que temos algum grande mantenedor, algum VIP importante, nós só damos uma palestra para eles, mas vocês também têm perguntas que querem fazer. Então, nós queríamos criar essa oportunidade. Então você
+
+pode enviar sua inscrição por lá. Vou moderar, e tal. Bem, vou começar com a picante. Pete acabou de me citar no Twitter e disse para enviar todas as suas perguntas sobre o ClosedClaw, certo? [risos] Acho que as pessoas têm muitas perguntas sobre o futuro do OpenClaw na OpenAI, e eu queria dar a vocês a oportunidade de perguntar o que as pessoas estão dizendo sobre o ClosedClaw e qual é a resposta de vocês.
+
+Eu nem tinha pensado nisso, surgiu quando decidi ir para a OpenAI. E acho que as pessoas têm razão quando dizem que o OpenAI nem sempre foi incrível com o código aberto. E eu acho que muita coisa mudou, como o Codex, que agora é de código aberto . Eles lançaram o Symfony, que é uma camada de orquestração muito legal. Então, eles estão realmente se envolvendo e entendendo o conceito de código aberto agora. Eles
+
+entendem que a nuvem aberta precisa permanecer aberta e funcionar com qualquer modelo, seja ele de uma grande empresa ou um modelo local. Todos no setor ganham se mais pessoas dedicarem tempo à IA. Sabe, se eu achasse IA algo assustador, de repente eu experimentasse a nuvem aberta e ela se tornasse divertida e estranha, e então eu chegasse ao trabalho e não encontrasse ferramentas de IA. Vou falar com meu chefe e perguntar por que diabos não temos IA no trabalho, e aí essas empresas provavelmente não usariam o OpenClaw, mas nós queremos algo hospedado e gerenciado, para que alguém possa fazer uma venda. Então eles estão totalmente de acordo. Eles me fornecem
+
+recursos. Bem, na verdade, eu poderia conseguir muito mais gente da OpenAI para ajudar no projeto, mas isso criaria a impressão de que eles poderiam ter assumido o controle do projeto, e eu não quero isso. Então eu trouxe pessoas da Nvidia, temos alguém da Microsoft, do Telegram, alguém da Salesforce, entre todas as empresas. Então, um salve para o Slack! Aliás, tem gente muito legal lá.
+
+Então, temos alguém que faz a manutenção do plugin do Slack. Agora eu trouxe a Tensent a bordo, Bite Dance. Conversamos com a Alibaba, Miniax, Kimi, enfim, com todos os fornecedores de modelos. Eles estão totalmente de acordo. Hum, a Nvidia tem sido extremamente prestativa.
+
+Acho que eles são uma das empresas mais legais em termos de engenheiros que realmente gostam de contratar uma agência e simplesmente fazer as coisas acontecerem. Sim . E agora que tenho todas as outras empresas, também estou trazendo algumas pessoas da OpenAI para ajudar a manter o projeto, porque, quer dizer, o software está mudando e o ritmo em que este projeto opera é insano. É como se você precisasse de um exército. Hum, e estou trabalhando nisso.
+
+Você tem um exército. Ah, mas... mas você sabe, até mesmo o gráfico de colaboradores que você mostrou... mostra que é difícil fazer com que
+
+colaboradores de qualidade permaneçam por aqui. As pessoas continuam contratando seus funcionários de manutenção e, depois, você precisa encontrar novos. [risos] Então, há muitas perguntas sobre modelos locais e modelos abertos. Sabe, nem todas as partes da pilha estão abertas. Existem muitos modelos em que você não tem acesso aos modelos e, sabe, há uma espécie de restrições estranhas. Qual a importância dos
+
+modelos abertos e locais para o futuro do OpenClaw? Quer dizer, parte do que me motivou a criar o OpenClaw foi ver todas essas grandes empresas com conectores para o meu Gmail, e meu e-mail fica hospedado em algum lugar. Essa empresa tem acesso total ao meu e-mail, e eu consigo obter apenas uma pequena parte dele. Para mim, é muito mais interessante ter todos os meus dados sob meu controle, e só uma pequena parte deles é enviada para o servidor se eu precisar do token de nível mais alto. Sim . e como um segundo tipo de
+
+hierarquia de modelos de contingência. Sim, você quer? Quer dizer, eu sou europeu de coração. Você quer ser dono dos seus dados, sabe? Então, então, então, e ninguém construiu isso. Então, para mim, isso foi muito
+
+atraente, além do fato de que, se você é uma startup e quer se conectar ao Gmail, leva cerca de seis meses e é um processo muito, muito difícil. Mas se eu for um consumidor, meu robô pode clicar em qualquer site e clica alegremente em "Não sou um robô". Se você precisar me fornecer os dados de alguma forma, se puder, meu agente conseguirá obtê-los. Assim, você pode contornar muitos desses silos que as grandes empresas estão criando e, em última análise, pode realizar casos de uso de automação muito mais interessantes do que as grandes empresas jamais conseguiriam. Então é um pouco como as coisas funcionam aos hackers. Sim
+
+. E alguma indicação da equipe aberta sobre o GBTOSS? Isso significa que continuará sendo um fluxo de trabalho que estará alinhado com o Open Claw ou será algo separado? Não estou em posição de dar, sim, dar informações sobre isso, mas parte do que o OpenCloud desencadeou é que mais pessoas na empresa estão se empolgando com o código aberto. E eu adoro que a OpenAI esteja se movendo mais em direção a uma abordagem aberta. Novamente, se
+
+você comparar com alguns outros laboratórios de ponta que começam com A, eles certamente irão processá-lo se você vazar qualquer informação do código-fonte deles, ou bloqueá-lo se você tiver muito sucesso. Acho que a Open está no caminho certo. Sim . OK. Gostaria de destacar esta questão. As pessoas adoram saber mais sobre o
+
+seu fluxo de trabalho de programação. Acho que a esta altura sua ideia de "prompt request" em vez de "pull request" já está muito bem difundida, e você também tem surpreendido as pessoas com a forma como está gastando tokens na OpenAI. [risos] Então, basicamente, as pessoas querem saber como vocês fazem os envios e o que vocês fazem em relação ao tempo de espera dos agentes, tipo, por que vocês estão dispensando tantos agentes? Eu sei, eu sei, nunca imaginei que essa foto minha fosse viralizar tanto. Sim . Na verdade, dê
+
+alguns números apenas para alinhar as pessoas. Acho que houve momentos em que eu estava executando quase 10 sessões ao mesmo tempo, especialmente quando usava o Codeex com 50 ou 51 janelas, era bem lento. Acho que agora, embora ainda seja estranho, fizemos melhorias que tornaram o processo mais rápido, e também há o modo rápido. Então, agora, meu fluxo de trabalho típico é talvez metade disso, talvez cinco ou seis janelas em vez do dobro, simplesmente porque cada loop é mais rápido e a área de trabalho que sincronizo nos workers é praticamente a mesma. Então eu não preciso mais usar tanto a tela dividida e acho que vamos caminhar para um futuro onde o token será mais rápido [limpa a garganta] e mais rápido. Então, em algum
+
+momento como este, não é natural que você trabalhe em seis coisas ao mesmo tempo. Bem, é basicamente uma solução paliativa até que seja mais rápido. Sim. Bem, uma das coisas interessantes de colocar você ao lado do Ryan foi ver como vocês dois abordam a questão de maximizar o uso de tokens. Basicamente, estou curioso para saber o que você acha da abordagem da fábrica totalmente às escuras, certo? Você nem sequer
+
+revisa o código que é inserido. Acho que isso é cada vez mais viável. Mas também, sabe, quando eu uso o " dark factory", de certa forma, significa que eu crio tudo o que quero construir desde o início, e eu simplesmente não acho que seja possível construir um bom software dessa maneira. Assim como o caminho para a montanha geralmente nunca é uma linha reta. É, é, é muito curvado. Às vezes você se desvia um pouco do
+
+caminho e então vê algo novo que te inspira. Você encontra atalhos. Bem, quando você chega ao topo, você consegue encontrar o caminho ideal, mas nunca se caminha assim . Assim, ao mesmo tempo, é muito improvável que a primeira ideia que você tiver sobre o seu projeto seja a versão final. Mas se eu, de repente, voltar a usar o modelo em cascata, esse será o projeto final. Para mim, isso
+
+não funciona. Assim como eu construo degraus, eu brinco com isso. Eu entendo como é essa sensação. Tenho novas ideias, meus temas de inspiração mudam. Para mim, é uma abordagem muito iterativa . Portanto, não vejo como
+
+isso poderia ser totalmente automatizado. Você definitivamente pode criar fluxos de trabalho para certas coisas. Sim . Mas mesmo para PRs, você não quer simplesmente criar um pipeline que apenas mescle PRs, porque muitos deles simplesmente não fazem sentido, sabe? As pessoas podem puxar seu produto em todas as direções possíveis. Mas se você automatizar
+
+isso, é muito improvável que a IA saiba qual é a direção correta. Você pode guiá-lo. Tenho um documento com uma visão geral que experimentei em parte, mas o gargalo ainda está afundando e parece que ainda estou com vontade de provar algo . [risos] Sim, o paladar é muito importante. Como você define gosto? Isso é algo que,
+
+nas minhas conversas com as pessoas, todos entendem que o sabor é a vantagem competitiva, mas ninguém concorda sobre o que é bom sabor. Então, estou curioso para ouvir a sua. Acho que nos dias de hoje o nível de bom gosto é baixíssimo, se algo não cheira a IA, sabe exatamente o que quero dizer? Sabe, se algo tem um estilo de escrita tão característico, e também uma interface de usuário tão ruim... a essa altura, você já viu
+
+tantas interfaces criadas por IA que imediatamente sabe se foi feita por IA. Sim, se tiver aquela borda colorida na esquerda ou na direita... quero dizer, por um tempo foi tipo o gradiente roxo, mas muito mais... eu
+
+sinto que é a mesma coisa, você consegue identificar uma escrita malfeita por IA imediatamente. Sim . É por isso que digo que é um cheiro. Mesmo que você consiga identificar isso com precisão, você saberá. Então, essa é provavelmente a caracterização mais básica de gosto.
+
+E depois subindo na hierarquia, porque hoje em dia grande parte do software é automatizável. Na verdade, você pode dedicar muito mais tempo aos pequenos detalhes. Não sei, sabe, tipo, quando você abre o jogo, você recebe uma mensagemzinha que às vezes zoa as pessoas. São aqueles detalhes encantadores que você simplesmente não vai perceber se der dicas de alto nível. Sim . Uma das minhas coisas favoritas em
+
+você é como você realmente se dedica muito à sua alma e compartilha sua abordagem de forma transparente, e eu acho que poucas pessoas se dedicaram o suficiente à alma até você aparecer. Acho isso muito interessante. Hum, eu... eu
+
+tenho um podcast que ainda não gravei. Eu ainda não lancei nada com o Mikuel Parakin, que era o CTO da Shopify na época, mas ele era o cara que liderava o Bing, onde o Sydney foi o chatbot original, meio que independente, que surgiu [risos] . Mas acho que as pessoas se divertem muito quando seu chatbot tem personalidade. Seu carro velho, você sabe, tem diferentes obsessões. Bem, não foi porque o mundo mudou, certo? Tivemos o GBD (Big Brothers)
+
+em 2023 e 2024, e basicamente era nós usando IA sem entender o que ela era capaz de fazer. Então, reconstruímos o Google para que você tenha um campo de busca e receba uma resposta, e você não espera que o Google tenha personalidade. Sim . Mas agora que passamos a usar mais agentes, como se eu não tivesse pensado no WhatsApp Relay no início e simplesmente o tivesse conectado ao Cloud Code. E aí, quando eu estava no WhatsApp, percebi que algo não estava certo. Mesmo que o
+
+CloudCode já tivesse alguma personalidade, ele não se encaixava muito bem na forma como as pessoas escreviam para você no WhatsApp. Então foi assim que toda a minha iteração começou, tipo, é uma questão de gosto, né? Não me parece bem assim. É muito prolixo. Usa pontos em excesso. É diferente, é diferente,
+
+meus amigos mandam mensagens diferentes. E foi assim que comecei a trabalhar. Eles dizem: "Não, não se trata de tentar escrever de forma mais humana." [risos] Ah, sim, eu escrevo como uma lagosta. Tipo uma lagosta. Sim. Hum,
+
+você sabe que uma das minhas citações favoritas suas é "loucura com um toque de ficção científica". Sim. Certo. É assim que se executam projetos de IA. E acho que não todos os projetos artísticos, mas especificamente algo como o OpenClaw nunca teria sido possível, não teria saído de uma empresa americana simplesmente porque teria sido vetado judicialmente muito antes de ser lançado, porque tem alguns problemas que nós, como indústria, ainda não resolvemos . Sim
+
+. Mas agora temos algumas medidas para mitigar o problema e a situação está melhorando. Os modelos estão ficando muito melhores. Mas não consigo entender como algum dos grandes laboratórios poderia ter divulgado isso. Sabe, seria muita resistência. Ah, e também não há
+
+provas de mercado suficientes de que é isso que as pessoas querem. Sim . Então, parecia que tinha que ser feito por alguém de fora. Sim. No começo, quando eu estava construindo aquilo, eu pensava: "Qual é o pior que pode acontecer?"
+
+como se pudesse extrair meu token, meus e-mails. Sim, não há nada ali que me mataria completamente. Você poderia, por exemplo, enviar algumas das minhas fotos. Eu pensei: "É , acho que os piores já estão online se você usa o Grindr." Hum, [risos] então foi tipo, ok, posso conviver com esse risco. Vai
+
+ser desconfortável, mas é algo suportável. Sim . Bem, se a sua empresa for diferente, ela exige uma abordagem um pouco diferente. Sim . Aliás, o perfil dele no Instagram é bom, siga-o na seção " underfollowed".
+
+[risos] Também tem algumas coisas boas. Ok . Você estava falando sobre o WhatsApp, falando sobre o Telegram. Muitos desses aplicativos de mensagens de texto. Hum, aplicativos de mensagens de texto são bons. As pessoas também estão buscando algo como
+
+o próximo formato. As pessoas querem, talvez, os óculos, os fones de ouvido. Qual é a sua lista de desejos em termos de agentes na sua vida? Na verdade, eu já tinha começado isso, mas acabei me perdendo em meio a tanta gente usando e à rotina diária. Mas se você estiver em casa, eu quero estar em qualquer cômodo e, sabe, em Star Trek, quando você diz "computador", eu quero falar com meu agente onde quer que eu esteja, e ele deveria ser capaz de me responder. Deveria saber
+
+onde estou. Tenho pequenos iPads em cada cômodo e meu agente pode usar o recurso de tela e projetar coisas nesses iPads. Por exemplo, se eu fizer uma pergunta que seja mais fácil de ser respondida, mostrando-me algo como a tela mais próxima, já que o sistema sabe onde estou. Então, o telefone é apenas um ponto de entrada muito conveniente, mas eu gostaria de poder falar com ele de qualquer lugar. Sim .
+
+Tipo, sim, se eu estiver por perto e usar óculos, eu deveria ser capaz de ouvir e projetar algo em mim. Mas, acho que sim, apenas siga o ubicular, quando tivermos uma casa realmente inteligente. Sim, tipo agentes no seu celular, mas na verdade você quer agentes onipresentes e aí talvez você queira ter seu próprio agente particular no trabalho. Você pode ter sua garra aberta, não sei, e essa garra deve ser capaz de se comunicar com sua garra pessoal de uma forma que seja confortável tanto para você quanto para sua empresa . Então, esse é o futuro que precisamos resolver. Sim
+
+. Uh, um de uh, eu acabei [limpa a garganta] de fazer um podcast com Maran Dre, que é um grande fã, uh, e também uh, tive conversas com Andre Karpathy. Esses dois caras usam o OpenCloud para administrar suas casas. E eu acho que o OpenClaw para residências é meio subestimado, mas as pessoas estão realmente descobrindo- o. E a ironia mais engraçada é que isso só é possível porque a internet das coisas significa que a maioria dos dispositivos inteligentes tem uma segurança terrível, o que significa que o OpenCore consegue executá-los.
+
+Ah, vai funcionar muito melhor daqui a alguns meses, quando os modelos estiverem realmente ruins. [risos] Sim, eles são muito bons. Hum, ok. Uma pergunta de segurança. ah, sobre injeção imediata. Como você pretende resolver o
+
+problema da injeção de dependência imediata, ou de que maneiras você tem pensado sobre esse problema? Provavelmente ainda não é suficiente. Por outro lado, os modelos de front-end são muito bons em detectar todos os casos em que coisas aleatórias chegam de um site ou de um e-mail, o que geralmente não é mais um problema. Você marca conteúdo como não confiável, muito difícil de remover de lá. Se eu tiver acesso ilimitado à sua garra e puder bombardeá-la com coisas, ainda haverá uma chance.
+
+Então ainda existe uma chance. Mas, como em qualquer outro caso, já não é o maior problema. Se você usar isso, também saberá que esse é provavelmente o ângulo em que, como algumas pessoas dizem, "Ah, Peter não gosta de modelos locais". Mas aí eu vejo gente usando um modelo com uns 20 bilhões de parâmetros que simplesmente faz tudo o que você manda, sem nenhum treinamento para ter defesas. Isso ainda é problemático. Se você executar esse programa e depois
+
+usar um navegador da web ou um e-mail, isso me preocuparia. É por isso que o OpenClow avisa se você usar um modelo pequeno. E eu sei que as pessoas distorcem tudo, dizendo que odiamos modelos. Eu adoro, adoro, adoro que apoiemos tudo, mas é preciso orientar um pouco o usuário comum para que seja mais difícil para ele se prejudicar . Sim , existem algumas ideias para a solução do problema. Está
+
+[bufa] um pouquinho ali. Eu não anunciei isso. Acho que Simon Willis tem trabalhado bastante nisso. Quer dizer, ele cunhou o termo "injeção imediata" e a abordagem de LLM duplo parece inteligente, né? E eu não sou inteligente o suficiente para descobrir todas as maneiras pelas quais isso pode ser atacado. Em
+
+algum momento, a confiança simplesmente tem que ser algo importante, certo? E eu descobri algo interessante conversando com o Vincent, que falará a seguir, que é que vocês tiveram que implementar o mesmo sistema de confiança que o Toby Luca teve que implementar, que é construir reputação ao longo do tempo e coisas com mais confiança recebem acesso mais privilegiado , certo? E acho que isso faz sentido. Isso faz parte da história. Sim . Sim. Sim. Ok, então, algumas
+
+perguntas mais gerais. Em que projetos interessantes você gostaria de trabalhar quando tiver mais tempo livre? Quer dizer, eu queria trabalhar em sonhos e saber como minha equipe de manutenção trabalhava em sonhos enquanto eu estava lá, assim como enquanto você estava sonhando. Então, mude isso, certo? Sim. O que é sonhar? É como
+
+uma forma de reconciliar memórias e criar uma espécie de registro de sonhos, como se fossem os registros das suas sessões . Descobrimos, através do vazamento do código-fonte do Enthropic, que eles também estão trabalhando no Dreaming, certo? Oh sim. Sim. Quer dizer, tenho quase certeza de que há mais empresas trabalhando nisso. Mas pense um
+
+pouco em como nós, seres humanos, aprendemos? Você vivencia muitas coisas durante o dia e depois dorme, e enquanto dorme, seu cérebro faz algo como uma coleta de lixo, convertendo algumas memórias locais em memória de longo prazo e descartando outras. Essas são ideias semelhantes que eu acho que também poderiam ser muito úteis para agentes. E então, o que nós publicamos sobre sonhos é como o primeiro pequeno passo nessa direção. Sim . Tem a ver com a wiki
+
+que o André estava falando, onde você meio que reúne tudo em uma wiki, que é mais uma forma de memorização, mas onde tudo acaba se misturando um pouco . A beleza do OpenClaw é que podemos simplesmente experimentar coisas novas, sabe? Tudo em que trabalhamos nos últimos meses era uma grande bagunça de código espaguete, e agora tudo é uma extensão, um plug-in. Então você pode substituir a memória, pode adicionar o wicki, pode adicionar sonhos, pode adicionar sei lá, qualquer ideia maluca que você tiver e simplesmente torná-la sua. Você não precisa enviar tudo por meio de um pull request, pois ainda estamos sobrecarregados com eles. Mas é mais parecido com o Linux,
+
+onde você pode instalar seus próprios componentes. Sim . Sim. E você está construindo o que muita gente considera o projeto de código aberto mais importante desde o Linux, e eu não sei como lidar com isso? Como você lida com a fama? Como é um dia na sua vida como
+
+o BDFL (Daniel Bad Forever - Melhor Jogador da Folha) ? Bem, ainda há muita programação pela frente. Aliás, entre as sessões, ele ficava programando [risos] por lá. Sim . Eles são tokenizados. Você precisa
+
+gostar de alguma coisa, tem que estar certo. Você tem que pressionar os agentes, certo? Sim . Bem, houve uma pequena mudança agora, é muito mais conversa e direcionamento das pessoas no caminho certo, porque há muitas coisas que já aprendemos no Open Claw. Então, parte da minha função na OpenI é ajudá-los a não cometer os mesmos erros novamente.
+
+E então, abrir a garra é como experimentar coisas novas que parecem interessantes, algumas podem funcionar e outras não. Permitir que as empresas criem suas próprias soluções sem precisar recorrer a soluções externas, tornando tudo mais personalizável. Sim, e às vezes eu durmo, às vezes você dorme. Ok, ótimo. Hum, acho que talvez esta seja a última boa pergunta final. Hum, em que habilidades
+
+você gostaria que os humanos, e os engenheiros em particular, se concentrassem em desenvolver na era da IA? O
+
+paladar foi um fator importante, mas eu já mencionei que o design do sistema ainda é fundamental. Sim, nós conversamos sobre isso em São Francisco. É, se você não pensar nisso, eventualmente vai acabar se encurralando, né? Ao definir os limites, o engraçado é que tudo está no mesmo nível, mas você ainda precisa fazer as perguntas certas, senão isso faz toda a diferença entre um código bom e um código realmente ruim. E é aí que todo o conhecimento que você tem sobre como construir software pode ser aplicado para direcionar o agente para algo que não seja uma bagunça. Sim
+
+. E então, acho que uma habilidade que está se tornando cada vez mais importante é saber dizer não. E isso é algo que eu também tive que aprender, porque até a ideia mais maluca está a apenas um estímulo de distância. E geralmente essa ideia isolada nunca é o problema, mas sim essa ideia, e essa ideia, e essa ideia, e essa ideia, e a forma como todas elas se encaixam. É aí que o problema surge.
+
+Sim. Então, acho que ainda estamos enfrentando gargalos na sincronização e na sincronização em geral, porque imagine o mundo a partir do seu dispositivo Clanker como se você estivesse sendo jogado em uma base de código. Você pode ter um arquivo agent.md desatualizado, mas basicamente você não sabe o que é DF e, tipo, você me diz, ei, adicione perfis de usuário e conecte isso às duas coisas que você vê, mas você não viu o sistema todo, certo? E é aí que entram muitas dessas soluções localizadas, onde, por exemplo, seu projeto tem o VS e é nosso trabalho ajudar o agente a fazer o seu melhor, fornecendo dicas. Ei, você quer
+
+considerar isso? Você quer dar uma olhada lá? Como isso interagiria com aquilo? E então, no final das contas, você obtém um sistema que é realmente sustentável. Sim . Bem, obrigado por manter
+
+um dos softwares mais importantes de todos os tempos e obrigado por dedicar seu tempo a nós. Obrigado por me receberem. [aplausos] Espero que vocês fiquem por aqui e respondam às perguntas. Obrigado. Tudo bem.
+
+[música]
+
+[música]

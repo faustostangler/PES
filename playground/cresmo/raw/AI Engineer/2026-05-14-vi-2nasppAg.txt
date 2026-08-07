@@ -1,0 +1,430 @@
+---
+video_title: "Make your own event-sourced agent harness using stream processors — Jonas Templestein, Iterate"
+video_id: vi-2nasppAg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vi-2nasppAg
+video_date: 2026-05-14T14:00:06+00:00
+video_description: |
+  The abstraction is three things: state, a synchronous reducer that derives state from events, and an after-append hook for side effects. The split matters: when your program restarts after 100 events, you want to catch up state without replaying LLM requests. Everything that happens (streaming chunks, tool calls, errors, circuit breaker triggers) is an event in the log.
+  
+  The interesting part is deployment. Jonas demos "dynamic worker configured," an event whose payload is a JavaScript string containing a processor. Append it to any stream and that stream becomes an AI agent without server or dependencies. The broader implication: processors from different authors on different servers can compose against the same stream, and a safety checker can inject context in a 200ms window before an LLM request without blocking the agent if it doesn't make it.
+  
+  Speaker info:
+  - https://x.com/jonas
+  - https://www.linkedin.com/in/jonashuckestein
+  - https://github.com/jonastemplestein
+  
+  
+  0:14 Introduction and workshop overview
+  1:33 Concept of event-sourced agent harnesses
+  2:24 Desired characteristics: Extensibility and composability
+  3:14 Agents on the edge and public routability
+  4:20 The distributed nature of agents and potential pitfalls
+  5:40 Introduction to the event stream architecture
+  8:38 Working with the API via curl
+  10:48 Handling events and error states
+  11:57 Circuit breakers and stream management
+  13:49 Scheduling tasks and event subscriptions
+  15:17 Q&A: Architectural philosophy
+  19:17 Demonstrating the SDK and TypeScript integration
+  30:06 Defining stream processors and reducers
+  47:34 How stream processors function in production
+  50:35 Dynamic workers and deploying via event payloads
+  58:45 Discussion on before-hooks versus eventual consistency
+  1:02:16 Future outlook and wrapping up
+---
+Bem-vindo(a) ao workshop. Eu sou Jonas e este é Misha. Nós dois trabalhamos na Itrate. Oi. E isso vai ser um caos. Acho que é puro caos. Em primeiro lugar,
+
+porque só decidimos fazer isso na última segunda-feira. E aí eu estava com um monte de coisas pessoais, o recesso escolar, as crianças estavam doentes e então, esta manhã, viemos para cá e eu pensei que isso ia ser tipo uma maratona de programação de uma hora e vinte minutos ou algo assim. E então chegamos aqui e nos disseram que vocês vão fazer isso sem público por causa de um problema com incêndio. E agora temos público novamente, o que é incrível. Então, vamos tentar fazer isso como uma espécie de hackathon improvisado, mas eu acabei de enviar o SDK, literalmente há 1 minuto, e o Misha vai tentar corrigir o problema ao vivo. Mas espero que
+
+ainda valha a pena o seu tempo, porque acho que há algumas ideias interessantes, ou melhor, gostaria de descobrir se isso é bobo ou legal. E você pode me ajudar com isso. Então, por favor, façam perguntas para esclarecer dúvidas, porque parte da razão pela qual dissemos na semana passada, "ok, vamos fazer este workshop", é porque essas são ideias que temos tido em mente ao longo do último ano, mas que ainda não tínhamos realmente colocado em prática . Não se trata necessariamente de um valor comercial, mas acho que é basicamente assim que eu gostaria de construir sistemas de agentes. Então, sabe, venho pensando nisso há um tempo e, obviamente, agora você tem o Claude e o Pie, mas antigamente não tinha, então você cria sua própria estrutura de programação e existem várias maneiras diferentes de fazer isso, e acho que a maneira que eu gostaria de fazer é usando apenas eventos como fonte.
+
+E eu digo aqui "depurável", porque tudo meio que evita ser baseado em eventos, como todas essas coisas, sem realmente ser baseado em eventos. Sempre há algo que tem um efeito colateral que você só percebe depois , e aí você só consegue ver isso nos registros do hotel ou algo assim, o que não faz muito sentido para mim, porque normalmente esses agentes, pelo jeito que trabalham, e veremos isso em um instante, eles já têm um registro de eventos, certo? Então, se você simplesmente disser que tudo o que possivelmente pode acontecer está lá, será muito fácil depurar. E como veremos, espero que seja um pouco estranho, mas potencialmente também muito fácil de expandir de outras maneiras. E a segunda coisa que eu quero é que isso seja extensível. E
+
+nós vimos isso, eu acho, com o Pi, que foi simplesmente incrível. É muito valioso tornar um agente extensível, não apenas por humanos, mas também extensível por si só. Hum, e uma coisa que eu quero em termos de extensibilidade é que ela seja composável. Tipo, acho que não vamos conseguir terminar em uma hora com todos vocês, mas talvez depois, se vocês disserem: "Nossa, isso é legal e não é bobagem", a gente continua trabalhando nisso, e vocês podem dizer: "Ah, eu fiz essa extensão. Você fez aquela extensão." E você pode
+
+combiná-los. E, hum, porque acho que ainda não sabemos qual é a melhor receita para agentes, basicamente, para o gerenciamento de agentes. E tem sido muito difícil experimentar, mesmo em Pi. Tipo, tudo tem que rodar em uma única thread, em um único processo aqui, neste computador específico, e assim por diante. Então, acho que talvez possamos fazer um pouco melhor do que isso. Bem,
+
+acho que deveria estar na borda, com roteamento público. Bem, do jeito que eu vejo, é basicamente uma entidade inteligente, tipo uma digital , que não é um robô, no futuro. É basicamente um programa de servidor conectado à internet, certo? Tipo, ele só usa HTTP. Portanto, de forma geral, os slides devem ser suficientes para quase tudo.
+
+E então eu simplesmente colocaria esses agentes na linha de frente, para que se comunicassem imediatamente com a internet . Hum, isso não é muito seguro. Aliás, nada do que fazemos hoje em dia é seguro. Não há autenticação, você vai ver. Todos vocês poderão ver as transmissões de eventos, os agentes e tudo mais uns dos outros. Você não deve colocar nenhum
+
+segredo nos payloads dos eventos, nem rotacioná-los posteriormente, certo? Então, nós podemos... sabe, essas coisas podem ser resolvidas.
+
+Mas, de modo geral, no momento em que um agente existe, ele deve ter um URL. Essa é apenas a minha opinião. Porque senão, você acaba criando todas essas coisas e depois se complica inventando um conceito de conector só para poder receber mensagens do Slack ou sabe-se lá o quê. E acho que isso deveria ser muito fácil. Hum.
+
+Ou talvez algo como um humano preencher um formulário online e o resultado ser inserido novamente para o agente, ou algo do tipo. É algo muito parecido com um webhook do Slack. E então deve ser distribuído. E isso pode ser uma faca de dois gumes, como veremos, não é? Mas por distribuído, quero dizer que você deve ser capaz de ter um agente rodando em um computador aqui, em um servidor, e meu plugin rodando aqui, e o seu plugin rodando ali, e o seu escrito em Rust e o meu em TypeScript, e nada disso realmente importa. Bem, e o motivo pelo qual isso
+
+é ruim é porque você eventualmente vai se deparar com condições de corrida e loops, certo? É como se fossem dois plugins trocando mensagens, criando um fluxo interminável de eventos no seu agente. Bem, por outro lado, esses problemas geralmente já existem na maioria das plataformas de agentes que eu já vi. Então, é muito bom se você se antecipar um pouco a isso. OK.
+
+Então, vamos, vamos falar sobre essa coisa que inventamos para, nossa! Hum, o que é isto? Isso não é o mesmo que no meu sistema de arquivos. Então, vou usar o que está no meu sistema de arquivos. Hum.
+
+Basicamente, criamos este serviço na semana passada, chamado events.iterate.com. Possui uma interface de usuário web. Hum.
+
+E nós podemos, você pode usar isso. Acho que você certamente vai usá-lo. Mas, por agora, vamos apenas brincar com isso usando a função curl, porque acho que isso torna o processo um pouco mais fácil de lidar. Bem, no aplicativo de agentes e eventos, temos esse conceito de caminhos de agentes. Assim como um "A" em um sistema de arquivos, cada agente tem um caminho, uma hierarquia, e você pode mostrar isso aqui.
+
+Você só tem os eventos brutos. Estes são os eventos brutos formatados em YAML em cada um desses caminhos. E, basicamente, esse é todo o princípio básico sobre o qual construiremos nosso agente. Então, podemos começar brincando com isso. Podemos dizer: "Ok, temos um prefixo de caminho." Se você copiar isso do
+
+repositório, o Misha vai colocar no arquivo leia-me daqui a pouco. Vou adicionar também o arquivo workshop.md. Sim, é , tudo bem. Ah, sim, talvez seja por isso .
+
+Eu adicionei o arquivo "Leia-me", mas não o workshop. Sim, então, basicamente, vamos definir um prefixo de caminho aqui. No meu caso, vai ser o Jonas Tempelstein ou algo assim. Aliás, eles começam com uma barra, o que pode ser um pouco estranho , mas o serviço é bem tolerante com a codificação de URL das barras ou qualquer outra coisa que você faça, mas eu queria uma boa economia de curl, e também queria que eles começassem com uma barra. Então, você tem uma raiz bem definida. Então, para a
+
+base aqui, ela já foi enviada para o repositório, mas você já compartilhou o repositório? Ah, sim, porque agora você pode fazer isso no seu computador. Hum, vamos fazer isso mesmo. Se você acessar github.com/iterate, encontrará um workshop para engenheiros de IA. Hum,
+
+e lá dentro, você deve conseguir. Se você clicar neste arquivo workshop.md, é isso que vamos analisar agora . Então, você deve conseguir copiar e colar os comandos curl de lá. E, novamente, não há autenticação, então você pode simplesmente fazer isso.
+
+E, na verdade, por que alguns de nós não implementamos eventos ao vivo? iterate.com. Tipo, isso é apenas uma espécie de prova de conceito de como eu acho que isso deveria funcionar. Bem, basicamente, o que vamos fazer é transformar esse fluxo de eventos simples em um agente completo sem precisar implantar nenhum software de servidor ou algo do tipo. Hum,
+
+talvez... é, eu deveria conseguir ver se alguém já conseguiu fazer isso. Vou esperar até que duas ou três pessoas consigam enrolar alguma coisa com sucesso, e então continuarei, porque acho que seria bom se você, se você, se você enrolasse...
+
+em si mesmo. Então, está aqui neste workshop para engenheiros de IA, workshop.md. Se duas pessoas têm o mesmo nome, isso vai causar problemas, então não importa. Hum, tudo bem.
+
+Ah, ok , pronto. Consegui algumas pessoas. Ok, então isso é muito bom. Aliás, você pode ver isso por aí. Existe também um projeto aqui chamado Project Slug. Se vocês
+
+começarem a se atrapalhar , basta digitar algo como "use um slug de projeto diferente" e pronto, é como se fosse um banco de dados completamente novo, um novo espaço de nomes. Você pode passar isso como um cabeçalho HTTP se alguém precisar disso mais tarde. Você pode me perguntar. Ah, ok, então agora temos algumas pessoas fazendo curling. Também vou começar a fazer cachos . Então, agora eu só
+
+vou dizer olá mundo, bem-vindos à minha transmissão. E isso vai voltar e, e, imediatamente, vamos notar algumas coisas. Existe um formato básico de envelope para eventos . Temos um tipo que acabei de inventar aqui. Os eventos não precisam ter nada além de um tipo, mas a maioria deles também possui uma carga útil.
+
+Bem, então, hum, aí está o caminho do fluxo que veio da URL para a qual publicamos isso e há um deslocamento. Trata-se simplesmente de um número inteiro de incremento automático que começa em um. Então, basicamente, existe um ponto de serialização no servidor que simplesmente os incrementa e você obtém um criado em. E aqui, o que podemos fazer com curl, que é muito bom, é o seguinte: se você fizer {dash} n, você pode fazer streaming streaming SSE. Portanto, isto aqui não tem absolutamente nada de mágico. Isso
+
+é literalmente só você sabe, {slash} Jonas Tempelstein uh {slash} olá mundo. É exatamente esse o movimento que estamos fazendo aqui. Hum, e hum, boop. Ali consigo ver as mensagens chegando . Muito legal.
+
+E eu posso, hum, posso adicionar outra mensagem e agora, basicamente, todas as mensagens aparecerão lá e também há um, opa , se você fizer {ponto de interrogação} ao vivo igual a verdadeiro, isso é inspirado no padrão de fluxo durável, mas um pouco diferente. Mas se você definir ` live` como verdadeiro, a conexão permanecerá aberta e continuará enviando mais eventos à medida que você os processar. Então, isso já é meio que...
+
+você poderia dizer que é um agente de IA se Misha estivesse respondendo simultaneamente ao meu "olá, mundo". Isso já seria um agente. E então, meus olhos me disseram que você pode, hum, se você for fazer isso com frequência, uh, você pode passar isso por, digamos, obter apenas os elementos de dados e, em seguida, passá-los por jq.dot e, assim, obter uma formatação um pouco melhor. Então, isso é tão trivial que eu realmente passo muito tempo no curl apenas executando-o.
+
+Então, o que você pode fazer? O sistema é bastante tolerante em geral com relação ao conteúdo que você publica, e isso será relevante caso você queira, por exemplo, enviar webhooks de terceiros aleatórios para lá. Minha teoria sempre foi que, se os LLMs forem bons o suficiente, eles basicamente conseguem consumir webhooks brutos de qualquer lugar e, em geral, fazem a coisa certa. Então, o que o servidor fará especificamente é o seguinte: se você enviar algo que não seja válido, como "besteira" aqui, ele dirá que não há propriedade de tipo, portanto, não há um evento válido. Então você pode ver aqui que o que foi acrescentado é basicamente um erro.
+
+Mas como estamos usando o Event Sourcing, o erro também é apenas um evento e simplesmente diz aqui: "Ok, você tem um evento inválido anexado." Ah, outra coisa que vamos notar é que o tipo que o nosso servidor criou começa com https events.iterate.com. Você não precisa fazer isso, mas é algo que gostamos de fazer porque leva diretamente à documentação daquele tipo de evento. E
+
+se for para ser uma string opaca, por que não fazer algo parecido com isso? Mas, obviamente, você pode usar apenas uma palavra, duas palavras ou o que for. Mas você verá esses URLs e eles são apenas tipos. Então, o que mais de interessante podemos fazer? Quer dizer, isso é meio chato, mas, sabe , se você for usar webhooks, precisa inserir uma chave de potência do item , o que significa que se você tiver a mesma chave de potência duas vezes, o evento não será anexado duas vezes. Você pode pausar uma transmissão. Acho que, para não
+
+perdermos tempo, podemos pular essa parte . Você pode retomar a transmissão. O motivo pelo qual a pausa é importante, e por que a incluímos mesmo tendo criado isso há apenas alguns dias, é devido aos loops infinitos. É muito, muito fácil, acidentalmente, colocar milhares e milhares de eventos em um loop infinito . Portanto, se você inserir mais de 100 eventos por segundo, por exemplo, o sistema simplesmente interromperá o circuito e a transmissão será pausada até que alguém a retome. Então, basicamente, se você tentar, hum,
+
+sabe, vamos fazer isso. Porque, mais uma vez, para aqueles que nunca viram event sourcing, isso pode parecer um pouco estranho. Como é que se pausa uma transmissão? Bem, você pausa uma transmissão... opa
+
+, esta é a errada. Você pausa um fluxo adicionando um evento que indica que ele está pausado. A única interface externa com o agente é...
+
+ah, agora ele está reclamando. Por que está reclamando? Ah, porque acho que precisa haver um motivo ou algo assim, talvez. Ah, sim .
+
+Demonstração do Reason. Sim, aí está. Então agora isso está pausado. Então agora, se eu, sabe, tentar enviar o evento "Olá, mundo!" de antes, ele simplesmente vai dar erro e dizer: "Não, nenhum outro evento é permitido." E isso é
+
+algo que não aparece como um erro no fluxo, porque senão você ainda teria um número infinito de eventos de erro. Hum, então, quero dizer, existem outras coisas estranhas e maravilhosas que você pode fazer. Eu nem sei se realmente precisamos fazer isso, mas, tipo, eu já fiz um plugin para isso, que faz com que, se eu colocar esse transformador de objeto JSON configurado para eventos , ele simplesmente observe certos eventos, os reescreva um pouco e crie um novo evento a partir deles. Mas acho que isso é um pouco avançado, então faremos isso mais tarde. Hum, hum, também pode fazer coisas estranhas, tipo, você pode agendar coisas. Assim como alguns SDKs de agentes que
+
+você conhece podem fazer isso, mas, aqui, sabe, se você quiser um evento de pulsação a cada 5 segundos, uh, oh, meu Deus. Agora preciso retomar a transmissão, pois ela está pausada. Hum, vejamos. Transmissão retomada.
+
+OK. Então, agora estou criando um evento de batimento cardíaco a cada 5 segundos, o que pode ser bastante útil, ou você pode agendar algo para daqui a 10 minutos ou em um horário específico. E, mais uma vez, é apenas um evento que diz: "Faça isso no futuro". Hum, mm mm mm. Hum, acho que vou pular essas, mas, hum, você pode cancelar o agendamento. Você pode
+
+controlar o fluxo adicionando um evento para enviar ao seu servidor, a um servidor de terceiros ou, você sabe, ao seu endpoint da API do Slack, ou qualquer outra coisa, um evento sempre que um evento for adicionado. Então, basicamente, você pode se inscrever na transmissão. Bem , aqui estamos nos inscrevendo em nosso terminal. Estamos fazendo uma assinatura pull, certo? Estamos nos conectando a um servidor HTTP e recebendo dados do cliente HTTP, que por sua vez está recebendo um fluxo de resposta SSE de eventos de streaming. No entanto, também é possível fazer
+
+o contrário, enviando os dados adicionados posteriormente ou um fluxo filtrado. Hum, é , o que pode ser bastante útil. OK. Então, hum, talvez seja melhor parar por aqui, porque eu sei também que, hum, não ficou muito claro pela descrição da sessão o quão tecnicamente complexa ela era. Então, vamos responder a quaisquer perguntas sobre o que é isso que vamos usar nos próximos 45 minutos.
+
+Mas as perguntas precisam ser enviadas como um evento no fluxo de perguntas. Sim, exatamente. Se você tiver alguma dificuldade em usar a pergunta " Um Does I assume many things don't make sense?" (Suponho que muitas coisas não façam sentido), por favor, pergunte, pois acho que isso será extremamente aleatório e estranho até agora.
+
+O que a Iterate faz na sua empresa? Ah, para ser sincero, a essa altura éramos como um clube de hackers amadores . Como nós, nós, nós ainda não lançamos nenhum produto. Mas se fizéssemos isso, acho que seria baseado nessa arquitetura. De qualquer forma, eu conto, posso falar sobre isso depois.
+
+Ok, ok, ok. Mas, sim. No momento, é mais um clube de hackers amador do que uma empresa comercial. Mas vai chegar lá. Sim .
+
+Tenho uma pergunta. Então, eu sei que vamos construir agentes baseados em eventos. Sim . E você talvez pense que essa é uma pergunta básica, mas os agentes imobiliários que estão disponíveis no mercado agora não são contratados por evento? Como é? É
+
+só... eu acho que é a API. Tipo, se você já tentou criar uma extensão de código aberto, um plugin, uma extensão do Pie ou uma extensão do Cloud Cloud, todas elas têm uma superfície de API um pouco maior do que a que você teria ou do que teremos daqui a pouco. Não é
+
+muita diferença, né? Mas, tipo, ok, talvez os fragmentos de streaming para conclusões parciais sejam algo diferente por algum motivo, em vez de apenas um evento do tipo que eu recebi, sabe, tipo cinco letras de uma resposta em streaming. Para mim, esse é um evento perfeitamente válido e a vantagem é que você pode...
+
+Eu sou meio que um cara que gosta de uma única abstração , sabe? Assim, isto deveria ser baseado em padrões da web, deveria haver apenas uma coisa, que é um evento, e então, como você verá, é como a coisa que estava no topo deste arquivo. Acredito que seja possível construir um agente de codificação de última geração e extremamente expressivo simplesmente implementando um processador de fluxo que reduza o fluxo de eventos e, ocasionalmente, execute efeitos colaterais. É só isso que faz, certo? É como se simplesmente ficasse ali parado, dizendo: "Ok". Vou te
+
+mostrar isso em um segundo. É um jeito um pouco estranho, eu diria, uma forma peculiar de programar. Então, se entendi corretamente, você está dizendo que pega eventos gerados por um modelo de IA e os aplica por meio desse processador de fluxo. É essa a ideia? O processador de fluxo é semelhante aos eventos que iteram. O aplicativo é o armazenamento. É
+
+quase como se fosse um banco de dados. Tipo, sabe? Você sabe que o Convex é uma espécie de... sabe,
+
+eles meio que te dão a ilusão de que estão executando TypeScript no banco de dados. Quase dá para pensar nisso como um fluxo programável ou algo do tipo, certo? Porque, na verdade, uma coisa que você também pode fazer, como veremos mais tarde, depois de modificar seus processadores de fluxo, é criar um evento que contenha o código-fonte do seu processador de fluxo. E então ele será executado em todos os eventos. Então, basicamente, acho que você pode experimentar uma enorme variedade de implementações de agentes que podem responder a eventos reais na internet e fazer solicitações de API reais sem precisar implantar seu serviço ou algo do tipo. Tudo o que você precisa é de um
+
+serviço de streaming que tenha algumas dessas funcionalidades específicas, como, por exemplo , a capacidade de ativar outras APIs, programas e assim por diante. Não sei disso. Sim. Hum, isso responde à sua pergunta? Ou sim, acho que sim.
+
+OK. Então, nós tentamos fazer agora uma versão um pouco mais séria desses cachos. Então, alguém aqui não conhece TypeScript? Então, acho que um dos argumentos a favor dessa arquitetura, que eu também coloquei naquele texto de apresentação, é que ela é, em princípio, poliglota, certo? E existe um, tipo, em qualquer linguagem, em events.iterate.com/api/docs
+
+você tem, quer dizer, esta é uma API extremamente simples, certo? Hum, você pode... você mesmo pode criar um. Existe uma
+
+especificação de API aberta. Você pode se tornar um cliente e assim por diante. Mas para o propósito deste workshop, vamos usar apenas a versão em TypeScript, e já disponibilizamos um cliente em um pacote NPM. Mas eu só queria salientar que, embora estejamos fazendo tudo em TypeScript, a questão é que não precisaríamos fazer isso, certo? Mas nós só precisamos fazer uma coisa para este workshop. Ok
+
+. Então, vamos fazer algo bem simples. Hum, o pacote do workshop de engenharia de IA já está atualizado e funcionando? Acho que sim, né? Então, sim. Talvez você precise baixar o
+
+repositório, pois ocorreu um erro de digitação no lado do cliente . No repositório de iteração? Não, no workshop de engenharia de IA. Certo, tudo bem. Acho que o exemplo é TS.
+
+Sim, mas... talvez eu realmente use isso. Então, poderei experimentar os mesmos bugs, caso existam . Sim, provavelmente é melhor assim. OK. Ok
+
+. Então, acho que se você quiser começar rapidamente, pode simplesmente clonar o repositório do AI Engineer Workshop. Hum, já existe um arquivo de exemplo bem pequeno lá dentro . E depois vamos adicionando mais alguns conforme formos avançando. E o arquivo workshop.md também possui um comando curl executável
+
+. Legal, sim. Isso funciona bem. Se você quiser, pode adicionar alguns exemplos, como os que estão no repositório iterate e que possuem processadores reais. Sim .
+
+Posso dar uma olhada.
+
+Não sei o que está acontecendo aqui. Ah. Pronto.
+
+Hum. Meu computador parece ter ficado extremamente lento ao tentar abrir uma janela com o cursor. Infelizmente, isso tem acontecido com certa frequência ultimamente. Ah, ok
+
+.
+
+OK. Oh, oh não. Acho que isso pode ser o que você mencionou sobre a internet. Acho que está com dificuldades porque não consegue abrir um terminal, já que o meu terminal está tentando se conectar à internet. Hum.
+
+Ah bem. Então vamos fazer isso.
+
+Não, não é a internet. Ou será que não? Pronto. OK.
+
+OK. Então, nós temos aqui um SDK empacotado para este workshop de engenharia de IA, um pacote que você pode simplesmente instalar via PM ou usar este exemplo aqui. E então, basicamente, o que... o que precisávamos
+
+no nosso cacho, certo? Por exemplo, precisávamos de uma URL base que fosse simplesmente events.iterate.com. É aí que está localizado o nosso servidor. Bem, podemos usar um prefixo de caminho
+
+e, em seguida, podemos executar esta função aqui chamada `create events client`, que faz parte do nosso SDK. E isso é o que está acontecendo nos bastidores...
+
+Eu realmente não sei o que está acontecendo com este terminal. É muito estranho.
+
+Hum. Hum. Ok, talvez tudo esteja incrivelmente lento.
+
+Você quer experimentar o meu nisso? Ok . Talvez, mas não há nada que esteja realmente consumindo todo o processamento da CPU. É que eu acho que realmente pode ser a rede, mas veremos. Então, aqui está.
+
+Então, aqui está... Bem, acho que isso não foi captado . Enfim. Certo, então basicamente era isso que
+
+estávamos fazendo agora, não é? Como dizemos, "Ok, estamos criando um cliente e aqui há uma função chamada stream. Isso é basicamente o lado direito do terminal que tínhamos antes, e então você digita live true e fornece o caminho do fluxo. E podemos dizer: "Ok, se o evento não for do tipo ping, não faremos nada, mas se o evento for do tipo ping, então faremos...". Quer dizer, essa
+
+função auxiliar ali embaixo é completamente desnecessária. Então podemos simplesmente usar client.append. Não entendo por que o servidor de linguagem TypeScript não está reconhecendo nenhum dos tipos para mim, mas não sei se é apenas um problema normal ou se está apresentando alguma anomalia novamente. Você é um exemplo, deixe-me ver. De
+
+qualquer forma. Hum. Era possível trocar de ID rapidamente. Não, está tudo bem. Está funcionando para mim.
+
+Ok, sim. Acho que isso infelizmente funciona como uma espécie de cursor. Certo, e então você deveria conseguir, se tiver uma versão moderna do Node, você deveria conseguir executar...
+
+ou talvez não. Será que eu consegui?
+
+Aparece uma mensagem de sintaxe de script inválida. Sabe de uma coisa? Vou simplesmente reiniciar o cursor. Acho que vale a pena . Alguém consegue executar este exemplo de TS em seu computador? Pronto.
+
+Eu sou. Hum. OK. Hum, e você consegue enviar um ping para ele e receber um pong como resposta? Ok, muito legal.
+
+OK.
+
+Hum.
+
+Hum. Sim
+
+. Não. Sim.
+
+Gostaria de saber se estamos usando... Não sei se você consegue ver, mas basicamente todos os meus comandos têm um atraso de vários segundos . Sim, pelo que entendi, se você quiser apenas trocar de laptop.
+
+Talvez.
+
+Sim, eu sei, eu sei, mas é só isso . É que meu editor não está funcionando. E eu também tenho vários cursores que não respondem . Sinto que, infelizmente, isso tem se tornado um padrão com o cursor ultimamente. Hum.
+
+Se você quiser trocar de laptop, parece estar funcionando bem no meu. Eu daria a todos mais 60 segundos para fazer a demonstração básica funcionar e depois me avisariam. Sim, porque acho que usar alguns...
+
+Sim, ainda falta quase uma hora . Não é bom usar o computador de outra pessoa.
+
+Talvez eu continue usando o seu e reinicie o computador. Acho que é uma boa ideia porque podemos, sim. Dum dum dum. Eu também tenho os exemplos 01 e 02. Ah, é mesmo?
+
+Brilhante. Acho que estou trabalhando com alguma coisa. Qual é o layout do seu teclado? Provavelmente igual ao seu. Pode-se ter esperança. Ah, ok.
+
+Tela inteira. o mesmo. Uh Uh, até agora está muito bom. Hum,
+
+você tem um terminal? Então,
+
+exemplos de nós: 01 Olá, mundo! Ok, perfeito. Sim. Bom, é isso que funciona perfeitamente. Então, hum...
+
+Todo mundo já conseguiu fazer isso funcionar mais ou menos? Porque aí a gente pode criar um agente de programação de IA de código aberto agora. Hum, acho que é tudo o que precisamos. Vamos lá, talvez eu pergunte...
+
+Vocês têm algum controle de voz aqui? Ah, sim, é controle e opção. É para crianças. Sim . E então? É
+
+isso. Está gravando. Olá. Oh. Legal.
+
+Veja, aquela barra vermelha é... Ei, eu gostaria de fazer um terceiro exemplo, chamado processador de agentes, e para isso precisamos instalar o SDK OpenAI normal. Por favor, faça isso e crie um novo arquivo que se pareça com o processador "Olá, mundo!".
+
+OK. Ok, então... preciso
+
+reunir todo mundo de novo depois de ter deixado vocês por uns 10 minutos. Sim . Aqui está, um programa TypeScript com código espaguete bem normal, certo? Basicamente, o que fizemos aqui foi realizar um trabalho mais básico. Bem, se quisermos nos inscrever, precisamos fazer uma assinatura. Nossa!
+
+Este exemplo que você colocou aí tem um sinal de aborto e lida com todo tipo de coisa e, bem, eu acho que, a maneira como eu penso sobre o que estamos realmente fazendo é que estamos escrevendo um processador de fluxo. E se você nunca trabalhou com processamento de fluxos de dados, isso pode parecer um pouco estranho, e as pessoas usam nomes ligeiramente diferentes para essas coisas, mas na verdade o que estamos dizendo é que existe algum tipo de estado do mundo que nos interessa e que pode ser derivado dos eventos. Neste exemplo que Misha criou, estamos tentando contar quantas vezes um evento "hello world" foi encontrado no fluxo. E então você pode escrever toda a lógica do seu programa como, efetivamente, uma função de redução. Este processo é síncrono e simplesmente analisa todos os novos eventos à medida que chegam e, em seguida, atualiza o estado. É só isso que faz
+
+. Então, ele recebe o estado e o evento e retorna o novo estado. Ou você pode simplesmente não devolver nada, não terá problema nenhum . Simplesmente ignorará. E então você pode, você não deve, causar efeitos colaterais com essa função reduzida. E a
+
+razão pela qual separei a função `reduce` de depois do `append`, onde você deve fazer seus efeitos colaterais, é porque, se você pensar bem, o que acontece se o seu programa entrar em estado de espera (sleep), certo? Como quando você fecha o laptop. No momento, tudo está rodando em nossos laptops, sabe, 100 novos eventos entram no fluxo. Alguns desses eventos podem, no futuro, precisar acionar solicitações LLM ou algo semelhante. E então você abre o computador novamente, inicia o programa de novo e não quer que ele faça um monte de solicitações LLM para todos aqueles 100 eventos do passado, necessariamente. Em vez disso, você quer que ele, de certa forma,
+
+alcance o estado atual e só então decida o que fazer com ele no final. Então, criamos aqui uma abstração superleve de um processador que basicamente se conecta a um ambiente de execução do processador e, em seguida, divide seu trabalho em reduzir eventos a estados e, se você quiser fazer alguns efeitos colaterais, como, por exemplo, adicionar, adicionar, você sabe, ao mesmo fluxo novamente, você pode fazer isso. Aliás, acho que você também pode fazer isso, o que é potencialmente...
+
+é bem interessante. Tipo, sabe, você pode simplesmente adicionar a um caminho filho, ou a um caminho pai, ou qualquer outra coisa que você quiser. É basicamente como um sistema de arquivos. Então, se você quisesse criar subagentes nisso , tudo o que você provavelmente faria seria adicionar `.{barra}`, sabe, Boris, e fingir que Boris é um subagente. E então você simplesmente se
+
+inscreveria em alguns eventos especiais que o Boris pudesse divulgar, como eu tenho o resultado. E então você seria automaticamente acordado novamente no monitor dos pais quando Boris tivesse o resultado. Misha, isso está confirmado ? Tipo, como é que se faz isso? Isso apenas exporta o ... tipo, você precisa do ambiente de execução,
+
+certo? Sim, existe um comando da CLI que agora não me lembro porque meu agente está executando-o. Bem, onde você pode...
+
+Você deve conseguir fazer PNP e W fora do arquivo, eu acho. Você fez tudo isso agora mesmo? Fiz isso há cerca de uma semana, mas você pode ter alterado. Não, sim, tudo bem. Então, tudo bem. OK.
+
+Vamos acessar nosso repositório. Como prometido, isto é um pouco... Estes são os... Então, você
+
+também pode fazer isso. Se você for iterar {slash} iterar workshop de engenheiro de IA, há vários exemplos de arquivos que são do workshop dois. Eu ia participar do segundo workshop. Sim, eu também acho que é uma versão desatualizada. era para ser, hum, era para ser renomeado. Hum
+
+, aqui está. Este é basicamente o trecho que queremos. OK. Tem essa coisa, hum, tem esse negócio que você pode ter...
+
+Então, aqui, acabamos de criar um processador, certo? Tipo, isso é como uma coisa inerte. E então, existe uma coisa chamada " runtime do processador de assinaturas pull". Bem, tudo o que isso faz é pegar o seu processador que você acabou de criar e executá-lo.
+
+Acho que você provavelmente precisa atribuir isso a uma variável, porque você está apenas usando `export default` acima. Sim, é isso mesmo.
+
+do do do do hm hm hm Ok. Hum,
+
+e aqui, vamos apenas ver se conseguimos executar isso. Então
+
+, uma pergunta. Deveríamos gostar disso? Uh sim, mas infelizmente eles precisam ser modificados, uh hum, para que uh hum, façam algo interessante. Porque não os encontro no GitHub. Sim, esses foram adicionados nos últimos minutos, mas... você...
+
+Sim. Eu dou instruções de cópia um pouco ruins. Hum, mas acho que... Acho que ainda
+
+não está definido. Sim . Hum, acho que vamos ter que ir construindo isso aos poucos neste repositório e depois enviar para o repositório quando estiver funcionando, infelizmente. Então, basicamente, o que eu fiz foi pegar esse processador e conectá-lo a esse ambiente de execução. O ambiente de execução serve apenas como um código padrão para consumir o fluxo, executar o redutor e o gancho afterappend. O que
+
+devemos ver é que, ao enviar "hello world" para esse caminho aqui, que é apenas o exemplo de Jonas {slash}. Hum, você deve receber uma resposta lá. Então, se eu for aqui na interface do usuário e for para Jonas {slash} exemplo e eu acho que eu disse que isso deveria ser evento de tempo olá mundo. Hum, ah não, isto está aqui em cima.
+
+Se tudo funcionar, isso seria uma espécie de prova que nos permitiria afirmar que não funciona. Cena "Olá, mundo!". Hum, não me lembro se este exemplo depende do nome de usuário da máquina, mas se depender, seria mm cal e não Jonas. Hum, talvez. Vamos
+
+fazer isso.
+
+Desculpe, este é o pior workshop de todos e eu também estou no computador errado.
+
+Sim, acontece depois de anexar. Hum, hm. OK. Meu computador voltou a funcionar? Sim, mas eu não sei sua senha.
+
+Ok, sim. Farei isso em um segundo. Ok, então este exemplo aqui não está bom, então acho que temos que partir para o plano B, mas talvez não consigamos executá- lo. Você está entendendo? Vou apenas explicar o código como se o tivéssemos escrito do zero.
+
+Desculpe por isso. Bem, porque acho que isso meio que ilustra a progressão das coisas e talvez se você pensar que estou instalando dependências, o que é um processo lento. Então vai acontecer, mas é exatamente isso. Eventualmente, isso estará executável até o final do tutorial. Então, nesse paradigma, conforme temos usado em nosso agente, quando você quer implementar algum tipo de recurso, o que você faz é perguntar: "Ok, qual é o estado que eu realmente preciso para fazer o que eu preciso?" Neste
+
+caso, queremos fazer uma solicitação LLM sempre que alguém enviar uma mensagem dizendo "Olá". Então, nós temos aqui na nossa interface de usuário, e você também pode acessar isso , basicamente um código de atalho que facilita um pouco a criação de novos eventos de um tipo chamado " entrada do agente adicionada". E isto é, deliberadamente, a coisa mais simples que você pode imaginar. Isso é basicamente apenas uma sequência de caracteres. Então, o que estamos tentando alcançar é que, sempre que alguém inserir um evento de entrada de agente em um fluxo de eventos, queremos reagir a isso fazendo uma solicitação LLM. E, para simplificar, vamos
+
+usar o SDK da OpenAI. Então, o SDK da OpenAI, bem, funciona da seguinte forma: em algum momento, antes de usá-lo, você precisa criar uma nova conta de cliente OpenAI. E então você pode usar a API de respostas deles . Então, você tem o OpenAI.responses.
+
+Respostas.criar. E então, para criá-lo, você precisa de algumas informações. Especificamente, você precisa de uma string de estado do modelo . Então, imediatamente, estamos dizendo: "Ok, então vamos supor que nosso estado para o nosso agente LLM tenha uma string de modelo."
+
+Porque essa é uma das coisas que precisaremos quando formos fazer uma solicitação de LLM, e não há nada além de event sourcing. Então, digamos apenas: "Ok, nós temos uma string de modelo e que ela vem do nosso estado." E então, sabe, você poderia facilmente imaginar no futuro, e isso era uma das coisas que você poderia ter feito como exercício no hackathon, que seria adicionar um evento do tipo "LLM alterado, modelo LLM alterado", e você teria um pequeno reducer de uma linha só, que simplesmente definiria o modelo para ser um modelo diferente, e então, pronto, você faria a próxima requisição LLM com um modelo diferente. E a outra coisa de que precisamos são instruções. Hum, acho que esse nome é um pouco inadequado, então eu o chamaria de prompt do sistema em nosso estado. E nós dizemos, ok,
+
+como o sistema sugere para o nosso LLM, o que ele deve fazer, vamos aceitar isso no nosso estado, e então você precisa de um histórico. Um histórico do estado, e então definimos isso e normalmente o que você fará é colocar isso em um pequeno tipo TypeScript, se você estiver usando TypeScript. Então, aqui estamos dizendo: este é o estado do nosso agente. Certo? E no começo é bem simples, mas no futuro você pode facilmente imaginar como adicionar coisas rapidamente, como, por exemplo, se estou compactando no momento, se uma chamada de ferramenta está em andamento ou qualquer outra coisa que você possa ter. Bem, a
+
+ideia é criar um sistema no qual seja trivialmente fácil, com três ou quatro linhas de código, adicionar uma dessas funcionalidades . E então você pergunta: "Ok, qual é o meu estado inicial?" Como estamos processando o fluxo, inicialmente não há eventos, então precisamos saber com o que estamos começando. Então, estamos apenas dizendo, uh, estamos começando com um histórico vazio e este prompt do sistema e GPT-5.4.
+
+E então, depois de fazer isso, você precisa decidir: quais eventos eu preciso para chegar a esse estado? E neste caso, vamos simplesmente criar um novo evento aqui. Hum, estamos usando o Zod aqui para esquemas, estamos dizendo que é um evento de entrada de agente adicionado, e ele contém apenas uma string. E então, sempre que recebemos alguma resposta da OpenAI, porque isso é como um fato que ocorreu, mesmo que seja apenas um minúsculo fragmento de uma string ou algo do tipo, nós armazenamos isso em um evento. E é isso. Esses são
+
+os dois principais tipos de eventos. Hum, acho que não precisamos de nada disso aqui, na verdade. Basicamente, o que aconteceu, como costuma acontecer, foi que eu tentei instruir um agente a reescrever todos esses exemplos para que fossem mais fáceis de executar, e ele simplesmente os reescreveu de forma bastante significativa. Mas isso é tudo o que você realmente precisa. Então, você precisa escrever seu reducer primeiro, e o reducer é basicamente onde você diz: "Ok, quando um evento é encontrado, como eu atualizo meu estado?" Você diz:
+
+"Ok, quando um evento de entrada de agente adicionado é encontrado, isso aqui está usando uma biblioteca auxiliar parecida com a do Zod, na verdade uma que o Misha fez chamada Schematch. Ela basicamente fornece segurança para essa carga útil aqui. Ela diz: 'Quando eu tiver um evento de entrada de agente adicionado, quero que meu estado seja atualizado como o estado atual mais o histórico, exceto que o histórico também recebe este pequeno detalhe aqui.'" Então, nós estamos... e...
+
+o motivo de estarmos fazendo isso é porque a API de respostas da OpenAI... já que estamos criando um processador da OpenAI, basicamente estamos traduzindo entre nossa visão de mundo, temos apenas essa entrada do agente, que é apenas uma string, mas a OpenAI quer que você coloque a função do usuário e, em seguida, coloque a string em um campo de conteúdo, então estamos colocando isso lá. Hum, e então, a outra coisa que precisamos fazer...
+
+quando você usa a API de streaming da OpenAI, ela basicamente vai gerar toneladas e toneladas desses eventos de resposta de saída, e um deles, finalmente, no final, será do tipo... bop bop bop bop bop... É
+
+, eu acho que isso é um pouco bobagem. Um evento de entidade no final das contas, hein? Sim, sim, exatamente. Basicamente, o que realmente queremos aqui é... hum... hum...
+
+Sim. Ah, obrigada. Hum, isso está mesmo certo? Não. Bem,
+
+suponho que você não tenha conseguido... Eu enviei o workshop dois para o...
+
+Sim, mas é o repositório de demonstração, mas está mais ou menos como está.
+
+Sim. Sim, vamos lá. Ok, então vamos meio que admitir a derrota na coisa que eu ia fazer e tentar mostrar como seria, porque podemos fazer algo muito simples funcionar, certo? Porque temos um processador de pingue-pongue extremamente simples que funciona. E então aqui nós podemos, nós podemos até, hum, apenas...
+
+Hum, talvez devêssemos começar por aqui.
+
+E então eu me deparei com uma citação insuficiente, executando meu...
+
+Hm. Jub jub jub. Sim, agora temos os mesmos exemplos no outro repositório, mas vai funcionar. Sim . Sinceramente, acho que talvez tenhamos que admitir a derrota e podemos falar sobre outra coisa ou te devolver o tempo.
+
+O problema é que, na verdade, não conseguimos executar essas coisas. E acho que vou precisar de uns 10 minutos de concentração para deixá-los executáveis. Então talvez devêssemos admitir a derrota nessa questão . Hum, eu me pergunto se...
+
+sim, faz algum sentido qual é a ideia, especialmente considerando a distribuição? Então, você tem o direito de dizer: "Ok, eu tenho meu processador aqui e seu agente pode usá-lo. E ele pode estar em um servidor diferente ou pode estar em um worker dinâmico." Hum, e hum, sim . Acho que sem mostrar, não faz muito sentido.
+
+Então, a ideia é usar o processamento de fluxo, pegando esse fluxo de eventos. Sim. Da OpenAI. Hum. e contém eventos como item de saída adicionado. Eu conheço o modelo de saída
+
+melhor do que conheço o de entrada. É muito semelhante. Então você tem uma série de variações de texto, por exemplo. Sim . Então, o redutor aqui está meio que comprimindo todos esses eventos.
+
+Sim. E então materializando esse tipo de resposta parcial. Sim. transformar isso em um evento, certo? Então, a parte que eu estava tentando entender era sobre esse processador de fluxo, né? O
+
+tipo de estrutura que você construiu é como se esses eventos materializados fossem persistidos como novas mensagens no fluxo? Os clientes consomem os eventos brutos e você realiza a materialização no lado do cliente, ou isso faz parte de um processo que ocorre no sistema? Sim, tudo o que acontece no sistema, cada fragmento transmitido, tudo se torna um evento no fluxo. E então você tem redutores rodando em vários lugares diferentes. Por exemplo, sabe, até mesmo essa coisa de saber se a transmissão está pausada ou não? A
+
+implementação real disso é... talvez isso seja realmente útil, porque já está em produção . Ah, tipo, existe um processador com disjuntor. E é assim que
+
+tudo funciona, inclusive dentro dos servidores de eventos. E o processador do disjuntor tem um estado inicial de pausado falso, e o motivo da pausa é nulo. Basicamente, ele tem um redutor muito simples que apenas verifica quais são os últimos 100 registros de data e hora dos eventos que eu vi. Se os últimos 100 registros de data e hora que vi não retrocederem mais de um segundo , então eu simplesmente adicionarei um evento. Então, basicamente, o redutor apenas acumula esses registros de data e hora e, em seguida, a função after append diz: "Ok, se eu tiver visto muitos registros de data e hora no último segundo, vou acionar o disjuntor." Então, isso é como um
+
+processador real que roda dentro do meu... do meu serviço. Mas deixe-me mostrar-lhe outro .
+
+Este aqui, esta interface de usuário, também é um processador de fluxo. O que essa interface de usuário faz? A interface do usuário recebe todos esses eventos e, para alguns dos eventos que considera interessantes, basicamente os projeta no que chamamos de itens do feed. Então, esses itens aqui que têm uma renderização um pouco melhor são itens de feed e não são a mesma coisa que eventos, mas são derivados de eventos. Então, ao criar a interface do usuário para isso, você também está simplificando.
+
+E porque o redutor é apenas uma função síncrona, certo? Se você soubesse, por exemplo, que eu tenho este processador tipo Pi Agent Harness, que vem com vários tipos de eventos e um redutor, você poderia simplesmente usar o redutor dele no seu processador . É praticamente de graça, né? É como se você pudesse simplesmente importar e executar. E então você pode simplesmente começar a construir abstrações que dependem de seus tipos de evento. Então,
+
+acho que o que eu vou fazer, o que eu vou fazer, o que eu vou fazer, já que essa foi uma experiência tão ruim, é simplesmente fazer um relato completo em vídeo na internet. E essa era uma das coisas que eu ia mostrar. Você pode simplesmente conectar o Raspberry Pi, o Clawed ou o Open Code também. E digamos que eles vêm com uma série de eventos e você pode armazená-los nesse fluxo de eventos e reagir a eles ou construir em cima deles. Isso responde à pergunta sobre onde o redutor é executado? Hum,
+
+e uma das coisas que você pode fazer com isso é adicionar um evento que contenha algum código-fonte, e então ele executa esse processador específico automaticamente para você, com escalabilidade horizontal. É, simplesmente... Você tem um exemplo de como fazer isso, onde você está adicionando algo como " Sim, eu tenho". Sim, eu tenho isso. Sim,
+
+eu tenho isso. Sim, na verdade podemos fazer isso aqui. Sim, acho que talvez isso seja bom. Assim como em vez de tentar escrever código, podemos nos concentrar nas coisas que podem funcionar. Então, vamos criar um novo fluxo. Aliás, todos os
+
+fluxos são criados de forma completamente implícita, então você pode simplesmente enviar uma requisição para qualquer lugar na API de fluxos e um novo fluxo será criado. E aqui está na interface do usuário, e você também pode interagir com isso se quiser, apenas para ver, há uma série de eventos predefinidos, e um deles está aqui. Você pode adicionar um evento do tipo trabalhador dinâmico configurado a este dispositivo. E o que ele tem? Contém apenas um script, que por sua vez é uma string, e dentro dessa string há um reducer e um gancho after append.
+
+Então, isto é literalmente um processador de fluxo. Seria engraçado se isso funcionasse, porque basicamente passei a maior parte da noite trabalhando nisso, já que essa é a parte mais empolgante, mas não era exatamente um trabalho de nível de workshop, porque você recebe os cinco primeiros conceitos e depois pensa: "Aliás , você pode implementar isso simplesmente adicionando um evento." Mas se eu disser "ping" aqui, aparece "pong", certo? Isso é muito louco. É como se eu tivesse aqui um fluxo que não sabe nada sobre o mundo e, em seguida, acrescentei este evento aqui que contém apenas um pouco de JavaScript . E esse pequeno trecho de JavaScript
+
+faz com que ele responda com "pong" sempre que encontrar algo com "ping". E existe, de fato, uma versão disso. O que realmente me tomou a noite, por assim dizer, foi que se você tiver esses arquivos de processador que exportam um processador definido com o comando " definir processador", você pode agrupá-los em um evento de forma eficaz. E esse agente de IA, eu também consegui fazer funcionar dessa forma. Mas é claro que você não vai querer incluir sua chave da API da OpenAI ali. É por isso que
+
+temos essa espécie de mecanismo de imposição um pouco estranho aqui, onde você pode colocar sua chave de API da OpenAI fora do fluxo, e então, basicamente, quando fizer uma solicitação de busca, ela substituirá o segredo no cabeçalho. Mas, sim, com certeza vou postar um vídeo disso, porque foi uma experiência incrível . Assim como você, você pode escrever as 40 linhas de código necessárias para um agente de IA básico e, em seguida, anexá-las a qualquer fluxo, transformando esse fluxo em um agente de IA. Não sei. Estou vendo uns dois ou três acenos de cabeça, mas na maioria das vezes apenas olhares vazios. É muito
+
+estranho. Hum, mas... mas...
+
+mas... acho que isso... isso faz algum
+
+sentido, pelo menos no que diz respeito ao que aconteceu aqui ? Porque você pode. Este você pode simplesmente brincar. É como se você pudesse simplesmente acessar a interface do usuário. Então, até certo ponto, você pode criar processadores cada vez mais complexos para seus fluxos de dados.
+
+Você pode simplesmente digitá-los neste campo de entrada, se quiser. Ou, você sabe, o único problema é que não pode ter nenhuma dependência. Por exemplo, se você quiser usar pacotes NPM, precisa agrupá-los nessa string, o que complica um pouco as coisas . Mas, hum, sim. Sim, então, essa é a outra coisa. Como
+
+tudo que você já deve ter percebido, tudo tem uma lesma. É como um identificador seguro para URLs. Portanto, o evento aqui é chamado de trabalhador dinâmico configurado, pois você pode substituí-lo. E o que já funciona com esse tipo de evento é que você pode dar instruções a um agente de IA para criar funcionalidades diferentes simplesmente chamando `append` com um pouco de JavaScript diferente. E você sabe, é bem fácil imaginar como superar o problema de agrupamento, por exemplo, dizendo: "Ah, existe outro tipo de evento chamado algo como um trabalhador dinâmico desagrupado, que tem apenas um arquivo `package.json`, um
+
+campo `script`, e então um processador diferente pega tudo, agrupa e cria o evento completo com todo o código-fonte do pacote. De repente, é basicamente como uma IDE, e é aí que você pode modificar a estrutura do agente sem precisar instalar nada ou envolver servidores. Mas infelizmente não consegui mostrar isso, que pena. E se houver um erro no JavaScript ou no fluxo de dados? Hum?
+
+Então, se você enviar o código JavaScript para um fluxo e houver um erro nesse código, ou se você cometer um erro de digitação, o que acontece? Bem, isto é JavaScript, não haveria erro de digitação. Mas, se houver algum tipo de erro, a única coisa que pode acontecer é receber um evento. Então, teria que haver um evento de erro. E não há erros de digitação na implementação atual, porque este é um avaliador de JavaScript. Mas você também poderia
+
+encontrar uma maneira de executar uma etapa de compilação do TypeScript primeiro e, em seguida, emitir erros dizendo que houve um erro de compilação do TypeScript. Depois, você poderia executá-lo por meio de um LLM para tentar corrigi-lo e emitir um novo evento com o código corrigido ou fazer outra coisa com ele. A ideia é que tudo o que acontece resulte em um evento e, em seguida, você possa reagir a esses eventos da maneira que achar melhor. E então, o primeiro passo é avaliar e executar esses dados de eventos no seu backend, certo? Sim, neste caso específico, são os trabalhadores dinâmicos do Cloudflare. Então,
+
+ele simplesmente inicia um pequeno processo de trabalho dinâmico. Então, basicamente, o processo de implantação para um processador como este é o seguinte: quando isso ainda funcionava antes de eu pedir para ser refatorado e quebrado, eu fazia o seguinte: localmente no meu computador, eu criava a assinatura SSE e executava o processador dessa forma. E então, quando achei que estava legal, eu poderia implantá-lo como um serviço web no Cloudflare Workers, no Vercel ou em qualquer outro lugar, e simplesmente dizer aos agentes e aos fluxos para me notificarem sempre que um novo evento precisasse ser processado ou, alternativamente, usar esse recurso de worker dinâmico. Hum, e assim eu não sei se isso vai funcionar. É por isso que, no momento, parece uma ideia realmente idiota, porque não está sendo compreendida.
+
+Mas, por exemplo, você poderia ter um plugin para o seu agente que roda em outro computador, especialmente se fosse algo realmente importante como uma proteção contra injeção de proxy ou algo do tipo, certo? Por exemplo, você poderia dizer: "Ah, ok. A forma como meu agente usa seu serviço de proteção contra injeção de prompt não pode ser feita por meio do MCP, porque não há como interceptar proativamente o loop do agente, ou pelo menos não no momento. Mas, o que poderia acontecer é que o sistema dissesse: 'Ok, o loop do meu agente espera até 200 milissegundos antes de fazer qualquer nova solicitação LLM para que os verificadores de segurança confirmem isso.'" E então, você pode simplesmente perguntar ao seu verificador de segurança ali. Não me
+
+importo com a forma como você implementa isso. Você poderia até me cobrar por isso, certo? Hum , e eu simplesmente não acho que isso seja possível de outra forma atualmente. É por isso que acho muito importante que o fluxo possa alcançar os processadores e dizer: "Vocês precisam fazer alguma coisa, sabe?" Você precisa processar alguns eventos agora." Hum...
+
+Há... Há algumas outras possibilidades... Hum, não sei... Quer dizer, é
+
+meu... Sim. Sim.
+
+Uma das ideias que compartilhamos é que meu agente pode usar serviços just-in-time de outros agentes . Sim. E ele pode ser cobrado por isso. Sim. Bem, quero dizer, provavelmente inicialmente o humano seria cobrado por isso. Mas...
+
+Não há como, digamos, ok, então, Claude Code, se eu quiser criar um plugin para o Claude Code... hum, se eu quiser transformar isso em um negócio, pense em como você teria que fazer isso no momento. E você precisa dar algum tipo de instrução ou algo assim para o Claude Code, seja para chamar proativamente suas ferramentas MCP ou algo do tipo, ou chamar talvez alguma ferramenta CLI que foi autenticada anteriormente, onde você fez login na CLI, sabe, em prompt injection protector.com, e então de
+
+alguma forma funciona, enquanto que... hum... na
+
+verdade, acho que você pode simplesmente se conectar ao fluxo do agente, ao fluxo de eventos diretamente. Tipo... A interface é como se alguém percebesse que Claude está prestes a fazer algo e adicionasse mais alguns eventos.
+
+E, de certa forma, tudo funciona assim, mas não exatamente. É como se você tivesse que forçar a vista para perceber que é nisso que tudo se resume. Outra coisa que talvez valha a pena mencionar, para alguns de vocês que tentaram criar código aberto ou plugins para Raspberry Pi, é que não há gancho `before`. Isso é muito importante. Na verdade, no backend, nossos processadores integrados têm a única diferença: nós podemos impedir que eventos sejam adicionados. Por exemplo, é por isso que o
+
+recurso de pausa não pôde ser implementado por terceiros. Então, há certas coisas que precisam acontecer antes que um evento entre no fluxo. Mas, de modo geral, sou muito contra ganchos `before`. Acho que houve alguns casos no OpenClaw, por exemplo, com regressões de desempenho massivas e aumentos de custo, onde você sabe... É possível
+
+quebrar o cache de contexto com bastante facilidade usando hooks `before`. Isso pode prejudicar drasticamente o desempenho. Acho que é muito melhor pensar em todo o sistema como eventualmente consistente. E, sabe, ao lidar com todas essas coisas de sistemas distribuídos, como dizer: "Ok, vamos esperar até 200 milissegundos para que alguém diga que tem uma pequena informação para você, mas então faremos a solicitação LLM, independentemente de você ter informações ou não, porque este sistema precisa ser resiliente." Então, se você pensar, por exemplo, em pipelines de processamento de dados e coisas do tipo, você pode facilmente ter um pequeno processador que diga: "Eu tenho uma versão indexada da base de conhecimento do Notion ou algo assim, e vou ficar aqui tentando inserir um pouco de contexto extra se achar relevante, mas se eu não conseguir a tempo, tudo bem. O processo
+
+continua funcionando. Não é como se eu tivesse atrasado o agente ou algo do tipo." Sim . E quanto ao " Então, você também está listando esta instância de cada taxa"? Tipo, como você imagina que no futuro todo mundo terá o seu próprio ou dois?
+
+Você quer dizer , quero dizer, o banco de dados de streaming. Tipo, sei lá. Eu acho que isso poderia funcionar em quase qualquer coisa que tenha um formato de fluxo durável. Então, isso foi apenas para os fins deste exercício. Hum, eu acho que existe um cenário potencialmente interessante onde... bem,
+
+não é bem uma combinação de uma fila, um sistema de publicação/assinatura e um banco de dados de streaming que também pode executar código, mas esse tipo de coisa é uma primitiva de infraestrutura interessante que talvez alguém pudesse criar. Hum, acho que sim. Mas, em princípio, como eu... não sei
+
+se você ainda não sabe disso, você pode ler sobre essa especificação da API de fluxos duráveis que alguém criou . Não seguimos exatamente, mas é bem parecido, e é basicamente uma ideia antiga e muito comum. Tipo, a grande novidade é que também seria possível receber notificações push por meio dele. Mas existem algumas coisas que fazem isso, como o NAT, por exemplo, o Jetstream NAT ou algo parecido. Sim .
+
+Você está falando da sequência elétrica? Sim, exatamente. Eles têm fluxos duradouros, sim. E assim como um fluxo durável é como um registro de eventos somente de acréscimo com rastreamento de deslocamento. E, como você sabe, eles querem que o cliente acompanhe o último deslocamento consumido. É assim que o
+
+Kafka funciona, por exemplo, ou algo parecido . Mas você também pode fazer o contrário e deixar o servidor rastrear os deslocamentos. E normalmente são serviços como o Google Cloud e a AWS que têm sistemas de publicação/assinatura onde eles dizem: "Ah, nós vamos te dar o próximo evento e vamos controlar o deslocamento para você." Hum, eu tenho mais uma pergunta. Sim .
+
+Certo, digamos que você tenha uma habilidade, ou melhor, uma capacidade de gerar imagens de subpartículas, e a conecte a um LLM local que está gerando imagens. Então, qualquer pessoa poderia enviar um fluxo de dados para esse LLM, que geraria uma imagem e a retornaria. Sim . Como eu poderia impedir uma certa quantidade de solicitações, basicamente uma sobrecarga? E, claro, seria necessário autenticar o acesso. Certo, certo, assim mesmo,
+
+essa coisa toda nunca seria assim, certo? Eu estava pensando que talvez fosse divertido simplesmente dizer que ainda existe isso, basicamente. Sim, exatamente. Seria divertido simplesmente dizer que existe um espaço de nomes público e que ele é limpo a cada hora ou algo assim, não é? Porque é muito bom que qualquer pessoa em qualquer lugar da internet possa simplesmente usar o comando curl ou copiar e colar um código curl de algum lugar e, de repente, ter uma espécie de agente. Acho
+
+isso bastante interessante, mas precisa ser apagado imediatamente, sem dó nem piedade. Sim, mas acho que esse problema está mais ou menos resolvido. É meio complicado, mas basicamente, a forma como eu imagino que você faria se fizesse isso corretamente é que, para cada evento, você teria informações sobre a procedência do cliente . A gente pergunta: quem era esse? O que eles foram capazes de fazer? Como podemos ter
+
+certeza de que essas pessoas, sabe, que o cliente HTTP ou o cliente de fluxo realmente tinham permissão para realizar essa operação? E, novamente, você pode modelar tudo isso como eventos. Certo? Assim como você pode fazer, você poderia simplesmente criar um evento que tornasse essa transmissão pública. E até que você crie esse evento, ele só poderá ser registrado por quem o criou ou algo assim. Certo
+
+. Talvez eu pergunte ao Sean se, em vez deste vídeo, podemos gravar um outro mais tarde, que mostre isso de uma forma mais agradável, porque acho que vale a pena mostrar. O prazo é um pouco curto demais. Então, a gente encerra logo, e se... eu não...
+
+não quero atrasar vocês em uns 10 minutos, com um intervalo maior. Se alguém quiser conversar. Obrigado.

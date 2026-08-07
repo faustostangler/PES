@@ -1,0 +1,357 @@
+---
+video_title: "Give Your Agent a Computer — Nico Albanese, Vercel"
+video_id: wflNENRSUb4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=wflNENRSUb4
+video_date: 2026-05-12T18:00:06+00:00
+video_description: |
+  The key insight from Vercel's internal agent work: giving an agent a file system didn't just add storage, it changed how the agent behaved. It started following through on long tasks, staying on track, and building on its own prior work. That's what this workshop builds toward.
+  
+  @nicoalbanese10  walks through AI SDK v6 from scratch: a tool loop agent, provider-executed web search, end-to-end type safety, and Vercel's new persistent named sandboxes. The agent gets a bash tool, a memories.md file it reads and writes, and instructions that make it generate Python scripts for repeatable tasks and store them for later. By the end, it's an agent that accumulates tools and context across sessions without any manual memory management.
+  
+  Speaker info:
+  - https://x.com/nicoalbanese10
+  - https://www.linkedin.com/in/nicoalbanese/
+  - https://github.com/nicoalbanese
+  
+  Timestamps:
+  0:00 Setup and project initialization
+  7:31 Installing dependencies
+  9:02 Introduction to AI SDK v6 and tool loop agents
+  11:05 Defining the agent in agent.ts
+  13:40 Building the route handler for the chat API
+  15:26 Creating the frontend UI with useChat
+  16:53 Modifying agent instructions
+  18:40 Adding web search tool (provider-executed tools)
+  23:55 Adding UI components for tool usage
+  27:43 The importance of persistent sandboxes (file systems for agents)
+  33:45 Managing context and message history across steps
+  45:11 Initializing persistent sandboxes
+  47:20 Defining custom call options and context
+  51:10 Creating the bash execution tool
+  55:05 Integrating the bash tool into the agent
+  57:15 Adding persistent memory (memories.md)
+  1:03:44 Making agents learn by generating Python scripts
+  1:05:58 Reviewing the full agent system and sub-agents
+---
+Agora tenho minha implantação em produção aqui e posso continuar acessando o painel de controle e meu projeto está funcionando. Um dos cinco itens da lista de verificação de produção. É só isso? Você conseguiu isso? Legal.
+
+Então, vamos acessar o repositório no GitHub clicando naquele botão grande do repositório. E então eu vou sair do Slack e de todas essas coisas e vou abrir um terminal. Acesse o diretório que me agrada. E eu fico feliz em inserir isso e vou clonar aquilo... opa, não é isso. Preciso copiar
+
+isso. Obviamente, clique no grande botão verde com o código . Copie o clone e depois obtenha a demonstração do clone AI London. Incrível. Vou acessar esse repositório e depois, se voltarmos ao site da documentação, que fica em nicoappadaze.com/aie,
+
+você será redirecionado para cá. Se você não tiver o Vercel CLI instalado, pode instalá-lo com o comando `npm i-g Vercel`. Hum, isso provavelmente te levará a uma página de login do Vercel na primeira vez que você usar. Hum, que irá aparecer este processo de inscrição que você pode permitir. E então você deverá estar conectado e poderá verificar isso com o Vercel, que diz "Quem sou eu?". E
+
+selecione "Sim". A
+
+vantagem é que, em um quarto pequeno como este, o Wi-Fi não deve ser um problema.
+
+Você conseguiu fazer login? Legal. Sim, então. Perfeito. A equipe da RIM está fazendo um trabalho incrível com a CLI do Vercel.
+
+Hum, eu sou muito fã. Sou parcial, mas sou muito fã. Então, depois de tudo configurado e com a sessão iniciada, acessamos o repositório que acabamos de clonar e executamos o comando `Vercel link`. Hum, nós dizemos que sim. Você deve conseguir encontrar se tiver o mesmo nome.
+
+E então queremos baixar nossas variáveis ​​de ambiente. E isso deveria nos dar o que eu provavelmente não deveria mostrar, hum, mas acaba sendo invalidado. Isso deve nos dar um token OIDC, que usaremos para autenticar tanto no gateway de IA para nossa inferência quanto nos ambientes de teste da Vercel.
+
+Sim, recebemos muitos pedidos assim internamente, já que, como você pode imaginar, temos muitas equipes envolvidas. Acho que participo de umas sete ou oito equipes diferentes do Vercel. Assim, autenticar-se com a entidade correta ou encontrar os projetos pode, por vezes, ser um desafio, mas estamos a tornar este processo mais fácil a cada vez.
+
+Sim, você pode já ter um token lá de uma conta pessoal. Uma para o trabalho. Legal.
+
+Ah, a primeira linha de comando.
+
+Oh sim. Sim, isso se você o tiver instalado com o NPM. Você pode executar o comando `NPM install -g uh Vercel at latest` e isso deverá instalar a versão mais recente. Eu também passei por isso recentemente, pois invalidamos o método de autenticação antigo em favor de um novo .
+
+Você também pode verificar qual versão do Vercel foi usada para instalá- lo. Veja, o meu usa PNPM em vez de NPM, o que causa aquele problema clássico e frustrante de qual gerenciador de pacotes é responsável por isso. Qual Vercel?
+
+Você ativou as configurações? Sim.
+
+Aliás, adorei sua camisa. Caseiro? Parece muito profissional. É um robô. Para quem está assistindo, é uma camiseta do TypeScript. É muito legal.
+
+TypeScript até morrer. Vou morrer defendendo essa ideia.
+
+Está sendo configurado ou está instalando algo novo? Sim, não. Estou autenticando. Ótimo. É um bom próximo passo. Sim.
+
+Qual é o link do Vercel?
+
+Aliás, caso ainda não tenha visto, lançamos uma nova página de destino. Finalmente, após 2 anos, substituímos minha péssima página inicial. Hum, o que definitivamente não fui eu que fiz. Esta é a equipe de engenheiros de projeto . Muito, muito legal.
+
+Um download ao vivo de figuras. Adoro divulgar este trabalho porque ele é muito bonito. Ah, e caso você não saiba, se já usou o Open Code, ele também é todo baseado no AI SDK . E esta é a citação mais Dax de sempre. O Open Code utiliza o SDK de IA. Ah,
+
+tudo bem. Estamos todos prontos? Sim. Eu trouxe o EMB Cool. Então, podemos começar. Então, a primeira coisa que
+
+vamos executar é o comando `pnpm install` ou ` npm install`, se você estiver usando o npm em 2026, talvez. Talvez use pnpm ou bun. Eu adoro pãozinho. E então podemos verificar se está funcionando. Este é um aplicativo Next.js novo, então
+
+não devemos ter nenhum problema, mas se você executar o servidor de desenvolvimento e acessar localhost:3000, você deverá ver a maravilhosa... bem, na verdade, nova tela inicial. Está tudo pronto para todos?
+
+Sim. Incrível. Acabei de começar. Então, vamos começar com o nosso agente. Vamos construir um agente. A primeira coisa que precisamos
+
+fazer é instalar algumas dependências, já que estamos trabalhando com JavaScript, certo? Adoramos instalar dependências. Então, vamos abrir o terminal e executar o comando PNPM add AI @ai-sdk/react e uh zod. Não se preocupe, estamos apenas no começo, então você não está perdendo nada. Então, se você quiser acompanhar pelo computador, eu deveria escrever. Tem algum quadro
+
+branco ou algo assim? Não, não existe. O site em que estamos é nicoalbanese.com/aie. E isso te levará à configuração do projeto, que você pode acompanhar aqui, e então estamos literalmente começando a construir o agente. Então, a
+
+primeira coisa que faremos, como eu disse, é construir com JavaScript, então precisamos instalar algumas dependências. Vamos instalar o SDK de IA, que é este ótimo pacote NPM de duas linhas aqui. Um exemplo é o nosso adaptador React, que veremos daqui a pouco. E o Zod, que usaremos para definir alguns esquemas que utilizaremos mais tarde no projeto. Então, a última vez que ministrei um workshop de AIE foi no AI SDK 4, e naquela época tudo era construído basicamente em torno de quatro primitivas: gerar texto, transmitir texto, gerar objeto e transmitir objeto. Essas funcionalidades
+
+ainda existem, embora tenhamos, de certa forma, integrado o máximo possível delas às funções de geração de texto. Assim, agora você pode gerar saídas estruturadas apenas com esses comandos de geração e transmissão de texto. Mas também temos trabalhado para oferecer uma abordagem mais orientada a objetos para a criação de agentes com o SDK. E parte disso se devia ao que vimos em nossas próprias aplicações, como elas estavam ficando cada vez maiores por terem toda a lógica do LLM no ponto de chamada. Então, você tinha seu manipulador de rotas Next.js em API/chat/route.ts, e lá você
+
+tinha 2.000 linhas de código porque tinha as ferramentas definidas em uma linha e o prompt do sistema definido em outra. Então, uma das vantagens do SDK de IA é que ele usa JavaScript leve. Assim, você pode definir isso uma vez no código em um monorepo e, em seguida, usá-lo em qualquer lugar, seja em um aplicativo Next.js, em um servidor Bun simples, ou em qualquer outra coisa, é JavaScript puro.
+
+Então, essa foi nossa primeira incursão, eu diria, nisso, que é o que chamamos de agente de ciclo de ferramenta. Bem, o criador do SDK de IA é alemão, e a escolha do nome é algo que prezamos muito. Bem, esta é uma das nossas APIs mais curtas, mas achamos que sua função é bastante óbvia . Trata-se de um loop de ferramentas que utiliza um agente. É exatamente o que o nome indica.
+
+Então, para construir nosso primeiro agente, tudo o que precisamos fazer é definir e importar esta ferramenta, o agente Loop, e então especificar um modelo. Então, vamos fazer isso criando um novo arquivo chamado agent.ts em uma pasta lib, e eu vou abri-lo em um editor para facilitar um pouco para mim, e vou aumentar a fonte para que todos possam ver. Vamos lá. Ficou melhor assim?
+
+Você sabe ler? Sim, legal. Então, vamos acessar o aplicativo. Na verdade, podemos fazer isso no nível superior e vamos criar um novo arquivo. E ficará numa pasta lib e se chamará agent.ts.
+
+Agora, aqui vamos copiar esse trecho. E como eu disse antes, estamos importando o agente Toolloop, especificando nosso modelo. O interessante aqui, se você já usou o SDK de IA antes, talvez tenha visto essa sintaxe em que você importa um provedor, então você importaria o OpenAI de @ai, se eu pudesse digitar @ai/openai. E então você poderia especificar que isso criaria uma instância de provedor de modelo na qual você poderia então especificar um ID de modelo aqui. Uma das funcionalidades interessantes que incluímos no AI SDK 6 é o conceito de provedor global, que permite associar um provedor a cada função do AI SDK presente em sua aplicação. E, por padrão, esse é o
+
+gateway de IA. Assim, especificando apenas strings simples, você pode acessar qualquer modelo no gateway de IA. Se desejar, você pode substituir essa configuração e usar qualquer provedor como provedor global aqui. Mas isso torna muito fácil começar. Então, nós vamos usar "O que dissemos?"
+
+GPT-5-4-Mini. É sempre difícil manter esse tipo de informação atualizada. Fiz isso ontem à noite, então está bem atualizado. Mas provavelmente quando este vídeo for publicado, isso não acontecerá mais. Bem, este modelo nos dará... Eu não usei
+
+muito o 5-4-Mini. Já usei muito o 5-4. Mas isso nos dá uma maneira interessante, barata e rápida de experimentar com nosso agente conforme avançamos. Então, essa é a nossa definição de agente. É meio surpreendente o quão pequeno é, mas é literalmente apenas este agente reutilizável usando GPT-5 para miniaturização.
+
+Então, precisaremos criar uma maneira de chamar nosso modelo, e faremos isso construindo um manipulador de rotas. Então, isso ficará em uma pasta chamada API, que por sua vez tem uma pasta chamada chat, e lá dentro, seguindo as convenções do Next.js, podemos definir um manipulador de requisição POST em um arquivo route.ts. Então, novamente, esse é o arquivo route.ts da API de bate-papo do aplicativo.
+
+Então, uma das coisas interessantes, voltando ao motivo pelo qual você pode querer usar isso em vez de simplesmente transmitir texto diretamente, é que isso nos permitiu manter toda a definição do agente em um só lugar, enquanto lidamos com a transmissão de dados desse agente em outro lugar. Além disso, abstraímos muitas das complexidades dessa transmissão em apenas uma linha de código: ` createAgentUIStreamResponse`. Novamente, se você já usou o SDK de IA antes, o que está acontecendo aqui é literalmente o mesmo que ` const result = stream text`. Você tem sua chamada de fluxo de texto e, em seguida, retorna o fluxo de mensagem result.toUI ou a resposta.
+
+Então, é basicamente a mesma coisa. E no seu agente, você também tem o `my agent.stream`, que é a função de streaming do seu agente . Então, isso nos dá uma solução e eu vou me livrar disso. Isso nos dá a maneira de entrar em contato com nosso agente. Você pode ver que nosso manipulador de postagens
+
+está recebendo algumas mensagens e simplesmente as repassando para o nosso agente. E agora precisamos criar uma página e um cliente para chamar esse agente ou esse endpoint. Então, podemos ir até o nosso arquivo page.tsx, nossa página inicial, e substituir o texto pelo que está aqui. E o que temos aqui é o infame recurso " agora use o chat hook", que na verdade foi o primeiro componente do SDK de IA quando o lançamos, há uns três anos .
+
+E isso gerencia todo o estado das nossas mensagens e nos ajuda a enviar essas mensagens para o nosso manipulador de rotas. Então, vamos desconstruir as mensagens, que serão o nosso repositório de mensagens. Hoje, tudo dependerá do cliente. Erro e a função de envio de mensagem. Verificamos se há algum erro e, caso contrário, em nossa marcação na interface do usuário, mapeamos as mensagens em nosso estado de mensagens e, para cada mensagem, mapeamos as partes.
+
+Você já usou o SDK de IA antes? É a sua primeira vez? OK. Então, e você também tem. Então, ou você não fez isso? É a primeira vez que
+
+vejo isso. Ok, ótimo. Então, a maioria de vocês já viu isso, então posso passar por essa parte rapidamente. Mas sim, é assim que estamos renderizando no cliente. Então, agora podemos executar `pnpm run dev` e devemos conseguir dizer "oi" e receber nossa resposta. Então, temos
+
+nosso chatbot, ou nosso agente, como deveríamos dizer, em 2026, pronto para entrar em ação. Agora, a primeira e mais básica coisa que vamos querer atualizar em nosso agente é mudar seu comportamento. Uma das maneiras mais básicas de fazer isso é alterando o prompt do sistema ou suas instruções. E você pode fazer isso com o SDK de IA na definição do seu agente, passando um parâmetro de instruções. Então, você pode fazer isso aqui. Posso
+
+responder como um cowboy. E agora, quando eu voltar para o nosso agente e disser "oi", devemos ver "olá, parceiro". Como posso ajudar vocês hoje? E ainda tem um emoji de cowboy bem simpático. Bem , isso remete ao que mencionei para o Casper logo no início. O que eu
+
+queria fazer hoje era tentar comunicar o que acredito serem os principais elementos para a construção de agentes em 2026, que são um ambiente de execução de agentes e uma forma de construir sua infraestrutura de maneira eficaz. Então, como você gerencia o loop? Como gerenciar o contexto entre os loops? Esse tipo de coisa. As próprias ferramentas que você está passando para esse ambiente de execução e, finalmente, um computador ou algum tipo de sistema de arquivos isolado para que o agente possa persistir o estado ou executar código dentro de sua execução. Vamos chamar as sessões de "
+
+execuções", ou seja, as sessões em que o sistema está sendo executado . Então, isso é como um dos blocos de construção. As instruções...
+
+acho que muita gente meio que torce o nariz para o prompt do sistema, considerando-o algo de 2023 quando estávamos começando, mas hoje veremos como usaremos as instruções junto com esses outros dois componentes para realmente tirar o máximo proveito de um agente e influenciar seu comportamento. Então, esse é o ponto de partida. Foi assim que construímos nosso agente básico. Bem, a primeira coisa que vamos fazer, e que acredito que muita gente vai querer, é dar ao agente a capacidade de obter mais contexto de alguma forma. Uma coisa básica que podemos fazer hoje, já que não temos um caso de uso muito específico, é simplesmente implementar a busca na web. Bem, a maneira de
+
+fazermos isso é voltando ao terminal. Bem, vou parar meu servidor de desenvolvimento aqui e executar o comando `pnpm add AISDK open AI`. E o motivo pelo qual vamos adicionar o provedor de IA aberta é para podermos obter a definição da ferramenta para algo que é chamado de provedor, uma ferramenta. E existem basicamente três tipos de ferramentas. Existem ferramentas personalizadas que eu consigo encontrar aqui mesmo.
+
+Porque isso me ajuda bastante. Existem, portanto, três tipos de ferramentas. Você tem ferramentas personalizadas, que são ferramentas que você mesmo define. Você fornece uma descrição, um esquema de entrada e uma função de execução. Isso efetivamente dá ao agente a capacidade de executar qualquer tipo de função arbitrária que você desejar, com base no contexto da conversa.
+
+Em seguida, temos ferramentas definidas pelo fornecedor. São bastante interessantes. Essas são ferramentas que uma instituição de ensino de LLM geralmente utiliza para treinar seus modelos após a conclusão do treinamento . Então, a Anthropic tem uma ferramenta tipo bash, que, juntamente com todo o uso de código na nuvem que ela subsidiou, eles estão treinando para usar muito melhor. Eles também possuem uma ferramenta para uso em computador. Então,
+
+a ideia aqui é que você define o que o agente deve fazer quando o invoca, mas eles trabalharam muito na descrição e no esquema de entrada para garantir que o agente seja muito eficaz ao invocá-lo. O tipo final é executado pelo provedor. E essas são ferramentas que existem na infraestrutura do provedor do LLM . E assim, o exemplo clássico é a pesquisa na web. Ferramenta de busca. A Anthropic também possui uma ferramenta de busca na web
+
+. Na verdade, você não fornece a ferramenta nem define o que deve acontecer quando ela for acionada, mas, de certa forma, você autoriza o provedor do LLM a utilizá-la. E se o agente decidir usá-lo, ele literalmente executará isso em seu servidor, adicionará o resultado da ferramenta ao estado da mensagem e retornará tudo isso para você. O melhor de tudo é que não precisamos escrever mais nenhum código. Tipo, você tira da caixa e já vem com ele.
+
+A desvantagem dessas ferramentas executadas pelo provedor é que você fica, obviamente, vinculado a um único provedor. Mas, para hoje, para esta demonstração, não é um grande problema e nos permite avançar bem rapidamente. Então, o que acontece quando importamos o provedor OpenAI aqui é que estamos literalmente usando isso para complementar nossa solicitação que vai para a OpenAI, para incluir essa opção de ativação, como por exemplo, "quero que a ferramenta de busca na web seja incluída". Então, vamos adicionar isso à nossa definição de agente e você verá que também removemos nossas instruções. E na verdade, é literalmente isso que temos que fazer. Bem, eu também preciso executar o servidor de desenvolvimento
+
+. pnpm run dev Mas agora posso voltar ao meu agente aqui e perguntar, por exemplo, quando é a cúpula de engenheiros de IA da AIE London em Londres? Acho que é assim que se chama. E veremos uma longa pausa, uma interface de usuário terrível, mas eventualmente, devemos ver nossa resposta retornar aqui, nosso contexto aumentado, nosso robô de pano, por assim dizer, usando a antiga linguagem arcaica. Mas agora nosso agente tem a capacidade de buscar e obter contexto relevante por meio de pesquisa na web. E há algumas
+
+coisas legais que podemos fazer aqui. Se você passar um objeto para essa ferramenta, o que seria essa função de fábrica aqui? Você pode especificar coisas como a localização do usuário aqui. Então, você pode dizer "Eu só uso o servidor de idiomas para me ajudar aqui", mas posso dizer que estamos em Londres. E isso permite que você talvez descubra, por exemplo, quando será a Cúpula de Engenheiros de IA, então não incluímos Londres e, em teoria, teremos um foco maior em Londres.
+
+Sim, aí está. Então, esse contexto extra ou esses parâmetros não estão sendo passados ​​para a OpenAI na solicitação que é enviada para a OpenAI em última instância. Ah , que legal. Agora temos uma maneira de ampliar nosso contexto e fornecemos ao nosso agente sua primeira ferramenta. Mas o problema que temos é que, se mostrarmos isso novamente, quando será a AI Engineer Summit, vocês já viram isso.
+
+Hum, acho que... o que eu fiz? Quando será a conferência de engenheiros de IA? O problema é que não está
+
+aparecendo nada na interface do usuário neste momento. Então, o usuário não tem ideia do que está acontecendo. E enquanto o agente está executando várias etapas e chamando uma ferramenta. Então, o que realmente queremos fazer é renderizar em nossa marcação, neste arquivo page.tsx,
+
+o que deve ser renderizado na interface do usuário quando diferentes ferramentas estiverem sendo usadas, especificamente quando nossa ferramenta de busca na web estiver em uso. Então, poderíamos entrar aqui e dizer "caso", e o SDK de IA seguiria essa convenção de usar um prefixo de ferramenta e, em seguida, especificar o nome da ferramenta. Então, nós íamos até nosso agente e víamos que se chamava busca na web. Então, diríamos "ferramenta de busca na web" e depois definimos algum tipo de marcação aqui. Tipo, vamos ver. Por
+
+exemplo, uma div chamada "busca na web". Meu Deus, estou digitando. Faz meses que não digito nada . E agora você pode ver que nosso agente fez uma busca na web. Mas esse processo é terrível. E se quiséssemos ver, tipo,
+
+qual é o p? Assim como na entrada, provavelmente há uma consulta sendo inserida aqui, mas está classificada como desconhecida. Que coisa feia. Não queremos fazer isso. Então, é aqui que vou apagar tudo isso. Por isso que
+
+digitei, e não está na página. É aqui que vamos aproveitar outro componente realmente incrível do SDK de IA, que é o sistema de tipos de ponta a ponta que construímos. Então, a grande premissa que permeia todas as decisões da API do SDK de IA é que queremos que a definição do agente seja a fonte da verdade, da qual tudo herda e deriva. Por isso, dedicamos muito tempo às chamadas de ferramentas e à biblioteca de interface do usuário, garantindo que tudo funcione perfeitamente. Então, por onde começamos, por onde temos que começar, é pela unidade atômica de estado em nossa aplicação, que é a mensagem. Então, podemos obter uma
+
+mensagem tipada usando este auxiliar de tipo, o agente de inferência de mensagem da interface do usuário. Então, vamos voltar à definição do nosso agente e passar o tipo dele . Agora, essa mensagem da interface do agente é totalmente segura em relação aos tipos de dados, com base nas ferramentas que passamos. Então, se formos ao manipulador de rotas, podemos atualizá-lo para definir que as mensagens recebidas são do nosso tipo de mensagem de interface de usuário personalizado. Mas o mais importante é que agora podemos voltar à página e digitar "usar o chat" enquanto temos minha mensagem de interface do agente.
+
+Então, o que você vai notar é que, depois de fazer isso e importar o arquivo do nosso agente lib. Então, quando rolarmos a página para baixo e verificarmos os diferentes tipos de peças, veremos que nossa ferramenta de busca na web deverá estar aqui agora. E se você entrasse aqui e verificasse os tipos de entrada e saída, veria que eles são tipados, o que é muito legal. Então, não vou aborrecê-los tentando digitar e construir um componente na hora, porque não sei projetar nada. E eu não acho que nenhum de nós realmente projete nada à mão hoje em dia. Mas, como
+
+você verá se voltarmos um pouco no tempo, agora temos um componente interessante alinhado para nossa busca na web. E podemos tentar isso de novo e eu direi quem é Nico Albaneze. Desculpe, é meio egoísta da minha parte, mas agora você pode ver que nosso componente tem esse estado pendente, o que é muito legal . Então, o que temos a seguir? Isso ampliou nosso contexto. Agora, vamos ao
+
+que eu considero o componente mais interessante , também em 2026, que é fornecer ao nosso agente um computador, um ambiente de testes (sandbox) com o qual ele possa interagir. E só para dar uma pausa aqui, vimos isso realmente decolar, onde internamente temos um agente chamado D0, que tem acesso a todos os nossos dados de chat, que estamos mencionando, tem acesso a praticamente todo o back-end do Vercel, todo o nosso painel de administração, todo o Salesforce, todas essas coisas. A ideia era que, se não me engano, nosso chefe de dados estava exausto de ser marcado em tudo e queria um bot para o Slack que pudesse fazer tudo isso e também ajudar a escalar sua equipe . E houve um ponto realmente interessante em que a ideia inicial era ter um agente com todas essas ferramentas, que usaria talvez cinco ou dez delas por vez e retornaria uma resposta meio alucinatória. Para isso, foi adicionado um sistema de arquivos e instruções que diziam: "Ok, para cada tarefa, em cada sessão, você tem um rascunho no sistema de arquivos, onde armazena um plano inicial que serve de referência para o que você deve fazer em cada etapa. Depois, você tem um
+
+diretório para suas pesquisas, onde coleta tudo." Duas coisas aconteceram ali: primeiro, o agente começou a executar as tarefas de fato, porque as informações não estavam mais sendo sobrepostas em uma janela de contexto absurdamente longa, onde o plano inicial era descartado. As instruções eram: "Crie este arquivo de plano", com o objetivo no topo e, logo abaixo, as instruções: "Siga este arquivo de plano à risca, marque os itens conforme for concluindo". E, de repente, surgiu essa coisa fascinante: o agente está lendo... E, ao se aproximar e
+
+se lembrar do objetivo, o agente mantém o foco. Assim, ele se mantém no caminho certo e, no final, obtém um artefato excelente que mostra exatamente o que o agente fez, o trabalho envolvido. É um comportamento emergente que observamos, onde eles se saíram muito bem ao integrar esse sistema de arquivos, seja um computador completo ou apenas um sistema de arquivos virtual. Observamos isso em praticamente todos os agentes que desenvolvemos internamente: temos um agente para a equipe de GTM, um agente de dados (como mencionei) e um
+
+agente de suporte ao cliente que reduziu nossos chamados em cerca de 90%, com 95% das pessoas realmente agradecendo, algo que nunca tínhamos visto antes. Todos esses agentes são baseados nessa abordagem de sistema de arquivos. E é isso que eu queria mostrar hoje: usaremos um produto da Vercel para isso, o Vercel Sandbox. Já desenvolvi muitos sandboxes diferentes ao longo dos anos e há algo muito interessante que acaba de ser lançado. Isso está em versão beta e se chama sandboxes nomeados, sandboxes persistentes, e acho que já os tenho aqui. E é isso que vamos
+
+aproveitar hoje. Então, um dos problemas que você tem com sandboxes em geral é que, a menos que você esteja usando em seu computador, elas são fundamentalmente efêmeras, certo? Assim como o fato de um provedor ter um ambiente de testes (sandbox) que pode funcionar por 30 dias ou por 5 horas no final, está resolvido. Então, estávamos pensando em como poderíamos contornar esses desafios e o que a equipe acabou criando foi um conceito muito legal: cada sandbox tem um nome e cada sandbox pode ter sessões. E as sessões são apenas instâncias desse item subjacente, como uma espécie de sandbox, por assim dizer.
+
+E sempre que você, em seu produto ou em seu código, quiser usar um sandbox, você o referencia pelo nome e, nos bastidores, o Vercel verificará se há uma instância ativa para essa sessão e o direcionará para ela, ou, de forma otimista, criará uma nova e o direcionará para ela. Então, no seu código, você simplifica todo esse gerenciamento do ciclo de vida, ou seja, se o meu computador está em execução e a qual devo apontar? Eu escrevi, e mostrarei se tiver tempo no final, algo em que tenho trabalhado: um sistema completo de gerenciamento de ciclo de vida onde eu literalmente compactava todo o sistema de arquivos após cada requisição, armazenava em um blob e depois criava novos. Era terrível. E isso é muito mais fácil. Então, o que vamos alcançar
+
+hoje é algo que, embora eu deteste interromper a discussão sobre chamadas abertas, nos permitirá ter um computador específico que poderá fazer referência a todas as solicitações. Bem, nos bastidores, o que vai acontecer é que o Vercel vai desligar o sistema após um período de inatividade, mas vai criar um snapshot do sistema de arquivos. Assim, o estado permanece o mesmo e, quando você fizer solicitações subsequentes, será criada uma nova instância com esse instantâneo como estado. Então, na prática, parece exatamente a mesma máquina, o que é muito legal. Bem , isto está em versão beta neste momento, mas eu já estou usando bastante e está funcionando muito, muito bem. E temos
+
+muito mais por vir. Então, a primeira coisa que vamos fazer é pular. Aliás, alguma pergunta até agora? Sim, claro. Sim
+
+. Sim
+
+. Sim , ótimo. Então, a pergunta, porque não sei se o microfone capta o som, é: você está dizendo que para cada solicitação de agente, você envia todo o histórico?
+
+Você pode usar o chat? Sim. Essa é a configuração padrão, hum, está bem aqui. Quando fazemos cada requisição com o comando "send message", isso envia todo o histórico de mensagens da rota para o seu agente. Bem, agora você sempre vai querer enviar ou...
+
+Essa é uma afirmação ousada. Bem, o seu histórico de mensagens é o seu contexto, certo? Entre em contato com seu agente. E por isso sempre haverá aquela vontade de ser algo maior, certo? Tipo, você pode ter todo o histórico de conversas que quiser, mas enviar todas essas mensagens pela internet toda vez não é algo que você faria. Assim, o
+
+padrão mais clássico está enviando apenas a mensagem mais recente. E você pode fazer isso no seu cliente com o comando ` prepare`, acho que fica no... Eu não programo mais, então não me lembro do nome. Hum,
+
+provavelmente está no transporte, que é novo. E então temos... aqui dentro , onde fica? Ah, não estamos
+
+importando nada da IA. Da inteligência artificial. Hum, vou mostrar rapidinho. Na verdade, sabe o que eu deveria estar fazendo? Mostrar isso para você nos documentos.
+
+Isso é ainda melhor. Não sei por que estou tentando digitar tudo isso. Basicamente, o que faremos aqui é que você pode especificar para enviar apenas a mensagem mais recente e, em seguida, buscar todas as mensagens no servidor em seu endpoint, juntá-las e enviá-las para o modelo. Mas, acho que o seu ponto de vista está mais relacionado ao contexto , certo? Você não quer enviar coisas antigas e irrelevantes para o modelo.
+
+Sim. Certo? Tipo, a parte de engenharia de contexto, de podar coisas e fazer com que outras desapareçam. É para lá que você está indo? Ou sim.
+
+Então, é aí que as coisas ficam mais difíceis de fazer.
+
+Com o SDK, é simples, mas requer algumas concessões. E isso exige decisões do desenvolvedor que não necessariamente impomos pela estrutura. Então, temos algumas abordagens que você pode adotar aqui. Todas elas se baseiam no uso, ou a maioria delas se baseia no uso, de duas coisas. Para começar, nos bastidores, o que acontece em nosso endpoint é que, na verdade, pegamos nossas mensagens da interface do usuário e usamos uma função chamada `convert to model messages`, que remove muitos dos dados específicos da interface, como timestamps, IDs e coisas do tipo.
+
+Mas, internamente, você também pode definir isso, acredito, para ignorar certas coisas, converter partes de dados em estruturas diferentes, para alterar os contatos que estão chegando. Então, em geral, você controla as mensagens que estão chegando. Por exemplo, se você quisesse usar `messages.map` e verificar se `m.if` tem a função de `message` definida como ` assistente` e ` m.parts.includes` como parâmetro, qual seria o valor? Tipo, se
+
+houver uma ferramenta chamada " uh", digitar começa a ficar divertido. Qual é o tipo aqui? Basicamente, você pode percorrer o processo e definir o que deseja, como por exemplo, remover esse tipo de chamada de ferramenta. Você pode fazer isso sem problemas. A maneira como vemos bases de código maiores fazendo isso é usando uma função que chamamos de etapa de preparação.
+
+E isso acontece antes, se pensarmos em tudo o que estava acontecendo em nossa pesquisa anterior na web, é como se o agente enviasse uma mensagem, o que inicia uma nova mensagem do assistente. Na primeira etapa dessa mensagem do assistente, foi feita uma busca na web, e então o agente, em tempo de execução, basicamente analisou todo esse contexto e decidiu o que fazer em seguida. E poderia ter usado a busca na web novamente, poderia ter usado o computador, qualquer coisa que fosse . Mas cada um deles é como uma etapa individual. E com o SDK de IA, você pode monitorar. Você tem esse retorno de chamada
+
+que é executado antes de cada etapa. E isso permite que você modifique qualquer um dos parâmetros que entram nessa etapa específica. Então, o que você encontra aqui dentro? Você recebe informações como as mensagens, o contexto, o modelo que está usando, o número da etapa e quaisquer dados relacionados às etapas, ou seja, o que aconteceu. E aqui, você pode literalmente retornar qualquer um desses parâmetros de nível superior . Então, você poderia retornar um
+
+estado de mensagem completamente diferente, por exemplo, se o número da etapa for igual ou maior que 20, você poderia basicamente receber apenas a pergunta " Onde está?". Estas são as mensagens que estão sendo executadas ativamente. Você poderia usar o comando `messages.slice` e pegar apenas as últimas cinco mensagens. Assim,
+
+dessa forma, você tem agora, no início de cada etapa, um filtro deslizante que considera apenas as cinco mensagens mais recentes. Bem, isso é um assunto muito interessante, um longo caminho a percorrer, porque tenho pensado muito sobre isso. Eu estava dizendo para o Casper antes que eu estava trabalhando em um agente de codificação há alguns meses e que ontem ele funcionou por... me pergunto se consigo encontrar
+
+a foto exata, mas ele funcionou por 104 minutos em uma única execução. Vamos ver se temos o valor exato para que eu possa provar para você. Essas são todas as minhas fotos de tela. Acho que está bem aqui. Sim. O processo foi
+
+executado durante 104 minutos, utilizou 316 chamadas de ferramentas, alterou 29 arquivos e usou apenas 32% da janela de contexto do GPT-4 . Não tenho nenhuma compactação em execução aqui . E acho que isso é meio polêmico hoje em dia, porque cada um tem seu próprio sistema. Antes, eu removia chamadas de ferramentas que estavam no início do histórico de mensagens quando atingia um certo limite, para ficar entre 40% e 60% da janela de token ou da janela de contexto. Mas surge um problema muito sério quando você faz isso, que é o de invalidar o cache de entrada toda vez que você faz isso.
+
+Hum, o que eu acho que é tipo, é, é tipo, oh, merda. Sim, claro . Mas era importante quando as janelas de tokens, eu acho, eram de cerca de 400 mil. Então, quando comecei a construir isso, os principais modelos que usei foram o Opus, acho que com a janela de tokens de 400 mil, e o GPT-53 Codex, ambos com janelas de tokens de 400 mil. E assim você atingiria esses 40% muito rapidamente.
+
+Mas com essas janelas de um milhão de tokens, não estou vendo tanto problema. Então, o que estou construindo em vez disso é mais uma combinação de duas coisas. Uma abordagem mais abrangente, como a implementação de subagentes aqui ( e podemos discutir bastante sobre isso), consiste em pegar tarefas específicas que podem ser relativamente independentes e executá-las fora da thread principal do contexto, retornando mil tokens, que representam o resumo do objetivo, e trazendo esse resumo de volta. Isso é um uso eficiente da janela de contexto em uma sessão. Mas também ter uma ferramenta dedicada, tipo o Amp... o pessoal do Amp fez uma
+
+implementação muito legal disso, dando ao agente uma ferramenta de transferência, que em determinado ponto o agente pode chamar, gerar algum tipo de contexto que ele queira passar para uma thread completamente nova, e essa thread se torna a thread principal para começar. Então, eu acho que quanto mais você puder avançar no território dos subagentes, melhor, porque essa sumarização, essa compactação por sumarização de agentes ou por sumarização LLM, é com perda de dados. Como você viu, houve aquele infame tópico no Twitter, acho que da chefe de IA da Meta AI, que fez um apelo público perguntando: "Vocês conseguem arquivar e-mails de ontem?". E simplesmente apagou toda a caixa de entrada dela. E ela ficava
+
+pedindo para parar, e eu respondia: "Não, você me pediu para fazer isso. Vou continuar." E o motivo era que uma ferramenta ineficiente gerava uma quantidade enorme de e-mails . Ao inserir essa informação, a compactação automática do sistema foi acionada e os e-mails sobrecarregaram as instruções iniciais dela. Então, a instrução inicial dela foi: "Não faça isso." tinha ido embora.
+
+Então, é isso que me assusta bastante, tipo, eu não tenho um sistema muito bom para decidir se você simplesmente mantém as mensagens do usuário e remove todo o resto. Não sei. Mas esse é o meu longo desvio do assunto . Posso entrar em mais detalhes sobre isso. O que eu quero dizer é que, mesmo usando esse agente de codificação por 14 horas por dia em todos os trabalhos que fiz nos últimos 4 meses, a compactação não tem sido um problema para mim. E,
+
+como eu estava mostrando antes, também tenho uma taxa de leitura de tokens de cache de 95% nisso . E isso, para mim, é mais valioso em termos de velocidade, desempenho e custo. Mas isso é um assunto muito, muito extenso, um verdadeiro labirinto . E podemos aprofundar esse assunto também. Mas é assim que você manipularia os contatos entre as etapas. E
+
+a última coisa que vou mencionar aqui é que fomos muito intencionais ao criar essa API para que ela fosse funcional, certo? É como se essa função fosse executada em cada etapa, em vez de retornar um novo array de mensagens e persistir esse array nas etapas seguintes. Isso é muito fácil de entender porque se trata de um espaço em branco, como uma função vazia, que começa em cada invocação. As mensagens que você recebe aqui são o conjunto agregado de mensagens de todo o sistema. E também te dá a garantia de que, ao persistir até o final, você terá acesso a todo o histórico da mensagem.
+
+Desculpe. Isso ajuda? Legal. Tudo bem. E isso também é bom porque eu sei que estou fazendo coisas bem básicas e vocês já usaram isso. Então, por favor, pare de
+
+me fazer perguntas interessantes como essa. Adoro falar pelos cotovelos . Então, vamos começar a parte divertida. Acho que instalamos a versão beta, certo? Não , não fizemos isso. Então,
+
+vamos executar o comando `pnpm add Vercel sandbox at beta`. E então, vamos criar um novo arquivo lib chamado sandbox.ts. E como eu estava explicando antes, com essas sandboxes persistentes, vamos criar uma função que aproveite essa funcionalidade. Então, passamos um nome e o programa verifica se esse ambiente isolado (sandbox) existe. Se isso acontecer, retornará esse valor.
+
+Caso contrário, ele criará a instância e retornará essa instância de sandbox. Então, já temos isso configurado. Isso é algo novo que eu acho que nenhum de vocês teria visto se não tivessem usado o AI SDK 6 antes. Então, temos usado a ferramenta Loop Agent e a temos chamado assim , passando nosso agente e nossas mensagens. Mas, muito raramente, o seu agente é a única coisa dinâmica, ou seja, o seu contexto. Por exemplo, muitas vezes
+
+existem diferentes entradas estruturadas que devem alterar o comportamento do seu agente. Muitas vezes, como no exemplo clássico que vou dar aqui, se você tem um agente de suporte ao cliente, uma das informações básicas que você vai querer ter ao acessar o sistema é o ID do cliente e, talvez, o tipo de cliente, se ele é corporativo ou amador, por exemplo, no caso da Vercel. E então, o comportamento desse modelo pode mudar com base nisso. Se você administra um sistema para centenas de milhares de pessoas, talvez você seja uma companhia aérea, acho que você trabalha no setor de viagens, certo? Ou não?
+
+Ah, eu trabalhava na construção civil. Em construção. Então, viajar funciona. Vamos usar isso por enquanto. Imagine que você é a British Airways e tem um chatbot que atende centenas de milhares de clientes todos os dias . E talvez para um membro azul,
+
+que é o mais básico, você queira dar a ele o GPT-5 para o plano mini, mas para um membro ouro, você queira dar a ele o GPT-5 para o plano pro ou algo assim. São como entradas estruturadas que alteram e ampliam fundamentalmente o comportamento. E a forma como fazíamos isso antes era como um estilo funcional. Você diria, por exemplo, `const create agent`, e teria algum tipo de entrada que alteraria o comportamento, e você usaria instruções `if` e coisas do tipo. Então, vimos isso e pensamos: " Isso frustrou algumas pessoas online, o que eu não imaginava que aconteceria." Hum,
+
+essas são opções de compra. Elas alteram a forma como as opções que você passa no momento da chamada são apresentadas, o que muda a forma como o modelo se comporta. Então, a maneira de definir isso é com um esquema de opção de chamada que você passa para a definição do seu agente. Então, vou copiar todo esse código aqui. E talvez eu remova algumas partes para que fique mais fácil de ver. Então talvez possamos encerrar isso
+
+e nos concentrar apenas no esquema de opções de compra . Então, o que queremos para o nosso agente, que será semelhante a este agente com um computador, é que ele receba uma sandbox em cada invocação. Certo? E o agente irá interagir com esse ambiente isolado. Então, definimos um objeto Zod para nossas opções de chamada esperadas, e ele será uma instância da nossa classe sandbox do sandbox Vercel.
+
+Podemos então passar esse esquema de opção de chamada para a definição do nosso agente de loop de ferramenta . E se formos para a nossa rota, você pode ver na resposta do fluxo da interface do usuário de criação do agente que há uma chave de opções e, dentro dela, temos esse objeto de opções com tipagem segura que precisamos passar. Você pode ver que temos um erro aqui. Nossas opções esperam um ambiente de testes. Olá.
+
+Sem problemas. Ok, sim, sim. Então, temos nosso esquema de opções de compra. Agora, precisamos fazer algo com nossas opções de compra, e o que faremos aqui pode não fazer muito sentido agora , mas fará conforme formos analisando. Queremos que nosso ambiente de testes (sandbox) esteja disponível em nosso ambiente de execução de agentes para que qualquer ferramenta possa utilizá-lo.
+
+E a maneira como faremos isso é usando um termo um tanto carregado, algo chamado contexto, dentro do ambiente de execução do agente AISDK. E o contexto é que ele se assemelha mais ao contexto do React do que ao contexto do Agent. Então, se você está familiarizado com o contexto do React, você tem um provedor e qualquer componente dentro dessa árvore de componentes aninhada pode acessar valores aleatórios e arbitrários dentro dele. Então, a ideia é a mesma: você pode passar qualquer tipo de dado arbitrário, variáveis, funções, o que quer que sejam, para esse objeto e, em seguida, acessá-lo durante a execução da sua ferramenta e a execução das funções da sua ferramenta. Então, o que estamos fazendo aqui é dizer que nosso agente agora espera que um ambiente de teste (sandbox) seja acessado toda vez que for usado. E então,
+
+na primeira vez que for chamada, essa função de preparação da chamada será executada. Ele é executado apenas uma vez, na primeira vez que nosso agente é acionado. E então, ele vai remover esse ambiente isolado das opções de chamada e injetá-lo em nosso contexto de tempo de execução, esse estado de tempo de execução que você tem em todas as invocações do agente. Ah, desculpe, não entre invocações de agentes, mas sim em toda a execução do agente, dentro de todas as etapas. Então, esse é o ponto principal.
+
+Hum, eu sei que isso é muita coisa agora, mas veremos em um segundo, tudo fará muito mais sentido. Porque vamos definir nossa primeira ferramenta. Então, vamos definir uma ferramenta chamada `tools.ts` em um arquivo chamado `tools.ts`.
+
+E esta será uma ferramenta bash. Atualmente, acreditamos firmemente que o Bash é tudo o que você precisa em muitos casos. Esses agentes são realmente muito bons em escrever comandos bash. Então, na verdade, durante toda esta sessão, usaremos apenas esta ferramenta, o bash, que fará tudo por nós. Então, como você define uma ferramenta com o SDK de IA? Todos vocês já
+
+usaram o SDK de IA antes, mas ele possui três componentes. A descrição é extremamente importante, não dá para enfatizar o suficiente. É isso que o modelo usa para decidir se deve usar sua ferramenta e também pode influenciar a forma como a utiliza . Em seguida, o esquema de entrada, obviamente, é isso que a ferramenta precisa para funcionar. E então temos a função execute, que é o código que será executado sempre que o agente a utilizar. E agora você verá onde o
+
+contexto entra em jogo. Este é um argumento do segundo argumento da função execute, que você pode acessar em tempo de execução da sua ferramenta, qualquer estado desse tempo de execução e, em seguida, executar comandos. Então, essa é a maneira interessante como sua ferramenta funciona: ela é totalmente independente do agente com o qual está interagindo, mas espera receber essa entrada e então pode usá-la. E temos uma atualização interessante chegando ao AI SDK 7, que adiciona tipagem para o contexto e tipifica o contexto principal no agente de nível superior. Então, se você usar uma ferramenta que espera algum tipo de contexto, isso gerará um erro na definição do seu agente, indicando que você precisa fornecer esse contexto, o que é realmente muito interessante. E isso aconteceu
+
+diretamente como resultado de eu ter importunado o Lars por 3 meses, já que tenho usado esse padrão bastante. Então, o que temos nos bastidores é que estamos literalmente extraindo o sandbox do contexto, executando o comando bash gerado pelo agente e, em seguida, retornando a saída padrão, quaisquer erros e o código de saída. Então, podemos voltar e retornar ao nosso agente, que eu acho que não está em execução, então vamos executar o PN dev. E poderíamos dizer algo como "execute LS, execute LS {slash} LA". Não.
+
+Por que não estamos? Ah, ha. Está vendo? Não está funcionando. Porque não disponibilizamos o ambiente de testes (sandbox). Claro, se eu tivesse seguido as
+
+instruções, eu saberia disso. O próximo passo, bem, são dois passos bastante importantes. Primeiro, precisamos realmente dar o nosso melhor. Eu estava me precipitando demais. Precisamos entregar nossa ferramenta ao nosso agente.
+
+Então, vamos voltar à nossa definição de agente. Vou substituir tudo e você verá que agora, na linha 21, estamos passando a ferramenta bash que acabamos de criar. E, mais importante ainda, precisamos atualizar nosso manipulador de rotas para obter o sandbox e passá-lo para a execução do agente. Então, vamos fazer isso com a nossa função auxiliar que criamos anteriormente, criar ou obter sandbox, especificando um nome para a sandbox. Então, este é apenas um ID aleatório. Em uma aplicação,
+
+esses nomes provavelmente estariam vinculados ao nome de um usuário ou a uma sessão. E isso se torna uma espécie de sandbox persistente que você pode usar em várias invocações. Então, nós obtemos nosso ambiente de teste aqui, como você pode ver, e então o passamos para nossas opções de chamada. Veja bem, se você não passasse isso, receberíamos um erro porque é seguro em relação aos tipos de ponta a ponta, e quem não gosta de segurança de tipos de ponta a ponta? Então, a última coisa que vamos querer fazer... você pode... Vai funcionar agora mesmo
+
+, mas obviamente você precisa esperar, e você não verá o terminal exibindo os comandos em sequência. Então, podemos definir um componente para nossa ferramenta bash, o que faremos aqui fornecendo um caso para tool-bash. Bem , vou voltar à página anterior. Vou copiar isso e podemos analisar novamente. Então, antes tínhamos o que deveria ser renderizado se o modelo gerasse um texto ou se o usuário tivesse algum texto, o que deveria ser renderizado na interface do usuário se o modelo usasse uma pesquisa na web e, finalmente, o que deveria ser renderizado na interface do usuário se o modelo usasse o bash. E,
+
+obviamente, eu não criei isso só porque fica bonito e funciona. Então, podemos executar o comando `ls-la`, e agora devemos ver o terminal que foi iniciado. O comando está sendo executado e veremos como resposta que estamos em um ambiente de teste do Vercel. Então, eu sei que isso é um pequeno passo para nós hoje, mas um grande passo para o nosso agente poder ter isso agora. Mas você vai perceber, e eu volto às instruções e ao comportamento. Se eu perguntasse
+
+"O que você vê?" O agente parece estar alheio a tudo. Agora ele sabe que tem uma ferramenta bash, mas não sabe realmente quando usá- la, como usá-la ou o que usar. Então, é aqui que poderíamos literalmente dizer que poderíamos entrar nas instruções do nosso agente e dizer: "Você é um agente com um computador. Você pode acessar com o bash. Se
+
+o usuário perguntar o que você pode ver, use o comando 'ls'." Algo assim. Essa é uma mensagem terrível do sistema, mas você pode perguntar algo como: "O que você vê?" Naturalmente, isso significa que ele vai começar a usar o computador um pouco mais. Hum, isso não é muito útil agora.
+
+Acho que uma progressão natural ao ter acesso a um sistema de arquivos é tipo: "Vamos armazenar coisas nele, certo?" E o próximo passo bastante natural para armazenar informações com um agente é a memória. Acho que muita gente está pensando sobre o que seria uma memória ideal. Minha opinião polêmica é que a memória é um arquivo que você armazena em seu ambiente isolado (sandbox) e você tem algum tipo de código determinístico para acessar esse arquivo, injetá-lo no prompt do sistema e, potencialmente, ter algum tipo de estrutura em seu sistema de arquivos para diferentes tipos de memória. Então, você terá um arquivo core memories.md, que contém
+
+os dados enviados a cada turno. E provavelmente há algumas informações ali, como por exemplo, para pesquisar o histórico de conversas, que fica armazenado em um arquivo chamado conversations.jsonl ou algo parecido. Mas a questão é que o sistema de arquivos se torna esse campo de testes, esse ambiente para você armazenar de forma estruturada grande parte dessas informações. E o mais interessante é que esses agentes são tão bons em gerar comandos bash que conseguem usar coisas como find, ls, grep, glob e todo tipo de recurso.
+
+Então, vamos para a última coisa com a qual vamos brincar aqui, que é adicionar esse conceito de memória persistente. Então, vou copiar isso rapidinho aqui. Eu expliquei a ideia básica do que estava pensando, que era algo como: vamos ter um arquivo no nosso sistema de arquivos chamado memories.md. O agente saberá colocar novas memórias lá dentro. E então, nessa
+
+chamada de preparação, que é executada uma vez antes de cada execução do agente, vamos buscar esse arquivo e simplesmente injetá-lo no prompt do sistema, nas instruções, com algum tipo de contexto em torno dele. Então, é isso que estou fazendo aqui. Estou buscando o arquivo memories.md. Estou obtendo a própria string. E então, tenho as instruções
+
+de antes: você é um agente de codificação com acesso a um computador. Você tem um arquivo memories.md que pode ler e escrever. Você deve sempre adicionar quaisquer informações que o usuário compartilhe ao arquivo memories.md.
+
+E então, se tivermos alguma lembrança, aqui estão suas lembranças; caso contrário, ainda não temos nenhuma. E poderíamos até perguntar algo como "ah, não, na verdade, tudo bem". Podemos fazer assim . E agora eu podia dizer: "Ei, meu nome é Nico." Novamente, são exemplos bem bobos, mas veremos o começo disso. O
+
+nome do usuário é Nico. E agora, se eu atualizar a página e disser "Oi".
+
+Veremos que está apresentando um comportamento indesejado, que é adicionar algum tipo de saudação arbitrária, como " oi" ao usuário. Mas você pode ver que funcionou mesmo assim, como se tivesse o Nico no sistema de arquivos. E eu poderia dizer algo aqui como, por exemplo, não relate tudo, registre apenas as memórias importantes.
+
+Você tem toda a razão. O usuário compartilha apenas fatos importantes e registra memórias relevantes. Vamos tentar. Veja, isso explica o problema da maioria dos agentes: mesmo eu, sendo falante nativo de inglês, acabo escrevendo instruções contraditórias que o agente obviamente interpretará literalmente. Então eu digo olá e agora espero que tenha acontecido de novo .
+
+Então você vê, isso é muita coisa. Isso também é como um modelo mais burro, sabe? Com ​​ou sem GPT-4, então nem...
+
+eu diria para não compartilhar saudações. E isso é ruim porque obviamente isso é tipo o elefante rosa. Você não quer mencionar comportamentos indesejados, pois isso ativaria parâmetros e nós realmente não sabemos o que eles estão fazendo, mas vamos ver. Hum, vejamos. [ __ ].
+
+Isso é realmente... então...
+
+isso não... Sim, exatamente. O fato de ter apagado minhas memórias.
+
+Então vamos nos livrar deles, vamos apagá-los. Ok, ótimo. Vamos remover o "Então, agora, quero dizer , esta é a parte divertida de construir isso, é como se estivéssemos literalmente tentando fazer com que esse tipo de máquina use esse estado persistente." E você verá que, tendo construído tanta coisa com sandboxes agora, o fato de termos apenas esse ID, esse nome, e ele persistir, esteja ativo ou não, ter esse estado persistente, é realmente incrível. Eu trabalhei em alguns prompts anteriormente que realmente melhoram o sistema de memorização. Então, você
+
+pode ver que interações triviais, como cumprimentos, conversas informais ou informações que podem ser derivadas do próprio código, não são salvas. Então, vamos copiar isso e ver como funciona. E agora, espero que quando formos lá... Oi.
+
+Também adicionei avisos ao sistema para torná-lo um pouco mais instigante. Então, algo como se as garras estivessem abertas durante o processo de integração, tipo: "Qual é o seu nome? O que você faz?" Então, e eu meio que sou o Nico. Então, agora está adicionando o nome do usuário.
+
+O que você faz? Eu trabalho na questão: Por que estou fazendo isso? Eu trabalho no SDK de IA da Vercel. Não sei por que digitei tanto hoje. Então, nós adicionamos isso.
+
+E agora, quando entro em um novo bate-papo, digo "oi". É como se tivéssemos essa memória que persistiu ao longo desses estados. Outra coisa muito legal que você pode começar a fazer simplesmente aproveitando o bash que temos aqui é usar algo que já está presente no ambiente e algo em que o agente já é muito bom: gerar e executar código. Assim, algo clássico que vocês verão, e que eu acho que explica por que o Open Claw foi tão empolgante e por que os agentes já decolaram este ano, é essa ideia de agentes se modificando ou se estendendo . E grande parte disso não se trata tanto de se modificar, mas sim de criar esses mecanismos que fornecem o ciclo de feedback no ambiente, onde ele pode construir, executar código, avaliar a saída e iterar sobre isso. E acho que é por isso
+
+também que a programação se tornou naturalmente... o primeiro lugar onde isso realmente enlouqueceu foi quando tivemos compiladores e verificadores de tipo. É como se fosse o ambiente perfeito para aquele loop REPL. Bem,
+
+eu adicionei outro recurso aqui que permite ao agente verificar se há tarefas repetíveis, como gerar um script em Python a partir delas e, em seguida, inserir esses scripts em Python ou a descrição deles no final do nosso arquivo memories.md e usá-los como um núcleo ou para decidir o que fazer em seguida. Portanto, se o usuário pedir para você obter a previsão do tempo, crie um script para isso e, se ele pedir novamente, use o script que você já possui. E isso é como se esses fossem os blocos de construção desse agente que aprende, que constrói o que constrói sobre si mesmo à medida que avançamos. Então podemos tentar. Podemos ver
+
+como isso vai funcionar. Hum, dizemos: confira a previsão do tempo em Londres. Use Python. Quer dizer, vou forçar um pouco a barra aqui, já que estamos fazendo uma demonstração. Ah, e veremos o que acontece. Então, ele vai escrever
+
+algum código Python aqui. E veremos como está o tempo. E agora isso foi adicionado ao nosso memories.md. E é muito legal que tudo isso tenha sido feito por um assistente usando apenas o Bash, e agora ele tem essa ferramenta para obter a previsão do tempo. Então agora poderíamos ver a previsão do
+
+tempo em São Francisco. Vamos tentar. Vai funcionar? E veja, ele usou, ele usou. Não é menos 11, porque por algum motivo ele pegou Quebec, Canadá.
+
+Teremos que modificar um pouco. Sim, faça isso. Faça isso. Ops. Provavelmente estraguei tudo aqui.
+
+Incrível, funcionou mesmo! Ok, então está a 12°C, mas você pode ver agora que temos isso... hum, eu prefiro... Veja, é legal, quanto mais
+
+ele pergunta, mais ele se constrói, mais ele aprende sobre o que eu gosto. E agora, neste computador, este é como o espaço de trabalho e o ambiente de testes dedicados do meu agente, para que ele possa me ajudar com qualquer coisa. Então, essa foi a base do que eu queria abordar hoje. O que eu queria mostrar para vocês é algo como o que eu construí: um sistema de agentes muito complexo baseado exatamente nesses padrões, que eu uso todos os dias para realizar meu trabalho. Então, eu queria, quer dizer, relaxar. Isso será divulgado ainda hoje
+
+. Estou me comprometendo com isso. E isso é basicamente como agentes de fundo de cursor, mas usando aqueles conceitos que vimos hoje. Então, ele usa o SDK de IA, usa esse padrão exato, usa o AI Gateway para inferência, usa o fluxo de trabalho para que possa ser executado indefinidamente, e cada uma das etapas é durável. Assim, cada etapa do LLM é associada a uma etapa de fluxo de trabalho consistente.
+
+E se alguma etapa falhar, o programa tenta novamente até obter um resultado. Sim , isso também se baseia naquilo que estávamos discutindo antes sobre subagentes. Então, tipo, eu posso criar uma nova sessão e dizer: "Sim, temos que terminar." De qualquer forma, já terminei. Bem, isso é mais para eu me exibir, mas...
+
+crie um subagente para explorar este projeto. E depois que a conexão é criada, como estou usando meu hotspot, o processo fica um pouco lento. O que
+
+estou tentando mostrar é que esse padrão se aplica a um sistema bastante grande . E para mostrar como isso está sendo usado por... então, sim, temos subagentes sendo ativados. E isto funciona
+
+em segundo plano. Assim como isso, 23 pessoas na Versel estão utilizando. Eu já movi 3,8 bilhões e meio de tokens por meio disso nos últimos dois meses. Essa taxa de leitura de caixa que eu mencionei me deixa muito orgulhoso, 90 a 91%, responsável por quase 350 PRs. Embora isso não inclua todos os que fecharam.
+
+E sim, e você verá que , se voltarmos aqui, haverá transmissões que podem ser retomadas. E muito bem, vocês podem ver que nosso subagente estava se desviando, encontrando e pesquisando todas essas coisas fora da thread principal. Usei 30.000 tokens, mas recebi apenas cerca de 500 no final. Isso nos mantém dentro de um limite de 7.000 tokens para a
+
+thread principal do agente. Sim, é isso aí . E espero que isso seja divulgado ainda hoje . Obviamente, estarei aqui se vocês tiverem dúvidas depois, caso sejamos expulsos. Sim.

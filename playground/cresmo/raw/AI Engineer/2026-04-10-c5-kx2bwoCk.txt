@@ -1,0 +1,45 @@
+---
+video_title: "Running LLMs locally: Practical LLM Performance on DGX Spark — Mozhgan Kabiri chimeh, NVIDIA"
+video_id: c5-kx2bwoCk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=c5-kx2bwoCk
+video_date: 2026-04-10T00:20:13+00:00
+video_description: |
+  Moving LLM workloads from the cloud to local infrastructure requires a shift in engineering strategy. In this talk, I share my journey of serving and benchmarking open-source models (1.5B to 14B) on an NVIDIA DGX Spark workstation. Using a reproducible methodology with vLLM, I analyze real-world trade-offs in throughput, latency, and the benefits of the 128GB Grace Blackwell unified memory architecture. You will leave with a clear framework for local model sizing, an understanding of quantization performance like NVFP4, and a guide for when local compute is the right choice for your AI stack.
+  
+  Speaker info:
+  - LinkedIn https://www.linkedin.com/in/mozhgankch/
+---
+Olá pessoal. Sou Moska Gabricima, gerente de relações com desenvolvedores na Nvidia, onde trabalho em estreita colaboração com desenvolvedores que criam e implementam sistemas de IA. Hoje, vamos analisar a execução de LLMs localmente e o desempenho prático de LLMs no Jetson Spark. Esta não é uma palestra teórica. É uma jornada baseada em dados que explora as vantagens e desvantagens da infraestrutura moderna de IA.
+
+As conclusões são baseadas em experimentos práticos com o objetivo de entender o que é realmente viável em um único sistema. A evolução da IA ​​impõe maiores exigências aos sistemas de desenvolvimento, criando dois desafios principais. Ou você fica sem memória ou não tem acesso ao conjunto de softwares correto . Então você acaba enviando tudo para a nuvem ou para o centro de dados. À medida que os modelos passam da fase experimental para a produção, preocupações como previsibilidade de custos, residência de dados e latência determinística ganham destaque.
+
+E a velocidade de iteração muitas vezes depende do acesso à infraestrutura compartilhada. E como seu trabalho será agendado em meio a outras cargas de trabalho concorrentes, isso também causa atrasos no desenvolvimento. Então, a questão é: podemos aproximar parte desse fluxo de trabalho de onde o desenvolvimento realmente acontece? Para maximizar a produtividade dos desenvolvedores, são necessárias soluções locais para esses desafios . O Jetson Spark foi projetado desde o início para construir e executar IA e pode ser usado como um sistema independente.
+
+Ele é alimentado pelo superchip GB10 Grace Blackwell , que combina CPU e GPU com uma arquitetura de memória unificada. Com 128 GB de memória unificada e suporte a NV4, permite que os desenvolvedores trabalhem com modelos de até cerca de 200 bilhões de parâmetros localmente, em um sistema que cabe embaixo da mesa ou em cima dela. Ele utiliza a mesma pilha de software de IA da Nvidia usada em ambientes de produção, o que significa que os fluxos de trabalho podem ser migrados do desktop para o data center ou para a nuvem com alterações mínimas. A ideia principal aqui não é substituir a nuvem, mas sim aproximar o desenvolvimento de IA avançada do desenvolvedor. Esta é a minha configuração.
+
+Tudo funciona localmente e é reproduzível. Para disponibilizar os modelos, utilizei o vLLM com um conjunto de modelos quantitativos em diferentes tamanhos e formatos de precisão. Eu executo isso dentro de um contêiner otimizado pela Nvidia . Isso garantiria que nosso ambiente fosse idêntico ao que você implantaria em um centro de dados. E [bufa] em vez de apenas mostrar os resultados brutos, quero mostrar o como.
+
+Eu construí uma plataforma automatizada para avaliação comparativa . Todos os modelos executados, de 1,5 bilhão a 14 bilhões, seguem o mesmo protocolo rigoroso. Isolamento do ambiente via Docker, três execuções de aquecimento obrigatórias e registro de métricas da GPU em segundo plano em intervalos de 1 segundo. À esquerda, você está vendo o script do orquestrador. Para cada execução, o script gera automaticamente um diretório exclusivo usando um carimbo de data/hora preciso e um ID de modelo anonimizado. Para cada
+
+execução do modelo, ele captura a resposta completa do endpoint do modelo e as métricas necessárias. À direita, você vê o resultado, um artefato limpo e versionado da execução. Contém tudo o que é necessário para verificar as descobertas, os metadados e os resultados textuais dos testes de avaliação. No canto inferior direito, você pode ver um exemplo de comando para iniciar o processo . Agora, vamos analisar a lógica de medição propriamente dita.
+
+Em uma aplicação de IA, a latência de ponta a ponta é importante, mas o tempo até o primeiro token é a métrica que define o desempenho percebido pelo usuário. Se o primeiro token chegar instantaneamente, o aplicativo parecerá responsivo. E este script aqui mostra como registramos a data e hora do primeiro bloco de uma resposta de streaming. Neste script, não estamos apenas chamando uma API e esperando por um resultado. Estamos tratando explicitamente a resposta de streaming do servidor vLLM.
+
+Se você observar o bloco destacado na função stream_once, verá a lógica de marcação de tempo . Para explorar isso na prática, realizei uma série de experimentos usando o vLLM no Jetson Spark. Testei diferentes modelos, desde um modelo de instruções menor até variantes otimizadas maiores, todos sob a mesma configuração. Tudo era servido localmente. O objetivo aqui não era ultrapassar limites teóricos, mas sim compreender o comportamento realista em um fluxo de trabalho de desenvolvimento.
+
+Vamos analisar os dados brutos de desempenho que coletei. [bufa] Este gráfico de barras representa o número de tokens de conclusão por segundo em todo o conjunto de testes. Na extrema esquerda, você vê o modelo de 1,5 bilhão de instruções entregando uma quantidade impressionante de 61,73 tokens por segundo. Mas o dado mais interessante para nós é o modelo NVFB4 de 14 bilhões . Apesar de ser quase 10 vezes maior que o modelo de 1,5 bilhão, ainda atinge 20,19 tokens por segundo.
+
+Eu diria que este é um ponto ideal crucial em engenharia. Ao aproveitar a quantização de ponto flutuante de 4 bits NVFB4 da Nvidia, conseguimos manter um modelo sofisticado e altamente inteligente com uma taxa de transferência que ainda é mais rápida do que a velocidade média de leitura humana. O que fica muito claro aqui é a queda acentuada na taxa de transferência à medida que o modelo é escalado. E o quanto a quantização ajuda. Dê uma olhada no modelo base de 14 bilhões .
+
+Cai para apenas 8,40 tokens por segundo. Isso prova que, na arquitetura Blackwell e no hardware Blackwell, a escolha do formato de quantização é tão importante quanto o próprio hardware. É isso que permite ao Jetson Spark preencher a lacuna entre o trabalho de pesquisa e o motor de prototipagem de produção. O Spark me permitiu experimentar diferentes formatos de precisão localmente e entender as vantagens e desvantagens em tempo real. Embora a taxa de transferência seja uma medida de poder bruto, o tempo até o primeiro token é a métrica que define a experiência do usuário.
+
+Isso determina se um aplicativo parece instantâneo ou se apresenta problemas. Em outras palavras, reflete a rapidez com que o modelo começa a responder. Como podemos ver nos resultados, o Jetson Spark oferece uma capacidade de resposta excepcional. O aumento para modelos maiores é esperado. Mais parâmetros significam mais computação antes que o primeiro token seja gerado.
+
+De todos os itens deste gráfico, os mais interessantes são a comparação entre os modelos de 14 bilhões de parâmetros, o modelo base e o modelo NVFB4. Como podemos ver, o modelo NVFB4 de 14 bilhões é 3,4 vezes mais rápido para gerar o primeiro token do que o modelo base não otimizado de 14. Uma conclusão importante que podemos tirar desses dados é que a capacidade de memória não é a mesma coisa que a largura de banda da memória. Embora os 128 GB de memória unificada do Jetson Spark nos permitam ajustar modelos massivos com até 200 bilhões de parâmetros, nosso desempenho ainda é limitado pela eficiência com que conseguimos mover os dados. É por isso que o NVFB4 é o herói aqui.
+
+Isso aumenta efetivamente nossa inteligência por byte, permitindo que um modelo de 14 bilhões pareça tão responsivo quanto um muito menor. Depois de executar todos esses testes, duas coisas me chamaram a atenção. Sobre quando usar o Jetson Spark. Para cargas de trabalho estáveis, dados sensíveis à privacidade e prototipagem rápida. Isso permite que você crie e ajuste localmente com a mesma pilha de software usada na nuvem Jetson.
+
+Acesse build.nvidia.com/spark para consultar os playbooks e o conjunto de softwares que utilizei para esses benchmarks. E em uma única execução local, itere rapidamente e, quando estiver pronto, expanda para um centro de dados ou para a nuvem. Esse é o fluxo de trabalho que o J utiliza e que o Spark possibilita.

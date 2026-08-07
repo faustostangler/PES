@@ -1,0 +1,124 @@
+---
+video_title: "How we solved Context Management in Agents — Sally-Ann Delucia"
+video_id: esY99nYXxR4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=esY99nYXxR4
+video_date: 2026-05-10T19:00:06+00:00
+video_description: |
+  The naive solution is truncation. The obvious solution is summarization. Neither worked — and the Arize team found out the hard way while building an AI agent that had to analyze the very trace data it was generating.
+  
+  A year of lessons from building Alyx, starting with the vicious loop that defined the problem: Alex runs on trace data, the spans grow, the context limit hits, it fails and tries again. The talk covers why truncation breaks reasoning, why summarization gives the LLM too much control, and how head/tail preservation with a retrievable memory store is what actually held. Then: long session evals, sub-agents as the answer when one context accumulates too much, and what they found when they went looking for secrets in the Claude Code source release.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/sallyann-delucia-59a381172/
+  
+  Timestamps:
+  0:00 Introduction and speaker background
+  1:02 Overview of the AI agent, Alyx
+  1:29 The problem: Context engineering vs. prompt engineering
+  4:06 The vicious loop of data growth in AI agents
+  5:16 Why naive truncation failed
+  6:14 Why summarization proved unreliable
+  6:46 The solution: Smart truncation and memory stores
+  8:02 Handling long session challenges
+  9:23 Offloading tasks to sub-agents
+  11:19 Ongoing challenges and future work
+  12:57 Findings from the Claude Code source release
+  13:44 Final key takeaways on context management
+  14:58 Q&A session
+---
+[música] Muito bem
+
+, sejam bem-vindos. Muito obrigada por terem vindo hoje. Estou aqui para falar um pouco sobre janelas de contexto e estou muito animado porque vou falar sobre algo que minha equipe e eu estamos desenvolvendo há quase um ano, que é o nosso agente de IA, Alex. Então, vou falar um pouco sobre algumas das lições que aprendemos sobre gerenciamento de contexto e como sair da janela de contexto. Então, quem sou eu? Meu nome é Sally Ann. Sou o
+
+chefe de produto da Arize. Tenho formação técnica. Comecei na área de ciência de dados e agora desenvolvo produtos para equipes. Sou uma pessoa prática. Sou um dos principais colaboradores do Alex. Não sou apenas um gerente de projetos, mas também
+
+atuo um pouco como engenheiro de IA em meio período . Então, conheço em primeira mão a dificuldade de construir esses produtos e sei que não é fácil criar um agente de sucesso. Meu trabalho hoje é transformar essas dificuldades em ferramentas que realmente possam ajudar as equipes de desenvolvimento de IA. Vou falar um pouco sobre Alex. Não quero gastar muito tempo com o Alex. Se quiser saber mais
+
+sobre o que construímos, venha me encontrar no estande lá embaixo. Vou fazer uma demonstração para vocês, mas basicamente o Alex é um dispositivo de inteligência artificial. Está aqui para ajudar você a criar seus aplicativos de IA. Temos planejamento avançado, mais de 40 funcionalidades integradas e fluxos de trabalho essenciais em engenharia de prompts, como otimização de prompts, geração de dados, aumento de dados, anotações, etc. Essa é apenas uma captura de tela do nosso produto, mas, se quiser uma demonstração, entre em contato.
+
+Para dar um gostinho do que vem por aí, vou falar um pouco sobre o problema da engenharia de contexto, gerenciamento de contexto, contar um pouco sobre um ciclo vicioso em que ficamos presos, como escapamos desse ciclo e como conversas longas podem sobrecarregar os agentes, um pouco sobre o que aprendemos sobre subagentes e, por fim, falar um pouco sobre o que ainda estamos trabalhando, porque certamente não descobrimos tudo. Então, qual é o problema? Acho que por volta de meados do ano passado, a engenharia de contexto começou a se tornar cada vez mais popular. Este é um trecho de Andre Karpathy sobre a importância do "mais um" na engenharia contextual em relação à engenharia de resposta imediata. Acho que, no início, todos estavam muito focados nas instruções, mas começamos a perceber que o contexto era o que realmente determinava o sucesso ou o fracasso de um agente.
+
+Bem, e por isso a estrutura mudou bastante. Já não estamos focados apenas nas instruções, mas sim no novo problema de engenharia, que é o contexto. Então, na minha humilde opinião, a melhor estratégia de contexto é aquela que permite que seus agentes se lembrem do que precisam e esqueçam o que não precisam. Ah, nós temos um pequeno problema. Então, vamos falar um pouco sobre como fazer isso, mas primeiro vamos falar sobre por que o gerenciamento de contexto é importante.
+
+Então, acho que muita gente pensa que gerenciamento de contexto é simplesmente o que cabe na janela, mas engenharia de contexto é, na verdade, escolher estrategicamente o que o modelo enxerga. É muito importante que você pense em quais dados são mais importantes e não apenas pense: "Ah, eu só tenho X quantidade de tokens, vamos colocar o máximo que pudermos e ver o que acontece". Portanto, não se trata apenas de dizer que está dentro desse limite de tokens, mas sim de ser estratégico em relação a isso. E é por isso que isso realmente importa. Todas essas diferentes aplicações, muitas vezes, são executadas sobre o seu contexto. Portanto,
+
+o que você escolhe mostrar ao modelo é realmente importante. Isso pode determinar o sucesso ou o fracasso da experiência. Assim, a nossa realidade com Alex é que Alex é construído sobre uma estrutura elevada, que é a nossa plataforma de observabilidade. Portanto, temos que lidar com todos os rastros que acompanham os agentes de IA. Então, temos um único rastreamento, estamos recebendo, você sabe, a entrada do usuário, há prompts, há todos esses metadados, e então o usuário interage com Alex. E assim,
+
+ele se torna realmente grande. E isso considerando apenas um único traço. Mas o que acontece quando eles querem ver padrões em todos os seus rastros? Bem, isso continua se multiplicando , multiplicando e multiplicando. Bem , ser estratégico em relação ao contexto era algo inegociável para nós. Precisávamos mesmo
+
+descobrir o que era mais importante para o Alex ver. E como lidamos com a situação em que é preciso que ele veja tudo? Bem, esse é o problema que realmente pretendemos resolver. Portanto, como profissional de produto, gosto de dizer que o gerenciamento de contexto não é um problema de produto e UX, mas sim um problema de engenharia. É certamente um problema que os engenheiros tentarão resolver.
+
+Haverá muitas estratégias diferentes que as pessoas tentarão, mas, em última análise, tudo se resume ao produto e à experiência do usuário (UX), porque se um agente não tiver os dados corretos, não tiver o contexto correto, ele dará respostas ruins. E se você der respostas ruins, ninguém vai querer usar seu produto, certo? É por isso que, na verdade, se torna um problema de produto e não apenas de engenharia. E esse é o ciclo vicioso em que ficamos presos. Então, quando estávamos desenvolvendo o Alex, basicamente o que decidimos fazer foi o seguinte: se conseguirmos criar um agente que facilite nosso trabalho no desenvolvimento do aplicativo, saberemos que teremos algo que nossos usuários realmente vão querer usar. E assim construímos o Alex usando o Alex.
+
+E esse é o ciclo vicioso em que ficávamos presos, onde Alex executava comandos em nossos dados de rastreamento. Os intervalos aumentariam, haveria dados em excesso, atingiríamos um limite de contexto e Alex falharia. E o intervalo (span) contém esses dados, então ele tentaria novamente, nós adicionaríamos mais dados a ele, ele seria executado e, em seguida, falharia. Então, ficamos presos nesse ciclo vicioso em que nosso contexto crescia cada vez mais. Não conseguimos convencer o Alex a tocar de fato. Então,
+
+sabíamos que precisávamos elaborar algum tipo de estratégia. Assim, o sistema que analisava os dados era limitado pelos próprios dados, e isso representou um grande problema para nós. Alex jamais conseguiria ter sucesso a menos que pudesse compreender e utilizar todos esses dados. Então, como resolvemos isso? Bem, é uma questão dividida em três partes, três coisas que realmente aprendemos aqui para escapar desse ciclo. Então, como
+
+controlar o contexto de fato, separando-o da memória? Acho que existe algo realmente importante em construí- los juntos, mas eles são, de certa forma, separados. E transferir tarefas complexas de um agente para outro foi outra lição que aprendemos. Então, vou analisar cada um deles e contar um pouco sobre como os abordamos. Então, acho que a primeira coisa que me veio à mente foi uma simplificação muito ingênua , do tipo: "Ok, temos esse enorme bloco de contexto. Podemos
+
+pegar só o começo? Só o começo é importante? Essa informação é suficiente para a Alex realizar a análise necessária?" Então começamos pegando apenas os primeiros 100 caracteres e depois descartamos o resto. Bastante ingênuo.
+
+E funcionou até que deixou de funcionar. No início, parecia que para coisas realmente simples isso funcionaria, mas o agente acabou esquecendo tudo. Os acompanhamentos pareciam novas conversas. Se eu fizesse uma pergunta, Alex responderia, e então eu dizia, sabe, faça uma pergunta complementar, tipo, quais são as entradas mais comuns? Ok, essas são as entradas mais comuns. Certo,
+
+você poderia me contar um pouco mais sobre a entrada B? Não entendeu o que eu estava dizendo. Logo percebemos que isso não daria certo e, por isso, precisávamos começar a considerar outras opções. Bem, a principal conclusão disso foi que o truncamento excessivo comprometeu o raciocínio. Não conseguia se lembrar.
+
+Então pensamos: "Ok, bem, resumo, temos todos esses mestres em Direito, eles são muito bons em resumir." Podemos resumir todo o contexto em uma quantidade menor de tokens para que possamos enviar isso ao LLM e obter um resultado melhor? E essa parecia realmente a solução óbvia, mas era muito inconsistente. Não havia controle sobre o que era importante, sabe? Estávamos simplesmente deixando para o mestrado em Direito (LLM) analisar os dados e decidir o que fazer com eles. Hum, e
+
+isso era bem pouco confiável. Assim, aprendemos rapidamente que a sumarização também não ia funcionar . Essa foi a segunda coisa que tentamos. Então, a próxima solução foi a memória de truncamento inteligente. É isso que usamos atualmente no Alex. Bem, é uma
+
+espécie de combinação de truncamento com um pouco de compressão, eu diria, e armazenamento na memória. Então, vamos considerar que o início ainda tem 100 caracteres. Também retiramos 100 da cauda. Então, nós retiramos o miolo e basicamente o armazenamos. Portanto, o agente ainda tem acesso a isso. Então,
+
+se houver mensagens duplicadas, as chamadas de ferramentas podem ser muito, muito longas, e Alex está fazendo muitas chamadas de ferramentas. Bem, então vamos manter o resultado mais recente . Não reiniciamos o prompt do sistema e truncamos o meio, mantendo apenas o início e o fim, e então, a qualquer momento em que Alex achar que há uma chamada de ferramenta importante ou uma mensagem da conversa anterior que seja importante, ele sempre pode voltar e recuperar esse contexto. Assim, isso dá a Alex um pouco mais de controle sobre qual contexto é realmente importante. E descobrimos que isso foi realmente muito bem-sucedido. Bem, não precisamos
+
+mexer nisso há alguns meses. Estamos chegando ao ponto, sobre o qual falarei um pouco mais tarde, em que estamos revisando nossa estratégia, mas descobrimos que essa combinação de truncamento e memória tem sido realmente muito bem-sucedida. Então, [bufa e limpa a garganta] contexto à parte, o modelo vê a memória, decide o que sobrevive e, portanto, este é um tipo de sistema que construímos com o truncamento inteligente ali. E, mais uma vez, isso está funcionando muito bem para nós. Mas tínhamos outro problema quando estávamos decidindo como lidar com o gerenciamento de contexto, que são as sessões longas, e acho que isso é algo com que muitas pessoas se deparam, pois os usuários geralmente não reiniciam seus chats.
+
+Sabe, acho que existem diferentes abordagens para isso. Algumas pessoas que conheço gostam quando você usa o Claude ou o Cursor, porque assim você consegue reunir tudo em um único chat. Algumas pessoas gostam de ter outras, mas aprendemos com o Alex que todo mundo meio que prefere ficar em um chat enquanto navega de página em página. Assim, nossas conversas se prolongam e nossos fracassos só aparecem mais tarde. Então, quando implementamos esse truncamento inteligente pela primeira vez, parecia que estava funcionando, mas depois, conforme vimos essas conversas cada vez mais longas, começaram a ocorrer falhas e só ficamos sabendo delas tarde demais, quando algum usuário relatou o problema ou quando eu estava analisando os dados e percebi que o Alex começou a esquecer coisas bem no final da conversa. Então, a solução
+
+que encontramos aqui são as avaliações de sessão longas, e quero incluir isso porque, você sabe, talvez não esteja exatamente relacionado a como você lida com o gerenciamento de contexto, mas é um sinal muito útil para entender como está o seu gerenciamento de contexto. Porque acho que sessões longas são algo que acontece naturalmente com esses aplicativos. Então, o que acabamos fazendo é carregar 10 turnos e depois testar o 11º para entender como o contexto está se comportando. Assim, esses erros tornam-se realmente testáveis. Não preciso esperar até encontrar o problema ou que um usuário o reporte . Então, queria compartilhar um pouco
+
+sobre isso e, mesmo assim, com a testabilidade e o truncamento aqui, ainda há, sabe, dados demais às vezes para um único agente. Então, uma grande constatação que também tivemos é que nem todo contexto pertence ao mesmo agente. Bem, vou dar um exemplo aqui, nossa tarefa de busca. Então, é aqui que Alex está tentando pesquisar dados no Arise. Isso acontece dentro da nossa sequência principal de rastreamento ou mesmo quando estamos analisando apenas uma pilha de rastreamento. Pode haver centenas
+
+de segmentos dentro dela, e o Alex precisa descobrir quais dados deve analisar. Portanto, há várias consultas em andamento, toneladas de dados e muito raciocínio intermediário acontecendo passo a passo. E chegamos à conclusão de que nem tudo isso precisa ser discutido abertamente . Então, depois que tínhamos um tipo de agente principal para nossas habilidades de rastreamento, decidimos que isso não era realmente necessário. Então, a solução que encontramos foi a de usar subagentes. E acho que isso também é
+
+algo muito importante quando falamos de contexto e de como gerenciamos esses agentes que precisam de muitos dados, ou seja, como descarregar as tarefas mais pesadas. A conversa principal pode permanecer restrita a pequenos grupos. Então, antes de termos a conversa principal, tínhamos o histórico do chat, muitos dados e a busca, tudo em um único contexto. Tudo isso foi gerenciado por um único agente. E então, basicamente, o que temos é esse agente principal mais um subagente.
+
+Então, temos a conversa principal apenas com o chat e um contexto leve. Mantemos um clima bem leve. O que ele pode fazer é delegar tarefas aos subagentes. E é aí que os dados mais pesados ​​ficam armazenados. Assim, podemos manter todo o contexto de dados complexos em nosso subagente. E então, assim que
+
+obtivermos um resultado, podemos passá-lo de volta para o agente principal, e o usuário poderá compartilhar ou continuar a conversa. E, claro, também pode sempre consultar a memória se alguma vez achar necessário obter mais contexto. Então, acho que isso foi algo que mudou tudo. Implementamos muitos subagentes agora que descobrimos que essa é a maneira correta de lidar com todas as operações que exigem grande quantidade de dados. Então, isso é grande parte do que descobrimos em termos de gerenciamento de contexto. Está
+
+funcionando muito bem. Acho que o que mais me surpreendeu foi o fato de o resumo não ter funcionado. Acho que essa foi, mais uma vez, a escolha óbvia para nós, mas a combinação de truncamento com a capacidade de armazená-lo na memória foi algo que consideramos realmente eficaz. Então, o que ainda estamos tentando descobrir, porque há muita coisa . Um contexto muito amplo ainda pode causar problemas. Acho que ainda é um
+
+problema para nós. Solicitações ou entradas muito grandes ainda atingem os limites do provedor. Então, como estamos em operação, temos um agente operando com dados de outros agentes; você pode imaginar todos os prompts do sistema, as mensagens do usuário, o histórico da conversa. É exatamente isso que nossos clientes estão tentando entender usando o Alex. Assim, à medida que o contexto deles se expande, temos um problema de contexto maior, porque precisamos descobrir como lidar com isso. E o padrão
+
+ao qual sempre retornamos é o de subagentes. Nós simplesmente continuamos dividindo as coisas e deixando o contexto a cargo de diferentes partes. Hum, e isso é algo que ainda estamos aprendendo e vendo se há algo que precisamos fazer para desenvolver ainda mais essa estratégia. A memória de longo prazo ainda é difícil. Isso é algo em que meus engenheiros estão trabalhando neste momento. Portanto, sessões longas
+
+são complicadas. Estamos vendo as conversas crescerem cada vez mais. Acho que, quando começamos, eu via menos de 10 interações por conversa com o Alex, e agora estou vendo as pessoas realmente ultrapassarem esse limite, chegando a mais de 20 . Na verdade, o que está acontecendo é que eles estão navegando pelo nosso aplicativo usando o Alex. Então, à medida que tentam realizar esses fluxos de trabalho mais longos, obviamente fazem mais perguntas e consideram o Alex muito útil, mas isso é um problema para nós, porque precisamos descobrir como lidar com isso. Então, acho que o que
+
+realmente estamos focando agora é na memória de longo prazo. Não é algo que Alex tenha. A memória é, na verdade, apenas esse tipo de contexto com o armazenamento de memória que Alex pode aproveitar. Então, na verdade, não temos memória de longo prazo. Acho importante também porque as pessoas querem fazer referência a assuntos que já discutiram com o Alex. Então,
+
+se eles decidirem iniciar um novo bate-papo, Alex realmente não tem contexto para isso. Então, estamos em processo de adicionar memória de longo prazo, e acho que isso vai ser um divisor de águas para nós. A seleção de contexto ainda é uma heurística para nós. Decidir qual contexto permanece é tão básico quanto isso, como eu disse, tipo, os primeiros 100, os últimos 100. Mas, a gente fica se perguntando: será que estamos mantendo as coisas certas? Hum, na
+
+verdade ainda não temos um orçamento contextual bem definido nem métricas claras para a qualidade do contexto . Usamos nossas avaliações eletrônicas com frequência para medir se o nosso contexto estava correto ou não. Hum, mas acho que há algo um pouco mais sofisticado que estamos pesquisando para descobrir se essa é a heurística correta. Algo que nos surpreendeu um pouco foi que, não sei quantas pessoas estão aqui, mas o código do Quad Code foi liberado para que todos pudéssemos ler um pouco sobre ele. Ficamos surpresos ao descobrir que eles estão usando uma estratégia de truncamento e compressão semelhante à nossa . Estávamos meio que esperando conseguir algum
+
+segredo deles, mas acho que todos nós teremos que continuar fazendo nossa própria pesquisa. Bem, e só para deixar algumas informações importantes, porque eu queria reservar um tempo para perguntas. O gerenciamento de contexto é iterativo. Ainda estamos aprendendo. Acredito que todos devem continuar aprendendo, se dedicando e tentando otimizar sua gestão de contexto. Uma das poucas coisas que considero
+
+realmente claras é que a engenharia de contexto realmente importa. A memória importa e a avaliação importa. Se você pudesse reter alguma informação importante de mim ou de nós aqui na Rise, seriam essas três coisas, e isso vem da nossa experiência, assim como da nossa experiência com toda a nossa base de usuários. E, por fim, os agentes não falham por causa das instruções, mas sim por causa do contexto. Acho que isso é algo que aprendemos na prática e que estamos vendo cada vez mais. No início, os
+
+estímulos eram tudo. Todos estavam focados na engenharia de prompts, mas nós e todos os nossos usuários estamos realmente focados agora na engenharia de contexto, e há muitas estratégias que podem ser aplicadas nisso. Você quer experimentar um aumento? Só quero fornecer um código QR para testar. Você pode experimentar o Alex, nosso agente. Estamos
+
+no estande lá embaixo, se você quiser ver uma demonstração, especialmente do Alex. Terei prazer em mostrá-la, mas queria reservar um tempo para, sinceramente, fazer algumas perguntas e responder a algumas delas . [aplausos]
+
+[aplausos] Sim, uma pergunta. Qual foi a principal novidade que eles apresentaram? Olá, obrigado. Foi uma ótima palestra. Uma das coisas que ficou evidente com o Claude Code Lee foi o esforço que eles dedicaram para não invalidar o dinheiro com o gerenciamento de contexto.
+
+Você também está trabalhando nisso ou como está pensando sobre isso? Sim, acho que agora estamos realmente tentando nos concentrar nas questões de memória de longo prazo. Não investimos muito em dinheiro vivo. Basicamente, temos isso salvo em um banco de dados com IDs. Então, o que o Alex pode fazer é usar uma ferramenta que contém todos os IDs e indica em que parte da conversa ele precisa acessar. Então, foi mais cedo
+
+? Quantas mensagens? E dá para ver um pouquinho da prévia. Então, é assim que temos feito até agora. Acho que definitivamente vamos precisar nos tornar um pouco mais sofisticados e investir nisso. Mas agora está
+
+funcionando. Então, estamos nos concentrando mais na memória de longo prazo porque sinto que é aí que recebo a maioria das reclamações. Sim . Mais alguma pergunta? Tudo bem. Bem,
+
+se tiver alguma dúvida, venha me procurar lá embaixo . Muito obrigado pelo seu tempo. [aplausos]
+
+[música]

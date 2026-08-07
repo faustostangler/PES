@@ -1,0 +1,187 @@
+---
+video_title: "MCP = Mega Context Problem - Matt Carey"
+video_id: YBYUvGOuotE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YBYUvGOuotE
+video_date: 2026-04-25T17:00:06+00:00
+video_description: |
+  The best MCP server is the one you didn't have to build.
+  
+  At Cloudflare we have a lot of products. Our REST OpenAPI spec is over 2.3 million tokens. When teams started building MCP servers, they did what everyone does: cherry-picked important endpoints for their product, wrote some tool definitions and shipped a separate service that covered a small fraction of their API.
+  
+  This was driven by a fundamental context limit of the end users' agent. And tools use a bunch of context just to describe themselves. MCP felt like a Mega Context Problem (and a separate service to maintain).
+  
+  I think we got it all wrong.
+  
+  The context limit is not an MCP problem. It's an agent problem. Tools should probably be discovered on demand and clients are coming around to this. But maybe we can also do it on the server?
+  
+  CLIs get this for free, self-discoverable and documented by design. APIs just need a little help.
+  
+  This talk will cover some of the techniques we've been exploring at Cloudflare, such as codemode and tool search, to make complete APIs accessible to agents through MCP.
+  
+  I'll also cover some of the work we are doing with the MCP Typescript SDK to make stateless servers the default.
+  
+  Speaker info:
+  - https://github.com/mattzcarey
+  - https://www.linkedin.com/in/mattzcarey/
+  - https://x.com/mattzcarey
+---
+[música]
+
+Olá a todos. Bem-vindo. Silêncio. Silêncio. Tudo bem.
+
+Incrível.
+
+Como estão todos? Sim, tudo bem? [aplausos] Ah, obrigada. Gostaria de ouvir alguns debates sobre MCP versus CLI ? Sim, foi por isso que vocês vieram? Enfim,
+
+olá , meu nome é Matt. Eu trabalho com MCP e agentes na Cloudflare. Sejam bem-vindos à minha palestra. O objetivo é transformar cada API em uma ferramenta para agentes. APIs existem por aí. Como podemos conectá-los aos
+
+agentes e fazê-los executar tarefas? Então, eu realmente amo meu trabalho porque todos os dias eu posso decidir, tipo, se um agente tivesse essa aparência, ele faria isso ou faria aquilo? E eu acho isso bem divertido. Hum, e frequentemente oscilamos o peso entre os dois. Tipo, alguém faz algo que você acha um pouco engraçado e aí, seis meses depois, todo mundo está fazendo a mesma coisa e dizendo que foi a melhor coisa do mundo. Sim
+
+, é muito bom mesmo. Mas, a parte principal da função, eu acho, e o que acabo fazendo no dia a dia, é como podemos ajudar os agentes? Como permitimos que eles interajam com o mundo exterior? E você provavelmente já viu algo parecido. Isso é uma chamada de ferramenta, uma chamada de função.
+
+Hum, já existe há algum tempo. O LLM escreve uma função, você executa a função. Bash bash bash, a temperatura em Londres está em 18°. Não, está fazendo oito horas e está congelando. Que tempos tristes.
+
+E então, a partir daí, passamos de ferramentas agrupadas para algo como ferramentas compartilhadas. Assim como as pessoas criaram ferramentas em seus agentes. E você provavelmente sabe disso, já que tudo isso é história recente, então provavelmente todo mundo está ciente, mas antes do MCP, as pessoas agrupavam todas as suas ferramentas em seus agentes e as mantinham agrupadas neles. Então, se eu quisesse interagir com o Gmail ou algo assim, eu criava várias ferramentas para o Gmail, as agrupava com meus agentes e pronto. E a próxima pessoa teria que fazer exatamente a mesma coisa. E aí acabamos com essa
+
+grande explosão de MCP e MCP remoto por volta de abril do ano passado. E os provedores de serviço pensaram: "Ah, podemos dar a todos as ferramentas MCP e assim todos podem usar as mesmas ferramentas padronizadas. Criamos tudo uma vez e fornecemos como mais uma interface para as pessoas consumirem nossa API. Talvez haja uma CLI, uma API, talvez uma API GraphQL, e agora temos o MCP como mais uma interface." Mas a coisa ficou um pouco interessante, porque oito ferramentas funcionavam bem.
+
+Mas o que aconteceria se adicionássemos mais algumas? Ou mais algumas? Ou mais algumas? Ou mais algumas? Ou mais algumas? E aí você pensa:
+
+"Quero dar a um agente acesso a toda a nossa interface de API." Bem, isso não vai acontecer. Por que não vai acontecer? Você destruiu completamente a janela de contexto do agente. Você a aniquilou por completo.
+
+Isso representa mais de 1 milhão de tokens. E esse foi o problema que encontramos algumas vezes... Bem, isso foi há cerca de um ano.
+
+Estávamos tentando dar acesso a toda a API do Cloudflare para os agentes. Você tenta criar ferramentas simples que tenham todos os endpoints da API e acaba sobrecarregando o sistema . A especificação OpenAPI prevê 2,3 milhões de tokens. Em ferramentas, isso representa algo em torno de 1,1 milhão de tokens. E isso nunca vai funcionar, mesmo com os modelos fundamentais mais robustos.
+
+Naquela época, pensamos: "Sabemos que isso não é necessariamente um problema do MCP, mas é assim que todo mundo está fazendo." Então, nós vamos nos adaptar. Vamos nos adaptar. Vamos improvisar." E vamos dividir nossa API em vários serviços MCP diferentes, baseados em produtos . Então, você provavelmente já viu isso:
+
+uma empresa que publica potencialmente 16 serviços MCP e os usuários precisam interagir com aquele que desejam usar, quando desejam usá-lo. Há muito menos contexto, mas o usuário precisa selecionar. E na maioria das vezes, a cobertura é incompleta. Por exemplo, em um dos nossos pacotes de produtos, podemos ter seis ferramentas no nosso servidor MCP, mas a API total pode ter uns 30 endpoints. Ou seja, perdemos completamente a cobertura.
+
+E isso não cumpre o objetivo de tornar cada API uma ferramenta para agentes. Na verdade, é meio irritante. Então, acho que erramos um pouco . Bem, na Cloudflare, tínhamos 16 servidores muito rapidamente. Estávamos perto de 2.500 endpoints. Acho que Na
+
+verdade, já temos cerca de 2.600 endpoints de API. Mas basicamente não conseguíamos dividir todos eles entre nossos servidores, e os usuários tinham que escolher quais queríamos. O que realmente precisávamos era de descoberta progressiva de ferramentas. Alguém já ouviu falar de descoberta progressiva? Alguém
+
+? Legal. E isso nos leva ao ponto crucial dos debates que todos têm online. Como fazemos a descoberta progressiva? E o MCP está morto? O MCP foi
+
+uma ideia realmente ruim? Bem, eu diria que não . O MCP é um protocolo. Todas essas ferramentas podem ser expostas via MCP. Só não devemos despejar um monte de ferramentas no contexto. Esse é o ponto principal.
+
+Não devemos despejar ferramentas no contexto. E todas as funcionalidades, como prompts e recursos no futuro (habilidades são basicamente recursos), não devem ser carregadas de uma vez. Então, existem três maneiras de se obter... Em relação a
+
+esse problema, existe uma CLI que as pessoas realmente gostam. Existe a ferramenta de busca. Ou existe uma terceira opção que abordaremos um pouco mais tarde. Mas, como uma CLI funcionaria para agentes? Bem, isso é um ambiente isolado em segundo plano.
+
+E se eu usar nossa CLI e fizer algo como chamar o Wrangler, receberei uma série de comandos. O agente pode ler esses comandos, executá-los e dizer: "Ah, eu quero interagir com o banco de dados." Vamos usar o Wrangler D1." E talvez queiramos listar nossos bancos de dados, enfim. E depois de um tempo e algum processo interativo, aparentemente, obtemos os bancos de dados que tenho na minha conta. E um agente
+
+pode fazer isso, na maioria das vezes. Ele pode chamar o comando ` help` para obter informações sobre quais parâmetros precisa e isso geralmente funciona. É muito popular em ferramentas como o OpenClaw e as pessoas geralmente gostam de CLIs. Mas você precisa de acesso ao shell. Esse é o principal problema.
+
+Acho que é o ponto crucial. Você precisa ter acesso ao shell e isso é meio chato. Então, para ferramentas como o Cloud Code, eles queriam uma maneira mais estruturada de fazer as coisas. Então, eles têm a ferramenta de busca. Eles têm uma ferramenta de busca que carrega as ferramentas necessárias no contexto em que precisam. Digamos que eu queira
+
+criar um worker. O que aconteceria é o seguinte: ele pegaria a pergunta do usuário, faria algum tipo de correspondência de palavras-chave e adicionaria K (digamos, oito ferramentas) ao contexto. Em algum momento, o LLM (Learning Language Management) analisaria e diria: "Ah, na verdade, os workers criaram esta ferramenta, e é esta que precisamos". Então, usaríamos essa . Mas as demais permaneceriam no contexto. Talvez não sejam oito, talvez
+
+sejam seis. Elas mudam, mas, no final, você teria cerca de 2.100 tokens, dos quais apenas 500 seriam usados. Mas funciona. Funciona muito bem. Você carrega apenas as
+
+ferramentas relevantes. E, por último, esta é uma postagem de blog que a Cloudflare publicou no verão passado. Nela, ela discute como, em vez de usar uma ferramenta de busca estática ou exigir que um agente tenha uma CLI, podemos permitir que o agente escreva código? E como podemos permitir que o agente escreva código em nosso ambiente? API.
+
+E acontece que o TypeScript é, na verdade, uma forma muito concisa de representar entradas e saídas, de uma maneira que um agente possa entender . Digamos que você tenha todos esses endpoints, como um para obter scripts de worker ou um para criar um worker, ou algo assim. Nós geramos esses tipos e, em seguida, deixamos o modelo, dado esses tipos, escrever algum código com base neles. Aqui, estamos fazendo o código para listar workers. Espero que vocês consigam ver.
+
+E vamos tentar listar alguns workers. Isso pode ser uma solicitação do usuário para listar workers. O modelo gera esse código com base em um SDK tipado que geramos a partir da nossa API. Você pode gerá-los a partir de especificações OpenAPI. E então podemos executar isso e listar os workers que temos em nossa conta.
+
+Poderíamos implantar um worker. Seria divertido. Olá, mundo! E poderíamos colocar isso atrás de uma das coisas mais difíceis de se fazer no Cloudflare, o que é estranho, porque é um produto tão poderoso, mas podemos adicionar acesso, que é como o nosso IDP gerenciado. E agora esse worker está protegido por um controle de acesso.
+
+Bem legal. Com uma política de acesso que permite apenas que eu entre e todas essas coisas boas. Super, super fácil. E um agente pode gerar todo esse código com base nos nossos tipos. Então, isso parece um passo na direção certa.
+
+Deixamos o modelo escrever o código. Nos beneficiamos com a melhoria do modelo. Nos beneficiamos, sei lá, com a melhoria da nossa especificação OpenAPI. É como se essa devesse ser a fonte da verdade. Mas, tivemos essa coisa meio estranha, em que achamos isso incrível e ficamos bem animados. Só que
+
+os clientes não implementaram. E quando digo clientes, agora estou usando os termos do MCP. Então, o cliente é o agente. Portanto, nos referiremos ao agente como cliente daqui para frente. Mas, então, os clientes realmente não implementaram.
+
+E estamos um pouco confusos sobre o porquê disso. Isso foi há uns oito ou nove meses, e é melhor agora. uma forma de interagir com APIs. Basta deixar o modelo escrever código para a API, mas eles não implementaram isso. E por quê?
+
+Porque executar código não confiável é extremamente perigoso. Se eu tivesse dito a vocês alguns anos atrás: "Vamos deixar um modelo de linguagem escrever um código que vamos gerar e executar para nossos usuários sem analisá- lo, sem lê-lo, sem ver o que ele faz, isso pode potencialmente ter acesso a segredos." Idealmente, possui algum acesso secreto. Você pensaria: "Que loucura! Isso é um currículo, né?" É um currículo. Tipo, é uma
+
+vulnerabilidade. Isso é um problema. E agora estamos propondo que você faça isso. Então, é bastante assustador. Quanta coisa pode dar errado. Poderia ler um
+
+sistema de arquivos, ler alguns segredos que você não quer que ele leia. Isso poderia extrair esses segredos para uma requisição de rede, executar loops infinitos, consumir todos os seus recursos, fazer coisas realmente assustadoras , executar um minerador de criptomoedas, sabe? Isso seria ruim. E, no passado, as pessoas tentaram diversas coisas para permitir que outros executassem soluções semelhantes a código . Então, se alguém já escreveu uma DSL, algo como uma especificação JSON sobre como interpretar isso como código, é basicamente isso.
+
+Se você já usou algum daqueles softwares de integração em que precisa fazer isso, é isso mesmo. Eles simplesmente não confiam em você para escrever código nos servidores deles. VMs também, pessoas criando ambientes isolados (sandboxes) para executar código, grandes ambientes isolados, grandes VMs, é isso. E também revisão de código. Mas, por sorte, temos um mecanismo primitivo bem interessante que resolve isso.
+
+E haverá outros mecanismos primitivos que resolverão isso. Acho que esta é a primeira vez, então vale a pena divulgar, de verdade. E a questão é: como executar código não confiável de uma forma que seja extremamente segura para você e sua infraestrutura? E é mais ou menos assim. Portanto, podemos executar um trabalhador a partir de uma string. E um trabalhador é
+
+como um pequeno isolado em V8. Existem muitos blogs explicando como tudo isso funciona. Não vou entrar em muitos detalhes. Vou apenas mostrar o que ele pode fazer. Por exemplo, temos este trecho de código que foi gerado e vamos executá-lo . E isso era executado em
+
+segundo plano. Não funcionou no meu navegador. Foi executado em um worker dinâmico que está totalmente isolado. E como eu acho que posso provar isso para você? Ao fazermos isso, estamos tentando obter alguns segredos aqui, process.env.
+
+E se as imprimirmos, não haverá segredos. E também temos essa estranha configuração global da Cloudflare. Ooh, interessante. Se ativarmos isso, será com a compatibilidade de nó ligada. Se desativarmos a compatibilidade com o Node.js,
+
+nem sequer temos o arquivo process.env e tudo dá erro. Então, podemos gostar de influenciar. Temos isso como uma espécie de sandbox programável. Não é bem uma caixa de areia. É como um dispositivo muito leve, no qual
+
+você pode inserir código e executá-lo. E mostrarei outras opções mais tarde. Tipo, não somos os únicos que temos isso, mas temos um serviço que hospedamos para vocês e que atinge um nível de escala semelhante ao do Cloudflare. Se você quiser fazer bilhões de solicitações, fique à vontade . E agora, aqui está um exemplo em que o agente escreveu um código que acessa uma API externa. E se
+
+executarmos este comando, é como se este trabalhador não tivesse permissão para acessar a internet por meio de funções globais. Ou talvez queiramos que ele tenha acesso à internet. E agora podemos dar-lhe acesso. Portanto, é um ambiente de testes programável com proteções programáveis. E tudo o que estamos fazendo aqui é como alterar uma variável booleana no servidor. É
+
+basicamente tudo o que está acontecendo aqui. Mas você pode fornecer uma função mais detalhada, como, por exemplo, "Acessar somente conteúdo destes domínios". E é isso que fazemos no Cloudflare MCP. Hum, se formos para o próximo. Ah, falando no Cloudflare MCP, é aqui que eu realmente espero que a demonstração funcione.
+
+Então, este é um cliente MCP neste slide. E se fizermos uma pergunta, vamos receber uma tela de autenticação. E então, com sorte, tudo isso funcionará.
+
+Oh, que loucura. Então, agora temos acesso completo, ou melhor, acesso somente leitura a toda a API do Cloudflare. Tenho acesso somente leitura a toda a minha infraestrutura do Cloudflare . Hum, o que é bem legal. Não se preocupe com esses IDs de conta .
+
+No mundo da Cloudflare, não são segredos. Ah, legal . Então, acabamos de listar um trabalhador, mas você poderia fazer muito mais coisas aqui. Por exemplo, você pode implantar workers a partir da linha de comando. Você pode fazer o que fizemos antes e adicionar acesso a alguma coisa. Você poderia
+
+[bufa] inspecionar seu DNS. Você poderá enviar e-mails em breve. Você pode fazer um monte de outras coisas. Tipo, é muito, muito legal o que você pode fazer aqui porque você tem acesso a toda a API do Cloudflare, todos os mais de 2.000 endpoints.
+
+E acho que isso levanta a questão de para onde estamos indo ao permitir que agentes acessem ferramentas externas? Tipo, como é que isso se parece? Tipo, você tem gente instalando CLIs para tudo e executando por conta própria, em suas próprias máquinas. Talvez executando em uma máquina virtual. Isso é bem legal.
+
+Você nos faz pensar: "Ah, você poderia simplesmente executar código não confiável em outro lugar, que é realmente isolado." Você tem pessoas fazendo buscas por ferramentas. Você tem pessoas renderizando o JSON da interface do usuário. Não sei. Bem, acho que meu principal pensamento é que teremos muitos ambientes isolados na web.
+
+E haverá uma infinidade de primitivas de infraestrutura que permitirão executar esse tipo de código não confiável na web, porque o código é, na verdade, um plano muito compacto. Em vez de fazer chamadas de ferramentas, você pode ter uma ferramenta chamada " código" onde o modelo gera o código de sua escolha e então você o executa. E esse código tem muito mais graus de liberdade do que uma chamada de ferramenta individual . Portanto, faz sentido para mim que, à medida que os modelos se tornam mais inteligentes, é isso que faremos. E as pessoas adaptarão seus elementos básicos de infraestrutura para fazer isso.
+
+Então, haverá muito mais disso. E você vê isso começando com o Pydantic Monty, o Deno também, e também temos isso com o WorkerD, os workers dinâmicos que mostrei anteriormente. Tipo, cada vez mais pessoas vão construir esses modelos primitivos porque eles vão se tornar cada vez mais úteis. Então, só para dar uma pequena explicação. Bem, isto é o WorkerD, que consiste em criar um trabalhador dinâmico nesta sandbox e executar algum código para obter uma sequência de Fibonacci.
+
+Você pode fazer a mesma coisa com o Deno usando o comando `deno run`, com algumas verificações questionáveis. Não faço ideia do que isso faz. E você também pode fazer algo parecido com o Pydantic. Monty, o novo interpretador de código deles para executar Python não confiável. Como se trata de Python, precisamos baixar o Python. Uma
+
+droga. Isso pode nunca funcionar. Na verdade, não faço a mínima ideia. Ah, aí está. Ótimo.
+
+Então, talvez você consiga perceber aonde queremos chegar com isso. Houve um tempo em que ninguém executaria código não confiável. Isso era um currículo. Tipo, você simplesmente teria que parar de permitir isso imediatamente. E parece que, para eles, os LLMs são realmente muito bons para escrever código que pode ser executado.
+
+E agora estamos construindo os elementos básicos para realmente nos permitir fazer isso. E parece que perdemos toda essa parte do cenário tecnológico, algo que nunca tínhamos experimentado antes. Por exemplo, na década de 1950, quando você queria executar algo em um computador na sua cidade, você imprimia alguns cartões perfurados, os carimbava e os entregava para o técnico. E isso era como executar um código não confiável, certo? Tipo, foi basicamente isso. E então, quando
+
+passamos para a nuvem, nos afastamos disso . E agora acho que vamos voltar muito mais para aquele cenário em que os usuários podem escrever código porque seus usuários são IA. E a IA é muito boa em escrever código. E é assim que eles vão interagir com a sua plataforma, seja através do MCP, seja mesmo através de bash e CLI. Tipo, eu não me importo.
+
+Acho que eles simplesmente vão escrever código direcionado aos seus serviços. E seus serviços precisam estar preparados para isso. Por exemplo, suas APIs precisam estar preparadas para suportar uma carga intensa, pois precisam ter um bom mecanismo de limitação de taxa. Porque posso executar isso em um loop "for" em várias sandboxes ao mesmo tempo e simplesmente sobrecarregar sua API. Tipo, você precisa ter alguma forma de se proteger contra isso. Tipo, este é o novo mundo em que vamos
+
+viver agora . E isso se aplica ao lado do servidor, ao lado dos serviços. E agora, o que vai acontecer do lado do cliente? Então, acho que isso é ainda mais interessante porque se trata do lado da experiência do usuário. Tipo, o usuário não vai ver o servidor. O
+
+usuário não se importa. O usuário simplesmente pergunta: "Por que meu agente não está recebendo meus e-mails do Gmail?" Ou por que minha caixa de entrada inteira foi apagada? Eles não vão gostar. Eles não vão ver isso.
+
+Mas do lado do cliente, muita inovação vai acontecer . E acho que demos uma pequena travada recentemente porque, na verdade, construir um cliente MCP em particular se tornou muito, muito difícil. Por exemplo, para realmente construir um cliente que fosse performático, que funcionasse, você precisava gerenciar conexões com estado, precisava gerenciar a capacidade de retomar a conexão entre essas conexões. Existem muitos outros motivos pelos quais construir um cliente MCP foi difícil, mas foi uma dor de cabeça, uma dor de cabeça absoluta. Então, as pessoas tinham os clientes mais despojados possíveis . A maior parte das funcionalidades era transferida para os
+
+SDKs do MCP, que são bastante básicos. E ninguém estava criando experiências de interface de usuário mais exclusivas além disso. E eu acho que isso vai acontecer muito, muito em breve. Então, a coisa mais óbvia é que teremos uma ferramenta programática fazendo chamadas nos clientes. No slide anterior, mostramos os ambientes de teste ( sandboxes) com WorkerD, Deno e Pydantic, o que equivale a executar código não confiável em um cliente. As pessoas
+
+vão fazer isso. Se o seu cliente estiver em um local remoto, você fará dessa forma. Se o seu cliente for local, então, simplesmente aproveite a vida, faça o que quiser. É só avaliar, sabe? Vai ficar tudo bem. Mas cada vez mais pessoas
+
+vão usar essa ferramenta programática de chamada. Vai acontecer. E como você está gerando código, as pessoas vão salvar esse código. E eles vão salvar isso em pequenos roteiros. E os usuários poderão decidir: "Ah, essa ação que acabei de realizar, gerada pelo LLM para mim, quero guardá- la para mais tarde." E então será
+
+muito mais rápido. Assim, você pode ver coisas como tarefas cron. Um usuário pode configurar uma tarefa de web scraping sem ter nenhum conhecimento de como o web scraping funciona. E então ele gera um script, e esse script é executado diariamente ou a cada dois dias. E sempre que algo der errado, porque a extração de dados da web é bem frágil, o agente irá corrigir e salvar o script novamente.
+
+Tipo, é assim que as coisas vão acontecer. E eu acho que esses mini scripts salvos só funcionam quando você usa ferramentas de chamada programática, mas eles realmente funcionam. E por último, provavelmente teremos muito mais clientes, porque tem sido muito difícil conquistá-los até agora, mas isso vai ficar mais fácil. Na verdade, não existe uma grande quantidade de clientes MCP realmente bem utilizados . Isso vai mudar. E com essa
+
+mudança, à medida que mais pessoas forem capazes de criá- las, mais pessoas implantarão agentes na nuvem que acabarão se tornando clientes MCP. E acho que mais pessoas vão tentar fazer algo parecido com um loop de agente sem estado. Seria ótimo se houvesse ambientes de teste (sandboxes) para cada agente, como executar código localmente, mesmo que existissem milhões de agentes no mundo. Acho que quando houver uns 100 agentes para cada pessoa...
+
+Ah, olá. Não vamos fazer isso. Isso vai começar a ficar muito difícil. E você terá que adotar uma forma de fazer as coisas nativa da nuvem, o que significa que o estado precisa ser algo que você possa ativar ou desativar. E acho que estamos chegando ao fim, mas esta é a minha última coisa. É
+
+como se eu trabalhasse muito em servidores MCP e no SDK. E é aqui que eu acho que essa parte vai dar . Acho que veremos o MCP como um middleware quando você construir um servidor MCP. Ao criar uma API e um serviço de API, você poderá ativar essa opção em seu framework preferido. O próprio SDK está ficando extremamente leve. E eu acho que até o final
+
+deste ano, estaremos presentes nativamente em pelo menos todos os principais frameworks full stack do TypeScript. Estará lá, nativamente. Por ser tão pequeno, ele literalmente expressará o protocolo em si. E seria uma tolice da parte deles não o terem. Eles simplesmente terão uma integração nativa.
+
+E eles poderão fazer isso. O MCP é válido para todas as suas APIs. E como todos os clientes farão chamadas programáticas às ferramentas , você pode expressar suas mil APIs a partir de um único aplicativo Next.js, simplesmente definindo `MCP = true`, e expô-las também nas ferramentas da Microsoft via MCP. E eu acho que isso vai acontecer. Já faz um
+
+tempo que venho pensando que isso vai acontecer, mas acho que estamos bem, muito perto disso. E o último obstáculo é, na verdade, corrigir o SDK para que ele seja capaz de fazer isso. É capaz de caber em qualquer frente, em qualquer pacote, na verdade. E esse é o plano. Você pode encontrar mais informações no post do blog "Temos um Modo de Código" que foi publicado recentemente. Foi assim que conseguimos fornecer aos agentes uma
+
+API completa em mil tokens. Se você tem uma API grande, provavelmente deveria fazer isso. Fornecedores de acessibilidade, por favor, façam isso, porque é realmente muito bom para as pessoas acessarem seus dados. Hum, e obrigada. Experimente os agentes da NPMI. Muito obrigado
+
+. Uau! [aplausos]
+
+[aplausos]
+
+[música]

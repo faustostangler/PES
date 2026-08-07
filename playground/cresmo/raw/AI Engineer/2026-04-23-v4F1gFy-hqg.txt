@@ -1,0 +1,124 @@
+---
+video_title: "\"Software Fundamentals Matter More Than Ever\" — Matt Pocock"
+video_id: v4F1gFy-hqg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=v4F1gFy-hqg
+video_date: 2026-04-23T15:15:06+00:00
+video_description: |
+  Matt will be back on stage at the World's Fair next week! see https://ai.engineer/wf and use YOUTUBEPROMO for new tickets only. Join 6000 AI engineers at the "Superbowl of AI"!
+  
+  ---
+  
+  AI coding tools are overhyped and powerful at the same time. Used well, they're extraordinary. Used badly, they'll bury you in spaghetti code faster than any human team could. The difference isn't the tool. It's the process. After 18 months of teaching developers to build with AI agents, Matt Pocock has watched the same patterns emerge: the devs who succeed aren't the ones who delegate everything or nothing. They're the ones who fall back on engineering fundamentals. In this talk, he shares the iterative process his students use to ship high-quality applications with AI agent swarms, and why the principles that make it work (ubiquitous language, vertical slices, TDD, deep modules) are decades-old ideas that didn't break. They got more important.
+  
+  Speaker info:
+  - https://x.com/mattpocockuk
+  - https://www.linkedin.com/in/mapocock/
+---
+[música]
+
+Olá a todos. A conferência está sendo produtiva até o momento? Sim. A conferência está sendo boa até o momento? Sim. Bom.
+
+Maravilhoso. Tenho uma mensagem para vocês que espero que seja reconfortante para aqueles que acreditam que suas habilidades não valem mais nada nesta nova era: acredito que os fundamentos de software importam agora mais do que nunca . E eu sou professor, e recentemente tenho ministrado um curso chamado Clojure Code for Real Engineers (Código Clojure para Engenheiros de Verdade). Agradável e provocante. E, no processo de desenvolvimento deste curso, tive que criar um currículo sobre programação de IA, o que é um verdadeiro pesadelo, porque as coisas estão sempre mudando , não é? A IA representa um paradigma completamente novo.
+
+Precisamos descartar todas as regras antigas, com certeza, para que possamos adotar as novas. E surgiu um tipo de movimento em torno disso, que é o movimento "especificações para código" . E o movimento "especificações para código" afirma que: "Ok, você pode escrever uma especificação sobre como um aplicativo deve funcionar. Então, você pode usar IA para transformá-la em código. Se houver um problema com o aplicativo, você volta à especificação. Você não
+
+analisa o código em si. Você apenas altera a especificação, executa o compilador novamente e acaba com mais código." Levante a mão quem já ouviu falar disso. Mantenha a mão levantada se você já tentou . Ok, eu também já tentei. Pode
+
+baixar as mãos. E o que eu percebi foi que, ao executar o programa, eu tentava não olhar para o código, mas acabava olhando, e percebia que, primeiro, eu obtinha um código, e depois, ao executá-lo, obtinha um código pior. E fiz isso de novo, e o código ficou ainda pior. Consegui de novo, continuei executando o compilador, continuei executando o compilador, e o resultado era sempre um lixo. Sabe, levante a mão se isso já aconteceu com você.
+
+Sim. Acho que isso não funciona. A ideia de que podemos simplesmente ignorar o código e deixar que ele se gerencie sozinho é, de certa forma, programação intuitiva com outro nome. E eu não acreditava nisso naquela época. Pensei: "Certo, como conserto o compilador? Como faço para que ele
+
+não produza código ruim todas as vezes, ou código pior?" Então pensei: "Ok, preciso explicar ao aluno de mestrado em direito, em inglês, como é uma boa base de código." Deixe-me desenterrar um dos meus livros favoritos de antigamente, que é "Filosofia do Design de Software" de John Osterhout. Acesse a Amazon e compre. E ele tem uma definição de como é um código ruim.
+
+Ele chama isso de código complexo. Complexidade é tudo aquilo relacionado à estrutura de um sistema de software que dificulta a compreensão e a modificação do sistema, certo? Portanto, uma base de código ruim é uma base de código difícil de modificar. Se você não consegue alterar uma base de código sem causar erros, então essa base de código é ruim. Boas bases de código são fáceis de modificar.
+
+Então pensei: "Uau, isso foi bom. Vamos tentar outro livro. Vamos tentar O Programador Pragmático." Acesse a Amazon e compre. Eles têm um capítulo inteiro sobre algo chamado entropia de software. E era
+
+exatamente isso que eu estava vendo. Entropia é a ideia de que as coisas tendem ao desastre, se afastando umas das outras e entrando em colapso. E é exatamente assim que a maioria dos sistemas de software se comporta: cada vez que você faz uma alteração na base de código, se você estiver pensando apenas nessa alteração e não no design de todo o sistema, sua base de código vai piorar cada vez mais . E era isso que eu estava vendo. Tudo dentro da ideia de "especificações para código", que consistia em simplesmente executar o compilador repetidamente, estava resultando em um código pior.
+
+Existe uma ideia que impulsiona o movimento de conversão de especificações em código, que é a de que código é barato. Levante a mão quem já ouviu essa frase: " Esse código é barato". Sim. Bem, eu não acho que isso esteja certo. Acho que código não é barato. Na verdade,
+
+código ruim nunca foi tão caro . Porque se você tem uma base de código difícil de modificar, não consegue aproveitar todos os benefícios que a IA pode oferecer, já que a IA em uma boa base de código funciona muito, muito bem. E isso significa que boas bases de código importam mais do que nunca, o que significa que os fundamentos do software importam mais do que nunca. Essa é a tese desta palestra. Então vamos ao que interessa na prática .
+
+Vou falar sobre diferentes modos de falha que você pode ter experimentado, ou ainda não ter experimentado, com IA, e como você pode evitá-los simplesmente consultando livros antigos e analisando boas práticas de software. Parece bom? Então, a primeira é que a IA não fez o que eu queria. Sabe, eu achei que tinha uma boa ideia na cabeça, mas a IA fez algo totalmente diferente, ou melhor, criou algo que eu não queria. Levante a mão se você já entrou nesse modo.
+
+Legal. OK. Bem, é isso que dizem em O Programador Pragmático: ninguém sabe exatamente o que quer. É que existe uma barreira de comunicação entre você e a IA , certo? Então, quando você conversa com a IA, é como se a IA estivesse coletando seus requisitos. Basicamente, trata-se de descobrir
+
+de você o que você precisa. E percebi que havia outro livro, " The Design of Design", de Frederick P. Brooks, que abordava essa ideia chamada conceito de design. É que quando mais de uma pessoa está projetando algo em conjunto, essa ideia fica meio que flutuando entre vocês, essa ideia efêmera da coisa que estão construindo. E essa coisa que você está construindo, ou a ideia dela, é chamada de conceito de design. Não é
+
+um recurso, não é algo que você possa colocar em um arquivo Markdown; é a teoria invisível daquilo que você está construindo. Então pensei: "Certo, é isso que está acontecendo . Eu e a IA não compartilhamos o mesmo conceito de design." Então, desenvolvi uma habilidade. A habilidade é muito, muito simples.
+
+Chama-se Grill Me e tem esta aparência. "Interrogue-me incansavelmente sobre cada aspecto deste plano até chegarmos a um entendimento mútuo. Percorra cada ramo da árvore de projeto, que é outra coisa que Frederick P. Brooks disse: resolver as dependências entre as decisões uma a uma." Essa habilidade é tipo... o repositório que
+
+a contém tem tipo 13.000 estrelas ou algo assim. Tipo, simplesmente enlouqueceu, viralizou. As pessoas adoram isso . Essas duas linhas significam que a IA lhe fará cerca de 40 ou 60 perguntas. Já aconteceu de o programa fazer 100
+
+perguntas às pessoas antes de ficar satisfeito por terem chegado a um entendimento mútuo. E isso significa que transforma a IA em uma espécie de adversária, que fica constantemente enviando ideias e tentando chegar a um entendimento mútuo. Isso significa que a conversa que você gera pode ser transformada em um documento de requisitos do produto ou algo semelhante. Ou, se for uma pequena mudança, você pode simplesmente transformá-la diretamente em um problema. E então seu agente AFK irá pegá-lo .
+
+E não me critiquem por isso, mas eu pessoalmente acredito que isso é melhor do que o modo de planejamento padrão na ferramenta que eu uso, que é o Clojure Code. O modo de planejamento está extremamente interessado em criar um ativo. A ideia é realmente criar um plano e começar a trabalhar. Por outro lado, acho muito melhor chegar primeiro a um conceito de design em comum. Essa é a dica número um.
+
+Agora, o segundo problema é que a IA é simplesmente verbosa demais. É como se você estivesse falando em direções opostas às da IA. Levante a mão se você se sente assim. Se você já passou por essa situação de falha. Sim.
+
+É como se a IA estivesse falando, só que usando palavras demais para tentar comunicar o que está fazendo. Não é como se vocês estivessem falando a mesma língua. E isso me pareceu muito, muito familiar, não é? Se você já foi desenvolvedor por um longo tempo e trabalhou com, digamos, especialistas de domínio, alguém criando um aplicativo, digamos que o especialista de domínio queira que você construa algo em, sei lá, microchips. Você não tem ideia do que são microchips.
+
+É preciso estabelecer algum tipo de linguagem comum, certo? Porque, caso contrário, eles vão usar termos que você não entende. Você vai traduzir isso para um código que talvez você nem entenda, e certamente o especialista no assunto também não entenderá. E então, como existe essa espécie de lacuna de linguagem entre você e o domínio, voltei ao design orientado a domínio, DDD. Isso é algo que ainda estou começando a explorar, mas tudo o que tenho lido sobre DDD é música para meus ouvidos. Eu simplesmente adoro isso.
+
+E o DDD possui um conceito de linguagem ubíqua. Com uma linguagem ubíqua, as conversas entre desenvolvedores, as expressões do código e as conversas com especialistas do domínio são todas derivadas do mesmo modelo de domínio. É basicamente um arquivo Markdown contendo uma lista de termos que você e a IA têm em comum. E você se concentra nesses termos e se certifica de que eles estejam alinhados com o seu significado real, usando-os o tempo todo no código, quando fala sobre o código, quando conversa com especialistas da área ou, no nosso caso, quando conversa com IA. Então eu criei uma habilidade.
+
+Essa habilidade é a habilidade linguística onipresente . Basicamente, ele escaneia sua base de código, procura por terminologia e então cria um arquivo Markdown. Cria o arquivo markdown da linguagem onipresente, um conjunto de tabelas markdown com toda a terminologia. E então eu passo isso para a IA, e eu também consigo ler. E na verdade, eu deixo aberto o tempo todo quando estou fazendo churrasco com a IA, planejando e tudo mais. O que notei ao analisar os
+
+padrões de pensamento da IA ​​é que isso não apenas aprimora o planejamento, mas também permite que a IA pense de forma menos prolixa, o que significa que a implementação fica mais alinhada com o que foi planejado. Portanto, isto tem sido, sem dúvida, uma potência. Tem sido incrivelmente bom. Essa é a dica número dois. Criar uma linguagem comum com a IA.
+
+Então, vamos imaginar que você se alinhou com a IA. Você sabe o que você deveria estar construindo. A IA construiu a coisa certa, mas não funciona. Levante a mão se isso já aconteceu com você. É, simplesmente não funciona.
+
+Bem, há algo óbvio que podemos fazer para melhorar isso, que é usar ciclos de feedback. Podemos usar tipos estáticos, sabe, se você não estiver usando TypeScript, isso é loucura. Bem, se você não estiver usando...
+
+se estiver criando um aplicativo front-end e não estiver dando a ele acesso LLM ao navegador para que ele possa pesquisar, isso é absolutamente necessário. E, obviamente, você também precisa de testes automatizados. E uma coisa que noto aqui é que, mesmo com esses ciclos de feedback, o LLM não os utiliza muito bem. Não parece aproveitar ao máximo seus ciclos de feedback da mesma forma que um desenvolvedor experiente faria. E então, acaba fazendo o que costuma fazer: muita coisa ao mesmo tempo . Vai gerar uma
+
+quantidade enorme de código e depois pensar: "Ah, talvez eu devesse verificar os tipos disso ." Ou talvez eu devesse fazer um teste sobre isso ou algo do tipo. E isso, no livro "O Programador Pragmático", eles descrevem como ultrapassar o alcance dos faróis. É basicamente dirigir rápido demais, porque a taxa de feedback é o seu limite de velocidade. A frequência do feedback é o seu limite de velocidade, o que significa que você deve testar conforme avança, dando pequenos passos deliberados. E a IA, por padrão,
+
+não é muito boa nisso. Então, a habilidade número três é TDD (Desenvolvimento Orientado a Testes). Você deveria usar o desenvolvimento orientado a testes (TDD), pois o TDD força o LLM a dar passos realmente pequenos. Primeiro você cria um teste, garante que esse teste seja aprovado e, em seguida, refatora o código para torná-lo mais elegante e considerando o design. A questão é que fazer testes é realmente difícil.
+
+Fazer provas sempre foi difícil. E a razão para isso é que existem inúmeras decisões diferentes que você precisa tomar ao elaborar uma prova. Você precisa determinar o tamanho da unidade que deseja testar. Você precisa descobrir o que vai satirizar. Você precisa descobrir, em primeiro lugar, quais comportamentos deseja testar.
+
+E todas essas decisões são interdependentes. Portanto, se você estiver testando uma unidade realmente grande, como um aplicativo inteiro e massivo, pode ser que o resultado seja bastante instável. Talvez você não queira testar tantos comportamentos assim. Sabe, se você for testar apenas esta unidade, você precisa criar um mock para esta unidade, entende? Está tudo interligado. E venho pensando nisso
+
+há anos, durante toda a minha carreira na área de desenvolvimento. E o que percebemos é que boas bases de código são bases de código fáceis de testar. Certo? Então, aqui estamos começando a voltar à ideia de que o código é importante. O ponto é que quanto melhor for sua base de código, melhores serão seus ciclos de feedback, porque você consegue fornecer um feedback melhor para o LLM, o que produz um código melhor.
+
+Então pensei: o que define uma boa base de código, qual a aparência de uma base de código testável ? Mais uma vez, recorremos a John Ousterhout. [Limpa a garganta] Ele fala sobre ter módulos complexos em sua base de código. Não são módulos superficiais, nem muitos módulos que expõem tipos, mas sim muitas funções. Deverão ser relativamente poucos módulos grandes e complexos com interfaces simples.
+
+Vamos compará-los rapidamente. Módulos complexos, com muitas funcionalidades ocultas por trás de uma interface simples. Ocultando a complexidade. Você pode examinar o módulo interno se quiser, mas não precisa. Você pode simplesmente usar a interface.
+
+Módulos superficiais, pouca funcionalidade, interface complexa. E eu vou esperar você tirar as fotos. Módulos superficiais em uma base de código se parecem mais ou menos com isso, onde você tem uma tonelada de pequenos blocos diferentes pelos quais a IA precisa passar e navegar. E isso é realmente difícil para a IA explorar. E, muitas vezes, o que você verá é que, se tiver uma base de código como essa — e a IA é muito boa em criar bases de código como essa —, você terá uma situação em que a IA não entende o que seu código está fazendo. Ele tentará explorar o
+
+código, mas como está mal estruturado e cheio de módulos superficiais, talvez não consiga chegar ao módulo correto a tempo ou não entenda todas as dependências e coisas do tipo. Ele não entende seu código. Então, qual é a aparência de uma base de código repleta de módulos complexos? Bem, parece que é assim. É o mesmo código, mas está estruturado dentro de limites, com essas interfaces na camada superior.
+
+E essas interfaces, você provavelmente deveria ter muito controle sobre elas e projetá-las muito bem. Caso contrário, sabe, a IA pode atrapalhar o projeto. Mas a implementação, você pode deixar isso por conta da inteligência artificial. Então, como transformar uma base de código que se parece com isso em uma base de código que se parece com aquilo? Bom, eu tenho talento para isso. Melhorar a
+
+arquitetura da base de código. Acontece que não é bem assim. É bastante complicado fazer isso, mas é como um conjunto de etapas que você pode repetir várias vezes . Você simplesmente explora a base de código, procura oportunidades onde haja código que pareça relacionado e envolve tudo isso em um módulo complexo. E este é um código-fonte testável porque os limites em torno deste código são muito, muito simples. Você testa na interface,
+
+verifica usando essa interface e pronto. Portanto, este é um código-fonte que valoriza o TDD (Desenvolvimento Orientado a Testes). Mas e quanto ao modo de falha número seis? O que significa que seus ciclos de feedback estão funcionando? Digamos que as coisas estão começando a engrenar.
+
+Você consegue produzir mais código do que nunca, mas seu cérebro não consegue acompanhar. Certo? Levante a mão quem já se sentiu mais cansado do que nunca em sua carreira na área de desenvolvimento. Sim, eu também. É exaustivo.
+
+E eu acho que essa base de código, na verdade, dificulta o trabalho do seu cérebro, porque você, assim como a IA, precisa manter todas essas informações na sua cabeça. Dessa forma, além de ser mais simples para você ler e entender, também significa que você pode tratar esses módulos, ou esses módulos mais complexos, como caixas cinzentas. Você pode dizer algo como: "Ok, vou apenas projetar a interface, mas não vou me preocupar muito ou revisar muito a implementação." Obviamente, você pode fazer isso com coisas que são menos críticas em sua aplicação. Não dá para fazer isso com coisas como finanças ou o que for, mas em muitos módulos do seu aplicativo, você não precisa se preocupar muito com a implementação, desde que tenha um limite testável fora do módulo e que entenda seu propósito e possa projetá-lo de fora. Descobri que isso realmente
+
+salvou meu cérebro, porque posso simplesmente dizer: "Ok, IA, vou deixar você lidar com o que está dentro da grande massa. Vou apenas testar de fora e verificar." Então, essa é a dica número cinco. Projete a interface, delegue a implementação. Mas isso significa que, sempre que mexermos no código, sempre que planejarmos algo, precisamos pensar e estar cientes dos módulos em nossa aplicação. Precisamos conhecer esse mapa
+
+muito bem. Isso precisa fazer parte da nossa linguagem universal. Precisamos incorporar isso também às nossas habilidades de planejamento. Então, ao escrever um PRD, eu escrevo especificamente sobre as alterações nos módulos e nas interfaces dentro desses módulos, e como elas estão sendo modificadas. Penso neles o tempo todo . E isso vem
+
+de Kent Beck. Invista no design do sistema todos os dias. E esse é o ponto crucial, certo? Como estamos focando nas especificações para gerar código, não estamos investindo no projeto do sistema. Estamos nos desfazendo disso. Vamos nos
+
+livrar disso. Considerando que isto, penso eu, é absolutamente fundamental. Portanto, o código não é barato. Essa é a mensagem que quero que vocês levem consigo. O código é importante.
+
+E se pensarmos na IA como um programador realmente excelente em campo, uma espécie de programador tático, um sargento em campo fazendo as alterações no código, precisamos de alguém acima disso. Você precisa de alguém que pense em nível estratégico. E esse alguém é você. E isso requer habilidades fundamentais de software que temos usado há 20 anos, ou até mais. Agora, se você se interessou por alguma das habilidades que mencionei aqui, elas estão no repositório do GitHub chamado macpocockskills.
+
+E se você estiver interessado nos treinamentos que eu ofereço ou em qualquer material gratuito, estou no YouTube, no Twitter, e também no aihero.dev, onde você pode conferir minha newsletter. Muito obrigado. Espero que isso lhe dê confiança nesta nova era da IA, mostrando que você realmente pode causar um impacto positivo. Obrigado.
+
+[música] [aplausos]
+
+[música]
+
+[música]

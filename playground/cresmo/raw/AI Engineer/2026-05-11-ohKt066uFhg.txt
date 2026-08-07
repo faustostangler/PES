@@ -1,0 +1,108 @@
+---
+video_title: "Viktor: AI Coworker That Lives in Slack — Fryderyk Wiatrowski"
+video_id: ohKt066uFhg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ohKt066uFhg
+video_date: 2026-05-11T15:00:06+00:00
+video_description: |
+  Viktor is an AI employee that lives in Slack. No web UI. It participates in channels and threads the way a teammate does, inherits integrations from whoever connected them first, and handles tasks that take ten minutes while you move on to something else.
+  
+  This talk covers what breaks when you scale a personal agent to a whole company. Slack is a more complex input surface than it looks: threads, DMs, edits, deletions, emoji reactions, and conversations that drift between channels. Memory isolation gets harder when the same agent needs context for a hundred users without leaking the growth channel into the engineering queue or one person's DMs into the team feed. And when you try to swap the underlying model for something cheaper, users notice in ways that have nothing to do with task performance.
+  
+  Speaker info:
+  - https://x.com/fawiatrowski
+  - http://getviktor.com/
+---
+Legal. Então, meu nome é Frederick. Sou cofundador da Victor. Victor é o funcionário de IA de quem provavelmente a maioria de vocês já ouviu falar. Está a fazer um sucesso estrondoso.
+
+Lançamos o produto em fevereiro deste ano. Nenhuma expectativa de crescimento. Bem, na verdade foi uma experiência e nos surpreendeu a todos. Adequação imediata do produto ao mercado, sabe, enorme adoção mundial. E sim, nós não conseguimos, não conseguimos alcançar. Então, o que
+
+é Victor? Victor é um funcionário de IA. E quando você pensa em um funcionário de IA, você deve pensar nele como se fosse um funcionário humano. Sabe, o Slack está onde você mora. Não possui um aplicativo web. Então, assim
+
+como seus colegas de equipe, você não precisa ir a um local separado para fazer a chamada. Ele participa das suas discussões, em tópicos e em canais. E tem acesso às ferramentas que você tem acesso. Tem acesso a 3.000 integrações.
+
+E se, por algum motivo, não tiver acesso às suas integrações, poderá criar as suas próprias conexões. Basicamente, Victor pode usar qualquer ferramenta que sua empresa utilize. Portanto, Victor tem conhecimento do contexto de todas as suas ferramentas. E, diferentemente dos funcionários humanos, Victor tem uma visão horizontal e abrangente de toda a empresa. Por exemplo, ao contratar um CMO, você provavelmente pode presumir que esse CMO seria muito melhor se tivesse acesso à sua base de código, se pudesse contribuir para ela .
+
+Hum, e Victor podem fazer isso. Portanto, trata-se de trazer esse tipo de conhecimento universal de nível de doutorado para todas as áreas da empresa. Vamos começar com uma breve história sobre Victor e a empresa. Nossa missão desde os primórdios, em 2023, era formar funcionários com inteligência artificial. E naquela época, você sabe, foi depois do lançamento do ChatGPT.
+
+Naquela época, pensávamos que a maneira correta de construir funcionários de IA era por meio de navegadores. Só para lembrar, não tínhamos ferramentas de chamada, não tínhamos, sabe, ótimos modelos de geração de código . Então, sabe, provavelmente a maneira correta de agir era através dos navegadores. Sabe, os navegadores são como interfaces muito universais . Basicamente, você pode usar qualquer ferramenta através de um navegador. A
+
+maioria dos aplicativos possui versões para navegador com as quais você pode interagir. E naquela época , quando ainda se chamava JCAI, estava funcionando. Bem, ele estava tirando um instantâneo do seu DOM e minimizando-o de forma não computacional. E então, com base no instantâneo, nesse instantâneo minimizado e no seu objetivo, foi preciso decidir qual seria o próximo passo. Por exemplo, devo digitar algo na barra de pesquisa do Google? Ou devo
+
+clicar no botão de login para entrar? E foi ótimo, sabe? Com certeza deveria funcionar, né? Sim, funcionou, mas não foi eficaz em muitas etapas com as capacidades atuais... com as
+
+capacidades anteriores... dos modelos. Era como em 2023, funcionava de forma confiável por três a cinco etapas. E por confiável, quero dizer
+
+com 60% de confiabilidade. E sabe, isso ia se agravando a cada passo. Então, aquilo ainda era o que havia de mais moderno. Então, o JCAI era um agente web de última geração, presente no benchmark de agentes mais popular, chamado WebArena, e estava indo bem, mas era muito difícil transformá-lo em um produto útil devido a problemas de confiabilidade e velocidade. Você pode simplesmente chamar algumas ferramentas ou, sabe, chamar uma função e ela lhe dará uma saída imediatamente, enquanto com os agentes da web, você tem que esperar um minuto até que a operação falhe. Então,
+
+foi bastante difícil, mas os agentes da web são incríveis e, sabe, finalmente estão funcionando muito melhor do que no passado. Legal . Então, sabe, depois disso, Jace, eu me tornei um agente de e-mail. Então, sabe, surgiu o Soneto 3.5. Bem, nós
+
+criamos nosso sistema de atendimento personalizado e realmente queríamos que você não precisasse acessar um aplicativo da web para pedir ao agente que fizesse algo, mas sim que o agente tivesse todo o contexto necessário e fosse capaz de sugerir tarefas proativamente para você. E conseguimos isso com Jace. Jace era como um produto incrível, e também tinha uma ótima adequação ao mercado. E ainda está vivo. Você deveria dar uma olhada.
+
+Basicamente, funciona assim: sempre que um e-mail chega, um agente é acionado, conecta-se às suas ferramentas e pode reagir aos e-mails não apenas com rascunhos, mas também com códigos de ferramentas. Por exemplo, se alguém solicitar um reembolso, o agente pode efetuar o reembolso automaticamente. Ah, claro, também pode ser restrito mediante aprovação. Legal . Mas aí, sabe, em fevereiro deste ano, lançamos o Victor.
+
+Victor, você sabe, provavelmente todo mundo, quer dizer, estamos no Slack do Open Call, então todo mundo conhece o Open Call, que é um agente pessoal. E sempre quisemos formar o funcionário, que é o agente da empresa. E a primeira pergunta que você deve se fazer é: qual a diferença? Qual a diferença entre um agente da empresa e um agente pessoal? Então, em primeiro lugar, achamos que os agentes da empresa devem morar onde você mora, trabalhar onde você trabalha e ter todos os contatos da empresa.
+
+E isso, sabe, se você estiver criando um agente pessoal, provavelmente todos na empresa conectarão suas próprias integrações e executarão esses agentes por conta própria. Com Victor e com os agentes da empresa, é diferente, porque de repente basta que uma pessoa da empresa faça a integração. Victor herdará as comissões dessas integrações, ou você pode ajustá-las conforme desejar . E então toda a equipe tem acesso a ele. Portanto, você não precisa conectá- los 100 vezes. Então, como eu disse antes, são
+
+3.000 ferramentas, tudo integrado ao Slack, e essencialmente tudo o que se faz em diferentes ferramentas. E isso traz consigo alguns desafios. E como você pode imaginar, hum, como você pode imaginar, tipo, eu vou falar principalmente sobre um aqui. Então, o primeiro desafio, tanto para usuários pessoais quanto para quaisquer outros usuários, está relacionado à memória.
+
+Assim, com o Open Claw, havia uma grande preocupação com a possibilidade da memória ficar sobrecarregada ou confusa com o tempo. E eu acho que isso é algo sério, e faz sentido se preocupar com isso, certo? Mas imagine que você tem a mesma arquitetura e a mesma memória, só que agora para cem usuários, e não apenas um . Então, provavelmente está ficando sem memória cem vezes mais rápido. É um grande desafio a ser resolvido, e nós o resolvemos.
+
+Outra coisa é que o Slack tem canais diferentes, e as empresas têm hierarquias diferentes às quais precisamos aderir, e as pessoas frequentemente dão instruções conflitantes aos agentes. Mas vamos imaginar que você tenha um Victor, o agente da sua empresa, em um canal, o canal de crescimento, e depois no canal de engenharia, e também nas mensagens diretas das pessoas. Então, o Victor vai, sabe, pegar o contexto do canal de crescimento, ou vai pegar o contexto do canal executivo, e você precisa garantir de alguma forma que esse contexto não vaze para o canal de engenharia ou de suporte. Da mesma forma, se você enviar uma mensagem direta para Victor com seus problemas, ele não deve levar em consideração o contexto do canal de crescimento, a menos que você seja da equipe de crescimento. Portanto, isso adiciona muita complexidade à forma como o acesso é estruturado.
+
+E sabe, escolhemos o Slack como nossa interface para o que consideramos Inteligência Artificial Geral (AGI) para empresas, e há um motivo para isso. Eu vou começar falando sobre os motivos e depois sobre o que causa problemas no Slack. Bem, existem dois motivos principais. Primeiro, queríamos que Victor parecesse um funcionário humano. E você não interage com funcionários humanos em aplicativos da web. Você interage com
+
+eles no Slack, assim como com seus colegas de equipe, certo? Bem, e o segundo motivo para escolher o Slack como interface é que, se o Victor for um agente muito poderoso e precisar executar tarefas complexas, essas tarefas não serão executadas imediatamente. Eles podem levar uns 10 minutos para executar, certo? Naturalmente. Então, quando você acessa um aplicativo web e pede a um agente para fazer algo para você, você muda de contexto e agora precisa esperar 10 minutos pela resposta ou pelo resultado, é bem frustrante, não é? Como se você não quisesse esperar. Você já
+
+está acostumado com isso no ChatGPT, está acostumado com respostas imediatas. Deve levar uns 30 segundos e pronto, é só copiar, colar e já terminei. Mas não é assim que funciona com agentes poderosos. Então, por que o Slack é melhor? Bem, agora, se você enviar uma mensagem para alguém no Slack pedindo para essa pessoa criar um aplicativo e receber uma resposta em 10 minutos, você ficará surpreso.
+
+Nenhum colega de equipe jamais criou um aplicativo para você em 10 minutos, certo? Então, a percepção é diferente, e de repente a latência é muito baixa quando comparada à sua experiência normal no Slack. Mas, existem certas coisas que dão problema no Slack. E, em primeiro lugar, quando você trabalha com aplicativos da web, você tem apenas um tipo de thread. Você abre um novo agente ou uma nova conversa e fala com esse agente.
+
+No entanto, quando você está no Slack, você tem muitos modos de interação. Uma delas é enviar mensagens diretas para as pessoas. Outra forma é estar presente em canais públicos e participar de discussões. Outra coisa é simplesmente reagir com emojis. Sabe, você também pode editar suas mensagens e outras coisas. E tudo isso é
+
+uma entrada para um agente. E tudo isso precisa se encaixar em um contexto linear de alguma forma. Não em um único tópico, certo? E nós precisamos gerenciar isso. Então, deixe-me dar um exemplo. É
+
+claro que, quando alguém apaga uma mensagem, presume-se que a tarefa não deva ser continuada ou que não seja mais interessante. Quando alguém edita uma mensagem, você também deve responder à edição. Mas digamos que você esteja enviando uma mensagem direta para um colega de trabalho, seja o Victor ou um amigo, e inicie uma conversa no Slack, certo? Bem, em algum momento, e isso acontece com muita frequência, você se esquece da conversa e simplesmente inicia uma nova mensagem direta para a mesma pessoa. Você deve começar e abrir uma nova sandbox?
+
+E os humanos normalmente têm o contexto da conversa anterior, mas para o agente é uma área totalmente nova. É uma tarefa nova, certo? Então, o que precisa acontecer é que, de alguma forma , sempre que Victor receber uma mensagem direta, você precise verificar as mensagens anteriores e, de alguma forma, incorporá-las às conversas existentes. Bem , este é apenas um dos desafios que precisamos enfrentar. Uma curiosidade interessante: percebemos que, sabe, eu não achava que seria tão importante quanto realmente é, mas o que realmente importa é o tom. Vou dar
+
+um exemplo de um de nossos clientes. Bem , nós estávamos fazendo testes, então usamos o Opus 4.6 para o Victor, e ele era usado como modelo principal, e queríamos experimentar o GPT 5.4. E quanto à ferramenta de chamada e geração de código, é realmente incrível, sabe? Deveria funcionar, e
+
+é ainda mais barato. Então, por que não substituir o Opus pelo GPT 5.4? E há um motivo pelo qual não optamos por isso. Tipo, tem um ou dois, mas o mais interessante é a personalidade.
+
+Por algum motivo, talvez devido à nossa arquitetura, nossos usuários adoraram o Opus e ficaram furiosos quando fizemos o teste A/B. Então, acho que há algo de belo nesse modelo, algo que podemos aprender com ele. Hum, e o Opus também tem um toque de ousadia em Victor. Não sei se isso se deve à nossa equipe ou a quem quer que tenha feito isso, mas, na verdade, é bem engraçado. Encorajo todos a experimentarem. Uma atitude proativa. Uma das
+
+funcionalidades poderosas do Victor é a capacidade de sugerir proativamente fluxos de trabalho que podem ser automatizados. Então, digamos que você esteja em uma equipe de crescimento e discuta um teste A/B e os resultados. E em algum momento você percebe, ok, essa opção está tendo um desempenho muito bom. Prefiro esta opção à outra. O Victor tem acesso ao seu PostHog ou qualquer outra ferramenta de análise que você use e pode literalmente verificar e perceber, e perceberá, se o que você está dizendo não é alguma besteira.
+
+Aconteceu algumas vezes de, sabe, estarmos discutindo alguns experimentos, o Victor checar o Posthub e dizer: "Ei, sabe, é verdade, mas isso não é estatisticamente significativo." E então, o programa calcula por que estou falando essas besteiras. Hum, então é divertido. É uma vantagem, certo? Se Victor pudesse de repente participar da conversa e ser útil, isso teria um impacto mais amplo no ambiente de trabalho, o que seria ótimo para o produto.
+
+Mas, se o Victor fizer isso no primeiro dia e acontecer, bem, a equipe de segurança vai ficar furiosa porque alguém adiciona o Victor ao seu espaço de trabalho e, de repente, o Victor começa a mandar mensagens privadas para todo mundo e a participar das discussões, e a segurança vai enlouquecer. Bem, é por isso que acho que você deveria conquistar o acesso com um pequeno número de usuários no primeiro uso e depois ir liberando aos poucos. Exatamente.
+
+Sim, então, o valor do contexto compartilhado. Não me resta muito tempo, mas, bem, vou falar muito rapidamente sobre a diferença entre Victor e agentes como Claude Code ou Claude Co-Work, ou algo do tipo. Agora, o ambiente de trabalho colaborativo Claude funciona no seu computador, então é um pouco diferente. A vantagem do Victor é que ele funciona na nuvem. Você não precisa manter o computador ligado para que funcione.
+
+E outra coisa é o contexto compartilhado. Então, como eu disse no início, para que o Victor funcione bem, para que você possa, por exemplo, pedir ao Victor para alterar seu orçamento de meta anúncios ou para ler seus dados analíticos, basta que uma pessoa da empresa conecte essa integração. Certo? Imagine que você trabalha em uma equipe de 100 pessoas e sua equipe de crescimento tem 20 integrantes. Se você precisar pedir a 20 pessoas para conectar seus meta anúncios, fazer isso individualmente com cada uma delas é bastante trabalhoso.
+
+Além disso, se alguém quiser interagir com Victor, e se Victor quiser ser proativo, cada um conecta sua própria integração, e alguém pode conectar sua própria integração incorreta, certo? E o Victor pode ficar muito preso a essas ideias e tomar decisões erradas, sabe, pode não saber qual integração usar, o que adiciona muita complexidade para o usuário. Legal . E algo que quero destacar aqui é que Victor não é um instrumento. É uma contratação.
+
+E é isso que eu quero dizer. Vou contar a história de um cliente. Uma das maiores marcas de comércio eletrônico dos Estados Unidos. Eles e o administrador da equipe entraram em contato com Victor. E a primeira integração, uma integração de equipe, que eles conectaram foi o e-mail pessoal deles.
+
+Gmail pessoal. E então, de repente, a equipe começou a conversar com Victor sobre os e-mails desse cara. E esse cara está me mandando mensagem dizendo: "Ei, cara, que diabos o Victor está vazando todos os meus dados? Por que você está fazendo isso?" E eu pensei: "Por que você deu ao Victor acesso ao seu e-mail pessoal? Tipo, sabe,
+
+se você contrata um novo funcionário, você dá a ele acesso ao seu e-mail pessoal? Provavelmente não, né?" Dito isso, acho que foi uma ótima inspiração. E o que fizemos foi adicionar um recurso ao Victor para definir o escopo das integrações. Assim, elas não são sempre compartilhadas e, se você quiser ter sua integração pessoal com seu e-mail pessoal e com o Victor para usar nas suas mensagens diretas ou publicamente quando precisar, isso também é possível agora.
+
+Sim. E, resumindo, o que é preciso para um colega de trabalho com IA ser ótimo? Acho que existem três pilares principais se você quiser construir seu colega de trabalho. Acho que este é um público técnico, então encorajo todos aqui a tentarem construir seu próprio Victor. E, sabe, existem apenas três coisas que você precisa para que ele funcione. Ele ajuda a realizar o trabalho com
+
+bastante facilidade. Os modelos são capazes hoje em dia. Sabe, conectar suas integrações por meio do Pipedream funcionará bem. Ele conhece a empresa, tem o Contexto do Slack. Certifique-se de saber como usar bem esse contexto.
+
+Provavelmente você precisará passar pelo processo de aprovação do Slack, que é muito difícil e pode ser tedioso. E então, torne a experiência amigável. Isso faz diferença, e você deve garantir que Victor goste da sua equipe e que sua equipe goste de Victor. Esta é a nossa visão para o futuro. Toda empresa tem funcionários de IA. Acho que é óbvio. Não há
+
+nada a discutir aqui. E historicamente, eu só queria destacar que a visão da IAG (Inteligência Artificial Geral) está conosco desde o século XVII. Gottfried Leibniz, o inventor do cálculo, estava refletindo sobre os humanos fazendo coisas desnecessárias e queria construir uma calculadora. Mal sabia ele que o cálculo não é a única tarefa cognitiva que podemos automatizar, e acho que estamos agora neste belo momento da história em que podemos essencialmente automatizar todas as tarefas cognitivas e podemos fazer parte da revolução. Então, vou me permitir ler esta citação: " É indigno de homens excelentes perder horas como escravos no trabalho de cálculo." Deixemos isso para...
+
+máquinas. E com isso, eu só queria encorajar todos a escanear este código QR, clicar, se inscrever e adicionar o Victor ao seu Slack. Testem. Todos nesta sala têm cem dólares em créditos grátis. Sem compromisso. Vocês podem
+
+remover o Victor a qualquer momento. Vai agregar muito valor, eu prometo. Se não agregar, me liguem. Eu garanto que vai funcionar. Obrigado.
+
+Uhu!

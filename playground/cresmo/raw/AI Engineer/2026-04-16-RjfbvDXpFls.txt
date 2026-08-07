@@ -1,0 +1,141 @@
+---
+video_title: "Building pi in a World of Slop — Mario Zechner"
+video_id: RjfbvDXpFls
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=RjfbvDXpFls
+video_date: 2026-04-16T22:58:06+00:00
+video_description: |
+  All I wanted was a shitty coding agent that is truly mine. And I’d have loved to just tell you why and how I built pi. But then Peter decided to make it the agentic core of OpenClaw. And now pi is collateral. So yes, this is a talk about pi. But it is also a talk about how agents are destroying OSS, how I deal with that, and a plea to slow the fuck down.
+  
+  https://x.com/badlogicgames
+  https://github.com/badlogic
+  https://www.linkedin.com/in/mariozechner/
+  
+  Timestamps
+  0:00 – Intro and motivation for building pi
+  0:29 – Act 1: Building pi and the frustration with existing agent harnesses
+  1:56 – Why current context management in tools like Cloud Code and Open Code fails
+  4:44 – The importance of minimal harnesses and the "Terminal" benchmark
+  5:35 – Introducing pi: A self-modifying, extensible agent core
+  7:27 – The "YOLO" security philosophy and extensibility through TypeScript
+  9:03 – Examples of pi extensions (chat rooms, NES, Doom)
+  10:46 – Act 2: OSS in the age of "clankers" and how to fight them
+  12:03 – Act 3: A plea to slow down and stop the "slop" in software development
+  13:58 – How agents create "enterprise-grade complexity" and why humans are still the bottleneck
+  16:12 – Practical advice: How to effectively integrate agents into your workflow
+---
+[música]
+
+Olá. Eu sou o Mario. Construí uma torta em um mundo de bagunça e isso é uma tragédia, uma tragédia em três atos. Só para falar rapidinho sobre isso. Um monte de gente na internet me deu dinheiro para colocar propaganda no meu torso e tudo isso vai para uma instituição de caridade. Então, é isso, obrigado pessoal.
+
+Então, primeiro ato: montar a torta. No início existia o código na nuvem e era bom, não é? Basicamente, todos nós fomos enfeitiçados por aquela coisa e paramos de dormir. Muita coisa aconteceu antes disso, mas o Cloud Code foi o que realmente me chamou a atenção. E, para começar, eu adoro a equipe da Cloud Cloud. São pessoas brilhantes,
+
+talentosas, de altíssima velocidade. Então, eles também criaram o jogo inteiro. Meus sinceros parabéns a eles. Portanto, isto não é uma crítica. Este sou apenas eu, um velho, explicando por que parei de usar código na nuvem e construí minha própria solução.
+
+Em 2025, comecei a usar o Cloud Code por volta de abril, eu acho, graças ao Peter, porque ele nos disse que os agentes já estavam funcionando. Naquela época era simples, previsível e se encaixava no meu fluxo de trabalho, mas eventualmente a obsessão por tokens tomou conta deles, eu acho, e a equipe cresceu e eles começaram a usar aquilo internamente e a desenvolver muitos recursos. Tem muitas funcionalidades que eu não preciso, o que não é problema. Posso simplesmente ignorá-los. Mas com a velocidade e mais recursos, vêm mais bugs, e isso é ruim porque eu costumava trabalhar em canteiros de obras e, se meu martelo quebra todo dia, eu fico muito irritado. E se minhas
+
+ferramentas de desenvolvimento quebram todos os dias, eu também fico irritado. Então, aconteceu isso. É só uma piada recorrente, e aqui está o Tariq nos dizendo que o código na nuvem agora é um motor de jogo. E aqui está Mitchell, da Ghosty, nos dizendo: "Não, não é." E eventualmente eles corrigiram a oscilação da imagem, mas depois outras coisas deram errado e acho que agora eles estão na terceira versão de um renderizador de ferramentas.
+
+Sim, mas isso é apenas um sintoma. O verdadeiro problema é que meu contexto não era meu contexto. O código na nuvem é o que controla meu contexto e, sem que eu perceba, faz coisas nesse contexto. Portanto, você tem o prompt do sistema, que muda a cada versão, incluindo as definições da ferramenta. Eles removiam ferramentas, modificavam ferramentas.
+
+Não é bom. Eles inseririam lembretes do sistema no lugar mais inoportuno do seu contexto, dizendo ao modelo: "Aqui está uma informação. Pode ser relevante ou não para o que você está fazendo." Isso significa que o que você está fazendo pode ou não ser relevante. E isso meio que confundiu o modelo e acabou interrompendo meus fluxos de trabalho.
+
+Além de tudo isso, não há nenhuma observabilidade, porque é assim que a ferramenta foi construída, e eu gosto de saber o que meus agentes estão fazendo. Não há nenhuma opção de modelo, o que é óbvio. É o arnês antropomórfico nativo, então faz sentido que eles queiram que você use o Claude, certo? E a extensibilidade é praticamente nula, e alguns de vocês podem ter escrito alguns hooks para o código Claude, mas estou lhes dizendo que o número de hooks e a profundidade desses hooks são muito superficiais. E sempre que um gancho é acionado, o que realmente acontece é que um novo processo é criado. Basicamente, o comando que você
+
+especificou para esse gancho ser executado não me parece particularmente eficiente. Então, dei um passo para trás e procurei alternativas, e gostaria de destacar especialmente o Amp e o FactoryDroid, os Porsche e Lamborghini das ferramentas de agentes de codificação. Portanto, se você tiver condições de comprá- los, por favor, use-os. Eles estão na fronteira. Eles são realmente muito bons e as equipes são fantásticas. E existem várias
+
+outras opções, e eu tenho experiência com software livre, então naturalmente me inclinei para o código aberto. E, mais uma vez, uma equipe brilhante, com altíssima velocidade de execução e sem promessas exageradas. Eles vendem ferramentas que funcionam na maior parte dos casos. Comecei a analisar o funcionamento interno do código aberto, principalmente no que diz respeito ao tratamento de contexto, pois essa é a parte mais importante para mim, e descobri várias coisas, como, por exemplo, em determinadas condições, o código aberto simplesmente removeria as saídas das ferramentas após uma quantidade mínima específica de tokens. E isso basicamente lobotomiza o modelo.
+
+Ah, também há suporte para servidor LSP, o que significa que toda vez que seu modelo chama a ferramenta de edição, o código aberto vai para o servidor LSP conectado e pergunta: [bufa] há algum erro? E, nesse caso , injeta isso como parte do resultado da ferramenta de edição. O que é ruim, porque pense em como você está editando o código. Você não está escrevendo uma linha de código, verificando os erros, escrevendo a próxima linha e verificando os erros novamente. Você não faz isso. Você termina
+
+seu trabalho e depois verifica os erros. Isso confunde o modelo. Existem várias outras funcionalidades, como armazenar mensagens individuais de uma sessão em um arquivo JSON. Cada mensagem é um arquivo JSON no disco. Bem, aconteceu isso, e acontece com todos nós, sem culpa nenhuma, mas não é bom se, por padrão, um servidor for iniciado e os cabeçalhos do curso forem configurados de forma que qualquer site que você abra no seu navegador possa acessar o seu servidor de código aberto . Sim, é isso mesmo
+
+. E, sem nenhuma relação com isso, comecei a pesquisar benchmarks para ferramentas de agentes de programação e encontrei o Terminal Bench, que é um benchmark muito bom, considerando tudo. E o mais engraçado é que se trata da coisa mais minimalista que você pode imaginar. Tudo o que fornece ao modelo é uma ferramenta para enviar comandos de teclado para uma sessão tmux e ler a saída dessa sessão tmux. Não há ferramentas de arquivo, nem subagentes, nada disso.
+
+E é um dos cintos de segurança com melhor desempenho na tabela de classificação. Aqui está a tabela de classificação de dezembro de 2025. Independentemente da família do modelo, o Terminus pontua mais alto, na maioria das vezes até mais alto do que o arnês nativo desse modelo. Então, o que isso nos diz? A segunda tese é que estamos na fase de experimentação e descoberta na codificação de agentes, e sua forma atual não é sua forma final, certo?
+
+Então, a segunda tese é que precisamos de maneiras melhores de nos divertir. E para mim, isso significa agentes maleáveis ​​que se automodificam. Coisas que o próprio agente pode modificar, e que eu também posso modificar, dependendo do meu fluxo de trabalho. Então, removi tudo, construí um núcleo mínimo, mas o tornei extremamente extensível, e fiz com que o agente pudesse se modificar . Com algumas comodidades, não é totalmente espartano. Então, essa é a Pie.
+
+É um agente que se adapta ao seu fluxo de trabalho, em vez do contrário . Ele vem com quatro pacotes: um pacote de IA, que é basicamente uma abstração entre provedores e transferência de contexto entre eles; um núcleo de agente, que é apenas um loop while e a chamada da ferramenta; e uma estrutura de pinça personalizada. Eu venho da área de desenvolvimento de jogos, então construí algo que na verdade não pisca muito, e o próprio agente de codificação. Aqui está a mensagem de sistema do Pie. [risos] É isso aí .
+
+Por fim, a indústria criou um novo padrão chamado skills, que basicamente consiste em arquivos markdown. Então, nós adicionamos isso também, e isso precisa constar no prompt do sistema. Então, a contragosto, tivemos que acrescentar mais algumas linhas. E, finalmente, aqui está a mágica que permite que Pie se modifique. Enviamos a documentação, que foi elaborada manualmente por mim e por um agente, juntamente com exemplos de código de extensões.
+
+E [limpa a garganta] tudo o que precisamos fazer para que o agente se modifique é dizer a ele: "Aqui está a documentação. Aqui está um código que mostra como você pode se modificar escrevendo extensões." Vem com quatro ferramentas. É só isso que ele faz: ler, escrever, editar e executar comandos. Aqui estão as definições das ferramentas. Não leia o
+
+texto, apenas observe o tamanho. É isso. Eis o que acontece quando você inicia uma nova sessão em uma dessas ferramentas. Então, a questão é que os modelos são, na verdade, treinados por reforço até atingirem um nível extremo em um zoológico. Então, eles não sabiam o que era um agente de codificação, porque a estrutura do agente de codificação é basicamente o que eles usam para serem treinados após o treinamento.
+
+Você não precisa de 10.000 tokens para dizer a eles: "Você é um agente de codificação". Eles sabem disso porque agora são agentes de programação . O Pie também é amarelo por padrão, porque minhas necessidades de segurança são diferentes das suas, e eu não acho que uma pequena caixa de diálogo que aparece de vez em quando toda vez que você executa o bash, pedindo sua aprovação, seja um mecanismo de segurança inteligente . Então, em vez disso, eu te dou tanta corda que você pode construir qualquer coisa que seja adequada às suas necessidades específicas de segurança .
+
+Também existem coisas que não são integradas. Sou um herege. Porque é assim que eu faço. Mas se você não gostar disso, basta pedir à Raspberry Pi para criar suporte para subagentes no modo plano ou suporte para MCP, o que você precisar. A extensibilidade vem com uma série de requisitos básicos e também com as próprias extensões. E as
+
+extensões no Pi são simplesmente módulos TypeScript. No caso mais simples, um arquivo TypeScript no disco. Você aponta Pi para isso. Aqui está uma extensão; carregue-a como parte do chicote de fios. E com isso, você obtém basicamente uma API de extensão que permite integrar tudo e definir elementos para o framework expor ao modelo. Isso inclui ferramentas e
+
+atalhos de comando. Você pode monitorar qualquer tipo de evento, reagir e salvar o estado na sessão, que pode ser opcionalmente fornecida ao agente ou armazenada para ferramentas que analisam sessões como parte dos fluxos de trabalho da sua organização. Você pode personalizar a compactação, escolher fornecedores específicos e ter controle total sobre as ferramentas. Assim, você pode modificar tudo no Raspberry Pi. E você pode então agrupar tudo isso e colocar no NPM ou no GitHub, porque acho que não precisamos reinventar um monte de silos chamados marketplaces.
+
+Já temos gerenciadores de pacotes. E todas essas recargas rápidas. Então, se você desenvolver uma extensão para o Raspberry Pi, você faz isso na sessão e recarrega as alterações instantaneamente, vendo os efeitos imediatamente, o que é ótimo. E isso também é importante no desenvolvimento de jogos: você quer altas taxas de iteração, e isso é excelente. Então, aqui vão alguns exemplos.
+
+A propósito, a Cloud ou a Anthropic enviam o link, que permite conversar com o agente enquanto ele realiza sua missão principal. Postei essa pequena sugestão no Twitter em tom de brincadeira e alguém a desenvolveu em 5 minutos com muito mais recursos. E eles não precisaram criar um fork ou clonar o projeto, bastava deixar o agente escrever a extensão com base no prompt. Aqui está Nico, um dos escritores de extensão mais prolíficos. Não faço a mínima ideia do que está acontecendo aqui. É uma sala de bate-papo
+
+para todos os seus agentes Pi, e eles conversam entre si. Eu jamais usaria isso, mas tudo isso é personalizado, incluindo a interface do usuário. Ou você pode jogar jogos de NES. Ou você pode jogar Doom. E há vários outros exemplos sobre os quais não vou falar. Então, como se
+
+cria uma extensão para o Raspberry Pi? Não. Você instrui o Raspberry Pi a construir o código para você com base nas suas especificações e, em seguida, você simplesmente itera sobre ele e recarrega a memória dinamicamente durante a sessão. Vou pular esse exemplo também. E se você não gosta de construir as coisas por conta própria — e espero que goste —, mas se não gosta, pode procurar no NPM ou na nossa pequena interface de busca integrada ao NPM para encontrar pacotes para subagentes, MCP e assim por diante.
+
+Então, será que funciona mesmo? Bem, aqui está a tabela de classificação do teste de bancada de terminais de outubro, antes do Raspberry Pi ter compactação. Eu acrescentei isso por causa da garra do Peter. Ficou em sexto lugar. Mas nada disso tem a ver com Pi. Se você quiser ler,
+
+basicamente quero que você retome o controle de suas ferramentas e fluxos de trabalho. Então, construa o seu próprio. E se você quiser saber mais sobre Pi e Open Claw, assista a esta palestra, por favor. Sim, e aí, eventualmente, apareceu o Peter. Ele colocou o Raspberry Pi dentro do OpenClaw, já que este é um núcleo Gent, o que fez com que meu projeto de código aberto se tornasse alvo de muitas instâncias do OpenClaw sem o conhecimento de seus usuários.
+
+Então, este é o segundo ato, OSS na era dos carros defeituosos. Os hackers estão destruindo o OSS. Aqui está o Till Draw. Eles encerraram o problema e o rastreador de solicitações de pull. Aqui estão os rastreadores do Open Claw. Aqui está o meu. Metade disso são
+
+instâncias do Open Claw que postam lixo. Então, comecei a me revoltar contra os incompetentes. Se você enviar uma solicitação de pull request, ela será fechada automaticamente com um comentário pedindo que você escreva uma descrição da questão de forma clara e objetiva, com um texto que não ultrapasse o tamanho de uma tela. E se eu vir isso, escrevo "parece bom para mim" e o nome da sua conta é adicionado a um arquivo no repositório e, na próxima vez que você enviar uma solicitação de pull request, ela será aprovada. Os incompetentes não leem esse comentário. Eles
+
+não voltam atrás depois de terem enviado uma solicitação de pull request. Então, esse é um filtro perfeito. Uh, Mitchell acabou transformando isso em garantia. Eis uma gafe. Ah, eu também os etiquetei. Se você interagiu
+
+com o OpenClaw, seus problemas terão prioridade reduzida. Eu também desenvolvi ferramentas onde incorporo problemas e textos de solicitações de pull em um espaço 3D, para que eu possa visualizar agrupamentos de problemas. Ah, eu também inventei a certificação de sistemas operacionais. Eu simplesmente fecho o rastreador quando quero, assim recuperei minha vida. Então, isso funciona? Sim, mais ou menos.
+
+[risos] O que me leva ao terceiro ato: vá mais devagar, [ __ ] . Tudo está quebrado. E depois há quem diga: "O nosso produto foi 100% construído por agentes." Sim, agora sabemos que a situação está uma merda. Parabéns.
+
+[Aplausos] [Ovações]
+
+[Aplausos] E estou ouvindo isso dos meus colegas, e isso é totalmente prejudicial. Então, aqui está como não devemos trabalhar com agentes e porquê, pelo menos na minha opinião. Escrevi isso no meu blog há algum tempo , mas a ideia principal é que temos um exército de agentes na sua rede usando o Beats On e você não sabe que se trata basicamente de um malware que não pode ser desinstalado, e a Entropic criou um compilador em C. Até funciona, mas na verdade não funciona, e esperamos que a próxima geração de moldes resolva isso. E aqui está o Kerbal construindo um navegador, e isso também está extremamente quebrado. Mas a próxima geração vai
+
+resolver isso. E o SaaS é um software morto que geralmente dura 6 meses, e minha avó acabou de construir um Spotify com a garra dela. Vamos lá, pessoal. Então, os agentes estão, na verdade, acumulando erros, que é o meu termo para falhas, sem nenhum aprendizado, sem gargalos e com uma dor tardia. A dor tardia é para você.
+
+Aqui está sua base de código para um humano, um agente e 10 agentes. Que parte do código do agente você pode revisar? Aqui está a mesma base de código, mas expressa em número de erros por dia. Quantos desses erros você acha que vai encontrar? Então você diz: "Ah, eu tenho um agente de avaliação."
+
+Permita-me apresentar-lhe o maravilhoso mundo do ouroboros. Não funciona. Ele identifica alguns problemas. O problema é que agentes e comerciantes aprenderam a lidar com a complexidade. Onde eles aprenderam essa complexidade?
+
+Da internet. O que tem na internet? Todo o nosso código antigo e inútil. Existem algumas pérolas na internet, sistemas realmente bem projetados, mas 90% do código na internet é o nosso lixo antigo. E é isso que os modelos aprendem.
+
+E cada decisão de um agente é local, especialmente se a base de código for tão grande que não se encaixe em seu contexto. E se você deixar fluir livremente e adicionar abstrações por toda parte, que sejam interligadas. Bem, isso leva a muitas abstrações, duplicação e problemas de compatibilidade com versões anteriores. Quem já viu isso nos resultados de seus agentes? É muito irritante. Ou defesa em profundidade.
+
+Sim, você consegue atingir a complexidade de nível empresarial em 2 semanas com apenas duas pessoas e 10 agentes. Parabéns. E então você diz: "Mas minha especificação detalhada..." Sim, claro. Sabe o que chamamos
+
+de especificação suficientemente detalhada? É um programa. Então, se você deixar campos em branco na sua especificação, o que você acha que acontece? Como o modelo preenche as lacunas? E com o que isso se preenche? Ele preenche o espaço
+
+com o lixo que aprendeu na internet a partir do nosso código antigo, que é lixo proveniente de código medíocre. E então você diz: "Mas os humanos também." Sim, os humanos são seres horríveis, falíveis e incapazes de progredir , mas podem aprender. E são gargalos. Há um limite para a quantidade de erros que eles podem adicionar à sua base de código diariamente.
+
+E os seres humanos sentem dor. Essa é uma propriedade muito interessante, pois os humanos detestam a dor. E quando a dor se torna insuportável, o ser humano tem diversas opções. Eles podem pedir demissão. Pode culpar outra pessoa e obrigá-la a resolver o problema. Ou então todo mundo se junta e
+
+começa a refatorar completamente a base de código problemática, certo? Os agentes continuarão a sujar alegremente sua base de código. E agora seus agentes e seus sistemas de memória supercomplexos não vão te salvar. Os agentes não aprendem da mesma forma que nós . Essas são as pessoas que eu mais amo. Eu nem
+
+leio mais o código. Parabéns. Algo está quebrado e seus usuários estão reclamando muito. Então, para quem você vai ligar? Não você mesmo, porque você não leu o código.
+
+Então, você está contando com seus agentes, mas eles agora também estão sobrecarregados porque a base de código é tão gigantesca que não há absolutamente nenhuma chance de eles conseguirem todo o contexto necessário para corrigir os problemas. E janelas de contexto longas são uma gambiarra, como a maioria de vocês descobrirá este ano, já que todos estão migrando para janelas de contexto com 1 milhão de tokens. E a busca por agentes também está falhando. Então, o agente aplica patches localmente e causa problemas globalmente. Se você vir isso na sua base de código, você está ferrado.
+
+Portanto, você não pode mais confiar na sua base de código, nem nos seus testes, porque foi o seu agente que escreveu os testes. Bom jogo. Então, é assim que eu acho que devemos trabalhar. Existem várias propriedades para boas tarefas de agentes. Isso significa escopo. Se você conseguir definir o escopo de forma
+
+que o agente encontre tudo o que precisa para fazer um bom trabalho, você terminou. Isso significa modularizar sua base de código. Se você puder adicionar uma função para avaliar o desempenho, melhor ainda. Subida de montanha, pesquisa automotiva. Ah, tudo que não for essencial para a missão, deixe apagar. Coisas chatas, deixe passar.
+
+Os casos de reprodução para problemas do usuário, que geralmente são apenas parcialmente informativos, são perfeitos. Eu não passo mais nenhuma manhã fazendo isso. Ou, se não tiver nenhum humano por perto, use um patinho de borracha. Portanto, existem muitas tarefas para as quais você pode usá-los e economizar tempo. No momento em que você avalia. Você pega o que é
+
+razoável, a maior parte não é, e então finaliza. Meu último slide, mais ou menos. Vai com calma, [ __ ]. [Suspiros] Pense no que você está construindo e por quê, e não construa apenas porque seu agente pode fazer isso agora. Isso é estúpido.
+
+Aprenda a dizer não. Essa é a sua habilidade mais valiosa no momento. Menos funcionalidades, mas as que importam, e depois use seus agentes para aprimorá-las ao máximo . Esclareça seus usuários, não seus desejos de maximizar tokens. Limite a quantidade de código gerado que você precisa revisar.
+
+E código não crítico, com certeza, cinco passos à frente. Código crítico, leia cada maldita linha. Veja a apresentação principal depois de mim para mais informações sobre isso. Então, como saber o que é essencial? Algum palpite?
+
+Bem, você leu o maldito código. [risos] Ah, se você for fazer algo importante, escreva à mão. Você pode usar um robô para te ajudar com isso, mas não deixe que ele tome as decisões por você, porque descobrimos que todas as decisões que ele toma são aprendidas na internet. E esse atrito é o que constrói a compreensão do sistema na sua cabeça, o que é importante. E é também onde você aprende coisas novas.
+
+E tudo isso requer disciplina e iniciativa. E tudo isso ainda requer seres humanos. Obrigado. Uau!

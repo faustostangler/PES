@@ -1,0 +1,117 @@
+---
+video_title: "The Multi-Agent Architecture That Actually Ships — Luke Alvoeiro, Factory"
+video_id: ow1we5PzK-o
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ow1we5PzK-o
+video_date: 2026-05-06T15:00:06+00:00
+video_description: |
+  Everyone's building multi-agent systems, but nobody agrees on how. This talk proposes a taxonomy of five frontier multi-agent strategies and shows what happens when you compose them into a single architecture. Drawing from production data at Factory, we walk through a three-role system (orchestrator, workers, validators) that uses validation contracts, structured agent handoffs, and adversarial verification. We cover the case for serial over parallel execution, why model selection per role is a compounding advantage, and how to design systems that get better with each model generation instead of being made obsolete by them.
+  
+  Speaker info:
+  - https://github.com/lukealvoeiro
+  - https://www.linkedin.com/in/lukealvoeiro
+  
+  Timestamp:
+  0:00 Introduction to multi-agent systems and the bottleneck of human attention
+  1:50 Taxonomy of five frontier multi-agent frameworks
+  4:04 Introducing 'Missions': The three-role architecture (Orchestrator, Workers, Validators)
+  6:34 The importance of validation contracts for consistent quality
+  8:09 Maintaining long-term context through structured handoffs
+  9:17 The case for serial execution over parallel execution
+  10:30 Mission control: Monitoring agent progress
+  11:22 Strategic model selection per role ('Droid whispering')
+  13:06 Production data analysis: Building a Slack clone
+  14:34 Designing systems that improve with each model generation
+  15:51 Conclusion: The shifting economics of software engineering
+---
+[música]
+
+Olá a todos. Meu nome é Luke e meu objetivo é que, daqui a 20 minutos, você seja capaz de montar equipes de agentes que consigam realizar tarefas muito mais difíceis do que aquelas que você consegue realizar com um único agente hoje. Um pouco sobre mim. Então, minha experiência vem da área de ferramentas de desenvolvimento. Há cerca de dois anos e meio, iniciei um projeto na Block, onde eu trabalhava na época. E esse projeto
+
+evoluiu para Goose. O Goose é agora um dos principais agentes de codificação de código aberto e foi recentemente doado à AI Foundation. Foi muito legal ver isso. Atualmente, trabalho na Factory, onde lidero nossa principal plataforma de agentes. A missão da Factory é trazer autonomia para todo o ciclo de vida do desenvolvimento de software.
+
+Então, quero começar com uma afirmação. O gargalo na engenharia de software atualmente não é a inteligência. Agora está limitado pela atenção humana. Mesmo os melhores engenheiros só conseguem concluir algumas tarefas de cada vez. Eles podem ter uma lista de espera de 50 funcionalidades, mas só conseguem avançar com algumas por dia, porque cada tarefa exige a atenção deles. Cada commit precisa ser
+
+revisado. Os modelos atuais são inteligentes o suficiente para resolver todas essas 50 tarefas, mas não há largura de banda suficiente para supervisionar sua implementação. Então, ficamos nos perguntando: e se um ser humano decidisse o que construir e um sistema descobrisse como fazer isso? Certo? Um agente pode trabalhar horas a fio durante dias e depois voltar para terminar o trabalho. É sobre isso que vim
+
+falar. Ao começar a pesquisar sobre estruturas e sistemas multiagentes, você rapidamente percebe que a área está um tanto confusa. Cada um tem sua própria estrutura, sua própria terminologia, suas próprias opiniões sobre o que funciona e o que não funciona. Por isso, gostaria de propor uma taxonomia simples. Existem cinco estruturas de vanguarda para multiagentes.
+
+Uma delas é a delegação. Certo? É aqui que um agente gera outro agente e o agente pai pode dizer para ele descobrir o esquema do banco de dados e, em seguida, recebe uma resposta . Esta é a forma mais simples de comunicação multiagente, sendo a que a maioria das pessoas implementa inicialmente. Você sabe que os subagentes e as ferramentas de codificação são os exemplos mais comuns.
+
+O outro é o verificador de criadores. Certo? Onde um agente constrói algo e depois outro agente verifica esse trabalho. E a chave aqui é algo como uma separação de responsabilidades. O agente que implementou o código possui algum viés de custo. Certo? Deseja que esse código
+
+funcione. Um agente novo, com um contexto novo, tem muito mais probabilidade de encontrar problemas, e é por isso que nós, humanos, também fazemos revisão de código. Outra forma é a comunicação direta. Isso ocorre quando os agentes se comunicam sem um coordenador central. Certo? É como
+
+trocar mensagens diretas. É difícil acertar, porque o Estado se fragmenta em diversas conversas sem um coordenador, e não há uma única fonte de verdade. O próximo passo é a negociação. Certo? Negociação é quando agentes se comunicam, mas em relação a um recurso compartilhado. Então, talvez
+
+eles queiram usar a mesma API. Eles querem modificar a mesma parte da base de código. Mas a negociação não precisa ser conflituosa. Na verdade, o melhor cenário de uso é quando há um saldo líquido positivo nas negociações. Certo? E é aí que os
+
+agentes têm uma situação potencialmente vantajosa para ambos os lados durante a interação. E então a última é transmitida, e é nesse momento que um agente envia informações para vários. Pense nisso como se fossem atualizações de status, um novo contexto que se aplica a todos, restrições compartilhadas. É um pouco menos chamativo que os outros, mas é fundamental para manter a coerência em tarefas de longa duração. Então, quando você tem todos esses componentes diferentes, como você os monta em um sistema que possa funcionar por vários dias?
+
+Portanto, missões são a nossa resposta. É um sistema que combina quatro desses elementos. Delegação, verificação do criador, transmissão e negociação em um único fluxo de trabalho. Você descreve uma meta. Você avalia isso através de uma conversa.
+
+Você aprova um plano e o sistema cuida da execução por horas ou dias, o que permite que você se concentre em outra coisa. É importante notar que uma missão não é uma sessão de um único agente . É um ecossistema de agentes que se comunicam por meio de transferências estruturadas e estado compartilhado. Utiliza uma arquitetura de três funções. Existe o orquestrador, existem os trabalhadores e existem os validadores.
+
+O orquestrador se encarrega do planejamento. Quando você descreve o que deseja, o orquestrador funciona como uma espécie de caixa de ressonância. Fazer as perguntas estratégicas certas. Sabe, ele verifica se há requisitos pouco claros no espaço do problema e, eventualmente, produz um plano que inclui funcionalidades, marcos e algo chamado contrato de validação. E esse contrato de validação define o que significa "concluído" antes de qualquer codificação ser feita.
+
+E voltarei a explicar por que isso é importante, porque acaba sendo fundamental para o sistema. A próxima função é a de operário. Eles cuidam da implementação. Quando uma funcionalidade é atribuída a um trabalhador, esse trabalhador tem um contexto limpo, sem informações acumuladas e sem atenção degradada. Certo? O trabalhador lê a
+
+especificação. Ele implementa a funcionalidade e, em seguida, realiza o commit via Git, permitindo que o próximo colaborador herde um ambiente limpo e uma base de código funcional . E, por fim, a última função é a de validador. Eles cuidam da verificação. Assim, a maioria dos sistemas valida executando verificações de lint, verificação de tipos e testes. Talvez
+
+eles façam revisão de código. O Missions faz tudo isso, mas também validamos o comportamento. Em vez de simplesmente perguntar se o código parece correto? Será que isso funciona do início ao fim? Essa é a diferença que permite que as missões durem muitas horas, muitos dias seguidos, sem desvios. E
+
+para que isso funcionasse, foi preciso repensar completamente o conceito de validação. Então, se você já trabalhou com agentes de codificação, provavelmente já viu esse padrão em que um agente cria uma funcionalidade. Ele escreve alguns testes. Os testes foram aprovados. Há cobertura completa.
+
+Mas os testes foram, de certa forma, moldados pelo código, e não pelo que o código realmente tentava fazer. Testes escritos após a implementação não detectam erros. Eles confirmam as decisões. Portanto, se você depender dessa validação, seu sistema acabará por se desviar. É por isso que existe este contrato de validação. É escrito durante o planejamento,
+
+antes de qualquer código, e define a correção independentemente da implementação. Assim, em um projeto complexo, isso pode representar centenas de asserções, e cada funcionalidade recebe uma ou mais asserções que devem ser satisfeitas. A soma de todas as características deve garantir que todas as afirmações sejam atendidas. Após cada etapa de desenvolvimento de funcionalidades, temos dois tipos de validadores que são executados. Então você tem o validador de escrutínio e o validador de teste de usuário. A primeira
+
+é mais tradicional. Ele executa o conjunto de testes, a verificação de tipos, a análise estática de código e, crucialmente, cria agentes de revisão de código dedicados para cada funcionalidade concluída dentro do marco. E o segundo, que é o validador de testes de usuário, é mais interessante. Ele age como um engenheiro de controle de qualidade. Ele inicia a aplicação. A
+
+interação ocorre por meio do uso de um computador ou algo semelhante. Ele preenche formulários, sabe, verifica se as páginas são exibidas corretamente, clica em botões e garante que os fluxos funcionais operem de forma integrada. Portanto, esta etapa leva significativamente mais tempo do que a anterior, a do validador de escrutínio, porque o sistema está interagindo com um aplicativo em execução. E o que percebemos é que a maior parte do tempo total das missões é gasto esperando que essa execução no mundo real aconteça, em vez de gerar tokens. É crucial destacar que nenhum dos validadores jamais viu o código antes.
+
+Eles não estão empenhados na implementação, portanto a validação é adversarial por natureza. OK. Assim, a validação detecta erros. Certo? Mas, para um sistema que funciona por muitos dias, também é preciso garantir que o contexto não se perca entre os agentes.
+
+Quando um trabalhador termina uma tarefa, ele não diz simplesmente "terminei". Ele preenche um relatório estruturado detalhando o que foi concluído, o que ficou por fazer, quais comandos foram executados durante o ciclo do agente e quais foram os códigos de saída desses comandos. Quais problemas foram detectados e eles estavam de acordo com os procedimentos definidos pelo orquestrador para aquele trabalhador? É assim que detectamos os problemas e como o sistema se autorregenera. Os erros são detectados nos limites dos marcos importantes . O trabalho corretivo é definido
+
+e a missão, de certa forma, volta aos trilhos. Não se trata de esperar que os agentes se lembrem do que aconteceu, mas sim de os obrigar a escrever e a abordar efetivamente as questões envolvidas, e falarei sobre isso daqui a pouco. Nossa missão mais longa durou 16 dias, o que é muito mais do que uma corrida de velocidade completa, e acreditamos que elas podem durar até 30 dias. Isso só é possível devido à estrutura. Assim que definimos essa arquitetura, a próxima questão passou a ser: como vamos executá-la na prática? Certo?
+
+A escolha mais óbvia é algo como paralelismo. Se você tiver 10 agentes em execução simultaneamente, terá 10 vezes mais capacidade de processamento. Mas nós tentamos isso e não funciona muito bem para tarefas na área de desenvolvimento de software, por causa dos conflitos entre os agentes. Eles se atropelam nas mudanças um do outro. Eles duplicam o trabalho. Eles tomam
+
+decisões arquitetônicas inconsistentes. Assim, a sobrecarga de coordenação acaba anulando os ganhos de velocidade, enquanto você continua gastando fichas. A diferença em relação às missões é que executamos as funcionalidades em série. Assim, há apenas um trabalhador ou validador em execução em um determinado momento. Dentro de uma funcionalidade, permitimos a paralelização em operações somente de leitura.
+
+Assim, tarefas como pesquisar no código-fonte ou em APIs são paralelizadas. Dentro dos validadores, também paralelizamos operações somente leitura, como a revisão de código. Trata-se de uma execução serial com paralelização interna direcionada. Pode parecer mais lento no papel, mas a taxa de erros cai drasticamente e, quando você tem tarefas que duram muitos dias, esse tipo de precisão se acumula. Bem, sua interface de bate-papo padrão não funciona muito bem para algo que dura muitos dias. Em uma rápida olhada, você
+
+precisa ser capaz de ver quanto do projeto você já concluiu e quanto do orçamento inicial você já consumiu . Então, usando uma missão como exemplo, construímos o controle da missão, que é uma visualização dedicada a isso. Você pode ver o que o trabalhador ativo está fazendo agora, e ler o resumo da transferência de informações detalha esse processo. O que o validador descobriu? E como isso vai alterar o rumo das coisas daqui para frente?
+
+Ou você poderia simplesmente, sabe, sair, hum, passar um tempo com seus amigos naquela noite. Toda essa visualização permite que você execute missões de forma assíncrona, e você pode estar conectado como um gerente de projeto supervisionando a implementação, ou você pode simplesmente, sabe, ir e... passar um tempo com seus amigos.
+
+OK. Portanto, o modelo certo para cada função. Bem, tudo aqui pressupõe uma coisa: que você esteja usando o modelo correto em cada função. O planejamento se beneficia de um raciocínio lento e cuidadoso, a implementação de uma escrita rápida, fluente e criativa, e a validação se beneficia do seguimento preciso de instruções, certo? Assim, nenhum modelo ou fornecedor de modelos é o melhor em todos os três aspectos.
+
+Utilizar sistemas como missões exige o desenvolvimento de uma nova habilidade, que internamente chamamos de " sussurrar para droides", mas trata-se da ideia de que você precisa ser capaz de modelar mentalmente como diferentes LLMs interagem, onde eles falham, como essas falhas se acumulam ao longo de uma operação de vários dias e, em seguida, precisa fazer uma escolha deliberada sobre qual modelo ocupará qual assento. Theo, o engenheiro que construiu o protótipo das nossas missões, criou as configurações padrão do nosso modelo, mas nós realmente incentivamos as pessoas a personalizá-las e adaptá-las às necessidades de seus projetos. Assim, por exemplo, a validação pode usar um provedor de modelo completamente diferente para garantir que não seja influenciada pelos mesmos dados de treinamento. Essa é uma vantagem estrutural de uma arquitetura agnóstica a modelos. Você é tão forte quanto seu elo mais fraco. E se você estiver preso a um único
+
+fornecedor de planos de saúde, ficará limitado pela capacidade mais fraca dessa família de planos. À medida que os modelos continuam a se especializar, a capacidade de colocar o modelo certo no assento certo torna-se uma vantagem cumulativa. Funciona também na direção oposta. Se você estiver usando missões, a estrutura delas pode compensar modelos que não estejam exatamente no nível de desempenho dos jogos de vanguarda. Assim, os contratos de validação, os pontos de verificação de marcos, permitem que você execute missões com muito sucesso, mesmo usando modelos de peso aberto .
+
+Bem, tudo isso soa bastante teórico. Como isso se parece na prática, em produção? Tenho um exemplo de como criar um clone do Slack aqui mesmo. Este slide contém muita informação, mas vou abordar apenas alguns pontos que considero importantes . 60% do nosso tempo é gasto na implementação, e 60% dos nossos tokens também.
+
+Observe como a validação nunca é bem-sucedida na primeira tentativa. Isso faz parte da missão. Qual é? Aquele que está no canto inferior esquerdo. Quase sempre temos que criar funcionalidades complementares. Portanto, isso demonstra realmente
+
+o valor de um sistema que realiza esse ciclo de controle de qualidade. Você acaba com 50% das suas linhas de código bem no final, no canto inferior direito, sendo testes, e 90% do seu código é coberto por esses testes. E, por último, aproveitamos ao máximo o cache de comandos para garantir que estamos compensando o custo de executar uma tarefa tão longa . As pessoas realmente se identificaram com as missões, e tem sido incrível ver o que elas têm construído com elas. Alguns exemplos que incluí neste slide, mas os que quero destacar são especificamente do ambiente empresarial, onde o Factory realmente brilha.
+
+Eles têm sido usados ​​para prototipar novas ideias e recursos da noite para o dia, para garantir que as pessoas possam criar ferramentas internas em taxas cada vez mais rápidas , para executar grandes refatorações e migrações, para pesquisa de aprendizado de máquina e para modernizar bases de código para que os agentes sejam mais produtivos nelas. Uma coisa que eu queria abordar também era esse conceito da " lição amarga", porque toda pessoa que constrói sistemas multiagentes tem esse medo de que a próxima versão do modelo torne sua arquitetura obsoleta da noite para o dia. Então, quando estávamos desenvolvendo as missões, decidimos que precisávamos aprimorar esse sistema a cada melhoria do modelo. Isso significa que quase toda a lógica de orquestração é definida em prompts e skills, em vez de uma máquina de estados codificada . A forma como decompõe as falhas e, ou melhor, como decompõe as funcionalidades e lida com as falhas, está toda contida em cerca de 700 linhas de texto, e quatro frases disso podem alterar a estratégia de execução de forma bastante drástica. O
+
+comportamento dos trabalhadores é determinado por habilidades que o orquestrador define para cada missão, resultando em comportamentos altamente personalizados. A lógica determinística é bastante limitada e focada em permitir que os modelos executem suas funções com excelência, enquanto o sistema cuida da parte administrativa, certo? Coisas como executar validações e garantir que o progresso seja bloqueado quando houver problemas de transferência que não forem resolvidos. Então, as missões meio que garantem a disciplina, e os modelos fornecem a inteligência usando elementos básicos com os quais eles já estão familiarizados, como agents.md, habilidades, etc.
+
+Então, o que isso desbloqueia? Lembra do gargalo com o qual comecei ? Atenção humana. A situação econômica está mudando. Antes, uma equipe de cinco engenheiros conseguia trabalhar em até 10 fluxos de trabalho simultaneamente .
+
+Agora, talvez com missões, possamos aumentar esse número para 30. A equipe pode se concentrar em problemas interessantes, como a arquitetura, decisões de produto, em vez de se preocupar com a execução em si. E o importante é que o código-fonte fique mais limpo do que quando você começou. Os testes de ponta a ponta, os testes unitários, as habilidades, a estrutura que as missões proporcionam, significam que os agentes e os humanos são mais produtivos nesse ambiente daqui para frente. Então, agora que você entende como as missões são estruturadas e como elas realmente funcionam, você pode ver que elas são, na verdade, uma composição daquelas estratégias originais, certo? A delegação se manifesta em todos
+
+os aspectos, desde a forma como o orquestrador gera trabalhadores até a forma como geramos subagentes de pesquisa. O princípio do criador-verificador é fundamental, pois a validação e a implementação são sempre agentes separados com contextos distintos. A transmissão percorre o estado de missão compartilhado que todos os agentes consultam, e a negociação aparece nos limites dos marcos, onde o orquestrador define, por exemplo, se este resumo de transferência está correto. Precisamos criar funcionalidades complementares, redefinir o escopo, etc.?
+
+Mas as estratégias não são suficientes. Você precisa do tecido conjuntivo. Você precisa dessas transições estruturadas para que os agentes não percam o contexto, precisa do modelo certo em cada função e precisa de uma arquitetura que melhore a cada aprimoramento do modelo. Então, o que eu gosto de pensar é que as pessoas nesta sala que estão pensando em termos de ecossistemas de agentes, que desenvolvem uma intuição sobre como diferentes modelos se compõem sob pressão, essas pessoas é que realmente vão lançar a próxima geração de inovação. Hum, ainda há muitas perguntas em aberto , não é? Como podemos paralelizar ainda mais
+
+a carga de trabalho das missões para que elas sejam executadas mais rapidamente? Como podemos começar a orquestrar as próprias missões em fluxos de trabalho ainda mais complexos? Mas os dados das missões de produção são claros. Isso funciona em projetos reais e em grande escala atualmente. Então, é com isso que vou deixar vocês. Abra o
+
+Droid, tente executar /missions, discuta com o orquestrador sobre o escopo, aprove o plano e depois vá fazer outra coisa. Estou ansioso para ver o que vocês vão construir, e estarei por aqui para responder a quaisquer perguntas durante o resto do dia. Obrigado. [aplausos] [música]

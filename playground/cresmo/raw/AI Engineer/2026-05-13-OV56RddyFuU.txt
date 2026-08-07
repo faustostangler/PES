@@ -1,0 +1,107 @@
+---
+video_title: "Self-Training Agents: Hermes Agent, HF Traces, Skills, MCP & Finetuning  — Merve Noyan, Hugging Face"
+video_id: OV56RddyFuU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=OV56RddyFuU
+video_date: 2026-05-13T17:00:06+00:00
+video_description: |
+  Open-source models have caught up. GLM 5.1 is leading the Artificial Analysis intelligence index over closed models, and the gap is closing fast with each release cycle. The practical upside beyond benchmarks: full weight access means you can quantize, fine-tune, and deploy to edge devices or browsers without data leaving your infrastructure.
+  
+  @MerveNoyan walks through the Hugging Face ecosystem built around this: inference providers that route to the fastest or cheapest option per model, benchmark datasets for filtering by SWE-bench or AIME scores directly on Hub, a traces repository type for storing and exploring agent sessions, and skills that plug into coding agents. The closer is a live demo where she asks Claude Code to fine-tune a vision-language model on a dataset by name. The agent calculates VRAM requirements, selects an instance, and kicks off the job. What used to be a day of napkin math is now a prompt.
+  
+  
+  Speaker info:
+  - https://x.com/mervenoyann
+  - https://www.linkedin.com/in/merve-noyan-28b1a113a/
+  - https://github.com/merveenoyan
+  
+  Timestamps
+  0:00 Introduction to Open Agent Ecosystem
+  0:39 Importance of Open Source in Machine Learning
+  2:36 Hugging Face Hub overview
+  3:06 Agentic models and Vision-LMs
+  4:24 Benchmark datasets and model filtering
+  5:16 Inference providers and model routing
+  6:50 Local coding agents and tools
+  7:46 Hermes agents for memory management
+  9:20 Traces repository for agent sessions
+  10:22 Tips for finding and serving local models
+  12:07 Supercharging agents with Hugging Face skills
+  13:41 Live demonstration of agent-driven fine-tuning
+  14:41 Training vision models (object detection/segmentation)
+  15:00 Using Model Context Protocol (MCP) for agents
+  16:30 Case study: OCR processing for AI papers
+---
+Olá a todos e sejam bem-vindos a esta palestra sobre o ecossistema de agentes abertos, que eu gostaria de chamar de "ter um engenheiro de IA ao seu alcance". Meu nome é Marwa e trabalho na equipe de código aberto do Hugging Face. Quantos de vocês usam a expressão facial de abraço diariamente ? Ah, vamos mudar isso. Isso não está certo.
+
+Mas primeiro vamos falar um pouco sobre código aberto e o que ele é. Portanto, quando se trata de aprendizado de máquina, o código aberto é absolutamente um diferencial. Basicamente, você tem os modelos de peso livre que são compatíveis com licenças não comerciais. Chamamos-lhes pesos abertos e depois temos modelos de código aberto que possuem licenças disponíveis comercialmente, como este da Deep Seek. É chamada de licença MIT ou Apache 2.0, e
+
+existem ainda mais modelos de licença aberta que disponibilizam o código de forma transparente. Se você tem agentes que têm o sistema aberto, tudo está aberto, e isso é ainda mais importante considerando que, como ontem ou outro dia, foi revelado que o desempenho da nuvem estava diminuindo. Então, se você tem tudo às claras, nada muda sem que você saiba, não há degradação de desempenho sem que você perceba, tudo funciona perfeitamente. Mas além disso, se você tiver acesso aos pesos, poderá reduzi-los e quantizá-los. Você pode ajustá-los com mais precisão se quiser .
+
+E garante privacidade absoluta para o usuário final, pois você pode implantá-lo em dispositivos de borda e navegadores sem que os dados sejam enviados para outro lugar. Na minha opinião, isso é muito importante, ainda mais hoje em dia com as falhas de segurança e tudo mais. E houve um argumento, talvez há alguns anos, de que os modelos de código aberto não são tão bons quanto os modelos fechados. Não, esse não é o caso. Como você pode ver, por exemplo, a versão mais recente do GLM, a 5.1, está causando
+
+travamentos constantes, e eu a utilizo no meu ambiente de programação. Este é o índice de inteligência artificial, e os verdes representam modelos abertos, enquanto os pretos representam modelos fechados, e nós acabamos de alcançá-los . E vamos acompanhar ainda mais de perto os próximos modelos e outras novidades. E vamos voltar ao Hugging Face Hub. Assim, tudo é facilitado pelo Hugging Face Hub, incluindo todas as versões de código aberto. É a camada de infraestrutura para todos
+
+os seus fluxos de trabalho de código aberto. E, a partir de agora, está hospedando ainda mais modelos. Eu deveria ter atualizado o número. Provavelmente perto de 3 milhões. Existem muitos conjuntos de dados, espaços e tudo mais, mas isso não é tudo quando se trata do ecossistema agentivo, e é sobre isso que falaremos hoje.
+
+Assim, ao acessar os modelos, você pode filtrar por modelos agentivos. São, em sua maioria, as que estão em alta. E, na minha opinião, existem dois tipos de modelos . Existem os LLMs de visão e existem os LLMs comuns, e os LLMs de visão também podem funcionar como um agente de uso do computador sobre as capturas de tela. Eles sabem onde clicar, etc., o que é muito
+
+legal. E uma tendência que tenho notado recentemente é o fato de que alguns laboratórios estão lançando seus LLMs com recursos de visão computacional desde o primeiro dia. Por exemplo, o Gemini 4 era um modelo omnidirecional e ainda é um modelo agentivo. Existe Qwen 3.5, existe Chimera Chimera 2.5. Esses eram VLMs. Portanto,
+
+prevejo que todos esses modelos serão lançados com recursos de visão computacional ao longo do tempo . E, na verdade, é super fácil de executar . Por exemplo, você pode usar um servidor como o VLLM MLX ou o Llama CPP desde o início, com poucas linhas de código. Antigamente era muito mais complicado, mas hoje em dia isso não é grande coisa. E se você quiser comparar modelos abertos, lançamos recentemente um recurso chamado conjuntos de dados de referência. Então, quando você
+
+acessa os conjuntos de dados no lado esquerdo, há, na parte inferior, um botão com vários parâmetros de avaliação. Basta clicar e você poderá ver os benchmarks populares, como SWE E Bench Pro, Humanity's Last Exam, AIMEE e outros. E quando você vai, por exemplo, ao SWE Bench para ver o quão bom seu agente é em programação e outras coisas. Você pode ver os modelos abertos classificados de acordo com as pontuações. Então, atualmente, o GLM 5.1 está no topo da lista.
+
+Portanto, hoje em dia também é fácil escolher um modelo aberto, porque existem 3 milhões de modelos disponíveis, enquanto antes era um desafio escolher entre os diferentes modelos. E se você realmente quiser conferir, a Hugging Face tem um serviço chamado provedores de inferência, que direciona os melhores modelos para os melhores provedores. Assim como existem outros fornecedores no mercado, há o Grok, o Cerebras, não conheço o Novita e outros. E depois disso, é super fácil compará-los também. Se você achar que tem a opção mais barata ou a mais rápida . Na verdade, tive que truncar,
+
+mas também existe a coluna de uso de ferramentas. Então, você pode escolher um dos modelos de código aberto para o caso de uso de agentes e coisas do tipo. E voltando aos agentes, depois de toda essa discussão sobre o Hub de Proteção contra Fusões e Aquisições, o Hub de Proteção contra Fusões e Aquisições lançou recentemente uma série de recursos futuros para você usar com modelos abertos, agentes e outras ferramentas. E, em primeiro lugar, há o servidor MCP, onde você pode conectar o hub ao seu LLM. E existem habilidades que permitem até mesmo sentir a vibração de modelos de trens. É como se você fosse
+
+até o seu agente e dissesse: "Treine Q e 23.5 neste conjunto de dados para mim", e então ele simplesmente treina. O que para mim é como ficção científica, porque antes não existia, e há muita coisa acontecendo nos bastidores, e o agente lida com tudo isso muito bem. E também existe o agente local, que permite executar agentes de codificação completos localmente a partir de modelos com o Hugging Face Hub, pois nos integramos muito bem a eles. E, passando para o primeiro ponto, basicamente minha palestra abordará todos esses assuntos . Em primeiro lugar, temos
+
+os agentes de codificação locais. E você tem muitas opções, na verdade, muitas mesmo, mas uma das minhas favoritas é o Pie, porque é super fácil de configurar. Basicamente, acho que você também pode usá-lo com provedores de inferência remotamente, mas se quiser servir como um agente de codificação local, pode usar o Llama CPP para isso, e então o Pie o consumirá diretamente. E algo muito legal é o Llama Agent, que está integrado ao Llama CPP como um binário que você pode executar diretamente e iniciar um modelo fornecendo o ID do Hugging Face Hub. Portanto, também é extremamente fácil colocar um agente local para trabalhar.
+
+Vou compartilhar meus slides na minha conta do Twitter depois, então não precisa tirar fotos. Uma das minhas coisas favoritas atualmente é a agente da Hermès, e eu defenderei essa ideia até o fim . Então, isso é como...
+
+É um passo um pouco além da garra aberta em termos de gerenciamento de memória e tudo mais. E, na verdade, é muito fácil começar a usar, tanto localmente quanto com o provedor de inferência do Hugging Face. Por exemplo, eu estava experimentando isso. É como se o assistente de configuração fizesse tudo por você. Basta fornecer as chaves e outros dados, e depois integrar ao Slack, WhatsApp ou qualquer outro aplicativo, e pronto .
+
+E eu recomendo fortemente o uso disso se você quiser usá-lo com um modelo aberto. Recomendo vivamente o GLM 5.1. Por exemplo, inicialmente não consegui me integrar ao Slack. Tenho testemunhas aqui, meu colega Niels está aqui.
+
+E então eu pedi ao GLM 5.1 para corrigir o problema com o agente Hermes, e ele se corrigiu sozinho, e foi um bom dia. Tipo, eu acho que o GLM 5.1 é um modelo muito bom, e mal posso esperar para usá-lo com o Gemma 4. Mas também, neste fim de semana rolou um boato no Twitter sobre um modelo Minimax que está para ser lançado, então provavelmente vou testá- lo também e compartilhar minhas descobertas. Portanto,
+
+recomendo vivamente o uso do agente Hermes com os modelos abertos. E mais uma coisa. Então, basicamente, o Hugging Face Hub agora tem um novo tipo de repositório de conjunto de dados chamado traces, e isso inclui todos os seus rastreamentos de código X, código na nuvem ou rastreamentos do Pie que eles hospedavam. Por exemplo, se você acessar o seu...
+
+se você enviou um rastreamento e clicar na coluna de rastreamentos no visualizador de conjuntos de dados, ele aparecerá assim: muito bem analisado. Você pode explorar seus dados e, mais tarde, se quiser, até treinar um modelo com eles, o que é muito legal, na minha opinião. Se quiser enviar os rastreamentos do seu agente, basta fazer o upload das suas sessões a partir desses caminhos, sem necessidade de mais nada. Provavelmente teremos o agente Hermes em breve para rastreamentos, caso você queira mais opções para servir o LLM localmente por trás do agente. Algumas dicas para encontrar um bom modelo: acesse o site da Hugging Face. Há
+
+outra aba, e dentro dela estão os aplicativos. Esses aplicativos incluem LM Studio, Llama, C++, todos os aplicativos para serviço local. Ao filtrar por eles, você encontrará os modelos compatíveis com esses aplicativos locais. Seja qual for o modelo que você queira servir, nós temos a solução. E quando você acessa o repositório de modelos, algo muito legal, na minha opinião, é que, nos lados esquerdo e direito...
+
+Existe uma seção GGUF, então basicamente, se você não sabe, o GGUF é suportado. Ele vem no formato de arquivo CPP do Llama, que é suportado em muitas coisas, como o Llama, o LM Studio e tudo mais. E você tem a compatibilidade de hardware; por exemplo, o Gemma, para modelos maiores, se você quantizá-lo para quatro bits, cabe em uma GPU L4 com 24 gigabytes de VRAM. Eu acho isso muito legal, e isso também é disponibilizado para repositórios MLX. E quando você voltar ao repositório de modelos, se não tiver a mínima ideia de como disponibilizar esse modelo, no canto superior direito há a opção "Usar este modelo", e você terá as opções de aplicativos locais nos quais o modelo é compatível. Ao
+
+clicar nela, você verá que com apenas algumas linhas de comando que você pode executar, você instala, o modelo estará disponível e pronto. É muito, muito conveniente executar modelos abertos atualmente. E, por último, potencialize seus agentes de programação usando as habilidades do Hugging Face. Então, temos um conjunto de habilidades para você começar a treinar, inferir com modelos abertos, usar modelos abertos, explorar conjuntos de dados abertos, usar aplicativos de IA, tudo. E temos uma ferramenta chamada Hugging Face CLI skill, que permite que os agentes de programação gerenciem repositórios, executem tarefas, iniciem demonstrações e tudo mais.
+
+E é assim que você pode instalá-lo. Basta digitar "HF skills" no Google e você encontrará os comandos. Mas nós temos mais habilidades do que isso. Basicamente, isso permite que você integre o hub aos seus agentes, oferecendo todos os recursos de exploração do Hugging Face Hub . Mas o resto das habilidades são muito legais. Existe a habilidade de instrutor LLM.
+
+Basicamente, isso não se aplica apenas a modelos de linguagem de baixa resolução (LLMs), mas também a modelos de visão computacional. Você pode simplesmente dizer ao modelo: "Ok, treine este modelo neste conjunto de dados", e ele iniciará o trabalho remotamente em nossa infraestrutura ou localmente, onde você preferir. E existe a habilidade Gradio, que permite criar demos. E existe a habilidade de conjunto de dados da Hugging Face, que permite explorar conjuntos de dados através da nossa API de visualização de conjuntos de dados. E você pode instalá-lo com muita facilidade. Mais uma vez, trazemos mais
+
+integrações. Acabei de colocar a nuvem no Gemini aqui. Então, colocando isso em prática, por exemplo, eu pedi ao modelo, pedi ao CloudCode para dizer: "Ei, você pode treinar o Qwen-2-VL no Lava-Instruct-MiX, que é como um conjunto de dados de visão e linguagem?" E me fez algumas perguntas. A mensagem dizia: "Certo, em qual instância você gostaria de inserir isso, já que existem várias opções?" Na
+
+verdade, o modelo, tipo, no back- end, o agente calcula a quantidade de VRAM necessária para executar, ajusta esse modelo em um determinado tamanho de lote e tudo mais. Assim, ele cuida de tudo para você. Ele apenas lhe faz algumas perguntas. Ok, qual é a sua divisão de validação, blá, blá, blá. E então, simplesmente inicia o trabalho, o que para mim ainda é pura ficção científica até hoje, como alguém que treina modelos desde, sei lá, o início da minha carreira, tipo, uns seis anos atrás.
+
+E no final, você simplesmente encontra seu modelo no hub. E isso não se limita a mestrados em direito (LLMs) e mestrados virtuais em direito ( VLMs). Recentemente, lancei algumas funcionalidades para, por exemplo, treinar detectores de objetos ou, sei lá, modelos de segmentação e tudo mais para visão computacional. Ele lida, por exemplo, com diferentes tipos de caixas delimitadoras e tudo mais. Basta dar o comando e deixar que ele cuide de tudo.
+
+E voltando ao MCP, o que oferecemos? Hum, temos modelos, conjuntos de dados, espaços. Procure sua tarefa. Hum, busca semântica por espaços. Então, se você não conhece espaços, é como a App Store da IA.
+
+Você tem uma infinidade de aplicativos por lá para absolutamente tudo que você possa imaginar. E também temos algo chamado "trabalhos", que permite que você inicie trabalhos pontuais que terminam se falharem ou se forem bem- sucedidos, e você paga pelo período em que estiveram ativos. Além disso, você pode consultar esses aplicativos a partir do MCP, como mostrarei em breve, e ele funciona perfeitamente com todas as suas plataformas favoritas. Assim, por exemplo, aqui, pedi ao modelo para gerar uma imagem de uma baklava feita de fios e, em seguida, ele chamará o espaço de imagens do Hugging Face do Qwen, que é um modelo de geração de imagens hospedado remotamente, consultará esse modelo e trará o resultado. Funciona muito bem.
+
+Olhar. Mas você precisa ativar uma configuração no MCP chamada espaços dinâmicos. Se você quiser mais opções, como por exemplo, se quiser absolutamente todos os espaços, você precisa ativar essa função, que é um pouco experimental. E aqui estão algumas ideias de como você pode usar os espaços MCP. Mas você não está limitado a essas opções.
+
+E para juntar tudo isso, meu colega Niels construiu algo que achei muito legal, então quis compartilhar. Basicamente, no Hugging Face Hub, existem artigos, e esses artigos são basicamente relacionados à Inteligência Artificial. Queremos que as pessoas possam fazer perguntas sobre esses documentos ou compartilhá-los. Mas nem todos os artigos vêm com Markdown, que é o modelo que podemos indexar e coisas do tipo. Então, fizemos OCR em 30.000 documentos usando os
+
+modelos e tarefas de OCR abertos do Codex, tudo por meio de instruções, o que é um pouco insano. Então, os passos para fazer isso são, em primeiro lugar, escolher um modelo de OCR que seja barato, bom e tenha um bom desempenho. Peça ao especialista em LLM para iniciar um trabalho de processamento, escrever o código correspondente e executá-lo na infraestrutura de suporte. Em seguida, deixe que o especialista configure a instância de hospedagem do modelo e tudo mais, sem que você precise se preocupar com cálculos rápidos. Depois disso, você terá lucro.
+
+Para escolher um modelo de OCR, você pode acessar o OCR Benchmark, que é um conjunto de dados de referência que já mostrei anteriormente. O primeiro resultado é o Chandra OCR, mas não se engane, acabamos de lançar uma funcionalidade que permite ao usuário perguntar ao modelo qual é o melhor modelo de OCR para ajuste fino, e ela também fará recomendações sobre ajustes e outras coisas. Então, se você precisar de modelos menores, etc., essa função cuidará de tudo para você, o que é muito legal. Confira .
+
+Uma vez que você escolher o modelo, ok? Neste caso, usaremos Chandra. Nós pedimos à modelo para escrever o roteiro e ela escreveu. Então, os agentes fazem um cálculo rápido para a instância, calculam o custo da tarefa em execução e tudo mais, e essas tarefas serão executadas novamente. Recentemente, lançamos um produto de infraestrutura chamado buckets, que é como um bucket do S3, mas muito mais barato e rápido. É
+
+isso que você pode usar com a montagem e, basicamente, você pode usar isso. E você pode começar através destes links. Espero que gostem desta palestra. Muito obrigado .

@@ -1,0 +1,86 @@
+---
+video_title: "Feedback Loops are All You Need — Mehedi Hassan, Granola"
+video_id: ON5LIT0M4do
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ON5LIT0M4do
+video_date: 2026-05-10T18:00:06+00:00
+video_description: |
+  One-shotting is seductive. One line of code for web search. One prompt to serve every user. One deploy and you're done. Granola shipped a chat feature into their meeting notes app and found out what comes after that.
+  
+  This talk is a product engineer's honest account of why the gap between "it works in the playground" and "it works in production" is so hard to close. Web search looks like a single tool call — until it blows up your context, bills you 10p per chat, and your provider ships an overnight update that silently degrades your results. Prompt personalization looks straightforward — until you realize that one prompt genuinely cannot serve the salesperson expecting a deal summary, the engineer expecting blockers and linear tickets, and the HR manager expecting something else entirely.
+  
+  The response at Granola wasn't to prompt better. It was to build the machinery for iteration: custom internal tracing that exposes tool calls, search trails, reasoning traces, and cost in a UI built for everyone — not just engineers with CloudWatch access. And a move to run their Electron frontend as a web app, so every PR gets a preview link and Cursor can go test changes automatically. The point isn't any single technique. It's the feedback loop — and what happens to an AI feature when it actually has one.
+  
+  Speaker info:
+  - https://x.com/mehedih_
+  - https://github.com/MehediH
+  
+  timestamps:
+  0:15 Introduction to Granola and product engineering
+  1:08 Demonstration of meeting transcription and note-taking features
+  1:52 The challenges of shipping generic AI features
+  2:48 The difficulties of integrating web search tools
+  4:02 Why a single prompt cannot serve diverse user roles
+  4:40 Building custom internal tracing and observability tools
+  6:22 Enhancing developer experience for desktop applications
+  7:16 Refactoring Electron for web-based testing and CI/CD preview links
+  8:33 Automating feature verification with Cursor
+  8:46 Concluding thoughts on building iterative feedback loops for AI products
+---
+[música]
+
+Legal. E aí, pessoal, tudo bem? Eu sou a Maddie. Vamos falar sobre algumas coisas de engenharia de produto que temos feito em Cronulla. Não vamos entrar em detalhes técnicos sobre a nossa área. Então, se
+
+eu tiver que fazer um mestrado em direito e coisas do tipo, isso não vai acontecer. Estou te avisando agora mesmo. Então, você já sabe o que está por vir. Legal. Então, eu sou engenheiro de produto na Cronulla. Eu programo
+
+desde a época em que o jQuery era popular. Tenho visto o React mudar a forma como a engenharia front-end funciona. E, obviamente, agora que os mestrados em Direito estão transformando a engenharia e tudo mais, assim como muitos de vocês. Para quem não sabe, o Cronulla é um aplicativo para realizar seu trabalho. Basicamente, somos um aplicativo de anotações de reuniões que fica armazenado no seu documento, assim como acontece agora. E tem
+
+acesso ao áudio do seu sistema de transcrição, bem como ao áudio do seu microfone , o que significa que temos transcrição em tempo real . E então, ao final da reunião, podemos lhe entregar anotações realmente incríveis. Então, vou fazer uma demonstração rápida para vocês. Então, eu estava gravando a palestra anterior aqui e vocês podem ver que captei literalmente tudo o que o apresentador disse. E o mais legal do Cronulla é que você também pode escrever suas próprias anotações por cima do que a transcrição está dizendo. Assim, o resultado final se
+
+assemelha mais ao que você normalmente escreveria em um bloco de notas. Então, vou gerar as anotações aqui. E você verá que isso resultará em um resumo realmente bom. E como você pode ver, eu anotei essa coisa de sobreposição de 20% e foquei mais na saída, certo? Então, esta é Cronulla. Temos as melhores
+
+atas de reunião da categoria, independentemente da sua função, e elas não atrapalham o seu trabalho. E essa tem sido a nossa filosofia de produto desde o primeiro dia. Portanto, incluímos muitos recursos de IA no Cronulla e nosso produto é conhecido por não atrapalhar o seu trabalho. Então, vamos ver o que acontece quando você coloca um recurso simples de IA em produção. Vou dar um exemplo usando esse recurso de bate-papo que temos.
+
+Essa é uma funcionalidade que já existe no Cronulla. Você pode fazer perguntas sobre uma reunião que acabou de ter, bem como sobre várias reuniões diferentes ou sobre um contexto compartilhado. E o Cronulla tentará responder da melhor maneira possível. Então, digamos que eu construísse, sabe, tipo, um sistema de bate-papo temporário. É muito fácil de fazer. E eu coloquei em
+
+produção no meu aplicativo Cronulla falso. E aí, assim que os usuários ouvem, sabe, é como se dissessem: "Me liga daqui a pouco". Então, me dê uma lista de cidades. A pesquisa na web está muito lenta. Não estou escrevendo e-mails de acompanhamento da maneira como costumo escrever meus e-mails.
+
+Pedi para ele me orientar sobre minhas reuniões e ele está me dizendo que tenho reuniões com meu treinador de futebol. Obviamente, esses são problemas muito comuns que você vai encontrar ao criar um chatbot genérico. Então, como resolvemos isso, certo? Então, o que vimos é que adaptar o LLM para funcionar de acordo com o seu caso de uso específico pode ser extremamente difícil. Um dos exemplos disso é a busca na web. Assim, a busca na internet pela maioria dos
+
+provedores de LLM se parece com uma linha de código. Basta adicionar a ferramenta de busca na web e esperar que ela funcione automaticamente. É isso que os laboratórios querem que você acredite, mas quando você começa a investigar , descobre muitas outras complicações. Assim, por exemplo, o uso e o custo dos tokens podem aumentar bastante, especialmente em consultas complexas. Isso vai mudar completamente a sua perspectiva. E cada conversa pode estar
+
+lhe custando cerca de 10 centavos de dólar. Obviamente, em grande escala, com milhões de usuários, isso não é realmente viável. E aí, sabe, os provedores de busca na web também dependem totalmente dos laboratórios. Por exemplo, durante o nosso desenvolvimento, o que observamos foi que estávamos utilizando um modelo por um período considerável de tempo. E então, durante a noite, eles enviaram uma atualização e, por algum motivo, a busca na web ficou comprometida, algo completamente fora do nosso controle. E,
+
+geralmente, não tínhamos ideia do que estava acontecendo, além de simplesmente trocar de fornecedor. Mas queremos ter mais controle sobre isso, porque afeta a experiência do usuário. E você sabe, existem literalmente empresas bilionárias que fazem buscas na internet. Isso demonstra que é muito mais do que simplesmente adicionar uma ferramenta de busca na web ao seu processo de formação em Direito (LLM). Outro aspecto extremamente importante para aplicativos como o Cronulla é a saída.
+
+Então, o resumo que você viu foi muito bom para o que eu esperava, mas alguém da área de vendas talvez esperasse um foco maior em negociações. Alguém da área de engenharia pode esperar algo como itens de ação, bloqueadores ou tarefas lineares. O RH pode querer algo completamente diferente. A questão é que uma única sugestão geralmente não serve para todos. E você sabe, os mestrados em Direito são teimosos e precisamos descobrir como entrar neles e fazê-los funcionar da maneira que queremos.
+
+E sim, como você sabe, o comportamento do LLM é amplamente visto como uma espécie de caixa preta, mas queremos nos aprofundar nos detalhes e descobrir exatamente o que está acontecendo. Então, o que fizemos recentemente em Cronulla foi começar a construir nossas próprias ferramentas de rastreamento. E, obviamente, graças aos LLMs, você pode eliminar essas coisas com um único tiro. E é aí que a mecânica de "one-shot" se torna interessante. Assim, criamos nossas ferramentas de rastreamento de ferramentas, onde temos basicamente visibilidade completa das chamadas de ferramentas do início ao fim.
+
+Assim, temos total visibilidade sobre as chamadas de ferramentas individuais, o motivo dessas chamadas, as ferramentas de busca, as ferramentas de raciocínio e o custo estruturado exatamente como desejamos. E a parte mais útil disso é que estruturamos os dados exatamente da maneira que queríamos . E a interface do usuário foi criada para atender nossos funcionários internamente, não apenas os engenheiros, mas também as equipes de produto, dados, experiência do cliente e todos os demais. Assim, você não precisa, sabe, entrar no CloudWatch e fazer consultas muito complexas para descobrir por que algo falhou. E essa tem sido a chave para nós desvendarmos esse mistério.
+
+E, anteriormente, obviamente, construir esse tipo de ferramenta seria equivalente a usar um provedor de SaaS. E simplesmente não daria, você simplesmente não teria tempo. Mas agora você pode realmente dedicar tempo a construir essa ferramenta de rastreamento que atenda às suas necessidades. Este é obviamente um exemplo muito básico , mas você pode usar o OpenTelemetry ou outros provedores semelhantes. Mas basicamente, nós apenas salvamos as coisas em um banco de dados, encapsulamos com um SDK de IA, e o front-end é a parte mais importante, porque é o que as pessoas vão usar para descobrir o que funciona e o que não funciona. E nós
+
+temos literalmente o nosso fundador entrando em detalhes, como seguir o ciclo do agente completamente do início ao fim para descobrir exatamente o que deu errado. Então, no final, você consegue descobrir exatamente o que deu errado, por exemplo, quando o resultado parece estranho. E então, ao iterar, você pode aprimorar esses aspectos. Mas, como eu disse antes, isso vai ser muito mais do que apenas o básico de um mestrado em Direito . E o comportamento do LLM obviamente faz parte do quadro geral. A forma como os usuários interagem e
+
+vivenciam seu produto também é muito importante. Assim, com LLMs, você pode executar mais tarefas de uma só vez e ter mais variantes, o que gostamos porque podemos experimentar diferentes recursos. Podemos experimentar com uma mesma funcionalidade, por exemplo, apresentando-a de maneira muito diferente em quatro usuários diferentes. Mas o problema específico para nós na Cronulla era que somos um aplicativo para desktop, o que significa que você só pode executar uma instância do aplicativo por vez. E havia muita resistência quando se tratava de testar novos recursos, diferentes variantes e, de fato, testá-las em paralelo.
+
+[limpa a garganta] Então, antes, sabe, antes você tinha que executar o aplicativo Electron localmente, instalar as dependências e testar as coisas. Se você quisesse que um colega de trabalho testasse essas alterações, você teria que pedir para ele fazer essas coisas também. Nós não tínhamos os mesmos luxos que os aplicativos da web têm. Basicamente, o que fizemos foi pegar nosso aplicativo Electron e transformar a interface ( front-end) dele em um shell web. E isso foi implementado online. Então,
+
+agora, em nosso CI, sempre que abrimos um PR, recebemos um link de pré-visualização e podemos ir testar essas alterações. E isso, de modo geral, acelerou muito mais o nosso tempo de desenvolvimento . E a parte mais legal disso é que, como os LLMs agora podem autoverificar seu trabalho, assim que abrimos um PR, o Cursor testa e envia uma captura de tela para o nosso PR, o que acelera muito o processo de teste. E, mais uma vez, você pode pensar que isso dá muito trabalho, mas na verdade é bem simples. Então, o que fizemos foi o seguinte, para aqueles que não estão familiarizados com o Electron, é que existe um processo principal e um processo de renderização. O processo principal
+
+funciona com as APIs do sistema e o processo de renderização é basicamente a sua interface de usuário . Essencialmente, abstraímos nossas APIs IPC, que são as APIs do sistema, para recorrer aos padrões da web quando estivermos no ambiente web. Da mesma forma, com as APIs do React também, como roteadores, sessões e camada de consulta, estamos migrando-as para os padrões da web. E, essencialmente, isso tornou o renderizador do Electron independente de renderização. E podemos simplesmente executá-lo como um aplicativo web. Então,
+
+isso nos ajudou, além das melhorias do LLM, pois nos permitiu alterar e testar um recurso em várias variantes diferentes. Então, seja qual for o produto final, a sensação é ótima porque sabemos que experimentamos muitas variantes diferentes. E nós realmente sentimos esses produtos na prática, em vez de apenas vê-los no Figma. Então, basicamente, este é um longo discurso para dizer que a resposta não é simplesmente melhorar com um único golpe. Trata-se de descobrir como criar esse ciclo de feedback que dê a sensação de estar jogando uma partida de tênis com o LLM. Assim,
+
+o produto final parece mais mágico do que apenas uma caixa preta, na qual você torce para que o recurso que você vai lançar funcione bem com os clientes, e tem a convicção de que o que você está entregando realmente vai se conectar com os usuários. Obrigado. Alguma pergunta? [aplausos]
+
+O que vocês acham da mudança de plataforma do Electron para o Tauri? Já pensamos em nos mudar para Tauri algumas vezes. Hum, acho que a forma como o Electron nos serve atualmente tem sido excelente. Assim como as APIs, que estão mudando bastante. Já experimentamos o Tauri antes e não vimos ganhos de desempenho significativos, que é o que mais nos importa .
+
+Sim, isso já foi discutido antes. Já fizemos alguns testes com ele, mas ainda não o enviamos para comercialização.
+
+Legal. Obrigado, pessoal.
+
+[aplausos] Viva! [música]

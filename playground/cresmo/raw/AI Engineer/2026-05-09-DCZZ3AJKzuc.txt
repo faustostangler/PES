@@ -1,0 +1,79 @@
+---
+video_title: "Give Your Chat Agent a Voice — Luke Harries, Head of Growth, ElevenLabs"
+video_id: DCZZ3AJKzuc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=DCZZ3AJKzuc
+video_date: 2026-05-09T13:00:06+00:00
+video_description: |
+  Chat agents dominated 2025. Every product either went AI-first or got left behind. But text-in, text-out is already starting to feel dated. Voice is faster, more accessible, and opens up interaction paradigms that chat just can't touch — phone lines, Zoom calls, screen readers, ambient interfaces. In this talk, Luke Harries from ElevenLabs argues that the next upgrade for every chat agent isn't better prompts or smarter RAG. It's a voice layer.
+  
+  The problem is most teams have already built and tuned their chat agents. They don't want to throw that out. This session shows how ElevenLabs' Voice Engine wraps any existing agent in a few lines — handling turn-taking, speech-to-text, text-to-speech, and emotion-aware interruption detection — without touching the underlying logic. There's a live demo of converting a working chat support agent to voice in a single prompt, plus a look at the client and server SDKs, Shadcn-based UI components, and how tool calling still works through the wrapper.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/luke-harries
+  - https://harries.co/
+  
+  Timestamps
+  0:00 Introduction to voice-first chat agents
+  0:20 The shift from text-based to voice-based interactions
+  1:43 Evolution of agent architecture and challenges of rebuilding
+  2:47 Introducing the ElevenLabs Voice Engine
+  3:32 Overview of the server and client SDKs
+  4:36 UI components and deployment demo
+  5:56 Summary of voice engine integration paradigms
+  6:37 Predictions for the future of AI agents
+  7:00 Q&A: Handling tool calling and integrations
+---
+[música]
+
+E estou muito animado para conversar com você sobre como dar voz ao seu agente de chat. E 2025 foi o ano dos agentes de bate-papo. E eu acho que ou você morreu como um SAS ou se tornou IA primeiro, adicionando um agente de bate-papo ao seu aplicativo. Então, muitos de vocês provavelmente viram aquele tweet que viralizou, onde eles simplesmente otimizaram o SEO de posts lineares e adicionaram a interface de chat como tela inicial. E eu concordo plenamente com isso. Parece que essa é
+
+a forma padrão que você deseja usar para interagir com a IA agora. Você pode usar a ferramenta de chamada, você pode usar o pano. É simplesmente muito declarativo. É um ótimo ponto de partida rápido. Até o governo está fazendo o mesmo. Esta é a
+
+abordagem do gov.uk para agentes de bate-papo. O chat é legal, mas não dá a sensação de que você está construindo o futuro. E eu realmente acho que a voz é esse meio natural. É muito mais rápido, é muito mais interativo. Além disso, é muito mais
+
+acessível para muitas pessoas que têm dificuldades com teclados ou dislexia, já que a voz é um meio muito mais natural. E também é omnicanal. Assim que você adiciona a voz, você desbloqueia todos esses diferentes tipos de paradigmas de interação. Então, digamos que você estivesse postando informações incorretas, agora seu agente pode entrar em uma chamada do Zoom e começar a corrigi-lo se você estiver falando estatísticas erradas. Ou, se você trabalha no suporte ao cliente, agora pode adicionar uma linha telefônica. Portanto,
+
+o que realmente precisamos fazer é atualizar todos esses agentes de chat para agentes de voz. E ah. Há algumas transições. E o que descobrimos ao desenvolver soluções com empresas foi que, inicialmente, começamos com 11 laboratórios e pensamos: "Ok, vamos construir os melhores modelos de conversão de texto em fala do mundo." E então, de certa forma, nos vimos envolvidos nessa grande questão de como construir esses agentes agora? E estamos
+
+trabalhando para dar suporte a clientes como o Revolut. E todos eles acabam ficando mais ou menos assim, com esse mecanismo de voz que faz a conversão de texto em fala, a alternância de turnos e a conversão de fala em texto. Você então tem essa orquestração de agentes onde combina seus LLMs, seu rag, suas diferentes chamadas de ferramentas e todas as suas integrações. Provavelmente, vários de nós nesta sala já construímos o mesmo sistema ou apresentamos a mesma ideia de slide. Mas o que descobrimos foi que, quando começamos a trabalhar com esses clientes, muitos deles disseram: "Sim, estamos começando do zero. Ótimo. Vamos usar esta versão
+
+pronta para uso." Mas para muitos deles, isso já havia sido construído. E eles disseram: "Calma aí. Eu já tenho meu agente. Passei um tempão fazendo as avaliações, as transcrições. Por que eu precisaria
+
+substituir e reconstruir tudo o que já tenho?" E é por isso que estou dando a vocês uma prévia de um novo produto que será lançado em algumas semanas, onde basicamente pegamos esse mecanismo de voz e o encapsulamos em um elemento primitivo de primeira classe, o que facilita muito a adição e integração com qualquer agente existente. Então, este é o mecanismo de voz. Combinamos os melhores modelos, como a conversão de fala em texto com o Scribe, que é o modelo mais preciso, bem como modelos de conversão de texto em fala, como o V3. Possui um sistema de alternância de turnos muito avançado , que leva em consideração o contexto emocional.
+
+Ele consegue detectar quando você está fazendo uma pausa. Isso também causa um problema semântico. Assim como as milhares de vozes e idiomas diferentes. E, o que é realmente importante para as pessoas nesta sala, nós nos preocupamos muito com a experiência do desenvolvedor nesse processo. E o mais legal disso é que você dedicou muito tempo construindo esses agentes de bate-papo complexos.
+
+Mas adicionar voz a isso é surpreendentemente simples. E assim é a aparência do SDK do servidor. Basicamente, temos o seguinte: você cria seu cliente e depois cria seu mecanismo de voz. E então você adiciona esse pequeno componente ao seu agente de chat existente, onde basicamente o integra. E então, cada vez que uma nova sessão é iniciada, esse loop é acionado e tudo é encaminhado para o seu agente de chat existente.
+
+Além disso, com o SDK do servidor, também temos o SDK do cliente. Então, isso é super simples. Basicamente, são três linhas que você pode adicionar e pronto, você tem um widget no seu site. Uma das vantagens interessantes que você também ganha gratuitamente é que, depois de começar a adicionar esses SDKs de cliente, você também pode adicionar recursos como telefonia e CSAS. E tudo isso já vem praticamente pronto para usar, assim que você embrulha. E,
+
+finalmente, temos um conjunto de componentes de interface do usuário realmente bonitos e bem elaborados, todos baseados no estilo Shaan CN e Vercel. Então você pode simplesmente apontar seu agente de codificação e tentar. O mais legal é que você pode, literalmente, em um único comando, converter um agente de chat existente em um agente de voz. Então, vou fazer uma demonstração rápida agora. Então, este é como um agente de suporte por chat genérico, onde podemos dizer: "Olá, tudo bem?"
+
+Perfeito. Ele responde. Então, isso funciona muito bem. E este é o código rodando localmente. E quando lançarmos isso, virá com uma funcionalidade que basicamente tem tudo de melhor da categoria. E então,
+
+literalmente, é um único comando que irá analisar sua base de código, descobrir como configurar seu agente de chat, como implantá-lo e como integrá-lo. Então, deve ser muito legal e rápido de fazer. Vou mostrar apenas um trecho do código que ele acaba gerando. Como podem ver, aqui temos o motor de voz. Você o conecta a cada nova sessão, e então ele começa a funcionar como proxy. Portanto,
+
+deve ser muito simples e fácil adicioná-lo aos seus agentes existentes. Tudo bem. Podemos deixar que funcione em segundo plano. Legal . Então, essa é uma prévia do mecanismo de voz. Eu também acho que este é
+
+um paradigma realmente útil que a comunidade deveria adotar, onde começamos a migrar para pacotes de abstração mais elevados, em vez de apenas conversão de texto em fala e de fala em texto. Resumindo, as duas coisas diferentes que temos agora para os desenvolvedores que criam esses diferentes mecanismos de voz ou agentes de voz são: o mecanismo de voz, que é fantástico. Você dedica todo o seu tempo a criar esses excelentes agentes de bate-papo. Você pode simplesmente criar esse pequeno wrapper com um SDK eficiente. Ou, se preferir usar uma plataforma completa de agentes para conversas, nós já oferecemos isso pronta para uso. É muito fácil e
+
+muito rápido de configurar. Uh termina com uma... uma previsão. Acho que esses
+
+agentes de chat ou vão deixar de ser apenas agentes de chat ou começarão a adicionar voz. Estou animado para trabalhar com muitas pessoas na sala. Também estamos à procura de parceiros de design. Então, se você quiser estar entre os primeiros a fazer isso, adoraríamos conversar. Mas muito obrigada.
+
+[aplausos]
+
+Legal. Sim. Como faço para lidar com a chamada de ferramentas? Sim . O interessante disso é que, normalmente, o agente de chat é quem faz a maior parte das chamadas de ferramentas. Na
+
+verdade, já está tudo implementado aqui na parte de trás. Assim, você pode ter esse wrapper sem precisar lidar com nenhum dos problemas de chamada de ferramentas. Nós também, na 11 Labs, temos o conceito de ferramentas do lado do cliente e ferramentas do lado do servidor. Assim, você pode fazer coisas bem legais, como expor as ferramentas logo na interface para manipular o DOM. E vamos adicionar uma forma de encaminhar algumas dessas chamadas de ferramentas para o agente encapsulado. Mas a maioria das pessoas
+
+já terá todas as chamadas de ferramentas resolvidas com os agentes de chat.
+
+Legal. Legal. Muito obrigado. Obrigado. [aplausos]
+
+[música]
+
+Legal.

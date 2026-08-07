@@ -1,0 +1,136 @@
+---
+video_title: "A Piece of Pi: Embedding The OpenClaw Coding Agent In Your Product — Matthias Luebken, Tavon"
+video_id: vAIDdLKB6-w
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vAIDdLKB6-w
+video_date: 2026-05-11T17:00:06+00:00
+video_description: |
+  OpenClaw feels like it's learning: it discovers capabilities, stitches tools together, builds solutions it wasn't explicitly taught. The reality is simpler — it's an LLM calling tools in a loop, powered by Pi, a minimal coding agent SDK. This talk is about what you can build once you understand that.
+  
+  Matthias Luebken walks through embedding Pi in a real product: a B2B sales pipeline where incoming RFP emails route to customer-specific agent sessions, CLIs expose CRM and ERP data in a form the agent can use cleanly, and the only output a human sees is a draft in their inbox. The architectural principle running through it: don't fight the coding agent, make things easy for it. Design your data access and tool interfaces so the agent can work naturally rather than having to compensate for complexity.
+  
+  Speaker info:
+  - https://x.com/luebken
+  -https://github.com/luebken
+  
+  Timestamps
+  
+  0:15 Introduction to Pi and OpenClaw
+  1:55 The philosophy of coding agents (doing one thing well)
+  3:34 Architectural pattern: Making systems easy for agents
+  5:13 Defining an agent: LLM with tools in a loop
+  6:37 Practical example: CRM lead qualifier
+  8:41 Coding agents vs. core agents
+  10:06 Extension API and UI interactions
+  12:53 Multi-channel environment: Pi and OpenClaw
+  14:46 Real-world B2B sales pipeline application
+  18:14 Demonstration: Dashboard and email drafting process
+  20:00 Final takeaways and encouragement to tinker
+---
+Tudo bem. Conheci o conceito de Pi ao pesquisar sobre garras abertas. Houve uma conferência, um encontro, e eu disse: "Ok, vamos jogar com garra aberta." E eu não estava tão interessado em todas as loucuras que as pessoas faziam, mas sim em entender como essas coisas funcionavam. Então, eu estava pesquisando sobre o Raspberry Pi e, sabe, tentando entender todo o universo de possibilidades que o Pi oferece.
+
+Essa é a foto que você precisa tirar. Fiquem à vontade para tirar mais fotos, mas todos os slides e exemplos estão aí. Então, esse é o único slide. Tudo bem. Muito rapidamente, falando sobre mim.
+
+Estamos criando uma pequena empresa, a Seven AI. Estamos criando agentes para organizações. Pequena vinda da Europa, mas está começando. E o que eu realmente gosto... hum...
+
+desculpe. O que eu realmente gosto na palestra do Mario é que, como vocês provavelmente já viram hoje de manhã, isso é uma citação minha. Estamos na fase de "tentar e descobrir por conta própria" para programar agentes, certo? Então, tudo o que vou mostrar a vocês é o que eu sei hoje, certo? E, bem, vou repetir a palestra daqui a algumas semanas e provavelmente será diferente. Bem, como o Mario estava
+
+mostrando esta manhã, ele criou esse cenário minimalista, certo? Este é o agente de codificação que está disponível para vocês experimentarem. E é isso que eu gostaria de encorajar vocês. Então, o que são agentes de programação e por que é tão empolgante para nós criarmos mais produtos? Este é Ken Thompson, o inventor do Unix, e esta é uma de suas famosas citações: "Escreva programas que façam uma coisa e a façam bem."
+
+E eu gosto muito disso porque meio que joga a nosso favor com os agentes. E a melhor parte, onde mostro isso, é com o Cohere. Então, este é o desktop do Claude, o Cohere. E basicamente estão agrupando seu agente de codificação em algo que consideram mais aplicável. E, para ser sincero, tenho visto uma recepção muito boa em relação a isso.
+
+E quando você usa isso com ferramentas de financiamento , com as ferramentas financeiras deles, você sempre precisa trabalhar com o Excel, certo? Então, eles têm essa habilidade com o Excel de vez em quando. E ele se comunica com o Excel, certo? Bem, não. Em vez disso, utiliza um conjunto de pequenas ferramentas, uma pequena CLI, Pandas, OpenPyXL e componentes do LibreOffice, e empacota tudo isso em sua própria skill para que funcione corretamente . E acho que este é um ótimo
+
+exemplo para te dar um ponto de partida, para te fazer pensar no que é possível fazer. Bem, eu não escrevi um livro, e ninguém pode escrever um livro sobre isso, certo? Porque não existem padrões, certo? Precisamos resolver isso. Estamos vendo alguns padrões emergentes no espaço da programação, certo? Obviamente, existem
+
+inúmeros agentes de codificação diferentes, e estamos vendo isso acontecer, mas não existe um recurso definitivo sobre o assunto, certo? Então, mãos à obra. Uma coisa que eu estava conversando com o Evan ontem, e que percebemos, é que um padrão arquitetônico que estamos observando facilita a codificação de agentes, certo? Bem, isso é muito amplo, mas pense nisso, certo? Tipo, não tente ser muito complexo e tal, mas pense no agente de codificação, no que ele é bom e como eu construo meu sistema para que o agente seja fácil, para torná-lo acessível. Eu tenho
+
+alguns exemplos. Muito bem, esta é a agenda aproximada para os próximos 10 minutos. Não vou falar muito sobre Pi em Open Claw. Tenho alguns slides, os slides estão online, então vamos continuar a partir daí. Então, mais uma vez, uma breve introdução a Pi, Mario, ótimo trabalho. Algo que ele não mencionou
+
+é que ele vai se juntar a Arendelle, o que eu acho incrível. Parece que são ótimas pessoas trabalhando juntas. Sim, é de código aberto, é minimalista, então é perfeito para começar. E a outra parte que eu quero reforçar é: experimente, certo? Vamos falar de algo um pouco diferente, mas abra o Raspberry Pi e peça para ele construir o que você quiser, certo? É incrível
+
+o que ele realmente consegue fazer com base nos comandos do sistema que o Mario demonstrou. Muito bem, estas são as extensões. Então, mais uma vez, todas as extensões que você pode baixar, criar você mesmo ou baixar, e sim, há muitas, muitas coisas para explorar. Muito bem, então vamos lá . Esta palestra não é sobre o agente de codificação em si, ou seja, sobre como usá-lo no seu trabalho diário de desenvolvimento, mas sim sobre o que podemos potencialmente fazer com ele?
+
+E o ponto de partida não são os agentes de codificação, certo? O ponto de partida, e eu recomendo que você faça o mesmo, é analisar o próprio agente principal . Existem outros SDKs, mas, como você sabe, estamos falando do Raspberry Pi, então vamos usar o Raspberry Pi. E o que é um agente? Um agente é, na verdade, apenas um agente LLM que executa ferramentas em um loop, certo? Então você tem alguns
+
+objetivos, você tem algumas informações contextuais, agentes e, em muitos casos, você faz chamadas de ferramentas, certo? E você obtém alguns resultados e, sabe, basicamente está fazendo isso em um ciclo. Certo? É isso. Certo? Não há muito mais a acrescentar. O
+
+resto é mágica, é tentar adaptar um pouco mais ao seu caso de uso, um pouco ao outro caso de uso, nessa direção. Então, é basicamente isso. Certo? Então, por favorzinho, não abra a cortina, não fique mexendo nela. Agora, com agentes, o núcleo do agente, isso se parece um pouco com isto. Você tem uma
+
+classe de agente. Tudo isso é TypeScript. Você pode, sabe, absorver todo tipo de informação. Você pode acioná- lo com informações diferentes e, além disso, você tem um sistema de eventos, então você fica sabendo de muitas coisas que estão acontecendo. Então, um pequeno exemplo. Este é um qualificador de leads para CRM
+
+. Não sei, comecei a usar o CRM para fins pessoais e acabei gostando . Então, interface de terminal, obviamente, pequena aplicação TypeScript. Três arquivos, muito fácil. E você consegue ver isso, certo? Você tem alguns
+
+comandos que pode executar, como, por exemplo , mostrar todas as pistas e classificá-las, certo? Então, é isso que fazemos. Mostre todos os leads e pontue-os. E aqui você vê todas essas coisas que estão acontecendo por baixo do capô. Certo? Você vê que o assistente
+
+está chamando ferramentas, que você obtém alguns resultados e, eventualmente, você recebe alguma entrada. Obviamente, há muita coisa para fazer, mas, sabe, eu simplesmente deixei isso de lado por meio da programação intuitiva, e é um bom exercício de aprendizado. A mensagem do sistema, como você pode imaginar, não é? Sabe, indicar as diferentes ferramentas, é isso que você faz, certo? Portanto, tudo bastante simples se você estiver construindo uma agência.
+
+Este é um exemplo de como se faz a injeção aqui, certo? Então, nós dissemos que queríamos fazer chamadas com a ferramenta, certo? Entramos em contato com isso e acionamos uma ferramenta específica. Mas, para o agente, para direcionar isso mais, certo? Sabe, um gancho típico estaria antes da chamada da ferramenta para fazer alguma coisa, certo? E
+
+neste caso, não queremos atualizar um contato sem, sabe, verificar alguma coisa ou algo assim. Você pode imaginar aqui qualquer tipo de acesso autorizado baseado em funções, qualquer recurso empresarial. Mas, basicamente, sabe, pouco antes da chamada da ferramenta. Há ainda outra categoria: eventos. Então, nós vimos isso, sabe, o fluxo, e você pode ter visto uma pequena marca de seleção ali. Ok, a chamada da ferramenta funcionou bem
+
+e retornou algum resultado. Então, mais uma vez, estamos nos inscrevendo em eventos. Tudo bastante simples. E, mais uma vez, por favor, experimente. Tudo bem. Então, este é um agente simples,
+
+outros agentes SDK estão disponíveis. E agora estamos passando pelo agente de codificação. Então, o que é um agente de codificação? No fim das contas, é basicamente a mesma coisa que já vimos antes. É um agente normal, sabe? Ele executa
+
+ferramentas em loop. Mas agora temos um ambiente de execução e algum tipo de shell, certo? O Bash parece ser o shell que todo mundo está usando. Mas temos um shell e um ambiente de execução para começar a executar. E agora as coisas estão ficando interessantes.
+
+E agora a magia daquilo que você viu com Open Claw de repente brilha. Hum, o Peter compartilhou este exemplo em uma apresentação onde ele enviou uma mensagem para o seu Open Claw e enviou uma mensagem de voz. Naquela época, o Open Claw... e eu
+
+ainda não sei se havia algum plugin específico para isso, mas naquela época, o Open Claw não tinha nenhuma experiência com mensagens de voz. Então, o que ele fez foi criar e usar diferentes ferramentas. E no final, uma das ferramentas era o FFmpeg, certo? Na máquina local, e foi isso que iniciou. E essa era uma das ferramentas, certo? Então, visto de
+
+fora, parece aprendizado. Mas, internamente, trata-se apenas de mais uma ferramenta disponível para o agente. E é por isso que essas coisas tornam tudo tão interessante. Então, hum, novamente, o exemplo aqui, hum, agora, este é um pouco mais sofisticado. Mas a parte importante, e esta é a API de extensão, e você sabe, por favor, procure-a online.
+
+Vamos fazer duas coisas, ou melhor, as coisas que mais me interessam são os eventos de sessão e a interação com a interface do usuário. E sim, uh uh, procure na internet. Mas aqui está a extensão propriamente dita. Bem, novamente, isso é o que você faria em um agente de codificação, provavelmente você simplesmente o geraria perguntando a ele. Mas aqui, se dermos uma olhada, hum, isto é um CRM, uh, TypeScript, uh, um pequeno trecho dele. Basicamente, o que estamos
+
+fazendo agora é repetir o mesmo exemplo de antes, certo? E temos um novo comando chamado pipeline. Certo? Então, se você tiver os comandos de barra e um novo comando chamado pipeline. E agora, estamos conseguindo carregar todos os contatos. Hum, e você vê isso
+
+aqui, não tem as linhas. Logo abaixo do primeiro passo, você pode ver a seleção da interface de contexto . Certo? Então, de repente, não estamos apenas interagindo com os sistemas de back-end, sessões e coisas do tipo, mas também com a interface do usuário. E nós podemos selecionar.
+
+Certo? E isso me fez pensar. Então, né? Então, você tem esse comando, e, novamente, este é apenas o agente de codificação, certo? Não estamos falando do agente principal por último, mas é assim que você carregaria o Raspberry Pi se simplesmente não baixasse o agente de codificação. E
+
+agora, com essa nova extensão, temos o Pi. Certo? E podemos começar a selecionar as coisas. Certo? Então, aqui temos uma seleção bem simples.
+
+E sabe, você tem até menus suspensos. Agora, o importante aqui é que essas são extensões e a estrutura que o Pi atualmente inclui é voltada para os casos de uso de um agente de codificação, certo? Então, como você sabe, há muito trabalho e outras coisas a serem feitas para deixar isso pronto para outros usuários em outros tipos de aplicações. Mas espero que você consiga ver e entender a visão para onde isso está caminhando. E, bem, você sabe, tudo isso é terminal, certo? Então, você deve estar se perguntando como
+
+isso ficaria na web? Atualmente não é possível pedir ao Raspberry Pi para construir algo. Então, eu pedi para o Pi construir alguma coisa, certo? E esta será uma interface de usuário web. Mesmo comando.
+
+Mesma seleção. Tudo baseado no mesmo mecanismo de extensão. Bem, está em andamento uma refatoração para tornar isso mais acessível e mais organizado, mas espero que isso mostre um pouco de para onde as coisas estão caminhando. Tudo bem. Bem, o Raspberry Pi e o OpenClaw são uma configuração muito especial, certo? Então, com o
+
+Pi e o OpenClaw, o que temos é que agora não estamos falando apenas de um único agente em uma única sessão em um ambiente de programação, mas sim de um ambiente multicanal onde temos, você sabe, várias threads em execução, vários agentes em execução. Então, tem um pouco mais de coisa envolvida. Bem, esta é a parte interessante, certo? Foi aí que tudo começou para mim. Se você der uma olhada nos pacotes principais do Raspberry Pi, todos eles são usados ​​no OpenClaw, certo? Então, o
+
+Open Claw tem essa função que executa o agente Raspberry Pi incorporado e cria uma sessão, certo? Assim, o próprio Raspberry Pi oferece um excelente suporte a sessões, criando um agente de sessão e transmitindo todas as informações de volta. Temos o agente de codificação sobre o qual acabamos de falar . Temos o núcleo do agente como a outra parte que mencionamos, e existem outros dois pacotes menores ou maiores: o Pi AI para a abstração unificada do LLM e uma interface de usuário de terminal. O Open Claw criou seu próprio mecanismo de plugins, e isso porque, você sabe, é um caso de uso diferente, certo? E possui requisitos diferentes.
+
+Então você tem suporte a plugins para roteamento multicanal, orquestração de diferentes provedores, subagentes, suporte a gateway, etc., etc., todas as coisas que você conhece do OpenClaw, mas é baseado na mecânica principal do Raspberry Pi e a utiliza. Legal. Mas uma coisa, e essa é a principal ideia que eu gostaria de transmitir, é: ok, o que fazemos agora com isso? Quais são as outras
+
+opções que temos? Este é um dos aplicativos que estamos desenvolvendo para um cliente e, basicamente, o caso de uso é um processo de vendas. Eles recebem pedidos de propostas para encomendar outro sistema, certo? partes. peças vendidas por essa empresa.
+
+E estamos removendo todo esse agente de codificação, tudo isso, certo? Somos, somos, somos um pensamento novo e inovador, certo? E observe o processo desde o início. Então, um e-mail chega, certo? Nós monitoramos basicamente essa caixa de entrada.
+
+Então temos um gateway porque o que queremos fazer é encaminhar isso para diferentes agentes. Certo? Então, aqui eu tenho vários agentes, certo? Bem, a estrutura é a seguinte: temos um agente por cliente. E esse agente tem um cinto de segurança geral, certo? Agente MDE,
+
+por exemplo, mas você obviamente também pode usar outros. E isso ajuda a entender o papel desse agente. No caso específico, explica como usar o sistema e como reagir a determinadas entradas, saídas, etc. Agora, o outro tipo é o de cliente MD, onde basicamente explicamos ao agente como, por exemplo, se o cliente específico pode ter peculiaridades específicas, certo? Acesso específico, descontos específicos e coisas do gênero.
+
+E então, certo? E foi isso que eu disse antes, eu gosto de usar sessões. Então, para cada caso, certo? Estamos criando e reutilizando sessões existentes para que possamos consultar o que foi discutido anteriormente . Tudo bem. Então, recebemos um e-mail.
+
+Analisamos a caixa de entrada e encaminhamos esse e-mail para diferentes agentes. E agora temos ferramentas. Certo? Então, temos essas diferentes ferramentas para conversar com o CRM, para conversar com o ERP, e obter as informações corretas do sistema para que esse agente possa analisá-las e agir de acordo com elas. Tipo, sabe, talvez tenha informações de novos contatos ou algo do tipo. E, mais uma vez, disponibilizamos isso
+
+. Nós facilitamos o acesso para os agentes, certo? E a nossa forma atual de fazer isso é com CLIs, certo? Então, nossos agentes são muito bons em usar CLIs, por isso disponibilizamos isso como uma CLI. Garantimos que os dados estejam seguros. Nós temos nosso
+
+próprio ambiente de testes, e depois criamos os rascunhos novamente. Certo? Então, esse é o sistema, e espero que a essa altura você já tenha entendido logicamente como essas coisas se encaixam, mas como isso funcionaria na prática ? Ah , só mais uma coisa, certo? Sempre há dúvidas sobre sandboxing, etc. E, para ser honesto, ainda
+
+estamos nos primeiros passos para chegar lá, mas se você viu o anúncio da Nvidia sobre o OpenClaw, a política deles, o Open Shell, é realmente muito interessante, e é uma forma de proteger um agente. Estamos investigando isso. Por favor, faça o mesmo. Tudo bem. Então, como isso se parece?
+
+Hum, para que você entenda como essas coisas funcionam, certo? Então, aqui está o painel de controle. Hum, meio chato, mas aqui está o e-mail na caixa de entrada, certo? Então, novamente, vemos o e-mail chegando. E sim, é apenas um de muitos e-mails. A maioria delas é ignorada, mas
+
+esta é como se a chamada do LM dissesse: "Ok, estou interessado nisso." E está relacionado a um caso, certo? Vemos o caso ali em cima. Bem, neste caso também se trata de uma sessão de agente, certo? Então, encontramos a sessão e a associamos a ela.
+
+Então, criamos um rascunho. Então, são várias chamadas, que vou mostrar daqui a pouco, mas basicamente o resultado de tudo isso é um rascunho de e-mail que o usuário poderá usar, certo? Então, nossa ideia é deixar esses usuários continuarem usando o e-mail. Deixe-os na caixa de entrada e nos rascunhos, e eles nem precisam fazer muita coisa. Então, isso é mais como uma interface administrativa; eles podem permanecer no e-mail, mas basicamente a saída seria um rascunho gerado. E
+
+como fica isso atrás, à direita? Temos as diferentes sessões antes dos threads, e isso é a mesma coisa, certo? O assistente pede desculpas em alemão, mas agora que estou lendo os artigos, vejo que ele faz chamadas de ferramentas diferentes, certo? Ele obtém resultados e faz isso em um loop para resolver, certo? O efeito final para o usuário é o seguinte: "Estou olhando minha caixa de entrada, há um novo e-mail associado a um caso e recebo um novo rascunho que posso editar livremente, mas nos bastidores temos todos esses agentes trabalhando."
+
+Muito bem, é isso, é só isso por minha conta novamente. Aqui você encontra os principais pontos dos slides. Os agentes de codificação são e continuarão sendo um componente fundamental para seus sistemas de software. Eu estou apostando nisso, muita gente está apostando nisso. Então, por favor, experimente. O Raspberry
+
+Pi é perfeito para experimentar, quer você goste ou não, ele é minimalista. Você pode desmontar coisas e remontar coisas. É perfeito. Então, por favor, vá em frente e experimente. Certo. Obrigado.

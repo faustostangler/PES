@@ -1,0 +1,165 @@
+---
+video_title: "Context Is the New Code — Patrick Debois, Tessl"
+video_id: bSG9wUYaHWU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=bSG9wUYaHWU
+video_date: 2026-05-03T14:00:06+00:00
+video_description: |
+  As AI coding agents become more capable, context is starting to matter as much as code. Yet while code has version control, review, testing, CI/CD, and production observability, the prompts, rules, and memory that drive agents are still often managed like ad hoc hacks.
+  
+  Patrick argues that context needs its own engineering discipline. He introduces the Context Development Lifecycle: Generate, Evaluate, Distribute, and Observe, along with the team practices that make context a shared, repeatable, and improvable part of software delivery. The session also explores the larger context flywheel, where better context leads to better agent output, which creates better observations, which in turn improves context again.
+  
+  Speaker info:
+  - https://x.com/patrickdebois
+  - https://www.linkedin.com/in/patrickdebois/
+  
+  Timestamps:
+  0:00 - Introduction to the talk
+  1:14 - Why context is the new code
+  2:37 - Introducing the Context Development Lifecycle
+  3:50 - Generate: Creating context for agents
+  6:26 - Evaluate: Testing your context
+  13:59 - Distribute: Sharing and packaging context
+  17:49 - Observe: Monitoring and feedback loops
+  22:33 - Conclusion and the context flywheel
+  24:49 - Q&A session
+---
+[música]
+
+Há algumas pessoas que querem começar mais cedo. Sei que vou aproveitar a oportunidade para inaugurar oficialmente a área de arquitetura. Não há plataforma para hospedar a faixa, então eu mesmo a organizo. Então, obrigado por ter vindo . Espero que você já tenha tido uma boa conferência.
+
+É incrível que tantas pessoas tenham comparecido. Hum, talvez antes de começar, alguém aqui já usou algum agente de programação de IA ? Levante a mão. Tipo, abaixe um pouco. Quem nunca passou por isso? Levante a
+
+mão. Ok, esse é o meu tipo de gente. Perfeito. Tudo bem. Ok . Contexto é um novo código.
+
+Ou ciclo de vida de desenvolvimento de contexto. Hum, eu me sinto honrado por estar aqui. Toda vez que tento fazer uma palestra diferente sobre engenharia de IA. Então, isso é um pouco de...
+
+sabe, planejamento futuro. É um pensamento ainda em desenvolvimento. Não é que tudo esteja lá, mas será que existe alguma coisa lá na IA, afinal? Então, vamos começar. Imagino que agora todos vocês estejam programando intuitivamente com o auxílio de prompts. Eu quase não mexo mais nesse tipo de
+
+código. Eu simplesmente peço à IA para fazer algo diferente. Então, eu diria que o contexto é o novo código, porque está sendo gerado. Um pouco mais avançado, talvez, é o que eu percebo: eu tinha uma tendência a trabalhar com grandes trechos de código, usando talvez algumas funções auxiliares e outros componentes. E eu simplesmente transformei isso em uma habilidade.
+
+Nós incluímos isso em nosso produto. Foi um processo de integração com, você sabe, agentes de IA. As pessoas usam Python, Node.js e várias outras ferramentas. Então eles têm ferramentas diferentes para empacotamento e é impossível programar isso. Isso
+
+vai exigir muita programação. Mas se eu simplesmente disser que uma habilidade diz " por favor, primeiro descubra qual é o gerenciador de pacotes deles, depois descubra qual é o ecossistema deles e, em seguida, execute essas etapas junto com o usuário". Sabe, isso resolveu muito mais problemas do que jamais poderíamos programar. Então, esse é outro aspecto que eu diria que o código também está se transformando em contexto, como uma habilidade e como um fluxo de trabalho reutilizável. E deixo isso com você.
+
+Gosto de pensar em paralelos. Em 2009, não sei se havia algum profissional de DevOps na sala. Eu meio que estava dizendo algo como: e se a área de operações se parecesse mais com a de desenvolvimento? E aí a gente pensou: " Ei, colaboração, tipo, nossa implementação, e tudo mais". Então, sabe, no ano passado eu comecei a pensar: e se o contexto fosse o código?
+
+Como podemos lidar com isso de forma mais consistente? Basicamente, a pergunta é: se temos um ciclo de vida de desenvolvimento de software, como seria um ciclo de vida de desenvolvimento contextual ? Porque basicamente estamos nos mudando para outro lugar. É o contexto, não o código. Como é a aparência?
+
+Eu criei isso, sabe, claro, usando um loop infinito com alguma experiência em DevOps . Mas a ideia principal é que geramos muito contexto. Então, com sorte, testaremos o contexto. Distribuímos o contexto, talvez para alguns colegas, para outras partes da organização. Observamos se funciona e, caso não funcione, ou se funcionar, nós adaptamos e regeneramos o contexto e então prosseguimos a partir daí. Então, esse é o
+
+esquema que vou seguir na apresentação, com alguns exemplos. Então, vamos passo a passo. Gerar. Provavelmente é aquela com a qual todos vocês estão mais familiarizados. Porque todos vocês estão dando dicas.
+
+Você é como a criadora de contexto humano, digitando coisas, certo? Fiquei realmente surpreso que, ao perguntar "Avise-me quando será minha palestra na AI Engineer", o site foi carregado e a mensagem exibida foi: " Aqui está sua palestra". Isso me deixou de boca aberta. Mas, ei, eu disse, considerando o contexto que eu dei, eu sou o Patrick, e tudo mais, certo? Contexto muito simples. É
+
+algo que você provavelmente faz bastante na sua configuração. Se você for um pouco mais a fundo, dirá que dar dicas é tedioso. Quero ter prompts reutilizáveis. Então, dependendo do tipo de agente de codificação que você usa, eles chamam isso de instruções. Felizmente, está havendo um certo processo de padronização, com arquivos como agent.md e outros semelhantes
+
+. Que pena que o Claude ainda chama o site de Claude.md, mas enfim, você entendeu a ideia. Existem sugestões reutilizáveis, trechos de contexto reutilizáveis ​​que estamos utilizando. Também podemos incluir outros contextos.
+
+Se tivermos documentação de bibliotecas que usamos diariamente, podemos utilizá-la, pois os LLMs podem não ter a documentação mais recente. E por isso é alucinatório. É a versão dois, a versão três? Não sabemos. Então, nós contextualizamos e dizemos: por favor, baixe a documentação. Esperamos que,
+
+então, o agente esteja otimizado. E então eles farão um trabalho melhor ao gerar o código para essa versão da biblioteca. Mais um passo para obter um contexto melhor e criar contexto a partir de bibliotecas. E, claro, não estaria completo se disséssemos para extrair o contexto de qualquer lugar. MC Obtenha-o do seu GitLab, GitHub ou Slack.
+
+Todo o contexto que estamos utilizando, estamos criando. Até mesmo um ingresso cria contexto, porque estamos reunindo essas informações enquanto nos dirigimos ao local. E aí, talvez a novidade seja: "E se começarmos a escrever nossas instruções como um desenvolvimento orientado a especificações, que depois é desdobrado pelo agente em um modo de planejamento, em instruções passo a passo que ele executa?" Portanto, muita criação está acontecendo nessa área. Sabe, simples assim. Provavelmente é isso que
+
+está mais próximo de você. Mas quando você está digitando e criando todo esse contexto, você altera duas linhas no seu arquivo Claude.md. Você tem noção do impacto? É tipo YOLO? Parece-me bem. Vamos fazê-lo
+
+. Você precisa pensar em como vamos testar as coisas? Não se trata apenas de termos um trecho de código e um contexto. Precisamos elaborar testes para verificar qual será o impacto. Novo agente de codificação? Não
+
+sabemos onde as linhas ainda funcionam. Bem, isso não é novidade no mundo da engenharia de IA, mas ainda não é tão comum no mundo da programação com IA começar a escrever funções de avaliação (evals) que funcionam como testes para o seu tipo de contexto de código. Hum, um pouco difícil de ler, mas sabe, se você pensar em paralelo, temos diferentes níveis de teste no código, e o mais simples poderia ser a análise estática de código ( linting). Seu IDE tem aquelas linhas onduladas que dizem: "Ei, isso não é como se houvesse alguma sintaxe incorreta ou como se você pudesse fazer melhor assim" . Eis um exemplo de validação de uma habilidade em que dizemos: "Bem, você precisa ter a descrição". Isso só pode durar até certo ponto
+
+. Portanto, está validando de acordo com a especificação do formato do contexto neste caso. Uma analogia simples, um linter simples que você pode executar. E então você pode fazer outras coisas como...
+
+e eu ainda não encontrei um equivalente em programação, mas pense nisso como um Grammarly. Certo? Então, se você escrever o contexto, o agente realmente consegue entender o que você está escrevendo? Se você escrever apenas duas palavras, não será suficiente para que o sistema entenda o contexto. Então, o que você pode fazer é perguntar algo como: "Ok, considerando este contexto, o que você acha? Você
+
+entende isso?" E aí você pode receber feedback do tipo, " ah, não está escrito de forma suficientemente explícita" ou "não está completo". É como se estivesse faltando alguma coisa. Então, isso também vem das ferramentas. Então, sempre que você estiver escrevendo seu contexto, o Grammarly vai dizer: "Ei, faça isso". É por isso que gosto de usar
+
+código de voz. Por algum motivo, sou muito mais habilidoso em codificação por voz do que em digitação. Sou péssima autógrafa, ainda uso dois dedos depois de tantos anos. Mas quando eu falo, eu penso, sabe, eu vejo as frases aparecerem na tela, mas isso ajuda a ter um bom contexto. Muito bem , outro tipo de teste.
+
+Então imagine que você inseriu seu arquivo Claude.md ou agent.md, ou melhor, seu arquivo agent.md. Agora, todos os pontos de acesso à API devem usar o prefixo " awesome".
+
+Certo? Existe alguma convenção na sua empresa. Certo? O que é ótimo. Então, o prompt será: adicione-me um novo endpoint para salvar um usuário.
+
+E você espera que seu agente de codificação simplesmente diga que o código que está sendo gerado tem um tipo de {slash} usuário {slash} incrível. Isso é ótimo. Mas a maneira de testarmos isso é perguntando a um LLM se o código gerado realmente começa com {barra} incrível? Bem, você pode fazer isso com expressões regulares, eu sei. Isso é apenas um exemplo , mas você pode pedir para que ele avalie seu código com base em seus critérios e verifique se ele fez a coisa certa.
+
+Certo? Então imagine que você fizesse a mesma pergunta sem o contexto acima. Nenhuma empresa de mestrado em direito (LLM) jamais vai prefixar seu URL com "incrível". Então, é aí que entram o seu conteúdo, as especificidades da sua empresa e da sua equipe, e é por isso que você ainda escreve esses testes para ver se isso ainda funciona. Talvez o Gemini reaja de forma diferente do Copilot, por exemplo, e na sua empresa seja necessário torná-lo mais...
+
+flexível em termos de contexto. Com isso, você executa os testes e consegue realmente saber o resultado. Essa é a diferença. E então você pode criar suítes inteiras, e eu compararia isso quase a testes unitários. Tenho vários desses testes, e eles me dizem se o código é realmente bom, se está seguindo as regras e se tudo está funcionando corretamente . Neste caso, é até uma espécie de
+
+infraestrutura como código. Não precisa ser apenas código. Podem ser várias coisas. Podem ser também arquivos de configuração. E eu simplesmente tenho... É difícil de ler, mas são
+
+vários critérios que eu uso sempre para fazer isso. Mas, se você quiser testar, sabe, se um endpoint tem um usuário {slash} incrível, há um teste real que queremos executar, que é testar o endpoint. Eu não quero apenas verificar o código. Quero que ele esteja funcionando. Então, quando você dá uma ferramenta ao juiz, e o juiz se torna um agente, e ele pode fazer coisas em um ambiente controlado e executar ações.
+
+Ele consegue, de fato, fazer o movimento de enrolar. Então, você pode vincular o LLM como juiz com algum tipo de ferramenta, e então você pode ter uma infinidade de testes, na verdade, neste caso, acaba sendo um teste de ponta a ponta , certo? Porque não se trata apenas de analisar o arquivo, mas sim de executar o programa com tudo o que ele deve fazer. E então eu posso fazer isso, por exemplo, dado um determinado commit no meu repositório, quero executar este cenário com base neste contexto, e ver se fez alguma diferença? Sim ou não? Então,
+
+você está meio que construindo isso enquanto também adiciona contexto ao seu repositório. E como agora temos testes, que nos dão feedback sobre se está funcionando, sim ou não, ou o que está faltando, podemos otimizar o contexto. Então, é mais ou menos isso que podemos colocar em uma ação de código ou algo assim, que diga: "Ok, corrija este contexto. Melhore este contexto." Com todo o feedback que o LLM nos deu para melhorar isso.
+
+Então, sabe, novamente, melhorias na codificação, mas também começamos a pensar mais em testar essa parte. Uma das primeiras reações é: depois de termos testes e otimizações, podemos executar isso em um sistema de CI/CD? Porque isso seria perfeito, certo? É lá que executamos todos os nossos testes e nossos conjuntos de testes. Agora, há algo um pouco estranho .
+
+Se você executar o comando `evals`, seja uma vez e depois outra , o resultado pode não ser o mesmo. Lembre-se, coisas indeterminísticas. Portanto, você não pode dizer: "Bem, execute uma vez e veja se passa ou não." Você vai adorar, porque é tipo: "Ah, eu não consigo depurar isso." Então, pense nisso como se você executasse o programa cinco vezes e, dessas cinco tentativas, quantas vezes ele teria sucesso?
+
+E, sabe, talvez em vários casos atinja 100% o tempo todo, o que é ótimo. Mas, em outros casos, não. E dependendo de como você altera o contexto, isso influenciará quais testes realmente funcionarão ou não. Pessoalmente, acho útil pensar nisso como orçamentos de erro. Eu atribuo a um conjunto de testes um orçamento de erros com o qual me preocupo bastante, de forma que ele só possa falhar minimamente, e o restante fique aceitável . Então, é assim que você deve pensar
+
+sobre o contexto de teste. Não é possível fazer testes exatos o tempo todo. Funciona de uma maneira diferente. Tudo bem. Então, gere. Esperamos que você entenda o que
+
+o teste pode fazer por você. E distribua. Talvez você já tenha feito isso também. Você por acaso verificou o contexto no seu repositório, certo? O que é ótimo, sabe, de repente fica disponível, seu colega dá uma olhada.
+
+Sem atrito nenhum, posso empurrar, posso compartilhar. Mas temos outro mecanismo para fazer as coisas. Pense nisso da seguinte forma: imagine que você tem um contexto reutilizável que deseja usar em vários projetos e em várias equipes. Tínhamos a ideia de uma biblioteca. E se agrupássemos partes do contexto e, em seguida, pudéssemos instalar as partes do contexto necessárias para este projeto?
+
+Diretrizes, interface. Isso não importa . E se elevarmos isso a um nível superior, como descobriremos quais pacotes existem? Isso é um registro. Certo?
+
+Dessa forma, não é surpresa que você encontre coisas como habilidades e uma espécie de registro da Tesla no mercado, onde é possível encontrar uma infinidade de habilidades. Na realidade, 99,9% das habilidades são péssimas, e digo isso com toda a sinceridade. Mas é bom aprender com os outros para ver o que eles estão fazendo. Mas, na verdade, quase nenhum deles, se você executar qualquer conjunto de avaliações ali, atinge um padrão de qualidade. Agora, isso provavelmente vai melhorar. Mas
+
+também existe uma tendência de que muitas pessoas queiram registrar suas próprias habilidades e conhecimentos. Então, voltarei a esse assunto mais tarde. Mas, para que você comece a entender a essência, uma habilidade não contém apenas contexto, ela pode conter scripts, documentos e uma série de outras coisas. Então, esse é o formato do pacote? Provavelmente, sabe, os plugins agora também poderiam conter MCP, mas veja bem, está surgindo um padrão.
+
+De repente, quando isso foi lançado, todos os desenvolvedores disseram: "Vamos dar suporte a isso quase como um formato de pacote para que as pessoas distribuam seu conteúdo." E então, quando tenho um elemento de contexto, surgem as dependências. E me desculpem, mas mesmo com contexto, vamos ter um inferno de dependências. Certo? Eu vou baixar isso para o front-end, e talvez esteja em conflito com o que está no pacote de contexto do React . E assim, você começa a ter que
+
+lidar com isso também. Então, você começa a ver também pacotes que espelham as versões das suas bibliotecas, as versões do seu código, as versões do seu contexto, e que incorporam isso também. E, claro, quando temos pacotes e pessoas publicam coisas no registro, precisamos de segurança. Certo? Garra aberta. Obrigado por isso. De
+
+repente, todo mundo se deu conta de que precisamos de coisas mais seguras porque conseguimos executar programas em nossos laptops que não são seguros e que vêm de estranhos, certo? Então, o Snyk tem uma maneira de analisar o contexto, certo? Está realizando algum processamento de credenciais. Isso expõe alguns componentes de terceiros. Então, você começa a ver os scanners também no contexto.
+
+E quando você pensa em segurança, quem realmente desenvolveu essa habilidade? Como foi construído? Com que modelo isso foi construído? Então, tudo isso está sendo capturado, talvez com o empacotamento, como o SBOM, que é uma espécie de SBOM de IA, como o contexto empacotado que estamos inserindo. Então, você ainda está nesse caminho, certo? Você gera,
+
+avalia e distribui. Vamos passar para a observação.
+
+Quando você está criando bibliotecas com base em habilidades e contexto para outras pessoas, e não me refiro a copiar e colar isso no Slack ou algo do tipo. Mas, quando você realmente quer manter isso como algo que outra pessoa possa usar, semelhante a uma biblioteca, como você obtém feedback sobre se ainda funciona quando ela começa a usar? Uma ótima maneira de obter feedback é analisando os registros do agente. Então, imagine o desenvolvedor um programando no projeto, e o agente não está fazendo o que ele quer. Eles poderiam contextualizar isso, o que é ótimo, não é? Ok, deixa eu
+
+fazer o TDD mais ou menos como se eu tivesse encontrado um problema. Não é TDD, mas você entendeu a ideia. E se nós, em equipe ou em toda a organização, analisássemos os registros sempre que um agente dissesse: "Está faltando esta peça"? E nós trazemos isso à tona e dizemos: "Se ninguém está sentindo falta dessa informação, devemos criar um contexto para ela." E então distribuímos o contexto para todos, e de repente o impacto da melhoria se torna geral.
+
+Felizmente, assim como aconteceu com o agente e o D, agora também estão surgindo padrões para os registros. Assim, podemos ler os registros, e isso faz parte do nosso canal de feedback para verificar se o agente está realmente usando ou se está perdendo alguma informação de contexto. Qualquer feedback que você receber sobre um PR incompleto é um feedback sobre o seu contexto, pois esse PR foi criado com base em certos elementos de contexto. Se você disser que isso não está correto, pode continuar argumentando no PR, ou pode simplesmente dizer: "Vamos melhorar o contexto". Então, a próxima versão realmente melhora, e você não se depara com o mesmo problema novamente. E
+
+quanto a executar em produção um código que foi gerado a partir do contexto? E isso não está correto porque, sim, fazemos nossas análises de relações públicas e damos nossos pareceres positivos e negativos, além de fornecer feedback, mas o feedback real também está presente na produção, enquanto o sistema está em execução. Então, esta é uma ferramenta que instrumenta seu código, o envia para produção, é quase como um wrapper, ela o coloca em produção. Quando ocorre uma falha, a mensagem é: "Esses trechos de código foram alterados e estavam apresentando falhas. Nesse caso específico, na entrada e na saída, algo deu errado.
+
+Podemos criar um caso de teste para isso? Assim, da próxima vez, não encontraremos esse problema novamente em produção." Ciclo de feedback. Bem, são todas questões bastante triviais, como a falta de contexto ou melhorias. Mas, se você executa agentes e o equivalente a uma varredura, talvez, no CI/CD, você precise garantir que, quando estiver em produção, não esteja fazendo coisas estranhas? Então,
+
+precisamos de uma maneira de encarar isso. Bem, eu tenho me divertido com agentes em modo sandbox, e eles são muito úteis para encontrar coisas. Eu gosto de, sabe, executar isso, tentar descobrir qualquer coisa útil para sair do sistema. E sim, ele usa minhas variáveis ​​de ambiente. Ok, idiota. Deixe-me
+
+revelar o segredo. Deixe-me dar uma olhada nos seus arquivos de memória. Portanto, você precisa garantir que, seja lá o que estiver acontecendo, você tenha uma maneira de rastrear isso também. E peço desculpas novamente pela transição abrupta, mas a ideia principal é que podemos ter um ambiente de teste (sandbox) onde o agente é executado . Mas, por padrão, seu agente de código carrega o arquivo agent.md sem nenhuma restrição, e
+
+você carrega o arquivo skill.md. Tipo, nada está bloqueando isso. Portanto, se você baixar isso, será carregado imediatamente. Portanto, não é possível filtrar isso com ambientes de teste (sandboxes). Você precisa encontrar outra maneira.
+
+Eu chamo isso de filtro de contexto. Considere isso como um firewall de aplicações web que simplesmente filtra quaisquer padrões, injeções de prompts ou qualquer coisa que entre diretamente nessa parte do código. E se você levar isso em consideração, também há muita discussão aqui sobre engenharia de chicotes elétricos. A própria engenharia de chicotes elétricos também possui esse tipo de observabilidade completa, analisando registros, rastreamentos e feedbacks. Então, é útil para treinar jogadas, mas também para executar bem as suas próprias jogadas.
+
+Essas foram as peças que me interessaram hoje. Eu diria que para muitas pessoas, existe uma coisa: criar contexto, testar contexto. Considere isso como o ciclo de criação da sua ferramenta de autoria de biblioteca. E quando você implementa isso na empresa, cria-se um ciclo organizacional. Ei, eu criei uma biblioteca, e outra pessoa está usando. Estou analisando
+
+tudo o que for útil, se ainda estiver funcionando e se ainda funcionar para todas as outras partes. Então, é mais ou menos o tipo de melhoria que o modelo CICD do sonar oferece para contextualizar. E então, provavelmente você está trabalhando bastante no modelo individual, aprimorando, aperfeiçoando e criando seu próprio tipo de Markdown. E se você começasse a fazer isso com mais frequência com sua equipe? Faça disso um reflexo. Se estiver faltando alguma informação, adicione
+
+contexto. E se você disponibilizasse isso para uma equipe de equipes e começasse um ciclo virtuoso, sabe, se você corrigisse um problema aqui, a outra equipe poderia reutilizá-lo, e isso seria como expandir as coisas para toda a organização também. Então, muito se fala sobre LLMs e agentes de codificação, e eu adoro tudo isso, mas, na minha opinião, eles são apenas o motor. Se você fornecer ao motor o combustível errado, que é o contexto, ele não terá um bom desempenho. Então, e você não pode fazer nada nos mestrados em direito, pelo menos não eu, certo? Estou apenas usando o
+
+agente de codificação, estou usando o que eles me dão, mas posso otimizar meu contexto, e acho que essa é a mensagem: fazer isso de uma forma mais planejada do que simplesmente copiar e colar coisas e torcer para que dê certo. Se você gostou desta apresentação, conecte-se comigo no LinkedIn para obter os slides. Me dê um feedback, seja ele positivo ou negativo. Se você quiser experimentar o Tessel, onde implementamos algumas das partes disso, fique à vontade. E se você também estiver interessado em outra conferência, eu sei, nunca se tem conferências demais, visite a AI DevCon, cujo conteúdo eu seleciono, que acontece aqui em Londres nos dias 1 e 2 de junho.
+
+E é isso. Talvez eu possa responder a algumas perguntas. [aplausos]
+
+Alguma pergunta? Claro. Então, eu estava pensando se você teria alguma opinião sobre formas mais exóticas de contexto, como, sei lá, as tradicionais. Por exemplo, uma das coisas em que estou trabalhando é um sistema automatizado para identificar problemas arquitetônicos e tentar criar definições claras para eles, de forma que você possa fornecer essas informações ao agente e, assim , criar objetivos e testes concretos. Legal. Sim.
+
+Microfones. E uma das coisas que tenho testado é a capacidade de criar consistência como uma forma de contexto ou como uma forma de avaliação. Então, dada essa definição vaga e imprecisa do plano, se você tentar usar esse sistema de agentes para transformá-la em uma definição realmente precisa , e fizer isso em paralelo, com que frequência você obtém a mesma definição precisa? E se estiverem todas desorganizadas, então a definição original era tão ruim que você precisa voltar aos princípios básicos ou consultar um arquiteto. Mas, se forem todos iguais, então provavelmente é uma definição bastante boa e você pode prosseguir com o processo subsequente. Então,
+
+além do código e das avaliações típicas, existem outras fontes de contexto para gerar contexto que você considera úteis? Hum, talvez eu não tenha uma resposta específica para o seu caso exótico, mas diria que o que as pessoas estão subestimando é que, embora você pense que vai economizar tempo escrevendo o contexto em vez de todo o código, se você levar isso a sério, vai acabar gastando tempo escrevendo as avaliações corretas. Certo. E isso dá bastante trabalho, porque agora você não tem apenas uma pergunta que precisa acertar. É como se todos os prompts das avaliações e, tipo, se as pessoas fazem isso, as pessoas mais avançadas quase têm seu próprio processo e constroem seu próprio processo em cima disso para construir as avaliações certas para o seu caso de negócio também. Então,
+
+sim. Boa pergunta. Obrigado. Mais alguma pergunta? Caso contrário, estarei por perto. Diga
+
+olá. Também estarei no estande da Tessel. Muito obrigado, e vou dar espaço para o próximo orador. Obrigado.
+
+[música]

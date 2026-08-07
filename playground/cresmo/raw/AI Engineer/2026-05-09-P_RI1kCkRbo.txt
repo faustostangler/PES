@@ -1,0 +1,147 @@
+---
+video_title: "Voice AI: when is the \"Her\" moment? — Neil Zeghidour, CEO, Gradium AI"
+video_id: P_RI1kCkRbo
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=P_RI1kCkRbo
+video_date: 2026-05-09T15:00:06+00:00
+video_description: |
+  The "Her" moment has been promised so many times it's become a joke. Every new demo, every smooth-sounding voice agent gets called it. Neil Zeghidour, CEO of Gradium AI and one of the researchers behind Moshi — the first full-duplex voice model — uses this talk to be honest about where the gap actually is and why it keeps not closing.
+  
+  The core tension: cascaded systems (speech-to-text, LLM, text-to-speech) are practical and getting smarter, but they're architecturally incapable of feeling like a real conversation. Latency from tool calls alone can be 500ms to 4 seconds — while humans process and respond in around 200ms total. Speech-to-speech models solve some of that but trade it for a different problem: they're still half-duplex, meaning they're either listening or talking but never both, which makes backchanneling impossible and the interaction feel robotic in a different way. Moshi showed that full-duplex is solvable. What it didn't solve was making the model useful. And cost is a wall hiding behind the latency problem — TTS at scale is expensive enough that some teams burn through their fundraising before they can grow a user base.
+  
+  The most underrated thread in the talk is paralinguistic understanding: voice carries tone, hesitation, discomfort, and cultural signals that get entirely stripped out the moment you transcribe to text. Getting to Her means building models that don't just produce natural-sounding speech but actually understand what the voice is carrying — and that's a science problem, not a prompt engineering one.
+  
+  Speaker info:
+  - https://x.com/neilzegh
+  - https://www.linkedin.com/in/neil-zeghidour-a838aaa7/
+  
+  Timestamps:
+  
+  0:14 Introduction and mission of Gradium AI
+  1:16 Demonstration of voice cloning technology
+  2:42 The "Her" movie analogy and current limitations of Voice AI
+  5:42 Challenges of cascaded systems (Speech-to-Text, LLM, Text-to-Speech)
+  6:37 The difficulty of latency in tool calling
+  9:08 Explanation of Speech-to-Speech vs. cascaded architectures
+  9:34 The necessity of full-duplex systems and backchanneling
+  11:53 Demonstration of the full-duplex Moshi model
+  12:59 The importance of paralinguistic understanding
+  14:29 Scalability and the high cost of current Voice AI
+  16:38 Introducing Phoneon: on-device, local TTS for privacy and cost efficiency
+  18:29 Conclusion and path forward for Voice AI
+---
+Oi pessoal. Obrigado a todos por estarem aqui hoje. Terei muito prazer em conversar um pouco. Portanto, este é o momento certo para esta palestra, pois tivemos muitas apresentações excelentes sobre voz esta manhã. Gostaria que vocês dedicassem um tempo para refletir sobre onde estamos agora no domínio da IA ​​de voz e quais são os principais desafios que ainda precisamos enfrentar.
+
+Breve introdução ao Gradian. Nossa missão é desbloquear o potencial ainda não realizado da IA ​​de voz. Basicamente, treinamos modelos de voz, de fala para texto, de texto para fala, de fala para fala, seja transformação, tradução, diálogo de fala para fala e assim por diante. Queremos ser um dos principais fornecedores de modelos de voz para todos que desenvolvem agentes e soluções de voz. Portanto, não estamos trabalhando em orquestração, nem em verticais específicas. Nós apenas criamos
+
+blocos de construção para pessoas que desejam desenvolver IA de voz. Quer dizer, posso deixar isso claro, como disse um podcaster famoso que clonei esta manhã.
+
+Deveria haver uma saída de áudio. Cara, você viu o que a Gradian está fazendo com clonagem de voz? É meio louco, sério mesmo. Podemos ouvir um trecho de 10 segundos da sua voz, só isso. Podemos ter um volume bem maior, por favor?
+
+Cara, você viu o que a Gradian está fazendo com clonagem de voz? É meio louco, sério mesmo. Você grava uns 10 segundos da sua voz, só isso. E o sistema analisa o tom, a entonação, o sotaque, todas essas pequenas peculiaridades que tornam sua voz única. Então, de repente, você digita o texto e ele responde. Ok,
+
+acho que você talvez reconheça o Joel de novo. Espero que sim. Então, basicamente, este é um projeto derivado de um laboratório sem fins lucrativos que criamos há dois anos, com financiamento de filantropos, incluindo Eric Schmidt e Xavier Niel. A ideia principal era criar um laboratório que promovesse a pesquisa aberta e que se concentrasse principalmente na fala. Então, desenvolvemos o Moshi, que foi o primeiro modelo de fala para fala para conversação, e o Pocket TTS, mais recentemente um modelo de CPU.
+
+E decidimos também criar essa estrutura com fins lucrativos para produzir um produto que possa ser utilizado em larga escala, além do código aberto. Então, o objetivo da palestra é basicamente baseado no filme "Ela". Então, essa tem sido a analogia mais usada e mais irritante, eu acho, nessa área. Ao mesmo tempo, é extremamente relevante, porque se trata de um garoto de 13 anos, e se você observar uma das cenas de introdução, é quando o personagem principal encontra sua voz de IA, Samantha, pela primeira vez. Ainda me parece que estava, sabe, antecipando, eu acho, como seria a interação.
+
+Oh, como devo te chamar? Você tem um nome? Sim. Samantha. Ei, de onde você tirou esse nome?
+
+Na verdade, fui eu quem me deu. Por quê? Porque gosto de como soa. Samantha. E aí, sabe, veio a tendência do momento "Her".
+
+E nós tivemos tantos momentos "Ela" no Twitter e na vida real. Repito, não quero ser maldoso com ninguém, então também vou rir de mim mesmo. É mais como, sabe, tentar ser pragmático em relação à promessa feita e à situação atual. Esta é uma demonstração muito recente daquela que considero a melhor empresa de IA de voz do mundo, a 11 Labs.
+
+Olá, você está falando com o assistente de IA do governo. Como posso te ajudar hoje? Eu gostaria de abrir um novo negócio. Para abrir uma nova empresa, você precisará escolher uma estrutura e um nome para o negócio, concluir o cadastro e enviar os documentos necessários. E esta é uma demonstração que fiz há dois meses com um Mini Rich. Então, o nosso
+
+apresentador desta manhã, você sabe, foi muito arriscado. Reconheço que estava com muito medo quando fiz isso. Mas basicamente, estamos transformando nossos modelos de voz em streaming em um mini-aplicativo robusto. Ação, basta dizer a palavra. Ok, talvez você possa fazer algo um pouco divertido.
+
+Quero te ajudar a melhorar minha saúde em geral e, por isso, estou procurando um parceiro para ir à academia. Você consegue ter a personalidade e a voz de um viciado em academia? E aí, eu sou o Logan, seu parceiro de treino. Vamos consolidar esses ganhos juntos. Preparado para levantar peso, suar e se sentir incrível? Pode contar comigo
+
+, sem desculpas, só resultados. Então, tudo bem, está tudo certo . Parece mais natural do que antes. Mas em ambos os casos, sabe o que quero dizer, ainda não chegamos lá, certo? A latência ainda é bastante alta.
+
+Não existe a capacidade de lidar com a comunicação simultânea entre o usuário e o sistema. A inteligência artificial está começando a ficar muito melhor e acho que é por isso que vemos toda essa procura por inteligência de voz, porque existem agentes aos quais podemos dar voz e que podem ser úteis. Além disso, trata-se basicamente de um modelo de texto aprimorado com uma voz associada . Portanto, como você já deve saber, qualquer coisa que não esteja no texto não poderá ser utilizada. E talvez eu pudesse pedir, pela última vez, para aumentar um pouco o volume.
+
+Acho que isso poderia ser ainda melhor. Então, o que é preciso para chegar lá? Basicamente, tivemos uma apresentação muito boa esta manhã feita por Samuel sobre sistemas em cascata. Então, vou indo rapidamente. Conversão de fala em texto, LLM, conversão de texto em fala, esse é o clássico Cascade. No nosso caso, fazemos
+
+transcrição de fala para texto em tempo real, transcrição de texto para fala em tempo real com clonagem de voz, VAD semântico, as técnicas clássicas. Então, latência, sabe, conseguir uma conversa rápida. Portanto, temos um TTS muito rápido . Então, essa é a latência do nosso TTS em comparação com alguns outros modelos. Mas, sabe, isso significa que apenas o TTS ainda leva mais de 200 milissegundos.
+
+Em uma conversa humana, todo o processo de compreensão, elaboração de uma resposta e sua pronúncia leva cerca de 200 milissegundos. Portanto, nada disso permitirá ter conversas que soem humanas. E isso é apenas a latência para conversas por texto. Não há chamada de ferramenta, nenhuma tarefa real é executada. Essa é mais uma cena do filme. Ah,
+
+ok, vamos começar com seus e-mails. Você tem vários milhares de e-mails referentes ao LA Weekly, mas parece que você não trabalha lá há muitos anos. Oh sim. Certo, então, sim, ele simplesmente começou a processar todos os e-mails, coletar informações e assim por diante. Obviamente, não estamos lá de forma alguma. Hoje em dia, se você tem um agente de voz
+
+que precisa usar uma ferramenta, você vai ter que esperar. A chamada da ferramenta, sabe, estamos lutando pela latência do TTS, tentando obter 10 milissegundos, 20 milissegundos, e então você tem uma chamada de ferramenta ou roteador aberto que terá uma latência entre 500 milissegundos e 4 segundos. Então, de certa forma, às vezes você sente que estamos lutando por algo que já não é tão relevante . Acho que agora o principal gargalo está se tornando a chamada da ferramenta, que é muito imprevisível. E deveríamos ter modelos que sejam resilientes a chamadas de ferramentas muito complexas . Então, o que estamos fazendo,
+
+você sabe, uma solução para isso é usar preenchimentos. Então, basicamente, o seu LLM se divide em duas partes. Então, ele envia uma chamada de ferramenta. E enquanto aguarda o resultado, pode manter a conversa fluindo de forma natural. Em seguida, ele recupera o resultado e tenta inseri-lo de volta na conversa de forma natural. Então, como
+
+sempre faço demonstrações ao vivo, farei uma demonstração ao vivo improvisada bem curta com algo que foi programado ao vivo muito rapidamente, então pode dar muito errado. Mas a ideia aqui é ter algo como um agente de viagens que funcionasse com código em tempo real . E quando eu pedir para ele buscar lugares, ele vai tentar encontrar algo de bom para dizer sobre o lugar para onde eu estou indo . Olá. Este é Colin, da Wanderlust Travel. Vejo que você deseja reservar uma
+
+viagem para duas pessoas de 10 a 13 de abril de 2026. Para onde você gostaria de viajar nessa viagem? Quero ir para Tóquio. Tóquio é uma escolha incrível. É uma mistura fascinante de arranha-céus ultramodernos e santuários belos e tranquilos .
+
+Encontrei algumas opções fantásticas para você. Você poderia se hospedar no Fairmont para uma noite agradável. Então, isso precisa de ajustes. A ideia principal é que, embora estivesse tentando coletar informações, não sabia ao certo quanto tempo levaria para obter os dados. A música tenta dizer algo de bom sobre o lugar para onde você vai.
+
+Portanto, essa é uma maneira de obter uma latência mais controlada e confiável, mesmo apesar da complexidade do sistema. Mas sabemos que a latência de um sistema em cascata é inerentemente alta, certo? Então, o que eu ouço muito de clientes, investidores e outros é: e quanto à comunicação por voz? Então, acho que uma grande confusão é: o que é fala para fala? Então, a tecnologia de fala para fala consiste em, em vez de ter três blocos, ter apenas um que faz tudo junto, certo? Então, em vez de ter
+
+áudio que entra no processo de conversão de fala em texto e depois no de conversão de texto em fala do LM, você tem um modelo que recebe a fala como entrada e a produz como saída . Isso reduz bastante a latência, mas ainda não é uma conversa humana. Em particular, porque todos os modelos de conversão de fala em fala, exceto o Moshi, são half- duplex. O que isso significa é que mesmo o melhor modelo de reconhecimento de fala, poderíamos argumentar, talvez o modelo de voz avançado da OpenAI ou da Cezanne AI, do qual sou um grande fã,
+
+ainda é half-duplex. Isso significa que o modelo está ouvindo ou falando. E não consegue lidar com a ambiguidade da conversa humana, onde pode haver sobreposição entre pessoas falando umas sobre as outras. Muitas coisas acontecendo. Você tosse. Sabe, você só precisa fazer "mhm",
+
+que é chamado de retroalimentação, e isso interrompe completamente o processo. Full duplex é uma conversa humana. Isso varia entre culturas e idiomas, mas, por exemplo, em japonês, é um sinal de polidez e de que você está ouvindo ativamente, além de demonstrar que está fazendo muita comunicação indireta. Então você diz "mhm uh uh" constantemente enquanto a outra pessoa está falando e isso chega a sobrepor as falas das duas pessoas em até 20% do tempo , certo? É isso que torna uma conversa humana, e eu mostrei este vídeo no meu quarto de hotel esta manhã só para vocês verem que é um modelo de fala para fala, mas não é um modelo full duplex, e vocês podem ver como isso pode se tornar irritante. E
+
+aí, tudo bem? Ei, estou muito bem. Obrigado por perguntar. E você? Como está sendo o seu dia até agora? Ah, estou ótimo. Sabe,
+
+estou me preparando para falar sobre IA de voz e o quão longe estamos do que no filme "Ela" e, bem, eu só gostaria de trocar algumas ideias sobre isso com você. Ah, esse é um ótimo tópico. Sim, adoraria ajudar você a fazer um brainstorming. Você está pensando mais exatamente nisso? Sim, eu estava pensando: " Não, não, não queria interromper."
+
+Sabe, eu estava dizendo exatamente isso. Você pode simplesmente continuar. Ah, sabe, não se importe comigo. É algo que costumo fazer. Ah, sem problema nenhum. Sim, eu ia
+
+dizer que poderíamos dividir isso em alguns aspectos, tipo... Sim, exatamente. Por favor, pare de interromper. Sabe,
+
+isso se chama retroalimentação. Os humanos fazem isso o tempo todo. Isso mostra que você está apenas acompanhando a conversa, sem interromper seu fluxo de raciocínio. Só vou indo. Ah, entendi. Obrigado por me avisar. Sim
+
+. Ah, qual é. Ok, então basicamente eu fui um pouco maldoso, né? É isso que eu quero dizer . Não é uma conversa de verdade, né? E isso
+
+pode se tornar particularmente irritante. É por isso também que, como você sabe, a maioria das demonstrações de IA de voz são gravadas em um ambiente vazio, como uma sala silenciosa ao lado do telefone e coisas do tipo. Muitas coisas podem quebrar. Então, o que fizemos no nosso caso foi...
+
+Desculpe, em que ponto da minha apresentação estou? Estou aqui com Mushi. era o sistema duplex forçado. Então, aqui vocês verão meu cofundador Alex falando com ele. Hum, já tem quase 2 anos. Acho que
+
+ainda envelheceu bem, porque o que você vai ver é que eles vão ficar falando um do outro o tempo todo, e tudo bem. O planeta é Sirius 22. Você pode traçar uma trajetória até ele, por favor? Sim, senhor. OK. Quanto tempo
+
+levaremos para chegar lá? resolva isso . São aproximadamente 5 meses para chegar lá. Ok, não é tão ruim assim. Você acha que temos tudo o que precisamos a bordo da nave para iniciar a missão?
+
+Temos tudo o que precisamos. OK. Então, sabe, mesmo quando o modelo adivinha o que você vai dizer, ele começa a responder antes que você termine. Ao mesmo tempo, você pode falar por cima e o áudio não ignora o que você está dizendo. É algo que você realmente pensa a respeito depois, e assim por diante. Assim,
+
+você tem o que é, até hoje, a experiência de conversação mais robusta, resistente a ruídos, a muitas pessoas falando e assim por diante. Mas agora, se compararmos com... você sabe o que estou pensando agora? Bem, pelo seu
+
+tom de voz, presumo que esteja me desafiando. Talvez porque você esteja curioso para saber como eu trabalho. Você quer saber como eu trabalho? Sim, na verdade. Então, talvez não tenha ficado muito claro, mas neste trecho aqui, a IA entende que o personagem está um pouco desconfortável. Então, isso é
+
+compreensão paralinguística. Sabe, é entender todas as pistas que vêm da maneira como as pessoas falam. Tecnicamente, isso está presente no Mushi, ou em qualquer modelo de conversão de fala em fala, porque essa informação não é perdida. No entanto, se você não explorar essa informação para fazer com que seu modelo diga coisas relevantes, ele nunca a explorará. Se você treinar o sistema com a versão em áudio de um conjunto de dados de instruções, e ele se limitar a responder perguntas factuais , por que ele tentaria capturar essa informação? Então, basicamente, em
+
+Moshi, acho que ainda vimos o único modelo totalmente duplex. Recentemente, a Nvidia publicou o modelo Plex pessoal baseado nisso. O que era ótimo, e ainda é, é que a fluidez da coisa toda é simplesmente impossível de igualar, eu acho. É conversacional e muito robusto. Ao mesmo tempo, alguns modelos eram muito estúpidos. Então, basicamente, foi
+
+inútil. Você podia conversar por alguns minutos e depois perdia um pouco o sentido, sabe? Por não ser um agente, não possuía nenhuma ferramenta de chamada, nenhuma capacidade de fazer nada. É impossível usar em produção algo que não possui observabilidade. Você não sabe se é muito difícil detectar se alguém disse algo que não deveria ser aceito e assim por diante. E
+
+não havia nenhuma compreensão paralinguística real . Então, a principal conclusão para mim é que sabemos que essa natureza de modelo interativo, que será totalmente duplex, será realmente a maneira de se chegar a uma interação tão natural quanto a que se teria com um ser humano. Mas enquanto não formos capazes de conferir a esses modelos com sonoridade tão natural o mesmo nível de confiabilidade, inteligência e personalização que os sistemas em cascata, não vejo um caminho para que eles substituam os sistemas em cascata. Então, eu costumava ser totalmente contra sistemas em cascata. Acho que eles são tão práticos e convenientes que o principal desafio, honestamente, acho que resolvemos isso com o Moshi.
+
+Qualquer pessoa que implementar isso e treinar com dados beta obterá algo que soa praticamente indistinguível da voz humana. Mas todo esse desafio vai acontecer aqui. Ah, um último ponto é a escalabilidade. Então, digamos que você tenha o melhor modelo de reconhecimento de fala, certo? Ah, isso resolve todos os problemas que eu mencionei . Se retomarmos a
+
+analogia do filme, você poderá conversar com ele por várias horas por dia, ou ele estará sempre ligado porque, você sabe, está no seu computador enquanto você trabalha e você faz perguntas a ele de forma assíncrona, e assim por diante. Bem, não vou mencionar o custo da API dos nossos concorrentes, mas a comunicação por voz é muito cara. Provavelmente todos nesta sala sabem disso. O modo de voz da maioria dos servidores de hiperescala opera com prejuízo. É um modelo multimodal gigantesco, e eles perdem dinheiro cada vez que você o utiliza. Mas
+
+, sabe, é meio que uma coisa de marketing e tal, tudo bem. Mas agora, se quisermos que seja um produto realmente lucrativo e usado em larga escala, simplesmente não vai funcionar. E, em particular, qualquer pessoa que tentou desenvolver um aplicativo para o consumidor com reconhecimento de voz percebeu que o LLM agora é praticamente insignificante em termos de custo. Todos os serviços de TTS (conversão de voz em texto) também são muito baratos. A diarização é acessível. Bem, a TTS (console em fala) é
+
+realmente o que vai consumir a maior parte dos recursos. E eu vi pessoas queimando seus fundos arrecadados em projetos de TTS, e elas nem sequer têm a oportunidade de aumentar sua base de usuários. Portanto, outro aspecto é a privacidade. Quanto mais você abrir os olhos, mais, sabe, você vai querer que tudo seja mais controlado e privado, e se sentirá mais confortável com a ideia de que as coisas não sejam compartilhadas publicamente. Em particular, vemos agora pessoas com o mito de que qualquer banco de dados pode ser invadido em poucos meses.
+
+Então, sabe, você se sentirá mais confortável se todos os seus dados privados estiverem armazenados localmente. Então, para resolver isso, nosso primeiro passo é o Gradion Phonon. É TTS integrado ao dispositivo. Então, "no dispositivo" significa muitas coisas. Para algumas pessoas, " no dispositivo" significa que o jogo roda em uma GPU para jogos.
+
+Para nós, "no dispositivo" significa que ele roda na CPU de um smartphone. Portanto, é um modelo muito pequeno, com menos de 100 milhões de parâmetros, e para o seu tamanho, funciona muito bem. É melhor do que todos os modelos existentes integrados ao dispositivo. Kokoro é um bom jogo, mas não tem clonagem de voz, e eu estou sem tempo, então eu só jogaria uma demo curta se pudesse. Sim.
+
+Puxa, Morty, pare de procurar sinal. O aplicativo Gradio para celular roda localmente na CPU, o que significa fala neural de alta fidelidade aqui mesmo, sem aquelas invasões governamentais intergalácticas na nuvem. Trata-se de simplicidade, sem servidores e sem esperas, apenas um desempenho fluido e silencioso que permanece no dispositivo com processamento local e total privacidade. O que mais? Processamento local? Parece que a
+
+máquina está fazendo seu próprio donut. Espere, se a CPU está fazendo todo o trabalho, ela pode adicionar um pouco de... Sim, então isso roda na CPU do smartphone, o que significa que você pode usá-la para alimentar qualquer tipo de aplicativo de voz sem pagar um centavo de taxa de API. Portanto, abriremos o período
+
+beta privado para este modelo. Nosso objetivo é permitir que as pessoas criem aplicativos de consumo com comandos de voz, basicamente, e que consigam expandir o uso sem perder dinheiro com a API. Portanto, a conclusão, o caminho a seguir para nós, e eu discordo veementemente de alguns dos nossos concorrentes que afirmam que a voz é agora uma mercadoria. Acho que isso é completamente falso. A voz é um grande desafio. O último trecho será
+
+o mais difícil de resolver, e para nós, trata-se realmente de ciência e engenharia, e nos levará ao filme dela, desculpe. Então, você pode nos usar no gradium.ai e, se quiser, junte-se a nós para dar vida a ela. Sim, esse é outro "eu". Agora estou usando esta analogia. Não, sim, se você quiser
+
+trabalhar com modelos de voz muito interessantes, pode se candidatar e se juntar a nós. Muito obrigado pela sua atenção.
+
+Uau!

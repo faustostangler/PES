@@ -1,0 +1,115 @@
+---
+video_title: "Collaborative AI Engineering: One Dev, Two Dozen Agents, Zero Alignment — Maggie Appleton, GitHub"
+video_id: ClWD8OEYgp8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ClWD8OEYgp8
+video_date: 2026-04-26T15:00:06+00:00
+video_description: |
+  Agentic engineering so far has been a solo story: one developer and a dozen agents moving at warp speed. But speed without thoughtful planning and team alignment is just wasting tokens. When everyone on a team is directing agents alone in their personal CLI tools with no shared context, you get duplicate work, conflicting changes, poorly-designed solutions, surprise features nobody else agreed to build, and everyone pulling in different directions.
+  
+  Serious software still requires serious collaboration. You need multiple perspectives and types of expertise to build great things. We need agentic environments where people can plan together, think critically together, and share the same context. In this talk I'll demo how we've tackled these design problems in Ace, a multiplayer agent environment from GitHub Next that uses real-time collaboration, proactive agents, and sandboxed micro VMs for rapid prototyping and exploration.
+  
+  Speaker info:
+  - https://x.com/Mappletons
+---
+[música]
+
+Ok, tudo bem? Certo. Então, sim, esta palestra se chama "Um desenvolvedor, duas dúzias de agentes, zero alinhamento". É por isso que precisamos de engenharia de IA colaborativa. Primeiro, uma breve introdução. Meu nome é
+
+Maggie e trabalho no GitHub como engenheira de pesquisa. Bem, pelo menos esse é o meu título. Na verdade, eu era designer na época em que isso era algo separado da engenharia. E a seguir temos a equipe do Labs dentro do GitHub. Por isso, trabalhamos com projetos mais experimentais e arriscados do que o resto da organização. Gostamos de
+
+chamar isso de Departamento de "Faça besteira e descubra". E, como todos os outros, estamos, obviamente, tentando moldar novas ferramentas de desenvolvimento orientadas a agentes. Então, acho que é assim que muitas pessoas imaginam o auge da produtividade de um desenvolvedor atualmente, certo? É como uma parede de agentes de codificação baseados em terminal, todos rodando em paralelo na máquina de uma única pessoa . Gosto de chamar isso de teoria do futuro "um homem e duas dúzias de Clods".
+
+Então, a promessa que nos fazem aqui é que uma pessoa com uma frota de agentes fará o trabalho de uma equipe inteira de desenvolvedores. O principal problema dessa linha de raciocínio é que ela pressupõe que o software seja feito por uma única pessoa. Todas essas ferramentas são interfaces para um único jogador e têm como foco ampliar o trabalho do indivíduo. Mas ampliar o potencial de um único indivíduo tem valor limitado . Porque o software não é criado por uma única pessoa isoladamente. É um esporte coletivo
+
+e todos os envolvidos na construção precisam concordar sobre o que estão construindo e por quê. Acreditar que a produtividade individual leva a um ótimo software é uma lógica tão absurda quanto a de nove mulheres que fazem um bebê em um mês. Hum, mais produção individual não resolve problemas que exigem comunicação e coordenação. Isso só piora a situação. A implementação está se tornando rapidamente um problema resolvido, certo? Provavelmente todos
+
+aqui acreditam nisso. Escrever código agora é rápido, está ficando mais barato e a qualidade está melhorando cada vez mais . A questão difícil não é mais como construí-lo, mas sim se devemos construí-lo. O novo gargalo é chegar a um consenso sobre o que construir . Portanto, todos na sua equipe precisam se envolver e questionar: estamos fazendo a coisa certa? Estamos investindo
+
+nossa energia no lugar certo e como podemos gerar o maior impacto possível? Quando a produção é barata, o custo de oportunidade se torna o custo real. Você não pode construir tudo, e qualquer escolha que fizer terá que sacrificar todo o resto. Qualquer pessoa que trabalhe em equipe no desenvolvimento de software sabe que esse não é um problema novo. O desalinhamento sempre foi um gargalo, mas os agentes aumentaram consideravelmente o custo de não estarem alinhados como equipe .
+
+O que torna a situação ainda pior é que todas as nossas ferramentas de coordenação ainda são de outra época. Portanto, GitHub, Slack, Jira, Linear e similares, em seu estado atual, não foram projetados para o mundo do desenvolvimento orientado a agentes . Estamos canalizando grandes quantidades de resultados de agentes para plataformas que foram construídas para uma forma ultrapassada de desenvolvimento de software. Bem, eu sei que trabalho no GitHub, então isso pode soar como uma heresia da minha parte . Mas prometo que não é polêmico. Há pouquíssimas pessoas
+
+internamente que acreditam que as relações públicas e a questão em si representam o futuro do desenvolvimento de software, e muitos de nós, dentro da empresa, estamos tentando explorar o que vem a seguir. Então era assim que o processo de desenvolvimento costumava ser, certo? Tivemos uma fase de planejamento, uma fase de construção e uma fase de revisão. E tivemos todos esses pontos de convergência ao longo do caminho. E o ritmo foi suficientemente lento para que tivéssemos tempo para conversas no Slack e reuniões no Zoom, comentários sobre problemas e rascunhos de PRs, para que vocês pudessem discutir os detalhes.
+
+E todos podiam dar suas opiniões, receber conselhos de especialistas de toda a equipe e de membros mais experientes, identificar erros e corrigir o rumo caso as coisas não estivessem indo bem. Mas, quando o código foi revisado e integrado, toda a equipe já tinha visto o trabalho sendo feito e estavam praticamente alinhados . Mas essa janela de implementação já se fechou. E como a implementação já não é tão cara e demorada, achamos que não precisamos de tanto planejamento. Assim, a maioria desses primeiros pontos de contato acaba desaparecendo.
+
+E sabemos que o tempo de revisão do código gerado realmente aumenta. Isso cria mais pontos de convergência, mas, na verdade, eles estão do lado errado da implementação. O tempo entre o registro de um problema e a abertura de uma solicitação de pull request por um agente agora é de apenas alguns minutos. O código é tão barato que não paramos para pensar direito antes de usá-lo. Infelizmente, a maioria dos agentes de codificação também possui esse modo de planejamento local, que não é compartilhado com outras pessoas.
+
+Então, você nem sequer verifica com sua equipe se o plano elaborado é bom antes de ser implementado , se é que vocês chegam a lê-lo. Assim, perdemos ainda mais pontos de alinhamento. Isso faz com que todo o peso desse alinhamento recaia sobre a solicitação de pull request. Todos esses pontos de verificação agora vêm depois da implementação, no final do processo, quando já é tarde demais. E, na verdade, nunca foi essa a função para a qual as relações públicas foram criadas , por isso elas têm um desempenho ruim nessa tarefa.
+
+Nenhuma das nossas ferramentas atuais oferece às equipes um espaço compartilhado para discutir planos, reunir o contexto adequado e trabalhar com os agentes de forma coletiva. Todos nós estamos sentindo as repercussões disso . Acelerar sem um bom alinhamento leva ao desperdício de trabalho. Então, são funcionalidades que ninguém pediu e que, na verdade, não resolvem problemas reais. E receber críticas construtivas depois de terminar algo, o que acaba significando que você precisa jogar tudo fora.
+
+E também dívidas de coordenação. É aí que surgem conflitos de mesclagem realmente complicados, porque os agentes podem mexer nos mesmos arquivos ou os desenvolvedores podem até mesmo duplicar o trabalho porque ambos começaram a mesma tarefa e tentaram finalizá-la no mesmo dia. Ou, como todos sabemos, temos pilhas enormes de PRs (Pull Requests) para revisar, para as quais ninguém tem contexto e nem sequer sabe o que contêm. Então, como resolvemos isso? Precisamos de ferramentas que ajudem todos na equipe a se alinharem antes que os agentes comecem a trabalhar, e não depois.
+
+Esse alinhamento precisa acontecer constantemente em paralelo com a implementação. O planejamento e a construção não são mais fases separadas, agora formam um ciclo. As ferramentas do futuro precisam reunir planejamento, coleta de contexto, tomada de decisões e desenvolvimento em um mesmo ambiente. Isso é especialmente verdade porque a maior parte do contexto necessário para o alinhamento e para construir a coisa certa não está na base de código. Está na cabeça das pessoas.
+
+O contexto empresarial e os recursos financeiros determinam o que é certo construir, assim como a dinâmica política de quem está no comando e quem toma as decisões, a visão do produto definida pelos líderes, as percepções da pesquisa de usuários realizadas pelos designers e o histórico da organização e o que já foi construído antes. Todos esses fatores são extremamente importantes quando você está decidindo o que é certo para sua equipe construir. E os agentes jamais conseguirão descobrir esse contexto por conta própria. Você precisa de uma maneira de fazer com que as pessoas compartilhem isso de forma rápida e natural, sem adicionar processos e sobrecarga. Tudo isso ficou muito claro para nós na próxima equipe.
+
+E nós temos estado a desenvolver um novo protótipo de investigação que explora como podemos resolver alguns destes problemas. Chama-se ACE, que significa Ambiente de Colaboração de Agentes. Hum, ainda não é um produto para o horário nobre. Então, se parecer um pouco imperfeito, é porque realmente é. Estamos prestes a entrar na fase de pré-visualização técnica e vamos usá-la para testá-la com alguns milhares de pessoas.
+
+Então, vamos aprender como as pessoas colaboram nisso e, a partir daí, fazer iterações. Então, aqui estamos nós na ACE. Provavelmente lhe parece bastante familiar. Não estamos reinventando a roda mais do que o necessário. Hum, parece um pouco como se o Slack, o GitHub, o Copilot e um monte de computadores em nuvem tivessem tido um filho.
+
+Então, temos nossa lista de sessões aqui à esquerda, e as sessões são onde você trabalha, certo? É um chat multijogador, é como um canal do Slack. Tenho colegas de equipe aqui dentro e posso conversar com eles sobre o trabalho que estamos fazendo, mas também tenho meus agentes de programação aqui. Cada sessão é mais do que um simples canal de bate-papo . Também conta com o suporte de uma micro máquina virtual.
+
+Portanto, um computador isolado na nuvem, em seu próprio branch do Git. As alterações que fazemos em cada sessão são isoladas, permitindo-nos trabalhar em tarefas paralelas e alternar instantaneamente entre elas. Se eu quiser conversar com um dos meus colegas de equipe e saber a opinião dele sobre um recurso que estou desenvolvendo, ninguém precisa salvar suas alterações no Git e ficar criando um novo branch ou se debatendo com árvores de trabalho locais. Eu simplesmente entro na sessão deles e vejo o que estão fazendo com um clique. Isso inclui todo o histórico de interações deles com o agente, então eu tenho o contexto de como eles chegaram às saídas atuais.
+
+Assim como em uma máquina local, posso executar comandos de terminal nesta sessão. Aqui, vou executar os comandos `bun install` e `bun dev` para iniciar meu projeto atual. Vou ver daqui a pouco... a
+
+pré-visualização ao vivo no navegador vai aparecer na lateral quando eu abrir a porta. O projeto de demonstração que temos aqui é uma versão mais tranquila do Hacker News, que mostra apenas as três principais notícias dos últimos três meses, o que é um pouco mais relaxante do que o conteúdo diário. E vou pedir ao agente para mudar o tema de cores para roxo aqui, e você verá em um segundo que ele aparece instantaneamente na minha pré-visualização. Certo, é só executar o código. Ah, e o agente também fez um commit automático para mim com uma mensagem de commit bem organizada, e eu posso abrir as diferenças e ver as alterações, todo tipo de coisa padrão que você esperaria de agentes de código.
+
+Então digamos que queremos fazer um trabalho de verdade. Hum, meus colegas de equipe estão aqui comigo nesta sessão. Ah, e vou pedir à ACE para adicionar alguns temas de cores adicionais ao meu aplicativo. Vamos escolher qual modelo queremos usar e, obviamente, será o Opus 4.6.
+
+E então a ACE vai começar. Além disso, temos este prático bloco de resumo no canto superior direito. Isso me mantém atualizado sobre as últimas mudanças nesta sessão, sejam elas minhas ou de outra pessoa, o que significa que posso alternar entre as sessões de várias pessoas que estão ocorrendo em paralelo e sempre me manter informado sobre o que está acontecendo, para que você não fique sobrecarregado com a quantidade de informações e atividades. Mas o mais importante é que eu quero conversar com meus colegas de equipe, certo? Gostaria de discutir as mudanças que estamos implementando. Assim,
+
+posso perguntar a eles o que acham das mudanças atuais. Eles podem criar o servidor de desenvolvimento por conta própria, porque, lembre-se, todos estamos trabalhando no mesmo computador na nuvem. Não há problema algum. Todos podemos ver a mesma prévia. Todos podemos escrever comandos no terminal e ver as saídas compartilhadas. Ninguém vai dizer que
+
+isso não funciona na minha máquina. Então, meus colegas de equipe, Nate e Dawn, estão entrando nessa também. Eles tiraram algumas capturas de tela. Eles estão sugerindo algumas funcionalidades alternativas, fazendo perguntas. E agora, o que vamos ver é que Nate vai pedir ao agente da ACE para fazer alterações em um minuto.
+
+Onde está Nate? Ali está o Nate. Então, ele disse: " Ace, vamos adicionar um tema azul-petróleo também." Bem , na verdade fui eu que iniciei esta sessão, mas agora é o Nate quem está dando instruções ao agente. Então, isto é verdadeiramente multijogador. Nós dois
+
+estamos compartilhando esta sessão de programação. O agente também pode ler toda a nossa conversa. Isso é tudo o que preciso inserir no prompt. Então podemos conversar sobre as coisas com antecedência e simplesmente dizer na Ace: "Façam isso". Eles irão fazer isso.
+
+Esse tipo de interface acessível, semelhante ao Slack, significa que o acesso a um agente de codificação permite a participação de todos que criam software. Assim, não apenas os desenvolvedores, mas também os designers, gerentes de produto e pessoal de suporte ao cliente podem participar da mesma conversa, vendo o que está acontecendo em tempo real enquanto um recurso está sendo desenvolvido. Porque se você está pensando, sabe, tipo, por que não usaríamos o Slack para isso? Acho que é porque o Slack nunca vai se tornar uma ferramenta completa de desenvolvimento de software, a menos que mude seriamente seu foco de negócios atual. Então, nunca terá os elementos primitivos corretos e duvido muito que os adicionem. Sabe,
+
+comparações de diferenças, comandos de terminal e coisas do tipo não são da alçada do Slack. Nós queríamos o Ace porque ele foi projetado especificamente para desenvolvimento de software, mas é muito mais amigável para outros membros da equipe do que o seu terminal. Enfim, voltamos a enviar nossas alterações por aqui. Gostamos do resultado, então vamos criar um PR (Publicidade de Referência). Porque eventualmente todo esse código precisa voltar para o GitHub, certo?
+
+Então, criamos esse PR diretamente de dentro do Ace. Vamos aguardar um minuto e ele nos mostrará a prévia do comunicado de imprensa. E então podemos clicar em um link que nos leva até lá. Em um segundo, Edon vai clicar. Pronto. Então, aí está o nosso trabalho de relações públicas. Tudo
+
+funciona, certo? Isso é compatível com versões anteriores . A descrição contém um link para a sessão Ace. Nem todo mundo precisa ser membro do Ace para usar isso. Você pode ter alguns membros da sua equipe usando o Ace e o restante permanecendo com a plataforma que estiverem usando.
+
+E às vezes, sabe, você ainda precisa mexer com código. Tipo, eu trabalho muito com front- end e os agentes são péssimos em CSS. Eles nunca fazem o que eu quero. Então, podemos, é claro, abrir nosso projeto no VS Code aqui, e temos edição multiplayer em tempo real porque, novamente, este é apenas um microcomputador virtual na nuvem. Todos estão usando o mesmo computador.
+
+Posso fechar meu laptop e continuar trabalhando. A minha sessão não é encerrada. Meus colegas de equipe podem continuar incentivando o Ace e progredindo. Ainda não temos uma interface para dispositivos móveis, mas estamos desenvolvendo uma. Mas essa arquitetura de micro VMs significa que tudo funcionará perfeitamente. Tipo, eu não preciso usar meu
+
+celular para acessar um terminal no meu computador via SSH. O computador não precisa estar ligado e eu não preciso comprar um Mac Mini para manter as coisas disponíveis. Eu simplesmente converso com meu agente sempre disponível na nuvem. Para funcionalidades maiores e mais complexas, você certamente vai querer que seu agente elabore um plano. Esse já é um fluxo de trabalho bastante padrão. Então, estamos aqui
+
+conversando sobre adicionar períodos de tempo variáveis ao nosso aplicativo clone do Hacker News. Então, pedi ao Ace que elaborasse um plano, o que ele fará bem rapidamente. Então, podemos abrir esse plano, certo? E aqui estamos todos nós, seguindo nosso plano. Consigo ver os cursores dos meus colegas de equipe. Podemos
+
+editá-lo em colaboração. Podemos decidir se gostamos deste plano, se ele é bom ou não, se atinge o nosso objetivo. Meu colega Nate está sugerindo que talvez seja melhor usar um menu suspenso na interface em vez de um controle segmentado. E então Edon entrou em cena e atualizou os requisitos para que o agente soubesse o que fazer. E quando todos estivermos satisfeitos com os detalhes, voltamos ao chat e podemos simplesmente dizer ao Ace: "Faça isso". E
+
+sabe qual é o contexto. Então, agora vou acessar o nosso painel de controle no Ace. Bem, grande parte do planejamento e das discussões que antes aconteciam no Slack, GitHub ou Linear agora estão sendo realizadas em nossas sessões do Ace. Assim, temos amplo acesso a um contexto rico sobre o trabalho em andamento e podemos resumi-lo de forma útil para você. Então, já é segunda-feira de manhã e estou tentando me lembrar do que deixei inacabado na sexta-feira passada.
+
+E o Ace está me incentivando a continuar trabalhando em alguns hooks do React que eu estava criando como parte de uma grande refatoração, o que é útil, já que minha memória fica péssima depois de um fim de semana prolongado. E a partir daqui posso iniciar uma nova sessão ou, nesta seção de retomada, posso abrir a sessão com um clique para continuar trabalhando no meu PR não mesclado. Também consigo ver uma lista dos meus PRs e problemas concluídos recentemente, o que alimenta meu ego e me faz sentir produtivo. E aqui à direita temos uma seção dedicada a toda a equipe. Então, isso resume o que meus colegas de trabalho têm feito nos últimos dias. Vejo que Nate está
+
+trabalhando em um canal de lobby e David está resolvendo problemas com tokens de acesso. Bem, também existe um feed bruto com os problemas e PRs recentes neste repositório, mas pessoalmente acho o resumo muito mais útil. Um dos maiores desafios do desenvolvimento orientado a agentes é que a velocidade e o volume de trabalho tornam muito difícil acompanhar o que seus colegas estão fazendo. Agora eles estão lançando cinco funcionalidades por dia, em vez de meia. Este painel é nossa primeira tentativa de tornar os agentes proativos e trazer esse contexto social até você.
+
+Se todas as suas conversas sobre o código estiverem disponíveis para os agentes, isso lhes dará acesso a uma rede de informações sociais onde eles poderão ajudá-lo a se orientar todas as manhãs e a se manter alinhado com sua equipe. Eles poderiam notificá-lo sobre decisões que estão sendo tomadas ou incluí-lo em uma conversa onde alguém está prestes a expandir uma funcionalidade que você desenvolveu originalmente. Portanto, não se trata mais de um conjunto de instâncias de terminal isoladas e desconectadas em computadores individuais. Isso cria um ambiente vivo e inteligente, onde todos compartilham o mesmo espaço de trabalho e contexto. Então, na verdade, tudo isso se resume a recuperar tempo, certo? Antes do
+
+surgimento dos agentes de codificação, nenhum de nós tinha tempo e energia suficientes para criar nossos produtos da maneira que desejávamos. Garanto que todos nesta sala já lançaram softwares dos quais não se orgulham. Talvez você não tenha tido tempo suficiente para fazer pesquisa de usuários, considerar detalhes de design ou refletir sobre as implicações de suas escolhas arquitetônicas. Não porque você não quisesse, mas simplesmente porque não havia tempo suficiente, já que a implementação consumiu muito tempo e esforço. Mas muito desse tempo nos foi devolvido . Temos a oportunidade não apenas de
+
+acelerar o processo e construir uma pilha gigante do mesmo software ruim, mas sim de criar um software muito melhor por meio de um pensamento crítico muito mais rigoroso e um melhor alinhamento na fase de planejamento. Explorando mais, pesquisando mais e refletindo sobre os problemas com mais profundidade do que podíamos antes. Os agentes nos permitem expandir a nós mesmos e nossas equipes de uma forma que, se feita corretamente, deve levar a um software de melhor qualidade . Acho que muitas pessoas estão percebendo agora que, em um mundo de softwares rápidos e baratos, a qualidade se torna o novo diferencial. O nível de exigência está muito mais alto, e o trabalho artesanal é o que vai te diferenciar da produção desleixada e superficial.
+
+Mas o trabalho manual ainda exige tempo e energia. Não é gratuito. E para ter o tempo e a energia necessários para isso, você precisa fazer menos coisas, mas melhor, o que exige um forte alinhamento. Além disso, existem mais distrações do que nunca. É muito fácil levar o usuário à solução errada ou adicionar inúmeras funcionalidades desnecessárias ao seu produto.
+
+Acho que o meu sonho é que acabemos com ferramentas, seja o Ace ou outras, que criem ambientes onde as equipes possam pensar juntas, de forma rigorosa, sobre problemas complexos. As ferramentas agentivas devem nos ajudar a realizar um trabalho de maior qualidade, a obter alinhamento mais rapidamente e a construir algumas coisas excepcionais em vez de mil coisas ruins. Muito obrigado por ouvir. Hum [aplausos] Bem,
+
+se vocês quiserem acesso antecipado ao Ace, ele deverá estar disponível em, no máximo, alguns meses. Este código QR levará você a um formulário onde você deverá inserir seu nome de usuário do GitHub e, em seguida, você terá acesso antecipado assim que o produto for lançado. Você pode ler mais sobre a equipe do GitHub Next e suas pesquisas em githubnext.com, e todo o meu trabalho e textos estão em maggieappleton.com.
+
+Os slides e anotações desta apresentação estarão disponíveis lá em um ou dois dias. Obrigado.
+
+[música]
+
+[música]

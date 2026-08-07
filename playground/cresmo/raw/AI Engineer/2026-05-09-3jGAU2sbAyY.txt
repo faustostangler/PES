@@ -1,0 +1,129 @@
+---
+video_title: "Why TTS Models Now Look Like LLMs — Samuel Humeau, Mistral"
+video_id: 3jGAU2sbAyY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3jGAU2sbAyY
+video_date: 2026-05-09T17:00:07+00:00
+video_description: |
+  The dominant architecture pattern for text-to-speech in 2026 looks a lot like an LLM — an autoregressive transformer generating sequences of tokens, one frame of audio at a time. Samuel Humeau from Mistral walks through why the field converged there, how neural audio codecs solve the information-density problem (audio carries ~200kbps of signal; you can't feed that raw to a transformer), and what the streaming trick actually is that makes voice agents feel responsive before the full audio has even finished generating.
+  
+  The talk uses Mistral's just-released open-weight TTS model as a running example — live demos of voice cloning from a few seconds of reference audio, a voice agent answering real conference schedule questions, and a breakdown of the codec-to-backbone-to-decoder pipeline that produces it all. There's also a frank section on what's still unsettled: how to handle streaming text input (tokens arriving from an LLM in real time rather than a fixed block of text) and why getting that right is the next meaningful latency win in agent pipelines.
+  
+  It's the kind of talk that makes the system feel less like a black box — not by oversimplifying, but by showing exactly which engineering choices are load-bearing and which are still open problems.
+  
+  Speaker info:
+  - https://x.com/DrSamuelBHume
+  - https://www.linkedin.com/in/samuelhumeau/
+  
+  Timestamps:
+  0:00 Introduction and Mistral's new open-source TTS model
+  2:06 Text-to-speech in AI agents and latency
+  3:33 Live demo: Voice cloning with 'Paul'
+  6:00 Voice cloning capabilities and multilingual examples
+  8:01 Historical context of audio generation
+  8:55 Transformer-based architecture for TTS
+  10:00 Challenges of information density in audio
+  10:55 Comparison of bit rates: text vs. audio
+  11:39 Using neural audio codecs
+  13:10 Backbone transformer and frame-based generation
+  14:56 Text conditioning and model architecture
+  16:08 Latency performance metrics
+  16:22 Future outlook: Streaming text input
+  17:35 Q&A: Generating text and audio simultaneously
+  18:24 Q&A: Availability of voice cloning features
+  19:35 Q&A: Philosophical take on speech interfaces
+  20:44 Q&A: Next steps for streaming audio and text input
+---
+Sou da Mistral AI e vamos falar sobre geração de fala e conversão de texto em fala. Bem, houve uma ocasião em que lançamos na semana passada nosso primeiro modelo de conversão de texto em fala, e ele é de código aberto. Por isso, recomendo vivamente que você dê uma olhada. É um modelo de conversão de texto em fala extremamente robusto. Estamos muito orgulhosos disso.
+
+Bem, para esta ocasião, pensei que poderíamos analisar algumas das tendências recentes na arquitetura de conversão de texto em fala, visto que há uma tendência dominante emergindo atualmente, embora isso possa mudar muito rapidamente. Bem, esta palestra é um pouco acadêmica e direcionada a pessoas que querem saber um pouco mais sobre como funciona a conversão de texto em fala. Dito isso, ainda temos alguns anos antes que as máquinas façam toda a ciência por nós, então podemos aproveitar isso hoje. Hum, eu sou Sam. Sim, trabalho na Mistral como cientista de IA.
+
+Antes, eu estava na feira do Facebook, quando ainda se chamava Facebook. Hum, Mistral, algumas palavras sobre a empresa. Somos um laboratório de vanguarda. Nós fomos fundados há alguns anos. Produzimos modelos de vanguarda, mas também somos uma empresa B2B. Ajudamos organizações
+
+em sua transformação com IA, que é uma espécie de palavra da moda, mas, literalmente, todas as empresas estão se transformando com IA. Nós os ajudamos fornecendo ferramentas, produtos e pessoas dedicadas para auxiliá-los em suas necessidades específicas. Voltando à questão da conversão de texto em fala. Existem, portanto, alguns casos de uso offline da geração de fala, como os famosos recursos "ouvir o blog" ou "ouvir o artigo". Mas hoje em dia, o principal caso de uso para conversão de texto em fala é, eh, seu uso em agentes.
+
+E, em particular, é usado para interagir com um agente de bate-papo, normalmente em um canal como este, onde você tem um agente de bate-papo central que faz conversão de texto em texto, mas faz isso extremamente bem, e você quer falar com ele, então adiciona uma conversão de fala em texto, e você quer que ele fale com você, então adiciona uma conversão de texto em fala. Como todos nesta conferência irão lhe dizer, a latência é crucial aqui. Então, você pode reduzir a latência à esquerda fazendo a conversão de fala em texto em tempo real, de forma que, quando você detectar o fim da fala, a transcrição já esteja pronta. E hoje vamos nos concentrar um pouco no lado direito. É muito importante também que, assim que você tiver os primeiros pacotes de áudio, você comece a pronunciá-los em voz alta. Dessa forma, a
+
+latência percebida é menor. Na verdade, já que seu LLM pode transmitir algum texto para você, o que você realmente quer é algo assim, se você for interagir com um assistente de bate-papo, que é um sistema de conversão de texto em fala com entrada de texto em tempo real, onde assim que você tiver o primeiro token do LLM, a máquina começa a falar. Vamos falar sobre isso no final da palestra. Quero me concentrar um pouco no início, na parte de saída, e no que significa transmitir áudio. Para ilustrar isso, tenho este aplicativo que desenvolvi especialmente para a ocasião.
+
+Então, nós vamos usar esse modelo de conversão de texto em fala que lançamos e que mencionei, e vamos ouvir o Paul. Então, Paulo é um ser humano real que fala assim. A ansiedade persistente que preenche o resto da minha vida se acalma enquanto eu tiver o sabor de algo gostoso na boca. Então, isso é tipo uma gravação real de uma pessoa real chamada Paul, e estamos copiando dele. Então, com o sol e as grandes explosões de folhas crescendo nas árvores, assim como as coisas crescem em filmes de ação, eu tive aquela familiar convicção de que a vida estava recomeçando com o verão.
+
+Então, vamos nos concentrar primeiro no que está acontecendo aqui. Como você pode ver , com a luz do sol, a voz e o primeiro pacote de áudio chegam primeiro, e podemos começar a emitir áudio, o que reduz bastante a latência percebida, embora o processamento completo do áudio ocorra 60 segundos depois. Então, se você usar isso em um agente, aqui eu criei um pequeno agente usando um recurso de conversão de fala em texto, um dos nossos LLMs, e este mesmo recurso de conversão de texto em fala, para que possamos falar com Paul. Ei, Paul, você poderia me dizer qual é o título da sessão das 12h20, por favor? A sessão das 12h20. O título é
+
+Richie Mini: Dando um Corpo à IA, de Andres Marafioti. E qual foi a sessão das 11h15, por favor?
+
+A sessão das 11h15 é "Além da Transcrição: Construindo IA de Voz que realmente entende conversas", com Hervé Brédan. Você gostou tanto quanto eu? Não tenho experiências ou emoções pessoais, mas fico feliz que você tenha gostado. Tudo bem. É tudo o que posso fazer.
+
+Então, o importante aqui é que, como o pacote de áudio chegou primeiro, você ainda tem uma latência razoável e pode aproveitar a conversa com o agente, apesar do áudio ainda não ter sido totalmente gerado. Então vamos cavar. Ah, sim, desculpe. Gostaria de fazer um pequeno parêntese. Então, mencionei a clonagem de voz aqui.
+
+Este modelo pode precisar de apenas alguns segundos para clonar a voz de alguém. Então, novamente, foi assim que eu soei e é assim que geramos o texto. E assim, com o sol e as grandes explosões de folhas brotando nas árvores. parecido. Também é muito bom em inferir como uma pessoa falaria em outro idioma. Por exemplo, esta
+
+é uma voz, uma voz francesa. Talvez.
+
+E assim, se gerarmos... E então, com a luz do sol e as grandes explosões de folhas crescendo nas árvores, assim como as coisas crescem rapidamente no filme. Sim, então podemos reconhecê-la claramente e também podemos reconhecer claramente um forte sotaque francês, que, como francês, eu aprecio bastante.
+
+Eu consigo até clonar a minha própria voz. Então, foi assim que minha voz soou durante a gravação. Olá, meu nome é Sam e é assim que eu falo. Com o sol brilhando e as grandes explosões de folhas brotando nas árvores. Funciona muito bem. Assim, em meu
+
+momento de ilusão e no auge do meu ego, posso discutir comigo mesmo sobre um problema complicado, o que é bom. E assim, está se tornando tão fácil imitar uma voz que está se tornando muito fácil de configurar. Então, é um pequeno parêntese, mas atualmente muitas grandes empresas têm um conceito de identidade vocal e se preocupam, em termos de marca, com a forma como soam em seus anúncios, em particular. Mas acredito que esse conceito se tornará mais comum e, assim como muitas empresas definem a aparência de seus sites como sua identidade de marca, o mesmo acontecerá com a identidade de voz. Ops , desculpe. Bem,
+
+voltando a como fazemos isso em geral. Então, certo, isto é um áudio. Fisicamente, é a pressão do microfone que medimos de tempos em tempos, tipo, milhares de vezes por segundo. Então fica assim. E historicamente, para gerar o áudio, houve muitas tentativas, muitos sistemas, como na época pré-histórica, onde se usava a junção de palavras faladas, como no sistema ferroviário francês SNCF, para quem sabe.
+
+E então, em algum momento, chegou uma nova geração . A tendência era gerar cada amostra uma após a outra. Em outra época, o áudio era gerado completamente de uma só vez, mas, como vimos, é muito interessante ter o início do áudio gerado primeiro para que possamos começar a reproduzi-lo. Portanto, parece que a maioria dos laboratórios convergiu para alguns padrões comuns e, obviamente, o primeiro deles é inspirado em grandes modelos de linguagem. Estamos tentando transformar o problema em um problema de modelagem de linguagem, porque a humanidade é extremamente boa em modelar sequências de tokens.
+
+Então, praticamente todo mundo está usando uma estrutura de decodificador autorregressivo e gerando áudio em partes . Bem, como eu disse, nós já não queremos gerar uma amostra após a outra. Então, o que queremos fazer é gerar trechos de áudio um após o outro. Então, o sistema esperado se parece com isto: você tem um codificador que transforma um quadro de áudio, algo como 80 milissegundos, em algo que idealmente é um token, porque a humanidade é muito boa em modelar sequências de tokens, e então você tem um decodificador que faz o oposto. Bem, quanto ao texto, é bastante fácil, porque transformar o texto em tokens é simples, não é? Você
+
+pode usar palavras semelhantes como tokens, e funciona muito bem, embora nós façamos muito melhor. Bem, no caso do áudio, é muito mais difícil porque um único token não contém muita informação. É como se um único elemento de um vocabulário de mil bits de informação representasse 10 bits, e o áudio requer muito, muito mais, tipo uma taxa de bits muito maior . Por exemplo, um MP3 de qualidade padrão tem 200 kilobits por segundo. Então, para transformar isso em uma sequência de tokens, e não ter milhares e milhares de tokens, precisamos de alguma forma compactá-lo e reduzir seu tamanho , talvez descartando o que não for necessário.
+
+Um ponto de comparação interessante é a legendagem em texto, porque se você descartar todas as informações acústicas e se concentrar apenas no texto, como acontece com uma faixa de legendas, você acaba descartando a maior parte da informação. É uma redução enorme, e você só tem alguns bits por segundo restantes. Então, aqui nesta demonstração, eu uso nosso texto de fala em tempo real para medir minha taxa de bits em termos de tokens de texto por segundo. E, hum, hum, eu sou uma pessoa muito... Eu sou muito...
+
+eu sou muito bom em falar. Bem, eu mal consigo processar 15 bits por segundo de informação real. Você pode tentar, hum, tentar superar isso, mas, no contexto geral , comparado a 200.000 bits de informação por segundo, isso não é muita coisa. Obviamente, queremos usar algo que permita recuperar características acústicas, como a voz e outros aspectos, e não apenas a informação semântica presente no texto. Assim, os
+
+codecs utilizados normalmente reduzem o áudio para cerca de alguns milhares de bits por segundo. No nosso caso, por exemplo, tratamos o problema com "Desculpe, cortamos o áudio em trechos de 80 milissegundos". Portanto, 12 quadros por segundo e transformamos cada quadro em vários tokens, como 37 no nosso caso. Assim, reduzimos o problema para cerca de 500 tokens por segundo. Não vou me aprofundar muito em como treinamos esses codecs, mas obviamente primeiro os treinamos.
+
+Nós os treinamos reconstruindo um conjunto de áudio muito grande e usando um gargalo aqui. O procedimento de treinamento restringiu a reconstrução a uma etapa em que cada quadro é decomposto em vários tokens. Para isso, geralmente o modelo é orientado a descartar informações inúteis e reter apenas as úteis. Assim, nós o guiamos por meio de algumas perdas, perdas de reconstrução, perdas adversárias e, particularmente para alguns dos tokens, tentamos garantir que eles contenham as informações de texto para que você possa reconstruir o texto a partir deles. Mesmo assim, 500 tokens por segundo ainda é muita coisa . E você poderia colocá-los
+
+um por um, alinhados em sequência, assim . Mas isso representaria um grande passo para o transformador principal, que está no núcleo do sistema, que é enorme. É enorme...
+
+No nosso caso, são 4 bilhões de parâmetros. Desculpe. O que é o que ainda é muita coisa, mesmo que não seja extremamente grande agora. O que a maioria das pessoas faz então é ter um passo da estrutura principal por quadro e um modelo menor aqui, normalmente um transformador de desenvolvimento, que reconstrói todos os tokens de um quadro em cada passo. Assim, você ainda terá muitos tokens. Você ainda carrega muita
+
+informação, mas a concorrência é muito mais rápida. Então, esse é o principal padrão que observamos, embora o último modelo que divulgamos não siga esse padrão. Na verdade, nós discordamos nesse ponto. Não vou me aprofundar muito nisso, mas só para você saber, cada quadro é representado por 37 tokens no nosso caso. Geramos esses 37 tokens de uma só vez usando um modelo de difusão. Então, é
+
+um pouco diferente do sistema de conversão de texto em fala padrão que existe hoje em dia. A propósito, recomendo que leia nosso relatório técnico, que contém todas essas informações. Além disso, é um caso de uso bastante interessante de modelos de correspondência de fluxo, que é semelhante ao modelo de difusão. Bem, a parte principal é o condicionamento, na verdade, porque até agora estamos apenas gerando áudio, mas não o estamos condicionando ao texto. Portanto, não se trata exatamente de um sistema de conversão de texto em fala. É apenas...
+
+fala. E quanto ao condicionamento, há muito mais variação entre laboratórios, artigos e implementações. Normalmente, você tem duas categorias. Bem, existem pessoas que se concentram em produzir o áudio depois que você já tem o texto, e algumas delas se concentram em ter um fluxo de texto. Normalmente, a primeira categoria tende a fornecer todo o contexto no início e, em seguida, produzir o áudio, como vimos. E,
+
+normalmente, a segunda categoria também adiciona algum contexto à medida que o áudio é produzido. O modelo que lançamos está na primeira categoria. Então, o que fazemos é fornecer o áudio da voz que queremos clonar, por alguns segundos, e depois o texto a ser pronunciado. E esse é o nosso contexto no nosso caso. Em relação à latência, é bastante rápida. Se você remover a rede
+
+e usar uma única GPU, terá 17 milissegundos entre o momento em que digita o texto e o momento em que o primeiro áudio é reproduzido. Em relação ao fluxo de entrada de texto em tempo real , que é o nosso próximo passo, não há um vencedor claro. Primeiro, ainda é possível, sabe, gerar o texto independentemente e costurá-lo, mas obviamente você terá muitos problemas de continuidade. Hum, e existem vários padrões. Os dois principais são pessoas que intercalam áudio e texto, então assim que há um novo texto, elas o colocam na mesma camada.
+
+E alguns outros que têm uma arquitetura de fluxo duplo, onde você tem um fluxo de áudio e um fluxo de texto, e você meio que os mistura durante a inferência. Hum, como estou em relação ao horário? Faltam 2 minutos. Obrigado. A conclusão é: verifique todos os modelos de código aberto, por favor.
+
+Leia o artigo técnico e espero que você tenha aprendido algumas coisas hoje.
+
+Temos 2 minutos. Bem, a forma como você os gasta é com você. Sim . Você disse que seu modelo primeiro recebe todo o texto e depois produz o áudio, mas no exemplo que você mostrou do agente de voz, parecia que ele estava gerando o texto e o áudio ao mesmo tempo. Eu sei.
+
+Então, a pergunta era tipo, ei, na demonstração parece que estamos gerando o texto e o áudio ao mesmo tempo. Não, para o agente de voz: Olá Paul, sou eu de novo. Você consegue dizer algo como, sei lá, um poema? Receio não saber recitar poemas. É assim mesmo , o texto é produzido de uma só vez.
+
+É que estou usando um LLM pequeno que é muito rápido, então o processamento é quase imediato e o áudio é produzido posteriormente. Sim . Sim . Ah, aliás, obrigado pelo ótimo modelo . Sei que os pesos estão disponíveis. A
+
+clonagem de voz em geral também é aberta? Sim, há um pequeno asterisco aqui. Bem, nós não lançamos essa parte, tipo a parte do codificador. O que significa que é a única coisa que falta para você clonar a sua própria voz. É uma funcionalidade que, por enquanto, oferecemos apenas de forma proprietária . Então, o que você pode fazer é usar o
+
+modelo de conversão de texto em fala, usando uma das vozes disponíveis que oferecemos. Talvez possamos fornecer mais informações no futuro. Sim, até agora não queríamos dar a todos a capacidade de clonar qualquer voz. Sim . Sim
+
+.
+
+Qual a minha opinião? Então, do ponto de vista do consumidor, você sempre terá a impressão de estar falando com um único sistema que ouve o que você diz e produz uma resposta, certo? Portanto, trata-se puramente de um modelo arquitetônico. Na minha opinião, podemos ir muito, muito longe usando apenas a fala como interface. Especialmente porque esses mestres em Direito (LLM) centrais são extremamente competentes, mas também fazem muitas outras coisas.
+
+Então, só para poder usar qualquer agente que tenha sido lançado com a mesma interface, isso tem uma vantagem, sabe, em relação à interface. Então, você pode ir muito longe apenas com a interface, especialmente se estiver fazendo esse tipo de coisa em que você transmite o token de texto que é emitido pelo LLM. Sim . Última pergunta porque meu tempo acabou, desculpe.
+
+Então, então... eu... eu... eu... eu... eu... eu... eu... eu... eu... eu... eu...
+
+eu não disse que nosso próximo passo seria esse, certo? Eu acabei de dizer que existem vários padrões para lidar com um fluxo de texto como entrada, em oposição a uma quantidade finita de texto. Hum, na verdade não sabemos qual vamos escolher. Então, seja intercalado ou outra solução como, por exemplo, modelagem de sequência atrasada . Então, não está claro qual arquitetura é a melhor, pelo menos para nós, pelo menos para mim. O que
+
+isso permite é uma latência menor, porque assim que você tem o primeiro trecho de texto produzido pelo LLM, você pode começar a reproduzi-lo. Então, você... Neste agente, isso não ficou claro porque as falas foram muito curtas. Mas imagine que eu peça a Paul para
+
+gerar uma página inteira de texto. Seria ótimo se eu não precisasse esperar o final da geração do texto para falar em voz alta . Sim. Sim. Quer dizer, isso também melhoraria a experiência do usuário ao usar esse tipo de sistema. Sim, com certeza. Sim.
+
+Obrigado.

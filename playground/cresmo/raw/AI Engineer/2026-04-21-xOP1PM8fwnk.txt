@@ -1,0 +1,239 @@
+---
+video_title: "Building Generative Image & Video models at Scale - Sander Dieleman, Google DeepMind"
+video_id: xOP1PM8fwnk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xOP1PM8fwnk
+video_date: 2026-04-21T19:33:38+00:00
+video_description: |
+  https://sander.ai/2025/04/15/latents.html
+  
+  Speaker info:
+  - https://sander.ai/
+  - https://github.com/benanne
+  - https://www.linkedin.com/in/sanderdieleman
+  - https://x.com/sedielem
+  
+  Timestamps
+  0:00 Introduction
+  2:55 Data Curation
+  4:02 Representation
+  9:39 Modeling: Diffusion Mechanism
+  20:01 Network Architecture
+  22:25 Training at Scale
+  23:33 Sampling & Guidance
+  28:03 Distillation
+  30:03 Control Signals
+---
+Legal. Vou começar. Parece tudo bem. Ok, eu consigo me ouvir. Ok, ótimo.
+
+Ah, obrigado a todos por terem vindo. Eu sou Sander. Sou pesquisador científico no Google DeepMind. Estou lá há mais de uma década. Ah, eu faço parte da equipe de mídia generativa. Então,
+
+trabalhamos com modelos como o VEO e o NanoBanana. E eu quero que esta palestra ofereça uma perspectiva dos bastidores sobre tudo o que envolve o treinamento desses modelos em larga escala. Então, o foco será em modelos de difusão, porque esse é o paradigma de modelagem que, pelo menos atualmente, as pessoas tendem a usar para gerar dados audiovisuais, o que é um pouco diferente da modelagem de linguagem, onde dependemos principalmente da autorregressão, embora, é claro, não exclusivamente hoje em dia. Então , sim, eu tenho uma espécie de tour relâmpago por tudo o que envolve isso. Então, tenho oito seções, o que é bastante coisa para abordar.
+
+Nem todos têm o mesmo comprimento. Tenho mais a dizer sobre algumas coisas do que sobre outras. Então, tenho mais a dizer sobre a modelagem e a amostragem , por exemplo. Mas vou tentar abordar um pouco de tudo e, com sorte, deixar tempo suficiente para perguntas no final sobre qualquer um desses assuntos. Então, os tópicos que quero abordar são curadoria de dados, representação, também porque você não simplesmente joga pixels em um Transformer, certo? Você pode usar uma
+
+representação mais avançada para simplificar as coisas. A modelagem vai se concentrar no mecanismo central por trás dos modelos de difusão. Gosto de explicar isso de uma forma intuitiva, e acho que é útil para entender por que esses modelos funcionam tão bem para a geração de dados audiovisuais . Também falaremos um pouco sobre arquitetura, como a arquitetura central da rede neural que está por trás de tudo isso. E então, muito brevemente, algumas coisas sobre treinamento em larga escala.
+
+Falarei um pouco mais sobre amostragem também, porque os modelos de difusão têm um regime de amostragem bastante flexível. É como se houvesse muito mais possibilidades com modelos de difusão do que com modelos autorregressivos. Então, vou falar um pouco sobre isso. Bem, vou falar sobre destilação, que no contexto da difusão não se trata tanto de reduzir o tamanho do modelo , mas sim de diminuir o número de etapas necessárias para obter uma boa amostra. E, finalmente, falaremos sobre controle, como os vários sinais de controle que queremos usar para fazer com que os modelos obedeçam aos nossos comandos e façam o que desejamos.
+
+Tudo bem. Antes de começar, eu tenho um blog. Você não precisa se lembrar de todos esses URLs individuais. Basta acessar sander.ai.
+
+Você pode encontrar todas as minhas postagens do blog lá. Atualmente, eles tratam principalmente de difusão , mas, em geral, gosto de falar sobre a intuição por trás de como os modelos generativos realmente funcionam. Legal. Então, vamos falar um pouco sobre dados primeiro. Hum, acho que é muito importante enfatizar o quão importante é a curadoria de dados no treinamento desses modelos de grande escala.
+
+É realmente essencial para obter resultados de alta qualidade. E para mim, vindo de uma formação em pesquisa, na verdade, quando eu estava fazendo meu doutorado, não é algo que seja incentivado. É como se você não fosse incentivado a analisar seus próprios dados, porque na verdade é incentivado a usar um conjunto de dados predefinido que todos os outros usam para que você possa comparar seus resultados com o que há de mais moderno. Então, isso é algo que estamos coletivamente tendo que desaprender nessa área, porque você realmente precisa analisar seus dados a ponto de perceber que o tempo gasto em aprimorá-los às vezes é um investimento melhor do que tentar ajustar o modelo e otimizá-lo ou coisas do tipo. Hum, acho que isso ainda é um aspecto subestimado, mesmo hoje em dia, do treinamento desses modelos. Bem
+
+, sim, eu não vou falar muito mais sobre isso porque é um assunto sobre o qual você não encontrará muitas publicações e também é um assunto sobre o qual eu não poderei compartilhar muitos detalhes, porque obviamente faz parte do segredo que torna os modelos bons. Então, vamos falar sobre representatividade a seguir. Então, esta é uma representação digital típica de dados audiovisuais, ou melhor, de dados visuais, em pixels, certo? Grades de pixels. Você obtém uma grade 2D para imagens, uma grade de pixels 3D para vídeos e pode simplesmente inserir isso em um modelo de difusão, e foi isso que fizemos no início, quando a difusão começou a se popularizar. As pessoas
+
+estavam treinando diretamente com pixels e funcionou muito bem. Mas na verdade não é isso que as pessoas fazem hoje em dia, porque quando você começa a aumentar o tamanho dos objetos que está modelando, como a resolução ou a duração no caso de vídeo, esses tensores de pixel na memória ficam muito, muito grandes. Certo? Você tem algo como: " Ok, digamos que você tenha um vídeo em 1080p, certo?" 30 segundos de vídeo em 1080p a 30 FPS. Estamos falando de
+
+vários gigabytes de dados, certo? Para armazenar isso na memória. Esse é um exemplo de treinamento. Isso simplesmente não é viável. Então, o que acabamos fazendo é usar representações comprimidas, certo?
+
+Bem, não vamos simplesmente usar representações comprimidas pré-existentes. Sabe, existem muitos tipos de codecs de vídeo por aí. Você sabe, existe o padrão JPEG para imagens. Geralmente não usamos essas representações porque elas se concentram em minimizar as coisas e, nesse processo, acabam obscurecendo a estrutura dos dados a tal ponto que a modelagem generativa se torna muito difícil. Então, o que normalmente acontece nesse contexto é que nós, na verdade, aprendemos a usar nosso próprio compressor. Nós fazemos isso com base
+
+em autoencoders. Então, a linha superior deste slide é basicamente uma rede neural que consiste em um codificador e um decodificador, e a tarefa dessa rede neural é simplesmente reproduzir a sua entrada, certo? Você insere uma imagem e quer obter a mesma imagem como resultado. Mas sabe, você está meio que forçando a passagem por um gargalo no meio, e esse gargalo vai aprender o que normalmente é chamado de representação latente. Então, é como uma representação mais compacta dos dados.
+
+E essa é a representação que usaremos como base para o treinamento do nosso modelo de difusão. Então, na segunda etapa, pegamos essas representações latentes e as extraímos de nossas entradas. Eu costumo usar imagens como exemplos porque, obviamente, é mais fácil mostrá-las em um slide, mas você pode imaginar que isso também pode ser visto em um vídeo. É basicamente o mesmo procedimento. Bem , nós extraímos as representações latentes e, em seguida, treinamos um modelo generativo com base nisso, que pode ser um modelo autorregressivo ou um modelo de difusão. Bem, na
+
+verdade não importa muito, mas, em geral, as pessoas descobriram que, para dados audiovisuais, a difusão leva vantagem em termos de conseguir bons resultados com um determinado orçamento de parâmetros. Então, é isso que geralmente usamos hoje em dia. E depois de treinar seu modelo generativo no espaço latente, é claro que, ao coletar amostras desse modelo, você obterá uma amostra no espaço latente. Então, como é uma amostra comprimida, você ainda precisa usar o decodificador que treinou anteriormente para trazê-la de volta ao espaço de pixels. Então, como isso se traduz na prática? Então, tenho
+
+aqui um exemplo concreto, e acredito que essas dimensões correspondem ao que o autoencoder no modelo original de Difusão Estável faz. Assim, a Difusão Estável também é um modelo de difusão latente. Bem, digamos que você tenha uma imagem RGB, de 256 por 256 pixels. Se você representar isso como um tensor 3D à esquerda, essas são as dimensões que você obtém. E então, quando extraímos nossa representação latente com nosso codificador, uma coisa que vale a pena notar é que ela ainda possui a mesma estrutura espacial. Ainda possui a mesma
+
+topologia, mas a resolução foi bastante reduzida, certo? Então, agora temos uma grade latente de 32 por 32 , e compensamos essa redução adicionando alguns canais extras para que possamos codificar algumas das informações que seriam perdidas se você simplesmente redimensionasse a imagem, certo? Se você simplesmente pegar a imagem original e redimensioná-la para 32 por 32, perderá muitos detalhes de alta frequência. E essas representações latentes tentam, de certa forma, reter isso um pouco, adicionando esses canais extras para codificar essa informação. Claro, ainda é uma compressão com perdas, porque se você observar o tamanho total do tensor das imagens latentes em comparação com a imagem original, ele ainda é muito, muito menor, certo? E essa é a ideia principal. Essa é
+
+a questão. Queremos reduzir isso ao mínimo, e especialmente para vídeo, onde você tem essa dimensão temporal extra, você tem ainda mais redundância, certo? Você geralmente consegue reduzir o tamanho desses tensores com os quais precisa trabalhar em duas ordens de magnitude. E essa é a diferença entre conseguir armazenar seus dados na memória e simplesmente não conseguir fazer nada , certo? Bem, uma coisa a observar sobre esses mecanismos de compressão é que eles são, na verdade, um pouco mais primitivos do que, você sabe, o H.265 ou
+
+outros codecs que as pessoas costumam usar hoje em dia. E isso é intencional, porque você quer preservar boa parte da estrutura topológica da representação original dos pixels, já que as arquiteturas de redes neurais que usamos para construir esses modelos dependem da presença dessa estrutura, certo? Eles possuem esses fortes vieses indutivos. E assim acabamos com essas representações latentes que ainda têm a mesma estrutura de grade dos pixels originais, mas em uma escala mais grosseira, certo? E a imagem que estou mostrando aqui é, na verdade, de um artigo chamado EQ-VAE. É um artigo sobre como
+
+melhorar o treinamento desses autoencoders. E eles fizeram uma coisa muito legal. Eles meio que tentaram visualizar o espaço latente pegando os componentes principais dos canais latentes e mapeando-os em RGB para que você possa realmente visualizar o que eles são. E você consegue perceber, olhando para essas visualizações latentes, que ainda é possível identificar qual animal está na imagem, certo? Assim, os elementos latentes não estão realmente abstraindo nenhum conteúdo semântico da imagem. Eles estão basicamente
+
+abstraindo a textura local e a estrutura muito detalhada, certo? Esse tipo de informação é comprimido e, de certa forma, removido. E todo o resto é preservado exatamente como estava no espaço de pixels original . E isso é meio que intencional . Tudo bem. Assim, uma vez que tenhamos nossa
+
+representação latente, podemos começar a fazer alguma modelagem generativa. Bem, eu já mencionei que você poderia fazer isso tanto com regressão automática quanto com difusão. Com a regressão automática, você precisa transformar tudo em uma sequência e, em seguida, prever essa sequência passo a passo. Isso é algo muito natural para a linguagem, que já é estruturada de forma sequencial. Um pouco menos natural de se fazer para uma imagem, não é?
+
+Porque uma imagem é como uma grade de pixels em 2D. Então, você precisa decidir uma ordem de sequência arbitrária na qual gerar os pixels. Bem, a difusão w é uma abordagem um tanto diferente para alcançar algo muito semelhante , que é uma espécie de refinamento iterativo, certo? Você cria algo não de uma só vez, mas passo a passo. E a difusão faz isso, de uma maneira ligeiramente diferente, que é definindo primeiro um processo de corrupção, destruindo informações na imagem ou no vídeo adicionando ruído gradualmente, adicionando cada vez mais ruído. E então você aprende um modelo de redução de ruído
+
+que tenta remover esse ruído. E então você pode usar esse filtro de ruído, como mostraremos, para gerar imagens ou vídeos passo a passo. Então, é , só para visualizar como isso se parece . Então, tenho uma imagem de exemplo aqui à esquerda. Se você adicionar gradualmente mais e mais ruído gaussiano a essa imagem, uma coisa a observar é que, eventualmente, quando você adiciona muito ruído, você não consegue mais ver a imagem, certo?
+
+Então, de certa forma, destruiu toda a estrutura. Mas, em estágios intermediários, você pode ver que, se eu adicionar um pouco de ruído, isso acaba removendo os detalhes, certo? Por exemplo, você pode não conseguir mais distinguir os bigodes deste coelho, mas ainda consegue ver a silhueta. Então, ainda dá para perceber que é um coelho, certo? Então, você acaba perdendo detalhes mais sutis inicialmente, mas não a estrutura global. E somente quando se
+
+adiciona mais ruído, essa estrutura global também começa a desaparecer. Então, esse é o processo de corrupção. E então vou tentar explicar como podemos usar um denoiser que tenta reverter esse processo para fazer modelagem generativa, certo? Então, uma espécie de visão intuitiva de como os modelos de difusão realmente fazem isso. Então, eu gosto de fazer isso com um diagrama 2D. Então,
+
+imagens e vídeos são, na verdade, objetos multidimensionais, certo? Se você achatar uma imagem em um único vetor, ela fica com uma dimensionalidade muito alta. Hum, vou reduzir isso a duas dimensões para que eu possa plotar em um slide. É algo um pouco arriscado, como generalizar de dimensões baixas para dimensões altas, mas neste caso é bastante instrutivo. Então, vou tentar explicar como esse processo reverso na fusão realmente funciona. Então, começamos aqui com uma
+
+imagem limpa do nosso conjunto de dados. Então, é assim que vou chamar o X0. Coloque isso no canto inferior esquerdo do slide. E então vou adicionar um pouco de ruído. Então, na verdade, vou simular esse processo de corrupção e adicionar um pouco de ruído a ele. E então acabamos em uma
+
+etapa arbitrária desse processo de corrupção. Vamos chamá-lo de XT. T é como um indicador temporal que marca o processo de corrupção. Portanto, essa é uma versão com ruído da nossa imagem no canto superior direito. Então, o que vai acontecer na amostragem por difusão é que vamos começar a partir do ruído, certo? Mas, bem, vou apenas dar um
+
+zoom em uma etapa específica do processo, onde já removemos parcialmente o ruído da imagem. Então, podemos acabar com algo como o XT. E então vou te explicar como o processo continua a partir daí? Então, a primeira coisa que nosso modelo de difusão fará, como eu disse, é remover o ruído, certo? Portanto, tentará prever uma versão limpa da imagem a partir da versão com ruído. Assim como
+
+observa a versão com ruído, é só isso que recebe, e então perguntamos ao modelo de onde isso poderia ter vindo, certo? Que imagem poderia ter dado origem a essa observação ruidosa em particular? E esse é, na verdade, um problema mal formulado, porque, como acabei de dizer, o ruído na verdade remove informações, certo? Portanto, existem, na verdade, muitas imagens diferentes que poderiam ter dado origem a essa observação ruidosa em particular. E assim, o que acaba acontecendo é que o modelo simplesmente não sabe qual prever.
+
+E precisa fazer uma única previsão. Então, vai apenas prever a média de todos eles. E é por isso que você obtém uma previsão imprecisa de um modelo de difusão. Por exemplo, se você pedir a um modelo de difusão para fazer uma previsão de uma única etapa , obterá uma imagem muito desfocada, parecida com esta. A maneira de pensar sobre isso é que não se trata de prever uma imagem específica em si, mas sim uma região do espaço da imagem. Qual é
+
+a direção aproximada que queremos seguir? E é isso que estou tentando visualizar aqui com esses círculos: existe uma região de imagens que potencialmente poderiam ter originado essa observação ruidosa, e essa é, mais ou menos, a direção que queremos seguir. Então, como funciona a amostragem? Bem, nós prevemos essa direção e então damos um pequeno passo nessa direção. Não damos um grande salto até o nosso X0 previsto porque, obviamente, isso resultaria em uma imagem borrada. Não é isso que queremos. Então, basicamente, vamos
+
+dar apenas um pequeno passo e depois perguntar ao modelo novamente, certo? Você pode comparar isso com o funcionamento da otimização de redes neurais, certo? Quando você está fazendo otimização, é claro que isso acontece no espaço de parâmetros. Aqui estamos trabalhando no espaço de pixels ou no espaço latente, mas quando você está fazendo otimização no espaço de parâmetros, está fazendo algo muito semelhante. Assim como o otimizador fornece uma direção de atualização. Você não deve dar
+
+um passo muito grande, pois essa direção de atualização só é válida localmente. E aqui é exatamente a mesma coisa. Uma coisa que difere um pouco de um algoritmo de otimização típico é que, depois de realizarmos essa pequena etapa de remoção de ruído , em muitos algoritmos de amostragem por difusão , na verdade adicionamos um pouco do ruído de volta. E isso é um ruído novo. Não se trata exatamente do ruído que você acabou de remover, mas sim da adição de um pouco de ruído novo.
+
+Obviamente, menos do que a quantia que você acabou de remover, certo? Porque senão você não faria nenhum progresso. E a razão pela qual você faz isso é, muitas vezes, para evitar o acúmulo de erros ao longo do processo. Como esse removedor de ruído que treinamos é obviamente uma rede neural, suas previsões não são perfeitas. Portanto, cometerá erros. E se você
+
+continuar repassando os próprios erros para a rede , você vai acabar perdendo o controle, certo? E então, descobriu-se que este é, na verdade, um truque útil para reduzir bastante o risco disso. É como adicionar um pouco de ruído novo, e isso meio que mascara os erros que o filtro de ruído está cometendo. Nem todos os algoritmos de amostragem por difusão usam esse truque, mas muitos usam. E então, como eu disse, o processo simplesmente se repete. Então, agora estamos em uma nova
+
+iteração. Estamos em XT-1, que é basicamente uma versão ligeiramente menos ruidosa da imagem, pois a reduzimos parcialmente. E vamos simplesmente pedir ao nosso removedor de ruído para fazer uma nova previsão. E desta vez vai ser diferente, certo? Ainda está tentando prever de onde viemos, mas agora tem um pouco mais de informação porque há menos ruído na imagem.
+
+Então, isso corresponde a uma nova previsão, e essa nova previsão corresponde a uma região menor do espaço de entrada, certo? Assim, essa região vai encolher continuamente ao longo do tempo até se reduzir a um único ponto. E nesse ponto, já selecionamos uma imagem da distribuição que estamos tentando gerar. Hum, sim, então isso continua como eu disse, seguindo exatamente o mesmo procedimento. Remover ruído e adicionar um pouco de ruído de volta.
+
+Hum, e assim por diante. E é assim que fazemos a amostragem de um modelo de difusão. Bem , agora quero abordar a questão sob uma perspectiva ligeiramente diferente para tentar explicar por que essa técnica específica funciona tão bem para imagens e vídeos. Bem , para isso, vamos usar a análise de Fourier. Vamos fazer uma análise de frequência do que realmente está acontecendo em um modelo de difusão.
+
+Então, eu tenho aqui, hum, quatro imagens do conjunto de dados ImageNet. Bem , o que eu fiz foi calcular suas transformadas de Fourier. E a transformada de Fourier é uma transformada de Fourier de uma imagem que é um objeto bidimensional, certo? Uma imagem é um objeto bidimensional, portanto você também obtém uma transformada de Fourier bidimensional, e ela é algo de valor complexo. Então, vou separar isso em magnitude e fase. Assim, a
+
+magnitude está na linha do meio e a fase na linha de baixo. É uma fase um tanto difícil de trabalhar. Vamos ignorar isso por enquanto. Vamos analisar apenas o espectro de magnitude. E então, para tornar isso ainda mais conveniente, vamos resumir o espectro de magnitude em um gráfico unidimensional. E faremos isso por meio da
+
+média radial. Então, vamos pegar esses cortes radiais e ver o que eles são, e depois calcular a média de todos eles. E se você fizer isso e plotar em um gráfico log-log, eh, aqui está o que você obtém para essas imagens. O que eu acho muito interessante nisso é que elas parecem linhas retas, não é? E este é um gráfico log-log. Então, se você está familiarizado
+
+com leis de escala em modelos de linguagem, isso indica uma lei de potência, certo? Existe uma relação de lei de potência nos espectros. E isso é uma espécie de fenômeno natural tanto com imagens quanto com vídeos. Por exemplo, se você tirar uma foto e calcular o espectro, normalmente obterá essa relação de lei de potência entre as frequências e a potência ou energia correspondente a essas frequências. Então, o que isso significa para a difusão?
+
+Bem, se você adicionar ruído a uma imagem, veja como isso se parece no espectro. Então, o espectro do ruído gaussiano é basicamente tal que contém todas as frequências em igual medida em expectativa, certo? Então, é meio que plano no domínio da frequência. Então, você pode ver aqui, assim como este é um espectro de ruído gaussiano real, esta linha azul, certo? Então, você acaba obtendo uma espécie de linha horizontal. E
+
+então, para uma imagem, você obterá esse espectro de lei de potência, resultando nessa linha com inclinação descendente. Agora, se eu somar os dois, se eu adicionar o ruído à imagem, posso calcular o espectro novamente, e o que você obtém então é a linha verde. Então, você pode ver que está seguindo o espectro da imagem até o ponto em que o ruído começa a obscurecê-la, certo? E então, simplesmente segue o espectro de ruído. Então, o que isso significa concretamente para o nosso processo de combate à corrupção?
+
+Isso significa que quanto mais ruído você adiciona, mais componentes de alta frequência você começa a obscurecer, certo? Portanto, ao adicionar um pouco de ruído, você apenas obscurece os componentes de frequência mais alta. Se você adicionar um pouco mais de ruído, na verdade estará obscurecendo cada vez mais os componentes de frequência mais baixa, até que, eventualmente, se adicionar muito ruído, estará obscurecendo todos os componentes de frequência do sinal, e eles se tornarão completamente indistinguíveis. Bem , essa observação, eu meio que resumi da seguinte forma: a difusão é basicamente uma autorregressão espectral, certo? Porque essencialmente permite gerar imagens desde as mais grosseiras até as mais detalhadas. Certo, você começa com as
+
+frequências baixas e depois vai adicionando gradualmente frequências cada vez mais altas, o que corresponde a características de grãos grossos e características de grãos finos. Bem, claro, sim, isso é uma aproximação, certo? Não é o mesmo que regressão automática rígida, mas em princípio é algo muito semelhante, só que em um espaço de representação que faz mais sentido para geração de imagens, onde você pode ir do geral para o específico, o que normalmente significa que você pode esboçar a semântica da sua imagem antes de adicionar todos os detalhes, o que é uma maneira muito natural de fazer geração de imagens. E isso também significa que, ao treinarmos esses modelos, podemos, na verdade, dar mais peso às frequências nas escalas que são mais importantes perceptualmente. E esse é um aspecto muito importante disso também.
+
+Tudo bem. Então, deixe-me falar um pouco sobre as arquiteturas de rede para esses denoisers. Tipo, a própria rede é muito simples, né? Está apenas realizando a redução de ruído. Você insere uma imagem com ruído e pergunta ao programa: "Qual é a versão limpa desta imagem?" Então,
+
+inicialmente, as pessoas começaram a usar U-Nets para isso. Então, as U-Nets são redes neurais convolucionais que foram originalmente projetadas para tarefas como segmentação de imagens, mas você também pode usá-las para qualquer tipo de tarefa de restauração de imagens ou o que for. Basicamente, qualquer coisa em que a dimensão de saída seja igual à dimensão de entrada. Sim , eles funcionaram muito bem também para esse caso de uso específico . Então, as pessoas meio que as adotaram, ou pelo menos os modelos de difusão estáveis também são baseados em U-Net. Mas aí as
+
+pessoas perceberam: será que dá para usar um transformador para isso? E a resposta é sim, claro que pode. Bem, você sabe, você obviamente não usa o mesmo tipo de receita exata que usaria para um modelo de linguagem grande. Você não usa uma máscara causal, por exemplo, porque não vai... sabe, neste contexto, é aceitável que a
+
+atenção seja totalmente bidirecional . Portanto, na verdade, ele é um pouco mais expressivo do que um transformador LLM típico . Ah, sim, funciona perfeitamente com transformadores. E como aprendemos muito sobre como dimensionar transformadores do ponto de vista do LLM, faz todo o sentido usar isso também para modelos de difusão, pois podemos reutilizar muito desse conhecimento. Um outro aspecto arquitetônico que eu gostaria de abordar no contexto da geração de vídeo é a tensão entre autorregressão e difusão. Então, você pode treinar um
+
+modelo de vídeo totalmente autorregressivo, mas isso significaria que você teria que pegar esse cubo de altura vezes largura vezes tempo e depois transformá-lo em uma sequência, certo? E então gerar um token por token. Você também pode tratar todo esse volume 3D do vídeo, esse volume de pixels 3D , como algo que você simplesmente reduz e suaviza o ruído, e é isso que a maioria dos modelos modernos de geração de vídeo fazem. Então, eles estão adicionando ruído em toda a dimensão temporal, bem como nas dimensões espaciais. Hum, isso funciona muito bem, mas na verdade não é uma dicotomia.
+
+Tipo, não é uma escolha binária. Na verdade, existe uma espécie de configuração intermediária onde você faz uma regressão automática no tempo, então você gera quadro a quadro, mas usa difusão para gerar cada um dos quadros. E essa é, na verdade, uma configuração híbrida muito interessante para diversas aplicações, especialmente quando você não quer fazer coisas como geração de vídeo em tempo real, por exemplo. Você meio que precisa fazer uma regressão automática ao longo do tempo, certo? Então, tipo, Genie é um bom exemplo desse tipo de compromisso. Legal
+
+. Tudo bem. Vou falar muito brevemente sobre o que envolve o treinamento de um modelo. Tipo, sabe, a gente amplia essas coisas , né? Mais parâmetros são melhores. Hum,
+
+eu diria que provavelmente não na escala em que os grandes modelos de linguagem estão hoje. Eles simplesmente tendem a ser um pouco menores. Hum, também vou explicar um pouco por que isso pode estar acontecendo. Mas, sabe, ainda assim, nós os dimensionamos para tamanhos razoáveis, então é muito importante descobrir como fazer paralelismo e particionamento em vários chips. Então, até certo ponto, você pode confiar no paralelismo de dados, certo? Basta
+
+dividir sua porção em vários chips para treinamento. Mas, em algum momento, você precisa também lidar com o paralelismo de modelos , então você precisa começar a distribuir seu modelo por diferentes chips. Geralmente usamos JAX para construir esses modelos. O JAX tem algumas ferramentas muito boas que meio que fazem isso para você, certo? Então, você pode usar o JAX para basicamente pedir que ele fragmente o modelo de uma forma que seja o mais próxima possível do ideal. E
+
+isso meio que minimiza automaticamente a comunicação entre os chips para você, para que você não precise fazer isso manualmente. Legal. É, acho que é tudo o que vou dizer sobre isso por enquanto. Vamos passar para a amostragem, porque quero falar um pouco mais sobre esse contraste entre amostragem estocástica e determinística . Então, como eu já mencionei, alguns desses algoritmos adicionam um pouco de ruído após cada etapa. Outros algoritmos
+
+não. Isso apresenta diferentes vantagens e desvantagens. Hum, falaremos sobre destilação um pouco mais tarde, nesse contexto. Na verdade, é muito útil ter um algoritmo de amostragem determinístico, porque você tem uma espécie de mapeamento um-para-um entre o ruído inicial e as amostras da sua distribuição de dados. Mas, como eu disse, os algoritmos estocásticos podem ser um pouco mais robustos ao acúmulo de erros. Então, existem algumas
+
+vantagens e desvantagens interessantes aí. Bem, o principal assunto que quero abordar no contexto da amostragem é essa ideia de orientação, certo? Isso é algo comumente associado a modelos de difusão, mas você também pode fazer isso para modelos autorregressivos. Parece funcionar excepcionalmente bem, especificamente para modelos de difusão. Assim, o que as orientações permitem é que você faça uma espécie de troca entre a qualidade da amostra e a diversidade. Portanto, se você
+
+aumentar o que é chamado de escala de orientação, se você aumentar esse hiperparâmetro, a diversidade de suas amostras será bastante reduzida. Eles vão começar a ficar mais parecidos. Mas a qualidade vai melhorar drasticamente, a ponto de esses modelos terem um desempenho muito superior ao esperado para sua faixa de preço. E é isso que eu estava dizendo antes, por que esses modelos, por que eu acho que esses modelos de difusão ainda tendem a ser um pouco menores do que seus equivalentes LLM, é que eles têm esse truque muito poderoso que realmente lhes permite ter um desempenho acima da média. Mostrarei alguns exemplos daqui a pouco.
+
+Mas primeiro, quero explicar o que a orientação realmente faz. Então, vou voltar a este diagrama que eu tinha antes e vou mostrar como a orientação realmente modifica o procedimento de amostragem. Então, vamos começar exatamente da mesma maneira. Vamos apenas tentar prever de onde viemos. Será uma previsão incerta, mas agora faremos também uma segunda previsão, porque teremos treinado nosso modelo com um sinal de condicionamento.
+
+Então, isso poderia ser um prompt de texto, por exemplo, e podemos basicamente extrair amostras do modelo fornecendo um prompt de texto, e também sem um prompt de texto. Então, se essa previsão for a previsão sem a dica de texto, posso fazer outra previsão com a dica de texto. E, normalmente, o que vai acontecer é que essa previsão será um pouco menos imprecisa, porque obviamente o número de imagens de onde essa observação ruidosa poderia ter vindo é bastante limitado pelo que é descrito no enunciado, certo? Se a descrição disser que esta é uma imagem de um coelho e fornecer alguns detalhes, então obviamente você saberá um pouco mais sobre o que a imagem original poderia ter sido. Portanto, existe uma diferença entre essas duas previsões, e é precisamente essa diferença que nos interessa. Então,
+
+vamos chamá-la de delta. E então vamos basicamente amplificar isso. Vamos dizer: "Ok, se esta é a diferença entre não ter o aviso e ter o aviso, e se simplesmente aumentarmos a escala, e então dissermos que esta é a nossa nova direção para a remoção de ruído?" Descobri que isso é extremamente poderoso. Pode parecer algo quase infantil, tão simples, mas na verdade existe uma espécie de raciocínio bayesiano por trás disso, que faz com que funcione muito bem. Bem, e então, sim,
+
+essa é basicamente a única alteração que fazemos no algoritmo de amostragem. Portanto, todo o resto segue normalmente. Novamente, podemos adicionar um pouco de ruído de volta e, em seguida, seguimos os passos normalmente. Portanto, você precisa realizar duas avaliações de modelo por etapa, mas obtém um aumento significativo na qualidade da amostra com isso. Na verdade, deixe- me mostrar-lhe. Então, bem
+
+, esta é uma comparação de algumas amostras de um modelo sem orientação e com orientação. Bem, isso é de um artigo de 2021, então é praticamente uma relíquia na área de IA, certo? Porque as coisas acontecem muito rápido. Mas este é um dos últimos artigos em que modelos de difusão foram treinados em grande escala, mostrando de fato uma diferença entre não usar orientação e usar orientação. Depois desse artigo, todo mundo só usa orientação. Ninguém
+
+mais desliga, porque é essencial para obter boas amostras desses modelos. E as diferenças, como vocês podem ver aqui, são, de certa forma, uma redução na diversidade, certo? Assim, da esquerda para a direita, você pode ver que as amostras da direita são, na verdade, muito menos diversas, mas também individualmente são de qualidade muito superior em relação ao que foi solicitado. E assim você recebe isso de imediato. E se você só quer uma amostra, por que se preocuparia com a diversidade, não é mesmo? Então você pode usar
+
+isso ou até mesmo reintroduzir a diversidade de maneiras diferentes, se quiser. É, basicamente, orientação é algo óbvio hoje em dia. Então, todo mundo simplesmente deixa ligado o tempo todo. E acho que muita gente ficaria surpresa com o quão ruins os modelos atuais são se você remover as diretrizes. Tipo, se você usá- los exatamente como estão.
+
+Aqui está mais um exemplo do mesmo artigo. Este é um artigo do projeto GLIDE da OpenAI, um dos primeiros modelos de difusão em espaço de pixel em grande escala. Legal. Certo, deixe-me falar brevemente sobre destilação. Então, para acelerar o procedimento de amostragem, o que vamos tentar não é diminuir o tamanho do modelo, que é o que geralmente se chama destilação no contexto de grandes modelos de linguagem, mas sim reduzir o número de etapas necessárias. Então, a amostragem
+
+de um modelo de difusão, você poderia dizer que é como traçar esse caminho não linear através do espaço de entrada, certo? Eu já te mostrei alguns passos antes. Aqui, estou tentando interpolar esse caminho com essa linha vermelha tracejada. Estou tentando mostrar, de certa forma, a trajetória que podemos seguir no espaço de entrada durante a amostragem. E é uma trajetória não linear. E o que um
+
+modelo de difusão faz é, de certa forma, indicar em cada ponto da trajetória a direção que você deve seguir , certo? Então, basicamente, prevê uma tangente a esse caminho. E então surge uma questão: ok, uma vez que sabemos qual é esse caminho, especialmente se tivermos um algoritmo de amostragem determinístico, existe apenas um caminho entre uma determinada amostra de ruído e um determinado ponto de dados. Uma vez que conhecemos esse caminho, por que estamos prevendo a tangente a esse caminho? Por que não conseguimos simplesmente prever onde vamos parar? Certo? Assim como
+
+estamos agora, vamos tentar prever onde esse caminho vai terminar quando todo o ruído desaparecer, e então podemos fazer a amostragem em uma única etapa, certo? E é exatamente isso que os modelos de consistência fazem. Então, você pode pegar um modelo de difusão e destilá-lo em um modelo de consistência, e esta é apenas uma das muitas maneiras que as pessoas desenvolveram para reduzir o número de etapas necessárias para amostrar de modelos de difusão. Na prática, quando você tenta fazer isso e tenta amostrar em uma única etapa de um modelo de consistência, geralmente não funciona muito bem, principalmente porque você está pedindo à rede neural para fazer em uma única passagem o que antes levava cerca de 50 passagens, certo? Então, é uma tarefa muito difícil. Então,
+
+geralmente isso não vai funcionar muito bem logo de cara. Bem, uma possível solução é basicamente dizer: "Vou fazer modelagem de consistência, mas apenas para certos intervalos do meu caminho de amostragem, para que eu ainda possa amostrar em, digamos, três etapas, e talvez assim eu consiga resultados melhores." Essa é apenas uma das muitas maneiras de se conseguir isso, mas eu só queria mostrar intuitivamente o que isso realmente faz. Tudo bem. Vamos falar brevemente sobre controle. Esta é a última coisa
+
+sobre a qual quero falar. Então, esses modelos só são úteis na medida em que conseguimos influenciar, em um nível semanticamente elevado, o que eles realmente produzem, certo? Assim, a maneira tradicional que temos usado com esses modelos é fornecer a eles um comando de texto. Por exemplo, você fornece a eles um texto explicativo, e esse texto descreve como a imagem ou o vídeo deve ser. Isso é ótimo. Isso funciona muito bem.
+
+Mas cada vez mais percebemos que as pessoas querem mais do que isso, não é? Eles não querem apenas tentar... opa, perdi meu slide. Eles não querem apenas
+
+tentar e, hum, isso está do meu lado ou está de volta. Ah, voltou. Incrível. Sim. Eles não querem simplesmente tentar descrever tudo em detalhes na linguagem. Eles querem ser capazes de fazer
+
+geração baseada em referência, por exemplo. Você quer, sabe, você quer poder gerar um vídeo e se inserir nele, certo? E você não vai conseguir isso descrevendo sua aparência em detalhes minuciosos. Você fará isso tirando uma foto ou gravando um pequeno vídeo de si mesmo e, em seguida, condicionando o modelo com base nisso. Portanto, também queremos esses outros tipos de sinais de condicionamento. Na geração de vídeo
+
+especificamente, podemos querer controlar explicitamente o movimento da câmera, a velocidade com que os eventos acontecem, como o momento exato em que ocorrem. Não é algo que você deva tentar forçar em uma representação textual, certo? Portanto, você precisa de sinais de condicionamento mais avançados. E então surge uma grande questão: quando devemos introduzir esses sinais de condicionamento no modelo? Porque, frequentemente, você não possui esse tipo de informação de condicionamento para a maior parte do seu conjunto de dados de pré-treinamento. Portanto, pode
+
+ser bastante útil fazer isso após o treinamento. Pré-treine um modelo apenas com os comandos de texto e, em seguida, talvez adicione alguns desses sinais de condicionamento extras em uma fase de pós-treinamento. E, claro, outras coisas que podemos fazer após o treinamento são o ajuste de preferências com base em avaliações humanas, como você faz usando aprendizado por reforço ou uma otimização direta de preferências. Tudo bem. Essa foi uma espécie de visão geral relâmpago de todos esses oito itens. Bem, vou
+
+parar por aqui para que tenhamos tempo para perguntas. Certo. Muito obrigado por ouvir.
+
+Você disse que é assim que se aumenta a orientação, com o aumento das políticas. É por isso que muitos desses modelos têm um estilo específico? É como se você olhasse para a imagem de um homem dentro de uma banana e... bem,
+
+isso faz parte. Quer dizer, acho que parte disso provavelmente se deve à configuração pós-treinamento, que tende a tornar esses modelos muito mais opinativos. Gosto de pensar no pós-treinamento como uma espécie de modelagem da distribuição de imagens feita pelo pré-treinamento, e então o pós-treinamento se concentra em qual porção dessa distribuição estou realmente interessado. E isso é algo que envolve muita opinião pessoal. Portanto, isso está desempenhando um papel importante nisso.
+
+Acho que existem efeitos específicos que podem ser observados e que são facilmente atribuídos à orientação. Por exemplo, se você obtiver imagens que pareçam muito saturadas, isso geralmente é um sinal de que a escala de orientação está muito alta, certo? É como se a escala de orientação estivesse amplificando essa diferença entre a previsão incondicional e a condicional, mas está fazendo isso em todos os níveis de ruído. Então, dependendo do nível de ruído em que você manipula essa direção, você obtém efeitos diferentes. Então, o que as pessoas frequentemente começaram a fazer é variar a escala da orientação ao longo do procedimento de amostragem. Como costuma acontecer,
+
+há artigos que afirmam que, na verdade, é melhor não fornecer orientações no início e no fim do processo , mas sim intensificá-las gradualmente no meio, o que tende a proporcionar o melhor equilíbrio. Sim , definitivamente desempenha um papel, mas acho que o período pós-treinamento provavelmente desempenha um papel ainda maior. Sim . Sim. Como a orientação para o funcionamento condicional se aplica à difusão de textos?
+
+Desculpe, poderia repetir, por favor ? Oi. Como vocês fariam essa orientação ou algo parecido com amostragem condicional para difusão de texto? Digamos. Você poderia usar exatamente o mesmo procedimento, desde que você tenha uma espécie de comando que esteja fornecendo ao modelo, certo?
+
+Você pode tratar esse estímulo como um sinal de condicionamento e, em seguida, aplicar orientações a ele. O quão bem isso vai funcionar é uma incógnita. Assim como claramente se aplica ao contexto também, acho que, tipicamente, o que descobrimos é que a orientação tende a funcionar melhor quando há uma espécie de lacuna semântica entre aquilo que você está guiando e aquilo que você está gerando. E é por isso que funciona tão bem com essa configuração de sugestão de classificação. Por exemplo, se você der instruções com base em um texto , esse texto tende a capturar a semântica geral do que está presente na imagem.
+
+E isso parece ser uma maneira muito boa de direcionar o modelo em uma espécie de espaço semântico, por assim dizer. Mas se você estiver guiando dessa forma, terá o mesmo problema na geração de imagens. Por exemplo, se você fornecer uma máscara de segmentação e quiser que o modelo preencha as diferentes partes dessa máscara, certo? Na verdade, o sistema de orientação funcionará muito menos bem nesse caso, porque se trata de um sinal de condicionamento de baixo nível, que está mais ou menos no mesmo nível de abstração dos pixels que você está tentando gerar. E parece que a orientação funciona melhor quando existe essa lacuna.
+
+Acho que é por isso também que as pessoas normalmente não o usam tanto para modelos de linguagem. Bem, embora seja perfeitamente aplicável também a modelos autorregressivos. Ali . Tenho uma pergunta aqui.
+
+Oi. Você mencionou que o JAX é mais adequado para fragmentação de modelos e paralelismo. Existe alguma razão específica para isso, especialmente em comparação com o PyTorch? Hum, ok . Preciso ressalvar que trabalho no Google há mais de uma década. Só para você saber, o PyTorch não
+
+existia quando eu entrei no Google, certo? Então, eu nunca tive muita experiência prática com PyTorch. Acho que é o JAX. O JAX foi projetado com isso em mente desde o início, porque, você sabe, nós já tínhamos TPUs no Google há algum tempo e foi realmente concebido para tentar tornar isso o mais fácil possível, certo? Para tornar o uso de TPUs o mais fácil possível.
+
+E com TPUs como você, raramente se usa apenas um chip, certo? Você meio que quer aproveitar o fato de que eles têm essa interconexão muito rápida e, de certa forma, expandir rapidamente. Então, sim, acho que foi projetado com isso em mente desde o início, mas você sabe, o PyTorch também pode fazer essas coisas, certo? Sim. Não é algo exclusivo de Jacksonville.
+
+Obrigado pela sua apresentação. Se você diminuir a velocidade do processo de redução de ruído, obterá imagens melhores ou diminuirá a velocidade no sentido de realizar mais etapas? Sim, tome mais medidas. Até certo ponto. Sim, porque, como eu disse, você está meio que aproximando esse caminho não linear através do espaço de entrada, certo? Então você está
+
+aproximando isso dando passos finitos. Isso significa que você está, na verdade, aproximando isso com uma espécie de caminho linear por partes através do espaço de entrada, certo? Assim, quanto mais esse caminho linear por partes começar a se desviar do seu verdadeiro caminho não linear , piores serão suas amostras . Mas obviamente existe um limite, e também tem havido muita pesquisa sobre como podemos treinar modelos de difusão ou modelos como este que produzam caminhos mais retos desde o início, para que se possa obter uma aproximação mais precisa com menos etapas. Isso é algo chamado refluxo de fluxo retificado, que tenta investigar esse problema . Sim, até certo ponto essa é
+
+a resposta. Sim. Obrigado.
+
+Eu... eu estava pensando se você poderia falar um pouco mais sobre como se consegue inserir esses outros tipos de sinais de controle para, digamos, um movimento especial da câmera . Isso é algo que você faria com um simulador ou algo onde você pudesse controlar todos os parâmetros?
+
+Essa é uma ótima pergunta. Bem, obviamente não posso comentar sobre o que realmente fazemos. Posso fazer algumas especulações. Na verdade, eu não sei os detalhes disso porque a equipe, neste momento, é bastante grande e há pessoas trabalhando especificamente no que chamamos de capacidades, sabe, como dotar o modelo com a habilidade de, por exemplo, ser condicionado por um sinal de controle da câmera e coisas do tipo. Na verdade, não estou ativamente envolvido nessa parte do trabalho. Mas sim,
+
+como eu disse, é muito importante ter esses sinais de condicionamento que são semanticamente abstratos. Então, você precisa encontrar a representação correta que faça mais sentido para condicionar um modelo. Acho que o mais importante também é que, se o seu modelo for um transformador, você tem várias maneiras de inserir informações de condicionamento. Assim como você poderia adicionar vários tokens extras. Essa é uma maneira de fazer isso. Às vezes, você pode preferir
+
+transmitir as informações de condicionamento para todos os tokens. Por exemplo, se nós, o nível de ruído que fornecemos ao modelo de difusão, quisermos informar a quantidade de ruído presente. Normalmente, vamos transmitir isso para todos os tokens. Não vamos adicionar apenas um token para isso. Quer dizer, isso é isso é isso é isso e depois há...
+
+Uh, acho que há uma terceira maneira que as pessoas começaram a usar para condicionamento físico. Mas sim, essas são todas coisas que você precisa levar em consideração quando tenta descobrir como introduzir um novo sinal de condicionamento. Sim .
+
+Acho que temos tempo para mais um, talvez.
+
+Obrigado pela conversa realmente muito agradável. Só para entender, na parte de redução de ruído, se você não adicionasse esse erro em cada etapa, seria totalmente determinístico? De que área você é? Sim. OK. Sim
+
+. Então, basicamente, quando você tem um removedor de ruído, existem dois tipos diferentes de modelos generativos que você pode construir. Um deles é estocástico e o outro é totalmente determinístico, certo? E é uma espécie de feito mágico. Tipo, eu ainda não acredito muito que isso funcione, mas funciona mesmo .
+
+Então, sim, você pode ter um modelo determinístico. E como eu disse, isso pode ser útil em muitas aplicações, especialmente se você quiser algo que funcione nos dois sentidos. Por exemplo, se você quiser ir da distribuição dos seus dados para a distribuição do ruído e vice-versa, é realmente útil. Além disso, para muitas técnicas de destilação, é imprescindível que o instrutor seja determinista. É o caso, por exemplo, desses modelos de consistência.
+
+Você precisa de um algoritmo de amostragem determinístico para começar. Sim. Obrigado. Saúde. Tudo bem. Obrigado a todos.
+
+Tenho uma versão mais longa desta palestra no YouTube. Se você quiser mais detalhes sobre alguma dessas seções, também pode conferir lá. Legal. Obrigado.

@@ -1,0 +1,417 @@
+---
+video_title: "Agent Optimization with Pydantic AI: GEPA, Evals, Feedback Loops — Samuel Colvin, Pydantic"
+video_id: A48uhxfxbsM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=A48uhxfxbsM
+video_date: 2026-05-07T17:00:06+00:00
+video_description: |
+  Deploying an agent is only the start. In this workshop, Samuel Colvin shows how to improve agents after they are already live, using Pydantic AI and Logfire to change prompts, models, and other parameters in production without redeploying or restarting services.
+  
+  The session covers managed variables for live prompt and model updates, how to run evals and compare prompt variants against real datasets, and how GEPA can be used to evolve better prompts from production traces and feedback signals. If you're building agents in production and want a practical path from manual tuning to continuous optimization, this is a strong hands-on walkthrough.
+  
+  Speaker info:
+  - https://x.com/samuelcolvin
+  - https://www.linkedin.com/in/samuel-colvin/
+  - https://github.com/samuelcolvin
+  
+  Timestamps:
+  0:00 Introduction to Samuel Colvin and the Pydantic ecosystem
+  1:29 Overview of GEPA for prompt optimization
+  3:02 Introduction to Logfire managed variables
+  3:55 Case study: Analyzing political dynasties using Wikipedia data
+  10:04 Getting started: Setting up the environment and API keys
+  16:55 Running the initial evaluation (evals) against a golden dataset
+  25:16 Comparing different prompt performance
+  34:00 Running the full GEPA optimization process
+  43:43 Q&A: Handling prompt size and systemic errors
+  57:01 Demonstrating managed variables in a FastAPI web server
+  1:11:06 Discussing implicit user feedback collection
+  1:15:42 Q&A: Real-world internal use cases and context engineering
+---
+Meu nome é Samuel. Sou provavelmente mais conhecido como o criador do Pydantic, a biblioteca de código aberto. Agora eu administro a empresa Pydantic. Fazemos um monte de coisas. Um Pydantic ainda mantém a validação Pydantic, é claro. Temos o Pydantic AI, a
+
+estrutura de agentes. E então temos a plataforma de observabilidade Pydantic Logfire. Quantas pessoas que estão chegando aqui já ouviram falar da palavra Pydantic? Só para deixar claro, isso é reconfortante. E quantas pessoas já jogaram com a IA Pydantic em algum momento? Sim,
+
+IA Pydantic? E a lareira? Ok, então a maioria das pessoas. O Logfire é fundamentalmente a base da plataforma de observabilidade geral, OpenTelemetry, que lida com logs, métricas e rastreamentos. Eu realmente não acredito na observabilidade da IA. Acho que é uma funcionalidade,
+
+não uma categoria, e em algum momento será absorvida pela observabilidade ou pela IA . Mas hoje vendemos como observabilidade de IA porque, compreensivelmente, é isso que as pessoas querem. Então, vamos além da observabilidade padrão de logs, métricas e rastreamentos. Fazemos coisas como avaliações, sobre as quais falarei um pouco hoje. E o gerenciamento de variáveis é um dos recursos mais recentes.
+
+E o próximo passo além das variáveis ​​gerenciadas, no qual estamos trabalhando no momento, é otimizar seu agente de forma autônoma e eficaz a partir da plataforma. Não é isso que vou demonstrar hoje. Vou falar sobre o Jeppa e como você pode usá-lo com variáveis ​​gerenciadas, de uma forma meio improvisada, até termos uma solução completa e integrada, onde você nos dá o seu dinheiro e nós otimizamos magicamente o seu agente. Provavelmente também mais interessante do que o argumento de que, magicamente, melhoramos o seu agente de qualquer maneira. Então, sim, há dois assuntos principais sobre os quais vou falar e depois tentarei juntá-los no final. Então Jeppa é uma
+
+biblioteca. Quantas pessoas aqui já ouviram falar de Jeppo? E meio que sentem que entendem o que isso faz. Bem, isso provavelmente me inclui até certo ponto. Portanto, o nome vem de paradoxo genético. Então, é um
+
+algoritmo genético no sentido de que busca o melhor valor de algum tipo. E então, depois de encontrar um bom valor, ele o mistura com outros valores que parecem ser bons e produz um novo candidato. E tenta otimizar isso. Portanto, em última análise, trata-se de uma biblioteca de otimização. Otimiza uma string. Essa sequência de caracteres pode ser um simples
+
+texto ou dados JSON que, em última análise, contenham o que você desejar. E a parte do paradoxo vem basicamente do fato de que ele seleciona candidatos da fronteira do paradoxo dentre os melhores exemplos que possui. Então, é basicamente como se você estivesse criando cavalos de corrida: você pega os melhores cavalos de corrida e os cruza a cada ninhada. Na maioria das vezes, você não pega um cavalo muito lento e o adiciona à mistura para ver o que acontece. Você pega todos os melhores cavalos de corrida, cruza-os e espera obter cavalos de corrida ainda melhores, e o resultado é semelhante .
+
+E a segunda são as variáveis ​​gerenciadas. Portanto, muitas plataformas, incluindo a nossa, possuem gerenciamento ágil. Basicamente, a ideia é que você pode ter seu texto de apresentação na plataforma e editá-lo a partir daí. Levamos as variáveis ​​gerenciadas um passo adiante. Desculpe, levamos a gestão ágil um passo adiante e gerenciamos as variáveis. Portanto,
+
+não precisam ser apenas texto. Eles podem ser efetivamente qualquer objeto que você possa definir com um modelo pedante e que possa ser gerenciado dentro de um arquivo de log. Então, vamos tentar combinar essas duas coisas hoje. Devo começar dizendo que, devido a algumas situações familiares, escrevi a maior parte deste discurso durante a noite. Assim, em consonância com o restante desta conferência, poderá haver um pouco de caos. Se o que estou dizendo não
+
+fizer sentido ou se eu adormecer em algum momento desta apresentação, por favor, me avise e eu me esforçarei para explicar melhor. Então, vou falar rapidamente sobre o assunto que vamos otimizar. Tem a ver com política. Não se preocupe, não se trata de uma questão política particularmente controversa em comparação com o que está acontecendo no momento. Mas, hum, quantas pessoas? Na verdade, eu não vou... eu
+
+não vou perguntar quantas pessoas. Existe um podcast chamado The Rest Is Politics, do qual sou muito fã e ouvinte assíduo. Eles estavam conversando em abril do ano passado, quase exatamente um ano atrás, na verdade, sobre como muitos políticos vêm basicamente de dinastias políticas, famílias de políticos. E houve muita discussão sobre qual poderia ser a resposta, então usei a IA Pydantic para analisar o artigo da Wikipédia de cada parlamentar, basicamente procurando referências a seus parentes que também eram políticos, e assim consegui chegar a uma porcentagem. Acho que cerca de 24% dos parlamentares têm algum tipo de ancestral que é político. Mas, na época, eu
+
+basicamente executei o teste com qualquer modelo que conseguisse, obtive uma resposta e enviei minha pergunta para o The Rest Is Politics. Eles leram em voz alta. Foi muito bom. Mas, tipo, eu não fui lá conferir como tinha sido o resultado. Então, aqui vamos aceitar esse desafio e tentar otimizá-lo para melhorar o prompt que usamos.
+
+Hum, a sutileza... Deixe-me... Deixe-me entrar
+
+em um trecho de código aqui e explicar a tarefa. Então, espero que esta seja uma escala que você consiga ler. Hum, tem muita coisa irrelevante aqui. Em particular, existe um arquivo compactado aqui que será baixado automaticamente se você executar o script, então você não precisa fazer toda a extração de dados da Wikipédia, que contém basicamente o HTML bruto das páginas da Wikipédia. Então temos um esquema para os dados dos parlamentares e, em seguida, um esquema para seus relacionamentos. Então, em particular,
+
+este é obviamente o nome, o papel que eles podem ter tido, em particular, a relação deles. Então, sejam eles irmãos, cônjuges ou avós. E, em particular, no que diz respeito à questão que estamos tentando responder sobre, digamos, dinastias políticas, não é realmente relevante se alguém tem um filho, cônjuge ou irmão que também é político. Tem a ver com a geração dos pais deles, ou com os pais dos pais, basicamente com os ancestrais. E isso é algo que achei muito difícil de fazer com que as modelos respeitassem. Depois de mencionar "parentes", era inevitável
+
+incluir cônjuge, filhos ou cunhada na lista. Então, a maneira que encontrei para resolver isso no ano passado foi basicamente dizer: "Inclua a relação, seja ela qual for." E depois, eu revisei, digitalizei e removi aqueles que eram obviamente da mesma geração ou de uma geração anterior, por assim dizer . Então, aqui, uma das coisas que estamos tentando otimizar é encontrar um prompt que faça o agente desconsiderar eficientemente os não-ancestrais. Então, este é o esquema que temos.
+
+Temos uma entrada de tarefa, que é relevante. Temos algumas instruções iniciais muito básicas para o agente. Temos algumas instruções um pouco mais avançadas, para que possamos ver como os dois funcionam. E, por fim , vamos tentar otimizar para encontrar uma sugestão ainda melhor. Então, o cerne disso tudo é esse agente de IA Pydantic. Na verdade, está
+
+usando um modelo predefinido. É uma variável porque, em teoria, você pode substituí-la pela linha de comando, mas acho que não precisamos disso hoje em dia. O mais interessante é que a forma como estamos fazendo isso é, na prática, uma questão de resposta estruturada . Portanto, isto poderia ser equivalente a qualquer outra saída estruturada. Encontre o endereço neste e-mail.
+
+Um localiza as linhas da fatura neste PDF, seja lá o que for . Mas estamos usando a mesma ideia de resultados estruturados para ir e encontrar essa relação política. Então, estamos apenas substituindo...
+
+sim, estamos apenas definindo o tipo de saída como uma lista de relações políticas. Nós definimos as instruções acima. E, no final das contas, quando executamos o agente, tudo o que fazemos é pegar o HTML, processá-lo um pouco com o BeautifulSoup para extrair o texto, assim não precisamos lidar com todas as outras coisas desnecessárias presentes na página HTML. E então, passamos a informação para o agente. E isso funciona surpreendentemente bem. Se você analisar
+
+os casos, verá que o sistema é bastante preciso na identificação de todas as relações políticas. Até mesmo os modelos relativamente simples fazem um trabalho bastante bom . O principal ponto de confusão reside na distinção entre parentesco político e outros tipos de relações, como com figuras públicas. Essa ideia de um parente ser um ancestral parece ter realmente confundido os modelos. Você verá se consultar o restante dos arquivos aqui. Peço desculpas se
+
+o explorador de arquivos estiver pequeno, mas depois de executá-lo uma vez, você terá este diretório MPs que contém um arquivo JSON com os MPs, os URLs, os dados brutos e, o mais importante de tudo, as páginas, que são as páginas HTML. Como eu disse, o arquivo será baixado e colocado nesse diretório na primeira vez que você executá-lo. Sim . E também existe essa questão das relações douradas. Então, essa é supostamente a resposta correta para cada político. Então,
+
+Stephen Kinnock é um nome político razoavelmente famoso para qualquer pessoa britânica. Ele tem vários contatos políticos. Hum, veja aqui novamente, está incluída a esposa dele, que era a primeira- ministra da Dinamarca, embora...
+
+estou vendo algumas perguntas sem resposta. Acredito que isso seja verdade. Bem, embora tenhamos dito para não incluir relações, foi por isso que usei essa técnica de basicamente incluir essas relações e depois removê-las com base no que a relação representa. Hum, etc., etc. E isto, hum,
+
+acredito que isto seja bastante preciso. Na verdade, nós executamos um script semelhante com o Opus 4.6 para obter esses dados, mas eu verifiquei bastante e parece estar tudo correto. Então, o primeiro passo aqui é executar algumas avaliações com base nisso e demonstrar que o desempenho é semelhante ao do conjunto de dados de referência . Mas antes de fazermos isso, vou
+
+executar um caso técnico simples no terminal e mostrar o que está acontecendo para que você tenha uma ideia do que estamos fazendo aqui. Então, acho que se eu olhar para a tarefa aqui, uh, sim. Se eu for, hum, executar a tarefa UV, uh, dois é o ID do primeiro político. Por algum motivo, Stephen Kinnock, vamos executar o modelo e encontrar com sucesso as duas relações. E neste caso, nós demos o aviso e dissemos, hum, não inclua apenas os ancestrais. Então, isso foi feito corretamente
+
+e excluiu a esposa dele. Bem, quer dizer, acho que as pessoas preferem acompanhar isso e experimentar por si mesmas. Isso é verdade? OK. Para fazer isso, você precisará, idealmente, de uma conta de arquivo de log que permita gerenciar variáveis. Você pode usar uma
+
+conta gratuita para registro de logs. O plano gratuito é extremamente generoso, então tudo o que você faz lá é gratuito. Outra coisa que você precisa, obviamente, é de uma chave de API para se conectar aos modelos. Você tem duas opções. No código, basicamente usaremos o Padan AI Gateway como uma maneira simples de acessar todos os modelos.
+
+Assim, você verá apenas o prefixo "gateway" antes do nome do modelo. Bem, se você tiver sua própria chave OpenAI ou Anthropic e quiser usá-la, basta remover o prefixo do gateway e funcionará. Bem, se vocês quiserem usar o Pydantic Gateway para que tudo funcione perfeitamente, vou gerar uma chave de API no Logfire e compartilhar com vocês. Portanto, esse canal deve ser limitado, e espero que ninguém o utilize completamente antes do término da aula. Finalize a oficina. Então,
+
+hum, estou aqui no Logfire. Vou entrar no portal. Bem, se eu tivesse organizado isso de forma mais formal, poderíamos basicamente convidar todos vocês e cada um poderia gerar suas próprias chaves e ter seus próprios limites. Eu não preparei isso, então vou gerar uma chave com um limite de mil dólares e espero que isso resolva o problema hoje. Ah, e depois apague-o após o workshop.
+
+Então, vou copiar isso para este canal aqui. Então, você deve conseguir exportar essa variável de ambiente. E então, quando você executar seu código, por exemplo, esta tarefa aqui, se você executar novamente a tarefa dois, você deverá obter uma saída. Hum, devo esperar alguns minutos para que todos... Outra coisa que você precisa
+
+fazer é configurar o Logfire para quando executar os comandos ` eval`, e a maneira mais simples de fazer isso é, depois de executar o `UV sync` neste diretório. Então, você estará neste diretório e executará o comando `UV sync`. Então, observe que estamos no subdiretório desta palestra. Vamos executar a sincronização UV. E para conectar isso ao seu projeto, você verá aqui que meu projeto se chama "demo".
+
+Então, vou executar o UV, e também executar projetos Logfire. Hum, " demo", sendo "demo" o nome do projeto ao qual quero conectar, e isso irá conectar o Logfire neste diretório ao projeto " demo". Então, quando eu executar algum comando, ele registrará os rastreamentos no Logfire e usará as variáveis ​​gerenciadas a partir daí. Hum, vou esperar alguns minutos porque tenho certeza de que as pessoas querem configurar tudo e fazer aquele programa básico de "Olá, mundo!" funcionar, e depois podemos prosseguir. Alguém tem alguma
+
+pergunta enquanto estamos configurando tudo ? Sim, o que é "gateway" a que você se refere no modelo? Então, nós temos um gateway de IA, mas não somos os únicos. A ideia é que você pode basicamente fazer solicitações para a maioria dos modelos através do nosso gateway com uma única chave de API e, em particular, temos observabilidade. Portanto, se você estiver usando a versão de produção, poderá ver as solicitações que sua equipe ou seus agentes estão fazendo.
+
+Temos coisas como cache e sistema de contingência . Então, se um modelo falhar, podemos recorrer a outro, e assim por diante. Mas, neste contexto, significa apenas que você pode ter uma chave de API e se conectar ao Anthropic , OpenAI ou Grok com modelos Q ou Gemini . Então, o gateway é o seu próprio produto. Sim.
+
+Mas, como eu disse, você não precisa usar isso aqui, mas pode facilitar o funcionamento de todos os modelos .
+
+Aguardarei alguns minutos, mas alguma pergunta? Ou devo prosseguir? Qual era o diretório no repositório naquela época? Desculpe? Lista telefônica lá dentro.
+
+Então, o repositório em si é o GitHub pydantic/talks e o diretório é 2026_04_ai_engineer. OK. Engenheiro de IA.
+
+Você já fez login com o Log Fire antes? Não. Ok, então você precisa fazer isso para ter a chave da máquina.
+
+Então, acho que se você desativar o Log Fire, desculpe, eu já fiz isso.
+
+Então, vou continuar só para manter as coisas em andamento, a menos que alguém tenha alguma pergunta. Então, agora temos o caso mais básico funcionando. O que queremos fazer é executar uma avaliação para ver como nosso modelo, com este conjunto de dados e com este prompt, está se saindo em relação ao nosso conjunto de dados de referência. Então, você verá que se entrarmos em `evals` aqui, temos...
+
+onde o conjunto de dados está definido? Desculpe. Como você pode ver na parte superior, temos o conjunto de dados de carregamento, que basicamente criará nosso conjunto de dados, que é o objeto no qual podemos então chamar o método eval. Bem, isto vai carregar os casos, o que basicamente criará um caso para cada um dos parlamentares que vamos executar. E então, ele vai gerar esses casos e, por fim, retornar esse objeto de conjunto de dados.
+
+E vamos registrar um avaliador personalizado aqui, que, por sua vez, gera uma série de métricas ou asserções sobre a precisão desta execução. Não acho que você possa ler a lógica detalhadamente. Não vou detalhar cada parte individualmente. Não estou afirmando que este seja o conjunto perfeito de avaliações em termos dos avaliadores em si , mas é um ponto de partida útil. A questão é que, se você for, pode consultar a documentação, mas temos vários avaliadores pré-configurados, como o LLM como juiz, e também permitimos que você defina os seus próprios. E, em geral, definir a
+
+sua própria área de atuação é muito melhor do que ter um mestrado em Direito como juiz, porque ter um mestrado em Direito como juiz é, na prática, o tipo de coisa que... não sei se é politicamente aceitável, mas é o tipo de coisa que os lunáticos estão fazendo, e isso pode levar a alguns problemas. Portanto, se pudermos ter uma avaliação determinística como esta, onde comparamos o resultado com um conjunto de dados de referência, isso é muito melhor.
+
+Bem, se você olhar em "main", onde vamos executar isso, verá que, no fim das contas, "main" é apenas uma interface de linha de comando (CLI). Então, configuramos vários casos de CLI e, no caso de `eval`, executamos a função de avaliação. Se você observar aqui, verá que, no fim das contas, o que estamos fazendo é imprimir informações melhores e, em seguida, simplesmente chamamos essa função de avaliação. Estamos usando a funcionalidade de sobreposição do Pydantic AI para substituir o prompt definido por padrão pelo prompt personalizado que estamos usando para aquele modelo específico que estamos avaliando. Na verdade, não vamos mudar o modelo neste caso. Então,
+
+sim, vamos fazer isso e, em seguida, vamos chamar a função `datasetvaluate`, que recebe uma função, que é a função que vamos usar para realizar a avaliação. Essa função executará todos os nossos casos em paralelo, com uma concorrência máxima de cinco, como vocês verão em breve. E então vamos dar um nome a isso para que possamos analisá-lo no Logfire. Agora, como vocês podem ver aqui, configuramos o Logfire na parte superior. A presença do token significa apenas que o programa será executado sem erros caso o token não esteja configurado.
+
+E definimos um nome de serviço de ambiente . Não vamos imprimir nada no console porque, nesses casos complexos, é muito difícil ver o que está acontecendo no terminal. Não ajuda muito ter o Logfire imprimindo informações no terminal. E então desativamos a limpeza automática porque ocasionalmente algo como a palavra "senha" ou "autenticação" ou algo parecido aparecia na saída, e ficamos satisfeitos em que isso fosse para o Logfire. E então vamos instrumentar a IA Pydantic.
+
+Na verdade, não precisamos disso agora. Então, eu não vou usar ` instrument prints`, mas quando começarmos a usar o Jeppa, usar `instrument prints` será uma boa maneira de integrar a saída do Jeppa ao Logfire. Bem , como você já deve ter percebido, o arquivo de ajuda, help.md, contém alguns exemplos úteis do que vamos executar. Então, vamos executar este script aqui. Então, vamos executar o arquivo
+
+main.py via UV. Vamos fazer a chamada com os argumentos eval. Vamos dividir, então estamos dividindo com base apenas no conjunto de testes que estamos executando, e o prompt é o inicial, ou seja, o prompt bem simples. Uma
+
+descrição sucinta do que o agente deve fazer, em vez de uma instrução mais complexa. E se executarmos esse comando eval, você não verá muita coisa no terminal porque o terminal está desativado, mas você verá o programa percorrendo os casos. Se consultarmos o LogFire, podemos ver os casos em andamento, seus custos, etc. Podemos analisar detalhadamente cada caso individualmente. Então, se você olhar aqui, estamos executando o agente e acho que ele está bem pequeno, mas vou tentar dar um zoom para você ver o que está acontecendo aqui.
+
+Temos a entrada do sistema. Novamente, estamos seguindo as instruções simples que mencionamos . E então temos a entrada, que é o conteúdo da página da Wikipédia em formato de texto. Em seguida, temos o resultado final e, neste caso específico, não foram encontradas relações. Isso já terminou e, além desta análise dos casos individuais aqui, podemos acessar as avaliações no Log Fire e você verá este caso aqui.
+
+E você verá este conjunto de dados e, dentro dele, o caso mais recente, de 1 minuto atrás. Se entrarmos e analisarmos aquilo, poderemos ter uma ideia do que está acontecendo. Então, mais uma vez, isso parece bem pequeno na tela grande, eu acho, mas ficará muito mais nítido na sua tela. Podemos ver onde os casos da métrica mais relevante, a precisão, se destacam: alguns indicam resultados corretos, outros incorretos, e alguns valores são menores, indicando que a saída do conjunto de dados de referência é ligeiramente diferente da saída do modelo que estamos executando aqui. Como você pode ver, esse cara tem um pai que tem alguma ligação com o UKIP.
+
+E está correto, o nome dele, mas há uma pequena diferença na descrição, por isso a pontuação é de 0,9. E você pode ver o desempenho geral de 85%. Então, em 85% das vezes, acertou em tudo . Isso não é particularmente bom. Também não é particularmente interessante em sua essência, até que o comparemos com a execução com um prompt melhor.
+
+Então, quantas pessoas estão dispostas a executar essa avaliação? Algumas pessoas. Ok, vou esperar alguns minutos porque acho que é um pouco mais divertido para nós...
+
+É, já se passaram 20 minutos. Temos bastante tempo. Vou esperar alguns minutos. Você pode mostrar o comando novamente, por favor? Sim .
+
+Então, é este comando. Se você olhar em um help.md, basicamente estamos executando o comando eval. Só estou pensando que está
+
+demorando um pouco. Sim . A mensagem indica que está demorando um pouco, cerca de 7 minutos. Executando avaliação? Sim.
+
+Demorou, eu acho, cerca de 9%, uns 7 minutos para chegar a esse ponto. Para mim, rodou muito rápido. Hum , eu também. Sim, levou 30 segundos. Acho que deve levar cerca de 30 segundos, então não sei se você está usando uma versão diferente da internet ou se mudou de modelo.
+
+Ah, sim, isso será muito menor do que acho que estamos usando. Bem, o Anthropic estava fora do ar esta manhã, quando eu estava tentando usá-lo bastante, então está muito, muito lento, e o GPT-4.1 está voando porque poucas pessoas o estão usando, e está fazendo um trabalho razoável. É por isso que estou usando um desses modelos, em parte para mostrar o desempenho da avaliação, mas também, francamente, para obter as respostas mais rapidamente.
+
+Enquanto as pessoas estão fazendo isso, vou passar para o próximo passo, que é comparar. Se você analisar o que isso está fazendo, basicamente está executando o comando `eval` duas vezes, uma com o prompt incorreto e outra com o prompt correto, e então poderemos comparar essas saídas no arquivo de log e ver de onde vêm as diferenças . E então podemos prosseguir para a etapa completa de otimização JEPA. Vou executar a comparação, que deve demorar um pouco mais, mas ainda assim espero que seja relativamente rápida com esses modelos. Veja bem, estamos executando apenas os 65 casos de teste aqui, em vez dos 650 MPs completos que usaremos quando chegarmos à otimização completa.
+
+Se você executar o mesmo parâmetro duas vezes por acidente, ele simplesmente criará um novo registro. Obviamente, haverá mais intervalos no arquivo de log e outra execução será exibida na visualização de avaliações do arquivo de log. Você pode arquivá-los quando ficar confuso com a quantidade de arquivos diferentes que possui. Então, se você vier aqui para as avaliações, entrar no caso mais recente, verá que agora tenho um monte que posso arquivar. Então, sim, arquivar os mais antigos na ordem inversa, só para manter as coisas organizadas.
+
+Mas, se eu pegar esses... Então, agora tenho duas novas execuções aqui, dois novos experimentos, e vou selecioná-los e compará-los. E agora temos uma série de diferentes métricas.
+
+Hum, em particular, e você verá que, em última análise, a precisão é o fator mais importante aqui, ligeiramente superior, 92% contra 87% para a pergunta do especialista em comparação com a pergunta inicial. E temos um gráfico, talvez um pouco inútil, de diferentes métricas e seu desempenho. Com menos métricas ou sessões, isso pode ser mais útil. E, novamente, o que provavelmente é mais interessante é analisar casos individuais em que o desempenho difere. Então, você vê aqui, com este deputado, Joe White, que a solicitação inicial encontrou uma correspondência, " relação cônjuge", o que obviamente não deveria ter acontecido, pois não estamos procurando por cônjuges, enquanto a solicitação do especialista ignorou corretamente essa correspondência.
+
+E se você observar este caso, Laura Kyle, verá que o resultado esperado é nenhuma correspondência. Em ambas as pesquisas mais recentes, encontraram uma correspondência porque tinham um tetravô que foi governador da Baía de Hudson, que não era um político, mas sim uma figura pública. Assim, você começa a perceber de onde vêm as diferenças e que tipo de coisas você pode querer fazer no prompt para melhorar o desempenho. Em última análise, esse é o tipo de dado que o Japer usará para, tipo, informar e gerar uma próxima fronteira de Pareto, para que ele possa tentar novas soluções. Eu
+
+não consegui visualizar os gráficos. Você verá os gráficos somente se estiver comparando dois casos. Portanto, se você abrir um único caso, os gráficos não serão exibidos . Dois casos. Então, executei a comparação. Depois de executar o comando `
+
+eval`, executei o comando `compare` com este aqui. E então, aqui, eu peguei dois casos. Então você clica em comparar e vê os gráficos comparando o desempenho.
+
+Então, se você olhar no arquivo task.py, verá que havia dois prompts como pontos de partida. Então, uma delas é uma frase muito simples. E a segunda parte é uma descrição um pouco mais detalhada dos tipos de coisas que você deve procurar. Ainda não está totalmente otimizado, mas é parecido com o que você obteria se, como humano, escrevesse uma pergunta decente para o modelo, como por exemplo, " escreva uma pergunta melhor para mim".
+
+Portanto, como podem ver, melhoramos o desempenho de 87% para cerca de 92% com este modelo, fazendo isso . E nós, com Jeppa, devemos conseguir melhorar. Acho que consegui 96% quando executei o teste mais cedo. Bem, não é perfeito, mas é...
+
+você sabe... houve exemplos de uso do Jeppa para...
+
+suponho que o que as pessoas geralmente fazem é manter uma variável constante, como "precisamos da seguinte qualidade e agora queremos reduzir o tempo ou o custo", ou "precisamos aumentar a qualidade". Então, havia um exemplo da Shopify usando Jeppa. Eles estavam basicamente analisando sites da Shopify e procurando por coisas como se eram fraudulentos ou em qual categoria tributária se enquadravam. Eles passaram de basicamente entregar o site inteiro para o GPT-5 e perguntar "o que é isso?" para usar um agente, um modelo Quen e o Jeppa para otimizar o texto. E eles conseguiram
+
+baixar o preço de 5 milhões de dólares por ano para 73 mil dólares por ano. E melhorar o desempenho ao longo do tempo. Então, obviamente, isso não é apenas otimizar o prompt, é uma mistura de otimizar o prompt e migrar para um formato gigantesco e blá blá blá. Mas, neste caso, estamos apenas tentando melhorar o desempenho, mantendo o mesmo modelo relativamente rápido, para fins de demonstração. Então , agora que fizemos a comparação.
+
+Acho que está na hora de analisar... Bem, alguém quer que eu espere mais um pouco ou devo continuar? Vou interpretar o fato de ninguém me pedir para esperar como um sinal para continuar.
+
+Então, agora chegamos à fase "Jeppa Jeppa" disso. Então, vou reativar isso enquanto me lembro. E, por fim, se você observar aqui, onde vamos executar o caso otimizado, verá que temos esta função de otimização. Execute a otimização aqui. Ele carregará os conjuntos de dados de treinamento e validação. É
+
+um erro se não estiver lá. Em seguida, vamos criar esse adaptador Jeppa. Então, o adaptador Jeppa é efetivamente como o Jeppa, não é? É incrível, eu diria que é o que há de mais moderno em otimização de agentes atualmente. Lakshya, o criador, é um estudante de doutorado do primeiro ano em Berkeley. Ele talvez não seja o desenvolvedor
+
+Python mais experiente em engenharia, e por isso o Jeppa não funciona muito bem. Não é tão seguro em relação a tipos de dados quanto eu gostaria. Estou morrendo de vontade de ir lá e consertar para ele ou simplesmente criar um fork, mas até agora não fiz isso, mas...
+
+sim, então, o Jeppa tem esse conceito de adaptadores, que são basicamente como você define o agente que vai propor o próximo caso. Então, temos esta função aqui para criar o adaptador, que por sua vez gera um desses adaptadores aqui, que definimos, que é uma subclasse do tipo adaptador. É uma classe de dados que recebe vários argumentos, mas, no fim das contas, o que importa é construir o agente proponente. Hum, que é obviamente o nome do método deles. E o que vamos fazer aqui é retornar um agente de IA Pydantic, por sua vez. Então, estamos
+
+usando um agente de IA Pydantic para propor novos casos e otimizar esse mesmo agente. Hum, e vamos usar novamente o GPT-4.1 para maior velocidade neste caso. Existe uma característica um pouco irritante em que o Jeppa é síncrono, não assíncrono, e por isso, se você tentar executar o agente proponente cada vez que ele for executado , ele será executado em um novo contexto assíncrono. Portanto, precisamos criar uma nova conexão HTTP (HTTPX), caso contrário, receberemos vários erros, daí essa formulação um tanto estranha.
+
+Temos novamente um aviso. Obviamente, você pode acabar dando voltas e mais voltas tentando otimizar o prompt, mas basicamente estamos dizendo: você é um engenheiro especialista em prompts, então melhore o prompt do sistema para este agente, blá blá blá . Aqui estão os pontos a serem considerados. Hum, e então vamos chamar a função de avaliação final, que vai gerar esse conjunto de casos, gerar uma avaliação de IA Pydantic. Execute esse comando `eval`, e é isso que usaremos para testar o desempenho do nosso novo prompt proposto.
+
+Isso provavelmente fará mais sentido quando eu realmente for executar o programa. Sim , e então aplicamos habilidades para as falhas e retornamos esse lote de avaliação, que é um resumo de como foi realizado, e é isso que o Jeppa usará para determinar se esta é uma nova fronteira de Pareto ou se deve propor um novo desafio. Bem , acho que a coisa mais simples a fazer é simplesmente executar isso. Vai demorar um pouco mais e custar um pouco mais, mas tudo bem. Vou executá-lo . Se você executar com
+
+50, basicamente para de funcionar antes mesmo de começar . Mas se eu executar isso com 400 chamadas,
+
+você verá que o Jeopardy começa a exibir uma barra de progresso semelhante e, como eu disse, desativei a impressão do arquivo de log para que você não veja o que está acontecendo em segundo plano, porque basicamente se torna impossível visualizar. Mas se você olhar dentro do arquivo de log, verá que essa otimização já está em andamento. Então, você pode ver que nós avaliamos o agente e então chamamos o agente proponente aqui. Então, o agente proponente, se você observar esta etapa aqui, é isso que acabamos de ter, o prompt do sistema que mencionei para o agente proponente. E então vem a entrada, que é basicamente a descrição do contexto feita pelo Jeopardy para que o agente proponente possa criar uma nova pergunta. A partir daí,
+
+o agente proponente irá propor uma nova solicitação do sistema. E então vamos avaliar isso, ver como funciona e iterar em direção a uma solução melhor. Então, é isso que está acontecendo aqui. Entende por que eu fiz a impressão do instrumento? É para que possamos visualizar a saída de impressão do Jeopardy de forma organizada dentro do arquivo de log.
+
+Pode haver uma maneira mais elegante de fazer isso, mas esta funcionou para mim esta manhã. E vai dar certo. Como você pode ver, é um pouco mais caro. Já gastamos 2 dólares. Hum, então, acho que se todo mundo participar, vamos gastar algumas centenas de dólares.
+
+Ah, a OpenAI sem dúvida vai apreciar isso. Hum, e isso vai funcionar, mas veja, já estamos tipo, hum, na metade do processo de otimização, e ele está propondo esses novos prompts e então, hum, uh, avaliando-os e usando o feedback da avaliação para decidir qual o próximo passo. E eu recomendo que você, se tiver um tempinho, dê uma olhada nesses rastreamentos, porque eles são bem interessantes e esclarecedores em termos de como a otimização está funcionando. Acho que um dos pontos a destacar é que as pessoas adoram dizer que tudo relacionado à IA é incrivelmente sofisticado, complicado e avançado. Essa técnica de otimização, embora seja de última geração , não é exatamente inovadora. Em relação à
+
+complexidade do próprio modelo, é como uma ideia relativamente rudimentar: peça a um agente para gerar um novo prompt; se ele for melhor, pegue partes desse prompt, coloque-as em um novo prompt e continue fazendo isso até que o tempo acabe ou até atingir uma pontuação predefinida. Sim. Tenho uma pergunta. Qual o tamanho dos lotes e você possui alguma habilidade de agente para lidar com isso? Hum, qual o tamanho dos lotes? Então, temos
+
+o processo do agente, o prompt que está no prompt do usuário do agente, quantos lotes ele está executando, quantos... Então, acho que você pode ver aqui onde ele está executando as avaliações. Então, está rodando, acho que está rodando todos os casos no conjunto de dados de teste.
+
+Hum, mas acho que já vi acontecer menos vezes. Então, acho que Jepher é esperto o suficiente para alterar o número de casos com base no desempenho deles, mas, sinceramente, não tenho tanta certeza. Sim. Então, em termos de habilidade, qual era a pergunta? Eu estava pensando em como reduzir isso para otimizar alguns prompts e o agente irá processá-los, então eu estava pensando se você tem... quero
+
+dizer, eu acho que podemos tornar isso muito mais fácil com código aberto. Também vamos criar uma funcionalidade em que você simplesmente conecta o arquivo de log e o processo ocorre em segundo plano. Mas também queremos tornar extremamente fácil fazer isso localmente ou com código aberto, e não queremos simplesmente dizer: "Ah, você precisa inserir isso no arquivo de log para obter a otimização." Sim. Agora, basta definirmos as metas máximas, certo? Acho que é por isso que atingir o máximo de objetivos que consigo me ajuda
+
+. Sim, então. Hum, existe uma maneira mais inteligente de fazer isso? Por exemplo, se você não melhorar em 10 iterações, simplesmente pare. Tenho certeza que sim. Eu
+
+não investiguei isso. Como eu disse, fiz isso meio às pressas. Eu concordo totalmente e presumo que seja ainda mais do que você está dizendo, quando se trata de atingir esse limite ou, como você disse, ficar sem otimização ou algo do tipo. Não entendi muito bem como você vê a otimização do prompt. Então, se você olhar aqui na execução do agente de propostas, verá efetivamente qual é a entrada para o agente que está propondo um novo prompt, e ele está sendo instruído, com base nessas informações, a propor um novo prompt.
+
+E então, se você observar o princípio da fronteira de Pareto, verá que ela pode conter componentes de estratégias anteriores que tiveram bom desempenho. E, na verdade, sabe, é um pouco como... Não é como se fosse diferente. É um "
+
+Sim" totalmente novo, está preparado, propondo uma nova e diferente abordagem. Então, eu acho que se você tiver vários, então, eu acho que o Jeppa opera com a ideia de uma espécie de objeto ou dicionário de chaves conhecidas. Portanto, aqui temos basicamente apenas um dicionário com um par chave-valor, por exemplo. como o valor de prompt do sistema. Se você tiver várias chaves diferentes, poderá otimizar combinando os melhores valores de cada uma delas. Então você poderia
+
+imaginar que poderia ter um modelo imaginário e um prompt de sistema ou modelo e algum conjunto de ferramentas. Ou até mesmo linhas diferentes de um prompt do sistema, de forma que você basicamente permita que a proposta seja feita, escolhendo valores diferentes do seu conjunto de linhas distintas. Essa é a maneira padrão de fazer isso no DSPy. É basicamente como pegar todos os meus exemplos diferentes e escolher quais incluir no enunciado. Portanto, DSPy é outra estrutura de agentes. Hum,
+
+algo semelhante ao PyDanse AI. Bem, isso vem de uma formação em aprendizado de máquina. Acho horrível de usar porque não é seguro em relação aos tipos de dados, mas o nível das pessoas que o usam geralmente é muito alto. Hum, e já existe esse conceito de otimização há muito tempo. Durante muito tempo, foi basicamente a única estrutura de agentes que teve essa ideia. Agora o
+
+Jepa surgiu e está disponível dentro do DSPy, mas não apenas dentro do DSPy. Sim, qual a sua opinião pessoal sobre o Jepa e esse tipo de algoritmo? Com base na sua experiência pessoal, elas funcionaram bem na prática? Vocês já usaram otimizadores para builds caseiras ? Sim, estou curioso para saber essa opinião informal. Então, acho que, no
+
+caso em que você está tentando obter um modelo mais simples, mais rápido ou mais barato para realizar alguma tarefa, eles fazem muito sentido. Se você pegar um modelo de última geração, como o Opus 4.6, e fizer a maioria das perguntas, ele, se tiver todas as informações necessárias, provavelmente acertará na maioria dos casos. Assim, a otimização torna-se ligeiramente menos relevante. Acho que uma das sutilezas aqui é que a estatística mostra que 98% dos dados são privados. Não sei se esse número
+
+está correto ou não, mas digamos que esteja errado por quilômetros e os dados sejam 50/50 . Quando você tem um conjunto de dados privados onde os modelos não foram treinados, você tem uma especificação interna enorme de como um banco deve operar, por exemplo. Adicionar o contexto certo ao prompt do sistema ou às instruções é incrivelmente valioso e a otimização é realmente importante. O problema que enfrentamos ao tentar fazer demonstrações como esta é que, por definição, não existem dados privados que possamos usar, porque se alguém nos permite usar seus dados privados, essa pessoa não diz: "Ah, sim, podemos ir falar sobre isso com os engenheiros de IA?" Então, eu tenho esse exemplo um pouco estranho de deputados, mas na verdade vocês verão que em casos como esse, que mostrarei daqui a pouco, o modelo simplesmente descobre quem é o deputado de determinado distrito, mesmo sem ter analisado os dados, porque, na verdade, são todos dados públicos que ele conhece. Portanto, creio que uma das
+
+sutilezas é que a otimização se torna muito mais importante quando se tem uma grande quantidade de dados privados. E, sinceramente, nós, como empresa, ainda estamos tentando descobrir isso . Uma opção para nós é usar material que seja público, mas recente o suficiente para não estar presente nos dados de treinamento. Uma opção seria usar notícias, mas isso poderia ficar um pouco delicado politicamente se usássemos notícias atuais como nossa fonte de informações para otimizar. Então, outra opção é usar o que está acontecendo no mundo dos esportes, porque, independentemente de você achar interessante ou não, pelo menos não é controverso.
+
+Poderíamos, por exemplo, perguntar qual jogador de futebol teve um bom desempenho na temporada da Premier League nos últimos cinco jogos. Esses dados podem ser públicos, mas equivalem a dados privados no sentido de que não existem dentro do modelo, mas não são um bom exemplo. É algo que estamos tentando descobrir. Ah sim, eu tenho uma pergunta sobre o Japão. Acho que o seu microfone não está funcionando, mas se você falar mais alto, podemos continuar. Sim, estou apenas tentando
+
+entender se existe uma maneira de priorizar a otimização e o ajuste do prompt do sistema em vez de adicionar conteúdo a ele, porque acho que isso é um problema recorrente. Você encontra novos casos extremos e fica adicionando e complementando informações. Sim. Então, será que se consegue atingir esse equilíbrio entre "ok, isso nós acrescentamos" e "isso nós ajustamos"? Então, eu estava usando o GPT-5 mini esta manhã e um dos problemas, o A, era que ele estava mais lento em geral, mas também estava gerando um prompt de sistema enorme, o que significava que o agente estava mais lento. Não
+
+sei se foi melhor ou não. Acho que teve um desempenho semelhante. Bem , isso definitivamente é um problema. Acho que a solução para isso é o que eu mencionei antes, onde, no fim das contas, o Jeppa quer um armazenamento de chave-valor , um dicionário de chaves e valores, e então, em vez de o agente proponente simplesmente gerar um novo prompt do sistema, ele escolhe um novo subconjunto da lista de entradas disponíveis, como se dividisse o prompt do sistema em 200 frases e escolhesse as 20 melhores para usar. Ora, por definição, se só pode escolher 20 frases, não vai ficar prolixo.
+
+Neste caso, estamos usando um agente de IA financeira para basicamente invocar um prompt de sistema completamente novo, o que provavelmente é melhor para encontrar os casos extremos, mas resulta em um prompt muito detalhado.
+
+Bem, na verdade, nesse ponto específico, já terminou. Isso nos forneceu essa sugestão ideal. Obteve uma pontuação de desempenho de 96,7% , significativamente acima dos 92 que obtivemos no nosso melhor cenário anterior. Hum, e à custa de uma mensagem relativamente longa. Bem, você pode ver onde isso foi abordado em detalhes e, em particular, foi discutido qual relação usar, quando incluir uma relação e que tipo de coisas contam como uma relação. Hum, sim
+
+. Ok . Então, é isso que o Jeppa está fazendo. Ah, a outra coisa que eu ia abordar são as variáveis ​​gerenciadas. Então, vou agora abordar as variáveis ​​gerenciadas, mas antes de prosseguirmos, alguém tem mais alguma pergunta sobre esta parte da apresentação ou sobre o Jeppa?
+
+Sim. Talvez seja só eu que esteja com dificuldade de ouvir, mas você comparou as pontuações de validação com um conjunto de referência, certo? Você quer levar isso? Os índices de validação são comparáveis ​​a um conjunto de referência, certo? Sim.
+
+O conjunto dourado deste repositório está aqui, certo? Sim. Oh, tudo bem. Certo, então, se você olhar no diretório "cases", verá "golden relations" e um arquivo JSON com o suposto conjunto de relações de ouro. Bem, tenho certeza de que não é 100% perfeito. Como eu
+
+disse, nós o geramos com o Opus 4.6 usando um script muito parecido, mas aí me veio um pensamento bobo: e se você não tivesse esse conjunto de ouro? As coisas ficariam bem difíceis, não é? Sim. Sim, as avaliações são muito mais fáceis se você tiver uma espécie de referência sólida sobre o que elas devem fazer.
+
+Em geral, o que as pessoas acabam fazendo é ter um subconjunto de dados que foi anotado por humanos e que funciona, mas também pode haver casos em que, por exemplo, se você tem um agente escrevendo código, você executa o código e verifica se ele falha ou não. Ou, se você puder ter um feedback, um ciclo completo de retorno dos dados à fonte original para verificar sua precisão, algo assim. Descobrir o que o seu avaliador considera é sempre a parte mais difícil das avaliações. Mas, no seu exemplo, se você executar o código, será como se ele simplesmente executasse ou não, certo? Não é como perguntar "Como se calcula uma porcentagem então?". Não
+
+sei. Estou um pouco confuso(a) quanto a isso. Bem, você poderia verificar, por exemplo, se o programa iria gerar código inválido ou usar bibliotecas que não estivessem disponíveis. Isso seria um primeiro passo para avaliar o desempenho . Mas sim, quero dizer, essa é a parte difícil das avaliações, que é saber o que é certo. E à medida que os
+
+modelos se tornam mais inteligentes, descobrir o que é certo fica cada vez mais difícil. Se você quer dizer, o caso extremo, certo? É como se você tivesse um agente cuja função é persuadir as pessoas a pararem de fumar. A avaliação definitiva é esperar 40 anos e ver quando eles morreram. Mas, obviamente, não se pode fazer uma avaliação em que se espera 40 anos para ver se eles morreram. Então, sua avaliação provavelmente é do tipo: "
+
+Ela inclui as palavras certas?" Não inclui algumas palavras ofensivas que você definitivamente não quer que sejam sugeridas? Tipo, sabe, que tal fumar um charuto , né? Então, um dos seus critérios de avaliação seria não incluir o charuto no texto . E não que isso soe estúpido, mas é exatamente o que muitas avaliações acabam sendo.
+
+Posso? Sim, desculpe. Duas perguntas. Uma delas é bem curtinha . Bem, na IA prática, você acaba quebrando a estrutura muitas vezes nos prompts. Será que ele simplesmente junta tudo
+
+e você só vê uma mensagem no final? Assim, você sempre terá apenas um conjunto de instruções. Sim. Então, trata-se de criar um conjunto de instruções. Certo. Certo, tudo bem.
+
+Bem, a verdadeira questão era... você sabe, a variação é enorme neste caso. Quer dizer, você mostrou seus resultados. Eu executei o programa e
+
+obtive resultados. Existe alguma maneira de fazer com que a variância faça parte da otimização propriamente dita? Hum, eu não diria isso. Então, quando você executa `evals`, estou procurando onde chamamos `run`, você pode basicamente definir o número de vezes que cada caso será executado. E a melhor maneira de reduzir a variância é executá-las muitas e muitas vezes.
+
+Sei que há vários fundos de hedge que gastam cerca de 20 mil dólares por noite executando todo o seu conjunto de avaliações para ver se conseguem melhorar com o tempo. E se você tem suas próprias GPUs, você pensa: "Bem, é meio que de graça usar esses programas, então devemos executá-los cada vez mais. Devemos executar tudo 100 vezes e ver o resultado amanhã." É definitivamente um dos desafios. Você prefere criar uma função de custo ou pode simplesmente apontar para ela? Eu quero que você
+
+otimize tanto a precisão quanto minimize a variância. Tipo, você escreve sua própria função de custo? Sim, então, se você olhar no código do adaptador aqui, você verá... quero dizer,
+
+dê uma olhada, mas onde exatamente eu devo procurar? Hum, a função ` evaluate` está retornando algo como um tipo de lote de avaliação, onde você pode basicamente incluir qualquer pontuação. `scores` é uma lista de números de ponto flutuante, certo? Então, no fim das contas, você pode devolver o que quiser , sabe, o que você achar que deve estar lá dentro. OK.
+
+E só para o caso de alguém estar se perguntando, trajetórias são efetivamente semelhantes a traços. É como uma sequência de diferentes etapas pelas quais os agentes passaram para chegar a um determinado ponto. Então, como vocês lidam com erros sistemáticos? Eu executei a otimização e obtive um alto valor de precisão, 96%, mas obtive resultados incorretos em alguns casos. Assim, a pergunta final exclui explicitamente os "ons" e os " tios", mesmo que eles façam parte do parentesco de ouro. Então, você sugere
+
+executar o código e, assim como Claude, percebeu isso imediatamente? Sim. Então talvez fosse possível ter um cinto de segurança com uma verificação adicional na extremidade. Acho que o que está acontecendo é que ele usa um pequeno conjunto de casos de teste e um conjunto maior de casos de avaliação, então o subconjunto de casos aos quais o agente otimizador é exposto talvez não inclua o tio e a tia, e isso tornou mais simples excluí-los. Então, uma das outras coisas que você acaba precisando é de, pelo menos, o dobro da quantidade de dados que cubram todo o espaço diferente, para que você possa ter um conjunto completo de dados para treinamento e outro conjunto completo para avaliação. Isso é como os
+
+problemas clássicos de aprendizado de máquina, tipo, como fazemos para construir algo que seja realmente confiável, sabe, muito confiável, porque, no fim das contas, você já está chegando ao ponto com o agente em que está meio que incentivando o sobreajuste. E suspeito que essa coisa do tio e da tia seja um exagero. Ok, obrigado. Há uma pergunta atrás de você. Essa provavelmente é uma pergunta muito boba, mas certamente os prompts...
+
+posso presumir que o prompt só funciona com o modelo específico que você está usando? Ou seja, a opinião geral é que você precisaria executar todo o processo novamente se mudasse de modelo. Isso vai acontecer o tempo todo, não é? Sim, e essa é uma das razões pelas quais as avaliações são difíceis. E essa é uma das razões pelas quais a maioria das pessoas não executa avaliações nem otimizações. Eles elaboram um bom texto de
+
+apresentação. Eles perguntam ao agente de codificação escolhido: "Essa sugestão parece boa?" Se a resposta for sim, eles meio que avaliam visualmente e depois colocam em produção, preocupando-se com outras coisas, porque provavelmente o modelo que surgir daqui a um mês irá substituir qualquer otimização que você tenha feito em alguns casos. Agora, se você é uma empresa de private equity com cerca de 200 milhões de faturas em seu portfólio que deseja analisar, vale a pena otimizar uma versão específica do Quend 3.5 Light Mini para realizar essa tarefa, em vez de simplesmente usar o GPT-5. A
+
+diferença é de cerca de 10 milhões de dólares, e você precisa de um analista que ganha meio milhão de dólares para trabalhar no problema por três semanas e ele o resolve . Então, depende da questão que você está tentando resolver. Mas o exemplo máximo disso são os agentes de programação, cuja trajetória é extremamente esparsa, ou seja, eles realizam uma gama muito ampla de atividades e, na maioria dos casos, somos informados de que essas empresas não têm muitas avaliações ou não têm nenhuma. Se você perguntar a Boris Chen como ele trabalha com o código Claude, ele dirá que é principalmente através de vibrações. Na maioria das vezes, gostamos de ver o que funciona e fazer alguns ajustes.
+
+Então, não estou afirmando que isso seja a solução para todos os casos, mas definitivamente existem situações em que ser capaz de otimizar seu prompt ou a escolha do agente é valioso. Outra coisa que não temos uma demonstração aqui, mas que você pode otimizar, é muito mais do que apenas um prompt. Então, existe o modelo, existem coisas como a estratégia de compactação, existe a forma de registrar ferramentas, existem coisas como incluir o modo de código nisso. E o próximo passo que queremos permitir é basicamente que você otimize toda a gama de ações que pode realizar dentro do seu agente para encontrar a escolha ideal, mesmo quando a escolha específica do modelo não for tão relevante. Isso me faz pensar que, embora tenhamos pedido para você avaliar a dica inicial, será que poderíamos mudar um pouco e começar a avaliar modelos diferentes? Ou isso
+
+seria bobagem? Sim, então isso seria algo que você poderia fazer, experimentar modelos diferentes. Quer dizer, considerando que você tenha uns 10 modelos que queira testar, provavelmente você executaria todos os 10 modelos e veria qual tem o melhor desempenho, escolhendo esse ou aquele que melhor se adapta ao seu subconjunto específico de critérios, como desempenho, preço, tempo, etc. Acho que havia outra pergunta antes da sua. Sim, obrigado. Eu já tenho o microfone.
+
+Então, o que você mostrou é uma tarefa relativamente específica em termos do que deve ser alcançado, e eu gostaria de saber como você a abordaria se a tarefa fosse mais aberta. Acho que minha suspeita é que esse seja um caso em que essa técnica de otimização seja mais difícil de aplicar. Como eu disse, no caso do agente de codificação, imagine que você acaba com 5.000 testes distintos para um agente de codificação e tenta otimizar ao máximo esses 5.000 casos.
+
+Acontece que eles representam uma avalanche de diferentes ações que as pessoas realizam, e agora seu agente está superotimizado para esses mil ou 5.000 casos. Penso que quanto maior for a abrangência da tarefa que seu agente está executando, mais difícil será fazer isso e mais você acabará tendo apenas um agente inteligente. Obrigado. Outra coisa que gostaria de mencionar é que o meu ponto anterior sobre quando temos grandes quantidades de dados privados e, portanto, precisamos inserir uma enorme quantidade de contexto no prompt do sistema para entender nosso domínio específico e, em seguida, escolher os exemplos certos para incluir, que basicamente cubram todo o conjunto de dados, está se tornando cada vez mais relevante.
+
+Você tem mais alguma pergunta?
+
+Então, se eu entendi corretamente, se você é uma empresa e usa essa técnica de otimização de J. Patek, e se tivesse mais dinheiro e talvez mais experiência, poderia decidir refinar um modelo. Portanto, são estratégias que, de certa forma, competem entre si. Correto. Sim, e respondendo à sua pergunta anterior sobre "mas não será que isso se tornará obsoleto no próximo modelo?", O principal motivo pelo qual os grandes
+
+laboratórios de modelagem dizem para não se preocupar com o ajuste fino é que, neles, você acaba gastando dezenas de milhares de dólares para aprimorar um modelo e, na verdade, na maioria das vezes, melhorar o funcionamento interno. É melhor esperar pelo próximo modelo; mostrar um ícone de carregamento mais atraente para os usuários provavelmente é melhor do que fazer ajustes finos. Mas isso ignora casos específicos em áreas como o setor financeiro, onde há um número enorme de simulações e a otimização e o ajuste fino são realmente importantes. Obrigado. Então, vou falar sobre variáveis ​​gerenciadas. Como eu disse
+
+antes, esta é uma resposta um tanto... não será uma resposta particularmente sofisticada, mas vou mostrar um exemplo apenas para explicar como funciona. Temos aqui um servidor web API muito simples e rápido . Como
+
+você verá, em última análise, ele possui dois pontos finais. Uma retorna algum HTML e a outra é um endpoint para envio de formulário . E se eu for lá e executar isso... hum...
+
+onde eu já o executei antes? E aqui estamos, de fato estava funcionando. Então, se você quiser executá-lo, provavelmente vai querer usar este comando aqui para executá-lo. Vou colocar isso no Slack também, caso alguém queira participar. E se você executar este servidor web, você verá um arquivo de log, o que ainda não é tão interessante, mas também verá o servidor rodando localmente. Este é basicamente
+
+um formulário muito simples onde você pode fazer perguntas sobre o mesmo conjunto de dados MP. Hum, e hum, eu posso ir lá e fazer uma pergunta, tipo, vamos ver como isso funciona. Hammersmith, onde eu moro. O processo levará bastante tempo, pois ele funciona em segundo plano com uma ferramenta que permite buscar informações nas páginas HTML. E respondeu relativamente rápido desta vez e, se eu carregar isso aqui, você verá a solicitação HTTP chegando no arquivo de log e então verá o agente em execução e ele executou uma boa sequência, desculpe, uma boa expressão regular, recuperou os dados e conseguiu identificar corretamente Andy Slaughter como o deputado por Hammersmith, onde eu moro.
+
+Muito bem, mas se você observar como esse código está definido, temos aqui essa variável de arquivo de log. Assim, isso nos permite basicamente alterar o comportamento desse agente sem precisar reimplantá-lo. Bem, obviamente, reimplantar neste caso específico, em que estou executando localmente, é muito simples, mas quando tenho uma grande infraestrutura de CI em produção para executar e a implantação leva horas, ser capaz de alterar variáveis ​​em produção ou em ambiente de teste muito rapidamente é extremamente valioso. Então, o funcionamento das variáveis ​​do LogFire é o seguinte: temos um tipo aqui, um modelo Pydantic, que recebe três strings: as instruções, o modelo e o número máximo de tokens, que é um inteiro. E então, definimos um valor padrão, aqui, um prompt bem simples, e então escolhemos o modelo e a temperatura.
+
+E o que eu executei aqui foi o comando " UV run web" e, basicamente, existe um comando CLI para isso que simplesmente envia a variável. Em última análise, estamos apenas chamando o Log Fire de variáveis ​​push neste caso. Ao executar o comando, serei questionado se desejo sobrescrever a variável, o que não desejo. No entanto, se você estiver executando o comando pela primeira vez, essa pergunta não será feita e você criará uma nova variável. Agora, vale a pena dizer que, para isso, precisamos tornar a experiência de usar essas variáveis ​​um pouco mais fácil no Log Fire. No momento, eles não estão
+
+configurados com o comando "Log Fire um projects use" que você usou anteriormente, então você precisa definir uma chave de API separada para usar variáveis. Isso será resolvido em breve, mas se você quiser fazer isso hoje, a maneira é acessar as configurações e, em seguida, as chaves de API dentro do Log Fire. Veja, eu criei... eu posso criar... eu
+
+poderia te mostrar o formulário. Posso criar uma nova chave de API e só preciso conceder a ela as permissões para as três variáveis. Bem, quaisquer que você quiser. E agora você pode ir e, como você disse, estamos usando essa chave de API para enviar as variáveis ​​do ambiente de desenvolvimento local, da definição do código para o LogFire, e depois recuperá-las para atualizar os valores. Então, como eu selecionei essa opção, se eu acessar "Gerenciar variáveis" aqui, você verá que tenho duas variáveis ​​configuradas.
+
+Essa configuração de busca no MP é a que estávamos analisando. Veja, temos esses três campos que definimos. Hum, e temos um histórico de algumas atualizações. Mas podemos, em particular, definir qual porcentagem das chamadas utiliza cada um dos nossos diferentes valores. Isso é muito parecido com um teste A/B. Na verdade, internamente
+
+, nossas variáveis ​​gerenciadas usam o padrão aberto de recursos para fazer isso. Em teoria, você pode se conectar ao Log Fire com qualquer coisa que suporte recursos abertos. Bem, sim, no momento estamos usando o código padrão. Então, você viu quando eu executei isso agora, e eu recebi esta resposta de Andy Slaughter. Mas agora vamos atualizar o valor aqui.
+
+Hum, eu quero ir editar. E vou manter esses valores inalterados e responder em francês para deixar bem claro o que aconteceu. Guarde isso. E vou abordar a segmentação e aumentar o uso da versão mais recente para 100%. Portanto, agora deve usar esse valor mais recente. E agora, se eu
+
+entrar aqui e fizer, por exemplo, a mesma pergunta de novo, e eu parar o servidor, o que foi uma bobagem. Mas você pode imaginar que o servidor ainda está em execução e que ele vai buscar a nova variável cada vez que essa função for chamada. E se os deuses da demo estiverem comigo e tudo estiver conectado corretamente, uh, de fato respondeu em francês. Conseguimos atualizar o servidor sem precisar reimplantá-lo. Obviamente, eu reiniciei o servidor, mas poderia ter alterado isso . Só para provar que isso funciona.
+
+Deixe-me voltar aqui, editar isso novamente e responder em alemão. Ah , isso é muito irritante. Uh Uh.
+
+E agora, se eu fizer a mesma pergunta novamente, essa variável que define o prompt do sistema deverá ser atualizada.
+
+Está demorando bastante, mas de fato está respondendo em alemão. Mas o interessante aqui é voltar ao seu ponto sobre ser apenas um aviso do sistema. Podemos configurar nossas variáveis ​​para que não sejam apenas valores de texto simples, mas, por exemplo, um modelo Pydantic, que nos permite editar vários campos diferentes. Então, posso alternar aqui do Gateway Anthropic uh Sonic 4.5 para o OpenAI uh GPT 4.1. Vou me
+
+livrar disso porque vai me confundir. Ah, guarde isso. 4.1. E a questão é que podemos atualizar vários valores diferentes. Então, se eu te
+
+perguntar,
+
+espero que não saia correndo. A mensagem dizia que agora se chamava ChatGPT em vez de Anthropic. Então, podemos usar isso para alterar variáveis ​​e, por fim, experimentar novos comandos, modelos, temperaturas ou o que for, e ver como eles se comportam em produção. Agora, claro, o objetivo final aqui é poder pegar todo esse sistema, conectá-lo e, em vez de termos que ajustar manualmente as variáveis ​​gerenciadas , conseguiremos basicamente um controle autônomo para essas variáveis. Então, dado um conjunto de avaliações, ele pode basicamente executar uma otimização, como uma escalada em direção a um pico, sem que precisemos fazer nada.
+
+Essa é a funcionalidade em que estamos trabalhando, mas posso dar uma ideia de como ela poderá ser aqui. Então, deixe-me recarregar isso. Você verá que nas variáveis ​​gerenciadas eu realmente tenho variáveis ​​aqui. E a outra é a instrução de relações MP, que são instruções para o agente de tarefas que estávamos executando antes. E você verá que ainda não temos nenhum valor aqui , mas o que temos em nosso código, no servidor web, é que registramos, então registramos, duas ferramentas diferentes neste agente principal. Uma delas
+
+era a busca por parlamentares, que já era usada anteriormente para descobrir quem era o parlamentar por Hammersmith. Mas também tem essa extração de relações políticas, que basicamente usa a mesma lógica de extração e então, uh, eu só estou dando uma olhada, sim. Em última análise, trata-se de chamar a mesma função de extração de relações que estávamos otimizando anteriormente. Assim, agora podemos usar esse agente. Pode-se perguntar a esse agente quem são as relações políticas de um político e, com um pouco de sorte, ele usará essa ferramenta para fazer o cálculo. No momento, ele
+
+usará o prompt simples e básico, mas a questão é que podemos alterar esse prompt com base no valor otimizado que obtivemos e, assim, aplicar nosso novo prompt de última geração sem precisar reimplantar o sistema. Então, se eu vier para cá, a primeira coisa que vou fazer é reduzir aquela variável anterior de volta para zero, porque queremos que ela receba a instrução correta sobre o que fazer. Então, vou colocar isso como zero.
+
+E só para provar que algo aqui está funcionando, vou dizer... quem são os assessores políticos de... como
+
+ele se chamava mesmo? Stephen Kinnock, porque eu sei que ele tem alguns. Vou analisar esse caso. E podemos ir dar uma olhada no arquivo de log daqui a pouco e ver o que foi feito, mas espero que tenha usado essa ferramenta da maneira correta para identificar quem são os parentes. Sim, ele os encontrou corretamente, mas o mais importante é que, se olharmos no arquivo de log aqui, veremos a chamada mais recente.
+
+E você pode ver que o agente de busca executou a ferramenta "Extrair Relações Políticas" com a entrada "Stephen Kinnock", o que está correto. Então, ele foi executado e exibiu o valor corretamente, mas se você olhar dentro da chamada da ferramenta, nós executamos o outro agente aninhado. Então, o processo foi executado e extraiu os dados corretamente, e agora estamos usando nosso agente e podemos basicamente clicar no valor e aprimorar o prompt. Então, posso vir aqui e, para ser justo, não terei uma maneira particularmente boa de mostrar que está funcionando melhor, porque parece estar funcionando muito bem, a menos que eu encontre um exemplo em que não estava. Então, deixe-me tentar, tenho um tempinho.
+
+Deixe-me tentar ver se consigo encontrar um caso de avaliação em que o prompt "burro" estava apresentando problemas. Ah, agora temos muitas corridas. Desculpe, deixe-me analisar este caso aqui e comparar estes dois.
+
+Então, se você observar , por exemplo, essa pessoa aqui, Paul Maskey, foi como se tivesse entendido errado, que a instrução idiota estava... não, ao contrário. Quero encontrar um caso em que isso tenha sido feito de forma inadequada, para que eu possa melhorar o resultado.
+
+Ok, vamos usar Andrew Gwynne como exemplo, onde a resposta correta é "não", " relações políticas", mas as outras duas opções sugeriram que eles tinham relações, e tenho certeza de que isso acontece porque, se analisarmos bem, ele é comentarista esportivo e seu pai também, o que a opção errada sugeriu erroneamente ser uma relação política. Então, se eu executar isso agora, com um pouco de sorte, estará usando o prompt "burro" ou "ruim", e, portanto, deverá encontrar essas relações. E, inversamente, se eu atualizar para o prompt correto, deverá encontrar... sim, então
+
+identificou o comentarista esportivo como uma relação política. E agora, sem precisar reimplantar o sistema, posso acessar e gerenciar as variáveis, atualizando o prompt que estamos usando. Acho que posso ter cometido um erro aqui. Deixa eu...
+
+Você não me viu simplesmente ir lá e ajustar o código. Eu ia ajustar o código para usar esta versão da tarefa em que estamos usando a variável de gerenciamento de instruções. Hum, deixe-me reiniciar o servidor. E agora, sem reimplantar, prometo que vou criar um novo caso aqui e, em vez do prompt simples, vou colocar o melhor que recebemos ao executar o Jeppa.
+
+Guarde isso.
+
+Bem, sem mais delongas, sem redistribuição, prometo que vamos tentar de novo e quase certamente vai dar errado, porque é assim que as coisas são, mas podemos ter esperança. E deu errado. Infelizmente, o problema foi identificado novamente. Mas espero que você entenda o princípio aqui. Sim, existe uma pergunta.
+
+Esta interface web onde você pesquisa e obtém uma resposta do ano, do modelo do quê? O quê? Como se chama isso? Isso é... Sim.
+
+Bem, o formulário e depois o agente para quem estou enviando. Sim. Você tem alguma ideia sobre como coletar feedback dos próprios usuários, como o NPS, e o que é bom ou ruim nisso? Quer dizer, o principal feedback que recebo é que ninguém clica neles. Então, bem, talvez haja uma possibilidade, mas...
+
+Ou você pode ser maldoso como eu e simplesmente clicar no "não gostei", mesmo que... Então, minha experiência é que, se você for fazer isso, use apenas "gostei" ou "não gostei" . Temos um sistema de anotações que não vou demonstrar hoje, onde você pode basicamente gravar anotações com base em instruções. Esse é mais um
+
+lugar para construir seu conjunto de dados de referência, ou pelo menos um ponto de partida para ele . A melhor coisa que você pode fazer é algo que esteja implícito na interação do usuário. Então, se você tem algo mais avançado do que um simples prompt de texto, como um chat, a melhor maneira de avaliar o desempenho de um determinado par de pergunta e resposta é observar o que o usuário fez em seguida, porque se o usuário disser: "Seu idiota, tente novamente." Você pode obter evidências bastante fortes de que o agente se comportou mal. E se o usuário disser algo como "Obrigado, isso é ótimo". Ou, se desaparecer, você presume que está
+
+certo. E se eles provavelmente não fizerem, provavelmente não será tão extremo quanto "Seu idiota, tente de novo". mas provavelmente é algo como: "Não, eu quis dizer X." Então, quer dizer, é assim que o Google funciona, certo? Assim como antigamente, quando usávamos o Google, eles avaliavam a qualidade de um site observando quanto tempo você passava nele. Se você voltasse
+
+imediatamente e clicasse em outro link, eles presumiriam que a página era ruim. E este formulário aqui, é um chat ou é... Se você... Sinceramente, acabei de
+
+perguntar ao Claude: "Vá construir um chat de painel único para mim." Temos uma integração com o protocolo de IA Cell AI, que permite criar uma interface de chat completa em um agente de IA de escala de painel com apenas algumas linhas de código. Eu tentaria demonstrar isso se tivesse mais tempo, mas este é apenas um exemplo simples para vocês executarem. Na verdade, pode ir, vou tentar mais uma vez, já que aquela não funcionou. E um bate-papo significaria que ele manteve seu contexto, de certa forma, correto? Sim
+
+. Sim, se eu fizer isso, se eu... me livrar dessa única execução e, em vez disso, eu fizer...
+
+qual é o nome do agente? Uh agente de relações ponto uh para web Hum e então eu vou e uh deixe-me matar esse servidor web para evitar confusão.
+
+Por que isso não está funcionando?
+
+Talvez eu precise executar o comando `dot run`. Hum, talvez eu esteja me esquecendo exatamente do nome, mas o princípio é que, basicamente, com uma única linha de código, se bem me lembro, você consegue transformar isso em uma interface de chat adequada . Hum...
+
+Deixa eu ver se os médicos me dizem rapidinho o que é.
+
+Então, eu defino o aplicativo, o que lhe dá um aplicativo de estilo, e então eu executo o comando "execute UV run UV corn task uh app" e há um erro de digitação. E isso deve me dar uma interface amigável para fazer perguntas, onde eu puder, onde eu puder dizer tipo, hum,
+
+talvez... não sei se vai funcionar, mas vamos tentar. Mas a questão agora é que você receberia um resultado final e poderia usá-lo como um agente, fazendo perguntas adicionais. Quer dizer,
+
+esse agente foi projetado para sempre responder com dados estruturados, então ele não é muito falante, mas você entendeu a ideia. Hum, vou parar por aqui. Muito obrigada. Terei todo o prazer em responder a quaisquer perguntas posteriormente.
+
+Desculpe, você tinha alguma pergunta? Prossiga. Obrigado. Você consegue me ouvir? Sim . Vocês têm
+
+casos de uso interessantes internamente em que utilizam sua infraestrutura, como agentes que vocês mesmos desenvolveram? Porque eu ouço muito sobre quantos tokens estamos queimando e quais são minhas avaliações, mas vocês já viram algum caso como o que você mencionou antes, envolvendo empresas de private equity? Esses são problemas clássicos de classificação. Você tem casos de uso internos que impressionam bastante os agentes ou o que a equipe está usando internamente para entregar mais rápido ou gerar mais valor para você ou seus clientes? Então, temos um agente dentro do LogFire que basicamente faz buscas de texto livre e as converte em SQL, e otimizamos bastante esse agente .
+
+Bem, nesse caso, não nos importamos particularmente com a contagem de tokens, porque o volume não é suficientemente alto. Nós nos preocupamos em gerar um bom SQL. O motivo pelo qual não podemos usá-lo é que, muitas vezes, acaba expondo dados confidenciais no SQL, como quando alguém pede resultados para as faturas 1, 2, 3, 4 e 5, e não queremos mostrar isso para outras pessoas. Essa é uma das razões pelas quais não podemos usar esse exemplo em demonstrações. Hum, acho que havia outra pergunta.
+
+Isso responde à pergunta?
+
+Certo. Então, no Logfire, é possível ofuscar ou criptografar a entrada e a saída e simplesmente compará-las com um conjunto padrão? Digamos que você configure um aplicativo para funcionar em uma área com informações sensíveis, como dados médicos. Nesse caso, você pode optar por não enviar nenhuma mensagem do sistema ou qualquer outra coisa para o agente e simplesmente registrar a saída, que poderia ser, por exemplo, o desempenho ( bom ou ruim), e então você teria as métricas. Você pode optar por não enviar os dados brutos. É obviamente menos
+
+valioso. Minha resposta, um tanto tendenciosa, seria que você pode, obviamente, hospedar o Logfire em sua própria infraestrutura corporativa e, em seguida, mantê-lo dentro de sua VPC. É provavelmente isso que as pessoas fazem, mas sim, você pode fazer isso sem gravar a entrada e a saída reais. Ótimo. O que as pessoas fazem nesses casos? Por exemplo, grandes empresas
+
+como a Logora e a Harvey são empresas de tecnologia jurídica que são estritamente proibidas de extrair dados, pois são dados muito privados dos clientes de seus clientes, e registram o desempenho categórico. Então, tipo, bom, ruim, tanto faz. É como se você tivesse 50 notas diferentes para avaliar o desempenho, mas você pode extrair esses dados sem realmente extrair nenhum conteúdo gerado que possa incluir dados privados. Ótimo. Mais alguma pergunta?
+
+Sim, tem um aqui.
+
+Obrigado. Esta é uma pequena questão interna. Notei que você está usando classes de dados por todo o texto. Sim. Isso é por motivos de velocidade ou por outros motivos?
+
+Acho que essa é a prática padrão em Python, então, se você não está tentando realizar validação, acho que geralmente são a escolha padrão em relação aos modelos Pydantic. Quer dizer, não faz diferença nenhuma. O desempenho em qualquer um desses casos, seja na validação do Pydantic ou no tempo de construção da classe de dados, será reduzido em, você sabe, 0,0001% do desempenho. Obrigado.
+
+Obrigado pela apresentação. Eu tinha uma pergunta rápida. Então, com a otimização de prompts, obviamente isso é um tipo de engenharia de contexto, certo? Então, eu estava me perguntando, você já fez avaliações onde combinou isso com, essencialmente, resumos? Porque obviamente, quando você tem degradação de contexto, mesmo que a janela de contexto seja tão grande, obviamente depois de umas cinco chamadas, ela ainda será menor, ou depois de 20 chamadas, ela será menor muito rapidamente. Então, combinando a
+
+otimização de prompts com a criação de novas chamadas LLM e reinicializações de contexto, em vez de, digamos, compactação, que também reduz o consumo de recursos . A estratégia de compactação é definitivamente um dos aspectos que você deve otimizar em casos mais complexos. Sim . Acho que aqui estamos priorizando algo que todos possam entender em uma sessão, em vez dos casos de uso mais complexos, mas sim, definitivamente isso é relevante. Por exemplo, no caso da Shopify, em que eles analisavam esses sites com o GPT-5, bastava fornecer todo o conteúdo do site e dizer: "Ei, descubra se isso é fraudulento." Usando um modelo de consulta, você
+
+não conseguiria fazer isso. Você precisava fazer algo mais gigantesco, como executar uma série de consultas para procurar determinados termos. Assim, trata-se de uma variação da engenharia de contexto, que basicamente permite que um modelo menor execute a mesma tarefa de forma mais determinística. Certo. Obrigado.
+
+Eu paro. Aparentemente, preciso parar. Obrigado a todos.
+
+Ooh.

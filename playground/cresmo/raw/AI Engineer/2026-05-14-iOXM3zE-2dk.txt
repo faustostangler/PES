@@ -1,0 +1,454 @@
+---
+video_title: "Mind the Gap (In your Agent Observability) — Amy Boyd & Nitya Narasimhan, Microsoft"
+video_id: iOXM3zE-2dk
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=iOXM3zE-2dk
+video_date: 2026-05-14T16:00:06+00:00
+video_description: |
+  Agents drift. Models change, prompts get tweaked, edge cases accumulate, and the gap between what your agent does and what you need it to do widens without you noticing. Amy and Nitya walk through Microsoft Foundry's observability stack: tracing built on OpenTelemetry, built-in evaluators for quality, safety, and agentic metrics like intent resolution and task adherence, and red teaming where a second AI attacks your agent with adversarial prompts to find vulnerabilities before your users do.
+  
+  The piece worth watching for is the observe skill demo. You point it at an agent with no eval dataset, no baselines, nothing. It generates the dataset, runs batch evaluations, optimizes the prompt, compares versions, and rolls back to the best one... all from a single prompt to a coding agent. The skill shows its reasoning at each step, which is where the real value is: it surfaces the failures you didn't know to look for.
+  
+  Speaker info:
+  - https://x.com/NityaNarasimhan
+  - https://www.linkedin.com/in/nityan/
+  - https://x.com/AmyKateNicho
+  - https://www.linkedin.com/in/amykatenicho/
+---
+Oi pessoal. Bem-vindo. Obrigado por se juntar a nós esta manhã. Meu nome é Amy Boyd. Eu lidero a nossa equipe de relações com desenvolvedores da Foundry na Microsoft.
+
+Na equipe, estou acompanhado da minha colega Nitya, que é uma verdadeira especialista em observabilidade. E hoje pensamos em um título bem chamativo, considerando nossa localização em Londres, que aborda a lacuna na visibilidade do seu agente . Vamos falar um pouco sobre o que realmente queremos dizer com "mind the gap" (cuidado com o vão), porque tem um significado mais profundo do que apenas um título bonitinho . Mas também começaremos a abordar assuntos realmente interessantes e você levará consigo uma série de recursos . Bem, há muita coisa para abordar nessa área, inclusive no espaço dos agentes, mesmo considerando apenas a observabilidade em si. Então, vamos dar o
+
+pontapé inicial, mas haverá uma jornada posterior que você também poderá empreender, se conseguirmos te empolgar com o que estamos preparando aqui. Então, "mind the gap" é, na verdade, uma terminologia muito boa para observabilidade quando se olha especificamente para agentes . Uma das coisas interessantes que Nitya percebeu é que ela começou sua jornada em Nova York e descobriu que lá também não se presta atenção à diferença, enquanto aqui a diferença é evidente. Mas quando começamos a pensar um pouco mais profundamente sobre isso, percebemos que funciona muito bem com uma analogia de observabilidade. Então, se você pensar em coisas como, por exemplo, quando avaliamos um agente, estamos verificando a qualidade e a mudança que o agente sofre ao longo do tempo. E se você pensar
+
+na mudança nos trens e na tecnologia, mas a plataforma não muda. Existe essa placa ali porque em cada estação é diferente. O trem poderia se encaixar perfeitamente, como este aqui, um trem novinho em folha, lindamente projetado para essa plataforma. Mas em outros casos, existe uma grande lacuna entre os requisitos, que são a plataforma, e o agente real, que neste caso é o trem . Então, o que queremos abordar um pouco é como você pode realizar avaliações desde o início e ao longo de todo o ciclo de vida, a fim de adequar seus requisitos à realidade do que seu agente está realmente fazendo em campo.
+
+Existe ainda outro elemento nessa analogia da lacuna que funciona muito bem, que é quando você começa a pensar um pouco mais sobre segurança. O motivo da existência dessas placas é que, no fim das contas, elas servem como proteção para você usar o metrô, neste caso. Está escrito: "Cuidado com o vão." É uma forma de informar seus clientes sobre algo que eles precisam tomar com cuidado . E o mesmo acontece quando aplicamos medidas de segurança e mecanismos de proteção dentro dos agentes e monitoramos exatamente como os clientes interagem com o agente. E, finalmente, o
+
+monitor interno. Essas coisas, essas plataformas, esses trens mudam com o tempo. Assim, o lembrete constante da frase "Cuidado com o vão" pelo sistema de som permite que os clientes se lembrem de que isso está acontecendo. Mas, como desenvolvedor de agentes, você também precisa saber o que está acontecendo não apenas hoje, mas de forma consistente em vários agentes que você poderá desenvolver no futuro. Ao final desta sessão, queremos que você seja capaz de dizer qual é a lacuna entre a observabilidade do agente e o que você está realmente construindo. Como podemos preencher
+
+essa lacuna? E daremos a vocês diversas oportunidades para refletirem sobre as maneiras de planejar e implementar a redução da lacuna em torno da observabilidade. E também, como podemos acelerar esse ciclo de otimização? Então, com base nas informações que me foram fornecidas, incluindo todos esses dados, como posso determinar o que fazer a seguir para aprimorar meus agentes ao longo do tempo? Então, hoje teremos muitos recursos excelentes, mas o que queremos fazer é dividir tudo em pequenas partes para que possamos continuar progredindo . Bem, antes de mais nada
+
+, adoraríamos que você fizesse um fork do repositório. Temos um repositório GitHub maravilhoso . Já faz um bom tempo que estamos trabalhando nisso. É algo que temos vindo a atualizar e continuaremos a fazê-lo continuamente . Portanto, esta será uma grande vantagem para você levar consigo no futuro, à medida que adicionarmos novos elementos ao longo do tempo.
+
+Também temos um canal no Discord específico para nós, usuários do Microsoft Foundry. Bem, na verdade criamos um canal para engenheiros de IA. Adoraríamos ver você lá. Bem, o que vamos fazer hoje é abordar bastante coisa. Ao levar este repositório do GitHub, o que queremos que você faça é continuar interagindo comigo e com a Nitya. Passe muito
+
+tempo naquele servidor do Discord. Ah, e adoraríamos poder conversar com você e ajudá-lo nessa jornada, assim que você começar a usar todos esses recursos diferentes. Então, para que você possa levar consigo, temos alguns links curtos, mas também alguns códigos QR, caso queira utilizá-los. Então, só para começarmos rapidamente, vamos falar sobre a tecnologia que vamos usar hoje. Eu sei que perguntei a alguns de vocês, conforme vocês começam, sobre as diferentes coisas que estão usando. Essa é a
+
+realidade do espaço de agentes, onde muitas pessoas utilizam diversas tecnologias diferentes. Mas, no fim das contas, usamos essa expressão porque os agentes não são determinísticos. Isso não é um problema exclusivo das demos. Isso também é um problema na vida real quando se chega à produção e a confiabilidade e consistência começam a ser afetadas ao distribuir o produto aos clientes. Você precisa gerenciar o não determinismo inerente a esses agentes.
+
+E três maneiras que consideramos para alcançar esse tipo de confiabilidade são: avaliar o desempenho, observar a qualidade e a segurança e também considerar o desempenho do seu agente . Ao analisar o monitoramento, não se limite apenas à fase de desenvolvimento ou como um complemento em avaliações, mas sim ao monitoramento contínuo dos seus agentes à medida que os requisitos, os clientes e o ambiente mudam, é crucial saber como promover melhorias constantes e depurar rapidamente quaisquer problemas que surjam. E, finalmente, a seção de otimização, que consiste em otimizar o desempenho do seu agente, aproveitando todos esses dados incríveis que estamos começando a obter dos agentes e realmente fazendo algo com eles. Bem, podemos te dizer, sabe, todo tipo de pontuação diferente e coisas do tipo, mas o próximo passo é: o que eu faço agora? E temos algumas coisas realmente fascinantes que podemos mostrar a vocês lá.
+
+Vamos nos concentrar em uma plataforma específica, o My Cyphon, ou melhor, o Netreo, que funciona com o Microsoft Foundry. É a nossa plataforma de agentes na nuvem para todas as suas oportunidades de ponta a ponta com agentes. Portanto, você pode criar os agentes, mas se estiver criando os agentes em outro lugar, também poderá hospedá- los, observá-los e gerenciá-los e monitorá-los dentro da mesma plataforma. Você pode usar a quantidade que desejar. Bem, algumas coisas que notaremos em relação à observabilidade é que ela se apresenta em três fases diferentes. Você deve incorporar a
+
+observabilidade desde um estágio muito, muito inicial na criação de seus agentes, então vamos começar nessa fase inicial. Vocês verão o que podem fazer ao depurar e otimizar em produção, e também quando começarmos a pensar no futuro, que pode não estar tão distante assim para quem está aqui, mas é assim que gerenciamos muitos agentes, não apenas sistemas multiagentes, mas na verdade muitos, muitos sistemas multiagentes também. Então, algumas áreas que vamos abordar hoje são coisas como o rastreamento nos estágios iniciais. Então, pensando em como você pode acessar todas as informações de monitoramento e depuração do seu agente. O que ele está fazendo exatamente? Que ferramentas está sendo utilizadas? Que
+
+mensagens diferentes ele pode estar enviando para todas as diferentes etapas nos fluxos de trabalho do seu agente? Uma das coisas realmente interessantes sobre o rastreamento de caracteres no Foundry é que, na verdade, aproveitamos a oferta de recursos de rastreamento de caracteres do hotel. Portanto, o grupo aqui na Microsoft trabalha bastante com esse padrão e pensa em como ele será para os agentes no futuro . Continuaremos fazendo isso, o que, na verdade, abre a possibilidade para vocês de não precisarem construir tudo em um só lugar. Você pode estar usando coisas diferentes para construir agentes diferentes em uma organização ou em várias empresas. E isso é perfeitamente
+
+normal. Na verdade, você pode trazer todos esses agentes e equipá-los com rastreamento de localização, o que significa que você poderá gerenciá-los dentro do plano de controle do Foundry . Oh. Pronto. Estamos de volta.
+
+A próxima coisa é que essa configuração indica que você vai analisar os avaliadores. É quase como se fosse uma pequena aberração visual. Hum, este slide tem muita coisa nele, mas acho que você pode tirar isso dele. Temos muitos avaliadores integrados, o que nos permite criar agentes em grande escala. Obviamente, como fornecedores de plataforma, estamos aprendendo muito sobre o que os clientes precisam. E então
+
+começamos a incorporar isso na própria plataforma. Você perceberá e provavelmente já estará bastante familiarizado com muitas das métricas de qualidade. Risco e segurança são aspectos que muitas vezes ficam em segundo plano, mas deveriam ser incorporados desde o início nesses agentes. E então começamos a passar rapidamente da avaliação do modelo e do próprio modelo de linguagem, que é bem grande, para a avaliação da saída do agente também. Assim, os avaliadores específicos para cada agente são os que realmente devemos considerar, à medida que começamos a pensar que não se trata apenas daquele envolvimento específico com o LLM. Na verdade, trata-se de
+
+como o agente se comporta de forma holística ao longo do tempo e do seu fluxo de trabalho. Mas se alguns desses avaliadores não funcionarem para o seu cenário, não tem problema nenhum, porque você pode criar seus próprios avaliadores personalizados e usar o melhor dos dois mundos nessa situação. Então, o que queremos dizer quando avaliamos o fluxo de trabalho do agente? O clima é um ótimo exemplo, não é? Bem, estamos em Londres. O clima costuma ser atípico.
+
+Hoje o tempo está realmente lindo. Então você é um agente meteorológico, essa é uma mensagem do sistema. Nosso usuário pergunta: "Qual a previsão do tempo em Londres hoje?" A primeira avaliação que talvez devêssemos fazer é, na verdade, a da determinação da intenção . Então, diríamos: o usuário...
+
+o usuário quer saber a previsão do tempo local? O sistema conseguiu compreender essa intenção e, em seguida, tomar a próxima decisão necessária, que é acionar uma ferramenta? Então, quando chegarmos ao espaço de chamadas da ferramenta, você deverá avaliar a própria chamada da ferramenta. Há todo um conjunto de métricas que você pode usar nesse contexto, incluindo métricas operacionais em geral. Mas o que você quer dizer é: a ferramenta chamada é a esperada? Bem, na
+
+maioria dos casos, esse não-determinismo significa que estaremos trabalhando com porcentagens. E, por fim, a resposta geral. Então, nesse nível do agente, o quão bem ele executou a tarefa , ou seja, a adesão à tarefa, tende a ser o aspecto que você precisa ajustar, eu diria, ao longo do tempo. Mas isso mostra que não se trata apenas de uma avaliação única. Você pode avaliar em diversas partes do ciclo de vida do seu agente, de forma que, quando as coisas começarem a dar errado ou não atingirem a qualidade esperada, você possa identificar exatamente onde fazer as alterações necessárias.
+
+Temos alguns elementos extras que esperamos abordar hoje. Então, muito rapidamente, mencionamos brevemente que depurar rastreamentos multiagentes se torna exponencialmente mais difícil do que depurar apenas chamadas menores específicas de cada agente. Então, existem várias maneiras excelentes pelas quais estamos incorporando isso à plataforma, para que você possa visualizar um rastreamento completo do agente e não apenas o agente em si, ou seja, qualquer agente individual por vez. Mas também oferecemos um trabalho bastante extenso de monitoramento desses agentes em diversas dimensões. Então, sejam avaliações contínuas que ocorrem quando você altera o código, avaliações agendadas em que você está trabalhando, testes de intrusão (red teaming), ou seja, coisas como segurança que você está adicionando, ou se você já usa monitoramento em toda a sua infraestrutura de nuvem, talvez queira incorporar algumas dessas informações também ao agente.
+
+Mas, o ponto crucial aqui reside novamente na questão da observabilidade. Se você já utiliza soluções de monitoramento na nuvem, temos o Azure Monitor para sua infraestrutura e seus dados. A plataforma de IA permite incorporar elementos do Foundry Control Plane, que veremos hoje, mas, na verdade, conectar-se ao Azure Monitor no final. Assim, os desenvolvedores criam com o que você deseja, e seus administradores de TI ainda ficarão muito, muito felizes porque conseguirão integrar tudo. E, finalmente, no que diz respeito ao controle de toda a frota, à medida que começamos a olhar um pouco mais para o futuro, estamos considerando a observabilidade centralizada, analisando mais do que apenas um sistema multiagente, e entendendo como sua frota se apresenta dentro da empresa ou do seu próprio tipo de negócio que você está construindo, e, na verdade, todos os seus diferentes agentes. Então, eu sei que tínhamos muitas
+
+oportunidades diferentes de hospedagem na sala quando discutimos, e essa é uma ótima maneira de pensar em como podemos integrar agentes de qualquer lugar, mas, novamente, observem a visualização da frota ali. E por fim, segurança. Infelizmente, não teremos tempo para falar sobre segurança hoje, o que é uma pena, pois o que estamos vendo atualmente em termos de segurança no espaço de agentes é realmente impressionante. Mas recomendo muito que você vá conferir vários dos trabalhos que fazemos relacionados a testes de intrusão (red teaming). O teste de intrusão ( red teaming) não é algo que se faça sozinho, por isso a Microsoft trabalha muito com o repositório de código aberto Pirate e se envolve profundamente para ajudar a aprimorar o código aberto e oferecer muitos dos nossos produtos como código aberto, mas também temos opções de ativação com um clique dentro da plataforma .
+
+Então, conversamos um pouco sobre o plano de controle da fundição. Hoje, neste curto período que temos com vocês, vamos abordar o conceito de observabilidade com mais profundidade. No entanto, há muito mais a oferecer e, por isso, queremos garantir que você leve essas informações consigo. Então, nesse momento, vou passar a palavra para a Nitya, que vai falar um pouco mais sobre a estrutura do workshop que vamos realizar. Incrível. Obrigada, Amy.
+
+Tudo bem. Preparem seus dedos para o teclado. Então vamos tentar entender isso. Então, basicamente, o que eu quero dizer é: quantos de vocês acham que conseguem aprender tudo o que desejam nos próximos 30 minutos? Este workshop não é para você.
+
+Para começar, quero dizer que este repositório é quase como um workshop de 4 horas que estamos tentando condensar neste formato. Então, o que eu quero que vocês pensem é que este é um programa de culinária. Vou mostrar os produtos assados, mas quero que você dê uma olhada no repositório, porque lá tem tudo e você pode tentar fazer isso em casa, injetar seus próprios códigos e brincar com eles. É a única maneira de aprender. Para contextualizar, vamos apresentar um caso de uso, certo? Então, quantos de vocês
+
+já desenvolveram aplicações multiagentes? Incrível. Quantos de vocês são completamente iniciantes nisso e querem apenas saber como começar? Incrível. Este é exatamente o tipo de público que procuramos. Digamos que
+
+você acabou de entrar para uma empresa chamada Contoso. Contoso é uma empresa fictícia muito famosa dentro da Microsoft. Seu chefe chega e diz: " Preciso que você desenvolva este aplicativo para agentes de viagens , certo?" Por onde começar? Então, vamos primeiro definir o que é um agente. Todos nós conhecemos modelos,
+
+certo? Todo mundo já trabalhou com modelos de IA, então você acaba tendo uma noção de como funciona. O que faz o agente? Os modelos, ao nascerem, já possuem um certo nível de conhecimento. Os agentes permitem que você incorpore conhecimento e capacidades adicionais por meio de ferramentas que aprimoram o modelo existente. Os
+
+modelos são o cérebro, o agente é como a experiência, e as ferramentas são todos os elementos que você insere para garantir que os modelos sejam aprimorados. Então, pensando bem, estou criando uma agência de viagens. Do que eu preciso? Preciso saber quais são as instruções para esse agente. Qual é a sua função?
+
+Preciso saber quais ferramentas são necessárias para garantir que o programa consiga executar as tarefas, e preciso ter o modelo certo para o trabalho. Faz sentido? Por onde eu começo? O problema para nós é: Alguém quer arriscar um palpite de quantas modelos existem na Hugging Face neste momento? Não, não, não. Mais de 2 milhões.
+
+Alguém arrisca um palpite de quantos itens o Azure tem em nosso catálogo? Mais de 11.000. Ok, não consigo. Se você me mostrar três músicas, não consigo escolher uma. Se você
+
+me mostrar 11.000 modelos, não tenho a mínima ideia de por onde começar, né? Então, o que realmente estamos analisando é que, ao iniciar o trabalho de desenvolvimento de um aplicativo, você não quer ter que tomar todas essas decisões. Como é que se começa logo, não é? Então, aqui está o desafio da perspectiva do desenvolvedor. O chefe diz: "Ei,
+
+preciso que você crie um agente de viagens que ajude o usuário a encontrar o hotel, o carro e o produto certos." O que você faz? Primeiro desafio: modelos em excesso. Não possuo dados existentes. Este aplicativo nunca existiu antes. De onde eu tiro os dados
+
+para fazer as avaliações, certo? Então, vamos mostrar como você pode resolver isso. Então, como faço para ir do zero a um protótipo de agente com conhecimento mínimo? Em segundo lugar, a qualidade da IA. Essa é uma marca que sua empresa possui.
+
+Se o seu agente fizer algo para destruí- lo, isso recairá sobre você. Então, como você pode detectar problemas em seu agente, diagnosticá-los e corrigi-los rapidamente? Então, essa é a solução de qualidade. E, por fim, a segurança, a proteção que ela oferece. A diferença entre a segunda e a terceira é que a segunda pressupõe que seus usuários estejam agindo normalmente.
+
+A terceira pergunta é: "Tenho um usuário malicioso que tentará realizar um ataque frontal na minha solução. Como posso me proteger disso?" A analogia que vou dar é a seguinte: imagine que você está construindo uma casa. A segunda etapa são as avaliações, em que um inspetor de obras vem e verifica se você está seguindo as normas. Mas a segurança é como ligar para esse cara e dizer: "Você pode invadir minha casa, por favor, para que eu possa provar que isso está funcionando e depois me dizer todas as minhas falhas, certo?" Essa é a grande diferença.
+
+Faz sentido? Será que estou indo rápido demais? Minha velocidade está boa. Esse é o feedback número um que sempre recebo: muito rápido. OK. Então, antes de começar,
+
+vou passar o bastão e dizer por onde começar. Então, o que eu quero que você faça é acessar o repositório. Então, vocês receberam o link para isso. Se você não o tiver à mão, posso lhe mostrar onde está agora mesmo . Você pode capturar a imagem diretamente da tela se der zoom.
+
+Mas o que eu quero que você faça é o seguinte: você não vai conseguir fazer tudo hoje. O que eu quero que você faça é criar um fork do repositório e mostrar como configurar seu ambiente de desenvolvimento para que você possa pelo menos acompanhar. Você precisará de uma conta do Azure e uma conta do GitHub. O que posso lhe dizer é que você pode se virar usando uma conta gratuita do Azure . Haverá um pequeno custo. Estou
+
+usando isso há 2 dias. Custa cerca de 10 dólares. Mas, se você entrar no Discord, vamos ver se conseguimos alguns recursos que podem te ajudar mais tarde, para que você possa tentar isso em casa. Mas, por agora, você só precisa criar um fork do repositório, certo? Tudo bem para todos?
+
+Sim? Então, o que eu vou fazer é o seguinte: eu já criei um fork do repositório, mas depois que você fizer o fork, por favor, desmarque a opção "main" para que você obtenha todos os branches. O motivo é que temos realizado este workshop em locais diferentes e, portanto, ele continuará a evoluir. Você quer criar um fork com todas as ramificações para obter a ramificação AIE Europa, que é o tipo de oficina que está atualmente focada em preencher lacunas . E uma das razões para isso é que, no final, vou integrar isso de volta ao principal e teremos outro workshop daqui a um mês, que terá ainda mais conteúdo, e depois vamos deixar isso de lado novamente, certo? Então, ao criar este link,
+
+quero que vocês deem uma olhada neste workshop hoje e fiquem de olho no relatório amanhã. Está tudo bem com todo mundo? Tudo bem. A próxima coisa que você vai fazer é no seu branch, e eu já fiz isso, mas o que você vai fazer é no seu branch no GitHub. Se você clicar nesse código, você já deverá ter feito login, certo? Quantos aqui já
+
+usaram espaços de código? Sim, meu povo. Para quem não sabe, um dos maiores problemas ao desenvolver software é configurar o ambiente de desenvolvimento. Você tem que instalar os pacotes, fazer tudo isso, certo? O Code Spaces utiliza um conceito chamado contêineres de desenvolvimento. Você verá que o repositório possui
+
+esse contêiner de desenvolvimento. E o que o contêiner de desenvolvimento faz é basicamente definir todas as dependências de que você precisa. E o que o Code Spaces faz é basicamente o seguinte: quando eu inicio e executo um Code Space, se eu disser "iniciar um novo Code Space", ele iniciará uma instância de uma máquina virtual na nuvem neste contêiner e me fornecerá todo o ambiente configurado. Portanto, você não precisa instalar nenhuma ferramenta ou pacote, tudo já está pronto para usar. Então, estou apenas mostrando como isso foi configurado. Então, se você fizer isso,
+
+terá que esperar alguns minutos para que fique pronto, mas este é um programa de culinária. Então, é assim que eu começo e depois quero passar sem problemas para o espaço do código finalizado, ok? Mas agora você viu... está tudo bem com todos até agora
+
+? Hum, está muito escuro, eu sei, mas hum, deixe-me ver se consigo ativar as tortas doces em toda a nossa organização Azure no GitHub e, assim, assumiremos todos os custos. Isso também não será contabilizado nos custos do seu espaço de código, então é muito bom poder usar esses recursos nos repositórios organizacionais, pois eles são cobrados na conta corporativa . Então, sim, uma pequena vantagem gratuita também em termos de tempo de computação. Então, se você iniciasse o processo e visse que eu acabei de iniciá-lo, levaria um tempo.
+
+Então, vou deixar vocês simplesmente deixarem rolar. E vamos voltar atrás e analisar a versão cozida. Ta-da! OK. Então, o que são espaços de código?
+
+Basicamente, você obtém uma instância do VS Code que é executada no seu navegador. Esta instância do VS Code está conectada a um contêiner em execução na nuvem que possui todas as ferramentas e dependências instaladas. Mais importante ainda, ao lado, você verá que vou reduzir o tamanho da fonte por um instante para que você possa ver tudo. Você verá que temos várias ferramentas instaladas prontas para uso. Então, o que essas ferramentas fazem por você é fornecer recursos adicionais que você pode usar quando estivermos testando coisas como executar notebooks, por exemplo, uma habilidade que automatizará tudo para você.
+
+Então, uma vez que você esteja aqui, quero destacar duas coisas. Nesse repositório que você acabou de... Então, quando você for fazer isso em casa, se você seguir as instruções, na verdade existem dois caminhos e vamos tentar abordá-los rapidamente hoje. O
+
+primeiro caminho é o caminho tradicional. É o caminho do SDK. Recomendo para todos que são iniciantes. Analise e compreenda passo a passo. Vamos abordar esse assunto um pouco. O
+
+segundo caminho é para pessoas que pensam: "Ei, eu quero realmente usar um agente de codificação e testá-lo." No segundo caminho, você simplesmente criará esse endpoint de agente em branco e, em seguida, liberará a habilidade para esse endpoint, que começará a ajudá-lo a construir os recursos e avaliá-los automaticamente. Analisaremos ambos hoje. Então, aqui está o cenário de aplicação. Estamos criando uma agência de viagens que inclui aluguel de carros, reservas de hotéis e venda de voos.
+
+Segue o programa do workshop. Tudo o que você precisa saber é que existem quatro etapas. O primeiro passo é o que você acabou de fazer, a configuração da infraestrutura. Bem, basicamente queremos ir... Vou passar a responsabilidade
+
+para a Amy fazer isso. Você já configurou o Code Spaces. Essa é a configuração do ambiente de desenvolvimento. Chegaremos a isso em um minuto. O Code Spaces demora um pouco , então vou passar a responsabilidade para a Amy. E o que vamos fazer agora é o
+
+primeiro passo: vamos configurar esse agente não qualificado. Um agente inicial simples no Foundry que fará as viagens por você. Amy, você quer assumir o controle? E se você quiser ver o que já está pronto, ele está aqui. Eu pensei.
+
+Incrível. Vou fechar isso e o espaço para o código está aqui. OK. Então, sim, vou apresentar nossa posição inicial. Então, nós todos aqui adoramos código e ficamos muito animados quando podemos usar um SDK e coisas do tipo, mas, sendo realista, o primeiro passo é simplesmente passar um tempo no portal e experimentar algumas dessas ferramentas rapidamente. Então, o que
+
+vou mostrar a vocês é esse ritmo acelerado, como eu construo um agente rapidamente, mas pensando em rastreamento e avaliações desde o início, em certo sentido. Então, o Microsoft Foundry está disponível em ai.azure.com, na internet, e faz parte da nuvem Azure, obviamente. Então, se você já configurou o Azure, poderá obter acesso a ele muito, muito rapidamente.
+
+E uma coisa que vocês vão notar é que existe essa nova experiência do Microsoft Foundry que estamos analisando . Então, se você clicar em "Começar a construir" aqui, poderá criar um novo projeto muito rapidamente. Vamos chamar essa de IA A Londres e depois competir lá. Bem, o que você verá aqui é a criação de um projeto, um recurso, a escolha da sua assinatura, ou seja, os componentes típicos da nuvem, um grupo de recursos e, na verdade, uma das coisas que faremos é alterar isso para uma região recomendada, que no momento é a Região Leste dos EUA 2, com alguns dos nossos recursos mais recentes. E clique em criar. Isso
+
+criará para você um projeto Foundry bem básico. Em seguida, ele iniciará coisas como modelos e começará a construir um agente muito rapidamente. Mas um projeto é um espaço onde você pode ter agentes dentro de um único projeto, que você obviamente pode avaliar e acompanhar em todos eles também. Então, vamos dar uma olhada nisso assim que começar. Uma das coisas interessantes sobre Foundry é justamente essa peça de configuração. Trabalhamos bastante
+
+para chegar aos estágios iniciais, mas também para que seja possível dizer "na verdade, eu quero personalizar" muito rapidamente. Então veremos que isso nos ajudará bastante a começar, mas depois você poderá seguir em frente e realmente, sabe, visualizar toda a sua nova obra por conta própria. Então você tem uma pequena abertura aqui. Essa é exatamente a experiência que você terá. E então seremos levados diretamente para a criação do nosso primeiro agente. Assim como a
+
+plataforma serve para criar agentes, vamos fazer isso. Então, a Contoso Travel é a nossa agente. E daremos um nome que não estará lá. Portanto, você precisará dar a ele um nome único. O que você vai notar aqui é que está indicando que está implantando o GPT-4 1. Portanto, está
+
+buscando capacidade imediatamente para você. E é preciso encontrar seu modelo muito, muito rapidamente, e então vamos direto para a área de testes. Um 4 1, obviamente, sendo você sabe, um modelo decente de sua escolha também está disponível no catálogo, mas, novamente, uma ótima maneira de começar. Acho que, a esta altura, todos nós já estamos muito familiarizados com parques infantis. Você tem opções como o modo de voz que pode ser ativado, instruções simples para o agente e a possibilidade de adicionar suas diferentes ferramentas. Neste
+
+caso, vamos adicionar uma pesquisa na web, que será a nossa pesquisa no Bing, pois obviamente queremos criar uma agência de viagens. Então precisamos que ele vá dar uma olhada na Expedia e em todas essas coisas boas. E aqui embaixo você vai notar que temos esse modelo, mas também promovemos outros modelos, e você pode clicar em " Explorar modelos" e ver todos os provedores, sejam eles Anthropic, Deep Seek, etc. etc. Todos eles estão lá.
+
+Uma das coisas interessantes é que, inicialmente, podemos começar a interagir com nosso agente, mas, neste momento, esse agente é apenas um modelo genérico. Não há instruções, não há nada, e só temos que recorrer à pesquisa na internet. Então, meio que vai desaparecer, e vai nos dizer que consegue fazer praticamente tudo, incluindo dar conselhos gerais para nós. Portanto, não é isso que queremos neste caso. Então, o que eu vou fazer é ir a uma padaria já assada. Vamos salvar esse agente.
+
+Vamos lá dar uma olhadinha. Ah, ah, mais uma coisa: você precisa criar o App Insights. Então, o agente em si não é rastreável neste momento, certo? É como se estivesse ali, já tivesse sido criado, mas você quer ter certeza de que está sempre captando coisas. Assim, o portal Foundry é uma ótima maneira de você começar rapidamente. Então, se
+
+você... Desculpe, Amy, esqueci de mencionar isso. Essa é a outra.
+
+Sim, se você acessar o que acabou de criar, basta selecionar esse agente, clicar na guia de rastreamento e aparecerá a mensagem de que você não tem o App Insights. E se você passar por isso agora, Amy, não sei se você quer fazer isso na sua virada. Eu ia dizer que, ao clicar aqui, você pode adicionar o App Insights como uma ferramenta de conexão dentro do portal de administração de forma muito rápida. Uma das outras peças interessantes é, na verdade, um auxiliar de agente, logo aqui em cima à direita. Então, você pode perguntar: "Como faço para conectar o meu App Insights?"
+
+E também lhe explicará exatamente passo a passo como fazer isso. Sim, é um jeito muito, muito rápido e fácil. O App Insights é uma tecnologia que realiza todos os tipos de rastreamento antes que os agentes se tornem uma realidade para nós. Então, essa seria uma maneira muito rápida de ativarmos essa parte também. Então, deixe-me mostrar algo que tem um pouco mais de detalhes. Então, voltando
+
+aos nossos registros, conforme começamos a usá- los, conforme começamos a interagir, começaremos a ver os registros, bem como as conversas, chegando aqui com custos estimados, tokens, as coisas usuais, mas também até mesmo coisas como avaliações. Adicionamos aqui algumas instruções sobre o que o nosso agente Contoso realmente faz. Uma das opções interessantes é sempre usar a busca na internet. É sempre bom ter uma comparação. Apresente externamente informações específicas da fonte, então adicione alguns desses elementos que permitam às pessoas ver em que se baseia também. E mantenha as respostas focadas
+
+e úteis, esse tipo de coisa. Já temos nossa busca na web. Outra coisa importante é verificar a configuração, pois você vai notar que é possível adicionar itens como nome de exibição e descrição. Então, se eu for até lá, acho que ela mudou para a versão dois. Você verá lá.
+
+Ah, agora estamos na versão que...
+
+Adoramos um bom controle de versão. Ah. Sem problemas.
+
+Portanto, todas as suas diferentes etapas estão neste repositório. Então, já fizemos grande parte deste trabalho. Criamos o nosso projeto. Descemos para criar nosso agente. Estamos no parquinho. Adicionamos informações sobre o aplicativo
+
+.
+
+Podemos testar nosso agente no ambiente de testes com diferentes comandos.
+
+Mas também podemos adicionar essas diferentes propriedades de configuração e, então, o resultado de adicionar alguns detalhes ali começa a trazer de volta o seu sistema de viajantes com as funcionalidades usuais, como o que as pessoas podem fazer com ele? Esses passos simples que permitem que eles comecem a interagir rapidamente com seu agente sem que seja algo como: "Olá, o que você faz?" Esse tipo de comando no início e depois ter que se adaptar a partir daí. Então você pode construir seu portal de viagens muito, muito rapidamente.
+
+Assim que você começar a interagir, deixe-me pegar aquela pergunta novamente, que está bem aqui. Novamente, você pode usar todo esse material que disponibilizamos aqui. Vou copiar esta.
+
+E envie isso. Enviaremos isso e deve retornar com algumas dessas respostas fundamentadas, como informações sobre aluguel de carros, etc. Mas uma das coisas interessantes que eu queria destacar aqui são os elementos na parte inferior. Assim, ele informa qual modelo foi utilizado. Se você estiver usando algo como um roteador, isso será mais interessante, pois você poderá ver, dada a consulta, qual modelo ele realmente escolheu usar. Coisas como
+
+tokens, mas você também verá imediatamente que temos uma métrica de qualidade de IA e uma métrica de segurança de IA que estão aqui embaixo. Então, uma das coisas que você pode fazer é, na seção de métricas, bem aqui em cima, marcar essas diferentes opções muito rapidamente. Como eu disse, começar pelo portal significa não ter que pensar em todos os nomes diferentes que essas coisas têm. Você pode simplesmente se familiarizar com o que está disponível e integrado e, em seguida, começar a visualizar rapidamente como isso poderia ficar. E todos nós imediatamente partimos para o código, certo? No sentido
+
+de que pensamos: "Ok, entendi. Entendi que temos esses recursos integrados. Como eu faria isso com o SDK?" Assim que todos eles forem selecionados, você pode prosseguir para recursos como os registros de rastreamento. Você pode ver exatamente quais etapas e mensagens foram executadas. E dentro das opções de entrada e
+
+saída, você encontra uma aba de avaliações. Assim, ele avalia e fornece respostas para todas as diferentes opções de avaliação que você selecionou. Então, mais uma vez, esta é uma questão interessante . Um pequeno aviso: a adesão à tarefa é, na verdade, bastante baixa considerando o que estávamos pedindo. Na verdade, não respondeu à pergunta que eu queria responder. Foi
+
+como se dissesse: "Ah, me dê mais informações." Então, é aí que você começa a pensar: "Como eu começo do zero?" Porque estamos no agente mais simples neste momento, mas já conseguimos obter esses resultados de avaliação para ele. Então, nessa configuração, basicamente eu queria mostrar que posso partir do zero e criar um projeto, um agente com um modelo padrão, adicionar algumas instruções e uma pesquisa na web, começar a interagir para poder ver esses rastros, selecionar algumas métricas de avaliação para poder ver algumas avaliações nesses estágios iniciais e, a partir daí, provavelmente começaria a pensar: "Ok, agora tenho uma espécie de prova de conceito bem rápida. Quero começar a programar." Então, a partir daqui, passo a palavra
+
+para Nithya, que começará a trabalhar no código. Incrível. Obrigada, Amy. Então, antes de passar para esse assunto, só uma rápida pergunta: quantos de vocês estão familiarizados com o decalque? Quantos de vocês estão familiarizados com avaliações?
+
+Quantos de vocês estão familiarizados com a maioria dos tipos de avaliação de qualidade, segurança e agência? OK. Então, provavelmente vamos abordar esse assunto um pouco mais a fundo. Quantos de vocês já escreveram um avaliador personalizado? Prompt ou código?
+
+Incitar? Incitar? OK. Então, uma das coisas que eu queria esclarecer antes de entrarmos no código é que a principal razão pela qual isso é superimportante é que, se você pensar na noção de observabilidade, não basta saber quando as coisas dão errado. É preciso reduzir o tempo entre a detecção de um problema e o diagnóstico do mesmo.
+
+Portanto, o futuro está nas avaliações vinculadas ao rastreamento . Então, uma das coisas que eu quero destacar antes de voltarmos aqui é que, como a Amy estava mostrando, toda vez que você vê um rastreamento, se você vinculou as avaliações corretamente, elas aparecerão aqui. Isso significa que você pode analisar os e-mails e descobrir a qual parte do rastreamento pertence. Por exemplo, imagine que seu modelo mudou e você precisou inserir um novo . De repente, você percebe que as chamadas da sua ferramenta não são mais tão eficientes.
+
+Seus e-mails vão te informar que sua ferramenta está funcionando, ou seja, que uma dessas métricas falhou, mas agora você pode voltar aos rastreamentos e dizer o que foi diferente entre esta versão e a versão anterior. Quer dizer, veremos isso mais tarde, através da habilidade de programação. Se você comparar, vai pensar: "Ah, espere aí. Uma das ferramentas não foi chamada. Por quê?" Certo? Assim, você consegue agir
+
+rapidamente para comparar o que aconteceu, ou seja, a detecção, com o diagnóstico. Tudo bem. Vamos agora passar para o código. Então, criamos um agente muito simples diretamente através do portal. Agora, se quisermos fazer algo mais complexo.
+
+Então, o que eu quero que vocês façam é, da mesma forma que fizemos no laboratório 00, configurar isso. Ambiente de desenvolvimento, vocês todos criaram um espaço de código. Você não precisa fazer isso agora, mas quando chegar em casa, ao acessar o Azure e configurar o projeto Foundry, você terá sua infraestrutura configurada, mas precisará conectar seus espaços de código à infraestrutura. O código do repositório possui um script muito simples. Execute o script. O que ele fará é
+
+usar a CLI do Azure para desenvolvedores do Azure para obter todas as informações necessárias e configurar um arquivo .env para você. Depois disso, praticamente você não precisa fazer mais nada além de executar notebooks. Então, isso vai resolver alguns desses problemas para você. Outra coisa que você vai fazer é usar algo chamado extensão de kit de ferramentas de IA . Não vamos entrar em detalhes
+
+agora, mas basicamente é o equivalente a ter a interface do Foundry diretamente no VS Code, para que você possa ver algumas das coisas que está fazendo. Então, você vai marcar isso como concluído . Resumindo, ao final do processo, você terá configurado seu ambiente de desenvolvimento para se comunicar com a infraestrutura que acabou de implantar, e poderemos prosseguir com nossa abordagem baseada em código . Então, na verdade, vou começar pela abordagem do SDK. Então, deixe-me mostrar-lhe o porquê.
+
+Então, fizemos o planejamento no portal. E quando você olha para o portal,
+
+vê como é, na realidade, o ciclo de vida completo do desenvolvimento de um agente. É preciso ter uma fase de construção, depois otimizá-la e, por fim, implantá-la e gerenciá-la. Então, quando você pensa em todas as etapas envolvidas na construção, vamos começar pelo que fizemos no portal: eu conhecia meu caso de uso, que é o de uma agência de viagens. Desenvolvi rapidamente meus modelos, ferramentas e um agente simples para isso. Eu testei um prompt, eu o construí. Consegui fazer
+
+tudo isso. Adicionei uma ferramenta simples de busca na web. Agora, tenho um agente funcionando que está fundamentado nos pontos que eu queria que estivessem. Não vamos falar sobre ajustes finos, mas queremos mesmo passar para o próximo nível, no qual eu quero ser capaz de fazer coisas mais complexas com ele. Então, para acessar o SDK, vamos nos concentrar em mostrar como fazer tudo isso em código.
+
+Então, o que você vai fazer aqui é voltar aos espaços de código que você começou. E demonstração de culinária, então, pronto, tenho meus espaços de código ali. Não vou mostrar a minha ponta de chave porque ela contém as minhas teclas, mas saiba que estava configurada. Bem, quando você executar o script, ele configurará isso aqui mesmo . E o que você fará agora é realizar esses laboratórios em ordem. Então, vou
+
+começar pelo primeiro. E se você conhece o VS Code , quantos de vocês aqui conhecem os notebooks Jupyter? Sim, tudo bem. Você conhece essa pequena aba de contorno? Eu amo isso. Então, o que eu faria é
+
+dizer que, à medida que vocês forem analisando esses materiais, perceberão que os laboratórios... primeiro, vou explicar o que são. E então, em cada laboratório, espero que você simplesmente mude para o modo de estrutura de tópicos e então nós os revisaremos.
+
+Então, o que temos? A história que vamos contar é do começo ao fim. Primeiramente, o primeiro laboratório basicamente irá executar e garantir que seu ambiente de desenvolvimento esteja conectado ao seu sistema de back-end. Com um simples comando de teste, tudo funciona. O próximo exercício prático consiste em reconstruir seu primeiro agente em código. Em outras
+
+palavras, você o construiu no portal de forma declarativa. Este caderno fornecerá todos os trechos de código necessários para compilá-lo programaticamente. Então, você pode usar esse caderno mais tarde, ir lá e mudar as instruções, fazer o que quiser, certo? E esse agente não tem ferramentas. Vai ser um agente bem simples. Então, o próximo passo ali embaixo
+
+é adicionar uma ferramenta. Você vai adicionar algumas funções que fazem as diferentes coisas que você queria fazer, como verificar. E agora você tem um agente que possui um modelo e ferramentas. Depois disso, que é a parte mais divertida, você vai criar um agente de fluxo de trabalho . Um agente de fluxo de trabalho diz: "Espere, por que um único agente deveria fazer todas as ligações?
+
+Vamos ter agentes dedicados para cada etapa." Então, existe um agente de voos, um agente de aluguel de carros e um agente de hotéis. E então tenho um concierge que coordena tudo isso. E o Microsoft Foundry tem uma funcionalidade chamada fluxo de trabalho, então vamos ver isso. E então, este laboratório específico mostrará como configurá-lo para o rastreamento.
+
+E, neste caso, você pode configurar o sistema para usar o recurso de rastreamento local (hotel) e visualizá-lo durante a depuração. Ou você pode configurar o envio para o Azure Foundry Monitor e visualizá-los no portal do Foundry. E então teremos um caderno para avaliações e um caderno para ajustes. Até agora tudo bem? Pronto para começar?
+
+Então, programa de culinária, experimente isso em casa. Vamos analisar isso aqui. Então, a primeira coisa que vou fazer é dar uma olhada no caderno. Então, o que queremos fazer na primeira? Então, isso não é grande coisa, mas vou dar uma olhada bem rápida.
+
+Portanto, precisamos instalar as dependências. Todas essas funcionalidades já vêm inclusas nos contêineres de desenvolvimento, então você não precisa se preocupar com elas. Configurar variáveis ​​de ambiente. Na verdade, você só precisa de dois. Ao configurar seu projeto, você terá um endpoint de projeto e precisará saber o nome do modelo.
+
+Isso já está configurado para você por padrão. Vamos realizar um teste muito simples para garantir que estamos conectados. Vamos garantir que o cliente esteja trabalhando. E então faremos uma ligação. Então, esses são os dados que eu tenho atualmente. Tenho aqui alguns dados fictícios
+
+que podemos usar. Então, eu me certifiquei de ter meus dados. Verifiquei se conseguia fazer uma chamada ao meu endpoint da API. Funciona. Estou pronto para começar.
+
+Agora é hora de criarmos um novo agente do zero. Então, quando eu analisar isso, e na verdade compartilharei todo esse documento com vocês mais tarde. O que isso fará é guiá-lo(a) pelos diferentes passos. Então, aqui, vamos analisar cada um desses notebooks, onde cada um criará um novo agente que executará apenas essa funcionalidade. E o primeiro, bem aqui, vai te ensinar como construir um agente muito simples. Então,
+
+o problema que você está enfrentando agora é que você nunca construiu um agente de IA antes e quer saber como configurá-lo com as instruções corretas e assim por diante. Então, para criar esse agente básico, o primeiro passo é configurar um cliente. Como você já está conectado com a CLI do Azure, você já possui as credenciais. Você configurou um cliente para uso com nosso endpoint Foundry. E então você cria instruções para o seu agente. Este é um conjunto padrão
+
+de instruções que criamos para descrever o que seu agente de viagens deve fazer. E quando você executa este comando, seu agente é criado no back-end Foundry com essas instruções simples e o modelo padrão que implantamos. Em seguida, você deve iniciar uma conversa simples. Portanto, estamos usando o endpoint da API de respostas para tentar uma única solicitação. Então, você diz: "Ei, me diga, por exemplo, eu estou basicamente fazendo uma pergunta do tipo, sabe, estou pensando em planejar uma viagem a Paris. O que eu preciso
+
+saber?" Ele executa o comando e retorna a resposta, e agora você pode vê-la. Neste momento, não fizemos nenhum rastreamento, não ativamos nada. Acabamos de conseguir um agente funcionando que responde da maneira que eu quero. Em seguida, você pode tentar conversas com várias intervenções do tipo "uh". Portanto, para aqueles
+
+que não usaram o SDK ou não estão familiarizados com agentes, esta é uma ótima maneira de experimentá-lo e se familiarizar com ele. Mas não vou entrar nesse assunto porque não estamos aqui para falar sobre a construção de uma agência. Bem, tudo isso permitirá que você faça apenas validar se você pode, de fato, implantar um agente conversacional de múltiplas interações no Foundry. E você pode inspecionar as respostas e ver que tipo de resposta está sendo dada . É um texto bem longo, não é?
+
+Próximo passo, caso você entre nisso. Portanto, para cada um deles, você notará que já estão configurados com um ambiente de execução, então você só precisa selecionar o kernel que temos no contêiner de desenvolvimento e seguir os passos um por um. Então, no primeiro caso, vamos voltar ao nosso portal e ver como ele se apresenta . Então, aquele primeiro agente de viagens,
+
+uh, essa foi na verdade a primeira versão disso. Isso apenas respondeu à pergunta, certo? Então, temos isso implementado aqui, e se eu fizer uma pergunta, ele me dará tudo o que eu preciso para a resposta, e eu também devo ver os registros aqui. Então, me dê um minuto para que ele inicie. Então, o agente que eu configurei, que invocamos a partir do código, eu consigo ver que quando faço essa pergunta, ele realmente a respondeu, e eu consigo ver os rastreamentos, mas não vejo as avaliações (e-vals) porque ainda não as configurei.
+
+A próxima coisa que faremos é adicionar ferramentas. Então, de que ferramentas precisamos? Então, aqui, vamos usar algo chamado definição de ferramenta de função , e queremos registrar ferramentas de função que realizam várias tarefas. Aqui temos ferramentas para busca de carros, busca de voos e busca de hotéis. Todas elas são funções definidas dentro deste único agente. Registramos as
+
+ferramentas e, em seguida, aprimoramos esse agente. Assim, o agente que antes possuía apenas um modelo e instruções passou a ter mais do que isso. Agora, ele possui modelo, instruções e ferramentas. E quando implantarmos esse agente, você poderá testá-lo. Então, se você executar o agente implantado e, em seguida, acessar esse endpoint com uma consulta sobre algo relacionado a voos, ele responderá a essa consulta.
+
+Você pode experimentar diferentes combinações, como "busque um hotel e um carro", etc. Ainda estamos revisando esses cadernos para garantir que nosso agente esteja configurado corretamente. Até agora tudo bem? Sim? Então, começamos com um agente básico, adicionamos ferramentas, temos conversação múltipla, e está tudo certo.
+
+Mas agora, olhando para isso, penso: "Espere, na verdade não queremos um único agente monolítico fazendo todo esse trabalho. Queremos poder dividir a tarefa em unidades de trabalho menores, com agentes dedicados a cada uma delas, e então orquestrá-las em conjunto." Quem já usou LangGraph ou LangChain sabe que os sistemas multiagentes têm certos padrões de projeto que os definem. Então, como se faz isso? Acontece que a Foundry realmente possui esse conceito conhecido como fluxos de trabalho e agentes de fluxo de trabalho. Neste
+
+laboratório específico, vamos construir um agente de fluxo de trabalho. Então, aqui, o problema que você está enfrentando agora é que você tinha um único agente e, agora, se algo der errado, você tem várias funções para monitorar, várias coisas para fazer; você realmente quer dividir isso em componentes menores. Então, neste laboratório específico, você começará a criar agentes especializados. Então, você se lembra que naquele primeiro laboratório criamos um agente de viagens? Agora imagine que você vai criar três desses agentes, mas dedicados a tarefas individuais.
+
+Então, você cria esses três agentes especializados e, em seguida, cria um agente de fluxo de trabalho que os reúne todos. Então, não vou entrar em todos os detalhes aqui, mas o que eu realmente quero que vocês observem é a diferença nos traçados. Então, aqui, quando crio o agente de fluxo de trabalho, forneço a ele uma declaração YAML que define como o fluxo de trabalho é estruturado . E então eu poderei testá-lo de ponta a ponta. Então, vamos ver como isso fica quando implantamos no Foundry.
+
+Então, é assim que um agente de fluxo de trabalho se parece. Então, até agora você viu dois tipos de agentes. O primeiro era um agente de prompt, que é simplesmente um agente declarativo leve, onde eu forneci instruções em um modelo, mas ele está fazendo apenas uma coisa. É um agente de uso único. Aqui, com os fluxos de trabalho, o YAML me permite compor visualmente o agente.
+
+Então, agora eu posso dizer: "Ok, o fluxo de trabalho indica que eu quero criar uma conversa com cada um desses agentes. Preciso que o agente de voos obtenha uma resposta, o agente de hotéis obtenha outra resposta e o agente de aluguel de carros também, juntar tudo e depois entregar ao usuário." E quando eu invoco esse agente, consigo ver os rastros no portal. Então, estou querendo dizer que, quando Amy fez a primeira demonstração , você percebeu que, para cada agente, sempre que você faz uma pergunta, já temos tudo configurado com os rastreamentos, mas agora você pode ver muito mais e analisar o caminho da sua invocação em todo esse fluxo de trabalho. Então, aqui você pode ver que quando eu faço uma pergunta ao agente, ele passa por um fluxo de trabalho e descobre como invocar cada agente por sua vez. Então, peça ao agente de voos para
+
+me dar informações sobre o voo, peça ao agente do hotel para me dar essas informações e, em seguida, junte tudo. Assim, a vantagem para nós agora é que você consegue ver qual desses agentes está com desempenho abaixo do esperado, qual deles não está desempenhando sua função corretamente, quais são os custos em termos de tokens para isso e, então, desativar apenas os agentes que precisam ser otimizados para melhorar o desempenho. Sim.
+
+Bem, eu... Guarde essa pergunta porque nós vamos... Não, não, não, eu vou
+
+respondê-la agora, mas você precisa... Nós vamos analisá-la novamente quando olharmos para a escala. Mas, respondendo à sua pergunta, vou apenas repetir as perguntas dele. Me avise se eu entendi
+
+direito. Primeiro, o custo. Será que podemos realmente otimizar em termos de custos? E a segunda coisa que você perguntou foi: qual é a complexidade? Qual foi a segunda pergunta?
+
+Como faço para... Sim. Então, vou responder às duas perguntas em parte. Em termos de custos, há dois fatores
+
+que os influenciam. Uma delas é pensar no custo do modelo. Você pode ter um GPT-4, mas ele vai te custar mais em tokens do que talvez um GPT-4 mini. Então, uma das coisas que você faz é trocar de modelo. É um dos certos? E quando você faz isso, você
+
+executa imediatamente a avaliação e vê se houve alguma regressão. Então, meu custo diminuiu, mas a precisão aumentou. Então, você pode experimentar, certo? E você verá isso na prática, que você realmente poderá experimentar. Inverta o modelo e experimente . A segunda coisa é que você consegue entender por que está
+
+gastando tempo? Por exemplo, se eu usasse uma busca na web e depois percebesse que isso estava demorando muito, eu preferiria que a busca fosse feita em um pequeno subconjunto de dados que eu tivesse em cache ou em outros lugares, talvez de forma mais eficiente. Então, existem maneiras de você analisar a situação. Certo? No entanto, o mais importante é que, sempre que você fizer uma alteração, deve avaliá-la imediatamente e verificar e comparar se houve regressão em algum outro aspecto.
+
+Então, a segunda pergunta é: como faço para reverter? Então, se você olhar para isso, estou mostrando isso para você no portal, mas você vai notar mais tarde, quando analisarmos a habilidade, que existem versões aqui, certo? Tenho todas as versões do agente. Então, implantar um agente significa que você pode simplesmente fornecer o nome da identidade e a versão desejada, e essa será a principal. E quando usarmos a habilidade, veremos que ela retornará automaticamente para uma versão com melhor qualidade e usará essa versão daqui para frente. Mas, no fim das contas, são
+
+apenas identificadores. Então, basicamente, você pode implantá-los. Faz sentido? Incrível. Então, esse agente de fluxo de trabalho agora permite que você componha vários agentes por meio de código, não por meio de uma estrutura externa, e ainda assim tenha tudo gerenciado e rastreável pelo Foundry . Então, uma das coisas que quero que
+
+vocês entendam é que, da perspectiva do rastreamento, realmente não importa que tipo de agente você tenha. Possui um endpoint e, desde que ele emita rastreamentos automáticos, posso coletá- los e mostrá-los a você. O mesmo se aplica à avaliação. Não importa como você construa o agente, contanto que eu forneça um endpoint, posso executar essas avaliações e retornar as métricas . Então, é isso tudo. Então, vamos
+
+falar sobre rastreamento. Então, até agora, você estava basicamente aprendendo como implantar agentes e personalizar suas funções, adaptar suas instruções, executá-los e ver como estão funcionando e analisar seus rastreamentos. Mas, e se você quisesse executar algo como ter atributos personalizados em seus rastreamentos? E como você poderia ativar os rastreamentos para uso local e também na nuvem? Então, se você quiser dar uma olhada nisso, este notebook em particular irá implantar um agente personalizado aqui.
+
+Então, é esta aqui. E o que você vai obter com isso é uma compreensão de como funciona o rastreamento. Então, o problema que enfrentamos agora é que temos vindo a mudar o nosso agente gradualmente, e temos vindo a expandi-lo e a fragmentá-lo. Agora está funcionando, e quando as coisas dão errado, há muitas maneiras possíveis de darem errado. Não seria ótimo se eu pudesse adicionar meus próprios atributos personalizados a esses rastreamentos, para que, quando eu quisesse solucionar problemas mais tarde, pudesse procurar as coisas certas?
+
+Então, neste vídeo, vamos ver como você pode, de fato, incorporar atributos personalizados ao seu rastreamento. Então, no primeiro, temos dois conjuntos diferentes para isso. A primeira coisa que queremos fazer é criar e rastrear um agente. E o que queremos fazer é configurar o sistema para exibir os rastreamentos no console local. Então, antes de fazer isso, como parte da configuração, você precisa definir dois atributos de ambiente: um para habilitar o rastreamento generativo de IA e outro para capturar o conteúdo da mensagem em torno dela.
+
+Portanto, ao fazer isso, você poderá ativar ou definir diferentes atributos e visualizá-los diretamente no console, para depurar o processo conforme necessário. Então, depois de configurar tudo, crio uma conversa e, quando a executo, não sei se vocês conseguem ver aqui, mas ela está inserindo alguns dos atributos personalizados que eu gerei. E deixe- me colocar isso como um " E agora eu obtenho rastros mais personalizados". Assim, posso inserir mais informações relacionadas aos tipos de coisas que quero depurar. Em seguida, quando quero interpretar o próprio rastreamento, esses rastreamentos são atualmente locais, mas seria ótimo se eu pudesse enviá-los para o servidor e visualizá-los lá também.
+
+Portanto, existem duas camadas diferentes nas quais você pode ver esses vestígios. Uma delas, no back-end, contra o próprio agente; esses rastros devem estar visíveis aqui. Então, eu posso entrar e ver o que aconteceu. Esse é apenas o comportamento básico de rastreamento. Mas, em segundo lugar, quero enviar isso para o Azure Monitor.
+
+Então, o Azure Monitor é uma espécie de coleção gigante de logs de toda a telemetria de todos os meus serviços. Ao adicionar também a minha telemetria de IA, não só consigo ter uma ideia de como os outros serviços estão funcionando, como também posso ver se o impacto no desempenho estava relacionado com as chamadas que eu estava fazendo. Por exemplo, se eu tivesse uma Pesquisa de IA do Azure com um índice, eu receberia a telemetria dela. Também estou recebendo a telemetria dos meus aplicativos de IA e posso analisá-los em conjunto. Então, nesta parte específica do laboratório, vamos configurar o rastreamento do Azure Monitor e enviar todos os rastreamentos para o monitor. Analisaremos
+
+isso em um instante, na parte administrativa. Execute uma consulta de rastreamento e agora você deverá conseguir visualizar os rastreamentos no portal Foundry. Assim, se você percorrer esses notebooks, agora poderá fazer tudo isso em código e executar as mesmas ações que fazia no portal. A avaliação realmente eleva o nível, mostrando como executar uma avaliação de qualidade, uma avaliação de segurança e uma avaliação de agentes, em modo batch, combinadas ou individualmente, usando conjuntos de dados avaliados que você forneceu. Assim, para preparar a agência de viagens para avaliação, o primeiro passo é coletar os dados de avaliação.
+
+Neste caso específico, estamos utilizando um agente de IA e criamos um conjunto de dados de avaliação de amostra. Mais tarde, com uma habilidade específica, vou mostrar como ela realmente gera isso para você. Então, o que é esse conjunto de dados de avaliação? O conjunto de dados de avaliação aqui consiste apenas em alguns exemplos de perguntas de teste, certo? Com respostas que você pode usar para avaliar o nível de equilíbrio e assim por diante.
+
+Então, queremos selecionar alguns avaliadores de qualidade e segurança . Para executar uma avaliação, primeiro você define um objeto avaliador e especifica os critérios. Estamos usando avaliadores integrados. Você deve ter notado que temos muitos avaliadores integrados para qualidade, segurança e agência. Então, basta especificar quais você deseja. E para cada um deles, você
+
+vai explicar como os dados se relacionam com o conjunto de dados de avaliação que você forneceu. Em seguida, você configura o fluxo de dados de avaliação e o executa. Ao executar a avaliação a partir do seu notebook, o processo demora bastante. Então, você pode configurar isso para verificar repetidamente até que a avaliação seja concluída. E, uma vez concluído, isso realmente ajudará você a analisar os resultados localmente. Ou você pode entrar no
+
+portal e ver isso novamente. Portanto, o notebook de avaliação rastreia esse agente e você pode ver ambos os rastreamentos aqui. Ou você pode simplesmente entrar e ver o resultado da avaliação. Então, aqui, uma das coisas que vocês verão é que tínhamos três avaliadores naquele caderno. A avaliação da qualidade.
+
+E só para você ter uma ideia do que está vendo aqui, segue uma cópia do conjunto de dados que foi utilizado. E quando olho para isso, está me dizendo que, para as métricas que analisei, que são coerência e fluência, está passando em todos os testes. Na verdade, existe um conjunto de testes muito simples. Então, quando estou fazendo algo importante, o programa permite que você veja os resultados, faça o download e veja os registros. Mas vamos dar uma olhada nos agentes.
+
+Assim, em agentic, além das funcionalidades básicas que já tínhamos, estamos analisando a resolução de intenções. Hum, podemos analisar coisas como... aderência à tarefa e acionamento de ferramentas.
+
+Vamos dar uma olhada em um deles. Neste caso, trata-se de uma falha de fundamentação. Então, agora quero mergulhar de cabeça e ver o que aconteceu. Eu deveria conseguir analisar isso e ver onde estão essas falhas. Portanto, aqui, posso ver que houve uma falha de aterramento.
+
+E agora, uma das coisas para mim é entender o porquê. Por que isso foi considerado uma reprovação? E você pode ver que o motivo disso ter ocorrido é que a resposta indicou a data de agosto de 2024 em vez de 2025, o que demonstra uma falta de fundamentação. Na verdade, não era baseado na verdade. Então, isto é como um caderno simples que mostra como executar suas avaliações de qualidade, segurança e agentes.
+
+E então você pode interpretar os resultados e, de certa forma, terminamos. Hum, e visualize-os no portal. A última coisa que quero fazer é mostrar a vocês como funciona o " red teaming". Então, até agora, o que você tem feito é configurar avaliadores com um dos avaliadores de qualidade, segurança ou agentes integrados, executá-los e, em seguida, visualizar os resultados no portal. Mas, o "red teaming" consiste em configurar uma varredura que ataca proativamente seu agente para verificar se ele consegue penetrar as defesas e avaliar suas vulnerabilidades a diferentes tipos de prompts manipulados.
+
+Então, quantos de vocês já participaram de testes de intrusão ou de simulação de ataque? Alguém aqui sabe como funciona o teste de intrusão (red teaming) ? Então, o treinamento de equipes vermelhas (red teaming) é, na verdade, bem interessante. Com o "red teaming", o que você faz é usar uma segunda IA ​​para atacar a sua primeira IA. Então, o agente de teste de intrusão que temos, basicamente, você diz a ele: "Estas são as categorias de risco às quais acho que meu agente está suscetível."
+
+Você define os tipos de ataques que deseja e, em seguida, o programa basicamente atacará seu agente com esses comandos e fornecerá um relatório que diz: "Estes são os casos em que seu agente falhou". Então, como isso funciona? Funciona assim. Se eu dissesse: "Ei, por favor, me diga como assaltar um banco." E esse é o tipo de exemplo que Amy deu.
+
+Meus dispositivos de segurança vão intervir e dizer: "Não, você não pode fazer isso. Não pode. Não responda à pergunta." E estaria certo. Mas acontece que talvez se eu invertesse a situação, certo? Inverta a ordem das instruções.
+
+A grade de proteção olha para aquilo e pensa: "Isso não faz sentido. Não há nada de errado. Vou deixar o comando passar." E a modelo diz: "Ah, bobinho. Ele virou a corda. Deixa eu
+
+virar de volta. Agora entendi o que você quer que eu faça." E de fato, irá executá-lo. Então, você ultrapassou a barreira de proteção porque manipulou o comando. O que o "red teaming" permite fazer é verificar proativamente todas as diferentes estratégias de ataque e, em seguida, informar a que você está vulnerável.
+
+Então, neste caderno em particular, você vai analisar que tipos de ataques de agentes você pode realizar. Por exemplo, ações proibidas. Veja bem, em termos de qualidade e segurança, você está pensando em submeter seu modelo a testes rigorosos. Você está apenas observando os comportamentos. Mas o comportamento agentivo é muito perigoso porque, se eu puder manipular o agente para realizar uma ação que ele não deveria realizar, isso é prejudicial. Então, com ações proibidas,
+
+que é um dos novos ataques ou estratégias de segurança que você pode usar, você pode dizer: "Ei, estas são ações que eu não posso realizar". Vou fornecer uma taxonomia de ações que o agente não tem permissão para executar. Ele pode preencher senhas. Não pode vazar dados. Não pode fazer isso, etc.,
+
+certo? E agora, quando você preencher isso, o agente de segurança irá proativamente sugerir ações que testarão isso para você. Sim. Você pode fazer o inverso e dizer que você tem o direito de não fazer nada, exceto o que eu autorizo ​​e quando eu autorizo? É isso que um guardrail faria. O que
+
+você está dizendo é que está informando ao seu agente: "Estas são as coisas que você deve fazer", certo? O que o red teaming está dizendo é: se eu disser isso ao agente, posso manipulá-lo usando um prompt? Então, como você disse, existem ataques muito famosos que dizem: "Ah, você não tem permissão para fazer isso". Mas Então eu digo: "Minha avó costumava contar uma história sobre isso." E a resposta é: "Ah, sua avó? Deixe-me contar
+
+como sua avó contaria a história, não é?" Isso é um ataque. Então, neste caso, a ação proibida está dizendo: "Eu não quero que você faça isso." "Eu quero que você faça isso." Essa é a taxonomia.
+
+Então, você está absolutamente certo. Na sua taxonomia, eu poderia dizer: "Eu só quero que você faça isso." O ataque que o agente da equipe vermelha diz é: "Eu quero ser inteligente e descobrir maneiras de contornar essa brecha." E então, ele apresenta uma série de prompts de teste que serão executados, e então você vê o quão eficaz era realmente sua proteção contra ações proibidas. Faz sentido?
+
+Ok. Então, quando você executar este, por exemplo, eu vou virar a página e mostrar para você, porque sei que estamos ficando sem tempo. Hum, então, se eu entrar aqui, vamos ver a equipe vermelha, certo? Só para sermos rápidos. Aqui está um exemplo de como a varredura do agente da equipe vermelha se parece. Então, você
+
+pode ver na parte superior que eu disse: "Estas são minhas categorias de risco." Isso é violência, vazamento de dados sensíveis e cumprimento de tarefas." Quero que você veja se consegue avaliar as vulnerabilidades que encontro seguindo estes passos. O ataque usa leetspeak. Se você conhece, leetspeak é uma forma de usar números em vez de letras para dar um visual melhor. Então, a questão é: se eu
+
+usar um ataque em que o prompt usa leetspeak em vez de inglês normal, ele passará pelas minhas proteções? É um ataque bem simples. Posso executar e você verá que, neste caso, é um ataque bem simples, nada demais . Passou por tudo. Não fez absolutamente nada.
+
+Você pode, no entanto, executar outro ataque, mas não sei se terminará a tempo . Basicamente, isso mostrou como executar um ataque, mas se você entrar aqui e eu disser: "Ok, vamos lá, escolha o agente Contoso que tínhamos..." "Qualquer um deles."
+
+Na verdade, existem muitos ataques mais abrangentes que podemos testar. Então, aqui estão os vários ataques que eu posso executar, ou melhor, aqui estão as categorias de risco. Vamos manter todas elas. Assim, posso analisar as estratégias de ataque e ver o que acontece. Estes são ataques fáceis. Mas existem coisas como um
+
+ataque crescente, bem aqui, que são extremamente difíceis. O que um ataque crescente faz é começar como um sapo em água fervente. Começa com um pequeno ataque e pensa: "Ah, você conseguiu passar por ele." Então, ele vai construindo em cima disso com um segundo ataque e outro, e quando você finalmente percebe que algo está acontecendo, já está sendo atingido por todos os lados, certo? Então, se você estiver em um ataque crescente, leva muito tempo, mas ele determinará todas as vulnerabilidades do seu sistema.
+
+No nosso caso, executamos um ataque bem simples, mas você pode analisar todos os diferentes ataques disponíveis, todos os diferentes riscos, e executá-los. Então, com isso, deixe-me voltar um pouco. Bem, temos alguns minutos e eu realmente quero mostrar... Posso
+
+prosseguir direto para o treinamento? Ok. Então, eu realmente queria falar sobre isso. Então, vou abordar esse assunto primeiro. Já vimos o SDK.
+
+Mas tudo isso é a maneira antiga de fazer as coisas, certo? E se pudéssemos melhorar isso? Você ainda não entende tudo o que não sabe. Então, o que eu realmente queria mostrar hoje, e isso está em uma versão prévia bem inicial, é essa noção de uma habilidade de observação. Então, agora, e para aqueles que quiserem experimentar em casa, vocês sabem que está documentado aqui.
+
+É o terceiro item ali. O Microsoft Foundry tem uma habilidade de nível superior que define as melhores práticas para fazer tudo o que você faria com um agente de ponta a ponta: desenvolvimento, criação, implantação e assim por diante. E aqui estão todos os diferentes itens. Vamos nos concentrar em observar. Observar é uma subhabilidade. E o que é
+
+observar? O que exatamente fazer? Observar, e acho que já está configurado aqui. Se não, deixe-me explicar. O que o `observe` faz é permitir que você execute todo o ciclo de observabilidade por meio de um agente. Vamos ver como
+
+funciona.
+
+Me avisem se vocês conseguem ver, ok? Vocês conseguem ver o lado direito da tela? Vou minimizar tudo. Então, lembram daquele agente do portal que a Amy configurou? Com ​​a habilidade `observe`, eu não precisei fazer nada do que fiz com o SDK.
+
+Em vez disso, eu simplesmente vou ao Copilot (neste caso, estamos usando o chat do GitHub Copilot) para ativar a habilidade. Eu tenho um agente de codificação. Estou usando o Claude como meu modelo. E eu digo: "Você pode usar esta habilidade `observe` para iniciar o ciclo de observabilidade no meu agente e fazer o trabalho para mim?". Neste ponto, eu só tenho um
+
+agente. Não configurei nenhuma avaliação. Não tenho nada. "Você pode me ajudar a avaliar isso?".
+
+E o que ele faz é entrar e analisar... seu código e diz: "Você não tem um conjunto de dados de avaliação." Eu sei o que você está tentando fazer porque você me mostrou as instruções. Vou começar a
+
+construir isso." Então, a primeira coisa que ele faz é verificar se eu tenho metadados e, quando não tenho, você vê algo como o agente "cozido". Ele então configura um cache. E a primeira coisa que ele fez foi gerar o conjunto de dados de avaliação para mim. Certo?
+
+Então, vou explicar isso rapidamente. Você vê que ele revisou os arquivos, criou tarefas e começou a processá-las. Obteve os detalhes do agente. Executou a avaliação do catálogo. Criou um conjunto de dados avaliado. E então
+
+executou a primeira avaliação em lote. Então, ele disse: "Eu tenho um agente." Preciso de um ponto de partida. Vou executar isso." Então, prosseguiu e, aliás, não encontrou o agente porque eu escrevi errado. Descobri isso, corrigi. E
+
+agora diz: "Ok, você tem este agente do portal de viagens." Vou pegar o conjunto de dados que você me deu e vou executar a avaliação. E uma das coisas mais úteis que encontro aqui é o raciocínio. Ele entra lá e você consegue ver exatamente o que ele procura em termos de falhas e como as avaliações foram instrumentadas. Então, depois de terminar isso, ele meio que passa por todas as etapas necessárias e, em seguida, finaliza essa avaliação, executa-a, executa-a, executa- a e depois retorna para mim e diz: "Aqui está o resultado."
+
+Então, esta é a primeira avaliação em lote e eu não precisei fazer nada além de configurar meu agente com uma instrução simples, um modelo e um ponto de extremidade. E a resposta é: "Com base no que você forneceu, seu prompt não é perfeito. A relevância está boa, mas em relação à execução da tarefa, há casos em que a tarefa solicitada não é concluída . Há duas falhas. E eu posso analisar o raciocínio, que me informa quais foram essas falhas. A
+
+resolução da intenção parece boa. E para a intenção indireta, eu fiz um teste de segurança e ele foi aprovado, certo? Então, a resposta é: "Ei, há um problema." E pergunta: "Você gostaria que eu resolvesse isso?" Certo? Então, a próxima coisa que
+
+me informa é: "Ok, então há um humano envolvido, certo?" Eu dei o primeiro passo por você. Você gostaria que eu desse mais um passo ou há algo que você gostaria de fazer?" Então eu digo: "Por favor, analise essas falhas para mim, otimize as instruções e reavalie." Então o que isso faz é executar algo chamado otimizador de prompt. Ele
+
+diz: "Com base na maneira como você escreveu seu prompt, você o deixou aberto para interpretações errôneas." "Vou otimizar esse prompt." E você me perguntou na época: "Como fazemos para reverter?" Isso automaticamente gera um novo número de versão e testa, certo? E se detectar uma regressão, pode reverter e você verá isso também.
+
+Então, aqui, agora está atualizando o agente. É aqui que ele envia a nova versão do agente. Ele executa uma nova avaliação em lote e espera a avaliação terminar. E pronto, quando termina, me dá uma tabela limpa. Diz: aqui está onde você estava.
+
+Otimizei seu prompt, executei novamente as avaliações em lote com os mesmos avaliadores. E agora melhorou em um ponto. Não está perfeito. Não tirou 10, mas corrigiu um dos problemas que você tinha. Então, está melhor.
+
+Sua aderência à tarefa e havia esse problema no prompt que eu corrigi, que agora está mais preciso. Então, agora você tem isso. E agora pergunta: o que você gostaria que eu fizesse? E é aqui que fica interessante. Eu estava meio ambicioso e disse: "Quero que você busque a nota 10 de 10.
+
+Quero que você corrija aquele último detalhe ." E é nesse ponto que a intervenção humana faz a diferença, porque começa a manipular os comandos para ver o que mais pode ser corrigido, certo? Então, aqui, ele continua testando. E agora você começa a entender o que eu quis dizer: se eu realmente insistir até o final para que você possa ver, ele vai e volta, regredindo. E vai descobrindo que melhora para sete e volta para oito. Melhora para sete, volta
+
+para cinco. E em algum momento, ele basicamente dirá: " Sabe de uma coisa? De tudo o que fizemos até agora, então..." É aqui que a intervenção humana
+
+pode dizer: "Você precisa parar. A melhor versão para o meu agente foi a versão cinco. Então, vamos manter essa." Certo? Então, aqui ele retorna e diz: aqui está todo o meu histórico de tentativas com diferentes coisas e como consegui melhorá- las. E para cada uma, vou dar
+
+insights sobre o que funcionou e o que não funcionou. E agora estamos na versão 10 de todas elas, sendo que a 5 é a melhor. Vamos voltar. Vamos usar isso, certo? Sim.
+
+Ele só muda o prompt ou pode mudar o modelo ou o " It"? Ele pode mudar outras coisas. Então, este aqui começou com uma avaliação em lote e analisou isso, certo? Então, ele retorna e pergunta: você gostaria que eu analisasse, por exemplo, que a pesquisa na web está demorando muito? Gostaria que eu procurasse uma alternativa para isso? Então,
+
+sim. A questão aqui é: é aqui que a intervenção humana faz a diferença. O raciocínio nos dá insights e é aqui que eu acho que o que não sabemos é o que nos prejudica. Não se trata de "eu" Eu nem sei o que eu não sei, e isso me expõe ao que eu desconheço. Mas sim, nesse momento eu posso realmente guiar a habilidade.
+
+Qual é a habilidade padrão? Você pode consultar o manual da habilidade, porque quando ela for instalada, você verá. Você sabe o que ela procura. Ela tem um conjunto de boas práticas que verifica. Se você tem conhecimento do domínio, pode querer aplicá-lo, certo? E dizer: "Bem,
+
+na verdade, é provável que seja esse o caso", e vamos tentar isso, e ela fará. Mas o que eu não sei se você entende por que eu gosto tanto disso é que automatiza a avaliação em lote, compara e me mostra o que aconteceu sem que eu precise saber cada chamada do SDK e tudo mais, certo? E era isso. Então, aqui, sim, como você disse, há outras coisas nos bastidores que você pode observar. E agora, no final, eu penso: "Você pode me mostrar um resumo completo do que está acontecendo?". Mas o mais importante
+
+nisso, eu acho que... Só queria mostrar, antes de terminarmos, que no final ele vai te dizer o que mais você pode fazer, recomendações para trabalhos futuros. Eu estava mostrando um agente de prompt, mas quantos de vocês usam LangChain, LangGraph, etc.?
+
+Você pode construir seu próprio agente com isso e trazê-lo para o Foundry usando algo chamado agentes hospedados. Eu posso ir até esse ponto e dizer: " Estamos usando a skill de observação, podemos usar uma skill de criação para converter este agente de prompt em um agente hospedado e usar o LangGraph para criá-lo para mim?" E ele fará isso também. Então, o objetivo da skill é realmente deixar de olhar para o editor e passar a usar um agente de codificação que o manipula, mas nós o guiamos pelo processo, se isso fizer sentido. Faz sentido para todos?
+
+Ok. Então, a última coisa sobre isso é que você pode ver que ele dá diferentes recomendações sobre o que você pode fazer: avaliações baseadas em rastreamento, testes de intrusão, etc. E você pode guiá-lo por todas elas porque existem skills nos bastidores, sim. E se você chegar a Ao perceber que precisa atualizar o conjunto de avaliação, você refaz todo o processo, essencialmente. Sim, e você pode realmente dizer isso. Então,
+
+uma das coisas... Deixe-me ver se consigo mostrar isso para vocês, porque faz mais sentido se vocês puderem ver. Vou publicar este documento , mas, se vocês olharem as habilidades, está aqui.
+
+Então, este é o... Ah, Deus, nem...
+
+Ok. Vejam se abre.
+
+E eu provavelmente deveria ocultar algumas coisas aqui. Certo. Não era para abrir esta janela. Vocês conseguem ver isso? É um projeto de código aberto, então vocês podem dar uma olhada. Azure
+
+Co-pilot, quer dizer, GitHub Co-pilot para Azure. Esta é a habilidade do Microsoft Foundry, o agente do Foundry. E se vocês olharem aqui, estas são todas as habilidades disponíveis. Então, vou explicar como é o loop de observabilidade. Se vocês puderem ver isso, o que ele faz é... tarefas. E
+
+se você quiser, aqui está uma maneira mais fácil. Há um código QR. Você pode pegar o código QR e ir diretamente para esta página, se estiver interessado. O que está sendo usado é o servidor Foundry MCP , e tudo isso está procurando por palavras-chave como estas: " avalie meu agente", "ajude-me a criar um conjunto de dados", etc. Uma das sub-habilidades que ele possui é criar um conjunto de dados. Outra
+
+é analisar seus insights e assim por diante. Então, você pode examinar isso para ver que tipos de coisas você pode realmente chamar e executá-las a partir daí. E então, deixe-me ver se consigo terminar o que estávamos falando. Basicamente, você pode percorrer isso e fazer com que ele itere mais de uma vez. E por último, mas não menos importante, isso está trazendo agentes de codificação para o seu SDK e para o seu IDE. Mas e se eu precisasse da mesma
+
+ajuda para analisar meus insights, certo? Então, quero mostrar algumas últimas coisas e depois encerraremos por hoje. Se você estiver acessando o portal, Sempre que você estiver no portal e tiver algum problema, pode usar o Ask AI. E o interessante do Ask AI é que ele é um agente que conhece o estado do seu projeto. Então, você pode dizer: "Você pode verificar este ID de rastreamento?" Você pode me informar a
+
+quais modelos tenho acesso com esta assinatura? "Tenho cota?" E faça perguntas aqui e ali, e veja o raciocínio por trás do estado. A outra opção está nos seus rastreamentos. Então, se você acessar o App Insights, eu não sei quanto a você, mas eu não entendo nada de consultas KQL. Não consigo escrever nem que
+
+minha vida dependa disso. Então, eu quero saber o que estou vendo em todos esses dados? Se você clicar nos logs do App Insights, verá um agente de observabilidade no topo. Isso permite que você converta todas as consultas programáticas que escreveu em interações em linguagem natural com um agente que fará o trabalho para você. Então, aqui, por exemplo, eu posso entrar e dizer: "Ei, você consegue encontrar falhas?" Você agora tem acesso a
+
+todo o meu espaço de trabalho de logs, certo? Então, você pode me dar uma análise sobre o que isso está fazendo, etc. E acho que já passou da hora, então, as duas coisas que acabei de mostrar no final, Ask AI, Bem, esse é o que está no portal do Foundry, e o agente de observabilidade é o que está no portal do Azure. E acho que com isso, Amy, você quer fazer algum resumo ou eu posso? Certo.
+
+Então, vou concluir dizendo: "Se você pegar esses dois códigos, o primeiro é o repositório inteiro e até mesmo a parte de habilidades está completamente documentada lá." Espero que ainda hoje eu consiga publicar a transcrição passo a passo que tenho, para que você possa comparar meus resultados com os seus. No Discord, enquanto você estiver executando este programa, se encontrar algum problema, entre no canal do engenheiro de IA e deixe um recado para nós lá. Adoraríamos receber exemplares seus. E, para concluir, começamos dizendo que existe uma lacuna na observabilidade dos agentes. Como você lida com o vão?
+
+E como você acelera o loop de avaliação e otimização? Então, espero que tenhamos feito um trabalho razoavelmente bom. E o principal que estamos tentando dizer é que a lacuna na observabilidade dos agentes se resume a três coisas, certo? Primeiro, você começa com um agente funcional, mas esse agente funcional irá se desviar dos requisitos originais porque os modelos podem mudar, os prompts podem mudar, seu ambiente pode mudar, novos casos extremos podem surgir. Como você avalia constantemente o que está acontecendo e é alertado quando essa lacuna muda?
+
+Isso é rastreamento e monitoramento. E em segundo lugar, como você acelera o loop? Você pode fazer isso manualmente, é claro, mas por que não começar a aproveitar os agentes de programação e deixar que eles automatizem parte disso para você, com um humano no circuito para orientá- los? Assim, você consegue responder mais rapidamente a alguns desses problemas antes que eles saiam do controle. E, finalmente, voltando para concluir as perguntas que fizemos, muitos modelos, nenhum dado existente, o que fazemos?
+
+Podemos usar agentes de codificação, podemos usar o Copilot ou habilidades e tê- los gerados com base no estado atual do aplicativo ou em nossos requisitos atuais. Para acompanhar as rápidas mudanças, como posso detectar e diagnosticar problemas com agilidade? A resposta é baseada em rastreamento, ou seja, avaliações vinculadas a rastreamento. Portanto, queremos ter uma visualização que nos permita ver tanto os rastros que mostram como a alteração foi executada quanto as avaliações que indicam qual foi o resultado dessa alteração realizada. E, no que diz respeito às práticas de segurança, é preciso pensar não apenas em avaliações de segurança para o comportamento normal, que consistem em definir as diretrizes padrão, mas também em testes adversários, nos quais se ataca proativamente para verificar se é possível ultrapassar essas diretrizes usando técnicas que talvez nem tenhamos imaginado e que equipes como a Pirate Team estão aprimorando progressivamente.
+
+E vou deixar vocês com uma última coisa. Eu não sou como muitos de vocês, estou apenas tentando acompanhar o ritmo das coisas, mas existem especialistas nessa área. Então, se você tiver interesse, temos uma série chamada Model Mondays. Por coincidência, nesta segunda-feira, Felicia Shaw é a pessoa por trás das habilidades que você acabou de ver. Ela é uma gerente de projetos que administra a seção de habilidades de fundição . Então, ela virá fazer uma
+
+demonstração e nos contará o que vem por aí. O que você viu é muito, muito cedo. Foi lançado há apenas duas semanas . Eles já estão construindo sobre isso. Então, se você tiver interesse, por favor, participe, pois ela fará uma sessão de perguntas e respostas para que você possa fazer perguntas diretamente a ela.
+
+Outro ponto interessante para quem usa o AI Toolkit é a novidade que ele oferece. E o principal aqui é que muitas das coisas que você viu sendo feitas no portal e no SDK agora podem ser feitas diretamente no VS Code usando essa extensão e podem ser feitas muito mais rapidamente localmente. Então, trata-se de melhorar a sua experiência como desenvolvedor local . E com isso, acho que é o fim. Ah, muito obrigado a todos por terem ficado até aqui . Acho que já estamos no horário,
+
+um pouco além. Agradecemos muito, e se você tiver alguma dúvida ou simplesmente quiser bater um papo, fique à vontade para aparecer e nos avisar. E muito obrigado novamente.

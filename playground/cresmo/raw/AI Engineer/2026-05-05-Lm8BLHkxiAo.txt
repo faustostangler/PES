@@ -1,0 +1,134 @@
+---
+video_title: "Accelerating AI on Edge — Chintan Parikh and Weiyi Wang, Google DeepMind"
+video_id: Lm8BLHkxiAo
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Lm8BLHkxiAo
+video_date: 2026-05-05T15:00:06+00:00
+video_description: |
+  As models get smaller and more capable, more AI workloads can move onto the device itself. In this talk, Chintan Parikh from Google DeepMind walks through what that looks like in practice, from Gemma 4 edge models and on-device agent skills to the real tradeoffs around latency, privacy, cost, and cross-platform deployment.
+  
+  The session covers LiteRT, the Google AI Edge stack for running models across Android, iOS, desktop, web, and IoT, along with demos of local tool calling, structured output, reasoning, benchmarking, and hardware acceleration on CPUs, GPUs, and NPUs. If you're building on-device AI systems, this is a practical overview of the current edge stack and where it is headed.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/weiyiwang1993
+  - https://www.linkedin.com/in/chintansparikh
+---
+Boa tarde a todos. Vamos começar. Meu nome é Chintan Parekh, gerente de produto do Light RT, que faz parte do Google AI Edge. E também tenho aqui o meu colega, que também se juntará a nós para a sessão de perguntas e respostas. Vamos lá, levantem as mãos! Quantos de vocês estão
+
+trabalhando na implementação em Edge ou têm interesse em aprender mais sobre os principais benefícios que isso trará? Ok, e alguns de vocês já estão fazendo o deploy. Então, vou analisar os slides. Vou tentar deixar em aberto para entender se vocês têm algum caso de uso ou algum projeto em que estejam trabalhando e que gostariam de discutir. Então, podemos manter isso em aberto nesse sentido.
+
+Ótimo. Então, aqui vai uma breve lista de itens da pauta, e vou abordar alguns dos novos modelos que estão por vir . Além disso, alguns casos de uso do Edge que seriam relevantes. Vou mostrar algumas das novas funcionalidades do aplicativo Galeria e, em seguida, você conhecerá nossa estrutura para implantação de IA em dispositivos Edge. Além disso, também queremos enfatizar o suporte multiplataforma que oferecemos, pois acredito que muitos de vocês desejam implantar não apenas em plataformas móveis, mas também em outras plataformas. Então,
+
+vamos fazer algo parecido. O Google DeepMind lançou recentemente o Gemma 4, e esta palestra se concentrará um pouco mais nos modelos Edge 2B e 4B, que são voltados para implantação em dispositivos. O Google certamente possui uma grande variedade de modelos, incluindo a família Gemma 3, que também inclui modelos menores, com resolução de até 270 milhões de parâmetros. Então, se você está procurando por modelos extremamente pequenos que você possa ajustar com precisão, nós certamente temos uma página da Hugging Face, que eu explicarei a seguir, que contém mais desses modelos. Então, é isso . Portanto, a grande evolução do
+
+Gemini 4 será a transição de funcionalidades típicas de chatbots para agentes mais autônomos, que também suportam capacidades de raciocínio e recursos mais sofisticados. E, bem, muito disso também será ótimo, pois você poderá implantá-los em diferentes dispositivos. Portanto, operar no limite oferece muitas vantagens. Acho que meu colega já explicou algumas dessas coisas ontem, e eu vou repassar isso rapidinho também. Então, certamente a latência é importante para quem está interessado em casos de uso de câmeras em tempo real, como filtros para substituir fundos ou videochamadas; nesses casos, a latência em tempo real é fundamental . Então, sabe, o dispositivo
+
+pode ajudar com isso. A privacidade também é crucial para qualquer caso de uso em que você tenha detalhes sensíveis, esteja resumindo documentação que contenha informações confidenciais, ou em casos de uso offline com conectividade precária e custos elevados. Já vi muitas apresentações, inclusive neste evento de engenharia de IA, em que as pessoas reclamam da quantidade de tokens utilizados e outras questões. Mas acredito que a computação em dispositivo sempre oferece essa abordagem híbrida, permitindo que você encontre o melhor equilíbrio entre executar tarefas na borda e na nuvem. Acho que há algo aqui.
+
+Legal. Então, em termos de modelos, existem dois modelos e acho que muitos dos casos de uso que mostrarei serão baseados neles. Assim, o Gemini 4 E2B utiliza aproximadamente entre 1 e 2 GB de RAM. Então, pode ser utilizável, mas, como dizem, depende dos seus casos de uso finais. Uh, certamente é bom para qualquer interface de voz ou caso de uso para sumarização ou qualquer tipo de processamento local de baixa latência. Hum, o
+
+4 4B será um pouco mais robusto se você pretende executá-lo em plataformas maiores, como laptops ou dispositivos IoT. Terá uma necessidade maior de RAM . Novamente, isso ocorre depois de ter sido quantizado para o tamanho desejado. Então, eu gostaria de fazer uma breve análise detalhada das novidades desta vez em relação às funcionalidades do Gemma 4E2B e E4B, no que diz respeito aos recursos do agente. Então, vou mostrar a vocês o que já existe nos próximos slides em termos de casos de uso e aqui abordarei um pouco quais são exatamente as novas funcionalidades. Assim, a
+
+chamada de funções oferece suporte integrado para chamadas de ferramentas e também, essencialmente, modelos para interagir com outras APIs locais. Portanto, você certamente pode iniciar a inferência na borda, mas também tem a possibilidade de, essencialmente, chamar outras APIs externas, e mostrarei isso em alguns dos meus exemplos, mas o núcleo da inferência estará na borda. Saída JSON estruturada. Portanto, o suporte nativo para qualquer saída JSON estruturada é garantido aqui, pois foi incorporado à arquitetura do modelo em vez de ser obtido por meio de alguma engenharia de prompts específica. Você também pode fazer algo parecido e eu mostrarei alguns exemplos . A linha de raciocínio é nova. Então,
+
+existe um modo de pensamento que pode ser demonstrado por um aplicativo, onde esse modo de pensamento ajudará você a entender o processo de raciocínio pelo qual o modelo está passando. Nosso aplicativo de galeria, que demonstrarei a seguir, oferecerá suporte a isso. E, por fim, o que será ótimo é que esses modelos são otimizados para suporte nativo de hardware, o que significa que você pode executá-los perfeitamente em várias plataformas e hardwares. Na verdade, queremos oferecer a flexibilidade de implantação em diversas plataformas. Então, para começar, se alguém estiver pensando: "Ok, onde posso encontrar esses modelos?" É como se já tivéssemos esses modelos
+
+prontos para usar. Então, nossa página Hugging Face tem esses modelos. Então, se você estiver procurando, você pode, sabe, todos eles são modelos com licença Apache 2.0. Então, você poderá baixar esses arquivos e começar a construir com eles, e nós lhe daremos algumas sugestões de como você pode fazer isso.
+
+Tudo bem. Então, sim, vamos falar agora sobre alguns dos casos de uso. Portanto, esses são apenas alguns dos muitos casos de uso possíveis . Esses são casos de uso que são possíveis hoje em dia. Este é o nosso aplicativo de galeria, que estamos demonstrando no terceiro andar, e também teremos uma sessão de demonstração em nosso estande depois desta para quem tiver interesse em saber mais. Eu também tenho códigos QR para
+
+isso, então eles estarão nos próximos slides. Atualmente, a novidade é que o aplicativo de demonstração da galeria permite demonstrar as capacidades de habilidade do agente. E também possui recursos de transcrição de áudio ou de imagem para perguntas, além de outros recursos relacionados a experiências de bate-papo. Tudo isso está acontecendo no dispositivo. O objetivo deste aplicativo criado pelo Google é fornecer um ambiente de testes para que você possa ter uma ideia do que esses modelos são capazes de fazer. Cada uma dessas
+
+funcionalidades também possui código de exemplo que qualquer pessoa pode acessar e baixar, e você também pode criar um fork deste aplicativo para desenvolver suas próprias experiências. O objetivo principal é inspirar e motivar você a criar suas próprias experiências. Então, alguns dos próximos slides em que me concentrarei estarão relacionados a alguns casos de uso do Gemma 4 Edge . Essas novidades vão enfatizar as capacidades do agente de voz e do agente local, e muitas delas também terão foco na privacidade. Portanto, existem três pilares principais que serão novos aqui, em comparação com o que já foi abordado nos slides anteriores.
+
+Então, vamos analisar os casos de uso do Gemma 4 . Então, vamos ver se isso funciona. Então, aqui está um caso de uso em que você está ampliando o conhecimento e, por exemplo, você pode criar uma habilidade para consultar a Wikipédia, permitindo que o agente consulte e responda a qualquer pergunta da enciclopédia. Então, essa é uma habilidade que já está disponível em nosso aplicativo . Então, se você está pensando em construir algo assim, isso é possível.
+
+Essas são novas habilidades, além das habilidades básicas do dispositivo, como resumir ou analisar imagens e coisas do gênero. Bem, esta é outra categoria onde, essencialmente, vamos ver se você consegue fazer uma entrada no diário com nota nove e um comentário. Mesmo aqui. Dormi 8 horas e estou ansioso para passar um tempo com a Amy hoje.
+
+Aqui você verá como criar, resumir e exibir tendências das horas de sono. Então você vai criar um aplicativo para dormir que te ajude a monitorar seu humor. Analise a evolução do meu humor nos últimos 7 dias.
+
+Assim, é possível perceber que ele consegue criar tudo isso no próprio dispositivo. Ele recebe suas informações, as processa e consegue compreendê-las. Assim, o raciocínio e a capacidade de pensar são novidades no novo modelo, e os recursos integrados ao dispositivo tornaram-se muito mais poderosos. Outro exemplo semelhante será a expansão das capacidades essenciais. Por exemplo, você também pode emparelhar fotos e o dispositivo irá ler a foto, compreender a imagem e gerar música, tudo no próprio aparelho.
+
+Então vamos tentar esta. Estou enviando uma foto. Você consegue combinar essa vibe com alguma música?
+
+Levando apenas alguns segundos,
+
+muitas dessas habilidades podem ser escritas por você mesmo no próprio aplicativo. Assim, você nem precisa sair do aplicativo. O aplicativo contém instruções sobre como fazer isso. Novamente, o único objetivo disso tudo é ajudá-lo a entender as capacidades de um modelo e construir algo por conta própria que você realmente goste. Isso é útil. Por fim, temos o desejo de
+
+criar um aplicativo funcional que descreva, por exemplo, vocalizações de animais. Assim como agora, estamos tentando navegar por vários aplicativos e usuários, e você pode gerenciar um fluxo de trabalho mais complexo neste caso. Então, este é mais um exemplo.
+
+E você também pode alterar a CPU, a GPU e, com sorte, em breve haverá suporte para NPU, para que você possa escolher o acelerador que deseja usar quando decidir. Então, este foi um som gerado puramente a partir de um comando dado pela pessoa. Novamente, a habilidade foi configurada, criada e carregada, e está em execução no dispositivo. Isso se aplica a algo semelhante. Certo. Então, há muita coisa que você pode fazer com
+
+isso. Temos um repositório inteiro no GitHub onde os usuários publicam suas habilidades no site do GitHub e podem compartilhá-las com outros membros da comunidade. Portanto, fique à vontade para explorar essa opção ou baixar qualquer um desses aplicativos. Outra opção é que o aplicativo de exemplo também é de código aberto no GitHub, então você pode pegá-lo, criar um fork e fazer alterações nele, se quiser. Então, o link do GitHub também está aqui e é uma oportunidade para fazer isso. E criar
+
+sua própria habilidade também é possível aqui. Esses são apenas alguns exemplos do que as pessoas têm feito. Este código QR contém instruções sobre como desenvolver uma habilidade. Então, se você está procurando basicamente por orientação sobre como fazer isso, você pode começar. Tudo bem.
+
+Na próxima parte da apresentação, vou me concentrar um pouco na implementação disso em dispositivos de borda. Então, já falamos sobre o que é possível fazer com os modelos Gemma. A estrutura que é usada aqui, certo? Então, o Google tem uma oferta com RT leve para modelos que você mesmo pode usar . Assim, o LightRT é essencialmente a estrutura do Google para dispositivos móveis. Ele é construído
+
+e baseado na estrutura TensorFlow. TensorFlow Lite, caso vocês estejam familiarizados com ele. Alguém conhece o TensorFlow Lite? Alguns de vocês, ok. Ótimo, ok. Então, é nisso que tudo se
+
+baseia. Bem, na verdade, a ideia é que ele também seja construído usando o mesmo formato de modelo do TensorFlow Lite, e é nisso que estamos nos concentrando neste momento. Então, o ponto aqui é que a estrutura subjacente do aplicativo que executava todas essas experiências é o Lite RT, e vamos mostrar que essa é basicamente uma das estruturas mais amplamente implementadas até o momento. Possui mais de 100.000 aplicativos, bilhões de usuários ativos e também muitas invocações diárias do interpretador. Trata-se
+
+essencialmente do número de inferências que ocorrem todos os dias. O interessante é que isso demonstra que estamos construindo sobre uma base confiável, e quando fazemos isso, como também temos o nosso formato de arquivo TFLite. E isso será muito importante porque, se você for um desenvolvedor que está criando com o TensorFlow Lite, seus modelos ainda funcionarão no Lite RT, e esses modelos, no mesmo formato, são multiplataforma. Então, não é só para Android, mas você pode executar em iOS, macOS, Linux, Windows, na web e até em dispositivos IoT. Aliás, vou mostrar alguns exemplos de IoT que estávamos desenvolvendo hoje de manhã . Legal
+
+. Então, do ponto de vista do fluxo de desenvolvimento, você tem essencialmente seus arquivos de modelo. Portanto, podemos aceitar o motivo de ter sido renomeado para Lite RT. Uma das principais motivações para a reformulação da marca foi demonstrar que não aceitamos apenas modelos TensorFlow Lite, mas também modelos PyTorch e modelos JAX. Portanto, se você estiver trabalhando com modelos PyTorch, pode pegar um desses modelos, convertê-lo para o formato de arquivo TFLite e, em seguida, realizar esse processo e implantá-lo. Então, temos muitos
+
+aplicativos de exemplo e coisas do tipo, mas não vou detalhar todo o processo aqui. Resumindo, temos a portabilidade do modelo e o suporte a múltiplos frameworks para os modelos. Tudo bem. Portanto, esta é uma solução completa que oferece uma arquitetura multiplataforma unificada. Talvez uma pergunta rápida: quantos de vocês pretendem implantar o aplicativo em vários dispositivos Android ou iOS? Assim como você quer
+
+algo que você construa e que possa testar facilmente em vários dispositivos. Porque se você está tentando criar aplicativos e pensa: "Ok, eu consegui, mas como eu sei se vai funcionar em celulares de 5 ou 6 anos atrás e tudo mais?" Então, também temos opções para isso. Então, vou explicar a estrutura da pilha para você. Portanto, a lanterna Light RT será o seu caminho de conversão.
+
+Basicamente, você traz o seu próprio modelo. Se você encontrou um modelo, gostou dele e quer executá-lo, você o converte para o formato TensorFlow TFLite. Você pode quantizá-lo, se necessário. Bem, se for um LLM, você segue o caminho do Light RT LLM, basicamente, ou, se não for, você pode seguir o Light RT. O interessante aqui é que também temos a ferramenta de exploração de modelos, que pode ajudá-lo a explorar o grafo e decidir quais aspectos do grafo você deseja alterar e quantizar, para que você possa realmente estudar o grafo e decidir a melhor maneira de realizar a mistura de precisão ou, basicamente, converter e quantizar completamente o modelo como desejar.
+
+O portal AI Edge é uma ferramenta de avaliação comparativa que pode ser interessante para quem pretende implementar amplamente em Android. Portanto, este é um serviço de avaliação comparativa baseado na nuvem chamado portal AI Edge . Basicamente, esta ferramenta está disponível para ajudar muitos dos nossos desenvolvedores de aplicativos terceirizados e até mesmo equipes de desenvolvimento internas a utilizá-la para verificar se, por exemplo, se um modelo possui tantos parâmetros, é necessário usar compilação antecipada (AOT) ou compilação just-in-time (JIT). Qual será a receita ideal para garantir que ela seja realmente implantável em uma ampla gama de dispositivos e que funcione de forma confiável ? Sim , desculpe. Mais uma coisa neste
+
+slide é que a próxima parte é a aceleração. Então, CPU e GPU são praticamente universais hoje em dia. Essencialmente, essas são bibliotecas que ajudam a executar tarefas na CPU e na GPU. Gostaria também de enfatizar que, com esse tipo de framework, é possível realizar a implantação em múltiplas plataformas, com CPU e GPU em execução. A aceleração da NPU também é outro foco.
+
+Então, concluímos a integração com a Qualcomm e a MediaTek, e também estamos focando em integrações adicionais com outros parceiros em diferentes plataformas. Se você está procurando por isso, também oferecemos uma solução que acredito ser revolucionária para muitos dos seus aplicativos ou produtos que utilizam realidade aumentada ( AR) e síntese de voz (TTS). Para qualquer aplicação que precise de capacidade em tempo real ou que necessite de
+
+melhorias ou atualizações em tempo real nas imagens da câmera, a NPU (Unidade de Processamento Neural) proporcionará um aumento de desempenho de pelo menos 3 a 10 vezes, sendo um divisor de águas em termos de consumo de energia e desempenho para viabilizar esses casos de uso. Então, a flexibilidade se resume a termos a opção de executar o comando no próprio dispositivo ou em tempo real, e para facilitar o uso, também existem muitas opções em termos de como simplificar o processo, além de muito mais documentação e suporte disponíveis sobre isso. Tudo bem. Então, na próxima parte, vou analisar alguns números de desempenho sobre como estamos nos saindo. Até agora, demos um exemplo do que você pode fazer no nível do aplicativo, o que é possível no nível da estrutura e como você pode escalá-la.
+
+Hum, em termos da nossa cobertura, certo? Então, falando especificamente dos modelos Gemma, esta é a cobertura atual. Então, muitas vezes eles vêm ao nosso estande de demonstração e perguntam: "Ei, ok, então, sabe, vocês podem fazer isso no Android?" Mas não, nós já testamos isso em todas essas plataformas . Então, os modelos que você tem no Hugging Face podem ser testados em várias dessas plataformas. Então, no
+
+Android, iOS, Linux e também no Raspberry Pi . E aqui está uma pequena demonstração que fizemos esta manhã. Vai demorar um pouco, mas este é o nosso pequeno robô que está sentado em nossa cabine de demonstração. Então, nós fizemos isso hoje de manhã, então não está com um desempenho excelente, mas o que fizemos aqui foi mostrar a um robô um sinal dizendo para mover a antena. Então, agora as duas luzes estão piscando, então está fazendo inferência e, você sabe, você verá que está rodando em um Raspberry Pi, está rodando em uma CPU, rodando em nosso RTLM de luz.
+
+E você verá em alguns segundos que ele vai mexer as canetas Sharpie que são suas antenas. E então, é isso . Então, surgem outras perguntas como "você quer casar comigo?" e ​​coisas do gênero. Se você estiver interessado, pode experimentar lá embaixo, está lá. Ah, legal
+
+. Então, é, isso foi divertido, mas também é, precisamos trabalhar na apresentação porque a gravamos hoje de manhã. Nós também temos uma ferramenta de linha de comando (CLI), então, para aqueles que desejam realizar implantações e querem uma maneira mais fácil de fazê-lo, desenvolvemos uma nova ferramenta de linha de comando, que também está disponível em nosso site, com suporte para vinculação com Python e muito mais. Então, está no nosso site, então se alguém estiver interessado, vai encontrar lá. Em termos de desempenho, tenho alguns números rápidos para destacar: usar alguns desses novos aceleradores e unidades de processamento pode proporcionar uma grande vantagem. Em alguns casos, você pode obter um aumento de até 13 vezes
+
+. E também temos o desempenho do iOS , então estamos dando suporte a tudo isso aqui. Então, algo em torno de 56 tokens por segundo e assim por diante. A versão para desktop também está disponível, então muitos desses números podem ser encontrados na nossa página de abraços, onde os dados quantitativos já estão listados. Então, estou apenas extraindo informações de lá, então você encontrará lá. Assim, ao baixar nossos
+
+modelos, você obterá detalhes de desempenho em todas essas plataformas e na Internet das Coisas (IoT). Nosso tempo de execução também é muito superior ao do Llama, pelo menos em dispositivos móveis, onde observamos um desempenho até 35 vezes mais rápido . Em computadores desktop, o desempenho é equivalente, e em dispositivos IoT, temos um desempenho cerca de 3 vezes superior . Tudo bem. Então, me resta um minuto, então, sim, em resumo, sim, o LightRT suporta todas essas estruturas. Se você
+
+deseja importar modelos de diferentes frameworks, pode fazê-lo. Temos os modelos no Hugging Hugging Face, e também um aplicativo de galeria, que é um ótimo espaço para você experimentar. Ah, e estes estão lá, sim. Se tiverem alguma dúvida, terei prazer em respondê-las. Sim, obrigado.
+
+Sim. Sim. Sim.
+
+Certo.
+
+Sim, então nos seus telefones, como em iPhones ou Pixels, por exemplo, quando você usa o desbloqueio facial, ele geralmente já está sendo executado localmente. Então, essa mesma estrutura também é usada em dispositivos do Google. A Apple também tem o recurso de desbloqueio facial integrado ao dispositivo, que utiliza o Core ML. Então, sim, isso é possível.
+
+Normalmente, sim, você liga a câmera e pode transmitir, mas para uma câmera residencial, acho que a história será um pouco diferente . Então, talvez fosse necessário criar algum tipo de algoritmo para verificar a autenticidade e fazer algo parecido. Então, será um pouco diferente de como é implementado no telefone, mas sim, você pode executar isso no dispositivo sem problemas.
+
+Então, então, então mande uma mensagem para o seu celular, certo? Certo. Certo. O
+
+Raspberry Pi conseguiria fazer isso, certo? Sim . Você tem alguma pergunta? Sim
+
+.
+
+Você quer responder a isso?
+
+Hum, deixe-me ver. Não sei se tenho Orin aqui. Não aqui, mas acho que está estampado no nosso rosto enquanto nos abraçamos. Acho que não tenho isso aqui. Sim.
+
+Hum. Acho que temos alguns grupos trabalhando em arquiteturas do tipo "falante" e "agente pensante". Hum, eu não tenho nenhum exemplo para compartilhar, mas essa é uma forma de distribuir o quê, e há orquestração para decidir o que deve ser executado localmente e o que deve ser executado em outro lugar. Então, não tenho exemplos aqui, mas sim, existem diferentes tipos, como um agente de saúde ou um agente de coaching, por exemplo.
+
+Sim. Obrigado. Sim.
+
+Certo.
+
+Certo. Certo. Certo. Então, se pudermos, se você tiver modelos OpenWheel de preferência, como... nós
+
+podemos dar suporte a qualquer um deles. Só precisamos garantir que os arquivos estejam no formato correto e que os tamanhos sejam adequados. Se você nos disser quais modelos está considerando, devemos conseguir. Uh Uh para inscrição. Pelo menos não estes, estão no 4B.
+
+Aqui, focamos apenas no Gemma devido à sua função de rastreamento mental profundo, mas, essencialmente, nossa página sobre o rosto abraçado tem outros modelos de peso livre, e você pode usar alguns deles, que fornecemos de forma fácil, enquanto outros você pode converter e usar por conta própria. Mas sim, se você já identificou algum modelo, podemos certamente discuti-lo. Obrigado. Sim, obrigado.

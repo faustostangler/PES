@@ -1,0 +1,164 @@
+---
+video_title: "Why MLX — Prince Canuma, Neywa Labs"
+video_id: zTLJNHj0DeQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zTLJNHj0DeQ
+video_date: 2026-05-11T13:00:06+00:00
+video_description: |
+  MLX is an array framework for Apple Silicon, essentially PyTorch for your Mac, and this is a tour of what it can run: real-time vision models that describe the world around you, sub-100ms text-to-speech, speech-to-speech pipelines, omni models that take image and audio together, and video generation from a text prompt on 16GB of VRAM. A recent breakthrough called Turbo Quant cuts KV cache by 4x and gets 1M context running fully on device. The community projects include a native voice app, a robot speaking in real time with a cloned voice, and a system that chains video generations into a coherent story — all without a cloud call.
+  
+  The underlying argument: the cloud assumption doesn't hold everywhere. Not for someone in Africa on an unreliable connection. Not for a local agent that needs to stay on. Not for a robot that has to hear, see, and respond without phoning home.
+  
+  Speaker info:
+  - https://x.com/Prince_Canuma
+  - https://pl.linkedin.com/in/prince-canuma
+  
+  Timestamp
+  
+  0:00 Introduction and motivation for on-device AI
+  1:13 The origin story: Accessibility and Apple Silicon
+  2:27 Introduction to the MLX framework
+  3:30 Vision capabilities: Empowering accessibility
+  4:15 Omni models: Multimodal input support
+  5:25 Audio intelligence: Controlling computers via voice
+  6:33 Speech-to-speech and modular pipelines
+  7:59 Vision demo: Real-time image analysis
+  8:56 Background blur and object detection demo
+  9:31 Large language model demo: Running Gemma 4 locally
+  11:50 Community projects: Grounded visual reasoning
+  13:06 Video generation chains on-device
+  14:33 Native voice application showcase
+  15:39 Robotics: Real-time voice cloning and interaction
+  17:14 Q&A: Neural engine usage and CorML
+  18:18 Q&A: Monitoring performance with Mactop
+  19:34 Q&A: Available model recommendations
+  20:15 Q&A: Limitations and performance expectations
+  20:54 Q&A: Turbo Quant breakthrough and KV cache optimization
+---
+Bom dia a todos. Quantos de vocês aqui já tentaram executar IA no celular ou no MacBook? Como foi essa experiência? Foi bom? Com MLX, sim. Mais ou menos? OK. Então,
+
+esta palestra de hoje é para vocês. Vou mostrar como você pode implantar e gerenciar agentes de IA, ou até mesmo agentes de voz, se preferir, completamente no dispositivo usando o MLX. Na pauta de hoje, é claro, vamos começar com o porquê de usar dispositivos móveis. Muitos de vocês usam assinaturas de código na nuvem e muitas outras assinaturas. Hoje, quero convencê-lo a transferir parte dessa assinatura para o seu dispositivo, e assim você só precisará pagar a conta de energia. Em seguida, falarei sobre o MLX,
+
+farei uma pequena demonstração e mostrarei alguns dos incríveis projetos comunitários que vi serem construídos pela comunidade usando os projetos que demonstrarei hoje. Em 2020, algo muito mágico e também estranho aconteceu. Foi o melhor e o pior ano da minha vida. Foi uma situação estranha. Por um lado, meu pai ficou cego. E, por outro lado, a
+
+Apple lançou um dos chips mais poderosos já criados para inteligência integrada em dispositivos . E eu me lembro de ter conversado com meu pai e dito: "Ei, eu prometo que vou te fazer voltar a ler." Ele é um dos leitores mais vorazes que conheço, e perder a visão foi um dos principais fatores que o afastaram dos leitores. Ele não conseguia mais absorver informações. E eu fiz uma promessa muito estranha. Eu disse: "Ei, eu vou dar um jeito nisso
+
+, de alguma forma." E, ao mesmo tempo, isso aconteceu. E eu pensei: "Hum, computação na nuvem não resolve necessariamente todos esses casos de uso, porque meu pai mora na África e lá não temos internet tão fácil quanto aqui, ou os planos de assinatura lá são muito, muito ruins. Então, pensei que o futuro está nos dispositivos." E então, em 2023, eu estava investigando alguns projetos muito legais no GitHub e vi este projeto aqui chamado MLX. É uma
+
+estrutura de matriz para o chip Apple Silicon. Você pode imaginar o PyTorch ou o TensorFlow para o silício da Apple. E eu experimentei o exemplo inicial e pensei: "Há um futuro aqui. Há um futuro que foi prometido para todos nós, mas que grandes empresas como a Meta e o Google não conseguiram realmente entregar porque estavam tentando otimizar a escalabilidade para a nuvem." E a Apple fez algo diferente. Então,
+
+comecei a contribuir para o MLX. Três anos depois, temos mais de 1,5 milhão de downloads, mais de 4.000 modelos adaptados e trabalhamos com alguns dos melhores laboratórios de ponta para oferecer suporte imediato a todos os seus modelos de código aberto . Você pode imaginar o Gemma 4, a versão mais recente do Gemma 4, para a qual tivemos suporte desde o primeiro dia no MLX, o que significa que você pode executar todos os melhores modelos de código aberto de ponta completamente no seu MacBook, no seu iPhone ou no seu iPad. Então, vamos começar pela visão, que para ele foi a maior privação sensorial.
+
+Ele não consegue enxergar. Ele não consegue se orientar no mundo. E eu pensei: "Bem, a maneira mais fácil de fazer isso é devolvendo a visão a ele ou dando-lhe um sistema que o ajude a navegar pelo mundo." E acho que em 2020, participei de um hackathon e construí esses óculos com minha equipe que conseguiam dizer o que estava à sua frente, mas o MLX VLM se tornou a segunda versão disso, permitindo que você faça isso não apenas por meio de óculos estranhos, mas até mesmo no seu iPhone. Agora você pode simplesmente pegar seu telefone, apontá-lo para algo e conseguirá entender o que está à sua frente.
+
+E hoje em dia existem omnimodelos que vão além dos modelos de visão. Esses modelos também podem captar o quê? Áudio. Para o meu pai em particular, digitar não é uma realidade, mas ele consegue falar. E com a fala, ele pode controlar a câmera e entender o que está à sua frente, o que precisa fazer e navegar pelo mundo. Então, este é o MLX
+
+VLM. Atualmente, se você usa o LM Studio, É um dos principais motores que alimentam o LM Studio, os modelos da Liquid AI e muitos outros modelos por aí. Mas, quando você pensa em dispositivos móveis, pode pensar: "Bem, isso é estranho. Não consigo executar modelos realmente grandes." Bem, isso não é mais verdade. Agora você pode executar modelos
+
+com centenas de bilhões de parâmetros, mesmo no seu MacBook com M1 original. Há muitas melhorias feitas pela comunidade que permitem executar até mesmo os modelos maiores e mais complexos completamente no dispositivo. Tenho alguns exemplos que mostram que você pode executar modelos como o Gemma 426B em um iPhone usando o armazenamento e ainda obter velocidades razoáveis. Depois de um ou dois anos, também comecei a experimentar como poderíamos dar mais autonomia aos humanos e oferecer mais acessibilidade, especialmente àqueles que não possuem todos os sentidos. E pensei que o áudio seria a próxima etapa. Mas foi por isso e também
+
+por um motivo muito egoísta. Eu queria poder controlar meu computador sem estar na frente dele o tempo todo. E se eu... Será que eu poderia simplesmente digitar um
+
+comando e deixar o computador executá-lo? Isso se assemelha mais à visão de mundo do Jarvis, onde você pode simplesmente falar com o computador e ter ações realizadas por ele. Começamos com a conversão de texto em fala, que depois se tornou o Marvis, um dos nossos modelos personalizados que pode gerar áudio em menos de 100 milissegundos.
+
+Além disso, temos a conversão de fala em texto, que permite que você fale com o computador e tenha sua fala transcrita em tempo real. Por exemplo, se você usa o WhisperFlow ou o Super Whisper, agora pode escrever o código desse aplicativo, basta apontar o Cloud Code ou o Code X para o MLX Audio, pedir para ele compilá-lo e você o terá em cerca de 10 minutos. E também temos a conversão de fala em fala. Além das duas primeiras funcionalidades, um grande desbloqueio é a possibilidade de o computador responder por meio da fala . A conversão de fala em fala é uma das principais funcionalidades que adicionamos recentemente e também oferecemos suporte a Python e Swift. Começamos com
+
+Python porque é muito mais fácil e escala mais rápido, mas também entendemos que experiências nativas são importantes. Então, com Swift, agora você pode criar aplicativos totalmente nativos com inteligência de áudio e também de visão . E no lado direito, você tem nosso pipeline modular que, além de modelos nativos de reconhecimento de fala, permite encadear uma série de recursos diferentes para criar um pipeline de fala modular . Por exemplo, você pode escolher qual modelo de reconhecimento automático de fala, qual modelo de linguagem e qual modelo de conversão de texto em fala deseja. Dessa forma, você pode criar experiências realmente personalizadas e modulares que se adaptam a qualquer orçamento de hardware. Então, se você tiver
+
+um Apple Silicon M1 de primeira geração ou mesmo o mais recente, poderá ajustar o pipeline ao seu hardware. Mas você pode pensar: "Bem, o reconhecimento de fala ou de texto em fala não é tão bom assim. Já vi alguns vídeos e áudios de reconhecimento de fala. Talvez eu não..."
+
+Sabe? Parece bom? Posso garantir que sim, e mostrarei uma demonstração daqui a pouco. Então, vamos começar com visão computacional. E, falando em visão computacional, tenho alguns exemplos.
+
+O primeiro aqui é análise de imagem em tempo real, para que você possa entender o que está acontecendo. É um comando muito simples , e vamos simplificá-lo ainda mais . No momento, está em Python. Em breve estará em Swift. Mas se eu executar este comando, ele executará o modelo RFDetector do Roboflow. E
+
+como você pode ver, isso é completamente em tempo real. Ele está entendendo onde... E tudo isso está rodando no meu computador.
+
+Só para deixar bem claro, não sei o que aconteceria se eu desligasse a internet , mas aqui está, rodando continuamente. Posso pegar um copo, e também detectaremos isso. Claro, ele pensa que é vinho, mas eu estou sóbrio. Então, isso está rodando em tempo real, completamente no dispositivo. No meu Mac.
+
+Também pode rodar no seu celular. E este é um exemplo. Quero mostrar outro exemplo muito legal que você pode fazer com este caso de uso específico. Você já tentou...
+
+Você já tentou... quando você está em uma reunião e quer desfocar o fundo? Você sabe que o Google faz isso e etc. Então, agora,
+
+você pode fazer isso nativamente e pode incorporar esse tipo de experiência em seus produtos. Não tenho certeza se você consegue ver que está desfocando o fundo, mas está mesmo . E está detectando minha máscara em tempo real e também detectará outros objetos. Certo. Então, esse é o exemplo número um. O número dois é que você pode executar
+
+modelos realmente grandes completamente no dispositivo. Aqui está o Gemma 4, que foi lançado há uma semana, eu acho. Sim, semana passada. E com o MLX VLM, você simplesmente executa MLX VLM.chat_ui e passa o modelo que deseja, e ele deve carregar esse modelo e fornecer uma interface simples para você começar a usar o Gradio. Espera.
+
+Não tenho certeza. O que está acontecendo? Esse é o problema com demos. Às vezes, os deuses não querem que a demo funcione. Só um segundo.
+
+Ok, não tenho certeza do que está acontecendo. Hum, ok. Bem, preciso fechar algo rapidamente. Hum, então, ok, parou. Vamos começar. Vamos tentar de novo.
+
+Ok. Está tentando baixar alguns arquivos de modelo, mas agora vou desligar a internet novamente só para mostrar que isso não está rodando completamente no dispositivo. Então, agora temos uma janela de bate-papo. Não sei se vocês conseguem ver ou se preciso dar mais zoom. E podemos escolher qualquer imagem para analisar. Deixe-me ver uma bem simples
+
+. Ok. Ok, aqui. Descreva esta imagem em detalhes. Então, aqui está. Está dizendo que é o
+
+perfil de um homem chamado Príncipe Kanuma e está coletando todos os detalhes, como minha biografia e etc. E tudo isso está rodando no dispositivo. Hum, está usando a GPU deste dispositivo específico. Então, esta máquina específica tem tipo 96 GB de VRAM. Então, eu consigo executar todos os modelos que mostrei até agora em tempo real, todos eles. Ao
+
+mesmo tempo. Então, esta é a demonstração número dois. Vamos voltar agora. Eu queria mostrar o áudio, mas parece que havia algo na branch Swift que eu não consegui resolver esta manhã. Mas, para fins de exemplo, vou mostrar alguns casos de uso da comunidade bem interessantes .
+
+Temos um aqui, de um dos criadores. Eu não incluí este caso de uso específico, mas mostrarei um vídeo daqui a pouco. Então, deixe-me tentar colocar em tela cheia para que você possa ver melhor. Um segundo. Ok . Então, estamos de volta.
+
+O primeiro exemplo é o raciocínio visual fundamentado . Você pode usar o Gemma, o modelo que acabei de mostrar, o detector de RF, ou qualquer um dos nossos modelos de percepção, e pode criar experiências realmente interessantes como esta. Você pode detectar todos os fogos. Você pode pedir para detectar itens específicos no vídeo. E tudo isso está funcionando. para
+
+acontecer completamente no dispositivo, sem usar a internet. E agora você pode ter, por exemplo, sistemas de segurança que funcionam completamente em um MacBook na sua casa, e você pode analisar até mesmo a gravação da sua câmera veicular. Eu tenho um vídeo de câmera veicular e já tive algumas experiências muito legais, ou melhor , nem tão legais assim. E eu costumo usar esse tipo de sistema que eu construí para analisar as gravações depois. E aí temos o segundo exemplo.
+
+Este é mais uma menção honrosa, que são desenhos animados gerados completamente no dispositivo usando o MLX Video, um dos projetos mais recentes que estou desenvolvendo. E aqui está um dos vídeos mais legais, gerado por um dos nossos usuários. Tudo foi gerado no dispositivo com um simples comando de texto.
+
+Hein? Então,
+
+ele fez algo muito interessante: ele encadeou isso. Não é como se ele tivesse gerado um vídeo inteiro de uma vez. O que ele fez foi encadear um sistema que pode gerar continuamente a partir do vídeo. Assim, você pode criar uma história coesa, mesmo que não seja uma única tomada. E esse sistema específico pode rodar até mesmo em um MacBook com 16 GB de RAM de vídeo.
+
+Então, sim, muito legal. Ele tem muito mais no Twitter. Vou colocar o link dele, vou compartilhar no meu Twitter. Então, se você conferir meu Twitter, vou compartilhar todos esses vídeos. E acho que um dos mais recentes que vou mostrar, mas antes disso, deixe-me mostrar um aqui de um dos nossos participantes aqui no salão. Então, se eu for para o drive,
+
+deixe-me ver. E meu drive, ok, New Labs. Você tem aqui. Este é, na verdade, feito por este senhor aqui na frente, Adrian. Ele criou este aplicativo chamado locally.
+
+E usando áudio MLX e TTS Marvis, ele deu a esse aplicativo específico a capacidade de responder aos seus usuários. Era uma voz forte. Você pode aumentar o volume? O Chatsubo era um bar para expatriados profissionais. Você podia beber lá por uma semana e nunca ouvir duas palavras em japonês.
+
+Certo. Então, esse é um dos exemplos onde você pode realmente criar experiências nativas muito bonitas. E se você tiver um bom toque de design, uma aplicação matadora também. E, finalmente, acho que esta é uma das partes mais empolgantes do que eu acho que estamos vendo a seguir com IA em dispositivos, que é a robótica. Então, no ano passado, adquiri um robô chamado Richie Mini.
+
+E a maneira como eu alimento meu Richie Mini em particular é usando MLX Audio e MLX Vision para dar a ele todas as capacidades de percepção usando sua câmera e entrada de áudio. Então, aqui está. Ele também está fazendo clonagem de voz em tempo real da voz original do...
+
+como se chama? A voz do Homem de Ferro, Jarvis . Então, espero que vocês consigam ouvir. Ei, Jarvis.
+
+Olá. Que bom te ver. Como vai? Então, você pode encadear e construir muitos aplicativos realmente legais. Este é apenas o começo. E espero que no futuro,
+
+vocês possam entender, ou melhor, a partir de hoje, que podem construir agentes que podem ouvir, ver e soar exatamente como você ou um de seus entes queridos, rodando em seu iPhone, iPad, Mac ou até mesmo em seu robô. Obrigado.
+
+Perguntas? Você já sabe que a Apple está promovendo bastante o Neural Engine? Sim. E eu também testei. Mas se você observar o uso do Neural Engine, é sempre zero. Essa é uma ótima
+
+pergunta. Então, o MLX usa a GPU, não o Neural Engine. Para habilitar o Neural Engine, você precisa do Core ML. E agora, o Core ML não funciona muito bem, não é uma experiência fácil para os desenvolvedores. Espero que até a WWDC, a Apple resolva os problemas com a API privada . E quando isso acontecer, temos alguns
+
+projetos internos que permitem executar inferência híbrida em ambas as plataformas. Sim, será possível. Mas também achamos que eles podem estar mudando o Neural Engine e colocando alguns componentes na GPU. Por exemplo, na série M5, você pode ver que ela já possui alguns componentes. E nós simplesmente não sabemos para onde eles estão indo, mas é empolgante. Vamos esperar pela WWDC.
+
+Perguntas? Sim? Existe alguma ferramenta para ver o uso da GPU em tempo real? Sim, a ferramenta mais fácil para começar é o Mactop. Se você executar o Mactop, ele mostrará praticamente todo o seu uso. Isso foi feito pelo Carson.
+
+Ele é um cara muito legal. Então, você pode ver aqui praticamente tudo o que está acontecendo: GPU, CPU. E você pode sobrepor isso na tela do seu dispositivo. E se executarmos inferência, digamos que eu abra uma nova janela e encontre o comando, ok. Então, se eu executar inferência aqui, deixe-me digitar "four bit" aqui.
+
+E ok. Você verá que o uso da GPU começará a aumentar. E se eu disser " hi
+
+are you" , você verá que o uso da GPU já está aumentando. Esta é uma das maneiras mais fáceis que encontrei para monitorar o desempenho. Alguma outra pergunta? Sim. Você também mencionou modelos. Sim.
+
+Qual você recomendaria? Você tem algumas opções. A primeira é o Gemma 4. A versão "e". Eles têm o Gemma 4 com o número "e" ou a letra " e" e depois um número "e4" ou "e2". Esses são
+
+apenas modelos. Eles aceitam imagem, áudio e texto como entrada, ou qualquer variação dos três. E também existe o Qwen 3 Omni, que é um modelo muito maior, com cerca de 30 bilhões de parâmetros, mas também pode ser executado em dispositivos. Esses são os principais que eu conheço. Quais são os limites?
+
+Quais são as principais limitações desses modelos no momento? Uma das principais limitações, eu acho, depende do seu caso de uso específico. Há certas coisas que os modelos simplesmente não conseguem fazer. Você não vai obter o desempenho do Cloud 3 ou do Opus 4.4.6
+
+hoje, mas talvez em 6 meses esses modelos de código aberto tenham esse desempenho. Então, a experiência deve ser ajustada às suas expectativas de desempenho. Essa é a única coisa que eu diria. Fora isso, não vejo nenhuma limitação. Você pode executar inferência em centenas de imagens em paralelo. Você pode executar inferência em
+
+muitos documentos e agora você tem contexto. de até um milhão graças à nossa recente descoberta com o Turbo Quant. Então agora você pode servir até 1 milhão de contextos completamente no dispositivo, dependendo do tamanho do modelo e do seu hardware, mas você já pode fazer isso hoje. Acho que não sei os detalhes específicos , tipo, você precisa...
+
+Sim.
+
+Hum.
+
+Então, eu fui uma das primeiras pessoas no mundo a implementar o Turbo Quant publicamente. Cerca de 30 minutos depois da publicação do artigo , eu já o tinha implementado. E fiz esse tweet por volta das 3h da manhã. Eu não sabia que ia viralizar tanto. Mas, se você for ao meu perfil e pesquisar por Turbo Quant, você vai ver essa postagem específica aqui. Isso foi por volta de
+
+25 de março, praticamente no mesmo dia, mas era meia-noite e teve cerca de 700.000 visualizações por causa disso. Então, o Turbo Quant funciona. Por exemplo, o modelo completo ocupa quase 1 GB de cache KV ou RAM e, usando o Turbo Quant, você pode reduzir isso em 4 vezes. Sim.
+
+Sim, veja, qualidade similar. Como você pode ver, quando vejo " correspondência exata", significa que o desempenho das respostas corresponde ao do modelo completo. E eu também divulguei os resultados e o desempenho completos. Por exemplo, aqui, quando você chega a cerca de 300.000 contextos, o desempenho quase dobra em termos de taxa de transferência. Então, sim.
+
+Sim. Essa é uma das muitas coisas que tento fazer para permitir que o dispositivo vá ainda mais longe. Sim. Mais alguma pergunta? Certo, obrigado.
+
+Ah.

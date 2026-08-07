@@ -1,0 +1,310 @@
+---
+video_title: "AI Didn’t Kill the Web, It Moved in! — Olivier Leplus (AWS) & Yohan Lasorsa (Microsoft)"
+video_id: XZ0boOjtbNo
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XZ0boOjtbNo
+video_date: 2026-04-10T00:24:17+00:00
+video_description: |
+  In 2026, AI didn't replace the web. It became part of it. Your browser now ships a built-in MCP server. Chrome DevTools debug your app with AI. Native Web APIs let you summarize, translate, and prompt right from your frontend code. Meanwhile, the web feeds agents right back through standards like LLMs.txt and MCP tools that make sure models always have the right documentation. AI builds the web. The web feeds AI. And now, AI lives inside the browser itself. In this talk, we'll follow a feature from idea to production and demo this new symbiosis in action: coding agents, AI-powered debugging in Chrome devtools, Web AI APIs, WebMCP, and more. Because your next website won't just be built with AI. It will be built for humans and AI agents alike. AI isn't just for Python folks. The web is AI's new home.
+---
+Olá pessoal, sejam bem-vindos a esta sessão onde discutiremos um pouco sobre a web e como as recentes inovações em IA mudaram o nosso impacto como desenvolvedores web. Então, vamos dedicar alguns instantes para uma breve apresentação. Então, meu nome é Yohan. Eu trabalho como defensor de desenvolvedores na Microsoft. Eu também sou um GDE para Angular e hoje estou com o Olivier.
+
+Sim, eu sou Olivier, meu defensor de desenvolvedores na AWS e também sou um GDE, mas desta vez na web. Portanto, nenhuma surpresa aqui. Vamos falar sobre IA e, mais especificamente, sobre como, nos últimos 6 meses, a crescente qualidade dos modelos mudou as regras do jogo para os desenvolvedores web. E não se trata apenas dos modelos, mas também de todas as integrações envolvidas . Assim, a IA está presente em todas as etapas do ciclo de vida de nossos aplicativos web.
+
+Para desenvolvimento, claro, mas também para depuração, melhoria de desempenho e integração nativa nos navegadores. E mesmo completando o ciclo, vemos cada vez mais agentes usando nossos aplicativos da web juntamente com humanos. Isso também significa que temos que adaptar nossos aplicativos web para essa realidade. Assim, o plano para hoje é abordar alguns dos avanços mais recentes em todas essas diferentes etapas. Programação, claro, mas também depuração e otimização de nossos aplicativos usando as novas APIs de IA locais que começaram a aparecer em nossos navegadores. E, por fim, Olivier
+
+nos mostrará como atualizar seus aplicativos da web para a nova era dos aplicativos da web com agentes. Para o teaser. Então, estamos em 2026. A questão não é mais se consigo programar meu aplicativo web com IA, mas sim como obter os melhores resultados de agentes de programação com IA. De vez em quando, ainda ouço algumas pessoas argumentando que não conseguem obter bons resultados com IA.
+
+Ou nunca fica exatamente como eles querem quando pedem aos seus agentes de programação. A verdade é que hoje em dia é principalmente uma questão de habilidades. Mas não me interpretem mal. É aquele que você instala e usa com seu agente de código favorito. Então, caso você nunca os tenha usado, as skills são plugins leves descritos em formato de texto, baseados em uma especificação aberta e suportados pela maioria dos agentes de codificação atualmente.
+
+Basicamente, é útil para adicionar conhecimento especializado sobre um assunto muito específico relacionado ao seu caso de uso, ao que você está desenvolvendo. Novas funcionalidades que não estão integradas aos seus agentes. Veremos mais sobre isso, especialmente se você precisar personalizá-lo. E algo muito importante nesta era de agentes de código agéticos é a possibilidade de criar fluxos de trabalho repetíveis. Então, vamos ver agora uma demonstração rápida do que isso significa para você.
+
+Então, vou migrar para o meu VS Code. Então, vamos começar com algo bem simples. Na verdade, antes de simplesmente mover o código, vamos mostrar um aplicativo de exemplo que criamos e que usaremos na maior parte da nossa demonstração de hoje. Então, é o Sena. É o nome de um rio francês.
+
+Só para dar um exemplo, como um site de comércio eletrônico . Aqui temos algo como uma página de produto com uma descrição, algumas avaliações e a possibilidade de adicionar suas próprias avaliações. Assim como ter exemplos para todas as nossas demonstrações. E neste produto, gostaria de adicionar algo novo. Então, vamos tentar um comando bem simples. O que estou pedindo é
+
+apenas para que verifiquem os problemas em aberto no repositório e para que meus agentes de programação implementem o primeiro deles. Portanto, isso levará bastante tempo. Então, enquanto isso, terei que mostrar a vocês o que acontecerá atrás da madeira. Como você pode ver, eu não perguntei especificamente o que usar. Você pode ver que ele já está tentando executar a CLI do GitHub. Vamos então
+
+mostrar o GitHub para vocês. Basicamente, este é o repositório para esta aplicação. Criei uma solicitação para adicionar uma página de contato. Então, estou apenas descrevendo o que quero ver nesta página de contato do meu site. Basicamente, quando peço para implementar a primeira issue aberta, o sistema usa a CLI do GitHub para obter essas informações e agora está tentando implementá-las.
+
+Então, eu mencionei habilidades. Então, se eu olhar no meu repositório dentro da pasta .agent/skills , você pode ver que eu tenho alguns. E você já viu que ele usou a CLI do GitHub para acessar os problemas. Então, essa é a habilidade que implementa isso. Algo que eu
+
+já sei que já está disponível. Se você analisar o arquivo skill.md, verá que cada habilidade tem um nome que basicamente corresponde ao nome da pasta. Possui uma descrição. Essa é a parte importante, onde basicamente as habilidades nem sempre estão incorporadas aos seus agentes de codificação. Basicamente, ele é
+
+selecionado dependendo do que for necessário para executar a tarefa atual. Portanto, a descrição serve para explicar aos seus agentes de código quando ela é útil e quando seus agentes de código precisam obter as informações da habilidade e inseri-las em seu contexto. E então você tem basicamente as informações da habilidade, explicando o que a CLI do GitHub faz, com muitos exemplos de comandos e dizendo ao seu agente como usá-los. Como você pode ver, tenho algumas habilidades listadas aqui no meu repositório. Eu tenho, por exemplo, uma que permite fazer um design de front-end melhor.
+
+Algo importante para nós, como desenvolvedores web. Tenho uma que permite usar a CLI do Playwright. Por exemplo, você pode ver mais tarde que ele gravará um vídeo da funcionalidade, se tudo correr bem. Eu também criei algumas habilidades personalizadas usando a ferramenta de criação de habilidades. Sim, você tem uma habilidade que eu posso te ajudar a personalizar e desenvolver. E,
+
+na verdade, eu já construí dois. Uma delas, chamada túnel público, que pode me enviar o que eu quero, é basicamente quando um recurso é implementado pelo agente de codificação; eu quero poder testá-lo no meu smartphone. E para conseguir fazer isso, preciso de uma espécie de túnel local entre minha máquina de desenvolvimento e o smartphone. E para facilitar as coisas, quero poder receber o URL diretamente no meu smartphone. Então, eu desenvolvi essa skill de envio para o Telegram e pedi aos agentes que me enviassem uma mensagem com o URL para que eu pudesse testar o aplicativo diretamente no meu smartphone.
+
+Então, esse é o meu fluxo de trabalho e tudo funciona por meio de habilidades. Basicamente, o que eu explico está descrito aqui no meu arquivo agents.md, que agora é um arquivo padrão usado por quase todos os agentes de codificação. E eu simplesmente configurei para que, sempre que o agente fizer uma nova alteração no site, ele grave um vídeo curto. Então, ele usará a CLI do Playwright para fazer isso, executará o servidor de desenvolvimento, criará um túnel local e me enviará a URL do Telegram.
+
+Basicamente, não feche a issue no GitHub até que eu confirme que está concluída. Então, ainda está funcionando. Posso ver que o Playwright CLI já foi executado. A próxima etapa é a construção do túnel. Então, mostrarei a notificação quando estiver funcionando.
+
+Voltando aos slides agora mesmo. Mostrarei a você quando terminar. Agora, vamos falar de Olivier. Deixo-te a oportunidade de te mostrar o próximo passo no desenvolvimento com agentes. Sim, vamos ver como podemos usar agentes para desenvolver nossa aplicação. Então,
+
+agora mesmo [limpa a garganta], a maioria de vocês já faz isso. Você pode escrever testes para testar sua aplicação. Ou você pode fazer o que muita gente faz, sabe, entrar nos sites, usar as ferramentas de desenvolvedor e tentar fazer funcionar e tudo mais. A questão é que, no Chrome, as ferramentas de desenvolvedor do Chrome são incríveis. Há muitas coisas que você pode fazer. Você pode acessar o console para
+
+problemas de animação, layout do computador e obter o desempenho. Você tem acesso a todas essas ferramentas aqui. Seria incrível se existisse um MCP para isso. Como um agente pode fazer. É exatamente isso que o Chrome MCP faz. Se você acessar o
+
+MCP (Modelo de Configuração de Ferramentas) da ferramenta de desenvolvedor do Chrome no GitHub, encontrará informações sobre como instalá-la. Basicamente, um servidor MCP é um servidor que hospeda ferramentas que podem ser chamadas pelo seu agente. E é muito fácil de configurar em qualquer IDE, qualquer CLI, qualquer ferramenta que você use para seus agentes. Portanto, é isso que você precisa inserir para instalar o MCP das ferramentas de desenvolvedor do Chrome . Então, foi isso que eu fiz aqui. Se
+
+eu acessar meu arquivo MCP.json, terei meu MCP da ferramenta de desenvolvedor do Chrome. E você pode ver isso aqui no meu IDE, eu tenho esse recurso e ele tem acesso a todas essas ferramentas. Então, tudo o que eu consigo fazer nas ferramentas de desenvolvedor do Chrome ou no navegador, eu consigo fazer aqui. Assim como clicar, preencher formulário, obter mensagem no console, a solicitação de rede, a auditoria do Lighthouse, navegar na página, tirar uma captura de tela, tudo. Redimensione a página e
+
+tudo mais. Então, posso fazer tudo daqui . Então, digamos, por exemplo, que eu tenho meu agente aqui. Se eu abrir a janela do meu agente e perguntar: "Ok, sabe de uma coisa? Você pode executar o aplicativo e ver como a página principal funciona no navegador Chrome?" Então, se eu fizer
+
+isso e você abrir minha ferramenta de desenvolvimento aqui, se eu fizer isso, ok, ela vai ver o agent.md e tudo mais. Mas aí ele vai dizer: "Certo, para executar o aplicativo, preciso iniciá-lo." Então, ele vai dar uma olhada no meu arquivo package.json. É como um motor básico
+
+fazendo seu trabalho. Está inaugurando um novo terminal. Está executando o aplicativo. E agora, para testar, será necessário abrir o Chrome. E é nesse momento que a ferramenta NCP será acionada. Então, vai aparecer a
+
+mensagem: "Ok, posso navegar até uma página. Posso listar as páginas." Eu sei que está abrindo o Chrome. Não toquei em nada. É possível ver que parece ser o Chrome sendo controlado por um software de teste automático.
+
+Então, agora o Chrome foi aberto e vai ser testado. Então eu posso tanto executar quanto testar. Agora vou ver se consigo tirar algumas capturas de tela. Então, o que eu pedi foi muito, muito básico. Acabei de perguntar: "Você pode testar a página principal?" Então, vai ser para lá. Está
+
+tirando uma captura de tela e listando o resultado. Então você poderá fazer tudo o que quiser. Você pode dizer: "Ok, sabe de uma coisa? Quero fazer outra coisa. Quero... Ok,
+
+vamos acabar com isso. Porque não preciso mais disso aqui." Posso dizer: "Sabe de uma coisa? Vamos abrir uma nova janela." Diga: "Sabe de uma coisa? Execute
+
+o aplicativo em 3G, 2G e em uma rede de internet rápida e veja como o desempenho do aplicativo se comporta e onde ele fica mais lento." Então, o objetivo agora é controlar as Ferramentas de Desenvolvedor do Chrome, incluindo as de rede e de desempenho. Vamos ver. Novamente, este prompt é muito básico. Você pode ser muito mais específico.
+
+Vamos dar um minuto para ver o que vai acontecer. Às vezes, mesmo sem eu pedir, ele gera capturas de tela ou arquivos JSON com relatórios. Ok . Ok, está iniciando o aplicativo. Ok, está navegando nele.
+
+E agora você pode ver que... Ok, teste um. Ele vai usar um "não" ou "verdadeiro" para iniciar o rastreamento de desempenho e testá-lo em uma internet rápida sem limitação de velocidade. Isso é bom.
+
+Capturou a linha de base. Agora, está fazendo uma análise de desempenho. Você pode ver que, toda vez que a ferramenta é chamada, ela é... Os
+
+detalhes. Então, agora ele testa em 3G rápido. Lembre-se, eu pedi três testes, três velocidades de conexão diferentes. Vamos ver. Aguarde mais um minuto.
+
+Ele emula o rastreamento de desempenho. Ok, ele tem. Análise de desempenho. E então ele fará o último. Espero que sim.
+
+Ok. Ok, vamos ver se ele vai gerar um relatório de teste no final. Às vezes gera, às vezes não. Depende. Eu não pedi um, então vamos ver o que ele gerou.
+
+Ok. E eu ainda tenho minha janela aqui. Não abre as Ferramentas de Desenvolvedor do Chrome, mas está usando a ferramenta em segundo plano. Fazendo alguma análise de desempenho. Ok.
+
+Imagem LSP e tamanho Stanley. Ok. Ok, vamos dar alguns segundos para ver o que está fazendo. Está verificando as imagens. Então, ele deve ter notado que há algo que podemos otimizar na imagem, eu acho. Então, está
+
+verificando o tamanho. Hum, está analisando o código. Ok. Normalmente, não chega a analisar o código dessa forma. Então, vou esperar uns 15 segundos. Se
+
+continuar... Ok, agora terminou. Ok, você pode ver que analisou tudo e pode te dar relatórios como: "Ok, para cada velocidade de conexão com a internet, tenho o LCP, o CLS, a latência do caminho crítico e a economia de bloqueio aleatório." E
+
+então dá algumas diretrizes. Por exemplo, a imagem do fone de ouvido está muito grande, então não funciona bem com 3G. Está te dando maneiras de melhorar. Então, você pode definir uma prioridade alta. Você tem o tamanho do CSS e alguns problemas no JavaScript. Você pode adicionar um
+
+pré-carregamento para algum JSON. Então, você tem todas essas opções para experimentar e melhorar seu aplicativo. Yann, você tem alguma novidade sobre sua notificação e demonstração? Vamos dar uma olhada. Sim, eu tenho. Não recebi nada. Podemos
+
+verificar. Às vezes o agente trava. Ele falhou porque não conseguiu encontrar o token. Sim, eu tenho um arquivo de dados. Não sei por que às vezes ele falha em encontrá-lo. Eu
+
+tenho um arquivo de dados. Use-o e deixe-me tentar. Sim. Às vezes os agentes não funcionam sempre, especialmente durante demonstrações. Você sabe disso.
+
+O alpha é para o seu aplicativo de mensagens, tipo... Sim, para que ele saiba qual canal usar para me enviar a mensagem do Telegram. Então, sim. Ok. Bem, vamos
+
+continuar e voltaremos a isso mais tarde, ok? Ah, e lá se foi a explicação. Deixe-me tentar mostrar para você. Sim, eu recebi a notificação. Sim, eu recebi a notificação no meu smartphone. Então, sim, vamos abrir para que
+
+você possa dar uma olhada. Sim, você pode ver, tentando focar ali. Sim, você pode ver aqui a prévia do vídeo mostrando o recurso que foi gravado. Vou abrir o link. Então, podemos Veja como ficou a página de contato. E sim,
+
+parece uma ótima página de contato. Então, sim, também posso mostrá-la para você, já que está rodando aqui. Então, você pode ver que agora temos esta página de contato. Então, sim, basicamente, terminei e posso testá-la e dar uma olhada no vídeo. Este foi um recurso muito simples, mas dá para ver como pode ser útil para recursos mais complexos e, basicamente, permitir que você revise tudo diretamente do seu smartphone, mesmo sem precisar executar nada, como no caso de assistir ao vídeo apenas para testá-lo.
+
+Se você quiser enviar, eu enviei para mim mesmo usando o Telegram, mas você pode, por exemplo, usar o Slack para enviar para seus colegas de trabalho ou qualquer outra pessoa que você imaginar. Faz parte do seu fluxo de trabalho. Então, sim, é realmente incrível. Passando para a próxima coisa legal. Vimos que com o Olivier, suas ferramentas de desenvolvimento podem ser controladas diretamente por agentes através do MCP. Mas
+
+você sabia que também pode usar IA diretamente nas ferramentas de desenvolvedor do seu navegador? Você pode obter todos os tipos de informações diretamente de lá, do seu navegador, para ajudar a diagnosticar e corrigir problemas. E, em vez de apenas descrever tudo o que você pode fazer, deixe-me mostrar na prática. Então, voltando ao site, vamos para a página "Sobre", por exemplo. Vamos abrir as ferramentas de desenvolvedor.
+
+Podemos ver que temos um erro. Primeiro, se você quiser ter acesso a todos os novos recursos úteis de IA, precisa ir às configurações das ferramentas de desenvolvedor e garantir que, na guia "Inovação em IA" , tudo esteja habilitado. Não está habilitado por padrão. Você precisa fazer isso manualmente se quiser obter essa assistência de IA. E depois de fazer isso, por exemplo, aqui você pode ver que tenho um erro comum no console dizendo que algumas solicitações foram bloqueadas pela política CORS. E você pode ver este
+
+pequeno ícone ali. Posso clicar diretamente nele para obter uma explicação, usando IA, sobre esse erro e até mesmo uma sugestão de correção, explicando por que esse erro ocorre e o que fazer para resolvê-lo. Então, diretamente no seu console, você não precisa ficar copiando e colando erros usando seus mecanismos de codificação ou ChatGPT, dependendo do que você estiver usando. Está tudo lá, dentro das suas ferramentas de desenvolvedor. E sim, você pode ver que é bem completo e oferece todos os tipos de dicas para tentar corrigir o problema. Então, vamos
+
+ver onde mais ele pode ser útil, por exemplo, na aba de rede. Vamos recarregar a página. Você pode ver uma das solicitações com falha que tem erros 400. Novamente, temos este ícone de depuração com IA. Então, vou clicar nele e posso ver que minha solicitação com falha foi adicionada a esta interface de chat. E eu posso, por exemplo,
+
+perguntar por que... A requisição falhou? Então, eu tenho uma espécie de chat integrado com IA que pode acessar diretamente o contexto do meu aplicativo em execução, diretamente das ferramentas de desenvolvedor.
+
+Então, novamente, ele está analisando por que essa requisição está falhando e me dando algumas dicas sobre o que eu posso tentar fazer para corrigir isso. Ok, me dizendo que é uma requisição inválida, provavelmente porque é um endpoint antigo que não existe mais . Então, sim, eu acho isso muito legal, você pode fazer isso diretamente das ferramentas de desenvolvedor dentro do seu navegador. Pode fazer todo tipo de coisa interessante, como, por exemplo, vou para o GitHub. Isso será mais significativo lá. Vou para a
+
+aba de desempenho. Então, desta vez, vou clicar em atualizar . Assim, ele coletará algumas informações sobre a página da web, como quanto tempo leva para executar as diferentes coisas e algumas métricas sobre ela. Então, eu Tenho este rastreamento. É um pouco semelhante ao teste que o Olivier fez anteriormente com o servidor da ferramenta de desenvolvimento MCP.
+
+Por exemplo, posso abrir a análise do LCP. E, novamente, você pode ver que tenho este botão "Perguntar à IA" . Posso usar o rastreamento que acabei de gravar no site do GitHub para me ajudar a otimizar minha pontuação LCP. Ao executá-lo, ele analisará todo o rastreamento do site e me dirá: "Ok, o LCP, o maior Contentful Paint para esta página está ok desta vez." E basicamente o que está causando a maior parte do atraso, porque são algumas coisas...
+
+Ah, não consigo ver... investigar problemas de bloqueio de renderização. Às vezes é mais detalhado, às vezes não. Novamente, isto
+
+é IA. Então, sim. Pode me dar algumas dicas sobre o que preciso otimizar. O tempo todo me dizia que era principalmente por causa do CSS e sim, você pode Obtenha algumas dicas se você não tiver certeza de por onde começar, por exemplo, para otimizar o desempenho do seu site. Mas ele pode fazer mais do que isso. Vamos
+
+voltar ao nosso site. Desta vez, vou selecionar os elementos do Send. Estou no CSS. Você pode ver aqui, este é o H1. Então, aqui estou navegando pelo DOM e você pode ver novamente que tenho este botão de depuração do AI.
+
+Selecionando-o, você pode ver que ele adicionou este elemento H1 específico ao contexto. E eu posso pedir, por exemplo, digamos que eu queira mudar este título sem graça e torná-lo um gradiente bonito. Então, vou apenas dizer para o CSS do texto do Send ter um gradiente bonito e quero que esteja em linha com o tema de cores existente, porque já estou usando algumas variáveis ​​CSS. Então, sim. Vamos continuar. Concordo que
+
+a página pode ser modificado. E sim, você pode ver que tenho gradientes muito bonitos, em harmonia com todas as outras cores do meu site. E você pode ver algo ainda mais interessante, porque a partir daí eu modifiquei o CSS ao vivo na página da web, mas o que seria mais útil é modificar diretamente o código-fonte, porque aqui estou fazendo apenas alterações não permanentes. Então, você pode ver que tenho esta aba de alterações não salvas com o CSS que foi adicionado à minha página da web. Posso tentar aplicar essa alteração diretamente ao meu código usando "Aplicar ao espaço de trabalho". Basicamente, o que ele
+
+pedirá é para adicionar sua pasta de origem às ferramentas de desenvolvedor. E isso permitirá que as ferramentas de desenvolvedor apliquem diretamente essa modificação de CSS de volta ao seu arquivo de código-fonte. Assim, agora não só é possível fazer modificações ao vivo no CSS e JavaScript do DOM, mas também aplicar essas alterações de volta. voltando ao seu código-fonte original. Então, eu acho isso muito interessante, especialmente porque, como desenvolvedor web, eu costumo brigar com CSS na maior parte do tempo. Certo, Olivier?
+
+[risos] Sim, e depois de fazer várias alterações nas ferramentas de desenvolvedor do Chrome, você não se lembra qual linha copiou e colou no seu arquivo CSS e pensa: "Não consigo encontrar de novo", porque a página atualiza de qualquer jeito. Todos nós já passamos por isso. Então, sim. Achei isso muito interessante. Além disso, reduz a necessidade de ficar indo e voltando entre o navegador ao depurar ou ajustar o CSS e as ferramentas de codificação, porque basicamente você tem tudo em um só lugar.
+
+Então, agora, ok, vimos como codificar e como depurar com IA. Vamos ver como podemos incluir IA em nossa aplicação. Você pode ter usado algumas APIs de IA diretamente de um provedor de IA ou de um provedor de nuvem. Isso requer fazer algumas chamadas na internet, geralmente pagar por isso, usar alguns tokens e tudo mais. A boa notícia é que existe uma nova API chamada Web AI API que pode ser acessada diretamente pelo navegador. Ela
+
+ainda está em fase de rascunho, acredito que sob a supervisão do W3C. Mas você pode ver que temos várias APIs diferentes. Temos a API de resumo, a API de escrita e reescrita, a API de prompt. Basicamente, vamos ver como podemos usá-la no navegador. O objetivo é ter um modelo rodando diretamente na nossa máquina, no navegador.
+
+Aqui, tenho um aplicativo que você já viu. Tenho algumas avaliações e posso adicionar mais avaliações. Você já deve ter visto em alguns sites um resumo de todas as avaliações. Vamos ver como podemos implementar isso. Vou mostrar meu código.
+
+Tenho três APIs diferentes. Vamos fazer algumas demonstrações . A primeira é o resumo. Quero que, ao clicar neste botão, ele me mostre um resumo de todas as avaliações aqui. No momento, ele não está fazendo nada além de chamar esta função.
+
+Vamos começar verificando, porque nem todos os navegadores têm essa API ainda. Então, vamos ver se o meu navegador a possui. Em seguida, vou criar um objeto de resumo, como ` summarizer.create`. Depois, vou definir algumas opções.
+
+As opções que estou definindo são: `type` . O tipo aqui é `keypoint`, que é o padrão. Se você consultar a documentação, verá que existem diferentes tipos disponíveis: `TLDR`, `teaser`, ` keypoints` e `headline`. Para cada um deles, você pode definir um comprimento diferente e ver o tamanho da frase ou das palavras. Assim, você pode decidir qual usar. Estou definindo o idioma de entrada esperado
+
+para as minhas avaliações e o idioma de saída esperado. linguagem. Você pode ver que isso é um array, então você pode ter várias entradas e saídas diferentes . Ok, vou dar o contexto. Vou dizer algo como: "Ok, estas são avaliações de um artigo que você fornece como um JSON formatado em string." "Me dê
+
+um resumo do que as pessoas pensam." Então eu vou... opa.
+
+Vou te dar um monitor. Então, essa função `monitor` está aqui para monitorar o download do modelo. O funcionamento dessa API é o seguinte: ela vai baixar o modelo para o seu computador. Vai baixar apenas uma vez, o que é bom porque ocupa 4 GB agora. Mas quando terminar, estará pronto para todos os sites.
+
+Se o seu computador precisar de armazenamento, como o seu, se estiver com pouco espaço, o Chrome vai excluir o arquivo, mas por padrão ele vai mantê- lo. Então, eu tenho esse monitor e o que vou fazer é chamá-lo. Vou usar ` summarize`, passando os dados e retornando o `summarize`. Vou retornar a resposta, como vou fazer aqui . Certo . Agora vamos ver o que
+
+temos aqui. Voltando aqui, vou clicar em `summarize` e agora... O que está acontecendo é que, bem, estou dizendo algo sobre o modelo.
+
+Então, estou chamando minha função novamente. E devo receber o resultado em um segundo. Como você pode ver, o modelo já foi baixado para mim. Então, ele vai de 0% a 100% diretamente porque não preciso baixá-lo novamente. Aqui você pode ver um resumo de todas as minhas avaliações. Os clientes estão
+
+elogiando muito o fone de ouvido pela qualidade do som e duração da bateria. Blá blá blá blá blá . Algumas coisas aqui. Para funcionar, você precisa ativar algumas flags no Chrome. Basta pesquisar por "AI" e você encontrará. Por
+
+exemplo, Gemini, que tem a API de prompt, a API de revisão, a API de escrita, a API de reescrita e tudo mais. Basta habilitá-las para poder usá-las no seu aplicativo. Aqui você também tem esses recursos internos do dispositivo no Chrome. Você pode ver algumas coisas. Você pode carregar um modelo ou carregar o modelo de som e... Então você pode
+
+simplesmente interagir com ele. Você pode adicionar imagens, áudio, brincar com o top K, temperatura. Você pode ver todos os registros de eventos. Então, estes são os registros de eventos do que acabei de fazer com o resumo. Você pode ver o status do modelo, quantos tokens foram usados ​​para cada uma das chamadas da API. Então, sim, esta
+
+é uma boa maneira de depurar. Agora, vamos ver outra API. Vou ver o revisor ortográfico. Então, salvar. Verificando se tenho acesso à API.
+
+Estou criando um revisor ortográfico. O monitoramento é o mesmo. Estou apenas monitorando se ele baixa o modelo. Então, vou dizer: "Ok, vou fornecer uma lista de linguagens complexas esperadas." Ok, aqui vou dizer, ok, isso será inglês porque quero que você corrija.
+
+E então eu tenho isso, estou chamando o revisor ortográfico e retornando o revisor ortográfico. Mas agora isso é útil para... Para corrigir erros de ortografia. Digamos que eu tenha
+
+escrito minha avaliação aqui e esteja pensando: "Este é um
+
+artigo muito bom". Vou dizer algo como "Mais abaixo". Ok. Então, por exemplo, estou escrevendo isso e, se eu tirar o foco, você pode ver aqui que estou chamando a API que fará a análise. Você pode ver que corrigiu: " Este é um artigo muito bom". Então,
+
+todos os erros que eu cometi foram corrigidos. E, na verdade, se eu... sabe de uma coisa? Temos um
+
+tempinho. Deixe-me imprimir. Se eu imprimir...
+
+espere, é console.log. É. Isso foi ruim. [risos] Estes são bons produtos. Novamente, saindo. Certo,
+
+clicando no... E você pode ver que corrigiu novamente. E você pode ver que também me dá a saída corrigida e todas as correções com o índice inicial e o índice e o que foi alterado. Então você pode até ter
+
+algumas correções adicionais, se quiser. com base na sua entrada. Então, estes são dois exemplos. Vou deixar você fazer o mais legal, a demonstração legal. Sim, vamos adicionar. O que o Olivier mostrou é
+
+basicamente a API bem focada em sumarização, em revisão ortográfica, mas também temos acesso a uma API mais geral, como aquela que você talvez já esteja acostumado, por exemplo, se estiver usando a API da OpenAI ou qualquer outro provedor de IA, para simplesmente enviar o seu prompt. Então, temos esse modelo de linguagem longo que cria a API. Você pode definir o tipo de entrada esperada, porque pode enviar texto e, no nosso caso, quero poder enviar imagens. Você também pode usar áudio como tipo, então é multimodal. Agora que tenho isso aqui, você basicamente cria seu prompt geral. Então, o que eu quero fazer é
+
+basicamente ter uma escrita automática de uma revisão baseada em Em uma imagem que eu envio, eu digo: "Ok, esta é uma imagem do produto e eu quero gerar uma descrição para uma avaliação, mencionando a condição em uma frase e basicamente dizendo como você se sentiu ao receber o produto, além de gerar um título." E eu quero que o resultado seja um objeto JSON com o título e o conteúdo da avaliação. Então, ok, este é o meu prompt, assim como quando você está tentando usar uma API de IA comum . E o próximo passo é basicamente executar a API de prompt. Aqui, `session.prompt` para obter a resposta. A estrutura
+
+da entrada é basicamente uma lista de mensagens. Aqui, estou usando a mensagem do usuário para enviar nosso prompt e a imagem de entrada. Como você pode ver, é possível misturar e combinar diferentes tipos de conteúdo. [suspiro] Eu quero um JSON como saída. Então, preciso adicionar algumas restrições à resposta.
+
+Quero dizer que minha resposta precisa... seguir um esquema específico. Então, vamos definir o esquema aqui. E
+
+o esquema é apenas um JSON simples . Acho que quero um objeto que tenha um título (string) e uma descrição (também string). E agora devo ter tudo, exceto retornar o resultado e imprimi-lo nos logs. Então, vamos testar o que acabamos de fazer. Passando para o navegador.
+
+Vamos dar um pouco mais de espaço. Quero testar esta API de prompt para basicamente escrever a avaliação no meu lugar. Então, vou enviar esta imagem. Este é o fone de ouvido que recebi. Como você pode ver, não está em muito bom estado. Vamos ver
+
+qual avaliação ele vai gerar. Se eu selecionar "Analisar", quero mostrar o console aqui.
+
+Ah, isso pode ser novo. Está dizendo que eu não especifiquei o idioma. Sim, como você pode ver, Olivier sempre especificou em qual idioma a solicitação foi enviada. Então, este é o resultado. Você pode ver o JSON e pode ver que ele preencheu o campo para mim. O
+
+fone de ouvido chegou terrivelmente danificado e quebrado . E, claro, fiquei decepcionado e frustrado ao receber esse tipo de produto. Então, sim, posso simplesmente enviar a avaliação por lá e economizar tempo, já que não preciso apenas enviar a imagem e a IA escreve tudo para mim. E, novamente, lembrando o que o Olivier já disse, tudo isso usa um modelo local executado na máquina do cliente, inteiramente no navegador. Sem usar nenhuma API da web. Tudo acontece dentro do
+
+navegador. Acho isso muito legal e este é apenas um exemplo de uso do tipo de coisa que você pode fazer porque este modelo local, como você pode ver, é multimodal. Ele entende imagens, áudio e texto, e você pode fazer todo tipo de coisa sem ter que pagar por uma API externa. Sim, é isso, é isso, isso. As APIs ainda são novas. Quer dizer, se você puder ir para a
+
+minha tela, eu acabei de abrir a API de resumo na documentação do MDN e você pode ver que ela ainda é altamente experimental. Mas, na verdade, eu acho que o Opera já a implementou . Temos o Chrome. O Edge está chegando. Então, as APIs ainda podem mudar. E o que
+
+acabamos de ver na sua tela é realmente novo. Não tínhamos essa exceção de idioma há uma semana, quando testamos. Então, tenha cuidado. Essas APIs podem mudar. Se você implementá-la no seu site, você já sabe disso.
+
+Então, sim, é muito experimental, mas eu acho que também é muito empolgante pelas possibilidades que abre para os desenvolvedores web. Quer dizer , o fato de você poder pegar uma imagem e criar uma explicação do que está nela. Vimos uma demonstração do Pictionary onde você tem uma imagem e as pessoas podem desenhar na tela, e então a imagem é comparada e você recebe uma porcentagem de acerto. Parece a mesma coisa? Então, na verdade, é bem legal não depender de nenhuma nuvem, nenhum modelo online, nenhum token que você precise enviar ou algo do tipo.
+
+Bem legal. Ok. Ah, sim. Próximo? De volta aos slides.
+
+Ah. Última [bufa] mas não menos importante seção, porque isso significa que os agentes de IA fazem muito trabalho para nós hoje em dia, mas nós também precisamos fazer algum trabalho para eles. [risos] Este é o momento em que, sim, você realmente precisa de humanos para atualizar seus sites para os agentes. Então, sim, os agentes são capazes de navegar na web. A novidade é que você precisa otimizar seu site não apenas para humanos, usabilidade e bom SEO para ser encontrado nos mecanismos de busca, mas agora também precisamos pensar em como os agentes podem consumir e usar seus aplicativos web. Isso
+
+é algo totalmente novo. E primeiro, vamos começar com uma proposta bem simples. Assim como já temos o robots.txt, que foi adotado para buscas. Os mecanismos de busca que já rastreiam a web fornecem algumas regras sobre como esses rastreadores devem navegar até seus sites. Também temos sitemaps
+
+para facilitar a navegação humana e tornar os sites mais acessíveis . Temos uma nova proposta para o LLM.txt, que é basicamente uma mistura dos dois. Ele é usado por agentes como um mapa para descobrir onde encontrar as informações necessárias em seu site. É uma combinação do robots.txt
+
+com o formato de arquivo de texto e o sitemap. Deixe-me mostrar um exemplo.
+
+Como já mencionei, sou desenvolvedor Angular. Vou mostrar o LLM.txt do site angular.dev. Você obtém um arquivo Markdown com vários links. Basicamente, se uma IA
+
+quiser pesquisar a documentação, ela não precisa percorrer cada página da web para encontrar as informações necessárias. Por exemplo, se eu quiser algo sobre animação, isso basicamente guiará os agentes de IA diretamente para uma dessas páginas de documentação, dependendo do que você está tentando fazer. Essa é a premissa básica do LLM.txt. Assim, fica mais fácil para seus agentes encontrarem o conteúdo que precisam. Mas pode ir um
+
+pouco além, porque temos variantes como o LLM-full.txt, que basicamente reúne todo o conteúdo do seu site em um único arquivo. Temos também uma versão para Angular. Esta é bem completa, como você pode ver pela barra de rolagem. E se você rolar um pouco , verá que eu tenho até um arquivo de código, por exemplo. É todo o
+
+conteúdo da versão mais recente do Angular reunido em um único arquivo de texto que você pode usar com seus agentes. Por exemplo, uma das dificuldades ao usar agentes de codificação é que a última versão deles... O Checkpoint era baseado em versões antigas dos frameworks porque nem sempre é possível treinar um modelo novo com o conteúdo mais recente. Às vezes, há um
+
+atraso de meses ou anos em relação ao conteúdo. Então, ele não sabe como usar a versão mais recente do framework. Digamos, por exemplo, para o Angular. Se você quiser garantir que, por exemplo, ao codificar um aplicativo usando os recursos mais recentes do Angular e a versão mais recente, você esteja usando a referência mais atualizada, você pode fornecer este arquivo LLM-dash-full.txt para seus agentes de codificação. Assim, ele
+
+contém todas as informações atualizadas para garantir que você não use recursos antigos dos dados de treinamento, como um exemplo antigo do AngularJS de 10 anos atrás, por exemplo . Isso é muito útil para garantir que os agentes tenham as informações mais recentes sobre a codificação. biblioteca, mas você pode traduzi-la para qualquer tipo de conteúdo que seu site forneça. Agora, por último, mas não menos importante, Web MCP. Passando para os slides, vou dar a palavra ao Olivier por esta, a última e divertida demonstração que temos.
+
+Sim, passamos de APIs experimentais para algo muito, muito experimental. Então, Web MCP, você pode compartilhar minha tela, por favor? Sim. O Web MCP, quer dizer, se você quiser ver o quão experimental ele é, acesse o site do Web MCP. Este é o site agora. Então, não é
+
+muita coisa. Mas a ideia é que, ok, temos agentes que podem navegar na web, como Yuan mencionou, eles vão e verificam o LMS, que usa arquivos de texto. Mas cada vez mais vemos IA incorporada no seu navegador, que você tem, como chamamos, um navegador agente. Basicamente, ele vai navegar na web para você . E agora temos algumas ferramentas que podem fazer isso. Elas vão abrir um navegador,
+
+clicar e navegar. Mas a maneira como elas O objetivo é imitar as interações humanas. Eles analisam a página, seja tirando screenshots ou examinando o DOM, e identificam um botão clicável, obtendo as coordenadas e clicando nele. O mesmo vale para formulários. Basicamente, estão tentando imitar o comportamento humano. O site
+
+foi projetado para humanos, não para agentes. E é exatamente isso que esta proposta tenta corrigir: o Web MCP. O objetivo seria ter um servidor MCP rodando na aplicação web. Assim, o usuário teria acesso a ferramentas que os agentes entendem. Os agentes podem chamar ferramentas porque têm acesso aos nomes, às definições e sabem quando chamá-las.
+
+Por exemplo, tenho a aplicação aqui novamente. Tenho um botão "Adicionar ao carrinho" . Como você pode ver, agora tenho algo no meu carrinho. Mas se uma IA tivesse que fazer o mesmo, teria que abrir um formulário. O Chrome tenta adivinhar que há um botão aqui, obtém a coordenada e clica no botão.
+
+Mas e se ele pudesse ter acesso a uma ferramenta, como uma ferramenta de IA, para chamá-lo? Então, aqui eu tenho o Chrome. O Chrome ainda não é uma IDE ativa, mas tenho uma extensão aqui que pode mostrar se tenho alguma ferramenta registrada na minha página. Então, vamos ver como posso registrar uma ferramenta na minha página. Tenho um arquivo de ferramenta de carrinho aqui que basicamente importa a função "adicionar ao carrinho". "Adicionar ao carrinho" é a função que é
+
+chamada quando clico em "adicionar ao carrinho" aqui. Ela simplesmente adiciona algo ao meu carrinho. E então, vou criar uma ferramenta. Se você se lembra, quando criávamos ferramentas antes de termos todos esses SDKs, era assim que fazíamos. Usávamos um JSON.
+
+Você dava um nome e uma descrição. Então, aqui é uma ferramenta para adicionar itens ao carrinho. E me dê um esquema. Então, ela recebe um objeto com o item, seu nome e a quantidade. Então, eu não tenho um banco de dados, sei lá. Então, só o nome
+
+e a quantidade. E aí eu tenho a função `execute`. A função `execute` vai receber o código da minha empresa. Então, eu vou pegar os argumentos. Vou recuperar o item e a quantidade.
+
+Vou iterar sobre a quantidade porque meu botão "adicionar ao carrinho" só aceita um. Ele não gerencia quantidade. Então, estou iterando e adicionando ao carrinho o que eu tenho. E estou retornando, digamos, o que quer que seja . Digamos que o item foi adicionado.
+
+E a outra coisa a fazer é registrar minha ferramenta. Então, eu criei minha ferramenta e a registrei no objeto `navigator` da minha página. Agora, se eu voltar aqui e atualizar, você pode ver que minha extensão de dados aqui, veja que eu tenho uma ferramenta "adicionar ao carrinho" e posso chamá-la. Então, eu posso dizer, ok, eu quero adicionar, sei lá, garrafas de água e quero ter cinco. E quando eu executo a ferramenta aqui, basicamente, você pode ver que ela adicionou.
+
+Tipo, cinco garrafas de água. E é basicamente uma IA que fez isso por mim . Está chamando a ferramenta que está registrada na minha página. Deixa eu ver. Eu tenho um tempinho. Estou testando.
+
+Testando se consigo chamar diretamente do meu IDE aqui. É, eu sei. Tenho muitas coisas. Deixa eu ver. É. Então, basicamente, eu posso até
+
+fazer isso daqui. Então, aqui eu tenho meu agente. Eu posso dizer, tipo, adicionar...
+
+Ok, vou remover a ferramenta de desenvolvedor para não ter muitas ferramentas. Adicionar três... sei lá...
+
+três celulares e laptops ao meu carrinho. Então, vou fazer isso e, normalmente, se tudo funcionar bem, vai chamar a ferramenta que está registrada na minha página web no meu Chrome. Então, vamos ver. Então, disse que tem um botão "adicionar ao carrinho". Ah, o que está fazendo?
+
+[limpa a garganta] Está criando uma ferramenta que gera meu conteúdo. Certo. Então, está chamando a ferramenta "adicionar ao carrinho", com a quantidade de laptops três. Você pode ver aqui, se eu voltar para a minha página da web agora. Ok, vamos ver. Três laptops. Eu deveria ter
+
+três laptops aqui. Então, eu chamei a ferramenta de uma extensão ou do meu IDE, mas o objetivo é que o seu navegador possa fazer isso para você, porque é um navegador do tipo agente. Ele pode navegar entre as abas e fazer isso automaticamente. Então, você pode ver que minha ferramenta está rodando na minha página da web. E não é muito código, mas existe uma maneira ainda melhor, não sei se é a melhor, mas digamos que você não queira adicionar nenhum JavaScript novo ao seu aplicativo porque está em transição e quer apenas testar essas ferramentas MCP no seu aplicativo sem alterar muito o código.
+
+Digamos que eu tenha o formulário aqui. O formulário é para escrever uma avaliação. O que eu posso fazer é adicionar o nome da ferramenta. Ferramenta para escrever avaliações. Vou dar uma descrição a ela.
+
+Aqui, vou dizer algo como "adicionar avaliação ao produto". E, fazendo isso, transformei meu formulário em uma ferramenta. Ela vai pegar todas as entradas e transformá-las em argumentos. Posso até adicionar uma descrição de parâmetro da ferramenta. Digamos, por exemplo, "avaliar o produto". Então, posso adicionar algumas descrições
+
+. Por exemplo, tenho o que quer que eu tenha como entrada aqui. É como se a descrição do parâmetro da ferramenta fosse " adicionar um título". Opa, adicionar um título para a avaliação. E posso adicionar isso, mas não preciso. Se eu voltar aqui, você pode ver que
+
+agora tenho minha ferramenta "escrever avaliação". E este é o esquema que ela gerou. Veja, é basicamente a mesma coisa que tínhamos aqui quando adicionei o esquema manualmente. Mas você pode ver que tenho
+
+minha ferramenta. Então, tenho a ferramenta "escrever avaliação" e ela pegou todas as opções de entrada de um a cinco. Tenho o título da avaliação com minha descrição. Adicionei o título à avaliação, incluindo o texto e a foto. A ferramenta gera automaticamente uma descrição, usando o rótulo mais próximo no meu HTML. Por exemplo, ao adicionar uma
+
+foto, vejo o rótulo "Adicionar foto (opcional)", que é o valor padrão. Vamos ver se funciona. Vou usar a ferramenta de escrita de avaliação. Não tenho uma foto. Posso usar o seguinte código: " É um bom produto para...". Veja se
+
+consigo inspecionar o código para ver o título. Posso usar o seguinte código: " Avaliação incrível" e " Texto perfeito" . Vou executar a ferramenta. Será que está funcionando? Não. Não era para adicionar isso aqui de
+
+qualquer forma. Ah , sim. Não, não. É para ser assim mesmo . Uhum .
+
+O que está acontecendo? Eu disse que meu arquivo finalmente foi salvo. Ok, vamos tentar de novo. Para um produto tão incrível . Adoro.
+
+Vou executar isso. Oh sim. E você pode ver que preencheu o formulário para mim. Sim, este produto é incrível. Adorei. Não tenho uma foto,
+
+mas pode ser que tenha. Mas você também pode dizer: "Ok, isso é bom porque preencheu o formulário, mas eu também quero que o formulário seja validado." Então, se eu voltar ao meu formulário aqui, vou dizer "ferramenta ferramenta envio automático". Fazendo isso, você vai preencher o formulário. Digamos três.
+
+Perfeito. Bem, espere aí. OK. Não dê atenção aos erros. E então, se eu clicar em executar ferramenta aqui, ela vai preencher o formulário, mas também validar o formulário inteiro. Nem sequer
+
+requer qualquer interação humana. Vai preencher e validar. Portanto, isto é, mais uma vez, altamente experimental. Na verdade, a API mudou novamente há uns 10 dias. Então, tenha cuidado, mas saiba que, como costumávamos dizer, é como se fosse design responsivo em algum momento. Você teve que adaptar seu
+
+site para dispositivos móveis. Se você não fizesse isso, a concorrência faria, e aí as pessoas não acessariam seu site pelo celular. Portanto, tendo a pensar que seja a mesma coisa. Certifique-se de que seu site esteja preparado quando todas as atualizações do navegador Agent Peak forem lançadas no mercado. Então, você pode começar a experimentar, novamente, de forma altamente experimental, mas comece a experimentar para estar preparado quando tivermos todos esses novos navegadores surgindo.
+
+E a demonstração funcionou. [risos] Legal. Sim, acredito que isso seja uma prévia do que teremos que fazer como desenvolvedores web em um futuro próximo, porque os agentes estão surgindo da web muito rapidamente, e acredito que essa especificação já esteja evoluindo muito rápido. Tem sido útil. Sim, se você tivesse olhado para o estado da coisa alguns meses atrás, ela não estava tão utilizável quanto você mostrou.
+
+Gosto especialmente da funcionalidade de atualização de formulários existentes como ferramentas MCP, pois simplifica muito a vida de desenvolvedores como nós, e até mesmo permite que agentes implementem isso para nós. Sim . Então, no fim das contas, o que vimos durante esta sessão é que, basicamente, a IA facilita a vida de desenvolvedores web como nós. Seja escrevendo o código, implementando um fluxo de trabalho melhor, depurando ou, claro, demonstrando o desempenho, que é muito importante. Mas também precisamos ajudar as ferramentas de IA a utilizarem melhor nosso site e aplicativos da web. Então, ainda é um pouco cedo no
+
+processo, mas sim, você já pode começar a pensar nisso. O arquivo LLMs.txt já é bastante comum hoje em dia. O MCP já é amplamente difundido, e o Web MCP está chegando para ser a próxima grande novidade, esperamos. Então, sim, você precisa se preparar para isso e, com sorte, isso resultará em aplicativos web melhores no final.
+
+Sim. E sim, obrigado por assistir a esta sessão. E temos um código QR lá dentro com basicamente todos os recursos, o código da demonstração e os links para os diferentes recursos que usamos e mostramos durante esta sessão. Então, sim, e se você tiver alguma dúvida, pode nos contatar pelo LinkedIn. Enquanto isso, divirta-se. Divirta-se. Vê
+
+você. OK. Bye Bye.

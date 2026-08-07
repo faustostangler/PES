@@ -1,0 +1,404 @@
+---
+video_title: "Human-in-the-Loop Automation with n8n — Liam McGarrigle"
+video_id: tDArkCqjA-c
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=tDArkCqjA-c
+video_date: 2026-05-02T23:00:06+00:00
+video_description: |
+  What does it actually take to build an AI workflow that can do useful work without becoming a black box? This workshop shows how to build secure, human-in-the-loop automations in n8n, using a Gmail and Google Calendar management agent as the concrete example. Liam McGarrigle walks through how to wire it together with n8n's visual automation system and combine chat triggers, tools, credentials, approvals, and access control into a workflow that can actually be observed and controlled. The session also covers how to extend the agent beyond the demo, including Slack-based interaction, scheduled runs, sub-workflows, and specialized subagents for larger real-world automation systems.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/liam-mcgarrigle
+  - https://github.com/liamdmcgarrigle
+---
+Como estão todos? Bom. Este é o primeiro workshop do dia para todos? Vocês já fizeram um antes? Vocês têm estado mais ocupados do que eu. Muito bem
+
+, ótimo. Bem, eu sou Liam. Sou um defensor de desenvolvedores na NAN, o que significa que viajo pelo mundo e faço coisas muito legais como esta, além de conversar com pessoas provavelmente muito mais inteligentes do que eu sobre assuntos realmente interessantes . Hoje teremos um workshop bem curto. Hum, esta é a primeira vez que todos estão usando NAD? Alguém já usou NAN antes?
+
+Aumente-o. Todo mundo já usou isso antes. Não usei. OK. Daquelas pessoas que o usaram como usuários avançados de nível básico, o que vocês diriam em termos de sempre ser adequado para iniciantes? Bem, vamos começar do
+
+básico aqui. Essencialmente, vamos construir como se fosse seu primeiro fluxo de trabalho. Vamos começar com o agente e, em seguida, adicionaremos alguma interação humana a ele. Assim, você estará pronto para pegar isso e expandi-lo para fazer muito mais. Essencialmente, você estará criando um agente de gerenciamento de Google Gmail e calendário muito simples que pode gerenciar sua agenda para você.
+
+Hum, e vou sair daqui porque não sei bem o que esperar desta conferência. Existe algum nível técnico, tipo, qual é o nível mais avançado de programação de cada um aqui? Você não sabe programar em JavaScript, como pode ver nesta sala? Sim. Não. Talvez. Sim.
+
+OK. JavaScript. Uma das grandes vantagens do NADN é que você não precisa saber programar para usá-lo. É uma ferramenta visual, mas você pode inserir código sempre que precisar . Você pode até mesmo escrever um método JavaScript diretamente em cada campo, pode escrever duas linhas em maiúsculas e simplesmente funciona, certo? Então você nem precisa
+
+criar um nó de código inteiro ou abrir um arquivo separado; você pode fazer tudo visualmente. E se precisar de um pouco mais de poder, basta fazer isso diretamente no código. Então, tenho certeza de que todos nós podemos ver o cenário agora, já que você está aqui. Você pode ir a qualquer lugar e construir um agente; é muito fácil construir agentes, não é? Um dos problemas que estamos vendo, e onde os vencedores estarão, é a capacidade de visualizar o que seu agente pode fazer, saber o que ele está fazendo, ver o que deu errado e ser capaz de ajustá-lo e corrigi-lo.
+
+Acho que é aí que realmente nos destacamos e é por aí que começamos, o que nos dá um ponto de partida muito forte como construtores e orquestradores de agentes, permitindo que você veja e controle o que está acontecendo. E prometo que odeio escorregadores. Removi quase todos eles do modelo de slide. Esses são praticamente os únicos que temos. Então, se alguém estiver atrasado ou quiser rever o conteúdo, acesse este link no computador.
+
+Para quem está assistindo à gravação em vídeo, esta é uma página do Notion com todo o workshop e tarefas para casa. Então, se você quiser continuar, há instruções sobre como prosseguir com seu agente posteriormente para que ele continue avançando, pois temos apenas uma hora aqui, o que não é muito tempo.
+
+Tudo bem. E alguém ainda está esperando por este link aqui? OK. Posso sempre recorrer a isto novamente se precisarmos. E lá dentro você encontrará esta página.
+
+E vocês têm um pouco de trabalho a fazer no início para que possam realmente usar o NAD. Então você pode acessar este link aqui e se cadastrar para obter uma conta na nuvem da NAD. Você receberá automaticamente um período de teste gratuito de 14 dias . Por agora, basta. Você não precisa atualizar agora. Mas
+
+certifique-se de fazer isso hoje ou amanhã, porque depois eu removerei esses códigos. Eu... eu consegui para vocês um ano de Cloud Pro, que custa 600 dólares. Hum, o que
+
+não fazemos com muita frequência. Eu gosto de ser generoso. Então vocês podem entrar e usar isso. Você ganha um ano grátis. Então, vou dar um minutinho para vocês. Se
+
+você já possui sua própria instância do NAD, ou seja, se já a utiliza em um ambiente auto-hospedado e já configurou as credenciais e tudo mais, ótimo. Certifique-se de estar usando a versão estável mais recente, 214.2. Se você possui sua própria versão em nuvem, certifique-se de atualizá-la para essa versão. Se você tem um serviço novo hospedado em seu próprio servidor e ainda não o utilizou muito, saiba que, caso encontre problemas relacionados à sua configuração, infelizmente não poderei ajudá-lo nesta sessão. Está um pouco fora do
+
+escopo. Temos que garantir que continuemos avançando rapidamente. Então, vou dar a todos alguns minutos para configurarem isso. Sei que há um questionário e que demora um minuto para carregar.
+
+E vocês, que usam NAN, usam no trabalho? Só por diversão, pessoalmente ? Ambos. Essa costuma ser a opinião geral? Vocês são os que estão levando isso para o trabalho?
+
+Sim, isso é ótimo. Por exemplo,
+
+por exemplo, isso é ótimo. Isso é ótimo. Se vocês precisarem de ajuda para usar isso no trabalho, ou para convencer seus chefes, temos dois caras aqui que são especialistas nisso. Então, vocês podem encontrá-los me fazendo perguntas técnicas. Você pode fazer aquelas perguntas chatas, sabe?
+
+Ah, com certeza. Então, outra coisa que quero garantir é que não estamos deixando ninguém para trás. Aqui embaixo tem uma captura de tela de como parece que vamos construir. E aqui está o JSON do fluxo de trabalho, que você pode copiar clicando neste botão aqui. E o melhor de tudo, uma das muitas vantagens do NADN, é que você pode simplesmente copiar e colar coisas nele. Então você pode copiar isso, colar
+
+diretamente na sua tela e terá o resultado final. Tente acompanhar, mas você pode voltar e olhar isso, comparar, ver o que eu fiz. Tenho certeza de que construí algo melhor aqui do que construirei na sua frente. Ah, e se vocês tiverem alguma pergunta, mesmo que não seja diretamente relacionada, levantem a mão ou gritem e eu paro. Quero muito que esta sessão se concentre em estabelecer as bases corretas, garantindo que todos estejam preparados para seguir em frente e, sabe, expandir esse conhecimento posteriormente.
+
+Como está o andamento da configuração? Estamos nos aproximando de... Posso saber quem ainda não está estabelecido no NAM? Todo mundo é. Por exemplo, na minha versão local, a
+
+260, você deve estar bem. Só que houve momentos em que as pessoas estavam com 60 versões atrasadas em um workshop,
+
+mas se você estiver hospedado em seu próprio servidor, provavelmente não precisa desse trabalho. Ah, sim, tudo bem. Vou dar uma breve introdução ao Naden também. Então, esta é a versão de demonstração. Então, para quem é muito novo no Naden, isso é muito difícil de ver para todo mundo? Eu sei que isso
+
+vai me deixar muito triste, mas posso ligar o modo de luz.
+
+Bruto. Ok, peço desculpas às pessoas que estão assistindo no YouTube. Eu sei que você pensa assim, pelo menos é assim que eu sempre me sinto. Mas então, este é Naden. Esta é a interface. Se você estiver usando um
+
+servidor próprio, não terá esses projetos aqui. Você só precisa do seu espaço pessoal, o que é perfeitamente normal. Na nuvem, em ambientes corporativos e tudo mais, você encontra esses projetos específicos. O bom disso é que você pode ter todas as suas credenciais separadas. Então, se você tem um projeto onde está fazendo uma coisa e outro projeto onde está fazendo algo completamente diferente, você não usa credenciais diferentes por acidente e pode compartilhar o acesso entre diferentes pessoas nos diferentes projetos, para ter um bom controle de acesso.
+
+Podemos criar um fluxo de trabalho aqui e construir isso manualmente. O NAD começou em 2019, antes do lançamento do chatgvt, numa época em que a IA era muito mais entediante do que é hoje. Naquela época, era apenas uma ferramenta de integração de fluxo de trabalho. É simplesmente uma maneira concisa de dizer "se isso acontecer, faça aquilo e depois faça outra coisa". Então, por exemplo, você pode ter um formulário, e ali estão esses gatilhos, certo? Então,
+
+estou me adiantando um pouco. Tudo começa com um gatilho. Então, pode acontecer quando um formulário é enviado, digamos, um formulário de lead, e aí o nome será exibido. O formulário nativo do Google aparecerá e dirá: "Meu nome é Liam",
+
+certo? Isso é um gatilho. Também existem coisas como agendamento e centenas de outras opções, como webhooks, chamadas de API e tudo mais. Então, você tem um gatilho e também ações, coisas que acontecem em outros aplicativos, como o Google (criar um contato, enviar um e-mail) e o Salesforce (se você quiser criar um contato), basicamente juntando tudo . E uma das coisas realmente poderosas é o fluxo de controle, certo? Portanto, se
+
+fizer isso e depois aquilo, poderá ter condições diferentes. Se for um contato pessoal, um contato do Google ou um contato comercial, acesse diretamente o Salesforce. E foi exatamente isso que me encantou, assim como a muitos outros, antes mesmo do Chat TPT ser lançado, antes que o agente de IA significasse algo. Essa era uma plataforma que as pessoas adoravam usar para construir coisas e criar sistemas totalmente integrados. E você pode fazer muito mais do que imagina com isso. Qualquer pessoa que seja desenvolvedora ou
+
+algo do tipo sabe que isso é basicamente uma versão abstrata de como criar chamadas de API. Você está apenas conectando os componentes e executando a lógica com eles. Claro, agora fazemos isso de uma maneira um pouco diferente. E agora podemos começar a acompanhar, caso você ainda não esteja acompanhando. É assim que vamos construir nosso fluxo de trabalho. Agora,
+
+queremos conversar com praticamente tudo. Não é bem uma questão de quando isso acontece em relação a um cronograma ou algo do tipo. Nossa principal interface costuma ser um chat, ou pelo menos uma forma de conectar a comunicação a uma IA. Então, em um novo fluxo de trabalho, vamos abrir um gatilho de chat e, com o Naden, você pode integrar várias coisas diferentes, como, por exemplo, adicionar um gatilho do Slack. Então, no Slack, e no gatilho, tipo, ao receber uma mensagem, ao postar uma mensagem no canal, você pode configurar para iniciar dessa forma.
+
+Ao final desse documento conceitual, sua tarefa é integrá-lo ao seu próprio sistema de mensagens. Mas, por enquanto, vamos usar o chat integrado, simplesmente porque é fácil e já está disponível. Quando você adiciona o chat à sua tela, aparece esta caixa aqui embaixo. Podemos digitar uma mensagem. Isso é ótimo para depurar e testar enquanto você está desenvolvendo, porque inicia o processo imediatamente.
+
+Você pode até mesmo iniciar um fluxo de trabalho sem nenhuma IA envolvida. O que também faremos é o seguinte: se você clicar no gatilho, há uma caixa de seleção que diz "disponibilizar no Chaturbate". Isso é relativamente novo e, desde que o fluxo de trabalho seja publicado, continua sendo uma realidade. Quando isso acontece, aparece um pequeno ícone de bate-papo aqui na barra lateral. Se clicarmos aqui e formos para a aba, teremos uma interface de chat completa dentro do NAD. Portanto, você não precisa
+
+conectá-lo a uma ferramenta externa se não quiser. É mais fácil usar aqui mesmo. Acho que é esta aqui. Então, este é o gatilho de bate-papo que colocamos ali. Então, se dissermos aqui, "olá do engenheiro de IA" e enviarmos isso, não estará conectado a nada. Mas se voltarmos a esse
+
+fluxo de trabalho e formos à aba de execuções, esta é a mensagem aqui. Vou mostrar isso para você ver, ou posso simplesmente clicar aqui. Olá, sou um engenheiro de IA. Então você pode usá-lo aqui mesmo, dentro deste espaço. Então é isso que vamos configurar hoje nesta sessão, onde você poderá conversar com seu agente aqui.
+
+No futuro, após a sessão, você poderá configurá- la com sua própria ferramenta de bate-papo. E claro que precisamos integrar a IA a isso, certo? Então você pode clicar no pequeno sinal de mais aqui. Você pode pressionar N no seu teclado. ou isto aqui em cima. E
+
+nós simplesmente pesquisaremos por agente de IA. E o nó do agente de IA é um tipo especial de nó. Você pode ver que parece bem diferente, pois tem essas perninhas saindo da parte de baixo em vez de na lateral. Assim, o agente de IA essencialmente deseja três coisas por padrão, mas apenas uma delas é obrigatória. Precisamos de um modelo de bate-papo. Este
+
+é o modelo de linguagem grande. Outra grande vantagem da NADN é que você pode conectar qualquer rede que desejar. Se não estiver nesta lista, você pode escolher o modelo de IA aberto e alterar o URL base para outro provedor, e isso geralmente funciona. Se você usa um proxy ou algo semelhante para uma grande empresa, é assim que se faz. Vou usar o OpenRouter, que oferece uma grande vantagem em relação a esse serviço. Você pode escolher qualquer modelo que
+
+desejar. Você pode usar o chat GPT 5.3, o Claopus 4.6 ou qualquer outro que preferir. E, como bônus ainda maior, te dei uma chave para isso. Vou remover
+
+isso depois de hoje, mas se você copiar esta chave, lembre-se de que ela deve estar aberta. Você pode clicar em "Configurar credenciais" aqui mesmo na conta do roteador aberto, colar as credenciais e isso deve funcionar.
+
+Agora que isso está aí, deve carregar estes arquivos. Vou usar o Sonnet 4.6. Você pode usar o que quiser. Use algo inteligente para que ele saiba usar suas ferramentas.
+
+E então você conecta isso ali.
+
+Basta ter em mente que, para qualquer nó de modelo de linguagem grande que você usar, você precisa usar o token para esse provedor UM específico. Portanto, você não pode usar esse token de roteador aberto dentro de algo que não seja um roteador aberto, por exemplo. Muito bem, alguma pergunta até agora? Está tudo bem entre nós. Neste momento, todos estão trabalhando com este agente? OK.
+
+Neste momento, podemos conversar com o agente aqui mesmo. Podemos perguntar: "Como você está?" ou o que quisermos. E devemos receber uma resposta em breve . Mas se perguntarmos: "Qual foi a minha primeira mensagem?"
+
+Você não tem nenhuma mensagem anterior. Alguém aqui sabe qual é o problema?
+
+Não possui memória. O roteador aberto não está sendo gentil o suficiente para armazená-lo para nós. Temos que armazená-lo nós mesmos. Então, existe esta aba de memória aqui, onde você encontra todas essas opções diferentes que pode usar. Eu simplesmente uso memória simples, a menos que esteja fazendo algo muito complexo. Mesmo que
+
+diga que é para iniciantes, não há problema nenhum. Isso simplesmente facilita as coisas. Funciona imediatamente. Será que vi uma mão nas costas? Não. Sim. E
+
+aí? Quais são os diferentes períodos ou tipos de memória que você usaria e para que tipo de aplicações? Claro que sim. Então a pergunta era: quais são os diferentes tipos de memória e quais são as diferentes aplicações? Uma memória tão simples que a armazenamos em nós mesmos. Nós cuidamos de tudo para você. E
+
+aqui dentro, existe o comprimento da janela de contexto, que aqui é cinco. Isso significa que ele só se lembrará de cinco mensagens no seu contexto e não se lembrará de nada além disso. Hum, esse valor padrão provavelmente deveria ser um pouco mais alto. As pessoas têm conversas mais longas hoje em dia. Você pode fazer uns 50 ou algo assim. Saiba apenas que você está pagando por
+
+todos aqueles tokens usados ​​anteriormente. Mas tudo isso é uma abstração para você. Simplesmente funciona. Você não precisa fazer mais nada. Isso funciona para praticamente qualquer aplicação que envolva um sistema de bate-papo. Você usaria
+
+algo como PostgreSQL, Reddus ou um desses outros se estivesse integrando a um sistema já existente. Por exemplo, com o PostgreSQL, você pode inserir os dados em uma tabela e, se tiver outro aplicativo, pode simplesmente usar o PostgreSQL com seu OM (Order Management) ou qualquer outra ferramenta para obter essas mensagens e exibi-las. Por exemplo, se você tivesse uma interface de chat ou algum tipo de painel que você mesmo programou, você poderia simplesmente consultar o PostgreSQL e colocar essas mensagens lá, como um exemplo. Mas a maior diferença é justamente essa: trata-se de uma abstração. Fazemos tudo em Naden por você. Com o PostgreSQL, ele simplesmente
+
+salva essas mensagens em uma tabela. E agora, com a memória aqui, o nó de bate-papo fornece um ID de sessão e, em seguida, simplesmente o passa para a memória simples para que seja armazenado. E acho que este é um bom momento para mencionar expressões. Se você nunca viu isso antes, algumas pessoas entraram agora mesmo, então você deveria entrar aqui, para quem entrou depois que começamos. Esta página é o ponto central de tudo o que estamos fazendo agora. Então, se
+
+você ainda não viu, vou deixar aqui por mais cinco segundos. Por favor, digitalize ou tire uma foto do documento.
+
+Tudobem. Então, no NAN, você verá esses colchetes e a parte verde. Chamamos isso de expressão. Assim, você pode digitar coisas nos campos e isso se torna um valor estático. Vai ser sempre aquela sequência de teclas aleatórias. Mas se você mudar para uma
+
+expressão, ainda será apenas um valor estático. Mas tudo o que você colocar dentro dessas chaves é JavaScript. E você verá algumas sugestões aqui. Oferecemos algumas funções de conveniência. Por exemplo, como agora, ele vai exibir a data e a hora. Na verdade, qualquer coisa em
+
+JavaScript funciona aqui. Você pode dizer algo como "matemática faz algo aleatório" e isso executa essa função. Mas o que as pessoas mais usam para isso é, claro, simplesmente pegar um campo. Isso vem do nó de gatilho e você pode simplesmente arrastar um valor e colocá-lo ali . O melhor disso é que, se estivermos criando algo diferente desse ID, podemos entrar e ele concatena tudo, colocando em um único campo.
+
+E agora temos um agente que vai funcionar. Você pode entrar e conversar com ele, e basicamente você está conversando com o provedor. Mas queremos isso especificamente para gerenciar nosso bot de e-mail e calendário. Então, o que precisamos fazer é adicionar aqueles mesmos nós que coloquei naquela tela simples que dizia "Você tem alguma pergunta?". Desculpe, pensei que você tivesse levantado a
+
+mão. Utilize esses mesmos nós para executar essas ações. Mas a diferença é que, com um agente, em vez de colocá-los no final como um nó diferente, podemos simplesmente fornecê-los como ferramentas para o agente usar por si só. Cada nó que temos em ferramentas comuns como o Google Contador de Contatos ou o Gmail pode ser usado como uma ferramenta, criando um pequeno nó circular que o agente de IA pode usar conforme sua necessidade. Por exemplo, podemos enviar uma mensagem e esses pequenos botões aqui permitem que a IA a preencha automaticamente.
+
+E, bem, todos aqui usam o Gmail para o trabalho ou para fins pessoais? Caso contrário, configurar com a Microsoft não é tão fácil. Mas pode ir em frente e fazer login com o Google. Não era minha intenção mostrar tudo aquilo ali. Mas, meu Deus, será que vai interromper a gravação se eu desligar meu computador por um segundo? Ele
+
+vai. Tipo, posso ligar de novo depois? OK. Vou conectar minha conta do Google rapidinho. Então, enquanto eu faço isso, você também pode clicar ali e configurar o seu, o que deve ser uma instalação com apenas um clique .
+
+E meu navegador travou.
+
+Essa é a pior coisa que pode acontecer hoje em dia. Estamos bem.
+
+Sim, sou eu.
+
+Tudo bem. Todos têm o Google conectado? Isso funcionou para todos. Provavelmente você levou menos tempo do que eu. Ok, a gravação está concluída.
+
+Ok, então agora você deve ter... Ah, conectou três vezes. Ok, ótimo.
+
+O que confunde muita gente no NAD, caso você nunca tenha usado antes, é que se você clicar aqui, você vai editar sua conexão antiga. Se você quiser adicionar uma nova credencial, clique aqui e selecione "Adicionar nova credencial". E nós apenas autenticamos um Gmail. Também vamos usar o Google Agenda. Então, você também precisa fazer login com sua conta do Google nessa .
+
+E agora que estarão conectados, deverá funcionar para tudo o que precisamos. Então, basicamente, agora queremos entrar e configurar essas ferramentas. Então, queremos que esse agente seja capaz de ler nossos e-mails, pesquisar nossos e-mails, arquivar e-mails e enviar mensagens. Então, basicamente, vou fazer isso mesmo. Vocês também podem fazer isso. Se tiver dúvidas, não hesite em nos contatar
+
+. Bem, o que você precisa saber ao fazer isso é que este botão aqui permite que a IA configure isso. E acho que é importante abordar esse ponto porque, em muitos casos, como no código em nuvem, por exemplo, se você der acesso ao seu calendário do Google, ele poderá entrar e fazer o que quiser. Ele precisa executar essas chamadas de API. Quando atribuímos uma ferramenta a algo no NADN, cada campo é inserido individualmente.
+
+Portanto, ele só pode configurar as coisas que nós especificamos . Assim, poderíamos, por exemplo, ter o assunto definido, a mensagem definida e permitir que apenas os dois campos fossem definidos. E como é a única coisa que temos, você pode ver como isso está configurado. Ele insere essa expressão auxiliar aqui. Este é o único campo em que ele pode atuar. Portanto, isso nunca poderá alterar os
+
+outros. Então, esse é um dos lados da faca de dois gumes . O outro lado da moeda é que isso significa que temos que preparar todos os campos. Então, temos que entrar e dizer "assunto definido, mensagem definida para definido", o que você pode fazer clicando nesse botão, mas você também pode dizer isso por meio de IA, usando esta expressão, e funcionará. O motivo pelo qual você não clicaria sempre nesse pequeno botão mágico é porque às vezes você quer misturar as coisas, certo? Então
+
+imagine que eu vou obter um valor de teste enviando uma mensagem do tipo "Quais são meus e-mails mais recentes?". Você precisa ter isso configurado. Quais são meus e-mails mais recentes?
+
+E eu posso impedir isso. E agora, não só posso, como posso
+
+inserir o valor da IA ​​e depois inserir o nome do campo, o que permite à IA, mesmo que diga "indefinido", que é apenas porque não tem um valor. Agora, quando estiver em execução, a IA fornecerá valor. Você pode inserir algo diretamente aqui, como por exemplo, " respondendo à mensagem". E então você pode digitar o texto estático que quiser, mas também pode fazer referência a outros campos, como a entrada do chat, aqui mesmo . Então, se você quiser ser realmente transparente sobre o que está fazendo, pode dizer algo como: "Esta é uma IA respondendo à mensagem". E aí você pode simplesmente
+
+incluir isso no seu e-mail ou em qualquer outra ferramenta que você esteja usando. É por isso que você usaria o recurso de IA se quisesse criar um modelo de texto como esse. Neste momento , eu só quero que funcione perfeitamente aqui. Vamos ver, está tudo configurado corretamente? Enviar uma mensagem.
+
+Perfeito. Outro aspecto importante a considerar ao configurar suas ferramentas é o sistema de prompts. Algo que vejo as pessoas errarem o tempo todo no NAN é que você precisa nomear seus nós muito bem. Então, esse nome automático é muito bom. Enviar uma mensagem no Gmail. Eu
+
+até renomearia para "enviar um e-mail" e depois a descrição da ferramenta, onde ela é configurada automaticamente. Você sempre deve configurá-lo manualmente, descrever a ferramenta e indicar o procedimento aqui. Essa informação é repassada ao LLM para mostrar quais ferramentas estão disponíveis. Então, essencialmente, cada chamada do LLM funciona dessa maneira, e é assim que as ferramentas funcionam internamente em todas as plataformas. A IA consegue visualizar uma lista de todas as ferramentas com seus nomes e descrições. O nome do nó
+
+é o nome da ferramenta. A descrição do nó é a descrição da ferramenta. Então você pode inserir instruções completas aqui. Então, o que eu costumo fazer em vez de adicionar o prompt do sistema dentro desse agente de IA, o que, desculpe, eu ainda não mostrei para vocês. Estou a caminho disso.
+
+Tenho certeza de que todos estamos familiarizados com a mensagem do sistema, já que estamos em uma conferência de engenheiros de IA. Bem, aqui na mensagem do sistema é onde você normalmente colocaria todas as suas coisas diferentes, mas eu gosto de deixar um pouco mais modular, então só coloco meus avisos de e-mail, tipo, "ah, não use travessões", "não faça isso" na descrição propriamente dita, o que talvez algumas pessoas discordem dessa abordagem. Eu gosto muito porque é modular; posso copiar uma ferramenta de diferentes fluxos de trabalho e ela simplesmente... Bem, tenho
+
+certeza de que as pessoas provavelmente já estão um passo à frente de mim em termos de como adicionar ferramentas. Ah, o que é bom. E se você ficar para trás, como eu estou aqui de novo, você pode entrar nesta página de ideias e aqui dentro você pode usar o comando "copiar" e depois é só pressionar Command + V e tudo será colado. E já que estou aqui, isso é para que vocês não precisem me ver escrevendo um texto enorme e cometendo erros de ortografia. Bem, vou colar aqui o texto que escrevi ontem à noite e explicar um pouco a estrutura dele enquanto vocês preenchem as ferramentas.
+
+E todas as diferentes caixas no NADN podem ser expandidas para ocupar a tela inteira, o que facilita um pouco. Então, como certamente todos sabemos, você precisa informar à IA, através do prompt do sistema, quem ela é e qual é o seu propósito. Gosto de mantê-los bem simples e ir adicionando coisas conforme a necessidade. Então, se uma ferramenta não está sendo chamada, algo não está acontecendo; você simplesmente entra aqui e diz para ela mudar. Então, eu dei a ele uma breve lista de como se comportar, como perguntar em vez de ter alucinações, e coisas do tipo. E isto é realmente
+
+importante. Tenho certeza de que todos nós já passamos por isso. Você não quer enviar um contato com apenas dois nomes para um cliente em potencial. Isso é realmente constrangedor, como podemos afirmar aqui. Não utilize os marcadores de posição. E, geralmente, quem tem mestrado em
+
+Direito não sabe as horas. Então você pergunta quais são os e-mails de hoje e aparece que você não tem nenhum e-mail em janeiro de 2023. E você fica tipo, o quê? Então, se você usar essa função de conveniência aqui, que por que mudou de volta, ela precisa ser uma expressão e então você verá a data e hora e mostrará que isso resulta nisso ao lado. Alguém tem alguma pergunta? Eu sei que andei meio
+
+pulando de um lado para o outro. Ainda estamos todos trabalhando para posicionar as ferramentas. OK, bom. Bom. Bom.
+
+E então eu vou trapacear. E eu vou simplesmente copiar isso. Acho que eu poderia tê-las arrastado, mas vou colá-las aqui.
+
+Uma boa dica, quando você estiver configurando algo, é configurar primeiro. Configure sua autenticação corretamente e, em vez de criar uma nova e definir os valores, basta copiar e colar, pois esse campo já estará preenchido. Bem, isso poupa um pouco de tempo, já que não é preciso clicar naquele botãozinho toda vez.
+
+E tem mais um truquezinho que facilita a configuração: quando você configura isso aqui, tem um botão que diz "adicionar uma descrição". E então, isto faz exatamente o que promete. Isso adiciona uma descrição a esse campo com a IA. Você vai notar que às vezes haverá um campo em que talvez o sistema selecione a opção errada. Por exemplo, no Gmail, o ID da conversa pode ser o ID da mensagem ou algo parecido . Você pode adicionar um texto aqui e
+
+pode torná-lo tão longo quanto desejar. Muitas e muitas filas, e tudo bem. Então, se algo acontecer e ele passar um valor errado ou algo do tipo, esta é apenas mais uma opção para direcioná-lo para o caminho certo. Outra coisa que você pode fazer é...
+
+deixe-me encontrar um exemplo melhor do que "ID da thread", talvez. Ah, um ótimo exemplo é quando se cria um evento no Google Agenda, o nome do evento... deixa eu ver onde fica? O
+
+resumo, na verdade, é o título, que é extremamente confuso até mesmo para todos os usuários do Gmail. Provavelmente deveríamos mudar o nome para "título", mas apenas seguimos os nomes da API "um" do Google. Ao configurar isso, você deve adicionar uma descrição e indicar que este é o título do evento, pois o resumo apenas exibiria um resumo do evento, é claro, mas isso indica que este é o título. Você pode fazer ainda melhor: clique aqui e verá a chave gerada automaticamente. Você pode alterar de resumo para apenas um título e então a IA preencherá o título a partir daí.
+
+Agora vou testar. Veja se está funcionando. Tenho alguns campos que não foram preenchidos.
+
+Não tenho acesso às credenciais.
+
+OK. Às vezes, quando você está trabalhando dentro de um projeto e cria uma credencial dentro dele (lembre-se que projetos são aqueles itens na barra lateral), você receberá um erro dizendo que não tem acesso, o que é realmente confuso porque parece que tem. Caso você se depare com essa situação, basta acessar sua conta pessoal e compartilhar suas credenciais. Então, diga "compartilhar" e depois compartilhe com o projeto. Veja outro exemplo de faca de dois gumes onde você a guarda.
+
+Bem, este já está bastante afetado por isso.
+
+Tudo
+
+bem. E agora, minha escala está tornando isso um pouco engraçado, mas quando perguntamos, podemos ver o que está na minha agenda para hoje. Podemos ver exatamente quais ferramentas foram utilizadas. É usado para receber muitas mensagens. E então, se clicarmos especificamente nesse nó , podemos ver o resultado exato dele.
+
+E aqui embaixo também temos registros detalhados de tudo o que aconteceu . Então receba muitas mensagens. O texto inserido no campo de busca foi "após 26/408 e antes de amanhã". E então, na mensagem, recebemos um resumo do que se tratava, o que me preocupou porque havia muita gente presa na fila do lado de fora. Tem uma fila enorme lá fora. Talvez
+
+vocês tenham entrado cedo. Todo mundo já consegue conversar com ele pelo chat ou ainda estamos adicionando ferramentas? Estamos bem . Tudo bem. Ótimo. Nesse
+
+ponto, já estou um pouco nervoso em testar isso com minha conta real, porque não quero enviar um e-mail para ninguém por acidente ou responder a um e-mail sem querer, certo? E tenho certeza de que vocês estão pensando: "Não quero simplesmente enviar um e-mail e deixar que isso aconteça automaticamente." E esse é basicamente o objetivo da apresentação de hoje: tornamos muito fácil adicionar... muita
+
+tranquilidade a essa questão. Assim, tudo aquilo que consideraríamos destrutivo ou sensível pode passar por uma etapa de revisão humana . E vejamos, isso seria enviar uma resposta por e-mail. Basta arrastá-los para separá-los. Enviar um e-mail.
+
+Criar um evento e depois arquivar um e-mail seria algo no limite. Vou deixar que ele arquive meus e-mails. Se eu perder um e-mail, não é grande coisa. Então, agora tudo o que você precisa fazer neste galho aqui é usar a lixeira e fazer um sinal de mais. Se você pressionar o botão de mais, a revisão humana será exibida e você poderá usar a plataforma de bate-papo que está utilizando.
+
+Estamos usando o chat nativo do NAN. E então isso cria essa pequena etapa de revisão humana bem aqui. E agora isso não é mais possível. Simplesmente não consegue ultrapassar essa camada. Não é possível usar esta ferramenta sem passar por este chat.
+
+E podemos adicionar opções, como o que o botão de aprovar diria. Podemos alterar isso para dizer "enviar". E também podemos adicionar um botão de "reprovar" ou "desautorizar". E então podemos bloquear a entrada do usuário. Mas eu prefiro deixar desativado porque assim você pode simplesmente responder e responder à mensagem irá negá-la. E agora podemos
+
+ver como isso fica e, digamos, enviar um e-mail de teste,
+
+esperando que ele responda. E ocorreu um erro quando o processo foi interrompido. Conseguimos ver que foi executado e utilizado, mas ocorreu um erro. O modo de resposta no gatilho do chat deve ser definido para usar nós de resposta. Outra dica: muita gente vê uma mensagem vermelha aparecer e pensa: "Meu Deus!". Mas se você ler a mensagem de erro,
+
+geralmente ela indica qual é o problema . Bem, honestamente, muito trabalho meticuloso é investido; os engenheiros escrevem essas mensagens eles mesmos, ou talvez como Claude faz hoje em dia. Mas vamos ver. O modo de resposta no gatilho do chat precisa ser configurado. Então, dentro do gatilho de bate-papo , vejamos, em opções, há esse modo de resposta.
+
+Por padrão, está configurado para streaming. E você verá que as palavras voltam uma de cada vez naquela tela de bate-papo. Mas para que os nós de bate-papo funcionem, precisamos configurá- los para usar nós de resposta. E isso basicamente faz o que promete. Em vez de transmitir os dados diretamente do LLM, controlamos quais mensagens são enviadas para ele usando nós na tela. Então, esse seria
+
+um nó semelhante a esta revisão humana. Também temos aqui nós de bate-papo comuns, onde você pode simplesmente enviar uma mensagem. Essa é a errada . Vou te mostrar isso porque é muito legal. Ferramenta de bate-papo onde você pode simplesmente enviar uma mensagem e usar outras ferramentas para fazer coisas legais.
+
+Mas agora, quando configuramos isso, também precisamos que ele não responda de forma alguma, a menos que seja por meio de um nó de bate-papo. Portanto, também precisamos adicionar um nó de chat depois do agente. Enviar uma mensagem. E neste momento você pode ver que está em branco. Hum, acho que isto é uma mensagem JSON. Pode ser a saída do chat.
+
+Vamos testar, no entanto. Diga olá. E vai voltar. E qual é o resultado?
+
+Está pendurado agora. Isso é mais uma síndrome de demonstração.
+
+Ok, vou desativar este nó. Enviar uma mensagem. Portanto, é sempre bom ter dados de teste incluídos. Acho que o problema era que isso não estava definido. Ok, é a saída. Não é uma mensagem. Então,
+
+podemos simplesmente arrastar isso para a direita para enviar uma mensagem. Agora, podemos testar novamente e garantir que recebemos uma mensagem de resposta. E então podemos ver que não há transmissão de volta. Ele envia de volta em um único bloco. Faz algum sentido? Sei que isso
+
+pode confundir as pessoas. Você só precisa responder com nós o tempo todo. Outra coisa legal que você pode fazer com isso é configurar ramificações condicionais, certo? Assim, você pode verificar algo nessa mensagem com uma estrutura condicional (if) e ter diferentes condições de resposta. Mas não precisamos nos preocupar com isso agora. Estamos apenas respondendo com
+
+isso. E agora isso voltará a funcionar. Podemos voltar aos testes e dizer para enviar um e-mail de teste para.
+
+Tudo bem. E agora podemos ver aqui no chat se, ao ampliarmos isso, o agente deseja ligar ou enviar um e-mail. E se você estiver olhando isso no seu celular, provavelmente vai dizer "ok", porque obviamente isso não está nos mostrando nada. Então, vou clicar em "Recusar" porque quero ver minha mensagem. E quando clicamos no nó de revisão humana , agora que temos esse exemplo, podemos ver de onde ele veio. Nesta
+
+mensagem, o agente deseja chamar tool.name. Neste campo, podemos usar esta ferramenta, uma função de conveniência, dizendo " ferramenta de símbolo de dinheiro" e, em seguida, parâmetros, que são chamados de parâmetros em cada campo do NADN internamente. Se você algum dia receber esse objeto, as pessoas que trabalham com JavaScript saberão do que se trata. Mas você pode fornecer duas strings JSON como dica para ver qual será a saída. E mesmo só
+
+isso aqui já lhe daria as informações necessárias para a etapa de revisão humana. Mas obviamente isso é meio feio. Então, o que eu preferiria fazer é dizer " para" e isso pode ser "ponto mensagem" ou "dois", certo? E não precisamos mais dessa string JSON. de. Bem, não a partir da
+
+ferramenta de assunto ponto parâmetros ponto assunto mensagem
+
+ferramenta ponto parâmetros mensagem. E agora podemos ver que, para o agente, essa mensagem será algo que podemos de fato aprovar ou rejeitar de forma razoável. E eu vou renomear isso para " O agente deseja enviar um e-mail". Ótimo. E agora vou publicar isto para que eu possa ver no chat .
+
+Vou até aqui e vou dizer novamente: envie um e-mail de teste para... na verdade, não consigo abrir meu e-mail, infelizmente... enfim,
+
+mcg...
+
+e aparece uma mensagem dizendo que o agente quer enviar um e-mail e faz tudo isso, e nós podemos ver, enviar ou recusar. E você também pode negar isso simplesmente respondendo. Então podemos dizer que eu prefiro que a mensagem seja em Markdown. Escreva um e-mail que utilize diferentes recursos de Markdown. E então isso nega a solicitação e o sistema simplesmente tenta novamente.
+
+Não levou em consideração o Markdown porque deu muito mais atenção à descrição da ferramenta . Mas você pode ver como isso funciona. E aí eu posso simplesmente enviar esse e-mail indesejado para mim mesmo. E pronto. Espero que isso mostre o quão poderosa e incrível essa ferramenta é, porque não é possível acessá-la sem passar por esse processo. Só está atrapalhando
+
+. Nós da NAND criamos essa camada justamente para interceptá-la no meio. E uma das coisas mais legais é que o sistema nem sequer percebe que existe uma etapa de revisão humana . Portanto, se suas ferramentas estiverem funcionando e você adicionar uma etapa de revisão humana, essa etapa de revisão humana não será executada. Está chamando a ferramenta e nós estamos interceptando a chamada. Assim como muitas coisas
+
+em IA, isso também é uma faca de dois gumes, porque as IAs normalmente ficam receosas com isso. Sabe, as IAs um pouco mais inteligentes geralmente não enviam um e-mail sem pedir permissão, a menos que você diga especificamente para fazer isso. Então, o que eu descobri é que às vezes nas descrições, nesses prompts, eu digo que isso não será enviado automaticamente. Não tenha medo de enviar uma mensagem. A mensagem é que há um ser humano envolvido no processo.
+
+E isso geralmente resolve o problema, porque fica tipo, ok, não vai ser simplesmente expelido. Será usado, certo? Então, se você for realmente preguiçoso como eu às vezes, também pode colocar várias ferramentas sob o controle de uma única pessoa no processo. Então poderíamos colocar a versão preliminar aqui também, e ela interceptaria ambas sem que nada precisasse ser alterado. É que os campos são diferentes e criamos uma mensagem personalizada para isso. Então, vamos
+
+escrever, vamos adicionar um diferente. Mas a preguiça ainda prevalece. Então, vou tentar algo. Veremos se a síndrome da demonstração nos prejudica aqui. E vou sugerir que adicionemos o fator humano ao processo, assim como acontece ao enviar um e-mail para o usuário,
+
+e este é o construtor de IA da NAD. Vamos ver. Deixe-me verificar se esta sugestão está correta. Inclua o fator humano no processo da mesma forma que está. uh, especifique os parâmetros e tudo mais para que correspondam às ferramentas.
+
+Descobri que o que ajuda muito é, se você tiver muitas coisas que se repetem, criar uma só e depois dizer: "Ok, faça isso ali também." E você não precisa clicar em nada. Na verdade, fará isso mais rápido do que você seria capaz.
+
+E temos isso na nuvem e na área corporativa. Ainda não está disponível em hospedagem própria. Estamos trabalhando para que isso aconteça, mas acabamos de lançar um recurso MCP onde você pode conectá-lo ao CloudCode ou a qualquer agente que você tenha, e ele poderá executar as mesmas funções que este recurso oferece, só que por meio da CLI com o MCP. E isso funcionou? Parece que sim . Validando o fluxo de trabalho.
+
+Podemos clicar. Parece que está funcionando. Ok, ótimo. Então agora vou publicar isto. Digamos que vou voltar ao chat central porque é um pouco mais agradável de se ver aqui.
+
+Hum, adicione um convite de calendário para o almoço de hoje ao meio-dia e envie por e-mail. Meu Deus, eu não sei nem o meu próprio e-mail.
+
+perguntando se ele quer ir.
+
+Enviar. Parece-me bem. Deseja criar um evento no calendário. Almoço. Nossa, isso é meio feio. Certo, então vou criar isso
+
+porque não vai alterar o que já está lá dentro . Mas podemos resolver isso. Vamos melhorar isso. E isso torna tudo muito bom para testes, porque você pode criar eventos fictícios e ver se a mensagem está sendo enviada para a pessoa errada ou se está fazendo algo errado, e você pode simplesmente rejeitá-la. Assim você sabe que não fará nada por acidente.
+
+Lembra quando eu disse no começo: "Ah, você consegue ver o que dá errado e tudo mais"? Nesta aba de execuções, você verá todas as vezes que o comando foi executado. Bem, ele marca os testes com o Flask, mas veremos que a execução do chat aqui, podemos ver que entrou no loop "human" e depois desceu e criou o evento. Se você clicar em "Copiar para o editor", poderemos trabalhar com esses dados aqui. Então, se clicarmos na ferramenta, veremos essas datas que estão muito feias aqui. E é aqui que o
+
+JavaScript se torna realmente útil. Se você não conhece JavaScript, pode simplesmente pedir a um atendente do chat que lhe diga como formatar esta data para mim. Mas podemos simplesmente dizer data e hora e depois formato de ponto, e acho que posso fazer dd
+
+t não pode converter. Ah, por que não? Vamos ver. Meu Deus, tentei transformar o almoço em um encontro romântico . Nós não podemos culpar a sorte na demo por isso. OK. E
+
+agora ele sabe que isso é compatível. Assim, quando você pressiona o ponto para selecionar a data, a hora já aparece automaticamente. E se pressionarmos o ponto novamente, a opção de formatação já aparece. E os engenheiros muito simpáticos da NAN entraram aqui e adicionaram a documentação para nós. Assim, podemos ver o que todas essas coisas fazem e você poderia até dizer, por exemplo, que C e C-minus mostram exemplos de código e tudo mais. É
+
+muito bom entrar e ler . Eu sei que estamos tentados a simplesmente perguntar tudo ao Claude agora mesmo, mas se você ler o que está na tela, prometo que será muito útil. Mas se formatarmos isso e escrevermos com D maiúsculo, eu acho. Sim, aí está. Legal. Se você
+
+adicionar mais alguns "D"s, fica ainda melhor.
+
+D e depois T T. E isto é, caso esteja se perguntando o que é isto, são apenas as funções de data Luxon. É apenas a biblioteca de datas que usamos, esse DDT...
+
+Eu já escrevi isso tantas vezes que nem lembro, mas você pode pedir para o Claude formatar para NAD e ele fará isso. Agora sim, ficou muito melhor. Isso torna muito mais fácil para nós aprovarmos sem termos que ler um registro de data e hora UTC. Então vamos publicar novamente e dizer: coloque o jantar no cal47.
+
+Pronto. Está resolvido. E podemos ver como é fácil entrar, ajustar e experimentar tudo. Faz sentido tudo isso? Alguma pergunta?
+
+Não precisa ser algo especificamente relacionado. Ah, e parece que vai chegar um e-mail .
+
+Apenas um mês. Apenas um mês. Oh sério? Apenas um mês. Você está no plano Cloud Pro quando o seleciona? Sim, quando eu seleciono,
+
+só posso por um mês. Vou criar um novo agora mesmo ou verificar depois. Vou criar um novo para não vazar a informação de como criar cupons. Sim . Então, vou colocá-lo lá, deixá-lo por 24 horas e depois retirá-lo.
+
+Desculpe por isso. Que coisa divertida. Na verdade, eu criei um sistema de descontos completo, como o nosso gerador de cupons na NADEN, que foi criado inteiramente em NADEN e abstrai todos os diferentes sistemas de cupons que temos em toda a Merch Enterprise, sorteios, nuvem, tudo tem um único ponto de entrada com uma API REST que passa pelo NADEN e tem todos os registros de auditoria e tudo mais. É realmente interessante e eu construí todo o sistema em cerca de seis horas. Então, é algo realmente muito poderoso.
+
+Sim. Sim . Ah, você se importaria de esperar pelo microfone? Obrigado. Você mencionou o servidor MCP. Bem,
+
+até recentemente havia uma versão não oficial no GitHub que eu estava usando e que estava funcionando muito bem com o código do Cloth. Hum, você poderia compartilhar um pouco mais sobre o servidor MCP nativo que vocês têm e se ele está disponível? Sim, com certeza. Então, isso é realmente muito emocionante. Bem, você deve conseguir acessar as configurações e, bem aqui, o MCP em nível de instância.
+
+Se você clicar aqui, poderá habilitá-lo e conceder acesso aos fluxos de trabalho. Então, hum, vamos ver o que temos aqui. Fluxos de trabalho que são publicados ou que possuem um webhook, agendamento de formulário ou gatilho de chat. Então, isso deve ser nosso. Ativar e-mail e bot de calendário. Você precisa
+
+conceder acesso por fluxo de trabalho. Você também pode fazer isso aqui em cima e verificar as configurações disponíveis no MCP. Isso serve apenas para que, se você conectar o dispositivo ao seu equipamento, ele não altere o fluxo de trabalho errado por acidente. Precisa ser ativado. E agora, naquele MCP, você pode dizer clientes conectados, ou como você faz os detalhes da conexão, basta inserir a URL do seu servidor no OOTH.
+
+Então, em... vamos ver... na nuvem...
+
+quase tenho medo de abrir minha conta na nuvem, mas somos um conector oficial na nuvem. Então você poderia simplesmente dizer conectar e . Você insere esse URL. Ele se conectará com o OOTH. Basta clicar em "Entrar". Ou, se
+
+você estiver usando um token de acesso, pode copiá-lo aqui e colá-lo no seu arquivo de configuração, substituindo o token de acesso por este. E faz tudo o que o MCP faz, só que não tínhamos a limitação de ter que trabalhar com a API existente. Nós o integramos perfeitamente. Portanto, ele faz exatamente a mesma coisa. Eu diria que você pode experimentar ambos e ver o que acha, mas o nosso vai adicionar cada vez mais recursos com o tempo. Bem,
+
+isso responde à sua pergunta. Acho que não entrei em muitos detalhes, mas basicamente ele é capaz de criar, ler e fazer tudo isso. Na verdade, também é capaz de executar tarefas. Então você poderia dizer para M, você poderia dizer para Claude: "Execute meu bot de e-mail e calendário e ele enviará uma mensagem de bate-papo para ele e poderá interagir com ele." Então, isso é outra coisa que eu acho que o MCP do Roman não consegue fazer. Sim
+
+. Então, isso é algo que nosso MCP é capaz de fazer. Mais alguma pergunta? Pode ser apenas uma pergunta aleatória como essa, caso você tenha algum material relacionado ao MCP. Sim.
+
+Oh sim. Desculpe. Obrigado. Então, supondo que eu queira criar um fluxo de trabalho para toda a empresa, certo? E eu gostaria de ter pessoas específicas de departamentos específicos envolvidas em ações específicas, se é que isso faz sentido.
+
+Existe alguma forma de eu registrar e ver onde o trabalho, todo o fluxo de trabalho, está atrasado? Então, algo como um mapa de calor ou um registro de quem demora mais para responder . Quem demora mais para responder? Esse é um caso de uso interessante. Bem, eu ia dizer que temos muitas funcionalidades de registro de auditoria em nossos planos corporativos, mas isso não é algo integrado, e sim algo que você pode criar com o NAD, porque o que acontece com isso... vou mostrar
+
+rapidinho. Ainda aparece "aguardando", mesmo que isso não seja verdade. Mas eu diria para enviar um e-mail para esse mesmo outro endereço de e-mail. Faça qualquer coisa, apenas teste. Então, se estivermos bem. Então, o que acontece agora é que esse
+
+fluxo de trabalho está errado. Este fluxo de trabalho entra em estado de espera e você pode vê-lo aqui. E então, quando o processo é retomado, aparece a mensagem de concluído. Você pode usar um nó final N8
+
+para obter a execução, que mostrará quando a espera começou e quando parou. E se você tiver suas conexões do Slack e tudo mais, todos esses detalhes serão exibidos. Seria apenas uma questão de analisar esses dados. Portanto, é algo que você pode fazer separadamente no NAD e agregar os dados. Esse é um caso de uso interessante. Eu
+
+escreverei isso. Vou pensar nisso, porque o registro de auditoria com intervenção humana é algo que definitivamente precisamos aprimorar. Vamos ver. Verificação de horário. São 11h50.
+
+Quero mostrar a vocês mais uma coisa específica para prepará-los para o futuro, que é a conversão disso para o Slack. Certo? Então, alguém tem mais alguma pergunta antes de começarmos? OK. Então, vou adicionar o Slack aqui.
+
+Todo mundo aqui usa Slack, Google Teams ou Microsoft Teams? Tomara que ninguém use o Teams. Slack. Sim, imaginei que seria principalmente pelo Slack. Então, meu agente pessoal que eu uso para mim mesmo, hum, eu uso o Slack. Ah, e
+
+é muito bom. Eu até já configurei tudo. Então, aqui mesmo, eu inseri um nó do Slack para adicionar uma animação de carregamento, que é um GIF de algo dançando. E então, no final, depois de responder, ele retira o objeto. Então, ele tem até um indicador de carregamento. Ah, é muito
+
+bom. Você pode entrar e simplesmente substituir o gatilho e esta resposta pelo Slack e fazer a mesma coisa aqui, onde tudo passa pelo Slack. Então, tudo funciona da mesma forma que você viu no ChatHub. Funcionaria no Slack. Mas algo ainda mais interessante, ou dependendo do que você considera interessante, seria, em vez de executar essa ação apenas quando você envia uma mensagem, adicionar um gatilho agendado para que ele fosse executado a cada hora, uma vez por hora, e incluir um aviso nesse gatilho que diga algo como "Limpar minha caixa de entrada". Então,
+
+ele executaria essas ações uma vez por hora, e isso pode ser conectado ao Slack para simplesmente enviar um ping a um canal. Assim, ainda há intervenção humana em tudo, mas tudo acontece em segundo plano, sem que você precise iniciá-lo. Imagine todas as coisas que podem ser feitas em segundo plano! Eu uso isso para o seguinte: se houver um problema no GitHub, um PR ou algo do tipo, eu o recebo, ele analisa o código, faz o que for necessário e envia mensagens para as pessoas, pedindo detalhes que eu já sei que terei ao lê-las. Depois, recebo a mensagem diretamente, porque não quero que a IA envie mensagens para colegas de trabalho, clientes ou qualquer outra pessoa sem vê-las primeiro.
+
+Faz sentido? Sim. E tudo isso está descrito neste documento conceitual como os próximos passos. Na próxima etapa, você pode atribuir memória para que ela persista entre as sessões. Ah, desculpe, você mal consegue ver, mas se estiver no documento do Notion, verá que é possível atribuir memória persistente, que manterá os dados salvos entre as sessões. Eu forneço tudo o que
+
+você precisa para configurar isso. Estas são as instruções para torná-lo autônomo, permitindo que você ainda converse com ele pelo Slack, mas que também execute a cada hora e tenha tudo configurado. E é tudo o que você precisa para experimentar e expandir este recurso, que espero ter configurado adequadamente para que você possa fazer isso. Temos 10 minutos restantes e, em vez de começar o próximo assunto, eu gostaria de responder às perguntas de qualquer pessoa ou simplesmente conversar sobre o que vem por aí para a NAN, o que vocês gostariam que fosse, algo assim. Então, qualquer dúvida que você tiver, terei prazer em responder.
+
+Sim.
+
+Eu gostaria de perguntar sobre as execuções com intervenção humana. Bem, no meu caso, trata-se de uma instância auto-hospedada na qual temos um limite de execuções simultâneas. Então, eu estava perguntando se as execuções em espera contam como execuções em andamento, porque, por exemplo, se você tiver um limite de 10 execuções simultâneas, você pode ficar preso porque talvez 10 usuários simplesmente não respondam. É, eu não sei a resposta para isso. Acho que não, mas pode ser que sim. Vou te dar uma dica:
+
+se isso contar, pode ser algo que torne a situação um pouco menos dolorosa. Você pode limitar o tempo de espera. Então, você pode dizer que depois de 10 minutos, a solicitação será negada automaticamente, certo? Assim, elas não ficarão se acumulando indefinidamente se alguém simplesmente não as vir. Eu sei, essas coisas simplesmente acontecem às vezes.
+
+E aí não é como se disséssemos: "Ok, inevitavelmente vamos chegar a um ponto em que isso vai acabar". Assim, você pode definir um limite de tempo. Você sabe a resposta para essa pergunta? Não sei. Sim . Então, podemos entrar em contato com você novamente,
+
+com certeza. Posso descobrir depois da sessão. Obrigado. Mais alguma pergunta?
+
+Ah, sim, então, em uma configuração de equipe onde várias pessoas potencialmente trabalham no mesmo fluxo de trabalho, como é o processo de aprovação? Existe algo semelhante a um fluxo de solicitação de pull request normal, onde alguém precisa aprovar as alterações para garantir que façam sentido dentro do contexto? Sim, você poderia ter isso no gatilho. E o melhor é que tudo é tão personalizável. Você disse Microsoft Teams. Ah. Ah, se você tiver
+
+equipes. Não, mas dentro de uma equipe. Sim. Então, o que você pode fazer é o seguinte: o gatilho, digamos que seja o Slack, pode pegar o ID do usuário e, a partir daí, quem responder, simplesmente fará referência ao ID do usuário para responder . Mas digamos que essa ferramenta esteja solicitando dias de férias.
+
+Obviamente, isso não deveria ir para a pessoa que perguntou, certo? Então, nessa mensagem do Slack, você pode simplesmente alterar os dois campos para quem quer que seja o responsável pela decisão ou qual seja o canal, e então essa pessoa poderá clicar em aprovar ou negar. Era isso que você estava perguntando? Na verdade. Ah, desculpe. Qual era o problema?
+
+Mas é um ótimo complemento . Não. Minha pergunta era mais sobre gerenciamento de fluxos de trabalho em geral. Você tem um projeto, alguém que o configura inicialmente e depois convida outras pessoas para sua equipe, que também devem ajudar, talvez adicionando alguns nós, fazendo ajustes, talvez você esteja de férias e assim por diante. Existe algum tipo de processo de aprovação na plataforma NAD que diga: "Ei, fiz alterações, como ramificar a partir daqui, fiz alterações, quero enviar isso, quem pode aceitar isso?" e ​​assim por diante? Sim
+
+. Portanto, a resposta dependerá se você é uma empresa ou não. Supondo que não seja um plano empresarial. Isso seria apenas uma questão de planejamento do fluxo de trabalho e, em seguida, bastaria gerenciá-lo internamente, criando uma cópia para que o responsável pelo gerenciamento a substituísse pelas alterações. Se você usa um ambiente corporativo, existe um recurso completo de ambientes e Git que faz exatamente isso.
+
+Possui integração com Git. Você pode ter vários ambientes. Então você pode ter ambientes de desenvolvimento, teste e produção, e pode ter pessoas gerenciando esses ambientes e aprovadores específicos. Mas, quando você diz que várias pessoas estão usando o mesmo fluxo de trabalho, você se refere a várias pessoas usando o mesmo fluxo de trabalho ou editando-o? Mais edição. Sim
+
+. Sim . Isso pode ser algo complicado quando se trabalha com ramificações. Por exemplo, se você quisesse ter uma branch de recurso ou algo do tipo, você precisaria copiá-la, trazê-la de volta, fazer as alterações ou usar a versão Enterprise e as integrações do Git. Isso melhorou bastante recentemente, porque agora temos o modo para dois jogadores completo, onde você pode ver duas pessoas trabalhando no fluxo de trabalho ao mesmo tempo, mas com atualizações em tempo real em segundo plano, graças ao salvamento automático.
+
+Então, por exemplo, se você estiver trabalhando em um fluxo de trabalho com outra pessoa remotamente, vocês podem ver um ao outro movendo coisas e coisas do tipo. Obrigado. Sim. Muito bem, últimas perguntas, se alguém tiver alguma. Sim.
+
+E quanto à interação humana, nos casos em que não há interface de usuário? Porque eu vi que aparecem dois botões, como "Aceitar" e "Recusar". Mas, suponho que se você simplesmente aceitar o LLM, ele não poderá executar a ferramenta. Exatamente. Então, em casos como uma chamada telefônica que não possui botões para clicar, você espera que o atendente peça uma confirmação. Por exemplo, durante uma
+
+ligação telefônica com um agente que agenda compromissos para você, ele pode pedir uma confirmação antes de fazer isso. Então, será que consegue lidar com uma situação em que o prompt deve sugerir qual botão clicar? Então, não tenho certeza se algum dia teremos isso, porque isso exigiria que o LLM decidisse se é aprovado ou negado, sendo que o objetivo principal disso é a revisão humana. Não pode ser aprovado de outra forma. Então, isso é um muro intransponível. DMZ, nada passa por ela,
+
+certo? Dito isso, no momento são apenas plataformas de bate-papo. Gostaria que também tivéssemos a opção de especificar algo personalizado, o que retornaria webhooks, pois, na prática, o que acontece é que ele cria um endpoint para o qual as plataformas de chat enviam solicitações de API. Seria ótimo se eu tivesse apenas esses dois links de API, que geram um token exclusivo para que o sistema saiba qual é qual, e então eu pudesse integrá-los por conta própria. Então, espero que isso aconteça eventualmente.
+
+Mas, para o seu caso específico, eu diria que você pode usar um subfluxo de trabalho e implementar essa lógica manualmente. Então você pode criar um subfluxo de trabalho e ter uma ação que entra e, na verdade, faz a pergunta, você recebe a resposta e então usa um nó condicional para verificar se foi aprovado e, caso contrário, cria duas ramificações com base nisso. E você poderia fazer isso em uma ferramenta com o subfluxo de trabalho "executar sub". E você pode simplesmente nomeá- lo como "confirmar" e então ele pode responder verdadeiro ou falso ou o que for necessário. Então você poderia fazer isso, tipo, abstrair isso e transformá-lo em uma ferramenta. Seria apenas um
+
+projeto de fluxo de trabalho em vez da etapa de revisão da unidade. Faz sentido? Ótimo. Obrigado. Tudo bem. Uma última pergunta.
+
+Sim. Bem, digamos que você projete um fluxo de trabalho e queira usá- lo como uma API e chamá-lo de outro lugar, como na minha empresa, onde conseguimos implantar produtos da Microsoft. O resto é complicado, mas usá-lo como um mecanismo e simplesmente chamá-lo e ocultar a API é possível? Absolutamente. Eu crio APIs REST completas o tempo todo e também crio documentação sofisticada, como o Swagger Docs e tudo mais, como mencionei com a geração de cupons. Eu criei toda essa
+
+ferramenta de cupons. Trata-se de uma API REST para que outros membros da nossa equipe possam integrá-la aos seus fluxos de trabalho NAND e às ferramentas externas. E eu criei tudo isso e depois apenas forneci a eles a documentação da API REST, e tudo está dentro da NAND e tudo é gerenciado lá dentro, incluindo toda a intervenção humana e tudo mais. Então, espero que isso responda à sua pergunta. Absolutamente. Você
+
+simplesmente criaria um gatilho de webhook assim. E então você encontra um caminho bem aqui. E você também poderia usar nomes que transmitam tranquilidade. Então você poderia usar um usuário e depois, sei lá, um comando POST para criar um usuário, por exemplo, se isso fizer sentido. Tudo bem. E acho que esse é praticamente
+
+todo o tempo que temos. Espero que isso tenha sido útil, que tenha mostrado coisas novas e que você tenha aprendido algo, e que mais tarde você possa expandir isso para ter muito mais do que apenas o Gmail e o Google Agenda, para fazer tudo o que desejar. Bem, uma coisa que eu diria, se você for adicionar mais ferramentas a isso, é usar a ferramenta de subagente, ou melhor , agente, e assim você pode ter um agente que chama outros agentes especializados. Portanto, esse agente que acabamos de criar pode se tornar um subagente de gerenciamento de calendário e e-mail. E você pode construir quantos quiser. Este pode ser um dos seus
+
+problemas no GitHub. Este poderia ser o seu, Deus me livre, agente de gerenciamento do Jira, e a lista continua. Dessa forma, você não adiciona tanto contexto apenas ao agente principal e pode alterar o modelo entre cada um deles. Cada um pode ter um LLM diferente, otimizado para sua função específica. Espero que faça sentido e estou animado para que vocês experimentem . Se vocês virem algum de nós, ou a mim,
+
+em qualquer outro momento durante a conferência, por favor, venham conversar. Ah, e não se esqueça de usar seu dispositivo. Sim, eu tenho adiado isso direto durante o último mês e penso que vai forçar uma atualização durante o processo. Então, aconteceu exatamente às 12h. Essa foi a sessão. Muito obrigado, pessoal.

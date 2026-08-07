@@ -1,0 +1,143 @@
+---
+video_title: "Code Mode: Let the Code do the Talking - Sunil Pai, Cloudflare"
+video_id: 8txf05vVVl4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8txf05vVVl4
+video_date: 2026-04-19T17:19:35+00:00
+video_description: |
+  Sunil Pai from Cloudflare discusses "Code Mode," an approach to interacting with AI agents where the model generates executable code (such as JavaScript) instead of relying on traditional JSON-based tool calling. This shift allows for more efficient, stateful, and complex system interactions.
+  
+  Speaker info:
+  Sunil Pai created Partykit, the open source tool for real-time multi-player apps. For his day job, he builds AI Agents at Cloudflare.
+  - https://sunilpai.dev/
+  - blog.cloudflare.com/author/sunil/
+  - linkedin.com/in/sunil-pai-a47732253/
+  
+  Timestamps
+  0:00 Introduction and speaker background
+  1:16 What is "Code Mode"?
+  1:31 Limitations of traditional tool calling at scale
+  2:03 The shift to generating executable code
+  3:01 Scaling API usage at Cloudflare
+  4:05 Why code generation is more efficient
+  5:28 Live demonstration of the Mythical server
+  7:20 A new way of interacting with systems
+  9:09 Example: The Kenton canvas and tic-tac-toe anecdote
+  11:46 New software architecture: The "Harness"
+  13:28 Observability and security in sandboxed environments
+  14:15 Long-running workflows and generative UI
+  16:41 Future outlook: Building for the next generation of users
+  17:50 The resurgence of capability-based security
+  18:33 Conclusion and final thoughts
+---
+[música]
+
+Nosso próximo apresentador criou o PartyKit, a ferramenta de código aberto para aplicativos multijogador em tempo real. Em seu trabalho diário, ele desenvolve agentes de IA na Cloudflare. Por favor, juntem-se a mim para dar as boas-vindas ao palco a Sunil Pai.
+
+Ah, 20 minutos até o pub. Ah, oi. Meu nome é Sunil Pai. Eu trabalho na Cloudflare. Hum, eu crio agentes lá, para o SDK de agentes. Estou me esforçando muito para que
+
+isso não se torne uma palestra sobre a Cloudflare, mas acho que estamos na lista de patrocinadores, o que é ótimo. Bem, esta é uma palestra sobre algo que chamamos de modo de código. Hum, eu tenho usado o chapéu, e há um precedente artístico para isso. Não afirmamos ter inventado isso, mas esta é uma palestra sobre as implicações de algo novo que estamos descobrindo. Então, vocês desenvolveram aplicações de IA, e a chamada de ferramentas fica complicada em grande escala.
+
+Quando se trata apenas de algumas ferramentas e de trabalhos muito curtos, não há problema. Mas no momento em que você começa a adicionar seus serviços do Google, seu Jira, seu wiki, etc., e tem centenas de ferramentas ocupando espaço no sistema, ele começa a dar problema. Hum, e a composição é estranha, e tem esse vai e vem que você tem que fazer com o modelo que é muito lento. Bem, decidimos fazer uma apresentação diferente.
+
+Em vez de ficar trocando JSON para lá e para cá , pedimos ao modelo para gerar um código, geralmente JavaScript, que pudéssemos executar em um ambiente. E alguns dos benefícios parecem um pouco óbvios para nós. Com código, você obtém uma API tipada, pode fazer verificação de tipos e corrigir erros de sintaxe. Os modelos são treinados com gigabytes, ou até mesmo terabytes, de dados já presentes no conjunto de treinamento. E em vez de ficar fazendo isso de um lado para o outro, você poderia escrever um código que executasse tudo de uma vez, em apenas uma execução.
+
+Então, é isso que eu quero dizer. Assim como existem capacidades fundamentais do código. Você consegue fazer loops, consegue manter o estado, consegue fazer sequenciamento, paralelizar, coisas que você normalmente faria com código como engenheiro. Então, o primeiro lugar onde aplicamos isso foi com meu colega Matt Carey, que falará um pouco mais sobre isso amanhã. Vocês deveriam assistir à palestra dele.
+
+A superfície da API do Cloudflare possui cerca de 2.600 endpoints. Se disponibilizássemos uma ferramenta para cada uma delas, seriam cerca de 1,2 milhão de tokens na sua primeira chamada. É simplesmente horrível. Não há como criar um servidor MCP para toda a superfície da API do Cloudflare.
+
+E ele teve uma ideia muito inteligente, na qual expôs apenas duas chamadas de ferramenta. Uh, pesquisar e executar. Ambos os endpoints aceitam código como entrada, literalmente uma sequência de código. Para a função de busca, a entrada que você passa para ela é toda a especificação JSON da API aberta . E depois disso, o comando `execute` fornece uma série de funções que você pode chamar nos itens que você invocou. E isso reduziu aquele número de
+
+1,2 a 1,5 milhão de tokens para 1.000 tokens. Algo praticamente inédito. Acho que é uma redução de cerca de 99,9% . Hum, isso vai ser assustador. Na verdade,
+
+tenho uma demonstração ao vivo disso, e geralmente demonstrações não me favorecem muito no palco, mas o ponto é que conseguimos pegar uma API ampla, extremamente ampla, e torná-la incrivelmente rápida. A própria pergunta pode ser bastante genérica. Então, eu deveria ter aumentado o tamanho da fonte neste. A ideia aqui é que, como cliente, você entre em contato e diga: "Estamos sofrendo ataques DDoS. Quero que vocês encontrem todos os IPs que estão nos atacando e os bloqueiem."
+
+Em um momento de pânico, quando seu site está fora do ar, você não tem tempo para ficar navegando pelos menus. O painel de controle do Cloudflare é notoriamente um pouco complicado de usar. E você só quer que a coisa seja feita. E você nem consegue agendar uma consulta de emergência, já são umas 3 da manhã. Bem, com um sistema MCP normal, e isso sem nem mencionar a possibilidade de distribuir 1,2 milhão de tokens. Seriam necessárias cerca de oito
+
+requisições para cada uma dessas chamadas à API. Em vez disso, o modelo pode gerar essa sequência de código, executá-la imediatamente ao lado da interface da API e fazer tudo de uma só vez. E está apenas executando JavaScript. São apenas funções e coisas que você está expondo na interface da API. Ok, demonstração ao vivo. Esta é uma demonstração do nosso
+
+servidor mítico. Hum, espero estar conectado, porque se não estiver, vou precisar que todos fechem os olhos enquanto digito uma senha. Digamos que eu queira apenas listar meus funcionários.
+
+Ah, aqui está. Liste meus funcionários. Eu digo enviar. Certo, certo, então não é necessária nenhuma senha . Ok, tudo bem, não tem problema. Ok,
+
+vou conceder apenas acesso de leitura para esta demonstração. Faça isso. Sim, permita, claro, tanto faz. Ba ba ba ba ba. Legal. Ok, ele volta a funcionar
+
+e você verá que começará a executar chamadas de ferramenta. Eu devo conseguir abrir isso. A mensagem enviada dizia: "Ei, encontre todos os endpoints da API que contenham apenas as palavras 'list workers' ou algo parecido." Então, ele executa o código, que, bem, é como uma única solicitação ao endpoint da API para obter todos os trabalhadores. Hum, deve ter recebido um monte desses. Na
+
+verdade, está apresentando erros de JavaScript agora. Vai ser interessante ver se isso realmente funciona. Nossa! Ah, então está tentando fazer isso página por página? Está tentando percorrer as páginas do documento. Suponhamos que isso tenha funcionado de qualquer maneira,
+
+e eu continuarei falando enquanto isso acontece . Ah, que bom que isso está acontecendo comigo no palco, porque eu testei 10 vezes antes de entrar. Hum, preciso pagar pelo modelo Mythos para que isso funcione corretamente. [risos] Ah, aliás, você pode ver isso. É como fazer uma lista de funcionários aqui. Pode ser que esteja tendo problemas para
+
+renderizar aqui. Bem, a questão é que conseguimos reduzir isso . Bem, se esta palestra fosse sobre otimização de servidores MCP, eu já teria encerrado o assunto . Eu pensei: "Ei, você deveria jogar isso, e acredite em mim, funciona quando você não está olhando fixamente para aquilo e tem 800 pessoas olhando para você no palco." Mas isso nos deu uma ideia de que há algo mais profundo acontecendo aqui.
+
+A possibilidade de executar esse código e... parece que existe uma nova forma de interagir com os sistemas, com os LLMs. Bem, eis o que eu penso. Assim como todos aqui, todos
+
+são programadores. E eu lhe apresento um problema como este: você tem 200 fotos na sua área de trabalho. Preciso que você os categorize e renomeie. A primeira coisa que você faz é abrir uma IDE (Ambiente de Desenvolvimento Integrado). Você vai escrever um pequeno roteiro. Talvez agora você
+
+passe todas as imagens para um modelo de visão computacional , porque assim você obtém uma legenda interessante para elas. Basta renomear e pronto. É assim que você interage com os sistemas. Hum, minha mãe não vai fazer isso. As opções dela são, bem, me ligar, ou
+
+simplesmente fazer isso. Haverá aplicativos de gerenciamento de fotos com o mínimo de recursos possível , e custarão US$ 7 por mês. E por algum motivo, você precisa instalar um daemon que está roubando seus dados criptografados ou algo do tipo. E sempre houve essa dicotomia, e tudo bem . Até agora, isso era uma troca aceitável: pessoas sem conhecimento técnico teriam interfaces personalizadas criadas para atender às suas necessidades e desejos. Os
+
+mestrados em Direito (LLMs) estão rompendo essa barreira. Agora, todos os seres humanos do planeta têm acesso a um parceiro que pode gerar código capaz de interagir com sistemas. Ele recebe uma linha de comando como "renomeie esses arquivos por data e local", gera um código e pode executá-lo em qualquer sistema que você disponibilize para ele. Bem, eu diria para executar isso com segurança aqui, e é sobre isso que eu quero falar daqui a pouco. O outro exemplo que tenho é o Kenton. Kenton é o criador do
+
+Cloudflare Workers. Como é sabido, eu sou... Então, ele faz o trabalho, e eu gosto de levar o crédito pelo trabalho dele. Essa é a nossa
+
+relação na empresa. Então, ele criou um tópico há pouco tempo onde explicou que construiu um pequeno ambiente de programação "white" para si mesmo, porque ninguém mais faz isso no mundo atualmente. Tão único. Construa seu próprio pequeno dispositivo de codificação branca. Bem, o que ele pediu para gerar foi uma tela, uma dessas telas no estilo TLDraw ou Excalidraw.
+
+E fez isso, fez uma pequena tela com pincéis e cores. E a primeira coisa que Kenton fez foi desenhar um jogo da velha com um pequeno X no canto. Este é o estado final, e falarei sobre isso em um instante. Ele fez isso. E então o que ele disse para o modelo foi: "Quero que você jogue jogo da velha comigo".
+
+O modelo, como você pode imaginar, começou a gerar um aplicativo de jogo da velha. Ok? Kenton o interrompeu imediatamente. Ele disse: "Não". Você tem acesso ao estado completo do sistema. E o estado do sistema
+
+aqui é uma série de traços. Sabe, tipo, um monte de pontos, linha de grade, linha de grade, traço X, etc." Ele disse: "Inspecione isso e teste comigo." Imediatamente, o modelo começou a exibir o estado em seu próprio contexto e disse: "Eu reconheço a aparência disso." Parece um tabuleiro de jogo da velha e vejo que você colocou um X no canto superior esquerdo. "Deixe-me desenhar um círculo perfeito
+
+no meio do aplicativo." Para deixar claro, não há nenhum código de jogo da velha em lugar nenhum neste sistema. O comportamento emergente é que o modelo pensa: "Claro, agora sei como interagir com o sistema com uma sequência de traços." Ah, e também perdeu. Aliás, perdeu o jogo e, quando vimos os rastros de raciocínio, percebemos que o Opus deixou o Kenton ganhar.
+
+O que é uma outra área estranha de alinhamento da qual não vamos falar agora. Enfim, isso gerou muita conversa internamente e é por isso que esta apresentação é um pouco estranha, um pouco mística. Nem sei bem para onde estamos indo e quero compartilhar a ideia com vocês e integrá-la. Então, a expressão que começamos a usar é: parou de gerar um programa e, em vez disso, está habitando a máquina de estados. Ah, aqui vai uma referência a "Ghost in the Shell" para quem tem mais de 40 anos: vocês precisam de ibuprofeno.
+
+Volte para casa. Ah, mas não, era muito estranho para nós não termos um estágio separado de geração de aplicativos com o qual você pudesse interagir. Isso faz parte do processo. Então, como é essa nova arquitetura de software? Todo mundo está construindo o que chamam de " harp". Isso porque, nos últimos 3
+
+a 6 meses, todos perceberam que esses agentes de codificação são ótimas máquinas de computação de propósito geral. É por isso que estão executando código Claude ou código... Não, estão executando Raspberry Pi em um Mac Mini, que, aliás, é a máquina errada para isso . Você não precisa gastar US$ 400
+
+em algo que faz chamadas de API. Isso está me deixando louco. Se você verificar, os preços de Mac Minis usados ​​dispararam. Eu tenho um antes disso, mas comprei porque sou especial nesse sentido . Todo mundo está construindo esse " harp" e a arquitetura desse " harp" não se limita a gerar código, mas também oferece um espaço seguro para executar esse código, no qual as funcionalidades são expostas.
+
+E existem alguns atributos para este sandbox. Estamos chamando-o de sandbox, que é, novamente, um termo completamente sobrecarregado, e tenho amigos na indústria, todos estão construindo um tipo diferente de sandbox. Temos um SDK de sandbox que usa contêineres e VMs, mas nem é disso que estou falando agora. Ele tem algumas funcionalidades. Ao contrário de um contêiner, que vem com todos os tipos de recursos que você cerca com segurança, sabe, você faz um monte de coisas de fora, você começa com algo que não tem funcionalidades. A
+
+única coisa que pode fazer é executar código. Não pode fazer requisições, não há APIs expostas, nada. E então você concede funcionalidades a ele explicitamente. Temos algo chamado workers dinâmicos. Eu disse que não é exatamente um código da Cloudflare, alguém pode construir algo melhor se achar que é melhor, tudo bem. Mas é isso que
+
+usamos. Usamos isolados V8 porque eles inicializam muito, muito rápido e têm cerca de 10 anos de segurança. Endurecimento. Está no nosso DNA, nos importamos muito com isso. Enfim, quando você começa a expor funcionalidades como APIs, também podemos controlar todas as requisições de saída e quaisquer conexões de rede. Na
+
+verdade, a maneira padrão que recomendamos é sem requisições de saída, apenas APIs. Precisa ser rápido e você precisa de observabilidade completa e absoluta. Você precisa saber por que na última terça-feira foi feita uma transação de US$ 2,3 milhões por, sei lá , cocô de lhama ou algo assim, certo? Você precisa voltar a esse código. Observabilidade absoluta nesses sistemas.
+
+Podem ser isolados V8 como os que usamos. Você poderia usar, sei lá, um WebAssembly, um interpretador JavaScript personalizado . Mas esse não é o ponto principal aqui. Você só precisa de algo que seja capaz de executar, ao qual você possa expor funcionalidades e que rode muito rapidamente. A partir daqui, você pode começar a ser realmente ambicioso. O exemplo que mostrei
+
+foi um caso isolado: pegue um código, execute-o em um API, expandir. Agora, e se você pudesse gerar fluxos de trabalho de longa duração que rodassem por dias, meses, anos? E se cada uma dessas instâncias tivesse algum estado que pudesse carregar consigo durante toda a sua vida útil? E se, neste mundo de interfaces de usuário generativas, você pudesse começar a gerar interfaces perfeitamente personalizadas para cada usuário? Todo mundo que trabalha com e-commerce conhece esse problema. Quanto mais
+
+popular você fica, mais a interface se torna algo genérico que precisa funcionar para todos os usuários. E aí você chama o pessoal de aprendizado de máquina e eles perguntam: "E se mudássemos a cor do botão para outro usuário?". Não. Você pode criar algo totalmente personalizado. Então, eu
+
+gosto do fato de ter conseguido que o Opus gerasse uma interface de usuário generativa para um slide onde eu estava explicando um ponto sobre interfaces generativas, e mesmo assim ela ainda parece um pouco ruim. Mas a ideia é que todo mundo gosta de e-commerce, deixa eu explicar melhor. Você tem contexto sobre tudo relacionado ao usuário, as coisas que ele gosta, os pedidos que ele fez. O carrinho deles, as coisas que podem estar irritando-os. Você pode exibir essas coisas como ações.
+
+A interface do usuário não precisa ser uma caixa de bate-papo em branco . Embora, honestamente, um e-commerce com caixa de bate-papo em branco possa ser bem divertido. Aqui, tenho dois casos de uso diferentes. No primeiro, preciso devolver estes sapatos e encontrar algo semelhante por menos de US$ 100. Se os engenheiros de produto não implementaram isso, vai ser meio ruim, mas você pode gerar algo instantaneamente, em vez do que acontece com meu pedido atrasado.
+
+A questão é que agora estamos em um mundo onde podemos gerar programas completamente diferentes, apoiados por um sistema que você construiu em seu back-end, para cada usuário. É um novo tipo de software que estamos construindo. E essa ideia de integração não está apenas integrada ao produto. Muitas pessoas estão descobrindo o poder de executar a integração mais perto do usuário, simplesmente porque assim podem começar a combinar todos os seus diferentes serviços. Isso é um discurso anti-Cloudflare neste ponto. Eu
+
+digo: você deveria executar o software em Seu iPhone, não tanto em nossos servidores. Por favor, execute-o em nossos servidores. Mas aí você começa a integrar diferentes sistemas nesse ambiente seguro e consegue fazer isso tarefa por tarefa. Coloquei isso aqui porque sou programador React e não quero assustar o pessoal do React dizendo que ninguém mais quer construir interfaces de usuário. Mas, na verdade, é um retorno à necessidade de repensar tudo o que pensávamos sobre interfaces de usuário para esta nova era. Continuo pensando
+
+nisso como parte da árvore tecnológica que não exploramos de fato por 30 anos porque o `eval` não existia, mas agora temos um `eval` seguro e temos essas ferramentas que geram código para você. Mas você precisa entender que seus próximos bilhões de usuários são esses pequenos robôs que estão gerando código para você. Para deixar claro, seus clientes ainda são humanos. As coisas que interagem com seus sistemas...
+
+se você realmente ama seus usuários, precisa descobrir onde eles estão, e eles não estão no bar, eles estão... lá fora, em registros. Eles sonham com erros de tipo e sintaxe, sabe?
+
+[bufa] Você precisa pensar na experiência do desenvolvedor para esses agentes. Aliás, várias empresas já fazem isso muito bem , sabe? Documentação em Markdown, erros que informam ao agente o que fazer em seguida, descoberta via busca. O principal ponto que eu quero abordar e que quero que vocês fixem na cabeça é a ideia de segurança baseada em capacidades. Isso nem é uma palestra sobre JavaScript.
+
+Pode ser em Python, pode ser em WASM. Espero que traga um ressurgimento do Lisp. Foi assim que eu aprendi como as ASTs funcionam, é meio que desestabiliza a mente. Mas os atributos continuam sendo os mesmos. Eventos, sandbox, segurança baseada em capacidades, incorporável para que seja muito rápido de iniciar e executar efêmeramente.
+
+Programadores React simplesmente... Bem, programadores de UI simplesmente porque eles têm muito... Eles estiveram tão próximos dos usuários que
+
+suspeito que se sairão particularmente bem aqui, e isso me deixa muito feliz , aliás. Estou contente com isso. Então, para finalizar, por muito tempo, programadores como nós tínhamos código, tínhamos poder infinito para interagir com qualquer sistema que pudéssemos e reclamar no Twitter porque nossa documentação não tinha o CSS certo ou algo assim. Programadores JavaScript são super arrogantes, aliás. Todo mundo tinha botões e formulários.
+
+Essa distinção está se rompendo. Em um mundo como este, você precisa deixar o código falar por si. O código é o que interage com todos os seus sistemas. Venha conversar comigo sobre isso no bar. Parece que isso está abrindo uma área de pesquisa totalmente nova para nós.
+
+Temos muitas ideias e consigo terminar minha apresentação e o dia com 6 segundos restantes. Que ótimo, não é? Muito obrigado. Agradeço. [aplausos e vivas] [música] [aplausos]
+
+[música]

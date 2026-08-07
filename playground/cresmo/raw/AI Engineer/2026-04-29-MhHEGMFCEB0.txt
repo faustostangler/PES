@@ -1,0 +1,292 @@
+---
+video_title: "OpenAI Codex Masterclass  — Vaibhav Srivastav & Katia Gil Guzman"
+video_id: MhHEGMFCEB0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=MhHEGMFCEB0
+video_date: 2026-04-29T16:00:06+00:00
+video_description: |
+  Codex is no longer just a coding assistant in a terminal. In this workshop, Vaibhav and Katia show how it becomes a full software engineering system, combining frontier models, the Codex app and CLI, plugins, automations, and subagents that can explore, review, and execute work in parallel. The session also dives into custom subagents: showing how specialized agents with different models, permissions, and tools can speed up code review, research, debugging, and long-running tasks while keeping control and safety in place.
+  
+  Speaker info:
+  - Vaibhav Srivastav | https://x.com/reach_vb
+  - Katia Gil Guzman | https://www.linkedin.com/in/katiagilguzman/
+  
+  Timestamps
+  (0:14) Introduction to the workshop and speakers
+  (1:48) What is Codex? (Overview of software engineering agent capabilities)
+  (2:18) Foundation models (GPT-5.3, Spark, GPT-5.4)
+  (4:11) The evolution of models and performance improvements (Websockets, Fast Mode)
+  (7:04) Codex app features, projects, and work trees
+  (8:37) Automations overview
+  (12:28) Plugins: Skills, apps, and MCP servers
+  (15:13) Game and Web development plugins (Playwright and Image Gen)
+  (16:26) Demo: Game studio plugin and generating assets
+  (17:23) Demo: Google Drive plugin for codebase data
+  (18:52) Demo: Setting up automations for Slack and Gmail
+  (27:14) Code Review features and integration with GitHub
+  (32:39) Subagents: Parallelizing tasks and custom personas
+  (36:18) Demo: Using subagents to review persona files
+  (44:52) Creating custom subagents
+  (49:29) Bleeding edge features: Guardian approvals, hooks, and personality settings
+  (56:11) Codex security and Cloud Code plugin
+  (57:10) Q&A session
+---
+Oi pessoal. Obrigado por estar aqui. Então, hoje vamos falar sobre o Codex. Meu nome é Katya. Katya Gribuzina, e eu estou com VB. Nós dois trabalhamos na
+
+equipe de experiência do desenvolvedor na VB. Sediados em Londres, nosso papel é ajudar os desenvolvedores a criar e aproveitar ao máximo nossos produtos, incluindo o Codex. Então, hoje vamos começar com uma breve visão geral do Codex, só para sabermos quantos de vocês aqui estão usando o Codex. Vocês podem levantar as mãos? Yay! Ok, legal. Então,
+
+não vamos nos demorar muito nessa visão geral, e depois faremos algumas demonstrações. Então, vamos mostrar a vocês os plugins e as automações. Hum, VB vai falar sobre subagentes e depois sobre a vanguarda tecnológica. Então, espero que aqueles que já conhecem e usam o Codex aprendam algo que não sabiam. E depois teremos um tempo no final para perguntas e respostas. Então, fique à
+
+vontade para perguntar qualquer coisa. Além disso, este é um formato de workshop. Então, sabe, se você tiver alguma pergunta urgente, fique à vontade para perguntar. E vejo que todos vocês têm seus laptops, então fiquem à vontade para nos acompanhar. Vamos mostrar como fazer algumas coisas, e você pode tentar fazer também. E
+
+durante a sessão de perguntas e respostas, esse também é o momento perfeito para você testar as coisas do seu lado. OK. Então, para começar, só para aqueles que não conhecem o Codex, ou mesmo se o conhecem, talvez não o conheçam tão bem, o Codex é o nosso agente de engenharia de software de IA aberta, com olhos abertos. Portanto, não se trata apenas de um agente de codificação. Não se trata apenas de um agente que escreve código. Pode fazer
+
+muito mais do que isso. Ele pode executar comandos. Ele pode executar testes. Ele pode explorar bases de código. Ele realmente consegue fazer tudo o que um engenheiro de software faria. Assim, ele se baseia em nossos
+
+modelos como fundamento. Então, por exemplo, o GPT-5.3, Codex, era, hum, o nosso anterior . Também temos a versão Spark, que é tipo o modelo super rápido que temos. O modelo mais moderno atualmente é o GPT-5.4. E também temos uma versão mini
+
+que, hum, foi lançada na semana passada. E, sabe, cada vez que fazemos melhorias, cada vez que temos modelos melhores, o Codex se beneficia disso. Mas não são apenas as modelos. Sobre essa base, temos o que chamamos de estrutura de agente unificada que irá gerenciar, eh, avaliar o comportamento do agente. E isso é um invólucro para execução de ferramentas, para configuração de ambiente, para tudo que, uh, permite que o agente, uh, faça seu trabalho e funcione sem problemas. Há também um sistema de
+
+segurança, um sistema de segurança integrado nesse arnês. Então, tudo isso é Codex. E então você pode interagir com ele através de diferentes superfícies. Então, temos o aplicativo Codex, sobre o qual falaremos daqui a alguns minutos. Você também pode interagir com ele através de suas IDEs com a extensão.
+
+Você pode interagir com ele através da CLI e também por meio de outras plataformas, como o Slack, por exemplo. Na OpenAI, costumamos entrar em contato com o Codex pelo Slack e pedir para que corrijam problemas, ou também pelo GitHub. Além disso, você também pode integrá-lo à sua ferramenta preferida para que funcione perfeitamente com tudo o que você já utiliza. Então, sabe, você pode integrá- lo com o Figma, com o Linear, com o Notion. Tudo isso combinado permite que você realmente faça tudo, permite que o Codex faça tudo o que um colega engenheiro de software faria.
+
+E assim, como mencionei, isso se baseia em nossos modelos. Então, vou deixar a VB falar um pouco mais sobre isso. Tudo bem. Bom dia a todos. Então, como temos falado sobre o aplicativo Codex, a extensão IDE, o CMI e assim por diante, todas essas ferramentas e serviços não seriam tão bons sem os modelos que os alimentam, certo?
+
+E só para dar um passo atrás. Quando entrei para a OpenAI, o que não faz tanto tempo assim , foi em dezembro. Nosso modelo principal naquela época era o GPT-5.2. E a partir daí, lançamos o GPT-5.2 Codex, que era uma
+
+variante especializada do GPT-5.2, chamada Codex, na qual exploramos os limites do modelo, executando- o em tarefas de longa duração e permitindo que ele continuasse funcionando sem parar . E logo em seguida, demos continuidade com o GPT-5.3 Codex. Logo depois disso, em parceria com a Cerebras, demos continuidade com o GPT-5.3 Codex Spark.
+
+E, mais recentemente, lançamos o GPT-5.4. E vocês já podem ver como estamos, de certa forma , impulsionando todo esse modelo e volante de inércia o mais rápido possível, tentando trazer a próxima fronteira para vocês o mais rápido possível, certo? Algo a observar, e algo que não está na tela, é que ao mesmo tempo, enquanto buscávamos modelos maiores, que são realmente bons para tarefas de longa duração, bem como para tarefas realmente complexas, e assim por diante. Também lançamos o GPT-54-mini e o GPT-54-nano, que você pode usar para tarefas de curta duração e subagentes, sobre os quais falaremos em breve.
+
+E algo que não temos enfatizado muito aqui são duas coisas. Ao mesmo tempo em que nos empenhávamos em aprimorar esses modelos, também trabalhamos bastante para garantir que eles fossem disponibilizados a você o mais rápido possível. Em princípio, isso significa que introduzimos algo chamado WebSockets, que nos permite criar uma conexão entre o seu dispositivo e o servidor da API, para fornecer tokens cerca de 1,75 vezes mais rápidos, sem que você precise arcar com esses custos . Ao mesmo tempo, lançamos também um modo rápido que permite obter, além do multiplicador de 1,75x, o dobro de tokens mais rapidamente. E isso é algo que a equipe está constantemente martelando. Haverá
+
+muitas outras melhorias de velocidade por lá . E assim, para reunir tudo isso no início deste ano, lançamos o aplicativo Codex. Quantos de vocês já usaram o aplicativo Codex? Muito bem, isso representa uma boa parcela da população. Para ser honesto, em dezembro e até mesmo antes disso, eu já era um usuário assíduo da linha de comando. E,
+
+em algum momento durante o lançamento do aplicativo, enquanto eu o testava na versão beta, usando-o na prática, o aplicativo Codex se tornou uma parte realmente importante do meu fluxo de trabalho. E a razão para isso é que proporciona uma maneira muito agradável de trabalhar em vários projetos, em primeiro lugar. E em segundo lugar, dentro do mesmo projeto, trabalhar em várias funcionalidades simultaneamente. Uma forma de fazer isso é ter projetos individuais, como você pode ver no lado esquerdo: o projeto Codex, o ChatGPT, o Sora, e assim por diante. Mas também dentro dessas árvores de trabalho você pode usar árvores de trabalho para trabalhar em solicitações de recursos individuais, correções de bugs ou perguntas e respostas, tudo ao mesmo tempo, sem interferir nas tarefas individuais. Isso
+
+é algo de que nos orgulhamos bastante e, sabe, fornecer suporte nativo à árvore de trabalho ajuda você a realizar a mesma tarefa e várias tarefas ao mesmo tempo sem precisar alternar tanto entre contextos. Ao mesmo tempo, durante o lançamento, temos tentado aumentar o benefício líquido que você pode obter do aplicativo Codex. E algumas dessas funcionalidades incluem, por exemplo, um melhor suporte à automação. A automação é também algo sobre o qual falaremos daqui a pouco. Mas, resumidamente, a automação permite que você tenha um processo básico que deseja que o Codex execute. Digamos que seja todos os dias às 9h da manhã,
+
+ou digamos que seja todas as noites. Ou digamos que você queira que o Codex analise sua agenda e crie um resumo para você. E tudo isso é possível dentro da própria configuração do aplicativo Codex, com automações. E então, claro, com as árvores de trabalho e um suporte mais nativo, você pode trabalhar em vários projetos e implementar mudanças conforme desejar, com a persona que preferir . Por último, mas não menos importante, você pode usar o aplicativo Codex dependendo da superfície em que o utiliza.
+
+No início do ano, lançamos o programa apenas para Mac OS, mas agora temos suporte nativo para Windows, que inclui o ambiente de segurança ( sandbox) nativo do Windows. Tem alguém aqui que ainda usa Windows ? Estou torcendo por você, cara. E então, para aquele senhor ali, temos suporte nativo a sandbox no Windows. Somos os primeiros do nosso tipo. Não existe nenhum outro
+
+ambiente concorrente que suporte um sandbox nativo para o Windows. Legal. Então, eu tenho falado sem parar sobre o aplicativo Codex. Estávamos falando sobre todos os modelos que temos enviado. Mas quais são as novidades em termos de todos os recursos que lançamos?
+
+Hum, isto está, se não me engano, em ordem decrescente. Recentemente, lançamos os plugins. Um plugin é uma forma de reunir habilidades, MCPs, bem como prompts e praticamente qualquer outra coisa em um único pacote, permitindo que o modelo faça uma correspondência mais precisa durante a construção. Nós também lançamos recentemente mini modelos que se integram muito bem com subagentes, permitindo paralelizar uma funcionalidade específica, solicitação de correção de bugs, perguntas e respostas, o que for, em um ritmo mais rápido, garantindo que você não pague tanto por seus modelos específicos. E depois temos um monte de outras coisas sobre as quais vamos falar ao longo do texto. Bem, parte
+
+disso se deve a como o Codex é tão bom em revisão de código, como o Codex é realmente bom em segurança, e assim por diante. Bem, enquanto falamos sobre tudo isso, quero enfatizar o fato de que nós, da OpenAI, temos muita sorte de a comunidade ter realmente abraçado o Cortex. Na verdade, ontem à noite mesmo ultrapassamos a marca de 3 milhões de usuários ativos semanais . E isso é muito importante para nós. E queremos continuar apoiando a comunidade de desenvolvedores, as empresas e startups que usam o Cortex. Portanto,
+
+durante a sessão, se tiverem alguma dúvida, fiquem à vontade para perguntar tanto ao Karthik quanto a mim, ou mesmo depois, ou simplesmente nos contatar. Com isso, passo a palavra para Karthik. Obrigado. E sim, ver os 3 milhões de usuários ativos semanais é realmente muito legal, e é incrível pensar que esse número mais que triplicou desde janeiro. Então, em apenas alguns meses, vimos uma enorme adesão e, sim, é muito, muito legal de ver.
+
+Ok, então, plugins. Plugins, não sei se você já ouviu falar . É algo bastante novo no Cortex. O suporte nativo para plugins. A ideia dos plugins, e vou mostrar como isso funciona na prática e como você pode usá-los, é que eles agrupam várias coisas em um mesmo pacote. Assim
+
+como habilidades, aplicativos, integrações, servidores MCP, eles agrupam tudo isso em fluxos de trabalho reutilizáveis. Então, o que são habilidades, aplicativos e servidores MCP? Novamente, vou mostrar para vocês, mas só para apresentar um pouco disso. Assim, as habilidades são essencialmente instruções reutilizáveis, agrupadas para processos específicos. Então, se você tem algo que faz com bastante frequência, pode criar uma habilidade para isso, para que o Cortex saiba disso. Você pode
+
+fornecer instruções, roteiros, recursos e tudo mais, o que evitará que você fique repetindo as mesmas coisas várias vezes. Assim, sempre que você tiver um fluxo de trabalho bem estruturado e consistente, poderá agrupá-lo em uma habilidade. Você também pode pedir para a Codex criar a habilidade para você. E os aplicativos são conexões com outros serviços. Então, como você sabe, veremos uma demonstração rápida, mas as ferramentas que você usa todos os dias, como Notion, Linear e todas essas, você pode conectar ao Codex. E
+
+depois os servidores MCP, talvez você já esteja familiarizado com eles, mas basicamente eles expõem ferramentas para o Codex ampliar ainda mais suas capacidades, e são ferramentas de sistemas externos. Assim, essas três coisas já são muito úteis por si só. E o que os plugins fazem é agrupar tudo isso para que você não precise configurar tudo manualmente. Você não precisa instalar várias habilidades. Você não precisa conectar vários aplicativos. Você não precisa
+
+conectar vários servidores MCP. Você pode simplesmente adicionar um plugin. E outra coisa que eu queria abordar no aplicativo Codex, e que mostrarei em uma demonstração rápida, são as automações. Pessoalmente, essa é uma das minhas coisas favoritas para fazer no Codex, porque você pode configurar automações que são executadas em segundo plano, como um cron job. E você pode conectar aplicativos, sabe, também pode usar plugins e simplesmente programar para que sejam executados em um horário agendado.
+
+Por exemplo, você pode configurar uma automação para ser executada todos os dias em um determinado horário, e é apenas uma instrução que o Codex executará em segundo plano. E por último, gostaria de mostrar a vocês na demonstração a seguir, habilidades específicas para desenvolvimento web, de aplicativos e de jogos, porque temos ouvido falar muito sobre desenvolvedores que querem usar o Codex para criar essas coisas, para criar aplicativos e jogos. E sempre, sabe, eles meio que se repetem, sempre usam as mesmas habilidades. Então, na verdade, nós agrupamos isso em plugins específicos. E existem duas habilidades que eu quero destacar, que são super úteis e, honestamente, que fazem toda a diferença quando você está desenvolvendo algo visual. É um Playwright Interactive.
+
+Então, para quem não sabe, o Playwright é essencialmente um navegador sem interface gráfica, tipo um navegador em sandbox que o Codex pode executar e usar para ver o que está acontecendo. Então, você pode abrir seu aplicativo em um navegador e, com a versão interativa, você pode clicar em coisas e navegar pelo aplicativo. E então, tirem capturas de tela e vejam e analisem enquanto fazem as capturas de tela. E o Imagen é uma ótima maneira de gerar recursos visuais para seus aplicativos e jogos. Bom, chega de conversa. Vou te mostrar uma
+
+demonstração. Bem, vou começar executando este aqui, porque ele é bem longo. Quando executei o programa ontem, demorou cerca de uma hora para compilar. Então, eu também tenho a versão final, mas queria mostrar para vocês assim, neste prompt, como o Codex está passando por isso. Então, o que estou fazendo aqui é usar o plugin Game Studio , que é, novamente, um conjunto de várias ferramentas úteis para o desenvolvimento de jogos.
+
+E estou pedindo para usar o Imagen para criar os recursos visuais, ou seja, os sprites para os jogos, e também o Playwright Interactive para depurar o jogo e garantir que ele funcione bem. Então, vamos deixar isso correr. E então vamos falar um pouco sobre plugins . Então, deixe-me mudar para outro projeto aqui. Então, este é o site deste desenvolvedor. Ok, então este
+
+é o repositório do site dos nossos desenvolvedores. Que está aqui. Desculpe, vou colocar em tela cheia. Assim, em nosso site para desenvolvedores, temos esta página com todos os encontros do Codex que organizamos. Então, sabe, tem muita coisa.
+
+E tudo isso está, na verdade, em nosso repositório, tipo, em nossa base de código, em arquivos YAML. Então, o que eu vou fazer é adicionar este plugin do Google Drive aqui. Sabe, temos vários plugins em destaque, desenvolvidos por nós, que você pode escolher . Você também pode, naturalmente, adicionar seus próprios plugins. Mas eu conectei este plugin do Google Drive que permite ao Codex acessar meu Google Drive. Então, o que eu fiz foi
+
+preparar esta planilha chamada Codex Events com o nome do evento, a data e a cidade. E vou pedir ao Codex para atualizar esta planilha com os encontros atuais do Codex listados na base de código. Então, vou começar. Novamente, isso vai levar um tempinho. Então, vamos dar uma olhada nisso. Ok,
+
+o processo do jogo ainda está em execução. Vou mostrar para vocês quando ele estiver fazendo algumas coisas um pouco mais interessantes. Mas a última coisa que mencionei foram as automações. Assim, a automação é algo que você pode configurar facilmente usando aplicativos. Você pode simplesmente perguntar qualquer coisa ao Codex, mas em vez de ser interativo, como se você estivesse usando o aplicativo Codex, você pode configurá-lo para ser executado em segundo plano. Então, dentre
+
+as ferramentas que configurei e que realmente me ajudam muito no meu dia a dia, uma delas é a de mensagens do Slack. Então, conectei o Codex ao Slack e perguntei: "Ei, Codex, vocês podem verificar todos os dias às 9h as mensagens que eu preciso responder e sinalizar se são urgentes ou se precisam de uma resposta imediata? Vocês também podem fazer um resumo de tudo o que aconteceu desde ontem no Slack?" E estou pedindo que isso seja agrupado em categorias por tópico. E então, informações importantes a serem consideradas. Então, temos
+
+canais importantes onde informações da empresa, geralmente aquelas que vazam em um dia, mas que são informações importantes da empresa, estão armazenadas . Então, só quero ter certeza de que não vou deixar passar nada. Então, esse é o tipo de coisa que eu peço para o Codex resumir para mim. Outra coisa bem legal é a conexão com o Gmail, que faz a mesma coisa. Eu recebo uma quantidade absurda de e-mails por dia, sinceramente.
+
+Então, estou apenas pedindo ao Codex para verificar se há e-mails aos quais eu realmente deveria responder e para verificar se são urgentes ou se parecem legítimos, porque recebo muitos pedidos que eu não necessariamente
+
+responderia, mas isso está me economizando horas por dia. Então, você pode criar automações a partir daqui ou simplesmente dizendo algo como: "Ei, Codex, você pode criar uma automação que procure no Slack por menções a casos de uso do Codex e liste todos os casos de uso importantes que eu deveria incluir no nosso site?" Vou deixar o Codex pensar um pouco. Deveria ter usado " park". E ele vai criar a automação para mim, basicamente. Eu não
+
+especifiquei quando queria executá-la, mas posso... Ah, interessante. Está fazendo algo diferente.
+
+Como esta é uma demonstração ao vivo, obviamente não... Ok, normalmente apareceria um pequeno pop-up para que eu pudesse clicar nele . Ah, está funcionando. Perfeito.
+
+Estava bem barulhento esta manhã. Ok. Interessante. Interessante. Ok. Então, por
+
+favor, crie a automação. Deveria aparecer um pequeno pop-up se tudo correr bem. Bem, mas se não funcionar, você ainda pode criar manualmente. Vamos ver se está funcionando. Ok.
+
+Não sei o que está acontecendo, mas vamos fazer manualmente. Você também pode criar daqui e basicamente tudo o que precisa fazer é chamar os plugins que deseja usar, como o Slack, e escolher a frequência com que a automação deve ser executada, em qual projeto ela deve ser executada, etc. Ok, então vamos verificar nossas outras tarefas. Esta ainda está pronta. Ok, gerou alguns sprites bem legais.
+
+Vamos ver isso depois. Vamos verificar nossa tarefa de atualizar a planilha. Aqui, o CodeX levou 2 minutos para analisar a base de código. Encontrou a origem de todos os eventos do CodeX, onde temos nossos arquivos YAML, e então, escreveu as 57 linhas de eventos. Então, temos 57 eventos listados atualmente no site.
+
+Vamos verificar. Vamos ver nossas planilhas e, sim, podemos ver que foram atualizadas. Ótimo. Então, este é um exemplo simples, mas sempre que você tiver algo que seja muito demorado e que envolva dados, como revisão de dados, por exemplo, você pode pedir ao CodeX para fazer isso para você. Ele tem acesso a tudo na sua base de código e você também pode fornecer outras entradas, como outros arquivos CSV, e pedir ao CodeX para fazer esse tipo de trabalho.
+
+Ok. Agora, por último, vamos verificar nosso jogo. Como você pode ver, o CodeX está usando o ImageGen para gerar... Vou diminuir
+
+um pouco o zoom. Ah, legal. Ele está gerando todos os sprites, todos os recursos do jogo que eu pedi. E está ficando muito bom. Vai levar um tempo. Bem, o que
+
+eu vou fazer é mostrar os resultados finais, mas como vocês podem ver, o CodeX está apenas lendo... quer dizer, gerando todos esses recursos e usando a habilidade Playwright para ver como isso fica no aplicativo. Infelizmente, não temos uma hora para esperar pelo resultado final.
+
+Então, deixe-me mostrar o que ele gerou ontem. Este está intocado. Eu não o toquei. É literalmente o CodeX que construiu isso. E eu não dei nenhuma instrução. Eu só disse: "
+
+Faça um jogo de plataforma com plataformas feitas de blocos". Só isso. E sim, ele gerou tudo. Claro que a interface do usuário não é das melhores, eu provavelmente faria algumas melhorias , mas acho que o jogo de plataforma em si é bem legal. E o mais legal é que todos os sprites estão se movendo por aí. Sabe,
+
+isso dá pelo menos uns cinco sprites diferentes do personagem. E eu não precisei fazer nada disso. Você também pode, sabe, criar um jogo personalizado com seu rosto como entrada e usar o Image Gen para criar uma versão 2D sua. Então, essa é uma forma de aproveitar a habilidade Image Gen, a habilidade interativa Playwright e o plugin do Game Studio. E só para mostrar o que tem dentro, também temos algo semelhante para aplicativos web, mas é um pacote com todas essas habilidades juntas. Então, é isso por
+
+hoje. Vou passar a palavra de volta para o VB. Obrigada . Obrigada, Katya. Certo
+
+. Perfeito. Então, só para fazer um checkpoint rápido e recapitular o que falamos até agora, vimos todos os modelos que alimentam o ecossistema Codex. Depois, vimos todas as superfícies das quais você pode consumir Codex. E então... Analisamos os
+
+plugins, como usá-los e quais são alguns dos plugins disponíveis. Você também pode criar seus próprios plugins usando o Plugin Creator. E então falamos sobre automações, imagens e assim por diante. Agora, algo importante a observar é que, à medida que delegamos mais e mais trabalho nesses agentes — sejam eles seus favoritos , do Codex ou não —, é fundamental garantir que o que quer que seu agente produza seja da mais alta qualidade. Isso significa que, ao começarmos a trabalhar em vários recursos ou projetos simultaneamente, será praticamente impossível revisar cada linha de código.
+
+Portanto, pelo menos na primeira revisão, você precisa de uma maneira confiável
+
+de revisar seu código. E é aí que entra a revisão de código. Bem, não estou me gabando de forma alguma, mas, na minha humilde opinião, o Codex Code Review é um dos melhores do mercado atualmente. É algo que as pessoas no Twitter, LinkedIn, em nossas próprias plataformas, Discord e assim por diante, não param de elogiar, dizendo o quão bom é o Codex Code Review. Então, eu queria falar rapidinho sobre o que ele faz.
+
+Primeiro, ele está disponível nas plataformas que você usa. Isso significa que você pode usar o Codex Code Review no GitHub. Você pode conectar sua conta ChatGPT ao GitHub e, para cada pull request que você criar, pode configurá- lo para que o Codex revise automaticamente cada um deles. Normalmente, ele exibirá algum tipo de...
+
+como se chama? Um destaque? Algo assim no próprio pull request, dizendo... Ei, tipo, isso é algo
+
+que está faltando. Ei, talvez você saiba, P0 corrija isso, P1 corrija aquilo, P2, sabe, isso seria bom ter, e assim por diante. Ao mesmo tempo, você pode usar uma revisão de código no Codex CLI ou no aplicativo Codex, e o Codex iniciará um grande processo de revisão, e assim por diante. E muito recentemente, na semana passada, com meu colega Dom, lançamos um plugin de código em nuvem para o Codex, que permite que você, essencialmente, invoque o Codex dentro de suas sessões de código em nuvem para obter o mesmo tipo de revisão de código de última geração, mas em suas sessões de código em nuvem. Então, algo para você ver aqui é, digamos que eu esteja trabalhando em um projeto como este.
+
+Aliás, esta é a minha configuração de trabalho real. É tudo o que eu trabalho aqui. Nem tudo o que você vê aqui são todas essas threads, todos esses projetos são algo em que eu trabalho diariamente. Então, se você vir algo que não deveria, apenas feche os olhos. Normalmente, o que eu faria seria analisar uma solicitação de recurso ou algum tipo de pedido de alguém.
+
+Digamos que aqui eu pedi ao Codex para fazer várias coisas. Então, vou pedir para ele revisar as alterações. Você tem a opção de escolher entre uma branch, se tiver várias branches no repositório Git, uma branch de recurso, uma branch de avaliação, etc. Neste caso, vou pedir para revisar as alterações não commitadas. O que acontece é que, como você pode ver aqui, ele cria uma nova thread.
+
+Essa thread, por sua vez, inicia um novo processo do Codex com seu próprio prompt de revisão. Ele continua analisando não apenas as diferenças ou a lista de todas as alterações, mas também contextualizando-as com... Tudo o que está no próprio repositório do modelo, certo? E, muitas vezes, a
+
+revisão de código do Codex encontra alterações que podem ter efeitos secundários, que não se limitam apenas às diferenças ou quaisquer outras alterações que você tenha feito, mas também a outros módulos que você nem sequer tocou na própria solicitação de pull request ou nas próprias alterações. E isso é tão eficaz que 100% das solicitações de pull request em todos os repositórios da OpenAI, feitas por todos os funcionários, incluindo Greg, são revisadas pelo Codex por padrão. E essa é a primeira análise que você faz. Legal. E, como você pode ver aqui, o Codex trabalhou por um minuto e apresentou essas atualizações, como P1, localizar os detalhes de receita, P2, traduzir isso para isso, e assim por diante. E o que você pode fazer
+
+depois disso é basicamente pedir ao Codex para... Tente corrigir isso ou abra um novo PR na branch em que você está e continue a partir daí. Legal.
+
+Agora, vamos falar sobre subagentes, algo que me deixa bastante animado. Então, antes de mais nada, o que são subagentes? Subagentes são essencialmente a capacidade de dividir uma tarefa principal em tarefas decomponíveis, paralelas e independentes, que você pode delegar a agentes. Isso permite que esses agentes trabalhem de forma independente e, ao final da execução, retornem com uma resposta. E a sobrecarga é praticamente ilimitada. Você pode criar quantos
+
+agentes quiser, desde que sua chave de API ou sua assinatura GPT Pro Plus Gold permita . Você pode fazer muitas coisas interessantes com subagentes. Por exemplo, na captura de tela à esquerda, tenho um repositório de agentes Codex, que veremos em breve. Ele não é público. Mas espero que possamos torná-lo público em breve, pois ele contém várias personas para subagentes que podem ser usadas. É algo meio
+
+meta. São essencialmente personas de subagentes, como revisores de documentação, criadores de casos de teste, executores de casos de teste e assim por diante. De tempos em tempos, alterávamos a especificação. E isso é de antes de querermos alterar a especificação de como os subagentes funcionam. Então, o que eu queria era que ele percorresse todas essas 40 a 50 personas de subagentes diferentes, as revisasse e garantisse que estivessem de acordo com a especificação. Claro,
+
+fazer isso sem subagentes significaria que o Codex abriria cada arquivo, o revisaria, me daria um resumo e continuaria fazendo isso para uns 50 subagentes diferentes. Nesse caso, ele essencialmente criou fatias de revisão, o que significa que criou, digamos, estes dois arquivos que aquele subagente... A Polly ou o subagente Plato deveriam, basicamente, revisar.
+
+Depois, eles criariam um novo ambiente Codex, revisariam tudo e, no final, o Codex reuniria todas as revisões e me daria um retorno. Então, vamos tentar.
+
+O repositório em questão é este. É um repositório de Agentes Codex, que tem várias personas. Como você pode ver, temos várias personas aqui. Temos um revisor de acessibilidade, um arquiteto e assim por diante. E isso é algo que você pode criar, e vamos falar sobre isso daqui a pouco: você pode definir seus próprios subagentes personalizados, certo?
+
+Mas pense neste repositório como uma coleção desses subagentes. E, normalmente, para cada subagente, você teria um nome, Você teria uma descrição, teria um tipo diferente de modo sandbox, se você quer que seja somente leitura ou somente para permissão. E então você teria algum tipo de instrução, e assim por diante. Então, agora o que vou fazer é pedir ao Codex para...
+
+vou acessar meus Agentes do Codex. Vou mudar para o Medium aqui. Vamos fechar. Posso colocar em tela cheia? Certo.
+
+Então, vamos dar uma tarefa a ele. Criar 20 subagentes para revisar todos os subagentes. Esta é uma tarefa muito simples. Estou apenas pedindo ao Codex para executar a mesma tarefa que mostrei antes, na qual eu queria revisar todas as diferentes personas de subagentes neste repositório, e você pode ver que ele já identificou os agentes e as habilidades e está analisando. Existem 45 personas selecionadas. O que
+
+vai acontecer é que ele vai criar 20 revisores e dar a eles todos esses arquivos Tamil para que os revisem. E você pode ver que há duas coisas bastante interessantes aqui. Primeiro, o Codex decidiu automaticamente que esta é uma tarefa potencialmente complexa. Então, ele iniciou automaticamente o modo de planejamento, que é o que está ativo aqui. Como você pode ver, ele criou cinco tarefas para resolver este problema específico.
+
+Você também pode invocar o modo de planejamento explicitamente , mas neste caso ele decidiu fazer isso sozinho. Ele está particionando todos esses arquivos de perfil e, em seguida, vai gerar 20 subagentes muito em breve. Juro que é mais rápido. Mas...
+
+Então, agora o que ele está fazendo é... Ah.
+
+Por algum motivo, na minha configuração específica, tenho um limite de seis threads de agente simultâneas que podem ser executadas ao mesmo tempo. Podemos corrigir isso, mas vamos lá. Voltando um pouco, o que podemos ver aqui é que ele inicializa pelo menos seis agentes, que é o meu limite por enquanto, e eu consigo ver todos esses agentes trabalhando aqui. Consigo ver rapidamente o que o Jason, o agente aqui, está fazendo, ou o Hume, e assim por diante. E você pode ver que algo importante aqui é que o modelo principal do Codex essencialmente criou uma persona, certo?
+
+E não é só começar, ele fornece os arquivos exatos que esse subagente específico deve revisar, certo? Além disso, ele também fornece algumas informações sobre as diretrizes do repositório em repo.md, contributing.md, skills e assim por diante, e continuará seguindo esse caminho para todos os diferentes subagentes, certo? E o que ele faz na fase final é desativar todos esses subagentes quando eles tiverem concluído todo o processo de análise dos arquivos do túnel e assim por diante. E se eu voltar
+
+ao meu modelo principal... Como você pode ver, dois dos agentes ainda estão funcionando, mas eventualmente o processo reunirá todo o feedback recebido de cada um desses subagentes individuais e prosseguirá. Você pode pensar nisso como um caso de uso simples de explorador, certo? Mas também pode
+
+pensar nisso, por exemplo, sob a perspectiva de segurança cibernética, onde você tem um commit específico ou um repositório específico e deseja que o Codex execute várias análises de vulnerabilidade. Você quer que ele crie várias análises de vulnerabilidade a partir de diferentes pontos de vista ou hipóteses, e que você aborde o mesmo diff ou o mesmo repositório do GitHub para tentar criar um mapa de vulnerabilidades, certo? Isso é algo que usamos bastante, ou melhor, eu pessoalmente uso bastante quando estou pensando em uma funcionalidade específica. Eu simplesmente executo vários subagentes do Codex para analisar como eu abordaria um problema, certo? Digamos que eu queira adicionar uma funcionalidade... Eu
+
+pediria ao Codex para criar um plano com cinco, seis ou dez maneiras diferentes de implementar um modelo para um recurso específico e, em seguida, pediria ao Codex para criar vários subagentes para me dar uma ideia dessas tarefas. Desculpe, meu relógio estava vibrando constantemente. Bem, essa é uma visão geral rápida de como os subagentes funcionam. Por padrão, fornecemos três subagentes, três personas de subagentes. Deixe-me explicar rapidamente.
+
+Por padrão, fornecemos três personas. Uma é um agente de fallback de propósito geral padrão. Outra é um "worker", que é focado na execução. Você usaria essa persona quando quisesse que o Codex escrevesse uma solicitação de recurso específica ou trabalhasse em um recurso específico. Depois, há o " explorer", que é o mesmo que usamos antes. E para
+
+cada um deles, você pode criar várias personas e Crie suas próprias personas de subagentes do Codex, como vimos antes, e vamos criar uma agora mesmo. Algo a observar é que, para cada um desses subagentes específicos, você pode definir qual modelo deseja usar, qual nível de esforço de raciocínio, qual modo de sandbox e assim por diante. Isso é importante porque, para um agente de revisão, você quase sempre vai querer usá-lo em modo somente leitura. Você nunca vai querer que seu agente de revisão execute nada, certo? Pelo mesmo motivo, para uma vulnerabilidade de segurança cibernética, por exemplo, você vai querer que seu subagente esteja sempre em modo somente leitura. Mas para um
+
+redator de documentação ou algo que crie documentação para um recurso específico que você criou, ou um relatório de bug, etc., você vai querer dar a ele acesso de gravação para que ele possa executar comandos e também criar um relatório de bug. Bem, algo a observar é que você também pode reforçar e dar a esses subagentes mais recursos, concedendo-lhes acesso MCP. Por exemplo, você pode dar a um subagente acesso MCP ao Sentry para que ele possa analisar todos os seus relatórios ou acesso ao backlog do LineageOS para que ele possa interagir com o LineageOS, ler todos os problemas adicionados, triá- los e assim por diante. Você também pode atribuir habilidades a eles. Então,
+
+se você realmente quiser, pode personalizar bastante toda essa configuração para o seu caso de uso específico. Vamos abrir nosso aplicativo Codex novamente. Você pode ver que ele analisou todos esses subagentes. Ele criou vários outros subagentes apenas para analisar todos esses e chegou a essas conclusões. Hum, é tipo baseado no arquivo leia-me, baseado na contribuição, uh, desempenho O investigador de romances, hum, tem privilégios excessivos, hum, P1 tem uma mistura de sandbox, uh, desculpe, o verificador tem uma incompatibilidade de sandbox. O mesmo vale para o escritor
+
+e assim por diante. Então, como você pode ver, isso já é bastante útil e economiza bastante tempo, pois permite analisar todos esses itens individualmente ou sequencialmente, e assim por diante. Bem, agora vamos voltar e ver um pouco mais sobre subagentes personalizados. Bem, como mencionei, disponibilizamos três perfis de subagentes, mas você também pode criar seus próprios subagentes personalizados . Na verdade, recomendamos que você crie seus próprios subagentes ou simplesmente peça ao seu Codex para analisar suas sessões anteriores e criar subagentes para você.
+
+Bem, ambos os cenários funcionam e funcionam muito bem. Então, neste caso específico, você pode ver que temos um subagente do PR Explorer que lê sua base de código, usa o GPT 5.3 Codex Spark, que é nosso modelo de pré-visualização de pesquisa somente texto, implantado no Cerebras, e é extremamente rápido, sendo bastante adequado para este caso de uso específico. E configuramos o sandbox como somente leitura para que o modelo não seja executado, e damos a ele certas instruções, digamos, específicas. Então, neste caso, dizemos: "Ei, mantenham-se no modo de exploração, rastreiem o caminho de execução, sabe , não proponham nenhuma correção e simplesmente pesquisem e descubram exatamente o que vocês querem que façamos."
+
+Bem, agora vamos tentar rapidamente criar um subagente. Então, digamos que queremos fazer um pesquisador de documentos. Nesse caso, o que eu normalmente faço é simplesmente ir lá e perguntar: " Ei, Codex, você pode criar esse subagente para mim?" Bem, aqui está a sua personalidade. Hum, e então vamos ver.
+
+Então, o que o Codex vai fazer é saber como ele funciona, o que ele deve fazer e onde deve colocar todas essas coisas. O que vai acontecer é que vai criar um arquivo de túnel para este revisor de documentos. E neste caso específico, isto utiliza o servidor de documentação MCP que criamos, a partir da equipe DX, e que reúne todas as referências de API, toda a documentação, todos os guias, todos os kits de ferramentas e assim por diante. E ele adicionará isso como um servidor MCP, de forma que toda vez que fizermos uma pergunta, tipo, qual a melhor maneira de usar o GPT 5.4 com WebSockets ou qual a melhor maneira de usar o GPT em tempo real com... bem, com...
+
+escolha sua maneira favorita de usar o GPT em tempo real. E, hum, você poderia criar um plugin React para isso e assim por diante? Hum, seria possível fazer referência a todas essas coisas. Então vou deixar que ele faça o que tem que fazer e, enquanto isso, voltem para os slides.
+
+Então, só para voltar um pouco atrás, desculpe, um segundo. Bem, o que você pode fazer para invocar um subagente específico é dizer: "Ei, você pode,
+
+subagente revisor, revisar cada persona com base na documentação do desenvolvedor?" Então, nesse caso, você pode basicamente usar o mesmo subagente específico, aproveitá- lo novamente e pedir que ele execute a tarefa específica que você deseja. Agora, algumas maneiras interessantes de usar isso são...
+
+imagine que você tenha um longo processo de compilação ou um processo de teste. Você pode ter um subagente que execute seu caso de teste localmente. Você pode ter um subagente que pode sempre garantir que...
+
+ah, me disseram que eu não tenho tanto tempo. Hum, você pode ter um subagente que pode obter a versão mais recente do GitHub assim que você fizer um pull. Você pode ter um subagente que, sabe, consegue extrair rapidamente todo o contexto de uma questão linear e assim por diante. Então, na verdade, você pode fazer isso, você pode aproveitar isso para muitas coisas. E a melhor coisa que gosto de fazer é simplesmente pedir ao Codex para analisar minhas sessões anteriores e me recomendar certas automações, certos subagentes e assim por diante que eu possa usar.
+
+Legal. Então, agora estamos na vanguarda . Trata-se de um conjunto de itens que já enviamos no passado, mas que não receberam muita atenção especial. Então, o que vamos fazer é dar uma olhada rápida em cada um deles e ver o que cada um faz e como você pode aproveitá-los. Portanto, em primeiro lugar, é necessário obter a aprovação dos responsáveis ​​legais . Esta é uma
+
+funcionalidade experimental. Você pode ativá-lo hoje mesmo acessando barra/experimental. Então, seria algo como um Códice. Espero que funcione. E então você pode dar uma olhada na versão experimental e, no meu caso, eu já usei as aprovações do guardião e você pode ativá-las desta forma.
+
+Bem, o que a aprovação do responsável faz é... todos nós, inclusive eu, em algum momento fomos... culpados de usar o modo YOLO o
+
+tempo todo, o que significa que, por padrão, você dá acesso irrestrito ao seu agente de programação para fazer literalmente o que bem entender , certo? E isso, de forma alguma, é seguro. Então, criamos algo chamado aprovação do guardião, que, sempre que o Codex precisa de um privilégio para executar uma tarefa privilegiada, digamos, "posso remover este diretório específico?", é necessário acessá-la. Posso executar um servidor? Posso expor um determinado
+
+arquivo à internet? Sempre que todas essas coisas acontecem, o que o Codex faz é criar um novo subagente, certo? O que, com base em uma solicitação específica, tentará verificar se isso precisa ou não da minha intervenção humana . E na maioria dos casos, não precisa de intervenção humana, então simplesmente dirá: "Ei, vá em frente. Execute esta ferramenta ou tarefa privilegiada específica." E assim por
+
+diante. E, desta forma, o que esperamos fazer é reduzir a fadiga humana que surge de ter que aprovar, executar, executar, executar este script bash específico, ou executar isso, e assim por diante. Em princípio, como seria? Estou tentando ver se havia...
+
+Ok, não me mostra agora, mas só para ganhar tempo, vou perguntar... Ei, você pode executar o servidor de desenvolvimento? E eu vou usar o modo de acesso total, que por algum motivo, eu não consigo clicar. Vamos
+
+tentar ver se isso invoca aprovações de responsáveis. Enquanto isso funciona, vou passar para a próxima etapa, que são os hooks. Hooks também é algo que está em fase experimental no momento. Estamos trabalhando incansavelmente para tornar essa experiência melhor. Atualmente, o Codex suporta três ganchos. Uma é após cada
+
+utilização da ferramenta, uma é no início de uma sessão e a terceira é quando você encerra uma sessão. O que os hooks permitem é que você peça programaticamente ao Codex para fazer algo X com base em um evento específico. Então, digamos que, ao iniciar sua sessão no Codex, você queira que o Codex busque a versão mais recente do seu repositório no GitHub. Então, nesse caso específico, você precisaria configurar um gancho de partida. Bem, se você quiser que o Codex faça algo após cada uso da ferramenta, digamos, para muitos pesquisadores que desejam documentar cada uso da ferramenta, eles podem ter um recurso específico para cada uso da ferramenta, onde documentam o que o Codex fez por sessão e assim por diante.
+
+Então você pode fazer isso com isso. E por último, mas não menos importante, algo que eu pessoalmente uso é o recurso de parada, que, quando estou executando tarefas de longa duração, eu peço ao Codex, ao final de cada turno, que continue em execução. Assim, ele fica executando uma tarefa específica continuamente. E, em teoria, como isso seria?
+
+Onde fica?
+
+Desculpe, um segundo. Uau, eu estava realmente preparado para ter mais tempo. Hum, tenho que dizer. Mas, em teoria, como isso funcionaria seria...
+
+você teria algum tipo de script em Python e definiria um arquivo hooks.json. Então, neste caso específico, você pode ver aqui que há uma pré-ferramenta que utiliza algum tipo de... um
+
+comparador. Você diz algo como: ao iniciar ou retomar a sessão, execute este arquivo session.sessionstart.py específico e assim por diante. E você pode definir como quiser, neste caso específico.
+
+Então, o que eu fiz, por exemplo, para o painel de vendas que mostrei até agora, foi criar um gancho para parar, que executa este script Python, o keep going.py, que, sempre que encontra o gancho de parada, pede ao Codex para continuar, fazer mais uma verificação, executar um comando de validação sólido, digitar mais uma coisa e, em seguida, parar e exibir o resultado. Assim, para tarefas de longa duração, você pode simplesmente configurá-la e pedir que continue executando a tarefa automaticamente. Por último, mas não menos importante, temos as mudanças de personalidade, o que significa que você pode acessar o Codex e pedir para ele dar uma olhada rápida na personalização. Você pode configurar personalidades diferentes. Você pode
+
+desenvolver uma personalidade mais amigável ou uma personalidade pragmática, dependendo do que você deseja fazer. Você também pode adicionar instruções personalizadas, para que o programa sempre cite o que estiver fazendo, e assim por diante. Certo. E por último, lançamos algo chamado Codex Security. Este é o nosso modelo de última geração , que permite encontrar e corrigir vulnerabilidades em seus projetos do GitHub. E,
+
+basicamente, o que ele faz é analisar commit por commit, criar uma correção para a vulnerabilidade e, em seguida, usar o Codex para aplicar as mesmas correções. Por
+
+último, como mencionei anteriormente, lançamos um plugin de código na nuvem, que permite usar o Codex no código na nuvem. Isso é algo que, surpreendentemente, foi bastante utilizado pela comunidade. E isso permite que você peça ao Codex para revisar tudo o que você já fez, execute uma revisão adversária ou simplesmente peça ao Codex para reverter as alterações que você já fez. É isso aí . Muito obrigado por se juntar a nós e fique à vontade para fazer qualquer pergunta que você possa ter.
+
+Oi. Portanto, não temos muito tempo para perguntas e respostas. Infelizmente, talvez devêssemos ter começado um pouco mais cedo, mas ficaremos felizes em responder a algumas perguntas na sala e, de qualquer forma, ficaremos por aqui. Portanto, se você tiver alguma dúvida e não tiver nenhum compromisso, pode vir falar conosco. Sim.
+
+Muito obrigado. E eu tenho uma pergunta. Você disse algumas vezes que existe uma maneira de fazer o Codex analisar sessões passadas e basicamente fornecer...
+
+Sim, então o que você normalmente faz é colocar todas as sessões dentro do Codex em pastas .sessions dentro de uma pasta específica .codex, e o Codex tem a capacidade de simplesmente analisar todas as suas sessões e então, você sabe, fazer as coisas. Sim .
+
+Você pode usar o aplicativo Codex, o Codex CLI, qualquer coisa; basta pedir para ele analisar as sessões e fazer o que você quiser. Legal. Tem mais um, ah, ok, talvez mais alguns. Sim . Aqui atrás.
+
+Oi. Oi. Existe alguma forma de delegar uma tarefa a um agente na nuvem? Então, digamos que eu esteja aqui trabalhando em uma tarefa e precise fechar meu laptop para acessar um agente na nuvem. Sim, definitivamente não abordamos isso, mas na verdade você pode fazer isso diretamente do aplicativo Codex. Por
+
+exemplo, você pode mostrar sua tela, mas também pode trabalhar localmente e, como você mencionou, podemos usar árvores de tarefas. Além disso, você pode selecionar a opção "nuvem" e escolher quantas vezes a tarefa deve ser executada. Você pode paralelizar, o que chamamos de "melhor de n", executando a tarefa quatro vezes na nuvem e selecionando o melhor resultado. Essa funcionalidade já está integrada ao aplicativo Codex, na extensão ID, e você também pode acessá- la diretamente pela interface web. E tem mais coisa legal chegando em breve.
+
+Mais o quê? Tem muito mais coisa legal chegando muito em breve. Acho que havia uma bem aqui. Sim .
+
+Muito obrigado. Na verdade, minha pergunta também era sobre a interface de usuário na nuvem, pois, se não me engano, os usuários do Sabat não são mais suportados atualmente . E o que mais me incomoda é que não utiliza as habilidades que estão no repositório. Isso será lançado em breve ou...? Então, correndo
+
+o risco de acabar falando sobre todo o planejamento. Com certeza teremos muitas outras mudanças nesse aspecto . Não tenho certeza se as habilidades em nuvem estarão disponíveis tão cedo quanto eu digo, mas definitivamente é uma das nossas principais prioridades e queremos adicionar, sabe, dar a vocês a possibilidade de ter seus próprios servidores MCP confiáveis ​​para executar tarefas, ou CLIs e assim por diante. E também a possibilidade de ter agentes SSH que podem ser executados em uma máquina virtual para uma tarefa específica, e assim por diante. Então, há muito trabalho a ser feito nisso, como por exemplo, se é possível usar as habilidades presentes no repositório, certo? Isso já foi
+
+verificado. Não está nas tarefas em nuvem. Sim . Mas, tipo, se você curtir, ele lê as instruções e tal, e eles conseguem encontrar e continuar vendo, já que está na base de código. É mais como se as habilidades que você tem localmente fossem as mesmas. O motivo pelo qual não
+
+permitimos isso na nuvem é porque não há como o ambiente de teste saber se uma habilidade é confiável ou não, certo? E é por isso que nós não permitimos isso. Uma habilidade pode ser empacotada como um script Python, um arquivo ou um executável. Não vai executar nada, mas se você tiver, sabe, coisas como recursos, ele pode acessá-los tecnicamente porque estão no repositório. É que não é tão bom, então preciso pedir. Sim
+
+. Sim . Obrigado. Obrigado. Havia outras perguntas?
+
+Legal. Tenha um ótimo dia. Tenha um bom dia. E se você tiver mais alguma dúvida, estaremos por aqui hoje, amanhã e talvez também na sexta-feira. Fique à vontade para entrar em contato ou simplesmente enviar uma mensagem direta e aproveite.
+
+Obrigado.

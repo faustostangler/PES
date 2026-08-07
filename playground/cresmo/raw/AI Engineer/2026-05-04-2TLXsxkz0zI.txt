@@ -1,0 +1,758 @@
+---
+video_title: "Ralph Loops: Build Dumb AI Loops That Ship — Chris Parsons, Cherrypick"
+video_id: 2TLXsxkz0zI
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=2TLXsxkz0zI
+video_date: 2026-05-04T14:00:17+00:00
+video_description: |
+  Dumb loops beat clever workflows. Most teams building with AI agents reach for multi-agent orchestration, planning graphs, and elaborate tool chains. Then they spend months debugging them. A single loop that processes one ticket at a time, evaluates its own output, and improves on the next run will outperform all of it.
+  
+  In this hands-on workshop you will build three things. First, a working Ralph Loop that processes real tickets end-to-end. Second, a synthetic feedback loop so you can test and iterate locally without waiting on production data. Third, a self-improving cycle where the loop's output quality gets better with every run without you touching the prompt.
+  
+  Speaker info:
+  - https://x.com/chrismdp
+  - https://www.linkedin.com/in/chrisparsons/
+  - https://github.com/chrismdp
+  
+  Timestamps:
+  0:00 Introduction to the workshop and Ralph Loops
+  6:12 How AI agents work on loops
+  10:06 Using loops for software development
+  10:43 Live coding: Building a Pomodoro timer
+  12:13 Explaining the ticket system
+  15:01 Implementing the first ticket (Status command)
+  17:37 The simplest Ralph Loop: A while loop
+  22:12 Next steps and taking the concept to the next level
+  28:19 Implementing further tickets using TDD principles
+  40:33 Advanced feature: The 'loop' command in Claude Code
+  49:39 Structuring and managing Ralph Loops
+  55:33 Using sub-agents for better validation
+  59:39 The 'startup' skill and ambitious automation
+  1:04:10 Real-world application: Worker and morning loops
+  1:09:19 Q&A: Determining when to stop open-ended tasks
+  1:13:31 VCP command and project context
+  1:15:52 Q&A: Handling context rot
+  1:17:01 Q&A: Reviewing sessions and verification
+  1:22:38 Q&A: Versioning prompts and skills
+  1:27:12 Q&A: Knowledge management and system organization
+  1:38:34 Closing, feedback, and final questions
+---
+Bem-vindo. Então, esta oficina é sobre loops de Ralph. Quem sabe o que é um laço de Ralph? Isso inclui quase todo mundo. Imagino que as outras pessoas que entraram estavam aqui porque acharam aquilo estranho ou talvez estivessem procurando um lugar tranquilo para trabalhar, não sei. Mas você é muito
+
+bem-vindo(a). Então, o que faremos hoje é um workshop de 2 horas. Se você pudesse abrir um pouco de espaço conforme as pessoas forem chegando, seria de grande ajuda. Obrigado. Este workshop tem duração de 2 horas. Na
+
+verdade, vamos construir circuitos Ralph juntos. Vamos fazer isso juntos, cada um em seu próprio laptop, para que possamos realizar algumas coisas e concluir algumas tarefas. Então, não se trata apenas de teoria. Isso é algo muito prático. Então, se você tiver um laptop, fique à vontade para pegá-lo daqui a pouco. Nós
+
+vamos tentar fazer isso nós mesmos. Então, eu tenho alguns slides, mas não muitos. Grande parte disso consistirá em demonstrações ao vivo e pontos de interação . E a ideia é que, ao final disso tudo, você consiga sair com algo que funcione. Isso será aplicado a uma espécie de base de código de brinquedo, apenas por diversão, para criar um cronômetro Pomodoro. Mas, com
+
+sorte, a ideia é que você consiga usar isso no seu trabalho real quando terminarmos . Então, mais uma vez, levantem as mãos, está tudo bem. Quem usa especificamente o Claude Code ou o Codex para escrever código? Mãos ao alto. Ah, bastante gente. Especificamente para escrever código,
+
+ok. Quem está usando isso para escrever todo o seu código? Quem não está mais escrevendo código? É muita gente. Olhe ao redor por um minuto. Isso é uma
+
+mudança enorme. Se eu tivesse perguntado a um grupo de programadores há 6 meses quem não estava mais escrevendo código, a resposta seria bem diferente. Então, próxima pergunta. Quem usa Claude Code ou Codex (e incluo aqui também quem usa cursor) em seus trabalhos que não envolvem programação . Ok, muitos de vocês. E quanto a
+
+todo o seu trabalho normal que não envolve programação? Ok, interessante. Interessante. Então, você consegue ver o futuro nesta sala, certo? Há algumas pessoas que estão começando, mas ainda estamos nessa jornada, com certeza. E quem já construiu
+
+circuitos Ralph antes? Última votação. Uma ou duas pessoas. Ok, ótimo. Vou contar com você para todas as respostas.
+
+Isso é ótimo. Então, só um pouquinho sobre mim. Meu nome é Chris Parsons. Atualmente, passo a maior parte do meu tempo tentando ajudar equipes como a que eu costumava liderar a descobrir o que diabos fazer com IA, principalmente. Então, minha formação é como CTO (Diretor de Tecnologia) . Já trabalhei em algumas
+
+startups e scale-ups apoiadas por capital de risco. E é por isso que elas nos pegaram de surpresa, a mim e aos meus amigos, e ainda estamos tentando descobrir juntos, profissionalmente, como ajudar nossas equipes a adotar e usar a IA. Então, é isso que eu faço para ganhar a vida atualmente . Tenho cerca de 30 anos de experiência profissional em desenvolvimento de software, tendo sido CEO de uma agência. Eu já fiz muita consultoria em metodologias ágeis, lembra? E
+
+esse tipo de treinamento também existia naquela época . E, curiosamente, todos esses princípios e práticas que ensinamos durante anos e que ninguém realmente ouviu, são assunto para outra conversa, e ainda são muito aplicáveis à IA. Então, é isso aí. Então, atualmente, estou executando loops do Ralph o tempo todo, 24 horas por dia, para conseguir terminar meu trabalho. Então, estou usando-as para escrever meus e-mails. Estou usando-
+
+os para consultar meu calendário. Estou usando-as para escrever conteúdo e newsletters. Estou usando-os para me ajudar no trabalho com meus clientes. Então, estou usando-os em absolutamente tudo. Eu também os uso para código, que é o foco de hoje, mas eles são muito aplicáveis ​​a todas as áreas de nossas vidas.
+
+Portanto, a ideia é que, no final das contas, você também esteja em uma posição em que possa fazer isso. Então, era assim que eu trabalhava com IA até bem recentemente. Provavelmente você não consegue ver isso muito bem. Este é um fluxo de trabalho N8N que utilizei para criar meu boletim informativo semanal. Provavelmente levei uma semana para escrever, sem contar os testes e a depuração. Tem uma enorme
+
+variedade de coisas diferentes aqui dentro. Isso é como um fluxo de artigo em destaque, que leria vários artigos diferentes do meu blog e descobriria se eu já os publiquei, resumiria o conteúdo usando IA e o colocaria em destaque. E depois há outra função para obter links que eu havia postado em uma lista específica, e ela meio que fazia um comentário sobre isso. Era realmente muito complicado e difícil de operar e manter. E até que funcionou razoavelmente bem, exceto às 14h. Às segundas-feiras, praticamente todas as
+
+segundas-feiras, eu recebia a temida notificação do N8N de que meu fluxo de trabalho havia falhado, e eu pensava: "Ah, não". E aí eu teria que entrar lá e descobrir o que quer que tivesse quebrado, tentar rodar o programa e consertar. Isso não é nada contra o N8N. O N8N é uma ferramenta muito bacana, capaz de fazer coisas realmente incríveis, e eu jamais teria conseguido orquestrar IA da maneira que fazia antes sem uma ferramenta como o N8N. Apesar de ser programador, é muito mais fácil gerenciar tudo aqui, e você consegue administrar todas as chaves de API com muita facilidade. É
+
+uma ótima ferramenta para manter tudo organizado. Mas era muito instável para usar nesse nível de complexidade, e eu não consegui obter muito proveito disso . E aí, cada vez que eu consertava, acabava fazendo outra coisa. Sinceramente, provavelmente foi mais fácil para mim simplesmente escrever a newsletter do que teria sido manter o programa que a escrevia , e provavelmente eu teria uma newsletter um pouco melhor. Então, isso não foi ótimo, mas, na minha opinião, há alguns meses, essa era realmente a única maneira de usar IA. Você tinha que meio que
+
+orquestrar e gerenciar tudo, fornecer os dados corretos e lidar com todo o contexto. E eu pensava que este era o futuro da automação, mas na verdade não é. O futuro da automação se assemelha muito mais a algo assim, executado em código Claude. Então, obviamente esta não é a habilidade em si, mas agora tenho no código Claude uma habilidade que escreve newsletters para mim, e ela contém todas essas instruções. Na verdade, eu copiei e colei o código JSON do NA10 de lá no Claude e disse: "Crie uma habilidade baseada neste fluxo." E fez um ótimo
+
+trabalho. E então o que ele faz é percorrer todo o processo e executar todas as ações necessárias. Mas o interessante nisso é como funciona o código de Claude? Bem, ele lê a primeira coisa, decide o próximo passo, e então lê o próximo passo, e então decide o próximo passo, e assim por diante, ao longo de alguns minutos, até chegar à redação e produção do boletim informativo que eu estava escrevendo. E o mesmo se aplica ao código. O mesmo se aplica a
+
+qualquer coisa que queiramos construir usando o código Claude. Claude meio que resolve isso. Você descreve o tipo de coisa que deseja, e o programa faz. O interessante é que o código Claude, fundamentalmente, é executado em um loop, não é? O processo simplesmente lê a habilidade, chama uma ferramenta, volta ao início, lê a habilidade novamente, chama uma ferramenta, chama outra ferramenta e, em algum momento, percebe que terminou, para e entrega seu boletim informativo no formato que você desejar. O
+
+interessante é que isso gera boletins informativos muito melhores e mais coerentes do que o fluxo de trabalho anterior. Ainda preciso alterá-las, escrevê-las, mexer nelas, mas... elas são um primeiro rascunho muito melhor do que jamais foram. E eu realmente não pratiquei essa
+
+habilidade. Na verdade, tudo o que faço com essa habilidade é dizer ao final do processo de escrita de um boletim informativo: "Por favor, atualize a habilidade com qualquer coisa que você tenha descoberto durante a sessão que poderia ter feito de forma diferente." E faz alguns ajustes aqui e ali. Então, isso é um loop. Esse é o tipo de trabalho que se faz em ciclos com IA. Então, agentes que
+
+inicialmente começam em fluxos de trabalho com uma orquestração bastante complexa, que se parece um pouco com algo infernal como isso, acabam em um loop bem mais simples , talvez com um contexto um pouco melhor. Isso não funcionou por muito tempo, mas agora está começando a funcionar com os modelos mais recentes. E por modelo mais recente , quero dizer realmente GPT-5.x, na verdade GPT-5.1 em diante, e Claude Opus 4.6 ou Sonnet 4.6
+
+em diante. Assim, esses modelos começaram a surgir por volta do final de novembro. Aliás, não faço a mínima ideia sobre Methos. Conversei com pessoas que usaram e elas dizem que é bom, mas é principalmente marketing, mas veremos. Hum, mas sim, vamos ver aonde isso nos leva. Talvez nem precisemos de
+
+habilidades. Talvez a gente simplesmente diga: "Escreva um boletim informativo". E vai funcionar. Quem sabe? Bem, o que estou tentando dizer é que, em vez de usar fluxos de trabalho complicados, estamos usando habilidades e loops de forma muito mais contextualizada . E qualquer tipo de agente que
+
+executemos já é, de alguma forma, um ciclo vicioso. OK? E esse tipo de estrutura de repetição poderosa é algo que você pode aplicar de forma mais geral. Então, o que acontece quando levamos os loops um pouco mais longe? Então, a primeira etapa... essa ideia, ou a
+
+primeira ideia, veio de Jeffrey Hinton Lee, há um tempinho, nos tempos antigos da IA, o que significa provavelmente por volta de junho passado. E ele disse basicamente que o que devemos fazer é, sempre que terminarmos de usar uma IA para fazer qualquer coisa, devemos simplesmente tentar fazer aquilo novamente de alguma forma. Deveríamos simplesmente fornecer exatamente o mesmo comando e ver o que acontece. Veja o que acontece novamente. E parece um pouco estúpido, e é baseado em... Alguém sabe de onde
+
+vem essa história? Quem sabe por que se chama laço de Ralph? Como duas pessoas. É chamado de loop de Ralph por causa de Ralph Wiggum, um personagem dos Simpsons, que basicamente diz "hum, ele simplesmente tenta a mesma coisa repetidamente , até que eventualmente funciona". E é só isso, na verdade.
+
+Um loop Ralph nada mais é do que construir ou executar algo dentro de um prompt. Então a IA se retira e realiza a tarefa. E então termina e diz: "Ok, eu fiz o que tinha que fazer." E então aparece: "Ok, ótimo. Vá e construa isso." E você sabe, e faça
+
+tudo o que eu disse para construir isso . E a resposta é: "Ah, ok. Farei de novo." E o aspecto inovador disso era que a IA frequentemente revisaria seu código e perceberia que havia deixado passar algo , certo? Então, descobriu-se que não estava totalmente terminado. E
+
+esse é um problema bastante comum com ferramentas de codificação de IA do ano passado. Não estava totalmente concluído. Não chegou exatamente ao fim. E aí eles dizem: "Ah, é mesmo, eu devia ter consertado isso." Mas depois acontece de novo . E então, quando para,
+
+diz: "Certo, definitivamente terminei agora, 100%. Está feito . Acabou." E depois, o que você faz? Você dá a ele mais um problema para resolver. Diga:
+
+"Vá embora e desenvolva a funcionalidade." É como se eu dissesse: "Eu desenvolvi a funcionalidade." E então tenta, olha e pensa: "Ah, é verdade, tinha uma coisinha que eu devia ter feito. Agora sim, terminei." E assim por diante. Assim, você
+
+pode perceber a utilidade de percorrer esse ciclo, onde você cria a funcionalidade e depois pede para que ela seja criada novamente. E então você pede para ele criar o recurso. Então, essa é a primeira etapa dos loops iniciais. E o que eu gostaria que fizéssemos é que tentássemos isso. Então, em primeiro lugar, vou fazer um pouco de programação ao vivo.
+
+Segurem seus chapéus. Vamos ver como isso vai ser. E vamos tentar realizar esse processo usando o código Claude para ver aonde isso nos leva. Então, deixe-me começar a mudar o que compartilho.
+
+Desculpe, só um minutinho. OK. Ótimo. Hum, este aqui. Todos conseguem ver isso, ok? As
+
+pessoas que estão lá atrás conseguem ver isso, ok? Você quer que eu aumente o tamanho? Aprovado. Ótimo. OK. Então, este é um
+
+trecho de código que eu escrevi ao vivo em cerca de 3 minutos ontem à noite, então não está bom. Mas, bem, esse é exatamente o objetivo. Vamos resolver isso. Então, é literalmente um cronômetro Pomodoro. E você pode ver como funciona. Se eu for ao Python e digitar "
+
+Pomodoro start", oba, temos um cronômetro Pomodoro. É só isso que faz. Simplesmente começa. Não há como saber se está terminado, completo ou algo do tipo, mas é isso que vamos mudar. Outra coisa bacana, que é muito importante para qualquer projeto de IA com código de feedback que se preze, é que ele tem testes.
+
+Então veja, tem um teste. Há um teste e uma verificação para ver se o motor liga. Isso é ótimo. Então, vamos dar uma olhada rápida — e me perdoe se você não for fã do Vim, porque eu sou. Bem, embora eu quase não use mais, é bastante triste. Sabe, 20
+
+anos de memória muscular simplesmente desapareceram. Mas, bem, então, tudo o que ele faz é executar um comando de inicialização e, em seguida, salvar no seu diretório Pomodoro.Pomodoro, na sua pasta pessoal, o horário em que você começou. Muito, muito simples. Portanto, este é um projeto muito simples e bastante direto. A diferença
+
+é que agora existe uma nova pasta com itens diferentes, e esses itens são ingressos. Existem, portanto, diversas maneiras de aprimorarmos esse cronômetro Pomodoro. E a primeira coisa que eu gostaria de saber é quanto tempo falta para o nosso Pomodoro acabar, em vez de apenas iniciá- lo. Então, o que eu fiz foi criar um sistema de tickets muito simples para nos permitir registrar algumas alterações. Esses não são... Bem, é só uma
+
+tentativa, então não tenho ideia se esses ingressos são realmente válidos. Na verdade, eu nem cheguei a olhar para alguns deles. Vamos ver como isso vai correr. Mas a ideia é que podemos usar isso para começar a construir um ciclo de trabalho a fim de realizar algo. Então, para começar, vou chamar o Claude e literalmente dizer para ele preencher o primeiro bilhete. Então, tenham paciência
+
+enquanto Claude liga o computador . De certa forma, fico feliz que eles não tenham lançado o Mythos ontem, porque acho que não funcionaria hoje se o tivessem feito. Hum, isso realmente não está funcionando, né? Isso é frustrante.
+
+Uau. Vamos tentar novamente.
+
+Acho que há um problema com o Wi-Fi. Ah, ok . Quer dizer, isso pode causar alguns problemas na minha apresentação, mas vamos ter que ver como as coisas vão se desenrolar . Eu não tenho um daqueles Macs novos e sofisticados que permitem executar programas. Não, na verdade, isso travou meu computador. Você
+
+acredita nisso? Estava funcionando perfeitamente há apenas 10 minutos. Hum, deixe-me dar uma olhada. Tenham paciência enquanto eu depuro meu computador. Hum...
+
+Tem... Hum... Acho que estou em uma rede
+
+Wi-Fi diferente, então deveria... Ah, não, é, a rede Wi-Fi caiu. Diversão. Tempo de amarração. Talvez tenha que ser.
+
+Certo, espere um segundo enquanto eu conecto meu celular à internet, que eu acho que tem um 5G decente, então devemos ficar bem. Certo, vamos ver se isso melhora. Viva! Ok, vamos tentar novamente. Não, essa não. Legal. Então,
+
+oficina de programação Pomodoro. Certo, esse tamanho é suficiente? OK, bom. Vamos tentar isso. Claude, através do poder do 5G. Olha só
+
+, funciona mesmo. Uau, fantástico. Ok, então, o que eu vou fazer é o seguinte: como eu disse, vamos usar um cronômetro Pomodoro muito, muito simples e bobo . E vamos implementar um sistema de tickets. Então, o que vou fazer é dizer: implementem este ticket. Então, está no documento de tickets
+
+001. Ótimo. E eu só vou dizer isso. Veja o que acontece. Então, o que vou fazer é ler o bilhete, que eu mostrei rapidamente para vocês antes. É muito
+
+simples, e tudo o que faz é implementar um indicador de progresso para vermos o quanto já avançamos . E então, o que eu gostaria que acontecesse... O que eu vou fazer depois disso é avisar quando estiver pronto, porque serão literalmente dois arquivos.
+
+Não vai ser difícil para isso. E então eu vou dizer, sabe, implemente isso de novo e veja o que acontece. Existem algumas maneiras diferentes de fazer isso. E não existe uma única maneira correta de fazer um loop Ralph. Na verdade, tudo se resume ao conceito, e nada mais. Ótimo. Então, o
+
+bilhete foi emitido. Se eu fizer um "quick get diff" rapidamente, você poderá ver que o que aconteceu foi a adição de um comando de status. Acho que, quando pedi que levantassem a mão mais cedo, a maioria de vocês eram programadores, então espero que não seja difícil de acompanhar. E então temos um novo teste. Olha só isso. Adicionamos um
+
+teste. Nem sequer pediu e adicionou um teste. Nossa! Para onde o mundo está caminhando? Então, o que eu vou fazer agora é literalmente dizer a mesma coisa. Há um ano, isso teria
+
+sido um passo muito importante, pois certamente teríamos deixado algo passar despercebido. Bem, agora é como se eu já tivesse feito isso. Está tudo bem, né? Assim, o Opus agora consegue perceber muito melhor quando as coisas estão concluídas. Agora, um laço Ralph tradicional continuaria fazendo isso, certo? E continuaria assim,
+
+com esse tipo de coisa: implementar este ticket, implementar este ticket, implementar este ticket. E... bem, isso é meio chato e não vai fazer muita coisa além disso. Hum,
+
+e em algum momento, na verdade, quando tentei isso antes, é interessante, aconteceu algo diferente. Na verdade, percebeu que o que deveria ter feito era atualizar o status para "concluído". Portanto, o processo funcionou. Isso não funcionou antes. Ah, isso é ótimo. Então, na verdade, percebeu
+
+algo que não tinha feito. Então, aí você pode ver o princípio fundamental inicial dos primeiros loops de Ralph, certo? A ideia de que você pode simplesmente avançar rapidamente, fazer alguma coisa e que, eventualmente, encontrará coisas que passou despercebidas. Como não funcionou , vou tentar mais uma vez, mas acho que não vai apresentar nenhum resultado diferente. Como eu disse, os modelos mais recentes realmente não precisam dessa etapa da mesma forma. Eles geralmente simplesmente resolvem o problema
+
+. Na verdade, desta vez é tipo: "Ah, se você estiver executando um loop do Ralph, isso pega o próximo ticket." Ah, isso é hilário. Isso está literalmente entregando minha apresentação. Hum, isso é fantástico. OK. Bem, o que eu gostaria que
+
+fizéssemos é, como ponto de partida, outra coisa que você pode fazer é simplesmente eliminar o contexto e, em seguida, fazer a mesma coisa novamente e dizer " implementar o documento ticket 001" (não vou me dar ao trabalho de soletrar o nome). Vai encontrar. Hum, e então, agora, o que estou fazendo é basicamente a mesma coisa, mas sem saber do contexto anterior. Então será muito interessante ver o que acontecerá com isso. Bem, estou supondo que encontrará, supondo que encontrou o bilhete. Sim,
+
+encontrou o bilhete. Isso foi bastante fácil para ele fazer. É apenas um teste para garantir que tudo funcione corretamente e seja aprovado. Ok, então está feliz. Então, quando começamos a usar os loops Ralph, algumas pessoas não os executavam dentro do mesmo estado.
+
+Havia um plugin de código Claude antigo que, no gancho de parada (que é o que está sendo executado agora), quando parava de funcionar, simplesmente executava o mesmo comando novamente. Então, é mais ou menos como se eu estivesse digitando a mesma coisa todas as vezes. Mas isso não funcionou muito bem, pois não foi muito longe. Enquanto que agora o que é mais útil, ou o que as pessoas começaram a fazer, foi simplesmente executar o código Claude em uma espécie de loop. Então eles fariam algo como enquanto fosse verdadeiro, e então fariam Claude implementar o ticket 001.
+
+Certo, e então pronto. E então isso simplesmente passaria por... bem, não exatamente, porque eu não interpretei Claude P., mas, na
+
+prática, era isso que eles estavam fazendo. Ah, não, agora estraguei tudo de vez. Eu realmente não deveria ter apertado Enter, né? Certo, aqui está. Então era isso, mas era basicamente o que as pessoas estavam fazendo. O loop mais simples do Ralph
+
+é literalmente um loop while que simplesmente executa várias ações. Super, super fácil. Então, qual é o próximo passo no ciclo de Ralph? Bem, na verdade, o que faremos agora é que eu vou ajudá-los a chegar a esse ponto e, em seguida, responderei às perguntas de outras pessoas. Então, deixa eu voltar para cá. Tenho esperança. Pronto. Sim
+
+, ótimo. Então, o que eu gostaria que vocês fizessem é abrir seus laptops e pegar o código daqui. Então, está no meu GitHub como "pomodoro workshop". Você deve conseguir encontrar isso com bastante facilidade. E você viu como eu conduzi isso. É muito simples. Talvez você precise
+
+instalar o Python na sua máquina. Então, espero que isso não seja muito difícil. Ou você pode simplesmente executar o Python, tipo o pomodoro.py, que vai te dar o comando que você pode digitar, e aí é só um teste unitário para executar o teste pomodoro, super fácil. E então, na quarta etapa, quero que você abra o Claude Code ou o Codex e tente criar esse ticket para garantir que esteja funcionando.
+
+Hum, e esse será um ótimo ponto de partida. Mas não crie mais nenhum ingresso ainda. Não deixe que isso te leve longe demais. E então, se você já está acostumado com isso e é algo totalmente natural para você, tente no Codex. Experimente com outra coisa. Experimente
+
+configurar algo semelhante em um de seus próprios projetos. Então , algo diferente. Então, vou responder às perguntas agora enquanto as pessoas continuam digitando. Vou te dar alguns minutos para configurar isso e depois passaremos para a próxima etapa. Alguém tem alguma pergunta, comentário ou opinião? Eu
+
+tenho um microfone aqui. Bem, se alguém quiser perguntar alguma coisa, sim. Pronto. Deve aparecer em um segundo. Esperançosamente.
+
+Os caras lá atrás... Pode ser que não esteja ligado. Está ligado? Você pode
+
+gritar e repetir. Sim, você pode gritar e eu repito. Sim, isso poderia funcionar. Posso verificar primeiro se está ligado? Sim, parece que sim. Que estranho. Grite
+
+e eu repito de qualquer maneira. Ah, aí está. Pronto. Ótimo. Hum, eu experimentei um pouco o método B mad, não sei se você já viu. Tem um
+
+cara que basicamente escreveu um monte de habilidades e comandos para seguir um processo ágil completo, sabe? E acho que ele tem... Ele tem um agente para construir, testar, sabe, tudo.
+
+E eu acho que sim, você já fez algo usando esse tipo de processo de ciclo aproximado , percorrendo todo o ciclo de vida do desenvolvimento de software em cada etapa? Sim. Hum, talvez eu consiga chegar até isso no final. Sim, eu já experimentei algumas dessas coisas. É realmente interessante e levanta questões muito pertinentes, tanto em relação ao contexto quanto ao valor da obra em si. É realmente interessante. Sim
+
+, talvez falemos um pouco mais sobre isso no final. Então, pergunte novamente. Se eu não tiver abordado o assunto, basta repetir a mesma pergunta e vamos chegar a uma conclusão aproximada. Ok, obrigada. Alguém mais tem alguma pergunta?
+
+Como estão as coisas para se organizarem ? Alguém conseguiu configurar isso? Sabe, dá um aceno para mim se você conseguiu fazer funcionar. Ótimo. Excelente! Alguém conseguiu
+
+implementar o primeiro ticket? Viva! Algumas pessoas. Você tem alguma pergunta? Não, não, não. Ok, vamos lá.
+
+Você conseguiu. Ótimo. Fabuloso. Sim, provavelmente eu deveria ter dado instruções diferentes para fazer uma pergunta e para depois de ter terminado. Isso é ótimo. Então, algumas pessoas já
+
+começaram. Fantástico. Ótimo. Então, você provavelmente já imagina onde isso vai dar e, se prestou atenção à demonstração ao vivo, já deve saber a resposta. Vou pegar o microfone de você para que não precise ficar segurando isso.
+
+Obrigado. Sim , você não precisa parar em apenas um ingresso. Por acaso, Matt Pocock está presente nesta sala? Sei que ele vai dar o workshop depois deste. Foi dele que recebi isso. Então, se ele estiver assistindo ao
+
+vídeo, obrigado, Matt. Bem, isso foi uma revelação para mim em setembro do ano passado. Postei um vídeo brilhante no YouTube sobre exatamente como levar loops brutos para o próximo nível. Porque quando foi lançado, eu vi na internet, testei e pensei: "É, isso é bom. É até legal. Ele meio que identifica coisas que a IA
+
+consegue fazer onde deixou passar e talvez consiga fazer um trabalho um pouco melhor , mas não vai mudar tudo o que eu faço." E a resposta é que isso realmente muda completamente a forma como trabalho e abordo o código agora. Então, acho que o mais interessante não é como garantir que Claude tenha terminado essa tarefa específica, mas sim o que acontece se eu direcionar esse tipo de loop para uma pilha inteira de coisas a fazer. Certo? O que acontece quando apontamos para uma lista inteira de coisas? Bem, eu tentei isso. Eu escrevi
+
+um post no blog sobre isso, que foi um pouco deprimente porque, para ser honesta, mostrou um fracasso absoluto do começo ao fim, mas era mais sobre o que eu tentei fazer. O que eu tentei fazer foi convencer o Claude, acho que era o Claude na época, a dividir um projeto grande em várias tarefas diferentes. E então consegui dividir todos esses ingressos em ingressos menores. E então eu consegui descobrir quais eram todas as dependências entre esses tickets e anotá-las com muito cuidado. E então eu consegui descobrir como ele poderia usar uma infinidade de agentes diferentes. Desculpe, você tinha alguma
+
+pergunta? Eu estava dizendo que estava com um problema de Wi-Fi. Isso é bom. Tem alguém ali com um microfone, caso você queira falar. Oh, um, dois, um, dois. OK. Eu
+
+tive um problema com o Wi-Fi e não fiz a clonagem. Ah, me desculpe. Vamos analisar essa. Em poucos minutos. Sim, obrigado.
+
+multar. Vou deixar assim mesmo. Isso é bom. Hum, todos gostaram do slide? OK, bom. Certo, aqui está.
+
+Então, esses slides, aliás, foram criados usando uma habilidade de apresentação de slides do Nana Banana Pros. Absolutamente incrível na criação de slides. Hum, eu não fiz nada além de adicionar um código QR, por menor que fosse, não adicionei nenhum texto a esses slides. São apenas imagens estáticas no Google Slides. Eles são realmente incríveis na criação de slides. Hum, o que eu estava dizendo mesmo? Sim.
+
+Então, a ideia de criar um loop Ralph para fazer apenas uma coisa parecia um pouco sem sentido e era apenas uma forma de contornar algumas limitações. Se você aplicar esse loop a uma grande quantidade de trabalho, ele se tornará incrivelmente poderoso. E como eu estava dizendo antes, criei esse enorme e complexo gráfico de dependências com uma infinidade de tarefas diferentes sobre como eu construiria esse sistema realmente complexo para mim. E aí eu fiquei empolgado, tipo, com seis ou sete agentes paralelos, e pensei: "Certo, você faz uma transmissão, faz aquela outra e pega esse ingresso." E simplesmente falhou miseravelmente porque o sistema não conseguia determinar o que havia sido feito e o que não havia sido feito. A solicitação foi atendida.
+
+Houve muita discussão entre os tickets, do tipo: "Bem, eu não posso fazer nada até que eu termine aquele ticket compartilhado, então eu vou fazer isso." E outro Claude disse algo como: "Bem, eu não posso fazer nada até que esse ingresso compartilhado esteja resolvido, então eu vou fazer isso também." E aí, os dois implementaram a mesma coisa e foi uma grande confusão. Então, isso foi realmente muito deprimente. E eu escrevi um texto inteiro sobre isso, e basicamente eu disse: "É impossível orquestrar um grande número de agentes, sabe, simplesmente não dá para fazer isso." O que
+
+obviamente era um absurdo, mas era assim que eu me sentia na época. E o interessante é que o que eu fiz, na prática, foi recriar os processos em cascata que eram comuns em algumas das piores empresas quando eu comecei a programar por conta própria nos anos 90, onde as pessoas escreviam documentos de requisitos que você tinha que levar aos poucos para as reuniões de requisitos, onde todo o projeto era especificado antecipadamente, com todas as dependências complexas, entregue à equipe de desenvolvimento e, então, dava a ela dois anos para construir. Consigo ver algumas pessoas, talvez um pouco mais experientes, na sala, acenando com a cabeça e sorrindo para mim quando me ouvem falar sobre isso. Mas sim, felizmente consegui evitar trabalhar em qualquer uma dessas equipes, mas alguns amigos meus trabalharam e foi absolutamente horrível. E o que eu fiz foi basicamente deixar essa tarefa para o Claude fazer. Eu havia delegado esse processo em cascata
+
+ao Claude para que ele o organizasse e descobrisse como funcionava conforme fosse avançando, o que foi realmente ruim. Não é de admirar, portanto, que não tenha funcionado. Se os humanos não conseguem fazer isso, como é que a IA conseguiria fazer melhor? Bem , em vez de dizer "com todos os seus ingressos, certo, o primeiro é o mais importante, depois este , e depois você deve fazer este, mas não pense neste até ter feito aquele". Em vez disso , vou voltar só por um minuto. A propósito, está tudo bem para todos nós com este slide
+
+? Alguém ainda precisa do slide? OK. Ok, está tudo bem. Certo.
+
+Em vez de fazer isso, você pode simplesmente executar um loop onde você diz algo como: "Ei, escolha o próximo ingresso mais importante." É simples assim. Basta descobrir onde estão todos os bilhetes e qual é o próximo mais importante a ser executado. Ok, você não precisa se preocupar com as dependências. Você não precisa descobrir isso sozinho. A IA é perfeitamente capaz
+
+de analisar todas elas, identificar as dependências em tempo real com base no que acabou de ser feito e determinar qual é a próxima ação mais importante a ser realizada . Isso é, na verdade, bastante fácil para uma IA fazer. A única coisa que não consegue fazer com tanta facilidade é gerenciar esse processo em paralelo, mas, para ser honesto, quando executamos esse tipo de loop continuamente, o gargalo geralmente não é o número de agentes. Geralmente, você só precisa acompanhar a IA, realizando as mesmas tarefas repetidamente. Então, vamos esquecer o paralelismo por um minuto e começar apenas com um loop. Veja se você consegue acompanhar uma IA,
+
+apenas uma IA que esteja funcionando continuamente, você se sai bem. Não se preocupe com o paralelismo por enquanto. Não se preocupe com gasolina, tempo ou qualquer coisa do tipo por enquanto. Por mais impressionantes que esses projetos sejam, você pode começar com um simples loop. Está tudo bem. Então, o que eu gostaria que vocês
+
+fizessem agora é mostrar rapidamente como isso funciona para aqueles que não têm seus laptops, mas depois gostaria que vocês tentassem em seus computadores. Então, mais uma vez, deixe-me encontrar meu mouse. E depois volto a compartilhar minha tela. OK. Ótimo. Então, se eu voltar ao Claude,
+
+primeiro vou voltar ao Vim e olhar a pasta de tickets. Então, eu tenho um monte de ingressos aqui. Tenho um comando de status. Tenho um comando de parada. Tenho durações personalizadas. Nunca usei isso mesmo. Eu uso
+
+outras coisas como, sabe, etiquetas e tudo mais. Bem, eu poderia tentar descobrir as dependências sozinho, mas na verdade não preciso. Eu posso simplesmente entrar no Claude e dizer: "Implemente o próximo ticket mais importante usando os princípios de TDD dos tickets de documentação. Faça o commit quando terminar." Algo assim.
+
+Ok. Então, vamos ver o que acontece.
+
+Agora ele está lendo vários tickets. Como você pode ver, ele leu os números um, dois e três. E decidiu que o próximo é o número dois. Ele simplesmente vai executá-lo. Ótimo. Então,
+
+ele vai trabalhar nele. Agora, o interessante é que, quando isso terminar, usando TDD, ele escreveu o teste primeiro. Quando terminar, espero que sim, ele seja marcado como concluído. Muito bom. Lembre-se disso.
+
+E então ele deve fazer o commit. Vamos ver se funciona.
+
+Desculpe, isso está na mesma sessão? Não , esta é uma sessão totalmente nova. Embora eu ache que ele ainda tenha o diretório de trabalho da sessão anterior . Então, na verdade, acho que sim. O que ele não fez foi fazer o commit desses tickets.
+
+Atomicamente, o que definitivamente é algo que eu poderia melhorar no meu prompt, mas podemos abordar isso em um minuto. Então, espero que ele faça isso. E então ele terminará. Sim. Ótimo. Fez. Fantástico.
+
+Agora, o que eu posso fazer é repetir isso como um loop de rota, ou posso simplesmente reiniciar uma nova sessão. Fazer a mesma coisa. E desta vez ele escolherá algo diferente. E então continuará funcionando. Agora, você pode imaginar que se eu colocar isso dentro de um loop while, então, em teoria, ele deveria processar todos os tickets de alguma forma. Agora, se o que eu obtenho no
+
+final é realmente o que eu quero é uma questão completamente diferente. Mas, definitivamente, ele fará muito trabalho em sequência. Então, eu adoraria que você tentasse. Então , se você tiver o aplicativo funcionando em seus computadores, veja se consegue fazê-lo processar quantos tickets quiser dentro desse período de tempo. Então, ele deve ser capaz de lidar com isso. Vamos lá. Veja se você consegue fazer com que ele...
+
+talvez escreva um pequeno script bash, como eu fiz, onde você usa um `while true` e depois `Claude`. Vou mostrar rapidamente como fazer isso. Aliás, se eu reiniciar rapidinho para começar do início...
+
+e na verdade, vou subir mais um nível.
+
+Cabeça dura. Pronto. Ótimo. Sim, esse é o lugar certo para começar. Então, se você conseguir fazer isso, ótimo. Outra coisa que
+
+você pode fazer é, em vez de usar `Claude` assim , usar `Claude {-} P`. Vocês conseguem ver isso? Aliás, não sei como fazer isso...
+
+É, é, `clear` é uma boa opção. É. ` clear`. ` Claude`. Pronto. Então, o que podemos fazer
+
+é usar `Claude {ponto} P` assim. E você pode gerar a saída usando `stream JSON` ou algo parecido . Como se chama? Algo como `stream JSON`. Espere um pouco.
+
+Um segundo. Vamos ver. Hum,
+
+acho que removeram. Que chato. Deixa pra lá. Você deveria ter visto a saída. Então, nada impede você de configurar assim.
+
+E aí você pode simplesmente fazer isso. Mas você precisa configurar o Claude com permissões totais para que ele não peça permissão . Sim. Então, a única maneira disso funcionar é se você quiser executar corretamente e, para que não pare, você precisa ser bem seletivo com as permissões que concede. Hum, então, a pergunta era presumivelmente se você precisa executar o Claude com permissões totais para que isso funcione. Sim. Sim, precisa. Hum,
+
+depende do que você está fazendo. É, se você estiver trabalhando em um pequeno projeto isolado como este, as chances de ele acessar outros lugares para descobrir coisas são muito pequenas. Hum, eu tenho um projeto chamado Lockbox e o único propósito dele é tentar impedir que ele faça coisas estúpidas, hum, quando lê tokens não confiáveis, o que poderia potencialmente desviá-lo do caminho certo, hum, basicamente ele impede qualquer tipo de acesso ao sistema de arquivos ou qualquer coisa depois disso. Então, existem maneiras de gerenciar isso. Bem, o que isso está fazendo em segundo plano é que você não consegue ver nada sendo feito, porque eu não tenho esse modo de saída, mas você pode descobrir como executar isso em algum tipo de script e, se eu sair, espero que pare. Pronto.
+
+Não. Vamos continuar. Desculpe. Claramente, um loop Ralph mais adequado para produção não seria assim, mas você pode ver que ele já fez bastante trabalho. Então, se eu for aqui, você pode ver que ele já começou no comando de status e está processando-o no momento. Então,
+
+ele começou do início novamente e estava funcionando. Então, há algumas coisas para se atentar aqui. Uma delas é que o feedback é muito importante com loops Ralph. Você precisa conseguir executá-lo de uma forma que permita saber o que ele está fazendo e como está fazendo. Esse tipo de teste super básico que eu te dei não é muito bom.
+
+Não é um que eu recomendaria executar em produção. Além disso, você precisa descobrir exatamente qual é o prompt para o Ralph, e esse é um ponto muito, muito importante. E acho que o que eu gostaria que você fizesse ao testar isso é o seguinte: sim, você vai criar vários tickets em sequência, mas também vai fazê-los de uma maneira que você não gostaria. Então, por exemplo, se eu executar este teste, que é literalmente apenas implementar a próxima coisa mais importante, vamos começar com esta. Eu provavelmente executaria algo como ` simplify`, que é uma skill muito útil do Claude, da equipe Anthropic, e ao terminar, garantiria que você refatorasse para reduzir a duplicação. Você pode imaginar que
+
+poderia criar uma skill bastante complexa para isso. Vou te mostrar a minha skill. Vou deixar isso para o final. Mas enquanto você estiver trabalhando nisso, tente descobrir se há maneiras de melhorar o que está acontecendo. Então, experimente, deixe o programa tomar uma decisão, depois escreva um código, leia o código e pense: "Ok, o que eu poderia ter melhorado no processo?". Em
+
+seguida, reinicie tudo e melhore o prompt depois disso. Experimente e veja como funciona. Enquanto as pessoas estiverem trabalhando nisso em suas máquinas, terei prazer em responder a perguntas. Sim.
+
+Você usou as habilidades como superpoderes? Qual delas, desculpe? A de superpoderes. A de superpoderes, e quanto ao processo? Reinicie tudo e melhore o prompt depois disso. Experimente
+
+e veja como funciona. Enquanto as pessoas estiverem trabalhando nisso em suas máquinas, terei prazer em responder a perguntas. Sim. Você usou as habilidades como superpoderes? Qual delas, desculpe? A de superpoderes. A
+
+de superpoderes. Uma coisa que eu fiz foi mostrar todo o repositório para o Claude e dizer: "Descubra tudo o que não está no meu conjunto de habilidades e implemente para mim, considerando o meu contexto". E isso funcionou bem. Então, eu não usei esses em particular, mas basicamente os copiei. Isso é ótimo. Bem,
+
+como eu uso muito os Superpoderes, acabo dando tarefas assim. E então, peça para executar vários agentes em segundo plano. Sim . Como você fez isso é o que eu estou...
+
+Sim, sim. Então, o que você pode fazer é usar uma versão de equipes de agentes, que eu acho que desativei neste caso específico do Claude Cable. O que pode acontecer é que você pode fazer com que o Claude use subagentes dentro das marcas T. Então, na verdade, acho que posso ativar isso se conseguir encontrar as equipes de agentes. Aqui está.
+
+Equipes de agentes experimentais com código Claude. Então, se eu pegar isso e executar o Claude com esses tickets neste repositório. Ou algo parecido com isso. E eu não sei se isso está sendo executado dentro do tmux. Então, hum... Bem,
+
+na verdade, talvez assim funcione. Então, talvez eu tente isso de novo. Tenha paciência comigo por um segundo. Então, se eu pegar isso, colar ali, pegar de novo, executar o tmux e depois executar isso. Em teoria, em teoria, isso deveria começar a atrair outros agentes. E, como eu disse,
+
+tentar orquestrar loops Raft, orquestrar agentes por conta própria e organizar todas as dependências e complexidades é realmente muito difícil. Mas, bem, o que você pode fazer é simplesmente dar a tarefa para o Claude executar, e ele fará um trabalho muito melhor gerenciando isso. Como podem ver, já está definido para imprimir tudo, o nome do arquivo e o ingresso para cada item. E tem um monte lá . Então, na verdade, ficou decidido que todos eles são sequenciais. Portanto, não deve
+
+executar nenhum deles em paralelo, o que é bastante interessante. E então, em teoria, deveria iniciar um agente de implementação. Vamos ver se vai funcionar. Acho que está rodando como um subagente. Deixa para lá.
+
+Não tenho certeza se isso vai funcionar. Deixa para lá . Se você conseguir fazer isso, me avise. Mas, basicamente, é um recurso experimental que foi lançado há apenas algumas semanas e que permite iniciar subagentes no Claude também, para que eles possam realizar tarefas. Mais alguma pergunta enquanto as pessoas estão analisando isso? Sim. Você disse que
+
+construiu um loop de jangada com a colaboração da automação interna. Hum. Então, quais foram os critérios de feedback? Então, o que determina se um artigo de jornal é bom? Tipo, isso é ótimo.
+
+Enviar para uma estrutura de mecanismo de consenso de website . Mas, qual seria a aparência ideal, se for dinâmica ou estática, você colocaria isso no arquivo MD do Claude? Ou como é que isso funciona? Então, a pergunta é apenas para repetir a primeira parte: quando eu uso o fluxo de trabalho NA10 para criar um loop Ralph para um criador de boletins informativos, como eu sabia? Como o agente sabia o que era "bom"? Como você
+
+definiu "bom" também? Ótima pergunta. Então, em relação aos boletins informativos, eu já vinha escrevendo o meu manualmente. Então eu tinha mais ou menos uma ideia de como queria que fosse lido e soasse. Eu também fiz muita pesquisa usando uma habilidade de pesquisa, que eu desenvolvi, que é algo como ótimas newsletters. E eu também já fiz coisas desse tipo
+
+. Eu também disse coisas como "hum, este é um novo texto fantástico" e "na verdade, eu só vou...".
+
+Isso não é o que eu costumo fazer. Sim, eu realmente faço isso. Esta é uma newsletter fantástica que eu escrevi ou que li em algum lugar. Você poderia, por favor, descobrir por que isso é tão bom? E quais são os princípios editoriais que norteiam este boletim informativo para que ele funcione tão bem?
+
+Então eu simplesmente colava isso no boletim informativo, deixava o sistema identificar os pontos positivos e, em seguida, verificava e dizia que sim. Ainda existe aqui um elemento de gosto humano . Você não pode se safar completamente disso. Dito isso, eu também tenho uma habilidade de simulação de público, que basicamente usa uma série de personas diferentes para diferentes clientes ou potenciais clientes com quem trabalho, e então eu executo o boletim informativo finalizado através dessa ferramenta, executando todas elas em paralelo. E depois que você terminar isso, descubra maneiras de eu aprimorar este boletim informativo ou minha habilidade em criar boletins informativos para conseguir isso. Existem várias
+
+maneiras diferentes de fazer isso. São uma espécie de simulação de público, super experimentais, mas na verdade são muito eficazes. E, muitas vezes, surgirão ideias que eu simplesmente não havia considerado . Hum, minha personalidade é um pouco confusa, a maneira como falo e me comunico geralmente não é assim . Então, eu costumo bombardear as pessoas com informações e, às vezes, minha habilidade me diz: "Ok, Chris, há muitas ideias aqui. Você só precisa se concentrar em
+
+um ponto principal que faça sentido." E eu penso: "Isso é muito útil." Então, sim , o que é bastante útil e interessante é que você pode usar IA para fornecer feedback sobre a própria IA. O mais interessante neste projeto em particular que estamos desenvolvendo, esta pequena ferramenta Pomodoro que as pessoas estão criando, é que ela funciona por linha de comando e é muito fácil saber se está funcionando. Portanto, é perfeito para um loop aproximado. Na verdade, essas pequenas ferramentas
+
+que criamos para nós mesmos, como por exemplo, a skill de newsletter, são perfeitas para esse tipo de ciclo. Costumo dizer: "Quero aprimorar essa habilidade. Você poderia, por favor, revisar o texto e escrever o conteúdo para mim? Depois, peça para outro profissional lê-lo, avaliar se está bom, sugerir melhorias e me enviar de volta ." E basta executar isso em um loop. Hum,
+
+existe uma habilidade muito legal. Eu não ia te contar isso até o final, mas vou te contar agora. Hum, existe um recurso muito legal no código Clojure chamado loop, onde em vez de criar, na verdade, vou começar isso em uma nova sessão. Em vez de simplesmente criar seu próprio loop while, você pode fazer um loop a cada minuto para gerar o próximo ticket a partir dos tickets de documentação. Basicamente, o que vai acontecer é que o loop vai configurar uma espécie de temporizador de repetição, e ele tem uma ferramenta de criação de cron, que para os não iniciados significa simplesmente fazer algo a cada minuto. É isso que
+
+significam essas cinco estrelas. E, bem, o que vai acontecer é que ele simplesmente vai gerar o próximo ingresso. Quando terminar, verificará o cron novamente e criará o próximo ticket. Ao terminar, verificará o cron novamente e continuará. Então, isso é ótimo para lidar com vários chamados de uma vez, mas não se aplica apenas a um conjunto de itens que você já tem. Se
+
+você pensar bem, vou deixar isso rodando ali em cima; você poderia ter um loop que fizesse algo assim. Executar um loop linear a cada hora para novos relatórios de erros provenientes da fase de testes. E aí eu simplesmente deixo rodando. Ah, sim.
+
+Não sei escrever. É só deixar isso rodando. E dessa vez você vai acabar irritando sua equipe de testes. Mas enfim, a questão é que você pode executar esse tipo de loop para realizar tarefas de uma maneira bastante interessante e dinâmica, mesmo sendo um loop bem simples. É só encontrar a próxima coisa, fazer a próxima coisa. Se você parar para pensar
+
+, boa parte do nosso trabalho consiste basicamente em loops. Se somos desenvolvedores de software, o que fazemos? Analisamos a lista de pendências. Selecionamos o item mais importante da lista de pendências. Nós paramos para mostrar, sabe, o que está em andamento. Nós a atribuímos a nós
+
+mesmos. Analisamos a arquitetura. Avaliamos se precisamos de outros contextos. Nós... analisamos a
+
+mudança. Nós promovemos a mudança. Submetemos um pedido de pull request. Nós...
+
+você sabe, aguardamos as avaliações. Nós comentamos as avaliações. Rejeitamos as avaliações. Implementamos as alterações ocasionalmente. Submetemos o pedido de revisão. Unimos
+
+o PR. Em seguida, passamos pelo processo de lançamento. Então, começamos tudo de novo. Pegamos o próximo bilhete e assim por diante. Isso é um loop. É uma questão bastante complicada,
+
+como discutimos há pouco. Mas ainda é um ciclo. É possível fazer com que uma IA execute todo esse ciclo. Não há razão para não o fazer. E é exatamente isso que está acontecendo aqui. Quando você pode configurar... Na
+
+verdade, você nunca escreveria isso de verdade. Você provavelmente escreveria algo assim, onde diria algo como "a cada hora, busca linear de bugs". E você teria uma habilidade que codificaria todos esses...
+
+esses fragmentos de informação que acabei de fornecer de uma forma que funcionaria para você e sua equipe em particular. Alguém não sabe o que são habilidades antes de eu prosseguir? Não, acho que praticamente todo mundo sabe o que são habilidades. Se você ainda não descobriu o que é uma habilidade, então esta é a sua tarefa de casa. Vá e entenda como as habilidades funcionam. Essa é a
+
+melhor maneira que temos no momento de agrupar pequenos pacotes úteis de contexto e scripts e movê-los para locais diferentes ou criar coisas diferentes. Por exemplo, eu tenho cerca de 50 que escrevi e eles fazem muitas coisas diferentes. A grande vantagem das habilidades é que você pode utilizá-las sempre que precisar. Por exemplo, e vou fazer isso agora, eu poderia dizer: " Você sabe como criar imagens usando o Nano Banana?" E eu posso fazer a pergunta para a IA e a resposta é: "Bem, eu poderia pesquisar isso, mas, curiosamente, ela sabe que eu tenho uma habilidade em imagens para isso ." Mas se você não tivesse um, ele
+
+não saberia. Mas se eu então mostrar imagens e perguntar: "Como se criam imagens? Me explique o passo a passo." Então, o que ele vai fazer é usar essa habilidade de processamento de imagens e me dizer exatamente como ela funciona . E na verdade, eu escrevi, aliás, vou ampliar para que vocês possam ver, eu escrevi um script dentro dessa habilidade que faz a geração para mim.
+
+Assim, o processo para fazer isso foi codificado, e o sistema simplesmente escolhe o modelo que quiser e fornece o conteúdo. E eu tenho esses modelos específicos que uso para criar habilidades específicas do Nano Banana. Nano Banana é genial. Foi assim que criei a apresentação que você está vendo. Possuo habilidades em slides e em imagens, que se complementam para criar essas apresentações. Legal. Vamos ver
+
+o que a outra coisa fez. Como você pode ver, já está no sexto bilhete. O bom de Ralph Lips é que você continua trabalhando, continua falando sobre outra coisa e isso já rendeu muita coisa. E simplesmente parou neste ponto, mas em um segundo, com sorte, se esperarmos um pouco, todo o processo recomeçará. Pronto . Ah, a tarefa agendada foi
+
+executada e está em andamento novamente. Então, você pode simplesmente deixar as sessões de código do Claude rodando com esses tipos de loops dentro delas. Elas duram cerca de 3 dias, então você precisa renová-las com frequência. Bem , você pode simplesmente fazer isso e manter funcionando mesmo antes de se aprofundar em coisas mais complexas, como escrever um script que envolva o Claude para fazer alguma coisa e tudo mais . Hum, mais alguma pergunta?
+
+Alguém descobriu algo interessante ou surpreendente no circuito do Ralph? Alguém já testou isso no trabalho de verdade ? Isso sim seria interessante . Sim . Como foi a sua experiência? Você
+
+ainda tem o microfone? Sim. Yeah, yeah. Acabei de criar um loop de captura de tela do Ralph para um contexto de site que entra na estrutura. Então Claude simplesmente tira as capturas de tela e depois analisa o layout porque ele apresenta problemas com o espaçamento geométrico.
+
+Hum. Funciona bem. Legal, bacana. Então você está usando o Claude para tirar screenshots e obter feedback. Sim . Sim, isso é bem avançado.
+
+Poucas pessoas fazem isso. As pessoas estão tentando usar programas como o Playwright e outros semelhantes para tirar screenshots, e também o plugin Claude para Chrome, que vem com o Claude. Você pode usá-lo para controlar o Chrome e tirar screenshots do que está acontecendo. Tive resultados variados com isso, porque é algo bastante complexo de gerenciar, mas para capturas de tela básicas funciona muito bem. Para as minhas imagens e conteúdo que escrevo, quando o programa executa essas habilidades de imagem, ele sempre analisa as imagens primeiro para verificar se há algum tipo de texto corrompido por IA ou algo do gênero, e as rejeita sem nem mesmo me mostrar se há algum problema com a imagem. Hum, havia
+
+mais alguma pergunta ou comentário? Sim, tem uma pergunta aqui atrás. Você pode me passar o microfone? Tudo bem? Muito obrigado.
+
+Hum, acho que é algo parecido com uma pergunta que já foi feita. Hum, porque eu não estou muito familiarizado com os loops do Ralph. Se eu pedir ao agente para implementar a tarefa um que já foi implementada, ele verificará a qualidade do que foi implementado ou apenas verificará se a tarefa foi concluída ou não, ou se foi marcada ou não? Sim, depende muito da finalidade para a qual você o configurou. Então, não há nenhum tipo de mágica no loop do Ralph, é apenas um loop.
+
+Então, esse loop que estou executando no momento, na verdade, eu provavelmente deveria simplesmente dizer "loop stop", senão ele vai continuar rodando indefinidamente . Use minha cota. Acho que você pode simplesmente parar por aí. Agora temos uma configuração Pomodoro bastante completa. Vamos lá, chega de enrolação. Bem,
+
+depende inteiramente do que você escreve. Então, se você ... se você for até a seção "Qual foi o loop que eu configurei?"
+
+Acho que foi este. Eu apenas disse para criar o próximo ingresso. Isso é muito ambíguo e pouco útil. Então pode ser que não termine de fato. Pode ser que a empresa simplesmente decida fabricá-lo e não enviá-lo.
+
+Pode ser que, na verdade, não seja muito útil. Então, o que é mais interessante é se você for... hum...
+
+deixe-me dizer... provavelmente a coisa mais fácil de fazer. Se eu carregar minha habilidade Ralph, esta é a habilidade que eu realmente uso para os loops do Ralph. Então, o que eu estou
+
+fazendo, na verdade, está um pouco desatualizado, mas o que eu tenho aqui usa uma pasta de alterações de documentos. Você pode ver isso ali, mas, neste exemplo, estou usando tickets de documentação, mas já alterei isso na versão mais recente . Bem, no fim das contas, você não precisa usar um sistema de tickets como um arquivo simples em um repositório do GitHub. Você poderia usar o Beads, que é a versão do Steve Yegge para esse tipo de abordagem, o que é bem legal. Eu já usei.
+
+Você poderia usar o Linear, poderia usar o Jira, você poderia, sabe, contanto que consiga acessar a IA. Você pode usar o sistema de emissão de bilhetes que quiser. Bem, para este exercício que você está fazendo, eu costumo usar arquivos simples porque eles funcionam, sabe? Não é...
+
+Você não precisa de nada sofisticado. Da mesma forma, o ciclo de Ralph é inteiramente o que você faz dele em termos de sua eficácia. Então, por exemplo, neste caso específico, eu atribuí um papel adequado, no sentido de que você representa um dia de energia em uma equipe de revezamento, faz exatamente uma mudança, depois abandona o contexto e para, começando novamente. Essa é a ideia. Então, este aqui foi projetado para ser executado em um script de shell, onde ele tem um contexto totalmente novo a cada vez, porque eu não queria que o contexto fosse alterado a cada vez. Hoje em
+
+dia, me importo muito menos com isso, porque o contexto é muito mais amplo do que costumava ser. Mas, hum, mas quando escrevi isso, aquilo era muito importante. Como você pode ver, é especificamente para código que não precisa de revisão humana antes do envio. E então, basicamente, ele te informa quando o trabalho deve ser feito ali, qual é o momento certo para usar a ferramenta, leia o arquivo claw.md, altere o formato. Este é o formato de um bilhete.
+
+Essa é toda a justificativa. Esses são os diferentes valores de status. Eu peço para verificar o estado do Git para garantir que não haja um diretório de trabalho. Hum, também tem, sabe, estados de recuperação. Então, se houver uma falha, o sistema saberá que existe uma árvore de trabalho corrompida , mas os testes estão passando, então provavelmente você terminou, mas talvez não, então é melhor verificar novamente. Se os
+
+testes falharem, então provavelmente está em pleno voo e quebrou, então você provavelmente deveria jogá-lo fora ou tratá-lo de forma diferente. Então, você pode imaginar que isso foi construído ao longo do tempo, tentando fazer funcionar, tentando entender o que o usuário quer, garantindo que passar nos testes não seja suficiente, verificando se o comportamento real funciona, executando as coisas em paralelo, marcando como concluído, blá blá blá blá blá. Tem muita coisa acontecendo . Então, com um verdadeiro ciclo Ralph, você quer construir ao longo do tempo, para o seu projeto específico, exatamente como verificar se algo está funcionando, exatamente como executar os testes em sua estrutura e dialeto específicos, como enviar as coisas para a equipe de testes, como comentar sobre alterações específicas e qual estilo usar, se você quer optar pelo que parece mais óbvio para você ou pelo que é de maior prioridade, ou uma mistura de ambos, dependendo de como você estiver se sentindo naquele dia. Tudo o que você quiser precisa ser codificado nele. Então, quando você estiver
+
+escrevendo um loop de rota, hum, vou mostrar um link para você pegar este no final, mas não há necessidade de usar apenas o meu ou qualquer outro. Comece com o meu e depois diga: "Corrija isso para o meu projeto." e permitir que mude, se transforme e evolua. Hum, algumas perguntas. Então, simplesmente se apresente.
+
+Obrigado. Oi. Muito obrigado pela conversa. Você poderia explicar um pouco mais sobre o assunto de sandbox, porque é exatamente isso que está me impedindo de executar este trabalho? senso. Sim. Sim, com certeza. Portanto, existem várias
+
+maneiras diferentes de realizar isso em um ambiente de teste. Para este pequeno projeto em particular, não farei isso. A maior parte do meu trabalho é realizada em um VPS, que fica separado da minha máquina principal. Possui algumas teclas específicas para o que eu quero que ele faça e, hum, ele pode acessar ferramentas de desenvolvedor. Hum, muitos deles só podem ser acessados ​​em modo somente leitura. Ele também pode
+
+acessar meu e-mail, mas, novamente, possui permissões bastante específicas e detalhadas do Claude para não enviar e-mails, pois isso é muito importante. Eu não permito que ele envie e-mails. Eu só permitia que ele fizesse os rascunhos. Então, eu uso uma combinação de posicionamento físico do código, ou melhor, não fisicamente, mas sim longe da máquina, em uma máquina diferente, em um VPS. Ah, eu também uso as permissões do Claude para isso . O sistema de permissões está um pouco
+
+problemático, mas funciona na maior parte do tempo. Estou tentando te ajudar a construir um cofre para torná-lo ainda melhor. Hum, eu uso...
+
+O que mais eu faço? Então, as teclas que eu uso são teclas separadas. Então, a IA tem acesso às suas próprias chaves, que eu não uso para as minhas outras coisas. Assim, consigo ver o tipo de registro de auditoria do que foi feito. Eu disse que existem várias maneiras diferentes de fazer isso. Se você
+
+quiser simplesmente executar as coisas na sua própria máquina, existe o Docker Sandbox, que é bem interessante. É um novo recurso do Docker que permite executar código em um ambiente isolado (sandbox) do Docker, dentro do qual o código será executado . Então você pode meio que isolá-lo dentro de um recipiente específico. Isso é bastante poderoso porque permite que você altere apenas os arquivos naquele local específico do sistema de arquivos. O problema é que ainda pode haver vazamento de dados de um dos seus sistemas para outro. Existe uma
+
+coisa chamada tríade letal. Não sei se você já ouviu falar disso. Um Simon Willison cunhou isso. É uma ideia de que, se você tiver tokens não confiáveis, acesso à internet e acesso a dados secretos importantes que você não quer perder, basicamente você vai perder esses dados. Essa é a questão fundamental. Então, você precisa
+
+minimizar a quantidade de vezes que essas coisas colidem no mesmo contexto. Então, sim, há muito o que dizer sobre segurança e, especificamente, sobre sandboxing. Bem, eu costumo não executar programas com permissões perigosas, mas geralmente uso algumas coisas ativadas por padrão, mas não todas. E você meio que precisa analisar e descobrir qual é o seu perfil de risco e o quanto você se importa com essas coisas. E certamente, como você está dando as principais dicas, os principais pontos a serem lidos, caso tenha interesse, são sobre a tríade letal, se você ainda não a conhece ou já a conhece. E, bem,
+
+pense bem sobre o poder e as permissões que você concede aos seus agentes, especialmente se estiver usando algo como o Open Claw, que, infelizmente, é inseguro por padrão. Bem, eu sei que eles têm trabalhado muito no Open Claw para torná- lo mais seguro, mas ainda é um desafio para esse tipo de agente. Eles têm acesso a muitas coisas. Mais alguma pergunta? Sim. Sim
+
+, você tinha uma etapa de validação no loop. Hum. Bem, isso pode ser apenas um relato pessoal, mas assim que alterei o meu para usar subagentes na etapa de validação, ele começou a encontrar coisas. Ah, interessante. Enquanto que, ao realizar a validação na mesma etapa e no mesmo contexto, o sistema simplesmente se parabeniza e diz: "É, você se saiu bem."
+
+Realmente, esse é um ponto muito importante. Hum, definitivamente existe um viés de confirmação por parte dos agentes, em que eles pensam: "Ah, sim, claro que escrevi tudo certinho. Estava tudo bem. Eu revisei agora mesmo." Sim, usar subagentes é realmente poderoso porque um subagente começa com apenas uma pequena parte do contexto. Não começa com o
+
+contexto completo, certo? Assim, você pode obter muito mais potência com ele. Então, como um bom exemplo deste projeto em particular, uma habilidade realmente útil que mencionei anteriormente é a simplificação. Simplify é uma habilidade integrada do pacote de programação Claude. O que ele faz é analisar as alterações mais recentes e executar três subagentes para tentar descobrir se o seu código precisa de melhorias. Então você pode ver
+
+aqui o que está acontecendo. Então, espero que isso funcione. Esses arquivos serão carregados e provavelmente encontrarão vários problemas. Sim, excelente observação. Boa apresentação. Obrigado. Hum, você
+
+tentou Open Spec ou combinou com Open Spec algum outro método orientado a especificações? Não, bem, para ser honesto, eu não sou muito fã de desenvolvimento orientado a especificações. Eu sei que isso é...
+
+controverso, e vou esclarecer. Temo que o desenvolvimento orientado a especificações esteja nos levando ao extremo, nos fazendo retroceder aos tempos sombrios do modelo em cascata, onde especificávamos todo o projeto ou tentávamos especificá-lo em excesso. Mesmo com esse pequeno conjunto de ingressos, não me sinto muito à vontade. Acho que o Spec deveria ser muito mais iterativo, e vejo que já está corrigindo vários problemas. Que legal! Para finalizar
+
+esse ponto, foram encontrados vários problemas e algumas correções foram implementadas. Ah, sim, então, Specs... eu gosto de Specs que entregam na hora certa. Gosto da
+
+ideia de construir ou pensar sobre o que você está tentando construir, criando algum tipo de plano e código Claude e depois executando-o. Isso é bom. Fico feliz com isso e acho que é um passo útil. O que me preocupa é o A, eu me preocupo com coisas como aqui, onde eles codificaram isso na ferramenta. Temo que isso quase fossilize aquela abordagem com IA que funciona hoje, mas que pode não funcionar novamente quando o Mythos for lançado, certo? Portanto, receio que as ferramentas
+
+estejam adotando, com muita rapidez, uma estrutura de trabalho específica que pode não ser a mais adequada no futuro. Então, estou sendo cauteloso quanto a isso. Bem, acho que é óbvio, é um fato incontestável que a IA precisa de mais contexto para funcionar bem. Portanto, devemos tentar dar mais contexto. Mas acho que a ideia de exagerar e especificar demais um projeto é algo com que devemos ter cuidado, assim como estruturar demais nosso processo com base no que sabemos sobre agentes hoje, porque aí acabaremos trabalhando com um novo tipo de processo orientado por IA que funcionou melhor com agentes que surgiram em 2025 ou 2026, sabe, quando ainda estaremos usando isso em 2030, e isso será uma perda de tempo inútil. Então, esses são
+
+os tipos de preocupações que tenho a respeito disso. Mais alguma pergunta? Sim, ótima conversa. Então, você mencionou que não gosta de softwares baseados em especificações e que usa o Ralph. Basicamente, não há intervenção humana. Então, surge a pergunta:
+
+Claude realmente precisa de você lá? Onde está a sua contribuição aí? Ótima pergunta. Bem , tenho pensado bastante sobre isso ultimamente e estou passando por uma espécie de crise existencial. Não sei quanto aos outros.
+
+Hum, mas, hum, mas sim, que valor estou agregando aqui a isso? Com certeza não para escrever um cronômetro Pomodoro. Não tenho certeza se estou agregando muito valor. Quer dizer, eu literalmente disse que derrotei aqueles inimigos com um único golpe, e não havia motivo nenhum para isso. Não estou dizendo que não gosto de planejar um sistema. O que me
+
+interessa neste momento, e para o qual não tenho as respostas, é o fato de que a IA frequentemente escolherá especificações melhores e escreverá especificações melhores do que eu consigo escrever, e muitas vezes terá uma ideia melhor da direção que meu software deve seguir do que eu necessariamente terei. Então, eu gosto da ideia de ter ciclos aproximados que criam outros ciclos aproximados e, potencialmente, ciclos aproximados que rastreiam engajamentos completos de clientes ou até mesmo startups inteiras. Então, tenho uma habilidade na qual estou trabalhando. Devo mostrar isso? Vou mostrar isso. Vai ficar tudo bem. O que poderia dar errado?
+
+Hum, o que se chama startup. É bastante ambicioso, mas a ideia é que ele basicamente guie um produto por toda a estrutura de uma startup. Bem, é para ser executado em loop. A ideia é que... Ah, vejo que todos vocês estão
+
+tirando fotos. Agora sim, isso é meu . Conte isso. Bem, agradeço imensamente a Ash Maurya, que escreveu alguns textos brilhantes sobre isso. Eu deveria dizer isso para a fita. Hum, então, sabe, foi muito, muito
+
+útil para mim. Então, eu construí isso usando basicamente todos os livros legais que li sobre o assunto. Então, eu sou fundador, cofundador e CTO de uma startup. Então, isso é algo muito especial para mim. O que estou tentando fazer aqui é fornecer à IA contexto suficiente para que ela possa gerenciar minha startup e, potencialmente, descobrir qual é a próxima coisa mais importante em que trabalhar, repetindo esse processo em um ciclo. Sabe, e aí
+
+existe um grande ciclo externo que diz: "Ok, qual é a próxima coisa mais importante a fazer? Vamos fazer isso." Bem , não funciona. Mas é interessante e está progredindo, e, bem, muitas vezes a primeira coisa que acontece é que eu não acho que consigo mostrar. Hum, mas, ah sim, não, eu vou mostrar porque é hilário.
+
+Aguarde um instante. Bem, eu perguntei a ele como estava indo em um de seus loops e ele gerou uma apresentação de atualização da startup como um memorando para investidores, o que eu nem sequer pedi para ele fazer. Vou te mostrar a demonstração. Espere um segundo. Hum, porque é absolutamente genial.
+
+Hum, vamos ver se consigo mostrar esta janela. Pronto. Atualização sobre a startup de habilidades aéreas. Então, sim, disse que precisava atualizá-lo. Então, o que eu fiz foi basicamente mostrar até onde chegamos . Esses são os problemas que ninguém
+
+resolveu. Isto é o que sabemos que é real. Esses são os números de... Esta
+
+é uma ferramenta de gestão de competências na qual estou trabalhando em segundo plano. Bem, esses são todos os tipos de problemas e surgiram várias coisas interessantes que poderiam entrar em uma apresentação para investidores. Sinceramente, sim, não é ruim. Não é ruim, acho que na verdade é o GitHub para habilidades em IA, mas enfim. E, sabe, quem vai pagar por isso? Quanto eles pagam? Esses
+
+números definitivamente não estão corretos. Mas, o interessante é que ele decidiu fazer isso e descobrir todos esses números com base nisso, o que eu achei hilário. Para ser honesto, ele estava bem orgulhoso dessa apresentação e eu tive que dizer: "Espere um minuto. Nós ainda não...
+
+Você precisa pensar seriamente antes de chegar a essa conclusão. As organizações pagariam por governança de habilidades? Sua organização pagaria por governança de habilidades? Ótima pergunta. Ainda não sei."
+
+Enfim, o motivo de mostrar isso é mais para destacar que a IA pode fazer muita coisa e ainda não se sai bem com startups, mas isso provavelmente se deve ao arquivo de habilidades, não ao agente em si. Tenho a sensação de que há muitas coisas que potencialmente serão... serão loops no futuro. Eu só cheguei até aqui
+
+nos meus slides. Nossa! Espere um segundo. Então, já fizemos isso. Já fizemos isso.
+
+Se você ainda... Se você não está apenas me ouvindo e ainda está trabalhando nesta demonstração, tenho alguns desafios para você, caso queira participar . Um deles é... você pode tentar
+
+atualizar o formato do seu ticket. Se você gosta do arquivo Markdown puro, o formato `doc tickets` funciona bem. Se preferir digitar `BD install` ou `install beads`, é super fácil. E se você quiser que o Ralph funcione com o Beads, experimente. Veja se funciona, sabe? Não há pressão para você
+
+alcançar nada. E esta pequena pasta `beads` é ótima porque só funciona dentro da sua pasta. Ela instala uma pequena ferramenta. Então, é algo bem útil para experimentar. Se você quiser testar um formato de ticket diferente ou quiser mover isso para o seu projeto principal e conectar o seu loop do Ralph ao seu sistema de tickets para ver como funciona, talvez não para enviar tickets ainda, mas você pode tentar e ver onde isso te leva .
+
+Essa é uma opção. Outro fator é a escala. Você precisará continuar atualizando e trabalhando no seu ciclo. O ciclo basicamente contém todo o conhecimento sobre como você, como pessoa, irá percorrer esse caminho. Você pode levá-lo desde a execução da próxima tarefa até o próximo passo na startup que você está tentando construir, seja lá o que for.
+
+Funciona para todos esses tipos de coisas. O que é super interessante nisso é que estou cada vez mais convencido de que tudo, na verdade, é um ciclo. Talvez como engenheiro, eu esteja definitivamente em um ciclo em grande parte do meu trabalho. Talvez como gerente de projetos, eu esteja em um ciclo. Talvez como CEO, eu esteja em um ciclo. Quem sabe? Talvez,
+
+certamente, muitos dos tipos de cadências com as quais trabalho também estejam em ciclos. Então, eu tenho uma habilidade, e se você estiver executando um OpenClawBot, você está fazendo algo semelhante. Eles simplesmente enviam um sinal de atividade a cada 15 minutos. Meu VPS simplesmente inicia o Claude, verifica algumas coisas, consulta meu calendário para ver se tenho algum compromisso e, em seguida, me envia mensagens do Telegram. Talvez isso esteja em um loop. E
+
+definitivamente está em um loop, a cada 15 minutos. Tenho um loop de trabalho, que mostrarei em um minuto, e um loop matinal, em que todas as manhãs, às 6h, ele gera um resumo completo do meu dia, determina exatamente o que devo fazer e me fornece todas as informações necessárias sobre o que aconteceu durante a noite. Todos os e-mails recebidos, tudo isso . O loop de trabalho é particularmente interessante porque... bem,
+
+não tenho certeza se posso mostrar isso. Deixe-me ver se encontro algo que eu possa mostrar. Hum, vejamos. Não, o motivo pelo qual não posso é porque contém muitas informações de clientes, então não posso mostrar isso. Mas, o que posso mostrar é, por exemplo, esta tela.
+
+Vou te mostrar. Então, se eu mudar rapidamente para isso, hum,
+
+então, este é um aplicativo, mas vou aumentá-lo um pouco. É assim que eu executo meu loop de trabalho. Então, este é um aplicativo que eu escrevi, hum, uh, para gerenciar projetos. Então, eu não tenho tickets dentro da minha pasta de trabalho, eu tenho arquivos de projeto, e cada projeto é um conjunto de tarefas que eu preciso realizar, e de tempos em tempos eu tenho um...
+
+basicamente, eu implementei um sistema Kanban, e um trabalhador pega e executa a próxima etapa do projeto. Então, se a próxima etapa do projeto for escrever um e-mail, porque ele tem uma visão geral, ou verificar itens, ou uh, produzir os slides para o meu projeto, ele executará a próxima etapa. Então, este, por exemplo, é o projeto de preparação de especificações do workshop no qual ele está trabalhando. E ele tem um monte de front matter que se parece com isso. Hum, e tem algumas perguntas para... Eu
+
+não atualizei isso, precisa ser atualizado. Tem os contatos, tem um histórico de decisões sobre as coisas que foram feitas e por que foram feitas. Então, basicamente, para cada coisa diferente que está acontecendo, ele simplesmente descobre a próxima. Também tem anotações sobre outras palestras que eu poderia dar, mas que acabaram não acontecendo . Tem o feedback de um workshop anterior que eu fiz sobre um tópico semelhante, no qual você pode clicar. Eu
+
+não deveria, não consigo clicar, tem um bug. Mas, basicamente, ele mostra as anotações de uma sessão de feedback. Então, este projeto reúne tudo de todos os contextos que consegue encontrar e, em seguida, executa a próxima etapa em um loop. Você pode executar tudo em um loop. Você pode executar todo o seu trabalho em um loop. Quando acordo de
+
+manhã, normalmente tenho cerca de 15 ou 16 rascunhos de e-mails com respostas que as pessoas me deram e Ele tentou responder às mensagens, sempre preciso editá-las. Elas sempre ficam boas. Mas, bem, ele definitivamente tenta me ajudar a organizar meu trabalho. Tenho regras bem específicas sobre o que ele pode e não pode fazer. Minha regra básica é: isso é reversível sem me causar constrangimento?
+
+E, bem, se a resposta for não, não faça. Mas faça uma pequena anotação no projeto e me devolva. Então, enviar e-mails não é permitido . Criar uma apresentação de slides, como esta aqui, por exemplo, é reversível. Não me causa nenhum constrangimento. Então,
+
+ele simplesmente fez e me devolveu. Por exemplo, ele não publica no LinkedIn para mim. Não envia e-mails. Não envia mensagens. Mas ele prepara tudo para eu revisar. Como você disse antes, e essa
+
+é uma resposta bem longa para a sua pergunta, bem, isso me fez questionar de verdade minhas habilidades e o meu propósito. Muitas vezes, cheguei ao ponto de ser apenas a pessoa que verifica e-mails, envia, verifica e- mails, envia, verifica. Isso não me parece um trabalho de verdade. Não me sinto bem. Então, o que isso significa para o meu trabalho? Tive que
+
+tomar uma decisão consciente sobre quais partes do meu trabalho eu quero fazer e quais eu não quero. Não quero ser a revisora ​​de e-mails, mas quero ser a estrategista. Quero ajudar organizações a entender o que está acontecendo com a IA e como resolver isso para elas . Eu poderia pedir para a IA fazer um primeiro rascunho ruim, mas não quero revisar o rascunho da IA. Quero pensar por mim mesma. Então,
+
+basicamente, eu... Disse: "Não façam esse trabalho. Eu quero fazer esse trabalho. Só me deem todas as informações de que
+
+preciso e eu farei o trabalho porque gosto desse trabalho e sou bom nisso." Então, a IA pode fazer todo o trabalho ruim, mas não pode e não deveria fazer o trabalho no qual eu sou excepcionalmente bom. Mas, como tudo é um loop e um loop de Ralph, isso está se tornando tão existencial. Porque os loops de Ralph são, são realmente tudo e podem ser usados para tudo. Temos que começar a fazer perguntas difíceis sobre quais partes do trabalho realmente queremos fazer. O que
+
+queremos fazer com esse trabalho? Não se trata apenas do que a IA pode ou não fazer. Sim, há uma pergunta, mas vamos voltar ao início. Acho que você foi o primeiro a levantar a mão. Acho que o rapaz está vindo com o microfone.
+
+Bem, estamos aqui para a gravação, é muito útil. Obrigado. Então, com as tarefas abertas, sim. Como Você pensaria em quando parar? Então, você define KPIs no início?
+
+Ou como você sabe quando terminou? Sim, ótima pergunta. Bem, novamente, isso se resume a...
+
+Desculpe, outra janela. Esta aqui . Trata-se de atualizar seu loop e você precisa basicamente dizer a ele quando parar. Então, eu não tenho apenas um arquivo de loop Ralph que funcione para todos esses loops diferentes que mostrei anteriormente. Eu tenho arquivos diferentes para cada um. E,
+
+por exemplo, o worker diz: "Quando você chegar a um ponto em que está sem contexto ou a um ponto em que há algo irreversível a fazer, então eu quero que você pare e relate." E o que "relatar" significa, neste caso, atualizar o arquivo de projeto, que é apenas um arquivo em um repositório, com o progresso alcançado e de uma forma que você me apresente para revisão. Então, estou trabalhando bastante no momento nesse tipo de etapa de apresentação porque Definitivamente, não quero ficar revisando um diff e apenas lendo texto, acho isso muito difícil porque geralmente há uma enorme quantidade de informações e é difícil de avançar. Então, estou tentando fazer com que ele me mostre as coisas passo a passo em formato de slides. Estou tentando chegar àquela interface que mostrei antes; você pode ver um pouco como estou tentando fazer com que ele mostre as coisas em lugares diferentes e de maneiras diferentes para que eu consiga, digamos, fazer o que preciso fazer em seguida . Então, para responder à sua
+
+pergunta, depende do que você está fazendo. Acho que o mais importante é você descobrir quais são os limites para si mesmo e ter aquele momento real de pensar: "O que eu realmente quero fazer? Como eu quero me envolver neste trabalho?". Não apenas como se a IA estivesse me ajudando a fazer meu trabalho, como uma companheira. É muito mais do que isso
+
+agora, sobre quais partes do trabalho eu talvez nem precise saber. Sabe? Ah, próxima pergunta. Tem um aqui. Tem um microfone ali na frente, em algum lugar, eu acho. Sim,
+
+ótimo. Obrigado. Ah, oi. Então, já que você mencionou o nosso envolvimento, certo? Em que etapa realmente nos envolvemos? Quer dizer, você
+
+mencionou que não revisa as diferenças. Hum, acho que a parte mais importante do nosso trabalho agora é criar esses tickets, certo? Quer dizer, primeiro identificar qual é o recurso mais útil para implementar e depois descrevê-lo de uma forma que você preveja todos os diferentes casos extremos ou, hum, apenas explicá-lo da melhor maneira possível para que o resultado seja o desejado desde o início. Qual é o seu processo de criação desses tickets? E então, minha preocupação é que às vezes você mesmo não sabe realmente até começar a implementar. Quer dizer, da maneira como
+
+costumávamos fazer, certo? Então, durante o processo de desenvolvimento, você encontra certos casos diferentes em que precisa de uma lógica personalizada, precisa... É difícil prever essas coisas desde o início. E vocês
+
+melhoram os tickets iterativamente? Você os reimplementa ou qual é o seu processo? Sim, ótima pergunta. Então, em termos de como eu trabalho, existem dois modos de trabalho que são feitos em meu nome. Um é o trabalho totalmente automático, do qual estamos falando aqui, onde a IA simplesmente realiza a tarefa. Eu não
+
+preciso me envolver, pois quando tenho uma especificação decente na qual confio e existe uma maneira de fornecer feedback para que a IA saiba que está tudo certo, eu não preciso estar envolvido nesse trabalho. Isso pode simplesmente acontecer. Para cada outra tarefa que realizo, eu trabalho com o Claude Code. Então, com aquele sistema que mostrei anteriormente, aliás, vou voltar a ele para mostrar a você. Deixe-me voltar para esta janela.
+
+Onde está? Aqui está. Neste, bem na parte inferior de qualquer um desses projetos que estão sendo executados para mim, há um pequeno item aqui que é um aplicativo Vi Coded que escrevi para mim. Ninguém mais tem acesso a ele. Isso. Hum, tem um pequeno
+
+comando VCP, que se eu pegar e digitar em uma janela de terminal... Hum, então, se eu voltar para este, por exemplo, acho que está tudo bem. Hum , sim, não consigo mostrar facilmente porque minha internet não vai conseguir se conectar ao meu VPS. Mas a
+
+questão é que eu consigo voltar... Hum, vou voltar para isso.
+
+A questão é que eu consigo... Hum, digitar isso e simplesmente colar no meu VPS. O que isso faz é iniciar uma nova sessão do Claude Code. Essa sessão
+
+sabe onde encontrar o projeto e carrega todo o contexto do projeto. Então, é como carregar uma frigideira, carrega o projeto. Lê todo o arquivo do projeto e sabe onde tudo está. Nesse ponto, tudo o que precisa para turbinar essa sessão comigo já está carregado. E então trabalhamos juntos. Então, se eu estiver,
+
+por exemplo, respondendo ao seu ponto sobre especificar tickets, Eu teria um ticket , provavelmente um projeto para aquela funcionalidade específica, e então eu diria: "Ok, carregue tudo o que você sabe sobre isso." E ele carregaria tudo, e então trabalharíamos em conjunto para especificar esses tickets. E o resultado seria tudo o que eu precisava fazer para concluir o projeto. Então, se estou trabalhando em algo em que quero fazer as coisas de forma útil e única por conta própria, é aí que eu entro em um projeto com o código do Claude. E quando digo fazer por conta própria, não quero dizer digitar tudo ou pensar por mim mesmo .
+
+Normalmente, quero dizer que peço ao Claude para me entrevistar, para que eu possa fornecer as informações necessárias para formular o código, porque não gosto de digitar. Mas peço que ele extraia as informações de mim para realizar o trabalho. Então, esses são os dois modos. É a iteração constante e é o processo automático. E eu também devo ressaltar que Eu não gosto de ler diffs, mas, no fim das contas, essa é a única maneira de revisar código.
+
+Quando estou lendo um artigo de newsletter, não quero ler o diff. Quero ler a newsletter. Já se estou revisando um código importante, que é para outras pessoas, aí sim, eu leio os diffs. Não gosto de fazer isso. Ninguém gosta de ler diffs, mas eu verifico para garantir que está funcionando e não consigo me imaginar sem fazer isso por um bom tempo, especialmente com segurança, como código consciente. Talvez
+
+com o Mythril, eu possa delegar. Seria bom. Alguma outra pergunta? Sim, uma aqui. Como você lida com a deterioração do contexto?
+
+Por exemplo, no seu exemplo em que você tem um loop e ele executa uma tarefa após a outra, é a mesma sessão de código Claude que executa todas essas tarefas ou teremos que experimentar com isso? Com ​​o comando de loop de barra, sim, é. É o mesma sessão. Hum, quando você executa como uma espécie de loop while fora do Claude, então é uma sessão diferente. Hum, você tem diferentes vantagens e desvantagens com isso. Com a mesma
+
+sessão, você tem todo o contexto dos tickets anteriores e das alterações anteriores. Isso pode ser útil. Na prática, não achei tão útil porque ele pode simplesmente puxar os arquivos conforme avança. Hum, se você não está digitando nada na sessão, você não está realmente adicionando nada a ela, então não há nada realmente útil ali. Então, eu tendia, no passado, a preferir iniciar um novo contexto para cada nova sessão. Hum, mas o
+
+loop é muito fácil de executar e simplesmente funciona. E especialmente o Opus é muito bom em recuperação de contexto longo . Então, é um problema muito menor . Ok. Hum, desculpe. Sim, tem um lá
+
+atrás também. Tem um microfone também? Ok, ótimo. Hum, você está revisando sessões que são feitas por você? Você está apenas revisando as diferenças no GitHub? Ótima
+
+pergunta. Porque eu permito que qualquer um dos meus colaboradores feche um projeto. Bem, eu sempre digo: "Se você acha que terminou, me diga o que está finalizado e eu fecho o projeto." "Vou finalizar isso." Então, pode ser que haja uma longa lista de coisas concluídas que eu preciso verificar pessoalmente, mas quero ser essa etapa final de verificação. O motivo de eu ter adicionado
+
+isso é porque me preocupo em deixar algo passar. Existe um conceito que alguém cunhou recentemente chamado dívida cognitiva, que é a ideia de não estar totalmente a par de tudo o que sua base de código pode fazer, ou de todo o código em sua base de código, e isso me preocupa. Então, eu geralmente quero pelo menos entender como o código se encaixa e como a parte do trabalho em que estou trabalhando se encaixa. Então, eu não deixo a IA simplesmente tirar algo da minha vista sem que eu tenha a chance de analisar . Caso contrário, sinto que perderia o controle do que está acontecendo.
+
+Sim, porque, por exemplo, eu uso sessões para rastrear tickets. Sim. Então, em vez de revisar o código ou as diferenças no código, estou apenas revisando o que a sessão específica estava fazendo. Sim. E eu até tenho um sistema de marcação que indica o status de cada sessão. Sim. Existe alguma maneira de
+
+fazer algo semelhante? Hum, semelhante. Sim, acho que as sessões e o status podem funcionar. Hum, eu não costumo usar sessões dessa forma. O que eu costumo fazer com as sessões é configurar o Claude para percorrer todas as sessões anteriores que executei naquele dia em todas as máquinas em que o Claude está instalado.
+
+Ele salva tudo em um arquivo JSON para mim. E então eu o configuro para descobrir como meu sistema pode ser melhorado e também o que eu fiz, para não me esquecer do que aconteceu. Então ele escreve um pequeno parágrafo sobre o que eu fiz. E eu uso isso para acompanhar o trabalho. É bem parecido com um ticket por sessão. Eu
+
+gosto bastante da ideia de ter um contexto por sessão. Acho que é uma ótima ideia. Desculpe, um, tipo por unidade de trabalho. Eu simplesmente não consegui fazer isso funcionar, mas é algo que eu achei muito útil porque aí eu posso voltar para a sessão específica em que o raciocínio estava acontecendo. Sim, e eu faço isso às vezes quando tenho um projeto que se estende por várias sessões, posso voltar para a sessão anterior. Hum,
+
+em vez do comando VCP que eu mostrei, eu poderia digitar VCR e faria a mesma coisa. Mas, na prática, eu gosto da disciplina de ter que retomar de um novo contexto, porque significa que, se tiver que retomar de um novo contexto, significa que toda a informação que estava naquela sessão foi codificada em outros lugares que qualquer sessão de código Claude ou pessoa pode encontrar, o que significa que você acaba com um repositório de conhecimento muito mais rico em que está trabalhando. Então, há uma dúvida sobre se as sessões são realmente efêmeras e se você as tem como um armazenamento, elas são acessíveis como contexto futuro? Trate-os como efêmeros e certifique-se de capturar tudo o que estiver dentro deles em seu repositório, em arquivos de citação de documentos ou algo assim. Acho que isso poderia ser mais eficaz. Vale a pena
+
+pensar nisso. Com certeza. Mais alguma pergunta? Parece que percorremos um longo caminho desde simplesmente abrir um chamado, mas vamos lá. Está tudo bem. Sim.
+
+Muito obrigado pela conversa. Tenho uma pergunta. Parece que, em um loop, o autoteste pode não ser necessário. Tipo, ele pode ir para o código e não encontrar nada lá. Sim. E
+
+você consideraria otimizá-lo de alguma forma ou simplesmente deixaria o token ser consumido? Não, apenas consumiria os tokens. Eles não são tão caros. Depende do que você está fazendo. Acho que estamos no ponto em que eu deveria... Isso
+
+é outra coisa completamente diferente. Basicamente, estamos na era dos tokens gratuitos agora. Sabe, eu tenho uma assinatura Max 20 e definitivamente uso mais do que a pessoa média que paga por uma dessas. Então, acho que neste ponto eu otimizaria para liberar meu próprio tempo em vez de otimizar... Para queimar mais alguns
+
+tokens. Não acho que os tokens jamais ficarão tão caros. Acho que os modelos de vanguarda podem ser muito caros, mas temos alternativas muito boas, mais baratas ou gratuitas, logo ali na esquina. Não tão boas para o tipo de trabalho mais recente que estamos tentando fazer, mas são realmente muito boas. Então, sabe, acho que...
+
+houve pelo menos uma que acabou de ser lançada, a GLM, que parece muito promissora. Acho que é a ZAI, que saiu esta semana. Muito interessante. Ainda estou usando o Claude, mas isso não vai ser sempre assim. Então, acho que eu simplesmente queimaria os tokens. Como eu
+
+disse no começo, sabe, passei muito tempo fazendo toda essa coisa de otimização, fazendo isso, se você não estava aqui no início... Sabe, passei muito tempo tentando mexer com tudo isso, mas no fim das contas, agora eu simplesmente deixo rodando. É muito mais simples. Às vezes, chego
+
+bem perto do fim da minha assinatura Max. Estou um pouco nervoso com o que isso significa. Preciso descobrir como conseguir outra conta. Sim, a Max, de 200 dólares por mês. Sim, sim. Chego bem perto disso toda
+
+semana. Estou 80% bem agora. Estou começando a ficar nervoso. Sim, você tinha uma pergunta. Você quer abaixar o microfone? Tudo bem?
+
+Obrigado.
+
+Não estou mais olhando para isso. Olá. É isso que eu quero dizer? Eu queria te perguntar sobre... Muito obrigado
+
+pela apresentação. Sim, claro. Eu estava ajustando o prompt. Você versiona? Você usa conjuntos de dados para ajustar todo o seu loop?
+
+Então, em termos de versionamento do loop do Ralph especificamente, como o prompt do loop do Ralph. Sim, exatamente a mesma coisa. Eu uso skills para isso. Então, como mencionei antes, tudo isso vai para a skill, e eu peço para o Claude escrever a skill para mim. E isso é salvo na sua pasta .Claude skills dentro do seu
+
+projeto, ou vai para o seu diretório home em .Claude habilidades. Eu uso o GitHub para versionar todas elas para mim. Não acho que o Git seja o formato de habilidades certo a longo prazo. Acho que precisamos de algo novo. Por isso, estou tentando
+
+construir habilidades-S, na verdade. Que é essa ideia de tornar as habilidades muito mais portáteis e compartilháveis ​​dentro das equipes, algo que estou tentando descobrir. Então, sim, eu as versiono e as trato como código bastante importante. E eu compartilho algumas delas, mas não todas rotineiramente porque há muita propriedade intelectual minha nelas, e também muita propriedade intelectual dos meus clientes. A questão é mais em relação ao desempenho dos prompts. Então,
+
+você estava dizendo que no início você vai aprimorando os prompts conforme avança . Mas você está versionando esse processo e está versionando o desempenho geral do prompt? Então, quando você diz prompt, você se refere à habilidade em si que estou usando? Sim, sim, sim, sim. Sim, então Sim. Então, a
+
+habilidade... O prompt reside dentro da habilidade. Então, quando eu digito {barra} rastreamento de bugs ou {barra} Ralph, esse é o prompt. Ele é
+
+escrito e gerenciado por Claude, o que significa que todo o arquivo é o prompt e, portanto, é controlado por versão. Então, eu sempre tenho um comando `get` em execução dentro dessa configuração e, toda vez que eu o altero, eu o atualizo, mas permanece subjetivo o quanto você menciona que melhorou. Digamos que você tenha um conjunto de dados que será um problema. Eu digo isso. E a saída esperada seria o novo recurso adicionado ao repositório.
+
+Sim. Então, como eu avalio se está bom ou como... Sim, exatamente. Como você sabe que está
+
+realmente melhorando? Entendi. Então, como você sabe se está melhorando? Essa é uma ótima pergunta. Eu testo minhas habilidades com outras habilidades e pergunto: esta habilidade é boa?
+
+Poderia ser melhorada? Poderia ser escrita? Bem , eu passo bastante tempo mexendo no meu sistema e nas minhas habilidades, provavelmente mais do que deveria. Acho que é um pouco subjetivo no momento. O que eu não fiz, e seria um ótimo exercício, é tentar executar testes cegos, onde você executaria um conjunto de tarefas com uma habilidade e outro conjunto com outra. No fim das contas,
+
+como o Claude é não determinístico , acho que há um alto nível de variabilidade com qualquer tipo de teste. Então, é muito difícil pensar em como construir um teste útil dessa forma para saber se você está realmente melhorando ou não. Em geral, quanto mais contexto você fornece ao seu prompt, melhor ele funciona, até um ponto em que não é muito fácil e óbvio descobrir onde ele piora. Então, trata-se de encontrar um equilíbrio . Mas sim, eu não fiz um processo de melhoria objetivo. Uma ótima pergunta,
+
+aliás. Há uma pergunta logo atrás da sua. Como você controla as versões das habilidades? Atualmente, estou usando o GitHub. Bem, tenho um produto que estou tentando desenvolver, que é, quer dizer, isto aqui. Aliás, se você quiser minha habilidade, é assim que
+
+você a obtém. É um projeto chamado Air Skills, do qual você viu uma breve prévia na apresentação que meu agente preparou para mim. A ideia é que você possa empacotar e gerenciar essas habilidades como uma unidade. Assim, você pode criar habilidades para sua organização, pacotes de habilidades, conjuntos de habilidades que funcionem para diferentes equipes dentro da sua organização. E tudo isso é versionado e atualizado automaticamente, sem que todos precisem aprender a usar Git e GitHub. Essa é a ideia.
+
+É um verdadeiro transtorno no momento. Achei muito, muito difícil gerenciar , mesmo só para colocar uma habilidade no GitHub. Sabe, não consigo imaginar ninguém da minha área usando isso. É muita fricção para um programador como eu. Não consigo imaginar pessoas sem conhecimento de programação usando isso. Então, é isso. Estou tentando
+
+construir isso. Hum, então, sim, execute esse comando na sua máquina e você terá minha habilidade. Qual é o futuro? Hum, desculpe, há uma pergunta aqui primeiro, e depois pode prosseguir. Hum, como você...
+
+Você meio que tocou nesse assunto um pouco, mas de forma superficial. Como você gerencia o conhecimento? Então, acho que você sabe, eu uso o Claude para descobrir por que minha VPN não está funcionando. E aí eu aprendo algo e quero registrar isso, e então penso: "Tenho uma reunião com alguém com uma transcrição, e tenho isso em outro lugar, e tenho um pouco de código que estou escrevendo", e no geral, tenho todos esses contextos diferentes, mas eles estão meio desorganizados. Você tem alguma maneira de pensar sobre como organizar tudo isso?
+
+Sim, então eu tenho um diretório de código e um diretório de cofre, e esses são os dois diretórios em que trabalho. O diretório de código contém alguns projetos diferentes nos quais trabalho de uma maneira mais clássica. O diretório de cofre é onde eu... Faço todo o meu
+
+outro trabalho lá e, francamente, geralmente começo a trabalhar lá mesmo quando estou programando, e simplesmente digo onde o código está, porque o cofre contém vários milhares de arquivos com todas as coisas diferentes que aprendi, trabalhei com o Claude nos últimos anos. Bem, não com o Claude por tanto tempo assim, mas você sabe o que quero dizer. Comecei com o Obsidian há muito tempo e venho trabalhando nesse cofre há bastante tempo. E com o Claude agora, ele simplesmente funciona para mim. Então, quando faço alguma pesquisa sobre como consertar minha VPN ou qualquer outra coisa, ele salva um arquivo lá. Tenho algumas regras específicas sobre
+
+como estruturar e gerenciar isso. Se você estiver interessado, não escrevi muito sobre isso, mas sei que o Andre Karpathy acabou de escrever sobre o uso do LLMs como wiki. É um ótimo artigo, caso você ainda não tenha visto . Sei que existe um Mina Na verdade, curiosamente, Jovovich fez algo sobre o Mem Palace ontem. É outra versão disso. Hum
+
+, você também pode usar isso. Existem muitos sistemas diferentes para isso por aí. A melhor maneira de começar é com arquivos Markdown em um sistema de arquivos, usando-o como uma wiki. Então, eu executo o Obsidian em uma janela e o Claude em outra, e simplesmente trabalho com ele e salvo as coisas conforme vou avançando. Então, você tem um agente que estrutura e coloca esses arquivos em pastas ou algo assim?
+
+Sim, depende do seu método. Eu uso a abordagem Zettelkasten, que é aquela em que você tem uma nota por pensamento. Então, qualquer pensamento vai para uma pasta simples. Depois, tenho uma pasta chamada {slash} projects, que contém todos os projetos que você viu, incluindo um para esta apresentação, que é a minha unidade de trabalho para um agente no qual trabalhamos juntos. Ele faz muita coisa e então eu faço algumas outras coisas.
+
+Então, ele faz algumas coisas. Hum, eu tenho, hum, transcrições lá. Todas as chamadas que eu já gravei vão para lá. Hum, e eu uso uma ferramenta chamada Lianne, que é uma ferramenta de embeddings de linha de comando. Então, basicamente, ela executa embeddings em todo o texto do repositório, todas as transcrições, todos os links que eu já salvei, incluindo todo o conteúdo.
+
+É enorme. Hum, e, hum, então ela consegue encontrar coisas de forma útil e fácil lá dentro. Hum, então, você acha que a melhor hora para começar é hoje, porque leva anos para montar tudo isso. Preciso escrever mais sobre isso. Alguma outra pergunta? Sim, uma aqui.
+
+Você disse que teve dificuldades ao versionar suas skills. Eu só uso skills há um mês, então não estou ciente dessas dificuldades. Você pode explicar qual é a dificuldade? Hum, posso. Tenho certeza de que existem. Alguém
+
+aqui já teve algum tipo de dificuldade com o meu tipo de gerenciamento e uso de skills ? Mais alguém? Sim, várias diferentes. Então, sim, é algo emergente. Não é surpresa que você ainda não tenha experimentado se não estiver usando há muito tempo. O que descobri é que, se você estiver
+
+usando por conta própria, criar um arquivo de habilidades e gerenciá-las é bem simples. Colocá-las no GitHub também é bem simples. São links simbólicos e um repositório do GitHub. Tudo bem . Onde fica difícil é como compartilhar isso. Então, como você
+
+compartilharia uma habilidade? Bem, se você quiser usar habilidades MPX, precisa colocá- las em seu próprio repositório do GitHub. Isso parece muito pesado para apenas uma habilidade. Eu precisaria ter 50 delas para compartilhar todas as minhas habilidades, então isso não funciona. Então é mais como, ok, se eu não quiser fazer isso, eu simplesmente envio o arquivo da habilidade? Eu envio um arquivo zip? Quer dizer,
+
+não consigo pensar em uma maneira melhor de fazer isso. Hum, eu preciso ter um submódulo em Ter uma pasta de habilidades para cada repositório Git com o qual compartilho uma habilidade? Simplesmente não faz sentido. Então, acho que a ideia do Claude tem alguns elementos relacionados a marketplaces de plugins, onde você pode ter um plugin com várias habilidades. Essa é a melhor maneira, mas aí você está versionando o plugin, não as habilidades. Então,
+
+provavelmente é a maneira mais integrada. Só que não funciona tão bem. Além disso, há um desafio: se alguém contribui para a sua habilidade, você quer as alterações dessa pessoa ou não? Depende da contribuição. São alterações locais ou podem ser incorporadas de forma geral ? Isso depende da
+
+habilidade e da pessoa que contribui. Então, você precisa gerenciar isso. Você mantém um backlog para cada habilidade com tickets para melhorá-las? Você vê... Acho que todos
+
+esses são problemas não resolvidos. Minha contribuição tenta resolver alguns deles, mas são grandes problemas que ainda não solucionamos . Hum, outras perguntas? Há uma Bem lá atrás. Hum, se tiver um microfone, seria ótimo.
+
+Obrigado.
+
+1, 2, 1, 2. Ok, está funcionando. Minha pergunta é sobre como podemos escalar essa abordagem com o Ralph Loop, mas para a equipe de produção em si, tipo , três engenheiros. Como coordenar, como cooperar? Você tem alguma ideia de como podemos organizar isso? Você tem alguma experiência? Essa é uma
+
+ótima pergunta. Só para ter certeza de que entendi, como você escala isso para poder coordenar equipes inteiras usando esse tipo de abordagem em loop ? É isso. Com todos os tickets e as habilidades, sim. 100%. Sim, é difícil. Acho que
+
+as equipes em que vi isso funcionar bem são aquelas que são proativas na atualização dos tickets. O bom é que, se você conectar seu sistema de tickets à IA, ela é muito boa em atualizá- lo, então você definitivamente deveria fazer isso. Certifique-se de reivindicar o ticket e movê-lo para a coluna "Em andamento" antes que o trabalho comece. E certifique-se de que ninguém mais tenha feito isso antes de você começar a trabalhar. Entende o que estou dizendo? Isso é realmente importante para
+
+evitar conflitos. Esses sempre foram problemas com equipes maiores. Da mesma forma que os loops Ralph funcionam muito bem, executando apenas uma tarefa por vez e de forma sequencial, pode ser que a sobrecarga de coordenação em nossas equipes seja causada pelo fato de termos muitas pessoas nelas. Talvez devêssemos ter equipes menores e com mais membros , certo? Então, talvez se você tentar fazer com que 10 pessoas se coordenem usando IA e loops Ralph, isso simplesmente não vai funcionar.
+
+Talvez você precise de três. E talvez essa seja a maneira de executar o projeto, dividindo-o em partes menores, e as outras sete pessoas fazendo outra coisa. Faz sentido? Então, resolver o problema é o primeiro passo, e garantir que você já esteja usando seus mecanismos de coordenação é o segundo. Passo. Hum, e então simplesmente tente
+
+e descubra quais são os gargalos . Seja realmente bom em retrospectivas com essas coisas. Acho que as retrospectivas e as equipes costumam ser bem fracas. É tipo: "Do que deveríamos fazer menos?" "O que devemos fazer mais?" Essa é a
+
+receita perfeita para mais do mesmo. Mudanças incrementais mínimas , o que pode ser bom, mas, em última análise, exigem uma reformulação radical. Portanto, certifique-se de que suas retrospectivas estejam realmente mudando aspectos da sua forma de trabalhar ou de que haja espaço para experimentar. Vamos tentar usar um ciclo Ralph em todo o nosso trabalho por uma semana e ver o que acontece. Se não funcionar depois de dois dias, tudo bem . E se você ocupa
+
+uma posição de liderança e pode patrocinar esse tipo de trabalho, saiba que é isso que significa tentar migrar para a IA. Se você quer transformar sua equipe, terá que patrocinar esses experimentos e aceitar o fracasso, porque, e estou falando com os líderes aqui presentes por um minuto, será um processo confuso e haverá muitos fracassos, mas se você quer uma transformação real, essa é a única maneira de consegui-la. Você precisa dar espaço para sua equipe experimentar. É uma série de coisas diferentes. Então, dê a eles cobertura aérea. Hum, então, sim, é uma
+
+questão grande e complexa. Hum, acho que se você for capaz e tiver autonomia para simplesmente tentar e ver onde isso te leva , existe um conceito totalmente separado chamado Teoria das Restrições, sobre o qual eu não falei nada, que é a ideia de que em qualquer equipe, em qualquer sistema, sempre há um gargalo. Sempre há um gargalo principal. Se você não trabalhar nesse gargalo, todo o resto do trabalho que você fizer para otimizar e melhorar o sistema será inútil. E, na verdade, provavelmente contraproducente. Então, é por isso que algumas
+
+equipes, ao usar ferramentas de IA e ferramentas avançadas de IA como o Ralph Loops, que é basicamente IA, ou o que estamos fazendo agora, só que turbinada, acabam ficando mais lentas. Algumas equipes avançam incrivelmente rápido. Algumas equipes ficam lentas. Por quê? Porque elas não estão trabalhando na restrição.
+
+A restrição nessas equipes pode ser... seja o processo de revisão. Se você, ou o processo de lançamento, se você lança seu código uma vez por mês, e está enviando 200 PRs em vez de 20 nesse lançamento, como você acha que isso vai funcionar, certo? Sabe, não vai funcionar
+
+bem. Então, é por isso que as equipes trabalham mais devagar, porque o que elas precisam fazer é corrigir o processo de lançamento, não a velocidade de codificação. Então, sempre corrija primeiro o maior gargalo, depois descubra para onde o gargalo se move no sistema, e isso não é previsível, é aleatório, então você precisa descobrir isso, e então mover e corrigir o próximo problema no sistema. Para saber mais sobre isso, leia "A Meta" de Eliyahu Goldratt, de 1984, nada menos. É um livro incrível. Mais uma
+
+pergunta aqui embaixo ? Tem outro microfone? Onde está o microfone? Eu tenho o microfone. Ah, você tem o microfone.
+
+Ótimo. Continue. Já que você estava perguntando sobre as restrições, Mas isso me lembrou que faço parte da equipe de IA, e temos uma equipe de IA que desenvolve muitos microsserviços, e eles estão em repositórios diferentes. Ok. Como vocês lidam com a codificação agora, já que é um grande monorepositório ou são repositórios menores? Você precisa experimentar
+
+diferentes abordagens e ver o que funciona melhor. Não acho que a arquitetura do GitHub, ou melhor, do Git, seja com vários repositórios ou um único repositório, realmente importe. Você sempre pode iniciar sua IA em uma pasta acima de todos os outros repositórios e simplesmente fazê-la funcionar. Ela faz um ótimo trabalho nisso. Então, tudo bem. Acho que a questão mais importante é
+
+quais são os padrões de coordenação dentro das suas equipes e serviços, quem é responsável por quê e como isso muda com a IA? Acho que esse é um desafio mais interessante. O principal motivo da minha pergunta é que alguns microsserviços dependem de outros, e aí você precisa lançar um deles, lançar uma tag e atualizar os outros. É só isso. Sim, acho que a IA vai expor todos os pontos em que o processo é ineficiente, porque fará tudo mais rápido. Isso significa que,
+
+se você está vendo gargalos de dependência entre seus microsserviços, adivinhe? Esse é o seu maior gargalo. Portanto, você precisa corrigi-lo. Mas como corrigir esse gargalo? Bem, você pode tentar um sistema de lançamento atômico ou construir algo usando a nuvem, como um Raft Loop, que encontre uma maneira de coordenar lançamentos em vários repositórios com mais sucesso. Não sei ao certo.
+
+Mas é isso que você faz. É nisso que você trabalha. Não trabalhe em mais nada até que esse seja o gargalo. Sim, uma pergunta. Você quer passar o microfone?
+
+Sim. Devo dizer que estou quase no final do conteúdo, como você provavelmente já sabia há meia hora. Eu tinha um slide de perguntas e respostas. Se você estiver saindo, fique à vontade. Mas fiquem à vontade para ficar e fazer mais perguntas. Eu realmente
+
+agradeceria um feedback. Então, este código QR é a única coisa que adicionei manualmente a estes slides. Se vocês pudessem preenchê-lo, seria ótimo . Obrigada. São apenas 3 minutos, quatro perguntas. Isso
+
+me ajuda a melhorar e garantir que eu faça um bom trabalho nestes workshops daqui para frente. Esse também é o meu LinkedIn. Eu publico muito conteúdo lá. Conectem-se comigo. Eu encorajo vocês a conhecerem meu trabalho. Discordem de mim. Eu adoro
+
+discordar. Adoro quando as pessoas dizem: "Claro, Chris, isso é loucura." Você não deveria estar fazendo isso." Adoro esse tipo de comentário, porque realmente me ajuda a pensar e melhorar, que é o que eu adoro fazer, e porque o Raft Loops está fazendo todo o meu outro trabalho, então não tenho mais nada para fazer. Ótimo. Obrigado. Então, eu só
+
+queria deixar isso registrado. Fico muito feliz em continuar respondendo perguntas. Mas, se as pessoas quiserem se afastar, então esse pode ser um bom momento. Fiquem à vontade . Minha pergunta é sobre ferramentas de orquestração multiagente. Estou
+
+curioso para saber se você já experimentou coisas como o Gas Town do CVA G ou o MCP Agent Mail. Sim, tem algumas coisas realmente legais e interessantes. Eu ainda acho que estamos no Velho Oeste, literalmente, com coisas como o Gas Town. Mas nós realmente não sabemos como isso vai funcionar. Eu experimentei o Gas Town.
+
+Não consegui fazê-lo funcionar direito, mas era bem no começo. Para mim, eu sinto que a orquestração de agentes... Por outro lado, acho que complicamos demais as coisas ao assumir que elas precisam ser executadas em paralelo. Gosto da ideia de
+
+começar com um loop. Não sinto necessidade de fazer minha IA executar várias tarefas simultaneamente antes de conseguir que ela faça uma coisa bem feita. Isso meio que remete à teoria das restrições. Não acho que a velocidade, ou seja, o número de tokens por segundo, seja o gargalo. Acho que é nossa capacidade de especificar o que queremos e revisar o que a IA fez. Então, se esse for o meu gargalo,
+
+não quero introduzir mais agentes. Por isso, não tenho me aprofundado muito nessas ferramentas. Sinto que elas resolvem um problema que poucas pessoas ainda enfrentam. Então , olá. Sim. Não apenas pela velocidade,
+
+mas, por exemplo, não sei se você já experimentou o MCP Agent Mail. Os agentes podem bloquear arquivos e se comunicar entre si para não interferirem uns nos outros. outros dedos dos pés, e você pode usar diferentes, como Claude, Opus e Codex, trabalhando no mesmo projeto. Assim, você tem cérebros diferentes trabalhando no mesmo projeto. Legal. É, não, acho que já
+
+ouvi falar, mas não experimentei. Parece uma ideia super interessante, como alguém mencionou antes sobre subagentes tentando olhar as coisas de uma perspectiva diferente. Eu já vi muito valor nisso . Mencionei antes minha abordagem de simulação de público, que funciona basicamente assim: ela pega transcrições e respostas de pesquisas no meu site e cria personas, fazendo com que esses subagentes pensem de forma diferente em paralelo, para analisar o conteúdo de perspectivas diferentes. Então, essa ideia de ter duas coisas diferentes em dois modelos diferentes também é super interessante. Acho que veremos muito
+
+mais disso. Vejo muito valor nisso. Sabemos que eles são muito bons em concordar. com eles mesmos, e você frequentemente obtém uma visão contrária melhor se descartar o contexto e analisá-lo novamente. Então, ótimo princípio. Acho que as ferramentas
+
+ainda estão em um estágio muito inicial, como todos sabemos, mas são ideias interessantes, com certeza. Uh, há uma pergunta logo atrás de você.
+
+Sim, continue. Elas vão funcionar. Então, ótima palestra, aliás, obrigado. Hum, quanta importância você dá a... Então,
+
+em termos de fases de desenvolvimento, você gasta muito tempo construindo o contexto, criando os tickets e tendo um sistema para executá-los em sequência, o quanto você se concentra ou enfatiza em CI/CD, execução de testes automatizados, linting? Hum, isso lhe dá a confiança para reduzir a quantidade de código que você revisa? Absolutamente. Bem, sim e não. Depende do código. Acho que,
+
+em primeiro lugar, acho que CI/CD, bons testes são absolutamente essenciais. Linting e todas essas coisas. Se você quer que uma IA faça um bom trabalho para você, por que não fornecer a ela essas ferramentas para ajudá-la a fazer isso? Um bom trabalho para você, certo? Da mesma forma que os humanos se saem muito melhor quando têm linting, CI/CD e bons testes.
+
+É exatamente a mesma coisa. É o mesmo com bases de código limpas, sabe? Hum, sabe, vale a pena fazer todo esse trabalho para que uma IA tenha um bom desempenho. Então, isso me dá mais confiança no que estou fazendo. O desafio é que, se a IA escreve os testes e também o código, há uma boa chance de que ela cometa algum erro em relação ao que você está tentando construir. Muitas vezes, ela
+
+não comete erros óbvios. O que ela faz de errado é simplesmente não entender uma funcionalidade, compilar e dizer: "Sim, está tudo bem", e então lançar o produto, e aí eu fico tipo: "Meu Deus!". Eu não deixo que ela lance tudo . Só faço isso com projetos em fase de pré-lançamento . Mas, hum, sim,
+
+me dá confiança saber que a coisa... Acho que está funcionalmente aceitável para lançamento, ou seja, pronto para ser lançado. Ainda quero ler as diferenças porque ainda não confio totalmente em uma IA para lidar com segurança. Bem, não sei se
+
+perdi a tela. Pronto. Obrigado . Acho que meu computador entrou em modo de suspensão. Eu simplesmente não confio totalmente na IA para não perder os dados dos meus clientes e não vou abrir mão disso. Então,
+
+vou ler as diferenças porque não quero ser responsável por isso. Não me parece que haja alguns problemas para os quais você possa confiar totalmente na IA. Por exemplo, linting, testes. Há alguns problemas para os quais você não pode realmente confiar na IA simplesmente porque ela não é responsável por resolvê-los. Então, talvez mudanças específicas relacionadas à segurança. Se você estiver executando
+
+migrações de banco de dados de produção, provavelmente deve verificar se elas funcionaram antes de executá- las em produção. E há algumas coisas que são um pouco mais nebulosas e imprecisas. Como a interface do usuário. Os testes são bem interessantes. No início, a ideia de ter um ótimo mecanismo de feedback era fundamental. Se você conseguir
+
+fazer uma IA clicar no seu projeto para verificar se ele funciona, isso é realmente poderoso. Funciona em 50% dos casos, na minha experiência, mas pode ser bastante útil, pelo menos na primeira tentativa. Ter bons testes de ponta a ponta é realmente muito útil. Se você estiver usando o Playwright ou algo parecido, que eu mantenho para o projeto Skills que mostrei , tenho alguns testes de ponta a ponta bem abrangentes que configuram sistemas de arquivos completos de habilidades e fazem a IA criar duas personas diferentes, executando cada uma, um editor e um criador, e verifica se todos os arquivos estão nos lugares certos. E isso é realmente muito útil para esse tipo de teste completo de ponta a ponta. Da
+
+mesma forma, se você conseguir criar esses tipos de mecanismos de feedback e dar à IA a chance de realmente saber se fez um bom trabalho, isso também é muito útil. É um lugar fantástico para se estar. E, por isso, estou sempre buscando descobrir como uma IA poderia dizer se algo é bom ou não, em vez de eu. E quando consigo me tirar desse ciclo, isso melhora muito todo o processo. Nem sempre é possível ou desejável, mas, na medida do possível, eu faço.
+
+Você está projetando o processo de feedback. Você está decidindo os critérios e, em seguida, deixando a IA executá-los. Sim. Se eu estiver trabalhando sozinho, sim. Se eu estiver trabalhando com um dono de produto, gerente de produto ou designer, estou muito interessado em utilizar as habilidades deles e dos testadores também para descobrir maneiras de projetar esses produtos. É isso que eles...
+
+É o valor que eles trazem para esses processos, certo? É como se, da mesma forma que os programadores pensam: "Como podemos evitar digitar tudo nós mesmos?", e se você for um gerente de produto, como você faz para a IA fazer as coisas fáceis para que você não precise fazê-las? Sabe, como você... através desse processo? Hum, o
+
+mesmo acontece com os testadores. Uma área de pesquisa super interessante. Duas coisas me vêm à mente sobre isso. O que funciona bem para você em uma equipe pequena? O que funcionou bem para mim foi configurar revisões adversárias, onde você tem a especificação, o agente de desenvolvimento desenvolve, um revisor faz uma revisão adversária, você
+
+passa esse contexto de volta, o agente de desenvolvimento itera. Geralmente, isso detecta muitos problemas e aumenta a minha confiança para lançar o produto. Mas mesmo com isso, com a velocidade com que você consegue criar especificações e a quantidade de código que você realmente precisa revisar, eu acabo sendo o gargalo no processo de revisão. Sim. Você já fez isso? Sim. Eu sempre sou o
+
+gargalo. Tenho 30 coisas diferentes que preciso revisar, coisas que minha IA fez durante a noite ou algo assim. E eu fico tipo, "Meu Deus!". Sabe, e o desafio para mim é que muito desse trabalho não deveria ser meu . A única razão pela qual me atribuíram isso
+
+é porque não posso confiar na IA. Mas qualquer ser humano poderia fazer esse tipo de trabalho. Então, agora eu me pergunto: será que eu contrataria humanos só para fazer o trabalho chato? Isso é ético? Sabe, essa é uma questão realmente interessante para refletirmos. Mas você tem
+
+razão. Se formos capazes de projetar sistemas — adorei seu ponto de vista contrário ao de outra pessoa —, como alguém já disse, se formos capazes de fazer isso e projetar esses sistemas de forma que não precisemos estar envolvidos diretamente, acho que isso é melhor para todos nós, porque eu não quero simplesmente dar um trabalho horrível para um humano. Até lá, estamos empregados, então... É, acho que sim
+
+. Obrigado. Sem problemas. Mais alguma pergunta? Podemos encerrar por aqui?
+
+Pessoal, foi um prazer conversar com vocês. Muito divertido mesmo.

@@ -1,0 +1,118 @@
+---
+video_title: "Everything I Learned Training Frontier Small Models — Maxime Labonne, Liquid AI"
+video_id: fLUtUkqYHnQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=fLUtUkqYHnQ
+video_date: 2026-04-29T12:00:06+00:00
+video_description: |
+  A new class of small models is emerging with the ability to reliably follow instructions and call tools while running on-device under 1 GB of memory. In this talk, we'll break down how to post-train frontier small models using the LFM2.5 recipe: on-policy preference alignment, agentic reinforcement learning, and curriculum training with iterative model merging. We'll cover training challenges unique to the 1B scale, like doom loops, capability interference, and how to fix them. The goal is to give you a concrete playbook to fine-tune and deploy small models for your own use cases, from structured data extraction to multi-turn tool use.
+  
+  Speaker info:
+  - https://x.com/maximelabonne
+  - https://www.linkedin.com/in/maxime-labonne/
+  - https://github.com/mlabonne
+  
+  Timestamps:
+  0:00:00 - Start
+  0:00:14 - Introduction to frontier small models at Liquid AI
+  0:01:02 - Characteristics: memory-bound, task-specific, latency-sensitive
+  0:02:20 - Architecture: why large embedding layers are inefficient
+  0:04:01 - LFM2 architecture: using gated short convolutions for speed
+  0:06:09 - LFM 2.5 recipe: 28T tokens and post-training stages
+  0:08:34 - Post-training: SFT, preference alignment, and RL best practices
+  0:10:43 - Identifying "doom loops" in reasoning models
+  0:11:34 - Solutions: mitigating loops via preference alignment and RL
+  0:15:29 - Future focus: using agentic tools to overcome memory limits
+  0:17:58 - Q&A: real-world applications for small vs. large models
+---
+Oi pessoal. Meu nome é Maxim Labonne. Nesta apresentação, quero falar sobre as lições que aprendi ao pré-treinar modelos pequenos. Para contextualizar, trabalho na Liquid AI como chefe de pré-treinamento. Na Liquid, focamos principalmente em modelos de ponta para implantação em dispositivos. E como vocês podem ver
+
+aqui, temos modelos que variam de 350 milhões a 24 bilhões de parâmetros. Portanto, isto é muito, muito pequeno. E ontem lançamos nossa nova VLM 450M e na semana anterior lançamos a nova versão do modelo 350M para texto. Então é isso que fazemos. Trabalhamos com texto, imagem e áudio. Sim, os
+
+modelos estão disponíveis na Hugging Face, caso você queira experimentá-los. Nesta apresentação, quero falar sobre o que diferencia os modelos pequenos dos modelos grandes. E existem três características principais sobre as quais quero falar. Primeiramente, os modelos menores são limitados pela memória, porque o hardware é o que é, certo? Em um telefone, em um carro, etc.
+
+Não podemos usar modelos muito grandes, por isso tentamos manter o tamanho bem pequeno. Por causa disso, temos uma baixa capacidade de conhecimento em comparação com modelos maiores. Então, os modelos são tarefas, o que é ótimo porque, se você tem pouca capacidade de conhecimento, pode pelo menos se concentrar muito bem em uma coisa. Isso significa que geralmente não são chatbots de uso geral como o ChatGPT. Eles têm um foco muito mais restrito e conseguem usar técnicas como sumarização de forma muito eficaz. Esse
+
+é o segundo aspecto. E, por último, é muito sensível à latência. Isso significa que você precisa ter uma taxa de transferência muito, muito rápida. Portanto, todas essas características são muito importantes e veremos nesta apresentação como elas interagem entre si e como podemos melhorá-las. Mas a principal lição que quero que vocês retenham desta apresentação é que os modelos pequenos não são simplesmente versões ampliadas de modelos maiores. Eles também têm seus
+
+desafios únicos e veremos como lidar com isso nesta apresentação. A primeira coisa que quero abordar é a arquitetura do modelo, porque há muitas coisas interessantes que podemos fazer aqui para modelos de borda. Primeiramente, gostaria de analisar os modelos Gemma 3 270M e Gemma 2.5 0.8B. Portanto, esses modelos são
+
+a versão menor de suas respectivas famílias. E você pode ver que ambos adotam uma arquitetura híbrida. Gemma 3 possui janelas deslizantes e sistema híbrido GQA. Gemma 2.5 possui uma nova arquitetura com Delta Net controlada por portões e atenção controlada por portões. Isso é
+
+ótimo porque é muito mais rápido. Mas o que me interessa aqui é, na verdade, a camada de incorporação. Porque, se você observar o tamanho da camada de incorporação em comparação com todos os parâmetros do modelo, verá que, na verdade, Gemma 3 270M é quase inteiramente uma camada de incorporação. Corresponde a 63% do total de parâmetros. E mesmo Gemma 2.5 0.8B ainda representa cerca de 29% dos
+
+parâmetros. Portanto, isso não é muito eficiente, porque os parâmetros efetivos, os parâmetros que são realmente usados ​​para raciocínio, para capacidade de conhecimento e tudo mais, não são os parâmetros de incorporação. São os demais. Assim, o tamanho efetivo é, na verdade, muito menor, o que significa que você pode obter mais raciocínio e mais desempenho com a mesma quantidade de memória. E a razão pela qual fazem isso é porque utilizam a destilação para treinar os modelos. Então eles destilam
+
+esses modelos, como esses são os modelos dos alunos, e eles têm modelos de professores com vocabulários de tamanho enorme, e é por isso que temos essas camadas de incorporação super grandes. Muito bem, vamos dar uma olhada na arquitetura LFM 2 agora. Como você pode ver, a arquitetura LFM 2 não é tão diferente em termos de camadas. Também temos uma arquitetura híbrida, e desta vez temos convoluções curtas e GQA. E eu gostaria de falar um pouco sobre... bem,
+
+primeiro vocês podem ver que a camada de incorporação é, na verdade, muito menor em comparação com as outras. São cerca de 90% dos parâmetros, então temos parâmetros mais eficazes, o que é ótimo. E eu quero falar sobre como criamos essa arquitetura. E fizemos isso na criação de perfis de dispositivos. Então, em vez de nos concentrarmos em um trabalho mais teórico, decidimos dizer: "Ok, vamos tentar implementar isso na prática, no hardware alvo". Tínhamos dois hardwares alvo
+
+aqui e queríamos ver como eles se comportam na vida real para poder otimizar a arquitetura e encontrar os operadores certos. E o que descobrimos foi este bloco de convolução curta com portão que você pode ver aqui. E o que é ótimo nisso é que é muito, muito rápido. As conversões curtas são muito mais rápidas do que todas as alternativas. Assim, você pode ver aqui, em comparação com a atenção por janela deslizante do Gemma 3, a Delta Net com portas do Gemma 2.5, a atenção linear com portas
+
+e a atenção de consulta em grupo. Você pode ver que a relação custo-benefício é realmente favorável à convolução curta, o que é ótimo, pois dissemos que ela é muito sensível à latência. Então é exatamente isso que queremos. Isso é bastante teórico, mas se analisarmos na prática e compararmos o desempenho desses modelos, podemos ver aqui nos dois processadores, o AMD Ryzen Max Plus 395 e o Samsung Galaxy S25 Ultra. Nem todos esses modelos têm necessariamente o mesmo tamanho, mas eles fornecem uma ideia geral e você pode ver que a convolução curta realmente permite que a arquitetura LFM 2 seja muito mais rápida e também use menos memória. Isso é ótimo.
+
+E você também pode ver a GPU. Não se trata apenas de desempenho na CPU, mas também na GPU, onde se pode observar um alto rendimento mesmo em níveis de concorrência muito elevados. Muito bem, vamos falar um pouco sobre treinamento agora. Assim, a receita de treinamento do LFM 2.5 é bastante semelhante ao que você pode encontrar em outros lugares em termos de etapas. Temos
+
+28 trilhões de tokens em fase de pré e meio de treinamento. Temos técnicas de ajuste fino supervisionado, alinhamento de preferências e aprendizado por reforço. E aqui vocês podem ver que estou falando de 28 trilhões de tokens. E eu disse que lançamos um modelo com 350 milhões de parâmetros na semana passada. Sim, nós pré-treinamos um modelo com 350 milhões de parâmetros usando 28 trilhões de tokens.
+
+Se você está familiarizado com as leis de escala do Chinchilla, isso pode soar um pouco estranho, porque supostamente devemos ser computacionalmente ótimos em, sei lá, talvez 1 bilhão, nem mesmo 1 trilhão de parâmetros. Quer dizer, na verdade não é bem assim, e vemos que o desempenho continua a melhorar quando aumentamos o número de tokens de pré-treinamento. E houve um artigo super interessante de Roberts et al. publicado na semana passada sobre as leis de escala do tempo de teste. E você pode ver aqui como o LFM 2.5 350M se compara às suas novas
+
+leis de escala. Você pode ver as leis de escala da chinchila aqui e as novas que eles propuseram aqui. Na verdade, não pré-treinamos os modelos com tokens suficientes. Devemos realizar um pré-treinamento ainda maior para sermos otimizados de acordo com as leis deles. Mas isso é ótimo porque permite mais pré-treinamento e funciona até mesmo em escalas muito pequenas, o que é excelente, já que esses modelos são muito mais baratos de treinar do que modelos muito maiores. E aqui você pode ver
+
+uma comparação. Não serve apenas para pré-treinamento. É como modelos pós-treinamento. E você pode ver que o modelo LFM 2.5 é significativamente melhor do que a versão anterior, LFM 2 350M, em diversos testes de desempenho.
+
+Então você possui conhecimento sobre o GPQA Diamond. Você tem instruções a seguir com o banco IF. Você tem um banco de relatórios de casos que é uma ferramenta de extração de dados. E também muita utilização de ferramentas com BFCL e bancada Dow 2. Com esse modelo, são apenas 350 milhões de parâmetros. O que queríamos era que
+
+o modelo fosse muito, muito bom na extração de dados e no uso de ferramentas. E quanto ao resto, se não for o melhor modelo para codificar, não importa. Como se as pessoas não o usassem dessa forma de qualquer maneira. O mesmo vale para a matemática. Acho muito bom tentar focar em algumas habilidades específicas e não tentar ser mediano em tudo.
+
+Muito bem, vamos falar exatamente sobre isso. Pré-treinamento de modelos pequenos e grandes. Qual é a diferença? Estamos praticamente na mesma situação. Portanto, não é propriamente em termos de estágios que vemos uma diferença. Tem
+
+mais a ver com a forma como você faz isso. Portanto, para o ajuste fino supervisionado, é melhor restringir bastante o escopo e se concentrar em alguma tarefa específica. Isso é verdade para o pré-treinamento de propósito geral, mas também é verdade se você estiver fazendo ajustes finos. Assim, você pode pegar um desses modelos no Hugging Face e ajustá-lo de acordo com o seu caso específico. Por exemplo, você tem um caso de uso em que deseja chamar uma função específica . Isso é ótimo. Este é um
+
+excelente caso de uso. Quanto mais estreito for o formato que você encontrar ou projetar, melhor. Em seguida, temos o alinhamento de preferências. Assim, durante o pré-treinamento, utilizamos nosso próprio algoritmo de otimização de preferências diretas normalizado pelo comprimento da política, do qual gostamos bastante. E o alinhamento de preferências é muito bom porque traz melhorias gerais. Não se trata apenas de
+
+metas de desempenho. Na verdade, após o alinhamento de preferências, o modelo fica melhor no geral. O som está melhor e é muito bom poder melhorar tudo isso. E, por fim, temos o aprendizado por reforço. E o aprendizado por reforço é extremamente eficiente mesmo em escala muito pequena. É
+
+uma técnica realmente muito importante que usamos em todos os lugares. E o principal é que tem um foco muito restrito. Então, o ideal é ter o máximo de ambientes e tarefas possível, e garantir que você consiga generalizar bem graças a isso. E, especialmente para modelos pequenos, eles são bastante sensíveis aos dados SFT de inicialização a frio. Portanto, se você tem uma tarefa específica em aprendizado por reforço, é sempre bom ter amostras semelhantes e uma tarefa similar em sua combinação de ajuste fino supervisionado. E esse é um bom
+
+feedback que você pode ver durante o aprendizado por reforço, indicando que algo não está sendo treinado muito bem. Provavelmente é porque você está sem alguns dados SFT de inicialização a frio . Talvez a tarefa seja muito complexa, existem vários motivos, mas você pode tentar começar de novo a partir da etapa de ajuste fino supervisionado, adicionar seus dados e ver se isso melhora alguma coisa. Muito bem, mas existe um novo problema com modelos de linguagem pequenos que você pode ter encontrado até mesmo com modelos maiores, e esse problema é o loop infinito. Então, o problema com o loop infinito é que, como você pode ver aqui, ele começa a repetir uma sequência de palavras várias e várias vezes , e simplesmente não para nunca. Bem
+
+, esse é um problema constante, mas é particularmente problemático quando se tem modelos pequenos, modelos de raciocínio e tarefas complexas. Se a tarefa for complexa demais para o modelo. Espero que esta receita não seja muito complexa para este modelo, mas isso pode acontecer em qualquer lugar, e você tem os três ao mesmo tempo. Portanto, se você tiver modelos de raciocínio muito limitados para uma tarefa matemática extremamente difícil, essa é a receita perfeita para criar inúmeros ciclos viciosos. Bem , este é um desafio único que você encontra com modelos pequenos, para dar um exemplo concreto.
+
+E aqui posso falar sobre como resolvemos isso. A primeira coisa a fazer é resolver isso durante a fase de alinhamento de preferências , e em particular na parte de geração de dados que realizamos. Aqui você pode ver o pipeline que usamos para gerar os dados, a geração de dados on-policy para alinhamento de preferências. Então, começamos com algo como 1 milhão de amostras para dar uma ideia aproximada, e depois usamos o modelo de política, o modelo que queremos treinar com amostragem de temperatura, e geramos cinco implementações. Como utilizamos amostragem de temperatura, essas implementações tendem a ser muito mais diversas, e esperamos que nem todas elas apresentem problemas graves. Pelo menos não se deve entrar em um
+
+loop infinito, certo? Por outro lado, geramos apenas uma implementação adicional com um modelo de política com temperatura zero, e acreditamos que esta vai entrar em um ciclo vicioso. E então entregamos tudo a uma banca de mestrado em Direito para que avaliem todos os lançamentos. Selecionamos a melhor opção, aquela com a maior pontuação, como a resposta escolhida, e a opção com a pior pontuação como a resposta rejeitada. A ideia é que, se houver algum loop infinito, a resposta correspondente a esse loop seja rejeitada. Portanto,
+
+treinaremos o modelo durante o alinhamento de preferências para evitar o ciclo vicioso. E isso é bastante eficaz. Então, essa é a solução número um. E então temos a solução número dois, que consiste em usar aprendizado por reforço com recompensas verificáveis, adicionando uma pequena penalidade de repetição de n-gramas . Mas você pode ver que, com o aprendizado por reforço com recompensas verificáveis, é uma maneira muito interessante de resolver esse problema, porque se você tem uma pergunta, como uma questão de matemática como esta, você vai tentar extrair a resposta final. Se você não tiver uma
+
+resposta final, não receberá uma recompensa positiva. Portanto, isso já está sendo levado em consideração durante o aprendizado por reforço com recompensas verificáveis. Mas além disso, você pode adicionar uma pequena penalidade de repetição para garantir que, no geral, você gere menos loops infinitos. Da mesma forma, também usamos amostragem de temperatura aqui, então as distribuições são bastante diversas, e é menos provável que você tenha muitos loops infinitos o tempo todo. Então, esta é a segunda solução.
+
+E isso nos permitiu reduzir bastante a taxa de ciclos viciosos. Então, este é um exemplo real com o conceito LFM 2.5 1.2B, que é um modelo pequeno. É um modelo de raciocínio e, além disso, impusemos a ele uma tarefa realmente difícil. Portanto, como você pode ver,
+
+após o pré-treinamento, a taxa de loops sem fim que calculamos em vários benchmarks foi de cerca de 15%. Hum, ou até mesmo 16%. E depois do SFT, praticamente não se move. Parece que o SFT não é o ambiente adequado para corrigir isso. Não tínhamos exemplos de loop infinito durante a fase de SFT, mas isso não é suficiente para eliminar esse problema.
+
+Depois do DPO, que foi nossa primeira solução, houve uma redução significativa , e você pode ver que, após o aprendizado por reforço, o problema praticamente desapareceu. Se hoje você tentar fazer a mesma coisa com a Gwen 3.5 0.8B no modo de raciocínio, verá muitos, muitos loops infinitos, mais de 50% deles , algo que as pessoas reclamam online, e isso também mostra que a Gwen 3.5, como este modelo pequeno, é apenas uma versão reduzida de modelos maiores. E essa
+
+não é a abordagem que estamos adotando aqui na Liquid. Queremos dizer: "Ok, assim como os modelos de ponta, eles são diferentes , e esta também é uma maneira de otimizar toda a arquitetura, toda a pilha de pré-treinamento, para garantir que os tratemos da forma mais especial possível. E, finalmente, quero falar sobre o próximo estágio, os próximos passos para todos esses pequenos modelos com aprendizado por reforço agente. A última característica que não mencionei aqui é a limitação de memória. Se você tem limitação de memória, significa que você tem baixa capacidade de conhecimento. Se você não tem baixa
+
+capacidade de conhecimento, significa que você vai ter muitas alucinações. Mas uma boa maneira de resolver esse problema é fornecer ferramentas de busca na web para o modelo. Se você tem um modelo pequeno, mas ele é capaz de pesquisar no Google tudo o que você jogar nele em termos de perguntas de conhecimento, você terá um desempenho muito, muito melhor do que se depender apenas dos modelos base. E o mesmo acontece com muitos problemas que você pode jogar no modelo. Acho que, por experiência, Esses modelos minúsculos são, na verdade, muito bons em tarefas de análise de agentes, e é assim que devemos usá-los.
+
+Não importa se eles não têm a capacidade de conhecimento de modelos grandes. O que eles realmente precisam é de uma capacidade de raciocínio muito boa para garantir que consigam usar essas ferramentas de forma confiável. Outro ponto que não mencionei aqui é que os modelos pequenos também não são muito bons em lidar com contextos longos . Mas tudo bem, porque se você tiver um ambiente de modelo de linguagem recursivo, pode usar Python e, basicamente, pegar um atalho para resolver esse problema. Então, a maioria dos problemas que você encontra com modelos de linguagem pequenos pode ser resolvida de maneiras diferentes. Só
+
+requer mais criatividade, só requer pensar nesse problema não como você pensaria a partir da perspectiva de um modelo maior, mas tudo isso é solucionável. Certo. Então, em conclusão, algumas lições aprendidas: espero ter convencido vocês de que os modelos de borda têm desafios únicos e são realmente interessantes do ponto de vista científico e também do ponto de vista da produção, se você os combinar com análise de agentes. As ferramentas tendem a ter um desempenho muito, muito bom, e isso é algo que ainda está pouco explorado. Falamos sobre cargas de trabalho com agentes e modelos realmente grandes , mas não é necessariamente o melhor caso de uso, não é necessariamente a melhor opção em todos os momentos. E, sim,
+
+finalmente, estamos trabalhando no LFM 3 e temos uma tonelada de experimentos e ideias malucas para testar, então venha trabalhar conosco se você estiver interessado nessa área. Obrigado a todos.
+
+Sim. Você pode compartilhar um pouco sobre como usa esses modelos em seu fluxo de trabalho e como decide quando usar modelos grandes? Sim, essa é uma boa pergunta. Então, a questão é como usamos esse modelo nos fluxos de trabalho e como decidimos entre modelos pequenos e grandes . A ideia principal aqui é que você tentará usar os modelos pequenos quando não tiver conexão com a internet, por exemplo. A implantação em um carro é um bom
+
+exemplo disso, porque você não pode ter uma conexão de internet confiável. Faz sentido. A latência também é um fator importante. Se você tem uma carga de trabalho muito sensível à latência, modelos pequenos executados localmente sempre serão melhores. Outro fator é a privacidade.
+
+Se você trabalha em um ambiente regulamentado, como no setor financeiro ou de saúde, isso também é relevante. A questão é como funciona no seu fluxo de trabalho específico . Eu crio os modelos, principalmente para outras pessoas, mas não necessariamente nos meus fluxos de trabalho. Você já tentou reduzir o loop infinito? Como você mencionou, o Gwen 3.5 é uma versão reduzida de um modelo maior
+
+? Sim. Você já viu o trabalho que você faz com aprendizado por reforço e toda essa redução do loop infinito em um modelo maior ser destilada em um modelo menor sem precisar refazer as etapas? É uma boa pergunta. Acho que precisamos fazer alguns experimentos para ver se simplesmente destilar de um modelo maior funciona bem em termos de redução do loop infinito. Eu diria que não. Acho que não
+
+, porque ficaria muito próximo da SFT (Saturação de Fibra de Vidro). Então, depende de como você faz essa destilação. Se você interromper a destilação e tiver K suficiente, talvez isso seja bom o bastante, mas acho que o problema não seria completamente resolvido e você ainda precisaria de várias destilações para garantir que não aconteça novamente. Certo. Sim.
+
+Certo, acho que devo parar por aqui, mas estarei disponível se você tiver outras perguntas. Muito obrigado.

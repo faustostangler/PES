@@ -1,0 +1,106 @@
+---
+video_title: "How Google DeepMind is researching the next Frontier of AI for Gemini — Raia Hadsell, VP of Research"
+video_id: zZsTVBXcbow
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zZsTVBXcbow
+video_date: 2026-04-18T23:20:35+00:00
+video_description: |
+  In this presentation, Raia Hadsell, VP of Research at Google DeepMind and AI Ambassador for the United Kingdom, opens AIE Europe and explores what's open in Frontier AI and the future of intelligence by focusing on advancements beyond standard large language models. She categorizes these innovations into three key areas:
+  
+  00:00 Introduction
+  05:05 Advanced Embedding Models: Raia discusses the importance of embedding models for fast retrieval and recognition, similar to how the human brain uses 'Jennifer Aniston cells' to identify concepts across modalities. She highlights Gemini Embeddings 2, a fully omnimodal model that processes text, video, and audio into unified semantic vectors.
+  09:53 AI for Weather Forecasting: The team has developed revolutionary models for atmospheric prediction, moving away from traditional physics simulations. Notable breakthroughs include:
+  11:00 GraphCast: A spherical graph neural network that provides accurate 15-day weather forecasts.
+  12:47 GenCast: A probabilistic model that offers higher efficiency and accuracy (97% of the time compared to gold-standard benchmarks).
+  13:51 FGN: A functional generative network that directly predicts cyclone behavior, which is currently being utilized by the US National Hurricane Center.
+  14:35 World Models: Hadsell introduces Genie, a project focused on creating interactive, real-time environments. Starting from Genie 1 (2D platformers) and progressing to Genie 3, these models allow users to create and interact with high-quality, 3D photorealistic worlds. These environments demonstrate capabilities like memory, consistency, and the ability to be dynamically prompted by the user to change the surroundings in real-time.
+  
+  Speaker info:
+  - https://uk.linkedin.com/in/raia-hadsell-35400266
+  - https://github.com/raiah
+---
+[música]
+
+Nosso próximo palestrante é o vice-presidente de pesquisa do Google DeepMind. Por favor, juntem-se a mim para dar as boas-vindas ao palco a Raya Hadsel.
+
+[música] [aplausos] Olá a todos. Maravilhoso. Que sala cheia e que sorrisos contagiantes! Ouvi a reclamação no Google no final. Eu percebi isso. Bem, meu nome
+
+é Raya Hadsel. Faço parte da DeepMind há quase 13 anos e estou muito feliz por ter um engenheiro de IA aqui em Londres. Também me orgulho muito de ser embaixador da UKAI este ano. Então, eu ajudo o governo, a academia e a indústria a preencher essas lacunas e, sim, sou americano de nascimento, mas estou aqui há tempo suficiente para me considerar também um britânico orgulhoso. Então, vou falar um pouco sobre a Frontier AI e o futuro da inteligência artificial.
+
+Para começar, uma breve apresentação de quem eu sou. É bom ter a idade que tenho. Você consegue analisar isso por décadas. Então, na década de 90, fiz minha graduação em filosofia da religião. Definitivamente ainda não sou cientista da computação. Mas,
+
+antes que você pergunte, eu gostei muito. Sim, aprendi muito e fico feliz por ter feito isso, mas não, não tem sido muito útil desde então. Nos anos 2000, fiz uma pequena mudança de rumo e migrei para a ciência da computação, após alguns bons conselhos de pessoas próximas a mim. Passei meus anos de doutorado na cidade de Nova York trabalhando com redes neurais convolucionais para robôs com Jan LeCun, o que foi muito divertido. Então, na década de 2010, tomei a decisão de me juntar a um pequeno grupo de indivíduos curiosos e determinados que trabalhavam na DeepMind.
+
+Era um grupo de cerca de 30 a 40 pessoas na época, e passamos o resto daquela década trabalhando em coisas como videogames da Atari, Starcraft e robótica. Foi muito divertido. E agora sou vice-presidente da DeepMind. Eu ajudo a gerenciar um grupo de cerca de 1200 cientistas e engenheiros em 10 laboratórios, e estamos trabalhando em muitas coisas diferentes. Vou falar sobre três delas .
+
+Então, em primeiro lugar, a IA de fronteira é uma área na qual estamos realmente tentando garantir que permaneçamos na vanguarda. Então, estamos pensando em quais serão as próximas arquiteturas que usaremos para o Gemini. Quais são os próximos problemas que somente a IA pode realmente resolver e como vamos construir o futuro da inteligência? Isso significa pensar não apenas em inteligência artificial, mas também na criação do futuro da inteligência humana e até mesmo da inteligência robótica. Estamos todos juntos nessa jornada e acho importante refletir sobre como os seres humanos mudam, assim como a tecnologia. Nossa abordagem consiste em buscar nós
+
+raiz. Sabe, não vamos perder tempo com as folhas. Vamos realmente descobrir uma grande área problemática que ainda não foi solucionada. Até que ponto podemos ir? Identifique os problemas mais profundos e resolva-os para, em seguida, gerar um grande impacto em toda a cadeia de valor. Nós
+
+realmente fazemos parceria com o mundo. Eu realmente penso nisso de forma muito ampla e reflito sobre quem são os parceiros que podem nos ajudar a encontrar esses nós raiz e resolver esses problemas e também, sabe, levar isso até os nós folha. E resolver problemas que valem a pena resolver. O lema e a missão da DeepMind são construir IA de forma responsável para o benefício da humanidade. Então, levo isso muito a sério. Queremos construir e
+
+resolver problemas que valham a pena resolver. Tudo bem. Trabalhamos em diversas áreas diferentes dentro da Frontier AI, na DeepMind. Essas são algumas das diferentes categorias. Não vou contar tudo para vocês, então talvez seja melhor manter isso em segredo.
+
+Mas vou escolher apenas alguns. Então, em primeiro lugar, nos modelos avançados, eu queria apresentar um modelo de embeddings. Portanto, o tema geral desta palestra são coisas que não são diretamente modelos de linguagem. E no âmbito da modelagem, eu queria falar sobre modelos de incorporação. Para começar, gostaria de saber se alguém sabe o que é uma célula da Jennifer Aniston.
+
+Tenho alguns neurocientistas na sala. Na verdade, esse é um conceito da neurociência, onde descobrimos que não existe apenas uma única célula, mas um pequeno número de neurônios que codificam algo específico, como em uma pessoa específica. E essas combinações de neurônios que se ativam apenas para aquela pessoa, aquela coisa ou aquele lugar específico, essas células são, na verdade, muito resistentes. Eles se ativam independentemente da modalidade. E isso é usado pelo cérebro de forma muito, muito rápida para recuperação de informações, tanto para reconhecimento quanto para funções de comparação.
+
+Isso significa que, quando eu digo o nome Jennifer Aniston, ou se eu mostro uma foto ou um vídeo dela, ou mesmo se você ouve a voz dela, caso a conheça, caso seja fã o suficiente, todas essas diferentes modalidades levam à ativação do mesmo conjunto de células. Portanto, queremos isso em uma rede neural artificial pelo mesmo motivo. Desejamos reconhecimento e comparação de recuperação rápidos. Assim, podemos usar o que chamamos de modelo de incorporação para codificar esses conceitos, de forma a sermos mais robustos às diferentes maneiras como a informação pode ser apresentada e para sermos muito bons em entender a comparação entre essas diferentes ativações. Utilize perdas contrastivas. Um dos
+
+motivos pelos quais gosto dessa área é porque fiz parte do meu doutorado estudando redes neurais siamesas, que foi uma das primeiras maneiras de entender o que é uma função de perda contrastiva. Bem, essas funções de incorporação são realmente essenciais para a IA generativa. Às vezes queremos gerar, às vezes queremos recuperar. O grupo do Google vem trabalhando nisso há muito tempo e, recentemente, lançamos o Gemini Embeddings 2. Isso é empolgante para mim, porque realmente representa o ideal. É totalmente omnimodal.
+
+Ele usa o que é derivado de Gemini. Então, possui esse nível de conhecimento e compreensão do mundo e permite uma recuperação extremamente boa. Poderia explicar com um pouco mais de detalhes por que é bom que seja unificado e multimodal? Significa que você não precisa de etapas diferentes para tentar obter uma experiência verdadeiramente completa, sem perder informações ao tentar combinar informações de áudio, visuais e de texto . Então você pode obter um único vetor que representa texto de até 8000 tokens (8K), hum [bufa] 128 segundos de vídeo, 80 segundos de áudio e um PDF completo, e juntos isso pode te dar muita informação. Você pode
+
+então usar isso para recuperar informações do [snorts], para consultar lógica agentiva e outras coisas. Também utilizamos algo chamado Matryoshka Representation Learning (MRL), que nos permite ter a mesma rede, mas representando dimensões diferentes. Por exemplo, você pode começar fazendo uma recuperação usando apenas 256 dimensões para seu embedding e, em seguida, expandir isso para obter mais expressividade. Então, isso também nos permite demonstrar que temos um espaço semântico unificado e uma qualidade realmente de última geração. Então, é algo que surgiu recentemente e que eu acho que não deveria ser discutido com tanta frequência quanto os modelos de linguagem, mas que considero muito importante como complemento.
+
+Tudo bem. [bufa] Em seguida, eu queria falar rapidamente sobre outra coisa que não é um modelo de linguagem. Isto não é um modelo de linguagem . Não houve qualquer envolvimento de linguagem. E este é um trabalho que fizemos sobre o clima em Londres. Chove muito
+
+e, há alguns anos, havia um cientista da informática no Met Office, o serviço meteorológico do Reino Unido. A agência meteorológica do Reino Unido perguntou: "É possível prever a precipitação com mais precisão do que nossos modelos baseados em física, utilizando inteligência artificial?" E eu disse: "Não sei. Problema interessante. Deixe-me levar isso para a equipe." Levei isso de volta para a
+
+equipe da DeepMind. Começamos a trabalhar nisso e descobrimos, sabe de uma coisa? Prever o tempo, embora seja um problema muito, muito difícil usando simulação física da atmosfera, é na verdade bastante viável para modelos de redes neurais, visto que temos 40 anos de dados, 40 anos de dados globais sobre as condições meteorológicas. Então, há alguns anos, lançamos o GraphCast. O GraphCast prevê o estado da atmosfera em até 15 dias em qualquer lugar da Terra e para diversas variáveis. E isso utiliza uma
+
+rede neural gráfica esférica. Imagine isso abrangendo a Terra e tendo nós que vão desde a superfície da Terra até a baixa estratosfera. E, na verdade, inserimos e depois fazemos previsões de forma autorregressiva com 100 variáveis ​​atmosféricas diferentes. Por exemplo, a velocidade do vento, a temperatura e a umidade, como mostrado aqui. E isso funcionou muito bem. Aqui está um
+
+exemplo rápido. Estávamos ansiosos para ver isso no final de 2024. Este é o furacão Lee. A onda entra no Atlântico, faz uma pausa por um momento e depois vira para o norte, acelera e atinge a costa da Nova Escócia. O total deste vídeo corresponde a 9 dias de gravação. Então é essa a distância que o
+
+furacão percorre. E este é, na verdade, o resultado da rede neural gráfica. Essa é a previsão. E a previsão feita está correta com 9 dias de antecedência em relação ao local onde o furacão vai atingir a costa . Em comparação, os melhores modelos de referência, baseados em princípios da física, só tinham uma previsão precisa do local onde o furacão atingiria a costa com 6 dias de antecedência.
+
+Quando se fala de um furacão de grande intensidade atingindo a costa, 3 dias é um período realmente importante. Então, com isso em mente, dissemos: "Ok, isso é importante e vamos continuar a investir na ciência." Assim, a equipe desenvolveu o próximo modelo. Chamamos a isso de GenCast. A diferença aqui é que este modelo, embora também baseado em uma malha, é probabilístico e possui maior precisão e eficiência.
+
+O clima está fundamentalmente caótico e queremos saber o que está acontecendo nas caudas das aeronaves. Assim, ter um modelo probabilístico nos permite fazer isso, permite que isso seja operacionalizado e usado para a previsão do tempo real. O GenCast também foi mais preciso. Assim, quando comparamos com 1.300 previsões meteorológicas de referência, consideradas padrão ouro, esta se mostrou mais precisa em 97% dos casos.
+
+E também seria possível que pudéssemos produzir essa previsão de 15 dias em 8 minutos em um único chip, em vez de horas em um supercomputador muito grande . Havia uma gama muito diferente de soluções em relação às que estávamos propondo. E neste último ano, essa equipe tem sido implacável. Eles estão constantemente criando novos modelos. Assim, a mais recente se chama FGN, rede generativa funcional. Isso
+
+prevê ciclones diretamente, em vez de prever o tempo e depois ter que adicionar um detector de ciclones como uma espécie de pós-processamento. Isso incorpora, na verdade, a categorização, o reconhecimento de ciclones, sua trajetória, a velocidade do vento e a formação do olho diretamente na rede. Nós treinamos para isso, o que significa que é muito melhor. Isso já foi usado nos EUA pelo Centro Nacional de Furacões e eles estão muito entusiasmados com a grande vantagem que isso agora proporciona. Portanto, espera-se que isso seja usado em todo o mundo nos próximos anos.
+
+Tudo bem. Por fim, gostaria de usar os últimos minutos para falar novamente sobre algo que não é baseado em modelos de linguagem. Então, estes são os modelos mundiais. E isso surgiu, na verdade, de um trabalho que a DeepMind vem desenvolvendo há muito tempo na área de jogos e simulação. Estivemos trabalhando em projetos como Atari e Go, StarCraft e também em ambientes do tipo Mujoco para robótica, porque queríamos entender a interação entre agência e ambiente.
+
+Começamos a nos concentrar cada vez mais não apenas no treinamento do agente, mas na criação de um ambiente infinito. Sabe, quando eu estava trabalhando na locomoção aqui, hum, então, ah, isso não está funcionando. Bem. Talvez isso funcione. Vou avançar para o Genie 1. Então, nós queríamos... Este
+
+é o Genie 1. Ele só podia funcionar por alguns segundos, mas você podia dizer: "Ei, eu quero esse tipo de mundo." E então você poderia criar esse pequeno ambiente de jogo de plataforma 2D onde você poderia pular por alguns minutos e ele realmente responderia se você apertasse para a esquerda ou para a direita. E isso poderia produzir uma diversidade razoável de mundos com visuais diferentes, típicos de jogos de plataforma. Isso foi o suficiente para dizer: "Hum, talvez tenhamos algo aqui. Vamos
+
+aumentar a escala. Vamos aumentar os dados e treinar novamente. Melhorar o método e treinar novamente, agora com jogos 3D." Então, criamos o Genie 2. O Genie 2 é interativo, mas ainda não é em tempo real. Então, você precisa ir muito devagar.
+
+Ele consegue produzir ambientes 3D, mas não conseguia fazer nada com a qualidade do mundo real e com uma definição mais alta. Então, estávamos trabalhando nisso. E então veio o V03. Muito bem. Agora [aplausos e vivas]
+
+Muito bem. Bom, meu tempo acabou, mas ainda vou dedicar mais um ou dois minutos para mostrar isso a vocês. Então, isso significa dizer ao Genie: " Quero um mundo onde estou caminhando por uma estrada lamacenta em Kent. Parece não ser longe da minha casa." O interessante é que você olha para si mesmo e percebe que realmente tem um corpo. Você está realmente
+
+interagindo com o mundo. É um pouco estranho saber o que está por vir. A partir desse modelo, entende-se não apenas a aparência de uma pista em Kent, mas também o que é necessário para interagir com ela, fazer a água se mover e caminhar para frente. Claro, não são apenas cenas de caminhada. Podemos esquiar tranquilamente.
+
+E assim, você pode criar um ambiente onde pode interagir com o mundo de muitas maneiras diferentes. Aqui está um exemplo onde está escrito "original" . Foi assim que começamos. Acionamos isso com um fragmento de vídeo e agora mudou para Genie Genie 3. Então, este é um artista. Ele criou
+
+aqueles primeiros segundos. E então usamos isso para acionar o Genie e dar vida a este mundo. Ele ficou muito feliz em ver que podíamos pegar um pequeno trecho do mundo que ele havia criado laboriosamente e dar vida a ele de uma forma que permite voar por ele. Você pode ricochetear nisso e ele se lembra: "Ah, aqui está aquela estrutura estranha ali" e volta para lá. E voa por ali.
+
+Então [bufa] esses ambientes não são apenas diversos e interativos de alta qualidade. qualidade. Eles também têm memória. Então, o comando aqui era: "Sou um lagarto de origami em um mundo de origami". E é isso que você obtém. E usamos isso como um
+
+pequeno teste interessante em que posso passar, sabe, posso passar um minuto correndo em uma direção, voltar ao início e tudo estará exatamente como estava no começo, porque temos uma memória muito boa. Trabalhar nesses ambientes nos dá consistência e controle. E, por último, podemos interagir com esse mundo enquanto você está nele. Isso significa que, enquanto estou em um mundo que pode ser um pouco entediante, aqui estou eu, sabe, este é um mundo dizendo que estou caminhando pelo Canal de Camden em Londres, aqui perto do escritório da DeepMind. Bem, o que acontece se eu interagir com ele ao mesmo tempo?
+
+Então, o que acontece? Ah. Acabei de mudar o mundo em que estou. Posso mudá-lo novamente. Pronto. Imediatamente, o mundo
+
+é diferente. E mais uma vez, só por diversão. Adoro a ideia de uma nova forma de jogo em que eu possa interagir de forma adversária com a sua experiência de um mundo. Isso cria um tipo de entretenimento completamente diferente , um mundo inteiro, uma nova fronteira. Acho que pode ser realmente incrível, não apenas para entretenimento, mas também para educação. A capacidade de
+
+entrar em um mundo para aprender sobre ele é incrivelmente poderosa e pode muito bem ser algo que veremos cada vez mais. E com isso, eu gostaria de agradecer e avisar que amanhã de manhã, meu colega Omar falará sobre Gemma 4, que é um modelo de linguagem. [risos] Obrigado.
+
+[música]

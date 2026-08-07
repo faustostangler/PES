@@ -1,0 +1,105 @@
+---
+video_title: "LLM codegen fails and how to stop 'em — Danilo Campos, PostHog"
+video_id: juoNbJiZUi0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=juoNbJiZUi0
+video_date: 2026-04-30T14:00:06+00:00
+video_description: |
+  Danilo Campos breaks down the most common failure modes in LLM code generation and the practical strategies PostHog uses to prevent them. Drawing from a system that helps 5,000+ users each month, he shares a playbook for making autonomous codegen more reliable, correct, and production-ready.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/danilocampos
+---
+Bom dia. Quem tem medo de robôs? Tem medo de robôs? Tem medo de robôs? Não tenho medo de robôs porque eles já me fizeram sangrar o nariz tantas vezes. Não há mais dor que eles
+
+possam me causar. E é sobre isso que quero falar com vocês nesta bela manhã. Obrigado por vir passar um tempo comigo. Então, meu nome é Danilo. Eu trabalho na PostHog e crio o Assistente da PostHog.
+
+E o mais estranho é que o Assistente do PostHog pula duas horas de sofrimento que você jamais recuperará e as devolve para você como oito minutos de pseudoentretenimento. E agora, como vamos nos safar dessa? Estamos falando de 15.000 pessoas que executam esse assistente todos os meses e, em troca do trabalho, recebem uma integração com o PostHog que funciona e que elas realmente gostam. Como fazemos isso?
+
+Vou contar tudo para vocês hoje. E só para reforçar a ideia de que isso realmente funciona, nas últimas 6 horas, recebemos duas postagens espontâneas no Blue Sky e no Twitter, onde as pessoas estão realmente felizes. Isso deveria ser assustador, não é? Eu coloquei um robô lá fora. É escrever código para pessoas.
+
+E se estiver fazendo um trabalho ruim? Bem, aprendemos todas as maneiras pelas quais ele poderia fazer um trabalho ruim. Vou explicar como esses empregos ruins acontecem. Vou compartilhar algumas estratégias que você pode usar para que seus agentes de codificação autônoma também façam a coisa certa . Tudo bem. Vamos começar pelo mais fácil
+
+. Temos problemas de deterioração do modelo. Bem, treinar um modelo leva muito tempo, mas não é só o tempo, é o dinheiro, certo? Você não está brincando como um antrópico treinando uma modelo em um fim de semana por puro divertimento, está? Trata-se de um investimento de capital considerável.
+
+E a desvantagem disso é que os modelos deixam de representar a realidade, certo? São um retrato do mundo e da internet como eram, sabe, há 6, 8, 12, 18 meses, talvez. Isso é útil para muitas coisas, mas se você está trabalhando em um projeto de software de ritmo acelerado, e existem muitos projetos de software de ritmo acelerado, a desvantagem é que o modelo perde completamente a noção do que está acontecendo . Então, você tem que lidar com a deterioração do modelo. Bem, isto é algo bastante simples . Você provavelmente já lidou com esse
+
+tipo de situação antes. Alguém aqui tem alguma opinião formada sobre como lidar com a deterioração de modelos? Algum palpite? Estou vendo algumas pessoas balançando a cabeça em sinal de desaprovação. O que é isso?
+
+Trapos. Trapos é bom. Sim . Mas, vou te dizer uma coisa: com as janelas de contexto do jeito que estão hoje em dia, não há nada melhor do que simplesmente jogar um monte de arquivos Markdown no contexto e corrigir as falhas. E é exatamente isso que fazemos com o assistente do PostHog: temos documentação atualizada, recém-publicada, no posthog.com,
+
+e permitimos que o agente faça uma seleção. Perguntamos: "Ei, o que você está fazendo? O que você está integrando aqui? O que detectamos?" E o agente pode usar ferramentas para sair, escolher em um menu de código Markdown atualizado e pronto para usar, que ele pode então simplesmente inserir no contexto, realizar o trabalho e fazer as coisas corretamente.
+
+O que desencadeou tudo isso foi que, há um ano, as pessoas começaram a pedir a seus agentes muito primitivos, algo como: " Certo, Cursor, quero que você integre o PostHog para mim." E faria um trabalho péssimo, não é? É simplesmente uma questão de inventar chaves, inventar padrões, criar APIs que não existem. E não é nossa culpa, não fizemos nada, mas foi um problema nosso. Portanto, descobrir maneiras de fornecer um contexto correto e atualizado ao agente para que ele execute a tarefa corretamente é parte de como conseguimos que as pessoas publiquem comentários satisfeitos sobre o que o assistente fez por elas.
+
+Tudo bem. Bem, esses modelos, quero dizer, claramente eles têm coletado dados de todos os tipos de projetos existentes , e eu imagino que nem todos eles tinham uma arquitetura excelente, porque algumas das decisões que esses agentes tomam ao montar um projeto são muito estranhas. Então, o que você faz? Como lidar com o fato de que a concepção de um agente sobre como montar algo pode ser tecnicamente viável, mas não exatamente ideal? Bem, eu e meus amigos da equipe de magos do PostHog mantemos uma frota do que chamamos de aeromodelos.
+
+E esses são projetos que têm o PostHog implementado. Eles têm isso em vários frameworks e em várias linguagens. Mas o que o caracteriza como um modelo de avião é o fato de não termos um projeto de produção completo e adequado embutido nele. O que temos é algo muito mais fino. Algo que é uma simulação de uma aplicação real, mas, por exemplo, a função "desligar" não funciona.
+
+Ou melhor, a opção "desligado" serve para tudo. Você pode simplesmente digitar o que quiser no campo de senha e conseguirá fazer login. Mas o formato é irregular, o que significa que podemos fornecer esses modelos de aviões ao agente. E então o agente percebe: "Ah, legal. Então, quando o evento 'off' aparecer, este é um ótimo lugar para colocar o rastreamento de eventos específico que alguém gostaria de usar para rastrear logins e identidades no PostHog."
+
+Assim, através da manutenção de algo que não é tão elaborado quanto a aplicação de produção real, o que significa também, obviamente, que é mais eficiente em termos de tokens, o que se obtém é a forma correta de uma integração como um padrão que o modelo e o agente conseguem completar de forma consistente todas as vezes. Tudo bem. Assim, além da arquitetura peculiar, o agente pode encontrar um caminho inusitado através do espaço do problema. E com 15.000 integrações por mês, pode encontrar 15.000
+
+maneiras de realizar uma integração com o PostHog. Embora isso atendesse aos requisitos de integração automatizada, nos deixaria com um fardo de suporte muito peculiar, pois teríamos muitas configurações diferentes do PostHog. É tipo: "O que é isso ? Como é que eu entendo isso?" Certo? Isso
+
+seria um problema em grande escala. Isso seria coisa de aprendiz de feiticeiro. Então, para limitar a improvisação, o que fazemos é dar pistas ao agente. Não informamos ao agente de antemão exatamente o que vamos fazer. Sabe, talvez você já tenha visto isso antes, mesmo usando o código Claude: se você disser exatamente para onde quer ir, ele pode criar um buraco no formato do código Claude nas quatro primeiras tarefas e depois ficar bem polido na quinta, certo? E
+
+não é isso que queremos para o nosso caso. Então, uma das coisas que fazemos é começar sem nem mesmo informar ao agente o que estamos fazendo. Nós nem sequer mencionamos que estamos fazendo uma integração com o PostHog. Começamos com algo como: onde estão os arquivos com valor comercial interessante neste projeto? Você consegue encontrar algo que se pareça com uma página de login, uma interface do Stripe ou algo que possa indicar que alguém está prestes a cancelar o serviço? Muito bem, vamos procurar os
+
+arquivos que possam ter impacto nos negócios de alguém. E o curioso é que os assuntos de negócios exercem uma enorme influência no código. Assim, podemos detectar esse tipo de coisa com muita confiabilidade. A partir daí, dizemos: "Ok, aqui estão alguns arquivos interessantes. Quais são os eventos interessantes que estão acontecendo nesses arquivos? Não escreva nenhum código agora.
+
+Vamos apenas pensar em alguns eventos interessantes que poderíamos incluir aqui. Quais seriam eles?" Então, fazemos uma lista disso. E obtemos os nomes dos eventos. Recebemos as descrições desses eventos. E nós simplesmente as guardamos
+
+em uma pequena pasta. E este é apenas o começo, certo? É como se nem sequer soubéssemos exatamente para onde estamos indo. Então, o próximo passo é tipo: "Ok, vamos começar a implementar o PostHog de verdade . Agora conhecemos vários eventos e pensamos cuidadosamente sobre quais eventos poderiam ser. E agora
+
+temos documentação e tudo mais, que podemos carregar conforme necessário, de acordo com a estrutura e a linguagem que nos interessam aqui. Assim, podemos entrar lá e começar a fazer modificações nos arquivos das pessoas, e as modificações, mais uma vez, não serão estúpidas e elas não ficarão bravas com isso. Ok. Agora, podemos fazer tudo o que for preciso para que o agente tenha sucesso. Mas a maior ameaça aos resultados do nosso agente somos nós mesmos. Somos
+
+seres frágeis. Temos um pouco de conteúdo aqui dentro da nossa cabeça, e também temos um limite de contexto. Não podemos realmente quantificá-lo, e varia de acordo com quanto tempo faz que tomamos café, e se tomamos café da manhã hoje . Nosso contexto não é apenas limitado, mas fragmentado. Há coisas que lembramos de ter implementado na semana passada, e há coisas que não lembramos de ter implementado na semana passada." Esqueci de algo do
+
+mês passado. Então, estamos fazendo alterações, editando o código e aprimorando as coisas com as quais nosso agente está interagindo, e às vezes estamos descartando coisas que são realmente importantes. E então, houve um momento em que tínhamos uma instrução da ferramenta MCP que era contraditória com a de outra ferramenta. E o agente ficou tipo, "Cara, não sei o que fazer aqui." Você está me colocando numa situação impossível."
+
+Hum, tivemos uma situação em que estávamos dizendo: "Ei, existe uma ferramenta que você definitivamente precisa usar para concluir esta configuração." E o agente respondeu: "Certo, legal." Vamos usar a ferramenta. "Espere, o MCP não tem uma ferramenta com esse nome." E estamos falando de centenas de execuções em andamento com essa ferramenta ausente.
+
+O que está acontecendo? Se não perguntássemos, não saberíamos. Então, uma das coisas que você pode fazer, que é realmente útil e relativamente barata, é uma pequena inferência sobre o que acabou de acontecer com o seu agente. Assim, ao final de cada execução, bem no ponto de parada, fazemos uma pergunta muito simples. Estamos fazendo uma pequena pesquisa com o usuário, mas o usuário, neste caso, é um robô. E perguntamos ao
+
+robô: "Ei, o que poderíamos ter feito melhor para te preparar para o sucesso nesta execução?" E então nos informa, e foi assim que descobrimos. Tipo, "Ah, nós não demos permissão para você acessar a ferramenta." Portanto, não havia ferramenta alguma. "Ei, você tem essas diretrizes contraditórias."
+
+Sem esse interrogatório constante... Ah , um bom exemplo é que continuávamos dando instruções para JavaScript, quando na verdade era um projeto em Python. Claro, muito...
+
+bem, não era frustrante, mas, sabe, nós identificaríamos o problema dessa forma. Então, erro humano, grande coisa. Você precisa perguntar para descobrir. Agora, também existem algumas artimanhas com as quais você precisa se preocupar, porque executar um agente na máquina de outra pessoa exige muita confiança, certo? Temos esse robô que potencialmente pode fazer qualquer coisa, e não queremos fazer nada de ruim ou destrutivo para o projeto do usuário. Não queremos colocá-
+
+los em uma situação pior. E uma das primeiras versões dos nossos assistentes simplesmente lia arquivos .env, o que é necessário para realizar gravações, certo? Não é possível simplesmente escrever em um arquivo sem saber o que está fazendo. É apenas um dos mecanismos de funcionamento desses agentes.
+
+Mas também não é ideal enviar o conteúdo do ambiente (ENV) das pessoas para a nuvem, e pensar: "Beleza. Isso vai ficar registrado no log de alguém sem que você saiba." Bem , obviamente isso é uma má notícia. Mas, quando você está projetando essas coisas, você tem um controle preciso sobre o uso das ferramentas, certo? Você pode decidir: "Tudo bem, essas ferramentas são aceitáveis. Esses tipos
+
+de leitura são aceitáveis. Esses tipos de leitura não são aceitáveis." Então, restringimos bastante o que o agente podia fazer em relação a qualquer coisa que fosse um arquivo ENV. E então conseguimos construir uma ferramenta que podia fazer duas coisas. Poderia verificar a presença de uma chave.
+
+Essa chave existe? E poderia escrever um novo valor em uma chave. E foi isso. Não havia nada que indicasse um aumento nas informações de inferência para este arquivo ENV. E, como resultado, deixamos de mexer com essas coisas. Mas,
+
+de novo, cara, você estava soltando esses robôs no computador de qualquer um . É preciso ficar de olho nessas artimanhas. Porque mesmo que você esteja resolvendo o problema que prometeu resolver, pode estar fazendo isso de uma forma que te faça parecer um idiota. Tudo bem. Agora, esta é a grande questão. Essa é a estranha
+
+. Porque ao longo de toda a nossa carreira, fomos recompensados ​​por escrever código. Nós escrevemos o código. Escrevemos cada vez mais código. Nós escrevemos o código inteligente. Ah,
+
+eu tenho uma estrutura aqui dentro. Isso funciona. Este produto é confiável. É um equipamento complexo, mas o desempenho é realmente bom. E cara, a gente tem que programar isso pra caramba. Se
+
+conseguirmos resolver esse problema programando-o, tudo ficará bem, certo? Esse não é mais o mundo em que vivemos . E uma coisa muito curiosa sobre código é que, se hoje você escreveu um código que considera bom, e amanhã um novo modelo é lançado, o código que você escreveu terá exatamente o mesmo valor. Na verdade, talvez esteja até diminuindo um pouco, não é? O código sempre foi um ativo que se deprecia. Você escreve o código, mas
+
+pode lançá-lo ao mundo com alguns problemas devido a dívidas técnicas, e você terá que lidar com isso em algum momento. Mas, entretanto, você entregou o produto no prazo e fez o que precisava. O assistente que deixa todo mundo tão feliz é composto por 90% de arquivos Markdown, 8% de ferramentas para distribuir e processar arquivos Markdown, e o resto é tipo coisas do Agent Harness , né? É na prosa em texto simples que reside grande parte do nosso valor atualmente. Quando você escreve uma prosa excelente hoje, e amanhã, e modelos ainda melhores serão lançados, essa prosa poderá ser usada para fazer ainda mais coisas.
+
+Então, um agente é um polvo, certo? Ele consegue se mexer, consegue se espremer em cantos apertados, consegue manobrar para contornar problemas. Você não quer restringir demais a capacidade do agente de resolver problemas , além das artimanhas que já discutimos, certo? Então, em vez de pensar tipo, cara, como eu posso estruturar o comportamento desse agente ao máximo? Trata-se de perguntar: como posso dar um passo para trás?
+
+Como posso fornecer informações suficientes? E como posso sequenciar as informações que forneço para que o sistema faça o que eu quero e, ao mesmo tempo, deixe as pessoas felizes? Então, isso é o que eu sei depois do robô ter me dado uma pancada no nariz. Vejo no meu relógio que me restam alguns minutos. Alguém tem perguntas sobre a estranha aventura de construir esse robô que faz as pessoas felizes?
+
+Atirar. Ah, você tinha isso na seção de aeromodelismo, sim. Você meio que explicou como fornecer um valor de R exato para o modelo, o que foi realmente útil para nós termos uma correspondência e descobrirmos o que estava acontecendo. Isso está distribuído em parte do enunciado? Como, como, como?
+
+Basicamente, como isso se estrutura na mente de alguém? Ah, claro. Assim, a forma como definimos o contexto para o assistente é utilizando arquivos de habilidades que são gerados a partir do nosso serviço de contexto. Assim, esse serviço de contexto pegará todos esses modelos de aviões, os transformará em um único arquivo Markdown e, em seguida, os incluirá como referência no arquivo de habilidades. Assim, temos sempre acesso ao modelo completo do avião, que o modelo pode usar para buscar e processar de outras formas.
+
+Ah, claro. Sim, isso faz parte do conteúdo complementar incluído na habilidade. Assim, descobrimos que havia uma série de informações úteis que podíamos incluir como parte do arquivo de habilidades. Então, temos a documentação, que é um texto simples em prosa, mas também incluímos o modelo do avião para que ele possa visualizar o formato de uma integração bem-sucedida, e tudo isso é referenciado como parte do processo de realização da tarefa. Atirar.
+
+Ah, claro. Portanto, isso utiliza o SDK do agente Claude, que encapsulamos em uma CLI, de forma que você execute um único comando e, em seguida, oferecemos inferência gratuita ao fazer login no PostHog. Temos esse gateway LLM que nos permite gerenciar todos os tokens em seu nome, o que era uma verdadeira bagunça, porque às vezes o código do Claude armazenava informações em um local inesperado e isso acabava causando problemas para os usuários. Ainda é cedo para oferecer isso como um tipo de serviço. Há mais alguma coisa que eu possa te dizer?
+
+Bom, então vou sair da frente do próximo orador. Obrigado por ter estado aqui . Que bom te ver. Tenha um ótimo resto de dia.
+
+Ei.

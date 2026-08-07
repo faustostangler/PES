@@ -1,0 +1,560 @@
+---
+video_title: "Mergeable by default: Building the context engine to save time and tokens — Peter Werry, Unblocked"
+video_id: 5ID22ACI7IM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5ID22ACI7IM
+video_date: 2026-05-03T16:00:06+00:00
+video_description: |
+  Agents can generate code. The hard part is generating code that's right for your system, team conventions, and past decisions. That's a context problem that naive RAG, MCP servers, and bigger context windows don't solve. Without the right context, that code costs you twice: once in tokens, again in long review cycles.
+  
+  This session is a practitioner's guide to building a context engine: the reasoning layer that brings together your organizational context and delivers only what the agent needs for the task at hand. I'll walk through the challenges that matter: reasoning across conflicting sources, maintaining permissions, and personalizing results based on who's asking and what they're working on. Along the way, we'll go deep on specific components with live demos and technical breakdowns.
+  
+  Drawn from real lessons building this in production, including what we got wrong.
+---
+Muito bem, obrigado a todos. Desculpe pela demora. Bem, esta sessão vai ser um pouco estranha porque inclui uma componente de workshop. Então, acho que todo mundo vai acabar programando no colo. Desculpe. Bem, de
+
+qualquer forma, desculpe, estou aqui e este é meu colega Brandon. Então, vamos dividir esta sessão em duas partes diferentes. Uma delas é uma espécie de palestra que vou dar sobre para que servem os mecanismos de contexto, como você pode construir um e o que levar em consideração. E então, vamos começar a segunda parte. Então, só para resumir rapidamente,
+
+vamos falar sobre três mitos que estão circulando agora sobre mecanismos de contexto. E então vou abordar algumas lições que aprendemos ao longo do processo de construção de um desses veículos. E então, finalmente, faremos isso. Então, vamos construir um grafo de engenharia social . Este é um componente extremamente útil em um mecanismo de contexto. E, para começar, gostaria de saber se
+
+todos entendem o que quero dizer com mecanismo de contexto ou se alguém precisa de esclarecimentos. OK. Então, no mundo dos agentes de IA, você tem agentes que, quando você começa a programá-los, estão basicamente no ponto zero. Eles não têm contexto nenhum sobre o seu código, sua organização, nada, ok? Normalmente, o que acontece é que a primeira coisa que eles fazem é começar a vasculhar sua base de código com base na tarefa que você lhes deu, tentando obter algum tipo de compreensão prévia antes de começarem a executar a tarefa.
+
+Então, a engenharia de contexto é a arte de fornecer todo o contexto necessário e, mais importante, nenhum contexto desnecessário, de forma altamente otimizada, para que, quando o agente começar a ser executado, ele execute a tarefa de maneira simplificada e alinhada às melhores práticas e expectativas da sua organização. OK. Então, falaremos disso depois. Então, não faz muito tempo, tipo uns 4 anos atrás ou menos, você era o responsável pelo contexto, entendeu? Então, quando seu agente precisasse de algo, você o alertaria, pegaria o ticket da solicitação e forneceria todas as informações necessárias para que ele iniciasse a tarefa. E em muitos casos, mesmo quando
+
+estava se esforçando para obter contexto de fundo, ao chegar ao final da tarefa, às vezes errava. Na verdade, muitas vezes aconteceu. E você teria que meio que reiniciá-lo, ou melhor, guiá-lo novamente em direção à solução que você tinha em mente. Ou, se errasse completamente o alvo, você teria que dizer algo como: "Não, não é o JavaScript, seu bobo. É o código-fonte em Python que eu quero que você analise."
+
+Então, vamos relembrar como você construiu o contexto em uma organização. Então, vamos deixar a IA de lado por um instante. Só quero que você imagine que, antes da IA, você tinha acabado de entrar para uma organização. Vamos relembrar como construímos isso. Então, com o tempo, você acumularia esse tipo de contexto por meio da experiência, certo? Você começaria um trabalho, talvez
+
+começasse a analisar o código um pouco para descobrir como as coisas funcionam. Você talvez se apegasse a um mentor. E eventualmente, você vivenciaria situações reais como incidentes, interrupções e coisas do tipo. São essas as coisas dolorosas que ficam na memória. Essas são as cicatrizes de batalha, certo?
+
+E é isso que constitui o contexto organizacional. São os aprendizados ao longo do caminho. Por que fizemos as coisas da maneira que fizemos? E agora você é bom no seu trabalho porque, depois de toda essa experiência de dor, agora você sabe quais perguntas fazer. Você sabe onde procurar quando ocorre um incidente. E esse é
+
+o objetivo. É isso que queremos obter para nossos agentes de IA. Então, vou apenas pegar essa curva de adoção de Basem El-Dath e, bem, talvez eu tenha pronunciado o sobrenome dele errado, mas desculpe, Basem, se você vir isso. Então, vamos começar do começo. Isso foi tipo há 4 anos, em 2022. Todo
+
+mundo se lembra do recurso de autocompletar sofisticado, né? Bem, naquela época, as janelas de contexto em IA eram bastante limitadas. Não sei se todos se lembram disso, mas eram cerca de 8 kilobytes ou 8 mil tokens, eu diria. E isso não é muita coisa. Assim, os tokens foram altamente otimizados e IDEs "agentes" como o Cursor se concentravam apenas no código que envolvia o código que você queria acessar e completar automaticamente. Basicamente, eles pegaram um
+
+código anterior, pegaram um código posterior, colocaram tudo em um modelo e disseram: " Este usuário está trabalhando neste trecho de código". Qual é o próximo passo mais provável? E foi isso que foi impresso. A situação foi melhorando progressivamente a partir daí. As ASTs foram integradas aos servidores de linguagem, e então você conseguia basicamente extrair os chamadores do código-fonte e colocar tudo isso em contexto.
+
+E os alunos de mestrado em direito (LLM) eram realmente bons em concluir o código. Então, nesses níveis, você era o mecanismo de contexto. E, em muitas circunstâncias aqui, é mais ou menos assim que a maioria das pessoas se encontra. Eles são agentes paralelos conectados com MCP e habilidades, ok? Só por curiosidade, alguém já foi além do contexto selecionado e chegou aos últimos graus de liberdade de ação, digamos assim, onde você tem agentes em segundo plano rodando na nuvem fazendo coisas no modo YOLO?
+
+Alguém está experimentando isso? Ok, legal. Isso é muito legal. Isso é tecnologia de ponta . Mas vamos parar um momento para reconhecer que o que há de mais moderno hoje será notícia velha daqui a 6 meses, ok?
+
+Então, eu sou canadense e vou dizer o seguinte: O disco está indo em direção aos agentes que estão atrás, com certeza. E uma das coisas que estamos enfrentando agora é que nós, como seres humanos, estamos nos tornando o gargalo, certo? Não sei se as pessoas já tentaram gerenciar agentes paralelos e trabalhar em várias tarefas ao mesmo tempo, mas todo mundo está começando a sentir essa espécie de desconexão cognitiva porque você está trocando de contexto o tempo todo e isso é realmente muito doloroso. É muito difícil passar desse modo em que você é o humano gerenciando o contexto para o modo de agentes em segundo plano, a menos que você tenha algum tipo de mecanismo de contexto que saiba como seu código opera, como sua organização funciona e entenda as motivações por trás de mudanças históricas e coisas do tipo. Então, André André, ele acertou em cheio. Os
+
+sistemas são inteligentes. Estamos prestes a atingir o ponto de crescimento exponencial da inteligência artificial aplicada ao código. Todo mundo já viu o comunicado sobre Mythos. Bem, você sabe, mas ainda não tivemos a oportunidade de realmente experimentar. A promessa é que, do ponto de vista da inteligência do código, isso é praticamente perfeito.
+
+Mas agora o gargalo é o contexto, claro. Sem contexto, vou apenas reforçar este ponto: você provavelmente acabará preso em ciclos viciosos. Alguém sabe o que é um loop infinito? Um loop infinito é como quando você está...
+
+você está tendo dificuldades com o agente. Não está fazendo exatamente o que você quer, e você precisa continuar aprimorando. O pior cenário possível é você executar isso no modo YOLO, e a tarefa inteira for concluída, mas o resultado estiver completamente errado. Você precisa voltar e corrigir, sabe, várias etapas. Então, quando você tem um mecanismo de contexto, você consegue chegar lá mais rápido.
+
+O problema é que acesso não significa compreensão. Então, temos clientes que estão em várias partes... Vou voltar aqui. Temos clientes que estão
+
+em diferentes etapas dessa jornada. E uma das coisas interessantes que notamos é que as pessoas sentem que, sabe, elas entendem melhor a sua organização. Assim, quando se trata de fornecer o contexto correto a esses agentes, as pessoas tentarão construir algo semelhante ao que um mecanismo de contexto realmente é. Eles talvez criem um sistema de rastreamento, ou alguma forma de fornecer dados organizacionais a um agente. Bem, infelizmente, acesso não significa compreensão.
+
+Então, o que isso significa é que você poderia simplesmente conectar um monte de servidores MCP, e eles não seriam capazes de entender quais são as relações entre todos esses dados, como eles vieram, como chegaram lá e por que são da maneira que são. E há ainda outro problema, sobre o qual falarei um pouco mais tarde, chamado satisfação da busca. Então, lembre-se desse termo, eu voltarei a ele mais tarde. Ok . Então, eu só queria te mostrar isso. Bem,
+
+isso foi algo que nós realmente implementamos e fizemos em duas partes. Um deles não possuía nenhum mecanismo de contexto, mas estava conectado a vários servidores MCP. Funcionou muito bem. Mas aí, quando chegamos ao fim, percebemos que tínhamos alguns dados legados nesse método antigo de dimensionamento da inteligência para a Entrópico. Então, agora eles têm pensamento adaptativo, mas antes era difícil fornecer um orçamento simbólico. E é assim que
+
+você poderia aumentar o tamanho da sua janela de pensamento. Então, tínhamos um código que meio que dependia disso, e havia razões para isso que o agente não entendia ou não percebia. Então, basicamente, isso destruiu todo aquele código. Mas quando adicionamos o mecanismo de contexto, ele percebeu todos esses motivos e implementou tudo da maneira correta. Assim, foram feitas as alterações necessárias nos locais corretos, incluindo a retrocompatibilidade para o código que utilizava o método antigo. Muito bem
+
+, agora vamos aos mitos. Mito um, um pano ingênuo sobre meus documentos é um mecanismo de contexto. Então, se você implementar, digamos, uma busca vetorial ou apenas alguns métodos de busca, você vai se deparar com alguns problemas. Um deles é o problema de satisfação de busca, onde o agente buscará incansavelmente, consumirá seus tokens e, no pior caso, você atingirá a compactação. Ok, então, sem conseguir encontrar o final do jogo.
+
+Existem algumas outras técnicas diferentes, como a que você mencionou, que exigem personalização ao construir um sistema de recuperação de dados. Isso porque, se você simplesmente agregar todos os seus dados, especialmente em organizações muito grandes , haverá problemas como conflitos que precisarão ser resolvidos. Não estará focado na tarefa que você está tentando realizar. Isso pode puxar, sabe, código relevante de outras partes da sua organização, o que, especialmente se você tiver uma organização muito grande, com muitos repositórios diferentes, vai criar uma grande bagunça. Portanto, é necessário algum elemento de personalização.
+
+E então, aqui novamente, conecte um monte de NCPs. Vou apenas reiterar esse ponto. Terminei. Não, definitivamente não. Então, é isso que realmente enfatiza a satisfação do ponto de busca, e explicarei isso em um instante.
+
+E, por fim, uma janela de contexto maior resolverá isso. Então, lá atrás, sabe, quando os modelos estavam começando a ficar grandes, as pessoas ficavam muito animadas com um milhão de tokens na sua janela de contexto. Bem, acho que o primeiro modelo que tentou isso foi o Claude, na verdade. Era Claude? Acho que na verdade era Código. Oh.
+
+Oh. Ou IA aberta? OK. OK. Gêmeos. Sim,
+
+desculpe. Eu sinto muito. Então , sim, o Gemini foi o primeiro modelo que tentou isso, e era realmente muito bom em encontrar agulhas em um palheiro. Então, você poderia inserir um documento enorme nele e, contanto que soubesse o que estava procurando com antecedência, ele conseguiria encontrar. Mas, na verdade, não era nada bom em raciocinar entre diferentes fontes de dados, em entender o verdadeiro significado por trás de um problema e, em seguida, recomendar a solução apropriada. Portanto, nada disso
+
+foi possível. É óbvio que as coisas melhoraram muito. O problema é que a maioria das organizações possui mais de um milhão de tokens de contexto. Portanto, tentar encaixar tudo isso na janela de contexto deles não vai funcionar de qualquer maneira. Vamos projetar o futuro e imaginar que você poderia armazenar algo como 10 milhões de tokens, 50 milhões de tokens. Bem, com
+
+a taxa atual de consumo de memória, só para operar os modelos, isso não será possível por muito tempo. Mesmo que fosse assim, e você conseguisse visualizar todo esse contexto na sua janela de contexto, você ainda teria problemas para entender o que é verdade, o que é falso, e como selecionar a informação correta, entendeu? Então, agora vamos voltar a este segundo ponto. Satisfação da busca. Este é um termo que, na verdade, vem da área médica, especificamente da radiologia.
+
+E a ideia é que, quando os médicos estão analisando radiografias e procurando a causa dos sintomas, eles podem encontrar algo na radiografia que explique esses sintomas e, então, param por aí . Bem, isso é algo perigoso do ponto de vista médico, porque pode haver outros indicadores de doenças como o câncer que passam despercebidos. Então, a satisfação com a busca é um problema real em radiologia, e existem muitos protocolos para evitar que se pare assim que se encontra a primeira coisa. Bem, é isso que acontece com os agentes. Quando eles pesquisarem, digamos, no Notion, no seu código, ou no Confluence, eles vão se deparar com algo que parece ser o que estão procurando, e vão parar. E então eles prosseguirão.
+
+Mas as verdadeiras preciosidades de informação podem estar em um lugar diferente daquele que o agente pensaria em procurar, como em uma conversa antiga no Slack ou em um relatório de incidente, algo assim. Então, aqui está o clássico meme do iceberg. Bem, um código que compile, isso é o mínimo necessário . O agente gera código que compila? Hum, mas tudo o que realmente importa acontece aqui embaixo. Então, entendendo a
+
+intenção original do usuário, ou seja, o que foi rejeitado no passado pela equipe e tentado antes, mas sem sucesso. Como você vai encontrar esse tipo de conteúdo apenas olhando para a documentação, o código e coisas do tipo? Então você precisa entender isso de alguma forma. E pior ainda, às vezes é difícil saber quando as coisas foram apagadas, na ausência de informações. Portanto, você também precisa de informações sobre o histórico que levou às decisões. Por isso,
+
+acreditamos que você precisa de um mecanismo de contexto. Um mecanismo de contexto entende quem você é, em qual equipe você trabalha, com quem você trabalha , quem são os especialistas em sua organização e quais decisões levaram à iteração atual de sua base de código. É capaz de resolver conflitos. Então, isso é tipo uma situação de verdade ou mentira . O que é verdade e o que não é? Às
+
+vezes, essa veracidade é uma área cinzenta, não é? Portanto, o mecanismo de contexto também precisa entender quando instruir o agente de que não foi possível resolver os conflitos e, em seguida, aprender com a entrada adicional do usuário . Bem, este terceiro ponto é extremamente importante, obviamente, em qualquer grande organização ou empresa. Bem, muitas vezes existem repositórios aos quais nem todos têm acesso, projetos secretos, esse tipo de coisa. Então, é muito importante que você implemente os controles de acesso de forma gradual. Você tem... Vou
+
+dar um exemplo que todos vão apreciar, que é o Slack. Nosso mecanismo de contexto se integra ao Slack ou ao Microsoft Teams. E quando você tem canais privados, isso é algo realmente muito sensível, certo? Por exemplo, você pode estar discutindo informações de RH ou, talvez, algo que você realmente não queira que todos vejam. Então, quando o Unblocked responde a perguntas, ele usa informações do canal privado, mas só usa essas informações se a pessoa que fez a pergunta tiver acesso a ele. E essas respostas
+
+não são públicas. OK? Então, são informações privadas para você. E, por fim , claro, fornecer o contexto certo no momento certo. E isso tem a ver com a eficiência dos tokens. Trata-se de chegar à
+
+resposta o mais rápido possível. Então, aqui está uma visão geral de alto nível de como nosso mecanismo de contexto pode funcionar. À esquerda, temos as entradas da fonte de dados. Então, coisas como ferramentas de planejamento, documentação, conversas, solicitações de pull request de código. Basicamente, qualquer coisa relevante para a execução do trabalho em nível de engenharia.
+
+E então, do lado direito, temos as saídas. Então, como você sabe, tudo isso pode ser integrado a agentes de codificação e ferramentas de painel de controle ou de linha de comando . É possível criar aplicativos personalizados através da API. Temos um componente de revisão de código que se integra perfeitamente ao seu SCM e fornece revisões de código. E, claro, integrações com aplicativos de mensagens de redes sociais.
+
+Então, esses são os seis requisitos gerais que consideramos importantes. Na verdade, há muito mais do que isso, mas esses são os pontos principais . Portanto, mais uma vez, contexto de sistema unificado. Trata-se de construir relações entre dados. OK?
+
+Mas é mais do que apenas reconhecer quando um dado está relacionado a outro. Por exemplo, no Slack, você pode ter conversas sobre solicitações de pull request. É fácil estabelecer uma conexão, pois vocês estão trocando links. Então, isso é fácil. O que é menos fácil é entender o motivo pelo qual as decisões foram tomadas ou as melhores práticas da sua organização, certo? Para entender isso, você precisa
+
+ir um pouco mais a fundo. Hum, fazemos coisas como extrair comentários históricos de solicitações de pull request. E tente destilar essas ideias até sua essência. E então, quando você vê padrões repetidos, você pode juntar esses padrões e armazená-los como, você sabe, memórias. Assim, quando alguém estiver trabalhando em um trecho de código semelhante, você pode carregar essas memórias e o agente poderá ver isso e dizer: "Ah, sim, certo. É assim que esta
+
+organização faz essa coisa específica." Hum, resolução de conflitos, superimportante. Hum, inicialmente adotamos uma abordagem um tanto ingênua, baseada apenas na atualidade, certo? Então, nós tenderíamos a dar preferência às coisas mais recentes. Bem, infelizmente, quando se tem o contexto completo, a atualidade não é suficiente.
+
+Hum, muitas vezes você tem pessoas escrevendo documentos ou conversando em suas plataformas de mensagens e elas podem estar dizendo coisas que não estão totalmente alinhadas com o funcionamento do sistema. Hum , então, sabe, aí começamos a ter uma preferência por código. Então, tínhamos uma informação recente e pensamos: "A filial principal é definitivamente a sua fonte de verdade." Mas nem sempre, porque às vezes , o importante é o que acontece a seguir, e não a forma como um sistema funciona atualmente. Por exemplo, quando você está trabalhando em uma tarefa, o que você realmente quer é que o agente entenda para onde você está indo, e não necessariamente de onde você veio. O histórico de seus contatos ajuda o sistema a
+
+entender o que não fazer. Para onde você está indo ajuda a entender o que você deve fazer, ok? Portanto, no caso do Slack, analisar as conversas que os especialistas da sua organização estão tendo é mais importante do que simplesmente entender sobre o que, você sabe, qualquer engenheiro aleatório está falando. A recuperação direcionada e a relevância pessoal estão muito relacionadas, então vou falar brevemente sobre elas juntas. Então, novamente, quando você estiver buscando contexto, é importante que você esteja buscando apenas o contexto relevante para a tarefa em questão, e provavelmente relevante para você.
+
+Então, aqui está uma técnica que é meio interessante. É possível entender em quais repositórios uma pessoa trabalha com mais frequência pela quantidade de Pull Requests (PRs) para os quais ela envia contribuições. E então, se você estiver fazendo uma recuperação vetorial, pode fazer uma recuperação profunda nesses repositórios específicos e, em seguida, uma recuperação mais ampla no restante do código-fonte, direcionando a seleção para os repositórios específicos, porque é mais provável que seja onde a pessoa estará trabalhando e passando seu tempo. Bem, já falamos sobre governança de dados, então acho que não preciso repetir isso. Mas é extremamente importante.
+
+Isso foi apenas um pequeno experimento que realizamos dentro de uma tarefa maior. Bem, admito que alguns desses números estão um pouco errados. É basicamente como se o Claude estivesse exibindo números, então não confie nisso. Confie na sua intuição e não necessariamente nos números. Basicamente, o que está dizendo é que quando começamos, sem o servidor MCP ativo, ou melhor, sem o mecanismo de contexto ativo, realmente deixamos a desejar em muitos aspectos.
+
+E isso aconteceu simplesmente porque não entendia como a implementação existente realmente funcionava e por que era daquele jeito, o que já havia sido tentado antes e falhado. E, portanto, cometeu muitos desses mesmos erros. Ah, com o recurso "Motor Turn" ativado, obviamente, ele... acertou em cheio.
+
+Os números-chave, no entanto, são o tempo e os tokens que foram necessários. Então, sem o mecanismo de contexto, levou 2 horas e meia para concluir essa tarefa com 21 milhões de tokens, o que é uma quantidade enorme de tokens. Mas com o mecanismo de contexto, levou apenas 25 minutos e 10 milhões de tokens. Portanto, é uma diferença bastante drástica . Ok, então, as lições difíceis. Aliás, estes são
+
+apenas exemplos, mas são alguns que achamos interessantes. Então, em primeiro lugar, inicialmente otimizamos para o acesso, não para a compreensão. Então, nossa primeira premissa era que, se conectássemos um conjunto de ferramentas e fornecêssemos um grafo de conhecimento, ele seria capaz de percorrer esse grafo e executar várias ferramentas específicas de recuperação para integrações particulares e assim por diante, e descobrir tudo. É que isso não funciona. Então, você terá que ir um pouco mais a fundo do que isso. A
+
+segunda é que escondemos os conflitos em vez de os expormos. Então, quando digo "esconder conflitos", não quero dizer que simplesmente ignoramos os conflitos. O que fizemos, em vez disso, foi tentar resolver esses conflitos usando estratégias ingênuas, e não trouxemos à tona os conflitos que não conseguimos resolver. Então, um aprendizado muito bom foi que um mecanismo de contexto, quer dizer, chegaremos lá eventualmente, mas nem sempre consegue dizer quais são os elementos verdadeiros, e quando não consegue, você deve expor isso e aprender com a situação. Esse é o ponto crucial.
+
+E então, finalmente, acho que muita gente tentou isso. Essa é uma péssima ideia. Então, quando um mecanismo de contexto fornece uma resposta, não a armazene em cache e tente exibi-la novamente para uma pergunta semelhante. O motivo é óbvio...
+
+é bastante óbvio em retrospectiva, mas... tudo muda constantemente, não é? O código muda, a documentação muda, o motivo das coisas muda. Portanto, isso simplesmente não funciona.
+
+Outra coisa é que, se você tentar usar as respostas anteriores como contexto para novas respostas, você regride em direção à média. Então, se o modelo estiver se comportando mal ou fazendo algo ruim, e você continuamente trouxer isso à tona, obviamente você vai poluir o contexto. E é isto que acontece. Certo, então vamos falar agora sobre onde as equipes de IA inovadoras, como aquelas que estão trabalhando com agentes baseados em nuvem, estão usando e aproveitando os mecanismos de contexto. Com certeza, e especialmente durante a fase de planejamento, ok?
+
+É aqui que você obtém o melhor custo- benefício, sem dúvida. É só envolver o mecanismo de contexto, usar uma habilidade para trazê-lo, conectá-lo ao servidor MCP e observar o que acontece. É aqui que você obtém o melhor custo-benefício. Também é útil fazer isso durante a revisão. Assim, você tem planejamento e revisão no final.
+
+Bem, porque, sabe, se você configurar um agente para fazer a revisão, ele basicamente vai prestar atenção ao código e tentar entender onde estão os pontos de interrupção, as questões de segurança e coisas do tipo. Mas, sem o contexto organizacional, não se compreende a motivação por trás disso. Então, isso é o que realmente importa . Enriquecimento de bilhetes. Hum, este é um caso de uso muito interessante. Então, você cria um ticket
+
+para um novo recurso e, em seguida, basta pedir ao agente conectado a um mecanismo de contexto para preencher os campos em branco. Funciona. Triagem. Ah, eu uso isso o tempo todo. Quando vejo um problema em produção, simplesmente o adiciono ao meu agente conectado ao mecanismo de contexto e ele instantaneamente exibe todos os problemas anteriores relacionados a ele e começa a operar imediatamente.
+
+Estamos vendo isso cada vez mais, gerenciamento de incidentes, ok? Então, acabamos de conectar o DataDog e... desculpe? Sentinela. Sentry e
+
+DataDog, desculpem. E isso já está se provando um caso de uso super interessante. Ele consegue ver os sinais e então agir de acordo com todos eles, relacionando-os ao código e a incidentes e discussões passadas que você teve no Slack. O fato de todas essas coisas acontecerem ao mesmo tempo é quase mágico. E, por fim, acho que esta é a minha favorita, e é a que os clientes mais usam: sucesso do cliente, vendas e suporte de engenharia. O que
+
+muitas equipes grandes fazem é manter canais de suporte de engenharia onde outras equipes podem entrar e tirar dúvidas. Se você inserir um mecanismo de contexto em um desses dispositivos, poderá fazer com que ele responda automaticamente a muitas perguntas e economize muito tempo dos engenheiros. Muito bem, então como as equipes personalizam um mecanismo de contexto? Habilidades. Então, definitivamente, desenvolva habilidades que você possa usar para organizar o contexto em um repositório do GitHub.
+
+E você pode desenvolver outras habilidades em torno disso, como digitar e enriquecer tickets. Forneça o ID do problema e, em seguida, ele poderá usar o mecanismo de contexto para criar o enriquecimento. Fluxos de trabalho como este preparam uma linha do tempo de incidentes. E então você pode simplesmente enviar para o seu agente novamente, o mecanismo de contexto, blá blá blá, junta tudo, mágico. E este dispositivo aqui...
+
+você pode conectá-lo a vários tipos de agentes. Uma das coisas que muitos clientes gostam de fazer é integrar isso ao código Claude em seu sistema de CI. Bem, na verdade temos um componente de revisão de código , então você não precisa fazer isso se estiver usando o Unblocked. Hum, mas as pessoas usam isso para outras coisas, não apenas para revisão de código. Assim que você configura um mecanismo de contexto em segundo plano, fornece uma chave de API e o deixa funcionar por conta própria, ele pode fazer coisas realmente incríveis. Bem
+
+, vou mostrar um exemplo rápido do que a configuração de um mecanismo de contexto pode fazer. Então, este é um comunicado de imprensa que, hum, meu colega escreveu. E, tipo, o Unblocked analisou e fez uma espécie de avaliação disso . E, no final desta análise, segue a análise em si. Bem, você pode ver que Richie, que foi o autor deste comunicado de imprensa, disse algo como: "Muito legal.
+
+É algo que eu diria." Bem, o motivo do comentário era: "Você basicamente duplicou um monte de texto. Além disso, você poderia dar uma melhorada nisso ." É porque, bem, essa foi uma prática recomendada que foi extraída de várias outras relações públicas. E o mais engraçado é que o autor desses comunicados de imprensa era o Richie.
+
+Portanto, foi ele quem realmente incutiu as melhores práticas na organização. Ah, então, foi um momento bem legal quando descobrimos isso. Bem, aqui vai outro exemplo. Então, esta foi uma transcrição bastante longa. Não vou mostrar tudo, mas enviamos o equipamento em uma missão para realizar uma tarefa muito grande. Sem o Unblocked,
+
+demorou bastante. Como você pode ver, a transcrição é bastante longa. Hum, e faltou muita coisa. Com o Unblocked, era muito mais compacto. Chegou à resposta de forma muito rápida e correta.
+
+E só porque agora estamos na vanguarda da IA e somos preguiçosos, pegamos as duas transcrições, passamos para o Claude e dissemos: "Ei, Claude, por que você não analisa essas duas coisas e nos dá o resultado?" Então, se tudo correu bem, não vou aborrecê-los com os detalhes, mas só para dizer que, no final, o veredicto é que o plano do mecanismo de contexto é o que eu usaria para o lançamento. Este outro é bom para um protótipo, mas falta uma série de coisas importantes para esta organização, que foram discutidas anteriormente. OK?
+
+Então, basicamente, é isso que eu venho tentando dizer. O código gerado por IA deve dar a sensação de ter sido escrito por alguém que trabalha na sua equipe há uns 20 anos, ok? Não, se ainda não acontece, tudo bem. Sim, vai sim . Se você configurar o Unblocked, verá uma grande diferença no desempenho dos agentes. E se você estiver
+
+construindo uma dessas coisas, com certeza, pegue todas essas coisas, construa e vamos ver onde isso vai dar. Então, antes de começarmos a parte prática do workshop, talvez tenhamos uns 5 a 10 minutos para perguntas e respostas. E aí ? Meu nome é Brandon. E este é o Brandon, então ele vai ajudar com a pergunta.
+
+Obrigado. Então, está claro o que ele faz por você e que tipo de problemas ele resolve, mas para mim, uma grande incógnita é: o que é exatamente isso ? Qual é o artefato que se encaixa nessa descrição? É como um programa que você instala, uma API hospedada remotamente ou um servidor MCP? O que é? É tudo isso junto
+
+. Então, como mecanismo de contexto, vou explicar o que é "Desbloqueado". Talvez eu possa mostrar uma demonstração rápida disso. Bem, de forma geral, um mecanismo de contexto possui diversas interfaces. Você deseja integrá-lo ao fluxo de trabalho do seu agente e pode fazer isso com um servidor MCP.
+
+Você pode fazer isso com uma ferramenta de linha de comando, por exemplo. Também temos este painel onde você pode fazer perguntas sobre o seu código. Bem, este é bem básico, mas você pode ver que ele entende quem eu sou e no que tenho trabalhado. E então, temos o Slack. Também temos conectividade com o Slack. Assim, você pode
+
+integrar o Unblocked ao Slack. É só usar em conversas e configurar para que responda automaticamente . Faz sentido? Respondi à sua pergunta ou acho que minha pergunta será respondida na demonstração ou em um minuto? OK.
+
+Mas sim, API, CLI, MCP. Sim. E produtos. É basicamente API. Sim .
+
+Ah, desculpe. Eu me deixei levar. Eu esqueci. Obrigado. Então, minha pergunta é: pelo que entendi, é como um aplicativo de gerenciamento e recuperação de conhecimento. Sim. E isso tem
+
+alguma relação com coisas como o LLM Wiki, que foi popularizado recentemente por Andrej Karpathy, ou com os registros de decisão e gráficos de contexto? Sim. que foi discutido há alguns meses. Sim. Então, você pode pensar em todas essas coisas como componentes úteis para um mecanismo de contexto. Nosso mecanismo de contexto precisa fazer
+
+muito mais do que isso porque, bem, os agentes são realmente bons em percorrer recursivamente uma Wiki, por exemplo. Depende de como você constrói essa Wiki, porque há uma série de coisas como memórias organizacionais, melhores práticas, especialistas em sua organização, e tudo isso serve como ponto de partida para a recuperação de contexto. Então, uma Wiki não resolve esses problemas a menos que tenha, sabe, uma estrutura com a qual você possa construir, e acho que Karpathy descobriu isso se você tratar uma wiki como uma espécie de sistema de arquivos, você pode dividi-la e fazer com que o agente a percorra como se fosse um sistema de arquivos. Aliás, os agentes são altamente otimizados para percorrer o sistema de arquivos. Sim, para a etapa de compilação. Exatamente. Sim
+
+. Desculpe. Talvez a mesma pergunta, mas trata-se de um mecanismo de contexto de propósito geral ou é direcionado especificamente para código? Porque será útil, por exemplo, para um especialista em um domínio de negócios ou para construir um domínio de negócios e, em seguida, ter esse mecanismo de contexto usando-o para que todos os meus outros agentes de IA possam usá- lo como contexto para o negócio? Ou você diria que isso é mais voltado para a parte de código? Então,
+
+definitivamente tem foco em engenharia. As integrações estão focadas em atividades de engenharia. Então, sabe, integrações de SCM e outras ferramentas que os engenheiros usam. Estamos vendo cada vez mais clientes usando-o para outros fins. Portanto, a inteligência de negócios é fundamental.
+
+E isso geralmente é útil quando pessoas em funções comerciais estão tentando entender o produto e sua função. Não temos, por exemplo, integrações com o Salesforce configuradas para isso. Então, você não poderia usá-lo para entender, sabe, qualquer coisa relacionada a vendas. Na verdade, é principalmente um mecanismo de contexto focado em engenharia. Isso não significa que essa situação não vá mudar. Sim
+
+. Em relação à governança, se você respeita os direitos de acesso, como é possível sintetizar diferentes informações e desenvolver novos conhecimentos internamente para depois compartilhá-los com outras pessoas? Sim , você tem razão em apontar isso. A síntese é compartimentalizada. Então, existem, sabe, lugares que são compartimentados como repositórios individuais. Esse é o nível
+
+de acesso. Então, se você conseguir sintetizar dados históricos com base nisso e correlacioná-los com informações públicas do Slack, essa é uma maneira de fazer a síntese sem ultrapassar os limites organizacionais. Então, sabe, outra maneira é observar e etiquetar quando a informação sintetizada cruza essas fronteiras organizacionais, e você pode adotar uma abordagem como a de ID de grupo para esse problema, onde você anexa etiquetas de ID de grupo à informação sintetizada e, em seguida, a recupera somente se a pessoa que tem acesso a ela puder executá-la. Então, primeiro adote a abordagem compartimentalizada, porque é aí que você obterá os melhores resultados, e você vai construindo a partir daí. Quer dizer, esse é o principal problema de usar uma tecnologia como o Graph RAG, certo? Porque o Graph RAG é
+
+como uma pirâmide, onde se constrói em camadas e depois resume cada camada, mas isso inevitavelmente ultrapassa os limites de permissões. Então, você precisa criar bolsos compartimentados. Sim . Essa é uma boa pergunta. Depois disso, acho que está na hora de hackear. Sim
+
+. Sim, você já nos contou bastante sobre as diferentes fontes de informação que consome e como as reúne . Quando se trata de sintetizar esses elementos, ainda é uma busca vetorial RAG ingênua e tudo mais por baixo dos panos, ou são agentes decidindo o que é apropriado? Ou talvez sejam combinações de todos eles, mas qual é esse passo? Sim , você tem razão. É uma
+
+combinação de todos eles. Assim, a construção de um grafo de conhecimento ocorre de diversas maneiras. Bem, o recurso de PR que mostrei, por exemplo, funciona assim: primeiro você constrói um grafo de conhecimento ingênuo de forma procedural e, a partir daí, pode usar um LLM para destilar, resumir e construir...
+
+esse tipo de técnica. Nosso mecanismo de contexto primeiro constrói um grafo de conhecimento a partir da base, tentando aproveitar todas as diferentes entidades. É algo parecido com o PageRank, onde os relacionamentos são construídos de forma procedural. E, claro, vetoriza os dados. E existem também ferramentas procedurais que buscam dados em tempo de execução. Bem,
+
+grande parte da essência da resolução de conflitos acontece em dois lugares. Então, uma coisa acontece durante o processo de ingestão de dados: existem tags que relacionam os dados entre si, para que possamos verificar se conseguimos resolver conflitos nesse nível e, em seguida, classificá-los uns em relação aos outros nesse nível. E então, claro, em tempo de execução, você precisa passar as informações para um juiz com os critérios definidos. E então realiza uma resolução de conflitos adicional em tempo real. Faz sentido? Sim. OK. Tenho
+
+mais uma pergunta e depois mudamos de assunto. Então, eu estava curioso, você diz conflitos, mas em algum momento surgem conflitos, ou seja, algo que significa receita para uma empresa também significa receita para outra . É um significado completamente diferente de como você pode reconhecer isso. Então, como envolver os humanos no processo? Como você utiliza essas ontologias e como pode usá-las quando se depara com elas?
+
+Então, na verdade, estou muito curioso para saber como você faz isso. Sim, então, se você... posso te mostrar rapidinho uma coisinha aqui. Então,
+
+você vai notar que na parte inferior as referências usadas para as respostas são fornecidas tanto para o usuário nesta interface, quanto para o agente. Sim. Então, se o agente, se o mecanismo de contexto não for capaz de realizar a resolução de conflitos, então, neste ponto, o humano pode intervir e orientar o agente quando houver sinais suficientes. Se isso não acontecer, então você pode simplesmente responder e dizer que isso não está correto, ou pode vir aqui. Ok, sim. Ah
+
+, sim. Desculpe, o jogador vai dizer "Sim", ou "Você pode fazer isso", o que não é útil, e explicar o motivo. É como se fosse um processo um pouco manual nesta fase, mas os sinais que se acumulam ao longo do tempo... É
+
+engraçado, não é? Então, se você trabalhasse apenas com produção em algumas empresas, poderia acabar adquirindo muita inteligência humana com isso, certo? Sim. Isso é incrível, sabe? Sim. Sim
+
+. Para um cliente típico, qual é o volume de dados gerado? Ah, é enorme. É, é, é incrível. Fiquei realmente surpreso com a disposição das pessoas em dar feedback. Sim, não, você pode dar
+
+um exemplo de um projeto em que você captou milhares ou centenas desses feedbacks humanos? Quero dizer, em uma equipe pequena, são centenas, sabe? Na So, o tamanho da equipe é pequeno, com cerca de 20 a 30 pessoas. Sim. Em equipes grandes , de 100 a 200 pessoas, é como se centenas e centenas de "Oh, uau!" fossem ouvidas.
+
+de feedback, sim. Isso é legal. As pessoas gostam muito de interagir com os agentes e dizer-lhes, em linguagem natural, o que está errado. É algo completamente natural de se fazer. Sim . Que
+
+bom para nós. Legal. Tudo bem. Hum, estamos prontos para uma sessão de perguntas e respostas? E então podemos prosseguir.
+
+Sim, vamos prosseguir para a parte do workshop. Então, nós criamos um... Bem, na verdade, o que eu vou fazer é o seguinte primeiro. Então,
+
+você pode fazer isso agora, se quiser. Hum, voltarei a este slide em um instante. Então, a ideia aqui é fazer com que todos entrem no espaço de trabalho do Slack que criamos. E então vamos reunir todos em um repositório onde esse código de exemplo está localizado, e então começaremos a trabalhar nele juntos. OK? Sim
+
+.
+
+Legal.
+
+O link desbloqueado não funcionará até que você execute a segunda etapa para acessar a organização do GitHub.
+
+Oh não.
+
+É problema de rede? Sim. Bem , enquanto o pessoal faz isso, vou mostrar a vocês o que vamos encontrar aqui. Então, esta é a organização GitHub. Bem, o que estamos desenvolvendo é um construtor de gráficos sociais.
+
+Então, o que isso fará é analisar um repositório de código-fonte. Assim, você pode executar isso em seu próprio repositório. Não vai enviar nada. É tudo local. Para que você possa ver essa situação se agravando dentro da sua própria organização.
+
+E vai fazer várias coisas. Basicamente, vamos obter um gráfico social a partir disso, e eu vou mostrar a vocês como ele se parece. E vamos entender quem são os especialistas e em quais partes do código eles trabalham. E depois haverá uma espécie de visualização interativa. Então, o objetivo deste exercício é colocar isso em funcionamento e começar a trabalhar nisso.
+
+Então, comecem a enviar PRs assim que isso estiver funcionando. Bem, é assim que fica . Este gráfico aqui representa a nossa organização, Unblocked, e o que vocês estão vendo é um gráfico de relacionamento que mostra quem está revisando os PRs de quem e, essencialmente, quem está sendo revisado. Isto é uma síntese de todas as diferentes equipes dentro da Unblocked. Então, isso é mais ou menos preciso. Bem, não exatamente de
+
+forma aproximada, é bastante preciso. Bem, eu fiz isso retrocedendo até o início de 2025. Quando você executar o programa, recomendo que use um período mais curto, pois será um pouco lento se você retroceder até 2025. Pode levar uns 15 minutos. Bem, na prática, é um resumo de quem são as equipes, e a única etapa de IA nisso é rotular as equipes. Você não precisa executar a
+
+etapa de IA se não quiser. Ele usará apenas as partes do código em que as pessoas mais trabalham. Bem, esta aba aqui mostrará os especialistas da organização e em que trabalham . Portanto, isso está dividido por área e caminho do projeto. Hum, e mostra quais áreas do código têm boa cobertura. A cobertura é definida principalmente pela
+
+presença de um especialista organizacional com alto nível de contribuição e se essa parte do código recebe contribuições ativas. E, finalmente, terei um gráfico interativo que detalha as informações por área da equipe e mostra quem são os principais colaboradores. Estou aqui na equipe de IA. Sim . Então, é isso. Vamos reunir todo mundo
+
+e começar a trabalhar nisso. Sim, com certeza. Sim . Muitos de vocês já devem ter recebido um convite por terem cadastrado seu GitHub. Então, por favor, verifiquem suas contas. O GitHub é
+
+o pior. Sim . Sim. Sim, é uma licença MIT. Mais tarde, divulgaremos a informação, mas por agora precisávamos mantê-la em sigilo .
+
+Ah, você ainda não foi convidado? Qual é o seu aplicativo? Qual é o seu GitHub? Eu te convido. k a s k a s
+
+Mas você deveria ter um convite. Sim, claro.
+
+Julian? Sim,
+
+provavelmente fiquei mais rápido. Eu vou te mostrar. Olha, eu estou chegando. Não vou colocar isso. O que você fez?
+
+Deixe-me... Deixe-me digitar isso. Samantha é estranha.
+
+Eu continuo tentando digitar TV e não é isso. Sim, eu sei. É bom para nós. Qual é a grafia correta? Eu também tenho um suporte para colocá-lo.
+
+É da minha filha, então eu simplesmente peguei de volta . É da sua filha. Muito bem, você consegue.
+
+E esse é Julian. E isso foi às 5:15. Então, acho que o resto desta sessão será apenas trabalho árduo . Então, daqui a pouco, acho que vou remover isso daqui, se todos tiverem entendido, para que eu e o Brian possamos nos concentrar em trabalhar com vocês no desenvolvimento de novas funcionalidades.
+
+Aliás, quando você enviar PRs, vai notar que o unblocked está lá como um revisor de código, então não se preocupe se ele aparecer um pouco no seu PR.
+
+Está tudo bem para todos? Eu vou retirar. Ok, legal. É isso aí .
+
+Brian, você está cuidando dos convites. Ok, legal.
+
+Incrível. Essa é exatamente a minha posição nessa lista.
+
+Oh. Na verdade, esqueci de mencionar algumas coisas aqui. Sim .
+
+Voltando à vida. Sim, ótimo. Só algumas coisinhas . Então, se você está procurando algo para implementar e começar a desenvolver ideias, existe um conjunto de problemas predefinidos nos quais você pode trabalhar, então você pode simplesmente escolher um deles. Conecte-o ao Clyde e veja como ele se comporta quando estiver ligado ao mecanismo de contexto.
+
+O servidor MCP para Unblocked está aqui. Então, se você quiser instruções sobre como conectar isso ao Clyde Coder ou a outro agente, você pode obtê-las aqui.
+
+Certo, então estou com Lars. Ainda faltam dois aqui, então, aliás, continuo na disputa para quem acabou de adicionar seu nome à lista.
+
+O que está acontecendo, Brennan? Ah, desculpe. Apenas um dos nomes de usuário é inválido. Oh, tudo bem. Eu vou levar.
+
+Tudo bem. Gato, você deveria ter um convite. Andrea, você é a próxima. Estou dois dias atrasado em tudo. Christopher, você ainda não recebeu o convite ? Não, não, eu não fiz isso.
+
+Que estranho. Deixe-me verificar novamente. Você deveria ter um, mas sim, eu deveria. Você deveria ter um e-mail. Já estou em uns 31 de vocês.
+
+Funcionou. É como se fossem cinco cliques para adicionar um membro, por exemplo, do GitHub. Eu ia dizer que você deveria conseguir usar a CLI para isso. O que está acontecendo aqui? Ainda não temos um agente para isso.
+
+Isso mesmo. Ainda não. Não, eles continuam colocando isso no meu comunicado de imprensa, e eu não quero que esteja lá. A Copilot vai fazer a avaliação para mim. Muito ruim, mas servirá para avaliação.
+
+Sim, com certeza. Cara, espera aí. Deixa eu te pegar o microfone.
+
+Espero que esteja funcionando. Funciona? Sim. Bem , eu acho que o mecanismo de contexto funciona muito bem para agentes assíncronos, de forma que você não precise especificar nada no teclado porque eles podem buscar o que precisam. Esse é um dos principais casos de uso, eu acho, e funciona muito bem, eu acho, com agentes como o Copilot no GitHub. Você vê algum... se puder
+
+compartilhar, quais agentes são mais usados com o Unblocked? Talvez seja porque, na prática, nós, desenvolvedores, usamos nossos laptops com mais frequência, mas acho que o Claude Code é muito mais utilizado do que o Copilot. Talvez você tenha uma visão diferente. Ok, então vou tirar isso da tela por um segundo. E veja se consigo encontrar isso para você. Bem,
+
+a resposta é sim, sabemos mais ou menos como é essa distribuição. Então, deixe-me pegar isso.
+
+OK. Acho que isso te dá uma ideia geral .
+
+Ok, então, esta é mais ou menos uma ideia geral . Bem, infelizmente, devido à forma como está configurado, eu provavelmente deveria estender o modo escuro da tela, mas vou apenas me mover para cá. Então, o Cloud Code é de longe o mais usado. Um seguido. Este é o próximo, é o cursor, então isso parece bastante óbvio.
+
+Esta última opção é meio que um termo genérico , mas o que é realmente interessante é que muita gente usa o Cloud Desktop. O que foi muito inesperado, mas é o que aconteceu. Então, o VS Code e o CodeX representam uma parcela menor. Mas sim, parece que todo mundo está usando Cursor ou Cloud Code. Eu esperava algo mais parecido com agentes totalmente assíncronos, como algo que as pessoas executariam a partir de um PR. Certo, você pode executar código
+
+a partir de um PR (Pull Request), mas isso é menos comum. Talvez você use o Copilot às vezes porque ele já vem integrado. Sim, na verdade, este aqui, o Cloud Code, pode capturar parte desse tráfego. Então é provavelmente isso que você está vendo. As pessoas irão integrar o Cloud Code na CI.
+
+E faça coisas desse tipo. Obrigado. Sem problemas.
+
+Tenho uma pergunta que pode ser considerada boba. Não existem perguntas idiotas. Bem, veremos. Na verdade, você sabe, você sabe que eu vou te tocar em breve. Eu tinha uma professora na terceira série que costumava me dizer que não existem perguntas idiotas, apenas pessoas idiotas. Prossiga. Eu
+
+poderia, eu poderia ser um deles. Hum, como você diria, do seu ponto de vista, certo? Você tem agentes que pode usar como subagentes de um ponto de vista exploratório. Sim. Como assim, como isso, mais a memória, mais o armazenamento de pequenos trechos de informação que talvez...
+
+Estou pensando no gráfico social que você acabou de mostrar, certo? Sim . Mesmo em uma organização com milhares de pessoas, seria possível armazenar isso em um arquivo muito pequeno. Não. Hum, você gostaria, como o gráfico que você mostrou. Ih
+
+, entendi. Sim, o componente de gráfico social . Sim. Ele pode ser compacto. Estou tentando entender como isso se compara.
+
+Qual é a relação entre USB e agentes exploratórios, e como isso se repete? Eu entendo o que você está dizendo. OK. Bem, existem dois componentes nisso. Uma delas é que um agente explorador teria que fazer isso todas as vezes.
+
+Então, partindo do zero, sim, pode ser possível reconstituir uma espécie de hierarquia em forma de gráfico social. Mas, para isso acontecer, teria que fazer duas coisas . Uma delas é que seria necessário escrever código para constituir o grafo. Pelo menos da forma como os agentes ou os modelos são hoje, não seria possível simplesmente usar ferramentas básicas na organização e descobrir quem é quem. Seria necessário escrever algo como o que é esse algoritmo de grafo social, executá- lo e, em seguida, obter a síntese no backend. Então, nesse ponto,
+
+você já está praticamente chegando perto desse componente de qualquer maneira. Então, você faz um curto-circuito e simplesmente o liga e usa. Talvez eu devesse explicar um pouco da motivação por trás disso . Agora percebi que talvez não tenha feito isso da maneira mais eficaz. Um gráfico social não se resume apenas a transmitir informações sobre quem são os especialistas.
+
+É usado no mecanismo de contexto como um ponto de pivô para um contexto mais importante . Então, entender quem são os especialistas em uma determinada área de código funciona como um ponto de partida, porque outra parte de um mecanismo de contexto que ocorre na camada de ingestão e processamento é... destilar... o que
+
+chamamos de "engarrafar" o especialista, mas é essencialmente destilar o que esse indivíduo fez no passado, onde ele se encontra na hierarquia da organização, as decisões que ele tomou com base em conversas no Slack , comentários em PRs e tudo mais. Bem, quando você simplifica isso, e passa para o agente, o que acontece é o seguinte: digamos que eu seja um novo funcionário e esteja chegando para trabalhar em uma área específica do código. Existem várias maneiras diferentes de carregar o contexto para esse código. Uma delas é, você sabe, a busca semântica via busca vetorial, certo? Então, essa é a primeira camada .
+
+Outra camada são as memórias pré-construídas. E então, a terceira camada consiste em " engarrafar" e "desengarrafar" o especialista naquela área do código. E contextualizar os ensinamentos desse especialista é um mecanismo realmente poderoso. Isso ajuda a conduzir o restante da recuperação em um ciclo agentivo. E isso ajuda o agente, em termos de direção, tipo, para onde ir em seguida.
+
+Faz sentido? Acho que agora todo mundo já entrou. Incrível. OK. Então, acho que se todos concordarem, o próximo passo é, assim que eu conseguir colocar isso de volta na tela, continuarei enviando convites. Vi alguém que acabou de
+
+ir embora. Então, por favor, continue vindo. Mas se pudermos continuar, sim. Então, fique à vontade para simplesmente enviar este repositório para o seu agente e fazer com que ele o execute. Se você simplesmente disser ao Claude: "Execute este código no meu repositório."
+
+Certifique-se de definir um prazo ou um limite de PR (Principais Resultados), caso contrário, o projeto sairá do controle e levará muito tempo para ser concluído. Então, é só dizer algo como: "Processar os últimos 300 PRs ou processar até setembro de 2025." ou algo parecido. Há informações suficientes no arquivo leia-me para que ele consiga fazer isso sozinho. E basta executá-lo no seu repositório.
+
+Esta manhã, eu clonei e disse: "Leia o que eu digo e faça acontecer, Claude." Sim. Posso lhe fazer mais uma pergunta? Qual é o seu plano para o futuro? Se você tem um plano, quais são os seus planos para o próximo ano?
+
+Para desbloqueado?
+
+É sobre o projeto Unblocked ou sobre algum projeto paralelo? Sim . Bem , eu já mencionei isso antes, mas o futuro está se voltando para agentes totalmente autônomos. Portanto, estamos muito focados em garantir que os fluxos de agentes autônomos sejam altamente otimizados. Como eu estava dizendo no início da conversa, você não consegue executar essas coisas de forma eficaz sem um contexto muito bem definido. Sim
+
+.
+
+Eu leio coisas como traçado. O que nós, agentes, e vocês conseguimos obter com esses livros ? É esse o caminho em que você está investindo ou é um caminho de recuperação? O quê? Você está falando especificamente sobre gerenciamento de incidentes? Ou... Desculpe? Você está
+
+falando especificamente sobre gerenciamento de incidentes e coisas do tipo? Não, estou falando sobre você... na verdade, estou pensando mais de uma perspectiva empresarial. Como podemos extrair conhecimento empresarial
+
+que está profundamente enraizado nos sistemas e que ninguém mais conhece, e algumas pessoas acham que sabem, mas na verdade não sabem? Sim. E documentos, e conhecimento humano, certo? Conhecimento comprovado. Sim .
+
+Então, quer dizer, existem duas maneiras de prestar esse serviço. Seja no nível do produto ou, hum, através do próprio mecanismo de contexto. E o que vemos cada vez mais é que as pessoas utilizam agentes para realizar seu trabalho, mesmo nesse nível. Então, eles vão acessar o código Claude, conectar o mecanismo de contexto desbloqueado e dizer algo como "Faça isso para mim". Então, o Context Engine encontrará tudo o que precisa para realizar essa tarefa e, em seguida, exibirá esses dados. Sim.
+
+Para nós, isso significa que o primeiro passo no roteiro de curto prazo é a API. Sim. É como uma interface de linha de comando. API de linha de comando . Sim .
+
+Legal. Vou levantar isso novamente. Tomara que as pessoas comecem a enviar alguns PRs e aí poderemos...
+
+Sim.
+
+Então, esta organização permanecerá online até o final da semana, momento em que basicamente a desativaremos e a lançaremos como código aberto. E, obviamente, todos que contribuírem receberão os créditos, então seu nome estará lá.
+
+Sim, basta clonar o repositório. A maneira mais fácil é pegar um agente como o Claude e apontá-lo para... simplesmente iniciá-lo a partir desse repositório, desse diretório, e dizer "por favor, inicialize e inicie este produto" e pronto.
+
+Se vocês se depararem com qualquer tipo de problema técnico, é claro que estaremos aqui para ajudar. Sim.
+
+Vamos aguardar, vamos chamar o microfone. Você entendeu. Entendi. Agora tenho uma lapela, que ótimo! Legal. Sim
+
+. Você consegue me ouvir? Sim, perfeito. Então, no slide em que vocês mostraram o desempenho, vocês estavam com 80% e sem o Unblocked era 20%. Sim . E agora eu vejo que, bem, você está
+
+basicamente conectando o Unblocked ao Claude Card, então, de certa forma, é uma comparação justa dizer que eu usarei o Claude Card padrão com acesso ao MCP e às habilidades? Sim . E então usarei o Claude Card com o Unblocked, com os mesmos MCPs e as mesmas habilidades. E aqui você pode fazer a comparação de desempenho e aqui você ainda tem muito alpha do que eu imagino que você esteja desenvolvendo dentro do Unblocked. Foi feita a comparação ou foi feita sem ela? Ou foi
+
+feita com uma carta Claude padrão, mas sem contexto? Não, foi feito com servidores MCP como GitHub e Slack interligados. Sim, legal, legal . Basicamente, conseguimos paridade com todos os servidores MCP de todos os fornecedores de SaaS em um só. Era como se fosse o Claude original com todos os MCPs e o outro fosse o Claude apenas com o modo Desbloqueado.
+
+E então execute a tarefa. Mesmo contexto, como os mesmos arquivos de contexto. Mesma mesma mesma solicitação. E o mesmo acesso. Sim. Sim. É
+
+bem divertido, sim. Ah, obrigada. Talvez duas perguntas. Então, uma coisa que eu vejo é que muitos desses grafos sociais são construídos com o tipo tradicional de cálculo de redes e os aspectos estatísticos das redes. Hum, essa é a abordagem com a qual você começou e que já funcionava melhor, ou você... porque a maioria dos
+
+sistemas de memória funciona mais filtrando a memória episódica, ou algo do tipo, e esse é um sistema de pontuação realmente muito bom . Sim. Essa é a primeira pergunta. É igual também com a versão desbloqueada? Segunda pergunta.
+
+Você mencionou que funciona com o Teams, no ambiente Microsoft. Gostaria de saber quais as diferenças que você observou na construção de gráficos sociais para diferentes ambientes, pois no GitHub imagino que seja bem diferente do SharePoint, Teams, etc. Será que também se baseia em estatísticas de rede ou é algo diferente? Então, nossa primeira implementação foi incrivelmente ingênua, certo? A análise consistia simplesmente em usar o número de contribuições de PRs e compará-lo diretamente com o número de PRs revisados ​​por cada pessoa. É um jogo simples de números
+
+. Hum, isso não gerou agrupamentos de equipes precisos. Então, passamos aos algoritmos que vocês veem aqui. O Um Unblocked faz um pouco mais do que isso. Então, isso é uma espécie de caminho do meio. Uma outra estratégia que a
+
+Unblocked usa é, como especialistas fazem, por meio de agrupamentos vetoriais. Então, quando importamos o código-fonte e o vetorizamos, entendemos quem são os principais contribuidores para aquele trecho de código. Assim, quando pesquisamos indivíduos, podemos ver em que eles têm trabalhado e quais são os agrupamentos próximos, e então relacionar as pessoas com base na proximidade de seus agrupamentos. Então, essa é mais uma abordagem do tipo aprendizado de máquina. E depois há uma camada final que é, hum, uma espécie de camada pesada de IA LLM que faz destilações de uma série de elementos contextuais diferentes . Coisas em que as pessoas trabalharam
+
+no passado, conversas que elas tiveram no Slack. E então, quando você pega tudo isso e compara com o gráfico gerado proceduralmente, você obtém uma destilação muito mais precisa. Há um exemplo aqui: você vai notar que algumas pessoas serão alocadas em grupos de equipes que, você sabe, operam em várias equipes diferentes, por exemplo, e isso não será levado em consideração . Sim. E quais são as diferenças entre ambientes diferentes, como Apple versus Microsoft, ou versus Slack? Tipo, você vê...
+
+Você precisa de algoritmos diferentes, pesos diferentes, digamos, que você abstrai ali? Quer dizer, eu não quero remover tudo isso. Não, não, este algoritmo é puramente baseado em SCM. Então, os algoritmos para plataformas como Slack e Teams, por exemplo, são bem diferentes porque não existem esses pontos de avaliação. Então, a questão passa a ser quem é o mais ativo em determinados canais, e aí você precisa de uma síntese ou um resumo do que se trata aquele canal, e precisa vetorizar isso, e então precisa pontuar em relação aos colaboradores mais frequentes . Mas não é suficiente. É
+
+preciso relacionar isso aos dados da SCM (Gestão da Cadeia de Suprimentos) para descobrir quem são os verdadeiros especialistas. Um dos problemas que eu pessoalmente vivenciei em algumas organizações em que trabalhei é que você acaba tendo aquele engenheiro júnior barulhento, sabe? Então, eles são muito barulhentos, adoram conversar, mas a relação sinal-ruído não é boa. E só porque alguém não está dizendo muitas coisas não significa que suas mensagens não sejam impactantes. Então, parte deste jogo consiste em avaliar o impacto de certas declarações feitas pelas pessoas, sabe, como isso se relaciona com os PRs (Pull Requests) que são gerados, quantos desses PRs são aceitos, esse tipo de coisa. Sim
+
+. Sim
+
+. Oh.
+
+Ah, não é? ser. Certo, verifique isso. Bem, você deve conseguir abrir uma solicitação de pull request. Você não pode enviar para a tela principal.
+
+Então, se essa for a situação, devemos... mas, quer dizer, vamos verificar. Sim, você deveria conseguir criar uma ramificação. Ah,
+
+não, não. Ele também não consegue criar um fork do repositório . Ah, sim, os forks podem estar desativados. Isso será de código aberto no final da semana, e todas as suas contribuições estarão nele.
+
+O mais divertido é usar essa ferramenta de gráfico social mais tarde no seu próprio repositório e mostrar para sua equipe. Sim . Ah, desculpe. Ah, eu farei isso. Sim.
+
+Vamos.
+
+Gostei que o Unblock tenha tentado responder à sua pergunta.
+
+Oh.
+
+Você viu isso? A resposta automática do Slack. Desculpe, sou só eu. Você está aí? Isso é uma câmera. Desculpe.
+
+Ah, tudo bem. Eu só pensei: "
+
+Ah, ok." Hum, deixe-me verificar se não é esse o caso.
+
+OK. Avise-me se você ainda precisar de um convite. Basta verificar os membros. Acho que sim , pode haver um problema aqui. Só um segundo.
+
+Doente. Doente. Doente. Doente.
+
+Ah, essas eram atribuições diretas. Então, acho que precisamos atrair pessoas para o projeto, porque elas não estão alocadas a ele pela organização. Ah, GitHub. Eu te amo. Tempo de atividade de 99,99%. Sim.
+
+Sim, vamos resolver isso aqui. Sim. E jogam todo mundo lá dentro.
+
+É uma loucura.
+
+Ah, qual é. Você tem o suficiente? Estou tentando, então. Porque agora só precisamos adicionar mais pessoas. Bons sinais.
+
+Bons colaboradores. E então, basta iniciar o
+
+Unblocked. Todos vocês têm permissão para escrever. É o nome da empresa. Por favor, confirme isso para nós. Sim , por favor.
+
+Avise. Oh.
+
+Perfeito. Tudo bem.
+
+Tudo bem. Agora estamos recebendo comunicados de imprensa de verdade. Pronto. Legal. Legal. Com certeza!
+
+Agora, vamos fazer coisas divertidas.
+
+Caramba, que legal. Parece-me bem. O que?
+
+Acho que já temos nosso primeiro comunicado de imprensa aprovado.
+
+Estou enviando mensagens absurdas para o Unblocked para que vocês possam ver e tentar responder às perguntas no Slack conforme os PRs forem surgindo. Vou ver o que diz sobre isso. É como se dissessem: "Ah, deixe-me pensar sobre isso." Ou você perguntou sobre relações públicas? Sim, mas acho que você aceitou a proposta de relações públicas, então vamos ver o que acontece. Quer
+
+dizer, eles aprovaram, então, sabe, o Unblocked ficou tipo, "Isso me parece bom , cara." O serviço Unblocked estava fora do ar. Visível apenas para você. Oh não. Bom, é uma ótima resposta.
+
+Ótima assessoria de imprensa. Bom trabalho, desbloqueado. Ótima resposta.
+
+Sim. Sim. Ah, sim, sim. Vou colocá-lo de volta. Vou colocar de volta em um segundo.
+
+Hum, para onde foi exatamente? Perdi o "
+
+Ok, obrigado". Foi por aqui. Boom. Obrigado. Sim.
+
+Você quer? Sim, com certeza. Sim. Ah, sim, sim. Sim, claro.
+
+Estávamos focados na sua construção, mas sim. Ah, não, tudo bem. Quer dizer, vamos lá. Oh, oh, você...
+
+Oh, me desculpe. Então, isso, isso, isso que eu mostrei antes, é o projeto que existe naquele repositório. Então, a ideia é tipo, pensar em funcionalidades que você quer adicionar ou coisas que você quer corrigir, ou novos componentes, e aí é só ir desenvolvendo e enviar um PR . É isso aí. Você quer abrir uma sessão de terminal e mostrar o MCP?
+
+Ah, claro. Sim. Porque eu penso que as pessoas obviamente podem usar, mas elas não têm acesso a todo o nosso código-fonte. Sim. Sim .
+
+Obrigado. Sim .
+
+Bem, quer dizer, uma coisa que você poderia fazer, se estiver visitando clientes, é perguntar se eles executam a ferramenta no repositório deles, e então ela gerará esse resultado para eles, para que eles possam ver em seus próprios projetos qual é o valor, certo? Acho que Peter está perguntando especificamente sobre o nosso produto , não sobre isso. Ah, desbloqueie. Ele está perguntando sobre o Unblocked. Foi mal, cara.
+
+Estamos vindo nessa direção. Desculpe. Desculpe. Foco em uma única coisa. Ok .
+
+Então, sua pergunta é como você pode demonstrar o valor do Unblocked para os clientes ou como eles podem ver esse valor. Sim . Sim
+
+.
+
+Desculpe. Sim. Você pode fazer com que conflitos surjam em seu aplicativo, mas... e depois
+
+há a camada de conformidade, que é muito interessante para clientes corporativos. Sim . Eu estava pensando em como esse "hum" se traduz em UX, porque, você sabe, muitas pessoas sabem que ele é usado principalmente para programação. Sim . E isso se aplica tanto a pessoas da área técnica, quanto a pessoas que supervisionam engenheiros, ou ao próprio engenheiro. Quer
+
+dizer, veja como sua plataforma funciona. Mas se isso estiver fora de contexto, quero dizer , tudo bem. Não, não, está tudo bem. Então, este painel de controle é como se fosse a interface de usuário final do produto. Então, sabe, você entra aqui e pode fazer qualquer pergunta sobre sua base de código, sobre você ou sobre sua organização.
+
+Encontre a resposta aqui. Bem, isto está agora mesmo , sabe, anexado a "Desculpe, perdi o cursor". Isso está anexado a esta organização de teste que temos, mas eu poderia usá-lo contra o Unblocked e dizer algo como, sabe, " Uau, tenho uma pequena surpresa aqui que posso mostrar." Ops. Então, o mecanismo Sourcegraph é um componente interno que usamos para rastrear alterações no código-fonte ao longo do tempo, incluindo, por exemplo, a movimentação de alterações entre arquivos e assim por diante.
+
+Então, como demonstração, você pode mostrar, quer dizer, você pode agendar uma demonstração para seus clientes conosco e nós podemos demonstrar isso, ou você pode integrar isso à sua própria organização e demonstrar esse fluxo para os clientes e tentar encontrar casos de uso onde as fontes de dados podem ser utilizadas e demonstrá-los. O desafio com os mecanismos de contexto é que é muito difícil demonstrar o seu valor para alguém sem realmente implementá-los. Portanto, existe uma pequena sobrecarga aí, já que as pessoas precisam conectá-lo a todas as suas integrações. A boa notícia é que o Unblocked oferece um período de teste gratuito para empresas, permitindo que as pessoas experimentem o produto em sua versão completa antes de comprá-lo. Sim .
+
+Portanto, se alguma dessas informações estiver incorreta, você pode simplesmente responder no chatbot ou sinalizá-la nas referências. Sim .
+
+Então você pode simplesmente responder aqui ou pode dizer que não foi útil e explicar o porquê. E então irá destilá-lo para a próxima rodada. Assim, o sistema ajustará internamente alguns pesos ou índices de confiança. Internamente, o que ele faz é construir memória de tarefas. Então, ele busca esse tipo de sinal repetido e é aí que entra o gráfico de especialistas, que é muito utilizado. O gráfico dos especialistas
+
+fornece pesos semelhantes. Então, quando um especialista aparece e diz que isso não está correto, a informação ganha mais peso e se fixa na memória. Se for apenas um engenheiro novato dizendo que isso não está certo, então essa ainda não é uma fonte confiável, portanto você precisa de uma fonte confiável para se basear. Faz sentido? Sim, faz muito sentido. É como uma rede social.
+
+Exatamente. De alguma forma. Sim. Sim . Obrigado.
+
+Sem problemas.
+
+Legal.
+
+Como é o seu armazenamento de memórias? Ah, debaixo do capô? Bem, quando é apresentado à IA, é apresentado na forma de arquivos. Mas, internamente, armazenamos isso em tabelas de banco de dados e coisas do tipo. É como se as memórias fossem constituídas por diversas fontes diferentes. Portanto, não são apenas
+
+arquivos planos. Sabe, toda a estrutura de memória será hidratada em tempo de execução. Então, sim. E você não vai simplesmente fornecer aos seus agentes ferramentas para, por exemplo, consultar o banco de dados com base em quaisquer critérios que o usuário esteja utilizando? Sim, bem, então sim, existem várias ferramentas para recuperação de dados.
+
+Especificamente para memórias, você não pode realmente deixar a hidratação da memória a cargo do agente, porque isso faz parte do contexto inicial. Para que o agente siga na direção correta, é preciso alimentá- lo com os dados apropriados. E o contexto do especialista é um bom ponto de partida para o agente. Então, sim. Sim.
+
+Existe algum parâmetro oficial que meça o tipo de valor que você tenta agregar? Tipo, é, porque eu acho que não é exatamente programação. Bem, é verdade , mas sim, estou curioso para saber se há alguma coisa pública que você esteja usando como referência para se monitorar . Então, nós temos alguns parâmetros de referência internos. É verdade, é um pouco mole.
+
+Então, e durante toda a palestra sobre o Boris Cherny na Cloud Code? É como o criador do Cloud Code. O criador do Cloud Code. Sim, então ele deu uma entrevista onde eles estavam falando sobre como medem o sucesso do código em nuvem internamente. Isso pode ter mudado porque agora existem muitos parâmetros de referência que eles têm. Tipo, eles têm esse
+
+padrão de conversa fiada. Vocês provavelmente já viram esse. Mas, no fim das contas, tudo se resume à vibração. Assim, o mais importante em sistemas como este é capturar o sentimento. Portanto, se o seu sentimento estiver numa tendência de alta, isso é uma coisa boa. Nosso sentimento
+
+atual está em uma escala de -100 a 100, algo em torno de 60. Então, em uma escala normalizada, isso seria algo como 0,75 a 0,8. Então, a vibe seria capturada por algo como, talvez, menos idas e vindas nos PRs ou, talvez, não sei, menos idas e vindas com a nuvem para concluir suas tarefas . Sim, então a vibe é de que as pessoas estão satisfeitas, certo? Assim, a satisfação pode vir de muitas fontes diferentes, assim como a insatisfação . Então, a maneira de pensar sobre isso
+
+é que codifica todas essas coisas. Mas você pode coletar métricas específicas e nós medimos quanto tempo as coisas levam e, na verdade, estamos trabalhando muito para reduzir os tempos de resposta porque, bem, você sabe, mesmo que os agentes estejam... aqui está o ponto interessante. À medida que avançamos
+
+para um universo mais autônomo, os tempos de resposta dos servidores MCP tornam-se cada vez menos importantes. O mais importante é que eles acertem a resposta em cheio. Sim. E a razão é que a quantidade de tempo que um agente de contatos gasta coletando e sintetizando todas essas informações é um microcosmo do que a tarefa completa exige para ser implementada e analisada. Portanto, se você puder dedicar um pouco mais de tempo e reduzir a implementação em cerca de 60, 70 ou 80%, isso será uma grande vantagem.
+
+Certo. E vá em frente. Sim. Desculpe, é uma pergunta complementar muito breve . Aliás, estou curioso, você tem algum dado aproximado sobre quanto tempo é gasto recuperando o contexto em comparação com a execução das tarefas? Respondendo à sua pergunta, por exemplo, está em
+
+10% agora ou em 90%? Ou será que não faço a mínima ideia? Quer dizer, eu tenho minha própria experiência, mas tipo, sim, a coleta de contexto do agente provavelmente está próxima desse número. É tipo 90%. A parte de escrever o código em si é muito, muito rápida. Se você pudesse ao menos
+
+observar o que um agente está fazendo, quando ele escreve o código que gera os tokens de saída, aliás, é isso que prejudica o desempenho. Antes, todos pensavam que eram tokens de entrada. Temos muita experiência com isso. Você pode aumentar o tamanho do token de entrada e, sabe, o tempo para o primeiro token de saída agora é muito, muito bom. Tipo, é muito bem otimizado. O
+
+que realmente impacta o desempenho são os tokens de saída. Então, você precisa ser criterioso na forma como coleta e fornece contexto de volta ao agente, para que ele permaneça eficiente em seus loops de saída . Para um dos benchmarks que Peter mencionou na palestra, nós demos uma tarefa ambiciosa porque, obviamente, depende de quanto tempo você está adicionando e como funciona com o mecanismo de contexto. Mas a tarefa ambiciosa que lhe demos foi implementar o novo modo de pensamento adaptativo na cadeia de ferramentas da Anthropic quando eles o introduziram, o que, como mencionado, reduziu o tempo de resposta de 25 minutos para o tempo de resposta com o Unblock e o mecanismo de contexto. O outro caso, sem cirurgia, durou 2 horas e meia. Demorou 2 horas e 25
+
+minutos, mas o principal motivo foi que fornecemos todos os dados, executamos o comando e, então, a primeira saída estava completamente errada. Então, o humano teve que repetir o processo várias vezes, dizendo: "Não, não, isso, isso, isso." E a próxima saída estava errada, e a seguinte também. Então, depois de completar quatro voltas, você terá um tempo de execução de cerca de 2 horas e meia, em comparação com os 25 minutos necessários quando não havia necessidade de correções. Sim. Bem, como já
+
+foi dito, pense nisso como uma cachoeira. Quanto mais contexto de alta qualidade e correto, como um sinal forte, você tiver antecipadamente, melhor será o desempenho do agente em todas as suas ações até que ele declare que a tarefa foi concluída. Independentemente de ter acertado ou não, sim. Sim . O cara entendeu .
+
+Você também mencionou que o uso de tokens em chamadas de ferramentas e em buscas de informações diminuiu bastante. Então, eu sei que muitas dessas ferramentas que fornecem agregadores para uso de ferramentas têm um consumo de tokens absurdo. Então, talvez seja interessante ter algumas estimativas de quanto, digamos, eu preciso para uma conversa no Slack, algum resumo de uma conversa para outra, ou como as pessoas interagem, o que custaria cerca de 60 mil tokens no Compozio. Gostaria de saber quantos tokens seriam necessários usando o Unblocked. Sim. Ele é
+
+mais baixo. Ainda estamos vivendo uma ótima fase por lá. Tipo, é difícil obter dados reais de outros clientes ou pessoas no mercado. Mas, novamente, com isso, vou continuar falando sobre a mesma tarefa como algo fácil. Essa ferramenta passou de um uso total de 21 milhões de tokens para 10 milhões de tokens com o mecanismo de contexto.
+
+Então, parte disso se deve ao fato de você não ter que entrar em um loop infinito. Então, quando isso aconteceu, é claro que aumentou bastante o custo dos tokens. Por exemplo , reduzimos em 50% em uma tarefa grande. Novamente, obviamente, se for algo como "Ei, centralize uma div." Você não vai obter muitos ganhos. É como se provavelmente estivesse nos
+
+dados de treinamento. Mas sim, como qualquer correção de funcionalidade. Então , muito do que as pessoas publicam no Unblocked ou do que um engenheiro faz todos os dias é algo muito raro: uma tarefa simples, digamos, pequena. Mas, por outro lado, eu já pedi para o Claude fazer isso , então aposto que não sou o único . Eu disse: "Você que faz." É como se eu pensasse: "Por que
+
+isso me custou 30 centavos?" Não sei. Sim . Eu me esforcei ao máximo para colocar minhas chaves GPT no lugar certo, então pensei: "Claude, vai lá." Mais alguma pergunta enquanto vocês enviam os produtos? Alguma
+
+dúvida? Há algo que eu possa desbloquear para você? É o meu propósito na vida. Desculpe, talvez você já tenha respondido a esta pergunta, mas então, você está usando a base de conhecimento (ou algo similar) no Unblocked ou qual é exatamente a tecnologia que você está apresentando? Ah, tantas coisas. Hum,
+
+posso conversar com você em um canto. Vou tirar meu microfone. Vou responder a essa pergunta. Claro. Foi tipo, "
+
+Ah, é em tempo real", basicamente. Então, bem, acho que essa pergunta tem duas partes. Uma delas é a frequência e a intensidade com que o Unblocked atualiza os dados no servidor. Então, para muitas das integrações, funciona em tempo real, enquanto para outras, é executado um cron job, porque essas integrações específicas não têm webhooks. Sim . Mas isso significa que a
+
+reconstrução dos dados do grafo precisa ocorrer com muita frequência. Sim
+
+. Sim . Sim
+
+. Sim . Sim . Não, é gradual. Então, o nosso algoritmo de construção de grafos sociais possui um componente incremental. Assim não precisamos
+
+executar tudo novamente. Mas também, os grafos sociais são menos sensíveis a mudanças frequentes nos dados, porque é improvável que uma única mudança tenha um grande impacto no grafo de especialistas, a menos que sua organização seja totalmente nova. Então, sim
+
+. Sim. Sim, então, como exemplo, fazemos a destilação das melhores práticas em uma cadência muito menor. Tipo, basicamente semana a semana, porque, é, não muda muito. Sim. Sim
+
+.
+
+Você recebeu uma oferta?
+
+Bem, oh sim. Repita a sua pergunta. Essa é uma boa pergunta. Então, quero garantir que isso seja feito. Oh.
+
+Em termos de privacidade do cliente, retenção de dados, hum, mais ou menos. Sim. Do meu ponto de vista, estou pensando em algo como SaaS empresarial ou até mesmo implantações locais, o que não estou sugerindo que você faça, estou apenas pensando nesse tipo de modalidade para o cliente. Sim, você recebe resistência? Como eles se sentem em relação a você armazenar dados como mais um processador no circuito?
+
+Bem, as discussões sobre privacidade acontecem no âmbito organizacional. Então, na verdade não encontramos muitos atritos. Existem, sem dúvida, ambientes como no governo e em bancos que têm necessidades extremamente sensíveis . E assim, para essas necessidades, temos uma solução local. Mas, definitivamente, não é o caminho que eu recomendaria. Assim como
+
+manter-se baseado na nuvem. Assim como temos grandes organizações empresariais que são inteiramente baseadas na nuvem. Como se fosse totalmente baseado na nuvem. Bem, você sabe, o segredo do sucesso está menos codificado no código-fonte e mais codificado no raciocínio. Assim, as organizações tendem a ser um pouco mais cautelosas com relação a coisas como dados do Slack, por exemplo.
+
+Mas, quanto à forma como armazenamos os dados, temos um documento técnico completo sobre como protegemos os dados dos clientes . E nunca foi um problema. Sim . Perdão? Sim. Temos uma solução local,
+
+mas, como eu disse, não é a abordagem recomendada. Mas certamente para ambientes sensíveis. Sim . Ah, por que não é recomendado? Bem, as integrações baseadas na nuvem, você sabe, são atualizadas com mais frequência, então há correções de software. É um
+
+pouco mais difícil de manter dentro de uma organização. Bem, existe um cliente, um banco, onde administrar a plataforma se torna bastante difícil porque eles têm isolamento de rede. Então, agora um de nós precisa, sabe, ficar dentro dessa rede e administrar a plataforma, ou precisamos treinar pessoas dentro da empresa para administrar a plataforma. Então, é mais um exercício de manutenção e acompanhamento. Mas sim.
+
+Sim, exatamente. Exatamente isso.
+
+Sim, obrigado. Obrigado por terem vindo.

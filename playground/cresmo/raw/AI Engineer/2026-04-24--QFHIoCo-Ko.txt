@@ -1,0 +1,655 @@
+---
+video_title: "Full Walkthrough: Workflow for AI Coding — Matt Pocock"
+video_id: -QFHIoCo-Ko
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-QFHIoCo-Ko
+video_date: 2026-04-24T15:15:38+00:00
+video_description: |
+  Matt will be back on stage at the World's Fair next week! see https://ai.engineer/wf and use YOUTUBEPROMO for new tickets only. Join 6000 AI engineers at the "Superbowl of AI"!
+  
+  ---
+  
+  A hands-on workshop covering the full lifecycle of AI-assisted development, from turning ambiguous requirements into agent-ready plans to running autonomous coding agents that ship production features.
+  
+  You'll learn to stress-test vague briefs into structured PRDs, slice work into thin "tracer bullet" vertical slices, and run an AI agent with TDD. You'll watch it select tasks, write tests, implement code, and commit. You'll then refine your prompts based on where it struggles, graduate to fully autonomous (AFK) runs, and learn to design codebases that maximize agent effectiveness.
+  
+  You'll walk away knowing how to:
+  
+  - Turn ambiguous requirements into agent-ready issues
+  - Slice work into vertical tracer bullets an agent can grab independently
+  - Run AI agents human-in-the-loop and autonomously with TDD
+  - Design codebase architectures that AI agents love to work in
+  
+  For: Engineers ready to move beyond chat-based AI assistance and build a real workflow for shipping features with autonomous coding agents.
+  
+  Speaker info:
+  - https://x.com/mattpocockuk
+  - https://www.linkedin.com/in/mapocock/
+  - https://youtube.com/@mattpocockuk
+  
+  Timestamps:
+  00:00:00 - Introduction
+  00:00:14 - The Thesis of AI Engineering
+  00:04:20 - Phase 1: Research & Prototyping
+  00:12:45 - Phase 2: The Grill Session
+  00:22:10 - Phase 3: Writing the PRD
+  00:35:50 - Phase 4: Slicing Work into Issues
+  00:48:15 - Phase 5: Implementation with AI Agents
+  01:05:30 - Phase 6: Human-in-the-Loop Review
+  01:18:45 - Phase 7: Deployment & Monitoring
+  01:28:10 - Designing Codebases for AI Effectiveness
+  01:34:06 - Final Takeaways & Summary
+---
+[música]
+
+Sim, estamos bem. Muito bem, pessoal. Estamos com a capacidade máxima atingida. Vamos começar. Não quero que você fique esperando aqui por mais 25 minutos antes de atingirmos um prazo arbitrário.
+
+Então, seja bem-vindo(a). Meu nome é Matt, sou professor e, pelo que entendi, agora ensino IA (Inteligência Artificial). Temos um link aqui em cima, caso você ainda não tenha visto , que contém os exercícios para as atividades que faremos hoje. Isso vai durar cerca de 2 horas, então podemos começar daqui a 2 horas . Tudo bem, Mike?
+
+Sim, perfeito. Bem, a teoria por trás desta palestra, ou pelo menos a tese que tenho defendido nos últimos seis meses , é que todos nós pensamos que a IA é um novo paradigma, certo? Obviamente, a IA está mudando muita coisa. Vocês obviamente têm interesse nisso, e é por isso que vieram a esta palestra. E eu sinto que, quando falamos de IA como um novo paradigma, esquecemos que, na verdade, os fundamentos da engenharia de software, aquilo que é crucial para trabalhar com humanos, também funciona muito bem com IA.
+
+E é exatamente sobre isso que será minha palestra amanhã. Pretendo desenvolver isso com muito mais detalhes. E neste workshop, espero poder direcionar sua atenção para esses pontos e, com sorte, mostrar a vocês que estou certo. Mas veremos. Hum, posso ter um aviso rápido primeiro?
+
+Quantos de vocês que programam já programaram com IA? Levante a mão quem já programou com IA. Perfeito. OK. Mantenha a mão levantada.
+
+Vamos todos compartilhar essas axilas com o mundo. Quantos de vocês programam com IA todos os dias? Legal. OK. É isso aí, levantem a mão quem já se frustrou com a IA.
+
+Ok, muito bom. Pode baixar as mãos. Obrigado por essa demonstração de obediência. Agradeço muito. E também estamos sendo transmitidos ao vivo para a sala Gilgood . Não...
+
+Enviamos alguém ao quarto dos Gilgood só para verificar se eles estão bem? Não sei. Mas eu vejo você, e há uma maneira de você participar, que é através de uma sessão de perguntas e respostas. Vamos acabar desenvolvendo uma certa aversão a sessões de perguntas e respostas, porque elas não são muito democráticas. Geralmente são as pessoas mais falantes que conseguem participar e compartilhar. Então,
+
+vamos passar por esta sessão de perguntas e respostas aqui. Então, por que temos que esperar até às 3h45? A sala está lotada, as portas estão fechadas. Concordo plenamente. Então, se você quiser fazer uma pergunta, eu gostaria que vocês entrassem nessa sala assíncrona, e então poderemos votar nas perguntas uns dos outros, e esperamos que as melhores perguntas sejam selecionadas para que todos na sala possam aproveitá-las.
+
+Então, quero falar primeiro sobre os tipos de restrições estranhas que os mestrados em Direito (LLMs) têm. E essas restrições estranhas são, de certa forma, a base do nosso trabalho . Bem, existe um cara chamado Dex Hardy que dirige uma empresa chamada Human Layer, e ele teve essa ideia, que é a de que quando você trabalha com LLMs (Learning Learning Machines - Máquinas de Aprendizagem Baseadas em Lógica), elas têm uma zona inteligente e uma zona burra. Quando você está começando a trabalhar com um profissional de LLM, e é como se tivesse acabado de iniciar uma nova conversa, partindo do zero, é aí que o LLM vai mostrar seu melhor desempenho. Porque, nessa situação, as relações de atenção são as menos tensas.
+
+Cada vez que você adiciona um token a um LLM, é como se estivesse adicionando um time a uma liga de futebol. Se você pensar na quantidade de partidas que são adicionadas cada vez que um time entra em uma liga de futebol, verá que o número cresce quadraticamente. Isso ocorre porque existem relações de atenção que vão essencialmente de cada elemento para o outro, relações essas que são posicionais e relacionadas ao significado de cada elemento individual. Então, isso significa que por volta de 40%, ou eu diria que em torno de 100 mil, é o meu novo parâmetro para isso. Porque não importa se você está usando uma janela de contexto de 1 milhão ou de 200 mil, sempre será sobre isso.
+
+Começa a ficar cada vez mais estúpido. Então, conforme você continua adicionando coisas à mesma janela de contexto, ela vai ficando cada vez mais burra até começar a tomar decisões meio estúpidas. Levante a mão se isso lhe parece familiar. Sim, legal. Isso significa que queremos dimensionar nossas tarefas de forma a mantê-las dentro da zona inteligente.
+
+Certo? Não queremos que a IA dê um passo maior que a perna. Isso remete a conselhos antigos, como os de Martin Fowler, sobre refatoração. Tipo, como o programador pragmático fala sobre isso. Não dê um passo maior que a perna. Mantenha suas
+
+tarefas pequenas para que você, como desenvolvedor, um ser humano, não entre em pânico e não comece a agir de forma imprudente. Mas como lidar com tarefas complexas? Como você pega uma tarefa grande, tipo, sei lá, clonar uma empresa ou algo do tipo, ou simplesmente fazer alguma loucura, e como você a divide em tarefas menores para que todas caibam na zona de complexidade? Uma maneira, claro, de fazer isso é, quer dizer, o que as empresas de IA talvez queiram que você faça, ou a maneira natural de fazer isso é simplesmente continuar, continuar e continuar, até chegar à zona burra, que cobra uma tonelada de tokens por solicitação. Em seguida, compacte novamente.
+
+Falaremos sobre como compactar corretamente daqui a pouco. E você continua, continua, continua, compacta de volta, continua, continua, continua. E acho que isso não funciona muito bem, porque quanto mais sedimentos...
+
+falaremos sobre isso daqui a pouco. Então, a teoria aqui, e isso é o que eu venho fazendo há algum tempo, é usar esse tipo de plano multifásico. Onde eu diria: "Ok, temos aqui essa coisa número quatro, essa tarefa enorme. Vamos dividi-la em pequenas seções para que possamos então agrupá-la e realizar cada pequena parte do trabalho na zona inteligente." Levante a mão se você já utilizou um plano multifásico antes.
+
+Sim, é uma prática bem comum, não é? É mais ou menos assim que temos feito. Certamente, era assim que eu fazia até dezembro do ano passado. E qualquer desenvolvedor que se preze olhará para isso e pensará: "Isso é um loop." Certo? Isto é um loop. Acabamos de ter a
+
+fase um, a fase dois, a fase três e a fase quatro. Por que não temos simplesmente a fase N? Certo? Fase N. Onde basicamente dizemos: "Ok, temos, digamos, um plano operando em segundo plano, e então simplesmente o executamos em loop até que esteja completo."
+
+E é aqui que... Levantem a mão quem já ouviu falar de Ralph Wiggum como um profissional da área de software. Ok, legal. Levante a mão quem
+
+nunca ouviu falar de Ralph Wiggum como uma prática de desenvolvimento de software. Isso sim é que é bom. OK. Então, existe essa ideia chamada Ralph Wiggum, que é meio que baseada nisso, que basicamente consiste em especificar o objetivo final da jornada, dizendo: "Ok, criamos um PRD, um documento de requisitos do produto, para dizer: 'Uau, ok, vamos descrever para onde estamos indo.'" E então dizemos para a IA: "Faça uma pequena mudança. Faça
+
+uma pequena mudança que nos aproxime cada vez mais desse objetivo ." E o Ralph funciona bem, mas eu prefiro um pouco mais de estrutura. Então, foi mais ou menos a esse ponto que chegamos em termos de pensar sobre a zona inteligente, e é por aí que eu quero que vocês comecem a pensar. Outra peculiaridade dos mestrados em Direito é que eles são meio parecidos com o cara do filme Memento, né? Eles simplesmente se esquecem constantemente.
+
+Eles poderiam simplesmente continuar reiniciando até o estado base. Deixe-me abrir este diagrama. Eu meio que... eu...
+
+eu realmente deveria usar slides, mas prefiro simplesmente rolar aleatoriamente por uma tela de desenho infinita. Obrigado, Steve. Então, outro conceito que quero que vocês entendam é que cada sessão de um LLM passa por etapas semelhantes. Você tem, em primeiro lugar, o prompt do sistema aqui. Essa caixa cinza aqui representa essencialmente tudo o que está sempre presente no seu contexto. Você quer que isso seja o
+
+menor possível. Porque se você tiver muita coisa aqui dentro, se tiver 250 mil fichas, como eu já vi gente colocar , você vai direto para a zona da burrice sem nem conseguir fazer nada. Então, você quer que isso seja minúsculo. [bufa] Depois você entra numa espécie de fase exploratória. Essa área azul representa o local onde o agente de codificação está explorando a base de código.
+
+Em seguida, você parte para a implementação. E então você entra na fase de testes. E, de certa forma, garantir que tudo funcione, executando os ciclos de feedback e coisas do gênero . Levante a mão se isso lhe parece familiar com base no que você já fez. Sim. São como os
+
+pilares fundamentais de qualquer sessão. E quando você limpa o contexto, você volta diretamente para o prompt do sistema. Ufa, volte lá agora mesmo. Então, você apaga tudo o que veio antes. E levante a mão quem já ouviu falar de compactação também. Sim
+
+, tudo bem. Há pessoas que nunca ouviram falar de compactação. Então, vamos mostrar rapidamente o que isso significa. Por exemplo, acabei de ter uma pequena conversa com meu mestre em Direito. Hum, quero garantir que abordemos os pontos básicos para que todos estejamos na mesma sintonia. Acabei de bater
+
+um papo com meu mestre em Direito. Tenho falado sobre algo que quero construir. Qual o tamanho da fonte? Devo aumentar o valor? Pessoal lá atrás?
+
+Ressalto. Ressalto. Ressalto. Ressalto. Ressalto. Oh.
+
+Estou usando o Claude Code nesta sessão, mas você não precisa usá-lo. Na verdade, muitas vezes é bom não usar o Código Claude. Então, estive conversando com o pessoal do LLM, planejando o que vou fazer em seguida. Está me fazendo um monte de perguntas, e eu recomendo muito que você faça isso. Tem uma pequena barra de status aqui que me diz quantos tokens estou usando, o número exato de tokens que estou usando. Tenho um artigo no meu site,
+
+AI Hero, se você quiser copiá-lo. Nossa, que coisa impressionante, não é ? Essa é uma informação essencial em todas as sessões de programação, porque você precisa saber exatamente quantos tokens está usando para saber o quão perto está da zona de erro. Absolutamente essencial. Então vamos assistir.
+
+Então, tenho duas opções. Posso apagar tudo errado e voltar ao ponto de partida, ou posso compactar. E quando eu compactar, vai comprimir toda essa conversa, que, reconhecidamente, não é muita coisa, em um espaço muito menor. E, em termos de diagrama, isso se parece mais ou menos com isto. Onde você pega todas as informações da sessão e essencialmente cria um histórico a partir delas, um registro escrito do que aconteceu.
+
+E os desenvolvedores adoram compactar o código por algum motivo, mas eu detesto isso. Prefiro muito mais que minha IA se comporte como o cara do filme Memento, porque esse estado é sempre o mesmo. É sempre a mesma coisa, todas as vezes que você faz isso. Você limpa tudo e volta ao início. Portanto, se você for capaz de fazer isso e de otimizar para isso, estará em uma ótima posição.
+
+Então, esses são basicamente os dois pontos que eu quero que vocês considerem em relação aos LLMs, as duas restrições com as quais estamos lidando. Eles têm uma zona inteligente e uma zona burra, e são como o cara do filme Memento. Vamos então analisar o primeiro exercício. E enquanto faço isso, a maneira como quero que funcione é mostrando a vocês como... vou demonstrando
+
+aqui em cima e quero que vocês também toquem na tela e façam as coisas. Então, essa foi apenas uma pequena palestra. Vamos agora colocar a mão na massa e começar a programar. Para quem chegou atrasado ou para quem está na sala Gilgud, acessem este link aqui em cima para ver os exercícios e clonar o repositório. Você não precisa fazer isso, pode simplesmente me observar se quiser.
+
+Mas vamos lá eu mesmo e vejamos quais exercícios nos aguardam. Basicamente, eu construí um... isto é fruto do meu curso.
+
+Esta é essencialmente uma plataforma de gerenciamento de cursos , uma espécie de CMS para instrutores e alunos, e é nela que vamos desenvolver uma funcionalidade. Então, vou mostrar todo o processo, desde a concepção da funcionalidade até a criação de um PRD (Project Release Design) e a implementação completa. E espero que você possa se inspirar nesse processo e usá-lo em seu próprio trabalho. Então, vamos começar. Então, vamos começar usando uma habilidade que me é muito querida.
+
+É a habilidade de me fazer refletir. E essa habilidade "grill me" é maravilhosamente pequena, minúscula, e ajuda a prevenir um dos principais problemas ao trabalhar com IA, que são os desalinhamentos. A ideia implícita contra a qual estou me manifestando aqui, contra a qual estou argumentando, é o movimento de "especificações para código". Alguém já ouviu falar da mudança de especificações para código ? Levante a mão. Não é
+
+bem um movimento, eu acho, é mais como se as pessoas estivessem ditando especificações para o código. O que acontece é que as pessoas dizem: "Ok, você pode escrever um programa ou quer criar um aplicativo, a melhor maneira de fazer isso é pegar algumas especificações, ou seja, escrever algum tipo de documento e depois transformar esse documento em código." Então eles simplesmente transformam isso em código. Como se faz isso? Você passa isso para a IA. Se
+
+houver algum problema com o código resultante, você não analisa o código, mas sim as especificações. Você altera as especificações e continua assim, mais ou menos . É como se fosse programação intuitiva, só que com outro nome, onde você basicamente ignora o código. Você não precisa se preocupar com o código. Você simplesmente vai editando as especificações e, eventualmente, continua progredindo. E
+
+eu tentei isso. Eu realmente tentei. E é péssimo. Não funciona. Porque você precisa manter o controle do código. Você precisa entender o que tem dentro
+
+. Você precisa moldá-lo porque o código é o seu campo de batalha. E é exatamente para lá que estamos caminhando. Vamos fazer alguns exercícios. Então, o que eu gostaria que você fizesse é ir até esta página, a habilidade "Grill Me".
+
+E aqui dentro do repositório temos uma mensagem do Slack do nosso amigo. Onde fica? Está na raiz do repositório e está em bur bur bur bur Oh, onde está? Mhm mhm resumo do cliente.md.
+
+É uma mensagem do Slack da Sarah Chen. Por algum motivo, Claude sempre escolhe Sarah Chen como nome. Não sei porquê. Isso significa que, na Cadence, nossa plataforma de cursos, nossos índices de retenção não são bons. Os alunos se inscrevem em algumas aulas e depois desistem. Eu adoraria
+
+adicionar elementos de gamificação à plataforma. Portanto, quando você se depara com uma ideia como essa, precisa encontrar uma maneira de transformá-la em realidade. Digamos que Sarah Chen seja sua cliente, você esteja com o orçamento apertado e precise concluir o trabalho rapidamente. Como você faz isso? Levante a mão se você gostaria de entrar no modo de planejamento enquanto faz isso.
+
+Alguém aqui usa muito o modo de planejamento? Sim. Vamos lá, vamos compartilhar rapidamente outras ideias sobre o que vocês fariam com isso. Ou, se tiverem alguma, levantem a mão: qual seria a primeira coisa que vocês fariam? Sim. Solicite mais informações.
+
+Desculpe? Solicite mais informações para verificar qual é a finalidade e qual é a nossa situação atual. Sim, exatamente. Vamos imaginar que Sarah Chen saiu de férias, você não faz ideia, né? Ela acabou de postar isso, você precisa tomar alguma providência antes de ir.
+
+Bem, minha primeira prioridade é desenvolver essa habilidade específica. Vou esclarecer o contexto. Vou me livrar de você, você não precisa estar lá. E eu vou dizer...
+
+vou invocar uma habilidade, que é a habilidade "Grill Me". Vamos verificar rapidamente. Levantem as mãos quem não sabe o que é isso. Legal. Ah, desculpe, desculpe. Deixe-me ser mais
+
+específico. Levantem as mãos quem não sabe o que estou fazendo aqui quando... bem, faço uma barra e depois digito alguma coisa.
+
+Alguém aqui meio que entende o que é isso? Estou invocando uma habilidade. Estou invocando a habilidade "Me grelhe". E o que vou fazer é o seguinte: vou dizer, me interroguem, e depois vou passar o briefing do cliente. Portanto, o LLM agora tem realmente apenas algumas coisas aqui. Tem a habilidade e
+
+a descrição do que eu quero fazer. E é praticamente assim que começo todos os meus trabalhos com IA. E enquanto exploro a base de código, vou mostrar a vocês o que a habilidade "grill me" faz. Isso está dentro do repositório, então você pode conferir. É extremamente curto.
+
+"Interrogue-me incansavelmente sobre todos os aspectos deste plano até chegarmos a um entendimento mútuo. Percorra cada ramo da árvore de decisão, resolvendo as dependências uma a uma. Para cada pergunta, forneça sua resposta recomendada. Faça as perguntas uma de cada vez, blá blá blá ." O que isso faz, e o que eu percebi quando estava trabalhando com IA, especialmente no modo de planejamento, é que ela se esforçava muito para gerar um plano para mim.
+
+Diria algo como: "Ok, acho que já tenho o suficiente. Vou simplesmente sumir ." E o que descobri foi que eu estava realmente tentando encontrar as palavras para isso, para aquilo que eu queria, em vez daquilo. E Frederick P. Brooks, em "The Design of Design", tem uma ótima citação falando sobre o conceito de design.
+
+Quando você está trabalhando em algo novo com alguém, quando todos estão tentando construir algo juntos, existe essa ideia compartilhada entre todos os participantes, e esse é o conceito do projeto. E foi isso que eu percebi que precisava com Claude. Eu precisava chegar a um entendimento comum. Eu precisava de um recurso, não de um plano, eu precisava estar na mesma sintonia que a IA, como meu agente. E essa é uma maneira extremamente eficaz de fazer isso. Então, espero que sim. Vamos lá
+
+. Legal. Primeiramente, realizou sua exploração. Foi invocado um subagente que gastou 97.937.000 tokens
+
+no Opus. E foi ela que me fez a primeira pergunta. Legal. Podemos ver que, embora o subagente tenha queimado uma grande quantidade de tokens, eu, na verdade, não aumentei muito o meu uso de tokens. Levante a mão quem não sabe o que são subagentes. É uma questão importante.
+
+Todo mundo tem mais ou menos uma ideia do que são subagentes? Certo, vou dar uma breve definição. Ou seja, esse subagente aqui, esse subagente de exploração, essencialmente chamou outro LLM que possui uma janela de contexto isolada. E então, esse mestrado em Direito (LLM) enviou um resumo . Então, um subagente é como uma delegação. Você está delegando uma tarefa a
+
+um subagente. Ele executa tudo com entusiasmo , explora uma infinidade de coisas e depois simplesmente envia aos poucos as informações importantes de volta para o agente orquestrador. Ao agente principal. Então, tudo bem. Espero que vocês também tenham visto a mesma coisa. Foi feita uma exploração.
+
+E agora temos a nossa primeira pergunta. Economia por pontos. Que ações geram pontos e quantos pontos? Ah, ok. Neste ponto, você pode fazer perguntas para aprofundar seu conhecimento sobre o repositório. É óbvio que
+
+conheço muito bem este repositório, pois fui eu quem o escreveu , mas você pode não saber o que está acontecendo. Então, digamos que minha recomendação é manter a simplicidade, começando com duas fontes de dados. O mais interessante é que isso não só nos apresenta uma questão que nos coloca em uma posição específica, como também nos oferece uma recomendação. E, frequentemente, o que constato é que as recomendações da IA ​​são realmente boas. Então, vou apenas dizer para ignorar os eventos de vídeo, eles são barulhentos e propícios a manipulação. Concordo.
+
+Sarah pediu que mantivéssemos as lições no pão com manteiga. Sim . Ficou ótimo, amigo. [bufa] Normalmente, o que eu costumo fazer é ditar para a IA. Normalmente, eu converso com a IA em vez de digitar aqui, mas este laptop é relativamente novo e não consegui fazer meu software de ditado funcionar nele porque o Windows é uma porcaria.
+
+Então, os pontos deveriam ser retroativos? Existem registros do progresso das aulas com datas e horários de conclusão. Essa é uma pergunta muito desagradável, não é? Será que deveríamos mesmo voltar atrás e preencher retroativamente todos os eventos de progresso da lição? Este é o tipo de questão sobre a qual vocês precisam estar alinhados se quiserem executar a funcionalidade adequadamente. Isso não é algo que
+
+eu tenha considerado e Sarah Chen certamente não considerou. Quero que seja retroativo? Hum. Vamos fazer uma votação aqui dentro. Devemos voltar atrás e preencher todos os registros? Levante a mão se você acha que
+
+devemos preencher todos os registros retroativamente. Levante a mão se você acha que não devemos preencher todos os registros retroativamente. Há muitos indecisos na sala. Eu diria que esse é o tipo de discussão que você está tendo com a IA. Vocês estão se alinhando cada vez mais. Sim,
+
+vou seguir a recomendação dele porque sou preguiçoso. Repare também em como consigo manter-me a par de tudo isto com a ajuda da IA. Não sei, é que está me bombardeando com essas perguntas muito rapidamente. Não preciso sair para checar o Twitter ou algo do tipo. Níveis. Qual é a curva de progressão?
+
+Sim, parece correto. Por exemplo, sim, tudo bem. Então, espero que você consiga resolver isso com a ajuda da IA. [Limpa a garganta] E essencialmente tentar chegar a um alinhamento. E essa habilidade de me fazer chorar, isso pode durar muito tempo. Essa lata... Eu já a usei e ela me fez 40
+
+perguntas. Já me fizeram 80 perguntas. Já teve gente que fez 100 perguntas também. Literalmente, você fica sentado lá por uma hora conversando com a IA. E o resultado final é essencialmente esse histórico de conversas que funciona muito bem e se torna um excelente recurso para o conceito de design que você está criando.
+
+Isso também pode funcionar assim. Você pode marcar uma reunião com alguém que talvez seja especialista na área. Talvez eu tenha uma reunião com a Sarah. Eu insiro a transcrição dessa reunião em, sei lá , reuniões do Gemini ou qualquer outro programa que vocês estejam usando. Você pega isso, usa como base para uma sessão de perguntas e respostas e questiona as suposições que você não tinha.
+
+Então, isso acaba sendo uma maneira muito interessante de receber informações do mundo e depois transformá-las e validá-las. Então, tudo bem. Vamos ver. Eu realmente quero chegar ao fim disso, mas também não quero ficar aqui sentado conversando com a IA na sua frente por...
+
+mil dias. Então, vou dizer que sim. Vamos ver o que acontece. Então, enquanto vocês fazem alguns testes aqui na região, vamos começar uma pequena sessão de perguntas e respostas agora. Vamos ver. Como isso vai funcionar?
+
+Podemos manter a porta fechada ou aumentar o volume do microfone? É bastante barulhento. Hum, vejamos. Mike, podemos fechar a porta? Ah, já foi fechado. Mark
+
+respondeu. Lindo. Então, o que eu gostaria que você fizesse é verificar se há algum lugar com ar condicionado? Sim, acho que tem ar condicionado. Há ar condicionado.
+
+Vocês não estão se divertindo aqui. Estou sendo frito vivo aqui. Então, o que eu gostaria que você fizesse é acessar o Slido, ao qual você pode se inscrever aqui. Se você não estiver participando do exercício, acesse o Slido, dê uma olhada e vote em algumas boas perguntas. Vou conversar um pouco com a IA até chegarmos a um ponto de parada. Então,
+
+sequências de vitórias rendem pontos? As sequências são independentes.
+
+Vamos ver o que mais ele consegue descobrir.
+
+Onde reside a interface de usuário para gamificação? Vamos colocar isso no painel de controle. Basicamente, vou apenas digitalizar e analisar tudo rapidamente. Então, como estamos nos saindo com o nosso Slido? OK. Já
+
+tentei usar o Spec Kit, o Open Spec ou o Taskmaster em vez da habilidade Grill Me ? Considero-os mais prolixos ou uma alternativa estruturada? Essa é uma ótima pergunta. Existem, portanto, diversas estruturas diferentes que permitem que você, de certa forma, construa esse processo de planejamento para você. Pessoalmente, acredito que nesta fase, quando não há um vencedor claro, quando não existe uma única maneira correta e quando as coisas estão mudando o tempo todo, você precisa assumir o controle de o máximo possível do seu planejamento .
+
+O que eu e muitos dos meus alunos temos observado é que eles tendem a usar em excesso uma determinada pilha de recursos. Eles se metem em problemas porque não controlam a infraestrutura e não têm visibilidade de tudo, e simplesmente concluem que isso não está funcionando. Isso é péssimo. Por outro lado, se você tem controle sobre tudo , pelo menos sabe como consertar ou potencialmente sabe como consertar. Então, mesmo que eu esteja basicamente te dando uma pilha, acredito na inversão de controle e que você deve estar no controle da pilha.
+
+Então, bur bur bur. Posso pressionar zero, por favor? Desculpe? Desculpe, isso foi meio que um murmúrio. Posso lhe
+
+agradecer? Eu sinto muito. [risos] Você não queria dar um bom feedback ao Claude? O que há de errado com você? Ah, ok , legal.
+
+Bem, muitas das perguntas feitas pela skill "Grill Me" não são necessariamente apropriadas para um desenvolvedor, mas sim para um Product Owner ( PO). Em equipes maiores, quem deve usá-lo? Sim . Levante a mão se você já fez programação em pares. Alguém aqui já fez programação em pares?
+
+Certo. Eu costumo dizer: "Abaixe as mãos e levante-as novamente se você já participou de uma sessão de programação em dupla com uma IA." Certo. Como foi? Foi bom? Você gosta
+
+disso? Acho que sessões de programação em pares com IA são uma ótima ideia porque você tem uma terceira pessoa na sala que vai te questionar e te fazer perguntas sem parar . Se você não souber a resposta, o ideal seria que você, o especialista na área, e a IA estivessem na mesma sala. Se você tiver alguma dúvida sobre implementação, o ideal é que você, um colega desenvolvedor e a IA estejam na mesma sala, entende? Vocês podem começar a discutir essas questões em equipe. E acho que, na verdade,
+
+vamos analisar a implementação daqui a pouco e veremos como você pode torná-la muito mais rápida. Mas acho que as decisões realmente cruciais , aquelas para as quais você precisa de humanos, na verdade precisam de muitos humanos, e não importa muito quantos humanos estejam envolvidos. Na verdade, você pode usar uma espécie de programação em massa com IA para manipular vários grupos. Qual é a minha ferramenta de meta-instrução favorita ? Acho que meio que já respondi a isso.
+
+Não tem ar condicionado. Vamos simplesmente conviver com isso. Como posso usar essa conversa a meu favor depois da sessão "Grill Me"? Bom, nós vamos chegar lá. Bem, eu realmente quero acelerar isso de alguma forma artificialmente. É exatamente isso que
+
+eu quero dizer. Então alguém simplesmente disse: "Ok, Ralph, repita isso." Mas isso é crucial porque eu não posso fazer um loop por cima disso, certo? Não consigo... Bem,
+
+acho que existem dois tipos de tarefas na era da IA. São tarefas que exigem intervenção humana, em que uma pessoa precisa estar presente e executá- las. Que é isto? Somos o ser humano no circuito, com vários seres humanos no circuito. E existem tarefas AFK. Existem tarefas em que a
+
+pessoa pode estar longe do teclado e isso não faz diferença. A implementação, como veremos, pode se tornar uma tarefa para ser realizada ausente do teclado (AFK). Mas o planejamento, essa fase de alinhamento, precisa ter participação humana. Tem que ser. Então, infelizmente, terei que fazer isso.
+
+Hum, não sei. Hum, me dê uma longa lista com todas as suas recomendações. Estou ministrando um workshop neste momento. Então, eu preciso artificialmente que você assuma mais responsabilidades. Vamos ver o que acontece.
+
+Vamos responder a mais algumas perguntas enquanto o programa está em execução. Qual a minha opinião sobre gerentes de produto ou outros profissionais que não atuam na área de desenvolvimento e que se sentem à vontade para realizar tarefas de programação? Hum. Hum, acho que vou voltar a isso mais tarde . Vou deixar isso sem resposta.
+
+Um pouco de mistério. Notei que não estou usando a interface de perguntas e respostas do Grill Me. Por que? Existe uma interface de usuário específica que você pode acessar no Claude Code. Vou responder rapidinho.
+
+Faça-me uma pergunta usando a ferramenta "Fazer uma pergunta ao usuário". [bufa] E essa interface de usuário... hum, está meio quebrada no Claude e eu realmente a detesto.
+
+Você percebe que estou usando Claude, mas eu não gosto muito de Claude. Assim como você, com esse método você tem total liberdade para escolher qualquer sistema que desejar. E esta é a aparência da interface do usuário. É muito agradável quando você se depara com isso pela primeira vez, mas depois percebe que, na verdade, está quebrado de diversas maneiras. Muito bem, qual foi a resposta? Nossa!
+
+Oh não. Enquanto isso acontece, deixe-me dar algumas aulas. O plano aqui é pegar nossa habilidade "Grill Me" e encontrar uma maneira de transformá-la em um destino. Precisamos ir até...
+
+Bem, basicamente precisamos... Estamos tentando descobrir o formato disso. É isso que estamos fazendo. Estamos definindo
+
+o formato das tarefas durante a sessão de churrasco. E para transformar isso em um conjunto de ações práticas para a IA, precisamos essencialmente descobrir o destino. Precisamos saber para onde estamos indo . Precisamos saber o formato de tudo isso. Portanto, acredito que existam dois documentos essenciais de que precisamos.
+
+Precisamos de um documento que indique o destino. Oh não. Não está suficientemente iluminado. Pronto. Ainda não está mais claro. Pronto.
+
+Precisamos de algo para documentar o destino. E precisamos de algo para documentar a jornada. Em outras palavras, precisamos de um documento que determine como isso se apresenta em todas as suas histórias de usuário, que defina o que significa " concluído" e, em seguida, que defina como será a divisão do processo . Então, é para lá que vamos agora . Então, depois que terminarmos a sessão de churrasco, sim, ficará ótimo. Fantástico. Eu amo
+
+isso. Respondeu a 22 das suas próprias perguntas. Pronto. Isso é bem representativo de como é uma sessão de churrasco. Então, neste momento, eu já usei 25 mil tokens e tudo isso, ou boa parte disso, é ouro. Quero
+
+manter isso por perto. Eu tenho 25 mil fichas lá. E o que eu quero fazer é meio que resumir isso em algum tipo de documento final. Então, este é o próximo exercício, onde vamos escrever um documento de requisitos do produto. E o documento de requisitos do produto, ou PRD, tem essencialmente essa função. São os
+
+documentos de destino. E, de certa forma, não importa qual seja o formato. Tenho um formato que prefiro e de que gosto bastante. Mas você pode escolher o formato que preferir ou qualquer outro que sua empresa utilize. E, na verdade, o que estamos fazendo é... não estou
+
+muito preocupado com isso. Na verdade, estamos apenas resumindo o conceito de design que temos até agora. Então, vamos tentar isso. Então, vou iniciar isso. Eu diria para dar zoom até o final da página.
+
+Tudo o que vou fazer é dizer para escrever um PRD. E agora podemos analisar essa habilidade . Escreva um PRD. Então, essa habilidade faz algumas coisas. Primeiramente, solicita ao usuário uma descrição longa e detalhada do problema. Você
+
+pode escrever um PRD sem grelhar primeiro, mas eu prefiro grelhar primeiro e depois escrever o PRD. Então você pode instalar o repositório, o que nós já fizemos, de certa forma. Então, fazemos com que o sistema entreviste o usuário incessantemente, realizando uma espécie de sessão de interrogatório, e então começamos a montar um modelo de PRD (Product Requirements Document). Então, isso está disponível no repositório, caso queira dar uma olhada. E, basicamente, é assim que se parece . Temos algumas declarações do problema,
+
+o problema que o usuário está enfrentando, a solução para o problema e um conjunto de histórias de usuário. E essas histórias de usuário meio que definem o que é isso. Vocês sabem, provavelmente já viram coisas assim se forem desenvolvedores . Sabe, existe uma linguagem chamada "cucumber" que você pode usar para escrever isso, ou nós simplesmente escrevemos nós mesmos, basicamente. Em seguida, temos uma lista de decisões de implementação que foram tomadas e também uma lista de decisões cruciais de teste.
+
+Então, vou executar isso. OK. E assim, cumpriu seu propósito. Ah! Windows, deixe-me fechar isso.
+
+Obrigado. Não sei por que comprei um laptop com Windows. Acho que simplesmente gosto do desafio. Hum [limpa a garganta] Então, a primeira coisa que vai me apresentar é um conjunto de módulos propostos que deseja modificar. Existe um motivo profundo pelo qual estou pensando nisso. Então,
+
+nesta fase, temos uma ideia, já a definimos detalhadamente, chegamos a uma compreensão do que estamos tentando fazer e, então, precisamos começar a pensar no código, porque neste ponto precisamos transformar especificações em código. Não é aqui que estamos ignorando o código. Na verdade, mantemos o código em mente durante todo o processo. E a maneira que eu gosto de fazer isso é simplesmente pensar em um conjunto de módulos propostos para modificar. Vamos retomar essa ideia de projetar continuamente seu sistema e mantê-lo em mente.
+
+Então, está dizendo que recomendar testes para o serviço de gamificação é o único módulo complexo com lógica significativa. Esses módulos parecem corretos. Sim. Parece bom. E vai ficar fora de alcance do PRD.
+
+Para facilitar a configuração, fiz com que criasse um conjunto de problemas localmente. Então, basicamente, será criado um PRD dentro deste diretório de problemas. Mas, a maneira como eu costumo fazer isso, e você pode conferir por si mesmo, é acessando o que considero meu repositório de trabalho, que é GitHub.com/MattPocock/coursevideomanager, aqui em cima . E aqui, basicamente, este é um aplicativo que eu criei e que uso o tempo todo para gravar meus vídeos e coisas do tipo . Acho que registrei tudo como se tivesse
+
+extraído as estatísticas. Acho que já gravei uns mil vídeos aqui, ou algo assim, uma loucura. E você pode ver aqui que existem 744 problemas resolvidos. E isso inclui essencialmente todos os PRDs e todos os problemas de implementação que eu coloquei aqui. Então, geralmente é assim que eu gosto de fazer.
+
+[limpa a garganta] Então, é isso que estou fazendo com o "There we go." Sim, vou apenas dizer que sim e, bem, resolver essa questão. Vamos ver. Está aqui dentro. Então, temos os enunciados dos problemas.
+
+Pessoas se inscrevendo em cursos. A solução, as histórias de usuário, 18 histórias de usuário parecem boas, algumas decisões de implementação, limites de nível, etc. Isso é informação suficiente. Já esclarecemos para onde estamos indo e o que estamos fazendo. Então, é isso que fazemos. Basicamente,
+
+temos uma sessão de churrasco e transformamos isso em um ativo. Agora, levante a mão. Devo analisar este documento? Levante a mão se você acha que eu deveria revisar os documentos. Sim, eu não olho para essas coisas.
+
+Eu não olho para essas coisas. O motivo pelo qual não analiso esses dados é porque, afinal, o que estou testando neste momento? Como eu fico quando leio isso? O que estou testando? O que sou eu? Quais são
+
+os modos de falha que estou tentando testar ? Eu sei que os mestres em Direito são ótimos em síntese porque são mesmo. Eles são realmente bons em resumir. Estou na mesma sintonia que o LLM, certo? Utilizando a habilidade "grill me" , temos um conceito de design em comum.
+
+Portanto, se eu tiver um conceito de design compartilhado, tudo o que estou fazendo é verificar a capacidade do LLM de sintetizar as informações. Então, geralmente não leio essas coisas. Vamos fazer uma sessão de perguntas e respostas, porque eu sinto que vocês estão ansiosos por isso. E acho que podemos fazer uma pausa de uns 5 minutos para eu descansar a voz e para vocês acompanharem os exercícios por um minutinho, se não se importarem. Então, vamos fazer uma pequena sessão de perguntas e respostas.
+
+Se eu não gosto de Claude Code, de qual eu gosto, afinal? Hum... Você já ouviu a frase "hum...
+
+democracia é a pior maneira de governar um país, além de todas as outras"? É assim que me sinto em relação a Claude Code. Hum, já respondemos a essa pergunta. Qual a sua opinião sobre a necessidade de os desenvolvedores compreenderem o TypeScript profundamente agora que existe a correção do "TS sem erros"? Não entendi a forma como isso foi dito, mas acho que entendi o significado, que é o de que acredito que o código é muito importante e isso vai influenciar toda a sessão, e que bases de código ruins geram agentes ruins. Se você tem
+
+uma base de código ruim, o agente que trabalha com essa base de código também será ruim. Falaremos mais sobre isso daqui a pouco. Portanto, acredito que compreender essas ferramentas profundamente, compreender o código profundamente, fará de você um desenvolvedor muito melhor e permitirá que você tire mais proveito da IA. E isso também responde àquela pergunta. Doce. Sai
+
+daí! Aqui está você. Agora que temos 1 milhão de tokens disponíveis, será que algum dia realmente vamos querer aproveitar essa vantagem? Notei que a zona da estupidez tem se tornado menos estúpida ultimamente. Ótima pergunta. Isso nos remete à nossa
+
+ideia inicial sobre a zona de ignorância. Bem, eu
+
+gravei meu curso sobre o Código Claude usando uma janela de contexto de 200 mil e, no dia em que lancei o curso, eles anunciaram a janela de contexto de 1 milhão. Na minha opinião, o que Claude Code fez foi basicamente isso. Uau! Eles basicamente enviaram muito mais conteúdo irrelevante para você . Isso é útil para tarefas em que você deseja recuperar informações de uma janela de contexto grande. Se você quiser
+
+passar cinco cópias de Guerra e Paz ou algo assim para isso e quiser descobrir todas as coisas que... uh...
+
+não consigo me lembrar de um personagem de Guerra e Paz. Hum, por que eu comecei por isso? É bom para recuperação. É menos adequado para programação. Portanto, considero que, no momento, a zona inteligente seja de cerca de 100 mil. A
+
+zona inteligente vai aumentar de tamanho, o que será uma melhoria muito boa. Então, pessoal, vamos fazer uma pausa de 5 minutos, se não se importarem, só para a minha voz descansar e para vocês se movimentarem um pouco ou tomarem uma bebida. Consigo notar alguns olhinhos sonolentos e quero ter certeza de que estaremos acordados para a próxima parte, se não se importarem. Então, vamos levar 5 minutos e já volto aqui . Tudo bem?
+
+Então, temos o nosso PRD, que não vou ler, que é o nosso tipo de documento de destino. Vamos dar uma olhada rápida para ver se há alguma pergunta interessante antes de prosseguirmos. E, ao redescobrir o papel da engenharia de software no mundo atual, quais são as três principais disciplinas que você recomenda? O Taekwondo é bom, pelo que ouvi dizer. Não tenho a mínima ideia de como responder a essa pergunta. Muito
+
+obrigada por perguntar. As três principais disciplinas que eu recomendo. Quer dizer, desculpe? Encanamento. Encanamento é uma boa opção.
+
+Sim, sim, sim. Não sei se isso é uma disciplina. Os encanadores que contratei geralmente não são muito disciplinados. Certo. Então, tudo bem. Já temos o nosso destino,
+
+ok? Um perfeito. Então, como chegamos ao nosso destino? Como podemos fazer isso? Temos uma espécie de PRD vago? Como podemos dividir isso para
+
+não colocar nada na zona de "sem conteúdo"? Em outras palavras, temos o nosso número quatro, como podemos dividi-lo nesse tipo de plano multifásico? Bem, provavelmente o que você faria neste ponto seria dizer: "Certo, Claude, me dê um plano multifásico que me leve a esse destino, certo?" Faz sentido. Isto é o que temos feito antes.
+
+Mas agora tenho uma maneira melhor de fazer isso, que é criar um quadro Kanban a partir disso. Levante a mão quem não sabe o que é um quadro Kanban. Hum, legal. OK. Um quadro Kanban é essencialmente um conjunto de tarefas que você coloca na parede e que possuem relações de bloqueio entre si. Então,
+
+vamos ver como fica por aqui. É assim que nós, desenvolvedores, trabalhamos há muito tempo, na verdade desde que o Agile surgiu. E o que ele faz, como podemos ver aqui, é propor que dividamos essa configuração em cinco tarefas diferentes. Temos o primeiro, que é o esquema e o serviço de gamificação. Sim, bem, parece muito bom. Isso não
+
+está bloqueado por nada. E podemos até ver aqui que também lhe conferiu um tipo de modo AFK. Você se lembra que eu falei sobre o fator humano no circuito e o AFK mais cedo? Esta é uma tarefa para ser realizada ausente do teclado (AFK). Isso é algo que podemos simplesmente repassar para um agente para que ele faça o seu trabalho.
+
+Rastreamento de sequências, ok, isso parece bom. Então, conecte pontos e sequências à conclusão do questionário das lições. Isso está bloqueado pelos números um e dois. Reaterro retroativo. Isso está bloqueado apenas por um.
+
+E então, esta aqui está bloqueada por todas as tarefas. Legal. Hum. Bem, eu penso que você poderia dizer: "Por que não criamos esse tipo de geração de problemas, por que não entregamos isso para a IA? Por que eu preciso estar envolvido nisso, certo?" Porque
+
+nos proporcionou uma seleção bastante boa de ferramentas. Por que preciso revisar isso e descobrir o que fazer em seguida? Bem, na minha opinião, isso é muito barato de fazer, muito rápido depois que eu fizer o RP, e já consigo ver alguns problemas. Existe uma técnica muito, muito importante quando você está tentando descobrir qual deve ser o formato dessa jornada . E isso nos leva a uma ideia muito clássica , que vem do livro "O Programador Pragmático", chamada de marcadores rastreáveis ​​ou fatias verticais.
+
+E as balas rastreáveis ​​realmente transformaram a maneira como penso sobre como fazer com que a IA escolha suas próprias tarefas. Os sistemas têm camadas, certo? Seu sistema possui camadas. Essas podem ser unidades implantáveis ​​diferentes . Você pode ter um banco de dados que esteja armazenado em algum lugar. Você pode ter uma API
+
+que reside próxima ao banco de dados, mas em um local separado. Você pode ter uma interface que reside em um local totalmente diferente, como uma CDN. Ou, dentro dessas unidades implantáveis, você pode ter diferentes camadas . Por exemplo, na base de código em que estamos trabalhando, temos uma infinidade de serviços diferentes. Serviço. Temos um
+
+serviço de quiz, um serviço para equipes, um serviço para usuários, um serviço de cupons e um serviço principal. E esses serviços têm dependências uns dos outros. Então, são como camadas individuais. Bem, o que eu percebi é que a IA adora programar horizontalmente. Portanto, ele adora codificar camada por camada. Ou seja
+
+, na primeira fase, serão feitas todas as tarefas relacionadas ao banco de dados, todo o esquema, tudo o que estiver relacionado a essa unidade. Em seguida, entrará na segunda fase e realizará todas as tarefas da API. Em seguida, adicionará a interface por cima disso. Alguém pode me dizer o que há de errado nessa imagem? Por que isso não seria uma boa ideia? Levante a mão se você
+
+tiver uma resposta. Sim . ter todo esse ciclo de feedback. Exatamente. Você não recebe feedback sobre seu trabalho até que tenha realmente começado ou concluído a fase três.
+
+Então, o que você realmente precisa fazer é testar, até chegar à fase três, se todas as camadas funcionam juntas. Você não possui um sistema integrado que possa usar para realizar testes. Portanto, em vez disso, você precisa pensar em camadas verticais. Você precisa pensar em pequenas fatias de funcionalidade que atravessem todas as camadas necessárias. E essa é uma maneira muito melhor de trabalhar, uma maneira muito melhor para a IA funcionar também, porque significa que ao final da primeira fase ou durante a primeira fase ela pode obter feedback sobre todo o seu fluxo.
+
+Então, o que isso significa para mim é que, dentro do PRD (Product Requirements Document), para resolver problemas aqui em cima, eu consegui dividir um PRD em problemas independentes que podem ser acessados ​​usando marcadores rastreáveis ​​em fatias verticais, escritos como arquivos Markdown locais. [bufa] Primeiro localizamos o PRD. Bem, novamente, explore a base de código se esta for uma sessão nova. Elaboramos cortes verticais. Assim, dividimos o PRD em problemas rastreáveis. Aliás, uma bala rastreável
+
+é basicamente quando você é tipo um artilheiro antiaéreo. Na verdade, é uma ideia bastante violenta. E você está olhando para o céu e é noite. Se você estiver atirando com balas normais, não tem ideia do que está atingindo, certo? Você pode estar, sabe, vendo o avião, mas não vendo para onde suas balas estão indo.
+
+As balas rastreáveis ​​são feitas com uma pequena quantidade de fosforescência, fósforo ou algo semelhante, que as faz brilhar durante a trajetória. Isso significa que a cada seis balas, ou algo assim, você vê uma linha no céu. Assim, você recebe feedback sobre onde está mirando. Então, a ideia aqui é aumentar nosso nível de feedback e obter feedback quase instantâneo sobre o que estamos construindo. Porque sem isso a IA fica meio que às cegas em termos de programação até chegar às fases mais avançadas.
+
+Temos algumas regras de fatiamento vertical. Questionamos o usuário. E então criamos os arquivos de problemas. Então, o que eu vejo aqui é que, mesmo tendo instruído o programa a fazer fatias verticais, ele está propondo criar o serviço de gamificação por conta própria. Essa é apenas uma fatia . E isso me parece um
+
+corte horizontal. O que eu quero ver especialmente na primeira fatia vertical são as alterações de esquema, ou pelo menos algumas alterações de esquema. Quero ver a criação de um novo serviço e uma representação mínima dele na interface do usuário . Então, eu quero que passe pelas fatias verticais, não apenas pelas horizontais. Faz sentido?
+
+OK. Então, vou dar uma boa surra na IA . Hum, garoto mau. Não, não sou. Não vou desperdiçar tokens apenas para dar nomes.
+
+Então, o primeiro corte está muito horizontal. Vou começar por aí e ver se funciona . Faz sentido como conceito? E acho que o que eu realmente gosto em voltar a esses livros antigos é que estamos realmente tentando, nos dias de hoje, verbalizar as melhores práticas de software em inglês. E esses livros, livros de 20 anos atrás, já fizeram isso. E é uma verdadeira
+
+mina de ouro se você quiser usar isso em sugestões de temas. Mas mesmo assim, não vai funcionar perfeitamente todas as vezes. Assim, atribua pontos pela conclusão da lição, que serão exibidos no painel de controle. Sim, esse é um belo corte vertical porque definitivamente é um pedaço grande de coisa. Está desenvolvendo muitas histórias ali, mas veremos algo visível no final, e a IA poderá então complementar isso. Entende agora por que essa opção é
+
+preferível à primeira? Legal. Uau, parece ótimo. Então, estamos cada vez mais perto. Quem estiver acompanhando de casa também, sabe, não estou em casa, mas vocês entenderam a ideia.
+
+Espero que Um também veja a mesma coisa e comece a desenvolver os mesmos instintos. Vamos abrir espaço para perguntas enquanto eu ainda estou criando essas solicitações no GitHub. Uh ba ba ba ba Oh, não, problemas do GitHub. Questões locais. Quando vou parar de usar o Windows? Nunca.
+
+O que você acha? Ok, falaremos disso mais tarde. Como a IA decide quando parar de grelhar? Já que a IA pode perguntar incessantemente, será que podemos ter uma maneira mais inteligente de decidir o ponto de parada? Sim, realmente costuma acontecer...
+
+essas sessões de churrasco podem ser super intensas. E o interessante dessas habilidades é que você pode aprimorá-las se quiser. Se você sentir que a IA está te massacrando sem parar , você pode simplesmente pedir para ela recuar um pouco ou definir pontos de parada e coisas do tipo. Então, se esse é um tipo de falha que você encontra com frequência, basta, sabe, mudar a habilidade. Hum, devo continuar usando a expressão "ser extremamente conciso", sacrificando a gramática em prol da concisão? Bem, havia uma dica que eu
+
+dei para as pessoas há uns 5 meses, que era basicamente aumentar a legibilidade dos seus planos. Então, quando você estiver usando o modo de planejamento, você pode inserir isso no seu arquivo Claude.md e dizer: "Ok, sim, aprove isso." Vamos abrir o Claude.md.
+
+Hum, será que eu tenho um Claude.md? Talvez não. Eu realmente não uso muito o Claude.md . Vou colocar um boneco aqui dentro
+
+. Hum, quando... Não.
+
+Quando estiver falando comigo, sacrifique a gramática em prol da concisão.
+
+E essa sugestão foi muito útil para mim quando eu estava lendo os planos, porque significava que os planos seriam divulgados de forma muito concisa, muito agradável, fácil de ler, geralmente muito sucinta. Mas acabei desistindo dessa ideia e preferi fazer um churrasco, porque o que percebi é que não queria ler as instruções. Eu queria entrar na mesma sintonia que o LLM. Eu queria que me fizesse perguntas agressivas. E quando parei de ler as plantas, parei de precisar que elas fossem concisas.
+
+Então, eu considero os planos no documento de destino como o estado final. E eu não preciso que esse resultado final seja conciso. Espero que isso responda à sua pergunta. Hum, qual será o resultado, na minha opinião, do impasse mexicano em relação aos futuros papéis dos primeiros-ministros e à convergência de outras funções? Hum, não faço ideia. Não sou especialista. Não faço a mínima ideia. Ah, ok
+
+. Então, depois de algumas aprovações, devemos acabar com uma série de problemas. Agora, esses problemas que estamos criando são projetados para serem acessados ​​individualmente, o que significa que este quadro Kanban acaba ficando mais ou menos assim. Onde você tem essencialmente um conjunto de ingressos com uma série de relações independentes. Então, esta precisa ser feita antes daquela . Esta precisa ser feita
+
+antes desta. E esta aqui, digamos que temos outra aqui . Esta precisa ser feita antes desta . Isso significa que você pode começar a paralelizar. Você pode começar a colocar agentes para trabalhar simultaneamente nessas tarefas. Porque
+
+sim, esta precisa ser feita primeiro. E então, esses dois podem ser capturados simultaneamente por agentes independentes. Levante a mão se você já trabalhou com algum tipo de paralelização de agentes. Ok, legal. Então, isso permite que você transforme esses planos de forma otimizada em algo como grafos acíclicos direcionados , onde você consegue ter essencialmente três fases.
+
+Onde você tem a fase um. Hum, deixa eu pegar e mover isso. Acima desta linha aqui, você faz esta. Na segunda fase, você faz os dois passos abaixo. E então, na terceira fase, você faz esta terceira e a adiciona àquela.
+
+E quando você pensa que poderia haver... Este é um plano relativamente simples , mas você poderia ter vários planos diferentes operando simultaneamente. Significa que você pode fazer uma paralelização realmente excelente . E falaremos mais
+
+sobre isso daqui a pouco. Mas é por isso que prefiro um quadro Kanban configurado dessa forma a um planejamento sequencial. Porque um plano sequencial só pode ser realmente compreendido por um agente. Então, para onde foi isso? Por aqui.
+
+Sim, este plano aqui é realmente apenas um loop, certo? Apenas um agente pode trabalhar nessas tarefas, pois temos fases numeradas e elas não são paralelizadas. Faz sentido? Legal. Então, temos nossos problemas. Ah, vamos lá.
+
+Pare de me perguntar, pois eu sei que isso está criando problemas no GitHub. Eu realmente não quero isso. Oh não. Seu tolo. Em vez disso, crie-as em issues.
+
+Não. Isso não é preciso o suficiente. Seu tolo. Em vez disso, crie-os em arquivos markdown locais, fazendo referência à versão local. Desculpe por isso.
+
+Então, quando chegarmos a este ponto, nós [limpa a garganta] teremos uma série de problemas locais que podemos começar a analisar e implementar. E é nesse ponto que o ser humano sai do ciclo. Então, até agora...
+
+Deixe-me apresentar uma visão geral adequada desse tipo de fluxo que estamos explorando aqui. Até agora, tivemos uma ideia. Vou dar um zoom para quem está lá no fundo. E nós nos questionamos muito sobre essa ideia. Podemos pular a etapa de pesquisa e prototipagem, mas transformamos isso em um PRD, em um documento de destino.
+
+Em seguida, transformamos esse PRD em um quadro Kanban. E todas essas etapas são revisadas por humanos. E agora, na fase de implementação, damos um passo atrás. E permitimos que um agente, ou vários agentes, trabalhem nesse quadro Kanban. Bem, isso significa que, sim, dedicamos muito tempo ao planejamento, mas também significa que acumulamos bastante trabalho para o agente. Podemos pensar nisso
+
+como uma espécie de turno diurno e turno noturno. Este é o turno diurno para o ser humano, certo? Planejando tudo, preparando tudo. E depois que passarmos para o turno da noite, a IA poderá simplesmente trabalhar AFK (ausente do teclado). Mas como isso se traduz na prática?
+
+Bem, então eu só vou... Ah, sim. Simplesmente permita. É perfeito.
+
+Então, parece que se passarmos para o próximo exercício, que na verdade é o último, vamos executar seu agente AFK. Bem, eu chamei isso de Ralph, na verdade, porque é essencialmente um loop do Ralph. E este ponto aqui, eu quero analisar bem de perto . A primeira coisa que faremos aqui é basicamente executar o Claude e tentar incentivá-lo a funcionar completamente em modo AFK (ausente do teclado). Vou mostrar a vocês como é esse tipo de roteiro daqui a pouco.
+
+Mas você diz: "Ok, os arquivos de problemas locais dos problemas são fornecidos no início do contexto." A forma como fazemos isso é a seguinte: se você olhar dentro do arquivo once.sh aqui no repositório, verá que é basicamente um script bash, onde pegamos todos os problemas, hum [limpa a garganta], que estão dentro de arquivos markdown, e os armazenamos em uma variável local. Portanto, essa variável "issues" contém todos os problemas que estão em nossa lista de pendências. Em seguida, selecionamos os últimos cinco commits.
+
+Explicarei o motivo em um minuto. Em seguida, capturamos o prompt e executamos o código Claude com o modo de permissão " aceitar edições". E então, basicamente, é só repassar todas as informações. Esta é a aparência do implementador. Então, essa é a aparência de uma versão muito, muito simples desse tipo de loop.
+
+E, claro, isto não é um loop. Isso é apenas executar o programa uma vez. O loop está na versão AFK aqui em cima, que é um pouco mais complicada. E o ponto crucial aqui é que também estamos executando isso em um ambiente Docker sandbox. Então, eu não quero que vocês instalem o Docker nos seus laptops porque vamos dizer: "Vocês precisam baixar uma imagem especial e vamos sobrecarregar o Wi-Fi da conferência se fizermos isso." Então,
+
+vou demonstrar isso para vocês, mas vocês não precisarão executar o programa por conta própria. Explicarei tudo em um minuto. Mas basicamente, este loop aqui, e ba ba ba ba boom. Basicamente, estamos executando uma versão do programa, que vamos repetir em loop indefinidamente. Então, esta é mais ou menos a versão com o humano no circuito . E isto é essencial. Executar
+
+esse processo repetidamente é essencial, pois você poderá observar o comportamento do agente e como ele acaba funcionando. E qualquer ajuste que você precise adicionar ao prompt, você pode fazê-lo. Vamos ao prompt. Então, os arquivos de problemas locais estão sendo enviados. Você vai trabalhar apenas nos problemas relacionados a ausência do teclado (AFK) . Faz sentido.
+
+Se todas as tarefas AFK forem concluídas, exiba esta mensagem: "Não há mais tarefas a fazer". E depois, escolha a próxima tarefa. Então, o que estamos fazendo aqui é essencialmente gerenciar ou organizar uma lista de tarefas pendentes que nosso agente AFK irá processar. Esse é o propósito de todas essas configurações iniciais. Neste quadro Kanban aqui, estamos basicamente criando uma lista de tarefas para o turno da noite executar.
+
+E o turno da noite, esse tipo de sugestão do Ralph aqui, tem sua própria ideia de qual é a próxima tarefa a ser realizada. Eu falei sobre paralelização. Mostrarei isso mais tarde, mas essencialmente trata-se de um loop sequencial. Vamos executar apenas um agente de codificação por vez. Essa é uma boa maneira de, basicamente, dar os primeiros passos.
+
+Portanto, a prioridade é a correção de bugs críticos , a infraestrutura de desenvolvimento, seguida pela análise de problemas pontuais e, por fim, o aprimoramento de melhorias rápidas e refatorações. E então temos apenas uma instrução muito simples sobre como concluir a tarefa. Então, vamos explorar o repositório. Utilize TDD para concluir a tarefa. Falarei disso mais tarde.
+
+E então executamos alguns ciclos de feedback. Então, vamos tentar isso e ver o que acontece. Então, ótimo. Os arquivos do problema foram criados. Devemos estar prontos para começar. Vou
+
+cancelar minha participação. Vou limpar e vou correr... Onde é? Ralph
+
+uma vez.sh. E sinta-se à vontade para fazer o mesmo se estiver acompanhando. Então, podemos ver que o Claude está sendo executado aqui dentro, com o prompt e todos os problemas que foram passados. E enquanto ele faz o que tem que fazer, você provavelmente tem algumas perguntas sobre essa configuração e sobre as decisões que tomei de delegar essencialmente toda a minha programação para a IA, certo?
+
+Então, vamos fazer uma rápida sessão de perguntas e respostas enquanto o sistema ainda está se consolidando . Ah, ok . Ba ba ba ba ba. Vou remover esses. Como você retém decisões negativas, coisas contra as quais decidiu e as justificativas ao persistir nos resultados da sessão de questionamento? Ótima
+
+pergunta. Existe uma resposta muito simples, que é: na seção PRD (Procedimento de Desenvolvimento do Produto), há uma seção na parte inferior, uma lista de itens que estão fora do escopo. Portanto, estas são as coisas que não vamos abordar neste PRD, que é muito importante para definir o que está concluído. Fique à vontade para entrar em contato pelo Slido se tiver mais alguma dúvida. Qual é o meu fluxo de trabalho de front-end? Certo,
+
+essa é uma ótima pergunta. Vou responder a isso daqui a pouco, eu acho. Como lidar com agentes que produzem mais código do que podemos revisar? Como paralelizar e usar vários agentes de forma adequada e independente. Certo, são duas perguntas.
+
+Levante a mão se você sente que está fazendo mais revisão de código agora do que antes. Sim, com certeza. Hum, acho que não há como evitar isso. Se delegamos toda a nossa programação aos agentes, você perceberá que a implementação aqui é realmente a única parte que exige atenção. Depois, também precisamos fazer o controle de qualidade do trabalho e a revisão do código , certo?
+
+E se estivermos executando esses loops onde essencialmente vamos implementar quatro problemas em um, é difícil conciliar isso com o princípio de que você deve manter os pull requests pequenos e autocontidos, certo? Por exemplo, solicitações de pull pequenas e autocontidas significam que você precisa fazer menos loops, loops mais curtos ou algo do tipo. Ou talvez você goste de uma pilha enorme de PRs, mas isso também parece horrível. Isso ainda representa mais código separado para revisar. Sinceramente, ainda não sei a resposta para isso.
+
+Acho que precisamos estar preparados para fazer mais revisões de código, essencialmente. O que não é nada divertido. Não é nada agradável dizer isso. Não é que eu não saiba. Não me sinto bem em dizer isso, mas acho que provavelmente é assim que as coisas estão caminhando.
+
+É uma ótima pergunta. Hum, podemos pegar algumas perguntas da sala também? Não vamos usar o microfone, mas levantem a mão se tiverem alguma pergunta para mim . Sim . Portanto, a abordagem é muito linear, desde a concepção da ideia até a revisão de código de controle de qualidade. É claro que
+
+o mundo real é muito mais complicado. Então, você tem todas essas ideias que estão em paralelo e ninguém tem a visão completa. E enquanto você está trabalhando em algo, surge outro bug. Sim. Como você lida com a bagunça? Como você otimiza esse
+
+ciclo de feedback? Ótima pergunta. Então, a questão era: se tudo isso parece ótimo para um desenvolvedor solo, como implementar isso na prática em uma equipe? Como você coleta o feedback da equipe sobre isso? E a minha resposta para isso é que, se você tem uma ideia, essencialmente a jornada da ideia até o destino é algo que você precisa descobrir com a equipe, certo? Então, tudo isso aqui em cima
+
+é meio que coisa de equipe, sabe o que quero dizer? Portanto, se você tiver uma ideia e, durante uma sessão de debate acalorado sobre ela, surgir uma dúvida para a qual você não sabe a resposta, é necessário envolver sua equipe, como descrevemos anteriormente. Então você pode precisar pensar: "Ok, precisamos construir um protótipo disso. Precisamos realmente discutir isso a fundo. Precisamos de algo que os especialistas da área possam testar."
+
+Ou, talvez, precisemos integrar uma biblioteca de terceiros a isso. Talvez precisemos fazer alguma pesquisa. Talvez precisemos, na verdade, ficar trocando mensagens entre nós para encontrar um serviço de terceiros que nos traga o máximo proveito. Talvez precisemos retornar à fase de ideação com as informações que coletamos lá. Portanto, em todo o processo até chegar ao PRD (Product Decision Making - Pedido de Compra), você precisa envolver sua equipe. É algo em que
+
+esses recursos serão compartilhados e você receberá solicitações de comentários sobre eles, e esse ciclo continuará se repetindo indefinidamente até que você descubra para onde está indo. Depois de definir seu objetivo, você pode começar a implementar o quadro Kanban. Mas isso é essencialmente muito discutível e você ficará oscilando entre as fases. Faz sentido? Sim.
+
+Você não precisaria de um PRD para o seu protótipo? Peça desculpas novamente. Você não gostaria de ter um PRD (Requisito de Design de Produto) para o seu protótipo? A questão era: você quer passar por toda essa sessão apenas para criar um protótipo? Você também não precisa de um PRD para o seu protótipo. Vamos
+
+falar rapidamente sobre protótipos por um segundo. Surgiu uma pergunta sobre como fazer isso funcionar no front-end? Como você faz isso, já que a interface é muito sensível aos olhos humanos? É preciso ter olhos humanos observando a parte frontal o tempo todo para garantir que ela tenha uma boa aparência. A inteligência artificial, na verdade, não tem olhos. Ele consegue
+
+analisar o código, mas sua interface é multimodal. Então, minhas experiências ao tentar integrar IA, digamos, ao navegador de agentes ou ao Playwright MCP, para fornecer ferramentas que permitam a visualização de imagens por meio de uma interface, são as seguintes: na minha experiência, ainda não é muito bom nisso e não consegue criar uma interface agradável em uma base de código madura. Ele pode, de certa forma, cuspir um. Mas o que ele pode fazer é você dizer: "Ok, eu quero algumas ideias de como essa interface pode ficar. Me dê três protótipos que eu possa escolher rapidamente para decidir qual fica melhor." E você pega o recurso
+
+desse protótipo e o reinsere na sessão de avaliação ou obtém feedback sobre ele, blá blá blá blá blá. Responder à sua pergunta, algo assim? O protótipo é... sabe, está uma
+
+bagunça. O objetivo é fornecer feedback logo no início do processo. Portanto, essa é uma ótima maneira de trabalhar com código front-end, uma ótima maneira de analisar a arquitetura de software em geral. Vamos a mais uma pergunta. Sim.
+
+[Limpa a garganta] No seu sistema, como você integra o respeito à arquitetura e ao design com contratos de API e a adequação ao seu sistema maior? Ah, restrições de segurança, todo tipo de restrição desse tipo. Sim . Essa pergunta envolve muita coisa. A questão era: como se adaptar à arquitetura existente? Como você faz para que
+
+ele esteja em conformidade com os padrões de código, como os da sua base de código ou, sim, as APIs de design de arquitetura, sim. regras de segurança que restringem seu projeto. Sim. Responderei a essa pergunta daqui a pouco. Não tem problema .
+
+Então, espero que tenhamos começado a colocar algumas coisas em andamento. É apenas um sinal emitido durante a fase de exploração. Hum, estou tentado a simplesmente deixar rodando AFK. Talvez sim, talvez não. Basicamente, o que ele está fazendo é explorar o repositório. A
+
+implementação começará então com base no que solicitamos. Vamos fazer mais uma pergunta enquanto o programa está em execução. Sim. Por que não usar IA para controle de qualidade de tudo? Sim.
+
+Então, a pergunta era: por que não usar IA para o controle de qualidade? IA para controle de qualidade. Por um segundo, fiquei sobrecarregado com tantos termos técnicos. Por que você não pede para a IA testar o próprio código? Agora, é claro que você pode, sem dúvida alguma. E acho que enquanto isso
+
+acontece, enquanto está sendo feito aqui, ok, já temos uma visão clara da base de código. Trata-se de avaliar as questões. A próxima tarefa será resolver o problema 02. Acho que vou mostrar isso para vocês daqui a pouco. É que você definitivamente deveria implementar uma etapa de revisão automatizada como parte da implementação.
+
+Então, você já tem sua implementação. Como os tokens são bem baratos e a IA é realmente muito boa em revisar coisas, você deve pedir para ela revisar o próprio código antes de fazer o controle de qualidade . Descobri que isso detecta uma infinidade de bugs diferentes, e o funcionamento é o seguinte: vou fazer um pequeno diagrama. Digamos que você tenha uma implementação que tenha usado muitos tokens na zona inteligente; se você a fizer tentar realizar a revisão, ela acabará sendo feita na zona burra. Assim, o revisor será mais burro do que quem realmente implementou a mudança.
+
+Se imaginarmos que este é o... sejamos consistentes. Essa é a resenha.
+
+Essa é a implementação. Por outro lado, se você limpar o contexto,
+
+poderá revisar diretamente na área relevante, que é onde você deseja estar. Vamos ver como está indo nossa implementação . OK, bom. Está gerando uma migração. Parece muito bom.
+
+Estamos recebendo algum código. E enquanto eu penso algo como "Aha, vamos lá". TDD. Vamos falar sobre TDD e depois acho que faremos uma pequena pausa. Descobri que o TDD é absolutamente essencial para tirar o máximo proveito dos agentes. Levante a
+
+mão se você sabe o que é TDD. Legal. OK. TDD significa desenvolvimento orientado a testes . Essencialmente, o que está fazendo é algo chamado refatoração vermelho-verde. E se você olhar no
+
+código-fonte, encontrará uma habilidade que descreve como realizar a refatoração vermelho-verde e ensina a IA a fazê-la. Então, o que está acontecendo é que ele está escrevendo um teste que falha primeiro. Então, é como dizer: "Ok, eu dividi a ideia do que estou fazendo e vou escrever um único teste que falhe e, em seguida, preciso fazer a implementação passar." Descobri que, em primeiro lugar, isso adiciona testes à base de código, e esses testes tendem a ser de boa qualidade. Então, nós temos esse tipo de serviço de gamificação.
+
+Parece que está usando alguns elementos já existentes para criar um banco de dados de teste. O teste falhou porque o módulo ainda não existe. Ok, confirmamos que é vermelho. E então ele vai em frente e, com sorte, executa o teste e é aprovado. Descobri que... levante a mão quem já teve problemas com
+
+IA escrevendo testes ruins. Sim . Ele tende a tentar colar nas provas porque faz isso meio que em camadas. Ele executará toda a implementação e, em seguida, executará toda a camada de testes logo abaixo. Bem, vou apenas dizer que sim, você tem permissão para usar o teste NPX V.
+
+E usando essa técnica, geralmente é muito mais difícil trapacear, porque ela meio que instrumenta o código antes de escrevê-lo. Portanto, considero que o TDD é extremamente eficaz em situações onde é possível implementá-lo. Na verdade, é tão bom que acabei adaptando toda a minha técnica para fazer o TDD funcionar melhor. Consigo ver alguns olhos marejados. Está muito quente aqui.
+
+Você não imagina o calor que faz aqui em cima. Vamos fazer outra pausa de 5 minutos para ir ao banheiro . Vamos voltar às 14h45, eu acho. Tenha um ótimo e generoso. E voltaremos em cerca de 6 ou 7 minutos e falarei sobre como penso em módulos, sobre como construir uma base de código para tornar isso possível.
+
+Estive a fazer alguns ajustes na IA e acabámos por chegar a um resultado positivo com um commit. Portanto, temos algo para testar. A segunda edição está concluída. Eis o que foi feito. É mais ou menos assim que fica quando um loop do Ralph é concluído: você acaba com um pequeno resumo.
+
+E agora temos algo que podemos testar. Porque fizemos os ciclos de feedback, porque fizemos os rastreamentos de tópicos, porque dissemos: "Ok, nos dê algo que possa ser revisado no final disso." Podemos ir imediatamente fazer o controle de qualidade. Agora, não há nada menos emocionante do que assistir alguém fazendo o controle de qualidade de alguma coisa. Mas, com sorte, poderemos nos divertir um pouco .
+
+Vamos só verificar se isso funciona mesmo. Na verdade, antes de ir para lá, eu só quero processar o que acabou de acontecer. O que podemos ver é que isso gerou algumas alterações no painel de controle. E então, os ciclos de feedback foram executados. Então, ele executou os testes e as tipagens.
+
+Agora, TDD é obviamente muito importante. E isso é realmente importante porque esses ciclos de feedback são essenciais para a IA, essenciais para que a IA produza algo razoável. Porque sem isso, a IA fica totalmente cega para a programação, certo? Você precisa...
+
+Se sua base de código não tiver loops de feedback, você nunca, jamais, jamais conseguirá uma saída decente de IA. E, frequentemente, o que você descobrirá é que a qualidade dos seus ciclos de feedback influencia, essencialmente, a qualidade da programação da sua IA . Esse é o limite máximo. Portanto, se você estiver obtendo resultados ruins da sua IA, muitas vezes é necessário aumentar a qualidade dos seus ciclos de feedback. Falaremos sobre como fazer isso daqui a pouco.
+
+Então, ele executou NPM run test e NPM run type check. Ocorreu um erro de tipo, e foi necessário corrigi-lo com um pouco de mágica do TypeScript. Muito bom. Sim, tipo de número limite de nível. OK.
+
+Entende agora por que parei de ensinar TypeScript? Porque a IA já sabe tudo . Então, os testes foram executados, passaram e tudo parece estar indo bem. Assim, chegamos ao final com 284 testes neste repositório. Muito bom.
+
+Eu acho que a interface (front-end) é realmente difícil de testar aqui. Basicamente, estamos apenas testando o serviço. Então, criamos um serviço de gamificação, se olharmos aqui em cima . E então temos um teste para esse serviço. Você pode ver isso tanto no serviço quanto no próprio teste.
+
+Bem, se eu estivesse fazendo revisão de código aqui, primeiro revisaria os testes, para garantir que eles estivessem testando coisas razoáveis, e depois revisaria o próprio código para ter certeza de que não está fazendo nada muito arriscado, certo? O essencial é que eu preciso, de fato, olhar para o painel de controle. Vou entrar como aluno. Ah, se me permitirem. Talvez não me deixe.
+
+Vamos lá, filho. Pronto. Vamos entrar com a conta Emma Wilson. Inscreva-se nos cursos. Bem, digamos que eu tenha uma introdução ao TypeScript.
+
+Continue aprendendo. Sim , eu terminei esta lição. E algo deu errado. Imagino que seja porque não tenho o erro "Uh SQLite". Não tenho a mesa certa. Então, preciso de uma tabela de eventos pontuais. "
+
+Eventos pontuais" é um nome de tabela estranho. Não tenho certeza do que estava pensando . Hum, vamos suspender. Vamos executar o comando `npm database migrate`. Empurre, eu acho.
+
+Não me lembro qual era. Mas você meio que entendeu a ideia, né? Eu não vou submeter vocês a me verem fazendo controle de qualidade porque é muito chato. Mas, neste ponto, eu basicamente voltaria atrás. Eu...
+
+Deixe-me abrir o projeto novamente. E eu gostaria de dizer que este é um momento crucial, e é muito importante fazer o controle de qualidade manualmente aqui, porque o controle de qualidade... Oh, céus, oh, céus. O que está dando errado? Pronto
+
+. O controle de qualidade é como eu, então, imponho minhas opiniões de volta à base de código, como eu imponho meu gosto. O que você frequentemente encontrará é que existem equipes por aí tentando automatizar tudo, cada parte desse processo. E eles tendem a...
+
+se você tentar automatizar a criação da ideia, automatizar o controle de qualidade, automatizar a pesquisa, automatizar o protótipo, você acaba com aplicativos que, na minha opinião, simplesmente não têm bom gosto e são ruins. Talvez simplesmente não funcionem, ou nem funcionem como deveriam, ou simplesmente não haja... É preciso um toque humano ao construir essas coisas, porque sem isso, o resultado é apenas uma bagunça.
+
+E aqui não estamos produzindo qualquer coisa. Estamos tentando produzir itens de alta qualidade , e é para isso que serve o controle de qualidade. Hum. Então, vou fazer duas coisas nesta seção final. Primeiro, vou explicar como...
+
+Provavelmente você está se perguntando: digamos que eu tenha uma base de código na qual estou trabalhando. E é uma base de código ruim. É uma base de código realmente complicada, na qual a IA nunca faz um bom trabalho, e talvez na verdade a maioria dos humanos que mexem nessa base de código também não façam um bom trabalho. Como posso melhorar essa base de código? E a segunda coisa é que vou mostrar a minha configuração para paralelização.
+
+Então, vamos começar com o código ruim. Onde está agora? Onde está o diagrama? Aqui está. Em seu livro, "A Filosofia do Design de Software", John Ousterhout fala sobre o tipo ideal de módulo.
+
+E vamos imaginar que você tenha uma base de código com a seguinte aparência. Cada um desses blocos aqui são arquivos individuais. E esses arquivos exportam coisas deles. Sabe, eles têm... coisas que você extrai dos
+
+arquivos e depois usa em outras coisas. Assim, você pode ter essas dependências estranhas, onde este arquivo aqui pode depender deste arquivo, ou daquele arquivo, por exemplo. Agora, se esses arquivos forem pequenos e não exportarem muitas coisas, John Ousterhout os chamaria de módulos superficiais, essencialmente. Onde eles não são muito...
+
+Eles meio que parecem com isso, se eu... Não, na verdade não. Não consigo fazer um bom diagrama disso. São
+
+basicamente muitos e muitos pedacinhos. Bem, isso é difícil para a IA navegar, porque ela realmente não entende as dependências entre tudo. Não consegue determinar onde tudo está. Sabe, ele precisa percorrer manualmente todo o gráfico e dizer: "Ok, isso depende disso. Isso depende disso . Isso depende disso."
+
+E também fica difícil testar isso, porque onde você traça os limites do seu teste? Você testa cada módulo individualmente? Tipo, literalmente desenhar um limite de teste? Não, não faça isso. Por aqui?
+
+E depois talvez outro teste de limite em torno do próximo, e depois do seguinte ? Ou você deveria fazer isso em grandes grupos ? Você deveria dizer: "Ok, vamos testar todos esses módulos relacionados juntos e, sabe, torcer para que funcionem." Bem, [suspiro] isso significa que, se eu pensar que os testes ruins geralmente se parecem com isso, onde a IA essencialmente tenta envolver cada pequena função em seu próprio limite de teste e, em seguida, simplesmente testar se elas funcionam individualmente. Mas o que isso significa é que, quando, digamos, este módulo aqui chama esses dois, ou seja, depende de ambos, este módulo pode inverter a ordem das funções, ou pode haver algum tipo de código dentro desse módulo que valha a pena testar separadamente. E se você
+
+envolver isso em um limite de teste, o que você faz? Você está simulando os outros dois módulos? Como isso funciona? Portanto, descobrir como construir uma base de código que seja fácil de testar é essencial aqui. Porque se nossa base de código for fácil de testar, então nosso código e nossos ciclos de feedback serão melhores, e a IA terá um desempenho melhor em nossa base de código. Faz sentido?
+
+Então, qual é a aparência de uma boa base de código ? Bem, não assim. Tem esta aparência . Onde você tem o que John Ousterhout chama de módulos profundos. Módulos que possuem uma pequena interface que expõe uma interface simples, mas que contém muitas funcionalidades.
+
+O que isso significa é que são fáceis de testar, porque basta... Digamos que haja uma dependência entre este e aquele. Minha flecha está funcionando? Sim, aí está.
+
+Então, o que você faz é simplesmente envolver esse módulo com um grande limite de teste, esse aqui em cima, e você vai detectar muita coisa boa. Porque há muitas funcionalidades que você está testando, e na verdade quem chama o módulo terá uma interface simples para trabalhar. Então, não é muito complicado. Faz sentido? Módulos profundos versus módulos rasos. Isso é bom.
+
+Essa versão superficial é ruim. E o que eu constato é que, sem auxílio, ou se você não observar a IA com atenção, ela produzirá uma base de código que se parece com isso. Portanto, você precisa ter muito, muito cuidado ao dirigi-lo. E é por isso também que, se olharmos para dentro do PRD, para onde foi o PRD? Está dentro das edições. Está dentro do
+
+sistema de gamificação. Não encontrado. Claro que não. Aqui está. Então, dentro daqui eu tenho o modelo de dados dos módulos.
+
+Então, está dizendo especificamente: "Ok, este serviço de gamificação é um novo módulo complexo, que vamos testar . Ele terá esta interface específica. E também... Ok, estamos
+
+modificando o serviço de progresso. Estamos modificando o caminho da lição. Estamos modificando o caminho do painel, etc. Então, estou sendo bem específico sobre os módulos que estou editando e me certificando de manter esse mapa de módulos em mente o tempo todo, durante o planejamento e durante a implementação. Faz sentido?
+
+Muito, muito útil. É útil por outro motivo também. Não só torna seu aplicativo mais testável, como você consegue fazer um pequeno truque mental. E vou encher minha garrafa de água enquanto vocês esperam para saber qual é. Deixe-me fazer uma pergunta para vocês. Então,
+
+levantem as mãos se vocês sentem que estão trabalhando mais do que nunca com IA. Sim. Levantem as mãos se vocês sentem que conhecem bem o código. base menos bem do que antes. Sim.
+
+Isso é real. Como estamos nos movendo rápido, como estamos delegando mais coisas, acabamos perdendo a noção da nossa base de código. E se perdermos a noção da nossa base de código, não conseguiremos melhorá-la e, essencialmente, estaremos delegando a sua estrutura para a IA. Eu [bufa] não acho isso bom. Mas então, como fazemos para que possamos nos mover rápido e ainda manter espaço suficiente em nossos cérebros?
+
+Acho que esta é uma maneira de fazer isso. Porque o que você está fazendo aqui não é apenas pensar em criar grandes estruturas na sua base de código, grandes serviços. O que eu acho que você deveria fazer é projetar a interface para esses módulos, mas delegar a implementação. Em outras palavras, esses módulos podem se tornar como caixas cinzas, onde você só precisa saber a estrutura deles, o que eles fazem e como se comportam, mas você pode delegar a implementação desses módulos. Eu achei isso muito bom. Eu não
+
+preciso necessariamente Revisar todo o código dentro desse módulo. Eu não preciso necessariamente saber tudo o que ele faz. Só preciso saber que ele se comporta de uma certa maneira sob certas condições e que ele faz o que precisa ser feito. Então, é como se eu tivesse uma visão geral da minha base de código e entendesse as estruturas internas, entendesse o que as interfaces fazem, mas posso delegar o que está dentro dela. Descobri que essa é uma ótima maneira de manter minha noção da base de código e preservar minha sanidade.
+
+Faz sentido? Então, você pode perguntar: como eu pego uma base de código que se parece com isso e a transformo em uma base de código que se parece com isso? Como eu aprofundo os módulos? Bem, temos... Espero que esteja aqui. Tenho
+
+quase certeza que está. Temos uma habilidade. E essa habilidade se chama "Aprimorar a Arquitetura da Base de Código". Bem direto. Vamos executá-la.
+
+O que essa habilidade fará é basicamente uma varredura da nossa base de código, procurando o que está disponível aqui. E fique à vontade para executá- la você mesmo, se quiser. Você está executando os exercícios. E está explorando a arquitetura, explorando essencialmente como trabalhar dentro dessa base de código, e vai tentar encontrar maneiras de aprofundar os módulos. Bem simples. Uma coisa muito legal
+
+que descobri aqui é que parte do meu aplicativo de gerenciamento de vídeos do curso é um editor de vídeo. Um editor de vídeo construído no navegador, o que é realmente complexo. É um projeto de engenharia considerável. E eu queria uma maneira de encapsular todo o front-end, do início ao fim, em um único módulo grande, para que eu pudesse testar se, ao clicar em algo no front-end, a ação se propagaria até o back-end. Então, encontrei uma maneira, essencialmente usando uma espécie de união discriminada entre os dois tipos, usando essa habilidade para ter um módulo enorme que era testável externamente, essa infraestrutura do editor de vídeo . E isso significava que a IA
+
+podia ver todo o fluxo, agir sobre todo o fluxo e testar todo o fluxo. Honestamente, a diferença na capacidade da IA de realmente fazer alterações foi gritante, porque a IA trabalhando em um editor de vídeo é bem brutal se você não a testar adequadamente. Então, sinceramente, se você puder levar apenas uma coisa de hoje, tente executar essa skill no seu repositório e veja o que acontece. Vamos ao Slido. Vamos fazer algumas perguntas enquanto isso está em execução.
+
+Então, vamos ver. Você já tentou o modo automático do Claude com `Claude enable auto mode`? Dessa forma, você pode evitar muitas das verificações de permissão óbvias. Falaremos sobre verificações de permissão em um instante. Devo manter os planos e problemas em Markdown para referência futura?
+
+Ok. Essa é uma ótima pergunta. Digamos que você tenha uma ótima ideia, a transforme em um PRD, crie um issue e implemente esse PRD, e o PRD esteja essencialmente pronto. Levante a mão se você mantém essas informações no repositório, então você as transforma em um arquivo Markdown. Levante a mão se você quer manter isso. Legal. Ok.
+
+E levantem a mão quem não quer manter isso por perto. Quem quer se livrar disso o mais rápido possível. É, acho que essa é uma pergunta sem uma resposta clara. O que realmente me assusta em qualquer decisão sobre documentação é o seguinte: digamos que temos um PRD para este sistema de gamificação, mantemos no repositório. E continuamos trabalhando . Digamos que um
+
+mês depois, queremos fazer algumas edições no sistema de gamificação. E entramos com o Claude, e ele encontra esse PRD antigo e diz: "Sim, encontrei a documentação original do sistema PRD". Bom, acontece que o código mudou tanto desde o PRD original que está quase irreconhecível. Os nomes das coisas mudaram, a estrutura de arquivos mudou, até os requisitos podem ter mudado. Podemos até ter testado com usuários. Isso
+
+é deterioração da documentação, quando a documentação de algo está se deteriorando no seu repositório e afetando negativamente o Claude. Ou os agentes do Claude. mal. Então, geralmente não mantenho isso por perto. Geralmente me livro disso. E para mim, como minha
+
+configuração usa o GitHub Issues, eu simplesmente marco como fechado. Ele pode buscar se quiser, mas tem um indicador visual de que está concluído. Então, geralmente prefiro me livrar disso. Comentários do Steve sobre o framework BEADS . Uh, eu não testei, mas parece ser uma espécie de outra maneira de gerenciar quadros Kanban e issues. Parece
+
+muito bom, mas eu não experimentei. Hum [limpa a garganta] Uh, deixe-me verificar rapidamente a configuração aqui. Vamos responder a algumas perguntas da sala. Alguém tem alguma pergunta neste momento sobre algo que abordamos até agora, especialmente esta última parte? Sim.
+
+Achei interessante sua resposta sobre os arquivos Markdown que você exclui porque eles criam deterioração de documentação. E quanto às migrações? Com ​​os arquivos de migração, você também os compactaria depois disso? Como migrações de banco de dados? Sim.
+
+Não sei. Espero que isso responda à sua pergunta. Pergunta. Me desculpe. Não, não. Acho que migrações de banco de dados
+
+são diferentes porque você tem uma espécie de registro contínuo do que mudou exatamente, e é mais determinístico. E acho que... Sim, é uma analogia interessante.
+
+Não tenho certeza. Vamos conversar sobre isso depois. Essa é uma boa maneira de dizer que não faço ideia. Sim. Sim. Então, você mencionou que
+
+não exclui o PRD. Você mencionou que não revisa o PRD depois de concluído. Desculpem, pessoal. Hum, estou apenas tentando ouvir a pergunta deste rapaz. Vocês já consideraram usar um mecanismo de aprendizado profundo como o ChatGPT ou algo parecido para dizer: "Analise este PRD e me diga se..."
+
+Leva cerca de uma hora. Sim, a questão aqui é: devo, numa fase inicial de planejamento, tentar otimizar o plano? Isso é algo que eu realmente vejo muita gente fazendo, e é uma ideia muito boa . Então, quando você... Vamos voltar
+
+às fases. Então, digamos que você tenha todas essas fases aqui. E você chega ao ponto em que meio que descobriu tudo sobre o LLM, entende para onde está indo, criou essa espécie de documento de planejamento de jornada. Como você deve então...
+
+tipo, você deve tentar otimizar, otimizar e otimizar esse PRD até que ele se torne o PRD perfeito que você possa imaginar? Não acho que isso tenha muito valor . Porque acredito que a jornada é apenas uma espécie de indicação de onde você quer chegar, e o lugar onde você precisa concentrar seus esforços é no controle de qualidade. E você até pode fazer isso AFK, eu acho, mas, na minha experiência, você não vai tirar muito proveito disso. O que realmente importa é conseguir o alinhamento com a IA, o que você faz inicialmente na sessão de perguntas e respostas.
+
+Vamos fazer mais uma pergunta. Alguém tem mais alguma? Sim. Como você faz para que seu fluxo de trabalho funcione da maneira que você deseja, de forma que, quando chegar a hora da revisão de código, ele esteja pelo menos familiar e utilize as bibliotecas que você queria usar? Sim. Bem,
+
+na verdade, já tivemos essa pergunta antes, que era tipo, como vocês impõem seus padrões de codificação aos agentes, basicamente? Como faço para que o código seja gerado da maneira que eu quero? Existem basicamente duas maneiras diferentes de fazer isso. Hum, você tem...
+
+eu não sei. Vamos. Empurrar. E você tem influência. O que quero dizer com empurrar e puxar? O recurso "
+
+Push" permite enviar instruções para o LLM. Então, você diz, ok, se você colocar algo em Claude.md, tipo " fale como um pirata", essa instrução sempre será enviada para o agente, certo? Então, na verdade, isso é um empurrão. Você está enviando tokens para ele. "
+
+Pull" é quando você dá ao agente a oportunidade de obter mais informações. E isso inclui, por exemplo, habilidades. Então, uma skill é algo que pode ficar no repositório e tem um pequeno cabeçalho de descrição que diz: "Ok, agente, você pode baixar isso quando quiser." Meu pensamento, meu pensamento atual sobre revisão de código e sobre padrões de codificação, é o seguinte . Quando você tem um implementador, o que está acontecendo? Pronto.
+
+Implementador. Vou diminuir a intensidade do vermelho daqui a pouco . Então você quer que os padrões de codificação estejam disponíveis via pull request. Se houver uma pergunta, você quer que ela seja capaz de respondê-la. Mas se depois você tiver um revisor automatizado, então você vai querer que ele envie as revisões. Você quer transmitir essa informação
+
+ao revisor. Você quer dizer: "Estes são os nossos padrões de codificação. Certifique-se de que este código os siga." Então, se você tem habilidades, por exemplo, é importante compartilhar isso com o revisor para que ele tenha tanto o código escrito quanto os padrões de codificação para comparar. Espero que isso responda à sua pergunta. Na verdade, também
+
+posso te mostrar uma versão automatizada disso. Sim , vamos fazer isso agora, enquanto ainda está fresco na minha memória. Recentemente, passei mais ou menos uma semana construindo uma coisa chamada Castelo de Areia. E o Sandcastle é um jogo que eu não estava muito satisfeito com as opções disponíveis para deixar agentes AFK (ausentes do teclado). E o que isso faz é, essencialmente, ser uma biblioteca TypeScript para executar esses loops. Então você tem
+
+uma função de execução que cria uma árvore de trabalho, a isola em um contêiner Docker e permite que você execute um prompt dentro dela. E nessa árvore de trabalho, então, é apenas um branch do Git com o código, que você pode mesclar posteriormente. Se eu abrir, existem algumas maneiras realmente interessantes de visualizar isso, e essencialmente permite executar esses tipos de loops automatizados e paralelizar em vários agentes diferentes de forma muito simples. Então, vou entrar no meu arquivo Sandcastle, mais especificamente no arquivo main.ts. Vamos analisar
+
+isso passo a passo. Então, isso é mais ou menos como eu mostrei para vocês, uma espécie de versão do loop do Ralph anteriormente. É aqui que passamos do sequencial para o paralelo. Temos aqui, em primeiro lugar, um planejador que recebe um prompt de planejamento, analisa o backlog e escolhe um certo número de tarefas para trabalhar em paralelo. Lembra daquele quadro Kanban que eu te mostrei com todas as relações de bloqueio? Ele executa
+
+todas as fases. Então, este aqui dirá: " Ok, digamos que temos... você pode ignorar todo esse código de integração aqui." Essencialmente, trata-se
+
+apenas de um conjunto de problemas, problemas do GitHub com um título e uma ramificação para você trabalhar. E então, para cada problema, criamos um ambiente de teste ( sandbox) e executamos uma implementação nesse ambiente, passando o número do problema, o título do problema e a branch. Isso é semelhante ao loop que executamos anteriormente. Então, se isso gerar alguns commits, nós os revisaremos. Este é essencialmente o loop.
+
+O que fazemos com esses commits? Nós repassamos essas informações para um agente de fusões e aquisições. O processo recebe uma solicitação de mesclagem, considera os branches criados, os problemas relatados e simplesmente os mescla. Se houver algum problema com a mesclagem, como problemas com tipos, testes e coisas do tipo, ele os resolve. E esse tem sido meu fluxo de trabalho há um bom tempo na maioria dos projetos.
+
+Funciona super, super bem. E sim, recomendo que você dê uma olhada no Sandcastle se quiser aprender mais sobre o assunto. E para responder adequadamente à sua pergunta, eu diria que, na revisão, eu enfatizaria os padrões de codificação. No implementador, eu permitiria que ele fizesse o pull. E na verdade estou usando o Sonnet para implementação e o Opus para revisão, porque considero que a revisão exige inteligência.
+
+Alguma pergunta? Na verdade, antes de fazermos mais perguntas, vamos voltar aqui. Certo, em que ponto estamos? OK. Nesta conversa, estamos meio que abordando vários assuntos ao mesmo tempo porque preciso fazer várias coisas simultaneamente. Então, vamos voltar à
+
+melhoria da arquitetura da base de código. A execução foi finalmente concluída e foram encontradas diversas sugestões de melhorias arquitetônicas. Basicamente, trata-se de um conjunto de módulos diferentes, todos de certa forma relacionados, que provavelmente poderiam ser testados como uma unidade. Obtivemos o primeiro lugar, o serviço de correção de testes . Também há extração de lógica de reordenação.
+
+Apresenta argumentos que explicam por que estão acoplados e também possui uma categoria de dependência . Portanto, é possível substituir localmente o SQL leve em um banco de dados de teste de memória. O serviço de correção de questionários não possui nenhum teste no momento. Essa é a maior lacuna. Então, é assim que fica quando voltamos a aprimorar a arquitetura da base de código.
+
+OK. Então, nominalmente, temos cerca de 17 minutos restantes. Não sei vocês, mas eu estou exausto. [risos] Hum, eu quero [limpa a garganta] Deixa eu resumir para você. Porque acho que estamos chegando ao limite da nossa resistência.
+
+Estarei disponível durante todo o período, caso queiram vir e me fazer perguntas. Hum, talvez eu faça mais uma verificação no slide ao lado, mas vamos recapitular o que já fizemos. Então, basicamente, esse é o fluxo. Ao longo de todo esse processo, estamos levando em consideração o formato da nossa base de código. Isto não é uma especificação para um compilador de código.
+
+Esta não é uma IA que simplesmente produz código em série. Estamos sendo muito intencionais quanto ao tipo de módulos e ao formato da base de código que desejamos. Estamos nos certificando de que estamos o mais alinhados possível por meio da sessão de perguntas e respostas, analisando minuciosamente nossa ideia. Não estamos sobrecarregando o PRD com índices, nem tentando ler cada parte dele. Nem estamos pensando muito nisso. Em seguida,
+
+transformamos isso em um conjunto de problemas paralelizados, nos quais os agentes podem trabalhar em paralelo. Implementamos o sistema, fazemos controle de qualidade e revisamos o código exaustivamente, e depois continuamos revisando essa implementação. Uma coisa que eu não mencionei é que, na fase de controle de qualidade, o objetivo dessa fase é justamente criar mais tarefas para o quadro Kanban. Assim, enquanto o programa está sendo implementado, você pode fazer o controle de qualidade e voltar, adicionando mais problemas. E o quadro Kanban permite adicionar tarefas bloqueadoras de forma praticamente infinita.
+
+E depois que tudo isso estiver concluído, depois que você tiver um código com o qual esteja satisfeito, depois que você tiver um trabalho com o qual esteja satisfeito , então você poderá compartilhá-lo com sua equipe e obter uma avaliação completa. Então, quando você chega aqui, é mais ou menos assim: um desenvolvedor, ou talvez dois, gerenciam isso, e aí cabe a você descobrir como integrar tudo de volta . [suspiro] Claro que tudo isso pode ser personalizado por você. Isso é algo que eu descobri que funciona. Não estou tentando te convencer a adotar uma abordagem específica. Se
+
+você puder levar apenas uma coisa desta sessão, recomendo que volte ao site da Amazon e compre vários daqueles livros antigos, porque, sinceramente, achei a leitura deles muito esclarecedora. Sabe, textos escritos antes da era da IA ​​sempre foram muito divertidos de ler. E em cada página eu encontrava algo útil e interessante para ler. Muito obrigada. Obrigado por aguentar o calor. Espero que
+
+sua temperatura corporal volte ao normal em breve. Ah, muito obrigado. [aplausos]
+
+[música]

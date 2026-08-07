@@ -1,0 +1,398 @@
+---
+video_title: "Training an LLM from Scratch, Locally — Angelos Perivolaropoulos, ElevenLabs"
+video_id: UsB70Tf5zcE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UsB70Tf5zcE
+video_date: 2026-05-04T18:30:06+00:00
+video_description: |
+  Training an LLM from scratch on a local machine sounds unreasonable, until it isn't. In this workshop, Angelos Perivolaropoulos from ElevenLabs walks through what it actually takes to train a language model locally, with a practical focus on the tooling, constraints, and engineering tradeoffs involved.
+  
+  If you want a hands-on look at small-scale LLM training beyond the cloud-heavy default, this is a useful deep dive.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/angelos-perivolaropoulos/
+  - https://github.com/angelos-p
+  
+  Timestamp:
+  0:00 Introduction and background of the speaker
+  1:21 Overview of the workshop objectives
+  3:12 Inspiration from Andre Karpathy's NanoGPT
+  4:37 The four fundamental building blocks of an LLM
+  7:08 Prerequisites and setup tools (UV, Python, hardware requirements)
+  9:06 Part 1: The Tokenizer (character-level tokenization explained)
+  24:29 Model architecture and parameters (vocab size, layers, embeddings)
+  30:13 The GPT class structure and transformer blocks
+  37:52 Parameter count and model sizing
+  40:54 The training loop: objectives and next-token prediction
+  44:44 Optimization and learning rate strategies (warm-up and cosine decay)
+  47:56 Validation and monitoring loss
+  53:07 Part 3: Text generation and inference strategies
+  56:30 Putting it all together (project file structure)
+  58:46 Monitoring training and debugging common issues
+  1:00:27 Workshop challenge and competition details
+  1:05:24 Q&A: Differences between base models and reasoning models
+  1:11:31 Q&A: Applying these concepts to audio and multimodal models
+---
+Muito obrigado por participar deste workshop. Bem, este será um workshop prático. Então, espero que você possa colocar a mão na massa e se envolver em algum projeto muito, muito interessante. Bem, para começar, gostaria de falar um pouco sobre mim. Meu nome é Angelos. Eu lidero a
+
+equipe de conversão de fala em texto na Eleven Labs. Sou engenheiro de pesquisa. Então, passo a maior parte do meu tempo treinando novos modelos, trabalhando com inferência, e também estou na área de produto. Então, infelizmente, às vezes sou responsável por conversar com clientes, o que não me agrada muito. Sou o tipo de pessoa que gosta de mergulhar de cabeça na pesquisa, fazer maquetes de trens e criar coisas que sejam de vanguarda e muito impactantes.
+
+Atualmente, estou trabalhando no treinamento de modelos em tempo real para transcrição. Específico para agentes. E, caso você ainda não saiba, temos este modelo de escriba V2 que minha equipe treinou. Atualmente, é o melhor modelo de transcrição do mercado em termos de benchmarks públicos populares. Então, se você tiver algum caso de uso para transcrição, fique à vontade para usá-lo. Acho que
+
+é muito bom. Bem, como parte do próprio workshop, hoje vamos treinar um profissional de LLM (mestrado em direito) do zero. Então, nada de pesos pré-treinados , nada que você possa simplesmente pegar online, tipo numa biblioteca de Transformers. Vamos trabalhar exclusivamente com o PyTorch e algumas bibliotecas bem básicas. Poderíamos descer um nível e não usar a tocha, mas não quero torturá-lo tanto.
+
+Então, acho que o PyTorch está em um bom nível e isso será um bom indicador de como os engenheiros de pesquisa em grandes laboratórios projetam seus modelos. Além disso, o que vier depois será mais voltado para otimizações, para aumentar a escala e melhorar o desempenho para casos de uso específicos. Então, o que você vai fazer hoje é praticamente o equivalente a 80% do caminho para criar um modelo do zero. Se você clicar nesse código QR, encontrará este repositório do GitHub. Hum, vou mudar para isso agora. Vou deixar assim por mais um tempinho
+
+. Bem, você tem duas opções. Uma opção é treinar o modelo localmente no seu computador portátil. Por exemplo, se você tiver 16 GB de memória, você deve conseguir fazer isso. É um modelo pequeno, muito pequeno, que você pode treinar rapidamente. Bem, se não for assim, e suponho que seja
+
+porque poucas pessoas têm acesso a tomadas, talvez o Google Colab seja outra opção. O Google Colab oferece GPUs gratuitas que você pode usar para treinar um modelo tão pequeno. Portanto, a escolha será sua. Bem, vou deixar isso ligado por mais um tempinho . E então podemos acessar o repositório em si. Bem
+
+, para dar uma ideia da inspiração deste projeto, meu primeiro contato com Transformers e LLMs em geral foi através deste vídeo de Andrej Karpathy, um dos cofundadores da OpenAI. Ah, que era esse código nanoGPT, e para mim foi um projeto muito especial. Essencialmente, é isso que inspira este workshop também. É um nível um pouco inferior ao que faremos agora. Então, isso se aprofunda um pouco mais em como você está usando o NumPy para vários cálculos. Mas
+
+acho que é um bom modelo que podemos seguir para criar um modelo do zero. Deixa eu mostrar isso na tela.
+
+Mas sim, se você não conhece esse projeto, acho que é uma ótima introdução. Se você já conhece este projeto e já treinou os elementos dessa forma antes, isso pode parecer um pouco simples para você, mas acho que existem maneiras de expandirmos esta oficina para algo um pouco mais competitivo, e eu gostaria de ver o que vocês conseguem propor. Para este workshop específico, vamos trabalhar com um modelo muito pequeno baseado na arquitetura GP2 GPT-2. É uma arquitetura um pouco antiga, mas a base, as partes fundamentais, basicamente não mudaram muito. E vamos analisar esses pontos daqui a pouco.
+
+Os quatro componentes básicos necessários para treinar um modelo são: O primeiro deles será o tokenizador. E dependendo do seu caso de uso, você precisará usar um tokenizador diferente para esse caso específico. Se você quiser treinar, por exemplo, um modelo muito grande que possa gerar texto em vários idiomas, precisará de um tokenizador enorme, o que significa que também precisará de uma quantidade enorme de dados para treiná-lo. Mas para um modelo menor, um tokenizador menor com embeddings menores seria o que funcionaria melhor e treinaria mais rapidamente quando seus dados são limitados, que é o que temos agora. Em seguida, será apresentada uma arquitetura de modelo.
+
+Para ser honesto, a maioria dos modelos que temos, pelo menos no período em que vamos trabalhar, eram muito semelhantes. Tipo, eram apenas modelos decodificadores causais, modelos decodificadores causais que tinham uma maneira muito semelhante de usar autoatenção causal e as mesmas camadas MLP e as mesmas normas de camada e todo tipo de coisa, que veremos mais adiante . Então, se você sabe como fazer isso com modelos pequenos, é muito fácil repetir o processo para modelos maiores e mais recentes. Mas, é claro, os modelos mais recentes serão muito mais especializados para contextos mais longos e, essencialmente, para escalar o treinamento, já que são arquitetados de forma a permitir o treinamento com o máximo de tokens possível, o que você não precisará neste caso. E por último, temos o ciclo de treinamento, que geralmente é a parte mais importante ao treinar um novo modelo.
+
+Por exemplo, se você verificar a diferença entre o GPT-4, o GPT-4o e o GPT-5, ou mesmo versões anteriores, verá que, na maioria das vezes, o pré-treinamento é muito semelhante. Trata-se do ajuste fino e do pós-treinamento, e essencialmente é o que você usa com um modelo base igual ou muito semelhante . E a forma como você treina faz uma grande diferença no desempenho. E agora vemos, por exemplo, o Gemini 3 sendo lançado com vários benchmarks excelentes, e então o 3.1 é lançado com o dobro do desempenho em alguns benchmarks, o que é incrível.
+
+Obviamente, os modelos são muito semelhantes, mas durante o treinamento, eles ensinam o novo modelo a usar métodos mais inteligentes para melhorar o desempenho de forma substancial. Agora, quanto ao final e, claro, à parte de inferência, isso será muito fácil para nós, pois será um modelo pequeno que pode ser executado em qualquer lugar. Então, sem isso, seria muito simples, parte dos blocos de construção. Então, os pré-requisitos são: qualquer laptop com pelo menos 6 GB de RAM serve. Você também pode trabalhar com laptops menores, só que será um pouco mais lento. Em laptops maiores, você pode aumentar
+
+o tamanho dos lotes, o que acelera o treinamento. Uh, Python 3.12 e eu espero que a maioria de vocês tenha alguma ideia de como programar em Python. Tipo, se você não fizer nada, ainda não está tudo bem, você pode simplesmente copiar e colar até que algo funcione ou pedir ajuda. Este treinamento pode usar o Apple Silicon, a arquitetura MPS, CUDA ou CPU, então basicamente suporta tudo.
+
+E quanto a começar, isso só facilita as coisas. Por exemplo, estou usando UV para este projeto. Então, se você estiver com o seu laptop aberto, pode instalar o UV na sua máquina, caso ainda não o tenha feito. É bem simples e não tem UV, é bem fácil de usar. Você pode simplesmente ativar a sincronização UV e ela cria um ambiente virtual para você, facilitando sua vida .
+
+E vamos escrever o código em um bloco de notas ou, se você estiver usando o Google Colab, o que depende se você gosta muito dessas ferramentas, talvez seja uma ideia melhor. Bem, se você simplesmente for até...
+
+se você simplesmente for até... e criar uma nova...
+
+deixe-me criar uma nova em uma conta separada para que possamos acompanhar. Sim
+
+. Então, se você abrir o Google Colab e criar um novo projeto, poderá executar este comando, que instala apenas o que precisamos: torch, numpy, tqdm e tick token. O token Tick serve principalmente para testar coisas.
+
+E sim, podemos passar para a primeira parte deste workshop, que será o tokenizador. Como mencionei, geralmente a primeira coisa em que você pensa ao criar um novo modelo de transformação é qual tokenizador você está usando. Bem, eu venho do mundo da dublagem, então é aqui que essa é uma das coisas mais importantes. Tipo, a gente pensa: "Ok, precisamos treinar esse novo modelo de TTS e vamos gastar talvez 6 meses pensando no tokenizador, e depois vamos gastar 2 meses na arquitetura." Então, esse é geralmente um dos aspectos mais importantes na hora de decidir como criar um novo transformador.
+
+Para quem não sabe o que é um tokenizador, assim como os LLMs não veem texto. Eles trabalham com embeddings ou vetores semelhantes. Então, precisamos de algum tipo de representação desses vetores para que o modelo possa processá-los. O que vamos usar aqui é um alinhamento em nível de personagem. Ah, uma tokenização em nível de personagem, desculpe.
+
+Simplesmente porque possui o menor número possível de tokens. Bem, no nosso caso, o nosso conjunto de dados terá apenas 65 embeddings, essencialmente porque são os 65 caracteres diferentes que aparecerão nos nossos dados de treinamento. E funciona assim, vai usar o conjunto de dados de Shakespeare, que contém algumas obras de Shakespeare. Faz parte do próprio repositório, mas se você estiver usando o Colab, haverá um link sobre como baixá-lo no Colab um pouco mais tarde. E basicamente, vamos usar esta biblioteca de histórias, que basicamente converte strings em números inteiros, e esses números inteiros serão então transformados em embeddings por meio da camada de embeddings quando treinarmos o LLM. E é um
+
+tokenizador muito, muito simples e direto que usa esta função de enumeração do Python e então seleciona o item específico que foi selecionado com este dicionário. Então, sim, como eu disse antes, usamos o nível do personagem porque é muito mais fácil de treinar. Como temos apenas 65 fichas, isso significa que as combinações de bigramas serão de aproximadamente 65 * 65, ou seja, 4.225 bigramas possíveis. Os bigramas são basicamente como quando você tem um token e tenta prever qual será o próximo token depois dele. E esse conceito de
+
+bigrama é muito importante quando você está treinando Transformers, porque você quer que seu modelo veja o máximo possível de bigramas. Então, se você tem um modelo com, digamos, 200.000 tokens, você precisa de pelo menos 200.000 tokens ao quadrado de dados para poder treiná-lo do zero de uma maneira muito boa. Então, ou pelo menos algo parecido com isso, é a magnitude que você está procurando. No
+
+nosso caso, 4.000 bigramas é algo perfeitamente viável. Dessa forma, este conjunto de dados deve incluir todos os bigramas, provavelmente em múltiplas ocorrências. Se tentássemos treinar usando um tokenizador completo, isso nunca convergiria. Podemos ficar treinando o modelo por horas a fio e, mesmo assim, ele nunca conseguirá obter bons resultados.
+
+O problema com os tokenizadores em nível de personagem é que eles não escalam muito bem. Bem, porque os modelos, da forma como funcionam, precisam entender a correlação entre diferentes tokens. Então, você pode facilmente fazer uma correlação dizendo "O céu é azul". Esses tokens combinados fazem muito sentido. Mas S K Y e depois I S e depois B L U E, o que torna um pouco mais difícil para eles, para o modelo, conseguir lidar bem com esses tokens de uma forma adequada. Bem
+
+, isso funcionaria muito bem para o nosso exemplo. Mas se você quiser um modelo muito, muito bom , ele será caro de treinar porque, obviamente, você precisa criar uma tonelada de tokens durante a inferência e durante o treinamento. Mas também nunca vai convergir para algo bom porque o modelo e os tokens combinados não fazem muito sentido. Então, essa é a nossa contrapartida, mas é uma contrapartida que estamos dispostos a aceitar porque, obviamente, estamos operando com um modelo pequeno. Mas no futuro, se você quiser expandir isso para algo melhor, se quiser treinar como um LLM adequado e estiver disposto a treinar por uma semana ou usando GPUs maiores, usando um tokenizador apropriado, como a codificação de pares de bytes, que é a maneira mais comum de fazer tokenizadores hoje em dia, que essencialmente pega todos os dados de treinamento e define todos os padrões comuns, combinando esses padrões de caracteres comuns em tokens específicos que podem ser reutilizados e o modelo pode entender as relações entre eles.
+
+Então, a forma como isso se conecta ao próprio modelo é que temos esta tabela de embeddings, que tem o tamanho do vocabulário, e então, como eu disse antes, ela recebe um vetor de inteiros e retorna uma lista de inteiros, que serão seus respectivos embeddings. E como eu disse antes, se usássemos um tokenizador tão grande, o tamanho dos nossos modelos seria mais que o dobro, porque se você multiplicar isso, o tamanho do nosso embedding é 384 para este modelo que vamos treinar. Então, isso já dá cerca de 25.000 parâmetros e, nesse caso, se usássemos o vocabulário de ferramentas de Programação Genética (GP), que é de 50.000, seriam 19 milhões de parâmetros, o que é mais de três vezes o modelo, o que não faria sentido no nosso caso.
+
+Então, vamos passar para a próxima parte deste workshop, que será o próprio transformador. E como mencionei antes, assim como os transformadores, eles meio que se tornaram produtos básicos. O funcionamento dos transformadores é diferente, pois existem laboratórios que encontram otimizações distintas, mas, em princípio, temos uma ideia básica que funciona muito bem. Como podemos fazer com que o treinamento seja mais rápido e tenha um contexto maior, e como as pessoas encontram maneiras de otimizar o processo em vez de reinventar a roda? Bem, pelo menos para isso existem algumas abordagens híbridas, que são mais complicadas. Bem, eu
+
+não vou me aprofundar muito em como os transformadores funcionam. E também para provar que você não precisa necessariamente saber em um nível muito profundo como os Transformers funcionam para ser capaz de treinar algo assim. Bem, quando comecei este projeto sozinho, eu não tinha ideia de como os Transformers funcionavam e ainda não tinha muita no final do projeto anterior em que trabalhei . Mas quanto mais você trabalha nisso e mais gosta, mais motivação você tem para continuar perseverando. Você consegue entender todos os diferentes conceitos juntos, como eles se encaixam e as razões pelas quais eles acabaram da maneira que são. Bem,
+
+voltando ao panorama geral, os transformadores utilizam quatro blocos de construção diferentes. Uma delas é a autoatenção multi-cabeça. A atenção é o que diferencia os Transformers de outras redes neurais: eles conseguem prestar atenção a tokens anteriores e entender a relação entre eles, como mencionei antes. É aí que entra a atenção. E, claro, quanto maior o nível de atenção, mais o modelo entende essas relações. E voltando ao que eu
+
+disse, grandes laboratórios como o Gemini estão tentando trabalhar com 1 milhão de contextos e estão encontrando maneiras de fazer isso, porque se você simplesmente tentasse usar 1 milhão de contextos para um modelo como esse, ele quebraria muito facilmente; os cálculos não funcionariam. Foi então que os engenheiros e pesquisadores do projeto Gemini encontraram maneiras de fazer funcionar. E é isso que faz a diferença, mas, fundamentalmente, é a mesma arquitetura. A próxima é a MLP, ou rede feedforward, que essencialmente pega as diferentes relações entre os tokens e, enquanto essas relações são organizadas, combina- as para gerar os logits que serão então... Então, basicamente, ela
+
+pega o contexto e o organiza de forma que o modelo possa gerar os logits e, consequentemente, os tokens. Espero que essa tenha sido uma explicação adequada. E depois há as conexões residuais, que basicamente servem para que o modelo não precise se reinventar a cada camada. O residual basicamente significa que cada camada pela qual passa, porque, como falaremos mais tarde, o transformador é construído em várias camadas diferentes pelas quais passamos as ativações uma após a outra. E os resíduos servem para que cada ativação não reinicie completamente o processo do zero. Isso apenas
+
+os altera ligeiramente. Então, ele simplesmente pega a entrada anterior e faz uma pequena, mas não tão pequena, diferença. A camada seguinte faz o mesmo, e a camada seguinte faz o mesmo, e isso continuará indefinidamente. Dessa forma, cada camada do modelo não provoca grandes alterações nas entradas em si, e o modelo pode ser mais estável durante o treinamento. E, por último, a normalização de camadas tem um papel muito semelhante,
+
+permitindo reduzir a escala dessas ativações de forma que elas não explodam para valores muito grandes . Então, se uma camada multiplica sua ativação por 10, digamos, a norma da camada vai empurrá-la de volta para valores normais, então não fica multiplicando por 10 até chegar a 10 milhões, e aí você pode ter milhões de valores que começaram em 0,5 e terminaram em 10 milhões. É para isso que serve a norma de camada. Mas, novamente, esses são apenas os elementos básicos . Você não precisa necessariamente saber por que eles estão lá e qual é o propósito deles. Assim como você,
+
+você aprenderá isso à medida que começar a trabalhar mais com esses modelos e entender o porquê dessas decisões . Porque todos eles são como eu estou falando com você, é claro, foram feitos por Nós temos uma certa ideia. Ah, isso não funcionou. Então, vamos adicionar isso para que funcione. Desculpe, pode prosseguir.
+
+Você está me mostrando alguns slides que ainda não vimos? Ops . Sim, eu estava mostrando. Cadê? Peço desculpas por isso.
+
+Sim. Então, eu estava passando pelo processo de tokenização. Ah, esse era o meu ponto anterior. E isso se você puder voltar e voltar, e você terá que ir e voltar pelos slides quando estiver trabalhando no seu modelo, porque você terá que copiar e colar as partes ou descobrir como fazê-las sozinho. Mas explicava por que estamos optando pela tokenização em nível de caractere e quais são as outras opções que temos.
+
+Em seguida, no caso do transformador, explicarei as diferenças no contexto geral, os diferentes blocos de arquitetura. E agora, como isso se parece em código? É que tudo o que eu descrevi para você é realmente muito legal. Você precisa de muito pouco código para implementá- los. Primeiro, vamos começar com o básico de "Sorry", pode prosseguir.
+
+Bem, quando se trata de código, isso se aplica? Porque, pelo menos em inglês, você sabe, você tem palavras e vocabulários meio que fixos. Mas em Python, você tem suas próprias variáveis ​​e assim por diante. Então, como funciona a tokenização nesse contexto? O que seria um token?
+
+Desculpe. Então, em uma linguagem de programação, é claro que você tem a sintaxe de programação, palavras-chave, mas também tem variáveis ​​normais, nomes de funções e assim por diante. Então, quando se trata de tokenização, como isso funciona? Então, sim, como mencionei antes, vamos usar um tokenizador em nível de caractere porque será mais fácil para este projeto, mas a maioria dos grandes laboratórios não usa tokenização em nível de caractere. Eles usam o que eu mencionei antes, o tokenizador BPE ou algo como o byte push.
+
+Essencialmente, o que eles fazem é... Você analisa seus dados de treinamento. Digamos que você tenha trilhões de tokens e que seus dados de treinamento incluam código, como você mesmo mencionou.
+
+E o funcionamento é o seguinte: ele simplesmente analisa padrões comuns. Então, se você tiver muitos dados de treinamento, ou seja, o próprio código, ele vai perceber e concluir: "Ok, os loops 'for' parecem ser bons candidatos para serem usados ​​como tokens." Portanto, o "para" será com certeza um token. E então você pode ter algo como enumerar. Enumere o que você vê com bastante frequência nos dados de treinamento, então esse será outro token. Então, ele analisará todos
+
+esses tokens diferentes e, em seguida, criará esse tokenizador com base na relação comum entre eles. Ah, claro, talvez em algumas linguagens como Pascal, por exemplo, essas palavras-chave não sejam muito comuns. Embora eu ache que provavelmente também haja uma boa representação nos tokenizadores. Mas algumas outras linguagens desse tipo, como aquelas que usam apenas espaços em branco, provavelmente não funcionarão muito bem. Minha pergunta era mais sobre... Então, uma
+
+coisa são as palavras-chave da linguagem de programação, mas depois você tem seus próprios nomes de variáveis. Que não são comuns entre os diferentes programas. Ah, entendi, é isso que você quer dizer. Ao transformá- los em fichas, não tenho certeza de como isso ajuda. Então, novamente, não há uma maneira específica, não há intervenção humana nesse processo. Depende dos
+
+dados de treinamento que você usa para treinar esse tokenizador. Bem, se o seu código tiver variáveis ​​como `foo` e ` bar`, que são variáveis ​​comuns, provavelmente serão tokens. Por exemplo, se os nomes das suas variáveis ​​forem muito estranhos, com caracteres aleatórios, provavelmente isso não será considerado no analisador léxico. E quando isso acontece, o analisador léxico recorrerá à tokenização em nível de caractere ou, algo como, em nível de código de byte. Então, se o seu token for aleatório, como um monte de gibbles, cada caractere será representado por um token diferente, ou talvez algumas combinações deles, mas a maioria serão tokens separados. Isso pode
+
+ser um pouco problemático durante a inferência e talvez não seja a melhor opção se você quiser uma inferência eficiente. Obrigado. Bem, voltando à questão dos transformadores, como eu disse, os modelos são geralmente bastante semelhantes, e o código para implementar esses transformadores também é bastante simples e fácil de escrever. É como se fossem talvez 100 linhas, na verdade, geralmente mais do que isso, menos do que isso. E a primeira coisa que temos que aceitar é como devem ser os parâmetros desse transformador . Como mencionei anteriormente, o
+
+tamanho do vocabulário é o tamanho do seu tokenizador; no nosso caso, será 65. O tamanho do bloco é essencialmente o comprimento da sequência ou, como seria de se esperar, a janela de contexto. No nosso caso, seria 256, o que é muito, muito pequeno para esses modelos, mas como estamos treinando um modelo localmente, é mais ou menos o que temos que fazer. Bem, laboratórios maiores usariam algo como 1 milhão de contextos para algo assim. Hum, mas geralmente 16.000 é um valor
+
+médio comum. Bem , então temos as camadas. Quantos, como mencionei antes, tipo, os transformadores têm várias camadas e você executa as ativações em cada uma dessas camadas. Vamos optar por um número modesto de seis. E então, os centros de atenção, a forma como a atenção funciona é que você pode ter diferentes centros de atenção que estarão focados em coisas diferentes. Como se uma das cabeças de atenção estivesse
+
+olhando para a pontuação. Talvez outra pessoa esteja atenta à gramática. Então, todos esses diferentes focos de atenção estão direcionados para uma característica específica do texto ou, se você estiver usando áudio, para uma característica específica do áudio, etc. E, por último, temos a dimensão de incorporação. Uh, uh, esse é o tamanho real dos vetores desses tokens que você cria.
+
+Bem, no nosso caso, vamos começar com 384. Esse é o padrão para o GPT-2. Mas, obviamente, um valor maior teria mais informações por token. Um valor menor teria menos, mas esse é um valor bastante padrão com o qual você pode começar. Bem, quanto ao código em si, fique à vontade para copiar e colar parte dele, se quiser dedicar mais tempo para entendê-lo.
+
+Não quero entrar em muitos detalhes sobre como as coisas funcionam. Bem, basicamente, você geralmente tem um módulo abrangente, que acho que vamos chamar de GPT, e esse módulo abrangente de nível superior incluirá todos os outros módulos que descrevi anteriormente. Bem, neste caso, isso vai usar a configuração. Bem, neste caso, isso pegará a configuração que tínhamos acima e então criaremos isso usando o módulo `dict` do Torch, pois é a maneira mais fácil de implementar isso. Mas tudo isso é apenas matemática; tudo o que você vê aqui seriam apenas cálculos, como multiplicações de duas matrizes, que o PyTorch nos permite abstrair e simplificar. E
+
+praticamente tudo o que você vê aqui são como redes neurais, menores ou maiores, que são combinadas entre si. Sim .
+
+Sim.
+
+Não necessariamente. Desculpe, talvez você possa repetir a pergunta pelo microfone. Portanto, o tamanho da sequência de entrada está relacionado ao número de parâmetros em seu modelo. Não necessariamente. Você pode ter sequências grandes com modelos pequenos ou sequências pequenas com modelos maiores. O principal que
+
+isso demonstra é que, essencialmente, existem duas maneiras de treinar um modelo. Você pode treinar um modelo que observe esse modelo de atenção total, digamos, um modelo que observe a atenção total. Então, analisa todo o passado, essencialmente, que é o que estamos construindo aqui hoje. Ou você pode optar por um modelo com janelas. É aí que entra a maioria dos modelos maiores que existem atualmente, que antes eram tão impressionantes quanto esses . E esse parâmetro é o
+
+tamanho dessa janela. Ok. Sim, é isso que vamos usar para treinar. Portanto, o modelo não terá visto nada maior que 256 tokens na sequência. Se você tentar ir além disso, vai desmaiar. Vai apresentar problemas. Mas
+
+digamos que temos capacidade computacional para aumentar o número de parâmetros e, assim, melhorar o raciocínio do modelo , certo? Qual número você aumentaria aqui para dizer isso? Tipo, você aumentaria o número de camadas, de cabeças de atenção, ou...
+
+eu aumentaria tudo, tudo mesmo, exceto talvez o tamanho do embedding e talvez a dimensão. Não me lembro exatamente quais outros modelos apresentam esses mesmos números. Acho que isso me parece razoável. Mas todo o resto funciona bem para um token pequeno, um modelo pequeno. O tamanho de um bloco de 256 é minúsculo. É como se
+
+você tentasse executar isso em um chat com GPT, você simplesmente esqueceria coisas que escreveu até 10 frases atrás. Mas quanto maior você fizer isso, mais difícil será o treinamento. E era disso que eu estava falando sobre leis de escala: você não pode simplesmente dizer "ele vai aqui" e dizer " ok, na verdade eu não quero um comprimento de contexto de 256, eu quero 2 milhões". Não é possível treinar isso dessa forma, pelo menos não com a arquitetura atual. Então, foi isso que os pesquisadores perceberam depois do lançamento do GPT 3.5: eles pensaram: "
+
+Ok, as pessoas estão reclamando que só temos um tamanho de contexto de 16k." Queremos 1 milhão. Como fazemos isso? Você não pode simplesmente alterar esse número. Você precisa alterar a arquitetura para permitir o treinamento, caso contrário, a memória acabará instantaneamente. Então,
+
+essa é uma das coisas que os pesquisadores estão tentando fazer agora para descobrir como vamos conseguir aumentar esses números, mantendo o treinamento estável. Ou como aumentar esses números, mantendo o treinamento estável e ainda com capacidade computacional suficiente para realizar isso? Espero que isso responda à sua pergunta. Incrível. Obrigado.
+
+Então, sim, a primeira coisa que teríamos que fazer é, como mencionei antes, criar a representação de nível superior do nosso modelo, que você pode ver aqui como a classe GPT. Bem, não vou entrar em muitos detalhes novamente, mas, como você quer saber, uma coisa seria como o seu modelo entende os embeddings e também como ele entende a posição do embedding. Bem, não quero entrar em detalhes, mas basicamente você precisa que os tokens sejam capazes de entender ambos. Então, você teria essencialmente aqui todas as camadas que mencionei anteriormente, e cada uma delas é configurada como um bloco, cuja definição de bloco abordaremos um pouco mais adiante. Mas, essencialmente, um bloco é como uma camada do transformador que inclui sua própria atenção e suas próprias normas de camada, e continua alimentando umas às outras, como quando você faz a passagem direta.
+
+E, por último, temos o cabeçalho LM, que pega todas as saídas dos passos anteriores e as conecta no que chamamos de logits, que é a distribuição de qual deve ser o próximo token a ser gerado. Bem, como mencionei antes, talvez sim, talvez não, mas o funcionamento dos Transformers é que eles preveem o próximo token. Então, você pega o contexto anterior, prevê o próximo token e precisa amostrar esse token nessa distribuição. E a cabeça do modelo linear cria essa distribuição da qual fazemos a amostragem. Então, a próxima parte importante, que é bastante simples e semelhante na maioria desses modelos, é a passagem direta, que essencialmente permite que o modelo receba a entrada, que serão os tokens que mencionamos, e os processe através de todos esses diferentes componentes que mencionei anteriormente.
+
+E então, ele faz um pré-processamento, transforma tokens em embeddings e embeddings posicionais, os soma e, em seguida, percorre todos os blocos do Transformer, todas as diferentes camadas do Transformer, e executa a passagem direta desse Transformer. Em seguida, são feitas as normas lineares e, por fim, passa-se pelo cabeçalho LM para obter uma distribuição dos logits que mencionamos anteriormente. E se você estiver fazendo o treinamento, isso também aplicaria a perda de entropia cruzada nesse caso, e no final você obterá os logits e a perda como saídas do seu modelo de transformação. E eu tenho alguns diagramas aqui que você pode ver. Bem, eles são bem básicos, mas essencialmente mostram o fluxo de processamento: você pega os IDs dos tokens, os transforma em embeddings, embeddings de tokens e embeddings posicionais, os soma , os passa pelo Transformer e, em seguida, pela normalização da camada, que simplesmente transforma as saídas em um formato que o cabeçalho do modelo de linguagem consegue compreender mais facilmente.
+
+E então você retorna essa distribuição de, tipo, qual deveria ser o próximo token que tem esse tamanho e, como mencionei antes, tipo, 65 é o tamanho do seu vocabulário - nosso vocabulário - nosso tamanho de token. E agora a autoatenção é um pouco mais complicada. Não quero entrar em muitos detalhes sobre como isso funciona, mas essencialmente, a atenção está voltada para a compreensão das relações entre os tokens. Hum, basicamente, o que é importante? Tipo, se eu disser que o céu é azul, azul e céu têm uma correlação muito grande . Então é isso
+
+que a atenção faz. Com base em como você treinou seus pesos, você entenderá quais elementos devem estar relacionados entre si e dará maior ênfase a essas relações específicas. Voltando ao que eu estava dizendo antes, é por isso que o tokenizador é tão importante, porque céu e azul são muito fáceis para o modelo estabelecer essa relação. Embora no nosso caso você tenha que combinar diferentes grupos de fichas com os diferentes personagens, isso é bem mais difícil. Mas é isso que a atenção faz. É aquilo a que
+
+cada token deveria estar atento no passado e o que tem maior importância para ele. E também possui um passe para frente, assim como todos esses diferentes tipos de bloqueio. E na sua implementação, fique à vontade para simplesmente copiar e colar esses blocos. Talvez você possa dedicar mais tempo para entender os diagramas e como as coisas funcionam. Mas como você pode ver, até mesmo algo tão complexo quanto a atenção tem um " It" muito pequeno. São apenas algumas linhas de código
+
+para implementar. E sim, por último, o bloco MLP, como mencionei anteriormente, também... como já falei, a atenção multifacetada tem várias "cabeças" porque cada cabeça se concentra em diferentes partes do que torna a linguagem o que ela é. Em
+
+seguida, o bloco MLP recebe as saídas da atenção e interpreta todas essas diferentes relações, transformando-as em algo que o modelo possa entender melhor. Bem, o que, novamente, é essencialmente uma rede neural que combina informações em algo um pouco mais compreensível para o controlador do modelo linear, para que ele possa então gerar distribuições para os logits. É sim, sim, não, você pode interromper. Temos o mesmo MLP para blocos de transformadores individuais? Tipo, será que a arquitetura e os pesos dos diferentes blocos do transformador são os mesmos?
+
+Não, cada bloco tem seu próprio peso. Cada bloco. Essencialmente, cada camada seria o que chamaríamos de blocos. Bem, geralmente eles têm uma seção diferente para um prefixo diferente para os pesos, tipo, MLP seria diferente, talvez geralmente sejam chamados de blocos FFN em vez de MLP, mas ainda seria a mesma coisa. Assim, cada bloco tem seu próprio peso.
+
+E o MLP de cada camada. Sim, cada bloco tem seu próprio MLP. Então, é que você tem seu próprio bloco, que tem seu próprio...
+
+como você pode ver aqui, ele está em atenção, suas próprias normas lineares e seu próprio MLP. É isso que basicamente constitui uma camada de um transformador. E era exatamente esse o meu ponto que eu ia abordar mais tarde. Tudo se junta neste bloco que podemos ver aqui, que é basicamente uma camada de um transformador com alguma normalização, executando a atenção para obter a relação entre os modelos, e então tendo o MLP que combina a relação do, desculpe, a relação entre os tokens, e então o MLP que pega essas relações e as transforma em uma representação que é fácil para o modelo criar os logits. E... isso... opa. Era isso que
+
+eu estava dizendo. Desculpe. Tenho duas telas diferentes. Eu não deveria estar fazendo isso. Mas sim, este é o bloco transformador. Este é o elemento
+
+fundamental de um transformador. Hum, possui norma de camada, atenção e outra norma de camada. Nem todos os modelos têm essa configuração, mas este modelo específico a possui. E então temos o MLP, que pega tudo e transforma em uma representação que faça sentido para nós, permitindo-nos criar as gerações. E você pode ver aqui um diagrama um pouco mais simples de como isso funciona.
+
+Sim? O nano GPT original também possuía a conexão residual. Você se lembra? Então, o resíduo deve estar lá. Não, não. O que eu quero dizer sobre o
+
+nano GPT de Andre Karpathy, eu não me lembro. Hum... Já faz um tempo desde que eu... Ok. Tipo, eu
+
+tive a ideia, mas a partir daí, construí tudo do zero. Então, eu realmente não me lembro se aconteceu ou não. Ah, sim, residual, como você pode ver, a ideia de residual seria, como você pode ver aqui, em vez de fazer X igual à atenção, você faz X igual a X mais a atenção. Então, você entende a diferença. Os valores das ativações não mudam muito. Bem
+
+, essa é a ideia de fazer os cálculos residuais. Hum, é , e sim. Então, se você quiser implementar isso por conta própria, pode copiar e colar todas essas classes diferentes em um único arquivo chamado model.py. Bem, e isso é basicamente toda a matemática por trás do funcionamento dos transformadores. Bem,
+
+como mencionei antes, precisamos decidir o tamanho da transformação, como a contagem de parâmetros que você pode ver aqui, que é de apenas 10 milhões de parâmetros, com base no que eu disse acima. Bem, você pode se encontrar simplesmente somando todos os diferentes parâmetros de todas as diferentes partes dos diferentes blocos que tínhamos acima. Bem, o vetor de incorporação dos tokens é 65 * 384. Dissemos que este é o vetor para cada incorporação, então é 25k. O número de embeddings posicionais é 256. Lembre-se, 256 é o
+
+comprimento da sequência, o comprimento máximo da sequência do modelo. Então, são mais 98 mil parâmetros. E a maior parte da lógica reside nos próprios blocos do transformador, onde a maioria dos parâmetros está localizada. Então, você tem , você tem 4x. Então, o número quatro vem da forma como a atenção funciona, onde você tem um par chave-valor, chave de consulta e chave-valor. Então, faz
+
+parte do potencial que possui quatro parâmetros diferentes. Para, por exemplo, para 384, que é a quantidade de tokens multiplicada pelas relações entre esses tokens. Então, 204 por vetor vezes 384. Portanto, temos 590 para a atenção por camada. E aí, no caso do MLP, você tem novamente a mesma lógica: " Não me lembro quanto é esse 1.536, mas
+
+, no fim, acaba sendo 1,2 milhão". Portanto, o número total de parâmetros que usaremos para treinamento será de 1,8 milhão, o que deve ser suficiente para a maioria dos dispositivos e facilitar o treinamento. Ah, sim, você pode voltar a isso. Tem muitos detalhes que... bem, que...
+
+que farão sentido para você voltar e entender um pouco mais a fundo, faça sua própria pesquisa sobre isso. Mas essa é uma ideia geral, bem resumida, de como esses transformadores funcionam. E agora vamos para o ciclo de treinamento. E é aí que se concentrará a maior parte do trabalho essencial deste projeto. Bem, nós temos esse transformador, e como vamos treiná-lo para fazer o que queremos que ele faça?
+
+O objetivo deste treinamento que vamos realizar hoje é algo que todos devem reconhecer facilmente. Mas, sabe, quando o modelo começa a funcionar e a "entender", o que significa que ele compreendeu o que está tentando fazer. Vai ser muito fácil entender que o modelo realmente funciona agora. E em segundo lugar, deve ser algo que seja bastante fácil para o modelo aprender. Bem, se o modelo tivesse que escrever código em Python para programação competitiva, então sim, seria uma tarefa muito difícil, então não seremos capazes de fazê-la aqui. Mas, no nosso caso, o
+
+objetivo será criar um mestrado em Letras (LLM) nos moldes do de Shakespeare, capaz de compor versos a partir de obras de Shakespeare. E como mencionamos anteriormente, esses modelos estão aprendendo a prever o próximo token . Então, o funcionamento da entropia cruzada é o seguinte: você pega os tokens atuais que deseja usar para o treinamento. Nesse caso, digamos que seja T0, T1 para TN. E então você queria prever T1, T2, T mais um e TN mais um.
+
+Então, o funcionamento da entropia cruzada é o seguinte: você pega sua sequência e a desloca em uma unidade, como se fosse o valor que o modelo precisa aprender para calcular. E claro, a última você não tem, então você tem que cortar fora. E então o modelo aprende a prever o próximo token com base nessa lógica. Bem, agora vamos ao código de treinamento em si. Primeiro, precisamos carregar os dados, e temos esta função que faz isso . Os dados já estão
+
+no próprio repositório uh. Está neste diretório de dados. É uma coleção de diferentes versos e linhas de Shakespeare. São cerca de 1 milhão de tokens ou 1 milhão de caracteres.
+
+Primeiro, carregamos os dados. O carregamento de dados é muito simples, até demais. Então, essa é uma das coisas que eu acho que você pode otimizar. Basicamente, o programa pega todos os tokens, divide-os em um conjunto de validação e um conjunto de treinamento, e então os embaralha e extrai 256 lotes de sequências de tokens que são extraídos do próprio texto. E, basicamente, usá-lo para treinamento. O tamanho do lote será 64. Portanto,
+
+ele pega 256 sequências de tokens, 64 delas, as empilha e as passa para o modelo para ensiná-lo a treinar. Portanto, um carregador de dados muito simples. Geralmente, esses carregadores de dados podem ser bastante complexos, especialmente quando se tem contextos de maior comprimento. A forma como os dados são carregados é uma parte muito importante de como o modelo aprende. Mas, no nosso caso, temos uma implementação muito, muito simples. A
+
+seguir, vamos explicar como o código funciona para que possamos usar um dispositivo. Bem, esse código funciona para MPS, funciona para CUDA e funciona para CPU. Depende do que seu laptop suporta, ou se você usa ferramentas como o Google Colab. Por exemplo, se você executar o Google Colab, ele detectará o CUDA e será bastante rápido. O MPS também é bastante rápido. A CPU será o componente
+
+mais lento. Mas é assim mesmo, funciona razoavelmente bem. A seguir, temos o aprendizado, a taxa de aprendizado, e isso é uma parte importante de como os modelos conseguem aprender. Bem, o funcionamento dos modelos é o seguinte: geralmente, você começa com uma taxa de aprendizado o mais alta possível, dentro dos seus limites, sem tornar o modelo instável. Então, basicamente, isso faz com que ele fique descontrolado.
+
+E o funcionamento é o seguinte: você começa com uma taxa de aprendizado muito alta, que é essencialmente a quantidade que o modelo consegue aprender por etapa. O quanto os pesos precisam se mover na direção desejada. Se você tiver uma taxa de aprendizado muito alta, isso compensará seu objetivo, fazendo com que seu modelo saia dos trilhos muito rapidamente. Portanto, você deve usar uma taxa de aprendizado bastante adequada. Para que seu modelo possa ser treinado adequadamente.
+
+E geralmente você tem esse conceito de aquecimento, onde começa com uma taxa de aprendizado muito pequena para que todas as suas otimizações, os pesos do modelo, consigam se manter em posições
+
+que sejam apropriadas para o início do treinamento. Então você começa com uma taxa de aprendizado muito baixa, aumenta-a ligeiramente até atingir o pico e, em seguida, no pico, começa a reduzir a taxa de aprendizado, e é isso que chamamos de decaimento de peso. Hum, e até você chegar a um ponto em que esteja satisfeito com isso. Para algumas pessoas, isso significa zero. Eu prefiro não ir para zero porque aí fica difícil reiniciar o treinamento.
+
+Mas essa é a ideia. O ideal é que a taxa de aprendizado seja menor quando o modelo estiver próximo da perfeição. Tão pequeno que você quer começar com mudanças muito grandes para encontrar, como bons mínimos locais, procure mínimos globais e então, para nos calibrar, o treinamento vai além. Então, vamos começar com um pequeno aquecimento de 100 passos e depois usaremos um decaimento cosseno até o número máximo de passos, que neste caso será de 5.000.
+
+Então você vai começar com um pico muito baixo, em torno de 100 passos, e depois começar a diminuir até chegar a 5.000 passos. E é isso que o normalizador AdamW faz. Essencialmente, isso permite esse conceito de controlar a taxa de aprendizado usando o decaimento do cosseno. E esse é o normalizador mais comum que as pessoas usam.
+
+Pelo menos costumava ser usado. Existem normalizadores melhores, mas este é o mais simples para começar. Eis como seria o ciclo de treinamento completo . Novamente, não é tanto código assim. Você só precisa inicializar sua configuração.
+
+Nesse caso, seria algo como seis camadas, seis cabeças de atenção, tamanho de incorporação de 384 µm e comprimento da sequência de 256. Você inicializa seu modelo. E então você cria o seu...
+
+você inicia o seu otimizador. Você inicia seus passos. Contratar um mestre de jogo ajuda a controlar as perdas e tudo mais. O ideal é que suas perdas comecem altas e continuem diminuindo até atingirem níveis aceitáveis. E outra parte importante são as avaliações, para garantir que seu modelo realmente funcione bem. É isso que representa a perda de valor
+
+aqui. Portanto, é muito fácil para os modelos sofrerem de sobreajuste, especialmente modelos pequenos como este, porque não há muitos dados disponíveis. Portanto, a perda pode continuar diminuindo, o que significa que o que o modelo prevê e o que os dados de treinamento representam são muito semelhantes. Assim, suas perdas podem continuar diminuindo bastante. Mas, na verdade, em determinado momento, talvez seu modelo sofra de sobreajuste nesse caso.
+
+E quando ocorre sobreajuste, mesmo que a perda diminua, na verdade o desempenho do modelo piora. É por isso que temos essa perda de validação, que representa uma parte dos dados que o modelo nunca viu, e executamos uma passagem direta para obter a perda dessa parte específica do conjunto de dados. E se esse valor for muito baixo, significa que o modelo está funcionando bem, pois nunca viu esses dados antes e, portanto, não consegue memorizar coisas que nunca viu. Então, é isso que temos aqui com a perda de valor. E agora, não vou explicar o conceito de perdas reversas, mas essencialmente é assim que os pesos do modelo se movem na direção da otimização.
+
+Então, para cada etapa, temos um tamanho de lote de, no nosso caso, 256 tokens, tamanho de lote 64. Assim, passamos essa matriz pelo nosso modelo, e então ele aprende, e o otimizador realiza uma etapa extra, e agora as taxas de aprendizado são ajustadas dependendo da etapa em que você está no momento. E por último, só para ter uma forma extra de, a cada 1.000 passos, você salvar seu ponto de verificação para poder reiniciar seu treinamento, se necessário, a partir daquele ponto. E também estamos executando inferência no ponto de verificação atual para ver o que o modelo realmente prevê neste momento. Então, o que vamos
+
+começar a ver é que, quando começamos do zero, porque é um modelo que estamos treinando desde o princípio, a perda será essencialmente aleatória. Nesse caso, seria o logaritmo natural de 65, então começaria por volta de 4,17. Bem, isso basicamente significa que o modelo não sabe de nada. Não tem a mínima ideia do que sejam esses dados. E aos poucos vamos começar a ver a perda diminuir para 3,3. É nesse momento que
+
+o modelo vai entender a frequência dos caracteres. Hum, ainda não será capaz de formar palavras , mas poderá entender coisas como " th" como parte de "the", que é uma palavra comum. Assim como isso, vai fazer parte das coisas que começará a gerar. Então, por volta dos 2,5, vai melhorar um pouco em relação a esse "th", e então vai entender a palavra "in" e coisas do tipo . Então, com cerca de 1,5 a duas perdas, começará a formar palavras de fato.
+
+E então, por volta de 1,0 a 1,2, é quando o modelo começará a ser decente nessa tarefa. Você conseguirá entender os nomes pelo texto. Isso começará a criar coisas que farão sentido. Mas quando a perda começa a ficar abaixo de 1,0 para esse conjunto de dados específico, é aí que começaremos a ver o sobreajuste. O modelo ainda será semelhante ao de produzir coisas razoáveis, mas não começará mais a se aprimorar nisso. Bem,
+
+este é um exemplo com 200 passos, quando eu estava testando isso. Ah, estava produzindo um completo disparate. E a perda de valor foi em torno de 3,5. Então, por volta da etapa 800, começou a produzir resultados decentes. Hum, ainda não eram coisas ótimas, mas estava começando a melhorar.
+
+E aos 1.000 passos, melhorou. E houve um ponto em que a perda de validação começou a aumentar em vez de diminuir, e é aí que sabemos que o modelo sofreu overfitting. Assim, por volta de 2.400 passos, esse foi o ponto em que o modelo apresentou o desempenho ideal. E se continuássemos assim, o
+
+desempenho talvez não estivesse diminuindo, mas os modelos estavam se tornando menos criativos. Então, essa é uma das coisas que você precisa ter em mente. Bem, a perda de validação não é a melhor métrica se você estiver realmente levando a sério o treinamento de LLMs (Modelos Lineares de Longo Prazo). Normalmente, você usa alguns benchmarks como parte do treinamento para verificar se os resultados estão piorando ou não. Mas para nós, essa é uma maneira muito fácil e barata de entender como o modelo está funcionando.
+
+Então, sim, esses são os próximos passos agora, provavelmente treinar esse modelo você mesmo. Considerando que a internet já está boa, eu sugeriria usar o Google Colab para isso. Você pode copiar e colar coisas daqui . Você pode colar coisas. Hum, copiar e colar provavelmente vai te permitir chegar a 90% do resultado. Hum,
+
+há muito espaço para melhorias no que fiz aqui. Eu propositalmente fiz tudo muito simples, e há coisas que vocês podem melhorar . Mas a ideia é...
+
+fazer alguma coisa funcionar. Espero que todos consigam fazer algo funcionar, caso estejam interessados ​​em trabalhar nisso. E ter algo que parta do nada e chegue a um modelo que possa produzir um resultado que pareça razoável. Depois de treinarmos um modelo, a próxima etapa é a geração de texto, que é como a parte de inferência do processo. Bem, vamos usar... existem
+
+várias maneiras de fazer inferência. Uma das maneiras é semelhante à decodificação gulosa. É o que eu estava mencionando antes. Você tem todos os logits, que são uma distribuição de tokens, e você simplesmente pega o token mais provável, e é isso que significa a decodificação gulosa. Então, digamos que você tenha o token T e o token H, ambos presentes na distribuição. Uma tem cerca de 80% de
+
+probabilidade, a outra tem cerca de 15% de probabilidade. Você sempre escolhe o melhor, o melhor de todos . Hum, isso é decodificação gananciosa. A decodificação gananciosa não funciona muito bem para LLMs. Isso pode funcionar bem para outros modelos, mas para LLMs, essencialmente, torna-os muito entediantes e pouco criativos no que geram. Portanto, você praticamente
+
+nunca deve usar decodificação gulosa para LLMs. Você pode usá-lo para outros modelos, como transcrição; por exemplo, a decodificação gulosa é a melhor opção porque geralmente só existe uma maneira de transcrever algo. Você não quer que a transcrição seja criativa . Tipo, isso não é uma boa ideia. Então, é isso que é decodificação gulosa.
+
+No nosso caso, não vamos usar isso. Vamos usar a temperatura. Basicamente, o que acontece com a temperatura é que você nem sempre está escolhendo a opção com a maior probabilidade de sucesso. Às vezes você pode escolher o segundo token com maior probabilidade ou o terceiro. E, mesmo que não faça sentido nenhum, por que você escolheria um token pior para a situação?
+
+Isso comprovou que, na verdade, melhora o desempenho do modelo. Às vezes, ele pode entrar em loops estranhos, então não há técnicas que você possa usar para garantir que ele não saia do controle gerando algum tipo de comportamento sem sentido. O pior é quando ele prevê o fim do token de transcrição e o fim do token de texto e, de repente, interrompe a geração, algo que talvez você já tenha visto ao usar o ChatGPT, onde ele simplesmente para sem motivo aparente. Às vezes é por causa disso, mas existem maneiras de você... você pode...
+
+evitar isso. Geralmente, uma temperatura de 0,7 uh é a ideal. O melhor meio-termo para que a inferência funcione bem. E depois você tem a amostragem top K. Bem, basicamente, isso impede que o modelo, se você tiver , digamos, cinco tokens que são muito prováveis ​​e o sexto token for completamente improvável, preveja esse sexto token muito improvável, mesmo que você tenha azar e a temperatura o atinja.
+
+Então, é isso que a amostragem top K faz. E nossa função de inferência é muito simples. Ele simplesmente executa, pega todos os tokens como entrada, passa-os pelo modelo, extrai os logits do modelo e executa o softmax. Isso é o que eu descrevi antes e se chama softmax. O sistema utiliza uma temperatura para calcular as probabilidades e, em seguida, decide qual deve ser o próximo token com base nessas probabilidades.
+
+Uma coisa que você pode fazer é usar sementes, e basicamente, com sementes, tudo se tornará aleatório se você continuar repetindo o mesmo comando. Mas se você continuar retornando o mesmo valor, mesmo usando uma semente fixa, sua inferência sempre retornará o mesmo valor. Hum, o que será relevante mais tarde. Bem, juntando tudo,
+
+se juntarmos tudo, devemos ter três arquivos diferentes. Um deles é semelhante ao arquivo model.py, que inclui a arquitetura do nosso modelo . Um deles é o train.py, que inclui o carregamento do conjunto de dados e o loop de treinamento.
+
+E por último, o arquivo generate.py que inclui nossa inferência. E, no total, isso deve dar talvez algumas centenas de linhas de código. É muito simples, e mesmo com essa quantidade de código, se tivermos hardware potente, poderíamos treinar um bom modelo de aprendizado de máquina usando essa arquitetura, desde que tenhamos dados e recursos suficientes. É basicamente tudo o que você precisa.
+
+E é basicamente isso que o GPT-3 e o GPT-2 representam. Lembro-me de quando a OpenAI estava prestes a lançar o GPT-2 e disseram que não o lançariam porque era muito perigoso para a humanidade. E isso era como naquela época. Era esse o código em que eles estavam trabalhando e continha muitos dados. E, claro, um modelo maior. Bem,
+
+isso parece meio engraçado, mas para eles foi um momento muito especial, e o modelo teve um desempenho realmente bom nas tarefas. Bem, no fim das contas, foi exatamente o que você vê aqui. Então, juntando tudo, se você usa o Google Colab, pode usar este trecho de código para baixar o conjunto de dados e este comando `pip install` para instalar as diferentes dependências. E então deve ficar mais ou menos assim, onde você instala as dependências e copia o código. Bem, talvez seja necessário fazer algumas conexões, mas basicamente você pode executar um treinamento usando o comando `train` para selecionar o conjunto de dados desejado, e isso iniciará o treinamento. Assim, você poderá acompanhar a
+
+evolução do desempenho do modelo passo a passo. Por exemplo, para mim, levou cerca de 15 minutos de treinamento no Google Colab até que eu começasse a obter bons resultados. Bem, com algumas melhorias, você pode fazê-lo funcionar mais rápido e talvez mais devagar, mas, na verdade, obter melhores resultados. Bem , basicamente é muito simples de fazer funcionar. Uma coisa importante a lembrar é que você precisa alterar o tipo de tempo de execução para T4 GPU, pois este é gratuito e funcionará muito rápido.
+
+Hum, ei, sim, fique à vontade para treinar. Você pode tentar começar com um modelo bem pequeno, com 0,5 milhão de parâmetros , com duas camadas, apenas duas cabeças de atenção e um tamanho de incorporação menor para cada token. E então você pode experimentar modelos cada vez maiores até obter resultados utilizáveis. Bem, como mencionei antes, você pode experimentar diferentes comprimentos de contexto. Comecei com 256, você pode tentar um valor maior, como 512.
+
+E então, se quiser monitorar e ver como suas perdas diminuíram de uma forma mais clara, você pode usar esta biblioteca, tipo o pipe plot, para visualizar os gráficos. O que você deve observar é se a perda de treinamento não está diminuindo, pois isso significa que seu modelo não está aprendendo. O problema é que você tem um bug no seu código. Bem, se você for...
+
+você também pode ter uma baixa perda de treinamento. Se a perda no treinamento estiver diminuindo, mas a perda na validação não estiver, na verdade está aumentando, isso significa que você está sobreajustando (overfitting). E se você tiver picos muito estranhos de perda, a perda seria, em geral, muito suave. Se você observar picos muito estranhos na sua perda, isso significa que provavelmente há algum tipo de erro nos seus dados ou no seu treinamento. E quando o modelo começa a estagnar e não apresenta mais melhorias, significa que você praticamente esgotou a utilidade do seu conjunto de dados atual.
+
+Então, ou você vai usar um modelo maior ou vai precisar de mais dados. Bem, uma parte interessante do que eu gostaria que fizéssemos é... acho que seria legal se tivéssemos algum tipo de competição para ver quem consegue treinar o melhor modelo, se alguém conseguir fazer as coisas funcionarem. Espero que os
+
+dados sejam suficientemente bons. E para leituras adicionais, você pode consultar diversos recursos disponíveis para este workshop. Bem, basicamente o desafio é que podemos votar todos juntos para descobrir qual modelo produz o melhor verso de Shakespeare. Ou poderia ser se você usasse um conjunto de dados diferente, como um poema de melhor qualidade ou algo do tipo. As regras são que você precisa treinar o modelo você mesmo, como aqui e hoje.
+
+Não pode ser como alguns, você não pode pedir ao ChatGPT para te dar um bom verso. Você precisa usar seu próprio modelo. E para provar isso, você usaria algo como uma semente com um prompt específico e veria qual seria a saída. Você pode regenerar quantas vezes quiser até obter os melhores resultados. E eu vou disponibilizar um código QR para que você possa enviar seus resultados e eu posso ajudar as pessoas que precisarem de ajuda para começar o treinamento . E, claro,
+
+esse treinamento é super básico. Existem muitas maneiras de otimizar e melhorar isso. Então, acho que pessoas com um pouco mais de experiência podem implementar essas melhorias e talvez obter melhores resultados com seu outro modelo. O vencedor vai ganhar alguns brindes da Level Ups, talvez um moletom com capuz ou alguns créditos grátis. Hum, vou ver o que eu realmente posso oferecer.
+
+Então, sim, esta é a submissão. Você precisa ser criativo e então eu... e isso será essencialmente como um bom verso.
+
+E talvez possamos usar uma espécie de colchete. Oh, o que aconteceu? Ah, legal. Podemos usar um sistema de colchetes e depois votar em qual verso soou melhor. Isso pode ser engraçado, pode ser algo bem feito, depende de você.
+
+E a reprodutibilidade deve ser algo parecido com isto. Bem, você executa o comando `python generate` no seu melhor ponto de verificação, o prompt que você decide que pode usar (fica a seu critério), a temperatura e uma semente que comprova que você realmente consegue produzir seus resultados. Você pode experimentar diferentes tamanhos de modelo. Bem, acho que 85 milhões de parâmetros talvez seja demais para isso, mas se você tiver recursos, pode tentar. Você pode tentar tokenizadores melhores, como este, que é baseado em caracteres, mas talvez você possa treinar seu próprio tokenizador BP com base nesse conjunto de dados.
+
+E também existem outros ajustes que você pode fazer, como um contexto mais amplo, por exemplo, algumas otimizações de treinamento, como usar um valor de dropout. Você pode parar quando quiser, quando achar que o modelo está bom o suficiente, e então alterar as taxas de aprendizado. E basicamente, queremos tornar o modelo o melhor possível. Ah, sim, essa é a ideia. Hum, vou dar uma volta e te ajudar.
+
+Desculpe, pode prosseguir.
+
+Então, os modelos de raciocínio atuam para repetir o... você está perguntando se existem modelos que são bastante diferentes no treinamento. Os elementos básicos são muito semelhantes. Assim como você pode treinar o mesmo
+
+modelo, você pode treiná-lo posteriormente, que é como o raciocínio geralmente é ensinado a esse modelo. Você tem um bom modelo base de instruções e depois o treina para se tornar um modelo de raciocínio. Isso depende muito do conjunto de dados. Portanto, você precisa de dados de altíssima qualidade. E você vai usar uma função de perda que seja boa o suficiente para conseguir aprender com esses dados de uma maneira muito eficaz .
+
+A dificuldade dos modelos de raciocínio reside em encontrar essa boa sequência de dados de pensamento. É por isso que a OpenAI tem vários analistas que são como estudantes de doutorado e que anotam os raciocínios de como resolvem os problemas. Porque esses dados precisam ser de altíssima qualidade, pois são eles que ensinam o modelo a pensar. Então, você não pode simplesmente entrar em um site como o Reddit e ficar vendo posts aleatórios. Você certamente não vai aprender a pensar dessa maneira. Você precisa de
+
+dados de altíssima qualidade e valor para ensinar esse processo de raciocínio. Mas, no fim das contas, o raciocínio é essencialmente apenas adicionar contexto ao modelo, dessa forma, para chamar a atenção. É como uma lógica que permite ao modelo, ao gerar uma resposta, voltar atrás e analisar esses tokens de raciocínio para obter uma resposta melhor. Então, seria como descrever o modelo um pouco melhor, depois ele volta, vê aqueles tokens que descreveu e diz: "Ah, na verdade, sim, eu já descobri isso . Vou anotar agora."
+
+OK. O microfone não está funcionando. É mesmo? Sim, perfeito. Então, modelos de raciocínio e não raciocínio frequentemente compartilham a mesma base, e então um é pós-treinado de uma maneira diferente e adiciona-se isso, você sabe, de uma forma diferente de pós-treinamento. Sim. Então, muitos
+
+laboratórios, digamos, o modelo atual que foi lançado na versão 1.3, geralmente lançam uma versão básica, uma versão com instruções, e normalmente a versão básica não tem uma linha de raciocínio. Normalmente, eles usam o mesmo modelo que é pré-treinado para ser bastante bom, e depois fazem alguns ajustes finos. E então o próximo passo é realizar o treinamento pós-formação para ensinar esse tipo de conhecimento. Então, é por isso que vemos muitas melhorias significativas acontecendo muito rapidamente no setor, como do Gemini 3 para o 3.1. Essencialmente, isso proporciona
+
+melhores dados de raciocínio e melhores dados de ajuste fino pós-treinamento para problemas específicos. É um pouco como fazer um teste comparativo, geralmente esses dados são muito semelhantes aos benchmarks, aos bons benchmarks atuais. Mas sim, basicamente é pegar um modelo base e usar esses novos dados para aprimorá-lo e levá-lo a um nível superior. OK. E a segunda pergunta é: comparado ao que você está nos mostrando aqui, este modelo bem básico, houve alguma inovação fundamental no treinamento principal do modelo, como a que impulsiona os modelos atuais, ou é basicamente a mesma coisa, só que com truques mais inteligentes, pequenos ajustes, dados melhores e assim por diante? Então, eu queria saber se todos
+
+ainda usam a mesma camada de atenção e assim por diante, ou se houve algumas mudanças fundamentais recentemente, e talvez você saiba, talvez não, eu não sei. Não, sim, não, sim. Então, você está correto. Então, grande parte dessa base é a mesma. Eles podem fazer algumas alterações em relação à forma como a atenção se concentra nesses diferentes tokens, porque às vezes o raciocínio pode ser bastante extenso, então você precisa de sequências longas para obter bons resultados.
+
+Então, existem muitos truques que os novos laboratórios usam para tornar a atenção mais eficiente. Mas, no geral, você pode pegar esse modelo, o GPT-2, e transformá-lo em um modelo de raciocínio. É como se você tivesse os dados e um modelo grande o suficiente para realmente aprender com esse raciocínio, porque, dessa forma, o raciocínio dos modelos atuais não os ajudará muito. Mas se você tivesse um modelo grande o suficiente que pudesse extrair informações do raciocínio, haveria pessoas que pegariam modelos mais antigos, como o Llama 1B, que era pequeno e não havia sido treinado para raciocínio, e os transformariam em modelos de raciocínio usando exatamente a mesma arquitetura. Sim.
+
+Quanto esforço você dedica para obter seu conjunto de dados ideal? Qual é o processo que você segue? Você quer dizer para depois do treinamento? Sim. Sim, como mencionei antes, geralmente o que a maioria dos laboratórios faz é recorrer a empresas como a Scale AI, que provavelmente é a maior delas. E a
+
+Scale AI tem um exército de pessoas assim, e você pode dizer: " Quero físicos". Forneça-me dados de físicos e a Scale AI encontrará físicos contratados, pagando-lhes o quanto precisarem. E então esses físicos podem anotar as coisas e podem ser contatados para fazer diferentes trabalhos. Mas, essencialmente, como muitas dessas empresas, a Scale AI fornece dados para empresas como a Anthropic e outra boa empresa como a Meta, então provavelmente não tanto assim atualmente. Mas, essencialmente, esses conjuntos de dados são fornecidos por empresas como essas, de rotulagem. A
+
+Scale AI é uma delas, mas muitos dos grandes laboratórios também têm suas próprias equipes de rotulagem, para as quais contratam terceirizados para gerar esses conjuntos de dados. Mas, como eu disse antes, se esse conjunto de dados tiver até mesmo alguns pequenos problemas, isso pode literalmente determinar o sucesso ou o fracasso do seu modelo. Então, esses conjuntos de dados são os mais caros, custam uma fortuna, mas são eles que tornam os modelos tão bons quanto são. Apenas um breve comentário complementar. Então, mesmo assim, você ainda precisa avaliar, mas a resposta não seria exatamente a mesma.
+
+Então, nossa equipe está realmente analisando isso, ou vocês ainda estão dependendo do LLM para avaliar? Você depende de outras pessoas para esse tipo de coisa. Normalmente, a forma como funciona é que uma grande parte do meu trabalho consiste em fazer essa organização. Normalmente, funciona assim: você tem uma pessoa que gera os rótulos, dados de alta qualidade, e depois tem alguns rotuladores que se qualificaram para um cargo de controle de qualidade, cuja função é garantir que os resultados dos outros rotuladores, os iniciantes, estejam corretos. E é um trabalho bastante difícil, porque se o seu controle de qualidade não for bom, você é demitido. Então, é
+
+como se essa fosse a maneira que eles encontraram para manter o nível bem alto. Sim. Então, os LLMs não são determinísticos, mas como funciona esse parâmetro inicial? Então, o fato dos LLMs serem não determinísticos se deve essencialmente ao uso de geradores de números aleatórios para a inicialização da sua máquina. Ou algo como a GPU que você está usando atualmente no sistema. A semente, essencialmente,
+
+faz com que todos esses cálculos diferentes sempre retornem o mesmo valor. Portanto, as coisas deixaram de ser aleatórias. Como se você fosse você, isso não é apenas para...
+
+para isso... essas sementes podem ser usadas para qualquer geração aleatória. Então, poderia ser algo como hashes de senha.
+
+Sim, funciona exatamente da mesma maneira. Sim. Mas, como você mencionou, isso é bastante determinístico, certo? Então, se partirmos do princípio de que são determinísticos, certo? Sim.
+
+Sim, se você usar decodificação gulosa, ainda pode haver algumas coisas que... tipo, é bom usar uma semente mesmo se você usar decodificação gulosa, porque pode haver outras coisas que você não controla. Talvez você esteja usando algum tipo de decodificação gananciosa, que às vezes pode não ser realmente uma decodificação gananciosa, pode ser algo como 0,01, uma temperatura, como no caso do VLM, por exemplo, que usa alguns circuitos elétricos para conseguir obter bons resultados. Então,
+
+em geral, é bom usar a semente mesmo se você estiver usando decodificação gulosa. Sim? Bem, obviamente tudo isso está em formato de texto. A Eleven Labs é focada principalmente em áudio, certo? Sim. Qual a
+
+diferença disso em comparação com o que se faz com áudio? É surpreendentemente muito semelhante. Realmente? É certamente mais complicado, mas partes da estrutura, como a maioria dos modelos de áudio, também conseguem processar texto, porque os modelos precisam entender a linguagem em si. E a melhor maneira de ensinar uma língua é por meio de textos. É
+
+claro que você pode treinar um modelo somente de áudio, como... E, novamente, é como eu estava falando sobre o tokenizador. Como é que se tokeniza áudio?
+
+Qual é o conceito de "tipo um som"? Por exemplo, qual deve ser o tamanho do seu tokenizador para áudio? Deveria ser apenas fala humana ou também deveria incluir elementos musicais? Você considera as notas de diferentes instrumentos musicais como se fossem fichas diferentes? Esses são os tipos de problemas que você precisa resolver, como se estivesse criando um modelo de áudio, mas não necessariamente um modelo de texto. Isso é um
+
+pouco mais fácil. Mas os fundamentos continuam praticamente os mesmos. Por exemplo, se você quiser gerar áudio, você geraria um token de áudio e esse token de áudio seria processado por um tokenizador. Não é exatamente a mesma coisa, porque o token de áudio precisa ser processado de maneiras diferentes para se transformar em áudio propriamente dito. Mas, bem, muitas das mesmas ideias gerais ainda se aplicam.
+
+Mas será que há muita perda ou algo assim? Porque com texto, sabe, tipo, este é o texto, o texto pode ser reduzido a um nível muito claro, tipo um é um, mas em áudio, tipo, um tom, frequência ou som específico, mas aí a unidade já se perde imediatamente, certo? Sim, sim, então funciona assim: você não usa essa função de perda de entropia cruzada, você usa diferentes tipos de funções de perda, e você pode usar a entropia cruzada, mas geralmente são funções de perda mais especializadas para o que você está tentando fazer. Por exemplo, existe uma função de perda chamada L2 loss, que basicamente pega dois espectrogramas Mel e tenta identificar a diferença entre eles, que é como uma onda sonora codificada de uma determinada maneira. E essa é uma forma muito comum de treinar modelos TTS: você treina com esses tipos específicos de perda.
+
+E, como mencionei antes, a entropia cruzada não funciona tão bem para coisas como pós- treinamento; você pode usar diferentes tipos de funções de perda, ou, se estiver destilando um modelo grande para um modelo menor, você não usa a perda de entropia cruzada, mas sim uma perda de divergência KL, onde você encontra as distribuições de tokens do modelo maior e tenta corresponder aos logits do modelo menor. Portanto, existem diferentes tipos de funções de perda para diferentes casos de uso, e nem todas funcionam da mesma maneira. Sim.
+
+Portanto, no funcionamento dos modelos multimodais, geralmente não se utilizam tokens no mesmo sentido. Bem, é aqui que a coisa complica um pouco, porque esses modelos não foram realmente construídos para isso. O modelo GPT, por exemplo, mas os modelos mais recentes também têm uma entrada de embedding, que, como mencionei antes, significa que cada token corresponde a um vetor. Mas esses vetores não precisam corresponder a um token específico. Você também pode obter esses vetores de outros lugares .
+
+E o que muitos desses laboratórios fazem é que, em vez de terem um tokenizador para vídeo, por exemplo, eles usam outro transformador que chamam de codificador de vídeo. E primeiro eles processam o vídeo através desse codificador de vídeo. E esse codificador de vídeo, digamos que você tenha um vídeo de 30 segundos, capturará um quadro por segundo desse vídeo. E ele pegará esses quadros e os passará por esse novo transformador, esse transformador de codificador, que funciona de maneira bem diferente deste . E o que você faz é pegar a camada final desse transformador, os valores ocultos, que também são vetores.
+
+Você extrai esses vetores do codificador e os insere na camada de incorporação do modelo Transformer. Então, o que o modelo vai ver geralmente é algo como um prefixo. Então, você pega o vídeo, passa-o pelo codificador, obtém alguns vetores e, em seguida, coloca esses vetores na entrada de incorporação do seu transformador que processa o texto. E a sequência, se você observar, provavelmente se parecerá com um prompt e depois com uma representação gráfica em vídeo . E então, na verdade, a incorporação desse token de vídeo será substituída pela saída do codificador.
+
+Então, é assim que esses modelos multimodais funcionam. Ele produz um vetor que tem o mesmo comprimento que um vetor para palavras. Sim, é exatamente o mesmo vetor. E isso é tudo em relação ao áudio. Você tem um codificador de áudio e faz o mesmo, mas para áudio.
+
+E a questão é que, em termos do que o modelo leva em consideração, ele se preocupa apenas com essas representações, certo? Eles não se importam se é texto, áudio ou vídeo. Ele se preocupa com esses vetores e é assim que você os representa na mesma dimensão que o modelo que o transformador espera. Portanto, não há nenhuma relação entre o vídeo do cavalo saltando e a palavra "cavalo". Não há nenhuma semelhança entre os dois? Tipo,
+
+talvez haja. Não, depende de como você treina. É como se fossem coisas um tanto misteriosas . Talvez exista, talvez não. Na verdade, essa é uma boa ideia.
+
+Seria um bom tema para um artigo de pesquisa, para ver se os codificadores de vídeo têm a mesma dimensão que os codificadores de texto. Eu não sei. Imagino que provavelmente exista alguma conexão. Desculpe, você também tinha uma pergunta? Ah, sim, eu estava me perguntando, já que você faz tanto fala normal, você também produz música?
+
+É um problema muito diferente ou a arquitetura será semelhante? E também, quando você tem esses harmônicos e tal, você ainda consegue fazer isso com um transformador autorregressivo básico, ou precisa usar difusão, ou as coisas dependem mais umas das outras? Hum, quando você quiser gerar tudo ao mesmo tempo. Você pode fazer as duas coisas. Existem modelos musicais que são autorregressivos e existem modelos musicais que são difusores. Bem,
+
+isso depende de como você o treina . Tipo, eu acho que alguns dos modelos do Google são baseados em Transformers. Alguns modelos de código aberto são baseados em difusores. Ambos os tipos de trabalho funcionam muito bem. É que isso é um pouco...
+
+Como eu disse, é um pouco mais difícil... colocar em perspectiva esse conceito, como toda música. Se você tokenizar e prever o próximo token, é meio difícil porque é muito abstrato. Bem,
+
+geralmente os difusores funcionam um pouco melhor nessas modalidades de imagem para geração, ou em música, ou até mesmo em áudio para alguns modelos. É como se eles tivessem algum tipo de difusor, um difusor, parte do processo. Ambos podem funcionar. Os difusores geralmente são um pouco mais fáceis de configurar. Espero que isso tenha respondido à sua pergunta.
+
+senso. Sim. Como tokenizar áudio? Quero dizer, em textos, você encontra repetições, e isso acontece com bastante frequência. É mais fácil combinar se forem tokens.
+
+Isso é uma grande vantagem. Áudio com vozes diferentes que indicam a duração da reprodução. É muito difícil. E não é algo que se faça simplesmente sentando e pensando: "Ok, vou transformar esta palavra em aquilo." Isso não é algo que você simplesmente decide sentado.
+
+Você usa algum tipo de processo no qual treina um tokenizador de áudio. É um caso muito semelhante , eu acho, a como você treina um tokenizador de texto. Você usaria seus dados de treinamento e encontraria padrões comuns no áudio, para então tokenizar esses padrões. Claro, quando falamos de áudio, nem sempre nos referimos apenas à taxa de amostragem e às ondas sonoras em si. Geralmente, convertemos esses dados para algo que seja um pouco mais fácil de tokenizar, para realizar esse processamento. O mais
+
+comum é semelhante aos espectrogramas de Mel. Primeiro, você converte seu áudio em espectrogramas Mel e depois usa esses arrays de números para treinar seus tokenizadores. E isso dependerá muito do seu conjunto de treino. Por exemplo, se você quisesse tokenizar músicas e usar um conjunto de dados musicais, seus tokens de áudio para música seriam muito diferentes de um conjunto de dados de voz. Isso vai ser como se concentrar na voz humana.
+
+Agora, a parte difícil é: e se você quiser se dedicar tanto à voz quanto à música? É aí que a coisa complica. É muito difícil.
+
+Mais alguma pergunta? Ok, ótimo. Sim, se quiser, pode começar a treinar o modelo se tiver um computador portátil à mão ou se já o tiver começado. Você pode seguir isso. Você pode acompanhar o workshop e isso ajuda a colocar algo em prática.
+
+E, se tivermos inscrições suficientes, podemos fazer a competição e ver quem ganha. Quem ganhar receberá alguns brindes legais. Desculpe? Então, como não temos muito tempo , vamos dizer 5:45. Se você tiver alguma dúvida ou precisar de ajuda, por favor, me ligue e eu irei até aí.

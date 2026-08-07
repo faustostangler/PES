@@ -1,0 +1,118 @@
+---
+video_title: "Mastering AI Pricing — Mayank Pant, Stripe"
+video_id: CrqPcIZOOXA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CrqPcIZOOXA
+video_date: 2026-05-01T18:00:06+00:00
+video_description: |
+  Monetizing AI is hard. Rising GPU and inference costs are squeezing margins, and traditional SaaS pricing simply does not work for the unpredictable compute demands of new-age AI companies. With models constantly shifting across credits, tokens, and seats, a new challenge emerges: how do we charge for AI without stalling growth? This talk presents a framework for solving the dual problems of aligning charge metrics with true customer value and balancing predictable revenue with rapid adoption. Through real-world examples, we'll explore how to build guardrails that protect your margins and see how Stripe's world-class usage-based billing solution helps AI companies launch quickly and monetize with ultimate agility. Whether you're launching your first AI product or revamping your current model, you'll learn how to make your pricing strategy both profitable and adaptable.
+---
+[música]
+
+Olá. Oi. Eu sou Mayank. Sou da Stripe e sou o arquiteto de soluções de faturamento da empresa . E hoje queremos falar sobre a precificação da IA. Então, temos um sistema de faturamento
+
+e, atualmente, muitas empresas de IA nos procuram para falar sobre como querem implementar o faturamento e como podemos ajudá-las com a precificação de seus serviços de IA. Com base na pesquisa que nossa equipe do Stripe realizou nos últimos 2 anos e em nossa experiência, queremos compartilhar alguns aprendizados com vocês. Como todos sabemos, a economia da IA ​​está crescendo em ritmo recorde. Eles estão crescendo três vezes mais rápido que o SaaS tradicional e, com base nos dados da Stripe, é isso que vemos, certo? As 100 principais empresas de IA levaram 20 meses para atingir 20 milhões de dólares em receita recorrente anual, enquanto as 100 principais empresas de SaaS levaram 65 meses. Basicamente, estamos
+
+crescendo três vezes mais rápido do que vimos antes. E embora isso seja ótimo, isso seja empolgante, também está trazendo novos desafios. A velocidade dessa movimentação é tão grande que as empresas estão se globalizando mais rapidamente. Eles estão crescendo mais rápido e precificar a IA está se tornando incrivelmente desafiador devido à velocidade com que estamos vendo isso. Sabemos, portanto, que antes se tratava de preços tradicionais de SaaS. Basicamente, tínhamos margens brutas de 80 a 85%
+
+. Eles não estavam mudando, certo? Mas com IA é completamente diferente, não é? As margens são baixas e são afetadas dependendo de quantos usuários estão utilizando o sistema. Portanto, nem o modelo puramente baseado em assinatura nem o modelo puramente baseado em uso nos oferecem uma resposta completa, certo?
+
+E a razão é simples: temos risco de margem devido aos usuários que consomem muita energia. De 5 a 10% dos seus usuários podem utilizar 80% da sua capacidade computacional. Os custos externos são imprevisíveis, esse é o preço da sua infraestrutura, certo? O que pode prejudicar seriamente suas margens de lucro. A complexidade técnica dos preços pode sobrecarregar os usuários.
+
+O que queremos dizer com isso é que, para uma empresa de produtos que fala em termos de tokens, as chamadas de API podem parecer muito normais, mas as pessoas do outro lado não entendem essa precificação técnica. Para mim, por exemplo, se eu entrar no modo Gamma, não me importo muito com a quantidade de chamadas de API que estou usando. Quero ver quantos slides ou quantas apresentações eu consegui obter pelo preço que paguei, certo? E os preços não conseguem acompanhar a velocidade de produção. O que hoje pode ser um recurso premium, daqui a 6 meses pode ser um recurso padrão para todos. Então, você
+
+consegue acompanhar esses preços? Então, o que observamos em 33% dos nossos sites de negócios com inteligência artificial são os custos computacionais imprevisíveis como principal preocupação. 41% afirmam que definir o valor que está sendo entregue é uma preocupação, certo? E 84% deles comentam que estamos lançando produtos mais rapidamente, mas nossos preços não estão acompanhando esse ritmo. Por isso, o que chamamos de iteração é uma vantagem competitiva.
+
+O primeiro preço que você insere é uma hipótese. Não se trata de um compromisso, pois vocês estão adicionando novos recursos toda semana, todo mês, e com esses novos recursos, talvez os antigos recursos premium se tornem padrão. Então o preço tem que evoluir de acordo com o recurso que você adiciona, certo? Então, mudanças frequentes de preços são um sinal de crescimento, certo? Você constrói a infraestrutura, coloca seus preços na infraestrutura que pode iterar, o que permite iterar rapidamente, certo?
+
+Este gráfico é um dos meus favoritos. Isso demonstra que empresas de crescimento acelerado, que apresentam um crescimento anual superior a 100% , alteraram seus preços mais de três vezes nos últimos dois anos. Eles não estão cumprindo com os preços que praticam. 49% é, você sabe, um crescimento alto. São três empresas que mudaram e apenas 22% delas apresentaram baixo crescimento.
+
+Isso significa que essas empresas de baixo crescimento têm um produto estático, certo? E não é aí que você quer estar nos dias de hoje. Então, para onde essas empresas estão se mudando agora, certo? Se você observar, o preço dos veículos híbridos, que era de apenas 6% em 2024, agora é de 41%. A precificação baseada em resultados é de 5%, certo? E
+
+de onde isso foi obtido? A precificação por assento, a precificação SaaS e a precificação por assinatura estão todas em declínio porque os modelos estão mudando. Como eu disse, a precificação híbrida aumentou sete vezes e agora 56% dos líderes de empresas de IA estão usando precificação híbrida. Como conversamos com várias empresas como Intercom, Lovable, Eleven Labs, OpenAI e Tropic, todas elas estão construindo suas soluções na plataforma Stripe, faturando pelo Stripe e usando preços híbridos. Também conversei com empresas que eram SaaS até então, que ajudavam os clientes a criar fluxos de trabalho e adotavam preços SaaS, mas agora, assim que incorporam a IA da LLM em seus produtos, também planejam migrar para preços híbridos, porque os preços SaaS começam a corroer suas margens, certo?
+
+Então, se é para esse caminho que estamos caminhando, como começamos a pensar em precificação? Como chegamos a um preço justo? Como definimos nosso preço? E como podemos iterar esse processo? Então, temos uma estrutura de cinco etapas para isso, e a primeira etapa dessa estrutura é definir seu valor, certo?
+
+Então, que tipo de valor meu produto pode proporcionar? Mas não o que o seu produto faz, e sim o que o cliente percebe que o seu produto faz. Como eu disse , usando o exemplo de Gama. Para mim, como cliente, preciso desse produto para fazer minhas apresentações, meus slides. Não me importa quantas chamadas de API estão sendo feitas internamente, mas sim para onde os dados estão sendo enviados .
+
+Para o cliente, o mais importante é a qualidade e a relevância da apresentação. Assim, 53% das empresas de crescimento acelerado ofereceram preços claros baseados em valor, que o cliente entende, em comparação com apenas 26% dos seus pares de baixo crescimento. E a forma como vemos isso é que existem quatro grandes estruturas, sendo que a primeira delas é composta pelas empresas que fornecem automação. Como empresa, estou ajudando-os a economizar tempo e, como cliente, o que eles veem é: " Com o tempo economizado, estou economizando dinheiro, certo?" Em segundo lugar está o aumento.
+
+O número de pessoas permanece o mesmo, mas a qualidade do trabalho realizado é muito melhor. Como se eles pudessem produzir imagens melhores. Provavelmente, para um provedor de campanhas, eles conseguem criar campanhas melhores mais rapidamente. Então, quando a empresa analisa esse tipo de aumento de pessoal, pensa: " Ok, tenho o mesmo número de pessoas, mas elas são mais eficientes, conseguem entregar mais valor, certo?" Em terceiro lugar, temos o serviço aprimorado. Talvez isso
+
+lhe dê acesso a um software proprietário ou a algum novo conjunto de dados ao qual você não teria acesso de outra forma, certo? Por exemplo, se você analisar a Stripe e nossa infraestrutura de pagamentos, verá que conseguimos detectar fraudes com muito mais eficiência devido ao volume de transações que passam por nós, certo? E, finalmente, o quarto tipo é aquele que proporciona resultados aprimorados. Por exemplo, uma empresa como a Intercom, que diz: "Vou cobrar com base no número de chamados que resolvi sem intervenção humana". Isso está impactando diretamente o resultado final. Assim que entendermos
+
+como estamos ajudando os clientes e como eles percebem isso, é que saberemos o valor e o preço que podemos cobrar no mercado. Depois de entendermos que esse é o valor que estamos oferecendo, você define sua métrica de cobrança. Qual é a unidade faturável que melhor representa o meu valor, certo? E então você integra funcionalidades a uma linguagem que os clientes entendem. Por exemplo, é baseado no consumo?
+
+Assim como para uma empresa de infraestrutura, o modelo baseado no consumo pode ser o mais adequado . Quantas chamadas de API eu te ajudei a fazer, né? E isso está alinhado ao custo da empresa que presta esse serviço. A segunda opção poderia ser baseada no fluxo de trabalho. Quantas imagens eu consegui gerar? Quantos documentos eu consegui
+
+resumir? E isso está alinhado ao produto, e o terceiro ponto é o foco nos resultados, como eu disse. Quantos resultados comerciais eu gerei? Então, se eu estiver ajudando a empresa a contratar pessoas, quantos candidatos eu terei apresentado? Quantos candidatos foram contratados dentre aqueles que se inscreveram, resultando em economia de tempo? Ou, quantos leads qualificados eu
+
+gerei? Certo? Portanto, isso está alinhado ao seu ROI (retorno sobre o investimento) para o cliente. Então, agora que você entendeu o valor que está oferecendo e definiu sua métrica de cobrança com base nisso, vamos ver como eles a alteram, certo? Por exemplo, se você passar de uma abordagem baseada no consumo para uma abordagem baseada em resultados, com certeza será muito mais fácil implementar a abordagem baseada no consumo . Mas é mais difícil alinhar-se aos
+
+valores. Por exemplo, se uma empresa me dissesse: "Liberei 1.000 chamadas de API para você . Não sei o que essas 1.000 chamadas de API significam. Quero ver quantos
+
+relatórios eu gerei, como no meu exemplo anterior." Mas, se você passar de uma abordagem baseada em resultados para uma abordagem baseada no consumo, fica mais fácil vender. É claro que posso chegar para um cliente e dizer: "Vou melhorar seus resultados. Vou aumentar o número de candidatos contratados", mas atribuir valor é difícil. Portanto, é aí que o equilíbrio precisa ser encontrado e os dados são necessários para satisfazer e fundamentar seu argumento.
+
+Uma dica importante é traduzir valor em crédito. Assim como agrupar os recursos em créditos. Digamos que "Estou lhe dando 100 créditos para este mês. E então, por trás desses créditos, você pode ter seus próprios modelos para chegar a esse valor." Mas isso ajuda o cliente a entender: "Ok, 100 créditos se traduzirão neste retorno sobre o investimento específico."
+
+Depois de fazer isso, você escolhe seu modelo de precificação. Bem, trata-se de uma taxa de assinatura? A utilidade de uma taxa de assinatura ou de uma taxa de SaaS reside na receita previsível. Isso proporciona um relacionamento sólido com o cliente . Certo?
+
+E a segunda poderia ser a taxa de utilização, que varia de acordo com o cliente e protege as margens de lucro. Mas, como eu disse, a desvantagem é que, devido à taxa do SaaS, seus usuários mais avançados podem acabar com suas margens de lucro. E, considerando a taxa de utilização, o cliente pode hesitar em experimentar o seu produto. É como se eles estivessem se aprofundando ao máximo porque não sabem que tipo de fatura terão que pagar por isso. Portanto, o modelo de assinatura pura, baseado exclusivamente no uso, ficou no passado. Como vimos
+
+também nos slides anteriores, todos estão migrando para o modelo híbrido. Então, o que é o modelo híbrido? Um modelo híbrido terá uma taxa base e uma taxa variável. A taxa base basicamente ajuda você a estabelecer um relacionamento com seu cliente. E a taxa de escala ou a taxa de utilização adicional permitirá que eles experimentem o quanto quiserem e paguem pelo valor que obtiverem da sua plataforma.
+
+Assim, você não estará alienando nenhum usuário, independentemente da categoria de usuários. Depois de definir seus preços, você deve estabelecer as salvaguardas, pois uma fatura incorreta pode corroer bastante a confiança do cliente. Você pode estar indo muito bem durante três, quatro, cinco meses, mas se no sexto mês a sua fatura estiver errada, a fatura ficar muito alta, então esses clientes vão embora, e você trabalha tanto para mantê-los, mas aí eles te abandonam. Então, que recurso de segurança você considera? É como se você estivesse oferecendo preços flexíveis.
+
+Agora, você está construindo grades de proteção ao redor disso, certo? Como o princípio do projeto é a justiça, aqui é simples. Estabeleça preços justos, mas depois não surpreenda. Então, o que aconselhamos as pessoas a fazerem é estabelecer limites de consumo. Tipo, eu paguei 20 dólares e recebi 100 créditos.
+
+Digo que, após 100 créditos, estabeleci um limite de uso. Ou você paga mais para prosseguirmos, ou paramos e você espera até o mês que vem. Assim, é o cliente que permanece no controle de seus usos. Certo? Você cria uma notificação automatizada. Você
+
+avisa quando eles já usaram 50%, 70%, 90% dos limites alocados, porque isso constrói confiança com o cliente. Não estamos tentando enganá- los. Estamos lá tentando informá-los de que foi isso que você usou. Essas são as coisas que você pode fazer agora. Você pode recarregar.
+
+Você pode fazer uma recarga manual. Você pode fazer uma recarga automática. Ou você pode pausar e retomar no mês seguinte, quando novos créditos forem alocados para você. E então você configura a limitação de taxa para que nenhum código incorreto ultrapasse os limites, certo? Assim, isso protegerá você e seus clientes.
+
+Depois de concluir os passos de um a quatro, o passo cinco é iterar, certo? Você continua iterando. 84% concordam que a rápida adaptação aos preços é uma vantagem competitiva fundamental. Como eu disse, seu primeiro modelo é uma hipótese e você continua aprimorando essa precificação à medida que seu produto evolui. Você prioriza a velocidade. Você não espera
+
+pelo preço certo, o ponto de preço ideal, e aguarda um ano antes de fazer o pedido. Você define um preço que considera adequado e depois faz ajustes. Você conversa com seus clientes. Aqueles caras que cancelam suas assinaturas com frequência, você conversa com eles e pergunta por que estão fazendo isso. Existe adequação do produto ao mercado? E
+
+então você trabalha no seu produto. Mas será que o preço é alto? Em seguida, você trabalha na sua precificação. Certo? Se eles atualizarem o sistema, você faz as mesmas perguntas. Você realiza testes A/B de preços
+
+para encontrar o ponto ideal, mas prioriza a velocidade e continua iterando. E então você se realinha continuamente aos seus valores. Agora, realinhar-se ao valor significa que, à medida que você implementa novos recursos, já definiu para eles uma precificação híbrida. Você já inseriu uma certa quantidade de créditos. Nos bastidores, você pode continuar alterando o significado desses créditos.
+
+Esses 100 créditos que você concedeu a eles significam cinco chamadas de API de uma determinada categoria e 10 gerações de imagens de uma determinada categoria? Qualquer que seja. Então, por baixo do capô, você pode continuar trocando-os. Mas você constantemente realinha o valor. Então, é assim que todas as empresas têm pensado sobre precificação. É
+
+assim que temos tentado ajudá-los. Mas, o mais importante em tudo isso é que tipo de infraestrutura você tem para sua cobrança e precificação que está te ajudando a fazer isso? Se cada alteração custar três meses, quatro meses e muito esforço de engenharia, então não vale a pena. Por isso, a infraestrutura que você escolher determinará a velocidade com que você pode iterar. E, da nossa parte, a solução de faturamento mais flexível e completa do mercado é o Stripe, e não somos nós que estamos dizendo isso.
+
+78% das empresas de IA estão construindo suas soluções na Stripe, o que por si só já é um grande feito. A maioria das empresas de IA que você vê aqui está sendo construída sobre o Stripe, como eu disse: Anthropic, OpenAI, Lovable, Eleven Labs, Intercom. Todos eles estão lançando seus sistemas de faturamento e precificação. Você pode ter associado o Stripe apenas a pagamentos, mas nos últimos dois ou três anos investimos muito em faturamento com IA. Então, temos o sistema de faturamento do Stripe, que permite optar por preços por assinatura , preços por uso e preços híbridos.
+
+E como essas empresas estão migrando tão rapidamente, em um período de 10 a 15 meses, começando com o movimento PLG de varejo e passando para as empresas, temos o Metronome, que permite criar todos os contratos difíceis e complexos com as empresas, com compromissos mínimos, pré-compromissos e preços adicionais. Então, nós temos isso e temos toda a plataforma que permite fazer pagamentos, impostos, faturamento, reconhecimento de receita com base nessa precificação por IA. Então, sim, é aqui que estamos agora, ajudando todas as nossas empresas de IA no mercado. Então, sim, estou à disposição para qualquer pergunta que vocês tenham. Sim, por favor.
+
+Isso é super interessante. Com a recomendação de alterar o modelo de preços com bastante frequência, um dos riscos é que isso pode causar frustração nos clientes, levando-os a cancelar o serviço devido à instabilidade e à menor previsibilidade da estrutura de custos. Então, você tem alguma dica sobre como...
+
+Sim, então, o que as pessoas estão fazendo e o que nós também possibilitamos que elas façam é vender créditos, certo? Mas o que significam esses créditos? Por exemplo, digamos que você entrou hoje, em janeiro, e tinha um recurso que era seu recurso premium. Não havia nada parecido no mercado e você tinha alocado cinco créditos para essa funcionalidade nos bastidores, certo? Em seis meses, essa funcionalidade se torna padrão. Os preços
+
+caíram e, nesse meio tempo, vocês adicionaram novos recursos porque também estão competindo no mercado, certo? Assim, para o cliente, ele vê apenas 100 créditos. Nos bastidores, você está alterando essas chamadas ou permutações, como o que um recurso significa e quantos limites existem. Assim, a transparência e a justiça permanecem para o cliente, mas, com base nas características do produto, você pode continuar alterando os preços. Além disso, também temos funcionalidades que permitem manter os preços antigos mesmo ao instalar uma nova versão.
+
+Eu, que já uso o serviço há algum tempo, continuo pagando o mesmo preço, mas os novos usuários têm que pagar mais. Sim, por favor. A partir de qual valor anual de contrato (ACV) você começa a obter melhores taxas e uma estrutura de gestão mais empresarial? Por exemplo, qual o volume de pagamentos que preciso fazer para começar a obter descontos melhores? Então, novamente, estamos falando mais da área de vendas, mas depende do volume, como o volume de pagamentos e o volume de faturamento.
+
+Basicamente, gostamos de ter uma plataforma. Permitimos que você use toda a plataforma que desejar ou apenas o mínimo que quiser, certo? E então, dependendo do volume que chega, reunimos tudo. Digamos que você esteja usando pagamento e faturamento juntos, mas não esteja usando impostos, isso não tem problema. Você traz o comprovante de pagamento e a fatura, e então nossos vendedores começam a analisar o seu pedido.
+
+O preço, obviamente, está ali para todos verem. Não tenho muita certeza de qual é o limite a partir do qual você começa a baixar o preço, porque isso depende mais da área de vendas, mas venha nos visitar no nosso estande. Temos alguns vendedores lá. Eles poderão te dar uma resposta melhor para isso. Eu expliquei o mecanismo, mas qual é o limite que eles conseguirão atingir para responder?
+
+Sim, por favor. Suas considerações sobre a apresentação foram realmente interessantes. Obrigado. E uma coisa que me intriga é, por exemplo, como o modelo de preços de grandes laboratórios de IA se relaciona com essa precificação iterativa? Tenho a impressão de que os laboratórios de IA costumam ter vários planos com preços bastante fixos.
+
+E aí, como sempre acontece, as novas funcionalidades são lançadas primeiro nos planos mais caros e depois vão sendo disponibilizadas para os planos mais baratos. Isso é verdade. os preços mais baixos. E eu realmente não vejo como eles utilizam precificação iterativa em seus preços. Não, não, eles usam isso debaixo do capô. Então, para eles, para você,
+
+mesmo se você for ao 11 Labs, você verá quatro tipos de planos lá, certo? Hum, vou chamar de bom, melhor, ótimo e depois empresarial, certo? Você vai escolher o melhor, certo? Eles continuarão adicionando ou removendo recursos de um plano para outro. Eles tentarão manter os preços constantes para você, mas internamente os recursos continuarão mudando e é por isso que eles querem lhe dar créditos, ou aconselhamos que você dê crédito ao cliente para que todos esses recursos não comecem a interagir com os preços. Certo, os
+
+preços para o cliente permanecem constantes, mas estão vinculados a qual plano? Sim, eles me deixaram dizer que o preço do plano voltado para o cliente permanece constante, certo? O preço pode mudar novamente, mas as funcionalidades continuarão mudando, pois foram abstraídas pelos créditos adicionados . OK. Certo, é isso. Sim, você
+
+tinha uma pergunta, desculpe. Sim , senhor. Minha pergunta é se a sua plataforma oferece alguma forma de registrar todas as transações do sistema, como por exemplo, cada transação individualmente. Isso tem um custo, e podemos rastrear o usuário . Sim, então o que fazemos é o seguinte: se você solicitar, por exemplo, se o cliente receber algumas chamadas, você enviará essas chamadas para nós.
+
+Você vai nos dizer como se tivéssemos todos os tipos de preços lá dentro. Preços escalonados, preços dinâmicos, preços baseados em dimensões . Você nos informa a faixa de preço desejada e, assim que o produto chegar, poderemos avaliá-lo e definir um preço para você. E então você poderá obter o relatório completo explicando exatamente por que a fatura apresenta esse valor, para que possamos fornecer a você todos os detalhes de preços. Certo?
+
+Obrigado. Muito bem, se tiver mais alguma dúvida, fique à vontade para vir ao nosso estande, no terceiro andar, certo? Muito obrigado. [aplausos]
+
+[música]

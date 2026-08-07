@@ -1,0 +1,550 @@
+---
+video_title: "Shipping complex AI applications — Braintrust & Trainline"
+video_id: ZdheJTfLu-s
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZdheJTfLu-s
+video_date: 2026-05-01T14:00:06+00:00
+video_description: |
+  Getting a prototype working is straightforward. Making it reliable in production, especially with multi-step agents, tool use, and real users is the hard part. In this hands-on workshop, you'll work through the core parts of building production-grade AI applications with Giran Moodley, Mayank Soni, and Oussama Hafferssas.
+  
+  Socials: 
+  - https://uk.linkedin.com/in/mayank-soni
+  - https://x.com/OussamaHaff
+  - https://www.linkedin.com/in/giran/
+  
+  Timestamps
+  
+  0:00 - Introduction and Welcome
+  4:07 - Workshop Overview and Agenda
+  4:39 - Understanding AI Engineering and Operational Challenges
+  9:55 - Introduction to Braintrust
+  12:56 - Experience from Trainline
+  28:35 - Building the Support Triage Agent (Overview)
+  33:57 - Basic Implementation: Single Shot Prompting
+  40:32 - Adding Local Tools for Determinism
+  41:30 - Implementing Specialist Stages (Agentic Flow)
+  46:19 - Instrumenting and Tracing the Application
+  56:43 - Evaluating AI Systems and Golden Data Sets
+  1:05:07 - Deploying and Managing AI in Production
+  1:13:58 - Online Scoring and Monitoring Production Logs
+  1:19:13 - Identifying and Remediating Failure Modes
+  1:33:05 - Key Takeaways and Summary
+  1:36:58 - Further Resources and Documentation
+---
+Boa tarde a todos. Bem-vindo à ensolarada Londres! É a primeira vez de todos aqui? Acho que é porque esta é a primeira conferência. Incrível. Incrível. Muito obrigado
+
+por participar da sessão de hoje. Espero que você esteja na sessão correta, mas para aqueles que precisam clicar duas vezes... Este é um workshop prático sobre como desenvolver aplicações de IA de alta qualidade com o BrainTrust. E também vamos firmar uma parceria
+
+com nossos colegas da Trainline, que apresentarei em breve. Então, provavelmente você deve estar se perguntando quem é esse cara? Ele sequer estuda aqui? Qual o nome dele? Para me apresentar, vocês podem me chamar de Duran, algo como a banda Duran Duran com um G, então espero que as pessoas digam que sou fã do Duran Duran.
+
+E eu tenho ajudado organizações e empresas a expandir a adoção de sistemas de missão crítica e agora a entrar na era da IA. Sabe, tenho formação em matemática formal, então sei que há toda essa tendência de aprendizado de máquina para ciência de dados e agora para engenharia de IA, e isso acontece em um momento muito oportuno. Fique à vontade para se conectar no LinkedIn se quiser dar uma espiadinha ou simplesmente bater um papo sobre esse assunto. Estou acompanhado também por dois amigos da Trainline. Se quiserem vir se apresentar, pessoal.
+
+Claro, se o microfone estiver funcionando. São bons? Sim. Olá pessoal. Ah, obrigado por terem vindo a este workshop, especialmente depois da pausa para o almoço e do tempo ensolarado lá fora.
+
+Muito obrigado por ter vindo. Então, meu nome é Osama. Sou engenheiro sênior de IA/ML na Trainline. Bem, para quem me conhece, sim, apenas uma pessoa na sala. Ah, sim, eu era engenheiro de plataforma antes e tenho experiência em visão computacional.
+
+Também trabalhava com aplicativos móveis nas horas vagas, então não tinha nada a ver com IA em algum momento, mas sim, agora estamos trabalhando com IA junto com o Mayank na Trainline. Se você for. Claro. Oi pessoal. Meu nome é Mayank. Eu
+
+sou engenheiro sênior de IA na Trainline. Tenho experiência em pesquisa na área de mestrados em direito ( LLMs), mas minha pesquisa se concentra nos LLMs anteriores aos grandes modelos existentes, como o BERT ou os LLMs mais antigos. Então, continuamos a desenvolver produtos de última geração na Trainline. Se você veio do exterior, tenho certeza de que utilizou o Trainline. Caso contrário, por favor, faça isso, pois é o aplicativo mais moderno para comprar ingressos e outras coisas. Então, seja bem-vindo(a)
+
+e estamos muito animados em recebê-lo(a) neste workshop. E sim, nós vamos te guiar pela experiência prática. Fantástico. Estou acompanhado também por alguns colegas da Braintrust que vieram do outro lado do Atlântico. Então, Phil, Eric e Rose, se vocês simplesmente levantarem as mãos . Não se preocupem, pessoal, vocês estão em boas
+
+mãos se ficarem presos. Então, é só chamar e eles podem ajudar. Fantástico. Ah, só queria fazer alguns ajustes também. Se todos pudessem entrar no canal do Slack de engenheiros de IA...
+
+bem, existe uma organização de engenheiros de IA , mas também há um canal específico no Slack que usaremos hoje para ajudar no andamento do workshop. Então, se você estiver com alguma dificuldade, podemos usar o canal do Slack para nos ajudarmos mutuamente . Novamente, já estamos nessa fase, mas à medida que progredimos e chegamos à parte prática, se você ficar preso em algum ponto, isso aqui vai ajudar bastante. Também estamos fornecendo uma espécie de guia rápido. Então, se você estiver enfrentando algum obstáculo específico, há instruções passo a passo que o ajudarão a chegar aonde precisamos chegar no workshop sem ter a sensação de estar ficando para trás. Novamente, muitos
+
+dos recursos que compartilhamos hoje, você sabe, estão disponíveis publicamente. Hum, novamente, podemos ter quaisquer perguntas adicionais específicas, se necessário. Mas, daremos alguns minutos para garantir que você acesse isso e depois participe do workshop do canal AI engineer Europe 2026 Braintrust {dash}. É um canal aberto ao público. Muito bem
+
+, equipe. Bem, podemos começar. Sim, só para quem está lá atrás. Precisaremos que você entre no canal do Slack. Então, se você me vir aqui, nós vamos te escolher. É
+
+isso. Obrigado a todos. Vamos prosseguir. OK. Então, para ajudar a orientar o workshop de hoje, vamos dividi-lo em três seções principais. Vamos dedicar um tempo para
+
+contextualizar um pouco, explicando por que estamos aqui e por que este workshop é relevante. Esperamos que isso estabeleça o contexto para quando formos ao workshop, para construir o sistema e discutir como implementar a igualdade em IA. E então, vamos concluir com os principais pontos abordados e ficaremos à disposição para responder a quaisquer perguntas e dúvidas que tenhamos do público. OK. Então, espero que hoje haja muitas pessoas de origens muito diferentes . Bem, a
+
+nossa intenção com este workshop era atender a um público-alvo específico. Novamente, provavelmente todos aqui sabem o que é um LLM. Não quero ofender ninguém, mas espero que você esteja começando a explorar sua jornada em termos de amadurecimento de suas operações na construção de sistemas de IA. Então, seja você um engenheiro de produto de IA, provavelmente de uma equipe aplicada, ou venha de uma área tradicional de aprendizado de máquina, talvez você seja de infraestrutura de operação de plataforma , isso é realmente adequado para você. Só para que todos saibam , quem aqui tem formação, digamos, na área tradicional de ciência de dados?
+
+OK. Interessante, interessante. Quem aqui talvez venha da área de engenharia de software ou esteja migrando para IA? OK. Portanto, este é definitivamente o quarto certo para você. Então, espero que possamos
+
+acelerar as coisas à medida que avançamos. OK. Só para contextualizar, acho que essa não é uma expressão incomum, e que estamos vendo isso com mais frequência em todo o setor. Bem, mais uma vez, levantem as mãos: quem aqui já fez uma prova de conceito (POC) de aprendizado de máquina ou IA? Digamos, mais especificamente, uma POC de IA generativa, mas que não conseguiu colocá-la em produção.
+
+OK. Tem algumas mãos aqui. Eu ficaria preocupado se ninguém mais fizesse isso, mas este é um ponto crucial que, você sabe, conversando comigo e com meus clientes, executivos, pessoas de alto escalão, estão todos pensando nessa nova tecnologia. Não é necessariamente algo novo, mas é relativamente novo para muita gente, especialmente em setores mais empresariais e regulamentados. E então eles estão tentando usar isso para agregar valor aos seus clientes. Mas,
+
+infelizmente, existe um grande obstáculo entre pegar o que você pode desenvolver localmente em sua máquina e depois industrializá-lo e garantir que funcione em ângulo. Mas o ponto crucial que observamos em todas as pesquisas disponíveis é que os modelos não são necessariamente ruins. Temos modelos muito sofisticados , quer esteja a desenvolver algo internamente, quer esteja a utilizar um modelo pronto a usar, daqueles dos melhores fornecedores comerciais de LLM disponíveis no mercado. De forma mais ampla, o que observamos é que o rigor operacional na implementação desses sistemas em grande escala não acompanhou o ritmo. Porque a engenharia de software tradicional é muito determinística, 1 + 1 = 2, ótimo.
+
+Sistemas LLM, sabe, como meu filho de 10 anos, ou melhor, de 5 anos, diria, sabe, 2 + 3 = 10, papai. Então, é preciso fazer alguns ajustes e garantir que estamos entregando isso em escala. E, novamente, vejamos o que observamos ao lançar esses produtos: o fato é que, mais uma vez, as pessoas acham que o estado de demonstração é adequado. Mas, claramente, fazer demos de duas a três vezes, cinco vezes , é ótimo. Ao colocar em produção, tudo dá errado.
+
+Tratar alguns dos seus registros como observabilidade é fundamental, e isso é realmente crucial para a forma como encaramos o BrainTrust. Os registros informam o que aconteceu, mas às vezes é preciso analisar o sistema em profundidade e compreender seu comportamento. E é aqui que a observabilidade entra em jogo. Outra coisa que funciona na minha máquina é falhar em produção. Eu tento corrigir o prompt. E, além disso, permanece
+
+operacional até que o próximo problema ou falha ocorra. Mas, novamente, como podemos acompanhar isso? Principalmente se você não tiver um sistema implementado, independentemente das ferramentas que usar, isso pode ter um efeito categórico. Portanto, mais uma vez, muito do que vemos não tem a ver com tecnologia de ferramentas. Tudo se resume a fluxos de trabalho mais operacionais. E
+
+é exatamente isso que pretendemos ajudar vocês a aprender na oficina de hoje. OK. Portanto, como já mencionei, não se trata de um protótipo. Estamos chegando a um ponto em que sabemos exatamente o que mudou no sistema, como podemos intervir nisso e, em seguida, como podemos implementar sistematicamente um conjunto de medidas rigorosas para que possamos melhorar cada vez mais. Lembre-se, nosso objetivo não é alcançar 100% de cobertura. O objetivo é chegar o mais perto
+
+possível do ideal, corrigindo ao mesmo tempo as lacunas que possam existir. Bem , algo que vemos repetidamente é que um único comando pode funcionar, mas à medida que você avança e industrializa o processo, provavelmente vai querer dividi-lo em setores individuais de responsabilidade. Então, novamente, se você tem formação em engenharia de software, você conhece esses conceitos . Você está dividindo tudo em microsserviços neste momento. Apresentaremos aqui uma abordagem muito semelhante quando falarmos sobre a construção desses sistemas.
+
+Mais uma vez, estamos nos certificando de que entendemos essas mudanças e implementando um conjunto de sistemas. É exatamente isso que queremos fazer na oficina de hoje. OK. Em relação ao dia de hoje, espero que, como mencionei, este seja um workshop prático. Então, vamos acessar o terminal, vamos entrar na interface do usuário e vamos explicar o passo a passo, guiando você durante todo o processo. Então, vamos usar um sistema de IA em estágios
+
+com uma ferramenta de chamada multiestágios, o que realmente nos permite ver esse fluxo agentivo de forma mais clara. Em seguida, usaremos o BrainTrust para instrumentar e verificar o desempenho do aplicativo. Em seguida, também queremos , sabe, analisar a criação do que chamamos de identificação de um modo de falha usando um teste de referência. Então vamos dar seguimento a isso. Também queremos discutir como podemos industrializar isso. Então, passamos
+
+de "Ei, simplesmente funciona na minha máquina." para algo que você possa usar em produção e ter gerenciado futuramente com um sistema implementado. E o ponto crucial é identificar esses casos extremos, porque, novamente, você pode criar um conjunto de dados de teste, mas, no fim das contas, não há substituto para dados do mundo real. Assim, mais uma vez, poderemos mostrar como captaremos esses sinais reais, os avaliaremos e completaremos o ciclo. Então, só para apresentar um pouco mais , quem aqui já ouviu falar do Braintrust ou já jogou Braintrust? Alguém
+
+pode levantar a mão? Ok, ótimo. Fantástico. Então, tudo bem. Amo isso. Amo todos vocês aí dentro. Então, só para
+
+apresentar um pouco a Braintrust, somos uma empresa que tem quase 3 anos de existência. Hum, somos aproximadamente uma empresa da Série B. Então, nós anunciamos isso há alguns meses. Captamos US$ 80 milhões com uma avaliação de US$ 800 milhões . Temos investidores como a Iconic, a Andreessen Horowitz e a Greylock, e estamos aqui para falar sobre como ajudar as organizações a lançar IA de qualidade em grande escala. Portanto, somos a
+
+plataforma para observabilidade de IA. Temos uma grande base de usuários globalmente, mas também estamos expandindo bastante nossa presença na Europa. Então, repito, sou um dos primeiros engenheiros a me juntar à equipe e ajudar a construir nossa função de entrada no mercado aqui. E estou muito animado novamente com nossos clientes e nossos amigos da Trainline para fazer isso. Alguns de nossos outros clientes locais incluem empresas como Lovable e Doctolib.
+
+Uh, ainda estamos realmente na vanguarda desses sistemas de IA. Bem, novamente, quando se trata de usar o Braintrust, eu sei que quero muito que você o experimente , mas onde realmente nos diferenciamos é na capacidade de fazer isso em grande escala. Então, nosso fundador, Ankur Goyal, está na verdade construindo a Braintrust pela terceira vez . Então, ele é especialista em sistemas de banco de dados e fundou uma empresa chamada Impira, que foi adquirida pela Figma e trabalha com extração de documentos. Lá, ele liderou a equipe de aprendizado de máquina (ML).
+
+E porque ele percebeu, sabe, que elaborar essas avaliações é difícil. Entender os processos de produção é difícil. Portanto, se estamos enfrentando esse problema, tenho certeza de que existem outras organizações por aí passando pela mesma situação. Assim, ele fundou a Brain Trust para realmente ajudar a fazer isso em grande escala. E à medida que analisávamos e compreendíamos esses vestígios que chegavam, e que, novamente, eram dados altamente semiestruturados e sujeitos a mudanças, ele percebeu que os sistemas analíticos tradicionais não eram adequados para o propósito. Então, criamos
+
+uma nova categoria de bancos de dados chamada Brainstorm, que realmente ajuda a identificar e acelerar isso em grande escala. Mais uma vez, somos agnósticos em relação às ferramentas, então, independentemente da estrutura de agentes que você esteja usando ou dos provedores de LLM disponíveis , nossa intenção é ajudá-lo a agregar valor, independentemente disso. OK. Uma das coisas que abordarei ao longo deste workshop é o conceito de volante de inércia. Então, mais uma vez , se você vem do desenvolvimento ágil, sabe que a perfeição é inimiga do bom. Queremos começar por
+
+algum lugar. Portanto, mesmo que seja um aplicativo novo e você não saiba como ele se comportará em produção, podemos começar com um conjunto de avaliação. Se você já possui um aplicativo para instrumentação, isso é ótimo. Podemos extrair essas informações e identificar os modos de falha aqui. Portanto, o essencial é inserir informações no sistema, identificar esses modos, corrigi-los, implementá-los e, em seguida, monitorar e repetir o ciclo continuamente até atingir o resultado desejado. Muito bem
+
+, então. Hum, você teria muito a meu favor. Então, uma coisa que farei é pedir aos meus colegas da Trainline que compartilhem suas experiências anteriores ao Brain Trust e como eles estão nos ajudando. Então, Osama, eu te dou isso . Muito obrigado.
+
+Ah, e olá novamente para quem está se juntando a nós agora. Bem, como meu amigo me apresentou, a Trainline é uma empresa que ajuda as pessoas a embarcarem nos trens. Bem, os trens são diferentes dos aviões, caso você não saiba. Hum, existe um sistema mundial, um sistema central para todos os aviões do mundo. Não é o caso dos trens. Bem, na
+
+Europa e no Reino Unido, é muito difícil, eu diria, se você quiser instalar um aplicativo para cada profissão, com certeza ocupará todo o espaço do seu celular . Então, a Trainline é basicamente uma plataforma que te ajuda a reservar passagens. Hum, independente de aplicativo móvel, plataforma ou carreira. Você faz tudo em um aplicativo e pode reservar um trem de Paris para Londres, de Lyon para Milão, quando quiser, basicamente. Em todas as carreiras nos EUA , vendemos quase 6,3 bilhões de passagens de trem.
+
+27 milhões de usuários ativos e esse número continua crescendo. E outra coisa interessante, provavelmente, para esta conferência, é quantas conversas de IA temos, na verdade, com nosso assistente de viagens. Então, temos um assistente de viagens que interage com as pessoas, e não é apenas um chatbot. Bem, na verdade é um sistema multiagente que pode lidar com reembolsos e com a troca de trens para você. Então, eu diria que é um sistema de agentes proativo, um sistema com agentes, e não apenas um chatbot. Provavelmente, o meu
+
+gostaria de acrescentar mais sobre isso. Sim, uma das vantagens de ter 27 clientes ativos é que você tem um leque enorme de possibilidades para disponibilizar aplicações com agentes ao vivo para esses clientes. Um exemplo disso, mencionado por Osama, é o assistente de viagem, ao qual você pode acessar a partir da bilheteria no aplicativo. Bem, é um sistema agentivo, algo sobre o qual falaremos um pouco mais adiante neste slide. Incrível. O que nos leva, eu diria,
+
+ao próximo ponto. Bem, vou ser breve. Bem, vender passagens de trem e ser tipo, uma empresa de passagens de trem, como é que estamos fazendo aprendizado de máquina? Claro que podemos. Há muita coisa para fazer e muita ajuda para as pessoas em relação às suas viagens, desde a compra de passagens e trens até o retorno para casa, basicamente.
+
+Construímos. Fazemos duas coisas. Então, a parte clássica de aprendizado de máquina, que é, na verdade, a construção de modelos. Nós fazemos isso. Construímos modelos de aprendizado de máquina do zero dentro da Trainline, desde os dados até o modelo. Isto é algo que
+
+fazemos. E também trabalhamos com sistemas multiagentes, ou melhor, com sistemas de IA generativa com os quais já estamos familiarizados, além dos LLMs que tanto apreciamos, todas as ferramentas, a engenharia de contexto e tudo mais. Nós fazemos isso. Portanto, na Trainline, abordamos os dois lados da história . E estes são dois exemplos do que os usuários realmente utilizam nesses sistemas. Do
+
+lado esquerdo, então, você pode pensar nisso como um aplicativo de previsão do tempo, mas para interrupções de trens. Então, basicamente, você tem uma passagem de trem e chega lá. Sabemos se este trem sofrerá interrupções ou não, se provavelmente chegará atrasado ou não. Sabemos disso, mas com base na enorme quantidade de dados que temos, desenvolvemos um modelo de aprendizado de máquina que consegue prever interrupções nos trens, atrasos e tudo mais. Então, esta é a parte clássica de aprendizado de máquina. O outro é o
+
+sistema para viajantes que eu te contei. Como eu disse, é um sistema multiagente muito avançado. Pode mostrar-lhe comboios alternativos se o seu comboio for cancelado ou se houver algum problema com ele. Boa sorte tentando fazer isso sozinho, mesmo com o ChatGPT. E a outra é lidar com reembolsos. Então, você pode
+
+solicitar um reembolso da sua passagem se o seu trem atrasar ou algo do tipo , e isso pode ser feito sem transferência de responsabilidade, ou você pode optar por ser transferido para um atendente humano da nossa equipe de suporte ao cliente. Bem, isso significa que, se você estiver fazendo isso em nível de produção e nessa escala, na escala da Trainline, significa que... ou você pode perguntar: estamos causando problemas na Trainline? É claro que
+
+não queremos fazer isso. E estamos avançando rapidamente porque a tecnologia definitivamente está evoluindo muito rápido. E é por isso que estamos aqui. Estamos aqui para mostrar o que estamos fazendo para avançar rapidamente sem causar problemas, principalmente no que diz respeito à IA. E podemos fazer isso além de lidar com os complexos sistemas de software que tanto amamos e prezamos, desde APIs em grande escala até o atendimento a milhões de usuários. Então
+
+, a forma como gostaríamos de pensar sobre isso é nesta escala. Portanto, sabemos com certeza que, independentemente do que tenhamos em nossos sistemas de software, este é o lado determinístico da história que temos. E, por outro lado, na construção dos modelos de aprendizado de máquina, temos o lado não determinístico da história. E sabemos com certeza que os sistemas agenciais estão entre esses dois extremos. Há partes deles que são determinísticas. Há partes deles
+
+que não são definitivamente determinísticas. E é assim que nós, com a estrutura de pensamento que temos, o utilizamos. Em termos de qualidade, como estamos lidando com isso? Essa é a questão. Para os modelos de aprendizado de máquina, nos preocupamos com a qualidade dos dados e com os métodos que usamos para treinar os modelos. Mas,
+
+além disso, temos, é claro, avaliações de aprendizado de máquina (ML), sejam elas offline ou online. "Offline" significa, por exemplo, antes de entrar em produção, que você precisa fazer suas avaliações. E online estão os dados de produção; você os obtém e avalia seu modelo para verificar se está funcionando bem ou não. No nosso caso, por exemplo, para a previsão do tempo, está prevendo o estado do trem, se ele está ou não sujeito a interrupções? O modelo está correto em sua previsão? Então,
+
+esse é apenas um exemplo. Por outro lado, para quem está familiarizado com engenharia de software, nós fazemos tudo, eu diria, verificações de qualidade, diagramas e tudo mais, e usamos as ferramentas que temos para lidar com a qualidade em grande escala, em uma escala muito grande como a da Trainline. E para esses sistemas, acho que você já adivinhou, é basicamente uma combinação de ambos. Com certeza, uma coisa não existe sem a outra. Fazemos tudo com a mesma qualidade em termos de sistemas determinísticos, mas também utilizamos a avaliação por e-mail do lado dos sistemas não determinísticos.
+
+Então, sim, eu diria que essa é a estrutura de pensamento que temos na Trainline, ao pensar sobre esses sistemas. E, com certeza, a BrainTrust está ajudando com isso. Aliás, uma ressalva: não estamos aqui apenas porque acreditamos que o BrainTrust funciona para nós. Nós não somos pagos. Então, com certeza, somos clientes satisfeitos. Estamos com a
+
+BrainTrust há muito tempo. E nós o usamos em diferentes... em alguns dos recursos do BrainTrust, inclusive aqui. Então, por exemplo, para as
+
+avaliações de IA de aprendizado de máquina, fazemos isso e acompanhamos a pontuação do Assistente de Viagem em níveis muito específicos, desde o tom de voz até a utilidade prática quando se trata de bilhetes, e os bilhetes são realmente muito complexos em termos de raciocínio. E o que você deve comprar, o que você não deve comprar, dependendo se o trem está atrasado ou não, e se o tipo de bilhete é de ida e volta ou antecipado, existem muitos casos complexos. Ah, sim, nós acompanhamos essa vertente de avaliação. Provavelmente, eu gostaria de acrescentar mais sobre isso. Sim, então, alguém aqui já teve problemas com custos de LM, número de tokens, troca de modelos, ou coisas do tipo ?
+
+Certo. Sim, é bom ver isso. Então, também tivemos um problema com a Trainline, porque fazemos isso em grande escala e o valor que pagamos à OpenAI e à Anthropologie é simplesmente bizarro. Portanto, temos que ficar alternando entre modelos, buscando o melhor modelo para o nosso caso de uso, modelos mais baratos e modelos com tokens eficientes. Agora, sempre que você quiser trocar de modelo, vai querer ter certeza de que ele terá pelo menos o mesmo desempenho que o seu modelo atual, certo?
+
+Antes da Braintrust, não tínhamos uma maneira específica de fazer isso porque não tínhamos pontuações definidas, não tínhamos, sabe, algo como uma avaliação. Assim, com o uso do Braintrust, conseguimos simular como seria o desempenho do modelo inferior. Utilizamos o Braintrust extensivamente para realizar avaliações offline e verificar o efeito, bem como avaliações online para confirmar se o efeito observado offline corresponde ao esperado. Então, acho que esse é um dos casos de uso. A outra é mais genérica, que seria algo como: levaria muito tempo para avaliarmos um novo recurso que seria implementado no Assistente de Viagens, mas com a Braintrust, conseguimos garantir que a nova experiência para os usuários será boa. Portanto, a
+
+Braintrust nos ajudou muito a agilizar o envio. Legal. E, claro, a outra parte é a observabilidade. Usamos o Braintrust para observabilidade, caso este esteja funcionando. Sim. Sim
+
+, este é um exemplo verdadeiro da Braintrust. Basicamente, vamos estragar a experiência da oficina com tudo o que vocês verão lá. Mas sim, podemos rastrear tudo relacionado à chamada da ferramenta, o outro agente, em termos de quantidade e qualidade. Esse tipo de conhecimento será necessário para transformar uma prova de conceito em um sistema real em produção, seja na sua empresa ou em algo que já esteja sendo usado e que os usuários considerem um produto realmente funcional, e não apenas um sistema gerado por IA. Não, nós precisamos, nós definitivamente precisaremos disso nesses casos. Você gostaria de
+
+acrescentar algo aqui? Eu ia dizer exatamente isso: o BrainTrust permite que você examine fluxos de trabalho complexos de agentes até o nível de chamada de ferramenta e nível de token, o que é muito esclarecedor e ajuda a depurar muitas coisas em produção e antes da implantação. Sim . E uma última coisa, provavelmente, é o ponto de vista da compatibilidade interfuncional. Bem, isso é algo que descobrimos ao longo do caminho, porque estamos construindo esses sistemas, desde o assistente de viagem até os modelos. Em algum momento,
+
+precisamos que, como somos uma grande empresa, com pessoas da área de produto e pessoas com formação não técnica, haja comunicação e compartilhamento de informações, e que elas também possam acessar algumas dessas informações por conta própria. Não podemos simplesmente dizer para alguém cuidar de outras pessoas e falar: "Ei, você deveria fazer isso. Você deveria fazer aquilo. Deixa eu pegar os registros, baixar e enviar para elas." Isso não funciona. Em grande escala, precisamos de
+
+uma forma que nos permita trabalhar de maneira multifuncional e dar liberdade às pessoas para fazerem o que quiserem e utilizarem dados e insights de forma autônoma. Então, isso é algo que também descobrimos ao longo do caminho, e a BrainTrust nos ajudou bastante com muitas das solicitações que recebemos. Sim, agradecemos muito, com certeza. E, claro, estamos usando apenas uma parte desse sistema. Temos as nossas próprias coisas. Uh BrainTrust, eu acho que vocês
+
+estão construindo ainda mais ferramentas. Então, definitivamente, haverá mais novidades em breve . Acho que o workshop definitivamente vai te ajudar a descobrir todas essas coisas. E, claro, divirtam-se construindo durante a oficina. Vou dizer que os laptops estão à disposição e, se você estiver interessado, a Trainline está contratando na área de engenharia de IA, é claro. E, bem, aqui está para você, Shah.
+
+Perfeito. Muito obrigado por isso, equipe. Sim . E só para reiterar, em nome de todos, eu e minha esposa, agradecemos imensamente pela funcionalidade de economia de divisão de gastos. Muito obrigado, então, parabéns por isso. Muito bem
+
+, pessoal. Muito bem, vamos prosseguir com a configuração. Portanto, mais uma vez, este será um workshop prático. É melhor vocês desempoeirarem suas habilidades de combate corpo a corpo, pessoal. Brincadeiras à parte, tenho um bom sorteio de cartas comuns para ajudar com isso. Então,
+
+espero que todos, ou pelo menos a maioria , tenham entrado na organização Slack para engenheiros de IA e também no canal. Eu coloquei um link para isso, mas também há um código QR para o repositório que usaremos. Então, está lá. Então, vou aguardar alguns minutos. O mais importante é se inscrever para uma conta gratuita no Brain Trust. Se você usa o Gmail, pode
+
+usar o truque do sinal de mais para criar uma nova conta. Se você, sabe, mantenha-o. Se você já é um usuário do Brain Trust, espero que isso não interfira com a sua conta atual. Você também precisará ter acesso a uma chave de API da OpenAI. Bem, isso deve ser fácil para você gerar.
+
+Se por algum motivo você conseguir gerar uma chave, por favor, avise meus colegas. Poderemos enviar o arquivo por mensagem direta no Slack para que você o utilize na sessão específica de hoje. E eu acho que, obviamente, como se trata de uma conferência de engenharia, e especialmente em IA, se você estiver usando assistentes de codificação de IA , sinta-se à vontade para usá-los com seu IDE ou no terminal para guiá-lo durante o processo, fazer perguntas sobre a base de código e assim por diante. Tentei simplificar bastante a estrutura existente. Então, estou usando o Mise para gerenciar o Node e o PNPM na máquina. Mas, como alternativa, você
+
+pode baixar o Node v 20.2 e a versão específica disponível lá. Deve funcionar bem, mas, novamente, quero deixar claro, especialmente para este workshop, que corrigi aquele problema específico de tempo de execução. Estou usando o make para, bem, usar um recurso sintático para encapsular os comandos. Se, por algum motivo, você não tiver o comando `make` instalado em um computador Windows, poderá executar os comandos `PM`, que nada mais são do que wrappers para o arquivo `package.json`.
+
+Sim, vamos dar alguns minutos para que as pessoas digitalizem e clonem. Só queria salientar também que incluímos na folha um guia passo a passo, que já vi que muitas pessoas já consultaram. Como mencionado, durante o workshop de hoje, se você tiver alguma dúvida, pode perguntar no canal do Slack ou consultar este link. Como mencionado, este recurso permanecerá público, então mesmo que você esteja com dificuldades fora deste workshop, poderá acessá-lo quando lhe for mais conveniente.
+
+Só para constar, quem aqui não consegue obter uma chave de API aberta? Chave da API OpenAI (desculpe). Esperamos que as pessoas consigam providenciar isso. É realmente crucial para isso.
+
+Sim. Há algumas pessoas que entraram mais tarde e não têm o código QR. Para o Slack? Sim, para o Slack. Sim, eu consigo fazer isso.
+
+Ok, pessoal, acho que tivemos alguns participantes que chegaram um pouco atrasados. Então, não queria me alongar muito nisso, mas se você entrou atrasado, por favor, escaneie o código QR, que lhe dará acesso ao Slack da equipe de engenharia de IA. Depois, entre no canal de IA do workshop AI Engineer Europe 2026 BrainTrust . É um canal aberto ao público. Por meio desse canal, você poderá acessar o conteúdo fixado. Portanto, o repositório, bem
+
+como um guia de consulta rápida, também serão disponibilizados em breve . É
+
+, só para dar um toque de bom senso, pessoal. Bem, espero que a maioria de vocês tenha conseguido entrar no canal do Slack e clonar o repositório, e que tenham acesso a ele. Muito bem , então. Bem, como mencionei no início da pauta , o que faremos é criar, por exemplo, um agente de triagem de suporte. Então, sabe, espero que este tipo de exemplo ajude muitas pessoas a entenderem os sistemas que já construíram ou estão tentando construir. Bem, é um
+
+aplicativo fictício, desenvolvido especificamente para este workshop. Por favor, não utilize este produto em produção. Na verdade, serve apenas para nos ensinar como incorporar esses padrões de IA em larga escala. Então, a ideia é que , dado que um chamado pode ser aberto no sistema em questão. Bem, temos um conjunto de agentes que passa por um processo em pipeline. Estou falando de
+
+pipeline, mas uma ferramenta de processo em estágio que chama, eh, que produz, eh, um conjunto de informações que podem ser emitidas para sistemas subsequentes, eh, dessa perspectiva. OK. Hum, só para ajudar a visualizar o que o sistema faz. Novamente, mencionando que estamos recebendo as informações do ingresso. Bem, temos um primeiro passo, que é coletar o contexto. É uma
+
+forma bastante determinística de extrair informações. Em seguida, passamos para a parte do tipo agente, que dividimos em três etapas. Então, temos um mestrado em Direito e duas ligações para triagem de um problema específico. Bem, em seguida, queremos realizar uma revisão da política para garantir que o resultado esteja correto. Em seguida, queremos criar e redigir, digamos, uma resposta para o cliente usando um redator de respostas. Em
+
+seguida, queremos reunir tudo isso e, dependendo da gravidade do problema, podemos acionar outra ferramenta para verificar se precisamos encaminhá- lo para, digamos, um atendente humano e, então, elaborar o resultado final. Então, novamente, nada muito complexo, apenas para dar uma ideia do sistema que tentaremos construir e operacionalizar na sessão. Um ponto importante a destacar é que, ao começarmos a usar o BrainTrust, surge a questão: onde ele realmente se encaixa para nos ajudar a implantar e gerenciar isso em grande escala? Eu isolei isso aqui, onde, você sabe, tudo o que faremos no final, especialmente à medida que progredimos, vamos acompanhar até o fim, como meus colegas já mencionaram. Poderemos usar o gerenciamento para exibir avisos, transferindo assim o que você faria localmente para um ambiente seguro. As
+
+chamadas de ferramentas serão gerenciadas. Então, mais uma vez, como se fala em acessar sistemas externos? E, por último, em relação às avaliações e pontuações, que serão processadas por meio de nossa infraestrutura BrainTrust.
+
+Vale ressaltar também que, se você acessar o repositório do GitHub, encontrará uma versão em formato GitHub Pages . Portanto, mais uma vez, os slides estarão prontamente disponíveis para você usar e consultar. OK. O ponto principal aqui é que estou tentando te ajudar a realizar cada fase e a verificar cada etapa. Então, se você ficar preso em algum momento, a ideia é simplesmente usar o comando `get` para selecionar uma tag ou branch específica. Mas, neste caso, cada
+
+tag ou branch individual é totalmente executável nessa fase. Então, se você ficar preso em algum momento, verifique se está tudo certo, mude para o branch correto, execute `make install`, `make setup`, execute os comandos e você deverá obter resultados quase idênticos sempre. Então, novamente, tudo isso está documentado no arquivo leia-me, mas também está incluído no guia de consulta rápida para você progredir. OK. Então, sim, só para dar uma ideia da sequência de eventos, vamos fazer uma espécie de montagem e preparação. Bem, vou
+
+falar sobre como construir um agente básico. Novamente, este workshop não foi realmente concebido para falar sobre agentes imobiliários. A questão é: ok, uma vez que você tenha um agente, como você coloca isso em prática? Então, para sermos breves, queremos fazer isso passo a passo. E então vamos abordar o ponto central, onde faremos um rastreamento, falaremos sobre as avaliações, sobre o conjunto ideal e identificaremos onde podemos melhorar.
+
+E então, integramos tudo isso e usamos uma espécie de infraestrutura gerenciada dentro da Braintrust para ajudar a operacionalizar o processo. E, novamente, vamos falar sobre aquela colaboração que meus colegas da Train Line mencionaram. Além disso, o ponto crucial, uma vez identificada uma falha na produção, é como corrigi-la, completar o ciclo e entregar um produto finalizado. OK. Então, na primeira etapa, vamos falar sobre a construção do agente.
+
+Então, neste ponto de verificação aqui, hum, novamente, precisamos começar de algum lugar, certo? Então, o que fazemos? Vamos fazer uma chamada inicial para um LLM, configurar um prompt, uma entrada, uma saída, e obter uma saída. Então, novamente, se você estiver fazendo uma prova de conceito, isso pode ser ótimo como parte desse teste inicial, mas, novamente, sabemos que ainda há trabalho a ser feito. Mas, sim, para contextualizar, vamos analisar isso passo a passo.
+
+Mas, como mencionei, só porque funciona na demonstração, não significa necessariamente que funcionará em produção. Bem, vou colocar um pseudocódigo aqui só para ilustrar, mas você pode ver que, como em todos esses modelos de linguagem, fornecemos um conjunto de prompts do sistema, fornecemos o usuário e, principalmente, o texto, e passamos essa saída de volta para nossa aplicação. Então, uma função, uma chamada de modelo, e temos a saída estruturada que queremos receber como parte da saída. OK. Então, o que faremos também quando fizermos a estrutura e a migração para a primeira filial, é abrir um conjunto de chamados para os usuários. Então, é um caso
+
+que já está meio que resolvido em código ou você pode usar a linha de comando. Então, vou demonstrar rapidamente como ficaria com as saídas. E você obterá algo semelhante a isso em formato JSON. OK. Opa.
+
+Então, espero que todos consigam ver isso neste momento. Hum, eu tenho o formulário de inscrição aqui. OK. Então, vou optar pelo pagamento básico. OK.
+
+OK. E, hum, para que serve esse modo? Então, se eu der uma olhada aqui, agora estou conectado àquela primeira caminhada, então construindo o agente básico. Hum, tenho o aplicativo aqui, que é muito semelhante ao código do prompt. Estamos criando o cliente usando o SDK de IA aberta. Novamente, para sermos breves, eu
+
+simplesmente não usei nenhum SDK de agente, mas damos total suporte a isso à medida que avançamos com o workshop. Então, isso está realmente disponível e você verá novamente no arquivo make. Se você não tiver o make instalado, pode simplesmente executar scripts PNPM ou, se você usa NPM ou Yarn, isso também é possível . Eu não testei, mas teoricamente deveria funcionar, já que utiliza apenas o arquivo package.json.
+
+Então, neste caso, digamos que você queira fazer algo como, sabe, criar um ingresso. Então, quando eu dou um comando, digamos, sabe, minha senha precisa ser redefinida. Nesse caso, eu já forneci alguns valores padrão, então vou apenas digitar, digitar, digitar. E agora está apenas fazendo um apelo à IA aberta. Estou usando, como você provavelmente já deve ter visto no arquivo de variáveis ​​de ambiente, o GPT 5 Mini. Você
+
+pode alterar se quiser, mas, para simplificar, vamos manter assim . Bem, como você pode ver aqui, eu tenho o ingresso e ele também gerou algumas informações. Mas, novamente, trata-se de uma única foto. Acho que nosso tempo acabou. OK.
+
+Então, sabe, com base nessa saída, parece bastante plausível, mas, novamente, não vai levar em conta muitos dos casos extremos que queremos, especialmente se houver muitas nuances na organização, que estamos tentando incorporar à lógica aqui.
+
+Hum, eu consigo até fazer coisas como criar uma demo. Então, faça uma demonstração. Acesse os scripts. Sim, é a mesma coisa. Estou apenas chamando a mesma função, mas aqui a codifiquei em JSON.
+
+Sim, os campos JSON estão visíveis. Incrível.
+
+Certo, isso é bem simples. Hum, não quero me alongar muito nesse assunto. Então, a próxima coisa que quero fazer é falar sobre adicionar ferramentas locais. Então, provavelmente deveríamos dizer: "Vejam, vamos tentar tornar isso um pouco mais determinístico." Embora nossa proposta possa estar muito bem estruturada, eu gostaria que você trouxesse, eh, diferentes maneiras de como ela poderia funcionar. Então, neste caso,
+
+estou usando três ferramentas diferentes para consultar artigos relevantes da central de ajuda sobre o assunto. Isso pode ser tanto interno quanto externo. Quer dizer, nós analisamos certas coisas que aconteceram com a conta. Então, digamos que um cliente tenha feito uma determinada migração e que isso possa ter um impacto nos sistemas de back-end . E provavelmente existe um motivo pelo qual eu queira , sabe, criar uma escalada aqui.
+
+E no caso do que eu fiz, eu o tornei um pouco mais determinístico. Para os fins deste workshop, novamente, isso é tratado como código, mas, na realidade, você provavelmente irá interagir com sistemas externos como o Vector Search, o MCP CLI e outros tipos de interfaces para desenvolver essa funcionalidade. E, novamente, o ponto crucial aqui é que quanto mais coisas você adiciona, maior será o número de maneiras pelas quais pode falhar. Então, mais uma vez, é por isso que o rastreamento, à medida que avançamos, se tornará mais importante. Certo.
+
+Então, apenas um aqui. Então, mais uma vez, leia o que estou dizendo aqui. A próxima coisa que faremos é consultar nossas ferramentas locais. Então, o que eu devo verificar? Tudo bem.
+
+Então, neste caso, sim, as ferramentas que eu criei estão disponíveis aqui. Mas, novamente, eles simplesmente fizeram o check-in como código por uma questão de simplicidade. E, novamente, posso fazer a mesma coisa, onde você cria um ingresso. Por exemplo, a senha precisa ser redefinida. Conta bloqueada.
+
+Ok, agora veja, isso forneceu um pouco mais de informação. Como você pode ver, está um pouco mais detalhado porque introduzimos chamadas de ferramentas, o que fornece mais contexto ao LLM.
+
+Vale ressaltar também, caso vocês estejam se sentindo travados, que muitas dessas tags dos branches da oficina são construídas sequencialmente. Então, se você selecionar, digamos, a etiqueta número seis, ela incluirá tudo o que faz parte dela. Então não se sinta na obrigação de analisar cada um deles . Se você se sentir travado e quiser pular alguma coisa, também pode fazer isso.
+
+OK. Vamos falar sobre ferramentas. Então, como eu já mostrei o código, vamos lá . Então, esta é uma ideia para pseudocódigo de como seria. Uma fase. Então, acho que este é o próximo passo,
+
+onde mais uma vez estamos desconstruindo essa ideia monolítica de que é necessário um mestrado em Direito (LLM). Agora estamos introduzindo ferramentas e o próximo passo é detalhar ainda mais as etapas específicas de como o LLM deve funcionar. Como você deve ter visto no diagrama de sequência, foram realizadas cinco etapas para este processo, onde estou configurando tudo para coletar o contexto, triar, determinar se está de acordo com as políticas da marca, fornecer uma resposta amigável ao cliente e também processar internamente em nossos sistemas, finalizando o resultado para os sistemas subsequentes. Bem, mais uma vez, isso vem da engenharia de software tradicional. Você está analisando o seu problema em detalhes. Você poderá ver
+
+exatamente onde algo está dando errado na pilha e poderá corrigir o problema. Portanto, mais uma vez, sempre que possível, tente ser mais explícito e dividir a tarefa em desafios nos quais você possa trabalhar. Então, sim, apenas um pequeno pseudocódigo. Hum, seria mais ou menos assim . Provavelmente vou instalar um depurador em uma nova IDE e dar uma olhada nisso .
+
+OK. Então, eu meio que venho fazendo isso em parte, mas já começamos com o início do ponto e depois vou falar sobre, você sabe, fazer a etapa de especialista aqui. Então, vamos dar uma olhada na próxima parte do arquivo leia-me.
+
+Então, confira as etapas especializadas aqui. Então, se eu der uma olhada agora, na pasta de origem, ela contém as funções individuais que estão separadas em partes . Os prompts associados a isso estão sendo usados. Então, digamos que seja uma triagem, com base no que estamos usando. E se eu for até o aplicativo, você pode ver aqui, hum, está aqui embaixo. Então, estou usando
+
+funções assíncronas para executar. Sim . E da mesma forma, se eu fizer algo como, sabe, criar um ingresso. Talvez eu faça algo um pouco diferente. Qual é outro problema clássico? Bem,
+
+digamos que preciso atualizar meu plano de Pro para Enterprise, mas o site não está funcionando. Estou recebendo erros 500. E você sabe, neste caso, estou no segundo nível de atendimento ao cliente. Estamos falando de faturamento aqui. E a minha conta é, na verdade, a conta número três.
+
+Então, mais uma vez, só para mostrar que estamos aqui. Isto é ao vivo. Não se trata de executar algo que esteja programado no sistema.
+
+Bem, vale a pena destacar também que esta etapa é um pouco lenta porque dividimos a chamada única do LLM em chamadas sequenciais. Portanto, espera-se que demore um pouco mais, mas, novamente, isso faz parte da construção desse fluxo de agentes. E agora você pode ver novamente, está um pouco mais detalhado, mas há muito mais reflexão por trás deste agente aqui. Então, como vocês podem ver novamente, estávamos falando sobre um problema de faturamento. Bem, você pode ver que o sistema considera o valor bastante alto porque um cliente deseja fazer um upgrade de um plano superior para um inferior, mas obviamente isso tem um impacto na receita . Então, neste caso, devemos
+
+encaminhar a questão às pessoas apropriadas do nosso lado. Assim, você pode ver aqui qual deve ser o motivo da escalada. Hum, e tanto o público interno quanto o cliente estão enfrentando essa situação. Então, incluímos uma pontuação de confiança para dizer, sabe, se isso é realmente um problema. Mas, novamente, como mencionado, as chamadas de ferramentas poderão extrair informações que estão ocorrendo em diferentes sistemas para proporcionar um nível maior de confiabilidade.
+
+OK. Perfeito. Tudo bem. Com isso em mente, então, sabe, novamente, esperamos ter mostrado como podemos construir e pegar um agente, dividi-lo em partes, construir algo que seja multiestágios e introduzir chamadas de ferramentas para nos dar o que precisamos. O próximo passo é fornecer essas informações e começar a rastreá-las. Assim, podemos
+
+ver exatamente o que está acontecendo, até nos mínimos detalhes. E é aqui que, você sabe, entra em jogo a questão da observabilidade. Portanto, o que queremos fazer neste tipo de seção é detalhar todo o caminho de execução. Sabemos que a estrutura do assunto é muito complexa e aninhada. Portanto, existem duas chamadas, além de chamadas de função adicionais por trás delas.
+
+Queremos acompanhar alguns dos pontos-chave e, como Myun destacou, as dificuldades iniciais que eles enfrentaram, como latência, custo e número de tokens, especialmente o tempo até o primeiro token, são métricas muito importantes que muitos de nossos clientes tentam identificar. Além disso, você sabe, quais foram as entradas, quais foram as saídas, os metadados associados a isso. E também incluindo tipos adicionais de campos para que, novamente, quando falarmos de monitoramento e observabilidade, possamos consultá-los na interface do usuário em tempo real e serializá-los, se necessário. Portanto, mais uma vez, ter um resultado não é suficiente. Precisamos entender todo o caminho de execução e é isso que o rastreamento nos permite fazer.
+
+Sim, só para dar uma ideia do contexto, e eu sei que é um tópico muito polêmico para alguns, porque, como já disse, venho de uma formação em desenvolvimento full stack. Então, sabe, eu uso tanto criptomoedas quanto ferramentas , Python, Go e TypeScript, mas sim, nossos SDKs são multilíngues. Então, Ruby, Go, acho que até mesmo .NET. Temos algumas pessoas que estão usando e isso é ótimo. Mas sim, hoje usei apenas o
+
+TypeScript para simplificar, mas nossos SDKs abrangem uma variedade de linguagens diferentes que você pode usar para rastrear seu aplicativo. Então, sim, um ponto fundamental e um dos desafios que observo com nossos clientes em geral é que eles realizam uma interação individual em relação a um único intervalo principal. E isso pode funcionar até mesmo com agentes de múltiplas interações e múltiplas conversas. O que queremos poder fazer é rastrear isso em uma estrutura aninhada para que você possa ver tudo, mas em uma única interação, digamos, uma conversa em um intervalo pai. Portanto, é crucial, ao iniciarmos a instrumentação de nossa aplicação, garantir que estamos implementando as estruturas corretas. Caso contrário, você
+
+não conseguirá perceber o impacto total de possíveis problemas em sua aplicação. OK. Bem, no fim das contas, tudo se resume a ler o rastreamento. Espero que, especialmente porque sei que há mais engenheiros de software na sala que usam ferramentas de observabilidade tradicionais, isto não seja muito diferente. Bem, para quem talvez seja novo nessa tela, um rastreamento nos permite descobrir não o que aconteceu, mas o que está acontecendo no momento com o aplicativo, em tempo real. Então,
+
+novamente, rastreando cada chamada, reunindo esses metadados e, dependendo de onde ocorreu a falha, podemos identificar qual o curso de correção necessário. OK. Então, na próxima etapa, o que faremos é adicionar o rastreamento a isso. E então, na verdade, vamos executar o teste e depois entrar no Brain Trust e, com sorte, veremos isso acontecer. Mas há algo que quero ter em mente antes de fazer isso. Então
+
+, vamos ao nosso arquivo "Leia-me". Está nos dizendo para rastrear.
+
+Acho que está tudo bem. Ok, agora está tudo bem.
+
+E tudo bem. E tudo bem. Ok, então eu introduzi um script auxiliar aqui chamado rastreamento. Então, o que fazemos muito bem em nosso SDK é, novamente, evitar introduzir mais complexidade onde ela é necessária. Portanto, se você estiver usando novamente o SDK padrão dos provedores LLM, basta encapsular essa função. Oferecemos isso de forma integrada
+
+. Mas quando se trata de chamadas individuais, podemos configurar alguns scripts auxiliares para ajudar e finalizar conforme necessário. Se você estiver usando algo como Python, também pode ter uma função decoradora, o que também ajuda. Nesse caso, você sabe, eu tenho uma pequena função que ajuda com a relação entre pais e filhos. E então, quando se trata do rastreamento real do aplicativo, você pode ver aqui que eu tenho um span filho que foi executado durante todo esse processo. Bem, novamente,
+
+não quero fazer muitas demonstrações de código neste momento porque o código está se expandindo bastante. Ah, sim, só queria explicar os principais conceitos disso . Ah, ok . Antes de executar o aplicativo, quero acessar a interface do usuário do Braintrust. Às vezes, pode ocorrer um erro se você já tiver se cadastrado para uma conta de teste gratuita, o que você provavelmente fez hoje mais cedo. Será
+
+criado um projeto semelhante a um teste. Não tem problema nenhum . Criaremos um novo projeto à medida que executarmos isso. Ah, uma coisa muito importante também...
+
+se você ainda não fez isso, no canto superior esquerdo, você vai ao seu perfil... Ah. Certo, vou criar uma nova.
+
+Então, tudo bem. Vamos criar isso apenas por enquanto. Vá até o seu perfil e depois onde diz " Chaves de API". Sabe, você pode inserir um nome para a chave, gerá-la e depois usá-la no seu ambiente, no seu arquivo .env. Ou guarde isso em um
+
+cofre de chaves, se você já tiver um. Há também a chave OpenAI, que esperamos que você tenha gerado. Hum, isso também deveria ser usado em provedores de IA. Então, configurei isso no nível da organização. Você também pode fazer isso por projeto, dependendo se quiser segregar por equipe ou ambiente específico. Ah, isso também é totalmente
+
+compatível. Mas, neste caso, precisaremos dessa chave mais tarde, quando se tratar da pontuação online gerenciada. Então, só uma dica: essa chave que você gerou, certifique-se de colocá-la na sua organização BrainTrust para ser usada mais tarde.
+
+Certo. Com isso em mente, vou executar a demonstração. Então, aqui e ali. E, só para constar, se você tiver algum problema com as legendas, use a opção "Make Setup" para garantir que tudo esteja configurado corretamente. Nesse caso, queremos fazer uma espécie de demonstração. Vamos
+
+apenas executar e processar esses chamados. Eu consigo fazer isso até mesmo usando o comando "criar ticket" .
+
+OK. Então, enquanto está rodando em segundo plano, opa, desculpe. Enquanto estiver rodando em segundo plano, se você voltar ao seu aplicativo, verá que existe um projeto chamado Helper Workshop. Então, esse é o que será criado como parte desta oficina hoje. Se você acessar a aba de registros, começará a ver isso em tempo real. Portanto,
+
+reiterando, graças aos recursos do BrainTrust, temos acesso quase instantâneo ao nosso sistema e a leitura fica disponível logo em seguida. Então, especialmente porque é uma função não bloqueante. Portanto, muitos dos nossos clientes, especialmente os mais sofisticados, estão realmente usando o BrainTrust em grande escala e explorando ao máximo seus limites. Então, não é o caso de eu ter mil rastros, sabe? Eles processam dezenas de milhões de rastros de uma só vez, em um período muito curto, e querem obter um resultado agregado . E, novamente, à medida que você aprimora
+
+seu aplicativo e o disponibiliza para mais usuários, esse número cresce rapidamente e você precisa de um sistema capaz de lidar com isso em grande escala. Então, assim que você começar a ver os registros chegando, em ordem inversa, vou dar uma olhada rápida no primeiro aqui e começaremos a ver o aplicativo instrumentado que já rastreamos. Há um botão específico aqui que permite visualizar isso em tela cheia, o que eu acho bastante útil. Então, como mencionei, como temos essa estrutura aninhada em que percorremos cada elemento na espécie de árvore, essa interação no topo é o ingresso de demonstração. É possível ver no nível mais alto que estamos indicando quanto tempo levou para executar essa invocação, os tokens de entrada e saída, o custo e a latência associados a ela.
+
+Também incluí alguns metadados porque quero poder extraí-los e filtrá-los conforme necessário, e mostrarei como isso funciona. E tudo está disponível para visualização aqui. Os metadados estão aqui. Se eu quiser analisar isso sob uma perspectiva diferente , podemos até examinar etapas individuais. Neste caso, quero analisar o que aconteceu com a árvore de especialização até chegar ao LLM propriamente dito. Então, novamente, o SDK oferece
+
+muita flexibilidade nesse sentido, permitindo que você veja o que foi inserido, o raciocínio por trás disso e as informações que configuramos. E então, chegando ao último ponto, sabe, devemos intensificar o processo ou não? Outra perspectiva que veremos como parte disso é, eh, dar uma olhada na linha do tempo. Então, isso te dá uma ideia, como uma metodologia em cascata, para ver se há alguma etapa específica que está demorando mais, e se precisamos corrigi-la. É impossível fazer isso. Certo
+
+. Então, se eu der uma olhada na minha página de registros, vamos sair dessa situação. Atualizar. Então, estou pensando em uns quatro ingressos que foram acionados. Sim, eles devem chegar agora mesmo.
+
+OK. Sim, então são dois ingressos no momento, e as mesmas informações que mostramos também estão disponíveis no console.
+
+OK. Sim, então já falamos sobre rastreamento. Vamos falar sobre a parte da avaliação . OK. É bastante interessante, novamente, dependendo de onde você está no processo de desenvolvimento deste aplicativo, muitos clientes já criaram um aplicativo, o monitoram e o integram. Mas o que
+
+acontece quando você tem, efetivamente, um problema de inicialização a frio, onde você não sabe o que está construindo, certo? Então, o que é considerado bom? E, na prática, o que seria um "bom trabalho" para mim? Bem, no caso do aplicativo de suporte que estamos desenvolvendo hoje, existem alguns pontos não negociáveis, como, por exemplo, se já categorizamos o caso de suporte? Já nos certificamos de que não há consequências graves, ou mesmo de baixa gravidade, para esses problemas que estão causando bloqueios?
+
+A escalação permanece em conformidade com as políticas e os SLAs? A estrutura parece... sólida?
+
+E se fizermos alguma alteração específica, isso realmente melhora o aplicativo, em vez de causar uma quebra ou regressão? Bem, podemos fazer isso usando avaliação. Então, uma avaliação, hum, para aqueles que espero que muitos saibam o que é, mas para aqueles que estão aqui , pensem nisso como uma forma de ter seu conjunto de dados, sua entrada, você tem uma tarefa e então tem um resultado que você deseja avaliar em relação a uma função de pontuação. Bem, isso é um pouco diferente de comparar, digamos, o desenvolvimento de software tradicional com o trabalho com sistemas de IA devido à sua natureza não determinística. Então, nesta parte específica, vou falar sobre como criar o que chamamos de conjunto de dados ideal.
+
+Então, neste aplicativo de suporte, tenho feito testes empíricos, mas quero criar um conjunto de casos extremos onde acredito que isso realmente nos ajudará a ter, pelo menos inicialmente, confiança de que o que estamos lançando em produção é adequado à finalidade. Sempre há espaço para melhorias, mas quero ser funcional. Quero pensar: "Olha, não estou lançando este aplicativo apenas baseado em impressões". Tenho uma maneira concreta de dizer: "Ok, é assim que isso é feito ao longo do tempo." Bem, para fazer isso, novamente, usamos dois tipos principais de funções de pontuação. A primeira delas
+
+é determinística. Então, acho que muita gente já deve ter começado a usar isso. Novamente, vindo da engenharia de software tradicional, você sabe, testes unitários, eu não diria análogos, mas são bastante semelhantes em natureza, pois são muito fáceis de executar e têm um bom custo- benefício. Na verdade, você não está usando um modelo neste momento. O segundo tipo, que é um pouco mais sofisticado, utiliza um LLM como juiz, ou seja, outro sistema de IA. E isso é realmente útil quando se
+
+trata de sistemas com nuances que não podem ser determinadas apenas por sistemas determinísticos. Então, novamente, criar um para falar sobre, você sabe, estilo de marca é apenas atender, você sabe, satisfação do cliente e assim por diante. Portanto, o mais importante é que, se não for possível escrever de forma determinística, você deve usar o LLM como um juiz sempre que possível. Então, e a razão pela qual isso é ainda mais importante é para garantir que qualquer mudança que façamos seja uma mudança de segurança à medida que avançamos com isso. OK.
+
+Então, vou voltar a abordar essa ideia. Vamos dar uma olhada no arquivo readme. E então vamos fazer: " Ah, talvez seja um dicionário que veio de..." Verei
+
+. Vamos dar uma olhada . Pronto. OK. E então, com base nisso aqui, faremos a demonstração e a configuração. Devemos ficar bem.
+
+OK. Então, uma coisa que eu gostaria que você fizesse também é executar o comando para iniciar o conjunto de dados. Então, criamos um conjunto de dados inicial. OK. Então, isso vai fazer com que nossos casos de teste de avaliação sejam carregados na interface do usuário do Vercel.
+
+Então, se eu acessar meus conjuntos de dados agora, você verá que se chama " conjunto de dados inicial auxiliar". Novamente, apenas por simplicidade, criei entradas de 10 µm. Hum, eu também os categorizei por ali . Então, você insere o que esperamos e alguns metadados associados a isso. Então, essa é a estrutura básica para criar uma avaliação.
+
+Então, como parte disso também, e dos métodos determinísticos e não determinísticos, eu criei algumas funções de pontuação, que usaremos como parte deste processo. Então, está disponível aqui. E depois as funções de pontuação do aplicativo. Então, novamente, verificando a categoria como um esquema em vigor. Um motivo para escalonamento ocorre quando necessário? Novamente,
+
+muito fácil de executar e codificar. Ah, sim, temos um pouco mais de sofisticação no que diz respeito à avaliação do cliente. Portanto, este é mais um caso de uso do LLM como juiz. Tudo bem. Então, o que podemos fazer é voltar ao arquivo readme.
+
+Portanto, não precisamos fazer a demonstração. Já implementamos isso. Vamos então fazer a avaliação. OK. Então, isso vai executar uma avaliação.
+
+Ah, deixe-me mencionar aqui também os dados iniciais. Bem, novamente, você não precisa necessariamente colocar isso em código, mas, seja vindo de um banco de dados ou, neste caso, eu usei apenas um arquivo JSON simples para isso. Só para te dar um pouco de contexto. Então, estamos realizando essa avaliação.
+
+E, se formos para a interface do usuário, deveríamos ter um espaço para experimentos. Então vou verificar novamente aqui. Sim, então esse experimento foi executado em todos os arquivos JSON associados a ele. Portanto, você deverá obter uma saída como esta, pelo menos no terminal. Mas se voltarmos à interface do usuário, podemos ver que começamos a rastrear nosso aplicativo em relação às entradas e saídas para este conjunto de dados específico.
+
+É
+
+bastante semelhante ao rastreamento que você teria visto nas pesquisas online. Você poderá ver uma perspectiva muito semelhante aqui e observar como isso funciona também em seus experimentos .
+
+Sim, e acho que sim, apontando que à medida que avançamos no workshop, começaremos a ver como podemos melhorá-lo usando diferentes funções e rastreando isso em toda a interface do usuário.
+
+Se você precisar de um pouco mais de espaço , pode recolher o menu, o que ajuda bastante.
+
+Opa. Ok, hora. Perfeito. OK. Muito
+
+bem, vamos prosseguir com o próximo ponto de verificação, que trata da implantação e do gerenciamento disso. Então, como mencionei, acho que muitas pessoas, pelo menos de forma anedótica, com base no que tenho observado dos clientes, dizem: " As coisas vão funcionar muito bem na minha máquina". Ok, agora estou implementando isso no código. Eu meio que quero levar isso para um lugar onde eu possa começar a colaborar um pouco melhor. Está em um... Há um
+
+ponto de referência. Hum, eu tenho o histórico de versões. Posso começar a identificar, novamente, quem fez qual mudança. E você precisa de uma maneira de reunir esses usuários. Então, acho que, como Salma falou sobre nossa colaboração. O
+
+que também é interessante é, novamente, alterar o prompt na sua máquina e tentar enviar esse código para um repositório, onde pode haver alguém que seja, digamos, um especialista não técnico, um gerente de produto, talvez. Eles querem atualizar os avisos. Eles não conseguem fazer isso. Eles têm que te tocar no ombro. Talvez isso tenha acontecido com algumas das pessoas presentes aqui hoje. Sei que
+
+isso já aconteceu comigo algumas vezes. E eu posso, eu posso, eu certamente posso ficar muito frustrante. Então, na verdade, só queremos uma maneira de conseguir fazer isso acontecer . Algo realmente crucial, especialmente para quem trabalha em setores altamente regulamentados, é a reprodutibilidade, que é um fator fundamental. E trabalhei, durante quase uma década, tanto no setor bancário quanto no mercado de capitais. Eu sei que, obviamente,
+
+com as regulamentações existentes, especialmente em relação a coisas como o direito ao esquecimento, o entendimento de quem fez uma alteração, principalmente em um cenário de saída sob estresse, como podemos inserir isso em um novo sistema? Isso é realmente fundamental para ajudar a desbloquear esse caminho. E é interessante quando se trata de identificar mudanças antes que isso aconteça. Então, repito, não queremos simplesmente fazer alterações, lançar a produção e depois nos perguntar o que aconteceu. Precisamos conseguir colocar isso em prática.
+
+Então, para nós, novamente, estamos introduzindo algumas funcionalidades agora. Então, o que você estava executando neste momento, você estava executando as ferramentas, executando os comandos, tudo na sua máquina local. O que pretendemos fazer é transferir essa capacidade para a BrainTrust. Assim, quando seu aplicativo estiver sendo executado em um ambiente seguro, ele poderá consultar o BrainTrust para obter essas informações e, em seguida, auxiliar no caminho de execução, que, novamente, segue os mecanismos de rastreamento que implementamos. Então, por padrão, quando você executa os comandos make, o modo de tempo de execução será definido como local.
+
+Se você quiser usar o modo gerenciado, basta usar o prefixo "managed" e todos os comandos restantes do "make" serão executados lá também. Então, o que eu quero fazer é... bem, fazer a transição para a IDE.
+
+Então, voltando para fazer meu arquivo readme.
+
+OK. Vou diminuir o ritmo, não vou tomar, verei .
+
+OK. Então, git checkout Oh. OK. OK. Então, dê uma olhada aqui.
+
+Vamos fazer a configuração. Tudo bem. E o ponto principal que quero enfatizar neste momento, já que estamos gerenciando isso no BrainTrust, é usar o
+
+comando de configuração do BrainTrust aqui. Então, o que isso vai fazer é empacotar essas funções de pontuação, essas ferramentas, esses prompts e enviá-los para a infraestrutura segura. Portanto, você deverá obter uma saída como esta. E como isso se pareceria na interface do usuário? Então, vou voltar à visão geral para ver. Então, no lado esquerdo, se
+
+observarmos nossos prompts, começaremos a ver esses três prompts que criamos como parte desse fluxo de trabalho. Hum, para você ter uma ideia. Se formos ao especialista em árvores e jardins , então, hum, você pode definir o que é uma lesma. Então, digamos que seja um ID imutável, ao qual você pode se referir no código. Hum, isso também pode ser gerado, se necessário.
+
+Bem, o prompt, bem, é tratado novamente como código. Hum, também usamos alguma interpolação ali, caso você queira parametrizar isso. Mostrarei como isso se parece em breve. Se eu for para a função de pontuação, então, vamos clicar em pontuações. Ah, ok, isso vai aparecer em um segundo. Hum,
+
+dê uma olhada nos parâmetros. Então, vou dar uma olhada aqui e criei um parâmetro específico, apenas para simplificar as coisas, alterando o modelo base. Então, talvez seja só uma questão de levantar as mãos, sabe, esses modelos são lançados muito rapidamente. Alguém já teve um gerente de produto ou, digamos, um especialista não técnico que dissesse: "Ei, a propósito, posso mudar o prompt? Posso alterar um modelo ou o prompt e ver como ficaria ? Isso já aconteceu com vocês
+
+?" Acho que temos algumas mãos aqui. Ótimo. OK. Então, a vantagem disso agora, usando os parâmetros gerenciados, é que esses especialistas não técnicos podem entrar no BrainTrust e alterar o prompt aqui, escrever um comentário dizendo: "Veja, hum, vamos usar um modelo diferente. Deixe-me
+
+usar algo como 4 mini." Bem , basta dizer: "Testando um novo modelo". Vou salvar esta versão aqui. Vou escrever o comentário. E o que eu também vou fazer, só para dar um toque final, é criar um conjunto de BrainTrust. Então, sempre que você alterar
+
+alguma coisa, você pode executar este comando, mas estou fazendo isso apenas por brevidade. Hum, isso serve mais para manter este modelo sincronizado. Então, se eu for aos prompts, uh, você sabe, uh, isso é meio que a sincronização, mas se eu der uma olhada nos, hum, uh, desculpe, nos parâmetros em vigor. Sim, deveria estar lá. Então, desculpe, tudo o que eu quero fazer é encontrar algo como, hum, uh,
+
+acho que este era o nosso modelo de tempo de execução.
+
+Vá para desbloquear.
+
+Então, neste caso, ao executar o modo de gerenciamento de mapas, estou apenas alterando o curso da execução, não para executar o modelo localmente, mas para seguir o caminho que a Brainwave Trust definiu para o modelo.
+
+OK. E, se tudo correr bem,
+
+reserve dois minutos agora. Você pode ver que eu alterei o modelo aqui. Portanto, mais uma vez, não precisei fazer nenhuma alteração no código. Tudo o que eu precisava fazer era acessar a interface do usuário, alterar o modelo desejado, qualquer outro parâmetro, executar o programa e usar isso como uma base para as avaliações. Bem,
+
+novamente, se você quiser, também pode executar o script de demonstração para enviar os ingressos de demonstração. Vou pular essa parte do workshop hoje.
+
+Bem, acho que vejo isso acontecendo com muitos dos nossos clientes: "Ah, sabe, talvez não haja necessariamente motivo para preocupação. Eles dizem: 'Aliás , a Braintrust agora tem controle de acesso a esses parâmetros.'" O que eu diria é que a Braintrust não foi feita para substituir esse rigor. Provavelmente você ainda vai querer usar sistemas de controle de versão para acompanhar isso. O que estamos dizendo é que, quando se trata de operacionalizar isso e garantir que outros usuários consigam trabalhar em um sistema compartilhado, este é um caminho recomendado que seguiríamos para ajudar nesse processo. Então, novamente, você
+
+provavelmente ainda precisaria ter seus prompts, suas ferramentas e seus parâmetros de forma centralizada, mas também precisaria implementar automação para sincronizar e executar tudo isso. E essa é a melhor forma que vimos os clientes aproveitarem isso.
+
+OK. Na próxima parte, vamos falar sobre a pontuação online. Então, agora que temos essas avaliações implementadas, o que faremos é aplicar essas pontuações aos registros de produção reais que estão chegando ao aplicativo. Então, ótimo, que bom que concluímos nossos testes. Temos um certo nível de confiança de que está funcionando. Mas, novamente, nada
+
+substitui os dados de produção, certo? Todos nós sabemos disso. Então, o que faremos é criar, novamente, mover essa lógica para o Braintrust e configurar o que chamamos de automações que rastrearão e avaliarão isso à medida que os registros forem chegando em tempo real. Vale ressaltar que, ao iniciar sua jornada, provavelmente, especialmente se você estiver usando o LLM como critério de avaliação, você vai querer começar com uma taxa de amostragem mais alta. Então, novamente, à medida que os registros forem chegando, sempre que possível, você deve identificar uma linha de base. Mas, novamente,
+
+há um preço a se pagar, já que esses custos podem ser bastante elevados, especialmente se você estiver usando modelos mais sofisticados e precisar de uma taxa de raciocínio mais alta. Nesse ponto, quando você estiver satisfeito com o resultado, o ideal é reduzir a taxa de amostragem para 5 a 10%. Portanto, mais uma vez, você está gerenciando seus custos de forma eficaz. Ah, pontuações determinísticas, de novo, são baratas. Recomendo mantê-los sempre em execução .
+
+S- Desculpe, qual era a pergunta? Sim, então vou adicionar isso à interface do usuário. Eu vou te mostrar. Sim. OK. Então, se eu voltar para a, hum,
+
+IDE, vou acessar o arquivo readme aqui. Ah, então é por isso que eu perdi a oportunidade de gerenciar ferramentas. Então, digamos que eu vou pagar a conta. Certo, então. E como eu mencionei, todas elas se complementam , então pular esta parte não tem problema nenhum .
+
+Então, faça o check-out. Muito bem, agora, se eu fizer uma pequena configuração, tudo deve ficar bem. Faça, hum, a preparação. Trazer custo. Bem , neste caso, estou levando também as ferramentas para a produção.
+
+Novamente, isso serve apenas para ajudar a acelerar as coisas sempre que possível. Bem , resumindo, se eu clicar em atualizar, certo? Então, nossas pontuações, as funções de pontuação que você viu anteriormente, em código, e eu estou gerenciando o BrainTrust. Então, como você pode ver, está disponível aqui. Os que eu quero destacar são os da triagem. Então, eu tenho um mestrado em Direito (LLM)
+
+como juiz, que já foi aplicado. Então, colocando uma saída que leva isso. E existe uma regra de automação em vigor. Então, qualidade raiz online. Então, o que eu fiz aqui foi automatizar a configuração como código. Então, para dar
+
+início ao projeto. Mas, novamente, o que faremos aqui é dizer, veja, dependendo se for um intervalo individual, podemos executar a execução ou o rastreamento completo. E é por isso que os metadados são tão importantes, porque podemos querer rastrear apenas falhas específicas que possam ocorrer dentro do código. Bem, novamente, depende do caso de uso. Bem, minha taxa de amostragem, como mencionei, está definida em 100. Mas, novamente, para
+
+chamadas mais caras, também queremos aumentá-la . Então, é assim que a automação funciona, ou melhor, como faríamos isso no BrainTrust hoje. Clique em empacotar as pontuações e Não, então a automação é mais como a execução em relação aos registros de entrada. Então, é isso. Sim . Mas eu tenho uma visão mais holística.
+
+Apliquei a automação para configurar esse ambiente e sua estrutura. Sim. Então, é isso que eu só queria esclarecer , sim. Então, temos uma pergunta aqui. Sim, que tipo de coisas você está pontuando?
+
+Você poderia explicar isso melhor, por favor? Sim . Então, as automações são como todo esse juiz, certo? Sim, correto. Se não houver nenhuma verdade comprovada nisso, tudo bem.
+
+Como você pode ter um bom desempenho online se não tiver informações confiáveis? Sim . Bem, provavelmente devemos considerar isso como um caso extremo, inseri-lo em um conjunto de dados, identificá-lo e, em seguida, movê-lo de volta. Então, essa seria a abordagem que eu adotaria para isso. Bem, se você ainda não tem nenhum dado ou informação de base, certo? Por isso eu
+
+disse que, dependendo de onde você começa, é melhor ter algum tipo de dado e, a partir daí, iniciar seu processo de otimização . Como posso supor que, se você tiver alguns dados, os aplicará às decisões dos analistas/juízes ? Ah, esse caso. Provavelmente podemos colocar isso em um conjunto de dados e depois reproduzi- lo no ambiente de testes. É assim que faremos isso. Sim. Sim.
+
+Tudo bem. Então, analisamos a pontuação online e a coerência ao longo do tempo. OK. Agora, vamos à parte da remediação. Então, espero que vejamos a diferença ou, novamente, por que a tivemos hoje. Então, espero que isso
+
+possa te ajudar com essa pergunta específica. Então, novamente, aqui está algo que pode acontecer como uma entrada plausível para o nosso sistema de agentes: o cliente, ou melhor, o usuário, pode dizer: "Ei, não, isso não é urgente, mas vou ver se consigo exportar as faturas antes da reunião do conselho." A modelo diz: "Olha, ei, isso parece bom para mim." Alguém diz: "Não é urgente." Come si, come sa.
+
+Mas o negócio é bem diferente, não é? Isso provavelmente precisa de atenção imediata. Ah, seu diretor financeiro, tenho certeza de que há um relatório de fim de trimestre a ser feito. E essa é a diferença entre o que estamos fazendo aqui hoje: tentar identificar o que é um modo de falha apropriado e, em seguida, remediá-lo sempre que possível. Então, neste caso, novamente, eu posso executar este modo específico aqui. Eu tenho
+
+isso neste conjunto de dados. Então, só para dar um exemplo de uma cena em que queremos reproduzir a falha, queremos fazer uma avaliação específica em relação a isso. Queremos refinar o prompt, executá-lo novamente e ver como fica . Provavelmente, vamos querer usá-lo não apenas em um caso de teste específico, mas em todos os nossos casos de teste também, só para ver se ele não funciona como esperado e se, dessa perspectiva, cometemos alguma regressão. Ok, então vamos em frente e temos duas ramificações separadas para isso. Então,
+
+vou dividir o ramo A em dois. Um deles terá em mente a taxa de falhas. Vamos acessar a interface do usuário e visualizar isso. E depois vamos falar sobre a parte da remediação também. OK.
+
+Incrível.
+
+Acho que sim
+
+, pode ir para lá. Então, muitos vídeos de produção. Ver.
+
+Coloque aqui. OK. Então, hum, confusão.
+
+Oh.
+
+OK. Assim, podemos até mesmo executar em modo de tempo de execução. Então, modo de tempo de execução. mesclado E então nós vamos, uh, reproduzir a falha. OK. Então, tenho este conjunto de cinco
+
+casos que são, você sabe, a regressão dos modos de falha neste caso. Então, aquele primeiro que você viu no exemplo do ticket, é isso aqui, feito como um arquivo JSON.
+
+Então, se eu der uma olhada aqui,
+
+ok, então se eu der uma olhada no modo de falha aqui, posso analisar isso em detalhes. CD E você também notará que, ao configurarmos as ferramentas gerenciadas online, bem como a pontuação online, o rastreamento se torna ainda mais sofisticado pelo fato de estarmos executando isso em um ambiente seguro de confiança intelectual. Então, mais uma vez, estamos migrando de um modelo local para um modelo gerenciado.
+
+Tudo bem. Vou acessar o arquivo make aqui. Desculpe. package.json
+
+Vamos lá.
+
+Aqui está outro arquivo.
+
+Que eu saiba. É outro arquivo aqui.
+
+Carregamento doméstico, impacto doméstico. Vamos executar a avaliação aqui. Então, estou apenas fazendo uma avaliação com base em um cenário específico. Está correto?
+
+Você também quer mostrar o monitor? Tem a ver com latência e coisas do gênero. Faremos isso. Apenas razoável. OK. Sim
+
+. Então, como podemos ver à medida que avançamos com o aplicativo, o experimento, novamente, o visualizador nos permite ver o progresso de nossas alterações. Então, como você pode ver, executamos a versão mais recente. Notamos alguma degradação aqui, o que nos permite monitorá-la melhor. Então, o conjunto de dados gerenciados que eu tinha em mente, as várias taxas de falha foram capturadas, e você pode ver que eu tenho a capacidade de compará-lo com experimentos existentes para acompanhar o progresso e corrigir problemas sempre que possível.
+
+OK.
+
+Então, me perdoe, mas a próxima coisa que farei é consultar o arquivo readme e, em seguida, prosseguir com a correção. OK.
+
+Então, execute o comando ` git checkout -b issue 4` em seguida . Tudo bem.
+
+Apenas
+
+razoável. Então, nesta correção, eu alterei o prompt que eu estava usando. Bem , uma maneira de ver isso é se eu der uma olhada no prompt e na mudança. Então, vejamos.
+
+Então, você verá alguma diferença aí.
+
+Basta substituir.
+
+OK. Acesse o arquivo de remediação aqui. Digamos que
+
+eu faça uma
+
+coleta aqui.
+
+Vamos dar nossa opinião sobre isso. no
+
+comando de confiança. Isso coleta.
+
+Existe uma bandeira específica. Acho que não sei se você gostaria de confirmar isso novamente.
+
+Sim, é isso mesmo. Se couber,
+
+então, não sei se você quer simplesmente colocar " se existir, substitua um" no final do chat. Sim. Sim .
+
+Sim, não, não, está tudo bem. Então, sim, concentre-se em, se quiser, na parte do script de correção, definir a variável de ambiente BrainTrust. Se ela existir, defina-a para substituir a variável existente. Isso irá enviar as alterações atualizadas para o ambiente.
+
+Então, se eu pegar... Ah, desculpe por isso.
+
+OK. E então você verá também, agora que atualizamos o prompt para o seu código e o enviamos para cima, que ele também está disponível aqui.
+
+Então, também na interface do usuário, e novamente como parte da operacionalização da operação, podemos ver quem alterou o quê, mas na verdade o que foi alterado no prompt específico, como neste caso. Dê uma olhada aqui. Portanto, estamos incluindo dois fatos. Limpe isso. OK.
+
+Então, estamos voltando para cá. Digamos que não fizemos...
+
+Estamos nessa avaliação novamente. Então, fizemos a alteração no prompt. E agora estamos executando a versão corrigida para ver como ela se comporta.
+
+Perfeito. Ok, então, espero que tenhamos executado o experimento aqui com as novas alterações. E estou me concentrando na interface do usuário. Vou realizar experimentos aqui. E é quase imperceptível, mas você consegue ver, sabe, meio que aumentando gradualmente.
+
+Sabe, qualquer melhoria para cima é uma melhoria. Mas sim, só para você ter uma ideia , agora que fizemos a avaliação, o que eu posso fazer é... fazer uma diferença. Hum,
+
+podemos fazer uma comparação no delta. Sim . Sim
+
+. Então, sim, isso melhorou com o tempo. Hum, que é o resultado pretendido. Sim. OK.
+
+Então, acho que estamos nos aproximando do fim do conteúdo. Bem, eu sei que foram várias etapas, então eu realmente quero agradecer pelo seu tempo e atenção para me guiar por esse processo . Como já foi mencionado, os artefatos são públicos. Temos a cola ali. Temos o canal do Slack para ajudar caso você tenha alguma dúvida, mas, para resumir o que você realizou hoje, nesta ordem, você passou de receber um comando simples para construir um fluxo de trabalho de IA com cinco etapas usando chamadas de ferramentas.
+
+O que conseguimos fazer então é inspecionar como isso funciona praticamente de ponta a ponta, analisando o processo com o rastreamento do Braintrust e garantindo que tudo seja registrado. Então, também queremos falar sobre como avaliamos o sistema quando não há nada online, quando há algo novo, criando esse conjunto de testes padrão com os casos de teste que serão executados. Em seguida, implementamos esses prompts gerenciados, essas ferramentas e parâmetros na arquitetura segura do BrainTrust, para que pudessem ser usados, e também adicionamos a pontuação online para avaliar o sistema à medida que ele se desenvolve. E então escolhemos uma falha de produção específica. Analisamos o traçado. Bem, nós modificamos o prompt no nosso
+
+caso e vimos a diferença lá. E ao executar a avaliação novamente, vimos que ela atingiu o nível necessário, concluindo a avaliação completa do seu edifício, observando-o, implementando-o e tomando nota disso para o futuro. Então , é, só para... encerrar
+
+e finalizar. Portanto, espero que isso não seja incomum, mas, novamente, o que pode funcionar na produção não necessariamente funcionará em um protótipo. Hum, precisamos mesmo analisar isso em detalhes, identificar os modos de falha e seguir em frente, e é aí que as etapas explícitas se tornam realmente muito importantes, certo? E o que acontece é que, novamente, isso introduz mais áreas onde as coisas podem dar errado, mas é mais fácil depurar se for esse o caso. É , não há nada que substitua mergulhar no código e rastrear tudo. Portanto, eu
+
+diria que a observabilidade é um requisito básico neste momento. Se você tem um projeto em andamento e não está rastreando-o, precisa voltar à prancheta e torná-lo operacional. Esperamos poder mostrar como fazer isso usando o BrainTrust. Bem, novamente, nada substitui os logs de produção, mas é melhor começar do zero. Se você tem uma ideia de qual problema pode ocorrer, essas são as maneiras perfeitas de começar uma avaliação.
+
+Então, usando esses modos de falha como seus casos de teste, e como eu mencionei, este é um processo contínuo, certo? Nada nunca está feito. Se você já trabalhou com desenvolvimento de carreira, sabe que o feedback constante é importante e, novamente, estamos trazendo esse modelo operacional, mas com uma nova forma de operar. E sim, espero que consigamos trazer essa vitória para as suas equipes hoje. Então, sabe, meu conselho para você, se isso for algo do seu interesse, é escolher algo que já esteja em funcionamento, não precisa ser o pacote completo. Talvez comece com
+
+algo que seja um pouco mais... hum...
+
+que eu acho que seja mais crítico, que você realmente queira aprimorar... os modos operacionais. O rastreamento coleta os casos extremos desse modo, gera as pontuações automáticas e, em seguida, reinicializa tudo o mais rápido possível.
+
+Portanto, mais uma vez, quanto mais rápido for o ciclo de feedback, mais informações você terá e mais poderá melhorar a entrega e as operações gerais do seu sistema. Sim, e é basicamente um apelo à ação. Então, novamente, sei que apresentamos muito conteúdo para vocês. É... bem,
+
+obviamente vamos tentar obter algum feedback. Vamos tentar colocar algumas mesas no lugar. Então, eu entendo que todos estão se desdobrando para fazer isso, mas, como já foi dito, é preciso começar de algum lugar. Vamos tentar acelerar o processo. Temos uma lista de documentos que são fornecidos. Bem,
+
+você também pode usar nosso agente de IA para pesquisar se tiver alguma dúvida, mas também temos um livro de receitas disponível. Então, eu costumo usar esse guia diretamente, sabe, cortar o Cosa Codex ou algo assim e dizer: "Ei, com base nisso, pegue o SDK e comece a rastrear meu aplicativo." Ele faz um trabalho bem eficaz. Nós até anunciamos uma CLI para o nosso aplicativo Brain Trust. Isso permite até mesmo fazer instrumentação automática. Vou
+
+mencionar meu colega Eric, que está fazendo um trabalho fantástico, e por favor, deem uma olhada no estande dele porque é incrível. E, novamente, se isso lhe interessou e você quer explorar mais, entre em contato com a equipe de contas da Brain Trust. Ficaremos felizes em ajudar no que for possível. E se você usa o Discord, fique à vontade para entrar. Terei prazer em responder às suas perguntas por lá .
+
+E sim, mais uma vez, queremos agradecer pelo seu tempo, atenção e energia. Sei que está um dia muito ensolarado e não quero atrapalhar as pessoas. Aqui dentro . Quero que você respire um pouco de ar fresco, mas , em nome da Brain Trust, da Train Line e em meu próprio nome, muito obrigado pelo seu tempo e atenção. Foi uma honra e espero vê-lo por aí rastreando e obtendo valor com a implementação de IA em produção.
+
+Obrigado.

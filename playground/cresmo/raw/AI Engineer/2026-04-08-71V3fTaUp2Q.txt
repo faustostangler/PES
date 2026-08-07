@@ -1,0 +1,201 @@
+---
+video_title: "Let LLMs Wander: Engineering RL Environments — Stefano Fiorucci"
+video_id: 71V3fTaUp2Q
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=71V3fTaUp2Q
+video_date: 2026-04-08T06:15:06+00:00
+video_description: |
+  Reasoning models like DeepSeek R1 have demonstrated that learning from interaction is just as critical as learning from examples. To build these capabilities ourselves, we need to move beyond static datasets and start building Reinforcement Learning Environments: little worlds where models can act, get rewards, and learn.
+  
+  In this talk, I will walk you through my journey exploring this space from a practical software engineering perspective.
+  
+  We will cover:
+  - How classic Reinforcement Learning concepts translate to Language Models
+  - Verifiers, an open-source library to build Environments as software artifacts
+  - Concrete examples of environments, from single-turn tasks to multi-turn games and tool-using agents
+  - How to use these environments for both evaluating and training Small Language Models.
+  
+  Join me to learn how to move from prompting models to building the gyms where they learn.
+  
+  Stefano Fiorucci - AI/SW Engineer/Explorer, deepset
+  
+  Stefano is an AI/Software Engineer and explorer.
+  
+  He currently works on AI Orchestration at Deepset, where he contributes to and maintains Haystack, a widely used open-source framework for building LLM applications.
+  
+  He loves experimenting with Small Language Models, Post-Training and Reinforcement Learning, and shares his learning through code, writing, and talks.
+  
+  LLM RL Environments Lil Course: https://github.com/anakin87/llm-rl-environments-lil-course
+  
+  Socials:
+  https://twitter.com/theanakin87
+  https://www.linkedin.com/in/stefano-fiorucci/
+  https://github.com/anakin87
+  https://huggingface.co/anakin87
+  
+  Slides:
+  https://drive.google.com/file/d/116PKThwtyTxeH1GmZQ7bL3HPYM6KCgHa/view?usp=drive_link
+---
+Olá a todos e sejam bem-vindos ao Let's Learn Wander, um espaço dedicado à aprendizagem por reforço em engenharia. Algumas palavras sobre mim. Sou Stefano Fiorucci, engenheiro de IA e software. Durante o dia, trabalho com orquestração de IA na Deepset, onde desenvolvo o Haystack, um framework LLM de código aberto. À noite, adoro mexer com pequenos modelos de linguagem, fazer ajustes finos e aprendizado por reforço.
+
+Hoje, vou falar sobre ambientes de aprendizado por reforço para avaliação e treinamento de modelos de linguagem. Este tem sido um tema muito debatido ao longo do último ano, e eu o considero fascinante por diversas razões. Esses ambientes permitem que os modelos aprendam interagindo, explorando e melhorando com base no feedback. São verdadeiros ginásios naturais para agentes LLM que sabem usar ferramentas, executar código e resolver tarefas complexas. Além disso, startups que desenvolvem ambientes de aprendizado por reforço estão recebendo financiamento substancial e trabalhando diretamente com grandes laboratórios de IA.
+
+Relatórios técnicos recentes da DeepSeek e da MiniMax mostraram que elas estão utilizando com eficácia milhares de ambientes de aprendizado por reforço para melhorar o desempenho dos modelos em tarefas complexas e escalar a inteligência. Não se preocupe se você não souber nada sobre ambientes de vida real . Abordarei esse assunto em breve. Segue a programação da palestra. Primeiramente, revisaremos os conceitos clássicos de aprendizado por reforço e veremos como eles se aplicam ao domínio dos modelos de linguagem.
+
+Em seguida, apresentaremos os Verifiers, uma biblioteca de código aberto para construir ambientes como artefatos de software, e exploraremos alguns padrões comuns para implementá-los. Por fim, vou apresentar um experimento no qual pegamos um modelo pequeno que mal consegue jogar jogo da velha contra um jogador aleatório e o transformamos em um mestre usando um ambiente de aprendizado por reforço . Vamos começar. Primeiro, uma breve revisão sobre aprendizado por reforço. Na aprendizagem por reforço, existem dois personagens principais: o agente e o ambiente.
+
+O ambiente é o mundo com o qual o agente interage. A cada passo, o agente observa o estado atual do mundo e toma uma ação. O estado do ambiente se altera em resposta a essa ação. O agente também recebe uma recompensa do ambiente, um número que indica o quão bom ou ruim é o estado. O objetivo do agente é maximizar sua recompensa acumulada ao longo do tempo e, para isso, ele precisa equilibrar a exploração, ou seja, experimentar novas ações para descobrir estratégias melhores, e a exploração, utilizando ações que comprovadamente funcionam. Ao interagir
+
+com o ambiente, o agente aprende com a experiência e aprimora seu comportamento. Uma trajetória, ou desdobramento, é a sequência de estados, ações e recompensas que o agente percorre ao interagir com o ambiente. É um registro da experiência. Nesta apresentação, usarei " trajetória" para me referir a um episódio completo, como um jogo inteiro. Vamos dar uma olhada na formação oferecida pelo LLM. Um
+
+modelo de linguagem é um modelo estatístico que, dado um texto (o prompt), retorna uma conclusão textual. O programa de treinamento padrão é dividido em três fases. Primeiro, um pré-treinamento com uma quantidade enorme de texto da internet. Aqui, o modelo aprende a criar sugestões de autocompletar texto. O modelo básico possui conhecimento, mas não consegue seguir instruções e é praticamente inutilizável em aplicações práticas.
+
+Durante o ajuste fino supervisionado em exemplos conversacionais, o modelo é treinado para seguir instruções e pode aprender novas tarefas. Na terceira etapa, o aprendizado por reforço é frequentemente usado com técnicas como a otimização de política proximal para alinhar o modelo às preferências humanas. Vale a pena mostrar um exemplo de dados de ajuste fino supervisionado, pois posteriormente compararemos frequentemente o aprendizado de ajuste fino supervisionado com novas abordagens de aprendizado por reforço. Como podem ver, temos pares de estímulos e respostas e, durante esta fase, o modelo aprende por imitação estatística. Basicamente, tenta imitar os exemplos fornecidos.
+
+Você talvez se lembre da palestra de Ilya Sutskever na NeurIPS 2024. Ele destacou que o paradigma de treinamento LLM que acabamos de ver começou a mostrar suas limitações. Em particular, o pré-treinamento parece já não ser suficiente para manter a melhoria da qualidade do modelo no mesmo ritmo. Precisávamos de uma nova forma de expandir. Em seguida, a OpenAI publicou sua série de modelos O1 .
+
+Em sua postagem no blog de lançamento, eles mencionaram o treinamento de aprendizado por reforço para fazer com que os modelos usem a cadeia de raciocínio de forma eficaz. Eles também destacaram que o desempenho do O1 melhorou consistentemente com mais tempo de computação dedicado ao treinamento de aprendizado por reforço e com mais tempo gasto pensando, ou seja, com mais tempo de computação dedicado ao teste. Infelizmente, eles não compartilharam muitos detalhes sobre como esse modelo foi treinado. O lançamento do DeepSeek R1 esclareceu como você pode alcançar esses resultados. Em primeiro lugar, eles reconheceram que o raciocínio e a cadeia de pensamento podem melhorar o desempenho dos modelos, mas ensinar esses comportamentos aos modelos usando ajuste fino supervisionado requer dados selecionados que são muito caros para serem produzidos em grande escala.
+
+Eles usaram aprendizado por reforço com recompensas verificáveis, o que veremos em breve, e o DeepSeek também usou o GRPO, um novo algoritmo de aprendizado por reforço que oferece uma configuração mais simples e leve em comparação com técnicas como o PPO. Então, o que é aprendizado por reforço com recompensas verificáveis? Nesse paradigma, o modelo é questionado e gera tanto um registro de raciocínio quanto uma resposta. A resposta é então comparada com a resposta correta conhecida. A recompensa é usada para treinamento de aprendizado por reforço.
+
+A ideia subjacente é mais geral e funciona onde o resultado pode ser verificado automaticamente, como uma resposta correta, um jogo ganho, uma chamada de ferramenta bem-sucedida, podendo servir como um sinal de treinamento. E isso é fundamentalmente diferente do ajuste fino supervisionado. Na SFT, o modelo aprende com exemplos selecionados, e suas conclusões tendem a se manter próximas à distribuição desses exemplos. Na aprendizagem por reforço com recompensas verificáveis, o modelo explora diferentes trajetórias a partir do seu pré-treinamento e aprende a privilegiar aquelas que maximizam as recompensas. E isso é empolgante porque o modelo não está mais limitado pela qualidade dos exemplos humanos. Por meio de tentativas e erros,
+
+é possível descobrir estratégias de raciocínio mais eficientes .
+
+Finalmente podemos mapear os conceitos clássicos de aprendizado por reforço para LLMs. O modelo de linguagem atua como agente. O ambiente para qualquer tarefa inclui dados, ferramentas e regras de pontuação, tudo o que é necessário para verificar e possivelmente treinar o modelo na tarefa. Do ponto de vista do software, isso marca uma mudança do ajuste fino supervisionado para o aprendizado por reforço com recompensas verificáveis. Embora a SFT dependa principalmente de conjuntos de dados conversacionais, esse novo paradigma geralmente requer um ambiente, um sistema dinâmico com o qual o modelo possa interagir.
+
+A definição de agente também está se expandindo. Agora, os modelos de linguagem podem receber ferramentas, desde uma API de previsão do tempo até um terminal, e isso torna os ambientes de treinamento e avaliação mais complexos e críticos. Para tornar isso mais concreto, considere ensinar uma modelo a jogar jogo da velha. O agente é o modelo de linguagem. Sua ação consiste em gerar uma resposta de texto com o movimento específico.
+
+O ambiente funciona como o motor do jogo. Ele se encarrega de instruir o modelo, acompanhar o estado do tabuleiro, gerar a jogada do oponente e decidir quando o jogo termina. A recompensa é o sinal do ambiente, por exemplo, +1 para uma vitória e zero para uma derrota. Essa recompensa orienta o modelo a encontrar estratégias vencedoras por meio de tentativa e erro. Essa configuração permite que o agente descubra estratégias que maximizem sua pontuação sem a necessidade de exemplos humanos preexistentes .
+
+Você provavelmente já percebeu meu entusiasmo por este tema, mas vamos também usar as palavras de Andrej Karpathy para descrever os ambientes. Eles oferecem ao aluno de mestrado em Direito a oportunidade de interagir de fato, tomar medidas e observar os resultados. Isso significa que você pode esperar um desempenho muito melhor do que a mera imitação de um especialista em estatística . Agora, vamos ver como construir esses ambientes.
+
+Para construir os ambientes como software ActiveX, podemos usar verificadores, uma biblioteca de código aberto da Prime Intellect. O Verifiers fornece componentes modulares para criar ambientes de aprendizado por reforço para agentes LLM. Esses recursos podem ser usados ​​tanto para avaliação quanto para treinamento. Ambientes são pacotes Python que podem ser facilmente instalados e distribuídos. A biblioteca fornece classes base para diversas configurações, ambientes de giro único com apenas uma interação entre o modelo e o final, ambientes de múltiplos giros, ambientes de ferramentas onde o modelo está equipado com ferramentas, e vários outros.
+
+Inclui também abstrações para analisar respostas do modelo e definir funções de recompensa. O verificador abstrai o modelo de serviço. Ele espera um endpoint de API compatível com OpenAI , para que você possa conectar modelos OpenAI, Open Router ou modelos locais por meio do LLM. Ele lida com uma única interação e trajetórias paralelas, permitindo que você se concentre na lógica do ambiente. Para treinamento, os verificadores vêm com seu próprio treinador e se integram a outras estruturas como Prime RL, Tinker e Sky RL.
+
+Resumindo, os verificadores nos permitem focar na tarefa e nas recompensas [limpa a garganta] em vez da infraestrutura.
+
+Vamos começar com um ambiente de turno único . O recurso de texto invertido é um ambiente simples para avaliar ou treinar modelos de linguagem em sua capacidade de inverter uma sequência de texto. O que está acontecendo aqui? O ambiente de carregamento [limpa a garganta] é o ponto de entrada para o ambiente de todos os verificadores . Contém toda a lógica de configuração.
+
+Primeiro, um conjunto de dados é carregado e mapeado. O conjunto de dados padrão contém 1.000 parágrafos de texto armazenados na coluna de prompt. Durante a etapa de mapeamento, transformamos o conjunto de dados original. A pergunta é o parágrafo do texto, enquanto a resposta é o texto invertido.
+
+Em seguida, o analisador XML é inicializado. Ele extrai o texto dentro das tags de texto invertidas, conforme especificado no prompt do sistema. Em seguida, definimos a função de recompensa. Esta função compara a saída do modelo com os valores reais e retorna a razão da maior subsequência comum. Finalmente, agrupamos tudo isso em uma rubrica, uma coleção de recompensas ponderadas, e inicializamos o final de turno único.
+
+Mas como isso ganha vida? Deixe-me mostrar-lhe uma execução de avaliação.
+
+Eis o que acontece por baixo do capô. O ambiente de carregamento é invocado. Cinco exemplos são retirados do conjunto de dados, e cada exemplo é usado três vezes para três implementações. Cada implementação recebe a mesma pergunta, mas pode produzir conclusões diferentes devido à aleatoriedade do modelo. Temos um total de 15 implementações.
+
+Para cada implementação, uma conversa é preparada com a mensagem do sistema e a pergunta. A conversa é enviada para o modelo. O modelo gera uma resposta. A resposta é analisada, extraindo-se a solução. A recompensa é calculada e os resultados são salvos. Ao final da
+
+avaliação, você recebe estatísticas resumidas e informações adicionais sobre a distribuição de recompensas. O treinamento segue o mesmo mecanismo básico, com a etapa adicional de atualização dos parâmetros do modelo. Analisaremos isso com mais detalhes posteriormente.
+
+Vejamos um exemplo diferente, envolvendo verificadores, no ambiente de dupla verificação. Aqui, o modelo responde a uma pergunta matemática e, em seguida, o ambiente pergunta: "Tem certeza?" Este é um ambiente de múltiplas jogadas, semelhante em espírito ao Jogo da Velha, no qual cada trajetória envolve múltiplas interações entre o modelo e o ambiente. Vamos analisar o que a extremidade com múltiplas voltas introduz. O Estado faz sua estreia aqui.
+
+É um dicionário que rastreia informações durante uma implementação. Podemos definir o estado inicial através do método setup state, que não é utilizado neste exemplo. Resposta final. Em vez da interação terminar após uma única rodada, o ambiente pode responder com uma lista de mensagens. Aqui, simplesmente diz: "Tem certeza?"
+
+Em ambientes mais complexos, a resposta pode ser gerada dinamicamente com base no estado. O decorador de parada "via" marca um método como uma condição de parada. Este método é executado em cada etapa da interação agente-ambiente . Assim que retornar verdadeiro, a implementação termina. Nos bastidores, os verificadores executam um loop no qual o modelo e o ambiente se revezam na troca de mensagens, atualizando o estado compartilhado, até que uma condição de parada seja atendida e uma trajetória completa possa ser avaliada.
+
+Outro tipo interessante de ambiente é o ambiente de ferramentas. Todos os tipos de ambiente nos verificadores são construídos com base em uma estrutura de múltiplas voltas, que implementa o principal ciclo de implantação de agente único. A ferramenta final adiciona a chamada de ferramentas a essa base. Como você pode ver, as ferramentas são definidas como funções Python. Durante as implementações, o modelo pode chamar ferramentas, receber resultados e continuar o raciocínio até produzir uma resposta sem recorrer a ferramentas.
+
+Cada turno consiste na resposta de um modelo seguida pela execução da ferramenta do ambiente. Para um exemplo mais realista, recomendo consultar o ambiente de busca da Wiki .
+
+Além dos ambientes fundamentais que acabei de mostrar, os verificadores fornecem mais abstração para a construção de ambientes. O ambiente NCP se conecta automaticamente aos servidores do protocolo de contexto do modelo para expor suas ferramentas. A categoria " ferramentas com estado" destina-se a ferramentas que necessitam de estado persistente entre implantações, como conexão de banco de dados ou ID de sessão. Existe também uma classe que implementa modelos de linguagem recursivos, uma ideia inovadora que você talvez já tenha ouvido falar. Trata-se de uma estratégia de inferência na qual os modelos de linguagem podem decompor e interagir recursivamente com o contexto de entrada de comprimento ilimitado por meio de ambientes REPL. O
+
+Verifiers também funciona bem com outros sistemas, integrando-se com diversas bibliotecas de ambiente de terceiros. O
+
+Verifiers está totalmente integrado ao hub de ambientes, um espaço comunitário para compartilhar esses ambientes de aprendizado por reforço. Os verificadores e o hub de ambientes são faces diferentes da mesma moeda, expressando a mesma intenção. Eles têm como objetivo combater a fragmentação ambiental. Com muita frequência, os ambientes ficam restritos a uma pilha de treinamento específica, o que dificulta sua reutilização. E, à medida que surge um mercado para ambientes de código fechado , essas iniciativas abertas garantem que tenhamos uma alternativa robusta. Não queremos que os modelos de código aberto
+
+fiquem para trás simplesmente por não terem os ambientes adequados para serem treinados. Além disso, deixando de lado o aspecto sério, é simplesmente divertido explorar o espaço e ver o que as pessoas estão construindo. Agora, vamos em frente, Jogo da Velha. Utilizamos verificadores para criar um ambiente de Jogo da Velha para treinar e avaliar modelos de linguagem neste jogo. Mas por que Jogo da Velha?
+
+É um jogo simples, mas que requer interação em várias rodadas, e capturar sua dinâmica com um conjunto de dados estático é um desafio. Apesar do seu pequeno espaço de estados e da sua solução determinística, os modelos de linguagem de pequena escala costumam ter dificuldades com ele. Vamos ver se o aprendizado por reforço pode ajudar [limpa a garganta] a preencher essa lacuna.
+
+O ideal é começar com uma versão simples, executar uma avaliação para verificar se funciona e, em seguida, iterar. Para começar, vamos fazer algumas suposições. O modelo sempre joga como X e começa primeiro. Deve retornar um número entre 0 e 8 dentro das tags de movimento. E o adversário joga de forma aleatória.
+
+No ambiente de carregamento, criamos um conjunto de dados contendo a mensagem inicial do usuário que inicia cada jogo. Para cada lançamento de jogo, o estado de configuração preenche o dicionário de estados com informações usadas e atualizadas durante o jogo, como o tabuleiro e o vencedor. E a resposta contém a lógica central do jogo . Ele analisa o último movimento do modelo e verifica se é válido. Movimentos inválidos resultam em perda imediata, e essa penalidade se aplica ao tabuleiro. Em seguida, aplica um
+
+movimento aleatório do oponente e verifica se houve vitória ou empate. Se o jogo não estiver terminado, ele retorna uma mensagem ao usuário com o estado atual do tabuleiro e pergunta qual será a próxima jogada. Utilizamos duas funções de recompensa: a função de recompensa de vencedor, com peso um, e a função de recompensa de formato, com peso 0,2, que recompensa o modelo por respeitar o formato XML.
+
+Agora podemos tornar nosso ambiente mais flexível, realista e adequado tanto para avaliação quanto para treinamento. Fiz algumas dessas melhorias gradualmente, enquanto me alimentava durante o treino. Primeiro, queremos que o modelo jogue às vezes em primeiro lugar e às vezes em segundo. Vamos agora analisar a habilidade do oponente. Jogar sempre contra um oponente aleatório não é realista. Assim, introduzimos um
+
+oponente ótimo usando o algoritmo minimax. Contra esse adversário, o empate é o melhor resultado possível. No entanto, para fins de treinamento, queremos que a habilidade do oponente seja controlável. Se o oponente for perfeito demais muito cedo, o modelo pode nunca conseguir uma vitória e falhar no aprendizado. Podemos fazer isso introduzindo uma probabilidade para o oponente escolher uma jogada aleatória em vez da jogada ideal.
+
+No ambiente de carga, introduzimos a probabilidade média de movimento aleatório e a probabilidade máxima de movimento aleatório, que variam de 0 a 1. Se definirmos ambas como 0, todos os jogos serão contra um oponente ótimo. Se definirmos ambos os valores como 1, todos os jogos serão contra um oponente aleatório. Utilizar esses parâmetros nos permite controlar a habilidade do oponente em todas as partidas. Para diferentes simulações originadas do mesmo conjunto de dados de exemplo, o oponente sempre terá a mesma probabilidade de escolher movimentos aleatórios, garantindo uma comparação justa.
+
+Agora, vamos falar sobre raciocínio. É comum pedir aos modelos que produzam um registro de raciocínio antes da resposta final. Isso pode melhorar o desempenho no momento da inferência, mas também é fundamental para aprimorar os modelos durante o treinamento. Definimos uma nova função de recompensa de formato usando uma expressão regular para também verificar a presença de tags de reflexão. Vamos agora abordar os lances inválidos. Ao
+
+experimentar com pequenos modelos abertos, observei que muitos deles, por vezes, apresentavam formato de saída incorreto. Outras vezes, a célula escolhida estava ocupada. Encerrar o jogo imediatamente é cruel. Isso pode impedir que modelos menores obtenham um sinal de aprendizado útil. Em vez disso, deixamos o jogo continuar e aplicamos uma penalidade fixa de -0,1, limitando as jogadas a oito.
+
+Vamos discutir como reduzir o ruído no aprendizado por reforço baseado em grupos. Na aprendizagem GRPO, comparamos várias implementações a partir do mesmo ponto inicial para determinar quais devem ser reforçadas com base nas recompensas. Para que isso funcione, as diferenças nas recompensas devem advir da forma como o modelo interage, e não da aleatoriedade do ambiente. E como podemos reduzir o ruído nessa configuração? Primeiro, definimos uma semente de exemplo para cada exemplo no conjunto de dados para selecionar o jogador inicial. Em seguida, para cada turno,
+
+derivamos uma semente de turno específica com base na semente de exemplo e no estado do tabuleiro. Isso garante que, se duas jogadas chegarem à mesma posição no tabuleiro, o oponente sempre responderá da mesma maneira. Por último, reduzir o ruído entre lotes. Para o nosso treinamento, o tamanho do lote é o número de jogos levados em consideração antes que os pesos do modelo sejam atualizados. Em nossa configuração, a habilidade do oponente varia ao longo do conjunto de dados de acordo com a probabilidade média de movimento aleatório e a probabilidade máxima de movimento aleatório [limpa a garganta].
+
+Se treinarmos com um tamanho de lote pequeno e a probabilidade de movimento aleatório não for fixa, podemos obter uma amostra em que muitos oponentes sejam difíceis ou muitos sejam fáceis. Isso faz com que a recompensa média flutue bastante, tornando o treinamento instável. Para combater isso, adicionei a amostragem estratificada. Isso faz com que cada lote contenha uma mistura perfeitamente equilibrada de dificuldade dos oponentes, abrangendo a faixa escolhida. Sei que este slide é denso, mas você pode encontrar todo o código e mais detalhes no repositório do GitHub. Chegou a
+
+hora de avaliar os modelos existentes. Optamos pelo GPT-5 mini e pelo LFM-2 da Liquid AI, um modelo pequeno, rápido e de código aberto. Usando verificadores, avaliar modelos requer apenas alguns comandos. Considerando alguma variabilidade estatística, o GPT-5 mini é excelente em seguir formatos e é um bom jogador de Jogo da Velha, mas não é perfeito. O pequeno modelo aberto da Liquid AI tem dificuldades em seguir o formato e em fazer movimentos válidos.
+
+É um jogador fraco de Jogo da Velha, às vezes ganhando de um oponente aleatório, mas raramente sobrevivendo contra um oponente ideal. Existe uma lacuna significativa.
+
+Decidimos treinar o LFM-2 por alguns motivos. É um bom modelo para o seu tamanho e um modelo instrutivo ideal para ser transformado em um modelo de raciocínio. Como podemos melhorar isso? Constatamos que esse modelo tem dificuldades em seguir o formato e frequentemente apresenta jogadas inválidas. Podemos usar o ajuste fino supervisionado para uma fase de aquecimento, onde ensinamos ao modelo o formato e a sintaxe dos movimentos válidos.
+
+Podemos então usar o aprendizado por reforço para desenvolver capacidades mais profundas. O primeiro passo é gerar dados sintéticos para o ajuste fino supervisionado. Uma vez que você tenha um ambiente adequado, gerar dados requer apenas um comando. Aqui, utilizamos o GPT-5 mini, pois ele seguiu o formato perfeitamente. E não precisamos de muitos exemplos. Geramos 200 simulações e
+
+filtramos as partidas perdedoras para evitar a incorporação de estratégias subótimas.
+
+Com esses dados sintéticos em mãos, podemos facilmente iniciar uma simulação de ajuste fino supervisionado usando o Prime RL. Neste exemplo, estou usando uma GPU de 96 [limpa a garganta] GB , mas você pode usar uma menor. O treinamento requer apenas alguns minutos. Chegou a
+
+hora de avaliar nosso modelo otimizado. Em comparação com o modelo original, ele aprendeu o formato quase perfeitamente e reduziu o número de movimentos inválidos. Isso também melhorou o desempenho do jogo, mas ainda há muito trabalho a ser feito. Antes de mergulharmos no treinamento de RL, vamos recapitular rapidamente a otimização de política relativa em grupo aplicada ao Jogo da Velha. Partindo do mesmo tabuleiro inicial, o modelo executa vários jogos através da amostragem LLM.
+
+Cada lançamento de teste é avaliado usando uma função de recompensa determinística; em nosso caso, recompensas por vitória, formatação e movimentos inválidos . É calculada uma pontuação média para o conjunto de implementações, e cada implementação é então comparada com essa média. Cálculo de vantagem. O modelo foi atualizado para priorizar trajetórias que apresentaram melhor desempenho do que a linha de base do grupo. Usaremos o CISPO, que é uma melhoria em relação ao GRPO.
+
+Para o treinamento de aprendizado por reforço, utilizei o Verifiers RL, um treinador simples. Aqui, usamos uma GPU para inferência e uma GPU para treinamento. Vamos comentar alguns parâmetros na configuração de treinamento. Nesta simulação de treinamento, a probabilidade de movimento aleatório varia de 20 [limpa a garganta] a 70%. Não há jogadores puramente aleatórios nem jogadores com desempenho ideal. É um
+
+bom campo de testes para receber sinais e aprender tanto o ataque quanto a defesa. O parâmetro num_groups é usado para configurar a amostragem estratificada. No que diz respeito aos argumentos do treinador, queremos que o nosso modelo aprenda [limpa a garganta] de forma estável, utilizando totalmente as nossas GPUs sem falhar. Para dicas sobre como usar a GPU sem ficar sem memória, recomendo consultar o repositório do GitHub. Aqui, quero enfatizar que o treinamento por reforço é sensível a ambos os parâmetros e pode ser instável.
+
+Aprendi da maneira mais difícil que o tamanho do lote é um parâmetro fundamental. Nesse ambiente, observei treinamento instável e colapso do modelo, e experimentei com valores inferiores a 256. A explicação é intuitiva. O tamanho do lote é o número de jogos usados ​​para atualizar os pesos do modelo. Se esse número for baixo, significa que você está aprendendo a jogar com um número muito pequeno de partidas e tipos de oponentes de cada vez. E isso provavelmente
+
+leva a estratégias subótimas.
+
+Vamos dar uma olhada nos gráficos de treinamento. A função de recompensa por vitória e a recompensa total foram constantemente aprimoradas. A função de recompensa do formato já era quase perfeita e não sofreu alterações significativas. A função de penalização por movimentos inválidos teve um bom início e convergiu para zero no final do treinamento. Isso sugere um bom treino, mas vamos fazer uma avaliação adequada.
+
+Impressionante. Graças ao aprendizado por reforço, nosso modelo se tornou um jogador de jogo da velha muito competente . Domina jogadores aleatórios e empata em 85% das vezes contra um oponente ideal. Os movimentos inválidos caíram para perto de zero. Esses resultados já são satisfatórios, e pode-se dizer que não há muito mais que possamos aprender com esse exemplo.
+
+Sou perfeccionista e gostaria [limpa a garganta] de um jogador de IA perfeito . Ao inspecionar as implementações, encontrei alguns modos de falha recorrentes. Em particular, nosso modelo às vezes cai em quatro armadilhas. Este exemplo mostra o final do jogo. Nosso modelo não está jogando de forma ideal, mas já havíamos perdido a partida ao permitir que o adversário fizesse dois passes vencedores.
+
+É possível usar nosso ambiente de aprendizado por reforço para aprimorar ainda mais nosso modelo rumo à perfeição? Vamos tentar. Precisamos fazer algumas mudanças. Neste teste, usei as GPUs mais potentes apenas para experimentar rapidamente. Provavelmente não é necessário.
+
+Primeiro, vamos discutir a habilidade do oponente. Aumentamos a habilidade do oponente definindo a probabilidade de um movimento aleatório para variar de 0% a 25%. Eu também tentei fazer o modelo jogar novamente apenas contra oponentes perfeitos, mas não funcionou. O modelo tornou-se excessivamente defensivo e não conseguiu explorar erros quando testado novamente com jogadores aleatórios. Mas como fazer com que nosso modelo explore além das estratégias aprendidas? Realizei diversas
+
+experiências em que este modelo não conseguiu melhorar e descartei as estratégias subótimas. Queremos que o modelo experimente novas abordagens. E a temperatura é o parâmetro certo para ajustar. Mas isso é um pouco arriscado. Se a temperatura estiver muito alta, o modelo pode começar a gerar dados sem sentido.
+
+Vamos treinar. As coisas ficam realmente interessantes. Houve uma queda inicial significativa na função de recompensa por vitória e na recompensa total. Interpreto isso como uma fase exploratória em que o modelo tentou estratégias novas e aleatórias , que inicialmente tiveram um desempenho inferior , mas com o tempo se recuperaram e melhoraram, atingindo novos patamares. Além disso, a função de recompensa de formato e a função de penalidade de movimento inválido tiveram uma queda inicial, mas, no geral, sempre se mantiveram próximas de seus valores máximos. Vamos passar à
+
+avaliação propriamente dita. Ah, finalmente encontramos o mestre do jogo da velha. Mas por que não jogar uma partida contra ele? Ok, vamos tentar uma jogada não tão perfeita. Hum, agora precisamos bloquear o modelo.
+
+Vamos bloquear novamente. Ah, não, nós perdemos. Agora seria interessante comparar o desempenho do nosso modelo com o GPT-5 Mini, o modelo que usamos como modelo de treinamento para gerar nossos dados sintéticos. Sim, contra um adversário aleatório, o desempenho é muito semelhante. Vamos ver contra um adversário ideal.
+
+Ah, neste caso, o nosso modelo é superior. Isso é uma conquista muito bonita.
+
+Para chegar a esses resultados, realizei diversos experimentos sem sucesso e gostaria de compartilhar as descobertas com vocês. Em primeiro lugar, o tamanho do lote. Se esse valor for grande, sim, seu modelo aparentemente aprende lentamente, mas em troca, você obtém um treinamento estável. Se o tamanho do lote for pequeno e seu ambiente produzir partidas diversas e oponentes de diferentes níveis de habilidade, o modelo aprenderá com um pequeno número de jogos por vez. Isso pode reforçar estratégias subótimas, e você pode observar treinamento instável ou colapso do modelo.
+
+Segunda lição. Fique atento a preconceitos ocultos nos ambientes. Deixe-me explicar. Em um experimento anterior, utilizei um algoritmo minimax diferente para o oponente ideal. Achei que fosse um detalhe de implementação e deixei o código cuidar disso.
+
+Obtive ótimos resultados nos testes de referência, mas ao jogar contra o modelo, percebi que ele não tinha a menor ideia do que estava fazendo. Analisando melhor o minimax, percebe-se que havia um viés. Se várias jogadas tivessem a mesma pontuação ótima, a primeira posição livre era sempre selecionada. Basicamente, eu estava treinando meu modelo contra um tipo específico de jogador otimizado. Ao longo de muitos jogos, o modelo simplesmente memorizou isso. E
+
+quanto à escolha do modelo? Você pode começar com um modelo que já esteja treinado para raciocínio, mas eles tendem a gerar longos registros de pensamento. Se você tiver recursos de GPU e tempo limitados, poderá acabar truncando a maior parte da execução mais longa no início para se adequar aos limites de tempo. Isso significa desperdício de orçamento e também o risco de prejudicar a inteligência do modelo. Talvez faça mais sentido partir de um modelo inicial e transformá-lo em um modelo de raciocínio para sua tarefa.
+
+Outro ponto sobre os modelos: pode ser difícil levar modelos muito pequenos à competência. Isso, obviamente, depende da tarefa. O que eu recomendo é que você avalie o modelo base no seu ambiente, observe algumas simulações, escolha um modelo que mostre comportamentos promissores, mesmo que os números ainda não sejam satisfatórios.
+
+Em geral, é sempre uma boa ideia inspecionar algumas implementações para ver a evolução do modelo. Além disso, após o treinamento, não pare na avaliação programática. Teste o modelo em uma tarefa real. A recomendação final, e natural, é monitorar seus registros e gráficos ao iniciar o treinamento para identificar precocemente erros de falta de memória ou instabilidade. É difícil para mim também, mas assim que o treinamento começar a dar certo, sugiro que você pare de ficar olhando para os gráficos por um tempo. O aprendizado por reforço
+
+é lento e leva tempo para que se observem progressos. Se você monitorar continuamente, corre o risco de ser tentado a interromper o processo e ajustar algo prematuramente. Embora uma corrida que progride lentamente possa ser surpreendentemente boa, dado tempo suficiente. Então, comece a treinar e vá dar uma caminhada.
+
+Durante esta apresentação, mapeamos o conceito de aprendizado por reforço para o domínio dos modelos de linguagem. Em seguida, apresentei vários arquivos e uma biblioteca de código aberto para construir ambientes a partir da base ativa do Flo R. Por fim, apresentei a vocês meus experimentos, nos quais peguei um modelo pequeno e o transformei em um mestre do jogo da velha usando ajuste fino supervisionado e aprendizado por reforço com recompensas verificáveis. Não nos limitamos a mostrar à modelo como jogar. Nós lhe demos um espaço para brincar e o guiamos através de recompensas.
+
+Atualmente, o aprendizado por reforço complementa o ajuste fino supervisionado em modelos de linguagem após o treinamento. Você também pode fazer isso em casa. Se você conseguir definir um sinal de recompensa claro, poderá construir um ambiente e treinar um modelo pequeno e especializado para superar um modelo fechado grande em uma tarefa específica a um custo muito menor. Gostaria de deixar aqui algumas ideias e recursos sobre este tema. Tudo o que compartilhei hoje pode ser encontrado no meu curso gratuito sobre o ambiente de aprendizagem colaborativa (LLM RL Environment Link), onde explico tudo em detalhes.
+
+Dê uma olhada e avalie com uma estrela. Para descobrir o que outros estão construindo, explore a central de ambientes. E o que construir a seguir? Algo que me deixa muito animado é isto. Treine um modelo de linguagem pequeno em duas ou três ferramentas que você usa com frequência e tente superar um modelo grande nessa tarefa específica.
+
+Recomendo o exemplo de busca na Wiki, presente no repositório Prime RL, como ponto de partida. Obrigado.

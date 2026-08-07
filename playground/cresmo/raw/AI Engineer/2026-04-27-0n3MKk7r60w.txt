@@ -1,0 +1,121 @@
+---
+video_title: "Scaling GitHub for your Agents — Sam Morrow, GitHub"
+video_id: 0n3MKk7r60w
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0n3MKk7r60w
+video_date: 2026-04-27T22:00:06+00:00
+video_description: |
+  GitHub operates one of the most heavily-utilised MCP servers in the ecosystem, with over 4 million downloads of the stdio server alone. Discover the architectural decisions, technical challenges and lessons learned while building and scaling a remote MCP server on production infrastructure. The session walks through the journey from initial implementation to horizontal scaling, covering the specific challenges of condensing a platform as expansive as GitHub into a coherent MCP interface. Attendees will learn practical strategies for managing tool overload, optimizing context usage, implementing distributed session storage, and maintaining observability without compromising user privacy. Whether building a first remote server or optimizing an existing implementation, attendees will gain concrete patterns, anti-patterns, and architectural guidance from real production experience.
+  
+  Key Takeaways:
+  • Architecture patterns for stateless, horizontally scalable remote MCP servers
+  • Practical approaches to tool proliferation and context window constraints
+  • Why a focus on auth, security and privacy is essential to success
+  
+  Speaker info:
+  https://www.linkedin.com/in/sammorrow
+  https://github.com/SamMorrowDrums
+  
+  Timestamps:
+  0:00:29 - Overview of GitHub's MCP public launch and community growth.
+  0:02:06 - Challenges of tool proliferation and impact on agent context.
+  0:03:21 - Mitigation via "tool sets" and dynamic discovery.
+  0:05:54 - Optimizing API output tokens to improve efficiency.
+  0:06:44 - Improving reliability through intent-based tool design.
+  0:08:14 - Security strategy: OAuth 2.1 and PKCE implementation.
+  0:10:40 - Managing prompt injection and security vulnerabilities.
+  0:12:35 - Using OAuth scopes for granular tool filtering.
+  0:13:47 - Stateless server architecture and Redis session management.
+  0:15:18 - Experimental features and human-in-the-loop UX.
+  0:16:30 - Future outlook: Compositional tools and automation.
+  0:18:04 - Final project metrics: Downloads, forks, and volume.
+---
+[música] Muito bem
+
+. Olá, Londres. [aplausos] E espero que todos estejam gostando da AI Engineer Europe até agora. Porque existem muitos alto-falantes incríveis. Tenho passado dias assistindo a palestras e conversando com pessoas, e tem sido uma experiência incrível.
+
+Eu sou Sam. Eu lidero o desenvolvimento do servidor MCP do GitHub e, sim, estou aqui para falar principalmente sobre os desafios que enfrentamos ao construir e escalar nosso servidor remoto, como os superamos e, antes de começar, eu gosto de provocar as pessoas. Então, sabe, quem aí já usou um servidor MCP? Bom. Bom.
+
+Quem já usou o GitHub? Quem tem uma opinião polêmica sobre o GitHub? [risos] E, bem, alguém constrói um servidor ou cliente? Oh legal. Bastante. E sim,
+
+alguém já contribuiu para a especificação? Oh. Oh sim. Eu tenho, eu tenho um. Na verdade, acho que essa é a primeira, além da conferência de desenvolvedores do MCP. Eram
+
+muitos. Ah, mas... [bufa] é, enfim, é muito legal ver tantas mãos. Então, fico feliz por ter
+
+vindo ao lugar certo. Mas sim, para o GitHub, sabe, nossa jornada com o MCP começou bem, pelo menos publicamente, em abril do ano passado. E, na verdade, disponibilizamos o código aberto do nosso MCP local em abril do ano passado. E acabamos de completar 1 ano de idade. Então, estou super empolgado com isso. Mas, sim, naquela época,
+
+havia um burburinho enorme. Éramos o repositório com mais estrelas no GitHub naquela semana específica. E, tipo, a exposição significou que recebemos um grande volume de contribuições públicas, preenchendo rapidamente as lacunas na cobertura da plataforma, já que as pessoas queriam adicionar ferramentas e outras coisas. E você sabe, nem tudo era perfeito, né? Após cerca de um mês de novos recursos, os agentes, de certa forma, estavam ficando piores no uso do GitHub e as janelas de contexto estavam sendo preenchidas mais rapidamente.
+
+E, sabe, nós selecionamos, eu acho, mais de 100 ferramentas. E, certamente, naquela época, isso era demais. A LangChain já havia produzido uma pesquisa, publicada em fevereiro daquele ano, exatamente sobre o tipo de problemas que estávamos enfrentando. Mais ferramentas não fazem agentes melhores, sabe? Eles ficam confusos e esquecidos.
+
+Bem, eu diria que mais ferramentas significam mais contexto e, para ser mais preciso, mais ferramentas inseridas diretamente no contexto. Mas sim , o GitHub é uma plataforma realmente abrangente . E nós fornecemos ferramentas, sabe, para repositórios, problemas, PRs, ações, projetos e muito mais. Mas a parte difícil de resolver isso foi que não queríamos impedir que os usuários tivessem individualmente as ferramentas de que precisavam e que utilizavam. Bem, basta dizer que nossa base de usuários é bastante diversificada.
+
+E provavelmente, assim como na plataforma GitHub atualmente, também pode haver uma ou duas cláusulas. Uh [bufa] e só para constar, uh, há uma equipe de nós que trabalha nisso. Não sou só eu. [bufa] E minha equipe é incrível. Mas, é, então, para tentar resolver alguns desses problemas, eu rapidamente adicionei esses conjuntos de ferramentas, que eram, sabe, uma espécie de conceito de agrupamento de ferramentas de produtos relacionados . E os usuários podiam simplesmente escolher quais
+
+queriam e configurá-los. Ah, eu também adicionei um recurso de seleção dinâmica de ferramentas, onde os agentes podem descobrir conjuntos de ferramentas e ativá-las em partes. E nós nunca a lançamos, mas eu fiz uma espécie de versão "rag" da mesma música. Sabe, para busca e descoberta de ferramentas semânticas. Mas, tipo, o que você acha que aconteceu mesmo apesar de tudo isso?
+
+[bufa] [risos] Todo mundo usou as configurações padrão. Foi realmente irritante porque, de certa forma, tínhamos todas essas soluções elegantes. Bem, tudo o que eles fizeram foi exigir que os usuários, na verdade, configurassem um pouco o JSON . E a maioria dos usuários simplesmente não faz isso. Talvez seja até parcialmente um problema de especificação, porque, você sabe, todas as propostas de agrupamento para a especificação MCP foram rejeitadas até agora por vários motivos . E já houve
+
+várias tentativas. E, de certa forma, cada modo ou configuração que adicionamos, sabe, pode-se argumentar que estamos apenas mascarando possíveis lacunas. Tipo, lacunas nas implementações do cliente. Então, por exemplo, temos um modo somente leitura e aproximadamente 17% dos nossos usuários o utilizam, mas ele corresponde exatamente à anotação de dica de somente leitura. Mas nenhum cliente expõe isso como um método de filtragem de servidores. Acho que
+
+alguns gateways já fazem isso, mas de qualquer forma, é uma solução interessante e fácil para casos de uso corporativos, onde as pessoas geralmente só querem isso. [bufa] Mas, é, precisávamos encontrar soluções melhores para a redução de contexto. E você não precisa se preocupar muito com os detalhes. Isso já está desatualizado. Mas, tipo, começamos a tentar otimizar e analisamos os padrões de uso em nosso servidor remoto. Inicialmente,
+
+reduzimos a quantidade de contexto utilizado, direcionando as ferramentas mais especificamente para o caso geral. E, com base no uso, estima-se uma redução de cerca de 49% na carga inicial. E, posteriormente, também agrupamos as ferramentas CRUD e reduzimos ainda mais esse número. E eu acho que você consegue cerca de 40 ferramentas se usar a configuração padrão. E então você pode expandir ou contrair isso de acordo com sua própria preferência. Mas, sim,
+
+é fácil de personalizar. E, recentemente, também fizemos um grande esforço para reduzir os tokens de saída de muitas ferramentas. E, neste exemplo, sabe, apenas ajustando exatamente o que vem com a lista de solicitações de pull, perdemos mais de 75% dos tokens usados ​​na saída. Então, sabe, em termos de quão exigente em termos de tokens o servidor GitHub é, é um alvo em constante movimento. Estamos constantemente a fazer alterações que o melhoram. E, se você
+
+não o usa há algum tempo, provavelmente está muito diferente de como era há alguns meses . E , bem, enfim, não descartamos abordagens mais avançadas, como o modo de código. E estamos sempre fazendo experiências internamente. Mas, logo em seguida, analisamos nossos dados e encontramos mais algumas oportunidades. [bufa] Então, é, tipo, nós fizemos um grande esforço para reduzir as falhas das ferramentas também. E a
+
+taxa de sucesso é, creio eu, de aproximadamente 95% neste momento. Mas, tipo, nem todas as falhas são evitáveis, porque os agentes nem sempre sabem em quais repositórios eles têm permissão de escrita. Eles ainda têm alucinações. Mas, bem, conseguimos identificar um número significativo de áreas que poderiam ser superadas, principalmente codificando uma espécie de intenção do agente na superfície da nossa ferramenta. E sabe, talvez você precise fazer cinco chamadas à API para torná-la mais robusta.
+
+Mas sabe, nesse caso, fazemos isso no lado do servidor para reduzir as viagens de ida e volta, porque isso, sabe, economiza contexto, economiza tempo e geralmente [bufa] proporciona uma experiência muito melhor, sabe, torna os agentes mais bem-sucedidos. Sim, também começamos a realizar avaliações no ano passado. Não vou entrar em detalhes. Esse link leva você a um artigo de blog que um colega meu mais experiente escreveu sobre como fazer isso. Mas, bem, uma das ideias principais é que, em vez de micro-otimizar as descrições de ferramentas individuais, você tenta testá-las umas contra as outras para garantir que sejam chamadas nos momentos certos e não nos momentos errados. Para que, no contexto geral,
+
+eles não lutem entre si, sabe, a descrição da ferramenta perfeita que faz o agente chamá-la o tempo todo é terrível, assim como o contrário disso. Então você precisa tentar apertar isso o máximo possível. Mas sim, isso daria uma conversa completamente diferente . A segurança, por outro lado, é como uma ameaça constante em tudo isso. Tenho visto muita gente falando sobre isso.
+
+E isso é um problema real para nós em alguns aspectos, porque, sabe, temos muita gente usando tokens de acesso em texto simples para MCP por aí. E geralmente eles são armazenados em algum lugar ao qual o agente possa ter acesso. Eles costumam ter uma vida longa. Eles costumam ser privilegiados em excesso. E eles ficam ali, meio que sentados, só esperando para serem abusados. Os
+
+usuários finais, tipo, eu não acho que eles estejam escolhendo isso, sabe, é realmente difícil tornar a configuração fácil e segura ao mesmo tempo. E os clientes precisam usar chaveiros de sistema ou armazenamento criptografado. E tal como o VS Code faz. Bem, você sabe, a especificação MCP também forneceu uma maneira melhor de lidar com HTTP remoto, o que, aliás, já existia desde abril do ano passado. Hum [bufa] e nós aceitamos isso, é claro.
+
+E queríamos criar um caminho de conexão seguro com a menor resistência possível. Não queríamos que os usuários tivessem que baixar um ambiente de execução local. E você sabe, nosso servidor remoto suporta OAuth 2.1. E minha equipe até ajudou a adicionar a chave de prova para suporte à troca de código, comumente conhecida como PKCE, ao servidor de autorização do GitHub para melhorar a segurança dos aplicativos cliente. Mas,
+
+como eu disse, esperávamos que o OAuth fosse o caminho de menor resistência. E, novamente, talvez alguns de vocês saibam o que aconteceu.
+
+Todos esperavam que oferecêssemos suporte ao cadastro dinâmico de clientes. E para nós, isso criou mais problemas do que soluções, porque, se você implementar corretamente, é difícil não ter um crescimento ilimitado dos bancos de dados de aplicativos e desafios sobre como agrupá-los para limites de taxa, e não há uma identidade de aplicativo confiável. Então, nós analisamos a proposta e a rejeitamos, pois acreditamos que foi um erro bem-intencionado e que não somos o único servidor de autorização a não oferecer suporte a isso. E até mesmo o
+
+próprio MCP, certo? A decisão foi de que os metadados de ID do cliente provavelmente são o caminho a seguir e não posso prometer que daremos suporte a eles, mas prometo que estou tentando fazer com que isso aconteça e que isso tornará o login muito mais fácil. Mas, sim, falaremos mais sobre isso no futuro. E, falando em segurança, alguns de vocês talvez já tenham visto isto. Hum, foi um dia divertido.
+
+[risos] Mas, como vocês sabem, a Invariant Labs publicou isso e, sabe, é um ataque de exfiltração por injeção de prompts bem executado para obter dados privados do GitHub e, bem , eles chamam isso especificamente de ataque ao servidor MCP do GitHub e eu acho que nós fornecemos as ferramentas que podem habilitar isso se você simplesmente habilitar todas elas, mas isso se aplica a quase todas as configurações de agentes, independentemente de usarem MCP ou não, ou mesmo o MCP do GitHub, sabe, aquela coisa do "trifecta letal", que eu não vou repetir agora porque acho que muitos de vocês provavelmente já viram ou podem procurar, como o post do Simon Wilson no blog, que é excelente, mas, sabe, a utilidade dos agentes está em conflito direto com a proteção dessas informações e é um campo ativo tentando descobrir como prevenir esses problemas, mas ainda não está resolvido e não é exclusivo do GitHub, temos usuários com perfis de risco muito diferentes, sabe, tipo, nós Sabe, temos até pessoas que têm instâncias do servidor GitHub Enterprise isoladas da internet, em um ambiente muito mais seguro, e aí, obviamente, os colaboradores etc. também acessam o GitHub diretamente, provavelmente com acesso total por token ao agente e tudo mais, e isso também é interessante, não é? E eu não estou negando nada disso. É interessante observar o que as pessoas fazem e verificar se conseguimos dar suporte aos diferentes casos de uso e níveis de segurança enquanto todos experimentam essas funcionalidades. E nós também usamos algo como "ligar e desligar" para gerenciar ferramentas. E isso é
+
+algo que me deixa bastante feliz. Se você fizer login no GitHub MCP com um token PAT, nós filtramos imediatamente as ferramentas de acordo com os escopos que o token possui. Você não precisa fazer nada além de entregar a ficha. Em relação ao OAuth, oferecemos suporte ao OAuth de autenticação em etapas. Então, sabe, você pode obter um desafio de escopo e, em seguida, o sistema perguntará interativamente ao usuário se ele deseja permitir o escopo.
+
+E se você fizer isso, então você pode continuar a chamada da ferramenta. Não falha, o que eu acho ótimo também. E o VS Code, por exemplo, oferece suporte a isso, e inicialmente trabalhei nisso com eles porque eles já têm um token para usar o GitHub e o que eles queriam era que, se o token integrado não tivesse permissões para usar tudo, em vez de simplesmente falhar, houvesse um mecanismo para que os usuários pudessem fazer uma instalação limpa e, posteriormente, ampliar o escopo, se necessário. E sim, por último, também os tokens do servidor. É como se eles não tivessem um "curtir" em ações e outras coisas, eles não tivessem um usuário.
+
+Então, ferramentas específicas para cada usuário já existem, e ao removê-las, estamos eliminando fontes constantes de falhas e contexto desperdiçado . Bem, nós executamos uma configuração de servidor completamente sem estado e temos usado o Redis para armazenamento de sessão, sabe, é uma pilha de observabilidade e complexidade padrão. Essa não é uma imagem estranha, mas acho que uma das coisas estranhas para algumas pessoas é que muita gente está executando um processo de servidor MCP com estado no singular e tem tido dificuldades para chegar a esse formato. Mas, para nós, fizemos algumas coisas porque é muito dinâmico, mas uma das coisas divertidas que fizemos foi criar uma nova instância de servidor no SDK para cada solicitação e adicionar as ferramentas a ela no início. Então, seja qual for a sua configuração, ele simplesmente constrói isso e você obtém o que solicitou ou o que tem permissão para usar, porque algumas coisas têm políticas que afetam se você tem acesso a ferramentas ou não. Sim
+
+, conseguimos escalar até este ponto e atendemos cerca de 7 milhões de chamadas de ferramentas por semana. E nós, como você sabe, não temos afinidade de sessão. Bem, mesmo as sessões que geralmente usamos são apenas para identificar a identidade do cliente, que é a única maneira de identificá-lo conforme relatado pelo próprio usuário no MCP. Portanto, é útil para nós entendermos quais clientes as pessoas estão usando com o servidor. Então, sim, usamos sessões para isso, mas também queríamos trazer experimentos para todos vocês . E, hum [bufa],
+
+temos uma coisa chamada Modo Insider, e tudo o que ela faz é ativar certos recursos e coisas para experimentos que ficaremos felizes em disponibilizar para qualquer pessoa que queira usá-los. E isso te leva à documentação, mas, por exemplo, algo que ainda não lançamos para o público geral, mas que está disponível para Insiders, são nossos aplicativos MCP. Eu configurei o exemplo antes de entrar, mas é muito útil ter a oportunidade de editar a solicitação gerada por IA durante a conversa com o agente, especialmente se você trabalha com projetos profissionais de código aberto e quer ter certeza de que foi você quem postou e que a solicitação não será fechada como algo gerado por um bot. É uma funcionalidade interessante de interação humana que o MCP possibilita e, sabe, eu não tinha certeza se gostaria muito dela no início, mas acabei adorando porque me importo com a forma como meus problemas e coisas são recebidos pelas pessoas e esta é uma ótima maneira de garantir que eu possa verificar isso. Então, sim, em termos de para onde eu acho que está indo, tipo, se for algo nessa linha, eu acho [bufa] que num futuro próximo, sabe, a descoberta de servidores será, com sorte, automática e o uso de ferramentas provavelmente se tornará mais composicional, como o bash ou o encadeamento de ferramentas em outras ferramentas, transmitindo dados através delas ou como, sabe, a abordagem de modo de código da Cloudflare ou a API de busca de ferramentas da Anthropic, que foi lançada no Claude Code há algumas semanas.
+
+E a OpenAI também adicionou recentemente uma API semelhante . Desculpe, a OpenAI também adicionou uma API semelhante. E, sabe, eu espero que milhares de ferramentas se tornem comuns muito em breve. Estamos tentando resolver todos os problemas que impediram isso em primeiro lugar e provavelmente vou reverter muitas das decisões sobre a redução do número de ferramentas. E, com sorte, os usuários nem precisarão saber o que é MCP. Eles simplesmente comunicarão o que
+
+desejam fazer, e a configuração do OAuth e a seleção de ferramentas se tornarão verdadeiramente autônomas. Não acho que estejamos tão longe disso, mas estamos nessa fase experimental, ainda não chegamos lá. Mas, bem, acho que ferramentas como o Raspberry Pi também são interessantes porque você pode construir um cliente peculiar que talvez otimize isso de uma maneira muito boa por conta própria. Portanto, eu encorajaria as pessoas a experimentarem com clientes excêntricos. Eu acho que você nunca sabe, você pode ser o próximo...
+
+[bufa] uh, tipo, se você tiver muita sorte, você pode ser o próximo Claude, né? Você poderia publicar algo que se tornasse tão viral que mudasse completamente o jogo do agenciamento. Queria terminar em alta e analisar alguns números. Assim como o próprio GitHub, ele possui mais de 11 milhões de downloads do Docker do nosso servidor IO padrão, que nem de longe é a versão mais usada . Bem, atualmente temos 126 colaboradores e mais de 2.300 problemas e solicitações de pull request, o que significa
+
+mais de sete por dia, praticamente todos os dias, há mais de um ano. Eu acabo analisando quase tudo. Então, foi um ano e tanto [risos]. Bem, quero dizer, alguns outros repositórios têm problemas ainda piores, mas eu também adoro este. Então, por favor, continue fazendo isso. E
+
+sim, temos quase 4.000 garfos, o que me deixa impressionado. Eu meio que quero saber, tipo, as coisas mais estranhas que as pessoas fizeram e que não trouxeram nenhuma contribuição em troca . Uh [bufa] sim, quase 30.000 estrelas e estamos nos aproximando rapidamente de 8 milhões de chamadas de ferramentas por semana. E o próprio GitHub também está enfrentando um
+
+novo desafio. [bufa]
+
+Isso é realmente intenso, né? E não dá sinais de que vai parar. Ah, eu ainda queria que você continuasse abrindo issues e PRs para nós. Tipo, a gente vai dar um jeito , mas sabe, isso é território desconhecido e, hum, sabe, tudo está pegando fogo para todo mundo ultimamente, e é simplesmente emocionante e divertido. Mas, sim, muito obrigada por me receberem.
+
+[aplausos]
+
+[aplausos] Acho que tenho uns 30 segundos. Não sei se alguém tem alguma pergunta, mas qual a sua opinião sobre chamadas de ferramentas de tubulação? Sabe de uma coisa? Acho que experimentar coisas como CLIs do MCP e outras do gênero é uma forma divertida de se explorar. Acho que ainda não está totalmente resolvido, mas uma coisa que você pode fazer é pegar as ferramentas somente leitura de algum MCP encapsuladas em uma CLI, fornecer a ajuda adequada e ver como o agente se comporta. Coisas assim
+
+são surpreendentemente eficazes. E sabe, como eu disse, quero que as pessoas mexam com essas coisas. Então, eu recomendo que você experimente se tiver interesse. Muito bem, estou com 0 segundos. Responderei pessoalmente, se não se importar.
+
+[música]

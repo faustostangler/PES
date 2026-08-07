@@ -1,0 +1,120 @@
+---
+video_title: "Platforms for Humans and Machines: Engineering for the Age of Agents — Juan Herreros Elorza"
+video_id: cCRO3ChaYhM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=cCRO3ChaYhM
+video_date: 2026-04-08T09:30:06+00:00
+video_description: |
+  As AI coding agents become first-class users of internal developer platforms, the practices that make platforms accessible to humans turn out to be the same ones that enable AI to thrive.
+  
+  Self-service interfaces, well-defined APIs with schemas and documentation, local-first workflows, and rich observability have always been important elements of a good platform. Now they are prerequisites for agents that can autonomously build, debug, and ship software.
+  
+  This talk explores what it means to design platforms where both humans and AI can collaborate effectively. We'll cover:
+  
+  - How to expose your platform as a product with structured APIs (and perhaps MCPs)
+  - Why prioritizing local tooling pays dividends when agents need to iterate on errors
+  - How observability becomes the bridge between runtime behavior and AI understanding
+  
+  We'll also discuss the flip side: AI is making it easier than ever to *contribute* to platform code, but that comes with new responsibilities around quality gates, context files like CLAUDE.md, and maintainability.
+  
+  Walk away with concrete practices to ensure your platform is ready for a future where agents are not just tools, but users of it.
+  
+  Juan Herreros Elorza - Team Lead, Banking Circle
+  
+  I'm Juan, a Platform Engineering enthusiast.
+  
+  I am working for Banking Circle, as the Team Lead in our Cloud Native Technology team.
+  
+  When I'm not working, I'm most likely rehearsing or performing improv comedy.
+  
+  Socials:
+  https://juanherreros.com/
+  https://linkedin.com/in/juan-herreros-elorza
+  https://github.com/jherreros
+  
+  Slides:
+  https://speakerdeck.com/jherreros/platforms-for-humans-and-machines-engineering-for-the-age-of-agents
+---
+Olá pessoal. Muito obrigado por assistir e sejam bem-vindos à minha palestra sobre plataformas para humanos e máquinas. Meu nome é Juan e trabalho como líder da equipe de tecnologia nativa da nuvem em uma empresa chamada Banking Circle. Você provavelmente não nos conhece, então deixe- me contar um pouco sobre o que fazemos. Somos principalmente um provedor global de pagamentos internacionais, além de oferecermos serviços de
+
+gestão de contas e liquidez. Processamos mais de 1 trilhão de euros por ano e prestamos serviços bancários a mais de 700 instituições financeiras regulamentadas. Somos uma fintech, sem dúvida, e muitos de nós trabalhamos de alguma forma na área de engenharia. Por isso, há alguns anos decidimos criar uma equipe de engenharia de plataforma no Banking Circle, onde trabalho atualmente. Mais de 250 pessoas no Banking Circle estão desenvolvendo algum tipo de sistema técnico, incluindo as APIs que nossos clientes utilizam. Isso inclui os
+
+sistemas bancários principais e algumas ferramentas internas. Isso inclui ciência de dados e engenharia de dados e, claro, a integração com os sistemas de compensação onde liquidamos os pagamentos. Por isso, decidimos criar uma plataforma que todas essas equipes possam usar, de forma a abstrair a complexidade de algumas das infraestruturas subjacentes e das questões de nuvem, permitindo que essas pessoas se concentrem na construção dos sistemas que devem construir. Chamamos essa plataforma de Atlas. E a Atlas possui diversas subplataformas.
+
+Temos uma plataforma de computação onde as pessoas executam seus aplicativos com base no Kubernetes. Temos uma plataforma de infraestrutura que as pessoas podem usar para provisionar serviços de armazenamento de blobs. Eles também podem usá-lo para provisionar bancos de dados. Eles podem usá-lo para fornecer sistemas de gerenciamento de segredos. Temos plataformas de mensagens para que os diferentes aplicativos e sistemas se comuniquem entre si, e também plataformas de observabilidade para que possamos saber o que está acontecendo com todos os nossos aplicativos e todos os pagamentos que processamos.
+
+Já percorremos um longo caminho nessa jornada de engenharia de plataforma. Mas nem sempre foi fácil. E eu gostaria de começar minha apresentação com uma pequena história, usando nomes e personagens fictícios, mas baseada em minhas experiências enquanto trabalhava aqui no Banking Circle. Tenho certeza de que muitos de vocês também se identificarão com essa história. Digamos que temos um novo desenvolvedor, certo? E eles se juntaram à empresa, se
+
+juntaram à equipe. Eles simplesmente começam a trabalhar e criam seu primeiro aplicativo. Esse desenvolvedor é ótimo. Eles são muito bons em programar aplicativos, talvez para algum sistema de pagamento. Mas eventualmente eles se depararam com um obstáculo. Eles
+
+têm o código, mas precisam implantar esse aplicativo em algum lugar. Então, naturalmente, o desenvolvedor perguntará a alguém da equipe: "Ei, o que devo fazer com este aplicativo? Como faço para implantá-lo?" E então alguém da equipe pode dizer ao desenvolvedor: "Sabe de uma coisa? Na verdade, eu já fiz isso, mas já está configurado neste pipeline. Por que você não copia
+
+de lá?" O desenvolvedor pode copiar o pipeline e, em seguida, talvez precise ajustar alguma coisa. Nesse caso não foi exatamente a mesma coisa, porque a aplicação tinha alguns requisitos específicos. Então eles tentarão, sim, executar esse pipeline. Talvez o pipeline falhe e, no fim das contas, o desenvolvedor não saiba o motivo da falha, pois o erro não tem nada a ver com o aplicativo que ele programou.
+
+Talvez eles voltem para o colega de equipe e digam algo como: "Ei, o que eu posso fazer com isso?" E o colega de equipe pode dizer: "Sabe o que você deveria fazer? Você deveria falar com aquela pessoa que trabalha na equipe de infraestrutura. Ela vai te ajudar." Agora esse desenvolvedor vai embora. Talvez eles
+
+conversem com essa pessoa. Eventualmente, eles dirão: "Ah, sim, claro, esse é um erro que acontece com muita frequência. Posso resolvê-lo para você." O erro será corrigido. Então o desenvolvedor implantará o aplicativo e talvez essa implantação seja bem-sucedida, apenas para perceber no final que, na verdade, além desse aplicativo, o desenvolvedor também precisava de um banco de dados ou talvez algum armazenamento de blobs.
+
+[bufa] De volta à estaca zero, o desenvolvedor provavelmente vai até essa pessoa da equipe de infraestrutura para perguntar: "Ei, devo usar você para criar este banco de dados ou este armazenamento de blobs para mim?" E talvez a pessoa, vamos supor que tenha as melhores intenções, é claro, talvez queira ajudar, mas diga: "Sabe de uma coisa? Na verdade, tenho muitas outras coisas em que estou trabalhando. Vou te ajudar, mas isso vai ser na semana que vem." Então, obviamente, o desenvolvedor ficará frustrado porque, embora tenha feito a sua parte, teve muita dificuldade no processo de implantação do aplicativo e para fazê-lo funcionar com todas as dependências necessárias.
+
+Talvez eles estivessem seguindo alguma documentação, algo que alguém escreveu ao longo do processo, mas também estavam recorrendo a perguntas feitas a um colega de equipe e a uma pessoa da outra equipe. Essa é uma situação ruim pela qual, acredito, todos nós já passamos em algum momento. É uma situação ruim para uma pessoa. Mas hoje todos nós usamos LLMs, usamos agentes de IA para nos ajudar em nosso trabalho diário. E se essa situação já era complicada para um desenvolvedor, ela é essencialmente impossível para uma máquina. Porque a máquina não
+
+vai, sabe, ir lá e tentar o encanamento e depois subir para o segundo andar e falar com a pessoa daquela outra equipe. É claro que um agente poderia usar o Teams ou até mesmo algum modelo de voz para fazer uma chamada telefônica, mas, geralmente, um agente que programa não será capaz de fazer tudo isso . Assim, esses problemas que os desenvolvedores enfrentavam tornam-se muito mais evidentes quando um agente os enfrenta. E são um fator limitante na produtividade desse agente de codificação ou na produtividade do desenvolvedor ao usar o agente de codificação. E o que vou lhes dizer agora...
+
+vou abordar alguns pontos desta história, mas a essência é que as melhores práticas continuam sendo as melhores práticas. Já sabemos há algum tempo que algumas dessas coisas, como depender de um colega de equipe para nos dizer como implantar um aplicativo, ter que entrar em contato com alguém de outra equipe ou ter que esperar por um pipeline apenas para perceber que não era exatamente o que precisávamos, nunca foram boas. Elas são muito mais óbvias e talvez muito mais dolorosas agora que temos esses agentes de codificação trabalhando ao nosso lado. Então, o que podemos fazer a respeito? Bem, para mim, a primeira coisa que importa é o autosserviço.
+
+Se eu precisar de algum recurso desta plataforma, se eu precisar fazer alguma coisa por meio desta plataforma, eu devo ser capaz de fazê-lo por conta própria. Da mesma forma, se meu agente precisar realizar alguma ação na plataforma, ele deverá ser capaz de fazê-la por conta própria. Não deve haver nenhum processo que exija falar com uma pessoa específica ou esperar que uma pessoa específica faça algo. O agente deve ser capaz de acionar tudo o que precisa e, para isso, é claro que também é importante que esse fluxo ou processo de autoatendimento seja intuitivo. É claro que precisamos documentar como essas coisas funcionam e falarei sobre isso daqui a pouco.
+
+Mas quanto mais fácil tornarmos o processo, mais autônomo ele se tornará. Porque se tecnicamente for de autosserviço, mas exigir a busca de componentes básicos em cinco locais diferentes, a junção deles e, em seguida, o acionamento de um fluxo em outro lugar, então não é realmente de autosserviço. Então, automatize o processo, remova [bufa] pessoas do processo e torne-o o mais fácil possível. O segundo ponto que considero importante é torná-lo baseado em API. O autoatendimento pode assumir muitas formas diferentes e também pode ser algo baseado no envio de uma mensagem de texto para algum lugar. Isso pode ser feito
+
+clicando em um botão. Isso pode ser baseado em muitas coisas, mas os agentes são bons em chamar APIs bem definidas. Também poderia ser, naturalmente, uma interface de linha de comando (CLI) sobre a API. Poderia ser algo como um servidor MCP em torno da API que o agente utiliza. Todas essas são boas ideias, mas, em geral, por trás de tudo isso, você deve ter uma API bem definida.
+
+Isso pode ser descoberto. Assim, ao interagir com ele, o agente descobrirá o que pode fazer e as opções disponíveis. Possui validação de esquema. Portanto, naturalmente, o agente enviará apenas coisas que funcionarão. Ele também possui autenticação ou , dependendo do que você estiver desenvolvendo, pode ter autenticação e autorização implementadas. Portanto, devido a isso, seu agente
+
+poderá usar suas credenciais como desenvolvedor ou, dependendo do fluxo de trabalho do agente, terá suas próprias credenciais. Mas será capaz de fazer tudo isso de forma segura e saberá o que está fazendo. E com isso o agente pode ir e vir . Pode tentar fazer alguma coisa. A API enviará uma resposta e o agente poderá começar a funcionar dessa forma, entrando em um loop até obter o que precisa ou o que lhe foi solicitado.
+
+O que me leva ao meu próximo ponto. Normalmente, um agente está em execução em sua máquina. Você também poderia ter isso em algum servidor em algum lugar e talvez usar o OpenClaw ou algo parecido, e se comunicar com um agente lá. Mas, normalmente, um agente é local à máquina. É claro que os modelos estão rodando em outro lugar . Mas o trabalho que o agente
+
+realiza é local. Portanto, facilite o trabalho do agente . Em primeiro lugar, mude para a esquerda. Se algo vai falhar, que falhe o mais cedo possível. Portanto, não faça com que o agente envie algo para o seu sistema de controle de versão apenas para que ele falhe em algum fluxo de trabalho após alguns minutos.
+
+Se você puder validar as coisas antecipadamente, se puder executá-las localmente, novamente, chamando essas APIs ou talvez usando algum tipo de wrapper em torno delas, faça isso. Desloque o máximo possível para a esquerda. Então, como eu disse, os agentes vão entrar em um ciclo. Portanto, se o agente estiver na sua máquina e puder fazer tudo o que precisa lá, e você definir claramente o que precisa, o agente irá iterar até conseguir. Agora, é importante que você dê instruções precisas, que descreva a tarefa, que diga ao agente: "É isto que preciso que você faça".
+
+E também é importante que você diga ao agente, pois é assim que você saberá que concluiu a tarefa com sucesso. Isso é um pouco importante ao trabalhar com agentes, porque, como humanos, podemos verificar isso de diferentes maneiras. E temos muitos sistemas de observabilidade onde talvez queiramos verificar se o aplicativo foi implantado e se as métricas estão corretas. Talvez tenhamos que analisar alguns painéis de controle. Os agentes não vão ficar olhando para essas interfaces gráficas.
+
+Portanto, você também precisa pensar em como será a observabilidade se o usuário principal for um agente de IA. Disponibilize esses registros, métricas, rastreamentos e tudo o que possa ser útil por meio de uma API, CLI, servidor MCP ou algo semelhante. Ao fazer isso, você está permitindo que o agente feche o ciclo. Você está dizendo ao programa como fazer as coisas e como verificar se elas foram feitas corretamente. E já que estou falando sobre como instruir o agente sobre como fazer as coisas, algo crucial é a documentação.
+
+Claro, você já tem a documentação. Acho que muitos de nós já escrevemos documentos, os guardamos em algum lugar e depois não conseguimos encontrá- los. Bem, quando precisamos expor essa documentação aos agentes, mas, por outro lado, isso já era verdade para os humanos, precisamos nos estruturar em torno disso. Portanto, existem diferentes estratégias que você pode adotar. Uma delas, especialmente se você estiver trabalhando em repositórios menores, é manter sua documentação próxima ao código que ela documenta.
+
+Dessa forma, se um agente estiver trabalhando naquela pasta ou repositório específico, ele terá tudo o que precisa. Possui o código necessário para funcionar e a documentação que o descreve. Se você estiver trabalhando em algo maior ou, talvez, como parte de uma equipe de plataforma, e precisar expor toda a documentação sobre a plataforma que um agente possa precisar, a melhor ideia é colocá-la em um local centralizado para que o agente possa acessá-la e começar a descobrir qual documentação está disponível. Agora, mais uma vez, pense primeiro na API. Porque o agente será muito melhor em consumir o site fazendo isso e, especificamente, se você puder fornecer a ele as partes específicas da documentação de que ele precisa por meio da API, melhor ainda, em vez de obter a página HTML inteira na memória e tentar descobrir quais são as partes relevantes ali.
+
+Claro, quando falamos de documentação, também podemos pensar em documentação específica para cada agente. Presumo que muitos de vocês já estejam familiarizados com isso, mas vocês podem usar os arquivos agent.md ou cloud.md, compiler_instructions.md, dependendo do agente escolhido.
+
+E, ao fazer isso, você também pode descrever ao agente como ele deve funcionar em um repositório específico. [bufa] Você pode dizer isso, bem, você sempre deve construir desta maneira, testar desta maneira, implantar desta maneira. Você pode verificar desta forma. Você pode incluir tudo isso no seu arquivo agents.md.
+
+Você também pode ter um desses arquivos de aplicação mais geral para diferentes sistemas e, em seguida, adicionar um arquivo agents.md mais específico para um projeto ou repositório em particular. Você também pode usar habilidades. Se você segue algumas convenções ou tem uma maneira bem definida de interagir com algumas de suas plataformas, pode codificá-las em uma skill, que, novamente, nada mais é do que um documento Markdown. Ao fazer isso, você está dizendo ao agente: "Quando você realizar esse tipo de tarefa, você deve fazê-la dessa maneira." Por
+
+último, mas não menos importante, você também deve incentivar as contribuições em suas plataformas. Se você estiver criando plataformas internas para desenvolvedores, elas servirão aos desenvolvedores da sua organização. E você quer que eles contribuam porque dessa forma eles também podem te ajudar. Eles podem te ajudar a ajudá-los. Então, você deveria encorajá-los. Você
+
+deve acolher as contribuições e, como elas utilizam agentes de IA, a barreira de entrada será menor. Portanto, eu esperaria, e é o que tenho visto, que as pessoas sejam mais bem-vindas a contribuir para as plataformas. Agora, é claro, este é um nível de responsabilidade ambíguo, porque, em última análise, como pessoa ou equipe proprietária da plataforma, você é responsável por sua manutenção. Portanto, você deve pensar muito sobre quais aspectos devem ser levados em consideração ao contribuir para a plataforma. É preciso estabelecer algumas diretrizes, seja em relação à segurança, à conformidade ou simplesmente ao seguimento de um conjunto bem definido de padrões, o que ajuda a manter a plataforma em funcionamento, seguindo sempre essas convenções.
+
+Você pode fazer isso com algumas políticas, talvez, em seus sistemas, mas também pode, sim, contar com o fornecimento de contexto ao agente. Mais uma vez, você poderia usar o agents.md. Você poderia usar algumas habilidades para que, quando as pessoas quiserem contribuir para sua plataforma, elas também possam direcionar seus agentes para esses arquivos Markdown e consultá- los como documentação sobre como contribuir. Em geral, eu recomendaria uma combinação dos dois. Instale proteções
+
+para tudo aquilo que você absolutamente não quer que aconteça. Utilize algum tipo de política para isso. Mas além disso, use esses arquivos Markdown para ajudar os agentes a trabalharem da maneira que você deseja. E então, chegamos a uma questão muito importante, que é: ok, nós fizemos todas essas coisas, certo? As pessoas estão usando IA na organização. Eles
+
+agora estão seguindo essas práticas que temos recomendado. Construímos uma plataforma que pode ser usada por IA. Mas será que funcionou? E eu acho que a maneira de saber se funciona é medindo se funcionou ou não. É claro que você pode medir esses aspectos antes e depois de fazer algumas alterações na sua plataforma, para verificar se elas tiveram algum efeito ou não. E dependendo do que você
+
+quer fazer, você pode querer se concentrar em alguns tipos de métricas ou em outros. Agora, sabemos que existem métricas sobre a entrega de aplicativos e temos todas as métricas do Dora sobre isso. Frequência de mudança, tempo médio de recuperação, prazo de antecedência e mais uma que não me lembro agora. Mas essas métricas medem com que frequência seus desenvolvedores conseguem lançar atualizações e qual a qualidade média dessas atualizações . Você também pode medir a confiabilidade.
+
+Talvez essa seja a principal preocupação. Certamente está presente nas instituições fintech. Então, você pode verificar se meus aplicativos estão mais confiáveis ​​do que antes? Estou tendo menos erros do que antes? O tráfego está se comportando de maneira diferente?
+
+Ou talvez você queira analisar métricas mais específicas da plataforma, como por exemplo, quantas solicitações de suporte eu recebi? Se as pessoas e seus representantes conseguem fazer tudo sozinhos porque é um sistema de autoatendimento, então eu não preciso dar suporte a eles? Ou será que estou recebendo mais solicitações de suporte porque a forma como implementei isso é confusa? Você também pode usar outras estruturas relacionadas à satisfação e experiência do desenvolvedor, como a do espaço. Mas, de forma geral, o que quero dizer é: pense no que você deseja alcançar ao facilitar a contribuição dos agentes de IA e, em seguida, avalie se você realmente teve sucesso nisso ou não.
+
+E com isso, vou resumir meus conselhos, que mais uma vez vêm da minha experiência. Poderiam existir mais pontos nesta lista, mas acho que este é um bom ponto de partida. Se você deseja preparar sua plataforma para agentes de IA para tirar o máximo proveito deles, certifique-se de que sua plataforma seja de autoatendimento, baseada em API e priorize o ambiente local. Certifique-se de ter boa documentação e observabilidade nessa plataforma, para que seja fácil dizer ao agente o que fazer, como fazer e como verificar suas próprias ações. E incentive contribuições bem-vindas para sua plataforma, pois dessa forma você também poderá avançar mais rapidamente e implementar os recursos que seus usuários precisam. Por
+
+último, mas não menos importante, verifique se todas essas medidas realmente funcionam. E talvez mais um conselho: talvez sua organização esteja resistindo a algumas dessas boas práticas. Talvez você esteja tentando incentivar o uso dessas plataformas com foco em APIs, torná-las mais amigáveis ​​ao ambiente local ou ter tempo para escrever uma documentação adequada. Mas aí surgiu alguma resistência, porque as pessoas estavam focadas em outras prioridades. Aproveite. Todos, desde os
+
+executivos até os colaboradores individuais, estão de olho na IA agora. É um assunto muito polêmico. Portanto, você pode usar a IA como desculpa para implementar algumas boas práticas que, aliás, sempre foram boas práticas, mesmo que você não tenha tido a oportunidade de implementá-las até agora. Muito obrigado por ouvir. Meu nome é Juan Herrero Salorza. Aqui
+
+você encontra links para meu LinkedIn, meu site pessoal e meu GitHub. E se você gostou, conecte-se por lá. Obrigado e tenha um ótimo evento AI Engineer Europe.

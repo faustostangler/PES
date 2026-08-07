@@ -1,0 +1,124 @@
+---
+video_title: "CI/CD Is Dead, Agents Need Continuous Compute and Computers — Hugo Santos and Madison Faulkner"
+video_id: VktrqzQgytY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VktrqzQgytY
+video_date: 2026-05-13T13:00:06+00:00
+video_description: |
+  Traditional CI/CD was built for humans pushing one or two diffs a week. Scale to thousands of autonomous agents opening PRs continuously and you get runner saturation, cold Docker builds on every branch, cache thrash, and a merge queue that starts behaving like a serialized database lock where time-to-commit becomes the actual bottleneck.
+  
+  Madison Faulkner and Hugo Santos (Namespace) lay out what replaces it: no PRs, just intent and plan fed into an agent loop with fast inline validation. Changes queue in a premerge layer where humans review intent-plus-outcome rather than diffs. The end state they're pointing toward is agents exploring multiple commits in parallel for the same plan, a multiverse where the tip of the repo is a moving target and the inner loop needs to be stateful and fast enough to keep up.
+  
+  Speaker info:
+  - https://x.com/madsfaulkner
+  - https://www.linkedin.com/in/madisonhfaulkner/
+  - https://namespace.so/blog/introducing-namespace
+  - https://www.linkedin.com/in/hugomgsantos/
+  
+  Timestamps
+  0:00 Introduction and speaker bios
+  1:28 Why agentic software is breaking traditional CI/CD
+  1:59 The fragmented lifecycle of modern software development
+  2:25 How traditional CI/CD pipelines work
+  2:55 The problems with CI/CD at agent scale
+  4:04 Replacing CI/CD with acceleration and orchestration
+  6:12 Real-world solutions and the future of agentic loops
+  7:23 The role of the human as the agent
+  8:43 Why Pull Requests (PRs) are becoming a bottleneck
+  10:00 A new architecture: Intent and plan-based development
+  11:58 Moving toward fully automated internal/external validation
+  13:46 The premerge queue and human-in-the-loop review
+  15:20 The future: Parallel development in the multiverse
+  16:51 Conclusion: The shifting role of CI and governance
+---
+[música] Muito bem
+
+. Vocês todos conseguem me ouvir? Ótimo. Pronto. Muito bem, estamos apenas com 35 a 50 minutos de atraso, mas obrigado por terem ficado . Vamos
+
+falar sobre por que o CI/CD está morto. E vamos propor que a computação contínua será a próxima grande novidade.
+
+Talvez.
+
+Tudo bem. Só uma breve introdução. Teremos dois oradores. Um deles já está com o microfone ligado. Meu nome é Madison e sou sócia da NEA, uma empresa que investe em tecnologia.
+
+Bem, eu me concentro em infraestrutura e ferramentas de desenvolvimento, e anteriormente era pesquisador de meta-IA . Então, eu costumava liderar equipes de dados e IA. Fiquei muito frustrado com o estado da infraestrutura e, por isso, entrei para o mundo do capital de risco para fazer algo a respeito, de cima para baixo. E então, em nome do meu parceiro aqui, vou apresentar Hugo Santos. Ele é o CEO da Namespace, que está construindo infraestrutura de computação de alto desempenho e, neste momento, acreditamos que ela irá eclipsar a nova onda de CI/CD. Ele também liderou formalmente a área de
+
+microsserviços no Google. Sim, é ótimo estar aqui com vocês . Então, vamos falar sobre por que o software agentivo está rompendo com o modelo tradicional de CI/CD. Obviamente, não vamos conseguir abordar isso hoje, mas a questão é que, à esquerda, o que começou no software agentivo eram, na verdade, agentes monolíticos. Na verdade, estávamos usando o LLM como um único motor de processamento. Mas
+
+agora estamos passando para o lado certo, que são os microsserviços com agentes. E é assim que realmente precisamos pensar sobre o desenvolvimento de software em um mundo orientado a agentes. Portanto, o ciclo de vida é muito fragmentado. Que bagunça, né? Nós realmente reunimos todos esses sistemas tradicionais de CI/CD, como build, test, deploy e DevOps, mas agora também temos novas IDEs. Temos
+
+soluções de engenharia de agentes autônomos. E depois temos o nosso DevOps tradicional no meio, que acreditamos que realmente vai inovar no próximo ano. Então vamos explicar por que achamos que está morto. Primeiramente, como funcionam os pipelines de CI/CD atualmente? Bem, todos sabemos que os desenvolvedores humanos estão enviando apenas uma ou duas alterações (diffs) quando estão escrevendo o código eles mesmos. E
+
+esses comunicados de imprensa acabam tomando muito tempo dos seus colegas para serem revisados. Em seguida, você precisa acessar o GitHub Actions e executar as etapas de compilação, teste e implantação. E, finalmente, você está resolvendo os casos de teste que falharam e talvez iterando sobre as diferenças. Então, nesse cenário, era realmente apenas uma ou duas vezes por semana. Então, como podemos pensar nisso em termos de escala de agentes? Você tem agentes usando
+
+exatamente os mesmos sistemas, mas eles têm, você sabe, N número de PRs, talvez N número de repositórios. Ainda leva um tempo semelhante para verificar, a menos que você esteja usando bots de avaliação, o que fica um pouco complicado. E então corrigimos os casos em que houve falha, assim como fizemos no cenário anterior. Então, o que acaba acontecendo com um ser humano? Bastante previsível. E você tem
+
+caches locais, que geralmente estão "quentes". Com um agente, a coisa começa a ficar realmente complicada. Você tem milhares de filiais de curta duração. Trata-se de uma tentativa de usar a mesma base de código em várias direções diferentes. Chega-se a um ponto em que mesclar todas essas versões diferentes se torna realmente impossível.
+
+E é aí que começamos a ter um grande problema. Então, vamos dar uma olhada em tempo real: a atividade no GitHub ficou absolutamente frenética. A linha branca aqui representa o número real de commits nos últimos dois meses. E depois o número de linhas adicionadas em comparação com as excluídas. Quer dizer, esse aumento é simplesmente inacreditável.
+
+Então, como podemos começar a substituir o CI/CD? Bem, o ponto de partida deve ser a aceleração. Obviamente , sei que muitos de vocês estão enfrentando dificuldades com os tempos muito lentos de compilação, teste e implantação de suas soluções de CI/CD. Este é um problema muito comum. Mas o nosso objetivo inicial é acelerar esse processo, integrando-o às ações do GitHub existentes e a outras infraestruturas subjacentes de CI/CD.
+
+Assim, esse cache realmente se tornará a camada de orquestração nesse cenário. E isso é realmente crucial e deve ser feito por meio de um projeto conjunto de hardware e software . Então, como isso começa a se parecer e como isso começa a eclipsar o CICD anterior? Primeiro, temos a nossa entrada, que requer controle de fluxo e limitação de vazão. Em seguida, passamos para o nosso cache, e esse é o próximo grande passo.
+
+Como podemos pensar em orquestrar e garantir que estamos encaminhando para a infraestrutura correta? A partir daí, podemos até avançar para a identidade de agentes para software e pensar em novas tentativas em grande escala. E se você não acredita em mim, vamos perguntar aos especialistas. Então, Mitchell Hashimoto, um dos desenvolvedores mais legais em grande escala, e também ex-fundador da HashiCorp, escreveu exatamente o que faria para consertar o GitHub hoje. E muito disso tem a ver até mesmo com o encerramento do Copilot, pensando em como evoluir o GitHub para ser, em primeiro lugar, na era da nuvem, mas, em segundo lugar, realmente possibilitando a inferência em escala.
+
+E então temos vários outros pontos de dados no lado esquerdo que precisamos ser capazes de atender primeiro aos usuários de IA e agentes, ou morreremos. [risos] E pensando em soluções amigáveis ​​de armazenamento de código, isso também pode ajudar. Existe muita frustração em relação aos processos de CI/CD existentes, mas este é apenas o ponto de partida. Só agora começamos a ver o software com agentes ganhar espaço. Agora vou passar a palavra para o Hugo para que ele discuta melhor como seria uma solução viável . Sim, então, eu tenho sorte e, junto com
+
+minha equipe, passamos muito tempo com empresas hoje em dia que estão passando da aparência tradicional de CI/CD para a forma como acreditamos que será no futuro. E, dando uma pequena dica, é um agente do começo ao fim . Então, trabalhamos com empresas como a Fall, a Zed, a Ramp e muitas outras que estão realmente na vanguarda de tudo relacionado ao desenvolvimento. E vocês provavelmente se reconhecem, entre esses dois momentos, em que, durante até 6 meses, os humanos estavam escrevendo todo o código muito lentamente, e alguns deles até que bem rapidamente, mas, em retrospectiva, bastante lentamente. Nós agrupamos todas essas alterações em PRs (Pull Requests).
+
+Realizamos a validação como parte desses PRs. E, nos bastidores, as máquinas são um pouco lentas, mas tudo isso fica oculto pela latência humana. E muitos de vocês já devem estar percebendo um pouco do que está acontecendo hoje em dia, onde a geração de código é muito barata, o trabalho é muito mais contínuo e isso meio que força a avaliação a entrar no loop interno. Então, o que você talvez não perceba é que, até este ponto, você, como ser humano, é o agente. Você tem um objetivo em mente, aqui está o que estou tentando realizar, e então estou passando por todas essas fases.
+
+Ok, vou enviar uma solicitação de pull request. Quando a solicitação de pull request da sua equipe diz: " Bem, você não seguiu o formato correto." Então volte ao início. Você está preso em um ciclo vicioso. Bem, agora suas alterações estão no PR, os testes estão sendo executados e falham. Você
+
+precisa ir lá e alterar algo no código. Você voltou ao loop. Um revisor humano retorna e diz: " Bem, você sabe, você não usou a API correta, por favor, vá e altere-a." Você está de volta ao circuito. E aí, quando você vai pegar seu código, finalmente termina e tenta mesclá- lo, a fila de mesclagem diz: " Bem, algum colega conseguiu colocar um código à sua frente e você tem que voltar no ciclo."
+
+E, quando se trabalha em escala humana, essa oportunidade de mesclagem, o tempo que leva desde o momento em que você está trabalhando no código até que ele seja inserido no repositório, pode ser considerável, porque há um limite para o número de alterações que você pode fazer simultaneamente. Mas, à medida que se acelera o processo, essa oportunidade de fusão torna-se realmente muito importante, porque a taxa de mudança aumenta drasticamente. Então, nós conversamos um pouco sobre isso, tipo, o PR é usado como unidade de trabalho. E é exatamente isso que foi projetado para revisão humana. É, é, é, espera um pequeno atraso no feedback. É
+
+esperado que ocorra uma espécie de " entrega na rua", onde você envia para o revisor e depois recebe de volta. A Inteligência Colaborativa é importante porque valida o trabalho que você está realizando. É como se estivesse causando uma regressão, sabe? Você está compilando e construindo seu código a partir de fontes conhecidas? Há outras mudanças em andamento que possam entrar em conflito com esta? Essa alteração é permitida?
+
+Portanto, tudo isso faz parte de um processo de validação automatizado. Os revisores humanos estão sobrecarregados. Você já ouviu isso muitas vezes. Não preciso repetir. E o interessante é que esse ato de mesclagem está começando a se parecer muito com problemas de banco de dados de alto desempenho, onde você tem serialização e um único livro-razão onde cada alteração precisa ser registrada e o banco de dados precisa ser bloqueado para que a confirmação possa ser efetuada.
+
+E o tempo necessário para o bloqueio quando há humanos envolvidos é grande, mas quando há máquinas, é curto. Portanto, o momento da fusão é crucial. Precisamos de uma nova arquitetura. Bem, é assim que nossa equipe já trabalha hoje e é assim que vemos muitas empresas na vanguarda trabalhando atualmente. Não há relações públicas.
+
+Começamos com intenção e planejamento. É isso que queremos alcançar e é isso que codificamos . Essa é a especificação. Alguém anota . Pode ser um bilhete com percurso fixo.
+
+Pode estar no Slack. Está em algum lugar. Em algum lugar você anotou qual é o objetivo. O que você está tentando alcançar? Isso entra em um loop, e esse loop é um típico sistema de gerenciamento de agentes. Então,
+
+pode ser o seu código na nuvem. Talvez seja porque somos grandes fãs de amplificadores planos, então, no nosso caso, costuma ser amplificador. Hum, pode ser o cursor. Pode ser de fábrica. Você entra em um loop e aqui o agente verifica seu código e começa a implementar seu plano. Ah, e muito
+
+importante, já faz uso de algumas dessas invariantes. Bem, isso confirma um commit bastante conhecido. Portanto, não parte simplesmente de qualquer coisa, por exemplo. Então, o que é validação interna? Bem, ele utiliza os recursos existentes no repositório para validar se a alteração está correta. Então, ele o constrói. Foi
+
+testado. Então, ele volta e te diz, como um ser humano, algo como: "Ei, acabei de terminar. Ficou bom? Devo mudar mais alguma coisa?" E você diz sim ou diz continuar. Tipo, "continuar" é
+
+provavelmente a palavra que mais usamos hoje em dia. E então simplesmente volta atrás e continua com o plano. Por fim, você termina e o processo entra na fila de mesclagem, e então ele é registrado no livro-razão. Então, seu repositório, seu repositório Git, é como um livro-razão. Hum, isso é rápido, mas não é rápido o suficiente porque, nessa validação externa, ainda há um humano envolvido.
+
+Então, para onde achamos que estamos caminhando? E isso ocorre em um período de semanas a meses, não de anos. É um mundo onde a geração de código se torna muito mais rápida. Já é rápido, mas a inferência só vai ficar mais rápida. Validação interna, portanto, a execução de suas compilações e testes também precisa ser extremamente rápida.
+
+E é aí que você não pode passar 15 minutos executando seus testes, ou 45 minutos, ou qualquer outro período de tempo, porque estará atrasando todo o ciclo. E a validação externa já não conta com a participação humana. Temos outros agentes que estão avaliando as mudanças. Então, você pode ter um LLM com foco em segurança. Você pode ter um LLM baseado em conformidade com a API que fornece feedback dentro do loop para as alterações que sua estrutura principal está incorporando de volta ao código. E está fazendo isso muito rapidamente.
+
+Bem, quando estiver concluído, e para que seja feito muito rapidamente, precisa estar sendo executado em um ambiente com estado. A memória é importante. O planejamento é importante porque, se você estiver sempre começando do zero, só vai atrasar ainda mais as coisas. Portanto, o estado do sistema é realmente importante dentro desse loop. Você recebe sinais do mundo todo de tempos em tempos. Coisas
+
+como, por exemplo, uma mudança de planos ou uma alteração feita por outra pessoa. Então, o sistema também adapta sua intenção e seu plano, o que cria um novo ciclo. E então, quando você termina, como há muitas mudanças acontecendo , e você ainda não, como ser humano, aprovou essa mudança, você não entra diretamente no repositório, você entra em uma pré-fila, que estamos começando a chamar de pré-merge, onde há uma fila de alterações que já foram concluídas. Eles teriam sido fundidos se o processo de fusão tivesse sido rápido o suficiente. Mas a realidade é que você terá tantos desses processos rodando em paralelo e operando nas mesmas partes da base de código que precisará de um processo que os reconcilie para que você possa ter serialização.
+
+Assim, você pode garantir que todas as alterações sejam registradas integralmente em seu livro-razão, em seu repositório. E é nesse ponto que você obtém a aprovação externa. É aí que entra o ser humano, que não se atenta ao código, mas sim à intenção e ao resultado obtidos. E o resultado pode ser este: Aqui está o vídeo da funcionalidade em funcionamento. Pode ser... Aqui está
+
+o resultado da análise de segurança do LLM sobre essa alteração específica. E não se trata de um único commit ou um único PR, pode estar presente em vários deles. Então, você pode até ter vários agentes trabalhando independentemente em funcionalidades que entram nessa fila de pré-fusão e são agrupadas semanticamente em algo que você, como humano, consiga gerenciar, porque haverá funcionalidades demais. Já percebemos isso hoje, dentro da nossa equipe, onde o volume do que chamamos de PRs (reuniões de relações públicas) do passado é quatro vezes maior do que antes. É impossível para um revisor humano analisar cada comunicado de imprensa individualmente.
+
+E se pensarmos um pouco mais no futuro, depois disso, se esse processo for extremamente rápido, uma coisa que pode acabar acontecendo é que você pode ter que entrar no multiverso, onde o ponto de partida em que a intenção e o plano são aplicados não é a ponta do livro-razão, não é o último commit do seu repositório, porque isso está em constante movimento. Existem muitos candidatos. Assim, os agentes podem estar trabalhando em várias confirmações simultaneamente para executar o mesmo plano. E para que isso aconteça , esse circuito interno precisa ser extremamente rápido, extremamente rápido. E isso se soma em termos de capacidade.
+
+Portanto, o uso de recursos também aumentará drasticamente devido a todos os candidatos que você estará explorando ao mesmo tempo. Este é o mundo para o qual pensamos estar caminhando. Nós somos obcecados por desempenho e eficiência, então estamos investindo muita energia encontrando maneiras de manter a eficiência dentro desse ciclo. E parte disso é, bem, não faça trabalhos desnecessários. Não comece tudo do zero o tempo todo. Os agentes
+
+trabalham muito mais como nós, engenheiros, fazíamos em nossas próprias estações de trabalho, que eram muito mais incrementais. E é esse tipo de mundo para o qual estamos caminhando. Hum, o CI desapareceu? Bem, a integração contínua ainda importa, mas mudou porque os princípios , por exemplo, questionam se o código realmente funciona. Não é mais uma fase separada, mas sim parte deste ciclo.
+
+Cada iteração está passando por validação neste momento. Ainda está em processo de aplicação dessas invariantes. Por exemplo, por motivos de conformidade, você ainda precisa ter garantias de que está partindo de um sistema de finalização de compra confiável, e que ninguém na sua empresa adicionou um código que nunca foi verificado. Portanto, essas invariantes ainda precisam ser aplicadas, mas essa aplicação ocorre de forma contínua. A coordenação se afasta da CI. Portanto, a CI não precisa mais
+
+orientar diferentes alterações e garantir que diferentes testes sejam aprovados para que as alterações sejam confirmadas. Isso precisa fazer parte do ciclo geral. E a governança ainda é importante, mas também é muito mais explorada na forma como essa estrutura impulsiona a mudança para seguir tudo o que sua equipe codificou nesses processos. E é isso. É para isso que acreditamos que o mundo está caminhando. Se
+
+você se interessa por esse assunto, nós da Namespace dedicamos muito tempo a pensar sobre ele. Outras pessoas do setor também. É um mundo louco e precisamos estar preparados para ele. Ah, obrigada. E, bem, vamos almoçar.
+
+[aplausos]
+
+[música]

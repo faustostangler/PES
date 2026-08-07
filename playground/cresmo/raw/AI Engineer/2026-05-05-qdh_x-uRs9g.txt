@@ -1,0 +1,90 @@
+---
+video_title: "The Small Model Infrastructure Nobody Built (So We Did) — Filip Makraduli, Superlinked"
+video_id: qdh_x-uRs9g
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qdh_x-uRs9g
+video_date: 2026-05-05T17:00:06+00:00
+video_description: |
+  Most embedding infrastructure assumes you know exactly which model you want ahead of time. This talk starts where that assumption breaks. Filip Makraduli walks through the real profiling mistakes, infrastructure gaps, and production constraints that led to building an embedding inference engine designed for dynamic model loading, hot-swapping, and memory-aware eviction instead of brittle one-model-per-container deployments.
+  
+  If you're working on small-model inference, embeddings, or GPU infrastructure, this is a practical look at what breaks in the real world and how to design around it.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/filipmakraduli/
+  
+  Timestamps:
+  0:00 Introduction and the gap in small model inference
+  0:53 Moving from research to building inference infrastructure
+  2:54 Introduction of the Superlinked inference engine
+  4:34 The importance of context management for agents
+  7:03 Misconceptions: Why more GPUs isn't the only answer
+  9:33 The "Yin and Yang" of inference: Model support and infrastructure
+  10:43 The challenge of supporting diverse model architectures
+  14:33 Deep dive into infrastructure and scalability
+  16:10 Conclusion and the open-source launch of SAI
+---
+Olá pessoal. Bem-vindos a esta palestra. Falarei sobre inferência de modelos pequenos e uma lacuna que identificamos no mercado. E o que fizemos a respeito e por que adotamos essa abordagem. E como vocês podem ver neste slide de fundo aqui, hum, isso não é por acaso. Então, se
+
+você adivinhar o que é isso (eu darei uma dica no final dos slides), você ganha uma pequena recompensa. Então, você pode me encontrar no intervalo depois. Então, pense nisso, mas também me escute, não pense demais. Então, a história começa quando postei um artigo alguns meses atrás no Substack que teve um pouco de repercussão, despertou o interesse de algumas pessoas, e expliquei o conceito de atenção instantânea, como os modelos funcionam, como os processos podem ser limitados pela memória, pelo poder computacional, e me senti muito bem porque me aprofundei bastante no assunto e, como alguém que trabalha com IA há alguns anos, me senti muito confiante. E isso era verdade, mas algumas pessoas apontaram que, na verdade, eu havia ignorado um aspecto fundamental sobre o que torna esses modelos rápidos no mundo real.
+
+E o aspecto que eu negligenciei foi a inferência. Então, como alguém que gosta de entender as coisas desde os princípios básicos e se esforça para compreender os problemas e as soluções em profundidade, percebi: "Ok, preciso descobrir isso. Preciso saber onde errei e, como pesquisador e engenheiro de IA, preciso aprender mais sobre inferência." Trabalhei bastante com VLAM, treinando modelos, ajustando-os, aplicando aprendizado de máquina e IA, e também fiz algumas pesquisas acadêmicas. Mas essa parte sobre como os modelos são executados em produção, agendamento de GPUs, roteamento e automação, era um ponto cego para mim. Então,
+
+percebi: "Ok, agora é a hora de descobrir isso, aprender e fazer funcionar." E qual a melhor maneira de fazer isso senão construindo algo? Então, decidi me juntar a uma equipe na Superlinked, composta por excelentes engenheiros de infraestrutura, e trabalhar com eles para construir algo relacionado à inferência. E esse algo é este repositório. É um mecanismo de inferência superlinkado que disponibilizamos como código aberto, e este é um tipo de lançamento experimental que estou fazendo hoje.
+
+Vocês poderão conferir mais tarde. Basicamente, trata-se de inferência para pequenos modelos de busca por IA e processamento de documentos. Como podem ver, testamos com alguns de nossos parceiros, como Chroma, Quadrant, Weaviate, vários bancos de dados vetoriais e LanceDB. Eles também experimentaram. Parece interessante. E
+
+está funcionando. Foi o passo certo para mim entender como a inferência realmente funciona e como se combina com minha experiência em aprendizado de máquina. Os três pontos principais que quero que vocês levem desta apresentação são estes: primeiro, quero explicar por que isso é importante. Por que fazer inferência para busca por IA e processamento de documentos é realmente importante ao criar agentes ou fluxos de trabalho que... envolver, hum, agentes. Então, isso é
+
+muito importante, o porquê. Depois, quero falar sobre o segundo ponto, que é o que a inferência não é. Existem algumas ideias equivocadas sobre como a inferência funciona, mas não se resume a isso . E o terceiro ponto é como vemos a inferência, e eu chamo isso de yin e yang da inferência de modelos, e é uma forma de combinar alguns elementos relacionados ao suporte e à infraestrutura do modelo. Então, por que isso importa para o seu fluxo de trabalho com agentes?
+
+Bem, o que você certamente já encontrou é a deterioração do contexto. E como provavelmente todos sabemos, este artigo de pesquisa da Chroma, de algum tempo atrás , demonstra esse efeito de que, não importa o que você faça, há esse efeito de deterioração do contexto. Ou seja, a qualidade se degrada à medida que o contexto aumenta. Portanto, ser capaz de gerenciar esse contexto e realizar algum gerenciamento de contexto é muito importante e uma maneira útil de resolver isso. Usar modelos pequenos que podem pré-processar seus dados para que você possa usar seus agentes e construir seus fluxos de trabalho é uma técnica muito poderosa .
+
+Você também pode usar o Modelos pequenos para chamadas de ferramentas que realizam tarefas semelhantes e abordam o problema do gerenciamento de contexto. Você pode se perguntar: "Por que eu não usaria código e buscas com grep?". E essa é uma questão válida. No entanto, você ainda pode fazer isso, e o pré-processamento dos dados torna as buscas com grep e os sistemas de arquivos que você cria ainda melhores. E
+
+não sou só eu que digo isso; a comunidade tem respondido a esse problema da seguinte forma: Andrej Karpathy está criando bases de conhecimento baseadas em grafos. Por exemplo, você pode usar modelos de reconhecimento de entidades nomeadas para gerar ontologias e, em seguida, construir grafos de conhecimento ou gerar seus sistemas de arquivos dessa maneira. A Chroma também lançou seu próprio modelo que faz isso. Ele pré-processa e filtra a entrada, gerenciando o contexto para abordar e alcançar o mesmo objetivo. Há também pessoas na comunidade criando diversas soluções que reduzem o contexto e a quantidade de tokens para que os agentes sejam ainda mais eficazes. E nós fizemos isso em
+
+também em produção. Temos um caso de uso em que este repositório que apresentei, o mecanismo de inferência Superlinked, foi usado como uma ferramenta de chamada, basicamente uma solução para classificação taxonômica em uma loja de e-commerce. Portanto, usar diretamente a chamada de ferramentas, onde os modelos menores são ferramentas que podem recuperar e processar seus dados, também é uma abordagem poderosa. Agora, vou falar sobre inferência e o que a inferência não representa. A perspectiva tradicional talvez seja: "Ok, vou adicionar mais GPUs, obter mais poder computacional, tudo certo, resolvi a inferência".
+
+No entanto, com modelos menores, onde cada modelo ocupa apenas um pequeno espaço na memória, como o Stella, que é um modelo de embeddings, e outros reclassificadores, como o modelo de reconhecimento de entidades nomeadas Glyner , eles ocupam apenas alguns gigabytes de memória. E se você provisionar uma GPU para cada modelo, estará desperdiçando muita memória ociosa. espaço. Sua GPU fica ociosa e não é usada. Portanto, neste caso de inferência de modelos pequenos , é muito importante poder trocar modelos a quente. O que fizemos
+
+foi criar a capacidade de você trocar todos esses modelos em uma única GPU, para que você obtenha uma utilização muito maior por GPU . Isso reduz seus custos e também permite que você troque e alterne entre modelos rapidamente. Se você quiser usar uma ferramenta com um determinado reclassificador ou outra ferramenta com outro modelo, você pode alterná-las rapidamente, e implementamos uma política de remoção do modelo menos recentemente usado . Além disso, a inferência não se limita ao servidor ou à produção. Temos soluções tanto para o servidor quanto para a produção, mas construir algo, por exemplo, usando Tay ou VLAM, ou até mesmo um wrapper de API para levar isso para produção, onde você realmente realiza roteamento, escalonamento automático e monitoramento com métricas do Prometheus, é essencial. No Grafana,
+
+você precisa escrever esse código você mesmo. E atualmente, no mercado, não existe uma solução de código aberto que leve você da criação da inferência do modelo à produção em larga escala . Então, é por isso que queríamos preencher essa lacuna. Incluímos muitos recursos relacionados a roteamento, escalonamento automático, mecanismos de filas e provisionamento de GPUs. Já falei sobre o que a inferência não é, por que isso é importante, e agora vou explicar o que a inferência realmente é.
+
+Eu chamo isso de yin e yang da inferência porque acredito que essa é uma abordagem holística que precisa combinar dois elementos-chave. Primeiro, o yin é o suporte a modelos. Sua inferência é inútil se você não oferece suporte aos modelos certos ou se não oferece opções suficientes para seus usuários. E modelos de código aberto: atualmente, existem milhões de modelos no Hugging Face. Isso é de março. Pode haver
+
+ainda mais agora. São quase 3 milhões de modelos. E o código aberto está evoluindo muito rapidamente, tanto em tamanho quanto em precisão. Portanto, é preciso dar suporte a esses modelos, porque as pessoas querem usá-los. As pessoas querem trabalhar com código aberto, e o desempenho também está melhorando cada vez mais . Então, não é mais um sacrifício
+
+. Na verdade, você está conseguindo, para tarefas específicas. Se você observar o MTEB ou outros benchmarks, verá que, para tarefas muito específicas, os modelos de código aberto superam os serviços gerenciados. E vemos isso até mesmo com modelos de propósito mais geral, como os que a Gemma desenvolveu. Eles lançaram modelos com poucos parâmetros que têm pontuações ELO maiores do que modelos muito maiores. Portanto, os
+
+modelos pequenos de código aberto são muito relevantes, e você precisa de uma infraestrutura para dar suporte a eles. E decidimos fazer exatamente isso. Ok, vamos lá. Vamos construir e dar suporte a centenas de modelos. No entanto, isso não é tão simples quanto parece, porque todos esses modelos têm tempos de execução diferentes. Por
+
+exemplo, se você usar o BERT e o Qwen como modelos, eles têm implementações diferentes. de atenção flash. Eles têm diferentes embeddings posicionais, e você precisa ajustar isso para tornar aplicável ao seu caso e mais geral. Portanto, não existe um mecanismo universal que possa lidar com BERT, Qwen e BERT moderno, porque suas arquiteturas são diferentes. Então, o que fizemos foi configurar uma maneira de reimplementar essa passagem direta para adaptar a atenção, para fazer preenchimento onde necessário, de modo a ter atenção de comprimento variável também.
+
+Trabalhamos com uma espécie de fusão da consulta, chave e valor. E este é um componente subestimado, especialmente se você observar o suporte a modelos como o ColBERT, que tem múltiplos vetores como saída. Assim, modelos de interação tardia , também codificadores cruzados e reclassificadores que não geram um vetor , mas sim pontuações. Portanto, é muito importante entender isso, e um exemplo disso é, por exemplo, esta comparação de alguns modelos que são totalmente diferentes nesses cinco aspectos. A normalização é feita de forma diferente no BERT. e Qwen. Então, isso precisa ser levado em
+
+consideração. No ColBERT, também é totalmente diferente. A consulta, a chave e os valores podem ser fundidos em algum lugar. Em outros, por exemplo, no Qwen, isso não pode ser feito porque há atenção de consulta agrupada. Então, esse é outro problema. Os
+
+embeddings posicionais também são diferentes. No BERT, você pode fazer uma busca absoluta, enquanto no Qwen, há embeddings posicionais rotativos. Esses são problemas que talvez as pessoas não pensem imediatamente, mas se você quiser dar suporte a muitos modelos, precisa haver uma maneira consistente de fazer isso. Então, configuramos isso trabalhando com agentes, bem como com humanos, para poder dar suporte a isso e reimplementar essa passagem direta para tornar a inferência desses modelos eficiente. Também trabalhamos para fazer atenção flash, que é atenção flash de comprimento variável , para que você possa fazer preenchimento e não haja desperdício, porque o que acontece é que, se você quiser fazer o agrupamento baseado em tokens, você É possível que uma requisição tenha um número menor de tokens, enquanto outra requisição tem um número maior.
+
+Se ambas as requisições forem preenchidas com o valor maior, você estará basicamente desperdiçando poder computacional com tokens vazios. Portanto, é necessário adaptar isso para que os modelos funcionem ainda melhor e mais rápido. Essa é uma diferença fundamental em nossa abordagem de inferência. A outra parte, o lado positivo, diz respeito à infraestrutura. Este é o gráfico complexo.
+
+É uma espécie de análise detalhada. Temos isso em nosso site e em nosso repositório. Não vou entrar em detalhes sobre cada componente aqui, mas basicamente o que está ali são os três elementos básicos da nossa API: codificar, pontuar e extrair. Em seguida, entra em cena a camada de infraestrutura , e este é um resumo dela . Basicamente, temos os três elementos básicos da API, além de um roteador e um mecanismo de filas dependendo da carga. Ajustamos entre
+
+esses elementos e também diferentes pools de GPUs e recursos que usamos para distribuir a carga de trabalho. Usamos instâncias spot, mas também GPUs maiores. Portanto, trata-se de poder provisionar o hardware e também ter as métricas para escalonamento automático. Estamos usando o escalonamento automático do KEDA com métricas do Prometheus para poder alternar entre modelos, evitando que as GPUs fiquem ociosas e desperdicem recursos. O principal objetivo é oferecer suporte tanto ao cluster quanto aos modelos. Não apenas
+
+um ou outro, e depois você ter que mesclá-los e escrever todo o código, mas sim uma solução completa de ponta a ponta para que você possa trabalhar com esses modelos rapidamente. Os modelos são basicamente uma configuração que você pode alternar e, em seguida, executar `terraform apply`, e pronto. Também publicamos gráficos Helm e imagens Docker . Foi assim que aprendi a lição. Construímos o Sie. Este é o nosso
+
+lançamento experimental, de certa forma. E disponibilizamos o código aberto tanto para a inferência de modelos que mencionei, adaptando essa passagem direta, quanto para o trabalho com... Atenção, reimplementando diferentes aspectos no modelo, mas também o cluster para que você possa usá-lo imediatamente sem ter que pensar em hardware, provisionamento de GPUs e todos esses problemas que surgem no mundo real.
+
+Você pode escanear o código QR para ver o repositório, e se chama Sie, então S I E. E a empresa é a Superlinked. E agora também temos o contexto . Então, um breve lembrete sobre isso. Alguém da plateia tem alguma ideia ? Vou revelar no próximo
+
+slide, sim, não quero fazer isso muito rápido se alguém já sabe o que é. Pense nisso como um conhecimento básico de aprendizado de máquina . Eu estava falando sobre atenção e tudo mais, então é um pouco sobre embeddings, mas também como os transformers funcionam. Ok, não, não, sem recompensa, eu acho, para você, infelizmente. Ou sim, desculpe.
+
+Não me lembro exatamente, mas era um daqueles embeddings ColBERT para o cluster de uma área. Não estava usando basicamente o Espaço de incorporação. Certo. Devido à forma como estavam fazendo a codificação posicional. Quanto disso?
+
+Então, vou considerar isso como uma resposta correta. Então, era sobre codificações posicionais, e sim, basicamente isso . Parabéns. Então, sim, isso é sobre visualização vetorial da codificação posicional. Isso é feito quando os Transformers são treinados, é assim que as posições são codificadas, e é sinusoidal. É por isso que
+
+você obtém esse padrão, porque são incorporações, e sim. Muito obrigado.

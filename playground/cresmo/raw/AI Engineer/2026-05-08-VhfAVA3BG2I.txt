@@ -1,0 +1,85 @@
+---
+video_title: "How Transformers Finally Ate Vision – Isaac Robinson, Roboflow"
+video_id: VhfAVA3BG2I
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VhfAVA3BG2I
+video_date: 2026-05-08T17:00:06+00:00
+video_description: |
+  Vision used to belong to CNNs. This talk explains why that changed, and why transformers only recently started winning for vision despite looking like the less natural fit for images. The answer runs through pretraining, scaling, borrowed infrastructure from the LLM world, and the long arc back to the simple architecture that scales best.
+  
+  Using the evolution from ViT and Swin through ConvNeXt, Hiera, SAM, and RF-DETR, Isaac Robinson walks through what actually made transformer vision systems practical, where the tradeoffs still are, and why deployment flexibility now matters as much as raw benchmark wins. What comes next for VLMs, world models, and physical AI?
+  
+  Speaker info:
+  - https://www.linkedin.com/in/robinsonish/
+---
+Olá, meu nome é Isaac Robinson. Sou o líder de pesquisa da Roboflow e estou aqui hoje para falar sobre como os Transformers finalmente devoraram a visão. Bem , vou começar com um breve resumo da competição. Em seguida, vamos fazer uma análise geral da evolução do transformador, por que ele acabou prevalecendo, algumas consequências disso e o que vem a seguir. Então, por onde começamos? Redes neurais convolucionais
+
+. Tenho certeza de que todos aqui sabem como isso funciona, mas, resumindo, essas técnicas possuem um excelente viés indutivo, motivado pela observação do funcionamento do olho. Então, você tem um filtro que aplica convolução à sua imagem, e você tem ativações que se iluminam da mesma maneira, independentemente de onde na imagem o evento esteja ocorrendo. Grande viés indutivo. Uma pessoa em uma imagem é uma pessoa, independentemente de estar no canto superior esquerdo ou no canto inferior direito.
+
+E nós construímos essas estruturas hierárquicas interessantes a partir delas, ResNets, etc. É assim que trabalhamos com visão computacional há muito tempo. Em seguida, vem o transformador. Novamente, tenho certeza de que todos sabem como um transformador funciona, mas, resumindo, temos apenas um conjunto de fichas. Executamos uma operação de conjunto para conjunto.
+
+Portanto, não há viés indutivo. Isso é simplesmente uma transformação de n ao quadrado. Injetamos as tensões indutivas no transformador. Assim, por exemplo, em um transformador autorregressivo clássico, adicionamos uma máscara causal à matriz de atenção , e isso nos dá uma modelagem sequencial. Para visão, temos um transformador de visão.
+
+E isso é muito complicado. Foi necessário muito trabalho de engenharia para isso. Pegamos nossa imagem e a dividimos em partes. 16 por 16 era o original. E adicionamos uma codificação posicional aprendida, e então a inserimos em um transformador, e pronto.
+
+Portanto, o transformador é um conjunto de conjuntos de dimensão n ao quadrado. Temos remendos em nossa imagem. Isso significa que temos n sobre 16 patches para o comprimento lateral, e acabamos com n elevado à quarta potência com o dimensionamento computacional da resolução. Não temos viés indutivo. O elemento que está no canto superior esquerdo pode ter um padrão de ativação totalmente diferente se estiver no canto inferior direito.
+
+Assim, surge naturalmente a pergunta: qual é o melhor? A rede convolucional n-quadrado com alto viés indutivo ou a VIT n-quarto sem viés indutivo ? Então, como todos esperavam, é o VIT. Então, como isso é possível? E eu vou argumentar que isso se deve ao pré-treinamento massivo específico para VIT, e então conseguimos aproveitar muitos ganhos de velocidade e infraestrutura graças ao fato de que os LLMs estão se popularizando rapidamente.
+
+Então, para traçar essa evolução, vamos falar sobre o que acabamos de discutir sobre a introdução da VIT e como as pessoas tentaram dizer: "Ok, isso não pode ser a melhor coisa que podemos fazer. Como podemos melhorar isso?" Então, passamos para o Swin, depois voltamos para uma rede baseada em convolução , o ConvNeXt, e então, uh, o Hera, que eu acho que é uma espécie de... tem algumas
+
+lições realmente muito interessantes. E então, como sempre acontece com o aprendizado de máquina, voltamos a dar ouvidos à coisa simples que escala bem, o VIT. Então, primeiro vamos começar com Swin. Então, temos essa operação de patchify, e pegamos nossos patches e os dividimos. Em vez de aplicar atenção global a todos os patches de uma vez, simplesmente dizemos: "Ok, vamos aplicar atenção a esta janela."
+
+Se continuarmos apenas definindo a atenção nesta janela, os tokens não poderão interagir entre si. Portanto, esses dois nunca mais se verão. Assim, na camada seguinte, na verdade, deslocamos um pouco a janela. Então, temos essas janelas sobrepostas que se alternam, e isso é muito, muito semelhante ao que descrevi com a convolução. Sim, então temos essa operação de aparência semelhante acontecendo nessas seções da imagem, e acabamos com uma sobreposição entre os filtros, nos locais onde eles são aplicados. E é assim que procedemos.
+
+E isso nos leva a um valor de n ao quadrado se o tamanho da janela for independente da resolução, além de adicionar um viés indutivo de localidade após a rede convolucional. Portanto, isso parece lógico. Faz sentido. Então, alguém disse: "Ok, veja bem, existe essa operação de transformação que não tem relação intrínseca com visão. Vamos voltar à rede convolucional. Vamos pegar todo o conhecimento
+
+que adquirimos com os transformadores de visão e simplesmente inseri-lo em uma rede convolucional para ver o que acontece quando fazemos uma operação de patch. Acho que usamos um patch 4x4 em vez de um patch 16x16, e vamos dizer: 'Nosso VIT era como todos os transformadores: autoatenção, feedforward, autoatenção, feedforward, etc.' E essa autoatenção está misturando suas informações espaciais." OK? Então, para a rede convolucional, e se dissermos simplesmente: 'Ok, vamos fazer com que a convolução misture as informações espaciais.' Vamos seguir o mesmo
+
+padrão. Misturador, feed-forward, misturador, feed-forward, em frente.' E vamos usar a mesma estrutura hierárquica que todo mundo vem usando nessas redes convolucionais." E também adicionar a normalização de camadas e algumas outras inovações, e é isso. Vamos testar. Acontece que isso supera o
+
+VIT e o Swin quando aplicado ao conjunto de dados de referência padrão do ImageNet. Isso é ótimo. Finalmente, temos algo que faz um pouco de sentido. Mas acontece que não é super rápido. Então, alguém da Meta decidiu: "Ok, quais são as coisas realmente importantes aqui?" O ConvNeXt possui
+
+vários desses excelentes vieses indutivos. Está seguindo esta fórmula que obtivemos do transformador. Vamos analisar para que servem, de fato, esses vieses indutivos. Então, vamos usar um modelo de transformador com polarização indutiva realmente muito bom. Vamos eliminar os vieses um de cada vez. Vamos obter um ganho de velocidade
+
+porque não temos mais todo o equipamento especializado para o viés indutivo e, em vez disso, usaremos o pré-treinamento para aprender o viés. Este é, creio eu, um ótimo exemplo do equilíbrio entre o pré-treinamento e o viés indutivo inerente, que acaba sendo o fator decisivo para o sucesso dos Transformers. Aqui, estamos usando MAE, um autoencoder mascarado. Para quem não conhece, você pega sua imagem, seus patches, descarta alguns deles e pede ao modelo para reconstruir o que estaria presente nos patches com base no contexto. É muito semelhante ao BERT, para quem vem da área de linguagem.
+
+Fazemos isso em grande escala e o modelo acaba aprendendo os vieses indutivos. Mas não é possível aplicar o MAE a uma rede convolucional. Como descartar um patch quando se está fazendo uma convolução invariante entre patches? Portanto, é uma limitação específica do VIT. técnica de pré-treinamento que adiciona viés indutivo que, de outra forma, estaria ausente na estrutura.
+
+Hum, isso é ótimo. Isso é super interessante. Isso funciona bem. Acontece que não. Você pode levar isso ao extremo e adicionar DINOv2, DINOv3, essas técnicas de pré-treinamento específicas para VIT, e no final você não terá apenas esses vieses indutivos sobre como processar uma imagem. Você terá, na verdade,
+
+mapas de características ricos e bem ajustados, prontos para uso. Então, por exemplo, esta é uma decomposição PCA dos mapas de características produzidos por um VIT pré-treinado em DINOv3, e vemos que as patas do gato têm cores diferentes e que está traçando as patas corretamente para cada um dos diferentes gatos. A imagem de satélite é decomposta de uma forma semanticamente significativa. E, na verdade, o objetivo de aprendizado autossupervisionado está alcançando o melhor que temos do aprendizado supervisionado, e isso é via sonda linear. Então você tem seu congelado Você está apenas explorando as características.
+
+Não está treinando nada especificamente com seus dados, exceto pela projeção linear no final, e está chegando muito, muito, muito perto do melhor que sabemos fazer com aprendizado totalmente supervisionado. Ok, mas e a questão da velocidade? Isso ainda é n elevado à quarta potência. Acontece que as pessoas se importam muito com a atenção. Então, no mundo do aprendizado de máquina, começamos a introduzir essas ferramentas, como a atenção flash, a principal delas, e Hera mostrou explicitamente um aumento de velocidade para a mesma precisão em comparação com o VIT, mas eles têm uma nota em seu artigo onde dizem: "Ok, vemos o aumento de velocidade e não vamos medir com a atenção flash."
+
+Então, quando você adiciona a atenção flash novamente , de repente não importa mais. Você volta a essa questão boba de n elevado à quarta potência que se beneficia desse método de pré-treinamento específico do VIT, e é isso. Nós...
+
+nós... nós... Nós meio que
+
+vencemos. Então, esta é uma palestra sobre a evolução das estruturas de base. Como o final da quarta versão acabou superando todos que tentaram superá-la. O que isso significa na prática e na aplicação? Bem, SAM é uma série de modelos muito famosa.
+
+Novamente, não sei de onde as pessoas tiram essa ideia, mas, da minha perspectiva, SAM foi uma das séries de modelos fundamentais mais importantes em visão computacional, ponto final. E nós vemos o mesmo padrão. Então, de SAM para Mobile SAM, para SAM 2 e para SAM 3, se você observar as estruturas de base subjacentes, é um VIT treinado com MAE. Aí alguém diz: "Ok, certamente isso não pode ser o melhor que podemos fazer." Então, o Mobile SAM usa um híbrido convolucional Transformer especializado chamado Tiny VIT e substitui a estrutura de base VIT.
+
+E o SAM 2 usa o Hera com esse pré-treinamento MAE, e então o SAM... A 3 simplesmente desiste da ablação da arquitetura e diz: "Ok, bem, temos essa espinha dorsal massivamente pré-treinada ." Vamos simplesmente inserir isso. É
+
+o melhor que podemos fazer." Então, tudo bem, mas onde isso nos leva na prática? Isso é realmente caro se dependermos dessas enormes estratégias de pré-treinamento para recuperar o desempenho perdido devido ao fato de nossa arquitetura não ser direcionada ao assunto. Isso significa que temos que gastar uma enorme quantia de dinheiro sempre que quisermos fazer uma implantação. Portanto, a falta de flexibilidade de implantação significa que temos esses modelos "tamanho único". O
+
+SAM 3 é algo muito poderoso, mas também tem 800 milhões de parâmetros. Leva 300 milissegundos para rodar em uma GPU T4. Não é realmente utilizável em muitos casos, especialmente porque a visão computacional historicamente tem se concentrado em dispositivos de borda de baixíssimo consumo de energia, em cenários de implantação com recursos limitados. Então, na Roboflow, o que fizemos foi tentar descobrir como
+
+transformar esses modelos de base fixa. em algo que tenha flexibilidade?" Então, introduzimos um conjunto de dados, RF100VL, que mede o quão bem os modelos de base se transferem para diversas tarefas subsequentes em relação à detecção de objetos, que é uma das tarefas canônicas centradas em visão computacional. E vemos uma aceleração de cerca de 40 vezes para a mesma precisão em comparação com o ajuste fino do SAM 3, e com uma aceleração de apenas 15 vezes, obtemos uma melhoria significativa. Então, essa combinação desse enorme avanço no pré-treinamento do modelo de base e esses métodos de implantação robustos, juntamente com a capacidade real de implantá-los em ambientes com recursos de hardware limitados, acaba sendo o golpe final para esses métodos clássicos baseados em convolução.
+
+Na época da publicação do RFDetR, esses eram os melhores modelos convolucionais para segmentação de instâncias em tempo real, e nós os superamos de forma significativa. E, portanto, todos esses modelos nessa linha usam, na verdade, o mesmo modelo de base. Nós apenas... Modificamos o modelo base
+
+usando busca de arquitetura neural para gerar uma família inteira de modelos de alto desempenho de uma só vez. Para isso, introduzimos uma série de opções flexíveis. Todas elas são compatíveis com a infraestrutura existente do modelo base e, ao combiná-las de acordo com os dados e o hardware de destino, podemos resolver o problema da falta de flexibilidade de implantação desses modelos base. Então, temos pré-treinamento massivo específico para visão computacional, além de ganhos de velocidade com LLMs e busca de arquitetura neural compatível com pré-treinamento. É isso. Já
+
+existem arquiteturas que suportam pré-treinamento de vídeo ou vídeo, imagem e texto ? Alguém está trabalhando nisso? Há muitas pessoas trabalhando em diversas combinações. O SAM3 é um bom exemplo disso.
+
+Ele processa vídeo especificamente para visão computacional, rastreando objetos em vídeo. Ele realiza processamento em larga escala. Pré-treinamento. Eles fazem o pré-treinamento do codificador de percepção para a arquitetura principal e, em seguida, realizam uma grande quantidade de pré-treinamento subsequente. Ou, acho que você simplesmente chamaria de treinamento nesse ponto.
+
+Hum, e quanto ao JEPA? Sim, o JEPA de vídeo e o VJEPA, esses são... quero dizer, sim, esses são outros modelos de base. Acho que, em termos de
+
+pré-treinamento centrado em uma única imagem, o JEPA não parece superar muitos dos outros. O JEPA de vídeo, eu ainda não vi ninguém usá-lo de forma significativa em um contexto de vídeo para transferência subsequente, mas, sabe, veremos. Sim. Sim. Mais alguma pergunta?
+
+Legal. Ok.

@@ -1,0 +1,643 @@
+---
+video_title: "Ship Real Agents: Hands-On Evals for Agentic Applications — Laurie Voss, Arize"
+video_id: Xfl50508LZM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Xfl50508LZM
+video_date: 2026-05-14T18:00:06+00:00
+video_description: |
+  Most agents get tested by running a few queries and checking if it looks right. Laurie calls this the vibes problem: it doesn't catch regressions, doesn't run in CI, and doesn't tell you whether a prompt fix broke three other things. This workshop builds a complete eval pipeline from scratch on a financial analysis agent: tracing with Phoenix, reading traces before writing a single eval, categorizing failures by root cause, then building code evals, built-in LLM-as-a-judge evals, and a custom rubric with labeled examples.
+  
+  The sharpest lesson: choosing the right eval matters more than tuning it. A correctness eval scored 0 out of 13 on the same agent that a faithfulness eval scored 13 out of 13, because the model doesn't know what year it is and can't verify forward-looking financial data. The workshop closes on the thing most eval content skips — experiments that let you prove a prompt change actually worked, rather than eyeballing it and calling it a win.
+  
+  Speaker info:
+  - https://x.com/seldo
+  - https://www.linkedin.com/in/seldo/
+  - https://github.com/seldo
+  
+  Timestamps:
+  0:00:00 Introduction
+  0:00:14 Workshop Overview
+  0:04:31 Troubleshooting Phoenix Setup
+  0:05:17 Fundamentals of Evals and Tracing
+  0:18:44 Anatomy of an Eval Result
+  0:21:19 The Iteration Loop
+  0:26:58 Building the Financial Analysis Agent
+  0:33:28 Using Phoenix for Observability
+  0:35:38 Running Multiple Test Queries
+  0:38:12 Reading and Categorizing Traces
+  0:49:52 Implementing Code Evals
+  0:57:51 Built-in LLM-as-a-Judge Evals
+  1:03:04 Faithfulness Evaluation
+  1:04:35 Designing a Custom Eval Rubric
+  1:11:47 Running the Actionability Judge
+  1:19:14 Using Data Sets and Experiments
+  1:50:19 Final Tips and Best Practices
+  1:51:48 Differences Between Phoenix and Arize AX
+---
+Olá a todos. Meu nome é Laurie Voss. Sou o responsável pela experiência do desenvolvedor na Arize AI. Ah, em uma vida passada, eu cofundei a npm Inc. Então, alguns de vocês podem se lembrar de mim de quando eu falava incessantemente sobre JavaScript. Agora, falo
+
+incessantemente sobre IA. Bem, o que eu mais penso é em como testar sistemas de IA, como criar sistemas de IA que realmente funcionem. Bem , temos bastante tempo livre hoje. Bem , vamos abordar muitos assuntos. Vamos começar pelos fundamentos: o que são avaliações, por que você precisa delas e por que os agentes tornam a avaliação mais difícil do que uma simples chamada de LLM .
+
+E então vamos configurar o rastreamento, que é como você captura os dados brutos necessários para executar as avaliações . Vamos também executar um agente de IA simples com o SDK do agente Claude e analisar os rastros que ele produz. Depois de analisarmos os dados, vamos fazer algo que a maioria dos tutoriais omite. Bem, vamos analisar os dados. Vamos ler nossos registros, categorizar o que deu errado e descobrir o que medir antes de escrevermos qualquer avaliação.
+
+Então, vamos escrever três tipos de avaliações. Vamos escrever um código simples de avaliação, determinístico, barato e fácil de executar. Vamos usar algumas das funções de avaliação integradas do Arize. E então vamos usar avaliações LLM, onde um LLM avalia o conteúdo semântico da saída e determina se as coisas tiveram sucesso ou falharam de uma maneira mais flexível e não determinística. Vamos usar as funções de avaliação (evals) integradas e também vamos escrever uma função de avaliação personalizada do zero.
+
+Ah, e também testaremos se nossos juízes estão julgando corretamente, um processo chamado meta-avaliação. E depois vamos finalizar com conjuntos de dados e experimentos. É assim que você itera em seu agente. É assim que você aprimora as avaliações de uso, não apenas para saber se algo deu errado, mas também para melhorar seu agente. E , no final, vamos dar uma olhada rápida no que vem depois que você dominar tudo isso . Então,
+
+estruturas práticas que você pode usar depois de sair desta sala, a hierarquia de impacto, o ciclo virtuoso de dados, e uma breve apresentação de técnicas como avaliação aos pares e pontuação de confiabilidade. Hum, este é o slide que eu deixei aberto enquanto você esperava. Levantem a mão quem realmente pretende tentar programar junto. Uau, impressionante. Além disso, é impressionante a quantidade de pessoas nesta sala. Tipo,
+
+esta é a última sessão do dia, e são avaliações, pessoal. Quer dizer, você sabe que se trata de avaliações? Não é exatamente o assunto mais empolgante. Tenho muito orgulho de você estar aqui. Bem, este workshop é sobre avaliar um agente, então não será sobre construir um agente. Estou partindo do princípio de que
+
+você já criou um agente e está tendo problemas com ele saindo completamente do controle. Então, o caderno de aprendizagem que você vai receber já tem um agente configurado para você. Não vamos perder tempo discutindo como construir um agente e o que torna um agente bom ou ruim. Vamos avaliar esse agente que eu já escrevi. Hum, também usaremos o Claude tanto para alimentar o agente quanto para alimentar as avaliações.
+
+Bem, eu escolhi Claude porque parece que todo mundo mudou para Claude nos últimos dois meses. Tipo, espero que você já tenha uma conta na API do Claude, para não precisar se cadastrar para obter uma chave de API agora. Mas, se você fizer isso, agora é a hora. Bem, se quiser, você pode usar o OpenAI ou o Gemini com os nossos dados. É totalmente de código aberto. São, hum,
+
+padrões abertos. Também funcionará com esses . Bem, por uma questão de simplicidade, eu não incluí nenhum exemplo de como usar o OpenAR e o Gemini neste material. Você também precisará de uma conta gratuita no Phoenix Cloud. O Phoenix é de código aberto e funciona no seu laptop, mas o Phoenix Cloud não requer instalação, sendo a maneira mais fácil de começar a usar mais rapidamente.
+
+O Phoenix Cloud é para onde nossos dados de registro serão enviados. Então, você precisará de uma chave de API do Phoenix para obter permissão para enviar os dados para lá. Espero que você tenha os links para esses slides, porque vou avançá- los em um instante. Bem, na verdade, você só precisa daquele arquivo para o caderno, porque o caderno contém os links para todo o resto. Quem estiver completamente confuso neste momento e precisar de ajuda, porque eu reservei um tempo para isso. Fique à vontade para fazer
+
+perguntas e não se preocupe com isso. Reservei um tempo para perguntas do tipo: " Não sei o que é isso". Acidentalmente, cliquei no produto errado. Ah, por falar nisso, a Arize tem dois produtos. Uma se chama Arize AX e a outra se chama Arize Phoenix. Atualmente, estamos trabalhando com a Arize
+
+Phoenix. Se você acessar nossa página inicial, verá um botão grande escrito " Inscrever-se" que o inscreverá no AX, que é o produto empresarial, e você não deve fazer isso. Se você está completamente confuso sobre onde inserir sua chave de API e qual deve ser o nome do seu host, é porque você se inscreveu no produto errado. Portanto, certifique-se de se inscrever no Phoenix. Então, sem deixar isso de lado, ou pelo menos enquanto você ainda está instalando as coisas freneticamente, vamos abordar o básico. O que é uma
+
+avaliação? Quem aqui levanta a mão e acha que já sabe o que é uma avaliação? Tipo, sabe mesmo. Ok, ótimo. Você está na sala certa. Bem
+
+, uma das coisas que me incomoda em relação às avaliações como área de estudo é que usamos um monte de termos que vêm do mundo do aprendizado de máquina. Usamos uma série de jargões que vêm do mundo do aprendizado de máquina, que os engenheiros de IA não precisam conhecer nem entender, o que torna tudo desnecessariamente obscuro. Então, você pode pensar nos rastreamentos e nas avaliações como testes, porque é isso que eles são, e o que alimenta nossos testes são os dados de log, e esses dados de log são o que chamamos de rastreamentos. Então, assim como os logs registram o que seu servidor fez em tempo de execução, os rastreamentos registram o que sua IA fez. Cada chamada de agente, cada chamada de ferramenta, cada invocação do LLM, todas as entradas e saídas do seu aplicativo de IA são registradas como rastreamentos.
+
+E os elementos básicos dos traços são chamados de vãos. Cada intervalo representa uma etapa na execução. Portanto, uma chamada LLM é um intervalo (span), uma chamada de ferramenta é um intervalo (span), e uma operação completa do agente (full agent turn) é um intervalo (span) que contém outros intervalos (spans) dentro dele. É essa estrutura de dados aninhada que, você sabe, pode ser facilmente imaginada como JSON, porque muitas vezes é JSON. Cada intervalo (span) registra sua entrada, sua saída, mas também uma série de metadados, como tempo e contagem de tokens, informações necessárias para entender o que aconteceu.
+
+E esse é o seu modelo mental hoje. Você está escrevendo testes para um admirável mundo novo de aplicativos que são muito difíceis de testar. Portanto, não é nenhum bicho de sete cabeças. Por que precisamos deles? Bem, o motivo pelo qual precisamos de válvulas com IA é devido ao problema de vibrações. Muita gente cria um
+
+recurso de IA e o testa executando algumas consultas e pensando: "Isso parece certo?". Então você envia o produto e ele falha em entradas que você não testou. Ele falha em casos extremos. O projeto falha porque as pessoas são hostis e inserem coisas ruins que você não esperava. E
+
+geralmente falha quando as pessoas fazem perguntas menos inteligentes do que você esperava. Essa é a principal forma pela qual os agentes falham: as pessoas usam um vocabulário inesperado, que por sua vez, espera encontrar substantivos e verbos que essas pessoas desconhecem. Então, o teste unitário fixo usual não funciona aqui. E a razão pela qual isso é verdade é que as mesmas instruções produzirão textos diferentes em cada execução, mas essas saídas, essas saídas diferentes, podem estar todas corretas. Existe um enorme espaço de possíveis resultados corretos. Portanto,
+
+você não pode simplesmente usar uma correspondência básica de strings, como a maioria dos testes unitários faz, para garantir que seus testes estejam sendo executados com sucesso. Assim, muitas equipes recorrem à revisão humana. Eles monitoram, executam e enviam o produto. E isso não é escalável porque não detecta regressões e, mais importante, não funciona em integração contínua. Então, o que você não pode fazer sem avaliações é alterar o prompt do sistema para corrigir um problema de tom, porque o tom pode melhorar, mas de repente o bot pode começar a exibir informações incorretas sobre os recursos do produto, e sem avaliações você não vai perceber isso.
+
+Sem avaliações, você não vai detectar isso porque, até que um usuário relate o problema ao bot, você pode fazer algo chamado avaliação de fidelidade, que indicará se o seu bot está usando o material de origem corretamente ou não. E hoje vamos mostrar como construir um desses. E cada alteração nas instruções pode afetar todos os tipos de entrada que os usuários enviam. Outra forma pela qual os agentes de IA de avaliação são diferentes é que, se você alterar um único aspecto do seu comando, isso não altera apenas o que você estava tentando mudar, mas tudo o que o agente faz, porque ele absorve o comando como um bloco e fará coisas imprevisíveis mesmo com pequenas alterações na redação. Então, você não quer consertar uma coisa e quebrar outra, e as avaliações permitem testar se tudo está funcionando como deveria, incluindo tudo o que funcionava antes .
+
+Você também não pode trocar de modelo sem avaliações, e isso é muito importante porque os grandes laboratórios de modelagem lançam um novo modelo a cada dois meses, e os modelos são significativamente diferentes em como eles... sabe, eles não são apenas melhores, eles são diferentes. Portanto, uma sugestão que funciona para o Soneto 4.5
+
+não funciona para o Soneto 4.6. E se você não tiver avaliações, então esse é um processo muito caro e complicado, onde você precisa testar tudo o que já testou anteriormente novamente para ver se funciona. Por outro lado, se você tiver um conjunto de avaliações, basta executar uma regressão e saber se é seguro ou não atualizar. Hum, e isto não é teórico.
+
+Equipes reais que estão desenvolvendo agentes de IA reais que as pessoas usam o tempo todo, como Dscript, Bolt e o próprio Anthropic com Cloud Code, fazem isso da seguinte maneira. Bem, eles enviam todos os seus produtos seguindo o mesmo padrão. Eles começaram enviando os produtos rapidamente e testando as coisas intuitivamente, mas descobriram que isso não era escalável e passaram a fazer avaliações formais. Então, esse é o arco narrativo que vamos seguir hoje. Como mencionei, existem dois tipos de avaliações. Existem avaliações de código,
+
+que são funções determinísticas que você escreve. São apenas, sabe, Python ou TypeScript básicos. Elas são executadas em milissegundos e, como são apenas código, seu custo de execução é praticamente nulo. Bem, você pode fazer muita coisa com avaliações de código. Se a saída do seu agente deve ser JSON, você pode testar se ela está em formato JSON.
+
+Você pode testar se o número de tokens é inferior a 500 . Você pode perguntar, pode verificar se menciona o assunto sobre o qual você perguntou. Bem, a grande vantagem das avaliações de código é que elas são extremamente rápidas, extremamente baratas e totalmente reproduzíveis. Portanto, se você tiver algo simples que precise testar, não precisa executar uma avaliação LLM todas as vezes. É possível ir muito longe com coisas que se parecem basicamente com testes unitários do estilo antigo, embora haja muita sutileza em como combiná-las, e é isso que vamos abordar hoje.
+
+Bem, a desvantagem das avaliações de código é que, assim como os testes unitários, elas tendem a ser frágeis. Quando o resultado se torna complexo ou extremamente não determinístico, você perceberá que precisa recorrer a outro tipo de avaliação, que é a de um mestre em direito (LLM) como juiz. Com o LLM como juiz, você usa um segundo LLM para avaliar o resultado do primeiro LLM. Normalmente, utiliza-se um LLM mais robusto do que aquele que é implementado em produção. Você avalia seus trabalhos de acordo com uma rubrica. "
+
+Rubrica" ​​é mais um daqueles termos que os engenheiros de aprendizado de máquina incluíram sorrateiramente. Uma rubrica é simplesmente um conjunto de regras. Pode ser...
+
+É basicamente um prompt que define todas as coisas que você precisa testar. E como os LLMs são avaliados por um LLM, eles são muito mais flexíveis. Então, você pode perguntar: "Essa resposta foi factualmente correta?" Você pode perguntar: " Manteve-se fiel ao material original?" Você pode perguntar: "O tom é adequado para uma interação com o cliente ?" Não existe nenhum
+
+tipo de teste unitário que você possa escrever para verificar o tom, mas um LLM é muito bom nesse tipo de coisa. A força dos juízes com mestrado em Direito reside no fato de que eles compreendem o significado, e não apenas as sequências básicas de palavras. Mas, para um juiz, o mestrado em Direito (LLM) tem suas desvantagens. A maior desvantagem é que são caros, tanto em termos de tempo quanto de dinheiro propriamente dito. E eles próprios são não determinísticos , o que significa que o seu mestrado em Direito (LLM) como juiz pode estar errado. Você precisa
+
+solicitar ao seu mestre em Direito (LLM) que se torne juiz, e essa solicitação é tão complexa quanto a solicitação que você incluiu em sua própria inscrição. Portanto, você precisa dedicar algum tempo para garantir que seu LLM como juiz esteja alinhado, que seu LLM como juiz esteja de fato julgando o que você pretendia que ele julgasse e que o faça de uma maneira que você considere correta. Existe também um terceiro tipo de avaliação, que é a avaliação humana. A avaliação humana é o padrão ouro. É ótimo. Os seres humanos
+
+são os melhores em julgar se as coisas são boas ou ruins de acordo com outros seres humanos. O problema é que os humanos não são escaláveis. Você precisa disso para funcionar em CI (Integração Contínua). Você precisa que ele seja executado milhares de vezes por dia. Não tem jeito, mesmo que você trabalhe, sei lá, na Meta ou no Google, e possa contratar a população de um país pequeno para fazer suas avaliações, de forma que seja economicamente viável ter humanos fazendo essas avaliações para você.
+
+Então, o que fazemos com os humanos é construir o que chamamos, vocês ouvirão falar disso mais tarde, de um conjunto de dados de referência com boas respostas conhecidas, que vocês podem usar como base para suas avaliações. Uma curiosidade interessante sobre anotadores humanos é que, em cerca de 50% das vezes, mesmo que você use pessoas para avaliar o resultado da sua aplicação de IA, elas vão errar em 50% dos casos. Isso porque, se você contratar alguém para fazer apenas isso, essa pessoa vai se cansar, e o cansaço faz com que ela deixe passar detalhes em aproximadamente 50% das vezes. Mas, avaliações de código, avaliações humanas e o LLM como juiz, não são abordagens concorrentes, são abordagens complementares. Um verdadeiro conjunto de ferramentas de avaliação utilizará todas as três simultaneamente.
+
+Então, a questão é: quando usar cada um? Uh, use avaliações de código quando a resposta for determinística. Portanto, validação de formato, limites de comprimento, frases proibidas, campos obrigatórios, todo esse tipo de coisa, você pode verificar de forma muito precisa. Hum, hum, e depois recorra a juízes com mestrado em Direito quando precisar de compreensão semântica. Então, como eu disse, uma avaliação de correção pergunta: " A resposta foi precisa?" Uma
+
+avaliação de fidelidade pergunta: "A obra se manteve fiel ao material original e somente ao material original ao responder a essa pergunta?" E você precisa manter os humanos no processo, para lidar com falhas que você nunca viu antes. Você precisa garantir que suas avaliações sejam conduzidas de uma maneira que os humanos acreditem ser real e correta. Bem , porque juízes com mestrado em Direito podem estar errados. Bem, e tudo isso é verdade para qualquer aplicação que utilize um LLM para qualquer coisa, mas os agentes tornam tudo ainda mais difícil porque apresentam falhas em cascata.
+
+E num agente, você não está testando apenas uma coisa, mas uma série de coisas. Você tem um agente que pode seguir inúmeros caminhos, e um passo em falso logo no início de um desses caminhos pode levar o agente a direções radicalmente incorretas . Então, imagine que você está fazendo uma avaliação, tipo, se você tem uma avaliação que... Desculpe, se você tem um
+
+agente que está fazendo chamadas de ferramentas, você precisa testar se o agente escolheu a ferramenta certa, se enviou os parâmetros corretos para essa ferramenta, se entendeu corretamente a saída dessa ferramenta, e isso é só adicionando uma chamada de ferramenta, enquanto um agente pode executar várias chamadas de ferramenta em uma única sessão. E cada uma dessas chamadas de ferramenta depende da saída da chamada de ferramenta anterior. Então, a coisa complica muito, muito rapidamente, e é por isso que geralmente é preciso recorrer a um mestrado em Direito para resolver o problema. Uh Do do do. E depois há os sistemas multiagentes. Se
+
+você não complicou as coisas o suficiente, acaba criando níveis adicionais de complexidade, pois precisa testar se o meu LLM de roteamento escolheu o subagente correto antes que qualquer coisa acontecesse, e se o meu subagente entendeu corretamente o que lhe foi pedido , se passou as informações de volta corretamente e se parou quando deveria. Então, todas essas coisas se acumulam em cascata. Um exemplo seria você pedir ao seu agente para escrever um relatório sobre a Tesla. O primeiro agente que faz a pesquisa pensa algo como: "Ah, então você deve estar falando de Nikola Tesla." Ele te escreve. Ele te envia
+
+um monte de informações sobre, você sabe, o inventor do século XVIII. Então você elabora um estudo de caso de investimento baseado inteiramente em, você sabe, se Nikola Tesla era ou não um cara legal, e isso é encaminhado para o seu chefe, e ninguém percebe porque o agente estava fazendo tudo isso de forma autônoma. É esse tipo de falha em cascata que estamos tentando evitar. Mas os agentes também podem fazer o oposto. Eles conseguem acertar de um jeito que você não esperava. Portanto, um dos
+
+riscos de escrever avaliações é escrever avaliações que sejam excessivamente prescritivas. Você não quer escrever uma avaliação que diga: "Espero que ela chame a ferramenta A, depois a ferramenta B, tome a decisão C e então obtenha a resposta, porque o agente pode encontrar uma maneira de ser mais inteligente do que isso." Isso acontece muito na produção. O agente encontrará uma brecha ou uma maneira mais rápida de fazer o que você estava fazendo ou o que ele está fazendo, especialmente se você acabou de atualizar seu modelo; ele ficará melhor em fazer as coisas que fazia antes. Isso fará tudo em menos etapas. Portanto, suas
+
+avaliações falharão se forem muito prescritivas. Hum,
+
+sim, e esse é um problema difícil. Bem, existe outra maneira de categorizar as avaliações em dois grupos, que são avaliações de capacidade versus avaliações de regressão. Então, uma avaliação de capacidade é dar ao seu agente um desafio a ser superado. Você deu a ele algo que você sabe que ele faz mal e algo em que ele provavelmente vai falhar. E você está criando um ciclo onde ele pode se tornar progressivamente melhor em passar nessa avaliação de capacidade. Quando uma avaliação de capacidade atinge 100%
+
+, ela se torna uma avaliação de regressão. Você incorpora isso ao seu conjunto de testes e garante que ele sempre possa fazer o que costumava fazer, além de realizar uma nova avaliação de capacidade onde ele supera um novo desafio e adiciona uma nova funcionalidade. Portanto, durante o ciclo de vida do seu conjunto de avaliações, você estará constantemente transformando avaliações de capacidade em avaliações de regressão. Hum, este é o aspecto de um resultado de avaliação. É muito simples. Você pode imaginar um
+
+objeto JSON com essas informações dentro, porque é exatamente isso que ele é. Você recebe uma pontuação, um rótulo que é legível para humanos, e o LLM avalia um terceiro fator. Eles acrescentam uma explicação. As avaliações de código não produzem explicações porque são apenas código. Você não incluiu uma explicação nisso. Mas as
+
+avaliações de mestrado em Direito (LLM) são extremamente úteis, pois não apenas dizem por que algo estava errado, mas também explicam por que acham que estava errado. Como veremos, isso é extremamente útil ao construir seu conjunto de testes de avaliação. Porque pode dizer o que estava errado, o que estava faltando e o que o agente deveria ter feito de diferente. Isso lhe dará dicas de como melhorar seu enunciado. O que é extremamente útil.
+
+Eis como seria uma explicação baseada em uma avaliação real. Então, neste caso, o usuário estava pedindo recomendações de viagens econômicas para Tóquio, e o juiz do LLM disse: "Ok, eles deram recomendações de viagem, mas não especificaram o custo de tudo. Então, se eu perguntar se estou procurando por viagens econômicas, isso é uma falha." Essa é uma distinção realmente sutil, não é? Porque se você estivesse perguntando, sabe, "Isso me deu recomendações de viagem para Tóquio?" Sim, funcionou,
+
+mas não fez tudo o que eu pedi. Não seguiu a sutileza do pedido original. E essa explicação é o que torna as avaliações acionáveis. Você sabe o que corrigir no prompt porque tem uma explicação que indica o que deu errado. E, mais útil ainda, quando você executa avaliações em milhares de rastreamentos ou milhares de intervalos, você encontrará padrões. Você vai perceber que seu
+
+agente falha no mesmo tipo de problema, da mesma maneira, muitas e muitas vezes, e isso lhe dá uma pista sobre o que é uma falha isolada, sabe, apenas o agente sendo estranho e não determinístico, versus uma falha sistêmica, que provavelmente é um problema com seu prompt. É claro que, se você executou uma avaliação em mil registros e obteve mil explicações, então você, como ser humano, precisa ler mil explicações , o que cria um novo problema: ler mil explicações e categorizá- las é um saco. Então, você envolve um terceiro analista de linguagem (LLM) para ler as explicações e transformá-las em categorias, até que sejam apenas analistas de linguagem até o fim. Então, este é o circuito completo que vamos construir. A instrumentação é o ponto de partida. É aí que você começa a
+
+coletar os dados. Você obtém os rastros, os avalia, anota suas avaliações, analisa os resultados e, em seguida, altera seu prompt, modifica seu aplicativo, aprimora seu aplicativo e recomeça. Então, vamos começar com as avaliações propriamente ditas. Um Quem quer ser apresentado à Phoenix ainda não foi apresentado à Phoenix? OK.
+
+O que você precisa? Onde você está preso? Ou não? Ok, desculpe. Ótimo. Excelente.
+
+Pelo que eu sei, todo mundo está cadastrado na Phoenix, ou não tem coragem de admitir que não está. Então, o que é Phoenix? Agora que já estou falando sobre isso há uns 20 minutos. Phoenix é a plataforma de observabilidade de IA de código aberto da Arize . O que ele faz é capturar seus dados de rastreamento, ele captura os registros que estamos gerando. Assim,
+
+cada chamada do LLM, cada chamada de ferramenta, cada etapa do agente com as entradas e saídas em cada ponto, além de capturar e armazenar suas avaliações e fornecer uma interface de usuário para examinar tudo isso. E também oferece uma maneira de executar experimentos com esses dados para que você possa testar como as coisas estão melhorando e aprimorar seu aplicativo . Como eu disse antes, você pode executá-lo localmente no seu laptop se quiser, mas hoje estamos usando o Phoenix Cloud porque isso não envolve a instalação de nenhum software. Então, vamos dar uma olhada no nosso caderno. A primeira coisa a fazer é instalar com o pip.
+
+Estamos instalando o SDK do Cloud Agent. Como eu disse, estamos instalando o SDK do agente em nuvem do Open Inference Instrumentation . Essa é a mágica. Cada SDK, cada framework existente, possui um pacote de integração desenvolvido por nós que instrumenta e inicia automaticamente a coleta de logs desse framework. É por isso que o Arise Phoenix é tão útil: você não precisa vasculhar as entranhas do seu framework, nem se aprofundar no OpenAI, Claude ou Gemini para conseguir que eles enviem os logs para você. As
+
+pessoas que desenvolveram esse software já optaram por esse padrão de código aberto chamado Open Inference e já implementaram todas essas linhas de log. Então, tudo o que você precisa fazer é instruí-lo a começar a enviar esses registros para um local específico. E é isso que vamos fazer daqui a pouco. Então, vamos passar para a primeira chamada. Hum, nós temos essas chaves de API. Minhas
+
+chaves de API foram obtidas por meio de segredos do Colab, mas você pode simplesmente colá-las aqui, já que ninguém vai ver sua tela, certo? Só existe você nesta sala. E essas duas linhas de código são a mágica. Você importa phoenix.otel uh e chama o registro.
+
+Você dá um nome ao projeto. É assim que você sabe com que nome vai aparecer dentro do Phoenix. E você diz para ele definir `auto instrument` como verdadeiro, e esse é o comando mágico que diz para ele investigar os detalhes internos, onde você já sabe como fazer as coisas, e ativar todo o registro de dados. Bem, está reclamando nessa mensagem de erro porque está usando um processador span, o que é bom para demonstrações, mas não para produção. Em produção, você terá milhares de spans de uma só vez, então você vai querer usar um processador em lote , mas não é esse o caso, então não importa nesta situação específica.
+
+Um para fazer. Oh sim. Também incluímos o Anthropic nas importações porque estamos usando o Anthropic para executar o LLM como um juiz, e é por isso que precisamos importá-lo separadamente para o SDK do agente. O SDK do agente Claude, caso você não o tenha usado, é uma estrutura muito, muito simples para a criação de agentes. Foi por isso que escolhi esse, porque é simples e não tem muita cerimônia.
+
+Os agentes podem usar ferramentas, podem pesquisar na internet, podem manter uma conversa entre turnos, que é tudo o que preciso que meu agente seja capaz de fazer para os fins deste exemplo. A OpenAI possui seu próprio SDK de agentes e, claro, existem frameworks completos para agentes, como Crew AI, LangChain, Master, Llama Index, e muitos outros que permitem criar agentes muito mais elaborados. Além disso, temos pacotes de instrumentação para todos eles. Portanto, independentemente do que você tenha usado para construir seu agente, você pode usar as mesmas duas linhas de código e simplesmente ativá-lo. Então, você pode prosseguir e executar essa chamada.
+
+Claro.
+
+Vá para os espaços.
+
+Basta lançar o produto no mercado espacial, e é isso que você quer. Ótimo. Claro. O endpoint do coletor Phoenix é o que eu chamei de nome do host. É app.phoenix/s/seunomedeusuário.
+
+Tudo bem. Alguém mais precisa de ajuda com esse tipo de coisa? Legal. Está quente aqui dentro. Um Choo choo choo.
+
+Então, vamos analisar o agente em si. Hoje, estamos construindo um agente de análise financeira. Hum, um agente muito, muito simples mesmo. Possui apenas dois subagentes. Hum, tem um agente que faz pesquisas. Se
+
+você fornecer um código de ação ou um conjunto de códigos de ações, o programa pesquisará na internet informações sobre essas empresas. E então, essa informação é passada para a segunda parte do agente, que redige um relatório financeiro conciso sobre essa pesquisa. Obviamente, um verdadeiro agente de pesquisa financeira , que é algo que as pessoas constroem em produção o tempo todo, terá bancos de dados muito mais elaborados para consultar. Vai ter muita coisa. Não vai ser só para fazer buscas na web.
+
+E também será capaz de gerar relatórios muito mais complexos. Mas é fundamentalmente isso que vamos pedir que ele faça. E aqui está como as duas voltas se conectam. Você pode ver que o Cloud Agent SDK mantém o contexto da conversa. Então, na primeira rodada, estamos fazendo pesquisa. Na segunda atividade, é preciso
+
+escrever um relatório. E como ambos estão usando o cliente Cloud SDK nesta linha, o contexto do primeiro é compartilhado com o segundo. E isso é tudo o que você realmente precisa saber sobre o que esse agente está fazendo. Não vou entrar em detalhes sobre o texto padrão ali. Isso é apenas o processamento da saída.
+
+Então, em seguida, você configura suas chaves de API. Como eu disse, você já fez tudo isso. Você já concluiu a etapa de registro. E, bem, quero enfatizar novamente: se houver alguém na sala usando o Phoenix AX, essa pessoa está no lugar errado. Você deveria estar usando o Arise Phoenix, em vez do Arise AX . Mas acho que
+
+agora todos já entenderam isso. Eu o redireciona de um para o outro. Oh sério? É assim que se faz . Oh.
+
+Sim. Bem , nós já mostramos a função de registro . A função de registro configura o OpenTelemetry. O OpenTelemetry, também chamado de Hotel, é usado por todos os principais provedores de observabilidade. Portanto, qualquer pessoa que trabalhe com registro de logs, logs do Kubernetes e tudo mais, utiliza o Hotel. Existe uma camada acima do Hotel
+
+chamada Open Inference, que adiciona muitas extensões ao Hotel específicas para o LLM. Então, coisas como texto de prompt, texto de conclusão, contagem de tokens, qual modelo foi chamado, quais ferramentas foram invocadas, todo esse tipo de coisa é gerenciado pela extensão Open Inference do Hotel, que todo mundo usa para compilar. E agora estamos construindo nosso agente. Como eu disse, esses dois passos...
+
+Esta parte é apenas para configurar nossos agentes. Uh, nós criamos. Estamos usando Claude Haiku. O motivo de estarmos usando Claude Haiku é porque ele é comprovadamente estúpido. Não é um agente muito bom, então vai cometer alguns erros, o que me dará algo para testar.
+
+E eu permiti uma ferramenta, que é a busca na web, e também configurei o modo de permissão para aceitar edições, porque senão ele ficava tentando me pedir permissão para editar arquivos, o que acabou sendo um erro que vamos abordar mais tarde. Então, é barato, rápido e ótimo para demonstrações como esta. E essas são as nossas duas etapas: pesquisar e escrever o relatório. E nós encapsulamos tudo isso em uma função assíncrona chamada relatório financeiro, que é tudo o que precisamos para criar um agente. Nós também fazemos isso aqui, que é envolver tudo em um span do OpenTelemetry.
+
+O motivo pelo qual fazemos isso é porque, por padrão, a primeira etapa e a segunda etapa, a etapa de pesquisa e a etapa de redação do relatório, aparecerão no Phoenix como rastreamentos separados, pois são turnos de agentes separados. Portanto, estamos aqui dizendo ao agente que ambos devem ser considerados um único agente realizando uma única tarefa. Então, estamos apenas pré-formatando nossos dados para facilitar o manuseio pelo agente. Bem , feito isso, podemos executar nossos agentes. Bem, se você executar o agente agora, levará um ou dois minutos.
+
+Você pode definir seu próprio código de ações e sua própria área de foco, se quiser. Eu dei para a Tesla. E foi isso que apareceu para mim. Exiba um texto padrão sobre o que estava fazendo. Era uma pesquisa. Era
+
+escrita. E então me deu um resumo executivo sobre a Tesla. Então, estamos pedindo especificamente para analisar o desempenho financeiro e as perspectivas de crescimento da Tesla. E você pode ver que o LLM realiza várias rodadas de raciocínio no início. O processo envolve várias etapas de pesquisa antes de chegar à fase de escrita. Bem,
+
+o que está acontecendo nos bastidores é que o sistema está realizando uma série de buscas na internet. É uma pesquisa na internet. Trata-se de descobrir se, eh, aquelas, eh, consultas de pesquisa forneceram informações úteis. Faz mais pesquisas na web. O texto aprofunda-se ainda mais no assunto. Bem
+
+, está fazendo o que um agente faz. Isso significa ser útil de forma não determinística. Ah, e isso é importante porque não poderíamos ter criado um teste que dissesse que ele faz uma única pesquisa na web e obtém todas as respostas. Não poderíamos ter feito um teste que afirmasse que o programa realizava cinco buscas na web e obtinha uma resposta, porque simplesmente não sabemos o que ele faria. Então, quando a pesquisa termina, enviamos os temas de redação e o sistema compila tudo em um relatório. Ah, e tudo
+
+isso é não determinístico, e isso é legal. Bem, é por isso que precisamos de avaliações, como eu disse, porque não podemos prever a saída apenas com base na entrada, e cada uma dessas decisões será registrada como um traço que podemos testar. Então, foi isso que aconteceu . Destaques do 4º trimestre de 2025, perspectivas financeiras para 2026, principais fatores de crescimento, avaliação de riscos, fantástico. Hum, para mim parece bastante legítimo.
+
+Mas "bastante legítimo" não é suficiente para enviar algo para produção. O objetivo das avaliações é justamente esse: o clima é bom, mas queremos ir além desse clima. Então, vamos ver o que o Phoenix capturou quando executei aquele agente.
+
+Esta é a aparência da interface do usuário do Phoenix. Cada uma dessas linhas é um intervalo (span). Então, no nível mais alto, você está vendo a entrada e a saída de todo o intervalo do agente. Era aquela coisa que tínhamos enrolado. Você está vendo que a mensagem era para pesquisar sobre a Tesla, com foco no desempenho financeiro e nas perspectivas de crescimento, e está obtendo o mesmo resultado que mostramos na colaboração.
+
+Mas lá dentro, você consegue ver tudo o que foi usado para fazer aquilo. Como você pode ver neste caso, foram feitas quatro pesquisas diferentes na web. Questionou o desempenho financeiro. A pergunta era sobre as perspectivas de crescimento para 2026. Questionou os resultados trimestrais, incluindo receitas e margens de lucro. E questionou a
+
+produção da Cybertruck e a demanda do Roadster em 2026, o que eu considero particularmente preocupante para a Tesla em 2026. E você pode ver os dois passos. Uma etapa é a de pesquisa, e você pode fazer a outra, a etapa seguinte, em que o sistema gera o resultado. Então, todas as etapas, cada detalhe de tudo o que seu agente fez, é registrado na interface do usuário do Phoenix. E essa é a chave para a observabilidade.
+
+Podemos observar. Podemos ver o que diabos está acontecendo . Era isso que queríamos poder fazer. Os rastreamentos revelam todas as decisões tomadas pelo agente , e você pode clicar em qualquer trecho e ver exatamente o que o modelo recebeu como saída. Como eu disse, e tudo mais. Hum, vamos
+
+voltar aos slides. O que vive em um intervalo de tempo? Temos um monte de coisas. Se você clicar diretamente em um elemento span, poderá obter os detalhes exatos desse elemento, como anotações e atributos. Como eu disse, há muito JSON por baixo dos panos.
+
+Este é um vão real. Você pode ver que há custos envolvidos. Ali está o modelo que estava sendo usado. Há a contagem de tokens, quantas coisas foram processadas, e depois as mensagens de saída em blocos gigantes, e um monte de outras coisas. Então, o que o Phoenix está fazendo aqui é tornar esse conteúdo muito mais legível do que seria por padrão.
+
+Mas apenas um intervalo, apenas uma execução de agente não é suficiente. Queremos poder ter vários vãos. Queremos ter uma grande quantidade de dados para saber o que está acontecendo. Então, no notebook, existem 12 consultas de teste que você pode executar. É basicamente isso: pega um monte de indicadores e um monte de áreas de foco, e os executa em um loop, rodando o agente 12 vezes.
+
+Eu já executei esses processos antecipadamente porque leva bastante tempo, mas você pode iniciá-los agora, e enquanto eu falo, eles serão executados em segundo plano para você. Deve levar cerca de 5 minutos, mas o tempo gasto com essas coisas é complicado. É por isso que também escolhi o haicai, porque é rápido, porque não exige muito raciocínio. E enquanto fazemos isso, podemos voltar aos nossos slides e abordar um pouco da teoria. Então, temos análises de ações individuais, diferentes áreas de foco, desempenho financeiro, crescimento da receita, cenário competitivo, estratégia de IA e uma análise comparativa, onde analisei duas ações simultaneamente.
+
+Perguntei sobre a Apple e a Microsoft, e pedi para comparar as duas. Bem , isso nos dá a variedade que precisamos. Isso é importante para testar uma variedade de possíveis casos de uso para esse agente e como ele se comportaria nesses casos. Bem, em dados reais, você não teria apenas 12 deles, mas sim várias centenas , com base em todas as coisas que você espera que as pessoas façam usando esse agente. Ah, e é muito importante abordar os casos extremos. A
+
+análise comparativa entre Apple e Microsoft, por exemplo, é muito mais difícil do que uma simples consulta de um código de ação, porque exige duas pesquisas diferentes sobre duas empresas distintas, sem confundi-las, e ainda é preciso redigir um relatório sobre ambas simultaneamente . Bem, a consulta sobre a Rivian, por exemplo, pergunta sobre uma empresa que ainda não é pública, então há muito menos fontes de dados óbvias de onde ela pode obter esse tipo de informação. Bem, a análise da Coca-Cola , a KO, é um tipo de análise muito diferente da análise de ações de crescimento. Portanto, se testarmos apenas na Apple e na Nvidia, podemos ter uma falsa sensação de segurança sobre a capacidade do nosso agente em realizar análises financeiras, já que essas são grandes empresas de tecnologia com muita informação disponível online. Bem, enquanto as pessoas que usam isso para fazer análises reais de cotações de ações vão perguntar sobre empresas muito mais obscuras e questões muito mais complexas.
+
+Então, conforme você for executando o programa, verá que os rastreamentos começarão a se acumular. Meus traçados parecem muito mais complicados do que os seus neste momento. Não se preocupe com isso. Vamos adicionando todas as complicações conforme formos avançando. As suas fileiras vão ser bem curtinhas por enquanto .
+
+Ah, ah, agora você pode ver todos os 13, porque eu executei 12 mais aquele original. Bem, a consulta inicial da Tesla está lá, e antes de escrevermos qualquer avaliação, precisamos analisar os dados. Foi isso que eu disse no início que íamos fazer. Hum, muita gente simplesmente ignora os dados, mas fica olhando para eles e se perguntando: " O que isso realmente significa?" Bem, ao escrever um conjunto de testes de avaliação real, você deveria estar lendo os rastreamentos regularmente . Isso não é algo que
+
+fazemos apenas em laboratório, não é algo que se faça apenas na teoria. Você precisa analisar os registros quando estiver montando suas avaliações iniciais, porque é assim que você descobre o que o agente está realmente produzindo e o que você deve testar, já que o comportamento é muito não determinístico. Qual foi a entrada? Qual foi o resultado? O que exatamente está quebrado? A
+
+Anthropic, por exemplo, investiu muito tempo e dinheiro em ferramentas que tornam muito, muito fácil para eles lerem as avaliações de seus agentes. Ah, isso mesmo, e as saídas dos agentes deles. É isso que estamos fazendo aqui por você. Estamos fornecendo essas ferramentas para você. Então, primeiro você precisa dos requisitos. Antes de
+
+poder categorizar os fracassos, você precisa saber como é o sucesso . Uma forma comum de falha nas avaliações é fazer perguntas muito amplas ou que exigem um contexto que o agente não possui. Então, não dá para dizer que não funciona. Você não pode ter algo se não tiver definido o que significa "funciona". Então, para o nosso analista financeiro, como seria um bom relatório?
+
+Não se pode simplesmente dizer que o relatório deve ser minucioso. Não se pode simplesmente dizer que o relatório deve ser aprofundado. O que isso significa? Então, neste caso, queremos que nosso agente relate recomendações práticas. Queremos que ele nos diga se devemos comprar as ações ou não. Essa é uma função muito específica
+
+que precisamos que ela seja capaz de fazer. Portanto, deve ser capaz de distinguir entre análises prospectivas e resumos históricos, pois esses são os nossos critérios de sucesso. E como eu disse antes, isso não é nenhum bicho de sete cabeças. Isso parece óbvio. Mas você precisa definir essas coisas antecipadamente e escrever os requisitos, porque senão terá avaliações vagas que são basicamente como jogar uma moeda para o ar. Você fica tipo, "Será que deu
+
+certo ou não?" O agente não sabe porque não tem contexto suficiente, não tem regras suficientes para decidir se as coisas são boas ou ruins. E isto não é um exercício puramente técnico . É aqui que você deve envolver as partes interessadas. É aqui que você deve envolver especialistas na área . É aqui que você deve envolver
+
+seus gerentes de produto. É aqui que você deve envolver seus usuários reais . Porque são eles que sabem o que é bom. O engenheiro que está escrevendo o seu agente não será necessariamente o melhor juiz do que seria um bom resultado . Eles podem dizer: "Ah, bem, isso me parece legítimo." Enquanto um
+
+usuário real diria: "Isso é completamente inútil." Então, é muito multifuncional. E se você não consegue definir o que significa "ótimo", você não vai conseguir escrever uma avaliação que verifique o que é ser ótimo. Então, uma breve observação sobre onde obter dados de teste. Temos neste workshop registros de produção porque já executamos os agentes. E
+
+se você estiver construindo algo totalmente novo? E se você estiver em fase de desenvolvimento e não tiver usuários reais para gerar dados de rastreamento reais para você? A resposta é: dados sintéticos. Envolva mais um LLM, peça a ele para gerar uma série de consultas falsas que abranjam deliberadamente todo o espectro de casos de uso que o LLM possa imaginar, a fim de gerar rastreamentos reais que testem o que seu agente faria se você lhe fornecesse esses dados. Os exemplos que eu gosto são: se você der um agente de análise financeira para um grupo de usuários reais, um deles vai perguntar, sabe, "Pesquise o desempenho financeiro da Tesla". A
+
+pergunta que surge é: "O que está acontecendo com as ações da Tesla?" que é a mesma pergunta formulada de maneira completamente diferente. Alguém vai perguntar: "E aí, será que vale a pena comprar ações da Tesla agora?" É a mesma pergunta, sabe, formulada para a Geração Z. Mas todos têm a mesma intenção, embora se comportem de maneira muito diferente. Portanto, os resultados
+
+podem ou não ser diferentes, e você só saberá depois de realizar suas avaliações. Hum, também precisaremos incluir casos extremos. Então, tickers inexistentes, perguntas com várias partes, tentativas de jailbreak, coisas maliciosas. Talvez representem apenas 1% do seu tráfego, mas são justamente esse 1% que tende a acabar no Twitter quando seu agente perde completamente o controle. Então, seus dados de teste devem ser semelhantes aos dados de produção. O melhor lugar para
+
+obter dados de avaliação e dados de teste é a partir da produção. Coloque o agente em produção e consiga algumas coisas. Se isso for muito arriscado, então dados sintéticos são a sua melhor opção seguinte. Agora, vamos examinar esses vestígios. Se você estiver executando o programa em segundo plano, provavelmente já deverá ter terminado de gerar esses rastreamentos.
+
+Então, vamos ver o que a Apple fez. Bem, eu queria poder, sabe, ir direto a coisas específicas que deram errado de maneiras específicas, e é por isso que todos os meus dados são pré-gerados, porque são todos não determinísticos. Então, eu não podia prever que daria errado. Então, o da Apple fez uma coisa muito engraçada: realizou uma série de pesquisas e depois tentou gravar o resultado em um arquivo porque achou que era código Claude, e pensou: "Ah, você queria um relatório, então vou gerar um arquivo Markdown no disco para você." E então, ele tentou chamar a ferramenta de escrita e falhou completamente porque estava sendo executado em um notebook, que não tem permissões de escrita.
+
+E isso foi uma falha grave do agente que eu não previ quando estava preparando essa demonstração. Eu não esperava que tentasse gravar no disco. Eu não dei, não pedi para fazer isso. Hum, eu fui muito vago sobre os requisitos para escrever um relatório. Escreva o relatório na saída, não no disco.
+
+Então, o que realmente aconteceu com a nossa relação com a Apple? O que estava escrito? Apresentou um relatório financeiro conciso , mas não disse se eu deveria comprar ou não. Dizia apenas: "Domina em termos de rentabilidade e valor de mercado a curto prazo." O que é bom, mas não era o que eu queria, certo? Eu queria algo que me
+
+dissesse se deveria ou não comprar essa ação. O relatório da Nvidia também foi muito completo, mas não permitiu tomar medidas concretas. Não me disse se eu deveria ou não comprá-lo. Quais deles foram interessantes? Vamos dar uma olhada na da Nvidia, porque ela é legal.
+
+Onde eu coloquei a Nvidia? Aqui está. Então, foram feitas quatro buscas na web, incluindo o cenário competitivo, concorrentes específicos e coisas do tipo. Hum, e na verdade, a saída foi exibida corretamente. Ele escreveu a saída para o próprio agente.
+
+Mas é por isso que você precisa ler os seus rastreamentos, porque se eu não os tivesse lido e tivesse julgado apenas pela saída, a saída do programa da Apple, onde ele tentou gravar no disco, é um lixo completo. Mas não é porque o relatório não foi escrito corretamente. Possuía todos os dados necessários. Realizou todas as buscas na web corretamente. Elaborou um bom relatório. O processo simplesmente gravou os dados no disco e
+
+depois falhou. Então, você precisa de algo que possa... Você precisa ler seus rastros porque precisa saber quando esses resultados inesperados estão acontecendo.
+
+E se você clicar em todos esses rastreamentos, verá que... Sim, você pode ver que a falha de gravação ocorre várias vezes. Então, existe um padrão aí. A
+
+olho nu, podemos ver que ele tenta gravar no disco várias vezes. Trata-se de uma falha sistêmica em nosso agente que teremos que abordar. Então, o último é um exemplo de algo que está comprovadamente errado. Este é o último em que vou clicar. O relatório da Rivian inclui todo tipo de informação sobre a Rivian.
+
+Tipo, sabe, a empresa disse que entregou entre 62.000 e 67.000 veículos em 2026. Isso foi inventado ou não? Não tenho como saber, pois não possuo informações sobre a Rivian e as informações da Rivian não são particularmente públicas.
+
+Esse número parece suspeitosamente preciso para uma empresa que não divulga seus resultados financeiros. Então, novamente, lendo os rastros, vou analisar isso e pensar: "Certo". Essa é uma situação em que eu deveria verificar cuidadosamente se a informação é alucinante ou não, se os dados da pesquisa foram realmente obtidos de uma fonte confiável. E quando você encontra uma falha, precisa perguntar por que ela falhou. Então, a resposta estava errada em relação ao sintoma. Os
+
+resultados da pesquisa foram ruins? Tentou gravar em disco quando não deveria? Tinha os dados corretos, mas chegou à conclusão errada? Isso influenciou o preço das ações? Bem, cada causa raiz aponta para uma solução diferente.
+
+Então, o que você precisa fazer com esses dados é categorizá-los. Analisar os rastros individuais é muito, muito importante. E então você produz em massa um padrão de onde as coisas estão dando errado. Não se trata apenas de errar de vez em quando, mas de errar sistematicamente. E como eu disse, você pode usar um LLM para isso. Você pode usar um LLM para percorrer
+
+todos os seus rastreamentos. Existem APIs para fazer isso no Phoenix. Analise todos os seus resultados, anote seus rastreamentos e diga: isso foi ruim por este motivo, isso foi ruim por aquele motivo. E em um conjunto de dados reais, você logo encontrará padrões surgindo. No caderno, imprimi um gráfico bem simples das coisas que deram errado.
+
+Analisei minhas categorias de rastreamento. Eu disse, sabe, coisas que eram boas e ruins. Eu imprimi e depois consegui gerar uma tabela. Então, a frequência da causa raiz, que na maioria das vezes parece boa, pode ser alucinação, falhas de raciocínio, dados não verificáveis ​​e recomendações ausentes.
+
+É fácil olhar para este gráfico e dizer: "Ok, então a possibilidade de alucinação é o fator mais importante, porque é o que aparece com mais frequência", mas, na realidade, é preciso ser mais sutil do que isso. Bem, se desse completamente errado e começasse, sabe, a despejar o texto de Moby Dick para o usuário, isso seria um fracasso total, um fracasso muito grave, e isso é mais importante do que uma possível alucinação. Portanto, você precisa multiplicar a gravidade pela frequência para determinar a prioridade ao decidir qual sistema analisar com mais frequência. E primeiro, corrija as falhas frequentes e caras . Então, as coisas caras são onde tudo saiu completamente do controle, e com alucinações leves, provavelmente você consegue se safar.
+
+Eu queria apresentar o modelo do queijo suíço. Esse diagrama foi descaradamente roubado da postagem do blog da Anthropic. É um conceito emprestado da engenharia de segurança. Você precisa imaginar cada camada de defesa como uma fatia de queijo suíço. Não existe um conjunto de avaliações que seja perfeito. Bem,
+
+todas elas terão várias imperfeições e vários buracos, mas se você as sobrepuser, os buracos não ficarão alinhados. Então, eventualmente, você eliminará todas as formas possíveis pelas quais seu agente pode falhar. Empilhar suas camadas de avaliação também funciona dessa maneira. Então, o seu método `eval` primeiro captura um monte de coisas bem básicas. Seu mestrado em Direito, enquanto juiz, identifica falhas de raciocínio, mas ignora alucinações sutis. Sua revisão humana
+
+captura elementos que passaram pelas duas primeiras camadas. Ah, mas não consegue ser dimensionado para todos os traços. Portanto, nenhum método de avaliação isolado conseguirá capturar todas as formas pelas quais ele pode falhar, mas se você os usar todos ao mesmo tempo, você fará um trabalho bastante eficaz na avaliação do seu agente. Então, vamos falar sobre as avaliações propriamente ditas. Vamos escrever algumas avaliações reais, começando pelo tipo mais simples, que é a avaliação de código.
+
+Nosso agente deve analisar os códigos das ações. Portanto, o mais óbvio a fazer é testar se o código da ação foi mencionado na saída. Será que estava falando da empresa que eu esperava que estivesse falando? Hum, esse é um teste completamente determinístico. Não preciso de um mestrado em Direito para fazer isso. Posso simplesmente
+
+pesquisar por essa sequência de caracteres. Então, foi isso que eu fiz no caderno. E eu vou explicar muito rapidamente como isso funciona. Então, primeiro, nós obtivemos nossos dados do agente financeiro em nuvem da AIA. Bem, este trecho aqui é a gente obtendo os spans pai. Bem,
+
+cada linha de log é um intervalo. Ah, aquelas que são raízes naquele gráfico que eu te mostrei, são aquelas que não têm pais. Então é assim que você detecta seus spans raiz. Os importantes são aqueles que não têm pais. Então, é isso que está sendo verificado . aqueles que não têm nenhum
+
+conjunto pai. E encontramos 13 extensões de nível superior , o que está correto. Bem, é assim que se parece uma avaliação de código. Uh, nós usamos o decorador create evaluator. Nós damos um nome a isso. É assim que será
+
+enviado para Phoenix. Este é o nome da avaliação. E nós damos a ele um tipo, que é um código, que serve para dizer ao Phoenix que esta é uma avaliação determinística simples e que não precisa ser executada como um LLM. E depois disso é apenas uma função Python comum . Você também pode escrevê-los em TypeScript, se preferir.
+
+Hum, esta é uma expressão regular muito básica. Procurei por frases em letras maiúsculas e depois excluí algumas frases que não eram códigos de ações. Em seguida, basicamente, procurei pelo código da ação no texto resultante. E essa é uma primeira linha de defesa muito simples, muito fácil e extremamente eficaz . A mensagem mencionava alguma coisa relacionada à empresa sobre a qual eu estava perguntando?
+
+Então, podemos obter os resultados aqui. Uh, podemos executar a negociação. É assim que você executa essa avaliação. Você avalia os dados. Você executa a avaliação do dataframe.
+
+Você passa o avaliador para ele, que é a função de menção de adesivo que acabamos de passar. E você fornece a ele o dataframe dos spans pais, que são aqueles que acabamos de criar. Uma coisa que você deve notar aqui é que estamos trabalhando com rastreamento suprimido. Estamos usando o Anthropic para fazer as avaliações. Então, por padrão, o Phoenix vai detectar que o Anthropic está em execução.
+
+Então, se você não suprimir o rastreamento, você obterá os rastreamentos do Anthropic executando as avaliações em si, o que é muito confuso. Então, você só avisa quando estiver executando o eval, sem capturar os rastreamentos. É por isso que está ali. Bem, podemos ver que foi aprovado 11 vezes em 13. Então, o relatório da Tesla e o relatório da Amazon, nenhum deles mencionou o código da ação da empresa que estávamos esperando.
+
+Então, mesmo esta avaliação de código determinística muito, muito básica encontrou um problema com meu agente. Hum, uh, do do do do. Então, por que isso aconteceu? Hum, temos que analisar esses...
+
+temos que analisar os intervalos para descobrir. Se você analisar os intervalos de tempo para descobrir, verá que a Tesla foi uma das empresas que apresentou falha porque estava gravando dados no disco. A Amazon era mais interessante. O relatório inteiro era sobre a AWS e não mencionou a Amazon em nenhum momento. O sistema simplesmente assumiu que eu me referia à AWS, a parte da Amazon, e não à Amazon como um todo.
+
+Então, esse é um aprendizado que não teríamos obtido se estivéssemos apenas testando entrada e saída, certo? É para isso que servem as explicações. Mas o que isso prova é que as avaliações de código não são apenas exemplos simples. Então, análise sintática de JSON, limites de comprimento, frases proibidas, como em um modelo de linguagem de IA, eu não posso... você pode testar isso
+
+deterministicamente. Ah, e uma avaliação de código não precisa ser uma simples operação com uma string. É possível consultar um banco de dados para verificar se o preço do seu produto está correto. É possível chamar uma API para verificar o preço de uma ação. Qualquer coisa que envolva uma avaliação sempre dá a mesma resposta. Você pode usar uma
+
+saída baseada em código determinístico, ou seja, uma avaliação baseada em código, para obter a resposta e testar as coisas. Portanto, uma das coisas boas — e uma das coisas com as quais você deve ter cuidado ao escrever uma avaliação de código — é que você deve testar o que o agente produziu e não o caminho que ele percorreu. Eu mencionei isso anteriormente. Então, não tente repassar todos os passos que você acha que deveriam ter sido seguidos para chegar à resposta. Basta verificar se obteve a resposta que esperava.
+
+Você também pode ser flexível na sua análise de strings. Então, se uma das coisas que você estava pedindo era uma estimativa de tempo, o agente poderia dizer 2 horas, ou 120 minutos, ou um número muito grande de segundos, e todas as respostas seriam 2 horas. Você pode usar a função `eval` do seu código para verificar se esses três itens estão presentes como saída válida. E o caminho percorrido pelo agente importa menos do que o destino final. Você queria que a resposta estivesse certa, mas você errou, chegou lá pelo caminho errado, e não é isso que sua avaliação está procurando.
+
+Então, vamos passar para o passo cinco, que é a avaliação integrada. Nesse caso, vamos tentar usar uma das funções de avaliação integradas do Phoenix, que é o avaliador de correção. Isso utiliza o LLM como uma ferramenta de avaliação para realizar tarefas que nenhuma verificação determinística consegue fazer. Nesse caso, nos pediram para descobrir se a saída do agente estava correta ou não. Era factual?
+
+Então, sabe, o avaliador de correção parece ser o que devemos usar. Um LLM completo como avaliação de juiz tem três partes. Possui um modelo de avaliação por juízes, que é o modelo do LLM que realiza a classificação. Possui um modelo de instruções, também chamado de rubrica. E contém os critérios, que são os critérios que o juiz aplica, e contém os dados, que são os exemplos que estão sendo avaliados. O Phoenix mantém esses
+
+três elementos separados para que você possa combiná- los como quiser, o que é muito útil. Você pode tentar as mesmas avaliações com modelos diferentes. Você pode experimentar o mesmo modelo com diferentes avaliações e comparar o desempenho delas. Então, como eu disse, a verificação de correção avalia se uma resposta é factualmente precisa, completa e logicamente consistente. Trata-se de uma avaliação que escrevemos, um prompt que também escrevemos e que já está integrado. Você pode inspecionar o
+
+prompt que escrevemos para saber que não é apenas uma caixa preta. E também temos coisas como avaliações para seleção de ferramentas. Então, o agente escolheu a ferramenta certa? Invocação da ferramenta. Será que passou pelos argumentos corretos? Temos
+
+avaliações integradas para relevância de documentos, detecção de recusas e muitas outras coisas que você gostaria de verificar em uma avaliação real, sem precisar escrever tudo manualmente, pois todo conjunto de avaliações precisa executar esses testes. Então, nós os incluímos. O que queremos saber é se estava correto? Então, vamos apresentar o juiz. Como eu disse, vamos usar o avaliador de correção integrado. Primeiro,
+
+precisamos de um mestrado em Direito (LLM) para poder fazer isso. Vamos passar esse LLM para o avaliador de correção, que acabamos de inserir. Se você quiser, pode imprimir o enunciado completo aqui. Vamos suprimir o rastreamento novamente e, em seguida, vamos executar a avaliação do quadro de dados, assim como fizemos antes. Vamos fornecer o mesmo conjunto de intervalos pais e um avaliador diferente. Neste caso, a
+
+avaliação de correção. E vamos exibir os cinco primeiros resultados. Nossa, isso é uma avalanche de informações. Depois de obter as informações, você precisa enviar os resultados para Phoenix, e é isso que está acontecendo aqui. Então, você transforma os resultados da avaliação em um dataframe e, em seguida, passa esse dataframe de volta para o Phoenix usando o dataframe de anotações do intervalo de log.
+
+O juiz que estamos usando para isso é o Sonnet. Como eu disse antes, é melhor usar um LLM mais competente para fazer a avaliação do que o agente original, porque esse agente com o LLM será mais inteligente e detectará coisas que o LLM original não detectou. Bem, se você já estiver executando um agente em produção com o Opus, não há nada melhor do que o Opus para ser seu avaliador, mas se você já estiver executando um agente em produção com o Opus, provavelmente não se importa com isso. A outra coisa que precisamos fazer é renomear nossa entrada e saída para que o agente entenda. Vou te mostrar isso em um segundo.
+
+Então, sim. Minhas anotações para a apresentação e o que eu realmente estou fazendo no documento... Estou escrevendo muito mais rápido no caderno do que nas minhas anotações para a apresentação. Então, peço desculpas. Um do do do
+
+do Então, vamos executar esse resultado.
+
+E veja só o que aconteceu em Phoenix. Como
+
+você pode ver, agora tenho uma anotação de correção ao lado de cada avaliação. Bem, e há um problema: se eu analisar a correção geral, verei que todas elas resultaram em zero. Hum, todas as suas avaliações estão incorretas. Por que suas avaliações estão incorretas? Precisamos descobrir por que isso acontece. Precisamos
+
+clicar e analisar as explicações. Então, vamos dar uma olhada em nossas anotações. Vamos verificar se está tudo correto e, na verdade, vamos apenas ler a anotação. Bem, o resultado apresenta números financeiros bastante específicos para o primeiro trimestre do ano fiscal de 2026, mas o problema é que o modelo considera que estamos em 2025, porque foi treinado em 2025 e não sabe que data é hoje, nem possui informações atualizadas. Nossa avaliação de correção, neste caso, é um completo lixo porque está tentando se basear em seu conhecimento do terceiro trimestre de 2025, ou quando quer que tenha sido aquele Soneto treinado antropologicamente, e não sabe nada sobre as previsões para 2026. Portanto, nossa
+
+avaliação de correção, neste caso, é completamente inútil. Bem, isso por si só já é um aprendizado, não é? Se você estivesse fazendo perguntas de conhecimento geral que pudessem ser respondidas com base em uma pesquisa completa na internet, o resultado teria sido muito melhor, mas neste caso estamos pedindo informações muito atualizadas e voltadas para o futuro , e nosso modelo e avaliação integrados não conseguem lidar com isso. Então, isso nos indica que precisamos de uma avaliação diferente. O que precisamos é de uma avaliação de fidelidade. Bem,
+
+a avaliação de fidelidade, basicamente, se você estiver familiarizado com aplicações rag, verifica se a saída do agente foi baseada nas informações que fornecemos a ele. Então, convenientemente, ou melhor, suspeitosamente convenientemente, dividi nosso agente anteriormente em duas etapas: uma para realizar a pesquisa e outra para gerar o relatório. Isso significa que podemos dar o passo em que a pesquisa foi realizada, pegar esse resultado e entregá-lo ao nosso avaliador de fidelidade e perguntar: "Com base nesta pesquisa, o relatório foi corretamente avaliado ? O relatório foi redigido corretamente? O relatório foi baseado nesta pesquisa e somente nesta pesquisa? O relatório se
+
+ateve ao material original?" Então, vamos ver como isso fica. Nós obtemos o mesmo conjunto de intervalos filhos, exatamente o mesmo conjunto, e temos que fazer o processamento de entrada que mencionei. Precisamos pegar as entradas e transformá-las nas entradas que o avaliador de fidelidade espera, e precisamos produzir uma coluna de contexto, que é a saída da primeira ação do agente, e somente da primeira ação do agente. Então, é isso que esse código está fazendo.
+
+Então, isso nos dá entrada, saída e contexto, que são as três colunas que nossa avaliação de fidelidade espera usar.
+
+Então, vamos executar o programa e ver o que acontece. Adicionamos o contexto, agora podemos executar o contexto. Hum, vamos suprimir o rastreamento novamente. Podemos pegar nossos spans principais, executá- los na avaliação de fidelidade e, desta vez, fornecer um dataframe, que contém os spans com a coluna de contexto adicionada. E obtemos nossa avaliação de 13 em 13, e constatamos que 13 dos 13 foram fiéis.
+
+Então, a correção nos deu zero em 13 tentativas, mas a fidelidade nos deu 100%. Então, nós conseguimos, sabe, destruir nossa fidelidade de uma vez só. Dois avaliadores integrados, dois sinais muito diferentes . Essa é uma lição muito importante . Escolher o avaliador certo pode ser mais importante do que ajustar o seu avaliador. Algumas das
+
+suas avaliações serão completamente inúteis. Algumas das avaliações integradas serão exatamente o que você precisa. E essa é a lição. Bem, aqui está o que você encontra em Phoenix para esse tipo de coisa. Como você pode ver, nossa avaliação de fidelidade obteve 100% de acertos.
+
+Você pode classificar por pontuação, se quiser, para encontrar seu melhor ou seu pior desempenho. Nesse caso, isso não vai fazer diferença nenhuma, porque temos apenas um placar de um contra zero . Mas você pode filtrar. Então, você pode filtrar para mostrar apenas as falhas. Então, neste caso, vou procurar por aquelas que sejam viáveis . Não, na verdade
+
+vou usar as minhas corretas. Correto
+
+Incorreto Tenho certeza de que todos vocês estão se divertindo me vendo assistir a isso. Assim, isso nos permite filtrar e selecionar apenas aqueles em que obtivemos uma taxa de acerto igual a zero. E você pode clicar em qualquer um desses rastreamentos com falha para ver a execução completa e exatamente o que deu errado. Então, quando só tem 13 deles, isso não é muito útil. Se você tivesse mil deles, seria muito útil, pois você conseguiria encontrar apenas os que estão apresentando falhas e se concentrar neles.
+
+Mas, as avaliações integradas são apenas o ponto de partida. Eles fornecem uma amostra imediata, um sinal imediato, sem qualquer intervenção técnica. Bem, quando você entra na essência da avaliação, é quando você faz avaliações de código personalizadas . Desculpe, LLM personalizado como avaliador de juízes. Como mencionei anteriormente, uma das coisas que queremos que nosso agente faça é fornecer resultados concretos. Queremos que nos
+
+diga se devemos ou não comprar este produto. Não existe uma avaliação integrada no Phoenix que diga: "Este relatório financeiro é acionável?" Teremos que escrever isso nós mesmos. O que nos leva ao sexto passo, que é escrever uma rubrica de avaliação personalizada. Bem, vale a pena discutir como elaborar uma boa rubrica de avaliação antes de realmente começarmos. Bem, toda boa
+
+proposta de avaliação que eu já vi tem cinco partes diferentes, cinco partes importantes. E eu vou analisá-los, analisar cada um deles. A primeira coisa a fazer é definir o papel dos juízes. Você precisa fornecer ao juiz o contexto do domínio, dizer a ele que tipo de saída está sendo avaliada e o que essa saída deve realizar. Bem, este é um exemplo de como fazer isso. A
+
+avaliação de que você é um analista financeiro experiente é algo que todos fazem. Os testes mostram que não faz tanta diferença assim, mas faz alguma diferença, então você pode incluir mesmo assim . O que realmente faz a diferença são as instruções e o resto do enunciado. Então, a segunda parte são os seus critérios, e é aqui que você deve ser o mais explícito possível. É aqui que muita gente investe pouco. Como eu
+
+disse, não dê uma resposta positiva, pois isso é uma aspiração. Uma boa resposta não leva em consideração o contexto que define o que é bom e o que define o que é ruim. Uma boa resposta é útil e precisa, o que dá a entender que você está melhorando nesse aspecto, mas "útil" também é completamente vago, assim como "preciso". Ninguém sabe o que isso significa. Então, em vez disso, liste exatamente o que torna um relatório acionável e liste exatamente o que o torna inacionável.
+
+O que torna esses critérios específicos o suficiente para realmente funcionarem? Eles são específicos e observáveis. Contém recomendações específicas que o juiz pode verificar. Inclui análises prospectivas, não apenas dados históricos. Essa é uma distinção clara.
+
+E quanto à questão das ações impróprias, trata-se apenas de um resumo de dados disponíveis publicamente, sem qualquer interpretação. Isso descreve um modo de falha específico que já observamos ao analisar nossos rastreamentos. Nós vimos isso, sabe, dando uma resposta genérica do tipo "Apple é bom", o que não era o que queríamos. E cada critério corresponde a algo que observamos anteriormente em nossos registros . É isso que estou tentando dizer aqui. Você não deveria escrever
+
+regras apenas com base no que você acha que seria uma boa ideia. Você deve escrever regras com base nos rastreamentos reais que viu e nas falhas reais que observou. A terceira parte de uma boa rubrica é que você deve apresentar os dados de forma clara. Usamos os dados iniciais e finais em nossas avaliações internas do Phoenix. Se você usa a nuvem, ela adora XML, então você pode usar tags XML para começar e terminar, e é muito boa em identificar o início e o fim de elementos.
+
+Mas o que você está fazendo com eles é rotular cada dado claramente para que seja possível diferenciar o que esses dados representam. Então, consulta do usuário, relatório financeiro, limites claros, reduzem a chance de o juiz confundir a consulta com o relatório ou vice-versa. A quarta parte consiste em adicionar exemplos rotulados, e essa é a parte que a maioria das pessoas ignora, embora seja de longe a coisa mais útil que você pode adicionar. Bem, se você puder tirar apenas uma coisa desta seção sobre rubricas personalizadas, é que você deve adicionar exemplos, porque os mestres em direito são muito bons em analisar um exemplo, descobrir qual é o padrão a partir desse exemplo e, em seguida, executá-lo e segui-lo. E eles são muito melhores nisso do que em receber uma lista de instruções que simplesmente dizem: "É isso que você deve fazer". Eles são realmente muito bons em
+
+observar o exemplo e segui-lo. E este é um exemplo prático disso . Ah, tem tudo. Então, possui dados específicos. Consiste em identificar um risco concreto com um número para comprová-lo.
+
+Possui recomendações específicas, acumule esse preço mais baixo. É assim que se apresenta uma ação concreta. É assim que se parece a falta de ação. Não, não está errado. A Nvidia é, de fato, uma das principais empresas do setor de semicondutores.
+
+Não está nos dizendo se devemos ou não comprar as ações. Bem , isso é apenas uma descrição. Não é uma demonstração. E o que você deve fazer é restringir a saída. Queremos saber se este relatório financeiro exige alguma ação ou não? A
+
+descrição da sua rubrica deve conter, quase sempre, uma palavra-chave. Basta me dizer se é algo que pode ser feito ou não . Não me dê uma explicação longa. Não me envie um bloco JSON. Não me envie, sabe, um diagrama em Markdown. O
+
+sistema binário é bem claro, e se você realmente precisar de mais nuances, pode usar três categorias. Você pode dizer que estava incorreto, que estava parcialmente correto ou que estava completamente correto. Uma coisa que muita gente quer fazer porque parece uma boa ideia é dar uma classificação. Eles pedem uma porcentagem ou uma nota de um a dez. Isso não funciona muito bem. Qual
+
+a diferença entre um seis e um sete? Você consegue definir exatamente quando está avaliando algo de um a dez? Qual a diferença entre um seis e um sete? A menos que você inclua isso na rubrica, o agente também não poderá fazer isso . Portanto, isso só vai introduzir ruído nas suas avaliações. Então, sim ou não,
+
+e se você realmente precisar, talvez, mas sem mais detalhes do que isso. Outra dica prática, quando você estiver escrevendo uma avaliação, é verbalizar seus pensamentos sobre o que está fazendo. A linha de raciocínio dos juízes comprovadamente melhora a forma como eles trabalham. Então, você pede para ele explicar seu raciocínio primeiro, antes de exibir o rótulo. E isso vai, você sabe, de forma mensurável e demonstrável, melhorar a qualidade do resultado que você obtém, porque vai gerar vários tokens antes de decidir se o resultado é bom ou não .
+
+Então, se você está acompanhando a programação, agora é a hora de ver se consegue escrever uma avaliação melhor do que a minha. Eis o aspecto de um LLM personalizado para juiz . É apenas um aviso muito extenso. Isso tem tudo o que acabei de mencionar. Então, você é um analista financeiro experiente.
+
+Liste os fatores que tornam um relatório acionável e os que o tornam inacionável. Por exemplo, uma data de início e uma data de término, um bloco onde eu insiro a entrada e a saída. Com base nesses critérios, este relatório financeiro é acionável ou inacionável? Hum, provavelmente você não conseguirá escrever uma proposta melhor do que essa de imediato, porque eu tentei várias vezes . Ah, mas é divertido tentar. Então, fiquem à vontade para,
+
+eh, inserir seus exemplos de como um relatório prático deveria ser agora. E então vamos anotar . Bem, para usar isso depois de termos escrito nossa pergunta, vamos usar uma ferramenta auxiliar chamada avaliador de classificação. Isso, uh, cria um LLM como juiz para Phoenix, uh, e nós só precisamos fornecer quatro coisas. Precisamos dar um nome a isso, " acionabilidade", que é o rótulo com o qual aparecerá em Phoenix.
+
+Bem, precisamos fornecer esse modelo de prompt, que é o que acabei de mostrar para você acima. Atribuímos um LLM a essa habilidade porque ela precisa, de alguma forma, realizar o julgamento . E então oferecemos opções, que são rótulos com pontuações. Portanto, ou é acionável, o que consideramos como 1,0, ou não é acionável, o que consideramos como zero. Mais uma vez, estamos suprimindo o rastreamento, certo?
+
+Oh sim. Desculpe. Então, e quanto às postagens do canal? O que eu estou dizendo é que primeiro você precisa escrever seu raciocínio e depois...
+
+Isso é verdade. Eu omiti essa parte. Eu disse que você deveria, mas depois não disse. Muito bem observado. Alguém está realmente prestando atenção. Isso é incrível.
+
+Ah, ah, porque está muito quente aqui dentro e são umas 4h30. Então, vamos analisar as pontuações e ver o que resultou em ações acionáveis ​​e o que não resultou. Hum, isto é uma avaliação de capacidade. Eu estava falando sobre avaliações de regressão versus avaliações de capacidade. Esta é uma avaliação de capacidade perfeita, pois não está indo muito bem. Hum,
+
+em seis dos casos, creio eu, surgiram elementos passíveis de ação judicial, e nos demais casos não surgiram elementos passíveis de ação judicial. Hum, isso significa que tem um caminho difícil pela frente. Isso significa que podemos, hum, dizer ao agente para melhorar. Hum, e na verdade ainda há espaço para melhorar. Então, registramos as anotações de volta no Phoenix e agora podemos consultar o Phoenix e ver as pontuações de acionabilidade dentro dele.
+
+Podemos fazer a mesma filtragem que fizemos antes. Hum, praticidade... Eu não tinha pensado nisso quando estava fazendo isso, se eu ia digitar com uma mão só ou não. Eu teria
+
+escolhido rótulos mais curtos. Certo. Então, isso é algo que pode ser tomado, ou podemos dizer que não é . E podemos recuperar aqueles em que falhou. E , assim como fizemos com os outros, podemos clicar para acessar nossas anotações, procurar por ações que possam ser tomadas e obter uma explicação.
+
+Podemos, portanto, afirmar que o relatório financeiro descrito carece de uma recomendação concreta de compra, venda ou manutenção. Hum, o Haiku está causando problemas aqui. Foi por isso que escolhemos o haicai, porque sabíamos que ia dar errado. Ah, e você pode filtrar e classificar por qualquer coisa. Assim, você pode filtrar por latência, por número de tokens ou por custo. Você
+
+não precisa filtrar apenas pelas suas etiquetas. Então , uma das maneiras de usar isso é, por exemplo, se você tiver um agente que está obtendo a resposta correta, mas a um custo muito alto, certo? Consiste em realizar cem buscas na internet e, eventualmente, encontrar a resposta. Hum, isso não é bom em produção, e você pode procurar essas chamadas caras, essas operações caras, e ajustar seu prompt para que ele faça as coisas de uma maneira mais barata. Então você não precisa apenas... o Phoenix está te dando um
+
+monte de coisas para pesquisar que não são apenas... as coisas que você digitou. Ele está te dando um monte de informações extras.
+
+Ah, como eu disse, este aqui, dizia que não era lacto concreto por venda por venda e retenção. Se filtrarmos para outras, podemos obter outras explicações sobre a aplicabilidade. O relatório apresenta dados financeiros sólidos e análises prospectivas, além de fornecer contexto. Mas a ausência de uma recomendação explícita ou de uma diretriz de investimento acionável coloca-a na categoria "não acionável". Ótimo. Era isso que
+
+queríamos que este dispositivo fizesse. Então, você deveria tratar suas avaliações como código. Suas avaliações, a redação daquele enunciado que acabamos de elaborar sobre como medir exatamente se seu agente estava fazendo um bom trabalho, vai mudar drasticamente palavra por palavra dentro daquele enunciado porque os Modelos de Aprendizagem Baseados em Liderança (LLMs) são muito não determinísticos. Portanto, você deve controlar as versões dos seus prompts. Você deveria estar armazenando-os. Você deve se certificar de
+
+saber, pelo menos cinco versões atrás, o que esse comando fazia caso as coisas saiam completamente do controle. E você deve testá-los com exemplos em que você já sabe a resposta correta. Portanto, se o juiz discordar das suas classificações humanas em 40% dos exemplos, isso significa que o enunciado que você escreveu não é muito bom. É possível iterar sobre as rubricas sem mexer no código. Uma avaliação que você não validou é apenas uma maneira sofisticada de estar errado em grande escala.
+
+Uma outra coisa que quero destacar ao escrever avaliações personalizadas é que, no caso de avaliações personalizadas de mestrado em direito (LLM), o juiz é o avaliador principal. É muito tentador escrever uma única avaliação de LLM que tente testar tudo. Então, ele vai testar a precisão, o tom, a integridade, a conformidade com as políticas e a formatação, e não faça isso porque é um pesadelo para calibrar. Se falhar, você não saberá por que falhou. Você teria que fazer com que ele exibisse uma palavra extra dizendo que esta era uma das cinco coisas que eu estava testando.
+
+Em vez disso, divida seu avaliador em uma coisa por dimensão. Então, teste a precisão, teste a completude, teste o tom, mas teste todos esses aspectos com uma avaliação LLM separada. Bem, e eu gostaria de falar sobre diretrizes de segurança versus métricas norteadoras. Bem, algumas avaliações são como barreiras, tipo bloqueadores de naves, tipo, se o agente tiver uma alucinação com o preço de uma ação, isso provavelmente é uma falha grave , certo? Não queremos que apareça " comprar" quando deveria aparecer "vender". Bem,
+
+se dissermos que você deve sempre recomendar investimentos complementares, isso é um diferencial, não um requisito essencial . Então, você precisa saber qual das suas avaliações é qual, quais devem bloquear a entrada de naves e quais são apenas informativas. Bem, a meta-avaliação é o assunto que temos evitado abordar até agora. Como você sabe se essa rubrica personalizada que você escreveu está realmente funcionando? Como você sabe que esse código que você escreveu, que agora determina se algo é acionável ou não, é confiável? Bem
+
+, a maneira de pensar sobre isso é que o juiz é um classificador. É um classificador de aprendizado de máquina , ou seja, um modelo mental. Então, ele recebe uma entrada e faz uma previsão, e assim como qualquer classificador, você pode medir seu desempenho comparando suas previsões com os dados reais. Então, neste caso, você pode usar seu próprio julgamento humano para verificar o trabalho do mestre em direito. Bem, o problema com o julgamento humano é que ele envolve muito esforço humano.
+
+Bem, você precisa analisar os resultados das suas avaliações e compará-los manualmente, perguntando-se: "Concordo com isso neste caso específico?" Bem, se eu entrar em um elemento span no Phoenix, posso adicionar uma anotação. Então, aqui, eu poderia criar uma nova anotação que seria algo como: "O usuário confia nisso?". E diga sim ou não.
+
+E eu posso fazer isso programaticamente ou posso fazer isso na interface do usuário. E eu posso incluir uma lista completa de avaliações humanas das minhas avaliações, independentemente de eu achar que essas coisas são ou não acionáveis. E então poderei fazer uma comparação entre o LLM como juiz e minhas anotações humanas. Não vou entrar em detalhes sobre como isso é feito porque é chato. Mas, bem, o que estamos fazendo aqui é construir um conjunto de dados de referência. Ah, conjuntos de dados de referência
+
+são incrivelmente úteis. Eu os mencionei logo no início. São uma forma de medir se o seu avaliador está fazendo um bom trabalho ou não. E a maneira de fazer isso é a mesma que o LLM fazia. Você deve estabelecer critérios concretos para decidir se algo é um sucesso ou não . Então, não entre nisso apenas como um ser humano
+
+e diga "sim, funcionou" ou "não, não funcionou", porque é exatamente isso que você vai ter: o mesmo problema que o profissional de Direito está enfrentando. Você vai ser arbitrário. Basicamente, você deve ler o mesmo enunciado que apresentou ao LLM e decidir, de acordo com as regras que você mesmo estabeleceu, se acredita ou não que a questão é ou não passível de ação judicial. Então, dê exemplos a si mesmo , elimine a ambiguidade e elimine a possibilidade de ficar preguiçoso. Ao fazer isso, você deve manter suas tarefas claras e sem ambiguidade.
+
+Se o seu agente obtiver uma pontuação de 0% consistentemente, isso quase sempre indica um problema na tarefa. Isso sempre significa que, sabe, seu agente não está fazendo nada. Então, não é uma boa avaliação. Isso pode acontecer se você tiver definido uma tarefa de avaliação que só um humano conseguiria realizar. E com seu mestrado em Direito, você conseguiu algo que seu agente jamais conseguiria .
+
+Então, para evitar isso, a maneira é criar uma solução de referência para cada tarefa . Decida antecipadamente qual o resultado esperado de um LLM nessa situação, e então você poderá avaliar se o LLM está ou não se aproximando desse objetivo. Você também pode testar em ambas as direções. Você pode testar casos em que o comportamento deve ocorrer e casos em que não deve. E você só deve testar, por exemplo, se tiver um teste que pesquise na internet? Essa é
+
+exatamente a coisa que você espera que um agente financeiro faça. Hum, você poderia acidentalmente criar um agente que sempre burla a avaliação. Você poderia criar um agente que sempre pesquisasse na web, independentemente de precisar ou não . Então, você precisa garantir que tenha casos de teste em seu conjunto de avaliação que sejam casos em que não seja necessário pesquisar na web, e que realmente não houve pesquisa na web quando isso aconteceu? E seu conjunto ideal não é apenas dados de teste. É o julgamento codificado das
+
+pessoas que melhor conhecem o seu domínio. Então, vai crescer à medida que você encontrar mais casos de teste. E as falhas de produção de hoje se tornarão o caso de teste de amanhã. Bem, se você está mesmo fazendo isso, outra coisa que você deveria fazer é dividir seu conjunto de dados principal. É possível criar uma avaliação que se ajuste excessivamente ao seu conjunto de dados de referência.
+
+Ele passa pelo seu conjunto de dados ideal, mas não foi generalizado corretamente. O sistema acumulou uma série de exemplos exatamente iguais ao seu conjunto de dados ideal e, por isso, os aprovou. Então, você deve dividir seu conjunto de dados de referência, uh, você sabe, 75 25, nos dados que você está usando para treinamento e nos dados que você está usando para teste. Então, cada vez que você fizer uma alteração no seu prompt, você poderá executar o teste contra os 25 prompts que ele nunca viu antes. E você pode ver se realmente funciona bem ou não.
+
+Então, vamos executar nossa ferramenta de avaliação de aplicabilidade. Hum, é
+
+, exatamente nos mesmos exemplos que vimos antes. Eu utilizei uma consulta span para fazer a filtragem, assim como podemos fazer na interface do usuário. Hum, e eu só tenho os que estão com baixo desempenho. Ah, desculpe, não. Eu tenho as ações práticas que envolvem seres humanos .
+
+Então, eu fiz essa linha aqui onde peguei os atributos complexos que recebem esse valor como entrada e os transformei em entrada, e os atributos que produzem esse valor como saída, porque é isso que nossa função `eval` espera. Então, agora vamos ver se nossos agentes concordam ou discordam das anotações que eu inseri sobre ações que podem ser tomadas por humanos . O que temos aqui é que, em duas de seis vezes, meu rótulo de ação humana e meu rótulo de ação discordaram. Bem, confesso que o que eu não fiz foi criar rótulos que pudessem ser aplicados a seres humanos. Eu simplesmente atribuí as respostas " acionáveis" e "não acionáveis" de forma meio aleatória para ter alguns dados concretos para apresentar, já que só tenho seis respostas aqui.
+
+Seis pontos onde falhou. Então, na verdade, não basta fazer um show completo. Um conjunto real seria 20, 50, 100, 200. Então, para ter dados reais para analisar, eu simplesmente coloquei as coisas aleatoriamente. Hum,
+
+mas o que isso nos dá é, sabe, se eu tivesse feito isso de verdade, o que isso me daria é uma noção de se o meu julgamento, o meu julgamento humano, está correspondendo ao julgamento do LLM. Este é o meu conjunto de dados de ouro, que uso para comparar com o LLM como juiz e descobrir onde eles discordam. Bem , o que nos leva à iteração da rubrica. Da mesma forma que podemos pegar nosso agente e melhorá-lo aprimorando o prompt, podemos pegar nosso LM como um juiz e aprimorá-lo por meio de iteração. Bem , para fazer isso, precisamos pensar em precisão e recall, que são termos de aprendizado de máquina mais opacos que os pesquisadores introduziram sorrateiramente em nossas vidas de engenheiros de IA. Hum, não são
+
+tão complicados assim. Imagine um preditor de spam. Um preditor de spam vai dizer se algo é spam ou não, e você pode comparar o resultado do seu preditor com a confirmação de que o conteúdo é realmente spam. Portanto, existem quatro resultados possíveis. Pode dizer que é spam, e é spam mesmo, o que é algo realmente positivo. Você pode afirmar que algo é spam
+
+quando, na verdade, não é, o que é um falso positivo. Bem, você pode dizer que não é spam e não é spam, um verdadeiro negativo, ou você pode dizer que não é spam e é spam, o que significa que você errou. Bem, os engenheiros de aprendizado de máquina têm duas maneiras de medir esses dados, e elas são conflitantes entre si. Então, você precisa escolher, você precisa decidir para o seu caso de uso qual dessas coisas você deseja otimizar. Então, a primeira maneira é a precisão. A precisão é medida pela
+
+proporção de verdadeiros positivos em relação ao número total de positivos. Se você tem alta precisão, isso significa que você reduziu o número de falsos positivos. Hum, isso significa que você está minimizando os falsos positivos. Se você estiver em um caso de uso onde, eh, falsos positivos são realmente perigosos, eh, é isso que você deve fazer. Isso é ótimo para spam, por exemplo, porque você não quer enviar um e-mail legítimo para a pasta de spam e aceita receber uma certa quantidade de spam de verdade em troca de não fazer isso.
+
+Mas lembrar é o oposto. Trata-se de distinguir entre os acertos e erros reais, qual a porcentagem que foi realmente positiva? Bem, para este aqui, para que suba, você precisa minimizar o número de erros. O objetivo é minimizar o número de falsos negativos. Um bom exemplo de quando fazer isso é se você estiver fazendo algo relacionado à saúde. Se
+
+você estivesse fazendo exames de detecção de câncer, com certeza gostaria de ter o mínimo possível de casos não detectados. Você aceita um monte de falsos positivos quando está fazendo exames de detecção de câncer, contanto que não deixe passar alguém que realmente tenha a doença. Então, essas duas medidas irão em direções opostas se você otimizar. Portanto, você precisa escolher uma que se adeque ao seu caso de uso e decidir como otimizá- la. Então, vamos ver como isso se parece na prática.
+
+Eu escrevi um monte de código aqui que calcula todas essas coisas e ele gerou a precisão e a revocação para o meu avaliador. Então, a precisão deste aqui é realmente muito boa. Quando o juiz diz "reprovar", isso está certo? Sim, 100% das vezes está correto. E o recall dele é realmente ruim, o que é um grande problema para todos os verdadeiros fracassos.
+
+Quantos ele detecta? Bem, isso é o que se esperaria. Você não esperaria tirar 100% em uma delas. Então, eu criei algo que é realmente muito bom em termos de precisão. É muito bom em evitar falsos positivos.
+
+Hum... Com uma amostra tão pequena, esses números são basicamente inúteis, certo? Você quer, sabe, um conjunto de dados ideal com 50, 100, 200 itens, e aí você vai obter números reais de precisão e recall. Este é
+
+um exemplo bem hipotético. E na maioria dos cenários de avaliação, provavelmente você vai querer priorizar a revocação, porque é melhor sinalizar alguns falsos positivos do que deixar passar falhas reais. Um falso positivo significa apenas que você precisa revisar algo como um humano, o que na verdade é normal, enquanto uma falha não detectada significa que um resultado incorreto chega aos seus usuários. Mas, como eu disse, existem alguns casos de uso, por exemplo, casos de uso médico, em que você gostaria de fazer o oposto. Bem, vale a pena ter em mente algumas armadilhas conhecidas ao usar juízes com mestrado em Direito (LLM) . Uma delas é o viés de posição.
+
+Bem, se você apresentar duas opções, o juiz tende a favorecer, dependendo do modelo , sempre a primeira ou sempre a última. Ah, existe um viés de duração. De modo geral, os profissionais de LLM preferem respostas mais longas a respostas mais curtas e tendem a preferi-las. Ah, existe viés de confiança. Seu juiz pode ser enganado por uma resposta que soe confiante, assim como os humanos podem ser.
+
+Ah, e existe o viés de autopreferência. Se você usa o mesmo modelo para julgar que usa para gerar o resultado inicial, eles tendem a gostar mais do próprio resultado. E essa é mais uma das razões pelas quais usamos um modelo diferente como juiz do que usamos como operador do próprio agente. Você também pode considerar usar um provedor completamente diferente. Então você pode usar o Claude para criar seu agente e o OpenAI para fazer suas avaliações. E
+
+você vai obter avaliações mais confiáveis do que obteria se usasse o Claude para tudo. Como saber se esses vieses estão afetando seus resultados? É preciso monitorar a precisão dos juízes em diferentes categorias de entradas. Portanto, se o juiz sempre aprova respostas longas e sempre reprova as curtas, então você sabe que tem um problema de viés em relação a respostas longas. Bem, se passar em tudo em uma categoria de consulta e falhar em tudo em outra, você precisa investigar o motivo.
+
+E o seu parâmetro de comparação aqui deve ser o desempenho humano, não a perfeição. Ah, e essa é a última coisa que quero dizer sobre meta-avaliação. Se você der a dois humanos a tarefa de produzir seu conjunto de dados ideal e disser: "Digam-me se , por exemplo, este relatório é acionável ou não." Eles não vão concordar o tempo todo. Na verdade, eles vão discordar numa quantidade surpreendente de vezes. A
+
+confiabilidade entre avaliadores costuma ser tão baixa quanto 0,2 ou 0,3 em muitos casos. Então, dois especialistas, a mesma conclusão, os mesmos critérios, e eles discordarão. Então, se o seu juiz LLM alcançar uma consistência maior do que isso, se alcançar 0,4, está indo muito, muito bem. Então, o fato de o juiz discordar de você não é necessariamente motivo para descartar sua avaliação. Isso acontece quando o juiz discorda de você com mais frequência do que uma pessoa normal discordaria.
+
+Outra coisa que você deve fazer é encarar seus fracassos como justos. Isso é algo que a Anthropic mencionou quando falou sobre meta-avaliações. Quando uma tarefa falha, deve ficar claro o que o agente fez de errado e por quê. Então, se você olhar para um rastreamento com falha e pensar " essa resposta parece boa para mim", o problema provavelmente está na avaliação, não no agente. Isso realmente aconteceu na Anthropic.
+
+Claude Opus inicialmente obteve 42% em um benchmark chamado CoreBench, o que pareceu baixo. Então, eles foram investigar o que o CoreBench realmente fazia e encontraram vários problemas, não com o modelo em si, mas com a própria avaliação. Então, por exemplo, a avaliação estava verificando a resposta de 96,12, e Claude estava dando a resposta 96,124991, e ela dizia: "Não, isso não está certo, porque não era o que eu esperava." Depois de corrigir a avaliação, a pontuação do Opus subiu para 95%. Então, suas avaliações podem estar completamente erradas quando você está sendo muito rigoroso ou quando está julgando algo que não era o que você pretendia avaliar.
+
+E a lição aqui é que você não deve aceitar avaliações pelo seu valor aparente. Você deve sempre analisar as explicações das suas avaliações. Você deveria analisar o resultado das suas avaliações. Você deve comparar os dados com o conjunto de dados de referência para garantir que está realmente aprimorando o agente. Então, o sétimo passo, e a última coisa que tenho certeza que todos vocês ficarão felizes em saber, são os conjuntos de dados e experimentos. É
+
+assim que você passa de simplesmente medir onde as coisas estão erradas para realmente melhorar seu agente. Então, você identificou algumas falhas, leu as explicações e sabe o que precisa ser melhorado. Então, você muda o prompt e depois o quê? Como você sabe se a sua solução realmente funcionou? Como você sabe que melhorou seu agente?
+
+Como você sabe que não quebrou algo que estava funcionando antes? Se você simplesmente executar o agente novamente em alguns exemplos e analisar visualmente, estará apenas voltando à intuição. Você precisa de uma maneira sistemática de testar se as alterações feitas em suas avaliações, ou melhor, em seu agente, realmente melhoraram suas avaliações de forma sistemática, e é para isso que servem os experimentos. Então, para isso, vamos para uma parte completamente diferente da interface do usuário do Phoenix. Vamos até os whoops, lá vamos nós.
+
+Você não viu isso. Bem, vamos para a avaliação dos nossos experimentos. Para fazer isso, você pode ir para gerar seu conjunto de dados, depois para seus rastreamentos e selecionar, por exemplo, um conjunto de rastreamentos com falha e clicar em "Adicionar ao conjunto de dados". Você pode criar um novo conjunto de dados usando este pequeno sinal de mais aqui, ou pode adicionar dados a um conjunto existente, e isso lhe dá, neste caso, informações sobre as falhas financeiras de agentes de IA. Então, você pode clicar para ver os exemplos e verá que incluí as seis vezes em que nosso rastreamento de acionamento falhou.
+
+Ah, desculpe, quando nossa avaliação de aplicabilidade falhou, eu os coloquei em um conjunto de dados. Porque é isso que eu quero fazer. Não quero executar todos os 13 comandos sempre ou, sabe, em produção, todos os 1.000 sempre. Quero executar meu novo prompt apenas nos casos em que ele falhou e verificar se está apresentando alguma melhora.
+
+Então, agora vamos aprimorar o agente. Bem, podemos analisar o que as avaliações nos disseram. A avaliação de aplicabilidade indicou que alguns relatórios não eram acionáveis ​​porque resumiam dados e não apresentavam recomendações explícitas. Então, podemos atualizar os dois prompts. Como eu disse, a solicitação de pesquisa agora exige explicitamente índices financeiros específicos. É necessário ter
+
+notícias recentes, dados de preços atuais e, agora, o enunciado da redação exige explicitamente uma recomendação de compra, compra, venda e manutenção. É isso que está acontecendo aqui. Se você ainda está programando, ótimo! E é aqui que você pode tentar fazer um trabalho melhor do que eu fiz para aprimorar o agente. Você pode elaborar um tema de pesquisa melhor, pode elaborar um tema de redação melhor.
+
+Observe como cada alteração que fiz nos prompts aqui corresponde a algo específico que encontramos de errado nas avaliações. Não estou simplesmente mudando aleatoriamente a mensagem do meu agente. Estou fazendo essa alteração em resposta a pontos específicos que observamos nas avaliações. Então, índices financeiros, notícias dos últimos 6 meses, recomendação de compra, venda ou manutenção, essas eram coisas que, nas explicações do nosso mestrado anterior em Direito, quando eu era juiz, diziam que estavam faltando, e nós dissemos: "Ok, incluam essas coisas." Então, não estamos apenas recebendo um aviso de que estamos errados, estamos recebendo orientações de nossas avaliações sobre o que podemos fazer para melhorar, e estamos repassando isso diretamente para o nosso agente, aprimorando-o dessa forma.
+
+Isso é engenharia de prompts orientada por dados. É disso que se trata o ARISE. Trata-se de pegar um monte de coisas que os LLMs nos dizem sobre o que está falhando e o que não está, e transformar isso em melhorias reais para o nosso agente. Então, agora vamos realizar um experimento de verdade. Para fazer isso, você precisa de uma tarefa para executar seu experimento. Nesse caso, trata-se do
+
+nosso relatório financeiro aprimorado. É basicamente o mesmo agente de novo. E nós o atribuímos a esse agente e o colocamos em uma função de tarefa que simplesmente executa esse agente com a entrada e a saída que esperamos. Criamos um novo avaliador de classificação. Ah, de novo com o rótulo de aplicabilidade.
+
+Nós aplicamos o mesmo modelo de praticidade. E então criamos esse novo avaliador e agora
+
+estamos executando nosso conjunto de dados, que contém apenas as falhas. E nós vamos executar nosso cliente assíncrono, que é mais rápido, basicamente, contra esse conjunto de falhas. Ah, então você pode ver aqui, uh, ta-da! Bem, minhas melhorias no meu agente eliminaram de uma vez por todas as cinco respostas classificadas como acionáveis ​​ou não acionáveis. E todos os seis testes que estavam falhando anteriormente agora estão funcionando corretamente. Então
+
+você pode ver isso aqui. Você pode ver os resultados neste gráfico. O que eu fiz aqui não é como ficaria na produção. Se você estivesse em produção, teria feito uma pequena alteração no seu prompt e obtido uma melhoria muito marginal em mil conjuntos de dados, e obteria esse pequeno gráfico mostrando seu agente melhorando gradualmente em todas essas coisas. Eu resumi tudo aqui porque, você sabe, já se passaram 90 minutos. Precisamos sair
+
+dessa situação em algum momento. Mas essa é a montanha que você está escalando. É assim que você vai de zero a 100% de aproveitamento: você mede, dentro dos seus experimentos, se a minha alteração no tema provou alguma coisa, se o meu experimento obteve uma pontuação maior ou menor na próxima vez. Às vezes, você fará uma alteração que piorará sua pontuação e terá que desfazê-la, voltar à versão anterior do seu enunciado e alterar outra coisa. É por isso que você os trata como código.
+
+O ponto principal aqui é que um experimento Phoenix não se importa com o que sua tarefa faz . Nesse caso, a tarefa que atribuí ao meu experimento foi executar o agente completo novamente em um novo conjunto de dados. Mas se nossa avaliação tivesse nos dito que a chamada da ferramenta estava com problemas, eu poderia simplesmente ter executado uma avaliação que executasse apenas a chamada da ferramenta, o que teria sido muito mais barato e muito mais rápido do que uma avaliação que executasse o agente inteiro. Então, você pode executar experimentos em uma parte do que seu agente está fazendo, um pequeno subconjunto do que ele está fazendo, e melhorar essa parte sem ter que executar todo o seu agente todas as vezes, o que seria muito caro .
+
+O poder dos experimentos reside na comparação controlada. Então, você recebe as mesmas entradas, o mesmo avaliador, a única coisa que mudou são as instruções do agente, e isso significa que qualquer diferença nas pontuações é atribuível à sua mudança. Você não está se perguntando se a pontuação foi maior devido à sua alteração imediata ou porque a busca na web por acaso retornou resultados melhores desta vez. Você eliminou uma importante fonte de variação. Idealmente, o que você deve fazer é executar cada um desses processos várias vezes para levar em conta o não determinismo da sua saída.
+
+Esse é o conceito de passe na posição K que vou abordar mais para o final. Mas, por enquanto, uma única execução por exemplo nos dá um sinal suficientemente bom para nos dizer se as coisas estavam certas ou erradas. E é nesse ciclo de avaliação iterativa que reside o verdadeiro valor da avaliação. Você obtém seus resultados, melhora seus resultados, melhora seus resultados novamente e, aos poucos, aprimora seu aplicativo. Uma das coisas que você poderia fazer neste momento é dizer: "Por que eu, como ser humano, estou fazendo isso? E se eu pegasse o
+
+resultado da ferramenta de avaliação e o entregasse ao Claude Code, dizendo: 'Ei, Claude Code, volte ao meu aplicativo e o aprimore de alguma forma'?" Isso é avaliação em circuito fechado , algo que consideramos muito interessante e que certamente acontecerá à medida que os modelos forem aprimorados. Onde você escreve a versão inicial de um aplicativo e usa avaliações como mecanismo de feedback para o seu agente de codificação, que então melhora automaticamente o aplicativo sem que você precise se envolver. Não vou fazer isso aqui porque, de novo, estamos todos sentados aqui e estamos com muito calor. Então, não vou, sabe, estender minha hospitalidade mais do que já a estendi.
+
+Uma boa pergunta que você provavelmente tem é: de quantas amostras você precisa? Já mencionei 50, 100, 200 e 400 amostras. Você não precisa fazer isso só no olho, pode usar matemática. Bem, se o objetivo é um agente que falhe apenas 5% das vezes, ou 3% das vezes, 200 amostras com uma taxa de defeito de 3% fornecerão um intervalo de confiança de 95%, que estaria em algum lugar entre 0,6 e 5,4%. Uma taxa de falha de 3% parece boa, não é? 3% é
+
+menos que 5%, que era o que você estava tentando dizer. Mas, devido ao intervalo de confiança, sua taxa real de falha pode variar de 0,6% a 5,4%. Se você dobrar o tamanho da sua amostra para 400, você reduz seu intervalo de confiança para 1,3% a 4,7%, o que significa que agora você está constantemente abaixo do limite de 5% e pode enviar o produto. Mas, para fazer isso, você teve que dobrar o número de amostras. Isso significa que você teve que dobrar todo o esforço, dobrar o tamanho do seu conjunto de dados de referência, dobrar tudo.
+
+Então, em algum momento você precisa fazer uma análise de custo-benefício para determinar o quão preciso esse agente precisa ser. Quanto esforço estou disposto a investir para que isso seja 2% mais preciso do que era antes? Bem, a partir de experimentos em escala de oficina como o de hoje, de 12 a 20 exemplos, você já consegue um sinal direcional. Para decisões de envio, 200 a 400 exemplares é uma boa meta. Como é que se torna o ciclo sistemático?
+
+Quando você está iterando, onde você investe seus esforços? Nem toda mudança tem o mesmo impacto. Hum, existe uma hierarquia. Essa é a hierarquia de impacto que mencionei logo no início. A hierarquia de impacto indica onde você deve concentrar seus esforços primeiro. As correções na qualidade dos dados têm, de
+
+longe, o maior impacto. Bem, se o seu agente estiver pesquisando nas fontes erradas, se a sua base de conhecimento tiver dados desatualizados, nenhuma quantidade de engenharia de ponta vai resolver o problema. Então, você deveria corrigir os dados primeiro. Depois de ter certeza de que os dados fornecidos ao seu agente são de alta qualidade, o próximo passo mais importante é implementar melhorias. Exemplos concisos no seu prompt, instruções explícitas, restrições sobre o que o agente deve e não deve fazer, essas são geralmente as mudanças com maior retorno sobre o investimento.
+
+E então, a seleção do modelo vem em terceiro lugar na hierarquia de impacto. Às vezes, um modelo mais eficiente resolve problemas que o método de solicitação não consegue, mas também custa mais, então você precisa avaliar se vale a pena ou não. E então, o ajuste de hiperparâmetros, coisas como temperatura, potência máxima, esse tipo de coisa, estão lá embaixo. Eles raramente fazem uma diferença significativa nos resultados de suas avaliações.
+
+Uma coisa que você pode considerar fazer é escrever suas avaliações antes de desenvolver uma funcionalidade. Se você quiser que seu agente sempre verifique a identidade do cliente antes de processar um reembolso, por exemplo, você pode escrever uma avaliação que verifique isso primeiro, e isso lhe dá uma avaliação de capacidade e um desafio a ser superado. Isso é o mesmo que desenvolvimento orientado a testes , ou seja, todo mundo diz que é uma boa ideia, mas poucas pessoas realmente a colocam em prática. O desenvolvimento orientado a avaliações na prática é como coisas como o Claude Code evoluíram. As avaliações de capacidade construídas antropogênicas, e então, deram a Claude Code uma tarefa árdua pela frente.
+
+Quando um novo modelo era lançado, eles executavam o pacote de testes e imediatamente viam quais de suas apostas tinham dado certo. Eles perceberiam imediatamente quais das mudanças que haviam implementado antecipadamente realmente ajudaram a melhorar o desempenho e quais não. Então, quem pode escrever essas avaliações? Como eu disse antes, você deve envolver as partes interessadas não técnicas, porque elas terão uma ideia muito melhor do que é bom e ruim para fins de elaboração de suas avaliações. Então, gerentes de produto, representantes de sucesso do cliente , vendedores, todos podem contribuir para as tarefas de avaliação e melhorar suas avaliações.
+
+Desculpe? Com certeza, porque eles podem te dizer, sabe, eles podem te dizer que um teste simples seria, tipo, isso deveria estar presente em todas as respostas, e você pode transformar isso em uma avaliação de código. Mas na maior parte do tempo eles vão trabalhar com instruções passo a passo. Outro padrão que vale a pena conhecer é o volante de dados. Então, quanto mais conhecimento especializado você adicionar, maior será seu conjunto de dados de referência, melhor será seu conjunto de avaliações e cada iteração se potencializa . Assim, à medida que seu conjunto de avaliações se torna
+
+mais abrangente, seus agentes melhoram e sua compreensão dos modos de falha se aprofunda, isso cria um conjunto de dados diferenciado que se torna uma vantagem competitiva. Ninguém além de você tem acesso às suas avaliações. Ninguém além de você tem essa longa lista de dados de produção e avaliações de produção que dizem: " Essas são todas as maneiras pelas quais o agente pode falhar". Isso cria uma vantagem competitiva que outras pessoas não têm, o que pode ajudar você a diferenciar seu agente de outro agente no mercado que esteja tentando fazer a mesma coisa. E um último benefício prático das avaliações é a vantagem na adoção do modelo. Como eu
+
+disse, novos modelos são lançados o tempo todo. Se você tiver um conjunto abrangente de avaliações de regressão, poderá saber em poucos minutos se esse novo modelo melhora ou piora o desempenho do seu agente e se é viável implementá-lo no mercado . Agora vocês ficarão aliviados em saber que estamos quase no final deste workshop. Obrigado a todos por terem ficado até o final. Estou muito impressionado com todos vocês. Bem,
+
+vou dar agora uma breve visão geral das coisas que não abordamos, para que vocês saibam o que pesquisar no Google para se aprofundarem ainda mais no assunto . Uma delas é o monitoramento da produção. Isso é algo em que nossos produtos corporativos dão muita ênfase, algo que o Phoenix não faz. Depois de enviar um agente para produção, você pode direcionar uma determinada porcentagem do seu tráfego para um ambiente de avaliação e verificar constantemente se o seu agente está apresentando um bom desempenho. Isso pode causar quedas na qualidade do modelo, pois às vezes elas ocorrem sem que haja uma alteração no modelo.
+
+Isso pode revelar ataques adversários, mostrando como as pessoas descobriram uma maneira de fazer seu agente falhar, e testar em um ambiente de produção pode proteger contra isso. E também pode testar a deriva do agente, a deriva do modelo. À medida que seu caso de uso muda, à medida que seu produto muda, coisas que funcionavam no seu agente deixarão de funcionar, e as avaliações contínuas de produção podem encontrar esses problemas. Você também pode fazer uma avaliação considerando os custos. Como eu disse, usamos Haiku para o nosso agente e Sonnet para o nosso juiz porque são modelos baratos e que se esgotam rapidamente.
+
+Mas na produção você pode ir mais longe. Você pode usar modelos diferentes para diferentes tipos de consultas. Então, sabe, se a pergunta é "quais são suas horas de trabalho?", isso não exige o mesmo poder de processamento que, digamos, analisar os índices P/L comparativos dessas cinco empresas de semicondutores. Assim, você pode fazer a seleção de modelos em camadas . Você pode usar modelos mais simples para
+
+consultas básicas e modelos mais sofisticados em seu agente para consultas complexas. Uma das maneiras de fazer isso é através da precisão normalizada por custo, que é uma expressão do Google que estou mencionando aqui apenas para que você possa pesquisá-la no Google. É uma forma de tornar essas compensações concretas. É a precisão dividida pelo custo. Portanto, um agente com 92% de precisão a 2 centavos por consulta pode ser melhor do que um com 95% de precisão a 15 centavos por consulta.
+
+E as avaliações dirão se essa compensação vale a pena ou não. E depois há a avaliação aos pares. Como eu disse antes, uma das coisas tentadoras que se pode fazer com as Avaliações é pedir ao agente para classificar algo de 1 a 10. Elas são muito ruins nisso. Uma coisa que ele faz muito melhor é dar dois exemplos e pedir para comparar qual é o melhor.
+
+Trata-se de uma avaliação aos pares. Dentre esses dois resultados, qual foi o melhor? E faz um trabalho muito melhor ao comparar os dois porque tem dois exemplos concretos com os quais trabalhar. Isso é especialmente útil para testes A/B de versões de prompts ou atualizações de modelos. E depois há a pontuação de confiabilidade. Eu
+
+mencionei "passar em K". "Passar em K" pergunta se o agente pode ter sucesso pelo menos uma vez em K tentativas? E depois há o passe elevado à potência de K, que é: será que ele consegue ter sucesso todas as vezes em K tentativas? À medida que o valor de K aumenta, essas duas medidas de confiabilidade divergem drasticamente. Um ponto de passagem em K se aproxima de zero. Desculpe, passar
+
+quando K se aproxima de 100% e passar elevado a K se aproxima de zero. A escolha entre elas dependerá do seu caso específico. Um assistente de codificação que eventualmente acerta é ótimo para passar no teste K. Você pode continuar tentando até conseguir algo que funcione. Bem, enquanto um assistente de suporte ao cliente que erra após cinco tentativas, sabe, a cada cinco tentativas, é um fracasso na perspectiva dos clientes.
+
+Então, hum, "pass at the power of K" é como você mediria a eficácia de um bot de atendimento ao cliente . Hum, e depois há a fronteira. Existem sistemas com múltiplos juízes, nos quais você, por exemplo, com um mestrado em Direito (LLM), pode utilizar vários juízes simultaneamente para obter diferentes opiniões, verificar fatos e confirmar alegações. Bem,
+
+basicamente, esse é o fim do que abordamos hoje. Este é o loop. Você instrumenta, rastreia, avalia, anota manualmente, analisa essas anotações, aprimora seu agente e depois volta ao início . Bem, uma dica final é que você deve começar devagar. Hum, você não precisa fazer tudo isso de uma vez. Comece por ler os
+
+seus rastros. Bem, 15 minutos lendo resultados reais serão muito mais eficazes do que, sabe, horas mexendo no prompt se você não leu os rastreamentos e as explicações. Hum, escreva um único comando `eval` como seu primeiro ` eval`. Verifique se está no formato esperado. Verifique se a sequência de caracteres que você espera encontrar está presente.
+
+E então, a partir daí, vá construindo gradualmente seu conjunto de avaliações. Primeiro, crie avaliações de capacidade e, à medida que as obtiver, transforme-as em avaliações de regressão. Bem , as avaliações são infraestrutura. Bem, algumas equipes criam avaliações logo no início do desenvolvimento, outras as adicionam quando já estão em escala. Bem, o momento em que você precisa de avaliações é quando a verificação de vibrações se torna um gargalo para a melhoria. Quando você descobre que
+
+mudar uma coisa quebrou outras três sem que você percebesse, é aí que você precisa de avaliações eletrônicas. Bem, na primeira vez que uma regressão aparecer antes de chegar aos seus usuários, em vez de depois, você terá justificado o custo de construir suas avaliações e-valid. Então agora é a hora de ir lá e experimentar de verdade. Você já possui uma conta Phoenix Cloud. Este é o link para a documentação do Phoenix. E o próprio Phoenix
+
+é de código aberto, então se você quiser contribuir com o Phoenix, ótimo. E, só para finalizar, devo mencionar que existe o Rise AX. Então, você pode fazer tudo o que faz no Phoenix no Rise AX, mas há algumas coisas que você pode fazer no Rise AX que não pode fazer no Phoenix, e são todas coisas voltadas para o ambiente corporativo. Então, se sua empresa é muito, muito sensível em relação aos seus dados, você vai querer coisas como SOC 2 e outras medidas de conformidade. A AX pode fornecer esses itens para você. Se você precisar de coisas como
+
+várias equipes interagindo, você pode usar SAML e SSO. Se você tem um agente de produção que está processando bilhões de linhas e bilhões de registros, temos uma tecnologia chamada Rise DB que nos ajuda com isso. O AX oferece rastreamento de agentes com reconhecimento de sessão , ou seja, não apenas as interações individuais dos agentes , mas toda a sessão de um usuário, desde o momento em que ele fez login até o momento em que fez logout. Temos um assistente de IA chamado Alex. Temos belas representações gráficas do trabalho do seu agente .
+
+Temos métricas, painéis de controle e monitoramento. É uma melhoria significativa em termos das coisas que você pode fazer. Bem, basicamente é isso. Muito obrigado a todos por terem ficado até o final. Se vocês tiverem mais perguntas, tenho algum tempo agora para respondê-las. Se você
+
+quiser, caso se lembre deles mais tarde, meu endereço é seldo.com no Blue Sky, e você pode obter esses slides nesse URL. Muito obrigado pelo seu tempo e atenção.
+
+Tenho alguma pergunta agora ou todos estão ansiosos para ir para casa? OK.
+
+Olá. Então, tanto para Cody Bells quanto para LLM Bells, é possível definir ambos na própria plataforma, de forma que sejam executados pela plataforma em vez de scripts individuais? Talvez eu não tenha percebido isso no início. Não , essa é uma ótima pergunta. Uh Cody Bells e LLM é um juiz e-bells em Phoenix uh são executados no cliente e retransmitidos para o servidor.
+
+No AX, eles podem ser executados online na própria plataforma. Existe alguma possibilidade de usar algo como as APIs de lote da Anthropic, que utilizam versões muito mais baratas de ferramentas de código aberto para analisar grandes volumes de dados? Pergunte-me novamente depois. Há um senhor atrás de você com uma pergunta. Olá.
+
+Oh. Olá. Sim. Para contextualizar, trabalho em uma empresa de IA para construção civil, onde analisamos aspectos como verificações arquitetônicas e conformidade. E um dos problemas que temos é que recebemos toneladas desses cheques de arquitetos. Tentamos analisar o cenário
+
+para entender exatamente o que precisamos construir. Certo. E não temos muitos dados rotulados sobre isso. O que começamos a fazer é tentar automatizar o escopo do código na nuvem e, em seguida, verificar a consistência. Então, se fizermos 10 análises, a solução será sempre a mesma?
+
+Temos usado a consistência como uma espécie de avaliação ( e-val) para a complexidade do problema. Uhum . Temos estado a juntar mais peças deste tipo, chamando- as de meta-avaliações, para quando temos um problema que ainda estamos a tentar resolver. Você consegue pensar em mais alguma coisa parecida? Assim como você está criando o próprio problema, também está criando o processo de resolução, ou seja, avaliações ( e-vals) para ele, e não apenas a solução em si .
+
+Sim, com certeza. Quer dizer, nós já falamos sobre isso com as meta-avaliações, certo? Por exemplo, numa situação em que se utiliza um modelo de aprendizagem baseado em leis (LLM) para avaliar o resultado de outro LLM, isso se torna imediatamente uma meta- avaliação de LLM. Você pode usar um LLM (Modelo de Aprendizado de Liderança) para avaliar qual dessas 10 configurações de agentes possíveis teria sido a melhor. Ah, era disso que eu estava falando quando mencionei configurações multiagentes e configurações multi-LLM . É
+
+possível criar uma situação de circuito fechado onde um agente gera cinco variações de prompts possíveis e as testa simultaneamente contra a avaliação para ver qual dessas variações, sem intervenção humana, trará melhorias. Isso responde à sua pergunta? Sim, faz sentido. OK. Ah, na frente.
+
+Obrigado pela conversa. Foi realmente ótimo. Hum, eu tinha uma pergunta sobre a quantidade de avaliações necessárias para uma funcionalidade, porque, especialmente quando se trabalha com rastreamentos em tempo real, às vezes o custo das avaliações pode ser maior do que o da própria funcionalidade. E sim, então como você sabe quando escreveu avaliações suficientes? Essa é uma ótima pergunta.
+
+Como saber se você escreveu uma avaliação suficientemente boa? É isso mesmo que você está perguntando, certo? Bem, a resposta está principalmente nas equações de custo que eu mostrei anteriormente. Bem, isso se deve em parte às avaliações de regressão versus avaliações de capacidade. Se você tiver um conjunto de 100 regressões e uma avaliação de capacidade, gastará uma quantia enorme de dinheiro realizando testes de regressão, e provavelmente não precisa de todas as 100 avaliações de regressão. Você
+
+pode descartar, sei lá, 80% deles e ainda assim ter uma amostra representativa de avaliações de regressão. A etapa em que você não deve pular, em que não deve economizar, é a avaliação de capacidade. Então, você pode reduzir, diminuir ou comprimir suas avaliações de regressão, e a avaliação de capacidade é onde você provavelmente deve investir mais em termos de custo. Você pensa algo como: "Não vamos nos preocupar com qual modelo estamos usando." Vamos tornar isso o mais caro possível, porque é aí que o agente realmente se destaca.
+
+Ok, obrigada. E em rastreamentos em tempo real, você executa tanto a regressão quanto a avaliação de capacidade, ou apenas a regressão? Em rastreamentos em tempo real, não faz sentido executar a avaliação de capacidade, pois ela não está mudando. Sim , você também pode reduzir custos aqui. Sim .
+
+OK. Obrigado.
+
+Eu não faço ideia. Sim , só uma pergunta sobre o seu modelo de acionamento ou sua avaliação personalizada. Então, tipo, desculpe, você pode falar mais alto? Sim, desculpe. Então, uma pergunta sobre a forma como você definiu seu LLM personalizado como juiz. Sim
+
+. Então, no seu exemplo, você tem basicamente oito coisas separadas. Então, aqui estão quatro coisas práticas. Aqui estão quatro medidas não acionáveis. E tudo isso está sendo tratado como um único sim ou não. Bem, há
+
+alguns conselhos online de outras pessoas que diriam: "Ah, não, você deveria dividir isso em oito cheques individuais separados ." Então, você recebe uma pontuação entre zero e oito, basicamente. Certo. E você está executando cada uma dessas verificações individuais uma vez como um LLM separado, na qualidade de juiz. Você acha que esse é o caminho certo ou acha que agrupá-los um pouco mais está bom?
+
+É uma ótima pergunta porque é... é meio arbitrária, não é? É como... o
+
+que eu estava tentando medir ali, tipo isso. É aqui que você precisa envolver as partes interessadas não técnicas. Tipo, o que estamos tentando medir? Estamos tentando medir a viabilidade. Estamos tentando medir especificamente se foram mencionadas ou não as relações preço/lucro? Se isso for
+
+algo específico que o stakeholder considera importante e que eu preciso ver sempre, então você deve fazer uma avaliação sobre isso. Se o que você procura especificamente é uma recomendação de compra, venda ou manutenção, que é o que eu disse que estava procurando, então um índice P/L (Preço/Lucro) ajudará o corretor a chegar lá, mas não é o que eu estou procurando. Então, com certeza depende do contexto e do que as partes interessadas dizem, o que realmente define o que é correto, em oposição a ser apenas um fator que contribui para a correção, se é que você me entende. Então, às vezes é inevitável, é uma espécie de "ou isso ou aquilo", contanto que faça uma dessas coisas. Exatamente.
+
+Saúde. Ah, havia outra pergunta ali atrás .
+
+Obrigado pela palestra. Foi muito bom. Hum, tenho duas perguntas. A primeira questão é... parece haver
+
+muitos fatores determinísticos em todo o processo de avaliação. Por exemplo, se tivermos esse resultado, o que ele significa? Tipo, isso significa que a solicitação do agente é ruim, ou que a rubrica que fornecemos é ruim, ou que, se houver uma anotação humana, talvez o próprio humano não seja confiável? Você acha que faz sentido passar por fases semelhantes? Primeiro, você se certifica de que isso é confiável, depois passamos para a próxima fase, que é comparar, sei lá, o que for.
+
+Sim, com certeza. Essa é uma das razões pelas quais eu recomendo construir suas avaliações de forma iterativa. Por exemplo, comece com a avaliação de código e certifique-se de que ela funcione sempre. Em seguida, crie seu primeiro modelo de aprendizado (LM) como juiz e verifique se ele está funcionando da maneira desejada. Se você introduzir várias avaliações ao mesmo tempo, terá o mesmo problema de múltiplas solicitações que tinha antes. Por exemplo, a alteração que você está propondo
+
+vai começar a alterar várias avaliações simultaneamente, o que não é desejável. É por isso que você precisa de uma avaliação de capacidade que esteja tentando superar individualmente. Bem, enquanto você tem avaliações confiáveis ​​existentes como avaliações de regressão que você espera que não mudem. Ah, obrigada. E a segunda pergunta é como você também mencionou, uma versão, a versão da rubrica ou a versão do prompt do agente ou algo assim, mas minha pergunta seria, por exemplo, quando mudamos os critérios, precisamos executar todas as avaliações novamente com base nas novas rubricas? Talvez tenhamos
+
+uns 500... não sei... dados no conjunto de dados que
+
+temos. Precisamos executar tudo isso novamente? Ou será que eles também considerariam como parte deste conjunto de dados algo como um exemplo de arquivo, não sei, que podemos usar mais tarde? Bem , essa é uma excelente pergunta. É para isso que servem os experimentos.
+
+Os experimentos fornecem um conjunto menor que você pode comparar com seu conjunto de fracassos e, assim, perguntar: "Estou melhorando nisso?" Então, os experimentos permitem que você use um conjunto pequeno e suba a ladeira rapidamente. Assim que você achar que chegou ao topo da colina, ou que está atingindo o ponto de rendimento marginal decrescente em sua escalada, você deve voltar e executar o modelo em todo o conjunto de dados para garantir que não tenha acidentalmente realizado um sobreajuste ou produzido uma regressão que seja aplicada a todos os dados. Então, você não precisa correr. É para isso que servem os experimentos. Você não precisa
+
+executar testes em todo o seu conjunto de dados sempre que fizer uma alteração, mas deve fazê-lo periodicamente quando achar que chegou a um ponto de parada ou quando estiver prestes a lançar o produto. Muito obrigado. Legal. Hum, tem mais um lá atrás e acho que depois disso o tempo acaba.
+
+Ah, obrigada. Super informativo. Como alguém que já trabalhou com aprendizado de máquina e pesquisa em aprendizado profundo, achei a ideia de otimização em circuito fechado muito interessante e acho que é uma perspectiva que me empolga particularmente. Já usei ferramentas como o DSPy no passado e não sei se é exatamente útil, mas acho que as
+
+ideias de pesquisa automatizada do Andrej Karpathy também são de certa forma relacionadas, porém não encontrei nada particularmente incrível além de me levar a um certo limite onde funciona bem, e então eu retomo manualmente a partir daí. Não sei, você tem alguma ideia de para onde esse espaço está caminhando ou se há algum trabalho específico que lhe pareça promissor ou interessante? Venha para a Feira Mundial da AIE. Esperamos apresentar algo lá em que realmente tenhamos conseguido fazer isso funcionar. Mas não, a resposta é que ainda é algo inexplorado.
+
+O software autônomo de circuito fechado e autoaperfeiçoamento é algo que podemos vislumbrar no horizonte. Acreditamos que seja o agente, sabe, talvez quando lançarem o Mythos, de repente, tudo funcione automaticamente. Bem, é muito difícil chegar ao trabalho agora, e esse é um dos motivos pelos quais não apresentei hoje, porque está tudo meio incerto no momento. Certo , obrigado. Muito bem, muito obrigado por terem ficado até aqui.

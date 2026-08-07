@@ -1,0 +1,82 @@
+---
+video_title: "Cognitive Exhaust Fumes, or: Read-Only AI Is Underrated — Šimon Podhajský, Head of AI, Waypoint"
+video_id: u0TOSBbAw7c
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=u0TOSBbAw7c
+video_date: 2026-04-08T09:45:06+00:00
+video_description: |
+  Every other personal AI demo has agents sending emails and managing calendars. I built the opposite: a read-only system that queries my data sources (email, journal, tasks, CRM, browser sessions, notes) but can't modify any of them. This is an intentional limitation. I'll cover why trust asymmetry matters (read is safe, write is dangerous), how cross-source pattern detection beats task automation, and why ""exhaust fume analysis"" of one's cognition is more valuable than yet another AI assistant trying to act on your behalf.
+  
+  Šimon Podhajský - Head of AI, Waypoint AI
+  
+  I'm Head of AI at Waypoint and a full-stack builder with a background in data science and data engineering. I built this personal AI system to scratch my own itch -- and discovered that the ""read-only"" constraint led to better architecture than the agent-first approaches I see everywhere.
+  
+  I made a Github repo with a template for people to try out the read-only AI / personal intelligence system: https://github.com/shippy/personal-intelligence-kit 
+  
+  Socials:
+  https://linkedin.com/in/simonpodhajsky
+  https://x.com/sim_pod
+  https://simon.podhajsky.net
+  
+  Slides:
+  https://slides.podhajsky.net/read-only-ai
+---
+Olá, meu nome é Shimon. Hoje, vou falar sobre um sistema de IA pessoal que te conhece, mas não fará nada por você ou em seu nome, e não vai arruinar sua vida. Então, isso é bom. Nesse processo, abordarei os riscos da IA ​​pessoal e como sistemas de IA somente leitura, como este, os mitigam. Vamos começar.
+
+Todo o espaço da IA ​​pessoal está obcecado com agentes que agem em seu nome. Eu construí algo diferente. O ponto de partida: seis fontes, acesso somente leitura, sem permissão de escrita. Essa limitação é totalmente intencional. Mas, antes de mais nada, o que são gases de escape cognitivos? O que eles são?
+
+É o termo que uso para a atividade digital que é um subproduto da sua cognição. Assim como os gases de escape de um motor de carro, individualmente, são apenas resíduos, mas se você analisar o escapamento, poderá diagnosticar o motor. Vejamos, então, alguns exemplos do que o escapamento revela. O que isso lhe permite fazer? Três dos principais usos que identifiquei: lacunas entre intenção e ação, dispersão da atenção e deterioração dos relacionamentos.
+
+Nenhuma fonte isolada fornece essas informações, e a capacidade de consultar diferentes fontes é o que elas têm em comum. Seu cliente de e-mail não sabe o que você escreveu no diário. Seu gerenciador de tarefas não sabe o que você está navegando. O sinal entre fontes é o produto. Vamos analisar o sistema mais de perto.
+
+Aqui está, Fulan. Três zonas. Os arquivos-fonte são somente para leitura. A IA nunca responde a eles. O espaço de trabalho é onde a análise acontece. Os arquivos gerados ficam armazenados em um
+
+cofre separado do Obsidian para que eu possa analisá-los, mas não precisa ser necessariamente um cofre separado do Obsidian . Poderia ser uma instância separada do Notion, arquivos de texto separados, qualquer coisa separada. Poderia ser qualquer outro sistema. E é isso tudo. E quanto às candidaturas?
+
+Vamos começar com uma abordagem prática e objetiva, ao estilo de David Allen, para a reflexão semanal. Com base nas seis fontes, a IA sintetiza uma reflexão, por vezes brutal, sobre como você passou a sua semana. Vejamos um exemplo real. Em Claude, tudo funciona. Armazenei essa lógica na habilidade de comando de reflexão semanal {slash} {slash}. O que
+
+ele faz é executar um script em Python que obtém todos os dados provenientes das fontes somente leitura, analisa-os e cria saídas estruturadas com instruções específicas que eu preparei. Isso leva um tempinho. Ele consulta a API Anthropic para obter esses resultados estruturados. E [bufa] assim que fizer isso, criará um documento Markdown que poderei revisar.
+
+Agora que o processo terminou, tenho uma visão geral e posso abri-lo novamente no Cursor para convertê-lo em uma pré-visualização mais legível e constatar que, de fato, aborda os temas da semana. Isso aborda algumas das tensões e conflitos sobre os quais preciso refletir. Aborda meus compromissos e relacionamentos, notadamente por suas omissões, e destaca os momentos marcantes, bem como questões de reflexão sobre as quais gosto de pensar.
+
+Resumindo, este não é um relatório de produtividade. É um reflexo de como você pensa, construído inteiramente a partir de gases de escape. Vejamos outro exemplo. Gosto de discutir o que estou lendo com outras pessoas, mas às vezes acho que não deveria ficar mandando mensagens para as mesmas três pessoas sobre o mesmo assunto. Então, perguntei à IA: "Considerando minhas leituras recentes, com quem da minha rede eu deveria discutir isso ?"
+
+Essa é a mágica da interoperabilidade entre fontes. Quatro fontes de dados, nenhuma das quais foi projetada para se comunicar entre si, se combinaram para gerar uma visão que você jamais obteria com uma única ferramenta. E tudo somente para leitura. Nada foi enviado. Nada estava agendado.
+
+Apenas uma sugestão para eu acatar, se assim o desejar. Deixe-me mostrar a demonstração mais uma vez. Mais uma vez, esta é uma habilidade do Claude, [suspiros] mas neste caso, escondi a maior parte das entranhas da habilidade do Claude na consulta de origem cruzada e faço a pergunta específica em linguagem simples. A linguagem simples sabe que irá ativar automaticamente a habilidade específica para consultas entre fontes e, em seguida, percorre os bancos de dados que selecionei e pelos quais tenho interesse regular, consulta o banco de dados SQLite do Vivaldi em busca dos artigos que mais li e, após algum tempo, identifica quais desses artigos são os mais lidos, quais ainda estão abertos em abas e quais pessoas podem estar curiosas sobre eles com base no perfil. Agora, esta é provavelmente a parte mais fraca. O Clay MCP
+
+demora uma eternidade para executar, mas ele pesquisa no meu CRM, ou no meu sistema de relacionamento com amigos, suponho, então FRM, por pessoas que possam estar interessadas em artigos sobre esses tópicos.
+
+Nesse caso, são pessoas interessadas em IA, ou pessoas na área da tecnologia europeia, ou pessoas na área da educação, que, por coincidência, são três áreas em que eu também estou envolvido. Como você deve ter percebido, isso ocupa muitos tokens na janela de contexto, então provavelmente não é recomendável fazer isso em uma sessão que não esteja limpa, mas não há problema se isso bagunçar um pouco a janela de contexto de 1 milhão de tokens da versão 4.6, e depois você a limpa novamente. Então, neste momento, está recebendo as respostas de todas as buscas por Clay. Ele sintetiza as pessoas com quem eu deveria conversar e as associa a um artigo cada. É isso que o [texto ilegível] está tentando fazer:
+
+mapeá- los para um artigo cada. Isso requer um pouco de... magia em bash por parte do código do Claude, mas se você estiver executando no modo automático ou com permissões de disco perigosas , também poderá se livrar disso .
+
+E, de fato, quando analiso os primeiros resultados, essas parecem ser as pessoas com quem eu gostaria de conversar, mas com quem ainda não conversei, sobre os tipos de artigos que tenho lido. Então, obrigado, Claude.
+
+Certo, neste caso, encontrou até o autor do artigo que eu estava lendo, que está na minha rede de contatos, então acho que devo dar uma chance a ele.
+
+Resumindo, nenhuma fonte conhece todos os detalhes dessa história . Seu navegador não reconhece seus contatos. Seu CRM não sabe o que você está lendo. O escapamento faz isso. Então, por que mantê-lo como somente leitura se é tão útil, afinal?
+
+Eis a questão sobre o risco envolvido. É assimétrico. A desvantagem de um erro de somente leitura é zero. Eu simplesmente ignoro. A desvantagem de um erro de escrita é ilimitada.
+
+E a IA pessoal opera em um ambiente de alto risco. Seus relacionamentos, sua carreira, sua reputação. Prefiro não receber e-mails automatizados do que ter um erro que destrua minha vida. Mas existe também um argumento filosófico mais sutil , quase uma questão de gosto. O modo somente leitura não é apenas mais seguro, como também produz análises melhores. No momento em que sua IA
+
+grava em suas fontes de dados, os gases de escape são contaminados. Você não está mais observando sua cognição. Você está observando um híbrido humano-IA e não consegue identificar quais padrões são seus. Claro, o observador também altera seu comportamento, mas o ciclo de feedback é mediado por você, não automatizado. Você leu a reflexão. Você decide o que
+
+fazer. Isso é diferente de a IA escrever seu rascunho. E há quem argumente que, para começar, você não quer que a IA escreva seu rascunho, e sim que você deve recuperar o controle da situação. Talvez seja difícil convencer esse público, mas vale a pena considerar. Neste ponto, você pode estar se perguntando: "Por que não colocar tudo isso no Open Claude em um servidor somente leitura?"
+
+Que eu tenho. A questão é a seguinte. O produtor e o observador geram muito mais valor por interação. O agente me economiza 30 segundos na verificação da previsão do tempo. O observador me mostra que tenho evitado meu projeto mais importante há duas semanas.
+
+Sem mencionar que há menos risco de exfiltração e poluição cognitiva. O argumento que estou apresentando aqui é que o modo somente leitura não é um passo intermediário para {quote} agentes reais. Isso ajuda você a fazer as coisas bem, sim, mas preenche uma lacuna diferente, atende a uma necessidade diferente. É uma categoria de produto diferente. A indústria encara o modo somente leitura como uma limitação da qual você se forma.
+
+Acho que isso está errado. Observadores e agentes são ferramentas diferentes, e o prefeito não é um mordomo desequilibrado. Essa é, portanto, a proposta de valor. Mas eu estaria lhe fazendo um desserviço se parasse por aqui. Vamos colocar o chapéu da paranoia.
+
+O que me mantém acordado à noite? Vamos começar com o efeito mosaico. Existe algo chamado efeito mosaico, onde você junta muitos pequenos pedaços de informação e obtém uma imagem. O texto do meu próprio slide descreve perfeitamente o risco de segurança. A mesma interligação que torna o sistema útil também o torna um alvo devastador.
+
+Portanto, tenha cuidado. O outro lado da moeda: a triquetra letal de Simon Willison. Caso você não conheça a triquetra letal, trata-se de um modelo de risco de segurança que combina três fatores: dados privados, conteúdo não confiável e comunicações externas. Inicialmente pensei que tínhamos quebrado apenas a triquetra letal, mas não, não completamente. Isso elimina os canais naturais de exfiltração, mas o terceiro elemento é qualquer capacidade de comunicação externa, e o acesso ao shell ainda permite isso.
+
+Resumindo, o sistema não é à prova de fogo, e eu não estou afirmando isso. Mesmo no melhor cenário possível, ainda estou enviando dados para a Anthropic em uma rede que é majoritariamente aberta, com muito mais informações disponíveis do que o estritamente necessário. Não estou afirmando que o sistema seja seguro. Afirmo que pensei sobre onde isso não acontece e decidi quais riscos estou disposto a correr. É diferente de não saber.
+
+A pior postura de segurança é aquela que você não analisou. Dito isso, ainda acho que há algo valioso a ser aprendido com tudo isso. Seu escapamento digital é o conjunto de dados mais subutilizado que você possui. Reflita sobre isso e use essa experiência para se tornar uma pessoa melhor. Obrigado por ouvir.
