@@ -1,0 +1,165 @@
+---
+video_title: "Installing Openclaw AI Agent with Ollama Open Source Models: Quick Install Guide"
+video_id: NNwb6jccnKw
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=NNwb6jccnKw
+video_date: 2026-05-27T16:00:35+00:00
+video_description: |
+  Installing Openclaw and giving instruction for its use has terrfied many users in the past. It was full of complexity and unclear procedures. I rewrote the installation scripts and simplified the instructions and now you can install Openclaw with Ollama with just one simple installation script.
+  
+  Then we will discuss what this AI Agent can do and demonstrate a few things. This is a "user" level tutorial. This is now at the reach of an average user and not an advanced techie.
+  
+  Caution: This is Linux only or Linux VM.
+  
+  ----------------------------------
+  BraX3 Privacy Phone and Brax Open_Slate is on https://braxtech.net
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+Hoje, vamos instalar um agente de IA e usá-lo na prática. Esperei muito tempo antes de pensar em fazer este tutorial porque antes era muito complexo e estava fora do alcance do usuário comum. Mas eu encontrei uma solução. Vamos instalar o Open Claw e manter tudo simples. Acredite em mim, é possível.
+
+Só quero sair da fase teórica, onde as pessoas dizem que eu apenas falo sobre agentes de IA, mas não os demonstro na prática. Foi por isso que adiei. Não queria te sobrecarregar com complexidades. Mas eu consegui resolver e reorganizei as instruções para ficar mais fácil. Vou explicar rapidamente, mas você sempre pode pausar o vídeo para ver as capturas de tela e copiar os passos.
+
+A premissa básica do que ensino é sempre priorizar a segurança da privacidade. Embora a opção mais segura seja uma máquina LLM local, como mostrei no meu vídeo sobre IA local, é uma proposta cara no momento, então, por enquanto, vamos usar o Ollama Cloud como nossa fonte de dados LLM. Com base no que você aprender aqui, poderá decidir mais tarde investir em uma máquina de IA real , mas poderá adiar essa decisão para uma data posterior. Em seguida, após instalar o agente básico do Open Claw, começaremos a interagir com ele e mostrarei como o configurei automaticamente. Então, nós [música] podemos discutir os muitos casos de uso potenciais e eu darei alguns exemplos simples.
+
+No final, os casos de uso surgirão da sua imaginação. No momento, para mim, meu agente Open Claw realiza a programação em minhas plataformas e me ajuda a gerenciar minha infraestrutura em nuvem. A empresa também oferece suporte ao cliente na plataforma Brexly. Você descobrirá o que isso pode fazer por você. Fique aí mesmo .
+
+Pré-requisitos. Embora essa configuração possa ser instalada em um Windows ou um Mac, vou me concentrar especificamente na instalação no Linux, que é o sistema operacional que desejo que meu público-alvo utilize. Se você estiver usando outro sistema operacional, pode instalar isso em uma máquina virtual com Linux, e as instruções serão as mesmas. As instruções devem funcionar sem alterações no Ubuntu, Debian, Mint, Pop!_OS e Zorin.
+
+Deve funcionar na maioria dos sistemas Arch e em outras distribuições, com pequenas alterações que você já deve conhecer se estiver familiarizado com essas distribuições. A instalação é feita por meio de um script, então você não precisa entender o que está nos comandos. Assim que o agente Open Claw estiver em execução, você interagirá com ele por meio do seu aplicativo de mensagens, que neste exemplo será o Telegram. Assim, o computador usado para o próprio Open Claw não importa muito, e você geralmente não precisará acessar o computador, exceto quando houver algum problema. Ele pode ser instalado em qualquer computador sem requisitos realmente específicos .
+
+Qualquer laptop com 5 anos de uso seria mais do que suficiente. A instalação será mais fácil se for uma máquina comum e não um dispositivo sem interface gráfica, como um Raspberry Pi. Embora você possa testá-lo em seu computador normal, eu pessoalmente recomendaria isolá-lo em um computador separado, pois, uma vez que esteja funcionando completamente, ele pode apresentar comportamentos inesperados. Portanto, aprenda a limitar o acesso a ele. Além disso, como já mencionei, usaremos o Ollama como nossa fonte de modelos de IA. E a
+
+razão para essa escolha é a privacidade, pois não queremos que as instruções de nossos agentes sejam capturadas como dados de vigilância ou mesmo dados de aprendizado. Nesse caso, você pode facilmente transformar isso em IA local, basta direcioná-lo para um modelo Ollama local , mas a instalação é idêntica à da IA ​​local. Novamente, não usaremos os modelos de nuvem da Frontier aqui, mas você ficará surpreso com a sua capacidade. Instalando os programas principais. O script que vou apresentar aqui serve apenas para instalar o programa Open Claw e o Ollama. Não executaremos
+
+nada relacionado à configuração do Open Claw até o final. Copie e cole este código no terminal Linux e pressione Enter.
+
+Muito importante: após executar este comando, feche o terminal antes de prosseguir. Se você quiser reverter isso para reinstalar o sistema, use estes comandos para desinstalar. Quando surgem problemas, a melhor solução costuma ser desinstalar e repetir o processo. E sempre feche o terminal após executar o script. Inscrições para lhamas.
+
+Em seguida, você precisará criar uma conta no ollama.com para acessar os modelos na nuvem. Faça login e cadastre-se. Em seguida, acesse a aba de preços e você verá os diferentes planos oferecidos. É possível começar apenas com o plano gratuito, mas ele será bastante limitado e poderá causar transtornos. Por isso, recomendo que
+
+você assine o plano profissional, que custa US $ 20 por mês. Haverá uma quantidade considerável de recursos de IA por esses 20 dólares, então valerá a pena . Será difícil para um indivíduo sequer atingir o limite máximo deste plano com uso intenso. Sem dúvida, é a melhor opção disponível para inferência de IA. Após criar uma conta no Ollama e efetuar o login, acesse o terminal e digite o seguinte. Faça
+
+login no Ollama. Isso pressupõe que o Ollama já foi instalado na etapa anterior e você será solicitado a conectar o dispositivo ao Ollama. Para testar se o Ollama está instalado, execute o seguinte comando no terminal. Isso deverá apresentar a mensagem, e você poderá fazer uma pergunta de teste com o chatbot LLM. Configuração do Telegram.
+
+Em seguida, vamos integrar o Telegram como um canal para nos comunicarmos com o agente de IA. Primeiro, instale o Telegram no seu celular e forneça um número de telefone. E não se preocupe, ninguém verá esse número se você não for usuário do Telegram, porque você estará falando sozinho. No entanto, você pode ajustar as configurações de privacidade para que ninguém veja. Mas isso é importante, pois você vinculará o aplicativo Telegram para celular a todas as instâncias para desktop. Em seguida, precisamos
+
+instalar o Telegram no Linux. Dependendo da distribuição, no Ubuntu, basta procurar o Telegram na central de aplicativos ou em qualquer outra fonte de software equivalente na sua distribuição. Em Zorin, é simplesmente chamado de software. No Mint, ele é chamado de gerenciador de software. No Pop!_OS, chama-se
+
+Pop!_Shop. Ou, no terminal, você pode simplesmente digitar sudo snap install telegram-desktop. Após instalar o Telegram no computador, execute-o e um código QR deverá ser exibido. Em seguida, usando o aplicativo Telegram no seu celular , acesse as configurações, selecione "Dispositivos" e depois "Vincular dispositivo". Isso
+
+lhe dará a opção de escanear o código QR e apontá-lo para o código QR exibido na tela do computador. Em seguida, os dois dispositivos serão conectados. O próximo passo é procurar por BotFather no Telegram. Em seguida, inicie um bate-papo com ele. Este usuário especial do Telegram fornece o token da API para conectar-se ao OpenClaw. Na
+
+sua conversa com o BotFather, digite {slash} newbot. Isso então o guiará pelo processo de dar um nome ao bot que termine com "bot" e, em seguida, ele lhe fornecerá um token de API. Eu pegaria esse token da API e o manteria disponível em um editor de texto, pois precisaremos coletar todos esses tokens de API com antecedência. Mais tarde, você poderá refinar seu bot digitando {slash} mybots na conversa do BotFather e, em seguida, poderá editar o bot, adicionar uma imagem e assim por diante. Portanto, é facilmente reconhecível.
+
+Voltaremos ao Telegram como uma das etapas finais da instalação, pois isso ainda não foi concluído. Configuração ousada. Em seguida, precisamos adicionar uma funcionalidade de busca na web . Isso será feito simplesmente acessando brave.com e se cadastrando para criar um login.
+
+Depois de acessar, vá para a API de pesquisa e acesse a seção de tokens da API. Agora, adicione um token de API e você poderá chamá-lo de OpenClaw. Novamente, anote a chave da API do Brave em um editor de texto, pois a utilizaremos mais tarde. Paguei 5 dólares para criar esta conta, mas isso me dá direito a 1.000 pesquisas por mês. Eu
+
+não uso muito e o Brave te dá 1.000 de crédito por mês. Basicamente, os 5 dólares são uma taxa única para a pessoa comum. É improvável que você pague mais no futuro. Configuração de garra aberta.
+
+O próximo passo é chamado de integração do Open Claw . Acesse a configuração do Open Claw. Em seguida, abra a garra a bordo. E agora vamos abordar as várias etapas de integração. E isso irá guiá-lo(a) durante todo o processo. Diga sim ao atendimento personalizado por padrão.
+
+Em seguida, selecione o modo de inicialização rápida. Selecione o seu modelo, que será o fornecedor da Ollama. Selecione nuvem e local. Insira o modelo manualmente. Eu digito manualmente Ollama Minimax M2.7 cloud.
+
+Em seguida, selecione seu canal, que será o Telegram. Em seguida, insira o token do seu bot do Telegram, que está salvo em um editor de texto ao lado, para que eu possa copiar e colar.
+
+Em seguida, habilito o emparelhamento de políticas DM se for solicitado .
+
+Em seguida, habilito a pesquisa na web selecionando o Brave. Em seguida, insiro a chave da API do Brave. Em "Habilidades configuradas", diga não. Então, por enquanto, vou pular a etapa final.
+
+Em seguida, seleciono "escotilha" no terminal. Para sair, digito {barra} sair. Agora, anote para acessar a interface de controle local, que é este link acima com o token. Isso lhe dá acesso ao OpenClaw através do navegador. Cole isso no seu navegador e, a partir daí, neste computador, você poderá acessar a interface do usuário do gateway OpenClaw a qualquer momento. Você
+
+pode até adicionar esta página aos seus favoritos. Você já pode conversar com seu assistente usando este link do navegador, mas na prática, eu nem uso isso, já que consigo acessar tudo pelo Telegram. Mas ainda não demos o passo final com o Telegram, que é emparelhá-lo. Emparelhando o Telegram com o OpenClaw. A configuração final que requer o terminal é o emparelhamento com o Telegram. Para fazer isso, acesse o
+
+Telegram, procure seu bot pelo nome e digite {barra} iniciar, ou pode haver um botão iniciar. Em seguida, deverá responder com um token de emparelhamento. E isso é algo que você também executa na linha de comando. A partir daqui, o Telegram já deve estar ativo e você poderá cumprimentar seu agente. A configuração ainda não está completa, mas a partir daqui o agente fará o restante do trabalho.
+
+Comandos importantes do OpenClaw. Embora normalmente não interajamos com o OpenClaw pela linha de comando, caso algo dê errado, esteja preparado para executar esses comandos. Reinicie o gateway sempre que alterar alguma configuração. Reiniciar o gateway OpenClaw. Configuração do OpenClaw. É semelhante
+
+ao processo de integração, mas você pode acessar especificamente a seção que deseja modificar. Configuração do OpenClaw. O OpenClaw Doctor permite que, se você fizer alterações manuais no arquivo OpenClaw.json e ocorrer algum problema, você possa usar o OpenClaw para descobrir qual é o problema ou restaurar o arquivo a partir de um backup. Médico OpenClaw. Todas as
+
+configurações importantes do Openclaw estão na sua pasta pessoal, dentro da pasta .openclaw, onde você também encontrará o arquivo de configuração, chamado openclaw.json. Este arquivo pode ser corrompido, então sempre faço um backup toda vez que faço uma alteração, para ter sempre uma versão funcional. Todos os arquivos de execução reais são mantidos em .openclaw/workspace.
+
+Inicializando o Openclaw. A primeira coisa que você provavelmente terá que fazer é responder no Telegram e dizer ao Openclaw quem você é e qual será o nome do agente . No meu caso, vou chamá-lo de Braxbot. A partir deste ponto, o Openclaw pode realmente te ajudar com a instalação e eu vou te mostrar como ele faz isso. Memória por meio de incorporações vetoriais.
+
+Uma das maiores vantagens da IA ​​é a possibilidade de usar a geração aumentada de recursos ou o algoritmo de recuperação de informações ( RAG). Bem, no Openclaw isso é muito fácil. Basta instruí-lo a instalar um modelo de incorporação vetorial, e todos eles fornecem um pequeno modelo chamado Nomic Embed Text, que funciona como um modelo local. Então, informo ao Openclaw que sua memória será armazenada nesses vetores incorporados em vez de apenas arquivos de texto. Dessa forma, ele pode ser facilmente recuperado e indexado. Além de simplesmente instruí-lo
+
+a fazer isso, não há muito mais que eu precise fazer, e acabei de lhe atribuir memória de longo prazo . Só para ver essa conversa, preciso instalar elementos incorporados.
+
+Configure o link de e-mail com o plugin Himalaya. Em seguida, quero demonstrar um uso muito prático do Openclaw, que é monitorar seus e-mails. Neste exemplo, configurei o e-mail apenas fornecendo meu endereço de e-mail e senha, e ele cuidou de todos os detalhes.
+
+Então, perguntei o que havia nas minhas mensagens hoje e, em seguida, pedi que respondesse a uma das mensagens.
+
+E eu lhe mostrarei o conteúdo da resposta real enviada pelo agente. Você pode ver uma resposta bastante detalhada aqui, e verá que minhas instruções de ativação foram muito curtas.
+
+Então, pedi para que lesse o e-mail, me fornecesse os códigos de segurança e também verificasse o conteúdo em busca de assuntos que pudessem estar relacionados a vendas e que eu precisasse priorizar, e o programa conseguiu fazer isso. Ele identificou o código de segurança e me forneceu, que pode ser um código de autenticação de dois fatores (2FA) enviado por e-mail quando você não está usando o computador. E então identificou um possível e-mail de vendas com base em informações de consultoria.
+
+O potencial de um agente. O valor de um agente reside no fato de ele ser independente e possuir memória de longo prazo. Isso vai muito além do que um chatbot pode fazer. Neste exemplo, estou falando com o Advai Telegram e dando instruções, mas eu poderia definir um cronograma e dizer para ele verificar meu e-mail a cada hora e executar alguma ação de acordo com isso. Isso poderia ser feito automaticamente ou o sistema poderia simplesmente encaminhar o e-mail para diferentes destinatários, dependendo do conteúdo. Essa poderia ser uma forma de
+
+limitar o tráfego da caixa de correio, por exemplo. Assim que você der instruções através do agente, elas ficarão armazenadas em sua memória de longo prazo . Novamente, usando apenas a conversa, você pode fornecer uma espécie de manual do usuário e uma base de regras para verificar sempre que alguma tarefa agendada for executada. E isso pode ser indexado se você instruir o sistema a armazenar esse conteúdo em vetores incorporados. Você pode ajustar o comportamento do agente usando os vários arquivos Markdown no espaço de trabalho, que são agent.md,
+
+heartbeat.md, soul.md, identity.md, tools.md e memory.md.
+
+Embora já tenhamos substituído o memory.md ao instruí-lo a procurar em representações vetoriais. Você documenta o que o agente pode fazer por meio de um arquivo de habilidades, e ele mesmo pode preencher esse arquivo. Por exemplo, você pode definir regras para determinar o que são injeções de prompt, para que o sistema não responda a e-mails suspeitos que, na verdade, sejam injeções de prompt. Você não precisa editar esses arquivos manualmente.
+
+Basta dizer ao agente para resolver isso para você. E você pode invocar uma habilidade, como verificar e-mails, pelo nome da habilidade, para que possa fornecer instruções detalhadas. Você pode ser tão sofisticado quanto eu. Meu OpenClaw tem acesso SSH aos meus servidores e pode visualizar o código-fonte do meu aplicativo e escrever código. O problema é que limitei o acesso correto a um diretório específico, e esse é o único lugar onde ele tem permissão para ler e escrever.
+
+Embora ele possa ler qualquer coisa e eu o tenha programado em PHP, Python, JavaScript, bash ou qualquer outra linguagem que eu precise. Uma das principais habilidades de um agente é fazer pesquisas para você. Seja para planejar férias na Grécia dia a dia ou reorganizar sua agenda de trabalho, o OpenClaw permite isso. Ou pode escrever um jogo para mim, como fez aqui.
+
+Os agentes não são perfeitos. O mais importante a lembrar ao aprender a interagir com um agente é que ele não é perfeito. É limitado pelo tamanho do contexto, que normalmente é de 128K, e pela capacidade do modelo. Modelos de vanguarda como o Claude 4.7 e o Chat GPT 5.5 são muito mais sofisticados, mas
+
+para uso típico, você descobrirá que todos os modelos de código aberto baseados em lhamas são bastante eficazes e podem realizar o trabalho muito bem. Cada modelo reage de forma diferente às suas instruções. Portanto, à medida que suas instruções se tornam mais sofisticadas, você precisa testar como cada modelo específico as interpretará. Não presuma que todos funcionam da mesma maneira. Os modelos menores tendem a se comportar como crianças do ensino fundamental, enquanto os modelos de vanguarda se assemelham a professores universitários. Os
+
+demais modelos situam-se entre esses dois extremos. Neste caso, fiz vários testes com GPT-OSS-120B e MinimaX-M2.7 e sei que funcionam muito bem. Mas você pode trocar de modelo com muita facilidade, até mesmo em tempo real. Basta digitar o comando no Telegram.
+
+/model seguido do nome do modelo. E desde que o modelo esteja bem definido em openclaw.json, você pode chamá-lo. Ou adicione garras abertas . A partir daqui, o OpenClaw pode fazer a configuração para você. Mas não confie totalmente nisso.
+
+Vai dar tudo errado. Portanto, faça um backup do arquivo openclaw.json ou configure o OpenClaw para fazer um backup antes de modificá-lo. O que você precisa aprender aqui é que a capacidade do agente é determinada por você. Não decidirá isso por si só. E sem
+
+sua orientação e supervisão, tudo vai dar errado . Mas, assim como qualquer aluno, ele pode ser treinado. E mesmo a medida básica de fornecer memória de longo prazo é suficiente para garantir que o animal aprenda por conta própria. A nova interface. Uma das coisas que aprendi com o layout "open claw" é que posso ser produtivo mesmo sem meu laptop por perto. Eu estava programando alterações no Braxbot
+
+no Braxme enquanto conversava com ele via Telegram. Em essência, se tiver acesso à informação, não há necessidade de interfaces especiais. Basta pedir ao agente e ele fará isso por você. E o agente pode estar sentado em outro lugar. Isso nos levou a criar um novo conceito de celular flip, onde a interface principal é apenas um sistema de mensagens de bate-papo . E isso será
+
+suficientemente poderoso para realizar pesquisas, obter informações e executar tarefas sem a necessidade de aplicativos. Resumo. O próximo passo é imaginar outros usos para isso, como um assistente ou funcionário poderoso. Independentemente das suas ideias preconcebidas sobre IA, a utilização deste agente, agora disponível ao nível de uma pessoa comum, constitui uma importante ferramenta de produtividade. Seja na área de tecnologia, vendas, marketing ou atendimento ao cliente, já existem inúmeras aplicações potenciais para aumentar a produtividade. Para mim,
+
+isso aumentou a produtividade em cerca de 5 vezes, como se eu tivesse 5 vezes mais funcionários. E no meu caso, investi em um computador local com IA , então meu acesso à IA é gratuito mesmo depois do custo único. Atualmente, o custo da IA ​​local é a única grande desvantagem. Portanto, essa utilização do Ollama é a menos perigosa das alternativas de IA. Espero que, no futuro, todos possam ter condições de instalar uma IA local.
+
+Aproveitar. Pessoal, estou sempre em busca de produtos e empresas que possam nos ajudar em nossa busca por privacidade. Para oferecer uma plataforma de discussão onde você possa debater ou discutir questões de privacidade, junte-se a nós no Brax.me e compartilhe seu conhecimento sobre privacidade ou aprenda com outras pessoas que estejam em um nível mais avançado do que você . Para apoiar este canal na loja Brax.me, temos produtos
+
+disponíveis que criamos para fornecer soluções de privacidade. Utilizamos o Braxmail para e-mails com proteção de identidade. Temos o telefone virtual Brax para números anônimos. Utilizamos o Bytes VPN para proteger seu endereço IP contra rastreamento de localização. Também estou apresentando a vocês o Brax SIM unlisted, uma solução de SIM sem KYC focada na privacidade . Fiquem atentos a isso no
+
+site da Brax Me. Vou disponibilizar o link para a página de inscrição deste serviço assim que estiver pronta, o que deve acontecer em breve. No que diz respeito ao hardware, temos vindo a criar soluções de hardware. Esses projetos estão sendo financiados coletivamente no Indiegogo.com e gerenciados pela empresa irmã BraxTech.net.
+
+O telefone Brax 3 já está em um segundo lote de produção e está sendo enviado. Está em estoque, então garanta o seu hoje mesmo se perdeu o primeiro lote. E o novo Brax Open Slate é o novo tablet com Android e Linux , que deve ser lançado no outono. Se você quiser saber mais sobre esses produtos, acesse BraxTech.net. Eles também estão à
+
+venda no Indiegogo.com. Outro anúncio importante é que a Brax Technologies, fabricante dos produtos de hardware, começará a aceitar investidores em breve por meio de ações regulamentadas pela regulamentação CF, então fiquem atentos. Agradecemos mais uma vez a todos que nos apoiam no Patreon, Locals e como membros do YouTube. Agradeço sua gentileza, que me incentiva a continuar. Até a próxima.

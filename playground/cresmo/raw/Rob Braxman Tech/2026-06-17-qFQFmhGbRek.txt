@@ -1,0 +1,119 @@
+---
+video_title: "This Linux Tip Will Save You! Multipartition Install"
+video_id: qFQFmhGbRek
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qFQFmhGbRek
+video_date: 2026-06-17T16:00:27+00:00
+video_description: |
+  If you ever mix Linux with Windows, whether it be on separate drives or one dual boot drive, or just suffer from some corruption of Linux, I have a new way of installation that will save you. This foolproof method will ensure that nothing will break your install. Even if Windows overwrites the bootloader, you can be up and running again in 15 minutes. The trick is something that's not taught frequently enough. It's a Linux Multi-Partition Install.
+  
+  ----------------------------------
+  BraX3 Privacy Phone and the Brax Open_Slate is on https://braxtech.net
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+A vida pode nos trazer muitos limões, e quando se trata de computadores, qualquer coisa que a Microsoft toque provavelmente deixará um gosto amargo e tornará nossa experiência com o Linux extremamente difícil. Só para dar um exemplo, tenho dois SSDs m.2 NVMe. Um deles tem Linux puro instalado, que é o Ubuntu. Outro SSD possui dual boot com Windows e Zorin, que é o SSD original da máquina.
+
+Então, você pensaria que, se substituísse o SSD por um Ubuntu puro, tudo funcionaria bem, já que não há Windows instalado . Errado. Em laptops mais recentes, existe outra camada na qual o Windows se intromete, mesmo que ela nem esteja instalada. Chama-se NVRAM. E então, quando coloco o SSD de inicialização dupla de volta, ele trava e procura o Windows, e não inicializa pelo GRUB, mesmo se eu restaurar um backup da partição de inicialização.
+
+Hoje, vamos transformar isso em algo positivo, porque por causa desse desastre, eu tive que aprender a resolver isso, e nossa, encontrei uma solução que me salvou, e é tão simples. Se a instalação do Linux der problema por causa de uma falha na partição de inicialização ou por causa dessa coisa especial na placa-mãe chamada NVRAM, não tem problema. Reinstalei o Linux e todos os meus aplicativos e documentos voltaram ao estado original. A reinstalação não demora muito. A solução é chamada de instalação com múltiplas partições e, se você usa Linux, essa é uma ótima ideia para usar sempre. Você
+
+pode até mesmo atualizar do Ubuntu 24.04 para o Ubuntu 26.04 a partir de uma instalação limpa, sem problemas. Este deve ser o método padrão para instalar o Linux em desktops em todos os casos. [música] Vamos resolver isso. Fique aí mesmo
+
+.
+
+O que é essa NVRAM? O culpado por tanta dificuldade se chama NVRAM ou memória RAM não volátil, e na verdade ela está na placa-mãe, não no seu disco rígido. Portanto, ao remover o disco rígido, você pode pensar que todo o sistema operacional estará nele, mas estaria enganado. Aparentemente, o carregador de inicialização UEFI consulta a variável de inicialização armazenada na NVRAM e, em seguida, insiste em instalar o último sistema operacional que foi instalado. Ele persiste inclusive em instalações anteriores de sistemas operacionais. Essa variável específica, que está fora
+
+do nosso controle, significa que sempre existe a possibilidade de sua instalação do Linux ser corrompida em algum momento. O Windows, por outro lado, é muito agressivo. Se o Windows for executado, ele garante que estará no topo da sequência de inicialização e apaga qualquer outro sistema operacional, além de não ser muito amigável a outros sistemas operacionais, garantindo sua posição no topo da lista de inicialização da NVRAM. Por essa razão, você sempre deve partir do princípio de que algo vai quebrar sua instalação do Linux, porque o Linux, ao contrário, não é muito insistente. Ele coexistirá com qualquer sistema operacional já instalado, incluindo outra instalação do Linux. Portanto, devido a essa descoberta,
+
+percebi que meu vídeo antigo ensinando como fazer backup da partição de inicialização para dual boot não funcionará em todos os casos. Mas, felizmente, podemos limitar os danos que o Windows pode causar. Instalação Linux com múltiplas partições. A solução para ter uma instalação Linux mais robusta é fazer uma instalação com múltiplas partições, o que significa criar uma ou mais partições extras para separar o Linux, de forma que ele não fique em um único volume grande. Descobriu-se que o Linux é realmente muito adequado para isso e o resultado final é que você pode preservar seus documentos e arquivos, que não serão apagados durante uma reinstalação. No entanto, você precisa
+
+prestar atenção em como instala o Linux para que isso aconteça. E também mostrarei que a maioria dos aplicativos mantém suas configurações nessa partição separada, para que você não precise reconfigurar tudo novamente. Isso torna a reinstalação do Linux muito rápida e, francamente, é mais rápida do que restaurar a partir de um backup ou realizar procedimentos realmente complexos para corrigir as configurações do carregador de inicialização. O interessante é que você pode fazer isso mesmo em uma instalação Linux existente ou, se perdeu o acesso à sua instalação Linux, pode usar o pendrive com a sua distribuição, chamado de "live USB", e ainda assim acessar seus arquivos. Você pode até mesmo fazer essa correção antecipadamente, antes de reinstalar o Linux.
+
+Assim, essa solução estará sempre disponível para você, seja para uma instalação antiga ou nova . Para poupar tempo em caso de um desastre futuro, aconselho que faça este procedimento agora, mesmo que não tenha nenhum problema. Etapas principais. Os principais passos que explicarei hoje são, primeiramente, criar uma partição separada para o Linux. Isso significa reduzir a partição Linux atual e, em seguida, criar uma nova partição com esse novo espaço. Vou
+
+mostrar como fazer isso usando o utilitário de discos. Você vai precisar do seu pendrive de instalação (live USB) para boa parte deste processo, incluindo a reinstalação, é claro, então prepare-o com antecedência. Para simplificar, vou usar um USB live do Ubuntu 26.04 e todos os exemplos usarão o Ubuntu. Após criar uma nova partição, você deverá formatá-la em EXT4, que é o formato padrão do Linux e não pode ser lido pelo Windows. Em seguida, copiaremos seu
+
+diretório pessoal para esta nova partição. Em seguida, reinstalaremos o Linux e mostrarei como especificar que seu diretório home (barra) agora está em uma partição diferente. Em seguida, você reinstalará seus aplicativos no Linux, mas verá que, com algumas exceções, seus aplicativos serão restaurados ao estado original e você não precisará configurá-los novamente. Por exemplo, o Thunderbird é instalado automaticamente por uma instalação limpa do Ubuntu e todas as suas contas de e-mail permanecerão intactas. Você precisa reinstalar os aplicativos que não foram instalados pelo Ubuntu. Eu reinstalo o Brave, o
+
+Chrome e outros navegadores, e eles aparecem exatamente como antes, com todas as configurações salvas, incluindo os favoritos originais. Agora, não saia daqui correndo porque acha que já sabe o que vai acontecer, porque no final vou te ensinar como corrigir manualmente as configurações de inicialização EFI caso o Windows esteja causando problemas , como quando perdi o acesso ao Zorin no meu SSD de inicialização dupla. Guia de particionamento do Linux. Novamente, antes de começar esta empreitada, tenha sempre um dispositivo USB à mão. Não serve apenas para instalar o Linux do zero. O
+
+recurso "Experimentar o Ubuntu" nos dá acesso total ao Linux caso tenhamos perdido o acesso de alguma forma, e você ainda poderá ler todos os seus dados. Um guia simples para criar um USB inicializável. Baixe a imagem ISO do site ubuntu.com.
+
+E então, se você tiver um sistema operacional em execução, poderá executar o Balena Etcher e restaurar a imagem do Ubuntu na unidade USB, criando assim seu Live USB. Agora, deixe-me dar algumas dicas sobre particionamento. Acontece que o lado do sistema operacional Linux é muito estável. Seu tamanho não muda muito. E para um usuário existente de desktop Linux, a maior parte da mudança no espaço do seu sistema operacional vem de documentos e arquivos no diretório inicial (barra) . Se você for um usuário mais avançado,
+
+como um desenvolvedor, provavelmente também aumentará o diretório {slash} var {slash} live, pois é nele que coisas como bancos de dados e outros arquivos serão armazenados. Assim, para esse subgrupo, pode ser necessário criar uma partição adicional. O espaço máximo que você pode esperar usar para o sistema operacional Linux, sem incluir dados, é de 100 GB. Na realidade, o tamanho fica em torno de 50 GB, mas estamos considerando arquivos de log, arquivos temporários, arquivos de troca e assim por diante. Portanto, minha sugestão é reduzir a partição principal do Linux para no máximo 100 GB.
+
+Se você tiver um disco rígido de 512 GB, isso lhe deixará com 412 GB disponíveis para seu diretório pessoal. Se você tiver um disco rígido maior e o Windows instalado, poderá reduzir o tamanho do Windows. Você só pode recuperar espaço de partição se o espaço liberado for contíguo, ou seja, se as partições estiverem lado a lado. Se o espaço livre estiver espalhado por toda parte, eu simplesmente faria um backup dos dados em um disco rígido externo, excluiria as partições existentes e criaria novos volumes com uma organização melhor. Lembre-se de que o Windows não consegue ver o conteúdo de uma partição EXT4, portanto, faça o redimensionamento dentro do sistema operacional que utiliza essa partição. Portanto, use o Linux
+
+para reduzir o tamanho das partições do Linux e use o Windows para reduzir o tamanho das partições do Windows. Reduzindo as partições. Felizmente, como eu disse, você pode reduzir o tamanho das partições no Linux, mesmo usando um USB inicializável, ou experimente o Ubuntu. Vou assumir que você já tem uma instalação do Linux instalada e vamos sobrescrevê-la com uma versão nova. Então, comece inicializando a partir do USB inicializável.
+
+Para a maioria dos computadores, isso significa pressionar a tecla F12 no início da sequência de inicialização, o que deverá abrir o menu de inicialização. Isso permitirá que você selecione o pendrive USB a partir do qual deseja inicializar o sistema. E então, quando o Ubuntu iniciar, você terá a opção de experimentar ou instalar o Ubuntu. Você vai tentar. Em seguida, localize o ícone "Mostrar aplicativos" no Ubuntu, que é aquele círculo, e no grupo de aplicativos "Sistema", você encontrará o aplicativo "Discos". Selecione o disco rígido
+
+que deseja modificar e você verá suas partições. No meu exemplo de instalação aqui, você verá três partições principais. A partição do sistema, uma segunda partição com 200 GB e, em seguida, uma terceira partição com 824 GB. Este é um SSD de 1 TB. Eu também tenho uma pequena partição quatro com espaço não utilizado, mas não vamos contá-la.
+
+O meu já está particionado corretamente, mas na forma original, a segunda partição tinha 102 GB. Então, para começar, eu só tinha duas partições utilizáveis. Se este fosse o seu novo caso, você selecionaria a partição dois, clicaria no botão de engrenagem e teria a opção de redimensionar, como você vê aqui. Aqui, ainda tenho a opção de reduzir essa partição para os 100 GB que sugeri. O meu é maior que esse.
+
+O tamanho oferecido depende do nível de fragmentação de dados que você tem atualmente em seu disco rígido. Em uma instalação mais recente do sistema operacional, você geralmente tem mais liberdade para reduzir o tamanho da sua partição. Para reduzir o tamanho dos arquivos de forma mais eficiente, especialmente no Windows, você pode desfragmentar seu disco rígido. Essa é uma opção disponível no gerenciador de arquivos do Windows. Em uma instalação do Linux, as partições não precisam ser contíguas, mas você não pode redimensionar uma partição para um tamanho maior usando espaço que não seja contíguo. Então, em um
+
+caso normal, como sugiro aqui, o que você fará é criar a partição como eu criei aqui, que é aquela chamada partição três. Eu já fiz isso, mas essa é a intenção. A última etapa é formatar a partição, e o formato deve ser EXT4. Após a formatação, você pode copiar o conteúdo do diretório /home para o novo volume usando o aplicativo Arquivos no pendrive de instalação do Ubuntu . Portanto, atualmente você terá duas cópias da sua pasta pessoal, mas durante a reinstalação, a pasta pessoal original será completamente apagada.
+
+Reinstalando o Linux. Agora, vamos reinstalar o Ubuntu, e eu mostrarei exatamente o que você precisa fazer. Primeiro, você deverá seguir as instruções usuais sobre idioma e teclado, depois selecionar a instalação manual e, em seguida, a opção interativa. Essa tela específica pode variar dependendo da distribuição Linux, então já aviso que a aparência pode ser diferente. No entanto, os princípios são os mesmos.
+
+Primeiro, você deve especificar qual será a partição de inicialização e qual versão do Ubuntu será selecionada neste menu suspenso aqui. E essa é quase sempre a primeira partição, onde o Windows também instala sua partição de inicialização. Em seguida, você precisa especificar a partição principal do Linux , e você a identifica como a partição principal do Linux indicando um ponto de montagem. O ponto de montagem é {barra}, que significa raiz. E, finalmente, a etapa extra é ir até sua nova partição e indicar o ponto de montagem como {slash} home.
+
+Para usuários mais avançados, você pode ter uma terceira partição Linux com um ponto de montagem de {slash} var {slash} lib. Novamente, isso é útil para aqueles que administram meus bancos de dados SQL. Agora, aqui está o ponto mais crucial. Se você observar a coluna de formato, verá que apenas o ponto de montagem raiz estará formatado. Este é o principal indício de que o diretório home {slash} será montado, mas não será apagado. Portanto, formatar
+
+significa apagar. Por padrão, apenas o diretório raiz é verificado quanto ao formato. Essa é praticamente a única diferença, e você pode prosseguir com a instalação selecionando suas configurações preferidas do Linux para o restante. Após a conclusão da instalação do Linux e a reinicialização do sistema, você verá que o Linux iniciará normalmente. Se o Windows corrompeu seu carregador de inicialização do Linux, ele será corrigido agora e o dual boot voltará a funcionar.
+
+Sua pasta pessoal conterá seus arquivos. Mas, se houver aplicativos que não estejam instalados anteriormente, você terá que reinstalá-los . Assim como no meu caso, precisei instalar manualmente o Chrome, o Brave, o VS Code, o Signal e o Telegram. Se você documentar como instala cada um deles, repetir a instalação será muito fácil. Mas vou mostrar a vocês por que os aplicativos não precisam ser reconfigurados.
+
+No seu diretório pessoal, se eu usar o comando {ls} {dash} {la}, ele mostrará todos os arquivos ocultos em home. E um deles é {dot} config. E pronto, a maioria dos aplicativos armazena suas configurações aqui. E os aplicativos instalados via snap terão suas configurações no diretório snap. É por isso que seus aplicativos não perdem as configurações após uma reinstalação. Não sei
+
+por que isso não está dito de forma mais clara. Portanto, na verdade, não importa muito se você reinstalar o Linux repetidamente. Gerenciador de inicialização EFI. Agora, vamos analisar alguns detalhes. Se você tiver vários sistemas operacionais instalados na unidade, precisará lidar com o gerenciador de inicialização EFI, pois ele controla a sequência de inicialização. Na verdade, é isso que o
+
+Windows modifica para se impor no topo da sequência de inicialização e apagar o GRUB ou o carregador de inicialização do Linux. A única maneira realmente eficaz de garantir acesso às variáveis ​​de inicialização da NVRAM é usando este comando no Linux. Para listar o que está atualmente na lista de inicialização, digite pseudo EFI boot manager {dash} v. Isso mostrará o que está atualmente na NVRAM. Os campos principais a serem observados são os que mostram a ordem de inicialização.
+
+E neste exemplo, ele mostra 0002 como o primeiro. E então, se você analisar os detalhes, o boot 0002 é o Ubuntu. Então, eu sei que o Ubuntu será o primeiro. Vou mostrar a vocês uma lista de inicialização diferente de outro computador, e este é um computador com dual boot. O sistema lista o Windows, que geralmente é o código 0004.
+
+O problema surge quando se usa dual boot e o Windows é o primeiro sistema operacional; nesse caso, a inicialização certamente falhará. Supondo que sua instalação do Ubuntu apareça na lista como boot 0002 e o Windows como boot 0004, o que é típico após uma instalação de dual boot, um carregador de inicialização com falha que continua iniciando apenas o Windows mostrará algo como " ordem de inicialização 0004 e depois o restante". Portanto, o Windows é carregado primeiro. Portanto, a primeira solução é executar o comando sudo efibootmgr -o 0002, 0004 -A. O objetivo aqui é garantir que o Windows não seja o primeiro. O que vier depois do
+
+Ubuntu e do Windows não importa. Este comando irá sobrescrever a NVRAM e seu sistema de inicialização dupla normal será restaurado. Normalmente, isso é tudo o que você precisa fazer e não é necessário reinstalar o Linux, mas não há problema em reinstalá-lo, já que o tempo necessário, geralmente 10 minutos, não é muito comparado a outras soluções complexas, como restaurar o GRUB e assim por diante. Considerações finais. Meu erro no passado, quando testei isso, foi presumir que as configurações da partição do sistema EFI, ESP ou partição de inicialização estivessem localizadas apenas no disco rígido. E se você usar sempre o
+
+mesmo disco rígido e nunca o trocar, não vai notar isso. Mas só me dei conta disso porque meu computador principal quebrou e eu transferi meu SSD para outro computador, pensando que funcionaria perfeitamente. Não aconteceu. E o motivo é que o computador retém os valores do sistema operacional na NVRAM da placa-mãe e não apenas no disco rígido. Isso acabou sendo uma boa lição, pois me fez perceber que a maneira como eu vinha instalando o Linux no passado não era a melhor. Este novo método deve
+
+ser o padrão para a instalação de sistemas Linux em computadores desktop. Não para servidor, mas para computador de mesa. Aproveitar.
+
+Obrigado por assistir ao vídeo. Gostaria apenas de fazer a nossa habitual propaganda da plataforma BrexMi, onde os especialistas em privacidade se reúnem. Junte-se a nós e converse sobre os temas [música] dos vídeos. Para apoiar este canal, temos uma loja com produtos focados em privacidade, como o Brac Mail, e-mail com aliases ilimitados, o Bytes VPN com nova tecnologia anti-inspeção profunda de pacotes , o telefone virtual Brac para números de telefone anônimos e muito mais. No que diz respeito ao hardware, o Brac 3, um dos lançamentos de celulares mais bem-sucedidos de um fabricante especializado, está novamente disponível em brac.tech.net.
+
+O novo Brac Open Slate já pode ser encomendado para entrega no outono. Agradecemos a todos que nos apoiam com doações no Patreon, Locals e por meio de suas assinaturas no YouTube. Até a próxima.

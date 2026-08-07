@@ -1,0 +1,123 @@
+---
+video_title: "How Tailscale+Rustdesk Makes Remote Access Simple and Truly Private"
+video_id: VZZW4A1wwTg
+channel_name: "Rob Braxman Tech"
+channel_id: UCYVU6rModlGxvJbszCclGGw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VZZW4A1wwTg
+video_date: 2026-04-15T16:00:59+00:00
+video_description: |
+  The go to solution for remote access has been Sonic Wall appliances. Or if you don't want to spend the money, you go for the riskier Port Forwarding option. These options have been eclipsed by two new technologies I will introduce today: Tailscale Mesh VPN and Rusk Desk for Desktop Remote access.
+  
+  ----------------------------------
+  BraX3 Privacy Phone and Brax Open_Slate are on https://braxtech.net. These are crowdfunded on https://indiegogo.com.
+  -----------------------------------
+  Brax Virtual Phone, De-Googled Phones, BytzVPN, BraxMail, BraxRouters are available on https://brax.me
+  -----------------------------------
+  Merch Store 
+  https://my-store-c37a50.creator-spring.com/
+  -----------------------------------
+  
+  
+  I'm the Internet Privacy Guy. I'm a public interest technologist. I'm here to educate. You are losing your Internet privacy and Internet security every day if you don't fight for it. Your data is collected with endless permanent data mining. Learn about a TOR router, a VPN , antivirus, spyware, firewalls, IP address, wifi triangulation, data privacy regulation, backups and tech tools, and evading mass surveillance from NSA, CIA, FBI. Learn how to be anonymous on the Internet so you are not profiled. Learn to speak freely with pseudo anonymity. Learn more about the dangers of the inernet and the dangers of social media, dangers of email.
+  
+  
+  I like alternative communication technology like Amateur Radio and data communications using Analog. I'm a licensed HAM operator.
+  
+  
+  Support this channel on Patreon! https://www.patreon.com/user?u=17858353
+  
+  Contact Rob on the Brax.Me App (@robbraxman) for encrypted conversations (open source platform)
+  
+  https://bytzvpn.com Premium VPN with Pi-Hole, Cloud-Based TOR Routing
+  
+  https://whatthezuck.net Cybersecurity Reference
+  
+  https://brax.me Privacy Focused Social Media - Open Source 
+  
+  
+  Please follow me on 
+  Odysee
+  https://odysee.com/$/invite/@RobBraxmanTech:6
+  Rumble
+  https://rumble.com/c/robbraxman
+---
+Como acessar seus dispositivos domésticos de outro local? Na verdade, este é um problema bastante complexo que o usuário médio não sabe como resolver. Se fizer isso de forma errada, você expõe sua rede doméstica a ataques de segurança. Se fizer da maneira tradicional, como em qualquer empresa, você vai gastar uma fortuna com novos equipamentos. Mas e se eu lhe dissesse que você pode fazer tudo isso de graça com uma VPN mesh, criptografada de ponta a ponta, e que eu ainda lhe mostraria como acessar seu computador como se estivesse em casa, de forma muito fácil?
+
+Este novo método foi possível graças à Tailscale e representa uma verdadeira revolução, tornando a ideia de redes privadas algo muito simples de se concretizar. Se você estiver gerenciando um laboratório doméstico, poderá ter acesso completo a tudo remotamente. Se você possui câmeras de segurança, pode monitorá-las sem precisar se conectar a um servidor do seu provedor de câmeras ou permitir que eles armazenem gravações. Você pode acessar seus backups de qualquer lugar, mesmo durante viagens. O que vou ensinar hoje eliminará os riscos de segurança e até mesmo os riscos de privacidade. Se você estiver se concedendo
+
+acesso remoto por meio do encaminhamento de portas no seu roteador, pare imediatamente com essa prática insegura . Vou explicar o funcionamento da VPN em malha Tailscale para que você não seja surpreendido por comportamentos não divulgados e, em seguida, apresentarei uma maneira independente de plataforma para acessar sua área de trabalho usando algo chamado RustDesk. Pronto para uma nova descoberta? Fique aí mesmo .
+
+Em um ambiente doméstico, a maneira mais comum de habilitar o acesso remoto é ativar o encaminhamento de portas. Digamos que você queira acessar remotamente um computador Windows em casa. Você vai nas configurações do seu roteador, habilita o encaminhamento de portas e abre a porta 3389. Ou, se você tiver um computador Linux em casa e quiser acessá-lo, a porta para SSH é a 22. Ou, se você tiver uma câmera de segurança usando RTSP, o fornecedor recomendará o encaminhamento da porta 554.
+
+Essas são práticas muito perigosas. Nunca, jamais, em hipótese alguma faça isso. Para hackers, seria muito simples procurar essas portas na internet aberta. E é assim que existem sites que mostram câmeras ao vivo das casas das pessoas em todos os lugares. Em um ambiente corporativo, se você estiver trabalhando em casa e precisar acessar uma rede da empresa, normalmente eles fornecerão um nome de usuário e senha, e você instalará um software como o SonicWall. E
+
+então isso conecta você a um dispositivo SonicWall que lhe dá acesso à rede corporativa. O SonicWall é um dispositivo de VPN e segurança. Você definitivamente não precisa disso. E, francamente, isso também é limitado, porque, para uso pessoal, é unidirecional. Digamos que seja o contrário. Você está em
+
+casa e precisa acessar a câmera de segurança da sua casa de férias. O SonicWall é uma VPN centralizada. Não é útil para uso distribuído, onde você pode estar em qualquer lugar e precisa acessar dispositivos de locais diferentes. Chegou a hora de abandonar essas tecnologias antigas, que realmente não são adequadas para usuários domésticos ou proprietários de pequenas empresas. E essas tecnologias representam um risco de segurança.
+
+Tailscale Mesh VPN. O conceito de uma VPN mesh é que, após a configuração, você estará sempre conectado a todos os seus dispositivos na rede mesh com um endereço IP semelhante a este. 100.x.x.x
+
+Desde que todos os seus dispositivos tenham algum tipo de conexão com a internet, eles se conectarão automaticamente à rede mesh. O conteúdo está presente em cada dispositivo. Ao reiniciar cada dispositivo, ele se conectará à internet normalmente. Em seguida, o aplicativo servidor Tailscale será executado e anunciará sua conexão com o endereço IP à sua rede mesh. Esta parte é controlada por um servidor Tailscale que funciona como um roteador. Portanto, este
+
+servidor roteador está apenas resolvendo o endereço IP para a rede mesh. Como a conexão estabelecida por cada dispositivo é de saída e raramente há um firewall bloqueando o tráfego de saída em sua rede local, o processo do servidor Tailscale geralmente consegue contornar as restrições de rede e se conectar ao roteador Tailscale. Na maioria dos casos, você estabelece uma conexão ponto a ponto entre as duas máquinas conectadas pelo Tailscale. Em casos mais complexos, como uma situação em que você está executando um roteador VPN no meio ou situações em que o protocolo UDP está bloqueado, você se conecta aos servidores da Tailscale chamados DERP, d e r p. Esses servidores atuam então como um repetidor e encaminham o tráfego para cada dispositivo.
+
+Em 90% dos cenários, como em uma instalação residencial típica , você não usará um relé DERP e tudo funcionará automaticamente. Você não precisa se envolver com esse nível. O Tailscale possui criptografia de ponta a ponta. A ideia de um ponto de retransmissão potencialmente envolvido na gestão do tráfego pode ser assustadora para quem se preocupa com a segurança. Então, posso afirmar que não há risco real. Todos os dispositivos
+
+se conectam entre si usando a VPN WireGuard. Novamente, tudo isso é instalado pela Tailscale, então você não precisa se preocupar com os detalhes. Isso significa que todo o tráfego é criptografado de ponta a ponta, pois é isso que uma VPN oferece. Embora seja uma VPN, não a confunda com uma VPN como a ExpressVPN, que você usa para acessar a internet aberta, pois são coisas diferentes. Esta é uma VPN para sua própria rede privada. A parte da VPN aqui
+
+fornece a camada de criptografia. Assim, mesmo quando o tráfego é retransmitido, os servidores de retransmissão lidam apenas com tráfego criptografado. Assim, nenhum dos seus dados jamais será vazado. Desvantagem do login no Tailscale. Do ponto de vista da privacidade, a principal desvantagem de usar o Tailscale é que ele não processa credenciais de forma alguma.
+
+Em vez disso, as credenciais são fornecidas por plataformas de terceiros. Isso simplifica as coisas para a Tailscale, já que nenhuma credencial pode ser hackeada a partir dela. E essas plataformas de terceiros são Google, Microsoft, Apple, GitHub ou um provedor de credenciais como o OpenID. Isso me incomodou tanto que procurei uma maneira alternativa de executar o Tailscale. Se você tiver conhecimento técnico, poderá configurar seu próprio servidor em nuvem e instalar o projeto auto-hospedado chamado Headscale. Eu tentei isso, e
+
+preciso dizer que foi muito problemático e cheio de bugs. E eu não consegui fazer funcionar nem mesmo com a ajuda da IA. Portanto, tive que reavaliar os riscos do Tailscale. Lembre-se que isso serve para controlar seus próprios dispositivos. Não existe nenhum monitor externo para ver seu tráfego, já que, como eu disse, ele é criptografado.
+
+No meu caso, utilizei o login de uma conta GitHub existente como credencial do Tailscale, e para mim foi o menor dos males. O risco é baixo, mas estou sendo sincero com vocês ao menos ao dizer que isso pode ser uma preocupação para alguns de vocês, caso desejem um tráfego verdadeiramente invisível. Em todo caso, depois de usar o próprio Tailscale, achei ridiculamente simples de usar e consegui conectar diversos dispositivos. Eu tinha dispositivos Ubuntu, Pop!_OS, servidores Ubuntu, Zorin, Proxmox, Windows e Android. Eu até consegui me conectar a um
+
+servidor da AWS. Na maior parte dos casos, você só precisa usar o provedor de credenciais, como o GitHub no meu caso, durante a configuração inicial. Então, não quero exagerar. A Tailscale é gratuita. O Tailscale é gratuito, pelo menos para o uso que vou ensinar hoje. A Tailscale
+
+é uma empresa nova, fundada durante o período da COVID-19, e cresceu rapidamente até se tornar uma empresa com uma avaliação de mais de 1 bilhão atualmente. Então, a questão é: como eles ganham dinheiro se é de graça? E o que você ganha com a versão gratuita? Bem, é realmente incrível. Um único usuário pode conectar até 100 computadores diferentes à sua rede mesh local.
+
+Isso é por rede mesh, e você pode compartilhar dispositivos via link com mais dois usuários adicionais. Você pode até ir além e se conectar a várias redes mesh gerenciadas por credenciais separadas. Mas falando sério, 100 dispositivos são suficientes até mesmo para uma pequena empresa gerenciar uma grande quantidade de máquinas, inclusive externamente. Assim, um profissional de TI poderia prestar serviços a um cliente que possui até 99 computadores, todos conectados à Tailscale, com um computador reservado para o técnico. Ou, alternativamente, um site poderia convidar um técnico para acessar um computador compartilhando um link do Tailscale.
+
+A limitação do plano pessoal é que uma única pessoa gerencia toda a Tailscale com suas credenciais, e é aí que a gratuidade termina. No cenário corporativo, se você deseja que várias pessoas gerenciem a rede mesh com suas próprias credenciais, então você precisa migrar para o plano premium, que começa em US$ 6 por mês por usuário e vai até US$ 18 por usuário por mês. Para uso empresarial, é aí que eles ganham dinheiro. Portanto, isso não se limita apenas ao uso pessoal, embora seja isso que estou ensinando a vocês hoje. Como instalar o Tailscale.
+
+Como eu disse, instalar o Tailscale é super fácil. Basta acessar tailscale.com e se cadastrar gratuitamente usando um provedor de credenciais.
+
+Em seguida, você instalará o software em cada dispositivo. No Linux, eu simplesmente copio e colo este comando no terminal. Após executar o comando e ele ser concluído, você será instruído a executar o comando sudo Tailscale up. Isso inicia o servidor Tailscale e fornece um link. Em seguida, abra o link no seu navegador e ele abrirá a caixa de diálogo para conectar o computador.
+
+Se a máquina estiver remota e você estiver se conectando a ela via SSH, poderá executar o link na sua máquina atual. Obviamente, você não pode acessar um navegador remoto se estiver usando SSH, mas isso não importa onde você o execute, o que é ótimo. No Windows, você deve acessar tailscale.com e fazer login primeiro. Em seguida, é disponibilizado o download do Tailscale e, depois, surge a caixa de diálogo para conectar o servidor à rede. No Android, instalei o
+
+aplicativo Tailscale, fiz login e consegui acessar meus servidores diretamente. Por exemplo, consegui usar um servidor NAS da Synology sem usar a internet pública. Assim, quando você tiver vários dispositivos conectados, poderá vê-los todos em tailscale.com com todos os endereços IP atribuídos, e esses endereços IP permanecerão fixos. Portanto, independentemente de onde você esteja, esses computadores parecem estar na sua rede local (LAN) com o endereço IP 100.x.x.x.
+
+Acessando uma área de trabalho via RustDesk. Se você usa Linux, pode utilizar ferramentas já existentes como SSH ou FileZilla para obter acesso direto aos seus arquivos ou controlar cada dispositivo. Mas e se você quiser controlar a máquina como se estivesse diante dela? Para usuários do Windows, vocês já sabem como usar a área de trabalho remota ou o TeamViewer. No entanto, essa não é uma solução tão simples quando se trata de dispositivos que não utilizam o sistema operacional Windows .
+
+A solução que funciona com todas as plataformas e é bastante integrada chama-se RustDesk. Na verdade, já conectei Linux ao Windows, Windows ao Linux e Linux ao Linux, tudo acessado no nível da área de trabalho. E, para todos os efeitos práticos , funciona como uma área de trabalho remota e é bastante ágil em 1080p. Primeiro, acesse rustdesk.com e baixe o software compatível com o seu sistema operacional.
+
+Existe um arquivo MSI para Windows, por exemplo. Para Ubuntu, existe um arquivo de desenvolvimento. Para simplificar, vamos assumir que você já está usando o Tailscale. Então, será como conectar-se a uma máquina local. No Windows, instale clicando no arquivo MSI e seguindo as instruções. No Ubuntu,
+
+instale o arquivo de desenvolvimento abrindo-o através da central de aplicativos. Após a instalação, execute o aplicativo RustDesk em todas as máquinas. E o que é simples aqui é que o aplicativo é o mesmo tanto para o servidor quanto para o cliente. Ambos estão sempre ativos. Após a instalação em cada máquina, toque nos três pontos ao lado do ID da sua máquina e acesse a segurança.
+
+Em seguida, clique em desbloquear configurações de segurança. Você pode precisar inserir sua senha de sudo no Linux. Isso permite o acesso às configurações de segurança. Isso é importante. Deslize a tela para baixo para inserir a senha permanente e digite a senha.
+
+Em seguida, role a página para baixo até ativar o acesso direto por IP e um número de porta será exibido; basta deixá-lo como está. É isso. A partir daqui, basta anotar o ID da máquina e sua senha global para se conectar a esse computador a qualquer momento. Você decide quem acessa o cliente e quem acessa o servidor. Para facilitar o uso, você pode visualizar as conexões do seu dispositivo no RustDesk e renomeá-las para que possa reconhecer a máquina sem precisar se lembrar do ID.
+
+Super simples e seguro. Quando usado dessa forma, não há servidor de retransmissão. É uma conexão direta ponto a ponto e você opera exclusivamente dentro da sua VPN em malha. Uso de nível superior. Para usuários mais avançados, levarei vocês ao próximo nível. Estou executando alguns
+
+servidores usando o Proxmox e também tenho servidores em nuvem rodando na AWS e em outros data centers. Usando o Tailscale, você pode fechar todas as portas de entrada do servidor usando as ferramentas de acesso normais, como SSH na porta 22, Webmin na porta 10.000 ou Proxmox na porta 8006. Tudo aparece como uma LAN, o que simplifica bastante a configuração de segurança, principalmente se você estiver executando muitas máquinas virtuais em um servidor rack. Ao usar o Tailscale, você age como se estivesse dentro de um data center.
+
+Talvez eu ainda configure o acesso SSH na nuvem para um único endereço IP de emergência, caso necessário, mas isso é tudo o que você precisaria. Todo o resto será tratado pela Tailscale. Isso eleva o Tailscale a uma ótima ferramenta de segurança. Tenho acesso a 100 dispositivos por rede mesh, o que é mais do que suficiente para manter servidores no meu laboratório doméstico, na AWS ou em um data center de colocation. Para meus servidores de colocation, normalmente uso o Proxmox e, nesse caso, nem preciso de mais nada, já que o Proxmox já possui uma interface web integrada.
+
+Então, embora eu esteja ensinando isso como uma ferramenta para uso pessoal, na verdade é muito mais sofisticada do que isso, mas ainda estamos no nível gratuito aqui. Uma solução há muito procurada. Essa combinação do Tailscale com o uso ocasional do RustDesk é uma solução incrível, seja para acessar um servidor em rack, meu servidor de IA local ou minha câmera de segurança residencial; estou sempre conectado. Não há nada para configurar. A malha está sempre ativa. Não preciso
+
+ligá-lo manualmente. Se as máquinas estiverem ligadas, estarão em Tailscale. Este era um problema muito difícil de resolver no passado e exigia abordagens arriscadas, como o encaminhamento de portas. Agora, a solução está simplificada. Na verdade, estou surpreso que muito mais pessoas não saibam disso. Fico feliz por
+
+poder divulgar a informação. Pessoal, este canal de tecnologia é um pouco diferente porque me concentro em soluções de privacidade para que tenhamos controle sobre a tecnologia, em vez de sermos controlados por ela . Possuo uma plataforma de mídia social chamada Brax.Me, onde muitos usuários podem discutir questões de privacidade em um ambiente seguro em termos de identidade e analisar criticamente soluções tecnológicas, desde o nível iniciante até o avançado. Junte-se a nós e faça parte da comunidade, podendo até mesmo compartilhar seu conhecimento .
+
+Para apoiar este canal, temos uma loja na Brax.Me onde você pode adquirir produtos de privacidade que nós mesmos criamos. Utilizamos o Brax Mail para e-mails com segurança de identidade. Temos o Brax Virtual Phone para números de telefone anônimos. Utilizamos o Bytes VPN para proteger seu endereço IP e ocultar sua localização.
+
+Temos outros produtos, como os telefones do Google e serviços de reprogramação de software. Temos dois projetos de financiamento coletivo no Indiegogo.com. Você talvez já tenha ouvido falar do telefone Brax 3, cujo segundo lote de unidades está sendo enviado agora. Tudo isso pode ser encontrado em um site diferente, o brax.tech.net, que é uma
+
+organização irmã da minha. E você também poderá descobrir o novo tablet Brax Open Slate, que roda Android ou Linux, em brax.tech.net. [música] Novamente, esses produtos estão sendo vendidos no Indiegogo.com.
+
+Muito obrigado a todos que nos apoiam no Patreon, Locals e como membros do YouTube. Suas contribuições são muito encorajadoras. Você é muito importante para nós. Até a próxima.
