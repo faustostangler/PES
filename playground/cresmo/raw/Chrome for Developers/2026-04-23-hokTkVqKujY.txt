@@ -1,0 +1,71 @@
+---
+video_title: "How to set up Chrome DevTools for agents"
+video_id: hokTkVqKujY
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hokTkVqKujY
+video_date: 2026-04-23T15:22:21+00:00
+video_description: |
+  Learn how to set up Chrome DevTools for agents to enhance your coding agent's capabilities. This video guides you through environment requirements, installation, and tailoring the server to your project needs. Discover how to connect it to Chrome for autonomous debugging and validation.
+  
+  Chapters:
+  0:00 - Introduction
+  1:13 - Node.js version requirements
+  2:12 - Scoping the installation
+  3:20 - Installing the Chrome DevTools MCP server
+  3:58 - Configuration files
+  4:55 - Available debugging tools
+  5:51 - Configuration options
+  7:10 - Testing the setup
+  
+  Resources:
+  Chrome DevTools MCP on GitHub  → https://goo.gle/4rsLT6W 
+  Announcement → https://goo.gle/4jSWS6C 
+  DevTools Times → https://goo.gle/4qD1oZq 
+  
+  Watch more DevTools Tips → https://goo.gle/DevToolsTips 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Matthias Rohmer
+  Products Mentioned: Chrome,  Chrome DevTools,
+---
+Olá! Meu nome é Mathias, sou da equipe de Relações com Desenvolvedores do Chrome. Recentemente, apresentamos o servidor MCP do Chrome DevTools. Este episódio é um guia simples sobre como configurar esse recurso na CLI do Gemini, o Claude, e em editores de código, como o Antigravity e o VSCode. Veremos os requisitos de ambiente, instalando o servidor MCP com opções de linha de comando de acordo com suas necessidades, e você verá como conectar o servidor a uma instância operacional do Chrome.
+
+Há instruções por escrito sobre como instalar mais de 15 ferramentas de programação com agentes em nosso arquivo readme, basta acessar goo.gle/devtools-mcp. Para entrarmos de vez no assunto do MCP, vamos a um breve resumo sobre ele. O MCP é um protocolo para que agentes de programação possam se comunicar com ferramentas externas, como o Chrome DevTools. Se quiser saber mais, veja nosso vídeo introdutório sobre o assunto e volte aqui para entender como usar o recurso.
+
+DICAS DE FERRAMENTAS PARA DESENVOLVEDORES
+
+TUTORIAL O servidor MCP do Chrome DevTools é um aplicativo Node.js que requer a versão 20.19 ou mais recente. Para entender qual versão você tem instalada no seu sistema, em um terminal, digite "node --version". Se você tiver um resultado como v25.1.0,
+
+pode avançar tranquilamente. Caso veja uma mensagem como "Comando não encontrado", acesse o site do Node.js e siga as instruções para baixar e instalar o Node.js no seu sistema. Se o resultado imprimir um número de versão inferior a 20.19,
+
+atualize o Node.js antes de continuar. Use o mesmo método utilizado na instalação do Node.js para atualizá-lo. Por exemplo, se você instalar o Node.js por meio do Node Version Manager (NVM),
+
+execute o comando "nvm use --lts" para baixar e usar a versão estável mais recente. Após verificar a instalação do Node.js, vamos falar sobre o escopo. Este tutorial é um guia de instalação do servidor MCP do Chrome DevTools para um projeto Node.js específico, não para o usuário.
+
+Essa é uma prática recomendada, uma vez que cada servidor MCP tem um custo de token, e você só quer a ativação nas sessões de chat em que isso é útil. Isso também permite uma configuração específica do servidor MCP para cada projeto. Por fim, as informações persistem sobre quais servidores MCP são usados em um projeto para o seu repositório. Assim, seus colegas podem usar os mesmos servidores MCP e a mesma configuração que você. Ao seguir este tutorial, verifique se o seu diretório de trabalho atual tem um package.json.
+
+Ou crie um novo arquivo desse tipo, executando "npm init". Antes de começar a usar o servidor MCP do Chrome DevTools, seu agente de programação pode ter ferramentas integradas de navegador. Não confunda o modelo com ferramentas sobrepostas. Desative esses recursos antes de avançar. Agora que seu ambiente atende a todos os requisitos, vamos analisar a instalação do servidor MCP do Chrome DevTools.
+
+Começaremos com a CLI do Gemini. A CLI do Gemini oferece um comando prático de instalação, como você vê aqui. Este comando invoca a CLI do Gemini executando o comando MCP com o subcomando add e o nome do servidor e o comando principal como argumentos. Execute este comando para instalar o servidor MCP do Chrome DevTools, de modo a usar no projeto atual com a CLI do Gemini. Para o Claude Code, existe um comando semelhante, como você pode ver.
+
+O bom desses comandos de escopo do projeto é que eles geram um arquivo de configuração padronizado. No caso da CLI do Gemini, acesse em .gemini/settings.json. Para o Claude Code, acesse em .mcp.json na raiz do projeto.
+
+Você pode criar o mesmo arquivo de configuração para o VS Code. Nesse caso, é possível acessá-lo em .vscode/mcp.json no diretório raiz do projeto. O mesmo funciona para outros editores baseados no VS Code, como o Cursor, usando o arquivo .cursor/mcp.json.
+
+Ao configurar servidores MCP, envie a configuração do seu repositório para qualquer editor que seja muito usado em sua equipe. Ao usarem o comando git pull, seus colegas poderão fazer o agente de programação descobrir e instalar automaticamente os servidores MCP usando os arquivos de configuração. Agora que configuramos o ambiente e o servidor, podemos pensar em personalizar. O servidor MCP do Chrome DevTools oferece uma ampla gama de ferramentas para diversas tarefas de depuração, permitindo que o agente de codificação investigue e corrija bugs de forma autônoma, validando a própria resposta. Existem ferramentas para preencher formulários, emular aspectos como tamanho da tela, localização, CPU e velocidade da rede, e para medir o desempenho ou executar auditorias do Lighthouse.
+
+No entanto, pode ser que seu projeto não precise de todas as ferramentas disponíveis. Por exemplo, ao depurar um formulário, talvez você não queira testar em vários dispositivos. Nesse caso, as ferramentas de emulação são desnecessárias. E, se você já testou o desempenho extensivamente, talvez não precise das ferramentas de performance. Assim, é possível desativar esses recursos, economizando nos custos de token.
+
+Para viabilizar esses e outros casos de uso, personalize o servidor MCP do DevTools MCP como quiser, usando flags de configuração. O servidor MCP do Chrome DevTools oferece mais de 20 flags para ajustar diversos aspectos do servidor. Há uma visão geral das ferramentas e opções de configuração disponíveis em nossa referência e no arquivo readme, basta acessar goo.gle/devtools-mcp. Existem também flags de configuração para o exemplo mencionado anteriormente.
+
+Você pode ativar ou desativar explicitamente certas categorias de ferramentas. Vejamos como fazer isso. Este é o nosso arquivo de configuração atual. Para aplicar as opções de configuração, crie uma nova entrada na matriz args. Por exemplo, se quiser desativar as ferramentas de emulação, adicione esta linha: --categoryEmulation=false.
+
+Ou, para usar o modo Slim com o menor consumo de tokens e somente para navegação na ferramenta de captura de tela, use --slim. Também é possível usar --autoConnect para que o agente use uma instância do Chrome já em execução, como esta. Para usar o autoConnect, habilite a depuração remota na sua instância do Chrome, acessando chrome://inspect/#remote-debugging. Depois de configurar o servidor MCP do Chrome DevTools como preferir ou, caso as configurações padrão sejam suficientes, siga para os primeiros passos. Por exemplo, peça que o agente de programação execute uma auditoria Lighthouse em qualquer site.
+
+Ou peça para ele depurar fluxos mais complexos, como acessar localhost:admin e fazer login com o usuário e a senha "admin". Crie uma nova página intitulada "Hello from DevTools MCP" e salve as informações. Em seguida, observe ao vivo seu agente testando o fluxo completo. Comece com um comando simples para verificar o funcionamento da configuração. Caso encontre dificuldades, confira dicas de solução de problemas em goo.gle/devtools-mcp
+
+ou nos informe nos comentários abaixo. Obrigado por assistir e até a próxima! WEB AVANÇADA. SEM COMPLICAÇÕES. ASSISTA MAIS CONTEÚDO

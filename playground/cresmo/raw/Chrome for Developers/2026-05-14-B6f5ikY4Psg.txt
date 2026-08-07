@@ -1,0 +1,29 @@
+---
+video_title: "Build an expert LLM judge"
+video_id: B6f5ikY4Psg
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=B6f5ikY4Psg
+video_date: 2026-05-14T21:00:13+00:00
+video_description: |
+  For our finale, we are leveling up to true production-grade quality with an expert judge! Learn how to measure human expert agreement with Cohen's Kappa, balance your judge's precision and recall using the F1 score, and avoid the massive trap of overfitting with a secret final exam dataset. Watch our final video summary, start testing today by reading the full technical breakdown in the article, then come back here and share your own tips with us!
+  
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Maud Nalpas
+  Products Mentioned: Chrome, AI for the web
+---
+Welcome to our final chapter. We've already built a basic model, but now let's hit two production grade quality. What we need is domain expert to label our data. 30 high quality expert labels beat 300 non-expert ones. Manual labeling is expensive, so optimize your experts time, build a simple labeling UI, or have an LLM generate initial labels for humans to verify.
+
+Because verifying is faster than starting from scratch. If you only have one expert, it's not ideal, but have them blindly relabel 10% of your data week later to check stability. Disagreements between your experts show you exactly where to refine your scoring rubric to measure agreements. Keep basic percentages because two people flipping coins still agree 50% of the time. Instead, use Cohen's kappa, a special metric to offset that log floor.
+
+Once a line, say your LLM matches your experts 90% of the time. Sounds amazing. Wrong a lazy judge could output paths, constantly, score 90% accuracy, and MS every toxic motor. What we need instead is recall. Did we catch the bad stuff and precision.
+
+Are we too strict. Because increasing recall often crashes precision. We balance them by combining them into the F1 score. Just like before. We run bootstrapping to prove our accuracy isn't just a lucky draw.
+
+Finally, test your judge on a secret final exam data set to avoid the trap of overfitting. And with that, the AI space is moving fast, and building a full eval pipeline can feel overwhelming. But don't let perfect be the enemy of good. Start small. Write one simple rule based test and one basic judge.
+
+And once you have a baseline, you get your power back as an engineer. Because you go from an internal prototype to something you can measure and test and ship to your users with confidence. Our entire series on AI testing is out now, so read the articles, fork the code, start testing today and tell us what you think. Share your tips with us too. I'm Maude, thanks for joining and happy testing.

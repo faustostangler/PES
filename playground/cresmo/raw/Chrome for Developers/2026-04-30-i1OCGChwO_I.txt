@@ -1,0 +1,65 @@
+---
+video_title: "Building an extension in Antigravity in 6 minutes"
+video_id: i1OCGChwO_I
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=i1OCGChwO_I
+video_date: 2026-04-30T14:34:32+00:00
+video_description: |
+  Explore how Antigravity, our AI-powered IDE, can streamline your Chrome Extension development. This video guides you through building an extension and includes practical tips for additional hints you can add to your agent's context.
+  
+  Chapters:
+  0:00 - Introduction
+  0:27 - Using the Agent Manager
+  1:17 - Single vs multi-agent workflows
+  1:44 - Customizing agent rules for extensions
+  2:43 - Maintaining a permissions justification file
+  3:29 - Reviewing the implementation plan
+  3:45 - Testing the generated extension
+  4:28 - Polishing the extension with favicons
+  5:00 - Reviewing the background task
+  5:53 - Conclusion
+  
+  Resources:
+  Watch more Developer Mode → https://goo.gle/dev-mode 
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  #ChromeForDevelopers #Chrome
+  
+  Speaker: Oliver Dunk
+  Products Mentioned: Chrome
+---
+You might have heard of anti-gravity, our new AI powered Ide. It generated lots of discussion on Hacker News back in November, and now that it's been out for a while, I've had a chance to learn from how we're using it internally today. Let's build a Chrome extension in anti-gravity together, and I'll share a few things I add to my agents context files for better results. Let's dive in.
+
+Now that anti-gravity is open, let's start in the agent manager. This is where you can experiment with adding features or building entire projects in the background. I'll ask it to make us a Chrome extension that can track the videos we're producing as part of the developer mode series. So I'm here in the agent manager. I've created a new playground, which is where I can experiment without needing to create a new directory, and I'm going to ask it to make us a Chrome extension that tracks developer mode videos.
+
+We're making for Chrome for developers channel. And normally when I do this, it's going to ask us a few questions along the way. So I'm just going to say make this immediately and don't prompt me for anything. Let's leave this to run and check back on it later. Now, I've mostly used a single agent so far, but we're at the point where running multiple agents to build features in parallel can make sense.
+
+I polled folks on LinkedIn, and it seems like most of the developers that replied are still using a single agent in the foreground. That's not entirely surprising, although I've heard from Googlers who are experimenting with some quite complicated multi-agent workflows, which I think is where things are headed, even if not everyone is ready for that yet. Real quick, let me tell you a few things that you can add to your agents context to help with Chrome extension development. My experience is that models are generally quite good at building Chrome extensions out of the box. These days they will normally use manifest V3, and they understand all of the most common extension APIs you might want to use.
+
+However, agents can still benefit from some additional guidance. For example, Chrome 146 and 147 a rolling out support for the cross-browser browser namespace. If you want to guide the agent to prefer browser tabs over the Chrome specific Chrome tabs, you can just make a quick note in the customization panel. You can find that in anti-gravity in this agent section. And if you click these three dots we have customization.
+
+And I'm just going to add a global rule. And here I can tell it that when building a Chrome extension I want it to prefer the browser namespace over the Chrome namespace. Here's another good trick ask your agent to maintain a web stormed file. It tracks your permissions and why they're needed when it's time to upload to the Chrome Web Store. You already have a first draft of your permission justifications written.
+
+It saves a huge amount of detective work later on. So similarly, I'm just going to say that when building a Chrome extension, please create a web stormed file when adding a permission to the extension. Please write down a justification in the file. And of course, when you go to upload your extension to the Chrome Web Store, you still want to check these justifications and see if they make sense, but at least helps to make a start for you. OK, so it looks like anti-gravity has made us an implementation plan.
+
+From what I can tell, this looks good and I'm going to tell it to proceed. One good thing I can see is that anti-gravity is planning to create the Web Store M.D. file that we asked for. Back to the prompt and it's done.
+
+Let's load this in Chrome and see if it works. So in anti-gravity I can find these files in Finder. And then I can go and take my extension. And I can drag it and drop it into Chrome extensions page. And then let's go to Gmail and see if this works.
+
+So I'm going to reload the tab to make sure that my content script gets injected. I'm going to type exclamation mark tabs. And as you can see, we get this nice drop down. And if I click on one of these tabs then the link insertion works perfectly. And if we go back to anti-gravity, we can see it created this web stormed file for us with a justification for the tabs permission.
+
+As one quick bit of Polish, let's add favicons to that dropdown so I can identify open tabs at a glance. I'm going to just write a prompt to my agent here. So I'm going to tell it. Please add favicons to the items in the dropdown and we'll let that run. And if we go ahead and test this again, we can reload the extension.
+
+We can once again reload Gmail to make sure that the updates get injected. And then if I type exclamation mark tabs, we can see we get the same dropdown but with the icons. And that looks great. Before we go, let's check back on that background task we started in the agent manager. Actually, Aaron's our producer and he's responsible for a lot of the production process.
+
+Aaron, come over and let's take a look at this together. So you're familiar with anti-gravity. We need to copy the files from anti-gravity into Chrome. Yep there is a button that takes files from the playground, but I also prefer just copying the path here. Looks good.
+
+And then if we go to Chrome, we can say load unpacked. We can use Command Shift g to open this UI where we can go to a folder and we can just paste in the folder we copied. Sweet and I'm assuming this added a pop up. It looks like it did. Perfect and so we're recording a video about using anti-gravity right now.
+
+I think it's fair to say it's in the recording part of the process. That's fair. OK cool. We can press Add video and it's tracked. I think this should be pretty helpful.
+
+Yeah send me a copy. Amazing I will do so. That's a quick look at building extensions with anti-gravity. Let us know down in the comments if you'd like to see more videos on this topic. As always, thanks for watching and we'll see you in the next video.
+
+See Ya. Good job. That's good. Yeah amazing. There Yeah let's do it.

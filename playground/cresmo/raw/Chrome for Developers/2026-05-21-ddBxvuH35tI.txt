@@ -1,0 +1,151 @@
+---
+video_title: "Build new features using built-in AI in Chrome"
+video_id: ddBxvuH35tI
+channel_name: "Chrome for Developers"
+channel_id: UCnUYZLuoy1rq1aVMwx4aTzw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ddBxvuH35tI
+video_date: 2026-05-21T23:46:32+00:00
+video_description: |
+  Take a journey through a travel blogging app powered by Chrome's built-in AI APIs. Follow along as Gemini Nano transforms unstructured writing into automated workflows. Learn to deploy the Summarizer, Writer, Rewriter, Language Detector, and Translator—all running locally for maximum privacy and zero server costs. Then dive into the Prompt API for structured data tagging with JSON schemas and multimodal alt-text generation to extrapolate these patterns into your own web apps.
+  
+  Resources: 
+  Learn more → https://goo.gle/4duFxya 
+  Learn more → https://goo.gle/4degIHN 
+  Learn more → https://goo.gle/43aWeK2 
+  
+  Speakers: Thomas Steiner
+  
+  Watch the Chrome sessions from Google I/O 2026 → https://goo.gle/Chrome-at-IO2026
+  
+  Subscribe to Chrome for Developers → https://goo.gle/ChromeDevs
+  
+  
+  #GoogleIO
+  
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: Web, Chrome
+---
+[MUSIC PLAYING]
+
+THOMAS STEINER: Good afternoon, Shoreline. My name is Thomas Steiner. I'm originally from Germany, but I live in Spain now. And I've come all the way from Barcelona to here to talk to you about building new features using built-in AI in Chrome. In my role as developer relations engineer on the Chrome team, I travel a fair bit.
+
+And while I certainly enjoy it, I can't claim traveling to be my job. But I wanted to introduce to someone whose actual job is to travel the world. The following story is not true. However, it could be. But all the code samples and all the APIs that are mentioned are very much true and exist in Chrome today.
+
+After the talk, you'll be able to start coding with those APIs and build out your amazing app ideas. And for each of the fictitious chapters of the story, I will have some real world partner mentions for partners who actually implemented with our APIs. And at the end of the talk, I will have a very real surprise for all of you to take home. You will first hear about the Summarizer API. Next, I will talk about the Prompt API with structured output and with multimodal input.
+
+I'll continue with the Writer and the Rewriter APIs and then the Translator API. Now, let's get started for real. Meet Maya, a travel blogger from Sydney who recently traveled to China and was stunned by the Chinese wall. Her partner in crime is Ashok from Hyderabad, likewise a travel blogger, whose most recent trip led him to Rio. Together, they run a very successful travel blog called Trailblazers, on which they document their trips, share travel tips, and build a community.
+
+Being active travelers themselves, they know that data isn't granted. Roaming fees can be very expensive. Hotel Wi-Fis can be incredibly spotty. And sometimes, being offline can even be a deliberate choice. All this is why they created their blog Trailblazers as a static site.
+
+They used a static site builder called build Build Awesome, formerly known as Eleventy. Build Awesome makes sure that they ship great performance over the wire without unnecessary bloat or heavy JavaScript dependencies. This isn't to say that the Trailblazers blog does not use JavaScript at all. They do use JavaScript where it makes sense, for example, for their share buttons. But Build Awesome forces them to think about the content first.
+
+This all pays off. The Trailblazers blog reaches a Lighthouse performance score of 95. And their users love it, no matter if they access the site from a 5G network in the heart of the city, or from a really shaky Wi-Fi connection in a hostel somewhere in the middle of nowhere. The one thing they disliked about Build Awesome was that there was no visual editor. Whenever they wanted to write a new blog post or modify an existing one, they had to open up their IDE and edit markdown code.
+
+But there was no immediate visual feedback loop. And adding multimedia content like images was tedious and annoying. And this is where magic happened. Apart from travel, Maya and Ashok share another common passion, web development. Last year, they went to Google I/O, where they met Julia.
+
+Julia is one of the Trailblazers' longtime guest bloggers. Together, they had a fantastic time at the event. When they heard about built-in AI in Chrome, they looked each other in the eyes. And it suddenly clicked. These APIs were the missing piece they'd been looking for without knowing it.
+
+As a quick reminder, the advantages of built-in AI are at hand. With the AI model running on the device, sensitive data never needs to leave the user's browser, which means huge benefits from a privacy perspective. When there's no server involved, this also means that running the AI model can happen entirely offline once the model has been downloaded. And you always get great performance, thanks to hardware acceleration on your device. So in some cases, you might even beat the performance of the Cloud.
+
+For the full background, see my I/O talk from last year where I cover these advantages in full detail. Back to the Trailblazers blog. Within a couple of weeks, the three collaborated on what they called Build Awesome, The Missing Editor. Julia was the main coder. And Ashok and Maya were customer zero.
+
+So Julia would create a blog post editor that exactly catered to their needs. First and foremost, It's an almost what you see is what you get editor. You author posts in markdown, and the live preview immediately gives you a feeling for how the rendered output will look like on the blog. You don't have to remember the markdown image syntax. Instead, you can just drag and drop images where you want, or paste them at the current cursor position.
+
+And the editor will take care of the correct markup automatically. Of course, it has a gorgeous dark mode too, so they can edit new blog posts wherever they are, even in a shared dorm, without blinding themselves or waking up the entire dormitory. All right, let's talk about the first built in API and how it's used on the Trailblazers blog, the Summarizer API. Julia, Ashok, and Maya take great pride in their handcrafted blog, but even they are not immune to the occasional writer's block. This is why they have integrated with a built-in API that shipped in Chrome 138, the Summarizer API.
+
+In the editor, They use it in two flavors. First, to digest titles for the blog post. And second, to make the tedious task of writing the meta descriptions a little easier. The actual code behind this feature is slightly more involved. But essentially, it all boils down to the following logic.
+
+First, they get references to the blog post text and the headline. As we're expecting a new headline from the AI, we delete the existing one. Next, we create a summarizer. Assuming an English blog post, we set the expected input languages to just English. We provide the model with context in English.
+
+So we set the expected context languages to English. We want the headline to be generated in English. So we set the output to the language accordingly. The type of the summary should be a headline. And our preference is speed, which means, internally, a smaller AI model is used.
+
+Finally, we provide the model with some context concretely that it should create click-inviting, not click-baity headlines. All we need to do now is call the Summarizer's summarize streaming method, passing it the blog post text, and then iterate over the chunks as they are returned by the resulting readable stream, and append the chunks to the headline. The meta description generation works almost the same. The only difference is the type, which we now set to teaser, and the shared context, which now hints the model at writing SEO friendly text. The Summarizer API is available in desktop Chrome and Edge as a version 138.
+
+As a real-world partner, The Drupal AI team's new CK editor uses the Summarizer API to give editors full control over AI driven content like SEO tags and description generation. Next, let me show you how the Trailblazers blog uses the prompt API with structured output for tag generation. Based on the blog post's text, the AI model can come up with tags that allow for grouping of similar blog posts, for example, all blog posts or all blog posts about cities, or all blog posts about Barcelona. Optionally, you can limit the tags to a predefined list of existing tags. So how does it work?
+
+Internally, this feature is powered by the Prompt API with structured output. So the model returns a predictable response format. For this, the Prompt API uses JSON schema. In this case, it limits the model to a predefined set of tags that it should return a JSON object with a tags key and an array of tags as its value. You can see an example response object in the lower right corner.
+
+It's a JSON object with a tags field and the tags, adventure, Australia, and beach. Limiting the response to a list of enums prevents the model from coming up with new tags. And we can also be sure that the response will always be a JSON object in the requested shape. Now for the actual implementation. We first store the JSON schema in a variable called response constraint.
+
+Next, we get the text of the blog post for which we want the tags. Then we create the session with the AI model. For this, we call the language model's create function. We pass it the expected inputs and output, which in both cases, is an array with just one entry, an object with a type of text and an array of languages, in this case, just English. Finally, we call the session's prompt method with a textual prompt to create the tags for the given blog post, which we then pass to the model.
+
+We pass the model the JSON schema as the response constraint option. This causes it to return the result in exactly the shape of the JSON object. So we need to parse it using JSON parse. Now, we can display the tags in the editor. Of course, the user can add additional ones or delete not fitting ones.
+
+The Prompt API launched for desktop Chrome extensions already back in Chrome 138 and for regular web apps in desktop Chrome 148. The online site cafe24 uses such a suggestion system in production. When an editor creates a product page, they can choose from AI suggested tags for the page. Jerry Young Lee, the group leader of their product generation group, shared how built-in changed their quality. He told us, by processing images and text together with a single on-device call, we turn simple tags like blue dress into SEO critical context like summer date look, blue midi dress.
+
+For us, multimodal was not just an additional feature, it was the key result to quality. You've just seen the Prompt API with structured output. Now, it's time to show you the prompt API with multimodal input. The markdown syntax is known to be hard. I can't even remember the regular link syntax, let alone the image syntax.
+
+Also, while the markdown image supports alt text, it doesn't support image captions. This is where Julia, in the Trailblazers editor, decided to change things. You can just add images using a file open dialog, or even paste an pasted image at the current cursor position. What happens in both cases is that the image will be marked up as a proper HTML figure, with an AI suggested alt text and an image caption that both can be easily adjusted if they don't fit. So how does it work?
+
+Again, as with the tags before, the secret is a JSON schema. This time, it's even a bit simpler. We just ask for a JSON object with an alt and a caption property. This will make the model return something an example in the lower right corner. Now as before, we store the JSON schema in a variable.
+
+Next, we create the session with the LLM. But this time, we need to pass it one additional expected input type of image. It is the system prompt and brief the model to act as an alt text and image caption writer. And finally, we create the session. Now, we can actually interact with the session.
+
+The prompt is a bit more involved as its multimodal. But the first part of the prompt is just a regular prompt. The second part, then, is the actual image. As before, we parse the response constraint that is the JSON schema as a parameter. This call will then return a JSON object that we need to parse before we use it in the editor, and put it in the figure markup.
+
+Drupal CMS has implemented alt text generation for images that follows the pattern you've just seen in the code samples before.
+
+From the Prompt API use cases, over to writing assistance using use cases with the Writer API, as this is for a written blog, after all. The editor that Julia built for the Trailblazers team is fully responsive. So the team can use it while on the go. A cool feature Julia has built based on the Writer's API is Help Me Write. Often, Ashok or Maya would jot down some bullet point notes into their phone to recap the day to not forget what happened.
+
+The Help Me Write feature will then take those notes and expand them into a full blog post draft that they could then refine and build upon. The core logic is rather straightforward. First, we create a writer instance, providing a shared context about the writing task. That is to expand bullet points to a more detailed blog post. The expected input and output language is English.
+
+Next, we create a stream by calling the Writer's write streaming method, passing it the bullet points for the blog post. We then iterate over each chunk and append it to the blog post draft. Now, if you actually tried using the built-in APIs on mobile, like in example I just mentioned in my story, you would say, wait a minute, these APIs are only supported on desktop. And this is absolutely true for the moment. And we say so in our docs.
+
+We need a way to run this server if the built-in APIs are not available. We call this hybrid inference. And this is where Julia's skills came in again. Julia is the developer from the Trailblazers team who coded the blog post editor. She used Firebase AI Logic hybrid SDK to run Hybrid AI in the cloud through intelligent routing if on-device isn't available, like on mobile.
+
+This code snippet shows you how easy and smooth it is to connect your API to your app. You initialize your app with your Firebase config, choose a backend and inference mode like prefer on device. And then you can run AI prompts against the local model or a configurable model in the Cloud. Firebase AI Logic hybrid SDK with App Check is a recommended approach for production use. Created on top of Firebase logic hybrid SDK, Julia built two experimental polyfills, the Prompt API polyfill and the built-in AI Task APIs polyfills.
+
+These polyfills allow her to just code against the API shape of the respective built-in APIs. On currently unsupported platforms, like on Android, the polyfills would kick in automatically and provide the AI functionality backed by an AI provider of choice, like Firebase AI Logic. On supported platforms like on desktops, the polyfills would just do nothing. By going to a cloud, of course, you lose the privacy advantages of built-in. But in Trailblazers' case, that's acceptable.
+
+If you're interested, you can find the experimental Prompt API and the built-in AI Task APIs polyfills on NPM. The Write API is available as a dev trial on desktop Chrome. You've just seen Help Me Write in the Trailblazers blog editor. CyberAgent in Japan has released a very similar feature to their Ameba blogging platform that makes the AI suggest the next sentence based on previous input. It's a feature their power users really, really love.
+
+When there's writing, there often also is rewriting. Let me show you how the Trailblazers blog uses the Rewriter API. It can have an entire blog post rewritten, for example, to make it more casual or shorten it. But it can also highlight just a part of a blog post, like for instance, an agent generated image caption that you're not quite happy with. The Rewrite API is pretty similar to the Writer API.
+
+You first create the Rewriter. The options passed here are the shared context. So the API knows that this request is about rewriting a blog post. The tone should be more casual, the format should be markdown, and the length should be shorter. Expected input and output languages are both English.
+
+And next, we call the rewrite streaming function, passing it the to be rewritten text. The final step is then only iterating over the readable stream and putting the rewritten text at the right place by replacing the input text. The Rewrite API, just like the Writer API, is available as a dev trial in desktop Chrome. You can also find rewriting assistance in CyberAgent's Ameba blogging platform. Highlight an existing sentence and ask the AI to rewrite it.
+
+You can then fine tune the result until you're happy with it. You all here likely speak different languages. And some of you might even use translation to listen to my talk. So let's dive in and see how the Trailblazers blog uses the translator API to create content for a global audience. The Trailblazers blog started in English, but has since gained support for Spanish and Japanese.
+
+English is the language that Maya, Ashok, and Julia mainly author their content in. But thanks to the translator API, they can machine translate drafts of their blog posts in Japanese and Spanish that then get reviewed and edited by native speakers. The main logic is this, first, you create a Translator object with the desired source and target languages. English is the language that the team authors do their blog posts in. And in this example, we call the translate method to get a Spanish draft that will then be reviewed by a team member for accuracy.
+
+The Translate API is available in desktop Chrome and Edge as a version 138. The Policybazaar team in India has a pretty similar setup. Their main content is authored in English. And they offer dynamic translation to common Indic languages based on the user's location. When the user chooses Bengaluru, the translation language is set to Kannada.
+
+When they choose New Delhi, the translation language is set to Hindi. For Maya, Ashok, and Julia, the Trailblazers blog is more than a hobby. They want it to be a friendly community of travel enthusiasts. Let me show you how the Trailblazers team uses the Prompt API with structured output, this time for building this friendly community. An important part of community building are comments.
+
+This is why they decided to add a comment section to the blog post, but use AI to avoid harmful, disrespectful, or just plain illegal comments from showing up. When a possibly abusive comment is being posted, its flagged and send for manual moderation to the team. For this feature, they used a Prompt API with structured output.
+
+Harmful. We start again with a JSON schema. This time, we want an object with two properties, one called classification, which is any of the strings safe, illegal, harmful, or language. And the other is just a short reason, which can be shown in an error message to the user. Then we create a session with a language model with a system prompt that tells the model to act as a blocked comment moderator.
+
+Next, we call the prompt method, asking the model to review a given comment, and of course, passing it the response constraint from the previous slide. This then gives us the classification and the reason. If the comment is safe, they can post it. Else, we show an error method to the-- error message to the user. The Yahoo Japan knowledge search team, Japan's largest community driven question and answer platform, uses a very similar setup to classify questions to the product that might require manual moderation.
+
+In their screencast, you can see the post moderation dashboard that the moderation team uses to help them make a decision before deleting a question. As I said some slides ago, for Julia, Maya, and Ashok, their blog post blog is more than a hobby. Over the years, the Trailblazers blog has become their main source of income. At the end of each blog post, they have a number of affiliate links to partners that they collaborate with. The first collaboration is with trip.com.
+
+A travel blog, of course, hopefully makes you want to travel. What's closer than having a visit Valencia search for flights link on the Valencia blog post? Trip.com is trialing a new feature using the Prompt API to make it easier to navigate their flight options with an AI summary of available options.
+
+Not everyone is happy to organize their travel themselves. This is why the trailblazers team has arranged for a collaboration with Plaid, who provide the connection to a classic travel agency. Plaid leverages the Chrome built-in AI API to process face-to-face conversations at the physical tour desks entirely on device, ensuring sensitive customer data remains completely secure. As a conversation happens locally, the Prompt API acts as a real-time mentor, guiding the agent's questions, and instantly curates tailored travel activities. By combining human empathy with a secure local AI, they make every customer interaction smarter, faster, and more personal.
+
+Check this out. [VIDEO PLAYBACK] - Helping you plan your trip. - Yes, that's us. We're looking to plan an overseas trip together. - Wonderful.
+
+Let's figure it out. It depends on the package, but what range are you thinking per person? - We'd like to keep it around 450,000 yen per person if possible, including flights.
+
+[END PLAYBACK] THOMAS STEINER: The final collaboration is with fashion store Nykaa. The team found that people really, really loved the blog's photography. And they were asking for t-shirt prints with their best blog post hero images. So Julia created a playful widget, where the user can pick their favorite t-shirt color, or have AI suggest one for them. And this is where Nykaa comes in.
+
+They have an image search feature on their page, where the user can take a picture. And the prompt API would then suggest interesting products based on the extracted colors, brands, and many other signals, all on the client side, without ever uploading the picture to the server.
+
+As I said in the beginning, the Trailblazers story did not happen in real life. But you can come and experience the Trailblazers blog in real life. Point your browser to goo.gle/trailblazers and give it a spin. And remember, at the beginning of my talk, I promised you a very real surprise for all of you to take home.
+
+As I said, the Trailblazers story could well be true. And in fact, you could be the persons to make it true. Because the technology behind the Trailblazers blog is real. We extended the Eleventy base blog by the Build Awesome team. Use the template behind our Trailblazers blog to build your own website.
+
+Go to goo.gle/starter-extended-blog, click on Use Template, and you are ready to go. The template design is pretty bare bones on purpose, so you can style it to your liking, as I did with the Trailblazers blog. And it has all the AI features integrated that I've shown in my talk. So let's recap what we've seen.
+
+I showed the Summarizer API, the Prompt API, and the Translator API, all ready to go and shipped in Chrome. And I showed you the Writer and the Rewriter APIs, which we're currently working on. And as a hidden champion that I didn't really mention, but it's silently just doing its job in the background, supporting all the other APIs, it's the Language Detector API, which is used to detect the input languages for all the APIs that I've demonstrated. Our partners around the globe build these APIs into products that you love and use every single day. And I hope you start creating with them too.
+
+If you start building with our built-in AI APIs, a quick reminder that we maintain TypeScript types for all APIs. Find them @types/dom-chromium-ai package on NPM. And of course, check out all the built-in AI docs that the team wrote. To hear about the latest development in built-in AI, join the early preview program. And with that, thank you very much for coming with me on this journey.
+
+[APPLAUSE] Check out the Trailblazers blog, goo.gle/trailblazers, build upon the Google starter extended blog, goo.gle/starter-extended-blog. And read our docs, goo.gle/built-in-ai-docs.
+
+But above all, happy creating with built-in AI. Thank you very much. [MUSIC PLAYING]
