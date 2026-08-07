@@ -1,0 +1,121 @@
+---
+video_title: "Most AI has amnesia. Here's the fix"
+video_id: PAoe7mmmvp0
+channel_name: "Artem Kirsanov"
+channel_id: UCR2uRTQ53V_egXKFflMMaaw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=PAoe7mmmvp0
+video_date: 2026-04-02T03:17:05+00:00
+video_description: |
+  Get a 20% discount to my favorite book summary service at https://shortform.com/artem
+  
+  =====
+  My name is Artem, I'm a neuroscience PhD student at Harvard University. 
+  🌎 Website and Social links: https://kirsanov.ai/
+  📥 "Receptive Field" neuro-newsletter: https://artemkirsanov.substack.com/
+  ✨ Support me on Patreon to get access to Discord community: https://patreon.com/artemkirsanov
+  =====
+  
+  Most neural networks have no concept of time: they analyze each input in complete isolation, with no memory of what came before. In this video, we explore how Recurrent Neural Networks (RNNs) solve this problem by adding a single new term to the network equation: the echo. We build up the intuition from scratch, starting with feedforward networks, then showing why the naive approach to memory fails, and arriving at gated architectures like LSTMs and GRUs through a natural chain of reasoning — discovering along the way that the simplest working memory mechanism turns out to be the same one biology already uses.
+  
+  
+  🕒 OUTLINE:
+  00:00 Introduction
+  02:10 ANN Background
+  05:53 Adding Recurrence
+  11:04 Sponsor: Shortform 
+  12:05 Leaky Integration
+  14:40 Gated Memory
+  17:18 Putting it together
+  
+  =====
+  Icons by Freepik and Biorender
+  Music by Artlist
+  This video was sponsored by Shortform
+  =====
+  
+  *Disclaimer:* This channel is my personal project. The views and content expressed here are my own and are separate from my research role at Harvard University.
+  
+  #artificialintelligence  #machinelearning  #deeplearning
+---
+Apesar de todo o seu incrível poder, a maioria das redes neurais artificiais possui uma falha fundamental. Eles não têm noção de tempo. Acesse esta rede aqui mesmo. Esta é a AlexNet. Quando foi apresentado em 2012, marcou um ponto de virada na história da IA.
+
+AlexNet é uma rede neural profunda construída para uma única coisa: cenas. Você pode inserir uma imagem e ela gera uma lista de 1.000 probabilidades, dizendo o que ela acha que está na imagem. Por exemplo, se você mostrar esta imagem aqui, os neurônios de saída serão ativados. A maioria está silenciosa, próxima de zero, mas um neurônio, o número 29 da lista, acende com um valor próximo de um.
+
+Vamos pesquisar a classe 29 e, com certeza, ela significa axolote. Impressionante, mas e se quiséssemos analisar um filme? A abordagem mais direta seria inserir um quadro de cada vez e observar as previsões. Mas esse método é profundamente falho. Cada análise é completamente independente das demais. A
+
+rede não tem memória nem contexto. Na verdade, você poderia embaralhar os fotogramas do filme em uma ordem completamente aleatória e a emissora nem perceberia. É como um especialista com um caso extremo de amnésia retrógrada. Ele consegue dizer o que acha que está na imagem, mas no momento em que a imagem desaparece, ele se esquece que sequer existiu. Isso é um problema enorme porque não é assim que nossos cérebros funcionam.
+
+Quando assistimos a um filme, nossa percepção da cena atual é profundamente moldada pela cena que vimos anteriormente. Construímos contexto. Antecipamos o que virá a seguir. Compreendemos a flecha do tempo. Então, como construímos uma rede neural que faça a mesma coisa? Como podemos
+
+dotar uma máquina de memória? Essa é a motivação por trás das redes neurais recorrentes , máquinas que incorporam o conceito de sequência em sua própria estrutura. Mas para entendermos como incorporamos o tempo na máquina, primeiro precisamos ter uma visão clara da própria rede. Então, vamos relembrar rapidamente os conceitos básicos de redes neurais. O elemento fundamental de uma rede neural é o neurônio. Você pode
+
+pensar nisso como uma pequena máquina de guardar provas . Ele recebe os sinais de entrada, multiplica cada um por um peso correspondente e os soma, construindo um estado interno. Imagine isso como uma corrente elétrica se acumulando através da membrana celular. É aqui que o cálculo é realizado. No entanto, os neurônios não comunicam seus valores de voltagem diretamente aos seus vizinhos. Em vez disso, eles convertem esse
+
+estado interno em um trem de picos, uma sequência de pulsos elétricos distintos enviados através dos fios para outros neurônios. Uma abstração matemática para isso é uma função de ativação sigma. Ele pega o estado interno e o mapeia para o sinal real enviado a jusante. Normalmente, pode parecer um portão de limiar, permitindo a passagem apenas de números positivos e reduzindo os valores negativos a zero. Mas um neurônio sozinho não faz muita coisa. Para possibilitar
+
+cálculos úteis, milhares desses neurônios são organizados em camadas. Todos os neurônios em uma camada específica observam exatamente os mesmos sinais vindos da camada anterior, mas os ponderam de maneira diferente. Escrever os cálculos matemáticos para cada neurônio individualmente seria um pesadelo de índices. É aqui que entra a bela e concisa linguagem da álgebra linear . Ela nos permite parar de pensar em neurônios individuais e começar a pensar no estado da camada como um todo.
+
+Considere qualquer par de camadas adjacentes, a camada L menos 1 e a camada L. Primeiro, vamos agrupar os estados internos de todos os neurônios em uma camada em um único objeto, um vetor. Imagine isso como uma coluna de números representando a pressão interna de cada neurônio naquela camada. A questão é: dado o estado da camada L menos 1, como determinamos H sub L? Bem, a camada L não vê diretamente os estados internos brutos da camada anterior . Ele observa os sinais gerados
+
+por esses estados. Então, primeiro, a camada anterior deve ser acionada. Aplicamos nossa função de ativação ao estado anterior. Em seguida, os sinais viajam pelas conexões até a próxima camada. Como cada neurônio na camada L menos 1 se conecta a cada neurônio na camada L, esses pesos formam uma enorme grade de números, a matriz de pesos WL.
+
+Esta matriz representa o diagrama de fiação de um par de camadas. Ao multiplicarmos essa matriz pelos sinais de entrada, estamos calculando a soma ponderada para cada neurônio na nova camada simultaneamente. Isso nos dá as novas tensões internas. Assim, toda essa complexa rede de interações se condensa em uma equação elegante. Pegamos o estado interno antigo, convertemos em sinal através do sigma, passamos por ele através da fiação com a matriz de ponderação, e isso estabelece o novo estado interno.
+
+Esta é a fórmula fundamental para uma rede neural feedforward. Trata-se de uma transformação estática e unidirecional de informações. Empilhando muitas dessas camadas , podemos construir uma máquina capaz de realizar feitos notáveis, como mapear os pixels de uma imagem para o rótulo de um dígito manuscrito. Assim, conseguimos capturar toda a lógica da rede feedforward em uma única equação elegante. Fogo e projeto. Fogo e projeção,
+
+camada após camada. Mas observe algo crucial sobre isso. O novo estado depende apenas do sinal proveniente do estado anterior. Não tem conhecimento do que aconteceu há 5 minutos . E é exatamente isso que estamos prestes a mudar.
+
+Vamos incluir o tempo na equação. Pense em sistemas físicos reais, como um capacitor ou a membrana vibratória de um tambor. Eles não são simplesmente zerados instantaneamente. Elas carregam o eco de seus estados passados. Então, vamos reescrever nossa equação fundamental para o estado da camada L no instante T.
+
+Agora, ela é influenciada pelos sinais que a camada anterior está enviando neste momento, assim como no caso de feedforward, mas também percebe um eco de seu estado passado. Aqui temos M como uma função de memória geral que descreve como os estados se propagam no tempo. E dependendo da escolha de M, você obtém diferentes tipos de redes neurais. Vamos pensar em qual seria a escolha mais natural. Para visualizar melhor as coisas, vamos alterar o layout. O eixo horizontal
+
+aqui mostra a progressão através das camadas da rede, como antes. Mas agora existe um eixo vertical que mostra a progressão do tempo ao longo dos elementos da sequência. Nessa grade 2D, cada nó recebe duas fontes de informação. Uma seta que flui da esquerda para dentro dela, comunicada pela camada anterior, assim como uma seta que flui de cima para baixo, informações comunicadas através do tempo de seu eu passado por meio da função M. Agora, imagine que você é um pesquisador inventando isso pela primeira vez e está pensando em qual deveria ser a função da memória.
+
+Esta é a escolha mais natural. Vamos aplicar a lógica de propagação das setas horizontais e fazer com que as setas verticais tenham a mesma forma funcional, tornando a grade simétrica. Afinal, sabemos, através de redes feedforward, que esse padrão de função de ativação seguido por uma projeção linear com um conjunto de pesos, esse "disparar e projetar", funciona muito bem. Então, vamos ter um conjunto separado de pesos recorrentes para que a propagação temporal do estado seja uma cópia da transformação de disparo e projeção. Em outras palavras, M tem exatamente a mesma forma que a transformação feedforward de uma camada para a seguinte.
+
+E então o estado real é apenas a soma desses dois termos de aparência semelhante, apenas com conjuntos diferentes de matrizes de conexão. Uma para descrever como cada neurônio em uma camada se conecta aos neurônios na camada seguinte, e outra para descrever como cada neurônio se conecta aos seus vizinhos nessa mesma camada, comunicando informações ao longo do tempo. E foi exatamente isso que os pesquisadores tentaram inicialmente na década de 80. Essa é a formulação básica de redes neurais recorrentes que você normalmente encontraria. No entanto, na prática, existe um grande problema .
+
+Embora as RNNs tradicionais consigam rastrear o que aconteceu alguns passos de tempo atrás, seu horizonte de memória é severamente limitado. Eles são fundamentalmente incapazes de aprender dependências de longo alcance. E o motivo está intrínseco à própria operação que escolhemos para o eco. Pense no que acontece com uma informação à medida que ela se desloca ao longo do eixo vertical. A cada passo de tempo, ele passa por sigma e é então multiplicado por W rec.
+
+Ou seja, é processado, comprimido, rotacionado e projetado. Após 10 intervalos de tempo, o sinal original foi processado 10 vezes. Após 100 vezes. É como um jogo de telefone sem fio, mas a cada passo, a mensagem não é sussurrada, é parafraseada, condensada e reinterpretada. Em retrospectiva, isso não deveria nos surpreender. Lembre-se, escolhemos essa
+
+função de memória copiando-a da via de sinalização feedforward. E o caminho de propagação direta foi projetado para descartar informações. Esse é o seu único propósito. Mapear todas as imagens possíveis de gatos em diferentes poses, iluminações e fundos em uma mesma saída. Em outras palavras, compressão, não preservação.
+
+Pegamos a operação que foi deliberadamente criada para descartar progressivamente a variação e pedimos que fizesse exatamente o oposto: preservar fielmente a informação ao longo do tempo. Portanto, não é de admirar que tenha falhado. E aqui reside a principal descoberta. Para armazenar informações de forma confiável ao longo do tempo, precisamos de um caminho onde as informações possam fluir sem serem processadas repetidamente, sendo transportadas praticamente intactas, com apenas modificações seletivas e controladas. Na verdade, a comunidade de aprendizado profundo já havia chegado a essa mesma conclusão, mas em um contexto diferente.
+
+Com o crescimento das redes de visão computacional, as pessoas perceberam que, mesmo entre diferentes camadas, é útil preservar algumas informações inalteradas. A grande inovação foi a conexão residual, um atalho direto que permite que um sinal ignore completamente a transformação de uma camada. Essa foi a revolução que tornou treináveis ​​as redes neurais profundas. Nossas RNNs básicas não apresentam exatamente isso ao longo do tempo. Em vez de algumas poucas etapas de processamento horizontal, temos centenas de milhares de etapas de tempo verticalmente, e precisamos que informações importantes se propaguem sem sofrer alterações .
+
+Precisamos de um mecanismo de conexão residual , mas para memória. Se você tem curiosidade sobre as pessoas e as histórias por trás das ideias que discutimos, desde os principais avanços no design de redes neurais até o hardware que tornou tudo isso possível, recomendo muito a leitura do livro "The Thinking Machine" no Shortform, que gentilmente está patrocinando o vídeo de hoje. A Shortform oferece guias de livros detalhados que vão muito além de simples resumos. Eles desvendam as ideias principais e incorporam insights relacionados de outros livros e artigos de pesquisa, o que realmente ajuda a ter uma visão geral. A biblioteca deles abrange uma enorme variedade de tópicos, desde ciência e tecnologia até psicologia, com novos guias sendo publicados toda semana. E os assinantes
+
+podem votar nos próximos livros a serem abordados. Eles também possuem uma extensão para navegador que pode gerar guias detalhados semelhantes para artigos e vídeos do YouTube que você encontra online. Se você quer turbinar sua leitura, siga o link na descrição do vídeo para se inscrever em um teste gratuito e obter 20% de desconto na assinatura anual. Então, qual é o eco mais simples que preserva a informação em vez de processá-la? E se, em vez da operação de disparo e projeção , o eco simplesmente mantivesse uma fração alfa do seu estado anterior?
+
+Este alfa é um único botão que controla a memória. Vamos explorar o que acontece quando o giramos . Quando alfa é igual a zero, o eco desaparece. Cada intervalo de tempo é independente. Voltamos à rede feedforward amnésica com a qual começamos. Quando alfa é
+
+igual a um, o estado é totalmente preservado e a nova entrada é simplesmente adicionada por cima. Isso parece exatamente com a conexão residual que estávamos procurando. Então, problema resolvido? Bem, não exatamente. Quando as conexões residuais são usadas entre camadas, o número de camadas é fixo, digamos 10 ou 50. A rede tem
+
+sempre a mesma profundidade. Cada exemplo de treinamento passa pelo mesmo número de adições, e a rede aprende a calibrar suas próprias saídas de acordo. A arquitetura é construída em torno de uma quantidade fixa e conhecida de acumulação. As sequências não têm esse luxo. Um vídeo pode ter apenas alguns frames, ou pode ser a versão estendida de O Senhor dos Anéis, com meio milhão de frames.
+
+Com alfa igual a um, o novo estado é igual ao estado anterior mais a nova entrada. Ao desenrolá-lo, o estado se torna uma soma acumulada de todas as entradas já recebidas. Após 10.000 etapas de tempo, torna-se uma pilha de 10.000 contribuições empilhadas umas sobre as outras.
+
+Nada é descartado, mas também nada é encontrado. É como nunca jogar fora uma única correspondência. Tecnicamente, nada se perdeu, mas sua mesa está soterrada e todas as cartas estão igualmente inacessíveis. Isso não é memória. Isso é acumulação compulsiva.
+
+Portanto, o valor correto deve estar algures entre esses dois extremos . Vamos definir o valor de alfa entre zero e um, e agora algo interessante acontece. Os insumos recentes permanecem fortes, mas os insumos mais antigos perdem força exponencialmente. Este balde está furado. A informação entra em abundância e sai lentamente. E aqui
+
+está a reviravolta satisfatória. Descobriu-se que esse é o mecanismo de memória preferido da natureza. A voltagem da membrana de um neurônio funciona exatamente dessa maneira. A carga se acumula a partir de estímulos sinápticos e vaza através de canais iônicos na membrana. Na verdade, um dos modelos mais utilizados em neurociência computacional, o neurônio leaky integrate-and-fire, é precisamente essa equação.
+
+Mas esse balde furado também tem um problema . Neste momento, alfa é um único número compartilhado por todos os neurônios e fixo para todos os instantes de tempo. Mas digamos que você esteja assistindo a um filme. O nome de um personagem, mencionado uma única vez na cena de abertura, precisa persistir durante todo o filme. O enquadramento exato de cada foto é útil agora, mas irrelevante um instante depois.
+
+Um único canal alfa não consegue fazer as duas coisas. Suficientemente alta para manter o nome, e também conserva uma crescente quantidade de detalhes visuais obsoletos . Suficientemente baixo para ocultar os detalhes, e o nome também desaparece. O que precisamos é que cada neurônio tenha sua própria taxa de retenção, que mude a cada instante dependendo do contexto. A solução é substituir o escalar alpha por um vetor f de t, um portão por neurônio, recalculado a cada passo de tempo.
+
+Note que a função de memória m agora também recebe a entrada como argumento, pois o que você deve esquecer depende do que está chegando. Mas de onde vem esse portão do esquecimento ? É necessário analisar tanto o que a camada está armazenando atualmente quanto o que está chegando, e produzir um número entre zero e um para cada neurônio. Já temos uma máquina que faz isso, uma pequena rede neural com ativação sigmoide. Quando o portão do neurônio está próximo de um, seu estado permanece praticamente inalterado. Quando
+
+se aproxima de zero, o valor antigo é apagado, abrindo espaço para novas informações. Em nossa grade 2D, as setas verticais agora carregam válvulas adaptativas, cada uma controlada por um pequeno circuito lateral que lê tanto o eco de cima quanto a entrada da esquerda e decide quanto do eco deixar passar. Essa retenção controlada é o mecanismo central de uma família de arquiteturas conhecidas como RNNs controladas. Na prática, essas arquiteturas frequentemente envolvem refinamentos adicionais. Os dois membros mais proeminentes dessa família são as GRUs e as LSTMs.
+
+Elas diferem em seus sistemas hidráulicos específicos. A GRU combina nosso portão de esquecimento com um portão de atualização complementar, enquanto a LSTM separa o que um neurônio sabe do que ele está transmitindo aos seus vizinhos, mantendo dois vetores de estado em vez de um. Mas essas são escolhas de engenharia. O mecanismo central em ambos os casos é aquele que acabamos de derivar: uma válvula adaptativa aprendida no ecocardiograma. E essa única ideia, o esquecimento seletivo dependente do contexto, foi o que finalmente deu às redes recorrentes a capacidade de aprender dependências de longo alcance .
+
+Olhando para trás, eis o que fizemos. Começamos com uma rede estática sem memória e nos perguntamos como dar a ela uma noção de tempo. A resposta foi um único termo adicional, o eco, e todo o conjunto de arquiteturas recorrentes acabou sendo composto por diferentes respostas para uma única pergunta: qual deveria ser a função da memória? Uma cópia simétrica do caminho de propagação direta resulta em uma RNN básica, elegante, porém fácil de esquecer. Um decaimento escalar fixo resulta em um integrador com vazamento, o padrão da natureza, mas um mecanismo de controle dependente do contexto aprendido fornece as redes GRU e LSTM que finalmente podem escolher o que lembrar e o que esquecer.
+
+Mas nós apenas arranhamos a superfície. Ainda não discutimos como essas redes são efetivamente treinadas. Como eles propagam erros para trás no tempo? Ainda não exploramos o que as redes recorrentes podem nos ensinar sobre o cérebro ou o fascinante campo da computação de reservatório, onde aproveitamos a complexidade da recorrência sem precisar treiná-la. Mas essas são histórias para vídeos futuros.
+
+Se você gostou do vídeo, compartilhe com seus amigos, inscreva-se no canal se ainda não for inscrito e clique no botão "gostei". Fique ligado para mais tópicos sobre neurociência computacional e aprendizado de máquina em breve.
