@@ -1,0 +1,21 @@
+---
+video_title: "Tracing keeps your systems alive"
+video_id: Yx8WooRfgYo
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Yx8WooRfgYo
+video_date: 2026-03-17T15:00:57+00:00
+video_description: |
+  Learn memory management in C - https://www.boot.dev/courses/learn-memory-management-c
+   @teej_dv
+---
+Agora que já sabemos como marcar, podemos começar a fazer a seção de traçado do Mark and Sweep. Isso é importante porque temos cenários como os seguintes. Considere a função obter lista. Cria uma variável A, armazena o valor cinco e retorna uma lista contendo A. Poderíamos então chamar essa função e armazenar seu resultado em L para lista. Agora, o que precisamos considerar
+
+aqui é quando vamos liberar algum desses valores? Ao fazermos isso, devemos começar pensando em quais variáveis globais temos e quais frames de pilha criaremos durante a execução do programa. A primeira coisa que acontecerá é que criaremos um novo frame de pilha quando executarmos o comando "get list". Isso criará espaço para qualquer uma das variáveis ​​que temos, como A, e armazenará seu valor como cinco, e então criaremos uma lista que contém A e retornaremos essa lista. Antes de sairmos deste frame da pilha, a coleta de lixo é bastante simples e já está sendo feita, bastando marcar todos os itens que são diretamente acessados ​​por variáveis ​​globais ou frames da pilha. Então, essa parte é bem
+
+fácil. Tudo aqui é referenciado, então tudo que estiver marcado como verdadeiro não será coletado quando chegarmos à fase de coleta de lixo . No entanto, as coisas vão ficar um pouco complicadas depois que esse quadro da pilha for removido. Depois de retornarmos essa lista e removermos o frame da pilha, teremos efetivamente um L global, que contém uma lista com o valor cinco , mas o que você realmente deve pensar é que esta é uma lista com a variável A, que atualmente tem o valor cinco. Agora, o que precisamos decidir aqui, e é aqui que entra a parte do rastreamento, é: A ainda está vivo?
+
+Isso é complicado porque intuitivamente sabemos que sim, ainda estamos usando o valor que alocamos para A, mas como vamos provar isso em nosso algoritmo? Então, o que vamos fazer aqui é primeiro realizar a fase de marcação. Mark vai percorrer todas as nossas variáveis ​​globais, que ele verá como L. Quando chegarmos ao rastreamento, que você está prestes a implementar, é aí que diremos: "Aha, vejo que tenho um array. Vou iterar sobre todos os elementos do array e, em seguida, marcar esse valor." E é aí que nos
+
+deparamos com A, e assim podemos fazer A se estiver marcado como verdadeiro. Este é o princípio fundamental que adotaremos durante o rastreamento, trabalhando com tipos de contêineres como listas ou vetores. Ao percorrer esse grafo, verificaremos e garantiremos que cada item referenciado por um valor global ou em um quadro de pilha esteja marcado, evitando que seja descartado . Isso garantirá que todos os valores ativos permaneçam marcados e não sejam liberados durante um ciclo de coleta de lixo.

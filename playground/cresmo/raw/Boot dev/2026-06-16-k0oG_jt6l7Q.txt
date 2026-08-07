@@ -1,0 +1,121 @@
+---
+video_title: "Google Did The Impossible"
+video_id: k0oG_jt6l7Q
+channel_name: "Boot dev"
+channel_id: UC9HOZ53gnHP3f_b-wixS74g
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=k0oG_jt6l7Q
+video_date: 2026-06-16T14:51:00+00:00
+video_description: |
+  Learn to code - https://www.boot.dev?promo=BOOTSTUBE
+  Cryptography course - https://www.boot.dev/courses/learn-cryptography-golang?promo=BOOTSTUBE
+  
+  Google spent nine months breaking something that wasn't supposed to be breakable. This is the story of SHAttered, the first practical SHA-1 collision, and the death of one of the internet's most trusted algorithms.
+  
+  Timestamps:
+  
+  00:00 The impossible PDF
+  01:10 The Shattering
+  05:17 What is a hash function?
+  09:21 How did the attack work?
+  13:26 The slow and painful death of SHA-1
+  16:00 Why is it still in use?
+  21:00 Outro
+  
+  Sources: https://www.boot.dev/blog/news/sha-1-was-shattered/#bibliography
+---
+A couple of weeks ago, I downloaded a copy of OBS in my operating system yelled at me. It told me I shouldn't trust it and frankly, it was right. I shouldn't have been trying to download from fastandrealOBS.ru. So look, that one's my bad. That one's on me. But what if one of the most important
+
+algorithms that keeps you safe from stuff like that just stopped working? Well, that happened, worldwide. On February 23rd, 2017, Google published two PDFs. One has a blue background, the other red, open them side by side and it's pretty easy to see that they're not the same document. But if you feed both files into SHA-1, the hashing algorithm that at the time still protected software installs, certificate authorities, and a good chunk of the internet's identity infrastructure.
+
+The algorithm claims that the two files are identical. This is impossible. At least it should be impossible. Back when SHA-A was designed, everyone thought that even if you used code to generate as many random input files as you possibly could, creating two files with identical hashes, called a collision, would take so long that it wasn't even worth worrying about. See, every git commit has its own SHA-1 hash associated with it, and GitHub put the odds of an accidental SHA-1 collision. This way, even if 5 million programmers each generated
+
+one commit per second, you'd only have about a 50% chance of seeing a collision before the sun swallowed the Earth. Turns out, took a team at Google about nine months to do it. The team, a collaboration between researchers at CWI Amsterdam and Google's security group, called the project Shattered. You could say that the news shattered the internet. Who wrote this Ars Technica ran an obituary like headline at death's Door for years widely used SHA-1 function is now dead. The Hacker News thread for the announcement racked up nearly 500 comments,
+
+with developers ping ponging between dissecting the math, arguing about which systems were actually exposed, and warning each other to stop trusting SHA-1 in production. Like immediately, Bruce Schneier, who's been writing about cryptography since the 90s, posted to his blog that actually the result was important, expected, and even overdue. He'd been calling SHA-1 broken since 2005, and in 2012, he published a back of the envelope cost projection on his blog that turned out to be pretty accurate. The attack only took about $110,000 worth of compute, split across 6500 years of CPU time and 110 years of GPU time. Okay, I know that sounds like a lot, but they compressed that time into just nine months by using Google hosted hardware and clusters spread across eight different physical locations. That 6500 years of CPU time could be parallelized across thousands of machines,
+
+bringing the real world time down to less than a year. So people suspected that SHA-1 could be on its last legs before 2017, and a collision had been theorized about, but had never been practical to actually try to create one. And it's important to understand. SHA-1 isn't just an academic algorithm, something like bubble sort that you study in school, but never really use it in your own software. It was holding up installation signatures, version control, deduplication systems, now, mostly boring technical plumbing to be fair, but important, technical plumbing and five researchers had just proven that they could fool it for the price of a luxury car.
+
+So in this video, we'll answer three important questions, one: What even is a hash function? Two: How did SHA-1 actually die? And three: Why are people still using it? By the way, if you like these documentary style videos that we've been making lately, please absolutely destroy the like and subscribe buttons. It lets us know that we should keep making them.
+
+Now, before we answer those three questions, let's finish the story. The team of five put out a blog post detailing that now famous attack on Sha one, which produced what no good hash function should allow two materially different PDFs with identical hashes. And this part really caught me by surprise. To keep with Google's vulnerability disclosure policies, they had to wait 90 days before releasing their code to the public. That allowed them to create the collision, but in the meantime, they did at least provide a free detection system to help the public protect themselves from the same kind of attack.
+
+That public detection tool was a file tester on the shattered website, you'd upload a file and it checked whether the file looked like part of the collision attack that they discovered. The detector didn't even need both colliding files. It could just look at one suspicious file and catch the patterns that they'd associated with the problem. And we'll get to how all that works under the hood in just a second. But the main takeaway of the project is very simple stop using SHA-1. They stress the flaws in the algorithm, hypothesizing that
+
+well-funded attackers could follow in their footsteps and craft even more collisions. Their exact words in the blog post were: "it's more urgent than ever for security practitioners to migrate to safer cryptographic hashes." Okay, so at this point, you're probably wondering what even is this hash function that we keep talking about? Well, a hash function takes any data input a word, a paragraph, a PDF, or even a full movie file and spits out a fixed length string of characters. Type hello into a SHA-1 hasher and you get back this 40 characters, always 40 characters no matter what you put in. Type hello with a capital H and the output is completely different. Same for
+
+jello. Same for cello. Same for adding a single space at the end of hello. Notice that even these tiny changes in the input scramble the output beyond recognition, but it's not actually random. The string hello always hashes to this exact fingerprint, and jello always hashes to that one. The mp4 file for the video you're watching right now always
+
+(actually it hashes to this one: 71F627534A33A3C932F983748880A393AE1202C6 ) hashes to this output. That's why hashes are so useful for managing secure file downloads. Say you download a game, your operating system or antivirus can have the game file you downloaded and compare that hash against the hash the publisher published as the official version. If they match, we can be confident that this is the official game file. If they don't match, there's no guarantee. Maybe the file got corrupted, or maybe there's a new version
+
+of the software that the antivirus just doesn't know about yet. Or maybe someone swapped in malware that asks for access to your files, your cameras, your passkeys, or whatever else your machine is supposed to protect when windows updates itself. Yes, even Windows. Microsoft uses code signing signatures to authenticate that the updates came from Microsoft and weren't tampered with. Wrong signature no update. Hash functions
+
+have four big properties that make them useful and secure, and breaking just one of them is enough to cause serious problems. First, hash functions need to be deterministic, meaning you put in the same input, you get the same output, every time. You can put hello into a SHA-1 tomorrow, next week, or a month from now and still get the same hash back. Second SHA based hash functions are fast to compute, even on something like a Raspberry Pi you can compute millions per second, which is important because some input files aren't just simple strings of a few kilobytes. They can be gigabytes or even terabytes in length.
+
+Third, the hash function only goes one way, so you can't reverse engineer the input from just the hash. So if you have a really embarrassing bit of software you wrote from years ago, even if you publish the releases hash to your GitHub, no one can get back to the source from just the digest. And last, this is the one the shattered team broke. A hash function must be collision resistant. A collision is of course, when two different inputs produce the same output fingerprint. It should be practically impossible to find
+
+two different inputs that produce the same output. Now, you might think those fingerprints are pretty short strings of text. Just 160 bits. Well, two to the 1/60 is actually about 1.46 quindecillion.
+
+So seems like we're safe, right? Unfortunately, it's that promise of collision resistance that the shattered team broke. Two visibly different files with the same 40 character fingerprint. So let's talk about how the shattered attack actually worked. Because no, they didn't just brute force one and a half quindecillion different inputs. But before that, here's a quick message.
+
+Your data ends up in a lot of places. online. Passwords, Social security numbers, medical histories, all of it floats around the internet. Scary. That's why we are proud to be sponsored by... What?! They didn't pay. They didn't. They didn't give us. They didn't
+
+give us the money. Okay, forget all that. This video is brought to you by us Boot.dev. We have the best coding, backend development and DevOps courses on the planet. And you can
+
+trust me because I work here. We even have a course on cryptography. If you want to actually get your hands dirty. Working with hash functions AES encryption and elliptic curve digital signatures. Do we have a course for you? But don't worry if you're new to programing.
+
+Our program does start from the very basics, so anyone can jump in and work their way up to some of this more advanced security stuff. Use code BOOTSTUBE, at check out for 25% off your first year of Boot.dev on an annual membership. Now back to collisions. Let's talk about how the shattered team actually created one. The interesting thing
+
+about collisions is that while they're incredibly improbable, they're not actually designed to be impossible. 1.46 quindecillion is still a finite number, and the number of possible inputs you could shove into the function is effectively infinite. There is technically an input limit, but it's just a bit of an implementation detail. It might as well be infinite. Every possible file,
+
+every possible string of text, and every possible video of your grandma's cat that she sends you every Wednesday at 6:51 a.m., they can all be hashed. More inputs than outputs. So some of these inputs have to collide. It's called the
+
+"Pigeonhole principle". If you have more items than containers, at least one container has to hold more than one item. If 13 people walk into a room, at least two of them must share a birth month. So when cryptographers said SHA-1 secure, they don't mean collisions don't exist. They meant finding one should be so absurdly expensive that the sun burns out before you're able to finish your search. To be fair, for 160 bit hash,
+
+a brute force collision search would just need to try roughly two to the 80th inputs, because two to the 80th is about the square root of the hash space to just find a single collision. But even at a million hashes per second, that's about 38 billion years longer than the universe has been around. So in practice, you'll never find a collision. Was a fair approximation. But the last time I checked, sun hasn't exploded yet and shattered already happened. So somehow
+
+they found a shortcut. Here's how they did it. SHA-1 processes data in blocks. It breaks up the input data and feeds each one of those blocks into a series of mathematical functions. The output of one block becomes part of the input to the next.
+
+The internal state evolves as more data flows through. These mathematical functions actually aren't all that complicated, so don't let it scare you. It's things like truncating some bits off the end or rotating bits left so the front bits wrap around to the back. It's mixing values together with bitwise Or exclusive Or operations. The important thing is that it's just transforming the data deterministically, not randomly, and it's doing it in a way that can't be reversed. Kind of like one of those silly
+
+math based magic tricks. The Shattered team used a technique called Differential Cryptanalysis. Instead of randomly trying inputs and hoping for a collision, they studied something very specific. How would tiny changes to the input ripple throughout all those different math functions? Can they find two small changes that maybe cancel each other out? If you could find
+
+enough of the right tiny changes, you'd have it. Two different files that produce the same final state a collision. Here's a simple example. Say you and your friend are standing in different spots in New York, but you both want to meet at the same coffeehouse. I give you one route and I give your friend a different route. Now, if I choose these two
+
+routes, carefully say go forward two blocks and left one block, then you'll both end up at the exact same place. The team constructed two files that started with the same prefix, then diverged into two different collision blocks of carefully calculated junk data. After those blocks, SHA-1 internal state was identical again, so the two files would go on to share the same suffix and land on the same final hash. The shattered team estimated their attack was roughly 100,000 times faster than a brute force search of the square root of the collision space. That's about two to the 63rd Sha one computations, instead of two to the 80th instead of two to the 17th, or about 130,000 times faster.
+
+Even so, it wasn't cheap. Now, reports vary on the dollar cost of creating the collision, but the repeated figure seems to be in the ballpark of $110,000 in cloud compute terms. It sounds like a lot until you remember that intelligence agencies, well-funded criminal groups, and nation states have deeper pockets than your average hacker. So effectively, anyone with serious money and patience can plausibly engineer a SHA-1 attack if the target still trusts SHA-1. So in 2006, nine years after shattered, has the world finally finished migrating off SHA-1?
+
+You can probably guess where I'm going with this. See, most people, including a lot of developers, treat security as binary. Either your password is long enough or it's insecure, but in reality it's not so simple. Cryptographic algorithms age. They often move through a slow life cycle of being considered safe, then questionable... and then dead.
+
+Sure, some have stayed extremely safe and we may never find a practical attack, but many haven't. Computers get faster and mathematicians find new attacks. The cost of breaking an algorithm drops every year, even when the algorithm itself doesn't change a line of code. What was secure in 2005 might be questionable in 2015, and actively dangerous in 2026. The perfect example of this SHA-1 death started years before shattered actually landed in 2005.
+
+A Chinese cryptographer named Xiaoyun Wang , I think, alongside some colleagues, published a theoretical attack that reduced SHA-1 collision strength from two to the 80th down to roughly two to the 69th. Within months, Wang and collaborators announced a further refinement to two to the 63rd, but Schneier wrote at the time that it pretty much put a bullet into Sha one for digital signatures, and that was a major, major cryptanalytic result. The math was now public, and so refinements would only make it faster. In 2011, NIST formally deprecated SHA-1 for Digital Signature Generation, the US government's standards body officially said in writing, please stop using this to trust file downloads and things like that. They didn't ban it. They
+
+almost never ban anything. But they made it very clear that we should move to other solutions. In 2014, Google Chrome announced that it would start gradually distrusting HTTPS certificates signed with SHA-1. They're the certificates of browsers used to prove that a server really belongs to the domain name in the address bar. The post was titled "Gradually Sunsetting SHA-1". The plan was tiered certificates
+
+expiring after 2017 would trigger a security warning and then eventually a hard error. By 2015, Mark Stevens and his collaborators got closer. They cracked a piece of SHA-1's internals in ten days using rented GPUs, and put a price tag on the full attack somewhere between 75,000 and $120,000 on Amazon EC2. So the degradation of SHA-1 wasn't really news to cryptographers. By the time shattered actually landed in 2017, the only thing surprising about it was the fact that anybody was still surprised.
+
+So our final question, if not SHA-1, what should we use now and will that algorithm break anytime soon? I mean, I heard that Claude mythos will soon break all security... SHUT THE HELL UP! SHUT UP. The simple answer is just use SHA256. It's nowhere near being
+
+cracked. Easy. One line code change, right? Kinda. The problem is you're updating every certificate authority in every certificate you've ever issued.
+
+So for some projects, yeah, it's pretty simple. But for the big projects with millions of hashes in production file systems, it's not. Every piece of software that validates signatures. Every embedded device with a hash function baked into the firmware, industrial controllers, medical equipment, point of sales terminals, ATM networks, weird custom IoT widgets, and oil refineries that nobody in the company can find the source code for any more. Now need an update. So it's not just the code, it's all those stored hashes. Side
+
+note: if you've ever worked on or used one of these older systems, it's now hard to update. Let us know in the comments below! We'd love to hear your legacy maintenance horror stories. Anyways. Take Microsoft. They didn't finish moving Windows
+
+Update signing fully to SHA-2 until 2019, over two years after shattered and they didn't retire the last SHA-1 signed windows content from their download center until August of 2020. Windows 7 users who never installed Microsoft's SHA-2 patch literally stopped receiving security updates in 2019 because their machines couldn't verify the newer signatures. Microsoft, one of the biggest companies on Earth with effectively infinite engineers, still took years to migrate. And if Microsoft moves that slow, imagine the rest of the internet. On the public facing internet SHA-1 was banished years ago. That part of the cleanup actually worked because browser
+
+makers could force the issue if a publicly trusted site kept using SHA-1 certificates, Chrome and Firefox could put a scary warning or eventually a hard error between that site and its users. But the internet runs much deeper than what's in your personal browser. There's the entire issue of corporate intranets, banks, government agencies, insurance companies, hospitals. These places run software written in the 1990s on hardware nobody wants to touch because they can't afford for it to stop working. And the people maintaining it are almost never cryptographers. They're sysadmins, keeping a $60 million mainframe
+
+from setting itself on fire. And the SHA-1 dependency is buried in a config file, eight directories deep that hasn't been touched since the guy who wrote it took her early retirement. For those teams, the plan is always to migrate next quarter, and the next quarter has been the next quarter for the last seven years. In January of 2020, three years after shattered, two cryptographers proved the attack had gotten even cheaper, Gaëtan Leurent and Thomas Peyrin published a paper called SHA-1 is a shambles for an estimated $45,000 in rented GPU time, they crafted a pair of PGP keys with different identities but colliding SHA-1 certificates. So why does that matter? Well, GPG, an open source implementation of open PGP used for
+
+years by journalists, activists and Linux maintainers, still defaulted to SHA-1 for identity certifications, and PGP runs on a Web of Trust. Instead of one central certificate authority proving who owns the key. Users sign each other's keys, forged the right certificate, and you can impersonate someone inside that trust graph. And then, of course, there's git. Git identifies every object in a code repository by its SHA-1 hash, every commit, every file blog, every tag. A collision in
+
+git theoretically means you could craft two different commits with the same identifier, swap malicious code into a repository, and not break the cryptographic chain that's supposed to prevent exactly that. When shattered dropped, GitHub responded fast. Within a few weeks, they deployed a SHA-1 collision detection. A modified version of SHA-1 that watches for the specific bit patterns used in collision attacks and just rejects them. Git, not GitHub, has been preparing for a transition for years, but that migration still isn't finished. To be fair,
+
+git SHA's are everywhere. There may not be a messier SHA migration in all of software. MD5, the algorithm that came before even SHA-1 started falling apart in the early 2000. It took decades to fully scrub MD5 from production systems. I mean, there are probably still corners of the internet where MD5 quietly hashes things that it shouldn't. SHA-2, which is what
+
+we mostly use now, especially SHA-256 is the safer family everyone moved to after SHA-1. Cryptographers do not think a practical SHA-256 break is close, but close in cryptography is often measured in decades, and we just don't know what we don't know. So should you panic the next time you push a git commit or click the little padlock in your browser? No. The padlock is signed with SHA-2, and the vast majority of commit hashes aren't direct attack vectors, but you should understand the tools that you're trusting.
+
+That's why we teach cryptography on Boot.dev. We have a whole chapter on hash functions, and we go way deeper on algorithms like block ciphers, digital signatures, and AES 256 so check out the site and use code BOOTSTUBE for 25% off your first year of an annual membership.
