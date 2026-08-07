@@ -1,0 +1,313 @@
+---
+video_title: "Code review acabou? O tema da semana, ao vivo."
+video_id: FZ7d_V31w_Y
+channel_name: "Vini - AI Coders Academy"
+channel_id: UCB0zxJZkEkb7TH6DdS-Fe_A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FZ7d_V31w_Y
+video_date: 2026-07-10T11:05:37+00:00
+video_description: |
+  VPS Hostgator - https://www.hostgator.com.br/52604-13-3-12.html
+  Entre para a http://aicoders.academy/
+  
+  Ontem vi um tweet: "pode aposentar o code review, a IA já revisa o próprio código". Juntou like pra caramba. Só que eu reviso PR de IA o dia inteiro e tô vendo o contrário: nunca gastei tanta energia revisando código.
+  
+  O que mudou é que a IA te entrega um PR de 20 arquivos em dois minutos, tudo verde, e a pergunta deixou de ser "isso compila". Virou "isso é mesmo o que eu pedi, e o que mais ele mexeu aqui que eu não tô vendo?". Ler o diff linha por linha não pega esse tipo de coisa, mas foi assim que a maioria da gente aprendeu a revisar.
+  
+  Nessa live eu abro o tema da semana: por que "code review acabou" é o hype mais caro de 2026, e por que o PR que parece certo é o mais perigoso. 
+  
+  Link para entrar pro Cursor com 50%: https://cursor.com/referral?code=OBNRHHKA8OQ8
+  
+  #codereview #gpt56 #grok45
+---
+[música]
+
+Fala aí meus vibe coders, como é que vocês estão? Dia de lançamentos adoidados, lançamento para todo quanto é lado. Ontem tivemos lançamento do Grock 4.5, hoje tivemos lançamento do GPT 5.6 Sol tão esperado. O sol começou a raiar
+
+pro lado de cá. E ali ainda tem lançamento do Meta Spark 1.1, lançamento ontem do SW1.7. set lá do AI, que pouca gente utiliza, mas que veio aí com uma velocidade absurda de 1000 tokens por segundo. Semana insana de lançamentos,
+
+até mesmo o Fable que era para ter saído ontem, voltou, continuou, fica até dia 12. Acho que eles vão estender um pouco mais com os limites resetados. Que semana boa pra concorrência, hein? Que semana boa pra gente. Fala comigo, Codex Vini foi deptado n aqui. Tô não, tô
+
+aqui. Eu tô aqui sim. É, eu presente. Olha aí, vem pela resenha. Rafael tá na área, Igor tá na área também. Salve,
+
+ioders, tamo junto, meu querido. Olha aí, ó. O Sol não tá disponível no Plus, só aparece a Lua e a Terra aqui, [risadas] pô. Aí é complicado, cara. Olha aí, ó. Codex na área. Galera, mais
+
+alguém com problema de assinar o GPT? Eu tô ligado que hoje a pauta vai se misturar bastante com o assunto do dia. Não tem como. A gente aqui tá hoje aqui para falar sobre code review, mas eu sei que vai acabar esbarrando em outras pautas. Vamos lá, antes de como é que fica por dentro de tantas novidades?
+
+Cara, daquele jeito, né? Eh, calvo e com olheira. Mas vamos que vamos, vamos para cima. Beleza? Você que tá chegando agora, já deixa o seu like, já se inscreve no canal se você não é inscrito. E hoje é um assunto que
+
+provavelmente você que curte um vibe codezinho, que não tá preocupado com colocar software em produção, de ter cliente de verdade, talvez um assunto para você não vai funcionar. Agora, se você é da área de tecnologia, já desenvolve software, já tem uma preocupação constante com qualidade, se aquilo que você tá entregando quebrar em produção, porque se quebrar em produção, quem vai ter que resolver você também? Aí essa live é para você. Essa semana, pessoal, rolou uma pauta muito forte no mercado sobre o assunto de revisão de código. Manda aqui no chat, você revisa o código? Deixa aqui o que que vocês
+
+acham. Vocês fazem revisão de código hoje ou vocês simplesmente deixam e confiam no que IA tá fazendo e jogando pra produção? Manda um aqui no chat, você que faz revisão de código, manda dois, você que acha que isso talvez não seja mais relevante. Quero saber a opinião sincera de vocês, beleza? E ó, pode falar a verdade, tá? Sem
+
+julgamento, sem hardin. Eu já falei algumas vezes aqui, eu já fiz algumas vezes, na verdade, eh, por requests, eu admito aqui, tá? Sem revisar. Eu achei que fal bom, acho que acho que tá bom e me arrependi amargamente de ter feito merge de por requests, de ter subido a por request sem fazer revisão de código. A gente vai falar um pouco disso hoje.
+
+Ó, o Israel tá na área também. Fala Israel, como é que você tá, meu querido? Olha aí, ó. O Adriano acredita, o Adío, desculpa, acredita que revisão de código é importante. Ó, o Israel sempre usando a premizade prévice ensinada aqui, né, Colores Academy. Estamos junto demais. O
+
+Fabrício tá no meio termo. O Codex falou que ele revisa tudo e e usa o ciclo prévice dottex para fazer microcomits e revisar tudo no detalhe. Cara, aí sim. Bom demais. Bom demais. O Igor também
+
+revisa. É isso, pessoal. Olha só, vou compartilhar com vocês a minha tela pra gente trazer algumas provocações aqui, tá? De onde que vem essa temática? Essa semana, tanto lá na gringa quanto aqui no Brasil, eu vi várias pessoas eh trazendo uma temática mais ou menos nesse sentido aqui, ó.
+
+Eh, que primeiro deles foi o T da T3, né? Ele falou assim, ó, quanto melhor os modelos precisam ficar para que você não precise mais ler o código. Aí depois ele trouxe, at this point, I'm generally conviced that most of you would have kept reading the assembly code after she got popped. Que que ele tá fazendo? Ele tem um pouquinho de sarc sarcasmo de vez em quando, tal, mas quando o C++ foi introduzido, tinha muito preciosismo lá com o pessoal da assemble que falava: "Não, cara, mas esa aí o negócio mesmo, raiz é raspabit, você tem que estar ali no assemble. Esse negócio de ser é muita
+
+abstração e tudo mais." E aí ele tentou fazer esse comparativo. Eu trouxe um pouco da minha opinião. Eu quero compartilhar aqui com vocês. Eh, primeiro eu falei, pô, eu acho que eu tô um pouco desconectado disso. Isso também
+
+porque o Tem acesso ao antecipado uma porrada de coisa, então nem sempre eu tô no mesmo ritmo que ele de saber o que tá acontecendo no mercado. Por exemplo, ele teve acesso antecipado ao GPT 5.6, mas na minha visão, se eu não leio o código, eu não conheço a base de código. E se eu não conheço a base de código, como que eu vou poder tomar decisões melhores sobre aquela base de código? Então, essa é a percepção que eu tive nessa discussão. E eu quero fazer uma pergunta
+
+para vocês aqui, para para vocês pensarem já para essa live. Fica com essa pergunta na cabeça. Você voaria hoje em um avião que o código do sistema dele foi completamente vibe codado e que ninguém revisou aquele código? Você voaria mesmo que tivesse vamos lá. Usa o Fable 5 GPT 5.6 Sol no modo ultra. Você
+
+voaria no avião assim, você hoje entraria numa numa cirurgia para ser operado máquina que que teve o seu código feito pelo Fable 5, pelo GPT 5.6, pelo Fable 7, que seja, pelo GPT9. Você entraria numa máquina que ninguém olhou para aquele código e falou assim: "Cara, isso aqui tá seguro?" Manda no chat, manda, responde. Você, você confiaria num sistema de alta criticidade para que, que não passou por uma revisão mais criteriosa de código? Olha aí, ó. Cara,
+
+canal é excelente, qualidade top, tem vários amigos que querem iniciar nessa área. Me envie o seu LinkedIn e seu curso para Lisen com certeza, meu querido. A gente já manda já aqui para você o link da, aliás, deixa eu mandar de uma vez porque depois às vezes é pior, né? Manda agora na vez, vou mandar no chat aqui, vou deixar como favoritado, beleza? E obrigado pela moral, tá? Mas olha só,
+
+o Codex trouxe, não revisa o código, tu não é substituível porque tu eh porque não sabe nem a arquitetura do seu projeto. Então, exatamente. Que mais? Quem voaria no avião que foi vibe codado? Deixa eu ver no chat. Você
+
+confiaria numa calculadora que não revisou o código dela? Aí sim. Boa. Excelente pergunta. Agência Vmax. Esse
+
+que é o ponto, pessoal. Quando a gente tá falando de revisão de código com inteligência artificial, a gente tem um grande problema hoje que é o seguinte: revisar código sempre foi um parto. Eu tenho certeza que você que é dev já recebeu uma PR, sei lá, de 3.000 linhas de código e ficou pistola com fela da mãe que te mandou essa PR. Por quê, cara? Ninguém merece ser quinta-feira,
+
+sexta-feira, um cara bou: "Revisa essa PR aí urgente que eu tenho que fazer esse merge para botar fit para entregar nosso sprint". Porém, o nível de criticidade de sistemas, ele depende. Concorda comigo que revisar um código de uma landing page não é tão crítico quanto revisar um código de um sistema da Imbraer para um avião, por exemplo, para um S192, por exemplo? Concorda comigo que aí o a agência Vmax trouxe um código de uma calculadora. Se essa calculadora não tiver sendo usada para fazer cálculo científico, né? Se ela estiver sendo, só
+
+para um cálculo básico do dia a dia, concorda comigo que eh revisar o código dela não exige o mesmo nível de critério que eu deveria ter com o critério de um sistema mais eh complexo? Ou seja, existe uma palavra, uma frase que se se chama risco de ruína, tá? Um uma expressão. Qual que é o risco de ruína de eu não revisar o código do sistema que eu tô fazendo hoje? E aí é onde a gente começa a entrar na pauta dessa live. Pessoal, concordo 100% com todo
+
+mundo que fala, Vini, é impossível revisar PR feita por IA. Deixa eu mostrar um exemplo para vocês, ó. Se você bateu o olho nessa PR que a gente tem lá no DCtext agora, inclusive foi feita por mim, ela tem simplesmente, eu vou mandar o link aqui, se vocês quiserem acompanhar, ela tem simplesmente 10.000 linhas, beleza? 78 arquivos alterados e olha a quantidade de coisa.
+
+Isso aqui foi feito eu e meu amigo Fable 5. Tá aqui, ó. Todos os comits feitos em conjunto. Aliás, esse foi Sonet 5. Todos os comits feitos em conjunto. Esse
+
+último foi GPT 5.5. Cara, a chance de eu parar e olhar para isso aqui e falar: "Isso aqui tá 100% certinho, eu vou demorar um tempão". Aí a gente tem algumas métricas. Vamos lá.
+
+Existe uma métrica do Smart Bear que ele fala que a revisão de código, quanto menor a PR, melhora a qualidade da revisão de código. Beleza? Então é um dado, isso é estatístico. Foi comprovado que PRs que tem entre 200 a 400 linhas de código, elas tomam mais ou menos 60 a 90 minutos de revisão de código e você consegue ter mais eficiência na detecção de problemas. Acima disso, começa a piorar a revisão de código. E aí a gente
+
+vem pro seguinte cenário. Olha só. O ciclo de desenvolvimento software hoje, tá? Hoje você que é deve, é diferente do ciclo de desenvolvimento software ano passado. Vamos pegar pré e préia. Aonde que tava o maior esforço
+
+nosso para desenvolvimento de software? O maior esforço estava na etapa de codificação. Então eu vou colocar isso aqui tudo como claro. E aqui na parte de codificação era de fato aonde estava maior gargalo. Por isso que as empresas contratavam mais devis. Por isso que o
+
+formato de consultoria se consolidou tanto de de empresas terceirizando de dentro de outras empresas. Por quê? Eu preciso entregar sprint mais rápido. Então, muitas vezes as pessoas achavam que nove mulheres grávidas fariam um bebê em um mês, né? Contratava gente a doidado para tentar resolver o maior gargalo. Quando entra a inteligência
+
+artificial, esse gargalo ele muda completamente de lugar. Se se antes fazer código era a parte mais demorada, agora não. Agora simplesmente você manda um prompt e a inteligência artificial gera aquele código para você. Se você é aluno nosso da Ioder, você vai usar a estratégia de engênia de contexto, vai fazer o espectro do development certinho e vai ter melhores resultados ainda com o código que é gerado pela inteligência artificial. Porém isso agora ele a gente inverte esse problema. Se agora é
+
+tranquilo, a parte de codificação na teoria tá mais bem resolvida, a gente tem velocidade, eu tenho mais demanda de planejamento, mais demanda de revisão de código, mais demanda para testes, beleza? E mais demanda de deploy. Por quê? Eu consigo, talvez, dependendo da empresa que eu tiver trabalhando, literalmente colocar o o roadmap de dois meses em um dia em P requests. Só que eu consigo revisar toda essa demanda de código que tá vindo agora. Imagina que
+
+isso aqui é a demanda de código que tá chegando. Eu consigo revisar na mesma velocidade da demanda de código que é gerada? Não, isso é inviável para um humano. Já era difícil quando era só 400 linhas de código que a gente ficava brigando. Já era difícil quando era uma PR de 3.000 linhas de código que tinha
+
+sido escrito por um ser humano. Agora que literalmente a cada minuto você consegue gerar uma PR de 3.000 linhas, 10.000 linhas, 50.000 linhas, fica realmente inviável a gente revisar o código. E aí a pergunta volta:
+
+então se fica realmente inviável eu revisar o código, como que eu deveria estar fazendo isso? Como é que eu entendo se aquele código faz sentido ou não? Tá, antes de falar da inviabilidade do código, deixa eu dar uma olhada no chat aqui como é que a galera tá falando. Ó, rapaz, tava terminando de ver a live do GPT 5.6. Que absurdo,
+
+absurdo mesmo, hein? Olha aí, ó. Crie uma skill para revisar o código. É bom ponto. Você tem um insite interessante.
+
+Só que é o seguinte, imagina só, eu acabei de chegar aqui na empresa da Ecoders Academy e eu não conheço a base de código. Beleza? Eh, ou, esse é um exemplo, qual que é o papel da revisão de código dentro de um projeto? Qual que é o papel de um code review? O papel de code review, ele não é apenas ler o código. O papel de code review,
+
+além de ler o código, é você entender a base de código que tá sendo desenvolvida, não só por você, como também pelos seus pares, seus colegas, entender as decisões que estão sendo tomadas e reduzir também a incerteza. Ou seja, quando eu tô revisando o código, eu quero reduzir a incerteza de que aquela decisão que eu vou tomar daqui ali na frente, eu sei o motivo de tomar ela. Vou te trazer um exemplo. Na nossa base de código da E coders, a gente tem um código legado que foi gerado pela inteligência artificial, que foi revisado com as nossas skills e tudo mais e que não tem uma parte hard coded para fazer uma validação se o usuário tem um plano X ou Y. Isso dentro de uma revisão de código por humanos. Jamais
+
+teria passado. Mas uma revisão de código pela inteligência artificial passou. Uai, mas como assim? A I não tá boa o suficiente para pegar esse tipo de problema? Na teoria sim. Só que na prática ela só
+
+vai ficar boa se eu conseguir passar para ela as referências certas de como minha base de código funciona. Então, guidelines de desenvolvimento, padrões de projeto, o que que pode, o que que não pode, direcionamento de onde a gente tá indo ou não. Eu falo que inteligência artificial gera código que ele parece certo. Sabe por quê? Quando a gente tá revisando o código de seres humanos, é muito fácil você ver quando um cara é ruim em fazer código. Você vai bater o
+
+olho e falar: "Cara, olha essa variável, que nome horroroso que esse cara colocou nessa variável. Olha como é que ele tá fazendo esse mapa aqui. Olha esse for do jeito que ele tá fazendo. Pô, isso aqui é inviável, isso aqui não funciona. O código que é gerado pela inteligência artificial, ele é bonito. Então você
+
+bate o olho no código, você fala: "Cara, que código bonito! aparentemente funciona. O problema não é o 90% do código que tá bonito, que aparentemente funciona. O problema é aquele 10% que talvez não precisaria tá ali, talvez é redundante, talvez só tá ali porque a Jack já fez, aproveita e sobe. Ou talvez ele tá quebrando um contrato interno, talvez tá adicionando um componente redundante que já existia na base de código. Então a gente volta para um
+
+ponto que é qual é o objetivo do de um code review. Não é não é apenas ler código, é reduzir a incerteza. Só que qual o nível de criticidade que o meu sistema tem para eu ter a obrigação de entender ao nível de detalhe o que que tá escrito naquele código. E aí a gente vai começar a entender que na maioria das vezes uma base de código de hoje em dia, a gente tá falando de um front end, vamos colocar uma landing page, vamos colocar de um extremo uma landing page versus um sistema de banco. Cada um tá no oposto. O nível de
+
+criticidade, se você tiver um bug de um componente numa landing page, é muito menor do que o nível de criticidade se você tiver um bug num sistema de banco. Concorda comigo? Ou seja, o peso que eu coloco no code review para landing page não tem que ser o mesmo de um sistema de banco. O nível de burocracia para passar por todas as etapas do ciclo de desenvolvimento software, planejamento, codewie, code review, teste, deploy é completamente diferente quando eu faço uma landing page hoje e quando eu faço um sistema eh mais complexo, igual um sistema bancário. Então, quando a gente fala de code review acabou, não é que ele acabou, é que se ficou hoje você talvez não precisa mais ter o mesmo nível de atenção para o code review que você tinha antes, porque a parte do código que é mais trivial, você consegue refazer ela rápido. Se uma lend page
+
+quebrou, você consegue montar os o a estrutura suficiente para corrigir aquilo rápido. Você consegue montar teste automatizado rápido, você consegue montar teste com playg trend, você consegue ter essa estrutura hoje, mas do outro lado, um sistema de mais complexidade talvez não faça sentido. Vamos dar uma olhada no chat aqui. Obrigado. A interação tá muito massa, inclusive, viu, galera? Olha aí,
+
+o Codex trouxe aqui, a manutenção e revisão fica mais fluida. Exatamente. Ó, eh, adversarial review. É assim que temos feito na empresa que eu tenho prestado serviço. Exatamente, cara. Isso
+
+é uma ótima estratégia, inclusive, viu? Ó, se um PR é gigante, porque a fiture tá grande demais, a granalidade da fiture tá diminuindo com boa, Renato. Ô, Renato trouxe um ponto sensacional que já tava mapeado aqui pra gente trazer e que complementa demais. Então, olha só, qual que é o problema da inteligência artificial para código hoje? A inteligência artificial, sempre falo nas nossas lives internas da igers, ela potencializa e ela potencializa tudo, coisas boas e coisas ruins. Se o seu processo tá bom,
+
+legal, ela vai potencializar um processo bom. O que que é um processo bom? Hoje em dia eu tô quebrando tarefas no tamanho certo. Eu tô programando já pensando que a P request não vai ficar uma coisa gigantesca. Talvez eu tô trabalhando com uma feature brand que vai receber outras PRs para ela. Assim
+
+eu facilito o code review do meu time e por aí vai. Então eu tenho um bom processo. O meu bom processo é potencializado pela IA. Por quê? Porque ela vai fazer código mais rápido, mas todo o processo em si vai ser potencializado para o bem. Porém, se meu
+
+processo hoje é ruim, se eu já não tenho um processo de planejamento, de quebrar as tarefas em especificação, de ter a granulidade certa paraas minhas tarefas, aí, meu amigão, aí ferrou, porque daí a IA vai potencializar isso tudo pro negativo e aí a gente vai ter aquelas por request gigantescas e aí entra no que a gente já falou aqui até agora. Beleza? Olha aí o Codexon Vini. O que eu faço, o que eu faço hoje foi abandonar o código 100% arquitetura limpa e hoje eu faço algo como Hook Architury. Então o código é bastante comentado já em hooks porque tanto a revisão fica, acho que não falta um pedaço do comentário, né? Beleza. Ah, melhor e
+
+mais fácil por beleza. Ó, e para entendimento de arquitetura, etc. Criando e live docs. Isso é legal para caramba também. Assim facilita demais a absorção de conhecimento.
+
+Ó, o que meu painel, esse aqui, ó, de review já pegou de furo, não é brincadeira, mas no fim tudo passa no C Green. Exato. Olha aí, ó. Code review com IA é o problema que você vai olhar algumas vezes, você tá, a diferença de um code review com IA é o seguinte, a IA ela tá treinada no no 7. Não significa que que aquele da set ele tá respeitando a sua regra de negócio.
+
+Não significa que ele tá que ele entende aonde que tá talvez o o maior gargalo do seu processo hoje de desenvolvimento de software. Talvez dentro da sua empresa você tá usando um sistema super legado e que o o code review vai falar: "Cara, você tem que refaturar isso daqui". E aí talvez você vai falar: "Cara, mas por uma decisão de empresa a gente ainda não foi por isso." Por quê? porque a gente tem uma spike, tem uma poque, tá fazendo alguma coisa em outro canto que a gente em algum momento vai migrar isso. Então,
+
+algumas vezes o code review com a ele também pode gerar ruído em excesso. Vou falar disso hoje lá na Eoders mostrando alguns casos reais também. Pô, só comentário pesado. O Israel trouxe aqui um comentário muito bom. A revisão nesse nesse eh fluxograma de PR com código antes deve vir por etapa.
+
+Revisão de entregáveis do backlog. Concordo 100%. Boa. Ó, então dando continuidade, vamos continuar aqui, ó. Vai ter cupom de desconto? Vai ter cupom sim, Ambition
+
+King. O cupom hoje se chama Code Review, beleza? Code review. Então se liga, pessoal, qual que é o ponto que eu quero chamar a atenção de vocês? Ao mesmo tempo que muita gente agora tá reclamando que putz, é muita linha de código entrando na base de código ao mesmo tempo, eu quero trazer uma outra provocação. Existe hoje uma corrida para
+
+você ter muita velocidade no seu processo, porque IA na teoria traz mais velocidade. Quem já é nosso aluno na ICO, tá ligado que eu sempre faço o comparativo com um carro. Imagina que eu tô lá em BH na no anel rodário. Anel rodoviário em BH tem um sentido que o limite é 70 km/h. Se eu tô andando de Ferrari ou se eu tô andando de de Uno, não interessa. É 70 km/h, que é o limite
+
+que eu consigo fazer. Se eu ultrapasso aquele limite, eu vou ser penalizado de alguma maneira. Pode ser com uma multa, pode ser com uma fatalidade, um acidente. De alguma maneira vai acontecer algum tipo de penalização no código, no desenvolvimento de software com IA. não é diferente. Hoje, se você
+
+tá querendo correr demais e o seu processo, o seu workflow de desenvolvimento software não permite, você vai ser penalizado por isso. Essa penalização, ela vem de várias maneiras, mas olha só, digamos aqui, ó, vamos trazer para baixo a nossa nota, o nosso corte aqui de velocidade. Essa linha preta aqui, ó, vamos colocar amarelo, ó. Deixa vermelho, ó. Essa linha vermelha é o nosso limite de velocidade, beleza? é o quão rápido o
+
+meu time consegue ir hoje dentro de uma empresa. Então, eu não tô falando rápido de fazer código, eu tô falando rápido a ponto de conseguir colocar uma uma parada em produção. Se aqui é o meu teto, porque eu vou esbarrar aqui em teste e meu time de testes hoje não consegue testar mais rápido, se aqui é meu teto de deploy, porque o meu time de deploy, talvez um processo de CSD ou às vezes um compliance mais exigente, eu não vou conseguir fazer o deploy mais rápido. Qual é o sentido de eu ir tão rápido na parte de codificação? Qual é o sentido de eu aumentar tanto o gargalo, tanto o workload, tantas questes na parte de revisão de código se o meu time não vai conseguir testar nessa mesma velocidade e não vai conseguir fazer o deploy na mesma velocidade? Isso aqui é
+
+literalmente se você pegar um horário de pico numa cidade igual São Paulo, pô, não tô mostrando na tela, né? Aí foi vacilão, ó. É isso aqui, ó. Então isso aqui é literalmente como se você tivesse, obrigado aí, eh [roncando] se você tivesse eh numa cidade igual São Paulo e aqui, ó, limite de velocidade essa linha vermelha e aí horário de pico, tá tudo travado, tá? Ó, Code viw, estamos em horário de pico, tá tudo travado, ninguém consegue mais revisar nenhumaquest que tá chegando. E aí eu
+
+vou lá e faço assim, ó, não interessa, manda mais código para lá, porque a gente consegue mais notificação. Então, o código tá indo rápido, a gente tá aumentando mais por requests. A por request, ela não vai eh aumentar na mesma medida que o que o código. Na verdade, o código vai ter uma velocidade, só que sempre vai tá o quê? engarrafando o processo nosso de revisão de código para no final do dia a gente não conseguir revisar as pr request na velocidade que precisa e depois não ter capacidade do time para fazer os testes na velocidade que tá chegando pro request. Ou seja, a pergunta que eu faço
+
+para vocês é: faz sentido você ir tão rápido se o seu processo não consegue absorver essa velocidade toda? Ou aí uma uma pergunta de provocação. Talvez o caminho de você buscar mais velocidade antes de buscar mais velocidade no código deveria ser buscar mais velocidade aonde tá o maior gargalo da empresa. Então hoje a gente tem gargalo no deploy, a gente tem gargalo no teste e a gente vai ter gargalo em várias áreas. Como é que eu consigo fazer para que esse meu limite ele suba um pouco?
+
+que de forma que eu falo assim, cara, o meu gargalo hoje maior, ele tá sendo em teste, tá? E aqui, ó, o deploy até consigo fazer mais. Chegou o deploy, faço sear esse dia, eu consigo. Meu gargalo maior hoje é em teste. Então, eu vou trabalhar no meu processo para resolver prioritariamente o meu gargalo de teste. E uma vez de teste tá
+
+resolvido, o que que eu faço? Opa, beleza. Aumentei aqui a demanda, consegui aumentar a velocidade da via, então agora eu consigo absorver mais código para fazer revisão de código. Então agora eu consigo fazer código mais rápido. Se eu consigo fazer código mais rápido aqui, eu consigo talvez até aumentar a demanda de planejamento. Só
+
+que às vezes o planejamento não vai estar com tanta demanda. Então você precisa buscar esse equilíbrio dentro do seu processo de desenvolvimento software, dentro do seu ciclo de desenvolvimento software, porque pode ser que o problema que você tenha hoje com revisão de código, ele não precise existir. Vou falar de novo. Talvez o problema que você tá reclamando hoje de ser muito código para revisar, talvez ele não precise existir simplesmente porque o seu time não tem capacidade de aumentar a vazão do engarrafamento de de do seu ciclo de desenvolvimento de software. Beleza? Então, a gente falou
+
+de algumas coisas aqui até agora. A gente já falou sobre eh qual o papel do code review, o que que de fato precisa ser revisado e o que que talvez não precisa ser revisado. Níveis de criticidade. O pessoal compartilhou aqui, poxa, eu eu perguntei: "Você voaria no avião que o código não foi revisado do sistema dele?" Beleza.
+
+[roncando] E aí o pessoal perguntou: "Mas Vini, você usaria uma calculadora que o código não foi rizado?" Eu adorei a pergunta porque de fato é esse o extremo. Dentro de um código de avião, a gente tem um nível de criticidade que é muito diferente de um código de landing page, que é muito diferente de um código de uma calculadora. E é esse nível de criticidade que vai definir o gargalo que você tem no seu ciclo de desenvolvimento de software hoje. Então, talvez o meu gargalo hoje ele seja não somente o limite de velocidade, mas talvez o limite e a rigorosidade que eu preciso ter nessas outras etapas. Vou te
+
+dar um exemplo. Se você trabalha num banco hoje e você vai precisar, talvez você tem lá 500 microsserviços, cara, vamos ser sincero, bota um GPT 5.6 só que saiu hoje, bota ele lá para funcionar e você vai ver que você consegue refaturar todos os seus microsserviços, talvez numa semana. Legal. Pergunta: "Dá para colocar 500 microsserviços no ar em uma semana?"
+
+Cara, não dá. Não é, não dá para operacionalizar isso. Você não vai conseguir atender talvez a todos os critérios de compliance. Você não vai atender, talvez a todos os requisitos de segurança e você vai agarrar um tempão só nessa etapa. Mas vamos dizer que a gente resolve todo esse problema, tá?
+
+Beleza? Ó, não existe mais essa linha e não existe mais gargalo na empresa. Eu criei o processo dos sonhos, o ciclo de desenvolvimento software dos sonhos na minha empresa. E aí? Eu cliquei no botão errado aqui. Vamos lá. E aí tá
+
+resolvido. Então agora é doidado, é eu consigo [limpando a garganta] ir rápido, consigo revisar rápido, consigo fazer tudo rápido. E aí que que que vem depois? Aí eu te faço uma pergunta. Imagina o seu aplicativo hoje do seu banco. Imagina o seu aplicativo de
+
+banco, que eu acho que é a parte mais crítica que você vai conseguir visualizar isso. Imagina o banco, imagina o seu aplicativo do Instagram, do ex. Imagina se você pega todo o roadmap de novas funcionalidades de um sistema e você consegue implementar tudo aquilo em uma semana. Qual é a chance de isso dar? Bom, vou te falar, é zero. Sabe por quê? Porque você
+
+não vai dar tempo do seu usuário aprender com o sistema. O que que tá mudando. O nível de demanda de suporte. Aí é outro gargalo. A demanda de suporte que você vai gerar vai ser absurda, porque ninguém mais vai saber mexer naquilo. Pega o seu sistema hoje e volta
+
+ele 5 anos atrás. Era outro sistema. Se você simplesmente muda da noite pro dia nessa velocidade, o seu sistema não comporta isso. Então essa essa visão crítica que eu quero trazer para vocês é justamente que talvez o problema de code review que você tá enfrentando hoje, ele não precise existir ainda. E talvez o o a velocidade de e revisão de código você consegue ajustar ela para encaixar dentro do do seu gargalo. E se o gargalo
+
+seu hoje for somente revisão de código, aí a gente tem alguns caminhos interessantes para est trabalhando. O pessoal já trouxe algumas ideias, adversar review, eh, tem algumas automações que a gente consegue colocar e isso inclusive hoje eu vou falar lá na nossa aula da Coders Academy. A gente vai ter uma aula específica hoje que eu vou demonstrar alguns workflows de revisão de código. Inclusive a gente vai estar utilizando essa própria PR gigantesca que eu criei lá dentro do context pra gente estar revisando ela, entendendo o funcionamento. Beleza?
+
+Deixa eu dar uma olhada no chat aqui pra gente trocar aquela ideia marota. Olha só, altas contribuições, hein? Pô, o nível da live hoje dos comentários, tá altíssimo, hein? Olha aí, ó. Nós não voaríamos, mas nosso filhos voaram [risadas] e não vão entender nosso medo, pô. Ô,
+
+Renato, pior que é verdade, cara. É a mesma coisa, né? Você seria atendido por um médico que fez faculdade na época do chatt? É a mesma pergunta, né? A, talvez você não saiba, né? Mas talvez ele tá
+
+usando já, né? É complicado, mas é um ponto de atenção. Eh, e assim, quando a gente fala brincando nesses sistemas de alta criticidade, não é um sistema também que é tão simples assim de você simplesmente vai dar uma parada. Você tem ali uma série de critérios que eles precisam obedecer e passar também, tem vários eh guard rails, vamos dizer assim, não é só botar no ar, literalmente botar no ar, né? Olha aí o Israel às vezes passa bugs e vulnerabilidades mesmo revisando o código. Imagine projetos de arranha csus
+
+que são construídos à noite pro dia com IA. Exatamente esse que é o ponto. Que mais aqui, ó? Nem usuários acompanham, nem desenvolvedores acompanham todas as mudanças. Exatamente. Olha aí, ó. O
+
+Alexandre, isso é muito verdade. A carga cognitiva precisa ser colocada na mesa. Não adianta ter um app top se o usuário não aprendeu a usá-lo. Olha aqui, ó. O já o descens. Ô, você tava na outra live
+
+também, tal. A galera da outra live vem toda. Eu tenho um projeto que os clientes colocam credenciais importantes de valor feito com IA. O GPT 5 pontos só revisou outras e também e falaram que tá seguro. Será que dá ruim? Cara, se você
+
+não manja de desenvolvimento software, eu chamaria alguém que já tem experiência de desenvolvimento software, especificamente na área do seu projeto, para te ajudar a dar uma revisada no projeto. Porque vamos lá, vamos voltar pr pra nossa pro foco da aula aqui, ó. [risadas] Olha o Dr. Pala, foi mal, cara. Mas era o melhor comparativo que eu tinha aqui. Mas [roncando] olha só,
+
+qual que é o ponto que de atenção que a gente tem que ter aqui. Eh, falando de, deixa eu só voltar da do projeto, né, de putz, viajei. Deixa só ler o comentário de novo. Eu tenho, eh, credenci importantes feitos e aí eu dei a ideia de chamar alguém para te ajudar, tá? Qual que é o ponto que a gente tem que ter atenção em projetos aqui de Eu fugi a coisa, mas eu vou vou voltar, tá? Eh,
+
+tá beleza. Qual que é o, acho que um framework de decisão pra gente entender isso a importância da revisão de código, quando implementar a revisão de código ou não, ela vem no seguinte sentido, eh, baseada em risco, né? Qual que é o impacto da mudança que esse código tá trazendo? Qual que é a incerteza que esse código tá gerando? E qual que é o nível de atenção necessário? E aí você vai
+
+entender onde vale a pena investir a atenção humana. Por quê? Onde que eu queria chegar aqui? Lembre, quando a gente tá trabalhando com desenvolvimento de software e revisão de código, a gente não revisa código para saber exatamente que lá na linha do arquivo que o Loran que o Loran abriu pra gente a por request, que lá na linha 122 ou vou pegar uma parte de código aqui, ó, que lá na linha 50 e 5, a gente vai ter essa invocação desse método chamando o cloud code hooket command. Eu não, eu nunca revisei código, nunca li por requests para decorar o que que tá acontecendo na base de código. O objetivo da revisão de
+
+código é você ter entendimento da sua base de código. E aí tem um ponto, para você entender a sua base de código, você não precisa necessariamente ler o código. Para você entender sua base de código, você precisa prioritariamente, antes de fazer qualquer coisa, trazer aqui no seu ciclo de desenvolvimento software planejar o que você vai fazer. Então, uma vez que você planeja, você tem um entendimento, ó, vamos desenvolver isso, isso, isso e isso. Para isso, eu preciso adicionar essa tabela, eu preciso fazer essa migration, eu preciso adicionar esse end point, talvez eu vou precisar de subir um outro serviço de pub sub, de fila, gerenciamento de fila e por aí vai.
+
+Talvez eu precise de uma camada de cash, só que você entende que isso não tá no code review, isso tá na definição da especificação, no planejamento da funcionalidade. E aí é onde eu falo para vocês que no ciclo de desenvolvimento software agora a prioridade muda. Você precisa gastar mais tempo no planejamento, porque o planejamento ele vai garantir que você dê o caminho correto com o contexto certo, com os casos de uso correto, com o que não fazer com promp negativo correto para que a IA implemente. Ela vai implementar com velocidade, mas ao mesmo tempo quando você chegar no code review, o seu foco ele precisa ser essa essa PR tá seguindo o que foi definido no contrato de especificação, na no contrato de tarefa lá atrás. Essa PR, ela tá respeitando os nossos padrões. E aí você consegue automatizar
+
+alguma parte disso com a inteligência artificial. Você consegue fazer a questão da revisão de código checando se o que você trouxe como especificação tá sendo coerente ou não, checando se o a sua engenharia de contexto, suas documentações, seus guidelines estão sendo respeitadas ou não naquela por request. Mas no final do dia você continua entendendo como funciona a sua base de código. Você continua entendendo que para eu fazer determinada coisa, eu vou conectar na outra ponta. E aí é um processo de ou você revisa bem o código para você entender o que que tá acontecendo ou você cria uma boa especificação para você garantir que aquilo vai seguir naquele caminho que você quer. Se você não gasta tempo
+
+planejando, você só faz no vibe coding, você não sabe o que que tá acontecendo. Então você precisa revisar o código para entender o que tá acontecendo. Agora, se você cria boas specs, se você tem as suas skills já para desenvolver corretamente, se você já tem os adrs bem definidos dentro da sua base de código, aí é outros 500. Aí você tá falando de uma base de código que você conhece ela sem necessariamente ter que ter decorado cada linha. Tá fazendo sentido, turma?
+
+Manda aqui no chat um se tá fazendo sentido, manda dois se você tiver perdido. Enquanto isso, vamos ler os comentários aqui, ó. Olha só. Eh, qual o teu fluxo de desenvolver com Iar? Você faz SDD e TDD, etc. Faço exatamente
+
+isso. Inclusive, a gente tem um curso agora lá na Eicodas que é o Open Fusion. A gente tá criando um projeto do zero. Já tem mais de 4 horas de curso que eu mostrei desde o começo. Como é que eu comecei o projeto, como é que a gente tá usando STD ao decorrer do projeto, como é que a gente tá fazendo testes, como é que a gente tá fazendo revisão de código, todos esses workflows ali dentro. Ó, o pior é que as credenciais
+
+de valor ficam no banco de dados, cara. Eh, se você tiver inseguro, recomendo demais chamar alguém que já tem experiência nessa área. A gente faz isso direto, assim, ó, isso não é coisa de inteligência artificial. Você chamar alguém que tem expertizo de uma área específica já acontece na área de desenvolvimento de software há muitos anos. A gente chama isso geralmente de consultoria. Eu vou contratar um
+
+consultor que já é experiente talvez implantação, talvez o cara especialista em WS, especialista em Google. Esse cara vai vir, vai me ajudar a pensar aqui como é que eu monto o meu terraform, como é que eu estruturo tudo isso pra gente fazer um deploy certinho e fazer o auto scale certinho. Eu não preciso ser o especialista nisso, mas quando eu tenho insegurança, vale muito a pena você contratar alguém para te dar essa consultoria. Que tiro no pé o GPT fez? 5.5 era bom
+
+econômico. Agora tem modelo inferior ao F. Caraca, você achou, Pereira? Não tive essa percepção, não, tá? Achei fenomenal, pirei a cabeça, inclusive já gastei meu meu meu limite semanal, já já resetei.
+
+Ó, ó aqui, ó. Estou desenvolvendo uma startup, cada passo que eh tenho que revisar, fazer teste de segurança e tudo mais. Olha aí, há muitos projetos desenvolvidos nessa onda de Vibe Code que estão sendo hackeados. Exato. E aquele ponto, cara, pô Vini, mas olha só, eu fiz um MVP. Qual é o risco de eu
+
+fazer um MVP hoje e quão preocupado eu devia deveria estar em revisão de código? Vou contar um pouquinho para vocês da minha trajetória. Eu desenvolvo software há 18 anos. Nos últimos 6 anos para trás aí eu trabalhei para empresas de fora. Então trabalhei na maioria das vezes alocado em startups do do Vale do Silício através de empresas como Maxteam, Kake por aí vai. E aí
+
+geralmente era projetos startups. Toda startup, cara, startup assim antes de A e pós de A não existe esse negócio de código de startup que não tem falha de segurança. Pelo contrário, código de startup é o spaghetti code que a gente chama. É tudo cagado, é tudo amarrado. Um puxadinho de daqui, um puxadinho de lá. Por quê? Porque startup você tá
+
+buscando seu product market fit. Então quando você busca o seu fit de mercado, você não pode gastar tanto tempo com o código perfeito. Você vai focar primeiro em encontrar alguma coisa que justifique aquela empresa existir no mercado. Encontrou aquele produto faz sentido do mercado. Aí você busca investimento e geralmente o que que acontece? pega o
+
+MVP que a startup criou, junta tudo aquilo, joga no lixo e cria do zero. Na maioria das vezes não é não é tão bonito assim, não, tá? Na maioria das vezes tem um legadão ali de desde o começo, você tem que se
+
+a Vivo tá de brincadeira comigo. Tô de volta. >> [suspirando] >> Vamos lá. Tem três internet aqui em casa. E aí a melhor era era da Vivo, mas enfim, não posso tomar processo não. Eh, até perdi
+
+o rumo aqui, tá? Então assim, startup, quando você trabalha numa startup, você geralmente você tá focado em fazer aquele produto valer alguma coisa no mercado. Aí depois você vai refaturar aquele produto e vai trazer ele para um fluxo que faça sentido pro dia a dia, pr pra empresa, pro mercado. Beleza? Então assim, código, galera, ah, que código de IA tem vulnerabilidade, tem, mas código de startup sempre teve. Lembra que eu
+
+falei algum tempo atrás que IA potencializa as coisas? Exato. E ela tá potencializando agora para qualquer pessoa criar o seu MVP de startup rápido. E os problemas de segurança que existem nos MVPs de startup hoje existiam antes, qualquer startup que tinha antes. A diferença é que você tem 30, 40.000 novos projetos MVP sendo
+
+criados diariamente com ferramentas como lovable R e por aí vai, tá? Então, eh, eu entendo que a galera fala de, poxa, muito código vindo com vulnerabilidade paraa produção. Concordo, só que isso não é novidade, isso sempre existiu e agora tá potencializado por inteligência artificial. E aí eu lembro de novo aonde que você vai colocar o peso. Momentos de negócio eh diferente determinam tomadas de de ação diferente. Se eu tô começando
+
+a minha empresa agora, aonde que eu devo estar mais preocupado? Em fazer o código estado da arte ou fazer uma um produto que é que eu consigo eh trazer valor para ele no mercado? Valor para ele no mercado. Se eu conseguir trazer código de estado da arte, perfeito. Mas vamos ser sincero, não é assim que funciona.
+
+Nenhuma empresa começa com código de est da arte. Legal. Mas boa. Parei no legadão, né? Deu um lag aí travou tudo. Aí foi [ __ ] SC é a melhor
+
+concorrente hoje, hein, pô. Eh, tá lagado ainda, turma. Dá um feedback para mim. Vou mudar de internet aqui, ó. Me dá um palito que eu já mudo de rede.
+
+Qualquer coisa eu trago a Starlink aqui para dentro do estúdio.
+
+Voltei. Tô de volta. Se tiver lagado, turma, por favor, manda no chat. Ó que é isso, cara. Que que você tá falando, ô Lausa do que isso, cara?
+
+Tem que banir você, velho. Que é isso, cara? N do nada, do nada o cara vem com os comentários aleatório aí, geralmente é ban os cara quer mais um imbecil, mas enfim do nada. Beleza, pode falar ali. Tá. Eh, só um segundo que o meu suporte
+
+veio me falar aqui o detalhe. Eh, beleza, turma. Ó, voltando aqui, então, desculpa a internet aí, pô, fhou, mas estamos de volta. Então, o seguinte, você que chegou agora, a gente tá falando de code review, tá? E, cara, assim, eh, o que que eu quero trazer pra gente aqui de de de conclusão? Não só conclusão,
+
+mas para trazer pra gente repensar. Quando a gente fala e vê tópicos como esse, sempre que você vê alguém falando do tipo um cara tipo Uncle Bob que falou em abril, não sei se você conhece a Uncle Bob, mas o cara que simplesmente escreveu o fucking livro do Clean Code. Quando você vê um cara desse falando eu não reviso o código escrito por agentes geralmente você vai falar, tá vendo? Nem o Ancon Bob tá que tá revisando o código mais. Daí você vai falar, por que que eu que não tenho essa competência toda, não tem essa moral toda que o cara que escreveu o livro do Creen Coach, por que que eu deveria tá revisando o código?
+
+Calma, jovem gafanhoto, calma, porque você tem que entender que momentos e negócios e situações diferentes podem trazer possibilidades diferentes. Se você tá trabalhando hoje com código de alta criticidade, você tem que revisar o código. Agora, se você tá fazendo web coding, fazendo MVP e tudo mais, você consegue ter um certo nível de flexibilidade para que a revisão de código, como a gente tá acostumado, não necessariamente aconteça. Mas lembro você que você o o principal objetivo da revisão de código é você entender a Codebase e conseguir tomar decisões melhores baseado no seu conhecimento e entendimento da Codebase e isso e a consegue ajudar você bastante. Beleza?
+
+Aqui ele traz até o ponto, né? Humans are low at code to get productivity with humans need to disenge from code and manage from a higher level. Exato. Então, sempre que você vê uma parada dessa, não vá só no no ponto objetivo. Então, ah, beleza. Então, não preciso
+
+revisar mais código. Se eu vi uma parada do T falando eh, at this point, eu eu acredito que talvez a galera não tá entendendo, que senão não deveria estar mais revisando código. Revisar código linha por linha, mas ele não tá falando necessariamente de você não entender mais a base de código. Entender a base de código é diferente de você precisar ler o código linha por linha, beleza? Aqui tem algumas dicas que você pode seguir e trazer pro seu workflow de desenvolvimento software para revisão de código com IA. E algumas
+
+delas tá relacionado a esse estudo da Cisco Smart Beer aqui. Então se você tá montando hoje um workflow agênico para desenvolvimento de software, tenta já quebrar, trazer uma granularidade pro paraas suas especificações. Lembra que eu falei que é da da importância de você pesar mais no planejamento? já quebra de forma que as suas specs elas sejam pequenas o suficientes para entregar algum valor interessante, mas que a PR fique menor. Pô, Vini, não vou conseguir fazer aqui uma PR menor. Beleza? Você
+
+consegue montar um planejamento por fases que cada fase vai criar uma uma PR menor para facilitar a revisão de código. Então, existem estratégias, tá? E a gente vai est falando dessas estratégias hoje, daqui a pouco lá dentro da Air Condas Academy. Que que a gente vai estar ensinando hoje? Deixa eu ver se já pegou a versão nova da nossa LP. Ah, aí sim, papai. Vou mandar um
+
+link para vocês aqui já no chat. Revise o código. Acho que é essa página mesmo, tá? Aí, ó. Vou mandar o link que a gente vai ter uma masterclass agora lá dentro da coders. E pela primeira vez aqui do
+
+nosso canal e pela primeira vez da E coders, eu resolvi fazer uma parada diferente. Geralmente só tem acesso à masterclass quem paga o plano anual de 997. E eu comecei a perceber uma coisa, falei: "Cara, esse assunto ele é super relevante e eu acredito que faria muita diferença no mercado, principalmente entendendo que o mercado hoje, essa semana a gente viu o layoff em algumas empresas de novo, ele tá buscando pessoas que estão antenadas com os maiores desafios da inteligência artificial, que é cara fazer código todo mundo faz, eu boto no cloud code, ele faz o código todo. E aí, mas eu consigo entender o que que vem depois? Eu consigo ter essa visão de gargalo? Eu
+
+consigo falar paraa minha diretoria, para pro meu CEO, que não é só simplesmente igual ele viu no grupo dos amigos dele, que você vai aumentar 20 vezes a sua produtividade, que na verdade você precisa de ter um olhar mais crítico do seu processo de desenvolvimento software como geral e trazer ali os pontos do gargalo e não só mostrar que existe uma dificuldade, mas trazer solução. Esse é o profissional que tá ficando relevante e cada vez mais relevante no mercado. Toda vez que eu vou dar treinamento numa empresa, toda vez que eu converso com alguma diretoria, o o a demanda que eles me trazem é: "Ô Vini, você consegue me trazer alguém que conhece disso que você tá me falando? Que eu não preciso treinar esse cara internamente? Então pra gente facilitar esse acesso, eu sempre acabei de fazer aqui quase uma hora de live falando de code viiew, trazendo meus pensamentos. Eu sempre
+
+trago um conteúdo gratuito aqui no YouTube. Para quê? Porque eu acredito que faz sentido a gente agregar esse conhecimento para vocês e fazer essa essa troca genuína, vocês que são inscritos aqui no canal. Mas se você quer dar um passo além e entender como é que a gente tá fazendo isso hoje, como é que a gente tá criando os nossos processos de revisão de código com inteligência artificial, aí nessa página que eu te mandei, eu vou, pela primeira vez, a gente vai vender a live a Vulsa. Então você consegue assistir somente uma aula hoje, somente a masterclass de 2 horas. São duas horas de conteúdo que a
+
+gente vai estar implementando, aonde eu vou trazer exatamente eh por revisar de o código com inteligência artificial. Vou trazer alguns dados que ajuda você a justificar isso para a sua liderança. Vou mostrar um novo papel do revisor. Então, a gente vai trazer uma parte teórica explicando como é que fica o papel do revisor de código, como você revisa código na área da inteligência artificial e a parte principal que é mana na massa. A gente vai criar um processo, uma estrutura técnica de code review assistido pela inteligência artificial que não só revisa o código para você baseado na sua estrutura de engenharia de contexto, mas que também traz para você um feedback constante de melhoria e evolução do seu contexto. Ou seja, o problema que você
+
+pegou no Code Review hoje, a gente vai trazer um fluxo que ele automaticamente vai sendo corrigido e melhorado a cada nova interação. Fiz o review hoje, peguei um problema, vi que a IA não respeitou a speec. Como é que eu garanto de uma maneira automatizada que no dia seguinte, na próxima vez que eu for fazer uma tarefa, que essa tarefa não aconteça o mesmo erro com ela? A gente vai estar ensinando tudo isso lá dentro. Tem o cupom é code review para você que quiser participar, code review. Para
+
+quem não me conhece, tem um pouquinho falando sobre sobre quem sou eu aqui dentro. E você pode entrar e acessar masterclass, tá? Valor 197, valor super justo. Mas se você quiser, ao invés disso, conhecer a EI Coders Academy, aí eu te convido a conhecer um pouco mais do nosso trabalho. A gente não fala somente disso lá, a gente tem vários conteúdos aqui, tem algumas algumas empresas que eu já treinei inclusive, então você pode estar dando uma estudada um pouco mais. Tem um pouco mais sobre
+
+quem sou eu, tem um pouco mais hoje sobre os cursos que a gente tem lá dentro da Coders, curso de spec Driven Development, curso de engenharia de contexto, curso do Zeroep. Aqui você consegue visualizar todos. Isso foi uma demanda que o pessoal trouxe pra gente. O curso hoje mais [ __ ] que a gente tá tendo é o Open Fusion. É um curso que você vai entrar, vai entender do zero como é que a gente tá pensando no desenvolvimento software com IA desde o ciclo de desenvolvimento como um todo, vai entender diferentes abordagens e vai aprender. Ó, se eu fizer dessa maneira,
+
+o resultado é esse. Se eu fizer dessa maneira, o resultado é esse outro. Se eu fizer dessa maneira, eu tenho esse outro resultado. E aí, qual a melhor maneira de fazer? Você vai ter o conhecimento necessário para aprender a tomar essa decisão. Esse é o nosso curso mais [ __ ]
+
+para quem tá desenvolvendo software hoje. E aí te convido a conhecer. Aqui tem os os nossos eventos. Hoje vai ter essa live da revisão de código. Na no dia 16 de julho eu vou trazer sobre contextual layer. Então todo mundo que
+
+tá dentro da coders hoje já tem acesso a esse tipo de conteúdo, vai ter acesso. Você paga uma vez no ano, você tem acesso semanal a esse nível de conteúdo. Contexol, trabalhando com múltiplos agentes com a mesma engenharia de contexto. Depois looping de boas práticas e casos de uso, mais duas horas de masterclass. Depois melhoria contínua de código com loop e skills. Sabe,
+
+aonders ela custa hoje 997. A gente não fica de frescura aqui, ah, vai, vai lá e vê o curso, o preço é 997. Se você fizer as contas e dividir 997 por 12 meses no ano, divididos por 4 semanas, você vai ver que mais ou menos o custo por masterclass, quando você tá no plano pro, ele custa 20, mais ou menos R$ 20. R$ 20,77 mais o quebrado de uma dízima periódica que dá. Ou seja, é muito barato. Tem gente te vendendo curso de
+
+outras paradas aí que talvez seja sejam legais também, mas para uma parada, mas que é muito mais caro. Inclusive a gente vai aumentar o preço porque tá realmente muito barato. Mas fica o convite. Você pode fazer essa aula com a gente pagando ela vulso. Não quero me comprometer tanto, quero ver se esse negócio prestar mesmo. Eu te garanto que ao final dessa
+
+live de hoje você vai entender como implementar um fluxo de revisão de código assistido pela inteligência artificial na sua empresa que vai te ajudar a resolver esse maior gargalo que você tá tendo hoje, que é revisão de código. Você vai chegar na reunião de segunda-feira ou de amanhã e vai falar assim: "Galera, olha só, seguinte, presta atenção no meu argumento. Ao invés da gente ficar mensurando e metrificando quantos tokens a gente tá usando, que tal a gente conseguir entender primeiro qual que é o tamanho do buraco aqui? Qual que é o nosso gargalo hoje de desenvolvimento de software? Porque uma vez que a gente entende a velocidade que que eu posso ir nessa via, aí agora sim, eu sei, eu sei que a gente pode ir mais rápido, só que hoje muita empresa tá mensurando pá, eu gasto tantos tokens eh dentro do dia a dia, tá? Esses tokens eles convertem em
+
+feature em produção ou é só token gastador e dado? Esses tokens eles estão agregando valor para produto ou não? Então tudo isso você consegue aprender com a gente, beleza? Deixa eu dar uma olhada agora no chat, fiquem à vontade. A aula começa às 8. Vou trocar uma ideia
+
+com vocês agora. Vou tirar dúvidas. Fiquem à vontade pra gente tirar dúvidas e daqui a pouco a gente cai para dentro aí e codas Academy. Olha aí, ficou linda LP do o verde limão. Fiz essa LP agora na live do GPT 5.6, viu? Adorei. Valeu,
+
+Alexandre, obrigado. Tamo junto. Inclusive, se tiver gente aqui no chat que já é lá membro da Air Cordes Academy, quiser dar um feedback pra gente, pro pessoal que tá assistindo, o que que vocês acham, como é que tem sido a experiência, pode mandar brasa aí. Beleza? A Dani lembrou uma parada, ó, o Pro tem acesso a todas as mentorias semanais, né, durante um ano. Então tudo
+
+que vai acontecendo, lançamentos, evolução, o nosso próprio aprendizado ali internamente vocês conseguem acesso a esse conteúdo. Não entendi, Vini pro O Pro tem acesso à live de hoje? Tem acesso à live de hoje. O Pro tem acesso à live de hoje de todas as semanas, mas se você quiser comprar somente a live de hoje, você compra somente a live de hoje também. O Pro tem acesso à live de hoje e você pode comprar essa live. A vulsa
+
+resetou os limites do GPT. Gastei meu reset à toa, hein? Bom demais, turma. Seguinte, então, papo agora a gente vai lá para dentro da comunidade, aonde a coisa acontece de verdade. Mas antes de ir para lá, eu quero fazer um lembrete muito especial para vocês. A gente tem
+
+aqui no canal um projeto muito legal que são os nossos Meetaps. A gente faz meetaps em várias cidades do Brasil, já aconteceu a edição aqui em Floripa, São Paulo. Em breve vai acontecer em outras cidades. A gente tá olhando para fazer em BH, tá olhando para fazer em Porto Alegre também para fazer em São Paulo novamente. Esses eventos que a gente faz são gratuitos, então não é evento de guru. Eu quero juntar gente boa, igual
+
+você que tá assistindo aqui agora e levar para esses lugares. Por quê? Porque, cara, às vezes você não tem a moral de botar uma câmera igual eu botei aqui na frente da minha cara e sair falando para todo mundo aí e ser aceitar, ser criticado, ser julgado. Às vezes você tá, pô, eu sou muito bom no que eu faço, mas eu quero guardar isso para mim ou no máximo trocar ideia no Meetap. Então, no Meetap é onde você vai conseguir chegar com outras pessoas tão [ __ ] como você para trocar ideia do que tá acontecendo no dia a dia na prática.
+
+Não é um cara que falou: "Ai, você esquece o resto, só usa tal ferramenta". é um cara que falou: "Olha, aqui na nossa empresa a gente fez esse esse, esse workflow e funcionou bem para caramba". Esses eventos que a gente faz nas cidades, eles contam com mega apoio da nossa patrocinadora aqui do canal, que é a Rostgator. Então, hoje, se você tiver procurando uma um empresa para rodar sua VPS, para rodar seu Hermes agent, para rodar o seu OpenCall, recomendo demais que você contrate a Rosgate, porque eles fomentam esse tipo de evento, eles ajudam a gente a levar um papo sério de inteligência. artificial pro mercado que é tão cheio de barulho e hype. Beleza? Então fica a
+
+dica de empresa aí que é nossa parceira que tá ajudando, tá sempre junto com a gente nos nossos eventos. E para vocês que estão participando da live agora, olha aí, ó. Estamos na melhor comunidade de programação do Brasil. Tamo junto, Fabri 100%, recomendo a todos. Além de conteúdo super relevante, tem grupos com a galera super engajada, super recomenda assinar o plano pro. Galera, obrigado.
+
+Não, ó, eu deixei aleatório. Se tivesse gente eh incomodado aqui, pode falar também, a gente resolve. Mas é isso, agora a gente se vê lá dentro da Ecoders, vou deixar o link aqui de novo. Tem o cupom de desconto que é code review. Então se você quiser aprender com a gente lá no plano pro você consegue usar esse cupom. E também na AI
+
+Coders do plano convencional você consegue usar esse cupom code review. Escreve assim ó, code review. Você vai conseguir acesso. Beleza, turma? No mais, obrigado de verdade pela presença de vocês até aqui. Agora vamos dormir
+
+hoje, hein? Não vai virar noite mexendo com GPT 5.6 não, hein? Cuidado. Mas é isso, a gente se vê já já ali às 8 horas dentro da Ecodas Academy. Cai para
+
+dentro que vai ser fera demais. Valeu, tamo junto. Aquele abraço, até mais. [música]

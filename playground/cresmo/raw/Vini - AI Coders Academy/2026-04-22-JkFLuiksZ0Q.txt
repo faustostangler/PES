@@ -1,0 +1,86 @@
+---
+video_title: "Kimi K2.6: 5x mais barato que o Claude (e a pegadinha na licença)"
+video_id: JkFLuiksZ0Q
+channel_name: "Vini - AI Coders Academy"
+channel_id: UCB0zxJZkEkb7TH6DdS-Fe_A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JkFLuiksZ0Q
+video_date: 2026-04-22T21:06:36+00:00
+video_description: |
+  Kimi K2.6 da Moonshot AI saiu essa semana. 5x mais barato que o Claude Opus, mas com ressalvas importantes. Análise dos benchmarks de coding onde ele bate o Claude, do ponto fraco em reasoning puro, e guia de quando usar e quando evitar.
+  
+  🔗 Links e Recursos:
+  - Blog post da Moonshot: https://www.kimi.com/blog/kimi-k2-6
+  - Texto completo da licença: https://github.com/moonshotai/Kimi-K2/blob/main/LICENSE
+  
+  🚀 Se torne membro da AI Coders Academy e aprenda a construir soluções reais com IA:
+  https://aicoders.academy
+  
+  Me siga e participe:
+  🔗 Comunidade AI Coders Academy: https://aicoders.academy
+  🔗 LinkedIn: linkedin.com/in/viniciuslanadepaula
+  🔗 Instagram/X: @oviniciuslana
+  
+  #kimi #kimik26 #moonshot #llm #agenticai #opensource #opus46
+---
+Sai um modelo novo essa semana que é 20 vezes mais barato que o Cloud Opus. Ele bate o cloud em alguns benchmarks de codificação e perde feio pro Gemini em raciocínio puro. Parece bom demais para ser simples e não é simples. Deixa eu te explicar quanto que o Química 2.6 faz sentido e quanto que ele é a escolha errada. Rapidinho para situar quem
+
+chegou agora. A Monhot AI, ela é uma empresa chinesa que vem mantendo um ritmo forte de release desde julho do ano passado. Lançaram o K2 lá em julho, K2.5 5 em janeiro desse ano, K2.6 agora em abril. O foco do K2.6 é execução
+
+longa com ferramentas. O que eu vou fazer aqui é abrir as três afirmações do título e discutir o que cada case do lançamento significa na prática. E no final eu te entrego um guia claro de quando usar e quando não usar. Bora. Os três números que importam: preço, codificação e reasoning. Eu começo pelos
+
+três números que sustentam tudo que eu vou falar no resto desse vídeo. Número um, preço. O Kimica 2.6, ele tá custando 60 centavos de dólar pelo milhão de input token e 280 pelo milhão de output token. Em comparação, obos 4.6, 15 input, 75
+
+output. fazendo a conta no output, que é onde o custo acumula em agente de execução longa, o K2.6 sai cerca de 27 vezes mais barato do que o Cloud Opus. No input é aproximadamente 25 vezes mais barato. Para você ter uma dimensão prática, um agente que roda 8 horas por dia gastando 1 milhão de tokens de output custa em torno de R$ 11 por dia com o K2.6. O mesmo workload no Cloud
+
+Opus passa dos R$ 300 por dia, vezes 22 dias úteis no mês, vezes o número de agentes que você roda em paralelo. E aí, meus amigos, a conta de API vira uma loucura. Número dois, coding em SW Bent Pro, que é o recorte mais difícil de bug fix em repositório real, o Kimica 2.6 passa o Cloud Opus por 5 pontos. Opus 4.6, OK? em terminal band 2.0, que mede
+
+a execução em linha de comando, passa por pouco mais de um ponto. Nos outros dois, SWB verified e multilual, Cloud ganha também por pouco. É empate técnico, vamos dizer assim, com Kim levando vantagem no cenário mais difícil. Vai aparecer canal no YouTube dizendo: "Ah, Kim matou o Cloud encoding". Não matou. O que aconteceu é
+
+que um modelo open source chegou no nível onde empata ou passa apertado com um frontier model fechado em coding, pagando ali uma fração do preço. Número três, reasoning puro. Essa é a linha que o marketing da Monshot não destaca. No Humaness XM, a versão completa, sem uso de ferramentas, o Kimica 2.6 tá com 34.7%, o Gemini 3.1 Pro em 44.4%.
+
+Dá quase 10 pontos de diferença. Ele tá atrás, mas com folga. Na prática, se você tira as ferramentas do K2.6, o modelo base fica um tier abaixo do Frontier. Ele foi desenhado para brilhar em loop com ferramentas, mas não para resolver problema difícil. Aliás,
+
+difícil só no raciocínio. É aqui que mora a complexidade do que parece bom demais. Barato, bom encoding, fraco em rison, impuro, não é um modelo universal, é um modelo especializado. Agora, dois cases que a Moon Shot publicou no lançamento que ajudam a entender onde esse modelo brilha de verdade. O primeiro case, eles colocaram o K2.6 para otimizar a inferência do
+
+Quen 3.5 quantizado em 0.8 bilhão de parâmetro no MC. E o modelo reimplementou a camada de inferência em ZIG. Pausa para quem não mexe com sistemas. Zig é uma linguagem low level,
+
+baixo nível, é uma alternativa ao C, relativamente nova, uma comunidade muito pequena e tem muito menos código público circulando do que ser Rust ou Go. E isso importa por um motivo. Quando o modelo é competente em Python, boa parte do trabalho é reconhecer padrão. Ele tem uma quantidade absurda de Python no seu datas set de treino. Quando o mesmo modelo escreve Zig de maneira competente, o trabalho é outro, é transferir os princípios que ele tem de linguagens parecidas para uma sintaxe nova com uma semântica diferente. Então,
+
+se você já tentou, por exemplo, usar o cursor ou cloud code com elixir Nin ou camon ou Rust mais avançado, você sabe do que que eu tô falando? A qualidade cai e você sai da zona mais povoada do do DERA 7 do Alelin. E aqui estão alguns números da Moon Shot. Foram 4.000 tool calls, 12 horas, 14 interações e o Troput saiu de 15 tokens por segundo para 193 tokens por segundo. Ficou cerca
+
+de 20% mais rápido que o LM Studio na mesma tarefa. Agora cuidado com a leitura. Esse é o caso que o próprio time escolheu mostrar. É o cenário deles. Não é a garantia de que você vai conseguir reproduzirse em casa com essa mesma velocidade. Mas tem algo
+
+informativo no próprio fato de terem escolhido o Zig. Se o modelo fosse bom só em linguagem popular, eles teriam mostrado Python. Eles escolheram Zig porque é o cenário que melhor comunica a generalização fora da distribuição. O que que muda para você? Se você trabalha com o stack menos mainstream, vale a pena testar o 2.6 no seu projeto real e
+
+comparar com o assistente que você já usa hoje. E aí você vai ver onde tá a diferença, onde você vai conseguir ver mais a diferença entre LMs. Segundo o case, a Moon Shot pegou um projeto chamado Exchange Core. É uma engine open source em Java que faz um matching financeiro. É o tipo de coisa que roda dentro de corretora. tem 8 anos de
+
+desenvolvimento, foi otimizado por humanos e rodava perto do limite de performance. Colocaram o K2.6 para mexer nele, o que reportam ali 13 horas de execução, 12 estratégias diferentes testadas e cerca de 1000 tool calls com 4.000 linhas modificadas. Ah, já review nessa por request, o troput mediano subiu 185% e o troput de performance 133%.
+
+O que que me chama atenção aqui não foi o ganho percentual, foi o tipo de trabalho descrito. Ele leu um code base Java desconhecido, analisou flame graphs de CPU de alocação de memória, identificou gargalos escondidos, reconfigurou a topologia de trads de 4me + 2 RE para 2 ME para 1 RE e manteve as invariantes de matching intactas. Esse último detalhe é o que muda o jogo, né? Olhar frame graph e tomar decisão de topologia de treadpool é trabalho de dev senior com experiência em sistemas. E olha lá, viu? Então um
+
+assistente de código convencional, ele não consegue resolver isso sozinho hoje. Ele resolve com você, guiando ele passo a passo. E aqui tem uma ressalva importante. Esse caso, esse case vem do fornecedor do modelo. A gente não sabe quantas tentativas foram descartadas antes de chegar nesse resultado e nem quanto scaffold, enquanto harness foi montado especificamente paraa demonstração funcionar. A gente sabe que
+
+o harness engineering em volta de um LLM consegue melhorar bastante o resultado. Se metade do que eles descrevem for reproduzível no dia a dia, a banda do que chamamos de tarefa agêntica viável subiu no último semestre. A pergunta honesta para vocês que eu quero trazer aqui agora é: qual foi o tempo máximo que você deixou um gente rodando numa tarefa real, sem revisar nada de intermediário? Escreve aqui nos comentários que eu tô curioso para entender aonde a galera tá confortável hoje. E o que que muda para você? Se
+
+você é tech tá decidindo quanto do backlog pode virar ticket pra gente, esse case sugere que a banda tá aumentando. Saindo de a gente faz spoiler plate protótipo e entrando em agente resolve refector estrutural simples. Documentos viram skills. O terceiro ponto relevante é uma funcionalidade nova do K2.6. Você sobe
+
+um PDF, um Word, uma planilha ou um slide. E o modelo extrai o que a Moonchot está tá chamando de DNA estrutural estilístico do documento. Isso vira uma skill reutilizável. Então, na prática, eh, seria o seguinte: em vez de você escrever um prompto, descrevendo a estrutura de um relatório que você quer, você sobe um exemplo, bom, o modelo aprende a estrutura e usa como molde para gerar os outros. Skills por si só não é uma invenção nova. A
+
+Antropic lançou skills no cloud lá em outubro do ano passado. A Open já tem projects. A proposta da Moon Shot é a extração automática do padrão direto do arquivo sem que você precise ficar escrevendo a skill na mão. Uma avaliação honesta, a descrição é promissora, mas captura o DNA do documento. É frase marketing. Isso aí é frase de guru,
+
+hein? Antes do fechamento, a nota importante sobre a licença que muita gente passa batido. A Moonhot chama de modified MIT. O o nome sugere liberdade total de MIT padrão, mas na verdade é mais ou menos, é sabor liberdade. Se o software ou qualquer derivado for usado em produtos ou serviços comerciais com mais de 100 milhões de usuários ativos mensais ou mais de 20 milhões de dólares em receita mensal, você deve exibir o química 2 de forma prominente na interface do produto. Indiretinho aí pra
+
+cursori que usou aí o química 2 para fazer um reinforcement learning e transformando em composer 2.0 papo para outro vídeo. Mas traduzindo em números, 100 milhões de usuários ativos por mês ou 20 milhões de dólares de receita mensal, que dá aproximadamente R$ 100 milhões deais por mês de faturamento, né? Olhando pro Brasil, iFood, NBank, Mercado Livre, PicPay, batem esses números. A grande maioria das startups, consultorias e times de engenharia brasileiros não vai bater nem perto disso. Então, na prática, a licença se
+
+comporta como um MIT normal. usa, modifica, redistribui, cobra, f tuna do jeito que você quiser em boot em produto fechado, sem atribuição obrigatória. Acima do do thrashold você continua podendo usar comercialmente, só que precisa mostrar o que MK2 na interface. Cloud, GPT, Gemini não são open source, nem entram nessa conversa. Então, resumindo, se você é consultor, agência, founder de startup pequena ou média, é essencialmente aim. Se você trabalha
+
+dentro de BigTech brasileira, vale passar pelo jurídico antes de colocar em produto final pago. Agora o framework. Agora o que eu prometi lá no comecinho do vídeo, né? Baseado em tudo que a gente viu aqui até agora, quando que o química 2.6 faz sentido e quando ele não é a melhor escolha. Não vou falar ficar
+
+no depende, não vou mandar a real para vocês. Use o química 2.6 vocês, quando você roda agente autônomo por duas ou mais horas por dia, quando a conta de API do cloud ou do GPT tá virando o limite de orçamento seu, se seu caso de uso envolve muitas tool calls em loop longo e se você trabalha com stack menos mainstream, elixir n rust avançado, zig ou camel, você precisa, se você precisa de refector estrutural em codepado e não tem deve ser disponível e se você monta um sistema multiagente e quer evitar um lockin de fornecedor, se não vai usar o química 2.6, quando sua tarefa é raciocínio puro, sem ferramentas, em problema difícil, quando você precisa de vision no state of the art, o Sota ainda é o ponto fraco do química 2.6. Quando
+
+você trabalha com BigTech brasileira e seu produto final pago tá perto de um thrash de 100 milhões de dólares ou 20 milhões de dólares meses de receita, quando você não pode aceitar a variabilidade de modelo open source em produção crítica, quando seu time não tem ninguém disponível para validar o output do agente em loop longo. Então, juntando tudo em uma frase, o K2.6 vocês a escolha certa quando o trabalho é a execução longa com ferramentas e o orçamento da API fechada tá apertado. Não é a escolha certa quando o trabalho é raciocínio puro ou quando você não pode aceitar ressalvas técnicas. Eu deixei o link do blog post aqui do lançamento shot na descrição para quem quiser lá ler diretos direta fonte. Dá
+
+mais ou menos uns 10 minutinhos de leitura. Eu sou Vini, esse é o canal da AI Academy. Se você curtiu esse conteúdo, vem conhecer nosso trabalho. O link tá aqui na descrição, e vem aprender como se destacar no mercado de desenvolvimento de software com inteligência artificial sem hype. No mais, estamos junto. aquele abraço e
+
+valeu.

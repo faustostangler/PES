@@ -1,0 +1,75 @@
+---
+video_title: "Querem banir as IAs chinesas, é possível isso?"
+video_id: 8mWsc7M-1XQ
+channel_name: "Vini - AI Coders Academy"
+channel_id: UCB0zxJZkEkb7TH6DdS-Fe_A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8mWsc7M-1XQ
+video_date: 2026-07-21T15:49:11+00:00
+video_description: |
+  Modelos open weight como o Kimi K3 podem ter os pesos disponíveis para download, mas executar um LLM com trilhões de parâmetros depende de GPUs, memória, rede, energia e provedores sujeitos a regras de exportação.
+  
+  Neste vídeo, eu investigo onde um possível ban de IA poderia acontecer na prática. A análise passa pelo Kimi K3 da Moonshot AI, quantização em 16, 8 e 4 bits, clusters com H200 e B200, NVLink, InfiniBand, data centers, provedores de nuvem e controles regulatórios como OFAC e BIS.
+  
+  📌 O QUE VOCÊ VAI ENTENDER NESTE VÍDEO:
+  • Por que modelos com mais de 2 trilhões de parâmetros exigem uma infraestrutura fora do alcance da maioria das empresas;
+  • Quanta memória um modelo como o Kimi K3 pode consumir;
+  • Por que baixar os pesos não garante capacidade para colocar o modelo em produção;
+  • Como rede, chips, energia e software formam uma réplica distribuída;
+  • Em que ponto sanções, regras de exportação e autorização de uso podem limitar o acesso.
+  
+  ❓ A pergunta central é simples: se os pesos são abertos, quem ainda controla a infraestrutura necessária para rodá-los?
+  
+  ⏱️ CAPÍTULOS / TIMESTAMPS:
+  00:00 - Open weights e o novo risco
+  01:23 - Escala dos modelos
+  01:45 - A prova da Moonshot
+  02:30 - Quanto de memória o Kimi K3 exige
+  03:08 - Uma GPU não basta
+  03:39 - O data center completo
+  04:20 - Quem consegue hospedar
+  05:00 - O gargalo regulatório
+  06:04 - Capacidade técnica não garante acesso
+  06:30 - A tese final
+  06:57 - Sua opinião e próximos vídeos
+  
+  💬 DEIXE SEU COMENTÁRIO:
+  Qual é a sua leitura: modelos open weight continuam acessíveis quando a infraestrutura computacional está concentrada em poucas empresas? Conta nos comentários.
+  
+  🔴 Inscreva-se no canal para acompanhar análises sobre inteligência artificial, LLMs, infraestrutura de IA e desenvolvimento de software com IA.
+  
+  #InteligenciaArtificial #OpenSourceAI #LLM #Tech #DataCenter
+---
+Será que eles vão banir os LLMs open weight do mercado? Será que é possível fazer isso? O open source no mundo das inteligências artificiais tá cada vez mais relevante. Até pouco tempo atrás você via os LLMs de fronteira somente das grandes empresas americanas. Aí a gente fala, Open A, por aí vai. E essas
+
+empresas começaram a esbarrar em barreiras importantes de sigilo e segurança nacional. Tanto que o Mitos não foi liberado pra gente, vio, veio o Fable 5, foi liberado com vários guardios. Super nerfado. A mesma coisa pro GPT 5.6. Sol, precisou passar por
+
+uma bateria de testes para só então ser liberado para todo mundo. E isso levantou várias perguntas sobre será que os próximos LMs de fronteira vão de fato chegar até nós ou eles vão ser nerfados e não vão chegar para mercados externos? E essa pergunta, ela fica um pouco mais complexa com o lançamento do open weight do química 3. Química 3, que chegou o nível de fronteira dos LLMs openweight para muito próximo dos LLMs fechados. E isso levanta uma série de questionamentos que já foram respondidos inclusive pelo próprio CEO Than Tropic.
+
+Será que eles vão banir os LLMs openweight do mercado? Será que é possível fazer isso? [música] Esses modelos são modelos acima de 2 trilhões de parâmetros. O que significa que para você rodar isso, você precisa de infraestrutura computacional. E não é qualquer lugar que vai conseguir rodar um Química 3, por exemplo, com 2.8
+
+trilhões de parâmetros, ou talvez um Quan 3.8 Max com 2.4 trilhões de parâmetros, e sim grandes empresas com grandes data centers. Prova disso [música] é que o lançamento da Moonhot AI teve como um destaque primeiro a inteligência do modelo e segundo a alerdeza da operação. Eles não conseguiam entregar com velocidade o modelo. Problema de infraestrutura mesmo
+
+para uma empresa que é avaliada em bilhões [música] de dólares. Ou seja, mesmo com bilhões de dólares, você não consegue ainda ver empresas com a infraestrutura necessária. Isso reside em poucas empresas no mundo e a maioria dessas empresas ou é americana ou está nos Estados Unidos ou está listada em alguma bolsa de valores relevante do Ocidente. E é nesse ponto que entra o perigo da sanção dos modelos openweight. Antes de falar sobre quais empresas conseguem oferecer essa infraestrutura, a gente precisa entender o que que é necessário para rodar um modelo, como por exemplo, química. A gente tá falando
+
+de um modelo de 2.8 trilhões de parâmetros com capacidade multimodal e uma janela de contexto de até 1 milhão de tokens. [música] Só para armazenar os parâmetros vão ser necessários cerca de 5.6 TB de memória. Isso usando lá em 16 bits. Se você fizer a quantização em 8
+
+bits, esse modelo, esse número, cairia para aproximadamente 2.8 TB. E usando 4 bits ainda seria necessário cerca de 1.4 ta ter ta de memória. E assim, isso é só para os pesos do modelo, tá? Também é
+
+preciso reservar memória pro contexto das conversas, pro processamento das solicitações, pro cash, comunicação entre máquinas e execução do sistema. Por isso, não estamos falando de só instalar o modelo em uma única GPU. Uma única réplica pode exigir dezenas de GPUs avançadas, como a NVID H200 ou P200, trabalhando de forma coordenada. Essas GPUs precisam estar conectadas por uma rede de altíssima velocidade, utilizando tecnologias como por exemplo o NVLink e o Infin. Sem essa conexão rápida, pessoal, a comunicação entre as placas se transforma numa coisa que vai acabar sendo grande gargala. Essa é a
+
+verdade. Também são necessários servidores com muita memória RAM, armazenamento de alta velocidade, energia elétrica em escala industrial, claro, né? E softwares capazes de dividir o modelo entre várias GPUs. E para atender a muitos usuários, não basta fazer o modelo funcionar. É necessário criar várias réplicas, distribuir as solicitações e manter capacidade de reserva para evitar interrupção. É por isso que rodar um
+
+modelo como química 3 não depende só de comprar algumas GPUs e colocar ali para funcionar. Depende de uma infraestrutura de data center completa. E hoje, infelizmente, poucas empresas no mundo conseguem oferecer tudo isso em escala. Quais empresas conseguem rodar um modelo desse tamanho? Hoje, na prática, a gente tá falando de cinco grandes providers.
+
+AWS, Microsoft, Google Cloud, Oracle e Corey Wivf. Mas as grandes clouds não são as únicas opções. Também existem as Neo Clouds ou providers especializados, como por exemplo Cérebras, o Grock Conaderi, Fireworks, base 10, Lambidda, Nebius, Ncale e por aí vai. Todas elas já têm e já oferecem clusters com GPUs da NVIDIA H200, B200, GB200 ou GB300, incluindo estruturas com dezenas de GPUs conectados como único sistema. Então, tecnicamente, todas elas já têm capacidade de hospedar um modelo tipo química 3 de 2.8 trilhões de parâmetros.
+
+Agora vem um ponto importante. Todos esses cinco providers respondem às leis e à sanções dos Estados Unidos da América. Isso inclui as sanções financeiras administradas pela OFAC e todos os controles de exportação do Departamento de Comércio Americano por meio do BIS e das regras conhecidas como EARAR, controle de ativos estrangeiros. Então, na prática, essas empresas podem bloquear ou recusar clientes sancionados, entidades presentes em listas restritivas, determinados usos militares e operações em países ou regiões sujeitos a embargos. Também podem exigir licenças específicas para disponibilizar chips avançados em determinados mercados, que é o caso que acontece hoje na China, por exemplo. A
+
+análise vai depender muito do modelo do chip, do cliente e do uso final. E não é uma proibição automática para toda e qualquer operação, tá? Isso aí vai depender da análise deles. E usar um data center fora dos Estados Unidos não elimina necessariamente essas limitações. Como são empresas americanas, suas operações e filiais continuam submetidas às regras de sanções e exportação nos Estados Unidos.
+
+Resumindo, então, a capacidade técnica existe, mas o acesso a essa capacidade não depende apenas de dinheiro e disponibilidade de GPUs, como também da identidade do cliente, do país e do uso pré-entendido e das autorizações regulatórias. Então você quer dizer, Vin, que a qualquer momento, se os Estados Unidos quiserem sancionar, eles podem travar o uso de LMS como química 3 no open weight? É mais ou menos isso que eu quero dizer. Apesar desses modelos serem abertos e tá disponível para qualquer pessoa rodar na sua infraestrutura, não é qualquer infraestrutura que vai rodar esses modelos. E principalmente a maior parte dessa infraestrutura hoje reside na mão de empresas americanas dos Estados Unidos da América. Beleza? Ou seja, na
+
+prática, a nossa liberdade com o open weight, ela tá ali, de certa forma muito amarrada ao que os Estados Unidos definirem como o que é liberdade. Eu não sei se isso é bom ou se é ruim e por isso eu quero saber a sua opinião. Que que você acha disso? Você acha que os LLMs openweight deveriam ser sancionados? Você acha [música] que esse nível de inteligência não deveria estar acessível para todo mundo e que somente [música] um país deveria ter controle disso ou não? Eu quero saber sua
+
+opinião. No mais, eu sou o Vini.

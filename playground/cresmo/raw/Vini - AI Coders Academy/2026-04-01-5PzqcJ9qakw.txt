@@ -1,0 +1,64 @@
+---
+video_title: "O Código do Claude Code VAZOU e eu descobri uma feature BIZARRA que não foi lançada ainda"
+video_id: 5PzqcJ9qakw
+channel_name: "Vini - AI Coders Academy"
+channel_id: UCB0zxJZkEkb7TH6DdS-Fe_A
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=5PzqcJ9qakw
+video_date: 2026-04-01T02:05:26+00:00
+video_description: |
+  No dia 31 de março de 2026, o código fonte inteiro do Claude Code — a CLI oficial da Anthropic para coding com IA — vazou publicamente no registry do npm. 512 mil linhas de TypeScript, 1.900 arquivos, tudo exposto por um source map de 59.8MB incluído acidentalmente no pacote.
+  Neste vídeo eu analiso o que tem dentro desse vazamento e o que isso revela sobre o futuro (e os problemas) da ferramenta de vibe coding mais popular do mercado.
+  
+  Me siga e participe:
+  🔗Comunidade AI Coders Academy: https://aicoders.academy
+  🔗LinkedIn: linkedin.com/in/viniciuslanadepaula
+  🔗Instagram/X: @oviniciuslana
+  
+  #ClaudeCode #Anthropic #VazamentoDeCódigo #VibeCoding #IA #InteligênciaArtificial #AIFirst #DesenvolvimentoDeSoftware #AICodersAcademy
+---
+O código fonte do Cloud Code vazou. Mais de 512.000 linhas de código, System prompt, inclusive features secretas que não foram lançadas ainda. Tá tudo disponível na internet. E o vazamento foi ridiculamente simples. Na verdade
+
+não foi um ataque hacker, não foi uma invasão, foi simplesmente um arquivo ponm que foi vazado na versão 2.1.88 88 do pacote lá no ntpm do cloud code. Isso já mostra uma tendência de por que a Antropic tá falando assim, ó, galera, quer usar o cloud code, baixa do nosso instalador proprietário aqui, porque ele vai ajudar a mitigar um pouco desses riscos. Fato é que não foi ataque, não foi invasão hacker, foi simplesmente uma falha de um processo que a própria Antropic já disse, uma falha no processo humano. Ou seja, alguém lá na hora de
+
+fazer o build e o publish dentro do npm esqueceu de arrancar fora o arquivo. Map. E você deve estar se perguntando, tá? Mas e aí, o que que um arquivo pmm pode fazer num sistema? O arquivo pmm ele é literalmente o mapa do código minificado, ou seja, você tem aquele código minificado que você não consegue entender nada nele, que é o que vem dentro dos pacotes do Node JS quando você instala lá diretamente no npm. E
+
+você tem o source map, que ele vai traduzir o que que cada linha daquele arquivo minificado significa. E aí é onde você consegue fazer uma engenharia reversa e trazer todos esses arquivos já que estavam minificados para um arquivo de verdade. E foi exatamente isso que aconteceu. Ou seja, um arquivo chamado ci.jgs.mmap
+
+com mais de 60 meg foi publicado e desse arquivo o pessoal conseguiu extrair ali entendendo mais de 512.000 linhas de código e mais de 1900 arquivos. O primeiro post foi de um estagiário, galera. Ele sempre tem um estagiário envolvido no rolê chamado Shafan Show, que postou lá no ex, a postagem dele no ex deu mais de 16 milhões de visualizações. Ou seja, mesmo que a Antropic queira que você desveja o que você já viu, já foi visto, não tem como desver. Então é isso, aconteceu, tá lá,
+
+tá publicado. Depois disso, a galera já pegou o link, já arrumou tudo que é canto do GitHub, você vai encontrar um pedacinho do cloud Code. E é isso. Inclusive, cuidado aqui, viu? Você jovem gafanhoto, inocente, que tá falando assim: "Onde é que eu baixo esse código fonte do Cloud Code?" Cuidado, porque
+
+tem vários espertinhos se aproveitando para lançar um Trojanzinho ali, você baixar lá no GitHub, instalar achando que é Cloud Code e você tá lascado. A Antropic já agiu rápido, ela já arrancou fora aquela versão lá do npm, então não tá mais vazado o código, mas já foi vazado. Agora a gente vai analisar hipoteticamente o que que esse vazamento revelaria sobre o código do Calvo Code. Combinado? Vamos lá. Primeiro ponto,
+
+arquitetura geral. Aparentemente teria sido revelado que existe ali um tool system com mais de 40 tools, entre elas leitura de arquivos e tudo mais, o que não é uma novidade. A gente sabe que para trabalhar com a gentes de A gente precisaria ter essa esse sistema de tools. Além disso, também teria sido revelado o carin, que é o cérebro do cloud code que faria ali toda a integração dele com llms e tudo mais, todas as chamadas. Também foi revelado o multiagent orchestration, que seria o swarm de agentes, que a gente já tá acostumado a entender e já ver isso acontecendo por trás dos panos, que é aquela ideia de ter os subagents funcionando, tendo até agora o agent também funcionando, controlando multiagentes em background, só que na teoria teria vazado qual é a lógica que eles usam para isso hoje. Além disso,
+
+também teria sido vazado o ID Bridge System, que é quando o Calvo Code consegue se conectar com uma extensão lá do VS Code, por exemplo, e aí ele comunica: "Ó, esse arquivo tá aberto, aqui que tá o contexto atualmente, então teria sido vazado essa estrutura também. E também o sistema de memória persistente, aonde o Calvo Code guarda informações sobre você, sobre as suas preferências, sobre como você utiliza a ferramenta. Então, teria esses sistemas ali supostamente vazados. Agora vamos falar das features não lançadas. Aparentemente teriam vazado algumas features secretas, aonde a gente estaria vendo ali uma das mais interessantes, talvez, e mais intrigantes, chamada Cyros. esse modo do cloud code, ele
+
+atuaria em background de uma maneira independente, ou seja, ele estaria sempre revisando o contexto, apagando coisas que não fazem sentido, aprimorando insightes, trabalhando ali como uma melhoria constante do próprio cloud code. Um outro modo muito interessante que teria vazado seria o proactive mode, ou seja, um modo que o cloud code ele age de maneira proativa sem que você precise ficar dando input para ele, quase que no modo automático. Curioso isso daí. Fiquei intrigado de entender como é que isso funcionaria na prática, mas estaria uma possível feature que tá para ser lançada em breve. E como o Cloud tá tirando o trabalho de muita gente, o Calvo Code vieram com uma ideia interessante, resolveram criar o próprio Tamagush aqui dentro do próprio Cloud Code. Quem aí
+
+vai lembrar o que que é Tamagus? Deixa aqui nos comentários. Eu lembro o que que é Tamagus. Inclusive isso é realidade. Eles encontraram um jeito de acabar com o seu tédio enquanto você dá as tarefas pro cloud code fazer. Agora
+
+você vai ter que cuidar de um bichinho que o próprio Cloud Code criou para você não ficar tendo que mexer no celular, pelo menos tá ali com a tela aberta, vai cuidando do seu bichinho. E aí, que que você acha dessa ideia? Tem tá gosto dentro do cloud code. Você acha que é legal uma parada dessa ou você acha que é viagem total dos caras? Deixa aqui nos comentários, quero saber sua opinião.
+
+Além dos vazamentos das fits secretas, também teria tido o vazamento de alguns codinomes de LLM, inclusive o Capibara, que estaria sendo cotado como um próximo lançamento a Tropic em breve. Além dele também outros nomes, como por exemplo NBAT e Fenek, que estariam fazendo parte das famílias, dos modelos atuais e dos que estão para ser lançados. Provavelmente isso na teoria seria ali um LM que eles estariam treinando internamente. Em breve quando fossem lançar aí esse nome é viraria o nome oficial do LLM. Agora, uma coisa interessante que gerou um pouco de polêmica, ao mesmo tempo um pouquinho de zoação na internet, é o modo undercover, ou seja, o modo agente secreto ali do cloud code. Teria uma feature interna,
+
+uma feature flag, que quando habilitada em principalmente em repositórios públicos e open source, eles esconderiam traços de que aquele código teria sido gerado utilizando a ferramenta do cloud code. Ou seja, os caras não vazariam informações internas, como por exemplo, codomes de LLMs, entre outras informações, logs, referências ao slack da empresa e tudo mais. Até aí tudo bem. O ponto que a galera começou a questionar é até onde ético ou coerente uma empresa que utiliza inteligência artificial, um agente de A para desenvolver código, não mencionar que aquele código foi feito por inteligência artificial. Bom, ah, o meu pitaco aqui é o seguinte, tem muito dev aí que tá fazendo comitos ele mesmo, mas a gente sabe que não foi ele, foi o próprio gente já que fez. Então, não sei até
+
+onde essa questão ética, ela realmente entra no rolê, mas tá rolando um burburinho na internet. Meu trabalho aqui com vocês é comunicar. De tudo que rolou nesse possível vazamento, teve uma parte que foi muito interessante. Vocês vão lembrar que no começo desse ano a Antropic acusou diretamente algumas empresas chinesas de ataques de destilação. O que que seria isso? Seria
+
+o fato de de estarem utilizando o próprio cloud code para estarem treinando seus LLMs chineses. Aí ela acusou diretamente DepIC, GLM, Minimx. OK. O ponto aqui interessante e muito curioso é o seguinte. eles teriam implementado o modo antidistillation.
+
+Que que esse modo faz? Ele injeta lá no cabeçalho do system prompt interpreta que tá sendo usado por um outro agente nesse sentido, tools falsas. Ou seja, ele força que aquela empresa que possivelmente estaria utilizando essa ferramenta para treinar os seus LLMs internos, ele força uma alucinação de inteligência artificial, injetando ali tools que não foram usadas de fato na requisição. Muito perspicaz isso daí, viu? Isso aí me lembra muito o Suntizu, Arte da Guerra ali. Interessante. Achei
+
+uma estrategia e bem curiosa. É um pouco meio paranóico também, né, de chegar nesse nível. Mas poxa, tá certo. Os caras estão tentando proteger o ouro deles. E um dos aprendizados mais importantes que eu vi ali a galera comentando e você deveria copiar isso para você também é que na hora de fazer a interpretação, se o usuário tá frustrado, se tá falando palavrão, alguma coisa nesse sentido, eles usam uma rejex. Isso mesmo. Eles não usam o
+
+agente de a para identificar se o cara falou palavrão. Eles usam simplesmente uma rejex. E essa rejex, ela ativa o modo de entender que, poxa, o cara tá chateado, provavelmente eu fiz uma cagadinha, deixa eu tentar ajeitar o código aqui, eu enquanto a gente já Então, estão usando uma rejex. O que que isso ensina pra gente? Nem tudo é a gente a meus amigos. Ainda dá para
+
+salvar bastante token fazendo rejex, usando lógica ao invés de usar geração de coisas por inteligência artificial. Copia essa dica aí da Antropic para você. O plot twist dessa história toda é que boa parte do código já vazado já foi transpilado para outras linguagens usando talvez o próprio cloud code para fazer isso. Isso é muito bizarro de pensar que a ferramenta ela pode ser copiada e replicada tão rápido assim usando ela mesma. Mas o fato é que a Antropic já entrou com as ações necessárias para tirar os mirrors ali do GitHub e o GitHub precisa obedecer, senão ele responde juridicamente por isso. Mas fato é que caiu na internet,
+
+meu amigo, já era. Caiu, já era. E é basicamente isso que aconteceu. Então, vazou bastante esse código. E aí, coincidências ou não, várias ferramentas de agentes já hoje lançaram várias releases, uma seguida da outra. O open
+
+code tá aí lançando feature doidado. Para mim, o principal takeaway desse problema todo é que ainda que você esteja usando agentes de ar como cloud code absurdamente para fazer código, você precisa prestar muita atenção nos seus processos de release, principalmente se você tiver publicando alguma coisa pública, porque um vazamento simples como esse pode significar um grande problema jurídico e inclusive de competição de competitividade de mercado pra empresa. Eu quero saber de você o que que a Antropic deveria ter feito para evitar que esse vazamento acontecesse. Eu sou o Vinilana, esse é o canal da E Coders Academy. Muito obrigado para você que assistiu até aqui. Se você não era
+
+inscrito no canal ainda, já se inscreve no canal, deixa seu like, compartilha esse vídeo. No mais, estamos junto. Aquele abraço e tchau tchau.
