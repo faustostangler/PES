@@ -1,0 +1,45 @@
+---
+video_title: "Antigravity Arcade: From prompt to game in minutes"
+video_id: 8I7wr2hYFec
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8I7wr2hYFec
+video_date: 2026-07-17T16:00:10+00:00
+video_description: |
+  Explore how Antigravity and AI skills can generate web games in minutes with best practices skills and deployment workflows to an online games portal powered by Firebase and Google Cloud.
+  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Speaker: Tom Greenaway 
+  Products Mentioned:  Google AI
+---
+Hi, I'm Tom Greenaway, and I'm part of the developer relations team here at Google. Today, my colleague James O'Reilly and I will show you anti-gravity arcade, a project we built for Google I/O in which anyone, whether they were a traditional developer or not, could walk up to a laptop running anti-gravity with a collection of AI skills and workflows and with just an idea for a game, have it generated entirely by AI and running on an arcade machine within minutes. We used a variety of Google technologies to create this workflow and deployment flow, including anti-gravity, Gemini, Cloud Run, Firestore, and Firebase authentication. If you have ever dreamed of building your own video game, well then this is the solution for you. So in this solution we wrote several best practices skills for game development, which brought consistency to the coding process of the developers at Google I/O. As they generated their games on the fly and later
+
+in this video, James will join me and explain how he built the deployment flow from anti-gravity connecting its systems to Firestore via Cloud Run. By the end of the solution, you'll understand how to leverage Google's technologies to create vibe coding skills and workflows, just like anti-gravity. Arcade let's begin by looking at some of the sample games we created. Here we have a simple 8 directional survivor game. The player must evade the enemies, and if an enemy is in range, they will automatically attack them.
+
+Next, a space shoot em up in which players move with the arcade stick and attack with a dedicated fire button. And lastly, a more complex platforming game with both jump mechanics and gravity switching. All these games were created without writing a single line of code. But notice how the games have underlying similarities. They all appear in a retro arcade aesthetic.
+
+The background of the games are all black and there is a screen warping shader present. The fonts are all pixelated. They all include particle effects when objects are destroyed, and there is screen shaking when the player is injured. Furthermore, all the games use the same key mappings and have gamepad support for the arcade setup. Was this an accident.
+
+No this is because we prepared anti-gravity skills in the project, along with a starting game template built using phasor js's game engine. Now, you might be wondering what are AI skills exactly. In anti-gravity skills are modular sets of capabilities that allow an AI agent to dynamically load specialized workflows, best practices, instructions, and executable scripts on demand. Instead of cluttering a global system prompt with every possible instruction, a skill bundles the exact context and tooling needed for a specific job, like migrating a database or best practices for front end design. The AI loads these lightweight instructions only when a relevant task is triggered by loading context dynamically.
+
+Skills prevent context window bloat, ensuring the AI maintains high reasoning accuracy rather than getting distracted by irrelevant instructions. This guarantees the AI autonomously follows organizational best practices while executing complex operations directly in the developer's environment. As an example, here's a snippet of one of the skills we wrote for this project. This skill, named ensuring arcade visuals, provides the AI with four key guidelines to follow, which ensure the consistency of the visuals. For whatever the game the creator prompts the AI to build.
+
+It ensures the background color is always black, and that the game should always use the CRT shader provided in the project template Genkit refers to cathode ray tube, an old screen technology commonly found with arcade machines. Furthermore, we encourage the eye to separate the visual layers so that the heads up display, where elements like user interface text is drawn, is not affected by the screen warping of the CRT shader, which is a more modern UX decision. On top of our retro feel. And finally, we always require that the retro font we provided be used by the games. But visuals are only half the battle when building games for physical arcade cabinets, you run into unique hardware quirks.
+
+To solve this, we wrote a handling user input skill. This skill instructs the eye to wrap all player input checks in a translation layer. So if the player presses the physical button on the gamepad, the game code Maps it correctly behind the scenes. This means the eye can build a game that works perfectly on our physical cabinet controllers on the very first try. Additionally, we built an upscaling container into our phasor JS starting template so that the classic arcade games render at low resolutions.
+
+But of course, modern displays need high definition inputs, so the template instructs the AI to render all the retro gameplay to a tiny 320 by 240 logical container, and then we upscale it using nearest neighbor filtering. But these are just a few of the many skills used by the project. Explore the game montage video in the solution to see the various skills in action in the solution log. You'll see notifications of which skills were used by anti-gravity to build those particular features in the game. Now my colleague James will take you through the anti-gravity workflows, powering the developer experience and the back end system.
+
+He built to host and serve the generated games. Over to you, James. Thanks, Tom. And hi, everyone. I'm James O'Reilly, the project lead for anti-gravity arcade.
+
+When an attendee at Google I/O finished generating their game, they needed a way to deploy it to one of the physical arcade cabinets to play it. But how do we deploy user generated code to physical public arcade machines. To solve this, we used go to build a custom deployer CLI tool. To use the tool, an attendee simply prompted deploy my game and our custom anti-gravity deploy skill executed the deployer CLI tool. This tool talks to Google Cloud back end using a highly sensitive, though limited in scope API token.
+
+However, exposing the token to attendees is an unacceptable risk. To solve this, we use the Unix setuid model API. Secrets are stored in a restricted directory, readable only by specialized system account. When the agent executes the deployer tool, the OS temporarily elevates its privileges, allowing the tool to read the token and authenticate the upload without exposing the keys to the agent, user, or terminal. Under the hood, the deployer tool runs a white build to compile the game, packages the compiled directory into a zip archive, calculates a checksum, and requests a short lived signed URL from the central server.
+
+The server performs an MD5 deduplication check to prevent uploading duplicate files. If it's a new build, the server returns a five minute GCS signed put URL, and the deployer streams the zip archive to the Google Cloud Storage upload bucket. The moment the upload completes, a Google Cloud eventarc trigger spins up Cloud Run function, which runs a few automated verification and validation steps on the uploaded files. If the game passes validation, the files are copied to the playback bucket. A Firestore transaction increments the game counter, a sequential game ID is issued and the game is registered for moderation using our game moderation web app.
+
+Demo staffers tested and reviewed all deployed games for playability. Games marked by staff as approved or featured instantly become playable by attendees on all arcade cabinets and showcase TV. By combining a custom CLI tool, asynchronous Google Cloud processing, and smart database queries, we build a robust game deployment pipeline for the event. So that's anti-gravity arcade, a physical to Cloud game development and deployment platform that brings the speed of vibe coding to retro arcade cabinets, showcases the power of custom developer agent skills, and demonstrates how to build a Cloud Native Deployment pipeline with anti-gravity. What vibe coding environments will you create next.
+
+Explore our solution. Inspect the full architecture. Quiz your knowledge. And we can't wait to see what AI powered experiences you build.
