@@ -1,0 +1,110 @@
+---
+video_title: "OpenClaw 5.12 Update: What You Need To Know…"
+video_id: _GhlR0TT5yE
+channel_name: "Julian Goldie SEO"
+channel_id: UCGpsgNbzdF7BECCVbB1COHw
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=_GhlR0TT5yE
+video_date: 2026-05-15T10:01:02+00:00
+video_description: |
+  Want to make money and save time with AI? Join here: https://www.skool.com/ai-profit-lab-7462/about
+  
+  Video notes + links to the tools 👉 https://www.skool.com/ai-profit-lab-7462/about
+  
+  Get a FREE AI Course + Community + 1,000 AI Agents 👉 https://www.skool.com/ai-seo-with-julian-goldie-1553/about
+  
+  Get a FREE AI SEO Strategy Session → https://go.juliangoldie.com/strategy-session?utm=julian
+  
+  Get 200+ Free AI SEO Prompts → https://go.juliangoldie.com/chat-gpt-prompts
+  
+  OpenClaw 5.12: Stability Fixes, Lighter Installs, Telegram Reliability & Should You Update?
+  
+  OpenClaw 5.12 arrives after several buggy releases that broke setups, wiped memory, and disconnected channels, contributing to Hermes Agent overtaking OpenClaw/OpenRouter in API call volume. The update focuses on stability: a lighter core install with channel/provider libraries installed only when needed, Telegram reliability improvements by moving message polling to a separate worker with local message backup and better stuck-message detection, fixes for group chat “require mention” image handling, and stored stream recovery to prevent mid-conversation hangs by rotating to backup models/logins or showing errors. Other changes include a new default OpenAI/Codex subscription login path, web chat auto-scroll controls, clearer CLI error guidance, security hardening for Windows folder sharing and credential handling, stricter pairing, and more reliable plugin installs. Community reactions show low trust, so the advice is to wait, back up, know your rollback version, and check Discord for fixes.
+  
+  00:00 State of OpenClaw
+  00:43 Lighter Core Install
+  01:54 Telegram Reliability Fixes
+  03:28 Stream Hang Recovery
+  04:19 Coaching Pitch Break
+  04:50 OpenAI Codex Defaults
+  05:26 Dashboard and CLI Improvements
+  06:27 Security and Plugins Update
+  07:16 Community Trust Issues
+  08:10 Hermes Overtakes OpenClaw
+  09:33 Should You Update
+  10:20 Tool Choice and Mastery
+  11:31 Final Call to Action
+---
+A atualização 5.12 do Open Claw acaba de ser lançada, e quero ser sincero com vocês sobre a situação atual . Tem sido um período difícil. As últimas atualizações apresentaram alguns bugs. As pessoas estão frustradas.
+
+Configurações sendo interrompidas, memória sendo apagada, canal desconectado. A comunidade tem se manifestado bastante sobre isso. E agora o Hermes Agent da News Research ultrapassou o Open Claw e o Open Router. Atualmente, o número de chamadas de API que passam pelo Hermes é maior do que pelo Open Claw. Essa é a primeira. Portanto, 5.12 é importante porque essa
+
+é a resposta do Open Claw. Peter Steinberger e a equipe descreveram o jogo como mais rápido, mais tranquilo e mais difícil de ser acertado com a cunha. E depois de analisar o registro de alterações, acho que eles se concentraram nas coisas certas. Deixe-me mostrar o que mudou. Você pode tirar suas próprias conclusões. A principal diferença que você vai notar
+
+é que o Open Claw ficou muito mais leve com essa mudança, certo? Antes desta atualização, ao instalar o Open Claw, ele baixava tudo. Então, bibliotecas do WhatsApp, bibliotecas do Slack, Amazon Bedrock, Anthropic Vertex, tudo isso. Mesmo que você nunca use esses canais. Então, sua instalação estava cheia de coisas que você não precisava. Isso
+
+tornou a instalação lenta. Isso tornou a inicialização lenta. E isso criou mais chances de as coisas quebrarem. O Open Claw 5.12 remove tudo isso do núcleo. Agora, ao
+
+instalar o Open Claw, você ainda obtém o núcleo. É isso. O WhatsApp é instalado quando você configura o WhatsApp. O Slack é instalado quando você configura o Slack. O Bedrock é instalado quando você se conecta ao Bedrock. Assim, cada peça só aparece
+
+quando você realmente precisa dela, que é mais ou menos o que você esperava. Para você, isso significaria uma instalação mais rápida, inicialização mais rápida , menor uso de memória e menos travamentos aleatórios causados ​​por bibliotecas que você nem estava usando. Se você tem usado o Open Claw em um servidor pequeno ou Raspberry Pi, por exemplo, ou em uma máquina mais antiga, isso representaria uma melhoria significativa, desde que funcione na prática. Às vezes, há uma grande diferença entre o que você vê no registro de alterações e o que realmente acontece na prática. Então, falarei sobre isso mais tarde. O Telegram também recebeu uma
+
+grande correção de confiabilidade. E isso é importante porque o Telegram tem sido um dos canais mais frustrantes ultimamente. Eis o que está acontecendo. Portanto, seu agente é executado em algo chamado gateway. Esse portal tem muitas tarefas.
+
+Ele gerencia suas mensagens, suas respostas, suas ferramentas e sua memória. E uma dessas tarefas é verificar o Telegram em busca de novas mensagens. O problema era que, se o gateway ficasse ocupado fazendo outra coisa, ele pararia de verificar o Telegram. As mensagens chegavam e simplesmente ficavam lá, sem fazer nada. Seu agente não os veria. As pessoas enviavam mensagens de texto para o seu agente e
+
+não recebiam resposta. O Open Web 5.12 move a verificação de mensagens do Telegram para um processo de trabalho separado. Funciona sozinho. Se o sistema principal ficar ocupado, o processo do Telegram continua funcionando. As mensagens
+
+são salvas em um arquivo de backup local assim que chegam. Assim, mesmo que o sistema principal apresente alguma falha, suas mensagens estarão seguras e aguardando. Além disso, a detecção de estol ficou mais inteligente. Antes, se um agente enviasse uma mensagem, essa atividade enganaria o sistema, fazendo-o pensar que tudo estava bem, mesmo que as mensagens recebidas estivessem retidas. Agora, o sistema apenas verifica se novas mensagens estão realmente chegando. Se não estiverem, ele sabe que algo
+
+está errado e tenta corrigir o problema. E existe uma solução para os chats em grupo. Se o seu agente estivesse em um grupo do Telegram com a opção " requerer menção" ativada, o que significa que ele só deveria responder quando alguém o marcasse , ele ainda tentaria baixar imagens de mensagens que não eram destinadas a ele, falhando e, às vezes, enviando mensagens de erro para o grupo, o que é bastante constrangedor. Isso foi corrigido, de acordo com esta atualização. Agora, veja só algo que importa para qualquer pessoa cujo agente esteja protelando no meio da conversa. Sabe
+
+quando o seu agente simplesmente para, fica processando , os pontinhos giram e, de repente, nada acontece? Nenhuma resposta, nenhum erro, apenas silêncio. O Open Web 5.12 adiciona a recuperação de fluxos interrompidos. Então, se o modelo de IA com o qual seu agente está se comunicando parar de enviar dados, talvez por exemplo, a conexão tenha caído ou o servidor tenha apresentado uma falha, seu agente agora detecta isso.
+
+E em vez de ficar parada ali para sempre, tenta uma abordagem diferente. Ele alterna para um modelo de backup ou um login de backup. E se isso não funcionar, ele mostra uma mensagem de erro real em vez de simplesmente ficar em silêncio. Um membro da comunidade, Tashin, disse: "Esta é a correção mais importante para quem executa agentes em produção, porque um agente que trava repentinamente é um agente em que você não pode confiar." E ele tem razão. Agora, se você quiser
+
+ajuda para configurar o Open Claw, operá-lo para o seu negócio, gerar mais leads, conquistar mais clientes e configurar fluxos de trabalho para o Hermes Agent e o Open Claw, é isso que fazemos no AI Profit Boot Camp, em nossas sessões de mentoria semanais. Atualmente, muitas conversas giram em torno exatamente desse tipo de assunto: como manter os agentes estáveis, como utilizá-los em casos de uso reais e como configurá-los corretamente. Temos tutoriais diários lá dentro, com 3.000 empresários criando negócios com agentes de IA. E um mapa de membros para que você possa encontrar outros usuários do Open Claw e de automação por IA perto de você. Link na
+
+descrição dos comentários ou acesse AI profitbootcamp.com. acesso. A configuração do Open AI e do Codex foi alterada. Portanto, ao configurar o Open AI no Open Claw agora, ele usa por padrão o login da assinatura ChatGPT , que é o caminho do Codex. Antes, o sistema
+
+perguntava qual método você realmente queria usar, mas agora ele assume que você tem uma assinatura do ChatGPT e inicia por lá. Se preferir usar a chave de API , você ainda pode selecioná-la, mas o padrão agora é o caminho da assinatura. Isso é inteligente porque a maioria das pessoas que usam o Open AI através do Open Claw possuem uma assinatura do ChatGPT. Eles não estão comprando créditos de API separadamente. Portanto, a configuração padrão deve corresponder ao que a maioria das pessoas realmente utiliza. O painel de bate-papo online recebeu uma pequena
+
+correção no problema de rolagem, que pode parecer insignificante, mas estava enlouquecendo as pessoas. Assim, quando seu agente estiver digitando uma resposta longa e o texto estiver chegando, o chat rolará automaticamente para acompanhá-lo. Mas às vezes você queria rolar a página para cima para ler algo que havia sido dito anteriormente, e o chat ficava puxando você de volta para baixo. Você não conseguiu ler o que queria. Agora você pode escolher, certo? Você pode ficar na
+
+parte inferior da tela e acompanhar as informações conforme elas aparecem, ou pode configurar para sempre acompanhar as novas informações, ou ainda pode desativar completamente a rolagem automática e usar um botão de novas mensagens quando estiver pronto para pular para baixo, o que é bem simples. Mas isso importa, sabe, quando você usa isso todo dia. Algumas pessoas usam isso por horas todos os dias, certo? A linha de comando também ficou mais inteligente em relação a erros. Assim, quando algo der errado , por exemplo, se suas configurações estiverem corrompidas, um canal não conectar ou um complemento falhar, o OpenCore deverá informar o que aconteceu e fornecer o comando exato para corrigir o problema. Antes você recebia um
+
+erro confuso e tinha que descobrir sozinho. Agora ele te direciona para a resposta. A atualização também inclui um passe de segurança . Assim, as pastas pessoais do Windows agora estão bloqueadas para compartilhamento com o ambiente de teste do seu agente. Isso significa que seu agente não poderá acessar acidentalmente suas senhas, suas chaves SSH ou outros arquivos confidenciais armazenados em seu perfil de usuário do Windows. As credenciais fornecidas agora
+
+passam por um sistema estruturado em vez de apenas ler variáveis ​​de ambiente aleatórias . E o processo de emparelhamento, no qual você conecta seu telefone ou navegador ao seu gateway, ficou mais rigoroso. As instalações de plug-ins também se tornaram mais confiáveis. Agora eles oferecem suporte ao pnpm 11, que é o gerenciador de pacotes usado internamente pelo OpenCore. As dependências de complementos são gerenciadas de forma mais eficiente, e o verificador de segurança de código que analisa os complementos durante a instalação não bloqueia mais complementos legítimos devido a códigos presentes em camadas profundas de sua cadeia de dependências. Agora, deixe-me
+
+falar também sobre o que a comunidade está dizendo, porque a reação à atualização diz tudo. André, por exemplo, no fórum X, e estou parafraseando aqui, diz: "Alguém já testou isso e pode confirmar que não quebrou a configuração de ninguém?" E essa pergunta revela tudo sobre o nível de confiança no OpenCore neste momento. As pessoas têm medo de atualizar, não é? E muita gente está gastando mais tempo corrigindo essas atualizações do que realmente usando o Open Core. E
+
+acho que esse tem sido um tema recorrente nas últimas atualizações. Então, antes de pensar em atualizar, bem, falarei sobre isso daqui a pouco. Felipe disse que nunca teve uma atualização tranquila desde a primeira versão, e agora o Slack está com problemas para ele. Essa foi mais uma reação da comunidade no X à publicação da atualização. Bem, você precisa ser realista e entender que a própria definição do OpenCore de "mais rápido, menos difícil de encaixar" mostra que a estabilidade não é a prioridade no momento.
+
+E vamos abordar o assunto que está todos ignorando . O agente Hermes acaba de passar pelo Open Core no Open Router. Agora, mais chamadas de API estão sendo feitas através do Hermes e do Open Core. E a razão é simples: são bugs. Quando sua ferramenta quebra sua configuração a cada duas semanas, ou a cada dois dias para algumas pessoas, as pessoas vão trocar, certo? Eles
+
+não mudam porque a outra ferramenta tem recursos melhores, eles mudam porque estão cansados ​​de consertar coisas. Eles estão exaustos, não é? E a Hermès tem se mostrado muito mais estável. Eles costumam ser enviados cerca de uma vez por semana e tendem a quebrar com menos frequência. E acho que eles aprenderam observando os erros do Open Core.
+
+Isso significa que o Open Core acabou? Não. O Open Core ainda possui o suporte de canal mais amplo de qualquer ferramenta de agente. Possui a maior comunidade, com mais de uma centena de colaboradores apenas nesta versão, e continua sendo uma das maiores no campo da IA ​​de código aberto. Mas o problema é que os recursos não importam se as pessoas não puderem confiar nas atualizações, e essa é a questão central aqui. O
+
+Open Core precisa de uma sequência de lançamentos limpos e estáveis. Sem novas funcionalidades, sem anúncios chamativos. Apenas atualizações que realmente funcionam e não causam problemas. Agora, a versão 5.12 parece ser um passo na direção certa. O isqueiro instala, o
+
+isolamento do Telegram, a recuperação ainda. Essas são melhorias de estabilidade. O tipo certo de trabalho. Se isso será suficiente para reconquistar os clientes da Hermès dependerá dos próximos lançamentos. As próximas três ou quatro atualizações são versões limpas e confiáveis . Se a próxima atualização quebrar o
+
+Telegram novamente, bem, mais pessoas vão embora. E é isso que eu digo a qualquer pessoa que esteja assistindo a isso. Primeiro, se sua configuração estiver funcionando, não atualize ainda. Sabe, espere alguns dias e veja o que as pessoas relatam. André, por exemplo, fez a pergunta certa. Deixe que outras pessoas testem
+
+primeiro, certo? Número dois, antes de executar qualquer atualização, faça um backup correto do Open Claw. Sempre, sem exceção, certo? Porque é sempre bom ter um plano B daquilo que está funcionando para você no momento. E também, eu recomendo que você salve isso, que anote, por exemplo, qual versão você deseja. Isso
+
+me leva ao terceiro ponto, que é conhecer a versão de reversão. Anote qualquer versão que esteja estável para você no momento . E número quatro, se você atualizar e o Slack, por exemplo, parar de funcionar, verifique o Discord do Open Claw para obter soluções antes de tentar qualquer outra coisa. É bem provável que alguém já tenha encontrado a solução e a tenha publicado. E, por fim, eu não correria atrás de ferramentas, correria atrás de estabilidade, sabe? Uma das coisas que
+
+aprendi com toda essa situação é que você tem o Open Claw, o Hermes, o Claw Code e mais alguma coisa, certo? Mas quem realmente vence são aqueles que dominam uma ferramenta, aprendem profundamente sobre ela e criam fluxos de trabalho reais. Você provavelmente já viu meus outros vídeos sobre a Hermès recentemente, por exemplo. Essa habilidade se acumula, não é? Se você abandonar o barco sempre que algo der errado, isso significa que você nunca se aprofundará o suficiente para ser, sabe, realmente capaz de lidar com esses agentes de IA. Bem, no meu caso
+
+, tenho muitas coisas com prazos apertados, então vou testar algumas coisas por enquanto. Mas para quem estiver assistindo, eu diria: " Certo, vamos nos concentrar nisso, vamos fazer apenas isso." Se eu tivesse que escolher entre todas as ferramentas agora, se você quer a mais estável, eu escolheria o Claw Code, certo? Agente superpoderoso, não há nada de errado nisso. Se você quer algo de código aberto, que te dê liberdade de personalização, eu escolheria o Hermes, e não usaria o Open Claw até ver relatos, relatos genuínos, onde o consenso seja que o Open Claw é muito mais estável, certo? E as pessoas que descobrirem como desenvolver
+
+agentes de IA agora, enquanto as coisas ainda estão complicadas, serão as que terão uma enorme vantagem inicial, certo? Assim como cada atualização é uma lição, cada correção é uma oportunidade de entender melhor sua configuração . E quando as ferramentas se estabilizarem, e elas vão se estabilizar, você já saberá como construir, solucionar problemas e automatizar. Agora, se você quer aprender com suporte de verdade , junte-se a nós na sala do AI Profit Bot. Quatro sessões de coaching por semana. Esta semana vamos abordar exatamente o que
+
+conversamos: como atualizar, como configurar agentes de IA, como usá-los no mundo real, como gerar clientes e leads com isso e como manter seu negócio funcionando com esses agentes de IA. E temos um roteiro de implementação de núcleo aberto para 30 dias. Temos guias muito úteis para o agente da Hermes. Novos tutoriais são lançados diariamente. 3.000 membros lá dentro.
+
+Consigo encontrar pessoas perto de você fazendo o mesmo tipo de coisa. O link está na descrição dos comentários ou acesse a sala do AI Profit Bot para obter acesso. E, novamente, antes de atualizar, execute o backup do OpenCore. Você pode , por exemplo, configurá-lo em um servidor separado ou, por exemplo, em um perfil de usuário separado. Veja se funciona e depois volte a tentar. Te vejo na
+
+próxima. Saúde. Bye Bye.
