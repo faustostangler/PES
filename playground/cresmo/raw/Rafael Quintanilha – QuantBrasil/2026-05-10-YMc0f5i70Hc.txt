@@ -1,0 +1,347 @@
+---
+video_title: "Pi Agent: o jeito minimalista de programar com IA (GUIA COMPLETO)"
+video_id: YMc0f5i70Hc
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YMc0f5i70Hc
+video_date: 2026-05-10T21:00:35+00:00
+video_description: |
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  Inscreva-se na formação de Harness Engineering ➡️ https://programe.ai/cursos/harness-engineering?utm_source=youtube&utm_medium=video
+  _______________________________________________
+  
+  Modelos locais estão ficando rápidos o suficiente para entrar no workflow real de programação, mas o harness faz muita diferença. Neste vídeo eu testo o Pi Agent com llama.cpp, Qwen, Gemma, tool calling, web access, skills e MCP para entender até onde dá para ir usando IA local.
+  
+  Eu começo ajustando o setup com Ollama/MLX, explico por que usei llama.cpp, mostro modelos GGUF no Hugging Face, comparo velocidade em tokens por segundo e configuro o Pi para usar um modelo local como backend. Depois coloco o agente para trabalhar em tarefas reais: ler um projeto, alterar código, instalar extensões e conectar MCP.
+  
+  A tese do vídeo é que modelos locais não devem ser tratados como GPT-5.5 ou Opus dentro de um harness pesado. Para extrair mais deles, o caminho parece ser o contrário: começar com um agente minimalista, adicionar só o que precisa e testar na prática onde ele acerta, onde erra e como melhorar o workflow.
+  
+  Capítulos 
+  
+  00:00 Intro
+  00:35 Updates no meu setup local
+  03:14 Vantagens do llama.cpp
+  05:21 Google MTP
+  08:39 Configuração do llama.cpp
+  11:30 Como baixar modelos no llama.cpp
+  15:07 Teste de velocidade no llama.cpp
+  17:25 Testando tool-calling no llama.cpp
+  21:44 O que é o Pi-Agent
+  25:14 Configurando o Pi
+  31:45 Como incorporar buscas na web no Pi
+  35:44 Configurando MCPs no Pi
+  39:45 Programando com o Pi na prática 
+  45:30 Conclusão
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 VPS com suporte 24/7 em português é na Hostgator 🔻🔻
+  https://www.hostgator.com.br/52611-13-3-12.html
+  
+  🔻🔻 Utilize suas criptomoedas no dia a dia com a Tangem Pay 🔻🔻
+  https://join.tangem.com/MsTz/ZEHCC9
+  
+  🔻🔻 Teste o Wispr Flow por 2 semanas grátis 🔻🔻
+  https://ref.wisprflow.ai/rafael
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://youtube.com/watch?v=u0AmA7DNog8
+  https://youtube.com/watch?v=Vv84nTpq-04
+  https://youtube.com/watch?v=AUk8bhpXzpE
+  
+  🔻🔻 Inscreva-se no canal de cortes e não perca mais nenhum destaque 🔻🔻
+  https://www.youtube.com/@cortesrafaelquintanilha
+  
+  🔻🔻 Links mencionados no vídeo 🔻🔻
+  Instalar no LM Studio: https://patloeber.com/gemma-4-pi-agent/
+  Instalar no llama.cpp: https://huggingface.co/docs/hub/agents-local
+  Repo llama.cpp: https://github.com/ggml-org/llama.cpp
+  PR do MTP: https://github.com/ggml-org/llama.cpp/pull/22673
+  
+  #piagent #ollama #qwen3
+---
+Os modelos locais estão cada vez melhores, porém alguns ajustes são necessários para extrair o máximo deles. Por isso, no vídeo de hoje, eu quero te apresentar o P Agent, um agente de programação minimalista, perfeito para modelos locais. Nós vamos fazer a configuração do zero. Eu vou te mostrar como instalar skills e MCPs. Vamos fazer testes de velocidade, colocá-lo a prática em tarefas reais de programação e responder a pergunta: será que o PI é o melhor agente para programar com modelos locais? Pessoal, alguns ajustes
+
+para o vídeo de hoje, tá? No meu último vídeo falando de Olhama, muitos de vocês vieram nos comentários falar que eu não estava utilizando a melhor arquitetura possível no meu setup aqui, utilizando o Mac Studio, certo? De fato, eu não estava, porque como eu estou no Mac, o ideal seria que eu estivesse utilizando arquitetura MLX, certo? E a arquitetura MLX, ela é otimizada para os hardware Apple Silicon, beleza? Que de fato é o meu setup aqui no Mac Studio Chip M4 Max que eu estou rodando. Porém, muitos
+
+também me recomendaram trocar do olhama para o LM Studio, beleza? Principalmente para tirar o máximo proveito dessa arquitetura MLX. Isso não é necessário porque desde 30 de março, né, então de mais ou menos um mês para cá, já é possível executar modelos otimizados para o hardware da Apple lá no Olhama, tá? Como eu estou mostrando para vocês aqui. Inclusive eu até fiz uns testes e atualizei aqui no post da comunidade do YouTube que realmente a melhora é bem gritante, tá? Então, por exemplo,
+
+testando o Quem 3.6, 35 bilhões de parâmetros com 3 bilhões ativos, eu saí de 45 tokens por segundo para 108 tokens por segundo lá no Olhama, tá? E o de 27 bilhões foi de 16 tokens para 26 tokens, beleza? Então, sim, se você está no Mac, não durma, não cometa o mesmo erro que eu, faça a instalação, né? Baixe o modelo na arquitetura MLX. Beleza?
+
+Então, só para vocês verem aqui, eu vou entrar no meu Mac Studio e vou mostrar para vocês todos os modelos que eu tenho. Então, aqui agora eu tenho os dois quen aqui voltados para programação, né? Então, se a gente ver aqui no olhama, a gente vai ver que eles são coding, né? Então, eles são otimizados paraa programação. Utilizando aqui o NVFP4, né? que é uma quantização
+
+menor, mas que provê mais velocidade. Então eu posso tranquilamente agora executar aqui algum promption. Vamos só para vocês verem a diferença de velocidade. Então quen 3.6 35B A3B coding NVFP4.
+
+Ruim é é ficar escrevendo toda hora, né? verbals. Então, verbal aqui vai me mostrar quantos tokens por segundo. Então, hi, who are you? Olha como é rápido isso aqui, pessoal.
+
+Muito rápido. E olha lá, 112 tokens por segundo que ele me mandou aqui. Tá impressionante mesmo. Beleza, mas dito tudo isso, no vídeo de hoje eu não quero nem utilizar o OLma, nem o LM Studio, mas sim o lhama.cpp.
+
+Por que, pessoal, se a gente vier aqui no repositório do lama.CPP, ele também é um projeto muito famoso, né? Feito aqui em C++, né? Daí o CPP em C++. Então, primeiro que ele é feito otimizado para os hardware Apple Silicon, tá? Então,
+
+first class citizen otimizados aqui, segundo eles, tá? E várias outras otimizações que eles fazem aqui, além da vantagem de você poder baixar modelos direto lá do Huging Face. Já vou mostrar isso para vocês dele já vir com uma web UI e várias outras coisas interessantes que eu vou mostrar para vocês hoje, tá? Mas o mais importante é que ele é mais hackable, tá? Ele é mais customizável, beleza? O que aqui no nosso canal, que
+
+somos os nerds da programação, isso faz sentido que eu posso ficar mexendo mais nos parâmetros. O olhama, de fato, ele é mais friendly, né? Você viu como ele é bem facilzinho de rodar e tal no último vídeo, inclusive, se você não assistiu o último vídeo, onde eu falo do olhama e também do meu setup, dos meus planos para modelos locais aqui no canal, dá uma olhadinha lá que ficou bem legal esse vídeo. Mas o que eu fiz ali do olhama ainda se mantém aqui, tá pessoal? Claro, a velocidade de tokens vai alternar dependendo da sua máquina, beleza? Mas os princípios todos ali se
+
+mantém. E o que eu quero mostrar para vocês hoje também pode ser perfeitamente atingível com o olhama ou com o LM Studio também. Muitos falaram que com LM Studio eu não precisaria nem fazer o meu setup com Tail Scale, porque também é verdade. Só que no fundo, no fundo, o que o LM Studio faz é uma forma de você rodar os modelos na sua máquina principal, tendo, né, o seu servidor em outro lugar, como é o caso que eu tô fazendo, né, com o Mac Studio. Mas basicamente o que ele faz aqui por trás dos panos é um T scale, tá? Então,
+
+basicamente, eu já fiz o que o LM Studio faz para você, mas como eu já tenho ele feito, como eu prefiro trabalhar na CLI, é muito mais fácil para mim, eu não tenho problema de usar. Então eu vou manter-me utilizando dessa forma, fazendo a conexão via Tails Scale lá na minha máquina. Só que agora em vez de utilizar o olhama, nós vamos utilizar o lama.cpp. Vamos lá. Antes da gente
+
+partir pro principal desse vídeo aqui, que é de fato falar do PA, gente, eu gostaria de trazer para vocês uma novidade que eu tô muito empolgado, que é uma novidade do Google chamado Multit prediction, tá? Ou que eles chamam também de MTP. Basicamente, pessoal, isso aqui é uma técnica que eles desenvolveram que permite que você aumente a velocidade incrivelmente dos modelos, ainda sem comprometer a qualidade, tá? Então, parece até bom demais para ser verdade. Alguns dizendo que você consegue ver um ganho de até três vezes de velocidade, dependendo do modelo, sem comprometer nada da capacidade do modelo, o que é bem incrível. Tem toda essa parte técnica
+
+aqui de speculativ, como que ele funciona na prática. Algo bem interessante para quem para quem de fato tem interesse em entender como funciona. E aí eles mostram aqui, por exemplo, diferença do Gema 426B num Nvidia RTX Pro, né, com e sem o MTP. Então, basicamente, eu fiquei muito empolgado para testar isso aqui e eu tava querendo fazer um vídeo sobre isso, beleza? Só que ainda não está pronto, tá? Eu tô acompanhando ansiosamente esse
+
+pull request aqui lá no repositório do lama, onde eles estão colocando o suporte pro MTP. E se vocês virem aqui, ele tá sendo assim e em ativo desenvolvimento, tá? Então, há duas horas atrás as pessoas faz um teste, 1 hora, 1 hora. Então, assim, muita gente testando aqui. Eu acredito que isso vai ser feito, o merge disso aqui vai ser feito muito em breve, beleza? E muita
+
+gente aqui mostrando ganhos incríveis, tá? até mostrar algumas coisas para vocês aqui que realmente isso aqui se mostrando verdade na prática pode ser sim um game changer, tá? Olha, por exemplo, essa pessoa aqui dizendo que com MTP enabled saiu de 22 tokens para 42 tokens por segundo. Outro teste aqui, ó, dizendo que saiu de 63 para 105 tokens por segundo. Detalhe é que tudo isso aqui é com o Quem 3.6, mas isso
+
+também está disponível para o GEMA. Então que o pessoal tá testando aqui no Quemen, mas a ideia é que isso se mostre também para outros modelos. E mesmo quando o ganho não é tão grande, por exemplo, esse cara aqui saiu de 70 para 96, 93, beleza? Não dobrou, mas ainda assim você teve um ganho aqui de 20%, 25%. Então eu tô bem empolgado para ver isso aqui na prática, tá? Realmente os
+
+testes são bem promissores e eu acho que isso tem o potencial de catapultar ainda mais o uso de modelos locais em máquinas, talvez até mais simples. Um último detalhe aqui, pessoal, que se você quiser testar hoje essa nova arquitetura MTP lá no Olhama, você consegue, tá? Porque eles colocaram esse novo modelo aqui, essa nova versão Gema 431B Coding MTP BF16. Então, tô vendo o MTP aqui, só que o problema é que ele é um modelo muito grande, tá? Ele é um modelo de 64 GB. Então eu não consigo
+
+rodar nem no meu estúdio, tá? Precisaria ter uma máquina com 128 GB para você conseguir rodar ele hoje, pelo menos nessa distribuição feita aqui pelo Olhama para o Gema 431B, tá? Nos outros a gente ainda não tem. Então pode ser talvez até que no momento que esse vídeo saia já esteja disponível. Tô falando aqui para vocês ficarem de olho nisso e assim que sair eu vou testar e vou trazer também os ganhos de desempenho para vocês. Fechado? Muito bem pessoal,
+
+vamos agora pro que interessa, tá? Eu preciso mostrar para vocês como que você faz o setup do lhama se você quiser, tá? É um pouquinho mais trabalhoso do que o olhama, tá? Eu tô chamando de lhama, lhama CPP, é tudo a mesma coisa, né? Lha, olhama, LM Stúio, tudo vem da mesma raiz. Então fique comigo aqui, tente não
+
+se confundir, mas a partir de agora eu vou falar do Liamma, lama.cpp. Então vamos lá. Para fazer a instalação é bem simples, né? Aqui no Mac basicamente você vai rodar um brew install, beleza?
+
+E tem outros comandos aqui, se você tiver no Windows e no Linux também. E basicamente quando você instala ele, você vai ganhar o lama CLI e o lama server, beleza? Então, basicamente, quando você executa o lama server, ele vai inicializar um servidor com duas coisas. Primeiro, com uma interface web que você pode testar, eu já vou mostrar para vocês. E essa interface web, ela basicamente é um end point, é open AI compatible, o que significa que você consegue utilizá-lo como back end. para
+
+o seu agente favorito, por exemplo, até mesmo para um cloud code da vida, por um Codex, não é o nosso foco aqui, até que a gente tá testando modelos locais e a gente quer um harness minimalista, mas a ideia é que sendo ali um end point open AI compatible, você basicamente consegue conectá-lo a qualquer outra SDK, como é o caso e do AI SDK lá do Versel, da própria Open AI SDK, enfim, você consegue utilizá-lo nos seus projetos. Inclusive, fica até uma sugestão de próximo vídeo aqui, a gente implementar um end point que se conecta com o serviço rodando o lhama localmente para que a gente coloque na prática num num app em produção um serviço que usa a IA local. Então me digam aí se vocês acham que isso é interessante pra gente fazer no próximo vídeo. Mas beleza, rodei o servidor e ele está escutando aqui a porta 8080. Como eu estou aqui no tail scale, eu já fiz toda a configuração para que eu consiga entrar diretamente aqui pela web e cair lá na interface web dele. Então, coloco o meu endereço da
+
+Taonet e consigo usar por aqui, né? Se você lembra, é o mesmo setup que eu fiz lá no meu Hermes, tá vendo, ó? conectado também na minha Tailet aqui, só que esse Hermes tá lá na minha VPS Hostator. Inclusive, se você tem interesse em ver como eu fiz a configuração do Hermes e os testes que eu fiz, dá uma olhada nesse link que eu vou deixar aqui. E também se você precisar de uma VPS, eu recomendo a HostGator, que é parceira aqui do canal e o link vai tá na descrição. Agora eu sei que você tá
+
+falando, Rafael, será que eu consigo colocar um Gema ou um Coen lá no Hermes ou do Open Claw? Calma, esse também é um teste que eu quero fazer em outro vídeo. Então já me conta aqui nos comentários se você quer que eu fale de hermes e open com modelos locais também. Beleza, pessoal, vamos voltar aqui pro que interessa. Tô aqui na interface do lama e eu quero mostrar para vocês algumas coisas, tá? Primeiro, quando eu clico
+
+aqui em select model, eu tenho os três modelos que eu já baixei aqui. Como que eu fiz para baixar esses modelos, tá, pessoal? Aqui no lhama CPP, basicamente, o que você vai fazer é rodar esse comando aqui, tá? Então, deixa eu abrir uma outra conexão lá no Mac Studio e você vai rodar o lama CL das HF, né? HF de hug e vai passar aqui o nome do modelo que você vai baixar. É menos
+
+intuitivo do que é lá no olhama, tá? Mas permite que você baixe modelos de vários provedores. Por exemplo, 3.6. E todos os outros modelos também. Eu baixei lá
+
+desse pessoal do Unsluff, que são dos mais famosos que tem, tá? E quando você tá baixando ali pro lama.cpp, você precisa baixar esses, ó, GGUF, tá? Você precisa que eles terminem em GGUF. Então, basicamente você vem aqui e copia isso aqui e faz o HF lá, né? Então, roda
+
+o lhama CLI HF e coloca, por exemplo, o modelo que você vai baixar. Uma outra forma mais fácil é você vir aqui em use this model e aí vem aqui em lhama CPP. Ele já te dá o comando, tá vendo? Inclusive com a quantização que você vai querer usar. Então eu tô usando essa quant aqui Q4, né? É, mas poderia usar aqui até o Q6 ou
+
+Q8. Uma coisa legal aqui no Huging Face é que você pode criar a sua conta. Criando a sua conta você consegue colocar qual é a sua máquina, tá? Tá? Então, como eu coloquei aqui, cadastrei que eu tô com um Mac Studio Chip M4 Max, ele até me fala o que eu consigo rodar, as quantas ações que eu consigo rodar e as que não vão ficar tão boas, né?
+
+Então, provavelmente eu consigo rodar aqui esse Quen 27B até na quantização de 8 bits tranquilamente, né? Porque eu tenho 64 GB de memória, mas o 16 bit ele fica meio na margem aqui, tanto que ele mostra até um amarelinho, ó. Talvez consiga rodar, certo? Então fica aqui a recomendação para vocês. Criem uma conta no Hugging Face, cadastre o seu equipamento lá e muito facilmente você consegue vir aqui e copiar e saber exatamente como você vai rodar, tá?
+
+Então tem toda a documentação aqui, ó, para instalar, para iniciar o servidor, para iniciar a CLI, tudo muito fácil que você consegue fazer por aqui. Eu mostrei aqui o Quem, mas você pode vir aqui, por exemplo, no Gema 4 e aí você vai vir aqui, ó, no uns tá vendo? Anslof Gema 426B A4B I T GGUF é o nome grande pr caramba. Que que significa essa sopa de letrinhas aqui, pessoal? 26 bilhões de parâmetros totais, mais somente 4 bilhões de parâmetros ativos, tá? Então
+
+é um modelo de mixer ofert, tá? IT ele é instruction tuned e GGUF significa que ele é package para você rodar lá no lama CPP. Beleza? Aqui a mesma coisa que eu também consigo rodar o 8 bit dele aqui e tem todo o tamanho dele também. Posso vir aqui e copiar exatamente o comando que eu vou rodar. Vir aqui, colar e
+
+pronto. Não vou fazer isso aqui agora. Já fiz o download. Os downloads são grandes, né? 27 GB, 30 GB e tudo mais.
+
+Então, mostrei para vocês como você faz para rodar o lama CPP localmente na sua máquina, certo? Veja, a gente consegue rodar aqui alguns modelos, ó, 10 GB, 12 GB. Então, quem tem 32 GB aí, muito possivelmente vai conseguir rodar com certa tranquilidade, tá? Estão falando aqui do 26B A4B do Gema, claro, mas tem vários outros que você pode rodar também. Beleza? Voltando então aqui pra
+
+interface, certo? Então, vou fazer o seguinte, pessoal, vamos fazer alguns testes aqui só para você ver como funciona, tá? Vou selecionar aqui o Quen 3.6, 35 bilhões de parâmetros A3B, né? ou seja, 3 bilhões de parâmetros ativos.
+
+Então, veja que, apesar dele ser o modelo maior do que o Gema de 26 bilhões de parâmetros, ele tem somente 3 bilhões de modelos ativos, tá? Então ele tende a ser mais rápido. Então, deixa eu mandar uma mensagem para ele aqui. E olha como é rápido. E olha que legal aqui nessa interface, a gente consegue ver em tempo real os tokens por segundo.
+
+70 tokens por segundo já é rápido para caramba, tá, pessoal? E a partir do momento que eu carreguei ele, ele aparece verdinho aqui. Então eu posso continuar numa conversa com ele. Beleza? Mas eu também posso trocar por outro. Só
+
+para vocês terem uma ideia, vou selecionar esse outro gema aqui, né? O gema de 26 bilhões de parâmetros e 4 bilhões ativos. Você vê que demora um tempinho porque ele precisa carregar o modelo. Carregou. Hi, how are you?
+
+De novo, ó. Bem rapidinho aqui. Chegou a 83 tokens por segundo. Então, incrivelmente o Gema 4 conseguiu ficar até mais rápido, mesmo ele tendo 4 bilhões de parâmetros ativos, certo? Ficou mais rápido aqui, né? 83 tokens
+
+por segundo. Excelente. E aí vou fazer o teste agora com Quen 27 bilhões de parâmetros denso, tá? Só que olha só, eu vou desabilitar, né? ou clicar aqui em unload, os modelos que já estavam carregados para eu não consumir tanto a memória. Então isso aqui fica bem fácil
+
+de fazer na interface também. Então pronto, liberei a memória do computador. Vou carregar aqui agora o de 27 bilhões de parâmetros. Na verdade, queria até fazer uma outra conversa. Vamos criar aqui uma outra conversa, mas não tem problema. Ele já tá carregado aqui. Hi,
+
+how are you? Detalhe que esse modelo aqui de 27 bilhões de parâmetros, pessoal, é pra programação um dos melhores que temos, tá? Então ele pode ser muito útil para quem realmente quer utilizar em tarefa de programação. Agora veja a diferença, tá? A gente já tá aqui falando de 21 tokens por segundo aqui nessa arquitetura, beleza? E estou
+
+utilizando a quantização aqui quatro, certo? 4 bits. Beleza? Muito bem. Só queria fazer esses testes de velocidade para você entender como eles funcionam aqui no L. Agora veja, uma objeção que
+
+eu percebo bastante nos modelos locais são pessoas dizendo que eles não são bons em tool calling, né? O que que seria isso? Seria a capacidade do modelo de chamar a ferramenta adequada para aquele prompt que você deu. Então se eu peço para ele, por exemplo, fazer uma edição num arquivo, ele sabe exatamente qual é tool calling que ele tem que chamar, certo? Então, por padrão, o servidor do lama, ele é inicializado sem tool, certo? Então, o que que eu vou
+
+fazer aqui, tá? Deixa eu dar um unload desse modelo. E aí vocês veem até que aqui no servidor eu vejo que a memória foi dealocada, né? Ou seja, foi liberada. E outra coisa interessante também que a gente consegue ver também por aqui os tokens por segundo, né?
+
+Então aqui no servidor no log a gente consegue ver tudo bonitinho. Inclusive a requisição que é feita. No final das contas tudo que a gente tá fazendo é um post para esse end point chat completion, ou seja, open AI compatible. você consegue tranquilamente colocar isso aqui, por exemplo, no seu app e ter um serviço rodando nativamente. Muito bem. Deixa então eu matar o servidor
+
+aqui e eu vou inicializar ele agora passando essa flag tools, tá? Só que se eu passar tools, ele vai reclamar, ó, tá faltando um argumento, beleza? E o argumento que eu posso dar é o nome da tool ou passar all para liberar todas as túlas. Então, é justamente isso que eu vou fazer aqui, ó. Passei com all e já tá rolando. Beleza? Então, deixa eu dar
+
+um F5 aqui, iniciar uma nova conversa. E agora sim, ó. Então ele já vem aqui com oito buildols, né? Ferramentas já inclusas, por exemplo, ler arquivo, escrever arquivo, editar um arquivo, get time, né? Pegar qual é a data de hoje.
+
+Então, vamos até fazer o teste aqui, tá pessoal? Por exemplo, vamos inicializar aqui o QEN 3.6 A3B, que que é provavelmente o melhor compromise aqui pra programação. O gema, enquanto mais rápido, ele não é tão bom pra programação. Como a gente já vai fazer os testes, eu quero iniciar ele aqui agora. Beleza? Então posso perguntar
+
+alguma coisa do tipo: "What day is today?" E aí, olha só, pessoal, ele foi capaz de chamar ferramenta. Eu permiti. E tá aqui, ó, o dia 6 de maio. Eu posso perguntar alguma coisa também do tipo list me all apps I have in apps.
+
+Então, tô pedindo para ele rodar um comando para mim e ele sabe agora. Exacte shell command. Então, ele consegue executar o comando. Beleza? Então ele tá verificando que existe e ele entendeu que tem aqui, certo? E aí
+
+eu posso pedir para ele alguma coisa do tipo assim: summarize to me, what is canvas collab? Então pedi para ele fazer uma tarefa tradicional aqui. Eu vou até liberar para todo mundo aqui. Eu vou liberar todas as chamadas. Então vou botar allow all para deixar ele rodando e vocês vão ver como é rápido. E é legal que a gente
+
+consegue ver aqui os tokens, né? Olha a quantidade de arquivos de tool calls que ele tá fazendo, né? Intercalando com reasoning, intercalando com ler arquivos, intercalando com exetar comandos. E tá aqui a resposta, ó. É um projeto React, backend node com express, web RTC, Drizzle, etc, etc.
+
+Então, muito legal. E veja como o tool callo, tá, pessoal? Muito bem feito mesmo. Eu dos meus testes aqui não tive muitos problemas em fazer ele usar as ferramentas que eu passei. Um detalhe, tá? Muita gente estava falando que o
+
+Gema não estava conseguindo executar as ferramentas de forma adequada, tá? Só que teve uma atualização aqui no dia 11 de abril que eles meio que corrigiram isso. Então foi algo da própria implementação ali do lhama e eles corrigiram no dia 11 de abril e basicamente resolveram o problema, tá? Então, se você teve alguma experiência ruim, faça atualização. Isso é importante que você entenda, pessoal. A
+
+gente tá trabalhando aqui na fronteira do desenvolvimento. O GEMA saiu há, sei lá, um mês atrás. O MTP que eu mostrei para vocês foi algo que ficou público ontem, né, dia 5 de maio. Eu tô mostrando para vocês aqui um p request real time que os caras estão querendo colocar essa otimização. Então, é algo que pode quebrar, tá? Então, saiba disso
+
+ao trabalhar com esses modelos que estão na fronteira do desenvolvimento. Muito bem, pessoal. Já instalamos o lama CPP, já baixamos os modelos que nós queremos utilizar, já fizemos os testes de velocidade. Aqui mostrei para vocês que ele consegue de fato utilizar ferramentas para analisar um repositório, só que não é ideal que nós programemos por aqui. Essa interface aqui da web dele é interessante para você, né, utilizar talvez no dia a dia.
+
+Talvez eu até utilizaria o gema aqui no lugar do Quen para coisas do dia a dia, mas se eu quisesse realmente colocar um workflow de trabalho aqui, eu faria com um coding agent. E é por isso que hoje nós vamos falar do PI, beleza? Que que é o PI, pessoal? O pi é um minimal terminal coding hard, ou seja, é um harness minimalista para um agente de programação. Se você ainda não sabe o que é harness, eu já fiz uma aula completa sobre harness engineering, que eu vou linkar aqui para você dar uma olhada. E aqui no canal também tem
+
+vários vídeos falando de harness, certo? Basicamente, pessoal, o harness junto com o modelo é o que constitui um agente. Então, o modelo é o cérebro. No nosso caso aqui, vamos pensar, é o Quen 3.6. a 3B e tudo que ele pode utilizar e
+
+o ambiente onde ele está, incluindo compactação, loop, ferramentas, MCP, skills, acesso ao Bash e a CLIS, tudo isso constitui o Harms. Porém, se vocês lembram no meu último vídeo do Olhama, quando nós inicializamos o Open Code com o Olhama, ele era bem lentinho, né? Ele ficava meio travado. Por qu, pessoal? Porque o Open Code é já um app mais avançado e pensado em quem vai utilizar muito provavelmente ali com GPT 5.5, com
+
+OP 4.7, com Sonet, com Gemini, modelos maiores e mais parrudos. O que acaba acontecendo é que quando você coloca um modelo local nesse harness, tipo open code, ele tem que carregar muita coisa. E a gente sabe que os modelos locais t problemas com contexto. Quanto mais coisa no contexto, ele vai ficando mais lento e degradando a capacidade. Isso é
+
+mais flagrante nos modelos locais, além de você tá dando muita informação para ele no modelo que é menos inteligente do que os flagship. No último vídeo eu também falei das prateleiras, lembram? Pratileira número um, flagship, estamos falando GPT 5.5, OP 4.7. Prateleira
+
+número 2, modelos open source, que tem uma capacidade bem superior, você ainda não consegue rodar numa máquina local, né? Um Kimi, um GLM, um Minimax. E a prateleira número três seria aqueles modelos que você consegue rodar numa máquina pessoal e que não vai ter a capacidade da prateleira dois e um, mas que com o ajuste necessário consegue chegar em um desempenho bem factível, tá? Então, para rodar esses modelos mais simples, o ideal é que você construa ele de baixo para cima. Não dê tudo para ele e vá trabalhando, não. Dê o mínimo
+
+possível e vá colocando somente aquilo que você precisa. evita o famoso bloat e permite com que o seu agente tenha uma capacidade, uma eficiência muito maior. E é justamente essa a proposta do PI, certo? Você adapta o PI para o seu workflow e não o contrário, o que é excelente. Um detalhe aqui que o pi é o harness por trás do open claw, tá? Então
+
+o pi é provado em produção também, ele é minimalista, ele é muito simples de trabalhar e é justamente o que nós vamos ver hoje, certo? Então, primeira coisa que você precisa fazer é instalar o Piu computador, tá? Então você pode instalar aqui com curl, com npm. Eu vou fazer aqui a instalação do pi. Então, vou copiar isso aqui. E aí vamos
+
+voltar aqui para o terminal e instalar esse agente. Beleza? E basicamente é engraçado que é um curl, mas é um curl que roda o npm install, né? Nem sei porque ele tem esse cur aqui. Feito, pessoal. Tá instalado.
+
+Então agora sempre que eu quiser executar ele, basta eu rodar esse comando pi. Então o que que eu pensei em fazer hoje, pessoal? Eu vou nesse repositório aqui, o canva escolar, que eu tenho trazido aqui várias vezes no canal, né? Que é basicamente um clone do excol draw que eu consigo usar para alguns testes mais simples. Eu vou sem trazer em apps mais complexos como Quant Brasil, em features mais complexos. de
+
+fazer teste de tudo isso. Calma, vamos ter muitos vídeos para fazer sobre modelos locais ainda. Então, posso vir aqui e inicializar rodando PI, como você rodaria ali Codex ou cloud code, certo? Só que olha só, quando eu rodo aqui pela primeira vez, algumas coisas interessantes, tá? Primeira coisa, ele já entende o contexto, então ele já me mostra aqui o que ele conseguiu carregar. Por exemplo, o agents MD, que
+
+já tinha nesse repositório, esse repositório foi feito ali com cloud, com Codex, então ele tem um agence MD e o PI já me disse que conseguiu carregar ele, tá? Então isso é interessante. Ele também lê e numa pasta PI e tudo mais. Eu recomendo que você siga sempre o padrão do agent que vai funcionar em basicamente todos os harnesses que não são cloud code. Pro cloud code você vai e faz um sim link. Já dei essa dica
+
+várias vezes aqui no canal, mas beleza, não tenho modelo, tá? Então eu preciso colocar o modelo aqui. Ele diz para você rodar login. Só que se eu quiser o login aqui vai ser uma assinatura ou uma API key, ou seja, cloud, chatpt, coisas do tipo. Você pode utilizar tranquilamente, inclusive muita gente gosta de utilizar o GPT 5.5, por exemplo, aqui no PI,
+
+certo? Não é o que nós vamos fazer hoje. Então eu vou cancelar isso aqui porque nós precisamos configurar o modelo. Então como que a gente faz para configurar? Pessoal, eu vou mostrar para vocês um guia. Primeiro, um geek que eu
+
+achei aqui publicado recentemente também, que mostra como utilizar o GEMA 4 com o PI lá no LM Studio. Então, se o seu negócio é o LM Studio, eu vou deixar o link na descrição para você dar uma olhada, beleza? Mas também aqui no próprio Huging Face, ele mostra como fazer, tá? Então você roda ali o servidor como já fizemos, instala o PI, como já instalamos e aí basicamente você precisa colocar isso aqui nessa pasta P Agent Models Jason. Você vem aqui e coloca o providers com o ID. Então vamos
+
+fazer o seguinte, vamos testar que a gente consegue fazer isso com os modelos que nós temos na mão. Vou copiar isso aqui, vou iniciar uma nova conversa aqui e vou falar o seguinte: I need to add this file. Please add to me. E aí tô de novo com o quent. 6 a3b aqui. Certo?
+
+Agora ele tem as ferramentas disponíveis. Ó, já entendeu que tem que criar, tá, pessoal? Na verdade, ele criou errado aqui, mas a culpa foi minha, né? Porque eu mandei só isso aqui, mas não disse onde a gente tinha que colocar e aí ele colocou em qualquer lugar. Então aqui você já entende que os modelos locais você tem que segurar ele bem firme ali para não deixar ele fazer besteira, tá?
+
+Então eu vou copiar isso aqui, ó. Actually, it should be here. E aí vou passar esse caminho aqui. Só que olha só, pessoal, vocês estão vendo que tem o ID aqui, ó. Esse ID é de fato o ID do modelo que a gente vai usar, não é esse, tá? É o modelo que eu instalei. Tem uma
+
+forma bem fácil de ver aqui. Só a gente vir aqui no servidor e em algum momento aqui vai aparecer o ID do modelo utilizado. Tá vendo aqui, ó? Unslof W 3.5 A3B GGUF Q4 km. Um negócio
+
+gigantesco aqui. Eu vou simplesmente copiar isso aqui e vou pedir pr ele alterar para mim também. Please change the ID to. E coloquei isso aqui. E veja, a gente consegue ver o reasoning. Ele entendeu o que ele tem
+
+que fazer. Ele caiu num loop meio infinito aqui, pessoal. Isso é bem comum de acontecer, tá? Às vezes ele fica pensando muito, a mesma coisa, 50 milhões de vezes, mas ele disse que trocou. Então, olha só, vamos conferir primeiro que ele trocou. Tô aqui na
+
+pasta, né? Vou rodar aqui o nano pi e aí barra agent/models. Jason barraagent. barmodels Jason. Aí, olha só, pessoal, eu rodei ali o Nano e vi que não tava. E aí foi
+
+de fato algum problema que na hora de criar o arquivo, tá? Ele criou no lugar errado. Então, veja, já aqui já fica claro que tem alguns problemas que a gente precisa ficar de olho, tá? Que às vezes ele vai errar operações que com um da vida você sabe que ele não vai errar. Dito isso, tá aqui feito, né, como nós precisamos, tá? como tava escrito aqui
+
+na documentação do Hugin Face e fiz isso com a IA, ela errando, batendo um pouco cabeça, mas consegui eventualmente fazer com que ela funcionasse. E aí agora eu vou inicializar o pi. E agora, beleza, não temos mais aquela mensagem de er e aparece o modelo que nós temos disponível aqui. Então posso mandar para ele alguma coisa do tipo sumarize this ripple. E aí a gente vai ver que isso vai funcionar milhões de vezes melhor do que quando nós estamos ali na do que é só para quebrar um galho, né? Então ele
+
+tá aqui, ó, chamando várias ferramentas, find, read. Eu consigo ver exatamente o que ele tá fazendo. Olha como é rápido novamente. Olha como tá aqui, ó. Tá? As
+
+requisições estão aparecendo aqui do lado esquerdo, tão vendo? Então, muito interessante. E agora ele tá escrevendo, né? Mas olha como ele conseguiu usar as ferramentas de forma bem tranquila, tá? Não sei se vocês notaram, não teve nenhuma permissão aqui. Ele não me pediu
+
+nenhuma permissão, tá? Por quê? Porque o pi por padrão não entrega para você permissão. Você tem que colocar os plugins. Lembra que eu falei que ele é minimalista? Você vai adicionando que
+
+você precisa. Aqui no caso ele não vem com esse sistema de permissão, assim como ele também não vem com MIPCP, assim como ele não vem, por exemplo, com busca na web, tá? Então nós já vamos corrigir esse problema já já. Agora veja, pessoal, funcionou. Maravilha. Beleza,
+
+tudo bonitinho. Deu aqui mais ou menos 63.74 tokens por segundo, certo? dentro de um harness voltado pra programação. Então aqui você já vê como o retorno foi muito melhor do que aquele summary que ele tinha me dado antes, beleza? Então aqui
+
+eu já tenho um retorno muito parecido com opos da vida, com GPT 5.5. Então bem mais interessante, certo? Vamos dar uma olhada aqui nas configurações do PI, tá? Se eu apertar o barra, então primeira coisa que vai aparecer aqui é o settings, né? Então tem várias
+
+configurações de steering, follow-up, nada muito eh diferente aqui, thinking level e tudo mais. E você vai ver que não vai ter muitas coisas, não tem, por exemplo, MCP, assim, são poucas opções mesmo, tá? E você também não consegue fazer buscas na web. Então, a primeira coisa que eu quero mostrar para vocês aqui, antes de nós fazermos exemplos práticos de programação, é como você poderia incorporar buscas na web nesse hard. Eu acho isso fundamental, porque na hora que você tá programando, você precisa que o modelo tenha acesso à internet para fazer configurações, para checar um repositório do GitHub. Então
+
+isso precisa existir, tá pessoal? Como que você faz isso? Vindo aqui no PI, você clica aqui em packages e aí você vai ver todos os pacotes que você consegue instalar. Por exemplo, subagentes. O PI não vem com subagente, né? MCP, o PI não vem com MCP e tem aqui
+
+o web access também. Então vamos ver como funciona a instalação aqui do web access, tá? É muito simples, tá? Basicamente você vai clicar aqui em copy e você pode até entrar aqui na documentação. Ele é um uma ferramenta bem inteligente, né? Ele vem aqui, né?
+
+Com skills. Você passa a API do Perplexity ou do Gemini, ele vai utilizar essas APIs para fazer busca também. Ele sabe fazer clone no GitHub. Se você passar alguma URL do GitHub, ele vai fazer busca em vídeo do YouTube, dependendo do que você mandar para ele. Então, uma ferramenta bem inteligente, tá? Mas vai te dar também uma busca
+
+básica se você precisar. Então, basicamente, o que você vai fazer é copiar o comando, rodar ele aqui e pronto, já estamos agora com a capacidade de fazer buscas na web. Então, tá aqui, ó, extensão P web Access aparece e também essa skill library, né? Essa skill é basicamente uma forma de ajudá-lo a investigar bibliotecas open source. Então ensina como ele vai fazer o clone do GitHub, como ele vai fazer busca, operações no Git, etc. Então se
+
+você precisar passar para ele um repositório de referência, ele vai invocar essa skill, certo? Mas se você quiser invocar essa skill diretamente barra skill librarian, aqui você vai ver também que nós ganhamos um comando chamado web search, só que se eu rodar isso aqui, is Rafael Quintanil, ele vai dar um erro aqui, porque na verdade ele tentaria abrir o navegador, não é isso que a gente quer, tá? Mas eu posso pedir para ele fazer a busca diretamente. Por exemplo, ru rafael Quintanilha e a gente vai ver quando fizer essa busca aqui, ele vai usar a ferramenta. Aí de novo ele tenta abrir o navegador até ele, né, desistir e inteligentemente fazer a busca sem o navegador. E tá
+
+aqui, ó, Rafael, onde eu trabalho, que eu sou no Brasil, meu background, meu site, meu Twitter, né, Substec e várias outras coisas aqui, inclusive meu GitHub. Então, claro, fez uma busca aqui bem simples, mas foi capaz de ir na internet, né? Isso claramente não tá no campo de treinamento dele. Nós podemos fazer um outro teste também. Então, primeiro, antes de fazer isso, eu posso passar esse curator off aqui para ele não tentar abrir o navegador, tá? Então,
+
+desabilito o creator. E aí eu posso fazer alguma coisa do tipo pegar uma página aqui do Cont Brasil, tipo Vale 3, e pedir para ele me achar alguma informação. Por exemplo, qual é o dividend y de vale 3, tá? Então eu posso mandar esse link, look for the dividend yield of this asset. E ó, olha que interessante, ele já entendeu que é dividend yield, fez a busca e olha lá, 7 e 14. Então ele foi
+
+capaz de fato de abrir a página e ver a informação, tá? Então considero isso aqui muito importante. Esse seria o primeiro plugin, a primeira extensão que eu colocaria no PI, beleza? Porque nós quando estamos programando, precisamos que o agente saiba buscar uma documentação, saiba fazer alguns testes, verificar coisas no navegador, tá? Então, busca na web é algo que eu colocaria sem sombra de dúvidas. Agora,
+
+a segunda extensão que eu gostaria de mostrar para vocês hoje é o MCP Adapter, que é justamente poder rodar MCPs. Então, aqui não tem nenhum mistério, a instalação vai ser bem simples, tá? de novo. Você vem em packages, vai aparecer aqui o PMCP adapter. Note, o criador do Pi chamado Mário, escreveu que você talvez não precise do MCP. Por isso que
+
+ele deixou o MCP de fora, deixou ele como um plugin que você opt in, tá? Isso é fato, né? O MCP pode consumir muito token e quando a gente tá trabalhando com modelos locais, nós temos que tomar muito cuidado com o contexto. Então faz sentido que ele não saia por padrão. Mas quando você tá programando em diversas outras ocasiões, você vai de fato precisar do MCP para algumas tarefas, tá? Então eu vou mostrar para vocês aqui
+
+para que você já saiba como fazer a configuração do MCP pro seu projeto, beleza? Então, de novo, pessoal, copiar o comando aqui. Vamos matar aqui o pi, rodar o pi install e feito. Já estamos com a extensão ligada. E você vê que já aparece aqui, ó, PMCP adapter. Então,
+
+para ver os seus servidores, você vai digitar barra mcp e maravilha. Não tem nenhum MCP configurado aqui, como já esperado, mas eu vou mostrar para vocês dando como exemplo a instalação do MCP do Test Pride, tá pessoal? O Testpite é um parceiro nosso aqui do canal e é um MCP gratuito. É um MCP gratuito que você adiciona nos seus projetos e consegue utilizá-lo para gerar testes to enden, certo? Gera um PRD em cima desse documento, ele vai gerar testes escrito em playw e você consegue acompanhar o código e tudo mais e verificar se aquela sua feature de fato está funcionando.
+
+Beleza? Então, como que eu vou fazer isso, pessoal? Vamos utilizar o poder do pi aqui de novo para mostrar para vocês que ele consegue funcionar como um assistente, tá? Então vou fazer o seguinte, pessoal, vou aproveitar que nós já fizemos a instalação da extensão que permite busca web e vou mandar esse link aqui pro PI, beleza? Check this URL. E aí vou falar isso aqui também.
+
+Vou vir aqui no testite, na documentação dele, tem a instalação para outras ideais, né? Tem aqui tra cursor, cloud code. Basicamente o que nós queremos é um MCP server dessa forma. Então vou copiar isso aqui e passar para ele. I want to add this MCP server. Colei,
+
+please do what is needed for me to run this MCP. Eu tô usando ele exatamente como eu usaria um Codex ou cloud code, tá? Mandei ali o link da documentação e mandei ali como a configuração deveria ser e vou deixar ele se virar. Beleza? Olha, ele já entendeu como que faz, entendeu que não tem MCP e já colocou. E
+
+aí ele me falou: "Agora você precisa gerar a API aqui". Então vamos ali no test pr, vou vir aqui em API keys, vou gerar um. Obviamente isso aqui é algo que você nunca deve mostrar para outras pessoas, tá pessoal? Eu vou colar aqui, mas eu vou deletar logo em seguida. Nunca faça isso. Replace the API key for
+
+me with this one. Agora veja, pessoal, olha como ele criou o arquivo de uma forma muito mais rápida. Olha a diferença que faz um harness, certo? Mesmo um harness minimalista. Olha a diferença que ele faz. Tá pronto, ele
+
+trocou. Detalhe, se eu tivesse num Codex e colasse a API key, ele iria reclamar, tá? Ele ia dizer: "Ó, tem que fazer a rotation dessa API aqui, não?" Ou ele ia falar: "Não, cole aqui porque não é seguro, vai ficar exposto, etc, etc". Então, aqui a gente já entende de novo que o modelo local tem sim seus problemas de segurança, ele tem mais falhas, certo? Ele vai deixar passar
+
+mais coisas. Beleza? Beleza, falou aqui para reinicializar o pi. Contrtrl D aqui para matar ele. Vamos rodar aqui de novo.
+
+E aí, olha só, um server conectado. Beleza? Então, já consigo ver que o meu MCP está conectado. Se eu rodar o comando MCP, agora sim, ó, tem aqui o test sprite com todas as ferramentas disponíveis, certo? E aí eu posso agora utilizar tranquilamente. Beleza? Ótimo, pessoal.
+
+Já temos MCP, já temos busca na web, já temos o nosso harness. Vamos agora colocar ele para fazer alguma tarefa. Beleza? Então vou de novo inicializar aqui o PI e vou aproveitar que eu tô aqui no Teux, né? Vou abrir uma uma nova tab aqui no meu servidor e vou rodar o projeto, tá? Eu já tenho o projeto
+
+configurado aqui do canvas colab. Basicamente eu rodo ele com npm e run dev. Tá rodando aqui na porta 3.000. Como eu tô aqui no tail scale, eu consigo utilizar a URL diretamente, colocar 3.000 aqui e pronto. Tá vendo?
+
+Consigo trabalhar aqui normalmente. Beleza? Então vamos tentar fazer alguma coisa aqui. Vamos ver se ele de fato consegue programar, tá? Vou pedir para ele fazer uma alteração. Por exemplo, tá
+
+vendo que aqui a gente tem uma cor amarela? Vou pedir para ele trocar por rosa, certo? Então vou falar alguma coisa do tipo. Please change the preset colors we have to replace the yellow with pink. Então de novo, pessoal, é um prompt bem similar que eu faria no GPT ou no Cloud Code, tá?
+
+E olha lá, ele já está achando, já fez a alteração. Olha lá, rosa, pessoal. Muito rápido, muito fácil. Beleza. Era, era um trabalho fácil, tá? Era um
+
+trabalho fácil, mas ele conseguiu fazer localmente utilizando o Quen A3B, que não é o de 27 bilhões de parâmetros densos, na quantização Q4, tá? Então, bem legal. Isso aqui funcionou super bem. E para finalizar esse vídeo, vou pedir para ele fazer uma tarefa um pouco mais complexa aqui, tá? Então, quando eu clico aqui para criar um texto, ele abre esse confirm dialogo. Eu não quero isso,
+
+eu quero que de fato seja um texto. Então, vou voltar aqui para ele. Vou utilizar aqui o whisper flow. Como eu costumo dizer várias vezes aqui no canal, eu utilizo o voice to text quando eu sei o que eu quero, mas eu não sei muito bem por e como fazer. A gente sabe que em modelos mais inteligentes, como 5.5, isso basta. Aqui a gente precisa
+
+verificar. So now text opens an dialog for me to the text there. I really think it should be in line like how we do with the circle and the square. So I can create the text in the color that I want and I can see it in the board and not necessarily using the confirm dialog. Please do this change for me.
+
+Quiser testar oflow, o link para você dar uma olhada nele vai tá na descrição. Bom, pessoal, o Quen já começou a trabalhar aqui, tá pensando bastante. Eu posso até maximizar aqui pra gente ver o que ele tá fazendo. Acredito que vai ser uma feature um pouco mais complexa. Vamos deixar ele trabalhar e eu volto com vocês quando ele terminar. Pessoal,
+
+demorou quase nada, até foi bem rápido mesmo. E ele já disse, ó, agora funciona in line, antes tinha o Window prompt. E agora ele cria o texto, tá? Então vamos fazer o seguinte, deixa eu dar um F5 aqui. Clicar. Beleza, eu consigo clicar, mas
+
+não consigo editar. Então ele não foi capaz de fazer um one shot, tá? Então vamos lá falar com ele. Implementation is not correct. When I click, indeed you add a text to the board, but it came with the text text, right? It's written
+
+text. And I can't click to add it. I can't click to move it around. not really working like I was expecting to. Acho que eu acabei falando muita coisa.
+
+Eu falei para ele resolver o problema de obviamente não tá funcionando, mas eu também falei que eu gostaria de eh arrastar para trás e pra frente e ele vai ter que fazer isso, né? Então ele tá colocando isso como várias coisas, né? Porque é bem mais complexo do que eu tava pensando em fazer originalmente. Então vamos ver se ele vai conseguir incluir na solução tudo que eu pedi, né? Então veja pessoal, estamos trabalhando com modelo mais simples. Nós temos que
+
+ser melhores no nosso prompt, criar skills focados. Eu acabei sendo aqui um pouco desleixado no meu prompt, né? De novo, tô tentando fazer aqui como eu faria num GPT ou num. A gente sabe que com esses modelos tem que ser diferentes. Vamos ver o que que ele arruma pra gente. Pessoal, olha só,
+
+demorou um tempo, tá? Mas ele fez bastante coisa. Inclusive aqui no thinking dele, dá até para ver tudo que ele mexeu aqui. Então, olha a capacidade dele de navegar. por um projeto com várias etapas. Se vai
+
+funcionar ou não, é outra história, tá pessoal? Mas ele fez aqui, né, e consumiu. Ó, a gente consegue ver o contexto aqui. 34% do contexto de 128.000 tokens. Vamos ver. Hora da
+
+verdade. Vamos clicar aqui no texto. Cliquei. E não conseguiu, né? Ah, tá beleza. Agora pelo menos eu
+
+consigo eu consigo arrastar isso aqui. Ele fez, consigo selecionar e trocar de cor. Só se eu clicar aqui com o novo, né? É, então consigo arrastar, mas ainda não cons Ah, dois cliques. Beleza, dois cliques.
+
+Opa. Ah, se eu boto aqui. Beleza, entendi. Porque como o R é o retângulo, quando apertei R aqui, ele trocou. Deixa eu botar o número aqui.
+
+É, tá bugado isso aqui, hein, pessoal. Tá bugado, mas é melhor que a gente consegue aqui. Vamos lá, sei lá, um. Aí ele ele vai, mas depois ele volta pro final. E agora que eu entendi o bug, tá vendo? Quando o cursor volta pro início,
+
+mas eu consigo editar. Pessoal, vou parar por aqui porque esse vídeo tá bem grande e o meu objetivo aqui não era fazer nada necessariamente funcional, tá? era mostrar para vocês primeiro como vocês poderiam fazer para rodar o pi com vocês e como deixar o piçar a trabalhar. Eu já considero que da forma como ele tá aqui agora, ele é usável. Você viu que ele errou algumas coisas, precisa de ajuste, precisa de um prompt com mais carinho, precisa talvez de skills que ensinem a usar melhor ferramenta, muita coisa que a gente consegue ajustar aqui, tá? O meu
+
+objetivo a partir de hoje é criar essa espécie de série aqui no canal, essa playlist aqui no canal, onde eu vou utilizar o PI tentando extrair o máximo dele ali com os modelos locais, testar outros modelos. Talvez o 27B tivesse um resultado melhor, ele tivesse feito um one shot mesmo que mais lento, mas não precisaria de múltiplas interações. São coisas para nós compararmos também, tá? Repito, meu objetivo aqui não era fazer nada perfeito, é, né, mostrar para vocês o estado de como é programar com um piila, vamos colocar assim, né, sem fazer muitas customizações. Já chegamos nesse ponto, nos próximos vídeos nós podemos agora deixá-lo cada vez mais avançado. Lembrando que tudo isso aqui
+
+tá rodando local no Mac Studio M4 Max, certo? Se você tem interesse nesse assunto, se você quer saber como extrair o máximo dos modelos locais, ficar de olho na nova arquitetura MTP que acabou de sair, se inscreve aqui no canal, deixa o seu like, compartilha esse vídeo com seu amigo e sua amiga que gosta de programar cunha, mas também gosta de modelos locais. Tem bastante coisa interessante para vir nos próximos dias. Agradeço a você pela audiência de sempre e até a próxima. M.

@@ -1,0 +1,245 @@
+---
+video_title: "Spec Driven Development (SDD): a melhor forma de programar com IA?"
+video_id: 9qJIJz2HLws
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9qJIJz2HLws
+video_date: 2026-03-24T22:00:17+00:00
+video_description: |
+  Spec Driven Development com o TraycerAI ➡️ https://traycer.ai/
+  
+  Inscreva-se na formação de Programação Agêntica ➡️ https://programe.ai/cursos/programacao-agentica?utm_source=youtube&utm_medium=video
+  _______________________________________________
+  
+  Spec Driven Development é o caminho para programar sério com IA. Neste vídeo eu mostro o que é SDD, como ele difere do Vibe Coding e uma implementação real na prática.
+  
+  Eu explico por que tanta gente falha ao programar com IA não por culpa do modelo, mas por falta de especificação, contexto e organização. Também mostro como transformar intenção em requisitos, fases e implementação usando um exemplo real dentro do QuantBrasil.
+  
+  No vídeo:
+  
+  - o que é Spec Driven Development
+  - diferença entre SDD e Vibe Coding
+  - relação com user stories, TDD e SDLC
+  - exemplo prático de refactor real
+  - como usar agentes com mais previsibilidade
+  
+  Capítulos
+  
+  00:00 Intro
+  00:43 Entrevista com Andrej Karpathy
+  02:42 Artigo: Escrevendo testes como histórias de usuário
+  05:29 Vibe Coding vs SDD vs SDLC
+  14:30 Spec Driven Development na prática
+  29:56 O plano e a implementação
+  32:13 Etapa de verificação
+  34:00 Conclusão
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 VPS na Hostinger com 10% OFF 🔻🔻
+  https://www.hostinger.com.br/quantbrasil
+  CUPOM: QUANTBRASIL
+  
+  🔻🔻 Ganhe 10% OFF no Firecrawl 🔻🔻
+  https://firecrawl.link/rafael
+  
+  🔻🔻 Teste o Wispr Flow por 2 semanas grátis 🔻🔻
+  https://ref.wisprflow.ai/rafael
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=aN79jlxU-iQ
+  https://www.youtube.com/watch?v=_wQjRbcxwWo
+  https://www.youtube.com/watch?v=_GqKe-Ym-d0
+  
+  🔻🔻 Artigo: Writing tests as user stories in React 🔻🔻
+  https://rafaelquintanilha.com/writing-tests-as-user-stories-in-react/
+  
+  #codex #specdrivendevelopment #claudecode
+---
+Se você quer construir algo sério com inteligência artificial, você não vai conseguir escapar do spec Driven Develop ou desenvolvimento orientado a especificação. Por isso, no vídeo de hoje, eu quero te contar o que é essa técnica, como ela se diferencia do Vibe Coding tradicional e te mostrar um exemplo prático onde nós vamos construir uma feature real utilizando o SDD. Se você não consegue construir algo com a, provavelmente a culpa é sua. Não sou eu que tô dizendo isso, mas sim o Andre Carpy, que eu já trouxe várias vezes aqui no canal. E ele deu uma entrevista bem recente dizendo que quando a IA não funciona, isso é uma skill issue, ou seja, é um problema entre o computador e a cadeira, né? Então vamos dar uma
+
+olhada aqui no que o Carpart falou nessa entrevista aqui que saiu no dia 20 de março, beleza?
+
+Ou seja, muitas das coisas, mesmo quando elas não funcionam, você percebe que é foi uma culpa sua, né? Foi um problema seu, uma skill.
+
+>> Ou seja, não é como se a IA não tivesse realmente a capacidade de resolver aquilo, mas é que você não conseguiu dar um jeito de conectar aquelas coisas para que a IA resolvesse o problema. Obviamente, pessoal, não estou dizendo aqui que a Ia consegue resolver todos os problemas do planeta Terra, mas se você trabalha com desenvolvimento, você sabe que 99% das coisas que você faz no dia a dia não são coisas complicadas, não são coisas que requerem um grau elevado de sofiscação. Realmente é questão de você trabalhar diligente, de você saber organizar o que você quer quer desenvolver e conseguir fazer a implementação. Por isso, de fato, Carpat tem razão em dizer que a maior parte das vezes onde a Iar falha foi porque nós humanos, não soubemos dar pra ela aquilo que ela realmente precisava para resolver o problema. Veja, não tô aqui passando pano para Iá que não resolveu.
+
+É, obviamente existem modelos melhores ou piores, mas o que a gente precisa entender aqui é que existe uma forma de maximizar a chance da IA resolver os seus problemas e é isso que a gente quer estudar hoje. Beleza, pessoal? Muito bem. Qual o fundamento aqui, pessoal? Eu quero passar para vocês uma parte de um vídeo chamado Spect Driven Development, AI Assisted Coding Explained, lá do canal da IBM. Um canal muito bom,
+
+inclusive um vídeo bem legal, vou deixar ele linkado aqui na descrição, onde nós vamos conseguir entender qual é a diferença do spec driven development, ou seja, do desenvolvimento orientado à especificação do que seria um vibe coding tradicional, tá? Deixa eu fazer um disclaimer aqui antes de começar. Isso não é nada novo, beleza? Quando você vai começar a programar uma feature historicamente, você não sai centra do computador e sai escrevendo código de qualquer maneira. Você precisa pensar o que que você vai fazer. Beleza?
+
+Inclusive, antes de colocar esse vídeo aqui, deixa eu resgatar um post meu para vocês não dizerem que eu tô só surfando onda aqui, escrito no dia 2 de abril de 2020 lá no meu blog, beleza? Onde eu escrevi esse artigo chamado Writing Test as User Stories in React, beleza? E é o modelo mental para você projetar ali testes de interface. Eu sempre trabalhei mais no front end, é a parte que eu me sinto mais confortável. Então isso sempre foi algo que eu estudei bastante.
+
+E nesse artigo aqui em particular, eu exemplifico como você pode pensar na hora de construir uma feature. Então eu sempre gostei de na hora de começar uma feature pensar no alto nível, né? o que que ela precisa entregar e começar a trabalhar de trás paraa frente. Isso é quase que o contrário de quem gostava de trabalhar com TDD ou test driven development, onde você começava bem incrementalmente até você ter ali toda a sua feature, tá? Então eu realmente sempre gostei de pensar dessa forma, como se você escrevesse user stories. Se
+
+você já trabalhou num time de desenvolvimento, você sabe que muitas vezes o requisito chega para você no formato de user stories. O que que seria isso? São histórias do que aquele usuário tem que poder fazer no app, né? Então, por exemplo, como um usuário, eu quero ser capaz de converter uma temperatura de Celsius para Fahrenheit. Então, se eu tô desenvolvendo uma calculadora, eu sei que, como usuário eu tenho que ser capaz de fazer isso aqui.
+
+Então, isso precisa estar na minha implementação, beleza? E naturalmente você tem um conjunto de user stories que vai criando ali uma um app, uma feature, uma tela, etc., tá? E aí, na época o meu argumento aqui era para você desenvolver testes sempre pensando como uma história, né, e não tentando testar o que seria uma implementação, detalhe de implementação. Então ali, por exemplo, se eu digo que eu tenho que ser capaz de converter de Celsus para Fahrenheit, eu digo que eu tenho que ser capaz de converter de Fahrenheit de volta para Celsius. E se eu digo que eu também
+
+quero ter um botão de reset pra poder converter vários valores com um esforço mínimo, eu já tenho aqui um conjunto de features que já me dá mais ou menos a ideia do que eu quero construir. Mas olha que curioso, pessoal, isso é algo que um project manager, um PM faria. Só que hoje com a nós estamos cada vez mais orquestrando os modelos. Cada vez mais ficou relevante que o desenvolvedor se porte como um P. Inclusive, eu falei disso no vídeo, das regras para você se tornar um AI native engineia. Dá uma
+
+olhada lá depois que ele vai conversar bastante com esse aqui, tá? Então, cada vez mais nós precisamos ter essa visão de PM, tá? Isso tem tudo a ver com o SDD, né? Que é você gerar uma especificação e trabalhar na sua feature através daquela especificação. Então, deixa eu dar um play aqui nesse vídeo da IBM. Vamos ver um pouco da teoria aqui.
+
+Beleza?
+
+Certo, né? Então, antigamente a dificuldade era você escrever o código e agora a dificuldade é como você vai orientar, orquestrar o LLM, o agente, a desenvolver aquilo que você quer. Veja, passou da parte da implementação pra parte da orquestração, specvenel, >> certo, né? Então isso é o spec driven developer orcing,
+
+right? Ai coding aqui fazendo a diferenciação de SDD para vibe, é bom que se diga que vibe code é um termo onde cada um usa de uma forma. Muita gente acha que usaria é vibe code necessariamente. Eu já disse aqui no canal que vibe code espectro, ou seja, você está vibe coding quando você não entende o código. Quando você entende, por mais que você não escreva uma única linha, eu não classificaria como web coding, porque você sabe, você está confiante, consciente de que você pode a qualquer momento assumir ali a manopla e dirigir aquele código, entendendo perfeitamente onde você tá, beleza? no vibe code de novo, você tá
+
+perdido, é só código, você não sabe o que tá acontecendo, você só tá preocupado com o resultado. coding typically looks like. And we'll kind of compare how this is different than spec coding here in a second. Basically, your AI coding agent, whether it's in a browser or it's on your machine itself, you're going to start from that initial prompt. So you're going to write that initial prompt to the LM and I want a specification.
+
+>> Beleza? Então você ali no Vib code você dá um prompt meio despretencioso, né? É isso que ele quer dizer, né?
+
+Então aqui, como a sua instrução ela é muito genérica, a IA vai precisar fazer muitas assumptions, beleza? Ela vai precisar assumir muita coisa na hora de gerar aquele código.
+
+Então, basicamente a chance da acertar o que você quer de primeira é bem difícil. Então, você vai ficar iterando com ela, beleza? até você chegar no resultado mais adequado.
+
+>> Então você consegue ver aqui que esse é um processo que você não consegue prever muito, certo? Ele vai ali do seu feeling, até por isso o termo vibe colding, né? Veja, existe um momento para fazer isso, porque é muito barato você gerar código dessa forma, no sentido que você não precisa pensar muito, né, antes de começar a implementação e você pode descartar o código sem muito remorço, tá? Então, em algumas situações, principalmente quando você tá explorando, esse tipo de abordagem aqui, é OK. Você vai lá, vai iterando, vai conversando, pede para ele trocar uma coisa, pede para ele trocar outra, até eventualmente você chegar no seu estado desejado. Porém, você
+
+consegue ver também que a IA pode não chegar onde você quer. E aí você tem uma carga mental forte aqui, porque você ficou lá muito tempo tentando resolver algo com alguém que não entendia o que você queria. Isso costuma ser até um pouco estressante. Então essa certamente é a principal falha do Vibe Code. E porque é difícil você aplicar essa técnica num projeto mais sério, num projeto maior, num projeto onde as especificações sejam mais amarradas, você tem mais certeza do que você quer.
+
+Por exemplo, quando você trabalha numa equipe de desenvolvimento, você tem uma instrução, você tem um output desejado, você dificilmente vai conseguir aplicar o VB Code nessa forma. Você vai precisar de algo mais estruturado, beleza? É isso que a gente vai ver em sequência. Então agora vamos ver como tradicionalmente você faz na engenharia de software, tá? Esse termo aqui é muito comum, você vai ver ele chamado SDLC, software Development Life Cycle, ciclo de vida do desenvolvimento de um software. Ele
+
+começa com o planejamento e o design, passa pela implementação. Essa implementação vai ter a fase de teste e de Qway, onde você entra nessa iteração, beleza? Essa iteração aqui acontece até que você fique satisfeito. A o deploy e aí depois você dá o suporte, a manutenção ao web. Tradicionalmente isso era o que a gente chamava de modelo waterfall, né, ou cascata. Eu já fiz um
+
+vídeo onde eu detalho o método waterfall e métodos áge também. Eu vou deixar o link aqui para você dar uma olhada e ele faz todo sentido nesse contexto que a gente tá passando hoje, beleza?
+
+spec driven softwareycle certo então o sdramação orientada a especificação, ela vai beber bastante do que nós fazíamos lá originalmente no SDLC. Beleza? Vamos ver isso aqui com bastante atenção aqui, pessoal. also use the LM just like vibe coding in order to as AI agent write code or run these tests but it all starts um with the prompt of course at first but the thing is we're not prompting specific implementation prompting what we want our system to do Então a gente começa com um prompt que não é implementação, a gente tá começando com uma ideia. Lembra da user stories? Basicamente a gente tá
+
+começando com as user stories, beleza? A gente tá começando o que a gente quer que o sistema faça e dali a gente vai evoluir.
+
+Então daqui você vai criar uma lista de requisitos. O famoso PRD, você pode dar o nome que você quiser aqui, mas você vai gerar os requisitos a partir daquilo, daquele seu desejo. Esse é o trabalho de arquitetura, pessoal. Por isso que engenharia de software é crucial. parêntes aqui perdido no vídeo.
+
+Pessoal que acha que não vale mais a pena estudar a programação, olha aí, é engenharia de software pura. Basicamente foi o que restou engenharia de software. Beleza?
+
+>> E aqui o princípio é o mesmo, né? Você vai gerar primeiro os requisitos ou um plano e você pode aprovar aquele plano ou seguir iterando, tá? Se você programa com cloud code, com Codex, com cursor, com antigravy, você já tá acostumado com isso. Todos eles têm uma forma ou outra de um plan mode, onde ele não vai escrever código até que você concorde com ele. O que ele precisa fazer, é o que ele chamou ali de contrá, são os requisitos, beleza?
+
+>> Certo? Ele tá chamando aí do design da implementação, né, do projeto da implementação, onde normalmente você tem ali os toos, né, onde você cria os tickets, onde você cria os itens que vão ser atacados pelos agentes.
+
+>> E aí, basicamente você manda pra implementação, se você ficar feliz você implementa e retorna no ciclo, tá? Então o ciclo fica orientado a essa especificação.
+
+>> Então ele dizendo que tradicionalmente como que a gente fazia, né? Você começava ele mais ou menos com uma intuição do seu código, você escrevia e aí ia atualizando a documentação. E aqui você viu que isso meio que inverteu, né?
+
+>> Então aqui o TDD que eu falei mais cedo, né? Você começa com um teste, com um detalhe mais técnico da implementação. Eu nunca gostei muito desse tipo de abordagem, tá? Vou ser sincero com vocês, mas muita gente fazia isso, isso é até uma forma bem metódica de trabalhar, tá? Então, só pra gente ter esse quadro final aqui das definições, né? Se no método tradicional você
+
+primeiro escrevia código, depois você documentava e no TDD você primeiro escrevia um teste e aquilo depois virava o código e o teste funcionava como uma documentação, no SDD você primeiro começa com a especificação com a user stories, com o que você quer fazer e dali você transforma no código. Então veja que é diferente de você ir primeiro pro código, como a gente fazia tradicionalmente, ou ir primeiro pro detalhe da implementação, como a gente fazia lá nos testes. você tem uma abordagem muito mais high level, você vê o que você quer e dali a implementação surge. Daí você vê que lá em 2020 eu já falava de programar dessa forma e por isso não é de se espantar que quando a IA surgiu eu fiquei particularmente interessado porque é uma forma que sempre me atraiu. Eu sempre gostei de programar assim. Muito bem pessoal,
+
+então agora vamos ver o SDD na prática num projeto real. Antes disso, duas coisas. Primeiro, o primeiro episódio da série criando um site do zero, eu faço um SDD, tá? Eu entro lá no chat GPT Pro e começo a conversar o que eu quero e a gente refina aquilo num documento de especificação. Toda série Criando um site do zero é baseada naquele documento. Se você tá assistindo a
+
+série, ela tem os cinco primeiros episódios liberados para todo mundo e depois pros membros do canal. Então, se você quiser assistir ela toda, essa é uma excelente oportunidade de você contribuir com o canal e também aprender mais sobre essa LDD. Eu a partir daquele documento gerado no primeiro vídeo, eu basicamente fiz 10 vídeos só com aá seguindo com o prompt do tipo: "Vai segue, implementa", porque já tava tudo organizadinho, todos os requisitos já levantados. Então foi muito fácil. Eu realmente recomendo que você assista o primeiro episódio da série Criando Sai do Zero. O link vai tá aqui, beleza?
+
+Segundo ponto, como o chat GPT Pro só tá liberado para quem assina o plano Pro de 200, hoje eu quero mostrar para vocês uma ferramenta chamada Tracer AI, que é a patrocinadora desse vídeo. Então pessoal, o Tracer AI é uma ferramenta bem interessante que se propõe a ser o seu product. Então, ela faz justamente aquilo que a gente conversou. Ela transforma o a intenção de um produto, aquilo que você quer em uma especificação que possa ser compartilhada e estruturada para que você possa refinar junto com seu time e então guiar os seus agentes de programação dentro daquele contexto e verificar se toda mudança feita está de fato de acordo com o plano. Então, basicamente, o Tracer AI é uma ferramenta que permite que você crie as suas especificações justamente usando os princípios do SDD. Por isso tem tudo a
+
+ver com esse nosso vídeo de hoje, beleza? O link para você testar o tracer sem pagar nada vai est tanto na descrição quanto aqui no comentário fixado. Muito bem, depois que você criar sua conta gratuitamente lá no Tracer, você vai precisar instalá-lo como uma extensão da sua IDE. Tem aqui a documentação, você pode instalar ali no cursor, no VS Code, no Windser, até no GitHub App mesmo, tá? Eu vou fazer aqui no cursor, escolha o que for melhor para você. Mas note que a implementação vai
+
+ser no seu agente de programação favorito. Então, se você prefere programar na CLI do Cloud Code, sem problema nenhum. Aqui a gente vai fazer a especificação, beleza? Então, é um botão ali para você instalar no cursor, vai fazer a sua autenticação e aí vai aparecer aqui uma opção na barra lateral para você abrir o tracer, certo? E você vai ver que ele tem quatro modos. o modo
+
+epic phases, plan e review. Vamos até voltar aqui pra documentação pra gente ver a diferença de cada modo, certo? Então, o modo de fases é aquele que você vai usar quando você quiser construir uma fature mais complexa que precise passar por múltiplos serviços ou por uma parte maior do seu código e, portanto, você quer preservar o contexto em cada fase, tá? Eu arrisco dizer que esse aqui é o modo principal, beleza? Ele também tem o plan mode para aquelas tarefas onde você consegue desenvolver de uma tacada só. Nesse caso, né, vai ser ali,
+
+digamos assim, um substituto pro que seria o plan mode do Opus ou do Coldex. Aqui vai do gosto do frega, mas eu realmente acho que onde ele se destaca é no Fazes mode e também no epic mode, né? No epic mode seria um trabalho ainda maior do que o pazes mode, né? Você quer fazer grandes refactor, você quer colocar ali um pedaço bem grande de implementação. É o que a gente chamaria de um épico, né? Você tem ali vários
+
+projetos dentro daquele épico, várias iniciativas dentro daquele épico e você quer manter o contexto entre eles, tá? Obviamente fica impossível de mostrar isso aqui num vídeo no YouTube, mas é bem interessante esse modo também. Mas hoje eu quero mostrar para vocês na prática o fazers mode, que eu acho que é o que faz mais sentido pra maior parte de nós aqui. Inclusive eles até dizem aqui, ó, quando que eu uso plan ou pazers? E aí o plan é para mudanças que tem um escopo muito bem definido, que pode ser implementadas em uma única sessão de desenvolvimento, né? Pensa num
+
+ticket único ali no seu time de desenvolvimento. E o Phases é para aquela fit, para aquele projeto que vai ter múltiplas áreas, que requer coordenação, backend, front end, banco de dados, testes, enfim, muitas coisas que você vai trabalhar ali, muitos tickets, se a gente fosse traduzir pro que seria, né, um gerenciamento de um time de programação. E nesse caso eu acho que faz bastante sentido. Beleza? Beleza? Vamos voltar aqui então pro
+
+tracer dentro do cursor. E aí basicamente você vai descrever o que você quer e ele vai começar a interação. É bom que se diga que você consegue escolher aqui qual tipo de modelo você vai usar, tá? Pode escolher aqui tanto diretamente os modelos down trop, né, que seu favorito ou até do chat GPT, por exemplo, GPT 5.4 Extra High, o XAI, né?
+
+Ou você pode vir aqui e deixar no model e fronteer, né? fronteira os melhores modelos com máximo de reasoning ou no modo balanceado, né, que vai ser um mix ali de qualidade, velocidade e custo. Normalmente, pessoal, você vai começar, principalmente se você for desenvolver trabalho em múltiplas fases, você quer ter o máximo de reasoning, tá? Então eu recomendo você sempre deixar aqui, né? Se você for fazer um trabalho mais longo, deixa ali no Frontier, trabalha com modelo que vai ter o máximo de reasoning, porque isso, por mais que gaste mais no início, vai te economizar muito no futuro, beleza? Porque tendo
+
+feito um plano mais adequado, a implementação segue muito mais fácil. Então, deixa eu fazer o seguinte aqui, tá? Deixa eu dar o contexto para vocês. Por que que eu vou dar o contexto? Que é importante, a gente tá fazendo SDD, a gente precisa entender o que que o usuário quer, tá? Então deixa eu fazer o
+
+seguinte, eu vou abrir aqui o Quant Brasil, que é o meu app de finanças quantitativas, e eu tô há muito tempo querendo fazer um refactor do portfólio, tá? No Quant Brasil, o portfólio funciona meio como uma watchlist. O cara vai lá, coloca os ativos naquele portfólio e aí, beleza, ele tem esse portfólio aqui que ele consegue usar para filtrar eh um screening ou para ver quanto seria o beta desse portfólio, né? Se eu vi aqui, sei lá, em ferramentas beta da carteira, eu posso simplesmente selecionar aqui um portfólio, pegar um portfólio menor aqui, botar o peso de cada ativo no portfólio e pronto, calculei essa métrica quantitativa que é um beta dessa desse portfólio. Mas você vê que eu não tenho aqui quantos por cento eu tenho de cada ativo, tive que botar aqui na mão, tá? E eu também não
+
+sei quantos ativos eu tenho. Sei lá, será que eu tenho R 1 milhão deais de Petro 4? Será que eu tenho só R$ 50? Não dá para saber da forma como ela tá hoje, tá? Então esse portfólio é útil enquanto watchlist, mas não me dá muitas informações que eu gostaria. Por
+
+exemplo, quanto que eu tenho de cada ativo na carteira, tá? Quanto que é o valor financeiro da minha carteira, não tenho isso hoje, beleza? Então isso é um refactor que eu quero fazer há bastante tempo no Quant Brasil e eu acho um excelente candidato para trabalhar como uma pace, beleza? Por quê? Porque é uma mudança que vai precisar de banco de dados, de back end. Eu preciso integrar
+
+isso num app já existente. Mas a vantagem da gente fazer isso aqui no tracer que tá dentro do cursor ou do VS Code é que ele tem acesso ao meu repositório. Então na hora de fazer o planejamento, ele sabe exatamente como ele está estruturado. Se eu fizesse isso no chat GPT Pro, eu teria que colocar aqueles arquivos para ele lá. Terei que ir lá exportar um zip ou botar os arquivos relevantes. É menos
+
+conveniente, tá? Então, usando uma ferramenta como Tracer, deixa todo o processo bem mais conveniente. Então, a gente vai fazer o seguinte. Lembra lá do vídeo do nosso amigo aqui, onde ele disse que a gente começava com uma especificação do prompt, isso gerava um requisito e daí a gente iterava? É justamente isso que a gente vai fazer aqui, pessoal, porque eu vou falar para ele o meu prompt inicial. I want to ref
+
+to the portfolio feature of con Brasil. Because right now the portfolios they work much more like a watchlist and not like a real portfolio. I don't have information of how many shares the user has. I don't have information of when the user bought something or sold something. I don't know what is the percentage the weight of each asset in the portfolio. So I want to refactor
+
+this in a way that it can be way more useful for the user. Se você quer saber o que eu fiz aqui, eu utilizei o whisper flow, tá? O link para você testar o whisper flow gratuitamente também vai tá aqui na descrição. É só uma forma de transformar o que eu falo em texto que eu acho que casa muito bem com aspect driven development. Beleza? Você vê que
+
+ele entendeu perfeitamente, converteu perfeitamente, eu consigo pensar alto e falar, é, é orientado ao que eu quero, né? Então eu preciso expressar aquilo que eu desejo e, portanto, né, esse tipo de prompt falado funciona super bem. Já adiantando, Rafael, você falou inglês, precisa ser em inglês? Não, pessoal, não precisa. Eu particularmente prefiro sempre falar com a IA em inglês. Eu noto
+
+que os resultados são melhores, o código está em inglês, a minha code base está em inglês, tudo orna melhor em inglês, tá? Dito isso, você não precisa, você pode fazer em português sem problema nenhum. Bom, o Tracer começou aqui a fazer a análise, beleza? [limpando a garganta] Então agora ele tá analisando o meu repositório baseado no que eu pedi e aí bem parecido que é o plan mode tradicional que a gente já tá acostumado. Então vamos deixar ele terminar o plano aqui. Aí olha que
+
+legal, olha a vantagem de ter isso aqui no repositório integrado no cursor no Vascode. Ele foi capaz de ver onde tá meu modelo no banco de dados e falou: "Ó, asset portfólio já existe." Ele asset ID e portfólio ID e tem uma coluna weight, só que essa coluna não é usada. Então ele foi capaz de ver que já existe, isso já foi previsto lá no início, mas nunca foi implementado. E ele já me dá até o link que eu posso clicar aqui e cair exatamente lá no arquivo, tá? Então excelente, muito bom
+
+de você fazer um planejamento dessa forma, tá? Já entendeu onde ficar a PI, já entendeu onde o front end lê? Muito bom. E aí ele agora me fez perguntas, ó. Ele falou: "Antes de quebrar essa refatoração em fases, eu tenho algumas perguntas, tá?" Então, de novo, é algo
+
+que a gente tá acostumado no plan mode de alguns modelos, mas ainda assim bem legal, tá? Então, a primeira pergunta que ele fez, como que a gente tem que modelar a posição dos usuários? A gente deve trackar e transações individuais com a data, preço e a quantidade por operação e construir as o histórico da posição ou um modelo simplificado onde o usuário só coloca o número total. Não, a gente tem que ser o individual, né? Daí que o usuário vá e fale assim: "Ah, hoje eu comprei isso, hoje eu vendi aquilo".
+
+Que mais? comportamento atual, que é tipo uma watchlist, eh, tem que ser conservado como um conceito separado ou o portfólio deve ser completamente substituído? Não, eu quero, eu quero both, eu quero ainda ter esse modo watch list. Esse modo watch list é relevante. Então, selecionei aqui como que o peso e a porcentagem de cada ativo deve ser calculado? Deve ser baseado no preço
+
+atual de mercado, né? Então, é o preço atual multiplicado pela quantidade de ações ou o usuário deve manualmente definir o weight. Automaticamente, não tem que fazer isso manual, né? Nós devemos atualizar também os endpões analíticos, momentum variation beta para incorporar e esses novos dados ou o refactor deve focar apenas no portfólio crue e display, deixando o analytics para uma interação depois. Vamos colocar para depois. Vamos fazer primeiro isso
+
+aqui, tá? E aí ele diz, ó, beleza, tudo foi respondido, vamos enviar e ele vai continuar aqui trabalhando. Você vê que por trás dos panos o tracer tá usando suagente. Tá vendo? Tem um agente olhando os modelos, um agente checando as definições de inan e outro agente chegando checando front end, tá? Então
+
+ele já até já consegue ver quais componentes eu tô usando para fazer um plano já bem, né, integrado com aquilo que eu quero, tá? Olha que legal, ele gera um diagrama mermaid, né, que eu posso até clicar para expandir aqui, ó, enquanto ele vai terminando, com justamente toda a lógica do negócio, né? Então o usuário vai criar um portfólio, vai escolher o modulo, se é watchlist ou não. E aí o front end chama pela API, né? Tá aqui o que vai ser inserido no banco de dados, né? Portfólio
+
+transaction que ele vai precisar criar, é onde cada coisa vai ser atualizada. Muito legal isso aqui. Isso aqui é justamente o trabalho que um PM faria. E ele já começou a criar as fases. Olha lá. Então aqui, ó, três fases. Vamos ver
+
+aqui, ó, as decisões chave que ele colocou no plano, né? Primeira decisão chave. Asset portfólio é sincronizado de forma automaticamente sempre que cada transação é adicionada. Então os end points analíticos que calculam o momento, variação, etc., vão chamar, né, lá de portfólio e isso tem que continuar funcionando, tá? O modo padrão é o
+
+watchlist, que é o portfólio que a gente tem hoje, né? Então, todos eles estão no esse modo watch list, ou seja, ninguém vai precisar fazer nenhuma migração nos usuários atuais. Os pesos são computados no servidor na hora que você dá um get positions. Então esse end point vai agregar as transações e computar o preço por ação. Naturalmente isso muda porque o preço das ações tá mudando toda hora, então vai ser em tempo real, bem legal e sem mudança ali nos end points analíticos. Então essas foram as
+
+decisões que ele tomou e aqui eu tenho as fases, tá? Então se eu clicar aqui, eu caio na face breakdown. Então, breakd de cada fase, ó, ele criou quatro fases, na verdade. Primeira fase, se eu clicar aqui, eu consigo ver todo o detalhe, tá? Extender o data model para suportar portfólio junto com watchlist. Então,
+
+colocar aqui a coluna mode, defult watchlist, mas podendo ser watch ou portfólio, né? Criar a nova tabela portfolio transaction, colocar as transações e utilizar o Allen Bic, que é o que a gente tá usando aqui pro Python. Beleza? Então, perfeito esse plano aqui, né? Segunda interação seria o quê? Criar
+
+os API end points, né? Então você cria lá o end point no seu back end, create transaction, né? As funções, o esquema do pident. Ele já entendeu exatamente como funciona o meu código. Excelente.
+
+Colocar as rotas aqui, ó, o crude, post transactions, get transactions, delete e pegar todas as posições, tá? Perfeito. Exatamente isso que eu quero. Terceira etapa, atualizar a UI do portfólio para aceitar agora essa seleção de modo. Então, claro, agora tem dois modos, a gente precisa disso. E aí, o legal, ele
+
+já até falou, tem aqui os botões radio group, togle group, você pode reutilizar, né? Então, já falou exatamente que vai ter que ter. E o quarto ponto é também lá na UI criar o front end para adicionar as transações e ver as posições, né, automaticamente computadas, tá? Então, basicamente, fechou isso aqui. Veja, se isso aqui fosse um time de desenvolvimento, realmente, provavelmente essa feitur seria quebrada em quatro tickets. E como
+
+que isso aqui aconteceria, pessoal? Tradicionalmente eu pegaria esse primeiro ticket, criaria, daria para um desenvolvedor back end, pegaria esse segundo ticket, talvez desse pro mesmo cara e aí colocaria o ticket trê e o ticket 4, que poderiam ser trabalhados em paralelo, talvez até por desenvolvedores diferentes, mas bloqueados pelo ticket dois, né? Então o ticket dois é bloqueado pelo um, o três é bloqueado pelo dois e o quatro e o três podem ser trabalhados de forma paralela, tá? Então veja que isso aqui é um time de desenvolvimento feito para você, beleza? E aí naturalmente agora você pode fazer a implementação. Como
+
+que funciona aqui com Tracer, pessoal? Então, a gente clica aqui no create plan e aí ele vai fazer a especificação do plano. Ele já entendeu qual é a fase e agora ele vai de fato criar uma especificação bem detalhada. Por isso spec driven development para que um agente de A faça a implementação. Só que agora a chance de erro é muito menor, porque os detalhes estão lá, a forma de desenvolvimento está lá, o arquivo que você quer utilizar está lá, os padrões de código estão lá, tudo fica muito mais suave. Beleza? E aí, pessoal, finalizado
+
+o plano, olha que legal, assim, um plano extremamente detalhado dizendo onde que ele vai colocar o inano, o arquivo de inano, onde que vão as migrações, como que ele faz para verificar depois utilizando o Ruff, como que ele usa ali o Alen Bik para gerar uma nova migração. Cara, muito bom mesmo, né? Assim, é impossível o modelo errar isso aqui, tá? Tem até um um diagrama de dependência aqui no mermade. E aí agora vem a parte mais legal. que é o seguinte, eu já tô
+
+com esse plano gerado, então eu posso agora jogar esse plano pro meu agente preferido, pro Cloud Code, pro Gemini, pro Codex, até pro cursor mesmo, ou posso simplesmente exportar como markdown, jogar em algum lugar, persistir lá no obsidian da vida para compartilhar com os meus companheiros de trabalho, ou talvez até mais fácil. eu copio e aí eu venho aqui, por exemplo, no terminal, abro o cloud code, dou um crl v e tá aqui o meu plano, um cloud code de 1 milhão de contexto, pessoal, vai funcionar que é uma beleza, tá? Só pra gente ver como funcionaria na prática, deixa eu clicar aqui, por exemplo, e jogar lá para o cloud Code. Você vai ver que ele já vai seguir a implementação, ó. Ele já abre aqui, ó, exatamente aquilo que eu mostrei para vocês. Ele já cai aqui no plano, ó. I
+
+have created a followed plan. Tá aqui como você vai fazer. Tá ali o nosso plano e ele já segue. Beleza? Deixa eu pausar aqui só para pra gente ver como seria em outros lugares. Esse aqui seria
+
+se a gente quisesse rodar direto no cloud code. Beleza? Tem aqui o handoff, né, que ele fala. Posso jogar aqui também, né, o handoff para o cursor. E se eu jogar aqui, ó, já cai de novo aqui no cursor. Basicamente para eu trabalhar
+
+com o modelo que eu achar melhor. Então aqui você consegue usar até o modelo mais barato, porque a parte mais difícil, que é o planejamento, já foi feita. Beleza? Então seleciona aqui o composer, né? o compos 2 que saiu novo, o Sonet, enfim, se você gosta dos modelos open source, seleciona lá o Kim, o GLM, o Minimx, tudo vai dar super certo aqui, tá pessoal? Então, deixa eu
+
+fazer o seguinte, eu não vou implementar todas as fases que vai ser muito grande, mas eu vou rodar aqui o cloud code, beleza? E aí a gente vai testar depois essa funcionalidade de verificar as mudanças feitas lá pela CLI, certo? Então vamos deixar ele trabalhar aqui. Ele vai fazer todas as etapas e eu vou voltar quando ele finalizar. Pessoal, muito fácil. Implementou tudo aqui em
+
+menos de quatro minutos. Isso porque deu erro com outra coisa não relacionada aqui no repositório, mas ele foi assim voando pelas especificações, tá? E agora vamos clicar aqui, ó, verificar mudanças feitas pela CLI do Cloud Code. Então vamos entrar agora na etapa de verificação, beleza? E vamos ver aqui o que que o Tracer vai fazer. Lembrando, a
+
+gente tá aqui, ó, na fase da iteração. A gente fez a especificação, levantou os requisitos, implementou. Estamos agora verificando. Beleza? E o que é essa etapa de verificação, pessoal? É o que
+
+seria um Qway, um code review num time de desenvolvimento. É quando o Tracer vai verificar a implementação do agente e gerenciar os comentários, né, da revisão para mudanças, melhorias iterativas. Beleza? E aí qualquer coisa que ele encontrar, ele vai classificar em critical, major, minor e outdated, certo? Então vamos lá, vamos ver se ele acha alguma coisa na implementação do cloud code feita com OLPUS 4.6, tá? E
+
+aí, olha só, ele achou, tá? Eh, disse que a implementação segue o plano, portfólio mode foi adicionado, portfólio transaction foi introduzido, blá blá blá, e achou aqui dois problemas que podem ser corrigidos, tá? Primeiro que o modo e o transaction type não estão limitados aos valores que eles deveriam ser. E aí o segundo problema que ele achou até bem interessante, né, bem técnico, as queries da portfolio transaction sem o índice vão ficar muito caras, tá? Então ele tá dizendo para colocar um índex ali. Então bem legal
+
+até bem mais detalhado do que eu imaginaria. E aí daqui a gente segue a iteração, né, esse fluxo que a gente viu aqui no vídeo. Beleza? Posso fazer o handoff aqui, por exemplo, de novo pro cursor ou pro cloud code ou qualquer coisa do tipo. Tá aqui, né, o comentário para implementar, usar o modelo que eu quero ou de novo jogar lá pro cloud code e repetir o fluxo. Pessoal, espero que
+
+vocês tenham gostado desse vídeo. Spec driven development é realmente a forma de se programar com a se você quer fazer algo séries, se você quer fazer algo profissional. Particularmente, como eu disse, é um tipo de programação, uma abordagem que me agrada bastante. Eu já gostava de fazer coisas similares lá no passado, portanto, fazer com IA para mim parece muito natural. E utilizando o Tracer AI fica até mais fácil, beleza?
+
+Então, agradeço novamente ao pessoal do Tracer pela parceria aqui nesse vídeo. Se você gostou desse vídeo, se você gosta de programação agêntica, engenharia de software, esse canal é para você. Então, por favor, se inscreva, curta esse vídeo, compartilhe com seu amigo e sua amiga que gosta de programar com Y, que gosta de programar no cursor, no Cloud Code, no Codex, ten certeza que esse vídeo vai agregar bastante. Não deixa de curtir e hypar também se você tiver um celular que ajuda bastante aqui o nosso canal. Agradeço a vocês pela audiência de sempre, agradeço ao Tracer pela parceria e até a próxima. Yeah.

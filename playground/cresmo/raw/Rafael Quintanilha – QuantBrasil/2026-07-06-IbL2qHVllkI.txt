@@ -1,0 +1,253 @@
+---
+video_title: "A melhor forma de usar Fable 5 sem gastar todo seu limite"
+video_id: IbL2qHVllkI
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=IbL2qHVllkI
+video_date: 2026-07-06T22:00:07+00:00
+video_description: |
+  Conheça a CLI do TestSprite ➡ https://github.com/TestSprite/testsprite-cli
+  
+  Conheça a formação em Engenharia de IA ➡️ https://programe.ai?utm_source=youtube&utm_medium=video
+  _______________________________________________
+  
+  Com o lançamento do Sonnet 5 e a volta do Fable 5, a Anthropic agora tem uma família de modelos bem mais confusa: Fable, Opus, Sonnet e Haiku, cada um com preço, limite, latência e nível de esforço diferentes. Neste vídeo, eu organizo essa bagunça para responder uma pergunta simples: qual modelo do Claude faz sentido usar em cada tarefa?
+  
+  Eu passo pelas recomendações oficiais da Anthropic, benchmarks, preço real por token, diferença entre níveis de reasoning e comparação com modelos como GPT 5.5, GLM 5.2 e Kimi K2.7. Também mostro uma dica prática para usar Fable 5 no Claude Code sem gastar limite à toa: deixar o próprio modelo decidir quando delegar tarefas menores para Sonnet ou Haiku. E, quando falamos de múltiplos agentes e tarefas longas, entra também a importância de validação com ferramentas como a CLI da TestSprite.
+  
+  A tese do vídeo é que não existe mais um único "melhor modelo" para tudo. O melhor workflow é saber quando começar pelo modelo mais capaz, quando economizar com um modelo menor, quando aumentar o nível de esforço e quando deixar o próprio Claude fazer esse roteamento por você.
+  
+  Capítulos
+  
+  00:00 Intro
+  01:36 Lançamento do Sonnet 5
+  07:16 A volta do Fable 5
+  10:14 Resultado dos modelos Claude em benchmarks
+  13:13 Preços: Sonnet 5 vs GLM 5.2 vs Kimi K2.7 vs Opus 4.8
+  16:46 Quando utilizar cada modelo
+  28:10 Como fazer o modelo se auto-validar
+  30:05 Dicas do Simon Willison
+  33:36 Testando a dica de economia com Fable 5
+  36:22 Conclusão
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 VPS na Hostgator com suporte 24/7 em português 🔻🔻
+  https://www.hostgator.com.br/52611-13-3-12.html
+  
+  🔻🔻 Teste seus apps com IA utilizando o CodeRabbit (14 dias grátis) 🔻🔻
+  https://coderabbit.link/rafael
+  
+  🔻🔻 Teste o Wispr Flow por 2 semanas grátis 🔻🔻
+  https://ref.wisprflow.ai/rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=3VaLMYJgR3g
+  https://www.youtube.com/watch?v=kyvdBqLfJko
+  https://www.youtube.com/watch?v=aFkDdz_P9Us
+  https://www.youtube.com/watch?v=5oH1luydCxE
+  https://www.youtube.com/watch?v=FJ_hWaLHB_w
+  
+  🔻🔻 Artigo oficial sobre como escolher cada modelo 🔻🔻
+  https://platform.claude.com/docs/en/about-claude/models/choosing-a-model
+  
+  #anthropic #claude #claudecode
+---
+Desde o lançamento do Sonet 5 e o restabelecimento do Fable 5, a Antropic passou a contar com quatro modelos no seu arsenal. Além desses dois já mencionados, temos também a série Opus e Riku. Por isso, no vídeo de hoje, eu quero discutir tudo sobre esses modelos para que nós sejamos capazes de decidir quando utilizar cada um deles. Nós vamos ler as recomendações oficiais do Antropic, vamos beber também das próprias recomendações da comunidade. Eu quero te dar uma dica de como utilizar o Fable 5 sem gastar tantos tokens e responder a pergunta: será que Antropic se tornou a melhor provedora de inteligência artificial? Pessoal, quem
+
+me acompanhou no Instagram nessas últimas semanas viu que eu estava fora do escritório e, portanto, perdi ali o lançamento do Sonet 5 e também, né, a volta do Fable. Aliás, se você quer saber sobre o Fable, eu já fiz um vídeo sobre as minhas impressões iniciais dele, que eu vou deixar aqui para você dar uma olhada depois. Mas o objetivo desse vídeo então é desempacotar tudo que aconteceu nessas últimas semanas para que nós tenhamos ali uma forma de pensar, de raciocinar qual modelo utilizar para cada ocasião, se tratando da Antropic. E por conta disso, nós vamos passar aqui pelos lançamentos, né, pelos principais pontos. Eu sei que vocês já viram muito provavelmente o que aconteceu, né, as principais, os principais destaques, mas eu quero fazer uma recapitulação nesse vídeo para que a gente possa, baseado nessas informações, saber qual modelo utilizar em cada caso.
+
+Beleza? Começando aqui com a recapitulação do lançamento do Sonet 5, né? Isso foi feito ali no dia 30 de junho e foi a atualização ali do Sonet saindo do modelo 4.6, né? O Sonet ficado bastante tempo sem nenhuma atualização para aí sim vir para a versão C. E aí, a
+
+Antropic diz que esse é o modelo dos sonhos mais agêntico, né, e que agora ele diminui a distância para o Opus 4.8, mas com preços menores. Calma que tem um detalhe do preço aqui. Agora é importante dizer que o Sonet não passa o Opus 4.8 em questão de performance, né?
+
+Na verdade aqui a gente estaria falando mais em questão de preço mesmo. Se a gente for olhar aqui os próprios benchmark que Antropic disponibiliza, a gente vê que é uma é uma boa melhora em relação ao Sony 4.6, mas ainda fica bem atrás do Opus 4.8, né? Agora, uma coisa interessante nesse lançamento é que eles dizem que o Sonic tem uma habilidade muito menor de performar tarefas de cybersegurança do que o, né? Lembrando
+
+que com o Fable e todo esse papo de cybersegurança, né? e proteção e soberania de A e tudo mais. Isso tem ficado em vog, tem ficado na moda. E aí o pessoal da Tropic dizendo que, ó, o Sonet não serve para isso não, né? Se você quiser fazer cybersegurança, vai lá pro Opus, né? Ou pro Fable, tá? Preço
+
+pessoal, o Sonet 5 disponível em todos os planos, né? Maxtin e Enterprise. E saindo com o preço inicial de por milhão de input token e 10 por milhão de output tokens. Só que isso vai aumentar em 50%, né? Vai ter um aumento de 50% a partir de e setembro, tá? Então
+
+a gente vai ter aqui o mês de julho inteiro, o mês de agosto inteiro e aí em setembro um aumento de 50%. Só que tem uma pegadinha que a própria Antropic disse que esse novo modelo está utilizando um novo tokenizer, ou seja, uma nova forma de quebrar ali os seus prompts em tokens, que é o que a entende, certo? E esse tokenizer produz aproximadamente 30% mais tokens do que o Cloud Sonic 4.6. Então efetivamente que eu tô lendo o blog do Simon Willson, é um aumento de 30% que eles estão dando, porque eles dizem que, né, o mesmo o mesmo promp vai produzir 30% mais tokens. Se você cobra pro token, você tá
+
+aumentando 30%. Por isso é importante a gente sempre olhar pra token efficiency, pra eficiência de token, não apenas para o preço raw, né, pro preço ali que eles disponibilizam pros consumidores, porque a eficiência de token é o que importa no final das contas, porque o mesmo modelo pode cobrar mais caro para para processar um token, só que ele utiliza bem menos tokens porque ele é muito mais inteligente, por exemplo, tá? Isso é uma verdade que a gente acaba vendo muito com os modelos da Open AI, né, do GPT. E aí o Simon Willon diz aqui que utilizou o Cloud Token Counter dele, uma ferramenta que ele criou para testar o novo Tokenizer. E aí ele foi capaz de perceber isso mesmo, tá? Ele passou aqui
+
+alguns documentos em diversas línguas, né? Inglês, espanhol, chinês e também aqui uma um arquivo de Python, um arquivo grande em Python e a quantidade de tokens aqui para cada modelo, né? O Sonet 4.6 aqui sempre o menor, o Opus 4.7, né? apresentando aqui um um número
+
+bem maior também, muito parecido, na verdade com Sonet 5, né? Você vê que comparado com quem tava utilizando o Sonic 4.6, o Sonic 5 teve tarefas aqui até de 1.4 vezes mais mais token sendo utilizado. Então a mesma tarefa só para você ingerir aquele prompt, aquele conteúdo, você estaria gastando 40% mais tokens, tá? E e aqui engraçado também
+
+que a gente consegue ver a diferença de linguagem, né? os chinês eh mandarem simplificado. É basicamente aqui utilizando bem menos tokens, né? É algo que a gente viu lá no vídeo do cavem, né? A skill que simplifica a linguagem, simplifica o output token e por isso, né, acaba gastando menos, tá? Então vou
+
+deixar o link se você quiser dar uma olhada no cave menu lá também, beleza? Ponto aqui é que sim, o Sonet ficou mais caro, beleza? Por quê? Porque você vai ter esse aumento aqui de 30% que a própria diz que vai ter e depois ele vai aumentar, né? Vai vai ficar ali em 3 por milhão e 15 por milhão de output tokens.
+
+Então se a gente colocar 30%, vamos arredondar aqui mais ou menos para 4 por milhão e 20 por milhão de output token, se a gente considerar o novo tokenizer. Beleza? Vamos dar uma olhada aqui nesse gráfico de custo por tarefa. A gente já vai ver alguns benchmark independente, mas é interessante ver que o Sonet 5 você vê que ele no modo high ele tem uma acurácia melhor do que o Opus 4.8 no low e no médio, né? Mas aí quando você
+
+coloca o Opus 4.8 no high, aí ele já tem uma curácia maior, embora ele fique mais caro, tá? E aí se você colocar o OPF 4.8 no X High ele só perderia para o Sonet Max. né? Na verdade, colocou o Son Max
+
+sendo até melhor do que o OP 4.8 aqui. É claro que isso é um tipo de tarefa, mas o que que isso quer dizer pra gente, pessoal? E aqui começa a entrar confusão, porque quando você fala dos modelos, cada modelo também tem os níveis de esforço, né, que vão variando. Então, às vezes o Opus num nível de esforço eh mais baixo vai ser inferior do que o Sonet num nível de esforço mais alto. E aí, qual que você usa e quando,
+
+né? Então isso fica bem confuso. Aí coloca que a gente tem o fable também com diferentes níveis de esforço. Então isso vai ficando meio confuso, tá? Por isso que eu quero desmistificar isso no vídeo de hoje. Mas antes, passando aqui
+
+para vocês entenderem o tamanho do problema, né? O tamanho da confusão que a gente tem aqui. Enfim, tá aqui então o artigo oficial de lançamento do Sonet 5. E aí vamos dar uma olhada agora no Fable 5, beleza? Que também saiu no mesmo dia, no mesmo dia que o Sonet foi anunciado, o Fable 5 foi restabelecido. Você lembra
+
+do que aconteceu, né? A Antropic disponibilizou o Fable 5. Ele ficou ali no ar por alguns dias. E aí o governo americano decidiu que eh deveria ser que ele era perigoso demais para ser colocado, disponibilizado para pessoas não americanas. Antropic não tinha como garantir que apenas americanos fossem utilizar o modelo. E aí ela decidiu
+
+tirar o acesso do Fable 5 de todo mundo. Tanto é que quando a Open AI anunciou o 5.6, ficou apenas para um grupo restrito, não foi disponibilizado para grupo geral de pessoas, também por questões de segurança. Agora, né, no dia 30 de junho, com o acesso restabelecido no dia 1eo de julho, o Fable 5 passou sim. a voltar a ser utilizado por todo mundo com algumas mudanças, tá? A
+
+primeira principal mudança aqui é que o Fable 5 vai sim estar incluso no seu plano max, né, lá da da do cloud code, porém só 50% do seu limite. Então o Fable 5 pode consumir metade do seu limite a partir se ele consumir mais disso, por mais que você ainda tenha limite lá no seu cloud code, no seu plano Max ou no plano Pro, você vai ter que usar via API, beleza? Então você já vê aqui que eles estão limitando o uso do fable, portanto fica ainda mais importante fazer o uso inteligente do fable novamente. É o objetivo desse vídeo, já que a gente não consegue utilizar o fable de forma indiscriminada, a ideia é a gente entender quando utilizá-lo, beleza? Então essa foi basicamente a notícia, né, que o Fable voltou, até interessante Tropic dizer aqui, né, que o Fable tinha originalmente sido banido por conta de eh bypassar, né, algumas algumas safe goys, algumas proteções. E aí eles
+
+falaram: "Cara, mas no nossos testes, ó, modelos menos capazes, como o próprio OPS 4.8, GPT 5.5 e até o Kim K 2.7, né? Veja, o Kim 2.7 é um modelo que eu
+
+gostei bastante e já fiz um review dele. Vou deixar aqui para você dar uma olhada. Esses mesmos modelos já eram capazes de achar essas vulnerabilidades que o Fable 5 tinha achado. Então, não era algo individual ali do Fable 5. Eles utilizaram esse argumento para restabelecer o acesso. Beleza? Então,
+
+agora nós temos sim o Fable 5 de volta. E aí eles falam diversas coisas aqui de segurança, né? Muito muito foco da Antropic em segurança e em proteções, né? O Fable ele vai overcorrecto de proteções, tá? Então, se você falar coisas que ele interprete como perigosas, ele fala: "Não, não vou fazer isso para você" e vai jogar para outro modelo então é importante entender que ele tem isso também. E como esses
+
+modelos todos se encaixam nos benchmark? Vamos lá, pessoal. Olhando primeiro aqui pro Deep SWE, a gente tem o Fable dominando aqui, tá? Então o Fable é o principal aqui no score do Deep SWE, né? É o que atinge ali, ó, 70%, ficando na frente aqui do GPT 5.5, né? mais muito
+
+mais caro, né? Aqui na verdade quanto mais na direita, melhor. Então a gente tem o Fable 5 com reasoning no máximo superior, mas meio que dentro da margem de erro do GPT 5.5, tá? Só que com a diferença de que o GPT 5.5 custa 1/3
+
+apenas do valor. Onde que entra o Sonet 5? Qu ele entra atrás do OP 4.8, como já imaginado, mas também na margem de erro até parecido, bem atrás ali do GPT 5.5, acima do que seria o GPT 5.4, mas olha
+
+só, bem na frente do GLM 5.2, um outro modelo que eu também já fiz um review e vou deixar aqui se você quiser dar uma olhada. Muita gente falando bastante bem dele e bem na frente aqui também do Kim K2.7 Code, tá? Olha, seria um vídeo interessante fazer a comparação. Não vou
+
+fazer no vídeo de hoje para não ficar, né, muito grande, mas eu quero sim colocar o Sonic 5 na prática em comparação ali com o GLM 5.2 e também com Kimica 2.7, porque o benchmark aqui de fato é bem, o gap entre eles tá bem grande, né? Eu queria quero ver se isso se apresenta na prática também. Fato é que o Son 5 sim é um bom lançamento nesse sentido. Embora se você compare
+
+ele com Feb e com Opis, você não tem muito por utilizá-lo, a não ser que seja preço. Só que se você tá olhando para preço, será que já não vale vale mais a pena um GLM 5.2? Então essa é uma dúvida legítima que você pode ter. Beleza?
+
+Vamos dar uma olhada aqui agora no benchmark do cursor. O cursor bch não é exatamente algo independente, mas não é, ou pelo menos seria independente dos grandes provedores. E aqui o Fable 5 vai de lavada, né? Fable 5 que domina no top 5. Na verdade o top 5 todo é downtropic, mas aqui fala ous 4.7 Max na frente do
+
+GPT 5.5 extra high, o que eu acho que poucas pessoas concordariam, né? Então tem isso aqui, né, de diferente. Chama atenção também a gente ter o Fable 5 low em sétimo, né? Então você vê que não tem muito porque você usar o Fable 5 Low, né? Ah, por latência, aí não vale a
+
+pena, né? Se for por latência você pode pensar aqui talvez em utilizar até o próprio compose, embora o compose aqui esteja muito alto, né? E o Sony tá entrando aonde? O Son tá entrando aqui em 13, né? E aqui é engraçado, né? Ele
+
+tá aqui na frente do OP 4.7 high. Agora convenhamos, né? você sair do high pro max de 14º para quinto é algo um pouco estranho. Então, enfim, pessoal, eh, esses benchmarks servem para nos dar uma direção. Você vê que direcionalmente o
+
+Fable tá sim dominando, né? Então, ele aparentemente é o melhor modelo seguido pelo GPT 5.5. Mas você vê que quando a gente muda os níveis de reasoning aqui, isso começa a dar uma embaralhada e o Sonet é também consistentemente atrás tanto do GPT quanto do FI. Agora, já que eu mencionei ali a comparação do Sonet com os modelos chineses open source, como Kimio e o GLM, vamos falar de preço aqui rapidinho, porque o grande diferencial do Sony seria uma capacidade perto do Opus, mas com preço menor, tá?
+
+Só que se a gente for olhar o preço aqui, é um pouco difícil você comprar esse argumento, tá? Por qu, ó, coloquei aqui nessa comparação no Open Router o Sonet, o Opus, o GLM e o Kin, tá? Em termos de preço, o Sonet ele é mais barato do que o Opel. Lembrando que ele é 30%, ele usa 30% mais tokens, né? Então ele acaba ficando na prática aqui metade do preço do Opos, tá? Com o
+
+desconto. Quando sair esse desconto, a gente vai ter ele ali, talvez só uns 25, 30% mais barato do que o Opus é. Então ele nem é tão mais barato assim, tá? para você ver que que ele consistentemente atra benchmarks e até o próprio benchmark tropic, né, coloca ali o Opus na frente em muitos em muitos momentos, tá? O opus 4.8 é que melhor em
+
+agent coding, né, em todos os benchmark, na verdade nenhum dos benchmark aqui, o Sonet 5 bateu o Opus 4.8. Então assim, para você talvez economizar 20, 30%, eu não sei se vale muito a pena, tá? Se você colocar na equação aqui o GLM5.2 2 e o Kim aí fica até pior, né? Que aí a
+
+gente vai estar falando de modelos que aí sim, ó, o GLM é quatro vezes mais barato hoje e o química 2.7 é três vezes mais barato. Quando sair o desconto, a gente vai ter o GLM seis vezes mais barato e o Kimic quatro vezes mais barato. Agora assim, se você está olhando para preço, eu não vejo muita vontade de você usar o Sonic. Claro, tem a vantagem de você utilizar ali a sua assinatura do cloud. Às vezes você só
+
+quer ter uma assinatura, você quer pagar ali no cloud max, talvez você pague o plano um dia de ó, você quer se preocupar em utilizar tudo down trop, você quer dominar aquele hardness troping que você adora o cloud code. Aí beleza, acho que o sonid foi um upgrade para aquelas pessoas que estão imersas no ecossistema tropic. Se você tá ali pensando no melhor modelo para para cada tarefa, né, alternando entre provedores, né, tendo modelos, opinando em cima de planos criados pelos seus modelos principais. Enfim, se você tá fazendo toda essa troca que a gente faz aqui nesse canal, que a gente mostra diversos modelos operando em diversas tarefas diferentes e e elege o melhor para cada situação, é você, eu acho que o Sonic ficou um pouco sem lugar, tá? Eu acho que o Son de fato ficou um pouco sem lugar, mas pra gente poder cravar isso, é importante que a gente entenda quando utilizar cada modelo, porque ficou um pouco confuso, pessoal. A verdade é
+
+essa. Você agora tem quatro linhas, né, quatro séries de modelos dentro de uma assinatura da Antropic. E eu quero passar aqui pela documentação da própria Antropic para que a gente entenda quando nós devemos utilizar cada um deles. Além do mais, quando utilizar baseado em cada effort level, que a gente viu, mudou o effort level, mudou ali o resultado do benchmark, ó. Jogou um lá no effort level max, ficou em quinto. O outro aqui
+
+no effort level high foi para 14º. Então muda bastante a diferença da capacidade e de latência também. Então vamos dar uma olhada no que a própria antropic fala oficialmente. Vou passar também a minha percepção pessoal de quem tem utilizado os modelos de tropic por bastante tempo pra gente chegar aqui na conclusão do que seria melhor de fazer. Logo aqui no início do artigo oficial da Antropic, ela já diz: "Se você não sabe qual modelo utilizar, comece pelo OPUS 4.
+
+Para tarefas complexas de programação agêntica, tá? Então isso aqui já é talvez um uma grande vitória, uma grande uma frase pra gente começar aqui. Vai começar o trabalho, começa com o Opus 4.8. E aí, baseado no que você vai fazer e baseado no resultado que você tá tendo, você pode jogar lá paraa cima no fable ou jogar lá para baixo no Son.
+
+Eles até dizem aqui, ó, para trabalhos que precisam da maior capacidade disponível, aí você joga lá pro Fable 5. Todos os modelos do cloud suportam texto e imagem, né, como input, visão, etc. Então você não, isso não vai fazer nenhuma diferença na hora de escolher, né? Qual que é o caso, por exemplo, do GLM 5.2, que não tem vision. Então isso
+
+é um downside ali daquele modelo. Aqui nos modelos da linha do cloud você não tem esse problema. E tem uma tabela bem útil aqui falando de do último modelo de cada família, né? Então o Fable 5, a descrição é a próxima geração de inteligência para tarefas de longo prazo. OPS 4.8 seria para workflows
+
+agênticos complexos. Son 5 é a melhor combinação de velocidade e inteligência. E o High Q4.5 C seria o modelo mais rápido, né, com a inteligência próximo da fronteira, né, né? Isso aqui não é verdade, né, pessoal? A gente sabe muito
+
+bem disso, mas de que ele é um modelo mais rápido e mais barato, de fato, isso é innegável, né? A gente tá vendo aqui o Haiku saindo a dó por milhão de input token e 5 por 1 milhão de output token. Tem uma coisa interessante aqui, pessoal, que é o seguinte, tá? O harness da Antropic, que não é o cloud code no cowork, ele vai utilizar muito subagente. Então, quando você melhora incrementalmente os modelos inferiores, o seu workflow como um todo pode ficar melhor, porque os suagentes que vão ser delegados à tarefas vão ter uma capacidade melhor de resolução. Então,
+
+isso é positivo, inclusive tem tudo a ver com a dica que eu vou dar já já para vocês. Beleza? Outra coisa interessante aqui é a parte do adaptive thinking, que é o próprio modelo decidir quando utilizar os níveis de esforço, tá? E aí o high não tem isso, você tem que definir manualmente. Todos os outros três tem e no fable tá sempre ligado, né? Então o adaptive thinking é a forma
+
+recomendada de utilizar o extended thinking, né? confuso para caramba isso com o Opos, o Sonet e também o único Finking Mode lá do Fable 5, né? Então em vez de manualmente você definir ali o thinking token budget, né? Ou seja, o nível de esforço, o adaptive thinking vai deixar o cloud dinamicamente determinar baseado, né, na complexidade da tarefa, tá? Isso é interessante porque isso remove um pouco do controle que nós temos que ficar dando ali, ficar alternando ali as combinações de esforço, né? você deixa com o adaptive
+
+thinking e aí o próprio cloud vai definir isso. Falando agora de latência, tá claro que o Fable 5 é o mais lento de todos. O Opus ele chama aqui de moderado, o Sonit seria rápido e o high seria o mais rápido de todos. Isso é bem importante, tá? O Fable, de fato, ele é bem lento. Nos meus testes, ele foi
+
+sempre muito lento, o que não é necessariamente um problema se você quer realmente ter o máximo de inteligência, mas dependendo do que você for fazer, pode acabar se tornando overkill, porque ele vai ser lento e vai entregar talvez o mesmo que um ou até o próprio Sonit conseguiria entregar, tá? Então você reserva o Fable para aqueles problemas mais complexos, ainda mais considerando que você tem ali apenas 50% do seu limite do cloud code disponibilizado para o FA. E aí eles têm um outro artigo aqui onde eles dizem como escolher o modelo adequado, tá? Selecionar o modelo ótimo do cloud para sua aplicação envolve equilibrar três coisas, tá? Capacidades, velocidade e custo, tá?
+
+Capacidade do seu modelo, quanto que ele é capaz de resolver em questão de complexidade das tarefas, velocidade, né? Você precisa que o seu modelo seja rápido ou não e o custo, dependendo de quanto você está disposto a gastar, tá? Então esse guia aqui é para ajudar você a definir qual modelo utilizar. Primeiro ponto, estabelecer os critérios chave. Beleza? Então isso que a gente acabou de
+
+conversar, né? As capacidades, a velocidade, o custo. E aqui também ele introduz o esforço, né? E diz ali que nos modelos do Opus e do Sonet você tem o parâmetro de esforço que troca, né? Inteligência por latência e custo dentro do próprio modelo, tá? Opus 4.8 vai ter
+
+o X high, high max. E a gente também já viu isso lá no Face. Vamos lá. Guia prático downtropic. Aqui como escolher o melhor modelo, né, para começar. Então,
+
+duas abordagens gerais que podem ser utilizados. Opção número um é começar com o modelo mais rápido e mais cost, né, o mais eficiente de todos. Daí você começaria a implementação com Hik 4.5, testaria e seguiria a partir dali e faria o upgrade para modelo melhor apenas se você identificar ali que tem um gap de capacidade, ou seja, não tá conseguindo fazer o que você quer. Segundo eles, essa abordagem permite que você tenha uma interação rápida, um desenvolvimento mais baixo de custo e muitas vezes vai ser suficiente para para aplicações mais simples, tá? Então
+
+bom para prototipagem, para aplicações que tenham que precisam é de velocidade, né? que não posso ter uma latência muito rápida, tarefas de alto volume, né, implementações que são sensíveis a custo. É, na minha opinião, pessoal, isso aqui é interessante, mas eu não começaria com o Haiku 4.5, não, tá? Eu começaria pelo menos com Sonet 5, considerando que você quer ficar no stack downtropic. Se você está disposto
+
+a trabalhar com outro stack, aí eu recomendaria aqui que você começasse ali pensando em custo, em economizar custo com Kimica 2.7 ou com GLM 5.8. Esses sim vão te dar um bom desempenho com um custo bem mais baixo, tá? E claro, GPT 5.5 ainda é o meu modelo favorito, mas
+
+ele já fica, né, mais caro, pelo menos dentro ali da da assinatura da Open AIA e do Chat GPT. Mas pensando única e exclusivamente no modelo, se você quer começar do menor para o maior e ir escalando à medida que você for identificando os problemas, a minha recomendação hoje seria começar com algum desses modelos chineses. Qual a melhor forma de utilizá-los? Você pode fazer pelo Open Code Go, você fica bem baratinho para você utilizá-los, ou você pode fazer ali pelo próprio API do Fireworks, que é um provedor de A, que consegue entregar esses modelos de uma velocidade muito rápida, tá? Isso também ajuda aqui na na parte do fast, né? Você
+
+quer você quer terar rápido, você pode fazer ali pelo Fireworks que também vai dar certo. Agora, a opção número dois, que a Antropic sugere é que você faça o contrário, né? Você comece pelo modelo mais capaz. E aí ela diz: "Para tarefas mais complexas, quando inteligências e capacidades avançadas são muito importantes, você pode querer começar com os modelos mais capazes e considerar a otimização para modelos mais eficientes à medida que você for trabalhando." E aí eles sugereem que você comece aqui com OPOS 4.8, otimize
+
+para esse modelo, analise a performance e aí você pode aumentar a eficiência diminuindo o esforço. Então em vez de você jogar talvez ali para um Sony 5, você joga o Alpus 4.8, Pode, sei lá, num reasoning médio, por exemplo, ou você faz o downgrade do modelo, tá? Essa abordagem é melhor para tarefas mais complexas, para aplicações científicas e matemáticas, tarefas que requerem nuance e aplicações onde a acurácia, né, supere ali as considerações de custo, tá? Particularmente, eu prefiro trabalhar nesse formato, tá? Eu prefiro trocar
+
+capacidade por velocidade. Eu prefiro modelos mais capazes, ainda que sejam mais lentos. Se você conseguir unir os dois, melhor dos Mundos, tá? E eu acho, por exemplo, que o GPT 5.5 faz isso bem, mas o Opus 4.8 também faz, tá? Então eu
+
+particularmente começo sempre com o modelo com o reasoning mais alto, a menos que eu saiba que vai ser alguma coisa muito boba, tá? Mas eu prefiro deixar ali o Reison mais alto. Passo para ele e vou talvez fazendo multitesking ali, que aí eu nem me preocupo tanto com o fato de que ele é mais lento. Claro, eu tô falando isso dentro de uma assinatura que eu particularmente gasto uma grana boa com assinatura, né? Eu pago o plano Max de $, pago o GPT Pro de 200, posso me dar o luxo de gastar mais token dessa forma, tá? parêntes aqui lá no GPT 5.5, dentro
+
+do Codex, eu ainda deixo ligado o fast mode, né, que aumenta a velocidade em 50%, deixa mais caro também. Isso tem jogado os meus limites para lá pro final, tem quase terminado os meus limites, né, que era algo que não acontecia, limite semanal, mas em compensação eu tenho um modelo ali rápido e capaz. Então eu consigo fazer isso com GPT 5.5. Você pode fazer isso com Opus 4.8 também. Você também pode
+
+ligar o fast mode lá no Antropic, só que aí os limites da Tropic são muito menores, né? Você vai esgotar muito mais rápido. Aí eu já prefiro não fazer. Beleza? Bom, e eles falam aqui que o parâmetro padrão lá no OP 4.8 é o high
+
+para você utilizar o X high para coding high autonomy work e, né, tarefas de maior inteligência. Então eu já por causa disso sempre jogo aqui no X high, tá? Eu tô sempre programando, então meu padrão seria trabalhar no Opus, no X High ou até mesmo no modo max. Se a gente v aqui para o benchmark do do Deep SWE, a gente vê que o 4.8 Max, né, é o que tá na frente aqui. E no cursor é o
+
+4.8 Max seria o melhor, assim como o 4.7 Max também, né? Então o máximo de reasoning realmente entrega uma performance mais adequada, né, mais interessante quando você tá programando. Então, por conta disso, eu sim vou jogar o meu nível de esforço quase sempre lá pro máximo. Beleza? Agora, interessante
+
+desse guia aqui, embora ele fale aqui do cloud Fable 5, ele não coloca na nessa matriz aqui de seleção, né? Então, o que que ele diz aqui? Quando você quer trabalhar com tarefas complexas de programação, considere começar com clouds 4.8. E aí, quais são os casos de uso, né? Agentes autônomos, né?
+
+Múltiplos agentes autônomos, refatoração em larga escala, sistemas complexos de engenharia, pesquisa avançada, enfim, se você não for usar o Fable para esse para esse, você também não usa para nada, né? O Sonet 5 aqui seria para inteligência em escala, né? Se você quer talvez programar e bastante coisa ou você talvez vai colocar isso de forma programática na PI, né? Enfim, você pode utilizar o Sonic 5 também. Uma coisa importante, no vídeo que eu falei lá do Dynamic Workflows, eu coloquei ali o cloud para prever o vencedor da Copa do Mundo e aí ele disparou, no final foram 120 agentes, tá? Então veja, se você
+
+consegue colocar esses agentes sendo o Sonic 5 hoje, você tem ali trabalho em escala, né? Você tá tendo ali 120 agentes trabalhando em paralelo, não precisa ser o OP, não precisa ser o Fable, muito pelo contrário. Aí você coloca ali o Sonet ou talvez até mesmo o Hik 4.5, dependendo do que você for fazer. Eu nunca utilizo Haiku, tá pessoal? Mas eu sei que a Antropic faz
+
+isso eh por padrão em alguns subagentes, tá? Fica a dica para você. deixa o high para Antropic selecionar pro próprio cloud selecionar dependendo do caso de U. Agora, quando a gente fala de múltiplos agentes em paralelo, né, de tarefas em larga escala, de tarefas num horizonte maior, a gente precisa ter uma forma de validar o trabalho. E é por isso que utilizar ferramentas como a CLI do Test Sprite, que é a parceira desse vídeo, pode ser muito útil para você.
+
+Por quê? Porque com o test sprite, pessoal, você consegue definir ali quais são os requisitos do seu app, os requisitos do seu produto. O meu app precisa fazer isso, o meu app precisa fazer aquilo. E aí você cria um prd, um product requirement document, passa isso ali pro teste. O testite vai gerar os casos para você em playw em Python. você
+
+consegue analisar de forma bem simples. Daí você consegue dentro da própria CLI, ou seja, instruindo ali o seu próprio harness, a própria, o próprio cloud a utilizar a CLI para se autovalidar. Então você pode fazer na CLI durante o desenvolvimento, você pode utilizar ali no MCP, você pode utilizar lá no dashboard do test sprite. Então existem várias formas de você validar que aquilo que tá sendo feito está correto. E por que que isso é importante, pessoal?
+
+Porque a gente tá falando aqui de múltiplos agentes, estamos falando aqui de tarefas de longo prazo. Você consegue colocar ali num loop de validação o test sprite, a celinha do test sprite. Daí você sabe, você tem a confiança de que o seu modelo vai parar de trabalhar somente quando aquele teste tiver passando e ele consegue se autovalidar. Isso é fundamental para todo mundo que está trabalhando com IA em programação em 2026. Pessoal, nós precisamos ter forma de validar o trabalho desses agentes trabalhando por horas a fio ou disparando múltiplos agentes em paralelo. Uma das formas de fazer isso é
+
+o teste. Se você quiser conhecer mais sobre o testite e a sé, o link vai estar tanto na descrição quanto no comentário fixado. Muito bem, pessoal. Para finalizar esse vídeo, eu queria passar uma dica bem interessante que eu li aqui no blog do Simon Willson. Então ele teve ali uma conversa com o pessoal lá do time do Cloud Code, né, incluindo a Cat, ela é PM lá no Cloud Code. E algumas
+
+coisas interessantes saíram dessa conversa. Primeira coisa que ele fala aqui é para deixar o fable, né, e até em algum certo sentido o Opus utilizar o seu próprio julgamento em vez de ditar como ele deve trabalhar. Eu falei disso no GPT 5.5. Quando lançou o GPT 5.5, eu
+
+trouxe para vocês ali que a própria recomendação do OpenI era não dar o microanaging, né? Deixa que esses modelos com uma inteligência muito superior, deixa que ele busque qual é o melhor caminho, que é justamente aí que ele brilha. Se o trabalho é muito bem definido, é passo um, passo dois, passo três, passo quatro, você não precisa de um modelo muito inteligente. Você pega o modelo baratinho, ele vai saber fazer, porque os steps são bem definidos. Agora, quando as etapas demandam uma maior criatividade ou você não sabe exatamente qual é o melhor percurso para chegar no final, aí sim é importante você deixar esses modelos mais inteligentes, acharem qual é o caminho mais adequado, tá? E aí um exemplo que
+
+foi dado foi durante teste, né? Estamos falando de teste aqui com test prite. Você pode dizer para o Fable, apenas use testes automáticos para features maiores. Não atualize e execute testes para pequenas, né, mudanças de cópia, né, de texto ou pequenas mudanças de design. Mas é melhor apenas dizer o fable para utilizar o seu próprio julgamento quando decidir quando escrever teste. Então, em vez de você
+
+falar pro pro fable, use teste nisso, nisso, nisso, você fala pro fable assim, olha só, quando você achar adequado, use essa ferramenta de teste automatizado. Use aqui o test price, use aqui o code rabbit, mas você define e aí o próprio modelo vai entender que para um determinado uma determinada mudança que ele faz que ele fizer, escrever um teste automatizado vai ser overkill. Pra outra não, ele de fato vai precisar, né? Por que que isso é importante? Porque essas coisas também gastam token, né? E aí a
+
+principal dica desse artigo, o Simon e acredita ao Jess Vincent que disse o seguinte, né? diga para o Fable para utilizar outros modelos para tarefas menores, aplicando o seu próprio julgamento acerca de qual modelo utilizar. Então você basicamente vai no Cloud Code e escreve algo do tipo. Para todas as tarefas de programação, use o seu julgamento para decidir, né, um modelo apropriado, né, um modelo de menor poder apropriado e execute num subaente. Por que isso, pessoal? Porque
+
+agora sim o Fable, entendendo que aquilo talvez não precise, né, de um máximo de capacidade, ele despacha ali um sonet que ficou mais poderoso. Então você tem um suagente muito mais capaz hoje do que ele era antes dessa atualização. E aí você diminui o custo do Fable, mantendo o mesmo desempenho. E aí o testemunho pessoal do Simon é que isso parece estar funcionando muito bem e que ele tá conseguindo fazer muito trabalho com o limite disponível do Fable, reduzindo cada vez mais lento, tá? Então tá aqui a dica, você pegar e jogar isso aqui lá no seu cloud code. Vamos fazer isso aqui
+
+pra gente finalizar o vídeo. Muito bem, pessoal. Tô aqui no terminal, vou inicializar uma nova sessão do cloud. Interessante. Eles falam aqui, ó, o Fable 5 tá de volta e aquele uso do 50% do seu limite semanal até 7 de julho, tá? Depois provavelmente vai ser só na
+
+API. Vamos ver se eles vão manter isso. Eles disseram que iriam continuar, né, dentro do plano ali do do cloud Max. Vamos ver se vai continuar. Eles iam fazer um esforço para que isso acontecesse. Por enquanto até 7 de
+
+julho, tá? Carreguei aqui. Vou enviar o mesmo prompt que o Simon Willson enviou naquele exemplo. E vamos ver o que que o Cloud faz. Ó, ele respondeu aqui, ó. Vou
+
+utilizar o Haiku para trabalho mecânico, renomear, pequenas edições de configuração, boer plate, script simples, sonet pras features típicas, né, bug fix. E eu vou continuar no loop. Ele não falou do Opus aqui, né? What about Opus? É, ele tinha deixado passar, né? Mas engraçado é porque ele disse, ó,
+
+como eu tô no fable 5, que é acima do Opus, o Opus ainda é lower power, né? Então acho que por isso que eu não tinha considerado o opos, porque ele não é lower power, mas ele criou esses esses tiers aqui, né? Só que eu não vi ele atualizando isso em lugar nenhum, né? Aí o persist. Eu achei que talvez pro padrão ele já fosse automaticamente jogar lá na memória, mas acho que se você não falar pode ser que ele não faça, tá? Aqui,
+
+pelo que o Simon disse, o Cloud salvou na memória, mas eu vou para garantir aqui, eu vou dizer para ele persistir isso na memória para que eu não precise ficar falando isso toda hora e toda sessão que eu começar, ele já tenha isso por padrão definido. E olha só, eu tive que parar ele aqui porque ele quis salvar essa preferência no cloud MD e eu não quero que fique nesse nesse arquivo porque eu quero que isso seja comum a todos os projetos, tá? E aí sim, ó, aí ele ele salvou lá no cloud MD genérico, tá? Não foi numa memória genérica, né? Na verdade, no exemplo aqui do do Simon Willson, ele de fato, para ser justo aqui, ele salva no projeto, né, na memória do projeto. Eu queria que ele
+
+salvassem todos. Então ele foi lá e editou o próprio Cloud MD dele, né? Ele até falou que essa preferência agora está salva no Cloud MD, que eu posso sempre alterar utilizando o comando barra memory, né? E aí a gente consegue até entrar aqui para ver. Vamos abrir aqui o cloud MD genérico, né, geral, né?
+
+Ó, eu não tinha nada, a primeira coisa que eu coloquei aqui, não tinha, não tinha nada ali. Enfim, tá aqui justamente o que ele tinha gerado, agora persistido para todos os projetos. Uma forma de você continuar utilizando o Fable 5, sem ter que ficar pensando toda hora em qual modelo trocar e deixar o próprio Fable 5 definir o subagente mais adequado com o nível de esforço mais adequado. Beleza? dica direto lá do pessoal do CloudC. Muito bem, pessoal.
+
+Espero que esse vídeo tenha ajudado a esclarecer um pouco mais sobre quando você utiliza cada um dos modelos da família do Cloud. Eu sei que ainda é confuso, depende muito dos níveis de esforço. Particularmente, como eu disse, eu prefiro deixar os níveis de esforço mais altos e trocar os modelos do do que ficar alternando muito nível de esforço, tá? Comece ali no opus sonet se você sabe que é algo muito simples ou delegue para o Fable 5 se você quer trabalhar em algo mais complexo. Você também pode, utilizando essa dica que eu dei aqui no final ficar mais focado ali no Fable 5, sabendo que ele vai passar aquela tarefa pra gente mais simples com o seu próprio julgamento. Essa é uma alternativa muito
+
+boa para quem combina o cloud code o chatpt, que é o meu caso. Como eu prefiro utilizar o chatpt e utilizo menos o cloud code, eu posso me dar ao luxo de utilizar ali mais no fable e deixar que o próprio fable se decide. Enquanto isso, eu faço o principal do meu trabalho, né, o o grosso do trabalho ali no Codex, no GPT 5.5. Então me conta aqui nos comentários como que você tem utilizado os modelos truck. Quando que
+
+você vai pro Fable, quando que você vai pro OL, quando que você vai pro Sonet? Se você viu alguma vantagem nessa nova atualização do Sonet e o que que você tem achado do novo Fable 5 agora de volta para todos, beleza? Me conta aqui que eu quero saber. Se você assistiu esse vídeo até aqui, muito obrigado. Já aproveita, então curte esse vídeo, compartilhe com seu amigo e sua amiga que gosta de programação agêntica. Não
+
+esquece de se inscrever no canal também. Lá na descrição você vai encontrar link para a lista de espera dos meus cursos de programação agêntica, Hes Engineering, Dominando Cloud Code, diversos assuntos que são relevantes. Agradeço a você pela audiência de sempre, agradeço ao pessoal do Test Sprite pela parceria e até a próxima. Yeah.

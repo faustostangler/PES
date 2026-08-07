@@ -1,0 +1,224 @@
+---
+video_title: "Diminuí o custo do Agent Teams do Claude Code absurdamente com esse hack"
+video_id: b9LRV7Qz3ys
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=b9LRV7Qz3ys
+video_date: 2026-02-18T22:00:37+00:00
+video_description: |
+  O Agent Teams é uma das features mais poderosas do Claude Code, mas rodar múltiplos agentes com o modelo Opus ou Sonnet pode sair caro. E se pudéssemos trocar o "cérebro" por trás da CLI?
+  
+  Hoje eu ensino a configurar o LiteLLM para atuar como um gateway, redirecionando as chamadas do Claude Code para modelos muito mais baratos no OpenRouter. Analisamos a performance, os desafios de compatibilidade com ferramentas (como o Firecrawl) e se a economia realmente compensa a complexidade.
+  
+  Capítulos 
+  
+  00:00 Intro
+  01:00 Como funcionam os Agent Teams do Claude Code
+  02:00 O que é e como funciona o LiteLLM
+  02:40 O que é o OpenRouter
+  03:39 Claude Code + LiteLLM + OpenRouter
+  05:48 Configurando o LiteLLM na VPS
+  07:59 Inicializando o LiteMM + OpenRouter com o modelo GLM-5
+  10:25 Rodando o Claude Code apontando para o LiteLLM
+  13:34 Como trocar de modelo
+  15:00 Utilizando o Agent Teams com o GLM-5 na prática
+  20:50 Utilizando a skill do Firecrawl para fazer busca
+  23:47 Resultado da pesquisa
+  26:05 Resultado da proposta
+  27:54 Quanto custou rodar o Agent Teams + GLM-5
+  29:28 Resumo do Workflow
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 VPS na Hostinger com 10% OFF 🔻🔻
+  https://www.hostinger.com.br/quantbrasil
+  CUPOM: QUANTBRASIL
+  
+  🔻🔻 10% off no Firecrawl🔻🔻
+  https://firecrawl.link/rafael
+  
+  🔻🔻 Ganhe $10 de créditos no Replit 🔻🔻
+  https://replit.com/refer/quantbrasil
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=ZiWW0mzRc7c
+  https://www.youtube.com/watch?v=Z3lkuq9egIg
+  https://www.youtube.com/watch?v=PUAUUAB4hVM
+  https://www.youtube.com/watch?v=ZiWW0mzRc7c
+  https://www.youtube.com/watch?v=gIT2bTTso0E
+  
+  🔻🔻 Documentação do Agent Teams 🔻🔻
+  https://code.claude.com/docs/en/agent-teams
+  
+  🔻🔻 Guia LiteLLM + OpenRouter 🔻🔻
+  https://gist.github.com/rafaelquintanilha/564fd98d542712bb44958c18f94a7dcb
+  
+  #inteligenciaartificial #claudecode #claude
+---
+Uma das funcionalidades que eu mais tenho utilizado ultimamente é o Agent Teams, que permite que você rode múltiplos agentes numa mesma tarefa. Porém, hoje essa funcionalidade está limitada ao cloud code, o que significa duas coisas. Primeiro que você só consegue rodar os modelos Don Tropic e segundo que fica bem caro no seu bolso. Portanto, no vídeo de hoje eu quero te mostrar uma alternativa que permite que você continue utilizando o Wage Age and Teans, mas com modelos muito mais baratos e até gratuitos. Pessoal, trabalhar com múltiplos agentes é sempre interessante por causa da característica estocástica dos modelos de inteligência artificial. Como cada vez que você dá um
+
+prompt, eles podem retornar diferentes respostas. É muito interessante quando você consegue fazer com que o modelo passe pela mesma pergunta várias vezes. Você tem muito mais confiança na resposta depois que o modelo rodar aquilo múltiplas vezes. E essa é uma das ideias por trás do Agent Teams, o time de agentes do Cloud Code. Eu já fiz um vídeo dedicado sobre o W and Teams. Eu
+
+vou deixar aqui para você dar uma olhada. Mas no vídeo de hoje eu quero ir um pouco além. Por quê? Primeiro porque ele realmente fica um pouco pesado. Quando você roda um time de agente, você está necessariamente instanciando múltiplos cloud codes. Claro, cloud code
+
+porque é uma feature exclusiva do cloud code. Você vê aqui, ó, você precisa ligar a flag cloud code experimental agents. Então é algo exclusivo do Cloud Code. Porém, essa funcionalidade em si é muito interessante e seria bem legal se a gente conseguisse portar isso para outros apps, sei lá, pro Codex, pro Open Code e pro seu provedor favorito. Infelizmente isso hoje ainda não é possível, mas existe uma alternativa que é você colocar um proxy, um outro provedor em cima do Cloud Code para que você possa rodar outros modelos muito mais baratos, por exemplo. Muito bem,
+
+pessoal. A gente vai fazer isso hoje através do Light LLM, que é um AI gateway que provê acesso a diversos modelos e ainda coloca algumas outras fichas, como por exemplo, controle de gastos. Isso é particularmente interessante para enterprise, para empresas. E não é o nosso caso aqui. Nosso caso, a gente quer rodar o Light LLM como um gateway que vai fazer o seguinte, a gente vai se conectar no Cloud Code, usar o Cloud Code como cliente, mas toda requisição que o Cloud Code fizer, em vez de ir para os servidores de Dropic, ele vai ser roteado pelo Light LLM. E aí com o Light
+
+LLM a gente consegue jogar aquela requisição para outro provedor. E eu quero utilizar hoje o Open Router, que eu já falei algumas vezes aqui no canal, inclusive vou deixar o link aqui para você dar uma olhada. Eu mostrei o open router justamente quando eu disse que é um workflow low cost. Por quê? Porque se você for lá no Open Router e selecionar os modelos, você vai ver que existem muitos modelos, principalmente os chineses, open source, disponíveis para serem utilizados através da API. Eles
+
+custam uma fração dos modelos principais. Então, por exemplo, o Minimax M2.5, ele custa 20 centavos por milhão de input token. O Opus 4.6, que é o modelo oficial que você vai rodar lá na Antropic, no Cloud Code, ele custa 5 por milhão de input token. Então, veja a
+
+diferença, ele é 25 vezes mais barato que o Opus 4.6, o Minimax. E o GLM5 que saiu recentemente, ele é ali seis vezes, seis, sete vezes mais barato, tá? Então são modelos capazes e que vão ser fração do que é o Opos. Então seria bem interessante se a gente conseguisse utilizar esses modelos com a funcionalidade do Wage and Teans, porque aí você coloca o modelo que é 25 vezes mais barato, no caso do Minimx, ou seis, se vezes mais barato, no caso do GLM5. E
+
+aí se você dispara três, quatro agentes, você teria um custo três, quatro vezes maior, mas aí você compensa pelo preço, beleza? Então essa é a técnica que eu quero mostrar para vocês no vídeo de hoje, beleza? Pessoal, até coloquei um guiazinho aqui que eu posso colocar depois no vídeo, né? Mas a ideia é o seguinte, a gente faz isso pra gente conseguir utilizar, né, o cliente do cloud code outro modelo. Como eu já disse, a vantagem, o cliente do Cloud Code, ele é muito bom. Eu
+
+particularmente gosto de utilizar ele bastante e você consegue explorar as funcionalidades que a Antropic lança. Eles estão sempre inovando. Então, basicamente o que acontece com o Light LLM é que ele vai transformar o provedor, ele vai receber aquele request daquele provedor, por exemplo, do cloud code e ele vai colocar num formato que seja open AI compatible. É como se ele ele recebesse e fizesse um parcer, né, fizesse uma transformação daquela requisição para que você para que seja utilizada a API da Open AI, que é uma API open source para outros modelos também. Então, por exemplo, a completions, API, a responses API, você consegue utilizar embedings e imagens, áudio e várias outras coisas. Então você
+
+fica com uma interface comum. Se você olhar aqui no código deles, ó, você chama simplesmente comption, passa o modelo que você quer e aí a resposta, né, vai ser no formato que você consiga, né, se comunicar com qualquer outro provedor. Beleza? Então essa é basicamente a ideia, é um gateway, como eu disse, mas eu não tô tão preocupado aqui em explicar como isso funciona e sim em mostrar para vocês na prática. Então, qual que é o meu plano para fazer isso? Eu vou rodar o Light Ll aqui
+
+localmente e nós vamos tentar fazer um projeto, uma prova de conceito, mostrar que a gente consegue rodar ou GLM5 ou minimax, né, 2.5 com a feature do Agent Teams. Beleza? A instalação é muito fácil, né? Ou você faz aqui via Docker ou você consegue fazer com Python. Se
+
+você tiver o Python instalado, você vai ter que instalar o Proxy. E aí depois que você instalar, basicamente você inicializa passando o modelo que você quer, né? Então no caso, se você for utilizar o Open Router, você vai simplesmente, né, passar aqui traço, traço modo, o modelo que você quer e aporta e acabou. Assim é bem simples mesmo, tá? Eu vou fazer isso no meu open claw. Por que que eu vou fazer isso na
+
+minha VPS? Porque eu quero ter o meu cloud code normal aqui na minha máquina, mas eu quero poder ali na VPS ter um cloud code talvez mais barato, que eu possa rotear as requisições para modelo mais barato, tá? Sem sem mexer na minha máquina principal. Beleza? Então vou fazer isso aqui na minha VPS. Você pode
+
+fazer na sua, eu estou utilizando o Tail Scale aqui numa máquina local, mas você pode fazer também numa VPS na nuvem. Inclusive, se você quiser utilizar a Hosinger, eu vou deixar o link aqui na descrição com 10% de desconto utilizando o nosso código, beleza? Você ganha 10% de desconto e claro, uma comissão aqui pro canal que ajuda bastante. Então vamos lá. Eu vou fazer o login aqui na minha máquina local. Tô aqui, como
+
+disse, no tail scale. Se você não sabe o que é o T scale ou como fazer a configuração dele no OpenCall, vou deixar o link aqui para você dar uma olhada. Tô aqui na minha máquina local, certo? e vou fazer a configuração. Então, seguindo o guia que eu vou colocar para vocês, primeiro a gente cria um ambiente virtual ali no Python.
+
+Se você tiver com token tanto melhor. Aí já tá criado aqui o Python já tá instalado e você cria, né, um ambiente ali para você poder rodar o seu Python. Beleza? Já tô com ele criado, né? Então eu posso simplesmente rodar esse comando aqui para entrar no meu ambiente virtual do Python. Beleza? E aí eu posso rodar
+
+Light LLM Version para ver que eu tô realmente com Light LLM instalado. Então aqui não tem muito mistério, só você realmente instalar o Light LLM. E eu recomendo que você faça isso, né, dentro de uma máquina virtual. Então, basicamente rodaria aqui, ó, pip install. Já tá instalado. Basicamente isso sem
+
+muito mistério aqui. Então, antes de você inicializar o Light LLM, você precisa colocar aqui no ambiente qual é a sua API ke lá do open router. De novo, eu vou utilizar o open router nesse vídeo. Você pode utilizar qualquer outro provedor que esteja listado lá no Light LLM que você preferir. Então você vai ter que ter uma conta no Open Router, certo? Você vem cá, cria sua conta. Como
+
+funciona o Open Router? Você basicamente coloca crédito nele, coloca gasolina lá no open router e ele vai te cobrar à medida que você faça as requisições, beleza? Ele não coloca markup, ele só te cobra na hora que você faz um depósito. Então ele te dá, cobra uma pequena margem, se eu não me engano, 5% em cima de cada depósito, mas ele não cobra em cima das requisições que você fizer. E muitos modelos no Open Router são gratuitos, então você consegue rodar até sem pagar nada. Tá vendo? Quen 3 Code
+
+Next gratuito no momento que eu tô gravando esse vídeo, vários modelos bem baratinhos ou literalmente gratuito. Beleza? Então, basicamente o que você vai fazer é pegar a sua API key lá no Open Router e colocar aqui. Eu já fiz isso, então não preciso fazer de novo. E agora sim vou inicializar utilizando esse comando. Light ll traço o traço
+
+model. E aí você passa o modelo que você quer. Como nós queremos testar agora o GLM5, então você vem aqui no modelo lá no Open Router e tá aqui o nome dele, tá vendo? Ztigi/GLM5. Como eu tô no Open Router, coloco o prefixo open router, muito parecido como a gente faz no Cloud Bot mesmo, né? E
+
+aqui dash to dash por 4000, ou seja, passar a porta 4000 e vai inicializar aqui o servidor, o gateway do light ll, tá vendo? Então posso rodar e ver ele aqui. Tem um detalhe que ele também tem um dashboard, tá vendo? Se eu clicar aqui para rodar, ele vai abrir um dashboard. Como eu tô numa VPS e esse link não não funciona direto. Então tem
+
+que botar aqui o nome da VPS que é a Galaxybook. Beleza? E tá aqui, ó, o eu consigo ver tudo é Fash API, né? Para quem acompanha aqui o canal Con Brasil já reconheceu. É, são os docs aqui do Fash API. É a API que a
+
+gente tá colocando na frente. Uma coisa interessante que o Light LLM também vem com um painel de admin que você pode inicializar, né, e pode ver o que tá acontecendo. Porém, você precisa configurar um banco de dados. Não é muito o que a gente quer fazer hoje. A gente só quer ver que a gente consegue rotear. Beleza? Então, tô aqui com Light
+
+LLM rolando e agora vamos fazer o seguinte, vamos fazer o teste que eu consigo fazer uma requisição no cloud Code e de fato ele vai não para o cloud code, mas sim para minha conta no Open Router. Beleza? Então vou utilizar aqui um outro terminal no Tmux, certo? Então inicializar aqui o Galaxy Book. E aí, pessoal, a única coisa que a gente precisa fazer é trocar a base lá da antropic, né, essa envi variable que o cloud code usa pro back end que a gente tá rodando para esse API local host.
+
+Então vamos fazer isso aqui e a partir do momento que a gente inicializar o cloud aqui, ele vai estar fazendo as requisições pelo Light LLN. Você pode se perguntar se isso é legal, né, se isso é algo que a antropic tolera. E a resposta é sim, né? Até na própria documentação deles, eles têm aqui como você fazer um LLM gateway, né? Como você fazer a configuração. Inclusive tem uma sessão
+
+específica para o Light LLM. Então eles não têm problema de você utilizar o cloud como cliente, desde que você esteja ali, né, conectado num outro back end, porque isso aqui não não tem nenhum custo para eles, né? Eles, né, consideram isso algo tranquilo, que é algo bem raro vindo da truck, que costuma ser um pouquinho chata, né? Então, teoricamente, já estamos com isso funcional. E se eu quiser, né, a qualquer momento, se eu quiser retornar pro cloud normal, eu só dou umet na URL de ambiente aqui, beleza? Então,
+
+exportando o local host. Por que local host? Porque a gente inicializou o light ll na porta 4000. Muito bem. Então, vou setar aqui a variável de ambiente antropic base e aí basicamente agora eu posso inicializar o cloud. E na hora que
+
+eu inicializo, olha lá, já vi que veio uma requisição aqui, certo? Então, parece que sim, nós estamos conectados. Agora, tem uma coisa interessante, pessoal. Se eu falar que modelo eu sou, vocês vão ver o que vai acontecer. Só que antes disso, eu quero mostrar para vocês uma coisa. Vamos dar uma olhada em
+
+como tá o meu uso aqui do cloud, beleza? Então, olha lá, para vocês verem, eu tô usando 15% do cloud na minha sessão de 5 horas, tá? A gente vai ficar de olho nisso aqui. E eu também quero mostrar para vocês como tá a minha atividade, né? o log aqui, né, do Open Router.
+
+Olha, vocês já vejam aqui, ó, 9:30 da noite. Tô gravando aqui esse vídeo e você vê que foi justamente a hora que o GLM5 rodou aqui, ó. Tá vendo? GL M5 fez uma requisição aqui através do app Lite LLM. Consigo ver aqui exatamente tudo que aconteceu, os tokens, né? input,
+
+output, o custo, tudo mais direto aqui. Então, aparentemente, pessoal, tudo certo. Só que olha lá, se eu perguntar algo do tipo, which model are you, que modelo você é, você vai ver que ele responde que é o opus 4.6. Aí você pode ficar se perguntando, ué, como que é o opus 4.6 se eu acabei de trocar? Porque
+
+isso, pessoal, provavelmente tá no system prompt, tá? Mas se a gente ver aqui e atualizar, a gente vai ver que a requisição foi realmente para o GLM, beleza? E claro, aqui foi só um prompt, né? Não vai mudar muito, mas a gente vai ver que continua com 15%, não mexeu no nosso limite, beleza? Então, aparentemente tudo certo, a gente tá roteado, estamos utilizando o Cloud Code e roteado lá pelo GLM5, beleza? Tá,
+
+vamos mostrar que a gente pode trocar de modelo, né? Então vou matar o servidor aqui e em vez de utilizar o Zi GLM5, vamos vir aqui, vamos voltar lá nos modelos e vamos ao Minimax, né, que é mais barato, é mais de três vezes mais barato do que é o GLM5. Beleza? Então aqui a gente vai trocar para Minimax/ minimax traço M25, né? Então é justamente aqui que a gente vai trocar, ó, minimax/ minimax traço M25 na mesma porta. Deixa
+
+eu reinicializar o cloud code aqui também. Já reinicializou. Vamos abrir o Cloud Code de novo. E eu botei errado, é 2.5, né? Então deixa
+
+eu matar aqui. É M 2.5. O importante isso, tá, pessoal? nome tem que tá certinho. Vamos reinicializar o cloud
+
+code aqui enquanto o servidor reinicializa. Beleza? Agora sim. E ó, a gente já viu aqui, ó, que de novo chegou a requisição. Vamos dar uma olhada ali no nosso logs, dar um F5. E tá aqui, ó,
+
+934 foi o mini max que foi chamado. Então, vejam como a gente consegue muito fácil trocar os modelos, beleza? Tá? Então, isso era só para mostrar para vocês mesmo. Eu vou voltar lá pro GLM5, tá?
+
+E agora vamos chegar no que eu realmente queria mostrar nesse vídeo, que é que você consegue de fato utilizar o multiagent, beleza? Então vamos utilizar aqui o GLM5 para fazer alguma coisa. Então vamos fazer o seguinte, vamos imaginar que eu quero colocar no Coin Brasil uma funcionalidade para se integrar com o Poly Market, né? Então vocês conhecem o Polymarket, é um app de predição, só que é interessante porque tem muita coisa que é voltada também para preço, beleza? preços de ações de cripto, né, também eleição, coisa do tipo. Então, vamos supor que eu quisesse
+
+colocar algo assim no Conte Brasil. Então, eu vou passar justamente essa tarefa aqui para o nosso amigo Cloud Code, rodando o GLM5. Beleza? Muito bem, pessoal. Então, tá aqui o meu prompt. Eu
+
+falei o seguinte, vamos planejar uma feature que integre o Polymarketing no Conte Brasil. Eu quero uma proposta para implementação, não o COD. Então eu quero que você faça a pesquisa e a revisão sobre o que usar e como isso seria útil para a audiência do Quant Brasil. Para que você consiga fazer isso, você precisa saber o que que nós suportamos e como os usuários se beneficiariam. E aí eu coloquei aqui, ó, você precisa criar teammates usando agents. Aí coloquei a
+
+documentação. Eu dei, fui aqui meio dramático para que ele entenda que eu quero fazer isso, né? Eu notei que muitas vezes ele acaba não fazendo se você não falar de forma bem específica, tá? Mas muitas vezes é suficiente simplesmente mencionar e aí você coloca a documentação para ele ver, tá? É importante dizer que precisa ligar a flag, tá pessoal? Tem que ligar a flag
+
+para rodar o agent no momento, beleza? Tem que ir lá no settings.json e colocar a flag ligada. Se você quer saber como fazer isso, eu já falei no vídeo onde eu explico tudo sobre o Agent Teams, beleza? E aí, pessoal, uma coisa que é bem interessante que a gente consegue ver exatamente como funciona o Cloud Code, né? Porque ele tá aqui fazendo a
+
+pesquisa, chamando as tools e você vai ver que isso vão virando requisições, tá vendo? Tá dando post messages, né? Isso tá indo lá, estaria indo pro back end downtropic, só que agora sendo roteado pelo light llm indo jogar lá no nosso open router. Vamos voltar ali pros nossos logs. Tá vendo aqui, ó? Todas as
+
+chamadas do GLM5, inclusive, ó, algumas até relativamente carinhas, né? 4 centavos, 5 centavos, né? Não é tão barato você utilizar o GLM5 nesse formato, tá, pessoal? Veja, é mais barato do que o óculos, que é bastante caro, mas ainda assim a gente vai ver isso na prática, quanto vai ficar, tá? Uma coisa importante de mencionar, pessoal, é que quando você roda através do Open Router, fica um pouco mais lento, tá? Isso é innegável, né? Quando
+
+você tá pagando por um serviço, como é o caso do Cloud Code, do Codex, você tá otimizando ali o back end, né, dos servidores ali da Antropic ou da Open AI, por exemplo, e tende a ser bem mais rápido. Então, no Open Router, você acaba tendo que se sujeitar a uma interação um pouco mais lenta, ainda assim bem tranquila, mas mais lenta para aqueles que estão habituados ao cloud code, ao Codex. Bom, a gente tá falando aqui e dá para ver que ele vai rodar sim o Steam. Isso, ele já falou, Lem SP work. Então, tá criado, pessoal. Deixa
+
+eu dar um zoom aqui nessa tela. E aí, agora a gente consegue ver, ó, ele criou três teammates, ó, competitive researcher, polymket researcher e user analy e o main que é o team leader. Beleza? E aí aqui, porque eu tô rodando via SSH, ele acabou não fazendo, não entrando automaticamente, separando as telas como com a integração do Tux, tá? Eh, porque no SSH, na máquina VPS que eu tô rodando, eu não tô com TUX configurado, tô rodando normalmente num terminal ali. Então, como a gente faz
+
+nesse caso para ver o que os agentes estão fazendo? Aí ele fala aqui, ó, contrtrl T para mostrar os teammates. Então, ó, contrtrl T e agora shift. E apertando as setinhas, ó, eu consigo passar por todo mundo, tá vendo? Team lead. Vamos ver o que que o comparative
+
+research tá fazendo, ó. Ele tá fazendo várias buscas aqui. Beleza? Eu tô notando que essas buscas estão retornando nada. Não sei se é algum erro, muito possivelmente, pessoal, isso aí é o seguinte. Ele está usando uma
+
+ferramenta que é específica da Antropic e não está configurada ali no GLM. Isso é uma coisa que vocês precisam ter em mente, tá pessoal? Foi até bom isso acontecer para eu poder mostrar para vocês, porque nós estamos roteando. A Antropic acha que é o Alpus 4.6, então ela vai mandar ferramentas que às vezes não são suportadas pelo modelo que você tá roteando. Então você precisa ter isso
+
+em mente. Beleza? Então eu vou fazer o seguinte, eu vou interromper ele aqui e falar para ele usar o firecrawl para busca, tá? Se você não sabe o que é o firecraw também vou deixar o link aqui na descrição para você testar. Ele tem uma skill hoje, né? Uma CLI, fica bem
+
+mais tranquilo. Vamos fazer isso com os outros também, ó. Poly Market Researcher. Esse aqui alguns foram quando ele faz um fat direto, o Web search não, né? Então vou vou também matar aqui também. Falei aqui para ele
+
+usar o firec e aqui o user analist. Vamos matar ele também. Use firecraw for the search. Então, importante, pessoal, isso para vocês verem que sim tem algumas limitações, tá bom, pessoal? Olha só, eu fiz isso aqui e ele acabou não respeitando, muito provavelmente porque ele já tava disparando ali várias buscas, tá? Então, tava várias buscas em
+
+paralelo, né? Eu preferi matar aqui o que a gente estava fazendo e vou reinicializar, tá? Dessa vez eu vou reinicializar mandando justamente isso. Use the firec in order to do your web searches. Então agora sendo bem direto, ele já carregou a skill do Firecroll, tá? Eu já falei
+
+sobre o Firecraw aqui no canal, vou deixar o link para você dar uma olhada também, mas eu vou falar em breve também sobre a skill dele. Enquanto eu não falo sobre a skill, é só uma forma de você fazer um scraping de dados utilizando essa API, né, que utiliza inteligência artificial para fazer scraping, de modo que ficar bem legal, tá? Veja, importante isso, pessoal. Por quê? Porque sim, o agent vai funcionar, mas saiba, você está colocando um cérebro diferente do que o Cloud Code espera.
+
+Então ele pode passar alguma ferramenta que você que aquele cérebro novo que você colocou, ou seja, aquele LLM novo que você colocou não suporta. E aí você vai ter que entender isso e contornar utilizando essas técnicas, né, como as que eu tô mostrando aqui agora, por exemplo, no caso do web source, usar a skill do Fire Pr ou usar o Brave ou usar qualquer outra skill para fazer busca, o próprio playwite, enfim, você que sabe. O importante aqui é que você fique de olho para ver o que que o agente está fazendo e se por acaso ele utilizar alguma ferramenta incompatível, você faz o ajuste. Bem pessoal, mesmo nós criando novamente, ó, a gente vê que ele de novo criou três teammates. Então, Integration Researcher, vamos permitir aqui que ele crie arquivos, Integration Researcher, Poly Market Researcher e Quant Brasil Explorer. Vamos lá, contrtrl T pra gente
+
+poder ver todos os teammates, Shift e, né, arrows pra gente ver o que que tá acontecendo. E aqui a gente consegue ver, ó, o que que o Integration Research vai fazer, ó. Agora sim, ó. Tá chamando o Firecra para fazer a busca. Beleza, vamos lá. Poly Market Researcher também
+
+utilizando o Firecrawl e o Cont Brasil Explorer também. Beleza? Então, olha só, pessoal, funcionou, tá? Ele ele tá fazendo a busca e tá salvando, né, num Jason para que ele possa, né, olhar. Depois estão todos funcionando aqui bonitinho. E o Quant Brasil Explorer já
+
+achou aqui. Eu tô aqui no meu open cloud, como eu disse, e ele já achou que eu tenho o repositório do Conti Brasil baixado aqui. Então ele vai conseguir explorar o código enquanto os outros estão em paralelo explorando possíveis funcionalidades, tanto do Polymarket, quanto uma possível integração, certo? Então vamos deixar agora os agentes trabalhar. Parênteses aqui, pessoal, para você que tá utilizando o Firecrow, você pode vir ali no dashboard, ó, em activs, e ver justamente o que ele tá fazendo, tanto busca quanto scrape.
+
+Então, a diferença é que no scrape ele vai num site específico, pega todos os dados daquele site e na busca é como se fosse uma busca do Google mesmo, né? Então você consegue ver aqui quanto que custa cada crédito. Então a busca ela é muito mais cara, mas depois que você faz o scrape é bem mais barato. Bom pessoal, demorando um tempinho aqui, mas ó, o nosso Integration Research já fez todas as buscas que ele quer, já tá na parte de compilar a o resultado da pesquisa e devolver pro Team Lead. O Polymarket Researcher, mesma coisa, ó, já sabe tudo sobre a API do Polymket, vai voltar o resumo lá pro Team Lead. E o Quant
+
+Brasil Explorer, esse não, esse tá um pouquinho mais lento aqui ainda, tá analisando localmente. Menos mal que ele é local, então ele não precisa fazer requisição nenhuma para o Fire Craw, né? Mas já estão terminando aqui e o Team Lead está só esperando o report de cada um deles para dar o veredito final do que a gente pediu. Aí uma coisa interessante, pessoal, é que a gente consegue ver o resultado da pesquisa de cada um deles, né? Então tô aqui, o Integration Research já terminou. E aí,
+
+ó, ele falou que fez a busca, salvou nesses arquivos aqui quais foram os finds dele, né? Tá dizendo aqui as APIs, eh, as questões de regulação no Brasil, dizendo que prediction markets não tem base legal explícita no Brasil. Eh, falando aqui de competidores, o polymarket, cus, etc., casos de uso e a recomendação para o Conte Brasil começar com uma integração apenas de dados com a a API gratuita do Polyarket, focar em mercados de alta liquidez, né, político e econômicas e se posicionar como, né, um primeiro player aqui, né, que dá sinais baseados em prediction marketing, tá? Então aqui, né, foi o resumo do que fez o Integration Researcher, Poly Market Researcher, né, falando aqui, ó, as APIs, então APIs oficiais, esse CLOB club, Trading Prices, gama API com descoberta de mercado, data API com as posições e o histórico. Tem suporte a
+
+web socket, bem legal, não sabia. SDK em Python, Type Script e RUS. Excelente. E tem até a capacidade de fazer trading pela API, né, que é algo que a gente já viu que o Integration Research falou para não fazer, mas tá dizendo que tem sim a forma de trabalhar e já dá a recomendação aqui da SDK em Python, né, já que o nosso backend está em Python também. Finalmente terminou aqui o Conte Brasil Explorer. E qual que foi o
+
+resultado dele? Ele tá aqui arquitetura do Cont Brasil, fecha API com Python, XJS, no front end, mercados que a gente suporta, B3, SP500 e crypto. Ele vê aqui do como que a gente pega, né? Então, ó, crypto lá da Coinbase, SP500 da SUAB, né? E por aí vai. features específicas
+
+do Cont Brasil e back testing com integração, sistema de alerta, trades automatizados, gerenciador de portfólio, factory screening e um feed e quantitativo. Inclusive, você quer testar o C Brasil também tá um link na descrição, é o meu site finanças quantitativas, beleza? Então tem aqui basicamente tudo. E agora é ir lá no Team Lead que vai receber o findings de todo mundo e vai compilar no nosso plano final. Então, olha lá, pessoal, ele recebeu a documentação de todos os teammates e criou aqui um arquivo com uma proposta para integração do Polymarket no Cont Brasil. E aí dizendo
+
+que é uma proposta que descreve uma integração estratégica do Polyarket, o maior mercado de predição do mundo no conte Brasil, dando para os traders brasileiros acesso ao mercado de orientado a evento, né, e sinais de trades, né, derivados, né, desse mercado preditivo. E aí ele vai lá, faz a descrição do Cach Brasil, que que ele é e tudo mais. Tá aqui as a API do Polymar. Então você vê que ele mistura o resultado de cada agente, né? E aqui a proposta de integração. Então, primeira
+
+fase, uma integração de dados, né? E aí até a rota que vai que vai ser feita, né? Dados ali de economia, política, com mod e crirypto, né? correlação, alerta de correlação, como é, por exemplo, alerta quando o preço do petróleo subir acima de um determinado preço, quando, né, a probabilidade de eleição no Brasil mudar muito, integração no calendário bem interessante, né, com integração, com pair trading, bem legal aqui, mas já vai dando aqui basicamente a estrutura do código, né? Tá aqui até o MVP, na implementação, a métrica de sucesso, risk assessment. E é isso, pessoal.
+
+Basicamente isso foi um PRD. Então aqui a gente conseguiu utilizar o agente de A, ou melhor, múltiplos agente de A para fazer pesquisa e gerar um arquivo de implementação, que a gente pode pegar isso agora e implementar enquanto feature, beleza? Mas olha que legal, a gente surgiu com uma ideia simples e conseguimos utilizar o poder de quatro agentes em paralelo para compilar um documento que se eu pegar e jogar para um Coldex ou até pro OLPUS 4.6, ele certamente implementa de forma bem tranquila. Beleza? Agora pessoal,
+
+enquanto ele fecha os agentes aqui, vamos pra parte que talvez não seja tão interessante. Olha lá, eu peguei o filtro desde que a gente começou ali, mais ou menos umas 9:30 e tá aqui todo o custo. Beleza? Então deixa eu fazer o seguinte, eu vou clicar nesse botão de export aqui. Eu vou jogar no chat GPT da vida, só pra gente fazer a conta de quanto foi gasto nessa brincadeira aqui, tá? Então é o preço é cost, né? O nome
+
+da tabela. How much was the total cost? Então, exportei aqui a planilha, tá aqui o valor. Gastamos 8.36 para fazer essa busca, tá, pessoal? Por
+
+que que eu tô mostrando isso? Para vocês entenderem que não é porque você não está utilizando o Cloud Code, que vai necessariamente ser barato, tá? Eu podia, claro, ter usado um modelo gratuito e isso seria zero, mas ia demorar muito para fazer aqui no vídeo e eu não sei se a qualidade seria tão boa. Eu podia ter usado o Minimx, que é quatro vezes mais barato, então teria gastado que já é bem mais aceitável. Fato é, pessoal, que se a gente pensar que a gente gastou 8 para criar todo um plano de documentação utilizando quatro agentes, nem seria tão caro. Obviamente
+
+não é a proposta do vídeo, né? Então, proposta do vídeo é mostrar como você consegue utilizar o W and Teamin de forma bem mais barata. E pra finalizar, vamos dar uma olhada que a gente não gastou o nosso limite do cloud, tá vendo? Lembra que tava em 15%? E, ó, continua em 15%. Então também fica essa
+
+dica. Se você ficar sem limite lá no Cloud Code, troca, coloca lá no Open Router, coloca um modelo gratuito, coloca um modelo mais barato e segue o trabalho. Veja que o resultado consegue sim ser bem adequado. Recapitulando, o que nós precisamos fazer foi rodar o light. LLM, onde nós temos o cloud code, passamos a porta, nos conectamos através de uma envi variable, né, da tropic, passamos a porta onde tá rodando o light ll aí as nossas requisições foram roteadas através desse gateway. Se você
+
+gostou dessa dica, já deixa o seu like, compartilhe, por favor, com seu amigo, sua amiga que gosta de utilizar GLM, Minimax, Cloud Code, Antropic, Codex, Open AI, qualquer modelo de A, esse é o seu canal. Aqui nós falamos de programação agêntica de forma séria para ajudar você a desenvolver os seus projetos. Agradeço pela audiência de sempre e até a próxima.

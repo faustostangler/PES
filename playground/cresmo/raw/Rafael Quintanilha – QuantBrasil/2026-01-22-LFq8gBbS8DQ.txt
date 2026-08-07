@@ -1,0 +1,272 @@
+---
+video_title: "Skills, MCPs e subagentes: quando usar cada um (Programação com IA)"
+video_id: LFq8gBbS8DQ
+channel_name: "Rafael Quintanilha – QuantBrasil"
+channel_id: UCc-Nvq1SYmXVTO5_UwQbg6w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=LFq8gBbS8DQ
+video_date: 2026-01-22T22:00:19+00:00
+video_description: |
+  Skills, Prompts, Projetos, MCPs, subagentes... a sopa de letrinhas da programação com IA só cresce. Hoje eu vou desmistificar cada um desses termos usando o guia oficial da Anthropic como base. Entenda de uma vez por todas quando usar cada ferramenta para criar apps com IA mais eficientes e baratos.
+  
+  Neste vídeo, focamos pesadamente em Engenharia de Contexto: como estruturar seus agentes para economizar tokens e garantir que a IA tenha a informação certa na hora certa, seja usando o progressive disclosure das Skills ou o isolamento de contexto dos subagents.
+  
+  Capítulos
+  
+  00:00 Intro
+  01:10 Artigo da Anthropic sobre skills
+  04:42 Skills
+  11:42 Prompts
+  14:20 Projetos
+  21:52 Subagentes
+  29:04 MCPs
+  32:57 Skills x Prompts x Projectos x Subagentes x MCP
+  26:58 Skills x Subagentes
+  38:39 Slash Commands
+  40:25 Plugins
+  43:20 Conclusão
+  _______________________________________________
+  
+  Os links abaixo são de afiliados. Ao utilizá-los você ganha descontos ou créditos nos produtos, além de ajudar o canal a ser sustentável.
+  
+  🔻🔻 VPS na Hostinger com 10% OFF 🔻🔻
+  https://www.hostinger.com.br/quantbrasil
+  CUPOM: QUANTBRASIL
+  
+  🔻🔻 Ganhe $10 de créditos no Replit 🔻🔻
+  https://replit.com/refer/quantbrasil
+  
+  🔻🔻 Teste seu código de graça com o TestSprite 🔻🔻
+  https://www.testsprite.com/?via=rafael
+  
+  🔻🔻 15% OFF no QuantBrasil 🔻🔻
+  https://quantbrasil.com.br/planos
+  CUPOM: YOUTUBE15
+  _______________________________________________
+  
+  Também estou em outras redes sociais. Siga-me para receber mais conteúdo sobre IA, Engenharia de Software e programação!
+  
+  ✍🏻 Newsletter: https://codecapital.substack.com
+  💬 Telegram: https://t.me/quantbrasil
+  💼 LinkedIn: https://linkedin.com/in/rafaelquintanilha
+  📸 Instagram: https://www.instagram.com/quant_brasil
+  _______________________________________________
+  
+  🔻🔻 Vídeos relacionados 🔻🔻
+  https://www.youtube.com/watch?v=1PbPLwJMlWI
+  https://www.youtube.com/watch?v=ddBlmSQGVrU
+  https://www.youtube.com/watch?v=qcvXSMKpVww
+  https://www.youtube.com/watch?v=ECHwooTK1eQ
+  https://www.youtube.com/watch?v=D9JZVk-tt4U
+  https://www.youtube.com/watch?v=PZzWx3lTf0E
+  
+  🔻🔻 Artigo: Skills Explained 🔻🔻
+  https://claude.com/blog/skills-explained
+  
+  #contextengineering #claudecode #promptengineering
+---
+skills, prompts, projetos, MCPs, subagents, plugins. Hoje eu quero desmistificar para você todos esses termos e o que e quando você deveria usar cada um deles. Pessoal, assim como a programação evolui, a forma como se constrói, como se cria apps com IA também evolui e você pode imaginar a velocidade, né, o pace, onde essas mudanças acabam ocorrendo. De certa forma que existe toda uma gama de termos e funcionalidades e coisas que você pode fazer com IA, que se você não prestar atenção, você pode ficar um pouco confuso, ficar um pouco para trás. Então, esse vídeo de hoje é um vídeo um tanto quanto basal para que a gente volte ali às origens, volte ali aos fundamentos das ferramentas que estão disponíveis para você que quer construir apps com IA, que é o caso do pessoal aqui desse canal. Então, se você ainda
+
+não é inscrito, eu já te convido, por gentileza, se inscrever aqui no canal, curtir e compartilhar. Aqui eu falo justamente isso, como você pode criar apps com IA da melhor forma possível, da forma mais eficiente possível. E nós vamos discutir esses termos que eu mencionei hoje. A inspiração por trás desse vídeo vem desse blog post aqui do pessoal da Antropic, tá? Isso aqui foi publicado já faz um tempo, mas vira e mexe alguém me pergunta, vira e mexe alguém tem dúvida lá no meu Instagram, lá no meu LinkedIn sobre como as pessoas devem utilizar skills. O que são skills?
+
+Qual a diferença de um skill para um sub agent? Que que é o MCP? Enfim. Então hoje eu quero usar esse artigo como ponto de partida. É um excelente artigo escrito pelo pessoal da Antropic.
+
+Inclusive existe um ponto interessante aqui, né? A maior parte dessas inovações na hora de gerenciar o contexto de uma IA vem do pessoal da Tropic, vem do pessoal ali por trás do cloud, justamente porque eles são quem mais tem problema com contexto. É o modelo mais caro entre os principais, né, considerando o Gemini e o Chat GPT. E portanto, a Antropic precisa inovar para colocar os seus agentes capazes de utilizar o maior número de informações possíveis, tá? Tanto é que o MCP surgiu deles e as skills que hoje foram unificadas também surgiram do pessoal da Antropic. E eu sou uma pessoa que gosto
+
+bastante das skills, já trouxe algumas vezes no canal. Primeiro vídeo que eu vou deixar aqui de referência para vocês foi quando eu testei as skills lá na cloud da cloud, né, lá na nuvem da cloud, quando eu mostrei para vocês um exemplo ali na prática, beleza? Mas eu também mostrei recentemente uma skill que você pode utilizar no cloud code. Você pode por extensão colocar ali no Codex, no cursor, no Open Code também, que é uma skill que deixa o seu front end 10 vezes melhor do que aquele front end genérico de A. Também vou deixar o link para você dar uma olhada depois, beleza? Importante dizer aqui o
+
+seguinte, apesar de eu estar aqui no blog do cloud, apesar disso aqui vir da pessoal da tropic, os termos e os conceitos aqui podem ser aplicados a todos os outros provedores de a e a gente já vai ver, beleza? Então tá pessoal, então o artigo é o seguinte, explicando as skills, né, com as skills se comparam aos prompts, aos projetos, ao MCP e aos subagents, os suagentes. E aí eu coloquei aqui nesse balaio também a parte de plugins, tá? São os plugins aqui do cloud code, que muita gente pode se confundir também. Os termos aqui são mais genéricos, tem a parte de plugin também. Vamos ver tudo um por um para
+
+que você entenda de uma vez por todas o que é cada uma delas. Skills são uma forma cada vez mais poderosa, uma ferramenta cada vez mais poderosa de criar workflows de IA customizados e também criar agentes, né? Mas onde que essas skills entram aqui no stack do cloud também no chatpt, enfim, como eu falei, nós vamos ver nesse vídeo e a partir desse artigo, quando utilizar cada ferramenta e porquê. Então, a motivação, né, que eles escreveram esse texto foi porque eles eles apresentaram as skills, né? Então, até pra gente ver aqui, Skills é um conceito relativamente recente, foi publicado aqui por eles no dia 16 de outubro e desde então a adoção foi bem rápida porque foi uma ideia realmente bem boa. Nós já vamos ver como
+
+que ela funciona. Então, OK, vamos entender aqui os building blocks da programação agêntica, né, ou de como um agente funciona. Então, os building blocks são aquelas pedras fundamentais e a partir dessas ferramentinhas, desses bloquinhos de Lego que você constrói o seu agente. Então, primeira coisa aqui que eles falam é o que são skills. Como eu já falei um vídeo dedicado sobre isso, eu vou passar aqui um pouco mais rápido sobre as skills, mas talvez elas sejam o conceito mais simples de entender. Skills são simplesmente pastas
+
+contendo instruções, scripts e recursos que a IA descobre e carrega dinamicamente quando ela é relevante para uma tarefa. Beleza? Então, a primeira coisa que você precisa entender aqui é que skill nada mais é do que uma pasta. Tanto é que quando eu mostrei a skill para melhorar o front end, se você ver aqui no repositório, é basicamente uma pasta cloud skills/design. E aí é um skill.md. Então é basicamente um
+
+markdown aqui com várias sugestões. E esse repositório tá andando, eu tô vendo que eles colocaram aqui é referências, tá? Então é até legal pra gente poder usar isso aqui de referência também pro nosso artigo. Beleza? O que que é interessante aqui? Então ele é uma pasta
+
+contendo instruções e você pode colocar ali também script, como no exemplo do vídeo que eu já mencionei para vocês, eu tenho lá um script que é para você redimensionar uma imagem. Então eu já tenho o código bonitinho, eu tenho lá a instrução e já dei o script. Então eu não preciso que a IA, claro, a IA sabe criar um código que vai redimensionar uma imagem, mas eu não preciso que ela pense nisso. Eu já deixo o script, ó, sempre que você quiser redimensionar uma imagem, usa esse código aqui e já deixo separado para que a já saiba o que utilizar. E aí a grande vantagem é que isso é carregado dinamicamente, né? O
+
+termo original que eles usaram é progressive disclosure. Então você vai mostrando, revelando para a IA de forma progressiva quando relevante pra tarefa. Obviamente aqui você depende da IA entender quando aquilo é relevante. E aí por isso que nas skills você precisa colocar uma descrição bem curtinha de o que que é aquilo, tá? Então aqui, por exemplo, a gente tá vendo formatadinho no GitHub, mas vamos até clicar em RAW para você ver, ó. Basicamente o que a IA vê quando
+
+você inicia uma sessão é o nome da skill e a descrição. Então a descrição tá dizendo aqui, ó, essa skill é para ser utilizada no design, né, de uma interface, dashboards, painéis de admin, apps, ferramentas e produtos interativos. Não utilize isso para marketing, né, para página, landing pages, marketing, campanhas. Então, quando você iniciar a sua sessão de programação e você tiver essa skill, essa, tô dando exemplo dessa em particular, mas qualquer uma outra skill, e você tiver essa skill cadastrada, o agente vai usar essa descrição para entender, opa, será que o que eu estou fazendo nesse momento é uma interface design? Se for, aí ele carrega o resto. Por que que isso é legal?
+
+Porque ao fazer isso, você economiza muito do contexto, que é um dos grandes problemas que nós tínhamos com MCP. Nós já vamos falar do MCP, tá? Mas a vantagem é gerenciar bem o contexto, o que, como eu disse, o pessoal da Antropic tem um problema sério com o contexto, tanto é que eles são mais caros, então eles inovam sempre para que você possa gastar cada vez menos contexto, o que para nós é ótimo. Claro, quanto menos contexto nós gastamos, mas a IA vai conseguir performar e mais barato vai ficar também. Eles seguem aqui dizendo que as skills, né, nada mais são do que manuais de treinamento especializado que você dá para com expertise em domínios específicos, tá?
+
+Então, por exemplo, aqui nesse caso é o manual de como você cria um front end. Então ele tá dizendo, ó, faça isso, eh, border raides, a tipografia, as cores, como isso deve ser utilizado. Então, tem um conjunto de princípios aqui nessa skill que a IA quando carrega ela, quando ela incorpora aquilo no seu contexto, ela vai performar de uma determinada forma. Obviamente você também consegue fazer isso aqui com outras coisas, como trabalhar com planilhas de Excel, né, e como usar ali os seus guias, seus guidelines da marca que você tá trabalhando. Você tá trabalhando numa empresa, sua empresa é sempre, as cores são, sei lá, verde e azul. E aí você consegue sempre fazer
+
+dessa forma coerente, né? Isso aí também é bem legal. Então, como que as skills funcionam? Basicamente que nós conversamos, quando a IA encontra uma tarefa, ela procura ali quais são as skills relevantes para achar aquela que mais faz sentido, tá? E aí tem tal do progressive disclosure que eu falei para vocês, o metadata aqui são aproximadamente 100 tokens, o que é muito pouco. E aí as instruções são
+
+carregadas somente quando necessárias. Vai ter que no e no máximo 5.000 tokens, o que também deixa tudo bem leve, beleza? E aí quando que você deve utilizar skills? Quando você quer que a IA performe tarefas especializadas de forma consistente e eficiente. E aí eles
+
+dão exemplos, né? Flows organizacionais, guias de marca, compliance, template de documento, expertise do domínio ali, então formas de Excel, como manipular PDF, análise de dados, preferências pessoais, sistema de notaking, padrões de código, métodos de research, de pesquisa, né? O outro exemplo que eles dão aqui é você criar uma brand guideline skill que inclui a paleta de cores da empresa, tipografias, layout, etc. né? Então, mais uma coisa na linha aqui do cloud designing engrei para vocês o a skill de front end. Beleza? Um
+
+detalhe que a Antropic tem aqui no repositório oficial dela do GitHub é uma lista de skills. Tá aqui, ó, MCP builder, PDF, skill creator. Você consegue usar uma skill para criar uma skill, né? Foi o que nós fizemos no último vídeo. Testar web app. mexer ali
+
+com XLSX, né, o formato para criar planilhas ali para Excel e tudo mais. Vamos pegar um aqui qualquer de brand guideline, já que ele falou bastante disso, né? Então, de novo, ó, só um MD. E aí ele vai falando: "Aplique as cores oficiais da marca da Antropic e tipografia para todo tipo de artefato que for que possa se beneficiar de ter o look androping. Utilize quando as cores da marca ou os guias de estilo, formatação visual e os padrões da empresa forem aplicáveis.
+
+Então, sempre que criar, quiser criar alguma coisa que for aplicável ali da brand guideline, ele vai usar a skill aqui da tropic, que aí claro tem as cores da tropicar isso aqui ou instalar através do plugin, como a gente já vai ver, e simplesmente trocar as suas para escolhas da sua empresa. Então, as skills são isso, são um conhecimento especializado em como realizar uma determinada tarefa que vai injetar ali no contexto da IA essa forma de realizar aquela tarefa, tá? Aí eu falei no vídeo brincando, é como se fosse uma skill de um RPG, né? Você tem, você aprende a fazer uma técnica, você usa aquela técnica. A skill é basicamente isso. E a IA ela vai
+
+entender quando que ela precisa chamar aquela skill baseado no metadado que você der ali para ela, na descrição que você der ali para ela. Vamos passar agora para os prompt. O prompt seja o mais entendido de todos aqui, porque é o que você faz quando você interage com a IA. Então o promp são instruções que você provê, né, para a IA em linguagem natural durante uma conversa. Então eles são efêmeros, conversacionais e reativos. Então você provê o contexto e
+
+a direção para aquele momento específico. Quando você utiliza prompt, quando você quiser um pedido ali que seja one off, né? Então você quer que ele faça uma coisa ali, né? que não vai se repetir. Um prompt é mais do que suficiente para você dar algum refinamento. Ó, faça, deixa o tom desse
+
+artigo mais profissional para você prover contexto imediato, né? Analise esse dado e identifique uma uma tendência. E para instruções ali a dooc, né? Então, tá, você me deu um retorno aqui, OK? Formato isso aqui agora como uma bullet, né? Por quê? Porque eu quero
+
+assim agora nesse momento, não tem nada padronizado. Tô vendo ali, quero dessa forma e vou conversando ali com a dessa forma. Beleza? Veja pessoal que o prompt eles são coisas individuais, então normalmente eles vão ser enviados para IA e você não tá tão preocupado em repetir aquilo. E é muito específico daquele contexto, daquela interação em particular que você tá tendo, tá? Então
+
+isso é bem fácil. Tenho certeza que todo mundo entende isso, mas o interessante aqui são duas outras coisas. Então eles dão aqui uma dica, né? Então, primeira dica é: Prompt são a sua forma principal de interagir com o cloud ou qualquer outro, mas eles não persistem entre conversa. Sempre que você quiser repetir um workflow ou repetir um conhecimento especializado, considere transformar esses prompt numa skill ou instruções de projetos. E outras coisas que você pode
+
+fazer também, como slash commands, que eles não colocaram aqui, mas eu já vou mostrar para vocês, beleza? E quanto que você deveria usar uma skill em vez do prompt? Sempre que você vê que você tá dando a mesma instrução, dando o mesmo prompt de forma repetida, é a hora, provavelmente de construir aquela skill, tá? Então você transforma uma instrução recorrente, por exemplo, eh revise esse código de olho em vulnerabilidade de segurança utilizando o padrão OWASP ou formate essa análise com um resumo executivo, key findings e recomendações. Toda hora tá fazendo isso, então transforma numa skill. Agora é
+
+importante, pessoal, que os mesmos princípios de uma boa engenharia de software se aplicam aqui. Não saia criando skill adoidado. Veja aquilo que você utiliza constantemente no seu dia a dia e extraia aquilo como uma skill. O terceiro tema aqui são os projetos, tá? Embora esse aqui seja um artigo do cloud e nem todas as IA tenham isso, a ideia por trás de projetos é muito simples.
+
+São contexto que você permite que a Iar recupere através de um hag, né, um retrieval augmented generation. Você basicamente tá conversando com a Iá, você quer dar informação de background para ela, ó, suponha que eu tenho um assistente para me ajudar no meu canal do YouTube. Então eu posso criar um projeto e nesse projeto eu vou falar o seguinte: você é um assistente para o canal do YouTube do Quant Brasil, que tem tantos inscritos que fala sobre tais e tais vídeos, que a brand guideline é essa e que, enfim, que os os vídeos com maiores views foram esses e esses e que o responsável é o Rafael, que é tal, tal e tal. Então você vai dando ali uma historinha, o background para aquele agente e aí toda vez que ele for trabalhar, ele consegue recuperar aquilo através do hag. Beleza? A parte mais
+
+interessante aqui é a gente entender que isso nada mais é do que o tal do context engineering, que eu bato muito na tecla aqui nesse canal. Já fiz um vídeo sobre isso, vou deixar aqui para você dar uma olhada, né? Eu até mostrei esse artigo aqui na época e eu ainda volto para esse artigo diversas vezes. Aqui a gente vai conseguir ver mais ou menos o que o pessoal do Cloud quis dizer. nem existia skill nessa época aqui, mas você vai conseguir entender. Então, a gente tem
+
+aqui o contexto. O contexto engloba um conjunto de informações que fica espalhado de várias formas. Então tem o user prompt que nós acabamos de ver e todo esse resto aqui, seja o histórico, né, de curto prazo, a memória de longo prazo, as instruções do system prompt, tudo que você vai conseguir ali recuperar através de um hard poderia ser considerado informação que você vai colocar no seu projeto. Agora, pessoal, é importante entender que quando nós falamos de projetos e de qualquer contexto de background, normalmente isso é algo que não vai mudar muito, tá? é algo mais estático. Se você quer uma
+
+informação que seja mais atualizada, aí normalmente não são projetos. E aí, sei lá, para eu mostrar para vocês um exemplo concreto, tá, de quando eu utilizei projetos. Então, eu queria rodar o app do Ponte Brasil, migrei para uma VPS, queria colocar lá na Docre. Inclusive, eu já fiz um vídeo onde eu mostro como eu economizei 90% do meu size colocando a VPS lá na host. Eu vou deixar o link aqui para você dar uma olhada depois. Aí, o que que eu fiz
+
+aqui? Eu coloquei ali diversos arquivos que eu queria que a IA soubesse como que eu como que quais que eles eram, né? Então, na época era uma outra época, né? A programação agênica não era tão forte, mas eu coloquei aqui arquivos específicos. Então isso já tava aqui no contexto de todas essas conversas, tá vendo? Todas essas conversas que eu tive
+
+dentro do projeto tinham esses arquivos dentro do contexto. Além disso, a memória do projeto, ou seja, tudo que eu conversei nas outras conversas também fazem parte da memória. E eu poderia colocar aqui instruções particulares, tá? Então, ah, use Typecript, né? Use Docker Compose e por aí vai. São
+
+instruções particulares do projeto. Mas veja que isso são coisas que não mudam muito, né? São coisas mais estáticas, tá? Eu já vou mostrar para vocês a melhor forma, na minha visão, de injetar um contexto dinâmico. É claro que aqui na história do context engineering, tudo isso vai ser um hag. Você poderia ter
+
+ali um banco de dados vetorial, como eu já mostrei quando eu usei o agno, né, para criar um app de chat que tinha lá uma base de conhecimento e buscava aquela informação através de um h lá no PG Vector da vida, você pode fazer isso também. Não é a ideia do project, tá? A ideia do project é a ideia de um background estático, que isso é mais uma camada de software do que necessariamente alguma coisa da IA, tá? Mas você vai ter isso no cloud, você vai ter isso no chat EPT, então acho que é legítimo mencionar isso aqui também. Então, coisas interessantes, né? Utilize
+
+os projetos quando você quiser ter um contexto persistente, né? É isso que eu falei para vocês, um conhecimento de background que toda conversa tem que partir daquilo. É uma organização do seu workspace, sei lá, eu tenho diversos times, tem diversas empresas, trabalho em projetos diferentes, cada workspace, cada app vai ter uma informação relacionada, tá? E claro, eh, instruções específicas. Beleza? Vocês querem ver um
+
+outro exemplo aleatório para projeto? Eu vou mostrar esse exemplo porque ele ilustra bem quando eu acho que projeto funciona, tá? Eu não acho que ele é tanto assim para programação e coisas desse tipo, mas ele funciona bem para quem usa IA de forma generalista. Olha só, eu eu criei no no chat EPT um fighting coach, né? Eu gosto de lutar box, kickboxing, né? E aí eu queria
+
+assim, cara, pôra me ajuda aqui nessa quando eu for fazer um sparring contra alguém que seja canhoto, sabe? Como que eu que eu lido com essa situação? Aí você fala: "Ah, Rafael, troço inútil". Mas não. Por quê? Porque no projeto eu
+
+consigo colocar informações minhas. Então, sei lá, eu tenho 1,84, tenho 33 anos, a minha envergadura é de 2 m, né? Eu peso 95, 98, eu tenho um cruzado bom, eu tenho um um jab rápido. Então eu vou meio que mostrando ali o que aquilo que, digamos assim, eu tenho facilidade ou aquilo que seria as minhas valências, sejam elas porque eh genético, né, ou enfim, coisas que a não teria como saber, mas que sendo box, uma uma um esporte ou qualquer outro esporte, sendo algo que você se adequa ao seu corpo, né, à suas valências, você quer maximizar aquilo que você é bom e minimizar aquilo que você não é. Então, sei lá, eu sou um cara meio pesado, então se eu ficar ali rodando muito na ponta do pé, eu canso rápido. Então, eu
+
+eu tenho que montar meu jogo de forma que ele entenda quem eu sou. Eu sou um cara meio pesado. E aí eu coloquei isso na instrução. Então, toda vez que eu for falar alguma coisa aqui, até tem que atualizar esse projeto aqui, mas toda vez que eu for falar alguma coisa, ele sabe agora quem, qual é o meu porte físico e ele consegue me recomendar baseado naquilo que eu passei para ele. Então, eu acho o projeto bem legal para esse tipo de coisa, tá? makeof
+
+programação. Dei um exemplo aqui meio besta de de esporte, mas você poderia pensar aqui no no exemplo aqui que o próprio pessoal da Trop que deu, ó. Vamos criar um projeto com eh o lançamento de um produto aqui do do Q4, né, do nosso último trimestre. E aí ali eu vou colocar tudo do produto. Então isso isso meio que não vai mudar, você tá entendendo assim, ah, eu vou lançar isso aqui, eu vou lançar este produto, pá, não vai mudar o produto que eu vou lançar, né? Se for mudar, vou mudar o
+
+projeto. Ah, não vai mudar quem são meus competidores. Então eu pego aquela informação estática que eu já compilei, coloco dentro do projeto e agora eu sei que a IA vai conseguir referenciar a kill. Beleza? No post eles dizem também, né, quando que você vai utilizar uma skill em vez de projeto. Então acho que
+
+ficou bem claro que são coisas bem diferentes, né? Projetos te dão um contexto persistente para um específico, para um corpo de trabalho específico. Por exemplo, a sua code base, né, como eu mostrei ali em client, etc. E as skills ensinam aí a como fazer alguma coisa, né? Então um projeto pode ter todo o background do lançamento de um produto e a skill ela vai dar uma técnica, né? Então todo o produto que a
+
+gente quer lançar é esse. E a e aí a skill pode ser algo do tipo, olha, a gente quando vai fazer um lançamento de um produto, a gente escreve dessa forma. Então é algo mais metódico, né? é algo mais voltado para uma ação, enquanto o projeto é para dar mais contexto para que a IA possa tomar a ação. O quarto item que nós vamos falar hoje talvez seja onde a maior confusão resida, que é o que são os subaentes e a distinção entre skills e eles. Beleza? Então vamos
+
+lá. Vamos ver isso aqui com bastante cuidado. Subagentes são assistentes especializados com suas próprias janelas de contexto, seus próprios system prompts e suas próprias permissões de uso de ferramenta. Então você tem sub agent no cloud code, no Open Code, no Codex, etc. Em todos eles. E uma das
+
+coisas mais legais do subagente é que ele é capaz de trabalhar em tarefas independentes e retornar o resultado ao agente principal de forma independente, também paralela, tá? Então o subagente ele vai operar na sua própria configuração. Você define o que o subagente deve fazer e aí ele vai resolver aquele problema baseado na instrução que você deu para ele, né, e nas ferramentas que ele tem acesso. É importante entender que um suaggente também pode usar uma skill. Então o suagente também pode ter acesso às skills que são, como nós vimos, uma forma de resolver um problema. Você vê
+
+que o suagente ele é como se fosse mesmo um funcionário, né? Então, subagentes tem skills. Você pode ter subagentes para trabalhar em tarefas mais específicas. Ué, Rafael, mas skills também não são para tarefas específicas? É, mas normalmente os subagentes são coisas um pouco mais complexas, tá?
+
+Normalmente um subagente vai envolver mais de uma etapa, eu diria. Talvez se você só precisar resolver algo em uma etapa, pegue X e transforme em Y, é, as skills sejam melhores. E aí, quando que você utiliza sobre a gente? Quando uma tarefa é muito especializada, code review, gerar testes, etc., gerenciamento de contexto, manter a conversa principal focada e aí você passa o trabalho especializado para subagente. Isso é muito, muito, muito
+
+interessante. Por quê? Porque a gente sabe todo o problema que acontece quando a conversa enche o contexto, você entra compactação, aí a perde um pouco daquela informação. Então o legal de você ter o sub agent é que ele trabalha no seu contexto próprio. Então eu tenho aqui um sub agent de reviewer, como é o caso ali do Codex, que eu gosto bastante, já mostrei para vocês várias vezes. Por
+
+exemplo, tô aqui no repositório do Quant Brasil, abro o Codex e aí eu posso chamar o review para, sei lá, revisar um por request específico que eu tenho aqui. E aí ele vai trabalhar no seu contexto isolado. Eu poderia ter uma conversa. Claro, acabei de inicializar uma aqui, tô com 100% contexto livre, mas se eu podia estar com muito mais coisa aqui e aí o review vai trabalhar no contexto específico, o que é legal porque se você vai revisar um pull request, por exemplo, você vai carregar todos os arquivos daquele request e aí você pode encher o seu contexto de forma desnecessária, certo? Então isso é bem legal. Uma outra coisa interessante para
+
+mostrar aqui é, sei lá, dessa vez vamos usar o cloud para dar o exemplo, tá? E aí vamos supor que nós queremos analisar alguma coisa. Então, eu quero analisar como funciona o blog do Cont Brasil e eu também quero analisar como funciona a página de releases do Contras, sei lá. Então, posso falar algo dessa linha? Então, duas instruções bem específicas.
+
+É, use suagentes para trabalhar em paralelo e retorne para mim como o blog funciona e como a página de releases funciona. E olha lá, quando eu falo isso, ele já, o próprio cloud, ele já roda dois agentes exploradores, o explor agents, né? Se eu apertar control o aqui, eu consigo ver o que que são, né, eles, né? Tá aqui o prompt, ó, do explore agents, ó, que ele criou. Explore how release feature works application. Busque isso, isso, isso.
+
+Então, consigo ver tudo aqui que ele fez e eles trabalham em paralelo e aí cada um deles com seu próprio contexto. Então, esse aqui usou 15 to users, gastou 54.000 tokens, esse aqui 55.000 tokens, mas quando eles retornarem pra conversa principal, vocês vão ver que eles vão retornar bem menos token, tá vendo? Vamos ver ele, vamos deixar ele terminar aqui pra gente ver. Antes dele terminar,
+
+interessante mostrar também, ó, cada um dos agentes, ele usa suas próprias ferramentas. Então, um usou 15, outro usou 20. No total, ó, 44, até atualizou agora, 44 users para um, 39 tu users pro outro. Então, cada agente tem o seu, as suas ferramentas. É como se você tivesse ali um funcionário, cada funcionário com sua ferramenta para realizar uma determinada tarefa. Eu ia falar cada
+
+funcionário com sua habilidade, eu ia confundir com as skills, mas você pode ter as skills também, as skills e as ferramentas. Beleza? Vocês vão ver como que economiza token nesse caso, né? Olha, finalmente finalizou. Um gastou quase 100.000 tokens, outro gastou
+
+75.000 token, mas você vai ver que a resposta final que vai passar para o agente principal, ele deu ali 9.000 tokens, foi mais ou menos que tava. Então perfeito, né? Eu não gastei tanto do meu contexto principal, eu gastei, claro, token da minha conta da Antropic, etc. Ainda gastei bastante, mas a minha
+
+trade principal, eu não preciso ver ali todos os detalhes de como foi feita essa pesquisa, certo? O que eu preciso é o resultado. Vai lá e pesquisa para mim e me diz como como funciona. Ah, não preciso saber todo o caminho que você fez para chegar na conclusão. Eu não quero isso. Eu quero só o resultado
+
+final. Essa é a vantagem do sobre agents. Beleza? E aí aqui ele diz como funciona o blog, o release, tá vendo aqui? Tudo bonitinho, através do ghost, etc. Como foi, como funciona, o que que
+
+eles compartilham, etc, etc. Eu espero que tenha ficado claro como os subagentes funcionam. Então, mostrei aqui para vocês tanto a parte do context management quanto também a parte do processamento em paralelo. E claro, eu posso ter um agente e limitar a ferramenta que ele pode utilizar. Você pode escrever código, você não, você só pode ler, tá? Então, fazendo isso, você
+
+consegue controlar bem a segurança, por exemplo, da sua aplicação. Um dos exemplos mais comuns é o do code review, como eu falei para vocês. E quando que você utiliza uma skill? Quando múltiplos agentes ou conversas precisam da mesma expertise, né? Mas veja, isso aqui é algo menor. O agente faz mais coisa e o
+
+agente pode utilizar uma skill, assim como ele pode utilizar uma ferramenta. Então você dá pro agente as ferramentas, né, e as skills necessárias para realizar aquela tarefa. Mas o agente ele é um LLM independente, certo? Então, se você quiser fazer alguma coisa que precise daquela mesma expertise, por exemplo, né, que no artigo ele sugere quando você quer fazer um uma um review de de segurança, né, ou métodos de análise de dados, então cria uma skill em vez de construir um subagente. Então, sei lá, não faz sentido eu ter um subagente que pega uma imagem e redimensiona ela. Eu poderia use o
+
+subagente tal para redimensionar a imagem, mas não faz muito sentido. Faz sentido aqui é que isso seja uma skill. Então, meu próprio agente principal carrega aquilo e faz aquela mudança que eu pedi. Então, us as skills para ensinar expertizes que qualquer agente possa aplicar. Use suba quando você precisa de de uma execução independente de uma tarefa com permissões específicas para ferramentas e context isolation, ou seja, o contexto isolado um do outro.
+
+Isso é fundamental, tá, pessoal? Isso aqui talvez seja uma das partes mais interessantes sobre a gente por causa do que eu falei para vocês. Ou um code review, eu quero context isolation. Ah, um explorador de code base, eu quero um contex isolation. Eu não quero que isso degrade a performance da minha trad, do meu contexto original. Beleza? Mais um
+
+termo que nós trazemos bastante aqui no canal são os MCPs, que significa model context protocol, que é um padrão aberto para se conectar ferramentas externas e serviços externos a IA. Gente, eu falo aqui diversas vezes de MCP no canal. Vou deixar aqui para você dar uma olhada no meu top cinco MCPs para programar. Por exemplo, usa o MCP do Contex 7 para trazer contexto sobre bibliotecas. Usa o MCP do Playgright para controlar o seu navegador. Usa o MCP do Centry para
+
+buscar informações de erro do seu app. Se você tiver utilizando o centry, usa o MCP do Postgress para se conectar no seu banco de dados, como eu mostrei no vídeo que você pode conversar com o seu banco de dados utilizando esse MCP. Enfim, você consegue utilizar MCP para diversas coisas, tá? Agora é interessante entender uma coisa, o MCP ele carrega normalmente muita informação no contexto. Até por isso que as skills foram desenvolvidos. Aqui no exemplo, ó,
+
+você vê que o MCP pode se conectar com o Git, por exemplo, para você gerenciar ali o GitHub, né, seu repositório do seu app. Quando o pessoal trabalhava com o MCP do Git, descobriu que carregava muita coisa no contexto. Então, na largada de uma tarefa que você utilizava o MCP do Git, você já vinha com, sei lá, 30% do contexto cheio. Isso é ruim. E aí por isso que veio a ideia ali do progressive disclosure do das skills, tá? Tem um detalhe também que pr pro
+
+Git, provavelmente você consegue fazer melhor com CLI. No geral, sempre que você tiver a CLI, a CLI é mais adequada porque ela vai gastar bem menos do seu contexto. E na CLI você pode instruir até como uma skill, né? Eu quero fazer um quero criar um request. Posso dizer, olha como quando eu quero criar um pr request, eu faço dessa dessa forma, utilizando a CLI, o padrão é tal e tal e tal. Isso é uma skill. É a skill para
+
+criar o P request no formato que eu quero. Ainda que essa skill utilize o MCP por trás dela, né? que seja parte do que ela precisa fazer, daquela rotina que ela precisa fazer. Não vou falar muito aqui de MCP, que nós já falamos diversas vezes no canal, mas ele é uma forma de você acessar dados e serviços externos, ferramentas externas, tá? Ah, que ele até falou, eh, plataformas de de gerenciamento de projeto. Eu gosto muito
+
+de utilizar o MCP do Lineer. Eu coloco lá os meus tickets que eu tenho que trabalhar no Lineer, uso o MCP do Linear para puxar o contexto. E aí eu sei, a sabe como o que que ela precisa fazer, tá? Se a gente voltar para essa imagem aqui do context engineering, o available tools que você vai ter aqui também vai incluir os MCPs. Então, ah, eu quero trabalhar num ticket, sou um programador, trabalho num time de desenvolvimento, tem um ticket lá no Gira, no Linea, que seja, eu busco aquela informação, pego aquilo tudo, coloco no contexto para me irar e agora ela consegue trabalhar. Então esse
+
+context engineering é fundamental. E aí, quando que você utiliza a skill e não MCP? Então, novamente, o MCP conecta a IA aos dados, as skills ensinam a IA o que fazer com esse dado. MCPs são formas de você pegar dados de serviços externos. Agora, o que que você faz? Uma
+
+vez que você pegou aquele dado? Aí faz parte da skill. Evidentemente que uma skill pode ensinar como pegar o dado. Então, se uma skill pode ensinar como pegar o dado, uma skill pode conter uma chamada para MCP, por exemplo. Então, se você tá explicando como utilizar uma ferramenta ou como seguir determinados processos, por exemplo, quando tiver fazendo uma query no banco de dados, sempre faça um filtro por date range primeiro ou formate sempre os relatórios do Excel formas específicas. Então, isso
+
+é uma skill, usa isso para fazer. Agora, como que você acessa o banco de dados em primeiro lugar? MCP. Como que você acessa o Excel, por exemplo, se ele tá lá no Google Drive, tá vendo? No MCP, o MCP vai te dar essa esse acesso, essa forma de pegar informações e conectar com o serviço e colocar ali no contexto para suar trabalhar. Eu ainda quero
+
+falar de plugins e de slash commands, mas antes disso eu queria passar por esse por essa tabelinha, tá, que o pessoal drop colocou aqui, que eu achei que ficou bem legal. Então, dá uma separação aqui entre os prompt projetos, suagentes e MCPs. Eles fizeram de uma forma horrível aqui com esse scroll. Vou até fazer uma coisa bem meta aqui agora. Deixa aí pro cloud falar o seguinte.
+
+Formar dele aqui na Mark table. Nossa, será que vai dar certo? Copiei aqui de qualquer maneira. Vamos ver se ele consegue fazer. E deu certo. Beleza.
+
+Usando o cloud para corrigir os erros do cloud, né? Que que são as skills, como que ela se compara com os outros, né? Então, o que que é skill? Prov. Conhecimento procedural, conhecimento de processo, que que os prompt provém?
+
+Instruções adocnâneas, projeto, que que ele, o que que ele oferece? Um conhecimento de background. Lembra do exemplo do box? Ah, tô trabalhando com um cara aqui que é destro, tem tanto de altura, tem tanto de peso, etc. E os suagentes, quando você quer delegar uma tarefa? Então tô
+
+trabalhando aqui numa tarefa, tem uma parte dela que pode ser delegada, pensa subergente é como se fosse um funcionário. Mando pro funcionário esse funcionário é equipado com os recursos necessários para realizar aquela tarefa. E MCP é conectividade de ferramenta. Então quero me conectar com serviços externos. Eu uso MCP, beleza? Centry,
+
+Línea, banco de dados, ZN N8N, que seja, eu me conecto serviços externos. MCP é uma boa chamada. Beleza? Quando nós analisamos sobre o prisma da persistência, então as skills podem ser utilizadas em várias conversas e em várias plataformas, tá? Então você pode usar as skills no Cloud Code, no Cloud Web, no Codex, no Open Code, em diversos lugares a mesma skill. Então isso é
+
+muito legal, uma vantagem tremenda das skills. Prontos, estão sempre ali para aquela conversa, nunca são reutilizados. projetos, a persistência dentro daquele projeto. Você criou aquela base de conhecimento dentro do projeto e toda a conversa dentro dele vai beber daquela fonte de conhecimento. Os suagentes são entre sessões, beleza? E o MCP precisa
+
+que você tenha conexão. Então eu sempre tenho que fazer lá conexão para usar aquele serviço ou recuperar a informação. Que que as skills contêm? Instruções, códigos e asset. Então, MarkD, código, exemplo, aqui o código para você redimensionar uma imagem e asset. né? Ou seja, arquivos. Tá aqui a
+
+logo do meu produto, por exemplo, aqui é uma skill, ela pode conter tudo isso. Promps são simplesmente linguagem natural, projetos pode ter documentos e contextos geral. Subagente tem tudo que o agente pode ter de lógica, o suagente também pode ter. Então ele pode ter acesso a tudo. Ele é uma mitose, vamos dizer assim, do agente, né? Então ele
+
+tem acesso a tudo que você der para ele. Evidentemente o MCP ele tem acesso às definições de ferramentas. Então, provedor do MCP, quem criar o servidor de MCP, ele define, ó, tem aqui a ferramenta X, Y, Z. Quando você chamar o MCP, você chama qualquer uma dessas ferramentas, tá? Então, fica a cargo de quem desenvolveu o servidor do MCP de criar essas definições. Quando que as
+
+skills são carregadas? Dinamicamente, quando necessário, progressive disclosure, prompt é a cada round, né, a cada iteração. Projetos estão sempre no projeto, sobre a agente precisam ser invocados, né? Essa talvez seja um dos um dos problemas do sobreagente, né? Você meio que tem que falar, chame o sobreagente, tal, você tem que delegar a tarefa objetivamente, senão ele não é chamado. Beleza? E o MCP tá sempre
+
+disponível. Essa, esse é um dos problemas do MCP em relação às skills. Como ele tá sempre disponível, ele tá sempre ocupando o contexto. E as skills não, as skills elas têm aquela descrição que funcionam como um ponteiro para contexto maior. Skills podem incluir código? Sim. prompt não. Projetos não.
+
+Você pode ter um texto aqui com com código, né? Acho que nesse caso sim. Sobreagente podem, MCPs podem. As skills são melhores para expertise especializada, prompt para requisições rápidas, projetos para contexto centralizado, suba para tarefas especializadas e MCP para acesso de dados e serviços no geral, tá? Então, post linear, contact 7, cento. Eu tô
+
+pegando o dado de outras fontes e jogando para dentro do meu contexto. Beleza, pessoal? Então, vamos concluir aqui esse artigo novamente reforçando a diferença entre skills e subagentes, que é o que eu vejo que onde reside a maior confusão. Então, você usa skills quando você quer a capacidade que qualquer instância do cloud ou qualquer IA pode carregar e utilizar. Skills são como materiais de treinamento. Ele faz a IA
+
+melhor em tarefas especializadas. Lembra do nosso nosso skill aqui do design de Nia? É o material de treinamento. Ó, use sempre esses princípios. Então são é uma skill. Você usa isso em diversos
+
+contextos, independente da IA, tá? Subagentes quando quando você quer agentes que precisam de tarefas específicas e completas, tá? Então são agentes autocontidos, projetados para tarefas de propósito específico e que vão trabalhar aí um determinado workflow de forma independente sob a agentes são como empregados especializados. Aí é o exemplo que eu tô dando toda hora, tá? são empregados especializados com seu próprio contexto e suas próprias permissões. Então, você cria um
+
+empregado para você, você dá para ele aquilo que ele precisa para resolver a tarefa e você invoca ele quando você quer delegar uma tarefa para ele. E aí esse empregado pode utilizar uma skill se aquela skill fizer parte da tarefa que ele tem que realizar. Beleza? E se você tava na dúvida disso, ó, tem aqui ter aqui, ó. podem subagentes utilizar skills e sim, cloud Code e SDK do agentes permitem que você utilize a skills, assim como o agente principal.
+
+Então ele até fala aqui, ó, você pode ter um subagente que é um Python developer e aí esse Python developer pode ter ali a skill pandas análises, que é para fazer a análise utilizando pandas, beleza? Então, perfeitamente possível. Além disso, pessoal, eu queria falar também dos slash commands, tá? Eu já falei algumas vezes aqui no canal e o slash command, por mais que ele não esteja aqui nesse guia, ele é interessante ser mencionado que você consegue utilizar ele em diversos contextos, mas a graça do slash comand é quando você quer algo mais determinístico, é quando você tem tarefas mais repetitivas, você transforma aquilo no slash command. Então, por exemplo, eu criei um slash command no codex. É engraçado que aqui
+
+no chatpt ele vai chamar isso de custom prompt. São slash command, custom prompt são coisas similares, tá? E aí eu fiz o seguinte, deixa eu mostrar para vocês que ficou legal. O que que eu faço? Às vezes eu quero gerar um change log de um release que eu vou fazer que tem vários commits. E aí o que que eu passo aqui
+
+nesse slash comand? Eu tenho a descrição onde eu falo para ele usar a CLI do GitHub e o MCP do Line recebendo uma URL de um P request. E aí através daquela URL ele vai pegar tudo que foi feito, né? que ele tem um P request, ele consegue ver todos os commits, consegue ver ali através da CLI do KitHub os arquivos que foram modificados e consegue ver também dependendo do nome do commit o ticker ali no lineer. Então ele consegue através desse dessa única URL pegar todo o contexto e gerar um texto com um formato que eu especificar, por exemplo. Beleza? Então isso é bem
+
+legal. E aí uma dúvida, claro, é quando que eu utilizo isso e não skills, tá? Aí ele até fala aqui na documentação do Codex, ó, que se você quiser compartilhar esse prompt ou se você quer que o Codex implicitamente invoque isso, utilize as skills. Então, basicamente a diferença dos custom prompts ou dos LED comandos para skills é que o custom prompt ele é mais determinístico. Assim, eu quero chamar ele aqui, eu quero passar um parâmetro, ele vai ter menos margem para erro, mas ele vai descrever o que você quer fazer da mesma forma como uma skill, certo? E aí, a última
+
+coisa que eu quero falar hoje, pessoal, são sobre os plugins do Cloud Code em particular. Se você abrir aqui o cloud, por exemplo, no seu repositório, você vai ver que ele tem aqui, ó, uma opção de plugins. E aí tem aqui, sei lá, GitHub, Serena, muita gente já falou, Playwght, etc., várias coisas que você consegue instalar aqui, ó. Atlation, Figma, agent SDK, dev notion. E aí algumas coisas linear, ó,
+
+algumas coisas são e mcps, né, como é o caso do context 7, outras são skills, outras são só slash commands, enfim, o que que são os plugins, né? Então os plugins permitem que você estenda a funcionalidade do cloud code, tá? E você pode compartilhar aquilo com projetos e times. Então, basicamente você pode criar um plugin e aquele plugin vai trazer junto ali um MCP, uma skill e um slash comando, por exemplo. Então isso é bem legal quando você quer padronizar alguma coisa, né? você instala um plugin
+
+e você baixa aquela configuração, né? É como se você tivesse ali um snapshot da sua configuração e e disponibilizasse para outras pessoas. Então eu queria deixar isso claro aqui antes da gente finalizar o vídeo, porque quando o pessoal do Cloud Code lançou os plugins, eu fiquei um pouco confuso. Eu achei que era uma coisa nova, mas não é não é uma coisa nova, é simplesmente uma forma de você reutilizar configurações dos seus agentes em diversos lugares. Inclusive no vídeo onde eu falo do guia atualizado cloud code com as dicas lá do criador.
+
+Vou deixar o link aqui se você não viu esse vídeo. Esse vísto tá muito bom e vai te ajudar bastante a programar com IA, especialmente se você usa o Cloud Code. Nesse vídeo ele mostra algum dos plugins que ele usa. E na verdade os plugins são isso, é uma forma de você lá instalar uma configuração específica, beleza? Quando que você utiliza plugins, quando você quer compartilhar a funcionalidade com o seu time, a sua comunidade, quando você quer ter o mesmo agente, os mesmos slash commands em múltiplos projetos. Então tenho lá os
+
+agentes que eu sempre utilizo, backend developer, frontend developer, database reviewer, code reviewer, etc. Uso em todos os meus sites, por exemplo, cria um plugin. Toda vez que você inicializar um projeto, você instala aquele plugin e aí automaticamente você vai injetar ali no seu projeto os agentes. Beleza? Você quer fazer um versionamento, né? Então,
+
+se você quer atualizar, coloquei um novo agente, eh, modifiquei uma skill, tudo ali dentro de uma de um versionamento. Isso é bem legal. você quer distribuir dentro de um marketplace e você não tem problema com os last commands que sejam name spaced, né? Então você coloca ali na frente barra my plugin dois pontos relow por exemplo, para evitar conflitos entre plugins. Beleza? O cloud vai ter
+
+isso aqui também. Bem legal para você trabalhar dentro de uma empresa. Se você tem um time e você quer reutilizar agentes, skills, slash comandos, etc. MCPs dentro desse time, você pode criar um plugin para a sua equipe e colocar tudo lá. Beleza? Muito bem pessoal,
+
+então um vídeo mais denso, com diversos conceitos, mas espero que tenha ficado claro para você que que é um skill, que que é um sub, gente, quando utilizar um e não o outro, quando utilizar um slash comando, quando criar um projeto, um MCP, enfim, que você tenha mais subsídio para criar apps com IA. Sempre lembrando que no final das contas tudo isso aqui é context engineering, é engenharia de contexto, é prover para irá as ferramentas que ela precisa para resolver aquela tarefa. E como você provê essas ferramentas da forma mais eficiente possível, sem comprometer o contexto, maximizando a chance de resultado, utilizando todas as técnicas que nós mostramos hoje. Então, programar com IA é sim uma habilidade por si só, envolve um conjunto de técnicas, envolve um conjunto de boas práticas que eu planejo explorar aqui nesse canal com você. Então, se esse assunto é algo que te interessa, por favor, se inscreva nesse canal. Compartilhe com seu amigo e
+
+sua amiga que gosta de programar com Yak, que tem dúvida sobre quando utiliza skills ou MCPs ou subagents. Não deixa de curtir esse vídeo, de hypar se você vê a opção aí no celular. Agradeço a audiência de sempre e até a próxima.
