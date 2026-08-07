@@ -1,0 +1,114 @@
+---
+video_title: "DEI UM PROMPT e o Opus 4.6 Criou 3 IAs que Construíram Meu App (Agent Teams)"
+video_id: 1_SOQHu5kEs
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1_SOQHu5kEs
+video_date: 2026-02-08T15:00:00+00:00
+video_description: |
+  Neste vídeo eu mostro na prática o recurso mais insano que a Anthropic já lançou no Claude Code: Agent Teams. Pela primeira vez você pode montar um time de IAs que trabalham em paralelo no mesmo projeto, cada uma com seu próprio contexto, suas próprias tarefas, e o mais impressionante, elas conversam entre si sem você precisar mediar nada.
+  
+  🔥 LANÇOU Conheça a Formação Agentes de IA: https://app.horadecodar.com.br/lp/formacao-agentes-de-ia-n8n?utm_source=yt_agent_teams
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Até agora usar Claude Code era ter um estagiário muito bom. Ele fazia tudo, mas uma coisa de cada vez. Se o projeto ficava grande, o contexto degradava e a qualidade caía. Com Agent Teams isso muda completamente. Você define um líder, cria teammates especializados, e cada um trabalha no seu pedaço do projeto ao mesmo tempo. O líder coordena, distribui tarefas por uma task list compartilhada, e os agentes se comunicam direto entre si quando precisam resolver dependências.
+  
+  Pra testar isso de verdade eu criei o FinanceFlow, um app completo de controle financeiro pessoal. Dashboard com gráficos desenhados em Canvas puro, gerenciador de transações com filtros e busca, e um sistema de metas de economia com barra de progresso e animação de confetti quando você bate 100%. Tudo em HTML, CSS e JavaScript puro, sem framework nenhum, sem backend, dados no localStorage. Abre o HTML e funciona.
+  
+  Dei um único prompt pro líder com o projeto inteiro detalhado. Ele leu, criou a estrutura base, e montou 3 teammates: Dashboard Dev, Transactions Dev e Goals Dev. Cada um recebeu sua missão e começou a trabalhar no seu painel do tmux. Três agentes codando ao mesmo tempo no mesmo projeto.
+  
+  O momento mais impressionante do vídeo é quando o Dashboard Dev manda uma mensagem direta pro Transactions Dev perguntando qual formato de evento ele deve escutar pra atualizar os gráficos quando uma transação nova for adicionada. O Transactions Dev responde que vai disparar um custom event no document. Eles definiram um protocolo de comunicação entre si sem eu fazer nada. Quando eu adicionei uma transação e voltei pro dashboard, os gráficos atualizaram sozinhos.
+  
+  Depois de construir o app, montei um segundo time só pra fazer code review. Três revisores trabalhando em paralelo com perspectivas diferentes: segurança, performance e experiência do usuário. O de segurança encontrou innerHTML sem sanitizar. O de performance pegou re-renders desnecessários nos gráficos. O de UX apontou falta de labels nos inputs e problemas de responsividade. Três lentes ao mesmo tempo que um reviewer sozinho provavelmente deixaria passar.
+  
+  Mostro também quanto tudo isso custou em tokens e dólares, sem esconder nada. Agent Teams custa mais porque cada teammate é uma instância separada. Mas a conta que importa é outra: se 3x o custo te dá metade do tempo e qualidade superior, faz sentido. E dou uma dica de ouro: coloque Sonnet nos teammates e Opus só no líder. Sonnet executa muito bem, Opus coordena melhor.
+  
+  Pra contextualizar o que isso significa, a própria Anthropic usou 16 agentes com Agent Teams pra construir um compilador C em Rust do zero. 100 mil linhas de código, 2 mil sessões, 20 mil dólares em tokens. O compilador compila o kernel do Linux em x86, ARM e RISC-V. Se 16 agentes constroem um compilador, imagina o que 3 agentes fazem com o seu projeto.
+  
+  Agent Teams é experimental ainda. Tem rough edges, às vezes um teammate esquece de marcar task como completa, às vezes o líder quer implementar em vez de delegar. Mas o que funciona já é impressionante o suficiente pra mudar a forma como você desenvolve. Você vira o gerente de projeto e as IAs são o time.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 O que é o Agent Teams do Opus 4.6
+  01:29 Explicando concentiualmente o Agent Teams em ação
+  03:09 Habilitando o Agent Teams no Claude Code
+  03:56 Criando app com Agent Teams
+  06:50 Alternando entre agentes
+  08:28 Verificando a Task Lisk do Agent Teams
+  09:40 Testando o app criado
+  11:30 Minhas considerações sobre o Agent Teams
+---
+O Cláudio Opus lançou dia 5 de fevereiro e com ele veio uma funcionalidade que tava ali nas entrelinhas, o chamado Agent Teams. O que que é isso? Uma funcionalidade direta pro cloud code, onde vai poder criar um time de agentes que cada um vai trabalhar em uma tarefa específica ou várias tarefas. É como se eles fossem especialistas e desempenhassem o trabalho quando tem ali um team lead observando o que eles fazem e também marcando as tarefas que tem que ser feita nesse projeto como concluída. Enfim, um recurso muito interessante, simples de utilizar e eu vou te mostrar agora exatamente passo a passo, criando um projeto, como tu pode implementar o Agent Teams nos teus projetos. Eu sou
+
+Mateus Batista, programador há mais de 10 anos e hoje venho compartilhando a minha vivência as ferramentas que eu uso de A aqui no canal com vocês. Então se gostarem não esqueça de deixar o like e também se inscreverem para receber mais conteúdos como esse. E claro, a campanha deste Mateus Feliz ainda tá rodando, galera. Olha só, muito like, muita view, muito legal, só que ninguém comenta, galera. Pô, vamos conversar, vamos falar sobre esse recurso. Isso aqui é o
+
+futuro, o progresso. A gente tem que trocar uma ideia para ver o que vocês estão achando e o que tão achando. Então, bora aí, deixa teu comentário que eu tô te esperando, tá bom? Então, vamos seguir. Bora pro Agent Teams do Cloud C.
+
+Ó, aqui eu trouxe uma pequena representação pra gente entender o que é esse recurso, tá? Então, na ponta aqui vai ter agente que vai pedir alguma coisa, algum projeto para ele. Tem uma sintaxe específica pra gente determinar quais são os agentes, tá? E aí quando a gente faz esse promp inicial, que eu vou mostrar para vocês como é que funciona, cria-se uma estrutura muito semelhante a essa, um team lead que só vai coordenar o que os agentes fazem, tá? E cada um dos agentes que a gente pediu para serem criados. Então, a gente pode criar um
+
+agente front end, de back end, de banco de dados, um agente tester, um agente de segurança, enfim. Não importa o céu e o limite. Beleza? Esses agentes eles se comunicam entre si para dizer o que que tá pronto, que eles estão mexendo, para não afetarem o trabalho um do outro, né? E também se uma tesque de outro depende do segundo, terceiro, sei lá, eles também conseguem se conversar para dizer que tá feito e o outro pode começar a tarefa dele. Isso
+
+tudo é centralizado em algo que é chamado de tesk, que ela é compartilhada entre todos os agentes. Então essa aqui é a estrutura do Agent Teams. E como vocês podem ver, não é tão complexo assim. É bem fácil entender, como se fosse um time de programação trabalhando em conjunto e a gente vai ver na prática agora mesmo, tá? Uma data é uma funcionalidade experimental, vamos dizer assim, né? E para tu ativar isso no
+
+cloud code, tu precisa habilitar essa configuração aqui no settings Jon. A boa notícia é que tu pode pedir para o próprio cloud fazer isso. É bem simples. Então tu vai copiar aqui, vai lá no teu cloud code e tu vai chegar assim para ele aqui, ó. Verifique se configuração está habilitada.
+
+Se não estiver, habilite. E eu vou colocar aqui o que a gente copiou lá da configuração. Ele vai dar uma olhada. Se tiver, o meu já tá, né? Ele vai dizer que tá OK. Se
+
+não, no teu caso, ele vai lá e vai habilitar oed teams. Beleza? Tá? Então esse aqui é o primeiro passo, senão não vai dar certo que a gente tem que fazer. Ó, no meu caso, como eu falei, já tava habilitado, então não precisou fazer nada. No teu, ele vai pedir se pode
+
+modificar, tudo dá assim e pronto. Tá? Então agora eu vou começar com o prompt inicial que vai determinar os agentes, tá? Então, vou colar ele aqui, vou dar um enter e vou explicar para vocês como é que funciona. Aqui, ó, eu vou criar um aplicativo, né, chamando chamado Finance Flow, que é com HTML, CSS JavaScript, tá? Os dados são salvos
+
+no C storage. Aí eu dou uma estruturada, né? Eu falo o que que eu vou querer no aplicativo, né? Isso é bem simples. É engenheira de prompt, né? Lembrando, se
+
+tu quer dominar engenheiro de prompt, a gente tem o nosso guia aqui do básico avançado, o link vai est na descrição, baixa aí e aprenda, tá? Aprenda engenheiro de prompt que é muito importante. Bom, voltando, depois que eu explico o contexto do projeto, eu vou determinar, né, cada um dos teammates, que seriam os agentes, tá? Essa maneira que de chamar eles pode ser assim, agente um, né, ou sei lá, eh, teammate, como eu tô falando aqui, não importa, ele vai conseguir identificar. quando aquela confessão tá debilitada, que tu quer um agente para trabalhar no Agent Teams, tá? Então tu vai determinar
+
+cada um deles, cada um deles vai ter um papel específico, é claro, né? É, esse é o cod da funcionalidade e aí vai se começar o projeto, tá? Então vai ter que dar os oks aqui pro cloud e inicialmente pode ser que ele faça um setupzinho e depois ele crie os agentes, tá? Então é bem comum isso também. que ele não inicie logo de cara, tá?
+
+Para ver os agentes trabalhando, a gente vai poder apertar aqui, ó, contrl T, como ele fala, e isso vai habilitar uma visualização de show tasks. Tá vendo aqui que eu tô apertando, não tá fazendo nada? É porque ainda ele ainda não criou. Então depois ele vai fazer isso. É como se inicialmente o agente Tinglit tivesse trabalhando e depois ele vai criar toda a estrutura de agentes que a gente precisa ter para fazer esse projeto, tá?
+
+Então vou guardar aqui e já retorno com vocês. Ó, ele terminou aqui essa parte inicial que eu falei para vocês, né? E agora ele vai criar o time e as tarefas. Então é a estrutura central, né? é um time de agentes que a gente definiu que trabalha numa tesk unificada, vamos dizer assim, mas os agentes têm comunicação entre si também, tá? Então
+
+agora, ó, ele tá mostrando as tarefas que vão ser feitas pelos agentes, beleza? E aí daqui a pouco a gente vai ver os agentes sendo iniciados de fato e cada um trabalhando isoladamente. E lembrando, né, esse comando contrl T é o que vai verificar aqui, né, quais são as tarefas. pode mostrar ou ocultar. Ó, vejam aqui, ó. Agents launched.
+
+Então, ele soltou dois, né? Um para dashboard, um para transactions. E aí logo a gente vai poder ver um outro menu que mostra os agentes detalhadamente. Ó, vejam aqui. Agora o contrl T, em vez de mostrar as tarefas, ele vai mostrar os agentes em si, beleza? E aqui, né, eh,
+
+como cada um deles está trabalhando, tá vendo aqui essa tabela? Bom, os agentes são esses. A gente tem o Team Lead, como explicado antes, que vai ser o cara que comanda eles. Dashboard dev, que é um dos agentes, gostos dev, que é outro, e transactions, outro agente, tá? Aí com o shift a gente consegue aqui, ó, eh, mudar eles. Então, eu posso falar com o team
+
+lead se eu quiser. Então, agora esse prompt aqui que eu mandar vai pro team lead, tá? Eu posso voltar lá e ah, não, quero falar com o GD. E agora eu tô mandando uma mensagem para esse agente específico. Vamos dizer que eu tenho uma outra tarefa para ele.
+
+Então, até ele terminar a tarefa designada ali inicialmente pelo Team Lead, esse prompt vai ficar suspenso, né? ele vai ficar esperando terminar a primeira tarefa para depois executar essa. Então, uma outra coisa legal, né, que acontece é que agora, né, eu tenho a possibilidade de utilizar individualmente todos os agentes, beleza? Então, bem interessante isso, porque eu posso continuar com eles, né, de forma isolada. Não preciso seguir talvez pelo comando no agente principal, posso falar com eles e pedir uma tarefa que eu queira. Ó, vejam aqui,
+
+ó. Tesk de vez em quando também é passada pra gente, pra gente ver o que tá acontecendo, que ele tá quase terminando o projeto. Vejam aqui que a maioria das tarefas, né, ficou pro transactions dev, os outros receberam menos. Lembra que eu falei que o líder ele só coordena? Às vezes ele pode fazer alguma coisa, tá? E para isso a gente tem um outro
+
+modo, né? A gente tem aqui o modo de aceitar redições, de planejar e o delegate mode on, que é um modo novo que a gente muda com shift tab, que aí sim transforma o líder somente num coordenador, né? Ele não pode mais executar código nenhum. Então é um outro modo que tu pode estar utilizando se tu quiser. Então aqui, galera, ele tá falando que o time foi encerrado porque todas as tarefas estão prontas, né? O
+
+cloud tá reclamando que tá quase estourando o limite que lançou ous é que eu tô na violência com ele, né? E aí que ele vai fazer aqui? Eh, provavelmente me dá uma forma de acessar o projeto pra gente testar, ó. Então, ele terminou aqui, tá? E agora a gente pode ver o projeto, né? Consegue
+
+ver um resumo geral do que foi executado. 13 arquivos, 3300 linhas. E vamos dar uma olhada aqui, então, se ficou legal.
+
+Ó, o projeto esse aqui é um finance tracker, né? A gente pode colocar aqui as nossas despesas e ver aí quanto que a gente tá gastando no mês, né, de receitas e despesas. Ó, aqui tem transações, então botar nova transação. Uma despesa, deixa eu despesa que é o supermercado Milão, né? E aqui é um gasto de moradia. Vou
+
+adicionar. Então, caiu aqui, ó. Não ficou muito bem organizado por causa da data, né? Então, tinha me perdido, mas tá aqui. E já tá contemplando aí a nova despesa, né? Nas coisas. Tem metas,
+
+já colocou alguns dados, né? Então, o sistema ficou bem completinho, ó. Modo light dark. Isso que é interessante também, duas coisas, né, que a gente pode ver aqui do do agente. A primeira é que ele entregou muitas funcionalidades com um prompt só. E isso, claro, se deve
+
+aos agentes trabalhando em paralelo, né, galera? Mas também a questão do do output de tokens tem aumentado, né? Isso faz com que o cloud entregue mais com menos prompt, ele atinja mais o resultado final antes. Só que claro, né? vai gastar mais token, de qualquer maneira vai gastar token, né? Mas ele
+
+vai terar menos conosco, né? Falando de agente, né, galera, relembrando todos vocês, a gente tá fazendo nossa formação de vibe coding, provavelmente vai ser em março agora já, tá? Então, eh, baixando até o ebook, vocês vão estar numa lista especial que vai ganhar um desconto do lançamento. Mas enquanto isso, a gente tem a formação X de A, que é formação de N8N, do básico avançado para vocês aprenderem automação. Então, o link vai tá na descrição aqui também, beleza?
+
+Bom, sobre o Agent Teams, era isso. Espero que vocês tenham curtido a novidade. É algo que tá bem em fase experimental, né? precisa habilitar ali a setting para usar, mas já mostra o seu poder. A gente consegue aí tá criando projetos de forma mais rápida, delegando papéis, né, exclusivos a agentes e inclusive adicionando novos, né, para poder fazer outros papéis e aí depois talvez seguir o caminho com um agente específico. Como eu falei, eu não
+
+preciso, né, sempre tornar o mesmo cloud, né, que seria antes. Um agente para tudo. Agora cada gente vai ter o seu cérebro, digamos assim, e conseguir desempenhar melhor sua função. Eu curti a funcionalidade, comenta aí se tu gostou também. E claro, não se esqueça, deixa o like, se inscreva para receber próximos conteúdos. Vou ficando por
+
+aqui. Espero vocês no próximo vídeo.

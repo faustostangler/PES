@@ -1,0 +1,559 @@
+---
+video_title: "Criei um Sistema COMPLETO com a IDE do Google (Antigravity + n8n)"
+video_id: 7CIopNtLnxg
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7CIopNtLnxg
+video_date: 2026-01-14T14:00:14+00:00
+video_description: |
+  O Google lançou uma IDE com inteligência artificial integrada e pouca gente está prestando atenção nisso!
+  
+  🔥 LANÇOU Conheça a Formação Agentes de IA: https://app.horadecodar.com.br/lp/formacao-agentes-de-ia-n8n?utm_source=yt_antigravity_n8n
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O nome da IDE é Antigravity. É gratuito. E permite criar projetos completos usando IA, do frontend ao backend, com deploy incluso.
+  
+  Nesse vídeo eu vou além do básico. Não é só um tutorial da ferramenta. Eu crio um projeto full stack de verdade e integro tudo com n8n pra ter automações funcionando junto com o sistema.
+  
+  O Antigravity funciona de um jeito diferente das outras IDEs com IA. Você descreve o que quer construir, a IA gera o código, e você pode editar, testar e fazer deploy direto na plataforma. Tudo no navegador. Sem instalar nada. Sem configurar ambiente.
+  
+  Mas o que realmente muda o jogo é quando você conecta isso com automações.
+  
+  Imagina criar uma aplicação web e já ter ela integrada com workflows inteligentes. Formulário que dispara automação. Dados que são processados por agentes de IA. Notificações automáticas. Tudo funcionando junto.
+  
+  É isso que eu mostro nesse vídeo.
+  
+  Começo apresentando o Antigravity e explicando como ele funciona. Mostro a interface, como criar um projeto novo, como usar os prompts pra gerar código e como a IA entende o contexto do que você está construindo.
+  
+  Depois entro na parte prática. Crio um projeto do zero, passo a passo, explicando cada decisão. Você vai ver o processo real, incluindo os ajustes e correções que fazem parte de qualquer desenvolvimento.
+  
+  Na sequência conecto o projeto com n8n. Mostro como criar os webhooks, como fazer a aplicação se comunicar com os workflows e como criar automações que respondem aos eventos do sistema.
+  
+  No final você vai ter uma visão completa de como usar essas duas ferramentas juntas pra criar projetos reais que funcionam no mundo real.
+  
+  Se você quer aprender a criar sistemas com IA sem depender de um setup complicado, esse vídeo é pra você. Se você já usa n8n e quer expandir o que consegue construir, esse vídeo também é pra você.
+  
+  Assiste até o final que tem bastante conteúdo prático.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 O que é o Google Antigravity
+  01:54 Apresentando o projeto que vamos criar
+  06:10 Iniciando o projeto com Antigravity com o Agent Manager
+  14:41 Vendo projeto criado no navegador
+  15:30 Criando autenticação de usuários no Antigravity
+  18:44 Testando criação de conta e login
+  21:51 Criando a dashboard do sistema
+  23:58 Prompt de Tela para criação de plano de estudos
+  27:01 Tela para exibir todos os planos de estudo
+  28:25 Explicando o workflow do n8n
+  28:50 Criando workflow do projeto no n8n
+  40:27 Integração do projeto web com n8n no Antigravity
+  48:07 Recebendo dados do workflow no sistema
+  49:17 Funcionalidade de exclusão de planos de estudos
+  52:14 Prompt de melhorias gerais no projeto do Antigravity
+  55:29 Prompt para correção de falhas de segurança
+  57:49 Iniciando deploy do projeto
+  59:39 Prompt para criar arquivo de instruções de deploy
+  1:02:16 Configurando domínio e DNS
+  1:04:07 Colocando projeto no GitHub
+  1:06:00 Iniciando configurações no servidor
+  1:16:22 Testando projeto no servidor após deploy
+  1:23:13 Conclusão e próximos passos
+---
+Uma coisa que eu tô usando bastante no meu dia a dia é o Gravit do Google, que é gratuita, né, para fazer o tal do Vibe Code. E pr poder mostrar pr vocês resultados que eu tô tendo nos meus próprios projetos, eu resolvi criar esse vídeo que vai mostrar a criação de um SAS com integração a banco de dados, ou seja, ele vai ter um back endn para ter uma automação plugada na regra de negócios desse SAS, desse software que a gente vai criar. Vamos fazer tudo o passo a passo desde o início dele, o primeiro promp. Vou te mostrar umas estratégias que eu tô utilizando também atualmente, até a integração do back end, funcionalidades como autenticação, a integração do N8N e por fim o deploy. Vamos colocar no ar e tu vai aprender esse processo aí como funciona de maneira profissional. Então, conteúdo
+
+completo, não encontra em lugar nenhum, detalhe por detalhe, de um desenvolvedor de mais de 10 anos de carreira. Se tu gostar, não se esquece de se inscrever e deixar aquele like que ajuda a gente bastante. Se não me conhece, sou Mateus Batista, criador da Hora de Codar e hoje eu tô desbravando muito esse mundo da Iá, porque eu entendi que é o futuro e vou te ajudar a entender isso também. Olha só, uma notícia importante para quem acompanha aqui. A gente também tá desenvolvendo uma formação em Vibe Code.
+
+Eu não gosto muito desse nome porque eu acredito que a IA mais auxilia, né, o Devo que programa por ele, assim. uma maneira descontrolada e louca. Se tu acredita nisso também, se tu acha que a IA potencializa o desenvolvimento e até abaixa um pouco também a barreira técnica de entrada, né? Me acompanha aí, continua me acompanhando que tu vai ficar a parte do lançamento dessa nova formação. Beleza? Bom, dito isso, chega
+
+de enrolação e agora bora aí que eu vou te mostrar, apresentar o projeto para depois a gente começar a criar. Então, galera, esse aqui é o projeto que a gente vai construir, tá? O deploy tá feito, como vocês podem ver, né? já tá num num domínio que eu possuo. E aqui o primeiro passo que eu quero fazer com vocês é percorrer o projeto e mostrar como ele funciona, tá? Então tem uma
+
+land page simples ali, só explicando o que que ele é, né? É um SAS que tu vai escolher um assunto para aprender, um tempo determinado e ele vai montar um plano de estudos para ti, tá? E esse plano de estudos é baseado no workflow do N8N com agente de A. Então a gente vai construir isso tudo juntos, né? Mas só deixa eu continuar aqui o fluxo.
+
+Então, passando a home, a gente tem que começar, né? A gente tem que fazer um login para poder usar o produto. Então, tem uma tela de login ou cadastro, tá? Então, vou cadastrar aqui, ó, o João, a senha, crio a conta, ele faz a autenticação. Lembrando, né, esse projeto aqui está com banco de dados, então todos os dados persistem nele, né?
+
+E o próximo passo seria realmente utilizar esse produto, né? Então o que que a gente vai fazer? A gente vai criar um plano de estudos. Essa é a funcionalidade core dele. Então eu vou aqui criar o meu plano. Eu vou escolher
+
+um assunto. Então vamos dizer que eu quero aprender uma das sugestões ali que ele deu. Marketing digital. E eu tenho aqui para aprender um mês. Dis que é para uma entrevista de emprego, sei lá, alguma coisa assim. Então eu vou lá e
+
+peço para ele gerar o plano personalizado. Quando eu clico aqui, ele ativa a execução no workflow, tá? Que recebe ali por meio de um web hook e vai fazer todo o processamento daquela informação baseado no tempo que o usuário tem. vai aqui passar pela inteligência artificial da Perplex para procurar temas mais atualizados sobre o assunto, já que a Perplex tem esse viés, né, de procurar na internet e depois ele passa pel GPT ali para condensar tudo e enviar de novo pro nosso projeto aqui, tá? Então demora um pouco, né, porque tem todo esse processamento e logo a gente vai ver aqui o resultado final.
+
+Vamos fazer um cortezinho aqui só para não tomar muito tempo. Ó, ele terminou aqui, tá? Aí muda um pouco a tela, né? Ele mostra aqui os passos dividido em dias. Então, quanto mais tempo a gente tem, mais personalizado é o plano, melhor ele divide os dias. E o contrário
+
+também funciona, né? Quanto menos dias, mais assunto ele condensa num dia só e menos ele consegue dividir. Então ele monta, ele monta o plano em etapas, tá, do de assuntos mais básicos para mais avançados. Ele mostra o que a gente tem que estudar e dar uma dica, tá? Isso aqui tudo é alterável, né? Tu pode mudar
+
+porque tu quiser. Só o exemplo mesmo pra gente poder utilizar todas essas tecnologias em conjunto. Aqui voltando, eu vou ter a tela dos meus planos, tá? Eu posso excluir o plano, eu posso fazer o logout, né? Toda a autenticação.
+
+Então, a base do sistema é essa, não é um sistema ultra complexo. A ideia aqui é mostrar toda essa stack de tecnologia funcionando juntos, tá? Tanto a parte da criação do projeto pelo antigravity aqui, né? Utilizando os modelos do Google. como também o desenvolvimento web em si, né? Como é que eu vou fazer
+
+as estratégias para montar um projeto como esse, a parte do N8N, a integração de um app web com web hook, né? E a tanto a chegada como a saída da dos dados, né? E aí tendo esse SAO completo. Beleza? Bom, agora vamos começar o desenvolvimento lá no Antigravity.
+
+Lembrando aqui, galera, eu tenho um outro vídeo aqui sobre Gravity, que eu falo mais sobre o software em si, sobre a IDE. O editor vai deixar aqui a TAMB para vocês verem que vídeo que é e eu vou deixar o izinho também. Caso vocês nunca tenham mexido, acho que faz sentido talvez fazer aquilo lá depois também para entender alguns conceitos que eu vou passar um pouco mais rápido nesse aqui, tá? Além disso, nós temos um guia completo de vibe coding. Eu criei isso aqui baseado em toda a minha experiência, que eu já venho desenvolvendo vários projetos nos últimos meses, tá? Com diferentes
+
+softwares e condencei tudo num material que tem mais de 40 páginas, tem mapa mental, tem infográfico, né? E tá tudo gratuito para vocês, link na descrição, beleza? Bom, então bora aqui pro antigraft. no antigravity, né? Vocês provavelmente vão ter uma tela muito semelhante a essa também, a não ser que abra um projeto, né? Dependendo que
+
+ponto que vocês estão ali utilizando já o software, tá? E aqui nesse caso a gente tem duas opções de começar. A gente pode abrir uma pasta, começar ali como se fosse no VS Code mesmo, né? trabalhando ali com o código e a gente já ajudando a gente. Mas ultimamente eu tenho muito, eu tenho gostado muito mais de trabalhar direto no agent manager e se eu precisar eu abro o código para ver coisas, analisar o código, eh pedir modificações pontuais, mas eu trabalho mais centralizado no agent manager, tá?
+
+Aqui no agent manager e ele trabalha em workspace. O que que é o workspace? É a pasta do projeto, né? Então eu tenho que criar um workspace para trabalhar nesse meu novo projeto. Então sempre lembrem-se disso, né? Porque senão vocês
+
+vão começar a trabalhar em projetos errados, aí vai dar maior confusão, porque ele a interface não é tão clara assim para principiantes, né? Então a gente pode vir aqui em eh open workspace, né? A gente pode clicar em start conversation, mas ele não cria workspace sozinho. Então a gente tem que vir aqui, ó, open workspace. E aqui eu vou criar um novo workspace. Então,
+
+clicando ali, né, em Openworks Space, ele abre o Explorer do Windows, né, dependendo do sistema operacional que tu tá, claro, e tu consegue criar uma pasta e abrir a pasta o no no abrir o endagu estudos V2, que é o nome que eu dei projeto, tá? V2, porque o que eu tô gravando e V1 seria o original, beleza? Bom, aqui, galera, é bem simples também, né? a gente tem opções, né, de adicionar imagens ou menções, né, que são outras coisas mais avançadas. Eapas de planejamento ou fest, eu recomendo muito fortemente que usem sempre o planejamento, apesar de demorar um pouco mais, os resultados do fast para mim tm sido terríveis, tá? Não sei se é porque
+
+tá muito cedo ainda gravity, mas não gostei do modo fast, eu sempre uso o modo planning, tá? E aqui a escolha do modelo fica a critério de vocês. Gosto muito, muito dos modelos da cloud para programação, mas como a gente tá num software do Google, eu acredito que o modelo deles vem performando melhor. Então vou utilizar o 3 Pro, tá? Mas tu pode usar o Flash, fica à vontade aí, tá? Dependendo de como é tua conta no
+
+Google, né? Eu assino aqui o plus deles, daí eu tenho um pouco mais de crédito, então não tem limitações, né? Mas dependente, você pode usar o flash ali que vai ter resultados provavelmente iguais, tá bom? Eh, a ideia do primeiro prompt, ela é muito importante, tá? O primeiro prompt ele tem que dar um contexto geral do projeto. Isso vai
+
+ajudar a IA a lembrar que ela tem que fazer ao longo de todas as próximas interações, tá? Então, fiquem atentos nisso. Primeiro prompt, ele deve apresentar de certa forma o projeto. Então, eu vou colocar os prompts aqui. Vocês podem estar printando e colocando GPT para transcrever, tá? Vou tentar
+
+deixar um arquivo aqui também com os prompts, mas sigam as ideias aqui que vai dar tudo certo. Não tem muito nada muito avançado aqui. É apenas uma estratégia que eu uso e vocês vão poder seguir também, tá? Então eu botei que eu vou criar um SAS de plano de estudos personalizado com IA, tá? Que é a base do projeto. A ideia é simples. O usuário
+
+coloca o tema que quer aprender, o quanto tempo ele tem e recebe um plano de estudos completos gerado por por IA. O sistema precisa ter uma página inicial bonita, explicando o produto, sistema de login e cadastro com e-mail e senha, uma área logada onde o usuário pode criar novos planos de estudo, ver os planos antigos e escir se quiser. Então, se vocês perceberem aqui, é o que o sistema exibiu ele para vocês, né, quando eu mostrei o overview. Só que eu não crio isso aqui tudo numa porrada só, porque senão vai ficar muito ruim. Eu eu secciono, só tô dando contexto. Aí eu
+
+volto, a parte de A vai ser feita para um sistema chamado N8N. Quando o usuário pedir para criar um plano do sistema, chama esse serviço externo, passando o tema e o tempo e recebe um plano pronto para mostrar pro usuário. Então já tô falando que ele vai conectar com um outro serviço. Quero usar eskelight para gerar os dados porque é mais simples. Então o que que acontece aqui? Eu
+
+escolhi o banco de dados da SK Lite para não ter muita configuração do deploy sobre o banco de dados, senão o vídeo ia para um caminho mais torto, tá? Então aqui depois como ele vai usar uma RMional, uma SKL, POSC, tá? Também sugiro talvez começar no SK porque não precisa de configuração nem no nosso PC e nem no servidor. Comece criando a estrutura do projeto da página inicial, ó. Então isso aqui que é importante porque eu dei o contexto, mas agora eu tô falando para ele criar home, tá? De boto que a home
+
+precisa eh ser bonita e converter o o visitante se cadastrar. É um título chamativo, tipo aprenda qualquer coisa plano feito para você, subtítulo, imagem, botão grande. Então, elementos que uma home deve ter, tá? Nada de mais. O grande detalhe disso aqui é que lá no primeiro, na primeira etapa do prompt, eu declarei algumas coisas de contexto do projeto e aqui no final eu declarei o que ele vai fazer, tá? Então essas essa
+
+parte inicial sempre vai ser levada em consideração, inclusive a parte do tema aqui embaixo, que é um tema clean, ã, tons azul e branco, tá? Essa questão do tema eu até usei assim porque ele vai criar algo próximo do que eu fiz na primeira versão, tá? Para que a gente tenha um projeto muito semelhante, mandando prompto, toda a estruturação do contexto, né? ele vai entender qual o projeto. Talvez ele crie até um artefato para poder salvar essas informações. Ele comece a criar o
+
+código naquela pasta. E o mais legal do antigraft, algumas ideias não mostram isso, é o processo de pensamento aqui, tá? Esse prompt inicial também tende a demorar mais, que ele vai instalar todas as dependências, vai criar muitos arquivos e vai pedir várias aceites aqui de comando no terminal, né, para instalar coisas e tal, tá? Então, o primeiro artefato foi criado, implementation plan, que é o que ele tem que fazer para iniciar o projeto, tá? Ele criou também um outro de teste aqui.
+
+Bom, ó, ele começou a rodar os comandos, então, né? Aqui ele vai fazer a instalação, tudo mais. E, ó, o antigravit, por mais que ele permita executar muita coisa sozinho, a maioria dos comandos terminal nós temos que aceitar, tá? Então a gente vai aceitando. Outra coisa importante gravitin ambientes Lux. Tenta dar uns comandos
+
+que no Windows são executados de primeira e aí é comum ele se bater nesse começo aqui para ver como que ele vai ter que fazer para executar esse comando funcional no Windows, se é o teu caso, tá? Ó, então a gente vai aceitar de novo. E aqui ele tá criando só toda a estrutura base do projeto. E ó, aqui é legal, galera, que ele também cria um artefato de tarefas, tá? Dependendo de quão complexo é o prompt, né? Geralmente
+
+esses prompts iniciais ou quando a gente pede muita coisa, ele vai criar isso aqui e aí ele vai mostrando o que ele tá fazendo além daqui também, né? aqui o que ele tem que terminar ainda, tipo um todo, para integrar o que a gente pediu. E vocês vem aqui, backend futuro, né? O a configuração do banco de dados, autenticação, passo futuro também, integração com futuro também. Então são coisas que a gente determinou mesmo, porque a gente fez um escopo de bem clean ali, né? falando
+
+para ele focar na página inicial, que é muito importante também, que é uma das estratégias que eu mais uso, é ou eu faço uma página, tá? Ou eu faço uma funcionalidade no prompt, né? Eu nunca condenso muitas coisas porque tende a dar errado. Beleza, vou seguir aqui. Ele tá terminando, como eu falei, demora um pouquinho mais do que os próximos, né?
+
+Bom, aí tecnicamente ele terminou, tá? E ele fala que a estrutura inicial tá feita. Então o que que a gente pode fazer aqui? A gente pode pedir para ele rodar o projeto no navegador pra gente. Ele já deu o passo a passo aqui, mas a gente pode ser bem preguiçoso e falar isso para ele, ó. Eh, rode o comando no
+
+terminal para eu poder abrir o projeto no navegador. Então, num resumo bem básico, se não consome tokens, faça aí a trabalhar por você. Se consome tokens, pense duas vezes em que comando utilizar, tá? Então, ó, ele vai rodar o NPM Brun dev, né, que é o comando que vai abrir o projeto no local host, que é a nossa máquina, né, e ele vai dar o link para eu acessar aqui. Então, a gente clica e acessa. Ó, ele abriu aqui e o projeto
+
+bem semelhante ao que a gente crii lá inicialmente, né? Tá bom? Agora que que eu vou fazer aqui? Eu vou paraa próxima etapa, tá? E um grande detalhe aqui que eu não comentei, mas talvez você tenham ficado em dúvida sobre isso, né? É sobre
+
+a questão do N8N. Ah, quando que a gente vai fazer o fluxo? Bom, é bem opcional. A gente pode fazer agora, né? Começar agora e criar o fluxo aqui e deixar prontinho ali pro web hook acessar o projeto acessar via web hook ou a gente pode fazer quando necessitar. E nesse
+
+caso aqui eu vou fazer depois, quando a gente chegar na etapa de integração, beleza? Então vamos voltar aqui e vamos começar a fazer a parte de autenticação, né? Fazer o login do usuário, tá? Então o prompt vai ser o seguinte. Agora preciso das páginas de login e cadastro.
+
+Página de cadastro, detalhe todos os campos, tá? Eu no outro vídeo, se eu não me engano, eu já comentei isso que eu tô usando muito essa estrutura aqui e tem funcionado perfeitamente, tá? Eu listo as coisas com sust bullet points, em listas aqui e ele interpreta muito bem, tá? do que aquele prompt corrida que eu costumava fazer mais antigamente. Então eu tô começando a fazer assim em bullets, tá? Ó, agora preciso da parte
+
+do login cadastro, né? Parte de cadastro específico que tem que ter os campos e tal, né? E também um link para ir pro login e a página do login é a mesma coisa, os campos tm que ter e uma forma de voltar pro cadastros, tá? As duas páginas precisam ter o mesmo visual. É, é bom citar isso porque tu faz o layout ser consistente, mas na maioria das vezes não precisa, tá? Ó, se o usuários
+
+errar alguma coisa, tipo, sem é diferente ao e-mail cadastrado, mostra uma mensagem de erro bonitinha. Depois de fazer o login, redireciona para dashboard. Importante porque eh às vezes ele cria essa parte de autenticação e permanece na mesma página, tá? Então é bom citar isso aqui também. E eu vou botar ainda isso aqui, ó. Botar assim,
+
+ó. Depois fazer login ou criar a conta, redireciona pro dashboard, tá? Então os dois processos vão levar pra próxima página para não quebrar o fluxo do usuário. Aqui precisamos salvar os dados do usuário no banco, os esquelet para isso, né? Como combinamos no início, o sistema precisa guardar os dados do usuário, validar tudo certinho quando fizer o log. Beleza? Vá. E aqui o que
+
+acontece uma perspectiva de código, né? Se fosse um outro banco de dados, nós deveríamos fazer a integração, né? colocar um usuário senha de banco e tal, fazer conexão. Nesse caso aqui, nesse cenário, as coisas ficam mais simples. Ele vai criar um arquivo SK Lite, tá?
+
+Que vai ficar o banco, é um banco de dados em um arquivo. No fim das contas não vai mudar nada. Eh, os dois projetos com banco de dados relacional robusto, vai funcionar igual, só que o esquelite ele é usado mais para prototipação. Projetos em produção não costuma usar skelet, tá? Vamos frisar isso. E outra
+
+coisa interessante também é que o meu projeto original ele criou com next, né, que é um framework em cima do React e aqui ele criou em React pur, tá? Também não vai dar diferença nenhuma aqui no desenvolvimento, tá? A única coisa que vai mudar é o processo do deploy. Talvez mude um pouco, talvez me quebre um pouquinho mais fazer o deploy, mas é bom que a gente aprende algumas coisas juntos, tá? Então vou esperar ele fazer aqui e aí eu tenho que testar, né? Uma
+
+outra coisa bem importante, tudo que eu faço eu testo, né? Toda a funcionalidade que a gente cria aqui por vibe coding, como pref, a gente testa de ver se vai tá funcionando para poder corrigir agora, senão vai criar um coisa de de louco aí. e vai ficar pior, cada vez pior, tá? Eh, o ideal mesmo seria cada funcionalidade que faz testar o sistema todo, né? Seria o mais correto. Então,
+
+aí eu, essas regrinhas, né, que eu uso no Vibe Code, eu comento naquele material que eu falei para vocês. Depois baixem lá que vale a pena, tá bom? Vou esperar ele aqui e já retorno com vocês. Bom, ó, galera, ele terminou, tá? E aí ele fala para testar, né, tudo mais.
+
+Então vamos ver o que aconteceu lá no projeto. Voltando aqui agora eu recarrego, costumo recarregar, tá? E a gente pode ir em login, tem a página de login, cadastres, vai ter a página de cadastro. Vamos fazer o cadastro. Então aqui o João. Aí toda a questão de
+
+validações quiser colocar também tem que colocar no prompt, tá? esse projeto tão fazendo um pouquinho mais simplificado essa questão, mas é importante. E também outra coisa que vocês tm que saber que ele pode pedir alguns comandos terminal ali, vocês não podem esquecer de executar, senão vai travar o desenvolvimento, né? Então eu crio a conta, ó, ele veio aqui e deu um erro. Então é agora, é a hora, né? Que que eu
+
+gosto de fazer? Dou um print, volto lá, erro ao criar a conta. E uma coisa que tem me ajudado bastante é falar assim, ó, planeje, identifique e planeje como resolver o problema. Essa parte de planejamento tem me ajudado a resolver o problema na primeira interação, tá? que antigamente eu falava o erro que dava e ele ficava meio que se batendo ali para resolver o problema e ficava levando vários promptes. Dessa
+
+maneira aqui, vejam que o Finking aqui tá correndo mais tempo e ele não tá fazendo nada ainda no código. É exatamente esse detalhe. Tem me ajudado bastante porque ele parece que analisa tudo primeiro e depois ele parte pra ação, tá? Então fica a dica para vocês aí. Vamos ver se ele resolve o problema.
+
+A gente testa de novo. Bom, ele diz aqui corrigiu o problema e agora a gente testa de novo. Então vou recarregar a página. Vou aqui botar o nome.
+
+Crio a conta. Ó, ele me redressor pro login. Beleza, eu já vou corrigir isso lá, mas vamos ver se faz o login. Ó, entrou, tá na despo. Show. Agora só vou
+
+fazer essa correção aqui. Vou fechar o o editor. Eu gosto da keeping background porque daí ele abre mais rápido se eu precisar depois, tá? Aqui, ó. Eh, a criação de conta precisa redirecionar o usuário autenticado para a dashboard.
+
+Agora está mandando para a tela de login. Uma correção bem pequena, tá? ele vai prosseguir para essa etapa aí. Bom, tendo isso pronto, né, a gente vai testar a autenticação de novo ali, tá? E vamos pra dashboard agora, que é onde os planos de estudos vão ficar. Ele disse
+
+que terminou, então a gente vai fazer o logout. Vou fazer o login aqui. Meio ruim para digitar hoje, né? Fez o login, certo? Então a não precisa testar mais. Vou fazer agora o
+
+cadastro de novo. E fechou. Agora sim, tá correto. Beleza. Então vamos pra dashboard. A dashboard é
+
+uma tela ali simples, mas é ela que vai abrir espaço, né, para a próxima funcionalidade. Então o pronto vai ser o seguinte. Agora vamos criar a dashboard, que é a área logada do usuário. Quando o usuário entra logado, ele vê um cabeçalho com o nome do sistema, o nome do usuário e o botão sair. Mensagem de boas-vindas, o botão grande destacado para criar um novo plano de estudos, que é a próxima funcionalidade, e uma lista dos planos que ele já criou antes. Cada
+
+plano na lista mostra o título, quanto tempo foi definido, a data de criação, o botão para ver esse plano e botão para excluir. Então os cardzinhos vão ficar em cards ali sendo exibidos. Se o usuário não tiver nenhum plano, ainda mostra mensagem, você ainda não tem nenhum plano, que tal criar o primeiro? Mas um incentivando usar o sistema. Lout cards pros planos ficarem eh organizados. Então vamos prosseguir
+
+aqui. Aí ele vai dar essa continuidade a dashboard, né? Ele já pré-criou, né? Se vocês perceberam ali no prompt passado, eu não pedi para ele criar dashboard, né? Só para redirecionar para lá. Mas
+
+ele já criou. No meu outro projeto, projeto inicial, ele não criou de fato, né? Ele entrou numa página quebrada 404 e aqui ele já criou. Então vai ter essas diferençazinhas aí a gente tem que entender que é um uma parte do processo do web coding, né? Então esperar ele terminar aqui a dashboard e eu retomo com vocês, ó. Então aqui foi mais rápido
+
+porque já tinha uma parte do dashboard, né? Então ele só deve ter implementado o design. Vamos dar uma olhada aqui que ele fez lá. E lembrando que ele sempre sugere a próxima etapa, né? Como eu já tô aqui com o script pronto, vamos dizer assim, né? Eu não vou nem ler isso, mas
+
+é interessante vocês darem uma olhada, porque ele pode sugerir coisas boas, tanto do que ele já fez como também do que ele tem que fazer, tá? Então, ó, aqui é a tela mais organizada, né? Ele adicionou a nave bar, ele colocou que não tem nenhum plano, que eu posso criar um novo plano, mas ainda não tem, né? O logout colocou para cá, né? Tava aqui no meio. Então, beleza. É isso aí mesmo.
+
+Então, nessa etapa aqui, a gente vai fazer a criação do plano, né? A criação do plano, ela é uma etapa prévia ao N8N, né? A gente já tá quase na hora da integração. Só que aqui eu preciso achar uma maneira de ele colocar as informações que eu preciso no formulário para enviar lá pro pro sistema do. Então é exatamente isso que a gente vai fazer.
+
+Agora preciso da tela para criar novo plano de estudos. cri uma parte separada para isso. O formulário precisa ter um campo de texto pro tema, um campo para definir o tempo disponível, o botão de gerar meu plano, né, que seria a criação. Quando eu clicar no botão, mostrar um load, o load precisa ser animado pra pessoa saber que tá funcionando. Pode demorar 10 a 15 segundos. Então é importante se tá bem
+
+frisar bem isso, né? Depois que receber a resposta, ele vai pra tela de visualização. Então ele sai da tela de criação e vai pra próxima, que é onde mostra o plano. Essa tela vai se conectar futuramente quando eu tô entro. Beleza? Então é esse que é o o próprio.
+
+Aí aqui pode acontecer o seguinte, ele pode fazer uma criação fake de de planos, né, só para ver se tá funcionando, mas pode ser que não faça. Então vamos ver ali como ele vai agir. Bom, então terminou essa parte da criação do plano. Então vamos dar uma olhada aqui. Vou recarregar aí. Aqui ele
+
+trouxe que não tem nenhum plano. Beleza. Eu posso clicar aí tanto em começar agora como novo plano que ele vai levar para cá. E vamos fazer um teste, ó. Ele colocou aqui eh esse esses tempos blocados, né? Talvez a gente pudesse
+
+pedir depois para dar uma customizada também, né? E vamos criar e vamos ver se ele vai fazer alguma coisa, tá? Ó, não faz nada. Beleza, então ele tá esperando a próxima etapa, né? Eu vou fazer o seguinte aqui, vou colocar aqui criar uma outra opção no select que permite o usuário colocar um tempo customizável em dias. Aí quando ele clica nela, abre
+
+um novo input que permite ele digitar um número que serão os dias para o estudo. Acho que é importante porque se aquilo ali for rígido demais, ele tem como fazer algo mais flexível pra realidade dele, né? Devia ser sugestões, não limitações, tá? Então agora eu vou pedir a tela do plano e aí talvez ele faça a criação fake, né? Vamos ver o que vai acontecer. Só deixa ele terminar aqui,
+
+ó. Ele falou que terminou. Então agora a gente tem outros. Eu posso botar quantos dias eu quero e aí fica mais flexível, tá? Voltando lá para gravit, eu vou pedir agora para ele criar a tela do plano em si. Quando termina, quando
+
+volta do fluxo 8N e ele me retorna e aí a gente vai ter toda a estrutura necessária para fazer a parte do N8N. Então bota aqui, Agora preciso que a tela da tela que mostra o plano de estudos completo. Quando o usuário clica para ver um plano, abre essa tela mostrando o tema do plano bem grande no topo, o tempo definido, a data que foi criado, o conteúdo formatado e fácil de ler, né? O plano vai ter módulos, tópicos e um cronograma. Então isso eu vou passar para ele depois, né? A
+
+estrutura que o Inn vai entregar pra gente, tá? Um botão para voltar pro dashboard e o botão para excluir o plano. O importante é ficar fácil. e lei seguo no fim seja um pouco modificada em função da resposta do ser diferente do que ele pensa que vai ser, tá? Mas não tem problema também. Se a gente tiver
+
+ali uma base vai ser fácil fazer adaptação. Bom, ele terminou aqui, tá? E talvez ele tenha criado dados mocados agora. Vamos dar uma olhada e ver o que acontece, tá? Ele até sugere que o próximo é conectar com 8N, né? próximo
+
+passo. Então vamos ver aqui. Eu vou recarregar, botar qualquer coisa, teste o mês, tirar o plano, ó, ele vai fazer o loading. E aqui a tela do plano. Então vocês veem que ele realmente mocou, né?
+
+Então aqui fundamentos, prática, aplicação, mais ou menos como vai ficar ali o plano, o tela final, né? Ele até fez um um exercício de previsão aí, né? Aí quando eu volto pro dashboard tem meu plano salvo aqui, então já tá persistindo os dados do banco. Vejam aí que mesmo que não tenha o Newton N pronto, ele já tem toda a base. A adaptação vai ser o de menos. O projeto
+
+conseguiu andar com dados mocados, que é uma estratégia que a gente usava muito ali na na era do desenvolvimento antigo, vamos dizer assim. Beleza? Tá? Agora bora começar a parte do N8N pra gente poder integrar aqui, né? Fazer junção das coisas, né? cereja no bolo, deixar o
+
+sistema completinho. Então, acessando o N8N, galera, aqui é importante, né? Eu pressuponho que tu já tenha instalado e tudo mais configurado, mas senão se não tem conhecimento em Uniten, eu vou deixar também aqui uma recomendação do curso gratuito que a gente tem de unit aqui no canal. O editor vai deixar TB e eu vou deixar o izinho aqui para vocês se situarem, beleza? Bom, aí lá a gente vai criar um workflow, tá? Aqui no novo
+
+workflow eu gosto de renomear. já para eu poder achar melhor ali depois, né? Fica muito bagunçado. Aqui agentes a gente dear eh SAS gravity, alguma coisa assim, né? Algo que remeta ao que tu vai criar, beleza? E primeiro passo no
+
+colocar um trigger, tá? Eu não vou começar direto com Web Hook porque eh vai atrapalhar um pouco os testes, vai dificultar um pouco o nosso fluxo aqui. Então a maneira mais simples é começar com um trigger manual, tá? E simular como se ele tivesse enviando os dados que a gente vai precisar que o sistema docraft envie. Então como que a gente vai fazer isso aqui? Eu vou colocar eh
+
+esse set mock data, tá? E nesse objeto aqui, né, que é um Jason, eu vou fazer o seguinte. Aqui no meio, eu vou colocar uma chave para o assunto que eu vou chamar de subject, tá? Que aqui a gente vai colocar e inteligência artificial como se o usuário que você vai quisesse aprender isso, tá? E o segundo é o tempo. Eu vou botar o time
+
+como 30, né? O número inteiro, que é o número de dias, tá? O sistema lá vai converter pra gente automaticamente. Não precisa se preocupar com isso. Única coisa que a gente precisa se preocupar é que envia um subject, que é um assunto, e um time, que é um tempo em dias numérico, tá? Toma cuidado. Isso aqui é
+
+bem chatinho, que é o formatação de Jason. Se tu botar uma vírgula aqui, ele vai dar um erro. Então, tem que ser exatamente como eu coloquei aqui, tá bom? Tem esses dados mocados, eu vou salvar. Eles já ficam pinados. Então,
+
+quando a gente executa, ele já envia isso aqui pro próximo nó, né? Que eu vou usar um edit. Por quê? Eu gosto de colocar esses nós aqui antes do do processo que eu vou fazer de fato, porque ele organiza os dados que chegam aqui. Nesse caso só vem dois, então parece, mas quando for lá no web hook vocês vão ver que vai vir muita coisa, né? Ele v ele manda um monte de dado de
+
+requisição e tal, então acaba atrapalhando, confundindo e assim a gente vai filtrar com o que a gente quer. Então botar aqui, ó, resgate de campos ou de valores, como preferi chamar. E aqui a gente só arrasta e solta, né? Não tem muito o que fazer porque tá muito simples. Inclusive, é por isso que eu prefiro trabalhar dessa maneira no início. A gente executa esse
+
+passo, vê que passa exatamente os dados que eu preciso lá pra frente. E o próximo campo aqui é um AI agent, né, que é o agente de A. Bom, aqui nesse agente de A, a ideia é que ele não seja conectado com o chat trigger e sim com os valores que foram enviados anteriormente. Então, vou dar um define below aqui para poder escolher quais são os dados de entrada, né? O prompt que, por exemplo, se a gente tivesse no chatt a gente enviaria, né? Então aqui eu tô
+
+escrevendo o que eu quero, mas o o sistema, né, ele vai interpretar sempre diferente, porque o usuário vai est aprendendo algo diferente e um tempo diferente. Então como a gente vai fazer aqui? Vou dizer que o assunto ele vai ser esse aqui, tá? E o tempo ele vai ser esse aqui. Isso aqui é entrada de dados.
+
+Que que o agente de A vai fazer com isso? A princípio nada, porque ele não tem um processo claro do que executar. E onde que a gente coloca esse processo? em system message, na mensagem do sistema. Então aqui eu vou abrir a opção system, vou botar expression para poder abrir a tela toda e mostrar para vocês o prompt que eu planejei. Como o sistema é
+
+bem simples, o prompt também vai ser bem simples, tá? Mas a gente poderia colocar o que quisesse. Aí o que eu falo para ele ali, você recebe o assunto que o usuário quer estudar e quanto tempo ele tem para dominar o tema ou aprender o máximo possível. Exatamente o que o sistema passa pra gente é exatamente o que a gente fez ali com os dados mocados. Baseado nisso, você faz um planejamento de estudos separando em quantidade de dias e qual assunto ele vai precisar estudar. Então ele
+
+desmembra aquele assunto principal em vários subassuntos, né, e monta ali um cronograma. Ele também envie também uma descrição e uma dica para cada assunto. Então, além do tema que ele tem que estudar, vai mandar uma breve descrição ali, desmembrando mais ainda, e uma dica ali para os usuários ser mais assertivo. A descrição descreve o tema a ser estudado e a dica é o foco principal. Usa tudo perplex. Então, a gente vai ter
+
+uma ferramenta nesse agente de A para e ajudar a puxar os assuntos mais relevantes, né? Como eu falei para vocês, Perplex tem esse VS para verificar se tem algo mais atualizado sobre algum tópico que o usuário deve aprender, tá? Então agora a gente precisa fazer isso, precisa configurar essa tool e o chat model nesse cenário aqui, né? E se a gente não precisa de um uma memória, por eh ele vai ser como se fosse assim executado de maneira única, então não vamos ter iterações novas, então o usuário só vai criar o plano e ele já vai entregar resposta. Nesse caso, memória desnecessária.
+
+Modelo aqui eu vou utilizar o PII. Como o processo é muito simples, não tem muita muito raciocínio envolvido aqui no que precisa ser feito, eu vou usar o modelo mini. Gosto também de utilizar os modelos mini para eh fazer inicialmente a a versão de testes e ver se ele responde bem. Se o modelo mini responder bem, o modelo mais completo vai responder melhor ainda, tá? Isso aqui é muito interessante porque o modelo mini tem teoricamente menos conhecimento.
+
+Então vou usar o GPT5 mini, tá? Aqui se tu é novo liner, vai ter que configar as credenciais, né? Basicamente pegar a chave da PI do GPT lá na Open AI, naquele material que eu indiquei, eu mostro como fazer isso, tá? É bem simples. E aqui tá pronto, né? E essa
+
+daqui é a inteligência do agente, é como ele vai processar todas as informações, o dado de entrada do usuário, acesso a ferramentas e entregar uma resposta definitiva, tá? E aqui ele vai utilizar tool de perplex, que vai fazer o seguinte, ela vai buscar na internet por coisas mais atuais. Então, nesse caso aqui, eu posso utilizar o modelo sonar, tá? Eh, aqui atualmente só permite sonar, né, em diferentes versões. Esse aqui vai fazer o que a gente precisa fazer e é o mais barato, tá? Os outros
+
+vão ser mais caros em questão de tokens. Obviamente tem que configurar também a chave, né? É bem simples, só chave de API. É igual no chat GPT ali que a gente viu, tá? E o texto aqui eu poderia fazer uma mensagem, mas eu posso também deixar a cargo do modelo do GPT, definir o que esse modelo vai receber. Como ah, daí
+
+agora não consigo configurar nada, né? Como o meu prop está bem claro no que ele precisa fazer com a perplex aqui no sistema message, não tem problema deixar assim, tá? Se tu vê que ele tá indo para um caminho muito errado, não tá respondendo que precisa, aí talvez seja melhor definir esse texto manualmente. Aqui eu vou mudar para Perplex, só para deixar o nome da tool igual eu descrevi aqui, tá? Fiquem atentos a isso que ele pode não acessar a TU por não entender o nome dela. Às vezes ele acessa porque,
+
+claro, tem uma IA envolvida aqui, mas deixando as coisas mais fáceis, a chance de erro é menor, tá? Eu posso testar tudo isso aqui, então vou executar o workflow e aí a gente vai receber a resposta final. Nesse caso aqui também eu vejo ele acessando as ferramentas, ó. Tá acessando a Perflex, acessou o GPT antes e agora talvez ele bata no GPT de novo para montar a resposta final. E aí ele entrega a saída, tá? Ó, então ele terminou aqui,
+
+ele retorna a resposta e a gente vai ver o que ele retornou. Como vocês podem ver, essa resposta aqui que ele nos deu não serve porque a gente quer, tá? Porque ele tá dando um textão gigante, ele tá falando obrigado, consi fontes recentes, né? Então não faz sentido pro que a gente quer que se vocês forem ver, deixa eu ver aqui, não tá acessando. Deixa eu criar um novo plano rapidinho aqui, ó. Esse aqui é o
+
+esquema de resultado que a gente quer, né? Um título, um uma descrição, né? Então não condiz com o que a IA tá mandando. Isso aqui é um problema clássico. A IA vai mandar como se fosse lá no chat GPT. Então a gente precisa
+
+fazer o quê? Ajustar o formato de saída. Então a gente vai vir aqui, ó, require specific output formats. Ele vai abrir uma nova perninha aqui, ó. A gente vai selecionar o output, esse estruturado, tá? E aqui ele me dá um Jason de novo,
+
+né, de um modelo como que eu quero que os dados saiam. Então eu vou colocar o modelo que eu desenvolvi para esse cenário desse sistema. Olha só, ele vai ter uma lista de assuntos, né, porque ele divide o assunto principal em vários subassuntos para estudar. cada assunto, né? Eh, são essas chaves aqui, né? Cada
+
+um desses assuntos tem um tópico a ser estudado, um intervalo de dias que o usuário vai usar para aprender, uma descrição e uma dica, tá? Então, exatamente o formato que a gente vai precisar lá no sistema docraft. Vejam aqui que isso vai fazer com que a resposta final seja conduzida de forma correta. Então, printem aí, peça pro chatt escrever que é chatinho copiar isso aqui, né? Então vou voltar aqui, vou salvar e vou reprocessar pra gente ver que agora sim a saída vai est correta. Olha, retornou aqui. Então
+
+agora sim a gente vê que a saída é o que a gente precisa. Beleza? Então é esse resultado que eu quero no final. Na maioria das dos agentes de A, vocês vão querer algo muito semelhante a isso, porque a saída padrão não vai ser a saída que vocês querem que ele forneça, a não ser que seja um chat, né? Mas se for usarem o sistema, vocês vão usar muito esse output aqui, tá? Lembrando,
+
+galera, se vocês t interesse em dominar o N8N também e aprender do básico avançado o processo de criação de sistemas de automação, aprender a vender eles. Nós temos a formação agentes de A, o link vai est aqui na descrição. É um treinamento completo que vai focar do básico ao avançado para vocês aprenderem tudo sobre N8N, automações IA e conseguirem vender os próprios sistemas que vocês criam. com automações, tá? Vários alunos tiveram sucesso, muitos pagam o curso no primeiro mês. Deem uma
+
+olhada, link na descrição, tá? Conheça o treinamento aí, vejam como ele é feito. Tem como baixar grade curricular aqui também, ó, esse botãozinho, tá? Qualquer dúvida ficar também acessem aqui o nosso WhatsApp, falem com conosco, né, comigo ou com a minha equipe quem tiver lá disponível, tá? Treinamento é vitalício e tem acesso a atualizações e tem um grupo no WhatsApp também de networking, beleza? Então, bem completinho,
+
+essencial para quem quer aprender mais sobre NM. Voltando, olha só aqui agora ele abre justamente a porta de entrada que a gente precisava para conectar com o Wgraft, né? Então a gente vai precisar fazer uma conexão de sistema que é via web hook. Então web hook nada mais é do que um trigger aqui, tá? Que vai esperar o sistema acionar o nosso automação e depois ele retorna uma resposta. Ele
+
+pega aqui, ó, web hook, tá? E aqui que eu vou fazer, eu vou mudar pro verbo post, porque ele tá enviando dados, né, e aí recebendo uma resposta eh do nosso sistema. Então é um verbo HTP que comunica melhor essa ação que a gente tá fazendo, tá? E aqui a gente tem uma URL de teste, que é como a gente começa a testar as coisas. Depois a gente vai para URL de produção, que é quando o sistema já tá no ar, beleza? Então, dito
+
+isso, eu vou agora salvar aqui, puxar esse hook, esse trigger para cá. A gente vai utilizar ele depois, né? Vai ser o nosso principal ponto de entrada. Esse aqui vai ser descartado. Bom, volto pro antigraft. E aqui eu vou fazer a
+
+integração. A integração consiste no seguinte, pronto. Eu vou mandar para ele que agora eu preciso conectar o sistema conect, que vai gerar os planos, né? estudo. Quando o usuário clicar em gerar meu plano, ele vai pegar o tema e o tempo que o usuário escolheu, enviar essas informações para o endereço externo, web hook do N, esperar a resposta com o plano gerado, salvar o plano do banco de dados e mostrar o plano pro usuário. Então, o mesmo
+
+processo tá acontecendo, mas com as informações que vem do N8N. endereço do NPC ser configurável não pode estar fixo no código. Isso vai ser necessário porque depois a gente vai mudar de URL, vai mudar do nosso servidor aqui de teste, né, que seria a nossa máquina para a produção. Então isso vai ser extremamente importante. O plano de que volta do do vai ter essa estrutura, título, descrição, lista de módulos, cronograma. Claro, esse aqui depois a
+
+gente vai ajustar e só para ele ter uma noção de como que vai ser. Se der algum erro, demorar demais, mostra uma mensagem claro pro usuário. Vou te mandar um JSON do workflow do plan para ver como os dados chegam e como os dados são recebidos. Lembrando, você precisa enviar sempre o tempo em dias para o N8N. Então, faça conversão baseado no que o usuário escolheu, tá? E eu vou ter
+
+aqui, segue o Jon. Como é que a gente vai pegar esse Jon? Vou voltar lá. A gente vai adicionar aqui também a parte que falta, né, que é como os dados voltam pro sistema. Então aqui eu vou pegar e vou colocar o nodook, que esse aqui é o respond to web hook, tá? Isso
+
+aqui seria a ponta final, seria como vai mandar para lá, tá? E aqui eu vou deixar first incoming item, que é justamente esse cara aqui, o primeiro item que vier, ele manda, que é o que vem, né? é o sub, é o a saída com os subjects. Então isso é isso aí mesmo, tá bom? Agora eu posso até conectar aqui também, vou salvar, beleza? E aqui a gente vai
+
+nos três pontinhos e a gente vai fazer um download. Bom, feito o download, a gente precisa abrir esse arquivo, tá? Então a gente pode abrir no graft mesmo, ó. Tu vai dar dois cliques no arquivo, dar open aqui, ele vai abrir esse arquivo gigante aqui com todas as instruções do N, tá? Então o que a gente vai fazer? Ele vai dar o contrtrl A,
+
+contrtrl C, volta aqui no antigraft e vai colar aqui, tá? E a gente vai mandar para ele. Esse é o prompt. Provavelmente vai ter que fazer algum ajuste aqui, tá? Então não vai funcionar de cara. Eh,
+
+seria muito difícil porque é uma integração não tão simples porque vai mensagem, volta resposta, né? Então é algo que um programador demoraria pelo menos um dia para fazer. Tranquilo, tá? Mas se fosse linha linha do código. Então vamos ver aqui o que ele me entrega. a gente vai começar a fazer os
+
+testes baseado nisso, né? Vamos então esperar aqui ele me retornar para darmos o próximo passo. Bom, ele terminou aqui, tá? E ele retornou pra gente que eu não mandei o RL. Então isso é algo bem importante, porque senão ele vai continuar usando os dados mocados, porque ele não sabe como acessar o N8N, né? Então, até nesse Enver aqui, ó, ele
+
+mostrou que precisa trocar essa URL aqui. Então, eu preciso ir lá no workflow, pegar aqui, ó, a URL de teste, tá? Clica para copiar e eu vou voltar na antigraft. Quero trocar para a URL de teste do NTN, que é e o método para acesso é um post. Posso até facilitar mais para ele. Pega, abre
+
+o web hook aqui, copia que interessa, tá? Que é esse bate um print, manda para ele e vamos ver o que vai acontecer. Aqui ele vai trocar o RL do ENV e provavelmente reiniciar o servidor. E aí a gente tem que ter acesso ali a o web hook via aplicação, tá? Então vamos ver aqui como ele responde. Ó, ele pediu
+
+permissão para reiniciar o serviço. Ó, daí ele fala que o in precisa tá ouvindo o a requisição. Então a gente vai lá no faz ele ouvir. A gente executa aqui. E agora ele tá esperando. Vindo aqui no
+
+create plan, a gente vai dar um teste. E ele falou que deu o erro a gerar plan. Beleza, deu um erro aqui, só que lá no as coisas aconteceram porque gerou um erro do web hook. Então quer dizer que a requisão chegou. Se a gente desconectar aqui, ó, salvar. Opa, tem que executar.
+
+Ó, deu verdinho, quer dizer que deu certo. O erro que deu aqui é porque esse nó final não tá configurado, tá? Então a gente pode partir, conectar de novo, ver aqui que os dados chegaram, ó. O assunto é teste e o tempo é 30. Só que agora eu tenho que passar os dados para cá, porque os dados lá do nosso fluxo de teste não funcionam mais os dados mocados. E esse aqui, ó, veja como eu
+
+falei lá no começo, que o Webhook trazia vários dados, né? Exatamente isso. E por isso que eu coloquei o o edit, porque eu não quero que puxe tudo isso. Então eu posso apagar aqui e puxar direto os dados que eu quero. E aí, pronto, agora ele já vai tá rodando baseado nos dados que chegam do sistema. Eu vou salvar
+
+aqui. E agora eu vou mandar um assunto de verdade, porque teste não não representa nada. Então eu vou usar, vou executar o workflow, vou voltar para cá. Vou botar aqui que eu quero aprender Python em um mês. Ó, agora deu um erro.
+
+O erro é porque a gente tem esse nó e ele não tá configurado. Foi o que eu falei antes e acabei não mexendo. Só precisa mudar essa opção de responder para eh using respond to web hook, que é usando aquele nó final. Agora volta, salva, executa de novo, vem para cá e pronto. Ó, agora ele vai rodar exatamente como foi no projeto que eu mostrei para vocês de exemplo. Bom, aqui
+
+a gente vai esperar ele criar o plano de aprendizado de Python. Enquanto isso, o sistema tá lá carregando. Show. Só que provavelmente o modo que a IA vai retornar pra gente não é o modo que o sistema tá esperando. Esse modo aqui que a gente configurou não é o modo que ele tá esperando. E isso que a gente vai
+
+arrumar no próximo prompt, né? É um possível problema que vai acontecer aqui. Olha, ele terminou a resposta e a gente vem aqui, ó. E olha só como é que ficou. Tá errado? Porque ele não
+
+conseguiu ler isso aqui. Então eu vou copiar nesse simbolozinho de copiar aqui e volto lá para esse gravity. Eu falar o ã sistema recebeu os dados com sucesso, mas não conseguiu tratar. Vou te passar o JSON de exemplo para você adaptar o nosso sistema. Veja, eu vou colocar aqui embaixo. Então,
+
+colei o JSON que retornou lá do tempo de aprendizado de Python em 30 dias. E aqui agora ele vai adaptar, ele vai conseguir juntar o que a gente recebe lá do NN com o que tá aqui no anit projeto, tá? Então vamos ver aqui agora depois dessa mudança como vai ficar ali os planos. Ó, ele falou que corrigiu o erro de processamento, então vamos testar de novo. Agora a gente tem que ativar o web hook. Volta para cá, cria um novo plano
+
+e vamos dizer que a gente quer aprender matemática básica em duas semanas. Então, gerar meu plano, ele recebeu, tá começando a tratar com a gente, vai passar por todo o processo, demora um pouco, são algumas ferramentas que ele tem que utilizar e aí quando ele finalizar vamos ver o retorno lá no sistema, se a gente já consegue fechar essa parte. Ó, ele terminou aqui o fluxo, voltamos aqui e agora tá respondendo exatamente como a gente planejou e também, né, tava o projeto original, pegou o assunto, plano de estudos para aprender em 14 dias, matemática básica, ele dividiu ali em dias os assuntos e nos entregou, tá? Então agora a gente pode testar com outro assunto. Por exemplo, aqui vamos aprender Google Ads em 3 meses. Vou
+
+aqui, executo, né? Tá em modo de teste ainda, por isso que a gente tem que fazer esse fluxo todo, tá? Então vai demorar de novo aquele tempo X. E aqui a gente vai ver como que retorna, né, o nosso guia de aprendizado. Ó, ele já retornou aqui. Temos um plano de 3
+
+meses. Aí ele passa mais o dia, os dias, né? ele talvez inclua eh mais profundidade nos temas também e tal, diante de a gente ter mais tempo. Agora a gente tem nossos outros planos aqui, né, com todas as informações e o próximo recurso que a gente vai querer é a exclusão de planos, tá? Então voltamos ali o promp que vai ser. Preciso
+
+garantir que a exclusão de plano está funcionando. Quando o usuário clicar em o plano, mostra uma confirmação perguntando se ele tem certeza. se confirmar, exclui o plano, mostra mensagem sucesso, atualiza a lista de planos, tá? Então vamos prosseguir agora para isso aí, né? Vamos dizer assim: "Ah, o MVP acabou, é só isso que a gente quer." Eu vou partir para uma
+
+finalização de projeto, que são outras dicas que eu quero mostrar para vocês, que vale a pena fazer em qualquer projeto, tá? Não só em sistemas como esse, né? Que tem interligado, mas qualquer projeto web para vocês aprenderem boas práticas. E depois vamos paraa hospedagem, né? do famoso deploy para concluir todo o processo, tá?
+
+Então, deixa eu ver aqui se ele já voltou. Ó, ele terminou e aí ele também entende, né, que, ó, ele terminou, né? E aí ele também entende que a gente finalizou aquele primeiro ciclo, que foi o escopo inicial que a gente deu no contexto do projeto. E por isso que é tão importante, né? Ele entendeu que ali o MVP está feito, tá? Mas ainda falta o
+
+que eu comentei para vocês lá que a gente vai fazer ainda em sequência. Só vou testar aqui. Então, vou excluir esses planos de teste ali que a gente não precisa mais. Ó, excluir nada mudou, né? Deixa eu recarregar aqui. Ele acabou
+
+excluindo todos os planos. Beleza, né? Não é exatamente o que eu esperava, mas por algum motivo ali, talvez no banco de dados ele tem que ter eh reiniciado ele, mas isso não foi legal. Bom, vou criar um plano aqui só para poder excluir. Ah, tem que ligar o workflow, né?
+
+Então vamos esperar ele terminar. Então aqui ele terminou, ele falou que a exclusão tá pronta, tá? Então a gente vai lá e testa. Ó, recarregando aqui. Parece que ele não trouxe nenhum plano. Então vamos
+
+inspecionar de novo. Ó, tem um erro aqui. Então ele tá tendo algum problema em trazer os meus planos. Vou copiar esse erro. Vou colar lá para ele. O sistema está
+
+com algum problema em trazer os planos. Verifique e corrija. Veja o print aí. Agora espero que isso corrija esse problema, tá? Talvez tu aí no teu projeto não enfrente isso, né? É que
+
+realmente por ter raiá, né? A gente tem resultados diferentes em cada projeto. Eu não tive esse problema no outro, né? E vamos ver aqui eh como ele se comporta ali com a exclusão depois de corrigir esse erro. Talvez seja até um problema de só de reiniciar o servidor, né? Nada
+
+demais, né? Seja no código em si. Olha, ele falou que tá tudo certo. Vamos ver então. Ó, agora realmente voltou. Ver se
+
+tem algum problema pontual, tá? Então aqui agora eu vou testar a exclusão. Ó, excluiu. Beleza, tudo certo. Recarrega não volta.
+
+H, vou criar aqui mais um plano, prender programação. Vou deixar ele criando ali só para testar realmente e ter o sistema todo funcional, né? Garantir isso. E agora eu vou para essas próximas etapas que eu falei para vocês, tá? A primeira eu gosto de chamar de polimento, né?
+
+Acabamento do projeto. E por quê? Se vocês verem ali, ele não avisa algumas mensagens, né? ele pode deixar o sistema mais interessante pro usuário na questão de navegação. Então eu costumo sempre ter um prompt que melhore isso. Então
+
+olha só o que eu preparei para esse projeto. Agora vamos dar uma pida final no projeto. Precisa que você revise todas as telas e garante que estão consistentes. Adicione animações sutis nas transições entre páginas. Garanta que tudo funciona bem no celular, né?
+
+Responsividade. Melhore mensagens de erro, né? Talvez aparecer aquele toast, né? Adicione visual, eh, feedback visual quando o usuário faz ações. Revise os textos para ficarem mais naturais. Se
+
+tiver algo que pode ficar melhor visualmente, faz as melhorias, tá? Faça, né? Eu vou prosseguir com esse prompt aqui. Só deixa eu ver, ó. Trouxe aqui, né? Então, tá funcionando tudo certinho.
+
+Agora sim, vou dar esse prompt de polimento, tá? E aí, o próximo também é bem importante pra questão de segurança do projeto. Só vou esperar ele voltar aqui e já mostro para vocês, ó. Então, ele terminou aqui, ele fez bastante coisa. O ideal seria fazer o teste, né, para garantir que tá tudo que tudo continua funcionando. Inclusive aqui já
+
+a tela de dashboard já vamos embora. Ah, tá que tava deslogado. Tá beleza. Então, vamos fazer aqui o login.
+
+Ó, tá aqui. Eh, a tela de dashboard não abre, fica em branco. Analise e corrija, né? Provavelmente alguma coisa que ele fez acabou bugando aqui. Use toast. Tem algum problema do react
+
+ali? E agora vai ter toast em cadação, né? Vai aparecer um cardzinho ali mostrando o que que aconteceu, tá? Esse promp demora mais, né? Porque ele mexe no projeto todo e seria justo também testar todo o projeto para poder garantir que tá tudo certo, tá? Então
+
+ele falou que corrigiu. Vamos ver aqui, ó. Realmente voltou. Se eu escuro um plan, ó, ele mostra o torcezinho. Beleza? Então ele melhorou um pouco que
+
+ficou ruim. Vou falar aqui para ele, né? Tela de criação de plano ã está conforme quebrado. Corrija. E agora, após essas melhorias, né, gerais no projeto, questão de responsividade e tal, vamos fazer a parte segurança também, que é muito importante, tá? Vou só esperar ele
+
+retornar aqui e aí eu vou mostrar para vocês como faz um prompt de melhoria de segurança antes de fazer o deploy do projeto, que é colocar ele no ar, tá? Olha, ele falou que corrigiu, só vamos dar uma olhadinha ali. Agora voltou ao normal. Beleza. Tá, o pronto de segurança que eu gosto de utilizar é esse aqui, ó. Opa. Não, esse aqui. Esse
+
+aqui é outro. Não, esse aqui é o de Bom, o pronto de segurança que eu gosto de colocar é esse aqui. Antes de colocar no ar, preciso que você faça uma revisão de segurança e bugs no projeto. Verifica principalmente se as senhas estão sendo salvas de forma segura no banco, se um usuário consegue acessar ou modificar dados de outro usuário, se as rotas que precisam de login estão protegidas. Tem algum erro que pode quebrar o sistema?
+
+Os formulários estão validando os dados antes de enviar, se tem alguma informação sensível exposta no código, se não encontrar problemas para avisar a gente, tá? Então isso aqui é bem importante. Aqui eu detalhei regras de negócio desse sistema. Quanto mais complexo é o sistema, mais regras tu vai ter que colocar aqui para verificar, tá? Então fica atento a isso também, que não é um promp de bala de prata, só uma ideia de como tu tem que fazer para checar segurança no projeto de vibe coding antes de colocar no ar. ser
+
+essencial, porque na maioria das vezes, pelo menos que a pessoa não tem experiência no código, ela vai tá fazendo o código nas cegas, né? Ela tá só orientando a IA. Então essa orientação também é muito importante. Olha só aqui nesse caso, né, ele achou duas questões, né? Ele viu que eh duas URLs não estavam protegidas, ele fez essa limpeza de backend que tinha código duplicado e comentário confuso. Então
+
+vejam aqui no outro sistema foram outros problemas, né? O que eu fiz o original. Então é muito importante fazer essas correções para colocar no ar, tá? Podia ter coisa mais grave, porque cada projeto vai ser um pouco diferente do outro, né? Por mais que a gente siga os mesmos promptiss. Então, partindo desse
+
+pressuposto, tá tudo certo e o projeto testado, agora a gente vai pro deploy, tá? Que acontece? O deploy, a gente vai colocar ele num servidor, né? Quando o projeto tem back end, não vai dar para colocar nesses servidores tipo versial da vida, né? Porque vai chegar uma hora que a gente vai escalar o projeto e não vai ser viável financeiramente e nem vai comportar a estrutura de um projeto que é full stack, que é o caso desse, tá?
+
+Então, nos meus projetos e e hoje nos meus sistemas em geral, tanto os sistemas que eu tenho, Wer Tley que vocês viram, estão na hosting, então é a plataforma que eu recomendo, tá? que eu tenho minhas coisas lá, então posso falar porque realmente as coisas estão sendo testadas em produção e eu acabei economizando muito, colocando todos os meus sistemas lá e realmente o painel deles é excelente para fazer o gerenciamento, não tem nada a reclamar, tô economizando, tô num bom serviço e gostaria de indicar para vocês também, tá? Mostrar aqui para vocês, o link vai tá na descrição, tá? E por mais que caia aqui nessa tela de N8N, né, que é o serviço que eles estão dando muito destaque agora, né, o nosso link aqui com desconto que vocês têm acesso na descrição lá. Depois tu vai escolher o plano, por exemplo, ah, teu KVM1, KVM2, que que é isso? tem um servidor mais
+
+simples, tu tá numa época aí da tua vida que tu só quer testar coisas, tá aprendendo, desbravando a hospedagem de projetos, não sabe se vai vingar, vai de KVM1 que é a melhor escolha. Já se tu tá criando um SAS para monetizar, vai ter pagamento, vai ter vários usuários, KVM2 é a melhor opção, porque aqui tu vai conseguir escalar teu projeto a milhares de usuários simultâneos e não vai perder performance, tá? Então tem essas duas opções e como escolher elas. acabei de falar, tá? Então, novamente, né, escolhendo o plano, tu vai acessar a parte de compra e aqui tu vai poder escolher o sistema operacional.
+
+Lembrando, né, galera, aqui nesse link o desconto já vai ser aplicado automaticamente, tá? Eu recomendo vocês escolherem de 12 meses ou 24 meses, porque aí o desconto é maior ainda, tá? É, vamos dizer que tu escolheu 12 meses lá e tal. E olha só, para o nosso cenário aqui, a gente vai pedir um SO simples, o buntu, tá? fazendo isso não tem nada a ver com o N8N mais, né? Mas
+
+claro, como a gente trabalhou com o N8N nesse projeto, né? Faz até sentido trazer a instalação com 8N, mas ainda assim dá para escolher lá dentro da host quando tu adquirir qual que vai ser o sistema operacional. Então isso aqui não é determinante, eles só estão te mostrando as opções, tá bom? Escolhendo teu plano aqui, fazendo pagamento, tu vai ter a área de gerenciamento lá, que é o problema a gente vai depois. Só deixa eu terminar aqui a parte do antigraphit, beleza? Então, se vocês vão
+
+hospedar o projeto, recomendo muito a Hoster, que é onde a gente tem também lá. Ó, esse é o promp do deploy. Por quê? Ele vai montar um arquivo baseado no projeto que a gente tem com passo a passo do deploy. Então, se o projeto de vocês é um pouco diferente do meu, vale a pena vocês fazerem isso, porque talvez tenha que ter um passo a mais e tal.
+
+Então, é um propt que vai ajudar bastante nisso, ainda mais pra galera que não manja de infra, né? Porque assim, programação é uma coisa, infraestrutura é outra, né? Então, geralmente quem é programador as eh costuma não entender muito bem de infra, né? Eu trabalho muito tempo na área, entende dos dois, mas tem caso e caso, tá? Então, o projeto está pronto. Agora
+
+eu preciso preparar e colocar no ar. Criei um arquivo explicando todo o processo de deploy a passo. Vou usar uma VPS zerada da hoster com o Bunto, que é Linux, né, que é o sistema operacional base de qualquer VPS, qualquer hospedagem. O arquivo precisa explicar como preparar o servidor do zero, o que precisa instalar, como colocar o projeto no servidor, como configurar para funcionar, como manter o sistema rodando e inclui todos os comandos que eu vou precisar rodar. Beleza? Vou fazer isso
+
+aqui, ele vai criar um arquivinho ali no projeto com todo o passo a passo. Claro, eu vou fazer aqui com vocês também, mas né, como eu falei, o projeto pode estar um pouco diferente, então tem um passo a mais, aí vocês vão ter essa explicação, né, de como seguir, tá? Então vamos aguardar aqui, eu já mostro o arquivo para vocês e depois a gente vai fazer o processo juntos, ó. Então ele foi lá, ele criou esse deploy guide. Vou abrir aqui. Não abriu. Deixa eu ver se tá lá
+
+no código. Ah, tá aqui, ó. Deploy guide. Então ele vai falar aqui para entrar no servidor, para instalar um monte de coisa, né? Então todos os passos que ele vai tá falando aqui, a gente vai fazer também. Beleza? Mas fica criado, né?
+
+Mais um guia para tu seguir e conseguir fazer o processo completo. Bom, então com o plano deploy pronto lá, né? a gente vem para hospedagem tu queira usar, tá? Aqui na página da Hostia, a gente vai ter acesso a várias informações importantes, tá? E o nosso servidor que a gente acabou de adquirir vai tá aqui em VPS, tá? Eu tenho quatro
+
+aqui contado para vocês, tem muita coisa rodando aqui dentro e eu vou trabalhar nesse cara aqui, tá bom? A primeira coisa que a gente precisa fazer, tá? É configurar o DNS, que é o IP do nosso servidor que aponta pro domínio, tá? E isso vai ser útil mais para frente, mas fazendo isso agora já vai ajudar a deixar pronto, né, essa etapa que vai ser essencial depois. Então tu já precisar de um domínio, naturalmente. Tu
+
+pode vir aqui na hoster mesmo e comprar um domínio, adicionar um novo domínio e tal. Eh, dependendo do plano que tu comprou e tal, tem domínio grátis, tá? Mas tu pode vir aqui registrar um novo domínio por eles mesmo, pesquisar. Vocês podem ver aqui, eu tenho essa promoção, né? Às vezes tem promoção de ponto comom por 1 centavo, tá? Só pesquisar aqui.
+
+Eh, botar aqui teste intrapit. Vai pesquisar, ó, R$ 1 primeiro ano. Show de bola. Adicionar o carrinho, compra e vai ter o domínio, tá? Tendo o domínio, vai configurar o DNS, né?
+
+Então, a gente vai receber o domínio aqui. Eu vou colocar dentro desse Mateus Batis. Então, a gente vai gerenciar. Aí aqui a gente vai em DNS name servers e aqui a gente vai adicionar um novo registro, tá? Esse novo registros aqui, esse novo registro aqui, ele vai ser referente a o domínio principal ou subdomínio, tá? Vou fazer um subdomínio
+
+aqui porque eu tenho um monte de coisa rodando. Eu vou remover esses estudos aqui, vai ser o meu novo, né, que eu vou fazer, mas antes eu fiz o deploy test, né? Então vai ser tipo a vou botar nome, que vai ser o subdomínio, né? estudos ponomínio. Se não quiser colocar subdomínio, pode botar www aqui, tá? Aí
+
+eu tenho que apontar pro servidor. Eu não copia domínio do servidor, então volto lá em VPS, copio o IP que eu quero, né, do servidor. Só vai ter um, provavelmente vocês, né? Aí cola o IP aqui, adiciona o registro, confirma e pronto, né? Tá configurado DNS. Depois a
+
+gente vai fazer o link entre uma coisa e outra. O que importa é que tá configurado e tu tem que anotar isso, né? qual subdomínio ou domínio tu criou que vai ser útil mais para frente, beleza? Bom, o projeto ele tá aqui ainda, né, no nosso PC, ele tem que colocar em algum lugar pro servidor conseguir puxar, porque dá pra gente colocar diretamente no nosso PC, mas não é tão prático. Então, a gente vai colocar no GitHub. GitHub é o local onde
+
+a gente coloca os nossos projetos que vão estar no ar, né, como se fosse um Google Drive dos programadores. Aqui estão todos os meus projetos. Tu vai criar uma conta gratuitamente, vai colocar o teu também, tá? Como que tu coloca? Cria um novo repositório, vem aqui, create new repository. E aqui tu
+
+vai criar um novo repositório com o nome que tu queira. Então vou botar aqui SAS estudos dois e aqui eu vou deixar ele público, tá? Projetos reais deixando privado, tá? Aqui é mais para fim de estudos e fica um pouco mais simples o processo de deploy quando ele tá público. Se ele tá privado, vai ter que criar uma chave de token, né, que permita tu conectar no teu perfil do GitHub, vamos dizer assim, né, pro servidor conseguir acessar. Então vou
+
+criar aqui o repositório. E aqui a gente pode fazer algo bem simples. A gente copia essas primeiras linhas, né? Esse que esse símbolo aqui, vai lá no anraft, no manager mesmo, tá? A gente coloca assim, ó. Coloque meu projeto
+
+no GitHub. A gente cola todas aquelas linhas lá e ele vai fazer o processo de envio para mim. Então me poupa um pouco de tempo, né? Mas também são alguns comandos, não precisa, não tem muito problema a gente digitar eles, né? Mas é mais para quem tem medo do terminal, tá?
+
+Então, provavelmente a gente vai ter que aceitar todos esses comandos aqui e tal. Eu mostro para vocês como ficou no final. Olha, dis que terminou, então a gente pode conferir recarregando essa página aqui, tá? Uma coisa bem importante é vocês certificarem, mas como a gente fez aquele medida de segurança, não vai ter, é se o arquivo ENV tá ali no projeto, beleza? Então ele não pode estar aqui porque ele tem coisas sensíveis. Então o git com
+
+antigraft não vai reversionar, ele vai tá aqui no gitnó. Mas é bom conferir, tá? Ainda mais se o teu projeto tiver público. Depois não diga que eu não te avisei, tá? A gente tem o projeto aqui.
+
+Então agora o que a gente tem que fazer fora da VPS já tá configurado, tá? Vamos então para dentro da VPS. lá na VPS. A gente vai voltar aqui, entra no teu servidor, gerenciar e tu vai apertar em terminal aqui, ó. Quando tu apertar em terminal, tu vai abrir ele aqui, como tá o meu, tá? E vai ter que digitar alguns
+
+comandos para poder instalar todas as dependências que a gente precisa para rodar o projeto e depois fazer as configurações do servidor para funcionar como um servidor web servir a página. Então eu vou colocar os comandos aqui, né? Lembrando que eu vou tentar deixar o guia para vocês aqui, então vocês podem acessar lá também, mas se o projeto de vocês ficou com alguma tecnologia diferente ou é um projeto diferente, sigam o guia que o Antigravit criou, tá? Então vou instalar primeiramente o cur git e unzip, tá? Nesse meu caso aqui, como a VPS antiga já tava instalada, depois a gente vai instalar aqui, não instalar, a gente vai configurar esse repositório de Node, tá? para poder
+
+baixar o Node versão boa e segura. Então, o Node é quem roda o projeto, né? Vamos dizer assim, a linguagem de programação que consegue executar o nosso projeto. Aí ele vai terminar de configurar esse repositório e aí em seguida a gente instala o Node, tá? Só terminar ele aqui, ó. Terminou. Eu vou
+
+dar um sud aptal - y node js para instalar o node. Aí eu posso conferir se o node tá instalado com node- V. Se aparecer a versãozinha, não dá nenhum erro, quer dizer que tá instalado. Depois eu vou instalar o PM2, tá? Esse cara vai ser responsável pela API e projeto ficaram rodando, tá? Então a
+
+gente vai fazer isso. E aqui agora eu preciso entrar na pasta que a gente vai colocar o projeto. Então os projetos webs geralmente ficam em VAR www. A gente dá um CD var www. E aí estamos na pasta. Bom, aqui tem o meu projeto
+
+atual, né? E eu vou colocar o novo projeto. Então a gente vai dar um git clone para pegar o git clone, né? Clonar os arquivos que estão no gitub lá. Eu venho aqui, botãozinho code, copio esse link, volto lá e dou um git clone, botão direito, colar. Ele vai colocar o
+
+projeto aqui. A gente vê, tá ali, ó. SAS Studos 2, eu posso entrar nele CD SAS Studos 2. E agora tô dentro da pasta do projeto. Se a gente dá um LS aqui, a gente vai ver que a mesma coisa que tem aqui tem aqui. Quer dizer que o projeto
+
+foi clonado, tá? Que mais? Agora tem que instalar as dependências do projeto. E isso quer dizer que os pacotes que o React usou para fazer o projeto aqui, né, por exemplo, para fazer essas transições e tal, vão ser instaladas no nosso servidor. Então, a gente vai dar um ntpm install, tá? Depois a gente
+
+precisa configurar o nosso ENV, igual tá ali no projeto que a gente fez o desenvolvimento. Então a gente pode copiar isso aqui, voltar para cá e dar um vin. Que que é isso? O vin é um editor de texto inline, tá? De linha de comando. O dv é o arquivo que a gente
+
+atrae vai criar esse arquivo. Aqui eu aperto i para começar a digitar, né, para permitir o modo de inserção. Botão direito, colar. Ele vai colocar essa URL aqui. Só que eu falei para vocês que o nosso projeto está em produção, então a gente tem que diferenciar os ambientes.
+
+Vou voltar no N8N, vou publicar esse workflow, tá? Vou vir aqui no Hook e eu vou pegar a URL de produção. Então eu mudo a abinha aqui, ó, e clico nela, ele vai copiar ela, tá? Voltando lá, eu vou apagar essa URL ali que tem de teste backspace, né? Até apagar tudo. Deixa só o igualzinho ali,
+
+botão direito colar, tá? Então já tá valendo o workflow no ar, que é o certo ali. Não inspira vocês, mas aperta ES dois pontos X exclamação que ele sai e salva do arquivo. Beleza? Tá? Tendo o
+
+ENV configurado, eu vou buildar o projeto. Que que é isso? Olha, a forma mais básica, esses arquivos aqui não servem pro navegador entender o teu projeto. Precisa transformar tudo em HTML, C7, JavaScript, que é o que o navegador entende. Então a gente vai dar um npm run build e ele vai gerar os arquivos finais do projeto, tá? Geralmente fica numa pasta
+
+chamada dist. Ó aqui, deixa eu ver aqui. Ele deu um warning, não é um erro, então ele vai deixar passar. Masse aqui é bom a gente corrigir. O certo seria eu ir lá no antigraft e mostrar esse warning aqui para ele modificar, tá?
+
+Mas prosseguindo aqui, né? Vamos ver se dá algum problema. A gente vai ganhar uma pasta chamada dis. Essa pasta também não versiona, não vai tá aqui, tá? Essa pasta tem que ser gerada toda hora que a gente atualizar o projeto. Ela estando
+
+aqui, a gente sabe que os arquivos finais do projeto estão aqui, tá? Então, que que eu vou fazer? Eu vou agora configurar o meu servidor para rodar, né, para rodar esse projeto aqui. Então isso a gente vai fazer com o PM2, tá? Aqui o PM2 ele já tá rodando. Se ainda é
+
+o PM2 status, vocês vão ver o projeto antigo rodando, tá? Então aqui vai criar um novo projeto com esse que eu tô fazendo com vocês, né? Então o comando vai ser botar aqui, ó, size estudos traço dois PM2 start, npm, name size estudos do start, tá? Então ele criou o novo projeto. Esse de baixo aqui é o novo, tá? Então a gente vai por ele
+
+agora, só para vocês não se confundirem. Eu vou dar um PM2 save. Isso vai salvar esse novo projeto lá. Eu sempre que desligar o servidor, ele vai religar com esse cara. Vou dar um PM2 startup para ele reiniciar as coisas, tá? E aí se, ó,
+
+a gente deu um PM2 aqui e ele der erro, tá? Quer dizer que deu algum problema. Deixa eu ver aqui. Agora a gente precisa verificar, né, qual o erro que aconteceu aqui para poder entender se foi um problema de conflito e tal. Então eu vou debugar isso aqui. Ó, eu já entendi o
+
+que aconteceu aqui. Ele faltou um script que eh no projeto antigo tinha e nesse não, tá? Então o que que eu vou fazer aqui? Eu vou matar esse projeto. Vou dar um PM2, Delite SAS Studos 2, tá? E eu vou rodar
+
+esse comando aqui agora, ó. PM2 start server indexs. Isso vai fazer com que ele inicie o projeto, tá? Utilizando um arquivo em vez de um script, que era como o projeto antigo rodou, né? Era um script e agora vai ser para um arquivo.
+
+Não tem problema nenhum. Ó, ele iniciou o projeto. Eu vou dar um PM2 save e eu vou dar aqui um PM2 status. PM2 startup, PM2 status. E, ó, agora o projeto se manteve no ar, tá? Então agora tá
+
+funcionando. Então, inclusive esse comando tava lá no deploy guid guide, né? Eu eu peguei de lá, tá? Então, por isso que é importante seguir o guia de vocês que ele gerou. Beleza? Bom, tendo
+
+isso pronto, agora o projeto tá rodando, só que ele não tá ligado ao nosso domínio, n? É isso que a gente vai fazer. A gente vai instalar então um servidor web, que aqui vai ser o Njinx, tá? Então suda aptem instal - YN Jinx. Aí agora eu vou criar um arquivo de configuração para esse projeto, tá?
+
+Então vai ser o seguinte. Sud do vinho bar etcing sites available s estudos 2, é assim que eu vou chamar esse cara, tá? E aqui eu tenho que colocar uma configuração, tá? Então a configuração é essa daqui. Peguem, deem um print, manda o chat pt para escrever ou copie do arquivo, tá? E o que a gente tá fazendo
+
+aqui, basicamente é que ele, né, vai tá apontando a porta 80 para domínio que a gente escolheu, né? Então aqui nesse arquivo a gente vai colocar a parte de configuração Jinx que ele criou provavelmente lá no guia de depó de vocês, tá? O meu deu esse aqui e a única coisa que eu tenho que colocar é o domínio que a gente colocou. Então em server name eu vou vou colocar estudos. musbatisteiaa.com.br
+
+e a pasta correta, tá? Então a pasta agora vou só salvar aqui pra gente ver é SAS Studos_line 2, tá? Então aqui vai ser SAS Studos_line 2/D, beleza? Então a gente vai configurar dessa maneira aqui, beleza? Aí a gente sai e salva com ES Xão, tá? E aqui agora eu vou habilitar esse
+
+arquivo. Como é que eu vou fazer isso? Só seguir os comandos aqui também, ó. A gente pode pegar aqui, colar aí o nome do arquivo, tem que colocar o nome que colocou. Meu SAS estudos traço dois, né? Aí ele habilita
+
+esse arquivo. E agora eu uso o comando subjinx - t para ver se tem algum erro, tá? Então aparentemente não tem erro porque aqui ele dispararia um um log de erros, tá? E eu vou reiniciar o endinx para reiniciar o servidor e ele pegar as alterações que a gente fez. System, CTL, start ind.
+
+Bom, agora eu tenho que instalar o certificado de segurança, tá? Então, a gente vai utilizar o comando sudt- Y, se bot, Python 3, se botins, né? Isso aqui são eh pacotes Python que vão habilitar o SSL no site, tá? E aqui eu vou utilizar esse comando, até tá aqui, ó. tá aqui também com o meu domínio, né? Então vai ser estudos
+
+Mateusbatistea.com.br. Opa, então ele vai fazer a geração aqui. Ele tá pedindo para eh expandir e trocar o certificado porque eu já tinha no outro, né? Opa, aqui eu errei, eu não coloquei
+
+o domínio aqui também. Mateus Batis. Br. Ó, aí eu vou colocar para renovar e trocar o certificado. Vocês provavelmente ele vai só executar o comando. Então ele vai renovar o
+
+certificado e aí ele deu sucesso e pode demorar um pouco para funcionar o certificado, tá? E também a propagação do DNS ali que a gente fez. Mas vamos testar aqui. Vamos ver se deu certo. Então vamos começar a testar aqui pra gente ver se deu certo.
+
+João teste joão teste@gmail.com. Opa, qualquer validação ele tá funcionando, né? Ó, não tem nenhum plano. E agora o grande X da questão, né? se o workflow
+
+vai funcionar no modo de produção, porque aqui ele não vai aparecer mais rodando, ele vai aparecer lá como eu mostrei para vocês no exemplo do projeto. Então aqui em executions ele vai aparecer, tá? Aqui ele não mostra mais porque aqui é só no modo de teste. Então vou começar aqui que eu quero aprender PHP em uma semana. Gerar o plano com IA. Ó, ele deu um erro gerar o
+
+plano. Então vamos ver que erro que foi. E aqui ele deu erro 500 na hora de gerar o plano e tudo mais. Deixa eu ver. e gerar plano cuad. Bom, galera, tava
+
+depurando aqui o código, tá? E eu vi que o que aconteceu na produção, né? Ele tá fazendo o seguinte, ele tá chamando o local host. Isso aqui não vai dar certo, tá? Então eu preciso pedir pro antigravity corrigir essa questão porque e ele precisa chamar a API do servidor, não é do meu computador, né? Não faz
+
+sentido. Então vou falar justamente isso para ele. Eu posso até mandar um print aqui do dev tools, tá? Eu vou descrever assim, ó. Cadê o aqui, ó?
+
+Parece que em produção o meu servidor está chamando o local host para acessar a API. Analise como podemos corrigir isso. Veja o print que te mandei. Aí, provavelmente, ele vai alterar o código para deixar mais menos interligado ao local host, né? Deixar na maneira mais flexível. Então, vamos ver
+
+aqui e aí eu retorno vocês como é que a gente vai atualizar. Ó, então ele falou que corrigiu, né? Ele troca, né? Lá na noite desenvolvimento por local host e lá em produção por barra, né? Utilizando o próprio domínio, tá? Então agora ele
+
+tá falando que a gente precisa gerar o build novamente. Só deixa eu ver uma coisa se ele enviou pro gitub, né? Então a gente vai dar um refresh aqui, ó. Ele não enviou, né? Então a gente precisa pedir para ele enviar, né? Porque essas
+
+esse código tá no meu PC só, né? Então vou botar aqui envie a atualização para o GitHub. Ele vai fazer um commit um push, né? Que são comandos comuns ali, né? De atualização. E a gente já tá
+
+aprendendo atualizar na prática também, né? Bem interessante esses erros que ocorrem, galera. É isso aí. O Vib code vai proporcionar a gente muita agilidade, mas ele vai também meter a gente em algumas enrascadas que se eu tivesse programando isso aqui, provavelmente não teria caído nessa cilada, né? Porque é algo bem de iniciante, vamos dizer assim, tá? Então
+
+vamos lá, ó. Ele tá pedindo permissão para usar o comando, né? Para mandar o fix e aí ele vai nos trazer o sucesso, tá? Vamos ver se veio agora. Recarrega aqui. A gente consegue ver as mudanças,
+
+ó. Não foi que ele mudou agora. Tá bom. Daí ele me diz que só fechar isso aqui rapidinho. Quando estiver em produção, eu vou ter que fazer os seguintes comandos aqui, ó. Então a gente pode
+
+copiar isso aqui tudo, voltar lá pro servidor e executar esses comandos, tá? Então gitpol puxa todos os códigos que alteraram, npm install e npm RBU build refaz o processo. E no PM2 ali ele tá reforço, resetando o serviço para pegar essas mudanças novas, tá? Tá? Então vamos ver se tá tudo certo aqui, ó.
+
+Estou logado ainda. E agora eu vou testar de novo. Agora foi. Então a gente pode vir aqui no N8N em executions, tá? Rodando, tá? E agora aqui logo mais a
+
+gente vai receber a resposta com a atualização ali do plano feito para estudar Python em uma semana. Para quem não sabe, né? Python é uma linguagem de programação, tá? E aqui, galera, a gente se deparou com mais um problema, mas esse aqui foi interessante até. A gente recebeu um time out. Que que é isso? O N
+
+demorou tanto que o meu servidor da Jinx não esperou a resposta. Então é algo padrão de servidor, né? É uma configuração que veio com time out de X segundos configurado por padrão. Então a gente vai ter que ir lá no arquivo de configuração e arrumar esse time out, tá? Então a gente vai abrir de novo aqui e a gente vai entrar naquele arquivo do Jinx. Esse aqui é o sites available, tá?
+
+E aqui onde tem a API, né? É importante que seja aqui dentro dessa dessas chaves aqui, ó, eu vou colocar algumas configurações, tá? Então vamos lá. Eu vou colar aqui, ó. Vai ser esse. Só
+
+deixa eu arrumar a identação, importante. Então, vou botar todos os 300 segundos, tá? que é o connect time out, sendout read time out, send time out, tá? Esses quatro timeouts e também esse proxy buffering que vai ajudar em respostas longas, tá? Então a gente salva de novo, né? ESC x exclamação. E aqui a gente vai
+
+dar um sudo ninx T para poder verificar se as configurações estão certas. E também vamos dar um reloadin tá bom? Agora precisamos testar de novo. Então vamos lá e vamos gerar o plano de novo. Ele vai fazer a request novamente, tá?
+
+Ele tá executando aqui mais uma vez. Deixa eu ver aqui, ó. Essa é a minha segunda execução, tá? Demorou 1 minuto e 32 segundos, né? Então o time out tem que tá acima disso, né? Pelo menos 2
+
+minutos lá, tá? Mas é meio arriscado. Eu colocaria pelo menos três. E vamos ver aqui a gente recebendo a resposta agora. Tomara que dê certo. Ó, agora veio, tá?
+
+E trouxe a resposta corretamente. Então a gente pode dizer que agora sim tá tudo funcionando da melhor maneira possível. Esse primeiro aqui, ó, criou dois porque não sei se ele conseguiu pegar a resposta. Eu vou excluir um, tá? Vou ficar somente com esse último. Vamos criar de novo para
+
+ver se ele tá duplicando. Botar aqui um mês para estudar geografia eh do ensino médio. Vou gerar de novo. Esperar aqui. Bom, ele trouxe aqui de novo, né? Então tá com estudar geografia
+
+aqui. E voltando aqui pro dash, ele cria só um. Então foi ali um bug do anterior que eu tinha criado, que não recebeu a resposta. Beleza, galera? Então assim, a gente concluiu o projeto, né? com deploy
+
+feito e até de quebra aprendeu a como atualizar ele, né, com o problema que deu. Bom, eu espero que você tenham curtido aí a aventura. Peço desculpa pelos problemas finais aí na parte do servidor, mas é uma parte mais complexa e realmente tem que acertar as coisas, né, como antigraft não preveu alguns detalhes, mas deu tudo certo. E agora vocês têm mais experiência nessa parte do depó, que é bem importante também. Se curtiram o vídeo, deixa aquele like.
+
+Também se inscreva aqui no canal para mais conteúdos como este. E claro, né, de uma olhada naquele guia de vibe code que vai ajudar vocês a criarem projetos melhores utilizando softwares como graft, logo e qualquer outro que aceite prompt e também se tu quer aprender mais sobre tô te esperando lá na formação a gente diá. Bom, por hoje é isso. Vou ficando por aqui. Espero vocês no próximo vídeo.

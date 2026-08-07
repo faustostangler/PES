@@ -1,0 +1,146 @@
+---
+video_title: "n8n Self-Hosted: Instalação Local com Docker (Tutorial Completo)"
+video_id: OwSDm5wfDNo
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=OwSDm5wfDNo
+video_date: 2025-12-29T14:00:44+00:00
+video_description: |
+  Neste tutorial completo, você vai aprender como instalar o n8n no seu próprio computador usando Docker, de forma 100% gratuita.
+  
+  🔥 LANÇOU Conheça a Formação Agentes de IA: https://app.horadecodar.com.br/lp/formacao-agentes-de-ia-n8n?utm_source=yt_docker_n8n
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Ebooks de n8n: https://app.horadecodar.com.br/ebookpages/materiais-aprendizado-n8n
+  
+  Vou te mostrar cada etapa do processo, desde a instalação do Docker até o n8n rodando localmente na sua máquina, pronto para você criar suas automações sem pagar nada e sem depender de serviços na nuvem.
+  
+  O n8n é uma das ferramentas de automação mais poderosas que existem, mas muita gente não sabe que é possível usar gratuitamente instalando no próprio computador. A versão self-hosted do n8n oferece todas as funcionalidades da ferramenta sem limite de execuções, sem limite de workflows e sem mensalidade. Você tem controle total sobre seus dados e suas automações, rodando tudo localmente na sua máquina.
+  
+  O Docker é a forma mais simples e limpa de instalar o n8n localmente. Em vez de configurar dependências, versões de Node.js e banco de dados manualmente, o Docker empacota tudo isso em um container isolado que funciona igual em qualquer computador. Se você nunca usou Docker antes, não se preocupe. Vou explicar os conceitos básicos necessários e mostrar cada comando na prática.
+  
+  O vídeo começa pela instalação do Docker no seu sistema operacional. Vou mostrar o processo para Windows, Mac e Linux, explicando as diferenças entre cada um e os cuidados específicos de cada plataforma. No Windows, vamos configurar o Docker Desktop e garantir que o WSL2 esteja funcionando corretamente. No Mac, a instalação é mais direta pelo Docker Desktop. No Linux, vou mostrar os comandos para instalar via terminal nas distribuições mais comuns.
+  
+  Com o Docker instalado e funcionando, vamos para a instalação do n8n em si. Vou explicar o comando docker run linha por linha, detalhando o que cada parâmetro faz, como mapear a porta para acessar pelo navegador, como configurar o volume para seus dados persistirem mesmo quando o container for reiniciado, e como definir variáveis de ambiente para configurações básicas como timezone e credenciais de acesso.
+  
+  Um ponto importante do tutorial é a configuração de persistência de dados. Por padrão, quando você para um container Docker, tudo que estava dentro dele é perdido. Vou mostrar como configurar volumes corretamente para que seus workflows, credenciais e execuções fiquem salvos no seu computador e sobrevivam a reinicializações, atualizações e até reinstalações do n8n.
+  
+  Depois que o n8n estiver rodando, vou fazer uma demonstração rápida da interface para confirmar que tudo está funcionando. Vamos criar um workflow simples de teste, configurar uma credencial, executar manualmente e verificar que os dados estão sendo salvos corretamente no volume que configuramos.
+  
+  Vou explicar também como gerenciar sua instalação no dia a dia. Você vai aprender a iniciar e parar o n8n quando quiser, verificar logs para diagnosticar problemas, atualizar para novas versões sem perder dados, fazer backup dos seus workflows e credenciais, e limpar dados antigos de execução que podem ocupar espaço no disco.
+  
+  O tutorial é indicado para quem está começando com n8n e quer experimentar a ferramenta sem gastar nada, para quem já usa a versão cloud mas quer ter uma instalação local para testes e desenvolvimento, para quem precisa de mais controle sobre seus dados e prefere não depender de serviços externos, e para quem quer entender como funciona o self-hosting antes de colocar em um servidor próprio.
+  
+  Ao final do vídeo, você vai ter o n8n rodando no seu computador, configurado corretamente com persistência de dados, e pronto para criar quantas automações quiser sem pagar absolutamente nada. Todo o conhecimento que você adquirir aqui serve de base para instalações mais avançadas em servidores e ambientes de produção.
+  
+  ⏱️ TIMESTAMPS
+  
+  00:00 Sobre a instalação do n8n com Docker
+  00:34 Como funciona o Docker
+  04:23 Download do Docker Desktop
+  05:01 Interface do Docker Desktop
+  05:40 Baixando a imagem do n8n
+  10:14 Acessando o n8n
+  12:03 O que fazer se o n8n não funcionar
+  15:15 Conclusão sobre instalação do n8n com Docker
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+---
+Fala galera, beleza? Sejam bem-vindos a mais um vídeo aqui do canal. Hoje eu vou ensinar vocês instalar o N8N localmente, né, fazer um self host na própria máquina utilizando o Docker, que é uma das alternativas de instalação mais simples que a gente tem disponível. Isso tudo vai ser bem rápido, fácil. Eu vou dar todos os detalhes para vocês, bem passo a passo mesmo. Não precisa nunca
+
+ter visto Docker na tua vida que tu vai conseguir aí fazer comigo. Bora lá. Então aqui antes eu quero começar com uma breve explicação do que que é Docker para tu entender o que tu tá instalando na tua máquina, né? Isso vai ser necessário para se um dia tu utilizar mais pra frente com outra aplicação que não seja o N8N, tu vai ter esse conceito base que não muda nunca e tu vai conseguir fazer a instalação muito fácil dessa outra aplicação que tu precisa se tu precisar. Beleza? Então o Docker
+
+funciona a grosso modo, né, dessa seguinte maneira. A gente vai ter aqui uma união de várias tecnologias ou várias dependências que eu coloquei aqui como A, B, C, tá? Que nós chamamos de imagem, né? Quando a gente unecolog, a gente chama ela de imagem no Docker. Então, trazendo aqui pro universo do N8N, todas as dependências, né, do N8N estão inserídas dentro de uma imagem e faz com que a gente não precise baixar nada no nosso computador, não precisa instalar outra ferramenta a não ser o Docker para rodar o N8N. E isso também
+
+vale para outros softwares mais complexos. Essa é a grande magia do Docker. A gente só precisa do Docker e de uma imagem que tenha todas as referências e tecnologia da ferramenta que a gente tá instalando. Então o Docker vai lá, ele une tecnologias de uma imagem, tá claro? Às vezes essa imagem é criada pela equipe do Docker, pela equipe da tecnologia, por pessoas comuns como eu e você, tá? E aí
+
+disponibilizadas para download, né? E o próximo passo é transformar essa imagem num contêiner. a imagem como se fosse o esqueleto do que a gente quer rodando. E o contêiner é de fato a aplicação rodando, tá? Só que antes a gente tem uma pequena opção que é muito vantajosa na maioria dos casos, que é adicionar um volume. Então, aplicações que precisam
+
+de banco de dados ou salvar algum tipo de arquivo e persistir isso, né? Por exemplo, desliguei hoje meu computador e amanhã eu ligo de novo. Elas vão precisar desse volume, senão a gente vai perder todos os dados, tá? Então, a gente pode adicionar um volume ao nosso contêiner, né, que é a a soma, né, da imagem mais esse volume. E aí os dados persistem. O Docker vai empacotar tudo
+
+isso, vai deixar tudo configuradinho na nossa máquina e ele vai servir essa aplicação numa determinada porta no nosso computador. Que que é isso? Bom, a gente vai conseguir acessar diferentes aplicações porque elas vão estar em portas diferentes, tá? Então é isso que permite também a gente ter o doc rodando em múltiplas coisas ou com múltiplas coisas. A porta nada mais é uma maneira que a gente tem de acessar essa aplicação, por exemplo, no navegador, tá? Vocês vão ver isso direitinho ali
+
+quando a gente começar a instalação. O fim aqui, né? Pode parecer confuso, é a forma de como a gente tem acessar o que a gente acabou de rodar no contêiner do Docker. Beleza? Então, bem resumidamente, baixamos a imagem, atrelamos um volume para persistir os dados, o contêiner executa essa aplicação e nós acessamos via porta X, Y, Zocker fornecer pra gente ou configurarmos. Beleza, galera? Então, se
+
+tu gostou dessa explicação aí, não esquece, dá aquele like, se inscreve no canal que provavelmente te ajudou a entender aí um pouco mais sobre o que a gente vai instalar agora e vai te ajudar futuramente, tá? Galera, fazendo uma pequena inserção aqui, eu esqueci de comentar que a gente tem um pacote de aprendizado N8N. Se tu gosta de ter um material ali de referência, um e-book denso para poder entender melhor como é que funciona o N8N nas entranhas, também ter ideias de a gente dear para criar, para monetizar, a gente tá disponibilizando isso aqui. Eu criei com todo o carinho, tem quase 100 páginas aqui de conteúdo, é bem completo mesmo. Eu vou deixar o link aqui na descrição também vocês baixarem. Eu acredito que
+
+vai agregar muito, já que vocês estão aqui nessa repreitada aprendendo isso vai ajudar aí a clarear mais as ideias, entender melhor como tu pode utilizar a ferramenta, não só os recursos dela, mas também para gerar uma renda extra com isso, como tem muita gente fazendo. Beleza? Então bora continuar. Bom, passo dois, baixar o Docker. Então a gente vai acessar docker.com, tá? Aqui ele fornece
+
+bem facilmente o download do Docker Desktop, que é o que a gente precisa, tá? para poder rodar essa aplicação. É a maneira mais intuitiva de rodar Docker. Tem outras maneiras, por exemplo, via terminal. E aqui a gente precisa escolher qual é o nosso sistema operacional. Então ele tem para Mac,
+
+Windows e Linux. No meu caso aqui é a MD 64, tá? E aí ele vai baixar o instalador e é aquele next da vida, tá? Só abrir, seguir o passo de instalação e tu vai ter exatamente essa visão que eu vou mostrar aqui agora. Ele vai abrir o software. Se não abrir, tu vai procurar
+
+lá por Docker Desktop, tá? E tu vai ter algo muito semelhante a isso aqui. Às vezes ele muda um pouco a interface, mas a gente vê que os elementos macro ainda estão aqui, como eu expliquei lá no comecinho, a gente tem contêiners, imagens e volumes, que é o que a gente precisa, mas outras coisas aqui não nos interessam, pelo menos não aqui para instalar o N8N, tá bom? Vamos lá. Como eu falei, o primeiro passo é baixar a imagem do N8N, né? Então vamos precisar
+
+aqui ir em imagens, tá? E procurar do N8N. Então a gente pode utilizar essa barra aqui de search, tá? Digita N8N. E aqui tem que ser bem criterioso, tá? Nós
+
+precisamos encontrar a imagem correta. Então vejam aqui que ele já me dá uma MCP N8N. Não é isso que a gente quer, tá? A gente quer esse aqui, ó. N8NIO/N8N, que é justamente da própria empresa, né, que faz o NM. Podemos ver também pela
+
+quantidade de downloads, mais 100 milhões e também é de estrelas, né? São boas referências para escolher boas imagens. Aí, como é que a gente baixa a imagem pro nosso computador? Ela vai est fisicamente lá. As imagens tamanhos variados, tem que cuidar com isso, né?
+
+Para não ficar aí o PC todo ocupado de imagens. Vamos clicar em pull. Isso baixa a imagem, tá? A gente pode acompanhar aqui nessa interface de imagens. E como vocês podem ver, eu já tenho uma imagem rodando aqui, né? E
+
+agora eu vou ter outra que é do N8N. E vocês vão ter essa também. Essa do meio pit ignorem, né? É um outro serviço que eu uso aqui que eu preciso. O que interessa aqui é a do N8N. E como eu
+
+falei, elas são isoladas, né? Cada uma vai representar um serviço. Então vou esperar baixar e já continuo aqui com vocês. Ah, galera, antes disso, tem um passo muito importante. Como eu falei lá, a gente precisa do volume, né? Algum
+
+lugar para persistir os dados. Ó, já terminou de baixar aqui. Então vocês vão fazer o seguinte, criem uma pasta onde vocês quiserem, né? Eu gosto de criar em níveis mais altos, digamos assim, né? Não tão entremeada, né? No PC. Então eu
+
+criei aqui na unidade D uma passa chamada N8N_line data, que é onde o volume vai funcionar. O Docker vai depositar os arquivos referentes ao N8N, tá bom? Então cria essa pasta que vai ser importante logo logo. Então a imagem por si só ela vem desligada, tá? a gente vai clicar aqui em run para poder ligar ela. E percebam que ela tem 1 GB de
+
+tamanho, tá? Então, como eu falei para vocês, imagens diferentes, tamanhos diferentes. Ele vai dar um run e aqui ele já me dá a opção, né, em opcional settings, de colocar ela num contêiner. Beleza? E é exatamente isso que a gente vai configurar aqui. Então, podemos
+
+colocar o nome para ficar facilmente identificável lá, tá? O nome da imagem já vem porque quem define é o fabricante, né, o construtor da imagem, mas o do contêiner nós que definimos. Então vou botar aqui N8N, por exemplo, senão ele vai gerar um nome aleatório que vai ficar ruim de achar se tiver vários conteando, tá? Host, tá? Aqui é a porta que eu falei para vocês, onde o Docker vai liberar a aplicação. Tem a
+
+padrão aqui que é 5678. Então a gente pode começar por ela. Se tu tiver outra aplicação Docker rodando teu PC, aí tu precisa escolher uma porta diferente, senão elas vão dar conflito e tudo mais, né? A porta é única. Precisamos escolher portas diferentes para aplicações diferentes, tá? Aqui, ó, volumes. É aqui
+
+onde vamos colocar a pasta que a gente criou. Então, a gente vai clicar nos três pontinhos, seleciona a pasta, ó, como eu falei antes ali, eh, aqui tá na unidade D, né? N8N data, que foi a pasta que eu criei anteriormente. Selecionar. Aqui eu preciso selecionar o contêiner PEF, tá? Isso aqui é dependente de cada
+
+imagem, tá? Então eu vou colocar aqui o que eles pedem lá na documentação. E sempre que vocês colocam uma imagem no no computador de vocês, tá? Via Docker, vocês t que ver se a imagem em si, ela pede um caminho específico para colocar os arquivos no contêiner, tá? Então nesse caso N8N é barrahome barra node/pn8N.
+
+Variáveis de ambiente a gente quer criar alguma configuração ou se já existe alguma configuração na imagem. para poder rodar, tá? Por exemplo, vamos dizer aqui, uma senha. Então, a imagem exige uma variável de ambiente senha com valor X y Z. Então, a gente colocaria aqui não, precisa, tá? Então, agora eu
+
+vou dar run e ele vai utilizar a minha imagem para criar um novo contêiner. Então aqui ele começa a montar esse contêiner, como eu falei lá na explicação, ele junta todas as tecnologias que precisam, ele junta o volume, empacota tudo isso num lugar só e serve para nós. O que quer servir? Ele coloca numa porta e a gente consegue acessar. Beleza? Bom, galera, e agora tá
+
+quase tudo pronto. Como vocês podem ver aqui, ó, ele tá falando, o editor agora está acessível via local host 678, que é exatamente a porta que a gente escolheu. E local host é a nossa máquina. Se a gente quiser ter uma visualização, né, menos agressiva, vamos dizer assim, né, quem não tá acostumado com terminal, só vir em contêineres aqui, ó. E agora a gente tem o contêiner do NN rodando, que é o empacotamento da imagem e do volume.
+
+E basta acessar via esse link aqui, ó, que ele vai abrir no navegador. Ele abriu o N8N. Aqui, tá zeradinho, tem que preencher as informações para poder utilizar, né, exatamente como a gente faz em qualquer instalação crua do N8N, tá? Vai dar um next aqui. Não precisa preencher isso aqui, galera, é legal, tá? principalmente se tu vai
+
+manter essa tua instalação por muito tempo, tá? Pegar essas paid features, né, essas funcionalidades pagas para sempre gratuitamente. Só botar T e-mail e tu recebe uma aqui por e-mail, tá? Eu vou dar skip que eu não vou utilizar essa instalação aqui, né? Bom, temos o N aqui, a gente vai dar um start from scratch, tá? E aqui é para botar um
+
+trigger, colocar, sei lá, algum valor aqui, executar workflow e pronto, galera. Temos aqui o N8N rodando perfeitamente, tá? Se tu quer aprender mais sobre N8N, tu pode tá vendo nosso curso de uma hora gratuito aqui pelo YouTube. Editor vai deixar a TAMB aqui bem grandona para tu saber qual que é e já tá começando a aprender mais sobre N8N agora mesmo. Beleza? Só queria dar
+
+mais algumas palavras pra gente ver outras partes aqui, outros probleminhas que podem acontecer nesse ciclo da instalação com Docker. Beleza? Então bora continuar aqui. Uma coisa muito importante é que a imagem oficial aqui ela abaixa a versão estável, tá? Então a gente vai ter aqui, ó, enervion 1.123.
+
+Logo tá saindo a dois, tá, galera? Depende. Quando vocês estão vendo esse vídeo, já foi a dois que foi instalada, isso não é a gente que controla, é a imagem em si. Beleza? E o que pode ocorrer também é que o Docker ele pode eh desligar por algum motivo, falhar. Tu
+
+pode desligar o teu PC e o Docker Desktop não abrir. E o que que vai acontecer? Bom, como vocês viram aqui, esse do meu do meu pit, ele ligou sozinho, tá? Mas pode ser que o de vocês desligue. Aí vai est uma situação parecida com essa daqui. Ele vai tá com
+
+a boleta aqui, ó, branquinha, tá? e ele não vai estar funcionando. Se a gente volta lá, ele vai dar aqui um erro, tá? Esse é o principal problema. E aí a gente acha que deu pau, a instalação não funcionou e tal, né? Só rolou uma vez,
+
+mas na verdade é bem simples, é só vir aqui e acessar o contêiner, né? A gente lembra sempre, agora só vamos lidar nos contêiners, clicar aqui em start, ele vai começar tudo de novo. E como eu falei antes, né? Ó, demora um pouquinho. Como eu falei antes, isso aqui só tá aparecendo, tá? A gente não tem que
+
+fazer o processo todo login de novo ali de criação de conta, porque a gente tem um volume atrelado, tá? Se a gente desliga o contêiner sem volume, vocês vão ter que fazer todo esse processo de novo e nunca vai persistir os dados. Então é muito importante fazer aquele passo do volume. Pode ser que de tempos em tempos a imagem atualize, tá? E aí tu pode chegar aqui e fazer a atualização dela. Basta clicar em pull que tu vai
+
+conseguir baixar a nova versão. E aí talvez o contêiner já entenda que tem a nova versão da imagem, senão tu vai ter que aqui manualmente parar e dar o play nele de novo para que ele reconstrua com a imagem nova, tá? pode usar essa opção de restart ele vai já persistir com a versão nova de imagem sem perder os dados do volume. Aqui eu entrei rapidamente na imagem, né, lá no Docker Hub, que é onde a gente pode ver qualquer novidade sobre ela. É a mesma imagem que a gente baixou. A gente vê
+
+aqui, ó, ela foi atualizada há 12 horas atrás. Então, sempre tu sentir que tu quer atualizar, tu pode vir aqui e ver se houve uma atualização, tá? Diferente do npm, que é um outro modo de instalação que a gente tem aqui no canal, a do Docker, tu vai ter uma instalação sempre estável, né? Então não tem perigo atualizar pra última versão que teoricamente só coisas boas virão, tá? Aqui também tem uma descrição bem técnica sobre como a imagem funciona. Se
+
+quiser dar uma olhada aí pode fazer sentido para poder entender melhor como ela é construída, quais são suas dependências e porque ela tem aquele tamanho de 1 GB. Bom, então a nossa instalação tá rodando bonitinho aqui no Docker desktop, tá? Lembre sempre, se alguma coisa der errado, depois de reiniciar o PC, deem uma olhada nessa tela que o problema vai tá aqui. Beleza? Além disso, galera, se vocês querem ter um treinamento completo de N8N, nós temos a formação agentes de A. Aqui tu
+
+vai sair do zero, aprender a criar qualquer tipo de automação no WhatsApp, workflows complexos, automações de agendamento, não importa. Tem várias aqui, tem mais de 30 projetos e tu vai aprender a vender essas automações, esses sistemas de automação que tu cria. Então o link vai tá aqui na descrição, beleza? Basta acessar a página, dá uma lida aqui, tem um botão de WhatsApp para conversar com a gente se ficou alguma dúvida. Tem um botão aqui para baixar a grade curricular completa para tu ver quão denso é o treinamento.
+
+Provavelmente sem medo de falar, sem medo de errar, o treinamento de o treinamento de NN mais completo do Brasil, tá? E fico esperando vocês lá. Esse aqui é o treinamento para quem quer dominar o N8N, a criação de agentes de A e saber como vendemos. Galera, por hoje é isso. Espero que vocês tenham curtido, tá? Esse assunto de instalação é bem
+
+importante a gente dominar vários meios de instalação para que a gente possa se formatar o PC, instalar de novo, ter domínio também sobre as tecnologias que a gente tá utilizando. A gente já tinha vídeo aqui no canal sobre a instalação com npm, que é uma outra maneira, a instalação na VPS, que também é self hoster, né, mas muda um pouquinho. E agora a gente tem a instalação de Docker, que é uma outra maneira muito interessante de instalar. Tu sabendo isso, tu vai est sempre com conhecimento de instalação da ferramenta, o que é bem interessante aí nos casos que tu precisa colocar ela rodando de novo, seja no teu computador, numa VPS ou no computador de um cliente, não importa. Espero que você tenham gostado. Deixa aí comentários com
+
+sugestões de próximos vídeos. Eu sempre leio e respondo todos os comentários. Deem o like também, por favor. Isso ajuda a espalhar mais o trabalho. E se inscreva para saber mais sobre N8N e inteligência artificial. Bom, galera,
+
+por hoje é isso. Vou ficando por aqui. Espero vocês no próximo vídeo.
