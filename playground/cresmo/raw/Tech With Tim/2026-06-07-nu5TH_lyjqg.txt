@@ -1,0 +1,114 @@
+---
+video_title: "I Went to the Biggest AI Infrastructure Conference"
+video_id: nu5TH_lyjqg
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=nu5TH_lyjqg
+video_date: 2026-06-07T14:30:01+00:00
+video_description: |
+  Get started with Temporal: https://temporal.io/ @Temporalio 
+  
+  Everyone's building AI agents. Almost nobody is shipping them reliably. I went to Temporal Replay in San Francisco — the biggest AI infrastructure conference of the year — to find out why, and what the best engineers in the world are doing about it.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/TechWithTim-jun26
+  
+  🎞 Video Resources 🎞
+  Recordings of Keynote: https://temporal.io/replay/2026
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  01:30 | Day 1
+  07:40 | Day 2
+  10:47 | Day 3 / Outro
+  
+  Hashtags
+  #Temporal #AIInfrastructure #AIConference
+  
+  UAE Media License Number: 3635141
+---
+AI agents are everywhere, but almost no one shipping them reliably. And the reason for that is pretty simple. Most AI agents now are just Python scripts running in a loop. They work great in a demo, but as soon as it gets to production, all kinds of things fail in API. Time's out.
+
+A server restarts your process, dies at steps six of ten. You name it all kinds of things happen, and then you're stuck writing all types of retry logic, state management. And those are things that you're definitely going to get wrong. Now, I've dealt with this firsthand. The AI part usually works fine, but it's the orchestration around it that can become an absolute nightmare.
+
+Think about long running state failures, rate limiting, authorization issues. All of these come up in production and you need a way to handle them. Now, this is what durable execution solves. Instead of you handling all of the state and writing all of the retry logic, a platform can handle it for you, and then you just worry about building the AI. If something crashes, it can pick up exactly where it left off.
+
+With no retries and no duplicated work. Now, temporal is the platform behind durable execution. It's open source. It has SDKs in over five different programing languages, and it's free to use from your own machine. Now this handles retries.
+
+Rate limiting pretty much anything is a relates to orchestration of AI agents, and it makes it really easy to build and deploy agents at scale. In fact, it's already used by companies like OpenAI, Netflix because of the capabilities it has. Now today I'm at Temporal Replay in San Francisco. I'm going to dive into this more in depth. I have a ton of sessions to attend. Let's get started.
+
+So I'm just on my way to my first talk here on AI agents in Python using temporal. It looks pretty exciting. Let's check it out.
+
+Now, today I'm at the temporal Replay. Conference here in San Francisco and got all kinds of exciting talks about AI agents. Let me bring you along and show you what I learned.
+
+All right, so day one was packed with a ton of workshops related to temporal and their SDK. Now, naturally, I attended the temporal for Python session where we learned about how to write durable AI applications. And we ran through 5 to 6 different demos. We went from writing agents from scratch to using all of the temporal primitives to make our applications traceable, observable, and most importantly, durable.
+
+And by the way, what does durable even mean? Well, it means your workflow state is never lost. Now, normally if your app crashes a server restarts, or some API call fails halfway through. You need to manually handle the retries, the state recovery, and all of that complexity yourself. Now, temporal solves this by storing the entire workflow state inside of the temporal server so your code can pause, fail, retry, or even continue running days later exactly where you left off.
+
+Now your workers execute the code while the temporal server acts as the source of truth that keeps track of every step in the workflow. Now we'll dive into that more later, because after my session I actually found another tech YouTuber Owner Codes. And here's what he had to say. All right. Guys, so I'm here.
+
+Temporal replay in San Francisco. Look who I met. We got uma codes here, and, Anyways, say hi, man. Hello. How's it? Hope everyone's doing good. Yeah.
+
+How are you? Enjoying the event so far? I am loving it so far. I've been to a few workshops and I am learning a ton. Yeah. Yes, sir.
+
+What would you say? The number one thing is deep learning. So far. I think how much they abstract from us so we don't have to worry about it when we design our systems. So I'll say that's the most interesting thing that I've learned so far.
+
+Yeah. And, that's you have a lot of experience. Building AI agent stuff. Do you do it on YouTube or or is this kind of the first one? I have experience building AI agents, but in, like, very confined workflow.
+
+Not in the context of temporal. Gotcha. Okay, so this is your first time using temporal. Yeah. This this this would be my first time.
+
+I have heard about them a lot. Yeah. Like I said, the whole claim is, what if your code or your process doesn't fail or never fails? So it's super interesting to actually see how that process works behind the scenes. Yeah, 100%. Yeah.
+
+Thanks, man. Now the day continued with plenty of other workshops covering some of the other skills the temporal has available, and even dove into their Nexus framework for more advanced and distributed workflows. But rather than just show you B-roll here, I want to give you a quick demo so you can see how this actually works. All right, so I'm on the computer here, and I'm going to give you a quick demo of how temporal works. I'm just going to show you a finished workflow.
+
+I'll briefly go through the code, but of course there's a lot more to dive into here to really fully understand it. So the basic idea of temporal is that you have kind of three main components. You have a dev server, which I'm running right here, which is kind of handling all of the message brokering between like the actual AI running and the different clients. We have the worker. This is where you actually run something like an AI agent and then you have the client.
+
+This is where you send some kind of request, right, to initiate some type of workflow. So if we just do something basic where like I submit a request saying what is the weather in Dubai? We'll see that if we go over here to the temporal dev server, which is running right now, we can see we have a running task, we can click into it, and we're able to view a timeline of all of the different events that are going on. Now in this case it ran quite quickly, but if it was being slow, we could see what activities were slowing us down. We could see exactly how long everything took.
+
+And then we can step through this and see all of the results from any given step. And this is what I was talking about with the traceability and observability. This really allows you to have better insights into what your AI is doing. So you can see we called GPT for oh, this was the systems instruction we had. We had some input which is what was the weather in Dubai.
+
+We can see all of the arguments that went through here. And then the benefit of this is that if this were to fail or there was some bug or something, we wouldn't restart the entire workflow. We would just sit here and wait until this was kind of rebuilt or ready to run again, and it would continue from the other task. Now, I can show you this with a failure, but I don't want it to take too long. And then if we go back here, let's just say I run, you know, another task right here.
+
+Give this a second. Let's refresh. You can see a new one comes up and is running, and we get a full log of everything that's going on. Now all you really have to do in order to use temporal here is just write a little bit of code. So for example if I go here this is the start workflow file.
+
+You can see this is kind of, you know representing the client. If we go to the tools workflow you can see this is a particular workflow where we kind of have an agent that has access to a few different tools. And if we have a look at these tools, we run them as something called an activity. And whenever we put a tool in an activity, it automatically makes it durable, which again gives it all of those benefits that I talked about before. Now again, I don't want to dive into too much of the code here, but I just wanted to show you a quick demo of how this actually works.
+
+The main thing here is this temporal dev server where you can have all these activities, schedules, batch workers, and access all of this kind of stuff. You can see the workers that I had, you can have multiple of them. You can have namespaces. And then of course the workflow itself where you're executing kind of a run of an album or an AI agent. Anyways, let's get back to the video and you'll learn a little bit more about it.
+
+All right, guys, we're just wrapping up day one at the conference. Just did some workshops today. I learned about durable AI agent execution. Super cool stuff. I would have thrown some demos in earlier.
+
+So hopefully you guys got some information tomorrow. We've got a bunch of keynote speakers, other creators. I'm going to talk to you. Stay tuned. See you there.
+
+Now we move on to day two of this three day conference where we started the morning nice and early with the official keynote.
+
+Now, there was a lot discussed and announced here, so I want to go over what I found most notable. Now, number one, Tim Portal is used by almost all major AI companies and is essential to their infrastructure. OpenAI, Mistral, emergent, Docker, Replit, retool, you name it. They're probably using temporal and they're using it more than ever before. Now, number two, Tim Portal has seen massive adoption and has become the defacto infrastructure for managing AI applications at scale.
+
+Now, OpenAI themselves grew their usage by over 60 in just the last year. And then number three, they announced three new capabilities. We had serverless workers, standalone activities and workflow streams. Now I'm not going to go into details on all of this is only makes sense if you're a preexisting user, but I can't say that the crowd was as energetic as I've ever seen for a tech conference full of a bunch of developers when these were announced. And for those of you that are still a little bit confused on what temporal is, actually met up with another tech influencer, Kris, who gave her best shot at explaining it.
+
+Let's hear her. Chris, nice to meet you here at temporal. We're going to have a quick conversation. Can you give a quick intro to the audience? Hi everyone.
+
+My name is Chris. I'm a content creator as well. And we met at this conference. It's very nice meeting you, by the way. My question is a lot of people don't know what temporal is that's watching this video.
+
+Can you give us a quick, high level explanation of your understanding of what temporal is? My quick understanding like simple. In simple terms, I would say if you are building anything like if you a vibe coder, are you software engineer? You know that almost any application breaks and temporal can help you prevent that and catch errors early and handle certain things on your behalf. So it's a very useful tool to have if you're building anything pretty much for sure.
+
+For the technical people, it's like durable execution for, you know, AI agents. But observability, logging, retries, long running tasks, delegating to an AI. Oh, you know, something like that with AI agents. So that you put it a lot simpler than I think I described it. So what do you think so far?
+
+Day two we. Do a lot of hype. Yeah, that has been backed up by evidence actually. Open AI with do 600 million along with a bunch of other topics. And so, so far, so good. Yeah.
+
+Let's keep going through this. Three. Now, what he was just talking about there was OpenAI and temporal partnership, and what we heard from the manager of the applied infrastructure team at OpenAI when he was discussing during the keynote. Now, I'll leave a link to the recording of the talk down below as we roll into day three. Day three again started bright and early with another keynote, but this time focused more on a technical deep dive of temporal and some of their newer features.
+
+Now, unlike many other conferences, they actually showed a real functioning demo on screen. They step through the code and they showed us logs, dashboards, and everything else that most other companies just try to hide for their dear life. Now, I don't have enough time to really dive into all of the details here, but it was a nice change of pace from the pure marketing hype that you usually see at all these conferences.
+
+Now, you may notice the change of background here, and that's because I had to leave pretty early on in the third day to take my 16 hour flight. Just 16 hour flight back to Dubai. So I'm here now, and I've had some time to kind of reflect on what I've learned. And I want to leave you with this. Now, AI is not going anywhere.
+
+It's being integrated deeper and deeper into our daily lives. And as a developer, we're being asked more and more to build it into applications. Now, the issue is that AI breaks, right? It fails at times out, and the more we try to scale it, the more of these issues we run into. Now this turns our apps into maybe 5% code for calling APIs, and 95% for managing all of the issues that can occur.
+
+And this is the exact issue that temporal solves, and is why so many companies are scaling their adoption of it right now. And this makes sense given that it's free, open source and available across all of the major languages so you can adopt it with no risk whatsoever. You don't need to pay for anything. Now if you haven't already, give it a try. And I'm sure once you do, you're going to see what I'm talking about here and you'll understand why all of the top companies are racing to adopt it anyways.
+
+Guys, that's all I have for you in this video. I hope you enjoyed this and if you like this style video, definitely let me know. I'm happy to make more. I'll also be doing a ten portal deep dive soon, so stay tuned for that where we actually dive into the code and I show you exactly how it works and how you can build with it.

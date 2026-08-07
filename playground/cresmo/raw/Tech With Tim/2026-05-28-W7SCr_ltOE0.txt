@@ -1,0 +1,272 @@
+---
+video_title: "STOP Building Apps With Supabase (Use THIS Instead)"
+video_id: W7SCr_ltOE0
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=W7SCr_ltOE0
+video_date: 2026-05-28T13:00:34+00:00
+video_description: |
+  Start using InsForge for free: https://go.insforge.dev/techwithtim
+  
+  Vibe coding gets you a demo. AI-native development gets you a production app. In this full tutorial, I show you exactly how to build a real, scalable, fully deployed application using tools that are specifically designed to work with AI agents — not against them.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/techwithtim
+  
+  🎞 Video Resources 🎞
+  Cursor Download: https://cursor.com/get-started
+  
+  ⏳ Timestamps ⏳
+  00:00 | AI Native Dev
+  00:50 | Finished Demo
+  02:22 | Application Architecture
+  04:57 | Tool Stack 
+  06:03 | Cursor & InsForge Setup
+  09:45 | Planning
+  14:30 | Build Phase
+  22:45 | Deployment & Environments
+  
+  Hashtags
+  #AINativeDev #CursorAI #FullStackDev
+  
+  UAE Media License Number: 3635141
+---
+In this video, I'll show you how to do AI native development in 2026. What that means is using tools that are specifically designed for use with AI agents, so you get a better result with a more robust application that can scale as authentication, databases, multiple branches, environments, all of the stuff that you need to do real software development. But now with kind of the twist of AI, because of course that's the era that we're in. Now, what we're going to be using for this video is two tools. We're going to be using cursor, and we're gonna be using something called INS forge.
+
+Now, INS forge is a full back end platform that's specifically designed to be used with AI agents. So you can say something like create a database for me and it will just make it. You can say, hey, connect to, you know, GPT and have a model integration and it will just do it. It's very cool. It allows you to build again, robust, scalable applications.
+
+And I want to give you a quick example of what we're going to be building. It might look a little bit different because obviously AI is not deterministic, but this is something I spun up in about 30 minutes using the tools that we're going to have in this video. So basically what this is is kind of just like a Rag application retrieval augmented generation. What that means is that you can upload some documents. In this case I'm calling it Study Buddy.
+
+So maybe it's like your notes or a textbook page or something. And then you can just directly chat with them. So here if I go into the chat you can see I asked a question like, help me come up with some practice questions about Python lists and then went through the information I uploaded, like this Python list document. And it gave me a bunch of questions. And then same thing.
+
+I said, okay, now let's do a general summary of the information and it gave me a summary. And you can see we have this info. And then I added this thing called Daily Summary where every day it will just go, look at what we talked about and give me a summary of kind of what I was studying. So it's kind of like second brain for you that you can come back to. And the idea is, well, to help you study.
+
+Now, you'll see here that this site is actually live. Like you could go to this site right now and start using it. It's fully deployed. It has authentication. You can see like I signed out here, and I have the ability to sign it with Google or with an email and a password.
+
+And it has all of the features like, you know, a full landing page, database connections, a model, all of that. And if we look here, we have like daily summaries, chat sessions. I can go look at the storage where we have the different documents that were uploaded. I can look at the functions, I can look at the deployments that we ran. You can see it's right here. Authentication. You guys get the idea okay.
+
+So I'm going to show you exactly how to do this. It's going to be a full tutorial. And even if you're not super experienced with AI, you'll be able to follow along with this and create real production grade applications using this tool stack. Let's get started. Now, first of all, massive thank you to NS forge for sponsoring this video.
+
+But don't worry, they're free to use. You don't need to pay for anything in this video. You can do it all completely for free. Now, what I want to start by doing is talking about what AI native development actually is. And to do that, I want to quickly explain the architecture of a large scale application.
+
+Because if you're just a beginner or if you've just been doing vibe coding, for example, you may not know what actually goes into larger apps that are a bit more than just like a basic website. So even the app that I just showed you there, it might look simple, but at scale, it's actually kind of complicated. And there's a lot of features that you need to have. So I just put together a really quick diagram here and I want to quickly go through some components. Then we're going to start building everything.
+
+So let's imagine we have a front end right now the front end is like the user interface. This is the thing that you would interact with that the user would see. And the user is just interacting with the front end. Then the front end is connected to all of these other services that you see here, which are really handling the application, especially as we go to scale. So for example, we have authentication.
+
+Now authentication itself is pretty complicated. How do we keep track of users multiple users signing in sessions, signing in with Google versus signing in with email. You. Right. It's just a component that we need to deal with next databases.
+
+We need to store all of the different data. But then what if we want to use AI with our database? Well, we have this thing called vector search. And what vector search can do is really quickly search through your information to pass it to an AI model so we can get a relevant response. Like I just showed you in that demo where we asked a question about, you know, our textbook pages and it gave us a response back.
+
+We then have storage. Now storage is usually for larger things, like a document where a PDF. We need to handle that whatever real time information we want updates immediately. And then we have things like edge functions. We have all these operations that we need to run in the background.
+
+We need to run them in a secure environment. We can't just do it in the user's web browser. We need to run those on a server. What about schedules? What if we want to do something every day at a certain time?
+
+And what if we want to connect to AI models? Right now, there's a lot of other stuff that goes into applications, but the whole point is that this whole back end here, typically you would first need to know that all of these different things exist. You need to use a different tool for almost all of them. But in this video we can use one single tool which is in forge, which is going to handle all of this for us and be directly commanded from the AI agent. So rather than me manually going and creating an edge function or creating a database, or creating an authentication platform, or signing into an account or something, all I need to do is just tell the agent, hey, go set up a schedule.
+
+Hey, go set up storage for me. Hey, go set up a database and it will do that automatically using this platform. So with that in mind, I want to introduce the tools we're going to use in this video. The first tool is going to be cursor. This is the code editor that I'm inside of right now that we're going to be using to actually handle all of the coding related stuff, even though you don't need to write any code.
+
+And then like I mentioned, we use INS forge. This is the back end platform that's going to allow us to have all of those operations. I don't want to go through everything, but you can see that it's a full kind of back end as a service with cloud storage, deployments, I integrations, all of this kind of stuff. And if you want to compare it to something like Super Base, the reason why this is different is that it's specifically set up to be directed by the AI agent. So rather than you going and manually setting it up and creating the project and all this kind of stuff, you just tell it, hey, do this thing and it will handle it.
+
+Based on the skills, MXGp servers, all of the stuff that it has. So I don't want to go through this too much. What I want to do is start building. So what we need to do here is we need to simply download Cursor. If you don't already have it on your computer and make an account, you can use the free account.
+
+But obviously if you want a better experience, you can upgrade. I think it's like $20 per month. Then we need to make a free account on NS forge. So same thing. I'll leave a link in the description.
+
+Same thing. Just create a free account here. You don't need to pay for anything and then we're good to go and we're going to follow the installation steps. So if you open Curser especially now they've made it. So the default view looks something like this.
+
+This is actually not the view that we want. The view that we want is the editor window. So if you're looking at this here just press editor window in cursor once you've downloaded it. And then it should open something that looks like this. And then you can close this. Agent one we don't need that open.
+
+Okay. So from here what we're going to do is just open a new project. So we're going to go open project. You can just go to your desktop. That's not what I meant to open file open Folder and let's just create a new folder.
+
+So on my desktop I'm just going to go I don't know app whatever. Call whatever you want and I'm going to open this okay. Now when I do that you're going to see that it kind of opens it in this left hand side here. And if you're totally new to cursor, this is what's called an integrated development environment. And what this means is that you can view code.
+
+You can run code, you can chat with an AI agent in this case, because it's AI enabled. You don't need to know too much about it. But on the left hand side, you're going to see all of your files here. You can kind of toggle them with this button. Here you can search through stuff.
+
+You can install various different extensions. You get the idea. Okay, there's really not too much to overcomplicate in terms of this view. And you can kind of collapse this view with this right here and then move all of the windows on the side. Now at the bottom you'll have a terminal. Terminal.
+
+You can just drag up from the bottom of the screen. Or you can hit control. And then the tilde symbol, which is on the top left side of your keyboard where the backtick is usually below the escape key. And you can kind of move the terminal up and down. And then on the right side you have kind of the agent view, which is mostly what we're going to be using, where you can just chat with the AI agent and it will start generating files, running commands, doing anything that we need to do.
+
+Okay. So that's the cursor set up. Now yours also might look a little bit different. I've just change the color theme on mine. So don't worry about that.
+
+Next thing we're going to do is we're going to install in storage. But we just want to make sure we're inside of our account. So from inside forge, once you create the account you can just go to your dashboard. From your dashboard, it's probably going to ask you to create an organization where it may create one automatically for you. So just go inside of your organization. Again, it should be free.
+
+You don't need to pay and you can just make a new project. Now I'm just going to call this YouTube. And then you can put the region that you want the project to be inside of. I'll just go with the US for now. Okay. So I'm going to go with Create Project.
+
+And once we have our project you may have already created this. It's going to take a second to load. What we're going to do is just copy a prompt from here into our AI agent to kind of let it know, hey, we're using Inch Forge right now. You know, set everything up, link it, get ready to go. So if you see here it says install in agent.
+
+If you go to the install on the bottom left hand side we have cloud code codex cursor, anti-gravity, other agents. We're going to press on cursor because that's what we're using. And all we have to do is just copy this prompt. And they also have an MCP server. But you don't need to use that.
+
+You can just use this prompt okay. And all we're going to do is just paste this right here and just say, hey, I'm using NS for just my back end. Log in through this right here. Then install the entire CLI, install the different skills that we need and get ready to go. That's it.
+
+We just paste it into this agent which is on the right hand side. And you can also toggle the agent by pressing this little kind of chat thing right here. It should start going and start creating everything for us. Now you'll notice that I'm using opus 4.7.
+
+That's because I have a premium version of cursor. If you don't, you can just use the automatic mode. There's like an auto mode that you can enable, and I think that's the only one that it lets you use. But it doesn't matter. You're going to get a very similar result.
+
+I've just gone with a slightly higher end model, just so there's going to be less kind of back and forth. All right. So let's just finish running and you'll notice that it's created a folder here called in switch. And if we press into this it just has a bunch of information. You don't want to leak this to anyone like I'm doing right now.
+
+This is going to kind of connect your project to the forge dashboard. So you can go and use that as the managed backend. Okay. So now at this point what we want to do is start creating a plan on what it is that we actually want to build. So you can build anything that you want.
+
+In this tutorial, I'm going to give you an example of something. But ultimately you can do anything and you'll still be able to follow along with the steps that I have here. So first things first. What you're gonna want to do is go to your agent here and change it to plan mode. Okay. So we're going to go from agent to plan.
+
+Now this is going to create a detailed plan before it starts executing anything, which is always a best practice when you're working with AI agents. Then what I recommend you do is kind of just dump your thoughts to the AI on what it is that you want to build, but make sure you have a clear idea of what kind of users am I going to have, what problem I trying to solve? What's the goal of the application? Generally, maybe. What do you want it to look like? Is there a color palette you want to go with?
+
+And you can even tell the agent, hey, anything you're unsure of, ask me questions about to clarify before we start building. So in my case, what I'm going to do is just use Whisper Flow here to dictate into the computer. And I'm going to say I want to create an application called AI Study Body or Second Brain. Now I want to be able to upload notes or documents. I want them to get chunked and embedded into a vector database.
+
+And then I want to able to chat with them and ask questions. So I want to add off as well. So each user has their own knowledge base. And I want to store all of the uploaded files that they have. I want to use edge functions that will handle the retrieval augmented generation pipeline.
+
+And then I want to add a cron job. So every single day gives a summary of the notes. Before we proceed, ask me any questions about the application that you need clarification on. And use whatever tech stack. Make whatever decisions you want.
+
+Okay. So I just use the tool again. It's called Whisper Flow. Just to really quickly dictate this in. If you want to check it out, I'll leave a link to it in the description.
+
+I actually have a long term partnership with them very, very good for stuff like building with AI because it's a lot faster than typing that. And while I did this, you may have noticed that I use some terms that maybe you're not familiar with, right? Like RAG, I said edge functions. If you don't know what those things are, don't worry, that's totally fine. The AI will figure out which ones to use because it's connected to INS forge, but you just need to describe what kind of functionality you want, right?
+
+And then it will know the more detailed you are. Okay, I'm going to have to set up this back end, okay? I'm going to set up authentication. If you say, hey, I want users to be able to sign in with Google, it will just go and configure that for you. But the point is you need to be specific.
+
+So that's why I'm emphasizing kind of come up with the plan, spend a few minutes thinking about it, then go to the AI. All right. So we're going to press enter here. And you notice it's in plan mode okay. So we're just going to wait. It's going to generate a plan for us.
+
+We're going to review it and make sure the plan is sensible. And then we'll proceed to start building okay. So it's going to start asking me a few questions here. You can see it says how should each user's knowledge base be organized. One single knowledge base per user.
+
+Every uploaded node is searched together. Multiple notebooks or collections per user, one knowledge base per user. But documents can have tags and folders. Interesting. Let's go with the tags and folders.
+
+Okay. Which are the daily summary cover and how should be delivered. Summarize the nodes added update rotating highlights based review. Let's do Let's do rotating highlights I like that and then continue. And it might ask you some more questions as you go through this, but that's good.
+
+The more things it asks you, the better, because ultimately the better results you're going to get. Now, while this is coming up with the plan, I'll just quickly show you that if you go to this Ends Forge dashboard here for the project that you created, it gives you a few things as kind of sample prompts that you can tell the model. If you're maybe more of a beginner and you don't know what to ask for. So for example, if you want to create a database, you can copy the sample prompt right here and just paste it in. So if we copy this one it says, hey, use inferred skills to create a table in the insert back end and add some sample data.
+
+So that kind of gives you a starting place. You can sign up your first user. Hey, copy this prompt. You can upload a file. You can add an LM feature. You can deploy it.
+
+And then if you come down here, you'll be able to see all of your usage, like how much disk space, the network network in CPU usage, all of that. And in terms of kind of like the pricing here, if we go back to the org, we can go like upgrade. You'll see that you get $1 in AI credits. So if you're doing like, you know, running an AI model, it's just free. You don't need to pay for that.
+
+You can have up to 50,000 monthly active users. I mean, that would be impressive if you have the 500MB for the database, five gigabytes of bandwidth, and then one gigabyte of file storage for free. And then of course, you can go up and pay for more if you need that, based on the usage that you have. Anyways, we don't need to pay for it for now. It's going to give us the plan.
+
+And what we can do is review the plan here. So you can see it gives us all of these steps. If you're unsure about a step, feel free. Just ask it and say, hey, I don't know if that makes sense. Let's switch it to this or explain to me what this is before we go forward.
+
+And you can do that by just switching this into the ask mode here, or if you want it to actually modify the plan, you can leave it in the plan mode. Okay. So you have these different kind of modes here in cursor. So in my case I'm just going to assume this is all fine. And I'm going to go ahead and press on build.
+
+And now it has 12 to dos. It's going to take probably a few minutes here. And it's going to go through them and build it one by one. And it should actually give me a fully finished version of the application, or at least pretty close. And then from there we'll just need to do some revisions, test the app, make sure that it's working.
+
+Anyways, let's see what we get. And by the way, if you want this just to work automatically and not ask you to approve things because sometimes it will say, hey, do you want to approve this command? Hey, do you want to approve this file? Edit there's a setting that you can adjust here in cursor, so let me try to find it for you. If you go to the settings wheel in the top right hand corner and we go to this agents tab here.
+
+If we scroll down there's a bunch of settings that you can enable. So you can see that if I keep scrolling and I go down to auto run, you can just change this to be run everything on sandboxed. Now this is a little bit dangerous because this means it can effectively run any command on your computers. You want to be a little bit careful, but if you don't care, you just want it to run on auto complete. You can just put this to run everything on sandbox, which is what I have right now.
+
+And now it will just automatically create everything for you and it won't ask you to approve it, which can be a little bit annoying. You also can put it run everything in the sandbox. When you do that, it's going to run in an isolated environment, which is a little bit safer, but then you're going to kind of have to know how to un sandbox it later anyway. So I'm not going to go through all of that. Point is you can enable this feature probably at the beginning it's fine.
+
+And then as the project gets more complicated, you likely do want to kind of approve and disapprove certain things that it's asking to do. Okay. So anyways, there's a bunch of other stuff you can change here. I'm not going to get into that. Let's close this and let's kind of just wait for it to go through the plan here.
+
+And you'll notice on the left hand side again, if we're in this kind of, file viewer that you'll start to see all of these files get created. Now if you want to read through the code, you can, but you really don't have to. And that's kind of the advantage now of how good the AI agents are. You can really just chat with them and they can build you a full app. Okay.
+
+So we're just wrapped up now. Now, this did take a long time. I think this was maybe 15 20 minutes of running, but it completed the entire application. I'm not sure if it's working yet. We're going to test that, but at least that's what it says.
+
+Now notice it actually deploy the application as well. Now you can run this application locally or you can just tell ins forge deploy it. Now it might automatically deploy it, but if it didn't you just say, hey, it's finished. Deploy the application and it will do it for you and give you a URL where you can view the site. And you see we've got a lot of stuff here.
+
+And it says in order to try it, sign up at the live URL, upload a PDF, open chat and then you can see the cron and it says if you want to run it locally, you can run these two commands. So I'm going to run these two commands in my terminal. And if you're unfamiliar with how to do that again you just tell the chat here, hey, how do I do this? Give me some more instructions. I'll begin or help me out, and it will walk you through it step by step.
+
+But in my case, I know that I can just type the command npm install. In order for this to work, I need to have something called Node.js installed on my computer. Now Node.js, you could just go here, right?
+
+And say Node.js install in the browser and you can download it and install it. But again, if you didn't have that, the model is typically smart enough to understand that. And if you got an error message when running this, you tell the model, hey, this didn't work, what do I need to do? And it will tell you install Node.js.
+
+So let's go ahead and run npm install here okay. It added the package and then we can run the command npm run dev okay. And it's running it locally. It's open this up in kind of the cursor browser here. And we can try it out.
+
+So let's try just locally first let's go and create an account. Let's put in the name. Let's do an email Tim at Tech with Tim dot net. Let's do a password and then create the account okay. Let's see if that works. And it asks for verification code.
+
+So let me check my email and see if I got that. All right. So here's the verification code I believe you can adjust these pages as well obviously. But for now we're not going to do that. Let's go paste and verify email and boom there we go.
+
+We get documents okay. Dashboard. We have a chat that we can talk with. And this actually looks better than the other one that I had. And let's try to upload a file.
+
+So let me just go to what do I have. I have another file I created. So you guys can just do any file you want, or you can just ask the AI to generate a file for you. So let's upload this photosynthesis PDF okay. And uploading and queuing.
+
+And let's see if we get that to work. So already while it's doing this I'm kind of realizing like it's difficult for me to know what the status of this. And it's just showing like a text thing. So I'm going to tell it when I upload a document. Can you give me like a loading indicator so it's more clear what the kind of status of the document is, rather than just saying, hey, it's uploading because I don't really know how long it's taking to, you know, parse through or whatever it's doing in the background, okay.
+
+And we'll just run that so that can just work and we can keep testing this. So it looks like I can add a tag. So let's just say like notes okay. Save and boom okay. Notes got added.
+
+And then let's go to chat. And what did I upload I uploaded photosynthesis I'll say tell me what I have about photosynthesis in my notes. And let's hit enter here and let's see if this actually works. Okay. So we got a response says based on your notes, here's a summary.
+
+And then it gives us a bunch of information. And then it shows us the source which is this the photosynthesis PDF that we upload. Okay cool. So I mean it looks like that's working. And then can we make a new chat.
+
+Yes we can and we can start asking questions. Okay. So this is working pretty well. There's like a few things that I might want to modify. Right.
+
+And then again I can go back to the AI agent and tell it to do that. It's automatically running it for me. But let's say I want to run maybe multiple agents at the same time. I don't want to wait for this one to finish. I can just press this plus button right here and I can actually run multiple agents in parallel.
+
+So this one's going. But then I just open a new agent and I can say when I send a message in the chat it says thinking before it actually adds the message to the conversation history. Can we make it to the message appears right away. And then it shows us like a loading indicator or like a typing indicator from the AI model. So it feels more like a normal conversation and then boom, hit enter.
+
+And then both of these can just kind of work at the same time. And while they are adjusting the code at the same time, sometimes that can be problematic if they're working on two completely separate things, which these two things should, then, you know, you can get a decent result. So I would only run multiple models at the same time, or multiple agents or chat windows if they're working on like really discrete tasks. Okay. So those are going to go.
+
+And then while they do let's just go back to our INS forge here. And I just want to quickly have a look at what we've got going on here. So I'm just going to refresh and let's give it a second to load. And we can see we have one user okay. We have some data.
+
+We it said we didn't have the LM feature, but I'm pretty sure we have that because it gave us the response. We have database storage edge functions. So if we go authentication we can see my user is here. We have some off methods. We can enable GitHub or Google auth.
+
+We can also add a custom email provider. Or we can just use our own. So you can see if I enable this and I can start adjusting the email stuff. We have storage. So this is the PDF that we uploaded for the database.
+
+We have our different tables like the chat threads and daily summaries. We get to test that part. We have the functions daily summary chat and process document. And then for the model gateway it looks like we're actually not using the model gateway. So I'm just going to tell it to add the LM feature as well, because I guess maybe it's just giving us the information back.
+
+But it's not actually like parsing it with an LM. So that's a good thing that we checked. So let's just wait for these to finish. And then once they're done, I'll kind of tell it to add that enabled feature. And let's make sure that's working.
+
+And just by the way you will likely want to restart the server. So the development server that you're running locally as soon as you make these changes just to make sure that it applies. So I'm going to control C on my keyboard. Control C will quit out of the application. Then I can use the up arrow key to get the next command.
+
+So npm run dev which is what I type previously and hit enter. And then it's rerunning and it should just pop up here and cursor. Now if it doesn't pop up and cursor, it shows you the URL. And you can just open that in your browser and you'll be able to see the app. So now I'm just going to say like hello world here and send and boom, okay, that looks a lot better.
+
+And we have kind of the typing indicator that I was looking for. And then we'll see if we get the response. And then this one is still going here. So let's wait for that to finish. And actually let's just go back to this agent.
+
+I'm going to say it looks like you're not using the model gateway in in forge. Let's make sure we're using that. I'm not sure how you're calling the Elm right now, but I want to use the model gateway.
+
+Okay. Boom. Let's hit enter and see what we get. All right, so one of our agents is still working, but I'm going to move on to the next part because it can just work in the background for now. And what I want to talk to you about is kind of the deployment process.
+
+Once you actually have your app out there and people are using it. So for right now this is available, right? And I can go to the public URL which is sharing with me right here. So let's open it up and I can start interacting with the app. So let's give it a second here.
+
+And you can see I can sign in I can continue with Google. Let's test this okay. And you can see this worked with Google and actually connected to my email account that I had before. Now the thing is right in this kind of deployed version, this on the site, I have the same data. Like if I go to the chat that I had in the local version that was running on my own computer.
+
+But the issue is that whatever I'm running on my own computer is typically like me testing it right where I'm making changes. I'm breaking something. I'm uploading data that maybe I don't want in the real application. So usually you want to separate things out and you want to have kind of a different version of the app that your users are using. And then the version that you're testing, and sometimes you actually have another version called a staging environment, where you're kind of cloning what the production version might look like.
+
+Now, with forge, we can do that. And you'll notice that if you go here, we actually have this branch, we can create new branches or just ask each forge to make it for us. And what I want to show you is the practice of having a development branch. Right? Or like a testing branch, and then a main or a production branch.
+
+Now, right now they're wanted the same, which is why we have this shared data, but it's really not a good practice to do that. So typically what you'll do is you'll do all of your work in the dev branch. And then as soon as it's good, you like okay. Everything's working okay. I've cleaned up my data.
+
+Now deploy that or clone it to the production branch. Right. And that's the process that you follow. So let's now go to Ends Forge. Let me give a prompt here. I'm going to say okay.
+
+Everything seems to be working. What I want to do now is set up a development branch. And I want to do all of the work on the development branch. And then as soon as I tell you, and only when I tell you, I want us to deploy it to the production branch. So I want to separate these two things out so that I can do some testing and local development, and then I can have the production environment use in forge to set up the two different branches here.
+
+I believe you already have a production one. Let's make sure we get a development one. Yeah, I'm being really detailed explaining it what I want and then it will know kind of what tools it needs to use or what skill it needs to use to actually do that. So again, what I'm running locally here can now be different than what I'm running in the actual app. Or like the deployed version from here. Okay.
+
+So let's wait for that to run and let's see what we get. And also I think this model one is still working, so it's still switching over to use the other model router that I was talking about because in forge actually has the ability to directly handle like multiple models and stuff. You can see all of them inside of here and then just below you at the price that these models are, I believe it's using open router in the background, but I'm not sure. And then like I mentioned again, you get kind of that $1 free. You can see we've used $0.04 so far in kind of like I credits.
+
+Okay. Now just so you understand what's kind of going on here when I asked you to do this right. It's actually using these various different skills to kind of directly call the INS forge CLI. So it says inspired CLI branch create dev mode full right. So it's doing that. It's provisioning the branch.
+
+And the reason it knows how to do that is because the first prompt that we gave here was telling it, hey, what we want you to do is use INS forge download all the skills, get all of the set up. So it did that in cursor, and now it has the instructions and kind of how to operate this tool, which is why we're calling this kind of AI native development. Okay. So all the agents have finished is now set up the development branch. If we want to verify that we can go back here, we can see that we now have this dev branch.
+
+So by default when we do work now will happen in development which is what's also known as the preview branch. And then after that what we can do is deploy it to Maine okay. So you can kind of switch between them as you're testing them. Or if you want to see it in the dashboard, you don't even really have to go here. Now from here, I also just asked it one other thing.
+
+I said, hey, just make a button so I can generate. Kind of like today's highlights by pressing the button rather than just running it on the cron. Cron means that it will just run on a schedule. So like every day it will run and you can see, did it generate anything? I'm not sure if it actually created that for us or not.
+
+So maybe we're gonna have to test that out and see if there's an issue there. But you get the idea. I mean, I asked it for that button, and then I guess maybe we have to wait for it to finish. Okay. But let's assume that, you know, our app is good now, right?
+
+And we've tested it. It's working in development it as it says here, what we would just say is hey now ship it to production. Right. So we say okay, ship to production. And then we just tell it that it should now take whatever we have on the dev branch and push it into the main production branch.
+
+And this is kind of what I wanted to show you with this tool is that you have the ability to do something like this rather than, what do you call it here? Just working all on one branch. Now, really, at this point, we should also start setting up git and GitHub. We want to make sure that we're tracking all of our changes now INS forge will automatically keep track of like the different functions and stuff that we've deployed. But we want to make sure that locally we have like a git repository set up, that we're storing all of the changes that we uploaded to GitHub, all of that kind of fun stuff.
+
+And we can also make it auto deploy and all that. I'm not going to get into all of that right now, but that's another thing that we could tell the agent. So for example, and this is a prompt you should probably copy. Hey, at this point I want to make sure that we set up git. I want to make sure all of the sensitive files, like our env files are not going to be stored on GitHub.
+
+So make sure we have the proper git ignore. Git ignore is a file that's going to make it so that we don't have certain things included in the remote repository where other people can see. And let's make it. So anytime we make a change, we automatically add all of the commits, to get. So the agent should know to do that.
+
+Okay. And wait a second here and then press enter. Now some of that I probably shouldn't have included in the prompt because I was trying to explain it to you guys, but git is what's called a version control software, and it will just automatically kind of checkpoint our code. So if we make a mistake, we messing messed something up. Sorry.
+
+We can just go back to the previous version and say, hey, you know that was wrong. Bring me back to the last commit. That's kind of how git and GitHub works. And then we can also create what's called a GitHub repo. GitHub is a place remotely where in the cloud we can store all of our code.
+
+So for all the different machine or if we're working with another developer, then we can just say, hey, here's the git repo, pull it down to your computer and start working with it. And then from INS forge side here, we can actually go to our organization and to our projects and we can start adding various users. So if I go to my projects here, I believe I can go to members and then like I can invite various other members here, add them by email so that they can start interacting with these projects as well uploading, using and for etc. from their computer. Okay, so anyways, let's go back to YouTube.
+
+Okay. So I think that's good here it's creating the auto commit rule and noticing cursor. What it's doing is it's creating something called a cursor wheels file. That's what this looks like right here. Now this is something that will automatically be loaded into cursor so it knows hey, I need to commit all of the changes that are made automatically.
+
+And this is again called a rule, something kind of common with AI agents. But cursor can automatically create that for us. And then if we go back to here, it's still, what are we doing here? Deploying it to production. So we'll just make sure that that works. So it looks like always good here.
+
+And it shows us that the production site is live, which we can click into. So let's go to it here. And we see that we go to A and I study buddy. And then we can sign in and you get the idea okay cool. So that's working.
+
+And then I just want to show you that because we enabled git if you press on this button kind of looks like I don't know, branches maybe I don't know what you would even call this, but this button here in cursor. And if you can't find it, you can press this drop down menu. It's called Source control. You'll see that we now have commits. And these are all of the changes that was made that now are being stored.
+
+So what will happen is any time we make a change now, it will automatically commit. And we'll kind of get this long history so we can see everything we've done in the project. Now at this point, guys, that's pretty much all I wanted to show you, right? Of course, there's a few bugs in the app we can go through. We can do the revisions.
+
+But I wanted to show you mostly the setup, the tool stack, some kind of, you know, I don't know, tips that you should know about in terms of like adding git. Right? Deploying, setting up the different branches. And you now can go ahead and just build a full application that can actually scale and can use all of the features that we've set up here, like databases or edge functions. I write right, all of that.
+
+It normally takes a very, very long time and requires that you actually understand those tools. In this case, you just use in its forge, and it takes care of all of that for you. So you can focus on build it. Anyways, guys, if you enjoyed the video, make sure they like subscribe to the channel. If you want more content like this, leave a comment down below and I'll be happy to make some more.

@@ -1,0 +1,154 @@
+---
+video_title: "Local Models Got a HUGE Upgrade - Full Guide (Ollama/OpenClaw)"
+video_id: 73UEJxAWzb0
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=73UEJxAWzb0
+video_date: 2026-04-24T14:14:05+00:00
+video_description: |
+  Get a chance to win a FREE Mac Mini with ClawComp: https://clawcomp.net/
+  PromptCast: https://www.youtube.com/@PromptCastOfficial
+  
+  Local models just got a massive upgrade. Just over the past two months, we've seen some really good local models drop that are very capable and relatively easy to run. I'm going to show you how you can run local models on your own computer and then connect them to tools like OpenClaw so you can genuinely save thousands of dollars per month and no longer need to rely on any kind of cloud provider.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/techwithtim
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  00:37 | Understanding Hardware Requirements 
+  04:29 | ClawComp Insert
+  05:58 | Ollama Setup/Install
+  07:58 | Model Selection
+  11:25 | Testing the Model 
+  12:03 | OpenClaw Setup 
+  15:55 | Multiple Model Selection
+  
+  Hashtags
+  #Ollama #OpenClaw #AIModels
+  
+  UAE Media License Number: 3635141
+---
+Local models just got a massive upgrade. Just over the past two months, we've seen some really good local models drop that are very capable and relatively easy to run. Even on just mid-tier hardware. So in this video, I'm going to show you how you can run local models on your own computer and then connect them to tools like OpenClaw so you can genuinely save thousands of dollars per month and no longer need to rely on any kind of cloud provider. Now, I am going to explain this extremely in-depth because there are some trade offs.
+
+You need to pick the correct local model, and not everyone should be running local models. It really depends on your use case, what you're looking for, security, and then obviously the type of hardware you have. Anyways, let's dive in. So the experience that you're going to have running local models is really going to depend on the model that you choose and the type of hardware that you're running. Now I want to go over both.
+
+And while it's going to seem a little bit complicated, it's really important to understand this because making the wrong decision here can have a massive consequence and force you to go back to using these cloud based models, which are going to be really expensive. Now, the first thing to understand is that the local models are open source, or at least most of the case they are. What that means is that these are models that are openly available, that are free to use, that anyone can download, modify, view, doesn't matter. Okay. So you're not going to be able to run, you know, opus 4.7 locally on your own computer because that's gated by anthropic.
+
+And they want you to pay them a massive amount of money to use it instead of tools like OpenClaw. Same with GPT 5.4 or whatever the newest model is. You can't run that locally. You have kind of a limited selection while it is still quite large actually right now.
+
+And when you are picking those models, there's only certain models that are going to be compatible with tool calling or agent kind of orchestration platforms like Open Claw, which I promise you, we're going to get into now in order to determine which local models you're capable of running, you do need to understand the hardware that you're working with. These models are very demanding on the hardware and specifically on the Ram and the graphics processing unit that you have in your computer. So before we go much further, I'm going to ask you to make sure that you understand the specs of the computer that you're going to use to run this locally. If you're working with a higher end MacBook, what you're going to want to do is just go to the little Apple icon here, go to about this Mac, and you're going to be looking for this number right here, which is the memory. Now assuming that you have a mac, that's no more than maybe 5 or 6 years old.
+
+This is the unified memory that you have available on your entire machine from your CPU, your GPU, and effectively what a local model is going to be able to utilize. It's not going to be able to utilize all of the memory. In this case, I have 32GB, and probably the highest end model I want to run would take up maybe 20GB. Again, we'll look at that in a second. But what you want to find is, okay if I'm on Mac, how much Ram do I have in my machine?
+
+Again, assuming that you're running on a newer MacBook, if you have a machine that's six, seven, eight years old, it's going to be very difficult to run local models, and you're probably going to have a better experience with cloud just because they're going to be extremely slow on that lower end hardware. If you're on windows, the situation changes a little bit. If you're on windows or even a Linux device, you're going to be looking for your GPU or your graphics processing unit, and specifically how much Vram is available there. So the Ram in your computer doesn't really matter. It's more about just the Ram. Again, if you're on windows.
+
+So if you're running a 4090, for example, you might have 24GB of Ram. If you're running maybe an older GPU, you might have eight gigabytes of Ram. Now, typically speaking, these local models can utilize almost 100% of that Vram in your GPU. So whatever that number is, is kind of the upper bound of the type or performance of local model that you're going to want to be able to run. Now we're going to get into all of the details here, but you want to understand what operating system on my on for 99% of you it's going to be Mac or it's going to be windows.
+
+If you're on Mac, you're looking at the total Ram of your device. If you're on a newer Macs on M-series Mac, and if you're on windows, then you're going to be looking at the total amount of Ram that you have available in your graphics processing unit, assuming that that's an Nvidia GPU. And again, you're ideally going to want the highest end hardware you possibly can have. But even if you're running on a relatively budget device, as long as you have Vram available in the GPU or again on a newer series Mac, you still can run these models. Okay, so now that we have that out of the way, the next thing is model selection and actually setting this up on our machine.
+
+So what we're going to do in order to run local models is we're going to install a tool called Ollama. Ollama allows you to pull down different models and then just run them natively on your own machine. The only limitation for running these models is that hardware that I talked about before, it's completely free. You don't need to pay for anything and then you can connect this to tools like Open Claw, which we're going to do obviously in just a minute. However, before we go any further, I want to make you aware of a really cool opportunity, especially if you're someone who likes open claw in.
+
+It's called ClawComp. Now Link Ventures is running it, and the short version is they're going to send you a free Mac mini to build with Open Claw, where you can run local models. You can keep it no matter where you finish. No matter what happens, the hardware is yours for free. Now here's how it works.
+
+It's a multi-month build program, so it's designed to fit around whatever you're already working on. You apply with a team of 1 to 3 people. You hang out in their discord, you talk in their tality group, and if you stand out, you're in. And then you get three months to actually build something real using open clock. So not a wrapper, not a demo that falls apart when someone pokes in an actual automation with measurable outcomes.
+
+Now the whole thing ends with something called claw week. This is from June 15th to June 18th in Cambridge, Massachusetts. At Link Studios. They fly you out, they cover the housing, and you spend four days pushing your project to the finish line in person. Now, founders and investors from the link ecosystem are there.
+
+Researchers from Harvard and MIT are there, and portfolio companies are walking around meeting teams and evaluating the pitches. Lock now the prize for $17,500 and the application date closes on May 8th. So if you're a student building something or you have an open claw project that you've been meaning to take seriously, or if you just want an excuse to go deep for three months with a real deadline and real people watching, this is super cool. It's an awesome opportunity. Again, it's free to apply.
+
+Link is in the description. Go apply, get in the discord stand out and I hope you guys get the free Mac mini. Okay, so that said, let's get back to the video here. I want to go through the setup process. So the first thing we're going to have to do here, regardless if we're on windows, Mac or Linux, and if you're running on a virtual private server, then same thing.
+
+You're going to go over to your terminal and you're just going to run this command that you can get from Ollama website. I'm going to leave a link to in the description, and it's just Ollam.com. You're going to copy the install command. And even if you already have Ollama installed, you should run this again to update Ollama, because you will need the newest version in order to use the model I'm going to recommend here.
+
+Okay, so you open a terminal or command prompt. You paste this command, you hit enter and it's going to install Ollam for you. Now like I said, Ollama is just a tool runs on your computer that lets you run these local models. So we're going to wait for this installation to finish. Once it's done, I'll be right back and then we're going to pull a local model to our machine.
+
+And then once we have the local model running, we're going to be able to actually connect it to OpenClaw. And good timing. It looks like it's already installed. While I was just doing that speech. Okay, so we have Ollam installed now just to make sure that it's working.
+
+We're just going to type the Ollama command. If for some reason this Ollama command isn't working for you, just close your terminal and reopen it or close your command prompt if you're on windows and reopen it, and you should just see something popping up like if the command does some output, you're good. And then what you can do is hit escape to exit out of that. Okay, get out of this interactive window. Now if you're on a virtual private server, which is how I typically recommend running OpenClaw, you're going to want to make sure that the virtual private server has the same hardware that I talked about before, right?
+
+So in the case of a Linux machine, you're going to want an Nvidia GPU with a ton of Vram. If you have that, then you're going to be able to run the local model on the virtual private server. So the steps that I'm showing you here work on any operating system, whether it's locally on your own computer, whether it's on a VPNs, but it requires that you have adequate hardware in order to have a decent experience running these local models. Okay, so now that we have Ollama installed, what we need to do is select the model that we want to download. So what I'm going to recommend is that we use one of the newest best local models, which is GEMA.
+
+For now. There's a bunch of other models that you can choose from. At least when I'm filming this video. This is the current, smallest and best model that most of you should be able to run. But what we're looking for when we select these models is that they have the ability to cull tools for OpenCL.
+
+Specifically, you need this. You don't just want a chat based model, you want one that has tools thinking, right? All of these different modes like Gemma for has. And if you want to see all the different models available, you can just go to open claw.com/search or just go to the models tab and you can look and see all of the different models that are here.
+
+For example Gwen 3.6. Also another great model, just a little bit larger than Gemma four. So I'm going to recommend that we go with Gemma for for now. So once we've selected that Gemma four is what we want, what we're going to run.
+
+Is this Ollama run or Ollama pull? I'm going to show you the command and a second Gemma for this is a command that's going to download the model to our computer. But before you do that, you need to select the size of the model that you want to download. Now you'll notice that if we go to the models down here, we have a bunch of different options. We have Gemma for latest, Gemma for 2 billion, Gemma for 4 billion, Gemma for 26 billion Gemma for 31 billion.
+
+And then the cloud one which we're not going to look at right now. Now the billion value here is the number of parameters that this model has. The larger the amount of parameters, the better performance of the model, but also the larger size of the model. So really the thing that you want to look at here is the size okay. So we see nine gigabytes, seven gigabytes, nine gigabytes 18GB 20GB.
+
+Now you want to make sure that this size is smaller than the amount of Ram that you have in your computer or that you have available from your graphics card. Again, based on what I talked about before, depending on your operating system, in my case, I have 32GB of Ram, so I'm fine to go all the way up to this 20 GB model, but I wouldn't want to go much higher than that because the bigger the model gets, the slower it's going to be. And again, you need to make sure that it fits inside of the Ram. Now theoretically, you can run any model you want, even if it was one terabyte, as long as you had enough hardware space. But it's going to be so incredibly slow that you're not going to be able to really even get any use out of it.
+
+So that's why I'm emphasizing that it needs to be small enough that it fits into the Ram and gives you a little bit of a buffer. So that's what we're looking for. Specifically, you want to pick the biggest model that your computer is capable of running. Okay. So I'm going to go with let's just go with the 31 B.
+
+Right. Because that's going to work for my machine. Even though it might be a little bit slow. And what I'm going to do is I'm going to go to my terminal and I'm going to type the command Alama pull. And then I'm going to paste this Gemma for 31 B.
+
+Now, for most of you, you're probably going to want to go with the smaller ones. You might go with 4 billion right. Or E 4 billion E 2 billion, whatever they've put here for this. Right. So you might put E to be right.
+
+Whatever the name is that you see here, you can just directly copy what this is going to do is then start downloading the model on your machine. It's going to pull all nine, 15, 20GB, whatever. And once that's done we're good to actually right now I already have Gemma four on my machine. So I'm not going to run this command. But if you don't again you need to download it first.
+
+It might take a few minutes depending on your internet speed. Now once it's downloaded, what you can do to see all of the models that you have available is to type the command Ollama list. When you do that, it's going to give you a list of all of the models you've downloaded. You can see that I just downloaded the latest Gemma for one recently, and this is the one that I'll end up using with open Clock. But you can see all of these.
+
+You can also just go Ollama help. And if you do that, it's going to give you a list of all of the different commands where you can create a new model, you can pull models, you can sign in, you can copy a model. There's all kinds of advanced stuff. I'm not going to go into all of the details. The point is, awesome is super cool, is a lot of stuff that you can do with it.
+
+Okay, so now that the model is installed, we can just quickly test it so we can type Ollama run. And then we're going to go with whatever the name is. So my case I'm just going to go Gemma for but you would put whatever it is that you actually installed and it should take a second here and then allow you to communicate with the model. So I'm just going to go hello world. And then you can see immediately I get the response, hello, how can I help you?
+
+You know I'm good. How are you? Right. Whatever I'm doing. Well.
+
+And then it gives me the response and you can see this is actually quite fast because I'm running one of the lower tier models, just the nine gigabyte model on my machine, which is capable of running this. If you want to get out of this window, you can hit slash exit. This is just kind of a terminal based view where you can chat with the model directly if you want to do that. Okay, so now that we have the model installed we want to start configuring it inside of OpenClaw. So first we need to make sure we have OpenClaw installed on our machine.
+
+And again if you're running this on a virtual private server, that virtual private server would need to have the hardware requirements. And you would follow the same steps I just did to install Ollama on the virtual private server. So what I'm about to show you, you just do wherever you have OpenClaw installed. Okay, I'm going to assume that you have it installed somewhere if you're following along with this video. Now what you can do right is we go to open I just ran this command.
+
+So I have OpenCL installed on my machine. And literally all we need to do to get Ollama working with this is we can type OpenCL or configure. Okay. So assuming this is installed on our machine right I don't recommend running it on your local machine. But for this tutorial I will show you doing it right here.
+
+We're going to type OpenCL configure. Maybe you guys have a mac mini or something. So you're going to do that directly on there. And what we're going to do is go through and we're going to select model okay. So where it says model we're going to use our arrow keys.
+
+We're going to press enter. And we're going to select down here. Mine's a little bit laggy when it first pops up. But we're going to go down all the way to where it says Ollama. You should see it popping up as an option.
+
+Now once it pops up we're going to go with just local only. We don't want to use the cloud one. I'm not going to get into that in this video. Ollama has a cloud offering, but I don't recommend using it. We're going to go local only.
+
+We're just going to leave the base URL as it is. We don't need to change this and continue. And we're going to select the model that we want to use with us. Now I apologize for the cut here, but I just wanted to mention that if at this point, for some reason Ollama is not appearing or showing, I can't reach the server and there's some issue, then what you're going to want to do here is quit out of this. You can hit Ctrl C and you want to just run the command alarmist serve.
+
+Now when you run Ollamaserve, this is just going to start the Ollama service on your computer. It's going to run directly in this terminal window. So just don't close it. And then you should be good to go. Now you probably don't need to do that.
+
+You also can just go to your spotlight search. If you're on something like Mac, and you can just run Ollama, you can just literally run the application and you should see you get like a little Ollama icon popping up in the top, meaning that it's running in the background. Okay, so you can see we have a bunch of options here. I'm just going to check this “ollama/gemma4:latest” as well as Java four. You can select all these different models. You can see I have a bunch of them right.
+
+Because these are all the ones that were installed on my machine. And I'm just going to go ahead and press on confirm okay. So you just select the model that we just installed or whatever you picked. For most of you it's going to be that gem of four. Okay. So we're going to go ahead and press enter.
+
+And now both those models or whatever ones we've selected are going to be enabled in OpenCL. So I'm going to press on continue. And then what we're going to do is just restart the gateways that this model will now be available to open class. We're gonna go open core and then gateway restart okay. Now when we run that command it's going to restart the gateway.
+
+Both these models should then be available. And then what we can do is just start using them directly inside of OpenClaw. Now, the same thing goes for windows. You can run the Ollama serve command, or you can just go down to your windows like application search bar or whatever you want to call it. And then you can just run Ollama and it should run automatically in the background for you.
+
+Okay. So you want to make sure that's running as a background process. Now once we do that we can go back to our open cloud control. Again I'm going to assume you know how to get here because you already probably set up open cloud before. And what we can do is just asking the question so I can say something like, hello, how are you doing?
+
+Can you tell me the meaning of life? Right. And you'll notice that by default, if you haven't selected any model, it should just be using GEMA four. And if we go enter here it should just be using this model. And you can see we get the response very quickly.
+
+Now if for some reason you have different models connected, you probably want to set the default model to be GEMA for. In order to set the default model, you can typically do that from the config. I don't know exactly where the configuration is for the default model, but I believe in the open cloud dot json file, there is a way to set the default model to just use this local model here. And then you're kind of good to go. Now, what I typically will do when I'm using this is I might have a local model that I use most of the time.
+
+And then I also configure a cloud model if I want to do something that's a little bit more challenging, that requires some higher intelligence, because while these models are good, they are going to be stupider than like an opus 4.6 or opus 4.7, so you probably want to use them in combination, unless you purely just care about privacy and you just want everything running 100% locally. So my suggestion is you configure like an open AI model and a traffic model, and then the local model, you set the local model as your default, and then you switch to the other model when you want to use that. Now what you can do is you can actually type slash model here.
+
+Right. And then you can change the model that you want to use. So I just do slash models. It will give me a list. You can see that right now we just have two.
+
+And then I can say slash model. And then you know Gemma for right. And then switch over to actually use that model. In my case I'm already using it. So there is no switch.
+
+But you also can just directly tell it, hey, I want to switch over to use Gemma for it. Can you switch the model and then open? Close should be capable of just running the command and automatically switching the model four. You can see it called the tool and then it's going to switch it out. Now in this case it's saying you can't do it again because we only have that one model.
+
+By the way, if you are wondering what I'm using to dictate here, I'm using a really cool tool called Whisper Flow. I can quickly click into it and kind of show you what it looks like here if we go to the settings, but effectively it's the best kind of voice dictation. It uses AI in the background extremely fast, actually have a long term partnership with them. They're free to try out and I just use them anyways, which is why we have the partnership. You could see my words per minute here, and I'll leave a link to in the description in case you guys want to try it, but especially if you're working with a lot of these AI tools, just much faster to speak rather than to type, right?
+
+So if I want to say something, hey, I want you to go do this. Here's a bullet pointed list of Abcde. Right? And then, you know, we go and it just gives me whatever and automatically formats it, fix the spelling, punctuation, all of that kind of stuff. So anyways, that's pretty much all that I have for you guys in this video.
+
+Setting it up with OpenClaw is very easy. It's a matter of having Ollama installed and then just configuring them all. If you want to go further, you can set up inside of like your sold on md file as well as your agent start MD file and all of the configuration and open floor, and you can tell it when to use the local model versus when to use the cloud model. You can install multiple local models. Right.
+
+So maybe you want Gemma for for something. Maybe you want Gwen for something else. Maybe there's a specific image or video model you want and you install that. You can go crazy with the configuration. The important thing is really understanding that hardware constraint.
+
+And again, the performance and speed that you're going to get is going to be dictated by that hardware. In combination with that model selection. Probably you just want Gemma, but you can mess around with some other ones and see what experience you get. In my case, Gemma is much, much, much faster than a lot of the other kind of best local models that are currently out there. So that's it guys. I'm gonna wrap up the video here.
+
+If you enjoyed, make sure they like subscribe and I will see you in the next one.

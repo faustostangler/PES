@@ -1,0 +1,311 @@
+---
+video_title: "Devin AI Is the Future of Coding… Full Tutorial"
+video_id: GFlFABWeqDc
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=GFlFABWeqDc
+video_date: 2026-05-18T13:02:48+00:00
+video_description: |
+  Get started with Devin for free here: https://devin.ai
+  
+  Most AI coding tools still run on your machine. Devin is different — it's a full cloud-based software engineer that works completely independently, so you can hand it a task, close your laptop, and come back to a finished pull request. I'll walk you through every part of the Devin ecosystem — including their new terminal agent, the cloud agent, and the review tool — and show you how to actually use them together in a real dev workflow.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/techwithtim
+  
+  🎞 Video Resources 🎞
+  CLI Install: https://cli.devin.ai/docs#windows
+  SWE1.6 Model: https://cognition.ai/blog/swe-1-6https://cognition.ai/blog/swe-1-6
+  CLI Docs: https://cli.devin.ai/docs
+  
+  ⏳ Timestamps ⏳
+  00:00 | What is Devin AI
+  01:41 | Devin for Terminal
+  03:42 | Basic CLI Usage
+  05:29 | Using Devin in an IDE
+  08:33 | Permission Modes
+  10:12 | Memory
+  11:14 | Models
+  13:38 | SWE 1.6 Model
+  15:11 | Session Management
+  17:26 | Agents.MD
+  21:10 | Subagents
+  26:51 | Handing Off to Cloud
+  30:20 | Devin PR Review
+  32:55 | Cloud Secrets & Environment
+  34:08 | Scheduled Tasks
+  34:32 | GitHub and Slack Integration
+  35:13 | Linear Integration Demo
+  
+  Hashtags
+  #DevinAI #AICoding #GitHubIntegration
+  
+  UAE Media License Number: 3635141
+---
+There are a ton of AI coding tools right now. You've got cursor, Claude code, GitHub Copilot, and then a bunch of others. But Devin, the one that I'm going to cover in this video is a bit different. It's the only one that's running a full cloud based software engineer, which is completely independent of your machine. That means that you can give it a task, close your laptop and come back to a finished pull request.
+
+Now the company behind it, cognition, actually just got a lot bigger as well. They acquired windsurf last year for $250 million, which means now they own both the autonomous cloud agent and a full AI native IDE, which I've shown on this channel before. So Devin is no longer just one product. It's actually a full ecosystem here. And in this video, I'm going to give you a full tutorial of how it works.
+
+But I want to break down kind of what's involved. So now they have a new tool called Devin for terminal, which is a local coding agent that runs in your terminal similar to something like Cloud Code now works with your local files. It lets you pick a model, and it's really just a CLI based coding tool that has a bunch of unique tricks, which I'm going to show you here. You then have Devin Cloud, and this is the original product. That's the one that runs in a full virtual machine that's in the cloud.
+
+So it can browse the web, run tests, deploy your code, whatever, all without being on your machine. And then they have Devin review. This is an AI powered code review tool that plug straight into your GitHub PRS. And in this video I'm going to show you all of that. I'm going to go through the terminal agent, the cloud agent, and things like playbooks, scheduled sessions, slack and linear integrations, the review tool, and how you actually use all of these together in a real workflow.
+
+So whether you're a solo dev or you're on a team, by the end of this video, you're going to know exactly how to set Devin up and when to use each piece, because there are a lot and it can be a little bit confusing. Now, big thanks to Devin Cognition for sponsoring this video. Anyways, let's get into it. So there's a lot of stuff that I'm going to cover in this video. If you want to fast forward, you can see all of the timestamps from the video player down below.
+
+Now we're going to start by going through Devin for terminal. This is the CLI based tool again kind of similar to something like Cloud Code. I'm going to show you how to install it set it up use it. And then we're going to start going into the cloud aspect where you can hand off tasks from your terminal into the cloud and then start running things like schedules, GitHub integrations, linear integrations, all of that stuff that's kind of better for real workflows as opposed to just doing some coding on your own computer. Okay, so Devin, for terminal first step, if you want to use this is to download it.
+
+You can use this command right here if you're on Mac or Linux. And if you're on windows you can just open up the documentation here. Let me get out of this. And you can do the windows install where you can just press this button. So I'll leave a link to the description to it.
+
+You can download the installer, and then you can just double click it and install. Very straightforward. Now in order to use Devin in the terminal you will need an account. So you can just sign up for a free one here from Devon AI. And then you can authenticate in the terminal.
+
+Now in terms of the pricing you can use this entirely for free, obviously with lower usage limits. Or you can go to the Pro plan which is $20 per month or up even higher to the $200 per month plan. In this video, I'm using the 14 day free trial that they have of the Pro plan. Again, you can get that from the link in the description. You don't need to pay if you want to test it out.
+
+Now, once you've got this installed, you can just open up a terminal. If you're on windows, use the default terminal application. If you're on Mac or Linux, it doesn't matter which one you use. Let's just make this a bit bigger and go full screen. I'm going to see into my desktop and I'm going to CD into the Devin video directory.
+
+I just have an empty directory that I've created and then I'm going to run the command. Devin, when you do that it should open up Devin here. And then what you can do is just type something like hello, just to test it and see if it works. And you can see it says low. I'm here to help you with your software engineering tasks.
+
+Now, if it's your first time running this, you are going to have to authenticate. And then I do suggest that you connect to GitHub, because if you do want to hand off a task, Devin needs to have access to your GitHub in order to create a pull request, read a repo, etc.. Now, once you open up Devin and you verify that it's working, if you want to get out of this, you can type the exit command. You also can hit Ctrl C twice on your keyboard and you'll see that I can now get out.
+
+Now, another interesting thing I can do with Devin if I want to use this from like a script or I want to automate something, is I can actually pass a prompt directly in the command line so I can do something like Devin, and then I can do dash P and just say, for example, Hello world. And then it's going to start Devin, but with the prompt Allo World. And then just give me the response. So if you wanted to just use this as like a skill for example, or you want to automate something, you can use this flag and then you can also, I believe start it by doing something like Devin Dash, Dash and then Hello World. And if you do that, it will just start the session with whatever prompt you pass in.
+
+Okay. So let's exit out of this and clear all of this and go back in to Devin. Now of course, there is a lot of other stuff that you can do here. I'm going to run you through pretty much all of the key commands. But just like all of these other CLI based kind of coding tools, you can just ask it to build you something, right?
+
+So we might say something like, hey, just build me a super simple landing page for tech with Tim or Tim, who's a software engineer who specializes in Python. Just make it super sleek, clean, easy, just build it out in HTML. Okay, so I'm going to just go ahead and press enter there. And if you're wondering what I'm using to dictate, by the way, I'm using a really cool tool here called Whisper Flow. If I go into it, you can see I use it all of the time.
+
+It's very fast, gives you formatted prompts, and what you call it is just much faster than typing. So I'm going to use it for the rest of this video. I do actually have a partnership with them, so if you want you can try it for free from the link in the description. Anyways, I'm going to press on. Yes, here it's just going to ask if it can go ahead and make this file.
+
+And that was very quick. Looks like it's done. And then if we open up index.html we'll be able to see the code. This actually leads me to the next important thing I want to go over, which is that when you're using this tool, I do recommend that you have some kind of visual editor open.
+
+So some kind of IDE so you can see what code is generating. And you can modify the files or open them up or read them. So what I'm actually going to do for the rest of this video is I'm going to exit out of my kind of just base terminal, and I'm going to go into windsurf. But you could use any editor or IDE that you want. I'm just going to go file.
+
+I'm going to open the folder that we were working on. So it's Devin video here. So I can just see the index.html file. I'm just going to make this full screen.
+
+I'm going to open up the terminal just by pulling up in the bottom here. And I'm just going to rerun Devin. So now I'm just going to work from it inside of the code editor so that it's kind of down in the bottom. And then I can actually view all of the files. And I just want to quickly see what this looks like.
+
+So let's go reveal in File Explorer. And I'm just going to open this up on my main screen. And you can see this is what it created okay. So very simple but you get the idea. That's what I asked it to do.
+
+Now if you're wondering what is this tool that I'm inside of? It's just called an IDE or integrated development environment. It's just a place where we can view and modify code. If you don't want to use it or you're unfamiliar with it. Don't worry, you don't need to.
+
+But I would suggest downloading something either like windsurf, which is owned by cognition, or VS code or cursor, whatever it is that you want to use, and using the CLI based tools inside of them, because it's just easier to see all of the files that they're creating. Really, all you would need to do is just go to the file menu that I have there. So file you open up some folder that's pretty much it, and then you can just open up the terminal by dragging from the bottom of the screen. And that's really all you need to know about the tool. And then you can just kind of click through the files in the left hand side with this explorer menu here.
+
+That's about all the tutorial that you need in order to get some value out of these kind of IDs. Okay, so we're inside of Devin here. I'm just going to start going through a bunch of the commands and showing you, well, some more advanced usage. So let's say that we wanted to maybe modify this index file that we have. Well we can actually reference it using the At symbol.
+
+So if you use at then it's going to show you a list of all of the files that are currently inside of this project. And note that Devin is going to work inside of whatever folder you started it in. So if I go slash exit, you can see that we're inside the Devin video folder here in our command line. So what I would do right is when I run Devin. Now I'm working inside of Devin video, and it only has access to the files that are there.
+
+Sorry, I just had to make a quick cut there because my recording stopped. But if we use the add symbol, you can see it's going to show us all of the files that are in our current directory. We then can reference something like index.html. Notice that I just used the tab key there to autocomplete the file, and I can say make this look cleaner and be orange theme or something.
+
+Right? And then you'll see that it should be able to do this. It's going to read the file right that we directly referenced and then change it. And it's going to ask me to approve it. So I'm going to go yes I'll prove that change.
+
+And we can see that it's changed. And now if I open this up again let's reveal it in the File Explorer. And I'll just bring it on screen. You can see now it's orange okay. So there we go.
+
+Now let's go through some more usage of Devin. So notice how when I asked it to change something that it was actually prompting me for permission and it was saying like, hey, do you want to change this thing and you have to press? Yes. Well, sometimes that's good if you want to be careful what this is changing, but other times that can be a little bit annoying and you want it to just automatically write the code for you. So there's some different modes that exist inside of here, and you can toggle between them.
+
+By using this slash mode command, you'll see that you have normal accept edits and then bypass. Now bypasses just can automatically do everything. It's not going to ask you for anything except edits means that it's just automatically going to edit files for you. But if it wants to run a command or delete something, then it's going to ask you for permission. And normal means that it's going to ask you permission to do anything other than reading.
+
+So anytime it makes any change at all, whether it's edit, create, delete, calling it tool, whatever it's going to ask you, and that can be a little bit annoying. So for now we can go into accept edits mode. And then if we want to quickly change between these we can use the shift tab key. And you can notice that as I hold shift and tab at the same time, it's going between accept edits, bypass and then just the default mode. Now there's also a shortcut of using the YOLO command that's just going to switch into the bypass mode.
+
+And then I think there's another one we have I think we can do just slash normal again. If we do slash normal, that brings us to the normal mode. And there's probably another one for the accept edits, but I don't know what the shortcut is. So you can just do it with shift tab. And now we're inside of except edits.
+
+Now let's say we want to clear the current session that we're in inside of Devin. What we can do is type slash clear. If we do that, it's just going to get rid of any of the conversation history that we had before. So Devin will effectively forget what it is they were talking about. Or alternatively we could use the new command.
+
+They both do the same thing. And you can see now that we get a new session. And that's one thing to keep in mind with Devin. And really all of these CLI based tools is that as soon as you kind of exit out of them and then come back and restart like a new Devin session here effectively, or new Devin instance, it's going to forget everything that you talked about before. Now with Devin there's actually a way to restore that.
+
+We'll look at that later. But just remember that if you like, leave your computer and you come back in an hour and you restart this like you go in a new terminal and you say, Devin again, it doesn't remember what you were talking about. So you have to be careful with that. And then like written the file reexport what you want or reference documentation or something. Anytime you have a new session it's like a fresh start.
+
+And typically these models are going to perform a lot better at the beginning of their session. Whereas if you get near the end and I'll show you what that looks like in a second, when we start doing some more coding, they start to forget things, hallucinate when their context window really fills up. So if you're getting close to the end of context and you want just a fresh session, you want it to perform better. You can just type slash new or slash clear. But then remember it's going to kind of forget what you were talking about previously.
+
+Just important to understand. All right. Now let's talk about changing models. So inside of Devin by default it's going to be using this SWE 1.6 model.
+
+Now this is cognitions own coding model. It's different than like anthropic or OpenAI OpenAI story or anything like that. But you can change this model if you want and you probably should change it quite often depending on what you're doing. Now, to change the model, you can type the slash model command. When you do that, you're going to see there's a bunch of models available here, and you get all of the new and you know what is a frontier models, right?
+
+So you have opus 4.6, SWE 1.6. You have an adaptive one, which I believe will change. I don't know what that one is.
+
+Claude haiku, Claude sonnet Deep Sea V4. Right. All of these are available and you can pick anyone that you want to use. So for example, if we want to use opus, we can just press enter here, and then we can pick the level of thinking that we want. I would suggest just going with something in the middle.
+
+So probably medium is going to be the best. And now we're just using opus and same thing I can type Hello World and then I'll get the response back. But this time it will be from opus. So there's a bunch of different models to look at right. And you can switch between them.
+
+Now what Cognition or Devin recommends is that when you're doing something that's a bit easier and not super complex and that you want to be done quickly, use that SWE 1.6 model. So if we go here, this is their model. If I can get back to it okay. There we go.
+
+You can use either fast or just new. Notice that the fast one is a little bit more expensive in terms of the usage that you have. So we can switch into it and start using it. But if you want to do something that requires advanced reasoning, it's a little bit more complex, then you should probably switch to either GPT 5.5 or to opus 4.7 or opus 4.6.
+
+Now, you can of course use any of these other models, and if you're familiar with them, you'll probably know which one to pick for which task. If you're doing something with like a lot of tool calling, for example, maybe you want to use like GLM or you want to use, I don't know, one of these other models. Point is, you have a lot of different options here. For example, we have GPT 5.5.
+
+And you can see it shows you the pricing here for using these. Now one thing with the pricing to notice that this isn't how much it's actually going to cost you, it's just how much it costs against the usage that you have. So you would have seen and I'll show you just changed to I don't know like high thinking or something. If I scroll up, you can see it shows that I have 94% remaining in my current usage quota, which resets in 20 hours. So the more expensive models just rip through the usage faster.
+
+It's not that they're actually going to cost you that amount of money when you're using them, unless you enable extra usage and all of that kind of stuff. Okay. So anyways, we've changed the model and now I want to talk just a little bit about cognitions model, because this is kind of one of the reasons why you would use what do you call it Devin. Right now there model is SWE 1.6.
+
+Now if we quickly look at some of the benchmarks here, you can see that as it compares to opus 46 and GPT 5.4. It's not quite as good at them specifically on these benchmarks. The one thing that you'll note is that it's extremely fast. And you would have actually seen that even when it was just building the landing page.
+
+Now, this is designed specifically for software engineering. It's not like a general purpose LM like opus and GPT 5.4 are, and that means that it's meant to do coding tasks and to deal with that kind of a genetic workflow. Now, what they've noted here is that they fixed all of these problems that they had with their previous models, and just with other models that they've looked at, like overthinking calling tools sequentially rather than in parallel, preferring shell commands rather than its own tools and exhibiting looping behavior. These exist in a lot of different models and again, according to them, based on their experience and everything they've noted here in this document, this model performs better and no longer has those type of issues.
+
+For example, SWE 1.6 would always call bash tool. Now it uses its internal tools rather than the bash, which makes it a lot faster. Repetitive reasoning you see from 34 down to 1.8.
+
+So I'm not going to go through everything here. I'll leave a link to this in the description if you want to check it out. But the point is this is a very good model, especially for like simple or medium complexity tasks. And it is very, very fast and much cheaper than the frontier models. One of the reasons again, you may want to use this tool.
+
+All right. Now let's continue and talk a little bit about session management. So let's say I say something like hey what is the best tech YouTuber out there. And I just hit enter. Let's see if we get some kind of response.
+
+It doesn't really matter what it is. Okay. We get Linus, tech tips, technology, connections, whatever, The verge. And let's say we exit out of this now, right? And we leave this session now, like I said before, let me just clear this by default.
+
+If I rerun Devin, it's not going to bring me back into that previous session. Right? It's not going to remember what we just said. However, we actually have the option with Devin to go back into a previous session because they will persist automatically, but we just need to select that. We want to go back into a previous one.
+
+So if we type Devin -c this will continue the last session. So in this case will be the one that we just closed. But if we run this you can see that there we go right. We get the previous session that we were inside of. Now if we exit out of this again we also have the ability to run the command Devin.
+
+And then this is dash R. And this will allow us to pick from a list of recent sessions. And you can see that we had a bunch of different ones. And we could just pick which one that we want to go into. So maybe I want to go into the index.html one and boom, we go inside of there
+
+and you see that that's what we see. So I just wanted to show you that unlike some of the other tools out there, it does persist the session. And if you want to go back into an existing one, you can you just have to manually select that okay. So let's continue and let's try to set up a project that's maybe a little bit more complex. Let's just delete index.html for right now.
+
+And let's try to create maybe a simple like react landing page. So I'm going to say hey, I would like you to create a simple react landing page. For this landing page, I would like you just to make a kind of product page for a new fishing product that I'm going to release, which is a really good lure for catching musky. I just want you to make up all of the product details and create like a compelling page with some reviews, maybe some product shots or stats or something. Whatever. I don't really care.
+
+Just create like a cool landing page. Make sure you use react. All right. So I'm just getting this to do something. So let's go ahead and press enter. We're using GPT 5.5.
+
+So it's going to be a little bit slower. But it should be able to create that for us. And then what I want to show you here first of all let's just press yes. And let's change this into the accept edits mode. Is that a like a lot of these other CLI based tools, I actually have the ability to create this agents file.
+
+Now this is a file that when it's in the root directory where Devin is working, will always be read into the context of Devin. So you can set, for example, rules for your projects, conventions that you want to follow, things that you always want to happen. So anytime you restart Devin or any coding agent really in this session, it will automatically read this file. You may not have seen this before, but this is very common practice when you're doing a genetic coding, especially when you're working on a project like what we're working on right here. Or maybe you always want to use react.
+
+You always want to keep the context fresh with information about your product. You always want to use tailwind, or you never want to directly call an API from inside of a use effect component or whatever it is that you're doing. You can put that inside of agents. So we're going to wait for this to finish. And then what I'm going to do is actually instruct Devin to write the agent.md file
+
+so we keep all of the rules and conventions in this one file. And then anytime we restart this Devin and we create a new session, it will automatically load this file inside. So really good practice. And Devin will actually automatically read cursor rules. It will also read like Claude files and other agent kind of rules or like setup files.
+
+I guess you could call them into its context. So I just wanted to show that to you because it's a little bit more of an advanced feature, but definitely worth having. Again, we're going to wait for this to wrap up, and then we'll write this file. Okay. So let's just wrapped up and anyways just show you what it created, which is pretty cool.
+
+I mean whatever, just random landing page. I didn't really give it very detailed instructions. And funny, it's got this like cool fish thing popping up. I don't know how it actually generated that. But anyways, nice.
+
+So what I'm going to do now, let's just close this. I'm just going to stop running the server and go back into Devin. And like I talked about, what I'm going to do is ask this now to generate the agent's file. Hey, based on the project that you just created, create an agent's file that has the tech stack that we should use a little bit of information about the product. So we always have that relevant.
+
+And then any coding conventions that we should keep keep it small, minimal clean and easy. So let's hit enter here and see what it does for the agent's file. And then I'm going to demonstrate how this works. All right so you can see that it just generated this because I had to accept edit to just created it right inside of the existing file. And now to show you what I mean by this, let's say we exit out, let's clear and let's open up a fresh Devin session.
+
+I'm going to say what do you know about my project? Don't read any files. Just tell me based on the agent's MD. Okay. And let's see here.
+
+And it should be able to give us that information by automatically loading this file. And then boom, we get the stuff. Now I kind of cheated because I told it agents. But you just need to trust me. It automatically will load this every single time without you needing to manually tell it that.
+
+So anything you put in here will just be inside of the context by default. Okay. And if you want to see the context by the way you can look at the bottom right. And it shows you what is it the current amount of tokens and then the size of the context window that it can load. And in this case we have 2% usage.
+
+Like I said, when you start getting to like 8090 it's a good idea to what do you call it, clear the session and create a new one or to do something called compacting. I think they have that command here. Yeah. Compacting. What this does is it takes the session and it will summarize it into a much shorter amount of text and then use that and continue on.
+
+So reduce the token window from like 90% to 10% or something with a summary of what happened so far and then continue. Typically compaction doesn't work that well for the performance of models, but is something you can do. And there are a lot of these tools will automatically do when you start getting close to your context window. All right. So this is working pretty well.
+
+What I'm going to do is I'm just going to go slash new. And actually I just want to put this up higher on the screen. So I'm just going to clear and then restart Devin. And I'm going to change the model. Now I want to change it to suite 1.6.
+
+And I'm going to use the fast model because I want it to be faster. Now what I want to show you next is something called subjects. You probably heard of this before, but these are typically background agents or just multiple other instances of in this case Devin that can be running and completing tasks in parallel at the same time. So for example, what I might want to do is set up like an a B test for my website, where maybe I have three different landing pages that are kind of in different styles now, rather than writing landing page one, then landing page two, then landing page three, I can actually instruct Devin to create three versions at the exact same time using something called sub agents. These subjects can then run in the background, and I'm going to show you how they work, because it's better just with an example.
+
+But the important thing is that they can run in parallel. So rather than again doing it sequentially one at a time, I can do three at a time. So I can say, hey, I would like you to create three different versions of this web page. So we have the existing version, but I want two new versions. I'd like you to use a sub agent to do this, and I want these versions to be distinct and different.
+
+So I can a b test them on my website later, use different colors, themes, layout, styles, headlines, everything like that, and just give me maybe different pages in my application so I can view them all from the same app. Don't create three separate apps, just create three different pages. Okay, so I'm going to go ahead here when this loads and press enter. And we should see in a second here that it knows it needs to create sub. And it should start doing that.
+
+So let's give it a second here. Once it reads in the context to spin those up okay. So you can see here that it's running this general sub. And now it's running this a B test subject here. For some reason some stuff is failing.
+
+But you can see that these subjects are running. If you want to be able to view these subjects let's actually yeah I need to put it in the correct mode so it can just accept everything. You can press the down arrow key on your keyboard, and you'll notice that it brings you into the sub agent tab. Now, right now there's just one running because the other one already ran I guess. And you can see that you can view the agent.
+
+So if I press down arrow sub agent is running, I can press into it. And I can actually view everything that's going on. And then I can just exit out of this right by hitting escape to go back to the main window. Okay. So that's kind of how that works.
+
+Again, when the sub agent is running, you press the down arrow key and then you can kind of click into it by pressing F or by pressing enter. And that will put it in the foreground. So you can see everything that it's doing. You can exit out of it by pressing the X button. And that will just cancel the sub agent running and you can navigate between them.
+
+So just wanted to show you that's how it works. Now in this case this subject here is actually running in the foreground. What that means is that I'm viewing the output of it right now. Right. And if I write something I'm kind of going to be guiding this sub agent.
+
+So rather than me having to just work with this subject, what I can do is I can put this into the background. And I think it actually just finished. Yeah. So that's a bad example because the sub agent is done now, so I can't put it to the background. But when a sub agent is running we'll run another one in a second.
+
+Here you can just put it into the background by hitting control B. When you hit control B that stands for background, it will put it into the background. And then it will allow you just to talk with the main agent that you're inside of. Well, that subject is running in the background. So let's wait for this to finish. And then I can show you another example.
+
+But the idea is that you can have these different sub agents. You can run them in the background so they can do their own thing without interfering with you. And you can still chat with the main agent to do something else while those sub agents are running, especially if they have a long task. And then later I'm going to show you that we can actually take these agents and we can hand them off to the cloud. So rather than running on our computer, we can have dev and just trigger them and run them in the virtual machine as I was discussing.
+
+So you can see that now it says it's done. What I'm going to do is just ask it to make another agent so we can test it. Hey, can you make another agent that just goes and refactor all of these and writes cleaner, easier to understand code. Let's do three subjects, one for each version. So for version one, version two and version three refactor them in parallel at the same time.
+
+This doesn't really make a ton of sense, but just so I can show you the example and it should spin these up. So let's see. You can see we have the sub. If I press down we have all of these. And we can kind of see the one that we're inside of.
+
+So let's say I foreground this one. Now if I want to put it back in the background I can hit Ctrl B and I will just trigger it to run in the background. So you can see that it is background task running and it's going there. It's a little bit weird sometimes because these sub agents are running so quickly that it's hard for me to. What does it show you what I mean?
+
+Because you can see that they're already finished. But the key thing is that you can move into the foreground, you can move into the background, and you can kind of manage the sub agent session like that. So it looks like they're done just because I'm kind of interested. Let's run this and see what it actually looks like. So let's open this up okay.
+
+We have version one. And then it says something about how I see the other ones. What pages are they on. Let's see here okay. So it's slash slash version two and slash version three.
+
+So let's go here slash version two and boom okay. We get our other version here appearing even though that looks a little bit messed up. And then we have version three. Boom there we go again. That looks pretty similar to version one.
+
+But I guess it just changed the the headline. So let's go here. And yeah okay. So the headline is different. Cool.
+
+All right. So that worked. Same thing. Let's just shut this down and let's continue. Now let me show you some more stuff that we could do okay.
+
+So we talked about subjects. And now I want to talk a little bit about Devon Cloud. Now what we're going to show or what I'm going to show you how to do here is hand off a task from your local terminal or like your own computer to the Devin cloud. Now, in order for that to work, you are going to need to just make sure you have the account on Devin, which you should already have. Now, what you can do is go to Apple II and you should see just some kind of like page that looks like this, where you have kind of this chat window.
+
+Now this chat window will work very similarly to the CLI, where you could just tell it to do something and it can just go and complete that task. Or you can work in a new project or you can connect it to a GitHub repository. So what you're going to want to do is go into your settings here. You're going to want to go to connections and you're going to want to connect GitHub. So just connect your account and then connect any organizations that you want to use.
+
+So my case I've connected my Dev Launch LLC organization. That's going to allow me to do tasks in that dev launch repo that I'm going to show you in a second. Okay. Now I have a repo. It's called onboarding site.
+
+And this is a private repository. And it's some code that's used for students in my dev launch program. Now, what I've done is I've just changed my directory and windsurf here to that repo. So notice that I'm connected or I'm kind of sitting inside of a git repo, which is a requirement. For this to work, you need to be using a git repo in order to kind of hand it off.
+
+And what I can do now is I can run Devon setup. Now if I run Devon setup, what I want to do here is I just want to connect GitHub. Now in my case I'm already connected so nothing's going to show up here. But when you run Devon setup it should prompt you to connect to a git provider. Now you're going to want to use the local provider this on your own computer.
+
+Or the first option that you see that should just authenticate with your GitHub account. Again, you're going to need that setup on your computer already. And now you're good to go. And you should be able to hand off a task to the cloud. So if we run Devon, I can do something like slash handoff.
+
+Now when I hand off, I can just give a prompt and it's going to take that prompt and execute it in the cloud. So I can say, hey can you drastically improve the file, add some running instructions and some other information, because right now there's nothing in that file. And I want Readme to be like a clean file and I don't know descriptive for this repo, just coming up with something on the top of my head. And when I hand that off here, it should connect to Devon. It should create a session for us in a second.
+
+So it's creating a new Devon session. And then you can see boom, it's handed it off. And if I press the down arrow key again we can now view this cloud agent. Notice it's not a sub agent. It's a cloud agent that's running at this URL.
+
+So if I just open it up here. So I just press control and then clicked on that. You can see that it's now running in the cloud. We've handed it off. In this case it's using a different model.
+
+And what will actually happen here is it's going to spin up its own virtual machine. It's going to pull down the repo, it's going to start working on it. And then it should make all of those changes and create a new pull request for us. So let's wait for it to finish. And then we can see the changes that Devon actually made in the cloud.
+
+Again, we don't need to be on our computer here. I could shut all of this down, come back and this would still be running. Okay, now what we can see here. I just went into the finished pull request because it's it's done now is that we've changed this whole file. We've added all of this content and it's actually created a pull request directly inside of the GitHub repo.
+
+And if we go to GitHub you can see this is the port request. Right. And we can actually just go and merge it directly inside because it's now connected to that repo. I'm just going to close that one for right now. And what's interesting here, sorry if I just go back into the session, is that now I can actually use a new feature that Devon has called Devon Review, where it will actually use Devon to review the pull request.
+
+Now, of course, Devon created the pull request, but if anyone else creates a pull request, you can actually set it up to automatically trigger a review using the Devon agent. Or you can just press this review button, right. Well, when you've triggered it through Devon. So when I do this, it's going to now start analyzing this pull request, seeing if there's any issues, any problems whatever. And well, reviewing it now as well as doing it manually here like we're doing.
+
+You can also just go over to this review tab. From here you can install the GitHub app in your project where it will just automatically do the review or what's actually interesting. Let me go back to my GitHub repo. I'm going to show you how you can trigger a review on any pull request for any connected GitHub repo. Okay, sorry for the cut, but here's a pull request that one of my co-founders, Kenny, made, right?
+
+It changes for files. It's actually quite a few lines change, and maybe I don't want to review this manually. Well, what I can do here is I can actually change the URL. So I'm just going to replace this github.com with Devon review.com.
+
+And what I do that it's automatically going to bring me over to Devon here and then just start reviewing this PR for me. So again it has to be on a repo that you have access to. But you can see now that it's open this up and it's ready for review. And I can just run Devon's AI analysis on this and it will automatically start reviewing the PR, leaving comments, giving me any severity issues, like is there a critical bug, is there a security problem? Whatever. Right.
+
+So it's running it right now. We'll just wait for it to finish and I'll show you kind of what the review would look like. All right. So just completed this analysis here. You can see it says it adds a global allow list.
+
+These are the commands that are added. And it just tells us what's going on in the PR. Then if we go to the discussion you can see the Devon actually gives us a list here. It says, hey, this thing is what do you call it, deprecated. You shouldn't use this. Here's the change.
+
+And if you want we can automatically fix it with debit. Now I'm not going to apply that fix because I don't want to go into this old PR and just make changes that aren't required. But you guys get the idea. I can ask a question, Devon Market is resolved, or just use it to automatically make the change. We can set that up on a trigger to run.
+
+Now, what I'm trying to show you here is that this cloud based environment can work directly from the cloud. I just ask it to do something. We can trigger it from our local machine by doing a hand off task. We can have it run from a GitHub integration, for example, and I'm going to show you in a second how we can actually do it from like linear. So I have like linear issues as well.
+
+So we can assign them to Devon. We have slack integrations that we can use etc.. But you might be asking okay well if we're going to run in the cloud, what about advanced repos that have like secrets or environment variables or more advanced configuration? Well, you can set all of that up directly inside of Devon.
+
+So if we go here and you go to environment, for example, you can actually bring in snapshots, blueprints, you can add different repositories. So they're already set up on the machine. You can add knowledge so you can have different information that Devon should know. So here system knowledge built in knowledge etc. which is going to be built into the context.
+
+Kind of like that agents file you have secrets right where you can create environment variables and whatnot for different services. And then you have playbooks. Now I'm not going to go into this too much, but I'll just quickly spin up the documentation so you can see what I mean. But essentially a playbook is a custom system prompt for a repeated task. So for example, if you wanted to have different Devon sessions that each integrate the same third party library but in different parts of your application, you might want a playbook.
+
+Playbook are easily shared and reusable. You can use them across your team, and this is essentially just a reusable prompt that you can trigger. So I can maybe hand off a task. I can have a playbook set up for that, and then we can just go through this process kind of like, yeah, a skill or like just reusing a prompt and it kind of goes through and explains how you would use this, how you set up the playbook. Again, I'm not going to do it right now because it doesn't really make sense for this example, but you have all of those available from this cloud environment.
+
+Now. Same thing with schedules. Let's say you want to audit the code base every morning at 9 a.m. you can just create a scheduled task.
+
+You can actually connect this to a playbook. Right. So there's different playbooks here that are automatically there that you could just connect it to. So it runs that prompt automatically. And then you can say, hey, I want to run it on this trip or all my repos or whatever, and it will just perform that task fee, whether it's analysis, whether it's creating a PR right, it's up to you how you want to trigger that schedule now.
+
+As well as that, we have connections. If we go in the organization connection section here that we can set up to both slack and linear. You also have Jira, Microsoft Teams with. These are the ones that most people care about. So if you wanted to connect it to slack for example, that what you can do is you can just add this, what do you call it?
+
+Slack application to your slack workspace. Again, I'm not going to do that because it doesn't really make sense for me right now. You can then tag Devin and you can just ask it to do something. So goes, hey, go make a new PR. Hey, go review this.
+
+Hey, you know, tell me what's going on in the code base and have it a part of that conversation, which is super interesting. And then you can also connect it to linear. I will show you this one so you can see kind of how this works with, for example, different issues you have in a code base. All right. So what I did is I just connected linear. It's pretty straightforward.
+
+You're just going to go through the off process. Just press 2 or 3 buttons. Then you can connect it. And I connected it to my username in linear. So now that it's connected you can see it directly inside of linear here if you go into the integrations and if we go into an issue.
+
+So maybe we click into this one. For example I now have the ability to actually just assign this to Devin. So wait let's go back here because I need one that's not already assigned. So if we go here we can assign and I can just press Devin. And if I do that you can see the Devin is just going to start working on this request.
+
+And we can click into it and we can see exactly what it's doing. So we can literally just create issues. Go in linear go oh Devin can handle this one. It's just you know, our other software engineer press the button and it just starts working on it, which is super cool. So I'll wait a second for this to finish.
+
+We also could click live into the session so we can view everything that's doing, but we're just triggering this cloud based session again running in the VM, this time from linear. So it's all happening in the same place right? You can see all of the sessions here but we're triggering it from different areas. So slack linear GitHub integration whatever. And now it's going to start going and working on this.
+
+Let's see. All right. So we can see Devin's working on this now. It's actually waiting for our review because it came up with a plan of what it's going to do here. And it says, hey, I'm ready to implement this when you give me the go ahead.
+
+So I'm just going to say go ahead. And now it can start triggering that. Now you'll also notice if we get out of this that it's started, what do you call it. Moving stuff. So it says Devin move this from backlog to progress.
+
+Created the plan. And then we just told it hey start. So now it's going to actually start working on that. And we can see that it's here. But it connects to an MCP server for linear.
+
+So it now can just move the task around in linear rather than us having to manually do it again, acting like kind of its own autonomous software engineer. I mean, this is pretty much the equivalent of having like a junior dev on your team. You just assign them an issue and then what are they going to do? They're going to move it from the backlog to in progress. They're going to come up with a plan.
+
+They're going to ask you for approval. You're going to say yes, and they're going to start working on it. That's what this flow is kind of trying to emulate. Now, I'm not going to wait for this to finish here. I just wanted to kind of demo the flow.
+
+And at this point, we're pretty much through everything that I wanted to show you. And of course, there's a lot of other stuff that you can do here. I mean, I could spend hours going through Devin and giving you a full tutorial, but I wanted to show you running it locally using the CLI based tool, and then how we kind of level up to the cloud environment to push those tasks off so they can just happen in the background, especially for things that are long running and then more advanced when we're connecting it to slack, when we're connecting it to linear, when we're triggering on every PR, when we're using the dev and review feature. That's the benefit of this kind of fully integrated platform where it's all in one place and you're not stitching together like 4 or 5 different tools. So anyways, guys, that's all I had for you.
+
+If you enjoyed, make sure leave a like, subscribe to the channel and I'll see you in the next one.

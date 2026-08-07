@@ -1,0 +1,699 @@
+---
+video_title: "Build an AI Email Assistant with Code | Full AI Tutorial"
+video_id: 8FBGb0NS_zc
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=8FBGb0NS_zc
+video_date: 2026-04-22T13:00:17+00:00
+video_description: |
+  Get started with Postmark for free to build this project! https://postmarkapp.com/lp/tech-with-tim?utm_source=techwithtim&utm_medium=sponsored-video&utm_campaign=techwithtim-sponsored-video-apr2026
+  
+  In this video, I'll show you how to build an AI assistant that you can trigger via email. This means you can send an email to a particular email address and it can reply. You also can have it automatically send emails to people, send welcome emails, send emails at certain times.
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/techwithtim
+  
+  🎞 Video Resources 🎞
+  GitHub URL: https://github.com/techwithtim/AIEmailAssistant
+  
+  ⏳ Timestamps ⏳
+  00:00:00 | Overview
+  00:00:28 | Finished Project Demo
+  00:02:03 | Setup/Install
+  00:10:20 | Postmark Setup
+  00:13:35 | Anthropic API Key
+  00:14:49 | Stubbing the App Structure
+  00:19:01 | Types & Database Setup
+  00:35:20 | Postmark SDK Setup
+  00:37:48 | Inbound Message Stream Webhook
+  00:48:37 | Ngrok Setup
+  00:52:42 | Replying to Emails (Postmark)
+  01:04:35 | UI Dashboard
+  01:18:56 | Sending Broadcasts 
+  
+  Hashtags
+  #Postmark #AIAgent #SoftwareEngineer
+  
+  UAE Media License Number: 3635141
+---
+In this video, I'll show you how to build an AI assistant that you can trigger via email. This means you can send an email to a particular email address and it can reply. You also can have it automatically send emails to people, send welcome emails, send emails at certain times. A lot of cool stuff that I'm going to show you how to set up here in this video. So what I want to do is give you a quick demo of the finished product.
+
+Then we'll start going through the full tutorial and we'll build it out step by step. So by the end of the video you have a fully functioning AI email assistant. Okay. So let's have a quick look at the demo. I just have an email address here.
+
+This comes from postmark because that's the service we're going to be using in this video to handle all of the emails sending, replying, etc.. So we have this email address. And what I can do is say something like tell me the meaning of life. Tell me the meaning of life and happiness. Right?
+
+And then let's see what it shows us here. And I'm going to go ahead and press on. Send. Now you can see right away, because this was the first email that I sent to the email assistant. It actually sends me a welcome email and it says thanks for trying email assistant reply to this email anytime.
+
+We're happy to help. So I just set it up so you get this welcome email. You could change this to be anything that you want. And then in one second, once the AI comes up with the response, it will give us another email with the answer okay. And you can see here that I just received the inbound email notice that's coming from me, because that's the address that I set up.
+
+So it's my own email that is sending it to me from. And then it says the meaning of life is blah blah blah and gives me the answer. And what we're also going to do for this project is just build this cool dashboard where it keeps track of all of the contacts, what time they sent an email, so we can track all of those and maybe add them to something like an email list. And then you can see that we have the activity here where it has all of the information of all of the messages that have been sent. And then if we want, we could actually send a broadcast email to all of the contacts on our list.
+
+So once we gather all of these contacts that are chatting with the assistant, maybe we want to send them something, give them a discount code, say hi whatever. We can do that from this application. This is super cool. You're going to learn a lot. We're going to be using Next.js postmark as you saw.
+
+Massive shout out to them for sponsoring today's video. And then a few other things like the anthropic API to generate the AI response. Let's get into it. All right. So we're going to go ahead and get started here.
+
+Now I've just opened up cursor. This is the code editor I'm going to use for this video. But you can use pretty much anything that you want. And what I'm going to do is just make a new project. So I'm going to go file open folder.
+
+I'm just going to go to desktop. And I'm just going to go email I don't know tutorial or something. Okay. Make a new folder and then open that up. Now again you can use any editor you'd like.
+
+Just make sure you make a new folder. And we're actually not going to use any AI features here. So I'll just close that tab and then we can start coding. Now we need to get everything set up here. So what I'm going to do is just open up the terminal here inside of VS code.
+
+And at this point I will mention that this tutorial is not designed for complete beginners. Well, I will go through everything line by line. It is suggested that you understand JavaScript, TypeScript and a little bit of Next.js because that's going to make it a lot easier to follow along. If you don't. Don't worry, you can still follow through.
+
+But obviously I'm not going to explain what a for loop is. Okay, now the first thing we're going to do is just create a new project here. So we're going to type Npx create Dash next Dash app. And then this is going to be at latest. And we're just going to call this I don't know maybe project or something.
+
+Okay. So let's run that command. When we do that it's going to ask us to install some dependencies. Let's go with yes. And then let's go through some of the different settings here.
+
+So from here I'm just going to go to Customize Settings. I'm going to go yes I would like to create or use TypeScript. Sorry I would like to use ESLint. I don't want to use the react compiler for tailwind CSS. We'll go with yes.
+
+What do we like to put our code inside of the c directory we're going to go with? No. But we like to use the app router. We're going to go with yes. And we like to customize the import alias.
+
+We're going to go with no. And then it says do you want to include an agent stormed to guide the coding agents. I mean we can go ahead and do that. That's fine. And then we'll go ahead and create the project.
+
+Okay. So this is going to take a second here to spin up. Once it's done we're going to go into this directory and we're going to start setting up the rest of the project. All right so the app has been created. So what we're going to do now is we're going to CD into the project directory.
+
+From here. What we're going to do is install the other dependencies that we need. Now for this project we're going to be using better SQL Lite. So we're going to do better. And then SQL Lite like so.
+
+And then three we're also going to use the drizzle ORM. This is something that is going to be a database wrapper for us effectively. So we don't need to write raw SQL code. Very popular. Let's build drizzle correctly though because we need to use that.
+
+Then we're going to install the anthropic. Same thing. We got to spell that correctly. Dash I slash SDK and we are going to install the drizzle dash kit as well as ad types slash. And then better dash SQL Lite three okay so these are all the dependencies that we need.
+
+Better SQLite three drizzle LRM anthropic SDK drizzle kit and then the better SQLite three types. So we're going to install those inside of our project. And then we'll continue. And also I almost forgot. But we're also going to need to install postmark because that's what we're going to be using for all of the email related features for this application.
+
+And it's worth noting the postmark works with various other languages, frameworks, SDKs, whatever as well. But in this case, obviously we're just using it with Next.js. Okay. So all of that is installed.
+
+I'm now going to clear and I'm going to go inside of my project here. We're going to start setting a few things up. Now what we need to keep in mind is that for this project we have a few different components. We're going to have that dashboard. That's where we're going to be able to view all of the different contacts, see the history of all of the emails.
+
+We're going to have the email handling. The way that we're going to do the email handling is we're going to connect to a post mark inbound message stream, which we'll talk about in a second, and we're going to have a webhook on our server, our next JS backend that's going to be able to receive any of the incoming emails, and then send a request to postmark to send an email response back. We're also going to be using anthropic, which means we'll need an anthropic API key, which again we'll look at in one second. And then I think the last step is we're going to have a simple database, which is going to keep track of all of the contacts and whether or not we've sent a welcome message to them, because when someone joins or it's their first time sending a message to this assistant, we just want to send them that kind of welcome email message. The point here is to give you a solid base.
+
+And then from there you can extend this and make it really anything that you want. Once you have all of the pieces of the puzzle and kind of the tools that you would need for a cool email assistant project. Now what I'm going to do at this stage is just start setting up some of the different config and the environment variables that we need, and then what we'll do is work to actually build the application code. Now keep in mind that all of the code I write in this video will be available from the link in the description. So if you're getting lost or you just want to copy anything, don't worry, you can just look at the GitHub, which I'll leave available down below completely for free.
+
+Okay, so first things first. We're going to go into our package dot Json file. Now because we're using drizzle which is a database ORM. What we're going to do is just update the script section here. Let me just make this a little bit smaller so we can read some more code so that before we start running the project, we automatically update our database schema.
+
+The way the drizzle works is that we can define a database schema, but we need to kind of run a manual update to update the database. If we make any changes to it. So rather than us having to do that manually, we're just going to have it done automatically for us in this script section. So we're going to make a new script down here inside of scripts in package.json.
+
+And this is going to be DB colon push. Okay. Now from here what we're going to do is just say drizzle dash kit and then push okay. So that's perfect. Then what we're going to do is for our dev command we're going to type npm run.
+
+And then this is going to be db colon push and end next dev. And we're just going to do the same thing here for the build command. So that automatically we just run this push command which is going to update the database schema okay. So we're going to have npm run db push and and next build okay. That's it. So that's all we need to adjust for the scripts.
+
+Now we're going to make a new file inside of the root of our project. And this file is going to be called drizzle dot config dot. And then this is I believe tz okay. Now inside of this file we're just going to put a very basic config to define the location of our database. So we're going to say import.
+
+And then this is going to be define config okay. You can see the AI is giving me the response here from a drizzle kit. And then what we can do is export default define config. We're going to specify the location of our schema which we're going to change here in just one second to be slash. And this is going to be lib and then slash debates which is a file that we'll create in one second.
+
+We actually don't need this out file. So we'll just remove that okay. Then where it says driver we're actually just going to change this to say dialect okay. And for the DB credentials we're going to change this from DB SQL Lite to be emails dot db because that's the file that we want okay. Then we're going to take the drizzle dot config.
+
+We're just going to make sure it's inside of the projects. I had it in the wrong directory there. And then we're good to go. And we've defined what we need for the database okay. Now last thing.
+
+We're going to make another new file in here. And we're gonna call this dot env. And we're going to start putting in some environment variables that we're going to need for this project. So the first environment variable we're going to need is the postmark server token okay. So server underscore token like so we also are going to need the anthropic underscore API underscore key.
+
+That's for handling all of the AI operations. We're going to need the sender email which we'll have a look at a second. And then we're going to need the postmark underscore welcome underscore template underscore alias. Because in postmark we can actually create email templates that we can send. That's the welcome email that you saw.
+
+So we're going to specify that here in a minute. Now for now we'll leave them empty. But we're going to fill them in in just one second. All right. So now let's start filling in these environment variables.
+
+Now the first thing we're going to do is get our postmark server token. Now as mentioned I teamed up with postmark for this video. But they are free to use. You can create a free trial, see if you like them before you commit to anything further. But they are one of the best email delivery services that's very easy to set up from a developer perspective, as you're going to see in this video.
+
+And I'll walk you through all of the core features that they have as we go through, and we start implementing them. But effectively within all of the major languages and frameworks, as you're going to see, you can very easily send emails. You're not going to get blocked when you send the emails, they're not going to be going to spam, and you're going to be able to send all different types of emails like transactional emails, broadcast emails, and then even have the inbound message stream, which is what we're going to set up here, to be able to actually receive the emails and then send the message back in. What do you call it, ARP. Can I email assistant?
+
+So what I'm going to do is leave a link to this in the description. You can create a free account here. And then once you've created your free account, you should be brought to a page that looks something like this. So you want to find servers in your postmarked dashboard. From here, what we're going to do is create a new server.
+
+Now for this server, just give it a name. In this case I'm going to call it Email assistant. You can give it a color code if you want. And then what we're going to do is just put it in the live mode for now, because we actually want to use this. If you were just purely testing it, you can go in the sandbox mode.
+
+Okay. So we're going to go with Create server. From here. You're going to see that once you make the server you're going to get a few different message streams here. Now we just want to quickly explain what these message streams are.
+
+Now the broadcast stream is when you're sending a broadcast or a batch of emails to a ton of different people. So for example, every Monday at 9:00 am, I want to send an email to my newsletter, for example. Then I would use a broadcast stream. The transactional stream is used when you want to send an email based on some kind of event. So for example, if someone signed in to the website or if someone's card got declined or if they're payments coming up, then you would use the transactional stream and then the inbound stream.
+
+Pretty straightforward. But that's what you're going to be using when you want to actually receive emails from someone. Now once this server is created, we're going to go to API tokens here. And we're going to copy this server API token. Make sure you don't show this with anyone.
+
+What we're going to do then is go back to our code, and we're going to paste that here for our postmark server token. Now we'll deal with the template in one second. But for now we're going to stick with that. Now one thing to keep in mind here is that in order for this to actually work effectively for us, we do need to set up a verified sender signature. Now, this is the email that we're going to be sending emails from, and that we could if we wanted to receive emails from as well.
+
+So we're going to go to sender signatures here. Now from here, what we're going to do is add a domain or signature. Now if you're using your own custom domain you may want to add the entire domain. And this means that you can actually set up to send with any email address from that particular domain. Otherwise what you could do is just send with a single email address.
+
+Like you could use a Gmail, you could use anything that you want effectively. So what we're going to do for now, just because it's simpler, is I'm going to go with the add sender signature rather than adding the domain for the from email. I'm just going to put my email which is Tim ed tech with Tim Dot net. And then we'll just put the name which is Tim Rashica. And then same thing with the reply to email.
+
+You can make it different or you can just leave it the same and you can add a note if you want. So you can remember what this signature is. Then we're going to go ahead and press on Create Signature. And from there what you'll see is that it actually sends us an email to this address. What we're going to do is go find that email and then just verify our email address that we should be good to go.
+
+So you can see that this is the email that was received. So I'm just going to press on confirm sender signature. From here. It's going to bring me back to the postmark page. And then we're good to go.
+
+And we can now use this to send out the email. If you're going to be sending tons of emails, it is better to add a custom domain here and to configure the DNS settings here we don't need to do that for this tutorial, so I'm going to skip it for right now. But again, if you're going to use this in production and send hundreds of thousands of emails, you probably want a separate domain and you want to go through this process and verify everything, especially if you want to receive mail to this particular address. For now, this is just going to allow us to send emails. If you want to receive emails that I believe you need to verify this.
+
+Okay. So now we're going to go back to servers. We can go back into our email assistant. And at this point we can just leave this page open. But we're pretty much done.
+
+Now the next step from here is we want to go in an anthropic or Claude API key. So what I'm going to do is just go to the anthropic console. You can just search it on Google. You're looking for platform.com.
+
+From here you will need an account. You will need a credit card enabled. This is not going to cost you a lot of money. So don't worry too much about it. And what we're going to do is just go and create a new API token.
+
+Now it looks like they've changed this page quite a bit, but if you go under manage and you go to API keys, you should be able to create a new one. So I'm going to go create new key and I'm going to go email assistant like so. And then add. And you can see even when I was testing for this video it cost me $0.03.
+
+So don't worry about it too much okay. So now I'm going to copy the key. I'm going to go back I'm going to paste it here. Obviously don't share that with anyone. I will delete it after the video.
+
+Now from our environment variable file. We're also going to specify the sender email that we had. So my case it was Tim at Tech with Tim dot net. But you can change this to be anything that you want obviously and whatever you verified. And then for the postmark welcome template alias we can actually just put welcome for right now because that's what we're going to call the template.
+
+But we'll create that template in a little bit okay. So at this point we have everything pretty much set up in our project. We have the scripts. We have the database config, we have the environment variables. And we can start writing some code and start building this iteratively okay.
+
+So what I like to do when I'm building our applications is start by stubbing them. What that means is creating all of the individual files that we're going to need. And then we can fill in the files one by one. So we kind of know how the pieces connect before we start. Just coding everything out.
+
+So we have this app folder. We'll keep that there. But then we're going to create a few more directory. So not inside of app but inside of project. We're going to create a folder called components.
+
+This is we're going to put a few React or Next.js components. We're also going to make another new folder. And we're going to call this lib. And then we'll have one more.
+
+And we're going to call this styles. So you should have styles lib components and app. These are the four main directories we're going to work inside of. Now you also see this public directory. You can leave the files here if you want.
+
+But I'm just going to delete them because we don't actually need them for this project okay. Now first things first let's talk about the styles. Now I'm not really in the mood to write a massive amount of CSS, and I imagine you guys probably aren't as well. So what I do in all my tutorials, I just leave all of the completed style sheets at the link in the description in the GitHub repository, and you can just copy them directly in here, and then we'll name the components appropriately so they have the right class name. So just links up with the styles that are already written.
+
+Feel free to write your own styles or skip that step. But what I'm going to do at this point is I'm just going to copy and four style sheets into styles dots or into this styles folder. Sorry. So we have base index tokens and UI UX. They're not too large, but you can see there are quite a few styles.
+
+So what I would suggest doing is just copying these. Again. You can find them from the link in the description. You can just go in the styles directory in GitHub, download these four files and then just add them to your local code base. Okay, so the styles are now created and are successfully there.
+
+And what we're going to do next is we're going to start working on our lip. So we're going to go inside of Lib. First we're going to make a new folder inside of here called prompts, which is where we're going to put the prompt for the kind of responding to the message that the user sends or the system prompt. We're then going to make a few files. So the first file we're going to have is debugging.
+
+Yes. This is going to be for our database. We're then going to have another new file. This is going to be email x for all of the email related operations. We're then going to have typed dots, which is going to be for all of our TypeScript types.
+
+And then inside of prompts we're just going to make a new file here. And this is going to be the inbound assistant. So we're going to say inbound dash okay. Dash assistant. Like that's okay.
+
+So that's going to handle our lib. We'll start writing those in a minute. We're then going to go to components. And we're going to write the components that we need. So the first component is going to be the broadcast form dot TSX.
+
+We're then going to have another new file. This is going to be the contact list okay dot TSX. And we are going to have the email. And this is going to be log dot TSX okay. So broadcast form contact list and email log I think those are pretty straightforward with the name.
+
+Then inside of our app we're going to start setting up our API. So we're going to create an API folder. We're going to create another new folder called actions. And inside of API we're going to make a new route. So not new file but a new folder called inbound.
+
+Now if you're unfamiliar with Next.js, the way that this works is that when you have an API folder, when you go to the slash API route and then slash whatever this folder is. So in this case it's called inbound. It's going to automatically route to run the code inside of a file called routes. So inside of routes we're going to create what's actually the inbound webhook.
+
+So anytime an email is sent to that email address that I'm going to show you in a second and postmark, it will be forwarded to our application where our application can handle process the email and then send a response back okay. And then the last file we're going to need is going to go inside of actions. And instead of actions we're going to call this the broadcast dots okay. Then I'm just going to delete the global dot CSS file because we don't need that. We already have a defined in our styles directory.
+
+All right. So I'm going to close all of these for right now. These are all of the files that we're going to need and where we're going to begin with is just by writing everything inside of lib. So these are the core components that we kind of need for our application. And then once these are defined we have the database set up.
+
+We can start handling the inbound webhook. I can show you how to receive the emails respond to the emails. Then we can build up the user interface. And again we'll build a piece by piece. So we're going to start inside of DB dot txt.
+
+This is for defining our database. And we're going to start with our imports. So we're going to import drizzle again. We're going to spell that correctly from. And this is going to be the drizzle or a better SQLite three.
+
+We're then going to import the database. You can see that the AI is doing a lot of work for me here. So I'm going to say import database from better SQLite three. We're then going to import the SQL SQLite table as well as text and integer okay. From the drizzle over SQL Lite core we're then going to import.
+
+And this is going to be EC, ASC and DSC. So equals ascend descends from the drizzle. Awesome. Because we're going to need to be able to sort emails and contacts in a minute. And then we're going to import some types that will actually define right now before we go any further okay. So let's actually go to type status.
+
+I think it's going to make sense to start with this because there isn't any dependencies. And then we can go back to the other files okay. So here's going to be all of the TypeScript types that we need. So we're going to say export type. And this is going to be inbound payload okay.
+
+And this is going to be equal to an object. And from here we're going to specify all of the details that will receive whenever a new email is sent okay. So whenever someone sends us an email this is the data we'll have access to. So we're going to have from this is obviously the sender we're going to have from full. And this is going to be email string and then name string okay.
+
+Same thing. Then we're going to have to and this is going to be a string. We're then going to have the subject this will be a string. We're going to have the text body. This will be a string.
+
+We're going to have the HTML body okay. Body like that. This will be a string as well. We're going to have the message ID okay. Colon. This will be a string.
+
+We're going to have the headers okay. And this is going to be name string. And then value string. And this is going to be an array okay. So that's going to be our inbound payload.
+
+Now again this is what's received when a new email is sent to us. Next we're going to move on and we're going to write the message log row. So we're gonna say expert type message log Rome. This is the type we're going to use when we are logging different messages that were sent or received. So we're going to have an ID this will be a number.
+
+We're going to have a thread ID so we can keep track of the thread which is going to be a string. We're going to have a role. So we know whether it was a user okay or an assistant. We're going to have a content which will be the string. And then we're going to have the createdat, which will be a note number actually.
+
+But a date okay. So that's going to be the message log row. We're then going to have the contact row for storing the contact. So we're going to say expert type contact row. This is going to be ID number.
+
+We're then going to say email string. We're going to say display name. And this is going to be string or no. We're then going to have the welcome sent ad. And this is going to be the date or no.
+
+And then we're going to have the createdat which is going to be the date and the updated out, which will be a date as well for our context. And notice with our context we want to determine, okay, did we send them a welcome message or not. Because if we send them a welcome message then we don't need to send it to them again. Then we're going to have an export type, and this is going to be a broadcast and then contact. And this is simply going to be email string okay.
+
+And then display name which will be string or no okay. The broadcast contact is just something that we'll use when we're sending emails for the broadcast. We're almost done with this file. We're going to go export type. Last one is going to be the broadcast.
+
+So let's spell this correctly. Broad cast state which is equal to. And this is going to be error question mark colon string. Because is there an error or not. We're not sure. Success.
+
+Same thing okay with a string and then sent count question mark colon number okay. So that's going to determine was the broadcast successful. Essentially we'll use that in a minute. And then the last thing we're going to have is export type. And this is going to be the assistant reply email parameters.
+
+So that we know what we need to send here. We're going to say this is two string. We're going to say subject string okay. We're going to say let's go back here text body string. And then we're going to say message ID string okay cool.
+
+So now we have all of the types that we need. What we can do is go back to DB. And we're just going to import those types that we need in order to fill this in. So we're going to say import. And then we're just going to say type like this.
+
+And we're going to bring in the contact row as well as the message log row okay. Because we're going to store these in the database. When we have some certain operations again then we're going to have slash types okay. And this can actually be ad lib. So ad lib slash types okay.
+
+So now that we have all of that we can start defining the database schema. Now there's two main database tables that we're going to need one for messages and one for context. So let's write those out. So we're going to say export const messages is going to be equal to the SQL light table. And this is going to be of messages.
+
+Now it looks like that hey I is doing a pretty good job at actually filling these in already. So let me actually just allow it to do that because it looks like it's pretty much perfect. With the exception of a few small things that we'll just change. Okay. So for the message table we're going to have an ID.
+
+This is going to be an integer of field ID primary key auto increment true. Meaning it's automatically going to increment the ID for us. We're then going to have thread. This will be of type text which is thread ID and not no okay. Correct. We're going to have role.
+
+This is of type role. However we're going to make this an enum. So we're going to say enum. And then we're going to have a list. And we're going to say user colon assistant like so.
+
+And then same thing that's going to be not no. Then we're going to have content text content not no. Perfect. And then we're going to have created out this will be an integer Createdat mode will be timestamp. Same thing.
+
+It will be not null. And then default. We'll actually not put SQL here. We're going to put a JavaScript function. So we're just going to put a function and then go new date like so okay.
+
+So I think that should be okay. But I need to put this as default function and just put a dollar sign like that so that it matches the correct syntax okay. So default function new date. We're good to go. And that is our messages table.
+
+Next we're going to have the context. So we're going to say export const contacts. Same thing. Let's let the I do some work here. So we're gonna have SQLite and then contacts.
+
+We're gonna have an ID an email a display name. Welcome send that created out. And that update it out. Let's run that. And I think we are good to go again with the exception of this where we just need to change the default function okay.
+
+So let's just go through this quickly. ID looks correct email that looks correct. However, we also want to make sure that the email is going to be unique. So let's add that field the display name. We can just go text display name.
+
+It could be now. So I'm going to remove this here and allow it to potentially be no we're going to have welcome center. Same thing. This will be an integer. However I'm going to remove the not null and the default because it's possible that we haven't sent the welcome message at all.
+
+So let's make sure we get rid of that. And then for Createdat and update it out. This is correct. It just is the same as what we had for messages. Okay.
+
+So now we have our contacts and we have our messages. DB now what we're going to do is we're going to actually set up the database. So we're going to say const SQLite is equal to new database. And then this is going to be emails dot db. From here we're going to say SQLite dot pragma okay.
+
+And we're just going to go in quotes. And we're going to say journal underscore mode equals well don't worry too much about this if you haven't seen it before. It's just for storing records for the database. And then we're going to say export const db is equal to drizzle. And we're going to say SQLite.
+
+And then for the schema this is going to have messages okay. Like this. Let's put this correctly. So why did that mess up. So this needs to be another object.
+
+Messages and contacts. So we're just specifying the different database tables that we want in our database schema. Now because we're using drizzle and drizzle kit this is going to allow us to automatically create the database whenever we run the code. So if we do npm run dev to run the development server, then it will automatically essentially see this update the schema, push the changes and we are good to go okay. So let's keep going here I just want to write some other operations we're going to need in this database file just to get them out of the way.
+
+And then we can move on to handling the inbound webhook. So first things first we're going to say export async. And then this is going to be function save message. Now to save a message we're going to take in a thread ID which is going to be a string. We're also going to take in a role which is going to be user or assistant okay.
+
+We're then going to have content which will be of type string. All right. From here we're going to say await DB dot insert. We're going to insert into messages because that's the name of our table. And the values that we're going to insert is going to be the following.
+
+So we're going to insert in. So we're going to insert the thread ID the role and the content. And we can remove that. And we just need to spell existing correctly so that we get rid of this type error. Next we're going to have a function that gets the recent messages.
+
+So we're going to say export async. And this is going to be function get recent message log okay. This is going to have a limit which will be a number which is equal to 200. And this is going to return a promise. The promise is going to be of type message log row which will be a list.
+
+And then inside of here what we're going to do is get all of the rows that we want to return. So we're going to say const rows is equal to and this is going to be await db dot select. When we select what we're going to do here select the following. So we're going to say ID and this is going to be messages.id we're going to say let's go down here thread ID messages dot thread ID roll content Createdat like so.
+
+All right now what we're going to add to the end of this is dot from, because we need to specify the table that we want to search from. So we're going to go from messages. We're then going to have another. And this is going to be dot order by. And we are going to order by descending.
+
+And then this is going to be messages dot created at okay. So created at like so. And then we're going to have dot limit. And that is going to be the limit. Now the I has already gone ahead and filled in the rest for me.
+
+But effectively what we're going to do is we're going to take the rows and we're now going to map them. So we just get the values that we care about in an object. So we say rows that map and then we have id thread, id role content and createdat we return that. And that's going to give us our message log row for the recent message logs okay. So that's going to handle that function right there.
+
+We're now going to move on to the next function which is going to be to update the contacts. So we're going to have a function. It's going to say export async function. This is going to be Upsert okay. So Upsert contact from inbound.
+
+So essentially anytime someone sends a message to us we're going to update their contact. So we're going to say email string. And we're going to say display name. And this is going to be string or no. Then what we're going to do is have the function body.
+
+We're going to say const now is equal to new date. So we can track when they sent us the message. And we're just going to insert a new record into the context table or update it if it exists. We're going to say await DB dot insert. We're going to insert into the contacts table.
+
+And for the values that we're going to insert it is going to be the following. So let's put our object we're going to insert the name the display name like so we're going to say welcome send. And this is going to be no okay. We're then going to say create. It is now and update.
+
+That is now as well okay. Then we're going to say dot on conflict do update. So what this means is hey, if this email already exists inside of this context database, rather than kind of clearing all these values and resetting, we're going to target the same email value, right? Or the same email row. And then what we're going to set is the display name.
+
+And we're going to set updated out to now. But we're not going to set the welcome center yet because it's likely that we already sent them a welcome message if they're already inside of our database, and we actually don't need to return anything from this function. So I'm going to remove that. And this is just going to upsert the contact from the event okay. Now let's keep going.
+
+And I'll just zoom out a little bit because I feel like it's a little bit large for how much code we're going to have here. Next we're going to go export async function. And then this is going to be Mark welcome sent. We're going to take in an email which is a string. And we're just going to mark it set for that particular user.
+
+So we're going to say await DB. And then let's go down to the next row. We're going to say dot update. We're going to update the contacts and we're going to set the following. So we're going to say set welcome centered which is just going to be the new date.
+
+And we're going to say update is the new date as well. And we're going to do that where we have the equal function and we're going to say the context email equals this specific email. Very straightforward. That's all we're doing okay. And then we just have two more functions.
+
+So first we're going to have a function that just checks whether we need to send the welcome message. So we're going to say export async function should send welcome. We're going to take an email and string. And then what we're going to do is return a promise okay. Of the contact row.
+
+And this is going to be a list. And then what we're going to do is say const rows is equal to await DB. We're going to go down again to the next line. We're going to say dot select. And we're going to say dot from.
+
+And we're going to say dot where we're going to put the equal function. And same thing. We're going to say context email and then email. We're going to limit this to one. And then what we're going to do is return rows at zero because we know we're going to have one value question mark dot welcome center equal equal. No.
+
+So effectively what we're doing here now. So I realize that this is wrong. This needs to be a boolean I was reading the wrong function. We're gonna say const rows equal to await db. We're going to select from the context table.
+
+We're looking for this particular email in the database limiting it to one. Now if this row doesn't exist or we didn't yet send the welcome email, then this is going to be true. Which means we should send it. If this row does exist and we have sent the welcome email, then of course it's going to be false. So that's what we'll return.
+
+Now. The very last thing that we're going to do is just one function to get all of our contacts. So we're going to say export async function, get all contacts. And this is going to return a promise okay. Now the promise is going to return or resolve to a contact row.
+
+This is the one that I had before that I was messing up. And what we're going to do here say const rows is equal to await. And this is going to be let's go back here DB okay dot select okay. And then this is dot from contacts. And then same thing.
+
+We're going to order by ascending contacts dot email. And then it's actually already filled in. What I want to have here for the return. So rows dot map. We're going to map every single row to all of the different values that we need.
+
+And I think actually let's just change this quickly. We're going to say welcome sent add question mark question mark or no okay. So that looks good to me. That's everything that we need. So we have a function to get all the contacts.
+
+Should we send the welcome email mark. The welcome email is sent UPS or the contact or update if it doesn't exist. Get recent message log and save messages. So that's all of our database operations that we're going to need. We don't need to touch the database file anymore.
+
+We've specified the types. Now what we want to do is handle the inbound email. Let's deal with that first. And then what we can do is go over and start handling the UI, the dashboard, all of that fun stuff. Okay. So we're going to go to our email.tz file.
+
+And we're just going to start setting up what we need to load postmark. So we're going to import the server client as well as the template ID message from postmark okay. Then what we're going to do is say import and we're going to import type. And this is going to be the assistant reply email parameters as well as the broadcast content from. And we need to make sure we do the correct import.
+
+So it's going to be at analysis slash lib slash types okay. Then what we're going to do is we're going to define our postmark client. Once we define that we're then going to write the inbound webhook. We'll deal with the I stuff after. So we're going to say let client.
+
+And then this is going to be the server client or no equal. Let's type this correctly. Equal. No okay. And let's spell server client correctly as well.
+
+Then we're going to have a function. We're going to say export function get postmark. And what this is going to do is return a server client. And we're going to say if okay not client, then what we want to do is say const token is equal to process dot env dot. And this is going to be the postmark server token that we defined above that we defined earlier.
+
+Now it's actually again filling in the rest. So we're going to say if not token we're going to throw a new error saying postmark token is not sent. Otherwise we're going to specify B clients. We're going to say client is equal to new server client. And then we can simply return the client.
+
+But we're just going to do that down here. So no matter what they get a return value okay. So that's it. So all this is going to do is we're just going to look for the postmark server token. Once we have the postmark server token we're good.
+
+We can just create a new server client from postmark here, which is going to allow us to receive emails, send emails, all of that fun stuff. Okay. And then we're just gonna do one more function while we're here and we'll come back to it later. So actually we'll just say function. And this is going to be require sender.
+
+This is going to return a string. And what this is going to do is say const from. And then same thing I'm going to look in my process dot env. So I'm going to say process sky and v dot sender email. And I'm going to say if there's no sender email defined then we need to throw an error because we need that environment variable sent.
+
+Again we'll use this in a minute. But effectively we're just checking to make sure that we have the correct values inside of our environment. Variable file okay. So that's that. Now we're going to go to our app our API and our inbound route.
+
+Now this is where we can kind of start handling the fun stuff where we can receive the inbound email. So in order to receive the inbound email we essentially need to create an API endpoint. This is going to be a post API endpoint where we can get all of the details of an email and kind of have it forwarded to our backend server. So in order to do this, we're going to say import okay. And then we're going to say next response from the next server.
+
+We're then also going to import anthropic. We'll use this in a minute. So we're going to say and throwback okay. From the anthropic AI SDK. We're also going to import the save message the Upsert contact from inbound as well as the should send welcome and the mark welcome sent from the lib DB.
+
+And let's spell inbound correctly. And then we're going to import the type. So import type. And this is going to be inbound payload from ad lib slash types. There's a few other imports so we'll need in a second.
+
+But for now we can start with this. So we're going to go const anthropic. And we're just going to make a new anthropic object here. This is actually going to automatically find the presence of the environment variable that we have defined. As long as it's called anthropic API key.
+
+So just make sure you spell it exactly as I spelt it there so correctly. Spell to anthropic underscore API underscore key. Now that we have that we're going to make our webhooks. So we're going to say export async function. And then in all capitals we're going to call this post.
+
+Now this is the way it works index.js is the type that you want to have for the Http method. It's just what you name the function. And it's going to go to slash API slash inbound on our server. So we're going to have post.
+
+We're going to say request. This is going to be of type request. So we're going to say const payload. And this is going to be of type. The inbound payload is equal to await request Json.
+
+We're then going to start defining some variables to grab out all of the data that we care about. So we're going to say const sender email is equal to payload okay. Dot from full side with all capitals email we're then going to say const display name is equal to payload dot from full okay. So payload dot from full question mark okay. And then dot capital name question mark and dot trims.
+
+Just remove any trailing or leading spaces and then otherwise no okay. Then we're going to have const subject is equal to payload dot subject. Or we're just going to put like this no subject okay. Because that's how it typically looks as the email. And let's fix that to be a semicolon.
+
+We're then going to say const user message. The most important one is going to be payload dot text body or an empty string okay. Now we're just going to do dot trim like that. Again remove any leading or trailing spaces. And we're going to say const message ID is equal to payload dot message ID.
+
+And let's spell const correctly okay. Now that we have that we're just going to first quickly check okay. Do we have a user message. We're going to say if not user message then we're just going to return a next response. And this is going to be dot Json.
+
+And from here we're just going to have a status that says empty message skipped okay. Just so we can see, hey, if you don't give us any message there's nothing to reply to. So. Well we're not going to do anything okay. Next we're going to say const conversation key is equal to message ID.
+
+Just so we have a way to track the current conversation. Now here at this point we'll do this in a second. We're going to send welcome email if we need to send the welcome email. So we can say if await should send welcome email, then we can effectively send the email. And then after we send the email so we can have like a try okay.
+
+To, you know, send email and we can await instead of here Mark welcome send to the sender email. Otherwise we can just have a catch. We can catch the error and then we can just console dot error whatever this is. So we can do something like let's go with a string inbound maybe in square brackets and we can say welcome failed okay. And then we can just put whatever the error message was.
+
+All right. So we'll deal with that in a second. But effectively we're just going to send the welcome message inside of here if we should send it. But we don't have that function yet. So we'll write that in a minute.
+
+Then we're going to save the message. So we're going to say await save message. We're going to save it using the conversation key. We're going to save it as a user type. And we're going to save it, the user's message whatever that is.
+
+So we have those details and we save that to the database. Then what we need to do is need to generate a response. So we're going to generate a response from anthropic. We can actually do that right now. And then we can send the response back.
+
+So we're going to say const response is equal to await anthropic dot messages dot create. And to create a message we need to specify the model we want to use. So I'm going to go with Claude Dash sonnet dash 4-6. You can go with the higher end model if you want. But this is fine. It's not going to cost us that much.
+
+I'm going to go with max tokens 1024, because I don't want it to respond with too many tokens. I'm going to go with system, and this is going to be the system prompt, which will specify in a second. And then we're going to say messages. And what we're going to do here is we're just going to give the most recent message. So we're going to say roll.
+
+And this is going to be user. And we're going to say the content is the user message okay. So this is effectively a you generate a response using the anthropic API. We specify the model maximum number of tokens, a system prompt which we'll write in a second. This specifies how the model should respond.
+
+So kind of like a base prompt before we tell it what to respond to. And then what we can do is specify multiple messages. In this case I'm just putting one, which is the most recent message that the user sent us. If you wanted the whole conversation chain, you could do that. But I'm just not going to add that right now.
+
+And then it will just respond to that and give us a response. So for the reply we can say const replies equal to response okay. Like this dot content. This comes in as a list. So we just take the first object.
+
+We're going to say if the type of this is text, then what we're going to do is we are going to take the response dot content at index zero dot text. Otherwise we're just going to say, sorry, I can't generate a response right now or something. Okay. So if it's of type text then we're good to go. We just take the text and we can reply with that.
+
+Otherwise we just have kind of this custom error message that we'll put in. Then what we're going to do is same thing. Save the message. We're going to save it to the same conversation key. But this time we save it with the assistant and then the reply so that we know, okay, hey, this is the new message, right?
+
+So we have this conversation key. This was the user's message. And then this is what we replied with. So we can kind of see that chained together. Then of course we're going to send the email.
+
+So to do you know, send email, which we'll look at in a second. And we're just going to return a next response dot Json where the status is okay. And that's all that we need to respond with. And also we'll just do a quick log here. So we'll just say console dot log.
+
+And let's just do some backticks. And we're going to go inbound applied to. And then this is going to say the sender okay email. And then we will just put inbound. And then we can put like the message ID or something just so we can see what we're getting okay.
+
+And just because I also want to see this I'm going to go console.log. And then let's just print out what the reply is. So same thing. Let's go Backticks.
+
+And we can say you know outbound or something okay. And we can say I replied with and then we're just going to put the reply just so we can see what the response actually was. And we we should probably put what they sent as well. But I want this to be crazy long in the console. So for now we just want to test to make sure that that works so effectively.
+
+Now at this point, what we have is a post end point where if we send a request to this, that includes all of the correct details here, what will happen is we will be able to reply to that using Arc. Now keep in mind that this webhook is not protected. So we don't have any signing secret or anything along those lines. So anyone could just call this right now. Again we can protect that using post mark, but I'm just not going to go through that in this video.
+
+So what we need to do now is we could manually test this by just sending a Post request. But what I want to do is test it using postmark by actually sending an inbound email. Now in order to get that to work, we need to have this endpoint actually running and available on the open internet. So first let's run our project. First of all just make sure there's no errors that everything's executing.
+
+This effectively. We'll just run a backend API for us right now because we don't have any front end code really that we've written. And what we'll need to do is we'll need to use something called Ngrok, which I'm going to show you in one second to allow us to forward the requests that get sent to a kind of public URL to this private, locally running server. Because we're not deploying this out on the open internet. I'll go over in a second.
+
+But essentially, Ngrok is just a proxy that allows you to proxy a request from a public IP to a local private IP on your own computer. So what I'm going to do right now is I'm going to type npm run dev. There's probably going to be some errors, but let's run it and let's see if we're good to go. And it looks like we are okay. And this is running on port 3001.
+
+However it's giving me some issues because it's trying to import a file that doesn't exist okay. So let's actually go fix that. We're going to go to our layout dot. And we're just going to remove some of the stuff that we don't need. So actually we don't need any of the metadata or any of the fonts.
+
+So let's get rid of all of this. Like that. Let's get rid of the metadata. And then for here we can get rid of these class names for the HTML and just leave it like that okay. So that should be good for the root layout.
+
+Then let's go to page dot TSX and it's loading a bunch of images and stuff. So same thing. We can just kind of scrap all of this. We'll just leave the main container and go like that so that we don't have any kind of unnecessary code. And if we go back here to the browser tab in cursor on port 3001, we can see we just get an empty page, which is totally fine.
+
+Okay. So this is all running. Now what we're going to do is we're going to go and we're going to install Ngrok. Now the way you install Ngrok is very straightforward. All you have to do is just go to the anger website and just go to get started for free.
+
+You need to sign in or create an account. Again, it is completely free and then just download this for your operating system. You also can brew install Ngrok as you see with this command, or use scoop or use docker pull. Either way, you simply need to install it. Now, once you install Ngrok, what you're going to do is go back to your terminal here and you're just going to type the command ngrok http, and then the port of the server that you are running.
+
+So in our case it is running. We can check this by going here on port 3001, because I believe I have another one running on 3000 right now. So we just type Ngrok http 3001. What this means is that we're just going to forward traffic to an http url to port 3001. So we hit enter.
+
+And what this is going to say is oh I already have ngrok running. So I just need to close that down. So I'm just on the free account. And then I can run it again and by the way, it might ask you to like log in or something using the ngrok command. Just do that, set it up again. It's very straightforward.
+
+Once you have it set up, you're good to go. Okay. So I just shut down my other instance of Ngrok. Let's run it again and you'll see that what this does here is just spin up a forwarding URL. So you might need to expand the terminal so that you can see it.
+
+But what I'm looking for is this URL right here. So I'm looking for this https url that ends in dot free dot app. And that goes to localhost port 3001. So what we're going to do is just copy that URL. And we're now going to go over to postmark.
+
+We're going to go to our default inbound stream. And we're going to start setting up some of these settings here. So you can see that if we go here it says set your server's inbound webhook URL. So what we're going to do is just paste that URL slash API slash inbound. So that's the URL route that we need to go to right.
+
+Slash API slash inbound. This is the ngrok URL. And one thing to keep in mind here is that if you shut the server down and you restart it, or you stop ngrok and you restart it, you are going to need to get a new URL of this. You will need to keep updating this if you're testing it, but ideally, if you were to deploy this, then the URL of the domain you have for your back end obviously will not change. So you just put that here, you're good to go and everything is set.
+
+So all we're going to do is just go save changes here for this. Our webhook URL okay. Now what we're going to do is also just copy this inbound email address, because this is currently the email address that we can send emails to you and then get a response from, what do you call it, our email system. So let's copy this email address. Let's make sure again that our server is running okay.
+
+We're good to go. And we're going to now go to our email. And we're just going to compose a new email. Now for that we're going to send it to the email address we copied in postmark. Again this one right here.
+
+We can just do something like I don't know, hello world okay. Say hello to me and then just say whatever you want. Right. Because we're trying to test to make sure this works. So let's shoot that email off.
+
+We're not going to get a response right now. But if we wait for a second on our server kind of terminal page here, we should hopefully get something forwarded over. Okay. So it just came through here. It said invalid request type.
+
+Your credit balance is too low okay. So I'm going to fix that in a second because I don't have any credit in my API account. But effectively this worked. It did trigger the inbound webhook to run, but it just that I can't actually generate something because I don't have any credits in my anthropic account. So I'm just going to go load up with a few more credits, be right back.
+
+All right. So I just gave anthropic more money as usual. And now what we're going to do is go back to email and I will send another email. And let's just test if this works. It does take a second to come through here. So just be a little bit patient.
+
+And we should see that it triggers the inbound webhook here as soon as the email is received by postmark and that we can start generating the reply. And then of course we'll send the email in one second. I just want to make sure that the inbound is working. Okay. So it did work.
+
+We got another trigger. However, it's still telling me that I'm out of credits, so I think it might just take a second to refresh. Let me just take a minute break, come right back and hopefully it will be working. Okay. So unfortunately anthropic is being quite annoying and although I have loaded with more credits, it's going to take a minute to propagate here.
+
+So rather than just sitting and doing nothing, let's move on and let's actually just code out the email responses. So by the time we finish coding this, everything should be good to go. And we can just test it fully. Because again I imagine for you guys this is working now because you probably have credits whereas I am waiting for them to reload. Okay.
+
+So what we're going to do now is we're going to go to this email file and we're going to start writing the code to actually send a response. Now we need to be able to send a welcome message as well as to send the general message. Right. So let's start with the assistant message. So I'm going to say export async function.
+
+And it's going to be send assistant reply email. And we're going to take in the arguments which is going to be the assistant reply email parameters. Now what we're going to do here is say const id is equal to args dot message id. We're then going to say await. And this is going to be get postmark okay.
+
+And then dot send email. So this is as easy as it is to actually send an email with postmark. You literally just write to send email. And then you put in the required fields. So we're going to say from is going to be you will require sender because we need to have a sender address.
+
+We're going to say two. Notice we're starting with a capital is going to be asked to we're going to say subject is going to be args dot subject. We're going to say text body is going to be args dot text body. And then we're going to say headers is going to be. And we're going to include the following headers.
+
+Now the name header is going to be in dash reply dash two. And the value is going to be ID. And then we're going to have name again. And this is going to be references. And this is value ID okay.
+
+So that's all we need to do to send an email. Now by default we should use the transactional email stream. You can't actually specify manually the type of stream that you want to use, but by default it will go to transactional and then it will just send email. So that's pretty much it for sending the assistant reply now, as well as that, we can handle sending the welcome email. So let's go back to postmark.
+
+Because what we're going to do for sending the welcome email is we're actually going to create a email template. So if you go back to your message streams here and you go to templates, what we can do is create a new template. So a template is essentially a reusable email. I'm sure you guys know what a template is. What we're going to do is just press on. Welcome.
+
+But you can see there's a bunch of them here. Or you can just create your own template manually from scratch. And this is something that has some dynamic variables that you can inject. So you don't need to keep regenerating the same email over and over again. You can just dynamically create them based on these custom HTML templates.
+
+So I'm going to go to welcome for the layout. I'm not going to use a layout, but you could add a layout so that the templates are rendered within some kind of layout to keep your branding styling, etc. consistent for your company. But I'm going to go don't use a layout and just press on, continue and you're going to see that it gives me this kind of like, you know, default welcome email. Now, I don't really like this.
+
+So what I'm going to do is go to edit, and I'm just going to completely change this with a new template that I'm going to include in the GitHub repository. So again, rather than writing a completely from scratch, I'll just include it in the GitHub repository so you guys can just copy it in. Okay. So I've just put it here inside of Curser. And again I will include it in the GitHub repository.
+
+But you can see that it's just a very simple with inline styled, kind of, you know, what do you call it HTML template here. And anytime you have a variable, you can just put it inside of these two sets of braces. So I have a name, I have a product name. And you can include other variables like support, email or really any other variables that you want inside of this template. So I'm just going to copy this.
+
+We're going to go back to postmark. And what we're going to do is we're just going to replace what was there with this okay. So now we have this new HTML template. If we want to look and see what it looks like, we can go to the preview. It will just take a second to render.
+
+And you can see that this is what it looks like. Welcome name value. Thanks for trying. Product value. Email us. Whatever.
+
+Right. There you go. Now in terms of the subject, we'll just leave it as this. Welcome to product name. Name.
+
+But you can change that if you want. And then go ahead and press on. Save. Now we're going to look for here is the alias. So notice the alias is welcome with lowercase.
+
+We're going to have that in our environment variable. So if you remember in our env we had this postmark welcome template alias called welcome. So we just want to match these two up in case you call it something else okay. So now that we have that we can go back, we can go to emails dots and we can start setting up the code for actually sending the welcome emails. So what we're going to do is create a function.
+
+And this is going to be the welcome template reference. And this is going to be string or number. And then what we're going to do here is we're going to say const alias. So let's spell cons correctly is equal to process dot env dot. And this is going to be the welcome okay.
+
+Welcome underscore template underscore alias like so. And I believe this starts with postmark. So postmark welcome template alias I don't know if that's exactly correct. But let's just go check our env and see. Yeah. Postmark welcome. Template alias okay. Good to go.
+
+And we're going to say question mark. And dot trim. Then what we're going to do is say if not or if sorry if alias then we're just going to return the alias. Otherwise we can just return a manual value of like welcome okay. Or we could throw an error or something if we want, but for now this is fine.
+
+Okay then. Now that we have the alias, what we can do is say export async function, send welcome email. We're going to take in arguments of the following. So we're going to say to string and display name is going to be string or no. Now from here what we're going to do is we're going to say const.
+
+So let's tab in const name is equal to display name okay. Question mark dot trim. Or we're just going to put there. So if that doesn't exist then we'll just put there and that is enough okay. Then we're going to say const product name is equal to.
+
+And we'll just hardcode this as email assistant. But you can adjust this to be anything that you want. And then for the supports email same thing. We'll just hardcode it. But you could change anything you want.
+
+And I'll just go support at example.com for right now. Then to send the email we're just going to say await. Get postmark okay. And to send with the template we're going to say dot send email with template.
+
+Again very very easy to do this. And inside of here we're actually just going to put new. And then this is going to be templated message. Remember we imported that above from postmark okay. So we're going to say new template ID message.
+
+Let's go back down to it for the template a message we're going to go require sender because this is who the message is coming from. We're going to say welcome template ref so that we get the reference or the alias. And then we're going to specify the template values. So we're going to say name. We're going to say product.
+
+And this is underscore name is going to be the product name. And then the support email is going to be the support email. So we just need to fill in the values. And then the last thing we do is specify the two value which is who we want to send this to. And that's it.
+
+That's how you send the welcome email. Very straightforward. So we have the welcome template reference, the ability to send the welcome email and to send the assistant reply. Okay. So now that we have those let's go back to our routes for the inbound.
+
+And let's actually import those that we need. So we're going to go to our imports. And we're going to say that we want to import the send welcome email from lib email. We also want to bring in the send assistant reply email. So now we can start writing those.
+
+So where we have the send welcome email we can say await send welcome email sender email and display name. And then once we get the reply here we can send that as well. So we can say await send assistant reply email and we can send to the sender email with this object, with this text body and with this message ID. And let's actually just adjust the subject so it looks a little bit better. So we're going to say subject dot starts with.
+
+So if it starts with re then what we're going to do is just go question mark subject. Otherwise we're going to put in Backticks re colon. And then we are going to just put the subject so they know that we're replying directly to them okay. So that is pretty much it. So let's just remove that to do it doesn't really matter.
+
+The order in which we put the assistant reply. And then another thing I'm realizing is we need the system prompt. So let's go to our prompts to our inbound assistant. And I'm just going to copy in the prompt because I'm not going to write it out manually. And then you guys can copy it from the GitHub repository.
+
+This is what it looks like effectively, what I'm doing is just writing it in a way where we can read it a little bit easier. So everything's on a separate line. Effectively, what I said is your email system. Keep responses concise. Each email is handled on its own.
+
+The user may include quote a text from earlier mail below their new text. Ignored quotes only answer the top newly written parts. Just telling it. Hey, just answering what the user just asked. Not, you know, the whole chicken.
+
+Okay, so now we're just going to import that so we can say import the inbound assistant system prompt from this. And then what we can do is just specify the inbound assistant system prompt like that. And we are good to go. And that is now the new system prompt. Now I don't know if my credits have reloaded yet but effectively the inbound should be done.
+
+So let's try it again by sending another email and see if we can get it to work. Okay, so I just said, you know, say hello to me. Let's send it to that inbound request. Let's go back here and let's wait a second and see if we get the reply. Okay.
+
+So now it's actually just giving me an error saying that I spelt sonnet incorrectly. So let's just fix that and then we should be good to go. So let's go sonnet okay. And let's now just close this down and restart it. And let's send one more email.
+
+What I can do is just reply to this one. Hello. Okay. Just so that it sends back to the same address. And let's see now if this works, okay.
+
+And finally we can see that we get the inbound. It says Reply detect with Tim dot net and says hello how can I help you. And if we go back here to my email you can see that we get hello, how can I help you today? Now the one thing that I didn't get was the welcome email. So what I'm going to do is I'm going to send this from another email, because I believe what happened is when we were testing before, it marked that it sent us the welcome email, even though it didn't send it, because I didn't have that coded in yet.
+
+So which just send from another email address and see if we can trigger the welcome email to be received. Okay, so I was just looking through the code here and I realized that I made a mistake in these should send a welcome email function, which is why the welcome emails are not being sent. Well, when I did the selects I didn't put any fields selects, so I need to put the following here where I say welcome sent at. And then this is going to be context welcome sent at. So that's what I'm selecting here.
+
+So that this condition will actually run. And that we get, you know, this particular field, not all of the fields, which means this is always going to be, what is it false. Okay. So let's resave this here. Let's just restart.
+
+And now if I set another email, we should hopefully get the welcome email. Okay. So I'm sending another email saying can you welcome me. And let's see if we receive it okay. And one more silly mistake here because that didn't work I need this to be two equal signs, not three equal signs.
+
+And then hopefully this will work. Then let's restart it and try one more time. Apologize for the errors. But this happens when you're coding large projects. So I usually just like to keep it in to keep it more realistic.
+
+Now let's go back to the email and try one last time. All right. And there we go. We got the welcome email finally. So it is all good.
+
+It is working perfect. All right. So now that all of that is functioning let's go back to the code and let's move on to the next steps. Let me just close all of this and let's continue. All right.
+
+So now that we finished that it's time to move on to create the dashboard. Now what I want to do here is I want to make it so that we can view all of the context that we have, see a history of all of the messages, and then be able to send a broadcast email to all of them. Now, in fact, let's actually just quickly go back to postmark because I just want to show you this. If we go to the email assistant, you can see that we have the transactional stream. So we have the number of emails sent, we have the inbound stream.
+
+And then we'll have the broadcast stream here as well when we start using that. So the transactional stream is working. We can always of course view the stats here. If we want to enable the tracking link tracking, all of that kind of stuff. There's a lot of interesting features.
+
+We can see the activity all of the emails and suppressions set up the webhooks, right? Like there's a bunch more stuff that we can get into here. Point is, you can see it all from the dashboard. And then same thing with the inbound. Again, we can see these emails if we want to and look at the individual activity.
+
+But I want to just be able to see it from our what do you call it here dashboard. Okay. So let's go back. What we're going to do is we're going to go to components. We're going to start writing the individual components.
+
+And then we'll render them onto the screen. Now probably the easiest to start with is going to be our email log. So what we're going to do is we're going to say import type. And this is going to be the message log row from ad lib slash types. We're then just going to do a quick function to format the time.
+
+So we're going to say format time. This is going to be the date. And what this is going to do is just return d dot to local. So let's take this correctly to local string. We're going to put in undefined.
+
+And then we're going to pass the date style which is going to be medium. And the time style which is going to be short okay. We're then going to say export function email log. We're going to take in the various entries. These entries are going to be of the following type.
+
+So we're going to say entries are message log row. And then we're going to have our component. Now from here we're just going to return a simple list. So we're going to return UL. The class name for this is going to be e dash log underscore underscore list like so.
+
+These are already predefined in the style sheet. And then what we're going to do is say entries dot map. And we're going to map the following. So we're going to take in our row okay. And from here we are going to say const inbound equals road dot roll is equal to user.
+
+So we're just going to check okay. Is it a user message or an assistant message. Because based on that I want to what do you call it here. Kind of color it or style it differently. And then I'm going to return from here the following.
+
+So I'm going to put a set of parentheses. And we're going to put a list element. So we're going to put or list items. We're going to go li. Let's spell li correctly.
+
+For the li we're going to have qi is equal to. And then this is going to be the row.id. And the class name is going to be equal to e dash log and then underscore underscore item like so. Then inside of here we're going to have a div.
+
+The div is going to have the class name. And it's going to be equal to e dash log underscore underscore meta. And then inside of the div we're going to have a span. The span is going to have the following. So it's going to have class name equal to.
+
+And then we're going to see okay inbound question mark. So are we inbound or not. That's the rule right. So if we're inbound then the class name is going to be a dash log underscore underscore badge okay let's spell badge correctly. And then e dash log underscore underscore badge dash dash received like so.
+
+Otherwise. So otherwise it is going to be E log badge. And then E log badge sent okay. And let's put this on another line. Now inside of the span we're just going to say inbound question mark.
+
+If it's inbound we're going to say received. Otherwise we're going to say sent okay. Then we're going to put the time. So we're going to say time like so we're going to say the class name is equal to e dash log underscore underscore time. And then the date time is going to be wrote createdat dot to iso string.
+
+And then inside of this time here okay. So let's end the time field. We are going to put as a variable the format time. And then this is going to be row dot created at like. So let's make sure that we leave that open and then that is closed okay.
+
+Cool okay. Then underneath we're going to have a span. For this span we're going to have the class name is equal to the I dash log underscore underscore thread okay. Now the title is going to be equal to the row dot thread ID. And then what we're going to do is the following inside of this span.
+
+So we're going to say inbound. And then we're just going to put a space here. And then we're going to say as a variable row dot. And this is going to be thread ID dot length is greater than 12. So if it's greater than 12 then what we're going to do just to separate out a little bit here is we're going to put a backtick, we're going to put a dollar sign, we're going to put row dot thread ID.
+
+This needs to be a variable. So let's put that here. And then this is going to be dot slice. And we're just going to slice 0 to 12 okay. Remove this.
+
+And we're just going to show the first 12 characters. And then put a dot dot dot. Otherwise we can just put the row dot thread ID and let's just fix the formatting a little bit so it's more proper okay. So that's where we're going to show the thread. And then the very last thing we're going to show inside of here is just going to be the actual content.
+
+So we're going to say class name is equal to e log underscore underscore preview. And we'll just show the row content I know that's a little bit complicated. Again if you were having trouble following that then just copy it directly from the GitHub in the description. So that is the email log. The other ones should be a little bit easier.
+
+So let's go to our contact list for our contact list we're going to say import type. And then this is going to be contact row from ad slash lib slash types. Then what we're going to do is say function format welcome. We're going to say send date or no from here we're going to say if not sent then we're going to return not sent yet. Otherwise we're going to return send dot to locale.
+
+Okay. Let's do this properly to local string. Same thing undefined. And then we are going to put here the date style medium and the time style short. Okay.
+
+Then we're going to say export function contact list. And from here we're going to take in the contacts. And this is going to be of type. So we're going to say contacts. So let's put it in an object contacts.
+
+And then this is going to be contact row as a list. Then what we're going to do here is just do a simple return. We're going to return a UL. We're going to say class name is equal to. And this is going to be e dash contacts underscore underscore item okay.
+
+And sorry this is not item. This is list. Then we're going to map the contacts. So we're going to say contacts dot map. And for the map we're going to map a C.
+
+And what we're going to do here is just return a list item okay. So for the Li we're going to say the key is equal to c.id we're then going to say the class name is equal to e dash contacts underscore underscore item. Then we're going to have our div inside of here. For the div we're going to say class name is equal to e dash context underscore name.
+
+And then we're going to put the c dot display name like so let's make sure we spell the display name correctly okay. So that's going to be the div. But let's make sure that they have a display name. So we're going to say C dot display name question mark this. Otherwise we'll just render. No okay.
+
+So now continuing inside of here we are going to have a div. This is going to be class name equal to e dash contacts underscore underscore welcome. And then inside of here we're going to have a span for the span. We're going to say class name equals e a dash context underscore underscore welcome dash label. And we're going to say welcome email like so.
+
+And then we're going to put a span for the span. We're going to say class name is equal to e dash contacts underscore underscore welcome dash value. And let's end the span. And then inside of here we're going to say format welcome. See welcome set at okay.
+
+So again I know a little bit complicated but effectively what we're doing is displaying all of the context and then showing whether or not we have sent them the welcome email. So that's what we're seeing from this component okay. And then lastly we're going to go to the broadcast form. And then we're kind of in the home stretch. We just need to write the logic for sending the broadcast.
+
+So first of all this is going to be a client component. So we're going to go use client. We're going to import the use action state from react. We're then going to import the type which is going to be the broadcast state broadcast like this state from. And this is at slash lib slash types.
+
+Now we also need to send the broadcast email which we'll do in a second. But for now we're going to say const initial state broadcast state is just equal to an empty object. We're then going to say export function broadcast form. For now let's just return a empty fragment. Because I can't write this until we have the broadcast function that we need, which we'll do in a second. Okay.
+
+But I do still want to get something on the page. So let's go to layout. Let's just adjust this a little bit. So for HTML we're just going to add a class name here. So we're going to say class name is equal to.
+
+And this is going to be E layout HTML. And then for body we're just going to change the class name here to be E a dash layout dash body like so okay. So that's all we need for the layout. Now let's just quickly import the styles. So we're going to say import add and then slash styles slash index which will import all of the other sheets for us.
+
+Now we're going to go to page dot TSX. For page dot TSX we're just going to import these different components that we have. So we're going to say import. And then we're going to import the broadcast form from the broadcast form component. We're going to import the contact list from there and the email log.
+
+And then we're going to import the get all contacts and the get recent message log. Okay. Then what we're going to do up here is we're going to say export const dynamic is equal to force dynamic. And inside of this home components we're going to start writing some state. So we're going to say const.
+
+And then this is going to be entries and contacts is equal to await promise dot all. So we can load these at the same time. And we're going to get the recent message log. We're going to get up to 200. And then we're going to get all the contacts like so.
+
+Now we just need to render the different pages. So what we're going to do is have the div first of all this div we can remove all of this stuff and we can just call this e home. Then for the main container let's remove all of those as well. And actually let's adjust this and let's just make this main okay. So we're gonna have main and main.
+
+And then inside of here we're just going to put some sections. So we're going to say section class name is equal to E dash section. And then what we can do is have a H2. So for the H2 we could just say id is equal to context heading. We can say class name is equal to e section underscore underscore title.
+
+And then we can call this context. And then we can just render the contact list with the context. Now it's actually filling in the rest of the stuff. So let's just quickly do that. We're going to have the email log and then the broadcast form.
+
+These are all sections right there. Class name is the E section. And then we have the broadcast email all of that kind of stuff. The only one that I want to change is rather than log heading, this is going to be activity heading like so okay. So that should be it for the page now because our server is still running.
+
+If we just open up localhost 3000 here it says await isn't allowed inside of async functions okay. So let's just go back and adjust that. So I believe we just need to make this an async component. So let's go export default async. And then if we come here we can see we have the email log.
+
+There is a lot we have the contacts which aren't really showing. And then the broadcast. So something's a little bit messed up. Let me quickly have a look and we'll adjust it okay. So it looks like inside of our routes here for the inbound we just forgot to upsert the contact.
+
+So we just need to make sure that we do that. We can really do that anywhere that we want. I mean I'll just do it down here, but I'm gonna say await ups are contact from inbound sender email and display name. So we just have to do that at some point in the function. Now that we have that called we will save the contacts.
+
+Before we weren't saving them. So that's why they weren't showing up. Now in terms of the email log, it's fine, but it's not looking as good as I remember it looking. So what I want to do is just look and see if maybe I made some mistake here in terms of the style sheet or the names. Okay, so I just spelt received incorrectly.
+
+So I'm just going to fix that. That's a first mistake okay. There we go. That's what I was looking for. We have sent receive sent receive sent received.
+
+And you get the idea okay. So that is the start. Now that we have that, let's move on to actually handle the broadcast form and sending the broadcast email. So to send the broadcast email we need to go to our email box. And we need to write the logic for the broadcast.
+
+So what we're going to do here is we're going to say const and then an all capitals broadcast. So let's spell this correctly. Broadcast underscore stream is equal to. And then this is just going to be broadcast like. So then what we're going to do is write a function.
+
+We're going to say export async function send broadcast okay. Broadcast emails like that. We're going to take in our contacts, which is going to be the broadcast contacts. We're going to take in our subject, which is a string okay. So let's just type that correctly.
+
+And we are going to take in our body which will be a string as well. Now this is going to return a promise which is a number of the broadcast emails that we sent. So we're going to say const from is equal to require sender. We're going to say let sent count equals zero. We're going to say four.
+
+And this is going to be can't see of contacts. And then what we're going to do is just send the emails. So we're going to say await get postmark. And then we're going to say dot send email for the email. This time we're going to say from is from, we're going to say two is secret email.
+
+We're going to say subject is subject. We're going to say text body is the body. And we're going to say the message stream is the broadcast stream. So we're specifying we want to use the broadcast stream, not the normal stream, which is designed for broadcast emails. We're then going to say send count plus plus so that we can keep track of that and return it.
+
+Okay, so that's all we need to do to send the broadcast. However, what we need to do now is we're going to go to our actions. So we have actions broadcasts. And what we're going to do here is say use server. And the idea is that we'll send a request here to actually get the details from the database so that we know which context to send the broadcast to.
+
+So we're going to say import and we're going to get go get all context from ad lib slash TV. We're going to import the send broadcast emails and we're going to import the type. Now it's already filling this in, but that's actually not what I want. I want export async function send broadcast to send the broadcast. We're going to take in the previous state, which is the broadcast state, as well as the form data, which is going to be the form data for what we want to fill in with the broadcast.
+
+And this is going to return a promise and this will be the broadcast state. Okay. So we have that there. And we're going to say const subject is equal to string. And this is going to be form data dot get subject okay.
+
+And then we're going to say question mark question mark empty string dot trim. We're then going to say const body is equal to string. Same thing. This is going to be form data dot get body otherwise empty and trim. We're going to say if not subject or not body then we're just going to return an error.
+
+So we're going to say return error subject and body are required. Now. Otherwise we're going to say const rows is equal. To await. Get all contacts.
+
+We're going to say if rows dot length is equal to zero then what we're going to do is just return again an error. And we're going to say no context found. Otherwise we're going to get all of the context. We're going to say const context is equal to rows dot map. We're going to map each row to the following.
+
+So we're going to say r. And then this will be parentheses. And then an object that we're going to return for each one of these is going to be email which is our dot email and display name which is our dot display name. We're then going to say const send count is equal. To await send broadcast emails to the context with the subject and the body.
+
+And we're going to return success. And we're going to say broadcast sent to, you know, this number of contacts like that. And we also just return these send count okay. So that is the action we're going to be using here. We actually don't need the broadcast contacts. So let's remove that.
+
+And now we can go to the broadcast form. And once we fill that in we should be good. So for the broadcast form first of all we're just going to bring in that action. So we're going to say import. And then this is going to be send broadcast.
+
+We're then going to go here and we're going to say const. And this is going to be state form action. And then rather than is pending let's just call this pending is equal to use action state send broadcast with be initial state. We're then going to return the following. So we're going to return a form.
+
+The action is going to be equal to the form action like so. Now the class name here is going to be equal to e dash broadcast. So let's spell that correctly. Then we're going to start filling in what we need. So we're going to put a P and we're just going to say send a broadcast email to all contacts okay.
+
+That's fine. Then what we're going to do is we're going to put a label. The label is going to be class name E broadcast label. And we will just call this subject. We then are going to put an input field.
+
+We're going to say input ID is equal to the broadcast get broadcast. Let's spell this correctly dash subject. We're going to say that the name is subject. The class is the E broadcast input the placeholder subject. We're going to make it required.
+
+And we're going to put the type equal to text like so. And let's just quickly format this okay. Now let's just adjust the label. So it says HTML four. And that's going to be the broadcast subject okay.
+
+Now the next thing that we want to do is put in the body. So actually just use the autocomplete. We have e broadcast label okay. Broadcast body. It is body.
+
+We're going to have a text area here. We have ID broadcast body class name E broadcast text area. The name is going to be the body. The placeholder is going to be the body. As well.
+
+We're going to make this required and we're going to make rows equal to six for right now okay. Then lastly we're just going to show the error state if there is any. So we're going to put a variable. We're going to say state dot error. So if there is an error then what we can do here is we can put a paragraph tag for the paragraph tag.
+
+The input class name is E broadcast message, E broadcast message error. Like so. For that error we are just going to put the role is equal to alert. If we can spell that correctly. And then we'll show the states error.
+
+Otherwise we can show no. So let's put it okay. And let's just make this a little bit cleaner. Otherwise we can show no like that okay. Now we want to show if there is success.
+
+So we're going to say state dot success and not state dot error question mark. So if that's the case then what we can do down here is we can put a paragraph tag. We can say the class name is E message broadcast. E broadcast message success. The role this time does not need to be alert.
+
+So we can remove that. And we can just show the states success. Otherwise here we can show. No. Okay.
+
+So that is for that. And then lastly we just need a button to submit. So we're going to say class name is equal to E dash broadcast. And this is going to be underscore underscore submit. Then we're going to do the type of this is equal to submit.
+
+And we're going to say disabled is equal to pending. So if it's loading we don't show that. Now if it's pending we're going to say sending dot dot dot. Otherwise we're going to say send broadcast for that button okay. So that is going to complete this form.
+
+That's pretty much all that we need in order to send the broadcast. And just the last thing I quickly want to fix is that if I go to my routes here, the upsert contact from inbound, I believe we need to actually put that a little bit earlier. So yeah, needs to actually go before we check the welcome message just to make sure that we have the contacts. So let's go here and let's do that right before we check the welcome message to make sure that we're updating the contact and we add it into the database okay. So now that we have that let's quickly check and see what this looks like.
+
+And if we scroll down we should see the broadcast form perfect. So we can send something and send one. However in order for that to work we need a contact because we weren't saving the context before. I'm just going to send another email. We'll save the contact and then we'll test the broadcast.
+
+Okay. We can see that a new contact was now added. You can see it shows my name. The welcome email was sent on this date. And if we go back here I can see that I received this and I should get the response in one second.
+
+All right. We can see that we got the response. I just asked it, how can I be happy? And it gave me this answer like so. All right. So that's all good.
+
+It's save the contact now. So what I want to do is test the broadcast. So I'm just going to go hello world. Just testing. Let's send the broadcast.
+
+And it says it was sent to one contact. So let me check the email and see if I received it. All right. And you can see that I received it. And we even have the unsubscribe link which is added here.
+
+Obviously we can format this and make it look better, but the point is the broadcast is working. So after a lot of work here, we have finally completed the project. We've built an email AI assistant that setups that anytime we send an email it sends us a response. We're tracking the contacts we can send broadcast. We have a full log of all of the history.
+
+This is super cool and I hope you guys enjoyed this video. Now again, massive shout out to postmark for making this video possible. This is like one of the easiest ways that I've ever used to send these types of emails. You can see that you can send broadcast transactional. You can create other additional streams.
+
+You have the inbound stream. And this is just one of the best email platforms out there. So definitely make sure you check it out and use it for projects similar to this. If you guys enjoyed the video, make sure leave a like. Subscribe to the channel and I will see you in the next one.

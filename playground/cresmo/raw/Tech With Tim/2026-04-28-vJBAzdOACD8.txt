@@ -1,0 +1,130 @@
+---
+video_title: "I gave Claude its own database, here's what happened"
+video_id: vJBAzdOACD8
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=vJBAzdOACD8
+video_date: 2026-04-28T13:01:40+00:00
+video_description: |
+  Use ghost.build for free to add persistent memory and disposable databases to claude: https://b.link/ghost-twt
+  
+  In this video, I show you how to connect Claude Code to a real database using a free MCP server from ghost.build. This is a game changer for AI-assisted development — once Claude Code has direct access to your database, it can write queries, debug schema issues, and build features way faster.
+  
+  I walk through the full setup step by step so you can get this running in minutes.
+  
+  Ghost.Build Docs: https://ghost.build/docs/
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/techwithtim
+  
+  ⏳ Timestamps ⏳
+  00:00 | Intro/Overview
+  01:21 | Solution
+  02:05 | Setup/Install
+  02:50 | Claude Code Usage
+  03:16 | Demo 1: Create and connect
+  07:25 | Demo 2: Seed, query, nuke
+  08:55 | Demo 3: Optimize a slow query
+  10:39 | Demo 4: 10 parallel databases
+  13:30 | Outro
+  
+  Hashtags
+  #Claude
+  
+  UAE Media License Number: 3635141
+---
+Se você estiver desenvolvendo um aplicativo em 2026, precisará de um banco de dados. O problema é que a maioria dos bancos de dados são caros, difíceis de configurar e não podem ser gerenciados nativamente por agentes de IA. E mesmo que consigam, o agente de IA pode cometer um erro e destruir todo o seu banco de dados. Então, neste vídeo, vou mostrar uma solução para isso e vou dar ao Claude seu próprio banco de dados, projetado especificamente para trabalhar com agentes de IA. Isso me permitirá executar centenas de bancos de dados em paralelo, simultaneamente, criar forks de bancos de dados existentes, excluí-los, criá-los, lê-los, listá-los, tudo nativamente dentro desta ferramenta de IA, sem que eu precise fazer nada manualmente.
+
+E a melhor parte é que isso é completamente gratuito. Então, que banco de dados é esse de que estou falando? Bem, é ghost.build. É gratuito e você pode instalá- lo com apenas um comando, e depois adicioná-lo como um servidor MCP a ferramentas como Claude, Codex ou qualquer outra ferramenta principal que você use para desenvolvimento. A ideia aqui é que
+
+podemos criar bancos de dados com muita facilidade. Podemos então criar forks desses bancos de dados para gerar múltiplas versões. Portanto, se quisermos testar algo ou se quisermos que o agente de IA construa algo, podemos fazê-lo em um clone do nosso banco de dados existente, em vez de no banco de dados original. Assim, se algo der errado, nada será prejudicado, e então podemos testar todos os tipos de estratégias de banco de dados e, em seguida, aplicar aquela que realmente funcionar de volta ao banco de dados principal. Agora, quero mostrar exatamente como configurar, mas vou dar uma olhada rápida na documentação para que você entenda quando usar esse recurso na prática. E, em primeiro lugar
+
+, existe um plano gratuito aqui. Você terá direito a 100 horas de computação por mês, 1 TB de armazenamento e bancos de dados e forks ilimitados. Então, você pode usar isso apenas para memória persistente por conta própria, caso queira ter anotações, blogs ou algo do tipo dentro do Claude, já que ele não possui memória própria, ou pode usá-lo para diversos projetos, como eu pretendo fazer. E, no caso de utilizá-lo, é bom para armazenamento persistente do Postgres, a liberdade de criar e descartar bancos de dados com muita facilidade, sem a preocupação com o custo, e também para fazer forks, como eu estava mencionando , além daqueles limites rígidos de gastos . Bem, provavelmente não é a melhor opção para algo como um painel de controle online ou para um sistema de precificação baseado no uso, que exige um controle preciso de custos. Você entendeu a ideia.
+
+Certo, então deixe-me mostrar como configurar. É muito básico. Vou deixar os comandos na descrição ou o link para a documentação. Independentemente de você usar Mac ou Linux, você pode copiar um desses comandos. No meu caso, estou usando um Mac. Podemos simplesmente ir até o terminal.
+
+Podemos colar o código, pressionar Enter e então começar a executar. Ok, eu já instalei, mas vai levar só um segundo. E depois de fazer isso, basta executar o comando ghost login. Ao fazer isso, você será solicitado a fazer login com sua conta do GitHub aqui. Eu já me autentiquei, por isso estou apenas conectado. Novamente, você
+
+nem precisa se cadastrar. Você simplesmente se conecta com sua conta do GitHub. E então podemos voltar, e o que vamos executar em seguida é a instalação fantasma do MCP. Ao executar esse comando, podemos escolher Claude, Codex, Cursor, ou qualquer outro. No meu caso, vou optar pelo Claude Code, porque é o que eu quero usar, e depois ele será instalado. Enfim, eu já tinha isso
+
+instalado, então apareceu a mensagem: "Ei, sabe, não foi possível executar porque já está instalado ." Mas, no seu caso, ele deve instalar automaticamente; escolha a ferramenta que preferir. E então, o que vou fazer é executar o Claude Code aqui e, para verificar a instalação, podemos simplesmente executar o comando slash MCP. Se formos por aqui, devemos ver o servidor MCP fantasma. Se clicarmos, podemos visualizar algumas das ferramentas.
+
+Podemos ver, por exemplo, login, execução de SQL, criação de banco de dados, etc. Então, vamos sair disso e começar a executar algumas demonstrações para mostrar por que isso é realmente útil e como você pode se beneficiar disso dentro do Claude Code. Então, para a primeira demonstração, vamos manter tudo bem simples. Vou optar por algo como criar um novo banco de dados fantasma chamado "registro de leitura" e definir um esquema simples para rastrear os livros. Quero o título, o autor, a data de conclusão e uma classificação de um a cinco.
+
+Inclua talvez uns 10 livros diferentes sobre IA e aprendizado de máquina. Vamos começar por aí. OK. Legal. Vou pressionar Enter e você verá que obtemos um texto formatado muito bem. Vocês sempre me perguntam
+
+o que eu uso para a digitação por voz aqui. Estou usando uma ferramenta chamada WhisperFlow. Agora, vamos dar uma olhada rápida aqui enquanto o programa está em execução. Como você pode ver, eu sou literalmente um usuário avançado. Tenho 103.000
+
+palavras a uma velocidade de 214 palavras por minuto. Obviamente, é muito mais rápido do que digitar manualmente, e eu gosto do fato de salvar as transcrições e fornecer todo o texto formatado automaticamente. E é grátis para experimentar e usar. Vou deixar um link para a descrição. E, felizmente, tenho uma parceria de longa data com eles, porque literalmente uso o produto o tempo todo, não importa o que aconteça, então achei que deveria avisar vocês. De qualquer forma, vamos esperar que
+
+isso termine. Podemos ver que está em processo de invocar um fantasma. Você pode ver que está criando um novo banco de dados chamado " log de leitura". Vamos esperar que isso termine e, assim que estiver concluído, entraremos aqui, veremos o banco de dados e começaremos a experimentar com ele. Ok, legal.
+
+Então, parece que acabou de terminar. Se eu quiser ver os comandos que foram executados, basta pressionar Ctrl+O, e você poderá ver que o banco de dados foi preenchido com vários valores diferentes. O sistema executou algumas consultas SQL para criar as diferentes tabelas, e isso está acontecendo nativamente dentro do Cloud Code, usando apenas o servidor MCP, sem que eu precise saber nada sobre a configuração do banco de dados. A partir daqui, podemos perguntar algo como: "Qual é a classificação média dos livros no banco de dados?" Certo? E então poderei
+
+ir e, com sorte, executar essa consulta. Certo, e podemos ver que obtivemos uma classificação média de 4,4 em cinco. E então, é claro, podemos perguntar praticamente qualquer outra coisa. O que eu vou dizer é: "Me dê os livros organizados por classificação." Certo, vamos ver se consegue extrair esses dados e classificá-los pela avaliação média. Ok, legal. E então,
+
+nossos livros de cinco estrelas, quatro estrelas e três estrelas começam a aparecer no console. Essa é a primeira demonstração, apenas para mostrar como é fácil. Conecta-se ao MCP e o utiliza automaticamente. Se por algum motivo não estiver usando o MCP, certifique-se de incluir o Ghost. Se você incluir o Ghost, ele saberá que deve usá-lo como banco de dados, caso você tenha outras ferramentas instaladas. Agora,
+
+vamos fazer algo um pouco mais complexo. Certo, então, para esta demonstração, vou dizer: "Crie um novo banco de dados chamado 'noite de cinema' com um esquema para rastrear filmes. Quero o título, o diretor, o ano, o gênero, a duração, a classificação de 0 a 10 e, em seguida, quero que você o preencha com 100 filmes diferentes de vários gêneros e décadas." Certo, então vamos executar isso e fazer com que crie algo um pouco maior. Ok, então parece que está terminado.
+
+Temos vários filmes aqui. Agora, o que vou fazer é criar um painel de controle com base nisso. Vou dizer: "Agora, crie um painel simples para isso. Quero uma página, Next.js, componentes Shadcn/ui, conexão direta com o banco de dados do Movie Night. Quero uma
+
+tabela com todos os filmes, um filtro por gênero e três cartões de estatísticas no topo mostrando o total de filmes, a classificação média e o diretor mais comum . Mantenha minimalista, apenas faça funcionar." Ok, então vamos inserir este prompt aqui e agora vou criar um painel simples. Não é a melhor opção para criar painéis, pois tudo acontece nativamente pelo MCP. No entanto, você pode obter a string de conexão do banco de dados subjacente e usá-la como quiser, mas normalmente ela é destinada a ser usada diretamente pelo agente de IA e gerenciada pelo servidor MCP. Então, vou clicar em "sim"
+
+e aceitar todos esses comandos. Vamos esperar terminar. Já volto e vamos ver como ficou . Certo, levou um tempinho, mas este é o painel. que ele criou, e você pode ver que podemos visualizar todos os filmes diferentes.
+
+Podemos ver a classificação. Podemos classificar por categoria, o que for, certo? E meio que navegar por isso. Obviamente não é perfeito, mas eu pedi para manter simples, o que obviamente aconteceu. E agora, vamos continuar e passar para a próxima demonstração. E, na verdade, antes de fazermos isso,
+
+quero mostrar que se eu sair daqui, certo? Porque o Claude não tem memória persistente por padrão, e então eu voltar e perguntar: "A quais bancos de dados você tem acesso com o Ghost, por exemplo?", você verá que esses bancos de dados ainda existirão. E então o que podemos fazer é excluí-los, podemos limpá-los, podemos criar um fork, o que mostrarei nas próximas demonstrações aqui. Mas, você pode ver que está listando. Temos os dois bancos de dados, e eu
+
+posso dizer: "Ok, exclua os dois." Certo? Provavelmente vai pedir para confirmar, mas vamos ver, e então vamos... Vamos nos livrar deles. Ok, e podemos
+
+ver que ambos os bancos de dados foram excluídos. Agora, vamos para a próxima demonstração. Certo, então, para esta, quero fazer algo que realmente mostre o benefício de ter esse tipo de ferramenta, que é executar vários bancos de dados ao mesmo tempo para testar várias estratégias. Neste caso, vamos começar otimizando uma consulta. Então, primeiro vamos criar um banco de dados que possamos usar para otimizar. Vou dizer: "Crie
+
+um banco de dados chamado 'shop analytics' com um pequeno esquema de e-commerce." Quero clientes, pedidos, itens de pedidos, produtos e categorias com 100.000 clientes, 500.000 pedidos e 1 milhão de itens de pedidos. Não adicione índices além das chaves primárias. Quero que isso seja lento de
+
+propósito. OK. Isso vai ser uma loucura. Não sei quanto tempo vai levar para criar todas essas entradas aqui. A questão é que eu quero um banco de dados realmente grande com uma série de valores diferentes para que possamos ver o quão lento ele fica quando tento consultar algo sem nenhum índice, visão materializada ou outras estratégias. E então, o que faremos é criar
+
+três forks de bancos de dados ao mesmo tempo. Vamos experimentar estratégias diferentes. Vamos executar diferentes consultas sobre eles. E então, qualquer uma que nos der o melhor resultado, nós a aplicaremos ao banco de dados base. Ok, então parece que está pronto. Criou todos esses valores.
+
+Agora, o que eu quero fazer é executar uma consulta nisso e ver o quão lenta ela é, e então faremos a otimização. Aqui está a consulta que quero que você execute. Quero que você mostre os 10 principais clientes com base no gasto total nos últimos 90 dias, além da quantidade de pedidos e do valor médio dos pedidos . Escreva o código, execute-o e depois mostre- me o tempo de execução e o plano de consulta. Quero ver quanto tempo leva. Ok, então me
+
+deu o resultado. Aqui estamos falando de algo como 1 segundo e 800 milissegundos. Não é extremamente lento, mas obviamente podemos tornar isso mais rápido. Então, vamos ver como podemos otimizar isso. Então, vou dizer: "Ok, não está muito lento, mas acho que podemos melhorar. O que eu
+
+quero que você faça é criar três bancos de dados bifurcados. Faça isso em paralelo. Não espere que os bancos de dados terminem de ser bifurcados antes de criar o próximo. Simplesmente bifurque os três ao mesmo tempo. E então, o que eu quero que você faça é aplicar três estratégias diferentes nesses bancos de dados, sem alterar o banco de dados base, que tornariam essa consulta mais rápida. O que eu
+
+quero que você faça é algo como índices direcionados, visão materializada e talvez uma tabela de resumo desnormalizada. Quero que você teste o desempenho da consulta em todos os três bancos de dados e depois me apresente os resultados e os classifique." OK. Então, vamos executar isso agora e ver o que obtemos. Ok, então acabou de terminar aqui e você pode ver que temos a visão materializada, a tabela de resumo e os índices direcionados, e obtemos um aumento de velocidade em comparação com a consulta base. Então, agora,
+
+o que podemos fazer, já que vemos o quanto é mais rápido em todas essas diferentes estratégias, é simplesmente instruir o sistema a aplicar isso ao banco de dados base. Então, dizemos: "Ótimo. Agora, vamos aplicar essa estratégia ao banco de dados base. Vamos usar uma visão materializada para que tenhamos uma velocidade de consulta melhorada." A vantagem é que eu estava testando isso em uma instância de banco de dados separada. Depois disso, posso
+
+simplesmente descartar essa instância do banco de dados . Não me custa nada. É grátis. Isso significa que eu não cometi nenhum erro no meu banco de dados principal antes de verificar se ele realmente funcionaria, o que é extremamente importante, principalmente com agentes de IA . Você pode ver, bum, simplesmente aconteceu isso. E agora
+
+estamos prontos para começar. Então, vou dizer: "Legal. Ok, remova os outros três forks do banco de dados. Não precisamos mais deles." Certo? E então podemos simplesmente
+
+removê-los. E aqui estamos. Tipo, isso é uma loucura, e é por isso que eu gosto muito dessa ferramenta, principalmente para esse tipo de experimento. E agora quero fazer algo ainda mais louco. Ok, então agora eu quero fazer algo que é bem comum, onde você tem alguns dados malformados. Você quer limpar
+
+alguma coisa. Mas eu quero fazer isso com 10 bancos de dados rodando em paralelo. Então, o que vou fazer agora é dizer o seguinte. Vou dizer: "Crie um banco de dados chamado 'espaço de usuários' com, digamos, 500 usuários fictícios. Quero nome, e-mail, número de telefone e data de criação. E quero que a
+
+coluna do número de telefone seja propositalmente confusa. Então, quero 3% de valores nulos, 2% de valores inválidos e o restante válidos, mas com formatos variados. Misture as linhas inválidas . Quero fazer isso para uma demonstração." Então, quero criar esse tipo de banco de dados malformado, que é muito comum, especialmente em grandes empresas onde os dados vêm de diferentes fontes. Em seguida, quero
+
+criar 10 bancos de dados em paralelo para executar diferentes estratégias de limpeza e verificar quantas linhas excluímos, quantas mantemos e quais os resultados dessas estratégias . Novamente, antes de aplicá-las e potencialmente causar algo perigoso ou destrutivo no banco de dados principal. Ok, então o banco de dados base foi criado. Agora, o que eu quero fazer é o seguinte. Vou dizer: "Quero adicionar uma verificação 'não nulo' e uma verificação de formato estrito à coluna de número de telefone." Mas
+
+primeiro preciso limpar os dados e não sei qual abordagem é a melhor. Então, quero que você crie 10 forks da base de usuários. Não use o comando wait quando estiver criando um fork. Basta garantir que todos os processos sejam bifurcados ao mesmo tempo, sem esperar. E eu quero que você faça algo como teste de migração um, teste de migração dois, teste de migração três, e tente uma estratégia de limpeza diferente para cada um. Então, descartar
+
+linhas defeituosas, preencher dados retroativamente, usar expressões regulares, normalização, colocar tabelas em quarentena, enfim, tudo o que você puder imaginar. Vamos testar 10 estratégias diferentes e depois me diga o que cada uma faz em seguida. OK? Então, vamos executar isso e observe que estou dizendo para não usar o comando wait porque, por padrão, ele espera que o banco de dados termine de criar um novo antes de criar outro . Isso vai levar muito tempo. Então, se simplesmente dissermos para ele criar processos filhos
+
+todos ao mesmo tempo, em paralelo, ele consegue fazer isso, mas precisamos instruir isso manualmente. Então, é isso que estou dizendo. Vamos esperar. Vamos ver o que acontece . Ok, então você pode ver que está criando bifurcações. Fiz isso em paralelo. Todas as
+
+10 aconteceram praticamente instantaneamente. E agora vai executar essa estratégia de limpeza. Certo, então está me mostrando o resultado agora. Parece que conseguiu aplicar todas as 10 ramificações e depois executar todas as diferentes estratégias aqui. Agora, diz que para uma migração real devemos combinar cinco com três. Então,
+
+vou dizer: "Ok, vamos executar a migração real em cada um deles. Vamos ver como funciona e, em seguida, escolher o melhor e aplicá-lo ao banco de dados base." Ok, parece que foi aplicado e podemos prosseguir. Ok, legal. E aí, sim, podemos dizer: "Destruam os outros 10 DBs." E
+
+acho que o grande diferencial para mim ao usar isso é que, quando os bancos de dados não são irritantes, não demoram para inicializar, você não precisa gastar dinheiro com eles, você para de tratá-los como preciosos e simplesmente se permite experimentar com eles, como estou fazendo agora. Especialmente com esse desenvolvimento de agentes de IA , sabe, eu posso construir quatro versões do mesmo aplicativo com quatro bancos de dados diferentes, e assim que termino uma, eu simplesmente descarto essa versão do aplicativo, descarto o banco de dados e sigo em frente, sem nenhum custo associado a isso. Então, pessoal, é basicamente tudo o que eu tinha para mostrar para vocês aqui. Essa ferramenta é incrível. Novamente, o uso é gratuito . Acho que é um MCP excelente para se
+
+ter e poder usar em ferramentas como o Cloud Code ou qualquer outra ferramenta de desenvolvimento. Adoraria saber o que vocês acharam, então deixem seus comentários abaixo. Espero vê-los em outro vídeo!

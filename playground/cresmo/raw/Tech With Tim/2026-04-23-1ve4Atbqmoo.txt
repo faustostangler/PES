@@ -1,0 +1,207 @@
+---
+video_title: "Hermes Agent Full Tutorial for Beginners | Setup Guide"
+video_id: 1ve4Atbqmoo
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=1ve4Atbqmoo
+video_date: 2026-04-23T14:00:05+00:00
+video_description: |
+  Deploy Hermes with Hostinger in one click: https://www.hostg.xyz/SHJJB
+  
+  In this video, I walk through the complete setup of Hermes Agent — a self-hosted AI agent you can run on your own VPS or local machine, control from Telegram, and extend with custom skills, web search, voice output, and scheduled tasks.By the end of this tutorial you'll have a fully working 
+  
+  Hermes Agent instance talking to you over Telegram, running skills on command, searching the web, speaking back with TTS, and executing tasks on a schedule — all running on infrastructure you own and control.
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/techwithtim
+  
+  Voice Mode Docs: https://hermes-agent.nousresearch.com/docs/guides/use-voice-mode-with-hermes
+  Firecrawl: https://www.firecrawl.dev/
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  00:35 | What is Hermes Agent
+  02:00 | Security & Risks
+  03:05 | VPS Setup
+  04:24 | Running on Your Own Device
+  05:11 | VPS Provisioning
+  06:30 | Model Configuration
+  07:20 | Telegram Setup
+  10:45 | TUI & Commands
+  12:00 | Running the Gateway
+  15:01 | Skills
+  16:35 | Adding Web Search
+  21:20 | Voice & Text to Speech
+  24:31 | Scheduled Tasks
+  27:36 | Important Details
+  
+  Hashtags
+  #HermesAgent #Hermes
+  
+  UAE Media License Number: 3635141
+---
+Neste vídeo, vou mostrar como configurar, instalar e usar o Hermes Agent. Esta é uma plataforma de agentes de IA ou ferramenta de orquestração relativamente nova, que é uma espécie de concorrente do Open Claw. É significativamente melhor em muitos aspectos, como explicarei neste vídeo. Ao final deste tutorial, você terá um bot do Hermes totalmente funcional que poderá usar para agendar tarefas, concluir coisas automaticamente, enviar lembretes, responder a mensagens do Slack e tudo mais que desejar. Seguindo este guia, você conseguirá configurá-lo . Vamos começar.
+
+OK. Então, primeiro, vamos falar sobre o que é o Agente Hermes, porque é um pouco diferente do Open Claw, mas as diferenças são sutis, então acho que vale a pena explicá-las. Agora, eu só quero ler isso diretamente do site. Este é um agente de IA com capacidade de autoaperfeiçoamento, desenvolvido pela Nous Research. Não sei exatamente como se diz isso. E
+
+este é o único agente com um ciclo de aprendizagem integrado. Agora, este é o principal fator que diferencia esta ferramenta de outras como o Open Claw. Isso se aprimorará automaticamente, criará novas habilidades, criará novas tarefas agendadas e possui uma programação especial para manter suas memórias atualizadas e, de certa forma, acompanhar as coisas melhor do que algo como o Open Claw. Então, como você pode ler aqui, diz que cria habilidades a partir da experiência, as aprimora durante o uso, se incentiva a persistir no conhecimento e constrói um modelo cada vez mais completo de quem você é ao longo das sessões. Portanto, conforme você usa essa ferramenta com mais frequência, ela realmente melhora e se aprimora, o que contrasta fortemente com ferramentas como o Open Claw, que podem piorar com o tempo dependendo de como o sistema de memória está configurado. Agora, o Open Claw pode ser um pouco
+
+mais útil se você quiser conectar vários canais diferentes a vários agentes diferentes e se quiser fazer coisas muito, muito avançadas. No entanto, se você está procurando apenas um agente principal com o qual irá interagir, conversar, receber lembretes , etc., então eu recomendaria o Hermes Agent e, claro, vou mostrar como configurá-lo aqui. Assim como o Open Claw, este agente tem acesso total ao computador, o que significa que ele pode abrir seu navegador, executar comandos no terminal, excluir um arquivo e criar um novo diretório. Portanto, você precisa ter muito cuidado com a segurança. Por
+
+essa razão, sempre recomendo executar isso em um dispositivo de hardware dedicado. Mas não precisa ser um dispositivo seu. Na verdade, eu sempre sugiro o uso de um servidor virtual privado (VPS) porque é muito barato, descartável, fácil de configurar e executar, e funciona 24 horas por dia, 7 dias por semana, sem que você precise fazer nada e sem se preocupar com quedas de energia, incêndios, roubos, furtos e todas as coisas que podem acontecer se você tiver um dispositivo físico no seu escritório executando esse tipo de serviço conectado a dados sensíveis. Dito isso, você ainda pode executar isso em um dispositivo como um Mac Mini ou seu próprio laptop, mas certifique-se de ter um dispositivo dedicado separado que não esteja conectado a nenhum dos seus dados confidenciais e que não tenha acesso a cartões de crédito, senhas ou qualquer coisa do tipo. É preciso ter muita, muita cautela ao operar esses agentes e sistemas de IA autônomos . E por essa razão, mais uma vez,
+
+recomendo um servidor virtual privado, mas deixarei a decisão a seu critério. Se você quiser executar modelos locais, provavelmente é melhor usar seu próprio dispositivo de hardware, mas a configuração será mais cara . Se você não se importa e só quer algo que seja configurado rapidamente e que seja confiável a longo prazo, então opte pelo VPS. Você pode usar qualquer provedor que desejar, mas neste vídeo, vou mostrar como configurar usando a Hostinger, com quem tenho uma parceria de longa data. Eles são um dos melhores provedores de VPS do mercado, têm planos muito acessíveis e oferecem uma opção de instalação com um clique para todos os tipos populares de frameworks de agentes de IA, como o agente Hermes. Então, em vez de ter que
+
+fazer a configuração você mesmo, você pode simplesmente pressionar este botão, que é o que vou fazer aqui. Em seguida, será implantado um novo bot agente Hermes para você, com toda a configuração já feita, e então você poderá prosseguir com o restante das etapas, como mostrarei a seguir. Então, o que vou fazer aqui é selecionar o plano. Pessoalmente, recomendo o KVM 2. Vou deixar um link para isso na descrição. Vou clicar em "
+
+Implantar" e, em seguida, vou seguir este processo. Agora, a partir daqui, vou selecionar a duração do plano. Vou deixar em 24 meses, e se você optar por um período de pelo menos 12 meses, poderá usar o código de desconto TechWithTim, disponível exclusivamente devido à minha parceria com a Hostinger, que lhe dará um desconto adicional de 10%. Aqui você pode escolher se deseja ou não ter um backup automático diário e, em seguida, escolher a localização do servidor. No meu caso, vou selecionar os Estados Unidos e depois clicar em Continuar e implantar. Ao
+
+implantar isso, você será direcionado para uma página semelhante a esta, onde mostraremos o nome de usuário e a senha do administrador. Você pode simplesmente copiar a senha de administrador para facilitar o processo mais tarde. No entanto, se você não copiar ou se esquecer, não se preocupe. Vou te mostrar como você pode encontrar isso. Enfim, eu vou ser o próximo. Vou
+
+providenciar isso e já volto assim que a implantação estiver concluída. Enquanto isso estiver sendo implementado, gostaria de mencionar que, se você quiser executar isso em seu próprio dispositivo ou em um provedor diferente, fica totalmente a seu critério. Em vez do que eu acabei de fazer, você vai executar este comando curl manualmente aqui. Isso foi retirado diretamente da documentação. Vou deixar um link para isso na descrição. Se você estiver
+
+usando Linux, Mac ou WSL no Windows, que é a forma como você precisará instalar isso, basta copiar este comando curl. Se você estiver usando Android ou Termux, execute este comando. Agora, depois de executar esse comando, você será automaticamente direcionado para uma espécie de configuração interativa, como, por exemplo, um painel de controle de fluxo, ou qualquer outra coisa que você queira visualizar. Será exatamente a mesma coisa que veremos aqui assim que o VPS for implantado. Assim, você poderá acompanhar exatamente como está, e este vídeo é meio que independente do provedor que você estiver usando. Novamente, se você estiver
+
+fazendo isso manualmente, use este comando. Se você usa Hostinger, acompanhe- me, e eu vou te mostrar em apenas 1 segundo. Muito bem, então podemos ver que a implantação do VPS está quase concluída . Atualmente, está em execução vários contêineres Docker e o agente Hermes está sendo executado dentro de um contêiner Docker para mantê-lo isolado no servidor virtual privado. Não se preocupe se você não entender o que é o Docker ou como usá-lo. Você não
+
+precisa acessar o servidor via SSH nem fazer nada do tipo. Isso criará um painel interativo na web, no qual você poderá simplesmente clicar e fornecer o nome de usuário e a senha (desculpe, a senha que vimos anteriormente para gerenciar a instância, que mostrarei a seguir). Ok, então o VPS está totalmente implantado, e o que vamos fazer agora é simplesmente clicar neste botão "Abrir" em nosso gerenciador do Docker. Portanto, deveria abrir esta página, mas se não abrir, vá para o Docker Manager e clique em "Abrir". A partir daqui, você será solicitado a inserir o nome de usuário e a senha.
+
+O nome de usuário padrão é Hermes, a menos que você o tenha alterado. E para encontrar a senha, caso ainda não a tenha copiado, você pode ir em "Gerenciar". E então você pode rolar para baixo. Vamos esperar um instante. Você pode acessar as configurações de ambiente e copiar a senha de administrador para lá. Obviamente, não compartilhe
+
+com outras pessoas e entenda que isso está disponível publicamente na internet. Portanto, se você compartilhar esse URL e essas credenciais, outras pessoas poderão acessar seu bot, o que obviamente não é o ideal e pode levar a problemas de segurança. Agora, depois de fazer isso, você será direcionado para uma espécie de terminal interativo baseado na web. E essa será a mesma configuração que você verá no seu próprio terminal se estiver executando isso no seu próprio computador. A partir daqui, vamos prosseguir com uma configuração rápida. Então,
+
+vamos pressionar Enter e escolher o provedor de modelo que queremos usar. Agora, você pode usar qualquer provedor que desejar, mas precisa escolher pelo menos um. Agora, vou optar pelo OpenAI Codex porque é o mais econômico e eu tenho o plano de US$ 200 por mês, mas você pode escolher o que quiser e provavelmente já conhece alguma das opções. Se você quiser uma recomendação, sugiro o OpenAI Codex. Eu também gosto bastante dos modelos Minimax, que também têm uma ótima relação custo-benefício. Então, vou acessar o
+
+OpenAI Codex e pressionar a barra de espaço. Vou copiar o URL que me foi fornecido e colar no meu navegador. Então, vou copiar o código que está aqui e colá-lo assim que fizer login. Ok, então estou colando o código e clicando em continuar. E então, se eu voltar aqui, veremos que o login será concluído. Em um instante, aparece a mensagem de que
+
+estamos conectados. E eu posso prosseguir e selecionar meu modelo. Vou usar as teclas de seta para fazer isso e selecionar GPT-5.4 porque esse é o melhor modelo disponível atualmente. Em seguida, podemos configurar o sistema de mensagens.
+
+Para fazer isso, basta pressionar a tecla espaço onde está escrito "configurar mensagens". Vou usar o Telegram, mas você pode usar qualquer um dos métodos que preferir . O Slack e o Discord serão um pouco mais complicados, pois você terá que criar um bot, o que envolve algumas etapas. O Telegram é o que eu recomendaria para todos os iniciantes. Mesmo que você nunca tenha feito algo parecido antes, ainda assim será bastante poderoso e lhe oferecerá todos os recursos de que você precisa. Então, no
+
+Telegram, vamos pressionar a barra de espaço aqui. Então, pressione a barra de espaço. Não pressione Enter. Primeiro você precisa pressionar a barra de espaço e depois pressionar Enter. Então, ao fazer isso, será solicitado que você insira um token de bot do Telegram.
+
+Para isso, vamos abrir o aplicativo Telegram. Pode estar no seu computador, pode estar no seu celular, não importa. Vamos acessar a barra de pesquisa aqui. E vamos procurar um bot chamado BotFather. Agora, estamos procurando por um que tenha este selo azul aqui.
+
+E dentro da aba de mensagens, vamos digitar {slash} newbot assim . Isso vai criar um novo bot do Telegram. Vamos pressionar Enter. E a próxima coisa que faremos é dar um nome de usuário a isso. Este é o nome de exibição, ou seja, o que você verá quando estiver conversando com ele. Então, vou usar o
+
+tutorial da Hermès ou algo assim, ok? Você pode fazer o que quiser. Agora, depois de escolher o nome de exibição, que não precisa ser único, você vai escolher o nome de usuário, que precisa ser único. Então, vou usar os bots de tutoriais do Hermes , sabe, o bot 2 3 4 {underscore}. E certifique-se de finalizar o bot {underscore}. Esse é um requisito
+
+para o nome de usuário. OK? Agora, vou pressionar Enter, supondo que o nome de usuário não esteja em uso, porque, novamente, ele precisa ser único em todo o Telegram. Ele criará o bot para você. E você vai procurar por esse token do bot, ok? Então,
+
+mais uma vez, sei que fui rápido demais. Você vai digitar {slash} newbot. Você vai dar um nome a isso. Você vai dar um nome de usuário a ele. E então você vai copiar este token do bot aqui.
+
+E você vai colar esse código onde é solicitado o token do bot do Telegram. Ao colar o código, você não verá nenhuma saída, então não se preocupe com isso e apenas pressione Enter. OK. Em seguida, será solicitado que você insira alguns IDs de usuário permitidos. Agora, é muito importante que você forneça pelo menos um ID de usuário aqui, porque, caso contrário, o bot ficará aberto, o que significa que qualquer pessoa poderá enviar mensagens para ele. Para
+
+encontrar seu ID de usuário, você pode acessar o Telegram e pesquisar pelo bot de informações do usuário. Certo, exatamente assim. Você vai procurar aquela que se parece com esta, que tem uma espécie de coroa azul. A partir daqui, você pode simplesmente digitar {barra} início e então ele lhe dará seu ID de usuário. Então, espere um segundo, deve aparecer o resultado e você pode ver que meu ID está aqui. Então,
+
+vamos copiar esse ID, ok, e vamos colá-lo aqui. Agora, se você quisesse que várias outras pessoas pudessem enviar mensagens para o seu bot, bastaria colocar uma vírgula e, em seguida, inserir os IDs de usuário delas . Você pode perguntar a eles, eles lhe darão , mas, novamente, seguindo o mesmo passo a passo, se você simplesmente acessar o Telegram, enviar uma mensagem para esse bot e ele responderá com o ID. Novamente, certifique-se de incluir pelo menos um. Essa será a única pessoa que poderá enviar mensagens para o seu bot, ou uma lista de pessoas que poderão enviá-las.
+
+Então, vamos pressionar Enter e agora será solicitado que usemos nosso ID de usuário como canal principal. Vamos responder que sim. OK. A partir daqui, tudo será configurado e agora poderemos começar a conversar com o nosso bot. Agora, você verá que há vários comandos diferentes aqui, então podemos adicionar modelos adicionais, configurar o gateway, configurar ferramentas, certo? E começaremos a fazer isso em um
+
+minuto, mas por agora, queremos apenas garantir que isso esteja funcionando. Então, para testar isso diretamente do terminal, em primeiro lugar , podemos simplesmente clicar em "sim", pois isso iniciará o programa automaticamente e nos levará ao que é chamado de TUI, ou interface de usuário do terminal. Agora, a partir daqui, podemos simplesmente digitar algo como "Olá, mundo!" e então devemos receber uma resposta. E, supondo que recebamos uma resposta, podemos prosseguir e isso significa que está configurado corretamente.
+
+Agora, também existe uma lista de comandos {slash} que você pode executar. Recomendo que você dê uma olhada neles, mesmo que sejam muitos, e verá que podemos fazer algo como {barra} novo, certo? Isso criará uma nova sessão. {barra} reiniciar, {barra} limpar. Então, se você está curioso e quer dar uma olhada no que pode fazer com isso, confira a lista de comandos. Você
+
+verá que provavelmente existem cerca de cem deles por padrão. Obviamente, não posso abordar todas as possibilidades, e isso lhe dará uma boa ideia do que é possível fazer logo de início. Agora, para sair daqui, vou pressionar Ctrl+C e, se por algum motivo ( Ctrl+C no teclado, aliás, ambas as teclas são pressionadas ao mesmo tempo), e se por algum motivo você voltar ao terminal onde está executando o programa e quiser retornar à interface do usuário do terminal, basta executar o Hermes novamente. OK? E se você fizer isso, deverá retornar à interface do usuário e, da mesma forma, poderá pressionar Ctrl+C para sair . OK. Então, agora quero mostrar
+
+como enviar essa mensagem pelo Telegram, porque sim, o motivo de termos criado isso no Telegram é justamente para não precisarmos acessar a interface do usuário, assim podemos enviar a mensagem pelo celular e receber uma resposta mais tarde. Esse é o objetivo. Então, para fazer isso pelo Telegram, vamos acessar o Bot Father. Vamos clicar neste link aqui, que é o nome de usuário do nosso bot. Basta enviarmos uma mensagem para o nome de usuário correto e depois clicarmos em " iniciar". Você vai perceber
+
+imediatamente que, na verdade, nada vai acontecer aqui e o bot não vai responder. O motivo é que precisamos iniciar o gateway. Para iniciar o gateway, basta digitar " Hermes gateway". Ok, este é o comando. Precisamos sair da interface de usuário do terminal e usar apenas o nosso terminal principal, certo? Então,
+
+vamos pressionar Enter aqui e isso iniciará o gateway. Agora que o gateway foi iniciado, em breve poderemos enviar mensagens para o bot. Então, podemos simplesmente dizer olá e, em um instante, veremos o bot começar a digitar e, em seguida, algo aparecer no terminal, pois conseguimos encaminhar essa mensagem. Como você pode ver, ele nos responde e diz: "Ei, Tim, como posso ajudar?" OK?
+
+Portanto, agora, se quisermos enviar mensagens para o bot pelo Telegram ou qualquer outro canal de mensagens, esse gateway precisa estar em execução. Se eu interromper a execução pressionando Ctrl+C, não poderei mais enviar mensagens para ele a partir daqui, certo? Vou precisar executar esse comando novamente com o gateway Hermes para poder interagir com ele pelo Telegram. Ok, vou encerrar isso por agora e vou mostrar que, se você quiser adicionar outro canal de mensagens, por exemplo, pode digitar Hermes e, acredito, o comando será algo como channels. Bem, na verdade "canais" não é o termo correto, mas isso nos dará uma boa maneira de visualizar os comandos. Como você pode ver, isso
+
+apenas nos dará uma lista das opções válidas que podemos escolher. Então, temos o gateway do modelo configurado. Então vamos configurar o Hermes assim e agora, a partir daqui, poderemos...
+
+o que é isso? Mexa com as plataformas de mensagens, as ferramentas, as configurações do agente, o modelo e o provedor. Acesse a configuração completa e altere qualquer uma das configurações. Portanto, se você quiser alterar alguma coisa, basta digitar "Hermes setup". Se quisermos mudar a plataforma de mensagens, certo? Vamos até aqui
+
+e, em seguida, podemos ativar qualquer outra opção usando novamente a barra de espaço. Se quisermos sair daqui, podemos pressionar Esc e isso nos levará de volta. E eu vou dizer "não, não quero reconfigurar o Telegram" e pronto . Outro comando útil para se ter em mente é que, se por algum motivo algo der errado, seu agente não responder ou parar de funcionar, você pode digitar o comando "Hermes doctor". Esta ferramenta fará uma verificação rápida de todos os arquivos de configuração e, caso encontre algum problema, informará qual é para que você possa corrigi-lo. E
+
+então você pode ir até um agente de IA e perguntar: " Ei, como eu resolvo isso?" Isso lhe dará o resultado. Então, se digitarmos "Hermes doctor" aqui, você verá que ele vai verificar tudo. Diz que está tudo bem. Está faltando um tipo de arquivo aqui. Existem algumas ferramentas que não estão
+
+configuradas porque não temos o Docker, não temos ferramentas de navegador, etc., certo? E você pode ver que, novamente, estamos sentindo falta de algumas coisas aqui, por exemplo, para realizar aprendizado por reforço, para fazer certos tipos de mensagens, para fazer buscas na web. Agora, isso nos dá uma lista de problemas e coisas que poderíamos fazer. Não precisamos configurar tudo, mas há algumas coisas que eu gostaria de acrescentar. Então, esse agente só se torna
+
+útil quando ele realmente consegue fazer alguma coisa, certo? Por padrão, este agente Hermes já vem com diversas funcionalidades integradas. Agora, se você quiser ver as funcionalidades, basta acessar o site do agente da Hermes, ir em "Habilidades", selecionar "Integradas" e você verá uma longa lista. Novamente, nem todas essas opções funcionarão imediatamente, pois algumas exigem chave de API, outras requerem configurações adicionais, mas há várias que funcionarão por padrão. Então, você pode dar uma olhada rápida aqui para ver o que vem na caixa, certo? É algo que você pode usar para
+
+criar conteúdo para o YouTube, por exemplo. Tipo criar esboços, fazer ajustes de peso e viés, Unsloth, Notion, né? Todas essas ferramentas estão conectadas e, novamente, exigem apenas uma pequena configuração da sua parte. Agora, também existe um conjunto completo de habilidades que você pode simplesmente copiar e fazer com que o Hermes Agent as crie automaticamente para você, ou copiá-las para a ferramenta. Você também pode conectar agentes Hermes a esse conjunto de habilidades, onde eles podem buscar e usar as habilidades que já foram criadas. Pessoalmente,
+
+não recomendo fazer isso. Se você precisar de uma habilidade, basta encontrar a que precisa e pedir ao bot para criá-la, o que veremos em um instante. É preciso ter cuidado ao simplesmente conectar isso à internet aberta e permitir que qualquer habilidade seja baixada, o que poderia ser potencialmente malicioso. E esse é o ponto principal a mencionar aqui, conforme avançamos para a configuração: tenha muita, muita cautela com o que você adiciona a este bot, a que você concede acesso e a que você confia a ele . Você realmente deveria criar contas separadas para isso. Você não deve conectá-lo ao
+
+seu e-mail principal nem à sua conta principal do Google Drive. Embora isso pareça útil, pode ser muito prejudicial se o bot cometer um erro, e já houve situações em que bots, você sabe, excluíram um Google Drive inteiro, algo que você certamente não gostaria de passar. Muito bem, então, independentemente disso, vamos prosseguir e adicionar algumas funcionalidades a este bot. A primeira funcionalidade que vou sugerir que adicionemos é o Firecrawl. Agora, você pode simplesmente acessar o site do Firecrawl.
+
+Vou deixar um link na descrição para que você possa criar uma nova conta. É grátis. Após criar a conta, você será redirecionado para uma página semelhante a esta. Você vai pressionar o botão que diz: "Entregar para meu agente de IA". Continue e copie esta chave de API. Agora que
+
+temos essa chave de API, vamos voltar ao nosso agente Hermes e eu vou executar um comando que definirá a chave de API do Firecrawl, o que permitirá que o agente navegue na web. Existem várias outras maneiras pelas quais o agente pode navegar na web. Por exemplo, pode usar um navegador, pode usar uma base de navegador, pode usar um navegador local se estiver a executar num dispositivo físico como, por exemplo, um Mac real, em vez de um servidor privado virtual. No entanto, o Firecrawl é o mais fácil de configurar e provavelmente o ideal para a maioria de vocês começarem, até que optem por uma solução paga ou mais complexa de configurar. OK. Então, para
+
+habilitar a busca na web, ou seja, para que seu bot possa pesquisar na web, vamos digitar "Hermes config set firecrawl _api_key" e colar a chave da API, ok? Então, vamos aqui e pressionar Enter. Agora, certifique-se de digitar exatamente como eu digitei. Especificamente, esta variável `firecrawl API key` precisa ser digitada exatamente assim. Assim que você adicionar essa chave, o Hermes terá automaticamente a capacidade de interagir com o Firecrawl, mas para que isso funcione um pouco melhor, vamos acessar a seção skill.md no
+
+site do Firecrawl e clicar em salvar. Vamos apenas copiar, ok? Vamos copiar isso para a nossa área de transferência. Vamos continuar. Vamos aceitar os termos e, por enquanto, vamos usar o plano gratuito . Não precisamos assinar
+
+nada. Podemos simplesmente clicar em " Iniciar" e deixar como está, ok? E, claro, você pode pagar mais se quiser fazer um upgrade para um plano adicional. Tudo bem. Agora, o que vou fazer é voltar ao agente Hermes e executar o gateway. Então, vou dizer
+
+portal da Hermes. Então, agora o gateway está funcionando. Posso enviar essa mensagem pelo Telegram. E o que eu quero fazer é adicionar a habilidade de rastejar em chamas. E é aqui que começaremos a falar sobre habilidades. Então, vou dizer o
+
+seguinte: "Olá, gostaria de adicionar a seguinte habilidade. Por favor, crie-a para mim." OK? Então, vou usar isso e depois vou colar a habilidade. Agora, essa habilidade, novamente, eu copiei diretamente do Firecrawl. Eles têm um
+
+por padrão. Você consegue ver como a habilidade se parece e o que é uma habilidade? Bem, uma habilidade é essencialmente um fluxo de trabalho repetível que seu agente de IA pode consultar sempre que precisar fazer algo específico. As habilidades aparecerão para o agente de IA apenas como seu nome e sua descrição. Não carregará todo o contexto, que, como você pode ver, é bastante grande, a menos que decida realmente utilizar essa habilidade. Assim, o
+
+agente Hermes irá aprimorar e desenvolver suas próprias habilidades automaticamente, e essas habilidades serão referenciadas ao longo do tempo para que o agente se torne melhor. Isso contrasta com a prática de tentar adivinhar como fazer algo todas as vezes. Agora você está fornecendo uma referência do tipo: "Ei, este é exatamente o processo que você deve seguir." Então ele verá: "Ok, eu tenho essa habilidade. Certo, deixe-me carregar a habilidade . Ok, preciso fazer isso." E isso torna o processo
+
+mais repetível, resultando em um comportamento muito mais consistente. Portanto, sempre que você estiver fazendo algo que seja realmente repetível, você deve incorporá-lo a uma habilidade. Esse agente deve fazer isso automaticamente para você, mas se não fizer, como no nosso caso em que estamos adicionando uma habilidade manualmente, basta dizer a ele: "Ei, crie esta nova habilidade." E vai dar certo. Então, vou pressionar Enter aqui. Enquanto isso acontece,
+
+vou aproveitar para mencionar que o programa que estou usando para ditar, já que vocês sempre pedem, se chama Whisper Flow. Então, quando estou falando com o computador assim , como você pode ver, e ele automaticamente me fornece esse tipo de ditado de voz por IA, essa é a ferramenta. É gratuito. É o melhor sistema de ditado por voz com IA que já usei e praticamente todo mundo está usando agora. Sou um usuário avançado. Tenho mais de 100.000 palavras
+
+e deixarei um link para o texto na descrição, pois, felizmente, tenho uma parceria de longa data com eles. A principal vantagem é que é mais rápido, mais preciso, formata o texto automaticamente e salva todas as transcrições, então, caso você as perca ou as tenha digitado na caixa de texto errada, tudo estará lá. Novamente, muito, muito bom. Vocês verão por si mesmos. OK. Então,
+
+agora dizem que isso criou a habilidade para nós. Ah, não se preocupe com nada do que os outros estão mencionando aqui. Então, por enquanto, a chave da API está boa para mim. Está tudo bem. E o que podemos fazer aqui é simplesmente testar para ver se isso está funcionando. Então, vou dizer:
+
+"Você pode fazer uma busca rápida por 'Tech With Tim' e me dizer o primeiro resultado que aparecer?" OK? E eu vou pressionar Enter aqui, e vamos ver se ele consegue usar a habilidade Firecrawl para buscar informações sobre mim e nos dar uma resposta. Ok, e vocês podem ver que o primeiro resultado é, claro, o meu canal do YouTube. Aparece uma mensagem e me dá a resposta usando o Firecrawl. E você pode
+
+ver que foi feita uma busca na web por "Tech With Tim". Ok, então a próxima coisa que quero fazer aqui é adicionar voz. Agora, isso nos permitirá falar usando a digitação por voz natural aqui no Telegram e, em seguida, receber uma resposta de voz. Então, não é como a digitação por texto que eu estava usando, mas sim como uma mensagem de voz. Para fazer isso, vou acessar a documentação do Hermes Agent, ir em " Recursos" e procurar por "Mídia e Web" e, em seguida, "Modo de Voz". Agora, no modo de voz,
+
+a configuração é bastante simples, mas basicamente o que faremos é copiar este comando aqui: pip install Hermes Agent all. OK? Agora, vamos acessar nosso terminal ou nosso Telegram aqui. E vamos dizer ao bot o seguinte. Por favor, execute este comando. Se o comando
+
+não funcionar, adicione as dependências e instale tudo o que for necessário para que ele funcione e, em seguida, execute-o. OK? E então vou colar isso aqui. Agora, vou pressionar Enter e observar que eu disse: "Ei, se vire. Se der errado, se não funcionar, simplesmente se instale sozinho." E agora ele deve
+
+ser capaz de instalá-lo para nós. Então, neste ponto, assim que começarmos a configurar tudo, não precisaremos mais voltar ao terminal. Podemos simplesmente enviar uma mensagem para o bot e ele deverá ser capaz de fazer todas as alterações para nós, o que é a grande vantagem de ele poder executar comandos. Ok, isso está demorando um pouco, então enquanto isso está rodando, vou encontrar o próximo comando que precisamos, que é o de dependências do sistema. Agora, se você estiver usando um Mac, precisará destes comandos aqui e, se estiver usando Ubuntu ou Debian, precisará destes. Agora, você pode
+
+executá-los diretamente, basta fazer isso no terminal, certo? Ou você pode simplesmente pedir ao agente para executar o comando para você. Então, vamos voltar ao Telegram. Vou simplesmente colar o código e dizer: "Execute estes comandos." Certo, vamos aguardar a conclusão deste comando e então executaremos estes comandos. Às vezes pode
+
+demorar um pouco porque envolve a instalação de muitos componentes. Enquanto isso, gostaria de mencionar que você pode trocar o provedor que está usando para voz, para conversão de texto em fala, conversão de fala em texto, etc. Você pode usar algo como o Eleven Labs, pelo qual você precisaria pagar. Você pode alterar a chave que está usando para o Groq ou para as ferramentas da OpenAI, mas não precisa configurar nenhuma dessas variáveis ​​de ambiente. Por padrão, ele usará apenas modelos locais, que são baratos, gratuitos, rápidos e fáceis de executar. Portanto,
+
+você não precisa gerenciar nada disso, mas eu só quero observar que existem muitas configurações aqui. Você pode fazer muita coisa em termos de configuração, como a fala, o texto, os padrões de atraso, é incrível a quantidade de opções de configuração disponíveis. Então, se você realmente se importa muito com a voz, vá ler a documentação e encontrará mais opções. Mas, neste caso, já configuramos a voz, ela deve estar funcionando, e agora podemos testá-la usando este pequeno ícone de voz aqui no Telegram. Olá, podemos testar se a mensagem de voz está funcionando? Ok, acabei de
+
+enviar uma mensagem de áudio por aqui. Deve levar apenas um segundo. É necessário processar. Obviamente, é mais lento do que enviar uma mensagem de texto. E você pode ver que está escrito: "Sim, sua mensagem de voz funcionou." E
+
+então, o que vai acontecer é que ele vai me dar a resposta aqui, para que possamos ver esta mensagem. Deixa eu tocar. Sim, sua mensagem de voz funcionou. Eu recebi a mensagem e transcrevi: "Ei, podemos testar para ver se a mensagem de voz está funcionando?" Certo, e você pode ver que recebemos a resposta, e se falarmos com a voz, ela nos dará a resposta de volta. Pronto, a
+
+voz está ativada. Agora, a próxima coisa que quero analisar rapidamente são as tarefas cron. Assim, a sua utilidade aumenta ainda mais pela capacidade de executar ações de acordo com um cronograma ou ser acionada por um evento. Agora, você pode configurar isso para responder a mensagens do Slack ou a eventos de webhook. É um pouco mais complexo de configurar, mas para a maioria das pessoas, a melhor opção será simplesmente ter algum tipo de evento incremental.
+
+Então, por exemplo, toda sexta-feira às 14h, me lembre que preciso ir à academia, certo? Você pode pedir para o bot fazer isso por você. Todas as manhãs, quero que você pesquise sobre Inteligência Artificial e me diga quais são os três principais tópicos em alta que eu preciso conhecer. Todos os dias, quero que você acesse meu Google Drive, encontre o resumo do briefing matinal que meu assistente virtual me enviou e me faça um resumo dele, certo? Este bot pode fazer praticamente tudo o que você quiser, desde que esteja conectado às ferramentas corretas e que você lhe dê essa instrução. E então,
+
+com o tempo, isso vai melhorar. Portanto, o exemplo mais comum que as pessoas gostam de usar para esses bots é algo como um briefing matinal. Então, vou dar um exemplo. Gostaria que você pesquisasse os três tópicos mais populares em IA. Basta pegar os três primeiros resultados e me dar um breve resumo deles, apenas uma breve descrição. Certo, então isso é
+
+algo que talvez devêssemos fazer com frequência. Então, tenho quase certeza de que vou pedir para fazer isso só para vermos qual será a resposta. E depois de recebermos uma resposta, podemos querer refinar a sua aparência, talvez usando um modelo ou algo do gênero. E então podemos dizer: "Ok, agora quero que você faça isso todos os dias às 9h da manhã." E irá configurar algo chamado tarefa cron.
+
+Agora, os cron jobs são simplesmente tarefas repetíveis que serão executadas em intervalos predefinidos. Então, poderia funcionar a cada hora, a cada 5 horas, toda terça-feira, toda segunda-feira às 9h da manhã. Tanto faz. Você pode programar para executar em qualquer incremento e ele simplesmente configurará tudo automaticamente. Ok, agora parece que está em processo de realizar a pesquisa na web, então vamos esperar que termine. Então
+
+voltaremos em breve. Ok, então você pode ver que me deu a resposta aqui. Então, vamos supor que isso esteja bom. Obviamente, poderíamos instruí-lo a melhorá-lo, se quiséssemos. Vou dizer: "Ok, isso parece bom. Agora, gostaria que você fizesse
+
+isso todos os dias às 9h04." Pronto, e nós simplesmente vamos dizer isso a ele, e ele deverá saber automaticamente que precisa fazer isso usando uma tarefa cron e poderá configurar o cron. Agora, vamos mostrar para você... vou mostrar
+
+aqui. Se formos aos guias e tutoriais e formos ao tutorial do bot de briefing diário, podemos ver que existem comandos que você pode executar, como {slash} cron add, e então podemos definir esse incremento usando um padrão que não vou detalhar aqui e depois basta inserir o comando que você deseja executar. Agora, o bot poderá fazer isso por nós, então não precisamos executar essa tarefa. Mas a questão é que o bot tem acesso a todos esses comandos e ferramentas diferentes que permitem que ele faça isso, certo? E nos bastidores, utiliza algo chamado cron.
+
+Existem muitas outras coisas nos bastidores que o bot utiliza, mas a questão é que sempre será mais fácil para nós simplesmente instruí-lo a executar essa tarefa, e ele a executará para nós, e pronto. Agora está nos perguntando qual fuso horário devemos usar? Então, vou apenas dizer para usar o fuso horário EST. Certo, então diga isso a ele e, com sorte, ele deverá configurar o fuso horário correto. Muito bem, parece que está tudo configurado. Só para
+
+esclarecer, a pergunta é sobre o Horário do Leste dos EUA. De qualquer forma, vou parar por aqui. A questão é que sim, você pode configurá-lo , ele pode executar um cron, e pronto . O potencial da ferramenta começa a aumentar quando você a conecta a serviços externos. Então você o conecta ao Notion, ao Google Drive e aos anúncios do Facebook.
+
+Não vou abordar esse assunto neste vídeo porque é mais avançado e também mais complexo, já que envolve muitas integrações diferentes, mas se vocês quiserem um tutorial sobre isso, com certeza me avisem. Terei todo o prazer em falar mais detalhadamente sobre o Agente Hermes. Neste ponto, vou encerrar o vídeo por aqui. Esta é a configuração necessária que, na minha opinião, te leva a 90% do caminho. Depois disso, trata-se realmente de ser criativo, pedir que ele faça coisas que sejam realmente úteis para você e, em seguida, usá-lo bastante, porque, novamente, o funcionamento é que ele se aprimora sozinho.
+
+Assim, desenvolverá habilidades por si só. Isso vai melhorar a memória. Na verdade, ele salva artefatos de memória por padrão e sobrescreve memórias antigas quando necessário. Possui um histórico completo de sessões, então tudo o que você já disse a ele, ele poderá lembrar e recuperar no passado se você instruí- lo a fazer isso. Bem, dito isso, pessoal, vamos encerrar este vídeo. Me diga o que mais você gostaria de
+
+ver com o Agente Hermes. Espero que tenham gostado. Se gostou, deixe um like, inscreva-se e nos vemos no próximo vídeo.

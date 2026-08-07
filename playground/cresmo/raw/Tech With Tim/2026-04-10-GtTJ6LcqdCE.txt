@@ -1,0 +1,93 @@
+---
+video_title: "The Claude Code Situation"
+video_id: GtTJ6LcqdCE
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=GtTJ6LcqdCE
+video_date: 2026-04-10T14:00:25+00:00
+video_description: |
+  Claude Code wrote a C Compiler that couldn't compile "Hello World", then another agentic platform fixed it...
+  
+  🎞 Video Resources 🎞
+  Blitzy C Compiler: https://blitzy.com/blog/hello-world-the-blitzy-c-compiler-has-arrived
+  Claude C Compiler: https://blitzy.com/blog/blitzy-fixed-and-enhanced-claudes-c-compiler
+  Claw Comp: https://clawcomp.net/
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/techwithtim
+  
+  ⏳ Timestamps ⏳
+  00:00 | Claude Has a Problem
+  00:40 | The Compiler Issue Breaking Claude 
+  03:43 | Meet the Tool That Actually Fixes It 
+  04:20 | How Blitzy Works 
+  06:58 | Blitzy Rebuilds the Compiler 
+  10:00 | Why This Changes Everything 
+  12:30 | Outro & Recap
+  
+  Hashtags
+  #claude #anthropic
+  
+  UAE Media License Number: 3635141
+---
+Portanto, acho que podemos afirmar com segurança que o último mês não foi dos melhores para a Anthropic. Acabamos de ter o vazamento de código do Claude, que aconteceu há algumas semanas, e é sobre isso que quero falar neste vídeo: o código do Claude foi submetido a 501 commits em massa na tentativa de criar um compilador C para o Scratch. E você pode ter ouvido falar disso, mas nada disso realmente se encaixa. Agora, vou colocar um monte de coisas na tela para que vocês possam ver do que estou falando, mas a Anthropic colocou 16 agentes Claude na tarefa de construir um compilador C completo em Rust. Eles fizeram 501 commits e criaram milhares de arquivos. Eles estavam mirando em
+
+quatro arquiteturas de CPU diferentes, e Claude anunciou isso, o que, em teoria, parecia incrível. Mas aí a comunidade tentou usar e não conseguiu nem compilar o "Olá, mundo!". Portanto, foram quase 500 pessoas que reagiram exatamente a esse problema no GitHub, o que vou mostrar aqui na tela. Mas, veja bem. Alguém realmente se deu ao trabalho de
+
+corrigir todos os problemas desse compilador C e, em seguida, construiu um compilador ainda melhor, completamente do zero, usando IA, apenas com uma metodologia diferente, que explicarei em um instante. Muito bem, então deixe-me contextualizar e explicar o que aconteceu. Sabe, há cerca de um mês, a Anthropic publicou um post no blog sobre um projeto que eles chamaram de CCC ou compilador C de Claude. Bem, a ideia aqui era bastante ambiciosa. Eles iriam pegar 16 agentes Claude, fazê-los trabalhar juntos sob a orientação de um pesquisador sênior que daria algumas dicas aos modelos, interagindo com eles, e então construir um compilador C completo em Rust que fosse direcionado a diferentes arquiteturas como x86, RISC-V 64, i686, etc., ok? Bem, isto é algo
+
+bastante sério. Este é um projeto grande e algo que eu não conseguiria programar do zero. Tenho certeza de que muitos de vocês não conseguiriam fazer isso. A ideia era que os agentes pudessem se comunicar uns com os outros e construir isso. E, para ser sincero , tenho que dar um pouco de crédito à Anthropic. Este foi um
+
+experimento verdadeiramente impressionante, e o fato de os agentes de IA terem conseguido tentar algo assim já representa um avanço bastante significativo para a programação assistida por agentes. Se você me dissesse há um ano que isso era remotamente possível com agentes de IA, eu provavelmente nem acreditaria. E o fato é que o compilador C é um dos softwares mais difíceis de se construir, então a ambição aqui era definitivamente real. Mas, obviamente, quando a comunidade começou a investigar isso, encontrou uma série de problemas. Na verdade, todo o projeto dependia muito de um único especialista humano. Ora, este era um
+
+pesquisador sênior que registrou mais de 2.000 interações escrevendo casos de teste, resolvendo conflitos de mesclagem, depurando, comunicando-se com os agentes, e os agentes não conseguiam realmente se autocorrigir ou validar sua própria saída em grande escala. Então, eles estavam produzindo um monte de código, mas isso não levava ao resultado que eles buscavam. E aqui estão alguns dos problemas que vários membros da comunidade encontraram no compilador C. O montador ARM apresentava erros de codificação de instruções, o montador x86 tinha processamento condicional defeituoso , havia erros de alinhamento entre arquiteturas, faltavam partes inteiras do C11, não havia um pipeline de otimização adequado e também não havia uma infraestrutura de testes significativa.
+
+Agora, todos esses são definitivamente problemas, mas o principal que chamou a atenção de muita gente é que nenhum commit em todo esse repositório do GitHub gerou uma versão funcional. Ou seja, se você fosse lá, desmontasse, tentasse ligar, nunca conseguiria fazer nada funcionar. Agora, não estou dizendo tudo isso apenas para criticar a Anthropic. O que eles demonstraram é que agentes de IA podem enfrentar desafios de engenharia complexos e de grande escala, e é muito legal que eles tenham conseguido chegar perto de algo funcional. No entanto, revelou algo importante. Sem um especialista humano que
+
+atue como arquiteto, engenheiro de contexto e responsável pelo controle de qualidade, certo? Basicamente, ao gerenciar todo o projeto de desenvolvimento, esses agentes não conseguem chegar ao fim sozinhos e produzem uma estrutura básica, não um software de produção ou empresarial. Sem essa pessoa coordenando os agentes, eles não conseguem fazer nada de significativo. E é aqui que a história começa a ficar realmente interessante, e vou compartilhar algo com vocês que provavelmente vocês nunca ouviram falar sobre o CCC ou compilador de código Claude. Bem, essa empresa chamada Blitz C, com quem já fiz várias parcerias neste canal, viu que o compilador Claude C estava com problemas e disse: "Ei, podemos corrigir todos esses problemas." E eles foram ainda mais longe
+
+e disseram: "Na verdade, vamos tentar construir nosso próprio compilador C completamente do zero para comparar nosso modelo de IA ou estrutura, você sabe, orquestração, seja lá o que eles tenham, sobre o qual falaremos em um segundo, com os códigos de Claude." O Blitzy não é apenas um LLM ou mais uma ferramenta de codificação de estilo, e na verdade, nem sequer está tentando competir com o Anthropic. Trata-se de uma plataforma de desenvolvimento de software de IA totalmente autônoma . Bem, o modo como funciona é fundamentalmente diferente do que a Anthropic fazia, e é por isso que é interessante neste caso. Agora, o Blitzy começa por construir um profundo conhecimento da sua base de código. Assim, ele mapeia
+
+toda a base de código e constrói um grafo de conhecimento dinâmico de todo o sistema. Então, dependências, arquitetura, vários padrões, convenções, e tudo mais, certo? Eles chamam isso de contexto de código infinito porque ele consegue lidar com bases de código com mais de 100 milhões de linhas de código. Bem, isso não acontece em 5 minutos. Quando usei o Blitzy no passado, o processo podia levar horas, ou até mesmo dias, dependendo da complexidade e do tamanho da base de código. Isso irá
+
+gerar um documento enorme, geralmente com centenas de páginas. Já mostrei isso em vários vídeos anteriores. Ele mapeia tudo, de modo que, quando a IA começa a fazer alterações ou a produzir código, ela sabe exatamente o que deve fazer e pode seguir essa base de código e todas as convenções e padrões já existentes. Agora, depois que o Blitzy entende a base de código, ele começa a orquestrar milhares de agentes de IA especializados que planejam, constroem e validam seu código completamente em paralelo. Agora, estamos falando de agentes que funcionam por horas ou dias. Em meus casos, já
+
+tive tarefas que duraram apenas 5 horas, e outras que se estenderam por 3 ou 4 dias. E o que esses agentes fazem é colaborar em toda a base de código. Agora, esta plataforma consegue compilar em lote até 50.000 linhas de código em uma única execução, sem que você precise intervir ou pedir qualquer outra coisa ao agente. E, na verdade, existem vários agentes de controle de qualidade que verificam o trabalho uns dos outros constantemente antes que qualquer código seja entregue. Portanto, existe um
+
+ciclo de revisão integrado, e não se trata apenas de geração bruta, e é isso que torna este sistema único: a orquestração de literalmente milhares de agentes diferentes. Isso abrange todo o ciclo de vida do desenvolvimento, desde requisitos, design, código, testes, PR, etc. E eles recentemente alcançaram 66,5% no SweepBench Pro, que é auditado de forma independente e, pelo menos até onde eu sei, é uma das pontuações mais altas, se não a mais alta, para qualquer plataforma de IA, ferramenta, LLM, ou como você quiser chamar. Resumindo, o Blitzcy funciona de maneira muito diferente de ferramentas como Claude Code, CodeX ou outras similares, como os modelos Cursor, que dependem de você estar sentado no terminal, orquestrando os agentes, enviando diversas mensagens, abrindo diferentes sessões, clicando em aprovar, rejeitar, etc., certo? Vocês conhecem
+
+o processo típico de codificação de IA . Com o Blitzcy, você literalmente envia toda a base de código, ele a entende e, em seguida, você fornece instruções longas e detalhadas. Já mostrei isso em outros vídeos. Em seguida, o programa orquestra os agentes, como expliquei, passa vários dias, em alguns casos, compilando o código usando esses diferentes agentes e, por fim, entrega o resultado. Então, dito tudo isso, o que a Blitzcy decidiu fazer foi dizer: " Ok, o Claude Code não conseguiu fazer isso de forma eficaz. Vamos ver se conseguimos primeiro
+
+corrigir os problemas que eles tiveram usando a nossa abordagem e, depois, podemos construir tudo do zero?" E é nisso que quero me aprofundar agora. Então, o que o Blitzcy fez aqui foi importar o repositório do CCC que tinha todos esses problemas diferentes, certo? Ele construiu esse grafo de conhecimento da arquitetura existente, então tudo o que o Claude Code havia construído por conta própria, e então eles corrigiram todas as 13 regressões críticas do PO , corrigiram o problema de codificação assembly ARM, os condicionais X86, corrigiram todos os principais problemas que você viu na versão original e que as pessoas estavam apontando no GitHub. E além disso, eles construíram um verdadeiro pipeline de otimização em camadas. Eles
+
+tinham desdobramento de loops, otimização de chamadas de cauda , ​​etc. E, no conjunto de testes, 753 de 753 testes unitários foram aprovados, todos os testes de integração foram aprovados sem problemas e tudo compilou e funcionou corretamente. Vou colocar o repositório na tela, vocês podem dar uma olhada se quiserem. Vou deixar isso na descrição também. Mas isso é apenas o começo. Como
+
+mencionei anteriormente, o Blitz não se limitou apenas a corrigir os problemas no repositório atual. O que fez foi tentar construir seu próprio compilador completamente do zero. Porque uma coisa é corrigir um software existente, com toda a arquitetura de suporte, sabe, a maior parte do código já está lá e basta corrigir os erros, mas outra coisa é construí-lo do zero, sem depender de nenhum código preexistente. Então, o que eles conseguiram fazer aqui, usando a plataforma Agent que mencionei, foi reconstruir tudo completamente do zero com apenas dois prompts. Vou explicar o que são esses valores daqui a pouco, mas isso é simplesmente insano comparado aos 2.000
+
+usados ​​pelo especialista que trabalhava com o código Claude. Para este projeto, deram-lhe o nome de compilador Blitz C ou BCC. Eles geraram 229.983 linhas de Rust. Eles tinham 129 arquivos de origem, 2.271
+
+testes que foram todos aprovados sem nenhuma falha, e não tinham nenhum aviso, nenhuma diferença de formatação, nenhuma dependência externa do Rust e, assim como antes, eles tinham como alvo quatro arquiteturas. Então eles fizeram exatamente o mesmo que o Claude: x86, i686, AR64 e RISC-V 64. E aqui está o ponto mais importante, não é? O compilador de Claude precisava do pesquisador sênior, que registrou 2.000 interações ao longo de 2 semanas. Já com o Blitz,
+
+eles coordenaram 3.600 agentes de forma autônoma, apenas por meio da plataforma. Eles dedicaram um total de 624 horas de trabalho de engenharia com agentes paralelos, e esse tempo foi comprimido em cerca de 4 dias e meio de execução. Com o humano, foram apenas duas rodadas, literalmente duas. Eles tinham uma para enviar a solicitação e outra para refinar a versão final do PR para que funcionasse na validação do Linux. Assim,
+
+na primeira tentativa, praticamente tudo funcionou perfeitamente. Eles adicionaram mais um comando e então tudo ficou pronto, e é isso que você está vendo agora. Bem, não vou entrar em detalhes técnicos aqui, você pode ler tudo no post do blog que vou linkar abaixo, mas basicamente a prova de que isso funcionou é que o compilador Blitz C, em primeiro lugar, compila e executa SQLite, Redis, Lua, QuickJS, zlib e, o mais importante, compila o kernel do Linux e inicializa com sucesso. E se analisarmos todos os detalhes , o compilador Blitz CC se destaca em 15 das 22 categorias mensuráveis ​​ao comparar os dois softwares gerados por IA, certo? E isso é comprovado por todos os resultados dos testes realizados, que você pode conferir pessoalmente. Então, tudo isso é legal,
+
+mas eu quero ampliar a perspectiva e falar sobre por que isso realmente importa. Olha , isto não tem nada a ver com compiladores. Sei que ninguém se importa muito com compiladores C e se a IA pode gerá-los, mas o que está acontecendo aqui é que estamos realmente vendo a fronteira do software gerado por IA. Constatamos que certas abordagens simplesmente não funcionam de forma tão eficaz. Quando a equipe da Anthropic, ou neste caso o pesquisador especialista, estava apenas usando o Claude, certo? Os
+
+modelos antrópicos ou código de Claude exigiam 2.000 interações. Conseguimos algo muito legal e muito próximo de funcionar, mas ainda com todos os problemas que você viu. E então, com algo como o Blitz CC, isso meio que mostra para onde estamos caminhando em termos de desenvolvimento de software baseado em agentes , onde, em vez de ter essas pequenas sessões curtas em que você conversa com o modelo e vai e volta 2.000 vezes, com a estrutura de orquestração certa , e neste caso 3.600
+
+agentes individuais, é possível construir software empresarial completo com engenharia de contexto e, novamente, vários dias de trabalho. Normalmente, quando estamos escrevendo código ou fazendo a geração de IA, o processo é muito rápido, em torno de dois, três, quatro, cinco minutos . Nesse caso, você dedica mais tempo ao contexto inicial, mais tempo à solicitação, especificando exatamente o que deseja, e então os agentes de IA podem entrar em ação e, nesse caso, trabalhar por 624 horas, o que equivale a vários dias, certo? Em paralelo, e gerar software empresarial totalmente funcional , o que é meio louco de pensar que já estamos nesse estágio e estamos apenas no começo de 2026. Agora, claro, tudo o que mencionei neste vídeo estará na descrição, para que você possa conferir e ler por si mesmo.
+
+Obviamente, você não precisa acreditar na minha palavra, mas quero te contar rapidamente sobre uma oportunidade muito interessante, porque ultimamente tenho falado bastante no meu canal sobre agentes de IA da Open Claw e plataformas de orquestração de IA. E se você se interessa por isso, se você já construiu robôs Open Claw, então quero te contar sobre uma oportunidade muito legal que o Blitz me apresentou. Isso se chama Claw Comp, um programa no qual equipes de duas a três pessoas podem se inscrever para receber um Mac Mini gratuito para desenvolver um fluxo de trabalho ou um produto usando o Open Claw. Agora, a competição culmina em uma maratona de programação de uma semana, onde você ganha uma viagem para a Link Ventures. Este é um fundo de capital de risco em Boston, Massachusetts. Todas as despesas de
+
+viagem, hospedagem e tudo mais serão cobertas pela Link Ventures para você. E, sinceramente, é uma ótima maneira de obter experiência prática com o tipo de tecnologia de agentes que temos discutido neste vídeo e em vários outros conteúdos deste canal. Agora, se você estiver interessado nisso, novamente, chama-se Claw Comp. Vou colocar o link na descrição. Competição muito legal.
+
+Definitivamente, vale a pena tentar. E, quer dizer, se você ganhar um Mac Mini de graça, isso já é muito legal por si só. Se você for convidado para ir até lá, com certeza será uma ótima oportunidade, algo para enriquecer o currículo, etc., e provavelmente muito divertido. Então, veja bem, recapitulando tudo e concluindo aqui, Claude criou um compilador C que não conseguia compilar "Olá, Mundo!". Blitz corrigiu todos os problemas
+
+e depois construiu uma versão ainda melhor do zero, com 230.000 linhas de código Rust, praticamente sem nenhuma intervenção humana, apenas alguns comandos que eu mencionei. Foi possível inicializar o kernel do Linux. Este é o futuro do desenvolvimento de software que estamos presenciando agora. É incrível o que os agentes de IA são capazes de fazer, mas é muito claro que a forma como os orquestramos é o que realmente definirá o futuro.
+
+Temos LLMs básicos muito bons, mas eles precisam ser usados ​​no ambiente correto. E se eles tiverem o equipamento certo, o que eles são capazes de construir é realmente impressionante, e eu não sei sobre o que estarei falando daqui a um ou dois meses, conforme as coisas forem ficando cada vez mais loucas. Enfim, deixem seus comentários abaixo e espero vê-los em outro vídeo.

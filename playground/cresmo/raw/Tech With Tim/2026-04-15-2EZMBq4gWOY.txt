@@ -1,0 +1,159 @@
+---
+video_title: "How to Design a Production-Grade System in Python"
+video_id: 2EZMBq4gWOY
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=2EZMBq4gWOY
+video_date: 2026-04-15T14:00:04+00:00
+video_description: |
+  Thordata: https://www.thordata.com/?ls=YouTube&lk=Tim
+  Use the code "THORTIM" to get 30% off!
+  
+  Now I know a lot of you watching are tired of the beginner tutorials, the quick code snippets, the simple library functions and you want something more advanced. I'm going to walk through a production-ready architecture for a large scale web scraping system that can reliably collect a massive amount of data at scale.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🎞 Video Resources 🎞
+  Code Link: https://github.com/techwithtim/AmazonPriceScraper-Python
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  01:07 | The Scraping Issue
+  02:37 | Project Demo
+  08:30 | Tool List
+  13:09 | Architecture Walkthrough 
+  16:44 | Code Examples
+  
+  Hashtags
+  #Thordata #Python #SoftwareEngineer
+  
+  UAE Media License Number: 3635141
+---
+Now I know a lot of you watching are tired of the beginner tutorials, the quick code snippets, the simple library functions and you want something more advanced. So in this video I'm going to give you exactly that. I'm going to walk through a production ready architecture for a large scale web scraping system that can reliably collect a massive amount of data at scale. Now, in case that doesn't sound impressive to you yet, I'm going to walk you through why this is actually something challenging. And if you've ever done any web scraping before, then you're probably familiar with that.
+
+Then what I'm going to do is give you a full, in-depth breakdown of the entire architecture of a system that I've already built. We're going to go through diagrams. I'm going to talk about the tech stack, and I'm going to explain how you can make something, again, scalable with many different tools using pure Python. Because I know a lot of you to watch this channel like that. Okay, so with that in mind, let's quickly talk a little bit about scraping because that's effectively what I'm going to show you here.
+
+Kind of an Amazon price competitor tool where effectively what we're able to do is go to Amazon search in different regions for the same product and see where there's kind of some price discrepancy and what competitors are charging, what prices for, what products in real time. Now, if you've ever scraped anything beyond a quick script, then you probably know this pattern. The first version works, then it gets blocked, then different countries return, different pages, then sessions die. Then your data gets inconsistent and you stop trusting it. Now at that point, scraping data stops becoming just a coding problem.
+
+It actually turns into a large scale systems problem. How do you get past blocks? How do you scrape from different countries? How do you do this reliably? How do you deal with failures?
+
+That's something that I'm going to tackle in this video. So rather than me walking through just a simple example, I'm going to go through a complete scraping system that I've tested that actually holds up in the real world, one that you can run continuously, scale across regions, store historical data, and still be flexible to query later using something like an AI model. Now, at a high level, the architecture looks like this. Essentially, we have an event driven backend that triggers scraping jobs. A clean Python scraping layer, a proper proxy network so traffic looks like real users, storage for both raw data and historical prices, and an optional AI layer on top.
+
+So you can ask questions instead of writing custom queries every time. Now, this might sound complex, and that's because it is. And that's the whole point of this video to show you something that goes beyond just using 1 or 2 tools. So with that said, let's hop over the computer. Let me walk you through an example of what I built.
+
+Then we're going to get into the in-depth architecture, and I'll explain to you exactly how you could build something just like this. And by the way, if you want the code on screen, you'll be able to see it from the link in the description. So I just want to quickly tease the architecture because I put together some diagrams that again, we'll dive into in more depth later. One thing you'll notice is there's a lot of different components here, a lot of different tools being used. And I want to point your attention to this one down here in the bottom right, which is the Thor data proxy network, specifically the residential proxy network that I'm using.
+
+Now, without that, this entire project wouldn't be possible. So massive shoutout to Thor data for sponsoring this video, but more on that later. Okay, so quickly I want to go into a demo and just show you what this can do. You know, visually it doesn't look that impressive, but in terms of what it's actually grabbing, I think it's pretty cool. And then we'll get into all of the design.
+
+So I've got the demo open and I'll quickly explain to you how this works. Now effectively, like I mentioned, this is an Amazon kind of price comparison and scraping agent. What it allows you to do is enter in the Asin or Amazon kind of identifier or product ID for a particular product that you're interested in retrieving, and then to put the different target countries you want to get it from. So a lot of times the same product exists on Amazon, but on multiple different sites, like in Italy, in France, in, you know, United Arab Emirates, like I am in Canada and US, it actually oftentimes has very different prices, which I thought was interesting. So you can select the different domain you want to scrape it from.
+
+And then assuming this product exists on multiple sites, sometimes it does, sometimes it doesn't, it will scrape all of the data and collect it for you. So for example you can see that I scraped scrubbed daddy. Now I was able to scrape that from France, from Spain, from Australia, from Japan. And you can see that we're getting different prices showing up. Right?
+
+Even in euros. It's a different price in these different countries for the same thing. If we keep going down, I was able to scrape an iPad from, you know, Amazon as I scraped Kleenex, in which case this existed on a few different domains, and I just scraped like a razor. So I just did a few products. I don't want to overwhelm you in the demo, but you could do as many as you want.
+
+And this is fully scalable and can, you know, asynchronously scale up and do effectively unlimited products. Now, I also made this price comparison tab, which allows you to quickly look into the products that have kind of multiple different country entries. So you can see like Kleenex. Here you go. We have the information.
+
+If I go to Scrub Daddy same thing. We kind of have some charts and information about that. And then the coolest thing in my opinion is that I made this, I enabled which means there's an AI chat feature. So rather than having to write SQL or just pass through the information yourself, you can just ask it whatever you want. You could do something like, you know, what is the price of an iPad?
+
+And this should then give you the result by querying the database. So you can see that it gave me the result, and it told me all of the information that it found by querying the database based on, you know, you just typing what is the price of an iPad. So you can imagine how this information would be useful to a business, right? Especially if they're interested in e-commerce and how if you made something like this and just adjusted it to a particular company, you could gather a lot of intelligence that would be very meaningful for making decisions. Now, I'll just quickly show you that the scraping does work.
+
+So for example, like I have this Ax product, I'm just going to grab the Asin from the URL up here, and let's just go here and paste it in. And I'm just going to do a few countries. So let's say US, Canada, UK and maybe 80. Now I don't know if it's going to give me the results from all of them because this product has to exist under the same Asin for this to work specifically. But there's all kinds of ways to make this work differently where that doesn't need to be the case.
+
+And anyways, I'm going to press on scrape product. But another cool thing I'll show you is that when I do that, this actually now connects to one of the logging and monitoring tools that I use called ingest. Now ingest is really good for doing orchestration of especially AI enabled applications where you have like, you know, event streaming and whatnot. So you can see that I created this ingest server, which I'll talk about in a second, which allows me to monitor everything that's going on with this particular application. So you can see kind of tasks were coming in here.
+
+We had, you know, two were completed. We're scraping a product. You can see exactly when that happens. And then you'll see that we have scrape says, okay, you know, the product appears to be empty or invalid. So we didn't find the information.
+
+So we just immediately returned. If I go into another one. So let's go back to runs. Let me go to like one like this. You can see that we got some information about a product previously.
+
+You know, we got the product from the different countries or whatever it is that we wanted to scrape. Then we had like an answer that was returned. If I go into another one here, you can see that this was scraping a product. I just did this. What is it, a few minutes ago, and you can see that we're scraping on a this was the Asin.
+
+This is the categories, the products. And it gives us all of the information. So we can see kind of what's being returned. And I was, you know, hooking this up. We then embed this in the vector database.
+
+We can see how long that step takes. And then we have finalization where it returns the results to the UI. And then sometimes it fails right. And it will actually attempt multiple times to scrape the product. Sometimes the product doesn't exist.
+
+Sometimes there's a timeout or whatever, but it actually cleanly returns and gives us the logs and information so we can see exactly what's going on, dive into this, fix it, etc. we can click through this, and the whole point is we can see like you know, exactly what was happening, the different functions that we called. You can see here we were querying a product here, we were scraping a product. And when you have something that you want to actually run at scale, you want some kind of orchestration tool like this where you can go into it, you can see the different events you can see the different functions that you've set up. You can see the runs, you can retrigger them right.
+
+Like I can rerun them and try it again. I could cancel the run if it was currently running. And you have this all built in really easily, which I'll show you in a second. So if we go back to the price agent and we scroll down here, you can see we were able to scrape the ax body spray. In this case it was only available in the United Arab Emirates for this particular case.
+
+And again I would have to kind of find an Asin like I did before with Kleenex and with Scrub Daddy, where it exists in multiple regions to show you that feature regardless. Pretty cool. Now what I want to do is go over to the code editor and start walking through the architecture and how you could replicate this. So let's start with the list of the tools that I used for this project. Now keep in mind this is purely written in Python.
+
+You could do this in other languages or frameworks. But you know I like Python. A lot of you guys do too. So that's why I did that. Okay, so for the user interface I used Streamlit.
+
+Streamlit is a super easy frontend UI library for Python. Definitely recommend checking it out, especially for demos like this. Next fast API of course, I'm going to use that for the back end API for being the API layer essentially, and communicating the requests and the responses to my front end. Because I have this and fast API, it also allows me to make another kind of front end, like a mobile app or another web app or something along those lines where we could use this tool without being tied to this direct user interface, then ingest. This is the tool I just showed you that handles all of the orchestration.
+
+I have full detailed tutorials on this channel on how it works and how to set it up, but it's very straightforward and it effectively allows you to create kind of monitored functions, which is what I did, where you can track what's going on at each step like you saw. Then for the scraping, we used beautifulsoup. So what I mean by this is essentially parsing the scraped code that we got. So this allows us to extract the product data from Amazon, which I'll show you a really cool way of doing later in the video. Then for the proxy provider we used Thor Data.
+
+Now I have to show this one out because this is what makes this entire project possible. If you were to try to just send a normal network request, for example, from like our computer to Amazon, you can do that 4 or 5, maybe ten times. But if you keep doing that, eventually Amazon is going to block you. It's going to blacklist your IP. It's going to give you a Captcha or some problem you need to solve.
+
+It's going to detect you as a bot, and it's not going to allow for a scalable solution. Imagine you want to hit Amazon thousands of times. So what I'm using is store data which provides a residential proxy network. I'll quickly show it to you here that allows you to emulate being in a different country by using a real physical device. So essentially what a proxy is is that rather than me sending the request, I send a request to Thor Data.
+
+Thor data then delegates that request to its residential proxy network of like millions of devices that it has access to. And then can pick if I want to send a request from Germany or Canada or UAE or wherever I want to send the request from. Then what that does is it sends a request from that real device, gets what you would see from that country, and then returns the data back to me. So you can see that I set up the proxy, which I'll show you how to do a little bit later. But that's kind of the network that I'm using in order to send out an unlimited number of requests not to get blocked and to determine kind of the session management and what country I'm scraping the data from.
+
+They have a ton of other options as well. So like you could use mobile proxy, high bandwidth proxy, static IP data center proxies, web scraping API. Right. Like there's a bunch of stuff you can do here. And if you scroll through. Actually, I was wrong. It's not just millions.
+
+I have like 60 million plus proxy IPS across 190 countries, which allows you to kind of unlock web data at scale, which is exactly what I was showing you to do. And like I mentioned, you can do it in multiple frameworks. So anyway, so that's store data, which again is the thing that makes this project possible. Then we have MongoDB. So I'm just running a local MongoDB database on my own computer which is spun up with Docker, which we'll talk about in a second.
+
+Then for the vector database I'm using quadrant again a local vector database on my own machine. Now a vector database is a special type of database that stores embeddings of kind of textual data. So in this case we have all of the products. But if I had millions of products just running like a SQL query on them isn't that efficient if we want to give that data to AI. So what we do is we actually embed the important information of our products into this special type of database, which is highly efficient at being queried by AI models.
+
+And then we can return relevant results extremely fast in that conversation chain you saw by using quadrant. Then we're using OpenAI for handling the embeddings. We could have used a local model, but I just chose this because it's the easiest method. And then in terms of actually running that AI agent, you saw that gives us the results about a particular product. We're just doing that with long chain, where we're setting up some tools that can call the quadrant database.
+
+Like I mentioned, in terms of the external services, we had Thor data open AI. And then of course Amazon is the website that we're targeting. But we could do this with really any site that we want with some minor adjustments. So that's pretty much it in terms of the tool stack. Now let's go over the architecture and I'll dive into some of the interesting parts of the code.
+
+So you can see kind of some unique tricks that I was using to get this to work effectively, because a lot of times getting the web pages easy, but actually scraping the data on the page can be difficult and really tedious. If you're just like looking through all of the HTML tags. Okay, so this is the architecture diagram. Let's start going through it kind of step by step. So we have the application layer right which is where a lot of the kind of communication is happening.
+
+Effectively we have the Streamlit UI. The ports aren't really relevant, but you can read them if you want. And what will happen is when we use the user interface will effectively send a query rights like scrape a product or give me some information or, you know, ask the AI agent. And right now we send that to ingest. Now ingest is this kind of intermediary server which handles all of the logging and monitoring.
+
+To put it in fancy terms, you know, we can say event orchestration, right. Then ingest will send or kind of forward all of these different requests over to our fast API API, which will then be able to get the different responses. So the scraping logic right happens. But being triggered by the API, which we'll look at in a second, but ingest is this kind of middle ground which is proxying the different requests and sending kind of the different events where they need to go. Now, the two core functions of this application that ingest kind of handles is querying the products.
+
+Right? So like from AI and scraping the products. Right. That's the two main things that this handles. You can see that I've just set up those two functions.
+
+And they kind of have their dependencies as we go down. We also have the link chain agent which can be triggered directly from ingest right when we're trying to query the products. So from the link chain agent I have this connected to a few tools. The tools it has access to is the Amazon scraper. So we can actually go out and scrape the products itself using the Amazon scraper.
+
+It can send a kind of a tool call to that. We also have it connected to our quadrant vector embeddings. This is again that super efficient database that's used specifically for querying the data really, really fast. And then we have it connected to our MongoDB database so that once it queries the information it needs, it can get the full complete schema or kind of database model from MongoDB. So there's three tools connected to it.
+
+Then we keep going the Amazon scraper. So this is kind of just an independent module or piece of code where effectively what it does is it utilizes that residential proxy network to send the request, get the HTML. So it goes, hey, I want to go to Amazon and, you know, scrape this particular product, give me the HTML for that. We send that request to Thor data. We tell Thor data, all of the information about the session that we want to set up.
+
+Do we want to connect to an existing session? Do we want to change the location? You know, how long do we want to wait, whatever, all of the different settings that it has. And then what it does is gives us back that geolocation specific HTML from a proxy proxy device, right. Like a residential proxy device.
+
+And then what we're able to do is use Beautifulsoup to actually scrape through that content and pull out the different HTML elements, JavaScript elements, and grab all of that product data. So then, even though it's not really like fully connected up here, we then take that info and store it in the MongoDB database. And at the same time we embed the data and store it in the quadrant database so that we have the kind of scrape stuff. And you can kind of see the trigger here, right? So from ingest we trigger the scrape product function.
+
+We scrape goes to the scraper goes to Thor data gets the data right. We scrape it from Amazon. Data comes back. Step two we store into MongoDB. And then step three we embedded in quadrant. Right.
+
+And kind of the same thing here. When we're querying the product we search for the information in the quadrant vector embeddings. And then we get the details from the MongoDB database. Cool. Then we have OpenAI, which is just responsible for running the yellow lab and then creating the embeddings and kind of generating the text string.
+
+So that's pretty much it in terms of kind of this, if you want to see a flow chart, you can have a look at it here. This is for the product scraping I'm not going to go through it step by step. And this is for the query flow. So as mentioned I'm going to dive into some different components of the code now and walk through some interesting kind of technical stuff. So in terms of the scraping and connecting to the proxy, I want to show you that set up because it is fairly straightforward to do.
+
+Now there's multiple ways to connect to the proxy. You can do this using a framework like selenium for example, or playwright, which is kind of like a web automation framework, which is a little bit more complex. Or you can just directly send an Http request, get all of the raw HTML and kind of page data back using, in this case the Thor data proxy. So what I was able to do is from the Thor data set, let me just pop it up here. I was able to create this kind of residential proxy account or like service.
+
+I was able to buy one gigabyte of data. I forgot how much it was, maybe 20 bucks or something, but it's pretty cheap. You can see I've hardly used any of it, and I simply just got a username and a password. But I'm also able to whitelist my IP address from there I can just go and I can see kind of like the curl command that I could run, or I can change this to look at some code examples. So I can see directly how I would run this in something like Python for example, just shows me how to do this.
+
+So what I did is I set up my own client where I essentially got my username, got my password, got the proxy server that I'm going to connect to, and then I just kind of built this quick little client that is able to build the authentication string that I need to send to Thor data when I want to actually get this proxy to request. So effectively, all this is doing is it's just building the correct string where it's putting in like my username, the country I want to connect to this session ID because Thor data can intelligently manage the session so you can reconnect to kind of the same browser instance if you want that. And then in order to get the proxy URL, we just put the authentication component, proxy host and the proxy port. And that's pretty much it. And then these are just functions that allow you to send a Get request and a Post request.
+
+And effectively all I've done is I've just set proxies equal to proxies. And I put an Http and https proxy object here. And now when I request a particular URL, which is the Amazon product URL, it proxies it through that and just gives me the request. And that's literally it for actually connecting to the proxy network and getting the data back. Now, in terms of kind of scraping the data back, let's go into that and I'll show you how it works.
+
+Okay. So this is my scraping client. First thing I do is I connect to the proxy client so I can actually send the request. And then I have this scrape product function. So what I do is get the correct Amazon domain based on the country code.
+
+I then generate the URL right that I actually want to go to to get this particular product. I then send the request and then of course if there's an issue I raise that. Then what I do is I just take the XML. So notice this is not just purely the HTML. And I put that into beautifulsoup.
+
+Now once I put that into Beautifulsoup, Beautifulsoup creates this Python object wrapped around this content, which allows me to really easily get some data about the products. Right. So for the product data, I'm able to create this kind of Json object or what I can do is start filling it in with different information that I have. So to start filling this in, I, you know, I put in some information that I have and then I start looking for the title, for example, right where I'm able to look inside of Beautifulsoup for a particular tag. So span with the property product title.
+
+Keep going. Right. I can look for the price where I can find this a price hole, and I use this regular expression to find anything that matches this or contains this text. Then I kind of just do a little bit more parsing. I'm not going to go through every single line.
+
+Same thing for finding the what is it the brand. Right. So brand by line, I can find that just by having the correct what is it kind of code here and what I effectively did in order to do this is the first time that I scraped all of the HTML. I just stored it in HTML file. I then passed that to my local L alum, or the yellow term that I'm running here inside of cursor, and I told it, hey, generate the scraping code based on this page, and it was able to go through there and find the tags that are going to be consistent in order to pull out the information from that page.
+
+Now, an even more clever way is to actually get it from the JavaScript object that's populating the Dom. However, I didn't do that in this particular example. So anyways, that's how I would do the scraping, right? It's really simple with Beautifulsoup avoids having to like click into stuff and like render and generate like dynamic pages using kind of this more advanced clients like Playwright or Selenium. And that's how I was able to get it.
+
+Now of course there's a lot of other stuff that I can go through here, but that's kind of the more interesting component of this code. I will quickly show you, though, that I did Docker ise all of this to make it very easy to spin up, because you can see that I was running a lot of different services, right. Like I have MongoDB running, I have a quadrant database, I have Streamlit, I have fast API, I have ingest. So trying to run all of those servers independently every time I want to test the app or if I want to deploy this is not really efficient. So again, I had I helped me create a Docker container with the docker compose where effectively I'm able to spin up, you know, my Amazon MongoDB container that stores my database, my quadrant database container, which has the quadrant database and the vector database, I'm able to spin up the API, I'm able to spin up ingest, and then I'm able to spin up Streamlit.
+
+So I have all five of those running at once. And then I created a super simple Readme file here. Let's just preview this. So preview markdown that shows me all of the different commands to effectively run this, tear it down, etc. and then how to access the various services in terms of what ports they're running on, as well as all of the various environment variables.
+
+And then actually, last thing, I'll just quickly show you, here's kind of a list of tools that I made that access those various services. Right. Like performing a vector search on quadrant. Right. Getting the information from my database. Right.
+
+In terms of like the geolocation or the product or the price history or searching or scraping or whatever. And then I connected that to my AI agent, which is right here, which I created using Link chain. Right. So you can see I have link chain open AI, I created, you know, my model, put my tools, created this line with tools, which is super simple, wrote the agent Executer. And then effectively I was good to go and I hooked all this stuff up with the UI and I was able to finish this app.
+
+So there you go guys. That is everything that I have for you. I think this is a super cool project. Hopefully you appreciate the more complex architecture. Maybe I introduce you to a few tools you've never seen before, or I gave you some inspiration for something interesting that you could build.
+
+Again. Massive thank you to Thor Data for sponsoring this video. If you want any kind of web search or kind of proxy networks, or you just want to unlock web data at scale, they are a great company to use. Their pricing is very transparent, very easy. And as you saw, I was using hardly any of the bandwidth that I paid for because it's very, very efficient.
+
+And again just gives you the results that you need. So anyways, guys, that's all that I have for you. If you enjoyed the video make sure leave a like subscribe and I will see you in the next one.

@@ -1,0 +1,176 @@
+---
+video_title: "AI Web Scraping Is Insanely Good | Browserbase Full Tutorial"
+video_id: XTQTJoSfeMg
+channel_name: "Tech With Tim"
+channel_id: UC4JX40jDee_tINbkjycV4Sg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=XTQTJoSfeMg
+video_date: 2026-05-15T15:19:07+00:00
+video_description: |
+  Create a free account and get started with Browserbase: https://browserbase.run/twt1
+  
+  If you've ever tried to connect an AI agent to some kind of browser or to automate the web, then you've probably dealt with a lot of frustration
+  and a lot of problems. In this video, I'm going to show you the fix to that by showing you a platform called Browserbase, which is free to use.
+  
+  Want to make real money with coding? I share high-signal insights on careers, monetization, and leverage in my free newsletter. Join here and get my guide How to Make Money With Coding instantly: https://techwithtim.net/newsletter
+  
+  🚀 Tools I Use
+  Get 10% off with code techwithtim
+  Openclaw setup: https://www.hostinger.com/techwithtim
+  VPS setup: https://www.hostinger.com/techwithtim10 
+  Wispr Flow (Best AI Dictation): https://ref.wisprflow.ai/techwithtim
+  
+  🎞 Video Resources 🎞
+  Browserbase MCP: https://www.browserbase.com/mcp
+  Browserbase Docs: https://docs.browserbase.com/welcome/introduction
+  
+  ⏳ Timestamps ⏳
+  00:00 | Overview
+  00:56 | What is Browserbase?
+  06:03 | Using the MCP Server
+  09:54 | Stagehand SDK
+  10:46 | Basic Python Usage
+  13:16 | Web Scraping & Extraction
+  16:53 | Workflow Automation
+  19:30 | Playwright Comparison
+  
+  Hashtags
+  #WebScraping #Browserbase #AIAgents
+  
+  UAE Media License Number: 3635141
+---
+If you've ever tried to connect an AI agent to some kind of browser or to automate the web, then you've probably dealt with a lot of frustration and a lot of problems. Now, in this video, I'm going to show you the fix to that by showing you a platform called Browserbase, which is free to use. Now this allows you to connect your AI agent to a remote browser session that can automatically search the web, extract information, press button, sign in to websites pretty much anything that you need in a remote fashion, which means if you're running it from open claw or a Hermes agent, or a Claude code session, or an environment where you don't have your own browser or you want to scale up and use, you know, tens of thousands of browsers at the same time, you can do it with this platform. It's going to be very valuable to you. And even if you're someone who does web scraping, you're going to see a much better approach here than manually writing a ton of playwright or selenium code, or trying to fix all of the CSS selectors on the page.
+
+So if you're interested in web automation at all, stick around, because this is definitely something you need to know about. So effectively, what I'm going to do here is just give you a full tutorial on how to use the browser based platform. Now I've partnered with them on this video, but like I mentioned, it is free to use. They have a generous free tier and then of course if you use it a lot you can upgrade and buy additional credits. Now, browser based effectively allows you to control remote browser sessions or even your local session as well.
+
+If you wanted to, using a significantly better kind of API or SDK or whatever you want to call it, than something like Playwright or Selenium. If you're not familiar with those, those are more conventional kind of browser automation frameworks that allow you to like select a bot in or select some text or search for like a CSS selector. But it doesn't use any type of. I just like manual browser automation. Browser based has all of that functionality, plus an AI layer, which allows you to give natural language and then perform all of the scraping in a repetitive way that's scalable.
+
+So you can search, you can fetch, right? There's a browser you can just give to your AI agents, which we're going to look at. And effectively this allows you to reliable web automation because it fixes a lot of the problems with that traditional scraping approach. Now just to explain this a little bit better, I want to go through kind of a few quick slides. You understand what it is that we're about to do.
+
+Now first things first. When we talk about LLMs or agents, right. OpenClaw Agent Hermes agent, your Claude code agent. Those can usually connect to your own browser. Right.
+
+But that assumes, first of all, that you're running on a machine that has a browser. So like a mac, for example, and not maybe a Linux virtual machine or, you know, a Linux VM that you're running in the Claude. But even if it has access to a browser, typically these agents are good at searching for information kind of finding something from a page, but they can't really reason or act on the page, so they can't go and press a button, for example, sign in. It can't spin up, you know, 100 browsers at the same time. And that's one of the core issues that this fixes.
+
+Now also, even if you were to try to do that using the AI agent, typically you're going to run into rate limits captures IP bans blocks, and there's no default API for interacting with these types of sites. So that's kind of where browser based comes in. And it's a platform that gives your agents a real, legitimate browser that looks like a real human so that it can go and automate following all of those tasks that are running into those issues. Now, there's five main things that I'll go over in this video. Some will cover more in depth than others.
+
+First, we have functions effectively. This is a way where you can have your code and the browser bundled in the Claude at the same time for very low latency. The stagehand SDK. This is an SDK that you can use to control a browser, either remote or local, using natural language and AI agents or LMS mobile gateway. This is effectively one gateway, so you can choose any AI feature that you want to control, the browser or any LM that you want to control the browser without needing a ton of different subscriptions.
+
+Agent identity this is the way you can sign in, get pass, block, solve captchas, etc. and then the browser API effectively a way that you can spin up browsers remotely and use them from different AI systems. Again, this could be normal web automation. We're using it from something like Claude code or whatever, right? Now let's continue here.
+
+I just want to show you an example of what the stagehand SDK looks like, which we're going to get into in a minute. You can see that in something like playwright or puppeteer, you would have to manually say, okay, like I want to click this button. I want to fill in this form, right. And you have to know exactly what form the location of it. You need to know, like the reference to it on the page.
+
+And those things can change, right? Like this button tag could be random characters. For example, if it's like a react component. Or it could just change later on. And it's very finicky and fragile.
+
+Whereas if we look at stage hand here, you can see that we could just say, okay, I want to take an action of clicking the button, okay. I want to take another action of filling in this field. Okay. I want to extract this from the page. So you just write in natural language what you want and the model automatically figures out how to do it on the page, which is self-healing, and means if something changes on the page later on, it can still recover from that, rather than if you manually hardcode all of the selectors.
+
+Now it really has three main things act, extract and then observe. There's also an execute one, which we'll look at in a second, but it's a significantly easier interface or API to use, which is why I'm going to show it to you. Now the next thing to go over here is something called Agent Identity. Now, browser based doesn't attempt to evade the bot detection effectively. What they did is they partnered up with Cloudflare as well as a bunch of different Captcha vendors so that they can tell these providers, hey, I'm an AI agent, but I'm authorized to view this page.
+
+No, I'm not doing anything against the terms of service, for example. So let me through. So with that, when you use their browser sessions, you don't have to deal with all of the blocks or IP bands. Rate limits captions because it automatically identifies itself as an agent and then goes through on the site. Whereas if you tried to run this locally on your own computer and you spin up, you know, 20 Chrome tabs that are being automated by an AI, you're very quickly going to be banned because you don't have this agent identity feature.
+
+Okay. So that's all kind of the key information that you need to know. Now I want to show you how we can actually use this. Now the first way to use this is directly from your own AI agent or, you know, harness or whatever. So something like open claw, Harmony's agent, clawed code, codex doesn't matter.
+
+So what we're going to do here is use something called an MC server. We're just going to add that to our AI agent. In this case I'm going to add it to Claude code. And then it's going to have the ability to use browser based to interact with the web and to perform all of these automations. And again, to do it at scale with multiple sessions at the same time.
+
+So I'm just going to copy this configuration right here. You can find it from this page. Just scroll down a little bit. I'm going to go over to Claude Code. I'm just running this in the terminal. You can use the desktop app too.
+
+And I'm just going to paste this and then tell it add this configuration to my MCP servers. And then what I'm going to do is just paste my API key as well, which I'll show you how to get. Because if you see here it says your browser based API key. So in order to get that you just need to make a free account here. Just sign up for a new one. I'll leave a link in the description.
+
+You don't need to pay. And then once you go to your browser based dashboard, you'll see a little thing in the left sign here that says API key. You just press on it to copy it, and then we can go back and we can just paste it. And if we paste the key and just tell it, here is the API key to use. Right. And just paste the key.
+
+Then we're good to go. Now you also could just manually add this to the MCP config. If you're familiar with that. But for most of you it's probably easier just to have Clyde do it for you. So I'm going to paste it without leaking it.
+
+Hit enter and then see if it adds the MCP. All right so that finished. And if you want to test this out and make sure it's working just restart Claude code and then type slash MCP. If you do that you should see browser based. If we click in we can see all of the tools that are available to us.
+
+And then we can test it out so we can do something like using the browser based MCP server. Go to YouTube, search tech with Tim and find his most recent video that was posted. Okay, something very basic. Let's go ahead and hit enter. And by the way, if you're wondering what I'm using to dictate here, it's a really cool tool called Whisper Flow.
+
+If I open it up you can see I am an absolute power user of this 112,000 words. It is free to use. I have a link to it in the description. It's just the best AI voice dictation tool that makes it a lot faster than typing. So anyways, I'm going to go yes, I want to start this up.
+
+What this is going to do is now start a remote browser session and then navigate to YouTube. So if I go here, you'll see that it's actually running a session right now. And we can view in real time what it's doing in the browser. So we should see that it is doing this. Yeah.
+
+So it's actually scrolling down right. It's looking at all of this. We can see the network logs. And if we go back here I'm just going to go. Yes.
+
+So we can start extracting the information from the page and then hopefully give us the result. But it's pretty cool because you can actually watch what it's doing. You can take over the browser, right. You can start clicking into stuff and you can see all of the information, which makes it really easy to debug. Okay. It's saying it's going to end the session now.
+
+So if we go back you can see the session is now ended. It's actually going to give us a full recorded replay of everything that it did, as well as all of the pages that it went to. So we can watch it in real time and see what happened. And then you can see most recent video, Claude Code Views 4.5 K posted seven hours ago, and we get the result.
+
+Now, while this is useful inside of something like Claude code, personally I find it much more useful in tools like Open Claw, because typically you're going to run those on something like a virtual private server where you don't actually have your own web browser or head full browser on the server. And in that case, what you can do is you can just connect it to browser based, and then it can go and access a browser and use that. Because if you ever tried to use Open Claw and you've installed it on a VPN and you tried to get some automatic browser automation running, it is a huge pain. Instead of doing that, just connect it to the MCP server and then you can do the exact same thing you looked at here, and you give it those capabilities at scale. Okay.
+
+So that's pretty cool, right? Obviously it works inside of your own kind of agent harness. But where this becomes more interesting is when you actually write the code yourself and you start doing automations inside of things like Python scripts, right? Especially if you want to do something a little bit more complex. Now, what I'm going to do is just show you a few demos here of this working and show you kind of how the code operates, so you can see how you could write this on your own.
+
+If you want to build a web scraping script, you want to have a workflow, you get the idea. So have a few demos and kind of code samples that I'll run you through on my computer here, but I just want to note that this is available for various different SDK. So TypeScript, Python, Java, go, Ruby. And what I'm going to show you here is something called the stagehand SDK. Now you can use these browser based browsers anywhere that you want.
+
+You can connect to it from playwright or from selenium. But stagehand is the SDK that we were just using via MCP that allows us to have this AI driven, repeatable workflow. So you can see that you can choose when you want to write code versus when you want to use natural language. You can go from AI to repeatable workflows, and then you can write it once and run it forever when you have it inside of this script. Now, in order to use this, you just need to install stage.
+
+And in this case I've used UV. And then you need to provide your browser based API key as well as the model API key. If you don't want to use their model router, which we'll look at in a second. So let me show you a quick example of how this works. So if we run through this code quickly, you can see it's as simple as me just importing stagehand, which I have installed.
+
+I have a few variables defined to my browser based API key, the model API key for the lime that I want to use, and then the browser based project id. Now here I have the ability to run this locally or to run it remote. So that's kind of an interesting feature of stagehand here is that you can actually run it in your own browser, on your own computer, without needing to pay for anything or using their service, because it's just the SDK that they have provided. And then you can specify the model that you want to use in the model API key. So if I want to do a remote, of course I need to pass my browser base info.
+
+If not, then I just say I want to use it locally. Then here I just provide the name of the model I want to use. So if I was using an OpenAI model, I would put in OpenAI API key. If I'm using an anthropic model, I put an anthropic API key right in my environment variable. Then if we scroll down, you can see it's as easy as me navigating to a particular page if I want.
+
+I can get the replay link. So this will allow me to go and view the session in real time, and then we can just say, hey, we want to extract this information. That's as easy as the API is. Here's the ID that we have. Here is the instruction okay.
+
+Extract the number one story from the Y Combinator front page. And then this is the schema or the format in which I want this data back. You can write this however you want. And this will then force the model to pipe this into that format. So it's easier for you to parse.
+
+For example like result dot data, dot result. Right. We can print that out. We can get all those different properties. So this is kind of a really cool part of using stage hand as opposed to having to manually write it in playwright.
+
+So now if I just open this up, let's go. You've run basics and let's run it in the Claude for right now. You'll see it saves me a session link. So let's go here and open up the session. And we can see that it's running.
+
+It's opened up Y Combinator. And then if we give it a second here okay. Looks like it finished. And if we go back we can see the title was a agent. Coding is a drop points 179.
+
+And then this is the author because that is the schema that we provide. And that's literally as easy as it is to use. Now we can also run this locally. So we can say you've run and then local. Same thing.
+
+We would just use this configuration here. You're going to get all of this random logging because that's kind of how it is set up. And then in a second we should get the top stories here. You can see it's kind of buried in here. But it says top story.
+
+And then we get agenda coding as a trap. And in this case we didn't run it on browser base. We just ran it on our own computer using the stagehand SDK. Cool. So that's a basic example.
+
+Now what I want to do is show you some more advanced examples using some more features from the SDK. So here's another example. We're going to load this up remotely. Notice this time that I don't actually provide the model API key. And the reason for that is I'm using something from stage hand here called the model gateway.
+
+Now this allows you just to specify the model that you want to use and have stagehand or browser based automatically go and then route the request to the appropriate alum and just bail you out, whatever the cost is that you would have to pay anyways. So rather than you managing, you know, hundreds of different keys or having a ton of different subscriptions, you just literally pick the model you want to use, okay? You want to use OpenAI, you want to use anthropic, whatever. It just does the routing for you and you don't need to change anything in the code. You literally just change the model that you want to use.
+
+Now, alternatively, like we were just doing, you can provide your own API key and do that if you want. Or you can just use their model routing, which is now what I'm using in these examples, which is why I don't have the key. So I say, hey, I want to use sonnet 46, okay, I want to use the browser based browser. And then same thing we can navigate. We're going to go to the Y Combinator page.
+
+And this time I want it to do something a little bit more complex. So I say extract the top five stories from the Hacker News front page. Okay, we can get all of the stories. I then say I want to observe the following. So I want to find the link that opens the comment page for the top story.
+
+So what observe will do is it will actually look at this site and find anything that you can interact with. So I can find like the comments body and I can find a like body and I can find a search field. Whatever you can see here identifies and returns available actions on the current page that match the given instruction. Then we can say, okay, did we find any actions? If we did, we can act on those so we can say hey to the action.
+
+I want to take is I want to use this particular input and I want to fill it in, or I want to click it or whatever, so we can perform that action and then we can extract afterwards. So notice it's just these kind of 3 or 4 different methods where we are. What do you call it. Extracting right. Observing and acting.
+
+And that allows us to use this natural language. And then of course we can use code as well. Like we've kind of done right here. But we have the ability to choose when we want to do that, to get something that's more robust but also a lot easier to write. So if I open this up now, I'm going to give you a demo of how this works.
+
+And now you've run demo scraping dot pie. Okay. Let's go to the replay link so we can kind of watch it in real time here. And let's see what we get okay. So it's on the page.
+
+We can see that it's now actually clicked into this where the comments are right for agent decoding is a trap. If I wanted to, I could even tell it to leave a comment. Of course we'd have to log in to do that, but if we go here, you can see that it found the top five posts, right? Agenda coding. Let's by spirit hair, all of this stuff.
+
+It finds the common thread for story one. So it says act on the link to the comment page for the top story. So it's now clicking into it as it just did. And then it found the top comment. Interestingly, I've done whatever blah blah blah.
+
+And if we go back and we watch the recording, you can see that again. Let's kind of go here. Where did it click into it? From here it was able to actually press that, and then it was able to scrape the comment, of course I can do something much more complex, but I'm just showing you the basic usage of the API so that you understand how this actually operates from code. And again, this is significantly easier than if you had to write this yourself with all of the selectors.
+
+So that's some kind of basic scraping task right now I want to show you a more advanced workflow, because sometimes you have pages where the steps aren't necessarily clear, or you want the agent to kind of take on something bigger. Now, that's what this specific, script does. This actually goes to Google Flights, and it punches in a bunch of information, which for me has always been notoriously difficult to automate and then gives me flight results back. So let's quickly run through the code and then I'll give you a demo of this working. Okay. So same thing. We're connecting to stagehand.
+
+We're just picking the model that we want to use, which in this case is sonnet 46. We said we're going to wait for the capture solve. So it will automatically solve the captures for us if it needs to do that same thing, get the session and then view the replay. We're going to navigate to Google Flights. We're just doing some logging.
+
+This is what we're searching for San Francisco to Dubai on these dates. And then if we scroll down here notice I'm using a new feature from the API called execute. Now execute allows us to do multiple complex steps in one flow. So rather than just pressing one button or extracting one piece of information, we can do something a lot more complex. So notice that I gave this really detailed instructions on Google Flights.
+
+Set up the round trip search and click search. This is the type. This is the origin destination, departure, etc. after clicking search, wait for the flight results to load and then stop. Don't click on any individual flights but I didn't tell it.
+
+Press this, do this, go here. I just gave it a general high level task. I said okay, take a maximum 100 steps. Here's the model I want to use. Here's the timeout which is just a few minutes.
+
+And then it will actually just go and perform all of those actions. Then after it's done I use extract where I say same thing. Here's what I want to extract. The top three flights. Give me the information, the, you know, departure date, whatever.
+
+And then it gives me all of the properties here that I pipe into the schema, and then I can print it out. So this is 90 lines of code to do something that I've done before manually using something like playwright, which takes a very long time. So let's just run this. You've run and then what is this called the demo workflow dot Pi. And let's see it functioning okay.
+
+So we can see that it's searching here. Same thing. If we want we can go over to the replay. This one will probably take a little bit longer to run just because it does need to do quite a few steps, but we'll be able to watch it here in real time. So I thought it was going wrong here, but it's actually brought itself back to the correct page and now it's doing the date selection.
+
+It's kind of scrolling through the months to get into May here. And okay, there we go. It picks May 8th. Now I'm looking for 15th hopefully okay. And now it's actually fully complete.
+
+We have the recording there. And if we go back here we can see that it found the three piece of information. So Air Canada, Emirates and Alaska as we asked. And it was able to go through all of these different steps. It took about four minutes to run.
+
+But that makes sense given what's happening here. And what's actually interesting is now that this will cache the result, we can actually set up caching. So if it does that, that means the next time we run this, it will be significantly faster because it doesn't need to search for all of the same elements because it's already been cached. And just to give you an idea of what I mean in terms of doing this manually, this is an example of a script that uses playwright to do this. You can see the we're already at double the number of lines, but it's not really about that.
+
+It's more that we need to actually do things like a regular expression check on the price, the duration, the stops. I need to get the role of a page. I need to find both ends. I need to search for various fields, and this most likely won't even work reliably because things can change on the pages is very dynamic. I have to look for Aria labels, right?
+
+And just creating this script is a lot more difficult, if even possible. And again, many times I've tried to automate Google flights. It is very difficult to do and this just did it on the first try with me just giving some general natural language. So playwright selenium, it's great. It's fine, but only when you really know what the page is going to look like.
+
+And even so, if the page changes, that's very problematic and is going to be very annoying to deal with. So anyways, guys, that's really all I had for you in this video. Now there's obviously a lot more stuff you can do here with browser based. And when you start going up to scale and running multiple sessions, that's when this really does make a lot of sense. But I wanted to give you a quick tutorial so you got to understand how to use it, what the API looks like, and to see if it fits your use case.
+
+If you guys enjoyed the video and you want more content like this, then definitely leave a like subscribe and I'll see you in the next one.
