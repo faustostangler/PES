@@ -1,0 +1,208 @@
+---
+video_title: "Best & cheapest AI for OpenClaw"
+video_id: T7uNP7Nrb98
+channel_name: "The Next New Thing"
+channel_id: UCNZEktrsM5oJZ-MK4jKPMOQ
+channel_category: "People & Blogs"
+url: https://www.youtube.com/watch?v=T7uNP7Nrb98
+video_date: 2026-04-06T18:26:02+00:00
+video_description: |
+  Presented by Zapier: https://zapier.com/
+  
+  Our model comparison report: https://thenextnewthing.ai/l/openclaw-model-eval
+  
+  👉 Josh Pigford (X/Twitter): https://x.com/Shpigford
+  👉 Josh Pigford (LinkedIn): https://www.linkedin.com/in/joshpigford/
+  
+  What happens when you actually test AI models in real work—not benchmarks?
+  
+  In this episode of The Next New Thing, Andrew Warner sits down with Josh Pigford to run a real experiment: take multiple AI models, give them the same OpenClaw task, and see which one actually performs best.
+  
+  After Anthropic removed Claude subscriptions for OpenClaw, Josh was forced to rethink his entire setup. Instead of guessing, he built a system to test models side-by-side—running the same workflows across Claude, GPT, Gemma, GLM, Qwen, and more.
+  
+  The result: most models fail in subtle but important ways.
+  
+  Some can’t find context.
+  Some give correct answers but lack intuition.
+  Some completely break mid-task.
+  
+  And a few come close—but still require more handholding than expected.
+  
+  This episode is a practical look at how different models behave in the real world—and why “technically correct” isn’t the same as actually useful.
+  
+  ⏱ Timestamps
+  00:00 AI models battle for real-world tasks
+  00:09 Claude subscription shutdown problem
+  00:45 $50/day vs $200/month (cost reality)
+  01:30 Setting up a model testing system
+  02:06 Baseline: Claude Opus performance
+  03:18 Why Opus feels “intuitive”
+  03:45 Sonnet fails to find context
+  04:21 Gemma misses key data
+  04:48 Kimi breaks mid-task
+  06:00 GPT models: correct but too “clinical”
+  07:03 Why vibe and context matter
+  08:06 GLM struggles with tool awareness
+  09:45 Qwen needs too much handholding
+  11:24 Testing GLM 5.1 via Z.ai
+  13:12 How to set up models in OpenClaw
+  15:00 Running real tasks (not benchmarks)
+  17:06 Real use cases (inventory, research, ops)
+  18:36 Managing business workflows with agents
+  19:12 Inconsistency problem across models
+  20:06 Final takeaway: Opus still wins
+  20:33 How to test models for your own use
+  
+  👉 Join us: https://thenextnewthing.ai/
+---
+Vamos colocar os melhores modelos de IA para competir para ver qual é o melhor para garra aberta e como você pode descobrir qual deles lhe dará os melhores resultados pelo preço certo. Vamos lá . Apresentado pela Zapier, a empresa de automação com IA . Assim como muitos usuários do Claude, recebi um e-mail muito gentil da Anthropic informando que eles iriam desativar as assinaturas no OpenClaw. Tipo?
+
+Foi como um tapa na cara antes de um feriado, dizendo: "Ei, sabe de uma coisa? Você estava usando sua assinatura para acessar o Open Claw? Pronto, acabou. Vaza daqui." É, não foi uma ótima maneira de encerrar minha semana de trabalho.
+
+Considerando que você usa o OpenClaw com tanta frequência, qual seria sua estimativa de custo se continuasse usando o Claude da maneira usual, em vez de pagar os 200 dólares mensais pelas taxas da API ? Ontem fiz um pequeno teste usando apenas a API e o custo total ficou em torno de 50 dólares. Então, 50 dólares por dia. Sim. E você estava sendo muito conservador. Eu
+
+vi seu teste. Basicamente, você estava dizendo que, em vez de usar o melhor modelo, que era o que você fazia antes, você estava dizendo: "Quero que o melhor modelo funcione como um roteador e decida qual modelo usaremos para cada uma das minhas tarefas." Mesmo com essa abordagem conservadora, você acabaria gastando US$ 1.500 por mês, em vez de US$ 200. Correto. E isso não significa que não haja
+
+programação, certo? Então, tipo, se eu estivesse programando bastante, isso, sabe, é só eu interagindo, batendo papo com eles. Certo, foi um dia tranquilo pelo que você viu. Então você disse: "Ok, isso não pode continuar assim, mas existem outros modelos por aí. Quero descobrir como fazer isso." E em vez de simplesmente escolher com o
+
+coração, você disse: "Vou ser um pouco mais científica sobre isso." E você começou a olhar em volta. Vamos ver o que você fez. Mostre-me esse Discord. Aquilo foi mágico. Sim
+
+. Sim. Então, criei este canal no Discord onde decidi analisar vários modelos diferentes. Bem, eu perguntei por aí tentando descobrir, tipo, "Olha, quais são algumas alternativas decentes? Eu não tenho acompanhado muito de perto os modelos de código aberto ou outros modelos alternativos."
+
+Então, recebi várias sugestões e decidi: "Bem, vou experimentar todas elas." Ok . Então, cada um daqueles à esquerda é exatamente a mesma pessoa ou agente com garras abertas, Hank. Sim . Só que você está fazendo as mesmas perguntas e observando as respostas deles.
+
+Com qual você quer começar e me mostrar como eles fizeram? Sim, então vamos começar com o que eu queria guardar, certo? Que é Opus. É isto que eu adoro. Sim, vamos ver como se saiu o Opus. Sim, então
+
+a forma como configurei isso foi... fazendo com que realizasse uma tarefa que eu normalmente faria, certo? Não estou apenas fazendo uma pergunta aleatória para avaliar o desempenho. Então,
+
+primeiro exemplo aqui, isto é para a empresa de brinquedos, este guia de vendas por atacado que existe no Notion. Eu não mencionei que existe um documento do Notion. Eu só perguntei sobre esse manual, que está tudo bem. Deixe-me ler. Você disse que perguntou intencionalmente: " Qual é a minha próxima tarefa para o fantástico guia de vendas por atacado de livros ?" E você não disse que está no
+
+Notion. E veja só, Hank volta automaticamente e diz: "Aqui está um guia completo de execução de vendas no atacado no Notion. Deixe-me abri-lo para ver exatamente de onde você parou." Inteligente. É isto que você está procurando, certo?
+
+É exatamente isso que eu quero, não é? Como se eu não quisesse ter que pegar na mão dele, dizer para ele ir procurar em um lugar específico. Deveria simplesmente saber onde está. Fez isso, deu sentido à situação e, sabe, meio que listou os itens pendentes e o que achava que eu deveria fazer em seguida. OK. E depois se oferece para ajudar a resolver o problema
+
+. Que gentileza. Então, essa é a minha base de comparação. É assim que eu quero que todos os outros respondam, como se eu estivesse tentando avaliar o quão perto eles estão do que eu considero uma resposta perfeita. OK. Então, depois disso,
+
+mergulhei no estudo de Sonnet. Então, este é um modelo inferior ao Opus, porém mais barato. E não conseguiu encontrar. Ele engasgou. Então, não conhecia o Notion. Uau. É, nem
+
+tentei encontrar lá . Só para ficar claro, como é que ele saberia sobre o Notion? De que forma você acha que o OpenClaw deveria saber que você está usando o Notion? Numa espécie de memória de nível superior, existe um arquivo chamado tools.md que menciona todas as diferentes ferramentas que eu uso, como o Notion. Que
+
+pena. O soneto não funcionou tão bem quanto eu esperava. Soneto 46. Vejamos o próximo. Então, Gemma, a mesma coisa. Modelo gratuito que o Google afirma que
+
+podemos hospedar por conta própria. Qual é a minha próxima tarefa? E disse: "Deixe-me verificar a memória recente. Deixe-me verificar a memória diária. Hum, não estou encontrando nenhum trabalho anterior sobre o guia de execução completo na minha memória." Mas
+
+deveria ter, não é? Deveria ter isso. Não há razão para que não aconteça. Kimmy é mais uma. Essa aqui causou certo alvoroço. Sim.
+
+É este o arquivo que as pessoas têm hospedado em seus Macs? A Nvidia fez algumas atualizações há um ou dois meses, que estavam disponíveis gratuitamente na Nvidia. Então, muita gente meio que entrou na onda. Hum. Sim, esse aqui deu uma pequena falha e começou a se comportar como se estivesse se conectando a uma parte diferente do Discord. Tipo, eu nem sei do que
+
+isso estava falando. O usuário está em um tópico diferente agora, Kimmy K 2.5, que é um tópico fora do canal de modelos. Você está perguntando sobre a próxima tarefa do nosso fantástico guia de vendas por atacado. Este é um assunto totalmente diferente do modelo LK. Deixe-
+
+me verificar minha memória. Eu deveria procurar um guia de vendas por atacado super fantástico. Na verdade, eu deveria reconhecer a mudança de contexto e procurar informações relevantes. Deixe-me procurar isso na memória e também verificar se não devo procurar em nenhum arquivo de documentação existente. Deixe-me verificar. E nunca retornou
+
+nada. Correto. E aí, mais tarde, volta a aparecer e diz " Boa tarde, o que posso fazer por você?". O que lhe vem à mente hoje?
+
+É, aí eu pensei: "Bem, talvez... não sei de onde está tirando isso, tipo, está falando os próprios pensamentos, o que é estranho." O que não me agradou. GPT 5.4 mini,
+
+então este foi um caso interessante. Muita gente diz que o Mini tem mais personalidade do que o Core 5.4, mas também tem menos... sabe, é menor, eu acho,
+
+ou um modelo menos poderoso. Hum... Mas vejamos.
+
+Então, este aqui encontrou. Simplesmente não deu nenhum contexto, tipo, não mencionou nada sobre o Notion. Tipo, opa, a próxima tarefa é construir a lista de fornecedores atacadistas. OK. Mas você perguntou qual é a minha próxima tarefa . O fato de não especificar que
+
+está no Notion não é um problema. Não se trata necessariamente de "É isso aí". Então, isso nos leva ao lado da vibe, que eu acho que muita gente ignora. Assim mesmo , tecnicamente está correto, sim. Mas é tão frio e impessoal que... chega a
+
+me fazer desconfiar. É como se, em certo nível, não desse contexto suficiente sobre como se chegou a essa resposta. Hum. Bem, embora tecnicamente correto, não gosto muito do resultado. Mas, novamente, essa é a parte subjetiva. O que
+
+você está dizendo é: "Veja, me deu exatamente o que eu estava procurando, mas não percebeu que o que eu queria era contexto, e não apenas a próxima coisa, mas mais daquilo." OK. Tudo bem, entendo por que você não gosta, mas também entendo por que não está errado. Ok, funciona. Então, e acho que isso pode ter sido o mesmo. Sim, o mesmo caso
+
+com a versão 5.4. Sabe, tecnicamente correto, mas... muito
+
+clínico. Diz que sua próxima tarefa é enviar um e-mail. É um link para o arquivo? Não, está apenas dizendo para enviar um e-mail aos seis compradores atacadistas recorrentes com os seus dados. E essa é realmente a próxima tarefa? Está certo?
+
+Sim, está correto. Essa é a parte mais divertida. Isso é dinheiro porque mantém o relacionamento, preserva novos pedidos e reduz as tarifas em 15%, chegando a 0%. Ok, até aqui, novamente, a mesma coisa que no modelo anterior. Certo. Então, mais uma vez, enquanto Kimmy,
+
+Gemma e Sonnet nem sequer conseguiam fazer aquilo. GPT acertou. Eu simplesmente não gostei do resultado. Bem, e gostaria de acrescentar que Peter Steinberger me informou que a OpenAI está satisfeita em permitir que usemos nossa assinatura. E até agora, tudo bem.
+
+Correto. Sim, então, se eu quiser isso como uma possível alternativa à assinatura do Claude, certo? Onde eu consigo usar bastante um serviço com uma taxa fixa, sabe, basicamente, funciona. Não gosto muito, no entanto. OK.
+
+Então, é tipo, "Bem, deixa eu continuar testando." Um GLM 5. Então, este é o 5.1, que é a versão mais recente, mas o GLM 5 já era algo que as pessoas vinham sugerindo antes. O GLM 5 teve um desempenho relativamente ruim. É que simplesmente
+
+começa a despejar um monte de coisas. Deixe-me verificar a memória para ter contexto sobre o plano de ação do Super Fantastic . Nenhum resultado. Deixe-me pesquisar mais amplamente por ofertas de atacado super fantásticas. Nada ainda, etc., etc. Essa memória
+
+não tem os detalhes do manual de operações da Wholesale . Deixe-me verificar o arquivo memory.md. E não está nos arquivos de memória, né? Não é bem isso que eu sou, essa coisa de manual completo , né? Gostou?
+
+Não intuiu que havia esse "gostei", o que significa que deveria verificar o Notion novamente. Tudo bem. Porque é essencialmente um documento. Parece que não reconhece que é um documento, né? É como se estivesse sendo literal demais e então, hum, sim, então começa a mostrar todas as maneiras pelas quais está tentando encontrar coisas, o que eu aprecio, acho que estou vendo o processo de todas as coisas que está verificando, mas ainda assim resultou em dizer tipo, "Eu não tenho nada." OK. Justo. Então, não gostei muito de
+
+GLM. Não é justo, mas tudo bem. Sim. Quinn foi outro nome que as pessoas sugeriram. Cara, aliás, eu estava te observando no X e achei que aquele GLM 5 estava funcionando para você. Não, não 5, 5.1. A versão 5.1 estava
+
+funcionando para você. OK. Tudo bem. Então, vamos continuar com Quinn. Eu revelei a resposta. Mas tudo bem, vamos dar uma olhada
+
+em Quinn. Quinn, estou vendo este documento com a lista de escalações. Deixe-me verificar. Muito bem, constatou-se que sua noção de integração existe. E então diz em 23 de março, sim, me explique isso. Está vendo ali. Certo.
+
+Basicamente, o que eu acho que isso fez foi procurar sessões com o Open Claw. Então, ele percebe que, ah, nós fizemos tudo isso e salvamos no Notion. Como se vê nas sessões com o Open Claw. Mas isso não estabelece a conexão de que existe, que se tem acesso à noção. Certo? É basicamente como se dissessem:
+
+"Ok, eu vi que fizemos tudo isso e que você salvou no Notion, mas eu não tenho acesso ao Notion." Sim, de fato. Simplesmente presume que não. Sim, isso é algo muito básico que deveria saber. Sabe a que ferramentas tem acesso . Deveria. E é como se tivesse estabelecido a
+
+conexão de que algo existe ali, mas nunca foi como se eu pensasse: "Ah, deixa eu ver se consigo fazer isso." Então, este é um daqueles casos em que eu poderia basicamente dizer: "Vá verificar o Notion." E seria tipo, "Ah, ok". E funcionaria . Então, esse é um daqueles casos em que era necessário mais acompanhamento.
+
+O que, mais uma vez, é uma questão de equilíbrio, certo? Modelo muito barato , mas precisa de mais atenção. Então, eu não me importei necessariamente com o resultado. Eu simplesmente não quero ter que ficar dizendo: "É, então agora vai fazer isso. Agora vai fazer aquilo." Sim
+
+. Então, depois de não ter tido sorte com o GLM 5, as pessoas sugeriram o 5.1. Eu pensei: "Qual é a diferença?" Sabe, mas [risos] quero dizer, também acho que a diferença entre o GPT 5.3 e o 5.4 é uma
+
+grande melhoria, sabe, o Opus 4.5 e o 4.6 é um grande salto. Então, sim, acho que acaba sendo esse o caso com a versão 5.1. Meus testes... acho que foi assim que
+
+terminei? Hum, eu não executei o programa. Acho que teria que procurar em outro tópico. Acho que acabei experimentando sem mencionar nada e funcionou bem, eu só estava verificando outras coisas. Então, como eu estava em um dos meus outros tópicos, acabei descobrindo que ele puxava corretamente todo o roteiro de vendas. De fato, estabeleceu
+
+corretamente a conexão entre os conceitos. Sabe, você poderia perguntar isso agora mesmo para que tenhamos exatamente a mesma coisa e possamos comparar? Vamos criar um tópico do tipo "Não posso fazer isso" aqui, porque assim teremos esse contexto. Certo, então talvez esta seja uma boa oportunidade para vermos como você faz isso do zero. OK. Sim, então o que nos
+
+deixaram abrir. Então, no Open Router, você sabe, existe um número infinito de modelos para escolher. Então, se você quiser configurar isso por conta própria, você diria que existe...
+
+Então, neste caso específico, GLM, é por isso que foi mais um passo. Assim como você não consegue acessar o 5.1 através do Open Router. Você precisa configurá-lo através do z.ai para a versão 5.1 mais recente. Agora, você pode
+
+configurar o GLM 5 através do Open Router. Existe também o turbo e o V turbo, que é como se tivesse a função de visão no modelo. Vale a pena testar se você tiver interesse. Mas o z.ai direct é a única maneira de testar a versão 5.1, que foi a que acabei escolhendo
+
+. Então, você entrou e assinou uma assinatura lá. Você criou uma conta totalmente nova e depois colocou um pouco de dinheiro, tipo 10 ou 20 dólares, no Open Router. E então você encontra o modelo que deseja, que, novamente, você simplesmente pesquisa pelo nome do modelo que precisa. Então, você pode simplesmente copiar isso.
+
+E então, para configurar um novo modelo no Open Claw, você usa o comando "Open Claw models set". E então, como já está sugerindo aqui, você diria " Roteador Aberto" e depois o nome do modelo. Então, neste caso, você colou o que obteve. Sim, então, você precisa adicionar " Open Router" antes para que ele saiba que está vindo do Open Router. Então, faça isso. Aparecerá uma
+
+mensagem informando que o Open Claw foi atualizado e, na verdade, isso altera a configuração padrão. Mas aí você pode configurar para desfazer a ação, para que essa não seja sempre a opção padrão. Mas então ele fica disponível para o Open Claw. Sim, então vou mostrar como isso fica aqui. Vamos chamar isso apenas de "
+
+Ok". Então, o que você fez foi criar um novo canal de conversa com o mesmo agente do Open Claw. Então, você faria modelos. Então, isto é algo específico do Discord. Mas você basicamente disse algo como "deixe-me escolher um novo modelo".
+
+Você acessaria o Open Router e veria tudo o que eu adicionei aqui, e então escolheria o modelo que deseja usar. Mas estamos testando o sistema 5.1, que eu configurei. Então, neste caso, você precisa ir diretamente para z.ai e obter a versão 5.1. Sim, já te enviei,
+
+pois essa é a minha configuração padrão. Mas sim . Então, vamos fazer a mesma pergunta agora e ver o que ela responde. Espere um pouco, deixe-me encontrar para que eu possa copiar e colar exatamente como está. E devo dizer que o que as pessoas no X estavam dizendo em resposta à sua postagem era que o preço do z.ai é
+
+realmente muito baixo. Estamos falando de um valor mensal máximo de 80 dólares. Sim, não é ruim. Estou com 30 dólares e tenho feito isso nos últimos dias, vamos ver. Você consegue ver essa pequena dica de ferramenta?
+
+Ah, sim , eu sei. Eu vejo isso. Oh, eu vejo. Ok, sim, sim. Que legal!
+
+Então, tenho este meu consumo do z.ai e passei bastante tempo com ele nos últimos 3 dias, usando 14% do meu total semanal. Então, tem gente que diz: "Ah, os limites são terríveis." Assim como eu, não tive nenhum problema com os 30 dólares por mês. Isso é muita coisa.
+
+Sim, e eu pagaria com prazer 80 dólares por mês se fosse preciso. Mesmo assim, ainda é muito barato considerando o que oferece. De qualquer jeito. Ops. Certo, então veremos. E agora você está
+
+fazendo a mesma pergunta. Qual é o próximo pedido que devo fazer para a Super Fantastic Wholesale Book, ou melhor, para a Playbooks? Provavelmente vai me fazer parecer mal, mas veremos. O que é Super Fantástico? Então, é uma empresa de brinquedos da qual eu faço todos os brinquedos. Então,
+
+sim. Como se utiliza o Open Claw em uma empresa de brinquedos? Sim, eu faço muita pesquisa de mercado . Muita gestão de estoque. Então, e como na gestão de lojas. Então, é
+
+como sincronizar os preços entre o Shopify, o Etsy, o TikTok e todos esses lugares. Por exemplo, tenho habilidades ou comandos configurados para sincronizar diferentes conexões de API com todos eles, de forma que eu possa executar tudo daqui do Discord. Então, se você reduzir o preço em um lugar, pode dizer ao seu agente da Open Claw: "Reduza o preço em todos os outros lugares também." Aumente-o em todos os outros lugares . Entendi. É esse tipo de coisa que
+
+ela consegue fazer. Esse é um ótimo exemplo de uso. Ou como se eu precisasse escrever uma descrição de produto. Então, eu escrevo a descrição do produto como base e depois faço uma pesquisa de palavras-chave para diferentes plataformas, porque o uso de palavras-chave é diferente no Etsy, no Shopify e no TikTok. Sim. Então,
+
+vou configurar o programa para fazer uma pesquisa de palavras-chave, reescrever as descrições para essas plataformas e depois sincronizá-las. De que outra forma você está usando o Open Claw enquanto aguardamos uma resposta? Sim. Muitos projetos. Então, esses são todos os diferentes projetos em que estou envolvido . Então, como eu disse, muito disso é
+
+material de pesquisa. Então, na verdade, é para isso que eu mais uso o Open Claw . Eu realmente não programo, é mais para pesquisa, tipo pesquisa mesmo, ou coisas do tipo relacionadas à administração de empresas . Tipo, eu vou fazer coisas do QuickBooks por aqui. Então, isso é definido uma vez por mês . Uhum.
+
+Então, eu o conectei ao meu QuickBooks para assuntos comerciais e para categorizar transações, basicamente como parte da contabilidade. Então, ele mostrará ao gato as coisas que ele não conseguiu categorizar automaticamente e as categorizará para você ou perguntará como você deseja categorizá-las. Sim. Ooh. Eu disse que provavelmente isso ia me fazer parecer mal.
+
+Não temos um manual de operações e listas de tarefas documentados para o atacado em lugar nenhum. A mesma pergunta surgiu no dia 4 e eu também não consegui encontrar a resposta. É muito frustrante que a mesma coisa não tenha funcionado aqui. Já funcionou antes. Isso é enlouquecedor.
+
+Caramba! É como se o Open Claw fizesse isso comigo todo dia. Foi tipo, "É, eu tô super animado, o GLM 5.1 é a solução." E aqui estamos nós . E é muito básico, muito
+
+inconsistente. Não entendi. Sim . Então, é por isso que eu não tenho nenhum desses problemas de consistência com o Opus. Está tudo bem, então aqui está o que aprendemos. Se eu analisar sua
+
+avaliação, Opus 4.6, número um, verá que ela acerta em cheio . Em seguida, você acessa as duas opções do OpenAI que você testou. E parece que ambas estão corretas. Eles simplesmente não estão preenchendo as lacunas além do que você está pedindo especificamente.
+
+Eles não estão intuindo o próximo passo, e no resto, eles estão bem, mas cometeram tantos erros por não conseguirem entender as coisas que é como regredir algumas gerações quando você está conversando com seus filhos. Ao conversar com uma criança de 11 anos, você pode presumir que ela entende o que você quer dizer com "entrar na internet", " ir à loja", etc. Quando se trata de uma criança de 5 anos, você precisa ser muito mais explícito. É aí que você se encontra agora nesta jornada de descoberta. E todos os outros podem ir lá e conferir por si mesmos, mas, no fim das contas, Josh, para você é realmente Opus 46 do começo ao fim.
+
+Todo o resto serve apenas para tarefas mais básicas , e para todos que estão ouvindo, aqui está uma boa maneira de testar e ver o que funciona no seu mundo, nos seus casos de uso reais. Ei, meu agente disse que se você assistiu até aqui, vai querer se inscrever, e o Google acha que se você assistiu até aqui, vai querer assistir àquele vídeo.
