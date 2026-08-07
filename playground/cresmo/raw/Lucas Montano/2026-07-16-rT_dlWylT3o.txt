@@ -1,0 +1,158 @@
+---
+video_title: "esse video não vai dar view"
+video_id: rT_dlWylT3o
+channel_name: "Lucas Montano"
+channel_id: UCyHOBY6IDZF9zOKJPou2Rgg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=rT_dlWylT3o
+video_date: 2026-07-16T15:00:08+00:00
+video_description: |
+  Pra criar uma conta na Replit tu pode utilizar o meu link: ✨ https://replit.com/refer/montanobv
+  
+  ✨ Se tu faz reunião, tu precisa do Perssua: https://perssua.com/downloads
+  
+  ✨ Entre pro meu Stupid Button Club https://stupidbutton.club/ 
+  
+  - Mentoria 1:1 com Lucas Montano
+  - Acesso Premium do Perssua pra sempre;
+  - Mock Interview;
+  - Acesso a comunidade VIP no Discord;
+  - Treinamentos sobre como integrar IA no teu pipeline e mais;
+  - Encontro Presencial Anualmente
+  
+  Da uma olhada no meu site pra mais links, lá tu encontra tudo que precisa saber sobre o que tenho feito e onde estou:
+  http://lucasmontano.com/
+  
+  ✅ 𝗢𝗦 𝗠𝗘𝗟𝗛𝗢𝗥𝗘𝗦 𝗩𝗜𝗗𝗘𝗢𝗦 𝗗𝗢 𝗖𝗔𝗡𝗔𝗟
+  
+  ▸ 3,700,000 requests do MrBeast na API do X (eu tentei e não foi barato)
+  https://youtu.be/HDScZ3dUH4g?si=ctlaSwHgKksZ56QL
+  
+  ▸ Programação realmente é muito difícil?
+  https://youtu.be/jouOvuRkOjY
+  
+  ▸ DEV Precificando Projeto tipo Netflix (bem simples)
+  https://youtu.be/Y2WfzFozf8M
+  
+  ▸ Gemini Impressiona ao Superar Humanos : Nova IA do Google https://youtu.be/gtJh4_zCh7o?si=UgoO5WjZ5T3JKBWE
+  
+  ▸ OpenAI choca o mundo +1 (mas Sora não é sobre gerar videos)
+  https://youtu.be/don0BfWUUMg
+  
+  ▸ IA que utilizo & a mentira da Gemini (Nova IA do Google)
+  https://youtu.be/2kENOMqWfnU?si=9SeIAWVPBZe-9vli
+  
+  
+  | 💜 Comunidade no Discord: https://discord.gg/cK8nSccsgD
+---
+Esse vídeo aqui eu tô criando para quem é da área de programação. Então se tu tá aqui pelo hype da IA, espera até o próximo vídeo. Mas isse aqui é porque eu fiquei devendo para vocês resolver um system design juntos contigo, do início ao fim, falando de várias coisas técnicas, coisas que se perguntam em entrevistas. Então eu vou trazer aqui hoje um problema que eu precisei resolver numa das entrevistas que eu fiz. E recentemente eu fiz esse mesmo problema com um membro lá do nosso clube que tava se preparando também para uma entrevista e ele mandou bem demais, cara. Ele mandou uma mensagem depois
+
+para mim falando que passou pra próxima etapa, que tem menos de 2 anos de experiência, mas a empresa avaliou ele como tendo conhecimento de siior. E foi foi muito massa ver esse depoimento e isso me motivou vir aqui e agravar para ti hoje a resolução de um problema como esses junto contigo do início ao fim, tá? Então o problema é esse aqui, desenhar, né, uma plataforma tipo o Twitter ou ex, tipo feed dessa dessas plataformas de rede social, seguindo os seguintes requisitos. O usuário pode postar tweets até 280 caracteres. Eles podem seguir e deixar de seguir outros usuários. Essa timeline vai mostrar
+
+tweets de usuários que eu sigo ordenados por tempo. Então a gente não tá falando aqui dessas timelines com com base de algoritmos de a, né? A gente tá falando de uma timeline simples, mas a gente tem que poder suportar 300 milhões de usuários ativos por dia e a timeline tem que carregar em menos de 200 msundos. Beleza? Algumas técnicas que a gente vai precisar utilizar é fun, caching, charging, message kills e no sequel.
+
+Para quem não sabe, esse é um site que eu tô criando chamado systemdesignarena.com, que vocês conseguem simular o desempenho do teu system. E eu criei ela integralmente 100% utilizando a Raplet. Tu vai ver a qualidade desse simulador, tu pode até mesmo testar ele. Então, se tu quiser também criar teus próprios projetos com a Raplet, cara, o, sério, sinceramente, o agente deles é muito bom. tu vai ver a capacidade dele de
+
+criar a qualidade desse simulador que eu criei. E se tu também quiser criar um projeto teu próprio com a Raplet, tu pode utilizar o meu link que tá aqui na descrição. E aí quando tu fizer o upgrade pro Raplet Core, tu garante $ de créditos para usar na plataforma. Mas agora bora resolver o system design, que esse conteúdo vai ser técnico e o único absurdo dele vai ser ser gratuito. Umente falando, né? Mas eu preciso falar
+
+uma outra coisa, tá? Eu vou te mostrar a solução que eu dei na entrevista que eu passei, só que cara, system é uma daquelas coisas que, tipo, tem diversas formas de resolver o mesmo problema. Então, eu posso cometer vários erros aqui. Comenta como que tu faria diferente. E eu vou colocar o merma da minha solução num num guist lá, num gitubar ela e subir pro simulador para tu mesmo sei lá, melhorar ou modificar. Beleza?
+
+Então, vamos lá. A primeira coisa que a gente precisa fazer quando a gente cai aqui numa entrevista, tá? Antes de desenhar, antes de eu clicar aqui em começar, a gente precisa ler os requisitos várias vezes. A gente precisa debater esses requisitos com o nosso entrevistador. Então, antes de desenhar, é bom tu fixar os requisitos chaves que a gente tem. 300 milhões de usuários
+
+ativos por dia, timeline carregando em menos de 200 msundos, tweets de até 280 caracteres e a timeline precisa mostrar posts de quem o usuário segue ordenados por tempo. Então o primeiro passo de qualquer design assim é montar o caminho básico de request response sem otimização, tá? Isso, isso vai ser o teu baseline para depois tu identificar os gargalos, que é literalmente o foco do nosso simulador aqui. E para identificar esses gargalos numa entrevista, tu pode falar coisas em voz alta, pode fazer cálculos. Então, literalmente, abre o quadro aí pro pro entrevistador e tu começa a escrever coisas como como tipo assim, quantos dados vamos escrever por dia? Isso é uma coisa que a gente pode
+
+prever, tá? Então, por exemplo, se o problema diz que vão ser 300 milhões de usuários ativos por dia, tu precisa chutar uma média. Tu pode perguntar pro entrevistador, tipo assim, cara, qual que é uma média aí de usuários? Quantos tweets eles fazem por dia? Daí o entrevistador vai falar: "Cara, eles fazem dois tweets por dia". Mas o valor
+
+aqui não importa. O que importa é o teu cálculo, entendeu? Aí tu vai falar: "Pô, dois tweets por dia, OK? Então eu tô falando mais ou menos de 600 milhões de tweets por dia sendo inscritos na na plataforma. Certo. Certo. Qual que é o
+
+tamanho do de um tweet? O tamanho do tweet é 280 caracteres. Então são 600 milhões vezes 280 caracteres. Pô, se a gente tá falando aqui de TF8, a gente sabe que cada caracter equivale a 1 byte. Então, basicamente aqui a gente tá falando de 280 bytes por Twitch vezes 600 milhões. Então, é só a gente colocar
+
+os zeros, né? São quantos zeros, cara? É, é bastante zeros, tá? 28 x 6 56 cara vai dar o quê? 168 GB por dia de dados sendo inscritos, tá?
+
+Então, cara, a primeira coisa assim, se tu começou a entrevista e tu fez esse cálculo aqui com o entrevistador, tu já começa a ganhar uns pontos. É basicamente isso, tá? Porque agora tu consegue já saber qual que vai ser o teu volume de escrita que tu vai precisar e até mesmo quanto de dados que tu vai gerar em logs e por aí vai. Mas um requisito importante é que tu vai precisar carregar a timeline em menos de 200 msundos. Então, provavelmente aqui, cara, a leitura vai ser muito maior.
+
+Porque pensa bem, tu como usuário, tu escreve dois tweets num espaço de tempo X, um de manhã, um de tarde. Agora tu lendo a timeline, tu tá lendo muito mais, tá ligado? Carregar uma timeline, carrega tweets de todo mundo que tu segue. Mas vamos começar aqui. Vamos lá.
+
+Primeiro, tá? Botamos aqui o client. Deixa eu expandir a tela. Então aqui tá o caminho natural, resolvendo esse problema agora, beleza? Então vamos começar a resolver o problema aqui do caminho mais simples possível. A gente
+
+tem um client, a gente tem um load balancer, a gente tem um app server, o teu app, e a gente tem o no sequel database. O nosso aplicativo aqui vai receber tanto a leitura de uma timeline quanto um post de um tweet. Beleza? Se a gente rodar aqui o simulador, tu vai ver que o borneck já virou o no cicle da Arabase em 400% ali. Essa é a carga, tá?
+
+Que ele tá tendo que aguentar. Se a gente aumentar aqui o tráfego para quatro vezes, tu vai ver que tu já começa a fazer fila no app Server. Por quê? Porque o teu aplicativo tá esperando o banco de dados responder. Como o banco de dados tá lento, tudo trava através dele. Então aquele gargala
+
+ele começa a propagar para trás e todo mundo começa a ficar vermelho. Esse erro aqui entre o load balancer e o app server, ele indica uma coisa, cara, connection dropped. Ou tu vai começar a ter também time out, né? Então, ou vai falhar em cascata ou vai ter um time out. Por que que isso aqui acontece, né?
+
+Porque o nosso design atual ele faz algo que a gente chama de fanout on read. Toda vez que o usuário ele abre o aplicativo ali do Twitter do X, o app server monta uma timeline na hora indo direto no no sequel database. Então é como se uma requisição virasse uma query, uma busca na base de dados. Tanto imagina 300 milhões de usuários ativos por dia abrindo o seu feed constantemente. Isso aqui ia gerar uma quantidade absurda de leituras repetidas e pesadas direto na fonte, que é o banco de dados. Então, não existe nenhuma
+
+camada ainda aqui de proteção entre o teu app server e o banco de banco de dados. E o banco, cara, simplesmente não vai aguentar esse volume. Como que a gente resolve isso? A solução clássica aqui é adicionar uma camada de cash de timeline entre o aplicativo e o no sequle database. Então, deixa eu escolher aqui a opção de cash. A gente
+
+vai ter uma conexão agora do app server por cash e pro cash pro no sequel. Então, por que que essa conexão aqui do through, né? Porque se o usuário ele bateu para buscar uma timeline e a timeline ela não existe, aí ele busca no no banco de dados. Se ela existe, ela retorna. Então aqui essa conexão do cash pro noc database é um miss, né? É um
+
+cash miss. E aí na verdade aqui a gente precisa também anotar cara que a gente vai fazer um cash asside, tá? E aí na entrevista tu precisa dizer como que tu vai fazer esse cash asside. Por exemplo, tu vai dizer lá: "Nossa, a nossa chave do cash Asside vai ser home timeline. Isso aqui vai ser o nosso prefixo seguido do user ID. E essa aqui vai te
+
+retornar um valor que é a lista dos tweets recentes do ID do usuário. E aí tu tem que dizer aqui na nota também qual que é o teu TTL. O TTL vai ser por volta de 5 minutos, que é o time to leave. É 5 minutos mínimo de to bound state stay. Depois tu bota ali, nossa, LRU eviction. E tu pode dizer também,
+
+tipo assim, a gente cria o cash ao ter ridmis. Então, o que que significa, cara? Se a timeline, o app tentou pegar a timeline do cash, a timeline não existe, a gente for no banco de dados, a gente fez um miss. Nesse MIS a gente já pode escrever no cash, tá? Na parte da leitura, tu pode até dizer aqui, nossa, a gente tem um fanuton worker, que é basicamente um worker que vai escrever direto no cash.
+
+Então, tem essas estratégias. Tem uma coisa aqui num simulador, cara, que a gente precisa ajustar, que é o hit rate. O nosso hit rate agora tá em 70%, eu vou subir ele para uns 85, 90%, tá? Ó, vou subir ele para 90%. Por quê, cara?
+
+Porque isso aqui eu tô falando que 10% vai ter miss, 90% ele vai encontrar. Por quê? Se tu parar pensar num aplicativo desse, a home timeline de alguém é extremamente repetitiva. O usuário ele atualiza o fit, o feed dele várias vezes numa sessão. Então o cash, ele vai receber hits várias vezes antes de ele expirar. Então, antes desses 5 minutos
+
+de de TTL, o usuário vai ler várias vezes daquele daquele daquela timeline. Então, 70% aqui que era o padrão, ele é muito conservador. Eu acho que a gente pode subir para esse caso aqui para 90% de hit rate. Se durante uma entrevista tu nem tá usando o System Design Arena aqui, tu precisa dizer isso em voz alta, tu precisa, enfim, falar isso, tá, pro entrevistador. Qual que é o teu hit rate mais ou menos? Então, atualmente, se tu
+
+for olhar esse nosso simulador, tu vai ver que ainda tem vários gargalos, tá? Um desses gargalos tá acontecendo porque todo o WR, todo o novo Twitch, ele tá indo direto lá pro nosso no CCLE database porque nada é pré-populado no cash. Ou seja, a próxima timeline read de cada follower vira cash miss até que alguém aqueça esse cash. Eu acho que eu falei isso em voz alta, mas eu não eu não coloquei aqui, tá ligado? Então a gente precisa adicionar uma fila para escrever no cash. Então vamos adicionar
+
+um message, o message kill aqui. Beleza? E olha só que bonitinho no simulador ele fica calculando o backlog também do tráfego. Cara, esse simulador aqui eu acho que ele tá muito redondo, tá? Se eu encontrar qualquer coisa, se vocês encontrarem também alguma coisa que a gente possa melhorar, me passa aí, me passa o prompt, porque eu já venho aqui pro pro agente da da Raplet, eu passo prompt, tá? Vamos lá. A gente tem um
+
+message kill e para consumir dessa dessa fila, eu vou precisar de um worker. Então, dá para pesquisar aqui o componente, o worker. Agora o worker virou o o gargalo, né? Aí já estabilizou. E do worker eu escrevo no cash. Então quando uma um novo post cair
+
+no app server, isso vai pro message kill que faz fanout de worker e o app server ele vai escrever então o tweet no na base de dados, certo? Então aqui tá faltando uma ligação. A escrita vai direto pra base de dados, mas a gente precisa desse message kill para atualizar o cash. Beleza? Essa é uma estratégia. O que que isso aqui nos dá,
+
+cara? Tu tem basicamente um caminho que é a escrita de um novo post e outro caminho que é atualizar a a timeline. Agora servidor o app server a gente pode escalar horizontalmente. Então eu vou aumentar as réplicas do servidor para quatro. Então tu vai ver que agora vai melhorar. Então cara, tem o load
+
+balancer, tu tem quatro aqui réplicas do teu app. O gargalo ainda é base de dados, mas base de dados a gente também consegue escalar horizontalmente. Então vou aumentar aqui para du, 3, 4 réplicas, cinco réplicas. Acho que acho que o problema é que a gente tá aumentando muita réplica aqui e tá demorando muito para para resolver o nosso problema, né? A gente ainda continua tendo a base de dados como o nosso nosso gargalo. Vamos abrir
+
+o nosso Live Matrix para tentar entender aqui o que que tá acontecendo, tá? Cara, eu acho que o maior problema aqui, ó, é quando eu clico aqui nas notas, ele só tem uma nota aqui que eu poderia escrever várias coisas aqui sobre sobre tá quem tá lendo, quem tá escrevendo, porque agora no simulador é como se tudo fosse leitura, tudo fosse escrita, né? Não tem a mesma coisa que eu criei aqui pro hit rate do cash. Então, por exemplo, numa entrevista, tu pode escrever aqui nas notas, né, que tu vai ter, por exemplo, parti user ID, ou tu vai colocar o teu TTL das sessões, quanto tempo uma sessão vive, beleza? Então, as réplicas elas vão melhorar a tua leitura, mas em termos de escrita, o gargalo ainda vai continuar existindo, né? Como boa parte da carga vem também
+
+de escrita de novos tweets que estão sendo escritos diretamente aqui e normalmente numa base de dados, tá? Uma escrita, ela vai precisar passar pelo pelo nó líder ali da tu do teu no ciclo database ou por partições, né, por charges. Simplesmente clonar o banco de dados, o banco de dados com uma nova réplica não aumenta a capacidade de escrita, só a de leitura. Por isso que existe esse teto aqui que a gente vai bater, que nenhuma quantidade de réplicas vai melhorar ele. Então eu posso continuar subindo aqui, cara. A
+
+gente vai chegar num teto, tá ligado? Ó, vai parar, não vai parar de importar. Então essa simulação, ela tá correta? Sim, eu dir que sim. Na verdade, é um design bem inteligente aqui da primeira versão que que é o agente da Raplet criou. Ele basicamente tá forçando aqui
+
+a perceber que os raps sozinhos não são a resposta certa para esse problema. A resposta real aqui para esse problema seria tu ter o teu charging, né? Mas como eu falei, a gente não tem nenhuma configuração aqui para fazer isso ainda. Eu acho que esse é o tipo de configuração que poderia estar aqui no nosso simulador e melhorar, tá? Então, eu já tinha identificado esse problema e eu já tinha começado aqui, mas eu queria mostrar para vocês como que o agente da Raplet vai implementar isso para nós, tá? Então eu coloquei basicamente um
+
+prompt descrevendo esse problema de como que a gente calcula o chardeamento da base de dados para resolver gargalos criados por escrita, que as réplicas vão nos ajudar na leitura, mas na escrita, como eu falei, falta uma tag de charging charging, falta outras coisas ali, né? Então, eu criei um subagente aqui, ele desenvolveu isso, ele levou 6 minutos para criar essa modificação. Eu vou aplicar essas modificações na nossa Branch Main. Ele tá me dando algumas ã sugestões aqui bem interessantes, como, por exemplo, ensinar o jogador quando usar um charge versus adicionar réplicas num estilo aqui de in simulator guidance. Cara, isso aqui eu acho muito da hora. Vou pedir para ele implementar.
+
+Aí quando eu clico aqui na sugestão dele, ele já faz o spawn ali, ele já cria uma nova trad. Ele cria o planejamento que tu consegue ver o plano de execução que ele tá criando. Esse aqui seria o RFC dele, né, o request fors dele. Depois de ter feito aí o request for comments, tu consegue também ver o preview dessa tarefa que ele tá fazendo. Então aqui é onde ele vai rodar todo o end to end dele e depois a gente consegue aplicar a a implementação pra branch principal. Deixa eu fazer o
+
+deploy aqui para vocês verem. Então ele vai fazer o provisionamento, ele vai identificar, por exemplo, mudança de esquima no banco de dados. Eu vou ter que aprovar essas modificações de migração de dados do banco. Aí ele vai rodar um security scan. Então ele vai verificar se tem alguma falha de segurança. Enquanto isso, ele já vai
+
+buildando. Aí nada de segurança. O build foi completado. Ele vai fazer o bundle e aí ele vai promover isso pra produção. Tu também consegue ver todos os logs aqui que ele tá tá gerando lá no servidor, tá? Deploy feito. Deixa eu
+
+atualizar aqui para o nosso simulador, atualizar a nossa página. E vamos ver se agora a gente tem aqui, ó, o charge counting, quanto de charge que a gente vai fazer. Olha só que massa, cara. Quando eu aumento o nosso shar count, ele colocou aqui para mim também qual que é a nossa estratégia de de par, eu não sei como é que se fala em português aqui, meu, de partition. Enfim, se tu vai fazer round robing, se tu vai fazer range partiing, se tu vai fazer hash of primary key e por aí vai.
+
+Eu vou deixar o hash primary key e vou colocar aqui que é pelo user ID. Deu uma falha ao salvar. Voltar aqui pro raplet. Vou falar para ele o que aconteceu e ele vai investigar os logs lá em produção. Ó, deixa eu rodar aqui o nosso sistema.
+
+Vocês podem ver que tá bem melhor, ó. Ó, feito. Agora quatro vezes vocês vão ver que o simulador tá mais real, tá? Eu vou diminuir um pouco as réplicas aqui, que elas estão absurdas, né? Aí, lembrando novamente, as réplicas ajudas na ajudam na leitura e aqui a gente pode dizer qual que é a nossa estratégia de partition e de charging. E, cara, numa
+
+entrevista tu vai escrever isso em em notas e tudo mais. Agora, fora esse charging, ainda tem coisas bem completas aqui no nosso system design. Eu acho que uma das coisas que estão erradas é que o app server continue escrevendo direto no no cicle database. Isso não seria necessário. A gente poderia, por exemplo, fazer o worker ao escrever no cash, escrever também na base de dados.
+
+Então, tem essas duas formas aí que a gente poderia estar fazendo. A gente poderia ter até mesmo um outro worker. Daí aqui a gente pode começar a se questionar em coisas do tipo, pô, será que a gente precisa de um cáfica da vida, né? Então, desenhar mais ou menos como que tá o teu os teus serviços. Então agora o nosso caminho de escrita, ele não tá mais quebrado. Falta ainda
+
+algumas outras coisas, por exemplo, funas com muitos, muitos seguidores. Imagina um Mr. Beast da vida. Cara, isso é uma coisa que o entrevistador ele vai te perguntar. Digamos que o Mr. Beast
+
+faça um tweet ou Elon Musk faça um tweet. Tu tá me dizendo que vai cair lá no Message kill e um worker vai ter que atualizar o cash, certo? Mas quantas pessoas seguem o El Musk? Milhões de pessoas. Então, tu tem milhões de cash porque são milhões de timeline. Cada
+
+pessoa tem uma timeline, porque tu escreveu aqui nas notas que tu vai fazer o key pelo user ID. Então, se cada pessoa tem uma timeline, isso significa que quando o Elon Musk twietar, tu vai ter 200 milhões de inscritas no teu cash. Então, o processo correto aqui, um padrão para contas muito grandes, é pular esse push e montar esse tweet específico em tempo de leitura. Então, basicamente, cara, ao invés de tu escrever no cash, quando alguém ler, tu monta e escreve no cash para aquela pessoa. Aquilo tá sendocheado para aquela pessoa. Tem diversas estratégias
+
+para fazer isso. E eu vou te falar a real, tá? Numa entrevista isso não importa, porque só o fato de tu ter pensado nesse problema, o entrevistador já vai pensar: "Pô, o o Lucas ele não tá me enrolando mesmo, o cara sabe porque, pô, ele me disse que no cash aqui é o user ID e ele associou que um usuário com 50 milhões de inscritos, ao fazer um tweet, o worker dele teria que escrever em 50 milhões de timeline." Então, só só de tu ter pensado nessa probabilidade e falado em voz alta na entrevista, já garante que tu vai passar na entrevista, tá ligado? Ao meu ver, porque cada empresa vai ter o seu secret de como resolver esses problemas de qualquer forma. Como que tu vai fazer a
+
+escalabilidade do teu próprio worker, da tua própria message? Então, worker aqui a gente tem uma réplica só. Quantas réplicas a gente poderia ter esse worker? Então, no message kill, vale a gente pensar numa coisa que a gente chama de dead letter kill, o D é o kill, né, cara? Pesquisa sobre Dead Letter kill também é legal antes da tua entrevista. A gente também não falou
+
+aqui de paginação da timeline. A gente não falou da proteção do cash contra stamped, né, que é quando uma entrada ela espira pelo TTL ou ela é despejada, né? E aí várias requisições simultâneas podem acontecer e colidir exatamente nessa reconstruição da timeline. Então tu imagina lá, tu tem um timeline em 5 minutos tu tem o TTL, a tua timeline vai evaporar do cash. Mas, pô, cara, durante o processo de limpar o cash, tu recebeu um pedido e aí meio que o cash tava num estado meio que de lock, tá ligado?
+
+Então, como é que tu como é que tu protege contra esse estado? Aí depois tem várias outras coisas que a gente poderia dizer. Bom, voltando aqui pro Raplet, ele identificou o problema no Parsy, que tava meio solto. Ele vai verificar aqui a nossa base de dados em produção e vai resolver o problema para mim, tá? Enquanto isso, eu tô gravando aqui o vídeo já e melhorando o simulador. E se tu ficou também com
+
+vontade de criar o teu próprio SAS, igual eu tô criando aqui, usa o meu link da Raplet que tá aqui na descrição, que quando fizer o upgrade pro Rapleto, ganha aí $10 de créditos para usar na plataforma. E sendo bem sincero, tá aqui, né? Eu também ganho 10 de crédito quando tu faz isso. Então todo mundo sai ganhando. E eu espero que esse vídeo aqui possa ter expandido um pouco mais o teu conhecimento, ajudado aí na tua preparação para uma próxima entrevista de emprego. É isso. Não esquece de se
+
+hidratar, deixar o like se tu curtiu, comentar porque esse vídeo vai flopar. É um vídeo muito técnico, normalmente ele flopa. Então eu super super agradeço se tu deixar o like ou compartilhar isso nas redes, fazer cortes e me marcar também se tu quiser. E tamamo junto, cara. Obrigado pelo apoio. Se quer ver
+
+mais vídeos desses, pô, vamos fazer esse vídeo não flopar, beleza?
