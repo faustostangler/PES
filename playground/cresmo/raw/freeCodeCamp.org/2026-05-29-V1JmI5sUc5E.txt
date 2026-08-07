@@ -1,0 +1,1538 @@
+---
+video_title: "Web Scraping with Python & JavaScript – MERN Stack Full Course"
+video_id: V1JmI5sUc5E
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=V1JmI5sUc5E
+video_date: 2026-05-29T10:00:31+00:00
+video_description: |
+  Learn to build robust web scrapers that can defeat modern anti-bot systems. In this 5.5-hour full-stack course, you will transition from basic Python scripting to deploying a full MERN dashboard that scrapes and visualizes real-world data from Amazon, Booking.com, Indeed, and the TIOBE Index.
+  
+  By the end of this course, you will have a deployed, full-stack application featuring a React dashboard that visualizes live scraped data. It is completely professional enough to put on your portfolio or use as a production template for client work.
+  
+  -🛠 Tech Stack
+  - Languages: Python | JavaScript
+  - Scraping & Bypass: Playwright | Cheerio | Evomi Scraping Browser | Evomi Scraper API | Residential Proxies
+  - Full-Stack: Node.js | Express | MongoDB | React | Vite | Bootstrap
+  
+  🔗 Start Scraping with Evomi: https://evomi.com/freecodecamp
+  
+  ✏️ Course developed by @GavinLon 
+  
+  💻 Code
+  - Link to Python Web Scraper Scripts: https://github.com/GavinLonDigital/Python_WebScraping_Scripts
+  - Link to Full-stack web application code (MERN): https://github.com/GavinLonDigital/InfoData
+  
+  🏗️ Evomi provided a grant to make this course possible.
+  
+  Chapters
+  - 0:00:00 Introduction
+  - 0:12:44 Part1 - Web Scraping with Python Scripts - Overview
+  - 0:16:27 Scraping booking.com using Python Script and Evomi’s Scraping Browser
+  - 0:37:10 Scraping indeed.com using Python Script and Evomi’s Scraper API
+  - 0:48:39 Scrape  amazon.com using Python Script and Evomi’s Core Residential Proxies
+  - 1:00:06 Part 2 - Pass Bot Detection Tests with Evomi’s Scraping Browser - Overview
+  - 1:04:18 Access Bot Detection WebSite using JavaScript - Through Standard Playwright
+  - 1:13:29 Access Bot Detection WebSite using JavaScript - Through Evomi’s Scraping Browser
+  - 1:18:39 Part 3 - Full-stack Web Scraping App using MERN - Overview
+  - 1:22:11 Getting Setup to Create the Full-stack Web Application
+  - 1:28:17 Install Dependencies for the Server-side Node project
+  - 1:29:26 Create server.js Code file
+  - 1:42:03 Create language.js Code File -To Define Schema for the TIOBE Index Data Model
+  - 1:51:18 Create tiobeService.js Code File - To Create Scraping/Parsing Code using Evomi’s Scraper API and Cheerio Respectively
+  - 2:12:41 Create tiobeController.js Code File - To Handle Incoming http Request Logic
+  - 2:23:02 Quick Bug Fixing Session Before Testing Code Through Postman
+  - 2:26:01 Test Scraping the TIOBE Index through Postman
+  - 2:32:28 Create the React Code to Display Scraped Tiobe Index Data
+  - 2:32:49 Setup React Client Project using VITE
+  - 2:35:50 Create Tiobe React Component
+  - 2:50:17 Install Bootstrap and React-Router-Dom
+  - 3:07:24 Within App.jsx Create the Route for the Tiobe Component
+  - 3:26:35 Run the React Client to Test the Tiobe React Component
+  - 3:37:01 Fix Cosmetic Issues
+  - 3:39:29 Run Code to Test Cosmetic Fixes
+  - 3:40:27 How to Poll Request to Evomi Using Evomi’s Scraper API.
+  - 3:45:24 Implement Server-side Node Code to Scrape Amazon Search Results
+  - 3:45:58 Create Amazon Route in server.js
+  - 3:46:50 Create Book Model to Define the Scheme for Amazon Search Data
+  - 3:56:27 Create amazonService.js Code File - To Create Scraping and Parsing Code using Evomi’s Scraper API and Cheerio Respectively
+  - 4:23:21 Create bookController.js Code File - To Handle Incoming http Request Logic
+  - 4:24:41 Make Sure the bookController.getAmazonBooks is Mapped to Route
+  - 4:34:42 Test Server-side Node Code for Scraping Amazon Search Results using Postman
+  - 4:36:41 Debug Session - Fix and Issue
+  - 4:37:19 Run Code - Tested with Successful Results
+  - 4:38:41 Create React Code to Display Amazon Search Results
+  - 4:40:06 Create Amazon React Component
+  - 5:21:26 Test React Code for Amazon Web Scraping
+  - 5:25:12 Fix Cosmetic Issues
+  - 5:27:20 Run Code to Check Cosmetic Fixes
+  - 5:36:27 Outro
+---
+Bem-vindo(a) a este curso abrangente sobre web scraping moderno usando Python e o Pilha MES. Você aprenderá a contornar detecção sofisticada de bots usando API de raspagem e navegador de raspagem da Evomi para extrair dados de alvos de alto valor como a Amazon. O curso progride a partir de scripts simples para construir um aplicação full stack pronta para produção Com a participação de Playright, Cheerio e VIT. Ao final deste curso, você será capaz de armazenar, analisar e exibir Dados em tempo real com profissionais eficiência. Gavin Lawn desenvolveu isto curso. E agradeço à Iomi por fornecer
+
+uma bolsa para viabilizar este curso. Oi Seja bem-vindo(a). Eu sou Gavin Lawn. Eu sou muito É com grande entusiasmo que apresento este curso online para vocês. raspagem, uma habilidade poderosa que permite você para extrair dados automaticamente de sites e transformá-los em algo estruturado, informação útil. No mundo de
+
+Em engenharia de software, costumamos dizer que Os algoritmos são como o motor, mas os dados são como a força motriz. é o combustível. No entanto, à medida que nos aprofundamos, em um mundo dominado pela IA, que A analogia evoluiu. Os dados não são apenas combustível. É o projeto arquitetônico.
+
+Isso define o que uma IA pode e não pode. fazer. No mundo atual, orientado por dados, vastas quantidades de informações valiosas são Publicado online a cada segundo. Se Você tem interesse em acompanhar os preços? Analisando tendências, reunindo pesquisas dados, ou construção inteligente aplicações, web scraping permite que você para coletar esses dados de forma eficiente e em [escala musical].
+
+Para dar a este curso um toque do mundo real. contexto, Vamos criar um aplicativo web completo (full stack). aplicação usando a pilha MER com NodeJS no back-end, React no front-end. front-end e MongoDB como nossos dados. instalação de armazenamento. Este aplicativo será usado
+
+para extrair e capturar dados do Índice Tyobi e Amazon. Ao executar o aplicativo concluído, você verá veja os dados extraídos, capturados e exibido em seu próprio front-end React em tempo real. Infelizmente não é. sempre uma tarefa fácil de automatizar a extração de dados valiosos do web. Isso ocorre porque sites que contêm informações valiosas disponíveis publicamente informação que eu diria que na maioria dos casos terão mecanismos de detecção de bots que pode, em última análise, resultar na prevenção do seu código de raspagem e captura do Dados provenientes de páginas web específicas.
+
+Então a questão é: como podemos nos locomover? esses mecanismos de detecção de bots para capturar os dados desejados do Páginas web específicas? Iomone fornece um infraestrutura que podemos aproveitar remotamente a partir do nosso código para superar o obstáculos na detecção de bots que nos impedem a partir da captura dos dados desejados do web. Então, em nossa plataforma web completa, aplicação, vamos aproveitar ferramentas fornecidas em duas das Eomi planos de assinatura. O primeiro plano é chamada API de raspagem, que na maioria dos casos Os casos nos permitirão superar qualquer bot.
+
+mecanismos de detecção e nos permitem a Extrair dados de nossos sites-alvo. Usaremos a API de raspagem para extrair os dados. Índice Tyobi. No entanto, quando se trata de Ao coletar dados da Amazon, a Amazon é notoriamente...
+
+difícil de raspar devido a bastante mecanismos formidáveis ​​de detecção de bots. Então Para superar isso, utilizamos as ferramentas. fornecido no núcleo residencial de Evomi Plano para extrair dados da Amazon. Este plano inclui rotação agressiva de procuradores funcionalidade, que significa cada solicitação virá de uma residência diferente Endereço IP, que nos ajuda a superar Obstáculos da Amazon na detecção de bots. Mais sobre rotação de proxy um pouco mais tarde. Em
+
+Neste curso, utilizo a API de scraping da Evomi. plano. Plano residencial central de Evomi e Plano de raspagem de dados do navegador Evomi. Você pode Cadastre-se para usar esses planos gratuitamente. Experimente se desejar acompanhar.
+
+os exemplos práticos fornecidos neste curso. Então, vamos analisar o alvo. sites que vamos extrair neste curso. Vamos primeiro analisar os Tyobi. índice. O índice Tyobi é um índice mensal.
+
+classificação de linguagens de programação com base sobre sua popularidade. Essas classificações ajudam Identificar idiomas em alta e em declínio. e mudanças de longo prazo nos indústria. Portanto, esses dados podem ser muito útil talvez em combinação com outros dados relacionados para fornecer informações poderosas Funcionalidade de apoio à decisão. Você vai Aprenda como você pode aproveitar ao máximo os recursos do IO.
+
+API de extração de dados para coletar dados da tabela classificada. da página web do índice Tyobi correspondente. Então, por que precisamos da API de scraping da Evomi? Extrair dados de uma página da web? Não podemos simplesmente fazer um Solicitação HTTP para a página web de destino, Obtenha os dados e, em seguida, use JavaScript.
+
+e seletores CSS para explorar o HTML. e coletar os dados relevantes. Para muito páginas web simples, você absolutamente poderia faça isso. Mas, na maioria dos casos, os dados de O valor será protegido pela detecção de bots. mecanismos concebidos para impedir a automação processos, bots extraindo dados do páginas web relevantes. Serviços Evomi
+
+fornecer uma infraestrutura sofisticada para superar a detecção de bots. obstáculos. Os sites usam uma combinação de técnico, comportamental e baseado em políticas proteções para limitar ou controlar Extração automatizada de dados. De forma geral, não se trata de impedir bots completamente, o que é claramente impossível, mas sobre detecção, desaceleração ou bloqueando atividades suspeitas. Vejamos alguns exemplos de como o seu É possível detectar bots de raspagem de dados. Antinatural
+
+Padrões de requisição, velocidade e volume. Os humanos navegam na internet em ritmo irregular. Bots geralmente não. Aqui estão alguns sinais de alerta, ou seja, sinais reveladores de que um visitante de um Este site é um robô. Dezenas ou centenas de solicitações por segundo. Perfeitamente
+
+intervalos de tempo consistentes entre solicitações e acessando muitas páginas em um breve rajada. Usuários reais fazem uma pausa, leem, Role a tela e clique de forma imprevisível. Bots tendem a ser muito rápidos e muito consistentes. Comportamento de interação não humana. Moderno Os sites rastreiam como você interage, não apenas O que você solicitou. Aqui estão alguns vermelhos
+
+bandeiras. Sem movimento do mouse ou rolagem. Cliques instantâneos, sem hesitação. Caminhos de navegação lineares e perfeitos. Humanos são bagunçadas. Nós hesitamos. Mova o mouse
+
+de forma desigual. Volte para cima. Bots frequentemente carecem desses padrões naturais. Sinais suspeitos ou incompletos do cliente. Cada navegador envia um conjunto rico de dados de identificação. Os bots costumam receber isso.
+
+errado. Aqui estão alguns sinais de alerta. Ausente ou cabeçalhos HTTP inconsistentes, agente do usuário Isso não corresponde ao comportamento real, não. Execução de JavaScript quando o site espera isso. Um ambiente de navegador real É complexo e internamente consistente.
+
+Os bots frequentemente aparecem desligados ou incompleto. Reutilização de identidade ou instabilidade, propriedade intelectual e identificação digital. Os sites rastreiam se um visitante visualiza algo. como um usuário real e estável ao longo do tempo. Aqui São alguns sinais de alerta. Muitos pedidos de
+
+O mesmo endereço IP em contas diferentes. Troca rápida entre endereços IP. Impressões digitais repetidas aparecendo por toda parte sessões. Os seres humanos normalmente têm estabilidade identidades. Os bots frequentemente exibem padrões de reutilização ou troca constante. Estes são
+
+Apenas alguns exemplos. Então, você pode ver Existem muitos sinais reveladores de que um O visitante de um site é, na verdade, um robô. e não um ser humano. Outro bot comum O mecanismo de detecção é a captura. E eu sou Claro, todos nós estamos familiarizados com isso.
+
+Testes pequenos e irritantes que aparecem do nada. de tempos em tempos, ao tentar fazer login em um site. Por exemplo, você recebe um série de imagens e você precisa selecionar uma imagem que contém uma coruja ou algo. [música] Captura significa totalmente automatizado teste de visita pública para informar os computadores e os humanos à parte. Capturas do trabalho de explorando a lacuna entre os humanos habilidades e scripts automatizados.
+
+Assim, a infraestrutura e os serviços da IMI ajuda para superar esses bots obstáculos de detecção para que você seja capaz Para extrair os dados que você precisa. Como Como mencionado anteriormente, é muito mais fácil Extrair dados do índice Tyobi é mais fácil do que usar a Amazon. As páginas da Amazon na web são notoriamente difícil de raspar devido a mais bot sofisticado ou mais agressivo mecanismos de detecção. Você descobrirá que é capaz na maioria dos casos. casos extraem páginas da web específicas para você como por exemplo o índice Tyobi usando API de extração de dados da Evomi. Mas em alguns casos,
+
+Por exemplo, se você quiser extrair dados... Para páginas da web da Amazon em grande escala, você precisará de Utilizar rotação agressiva de proxies. A Evomi fornece o necessário infraestrutura para rotação de proxy por meio de seu plano residencial principal. Então
+
+Vamos usar o núcleo da Eomi. serviços residenciais para extrair dados da Amazon. Então, vamos discutir exatamente o que é um proxy. rotação é. A rotação de proxy é uma técnica em que as solicitações são enviadas por meio de um conjunto variável de endereços IP em vez de um único. Se, por exemplo...
+
+Você está tentando extrair dados da Amazon em grande escala. A partir de um endereço IP, seu scraper é Provavelmente será detectado muito rapidamente. Mas utilizando a infraestrutura da Iomi através de E/S plano residencial principal, cada solicitação é roteado através de um servidor proxy diferente. Assim, para o site, o tráfego aparece vir de vários usuários ou locais. Ao longo deste curso, você aprenderá Como navegar e extrair dados de Páginas HTML e como automatizar o todo o processo usando ferramentas modernas e técnicas de programação.
+
+Usaremos seletores e tecnologias CSS. como uma bela sopa em nosso código Python e Cheerio do nosso código JavaScript para Analise detalhadamente o HTML bruto extraído. das páginas da web alvo para minerar esses pequenos fragmentos de dados, por assim dizer. Por meio dessas tecnologias e técnicas de codificação associadas, nós vamos Extrair os dados desejados do nosso alvo páginas da web adequadamente. estruturar o dados extraídos, capture os dados em nosso próprio banco de dados e exibir os dados em um estilo esteticamente agradável em nosso Interface React. Deixe-me compartilhar um
+
+Uma breve anedota para lhe contar. Antes de eu me tornar um desenvolvedor de software profissional muitos Anos atrás, eu estudei administração e marketing. Um assunto que nos divertiu era algo que jovens estudantes na faixa dos 20 anos tinham que fazer. com pesquisa de mercado. Especificamente, um assunto chamado garbologia.
+
+Garbologia. Envolvia literalmente mergulhar. em lixo humano um espécime para coletar dados relativos a seres humanos comportamento. Acho que a garbologia ainda é uma Na verdade, é isso mesmo. Garbologia.
+
+Você ainda pode se tornar um garbologista se você quer. Mas eu estava pensando em quanto Prefiro capturar dados por meio de plataformas digitais. Automatização sempre que possível. Então, sem ofensa a nenhum especialista em coleta de lixo ou aspirantes a garbologistas ou professores de garbologia por aí, mas eu prefiro limpador. a abordagem digital mais limpa para capturando meus dados. Mas talvez seja isso mesmo.
+
+apenas eu. Enfim, eu só pensei que... Mencione garbologia.
+
+Isso ainda me diverte de certa forma. Acho que é Que ótimo que na internet moderna a IA idade, não precisamos mergulhar nisso caçambas de lixo talvez tanto quanto antes. E pense em capturar dados em grande escala. Você precisaria de um exército de especialistas em coleta de lixo. Você pode imaginar que isso seria bastante...
+
+Caro e, em última análise, impraticável. Enfim, voltando ao ponto principal disto. curso, web scraping. Não importa o seu histórico, seja você iniciante ou Buscando expandir seus conhecimentos técnicos? Este curso irá equipá-lo com um conjunto de ferramentas.
+
+habilidades práticas do mundo real que você pode Candidate-se imediatamente. Certo, vamos lá. iniciado.
+
+Nesta parte do vídeo, vou te mostrar como. por meio de uma série de webs do mundo real cenários de raspagem para destacar um padrão comum desafio que os desenvolvedores enfrentam. Moderno sites que detectam e bloqueiam ativamente ferramentas automatizadas de extração de dados. Eu já O código foi preparado em formato Python. roteiros. Mais tarde, vamos criar um
+
+Aplicação web full stack usando Node em No back-end, React no front-end. e o MongoDB como armazenamento de dados. instalação. para raspagem e captura dados do índice tyobi e raspagem e capturando dados da Amazon. Criaremos este aplicativo web completo.
+
+aplicação linha por linha com Explicações abrangentes. Esta parte de O vídeo não é sobre programação. detalha, mas se concentra em como usar o Evomi's proxies e serviços de raspagem permitem o código para evitar ser detectado como um bot, ou seja, um processo automatizado de raspagem de dados e, portanto, evita que nosso código seja impedido de extrair os dados desejados. Então, nesta parte do curso, nós...
+
+Vou tentar extrair dados do booking.com. indeed.com e amazon.com. Em cada caso
+
+Vamos começar usando o playright padrão. para extrair os dados desejados. Enquanto Playright é uma ferramenta de automação poderosa. Você verá que em muitos casos é dificuldades ao enfrentar o antibotão proteções. Essas falhas ajudarão ilustrar as limitações do uso configurações padrão em alto atrito ambientes. Nosso primeiro exemplo se concentra
+
+no Booking.com. Vou tentar extrair dados usando playright padrão onde o O processo resulta em um tempo limite excedido. Embora Os dados existem na página, é isso mesmo. efetivamente inacessível devido ao bloqueio mecanismos. Logo em seguida, eu vou
+
+tente a mesma tarefa usando o Evomi's Extraindo dados do navegador por meio de uma conexão remota. sobre o CDP e o protocolo WSS. Esse essa abordagem contorna com sucesso o restrições, permitindo que os dados sejam recuperado e exibido diretamente no Terminal do VS Code. Em seguida, passamos para indeed.com.
+
+Usando o playright padrão, a solicitação resulta em um HTTP 403 proibido resposta, um bloqueio explícito ou difícil bloco indicando que o acesso foi negado. Em seguida, passarei para o de Iomi. API de raspagem para extrair e exibir o anúncios de emprego relevantes onde o mesmo A solicitação retorna um status HTTP 200. Esse Uma resposta bem-sucedida nos permite coletar dados. e gerar os dados relevantes da lista de empregos.
+
+Sem interrupção. Por fim, tentaremos extrair dados de uma página da web. página referente a um URL de pesquisa em Amazon. Uma tentativa padrão de dramaturgia leva à rejeição da solicitação devido a Defesas anti-bots. Em contraste, quando usando o serviço de proxy residencial da Iomi, A solicitação é bem-sucedida com um HTTP 200.
+
+resposta. Isso nos permite extrair o desejado. Os dados são exibidos no terminal. Em todos esses exemplos, o objetivo é demonstram não apenas que as falhas ocorrem, mas por que ocorrem e como? aproveitando a raspagem especializada infraestrutura como os serviços Evomi podem superar essas barreiras.
+
+Ao final desta demonstração, você irá ter uma compreensão mais clara de como estratégias de proxy e navegador remoto A execução pode melhorar drasticamente. taxas de sucesso de raspagem em ambientes restritos ambientes. Muito bem, vamos começar. Ok, então primeiro vou criar um diretório local para armazenar arquivos para meu Projeto em Python. Então, vou falar sobre o meu desenvolvimento.
+
+pasta aqui, e eu só vou para crie uma pasta chamada
+
+Soluções de extração de dados em Python.
+
+OK. E vou invocar uma instância de Visual Studio. E eu vou abrir aquela pasta, Soluções de extração de dados em Python. Selecione a pasta. Ótimo. E agora estamos prontos para começar. Então
+
+A primeira coisa que quero fazer é invocar a janela do terminal. Então nós simplesmente vamos Para fazer isso, pressione a tecla Ctrl e depois o caractere til (~). E, em primeiro lugar, eu só quero ver o quê versão do Python que estou usando. Então, Python A versão "d" é o comando que queremos executar. para ver qual versão do Python estamos usando.
+
+correndo. E acredito que essa seja a versão mais recente. versão estável a partir do momento de Gravando este vídeo. Então, isso é ótimo. Então, se você ainda não tem a versão estável mais recente, Se você quiser instalar o programa, você...
+
+Você pode fazer isso acessando www.python.org/d org/d downloads e você poderá então Baixe e instale a versão mais recente. a versão estável mais recente do Python. Ótimo. E agora queremos criar o nosso
+
+ambiente virtual. Um virtual O ambiente é um espaço isolado com seu próprio interpretador Python e instalado pacotes. O isolamento resolve alguns problemas. Problemas muito reais. Basicamente, mantém seus projetos Python não serão afetados um com o outro, por assim dizer. Ok, então nós estamos
+
+isolando nossos projetos Python de um outra, incluindo um virtual ambiente. Ótimo. E depois o próximo comando que queremos executar para criar nosso O ambiente virtual é Python. dash mv e depois ponto venv assim.
+
+Ótimo. Você pode ver aqui que foi criado. estas pastas aqui e esta, uh denota nosso ambiente virtual. E agora Queremos ativar nosso virtual ambiente. Então, só precisamos executar isso.
+
+arquivo. Então, para fazer isso em uma máquina Windows Você digitaria o seguinte. Então ponto venv É esta pasta aqui e depois siga em frente. slashscript. Então, estamos direcionando o arquivo de ativação.
+
+aqui. Em seguida, clique na barra para ativar. E isso deve ativar nosso virtual ambiente. Vamos pressionar a tecla Enter. E pronto. Agora estamos no
+
+espaço de ambiente virtual. E então nós queremos ter certeza de que selecionamos o interpretador Python apropriado. Imprensa controle de mudança Para invocar a paleta de comandos. E então queremos selecionar esta opção. Na lista suspensa, que é python dois pontos Selecione o intérprete. E você pode ver aqui
+
+nosso ambiente virtual. Nós queremos Selecione esta opção aqui. Slash.env/scripts voltar/python.exe.
+
+E você pode ver que é recomendado aqui. Então vamos selecionar essa opção. Excelente. Então, a próxima coisa que quero fazer é instalar os pacotes relevantes que estamos Vou usar. por exemplo, para uh, fazendo requisições HTTP para um endpoint, um ponto de extremidade remoto para analisar os vários HTML que recebemos de volta dos sites.
+
+Vamos usar um pacote chamado Uma sopa maravilhosa para isso, que vai segmentar vários seletores CSS para que possamos podemos direcionar os dados desejados que queremos Extrair do HTML bruto. E o outro uma delas é Python.v. E isso é para que possamos ler o arquivo AV. para que possamos ler determinados valores de Arquivo AENV. Então não precisamos incluir
+
+os valores reais em nosso código. Pudermos leia-os a partir de uma variável de ambiente no arquivo AENV. E então, é claro, nós queremos Para instalar o Playright e o Playright é O que vamos usar para acessar o Dados relevantes dentro das páginas web de destino. Então, vamos digitar o comando relevante para Instale esses pacotes e depois prosseguiremos. em cada um dos pacotes.
+
+Com um pouco mais de detalhes. Então, pip solicitações de instalação. Vou abrir um pouco mais de espaço para mim aqui. Solicite espaço. Sopa maravilhosa
+
+para píton espacial traço. Nenv e então espaço jogar direito. E antes de pressionar a tecla Enter para Instale esses pacotes, vamos lá. através de cada um deles. Então, solicitações é um Biblioteca HTTP simples para envio de conteúdo web.
+
+Você pode usar isso para fazer solicitações, receber postagens, etc. Para obter dados de APIs ou baixar da web páginas sem lidar com nível baixo networking. E então temos algo lindo. sopa. Uma sopa linda é uma biblioteca para Análise e navegação em HTML e XML. Isto
+
+é comumente usado com solicitações para Extrair dados específicos, como títulos, links, tabelas, etc. de páginas da web. Então Em nosso código Python, isso será muito importante para conseguir o dados relevantes dos dados brutos retornados HTML. E depois temos o Python.env.
+
+Isso carrega variáveis ​​de ambiente de Arquivo AENV no seu aplicativo. É útil para guardar segredos, chaves de API, senhas, etc. fora do seu código. Assim podemos armazenar aqueles que possuem informações sensíveis em AENV arquivo e que pode ler esses valores Os dados armazenados no arquivo thatv são lidos e memória em tempo de execução. Então, sensível As informações não serão divulgadas dentro Seu código. E então, é claro, nós temos
+
+jogar direito. Oh Pequeno erro de digitação. Não é platrite playright lá. E o Playright é uma ferramenta para Automatizando navegadores web reais. Cromo, Firefox, WebKit, por exemplo. Usado para
+
+Extração de dados de sites dinâmicos, testes web aplicativos, ou interagindo com páginas que Requer JavaScript. Ok, perfeito. Vamos pressione a tecla Enter e instale esses pacotes.
+
+Excelente. E está instalando nossos pacotes. Ótimo. Uma sopa maravilhosa. Playright instalado.
+
+Excelente. Vamos limpar a tela. Então, a última coisa que precisamos fazer é...
+
+É preciso instalar os navegadores Playright. E Para fazer isso, digitamos playright. instalação do espaço. Então, para concluir nosso instalação do playright, nós digitamos Instale o PlayRight no prompt de comando. e pressione a tecla Enter.
+
+Excelente. Então agora a nossa instalação de O Playride foi concluído com sucesso e Estamos prontos para criar nossos arquivos de raspagem. e testar a funcionalidade de extração de dados. Vamos limpar a tela. Excelente. OK.
+
+Então agora vamos tentar extrair os dados. um booking.com. Em primeiro lugar, vamos usar o padrão. jogar direito para tentar scrapebooking.com.
+
+E então veremos que isso realmente acontece. falha. Ficamos bloqueados usando apenas direito de jogo padrão. E então Em seguida, vamos usar o da evomi. Extraindo dados do navegador para scrapebooking.com.
+
+E você verá como isso nos ajuda a conseguir superando esses obstáculos de detecção de bots. Então, O que é Booking.com? Booking.com é uma Plataforma online para encontrar e reservar serviços relacionados a viagens. A maioria das pessoas usa
+
+é usado para reservar hotéis, apartamentos e Hospedar, comparar preços e ler avaliações. reservar voos, aluguel de carros ou Táxis do aeroporto. Funciona como um mercado. Fornecedores de alojamento listar suas propriedades e viajantes Navegue, compare opções e reserve. diretamente por meio deste site ou aplicativo. Então,
+
+Vamos extrair dados do site para dados relevantes e nós vamos simplesmente fazer uma busca básica por propriedades uh Relativo à cidade de Nova Iorque. Então, eu vou Vou te mostrar o que quero dizer agora. Mas em primeiro lugar eu quero criar o arquivo que irá conterá informações sensíveis que será importante quando recrutarmos o evomi serviços porque me inscrevi para usá-los. vários planos com evomi e minhas credenciais serão armazenadas em este arquivo .v que é sensível Informações que eu não quero divulgar.
+
+disponível dentro do próprio código. OK. E eu vou simplesmente copiar isso. Ótimo. Obviamente, você pode ver que eu não sou mostrando a você o sensível real Informação. Como você pode ver, eu tenho uma API.
+
+chave que será usada quando utilizarmos o Evomi's API de extração de dados. Esta chave de API será pertinente a esta parte do curso porque vou me alistar Navegador de raspagem de dados da Evomi. Para que estejamos Não estamos apenas usando o Playright padrão, estamos usando o navegador de raspagem do Evomi para scrapebooking.com. e você verá como O uso do navegador de raspagem Evomi irá Superar esses obstáculos de detecção de bots.
+
+Ok, então vou acessar este novo arquivo. ícone e vamos criar o código para scrapingbooking.com usando o playright padrão em primeiro lugar. OK, Então vamos chamar isso de raspagem de arquivo. reserva padrão para padrão jogar direito.
+
+Então, playright.py padrão. assim. E eu já preparei o código e eu vou apenas copiar isso em aqui. E aqui está o código para usar direito de jogo padrão. OK. Então nós temos
+
+nossa configuração de variáveis ​​de ambiente e Criamos um novo arquivo chamado scrapbooking padrão playright onde Vamos acessar scrapebooking.com para diversos resultados de pesquisa. um especificamente uma busca por Nova Iorque Estou aqui para Nova Iorque. Vamos ter o HTML que nos foi retornado. Você pode ver Temos uma resposta aqui na página. Vá para a
+
+URL que é o URL de pesquisa aqui. Eram imprimir o status retornado para nós e e então vamos tentar na verdade, extrair os dados relevantes de o HTML bruto e estamos apenas usando o O mais importante a observar aqui é que estamos usando o padrão jogar certo para Navegue até o URL de pesquisa relevante. Então Você pode ver aqui o código para Reprodução padrão aqui. Então não somos usando os serviços evomi neste caso específico Neste código Python, estamos usando playright para navegar até este URL a URL de pesquisa em booking.com Vou mostrar exatamente o quê esta busca traz de volta para dentro do navegador. Então eu vou para o
+
+navegador aqui. OK. E você pode ver aqui Estou apenas colando isso. URL de pesquisa. Então precisamos de algo novo e depois a porcentagem entre você e York deveria ser a porcentagem 20, que representa um espaço. E essa é a nossa busca em
+
+booking.com. E é exatamente isso que Vamos emular usando É preciso ter a intenção de fazer isso. E você pode ver Aqui, está trazendo de volta esses resultados. E no código, na verdade, eu estou apenas resgatar o nome da propriedade, o nome do hotel, por exemplo, e sua classificação. É só isso que estou trazendo.
+
+voltar. Apenas um exemplo simples. Somos os primeiros Vou tentar extrair dados desta página da web. usando o padrão Playright. E então nós estamos Vou usar o navegador de raspagem Eomi para fazer isso.
+
+a mesma coisa. Você verá que nós conseguimos bloqueado quando estamos usando o padrão jogar direito. E podemos ver a vantagem. de usar o navegador de raspagem Evomi que Vou demonstrar assim que tivermos analisado...
+
+tentando extrair os dados relevantes usando direito de jogo padrão. Então, isto aqui, isto O código aqui usa apenas o playright padrão. Para extrair o URL de pesquisa relevante. E então o resto do código é basicamente só usando uma sopa bonita para tentar extrair os dados para que vocês possam ver que estamos raspando. o nome da propriedade e depois o avaliação e depois estamos apenas produzindo resultados.
+
+esses resultados aqui dentro de um loop for aqui. Então vamos ver o que acontece quando nós Tente executar este código. Então, para executar o código Digitamos python e depois fazemos o scraping.
+
+reserva padrão para padrão jogar certo torta. Vamos pressionar a tecla Enter e ver... O que acontece.
+
+Ok, então retornou um status HTTP. código de 202.
+
+Vamos ver se retorna os dados. É isso que queremos. Veja o que realmente está acontecendo aqui. Está expirando o tempo limite. Então isso não deu certo. Na verdade, nós já...
+
+Fui bloqueado pelo Booking.com. Então vamos limpar a tela. E agora Agora quero experimentar usar os serviços da Evomi. O navegador Evomi realiza a coleta de dados para executar o mesma operação de raspagem. E vejamos
+
+O que acontece. Então, vou criar um arquivo aqui chamado raspar reserva uh evomi. E eu simplesmente vou embora. raspagem navegador aqui. Py. OK. Eu vou para
+
+Cole esse código aqui.
+
+Ótimo. Então, Vamos dar uma olhada rápida no código. E Você pode ver a diferença aqui. Agora O que estamos fazendo na verdade é usar O navegador de extração de dados do Evomi a partir do nosso código aqui. Assim, conseguimos controlar isso.
+
+navegador remotamente a partir do nosso código. E isto É assim que conseguimos fazer isso. Estamos usando o protocolo WSS, que significa seguro Conexão WebSocket. Então pense conexão persistente em tempo real do que uma solicitação pontual. Então, através disto conexão com a qual nosso código pode se comunicar Navegador de raspagem Evomi. O código de barras pode ambos
+
+enviar mensagens para o navegador remoto serviço e receber mensagens do serviço de navegador remoto através da rede segura Conexão WebSocket. Estamos usando o WSS para isso. E você pode ver que somos capazes de comunicar com o navegador de extração de dados porque eu já me inscrevi em um planeje em Iomi. Eu me inscrevi em um. dos serviços da Evomi e você pode fazer o mesmo. Você pode obter um teste gratuito se você
+
+Você quer testar o código por si mesmo? Então Basta incluir a URL aqui, a URL do navegador e, em seguida, usando o Connect. CDP. Assim, a conexão é feita via CDP. que significa ChromeDev tools protocolo CDP. CDP é o mesmo protocolo
+
+ferramentas como o Playright Utilizado internamente para controlar um navegador. Mas Estamos controlando O navegador de raspagem da Evomi usa o Protocolo WSS aqui. Então, não estamos usando Reprodução padrão aqui. Estamos usando O navegador de raspagem da Evomi para ver se nós consegue contornar os obstáculos à detecção de bots que o Booking.com coloca na frente de nós. Então, tudo isso está fazendo é
+
+conectando via conectando-se ao navegador de extração de dados via o protocolo WSS. E você pode ver isso lá e estamos lendo esta em particular credencial. Esta é a chave da API que Você receberá isso quando se inscrever no Extraindo o plano do navegador. E você pode obter um Experimente gratuitamente, se quiser. você mesmo codifica. Então, estamos recebendo
+
+Essa chave de API está no arquivo .v aqui. E então conseguimos acessar o recurso de raspagem do Evomi. Analise esta linha de código aqui. E então podemos controlar o navegador.
+
+por meio do nosso código remotamente usando webs seguras, um socket web seguro Conexão WSS. OK. E você pode ver Estamos aguardando o código. Eram imprimindo o status do HTTP solicitação e então estamos usando o vários seletores CSS para efetivamente extrair dados o resultados de pesquisa relevantes e nós somos exibindo o nome da propriedade e a classificação do imóvel em questão. Para Por exemplo, o hotel aqui. Eram
+
+obtendo os resultados através da leitura do dados relevantes usando HTML bruto e Seletores CSS específicos para extrair o dados relevantes, o nome do hotel e a classificação do hotel. Estamos adicionando isso em um array e então fazemos um loop. através desse array e estamos produzindo Os resultados estão aqui. Vamos ver se o A extração de dados do navegador resolve nosso problema com Extraindo este URL de pesquisa do Booking.com onde estamos procurando hotéis em Nova A cidade de Nova Iorque, por exemplo. OK. Então, vamos
+
+digite Python e depois o nome do arquivo que queremos executar, que é raspar reservas de raspagem Evomi
+
+Extraindo dados do navegador. Agora estamos usando Experimente o serviço de raspagem de dados do navegador da Evomi. para scrapebooking.com. E vamos ver se temos alguma sorte.
+
+Extraindo os dados relevantes. Pressione o tecla Enter.
+
+Certo, então está retornando o mesmo 202. Estado HTTP. Ok, e isso é apenas uma forma de exibir o status. enquanto tentamos extrair os dados relevantes da pesquisa URL.
+
+Uau. E isso é incrível. Olha só isso. Nós temos ter conseguido extrair os dados relevantes da web página no Booking.com. Então, nós raspamos.
+
+o nome do hotel e, por exemplo, A avaliação aqui é muito boa. Isso é baseado Com base em 423 avaliações. Suítes Spring Hill por Marriott, Nova York, Manhattan, Tempo Praça, Sul. E nós temos a análise. Com base em 600 avaliações. E nós temos
+
+ter conseguido extrair os resultados relevantes usando os serviços da Evomi usando o Evomi serviço de raspagem de dados do navegador. Então nós éramos não foi possível extrair dados a página web relevante usando padrões jogar direito. Então, estamos tentando fazer isso nós mesmos. Mas através do navegador de raspagem da Evomi serviço, não temos problema em extrair dados do Resultados que desejamos no Booking.com.
+
+Excelente. Certo, então agora vamos para raspar de fato.com. Então, de fato, o Indeed.com é um Site de busca de emprego online que conecta pessoas procurando emprego com empregadores que estão contratando. Então vamos fazer um
+
+Pesquisa básica. Então vamos direto ao assunto. indeed.com. Já visitamos o Booking.com.
+
+Agora, vamos acessar o site indeed.com e Realizar uma pesquisa. Então, www.indd.com.
+
+Vamos lá. Hum, OK. Veja como realmente quer. Verifique-me, pois tenho feito bastante coisa. muita raspagem disso, uh, do meu Endereço IP. Então
+
+O que queremos fazer é procurar por desenvolvedor de software e Vamos fazer uma pesquisa. e isso traz de volta os dados relevantes. Então Estamos extraindo determinados campos destes cartas é o que vamos tentar fazer fazer para esses critérios de pesquisa específicos aqui. Então, em primeiro lugar, eu vou...
+
+no VS Code. Vamos criar um novo arquivo. E vou chamar isso de raspagem. de fato. Padrão para jogo padrão, certo? Então nós somos
+
+Vou tentar usar o playright padrão. raspar, de fato. E eu realmente...
+
+preparou o código para nós. Então, vou apenas copiar isso. aqui. E você pode realmente ver O URL da pesquisa está aqui. Então, estamos coletando dados de software.
+
+desenvolvedor. Esses são os nossos critérios de busca em Cidade de Nova Iorque. E é isso que o A URL de pesquisa tem a seguinte aparência: Poderíamos até mesmo Aceite isso como está. Acabei de...
+
+Está codificado ali. E podemos colá-lo. aqui dentro. E você deveria receber o mesmo. tipo de resultados. Então, espero que possamos
+
+Extraia esses resultados. a partir deste URL de pesquisa aqui no indeed.com. Mas primeiro vamos tentar extrair dados do Indeed. basta usar o código padrão do Playright aqui. E você pode ver aqui que nós somos apenas
+
+indo p.chromium.launch. Este é apenas o código padrão do Playright. Não estamos utilizando os serviços da evomi. Eram
+
+não usar servidores proxy nem nada do tipo que. Então, ele tentará extrair dados. esse página web que contém o relevante Resultados da pesquisa por desenvolvedor de software em Cidade de Nova Iorque. E vai usar várias pausas. código, cujos detalhes não são importante para isso. Mas basicamente todos
+
+Este código está extraindo o título, empresa e localização das oportunidades de emprego relevantes e exibindo-o na janela do terminal. aqui. Mas você verá que nós realmente...
+
+Você será bloqueado. E não é apenas uma sutileza bloqueando qualquer um dos dois. É um bloco duro, significa que retornará um valor real Status HTTP diferente de 200. Às vezes. Você sofre um bloqueio temporário e mesmo assim...
+
+retornar um status de sucesso HTTP de 200, mas na verdade você foi bloqueado. Não retornará os dados que você deseja. Mas você verá aqui que na verdade conseguimos bloqueado completamente e retorna um status código 403 que significa proibido Significa que estamos sendo explicitamente bloqueados. Então vamos ver isso na prática. Eu vou Execute esse código agora e você verá que Somos bloqueados completamente quando tentamos raspar esta página web em particular com isto URL de pesquisa no Indeed. Então, nós somos
+
+Procurando desenvolvedor de software em New York. E se olharmos para o Chrome novamente, você pode ver o dados retornados em nosso navegador, mas nós Deseja automatizar isso por meio de um bot? que é basicamente o que este código Python faz. está fazendo. E queremos poder extrair os dados desejados, como por exemplo Por exemplo, o cargo e a empresa.
+
+E então vamos imprimir isso. Dados para a janela do terminal. Enfim, Vamos executar esse código e ver o que acontece. acontece. Certo, então Python e depois o quê?
+
+Eu previ isso aqui? Isso é raspar de fato stdplay.py. Pressione a tecla Enter. Vamos ver o que acontece.
+
+403. E se pesquisarmos o que é 403, Então, se formos ao Google e digitarmos, então 403 HTTP código de status e pressione Enter. Então HTTP 403 é um erro HTTP código de status, que significa acesso ao O recurso solicitado está proibido. Então nos foi explicitamente proibido de extraindo esses dados específicos. Então, como?
+
+Vamos conseguir contornar isso? Eram Vamos aproveitar esse tempo para... use o de Evomi API de extração de dados. Então isso envolverá apenas
+
+uma solicitação POST para um URL Evoi específico como bem como a URL que queremos extrair e dará conta de superar todos os obstáculos relevantes na detecção de bots para nós em o servidor e nos retorna o HTML bruto. e então nós mesmos pausaremos esses dados. em nosso código. Então vamos pegar esse código. Pronto para uso no VS Code. Então eu tenho
+
+Na verdade, o código já estava preparado. Então Acabamos de ser bloqueados ao tentar... extrair esse URL de pesquisa usando o padrão Playright. E agora estamos
+
+Vou usar o serviço de API de scraping da Evomi. tentar extrair dados da mesma página e ver se ultrapassar esse bloqueio explícito aqui. Então, vou criar um novo. arquivo. Vamos chamar isso de raspagem.
+
+de fato. Raspador, raspador, ou vamos lá evomi API de raspagem ponto aqui. OK. E nós vamos... Eu só vou colar.
+
+esse código.
+
+OK. Então, vamos revisar isso rapidamente. código para que você possa ver o que está acontecendo aqui. Hum, OK. Então, aqui está o método principal.
+
+Este é o endpoint evomi. Então, nós somos lendo essas configurações do arquivo v e as credenciais relevantes porque eu sou obviamente configurado no relevante Plano de API de raspagem evomi. Então, Recebi uma chave de API que irá Permitir que eu utilize os serviços deles. E então Esta é a URL que queremos extrair. O URL de pesquisa no Indeed. E então nós temos
+
+Tenho esses cabeçalhos aqui. Então, tudo isso é basicamente tentando imitar um navegador típico hum que podemos atravessar para serviços. Então, o referenciador, por exemplo. Definindo o agente do usuário, basicamente estamos...
+
+tentando adicionar essas configurações ao nosso cabeçalho nosso cabeçalho de solicitação HTTP para que Podemos simular alguém visitando esse site. página. Então, um ser humano típico simplesmente navegar na web e realizar isso Pesquise no indeed.com em vez de usar um bot. tentando extrair dados relevantes da web página. Então é disso que se trata.
+
+aqui incluindo o agente do usuário aqui e o remetente. Estamos tentando imitar um ser humano que visita esse URL de pesquisa. Então, obviamente, isso é para tentar enganar os mecanismos de detecção de bots pensar que somos seres humanos e Não sou um robô. OK. E então aqui está o código. É apenas um HTTP típico.
+
+solicitação POST onde o ponto final que é o serviço evomi passado como primeiro argumento e então Temos JSON igual a payload e isto aqui, que inclui o URL de pesquisa: a página web de destino que nós queremos extrair dados e então incluímos o Cabeçalhos relevantes aqui e alguns disto Uma das configurações é a chave da API. um que nos permite usar o scraper do iomi API. Agora você pode se inscrever gratuitamente. teste para experimentar esse tipo de código Você mesmo e receberá uma chave de API. onde você pode usar a API de raspagem serviço em Evomi. E então isto
+
+A informação está apenas tentando fingir que... seja um ser humano visualizando o conteúdo dos URLs de pesquisa através de o navegador em vez de um bot tentando extrair o conteúdo, que é o que estamos fazendo. Estou fazendo isso aqui, na verdade. E aí eu fico simplesmente...
+
+imprimir o status e a mensagem aqui, a partir da resposta retornada de esta solicitação HTTP post. E então isto Retorna o HTML. Passamos isso para raspagem. de fato, e isso devolve os empregos em um variedade. E então podemos simplesmente imprimir.
+
+essas tarefas para a janela do terminal. E Vamos ver se formos capazes de superar isso agora obstáculos à detecção de bots no Indeed usando API de extração de dados da Evomi. Certo, então ótimo. Aqui está todo o código para pausar os dados relevantes. É bastante detalhado.
+
+Não é necessariamente desnecessário. Para entender todos esses detalhes aqui. Todos O que estamos tentando fazer aqui é demonstrar que usando o playright padrão, nós obtemos bloqueado com um erro 403. Portanto, é difícil. bloquear.
+
+E então, quando usamos o Evomi's API de raspagem, somos capazes de superar esses obstáculos na detecção de bots e os dados o que queremos é extraído e nós podemos Imprima esses dados na tela. Certo, então vamos Execute o código e veja o que acontece. Hum, e é raspadinha mesmo, evomi raspadinha API. Então vamos tentar isso.
+
+OK. E vamos ver se conseguimos extrair o dados relevantes. OK. Então, vamos pressionar a tecla Enter e executar nosso código. E esperamos ter sucesso.
+
+Olha só isso. E nós conseguimos Extraia os dados relevantes do indeed.com. usando o Evomi's Serviço de API de raspagem. Excelente.
+
+Certo. E, por último, quero demonstrar usando playright padrão para raspar um URL de pesquisa da Amazon. Aqui você pode ver que nós estão coletando dados da Amazon. A pergunta é JavaScript E este URL de pesquisa significa apenas que estamos extrair dados da Amazon em busca de livros relacionados a JavaScript. Como você pode ver, nós temos...
+
+Este parâmetro I é igual a livros em tiras. Estamos pesquisando livros na Amazon. relacionado à pesquisa em JavaScript critérios e estamos usando padrões jogar direito. Você já viu esse código antes. Navegador é igual a awaitp.chromium.launch.
+
+Estamos lançando um navegador e ele está em um Estado sem interface gráfica, o que significa que não possui Na verdade, não mostra o navegador e vamos abordar o ponto específico que URL de pesquisa específica. Estamos recebendo o status aqui e estamos imprimindo o status lá e estamos apenas usando Jogada padrão aqui. Então, eu vou para digitar Python extrair dados da Amazon padrão toque o ponto certo Pi. Bem, deixe-me mostrar-lhe o que é...
+
+Os resultados serão exibidos como em um navegador. antes de realmente demonstrarmos o raspagem. Então, eu vou simplesmente para amazon.com. Então, essencialmente, esta é a busca que nós o URL de pesquisa que vamos usar alvo. E se formos para o JavaScript,
+
+Você pode ver que estamos sendo devolvidos. estes livros de JavaScript aqui. E nós somos Extraindo os dados relevantes. Por exemplo, o título, o autor, a classificação do livro, e esse tipo de informação. Estamos raspando e vamos para Exiba isso na janela do terminal.
+
+Enfim, vamos Execute o código para extrair dados da Amazon, o script Python relevante. E estamos usando basta usar o Playright padrão para fazer isso. agora.
+
+Ok, estamos recebendo um erro 503 da Amazon. Na verdade, fomos bloqueados de executando o Amazon relevante funcionalidade de extração de dados. Então vamos executar o nosso Código do scraper.
+
+Ok, então você pode ver que estamos recebendo um 503. Ocorreu um erro ao tentar extrair dados da Amazon. Um se formos para Um Google aqui, podemos ver o que é um 503 erro significa. Então 53 O erro "serviço indisponível" é um código do lado do servidor indicando O servidor está temporariamente sobrecarregado ou em manutenção, o que significa que Não foi possível processar a solicitação. Então, às vezes a solicitação HTTP que você recebe de volta não é sempre claro. Então, o que está acontecendo aqui?
+
+Na verdade, estamos apenas sendo bloqueados. Pela Amazon. Então vou tentar usar agora. Os representantes de Iomi para superar este 503 problema que estamos enfrentando e, com sorte, Em seguida, podemos extrair os dados relevantes da pesquisa. URL publicada com sucesso na Amazon.
+
+Ótimo. OK. OK. Então, eu vou Criar um novo arquivo aqui e eu vou chame isso de raspagem sou Amazon núcleo residencial evomi núcleo residencial. Então, este é um plano que Você pode se inscrever no Iomi e você pode Obtenha um teste gratuito usando a versão principal.
+
+proxies residenciais no Iomi e você pode Em seguida, teste você mesmo o código relevante e veja se você consegue fazer isso com sucesso Faça uma busca na Amazon e você verá agora que É relativamente fácil extrair dados da Amazon usando Este serviço Evomi. Ok, eu só vou indo. Para copiar esse código ali. Assim, você pode ver a estrutura do código. Aqui é ligeiramente diferente. desde quando nós
+
+Utilizei a API de raspagem. Nós também somos Executando uma requisição HTTP para a Evomi. Estamos usando os proxies da Evomi aqui. Então você você pode ver aqui o relevante JSON que passamos em nossa requisição HTTP GET. solicitar.
+
+Este objeto inclui estes URLs aqui. E estou lendo isso do arquivo v. E Estas são as configurações que você irá usar. você terá acesso quando se inscrever no o plano residencial principal, o núcleo Serviço residencial fornecido pela Evomi. Você pode se inscrever para um teste gratuito e Você receberá essas configurações que Você pode inserir no seu código e então Teste seu código extraindo dados da Amazon.
+
+OK. E esses cabeçalhos são apenas para Basicamente, tento enganar a detecção de bots. mecanismos para acreditar que somos um ser humano, e não um robô. Então eles Parece ser apenas um navegador normal. configurações. Então os usuários simplesmente passam por seus
+
+navegador realizando uma pesquisa na Amazon. E é isso que todos esses cabeçalhos representam. Tudo se resume às configurações. E você pode ver como estamos executando uma simples solicitação GET para o URL dessa página. Estamos passando pelo proxies que temos definido aqui.
+
+E essas são as configurações que temos. obtido ao se inscrever no núcleo Plano residencial em Evomi. E como eu Você pode se inscrever para um teste gratuito, disse ele. Para testar você mesmo. E então estamos realizando uma requisição GET.
+
+E este URL da página é o URL de pesquisa em Amazon. Então, onde estamos procurando? Livros didáticos de JavaScript e então estamos pausando o relevante HTML. Então estamos retornando o HTML. response.ext passando isso adiante para
+
+esta pausa Amazon HTML lá e depois imprimimos os resultados. aqui. Então estamos passando por nesses resultados e eu escrevi código para imprimi-los. os autores, os título, preço, classificação, avaliações em um Uma maneira bastante prática de acessar a janela do terminal. Então, vamos tentar executar isso. Vamos ver se
+
+Podemos superar isso 503 erro que nos foi enviado de volta de Amazon. Certo, então temos o arranhão. Arquivo residencial principal do Amazon Evomi aqui e estamos usando o núcleo da Amazon plano residencial agora vai descartar o URL de pesquisa relevante na Amazon. E você Como você pode ver, estou incluindo um cabeçalho. valores para tentar enganar ainda mais o bot mecanismos de detecção que levam a pensar que Somos um ser humano navegando na internet. Ótimo.
+
+Então, vamos tentar extrair dados da Amazon usando o serviços residenciais essenciais fornecidos por Vomite. Para fazer isso, digitamos Python. e depois raspe opa, Amazon mal núcleo redundante
+
+pi e vamos pressionar a tecla Enter e ver Se isso funcionar. Excelente. Então ótimo, Isso é maravilhoso. Você pode ver tudo isso Os dados foram extraídos das fontes relevantes. Página da Amazon na internet.
+
+Então, você obteve o status 200. em vez daquele horrível status 503, Significa que fomos bloqueados. E você pode ver aqui, status 200. Ok. E temos 24 resultados. JavaScript o
+
+Guia definitivo para dominar os mais... linguagem de programação usada por David Flanigan e podemos ver que temos todos esses resultados. retornou para nós e isso é algo útil.
+
+dados e você verá mais tarde que vamos Para usar o Node, vamos usar JavaScript dentro de um projeto Node para extrair dados da Amazon de maneira muito semelhante a Estamos fazendo isso aqui usando o núcleo Serviço residencial fornecido pela iO para meu. Excelente. E nós poderíamos simplesmente por Boa medida, tente outra pesquisa. critérios. Então, vamos extrair dados do Python.
+
+Desta vez, vamos ver se conseguimos alguns dados. voltar disso. Então vamos limpar a tela. Python. Vamos executar o Python roteiro. Raspar
+
+Evomi. Desculpe. Extrair dados da Amazon. vomitar núcleo residencial.py E vamos ver se teremos sucesso novamente.
+
+Excelente. 200. Então, temos um status HTTP de 200. retornou. OK. E o terceiro curso intensivo de Python
+
+edição. Temos todos esses dados. Nós temos Consegui os autores. Já temos o preço e todos esses dados úteis que coletamos a partir do URL de pesquisa relevante na Amazon. Ótimo. Vamos tentar outra busca. Então,
+
+Vamos procurar livros de Java, livros sobre Java, e vamos ver se conseguimos com sucesso. Extrair a URL de pesquisa relevante da Amazon, a página web referente ao assunto em questão URL de pesquisa da Amazon. Vamos ver se conseguimos. extrair com sucesso os critérios critérios de pesquisa do Java. Então queremos o livro.
+
+dados referentes ao Java que nos foram devolvidos e então podemos extrair o título, o autor, o preço e os dados desejados que queremos e podemos exibir isso para a tela. Então vamos tentar isso. Então Então vamos executar o script correspondente. Python extrair dados da Amazon evomi correspondente.
+
+E vamos ver se conseguimos. Resultados de pesquisa decentes. Pronto. Então, o décimo resultado que Recuperamos o Java, o completo. Referência desde os fundamentos até o nível avançado.
+
+conceitos com auxílio de IA moderna Desenvolvimento de Bruce Herbert. Brilhante. Vamos ver quantos resultados temos. pegou. 33 resultados e, claro, o HTTP O status é 200 e não 503. E
+
+Obtivemos alguns dados úteis. a partir do URL de pesquisa relevante na Amazon. E conseguimos usar uma sopa maravilhosa. Como você pode ver aqui, estamos usando o CSS. seletores e sopa linda bela embalagem de sopa para extrair o dados que queremos e que estamos exibindo Está aqui em nosso terminal.
+
+Excelente.
+
+Então, antes de desenvolvermos nossa pilha completa aplicação, vamos dar uma olhada em uma ferramenta que pode ser muito útil para nos mostrar como nós são percebidas, por assim dizer, por meio de grupos direcionados sites. Somos percebidos como um robô ou Passamos pela detecção de bots relevante? testes? Os resultados desses testes podem ser feito através de uma página web neste endereço. https colon/bot.sanisoft.com.
+
+Esta é uma ótima ferramenta para ajudar com Como contornar os testes de detecção de bots. Então Nesta parte do curso, vamos... Em primeiro lugar, use o direito de reprodução padrão para Acessar uma página da web usando um servidor headless navegar através de código JavaScript. Doente
+
+Explicarei o que é playright daqui a pouco. Quando digo "padrão playright", quero dizer nós você vai acessar a página da web em sysoft.com onde seremos testados para detecção do indicador de cauda sinais como sendo de um robô ou não, sem qualquer ajuda. do navegador de raspagem do Iomi. Você pode Inscreva-se no plano de navegador de scraping da Evomi.
+
+Para um teste gratuito. Se você deseja seguir junto com quando usamos a raspagem do Evomi navegador para acessar a página da web em sanisoft.com para avaliar as diferenças nos resultados em comparação com quando acessamos o mesmo Página usando o padrão Playright. A web A página que vamos acessar não é apenas Uma página web normal. É uma página da web.
+
+criado especificamente para exibir o status informações sobre como um site irá veja suas solicitações HTTP recebidas no Contexto da detecção de bots. Isto gera especificamente tabelas de informações destacadas em vermelho onde Suas solicitações HTTP de entrada falharam. Testes comuns de detecção de bots. Então, como conforme mencionado, esta página da web pode ser encontrada em este URL sanisoft.com e ele lhe dirá Você sabe por que está sendo detectado como um robô?
+
+ou revelar o fato de que você está passando os testes de detecção de bots, uma vez que tivermos testou o acesso à página web da Sanoft. através da funcionalidade padrão do Playright e observou os resultados do teste. ou seja, enquanto estamos sendo detectados como um robô ou não. Vamos passar a acessar a página da SanSoft, mas desta vez Aproveitando o navegador de raspagem do Iomi remotamente a partir do nosso código. Como já foi mencionado, Você pode testar o código relevante por inscrevendo-se para um teste gratuito usando Plano de raspagem de dados do navegador Evomi. E quando
+
+Ao executar o código relevante, você verá que as bandeiras vermelhas destacadas em vermelho em a página web da SYSoft que você observou ao acessar o Página web da Sanoft através do padrão O playright agora estará verde. Significando você passaram pela detecção de bots relevante. testes. Então, esta parte do curso destaca como usar a raspagem de dados da Evomi O navegador consegue contornar certos bots. testes de detecção que muitos sites conduta para impedir que bots extraiam dados seus sites. Então, o que é Playright?
+
+O Playright permite simular um usuário real. Interagindo com um site, clicando botões, preenchimento de formulários, navegação páginas e depois verifique se tudo está correto Funciona corretamente. Aqui estão alguns pontos-chave Características do Playright. Navegador múltiplo O suporte funciona com Chromium, Firefox, e o mecanismo WebKit Safari. Multiplataforma Funciona em Windows, Mac OS e Linux.
+
+A espera automática aguarda automaticamente por elementos a serem preparados. Então, em termos de Para fazer scraping, você pode usar o Playright para esperar. para que a página inteira carregue antes Executando seu código de extração de dados. Se você Iniciei a extração de dados e a página não está totalmente carregados, os elementos que contêm Os dados que você deseja segmentar podem ainda não estar disponíveis. ser carregado. Modo sem tela para que você possa
+
+executar o navegador sem abrir um navegador visível, ou seja, um navegador com um Interface do usuário. Seletores poderosos encontram elementos com facilidade. na página. Controle de rede, interceptação, e simular requisições de API. Ótimo. Então, vamos
+
+entrar nessa parte do curso. Então, Vamos configurar alguns scripts JavaScript. scripts aqui que executaremos usando Nó para ilustrar como podemos usar O navegador sem interface gráfica da Evomi para navegar os vários mecanismos de detecção de bots que existem por aí. Então, o primeiro O script que vamos executar é este: roteiro padrão do Playright. Então, o que nós somos O que vamos fazer é acessar um site chamado httpsbot.sanisoft.com.
+
+bot.anisoft.com é uma ferramenta especializada usada para testar um site furtividade e detectabilidade do navegador por Sistemas automatizados de detecção de bots. Então eu sou Vou apenas copiar este código. Você pode Encontre este código neste URL no GitHub.
+
+E você pode fazer o mesmo. Você pode simplesmente Copie-o para o seu VS Code e execute. Você mesmo pode testar o código. você mesmo. Então, vou apenas copiar isso.
+
+código como este. E primeiro vou criar o arquivo. aqui. Então, como chamamos isso aqui? Teste o padrão Playright. Então
+
+teste_std playright.js
+
+E eu vou simplesmente colar esse código em aqui. Então, nós colamos esse script. Aqui, e você pode ver que estamos usando playright padrão para navegar até aqui URL. Então, o que isso faz é garantir a página inteira é carregada antes de Tira uma captura de tela da página. Eram usando um navegador sem interface gráfica, um playright Navegador sem interface gráfica para essa finalidade. Então
+
+a principal diferença entre um Navegador sem interface gráfica e um navegador completo ou Um navegador normal reside na presença de um interface gráfica do usuário. Embora ambos usem O mesmo mecanismo subjacente para revelar a web páginas, elas são usadas para diferentes propósitos e operavam de maneiras diferentes. Então, estamos usando um navegador sem interface gráfica aqui. Para acessar esta página da web e então nós estamos rolando a página para baixo, certificando-se de que A página inteira foi carregada com todos os seus componentes. conteúdo e então estamos usando o Playright Aqui, este método PDF de objeto de página aqui, passando este objeto e nós estamos basicamente tirar um print do que está na tela página e salve-a como um PDF aqui.
+
+Certo, é isso que esse código faz. Então, vamos ver uma captura de tela de a página da web neste URL, e isto irá Mostre-nos o nosso status em termos de se nós temos Foi detectado como um robô ou não. Então, vamos Execute este comando. Então, vou começar logo com...
+
+o terminal aqui. Vamos apenas configurar isso Projeto disponível para node npm inicializar assim. E isso deve gerar o nosso Arquivo package.json. Conseguimos alguns dependências que precisamos incluir. Nós queremos
+
+para ler um ambiente específico variável do arquivo AENV. Então precisamos para instalar o pacote relevante para que. Então podemos fazer isso através disto comando npm Instale e depois configure o ambiente dessa forma. Ok, ótimo. Vamos limpar a tela.
+
+Vou criar esse arquivo daqui a pouco. E Então também queremos instalar um extensão específica para que possamos visualizar Arquivos PDF do Visual Studio Código. Então, a extensão para isso é VS Code PDF assim. E aqui está. Então nós queremos Instalei isso apenas por conveniência.
+
+que podemos visualizar o arquivo PDF relevante. que nosso código irá gerar dentro Visual Studio Code. Então vamos pressionar Instale assim. Confie e instale. Excelente. OK. Saia daí. E você
+
+Podemos ver que vamos economizar isso. PDF apenas para o nosso diretório atual aqui quando o executarmos. E então precisamos instalar o PlayRight. Então Vamos instalar o PlayRight. E eu vou Explicarei o que é playright daqui a pouco.
+
+Então podemos instalar o Playright usando isso. comando npm init. E então jogue direto em mais recente assim. OK. OK. E isso só está nos incentivando a...
+
+aqui. OK. Para prosseguir. Sim. Então você digitar.
+
+OK. Você deseja usar TypeScript ou JavaScript? Então eu quero JavaScript. Digitar chave. OK. Vou apenas pressionar Enter.
+
+aqui. Adicione ao fluxo de trabalho do GitHub Actions. Eu sou só vou para Entre aqui. Bem, instalar navegadores Playright pode ser Feito manualmente. NPX e instalar.
+
+Ok, eu vou indo. Sim. E Está sendo instalado. OK. Então, está instalando tudo Navegadores Playright para nós.
+
+Ok, claro. Isso levou um pouco de tempo, mas Agora está feito. Bom. Então, nós temos Baixei e carreguei tudo do Playright navegadores. OK. Então, eu só vou
+
+Limpe a tela ali. OK. Então, deixe-me Basta explicar rapidamente o que é o Playright. Então, o Playride é um software de código aberto. biblioteca de automação desenvolvida por A Microsoft projetou especificamente para Testes de ponta a ponta e automação web.
+
+É amplamente considerado o moderno sucessor de ferramentas como Selenium e Marionetista porque é mais rápido, mais confiável e construído para suportar o complexidades das aplicações web modernas que usam para que são construídos usando React ou Vue. Por exemplo, estamos usando um navegador sem interface gráfica para acessar o httpsbot.sanisoft.com Acesse nossa página na internet para ver qual é a nossa situação. em relação a como nós somos ou ser detectado como um robô ou não ser Detectado como um robô. Essencialmente, é
+
+Vou acessar a página da web neste endereço. URL. E então tiramos uma foto, uma captura de tela da página da web porque Lembre-se que este é um navegador sem interface gráfica. estamos usando aqui. Então, não vamos ser capaz de visualizar a página da web em um navegador, mas o que podemos fazer é que podemos tirar uma captura de tela furtivamente do que o O navegador ficaria assim se você estivesse apenas Acessando-o usando um navegador com interface gráfica, por exemplo. Então, vamos testar o código.
+
+digitando node e depois test jogo padrão write.js assim. OK. Excelente. Veja o que acontece.
+
+Ok, ótimo. Então, esse código foi executado. Com sucesso. Então, o título está escrito por extenso, que é antibbot e seu PDF salvo como padrão jogar direito. PDF. Então, se agora podemos acessar isso
+
+PDF. Basta clicar nele. Podemos ver através disso Visual Studio Code porque o instalamos a extensão relevante. Então nós podemos Na verdade, visualize o PDF através do VS Code. Então, se você olhar aqui, verá que é isso.
+
+objetivo desta seção do curso realmente para mostrar a vocês como temos sido Detectado como um robô. Você pode ver o usuário agente, por exemplo, driver web antigo. Esses são as formas pelas quais fomos detectados como um robô. esses detalhes em vermelho aqui. Uh Já concluímos o curso avançado de drivers da web. OK,
+
+Isso é verde. Assim, o verde indica onde Passamos no teste e o vermelho indica que... onde falhamos no teste, ou seja, onde Fomos detectados como um robô. Então agora nós
+
+Chegamos ao ponto principal desta seção do curso onde poderemos usar O navegador headless da Evomi usa o WSS. protocolo e eu vou explicar o que é isso. Daqui a pouco. Poderemos nos conectar para Evomi's Navegador sem interface gráfica via Playright e Essencialmente, executam o mesmo código. Faça uma captura de tela da página da web e nós...
+
+consigo ver, espero que vire para onde Vemos esses destaques em vermelho, então vai mudar. eles estão verdes, o que significa que passamos. esses testes. Então você pode ver aqui a falha Falha, estamos sendo detectados como um robô. Basicamente, nós não conseguiríamos.
+
+superar esse obstáculo e não seríamos capazes extrair os dados da página web relevante é Basicamente, é isso que nos estão dizendo aqui. Então, vamos acessar o GitHub aqui. E nós temos Tenho este script de navegador test_omi aqui. E vou colar e vou Entendido. Copiar arquivo bruto. Eu vou para
+
+Criar Oops. Vou criar isto roteiro. Então, é um teste do evomi browser.js. Então vamos criar o arquivo.
+
+teste evomi navegador.js e vamos colar esse código no novo Arquivo de script aqui. E agora, aqui está a parte importante. Veja, não estamos apenas usando o padrão. jogar direito. Estamos nos conectando com a Evomi.
+
+Navegador sem interface gráfica via webs seguras WSS Conexão websocket segura. Então, o WWS protocolo é o protocolo usado para estabelecer uma birreção persistente e conexão criptografada entre seu local script e um servidor remoto. Nesse caso o navegador instantâneo hospedado em navegador.eomi.com.
+
+Então, é isso que este código está fazendo aqui. esta conexão via CDP e então podemos usar o Playright muito bem da mesma forma que o usamos em este roteiro aqui. Então, tudo o que estamos fazendo é rolando a página para baixo e e tirar uma foto, uma captura de tela. Estamos garantindo que a página inteira esteja visível. carrega e depois tiramos uma captura de tela.
+
+da página web relevante. nós conseguiremos para inspecionar o arquivo PDF que ele cria algo semelhante a isto mas espero que esses detalhes em vermelho ficar verde, o que significa que passamos do limite. testes relevantes de detecção de bots. Certo, então Vamos acessar test.eomi e executar o teste.
+
+este código. Na verdade, antes Podemos executar isso. Estou armazenando uma chave de API. Você precisará, se quiser executar isso, Você precisará se inscrever para um período de teste gratuito. Com o Evomi, você pode usar o navegador do Evomi. Então,
+
+Você pode ver que estou tentando acessar um ambiente variável, mas eu não tenho um arquivo ENV. Vou fazer isso rapidinho. Indo para criar um ponto Arquivo aenv aqui. Precisamos criar um variável de ambiente chamado navegador API_key. E eu só Vou colar a chave relevante em fora de cena. OK. E agora estamos prontos para
+
+Execute este código. E então podemos comparar. Este PDF onde usamos o padrão playright para como o PDF ficará quando nós Extrair dados remotamente usando o navegador do Evomi. Vamos executar o script. Então, nó teste navegador vomi.js
+
+JS. Pressione a tecla Enter. Ótimo. Ótimo. Então, isso salvou o evomi arquivo browser.pdf. Então, levou um tempo
+
+Captura de tela do bot. A página web nesse endereço, Mas nós conseguimos conectar. Nós nos conectamos para esse URL através do navegador Evomi. E nós somos Conectando-se remotamente ao navegador da Evomi usando WSS. o protocolo WSS seguro Conexão WebSocket.
+
+OK. OK. E você pode ver que tivemos que passe a chave como parâmetro. que te será revelado ao se inscrever para o programa relevante Plano Evoi que, neste caso, permite que você use o navegador da Evomi em este local remoto, mas você precisa de Inclua suas credenciais no formato de uma chave de API que lhe será fornecida após se inscrever no plano relevante e você pode se inscrever para um teste gratuito e Experimente você mesmo este código. OK, ótimo. Então, vamos ao arquivo PDF.
+
+que foi criado agora. Evomi navegador.pdf. E veja só. Então, agora queremos compare standard playright.pdf. Você tem
+
+todos esses detalhes em vermelho aqui, significam Falhamos em todos esses testes. Então, é Nos detectaram como um robô aqui. E se formos No navegador evomi, temos muito verde, Significa que passamos em todos esses testes. Olha só isso. Então, quando usamos o padrão jogar certo Nós conseguimos, nós falhamos em muitos dos testes.
+
+e isso é representado por todos esses vermelhos Aqui estão os destaques. Mas quando usamos o Evomi's navegador usando o protocolo WSS como você Como você pode ver aqui, nos conectamos via Playright para O navegador da Evomi e, em seguida, através do navegador da Evomi. navegador ao qual estamos nos conectando relevante URL e então estamos tirando um instantâneo. captura de tela de como a página se parece E nós podemos ver isso aqui, e você também pode ver. todo o verde significa que estamos passando por tudo os testes de detecção de bots. significa que nós somos
+
+superando a detecção de bots mecanismos e podemos ter sucesso Extrair dados da página web relevante. Excelente.
+
+Ok, então agora que já tivemos alguma experiência prática... experiência usando a API de scraping da Evomi e Também utilizamos proxies agressivos. rotação usando o núcleo residencial da Evomi plano para raspar o notoriamente É difícil extrair dados do site da Amazon. Então
+
+Vamos criar um aplicativo web completo. Aplicação com Node no backend, React no front-end, e nós usaremos MongoDB como nosso armazenamento de banco de dados instalação. Assim, espera-se que isso possa fornecer nos dá um contexto do mundo real por Implementando funcionalidade de web scraping dentro de um aplicativo construído sobre a pilha MER. Neste site full stack aplicação, vamos implementar código do lado do servidor e JavaScript dentro de um projeto node para extrair o índice Tyobi por meio da API de raspagem da Evomi. O primeiro tempo em que nosso código extrai o índice Tyobi, Nosso código salvará os dados coletados em um Coleção MongoDB. Então, quando uma solicitação
+
+para os dados do índice Tyobi subsequentemente feito por um cliente que fez a chamada, o em cache dados salvos no MongoDB relevante A coleta será devolvida do banco de dados para o cliente que está fazendo a chamada. Bem Implemente o código React para exibir o Dados do índice Tyobi em um formato esteticamente agradável uma forma agradável em nosso próprio site. Bem Em seguida, implemente o código para extrair dados da Amazon. dentro do nosso projeto Node.js. Como visto anteriormente
+
+Ao longo do curso, será melhor Extrair dados da Amazon usando proxy agressivo rotação que somos capazes de aproveitar através do núcleo residencial de Evomi infraestrutura que nos foi fornecida através de Plano residencial central da Evomi. Como Como mencionado anteriormente, você pode se inscrever para um Experimente este plano gratuitamente, se desejar. para acompanhar a parte prática exemplo neste curso. Então, quando a Amazon Primeiramente, é feita uma análise comparativa de dados específicos. critérios de pesquisa, por exemplo, JavaScript ou caratê ou qualquer outra coisa relevante Os resultados da pesquisa são extraídos da Amazon.
+
+e então salvo em uma coleção dentro de nosso banco de dados MongoDB. Subsequente As solicitações do cliente resultarão em os dados que estão sendo retornados do banco de dados. Então, se o usuário inserir para Exemplo de JavaScript no cliente e envia uma solicitação de informações relevantes da Amazon dados. Se os dados da Amazon referentes a Critérios de pesquisa: JavaScript encontrado dentro da coleção relevante dentro nosso banco de dados MongoDB, esses dados serão retornado do banco de dados para o cliente. Se os dados não forem encontrados em o banco de dados, isso acionará nosso código no lado do servidor para extrair dados da Amazon para os resultados de pesquisa relevantes.
+
+Os resultados da pesquisa serão então salvos em a coleção relevante dentro do Banco de dados MongoDB. Então, este é um site full stack. aplicação que aproveita o clássico A pilha MER nos fornece um exemplo prático do mundo real. Exemplo de código de como podemos capturar dados da internet, estruture os dados e salvar esses dados adequadamente em nosso bancos de dados próprios. Poderíamos então, por exemplo, usar LLMs para obter informações sobre os dados coletados ou até mesmo treinar nossos próprios modelos no dados capturados. Neste mundo de IA onde
+
+É necessária mais inteligência intrínseca. Os aplicativos certamente estão se tornando mais Orientado por dados. Certo, vamos criar o código para o nosso Aplicação web full stack. Certo, então o primeira coisa que vamos fazer antes de nós Comece a desenvolver nosso site full stack. Aplicação usando a pilha MER. Primeiro
+
+O que vamos fazer é criar uma raiz. diretório para abrigar nosso projeto. E então Podemos abrir o VS Code e começar. desenvolvendo nosso site full stack aplicação que usa nó no Lado do servidor e React no cliente lado. E estamos usando o MongoDB para o nosso Instalação de armazenamento de dados. Então, em primeiro lugar
+
+O que eu vou fazer é criar um Diretório raiz do nosso projeto. Então eu sou Vou apenas criar uma pasta aqui. chamado Evomi. E então vou entrar no evomi pasta e esta será nossa raiz diretório e vou chamar isso de dados de informação porque esse é o nome do nosso projeto. Vamos capturar dados e armazená-los em cache no MongoDB.
+
+banco de dados. Então vamos capturar Primeiramente, vamos coletar os dados. Utilizando web scraping através do Evomi. Eram vou capturar os dados do Tyobi página web de índice que contém dados que classifica as 20 principais linguagens de programação e vamos extrair esses dados e Vamos colocar isso em uma tabela ou em um coleta dentro do nosso MongoDB banco de dados. Então, vamos chamar essa pasta de informações.
+
+dados. OK. E então vamos carregar o Visual Studio Code. OK. Ótimo. Vamos colocar em tela cheia.
+
+E eu vou Abra essa pasta. Abra a pasta raiz que acabamos de criar dentro do CDEV. E esta pasta raiz é chamada de dados de informação. discutido. Então vamos selecionar a pasta.
+
+E agora queremos criar a raiz. pasta que irá armazenar o lado do servidor Código do nó. Então, primeiro vamos...
+
+Crie uma pasta chamada servidor. E dentro do servidor vamos criar uma pasta chamada info captura de dados porque vamos Extrair os dados da web relevante páginas. Então, estamos capturando os dados de as páginas da web através dos serviços da Evomi e então vamos armazenar esses dados em cache. em nossos bancos de dados. Então será nosso O código primeiro verificará se esses dados existe dentro do banco de dados. Se for
+
+Se não fizer isso, ele coletará esses dados de a página web relevante e salve esses dados para uma coleção relevante, uma apropriada coleção dentro do nosso banco de dados MongoDB. Ótimo. Então esse é o diretório raiz para nosso código do lado do servidor, nosso código Node. Então Vou abrir a janela do terminal. Para isso, podemos usar o comando control tilda.
+
+personagem assim. E nos direcionou por padrão para os dados informativos. diretório raiz. Essa é a raiz Diretório para todo o projeto. Mas nós Quero o diretório raiz do servidor.
+
+código lateral. Então vamos ao servidor de CD. Ops. Captura de dados de informações do servidor. E Agora estamos no diretório raiz do nosso projeto.
+
+Código do lado do servidor. E agora podemos criar nosso projeto de nós. E para fazer isso, bem, Primeiramente, vamos verificar se temos tudo o que precisamos. uma instalação adequada do Node. EU Recomendo que você instale a versão mais recente.
+
+versão do Node. Se você ainda não fez isso Com o Node instalado, podemos digitar Node e então hífen V. Então, estou na versão 25.6.1. Acho que isso basta. Isso é bom.
+
+Acho que esse pode ser realmente o Última versão estável do Node. Então, Isso me serve. Então, basta verificar o seu Verifique a versão do Node antes de começar. E então, para inicializar seu nó. projeto, você digita npm inicializar y. Então, caso você esteja se perguntando o que é...
+
+O hífen y basicamente ignora todos os perguntas e cria automaticamente o package.json arquivo usando valores padrão. Então, se nós não incluiu o hífen y e apenas np npm init, isso vai nos guiar por uma série de perguntas que temos para responder antes que ele inicialize nosso projeto. Então estamos ignorando esse processo. incluindo o hífen y, ficará assim: incluirá apenas o padrão.
+
+valores dentro do nosso arquivo package.json. Essa é a consequência de incluir hífen y para passar por todos os relevantes questões. Vamos pressionar a tecla Enter. E pronto. E você pode ver que é
+
+criou esse package.json arquive lá. E agora queremos instalar alguns dependências. Queremos expressar que é uma estrutura web mínima para NodeJS é usado para construir APIs e sites. servidores. Ele lida com o middleware de root.
+
+e requisições e respostas HTTP. E Então também precisamos instalar um pacote. para lidar com núcleos. Então, estamos instalando o pacote de causa para que seu servidor possa Permitir solicitações de diferentes domínios, diferentes clientes que estão hospedados em Domínios diferentes, origens diferentes. Então, nosso cliente vai ser...
+
+hospedado em um domínio diferente porque Quando testarmos nosso código, estaremos Estou executando no host local, mas a porta O número será diferente. O porto O número será 5173 para o React. cliente, e o servidor estará em execução na porta 3000. Portanto, devemos levar em conta porque é uma medida de segurança. OK. E então vamos incluir um
+
+pacote chamado Mongoose. Mongus é um Biblioteca de modelagem de objetos MongoDB para NodeJS. E permite que você defina esquemas. e modelos para interagir com o MongoDB em um de forma estruturada. Então, para fazer isso, digitamos npm install.
+
+OK. Vamos nos dar um pouco de tempo. Aqui tem mais espaço. Na verdade, eu vou saia daí. Então, execute o comando npm install.
+
+e queremos expressar e queremos mongus E queremos o pacote de medidas. Excelente. Pressione a tecla Enter. Ok, está funcionando. Como sempre, quando Ao instalar um software, é preciso ter Tenha paciência, mas estamos chegando lá. E
+
+Isso está feito. Excelente. OK. E um outra dependência que queremos instalar porque queremos armazenar nosso ambiente variáveis ​​em um arquivo chamado env. Então, como queremos fazer isso, precisamos para permitir que nosso código Node seja capaz de Leia esse arquivo de forma fácil. Então nós
+
+é necessário instalar outro pacote para esse. E esse pacote se chama env. Então Vamos instalar o pacote env. Então, para fazer que você execute `npm install` e depois `env`. assim.
+
+Ótimo. E isso aconteceu por nós. E nós Agora vocês estão prontos para criar algum código. Então primeiramente, dentro da raiz de dados de informação diretório para o nosso código Node.js que vamos usar Para criar um arquivo chamado server.js. E
+
+Este será o ponto de entrada para nossa aplicação Node, o código Node aqui. Então vamos analisar Criando esse código agora aqui. Então o A primeira coisa que vamos fazer é importar. a estrutura express para lidar com roteamento e lógica de servidor. Então, para fazer isso, nós vamos estresse igual ao exigido então entre chaves. Portanto, não é necessário.
+
+É necessário. Então remova esse d dali e então, dentro de aspas simples, incluímos express e acabamos de instalar isso pacote. Então Isso serve para importar o framework Express. Para lidar com roteamento e lógica do servidor. O Na próxima linha de código, queremos importar causa E é por isso que importamos essa causa. Isso é
+
+middleware para permitir origem cruzada Compartilhamento de recursos. Então, para importar, porque nós ir const causa igual a exigir então abra os grampos e inclua oops Porque é assim mesmo. Agora queremos incluir o mongoloide. Então, para fazer que nós vamos const. Vamos chamar isso de mongo variável assim. E nós seguimos, é basicamente a mesma coisa.
+
+coisa. Nós vamos exigir e depois aparelhos ortodônticos mongus gosta desse ponto e vírgula e então nós quero poder ler valores de um arquivo chamado env. E nós éramos Instalei o pacote thev para essa finalidade. Então precisamos importar isso. Ele carrega o variáveis ​​de ambiente com arquivo av em process.env.
+
+Para que isso funcione, precisamos de Inclua esta linha de código. OK. ENV é o pacote e depois a configuração, como por exemplo esse. Excelente. OK.
+
+E agora vou definir uma constante. para um controlador que ainda não temos criado. Mas nós vamos criar que. Não tenha medo. Vamos criar isto controlador em breve. E isso não é
+
+Como se escreve "controlador"? agregar assim é o mesmo que exigir. Não temos Obviamente, isso foi criado, mas nós vamos...
+
+para criar este caminho este arquivo neste caminho para o controlador. Nós vamos crie um diretório chamado control lurs e então vamos criar um arquivo. chamado tyobic controller.js. OK. E para este código, nós só precisamos de
+
+incluir tyobi controlador usando camelCase assim. E nós não É necessário incluir a extensão. mas criaremos um arquivo dentro deste pasta chamada tyobic controller.js em Só um pouquinho. Ótimo.
+
+Então, vamos começar por extrair o índice Tyobi e salvá-lo para a nossa coleção relevante do MongoDB. Então é isso que vamos fazer primeiro. e depois vamos receber um Um pouco mais complexo e nós vamos para tentar extrair dados da Amazon. Ótimo. Então Em primeiro lugar, vamos nos concentrar em...
+
+Índice Tyobi. É uma página web muito mais fácil de usar. para raspar e você verá por que isso está em um pouco mais tarde, quando tentarmos Extrair dados da Amazon. Então, a próxima linha de código é const app igual a express. OK.
+
+Isso inicializa uma nova expressão. instância do aplicativo e essa é a nossa estrutura web que estamos usando em nosso projeto Node e depois no aplicativo usar, queremos usar porque E é assim que você faz isso, use a causa. assim Ok, e isso permite que o aplicativo...
+
+aceitar solicitações de diferentes domínios Conforme discutido anteriormente. Então estamos lidando com isso. causa. É feito de forma muito básica. por meio desta linha de código. E então nós
+
+quero configurar o servidor para automaticamente pausar o recebimento de corpos de requisição JSON. Então Para isso, precisamos incluir esta linha. do aplicativo de código ponto de uso express.json assim. Abrir e fechar os aparelhos ortodônticos.
+
+Excelente. E então precisamos conectar para o nosso banco de dados. Então, o que vou fazer aqui é...
+
+Vamos criar um arquivo AV porque estamos Vou ler a string de conexão para nosso banco de dados MongoDB a partir do arquivo .v. E Vamos fazer isso de uma maneira específica. que o pacote thev nos permite fazer. De Claro, nós instalamos recentemente.
+
+o pacote. Então, dentro dos dados de informação Neste diretório raiz, incluímos um arquivo. chamado env. E porque instalamos o pacote que ele vai enviar automaticamente saber para onde nosso código Node está indo saber automaticamente onde ler o variáveis ​​ambientais relevantes que Vamos criar aqui neste arquivo. aqui. OK. Certo, então, o ambiente
+
+A variável que vamos criar é chamado mongo uri uri e vamos configurá-lo para o URI relevante para MongoDB. Então ele usa o Protocolo MongoDB para conexão. Então, MongoDB, Esse é o protocolo. Cólon/ E estamos executando-o em nosso host local. apenas durante os testes. anfitrião local
+
+e este é o número da porta padrão. para MongoDB. Se você instalou Com o MongoDB, você poderá se conectar ao sua instância local do MongoDB em 27017 assim. E então queremos conectá-lo a um banco de dados chamado info data. E se esse banco de dados não existir, Na verdade, vai criá-lo.
+
+Então, temos nosso ambiente de URI do MongoDB. Configuração de variáveis ​​para isso. Excelente. Ótimo. Então, vamos voltar ao servidor.
+
+código ali. E agora queremos criar o relevante conexão para MongoDB. Então vamos de Mongus. Nós vamos através do mangusto. Vamos para mongus.connect.
+
+E agora, vamos ler sobre esse ambiente. variável, incluímos process.env ambiente Desculpe, Mongo uri URI assim e que se conecta a o banco de dados usando o URI armazenado no variáveis ​​ambientais e então podemos incluir o ponto então Se formos capazes, esta é a condição para quando nosso código é bem-sucedido conecta-se à instância relevante de MongoDB e você escreve o código assim usando uma função de seta console opa console.log e então queremos produzir o resultado. conectado e isso simplesmente exibirá o texto relevante para a sua janela do terminal Que coisa, MongoDB! OK. E
+
+Se ocorrer um erro, podemos detectá-lo. erro através do catch como este. Então nós somos encadeando esses métodos e então usamos uma função de erro e nós pode sair O erro é assim. Então vamos lá erro de conexão e podemos incluir o detalhes do erro incluindo o erro desta forma lá. Então, este código aqui Registra uma mensagem de sucesso se o banco de dados A conexão foi estabelecida. E este código
+
+Aqui é registrada uma mensagem de erro se o A conexão com o banco de dados falhou. Ok, perfeito. Ótimo. Agora, o que queremos fazer é traçar uma rota para o controlador que ainda não temos criado. Para fazer isso, acessamos app.get e queremos...
+
+mapear uma solicitação HTTP GET para este caminho. caminho relativo. Então, API tyobi assim e então nosso controlador será tyobi controlador assim ponto e vai se chamar obter tyobi classificações. Certo, então estamos mapeando uma solicitação GET. para os dados Tyobi aos seus respectivos função do controlador e isso deveria ter um K, tipo que. Confira o ranking do Tyobi. OK,
+
+excelente. E então queremos ler o porto número. Então vamos estabelecer o porto. número para o nosso servidor código. E o porto terá 3000, que é a porta padrão para um nó de projeto Node.js
+
+aplicativo. OK. E podemos ler esse número de porta. assim. Então, primeiro queremos ver se nós consegue ler isso do v arquivo e fazemos isso através deste código porque estamos usando ov pacote porta. Esse é o nome do meio ambiente.
+
+variável que acabamos de criar. Então podemos Use o operador "ou". Se nenhum valor for lido aqui. Então, se isso não retorna nada, então podemos definir a porta padrão como 3000 assim. OK. E então queremos
+
+expressar para ouvir. E nós podemos fazer isso. com esta linha de código. Então que inicia o servidor e fica à espera de tráfego de entrada na porta especificada. Então, app.listen e vamos incluir o
+
+porta, Em seguida, vamos exibir algumas informações de status. E podemos simplesmente imprimir Servidor em execução na porta. Vamos incluir estes entre crase caracteres para que possamos incluir Valores variáveis ​​dentro da string. Então inclua estes, inclua isto string dentro de volta aos caracteres e então podemos incluir o número da porta muito bem basicamente incluindo o símbolo do dólar e então envolvido por chaves porta. Então é essa constante que estamos mantendo.
+
+incluindo dentro da string aqui e nós quero que isso seja exibido no terminal janela quando o Express é bem-sucedido ouvindo nesta porta que será 3000 e nós já o configuramos. aqui dentro do nosso arquivo como 3000 lá. Excelente. Ok, acabei de perceber uma coisinha. há um problema aqui. Um pequeno erro de digitação. Então C
+
+OU isso deveria ser apenas uma causa co R S Ótimo, e agora queremos seguir em frente e criar o modelo para nossa linguagem e Isso significa que denota o campos. Então, basicamente, se isso fosse um tabela de banco de dados relacional é a tabela com todos os seus campos. Estamos definindo o quê As colunas estarão em nossas tabelas e o quê? seus tipos de dados são. Mas isto é para um Coleção MongoDB. Então nós vamos
+
+definir qual é o esquema para o nosso a Será um item de coleção ou um documento. Qual será o esquema de um documento? É isso que vamos definir agora dentro de um modelo. Então, vamos criar uma pasta chamada modelos. MOD é assim. E então
+
+Vamos criar um arquivo que irá... abrigar nosso modelo. E nós vamos ligar este arquivo language.js
+
+porque estamos extraindo dados do índice TY para As 20 linguagens de programação mais bem classificadas. Então, vamos simplificar e nós pode chamar essa linguagem. OK. E então vamos definir cada um dos campos para um idioma documento. basicamente, uma linguagem r documento de classificação. Vamos chamá-lo de
+
+Classificação de idiomas. Vamos ligar esta classificação de linguagem modelo, mas o arquivo chama-se simplesmente language.js. Primeiramente, vamos escrever o código para importar. mongolo.
+
+Então, vamos const mongus igual a require e depois aspas simples mongus assim. Então ele importa o biblioteca mongoose para interagir com o Banco de dados MongoDB, o MongoDB relevante banco de dados. OK. E então vamos criar o esquema. E para Para isso, digitamos `const` e vamos chamar a função.
+
+esta linguagem constante esquema igual a novo e depois mongus. Vamos usar o Mongus para criar o nosso esquema. E então o método é chamado de esquema. E queremos passar um objeto para o esquema que denotará cada um dos campos relevantes dentro do nosso esquema. O O primeiro campo é o ranking. Então 1 2 3 4 5.
+
+Python é um dois. Poderia ser... JavaScript, seja lá o que for. Não acho que seja.
+
+JavaScript hoje em dia, mas pode ser de qualquer forma. Então, classificando E vamos digitar. Então, isto é um número. OK. Com, obrigatório. É obrigatório
+
+valor do campo. Então você deve ter um campo valor para este campo. Verdade, assim mesmo. Assim, o esquema define um novo esquema. estrutura para sua linguagem de programação dados.
+
+E então o ranking do campo aqui especifica um campo numérico obrigatório para Acompanhe a classificação atual do idioma. Então É isso que este campo aqui representa. E agora Vamos lá. Opa. Agora vamos passar para o próximo campo. OK. E é isso que eu sou apenas
+
+Vou chamar isso de linguagem p. Então linguagem de programação apenas uma Apenas por um breve momento de angústia. E então coloque um objeto ao lado e defina seu tipo como string. E acredito que isso deva ter capital. vírgula string E isso também deve ser exigido.
+
+Portanto, o que é exigido é verdade. E então Queremos eliminar todos os espaços em branco. Então Incluímos `trim = true`. Então nós temos definiu uma string obrigatória para o nome do idioma e automaticamente Isso removerá quaisquer espaços em branco extras. OK. E então vamos passar para o próximo.
+
+campo. OK. E esse campo será o caminho da imagem. Então esse será o caminho do Ícone real que representa o idioma. Então, para que possamos extrair o caminho para isso.
+
+imagem e podemos incluí-la em nosso site página no momento apropriado e nós façamos isso quando criarmos o relevante Código React. Mas nós queremos apenas capturar Os dados brutos, por enquanto. Então, caminho da imagem cólon tipo e isto é uma string obrigatório. Sim. Nós queremos, nós queremos cada um linguagem de programação para ter um ícone ou imagem associada. Então necessário
+
+igual a verdadeiro. Então ele armazena o arquivo. caminho ou URL para a programação Ícone do logotipo de idiomas. Essa é a imagem O caminho é para. Vírgula. E então, a última que queremos...
+
+registrar automaticamente o atual Carimbo de data/hora sempre que um documento é criado. dentro da coleção relevante. Então, todos tempo em que um documento é inserido no coleção relevante, o valor padrão será incluído na atualização no campo e o valor padrão será a data agora. Então será a data atual e momento em que esse documento é inserido em a coleção. Ok, excelente.
+
+Então, temos mais uma. trecho de código para escrever para completar este arquivo, e é módulo.export assim é igual a mongus. Ops, não era isso que eu queria. Mongus modelo de pontos.
+
+E então queremos chamar esse modelo de linguagem classificação. E passamos o esquema que acabamos de criar. definido aqui. Esse aqui. Agora queremos passar essa constante.
+
+Aqui está a definição do esquema. neste método de modelo aqui. OK. E o que isso faz é compilar o esquema em um modelo e o exporta para Utilizar em outros arquivos. E nós vamos Crie esses outros arquivos em instantes.
+
+Na verdade, vamos criar esses Outros arquivos agora. Excelente. OK. Então, agora vamos criar o código de serviço. Agora, o código de serviço é crucial e parte essencial disto funcionalidade, porque o que ela faz é isso na verdade executa a raspagem do Índice Tyobi. Restaura o HTML puro.
+
+e então vamos usar uma tecnologia chamado Cheerio. Então, nós vamos... Instale um pacote chamado Cheerio. E
+
+O que podemos aproveitar para fazer é... Analise o HTML e crie uma matriz a partir de esse HTML. Assim, podemos extrair as informações relevantes.
+
+valores de campo que definimos no Classificação do esquema de linguagem pang e imagem caminho. E podemos extrair esses valores e incluir uma matriz extraída deste HTML aqui. Vou mostrar aqui mesmo. Aqui está o índice Tyobi. Então nós vamos Para usar o web scraper da Evomi para extrair dados.
+
+esta tabela. Extraia os dados aqui. Então você Como você pode ver, temos Python em primeiro lugar. Um, C em segundo lugar, C++, Java, C, JavaScript, Visual Basic. Hum, visual O valor básico aumentou um nível. É interessante.
+
+Parece que o Visual Basic está se tornando mais popular. Então, enfim, nós vamos ser extraindo os dados relevantes aqui, que O valor da classificação será incluído. Então, se Aqui, analisamos o esquema. Obtivemos o valor de classificação 1, dois, 1, 2, 3, 4, até 20. Então, um Python, dois C, três C++, quatro Java, cinco linguagens C, etc.
+
+Hum, e vamos raspar o Nome do idioma. Então será isso real Nome do idioma. E se olharmos para o tabela, então esse será o valor aqui assim como a imagem. Então vamos começar a raspar. o caminho até essa imagem. Então nós podemos
+
+Incluiremos isso em nossa própria página da web. OK? E vamos raspar esse caminho e coloque-o em nossa variedade de dados. Cada item nessa matriz terá esses campos. caminho da imagem pang de classificação E esses são os campos que criamos.
+
+que definimos dentro desta linguagem esquema que chamamos e temos chamado de classificação de linguagem modelo. Então Agora vamos criar o serviço. que usará o scraper da Evomi funcionalidade para extrair dados do índice Tyobi todos os dados e então vamos usar Cheerio para pegar esse HTML bruto que irá ser retornado do endpoint Evomi e vamos usar Cheerio para Analise esse HTML bruto e transforme-o em algo bruto. Converter HTML em uma matriz de dados com base nisso esquema aqui. Primeiramente, nosso código irá verificar se os dados relevantes estão presentes O índice de tabby existe dentro do relevante coleção. Se não existir, irá
+
+Extrair esses dados e salvá-los no coleção no banco de dados MongoDB. OK. Então vamos criar nosso serviço. Então Primeiramente, vamos criar uma pasta com um captura de dados de informação e vamos chamar isso de serviços desse tipo. Dentro dos serviços, Vamos criar um arquivo chamado serviço Tyobi.
+
+tyobi service.js. E agora vamos criar o Código JavaScript relevante para o Tyobi serviço. Primeiramente, precisamos instalar Axios. Vamos usar o Axios para fazer nossas requisições HTTP e obtemos nossas respostas.
+
+da solicitação HTTP relevante. Então, Vamos usar o Axios para isso. propósito. Então vamos instalar o Axios. Mas nós também quero instalar o Cheerio, o Pacote Cheerio, que nos ajudará Analisar o HTML bruto que será retornado.
+
+do endpoint Evomi relevante, que dará início à extração de dados relevante. funcionalidade. Quando chamamos isso de Evomi endpoint, a funcionalidade de raspagem é expulso dos servidores da Evomi e O Evomi retorna o HTML bruto. raspado a partir desta página web aqui. para que possamos pegue esta mesa e obtenha as informações desta tabela.
+
+e salvá-lo em nossa própria coleção em nosso Banco de dados MongoDB. OK, ótimo. Então, a primeira coisa que precisamos fazer é instalar o Axios e também queremos Instale o Cheerio. Então, para fazer isso, nós vamos npm install então Axios e depois, um brinde espacial. Ops.
+
+Cheerio assim. E é só isso. é isso. E estamos instalando esses dois. pacotes que precisamos. Então nós conseguimos aqueles
+
+duas dependências. OK. E está fazendo o seu trabalho. Ótimo. Instalamos esses pacotes e agora Podemos escrever nosso código. Então, a primeira linha
+
+de código const axio opa aios é igual a exigir axios. OK, assim. Essa linha de código importa o Axios. biblioteca para fazer requisições HTTP para APIs ou sites externos. É isso que Podemos usar essa funcionalidade do Axios para...
+
+E vamos criar outra linha. E agora Queremos importar Cheerio. Então const. Vamos chamar isso de Cheerio igual a exigir. Ops. O que foi que eu fiz ali?
+
+Não parece certo. Requerido. E então queremos passar Cheerio, esse é o valor aqui. Então nós podemos Importe o Cheerio para o nosso código. Então é importa Cheerio para pausar e manipular Marcação HTML usando uma sintaxe semelhante a uma consulta.
+
+E vamos analisar os detalhes disso em Só um pouquinho. Mas por agora, vamos apenas importar isso funcionalidade, essa biblioteca. OK. E Agora vou começar criando. o método que pausa o HTML do Tyobi.
+
+Então, o Evomi vai retornar. O código HTML bruto desta página web. E Vamos pausar esta tabela aqui. Vamos usar CSS para direcionar o valores relevantes que desejamos em nosso coleção. E vamos usar Cheerio para conseguir esses valores. E então vamos para
+
+Vire cada uma dessas fileiras. Cada um destes As linhas representarão um item em uma matriz. Então Vamos criar uma matriz a partir de basicamente esta tabela. E nós vamos Salve esse array em uma coleção dentro de nosso banco de dados MongoDB. Então vamos escrever o Primeiro, pause o código. Então, nós vamos
+
+Escreva uma função chamada pario opa tyobi html e aceita um parâmetro de que somos Vou chamar o HTML. Então, esse é o HTML. Vamos analisar o serviço Iomi. serviço de raspagem. Assim, isso retorna o HTML do serviço e estamos analisando isso em nosso código aqui, transformando esse HTML em uma matriz de valores relevantes. Então
+
+Estamos declarando uma função que Transforma HTML bruto em uma string HTML bruta em uma matriz de dados estruturados. OK, a primeira linha de código é const e o símbolo de dólar equivale a cheerio carga de ponto. Queremos carregar o HTML em Até logo! e Cheerio usando um J um jQuery como sintaxe que conseguimos analisar o texto bruto HTML e extrair os dados que queremos em nosso variedade. OK. Então ele carrega o HTML em
+
+Tchau, então podemos consultá-lo usando CSS. seletores e é assim que conseguimos Extrair os valores através do CSS seletores. OK. E queremos impulsionar esses dados em nossa própria matriz. Então vamos Defina a matriz.
+
+OK. Então const erro de classificação igual a matriz vazia e É isto que armazenará a estrutura matriz de dados que vamos usar Extrair do HTML bruto. E nós queremos então todas as linhas para direcionar esta tabela aqui para direcionar esta tabela dentro do arquivo bruto HTML. Leve em consideração o HTML bruto. vai incluir tudo, inclusive Tudo isso. Portanto, precisamos focar nisso.
+
+Vamos usar isso. Nós vamos Defina esta tabela através de um CSS. seletor. E é assim que o seletor se parece. como. Então, percorremos todas as linhas assim:
+
+para dólar. E você pode ver que a sintaxe é Muito parecido com jQuery. E agora incluímos o seletor CSS relevante traço principal 20 Tbody. É assim que conseguimos selecione aquela tabela que contém o classificações relevantes por meio deste CSS seletor TR assim. E você pode realmente ver isso.
+
+acessando através do seu navegador e é só clicar com o botão direito do mouse isso e inspecionar. E pronto. Você pode ver que o CSS bem aqui. Então, estamos usando ferramentas de desenvolvedor dentro do o navegador dentro do navegador Chrome aqui. E você pode ver por que nós... por que nós...
+
+estão usando esse CSS específico porque Isso nos permite segmentar essa tabela. E aqui está a tabela. E se nós dê uma olhada no CSS código, a tabela de seletores CSS top 20 Tbody tr. Isso retorna um array. de valores.
+
+Então você pode ver ali a tabela, a tabela, o traço. Os 20 principais, os 20 principais, qual é o CSS relevante? classe e estamos usando um seletor CSS para selecione essa tabela e, em seguida, uma matriz de essas linhas cada coluna essas colunas Essencialmente, armazenamos os dados que desejamos. Você pode ver o número um, que é o Classificar isso é exatamente o que queremos. número um. E você pode ver, por exemplo,
+
+esta imagem aqui e nós estamos realmente Vou analisar esse caminho. E você pode Veja, tudo o que isso faz é te dar um... Logotipo: o ícone que representa o Python. Então é
+
+significa que poderemos incluir esse logotipo. em nossa própria página da web. E nós vamos olhar É aí que chegamos à parte do React. código. Mas é assim que conseguimos usar Seletores CSS para usar com sucesso alvo um Perdi isso ali, desculpe, para ser eficaz.
+
+Acesse o índice Tyobi aqui e você poderá inspecione os elementos relevantes em seu página web e inferir quais seletores CSS usar use e então você pode simplesmente usar esses CSS. Seletores dentro do seu código Cheerio. esse Aqui está um código semelhante a JSON-l e você pode extrair os valores relevantes da web página e é essencialmente assim que somos Extraindo o índice TYOB aqui. Ótimo. E então isso deve retornar uma matriz de fileiras e podemos ir todas as fileiras cada iteração que desejamos percorrer é realizada.
+
+sobre cada linha da tabela encontrada no HTML estrutura. Assim, todas as linhas correspondem a cada índice. Então Isso é apenas um contador. Assim, cada linha irá possuem um valor de índice associado. Então queremos incluir esse dobro colchetes assim.
+
+Elemento vírgula assim. OK. E então queremos incluir um seta. Esta é uma função de seta. Encaracolado aparelho ortodôntico. Vamos incluir o código da função.
+
+Queremos encerrar aquele parêntese redondo que criamos lá. Então, esse parêntese é associado a esse colchete redondo lá. E então encapsulamos estes dois parâmetros entre parênteses. E essa é apenas a sintaxe para uma seta. função. Então, todas as linhas fazem cada uma e depois
+
+pudermos examine cada coluna dentro disso mesa. Então const e depois dólar td igual a Elemento dólar. E é exatamente assim que você usar o elemento Cheerio ponto de localização. Então queremos encontrar o TD em cada linha. Assim, este comando encontra todas as células de dados da tabela.
+
+dentro da linha atual que está sendo processada. Então, isso é um array. Esta constante TD aqui é uma matriz de TDs. Então, se olharmos para a tabela aqui, um...
+
+Python, o caminho da imagem, tudo isso, tudo. essas colunas estão incluídas na matriz de TDs. Então, uma linha, então estamos em loop. por todas as linhas e então é um matriz bidimensional e então cada coluna pela qual estamos percorrendo todos os valores nas colunas de cada linha. Essencialmente, é isso que estamos fazendo.
+
+aqui. Então, isso retornou um array. OK. OK. E então vamos para matriz de classificação porque queremos agora Extraia todos os valores e insira-os.
+
+em uma matriz estruturada. E é isso que o que estamos fazendo aqui. OK. Abrir caracol aparelho ortodôntico ali. OK. E agora
+
+Podemos incluir a classificação de pares nome-valor. Portanto, é um objeto composto por pares nome-valor. É um array de objetos. OK. Então vamos Dê um nome a isto classificação de pares nome-valor e então nós pause int porque este é um número inteiro.
+
+Definimos isso anteriormente em nosso esquema. E agora, isto é o código de consulta. Então, estamos usando TD aqui. E na verdade vamos usar TD. Deve Tenho um dólar aí.
+
+EQ. É assim que estamos atravessando o relevante elementos, elementos HTML, e queremos o primeira coluna da matriz. Então, nós queremos esse valor aqui, número um, e nós estamos Utilizando CSS para selecionar esse valor. Então, eu sou Encontrando todos os TDs. Isto é um array TD.
+
+Obtenha o valor da primeira coluna. E Queremos o texto. Então vai ser Isso é um exemplo para Python, que irá retornar um para C, ele vai retornar dois, é a classificação associada ao linguagem de programação vírgula ok e então Queremos o nome real do idioma, então P língua assim Ok, vamos lá, TDS então Vamos chamar isso de TDs porque isso é um conjunto de TDs. Então vamos chamar isso de TDS. Então, dólares TDs e depois EQ.
+
+E queremos a quarta coluna aqui. Desculpe, EQ. Queremos a quarta coluna. Então pegue quatro.ext.
+
+E queremos remover quaisquer espaços em branco. lá. Então, estamos apenas higienizando os dados. Um pouquinho ali. Dor.
+
+E você pode ver aqui que, por exemplo, em a primeira linha que seria Python 0 1 2 3 4 Python. E é a isso que corresponde. lá. E estamos fazendo isso para todos os linhas. Você pode ver aqui todas as linhas fazendo tudo cada uma em linhas. Estamos percorrendo cada um dos
+
+as linhas e estamos direcionando os valores dentro de uma matriz de colunas. Cada linha Contém uma matriz de colunas. E então Queremos o caminho da imagem. caminho. Vamos chamar isso de caminho da imagem do par de valores. Então é isso.
+
+Nome do par nome-valor. E nós queremos em @ TDS. Desculpe, TDs em dólares. Não sei Por que eu disse em dólar TDS.EQ.
+
+E estamos obtendo o valor da terceira coluna. aqui. ponto encontrar vamos encontrar do elemento de imagem HTML da imagem elemento e queremos o atributo src porque isso contém o caminho para o imagem de idioma relevante e podemos obter que a partir de src o atributo src e que é claro que é apenas o atributo src básico do HTML dentro de uma tag de imagem ali e então podemos Retorne esse array. Ok, essa matriz de classificação aqui para o código de chamada e isso agora é um matriz estruturada contendo os valores que queremos da página da web. Nós usamos Cheerio para passar o HTML bruto e extrair uma matriz estruturada de valores que nós queremos capturar em nosso banco de dados e exibir aos usuários, nossos usuários via Código React relevante que criaremos Um pouco mais adiante, no código da interface.
+
+OK. Ei, olha só isso. Então, nós temos nosso código de pausa, agora chamado par, foi escrito. tyobi html. E agora queremos dar início ao...
+
+raspador. Então, vamos fazer isso. Vamos criar um função chamada buscar rankings tyobi. Então constante buscar tyio opa tyobi classificações equivale a ser uma função assíncrona. Então, vamos incluir o modo assíncrono.
+
+palavra-chave e depois uma função de seta como esse. OK. carga útil constante igual a agora isto é um objeto com uma propriedade chamada URL e nós estamos lendo este valor o URL tyobi isto será este URL específico aqui, então vai funcionar para ser aquele URL específico e eu tenho Defini isso dentro do arquivo env. Eu não estou Vou mostrar o arquivo NV porque ele é contém informações sensíveis. apontar. Então, eu já te mostrei isso antes.
+
+princípios básicos de como definir seu ambiente variáveis ​​com seus respectivos valores. Então Vamos ler um livro em particular. variável de ambiente que eu tenho configurado fora da tela mas nesta fase você não precisa saber Não se trata apenas de definir o valor, mas sim de saber qual é ele. seu próprio variável de ambiente. Então é chamado URL do Tyobi. Estamos lendo isso a partir deste
+
+Arquivo aqui. OK. Então, temos a carga útil e Isso é basicamente tudo o que é. Isso não é particularmente sensível. De Claro que não. E isso é tudo.
+
+é. Isso é. É o URL do Tyobi. índice. É só por isso que estamos passando.
+
+porque precisamos passar esse URL para o Serviço Evoi relevante, o scraper serviço. OK. E então vamos const resposta. Então agora vamos ligar Evomi dará início ao processo de raspagem. E vamos usar o Axios para isso.
+
+Axios. Nós usamos o dotpost. Queremos incluir um HTTP Faça sua solicitação aqui. Processo ambiente. E este se chama evomi ponto final.
+
+OK. Vom me e apontar assim carga útil. OK. Certo. E então vírgula e queremos abra as chaves ali.
+
+E foi assim que abrimos aqueles cachos. aparelho porque queremos passar em um cabeçalho que conterá as informações relevantes Chave de API. E, claro, as chaves de API são Informações sensíveis. Sua chave de API é Vai ser diferente do meu. Você tem Inscreveu-se nos serviços da Evomi. Talvez
+
+Você já pagou. Então, você não quer alguém ou então roubar essa chave e usá-la Seus créditos Evoi. Então, é por isso que eu...
+
+Estou armazenando esses valores no arquivo v aqui. Portanto, estamos armazenando-os com segurança. valores no arquivo v. E então você deve Incluir a API X. Este é o raspador.
+
+Esta é a sua chave de extração de dados, a sua chave de API. E então nós somos incluindo o valor real no HTTP cabeçalho chamado x-api-key. E nós somos lendo o valor da chave x-api de process.env. Estamos lendo isso a partir do arquivo de variável de ambiente ponto e isto Uma delas se chama API_key.
+
+E isso permite que você use o Evomi's serviço de raspagem. OK. E parece que...
+
+ser um problema, e isso porque eu tenho incluía uma vírgula e deveria ser uma dois pontos assim. E isso parece melhor. E agora essa resposta vai para Contém os dados HTML brutos. Portanto, não queremos retornar o HTML bruto. dados. Queremos retornar os dados do pedal.
+
+Então vamos chamar nosso par tyobi Método HTML que acabamos de criar aqui que usa Cheerio para passar o HTML e criar uma estrutura de matriz estruturada a partir de esse HTML bruto retornado do Evomi serviço. Então vamos passar a resposta. dados porque o Evomi está retornando os dados brutos HTML nesta propriedade de dados aqui. E Estamos enviando isso para o nosso sistema alfandegário. método de pausa aqui que aproveita Um brinde a esse HTML bruto!
+
+que será daqui e então estamos usando o código relevante. para extrair os valores que desejamos e inseri-los. eles em uma matriz estruturada e nós estamos retornando esse array estruturado E isso está sendo devolvido aqui. Então busque classificações tyobe este assíncrono A função retorna a matriz estruturada de então 20 linhas e dentro dessas 20 linhas cada linha conterá para cada idioma sua classificação nome do idioma e seu caminho de imagem Logotipo da imagem para a programação relevante linguagem. Ótimo. E a última coisa que precisamos fazer é
+
+Exporte isso porque está em um arquivo separado. módulo agora. Então module.exports igual a e buscar classificações. Então, exportamos esse método.
+
+conseguir rankings desse tipo. Assim, exporta a funcionalidade de busca. Ele pode ser usado pelo nosso controlador ou pelo nosso controladores, mas só vamos usar isto de um controlador específico e Vamos criar isso no próximo seção. Certo. Então agora tudo o que temos que fazer antes Podemos testar nosso código do lado do servidor.
+
+Criar nosso controlador. Então nós conseguimos o nosso serviço, temos nosso modelo pronto lá E agora podemos criar nosso controlador. Então Vamos criar uma pasta chamada "controle". Ops. Não queremos isso lá. Nós queremos
+
+isso dentro da captura de dados de informação diretório. Então, vamos clicar com o botão direito do mouse e Ir para uma nova pasta. E vamos chamar isso de controladores. E dentro dos controladores, Vamos criar um arquivo chamado tyobi. controller.js.
+
+Tyobi. E estamos usando camel case para este controlador. Nome do arquivo.js assim. E agora Vamos criar o controlador relevante.
+
+OK. Primeiramente, queremos importar o modelo mongus. E para fazer isso nós Escreva esta linha de código. Blangage. Na verdade, deveria ser camel case.
+
+linguagem classificação é igual a exigir colchetes abertos e o caminho relativo é ponto ponto barra modelos e depois a linguagem. Então este arquivo que contém nosso modelo esquema aqui. Então, estamos importando isso. Veja, nós temos exportei para cá. E agora estamos importando isso para lá.
+
+OK.
+
+OK. Vírgula. Tem um rabisco vermelho.
+
+OK. Para que Precisa estar em minúsculas, assim. Perfeito. OK. E então queremos Importe o serviço Tyobi onde todos os O trabalho pesado já foi feito.
+
+E podemos fazer isso com esta linha de código necessário. E precisamos incluir o caminho relativo. ao serviço que acabamos de criar. Então serviços é onde nossos Serviço Tyobi.js O arquivo que contém o nosso serviço está localizado em [localização do arquivo].
+
+código. Então, o serviço Tyobi é assim. Então que importa o serviço responsável por extrair dados do site da Tyobi e transformar esses dados em uma estrutura variedade. E agora, o método principal. Para o nosso controlador, vamos ligar para Confira o ranking de Tybee. E nós podemos simplesmente...
+
+exportá-lo ao mesmo tempo em que o criamos. isto. E para isso usamos a exportação. objeto ali. e nós vamos buscar o tio classificações. É assim que estamos chamando.
+
+E vamos use uma função de seta para o nosso método aqui. Naufrágio. Esses são parâmetros. Ops, nós Não quero isso lá. Vai ser um desastre. E depois descanse.
+
+Isso representa uma requisição HTTP e Esta é a resposta HTTP. E nós criamos nossa função de seta chaves. E agora podemos incluir o nosso o código da nossa função de seta. Vamos Inclua este código dentro de um bloco try-catch. bloco assim pegar erro.
+
+OK. E incluiremos o código relevante para o O bloco de erros será exibido em breve. Mas vamos lá primeiro inclua o código para tentar o código principal. OK. Const classificações em cache igual a linguagem classificação ponto encontrar E depois queremos que isso seja resolvido também.
+
+OK. Então, estamos consultando o MongoDB. banco de dados aqui e queremos classificar por Classificado em ordem crescente. Então é isso o que isso significa lá incluindo este objeto aqui. Nós queremos Para ordenar de 1 a 20. Queremos ordenar
+
+Nossos dados de 1 a 20. Ok. Então nós somos primeiro verificando se o índice tyobi Os dados foram extraídos e existem dentro de a linguagem de coleção MongoDB relevante classificação e estamos fazendo isso através de mongus assim. OK. Assim, ele consulta o banco de dados.
+
+para todas as classificações ordenadas numericamente de um para cima. Este é o código que ele usa. faz isso aqui. Então, se as classificações em cache comprimento
+
+é maior que zero. Então, nós encontramos o dados. É isso que significa. que o Os dados foram extraídos e agora existem. dentro da coleção relevante em nosso Banco de dados MongoDB. Queremos devolver um
+
+resposta uma resposta HTTP automaticamente em formato JSON do banco de dados. Então vamos marcar isso. fonte como banco de dados, significando que os dados residem em o banco de dados e esses dados específicos não foi raspado durante esta solicitação específica. Os dados foram efetivamente recuperados. do banco de dados, o que significa que em um antes da solicitação, os dados foram extraídos de o site e salvou-o em nosso MongoDB.
+
+banco de dados. Então, na verdade, estamos retornando. os dados em cache e não os dados recém-coletados classificações de dados em cache neste caso específico cenário. OK. Mas se os dados não existirem, Então, se os dados existirem, eles irão...
+
+Devolva-o imediatamente, o que significa que A função basicamente termina neste ponto. porque estamos retornando o relevante dados JSON para o cliente que está fazendo a chamada, que será o nosso React componente, que escreveremos mais tarde. Então, neste momento, os dados não...
+
+foram encontrados no banco de dados. Então precisamos para extrair os dados das fontes relevantes. Página web do índice Tyobi. Então vamos raspar classificações equivale a uma espera e queremos começar. O serviço Evomi já está disponível. E nós escrevemos nós
+
+escreveu o serviço anteriormente no seção anterior. E tudo o que precisamos fazer é... Agora basta chamar um método e ele irá...
+
+cuidaremos disso para nós, porque nós... encapsulou a funcionalidade relevante que chama o serviço de raspagem evomi dentro deste método de classificação tobi aqui. Então, estamos chamando esse método. Então
+
+se rankings extraídos comprimento é maior que zero. Então nós temos Extraímos com sucesso o índice Toby aqui. para esta condição. É isso que somos verificando. Então, se tivermos sucesso inscrito esses dados e agora temos dados disponíveis matriz estruturada, queremos salvar isso dados para a coleção relevante dentro do nosso MongoDB banco de dados
+
+rankings extraídos. Isso significa recuperar os dados extraídos em uma matriz estruturada e então estamos inserindo isso em a coleção relevante em nosso MongoDB banco de dados. O que significa que da próxima vez isso O método é chamado, haverá, deveria haver. sejam dados no banco de dados MongoDB e ele retornará os dados JSON relevantes. contendo a matriz de dados classificados linguagens de programação classificadas para Cliente em ligação. É isso que esta linha de
+
+O código está aqui. E então nenhum outro O código é chamado em seguida. Mas se isso Os dados não foram encontrados no banco de dados. Isso significa que precisamos raspar o Tyobi. índice Esta página web contém os dados relevantes.
+
+E é isso que este código representa. E Então, quando chegarmos a esse ponto, podemos simplesmente chamada res denotando a resposta, a resposta HTTP para o cliente que está ligando. Então res.json, JSON. Queremos retornar os dados JSON.
+
+e nós vamos
+
+informações de retorno para o cliente que isto é recente Dados extraídos. Raspador Tyobi e não do banco de dados.
+
+OK. Ótimo. E vamos incluir o erro. Manipulando o código aqui. E nós vamos simplesmente...
+
+erro no console. Então nós vamos Escreva o erro para o janela do console, a janela do terminal. Tyobi controlar erro. OK. Vírgula. Ops. Vírgula. Erro. ponto
+
+mensagem desse tipo. OK. E então queremos retornar um status HTTP. código de erro interno que é denotado pelo valor numérico de 500 status 500.json JSON. Retornamos este JSON
+
+com os detalhes do erro. E isto O erro 500 é um erro interno do servidor. E podemos simplesmente retornar o texto internamente. erro do servidor para o cliente assim. E esse é o nosso controlador.
+
+escrito. Então, agora estamos prontos para testar nosso funcionalidade do lado do servidor para extração de dados e capturando os dados do Tyobi índice. Excelente. Certo. Então, supostamente, estamos prontos para testar.
+
+nosso código. Mas antes de fazermos isso, eu tenho Acho que foram introduzidos alguns bugs. Então, se formos para language.js JS aqui. Para começar, certifique-se de que isto...
+
+modela este arquivo language.js dentro do Pasta de modelos. Certifique-se de que esse L seja não escrito em maiúsculas. Então, tudo em Lowerase aqui. E então, quando estamos exportando o modelo, eu quero que esteja em uma base inferior lá. Essa língua, o L em língua
+
+lá. Isso deveria ser menor só para garantir que tudo é consistente. E se formos para Tyobi controlador de onde estamos importando, Isso deve estar em linguagem minúscula. Esse L deveria estar em lowerase. E isto essa linguagem deveria fazer parte disso classificação de idiomas nome constante. Isso também deveria estar em
+
+diminuir. E certifique-se de que tudo esteja correto. Em baixa, o L para classificação de idiomas é em lowerase para todas essas referências aqui. E isso deve ser muito, muito bom. E notei aqui que isto deveria Tem um `await` aqui porque esta função é uma função assíncrona. Então, a espera
+
+palavra-chave deve estar presente dentro desta linha de código aqui onde estamos procurando o dados dentro do próprio banco de dados MongoDB. Estamos procurando a coleção e garantindo que realmente contenha dados. E se tiver dados, nós estamos Retornando os dados do banco de dados. Mas se não funcionar, vamos ter que nos virar. o índice Tyobi para seus dados. Eram
+
+raspando esta tabela aqui para o seu 20 linguagens de programação classificadas. Para o dados referentes aos 20 classificados linguagens de programação. Ótimo. E isso Tudo parece estar em ordem e pronto para testar. E Então, só quero verificar mais uma coisa.
+
+aqui. Se recorrermos ao serviço Tyobi aqui, Isso está incorreto. Hum, Aqui está ligeiramente incorreto. Então, para isso Esta linha de código deve ser EQ. Não entendi. Ok, então TDS EQ
+
+e que o resto dessa linha parece correto. E então aqui, isto não deveria acontecer ter conseguido. É apenas um equalizador para referência. a coluna relevante. Então, TDs como todos os elementos TD dentro de TDs a linha EQ para a qual estamos apontando é a quarta coluna e lembre-se que é a matriz é de base zero. Os TDs são de base zero. Então
+
+Essa seria a quinta coluna, porque zero Conta como uma coluna dentro da linha. E e então o último, este deve ser EQ. Então Não consegui encontrar a imagem. E isso deveria ser bom. OK. E certifique-se de salvar o seu
+
+mudanças. Hum, e acho que estamos prontos para testá-lo. E vou testar esse código até...
+
+Carteiro. Então, já carreguei tudo isso. Então, vai criar preguiçosamente, se você tipo, o banco de dados. Você pode ver o O banco de dados não existe. Não precisamos Na verdade, crie o banco de dados manualmente.
+
+Hum, dados informativos ali. dados. Ok, na verdade vou apagar. Só para que não haja confusão. Banco de dados de exclusão. Mas este é um caminho
+
+Você pode testar. Se você tiver as informações banco de dados de dados dentro da sua instância de MongoDB, se você tiver essa informação. O banco de dados existe, você pode excluí-lo. porque vai carregar lentamente ou de forma preguiçosa crie, se quiser, esse banco de dados para nós por causa da maneira como temos estruturou o código. Então, vai ser Crie isso para nós. Então, não precisamos
+
+Crie-o manualmente. OK. Hum, e eu Acho que estamos prontos para testar isso. Então, servidor de segurança, Parece tudo bem. Então precisamos de Faça uma solicitação GET para este caminho aqui.
+
+e deve fazer tudo o que queremos. pendência. OK. Então, vamos testar. Isso através do Postman. Então, eu vou
+
+Acesse o Postman aqui. Enviar uma solicitação de API. Vamos fazer isso. E queremos enviar o Solicitação de API/Tobi aqui. E você pode ver que estamos executando nosso Código do lado do servidor em localhost, porta 3000.
+
+E agora podemos enviar essa solicitação para o nosso código. Mas primeiro precisamos executar nosso código. Então fazemos isso garantindo que estamos dentro o diretório raiz do nosso servidor código. Captura de dados de informação ali. e nós são. Então podemos simplesmente digitar node e depois
+
+servidor o ponto de entrada para o nosso O formulário de inscrição está aqui. Queremos que seja Escute na porta 3000 em nosso host local. Então vamos usar o node server.js. Pressione a tecla Enter. Isso nos deu algumas coisas.
+
+Servidor de status em execução na porta 3000 Conectado ao MongoDB. E agora não deveríamos ter nenhum dado. Nós nem sequer existe um banco de dados em Atualmente, estamos usando o MongoDB. Nossos dados de informação banco de dados. Então, quando executamos nosso código, ele deve extrair os dados diretamente daqui e inserir esses dados em nossa página web.
+
+banco de dados. Então vamos ver se isso resolve o problema. Esperamos. Então vamos enviar isso. Brilhante. Portanto, a fonte é Tyobi.
+
+raspador. Se analisarmos nosso código, você poderá... Veja, ele coletou todos os dados relevantes.
+
+Em primeiro lugar, temos o Python. Nós temos obteve o caminho da imagem. Nós poderíamos, na verdade. basta copiar o caminho da imagem. e cole-o na janela do seu navegador e deveria Exibir esse ícone, o ícone relevante.
+
+Aqui está. C. Excelente. Para que Verifica se os dados estão corretos. Hum, Então, tiramos C.
+
+Java, JavaScript, Visual Basic e ele extraía dados. os dados relevantes. Mas esta fonte é É isso que eu quero destacar. Em primeiro lugar, um scraper Tyobi, o que significa que nós temos extraí o índice Tyobi. Não temos Os dados foram recuperados do banco de dados.
+
+Com nossa solicitação GET aqui, está tudo atualizado. extraí o índice Tyobi e o salvei em nosso banco de dados MongoDB. E se olharmos para MongoDB através do Compass aqui, que Nos fornece uma interface gráfica de usuário. Então Primeiramente, vou recarregar o dados. E você pode ver que os dados de informação agora estão disponíveis.
+
+apareceu lá. E se olharmos para dentro Você pode ver os dados informativos no idioma. classificações. Esta coleção apareceu foi criado. E aqui está.
+
+capturou os dados relevantes. Então é capturaram todos esses dados do Tyobi índice. Então, funcionou corretamente. Excelente. E em seguida criaremos o Código React para exibir os dados em nosso front-end.
+
+Mas o que podemos fazer agora é correr. Então podemos testar isso novamente. Então, se formos para o carteiro e executamos isso novamente, você vai veja que este valor do raspador Tyobi deve Mudança em quê? O que Deveria mudar para? Vamos para Tyobi controlador.
+
+Pronto. Então, o raspador Tyobi. Isto deveria mudar. Esse valor de origem deve altere para o banco de dados ali. Então vamos lá De volta ao Postman, vamos executá-lo. Então
+
+Esta fonte deve ser alterada para banco de dados. Excelente. Então, está recuperando os dados. do nosso banco de dados. É posteriormente recuperando os dados do nosso banco de dados porque armazenamos em cache esses dados coletados.
+
+que extraiu dados do índice Tyobi dentro do nosso Banco de dados MongoDB dentro de um banco de dados chamados dados de informação que criamos através de nosso código. E Então, você pode ver aqui se formos em bússola. Criou uma coleção chamada Classificação de idiomas e todos esses valores e todos esses dados que coletamos agora existe dentro do banco de dados. Então, se nós agora Excluímos este banco de dados, então os dados de informações que excluir o banco de dados, descartar o banco de dados não existe mais, ele irá raspar o índice tyobi novamente. Então, se formos aqui, você verá que isto O valor de origem deverá ser alterado para Tyobi.
+
+raspador. Vamos ver se isso funciona. Excelente. Raspador Tyobi. Então agora isto dados retornou de um recém- Índice Tyobi extraído. Então, esses dados são
+
+retornou de Evomi raspando o Tyobi índice para nós. E devolveu o Dados JSON relevantes. E agora economizamos está dentro do banco de dados. Então, da próxima vez que nós execute-o, use o banco de dados de origem porque é recuperando-o dos dados em cache que foi armazenado em cache no nosso MongoDB. banco de dados.
+
+E se atualizarmos ou recarregarmos esta página agora? Os dados e informações aparecem e você pode ver a coleção relevante agora contém o Dados do índice Tyobi. Excelente. Então é isso Tudo funcionando perfeitamente e agora podemos...
+
+passe para a criação do código React que exibirá esses dados em um de maneira esteticamente agradável para o usuário. Ok, então agora nós criamos o servidor e nós o testamos através Carteiro e bastante satisfeito com o resultados. Agora vamos criar o cliente. Então, o código do cliente React. Então Vamos começar criando um pasta raiz para o nosso cliente.
+
+Então, vamos clicar com o botão direito do mouse. aqui e vá para uma nova pasta cliente. Excelente. E vamos para o CD aquela pasta cliente lá. E agora vamos criar o nosso Projeto React. E vamos usar
+
+VIT para este propósito. Então, para criar um Projeto React usando VIT, digitamos npm assim. Criar vit em mais recente assim. Pressione a tecla Enter. Ok, perfeito. E nós queremos o projeto
+
+nome para ser limite de dados de informação. Não, não. capturar. Essa é a raiz do lado do servidor. pasta. Queremos que isso sejam dados informativos.
+
+mostrar. Pressione a tecla Enter. Pressione o Digite a tecla novamente. E vamos selecionar React. aqui. E vamos usar apenas JavaScript.
+
+Pressione a tecla Enter. OK. Instalar com npm e inicie agora. Sim. E lá se vai ele e instala nosso React e cria nosso projeto React com todas as dependências relevantes.
+
+Ótimo. Está ótimo. leva um pouco de tempo, mas como sempre acontece com instalações e implantações e coisas do gênero, É preciso exercer paciência. Certo, chegaremos lá. Estamos procurando bom. Feito. Vamos testar se todos os
+
+Configurações padrão foram criadas para nós. E Podemos fazer isso pressionando a tecla Control. tecla e depois clicando no link. E nós pode ver se nossa infraestrutura tem Foi criado com sucesso para nós. E Aqui está a página padrão que foi carregada para nós.
+
+Interatividade. Bom. Excelente. E Está tudo pronto. Ótimo. Então, vamos
+
+Ctrl+C para sair daqui. Limpe a tela. E agora podemos começar. E você pode Veja, aqui foram criados os dados informativos. Exibir pasta para nós. Conseguimos nosso nó
+
+módulos. Então, nós temos todos os nossos Dependências criadas. Nós temos o nosso arquivo JSON package.json e todos nós estamos É bom começar com este src. Um diretório foi criado para nós. E
+
+A primeira coisa que quero fazer é simplesmente inicializar todos os estilo Código CSS. E por inicializar quero dizer obter Livre-se disso. Então, vou selecionar. tudo isso do arquivo app.css e excluir. Guarde isso porque eu realmente estou
+
+Vou usar o Bootstrap, a versão mais recente. versão do Bootstrap para estilização e para fins de layout. E nós também queremos obter elimine todo o código de estilo dentro de index.css. Então vamos selecionar tudo isso, Apague, salve e agora estamos prontos para começar.
+
+começamos criando o código para o nosso Aplicação React. Então, em primeiro lugar, quero criar um componente. chamado tyobi que será usado para Exibindo o índice tyobi. Então nós Basicamente, quero exibir algo semelhante a esta em nossa própria página da web. Mas Estamos apenas analisando algumas dessas informações.
+
+campos e exibiremos esses campos em nossa própria página web. E é por isso que estamos criando este componente Tyobi para o objetivos de exibir as colunas que Nós raspamos o conteúdo. os valores da coluna que incluímos um aspecto esteticamente agradável. de uma forma agradável, não muito diferente desta. nossa própria página da Internet. Então vamos começar por aí. Então
+
+Primeiramente, queremos criar uma nova pasta. dentro de src porque estamos criando um novo React componente. E vamos chamar essa pasta de "pasta". tyobi assim. Pressione a tecla Enter.
+
+E então, dentro do tyobi, vamos criar um novo arquivo. E vamos chamar essa de tyobi. jsx com o t maiúsculo assim. Excelente. Então, tyobi.jsx.
+
+E agora estamos prontos para criar o código. para o nosso componente Tyobi. Então, vamos faça isso. OK. Então, a primeira linha que importamos Do React. Estamos importando o estado de uso.
+
+Ops, não deveria ter letra maiúscula. Estamos importando o estado de uso e o usar gancho de efeito Do React. Certo, então o motivo de termos sublinhados aqui é porque ainda não usamos o dois anzóis. Então não há nada com que se preocupar. sobre. E só para deixar tudo organizado, eu estou apenas
+
+Vou colocar espaços ali. Então nós somos Importando os hooks para gerenciar o ambiente local. estado e efeitos colaterais no componente aqui. Use o estado para armazenar o estado e estado de rastreamento e efeito de uso para Gerenciar os efeitos colaterais. OK.
+
+Então, vamos pressionar a tecla Enter. O próximo linha de código em que queremos importar o Axios, mas Precisamos instalar o Axios. Já o instalamos. no servidor, mas ainda não fizemos isso para o cliente. Então precisamos instalar o Axios.
+
+Para isso, vamos primeiro... CD para exibir dados de informações, desculpe, dados de informação Exibir o CD nisso. E então queremos Para instalar o Axios. Então, npm
+
+Instale o Axios dessa forma. E, claro, vamos usar o Axios. para lidar com nossas solicitações HTTP e HTTP respostas. Ok, então instalamos o Axios. Vamos Para garantir, limpe a tela.
+
+E vamos importar o Axios. Axios de Axios assim. Certo, então ele importa o Axios para lidar com o solicitação HTTP assíncrona para o nosso back fim. É basicamente isso que vamos fazer. para usar o Axios.
+
+OK. E vamos crie o código do componente propriamente dito usando uma função de seta. Então const tyobi assim equivale a chaves vazias. Nenhum parâmetro é passado para este. função de seta. Crie a seta e
+
+Então, dentro das chaves, criaremos a funcionalidade para o nosso tyobi componente. Então, basicamente, isso define. o componente funcional para exibição o ranking Tyobi. A primeira coisa que nós o que eu quero fazer é ir const idiomas e depois definir idiomas equivale a usar o estado. Então agora estamos usando nosso gancho de estado de uso assim. E vamos passar em um
+
+valor padrão de uma matriz vazia como que. OK. Excelente. Você pode ver o rabisco vermelho. desapareceu em estado de uso porque Agora estamos usando o gancho de estado `use`. Então
+
+Ele inicializa uma variável de estado para armazenar a lista de idiomas que têm como padrão um matriz vazia. Então é isso que esta linha de O código faz isso. Perfeito. E então vamos usar o Use o gancho de estado novamente. E isso é apenas para um indicador de carregamento enquanto ele está carregando. Pode ser que esteja raspando por um longo tempo.
+
+tempo. E não queremos o usuário Apresentada a uma tela em branco. Nós queremos algum tipo de girador exibido para o usuário ou apenas um texto dizendo carregando. Algo que informa ao usuário que Nada deu errado. Estamos apenas esperando.
+
+para os dados. Então, vamos usar um constante indicador de carregamento para isso. Configurar carregamento equivale a usar o estado, o gancho de estado de uso. E então vamos definir isso como verdadeiro por padrão. Então Queremos que a página seja exibida por padrão.
+
+o indicador de carregamento. Então, inicializamos um estado booleano para acompanhar se os dados ainda estão sendo buscado. Basicamente, é isso que essa linha representa. do código faz. OK. Excelente. E agora
+
+Vamos usar um gancho de efeito para gerenciar os efeitos colaterais do componente. E Isso será executado na primeira vez que o componente é carregado. E Você verá como garantimos isso. agora mesmo. Portanto, dentro do efeito de uso, queremos também para garantir, como já foi dito, que apenas carrega apenas uma vez, desculpe, este código é apenas É executado uma vez quando o componente é executado. Então nós
+
+precisam passar no próximo para o próximo argumento ao efeito de uso gancho, precisamos passar pelo quadrado vazio chaves indicando que estamos passando para um array vazio que indica que isto deve ser executado apenas uma vez quando o componente cargas. OK, Então, temos nosso gancho de efeito de uso em lugar. Agora queremos incluir uma função dentro do nosso gancho de efeito de uso. Então vá const. Vamos criar uma função de seta.
+
+Isso é assíncrono. Então busque dados tyobi igual a assíncrono assim. Em seguida, abra os colchetes vazios e Crie a sintaxe da função de seta. E podemos criar, podemos preencher o Agora, qual é a lógica para buscar esses dados do Tyobi? E É autoexplicativo o que esta seta representa.
+
+função faz. Ele busca os dados do Tyobi. seja do banco de dados ou de uma fonte recém-criada dados extraídos do Tyobi índice. OK. Portanto, a resposta é igual a um peso assim. Então estamos usando
+
+Axios. Você verá o Axios na linha vermelha. agora desapareceu porque estamos usando aqui. Estamos enviando uma solicitação GET para ou inicie uma briga ou busque o dados do banco de dados se os dados tiverem já foi capturado. Então, HTTP e isto é o caminho para o nosso ambiente local hospedado globalmente código do nó do lado do servidor nosso Funcionalidade de API web.
+
+Então, API e depois tyobi assim. Isso é o ponto final que queremos chamar de ou obtenha os dados do banco de dados ou Inicie a funcionalidade de raspagem através de Os serviços da Evomi são acessados ​​através do site da Evomi. serviços de raspagem que irão raspar o Os dados são salvos no banco de dados e devolva esses dados recém-coletados para o nosso Componente React do cliente. Certo, então nós temos já tínhamos respondido à convenção ali mesmo, naquele instante. Quero registrar o resultado apenas para fins de depuração.
+
+propósitos. Então console.log assim. OK. E podemos simplesmente usar os dados de resposta.
+
+OK. E dados de resposta com vírgula, como esses. Isso gera a resposta bruta da API para O console serve apenas para fins de depuração. OK. Excelente.
+
+E este código aqui const actual variedade equivale a precisar verificar se é um variedade é um array semelhante a esses dados de resposta. Então, estamos apenas nos certificando de que os dados O que nos retorna é, como esperado, um variedade. Queremos que nos seja retornado um array. Então Se for uma matriz, os dados de resposta são um O array usa a resposta diretamente se ela é uma matriz. Hum, senão
+
+se resposta do data ponto data ou nós somos verificando se a matriz poderia ser armazenado em esta propriedade aqui. Então os dados são estruturado assim em vez disso em este caso específico. ou Podemos usar o operador OR e verificar. talvez a resposta esteja em a propriedade de idiomas assim ou então Queremos, se não for nenhuma dessas opções. propriedades que queremos retornar um valor vazio matriz desse tipo.
+
+Então, com o nosso código, o array será retornado nos dados de resposta. Então, este código aqui será disparado e retornará para matriz real ali. Ok, perfeito. E então definimos os idiomas. Estamos usando a função de linguagens definidas aqui que nós temos definido com gancho de estado para nosso uso aqui. Estamos usando idiomas definidos para
+
+mudar o estado das línguas porque a variável de idiomas armazenará o resposta retornada da solicitação HTTP Aqui em cima, a solicitação GET. Então vamos lá matriz real como essa. E isso será também renderize novamente nosso componente que é o que queremos, porque os dados mudou. Então queremos refletir isso. na interface com o usuário. OK. Então
+
+atualiza o estado dos idiomas com a matriz processada para acionar um renderizar novamente. Basicamente, é isso que... O que essa linha de código está fazendo ali. Perfeito.
+
+OK. E queremos incluir uma tentativa de captura em nosso código aqui, para que, se ocorrer um erro ocorre durante o processo de recuperação de nossos dados nos permitem levar isso em consideração. Então, vou criar o básico. O código para isso está aqui, assim. Então nós temos Tenho um bloco try-catch básico. Então vamos
+
+recorte e cole isso assim mesmo. OK. Vamos lidar com isso. Veja a parte aqui. E tudo o que queremos fazer é console.log
+
+o erro. Então, um erro no console como esse. e então buscar erro erro de dois pontos seguido de vírgula, como esse lá. E então tudo o que queremos fazer com o bloco finally dentro do bloco finally bloco que queremos definir carregamento para falso assim. OK. E então
+
+Então, queremos apenas esse indicador de carregamento. para exibir quando os dados estão sendo recuperado. E uma vez que os dados tenham sido recuperado com sucesso, queremos o O indicador de carregamento desaparecerá. Então É por isso que estamos definindo o carregamento para Aqui não é verdade. E então queremos realmente ligação que ainda não fizemos de fato essa função em qualquer lugar. Acabamos de...
+
+Declarou e criou. OK. E nós Chame a função. Chamamos isso de fetch tyobi. por aqui.
+
+Obter dados do Tyobi assim. Hum, não se preocupe com isso. Por enquanto, porque ainda não terminamos. componente inteiro ainda. Mas por agora, apenas Certifique-se de que não haja problemas estruturais.
+
+problemas. Já escrevemos vários linhas de código ali. Apenas certifique-se de que Exemplo aqui, use o efeito que deixou isso encaracolado abra a braçadeira ali. E você pode ver isso Fecha ali. E depois vírgula e depois o quadrado, os colchetes vazios indicando que queremos que este código Dispara apenas uma vez quando o componente é carregado.
+
+É para isso que serve esse gancho de efeito de uso. por aqui. Então, certifique-se de que seu estrutura é Corrija aqui antes de prosseguir. Então vamos continue aqui. Então, criamos nossa própria solução.
+
+gancho de efeito. OK. E eu só quero Para maior clareza, use a tecla Tab. Então agora nós queremos lidar com o carregamento do nosso componente. Portanto, isto corresponde a se os dados foram obtidos ou não. Então, se os dados
+
+Ainda está carregando, queremos um carregamento indicador a ser exibido. E isto é o que isto É tudo sobre código. Então, praça aberta aparelho ortodôntico. Estamos verificando o carregamento. variável.
+
+Então, se for verdade, retorne. um indicador de carregamento. Então, enquanto os dados estão sendo obtidos, nós Desejo que seja exibido um indicador de carregamento. para o usuário. E isto é para bons usuários.
+
+experiência. Assim, o usuário não pula para a conclusão de que algo aconteceu errado. OK. Então, nome da turma. Agora estamos Criando código Bootstrap aqui. E nós
+
+Na verdade, eu não instalei o Bootstrap. Então Essa é a próxima coisa que vamos fazer. Então, se formos para o terminal aqui dentro Exibição de dados informativos, queremos instalar Bootstrap. Já que estamos aqui, vamos...
+
+para instalar o React Route porque é isso o que faremos depois que Finalize este componente. Então, vamos instalar. Bootstrap e React Router DOM porque Vamos cuidar das raízes. usando React o roteador React DOM pacote. OK. OK. Então, para instalar
+
+Bootstrap e React Roots DOM, nós digitamos npm e então inicializar dessa forma. Não, npm instalar. Desculpe. Instalar o Bootstrap E então reagir. Ops. Derrota
+
+assim. Ok, vamos pressionar Enter. chave e deve instalar esses pacotes para nós agora. Excelente. Isso já foi feito.
+
+Já instalamos o Bootstrap. Para que significa que podemos continuar criando o nosso Componente Tobi usando Bootstrap para Para fins de estilo e layout. Então vamos Limpe a tela. E existem apenas alguns Ainda precisamos fazer mais coisas para garantir que O Bootstrap pode ser usado. Então, o primeiro O que precisamos fazer é entrar no arquivo main.jsx.
+
+e inclua uma importação aqui, uma importação declaração. Então precisamos importar precisamos incluir esta linha de código aqui Para fins de estilo e layout. E obviamente uma das principais vantagens de O uso do Bootstrap é uma tela capacidade de resposta. E assim, em um telefone celular, nós vamos...
+
+Implementar um menu básico. E em um pelo celular, vamos querer um hambúrguer. botão que eles podem pressionar para descer o menu. E para que isso funcione, nós Na verdade, preciso importar algum JavaScript. E é isso que esta linha de código aqui faz.
+
+É tudo sobre isso. Ótimo. Então precisamos de Inclua aqui estas duas declarações de importação. dentro do arquivo main.jsx do Bootstrap para funcionar corretamente. E agora podemos
+
+continuar com nossa funcionalidade de carregamento. OK. Então, nome da turma, e nós vamos para estar usando um monte de Classes Bootstrap aqui. Então, opa. Deflex simplesmente justificar justificar contente centro alinhar Unid centro assim. E vamos incluir alguns
+
+Estilização em linha. E então explicarei o que estamos fazendo. Logo após criarmos esse código. Então Estamos incluindo nesses cachos entre colchetes, estamos incluindo um objeto com uma propriedade da altura e essa altura é 100% da altura da janela de visualização. Então 100 VH assim. OK. Excelente.
+
+Então, o que fizemos aqui? Nós temos Basicamente, estamos centralizando a carga. girador tanto verticalmente quanto horizontalmente. É isto que isto O código Bootstrap aqui faz isso com a ajuda deste estilo embutido aqui. Altura igual a 100% da área visível. OK,
+
+ótimo. E então vamos incluir uma criança. div dentro deste elemento div div assim. E agora este código irá Na verdade, crie o spinner. Então vamos lá nome da classe igual a borda giratória assim. Texto
+
+primário assim. OK. E então vamos incluir um estilo é igual a abra as chaves. E nós queremos Incluir um objeto. Podemos definir o largura e altura do spinner. Então
+
+a largura será três aros assim e a altura vai ser também três aros assim. OK. Excelente. Portanto, esta linha de código renderiza um círculo giratório Bootstrap para visualização opinião. Basicamente é isso.
+
+O que essa linha de código está fazendo aqui. E então dentro de Nesta div, queremos incluir um span. elemento. OK. Carregamento visualmente oculto.
+
+E devemos colocar o status de "rolagem igual a" em destaque. Aqui também. Assim. OK. Certo.
+
+dois pontos ali. Retornar. Então nós que está carregando. OK. Então é isso mesmo o primeiro retorno quando o componente primeiras cargas. Então o usuário
+
+não é apresentado apenas com uma tela em branco tela. O usuário se depara com um spinner, um indicador de carregamento. Então isto simplesmente dirá ao usuário que nada está acontecendo. Deu errado. Estamos apenas aguardando os dados.
+
+para ser devolvido. E então esses dados, de claro, será exibido assim que estiver Retornou com sucesso. OK. Assim, quando os dados forem retornados, É isto que queremos retornar em nosso código. Então ele retorna o estrutura JSX principal uma vez que os dados tenham Carregamento concluído. Este é o código que ele usa.
+
+É tudo sobre isso. OK. Então div
+
+assim. Vamos lá, nome da classe, nome da classe é igual a recipiente fluido e margem vazia superior 4. Isso é apenas um layout. código. Código de layout do Bootstrap aqui. E
+
+Vamos criar um cabeçalho usando H2.
+
+nome da classe igual a MB-4 texto centro assim. OK. E o texto para nosso cabeçalho é programação
+
+Classificação de idiomas. Então, ele exibe um Cabeçalho centralizado para a tabela de classificação. É isso que isto faz aqui. Ótimo. OK.
+
+E vamos criar outra div aqui. div certo. OK. Nome da turma igual à tabela responsivo assim. OK.
+
+E então queremos incluir uma tabela. elemento agora assim. OK. E vamos incluir os relevantes Classes Bootstrap. Nome da turma igual a mesa. Ops.
+
+Tabela T pairar. Queremos um efeito de passar o cursor sobre o objeto. incluído. Mesa amarrada. Queremos cintas incluído em nossa mesa.
+
+E queremos alinhá-lo no meio.
+
+assim. OK. Então, estamos aplicando o Bootstrap. estilos para alças de destaque de fileira e alinhamento vertical. E nós queremos o A mesa deve estar na horizontal. Então, mesa
+
+capacidade de resposta. Queremos que seja Rolagem horizontal em telas menores dispositivos. É isso que estamos fazendo lá. Certo. Então vamos incluir a tabela.
+
+Cabeçalhos aqui. Então, cabeça T, certo? Cabeça em T assim. OK. E vamos incluir o primeiro título da primeira coluna assim.
+
+Escopo é igual a chamar estilo. Ops. Sim. Estilo igual a chaves abertas incluem um objeto para o estilo embutido aqui. E nós Só quero que a largura seja responsiva e queremos que seja 10%. Então, definimos isso para 10%, dessa forma.
+
+OK.
+
+OK, Desculpe, não deveria ser "igual a". Eu era curioso para saber o que estava acontecendo ali com as linhas onduladas. Isso deveria ser um cólon. Certo, então conseguimos resolver isso. E Então, vamos dar a isto o título de classificação. Assim
+
+classificação. Vamos simplesmente duplicar isso. OK, Queremos que seja 15%. E isto deveria ter o título de ícone. Este será o título.
+
+para o ícone do logotipo de programação. OK. E vamos colar isso novamente. lá. E basta modificar as partes que queremos.
+
+modificar. E esta é um pouco mais fácil. Nós apenas incluir linguagem de programação para o pró a coluna mais à direita e isso será para o nome do idioma. Este é o cabeçalho do nome do idioma. lá.
+
+OK. Excelente.
+
+OK. Então, estamos quase lá. Como eu disse, se você ficar preso, há um Muito código aqui. Basta conferir o Página relevante do GitHub. O link para O repositório do GitHub foi criado.
+
+disponível na descrição deste produto vídeo. Ok, ótimo. Então, temos o cabeçalho da nossa tabela. lá. Agora, queremos incluir o corpo para a nossa mesa.
+
+Portanto, incluímos uma tag Tbody aqui. Vamos verifique os idiomas não é nulo. Então queremos ir ao mapa e queremos fazer um loop os itens que foram devolvidos. Certo, então queremos percorrer cada um deles em um loop. item que foi devolvido. O índice é
+
+apenas uma contagem de quantos itens temos Percorra o conteúdo do array de idiomas. O índice incrementa em um. Então é isso O que é o índice? E então podemos usar a sintaxe da função de seta aqui e Crie o código que queremos executar como Nosso código percorre os itens no array de idiomas que foi retornado de da nossa chamada HTTP para o nosso servidor. código para o código tyobi. Então agora vamos
+
+Renderizar cada linha da nossa tabela. OK. Então vamos criar uma linha aqui. TR tr Ok, ótimo. E cada linha deve ter uma chave única.
+
+identificador. Isso visa à eficiência do React. Para otimizar a eficiência do React, Cada linha deve ter um número único. identificador. E nós simplesmente usaremos o índice.
+
+por esta. OK. E então vamos criar nosso primeiro TD. OK. E esta coluna conterá nosso primeiro valor que será item classificação de pontos.
+
+Então será a classificação de 1 a 20. Por exemplo, o Python tem uma classificação de um. C tem uma classificação de dois. Então é isso Qual será esse valor aqui? E nós Quero que isso esteja em [ __ ]. Então vamos lá
+
+O nome da classe é igual a 2. E então vamos... Inclua a classe Bootstrap relevante.
+
+E nós simplesmente seguimos em frente. Ousado assim. OK. Então ele exibe o Número da classificação em [ __ ]. Ótimo. E então queremos em seguida, queremos o
+
+imagem que será o logotipo do ícone representando a linguagem. Então digite TD. OK. E dentro deste TD queremos um etiqueta de imagem. OK. E a fonte será
+
+o valor do caminho retornado do nosso HTTP chamar. Então vamos ao item ponto do item caminho da imagem para que exiba o logotipo relevante. para o idioma desta coluna. Então, podemos realmente definir o alt para o nome da linguagem de programação. Então seja item item.p
+
+lang assim. OK. Excelente. E queremos incluir alguns elementos de estilo. dentro da nossa tag de imagem. Só vou para
+
+entre por ali. E Então, em termos de estilo, incluiremos alguns elementos embutidos. estilização aqui. E dentro do encaracolado chaves, vamos passar um objeto com largura como uma propriedade. Cólon. E isso será 40 px por 40 pixels.
+
+Vamos definir a altura. 40 pixels também. E queremos que o objeto se ajuste. definido para conter assim exibe a imagem inteira. dentro da coluna relevante da tabela assim. OK.
+
+Assim, ele renderiza o ícone de idioma com um tamanho limitado e proporção adequada ajuste do objeto. Excelente. OK. E por último, o verdadeiro programação. A última coluna é a Nome da linguagem de programação. Então TD.
+
+OK. Então TD e dentro das chaves queremos renderizar o nome do idioma item ponto P lang assim. Então ele exibe o Nome do texto para a linguagem de programação aqui. Ótimo. Tenda corporal Tbody.
+
+E então queremos garantir que nós estão exportando nosso componente para que ele possa ser incluído no app.jsx arquivo que faremos daqui a pouco. Então Vamos exportar isso. Exportar padrão tyobi assim. e Incluímos um ponto e vírgula ali. E
+
+Olha só isso. Criamos nosso Tyobi componente e estamos prontos para prosseguir para o próximo
+
+O próximo componente será o app.jsx. onde criaremos o roteamento. E em No momento em que temos apenas um componente. Então, vamos simplesmente criar o Roteamento para o componente Tyobi. Então
+
+Vamos para o arquivo app.js. JSX Aqui, e vamos remover todo esse código. Então, vou clicar com o botão direito do mouse. Selecione tudo e exclua todo esse código.
+
+E vamos começar do zero. Vamos criar o arquivo app.jsx. Código agora. Então vamos começar por...
+
+importar reagir a partir do react. Assim, ele importa a biblioteca principal do React para Criar componentes e gerenciar o estado da interface do usuário. E vamos importar roteador de navegador. Lembre-se que instalamos rotas react todos esses componentes raiz
+
+raiz singular e elo e estamos importando e estamos importando isto é do React roteador uh DOM tipo isso.
+
+Ok, excelente. Assim, importa o enraizamento. ferramentas para permitir a navegação em várias páginas Sem recarregar o navegador. Eram Vou incluir apenas o Tyobi componente para este roteamento funcionalidade por enquanto, mas nós vamos...
+
+incluindo uma rota para um Amazon componente que vamos criar um pouco mais tarde. Ok, então precisamos importar importar Tyobi. Lembre-se que acabamos de exportar Tyobi. do nosso código de componente para o nosso Tyobi funcionalidade de índice que apenas exibe o índice Tyobi em a parte frontal. Então importe tyobi slashtyobi assim. Então esse é o Tyobi.
+
+lá para barra Tyobi. Estamos exportando componente Tyobi. Certo, então vamos importar isso. Então é importa o componente de classificação Tyobi para ser exibido em sua rota específica. É isso que esse código faz. E agora
+
+Vamos criar uma função para o componente do aplicativo. Então, vou apenas digitar. aplicativo de função. O código que vamos escrever agora conterá nossas informações de roteamento, um menu para cada uma das raízes, e apenas um Página inicial básica, muito básica. Certo, então nós Quero devolver isto aqui.
+
+abrir suportes redondos e vamos para Vamos criar a marcação que será devolvido mas precisamos envolvê-lo dentro disto elemento roteador. Então roteador assim. Ok, vamos incluir um elemento div ali. Incluir algumas classes Bootstrap igual a minh 100. Então, estes são apenas layouts e estilo relacionado classes bootstrap que precisamos para incluir para deixar nossa página com uma aparência melhor Esteticamente agradável ao usuário.
+
+Coluna assim. Assim, cria-se um completo Recipiente flexível em altura que pode ser empilhado seus filhos verticalmente e é isso que esses Bootstraps fazem As aulas aqui são assim. OK. E então queremos Para criar uma barra de navegação. Então nós somos Vou usar o elemento de navegação para isso.
+
+Então nav opa nav nav assim. Vamos incluir os nomes das classes relevantes.
+
+OK. Então, nome da turma O nome da classe em camel case é igual a barra de navegação opa, barra de navegação hífen na barra de navegação expandir hífen LG navegação bar faça escuro fundo escuro, faça escuro e estes são apenas Classes Bootstrap que são usadas para Criar a estética que desejamos para o nosso site. página. Então, neste caso específico, estes As classes do Bootstrap definem um tema escuro. Barra de navegação Bootstrap com um toque sutil sombra. É só isso, é isso que esses
+
+As classes do Bootstrap fazem isso. Ok, vamos criar ali há outro elemento div. E nós simplesmente...
+
+quero que isso tenha um Possui uma classe de contêiner. Então, Bootstrap classe chamada container aqui para isso elemento e centraliza a navegação conteúdo e fornece espaçamento responsivo é o que esta classe de inicialização de contêiner é faz. OK. E então vamos criar um link. elemento. E isto é de onde você pode ver
+
+que foi importado do React Caminho para o DOM ali. E isso vai servir de ligação, isso basicamente vai funcionar. Basta ser um link para a página inicial. OK. O nome da classe é igual a, vamos apenas incluir.
+
+navegação marca de bar. Então queremos a marca aqui, Seja lá o que for. E nós queremos isso em audacioso. FW em [ __ ]. Ops. Ousado assim.
+
+E então queremos o atributo do Elemento de link para apontar para a página inicial que é simplesmente uma barra invertida como essa. Então, quando você clica em "dados de informação" aqui, que é o nome do nosso aplicativo irá direcionar o usuário para o página inicial. Basicamente, é só isso. Assim, cria um logotipo clicável que Retorna o usuário à página inicial. E para garantir a capacidade de resposta, vamos...
+
+Inclua um botão de alternância aqui. [bufa] que definirá um cardápio de hambúrgueres botão para dispositivos móveis para ativar/desativar o Link da barra de navegação. Então, eu gosto de fazer tudo Minha interface de usuário é responsiva e a sua também deveria ser. Ao criar, pense na capacidade de resposta. suas interfaces de usuário. Muito importante na era moderna
+
+Desenvolvimento de aplicativos. Então, certo. Então, botão vamos lá lá. OK. E vamos incluir os atributos. Aula
+
+nome da classe igual a barra de navegação toggler é apenas uma classe do Bootstrap. E o tipo deste botão é um botão. OK. e dados BS alternar equivale a um colapso.
+
+OK. área controles. É apenas para fins de acessibilidade, o que equivale a barra de navegação, navegue assim. Área x expandido igual a falso. área rótulo igual a Alternar navegação.
+
+Isso é apenas para fins de acessibilidade. OK. E então, dentro do botão Criamos uma tag span.
+
+Ops. Desculpe. fora do botão elemento. Não sei por que coloquei isso. lá.
+
+Então, dentro do elemento de botão, Queremos incluir um nome de classe para a tag span. igual a 2. E vamos incluir a barra de navegação. alternador ícone de traço. Assim, exibe o padrão de três linhas.
+
+ícone para navegação móvel alternar. Basicamente, é só isso que faz. lá. E estamos usando make usando O Bootstrap torna isso bastante fácil. alcançar essa capacidade de resposta no Interface do usuário. Então, em dispositivos pequenos, este hambúrguer
+
+O ícone será exibido e você poderá ativá-lo. qualquer menu que você definir. aberto e fechado usando o O alternador da barra de navegação foi fornecido a nós através de Bootstrap. OK. Então, e a próxima coisa que queremos fazer é Então, depois do botão, vamos incluir outro.
+
+div E este será o menu propriamente dito que teremos. Quero poder abrir e fechar. OK. Então, vamos criar uma lista não ordenada para contêm nossos menus. Mas primeiro vamos por partes Crie esta tag div pai. Então, turma
+
+nome é igual a colapso barra de navegação hífen desmoronar assim e depois excluir ID igual a barra de navegação navegação. Isso encerra os links de navegação. para que possam ser ocultados ou exibidos em telas menores. OK. E vamos incluir a lista não ordenada. Então
+
+Isso é definido por ul aqui. E nós queremos Para incluir uma classe, uma classe Bootstrap. igual a barra de navegação navegação EM auto. Então, ele cria uma lista de itens de navegação alinhados à direita lado do bar. E é isso que isto significa.
+
+O código que está sendo usado aqui é o não ordenado. lista. Ótimo. E então vamos incluir um LI elemento aqui. OK. Aqui.
+
+E incluímos outra tag de link aqui. Link nome da classe igual a link de navegação com hífen, assim. Então nós isto define um item de lista individual dentro de o menu de navegação assim. Vamos encerrar nosso link elemento lá. E este vai ser o ty índice.
+
+Ok, tyobi Índice aqui mesmo. Então, esse é um link para nosso componente tyobi que exibirá o índice tyobi nele. E nós precisamos de Defina esses dois atributos para o caminho. do nosso componente tyobi que irá apenas seja tyobi slashtyobi assim com o t em maiúsculas ali. OK. Então, abaixo da navegação
+
+Agora queremos incluir a tag principal. principal assim.
+
+OK. Então, dentro do elemento principal, criamos um elemento div. nome da classe igual a recipiente e texto centro. Então esse O elemento div centraliza a raiz aninhada conteúdo horizontalmente dentro de um layout responsivo recipiente. OK. Então nós também precisamos de
+
+incluir um monte de bootstrap aulas dentro do elemento principal. Então queremos flexibilidade. cultivar cinzas um. Queremos flexibilidade. Nós queremos alinhar alinhar Unid Unid centro.
+
+Queremos justificar contente centro assim. E queremos hífen BG claro assim. OK. E isso cria uma luz centrada. área principal colorida que preenche o espaço vertical restante. É isso que
+
+que é isso aí. OK. Desculpe. Isso é O que essas turmas fazem aqui. E então estas são as classes do Bootstrap.
+
+Centralize o conteúdo da raiz aninhada horizontalmente dentro de um responsivo recipiente. E agora vamos criar o nosso raízes. Então vamos usar as raízes. marque ali. Raízes. Estamos usando React.
+
+DOM roteado aqui. Assim. OK. Eu ainda não domino a arte de... conversar.
+
+enquanto digito ainda, mas estou conseguindo melhorar. OK. Então, e então queremos um elemento raiz. Ei, dessa vez funcionou. Legal. Então, nós
+
+obteve um elemento raiz. Vamos definir seu caminho. Para ir para a página inicial, use a barra invertida (/). OK. E precisamos definir o elemento agora.
+
+dentro da raiz. Então fazemos isso mas na verdade, este é um fechamento automático marcação. Portanto, não queremos que isso seja fechado. rota até lá. Fecha assim.
+
+Fechamento automático. Ou podemos simplesmente... Configure isso dessa forma e vá para o elemento.
+
+equivale a chaves abertas. OK. E aqui dentro queremos uma tag H1. Elemento H1. OK. H1
+
+um, este será o link para a página inicial. Informações da página inicial. Certo, assim mesmo. E queremos incluir um monte de classes do Bootstrap. E Na verdade, estou farto de escrever isso.
+
+Então, vou simplesmente copiá-los para lá. Certo, assim mesmo. Então, nós temos o primeiro item em exibição. FW texto preto maiúsculas espaçamento mais apertado. E isso resulta em um grande marca estilizada rumando para o pouso página. E é isso que aqueles
+
+As classes do Bootstrap servem para... OK, excelente. Acho que estamos bem nesse aspecto.
+
+Vamos apenas organizar um pouco o código. pedaço. Ok, ótimo. Então, isso é para o página inicial. E agora queremos criar um raiz para o índice Tyobi raiz. OK. E isso se fecha sozinho.
+
+Livre-se disso. OK. Raiz. E então caminho igual a e este será o caminho para nosso componente tyobi. Então é tipo tyobi aquele tipo de barra invertida elemento b equivale a chaves abertas.
+
+O elemento é igual a chaves abertas. e então incluir Etiqueta de fechamento automático tyobi assim. Excelente. Como você pode ver, nós importamos. o tyobi componente aqui em cima e é isso que somos mapeando este caminho para este componente aqui que nós criamos lá. OK. E então queremos um para
+
+Amazon 2. Mas o problema é que ainda não temos Um componente da Amazon. Então, na verdade, eu sou um. Ops. Na verdade, vou apenas fazer um duplicado daquilo ali.
+
+Por enquanto é assim. Então, apenas dois links. lá. E vamos mudar isso para o O link da Amazon estará disponível um pouco mais tarde. Chegamos então à parte do código da Amazon.
+
+Assim, o diretório raiz atua como um contêiner que alterna entre diferentes componentes com base no caminho da URL atual. Então, aqui está um grande desenho estilizado. Título da marca para a página inicial. E então este código aqui mapeia o URL específica do Tyobi para o Tyobi componente ali. Hum, e nós não...
+
+Eu realmente preciso disso. Eu só vou Remova isso. Mas isso será para a rota da Amazon, assim que a tivermos criado. o código para isso. OK. E então nós
+
+Preciso exportar o componente do aplicativo. Eu sou Vou incluir um ponto e vírgula aqui. E podemos digitar exportar padrão aplicativo assim. OK. E estamos bem.
+
+Acho que ficou bom. E nós poderíamos Execute isso agora mesmo e teste nosso código. Deveríamos tentar isso? Acho que sim. Certo, vamos abrir outro terminal.
+
+janela aqui. Então, eu só vou Navegue até o servidor e depois acesse as informações do CD. limite de dados assim. E nós vamos executar o nó de código do lado do servidor servidor server.js assim.
+
+OK, ótimo. Está conectado ao MongoDB e Está tudo pronto. Vamos executar o cliente. agora. Então, para atender nosso cliente, criamos nosso cliente usando vit. Então, para administrar nosso
+
+cliente, nosso componente React, digitamos npm e rundev assim. E nós podemos ver O que acontece aqui agora. E agora? O que acontece se acessarmos o localhost? Certo, aqui está. Ok, então isso não
+
+Obviamente, não parecem tão bons assim, mas nós vamos Resolvemos isso um pouco mais tarde. Então, Essencialmente, este é o nosso front-end. Vamos ver o que acontece. quando clicamos no índice Tyobi. Ótimo. Lá
+
+Nós vamos. Ok, então ele foi recuperado. esses valores do banco de dados. Hum, e isso não parece nada bom. EU Acho que estamos esquecendo alguns itens. apenas
+
+algumas classes do Bootstrap que deveriam ser lá. Hum, Mas é basicamente isso que está funcionando. O que isso faz é chamar de nosso lado do servidor ponto de extremidade para recuperar o índice Tyobi. Então, quando clicamos no índice Tyobi, é recuperando esses dados do nosso MongoDB A tabela do banco de dados está aqui neste momento. hum, ou melhor, nossa coleção.
+
+nossa coleção de rankings de idiomas de nosso banco de dados MongoDB. Então nós temos A funcionalidade básica já está implementada. Então Uma coisa que eu gostaria de testar rapidamente é iniciando o processo de raspagem e o Uma maneira de fazer isso é excluindo o banco de dados. Então vamos simplesmente apagar isso. banco de dados por meio de bússola.
+
+Então vou descartar os dados, descartar o banco de dados, e vamos tentar executar Isso de novo. Então, desta vez, quando clicarmos O índice Tyobi deveria, na verdade, ativar. nossa funcionalidade de raspagem e salve isso Dados para o banco de dados. Salvem o Toby Indexar dados ao banco de dados. Então isto Deve demorar um pouco mais. Então nós
+
+você deverá ver um indicador de carregamento. tempo. Carregando, certo? OK. OK, Então, acho que algo deu errado ali.
+
+Certo, então temos alguns... bugs para...
+
+Lidar com. Então, o que estava acontecendo? Temos aqui o pedido para extrair dados do TIB. O índice estava, na verdade, expirando o tempo limite. É vezes sai após 30 segundos, mas o fundo O processamento continuará em andamento.
+
+o plano de fundo. E eu vou te mostrar como. Você pode, na verdade, fazer pull requests para...
+
+Evomi um para ver se os resultados estão prontos. Até E se a primeira tentativa de raspagem... Se falhar, o tempo limite é atingido após 30 segundos.
+
+Acredito que esteja tentando em segundo plano por cerca de 10 minutos. Se a raspagem não for Acredito que tenha sido bem-sucedido após 10 minutos. Então, um erro é lançado. Então eu mostrarei você sabe como realmente fazer um pull request para um determinado endpoint Evomi de forma que talvez em tentativas subsequentes de raspagem O sucesso será alcançado e o Os dados relevantes do índice Tyobi podem então ser enviado de volta para o nosso servidor e então De volta ao nosso cliente. Mas primeiro vamos Tente extrair o índice Tyobi novamente.
+
+porque isso acontece um dia depois de A última vez que tentei extrair dados do Tyobi. Então talvez tenhamos sido retirados do Cantinho do castigo. Acho que fomos colocados no Cantinho do castigo porque estávamos raspando tentando extrair o índice Toby em resumo sucessão. Então seus mecanismos de segurança detectados que somos basicamente um robô. Então, os deles Os mecanismos de segurança provavelmente já existem.
+
+O endereço IP relevante foi bloqueado. OK. Mas vamos lá Tente novamente. Vamos ver se conseguimos agora que Já demos um certo prazo para isso. entre raspagens. Vamos ver se temos
+
+Obtivemos sucesso ao extrair dados do índice Toby. Então eu sou Vou tentar tudo isso de novo. O primeiro coisa que queremos fazer para forçar o Para que a raspagem ocorra, vamos simplesmente excluir o banco de dados de informações. Então vamos fazer isso. dados. Vamos descartar o banco de dados. OK. E
+
+Vamos deixar isso bem claro. Primeiramente, vamos inserir o CD no o servidor Informações sobre o chip de dados e vamos executá-lo.
+
+Ok, ambiente injetado, isso é bom. Conectado ao MongoDB. Excelente. servidor em execução na porta 3000. Vamos criar um novo Aqui está a janela do terminal e vamos usar o comando `cd` para entrar no diretório.
+
+o cliente diretório raiz. Cliente dados de informação Exibir, certo? E estamos na raiz. diretório de todo o código do cliente. E Vamos executar nosso cliente. Então, execute npm oops
+
+rundev. OK. E lá se foi. Brilhante. Então, está ouvindo em localhost 5173. Vou apenas iniciar isso.
+
+Bem, vou simplesmente executá-lo. Cromo. Vamos executar isso e vamos ver se conseguimos fazer com que ele raspe o código. o índice Tybee. Então, para fazer isso, nós apenas Basta selecionar esta opção de menu aqui, Toby.
+
+índice, e precisamos resolver essa questão do carregamento. indicador. e isso nos permitiu passar imediatamente. Então, nós conseguimos Extrair o índice TY sem muitos problemas de forma alguma. Hum, mas eu vou apenas mostrar você tem várias maneiras de se locomover mecanismos de segurança relevantes, se você fizer Você será bloqueado. Então, uma coisa que você pode fazer é
+
+incluir dentro do objeto de cabeçalho aqui. Então, aqui na Tyobi Services, apenas Cole isso aqui. Então você tem seus cabeçalhos adicionais. aqui como referenciador. Então, basicamente, é isso.
+
+imita que você é apenas mais um típico usuário da internet usando seu navegador para uh Consulte sites. Então, aqui está um exemplo. Você poderia ter pesquisado no Google e digitado isso. Tyobi e isso te levou ao Tobi Índice Tyobi. Portanto, o referenciador reflete isso e diz https www.google.com
+
+aqui. Então você está imitando alguém, simplesmente Basicamente, navegar na internet. E você pode Veja aqui o agente do usuário. Então, este é o navegador. relacionado metadados aqui.
+
+Assim, você poderia incluir esses adicionais. cabeçalhos quando você estiver postando no evomi. Então você você conseguiu a carga útil do PO e você tem seus cabeçalhos aqui e você pode incluir esses cabeçalhos adicionais dentro este objeto de cabeçalhos ou você pode realmente incluir outro objeto chamado adição adicional cabeçalhos como esse e depois adicionais cabeçalhos que você incluiria adicionais cabeçalhos ali. Então seria algo como esse. E então você faria isso. Então você pegaria.
+
+que lá e você criaria seus cabeçalhos adicionais. assim. E então você poderia incluir esses cabeçalhos adicionais dentro do seu pedido à Evomi. E quando tenta extrair dados do alvo relevante. site, Bem, os mecanismos de segurança verão tudo.
+
+essas configurações de cabeçalho adicionais e Espero que isso os engane, fazendo-os pensar que você não é um processo automatizado, Que você não é um robô. O mais fácil A solução, claro, é simplesmente dar um pouco de tempo entre raspagens se você estiver usando o API de raspagem para fazer isso. Mas eu vou te mostrar na próxima seção, quando fizermos a extração de dados Amazon. Vou usar o núcleo Plano residencial para eliminar a Amazon. Isso é É recomendável usar esse plano ao fazer scraping.
+
+em grande escala para que você não seja detectado por os vários mecanismos de segurança para bloquear para que não consigam identificá-lo como um robô, um processo automatizado que tenta extrair dados eles a página web relevante. Mas nós temos De fato, obtive sucesso lá. Então vamos Vamos dar uma olhada no MongoDB e atualizar o código. dados ou recarregar. OK. E agora, se nos conectarmos aqui, nós temos
+
+obteve dados informativos e os extraiu. Índice Tyobi e capturou esses dados em nosso banco de dados. Então, da próxima vez, Então, se voltarmos ao nosso navegador, nosso Aqui está o navegador Chrome e vamos para o Primeiro a página inicial e depois vamos para Tyobi. índice, ele será capaz de recuperar esses dados são super rápidos. Você verá porque Os dados agora estão armazenados em cache em nosso sistema.
+
+Banco de dados MongoDB. Então vamos pressionar o Opção de menu índice Toby. E isso é Super rápido. OK. Então eu só quero Confira mais uma coisa aqui.
+
+Ok, ótimo. Então, está capturando tudo. URL aqui para o caminho da imagem. Há uma coisa que você Talvez seja bom verificar. Notei também que em certas situações era simplesmente capturando o caminho relativo aqui no banco de dados. Então talvez você queira verificar.
+
+que esta parte da URL existe e se Não existe, talvez você queira adicionar. que em um Porque você precisa do caminho absoluto. Certo, mas isso parece bom. Ótimo. Então Temos o índice Tyobi. Então nós temos
+
+Extraímos com sucesso o índice Tyobi. Há apenas algumas questões que eu não... como. Não gosto da disposição daqui. E
+
+quando nós Clique no índice Tyobi, acabamos de ver o texto de carregamento exibido e Na verdade, codificamos um spinner que é Vai ficar muito melhor. Então é muito Melhor para a experiência do usuário. Então nós vamos basta corrigir alguns problemas estéticos agora e então podemos passar para a extração de dados da Amazon. OK. Então vamos para tyobi.jsx
+
+aqui. E a primeira coisa que notei foi que eu... Introduziu alguns erros bobos aqui.
+
+porque o nome da classe deve estar em camel caso. Portanto, precisamos mudar em todos os lugares. que vemos o nome da classe. Precisamos Inclua-o aqui desta forma. Nome da turma.
+
+Vou fazer isso manualmente porque Não são muitos os casos. Então, apenas Altere o nome da classe onde você vê a classe. Nome com o N em minúsculas. Apenas Altere para camelCase, assim: E isso deve resolver a maioria dos nossos problemas. questões estéticas.
+
+OK, ótimo.
+
+Ok, excelente. E acho que já abordamos toda a aula. Instâncias de nomes, referências, se preferir. Sim, parece bom. E então nós conseguimos um algumas questões a serem resolvidas aqui com um app.jsx. E vamos simplesmente analisar esses assuntos.
+
+rapidamente. Primeiramente, vamos começar pelo mais fácil. Ganhe aqui. Então, RUA expandido que deveria ser RA assim. Guarde isso. Temos um pequeno
+
+Aqui temos um problema em que precisamos incluir dados. dashbs Use o comando `dash target` para resolver este problema. Igual. E então isto deveria ser haxixe barra de navegação navegar assim porque nós somos direcionamento este elemento div aqui para expandir e recolher o menu relevante. Tem ID navbar nav e precisamos incluir esta linha de código aqui para que trabalhar.
+
+Hash significa obviamente que estamos visando um Identificação e aqui está a identificação. Ok, excelente. Então isso está resolvido. E eu vou exclua o banco de dados de informações para que ele força uma raspagem. E esperamos poder ver que o nosso Os indicadores deixaram de apenas exibir que carrega texto ponto ponto ponto para um spinner real, já que nós o fizemos alterações relevantes.
+
+OK. Então vamos executar o servidor. Então, nó servidor whoops servidor server.js. Digitar. Ótimo. Isso parece ótimo. Vamos
+
+Acesse o cliente aqui e execute `npm rundev`. Agora estamos executando o cliente e vamos lá. carregar o aplicativo em nossos navegadores. OK. OK. Então, vamos ver se conseguimos extrair os dados.
+
+o índice ty. Então vamos pressionar o relevante Opção de menu aqui. E pronto. Nós Conseguimos fazer nosso girador funcionar agora. E isso Funcionou perfeitamente e o layout Ficou muito melhor.
+
+Então, resolvemos a maioria dos problemas. lá e agora estamos com sucesso extraindo o índice Tyobi e todos os nossos Os problemas estéticos já foram resolvidos. Parece muito bom. Ótimo. Então, quando você está fazendo scraping, Acho que a melhor solução é... (pausa)
+
+Dê um tempo e então você estará Você será retirado do cantinho do castigo e estará capaz de, uh, continuar raspando com sucesso. Se você extrair dados do índice Tyobi em rápida sucessão, Você sem dúvida será bloqueado eventualmente, e você certamente será bloqueado em Amazon. O site da Amazon é muito mais difícil de usar. para raspar. Então, provavelmente você precisará de Use o núcleo residencial se você for o plano residencial principal. Núcleo de Evomi
+
+plano residencial se você for para Extrair dados da Amazon em grande escala. O índice Tyobi é um pouco mais fácil de raspar. Eu tive um muito mais sucesso e consegui Para isso, basta usar o plano da API de raspagem. OK. Excelente.
+
+Hum, mas há algumas coisas que você pode fazer. Como mencionei anteriormente, você pode incluir cabeçalhos adicionais como este aqui dentro do seu enviar solicitação para o evomi relevante ponto final. Você pode incluir esses cabeçalhos adicionais para tentar imitar alguém navegando na internet e se escondendo O fato de que isso é realmente um bot automatizado tentando extrair um dos suas páginas da web. Então você poderá ser capaz de burlar seus mecanismos de segurança e enganá-los usando esses recursos adicionais. cabeçalhos que normalmente são incluídos quando um usuário está apenas navegando na internet usando o navegador deles. Então você poderia
+
+incluir um método como este dentro do seu código porque Iomi ainda pode estar se virando como pode. o plano de fundo, mesmo que o tempo limite seja atingido Na sua primeira tentativa. Assim como aqui, Aqui está a primeira tentativa. Você é Verificando o conteúdo, ok? E o O conteúdo está vazio. Se o se tiver sido
+
+Se você tiver sucesso na primeira tentativa, será Basta retornar os resultados aqui. Mas se você não teve sucesso em Na sua primeira tentativa, o que você pode fazer é Você pode obter um ID de tarefa porque isso O scraper ainda estará em execução no e entrarei em contato com você. Se for não retorna o conteúdo, ele irá Retorne este ID de tarefa. Assim você pode definir o Atribua o ID da tarefa a este valor aqui. E Então você pode fazer uma solicitação para isso.
+
+endpoint e você pode extrair essa solicitação. E aqui estou eu, atendendo a essa solicitação para 2. minutos, 120.000 milissegundos neste Código aqui. e você pode ter sucesso com subsequente solicitações para o endpoint Evomi relevante aqui. Então, tenha em mente que se o
+
+Se a primeira tentativa falhar, você pode realmente puxe a solicitação para Evomi para este ponto final aqui. Você terá um ID de tarefa. será devolvido a você se não houver conteúdo. Entregue após a primeira solicitação. E Você pode usar este endpoint e esta tarefa.
+
+EU IA Fazer vários pedidos. E você pode Veja, estou fazendo pedidos a cada dois segundos aqui. E depois de 2 minutos, se falhasse, Então você lança uma exceção. Ou então, se um dos Se as solicitações forem bem-sucedidas, você retorna o conteúdo para o código de chamada dessa forma. Essa é mais uma opção que você pode usar.
+
+Se você não conseguir fazer isso com sucesso extrair, por exemplo, o índice Tyobi e Não é algo crítico para a missão naquele momento. A melhor maneira de fazer isso é simplesmente baixar ferramentas, volte mais tarde e tente Novamente, que é essencialmente o que temos... feito. E então eu consegui
+
+Extraímos o índice TY com sucesso novamente. Basicamente, fui demitido. o cantinho do castigo e eles me deixaram entrar Extrair dados da página web. Mas se você for raspando-o em rápida sucessão, você pode De fato, você será bloqueado. OK. Então, espero que
+
+Tudo faz sentido. Então, eu só vou Remova este código daqui. Nós não somos vou pull requests porque estamos tendo Sucesso na extração do índice Toby. E não é algo essencial para a missão. Pudermos Podem simplesmente esperar e depois raspar o chão.
+
+Índice Tyobi um pouco mais tarde e Capturar esses dados em nosso banco de dados. Armazene esses dados em cache em nosso banco de dados. porque agora, com chamadas subsequentes para obter o índice Tyobi, vai conseguir isso dados do nosso banco de dados e não irá Extrair o índice Tyobi a cada vez. Mas Se você tivesse que extrair dados de uma página da web com Para cada solicitação, eu recomendaria usar o plano residencial principal para isso porque cada solicitação será feita por um IPs de proxy diferentes que enganarão seus mecanismos de segurança e, portanto, você Não será bloqueado. você terá mais sucesso dessa forma. Então, se você estiver fazendo scraping
+
+Em grande escala, por exemplo, um site como Amazon, recomendo fortemente que você use o plano residencial central, o núcleo de Evomi Plano residencial. Certo, mas nós já tivemos Sucesso aqui. Está ficando muito bom. Então, agora, se carregarmos nossos dados, recarregarmos os dados, Você pode ver que os dados informativos estão lá. e temos rankings de idiomas nossa coleção que é povoada por os dados relevantes do índice Tyobi. Então em
+
+Em solicitações subsequentes, ele simplesmente captura. os dados relevantes de nossa coleção aqui. Mas se você quisesse algo novo se quiser, faça o scraping do índice Tyobi. dados recém-coletados do Tyobi índice, nosso código está escrito dessa forma que o que você pode fazer é simplesmente exclua o banco de dados de informações e ele criará esse banco de dados de informações e a coleção relevante e, em seguida, extrair os dados. o índice Toby. E quando o relevante
+
+Os dados são retornados e nosso código os salva. dados para o ranking de idiomas coleção. E depois, pedidos subsequentes pois esses dados não resultarão em raspagem ocorrendo, raspagem da web ocorrendo. Ele simplesmente coletará esses dados. do cache aqui, que é nosso Classificações de idiomas da coleção aqui dentro os dados relevantes do banco de dados MongoDB.
+
+Ótimo. Neste momento, vamos raspar. Amazon. Agora, isso sim é um verdadeiro desafio. mas temos todas as ferramentas necessárias para Conclua essa tarefa. Então, vamos lá.
+
+iniciado. Então, isso vai ser apenas... Criando o código. Então, nós vamos.
+
+percorra o código linha por linha e construa Aprimoramos nossa funcionalidade de extração de dados. Então, Primeiramente, queremos estar no servidor. Código aqui. Queremos acessar o arquivo server.js.
+
+JS é o ponto de entrada para o nosso nó. aplicativo e queremos criar um novo Rota aqui. Então vamos simplesmente duplicar isso. e depois alterar as partes que precisamos. mudar. Então vamos criar o
+
+caminho relativo até o endpoint da Amazon aqui. Então vamos fazer isso. E podemos colocar o ponto final na API livros, porque estamos coletando dados de livros nesta parte do curso. Livro da Amazon dados. Então, produtos da Amazon que acontecem ser livros, livros didáticos, quaisquer que sejam os livros Você quer. Bem, qualquer coisa que o usuário pesquise
+
+para. Então, livros sobre APIs e depois a Amazon. assim. E esse será o nosso o caminho até o nosso ponto final. Vou começar com o código do lado do servidor e então nós vamos Avançar para o código do lado do cliente. Então o
+
+A próxima parte do código que queremos construir é o modelo para os dados do nosso livro. Então nós somos Vou chamar esse modelo de "sem prêmios" por... adivinhação. Vamos chamá-lo de livro.
+
+Então, vamos clicar com o botão direito nos modelos aqui e ir... novo arquivo e book.js.
+
+OK. Vamos pressionar a tecla Enter. Então nós Tenho o arquivo book.js aqui. Então, nossa primeira linha de O código tem a ver com o Mongoose. constante
+
+mongo
+
+mongus certo é igual a exigir. Então estamos importando mongo mongus aqui ponto e vírgula. Então importa o Biblioteca Mongoose para criar e gerenciar o esquema do banco de dados. Nós vamos ser Usando o Mongoose para isso. Excelente. Agora vamos criar o de fato
+
+modelo. Então vamos escrever const livro esquema igual a novo esquema de pontos do mongoose. OK. Abra os parênteses redondos e depois abra chaves. Então estamos passando um objeto através do método de esquema.
+
+Então vamos construir nosso objeto, que é Basicamente, nosso modelo. Então, qual é o definição para o nosso modelo. Então vamos Inclua o termo de pesquisa aqui, dois pontos e depois Vamos definir o que queremos que este campo faça. ser. Portanto, o tipo é string.
+
+índice. Então, é um índice porque nós somos vai pesquisar o Mongo, o coleção relevante do MongoDB, os livros coleção para dados de livros com base em critérios de pesquisa que as entradas do usuário. Então, queremos que seja um indexar porque isso obviamente vai acelerar agilizar o processo de busca. Minúsculas. Então, O que estamos fazendo aqui é forçar isso a entrar em Em minúsculas, estamos normalizando o critérios de pesquisa. E então vamos aparar
+
+Ops. Ops. E então vamos aparar qualquer excesso de branco. espaços antes de entrar no banco de dados. Ótimo. Assim, ele armazena os critérios de pesquisa.
+
+indexado por velocidade e normalizado por Pesquisas consistentes. Termo de pesquisa. Então, este é o termo de pesquisa. que o usuário irá inserir na frente e depois, na parte de trás, nós vamos conduzirá uma busca com nosso código. em relação à coleção de livros relevante em nosso banco de dados MongoDB. Certo, vamos lá
+
+passe para o próximo campo, que será título. Então, esse é o título do livro. Então agora os usuários entraram no termo de pesquisa. O termo de pesquisa recebe propagado até o servidor. O O servidor realiza uma busca e encontra o relevante.
+
+conteúdo dentro da coleção ou do Os dados são extraídos dependendo se o Os dados já existem no MongoDB. coleta ou os dados são extraídos e Este é o título do livro. Isso é a definição do campo título. Então É uma corda. Então, define uma string.
+
+Campo para armazenar o título do livro. É só isso. OK. E então nós querem autores e poderia haver mais mais de um autor. Então, isto é um array.
+
+de cordas. Então abrimos os colchetes. e coloque um barbante dentro dele assim para Defina um array de strings para armazenar um ou vários nomes de autores. OK. Ops.
+
+OK. Então, vamos para URL dois pontos string com S maiúsculo e armazena o link direto para o produto do livro página na Amazon. OK. Vírgula. E então vamos falar de preços.
+
+aqui. E agora, este é o nosso primeiro número. Então, definimos isso como um número que é um Tipo de dados JavaScript. E armazena o preço numérico do livro para facilitar Classificação e filtragem. Ótimo. E então
+
+com a classificação. Então é isto que o Amazon Os usuários estão avaliando este livro com a seguinte classificação: Então é atribui uma classificação. Assim, as lojas armazenam a média. Avaliação do cliente. Por exemplo, 4,5 de cinco. E isso é armazenado como um número.
+
+valor. Então, número certo, ok, e então avaliações e este é um número, então é apenas um número que armazena o número total de avaliações de clientes como um número inteiro e de claro que você pode construir quaisquer dados Está disponível para você na Amazon, mas isto Esses são os campos que eu escolhi. para esta aplicação específica, mas você pode, claro, construir o que quiser campos que estão disponíveis na Amazon a página relevante da Amazon que estamos vou extrair e depois a imagem e Este é o caminho da imagem. Então será Seja a imagem do livro na Amazon. Então assim como nós nos esforçamos para encontrar o Logotipo que representa o idioma relevante.
+
+Quando extraímos o índice Tyobi, isto é o caminho relativo da imagem no Internet Onde podemos encontrar a imagem? representando o livro relevante e este será uma sequência de caracteres. Então, incluímos a string Com o S maiúsculo, armazena-se o URL. fio apontando para a capa do livro imagem. E então vamos criar.
+
+Ops. Criado em deve ser em camel caso. E vamos abrir as chaves. O tipo é uma data. E queremos a opção padrão.
+
+OK. Então, criado em Registra automaticamente a data e a hora. quando o registro do livro foi salvo pela primeira vez. Então É por isso que estamos optando pela opção padrão. Aqui está o valor da data e hora atual. E então
+
+Só temos mais uma coisa para fazer com este arquivo e isso exporta o módulo para que possa ser usado dentro de nós o controlador relevante. Exportar está correto, é igual ao modelo de ponto do Mongoose. suportes redondos abertos e este modelo é Vai se chamar livro assim. e vamos incluir o livro esquema. Então estamos passando o esquema do livro.
+
+definição de cada documento que será residem em nossa coleção de livros. Nós somos Definimos isso no livro. objeto de esquema aqui esta variável aqui ou esta constelação aqui e estamos passando isso ao método do modelo que nos foi fornecido através de mongus. Então, compila o esquema em um modelo chamado livro e o exporta para uso em seu controladores. É isso que esta linha de O código faz isso aqui. E agora estamos prontos para
+
+passaremos então à criação do serviço para o nosso Funcionalidade da Amazon. Então, nós temos o Serviço Tyobi aqui. Você pode ver aqui No serviço TY, estamos pausando o Dados extraídos. E aqui está a raspagem. código ou estamos recuperando o relevante dados de um banco de dados. Mas isto é para fazer
+
+ao iniciar o raspador de fato e pausando os dados extraídos relevantes aqui. E nós faremos o mesmo. agora é coisa da Amazon. Assim, nos serviços, Vamos criar um novo arquivo e vamos chamá-lo. esta Amazon serviço como este.js.
+
+Certo? OK. E vamos criar o código. pelo serviço. Serviço da Amazon.
+
+Primeiramente, vamos importar o Axios. const Axios é igual a exigir assim Axios. Portanto, isso importa o Axios para lidar com o solicitações HTTP complexas necessárias para raspagem. OK. E então queremos importar Até logo.
+
+E já instalamos o Axios. e Cheerio, então não precisamos fazer isso. agora. Requerido. Então, estamos importando Cheerio.
+
+para que possamos pausar a coleta de dados e extrair os dados relevantes para um poço matriz construída. OK. Então, importa cheerio para navegar e Extrair dados do HTML denso da Amazon estrutura. Isso facilita muito para nós. Para ler os dados relevantes e armazená-los em uma matriz.
+
+Então vamos começar com o código de pausa. Então, constante por Amazon HTML igual a HTML. HTML, o HTML puro extraído da web relevante da Amazon A página será passada para este parâmetro. aqui. E então usaremos Cheerio para Extraia os dados relevantes e insira-os.
+
+em uma matriz estruturada. E termo de pesquisa É aquilo que o usuário procura. Então nós somos raspagem com base nesse termo de pesquisa que será usado como termo de pesquisa dentro de Amazon. Vai pesquisar na Amazon por livro relevante. Então, o termo de pesquisa Poderia ser programação em Python e nós...
+
+Crie, por exemplo, uma página web cheia de código Python. talvez 16 produtos e nós vamos Extrair dados da Amazon com base nesse termo de pesquisa. um a página web relevante e o HTML para a página que contém talvez 16 livros 16 produtos da Amazon que são livros relacionado ao Python e isso trará de volta a esse HTML e agora vamos para extrair os dados relevantes

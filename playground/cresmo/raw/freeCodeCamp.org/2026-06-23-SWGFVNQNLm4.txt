@@ -1,0 +1,573 @@
+---
+video_title: "Notion Workers – Full Tutorial 2026"
+video_id: SWGFVNQNLm4
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=SWGFVNQNLm4
+video_date: 2026-06-23T11:30:11+00:00
+video_description: |
+  Notion Workers are one of the biggest updates Notion has ever shipped, but most people can't use them because they think you need to know how to code. You don't. Not anymore.
+  
+  Workers solve three problems that Notion users have run into forever: getting external data into Notion, pushing data out to other tools, and running complex business logic that Notion's built-in automations just can't handle. Until now, the answer was always some no-code tool patching the gap. Workers change that entirely — and with AI doing the heavy lifting on the code side, you genuinely don't need an engineering background to ship these.
+  
+  Course developed by @mfreihaendig 
+  
+  Prefer a blog post? Here you go: https://matthiasfrank.de/en/notion-workers-beginners-guide/
+  
+  Need a Notion Consultant? https://matthiasfrank.de/en/notion-consulting/
+  Workbook plus a ton of free resources: https://matthiasfrank.de/en/special/
+  
+  ⭐️ Contents ⭐️
+  - 0:00:00 Intro
+  - 0:01:41 Why Notion Workers Matter
+  - 0:04:15 Why No-Code Tools Are Dead
+  - 0:06:27 Setting Up Your Machine and Notion
+  - 0:14:20 Webhook Notion Workers
+  - 0:38:02 Sync Notion Workers
+  - 0:55:04 Agent Tool Notion Workers
+  - 1:17:50 Outro
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+Descubra o potencial revolucionário dos colaboradores da Notion. Este curso oferece um guia completo sobre como aproveitar esse recurso poderoso para automatizar tarefas, conectar dados externos e criar lógica de negócios complexa em seu ambiente de trabalho. Ao final, você terá implantado com sucesso seus próprios workers personalizados, independentemente de sua experiência em programação. O Notion lançou recentemente uma de suas maiores atualizações de todos os tempos, mas pouquíssimas pessoas conseguem usá-la. Estou falando de trabalhadores.
+
+Basicamente, os trabalhadores são a peça que faltava no quebra-cabeça do Notion. Elas permitem que você faça praticamente qualquer coisa. Como integrar dados de aplicativos externos ao Notion? Claro. Criar lógica de negócios complexa e codificar qualquer tipo de fluxo de trabalho que você precisar?
+
+Sem problemas. Mas há um problema. Você precisa de código. Agora, em 2026, isso não significa, obviamente, que você não possa usá-los se não for engenheiro. É exatamente para isso que serve este vídeo . Nos próximos minutos,
+
+vamos abordar tudo o que você precisa. Desde a importância dos workers até como configurar o seu Notion para workers, e, claro, a criação do seu primeiro worker. E eu prometo a vocês, mesmo que nunca tenham tocado em uma linha de código e também não tenham usado IA para criar código, ao final deste vídeo, vocês terão não um, mas três workers prontos para uso. É interativo, certo? Então, também temos um caderno de exercícios para acompanhar, para que você possa seguir e, sim, simplesmente fazer . Como este texto é um pouco
+
+extenso, dividimos o conteúdo em cinco grandes capítulos para facilitar o acompanhamento. Primeiro, por que os trabalhadores são importantes, certo? Uma breve olhada nos bastidores e em onde você poderia utilizá-los em sua empresa . Em segundo lugar, a configuração geral que você precisa fazer tanto no Notion quanto em sua máquina para estar pronto para criar seus primeiros workers. E então todos os trabalhadores saem. Então, vamos começar pelo
+
+capítulo um, o porquê. Em relação ao motivo, basicamente está dando superpoderes ao Notion. Certo? Se você quisesse resumir em uma frase. E com superpoderes, quero dizer que, embora o Notion seja uma ferramenta incrível, certo? Para
+
+criar sistemas personalizados para sua equipe, existem basicamente três casos de uso em que você encontrará limitações no Notion. A primeira coisa que você precisa fazer é importar dados externos para o Notion. Digamos que você tenha um CRM externo que eu precise integrar. Ou o Google Agenda, e suas reuniões devem aparecer no Notion. Ou é um caso de uso pessoal, certo? Você
+
+quer obter os dados do seu Anel Oura, certo? Ou algo como qualquer tipo de métrica de saúde. Independentemente do que aconteça, se você tiver dados fora do Notion, você precisa importá-los para lá. Se você tiver sorte, o Notion tem um conector pré-configurado, mas mesmo que tenha, como por exemplo para o Jira, não é? Pode ser que não faça o que você precisa. Então, essa é a primeira
+
+área onde você encontra limitações. A área dois é a oposta, certo? Então, como aqui, o terceiro, está meio que enviando dados. Certo? Talvez você tenha suas informações no Notion, mas elas precisam estar em outro lugar. Certo? Você deseja
+
+publicar uma página no WordPress. Você quer sincronizar algo com sua ferramenta de newsletter, certo? Ou você quer enviar atualizações para o Slack. Novamente, essa é, muitas vezes, a ideia, certo? O Notion é esse ponto central do seu fluxo de trabalho, e ainda existem várias ferramentas disponíveis, sendo necessário que haja fluxo de entrada e saída de dados.
+
+E o terceiro aspecto está dentro do Notion, dentro do Notion como plataforma central, e isso significa executar fluxos de trabalho complexos, onde a lógica de negócios da configuração padrão do Notion simplesmente não existe. Claro, temos automações integradas, botões e ações simples, como etapas lógicas. Mas quando se trata de algo complexo, por exemplo, "Sempre que eu criar um projeto desse tipo, verifique nossos processos, descubra a lista atual de tarefas para esse projeto, crie-as e atribua-as à pessoa responsável", certo? Esse tipo de lógica de negócios complexa não pode ser facilmente implementada no Notion. E até o lançamento do Workers, a solução era: precisamos de um sistema externo. Precisamos de ferramentas externas,
+
+geralmente sem código, para suprir essa lacuna. É por isso que precisamos do Workers, certo? Ele atende a essa mesma necessidade, importando e exportando dados do Notion e criando lógica de negócios complexa. Para ser sincero, quando o Notion Workers foi lançado em versão alfa inicial, meses atrás, eu o vi e pensei: " Isso é muito legal, mas ainda não sei onde usá-lo". E o problema era aquele velho clichê, não é? Se você tem um martelo,
+
+tudo parece um prego. Então, eu estava olhando para isso e pensei: "Bem, ok, todas essas três áreas, certo? Onde os Workers são ótimos, eu tenho ferramentas no-code para fazer isso, certo? Por que eu preciso de um Worker?" E é verdade, né? O diagrama de Venn mostra que o Worker pode fazer
+
+algo, o Notion, uma espécie de ferramenta no-code, também pode fazer algo, certo? Há uma sobreposição quase perfeita até certo ponto. Mas a verdadeira questão é: por que se preocupar com ferramentas no-code se você pode criar um Worker para elas? Para ser honesto, acho que as ferramentas no-code estão mortas. Não há mais motivo para elas, com algumas exceções sobre as quais acabei de escrever um post no LinkedIn, um boletim informativo e um post no blog ( link abaixo). Mas, resumindo
+
+, por que temos ferramentas no-code? É para que possamos entregar soluções muito rapidamente . É muito mais barato do que desenvolver software tradicional. E você tem essa maneira de... não-engenheiros para fazer isso.
+
+Todas essas três afirmações não são mais verdadeiras. Adicione você à IA, certo? Com ​​os fluxos de trabalho de IA certos, é perfeitamente possível criar código mais rápido do que você conseguiria manualmente clicando e usando o make ou um fluxo de trabalho N8N. Isso também se deve ao fato de ser muito mais barato. E se você usar o Notion para hospedar, poderá executar lógicas muito mais complexas, o que seria muito caro com uma solução hospedada com make ou N8N.
+
+E, claro, há a questão da acessibilidade. É para isso que serve este tutorial , certo? Eu prometo que, mesmo que você não tenha ideia de programação, ao final , você terá seus primeiros workers implantados. Isso mostra que você não precisa mais aprender uma ferramenta no-code . Você simplesmente precisa aprender os princípios de construção desses sistemas e poderá fazê-lo com a ajuda da IA.
+
+Para começar, precisamos basicamente de duas coisas: o aplicativo Claude ou... CodeX instalado. Vou colocar os links para ambos abaixo. Você também pode usar o
+
+Claude Code no terminal, claro, mas se você é iniciante, recomendo fortemente que comece com um deles, pois tornam o processo mais fácil e acessível. Então, baixe-o. Segundo passo: abra o Finder, na sua pasta "Geral", e crie uma nova pasta de nível superior chamada "Claude" ou "CodeX", dependendo da ferramenta que você usar. É isso por enquanto. É lá que vou criar os arquivos necessários para o desenvolvimento , mas na pasta de nível superior, com o aplicativo baixado, vamos instalar as ferramentas de desenvolvedor do Notion. O
+
+link também está na descrição e na postagem complementar. Basicamente, há um comando específico. que você precisa executar para instalar a CLI do Notion. A CLI do Notion serve para você autorizar e conectar-se ao Notion. Porque quando estamos criando workers, certo? Fazemos isso na
+
+interface do Notion, por meio de código. E através do nosso código, certo? Precisamos dizer ao Notion: "Ei, nós temos permissão para fazer isso". Então, é basicamente isso que estamos preparando aqui, certo? Instalando essas ferramentas de desenvolvedor.
+
+Você pode fazer isso de duas maneiras, e eu vou mostrar em um segundo. Você pode abrir o terminal na sua máquina, certo? E simplesmente digitar este comando, certo? Ou copiar esse comando e pressionar Enter. Ou você pode simplesmente pedir ao Claude ou ao Codex no aplicativo, e é isso que faremos em um instante, para instalar isso para você, certo?
+
+Super fácil. Então, sim, só para avisar rapidamente. Agora, certifique-se de instalar isso e vamos dar uma olhada. Após publicar a versão inicial deste tutorial, recebi alguns comentários de que havíamos esquecido algumas etapas de configuração auxiliares. Então, aqui vai uma breve explicação. Se esta for a
+
+primeira vez que você usa o CodeWork, talvez precise realizar duas etapas adicionais de configuração. Elas dependem um pouco do sistema operacional que você está usando. Eu sempre uso macOS, então peço desculpas se a parte sobre Windows for um pouco curta. Basicamente, no macOS, você provavelmente vai querer adicionar as ferramentas de linha de comando. E, novamente, você pode simplesmente pedir ao Claude Code ou ao Codex ( falaremos sobre isso em breve) para fazer isso para você. Mas você também vê o
+
+comando aqui na tela. Já no Windows, o processo é um pouco mais complexo. Muitas das ferramentas do Notion, principalmente a linha de comando que vamos instalar em breve, estão disponíveis apenas para macOS e Linux até o lançamento deste vídeo. Portanto, você não pode executá-las diretamente no Windows. Felizmente, existe uma solução alternativa: o WSL. Basicamente, ele cria um
+
+pequeno ambiente Linux dentro do seu sistema. Windows, onde você pode executar todas essas coisas. Novamente, certo? Você pode simplesmente pedir à sua ferramenta de IA preferida e dizer: "Ei, precisamos disso também para executá-la". Provavelmente ela descobrirá isso sozinha, para ser honesto, mas ainda é melhor se você puder dar um pouco de orientação. E
+
+também precisamos do Node.js, que é uma maneira de sua máquina executar JavaScript, o que é muito relevante porque tudo o que usaremos é construído sobre ele. Novamente, tudo acontece nos bastidores, e você pode simplesmente pedir à sua ferramenta de IA preferida para instalá-lo. Certo? Voltaremos ao tutorial normal em um instante. E lá, você verá
+
+como interagir com o Claude Code ou o Codex para pedir que façam essas coisas. Lembre-se, antes de começarmos, peça no macOS para obter as ferramentas de linha de comando e o Node.js. E se você estiver no Windows, peça para obter o WSL e o Node.js para que tudo funcione corretamente. Funciona sem problemas.
+
+Começando com o Claude Code, se você tiver o aplicativo Claude instalado e aberto, você pode, nas configurações, alternar entre o chat e o código. Você deve ir direto para o código. Esta é uma das minhas várias assinaturas do Mac que tenho rodando em paralelo. E aqui, só para falar rapidamente sobre a interface. Basicamente, aqui é onde você vai conversar com a ferramenta. Aqui,
+
+você pode adicionar uma pasta. Então, certifique-se de clicar no sinal de mais para adicionar outra pasta e escolha esta pasta de nível superior que você acabou de criar na etapa anterior. Deste lado, você pode ver qual modelo está usando. Em geral, você deve usar o Opus 2.7.
+
+Dependendo da rapidez com que você consome créditos , talvez queira reduzir de "Extra Alto" para "Alto", mas vamos supor que você não esteja trabalhando muito. Então, eu prefiro manter em "Extra Alto", se possível. Não ative o modo rápido. Ele consome créditos muito mais rápido. Então, você quer evitar isso.
+
+E aqui no canto inferior esquerdo, à direita , tem outra coisa importante. É como um modo automático. Certo, então, quando se trata do Claude Code, já que ele tem controle sobre sua máquina e pode instalar coisas, a questão é: você quer que ele faça isso automaticamente ou que peça permissões? Sinceramente, nove em cada dez vezes, eu executo o meu com a opção de ignorar permissões, o que basicamente significa que ele não vai pedir nenhuma permissão. O motivo é que eu ainda estou aprendendo conceitos de programação, certo? Então, o Claude vai saber muito
+
+melhor. Assim, as chances de eu encontrar algum problema são bem baixas. Grande parte do trabalho está no planejamento e em garantir que explicamos ao Claude exatamente o que queremos que ele faça. No modo automático, ele não vai fazer tanta coisa. Ele vai pedir permissões com mais frequência. Então, é
+
+uma boa ideia. Para começar, peça permissão, tente entender o que normalmente se espera de você. Depois, se você pensar: "Ei, eu nunca conseguiria revisar isso mesmo." Eu só fico clicando em "Aceitar, aceitar, aceitar." Então, você pode prosseguir. Por enquanto,
+
+vamos permanecer no modo automático, que é uma espécie de meio-termo. Dito isso, lembre-se, esta é uma IA. Ela roda na sua máquina, certo? Então, você deve dar a ela acesso às suas pastas. Você deve estar ciente de que ela pode fazer alterações, certo? Portanto, devemos sempre
+
+ser muito precisos com o que fazemos. E, mais importante, sempre executá-la nos modelos menores, porque são eles que têm a maior chance de interpretar corretamente o que pedimos. Certo. Então, com tudo isso esclarecido, vamos começar pedindo para instalar o Notion CLI. Este é o meu prompt simples para isso, certo? Você pode instalar o Notion
+
+CLI nesta máquina? Aqui está a documentação. E este é o padrão geral que você seguirá para todas essas coisas: você irá até o local onde a documentação está, simplesmente fornecerá as informações e ela as interpretará. E, novamente, todos esses links são no post complementar do blog, logo abaixo. E então, vou simplesmente pressionar Enter.
+
+Agora, enquanto isso está rodando aqui, vamos dar uma olhada rápida em como isso ficaria no Codex. O Codex é basicamente o complemento ou equivalente ao Claude da OpenAI. E no momento da gravação deste vídeo, as duas interfaces podem parecer um pouco diferentes, mas os princípios ainda são válidos, certo? Você precisa procurar a área onde pode inserir isso. No Claude, no momento da gravação, você tem três opções diferentes: chat, coworking e code, e precisa acessar o code. Com o Codex, é apenas uma
+
+interface, certo? Então, não há diferenciação entre elas. Basta acessar a interface padrão. Eu também selecionei minha pasta, certo? O princípio é o mesmo. Aqui se chama Codex.
+
+Permissões, certo? O mesmo aqui. Você pode conceder acesso total, permissões padrão ou revisão automática. E então o modelo, certo? Que em Neste caso, certo? Uh 5.5. Novamente, eu gosto de
+
+mudar para algo como "alto" só para termos um pouco mais de confiança no que ele faz. Fora isso, o princípio é o mesmo , certo? Vamos simplesmente executar nosso comando pedindo para instalar isso. Na verdade, eu já instalei o CLI na minha máquina. Então, isso é o que eu recebo de volta do Claude, certo? Ele
+
+me diz: "Bem, tudo está pronto." Uh, uma boa prática ao instalar um novo aplicativo, certo? É perguntar: "Ei, o que eu posso fazer, cara?" Quais são os tipos de comandos que poderíamos executar? Só para ter uma ideia .
+
+Hum, e então ele lista essas coisas, certo? E todos esses comandos são comandos que você digitaria no seu terminal, certo? Então, em um Mac, você abriria o terminal, certo? E digitaria, por exemplo, `ntn doctor`, certo? Esse foi um dos comandos que vimos aqui, certo? Para verificar a integridade da
+
+configuração de autenticação e assim por diante. Hum, você sempre pode fazer isso, certo? E a maneira mais fácil é simplesmente pedir para o Claude te guiar, porque algumas coisas ele pode fazer automaticamente, certo? Então, este foi outro exemplo, certo? Poderíamos simplesmente ter digitado o comando `curl` na nossa máquina. O Notion
+
+adicionará o Claude, que conseguiu fazer isso para nós. As coisas em que precisamos fazer algo nós mesmos são aquelas em que precisamos executar alguma ação na nossa máquina. Então, `ntn login` seria um exemplo. Por exemplo, certo? Então, novamente, você pode simplesmente perguntar ao Claude ou a um colega de trabalho: "Você pode me ajudar a usar o comando 'ntn login' e autorizar esta máquina?". E ele
+
+te dirá: "Ei, aqui está o que você deve fazer". Às vezes, ele dirá: "Ei, vou executar isso para você". Às vezes, ele dirá : "Ei, abra seu terminal e cole isso aqui". Você pode basicamente seguir os passos. O que acontecerá é que você digitará "ntn login", certo? Você
+
+provavelmente irá ao seu terminal, digitará "ntn login", pressionará Enter e uma janela pop-up será aberta, certo? Onde dirá: "Ei, por favor, selecione o espaço de trabalho do Notion onde você deseja autorizar". Então, se você estiver em vários espaços de trabalho do Notion, você terá que escolher aquele onde deseja instalar o Workers. E então você simplesmente confirma e autoriza. Há mais um passo que você precisa... Para
+
+começar a criar seus Workers, você precisa ativá-los no Notion. Para isso, acesse a interface do Notion, vá em Configurações e, em Recursos, procure por Workers. Para usar um Worker, você precisa ter pelo menos um plano Business ou Enterprise. Além disso, precisa ser o proprietário do espaço de trabalho para habilitá-lo. Caso contrário, você precisará pedir ao proprietário do espaço de trabalho para fazer isso. Depois que o
+
+proprietário habilitar, você poderá escolher se todos os membros do espaço de trabalho podem fazer isso, apenas os administradores ou apenas determinados grupos. Essa é a etapa inicial. Depois disso, você já pode começar a criar. Cloud ou Codex instalados, pastas configuradas, Notion CLI instalado, login no Notion CLI e Workers ativados. Essa é toda a preparação. Agora, vamos
+
+começar a criar. No momento desta gravação, o Notion oferece três opções diferentes. Tipos de Workers que precisamos conhecer. E mesmo que surjam mais tipos, estes provavelmente serão os arquétipos mais importantes . Sempre atualizaremos as postagens do blog com as informações mais recentes sobre eles.
+
+Basicamente, teremos Workers orientados a eventos, certo? O que significa: "Ei, algo acontece, vamos acionar este fluxo." Depois, temos um Worker de sincronização de dados agendado. Este é um Worker que é executado regularmente e busca informações de terceiros regularmente. Certo?
+
+Isso resolve claramente o problema de: "Ei, precisamos obter informações de uma ferramenta externa para o Notion." Este é um tipo muito especial de Worker porque, como veremos mais adiante, ele cria e gerencia seu próprio banco de dados. Portanto, é muito singular porque cria um banco de dados imutável no Notion, certo? Onde algumas entidades e propriedades não podem ser alteradas, certo? Assim, você pode sincronizar dados com segurança e não precisa se preocupar se alguém os modificar.
+
+E por último, mas não menos importante, E, por último, mas não menos importante, temos trabalhadores que ampliam as capacidades da sua IA. Neles, você pode literalmente dar uma ferramenta a um agente personalizado e dizer: "Ei, agente personalizado, agora você pode interagir com a minha nova página de configuração, certo?" Ou agora você pode publicar no WordPress." E tudo depende do agente que os invoca. Vamos analisar cada um deles com mais detalhes, certo?
+
+Mas eu quero explicar, mais ou menos, "Ei, esses são os três tipos de trabalhadores. Vamos construir um exemplo para cada um, e então você entenderá exatamente como usá-los, em que situação e quais são as peculiaridades de cada um." Porque, claro, existem algumas sobreposições, certo? Então, por exemplo, o de sincronização é executado em um agendamento, mas você também pode adaptar o seu webhook para ser executado em um agendamento, se você quiser agendamento, mas não quiser um worker que gerencie seu próprio banco de dados. Mas, sabe, não precisa descobrir isso agora.
+
+Só quero dar uma ideia: "Ei, este é o mapa, certo?" "Do que vamos analisar neste curso." E agora vamos começar com o primeiro, certo? Porque é o mais simples de entender. Algo acontece no Notion e queremos automatizar alguma lógica de negócios interessante.
+
+Antes de continuarmos com a criação do worker específico, uma breve reflexão sobre a configuração geral, certo? Este é um tutorial para iniciantes sobre workers. Então, não vou me aprofundar no fluxo de trabalho de desenvolvimento exato, certo? Para o nosso desenvolvimento habilitado por IA, certo? Que estamos usando para criar nossas ferramentas internas ou scripts e softwares de cliente mais complexos , basicamente. Se você estiver
+
+interessado em ver isso, deixe um comentário abaixo. Aqui, queremos nos concentrar na regra 80/20, sabe, apenas criar sua primeira coisa. Mas ter um pouco de estrutura, certo? Ajudará mais tarde . Então, sabemos que já configuramos nossas extensões Claude ou Code em nossa pasta, certo?
+
+Uma das primeiras coisas com as quais precisamos nos acostumar, certo? Para quem não é desenvolvedor, vamos começar criando isso. É apenas uma estrutura de pastas com arquivos na sua máquina local. Claro, você pode fazer backup no GitHub, certo? Mas, por enquanto, fica aqui na sua máquina local.
+
+E isso significa que queremos, dentro disso, criar pastas para cada projeto que estamos desenvolvendo, certo? Então, no nosso caso, vamos criar três workers. Cada worker teria uma pasta de nível superior , por exemplo, tarefas do projeto, o assistente do Hacker News que vamos construir em um instante e o enriquecedor da Wiki. E dentro de cada projeto, eu gosto de começar com uma seleção de quatro arquivos, certo? Então, isso é basicamente parte do meu prompt de configuração. E você pode ver uma
+
+versão simplificada disso aqui embaixo, certo? Você pode tirar um print daqui, pode conferir o link na descrição, certo? Para a postagem do blog ou no modelo de configuração, lá está a versão completa. Mas, basicamente, queremos dizer ao Claude ou Codex, certo? Para sempre configurar isso e garantir que, ei, queremos um arquivo README, que explique o que e por que está acontecendo aqui. Queremos aprendizados.
+
+Então, conforme o processo avança e a IA descobre: ​​"Nossa, a API do Notion funciona de forma diferente", ela anota, para que não precise descobrir tudo de novo na próxima vez. E o changelog, que registra o que mudou. Nada disso será preenchido por nós, certo? Tudo será mantido pela IA, que constrói o contexto automaticamente para que melhore na próxima vez. Porque os mesmos princípios que você usa em outras áreas da IA ​​ainda se aplicam aqui.
+
+Criar contexto, garantir que, para cada sessão de trabalho, você gerencie a janela de contexto, certo? E não a sobrecarregue. E, na próxima sessão, você ainda terá essas informações externalizadas, certo? Assim, você não precisa se explicar toda vez . Então, essa é a estrutura que usaremos. Basicamente, depois de
+
+criar seu projeto principal, você pode pedir ao Claude ou ao Codex para configurar a estrutura dessa forma. E então, com tudo isso resolvido, estamos prontos para começar a construir. Agora, se você acompanhou até aqui e pensou: " Ótimo, mas não tenho tempo para criar workers, ou preciso que toda a minha equipe seja capaz de criá-los", então vamos conversar. Como você deve saber, minha missão é construir a consultoria número um em Notion na Europa, e isso significa também ajudar você com fluxos de IA dentro e ao redor do Notion, e, claro, com workers. Se você busca uma transformação completa da sua configuração atual, onde entramos e ajudamos a levar seu Notion, as automações e a lógica de negócios para o próximo nível, ou se prefere um workshop específico, temos algo para você.
+
+Basta conferir o link na descrição ou me enviar um e-mail, e podemos acertar os detalhes. Mas, por enquanto, vamos dar uma olhada em... Como construir esse primeiro worker? E aqui está
+
+a lógica de negócios interessante. Nosso primeiro worker será acionado por um webhook. Isso significa que algo acontece no Notion e, então, ele entra em ação. O exemplo específico que escolheremos é o de um projeto, um projeto de um tipo específico. Por exemplo, uma nova campanha de marketing.
+
+Sempre que isso acontecer, queremos que aconteça em segundo plano: "Ei, nova campanha de marketing, vamos criar essas tarefas padrão". Isso tem sido um problema com o Notion desde o seu lançamento . Precisamos criar essas entradas de tarefas padrão e existem várias soluções alternativas, mas nenhuma delas é realmente escalável. Sempre dissemos aos clientes: " A melhor solução é esta, com um banco de dados de processos dedicado". Vamos dar uma olhada nisso em um instante.
+
+E então, basicamente, você tem uma automação sem código que faz isso. Agora, finalmente podemos usar... Um trabalhador, certo? Então, tudo
+
+dentro do Notion. E o fluxo é simples, certo? Um novo projeto é criado para um tipo específico. Vamos pesquisar qual é o nosso Procedimento Operacional Padrão (POP) para essa situação e, em seguida, vamos criar um conjunto de tarefas específicas para isso, certo? E podemos aprimorar isso, por exemplo, definindo datas de vencimento específicas. Certo?
+
+Podemos aprimorar ainda mais atribuindo a pessoa certa a essas tarefas. Certo? O mundo é seu depois que você tiver esse fluxo básico pronto. Antes de nos aprofundarmos, certo? Quais são alguns outros exemplos de onde você poderia usar esses trabalhadores de webhook? Um deles poderia
+
+ser para tarefas recorrentes. Certo? Poderia ser algo como: "Ei, sempre que eu marcar uma tarefa recorrente como concluída, certo?" Certifique-se de criar o próximo." Ele permite que você faça uma lógica muito mais avançada do que nossas soluções alternativas anteriores, que dependiam de automações personalizadas do Notion. Mas, sim.
+
+Este é ótimo. Então, vamos dar uma olhada primeiro em como é a configuração no Notion, o que precisamos lá, porque temos um pouco de preparação, e depois vamos ver como criar o worker. Além disso, uma observação rápida: como este é um tutorial interativo, certo? Temos uma espécie de guia com todos esses elementos, cujo link está abaixo. Certo? Então, certifique-se
+
+de ir lá. Você precisa se inscrever em nossa newsletter. Você pode cancelar a inscrição imediatamente se não quiser nossas dicas, mas então você receberá uma lista com todos os nossos modelos e recursos, incluindo este aqui especificamente, para que você possa acompanhar e não precise criar o preset sozinho. Mas, sim. Então, vamos dar uma olhada no Notion.
+
+Configuração bem simples no Notion, certo? Isso não é para... Bem, algumas ideias que eu tenho. Se você quiser ver, certo?
+
+Temos um tutorial completo sobre como gerenciar seus projetos no Notion, como estruturar seu negócio no Notion e como criar um CRM. Certo? Temos vários tutoriais passo a passo. Para este, vamos nos concentrar apenas na estrutura básica . Basicamente, precisamos do nosso banco de dados de projetos, certo? E esse
+
+banco de dados de projetos deve ter tarefas vinculadas. Certo? Assim, eu posso dizer: "Ei, aqui está meu projeto, certo?" E aqui estão minhas tarefas." Atualmente, não temos tarefas vinculadas a isso.
+
+Idealmente, o que eu gostaria é que, sempre que eu criasse um novo projeto do tipo "nova campanha de marketing", certo? Ou " campanha de marketing", eu quisesse garantir que as tarefas fossem preenchidas automaticamente. Para que essa configuração funcione, eu preciso de um banco de dados de processos dedicado. Certo? Isso é separado das tarefas. Eu
+
+tenho um banco de dados de tarefas global que contém todos os itens de ação. E então eu tenho esse banco de dados de processos, que lista: "Ei, estas são as etapas ideais que precisam ser seguidas." E lá, certo, temos um tipo, o que significa que podemos ter vários processos para, digamos, qualquer número de projetos. E aqui podemos dizer: "Ei, estas são as sete etapas padrão que precisam ser executadas." Você pode pensar nisso como documentação viva. É um dos
+
+grandes benefícios do Notion, porque significa: "Ei, sua documentação sempre influencia a execução." Porque toda vez que criamos um novo projeto, ele analisa essas sete tarefas e as cria. E se atualizarmos nosso documentação, certo? Porque dizemos: "Ei, na verdade, agora devemos ter nove etapas." Para a próxima campanha que for lançada, certo? Essas nove tarefas são
+
+criadas. Assim, você não tem aquele problema comum em documentação, certo? De atualizar a documentação e ninguém a seguir porque, na execução diária, ela não é refletida. Ou o contrário, certo? De ter a lista de tarefas sempre no sistema, mas nunca atualizar a documentação, certo? Ela está inevitavelmente
+
+vinculada. Então, dito isso, certo? Só como uma observação à parte, temos aqui nosso banco de dados de processos. Temos o nome da tarefa, certo? O tipo de projeto. Eu gosto de ordená-los para sabermos em
+
+que ordem devem ser carregados no sistema. E já temos duas propriedades para elementos mais avançados, certo? Temos um deslocamento de data de vencimento. Então, podemos dizer: "Ei, com base na data de início desta campanha , certo? Depois de 3 dias, esta tarefa deve vencer, certo? Depois de 7 dias, esta outra." deve
+
+ser entregue." Então, você pode definir marcos dinâmicos. E nós já temos funções atribuídas a isso, certo? Então, você vai notar que nos projetos teremos funções diferentes em todos os níveis. Atualmente, sou eu quem faz tudo, mas basicamente, podemos fazer algumas coisas legais, como o funcionário entrar e perguntar: "Ok, quem é o gerente de projeto neste aqui?"
+
+É Matthias. Vamos atribuir essa tarefa ao Matthias." Certo? Então, você pode ver que é possível construir sistemas realmente elaborados. Novamente, o mundo é seu, mas essas são as nossas informações básicas, certo? Agora queremos criar um trabalhador
+
+que "Ei, ok. Sempre que tivermos uma nova campanha por aqui, certo? Ou digamos que sempre que definirmos uma campanha como "em andamento", por exemplo, podemos fazer isso agora. Vamos definir um projeto como em andamento. Queremos garantir que ele verifique o tipo de projeto, obtenha essas tarefas e as atribua. Todas
+
+essas etapas de preparação, certo? Servem apenas para garantir que nossa vida seja mais fácil mais tarde. Então, aqui estou eu, protegido pelo Codex, certo? Na verdade, eu já criei minha pasta principal, certo, para esta tarefa específica, certo, criação automática de tarefas. E agora vou perguntar: "Ei, você pode, por favor, configurar os arquivos que eu quero aqui e mantê-los atualizados durante toda a nossa sessão? E depois, quando terminar, por favor,
+
+carregue também as habilidades, certo?" Se você já assistiu a algum dos meus vídeos anteriores, sabe o quão importantes são as habilidades para a IA. Porque as habilidades são basicamente pequenas instruções que ensinam à sua IA algo específico. É, eu sempre gosto de pensar na minha IA como um Pokébot, sabe? E agora posso ensinar-lhe algo novo. E você sempre
+
+quer ensinar a ele o conjunto certo de habilidades para um projeto. Quando se trata de criar workers do Notion, é claro que a questão é: como interagir com eles? E, felizmente, o Notion está criando essas habilidades para nós, então tudo o que precisamos fazer é apontá-lo para o endereço certo. Novamente, o link está na descrição abaixo e ele será configurado automaticamente. Agora, embora as habilidades sejam um conceito que surgiu inicialmente da Anthropic e, portanto, da empresa por trás de Claude, elas funcionam exatamente da mesma maneira no Codex, certo? Lá você também
+
+diria ao Codex: "Ei, por favor, configure isso ." O Codex não terá um Claude em Leaf, certo? Mas instruções gerais, hum, mas o mesmo vale para os outros tipos, certo? Leia-me, aprendizados, registro de alterações. E então, claro, as habilidades do trabalhador. Então, enquanto isso funciona,
+
+já podemos falar sobre a próxima parte, que é explicar o que você está tentando construir em si. Nesse quesito , recomendo fortemente que você adquira um gravador de ditado. É muito melhor conversar com a IA do que ter que digitar tudo isso. Meus dois favoritos são o Monologue, se você usa Mac, ou o Whisper Flow, se não usa. O link para eles está lá embaixo na descrição. Ambas são ferramentas incríveis, muito,
+
+muito legais. Funciona também em dispositivos móveis, certo? E eles vão aprimorar muito suas habilidades de IA. Acabamos de realizar nosso primeiro workshop ao vivo, com um pequeno grupo de pessoas, e foi muito legal ver todo mundo interagindo com a IA. O feedback constante foi: "Ei, agora que eu converso com ela, está muito melhor do que antes." Então, vamos pegar a
+
+série, certo? Entenda que realmente vale a pena. Então, agora que isso está esclarecido, certo? A inteligência artificial estava funcionando em segundo plano. Então, agora vou começar a ditar e dizer: "Ei, é isso que estamos tentando fazer agora. Ei, Claude,
+
+ótimo. Muito obrigado pela configuração. Agora preciso da sua ajuda e quero descrever o que estou tentando construir, e então preciso que você revise isso e faça qualquer pergunta para esclarecer quaisquer dúvidas que você precise antes de começarmos a construir ." Bem, é o seguinte: estamos tentando fazer isso. No Notion, teremos um banco de dados com nossos projetos. E
+
+sempre que houver um projeto de determinado tipo, e esse projeto estiver com o status "em andamento", eu quero que o funcionário consulte um banco de dados de processos que liste uma lista de exemplos de habilidades, ou melhor, de tarefas, e essas tarefas devem então ser criadas para esse projeto específico. Vai ter um pouco de lógica avançada envolvida, certo? Então, as tarefas na lista de processos têm um deslocamento de data de vencimento, então queremos garantir que, "Ei, com base na data de início do projeto, você sabe, mais 3 dias para a data de vencimento, mais 7 dias para a data de vencimento." E nós também temos um papel a desempenhar. E no projeto, temos uma propriedade personalizada do Notion com essa função. Portanto,
+
+queremos garantir que atribuamos as tarefas que criamos no banco de dados de tarefas a essa função. Resumindo, são três bancos de dados, projetos, processos e tarefas. Quando o projeto atingir determinada condição, verifique os processos e crie entradas e tarefas relacionadas a esse projeto. E você vê, se eu tivesse que digitar tudo isso, levaria uma eternidade. E também não tem problema nenhum eu ter que me corrigir ali. A inteligência artificial é
+
+muito, muito inteligente, então não há absolutamente nenhum problema com isso. Agora, antes de enviarmos isso, vou dar uma olhada rápida no Notion. Vou pegar os links para as minhas postagens no Notion e colá-los aqui. Isso vai permitir que Claude os veja . Para que isso funcione, você precisa, obviamente, garantir que seu Claude esteja conectado ao Notion. Idealmente, através
+
+do MCP. Essa é a maneira mais fácil. Então, se você ainda não fez isso, aqui está como você pode configurar. Você precisa acessar as configurações do seu aplicativo Claude. Mostrarei o Codex em instantes.
+
+E então, atualmente, chama-se " personalizar" e depois "conectores". Caso contrário, você pode simplesmente perguntar ao Claude, certo? Ei, onde eu adiciono um MCP? Ele vai mostrar a versão atual, porque às vezes eles reorganizam a interface do usuário . Mas basicamente fica embaixo dos conectores, certo? Você tem o Notion aqui. E então,
+
+se você já o conectou, e se não, certo? Você vai clicar em " mais", depois em "procurar conectores", selecionar "Notion", escolher o espaço de trabalho ao qual deseja se conectar e então verá isso. Bem, eu geralmente deixo a maioria dessas opções ativadas , então elas simplesmente cumprem a função, certo? Principalmente para ferramentas como todas as de leitura. Não quero que o programa me pergunte antes de ler uma página no Notion. Você
+
+também pode alterar isso para sempre confirmar, se quiser. No Codex, você faria isso em configurações, depois em servidores MCP e, em seguida, preencheria os valores aqui. Basicamente, você também poderia perguntar, claro, como sempre, sobre IA, certo? Olá, como faço para configurar o Notion MCP? Mas enquanto eu navegava por aqui, percebi que nem precisamos disso porque, lembre-se, antes já tínhamos feito login no nosso espaço de trabalho do Notion pelo CLI, certo?
+
+Quando digitamos "login NTN". Portanto, a ferramenta já está conectada. Na verdade, não precisamos do MCP. Então, você pode ignorar essa parte. Então, os links do banco de dados, esses nós definitivamente queremos lá. Então, estou
+
+enviando tudo para que eles trabalhem nisso novamente. E o ponto crucial aqui é que pedimos à Switch para nos fazer perguntas. Se você quiser, pode até mesmo colocá-los em modo de planejamento, certo? Então, o Claude tem essa função integrada em que, se você basicamente mudar para o modo de planejamento, há alguns avisos em segundo plano do Anthropic que dizem: "Ei, não faça nada ainda. Apenas descubra a melhor maneira de realizar isso e faça perguntas ao usuário."
+
+É uma ótima ferramenta como ponto de partida e entrada , não é? Então, não há nada de errado em alternar do modo automático para o modo planejado, e fazer isso por um tempo. Bem, pessoalmente, para o nosso fluxo de desenvolvimento adequado, eu tenho um conjunto de habilidades, e principalmente a habilidade de me pressionar , certo? Não fui eu quem enviou, mas sim um cara incrível chamado Pocock, cujo link também está aqui embaixo, o que força a IA a te fazer um monte de perguntas. Ótimo para construções mais complexas. Mas neste caso aqui, é
+
+um processo muito simples e direto. Provavelmente ficaríamos bem mesmo sem a IA nos perguntar nada, simplesmente deixando que ela resolvesse isso de uma vez. Então, é uma boa prática, sempre que você estiver construindo algo, explicar o que está tentando fazer para a IA e, em seguida, ter alguma forma, seja no modo de planejamento, em uma habilidade específica ou, como fizemos aqui, simplesmente digitando e fazendo perguntas para esclarecer dúvidas, para que você saiba exatamente como isso deve funcionar e para garantir que tudo esteja alinhado, certo? Porque as suposições implícitas são o principal motivo pelo qual as soluções de IA falham. Então, aqui, vemos nossas perguntas retornarem. Certo,
+
+como o worker deve ser acionado quando um projeto estiver em andamento? Hum, isso é ótimo, não é? Então, na verdade eu nem cheguei a dizer isso. Então, vamos usar o webhook na mudança de status, certo? Esse é exatamente o objetivo. Lembre-se, existem três tipos
+
+de sistemas. E você pode ver também, certo, que você poderia fazer uma sincronização, mas isso não faz parte do gerenciamento de banco de dados próprio. É estranho, porque estamos escrevendo para algo que já existe. Então, a IA é muito boa nisso. E não queremos uma ferramenta no [nome da ferramenta] porque, nesse caso, precisaríamos executar um agente toda vez que quiséssemos usá-la, e isso consome tokens de agente, certo? Que são todas
+
+muito caras. Então, queremos fazer o webhook. Qual tipo de projeto isso deve acionar? Funciona para todos os tipos. Sim. E então,
+
+na linha de processo, ele pode simplesmente verificar o que estiver lá. Isso significa que o que estamos construindo aqui também funcionará se a equipe adicionar mais 10 tipos e mais 10 processos. Essa é uma das razões pelas quais essas automações são tão poderosas, certo? Você precisa configurar isso uma vez, mas depois todo o resto acontece na interface do usuário, certo? Você pode criar mais três tipos de projeto e mais três processos. E
+
+vai funcionar sem precisar tocar em nada. Tudo bem. Se já existirem tarefas em andamento, não as recrie . Sim. Então, essa é geralmente uma ótima ideia, mas exige que tenhamos algum tipo de lógica para combinar tarefas, certo?
+
+Com base no nome ou no documento de identidade. Assim, podemos ver como queremos que isso aconteça. Desta vez, vamos fazer de forma simples. Vamos dizer: "Ei, se definirmos isso como em andamento, queremos que seja criado sempre, mesmo que crie duplicados." Para a sua produção, certo? Você provavelmente
+
+quer fazer isso. Hum, se você fizer isso para sua equipe e, sabe, tiver algum tipo de ID em suas tarefas, mas aqui, bem, na verdade, vamos fazer assim. Vamos ver qual solução será apresentada. E para criar a tarefa, basta deixar o campo do proprietário vazio. Sim, faz sentido.
+
+Bem, na verdade, aqui sempre atribua isso ao proprietário do projeto ou, como alternativa, à pessoa que criou o projeto, certo? Eu nunca quero ter tarefas vazias ou tarefas não atribuídas no meu sistema. Deve sempre haver alguém responsável. Então, agora, o jogo é o mesmo, certo? Vou esperar um pouco e depois volto.
+
+Construir com IA envolve muito responder perguntas, sabe, momentos de concentração intensa, e depois esperar o momento certo, não é? Normalmente, eu faria uma espécie de ciclo com alguns projetos, garantindo que sempre haja as próximas perguntas prontas quando eu voltar, mas aqui também é tudo muito rápido, não é? Então, vamos ver se encontramos mais alguma coisa enquanto fazemos isso, certo? Isso vai gravar esses detalhes nos documentos, nas páginas que configuramos. É por isso que é tão útil, porque assim que você dá à IA um pouco de estrutura, como neste caso, as decisões, o registro de alterações, certo? Isso vai
+
+facilitar muito as coisas, não é? Para manter o controle disso. E se tivermos que reiniciar a sessão em algum momento, certo? Porque quanto mais fizermos isso, mais o contexto se sobreporá e pior será o desempenho da IA. Não precisamos repassar todas as perguntas. E
+
+por enquanto, nosso contexto ainda deve estar bom, pois não tivemos muita conversa com ele. Mas se você sentir que ficou nesse vai e vem por um tempo até chegar ao tipo de trabalhador que deseja criar, então é melhor encerrar. Faremos um exemplo de conclusão mais tarde, mas por agora, aqui vou dizer sim, por favor, prossiga e comece a construir o trabalhador, e você sabe, se precisar de alguma coisa da minha parte. Certo? E, novamente, para tudo isso, estamos no modo automático, então, na maior parte, ele simplesmente executará, mas alguns comandos ainda precisarão ser aprovados manualmente.
+
+Se mudássemos para ignorar as permissões, o programa simplesmente continuaria rodando até que pensasse: "Ei, preciso de alguma contribuição dos meus colegas ou de algumas ações da interface do usuário." Certo? Por exemplo, se começar a fazer isso e verificar: "Ei, os trabalhadores estão ativos no espaço de trabalho com as configurações que fizeram antes?" E se você ainda não tiver feito isso, aparecerá uma mensagem: "Ei, você poderia, por favor, acessar a interface do usuário e fazer isso?" Porque não consegue executar todas as ações. O mesmo acontece com o registrador de dados NTN.
+
+Então, vou fazer uma pequena pausa aqui e volto quando, você sabe, nos avisar novamente que está pronto para recebermos nossa contribuição. Então, aqui estamos nós novamente. É necessário inserir alguns dados. Precisa verificar, certo? Quer verificar?
+
+Seja para verificar se os webhooks estão realmente ativados, certo? Sempre informaremos no chat o que ele está tentando descobrir. A mensagem diz: "Ei, o modo automático não me permite fazer isso sem a sua aprovação, então você precisa clicar uma vez." Basicamente, o que está acontecendo aqui é o seguinte: vamos clicar em " Sim, implantar". Na documentação do GitHub, com relação aos workers, o Notion ainda tem algumas flags alfa. Por
+
+exemplo, os workers podem não estar habilitados ou o recurso de webhook pode não estar habilitado, mas tudo deste tutorial já deve estar disponível no seu espaço de trabalho a partir de hoje, desde que você esteja pelo menos no plano Business. Então, ele ainda vai testar isso antes de executar o próximo worker. Esta é uma das coisas que podemos configurar com antecedência, certo? Aliás , temos workers aqui. Os webhooks funcionam, etc. Então, não precisamos
+
+repetir esse processo. É para isso que servem os aprendizados, certo? Então, para que ele se lembre disso e não precise se preocupar. Funcionou por um bom tempo, certo? Mais de 8 minutos seguidos, mas agora está praticamente pronto. Ele
+
+me informa que está bloqueado na tarefa número três. Precisa de um token de integração, certo? Então, mesmo que estejamos logados aqui para realizar ações no Notion, para que o worker execute alguma ação, às vezes ainda é necessária uma integração adequada. Ele também nos fornece a URL onde podemos fazer isso, certo? Esta é uma maneira, embora o Notion tenha atualizado recentemente . O Notion agora tem um novo
+
+portal de desenvolvedores, cujo link também está abaixo. Então, você deve acessar o portal, criar um token de API, nomeá-lo adequadamente e conceder acesso a esses recursos. Vamos fazer isso e também mostrarei a melhor maneira de fornecer esse token, porque, claro, você poderia colar seu token de API aqui. É sempre recomendável não fazer isso. Certo?
+
+Não é uma boa prática de segurança expor seus tokens de API aqui no chat. Então, vamos falar sobre algo chamado arquivo ENV. Mesmo que você nunca tenha ouvido falar disso, vou mostrar como funciona e você pode acompanhar, sem problemas. No portal de desenvolvedores do Notion, vá para Conexões e clique em Criar nova conexão. Você pode escolher em qual espaço de trabalho isso deve ser instalado, perfeito. Vamos chamar de "
+
+YouTube workers demo", certo? Vamos criar um token de acesso, criar uma conexão e agora temos aqui, podemos copiar e adicionar. Também podemos alterar as permissões, certo? Se dissermos: "Temos um worker que não precisa fazer alterações", podemos dar a ele apenas permissões de leitura. Ou se ele precisar interagir com comentários, certo? Então, você
+
+vê que há algumas configurações extras, mas para as configurações padrão, Está tudo bem. E você pode clicar em copiar aqui. Para criar seu arquivo ENV, precisamos de mais uma ferramenta de engenharia ou ferramenta relacionada a código. Essa ferramenta serve para editar esses arquivos. Eu recomendo o VS Code.
+
+É uma ótima ferramenta inicial, amplamente utilizada, para desenvolvedores. Se fôssemos escrever código, certo? É aqui que faríamos isso, certo? Quando fiz meu curso básico de desenvolvimento web , alguns anos atrás, era aqui que você criava seus arquivos HTML e CSS. Agora, estamos usando-o basicamente como um navegador de arquivos sofisticado.
+
+Depois de instalá-lo, você abre uma pasta, certo? Então, você vai em Arquivo, Pastas e seleciona a pasta que você criou, certo? Esta é a pasta de criação automática de tarefas no nosso projeto de relógio, e você vê todos os arquivos que ela contém. criado aqui. E entre outros, certo? O arquivo readme,
+
+certo? Hum, que nós dissemos para ele configurar, uh, com ele mesmo. E esta é também, aliás, a maneira mais fácil de verificar, bem, o que é realmente o readme, certo? O que a IA decidiu documentar aqui, certo? Então, aqui, hum, dizemos: "Parte do projeto de demonstração do YouTube workers ao vivo na tela." "Sem segredos ou tokens na
+
+tela." Mas eu disse: "Ei, por favor, quando eu compartilhar minha tela, evite imprimir quaisquer segredos, certo?" " Isso não deveríamos ter lá." Hum, também podemos verificar o que foi aprendido , certo? Então, isso é o que aprendeu, hum, quando fizemos isso, certo? Então, escolher um gatilho de webhook, hum,
+
+obter resultado, certo? Está habilitado. Então, é assim que podemos ver o que acontece e acompanhar um pouco. Hum, agora, para revelar o segredo, vamos clicar em "Criar um novo arquivo" e digitar ".env" . Hum, isso tem tudo a ver com
+
+variáveis ​​de ambiente. É como passamos nosso código, geralmente coisas que não queremos expor em lugar nenhum. E então, vamos simplesmente chamar isso de "notion" e digitar, certo? É apenas um editor de texto. Então, vamos chamar isso de "notion API token equal to" e vou colar meu token. Agora,
+
+neste caso, certo, estou expondo meu token de integração na tela. Isso é uma má ideia. Você não quer fazer isso. Então, antes que este vídeo vá ao ar, vou voltar à integração e rotacionar esta chave para que ela não funcione mais. Mas esta é basicamente a maneira segura, certo, de passar isso para sua IA em vez de simplesmente colar no chat. Feito isso, podemos
+
+voltar ao chat do Claude e dizer: "Ei, agora você tem um token de ambiente." Então, aqui, vou dizer: "Certo, configurei um token para você em um arquivo de ambiente." Ah, também existe um projeto nas tarefas de demonstração, no banco de dados do projeto de demonstração, que tem um tipo definido. Basicamente, você pode usar isso para isto. E todas essas entradas são entradas de demonstração."
+
+E então configure-as. Faça-as funcionar novamente. Agora, você também precisa garantir que seu token de integração possa acessar os bancos de dados, certo? Ele precisa interagir com eles. Para fazer isso, você deve abrir o banco de dados, clicar nos três pontos no canto superior direito, conexões e, em seguida, adicionar conexão.
+
+E aqui, veja, neste caso, certo, para a demonstração do YouTube Workers, certo? Essa é a que eu criei. E adicione isso à página, e ela precisa ter acesso a todas as fontes de dados, certo? Ela deve acessar. Então, se você também tiver uma página de nível superior que contenha todas elas, você também pode dar acesso a ela. E então, com as
+
+permissões em cascata do Notion, certo, todas serão compartilhadas. Então, estamos quase prontos para testar nosso primeiro worker. Claude vai nos perguntar: "Ei, devemos publicar isso?" "Estamos prontos?" Sim, queremos enviar e implantar, o que significa que isso dará ao worker instalado em nosso espaço de trabalho o token de integração para que ele possa fazer o que deve fazer. Uma observação rápida: você também pode confirmar
+
+se o seu worker está no espaço de trabalho acessando as configurações, depois "Workers" e, aqui, onde o ativamos inicialmente, vemos a criação automática de tarefas , certo? Aquela que acabamos de habilitar. Você também pode desativá-la ou excluí-la daqui, certo? Caso se esqueça de como acessá-la pelo Claude, é aqui que você a encontrará. Muito bem, nossa automação está pronta, o que significa que agora precisamos garantir que esteja configurada corretamente, porque, lembre-se, o gatilho é um webhook. Então, precisamos configurar
+
+essa parte do webhook. O Claude explicará o que devemos fazer aqui, certo? Devemos criar uma nova automação em nosso banco de dados e garantir que, quando o gatilho estiver definido como status, certo? Queremos fazer um ping em uma URL e ela nos retorna essa URL em um arquivo de texto, certo? Então, podemos pedir para imprimi-la aqui, ou podemos voltar ao VS Code e inspecionar o arquivo.
+
+O motivo pelo qual geralmente preferem nos fornecer a URL em um arquivo em vez de imprimi- la é que, obviamente, qualquer pessoa com essa URL pode fazer ping no seu worker, certo? Um webhook também pode vir de fora do Notion. Uma maneira de aumentar a segurança é simplesmente adicionar um segredo, certo? Então, podemos pedir ao Claude daqui a pouco, se quisermos: "Ei, você pode garantir que haja também um segredo no cabeçalho para autorização, para que, quando fizermos o ping neste webhook, caso alguém encontre essa URL, não possa continuar acionando tarefas, certo?" E também uma espécie de senha."
+
+Então, essa é geralmente uma boa prática. Eu recomendo que você tente isso por si mesmo, certo? Se chegar a esse ponto e não sugerir proativamente, peça para que ele lhe dê um segredo que você possa colocar em um cabeçalho. Muito importante, falaremos sobre isso em um segundo. Mas neste caso, certo? Vamos rapidamente
+
+ao VS Code, certo? E aqui, vamos procurar o arquivo que ele disse ter criado, da da da da, bem aqui, texto da URL do webhook. Perfeito. Então, aqui está a URL do webhook que precisamos, então vou copiá-la e depois voltarei ao Notion para configurar o gatilho. Então, no Notion, agora para a automação, certo? Vamos clicar
+
+aqui, sabe, gatilho automático. Basicamente, basta seguir o que o Claude nos disse, certo? Mas aqui na automação, dizemos: "Ok, sempre que o status for definido como 'em andamento', queremos acionar "Aliás, se você quiser o tutorial completo sobre como funcionam as automações do Notion, certo? Eu também tenho um guia completo sobre isso aqui embaixo. Mesmo com os workers, ainda vale a pena aprender a usá-los, porque eles são como um passo preparatório, certo? Muitas vezes,
+
+uma automação simples é suficiente. Então, você quer saber: "Ei, quando eu uso um worker?" Quando devo usar isso?" E como você pode ver, muitas vezes você precisará de automações normais para acionar seus workers. Então, envie um webhook e vamos enviar este webhook para a URL.
+
+Agora, o que eu recomendo fortemente, certo?, é configurar um segredo. Tipo, você diria: "Adicionar um cabeçalho personalizado". E então, o que for que for solicitado como chave, certo? Algo como "X header secret" . E aqui, no campo "Valor", é
+
+onde a senha seria inserida. Isso permitiria que você garantisse que " ninguém fora do seu espaço de trabalho possa acionar seu worker, mesmo que descubra isso por acaso". Eu ainda faria isso. É muito improvável, mas como uma boa prática de segurança, é uma boa ideia. Você não precisa enviar mais nada, certo? Isso é suficiente.
+
+Outra coisa a se ter em mente é que, às vezes, quando você trabalha com Claude ou Codex e configura um desses gatilhos de webhook, ele pedirá que você... "Ei, e coloque isso no corpo, certo?" Ou então, envie esses valores." Se isso
+
+acontecer com você, basta informar ao Claude ou ao Codex que, na verdade, com uma automação do Notion, você não pode definir nenhum valor, exceto o cabeçalho, certo? A única coisa que você pode enviar são os elementos do cabeçalho e o conteúdo é predefinido pelo Notion, certo? Portanto, não podemos escrever nada personalizado ali. Então, a maneira mais fácil é simplesmente dizer para ele dar uma olhada no ID ou no payload uma vez, processá-lo e descobrir como usá-lo. Então, sim, neste caso, vamos clicar em "Ativar" e podemos testar . Outra maneira, claro, de enviar
+
+esses webhooks é por meio de ações de botão, certo? Só para você ver. Certo? Então, se você quiser acionar isso manualmente, também pode procurar o botão aqui. Onde está a dica?
+
+Vamos chamar isso de "Criar tarefas". O bom é que isso funcionará independentemente de... Seja a mudança de status que aciona isso ou isso que aciona, é a mesma coisa. Então, aqui dizemos:
+
+"Ok, enviar webhook também, certo?" Mesma ideia. Certo, e salvar. Agora, está tudo configurado. Agora, o que vou fazer é voltar ao Claude antes de clicar ou acionar isso, dizer que tudo está pronto e que ele deve começar a monitorar a primeira execução para vermos se tudo funciona ou se algo precisa ser solucionado. Porque, novamente,
+
+às vezes pode faltar alguma coisa na primeira execução, e monitorá-la garante que qualquer depuração necessária seja feita imediatamente. Então, estou fazendo isso novamente, de forma super simples, apenas perguntando: "Você pode monitorar o worker?" E vemos: "Sim, ele vai monitorar isso pelos próximos 5 minutos." Então, posso voltar aqui agora e usar isso para definir como "em andamento" ou a outra opção, e então voltaremos ao nosso Claude. e ver se detecta. E se algo acontece. E
+
+claro, aqui no Notion também podemos investigar se essas tarefas estão sendo adicionadas. E parece muito bom, não é? Então, aqui temos nossas entradas, certo? Todas estão configuradas. O status está definido. A data de vencimento está definida com base no
+
+deslocamento que criamos. Claro, todas estão atribuídas a mim porque estou preenchendo todas as funções em nosso projeto de demonstração. Mas ainda assim, muito bom. Então, vamos voltar ao projeto de demonstração. Na verdade, vamos criar outro, como uma segunda campanha.
+
+Campanha. Sim. Segundo teste. Vamos fazer isso primeiro, certo? Vamos manter simples. Aqui novamente,
+
+podemos testar o que acontece se não tivermos nada configurado, certo? Vamos testar isso também. Certo, então aqui vou definir como "em andamento". Este não deve receber nenhuma tarefa porque não tem um tipo, certo? E então, terceiro teste. Vamos fazer Isso, e vamos
+
+garantir que temos todas as propriedades necessárias aqui, certo? Tipo, eu quero ver o status. E também quero ver o tipo de projeto. Sim, perfeito. Então, aqui, certo, este não está em andamento, mas este receberá uma nova campanha de marketing.
+
+E aqui temos outro em andamento. Então, se eu investigar este, não devo ver nenhuma tarefa. Sim, perfeito. Zero tarefas. Se eu investigar este, certo, em um instante ele deve receber as tarefas do worker. Vamos ver
+
+se ele executa tudo. E então podemos dar uma olhada na nossa nuvem e ver se ela investigou algo dessas execuções. Certo, as tarefas não apareceram no nosso terceiro teste, o que é ainda melhor porque agora podemos solucionar problemas, certo? Isso pode sempre acontecer, certo? Você pode configurar e, ok, não fazer o que deveria. O que fazemos? Bem,
+
+perguntamos à IA. Agora, neste ponto, certo, nosso contexto está ficando bastante complexo. Ainda vou fazer Por enquanto, isso está aqui, mas em algum momento, você pode decidir: "Ok, vamos documentar tudo e solucionar o problema em outra janela." Mas por agora, vou apenas perguntar...
+
+o monitor em segundo plano acabou de ser executado novamente, certo? Ótimo. Então, vou perguntar novamente aqui, com a citação. Na verdade, tentei fazer mais alguns testes. Criei um projeto com o tipo automático e o defini como "Em andamento", e depois criei outro projeto com o mesmo tipo e o defini como "Em andamento". Ele
+
+não recebeu nenhuma tarefa. Depois disso, cliquei no botão que criei para acionar o mesmo webhook mais duas vezes e também não recebi nenhuma tarefa. Você pode verificar os logs e ver o que pode ter dado errado? E então, sim, identificar se há alguma correção específica que precisamos fazer ou qual é a causa disso. Depois que esse tipo de bug for resolvido e corrigido, poderemos documentá-lo. Tudo aqui no projeto,
+
+então temos uma transição completa para a próxima sessão e encerramos isso por agora. E então, caso contrário, certo, se você quisesse encerrar isso agora ou, sabe, começar uma nova sessão de busca de bugs, você simplesmente perguntaria: "Ei, sabe, na verdade, queremos fazer mais alguns passos, mas o contexto está ficando bastante complexo." Você poderia escrever um documento de transição, adicioná-lo ao projeto e imprimir um guia para eu usar como ponto de partida na nova janela? Sim , vemos que quatro novos programas web terminam com zero. E agora vai ler os registros. E essa é a grande
+
+vantagem, não é? Os funcionários do Notion registram automaticamente o que fazem. Então, para que você possa ver, ok? Onde está o problema? Por enquanto, certo? Você sempre precisa
+
+usar o Claude ou o Codex para acessar isso. Mas, se você quisesse visualizar essas execuções no Notion, também poderia criar um banco de dados para as execuções do worker. E então, como parte da sua configuração, certo? Você sempre podia dizer para o Claude: "Ei, e certifique-se de que, sempre que um processo for executado, ele registre esses detalhes lá." Isso facilita a sua visualização.
+
+Tudo bem. Então, vamos ver o que foi encontrado. Todas as quatro execuções falharam corretamente. Perfeito. Segundo teste, nenhum tipo possui um tipo de projeto. Isso mesmo. O terceiro teste,
+
+uh, não tem data de início. Essa foi a que te surpreendeu. Se tiver um tipo de projeto, mas não uma data de início, será considerado obrigatório. Que bom saber disso, né? É mais ou menos um comportamento em que ainda não sabíamos bem o que fazer. Então agora queremos dizer: "Ok,
+
+sim, queremos ter uma alternativa. Mesmo que não haja uma data, queremos usar como alternativa a data de hoje, porque talvez alguém não tenha preenchido corretamente." Mas é claro, essa é justamente a vantagem de construir isso em código. Em uma ferramenta sem código, você também pode ter toda essa lógica. Mas quanto mais casos extremos você tiver, mais complicado fica. E em algum
+
+momento você pensa: "Ei, pessoal, ok, não conseguimos lidar com todos esses casos extremos. Preciso que vocês insiram os dados corretamente ou vai dar errado." Com código, é claro que você também terá problemas em algum momento, mas é muito mais fácil fazer isso. Por exemplo, você poderia simplesmente dizer: "Ei, ok, nesse caso, por favor, configure isso também." Certo?
+
+Se você souber, por exemplo, com base em outras documentações do seu sistema, que esse tipo de projeto deve sempre durar 8 semanas. E se a pessoa ainda não tiver configurado isso, basta pegar o dia de hoje e pronto, ou então, avisar alguém no sistema, atualizar o status e adicionar uma tarefa para alguém fazer isso, certo? Qualquer tipo de lógica de negócios que você possa codificar aqui no seu worker para garantir que seja executada corretamente. Então, uh, consertei, né? E agora podemos verificar isso novamente para ver se funciona.
+
+Aliás, uma dica rápida: se você rolar para baixo, verá como estamos funcionando atualmente. E veja bem, se eu tiver tudo isso, consigo visualizar meu consumo. Eu também posso simplesmente passar o cursor sobre ele, a ideia é a mesma. Então, eu vejo, tipo, "Ok, no meu plano, eu tenho atualmente cerca de 30 % do meu limite de 5 horas sendo usado porque tenho algumas consultas rodando em paralelo além desta ." E vemos a janela de contexto dessa consulta específica. Atualmente
+
+possui 135.000 tokens. Agora, em teoria, temos de 1 milhão a 2 milhões de janelas de contexto com o Opus. Mas, com base na minha própria experiência e no que vi outras pessoas fazerem, especialmente aquelas que fazem engenharia adequada, 120 a 150 parece ser o ponto ideal para se pensar em transferir o controle, certo? Então, 135 mil, é uma boa opção. Precisamos apenas
+
+criar uma documentação. Agora, não precisamos mais trabalhar duro. Mas, se você chegasse a este ponto agora e dissesse: "Ok, precisamos construir uma nova etapa lógica . Precisamos fazer mais algumas perguntas de um lado para o outro." Isso definitivamente seria um sinal para eu dizer: "Ok, vamos passar para uma nova sessão."
+
+Porque, embora consiga processar mais, certo? Você está diluindo isso, certo? Agora, há toda essa informação que flui por ali . Você está esgotando seus limites muito mais rápido. A qualidade das suas respostas vai diminuir. Portanto, o
+
+melhor é externalizar o que aconteceu até agora e fazer isso. Mas, sim, por agora, tudo está implementado, então podemos voltar e testar. Aqui está o nosso quarto teste, certo? Podemos definir isso como em andamento. Vou investigar por que isso também não tem uma data de início definida. Então, vamos ver se isso
+
+funciona corretamente. Também não possui um conjunto de configurações de proprietário. Não acho que isso deva ser um problema, porque dissemos: "Ei, não há proprietário, recorra à pessoa que o criou." E sim, de fato, está funcionando corretamente. Mas você já entendeu, não é? Por exemplo,
+
+dependendo do seu sistema, pode haver algumas coisas que você precise ter em mente. Por isso é importante testar, iterar e depois trabalhar em conjunto com Claude e os registros para descobrir, ok, onde algo está dando errado? Mas isto é perfeito. Então, vamos voltar ao Claude e dizer algo como: " Ótimo trabalho, por favor, documente tudo, finalize isso e então podemos começar uma nova sessão." Trabalho incrível.
+
+Agora funciona perfeitamente. Então, neste ponto, eu diria que devemos garantir que documentemos tudo minuciosamente neste projeto, para que, na próxima vez que voltarmos a ele, saibamos exatamente qual é o estado atual, quais decisões foram tomadas e, se você quiser expandir o projeto, como podemos fazer isso. Assim que você fizer isso, podemos encerrar esta sessão por aqui. Tudo bem. E então enviaremos isto.
+
+Uma das coisas que ele fica me perguntando é se quer que eu confirme a alteração, porque estou usando Git e GitHub para fazer backup de tudo e controlar as versões. Mas, novamente, isso é algo mais relacionado ao fluxo de trabalho de engenharia adequado, como o fluxo de trabalho de engenharia de codificação Vibe que seguimos internamente. Novamente , se você quiser ver um tutorial mais detalhado, um mais avançado sobre isso, deixe um comentário abaixo. Poderíamos até mesmo realizar um workshop sobre isso em algum momento. Sim, mas... Então, bem, vou
+
+fazer isso logo. E isso significa que nosso primeiro capítulo está concluído. Neste ponto, você já deve ter seu primeiro worker funcionando, certo? Ele é acionado por um webhook e executa alguma ação no seu espaço de trabalho. Você pode codificar qualquer tipo de lógica de negócios complexa nele. E sim, então estamos
+
+prontos para o próximo. Vamos então ao nosso segundo projeto, trabalhadores de sincronização. Para relembrar, um worker de sincronização é aquele que você configura e define: "Ei, em uma determinada frequência, a cada 10 minutos, uma vez por dia, uma vez por semana, acesse esta fonte de dados externa e importe os dados para o Notion." A particularidade deste é que ele cria este tipo de trabalhador, se o chamarmos de trabalhador síncrono, certo? Se o definirmos assim, significa que ele precisa gerenciar seu próprio banco de dados.
+
+Então, em vez de criar um banco de dados como já tínhamos feito, certo, com nossas tarefas e etc., certo? Isso criará um novo . Atualmente não há como dizer: "Ei, eu já tenho isso. Por favor, atualize." Tomara que isso
+
+aconteça no futuro. Por agora, isso criará um novo. Então, talvez você precise migrar outros dados para lá, sabe, reorganizar um pouco as coisas. O mais interessante é que o banco de dados criado por ele é gerenciado pelo worker, o que significa que todas as propriedades gerenciadas por ele não podem ser alteradas no Notion. Você não pode alterar os valores das entradas. Não é possível alterar
+
+os tipos de propriedade, etc. Isso está meio que protegido na interface do usuário. Isso significa que, ao levar em conta essa sincronização unidirecional, você sempre garante que esses dados sejam exatamente iguais aos da fonte de dados externa. E você não corre o risco de pensar: "Ei, sabe, tem algo errado com a configuração." Você pode então, é claro, adicionar suas próprias propriedades a ele. Por exemplo,
+
+eu tenho um banco de dados que sincroniza minha newsletter do ConvertKit e tenho todas as propriedades do worker para os detalhes e análises. E então posso relacioná-lo ao meu conteúdo real e conectar propriedades adicionais, se eu quiser. Veremos em instantes como isso funciona. O importante é saber que isso cria uma sincronização unidirecional com o banco de dados gerenciado. Só para constar, até o momento da gravação deste tutorial, esta é a única maneira de declarar um temporizador dentro do worker, certo? Uma tarefa agendada (cron job).
+
+Basicamente, é quando você diz: "Ei, a cada 15 minutos, a cada 30 minutos, execute isso." Em um ambiente de trabalho normal, certo, um que não gerencia seu próprio banco de dados, você não pode fazer isso. Mas pode haver muitas situações em que você queira isso. Por exemplo, talvez você queira criar um worker para construir uma sincronização bidirecional, certo? Isso não é algo que vamos analisar aqui. Isso é bem mais complexo, mas
+
+você pode dizer algo como: "Quero poder atualizar os dados no Notion e, em seguida, eles devem ser atualizados na fonte externa." Certo? Queremos isso das duas maneiras. Então você não pode usar um worker síncrono agora porque, lembre-se, você não pode alterar valores no seu sistema. A solução alternativa para isso, só para você saber, seria pegar o primeiro tipo, o worker de webhook, e então, no Notion, você pode disparar um webhook de acordo com um agendamento, certo? Então, você pode dizer: "Ei,
+
+a cada 15 minutos, dispare este webhook." Então, dessa forma, você pode basicamente criar uma espécie de tarefa cron, como se fosse uma tarefa cron doméstica, para garantir que seu trabalhador execute essa tarefa. Então, basicamente, se você disser: "Ei, eu quero algo que funcione em um cronograma, mas não quero essa sincronização unidirecional de banco de dados e gerenciamento de dados", vá com a abordagem número um e simplesmente acione um webhook em uma cadência. Mas, para este exemplo, o que vamos construir é um sistema que extrai dados de uma fonte externa. Acho que o Hacker News deve ter uma boa opção. Vamos verificar
+
+em um instante. E basicamente, queremos ter sempre a lista atualizada das principais notícias do Hacker News em nosso sistema. Mas isso poderia ser seu CRM externo, certo? Então, se você gerencia negócios em algo como o HubSpot, por exemplo, você poderia importar os dados. Se você tem um produto e quer importar os dados de uso do seu produto para o Notion, esse seria um ótimo caso de uso. Ou, novamente, praticamente qualquer
+
+fonte de dados externa. Para dados pessoais, muitas pessoas pensam no Spotify ou, por exemplo, nos dados de saúde do Oura Ring. Sempre que você tiver dados externos e quiser torná-los acessíveis, este é o caminho. Então, uma nova janela no código do Claude aqui. Novamente, estamos apenas percorrendo o fluxo agora e estou descrevendo como isso funciona. Então, estou ditando e
+
+explicando o que quero que faça. Esta é uma nova pasta novamente, certo? Worker separado, pasta separada, sincronização de dados. E ainda não tem a estrutura de dados , então vou pedir para criá-la. Muito bem, Claude, pronto para outro projeto. Desta vez, queremos criar
+
+outro worker do Notion, um worker de sincronização. Para configurar isso, primeiro gostaria que você criasse, além do readme, que já está neste projeto, o learnings.md e o changelog, para que possamos acompanhar tudo o que estamos fazendo ao longo deste projeto, certo? Por favor, mantenha-os sempre atualizados. Depois disso, gostaria que você me fizesse perguntas sobre o projeto que estou planejando implementar aqui, certo? Basicamente, o que queremos fazer é
+
+usar o Notion... Opção de sincronização do worker para importar dados de uma fonte externa. Estou pensando em importar do Hacker News.
+
+Acho que eles têm uma API aberta que podemos usar. Poderíamos importar uma vez por dia para criar um banco de dados. Gostaria de atualizar esse banco de dados no Notion. O worker precisará ter seu próprio banco de dados gerenciado, se não me engano. Já configurei uma espécie de página principal onde você pode inserir os dados. Mas sim, é isso que
+
+tenho em mente até agora. Por favor, façam perguntas para esclarecer dúvidas e garantir que saibamos exatamente no que estamos trabalhando . Assim que tudo estiver pronto, podemos partir para a implementação. Você já deve ter acesso e estar logado no Notion via CLI. A conexão já deve estar confirmada, mas você pode verificar se quiser.
+
+Novamente, é como entregar um projeto para alguém da sua equipe. Você apenas fornece o contexto. E se você usar com frequência suficiente, pode encapsular isso em skills, certo? Assim você não precisa se repetir o tempo todo. Então, vou executar o comando e ver o que ele retorna. O
+
+jogo de sempre. Ele voltou com algumas perguntas para nós. Qual feed do Hacker News o worker deve puxar e aproximadamente quantas notícias? Vamos usar a página inicial. 30 parece pouco. Mas vamos
+
+usar apenas as 10 principais. E é aqui que entra a opção "Outro", certo? Às vezes, essas opções são muito curtas e não descrevem exatamente o que você quer. Então, é uma boa ideia usar " Outro" e simplesmente ditar. Neste caso, vamos usar "Página inicial" e apenas as 10 principais, certo?
+
+Como o banco de dados do Notion se comportaria de uma execução diária para a seguinte? Sim, queremos espelhar a lista atual, certo? Então, esta é a questão: seu worker de sincronização pode simplesmente substituir as notícias, certo? Assim, ele mostra apenas as 10 mais recentes. Ou, se você quiser sempre copiá-las, certo? Ele também pode fazer isso
+
+e acumular. Mas aqui queremos substituir. Então, eu só quero ver as 10 notícias mais recentes. Basicamente, quando eu uso o Notion News, Que legal seria isso? De onde deveríamos buscar os dados? Hum,
+
+não sei. Certo, essa é uma pergunta... eu não sei qual é a mais eficiente. Isso vai acontecer com
+
+bastante frequência, né? Às vezes, quando você constrói algo mais complexo, o Claude vai te fazer perguntas de engenharia. E na minha configuração de engenharia adequada, eu tenho uma longa lista, ou melhor, um documento de contexto completo que guia você por todo o processo de decisão. Onde eu deixo bem claro: "Ei, você é o engenheiro sênior." " Eu sou meio que o produto." Certo? Se você olhar
+
+para isso em uma estrutura empresarial tradicional , onde sempre há alguém que descobre: "Ei, é isso que devemos construir e é isso que os usuários estão pedindo." E então há o lado da engenharia, que realmente faz acontecer. A relação aqui, se você, como alguém sem formação em engenharia, trabalha com o Claude ou o Codex, é muito semelhante, certo? Você está assumindo o papel de produto. E às vezes você precisa lembrar ao Claude que: "Ei, quando se trata de perguntas de engenharia, você provavelmente não pode respondê-las." Então
+
+também é importante que você aprimore e treine sua própria percepção e habilidade aqui, para não dar palpites sobre coisas que você não pode, certo? Se você quiser dar palpites, precisa entender o contexto, certo? Você pode abrir uma nova janela e perguntar ao Claude: "Ei, quais são as vantagens e desvantagens entre estas opções?" Para que você possa tomar uma decisão. Ou sobre algo como É isso aí, né? Basicamente, vou me
+
+virar e dizer: "Hum, você é o especialista nisso, certo?" A decisão é sua. Eu realmente não me importo. "Hum, o que você achar mais eficiente." E além do título, da fonte e do link do Hacker News, o link da discussão do Hacker News, o que mais queremos?
+
+Hum, claro, vamos pegar a contagem, o autor. Hum, a data e hora da publicação. Vamos pegar tudo, certo? Vamos pegar tudo. Hum, e eu realmente não tenho ideia de como essa API funciona. Hum,
+
+existe um resumo também? Hum, ou o conteúdo em si? Sem problemas. Hum, sim. Não, mas só curiosidade, né? De como é
+
+. E então vamos enviar. Ops. Não consegui enviar sem clicar no botão. Pronto. Vamos enviar nossas respostas.
+
+Desculpe por aparecerem tão grandes na sua tela. Então, é isso. E novamente, vamos esperar um pouco. Certo? Como você pode ver, isso levou uns 5 minutos para o primeiro. Então, novamente, você pode não precisar
+
+fazer outras coisas no meio do processo, como alternar entre alguns workers. Você está construindo. É uma nova forma de trabalhar, onde você investe muito tempo no planejamento e a execução fica por conta do sistema. Similar ao que fizemos no nosso guia de desenvolvimento. Certo? Se você estiver
+
+curioso sobre como construir espaços de trabalho do Notion com uma abordagem semelhante, priorizando a IA, confira nosso guia de CRM abaixo. Certo. Foi rápido. Depois de responder a essas perguntas, o sistema decidiu que tinha tudo o que precisava e simplesmente construiu isso. Perfeito.
+
+Me perguntou novamente se eu deveria implantar . Sim, quero implantar e executar para ver como fica no espaço de trabalho. E você vê, né? Em 10 minutos, já estava aparecendo. Certo? Basicamente, está trabalhando
+
+nisso há 10 minutos consecutivos. Se verificarmos nossa janela de contexto, onde estamos, hum, ba ba ba ba, certo? 86 mil. Isso mostra que você pode executar esses workers simples uma única vez em uma sessão. Se você precisa de integrações mais complexas, talvez queira fazer algumas rodadas de testes antes de partir para o desenvolvimento propriamente dito. Mas, novamente,
+
+para algo assim, é tão acessível criar esses projetos hoje em dia, mesmo para quem não é engenheiro. É incrível, não é? E isso não são 10 minutos de tempo ativo, certo? São uns 10 minutos de tempo cronometrado e mais alguns minutos aqui e ali para respondermos a perguntas. Certo. Então, está implantado. Agora vamos
+
+ver como ficou no Notion. Certo. E aqui está. Nosso banco de dados com os 10 principais Hacker News do dia. E você vê, né? É isso que eu quis dizer.
+
+Este banco de dados de trabalho está sincronizado. Então, embora eu possa clicar aqui e abri-lo, e claro, criar um modelo, eu também posso digitar o corpo da página, porque ele não está sincronizado. Eu não posso alterar nenhum dos valores, certo? Não posso dizer " isso está errado", certo? Tipo, eu não posso clicar em nada. Eu só posso copiar.
+
+Isso. O mesmo vale para isso. E esse é o poder desses bancos de dados, certo? Você os protege de alterações acidentais no sistema. Posso então prosseguir, certo? Agora posso
+
+adicionar novas propriedades a isso. Então, posso dizer: "Ok, vamos mover isso um pouco." Se, por algum motivo, quiséssemos vincular isso ao nosso próprio banco de dados interno, certo, para obter insights, poderíamos fazer isso. Ou poderíamos adicionar uma propriedade de tags, certo? E então, se não estivéssemos redefinindo isso todos os dias, certo, poderíamos criar tags aqui e, por exemplo, criar um agente do Notion que realmente lê a postagem do blog, certo? E adiciona as tags
+
+a isso para garantir que tenhamos o contexto. Ou poderíamos criar um worker, certo, que, como acompanhamento, pega o conteúdo desta postagem e o insere no corpo da página. Certo, existem muitas extensões para isso, mas essa é a premissa básica de um worker de sincronização. Podemos então Diga-lhe com que frequência deve atualizar, certo? Neste caso, é todos os dias, mas você poderia executar isso, claro, se for uma sincronização de dados que mudam com mais frequência, a cada 15 minutos, ou até com muito mais frequência, e ter tudo aqui no Notion praticamente em tempo real. Vamos para o
+
+terceiro agente. Fornecendo ferramentas de IA. Trata-se de aprimorar e capacitar seus agentes personalizados do Notion. Porque, embora eles sejam ótimos em realizar as tarefas nativas do Notion, existem basicamente duas áreas em que fornecer ferramentas a eles pode ser realmente impactante. Uma delas é expandir suas capacidades. Então, como já
+
+falamos antes, certo, extrair e enviar dados. Se você quiser interagir com um agente enquanto faz isso, certo, é disso que você precisa. Por exemplo, digamos que você tenha um data warehouse em algum lugar da sua empresa com toneladas de informações e queira um agente personalizado do Notion onde as pessoas possam fazer qualquer tipo de consulta de dados, para que não precisem recorrer a um analista de dados e possam se concentrar em... Sabe, limpar
+
+e preparar os dados adequadamente. Bem, você pode fornecer ao seu agente do Notion uma ferramenta que permita acessar seu data warehouse e fazer isso. Ou você pode fornecer uma ferramenta que o ajude automaticamente, por exemplo, a criar um boletim informativo, atualizar uma postagem de blog na web, etc. Certo, todas coisas em que, de outra forma, você teria que primeiro interagir com a IA em seu espaço de trabalho e, em seguida, executar essas ações manualmente. Esse é um dos grandes obstáculos.
+
+O outro grande obstáculo em que as ferramentas para seus agentes do Notion são muito relevantes é a otimização de custos, certo? Porque quando um agente é executado, ele consome tokens. E quanto mais informações ele precisa consumir para fazer algo, mais caro fica. Muitas vezes, porém, partes do que ele faz podem ser terceirizadas para código determinístico. Por exemplo, vamos considerar a deduplicação.
+
+Se você quiser deduplicar seu banco de dados do Notion, você poderia, é claro, dizer: "Ei, agente, consulte isso, verifique nomes semelhantes, etc." Mas então ele precisaria fazer tudo isso, certo? Isso seria extremamente caro. Seria muito mais eficiente dar ao seu agente uma ferramenta, um pequeno código, certo? Que basicamente percorresse o banco de dados e, com base em uma lógica determinística, certo? Determinasse: "Ei, sabe, essas
+
+são pessoas com o mesmo nome, essas são pessoas com o mesmo e-mail, certo?" "Esses são duplicados." E então o agente simplesmente vê os duplicados analisados ​​e pode usar seu raciocínio para dizer: "Ok, como vamos mesclar isso , certo?" E você meio que obtém o melhor dos dois mundos. O código faz o trabalho pesado e o raciocínio do agente faz o trabalho de pensar. Então,
+
+neste caso, vamos fazer um exemplo bem simples, certo? Só para você ter criado sua primeira ferramenta para o worker. Vamos criar um agente personalizado e este agente personalizado poderá buscar a API da Wikipédia, certo? Isso vai facilitar um pouco a obtenção de alguns dados estruturados e, em seguida, preencher nosso banco de dados do Notion. Então, as mesmas ideias de antes, certo? Vamos para a nuvem,
+
+vamos descrever o que queremos construir e então vemos qual é esse elemento único, certo? Com ​​o que precisamos, você sabe, passar isso para um worker no Notion. Você já sabe como funciona para esses prompts, certo? Basicamente, vou dizer: "Ei, eu Deseja configurar uma ferramenta de agente personalizada como um worker. É isso que ele quer fazer." O que eu
+
+acabei de descrever aqui, certo? Aqui está um banco de dados onde esses dados devem ser inseridos. E se você tiver alguma dúvida , por favor, pergunte. Então, uma coisa que você pode ver é que, como estamos trabalhando em uma pasta onde já existem outras pastas com workers, a IA é inteligente, certo? Então, ela vai verificar o que fez antes . Alguns dos aprendizados,
+
+mesmo que estejam restritos a um projeto individual, serão transferidos. E se você criar mais e mais workers, você pode, é claro, começar a abstrair aprendizados, certo? Então, você pode criar um grande banco de aprendizado e, ocasionalmente, pedir ao Claude para revisar os projetos individuais que você criou e descobrir: "Ei, qual conhecimento devemos abstrair para que seja mais fácil quando criarmos novas coisas?" Novamente, para esses projetos simples, isso não importa muito. Mas, digamos, por exemplo, que você integre isso com ferramentas personalizadas da sua empresa. A
+
+API interna da empresa tem algumas peculiaridades, certo? É muito útil não ter que explicar isso toda vez. Então, o que a ferramenta deve fazer quando o agente chama o tópico? A ferramenta busca os dados da Wikipédia, cria um glossário próprio, isso mesmo, e retorna uma confirmação. Exatamente, certo? O agente
+
+também não precisa realizar a etapa de gravação. É aí que queremos otimizar os tokens ao máximo, para que eu possa simplesmente dizer ao agente: "Ei, você pode me buscar detalhes sobre isso?" E ele faça isso da forma mais eficiente possível. Qual endpoint da Wikipédia? Hum, sim, parece bom. Vamos usar um
+
+ID de dados estruturados limpo para o glossário. Vamos seguir as recomendações. E como devemos acessar o banco de dados do glossário? Queremos gravar em um banco de dados existente, certo? Isso é importante.
+
+Basicamente, ele me pergunta: " Este deve ser um banco de dados gerenciado pelo agente?" Tipo um banco de dados síncrono? Não. Não queremos um banco de dados gerenciado pelo agente. Temos um banco de dados existente que queremos usar. Um. É
+
+por isso que é tão importante, certo? Passar por essas questões para que a IA realmente construa o que queremos, em vez de outra coisa. Além disso, como princípio geral, quanto mais complexo for o que você está tentando construir, mais tempo você deve dedicar a esse planejamento. Então, estamos acelerando um pouco aqui, certo? Porque é uma demonstração, um tutorial. Serve para
+
+dar a você um pouco de experiência com seus primeiros colaboradores. Quando construirmos fluxos mais complexos, certo? Para projetos de clientes ou internos, pode levar meia hora, uma hora, duas horas, certo? E para passar por essa sessão de perguntas e respostas e descobrir: "Ei, do que exatamente precisamos?" Quais são as regras? Qual era a primeira versão, talvez o que
+
+eu queria fazer desde o início? "Quais são as coisas e funcionalidades que nós, você sabe , vamos lançar mais tarde?" Então, sim. Vamos deixar isso rodar. Vou ver se há mais alguma pergunta.
+
+Caso contrário, provavelmente vai compilar isso diretamente enquanto esperamos um momento. E, tipo, 7 minutos depois, vemos que está basicamente pronto, certo? Está atualizando a documentação como sempre. E me diz: "Ei, o comando de implantação está bloqueado." Porque é por isso que ainda estamos no modo automático, certo? Não pode fazer
+
+tudo sem a nossa intervenção. Então, vai terminar de escrever isso. E vai me perguntar: "Ei, devo executar isso?" E, novamente, vamos verificar quanto contexto foi usado, certo? Ainda bem abaixo do nosso limite de 120 a 150 mil para esta configuração única, então está perfeito. Uma opção,
+
+claro, certo? É que você sempre pode, se encontrar limites de contexto e problemas de uso, pode diminuir de, você sabe, extra alto para alto ou médio. Mas, em particular, certo? Se você não tem muita experiência com IA guiada, recomendo aumentar a configuração para garantir que você tenha algum tipo de orientação do sistema sobre o que está fazendo. Uns 15 minutos depois, a implantação e tudo mais foram concluídos, com todas as atualizações. E agora estou simplesmente
+
+perguntando: "Ei, você pode me dar um comando que eu possa colar no Notion AI para configurar o agente para isso?" Agora, isso é um truque que às vezes é muito útil. Porque acabamos de dar bastante contexto a esta sessão, certo? Sobre o que estamos tentando construir. E agora, no Notion, eu ainda não tenho um agente personalizado para isso, certo? Muitas
+
+vezes você já pode ter um agente personalizado configurado com comandos e habilidades e que tem tudo o que precisa saber. E você só precisa fornecer uma ferramenta e expandi-lo. Mas, em uma situação como esta, em que você primeiro cria o agente e depois diz: "Uau, ok." Agora preciso de um agente para lidar com isso." Uma das maneiras mais fáceis de fazer isso é basicamente pedir à IA que forneça uma espécie de sugestão, certo? Então, podemos simplesmente copiar o que ela
+
+nos deu aqui. E como ela escreveu as instruções do código, sabe exatamente o que deve explicar. Então, vou copiar isso. Volto para o Notion, onde temos nossa base de pesquisa de demonstração. E vou perguntar à IA do Notion: "Ei, você pode me ajudar a configurar isso ?" Nunca execute isso no modo automático, certo?
+
+Sempre no modo máximo. Hum. E vamos explicar isso. Certo, preciso da sua ajuda para criar um agente personalizado do Notion para mim, para esta demonstração no YouTube. Basicamente, criamos um worker, que é uma ferramenta para um agente acessar a Wikipédia e enriquecer esses tópicos de pesquisa. Também pedi ao Claude,
+
+que acabou de criar esse worker, para nos dar um pouco de contexto, certo? Assim, você saberá exatamente o que construir. Basicamente, eu só quero conversar com esse agente personalizado para fazer isso, certo? Porque queremos apenas... Vamos
+
+demonstrar o que é possível fazer aqui. Nada muito sofisticado. Vou conectar a ferramenta em si, mas se você pudesse criar o agente para mim com todas as instruções, seria incrível. E sim, é só deixar rodando. Porque essa é a maneira mais fácil de configurar isso. Claro, poderíamos acessar a
+
+interface do usuário e fazer isso sozinhos. Aliás, uma observação rápida: permita-me, este é um caso de uso para demonstração. Provavelmente você não criaria isso como um agente personalizado real no seu ambiente, certo? Só para acessar a Wikipédia e extrair os dados . Então, pense em algo maior . Pense em outras
+
+fontes de dados externas que você possa querer usar . Talvez você precise tomar alguma decisão de compra. Talvez você não esteja integrando uma fonte de dados externa ao Notion com uma ferramenta do tipo worker. Você só quer que seu agente possa acessar os dados ou enviá-los para algum lugar. Então, não considere isso como o caso de uso ideal para criar um agente do Notion. Vamos esperar este
+
+terminar e depois voltamos para conectar tudo. Então, nosso O agente está pronto. Aqui estão todos os detalhes. Agora, novamente, certo? Normalmente, isso não seria um agente. Só para constar. Espero que o
+
+Notion mude isso no futuro, mas, no momento, você só pode anexar ferramentas a um agente personalizado, não ao seu agente pessoal. Ou seja, um tipo de interação em que você diz: "Ei, eu só vou abrir isso no chat, certo?" Isso geralmente não deveria ser um agente personalizado. Deveria ser apenas uma habilidade para o seu agente pessoal, para que você não precise pagar por tokens. Mas, há uma exceção agora, que é se você precisar anexar workers, porque eles só estão disponíveis aqui por enquanto. Para
+
+fazer isso, certo? Podemos ir aqui embaixo e clicar em "Adicionar conexão". E a conexão aparecerá aqui embaixo , certo? Como uma ferramenta. Uma pequena peculiaridade aqui. Quando você vai
+
+aqui e tenta procurar workers e não os vê, pode ser porque você não é a pessoa que implantou um worker. No momento, apenas a pessoa que implantou o worker também pode anexá-lo a agentes. Isso significa que você não pode criar ferramentas para sua equipe e depois anexá- las a qualquer agente que desejarem. Eles sempre teriam que compartilhar com você e fazer isso. Ainda não há como adicionar permissões. Esperamos que isso seja implementado
+
+no futuro. Aliás, só um detalhe: não demos um bom nome a isso aqui, mas isso é para o futuro. Vamos conectar. E então, quando conectamos , vemos: "Ok, há um worker e uma ferramenta." Um worker pode conter uma seção inteira de ferramentas, o que é relevante. Por
+
+exemplo, digamos que voltemos ao nosso exemplo de data warehouse e digamos: "Ok, este agente deve ter, digamos, 15 consultas SQL diferentes que ele possa executar em nosso data warehouse." Nesse caso, você não precisaria de 15 workers diferentes. Você cria um worker, e esse worker teria 15 ferramentas diferentes. E então, você também pode decidir pontualmente: "Este agente deve ter acesso a todas essas ferramentas?" ferramentas? Apenas para alguns? E se
+
+atualizarmos esse trabalhador no futuro, certo? Deveria receber novas ferramentas automaticamente ou precisamos optar por elas ? Então, sim. As conexões funcionam basicamente da mesma forma que os MCPs personalizados. Mais uma etapa de configuração, certo? Eu sempre
+
+começo executando meus agentes no Opus 7.6 só para garantir que, se testarmos isso em um Opus 7, porque se o modelo mais inteligente não conseguir lidar com suas instruções e suas ferramentas, então você tem um problema. Aí você precisa voltar à prancheta, mas depois que funcionar, podemos voltar e fazer algumas alterações mais simples. Certo, vamos salvar e testar. Podemos testar sua nova ferramenta com uma consulta na Wikipédia?
+
+Você escolhe o que quiser. E então executamos. E agora, certo, vamos ver como isso funciona e de onde ele decide chamar. Um aspecto interessante do nosso Notion é que precisamos confirmar as chamadas de ferramentas se as executarmos assim. Se elas forem executadas em um agendamento, certo, elas serão executadas sem Confirmação.
+
+Podemos ver também qual ferramenta foi chamada, certo? Então, ela vê, ok, executa isso pela ferramenta, ok, testado no Capybara, ótimo. Vamos ver a entrada do glossário que criamos para isso. Da da da. Vamos ver. Esse é o link que leva a
+
+ele? Não, esse é o link da Wikipédia. Vamos voltar e descobrir onde ele está no Notion. Aqui está, certo? Então, nosso Capybara está lá, certo? Vemos o resumo que
+
+obtive da Wikipédia, a URL, a miniatura, certo, e o último conjunto enriquecido. Então, funcionou perfeitamente, certo? Agora, você pode expandir isso, fazer com que ele faça mais, mas se você acompanhou até aqui, você implantou com sucesso seu terceiro worker. Então, agora você tem um worker que é executado com um webhook, um worker que é executado em um agendamento e um worker que pode ser invocado por um agente. Isso conclui nosso grande tutorial para iniciantes sobre workers do Notion .
+
+Parabéns, certo? Até mesmo Se você nunca escreveu uma linha de código antes, agora você tem três workers prontos para usar no Notion. A partir daqui , o mundo é seu, e o único limite é a sua imaginação. O que você precisa que aconteça quando, digamos, processos de negócios são executados no Notion? O que você gostaria que pudesse ser importado ou exportado do Notion?
+
+Seja o que for, agora você tem as ferramentas para criar. Como sempre, se tiver alguma dúvida , deixe um comentário abaixo. Se precisar da nossa ajuda como consultores de motion graphics, você já sabe onde nos encontrar. Além disso, recomendo muito que você assista a este vídeo. Nele , exploramos como você pode ensinar tarefas complexas à IA, principalmente aquelas em que você ainda não é muito bom. É uma
+
+das coisas mais complicadas de se fazer, mas se você conseguir, não é? Se você puder usar a IA para compensar suas fraquezas, terá um novo superpoder. Então, assista e nos vemos em alguns segundos.

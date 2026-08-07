@@ -1,0 +1,366 @@
+---
+video_title: "Build a Self-Healing CI/CD Pipeline with AI"
+video_id: vj68el9hRvU
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=vj68el9hRvU
+video_date: 2026-06-15T11:47:23+00:00
+video_description: |
+  Stop manually debugging your code and learn how to leverage AI to automatically detect, analyze, and resolve CI/CD pipeline failures. In this course, you will bridge the gap between DevOps and automation by integrating N8N, OpenAI, and GitHub Actions to create a fully autonomous, self-healing workflow.
+  
+  ✏️ Course from @TheTechzeen 
+  LinkedIn: https://www.linkedin.com/in/farzeen-ali-533479204/
+  Website: https://www.thetechzeen.com/
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  ⭐️ Contents ⭐️
+  - 00:00 Introduction to Self-Healing CI/CD Pipelines
+  - 02:00 Recommended Tech Stack Overview
+  - 02:29 Workflow Logic and Architecture
+  - 03:02 Setting Up the Local Environment (Git & GitHub)
+  - 05:09 Building the Node.js and Express Application
+  - 08:17 Creating the Smoke Test Script
+  - 10:22 Implementing the GitHub Actions Pipeline
+  - 19:51 Setting Up the N8N Automation Account
+  - 21:56 Repository Setup and Security Secrets
+  - 27:31 Testing Failure Detection and AI Analysis
+  - 30:48 Fetching Logs and Analyzing Changes
+  - 38:54 Generating AI Fixes with OpenAI
+  - 46:51 Creating a Git Branch and Pushing Fixes
+  - 54:32 Automating Pull Requests
+  - 56:51 Email Notifications for Team Updates
+  - 58:28 Finalizing Production Deployment
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+Pare de depurar seu código manualmente e descubra como aproveitar a IA para detectar, analisar e resolver automaticamente falhas no pipeline de CI/CD. Neste curso, você aprenderá a preencher a lacuna entre DevOps e automação, integrando N, OpenAI e GitHub Actions para criar um fluxo de trabalho totalmente autônomo e com capacidade de autorrecuperação. Olá a todos, aqui é Fzini, fundador da techine. Hoje vou mostrar como construir um pipeline de CI/CD com capacidade de autorrecuperação do zero, usando ações do GitHub (NAN) e IA. Criaremos um sistema que detecta automaticamente as falhas e abre todas as solicitações para aplicar a correção.
+
+Chega de depuração manual. Vamos começar. Antes de partirmos para a implementação, vamos primeiro abordar alguns conceitos fundamentais importantes para que você tenha uma visão clara do que estamos construindo. Pense nisso. São 3h da manhã e sua compilação falha repentinamente.
+
+Normalmente, isso significa que você teria que acordar e passar horas vasculhando registros confusos e complicados apenas para encontrar o erro. Na realidade, muitas dessas falhas são apenas erros de digitação simples ou bugs óbvios. No entanto, cada minuto que seu sistema está inativo custa tempo e dinheiro para a empresa. Esse processo de depuração manual é exatamente o que queremos eliminar. É aí que entra um pipeline de CI/CD com capacidade de autorrecuperação.
+
+Em vez de buscas manuais, a IA detecta o erro no instante em que ele ocorre e realiza uma análise instantânea da causa raiz. Mas não para por aí. O sistema gera um patch e abre uma solicitação de pull request para você. Isso mantém você, o desenvolvedor, no controle total, enquanto a IA cuida de todo o trabalho pesado. Para construir isso, estamos usando um conjunto de tecnologias poderosas . Primeiro, temos o Git e o GitHub para
+
+gerenciar nosso código e hospedar nossos repositórios. Em seguida, temos o nitn, que funciona como o cérebro de toda a operação, conectando todas as nossas ferramentas. E, finalmente, usaremos pipelines do CI/CD para automatizar todo o processo de compilação, teste e implantação. Então, como tudo isso funciona na prática? Eis o fluxo. Primeiro, uma
+
+ação do GitHub falha durante uma compilação. Essa falha aciona um webhook que envia um sinal diretamente para o nosso fluxo de trabalho niten. A OpenAI entra agora em ação para analisar os registros e identificar exatamente o que deu errado. Assim que a correção estiver pronta, a API do GitHub cria uma nova ramificação e envia o código corrigido. Por fim, você recebe uma notificação para revisar e mesclar o PR.
+
+É simples assim. Muito bem, chega de teoria. Chegou a hora de colocar a mão na massa e começar o trabalho prático. Para construir esse pipeline de autorrecuperação, primeiro precisamos configurar nosso ambiente com Git e GitHub. Primeiro, vamos ao Google e pesquisamos por "download do G".
+
+Clique no primeiro site oficial. A partir daqui, basta baixar a versão compatível com o seu sistema operacional. Após a conclusão do download, abra o arquivo de instalação. Agora a instalação é bastante simples. Continue clicando em "Avançar" nas configurações padrão até que a instalação seja iniciada. Enquanto isso instala,
+
+vamos dar uma olhada no GitHub. Esta é a nossa plataforma de hospedagem de controle de versão. Se você ainda não tem uma conta, basta pesquisar no GitHub e se cadastrar. É um processo muito simples, como criar uma conta em qualquer outro site. Agora que o Git está instalado, precisamos conectar nossa máquina local à nossa conta do GitHub. Para isso,
+
+vá até a sua área de trabalho, clique com o botão direito do mouse e selecione "Git Bash aqui". Primeiro, vamos definir nosso nome de usuário. Então, digite get config dash global user.name. E aqui você precisa digitar seu nome de usuário do GitHub, este aqui. Então estou escrevendo
+
+aqui fzine dash ali e pressionando enter. Em seguida, vamos configurar nosso e-mail. Digite get config dash global user. E aqui você digita seu endereço de e-mail. Certifique-se de usar o mesmo endereço de e-mail que você usou para criar sua conta do GitHub.
+
+Pressione Enter. Para garantir que tudo esteja configurado corretamente, vamos executar o comando `get config list`. E como você pode ver aqui, nosso nome de usuário e e-mail estão configurados corretamente. Pressione Q para sair. Agora podemos fechar o Gitbash e prosseguir para a próxima etapa. Agora que nosso
+
+ambiente está pronto, vamos construir um projeto simples em NodeJS e ExpressJS. Para começar, vou clicar com o botão direito do mouse na minha área de trabalho e criar uma nova pasta chamada meu projeto Dash. Claro, fique à vontade para dar o nome que quiser. Em seguida, vamos abrir esta pasta. Clique com o botão direito do mouse e selecione "Abrir com código". Isso iniciará nosso projeto no
+
+Visual Studio Code. Se você estiver usando um editor de código diferente, não tem problema nenhum. Mas, para este tutorial, vou usar o Visual Studio Code. Uma vez dentro do diretório, vamos criar um novo arquivo e nomeá- lo index.js.
+
+Este será o principal ponto de entrada para nossa candidatura. Agora vamos até o terminal e abrir uma nova janela. Aqui vamos executar o comando `npm start` sem o `y`. O sinal "-y" basicamente indica "sim" para todas as configurações padrão. Espere, se você receber um erro aqui, provavelmente significa que você não tem o NodeJS instalado. Nesse caso, basta
+
+acessar o Google, pesquisar por " download do NodeJS", ir ao site oficial e instalar a versão mais recente compatível com o seu sistema operacional. Feito isso, você estará pronto para começar. Como você pode ver, temos um arquivo package.json. Este é o arquivo mais importante do seu projeto. Ele contém todos os detalhes do seu projeto
+
+e registra cada pacote que instalamos. Se esse arquivo for corrompido, todo o projeto pode ser comprometido. Agora vamos instalar nosso framework web. No terminal, execute o comando `npmi`, que significa instalar o Express. Isso instalará o ExpressJS em nosso projeto, que é um framework backend poderoso e popular para NodeJS.
+
+Veja nossa barra lateral. Agora temos um arquivo package-log.json que rastreia a versão exata de nossas dependências e existe essa pasta enorme chamada node modules. É aqui que todas as bibliotecas e pacotes que usamos em nosso projeto estão armazenados. É pesado, mas é o motor que está sob o capô da nossa aplicação. Agora que nossos
+
+pacotes estão instalados, precisamos definir alguns comandos importantes para o nosso projeto. Vamos abrir o arquivo package.json. Na seção de script, vamos adicionar duas linhas muito importantes: o comando de teste e o comando de compilação. Então eu copio e colo isso aqui. O
+
+comando de compilação é o que usaremos para executar nossa aplicação principal, enquanto o comando de teste é o que nosso pipeline de CI/CD usará para verificar se nosso código está funcionando corretamente . Pressione Ctrl+S para salvar e fechar o arquivo package.json. Em seguida, vamos criar um novo arquivo com o nome test.js.
+
+Este será o nosso teste decisivo. Vou colar este código test.js aqui. E deixe-me explicar rapidamente o que está acontecendo. Primeiro, vamos configurar um servidor Express na porta 5000. Assim que
+
+o processo é iniciado, utilizamos o método HTTP para enviar uma solicitação a nós mesmos. Se recebermos um código de status 200, o que é normal. Significa que o aplicativo está íntegro, o teste foi aprovado e o processo foi finalizado com zero resultados. Se algo der errado ou o servidor não responder, o processo será encerrado com um código 1, que informa à nossa ação do GitHub que a compilação falhou. É exatamente isso que desencadeará nosso processo de autocura mais tarde. Agora pressione Ctrl+S para salvar e
+
+abrir o arquivo index.js. Digite uma linha simples aqui: `console.log log` e dentro do ` console.log` podemos digitar qualquer coisa como " olá de index.js"
+
+e pressionar Ctrl+S para salvar. Num cenário real, é aqui que toda a lógica de backend estaria localizada. Neste tutorial, vamos manter as coisas simples para que possamos nos concentrar na parte de automação. Aliás, não precisa se preocupar em copiar todo o código manualmente enquanto assiste. Incluí o link para o código-fonte completo na caixa de descrição abaixo. Você pode baixá-lo de lá para
+
+praticar. Muito bem, vamos garantir que tudo esteja funcionando conforme o esperado antes de migrarmos para a nuvem. Abra seu terminal e execute o comando `node space index.js`. Perfeito. Como você pode ver, está funcionando
+
+corretamente. Agora vamos testar nossa lógica de teste de fumaça executando o comando `node space test.js` e pressionando Enter. E aqui está. O teste de fumaça foi aprovado. Nosso ambiente local
+
+é sólido. Agora vamos ao cerne deste projeto, que é a construção do pipeline de CI/CD. Pipeline de integração contínua e implantação contínua. Vamos implementar isso usando o GitHub Actions, que nos permite automatizar nosso fluxo de trabalho diretamente no GitHub. Para começar, precisamos seguir uma estrutura de pastas específica que o GitHub reconhece.
+
+Na pasta raiz do seu diretório, crie uma nova pasta chamada GitHub. Dentro dessa pasta, crie outra chamada workflows. Ok, então estou escrevendo aqui sobre fluxos de trabalho. Por fim, dentro da pasta workflows, crie um arquivo chamado main.yml e pressione Enter. Este arquivo YL é onde
+
+escreveremos as instruções para nosso pipeline, informando ao GitHub exatamente quando executar nossos testes e o que fazer caso eles falhem. Muito bem, vamos escrever isso linha por linha. Acompanhe-me. Começamos com o nome da palavra-chave, seguido de dois pontos, e chamaremos isso de pipeline de CI. Esta é apenas a etiqueta para o nosso fluxo de trabalho.
+
+Em seguida, definimos o gatilho usando "on" seguido de dois pontos. Isso indica ao GitHub quando iniciar o mecanismo. Na linha seguinte, recuamos o texto e digitamos "push" com dois pontos. Queremos que isso seja executado a cada envio de código. Na linha seguinte, faça um novo recuo e digite branches seguido de dois pontos. Precisamos especificar
+
+qual ramificação monitorar. Adicione um hífen aqui e digite "main". Agora, esse pipeline está conectado à nossa branch de produção. Agora volte ao início e digite "jobs" seguido de dois pontos. É aqui que a tarefa propriamente dita começa. Indent e nomeie nosso primeiro
+
+trabalho: build, travessão, end, travessão, teste e, em seguida, dois pontos. Esta é a nossa principal etapa de validação. Na próxima linha, faça um recuo novamente e digite " runs dash on", depois dois pontos e digite " Ubuntu dash latest". Isso instrui o GitHub a nos fornecer um novo servidor Linux. Agora, na próxima linha, digite aqui os passos seguidos de dois pontos. Na linha seguinte, adicione um hífen, um espaço
+
+e escreva seu nome, seguido de dois pontos e o código de verificação. Esta é apenas uma etiqueta para o primeiro passo. Em seguida, pressione Enter. Nesse tipo, são usadas ações com dois pontos / verifique a taxa v4, que significa versão 4. Esta é uma ferramenta pré-construída que integra nosso código ao executor. Em seguida, pressione Enter. O próximo passo é
+
+digitar novamente o nome do arquivo com dois pontos e escrever aqui a configuração do Node.js. Precisamos preparar o nosso ambiente. Em seguida, pressione Enter. O tipo usa dois pontos e ações/ configuração de nó de traço na taxa v4. Isso
+
+instalou o NodeJS para nós. Em seguida, pressione Enter. Digite com seguido de dois pontos. Precisamos passar uma configuração específica aqui. Pressione Enter. Recue aqui. Em seguida, digite node
+
+dash version seguido de dois pontos. Estamos usando a versão mais recente e estável, que é a 20. Pressione Enter para a próxima etapa. hífen, nome, dois pontos e escreva aqui as dependências de instalação. Chegou a hora de revitalizar nossas bibliotecas. Digite aqui "run" seguido de
+
+dois pontos e o comando "npm" com um espaço para instalar. Isso baixa tudo o que precisamos. Para a próxima etapa, pressione novamente Enter seguido do nome e dois pontos. Digite aqui: executar teste. Este é o momento da verdade. Digite "
+
+run" com dois pontos. E para o comando de teste, precisamos escrever aqui: npm space test. Se o nosso código estiver com defeito, o processo será interrompido aqui mesmo. E para a etapa final deste trabalho, precisamos escrever aqui o nome com dois pontos e escrever aqui o projeto de espaço de construção. Para compilar o projeto, pressione Enter. Escreva `run` com dois pontos
+
+e depois `npm` com um espaço para executar e um espaço para executar com um espaço para construir. Adicione a flag com dois traços (`@`) se o hífen estiver presente para evitar erros caso o script esteja faltando. Agora vamos criar a função de resposta a emergências. Volte ao mesmo nível do nosso primeiro trabalho e digite notify dash n-on dash failure. então dois pontos, assim como antes, digite runs dash on colon nubunt2 dash latest e pressione enter. Digite needs
+
+colon space build dash end dash test this job to wait for the first one to finish then press enter. Digite aqui se os dois pontos falharem, abra e feche o colchete. Esta é a linha mágica. Isso só é acionado se a compilação falhar. Em seguida, pressione Enter.
+
+Digite os passos a seguir com os dois pontos. Adicione um hífen, nome, dois pontos e digite "gatilho" e " web hook". Em seguida, insira aqui o tipo de texto "run" seguido de dois pontos e o símbolo de barra vertical. Isso nos permite escrever um comando limpo em várias linhas. Indentação aqui digite c espaço hífen x espaço postagem. Em seguida, digite o símbolo de dólar entre aspas duplas
+
+. Para os valores dinâmicos, digite chaves duplas, depois digite secrets.n URL do webhook e finalize com uma barra invertida. Aliás, usamos segredos aqui para manter nossos URLs confidenciais ocultos do público. Mais tarde, mostrarei como configurar essas opções nas configurações do GitHub. Em seguida, pressione Enter
+
+aqui. Digite um hífen maiúsculo e, em seguida, entre aspas, digite conteúdo, hífen, tipo com dois pontos, espaço, application/JSON e, em seguida, outra barra invertida. Em seguida, digite novamente um h maiúsculo entre aspas duplas, digite x, hífen web hook, hífen secret com os dois pontos e, em seguida, digite cifrão cifrão chaves, digite secrets ponto n web hook secret e adicione uma barra invertida novamente aqui e pressione Enter. Novamente, estamos usando um segredo para o token para garantir que apenas nosso canal autorizado possa se comunicar com a N8N. Agora digite um hífen seguido de um D, depois uma aspa simples e chaves de abertura. Digite aqui o ID da execução
+
+entre aspas duplas e, fora do código, escreva dois pontos. Dentro das aspas duplas digite cifrão, chaves duplas, espaço e escreva aqui github ponto run id. Após fechar as aspas duplas, digite vírgula e pressione Enter. Em seguida, abra e feche as aspas duplas novamente. Dentro das aspas duplas escreva "repo" com dois pontos e depois aspas duplas "$" e chaves duplas " github ponto repository". Escreva a
+
+vírgula aqui e pressione Enter. Agora, as aspas duplas abrem e fecham. Dentro das aspas duplas, escreva aqui um ramo com dois pontos e, em seguida, aspas duplas com cifrão e chaves. Dentro das chaves, escreva aqui o nome de referência do GitHub para o branch e, em seguida, digite uma vírgula aqui e pressione Enter. Digite aspas duplas e confirme com dois pontos. Digite novamente
+
+aspas duplas, cifrão, chaves duplas e, dentro das chaves, para obter o commit, precisamos escrever aqui github.sh S H A. Em seguida, digite vírgula e, finalmente, aspas simples, feche as aspas, dois pontos, aspas, cifrão, chaves e, dentro das chaves, precisamos escrever aqui GitHub do actor para o nome de usuário, feche as chaves e as aspas simples. Pronto! Para garantir que tudo esteja correto...
+
+Desculpe, este é um erro de ortografia. E a versão do Node.js está escrita corretamente . Ok, pressione Ctrl+S para salvar. E agora terminamos . Agora que nosso código está
+
+pronto e nosso pipeline configurado, precisamos de um local onde a mágica da autorreparação realmente aconteça. Para isso, vamos usar o N10, que é uma poderosa ferramenta de automação de fluxo de trabalho . Vamos criar nossa conta. Primeiro, vamos ao Google e simplesmente pesquisamos por N8N. Você verá o site oficial logo no topo, niten.io.
+
+Vamos clicar no primeiro link. Após acessar a página inicial, procure o botão de login no canto superior direito. Agora, clique aqui em "Iniciar um teste gratuito". Insira aqui seu endereço de e-mail profissional ou pessoal. Certifique-se de que seja uma conta ativa, pois precisaremos verificá-la na próxima etapa. GitHub e
+
+niten são muito seguros. Portanto, verifique sua caixa de entrada para obter um código de verificação. Após verificar isso, você será redirecionado para esta página para finalizar a configuração. Agora vamos preencher as informações básicas. Digite seu nome completo. Crie uma senha forte e insira o
+
+nome da sua conta. Este será o seu espaço de trabalho pessoal de automação. Agora clique em "Iniciar teste gratuito de 14 dias". A Aniten fará algumas perguntas para personalizar sua experiência, como sua função ou o que você planeja automatizar. Não pense demais nisso. Você pode selecionar aqui qualquer opção
+
+que melhor se adapte às suas necessidades e clicar em "Avançar". Você também pode convidar membros da equipe ou simplesmente clicar em "pular". Depois de responder às perguntas, clique no grande botão "Começar a automatizar". É aqui que sua jornada rumo ao DevOps orientado por IA realmente começa. E pronto. Nossa conta já está
+
+ativa para manter tudo organizado e profissional. Vamos clicar em "começar do zero". Isso nos dá uma tela em branco para construir nosso fluxo de trabalho de autorreparação personalizado. Primeiro, vamos corrigir esse erro. A grafia de "workflows" está incorreta no momento . Vou pressionar F2 para
+
+renomear a pasta e corrigir a ortografia dos fluxos de trabalho. Agora, pressione Enter. E pronto. Tudo bem. Agora é hora de juntar as peças. Precisamos
+
+configurar nosso repositório e protegê-lo com as variáveis ​​que definimos em nosso arquivo YAML. Primeiro, vamos acessar o Google. Acesse sua conta do GitHub. Clique na aba "Repositórios" e depois no botão "Novo". Vou nomear este repositório de pipeline CI/CD de autorrecuperação usando nitin.
+
+Vou deixar a descrição em branco aqui porque é opcional. Role a página para baixo e clique no botão "Criar repositório". Perfeito. Nosso espaço remoto está pronto. Agora precisamos de uma maneira para que qualquer pessoa possa se comunicar com o GitHub para corrigir nosso código. Para isso,
+
+precisamos de um PA (Personal Access Token). Considere isso como uma senha segura que permite que um aplicativo execute ações em seu nome. Acesse sua conta do GitHub. Clique no botão de configurações. Role a página para baixo e clique em " Configurações do desenvolvedor". Selecione o token de acesso pessoal
+
+. Vamos escolher os tokens clássicos porque eles nos dão um controle específico sobre os escopos de que precisamos. Agora clique em gerar novo token. Selecione "Gerar novo token clássico". Vou adicionar uma nota como N8N. Agora, os escopos são muito importantes.
+
+Estamos selecionando o fluxo de trabalho de administrador do repositório e o gancho de administrador do repositório. Precisamos desses escopos porque nossa IA não está apenas lendo código. É necessário obter permissão para enviar correções, atualizar fluxos de trabalho e gerenciar hooks. Role a página para baixo e clique em "Gerar token". Copie isto imediatamente e cole no seu bloco de notas. O GitHub não mostrará
+
+isso novamente para você. Agora volte ao repositório. Clique no botão de configurações. Deslize para baixo. Em seguida, clique em segredos e variáveis ​​e selecione ações. Precisamos adicionar três segredos que
+
+usamos em nosso arquivo YAML. Clique em novo segredo do repositório. O primeiro nome é gh token, que significa token do GitHub. Cole o token de acesso pessoal que acabamos de copiar no campo e clique no botão "Adicionar segredo" . Isso permite que nosso pipeline se autentique com o GitHub. Em seguida, crie
+
+outro segredo. Dê um nome a este segredo do webhook NAT . Você pode digitar qualquer sequência de caracteres aqui. Vou usar meu segredo: 1, 2, 3 e depois um ponto de exclamação. Isso funciona como um aperto de mãos digital, garantindo que a extremidade saiba que a solicitação está vindo do nosso repositório e não de um hacker aleatório. Vou copiar
+
+e salvar isso no meu bloco de notas porque precisaremos disso dentro da carta nitn. Agora clique no botão adicionar segredo. Agora clique novamente em "Novo segredo do repositório". O último segredo é o URL do webhook. Para isso, precisamos voltar à avó.
+
+Clique no ícone de mais e procure o nó de webhook. Selecione este nó de webhook. Um webhook é basicamente uma URL que fica à escuta de dados. Quando nosso pipeline falhar, ele enviará uma solicitação POST para este URL. Selecione o método POST aqui e copie este URL de teste. Utilizamos a
+
+URL de teste durante o desenvolvimento. Assim, podemos ver os dados chegando em tempo real. Assim que o projeto estiver concluído, passaremos para a produção. Agora, cole isso de volta no seu segredo do GitHub e salve. Verifique novamente se os nomes DH token, at webhook secret e at webhook URL correspondem exatamente ao que você escreveu no seu arquivo main. A distinção entre maiúsculas e minúsculas é importante.
+
+Agora, de volta ao VS Code, vamos criar um novo arquivo no diretório raiz do nosso projeto. Dê o nome de ".get ignore" a este arquivo e pressione Enter. Adicionamos módulos do Node aqui porque não queremos enviar milhares de arquivos de biblioteca para o GitHub. O sistema irá instalá-los automaticamente. Pressione Ctrl+S para salvar e,
+
+em seguida, abra o terminal do VS Code. Digite o comando `get init` para inicializar esta pasta como um repositório Git local. Agora digite `get add dot` para preparar todos os nossos arquivos para o primeiro commit. Agora digite `get commit dash m` e escreva qualquer mensagem aqui, como "Estou digitando aqui primeiro", depois pressione Enter. Isso preserva nosso progresso local.
+
+Agora digite `get remote at origin` e cole aqui a URL do seu repositório do GitHub. Para isso, acesse sua conta do GitHub. Deslize a tela para cima e clique na seção de código. Copie este URL, cole-o aqui e pressione Enter. Este comando conecta nossa pasta local ao GitHub. Agora digite get
+
+branch dash M maiúsculo e depois main e pressione enter. Este comando renomeia nossa branch padrão para "main" para corresponder ao padrão do GitHub. Agora digite get push- u origin e depois main e pressione enter. Isso envia nosso código para a nuvem. Agora, se você atualizar a página, verá que seu código está ativo. Se você verificar a
+
+aba de ações, clique em detalhes aqui. O oleoduto já está em funcionamento. Como nosso código está correto no momento, o pipeline deve terminar com uma marca de seleção verde. Agora é hora de colocar nosso sistema à prova. Vamos quebrar nosso código intencionalmente e ver se o Nit detecta a falha. Primeiro, vamos
+
+voltar ao VS Code e abrir o arquivo test.js. Vou encontrar a linha `const app equal to express` e excluí-la. Sem essa linha, o servidor não será inicializado, o que fará com que nosso teste de fumaça falhe. Vamos pressionar Ctrl+S para salvar este arquivo. Agora, vamos voltar à NAN e
+
+configurar nosso ouvinte. Vou clicar no webhook e mudar o nome para " webhook de falha do GitHub" para melhor organização. Na seção de autenticação, selecionarei o cabeçalho O e clicarei em configurar credencial. Isso é importante porque não queremos que qualquer pessoa acione nosso fluxo de trabalho. Vou nomear este webhook de N8 n segredo e depois pressionar Enter. Para o
+
+nome secreto, digitarei x - web hook - secret. Isso deve corresponder exatamente ao que escrevemos em nosso arquivo main.yml. Para saber o valor, vou consultar meu bloco de notas. Em termos de custo-benefício, voltarei ao bloco de notas.
+
+Copie a chave secreta que salvei anteriormente e cole-a aqui. Role a página para baixo e clique no botão Salvar. Perfeito. Nossa segurança está configurada. Na configuração do modo de resposta , irei alterá-lo para "quando o último nó terminar" e "dados de resposta iguais a nenhum corpo de resposta". Isso garante que
+
+o pedido seja reconhecido somente após o processamento da lógica. Agora vamos voltar ao VS Code. Abra seu terminal. Em seguida, digite get add dot e pressione Enter. Este comando prepara nosso código com problemas. Em seguida,
+
+execute o comando commit minus m e escreva qualquer mensagem aqui, como "alterações uma" e pressione Enter. Estamos cometendo esse erro deliberadamente. Assim, o oleoduto tem algo a que reagir. Antes de enviar este código, irei ao nitn e clicarei em "ouvir evento de teste". Agora, o sistema está aguardando ativamente um sinal do GitHub. De volta ao VS Code,
+
+execute o comando `get push` e pressione Enter. Nosso código com problemas agora está sendo enviado para o GitHub. Se verificarmos as ações do GitHub e clicarmos no botão de código, o pipeline será iniciado e, como esperado, falhará durante a execução do teste. Se clicarmos no botão de detalhes, seremos notificados imediatamente e, se acessarmos o nitin e clicarmos no botão JSON, poderemos ver que os dados chegaram ao nosso webhook. Você pode ver o ID da execução, o repositório, o nome da branch, o commit e o autor aqui na saída. Agora que temos os
+
+dados da falha, precisamos descobrir por que ela ocorreu. Precisamos dos registros de erro reais do GitHub. Vamos fechar este nó de webhook e clicar no ícone de mais para adicionar uma nova etapa. Procure o nó de requisição HTTP. Este nó é a ponte que permite que qualquer entidade se comunique com qualquer API externa. No nosso
+
+caso, a API do GitHub. Vamos adicionar isso. Primeiro, vamos renomear este nó para "buscar logs" e depois pressionar Enter. Assim, nosso fluxo de trabalho permanece organizado. Manteremos o método como "get" porque estamos simplesmente obtendo dados do GitHub. Agora, preste muita
+
+atenção ao URL. Precisamos apontar para o trabalho específico que é https:: appi.github.com/repos
+
+e depois novamente para a barra. Agora, em vez de digitar o nome do repositório, vamos torná-lo dinâmico. Acesse os dados de entrada à esquerda. Abra o corpo do código e simplesmente arraste e solte a variável repo aqui. Agora digite / ações barra execuções barra e arraste e solte o ID da execução aqui. Por fim, finalize o
+
+URL digitando / jobs no final. Agora feche isto. O que acabamos de fazer foi criar um link dinâmico. Independentemente do repositório ou da execução que falhe, o N10 sempre buscará os logs corretos para a instância específica. Agora feche isto. A
+
+API do GitHub não nos fornecerá os dados sem permissão. Então clique em autenticação. Selecione o tipo de credencial genérica. Na lista, selecione cerveja o. Agora clique em configurar credenciais.
+
+Vou chamar isso de GitHub. P A significa token de acesso pessoal. Agora, para o token, precisamos do nosso token de acesso pessoal. Vou voltar ao bloco de notas. Copie aquela longa sequência de caracteres que geramos anteriormente e cole-a aqui. Agora
+
+clique no botão Salvar. Feche isto. Estamos prontos. Agora clique em executar etapa. Isso gera um erro devido ao espaço presente na URL. Agora clique novamente em executar
+
+etapa. Hitan entrará em contato com o GitHub e retornará uma resposta JSON detalhada contendo todos os detalhes da tarefa, incluindo o status e a localização dos logs. E aqui está. Você pode ver o resultado aqui mesmo. Agora que temos os registros, precisamos saber exatamente quais arquivos foram modificados no último commit. Isso
+
+ajuda a IA a identificar com mais precisão onde está o erro . Vamos fechar o nó de busca de logs novamente. Clique no ícone de mais. Procure o nó de requisição HTTP e adicione-o à nossa tela. Vou renomear este nó para " buscar arquivos alterados" e depois pressionar Enter. Ainda estamos
+
+usando o método GET porque estamos solicitando informações do mecanismo de comparação do GitHub. Agora, este URL é muito, muito importante. Vou digitar tudo e explicar cada detalhe. Começamos com https dois pontos barra dupla api.github.com/repose/
+
+primeiro adicionamos ao nome do repositório dinamicamente. Então escrevemos aqui chaves duplas, espaço, cifrão, parênteses, aspas simples e selecionamos GitHub failure web hook, ponto first method e, em seguida, ponto JSON, ponto body, ponto repositório. Isso garante que estejamos sempre analisando o projeto certo. Em seguida, digite barra, escreva compare barra. Agora precisamos comparar o estado do código antes do push com o estado depois do push. Para isso,
+
+pegamos o commit atual, chaves duplas novamente, cifrão, parênteses, aspas simples e, em seguida, selecionamos o webhook de falha do GitHub. Novamente, escreva ponto primeiro método, depois ponto JSON, depois corpo e, por fim, ponto commit. Agora vou adicionar um sinal de inclinação aqui e o número um seguido dos três pontos. Essa sintaxe instrui o GitHub a mostrar a diferença entre a versão anterior (menos um) e a versão atual. Por fim, adicionarei o commit atual novamente. Para isso, use
+
+chaves duplas, cifrão, parênteses, aspas simples e selecione o webhook de falha do GitHub. Novamente, escreva ponto primeiro método e depois ponto JSON ponto corpo e depois ponto commit. Isso completa o intervalo de "de" a "de". Em outras palavras, este URL pergunta ao GitHub o que exatamente mudou no commit específico. É assim que a IA saberá que editamos o arquivo test.js e não outros arquivos.
+
+Agora feche isto. Clique em autenticação. Selecione o tipo de credencial genérico e, em seguida, selecione novamente cerveja o. Selecione o GitHub P que criamos anteriormente. Agora vamos executar o passo. O
+
+GitHub analisará o commit e retornará uma lista de arquivos. Como você pode ver na saída, fica claro que o arquivo test.js foi modificado. Ele nos fornece até mesmo os dados de correção, mostrando exatamente quais linhas foram adicionadas ou removidas. Agora sabemos que o nome do arquivo é test.js, mas precisamos
+
+obter o código que está dentro dele. Vamos obter o conteúdo bruto para que nossa IA possa analisar a lógica. Feche o nó de busca de arquivos de alteração. Clique no ícone de mais. Procure o nó de requisição HTTP e adicione-o à sua tela. Agora, vamos
+
+renomear este nó para "buscar conteúdo do arquivo" e pressionar Enter. O motivo pelo qual precisamos disso é simples. A resposta anterior do GitHub apenas nos forneceu a correção ou a diferença. Para corrigir o arquivo inteiro, a IA precisa do código-fonte completo. Novamente, utilizaremos o método GET, pois estamos baixando o conteúdo do arquivo do servidor GitHub. Agora, para a URL, vamos
+
+digitar um link estático. Vamos utilizar os dados dinâmicos da etapa anterior. Digite isto com cuidado. Primeiro, escreva chaves duplas, depois um cifrão ($), depois parênteses e aspas simples e, em seguida, selecione "buscar arquivos alterados". Em seguida, digite o primeiro método e depois os arquivos JSON. Dentro dos colchetes, escreva
+
+zero e depois ponto e sublinhado (.). Deixe-me explicar o que isso significa. Os arquivos de alteração de fatos indicam a todos para consultarem os dados do nosso último nó. O ponto inicial garante que estamos usando o primeiro arquivo response.json bem-sucedido, apontando para o primeiro arquivo que
+
+foi alterado. O segredo está no URL bruto (./raw) . É um link direto para a versão em texto simples do seu código, sem passar pela interface do GitHub. Agora feche esta janela e clique no botão "Executar etapa". Se você observar
+
+a saída agora, em vez dos metadados JSON, verá seu código JavaScript exatamente como está no seu VS Code, incluindo o erro que foi gerado. Agora temos tudo pronto para a IA assumir o controle . Agora que temos os registros, os arquivos e o código, precisamos compactá- los em um único prompt para a IA. Para isso, vamos usar um nó de código. Vamos fechar o nó de busca do conteúdo do arquivo . Clique no ícone de mais. Procure
+
+o nó de código e selecione "Código em JavaScript". Vou apagar o código padrão e colar o código JavaScript personalizado do meu bloco de notas. Deixe-me explicar o que este código faz linha por linha. Nas duas primeiras linhas, estamos capturando a carga útil do nosso webhook original e os dados JSON do nosso nó de busca de logs . Isso nos fornece as informações básicas sobre quem, o quê e onde ocorreu a falha. Em seguida,
+
+filtramos os trabalhos para descobrir exatamente qual deles falhou. Utilizamos o método dotfind para procurar um status chamado falha. Assim que encontramos a tarefa, também extraímos as etapas específicas que falharam, para que a IA saiba exatamente onde o processo travou. Em seguida, criamos constantes de detalhes de cada etapa . Isso mapeia o nome, o status e o momento da falha em uma string clara. Este é um
+
+contexto crucial para que a IA compreenda a sequência de eventos. Agora vamos analisar o arquivo de alterações, já que um commit pode conter imagens ou arquivos readme. Definimos uma lista de extensões de código como JS.ts ou py. Filtramos os arquivos para garantir que a IA se concentre apenas no código-fonte relevante e ignore tudo o que foi excluído. Aqui,
+
+nós processamos o conteúdo do arquivo e, às vezes, podemos enviar dados como uma string ou um objeto. Essa lógica garante que extraímos o código correto, independentemente do formato. Este é o código que a IA acabará por corrigir. Agora vamos construir as seções do arquivo. Utilizamos um loop para percorrer nossos arquivos relevantes, identificar sua linguagem (como mapear JS para JavaScript) e, em seguida, envolver o código em trechos de código Markdown. Isso garante que a IA
+
+leia o código em sua sintaxe correta. Finalmente, combinamos tudo em uma constante enorme chamada prompt. Este é um modelo dinâmico que inclui o repositório, o branch, o commit e os arquivos de código específicos que precisam de atenção. Também estamos dando instruções rigorosas à IA para retornar a correção em um formato JSON válido, para que possamos processá-la automaticamente na próxima etapa. Agora feche esta janela e clique no botão "Executar etapa" . E pronto. No resultado,
+
+você poderá ver um relatório perfeitamente estruturado . Contém todos os detalhes da falha e o código-fonte pronto para ser enviado à IA. É assim que se faz a ponte entre os registros brutos e a inteligência artificial. Nosso relatório de falhas já está pronto. Precisamos de um cérebro para analisá-lo. Vamos chamar a OpenAI para
+
+encontrar o erro e gerar a solução. Vamos fechar o nó de código e clicar no ícone de mais. Pesquise por IA aberta e selecione a mensagem de ação, um modelo para o recurso. Vou selecionar o texto. Uma dica rápida: o Niten oferece alguns créditos gratuitos para começar, o que é ótimo para iniciantes. Mas se você quiser usar sua
+
+própria chave de API para ter maior controle. Vou te mostrar como fazer isso. Acesse a busca do Google por "chave de IA aberta" e clique no primeiro link oficial. Você precisará criar uma conta e adicionar pelo menos US$ 5 ao seu saldo de crédito para ativar a API. Feito isso, acesse as chaves da API. Clique em criar nova
+
+chave secreta. Dê o nome que quiser. Criar chave secreta. Em seguida, copie isso e volte para o NAN. Clique em configurar credenciais.
+
+Cole sua chave de API aqui e clique em salvar. Agora feche isto. Certifique-se de que a operação seja uma mensagem de modelo. Para o modelo, selecionaremos o GPT4 mini. É incrivelmente rápido, econômico e perfeito para tarefas lógicas como corrigir código. Na seção de mensagens, defina a
+
+função como sistema. O motivo pelo qual usamos a função de sistema é para definir a personalidade e as regras da IA. Basicamente, estamos dizendo a ele como se comportar durante toda a conversa. Vou colar este prompt específico. Você é um engenheiro DevOps experiente e desenvolvedor NodeJS. Analise os registros de falhas de CI/CD fornecidos
+
+e o código-fonte. Identifique o erro e forneça uma correção completa, com restrições que incluam apenas um objeto JSON válido. Sem Markdown, sem blocos de código, sem texto conversacional. O nome da ramificação deve ser único e específico para a correção, como por exemplo, "AI fixing express". Não use "main" ou "master". O
+
+código corrigido deve ser o conteúdo completo do arquivo, incluindo o arquivo aplicado. Nome da ramificação do esquema JSON , caminho do arquivo, código de correção, título do PR e corpo do PR. Agora copie e cole isso aqui. Em seguida, role para baixo. Agora clique em adicionar mensagem. Desta vez, estamos usando a
+
+função de usuário. A função do usuário representa os dados ou a pergunta que estamos fazendo. Em vez de digitar, vou acessar a saída anterior. Arraste e solte nosso prompt dinâmico. Agora, se clicarmos em executar etapa e observarmos o resultado, teremos uma resposta JSON perfeita. A IA nos forneceu o
+
+nome da branch, o código de correção completo e até mesmo um título e corpo detalhados para a solicitação de pull request . É exatamente o que um desenvolvedor humano faria, mas em segundos. Agora que a IA forneceu a solução, precisamos limpar esses dados e preparar o GitHub para uma nova ramificação. Nunca enviamos código de IA diretamente para a branch principal. A segurança e a revisão manual vêm sempre em primeiro lugar. Vamos fechar este nó. Clique
+
+no ícone de mais e procure o nó de código. Selecione o código em JavaScript. Renomeie este nó para extrair a resposta da IA ​​e pressione Enter. Agora vou copiar esse código e colá-lo aqui. Vamos analisar isso passo a passo . Acedemos à resposta aberta da IA.
+
+Se a resposta estiver vazia ou formatada incorretamente, geramos um erro imediatamente para impedir que o fluxo de trabalho seja processado com dados inválidos. Isso é vital. Às vezes, a IA apresenta sua resposta em blocos de código Markdown. Esta linha utiliza uma expressão regular para remover esses elementos, deixando- nos com uma string JSON limpa. Transformamos essa string em um objeto JavaScript real . Verificamos também se o campo de código de correção
+
+existe. Se a IA não conseguir fornecer a solução definitiva, o processo termina aqui. Finalmente, retornamos um objeto limpo. Observe a linha de conteúdo B 64. A API do GitHub exige que o código seja enviado no formato B64. Estamos convertendo nosso código de correção
+
+para essa codificação específica aqui mesmo. Assim, o GitHub poderá lê-lo. Agora feche esta janela e clique em executar etapa. Como você pode ver na saída, agora tudo está perfeitamente organizado. Temos o nome da branch, o caminho do arquivo, o código de correção, o conteúdo em base64, o título do PR, o corpo do PR, o repositório e, em seguida, o commit. Agora feche este nó e
+
+clique no ícone de mais. Procure a solicitação HTTP, renomeie-a para o ramo "create space" e pressione Enter. O método deve ser POST. Usamos o método POST porque estamos criando um novo recurso no servidor GitHub, especificamente uma nova referência Git. Para o tipo de URL https dois pontos duplos/ ai.github.com/repost/,
+
+arraste e solte o nome do repositório aqui. Certifique-se de que não haja espaço entre eles. Agora digite barra e depois obtenha, depois digite barra novamente e depois digite refs. Este é o endpoint oficial para criação de branches. Estamos usando o nome do repositório dinâmico que capturamos anteriormente. Agora clique em autenticação.
+
+Selecione o tipo de credencial genérica. Selecione cerveja e escolha o pet do GitHub. Como estamos criando uma ramificação, isso modifica o repositório. É necessário o seu token de acesso pessoal . Agora ative a opção "Enviar corpo da mensagem".
+
+Defina o tipo de conteúdo do corpo da mensagem como JSON. Especifique o corpo da mensagem usando JSON. Dentro do bloco JSON, forneceremos duas informações essenciais. Primeiro, abrimos e fechamos as chaves. Dentro das chaves, abra e feche as aspas duplas. Dentro das
+
+aspas duplas, escreva ref. Depois das aspas, digite dois pontos e, em seguida, abra e feche as aspas duplas. Dentro das aspas duplas, escreva ref / heads barra e, em seguida, arraste e solte o nome da nossa filial aqui. Agora digite vírgula e pressione Enter. Novamente, abra e feche as aspas duplas. Dentro das aspas duplas,
+
+digite "sha", depois digite dois pontos e, em seguida, abra e feche as aspas duplas. Dentro das aspas duplas, arraste e solte o seu ID de commit aqui. A referência (Ref) informa ao GitHub o nome da nossa nova branch de correção e o SHA garante que a nova branch comece exatamente do ponto onde ocorreu a falha. Agora está tudo bem. Clique no botão "Executar etapa" e pronto, a ramificação é criada. Por que criamos uma
+
+ramificação separada em vez de corrigir diretamente a ramificação principal? Segurança e melhores práticas. Jamais queremos que uma IA sobrescreva nosso código de produção sem supervisão humana. Ao criar uma ramificação, mantemos o desenvolvedor humano informado para revisar e aprovar as alterações antes que elas entrem em produção. Nossa filial está pronta. Mas
+
+antes de podermos enviar o código de correção, precisamos fazer uma coisa muito importante. Precisamos obter o SHA ou identificador único dos arquivos . Vamos começar agora. Feche este nó. Clique no ícone de mais e procure pela solicitação HTTP. Vamos
+
+renomear para obter o SHA do arquivo e depois pressionar Enter. Mantenha o método como está. Mas por que estamos fazendo isso? O GitHub não permite atualizar um arquivo apenas enviando o novo código. Você precisa fornecer o SHA, que é como uma impressão digital do arquivo atual. Isso prova que você está
+
+atualizando para a versão mais recente e não sobrescrevendo as alterações de outra pessoa por engano. Para o tipo de URL https dois pontos duplo/api.github.com/repost/ github.com/repost/ selecione expressão aqui chaves duplas parênteses de dólar aspas simples e selecione extrair resposta de IA, depois digite ponto item ponto JSON e depois ponto repositório, depois disso digite barra, depois digite conteúdo, depois novamente barra e depois chaves duplas parênteses de dólar aspas simples extrair resposta de IA ponto item ponto JSON ponto caminho dos arquivos. Vamos analisar isso em detalhes. Estamos
+
+instruindo a API do GitHub a acessar o repositório específico. Analise o conteúdo e encontre o caminho específico do arquivo que a IA identificou para correção. Ao acessar este URL, o GitHub nos enviará os metadados desse arquivo, incluindo seu SHA atual. Agora feche isto. Na seção de autenticação, selecione o tipo de credencial genérica. Em seguida, selecione o portador O
+
+e escolha o pet do GitHub. Embora estejamos apenas lendo informações, já que este é um repositório privado, precisamos fornecer nosso token. Agora clique em executar etapa e pronto, lá está. Na saída, você pode ver um campo chamado SHA. É uma longa sequência de números e letras.
+
+Precisaremos dessa sequência exata de caracteres na próxima etapa para atualizar o código no GitHub com sucesso . Agora que temos o SHA exclusivo do arquivo, podemos finalmente enviar a correção de IA de volta para o GitHub. Vamos configurar o nó de atualização. Feche este nó. Clique no ícone de mais. Procure o
+
+nó de requisição HTTP. Renomeie o arquivo para "push fix file" e pressione Enter. Para o método, selecionamos o método [ __ ]. Usamos o método [ __ ] porque não estamos criando um novo arquivo. Estamos substituindo o conteúdo de um documento existente pela nossa versão corrigida.
+
+Digite o seguinte URL. https colon/api.github.com github.com/repose slash clique em expressão chaves duplas cifrão parênteses aspas simples e selecione extrair resposta de IA, depois digite ponto item ponto JSON pontotreo depois disso / conteúdo/ novamente chaves duplas cifrão parênteses aspas simples selecione extrair resposta de IA Em seguida, digite ponto item ponto JSON e depois ponto caminho do arquivo. Este
+
+URL direciona para o arquivo exato em nosso repositório que precisa de correção. Para autenticação, selecione o tipo de credencial genérica. Em seguida, selecione cerveja e escolha o pet do GitHub. Esta ação requer permissão de escrita. Portanto, nosso token é essencial. Ative a opção "Enviar corpo da mensagem".
+
+Selecione o tipo de conteúdo do corpo para gerar um corpo específico em JSON usando os campos abaixo. Precisamos adicionar quatro parâmetros específicos aqui. A primeira é uma mensagem para o valor. Então, arraste e solte o título do comunicado de imprensa aqui. Esta é a nossa mensagem de compromisso. Em seguida,
+
+clique em adicionar campo de corpo. Dê um nome a este conteúdo. E para o valor, arraste e solte conteúdo em base 64. Em seguida, clique novamente em adicionar corpo. Dê um nome a este SHA. Em seguida, arraste
+
+e solte o SHA da saída do nó anterior . Isso informa ao GitHub que esta é a versão mais recente e atualizada. Clique em adicionar campo de corpo. Dê um nome a este ramo. Arraste e solte o nome da ramificação da resposta de IA extraída. Agora clique no
+
+botão "Executar etapa". O código corrigido já está disponível em nossa nova branch no GitHub. O código está corrigido, mas precisamos notificar a equipe para que eles possam incorporá-lo. A etapa final para abrir automaticamente uma solicitação de pull. Então feche este nó. Clique no
+
+ícone de mais. Procure a solicitação HTTP e renomeie-a para "open pull request". Então, estou escrevendo aqui "abra o pull request" e depois pressiono Enter. Selecione o método POST, pois estamos criando uma nova solicitação de pull request. O URL é https col//appi.github.com/repos/
+
+github.com/repose/. Clique na expressão, digite chaves duplas, cifrão e parênteses e selecione "Extrair resposta de IA". Em seguida, digite .item dojson dotrepo e depois / pulls. Este é o nosso link oficial para pull
+
+requests. Agora, clique em "Autenticação", selecione "Credenciais genéricas", digite novamente, clique em "Cerveja" e escolha "GitHub pet". Agora ative a opção "Enviar corpo da mensagem". Selecione JSON e utilize os campos abaixo. Vamos adicionar esses quatro parâmetros. O primeiro é o título.
+
+Arraste e solte o título do comunicado de imprensa da resposta extraída por IA. Em seguida, clique em adicionar campo de corpo. Escreva o nome no corpo. E para o valor, arraste e solte o corpo do RP da resposta de IA extraída. Em seguida, clique em adicionar campo de corpo. Dê um nome a esta cabeça. E para o
+
+valor, arraste e solte o nome da filial da resposta da IA ​​extraída. Em seguida, clique novamente em "Adicionar campo de corpo". Dê um nome a esta base. E quanto ao valor principal aqui. Isso indica ao GitHub que queremos eventualmente incorporar nossa correção à branch principal.
+
+Clique no botão "Executar etapa". E pronto . Se acessarmos o GitHub e formos até a solicitação de pull request, podemos ver nossa correção gerada por IA aguardando revisão. As alterações no código foram implementadas e nosso sistema de CI/CD se recuperou com sucesso . Se clicarmos em "Mesclar solicitação de pull", confirmarmos a mesclagem e pronto, a mesclagem foi concluída com sucesso. Se formos à
+
+seção de código, podemos ver que nosso pipeline foi bem-sucedido. Para que isso seja verdadeiramente profissional, não deveríamos ter que verificar nada manualmente no GitHub. Vamos configurar uma notificação automática por e-mail para que a equipe saiba exatamente quando uma correção for publicada. Feche o nó da solicitação de pull . Clique no ícone de mais (+) e pesquise por Gmail. Clique aqui. Procure por "enviar uma
+
+mensagem". Clique em "Fazer login com o Google". Verifique esta opção e clique em continuar. No campo "Assunto", vou digitar "Falha de CI/CD" . Corrigido e aprimorado por IA. Corrigido
+
+e aprimorado por IA. Agora, escreva um endereço de e-mail . Selecione o texto. E quanto à mensagem, estou escrevendo isto. Estamos obtendo o nome do repositório do webhook de falha do GitHub. Nome da ramificação obtido a partir da
+
+resposta da IA ​​extraída. Título do PR extraído da resposta da IA ​​e do corpo JSON do repositório do webhook de falha do GitHub. Este é o nosso e-mail. Agora feche esta janela e clique em executar etapa. Agora vamos acessar meu Gmail. Uma notificação em tempo real com todos
+
+os detalhes e o link para a correção. É assim que você mantém sua equipe informada sem mover um dedo. Se você quiser remover essa atribuição, basta acessar o nó do Gmail. Clique em adicionar opções, depois em adicionar atribuição NaN e desative esta opção. Agora, se clicarmos novamente em "Executar etapa" e voltarmos à conta do Gmail, como você pode ver, não há nenhuma atribuição nitn aqui. Neste momento estamos
+
+em fase de testes. Para que isso se torne parte permanente do seu fluxo de trabalho, precisamos levá-lo para a produção. Volte para o nitn e feche isto. Abra o nó do webhook de falha do GitHub . Você verá duas abas. URL de teste
+
+e URL de produção. Clique no URL de produção e copie este link. Este URL é permanente e estará sempre à escuta de falhas. Agora feche esta janela e clique em " Publicar". Clique em publicar. Agora
+
+clique em "Ir". Entendi. Seu fluxo de trabalho agora está ativo e sendo executado em segundo plano. O passo final é instruir o GitHub a usar este novo URL. Acesse seu repositório no GitHub. Em seguida, acesse as configurações. Role a página para
+
+baixo e clique em "Segredos e variáveis". Selecione as ações. Agora acesse o URL do seu webhook do GitHub. Clique neste ícone de lápis e, no campo "Valor", cole aqui o URL atualizado. Este é o seu URL de produção. Agora clique em atualizar
+
+segredo. E é isso. Você construiu um pipeline CI/CD totalmente autônomo, alimentado por IA e com preenchimento automático. Desde a detecção de falhas até a análise de registros, escrita de código e notificação da equipe, tudo agora é automatizado. Este projeto demonstra que a IA não veio para substituir os desenvolvedores. Está
+
+aqui para capacitá-los. Agora você pode dedicar menos tempo à depuração de erros simples e mais tempo ao desenvolvimento de funcionalidades incríveis. Se você seguiu este tutorial e construiu este projeto, compartilhe seus resultados nos comentários.

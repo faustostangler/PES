@@ -1,0 +1,137 @@
+---
+video_title: "Every Major AWS Outage (And Why They Keep Happening)"
+video_id: 6C14E9sQ_-w
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=6C14E9sQ_-w
+video_date: 2026-07-03T15:06:01+00:00
+video_description: |
+  Six times in fifteen years, Amazon Web Services went down and took half the internet with it. Airlines, hospitals, banks, smart home devices, Amazon's own delivery trucks. They were all frozen, all tracing back to a single data center in Northern Virginia. This is every major AWS outage, what caused each one, and why the same region keeps failing over and over again.
+  
+  This video was created by @beau 
+  
+  ⭐️ Chapters ⭐️
+  - 00:00 The Day the Internet Stopped (Intro)
+  - 01:14 What is AWS US-East-1?
+  - 02:12 2011: The Network Upgrade Mistake
+  - 04:17 2012: The Northern Virginia Storm & Netflix's Resiliency
+  - 05:54 2017: The Index Subsystem Typo
+  - 08:17 2020: The Hidden Kinesis Dependency Cascades
+  - 10:04 2021: Amazon Broken by Its Own Cloud
+  - 12:09 2025: The Automated DynamoDB addressing failure
+  - 14:38 The Uncomfortable Truth of Complex Systems
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+20 de outubro de 2025, 7h da manhã. Enfermeiros em hospitais por todos os Estados Unidos tentam acessar os prontuários dos pacientes. Nada carrega. Os funcionários da companhia aérea tentam emitir o cartão de embarque. O sistema está congelado. A
+
+Coinbase saiu do ar. O Slack ficou fora do ar. O Snapchat saiu do ar. Dualingo cai. Fortnite sai do ar. As pessoas tentam perguntar à
+
+Alexa o que está acontecendo. Alexa não responde. Durante as próximas 14 horas, uma parte significativa da internet moderna simplesmente para de funcionar. A Amazon, Amazon, Amazon.com sofreu uma grande interrupção de serviço hoje. Nos Estados Unidos, os principais
+
+serviços de computação em nuvem ficaram offline. Aproximadamente um terço de todos os sites da internet o utilizam. É difícil acreditar em quantas pessoas o utilizam. Então, essa interrupção causou imediatamente ondas de choque em todo o mundo. Não houve ataque cibernético, desastre natural ou ransomware. A causa é um
+
+problema de sincronização entre dois processos de software dentro de um centro de dados em Ashurn, Virgínia. Um único centro de dados, uma única região, a infraestrutura de uma única empresa, e o mundo prende a respiração. Mas veja bem . Isso não era novidade. Esta foi a sexta vez. Antes de começarmos
+
+, o que é exatamente o US-East1? A AWS divide sua infraestrutura em regiões, áreas geográficas onde construiu centros de dados. A região leste dos EUA corresponde à região da Virgínia do Norte. E não se trata apenas de mais uma região. Foi a primeira região. Todos os serviços fundamentais da AWS,
+
+como S3, EC2, DynamoDB e Lambda, foram construídos e testados lá primeiro, o que significa que se tornaram o padrão. Os incorporadores que construíram no início da década de 2010 escolheram o US-East1 porque era onde tudo estava. E quando um número suficiente de pessoas começou a usá-la, tornou-se a região que todos tinham que usar. Hoje, as estimativas apontam que entre 30 e 50% de todo o tráfego da internet passa por aquela região, aquele cluster de data centers, aquele estado, a Virgínia. Tenha isso em mente.
+
+21 de agosto de 2011. A AWS completa quatro anos . A computação em nuvem ainda é uma ideia nova. A maioria das empresas ainda utiliza seus próprios servidores, mas uma geração pioneira de startups como Reddit, Forsquare, Quora e Hootite apostaram tudo nessa novidade chamada nuvem. Naquela manhã, a equipe da AWS inicia uma atualização de rotina da rede no US East1. O objetivo é direcionar o tráfego para
+
+conexões de rede de maior capacidade, um procedimento padrão. O engenheiro que executou a alteração cometeu um erro. Em vez de encaminhar o tráfego para a rede principal e transferir as conexões antigas para a rede de backup, eles fazem o processo inverso. A rede de backup recebe o tráfego principal, mas o backup não foi projetado para essa carga. Começa a descartar pacotes. E é aqui que as coisas ficam
+
+interessantes. O EBS (elastic block storage), o armazenamento em blocos elásticos dos discos rígidos virtuais onde as instâncias do EC2 são executadas, começa a tentar espelhar a si mesmo. Milhares de volumes detectaram que seus dados podem estar em risco. Todos tentando simultaneamente criar cópias de segurança de si mesmos. Normalmente, isso não é um problema. Normalmente, o religamento utiliza
+
+capacidade ociosa da rede. Não havia capacidade ociosa. A rede já estava sobrecarregada. Assim, o espelhamento repetido congestiona ainda mais a rede, o que faz com que mais volumes EBS pensem que estão perdendo dados, o que causa mais espelhamento repetido, o que congestiona ainda mais a rede, um ciclo de feedback, uma espiral. O Reddit sai do ar, o Forsquare sai do ar . O Quora saiu do ar. A
+
+AWS, um dos principais serviços de computação em nuvem, ficou offline no início desta manhã, derrubando importantes sites como Reddit, Forsquare e Giant Bomb. Os engenheiros da AWS trabalham 24 horas por dia, 7 dias por semana. A recuperação completa leva quatro dias. A nuvem tinha três anos e já havia provado ser algo importante. Quando quebra de maneiras que ninguém previu. Em
+
+29 de junho de 2012, uma enorme linha de tempestades atingiu o norte da Virgínia. O tipo de tempestade com ventos de 130 km/h e relâmpagos que se sucedem rapidamente. Racho. Isso deixou uma grande marca em nossa região. Os danos afetaram milhares de pessoas em nossa região. O ataque
+
+atingiu os centros de dados da Ashberry. Os geradores de emergência entram em funcionamento. Em seguida, as chaves de transferência começam a apresentar defeitos. Existem equipamentos que gerenciam a transição da energia da rede elétrica para a energia do gerador. Alguns deles fracassam na subida.
+
+Oscilações de energia. Os servidores ficam fora do ar. Netflix, Pinterest, Instagram, Heroku, todos afetados. Mas aqui está a parte interessante. A Netflix continuou funcionando. Seus
+
+concorrentes estavam se esforçando ao máximo. Os engenheiros da Netflix passaram dois minutos observando seus painéis, perceberam que a AWS estava com desempenho degradado e seus sistemas automaticamente redirecionaram o tráfego para longe da zona afetada. Nos dois anos anteriores, eles haviam desenvolvido um software chamado Chaos Monkey, que encerrava aleatoriamente suas próprias instâncias em produção de propósito, para forçar seus sistemas a se tornarem resilientes exatamente a esse tipo de falha. Eles literalmente ensaiaram para esse desastre. Assim, enquanto o Instagram ficou fora do ar e o Pinterest saiu do ar, a Netflix continuou transmitindo e os engenheiros de toda a internet aprenderam uma lição sobre o que significa construir para o fracasso. A tempestade durou algumas horas.
+
+A interrupção durou praticamente o mesmo tempo.
+
+28 de fevereiro de 2017. Neste momento, a Amazon afirma estar enfrentando problemas com seu serviço de computação em nuvem, utilizado por quase um milhão de clientes. Desta vez não haverá tempestade. Nenhuma atualização de rede deu errado. Desta vez, trata-se de um erro de digitação. Um
+
+engenheiro da S3 está depurando um problema de faturamento. O S3, ou serviço simples, é a espinha dorsal da internet. Sites da internet, aplicativos, bancos de dados e grande parte da web estão hospedados no S3 ou dependem dele. O engenheiro segue um roteiro preestabelecido. Eles executam um comando para remover um pequeno número de servidores de um dos subsistemas internos do S3, mas digitam o número errado. Em vez de remover um
+
+pequeno número de servidores, eles removem um grande número. Especificamente, eles removeram o subsistema de indexação, o serviço que rastreia a localização de cada objeto no S3. Cada foto, cada arquivo, cada backup de banco de dados. Sem o índice, o S3 não consegue encontrar nada. As solicitações começam a falhar. O Trello saiu do ar. O Slack
+
+ficou fora do ar. Milhares de aplicativos que dependem do S3 ficam fora do ar. A equipe da AWS tenta reiniciar o subsistema de indexação. E aqui está o problema. O S3 cresceu enormemente desde o seu lançamento em 2006. O
+
+subsistema de indexação não precisou de uma reinicialização completa há anos. Ninguém sabe quanto tempo isso vai levar. Leva horas. A barra de progresso avança lentamente pela tela enquanto os engenheiros aguardam. Em algum momento, alguém tenta verificar o painel de status da AWS para ver se há alguma atualização. O
+
+painel de controle de status está hospedado no S3. Não vai carregar. A Amazon está usando a Amazon para verificar se a Amazon está fora do ar. O painel de controle mostra tudo verde, tudo está bem, os serviços estão operacionais, porque o próprio painel não consegue atualizar seu próprio status. Quatro horas depois, S3 se recupera. O problema de faturamento
+
+foi resolvido. Presumivelmente, o engenheiro tem uma longa caminhada até em casa. A Amazon adicionou discretamente uma nota ao seu relatório pós-lançamento informando que irá migrar o painel de status do S3. Em
+
+25 de novembro de 2020, véspera do Dia de Ação de Graças, a AWS fez uma alteração nos fluxos de dados do Kinesis. Kinesis é um serviço para processamento de dados em tempo real. Não é tão conhecido quanto o S3 ou o EC2, mas, ao que parece, está discretamente integrado à base do funcionamento interno da AWS. Essa alteração faz com que o Kinesis comece a consumir muito mais recursos do que o esperado nos servidores que executam a interface do serviço. O sistema cinético começa a apresentar dificuldades e, em seguida, ocorre tensão. O IM começa a apresentar problemas. IM
+
+é o serviço de autenticação da AWS. É o que verifica quem você é e se você tem permissão para fazer algo. O Cognto começa a apresentar problemas. Esse é o serviço que permite que os aplicativos gerenciem o login do usuário. O Cloudatch começou a apresentar problemas. Esse é o
+
+serviço de monitoramento, aquele que os engenheiros usam para descobrir o que está errado. As verificações de saúde da Rota 53 começam a falhar. A autocalibração parou de funcionar. Todos eles tinham dependências do Kinesis que ninguém havia mapeado completamente. Quando o Kinesis diminuiu a velocidade, arrastou tudo o que estava conectado a ele. Os engenheiros
+
+tentam acessar o console da AWS para diagnosticar a situação. Eles não conseguem fazer login. O AM está fora do ar. A ferramenta que você precisa para resolver o problema está quebrada pelo próprio problema. Desvendar essa cascata leva horas.
+
+Os serviços são restabelecidos lentamente, um a um, ao longo da noite. No Dia de Ação de Graças, as pessoas percebem que as coisas estão funcionando novamente. Mas, na época, quase ninguém tinha ideia do que havia acontecido.
+
+7 de dezembro de 2021. Se você está tendo problemas para usar os serviços online da Amazon esta manhã, saiba que não está sozinho. A Amazon Web Services sofreu uma grande interrupção hoje, afetando o acesso a muitos sites populares. A empresa desativou serviços como o Prime Music, o serviço de vídeo Alexa e seus sistemas Ring Smarthome. Algo está errado com o AWS Lambda e vários outros serviços na região Leste dos EUA. Os aplicativos
+
+começam a apresentar erros. Usuários que tentaram usar o Instacart, Venmo, Kindle, Roku e Disney Plus relataram problemas. A princípio, nada catastrófico. Depois piora. Mas essa interrupção é diferente das outras por causa de quem fica sem energia. Alexa para de responder. Dezenas de
+
+milhões de pessoas dizem "Alexa" e não obtêm resposta . As câmeras Ring ficam offline. Câmeras de campainha, câmeras de segurança, todas offline. Os aspiradores de pó Roomba da iRoot, programados para limpar enquanto seus donos estão no trabalho, param no meio do andar e se recusam a continuar. E depois piora. A própria Amazon começa
+
+a ruir. Os motoristas do Amazon Flex, que são os trabalhadores autônomos que entregam encomendas da Amazon em seus próprios carros, abrem seus aplicativos para iniciar seus turnos. Os aplicativos não carregam. Eles não conseguem escanear pacotes. Eles não podem iniciar rotas. Dentro dos
+
+centros de distribuição da Amazon, os leitores portáteis que os funcionários usam para rastrear o estoque param de funcionar. A empresa proprietária da nuvem está sendo derrubada pela sua própria nuvem. Durante algumas horas, a capacidade da Amazon de processar pedidos, que, como você sabe, é a razão de sua existência, está sendo afetada pela queda da AWS . A mesma infraestrutura que a Amazon construiu para vender para o mundo é a mesma infraestrutura da qual a Amazon depende para funcionar. A interrupção acaba sendo resolvida, mas a Amazon não entra em muitos detalhes sobre a causa principal. O
+
+silêncio é uma resposta em si mesma.
+
+19 de outubro de 2025, 23h. Dentro da AWS, um sistema automatizado está fazendo o que sempre faz: gerenciando registros DNS para o DynamoDB. Essa interrupção foi tão grande, na verdade, que é realmente difícil apontar um setor que não tenha sido afetado por ela. O DynamoDB é o principal serviço de banco de dados da Amazon . Mas não é apenas um banco de dados que as pessoas usam. Internamente, dezenas de
+
+serviços da AWS usam o Dynamob como camada de coordenação, armazenando estado, rastreando configurações e gerenciando metadados. É o tecido conjuntivo da plataforma. A automação gerencia centenas de milhares de registros DNS, atualizando-os constantemente para apontar para o ponto final. Em algum ponto dessa automação, dois componentes redundantes encontram uma rara condição de temporização e são apagados. Eles colidem de uma forma que nunca aconteceu antes. A automação exclui o
+
+registro DNS do endpoint regional do Dynamo DB . Não os dados, nem os servidores, apenas o endereço que cada serviço da AWS usa para encontrar o DynamoDB. Em segundos, o Dynamob fica inacessível. Não está quebrado, apenas impossível de encontrar. E então a cascata começa. As máquinas virtuais EC2,
+
+que alimentam toda a nuvem, armazenam seus dados operacionais no Dynamob. Com o DynamoDB inacessível, o sistema de orquestração do EC2 fica paralisado e novas instâncias não podem ser iniciadas. Instâncias existentes não podem ser gerenciadas. Outros serviços que dependem desses serviços também começam a falhar. A Netflix saiu do ar. O
+
+Slack ficou fora do ar. A Coinbase saiu do ar. A Expedia saiu do ar. Os hospitais não têm acesso aos registros. As companhias aéreas não podem emitir cartões de embarque. Os bancos ficam às escuras.
+
+Equipes de engenharia em todo o mundo abrem seus consoles de gerenciamento da AWS para diagnosticar o problema. Os consoles estão inacessíveis ou exibem dados desatualizados. As ferramentas fixas são quebradas pelas coisas que estão sendo consertadas. Mais uma vez, os engenheiros da AWS trabalham para recriar o registro DNS ausente, mas os sistemas que deveriam se recuperar automaticamente dependem do DynamoDB. Eles não conseguem se recuperar. Restaurando tudo cuidadosamente
+
+na ordem correta, validando cada etapa. Isso leva 14 horas. 14 horas. Seis interrupções. 15 anos. Uma
+
+região. Um erro de digitação, uma tempestade, um comando digitado incorretamente, uma mudança de configuração na véspera de um feriado , uma dependência que ninguém mapeou, uma condição de corrida na automação: seis causas completamente diferentes, seis modos de falha completamente diferentes e, no entanto, mesma região, mesmo impacto, mesma história. A verdade incômoda sobre a US East One é esta. Sabemos há 15 anos que é demasiado importante para falharmos. E, mesmo assim, vimos o sistema falhar repetidamente por razões que variam desde má sorte a erro humano, passando por complexidades ocultas que ninguém entendia até que ele quebrasse. Toda vez que a Amazon publica um relatório
+
+pós-lançamento. Toda vez que prometem novas medidas de segurança. Cada vez que ocorre uma nova interrupção, uma brecha diferente é explorada. Porque sistemas tão complexos não falham da maneira que você prevê. Eles falham de maneiras contra as quais você nem imaginou se proteger. E isso porque entre 30% e 50%
+
+da internet escolheu a mesma região, o mesmo conjunto de centros de dados, a mesma porção de terra no norte da Virgínia. Sempre que algo dá errado ali, o mundo inteiro fica sabendo .

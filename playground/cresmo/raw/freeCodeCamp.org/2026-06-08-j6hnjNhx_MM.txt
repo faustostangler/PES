@@ -1,0 +1,343 @@
+---
+video_title: "Web Scraping for Beginners –  Extract Data with an API"
+video_id: j6hnjNhx_MM
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=j6hnjNhx_MM
+video_date: 2026-06-08T23:24:07+00:00
+video_description: |
+  Learn how web scraping can be utilized for tasks like market research, SEO tracking, and data collection. She will demonstrate how to bypass common obstacles like CAPTCHAs, rate limits, and bot detection by leveraging an efficient API. By the end, you'll learn how to build a simple, effective scraper that extracts structured data for your own projects. 
+  
+  🔗 Check out SerpApi here: https://serpapi.com/google-short-videos-api?utm_source=freecodecamp
+  
+  💻 Github link: https://github.com/kubowania/video-downloader
+  
+  🏗️ SerpApi for providing a grant to make this course possible.
+  
+  Course developed by @aniakubow 
+  
+  ⭐️ Contents ⭐️
+  – 0:00:00 Introduction to Web Scraping
+  – 00:00 Introduction to Web Scraping
+  – 01:58 Getting Started with SerpApi
+  – 03:54 First API Search Test
+  – 05:14 Setting Up the Project
+  – 06:59 Installing Packages and Project Configuration
+  – 08:15 Configuring Search Parameters
+  – 10:04 Exploring Advanced Search Parameters
+  – 14:35 Scraping Short Videos (Instagram, YouTube)
+  – 16:40 Using Google Lens API
+  – 18:32 Building a Project: Short Video Scraper
+  – 19:40 Back End Development
+  – 28:20 Creating the Front End (HTML, CSS, App.js)
+  – 37:09 Implementing the Search Functionality
+  – 46:16 Setting Up Video Downloads with YT-DLP
+  – 56:48 Implementing the "Download All" Functionality
+  – 1:00:14 Securing the API Key with Environment Variables
+---
+Neste tutorial completo sobre web scraping, Anya Kubow ensinará como essa técnica pode ser utilizada para tarefas como pesquisa de mercado, monitoramento de SEO e coleta de dados. Ela demonstrará como contornar obstáculos comuns, como CAPTCHAs, limites de taxa e detecção de bots, utilizando uma API eficiente. Ao final, você aprenderá como construir um scraper simples e eficaz que extrai dados estruturados para seus próprios projetos. E agradecemos à SERP API pela bolsa que tornou este curso possível. As pessoas querem coletar dados de produtos, monitorar concorrentes, acompanhar rankings de SEO ou até mesmo construir ferramentas de IA que extraiam informações da internet. Mas o
+
+problema é que a maioria dos tutoriais de web scraping são extremamente complicados ou param de funcionar assim que um site adiciona elementos como CAPTCHAs, limites de taxa ou proteção contra bots. Neste vídeo, vou mostrar uma maneira muito mais fácil de extrair dados da web. Em vez de criar scrapers do zero, lidar com proxies ou corrigir constantemente scripts com defeito, vamos usar uma API que cuida de tudo isso para nós. Ele executa buscas em um navegador real, resolve CAPTCHAs automaticamente e retorna dados limpos e estruturados em JSON que podemos usar diretamente em nossos aplicativos. Meu nome é Anya Kubow, sou desenvolvedora de software, criadora de cursos e, hoje, vou guiá-lo(a) na compreensão de como os web scrapers funcionam, como extrair dados de mecanismos de busca como o Google e como transformar esses dados em algo útil para seus próprios projetos. E,
+
+por fim, como construir um scraper simples com apenas algumas linhas de código. Portanto, seja para criar uma ferramenta de SEO, fazer pesquisa de mercado ou simplesmente automatizar a coleta de dados da internet, este é um tutorial completo e fácil para iniciantes em web scraping. Então, o que estamos esperando? Vamos fazê-lo . Certo, então, para usar um scraper pronto para uso que nos permita coletar todos esses dados e contornar barreiras como CAPTCHAs, limites de taxa e detecção de bots, vamos usar um pacote NPM chamado SerpApi.
+
+Mas para utilizá-lo, precisamos de uma chave de API. Se você não sabe o que são pacotes NPM , não se preocupe. Abordaremos esse assunto neste tutorial. Mas para usar este pacote NPM, precisamos de uma chave de API. E para isso, precisamos nos cadastrar no serpapi.com.
+
+Então vamos fazer isso. Ok, então aqui estamos no SerpApi, e eu vou me cadastrar. E pronto! Diretamente no meu painel de controle, obtemos uma chave de API privada. Bem, esta é minha, claro. Estou revelando isso para você.
+
+Por favor, não use este, pois irei desativá-lo. Adquira o seu próprio e guarde-o em segurança. O motivo pelo qual você deve mantê-la em segurança é que, se outras pessoas obtiverem sua chave de API e a utilizarem em seus projetos, elas poderão consumir todos os seus créditos ou até mesmo acumular uma fatura de cartão de crédito considerável, caso você decida vincular cartões de crédito às suas plataformas. Ok, isso vale para todas as chaves de API existentes, então, por favor, esteja ciente disso. OK? Então, por favor, copie
+
+isso aqui. Agora, a SerpApi também é extremamente útil. Também mostra como pesquisar todas essas coisas diferentes. Certo, então tem muita coisa, e ainda oferece alguns auxiliares. Então, já falamos sobre o Google. Aqui temos algumas da Amazon, como a
+
+API de Produtos da Amazon, a API da App Store da Apple, até mesmo do Bing, a API de Busca do DuckDuckGo e a API de Busca do YouTube. Quer dizer, a lista é bem extensa, e todos os ajudantes estarão lá. Vou abordar este assunto mais adiante no tutorial. Mas, por agora, tudo o que você precisa é da sua chave de API, e só. Já estamos preparados para usar a SerpApi. Só para verificar se está funcionando,
+
+vou executar um comando curl simples no meu terminal, inserindo apenas os parâmetros necessários para realizar essa busca. Para sermos claros, o que faremos é nos comunicar com a API de Busca do Google (SERP) . É identificado pelo URL e vamos procurar por café. Então, aqui está. Aqui está o meu comando e, como você verá, eu inseri dois parâmetros. A letra Q da pesquisa, neste
+
+caso "café", e depois minha chave de API exclusiva. Aqui está apenas um exemplo . Ok, mais uma vez, esses são os únicos parâmetros necessários. Outros itens são opcionais e os abordaremos nas próximas seções. Então, vamos fazer isso. Vamos dar uma olhada
+
+. Então, aqui estou eu. Vou abrir meu terminal e digitar esse comando. Certifique-se de escrever o seu exatamente da mesma forma, substituindo apenas a sua chave de API exclusiva, e vamos executá-lo. E pronto, obtemos os resultados da pesquisa. Ok, então isso funcionou.
+
+Você utilizou oficialmente a API de Busca do Google para extrair resultados da página de busca do Google e aqui estão os resultados. Vamos agora explorar os diferentes parâmetros opcionais que você pode ter. Como extrair dados de mecanismos de busca como o Google. Ok, então nesta seção, vamos fazer exatamente o que está escrito na embalagem e vamos extrair dados do Google. A Busca do Google , mas também outras coisas como o Google Flights, por exemplo.
+
+Então, peguei meu editor de código e tudo o que fiz foi simplesmente criar um diretório ou pasta chamada "tutorial de scraping" e colocar um arquivo index.js dentro. Então, por favor, faça o mesmo. Este é essencialmente o nosso ponto de partida para extrair qualquer informação, na verdade. Vamos abrir nosso editor de código para podermos escrever algum código. OK?
+
+Então, vou minimizar isso por enquanto para que possamos nos concentrar neste arquivo. Agora, a primeira coisa que vamos fazer é iniciar um novo projeto Node.js criando um arquivo package.json. Portanto, o comando que precisaremos usar é `npm init`.
+
+Certo, vamos lá. Há algumas perguntas padrão que ele está me fazendo. Então, aqui está o tutorial de script do pacote, versão um. Sim, esta é a primeira versão do meu aplicativo. Descrição: vamos deixar em branco.
+
+O ponto de entrada será o arquivo index.js e o comando de teste deve ficar em branco. Obtenha o repositório em branco, as palavras-chave em branco, o autor em branco e a licença em branco. Certo, vamos lá . Acabamos de criar um arquivo package.json.
+
+Maravilhoso. Agora, se isso não funcionou para você, pode ser porque você não tem o Node.js instalado no seu sistema. Então, por favor, faça isso. Ao instalar o Node.js,
+
+você poderá executar comandos básicos do npm, como acabamos de fazer. Ok, então é só clicar em "Obter Node.js" e fazer o download de acordo com o sistema operacional que você está usando. Ótimo. OK. Portanto, todos deveríamos estar aqui.
+
+E agora vamos voltar ao nosso arquivo index.js. Então, vamos usar a sub API do pacote para fazer scraping , o que significa que precisamos deste código. Ok, estamos obtendo esse pacote e, em seguida, o método para obter o JSON a partir dele. Então, é claro, precisamos instalar este pacote. Então, mais uma vez,
+
+vamos ligar nossos terminais. Vou apenas limpar isso e executar `npm i` para instalar o pacote da sub-API. Ok, e isso está feito. Portanto, mais uma vez, se você consultar o arquivo package.json, ele deverá aparecer lá, juntamente com a versão que você está usando. Agora, esta versão
+
+é importante. Se você estiver assistindo a isso no futuro e aparecer 4.2.1, basta alterar para 2 para que fique exatamente como o nosso. Salve o arquivo e execute `npm i` novamente para instalar esta versão da API Serp, garantindo a compatibilidade com este tutorial, pois nunca se sabe que tipo de alterações podem ter sido feitas posteriormente na versão quatro.
+
+Então, sim, certifique-se de que sua versão da API Serp seja exatamente a mesma que está escrita aqui. Ótimo. Em seguida, vou obter o método para obter o JSON e vou passar um objeto como argumento. Ok, então esse é o meu objeto, e esse objeto terá o motor que vamos coletar dados. Então, nesta ocasião será o Google, a consulta que pesquisaremos no Google será "café",
+
+a localização. Vou colocar Londres, Inglaterra, Reino Unido . Domínio do Google. Claro que você pode mudar tudo isso. Vai depender inteiramente de você.
+
+Vamos usar google.co.uk. Vou apenas substituir essas aspas por aspas duplas para que fiquem iguais ao resto. HL será a linguagem utilizada nas buscas do Google. Então, vou
+
+colocar em inglês. GL vai ser do Reino Unido. Portanto, GL apenas define o país a ser usado na pesquisa do Google. Portanto, é um código de país de duas letras e, neste caso, é UK para Reino Unido. E nossa chave de API. Para mim é isto. Por favor,
+
+use o seu próprio, pois irei desativar o meu, então ele não funcionará no futuro. E é isso. Esse é o meu objetivo principal. Claro, você pode adicionar mais parâmetros a isso. E tudo isso, ok, você não pode simplesmente inventar . Eles precisam vir de uma
+
+lista específica que está listada na API Serp. Ok, esses parâmetros da API podem ser encontrados aqui. Ok, então serpapi.com/search_api. Você obtém a pesquisa de consulta Q, então, para nós, usamos o termo "café" para se referir ao Q. Existem outras maneiras de
+
+usar isso também. Usamos isso de uma forma muito, muito básica. Nós temos a localização. Novamente, isso precisa ter uma aparência específica. Basta acessar a API JSON de locais, onde você poderá ver os locais suportados.
+
+Certo, então é só clicar ali para vê-los. Você também tem todas essas outras coisas, que são opcionais. Portanto, o parâmetro UULE é a localização codificada do Google . Você também pode definir por latitude e longitude, o que é opcional. Um raio também permite definir a distância em metros dentro da qual os resultados da pesquisa serão filtrados. Isso também é muito
+
+legal. Você também tem alguns parâmetros avançados do Google, que não abordaremos hoje, pois este conteúdo é para iniciantes. Mas, se você quiser conferir, aqui estão elas. E depois, claro, a localização. Portanto, usamos o domínio do Google, que define o domínio do Google que você deseja usar, embora isso seja opcional. Utilizamos o parâmetro GL,
+
+que define o país em que a pesquisa do Google será realizada. Definimos o idioma. Novamente, a página de idiomas do Google está aqui, então não invente isso . Existem determinados códigos de duas letras que representam diferentes idiomas. Também temos a Costa Rica (CR), portanto, este prompt define um ou mais países para limitar a pesquisa. Portanto, consulte novamente a
+
+página de países do Google CR e, por fim, você também pode definir um ou vários idiomas usando o LR. Então, confira através do link aqui. OK? E, claro, temos alguns filtros avançados. Também temos o tipo de pesquisa, a paginação e, por fim, a única coisa realmente obrigatória, já que todas as outras são opcionais, é a chave da API, que já inserimos.
+
+Ótimo. É aí que você encontra todos os parâmetros da sua API . Então, aqui estão todos esses campos, como preenchê-los e também adicionar os outros opcionais. Maravilhoso. Vamos em frente.
+
+Então, depois de enviarmos isso para a SerpApi, é claro que queremos obter alguns resultados, e nossos resultados vêm em formato JSON. Então, vamos pegá-los e depois vamos registrá-los no console. Vamos apenas registrar as ações no terminal. Registro do console em formato JSON. E é basicamente isso. Vamos salvar
+
+isso. Agora, vou sair do meu terminal. Vamos esclarecer isso mais uma vez. E para garantir que estamos no tutorial de scraping, vou usar o Node para executar o arquivo index.js, assim mesmo. E pronto, recebemos
+
+o JSON de volta. Ok, então aqui você tem basicamente os resultados da busca por "café em Londres" usando o domínio google.co.uk, o idioma e o dispositivo, que foi adicionado como "desktop", já que estou usando meu computador, então ele detectou isso automaticamente. Certo, aqui está. Aqui estão
+
+todos os resultados que obtivemos. OK? Legal. Então, recebemos um Reels do Instagram de volta. Também descobrimos que os cafés mais baratos de Londres nunca tiveram mais de um cliente, e isso é um vídeo do YouTube. Na
+
+terceira posição, também temos uma publicação no Facebook, ao que parece , com os 10 melhores cafés para experimentar em Londres. Também recebemos perguntas relacionadas. Ok, a página inteira foi copiada. O que também é bastante interessante é que, se você quiser ver isso visualmente, pode voltar ao serpapi.com (barra), a API de pesquisa do Google, e simplesmente digitar o endereço aqui. Então, depois de tudo o que acabamos de
+
+fazer, vou digitar "café", essa foi a minha busca, lembra? Q café, e em relação à localização, eu diria simplesmente Londres. Então, Londres é assim. E pesquise. Portanto, mais uma vez , isso detectou automaticamente outros parâmetros de pesquisa, como meu idioma, área de trabalho do dispositivo e assim por diante. Mas,
+
+essencialmente, aqui temos uma representação visual do que seria pesquisado se realmente digitássemos "café" no mecanismo de busca do Google. Isso também é bastante útil. OK? Ótimo. Então, incrível, temos esse JSON e agora podemos usá-lo em qualquer projeto que quisermos. E esse é o objetivo,
+
+e chegaremos lá. No entanto, gostaria de abordar mais alguns pontos. Então, nós escrevemos o código JavaScript para isso, então pode parecer familiar para você. Mas se você estiver mais familiarizado com Python, aqui está o código para isso. Se você se inscrever na API do SERP, sua chave de API já estará aqui, o que é muito útil. Se
+
+você quiser usar Java, se quiser usar Rust, se quiser até mesmo integrar isso ao Google Sheets, você pode. OK? Ótimo. Vamos em frente. Como extrair dados de Reels do Instagram, Shorts do YouTube e outros vídeos curtos.
+
+Nesta seção, vamos analisar como extrair vídeos curtos usando a API de Vídeos Curtos do Google. Isso nos permitirá extrair essencialmente títulos de vídeos, links, miniaturas e até mesmo os próprios videoclipes, bem como ícones de origem, canais e durações. Vamos experimentar . Ok, então, para obter vídeos curtos, e eu me refiro literalmente aos vídeos em si, bem como a todas as outras informações, mais uma vez, esta é minha configuração básica de código, e mais uma vez, isto é Node.js, e tudo o que vou fazer é adicionar o mecanismo. Então, vou escrever
+
+vídeos curtos para o Google. E agora vamos inserir uma consulta, então vamos consultar La Boo Boo. E é isso. Assim como fizemos na extração de dados anterior , você pode, é claro, adicionar outros parâmetros da API aqui. Já abordamos esses assuntos na seção anterior, então não vou repeti-los . E agora tudo o que precisamos
+
+fazer é executar este script. Então, mais uma vez, vou simplesmente digitar node e depois index.js, que é o nome do nosso arquivo. E pronto, recebemos um monte de vídeos do La Boo Boo de volta . OK. Então, tem muita coisa. O
+
+brinquedo La Boo Boo, que viralizou nas redes sociais, em breve estrelará um longa-metragem. Vamos em frente. Como usar a API do Google Lens. Então, este é o último que vou mostrar para vocês, e acho que é bem interessante. A API do Google Lens permite extrair resultados da página do Google Lens ao realizar uma pesquisa de imagens. Os resultados relacionados à imagem
+
+podem conter correspondências visuais e outros dados, e nós vamos obtê-los. Então, mais uma vez, aqui está minha configuração. Como mecanismo de busca, vamos simplesmente passar pelo Google Lens e, em seguida, teremos que procurar uma imagem. Então, desta vez, vou apenas procurar esta imagem de Danny DeVito. Aqui está o URL que vou usar. E,
+
+claro, precisamos da nossa chave de API. Agora, eu só quero ver as correspondências visuais, mas falaremos disso daqui a pouco. Por agora, vamos apenas registrar tudo no console. Então, vou executar o comando `node index.js` novamente, e pronto! Então, basicamente, isso é
+
+tudo que retorna. Ok, então, coisas de grupos do Facebook. Tem muita coisa aqui dentro. Se você só quer correspondências visuais, vou pesquisar apenas por correspondências visuais. Você pode acessar a matriz, procurar por correspondências visuais e executar o processo novamente. Então,
+
+índice de nós. js, e agora apenas as correspondências visuais serão retornadas. Como vocês podem ver, são apenas imagens ou miniaturas durante toda a exibição . Ótimo. Vamos abrir um para ver como é .
+
+E ótimo, uma correspondência visual que foi usada em monmouthtimeline.org foi retornada. Muito bem , agora vamos usar o que aprendemos para construir nosso primeiro projeto, que será, como você já deve ter adivinhado, um pequeno programa para extrair dados de vídeos. Então, vamos utilizar o que aprendemos sobre como usar o mecanismo de vídeos curtos do Google a partir da SerpApi. Vou criar um aplicativo web que extrai vídeos curtos do Google usando a SerpApi e os baixa localmente para o seu computador, utilizando também outro pacote .
+
+Então, vamos construir um back-end super simples que chamará a SerpApi para realizar a busca nos vídeos que vimos anteriormente. O mecanismo de busca de vídeos curtos do Google retornará os resultados e, em seguida, faremos o download deles via yt-dlp para uma pasta de downloads. OK? Vamos construir uma interface bem básica usando apenas JavaScript e CSS, com um campo de busca simples e um seletor de quantidade para que possamos escolher entre 5, 10 ou 15 vídeos para baixar. É claro que este projeto é super básico.
+
+Só quero te dar a estrutura básica para que você possa seguir em frente, criar a sua própria, adicionar recursos, expandir essa ideia, enfim, o que você quiser . Ótimo. Então, vamos fazer isso. Certo, então vamos lá . Assim como antes, estou começando com um arquivo index.js e, assim como
+
+antes, vou inicializá-lo. Então, execute npm init. Ok, basta pressionar Enter em todos eles para obter os valores padrão. Ótimo, isso vai gerar um arquivo package.json para nós, que terá esta aparência.
+
+Em seguida, como você já deve ter imaginado , teremos que instalar alguns pacotes. Sim , vamos instalar a API Serp. Então, vamos em frente e fazemos isso. Vamos instalar o npm i Serp API, mas também vamos instalar o Express, que nos ajudará com o roteamento. Então, é isso. Isso vai ser
+
+instalado. E se você rolar para baixo, verá os pacotes que estamos usando, juntamente com suas versões. Portanto, assim como antes, certifique-se de que suas versões sejam compatíveis. Caso contrário, basta alterar isso e executar ` npm i` novamente. OK?
+
+Ótimo. Vamos encerrar isso. Então, agora vou abrir meu arquivo index.js novamente e vamos escrever algum código. Então, em primeiro lugar, vamos obter o Express, e isso requer o pacote que acabamos de instalar, chamado Express. E agora vamos seguir
+
+o caminho. Isso vai exigir o caminho (path) e também o sistema de arquivos (fs). Isso vai nos ajudar com os arquivos. Portanto, é necessário o sistema de arquivos. Explicarei tudo isso para você quando formos usar. A constante `exec
+
+file` requer um processo filho e a constante `get JSON`, que, como sabemos, vem da sub API. Então, é isso. Assim, o módulo path é essencialmente importado para lidar com caminhos de diretórios de arquivos. Este aqui é o módulo do sistema de arquivos e nos ajuda a ler e gravar arquivos e pastas em nosso computador. O método `exec file` é importado para executar comandos externos, como o `yt-dlp` que usaremos, e vem do pacote `child process`.
+
+Ótimo. Agora, vamos criar uma instância de aplicação Express. Então, basicamente, estamos recebendo o Express, que importamos para cá. Estamos chamando isso de aplicativo e salvando todas essas maravilhas no aplicativo const para que possamos usá-las. Vamos também definir nossa porta.
+
+Então, para a porta constante, eu diria 3.000. É aqui que o servidor ficará à escuta. E depois a chave de API constante, bem, você já deve ter adivinhado. Vamos colocar o nosso antigo de volta. Isso nos ajudará a usar
+
+a sub API. Ótimo. Em seguida, vou definir também o nosso diretório de downloads.
+
+E vamos usar o caminho de junção do nome do diretório de downloads. Basicamente, estamos dizendo que este é o caminho absoluto para a pasta de downloads que fica no seu computador. Portanto, tudo o que baixarmos será salvo lá. Se você não quiser que o arquivo seja salvo lá, pode, é claro, alterar o local para qualquer pasta que desejar. Agora, vamos garantir que o diretório de downloads exista antes que o servidor seja iniciado. Então, existe a
+
+sincronização e agora vamos percorrer o diretório de downloads. Portanto, se não existe, nós o criamos. FS. mk dir sincronizado. Então, vamos criar uma pasta chamada downloads.
+
+Ok, "mk dir" é apenas um comando para criar um diretório. Agora, vamos usar o recurso de uso do aplicativo e, essencialmente, habilitar a análise do corpo JSON . Então, expresse o JSON exatamente assim. E também vamos disponibilizar os arquivos da interface a partir da pasta pública. Portanto, expresse o caminho estático join e, em seguida, passe o nome do diretório public.
+
+E também vamos disponibilizar os vídeos baixados como arquivos estáticos na página de downloads. Então, para fazer isso, vamos acessar a pasta de downloads do Express, no
+
+diretório de downloads estáticos. Ótimo. Ok, agora é hora de escrever nosso endpoint de busca. Então, app.get, é aqui que entra o roteamento, porque se formos para um determinado endpoint, neste caso estou literalmente inventando um , poderia ser qualquer um que você quiser.
+
+Eu optei pela busca no aplicativo. Vamos passar por uma solicitação e uma resposta. Em seguida, vamos extrair a consulta de pesquisa e a contagem de resultados. Assim, por exemplo, a constante Q count é igual a cinco . Certo, então cinco é o valor padrão, mas pode ser alterado. Vou mostrar a vocês
+
+o que isso significa na prática . Agora, se não houver essa consulta, ou seja, se não pesquisarmos por Labubu, por exemplo, então queremos apenas enviar um erro. Então, vamos retornar o status 400 em JSON e, em seguida, enviar um objeto com o erro. E vamos simplesmente inserir a string do parâmetro de consulta Q. Q é obrigatório.
+
+Só para sabermos por que ocorreu um erro. Agora, vamos usar o método `getJSON`, com o qual você já deve estar familiarizado. E vamos sair de lá através de, você adivinhou, um objeto. Um objeto que aceita parâmetros opcionais, como o mecanismo de busca, que neste caso será aquele que você usou anteriormente, que é o Google Short Videos como consulta. O que vamos distribuir a partir da nossa interface, então vamos deixar vazio por enquanto. A
+
+chave da API será a chave da API, ok? Então, isso virá da nossa variável armazenada no início do arquivo, que devemos manter em segredo, ok? Não publique este projeto na internet tal como está. Isso é algo que você terá que fazer. Ok, ótimo. Então,
+
+aqui está, e então obtemos o JSON. E ` const videos` equivale a resultados de vídeos curtos em formato JSON . Ok, então estamos obtendo os resultados de vídeo curtos do JSON que nos é retornado e armazenando-os como constantes de vídeos. Alternativamente, se isso não produzir nenhum resultado, simplesmente retornaremos uma matriz vazia. Agora, vamos simplesmente dividir o valor em 5, 10 ou 15. Para
+
+isso, usaremos o método `slice`, começando a contagem do zero e passando um `int` para converter a contagem em um inteiro, que também será passado pela interface. Ótimo. Então, vamos obter o JSON de resultados e simplesmente enviar os vídeos de volta. OK. Assim, os resultados do vídeo serão enviados de volta para a interface em formato JSON.
+
+Ótimo. Acho que vamos iniciar nosso aplicativo por enquanto e ver como fica. Então, app.listen, escuta a porta, e depois vamos simplesmente usar console.log para exibir "servidor em execução" no nosso localhost e na porta que estava sendo usada, que era 3000.
+
+Legal. Analisando isso, precisamos apenas remover aquilo e colocar aqui fora também. Certo, então ele existe fora da função anterior. Então, basicamente, o que nós escrevemos foi o nosso back-end . Agora, aqui dentro, vou criar outro diretório. Então, vamos
+
+criar uma nova pasta. Vou chamar isso de público. E aqui, vou criar um novo arquivo, o arquivo index.html. Também vou criar um arquivo styles.css e um arquivo JavaScript chamado app. js
+
+. Maravilhoso. E agora vamos conectar tudo . Então, vamos apenas inserir um texto padrão aqui. Então, tipo de documento HTML.
+
+Vou definir o idioma HTML como inglês. E aqui dentro teremos o cabeçalho, que conterá alguns metadados, bem como o título. Vou chamar isso de "raspador de vídeos curtos" , assim: meta charset UTF-8. Portanto, você já deve estar familiarizado com isso. Isso é apenas um texto padrão muito básico . A
+
+largura do conteúdo da viewport é igual à largura do dispositivo e a escala inicial é igual a um. Ótimo. OK. Então vamos definir o estilo. Então, vou apenas colocar o link aqui.
+
+Link href styles.css rel folha de estilo. Agora, falando sobre o corpo do texto, vou manter tudo bem simples. Vou usar um elemento H1 com o texto " extrator de vídeos curtos". Vamos colocar o emoji aqui também.
+
+E depois uma div. Isso terá um campo de entrada e uma lista suspensa para selecionar a contagem. Então, 5, 10 ou 15. Vou escolher a opção cinco. Inclua também os números 10 e 15. Claro, você pode incluir
+
+quantos quiser. Eu também preciso inserir o valor. Então, atribua um valor à sequência de cinco elementos. Valor valor. Mantenha este valor como 10 e este como 15. Vamos atribuir a isso também o ID de
+
+contagem. Então, contagem de IDs. Ótimo. Este campo de entrada será para texto, que é o padrão. Vou fornecer um ID de consulta para que possamos identificá-la . E vamos também ter um
+
+espaço reservado que diga pesquisar por vídeo curto {dot} {dot} {dot}. OK? Então, esse é o texto de exemplo. E eu vou simplesmente inserir um valor e codificá-lo diretamente, mas você também pode sobrescrevê-lo no Labubu. Legal.
+
+Então, se você quiser, posso colocar isso em várias linhas para que você possa ver. Pronto . Parece bom. Então, agora que temos isso, vou atribuir a classe " control" para que possamos estilizar tudo dentro dessa div. Ah, eu também vou colocar um botão.
+
+OK? Basicamente, esse botão nos permitirá pesquisar pelo termo de busca e pela quantidade de vídeos que queremos exibir. Ótimo. Também vou atribuir a isso o ID do botão de pesquisa para que possamos identificá-lo em nosso JavaScript. Depois que essa div estiver finalizada, vou adicionar um elemento P com o ID " status" para que possamos ver quaisquer atualizações e exibi-las aqui entre essas duas tags P e um pouco de texto. Em seguida,
+
+vou criar uma div com a classe " barra de download". OK? E também o ID do download . OK? E isto será simplesmente para o nosso botão. Então, vou
+
+adicionar um botão aqui. Este é o botão de download. OK? Ótimo. E talvez devêssemos atribuir a ele também o ID de botão de download .
+
+Legal. E, por fim, vou adicionar uma div. E aqui estão todos os nossos resultados. Então, vamos atribuir a isso o ID dos resultados. E também vou atribuir o nome de classe " grid" exatamente assim . E finalmente, depois de tudo
+
+isso estar feito e funcionando, vou apenas inserir um script chamado app.js. Então, lemos nosso arquivo JavaScript, que ainda precisamos escrever. Mas, primeiro vamos adicionar um pouco de estilo para vermos como fica . Então, para começar, vou remover qualquer preenchimento ou margem padrão. Para
+
+o corpo do texto, vou definir a família da fonte como sans-serif, a cor de fundo como preta, a cor do texto como esbranquiçada e a altura mínima de 100 pixels da viewport, com um preenchimento de dois REM. Todos os elementos H1 terão alinhamento de texto centralizado, margem inferior de dois REM, tamanho da fonte 1,8 REM e cor branca. Em seguida, vamos analisar os controles. Então, vou selecionar o elemento da classe "controls" e usar a propriedade "display: flex" para poder espaçar tudo de forma adequada, com uma largura máxima, além de adicionar margem e alinhar todos os itens ao centro. Agora, o campo de entrada com o tipo de texto que reside nos controles, e estou sendo extremamente rigoroso, terá o seguinte preenchimento, bem como o raio da borda.
+
+Vou adicionar uma borda, um fundo e uma cor para o texto também. Além de definir o tamanho da fonte. E, finalmente, o elemento select que está dentro dos controles terá preenchimento (padding), raio da borda, borda, cor de fundo, a cor da fonte será branca e também estou definindo o tamanho da fonte. Agora, o botão... O botão, ok,
+
+terá um pouco de preenchimento, um raio de borda, nenhuma borda, e a cor de fundo será roxa. A cor da fonte também será branca. O tamanho da fonte será de 1 rem e o cursor apontará para dentro dela quando você passar o mouse sobre ela. A transição também será tranquila. Então, vamos definir isso daqui a pouco. Então, isto será uma
+
+animação. Ao posicionarmos o cursor sobre o botão, ele simplesmente mudará para um tom de roxo mais escuro. E quando o botão estiver desativado, ele ficará cinza e o cursor não poderá ser movido. Na verdade, talvez seja melhor eliminar essa transição. Não é realmente necessário para esta demonstração.
+
+Então, o elemento com o ID " status", eu vou apenas alterar o texto também. Então, também vai ser um tom de branco meio sujo. E agora, a barra de download também terá uma pequena margem, e eu também vou definir uma largura máxima. E, finalmente, os resultados da grade. Assim, os elementos com o nome de classe "grid" terão essencialmente um modelo de grade. Assim, quando for populado,
+
+ficará bonito e organizado em uma grade. Ótimo. E será preenchido com cartões, que não adicionamos ao HTML porque isso será criado em JavaScript. Portanto, qualquer elemento com a classe " card" terá essa cor de fundo, um raio de borda, propriedade "overflow: hidden" e uma borda bem definida. Qualquer imagem no cartão também terá 100% da largura, uma proporção adequada e um pouco de CSS para garantir que a imagem fique bem ajustada. O corpo do cartão agora. Então, o
+
+corpo do card terá um preenchimento (padding), e vamos também estilizar o elemento H3 que está dentro do corpo do card, bem como um elemento chamado source. Então, a fonte do vídeo. E também teremos um botão que ficará dentro do corpo do cartão. Também vamos procurar um elemento com o nome de classe "done" dentro do corpo do cartão e alterá-lo para " green". E se houver um erro, ele será indicado por essa cor vermelha. Ok, então eu passei por essa parte rapidamente
+
+porque não quero que o foco seja o estilo. Vamos em frente. Terminamos com este arquivo. Vamos passar agora para o arquivo app.js. Ok, então
+
+vamos coletar os vídeos atuais em um array. No momento, está vazio, mas ainda não realizamos nossa busca. Então, vou escrever uma função chamada busca de função assíncrona. E aqui, o que vamos fazer é analisar o nosso documento. Então, vamos obter um elemento pelo seu ID, e o ID será a consulta. E
+
+vamos obter o valor e reduzi-lo. Certo, e vamos salvá-lo sob a constante Q, pois essa é a nossa consulta. Faremos o mesmo para a contagem, pois são duas coisas que precisamos passar para nossa consulta. Então, vamos obter o elemento do documento pelo ID, e o ID será a contagem. Então, estamos procurando em nosso documento, nosso documento HTML, por qualquer elemento com o ID "count" e obtendo seu valor.
+
+Então, estamos guardando essas duas coisas. No entanto, se não houver nenhuma consulta, simplesmente sairemos deste processo e não faremos nada, certo? Porque precisamos de uma consulta. No entanto, se houver alguma dúvida, prosseguiremos. Então, agora vamos pegar o botão de pesquisa. Então, mais uma vez, vamos procurar em
+
+nosso documento e obter o elemento pelo ID, e esse ID é o botão de pesquisa. E vamos salvá-lo como um botão, assim mesmo . Agora, se houver uma pesquisa, queremos desativar o botão, então vamos torná-lo verdadeiro. Também vamos obter o conteúdo de texto do botão e alterá-lo para que funcione como uma busca. Assim, o usuário percebe claramente que algo está acontecendo.
+
+Em seguida, vamos definir o status como " em busca". Certo, e esta é uma função que ainda precisamos escrever. Então, a função define o status e, em seguida, vamos passar uma mensagem, que no momento acima é " searching" (buscando). Vamos obter o elemento do documento pelo status do ID. Então, vamos preencher isso com qualquer mensagem que passarmos.
+
+Assim, poderemos ver isso visualmente em nossos navegadores. Certo, então, por enquanto, vai mostrar "buscando", mas podemos usar essa função várias vezes para mudar a mensagem para outras coisas também. Ótimo. Então, vamos continuar com esta função aqui, a função de busca. Vamos definir o status como "buscando" e, em seguida, vou usar o método "obter elemento do documento por ID". Então, vou apenas copiar isso.
+
+E então vamos procurar o elemento com resultados porque queremos preenchê-lo, certo? Então, para começar, vou limpar tudo, caso haja algo ali de alguma mensagem anterior. E então vou obter a barra de download. Então, atribuímos a ele o ID de download. Exibição de estilo: nenhuma. Então, vamos limpar tudo antes de
+
+fazer qualquer coisa, certo? Então, vamos começar com a lista de candidatos e depois vamos tentar... bem, vou aguardar os resultados.
+
+Então, aguarde o resultado da busca e vamos para a pesquisa da API. Então, essa é a rota que definimos. E então vou pesquisar a consulta. Agora, a consulta está codificada em um componente URI aqui. E vamos contar, e depois simplesmente repassar as contagens.
+
+Então, 5, 10 ou 15. Certo. Certifique-se de que esteja selecionado o componente URI de codificação . E então vamos salvar nossos dados. Então, aguarde o JSON da resposta e salve os dados dessa busca nos vídeos atuais. Não tenho
+
+vídeos meus atualmente. É um array vazio. Vamos substituir isso por dados. Se não houver retorno de vídeo ou se ocorrerem erros, retornaremos uma matriz vazia. Ótimo.
+
+Agora, se a duração do vídeo atual for exatamente zero, basta definirmos o status como " Vamos passar uma mensagem". Nenhum vídeo encontrado. Ok, e vamos simplesmente sair dessa função. Incrível. No entanto, se tudo estiver bem e houver vídeos, vamos definir o status e os acentos graves encontrados e, em seguida, retornar o número de vídeos na matriz, ou seja, a duração dos vídeos atuais. Estamos obtendo a duração do
+
+vídeo em matriz. Assim, sem mais nem menos . E vamos obter o elemento do documento. Vamos procurar a barra de downloads novamente. E vamos usar o estilo ` display: block`.
+
+OK? Legal. E então vamos escrever uma função para renderizar os vídeos. Em seguida, vamos capturar quaisquer erros e definir o status como erro caso ocorram, e simplesmente imprimir o erro. Então, você recebe a mensagem de erro assim, sem mais nem menos. E então, finalmente,
+
+desativaremos o botão "desativar falso". Portanto, ele deve ser clicável novamente, exibir o conteúdo do texto do botão e alterá-lo de volta para a pesquisa por palavra. Ótimo. Até agora, tudo parece estar indo bem. Então, por agora, vamos voltar aqui.
+
+node index.js Que legal, né? Está tudo parecendo tão bom. No entanto, neste momento, não nos permite fazer o download. Ainda não escrevemos essa função.
+
+Vamos escrever nossa função para renderizar vídeos. Então, vou mover tudo isso para baixo assim. função renderizar vídeos. Desta vez, vamos procurar em nosso projeto o elemento com o ID "results", que é a grade, obviamente. E agora vamos criar cada carta que irá preencher a grade. Então,
+
+vamos usar o elemento grid em nosso HTML para fazer isso. E vou obter os vídeos atuais. Vou mapear tudo o que está dentro do array em cartões. Certo, então vamos lá e fazemos isso. Vou usar apenas crases (`). E aqui,
+
+dentro dessas crases, vamos essencialmente criar um elemento inteiro em HTML. Então, eu já fiz isso aqui, para que seja mais fácil para você copiar. Pronto. Então, é isso tudo . Vou fornecer esse código para você no final do tutorial. Mas, essencialmente, é uma div.
+
+Estamos mapeando o número de identificação na div. Em seguida, adicionamos uma imagem que exibirá a miniatura do vídeo. Como alternativa, também vamos abordar o título. E então, outra div com o corpo do card, que contém o elemento H3 que exibirá visualmente o título , bem como a duração do vídeo e a fonte. Você também tem a opção de baixar esse vídeo.
+
+Ótimo. Então, vamos em frente. Esse é o elemento completo. E então eu também vou participar. Ótimo. Então, depois de renderizarmos todos os nossos
+
+vídeos, vamos ver como isso realmente fica. Então, vamos voltar aqui. E vamos conectar o botão de busca. Então, mais uma vez , vamos procurar o elemento do botão de pesquisa. Então, botão de pesquisa constante.
+
+Em seguida, vamos capturá-lo e adicionar o ouvinte de eventos a ele. E se clicarmos nele, queremos executar a função de busca que escrevemos acima. Então, agora, se digitarmos Labubu e 10 e pesquisarmos, incrível. Nós recebemos esses vídeos renderizados . No entanto, o botão não funciona, como você verá. Ainda não fizemos isso. Então,
+
+vamos escrever essa função. Então, aqui está uma função assíncrona para baixar um vídeo. Vamos analisar o índice para que você possa baixar o arquivo. Vamos definir o que é vídeo. Vamos analisar o array de vídeos atual e percorrer o índice para retornar aquele com o qual estamos interagindo .
+
+Vamos procurar o botão pelo índice do botão. Então, isso pertence às cartas. Cada um deles individualmente. E assim que tivermos esse botão, vamos desativá-lo. Então, desative o verdadeiro.
+
+E o conteúdo do texto do botão é igual a " baixar". Então, sabemos que estamos baixando o vídeo. Certo, então isso é a parte visual. Agora, vamos fazer o download. Então, para isso, vamos aguardar a busca ( fetch).
+
+E então, vamos abordar o download da API, que ainda precisamos desenvolver. O método utilizado será o método pós-processamento. Os cabeçalhos serão do tipo de conteúdo
+
+JSON da aplicação. Certifique-se de que seja uma vírgula. E para o corpo do texto, usamos JSON. Converter para string. E passe um URL de objeto, link de vídeo.
+
+E então o título, o
+
+título do vídeo. OK? Portanto, estamos enviando informações para o nosso servidor que conterão o link e o título do vídeo. E então vamos salvar esses dados. Portanto, os dados são iguais a aguardar res JSON. Assim, sem mais nem menos
+
+. Agora, visualmente, eu só quero mostrar nos botões de download se o download foi bem-sucedido ou não. Então, se a coleta de dados for bem-sucedida e recebermos alguns dados de volta, quero obter o conteúdo do texto do botão e simplesmente exibir "Concluído". Assim . OK? E então vou
+
+obter a lista de classes de botões e concluir a adição. Então, isso deve fazer o botão ficar verde. No entanto, se não for bem-sucedido, vou pegar tudo isso e simplesmente colocar como "falhou". Ok, então o download falhou. E vamos mudar isso para erro, o que fará com que o botão fique vermelho.
+
+Você também pode adicionar um visto e um x, se quiser. E então, se houver algum erro, eu vou detectá-lo. E vou marcar o botão como falho também, porque faz sentido. Ótimo. Então, agora vamos voltar aqui e concluir o download.
+
+Um pré-requisito é que você precisará instalar o yt-dlp, que é basicamente o programa que você usará para baixar vídeos para o seu computador. Portanto, se ainda não o fez, pode fazê-lo lendo as instruções de instalação. Se você estiver usando um Mac, basta executar o comando ` brew install yt-dlp`. OK? Eu já o tenho instalado no meu computador, mas, por favor, faça a instalação se você ainda não o tiver, e consulte as instruções se estiver usando outro sistema operacional. Então, esta vai
+
+ser uma coisa bem importante. Então, este é o nosso ponto de extremidade para download. Bem, será uma postagem em /api/downloads, pois foi essa a opção que escolhemos. E então vou repassar tanto a solicitação quanto a resposta. Download. Singular. Download único.
+
+E vamos extrair o URL e o título do vídeo, ok, da interface, porque foi isso que enviamos. Se não houver URL, queremos apenas retornar um erro, então retornaremos o status 400 e, em seguida, como JSON, retornarei um objeto que indica o erro, e direi apenas que a URL é obrigatória porque obviamente nenhuma foi fornecida. OK? Em seguida, vamos limpar o título do vídeo para que seja seguro usá-lo como nome de arquivo. Portanto, o nome seguro da constante é igual ao título ou ao vídeo. OK? Então, essa é basicamente a alternativa
+
+. Então vamos substituir qualquer caractere especial por um sublinhado, ok? Então, aqui estão algumas opções rejeitadas para fazer isso. Além disso , vamos limitar o nome do arquivo a 60 caracteres e, em seguida, escrever um nome de arquivo de caminho de saída yt-dlp. Então, const out [ __ ] temp late equals path join down loads directory safe name dot Coloque isso entre crases, na verdade.
+
+ext s Ótimo. Agora, execute o arquivo yt-dlp. Isso executará o yt-dlp como um processo filho com os seguintes argumentos. Então, modelo de caminho de arquivo de saída . Também não vamos incluir uma lista de reprodução, ou seja, vamos baixar apenas o vídeo individual, sem lista de reprodução, e mesclar os fluxos de áudio e vídeo em um único arquivo mp4.
+
+OK. E também vamos passar o link do vídeo para download. Em seguida, também vamos definir o tempo limite para 1 2 3 4. erro sd tout sd d e r r Ok, então este é um tempo limite de 2 minutos. E em seguida, se houver um erro, por exemplo, se ocorrer um erro com o yt-dlp, vamos simplesmente registrar os erros no console do servidor, assim.
+
+E vamos retornar um erro, então desta vez o status da resposta é 500: erro JSON, falha ao baixar o vídeo. E você também pode mostrar os detalhes, se quiser. Um os detalhes s t d e r Então, estamos repassando isso . Vamos continuar. Agora, vamos procurar o arquivo baixado no diretório de downloads. Então, const files
+
+é igual a f s read directory sync downloads dir. Então, isso vai listar todos os arquivos na pasta de downloads. E vamos encontrar o arquivo que corresponde ao nome do nosso vídeo. Então, const baixado igual a arquivos encontrar f f começa com e então passar pelo nome seguro. E se o vídeo for baixado, encontramos o título. Vamos prosseguir com o JSON
+
+, encontramos o título. Então, sucesso, nome do arquivo verdadeiro baixado e então vamos fazer o download do caminho carregado e então baixado. Então, isso apenas retorna essas informações para que possamos ver. Caso contrário, se o arquivo não for encontrado, retornaremos a mensagem JSON de sucesso " true" indicando que o download foi concluído, mas o arquivo não foi encontrado. Ótimo.
+
+Então, vamos dar uma olhada. Então, agora, se eu pesquisar cinco vídeos no Le Boubou, não devo conseguir baixá-los. Ótimo. Então, agora, se olharmos aqui e procurarmos em downloads, voilà! Esse vídeo foi baixado para o meu computador.
+
+Incrível. Que legal, né? Eu amo isso. Vamos continuar. Só nos resta uma última coisa a fazer, que é escrever uma função para baixar todos os vídeos. Então, vamos lá
+
+. Então, mais uma vez aqui embaixo , vou escrever uma nova função assíncrona para baixar e carregar tudo. Ok, então esta função aqui, com o status definido, vai baixar todos os vídeos. E vamos escrever um loop para percorrer todos eles. Considere I igual a zero enquanto I for menor que o comprimento atual da matriz de vídeos .
+
+Em seguida, aumentamos I em um. Desta vez, vamos obter o elemento pelo ID e passá-lo adiante. Então, use o botão com crase e o ID do botão que foi renderizado. Então, assim mesmo, vamos salvar isso como um botão sempre que repetirmos o processo. E se a lista de classes do botão contiver " concluído", então continuamos.
+
+E aguardamos e fazemos o download. Então, usamos a função que já escrevemos, `download one I`. Basicamente, estamos percorrendo cada vídeo em um loop e baixando cada um deles . Então, defina o status. Então também podemos atualizar no navegador o que está acontecendo.
+
+Então, estou apenas dizendo que baixei 1 mais um vídeo com a duração atual. Portanto, deve-se baixar um de 10, baixar dois de 10 e assim por diante. E assim que isso for feito, podemos definir o status novamente. Defina o status para " todos os downloads concluídos". Fácil. Então é isso mesmo.
+
+Vou conectar isso agora mesmo. Então, o documento obtém o elemento pelo ID, baixa a constante " download all button" e então eu vou pegar esse botão. Use o ouvinte de eventos para adicionar o evento de clique e vamos simplesmente chamar essa função. Então, baixe tudo.
+
+Certifique-se apenas de que seja um hífen. Então, vamos experimentar. Ok, então vamos pesquisar e baixar tudo, e isso baixou um vídeo, baixou um, cinco, isso deve ser dois de cinco, três, quatro, cinco, todos os downloads concluídos. E se olharmos aqui dentro, tcharam! Incrível. Que
+
+legal, né? Eu amo isso. Ok, agora que vimos esse trabalho, vou fazer algumas coisas antes de enviar isso para a internet. A primeira coisa a fazer é garantir que a chave da API não esteja exposta apenas aqui neste arquivo, ok? Vou colocar isso em um arquivo que não será carregado na internet . Então, para isso,
+
+vou instalar o npm i dot env. Portanto, o pacote se chama dot env. OK? Isso significa que agora posso criar um arquivo .env e nele vou inserir minha chave de API.
+
+Então, vamos continuar daqui e colar assim. Certo, então seu arquivo deve ficar assim. Salve isso e agora posso usar ` process.env`
+
+e depois o nome que demos a ele no arquivo de ambiente, que era `API key`, e então vou apenas usar `require.env`. Então, tudo isso funciona. Ótimo. Agora, estamos prontos para enviar isso para o meu GitHub. OK? Então, vou
+
+compartilhar o código com vocês agora que terminamos. Por favor, siga em frente, aprimore isso, faça disso algo seu. Esta foi apenas uma demonstração super básica para você.

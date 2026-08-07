@@ -1,0 +1,460 @@
+---
+video_title: "Intro to Shaders – JavaScript & p5.js Course for Beginners"
+video_id: YdhXnB5E-4s
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=YdhXnB5E-4s
+video_date: 2026-07-15T11:17:50+00:00
+video_description: |
+  Learn the fundamentals of shaders, with zero prior experience required. Starting from the basics of how the GPU renders pixels, you'll progress to building an animated, fractal heart effect written entirely from scratch. Designed specifically for creative developers who want to break into WebGL and master the math of motion. 
+  
+  Course developed by @pattvira 
+  
+  ⭐️ Connect with Patt Vira ⭐️
+  🔗 Website: https://pattvira.com 
+  🔗 Twitter: https://twitter.com/pattvira
+  🔗 Instagram: https://www.instagram.com/pattvira
+  
+  ⭐️ Code ⭐️
+  Part 1: https://editor.p5js.org/pattvira/sketches/LV4ZSuHXD
+  Part 2: https://editor.p5js.org/pattvira/sketches/fdykpy1OD
+  Part 3: https://editor.p5js.org/pattvira/sketches/I0HtC1ISj
+  Part 4: https://editor.p5js.org/pattvira/sketches/WQXm21NW2
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  ⭐️ Chapters ⭐️ 
+  - 0:00:00 Intro
+  - 0:00:51 Part 1 - Basic Introduction to Shaders
+  - 0:01:17 What is a shader?
+  - 0:03:24 Bridge between CPU and GPU
+  - 0:04:20 Vertex and fragment shaders
+  - 0:06:09 Start coding in p5.js
+  - 0:09:44 GLSL Rulebook
+  - 0:12:50 Set up canvas space in a vertex shader
+  - 0:16:16 Color pixels in a fragment shader
+  - 0:17:44 Map clip space to screen coordinates
+  - 0:20:03 Create a static gradient
+  - 0:22:04 Create a dynamic gradient
+  - 0:27:03 Part 2 - Domain Repetition
+  - 0:28:33 Draw a circle
+  - 0:32:05 Use gl_FragCoord to get pixel coordinates
+  - 0:38:45 Create tiling with fract()
+  - 0:42:00 Fix aspect ratio
+  - 0:43:56 Introduce the standard resolution fix
+  - 0:45:01 Part 3 - Shaping Functions
+  - 0:45:38 What is a shaping function?
+  - 0:46:20 Explore sin() function
+  - 0:47:41 Explore step() function
+  - 0:48:25 Explore smoothstep() function
+  - 0:49:40 Explore abs() function
+  - 0:51:33 Create a glowing effect with inverse distance equation
+  - 0:55:02 Animate glowing rings
+  - 0:54:21 Experiment with other shapes
+  - 0:57:43 Part 4: Colors
+  - 0:57:43 Introduce mix() function
+  - 1:01:01 Change the blend ratio using uTime
+  - 1:02:12 Change the blend ratio using position
+  - 1:04:18 Change the blend ratio using shaping functions (step & smoothstep)
+  - 1:05:22 Change the blend ratio using shaping functions (distance functions)
+  - 1:08:22 Introduce cosine-based color palette
+  - 1:10:54 Bonus! Fractals!
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+Este curso para iniciantes foi desenvolvido para ensinar os fundamentos da programação gráfica sem que seja necessária nenhuma experiência prévia . Você começará entendendo como a GPU renderiza pixels e, progressivamente, aprenderá conceitos básicos como shaders de vértice e fragmento, repetição de domínio e funções de modelagem. Seguindo as instruções em p5 js, você aplicará essas técnicas para construir um efeito de coração fractal animado impressionante, totalmente do zero. Desenvolvido por Pat Verra, este curso é o ponto de partida perfeito para desenvolvedores criativos que desejam ingressar no WebGL e dominar a matemática do movimento. Oi pessoal. Hoje é o dia. Vamos
+
+mergulhar no mundo dos shaders. Então, se você é como eu era há alguns meses , você deve estar pensando: "O que é um shader e por que eu deveria me importar?" Bem, deixe-me explicar porquê. Se você já viu esses belos desenhos e se perguntou: "Como eles são feitos?" Ou, se você criou um esboço como este e está se perguntando: "Como posso fazê-lo rodar um pouco mais rápido?"
+
+Os shaders podem ser a solução. Este vídeo é a primeira parte da minissérie sobre shaders, onde explico os conceitos fundamentais de shaders. E ao final da série, você será capaz de criar esta peça do zero. Então, vamos responder à grande pergunta. O que é um shader? E por que isso faz com que as coisas funcionem
+
+muito mais rápido? A diferença de velocidade depende de como a CPU e a GPU processam os dados. A CPU, ou unidade central de processamento, é o cérebro principal do seu computador, projetada para lidar com lógica complexa, uma tarefa de cada vez. Pense em uma CPU como um mestre artesão. Incrível em trabalhos complexos, mas lento se forçado a construir milhares de tabelas básicas uma a uma. A
+
+GPU, por outro lado, é um processador especializado, projetado para lidar com grandes quantidades de dados simultaneamente, executando tarefas em paralelo. Imagine a GPU como uma linha de produção em massa de uma fábrica. Milhares de estações de trabalho simples executando tarefas idênticas simultaneamente. Um shader é simplesmente o código escrito para ser executado na GPU. Trata-se de um único projeto distribuído a todas as estações de trabalho naquela fábrica, exatamente ao mesmo tempo. A contrapartida
+
+dessa velocidade é o isolamento total. Os pixels na GPU não conseguem se comunicar entre si. Seu código não tem ideia do que o pixel ao lado está fazendo. A única razão pela qual esses milhões de pixels isolados conseguem formar uma imagem coesa é porque cada estação de trabalho executa exatamente o mesmo modelo matemático em um espaço de coordenadas compartilhado. Nesta série, vamos configurar nossos esboços em JavaScript usando p5.js, mas o
+
+código do shader em si será escrito em uma linguagem dedicada chamada GLSL ou linguagem de sombreamento OpenGL. Embora diferentes frameworks exijam diferentes códigos padrão para exibir um shader na tela, a lógica matemática central que você escreve dentro do GLSL é universalmente transferível. A versão mais recente do p5 possui uma biblioteca chamada p5 Strands que permite escrever o código do shader em JavaScript e traduzi-lo para a GPU nos bastidores. E você pode conferir este incrível tutorial de Juan Rodrigue Garcia para aprender mais. Mas para esta minissérie, pensei que deveríamos analisar como a lógica funciona fundamentalmente, para que você possa pegar seu código de shader e inseri-lo em qualquer ambiente que escolher. OK.
+
+Agora que temos a separação entre o código de configuração e o código do shader, como eles se comunicam? Para que isso aconteça, seu código de configuração, ou no meu caso meu código p5 js, precisa fazer exatamente três coisas. Primeiro, ele instrui o navegador a usar o pipeline 3D da placa gráfica ou a configurá-lo para o modo WebGL. Em seguida, carrega os arquivos de texto GLSL na memória e os envia para a GPU. E, por último, envia informações para a GPU a cada quadro.
+
+Esses dados em tempo real incluem duas coisas. Variáveis ​​globais dinâmicas, como o cronômetro em execução ou a coordenada do cursor em tempo real, e os dados geométricos reais ou a forma que você deseja desenhar. Para iniciar o processamento visual, a CPU envia uma lista de pontos para a GPU. É aqui que o código do seu shader entra em ação e processa esses pontos em estágios distintos em dois arquivos de shader. Os shaders de vértice posicionam nossa geometria no espaço e o shader de fragmento determina a cor final de cada pixel.
+
+Ao trabalhar em 2D, o shader de vértices é incrivelmente simples. A CPU só precisa enviar quatro pontos ou vértices dos quatro cantos da tela. Nosso shader de vértices é então apenas um modelo básico que estica uma tela plana para enquadrar a tela. Por isso, concentraremos a maior parte de nossa energia no shader de fragmentos que realiza toda a pintura. Tudo bem. Agora, vamos dar um zoom no
+
+shader de fragmentos. Se a sua tela tiver o tamanho de, digamos, 800 pixels x 600 pixels, o shader de fragmentos será executado exatamente 480.000 vezes por quadro. Em um monitor padrão de 1080p , essa escala aumenta para mais de 2 milhões de pixels individuais. Devido a essa escala gigantesca, a forma como você aborda a escrita de um fragment shader será muito diferente da forma como você escreve um sketch p5 js padrão. Digamos que, ao
+
+desenhar um círculo em um esboço padrão do P5 , você escreveria uma função como a de uma elipse ou de um círculo e forneceria a ela as coordenadas x e y, bem como seu tamanho. Mas em um shader de fragmentos, você escreve seu código com base na perspectiva de um único pixel. Como mencionado anteriormente, cada pixel é isolado e não tem ideia do que seu vizinho está fazendo. Sem ter como se comunicar com seus vizinhos, ele descobre sua cor em quatro passos rápidos. Primeiro, ele procura sua localização exata em XY na tela. Em seguida, importa o
+
+contexto externo da CPU, como a hora ou as coordenadas do seu mouse. Em seguida, ele testa sua posição em relação ao seu código, perguntando, por exemplo, se a distância específica do centro é menor que 200 pixels e, em caso afirmativo, define a cor para azul. Por fim, envia o valor da cor finalizada diretamente para a tela. Muito bem, acho que já temos contexto suficiente para começar a programar. Então vamos lá. Primeiro, vamos
+
+mudar a versão do p5 para a versão mais recente, p5 js versão dois. Na verdade, por que não usar a versão 2.2.2? E então vamos definir o modo de tela. Altere o modo de tela para o
+
+modo WebGL. Tudo bem. Assim, com o WebJL, o centro, a origem, agora está no meio da tela. Então, por que não tentamos desenhar um retângulo? Então, se eu fizer um retângulo de 0 vírgulas 0 com uma largura e altura definidas, você pode ver que agora ele está fora da tela. Então, o que queremos fazer é
+
+alterar isso para largura dividida por dois, largura negativa dividida por dois e altura negativa dividida por dois, de forma que fique posicionado no meio da tela. Em seguida, o que queremos fazer é criar nossa variável de shader. Vamos chamá-lo de meu shader. E então, lá dentro, eu configurei tudo para carregar os arquivos de shader que ainda não escrevemos. Então vamos fazer meu shader igual a carregar o shader e depois colocaremos os arquivos de shader aqui. Mas, como você pode ver, não estou usando
+
+a função de pré-carregamento que costumo usar em meus outros tutoriais. Isso ocorre porque estamos usando o p5.js versão 2. E, em vez de carregar arquivos usando preload, usaremos a estrutura async/await, que nos permite carregar arquivos de forma assíncrona. OK. Então, vamos adicionar um operador assíncrono aqui e aguardar
+
+antes da função de carregamento. É só isso que você precisa fazer. e dois arquivos que vamos carregar. Na verdade, por que não criamos esses arquivos primeiro? Então, vamos até esta seta aqui, clique no sinal de mais e depois clique em "Criar arquivo". Vamos
+
+chamá-lo de shader. Então, vamos criar dois arquivos de shader. Primeiro o shader de vértices e depois o shader de fragmentos. Então, vou chamá-lo, como você pode ver aqui, de arquivo de adição shader.vert. E mais um é o shader.frag.
+
+fragmento. Vamos voltar ao esboço. Então agora, dentro da função load shader aqui, podemos colocar shader.vert e depois vírgula shader ponto frag. OK.
+
+Tudo bem. Clique em executar. Sem erros. Está tudo bem entre nós. Mas nada acontece. Não tem problema. Agora,
+
+aqui dentro do desenho, primeiro vou apagar o fundo. Não precisamos de contexto aqui. Correr. OK. E o que vamos inserir aqui é uma função chamada shader. Basicamente, isso
+
+informa ao arquivo que não usaremos as predefinições de sombreamento padrão que acompanham o modo WebJL. Vamos usar nosso arquivo de shader para criar este esboço que está prestes a ficar incrível. Então, vou inserir meu shader aqui e clicar em executar. E agora está apresentando um erro porque, presumo, ainda não há nada dentro desses dois arquivos. Então, antes de começarmos a escrever o shader de vértices e os shaders de fragmentos, pensei que seria interessante analisarmos a sintaxe do GISL e também sua estrutura, para que você se familiarize um pouco com ela antes de começarmos a programar. A
+
+GISL herda sua sintaxe rígida da linguagem C. Cada instrução deve terminar com um ponto e vírgula. Também possui tipagem estática, exigindo correspondência de tipos rigorosa. Mesmo um número inteiro precisa incluir um ponto decimal para ser reconhecido como um número de ponto flutuante. Você deve informar explicitamente à GPU quanta memória alocar para números decimais, dependendo das suas necessidades de desempenho. Você
+
+tem três opções aqui. Você poderá notar mais tarde que escrevo essa linha apenas no nosso shader de fragmentos. Isso ocorre porque o shader de vértices usa automaticamente o valor P alto por padrão. Como os shaders lidam com cálculos espaciais e espaços de cores, você trabalhará constantemente com vetores. Apesar da natureza rígida do GLSL, os vetores são incrivelmente flexíveis. Primeiro, você obtém
+
+inicializadores abreviados. Ao escrever isso, os três canais são preenchidos automaticamente com o valor 1.0. Em segundo lugar, você pode acessar os dados usando convenções de nomenclatura que correspondam à sua intenção. Use XYZW para posições ou RGBA para cores.
+
+São completamente intercambiáveis. E por último, girar a mistura. O recurso "embaralhar" permite reorganizar instantaneamente componentes duplicados ou fatiados em uma única linha. Por exemplo, o arquivo calling.bgr troca os canais azul e vermelho para inverter instantaneamente sua paleta de cores. Ou, ao
+
+extrair xy de um vec 3, o terceiro canal é descartado, transformando-o instantaneamente em um vec 2D. Agora, como esses arquivos realmente se parecem? Cada shader gira em torno de uma única função principal, que atua como seu ponto de entrada. Para efetivamente gerar os gráficos, seu código precisa gravar dados nas variáveis ​​de destino dedicadas da GPU . No shader de vértices, seu alvo é gl_osition, uma função integrada que informa à GPU onde a geometria existe no espaço. E
+
+no fragment shader, seu alvo é uma variável personalizada, geralmente chamada de cor de fragmento, que é um vecore que define a cor final do pixel. Para encaminhar dados por esse mundo isolado, tudo flui em uma única direção, rio abaixo. Os dados percorrem esse fluxo de três maneiras. Ele entra em um estágio como entrada, sai de um estágio como saída ou é transmitido globalmente da CPU para cada pixel de uma só vez como uma variável uniforme. Se você estiver consultando tutoriais de shaders mais antigos online, a sintaxe pode parecer um pouco diferente. Aqui está uma tabela de referência rápida
+
+mostrando como as palavras-chave mudam entre o WebGL1 original e o WebGL 2 atual. Para informar ao navegador que queremos usar essa sintaxe atualizada, você precisa escrever isso como a primeira linha de ambos os seus arquivos de shader. Por que o número 300? Porque, embora os navegadores chamem isso de WebGL2, internamente, ele funciona com o padrão de hardware móvel OpenGL ES3.0.
+
+Essa etiqueta 300ES simplesmente aponta diretamente para a especificação da versão 3.0. Agora que você já tem todo o contexto, vamos começar com os arquivos de shader de vértices, certo? Então shader.vert.
+
+Tudo bem. Então, aqui, vamos começar declarando que este é o modo WebGL mais recente. Vamos fazer essa versão 300 com o símbolo de libra. E na verdade, vou fazer a mesma coisa dentro dos shaders de fragmento também, para não me esquecer. Muito bem, vamos voltar. Em seguida, terá uma
+
+função principal. Então vamos usar o método `void main`. E então, a próxima coisa que faremos é receber as posições das coordenadas, os vértices do tamanho da tela, do JavaScript ou da CPU, certo? Na verdade, o JavaScript, embora o tamanho aqui seja a largura, que é 400, e a altura, que também é 400, certo? Mas quando ele envia para a GPU, o p5 converte isso em valores entre zero e um. Então, o que
+
+vamos fazer aqui dentro de shader.vert convert é usar a chamada do qualificador, certo? Em seguida, vamos definir o tipo, que é ve 3, e depois definir essa variável interna chamada posição. E aqui dentro vamos escrever `glosition` e então defini-lo como... não podemos defini-lo
+
+diretamente para uma posição porque `GL position` precisa de um `ve` (valor 4). Então vamos usar `ve` para uma posição e então fornecer 1.0 como o último argumento. Vamos tentar executar isso. Ok, está apresentando um erro e acho que é porque carregamos o fragment shader, mas não escrevemos nada nele. Então vamos lá. Então, o
+
+shaderfragment e a mesma coisa, ele tem uma função principal. Sim, vamos executar isso e ver se ocorre algum erro. Ok, acho que era isso. Portanto, agora nada está sendo colorido, pois essa é a função do shader de fragmentos. Então vamos fazer isso. Então vamos
+
+voltar ao shader.vert. Agora que já recebemos o produto , queremos enviá-lo. Portanto, queremos enviar a posição dessas quatro coordenadas para o shader de fragmentos. Então vamos fazer isso, mas na verdade vamos enviar apenas dois pontos, X e Y. Que tal chamarmos isso de pose em V? Então,
+
+é uma posição que está sendo enviada do vértice e vamos enviar V post igual a uma posição.xy e isso é o que eu descrevi anteriormente como Switzling, certo? Então, estamos considerando apenas o primeiro e o segundo componentes deste ve 3, certo? E então, dentro de shader.frack, frack, vamos receber em VOST, que é um vetor V de 2 poses. Também precisamos declarar a
+
+cor de frack nesta nova versão do WebGL, e vamos definir a cor de frack para ele também, que é um vetor de 4 valores e o intervalo é entre zero e um, 0.0 e 1.0 zero. Então, o que vamos fazer é o seguinte: que tal definirmos a cor para preto e o quarto argumento ser a transparência? Certo? Então, se eu definir para
+
+1,0 zero.
+
+Ah, a cor frack é um ve quatro. Não. Poucos instantes depois. Ah, então eu esqueci de configurar a precisão corretamente no fragment shader. Então vamos fazer isso. Então vamos usar a precisão
+
+média P para o tipo de execução float. Yay. OK. Então temos a cor preta. Digamos que eu altere o primeiro valor aqui para 1,0. O que
+
+você espera? Vermelho. Isso mesmo. Se eu fizer as duas coisas , você obtém magenta. Isso é ótimo.
+
+Mas por que está no canto superior direito ? Isso ocorre porque o que está sendo enviado da CPU ou do programa P5 são valores entre 0 e 1. Então, o que eu disse antes, que a CPU envia esses dados para o shader de vértices, na verdade, os converte em um valor. É mapeado para um valor entre 0 e 1. Mas os shaders de vértice precisam, na verdade, de um espaço de recorte que varia entre -1 e 1. Portanto,
+
+neste momento, uma posição está entre 0 e 1. Como você pode ver aqui. O que queremos é garantir que esteja entre -1 e um. O que podemos fazer é criar uma variável separada. Então vamos fazer uma chamada de posição ve 4 e configurá-la inicialmente assim.
+
+E então vamos substituir isto aqui. Então, por enquanto, nada mudou, certo? Porque nós acabamos de... o que eu fiz de
+
+errado? Ok, esqueci que não programo mais em JavaScript. Isto é JSL e eu esqueci um ponto e vírgula aqui. Agora funciona. OK. Então, o que precisamos é
+
+remapear isso, certo? Então, para mudar de 0 para 1 e de 1 para 1, o que precisamos fazer é definir a posição XY para ser igual à posição XY atual multiplicada por 2,0. Certo? Assim, entre 0 e 1, multiplicamos por dois. Assim, o valor agora fica entre 0 e 2. E então, simplesmente subtraímos
+
+1,0. zero. Agora, o valor fica entre -1 e um. E clique em executar. Tada. OK. Agora vamos
+
+voltar aos shaders de fragmentos. Basicamente, este é o modelo padrão para este esboço 2D. E não vamos mexer no shader de vértices por enquanto. Então vamos acessar o shader, o arquivo de shader de fragmentos. Agora não queremos apenas uma cor sólida. E se
+
+mudássemos para que se tornasse um gradiente? Então, o que podemos fazer é usar os dados que já recebemos do shader de vértices, que representam a posição de todos os pixels ao longo dos eixos x e y. E se fizermos vose dox? Na verdade, podemos fazer isso agora mesmo. Portanto, vpost.x
+
+já está entre zero e um. Portanto, se fizermos isso, o resultado variará entre zero e um. E se eu clicar em executar, voilà. Não é incrível? Portanto, não estamos fazendo nenhum loop. Como eu disse antes, o
+
+próprio pixel não sabe realmente o que está acontecendo ao seu redor, certo? Tudo o que sabe é qual é a sua posição XY atual em relação a esta tela. Este valor varia entre 0 e 1. Então, digamos que exatamente neste local aqui, digamos que seja 0,5. Por isso a cor aqui é arroxeada. Mas se você
+
+for totalmente para a esquerda, a posição de vost.x será zero, certo? E é por isso que fica azul. E bem aqui à direita, o valor é 1,0. E é por isso que é magenta. E depois há um gradiente entre esses dois extremos
+
+. Então podemos fazer o mesmo para o segundo também. Então, vamos fazer a pose V.y. Legal, né?
+
+Ok, eu já fico muito animado com apenas três cores degradê. Mas antes de encerrarmos este vídeo, esta primeira parte, quero dar um pouco de ritmo para que fique emocionante antes de terminarmos aqui e para que vocês continuem assistindo ao próximo episódio. Então, o que vamos fazer a seguir é enviar a variável global, certo? A variável global dinâmica . Basicamente, vou enviar a hora e faremos isso a partir do Sketch. Vamos
+
+usar uma função chamada set uniform. Define as variáveis ​​globais uniformes dos shaders . Então vamos ver. Queremos inserir o nome do nosso shader, certo? que definimos com o mesmo nome aqui, meu shader, e então fazemos `dot set uniform`. Este é o nome
+
+da variável que queremos enviar e este é o valor que ela quer definir. Ok, então vamos voltar para meu shader, `dot set uniform`, e então vou nomeá-la como `u time`. E então vamos enviar para a função `millie`, que irá detectar o temporizador, certo? E por que não imprimimos o que `mill` significa para que você possa ver quais dados estão sendo enviados? Sim, então ele continua aumentando com base no início do programa em milissegundos.
+
+Certo, então será muito rápido. Agora que sabemos que está enviando isso, vamos enviar para o fragment shader. Então, o que vamos fazer aqui é definir o qualificador, digamos, uniforme. Vai ser um desfile e vai se chamar " tempo U". Agora, o que podemos fazer é o seguinte: e se eu definir outra variável chamada float x igual a v post.x x + u
+
+tempo. Vou definir isso como 0,0 por enquanto. E você só vê magenta. Se for zero, provavelmente era azul antes, mas rapidamente fica magenta porque esse valor aqui altera x para mais de um muito rapidamente. Então, o que queremos fazer é limitar o tempo dentro de um intervalo que faça sentido. Então, na
+
+verdade, vou inserir a função de sinal. Assim, a função sinal varia entre -1 e um, certo? Então, esse valor estará apenas entre...?
+
+Portanto, está entre 0 e 1. Então vai ser entre um e dois. Sim . Certo. Porque, neste caso, se isto for zero e isto for negativo, o máximo que se obterá será -1, e se isto for um e isto for um, o máximo que se obterá será dois. OK. Então vamos tentar isso.
+
+Ah, desculpe por aquele esboço tremido [suspiros] . Bem, na verdade vamos dividir isso por um número grande. Vamos usar 2,00 para que se mova um pouco mais devagar. E você pode ver que há um pequeno trecho dessa linha, como se fosse uma cor magenta saturada. E é nesse momento que o valor ultrapassa um. Certo. OK. Sim. Vamos voltar
+
+. E se fizermos exatamente a mesma coisa para y? Na verdade, vou também definir algo que chamaremos de pulso. O pulso é um sinal do seu tempo de pulsação.
+
+Tudo bem. Em seguida, defina X e Y aqui.
+
+Bem legal, né? Ok, por último, antes de ir, vamos voltar ao Sketch. E se mudarmos de `react` para `ellipse` na largura e altura, e definirmos isso para 100 detalhes? Tudobem. OK. Acho que já chega de
+
+shaders no estilo "Hello World" e sim, terei mais alguns episódios mostrando cada vez mais dessa técnica incrível. Então fique ligado ou passe para o próximo, caso já esteja disponível. Vamos começar de onde paramos da última vez. Primeiro vamos ver o que temos. Assim, temos esse gradiente em movimento com a forma de um círculo. Então, vou
+
+comentar a linha que descreve a elipse e alterá-la de volta para um retângulo. E vou deixar isso um pouco chato por enquanto. Mas vamos acessar o shader de fragmentos e impedir que ele continue a animação. Então, na verdade, vou apagar essa linha. O pulso desapareceu.
+
+E também vou mudar dessa cor linda para um tom monocromático de preto e branco em escala de cinza. Primeiro, vou alterar esses valores para xx e x, e x produzirá um valor entre 0 e 1. Então, se eu clicar em executar, o que você verá é um gradiente que vai do preto ao branco. E se eu mudar para Y, você também verá o mesmo gradiente, mas agora ele vai de baixo para cima. Então, o que eu queria que vocês vissem é o espaço de coordenadas GISL, que vai da esquerda para a direita, de baixo para cima, e o ponto de origem está no canto inferior esquerdo, o que é um pouco diferente do espaço de coordenadas P5JS com o qual estamos familiarizados. Agora queremos desenhar
+
+um círculo. Então, como fazemos isso? Num esboço p5 normal, definiríamos o centro do círculo e depois o seu raio ou diâmetro. Mas no caso de um shader, ele simplesmente pergunta a cada pixel: "Qual a distância dele até o centro?" E use esse número para traçar o círculo. Para isso, podemos usar a
+
+função integrada do GLSL chamada `length` para encontrar a distância e passar as coordenadas xy dos pixels. Isso retornará a distância entre cada pixel e seu ponto de origem. Muito bem, vamos tentar isso. Mas primeiro, vamos excluir estes. E vou definir uma nova variável do tipo ve 2. E vou chamá-la de
+
+UV. E este é apenas um nome convencional para o espaço e os shaders atuais. E vou definir isso como pose em V. Em seguida, vou definir outra variável chamada D. Vou atribuí-la ao tipo float.
+
+e então defina-o como igual ao comprimento da função e insira UV e agora, dentro de `frack color`, vamos inserir `D vírgula D vírgula D`. Certo, vemos algo aqui e, como você pode ver, também nos mostra o espaço atual dentro da tela GSL, certo? `D`, que varia entre... eu acho que pode ser...
+
+sim, está entre 0 e 1, porque se ele estiver entre zero e 1, passamos isso para `frack color`. A distância mais próxima da origem seria zero ou muito próxima de zero, certo? Por isso é preto e está o mais longe possível da origem, que é este ponto aqui. É completamente branco. Na verdade, queremos um círculo cuja origem esteja no meio da tela. E podemos fazer isso
+
+deslocando o espaço de coordenadas. Portanto, em vez de termos um espaço de coordenadas que varia entre 0 e 1, queremos que ele esteja entre 0,5 e 0,5 positivo. Portanto, este ponto é originalmente zero. Então, tudo o que precisamos fazer é subtrair 0,5. Então vamos fazer V pós menos 0,5.
+
+E pronto, agora temos um círculo. E vocês podem ver que não conseguimos mais ver a cor branca, certo? Isso ocorre porque o comprimento aqui agora varia entre -5,5 e 0,5 positivo. Digamos que multipliquemos isso por 2,0, fazendo com que o valor varie entre -1 e 1. Agora podemos ver um círculo. Tudo bem. Então, na
+
+verdade, vou voltar a colocar assim . Atualmente, para obter a posição do quadrado ou da tela, passamos os pontos dos vértices da CPU para o vertex shader através do VOST e, em seguida, os enviamos para o fragment shader aqui, recebendo-os como VOST através dos qualificadores de entrada e saída. Mas, na verdade, não precisamos fazer isso. E a razão pela qual fiz desta forma é porque queria mostrar como os dados são transmitidos pelo pipeline. Mas, na verdade, quando se trata de ler as posições das telas, a GPU já rastreia tudo isso internamente. E você
+
+pode obter as coordenadas automaticamente por meio de uma variável integrada chamada GL frack cord. Para descobrir a origem desses dados, precisamos analisar o processo chamado rasterização. E a rasterização é o processo em computação gráfica que converte formas em uma grade 2D de pixels para exibição na tela. O rasterizador é a etapa específica da GPU que pega esses triângulos definidos pelos vértices enviados pela CPU e determina exatamente quais pixels físicos no seu monitor estão contidos dentro deles. Primeiro, vou comentar isto e colorir a nossa tela de vermelho.
+
+Tudo bem. E vamos voltar ao esboço e vamos retomar o círculo. Como vocês podem ver aqui, eu apresentei cinco argumentos, e eu geralmente não faço isso, né? Porque, afinal, qual é esse último argumento? O quinto parâmetro, "detail", determina quantos vértices são usados ​​para desenhar a elipse no modo WebGL. E o
+
+valor padrão é 25. Se eu apagar isso, você pode ver que o círculo fica muito mais irregular, certo? E se colocássemos 10? E agora contamos 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. Basicamente, isso nos dá o número de vértices com base neste número aqui.
+
+Agora temos 10. Se eu colocar um, você não vê nada porque é apenas um ponto. Dois, você entra numa fila. Três, um triângulo. E depois quatro e assim por diante.
+
+Certo? Mas na verdade são apenas triângulos costurados juntos, certo? Então, se colocarmos 25, que é a configuração padrão deles . Se eu colocar 100, agora vai parecer um círculo, certo? Quer dizer, antes era um círculo, mas apenas um círculo irregular. Agora é um círculo bem suave
+
+. Basicamente, esse círculo é apenas um conjunto de muitos, muitos triângulos unidos por vários vértices, certo? Neste caso, 100. Então, vou trazer de volta nosso retângulo. E então, dentro do shader de vértices, eu vou excluir a pose em V.
+
+Não precisamos mais disso. OK. E aqui dentro, o shader de fragmentos. Nós também não precisamos disso. E então vamos substituir o VOST pelo cabo de fragmentação gl. Mas nós também queremos apenas as
+
+coordenadas x e y. Então precisamos usar doxy. Em seguida, clique em executar. Ah, não, nada acontece agora porque precisamos desta parte aqui onde a luz UV está sendo usada. É tudo branco. O que está acontecendo aqui?
+
+O que está acontecendo exatamente aqui é que os intervalos de gl_frack cord e vost são, na verdade, diferentes. Para o vpost, varia entre 0 e 1, mas para o glar cord, na verdade, varia dentro do tamanho da nossa tela, que no meu caso é entre zero e 400. Então, o que queremos fazer é normalizá-lo. Então, vamos ao Sketch e vamos enviar os valores da resolução, da largura e da altura na forma de uma variável uniforme. Então, vamos fazer de uma maneira muito parecida com esta. Então, meu
+
+shader dot set uniform e vamos chamá-lo de resolução u. OK. E então vamos enviá-lo como uma matriz, basicamente um vetor 2D. Então vamos enviar a largura e a altura. E agora, dentro do shader, nos fragment shaders, só precisamos recebê-lo, certo? Então, uniforme, vamos recebê-
+
+lo como um ve 2 e é chamado de urologia. Agora, queremos usá-lo da maneira correta. Queremos dividir isso, que varia entre 0 e 400, em uro solution.xy, que é a largura e a altura. Em seguida, clicamos em executar.
+
+Hum. Não era isso que esperávamos, certo? Queremos que este círculo fique aqui no meio e que preencha a tela. E a razão pela qual isso está acontecendo é que, embora esses sejam os valores de 400 (vírgula 400), a largura e a altura (gl) aqui não estão, na verdade, entre zero e 400. Por quê? É por causa
+
+da resolução da minha tela. Então, o que precisamos fazer é ir ao Sketch e inserir uma função chamada densidade de pixels, atribuindo o valor um ao argumento. E pronto, agora funciona. Então, antes de prosseguirmos, vamos à página de documentação para que você veja o que está acontecendo. Telas com pixels menores têm uma densidade de pixels maior e criam imagens mais nítidas. E acho que, no meu caso,
+
+tem uma densidade de pixels maior, mas não queremos isso. Queremos que seja da mesma escala. Assim, podemos chamar a densidade de pixels com uma variável de um para desativá-la. Então, vamos recapitular rapidamente o que acabamos de fazer. Estamos usando a variável integrada gl_frack_cord, que rastreia o espaço bruto da tela, ou seja, coordenadas que variam de 0 a 400 no canvas. Em seguida, normalizamos o
+
+valor para que fique entre 0 e 1. E fazemos isso dividindo gl frack cord pela largura e altura totais da tela, que passamos da CPU como uma variável uniforme chamada resolução U. Além disso, definimos a densidade de pixels para um no lado p5 para garantir que nossas coordenadas de shader e o tamanho da tela mantenham uma proporção perfeita de 1:1 . Por fim, atribuímos esse resultado normalizado à variável UV, que é apenas uma convenção universal para o espaço atual no mundo dos shaders. A seguir vem a parte emocionante. Como estamos fazendo
+
+o mosaico para criar uma grade? Não precisamos fazer muitos loops diferentes como costumamos fazer com colunas e linhas. Basta utilizarmos uma função integrada chamada frack. E o que o comando `frack` faz é remover a parte inteira de um valor e retornar apenas os decimais restantes. Para números positivos, o valor retornado é bastante intuitivo.
+
+Mas, na verdade, para um número negativo, você não pode simplesmente remover a vírgula e colocar o sinal de menos. A equação real é fractais de x menos o piso de x. Por exemplo, frack de 0,3 retorna 0,7. E se você observar isso em um gráfico, verá que forma uma onda dente de serra perfeita e repetitiva que sobe de 0 a 1 e volta a zero em cada número inteiro, tanto para números positivos quanto negativos. E a razão pela qual podemos usar o frack para criar uma grade é porque ele basicamente ignora os números inteiros e nos fornece o intervalo entre 0 e 1 repetidamente . E isso cria um
+
+padrão repetitivo que resulta em um belo azulejo. UV igual a fract UV H não parece com o que esperávamos, certo? A razão para parecer assim é que, basicamente, neste ponto aqui você obtém zero, mas neste ponto aqui você obtém fract.5, que é 0,5, e então fract aqui é 0,5, que continua sendo 0,5, mas entre esses dois pontos ele aumenta e depois se torna zero, e continua aumentando novamente. Mas agora, se multiplicarmos por, digamos, dois, obtemos algo que esperávamos, certo? Temos uma grade
+
+de 2x2. Mas o círculo dentro de cada peça também não está centralizado. Isso ocorre porque o intervalo está entre zero e um. E é por isso que a cor fica entre o preto e o branco, da esquerda para a direita. Portanto, podemos fazer exatamente a mesma correção aqui, simplesmente subtraindo 0,5. Para que
+
+possamos remapear esses valores daqui para cá. Então fica 0,5 para 0,5 e fazemos isso aqui. E pronto. Você pode multiplicar a distância aqui por outra constante, como fizemos originalmente. E você pode alterar essa constante aqui para 3, 4 ou 5. Então, aqui estão os quatro passos que
+
+realizamos. Primeiro, normalizamos os valores das coordenadas para que fiquem entre zero e um. Em seguida, centralizamos as coordenadas globais subtraindo 0,5 do valor de UV. E isso basicamente desloca o espaço de coordenadas para ficar entre 0,5 e 0,5. Em seguida, multiplicamos por uma constante que representa o número de células desejado. E então nós o fatiamos usando a
+
+função frack. E, por último, basicamente fazemos outro alinhamento central para cada uma das formas dentro da célula. E fazemos isso exatamente da mesma maneira, subtraindo UV de 0,5. Certo, então reescrevi isso para refletir os passos que acabamos de discutir. Muito bem, agora vamos voltar a esboçar . E se eu alterar o tamanho da tela
+
+para 600 por 400? Agora vocês podem ver que nossos círculos estão sendo esticados, certo? Para corrigir isso, precisamos ajustar a proporção da tela. Na verdade, vamos usar esta equação logo antes de tudo isso. Então, vamos fazer UV dox, que é simplesmente multiplicar as coordenadas x por u resolution.x e
+
+dividir por u resolution.y.
+
+Correr. E voilà, funciona magicamente. Então, como funciona exatamente? Assim, dividindo a largura pela altura, ou seja, 600 por 400, o shader calcula uma taxa de escala de 1,5. Isso nos indica que a tela tem exatamente 1,5 vezes a largura do que a altura.
+
+Sem essa correção, ambos os eixos são forçados a um intervalo estrito de 0 a 1. E multiplicando UV.x X por essa fração de 1,5. Ampliamos a faixa do eixo X para corresponder ao formato físico do monitor. O eixo Y permanece fixo entre 0 e 1, mas o eixo X agora se estende de 0 a 1,5. Mas observe o que isso faz com o nosso
+
+ponto central. Como nossa largura está entre 0 e 1,5, o ponto médio agora é 0,75. Ao subtrair um valor fixo de 0,5, nossos elementos visuais agora estão descentralizados. Para corrigir isso, podemos calcular os deslocamentos para os eixos x e y independentemente. Para o eixo x, podemos subtrair metade da proporção para compensar essa largura extra. Para o eixo y, como ele
+
+varia de 0 a 1, podemos subtrair 0,5 sem problemas. E é isso. E é assim que se criam os belos padrões de mosaico dentro dos shaders. Mas antes de terminar aqui, quero destacar uma última coisa. Se você acessar sites como o Shader Toy ou consultar outros recursos online, a primeira linha de um mini fragment shader pode ser semelhante a esta. E não
+
+tenha medo, porque você já viu isso antes. Portanto, se você observar nosso arquivo de shader de vértices aqui, poderá ver que position.xy também é multiplicado por dois e subtraído por um. A única diferença é que a escala é diferente aqui. O intervalo é entre 0 e 1, e queremos mapeá-lo para -1 e 1. Então multiplicamos por
+
+dois e depois subtraímos por um. Mas no caso da corda de fratura GL, que varia entre 0 e 400, o que queremos fazer é multiplicá-la por dois e depois subtrair pela largura, basicamente certo? E então dividir por u. A resolução y no final é exatamente a mesma coisa que acabamos de discutir. Mas você pode ver que parece haver muito mais células aqui, e você está absolutamente certo. Isso porque
+
+agora o intervalo fornecido é entre -1 e 1, enquanto que antes o intervalo era entre 0,5 e 0,5. Isso basicamente dobra o tamanho da grade. E é isso para este vídeo. Espero que você fique por aqui. Vamos . Então, foi aqui que paramos no
+
+último episódio. Gostaria de fazer algumas alterações antes de prosseguirmos. Primeiro, quero alterar o tamanho da tela para 400 x 400. Ok. E então vamos abordar os shaders de fragmentos. E
+
+lembre-se que falamos sobre as duas maneiras diferentes de obter as coordenadas UV. Na verdade, vou usar esta equação aqui. E vou apagar esta primeira parte. Tudo bem. E então eu quero mudar a constante aqui para 2.0 para que tenhamos uma
+
+grade 4x4. Em seguida, vamos falar sobre uma função de modelagem. Então, o que é uma função de modelagem? Uma função de modelagem é qualquer função matemática que recebe um número e o transforma em uma forma diferente. E para falar sobre a função de modelagem, o que eu quero fazer é comentar isso também. Então, em vez de
+
+trabalhar com um espaço 2D, por que não começamos com um espaço 1D para que seja mais fácil compreender o conceito? Então, vou criar uma variável chamada X. E vamos definir X como igual ao valor de UV dox, que é a componente X da coordenada UV. E então vou mudar isso para X vírgula X, X. A primeira função de formatação com a qual vamos trabalhar é a função sinal.
+
+Vamos inserir o sinal de UV.X. O que você observa aqui? Talvez você consiga ver melhor se eu multiplicar por um número maior. Parece que a faixa preta é maior que a faixa branca, certo? Isso
+
+porque, se eu apagar isso, se você olhar aqui, o intervalo é entre -1 e um, certo? A faixa do espaço de corrente UV. E quando você coloca isso aqui dentro, dentro de um sinal que oscila entre o valor de -1 e um, a cor que está sendo renderizada na verdade está apenas entre 0 e um. Assim, qualquer número negativo inserido como entrada retorna o valor zero. Basicamente, a GPU simplesmente trunca o número negativo, transformando-o em zero. É por isso que
+
+tudo o que está no lado esquerdo, onde o intervalo é entre menos um e zero, é preto. E então, tudo o que estiver no lado direito agora retorna valores entre 0 e 1. E como o sinal de um é próximo de 8, você pode ver que este ponto aqui é cinza claro. E se quisermos uma borda nítida ou um corte preciso entre o preto e o branco? Na verdade, podemos usar outra função de modelagem chamada passo. E a etapa envolve dois argumentos.
+
+O primeiro é o limite e o segundo é o valor de entrada. X é igual a um passo de 0,0, X. 0,0 é o limite. Portanto, qualquer valor abaixo de zero retornará zero. Qualquer valor acima de zero retornará o valor um. E como você pode ver aqui,
+
+qualquer valor abaixo de zero é representado como um número negativo. Portanto, o lado esquerdo deve ser preto e o lado direito deve ser branco. Certo? Vamos tentar. E pronto. Você obtém um corte nítido entre o
+
+preto e o branco. Mas e se você achar isso um pouco chocante demais? Você quer uma pequena transição entre os dois. Na verdade, você pode usar outra função de modelagem chamada " passo suave" para obter essa transição suave. É necessário um argumento adicional. Vou comentar isso
+
+e então simplesmente colocar x igual a passo, sem passo suave, que tal fazermos -0,5, 0,5 e então x? Agora você pode ver que há essa transição suave entre os dois. Basicamente, fornecemos dois argumentos: o limite inferior e o limite superior. Qualquer valor abaixo do limite inferior retorna zero, qualquer valor acima do limite superior retorna um, e qualquer valor entre esses dois extremos recebe uma transição suave, como você pode ver aqui. Então, se fornecermos uma banda menor aqui. Então, entre 1,1 e 0,1,
+
+você pode ver que essa transição entre eles é menor. Mas para criar o anel brilhante, na verdade não usaremos nenhuma dessas funções de modelagem. Vamos usar ABS ou absoluto. Não queremos remover nenhum dos valores negativos. Queremos transformar o valor negativo em um valor positivo. E é assim que realmente criamos
+
+esses anéis brilhantes. X é igual ao valor absoluto de X. Agora, os valores negativos são basicamente o reflexo do lado positivo. Em vez de simplesmente fornecer o UV.X e você receber apenas esse conjunto de gradientes, certo? E se
+
+multiplicarmos por um múltiplo de pi? Vamos começar com este pi. 3.14. Você pode ver que no ponto médio aqui está o seno de 0, que retorna zero, e você obtém essa faixa preta. E então, neste
+
+ponto aqui, que é o seno de pi / 2, você obtém a cor branca porque retorna um. E então, na extremidade direita, que é o seno de pi, que é igual a zero. E então você vê outra borda preta aqui. O mesmo acontece no lado esquerdo. Certo? Agora que inserimos o
+
+valor absoluto, obtemos a imagem espelhada do lado direito e, em seguida, podemos multiplicá-la por outras constantes para obter vários períodos. Então, na verdade, vou fazer quatro. Por que não trazemos de volta nosso espaço bidimensional? Então vamos descomentar isso. E o que precisamos fazer agora é definir D como igual à função sinal aqui. E depois defina também D aqui.
+
+Troque todos os X por D. Ok. Tudo bem. Parece bem legal. Agora, a parte mais emocionante, pelo menos para mim, é criar esses anéis brilhantes.
+
+Como fazemos isso? Fazemos isso usando esta equação que imita o comportamento da luz. Esta é a equação da distância inversa. Basicamente, dividimos uma pequena constante pelo valor da nossa distância. Muito bem, vamos tentar. Então vamos fazer d
+
+= 2 n / d, certo? E podemos escolher o nosso n. Então vou começar com 0,1 / d. Tudo bem. E se aumentássemos o valor do numerador aqui?
+
+Uau, brilha muito mais. E que tal diminuirmos para 0,05? Ok, que tal ainda menores? Então, como isso funciona exatamente? Se você observar aqui onde estão os valores acentuados, é aqui que a função absoluta leva a onda a zero, certo? Assim,
+
+ao dividir um número extremamente próximo de zero, a saída basicamente tende ao infinito e a GPU a limita a um, que é a cor branca. E à medida que você se afasta ou se distancia do valor, a distância d aumenta, a saída se aproxima de zero e o brilho diminui rapidamente. E conforme modificamos o numerador, você pode ver que o tamanho dos anéis brilhantes muda, certo? Isso ocorre porque o numerador é literalmente a distância na qual se obtém o brilho máximo. Digamos que você defina para 0,02; os únicos pixels dentro dessa distância, 0,02, serão aqueles que ficarão totalmente brancos, e todo o resto desaparecerá ou ficará preto. Se você definir um
+
+valor diferente, digamos 0,1 ou 0,5, essa zona de brilho máximo ficará mais ampla. E aqui está a parte que eu acho mais fascinante. É assim que a luz realmente se comporta. O brilho diminui com a distância da fonte. Na física, existe uma lei chamada lei do inverso do quadrado. E
+
+a equação é 1 / d². Mas em shaders, usamos 1/d porque fica visualmente correto e custa menos. E existe até um nome na pintura. Chama-se chia rose kuro. Acredito que isto seja italiano. Então, se
+
+houver algum italiano por aí, por favor, corrija minha pronúncia. É o contraste entre luz e sombra que cria a ilusão de luminosidade, e você já viu isso em muitas pinturas famosas. Em seguida, vamos trazer de volta algumas animações. Então, lembre-se da variável uniforme temporal u que usamos no primeiro episódio. Vamos trazer isso de volta. Então, dentro do sketch, vamos
+
+fazer meu shader dot set uniform e a variável será nomeada u time e vamos passar a função millie, que basicamente conta o número de milissegundos desde o início do programa, e vamos dividir por uma constante grande para que não se mova muito rápido. Então, na verdade, vou fazer algo em torno de mil e vamos para o fragment shader e aqui vamos recebê-lo como um uniform, que é um float chamado u_time, e vamos fornecê-lo dentro da função sign aqui. Vamos fazer mais u tempo e, na verdade, vamos mudar isso para 0,1. Tudo bem. E agora temos esses anéis brilhantes em movimento . Basicamente, fornecemos esse
+
+tempo u dentro da função sinal para que ele altere o valor dentro da onda. Certo? Basicamente, desloca a função sinal no tempo. Certo? Então, se somarmos, podemos ver que se move em uma direção e, se subtrairmos, obtemos um movimento diferente.
+
+Então, são apenas as diferentes maneiras pelas quais alteramos essa função sinal, essas ondas oscilantes de sinal. Temos trabalhado com os círculos e, por mais empolgante que isso seja, é realmente muito empolgante. Vamos mudar para um formato diferente. Tudo o que precisamos fazer é alterar esta função aqui. Um aquecedor de polegadas, basicamente, tem qualquer formato e é apenas uma função que retorna uma distância. E é aí que
+
+a diversão começa, porque quando trocamos a função, obtemos uma forma diferente. Então vamos começar pelo básico. Em vez de um círculo, vamos trabalhar com um romance. Então, em vez do comprimento de UV, e se multiplicarmos isso por um dois maiúsculo, digamos 1,0? 0 e 1,5. Então, alteramos a coordenada y aqui.
+
+O que você espera? Tudo bem. Então temos esses anéis com formato mais oval. E o que queremos, na verdade, é uma função que crie o formato de um coração. Vou copiar e colar esta equação aqui. E então
+
+chegaremos a esta linha e, em vez de d ser igual a isso, faremos d ser igual ao coração de uv e pronto. E você vê toda essa equação e pensa: "É isso aí!". Você não deveria saber disso. Você deve ir lá e procurá-los. Então,
+
+vou fornecer alguns recursos e depois testar alguns para que você possa ver como funciona . Então, se você acessar este site do grande Ino Kilis, encontrará diversas funções de distância 2D. Então, vamos analisar alguns deles. Que tal trabalharmos com uma caixa arredondada? Então, vou copiar isso e vir aqui, float of SD rounded box, e vamos copiar aqui.
+
+Vou comentar o nosso coração e o float de D para serem iguais a isto. E então o vetor 2 de P será simplesmente nossa coordenada UV. O vetor de B, eu não sei qual deveria ser. Que tal fazermos apenas 0 1.0 e vetor de 4? Vamos fazer 1.0 também. E
+
+você pode ver que eu forneci apenas um valor. E com vetores dentro do GLSL, isso basicamente vai preenchê-lo para mim. Portanto, será 1,0 para todos os quatro valores deste ve 4 e, em seguida, dois valores para este ve 2. Hum. Parece apenas um círculo. E se
+
+eu mudar isso para dois? Ah, que legal . Que tal fazermos as versões 1.0 e 2.0 aqui?
+
+Tudo bem. Então, como vocês podem ver, dá para brincar com essas equações, mas eu vou comentar isso e terminar com o nosso coração. E é isso para este vídeo. No próximo vídeo, vou mostrar como adicionar cores bonitas e também usaremos um loop "for" para envolver todas essas formas. Vamos.
+
+Falando em cores, deixe-me apresentar a vocês uma função chamada mix. Mix aceita um total de três argumentos. As duas cores e a quantidade. O valor varia entre 0 e um. Então, se você colocar zero, obterá a cor A. Se colocar
+
+um, obterá a cor B. E se colocar qualquer valor entre esses dois, obterá a mistura entre essas duas cores. Então, aqui está onde paramos no último episódio. Vou definir duas cores como um vetor 3. Então, vamos usar o vetor 3. Vamos chamá-lo de cor a
+
+igual a vetor 3, ou que tal usarmos a cor vermelha? Então 1.0.0 e 0.0. E então, que tal usar a cor
+
+B como cor? Azul? RGB. Então 0.0.0
+
+e 1.0. zero. E então, dentro da função principal, vamos definir a quantidade. Então, vamos definir isso como um valor float igual a, digamos, 0,5.
+
+E [bufa] vamos definir uma nova variável como um vetor chamado cor. E a cor será definida de acordo com a função de mistura. E vamos inserir a cor A, a cor B e a AMT. E vamos usar essa cor dentro da cor do fraturamento hidráulico aqui. Então vamos substituir o D aqui por cor.
+
+Tudo bem. O que você espera? Então estamos misturando vermelho e azul. E pronto, conseguimos esse roxo. OK. Então agora podemos brincar com a
+
+quantidade aqui, certo? Então, se eu fizer 0,0, Z, você deverá obter a cor vermelha. E se eu fizer 1.0, você obtém azul. E qualquer valor entre esses, digamos 0,3, você obtém algo mais próximo do lado vermelho. Por que
+
+não usamos a função sinal, que retorna valores entre -1 e 1? E então vamos passar uma variável u_time, que será o nosso temporizador. Certo? Isso nos dará um valor entre -1 e um. Então, vamos clicar em executar.
+
+OK. Se você observar, poderá notar que a cor vermelha permanece visível por um período um pouco mais longo do que a azul. Isso porque o valor, na verdade, varia apenas entre 0 e 1, certo? Mas isso retorna valores entre menos 1 e um. E com o valor negativo de um, ele é limitado à cor vermelha. Então, vamos
+
+usar o termo "absoluto" para garantir que transformemos o valor negativo em positivo. Agora está dentro do intervalo de zero a um. Mas aí só podemos obter essa cor de cada vez, certo? Cada quadro. E se quisermos obter aquele degradê bonito? O que podemos fazer é
+
+mapeá-lo para nossas coordenadas UV. Que tal mapearmos isso para a coordenada X? O que vamos fazer é configurar o AMT aqui. Vou apagar isto. Configure para que tipo de UV é X.
+
+E você obterá um gradiente bonito. Mas você também pode ver que temos uma parte muito maior que é vermelha, na verdade, chegando até a metade, certo? E o resto é esse belo degradê. Basicamente, essa coordenada UV varia entre -1 e 1, certo? Então, é exatamente a mesma coisa.
+
+Não quero mexer nessa linha de código. Então, vou fazer algo redundante, que é remapear. Então, que tal fazermos um UV de X mais 1,0? Então, agora o valor ficará entre 0 e 2. E então vamos dividi- lo por dois. Assim, agora o valor variaria
+
+entre 0 e 1. Agora temos um gradiente bem definido e distribuído uniformemente. Agora a função mix também pode receber não apenas um número de ponto flutuante, mas também um número inteiro de 3 dígitos. Então, vamos converter amt para um número inteiro de 3 dígitos e este também será um número inteiro de 3 dígitos. E se alterássemos o tipo agora, ficaria exatamente igual. Isso
+
+ocorre porque todos os canais, vermelho, verde e azul, têm a mesma proporção de mistura, que é baseada na coordenada x. Certo? Então, o que podemos fazer é mudar... que tal
+
+mudarmos o canal r? Que tal convertermos para um número decimal? Vamos fazer 0,1. E obtemos um gradiente diferente, certo? Cor gradiente. Mas isso não
+
+mostra realmente a mágica de como, se alterássemos a proporção de mistura de cada canal, o que poderíamos fazer, certo? E se retomarmos o que aprendemos no último episódio, que são as funções de modelagem? Vou acrescentar: que tal o passo? Basicamente, o passo retorna zero ou um com base no valor limite, certo? Então, se eu definir o valor limite em 0,5 e os valores que queremos alterar forem os do canal vermelho, nessa quantidade, vamos tentar.
+
+Tada. Assim, você obtém um corte nítido e preciso, uma separação bem definida entre as duas cores. Mas ainda dá para ver que existe um pequeno gradiente aqui, certo? Do vermelho ao rosa e depois a um azul, um azul mais escuro até um azul mais claro. Isso ocorre porque estamos alterando apenas a proporção de mistura do canal vermelho, mas os canais verde e azul ainda são baseados nessa quantidade que temos aqui. Isso é só para mostrar que
+
+você pode usar funções de modelagem para alterar as quantidades de cada um dos canais de cor e experimentar, o que é bem divertido. Agora vamos tornar isso um pouco mais interessante. E se usássemos também as funções de distância que aprendemos no episódio anterior, criando formas como um círculo ou um coração, para manipular esses gradientes de cor? Então, vou apagar isto. Na verdade, em vez de atribuir o valor a essa coordenada X, por que não atribuímos, por exemplo, ao comprimento da coordenada UV?
+
+E então precisamos defini-lo como um número de ponto flutuante. E vamos correr. Tada. Você obtém um formato circular. Basicamente, o valor mais próximo do centro retorna zero, certo? E conforme você vai
+
+saindo, aparece essa linda cor azul. [bufa] E também podemos mudar para o formato de coração. E essa forma de coração, o que é interessante nela é que está atribuída uma função de distância. Isso significa que tudo o que estiver dentro da forma retorna um valor negativo e tudo o que estiver fora da forma retorna um valor positivo. Se você observar com atenção, verá um recorte bem nítido nessa forma de coração aqui, que está completamente vermelha. E se, na verdade, trouxéssemos de volta
+
+a função degrau? Então, damos um passo de 0,0 zero e depois um coração aqui. E você deverá ver um formato de coração bem definido. E podemos mudar a etapa para algo um pouco mais suave, certo? Então podemos fazer um passo suave e podemos alterná-lo entre... por exemplo,
+
+se isso for zero, e se fizermos daqui para cá? Portanto, de -0,3 a 0,3. E agora você obtém uma mistura mais agradável e suave entre as duas cores. Então você pode experimentar com isso. Então, vamos retomar a grade de corações que criamos anteriormente. Para fazer isso, basicamente, em vez
+
+de apenas inserir a cor como os valores dentro do campo de cor fracionária aqui, o que queremos fazer é multiplicá- la por D. E a razão pela qual queremos multiplicá-la por D é porque D determina o brilho da cor que será pintada. Certo? Portanto, onde D é o ponto mais alto, é onde se encontra o formato do coração. Então, o que vamos fazer é multiplicar por D.
+
+Agora obtemos a forma que criamos originalmente. E eu vou mudar isso um pouco. Vou alterar a placa interna aqui. Vamos fazer um lindo formato de coração. Apenas uma forma aqui. E é isso aí
+
+. Até este ponto, experimentamos algumas maneiras de chegar ao valor, certo? Ao inserir o tempo, a posição ou ao usar funções de barbear. Mas, basicamente, estamos fazendo a mesma coisa. Estamos escolhendo um valor, uma cor ou criando um gradiente entre duas cores, a cor A e a cor B. Mas agora quero apresentar a vocês
+
+esta equação baseada no cosseno, que cria um espectro de cores mais rico. Essa função recebe um número de ponto flutuante e retorna uma cor. E os quatro vex 3es que você vê aqui, A, B, C e D, basicamente moldam a cor do grave, o contraste, a frequência de oscilação e a defasagem de fase por canal. Vou incluir o link para o artigo e também para um vídeo que descreve como isso funciona, além de ferramentas interativas que você pode experimentar para criar sua própria paleta. Então, eu já experimentei um pouco com a paleta de cores. Então, em vez de fazer tudo isso, vou
+
+simplesmente copiar e colar aqui fora da função principal e aqui dentro da função principal . Vamos definir as cores na paleta. Então, que tal eu apagar esse valor? Não precisamos mais disso. Não vamos usar a função mix. Vamos usar
+
+paletes. E então vamos começar com a duração do UV. E na verdade, também vou mudar isso de volta para cores. Tudobem. Que bom. OK. Então, que tal
+
+mudarmos para o coração? E se fizermos isso acontecer adicionando o seu tempo? [risos] Isso me lembra a abertura de As Meninas Superpoderosas. E você também pode, sabe, se quiser que seja mais lento ou mais rápido, pode multiplicar por uma constante. E se trouxermos de volta a forma?
+
+Basta multiplicar isso por D. Certo. E eu quero que o coração dentro da grade aqui fique um pouco mais brilhante. Então, vou aumentar o número de enumeradores aqui. E como vocês podem ver, esta é praticamente a peça final. Mas essas são exatamente
+
+as variáveis ​​que eu usei. Assim você pode experimentar até encontrar a que deseja. Mas na verdade não vou terminar por aqui. Vou te dar um pequeno bônus. Então, como mencionei no segundo episódio, esta peça final é na verdade uma remixagem direta de uma peça de Kishimisu, mas como vocês podem ver na peça dele, parece que há apenas um monte de círculos sobrepostos. Então, esta é a última
+
+funcionalidade que quero apresentar a vocês: como criar um fractal. Portanto, na CPU, você pode estar construindo isso usando recursão, mas na GPU, você não pode fazer isso. Então, em vez disso, estaríamos remapeando as coordenadas UV usando um loop for. Então, vou encerrar o loop for aqui. Então, vai ser um passeio. Então, float I é
+
+igual a 0,0. I é menor que 2,0. Vamos começar devagar. Eu ++ e então vamos trazer tudo para dentro do loop for. OK. Vamos
+
+ver o que acontece.
+
+OK. Então, o que temos agora? 1 2 3 4 5 6 7 8. Temos 8 por 8, certo? Porque estamos executando apenas um conjunto, quer dizer, dois conjuntos de loops for. Mas só conseguimos ver
+
+um conjunto de escalas, certo? que é o último conjunto 8 por 8 aqui. Na verdade, o que queremos é poder ver todas as formas sobrepostas. Queremos ver as diferentes escalas. Então, o que podemos fazer é manipular as cores. Então, neste momento,
+
+estão instalando equipamentos de fraturamento hidráulico aqui. E se acumulássemos as cores? Então, o que vamos fazer é, fora do loop for , definir uma variável chamada final color e defini-la inicialmente como preta. Então 0,0. E então, dentro do loop for, vamos definir a cor final como aqui. Tempo de cor D.
+
+E vamos definir a cor frack fora do loop for. Então, esta será a cor final definitiva. Se definirmos simplesmente como cor final igual ao tempo de cor d, o que você esperaria é...
+
+opa, hum, vamos ver... a cor final é um ve três. Ok, parece exatamente igual porque a cor está sendo definida dessa forma a cada iteração. Então, o que
+
+queremos fazer é, na verdade, acumulá-lo. Começamos com preto e, em seguida, cada dobra à direita, cada remapeamento, terá uma cor final diferente. Vai acumular. Então vamos tentar. [bufas e risadas] Muito legal . Acho que vou terminar por
+
+aqui. E como você pode ver, é possível experimentar com as diferentes variáveis. Você pode incorporar as funções de modelagem. Você pode combinar cores diferentes . Use a técnica de remapeamento de coordenadas UV e crie uma peça final bem legal como esta. Isso é
+
+fascinante. Tudo bem. Então, este é o fim desta série introdutória. Espero que tenham gostado e aprendido algumas coisas, mesmo sendo iniciantes como eu. Ainda há muito que quero aprender. Então, por favor, me diga quais são
+
+algumas das coisas que precisaríamos explorar. Até a próxima. Tchau.

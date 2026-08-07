@@ -1,0 +1,2032 @@
+---
+video_title: "Gemini CLI Essentials – Full Course"
+video_id: XKOR4h3CrwE
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=XKOR4h3CrwE
+video_date: 2026-04-24T13:47:49+00:00
+video_description: |
+  Learn how to use the Gemini CLI for agentic coding.
+  
+  Created by @ExamProChannel 
+  
+  Course info: https://www.exampro.co/exp-gemini-cli-01
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecampGemini Fundamentals
+  
+  ⭐️ Contents ⭐️
+  00:01:09  Introduction
+  00:07:56  Gemini CLI
+  00:10:04  Gemini Models
+  00:11:17  Gemini Models Follow Along
+  00:13:36  Gemini API Key
+  00:17:03  Context Window Size
+  
+  Setup and Authentication
+  00:18:47  Install and Auth Gemini CLI
+  00:20:24  Gemini CLI Install
+  00:34:39  API Key Follow Along
+  
+  Context, Sessions, and Execution
+  00:41:16  Memory Management
+  00:42:25  GEMINI Markdown File
+  00:43:58  Gemini Markdown File and Memory Part 1
+  00:50:29  Gemini Markdown File and Memory Part 2
+  01:07:20  Compress and Clear Follow Along
+  01:18:55  Chat Management and Rewind Command
+  01:20:33  Chat Management Commands Follow Along
+  01:29:39  Rewind Command Follow Along
+  01:34:41  Plan Mode Follow Along
+  01:38:39  Settings File
+  01:39:46  Settings File Follow Along
+  01:44:30  Policy Files
+  01:46:01  Policy Follow Along
+  02:03:34  System Prompt Overrides
+  02:04:34  System Prompt Override Follow Along
+  02:10:16  Gemini Ignore Files
+  02:11:14  Gemini Ignore Follow Along
+  02:14:08  Permissions and Trusted Folders
+  02:15:15  Permissions and Trusted Folders Follow Along
+  02:19:30  Sandboxes
+  02:21:03  Sandbox Mode Follow Along
+  02:27:57  Yolo Command
+  02:28:39  Headless Mode
+  02:29:08  Headless Mode Follow Along
+  
+  Integration, Skills, and Automation
+  02:31:58  Extensions Marketplace
+  02:32:36  Extensions Marketplace and Using a Skill
+  02:41:00  Agent Skills
+  02:43:18  Agent Skills Follow Along
+  02:49:50  MCP Follow Along
+  03:02:02  Google GenAI SDK Follow Along
+  03:11:33  ADK Follow Along
+  03:24:47  Custom Subagent
+  03:36:22  GitHub Actions Follow Along
+  
+  UI & Misc
+  03:47:02  Themes
+  03:47:21  Themes Follow Along
+  03:48:00  Footer
+  03:48:58  Footer Follow Along
+---
+Olá, aqui é o Andrew Brown, seu favorito. instrutor de tecnologia, trazendo para você mais uma IA certificação. E desta vez é o Gemini CLI Essentials. E a maneira como nós vão obter a certificação, como Sempre vamos dar as aulas, fazer os laboratórios práticos, e eu vou para Oferecemos a você um exame prático gratuito. Então, Você pode ir lá e arrasar nessa prova, pode se jogar!
+
+seu currículo ou LinkedIn, e mostre que Você possui conhecimento em programação de IA? especificamente com Gêmeos. Se você ama os cursos que estou disponibilizando aqui, A melhor forma de apoiar esse conteúdo é para adquirir o adicional pago materiais. Eu realmente preciso do seu apoio. para continuar produzindo esse conteúdo gratuito. Um
+
+Sabe, então, por favor, tente apoiá-lo se Você pode, e isso vai te levar a algum lugar. Acesso a materiais adicionais. Um e Além disso, se você quiser fazer o exame, você É preciso pagar para participar, caso isso faça diferença. Para você. Bem, se você não me conhece, eu...
+
+Criou muitos cursos aqui. uh Google, anúncios, Azure, GCP, Terraform, Kubernetes, Codeex, Claude, você escolhe, eu já... ensinou isso. Mas chega disso. Vamos
+
+Vá em frente e participe do curso. [música] Olá, aqui é o Andrew e estamos no Início da nossa jornada perguntando o mais Uma questão importante para nós é: o quê? O curso Gemini CLI Essentials é o que você procura? Então, Este é um curso de certificação que Este guia apresenta as funcionalidades do Gemini. CLI tem um forte foco em aspectos práticos.
+
+conhecimento prático, e não temos receio de... Afastar-se daquilo que não funciona. E você é Vou descobrir logo de cara que estou Vou enfrentar alguns desafios. Sim, fazemos
+
+Vamos explorar o Gemini CLI e descobrir descobri que funciona bem, mas você Saiba que existem algumas ressalvas a serem feitas. Hum, O código do exame aqui é EXP Gemini CLI01. Se isso mudar, preste atenção nisso. porque isso significa que há um novo curso de certificação concluído. Considerar fazer este curso se você quiser Explore todos os recursos da CLI do Gemini em no menor tempo possível. Uh
+
+Você precisa de conhecimento prático em vez de vendas. conhecimento. Você está se preparando para o nosso bote. acampar. Eu tenho o acampamento de código Claude, mas Hum, acho que vou deixar você usar qualquer provedor.
+
+Você quer, mas geralmente o código Claude é O que é mais popular. E assim nós vamos provavelmente sair com esse nome ou ter um um nome secundário generalizado. Enfim, então Aqui está o mapa de linhas expandido e eu acabei de...
+
+Quero mostrar o que faz sentido aqui. Então a ideia é que, você sabe, se você Estão entrando apenas usando a CLI do Gemini Você pode fazer isso com certeza, mas... A ordem em que criei isso é Cloud Code, depois Codeex e, por fim, Gemini.
+
+Na interface de linha de comando (CLI), há muita sobreposição, mas existe diferenças entre esses serviços Então, se você está passando por isso... Você vai maximizar sua velocidade. através dessas coisas a nuvem a nuvem arquiteto certificado um tem Claude no O nome não está necessariamente focado totalmente em código na nuvem e coisas do tipo. Isto
+
+possui uma orquestração muito boa e técnicas de estímulo que podem ser aplicado aos modelos codeex para Gemini modelos. Então, qualquer uma das três principais. provedores, caso você ainda não tenha feito isso Você também pode querer fazer o Geni. essenciais, pois isso lhe dará uma ótima fundamentos em conhecimento geral de Genai pois não vou abordar esses assuntos no diminuam os números, senão eu ficaria apenas estamos lotando esses cursos e estamos tentando para manter esses cursos isolados. Se você não consegue lidar com a CLI do Gemini ou qualquer outra coisa conteúdo nos fundamentos, então eu sou Trabalhando em um código na nuvem do zero curso. Bem, tecnicamente você sabe que pode.
+
+Pense nisso como um codex do zero ou Gemini CLI do zero. Hum, mas novamente, para marketing para fins de marketing que estou fazendo Claude Code do zero, pois é o mais provedor popular e isso é para Pessoas que não têm nenhuma experiência em tecnologia. Então, se você nunca mexeu com código De jeito nenhum, você não é um desenvolvedor. Estas são as coisas que você talvez queira...
+
+Olhe para. Bem, o motivo de estarmos fazendo tudo isso é... A ideia é fazer um projeto, um treinamento intensivo.
+
+E esse será o código Claude. acampamento, que neste momento está em claude.cloud projectbootcamp.com. Hum, e isto é onde poderemos nos candidatar nosso conhecimento. Hum, também tem isso.
+
+arquiteto empresarial. Isso não é bem verdade. para você. É para empresas que, se Eles querem comprar, e me ter. vir e fazer treinamento ou eles precisam Para se preparar para assuntos empresariais, isso é...
+
+Oferta completamente separada. Mas eu tenho Está no roteiro aqui. Se você é um organização, você pensa: "Ei, eu quero Andrew Brown virá nos ajudar com "Essa ferramenta aqui." Acho que para o Em grande parte, já abordei muito do que eu queria cobrir em JAI. A única coisa É isso que me falta nas ferramentas de programação.
+
+modelos de código aberto. Então, eles são sempre mudando o que talvez queiramos utilizar. Então, hum, eu suspeito que vou fazer um Curso muito curto sobre modelos de código aberto e veja como eles se comparam. Algumas pessoas precisam levar isso em consideração. opções. Mas enfim, agora que isso foi resolvido
+
+Bem, vamos continuar. Então, como? Quanto tempo vai demorar? E eu tenho Codeex aqui, mas é Gemini. Então, eu sou Vou simplesmente riscar isso.
+
+fora. E este é o Gemini, pessoal. Gêmeos. Mas elas têm comprimentos muito semelhantes. Então, O horário será o mesmo. 12
+
+horas se você for iniciante. Se você é Com experiência, levará quatro horas. Um talvez até duas horas se você estiver assistindo em velocidade dupla. Então, sabe, talvez 10 horas no total, se Você acabou de chegar aqui usando o Gemini CLI. Se você já usou meu codec CLI, meu CLI do Cloud Code, você vai arrasar!
+
+através disso muito, muito rápido e apenas ajude a se manter... hum...
+
+Flexível para todos os fornecedores. Então, o que é Qual é o truque aqui? Assista ao vídeo aulas teóricas, faça os laboratórios práticos no seu contas próprias, hum, faça o treino pago exames. Temos um gratuito na expge gêmeos cli0is1 onexampro.co.
+
+Então você pode levá-los para lá. A captura de tela ali é apenas um exemplo. captura de tela. Então, essa não é a versão real. quantidade de tempo e perguntas, mas nós Abordarei isso daqui a pouco. Então, onde?
+
+Você vai fazer esse exame? No exame profissional plataforma, nós somos os emissores disto exame. Então você pode ir sentar-se lá, por conta própria. Conveniência a qualquer hora que você quiser. Um, os são três domínios aqui. Então temos o núcleo
+
+Conceitos e fundamentos, Gêmeos serviços, recursos e funcionalidades avançadas capacidades. Eu diria que dentre os três, Gêmeos provavelmente tem o menos quantidade de recursos, mas praticamente O mesmo que o Codeex, mas eu diria O Codex possui um ecossistema um mais maduro para desenvolvimento. Bem, se você quiser criar seus próprios sistemas de codificação, mas... você
+
+sei que simplesmente aconteceu. basicamente do mesmo tamanho que o codex curso. O curso de código na nuvem, obviamente. é o mais longo e possui um adicional domínio, pois é muito, muito complexo funcionalidade. Esses domínios têm sua própria espera. Então a distribuição
+
+As perguntas vão variar. O A nota mínima para aprovação é 70%. Bem, existem 50 questões. Você pode errar 15 questões. Há Sem penalidades. É de múltipla escolha.
+
+pessoas. Você tem 1 hora. Então é 1,2. minutos por questão, o que corresponde ao tempo de prova 60 minutos. Tempo de permanência sentado: 90 minutos. Então
+
+O tempo de permanência na cadeira é o tempo que você precisa para alocar recursos para o exame, como por exemplo, leitura. as instruções, mostrando o online espaço de trabalho do procedimento, leitura, aceitação o acordo de confidencialidade e a conclusão do exame, fornecer feedback no final do exame. Este exame é válido por 24 horas. meses e dizemos dois anos, mas quero dizer Na verdade, essas coisas se movem muito rápido. para que você saiba como vai saber é se lançarmos uma nova versão disto curso e você quer fazer isso, uh, algum Falando sério sobre certificações, estas são...
+
+As certificações estão aqui apenas para te ajudar. Eles podem medir o próprio progresso. Não vou te ensinar a programar scripts SQL. Servidores Linux e Windows para redes de TI ferramentas de desenvolvimento de gerenciamento de projetos compilar habilidades de desenvolvimento de aplicativos algoritmos e muito mais para preencher esses lacunas. O Free Code Camp tem muitas, muitas, muitas opções.
+
+de conteúdo gratuito. Eu também tenho muitos muito conteúdo para meus inscritos hum e nos ajuda a apoiar essas iniciativas. Eu sou muito bom em simplesmente lançar um monte de as coisas que estão aqui dentro. Então, eu sou bastante abrangente, mas sei que alguns As pessoas, você sabe, não querem sentar. um curso de 100 horas, então você sabe que eu tenho que quebre-o e coloque-os em cursos individualizados. Então, só
+
+Pense nisso. Mas agora que temos isso Deixando isso de lado, vamos direto ao assunto. curso. Ok, cha chia.
+
+Olá, meu nome é Andrew. Estamos tomando uma Veja o Gemini CLI. Portanto, é um agente ferramenta de codificação ou, como também se pode dizer, uma ferramenta de programação. O sistema lê o seu código-fonte, Edita arquivos, executa comandos, Integra-se com suas ferramentas de desenvolvimento. Você pode encontrar isso em geminici.com.
+
+Este é o principal recurso que estamos utilizando. uh, para este curso. Hum, e é Disponível provavelmente em vários formatos. Estou usando o formato CLI porque não...
+
+Considero o ecossistema do Google o melhor. Um mas tecnicamente eles têm coisas que meio que funciona com a CLI do Gemini, mas eles gostam de especializar todas as suas ferramentas. Então Eles têm joias antigravidade, tipo coisas. assim, enquanto algo como Claude Código e Codeex são tipos de trabalho em geral. múltiplos serviços. Mas enfim, hum, o
+
+Os casos de uso aqui seriam a automação de... Qualquer tipo de trabalho de desenvolvimento, conserto bugs, desenvolvimento de funcionalidades, trabalho com hum seu Repositórios Git, conectando-se com o MCP ferramentas, hum, e uma variedade de outras coisas. E então, é assim que fica quando Você está executando a CLI do Gemini. Não o
+
+mais bonita, mas, bem, definitivamente é. trabalhar. A principal maneira pela qual você vai...
+
+A energia desta ferramenta é provavelmente transmitida por um Assinatura do Google AI. Então, há O Google One, que é uma assinatura. que lhe dá armazenamento e dispositivo gestão e dentro dela há outra assinatura que é a IA do Google assinatura e, portanto, você tem diferentes Existem planos como Plus, Pro e Ultra. EU Tente escolher o plano de US$ 30, pois eu Descubra o que lhe dará mais benefícios. uso robusto aqui. E então você está
+
+vai receber mais do que apenas... o Gemini CLI vai receber mais funcionalidade, mas é isso que você é vou utilizar. Descobri que eu Não consegui conectar isso ao meu conta comercial do Google Espaço de trabalho. Então, acabei usando meu
+
+conta pessoal. Talvez haja um Uma forma diferente de comprar para empresas, mas eu queria facilitar para você descobrir. Então, eu literalmente tive que fazer uma nova conta do Google e inscreva-se em isto. E na verdade, quando me inscrevi para Com isso, ganhei um mês grátis. Então, eles Eles estão realmente te incentivando a usar isso, pelo menos na época em que eu estava usando-o. Mas espero que você encontre.
+
+interessante. Mas vamos continuar. OK.
+
+Certo, então, com Gêmeos, você tem diferentes modelos Gem Gemini que você pode utilizar, o que podemos descobrir aqui. na documentação. Ah, e então o Os principais que veremos são os Pro. Flash e lanterna. Hum, há de claro que existem mais modelos do que o Google tem, mas Esses são os que vão ser usado para alimentar a ferramenta de codificação.
+
+OK. E se analisarmos qualquer uma dessas opções... cartões modelo, podemos obter informações como seus limites de token para seus entradas e saídas, o que é muito É importante saber. Hum, por aqui, uh,
+
+Assim que estivermos no Gemini CLI, poderemos para alternar entre diferentes modelos. E Você pode ver aqui que temos o Pro Flash, Lanterna, e temos duas diferentes. versões aqui. Então, essas coisas são sempre mudando constantemente, mas...
+
+Geralmente você sabe que terá a última chance. geração a geração atual última geração que proporciona estabilidade enquanto a nova versão oferece melhores recursos ou melhor desempenho ou melhor inteligência, mas talvez não sejam. super estável e até mesmo dentro dessas Pode haver várias versões dentro de um mesmo produto. digamos 3.1, mas você pode nunca...
+
+na verdade, veja isso como eles poderiam ser lançando pequenas atualizações e ajustes. Com o tempo, mas enfim.
+
+Ok, neste vídeo, vamos dar uma olhada. na um os modelos que estão disponíveis para nós. Então, eu simplesmente digitei, sabe, Modelos Gemini, e aqui estão eles. Então, Obviamente, existem muitos modelos que estão aqui, mas, hum, só tem alguns que vão aparecer em Gêmeos. E Então, temos o 3.1 Pro e o Gemini 3.
+
+Clarão. A coisa que é meio que interessante é como quando você olha para Algo como Clawude, eles sempre têm seus três modelos, tecnicamente quatro se Você conta os mitos e a abertura, tipo... segue a mesma coisa onde eles têm um primeiro a mini e depois a de tamanho normal. Uh
+
+e então, geralmente, o que poderia ser? A mudança seria assim, segundo este raciocínio. tamanho ou a quantidade de fichas que você pode usar. Mas se eu entrar em 5.4, ele mostrará gostamos que tenha uma janela de contexto de um milhões com uma produção máxima de 128.000. Se
+
+vamos até, digamos, o Opus aqui, observe que ele possui uma janela de contexto de um milhões com 128.000 tokens. Mas o que é O que não está claro aqui é quando você está Na verdade, ao usá-los na CLI, não vai funcionar. necessariamente assume um valor padrão de um milhão. E em de fato, ter um milhão de uh contexto de token Não apresenta um bom desempenho. Pelo menos hoje,
+
+Não tem apresentado um desempenho muito bom. Um E também existe um limite rígido. na saída, e isso provavelmente é para impedir que ele faça coisas realmente estranhas coisa. Hum, então, sim, sabe, eu... eu não
+
+Saiba o que a Gemini está usando porque é Não muito claro, mas como o outro provedores, eles vão gostar de um Antrópico Vai avisar quando você estiver usando o Cloud. O código é limitado a 200.000 e eu Acredito que com a Codeex, sejam cerca de 400.000. mas você não quer que seja grande, senão você vai ficar estranho resultados. Hum, mas aqui você pode ver que
+
+Possui um dos menores tokens UM. limites, e não tenho certeza do porquê disso. Muito pequeno, mas é o que eles têm. escolhido para fazer. OK. E podemos revisar.
+
+para aqui para piscar. E Sim, tamanho semelhante, mas vai... ter diferentes níveis de inteligência. OK. Hum, e então lá
+
+é a lanterna. Quando estávamos fazendo No vídeo, fiquei confuso com o quê? A lanterna era algo que eu nunca tinha ouvido falar. mas é claro porque é Definitivamente novo. E talvez seja isso.
+
+supostamente como o haicai do Modelos Gemini. Mas enfim, tem o modelos. Pronto, aí está.
+
+Certo, então outra maneira que podemos A autenticação com o Gemini CLI é a Chave de API. Então, obviamente, já fizemos isso. a assinatura, mas vamos falar sobre o método da chave de API. Hum, e o motivo Você usaria isso para fins de produção. casos. Então talvez você esteja executando isso em
+
+Ações do GitHub, talvez você esteja executando-as. no servidor de produção. Existem muitas razões para Por que você usaria uma chave de API? Talvez você apenas Quero gastar de forma confiável. Talvez como em a assinatura que eles quantizaram quantificou o modelo para torná-lo mais econômico e então você pode lá na verdade, trata-se de uma diferença de inteligência.
+
+entre a versão da chave da API e a assinatura um, e então é muito Simples: você gera uma chave e a lança. Lá você se autentica se fez o Curso de codeex ou cloud code, é o mesmo processo um para rastrear o uso de tokens Tudo está sob o comando do estúdio de IA. não passe muito tempo lá dentro, mas Sim, você pode rastrear o uso de quais modelos. todas essas coisas, hum, uma coisa que eu Acho que você definitivamente deveria fazer isso. Eu não Realmente preciso fazer isso pelos outros.
+
+provedores, mas para o Google, eles têm um Controle seus gastos e, assim, você pode definir um limite. aqui. Eu fiquei realmente confuso porque quando Eu entrei aqui e já tinha créditos. E eu nunca tinha carregado nenhum crédito. mas acho que vem com 10 dólares, hum.
+
+o plano intermediário do Google Cloud, mas Por algum motivo, hum, eu não faço ideia. Como você carrega os créditos? E eu não tenho certeza. de onde veio o consumo. Hum, mas O motivo pelo qual eu recomendo fortemente definir um limite de gastos, quer dizer, obviamente nós Deveria gastar esse dinheiro fazendo isso por todos eles.
+
+mas o Google e especificamente o Gemini, Havia uma pessoa que recebeu como um Conta absurda do Google. Isto pode ter sido do Google Cloud Vert.Ex AI para Gemini. Mas a questão era É que eles tinham um guarda de segurança em lugar e então os gastos simplesmente dispararam. E tipo, eu não sei, acho que eles talvez eles estejam falando sobre falir ou coisas do gênero. Então,
+
+Bem, o Google é notório por ser o Menos útil quando há um problema. OK? Então, hum, faça esse esforço extra e enviar esse limite. OK? Existem níveis limites. Então, mais uma vez, se você aceitou o meu
+
+outros cursos, hum, então você vai gostar de outros fornecedores, você conhecerá isso como Bem, existem diferentes níveis. limites para o uso da API. O que é interessante É como se não tivéssemos feito nada. Já estamos no plano pago de dois níveis ou segundo nível. Hum, o que é estranho porque não tenho certeza de como chegamos qualificado para isso. talvez do nosso
+
+conta do Google, mas eu não estava realmente usando o Gemini. Mas a ideia aqui é que Quanto mais você usa, mais você ganha um colocados em níveis. E a ideia aqui é esta: É essa a quantidade que você pode usar. Então Neste momento, se você souber que houve um explorar, alguém poderia me dar um Nota de 2.000 dólares. Mas, novamente, colocamos isso
+
+limite de gastos lá. Nós garantimos que estão protegendo nossa chave. Não deveríamos Temos esse problema aqui. Hum, existem dúvidas como, por exemplo, como adicionar créditos? Como você monitora o uso da assinatura? E
+
+Eu literalmente entrei em contato e disse: "Ei, Não tenho ideia de como posso rastrear meu uso da assinatura." E a resposta foi A maioria das pessoas disse que você não pode, simplesmente não pode. não pode. Então, é meio frustrante. como você quer entender quando Você está se aproximando do seu limite de uso em pelo menos com codecs como você não pode exatamente veem isso, mas eles ainda têm, hum, o...
+
+janelas deslizantes de cinco horas e semanais e eles vão mostrar aqui embaixo, mas Não há transparência nenhuma com a Gemini. Eu não atingi nenhum limite, mas não sou Uso este carro diariamente. Há algum lugar para adicionar créditos para a API chave. Não faço ideia de onde seja. talvez Está vinculado à sua conta do Google porque Ao utilizá-lo, você vincula sua fatura.
+
+conta do Google. Então, é um pouco Um pouco confuso. Isso me deixa desconfortável. Mas é assim que as coisas funcionam para eles. E você Sabe, é o que é. OK.
+
+A janela de contexto é o ambiente de trabalho completo. memória que um modelo pode armazenar de uma só vez e Inclui tanto suas entradas quanto suas saídas. medido em fichas. Então, se estivermos olhando No Gemini 3.1 Pro, veremos que ele tem uma entrada máxima de tokens de uh 1 milhão e uma produção máxima de 65.000 tokens.
+
+O mais baixo de todos os modelos de fronteira. em todos os provedores de uh para americanos Modelos americanas. Um 65.000 é realmente muito baixo. Hum, eu acho que quanto mais...
+
+Quanto mais você produz, mais as coisas ficam. Meio selvagem. E eu acredito que haja como um ponto ideal de no máximo 125.000 fichas. E, se você tiver 200.000
+
+Janela de contato de 250.000, é aí que... Você vai obter os melhores resultados.
+
+Mas você sabe, pessoas tendo milhões, uh milhões de contatos de tokens parecem todos Parece que querem isso, mas não percebem Isso significa que você não obtém os melhores resultados. Mas enfim, todos os modelos são meio que indo por esse caminho de qualquer maneira, onde os números são tokens de entrada enormes, saída menor fichas. Mas a maneira como podemos gerenciar nosso A janela de contexto possui dois comandos. Nós Tenha clareza e comprima. Outros fornecedores Podemos chamar isso de compacto. Mas a ideia aqui é
+
+que, hum, enquanto você... hum, você está trabalhando memória, suas janelas de contexto crescem, seu O uso de tokens aumenta, você pode compactá-los. que resumirá o atual conversa para que você possa continuar. E
+
+Você tem o comando claro, que simplesmente basicamente esclarece todo o contexto. janela começando basicamente de uma nova conversa ou o que você quiser ligue para isso. Gemini consegue gerenciar o contexto, assim eles irão compactá-lo com o tempo para você. Mas se você quiser fazer algo proativamente Isso você pode. Tenho o hábito de Sempre faço isso de forma limpa após a maioria das tarefas. Então,
+
+É um bom hábito para você ter. Mas esse é o tamanho da janela de contexto.
+
+Para instalar o Gemini CLI, vamos... Para usar o MPM. E nós temos um pacote.
+
+aqui. Então, vou recomendar que Você o instala globalmente aqui, pois é isso. vai ser provavelmente a melhor maneira de Trabalhe com isso. Hum, em termos de carregamento Gêmeos, tudo o que você vai fazer é digitar A palavra Gemini aparecerá assim que estiver instalada. Isto vai lançar este ambiente que Podemos trabalhar dentro desse limite. Hum, para autenticar,
+
+Existem três opções. Usamos o para/ comando. Hum, eles não usam login para Seja qual for o motivo, eles chamam o deles de O, e isso lhe dará algo que Parece muito semelhante ao Codeex ou ao Cloud. código. Hum, mas as opções são um pouco um pouco diferente. Fizemos login com o Google.
+
+Hum, use a chave da API Gemini ou a Vertex AI. Hum, eu tive um pouco de dificuldade. Com o WSL 2. Hum, mas você sabe que eu trabalhei. por ali e havia tipo um duplo autenticação que tivemos que fazer onde Autenticámos uma vez e tivemos de Autentique duas vezes, mas apenas inicialmente.
+
+aquela primeira vez. Hum, e houve um pouco de um ataque hacker que tivemos que resolver. EU precisava copiar um link em uma determinada área para Faça funcionar. Portanto, preste muita atenção. a isso. Para saber se estamos logados.
+
+Em seguida, usaremos o comando stats. O O comando stats fornece muitas informações. Informações adicionais. Hum, mas a chave A questão aqui é como fazemos para entrar no sistema. Então, aqui está nos dizendo como estamos contratados.
+
+em que conta temos. Hum, o quê? Seria interessante ver. como nossas janelas de uso, mas para Seja qual for o motivo, Gêmeos não faz que é transparente. Vou falar sobre que mais tarde. Hum, mas eu achei tipo
+
+De todos os fornecedores, é difícil realmente encontrar um que realmente funcione. Entenda nosso uso. Não acertei nenhum limites, mas, se eu fizesse, eu não faria Não sei por que atingi esses limites, se é que sei por quê. Faz sentido. Bem, é isso aí.
+
+Olá, meu nome é Andrew e nós vamos... Instale o Gemini CLI. Então, O que eu fiz foi recorrer ao Google, digitamos no Gemini CLI e estamos procurando para suas instruções de instalação. Então,
+
+Se formos ao GitHub e descermos as páginas... Abaixo, você encontrará algumas opções. Então, nós Tenho MPX, MPM, uh, Brew, Macports. EU
+
+geralmente evitará usar qualquer tipo de instala um especialmente para nuvem serviços ou serviços vinculados à nuvem pacotes, pois às vezes podem estar fora ofd e a maioria dos provedores irão Sempre recomendo que você compile a partir de fonte. Então a fonte mais próxima está indo Para ser o único mpm. Queremos isso globalmente. instalado. Não há razão para você Só quero fazer isso uma vez, a menos que...
+
+Talvez você esteja usando para automação. sistemas. Então, este é o comando que nós...
+
+quero correr. Você precisa ter um nó. instalado. Você não tem um nó. instalado. Você precisa aprender como fazer
+
+que. Tenho outros materiais sobre o Plataforma Xampro para isso. Então, eu fiz uma nova pasta chamada exemplos da CLI do Gemini. Vou criar um repositório no meu GitHub. É aí que vamos estar fazendo.
+
+tudo incluído. Vamos em frente e Instale-o. Bem, eu já instalei. Está aqui. Então, vai me dizer que já está instalado. Mas lá estava
+
+é. Vamos começar a trabalhar com isso. Então, Vamos digitar Gêmeos. Isso vai acontecer para lançar o Gemini aqui. Se eu estiver logado Vou sair da minha conta. Então, eu acho
+
+Eu já estou conectado. Então, eu só... Vou sair da sessão. Assim, você obtém algo semelhante.
+
+experiência do que eu tenho. Então eu simplesmente quero [risos] Sair da sessão. Não sei se eles realmente têm um comando de logout, mas assim como eles vai te levar até o O. Então, se for na primeira vez que você o liga, Você vai acabar com isso. interface. E então temos três
+
+opções. Faça login com o Google, use um Gemini Chave de API ou Vertex AI. Eu vou ser usando o Google. E então eu tenho meu...
+
+Conta pessoal de Gêmeos. Você pode conseguir. com negócios, de alguma forma, mas eu só Criei um novo e-mail só para usar o Gemini. CLI. Então, é completamente isolado... você
+
+Sabe, a gente só pesquisa Gêmeos, uh, um Porque é isso que é. É Gêmeos 1, certo? Vou até aqui. E é realmente muito confuso. mas a ideia é através de Gêmeos, uh O Google One é onde você encontrará o seu plano. Então, eu peguei o plano profissional, como eu...
+
+tente ficar em torno de US$ 30, pois é isso. Na verdade, acho que é aí que está o bom lugar. EU Não acho que valha a pena perder seu tempo indo até lá. inferior a esse valor. Então, se você é Pagar de 20 a 30 dólares é o preço certo.
+
+quantia. E quando me inscrevi, na verdade me deram um mês grátis, o que... Mostra que o Google realmente quer que você Utilize-o. Mas vou prosseguir.
+
+e faça login com o Google. E vai acontecer Abra-o. O que é interessante aqui é Este aqui se abre no meu navegador. E eu vou escolher o meu Conta do Google fora da tela. Eu vou para Pode iniciar sessão.
+
+OK. E agora estou conectado. O que é um É um pouco incomum que você tenha que Reinicie o console, que eu Não sei, não sei porquê, mas nós vamos. Siga em frente e pressione Esc. E eu vou simplesmente bater Pressione Ctrl+C para sair daqui. Vou digitar
+
+Em texto claro, e vamos iniciar o programa. Então, onde é um pouco diferente de outros fornecedores, é como se perguntassem: onde está o O comando de logout? Onde está o cheque? meu comando de status desligado? Não consigo encontrar isso.
+
+coisas muito, muito facilmente. E eles não fazem isso. Tem até um comando de status. Isso é Apenas estatísticas. Então eu posso ir lá e conseguir Algumas informações, mas isso nos mostra algo.
+
+nosso método de desligamento. Isso é útil para nós. e podemos ver em que nível estamos. usando. Então, essa será a única É assim que podemos rastreá-lo. Não consegui encontrar nenhum.
+
+comandos CLI básicos, mas isso é Bem simples. Então, agora isso Nós temos isso instalado, eu acho que sim. poderia simplesmente fazer um simples teste. Eu gostaria de fazer um teste "Olá, mundo!".
+
+como minha entrada. E isto deveria inicializar dentro do repositório em que estamos Então, neste momento, este é o nosso espaço de trabalho. diretório. E eu vou apenas voltar aqui fora. Talvez haja uma maneira melhor de gerenciar essas coisas porque parece que O Gemini possui mais gerenciamento de diretórios.
+
+onde outros não necessariamente fazem que. Um, querendo dizer algo como mudar o seu diretório de trabalho de onde você realmente são enquanto você está na CLI. E então eu estou Vou reabrir o Gemini. E talvez pergunte se precisamos confiar. esta pasta. É isso que eu espero.
+
+fazer isso. H. Tudo bem. Não funcionou. que. Mas agora estamos aqui. OK. E
+
+Eles têm algo aqui que eu não tenho realmente ciente do que era Eles estão dizendo isso aqui. Um Gosto de como eles agem como se eu já fosse profissional. E eles ficam tipo, melhore, melhore ainda mais. Bem, enfim, agora que estamos dentro...
+
+Aqui, eu gosto de dar um pequeno "olá". mundo. Então, vou prosseguir e...
+
+Vou dizer, você pode criar um para mim, uh? Olá mundo! Arquivo .rb que imprime "Olá!" mundo nesta pasta? E nós vamos em frente.
+
+E que comece a corrida. Hum, Eu já deveria estar autenticado, mas Vamos verificar nossa conta. E agora tente abrir isso nesse aplicativo bobo. Janela boba do Google aqui. Eu realmente Odeio quando fazem isso. Tipo isso é por
+
+WSL 2 é que está fazendo isso. Não consigo verificar dessa forma. E isso é tudo um déficit de um Wiz L2. Então, eu acho Vamos entrar novamente, mesmo que eu estivesse Já está conectado. E, hum, isso não está abrindo meu navegador.
+
+Então, vou copiar o link e colar aqui. aqui dentro, E então meu navegador trava. Lá estamos nós ir. Vamos tentar novamente. Vou dizer para fazer login.
+
+Já estou conectado. Pressione R para reiniciar. R. Aqui está. R. R. R. Aí está. Isto
+
+Reiniciado. OK. Então, agora o que eu vou fazer é Sabe, eu vou entrar em contato com...
+
+no meu teclado e tente novamente. É possível que sejam necessárias outras ações para usar um(a) serviço. O que você está falando? EU Estou conectado. [risos] Isso é um pouco frustrante.
+
+Deixa eu só apertar Esc. Eu já estou logado. O quê? O que mais você quer aqui? Então, eu sou Vou começar a fazer as estatísticas.
+
+Eu rolo a tela para cima e aparece que estou conectado. Então, Gemini Code Assist no Google OneI Pro. Então, isto é um desafio onde estamos presos ao WSL 2, mas não está nos dando isso método de autenticação. Então, eu vou Pode pressionar Enter novamente. Eu vou Talvez seja necessário alterar a autenticação.
+
+Não. Só me dê um segundo para pensar nisso. fora. Tudo bem. E aqui vão algumas sugestões.
+
+aqui. Hum, e na verdade é Gêmeos. sugerindo isso. Não estou dizendo que Gêmeos é Vai nos dar um bom conselho aqui, mas Está dizendo para executar o comando de depuração. Então O que eu vou fazer é matar aqui fora.
+
+E já nos deparamos com problemas. Isso não é incomum em produtos do Google. Eles constroem essas casas para eles, não para nós. OK. Hum, é o que é. Mas enfim, então agora nós
+
+estão em modo de depuração. Lá embaixo podemos ver a flag de depuração. E, bem, estamos conectados. Entrar com o Google O. Quer dizer, eu deveria.
+
+Você já está conectado, certo? Está dizendo Qual é o meu plano atual? OK. Então, eu sou Vou prosseguir e abordar o teclado. Ó meu Deus. Isso é terrível.
+
+Ações adicionais são necessárias para usar o serviço. OK. Portanto, não podemos ver Não tenho nenhuma informação aqui, mas vou tentar. Verifique sua conta. Então, temos este link aqui. Talvez eu
+
+Você pode simplesmente copiar este link. e depois colar no meu navegador. Ah, aí está. Olha só isso. Certo, então Eu nunca, nunca pensei nisso.
+
+antes, mas acho que isso vai funcionar. Hum, Então, vou prosseguir e talvez digitalizar. Um código QR. Ok, então eu tenho um código QR. Eu simplesmente não sou Estou mostrando aqui na minha tela, pessoal. O
+
+A única coisa chata aqui é que se eu estiver no meu telefone, Acho que não é realmente irritante, mas Vou digitalizar isto. Pronto. Então, fizemos um pequeno exame aqui. Nós vamos. OK. E eu diria que sim,
+
+continuar no meu telefone. A mensagem diz para retornar ao outro dispositivo. Agora, Isso desbloqueia o acesso. Talvez porque É a primeira vez que faço isso. Eu sou Não tenho certeza. Então, agora eu devo entrar.
+
+OK. E assim, fizemos isso. mas não há O que está acontecendo aqui, não é? Certo. Então, Vou apenas pressionar Ctrl + C.
+
+E eu vou voltar para cá. Correr Em modo de depuração. Não que isso esteja acontecendo. A ajuda acontece, ajudando muito. OK. E eu vou prosseguir e
+
+Vamos tentar novamente. Por favor, não pergunte. Preciso que eu me autentique novamente. Não sei Quantas vezes posso autenticar? Mas talvez tivéssemos mesmo que fazer isso.
+
+uma vez, já que é a primeira vez que estou Estou usando a CLI Gemini e estou tentando... registre qualquer um desses problemas assim que você saber. É isso que acontece. Então, é isso.
+
+pensamento. Então agora deve estar funcionando. OK. E assim, essa solução alternativa deve ter Funcionou, mesmo que não tenhamos conseguido aquilo...
+
+resposta. Acho que o motivo é que Novamente estamos na WSL e, portanto, está em execução um Chrome sem interface gráfica dentro dele. Agora, se Você está usando um Mac, você não vai conseguir. Tenho esse problema. Se você estiver em um idioma nativo Máquina Linux, provavelmente não. Mas se
+
+Você está usando o WSL, que é o que a maioria das pessoas usa. É isso que eles vão ter, ou Em máquinas Windows, você terá dor aqui. E vamos superar essa dor. Mas é pensamento. Por que está pensando tanto, eu não sei.
+
+saber. São os arquivos mais simples e fáceis, mas vamos parar por aqui e voltaremos mais tarde e Vamos ver se algum dia ele decide ser concluído. OK, Após uma longa espera aqui, está perguntando se Ele pode escrever nesse arquivo. Diremos Permitir esta sessão. E então agora é deveria ser capaz de escrevê-lo. Estou percebendo
+
+O modelo é Gemini 3, configurado abaixo para automático, o que significa que provavelmente pode funcionar para o Na maioria dos casos, a aprovação é automática, mesmo que... não necessariamente fez isso. E nós somos Ainda aguardando. Novamente, um dos
+
+os menores arquivos que você poderia criar em o mundo e absolutamente demorando uma eternidade e os arquivos já estão prontos. Eu não tenho certeza No que está pensando. Então, mas vamos mudar o modelo como Gêmeos, uh, Gêmeos tem muito, muito modelos mais rápidos. Hum, mas seja lá o que for O motivo, seja lá qual for, é Gemini 3. Não estamos nos divertindo.
+
+com ele. Mas ficaremos por aqui até decide terminar. E dê uma olhada no tempo. Ainda faltam quase duas horas. minutos e é o "olá mundo" já foi escrito. O que está fazendo?
+
+certo? É isso que eu não entendo. OK. Bom, de qualquer forma, vamos ficar juntos até...
+
+Está feito. Ah, aí está. OK. Por exemplo, se eu estivesse usando um modelo local no meu CPU, talvez eu consiga entender isso. Mas Eu realmente não entendo por que é indo tão devagar. Ainda não está concluído.
+
+Oh. Nossa! Mal posso esperar para mudar o modele aqui e veja se funciona diferença. Ainda não terminamos aqui. Então aqui está dizendo "mover olá mundo".
+
+Remova o diretório. Correr. O que ele quer fazer? Doente Mova o arquivo para o diretório atual. e limpe tudo. Já está onde está
+
+precisa ser, Mas claro. Só quero ver onde fica. Vou nessa. Volte aqui em apenas Um momento. Muito bem, aqui está. E assim
+
+Temos o nosso "Olá, mundo!". Novamente, não posso entender por que aquilo aconteceu exatamente daquilo experiência. Vamos dar uma olhada no modelos que temos disponíveis. Hum, então Temos Gemini 3 e Gemini 2.5.
+
+OK. Então, vou escolher três. Bem, como faço para mudar para o modo flash? Ah, então está fazendo todo o roteamento para mim? Eu não tenho escolha. Deixe Gêmeos
+
+decidir. Não, não, não. Quero o manual. Lá Nós vamos. OK. E aqui temos Gêmeos.
+
+3 1 Pré-visualização profissional. Hum, OK. É por isso que não está funcionando? bem? Porque estamos em uma versão de pré-visualização.
+
+E há um flash e depois uma lanterna. OK. Acho que vamos usar Flash mesmo. Por um segundo. Vou apagar isto. Eu sou
+
+Vou apagar isso e vou perguntar para fazer a mesma coisa. Eu vou primeiro Vou encerrar a conversa. Ok, então é de uma fonte clara conversa. Então, você pode criar um para mim? Olá rb que imprime "Olá mundo" neste pasta? Vamos pressionar Enter.
+
+Espero que com flash isso funcione muito bem. mais rápido. Pronto. Diremos permitir E pronto, está feito. Certo, então, para Seja qual for o motivo, onde está? Lá
+
+Nós vamos. Por algum motivo, o outro Uma delas era realmente muito longa. E assim, obviamente, escolher seus modelos e Saber o que você está usando é importante. Vou testar este aqui mais uma vez. tempo. Normalmente eu não seria assim.
+
+minucioso com um um uma instalação vídeo, mas foi justamente isso que me pegou de surpresa Cuidado com o quão estranho isso foi. Então, eu vou para voltar ao modo manual e nós vamos Volte para o modo profissional, mesmo que seja profissional. É um exagero. Vamos digitar de forma clara para clara nossa conversa. Vamos entrar em contato. Bem
+
+Tente mais uma vez. E eu quero Vamos ver quanto tempo leva, ok? OK, porque se for preciso muito tempo...
+
+Tempo muito longo para o mais básico Vamos continuar usando o Flash. manual. Obviamente, hum, tinha o roteamento, mas o roteamento nem sequer funcionou. parece direcionar para o... para o flash.
+
+Então, nem sequer foi uma boa escolha. em termos de qual modelo deve ser usado, mas Já está muito, muito lento. Mas nós Vou ficar por aqui e só medir isso. Mais uma vez. OK. Tudo bem. E
+
+Ainda estou esperando há um tempo incrivelmente longo. EU nem saberia dizer quanto tempo isso durou era. só não sei alguns minutos tipo três ou quatro minutos só para isso acontecer autorização para escrever nesse arquivo. Um E foi isso que o criou. Então, um pouquinho Melhor, mas em termos de produtividade.
+
+E criou uma pasta dentro de outra pasta. Uau. [risada] Uau. Não está fazendo um bom trabalho. Então, acho que o que faremos é ou não fazer nada.
+
+Usaremos a versão prévia ou mudaremos para a versão mais recente. Voltar para o flash. Hum, mas você sabe, Isso é apenas um exemplo de quando...
+
+Se você está usando essas ferramentas, você precisa... mexer com eles como você sabe, eles são As coisas estão se movendo rápido por aqui, pessoal, e algumas coisas...
+
+Simplesmente não funcionam como esperado. OK. Hum, Mas enfim, e será que recebemos nosso "olá"? mundo? Sim, fizemos. Hum, não preciso testar.
+
+que. Eu sei que isso está correto, mas agora nós Tenho o Gemini CLI instalado. OK.
+
+OK. Então, agora que conseguimos criar Nosso negócio de "Olá, mundo!", hum, a próxima coisa O que queremos fazer é conectar ou autenticar. usar a API, pois isso é muito comum. caso de uso. Então, eu só estou tentando...
+
+Pense nisso porque eu tenho um conta pessoal, certo? E então é isso. Uma das maneiras pelas quais podemos autenticar, mas eu Acho que depende muito de onde estamos. vou obter esse token de onde houver vert.ex IA dentro do Google stu uh Google uh nuvem. Mas eu acho que...
+
+A chave da API viria do Google. Estúdio de IA. Então, o que eu vou fazer é...
+
+Vou procurar aqui. Google Studio IA. Vamos ver se é isso mesmo. Um E eu estou pensando, sim, porque diz...
+
+A chave da API é provavelmente onde ela está. vindo de. OK. Então, se eu for até...
+
+aqui Ah, sim, tudo bem. Hum, Então, o que estou procurando aqui é uma API. chave. OK. Então, vou prosseguir.
+
+e crie uma chave de API. Então, estou criando uma API Gemini. chave aqui. Aparentemente, preciso criar um projeto. Criar projeto.
+
+Esperamos que nossos cartões de crédito estejam vinculados a esse. Isso vai facilitar muito a minha vida. Hum, ainda estou tentando criar essa chave. Estou tentando fazer isso fora da tela, caso Há algo que eu não quero mostrar. você.
+
+Pronto. E então, literalmente, tem um ID do projeto. E agora temos uma chave. Vou verificar se isso funciona. funciona. Então vamos começar a digitar
+
+Gêmeos. E vamos dedicar um momento aqui para conectar e vamos digitar "desligado" enquanto isso acontece ser um método Sim, e sim. OK. Ok, então, ele vem sim. Do Google AI Studio. Então eu estou no
+
+lugar certo. Vamos prosseguir e atacar. digitar. E agora devemos estar operando. com uma chave. Então, vou prosseguir e
+
+Digite as estatísticas. E agora está escrito Gêmeos Chave de API, certo? Então, o que eu vou fazer é... mudar...
+
+Não queremos ficar no modo automático, pois já estamos assim. O aprendizado automático não está nos ajudando. hoje. Então, vou prosseguir e Mude para o modo manual e entre no modo flash. Hum, e eu só vou perguntar, você pode?
+
+adicione uma segunda instrução de impressão ao olá mundo arroba olá worldrb? OK. Então, isso vai prosseguir e escreva aquela única linha extra. Isto Não deve demorar muito, mas a ideia é que estamos consumindo o token da API. A única coisa que me deixa confuso é a confusão.
+
+É como se eu estivesse usando algo assim? Porque normalmente você teria que anexar um cartão de crédito, carregue-o. Hum, mas talvez O Google AI Studio oferece alguns usos gratuitos e É por isso que estamos vendo isso. OK. Então, se eu simplesmente desistir aqui...
+
+Por um segundo. Sim, existe um nível gratuito. Isso é muito legal. Então, acho que nós poderia carregar créditos. Tenho certeza que é isso.
+
+Sem confusão. Não estou com vontade de fazer que está aqui hoje. Bem, acho que estaremos Utilizando principalmente a assinatura. Se fizermos isso, Vou carregar isso e gravar esses vídeos. Hum, mas sabe, é bom...
+
+veja, isso aconteceu ali. Tudo bem. Então, é isso. Adicionada uma segunda linha de impressão. OK. Bem
+
+Feche isso. Reabra. OK. Onde está o troco? Então, vou usar o Shift+Tab para...
+
+Aceitar edições. OK. Shift + Tab. Uhum. Vou adicionar uma segunda declaração de impressão. EU
+
+adicionará a instrução de impressão ao Olá, mundo. E Uhum. OK. OK. Bem, Você realmente atualizou o arquivo?
+
+Porque não vejo nenhuma atualização. Eu atualizei o arquivo. Aqui está o conteúdo atual. E então, às vezes isso Pode ser um problema com... hum... VS
+
+Código. Então, vou simplesmente cancelar isso. aqui. Vou analisar o arquivo. Sim. OK. Ok, então não foi isso.
+
+É culpa de Gêmeos, mas por algum motivo é Não, não está me mostrando as últimas informações. uma versão atualizada. Pode ser porque eu sou montado e isso não está no meu idioma nativo diretório. Então, o que eu vou fazer? Aqui, vou apenas mover isto. Eu sou
+
+Vou voltar ao diretório aqui e um diretório anterior. Eu vou me mudar. Adicionei meu Gemini ao meu diretório de sites aqui. E eu vou gravar o CD aqui. Eu acabei de Quero ver se isso resolve nosso problema.
+
+Ok, isso só vai ser um problema. se você estiver em WSL 2. Vou para lá. Agora ambos estão lá. Então, acho que esse era provavelmente o meu problema.
+
+e talvez meus problemas de cache, mas enfim, Você viu que conseguimos usar a API? chave. Muito simples. Hum, eu imagino A Vertex AI vai ser a mesma coisa. processo. Vou prosseguir e pegar
+
+livrar-me desta chave porque não quero Use-o. Na verdade, antes de nos mudarmos Para frente, acho que também deveríamos apenas teste um uh o Gemini como a API Gemini variável de ambiente chave porque eu eu Eu também gosto sempre de fazer isso. Então, aqui está dizendo o quê, como fazemos? usá-lo? Chave da API Gemini. Ok, ótimo. Então, o que eu estou
+
+O que vou fazer aqui é digitar Exportar Gemini. O único problema é tipo já está usando a chave, então eu sinto como se estivesse armazenado em algum lugar. Não existe uma opção como "sair da sessão". Vamos Experimente isto aqui. Gemini, uh, sair. Isso vai funcionar? Desligado.
+
+Sair da sessão. Não, não fez isso. OK. Um Mas enfim, acho que vamos só definir isso...
+
+embora não tenhamos o mesmo clareza em relação ao que está acontecendo. E Então vou prosseguir com a exportação. E vamos aplicar um sinal de igual duplo aqui. E podemos pegar aquela chave de novo? Oh, Normalmente, você não consegue obter mais chaves do que uma vez. Não. Eles deixam você fazer isso. OK,
+
+claro. Por que não? E nós vamos definir isso. Bem Digite em Gêmeos. Novamente, não consigo dizer se é realmente verdade.
+
+Mas vou pegar. Confie nesta pasta status ou estatísticas. O mesmo se aplica à chave da API Gemini. H. OK. Então, quer dizer, bem, na verdade, não, é
+
+Provavelmente não teria. Não, talvez. já tinha isso antes, mas enfim, Vamos assumir que é assim mesmo. Deveria funcionar. Mas agora, nós testamos Com chave de API. Não vamos fazer isso.
+
+IA de vértice. Vai ser a mesma coisa. coisa. Basta iniciar sessão na sua conta do Google. Acesse o Vertex AI e gere uma chave. Mas
+
+Pronto. OK.
+
+Outra coisa que teremos que... Preste atenção ao usar o Gemini Gerenciando nossa memória. Isso não é algo que realmente precisamos fazer em outros fornecedores, hum, o que não aconteceria Doeria se eles fizessem isso, mas a ideia Eis que a memória simplesmente lhe diz o quê Os arquivos foram carregados na memória. Então, você viu
+
+naquele último slide onde estava escrito Gemini Tinha quatro arquivos carregados. Bem, se houver eram outros arquivos que estavam sendo carregados, Poderíamos usar o comando de memória para listar descobrir quais arquivos ele está visualizando. Podemos adicionar arquivos. Podemos analisar o atual...
+
+conteúdo de memória real. Literalmente O que ele realmente leu desses arquivos ou recarregá-los. O último ou o melhor Um deles é super, super importante quando você estiver usando a CLI do Gemini. Eu encontrei Às vezes, tinha coisas antigas ou erradas. coisas e então poder entrar aqui e mexer com isso, uh, foi muito, muito útil. Embora você meio que deseje que fosse assim
+
+Funcionou exatamente como esperado. Hum, mas Eu diria novamente que não faria mal. se os outros fornecedores tivessem isso, mas eles não. Hum, e você me verá usar isso funcionalidade quando fazemos o Gemini coisas de markdown porque eu terei que Use-o. Então, fará parte desse laboratório.
+
+OK.
+
+Então, para Gemini, existe um Markdown Gemini. arquivo. Cada fornecedor tem o seu próprio. Garra Possui garras. Médico. A Codeex tem agentes. Hum, mas
+
+De qualquer forma, o deles se chama Gemini Markdown. arquivo. E você pode colocar isso no seu um abrangência global em seu diretório inicial ou no âmbito de um projeto. Eles realmente não fazem isso. possuem o mesmo número de escopos que os outros, Mas está tudo bem. Eles têm isso.
+
+conceito de just-in-time cont uh contexto arquivos, o que na verdade é progressivo divulgação, que é o termo que O código de Claude usa, e então eu penso O Cloudex simplesmente usa linguagem normal. Mas A ideia aqui é que, se houver outros Os arquivos Gemini serão carregados. enquanto o CLI está passando seu código-fonte. Ok, não vai acontecer. Carregue todos eles, exatamente o que precisa.
+
+E eu descobri que Gêmeos era muito agressivo em termos de carregamento Gemini arquivos, até mesmo aqueles que eu não esperava. para carregar. Mas pelo menos isso te mostra Assim você terá uma ideia. Então Isso foi meio interessante. Hum, tem um comando de inicialização, assim como todos os outros.
+
+fornecedores para gerar um para você. Você realmente deveria escrever o seu próprio. código, mas se você não sabe o que fazer Escreva e você já tem um existente repositório, você pode fazer isso como ponto de partida apontar. É algo que eu realmente gosto. Gemini permite que você mude o nome.
+
+do arquivo de contexto. Então aqui podemos Renomeie para Claude MD. Então agora é Claude, médico, por aqui. E também tem importa o que o código em nuvem tem. O Codeex não tem exatamente isso. Você tem
+
+para dizer para literalmente rastejar por que. Mas é bom que tenha isso. importações. Bem, é isso aí.
+
+Olá, aqui é o Andrew e neste vídeo nós Vamos analisar o Markdown do Gemini. arquivo e também memória. Então, o que nós somos O que vou fazer é criar uma nova pasta. aqui. E, bem, vou prosseguir e Chame isso de aplicativo de tarefas simples.
+
+OK. E eu vou simplesmente desligar o CD. esse. E voltaremos um nível no diretório. Vamos chamar de aplicativo de tarefas simples. E daí?
+
+Estou pensando que aqui está, tipo, eu obviamente quero criar um Gemini markdown arquivo, mas não temos nenhum código. Então Depende. Queremos isso? Crie algo e depois controle-o a partir de lá? Mas eu realmente quero te mostrar essa etapa de inicialização. Então, o que eu estou
+
+O que vou fazer é dizer o seguinte: Sou de Gêmeos. Vou ser muito prescritivo em termos de construção de um aplicação simples e depois nós faça engenharia reversa do nosso Gem ou Gemini arquivo markdown dele. Então está configurado para automático, o que é ótimo. Eu vou apenas diga, neste repositório, eu quero que você ou Desculpe, crie um um simples Aplicativo de tarefas usando Myithiljs e você mythiljs apoiado por com um mínimo Aplicativo Golang usando SQL call light três. Hum, E a outra parte disso, eu vou...
+
+Coloque isso em modo de planejamento. Então, eu vou Para pressionar Shift + Tab. Então, agora estamos Totalmente em modo de planejamento. Então crie um Aplicativo de tarefas simples com M.JS com um Golang minimalista Aplicativo Golang es uh SQLite 3. O aplicativo
+
+é uma ferramenta interna para um equipe e Precisamos apenas de uma lista de tarefas simples. Não projetos ou tarefas. OK. Esses são, portanto, os meus requisitos. Vou deixar rolar e talvez Vai me fazer algumas perguntas. E então
+
+Uma vez que tivermos isso gerado, o que... O que vamos fazer é...
+
+então inicialize porque eu presumo que haja devem ser funções de inicialização como elas normalmente os tenho. Hum, e então nós vamos Experimente e refatore algumas coisas. Quero mostrar-lhe as importações. Importações é Muito, muito útil. Então aqui temos um estratégia proposta. Então, nós temos um
+
+aplicativo simples, vá, vá, aqui, o Site estático aqui com alguns pontos finais. Aqui temos pontos finais muito simples. Sim. Um executar. OK.
+
+Então, vamos deixar a coisa começar a correr. aqui e uh gerar isso e apenas Aceitar quaisquer alterações necessárias. Quer Basta aceitar se é possível editar. Bem Diga automático. Então vá em frente e faça isso.
+
+E nós vamos aguardar firme. aqui quer estar Consegui acessar o site do GoSQLite. OK. Ah, como seria bom instalá-lo. Certo, tudo bem.
+
+Sim. Hum, e eu espero que, sabe, Se for um produto do Google e eles gostarem Vai, vai ser muito bom em escrever. Vá programar. Os aplicativos Go são incríveis. Hum, eles Ter um desempenho extremamente bom. Eu sou
+
+Estou usando o WSL, então provavelmente tenho o Ubuntu instalado. com ele instalado. Se não for, será reclamar. Hum, mas talvez você tenha que fazer etapas adicionais. Isto não é programação.
+
+curso. Tenho cursos separados para que. Então, espero que você não se depare com...
+
+Se houver algum problema, continuaremos por aqui. Ok, outra opção aqui. Então diremos Permitir a sessão. Continua a É só uma questão de compilar e testar. Isso é sendo muito minucioso e é e Verifique aqui. Novamente, é apenas fazer algo.
+
+um trabalho muito minucioso para concluir estes tarefas. OK. E, novamente, apenas minucioso, é minucioso. testando. Parece que provavelmente é trabalhando. Então eu fico pensando o que é
+
+O que está acontecendo aqui com os modelos é que Quando se usa o modelo maior, é um Muito melhor em tarefas maiores. Enquanto que se Estamos fazendo coisas bem pequenas, estamos Vou querer muito entrar lá e Mude para "Eu continuo esquecendo o nome". do modelo pequeno, o modelo pequeno, seja lá o que for. pediu por um Gemini. Então é mais ou menos isso Interessante, pois estamos analisando isso a fundo.
+
+Flash, o modelo Flash, certo? Hum, mas Sim, não parece ser ruim. essas tarefas maiores com certeza porque apenas a forma como está abordando seus testes e Sua sanidade é realmente muito boa. apesar de ser muito, muito lento. Hum, mas Não acho que seja lento porque não é.
+
+Trabalhando duro. Acho que é simplesmente porque Está fazendo muita coisa nos bastidores. Hum, e talvez esse tenha sido o nosso falso motivo desse "olá mundo". Certo, mas Continuaremos esperando aqui e é Está demorando bastante. Hum, mas No fim das contas, é como se fosse...
+
+Os resultados? Se os resultados forem realmente bons, Então, para mim, está tudo bem. Mas, novamente, isso é Não é por isso que estamos fazendo este vídeo. Eram Estou fazendo este vídeo para testar o Gemini. Arquivo Markdown. Mas, sabe, nós temos
+
+Aprender o máximo possível enquanto trabalhamos. por meio disto. OK. Então, só relaxando fora. Ah, aí está. Então, continua.
+
+Eu já concluí a implementação. Agora vou remover o binário para manter o diretório direto uh limpo. Ok, legal. Então, está mais ou menos pronto. Quer dizer, eu Não me importaria se eles mantivessem o binário por perto, pois provavelmente preciso dele, Mas vamos esperar. Mas parece que
+
+Estamos quase prontos para fazer o que queríamos. Para fazer neste vídeo. OK. OK. Então, agora que nosso código está pronto, quer dizer, nós Pode verificar se funciona. Eu não sou assim.
+
+Estou preocupado com isso neste momento. Ah, isso Pode ser por diversão. Nós iremos. Experimente. Então, vou prosseguir e Execute o aplicativo Go. E isso é ELA? Oh,
+
+sim. Isso também serve para o aplicativo. Pronto. Recebemos uma ótima lista de tarefas. Funciona. OK. Então, nada mal.
+
+Faz o que se espera que faça no estanho. Então, tudo bem. E agora, o que nós...
+
+tudo o que posso fazer é voltar a isto e ao O comando deve ser init. Então, o init irá gerar saída hum o projeto e isso nos gerará um arquivo Gemini. Então, nós daremos que é um momento para se gerar. Pessoal, eu fui a uma festa de aniversário! Para crianças. Então vou parar o
+
+vídeo. Vamos começar de novo e vai funcionar. seja apenas uma segunda parte, uma parte disso. Mas Já geramos o aplicativo e então Vamos continuar por aqui. Veja o Inicializar a função uh. Um use o
+
+importações, verifique a memória, uh, altere o nome do contexto e voltar, você sabe, Bom, para você será instantâneo. Então eu sou Dividindo isso em dois vídeos. OK.
+
+OK. Então, estamos de volta à parte dois. e um Acho que isso só confirma algumas coisas. coisas. Sim, é só escrever o arquivo.
+
+aqui. Então, vamos prosseguir e permitir que isso aconteça. Escreva o arquivo. Então, estamos apenas aguardando o conclusão disso Gêmeos arquivo. Ok, agora está feito. Vamos
+
+Dê uma olhada na qualidade do arquivo. Então, espero que a espera tenha valido a pena. E Então, aqui temos as tecnologias, arquitetura, construção e gestão, hum, endpoints de API, desenvolvimento, uh, convenções. Então, muito minimalista para como Demorou bastante para analisar, mas é Sem problemas. Sinto que se tivéssemos alimentado É um modelo do que um bom geminiano costuma ser.
+
+hum, ou você sabe, o arquivo dos agentes principais deveria bem, provavelmente poderíamos melhorar. resultados. O Codex tem uma lista muito boa. hum, de coisas, mas você sabe, nós somos apenas Estamos tentando trabalhar com o que temos aqui. E então, obviamente, temos isso. A coisa
+
+O que eu gostaria de fazer é dividi-lo em em arquivos separados. Então, eu vou... Pode então pedir para fazer isso. Então eu sou
+
+Vou verificar a documentação com atenção. onde é isso. Mas tenho quase certeza de que é apenas a declaração de importação. Hum, mas o quê? O que eu só quero fazer é garantir Isso funciona como esperado.
+
+Ok, só porque é muito lento, certo? Então, se você olhar aqui, nós temos ao assinar componentes de documentos, etc. E então eu Gostaria de criar uma nova pasta chamada "docs". Gosto de guardar coisas nos meus documentos. Tudo bem. E aqui dentro temos um
+
+seção diferente. Então, eu vou. vá em frente e diga, você pode, uh, interromper meu, uh Gemini MD em separar arquivos markdown no diretório docs, nomeando o arquivo como snake case, uh, isso é descritivo do seu um do seu conteúdo. Então, na maior parte dos casos, principalmente Tudo deveria ser importado. OK, As importações usam a sintaxe do sinal de arroba. O em
+
+sintaxe de sinais. OK. E então, espero que vá acontecer. entender que. Eu teria simplesmente colocado o símbolo @ lá, mas seria autocompletado. EU
+
+Não quero causar confusão. E então nós estamos Vou esperar que refatorem isso. para o nosso diretório de documentos. E nós iremos Aguarde um instante. Por mais que dure decide fazer algo. Provavelmente deveria
+
+já fiz isso, hum, eu continuo esquecendo o nome dos modelos pequenos, mas uh flash teria sido uma ideia melhor. Mas Enfim, aqui vamos apenas dizer permitir para a sessão ou continuará perguntando nos permita realizar a sessão. E agora é preso. Não sei ao certo porquê. Está completamente travado. Nunca vi
+
+Ele já ficou preso antes. Então, vamos prosseguir. E voltaremos a Gêmeos. E eu vou ali digitar Em resumo. E nós vamos para lá. Hum, eu não...
+
+Significa cancelar a solicitação. Você congelou. Tente novamente. OK. Então, Vamos prosseguir e ver se...
+
+pode terminar o pedido que eu tinha lá.
+
+Pronto, aí está. Digamos que permita o sessão. E percebo que continua acontecendo. congelando. Ah, jamais. Pronto. Era
+
+congelando. Às vezes preciso clicar Ligado e desligado. Talvez esteja funcionando. Só me resta esperar. Não. Às vezes, simplesmente não reage.
+
+Estou pressionando Enter duas vezes. Muito estranho comportamento. Hum, então e aqui Quero dizer que o diretório já existe. O Sugira alterações. Pressione Esc. O
+
+O diretório já existe. OK. Quase sinto que teria que dizer como inserir em algo já existente diretório. Parece ser simplesmente isso. sendo muito agressivo para garantir que As coisas existem. Hum, e talvez seja isso.
+
+exatamente como seus modelos funcionam. Estou batendo digite digite digite.
+
+Vamos. E observe que não é levando isso. Teria clicado em aceitar. aqui. Ok, talvez a gente só precise clicar em aceitar.
+
+aqui em cima. Então, não sei bem por que isso está acontecendo. Mas vamos aceitar isso. Não tenho muita certeza do que está desencadeando isso. Mas isso sim.
+
+Ah, está escrito Gemini CLI. OK. E assim, hum, mesmo que os tenhamos lá embaixo, Teremos que prestar atenção a isso. marcas de seleção. Eu não sabia disso seria preocupante. E nós simplesmente iremos.
+
+Siga em frente e continue dizendo sim. Vamos ver se eu vou aqui embaixo. Eu não quero ter que fazer isso. Isso vale para cada um deles. Mas é sendo bobagem e não abordamos permissões ou políticas. Mas escrever
+
+Os arquivos Markdown devem estar dentro do O repositório existente não deve ser algo que nós deve ser constantemente lembrado sobre isso. Isso é meio chato, mas vamos ter que lidar com isso. Vamos aprendendo conforme avançamos. Ok, ainda é ainda está acontecendo de novo. Provavelmente será mais rápido da próxima vez, porque É um trabalho de recorte tão simples e estes modelos complexos parecem ser realmente Confuso, mas estávamos melhorando.
+
+resultados para tarefas maiores. Então, nós apenas É preciso lembrar de trocá-los e o fato de não se lembrar de fazer que. Então, diz que eu consegui. Refatoramos a documentação criando Arquivos Markdown separados. Aqui estão eles.
+
+Não está usando o formato Snake Case, mas isso é... multar. Ninguém parece entender o quê É um caso de cobra. casos com hífen, não
+
+sublinhado minúsculo, mas eu gosto Sublinhado em minúsculas. Está tudo bem. E assim Temos todas as nossas declarações de importação. Então, a ideia aqui é que deveria ser capaz de contextualizar isso Informação. Mas o modo como funciona é assim.
+
+OK. Então, para alguns, errou. razão. Ah, mas tudo bem. Eu vou para prossiga aqui E nós simplesmente vamos mudar isso. Ops.
+
+E, por algum motivo, meus comandos do Vim Não estão funcionando. Pronto. E então, isto é
+
+Vou chamar isso de... documentação do projeto ou base de conhecimento do projeto. OK. E agora temos um monte de
+
+regras para garantir que isso esteja funcionando. Nós vamos... queremos fazer um teste. Então
+
+Aqui temos os endpoints da API, arquitetura, convenções de desenvolvimento. Vou fazer um novo chamado comunicação padrões de comunicação. Ao falar com o desenvolvedor, Falar em japonês. Certo, então isso é um uma bem clara que deveria ser muito...
+
+óbvio, supondo que Gemini... tem...
+
+Não tenho problemas em trabalhar com japoneses. Então, Ok, se você não entendeu, mas Estou estudando japonês, então eu deveria estar Consegui entender parte disso. Eu vou para irmos até lá e trocarmos nosso modelo. Bem, antes de fazer isso, eu só vou...
+
+sair, apenas certifique-se de que limpamos o nosso sessão. Acho que vou digitar claro. Eu simplesmente não tenho o hábito de Por algum motivo, estou digitando "limpar". E uh Vamos trocar nosso modelo. E eu quero acessar o modo manual. E eu quero
+
+Para acessar a pré-visualização em Flash. E eu vou É só perguntar, né? Você pode criar um ou desculpe, tipo, hum, o quê? linguagem de programação A linguagem de programação faz essa pilha para isso Você usa este aplicativo de backend? OK. Então, quero ver se vai dar certo.
+
+Para ler essas coisas. A pergunta é tipo Ele nos mostra quando está lendo? Por isso, estamos acompanhando atentamente. Bem, não parecia nada com o Gemini. O arquivo foi selecionado.
+
+Então, fale comigo em japonês. Então, eu sou Vou colocar aqui. E tentaremos isso novamente. Outro A questão que pode estar causando o problema é que Não coloquei barra invertida aqui.
+
+OK. Não deveríamos ter que fazer isso, mas nós... Farei isso. Hum, mas, de novo, eu sou
+
+fazendo a correspondência com base no que eles têm aqui, certo? Então, vou lá e pego... Isso vai sair mais uma vez. E eu faria
+
+espere que seja lido. Então, desculpe, o que... Que framework JavaScript Ele usa?
+
+Vamos perguntar isso. Dando um momento para isso. É pensar, Pensando, pensando, pensando. Estamos na pré-visualização em Flash. Deveria ser rápido. Não é algo rápido, né?
+
+Ajudaria simplesmente dizer algo como "vá ver". por aqui. Eu não fiz isso, mas...
+
+Ser bem específico nos pouparia tempo. e energia. E ainda está falando em inglês. Então, Vamos prosseguir aqui e então Falar em japonês.
+
+regra de comunicação. Eu só quero ver que está carregando o arquivo Gemini aqui, certo? E nós diremos, hum, desculpe. Então, hum Onde está o arquivo main.go?
+
+Tentando novamente fazer com que ele se comunique. Japonês. Então, não é isso que está acontecendo. Mas observe Aqui está escrito Gemini file.mmd. Então tem
+
+Leia sem dúvida nenhuma. Então, eu vou... Pode falar como um homem das cavernas.
+
+Talvez eu simplesmente não consiga falar japonês. Onde está o arquivo "go some"?
+
+OK.
+
+OK. Então, uh, no meu arquivo Gemini, Eu especifiquei para você falar em japonês. Por que você não está fazendo isso?
+
+Então, agora está funcionando. Mas isso não é É muito útil se tivermos que dizer isso para... Para ler, certo? Hum,
+
+Então, é nessa parte que fica tipo, Certo, qual é o problema aqui? certo? Vamos dar uma olhada aqui. Uh, Gêmeos Gêmeos onde o local é Bem a tempo. Vamos verificar a memória.
+
+comandos aqui. Memória. E a ideia aqui é que nós deveríamos ser capaz de mostrar a memória atual conteúdo. Ah, pelo menos estamos vendo importações. falhas. Então, isso é bom. Não sei
+
+Mas se essa informação já estiver desatualizada. Então, O que eu vou fazer aqui é... Para digitar em texto claro. Podemos voltar a
+
+memória? Mostrar. E assim, a memória não é Fazendo o que queremos que faça. Recarregar. OK. E agora, vamos dar uma olhada em
+
+memória. Mostrar
+
+OK. A única coisa é que parece que não podemos Veja tudo isso. Acabamos de ver a atualização. Convenções de desenvolvimento de tarefas pendentes. Então, vou cancelar aqui.
+
+Por um segundo. Claro. E Eu só quero fazer algo muito simples. teste. Teste de Markdown Gemini tão simples ou Vamos apenas dizer teste com renomear E vou pegar isto aqui. Bem
+
+criar um novo Gemini Arquivo Markdown do Gemini. Vou colar Está bem aqui. Fale em japonês. Então, é isso que nos interessa. regra aqui. E eu vou voltar ao CD com.
+
+E nós vamos em frente e tentar. Gêmeos. OK. E vamos prosseguir aqui e
+
+Então, tipo, e eu vou simplesmente trocar o modelo para que chegue a três modelo uh três flashes. Tente dois flashes porque Isso é obviamente mais antigo. Talvez simplesmente aconteça trabalhar. Então crie um arquivo hello world.rb arquivo com um comando puts.
+
+OK. E então, o que eu espero fazer é... É lido, definitivamente lido, Gemini.
+
+arquivo. Pronto. Imediatamente é...
+
+Falando em japonês. OK. Então talvez haja algo errado. com a nossa memória anterior. OK. E aqui podemos ver que é
+
+carregando-o. Quero voltar à nossa lista de tarefas simples. aplicativo. E vamos abrir o Gemini. No Ao menos você pode ver o que é.
+
+Está olhando, mas, hum, quase parece Parece que esse recurso está lá porque Algo está errado. Então mostre o atual memória. Adicionar conteúdo à memória. Lista O caminho dos arquivos Gemini em uso. Então, Aqui está isto.
+
+Hum. Certo, tudo bem. E então nós iremos Vamos em frente e voltaremos à memória e Diremos: mostre o conteúdo. Assim, finalize o endpoint da API de importações. Então parece que sim como se estivesse importando tudo isso.
+
+Ah, podemos rolar para cima. Eu fiquei tipo, como é que... Vemos tudo isso? Nem sequer pensei nisso.
+
+rolando para cima. E então, aqui definitivamente Está carregando e falando japonês. OK. Então Vamos apenas dizer, você sabe, onde é? o arquivo main.go. Vamos tentar.
+
+Isso de novo. Pronto. Assim, conseguimos ver o quê fua Está indicando onde fica. projeto.
+
+OK. Então, indica onde fica. Legal. Hum, Enfim, é isso. Então, nós fizemos Tudo o que eu queria fazer, que era...
+
+olhar para a memória, que era olhar para o Arquivo Gemini. Há uma última coisa que eu gostaria de dizer. gosto de fazer. Hum, e isto não é Obviamente é uma coisa difícil, mas nós vamos conseguir. Altere o arquivo settings.json.
+
+Então, vamos garantir que estamos colocando as configurações JSON no formato correto localização. Um momento. Acho que sim no um, basta criar configurações JSON localização. Nos slides, mostrarei que eu já Sei onde fica, mas não consigo me lembrar. Estou trabalhando com muitas coisas aqui. EU
+
+Simplesmente não consigo me lembrar de nada. Então, eu sou Vou dar uma olhada rápida. Onde Como estão nossas configurações? Entra sim, Pasta Gemini ou Ok, ótimo. Sim, pasta Gemini. E o
+
+O motivo da minha confusão é porque você quando Estou usando codecs, eles usam dotex e primeiro o Codeex e às vezes eles Nem sequer tenho, é confuso. E assim, Só quero ter certeza absoluta. Saiba onde isso deve ser colocado. Hum, nós somos Vou criar uma nova pasta. aqui chamado Gemini.
+
+E vamos criar um novo arquivo aqui chamado settings.json. Não me incomoda que seja um arquivo JSON. EU Acho isso ótimo. É conveniente. Hum,
+
+e nós iremos até lá e simplesmente... Copie isto assim. Colar. E assim
+
+Isso apenas indica qual contexto carregar. Então, digamos que quiséssemos trabalhar com Claude Médico. Poderíamos fazer isso, certo? E agora eu posso ir aqui e Mude isso para Claude. OK. E vou parar por aqui.
+
+Limpe tudo. Reinicie o programa.
+
+E agora já deve ter carregado. Veja, carregou. Assim podemos analisar. À nossa memória. Vamos dizer lista. E então está carregando.
+
+lá porque nós o adicionamos dessa forma. Hum, então, é bem simples. Quero dizer, Em teoria, essas características são boas, mas Você pode ver que tipo, sabe, coisas Um pouco tosco. Hum, mas, ei, em Pelo menos podemos depurar esses problemas e trabalhar. por meio dessas coisas. Ok, cha chia.
+
+Muito bem, pessoal. Hum, neste vídeo, O que eu quero fazer é mostrar a vocês. como fazer algo claro e compacto, como ou claro e Ah, seja lá como chamam isso. Eles não Podemos chamar isso de compacto. Eles decidiram usar um nome diferente. Hum, comprima. OK,
+
+porque a ideia aqui é que você... quero poder, uh, comprimir um conversa se ficar realmente grande ao longo do tempo. OK. Bem, mas a questão é que...
+
+que, hum, vai fazer automaticamente isso para você, mas às vezes você pode Quero fazer isso eu mesmo. A pergunta É, conseguimos ver alguma coisa? Podemos ver em algum lugar o contexto atual? tamanho? Então, vamos para cá. Nós temos
+
+Agente de tempo de parede ativo. Não, não é isso. Não me diga nada lá. Existe Em algum outro lugar onde pudéssemos vê-lo? Isso é sobre a versão. Existe algum comando para
+
+contexto? Não. E então, pode ser um É um pouco difícil para nós determinarmos o tamanho. Outra coisa que talvez desejássemos verificar está no rodapé, pois isso poderia Conte-nos. Também estou apenas verificando outras opções.
+
+configurações. Vamos acessar as configurações aqui. Vim modo, modo padrão, modo plano porque estou tentando encontrar o tamanho da nossa janela de contexto se isso for possível em algum lugar, O que eu acho que não é. Isso é não. OK. Eu consegui o Microsoft Foundries em
+
+lá. Estamos usando Gêmeos, certo? Sim. É estranho porque Está escrito Foundry e eu não espero que...
+
+Veja Foundry ali. Um OK. Então, vamos dar uma olhada no rodapé primeiro. Vou apenas pressionar Enter porque o O rodapé pode adicionar informações adicionais. Pelo jeito que isso parece estar funcionando, Como funciona o Codeex, onde ele te mostra...
+
+Que informações, ah, contexto, use, olhe para que perfeito, então o uso do contexto é muito O uso eficiente da memória é muito útil. ID da sessão não é lá essas coisas, bar muito legal embora informações Ok, acho que isso é só um exemplo. O código abaixo não altera a contagem de tokens. Então eu diria que eles provavelmente têm o melhor rodapé de todos os...
+
+Mas enfim, agora temos o nosso contexto. EU Não sei como estamos 85% usados ​​quando nós Não fiz nada. Bem, de qualquer forma, o que faremos é...
+
+Pode digitar "limpar". Ah, então agora Nosso contexto é zero. Então talvez fosse isso mesmo. dando continuidade à conversa, veio antes. Podemos retomar o anterior conversas se digitarmos o currículo. E
+
+Aqui você pode ver que temos apenas um. Nós ter a opção de desativação do logout, o que não é o que é isso que vamos fazer aqui. Então, nós precisamos Fazer algo um pouco maior. Então, Vou simplesmente gravar um CD para sair daqui. diretório por um segundo. Eu vou
+
+Em seguida, crie uma nova pasta. Eu preciso de algo que vai ser computacionalmente dispendioso, mas não super super grande. Então, estou apenas tentando...
+
+Pense em algo que possamos construir. É muito, muito simples. Hum, Existe algum tipo de jogo em que você gosta Combinar números. Só me dê um segundo. Costumava ser muito popular em a Internet. Deixe-me ir procurar. O
+
+O jogo se chama 2048. Então, eu vou... adiante e diremos uh 2048 clone. Não sei se você consegue
+
+A pasta deve ter números no início. Então, Vamos clonar o clone 2408. E vamos prosseguir com o lançamento do Gemini. E meu único objetivo aqui é apenas consumir. muito uso. E assim, estamos de volta ao
+
+Gemini 3 automático. Não sei se ele reinicia. Isso acontece sempre que reiniciamos. Eu vou Só para verificar isso rapidinho aqui. Então, se eu acessar o modo manual e depois formos para...
+
+Flash, estamos no Flash. Se eu desistir, Vai continuar assim? Nossa, é verdade. Então, temos que reembolsar Preste muita atenção nisso. Mas enfim, Estamos no diretório do clone 204. Nós
+
+Não tenho contexto para usar. E nós diremos Criar um clone em JavaScript de um jogo de 2048. De 2048. Ok. Então, vamos prosseguir e Veja o que ele faz aqui. Gosto de como isso
+
+é em tempo real, então podemos ver o que está acontecendo. acontecendo exatamente em tempo real. Para que É muito bom. E podemos ver nosso token. uso imediato. Isso é realmente,
+
+Muito bom. Não consigo ver o quanto nós somos esgotar nossa assinatura. Então é isso Uma coisa que é meio frustrante. Diz que entrarei no modo de planejamento para o clone. E isso nos levou a...
+
+Diga, ei, talvez você queira fazer um plano. modo. E já é como se fosse um limite de uso. Acesse todos os modelos profissionais. Como? Eu não tenho
+
+Já fez alguma coisa? Eu não fiz isso. nada. Eu não fiz absolutamente nada. A menos que ainda estejamos usando nossa API.
+
+chave. Então, vamos voltar aqui por um segundo. Isso provavelmente explicaria muita coisa. OK. Então vamos aqui e digitar "estatísticas".
+
+estatísticas E estamos usando a chave da API. Então Vou simplesmente dizer que não está definido. Gêmeos Chave de API. Chave de API Gem Ani. E a outra coisa aqui que eu quero O que eu quero fazer é entrar novamente na minha conta. Então
+
+Vamos aqui e digitaremos "desligado" e Iremos por aqui. Diremos que sim. E Isto está abrindo fora da tela. E eu sou Confirmando essa conta. E eu estou assinando dentro. Espero que não tenhamos essa duplicação.
+
+verificação novamente porque isso Foi péssimo. Hum, mas talvez de novo nós Só precisei fazer isso uma vez. Aperte R aparentemente para reiniciar. Eu pressionei R uma vez. Pronto. Reiniciou. E assim
+
+Agora estamos na mesma pasta. Eu sou Vou te mandar uma mensagem, pode ir em frente e me contatar. teclado. E vamos pressionar Enter. EU na verdade, meio que gostou disso, tentou.
+
+entrar no modo de planejamento. Então é pensar sobre essas coisas um pouco melhor do que os outros. a maioria das pessoas gosto de escolher esses modos deliberadamente. Mas, novamente, o objetivo aqui é...
+
+Absorva o contexto aqui para que possamos usar um comprimir e também Acho que eles chamavam isso de compressão compressão e claro. Então vamos ficar por aqui e Deixe-o pensar muito. Talvez nós...
+
+Entre novamente no modo de planejamento. Veremos. OK. E então está provocando, uh, provocando solicitando que eu entre no modo de planejamento, o que para mim É lógico. Faz sentido. Hum, observe
+
+que apenas 1% do nosso contexto é utilizado. EU Não consigo dizer a dimensão desse contexto. é. É um milhão? São 200.000? EU
+
+Não sei. Estamos analisando algumas opções. muito semelhante ao Codeex, enquanto que um Cloud código pelo menos da última vez que eu estava Usá-lo não nos mostrava isso. Vamos usar HTML e CSS puros. E Novamente, estou tentando usar isso.
+
+contexto, mas se eu novamente, se eu não souber quão amplo é esse contexto, não é Vai nos ajudar a saber. E também nós Nem consigo identificar qual modelo está sendo usado. encaminhado para agora. Um mas, bem, vamos aguardar aqui e Veja o que acontece. OK. OK. E assim
+
+Vamos descer. E aqui está escrito: O objetivo é criar um totalmente clone funcional baseado em navegador para Jogo de quebra-cabeça popular. Um o leve Essa abordagem garante alto desempenho. sem a sobrecarga das ferramentas de compilação. E nós vamos em frente e diremos sim e aceitar automaticamente isso Informação. E vai acontecer.
+
+e tente implementá-lo. e nós somos tentando assimilar esse contexto. Hum, e Novamente, não tenho como verificar o quê. o tamanho atual é. Embora isto seja Executando em segundo plano, vou ver Se eu conseguir encontrar alguma informação sobre isso.
+
+OK. OK. E nós voltamos com isso. Estou pedindo para poder criar um diretório. Vamos permitir esta sessão. E assim
+
+O discurso no Reddit é tipo, você Sabe, estúdio de IA, porque há o estudante de IA e depois tem o hum o outro estúdio, mas eles são basicamente Dizendo: "Sim, é muito difícil dizer." Então, é anunciado como 1 milhão, mas... Não dá para saber ao certo. E de todos
+
+Sempre dizendo: "Estou farto de X. Estou "Cansado de Y." Mas, honestamente, todo mundo está Estou farto de todos os fornecedores. Então, você Sabe, leve isso com uma pitada de sal. Hum, mas aqui diz que 1 milhão é um grande Grande mentira. Está mais próximo de 32 kil uh
+
+kilobytes ou o que quer que seja. 32.000, Desculpe, é isso que o K significa. Hum, Mas enfim, está escrito 1%. E quero dizer, se É um milhão, parece um...
+
+milhões agora mesmo. Mas, de novo, você Sabe, essas coisas são um pouco difíceis. para nós contarmos. Com Claude, é O Cloud Code é muito claro. Com o Codeex, Não temos ideia. Hum, e com, você sabe,
+
+Sou de Gêmeos. Ainda assim, não tenho como. de realmente saber. Certo, mas Observe que a contagem de tokens aqui é 42.000.
+
+45.000 até o momento. Mas enfim, nós vamos continue. Acho que se for 45.000 e Há um milhão, então meio que faz sentido.
+
+tenho a sensação de que é 1%. embora você pensasse Aquele 1% seria outra história. Talvez não. Enfim, vamos continuar. aqui. Certo, mas sim, estou indo para lá.
+
+Só um minutinho. Se nós fôssemos [bufa] indo com base na contagem de fichas e Então, aqui está sugerindo que seria 4,52 52%. Então, não tenho certeza de quão preciso é. Este número de contexto é. Hum, mas você Sabe, do jeito que a janela de contexto funciona, é entrada de saída. Então, quando você vir isso
+
+número, é isso que você geralmente faria pensar. Estamos a 2 minutos e 32 minutos. em nossa espera. Vamos relaxar por aqui. Ok, agora estamos começando a ter algumas novidades.
+
+Volte ao código e iremos rolar para cima. Hum, fez Ele termina de fazer isso? Não, ainda não está pronto. ainda. E, novamente, estamos apenas fazendo isso.
+
+então podemos testar o que eles continuam dizendo compacto, seja qual for o outro Ligaram, mas vamos relaxar. Agora estamos com 70.000 tokens. O contexto não foi mudado. Estou realmente confuso com isso.
+
+E, obviamente, temos o uso de memória. também, o que eu não entendo como Isso é um fator a ser considerado. Você sabe normalmente a memória é algo que é abstraído de outros fornecedores. Então você sabe que isso é algo que teremos. para tentar entender o que eles são falando sobre. Além disso, você só está falando
+
+sobre o uso da memória local. Depois de uma longa espera, aqui estamos nós! Informação. Nosso contexto representa apenas 2% de diferença. Utilização de 138.000 tokens. Eu não entendo
+
+esse código uh uh contagem de contexto, mas eu estou Estou curioso para saber como o jogo se comporta para diversão. [risada] Não é realmente tão importante, mas eu estou Vou revelar isso no explorador e Espero que funcione. Às vezes nós Preciso executar um servidor HTTP para isso. coisas. E nossa, ficou ótimo! Uh
+
+Ok, novo jogo. Junte-se aos números. Ah, sim, nós simplesmente...
+
+nós atingimos uh Quer dizer, não há animação de slides e Estou um pouco confuso em relação aos termos. do que está acontecendo, mas está funcionando. Certo, vamos considerar que está correto. EU Não sei. As peças deslizam e se fundem com o fluido.
+
+animações. Não, não funciona.
+
+Mas enfim, a questão é que... O contexto foi usado, e nós vamos...
+
+Para prosseguir e digitar "comprimir". OK. E agora está comprimindo isso. histórico de bate-papo.
+
+Bem, eu presumo que quando você estiver Comprimir não é apenas o longo conversa que você tem tido com ele, mas eu presumiria que tudo isso, tudo A saída e outras coisas devem estar lá. Isso é algo que eu nunca Só pensei nisso até agora. Então, mas Enfim, a questão é se você já esteve tendo uma conversa muito longa, você Talvez você queira executar o comando de compressão. Então, sim, Aqui você pode ver que aquilo era... era
+
+Foi encolhido. Podemos prosseguir aqui e também Que outra coisa queremos fazer? Nós Quero esclarecer isso para que possamos prosseguir. e limpe-o. Isso resolveu o problema. Sim. E assim, começa uma
+
+nova conversa. Será que nós podemos? também basta criar um novo se quisermos algo novo conversa. Não. Alguns fornecedores Tenho isso. Bem, aí está. OK.
+
+Em termos de gestão da conversa ou sessões, ou qualquer palavra que você queira usar, Existe um comando de bate-papo e apenas... Gemini tem esse conceito. Hum, quer dizer Existem outros que o implementam.
+
+que é com bifurcação, mas o deles é É realmente estranho porque a ideia aqui é que quando você está em uma situação atual Para conversar, você usa o comando de bate-papo. Você pode salvar uma conversa atual. Dê um ponto de verificação e um nome a ele. Hum, mas Não é como fazer um fork. Então, se você for e você e você voltam a uma versão mais antiga.
+
+ponto de verificação, não é como se você tivesse criado um garfo. É literalmente uma questão de economizar. diferentes pontos na história e substitui o atual conversa. A outra coisa é que Ao encerrar a sessão, você perde tudo. essas informações do ponto de verificação. Então, eu não sou
+
+Não sei ao certo o que eles queriam fazer com isso, Mas na verdade não funciona muito bem. Hum, então Eu mostro como usar, mas, novamente, Eu não usaria. Não é muito útil. Eu gostaria que eles tivessem feito apenas quatro garfos. sessões como as dos outros fornecedores. Uh
+
+também existe um comando de retroceder que em A teoria parece muito boa. A ideia é que você pode escolher um ponto no tempo em conversa, volte a ela, mas também reverterá as alterações para esse ponto porque muitas vezes Reverter a conversa não vai funcionar. Para reverter as alterações, certo? Mas em Na prática, isso nunca funcionou. Então Temos duas maneiras de gerenciar nosso chat.
+
+Vou mostrá-los a você. Eles são Vai ser péssimo. É simplesmente o que eles são. O que eles provavelmente deveriam ter feito é um permitia que você tivesse garfos como o outros fornecedores e também bifurcá-los em árvores de trabalho git separadas para que você poderia isolar completamente o separado trabalhar. Mas não foi isso que eles fizeram e Você sabe que provavelmente eles não vão Consertar, mas eu só quero cobrir isso, então Você sabe muito bem que é só isso que eles fazem.
+
+OK.
+
+OK. Vamos dar uma olhada em algumas conversas. gerenciamento. Outros provedores de serviços terão Coisas como bifurcação (fork) e algumas outras opções. Mas por algum motivo, Gêmeos Decidimos ser um pouco mais robustos.
+
+Estou esperando meu terminal apenas para Reaja aqui. Não sei bem porquê. pendurado. Às vezes isso acontece. Às vezes chora.
+
+Vamos. Acordar. Acordar. Acordar. Acordar acima. Acordar.
+
+Acontece. Nem consigo te dizer por quê. faz isso. Então, vamos prosseguir e Vamos digitar Gemini. E assim temos este comando chamado para/ bater papo. Vamos conversar aqui. Não há
+
+comando fork. Se você for de outro lugar provedores, você esperaria algo como um fork, você esperaria Espere novidades desse tipo. Nós não Tenho isso. Mas se formos aqui, podemos ver nosso histórico de bate-papo. Mas, bem, eu vou...
+
+Pressione Esc aqui. Mas se digitarmos para/ No chat, você vai notar que temos alguns opções. Então podemos retomar. Nós temos avançar/retomar, mas podemos retomar de aqui. Listar, salvar, excluir, compartilhar. Então, se
+
+queríamos iniciar uma conversa paralela, nós... Preciso salvar uma cópia. Então vamos lá Adiante, aqui está uma lista. E há
+
+Nenhuma conversa neste momento, o que É incomum porque me lembro: "Ah, estou dentro" pasta errada. É por isso que não há Sem histórico. Vamos prosseguir aqui novamente. Vamos tentar novamente. Lista de bate-papo.
+
+E não há [risos], não há conversa. Então, o que eu vou fazer? É que eu vou fazer só um pouquinho. da história. E eu vou escolher um modelo. Eu sou
+
+Vou escolher uma lanterna. Eu quero o modelo minúsculo porque quero que seja Muito rápido. E eu só vou dizer Sabe, na verdade eu vou fazer isto em um novo diretório e nós ligaremos para este gerenciamento de bate-papo. OK. E vamos inserir o CD aqui. E então
+
+Vamos fazer Gemini de novo. E eu vou aqui e escolher o nosso modelo. E vamos passar para manual. E vamos para a lanterna 2.5.
+
+Qualquer coisa que conseguirmos, mesmo que seja a menor. O mais estável aqui. Vou apenas dizer criar Um arquivo readme vazio. OK. E o que estou tentando fazer aqui é Basta conversar.
+
+Chame de readme.md. Está tudo bem. Quer dizer, é meio idiota. Onde você gostaria de estar atualmente?
+
+diretório? É realmente interessante que esteja perguntando me conta literalmente tudo, mas tudo bem. porque está ajudando a impulsionar isso conversa apesar de não ser muito inteligente. Vamos permitir a sessão. Ótimo. OK. Vamos apenas dizer
+
+adicionar cabeçalhos ao leia-me para os cabeçalhos
+
+Leia-me o arquivo. Eu deveria estar no chat. Mas a gestão é importante, né? Então, o que eu estou Estou confuso sobre o que era o recurso de autocompletar. o nível mais alto aqui.
+
+Ah, foi isso que criou aqui? Sim, aconteceu. Mas eu estou nessa pasta. Que estranho. Então, vamos voltar e retomar isso.
+
+conversa. E eu teria pensado que seria Esteja aqui. Vou simplesmente arrastá-lo. Não, não, talvez não esteja aqui. Um segundo aqui.
+
+Então, com teste. Eu trabalho com gerenciamento de chat. OK. Então, vou colocar aqui. Nós somos usando um modelo bastante estúpido. Então é isso
+
+Provavelmente por isso. Voltar ao manual. Vamos usar flash, Não é uma lanterna. E eu simplesmente voltarei. e digite leia-me. E aqui está.
+
+Assim como adicionar três títulos. Hum, uh, lua, estrela, espaço,
+
+Esse modelo de lanterna não é Útil para tudo. Então, estamos aqui apenas relaxando. Lembre-se que temos a opção de aceitação aqui. o que às vezes nos dá melhores resultados. E agora temos isso aqui. Um
+
+escreva um único uh haicai. Escreva um haicai para cada título em nosso arquivo readme. OK. Então, estamos apenas pedindo para fazer algumas coisas. Isso não faz sentido. Só para podermos testar o
+
+recurso de bate-papo, certo? Bom. Então, digamos que permitamos o sessão. Aceite aqui. Exceto aqui em cima. Bom. Bom. Bom. Bom.
+
+Bom. OK. E então, uh, nós cavalgamos uh nossos três haicais. Então, agora vamos usar o bate-papo. Então, vamos para a lista de bate-papo. Pudermos
+
+Não há pontos de verificação para salvar conversas. encontrado. Ah, ok. Então, basicamente, o que vamos fazer...
+
+façamos aqui, iremos para lá e diremos salvar. Então vamos salvar uma corrente Ponto de verificação aqui. Salvar. E depois vamos dar uma etiqueta a ele. Então vamos começar com um haicai.
+
+OK. Agora temos um ponto de verificação. Doente Basta dizer: você pode reescrever meus haicais para O arquivo readme.md estará em japonês? Então, isso vai reescrever aqueles em Japonês.
+
+Não vou dizer que vai fazer a diferença. Bom trabalho, mas vai cumprir essa função. pois não tenho certeza das capacidades de flash para comunicação desse tipo. Então, vou simplesmente aceitar o mudanças. Como você sabe, a CLI aqui está com alguns bugs.
+
+meu. Então, tenho que aceitar isso dessa forma. E agora eles reescreveram aqueles...
+
+haicais. OK. Então, a próxima coisa que aconteceu foi... nós
+
+o que eu quero fazer é apenas Vamos para lá. Vamos falar de bate-papo. Então, se quisermos, podemos voltar atrás e retomar de um posto de controle. Então, sem percebermos, podemos...
+
+do for/resoom ou chat resume tag. Bem, também poderíamos fazer uma lista aqui. Então Isso mostra o histórico da conversa.
+
+OK. Então, vou prosseguir e Basta acrescentar mais um pouco aqui. Hum, Você pode adicionar mais três ou outro? Você pode adicionar mais um cabeçalho? haicai? Hum, escolha qualquer coisa.
+
+Então, estamos apenas tentando lançar alguma coisa aqui está. Vamos aceitar isso. Então, digamos que o bate-papo salve a mudança do oceano. OK. E nós diremos É uma pena ter que fazer isso de novo.
+
+Agora, acrescentou-se uma montanha. Bom. Não se trata de adicioná-los em japonês. Oh, Está fazendo as duas coisas. Isso é difícil. OK. E então agora nós vamos
+
+Voltar ao chat. Hum, salve a montanha mudança, certo? Então podemos ir para lá e diga bate-papo lista. E agora podemos ver que podemos retomar. Qualquer uma dessas. Então dizemos "bate-papo".
+
+Podemos compartilhar o arquivo Markdown. Eu não Realmente preciso fazer isso. Vamos falar de bate-papo. retomar uma mudança oceânica. E agora podemos ir.
+
+e comece a trabalhar a partir dessa posição. Posso ir aqui e simplesmente adicionar mais um. Só estou curioso para saber se isso vai gerar um fork. Isto Provavelmente não. Provavelmente, basta mostrar em uma lista.
+
+É interessante que isso vá adicionar algo. Ah, aí está, aplicando força. OK, bom. Acho que inicialmente... Ah, já está escrito.
+
+Já está no cabeçalho. Então, eu não saber se é algo determinístico e tal Era isso que teria acontecido em seguida. Mas Vamos em frente. Vamos dizer que é um resumo de bate-papo ou lista de bate-papo. Bem, eu diria que a economia floresta. Diga lista de bate-papo.
+
+Então não é como se estivesse mostrando bifurcação. Então, as coisas simplesmente ficam salvas. E nós realmente não conseguimos enxergar essa história. EU Acho que o Claude provavelmente tem o melhor...
+
+histórico de bate-papo em termos da maneira como funciona. E você sabe, você pode, você pode retomar em qualquer ponto. Codex sendo o mais simples. Hum, sabe, é legal. Bem, a Gemini tem alguns gerentes.
+
+aqui, mas não é tão bom quanto o outro. uns. Mas pronto. Isso é bate-papo comandos de gerenciamento. OK.
+
+Olá, meu nome é Andrew. Neste vídeo, eu Quero mostrar a você o comando de retroceder como Supostamente, é muito poderoso. Isso pode te levar de volta no tempo para um conversa, mas também deveria ser capaz hum, mudar, fazer as mudanças acontecerem voltar a ser como era antes. E assim Havia um repositório com o qual estávamos trabalhando. onde estávamos mexendo com o um história. Acho que era gerenciamento de chat.
+
+Vamos acessar o gerenciamento de bate-papo e ver o que acontece. Se conseguirmos carregar essa conversa. Se Se não funcionar, tudo bem. E nós vamos É só começar algo novo. Mas eu vou entrar aqui. Eu vou
+
+para ver se consigo dar continuidade a um anterior conversa. Quer dizer, nós temos isso. Vamos acessar o histórico do chat. OK. E diremos lista. E então é isso.
+
+sumiu completamente. OK. OK. Apesar de termos todas essas coisas, O que é meio irritante. Como conversar A gestão não é como eu esperava.
+
+trabalhar. O que vou fazer aqui é Vou mudar meu modelo para um uh Vamos dizer apenas 2,5 flash. Você pode fazer isso três pré-visualizações, se quiser. Eu sou apenas Fazendo o que for preciso aqui. Gosto de como nós ter o dobro. Não consigo me livrar disso.
+
+Isso é muito irritante. Então, eu vou Desista disso. Eu vou e...
+
+Em vez de gerenciar o chat, podemos Faça a pasta aqui. Teste de retrocesso. E nós vamos em frente e nos tornaremos um Novo arquivo readme. E, hum, vou fazer um novo Gemini f Arquivo aqui. E diremos settings.json.
+
+porque estou ficando realmente cansado de... tendo que mudar meu modelo. Então, eu vou Para copiar e colar este texto, basta colá-lo aqui.
+
+entrar, e eu manterei meu modo VIN, e Vou eliminar essas duas opções aqui. Hum, e vamos voltar ao CD aqui, rebobinar, E vamos iniciar o Gemini. E então, eu só quero algo simples conversa. Então, e sim, pressione Pré-visualização. Então diremos criar um cabeçalho Por exemplo, lua e crie um haicai sob o Título em japonês dentro do nosso arquivo readme Médico.
+
+OK. Então, vamos pressionar Enter. E vamos deixar que isso aconteça. E eu vou Fazer isso quatro vezes. OK. Todos
+
+certo. Então, vou voltar para cá. E Então, temos aqui um 575 japonês. Haicai por diversão. Legal. E nós vamos
+
+continue aqui. E eu só vou Pode entrar em contato sem problemas. E eu quero que isso aconteça. Mais uma. Então, espero que isso acrescente algo.
+
+Mais uma. Não sobrescrever, mas adicionar. Pronto. Vou aceitar isso. mudar.
+
+Essa já está feita. Vou fazer outro um.
+
+E nós vamos aceitar isso. E depois faremos mais uma. OK. E nós aceitaremos isso. E assim Agora temos múltiplos. Vamos em frente.
+
+e tente rebobinar. Então, voltemos ao início. Aqui está. Voltar a uma mensagem específica. Bem Pressione Enter. Indique a posição atual.
+
+Use a tecla Enter para selecionar uma mensagem. Direita, esquerda. Direita, esquerda. Ok, vamos voltar um pouco. Voltar a um ponto específico Envie a mensagem e reinicie a conversa.
+
+Bem, estou tentando. Ok, não ajudou em nada. Então, eu vou. Vá em frente e tente novamente.
+
+Diga olá, permita. Esta é a nossa conversa. Mesmo que seja A mesma coisa repetidas vezes. Vamos voltar ao início. Veja, eu estou rebatendo para lá e para cá.
+
+Não faz nada. Esquerda, direita faz Não faça nada. Não colapsa. Faz Não funciona. Vamos até a seção de documentos.
+
+Então, permita que você retorne ao estado anterior em a conversa. Opcionalmente, revertendo Informação. Selecione a interação. Para cima e para baixo. Para cima e para baixo. Esquerda e direita. Docas não
+
+Siga as instruções aqui. Reverter ações destrutivas. Então é isso. ir. Não funciona, mas pelo menos nós...
+
+explorou isso. Só para que você não... louco. Teria sido bom se...
+
+trabalhado. A outra coisa que descobrimos foi O gerenciamento do chat parece não se lembrar de nada. histórico de bate-papo. Portanto, esses recursos não são os melhores, talvez, eles trabalham como Eles esperam que eles trabalhem, mas eles não trabalham. Funciona de forma intuitiva para o usuário. Então é isso
+
+É um problema, mas vamos resolvê-lo. lá. OK.
+
+Olá, meu nome é Andrew. Eu só quero ir e mostrar explicitamente o modo de planejamento, que já vimos antes indiretamente, mas eu quero explicitamente Mostre isso. Então vou fazer um novo diretório aqui, e isso será apenas Flappy Bird, ou melhor, um clone de Flappy Bird. OK. OK. E vamos falar sobre Flappy.
+
+Bird e nós podemos fazer Gemini. E eu acredito Estou consultando a documentação aqui. Lá deveria ser um modo dizendo tipo aprovação plano de modo, O que é bom, mas eu realmente não preciso. que. Vou só apertar Enter.
+
+porque a forma como vamos alternar entre eles é exatamente como... Claude E o Codeex funciona se você for acertar Shift + Tab. Veja onde está escrito Shift + Tab.
+
+aqui na tela? Então, eu vou. Estou aqui até entrar no modo de planejamento, e estou Vou dizer, crie um plano para mim, bem, Eu nem preciso escrever "crie-me um" plano. Então, crie um clone de Flappy Bird que é autossuficiente dentro de um único arquivo JavaScript ou arquivo HTML. OK. Então, aqui vai criar
+
+um plano. Pode ser que nos faça perguntas, que é algo que o editor Codeex faz. Hum, isso pode ser interessante. ver para ajudar a direcionar essas informações. Vamos aguardar um instante. E assim
+
+Aqui temos algumas perguntas. Simples formas, emojis. É, emojis soam como diversão. E então nós, só me perguntaram...
+
+Só uma pergunta, mas é claro, se você tivesse... algo muito mais complexo, como Estou desenvolvendo um jogo Wolfenstein, que eu tenho feito em outros, mas nós não estamos fazendo Está aqui. Isso dá muito trabalho. Hum, mas
+
+se fosse para construir um Wolfenstein jogo, provavelmente nos perguntarão muito mais perguntas, especialmente se fôssemos muito vago. Mas se você puder escrever mais, então Vai ficar muito melhor. OK. Então estamos apenas passando um tempo juntos e Aguardando para ver o que acontece aqui. OK.
+
+Tudo bem. Então agora temos nosso plano e Vamos agora elaborar um plano. Tão pronto para Implementar objetivo. Não tenho certeza de qual é o plano. Às vezes, por exemplo, se você usar a garra, irá...
+
+Salvar planos em um local específico. Então, vou dar uma olhada. aqui. O que eu estou tentando ver é Existe alguma informação sobre o plano? Cópia do Flappy Bird. Então não há nada aqui.
+
+OK. Sim, eu diria que sim. Então eu sou Não tenho certeza exatamente de como é o plano. como. Acho que é por aqui.
+
+Ah, está por aqui. E enquanto isso acontece, eu estou apenas... Vou analisar o arquivo. OK. Então
+
+Eis o plano. OK. OK. Crie o arquivo, faça o Coisas simples, sem rodeios. Voltaremos por aqui. E agora está pensando.
+
+Aguardaremos a conclusão. OK. Tudo bem. E então, hum, obviamente você Conseguia ver como o plano funciona. E então O programa segue em frente e executa a tarefa. Eu acho
+
+Podemos ir conferir nosso jogo e ver o que acontece. como é. Hum, é que eu sou apenas vamos revelar isso em nosso arquivo explorador. Basta fazer isso fora da tela. E Vou abrir uma nova janela aqui. Eu sou
+
+Vou apenas arrastar este arquivo para cá. assim. Boom. E vou apertar o botão. reiniciar. Ops. [risada]
+
+É incrível como este jogo é fácil de jogar. construir. E hum Ganhou muito dinheiro quando começou. surgiram porque os telefones eram muito simples. OK, Nada de muito emocionante por aqui, mas
+
+Coisas divertidas, né?
+
+OK. Desculpe. E eu só estou perdendo tempo. agora. Mas enfim, é isso aí. Isso é
+
+Modo de planejamento. Nada de confuso aí. Um Mas sim, salva no temporário diretório. Eles realmente deveriam guardá-lo em uma pasta de planos, mas é exatamente o que eles fazer. Tudo bem. Chow chow.
+
+Então, para o Gemini, temos um arquivo settings.json. arquivo e permite que você configure CLI Gemini. Existem quatro possibilidades. locais onde será ambientado. Então
+
+Temos o JSON padrão do sistema. Então Temos as configurações do arquivo do usuário. Então isto está no seu diretório inicial em todos os seus projetos. Isso seria através do todo o sistema. Hum, este aqui é especificamente para um projeto. Isso é o
+
+uma na qual vamos nos concentrar. E então temos o sistema de nível superior, o primeiro. Então, temos um embaixo e um em cima. o topo. Não sei ao certo por que eles decidiram.
+
+Para fazer isso, mas é exatamente isso que faz. Uh, Provavelmente, o ponto crucial é simplesmente configurar. Qual é o modelo padrão aqui? Hum, mas Sabe, você pode configurar a interface do usuário, o contexto e os NPCs. servidores, segurança, sandbox, coisas do tipo que. Não adianta caminhar
+
+por meio de todas as funcionalidades. Eu caminhei por meio de todos eles no código em nuvem, pois fazia sentido fazer isso e de certa forma em codeex, mas para Gemini, não vamos. para fazer isso. Não faz sentido nenhum. Hum, Mas enfim, vamos aprender como configurar o arquivo de configurações. um deles a documentação é
+
+Não são os melhores exemplos. Então você É preciso mesmo ler o arquivo de configurações para Descubra. Mas enfim, nós vamos continue aqui. OK.
+
+Olá pessoal, aqui é o Andrew. Nesta vídeo, queremos explorar Ah, o arquivo settings.json. E então, isto é algo que nós já temos um em nosso arquivo de configurações está aqui. Então talvez O que podemos fazer é explorar algumas opções.
+
+opções adicionais. Então, eu só vou para o CD voltar aqui e nós vamos em nosso aplicativo de tarefas simples e eu A documentação do Gemini está aqui. E podemos simplesmente escolher algumas coisas. Então, uma coisa que pode ser divertida é mudar a saída. Então, nós temos que meio que...
+
+Preste muita atenção em onde estes As configurações são. Eu diria que isto é não é a melhor maneira, pois eles realmente deveria mostrar um exemplo. referências, mas É o Google, né? Eles não são os são os melhores em documentação. Na verdade, Eles são os piores. [risada]
+
+Sabe, se eles conseguissem ao menos... documentação, hum, juntos e apenas, Sabe, algumas melhorias na qualidade de vida, eles seriam um ótimo fornecedor, mas Sabe, eles simplesmente nunca vão fazer isso. isto. Então, vamos prosseguir e vamos...
+
+Tente fazer isso. E assim, espero que Isso está correto. Eu simplesmente não sei dizer com base nesse aninhamento porque há Poderia ser um nível acima disso, mas eu não...
+
+Acho que sim, porque se tivermos contexto Aqui, eu apenas busco contexto. Onde quer que este esteja, contexto contexto contexto. Isso pode nos ajudar a determinar isso. era como o nome do arquivo de contexto. Vamos tentar este nome de arquivo de contexto. Sim. E assim
+
+Essa é de altíssimo nível. E assim por diante, esse tipo Faz sentido. Hum, uma coisa que eu gostaria A solução é alterar o modelo padrão. É É algo que está impulsionando o processo. Estou ficando louco aqui. Então vamos pegar... Bem,
+
+Antes de prosseguirmos, vamos configurar o modo Vim. Você não precisa fazer isso, mas eu uso Vim. Portanto, se você não usa comandos do Vim, Não use isso. Isto é apenas para André. Então, eu quero configurar o modo Vim.
+
+aqui. Modo Vim ativado. Mas o que é O que está me deixando louco é o modelo padrão. Então, vamos procurar o modelo aqui. Assim, alterna automaticamente entre os modos profissional e flash baseado nisto. Não, eu não gosto.
+
+um com base no status do modo de planejamento. Quero dizer, isso é para fins de planejamento. Eu só quero saber qual é a configuração geral do modelo Pode ser. Então deve haver algum lugar Aqui está uma configuração de modelo. Temos um modelo Talvez seja apenas o modelo.
+
+modelo. Aqui está um exemplo. OK. E eu irei aqui e definiremos isso como modelo E esse será o nome. E assim, a menos que nós Saber o nome exato disso vai...
+
+Pode ser um pouco complicado. Então, vou explicar. até aqui. Eles têm algo como o Gemini 1.5 Pro.
+
+Mostra o quanto eles cuidam bem das coisas deles. a data. De jeito nenhum. OK. Então, nós vamos.
+
+por aqui porque não consigo ver o que estou fazendo sem fazer isso. E eu simplesmente Deseja prosseguir e digitar o modelo aqui? E vamos para o modo manual. E aqui estou eu. pode definir isso como Gemini um 3.1
+
+um 3 pontos, quero dizer 3.1 ou três flashes. É isso que eu quero, porque parece ser aquele. sensato, certo, e tem baixo uso, uh, em termos do que precisamos dele e então é isso O que eu preferiria ter aqui. Ok, então Vou digitar "limpar". Enquanto estivermos
+
+Vou apenas verificar se há Qualquer outra coisa que seja realmente interessante. Podemos configurar nosso servidor MCP, que é multar. Onde encontrar ferramentas. Eu não Preocupem-se com a interface do usuário. Hum, Sabe, acho que praticamente acertamos em cheio.
+
+É basicamente o que queremos aqui. Então, nós vamos. de volta para cá. E eu só quero ir Vamos lá, vamos começar. E eu quero Veja que começa com este modelo, o Pré-visualização em flash um.
+
+Então, aqui está uma pré-visualização em Flash, que É bom. Hum, vou ver se meu Vim Os comandos funcionam. Então, eu vou fazer... J.
+
+Não, desculpe. Escapar. Oh sim. Isso é Alternando entre modos. Viu isso? Normal
+
+inserir. Inserção normal. Então, é Definitivamente funcionando no modo VIM, que é ótimo. Hum, e a última coisa foi o Saída JSON. Então, vou para cá.
+
+e simplesmente diga quantos arquivos Go existem. O que esta pasta contém? E definimos a saída para ser JSON. Então, Gostaria de saber o que isso significaria. Quer dizer, esse resultado faz sentido se estivermos Executando em modo headless, mas eu só Estou tentando testar aqui por diversão.
+
+E não está gerando JSON no momento. Então, acho que isso é mais para modo sem tela e não necessariamente para... O que estamos executando aqui no terminal.
+
+Hum, e isso será algo que nós Vou testar mais tarde. Supondo que eu Não me enganei, eu só vou... pesquisar novamente a saída formatar.
+
+Não, está correto. E assim, novamente, Provavelmente não é para este modo em específico. Bem, é isso aí.
+
+Certo, então a maneira como você gerencia um permissões ou, como também podemos chamar, políticas internas Gemini CLI é o mecanismo de políticas. Um e A ideia é que você crie essas políticas. arquivos e são aplicados globalmente a todos os projetos. Isso parece muito semelhante a O firewall do Google Cloud onde você Basicamente, você tem uma série de permissões e negações. e você pode dar-lhes diferentes prioridades aqui. Hum, mas geralmente
+
+Você está fazendo isso, Args, e você está correspondendo a um padrão de argumentos e escolhendo Que ferramenta é essa? Temos a ferramenta de escrita, ler, ler arquivo, substituir diretório de listagem. Eles têm uma página no site com tudo sobre isso. as ferramentas que você pode configurar para eles. Hum, mas você cria esses arquivos TOML e eles tem que entrar no diretório inicial das políticas da Gemini. Hum, eu passei um longo
+
+Estou tentando ver se isso funcionaria. dentro de um projeto. Hum, mas não. Parece que eles têm isso para o projeto. políticas específicas, o que é meio que Frustrante. Bem, os médicos não dizem isso.
+
+Eles não os têm, mas os modelos de IA dizem que eles os têm. Ah, mas enfim, tudo bem. Nós jogamos eles ali. E então, este foi o meu Uma versão personalizada, que permita o uso de Markdown TOML. Que foi a mais irritante, onde é tipo, toda vez que eu queria editar um O arquivo markdown estava apresentando problemas.
+
+me matar de rir. Então dissemos: "Ok, para o arquivo de gravação, hum, se ele tiver um Arquivo Markdown, você tem permissão para escrever para isso. Certo, a única coisa que me falta Aqui está a prioridade, da qual não tenho certeza. Por que nunca foi configurado? Então, seja lá o que tenha acontecido, estabeleceu isso como a prioridade máxima no lista. Provavelmente, um número menor é maior.
+
+Geralmente é assim que o Google funciona, eu pensar. Bem, de qualquer forma, é muito bonito. direto. OK.
+
+Olá, meu nome é Andrew e neste vídeo eu Gostaria de dar uma olhada nas políticas. Então, As políticas são uma forma de podermos individualmente, diga se algo é Pode ser executado ou precisa de aprovação, tipo... Perguntar ao usuário ou negar. Então, eu vou
+
+para voltar aqui e nós vamos apenas Vamos chamar isso de "parque de diversões de políticas". Não vamos fazer nada muito Aqui é complicado. Tudo o que eu quero fazer é Quero impedir que isso nos atinja. ter que aceitar isso constantemente Arquivos Markdown. Lembra quando nós éramos fazendo os arquivos markdown e era simplesmente Nos incomodando constantemente. E daí
+
+O que faremos é criar uma nova pasta aqui. que será Gêmeos. E então eu acredito Precisamos criar outra pasta chamada políticas. Estou apenas navegando pelo Documentação aqui. Sim, é isso mesmo que nós...
+
+preciso fazer. Então, vou fazer outro novo. pasta chamada políticas. E eu vou Sinta-se à vontade para criar uma nova aqui. E Este é um arquivo TOML, o que é estranho.
+
+Porque, assim como o JSON de configurações, quero dizer, É um arquivo JSON, mas este é um TOML. arquivo. É estranho porque o Codeex é tipo ao contrário, onde eles usam arquivo toml para configurações. E eu não sei, mas de qualquer forma. Então aqui, tipo, hum, permita, uh Você conhece a edição em Markdown?
+
+Permitir Markdown MD ou, desculpe, TOML. OK. E aqui eles estão dizendo que Existe um nome de ferramenta, prefixo de comando, decisão, prioridade. Então, o que precisamos? O que fazer é descobrir... o que são...
+
+As configurações são. E é interessante. porque você sempre define a regra em a parte superior aqui com dois colchetes aqui. Ops. Vamos dizer regra. E então haverá
+
+Podem ser nomes de ferramentas diferentes. Então vamos descobrir descobrir quais ferramentas estão disponíveis. Bem, quero dizer, eles executaram um comando no shell. Então seria bom saber o que é possível. ferramentas Consulte nossa lista de ferramentas. Nós poderíamos ser
+
+Você poderá descobrir aqui. Sim. Então aqui estão ferramentas disponíveis e assim executar comandos arbitrários do shell. Claro. Mas eu quero poder alterar a edição. Então temos um sistema de arquivos.
+
+Então, presumo que haja algum tipo de edição. realizar substituição de texto precisa escrever arquivo. Então acho que escrever arquivo vai para seja por uma parte disso. Então eu vou vá aqui nome da ferramenta e sim, claro que sim poderia usar IA para gerá-lo, mas porque Gêmeos é tão lento, por isso que eu sou Estou meio tentado a simplesmente escrever isso. mão enquanto que quando eu fiz o codeex Claro que deixei escrever porque era Rápido o suficiente. Então, temos isso.
+
+Que é esta? Então, o nome da ferramenta é... nós não precisa de um prefixo de comando Porque isso provavelmente serve apenas para executar o shell.
+
+comando. Vamos falar em decisão. permitir. OK Prioridade 100. Ah, o Google adora isso.
+
+Números de prioridade. Eles fazem isso com frequência. O que eu preciso descobrir é as condições. Vamos até...
+
+condições. Então, temos o nome da ferramenta. padrão de argumentos argu. Então, isso não nos ajuda muito. sabendo exatamente o que é. O que eu sou
+
+O que eu vou fazer é ir para Gemini. um Google Gemini aqui. Vou fazer Tenho certeza que estou na minha conta, que na verdade eu estou Pagar por isso me dá as vantagens. OK. E porque achei que deveria.
+
+Comece a usar isso com mais frequência. E eu só vou dizer como se eu estivesse tentando escrever uma regra para Código Gemini Gemini CLI que permite editar um arquivo markdown para aprovação um por meio de seu mecanismo de políticas mas eu não sou Como definir as condições. Certo, então aqui temos isso. Cole isso aqui. Ops. Eu quero tudo
+
+coisa. Eu não ia usar IA para fazer isso. isso, mas é muito difícil de ler. documentos. Vai demorar muito. Então, nós vamos.
+
+à frente. Talvez não. Talvez seja mais rápido para que possamos de fato ler os documentos. Mas Aqui foi rapidinho. Eu digo ainda Atualizei, mas eu já atualizei. Então,
+
+Quantas melhorias ainda tenho disponíveis? O que fazer aqui? Então, sim, nós temos Obviamente, existem outras opções aqui. rápido Pensamento e IA ultra profissional. Então vamos.
+
+aqui embaixo, e nós recomendamos Configuração de regras. Então aqui temos A gravação de arquivo permite 100. Então é isso. Estou procurando por. Não sei se isso é Na verdade, é assim que funciona. Vamos dar uma olhada
+
+olhar. Então nós vamos de acordo com as nossas condições aqui.
+
+O que eu procuro é um exemplo. Eles Realmente não gosta de nos dar exemplos. E agora, será? Então, regra. Onde está o nosso exemplo?
+
+Não, isso não é bom. E então eu quero querer voltar a analisar. aqui. Como você sabe que gosta? Aqui diz que é um arquivo Markdown restrito?
+
+Então, se você quiser ter ainda mais segurança, eu... simplesmente não sei onde, tipo, como, onde foi? você encontrar isso,
+
+certo? Tipo, e este é o maior O problema é como simplesmente não conseguir encontrar essas coisas básicas. Hum, e o Google faz têm muita coisa por trás de si mesmos. parede paga, o que não faz sentido, mas o A sintaxe oficial é o mecanismo de políticas. Foi uma boa jogada. Eu estava usando curto
+
+lógica manual baseada no mecanismo de políticas analisar o objeto de regras, mas no atual A sintaxe das implementações da CLI Gemini é Na verdade, é mais plano do que um conjunto de regras aninhadas. Certo, então, o mecanismo de políticas da CLI Gemini... argumentos da ferramenta de filtro uh. OK,
+
+e então use um argumento de expressão regular padrão. Eis como você realmente escreveria A regra que você está procurando. Então A CLI avalia tudo na regra. bloquear. Hum,
+
+OK. Então, essa não é a melhor opção. Aqui há confiança. Eu gosto, eu gosto de como Isso é mais explícito, mas o que eu quero dizer é...
+
+Suponhamos que pudéssemos fazer isso aqui. Realmente não gostei de como isso aconteceu. E, portanto, aqui está agora, que deveria ser aprovado. para redigir esses arquivos de política. Bem, Antes, isso nos exigia muito. Então eu sou
+
+Vou prosseguir e simplesmente dizer, você Sabe, crie um para mim. Eu simplesmente vou desistir. aqui fora. Certifique-se de que o mecanismo de política Está sendo carregado. E vamos apenas fazer tenho certeza de que realmente consegue ver isso política. Vou presumir que seja assim que
+
+Podemos ver isso digitando para barra políticas. E podemos listá-los. E aqui estamos nós Posso ver que existem vários padrões. aqui dentro. Há toneladas e toneladas. E daí
+
+Estou procurando aquela que nós criado. E repare que, assim como existe um prioridade destes. Então, tipo prioridade um, tanto faz, tanto faz. Eu teria pensei que teria sido...
+
+diferente disso, mas tipo, como eu faço? Sabe que o meu está aqui dentro? Acho que depende de onde vem. de. Então, diz writetoml plano.toml. Então, vou prosseguir e
+
+copiar ou apenas pesquisar permitir Markdown. Então, estou procurando por que aqui. E eu não vejo isso em nesta gêmeos. Será que escrevi Gêmeos errado? É tudo o que consigo pensar.
+
+Gêmeos. Gêmeos para/políticas. Então, para mim, isso parece correto. Mas sabe, nós temos que ser realmente Cuidado aqui com o Google Docs porque Novamente, eles não fazem um bom trabalho mantendo Eles mantêm tudo atualizado. Eles não cuidado. Então, vamos até o
+
+Aqui em cima. Vamos dar uma olhada aqui. Ah, mas este está no global. pasta. Ok, então talvez talvez não possamos aplicar isso ao nível de projeto. Vá para cá. Será que...
+
+O Gemini permite nível de política? Permissões? nível de projeto. Talvez só sejam feitas globalmente.
+
+Então, aqui temos aqui e depois lá. Uhum. Mas não está carregando. OK. Vou prosseguir aqui e talvez apenas reduza um pouco Permitir Markdown.
+
+E vou voltar a falar sobre políticas. aqui. Vamos desistir. Vamos recarregar isso. porque queremos ver essa política aparecer de fato. Quero ter certeza
+
+que estamos no local certo. Às vezes ajuda revelar o abra o arquivo no explorador e certifique-se de que A estrutura está correta. Então, aqui nós ter política de playground. Políticas da Gemini. Aqui está o arquivo. Portanto, claramente
+
+Deveria estar funcionando. E também, eu não Não sei porquê, mas agora está pendurado. Lá estamos nós ir. Isso levou um pouco de tempo. Vamos prosseguir e digitaremos políticas lista.
+
+E por isso estou procurando cuidadosamente por esse arquivo. Vou apenas digitalizá-lo. Com meus olhos aqui. Planeje um rastreador somente leitura. Certo. Certo. YOLO. Planejar, planejar.
+
+um Sabe, e então, de novo, não está carregando. Você sabe, eu notei que você não está seguindo essa política. carregando minha política de permissão de Markdown, por que não?
+
+Diz que aqui deve estar localizado no Diretório de políticas Gemini na raiz de seu espaço de trabalho para ser automaticamente descoberto então você teria aqui, no entanto, se o seu O diretório atual é sites Gemini CLI diretório de trabalho, a CLI pode não estar percorrendo essa informação. Eu vou, eu vou Verifique a configuração atual. Então Deixe que isso aconteça. Diremos que sim. Quero dizer, nosso diretório de espaço de trabalho acabou.
+
+aqui. Mas está faltando a tabela de políticas, que É necessário para a CLI geral. tabela de políticas. Então vamos tentar e ver o que acontece. acontece aqui.
+
+Tudo bem. Então está funcionando e Talvez isso possa nos ajudar a depurar o problema. Mas tipo Temos no diretório correto. Então você O que sabemos é que a linha LM nos atende. Este é o O desafio com Gêmeos é que não podemos Confie na documentação do Google.
+
+Um Então volte para cá. Então vamos dar uma olhada olhar. A política é válida, mas está faltando o tabela de políticas que é necessária para CLI Gemini. Um, o subagente de ajuda da CLI. afirma que a seção de políticas não está obrigatório. Portanto, seu arquivo tommo deve ser
+
+Válido conforme redigido. Nós nunca escrevemos políticas. Em qualquer lugar ali. Vou verificar o estado atual das políticas e veja se houver alguma mensagem ou pista. Vou executar o comando.
+
+Shell aguardando entrada. O que é isso? Aguardando? Hum, vou verificar a atual. status.
+
+OK. Acho que aperto a tecla Tab. Desculpe. Você fez isso? E agora é...
+
+Sem resposta, é claro. Ah, aí está. ir. Está pensando agora. Então, veremos.
+
+O que acontece. Pressione Tab novamente. Foco, eu acho. Oh, tudo bem. Eu simplesmente apertei Enter no espaço.
+
+lá. Não faço ideia do que está fazendo. Aquilo é Que estranho. Temos uma caixa dentro de outra caixa. É como se tivesse iniciado o Gemini CLI.
+
+dentro dele. Acho que foi isso que aconteceu. Eu acho que sim Lançado o Gemini dentro do Gemini. Um OK. [risada] OK. Então, vou parar por aqui, pois
+
+Obviamente, isso não está fazendo o que deveríamos. queria fazer. E eu vou mover isto. política Bem, em primeiro lugar, vamos...
+
+certifique-se de que temos este diretório, que é o diretório Gemini. Sim, fazemos. OK. Um Então, vou prosseguir e agora mover um o diretório de políticas Gemini para o Diretório inicial, políticas do Gemini. Bem, Gêmeos gostam disso. E agora, o que eu vou fazer?
+
+Faço isso, digito e apago. Então agora nós temos Nada neste diretório. Vou prosseguir. E basta criar um novo arquivo readme aqui. Ou simplesmente diremos "hum".
+
+Ah, Gêmeos, desculpe, Gêmeos. Gemini MD. E vamos digitar Gemini. de novo. E então, o que eu quero que isso faça é...
+
+É preciso verificar se realmente carregou. lista. Então, vamos dar uma olhada aqui. E agora ele aparece. Então, não tenho certeza.
+
+Quanto ao motivo de não carregar aqui. O A documentação não deixa isso claro. se é que consegue carregar, mas tipo Obviamente, a CLI acha que pode. Um E, novamente, isso é apenas uma falta de documentação. Como você pode ver aqui, é não nos contando hum, sobre o mecanismo de políticas. Só
+
+Mostra isso a partir deste local específico. Então talvez esse seja o único lugar onde isso possa acontecer existem. Mas agora vamos em frente porque Agora que funciona, vamos dizer, você sabe...
+
+escreva uh escreva em meu uh gemini.md um projeto padrão da UM um projeto padrão para documentação do projeto por criar um Wolfenstein Clonagem 3D em JavaScript usando WebGL. Então, vamos pressionar Enter. [bufa] Eu deixei a coisa correr solta lá e Preencha isso. Pode ser que comece a me perguntar algo.
+
+pergunta se entra em modo de planejamento. Isto Não parece estar em modo de planejamento. Então, Possivelmente encontraremos. Então, é Redigi isso de forma rápida e eficiente. Então, agora Está ficando muito, muito rápido e Funcionando como esperado, o que é ótimo.
+
+O que é estranho é que nós somos... bem, o que não é? Estranho, mas estamos no modo automático. Ah, é isso
+
+Parece que provavelmente houve uma mudança. para Haiku, mas acho que em nossos contextos arquivo, não é como um arquivo global, então É por isso que está fazendo o que está fazendo. Bem, agora vou prosseguir aqui. E simplesmente diga, você pode... criar?
+
+romper o Arquivo Gemini MD em vários arquivos Markdown em um diretório de documentos para esta pasta para este espaço de trabalho. e importe-os usando o sinal de arroba. sintaxe. Lembre-se, isso não é importante. Então, não há como fazer isso, não está em sinal
+
+para importá-lo. Confira Gemini um Documentos de referência MD uh. Então você recebe o As declarações de importação estão corretas. OK. Então, vamos em frente e deixar acontecer.
+
+faça isso lá. Vamos dedicar um momento a isso. OK. Tudo bem. E isso realmente gerou isso.
+
+Rapidamente. Então agora estamos ficando... Resultados muito melhores. E mesmo assim
+
+Ter um único arquivo de política é ótimo. Super incrível. Então, sim, obviamente. Existem alguns ajustes que podemos fazer para melhorar. Isso é um pouco mais fácil. Então você é
+
+Falando sobre o motor de ray casting que é o modo original de funcionamento. um o ciclo de vida do desenvolvimento, mandatos, padrões do projeto. É um começo razoável. para algumas coisas. Não é o melhor informação, mas a questão era que Fez exatamente o que queríamos. O mecanismo de políticas
+
+Funcionou muito, muito rápido. Vamos Dê uma olhada aqui e veja se encontra algo. É assim que a gente mexe com isso. Eu não Achamos que podemos mexer nas políticas. É apenas para nos mostrar o que é carregado. Eu acho que se isso for um
+
+Google, que provavelmente tem alguém lá. Algumas prioridades se sobrepõem às outras. porque eles costumam fazer essas coisas Muito complicado. Um Então, sim, não tenho certeza se vamos abordar esse assunto. permissões agora, mas enfim, o A questão é que... nós... nós temos o
+
+O mecanismo de políticas está funcionando. Eu gostaria que pudéssemos já foi feito na pasta. Não consigo entender mas ei, pelo menos nós temos isso. lá. E até que faz sentido. Como
+
+Se eu fosse o Google, se eu gostasse, se eu soubesse como O Google funciona, eles gostam de ter Tudo gerenciado centralmente. E assim foi Faz sentido se eles simplesmente... Só tenho esse nível. Mas eu sinto que
+
+Supostamente, deveríamos ser capazes de... faça na pasta. Mas os médicos não podem nos diga e o Gemini CLI não consegue descobrir.
+
+e Gemini não consegue entender. Bem, então, sabe, fizemos o nosso melhor. OK.
+
+Tudo bem. Então, uma coisa que você pode fazer com Gemini CLI permite que você sobrescreva seu padrão principal. incitar. E a maneira como fazemos isso é que vamos Para instalar um sistema. Arquivo MD em nosso Gemini diretório. E a outra coisa é você
+
+preciso definir uma variável de ambiente para Diga para ele utilizar sua configuração de sobreposição. Sistema MD sobreposto. Hum, eu acho Inicialmente tive problemas para fazer isso funcionar. trabalho, mas aí quando eu segui o prompt de modelo onde tinha estes injeções aqui, então começou Funcionando conforme o esperado. Hum, por que você faria isso?
+
+Deseja alterar isso? É a mesma coisa. raciocínio com código em forma de garra. Um Códice não permite que você altere o sistema deles incitar. Pelo menos eu acho que não.
+
+Mas você sabe, se quiser ser eficaz mudar a natureza ou o comportamento disso que você pode utilizá-lo para diferentes fins casos de uso, sabe, para seus projetos. Mas mexer com o prompt do sistema é vai te dar resultados muito estranhos e pode quebrar muita coisa. Então, na verdade Você não deve tocar nisso a menos que...
+
+Realmente preciso. OK.
+
+Então, uma coisa que podemos fazer é que podemos substituir o aviso do sistema que é Bastante poderoso. Um e isso seria interessante de se dar. Uma tentativa. Acredito que podemos fazer isso na nuvem. não necessariamente codex. Hum, e tem
+
+provavelmente casos de uso muito específicos para esse. Não me vêm à mente agora. no topo da minha cabeça. Mas poderia ser. basicamente interromper todo o fluxo porque Não sabemos o que há nesse sistema.
+
+incitar. Então, o que eu vou fazer é Eu vou, estou no meu... Flappy Bird.
+
+pasta aqui. Vou fazer um novo pasta chamada Gemini porque parece como você pode colocar isso no projeto nível e, hum, vamos prosseguir e criar arquivo AV, como eles estão dizendo que é isso. Vamos carregar o arquivo AV aqui e vamos começar. para definir o Ah, diz para usar o caminho padrão. Uh Aqui você pode configurar o ambiente.
+
+temporariamente em seu shell ou persistir nele aqui. Utilize o caminho padrão do projeto. Caminho padrão do projeto. Sim. Então aqui está Aqui temos o sistema Gemini verdadeiro. E
+
+Isto será lido aqui. Não sei por quê. É um pouco diferente nesse sentido. E assim podemos fazer isso. E então agora nós supostamente deveria ser possível trocar O ID do sistema está aqui. Então iremos para lá e
+
+alterar isso para sistema Médico. E Então você é um agente de codificação, mas você só comunicar usando a linguagem tokip pona, que é uma construção artificial linguagem. Então vamos em frente e eu estou Vamos parar com isso aqui e nós estamos Vou... ops, limpar isso. Vamos ver
+
+se de fato carregar.
+
+OK. E imediatamente começa a apresentar erros. O que é ótimo, porque nós realmente...
+
+sujo mexeu com o prompt do sistema. Sabe que está simplesmente apresentando um erro. E eu Sinceramente, eu meio que esperava por isso. Hum, Tente isso de novo porque, tipo, eu não...
+
+Não entendo como isso funcionaria se você, se você monge com o prompt do sistema Porque isso é nível baixo. Mas nós vamos Pode prosseguir. Vou simplesmente apagar permanentemente este aqui. Vamos ver. se isso nos trouxer mudanças. Eu acabei de
+
+quero ter certeza de que isso não seja algo outras coisas que estamos vendo como erros de autenticação. Não é. Então, não tenho certeza de como estamos Vou demonstrar isso, para ser honesto. Hum, vamos dar uma olhada aqui e ver. Que exemplos temos?
+
+Sessões pontuais usando o arquivo do projeto. Então, também poderíamos configurar dessa forma.
+
+OK. Bem, nós fizemos isso. Vamos experimentar esta. mais tempo, mas eu simplesmente não tenho. Tenho muita, muita fé neste trabalho. Então,
+
+Vou me adiantar e dizer logo: Gemini e nós vamos criar um sistema MD. Médico. Diremos que você é um agente prestativo.
+
+Ok, vou dar a nota máxima. sugestão que eles têm como exemplo. Hum, comunicação Fale com o usuário usando o tokip pona. OK. E então aqui, em vez de mudar essa variável de ambiente, o que eu estou vai fazer Basta configurar assim. Aqui podemos
+
+também defina o caminho personalizado que nos dá uma garantia de que está carregando. Certo, mas isso deve funcionar bem o suficiente. Então, vamos apenas dizer o que... o
+
+código do arquivo html de índice. Então, o que eu espero é que seja Vou utilizar isso. Talvez seja o d.env Arquivo ENV que estava causando problemas sobre. Eu não tenho certeza. Ou talvez precisássemos de um
+
+Exemplo completo de prompt. E não é Hum, o que o seu sistema faz? Qual é a aparência do prompt? Bem, talvez não isso. Então, isso não funcionou. Eu vou
+
+vá em frente e pegue isto aqui e eu vou ajudar a saber exatamente o que precisa ser carregado aqui. Então, Estamos no Flappy Bird. E isto irá bemini barrasystemmd Porque eu só quero garantir que seja isso mesmo. Vai funcionar assim, vai funcionar Carregar no local correto. Se for Se ainda não funcionar, tudo bem. O que é
+
+no arquivo HTML de índice?
+
+Fale comigo, Tokyo. Não está funcionando que. Então, por que você não está falando em tokyp pona? Não é isso? Não é isso?
+
+Seu arquivo MD do sistema? Mensagem do sistema. Vamos ver se conseguimos ajudar por lá.
+
+Provavelmente vai falar comigo assim que agora mesmo. Então, sabe, se isso não funcionar, isso é bom. Mas pelo menos nós exploramos. isto. Não tem nenhum segredo nisso.
+
+Certo. Diz: "Ei, é assim que você..." deve ser possível carregá-lo.
+
+Sim, eu É realmente confuso." Então, vou parar por aqui. E isto Um deles é um ônibus, mas pelo menos sabemos disso. Supostamente, isso é possível. Mas isso é É tudo o que posso fazer por vocês aqui. OK.
+
+Então o arquivo de ignorar do Gemini funciona perfeitamente. como um arquivo git ignore, mas é especificamente para o que Gemini vai ignorar. Então, aqui está um exemplo de coisas. Você pode ignorar. Você pode pensar, ok, Bem, vou excluir minhas chaves de API. Hum, e
+
+A questão é que... você pode dizer Gêmeos pode ignorar isso, mas ainda assim pode. Encontre maneiras de ler arquivos que você indicou.
+
+Ignorar isso. Então, se você acha que isso é É uma medida eficaz para a segurança. não. É mais uma questão de não ter Gêmeos consomem coisas em seu contexto e Ah, desperdiçando suas fichas. U o que é O interessante, porém, é que se houver algo que é claramente uma chave, uh em nome. Então, se você tivesse um arquivo
+
+chamado API keys.txt, Gemini dirá, "Ei, isso é algo delicado. Eu "Não quero nem tocar nisso." Então, logo no início...
+
+Ao menos é honesto nesse sentido. Hum, mas Sabe, se você simplesmente der um nome a isso... Mesmo assim, ele lerá o texto de forma genérica. Então não
+
+Não sei bem o que te dizer sobre isso. Mas enfim, Ah, esse é o arquivo de ignorados do Gemini. OK.
+
+Olá, meu nome é Andrew. Neste vídeo, eu Quero dar uma olhada no Gemini Ignorar arquivo. A ideia aqui é ignorar arquivos que nunca deveria ser visto. EU pensaria que isso seria realmente Útil para ignorar arquivos confidenciais. Uh, Então, se formos para cá, aqui está...
+
+Ignorando pacotes. Então talvez haja coisas que estão acontecendo demais Existem chaves de API específicas. Vamos usar isso. exemplo. Então, vou voltar um pouco...
+
+Diretório aqui. E isso não importa. Vamos fazer o Flappy Bird. Nós não temos estar constantemente criando novas... novas
+
+Pastas sem motivo aparente. Eu vou e crie um novo arquivo, que será o nosso Chaves de API. .TXT. E eu só vou diga super secreto chave.
+
+Um Vai, Fox, vai. OK. E eu vou entrar isto aqui. Diga: "Você consegue me ler?" Você pode me ler a chave super secreta?
+
+o texto da chave da API?" Ok. E então meu A expectativa aqui é que ele leia isso. ou pode dizer: "Ei, eu não sou" Era para ler isso em voz alta. Eu não posso Imprima ou mostre essas coisas mesmo que eles estão armazenados na base de código." Muito bom.
+
+Então, vou mudar isso para Algo mais genérico. Vou dizer apenas algo como... informações E vou chamar isso de ponto de dados.
+
+Eu vou dizer: você pode ler para mim o uma informação ponto de dados
+
+ah, ponto de sublinhado de informação.txt. Não sei por que eu Não consigo encontrar ali porque eu simplesmente...
+
+Renomeei, mas tenho certeza de que encontrará. isto. Portanto, minha expectativa é que isso aconteça. tentar ler isso porque não Sei que isso é um segredo. Pronto, aí está.
+
+Raposa boba vai. Imagine que fosse um senha. Vamos prosseguir e Crie um novo arquivo aqui. Coloque isso aqui. E vamos ignorar informação.txt.
+
+OK. Então agora estamos ignorando isso. E Vou simplesmente acabar com ele e pronto. Limpe isso. Vamos voltar aqui e eu estou Vou tentar fazer com que ele leia novamente.
+
+E veremos se ele ignora isso. Certo, vamos aguardar um momento.
+
+Está sendo excluído. Será que vai tentar? Para encontrar uma solução alternativa? OK. E então, mesmo que tenhamos contado isso Ignore, simplesmente contornou o problema. [risada]
+
+Não é ótimo para a segurança, mas, ei, pelo menos... Ao menos sabemos que é assim que vai funcionar. Certo, aqui está.
+
+Muito bem, vamos falar sobre o comando de permissões e pastas confiáveis. Então a ideia aqui é que quando você digita o palavra Gemini um em outros provedores eles definir que se trata de criar um novo projeto, mas o A ideia aqui é que você está criando um novo relacionamento de pasta de confiança e você está Basicamente, estou perguntando se posso usar o conteúdo que está dentro desta pasta e você vai dizer sim ou não e Isso vai determinar se é um pasta confiável ou pasta não confiável. Todos esses dados são armazenados no local confiável. Arquivo folders.json. Todas as permissões
+
+O comando permite adicionar outros diretórios ou talvez alterá-los valores. Obviamente, você pode simplesmente abrir isto. Arquivo JSON, que você pode ajustar como quiser. Uh Quando fizemos o teste para garantir que...
+
+Não foi possível ler uma pasta considerada "não confiável". com certeza não vou deixar você ler isso coisa. Então talvez, sabe, como um método de permissões, você pode querer defina pastas como não confiáveis ​​se você realmente não quero que eles olhem para eles. ou talvez até mesmo apenas impedir que isso aconteça. Existem repositórios ao redor disso. Que
+
+Pode ser uma boa estratégia. Mas sim, Pronto.
+
+Olá, meu nome é Andrew. Neste vídeo, eu Deseja explorar o recurso de permissões? Como dissemos, gerencie a confiança entre pastas a partir de configurações. Isso significa que tipo de pastas são essas? Ter permissão ou não. Então
+
+se formos para cá Bem, a documentação aqui, eu acho que A maneira mais normal é ligar o configurações. Então, com certeza, virou. Está desativado por padrão, mas podemos ativá-lo. e então estamos dizendo explicitamente o quê As pastas são confiáveis. Você vai perceber que às vezes, quando lançamos o Gemini, especialmente quando se trata de uma pasta nova, é dizendo, por exemplo, quais são permitidos e quais não são. Então, aqui está a confiança.
+
+A pasta concede total confiança ao atual. pasta ou temos pasta pai confiável, então permitir que os pais ou não confiem, então marque A pasta foi classificada como não confiável. Então nós temos um algumas opções aqui e ali, e depois parece que Eles estão salvos em nossas pastas confiáveis. diretório. Então, o que me deixa curioso é Se formos ao nosso diretório Gemini Isso já existe porque nós temos provavelmente tem permitido certas coisas E nós fazemos. Aqui podemos ver qual
+
+Pastas são permitidas. Hum, E então, tudo o que isso está fazendo aqui é apenas... dizendo que esta pasta em particular é Confiado explicitamente. Então, se você tivesse, vamos
+
+digamos, um repositório e ele baixou o arquivo de configurações, então você não precisaria Peça para aceitar. E talvez isso fosse Será importante se você estiver executando isso. em um ambiente onde você não quero ter esse aviso que acontecer. E é só nisso que consigo pensar. sobre isso. Bem, vamos em frente.
+
+e veja se este comando de permissão funciona nada de importante porque eu não Acho que realmente faz alguma coisa, mas vamos... Dê uma olhada aqui e veja o que ele pode fazer. A documentação não explica muito bem, mas nós Vou testar esse recurso e ver se funciona.
+
+Podemos descobrir. Então, nós temos permissões. Então, gerencie a confiança da pasta. configurações e outras permissões. Então, Vamos pressionar Enter. Diz: "Ah, confie". E
+
+Então, basicamente, é muito simples. Isso é assim como vamos confiar em um diretório. Então, o que eu vou fazer é ir. voltar um diretório e eu vou... fazer
+
+Mais uma. Isso vai ser tipo... nova pasta de confiança.
+
+OK. E então aqui eu farei um arquivo chamado código como main.rb como imprimir insere o código. OK. Então, o que eu farei é Vou usar o comando CD para entrar em outro diretório, como por exemplo...
+
+Olá, mundo. Talvez não seja "Olá, mundo". Faremos um teste de comunicação. Não importa. Talvez não seja apenas um "Olá, mundo!" como poderia ser.
+
+ter permissões mais robustas lá. E Vamos voltar e entrar em Gêmeos. E eu sou Vou usar isso. comando de permissões. Diremos confiança. E eu só vou
+
+suba um nível no diretório para uh nova pasta de confiança. Nova pasta de confiança. Assim, ele mostra o caminho completo. Será que nós...
+
+Confiar nisso? Confie nesta pasta. Confie nisso pasta principal ou não confie nela. E assim Eu diria para não confiar nisso. pasta. E agora, o que eu quero fazer é...
+
+Não sei por que duplicamos esse valor. Queremos voltar e uh gato fora Gêmeos um Pastas confiáveis ​​aqui. E agora observe que não é confiável. Então, eu vou Entre nesse diretório, o novo uma ali, a nova pasta de confiança, e Vamos experimentar o Gemini aqui e ver o que acontece. acontece.
+
+Portanto, indica que não é confiável. Hum, e então Não será aplicada para este fim. Use o permissão para ignorar agentes de projeto devido para pasta não confiável para habilitar. Uh faça esse A confiança no ambiente de trabalho mudou devido a Conexão de ID. Pressione R para reiniciar Gêmeos. Aplicar alterações. Vou apertar R.
+
+OK. Portanto, simplesmente não podemos usá-lo. OK. E era só isso que eu realmente queria. demonstrar. Hum, e isso pode ser
+
+Útil se você realmente quiser trancar. reduz isso a um detalhe muito específico. pasta. Bem, a questão aqui é tipo...
+
+Podemos simplesmente confiar em tudo por padrão? e assim para de nos alertar e perguntar nos para coisas porque isso seria Muito legal, mas não tenho certeza se realmente... Veja aqui. Então
+
+Sim, é o que é. Mas ei, em Ao menos sabemos como isso funciona. OK. Chowo chiao.
+
+Tudo bem. Portanto, um sandbox é uma ferramenta de segurança. mecanismo para separar a execução programas que utilizam seu sistema operacional. E uma caixa de areia fornece um conjunto rigorosamente controlado de recursos para programas de convidados serem executados em armazenamento e memória uh rede limitada Acesso, a capacidade de inspecionar o host sistema e, uh, proibindo ou fortemente restringir a leitura de dispositivos de entrada. Assim, o Gemini depende do isolamento (sandboxing) em nível de sistema operacional.
+
+bibliotecas para fornecer seu ambiente onde é um pouco diferente de outro provedor é o do Linux e O WSL 2 usa o G Visor, mas qual é? Aparentemente, basta executar o SC. É feito por Google, então faz sentido o porquê de eles serem usando isso. E também o LCX e LXD bibliotecas. Acho que é parecido com o Linux.
+
+recipiente que não é exatamente recipientes, mas é como um leve um Não sei como descrever, mas eu Tenho vídeos sobre isso em algum lugar. E então eles também enfatizam o uso de contêineres caixas de areia. Eu diria que definir isso Up era muito confuso em comparação com outros. uns. E também só tentando descobrir O que está sendo executado no ambiente de testes e O que tinha que ficar de fora não era claro ou não. Para ativar o modo sandbox,
+
+Você precisa usar uma bandeira. Outro Os provedores permitem que você o ative enquanto Você está no interior e eles fazem isso Fica bem claro quando o modo sandbox está sendo usado. e não. quando você lançar Acima, você pode atualizar seu rodapé para que Isso mostrará em qual sandbox você está. utilizando. Mas, novamente, não me sinto como
+
+Aproveitamos melhor o modo sandbox, mas A questão é que nós o ligamos. Então, em No mínimo, descobrimos isso. O A documentação era realmente muito confusa. OK.
+
+Olá, meu nome é Andrew. Vamos dar uma olhada. ao usar o sandbox com a CLI do Gemini. E Então parece que ele quer usar um G. Viseira. Hum, o que é ligeiramente diferente de
+
+Os outros não estão usando isso. Um Acho que eles estão usando plástico bolha. Um Então é aqui que... leva um tempinho.
+
+um pequeno desvio, hein, do outro provedores. Ainda uso cinto de segurança para mim. Acredito no Mac OS. Hum, e também temos...
+
+X uh LXC LXD. Então acho que teremos que... Vejamos o que queremos implementar. Um
+
+Mas vamos dar uma olhada aqui. Como fazemos isso? Vamos dar início a isso? É muito mais fácil em os outros. Nós literalmente só digitamos para/ sandbox. Isso nos diz o que fazer,
+
+mas aqui está, bem aqui. Então vamos lá. Venha cá e dê uma olhada. Estamos em Flappy Pássaro agora mesmo. Eu não acho que seja realmente assim.
+
+assuntos. Gêmeos. Gêmeos. Vamos analisar. Para Gêmeos.
+
+E o que vou fazer aqui é esperar. Só um momento e vamos ver se temos caixa de areia. Observe que não há sandbox. opção como normalmente esperaríamos. Portanto, teremos que configurá-lo. Hum,
+
+E existem algumas maneiras diferentes. OK, Então, estou apenas tentando decidir. Como fazemos isso. Ah, existe um... existe um
+
+comando desta forma. Então podemos fazer verdade docker podman executar sc Talvez eu deva executar o SC porque eu realmente não o faço. quero ter que, hum, administrar as coisas em um container docker, mas eu não sou realmente Estou familiarizado com esses. Estou familiarizado. com plástico bolha é isso que todo mundo faz caso contrário está sendo usado. Por que eles escolheram fazer
+
+algo? Ah, claro que é um Produto do Google. É por isso. Uh, Viseira G é um forte isolamento de camada. Uhum.
+
+Ao contrário do Linux, ele foi escrito para memória. Informações seguras. OK. E então é literalmente chamado Executar segurança. Tudo bem. Então, qual é a maneira mais fácil?
+
+Para que possamos instalar isso? Eu não Quero ficar aqui fazendo palhaçadas o dia todo. Então Vamos voltar e Instale o binário runsec. Então, se houver um binário aqui, pode estar por aqui em o lado direito. Às vezes há Lançamentos como este.
+
+Não é assim que funciona para nós. Eles certamente não querem facilitar as coisas. para nós. Vou experimentar isso. Eu vou Para experimentar o pseudoaplicativo, obtenha a instalação.
+
+pseudo app obter instalar um executar CS. É É assim que se chama? correr sc executar executar segurança. Estou tentando não deixar as coisas acontecerem de forma descontrolada. recipiente. Podemos fazer isso. Eu simplesmente não
+
+quero fazer isso. Vou digitar meu senha. Operação inválida. Então, então p sudo app install. Experimente isto.
+
+E Sim, agora está instalado. Certo, isso Foi o que eu melhor imaginei. E agora eu quero Execute este comando no modo sandbox. E assim foi Parece que podemos definir uma configuração, mas nós também pode lançar isto um comando como esse. Ao fazer isso, o Gemini CLA executa o Docker.
+
+correr. Portanto, ainda podemos precisar do Docker. Instalado e em funcionamento. Hum, então eu... eu deveria
+
+Tenho o Docker instalado aqui. Sim. Hum, eu não sou Vou mostrar como instalar o Docker. Já mostrei tantas vezes às pessoas como fazer isso Instalar o Docker. Não vai estar em este vídeo. Certo, então temos isso e
+
+Em seguida, precisamos configurar o ambiente de teste (sandbox). Provavelmente, a maneira mais fácil será com o modo de configurações. Então eu só Estou procurando essa opção de configurações para o caixa de areia
+
+e opções terríveis. E daí O que vamos fazer é ir às configurações do JSON Gemini. CLI e aqui vamos apenas procurar por informações do sandbox
+
+sandbox de ferramentas aqui embaixo. Aqui diz que está usando a sandbox. comando. Eu preferiria mesmo mesmo colocá-lo no meu configurações. Não posso fazer isso. Multar. Então nós simplesmente...
+
+Adicione um hífen. Então, vamos dizer: o que estamos digitando? Uh, Gêmeos. Gemini hífen S de sandbox. Precisamos especificar qual sandbox? Como
+
+Existem muitos modos. Como isso vai acontecer? Sabe como executar o SC? Eu não sei. Como Vamos saber que estamos dentro Modo sandbox? Tantas perguntas.
+
+Está demorando muito para iniciar. Então, Quer dizer, pelo menos parece um bom indicador de que isso pode ser trabalhando. OK. Eu esperaria que isso levasse um parâmetro. Não diz nada.
+
+Por padrão, ele usa a CLI do Gemini. Imagem Docker de ambiente de teste (sandbox). Pode ser Baixando a imagem. Certo, então é Iniciou. Como sabemos que estamos no modo sandbox?
+
+Vamos dar uma olhada no Flooter. Talvez rodapé Nos avisará. Ah, bem aí. Ah, então estamos numa caixa de areia. Legal. OK.
+
+Então, a ideia de um sandbox é que se Existem ações perigosas e isso tem que trabalhar fora da caixa de areia, isso deveria nos levar a refletir sobre algo. Então, em Bem, eu só vou perguntar, você... Sabe, você pode ir? Você pode ir ao
+
+internet e encontrar código para fazer nosso Flappy Bird é um jogo 3D que utiliza WebGL. OK. Eu sou Só tentando dar um toque pessoal. complicado. Hum, eu não tenho realmente tipo Uma ação perigosa. Eu não gosto de
+
+Realizar ações perigosas, se possível. Porque isto não é um caso isolado. máquina. Bem, tecnicamente estamos dentro. WSL, então é um ambiente virtual, mas eu não têm sido bons em encenar exemplos de segurança. Então
+
+Ok, mas está rodando no ambiente de testes (sandbox). e parece que consegue sair. e fazer certas coisas. Hum, Então, novamente, pode ser difícil para mim...
+
+como é mais fácil em outros provedores, Mas não tenho certeza quanto às políticas. São muito complicadas de escrever aqui. Hum, e, portanto, talvez não consigamos obter um Boa demonstração de caixas de areia aqui para Gêmeos.
+
+OK. Mas não há nada aqui que seja dizendo algo como, ei, peça permissão e peça isso. Mas, pelo menos, sabemos que estamos Executando em modo sandbox. Então, acho que é isso. legal. Hum,
+
+Então eu direi que está tudo bem. Ativamos o modo sandbox. Sou capaz de realmente te mostrar um exatamente como ativar o sandbox aqui Para Gêmeos? Não, eu simplesmente não quero. Dedique tempo a isso. Mas nós conseguimos
+
+para ligá-lo e isso é um grande Grande vitória. E nos vemos na próxima! um. Ok, tchau.
+
+Então, o modo YOLO é o nome que a Gemini dá a esse modo. dá a eles um roteiro perigosamente Questão de permissões. Então, se você já usou um Cloud Code ou Codeex, você sabe o que eu sou falando sobre. Mas a ideia é usar Este comando nunca perguntará nada. com as devidas autorizações, o projeto seguirá em frente e execute-o. Obviamente, isto é muito
+
+perigoso. Então, se você se deparar com um sandbox, uma máquina virtual, hum, isso Faria sentido e você sabe exatamente disso. a que tem acesso e, hum, o quê? danos que possa causar, então tudo bem para faça isso. Ótimo, extremamente útil em, autônomo, totalmente autônomo, uh, sistemas de agentes. Mas sim, é isso mesmo.
+
+comando YOLO. OK,
+
+então o Gemini tem um modo não interativo ou também conhecido como modo sem cabeça que permite que você execute solicitações sem Entrando no terminal interativo. Esse É realmente muito útil se você estiver usando isso em um pipeline de automação, ou você? quero obter algo como JSON e redirecioná-lo para outro programa. Um e É bastante simples. Então você Sei que é isso mesmo. OK.
+
+Olá, meu nome é Andrew. Neste vídeo, Vamos dar uma olhada em robôs sem cabeça. modo. Então, o modo sem interface gráfica nos permite...
+
+solicite-o em modo não interativo. Então, Aqui está nosso aplicativo de tarefas simples. Eu sou Vou digitar Gemini. Vamos dar uma dica. Eu só vou para dizer, me diga uh, que tipo de projeto é?
+
+nesta pasta. OK. E assim iremos. Vá em frente e faça isso. Existem inúmeras bandeiras que poderíamos usar.
+
+Disponibilizar para modo sem interface gráfica. Provavelmente o O mais útil será o JSON, mas nós estamos Vou executar este modo aqui e Espero que minha assinatura funcione. com ele. E assim recebemos informações de volta. Então uh Ok, na verdade eu meio que esperava.
+
+isso para [risos] me dê algo útil em troca e Surpreendentemente, isso não é muito útil. Então Diz que o sistema headless fornece uma estrutura definida. texto ou JSON que faça sentido aqui. E talvez esteja usando o formato padrão. de JSON, o que, quero dizer, está tudo bem, mas eu estava Aguardando resposta por mensagem primeiro. Vamos
+
+adiante e certifique-se de que especificamos texto. Hum, ah, desculpe, é saída. Então Vamos dizer texto de saída. E então talvez isto vai nos dê algo um pouco mais natural. Nossa, é o formato de saída. Quem
+
+Quem foi o idiota que teve essa ideia? E assim nós vai executar isso como tal. Imagino que possamos continuar em um sessão, faça outras coisas. E então, o que é? O interessante é que está carregando...
+
+conteúdo do nosso, quero dizer, obviamente você Não consigo ler isso, mas está carregando. conteúdo do nosso arquivo Gemini e o arquivos subsequentes. E então aqui está ele, fazendo o seguinte: Um resumo, mas é basicamente isso. é para isso é o modo de prompt, mas eu Acho que por padrão ele está enviando a saída para JSON, que na verdade provavelmente é o seu método preferido. OK. E assim iremos.
+
+Vamos lá, execute isso novamente e conseguiremos. Jason voltou,
+
+certo? Então, sabe, não é o melhor. explicação, mas tecnicamente isso faz noção do que está sendo pedido aqui. Ah, então é por isso que não fez sucesso. faz sentido porque não rolamos a página para cima.
+
+[risos] Então, rolamos a tela para cima. Agora, nós podemos Veja essa informação. OK. Então, provavelmente poderíamos encanar. Isso passa a palavra para JQ.
+
+E se quiséssemos, poderíamos selecionar. Exatamente o que queremos. Então poderíamos dizer ponto uh Onde estão as informações reais? resposta. OK. Então vá para a resposta do ponto. EU
+
+Acho que é só isso que precisamos fazer para conseguir. que volta. Não me lembro de todos os meus jQ comandos. Então, provavelmente é isso mesmo. Então, nós daremos isso. Sim, aí está.
+
+E assim, recebemos essa informação de volta. Bem simples. Sim, tem. Provavelmente muitas e muitas bandeiras, mas Isso é suficiente para nós. OK.
+
+Vamos dar uma olhada nas extensões. mercado. Este é um lugar onde você pode baixar várias extensões. Outros fornecedores chamam-lhes plugins. Um mas a ideia aqui é que eles podem ser incluído com habilidades e comandos do MCP, Arquivos de contexto, ganchos. Hum, tão linda!
+
+direto. Hum, na verdade existe um Muito popular, pelo menos por enquanto. chamado homem das cavernas, que nós tentamos onde Isso faz com que a CLI fale como um homem das cavernas. para economizar o uso de tokens. Hum, mas sim, é Bem simples. Vamos pular direto para a direita
+
+nisso. Olá, meu nome é Andrew. Neste vídeo, nós estamos Vou analisar as habilidades dos agentes. Então As habilidades do agente são um recurso que é um Disponível no Codeex e no Claude e é Um padrão aberto. Então, a ideia aqui é que nós deveríamos ser capazes de... encontrar uma maneira
+
+de definir um, uma habilidade que podemos carregar para outros lugares. Cada fornecedor Funciona de uma maneira um pouco diferente. Então nós somos Vou ter que descobrir o pequeno detalhe. diferença para Gêmeos. Mas primeiro vamos por partes Veja se vem com algum.
+
+Habilidades pré-construídas. hum, como poderia ser. Estou dentro meu clone de Flappy Bird, mas nós poderíamos alterar o diretório aqui em apenas um momento. Então, vou digitar para/habilidades E diremos lista. E assim temos um Vários modelos padrão, principalmente da Microsoft.
+
+Fundição. Não entendo por que tantos habilidades para o Microsoft Foundry, mas talvez Talvez devêssemos prosseguir com a instalação. alguns. Então talvez exista um mercado mercado extensões. E aqui poderíamos dizer explorar.
+
+OK. E agora está abrindo o navegador. Então, isso é realmente muito legal. forma de encontrar extensões. E assim extensões são como um pacote de habilidades e outras coisas, certo? Hum, mas eu
+
+Acho que o que quero fazer aqui é encontrar algo. Ah, a comunicação ultracomprimida! modo. Homem das cavernas. É engraçado que seja por aqui. Hum, e o que é isso?
+
+habilidade? Sim, é uma questão de habilidade. Então, vamos pegar o...
+
+homem das cavernas [risos] pois aquele é... aquele vai ser engraçado. Então, vamos prosseguir e Instale o do homem das cavernas. Nos faz conversar
+
+como um homem das cavernas. Foi criado por terceiros. Sim, nós vamos Aceite isso. A questão é onde eles estão. Você precisa ter essas habilidades? Vou chutar
+
+Vai entrar no Gemini diretório. Vamos dar uma olhada aqui. E Vamos falar sobre extensões. E há O homem das cavernas, certo? E aqui podemos ver Ah, as coisas. Então, eu vou...
+
+É só abrir. Eu sou apenas Tenho curiosidade em saber como é um pacote de extensão. como. Não. Não era o que eu queria. Eu não
+
+Quero tudo. Vamos tentar mais uma vez. tempo. Só quero o diretório do homem das cavernas. Oh não. Tem muita coisa mesmo em
+
+aqui. Nossa, isso é loucura. Talvez porque É genérico e, portanto, está se aplicando a todos eles. Veja, você tem agentes, garras, gêmeos, e depois um monte de outras coisas. Então, todos esses arquivos que estão chegando aqui porque eles estão permitindo que isso funcione para Qualquer um deles. Nós vamos até o homem das cavernas, uh
+
+habilidades. Essa é a habilidade e isso é um arquivo de habilidades. Está explicando como isso funciona. deveríamos conversar. Vamos voltar para cá.
+
+e vamos lá e Sim, vamos fazer isso no Flappy Bird. Está tudo bem. Então, vamos aguardar um instante. E vou começar a digitar Lista de habilidades. Então, aqui dentro, nós deveríamos Agora veja o homem das cavernas. Então, temos um monte de
+
+Homens das cavernas. Tipo homem das cavernas para/homem das cavernas. Então agora vamos simplesmente dizer homem das cavernas. Análise de ajuda do homem das cavernas. Isso é ótimo.
+
+Homem das cavernas, o que significa o código no O que fazer com o arquivo HTML indexado? OK. Então vamos executar isso e ver o que acontece. O que retorna. E eu lerei para compreendê-lo completamente.
+
+emoji flappy bird c uh ca canvas API Clique na barra de espaço para fazer o pássaro pular e bater no cano ou O próximo passo do usuário no Edge é alterar a reprodução. Em termos de jogabilidade e aparência, é realmente muito bom. Para que serve isso? Você pode me fazer um plano? para transformá-lo em 3D usando WebGL Ok, e isso é cada vez mais Interessante só de ver o homem das cavernas.
+
+fale, mas ei, nós aprendemos extensões enquanto também aprendendo sobre o As extensões de habilidades também podem ser instaladas. Provavelmente servidores MCP e coisas do tipo. que. Então, qual ferramenta usar? WebGL bruto, Acho que é uma boa ideia. 3GS está ótimo.
+
+Bem, mas para o que estamos construindo, Podemos manter tudo bem simples, certo? Então, vamos aguardar um momento. gerar saída. Hum, ah, outra coisa que não fizemos O que fizemos foi não dizer para usar o método do homem das cavernas. lógica. Ah, isso não vai funcionar.
+
+porque não podemos ter um final como esse. homem das cavernas, podemos? Não, não podemos. Então, Que pena. E se fizéssemos um homem das cavernas?
+
+E diga, uh, homem das cavernas, faça-me um plano. para transformar nosso jogo Flappy Bird usando "uh" em um jogo 3D Com WebGL. Hum, OK. Vamos tentar novamente. E agora eu estou certificando-se explicitamente de que está lá. Então é
+
+ainda pode entrar. Está em modo de planejamento. com para/homem das cavernas. Então eu só quero ver Preciso de shaders. Mantenha a lógica 2D. Renderizar em 3D
+
+cubos para tubos. Parece bom. Eu faço o rascunho plano. Sim. Bom. [risos] Também meio que
+
+te incentiva a falar como um homem das cavernas, O que é meio engraçado. Bem, vamos esperar um momento. OK. Então, converta o arquivo. a isto. Mantenha o jogo em andamento. Sim.
+
+Aceitar edições automaticamente. Eu quero Veja, eu realmente não preciso recodificar. mas eu só queria ver se era isso Indo para Oops. Isso vai estar em Essa língua estranha? Estou apenas tentando copie isso sem sair deste local.
+
+abaixo. gato. OK. E por isso se recusa a Faça isso. Vou só... Ops.
+
+Gato. Cole-nos aqui e veja se conseguimos. O plano será preenchido automaticamente. Planos. Uh, claro. Plano.
+
+Só quero ver qualquer coisa por aqui.
+
+Não sei se essa é a correta. Isso não parece muito com manter a jogabilidade principal renderizar objetos do jogo como primitivos. Não tenho certeza se é isso mesmo. A certa. Vamos lá e vamos verificar.
+
+Isso de novo. WebGL Flappy Bird. Não, é sim. Então, não sei se é Na verdade, escrevi o plano como um homem das cavernas. OK. É uma pena. Mas,
+
+Quer dizer, há um limite para o que você pode fazer. Suponha. Bem, agora que convertemos um Fim de jogo, talvez a gente possa ir embora. Dê uma olhada, só por diversão. Uh, Onde está o arquivo? Ah, está bem aqui.
+
+Então, revele e explore. Espero que Continua funcionando como esperado. Apenas Arrastando isso para cá. Quer dizer, não parece 3D. Os gráficos são definitivamente diferentes.
+
+Então, isso não significa que não seja. Utilizando WebGL. É apenas uma imagem estática de um desenho animado 2D. perspectiva. Hum, OK. Eu só digo, sim, é o jogo.
+
+Parece 2D. Não consegui. Você não conseguiu girar? isto Então parece 3D?
+
+Sim, Porque, vamos lá. Todo esse trabalho e eu Não consigo ver a diversão em 3D aqui. Então, Vamos aguardar um instante. De novo, Não preciso fazer isso de jeito nenhum, mas...
+
+De qualquer forma, já mostramos como usar. habilidades, certo? Existem muitas habilidades em ali, e então, você sabe, seja lá o que você querer. Tem todo tipo de coisa. Hum, não temos a pasta de extensão.
+
+não estar mais aqui em cima, mas uh Então, vou experimentar isto. de novo. E agora não conseguimos ver nada. Sim. Então, Isso é um lixo completo. OK. Hum, que é
+
+multar. Se você está assistindo a isso, você é Tipo, "Por que o jogo Flappy Bird não..." trabalho?" Bem, você sabe por quê. Agora, nós vamos
+
+Não se preocupe com isso depois. OK. Mas eu sou Vou apenas salvar essas alterações. E Então, já falamos sobre extensões e...
+
+pelo menos carregar uma habilidade, mas vamos dar uma olhada em Como criar uma habilidade. OK.
+
+As habilidades de agente são um sistema aberto e leve. Formato para estender agentes de IA. Isso é um formato aberto que foi criado. EU disse que criamos sim, eu criei com Antrópico, mas foi criado por Um antropogênico em 2025. OK. Então, esta é a estrutura de diretórios.
+
+que você vai ver. Você vai para nomear a habilidade aqui mesmo. Isso é Vai ter um médico especialista. Pode ter roteiros. Pode ter referências e pode ter ativos. Então, as habilidades são usadas.
+
+divulgação progressiva para gerenciar o contexto eficientemente. Se você me perguntar o que é isso Significa que eu esqueci essa palavra e isso mostra aumentou muitas vezes no marketing. Então é algo tipo de jargão de marketing, hum, aquele Claude gosta de ou antrópico gosta de dizer um muito. Hum, acho que significa tipo divulgação progressiva significa algo como Só carrega quando precisa, certo? Então Sabe quando você usa Claude M, uh, Claude Arquivos MD e depois tínhamos outros arquivos.
+
+arquivos em outros locais, hum, seria Carregue apenas quando necessário e Não precisa saber de tudo. Nós também veja o termo divulgação progressiva Quando falamos de MCP também. Mas Enfim, isso é um detalhe à parte. Hum, então hum Enfim, voltando a isto. Existem três coisas. Conseguimos uma descoberta. Então, no início,
+
+Os agentes carregam apenas o nome e Descrição de cada habilidade disponível. O suficiente para que você... talvez saiba quando...
+
+será relevante. Então, o que eu acabei de dizer, ativação, quando uma tarefa corresponde a uma habilidade descrição, o agente lê a descrição completa Instruções de habilidade do médico em contexto. execução. O agente segue instruções opcionalmente carregando arquivos de referência ou execução de pacotes Codifique conforme necessário. Então, sim, exatamente o que eu disse. Vamos dar uma olhada na anatomia.
+
+de um médico especialista em habilidades. Então você tem a sua frente importa e você precisa ter um nome e descrição. Isso é tudo que você precisa ter. a habilidade, mas você provavelmente quer terá instruções concretas porque irá Vai ser muito melhor. E então a única coisa Você precisa ter essa habilidade, MD.
+
+Todo o resto, os roteiros e essas coisas. são opcionais. Hum, algo que você também pode ser interessante especificar se é permitido ferramentas que estão nesse script. Então, aqui está Temos muito mais informações. Você pode Veja, temos licença, compatibilidade, metadados, mas acho que as ferramentas permitidas são Uma com a qual não vamos nos importar. OK.
+
+Sim, isso é o básico. Informações sobre uma habilidade de agente.
+
+Olá, meu nome é Andrew. Neste vídeo, eu querem que sigamos em frente e nos criemos. Uma habilidade personalizada. Hum, e então estes Não deve ser muito difícil de construir. Hum, como eu construí um para Claude e Codeex e outras coisas aqui. Hum, e segue
+
+os agentes, hum, os agentes, uh, habilidades estrutura. OK. E então, provavelmente, existe alguma maneira de ter Bem, temos o SQL, temos o nosso simples Banco de dados de tarefas com suporte em SQL. EU Não sabemos se testamos isso. Acho que nós Você testou, né? O que vou fazer
+
+É só ir até meu aplicativo de tarefas simples. EU Acho que este seria um bom exemplo para Criar uma habilidade. E assim, habilidades um Pode ser que já exista um comando para nós. ter um programa de desenvolvimento de habilidades, já que todos eles Parece que agora existem desenvolvedores de habilidades. Então, eu sou Vou digitar "habilidade" em seguida.
+
+Habilidade ativada. É como se não houvesse nada. Desenvolvedor de habilidades. Desenvolvedor de habilidades criador. Realmente? OK. Se não tiver isso,
+
+Vamos à loja de extensões e eu estou Vou dizer explorar. Vamos reabrir o navegador porque deveria haver uma habilidade criador. Criador de habilidades.
+
+criador, criador de agentes, CLI Gemini, Criador de habilidades, criador de extensões. Então, Provavelmente este aqui. Hum, vamos ver Faça isso no GitHub e veja o que temos. Permite o desenvolvimento de habilidades específicas para o projeto. desenvolvimento. Desenvolver habilidades. Então, isto é
+
+O que eu quero. É estranho que... não vem automaticamente com isso instalado. Acho que com o Cloud Code,
+
+Acabamos copiando. O Códice era o único que de fato o construiu Vou prosseguir e instalar. essa habilidade. Ok, acabei de copiar isso. E assim Diremos que sim, não há problema em estar em lá. E agora vou ali e digo
+
+Gêmeos. E diremos habilidade. Desenvolver habilidades. Criar uma nova habilidade que nos permita gerenciar nosso SQL Banco de dados de tarefas SQLite leve para adicionar, Apagar ou listar tarefas. uh use uh a habilidade deve usar um roteiro e assim deveria forçar O motivo pelo qual estou dizendo isso é como um A habilidade pode ser como um arquivo Markdown.
+
+e então ele pode simplesmente editar o JSON. diretório direto, mas queremos ter edição previsível, então crie uma nova habilidade que permite gerenciar nosso banco de dados SQL Ferramenta para adicionar, excluir ou listar tarefas. habilidade deve usar um script em vez de diretamente chamando um escolite comandos para criar um processo auditável consistente experiência auditável. OK. E assim nós vamos Pode pressionar Enter. Espero que isso
+
+A compilação simplesmente funciona. E espero que isso crie o pasta onde precisa estar. Vai Provavelmente estará em Gêmeos. Então aqui está. a pasta de habilidades.
+
+É um pouco diferente. Habilidade criar. Não, não. Para onde está indo? Gosto da forma como está escrito em japonês. eu esqueci
+
+que está escrito em japonês. Bem, qualquer que seja. Quem se importa? Vamos deixar que escreva. Em japonês. Contanto que funcione. Por que
+
+Isso importa? Quer dizer, acho que importa se você tem escrever em japonês para ele. Para que Pode ser um erro, Mas meio que esqueci que estava fazendo isso. que. OK. E assim, criou-se um diretório de habilidades.
+
+aqui. Não, está em inglês normal. Certo, mas podemos dar uma olhada aqui e Não sei por que há tarefas a fazer aqui. Acho que é assim que funciona. Vai escrever Faça as tarefas e depois vá iterando sobre elas. Mas em
+
+Aqui, deveria haver um script, um gerenciador. Roteiro de tarefas, certo? E assim, dessa forma, Ligarei diretamente para essas pessoas. Nós temos uma referência, que eu acho que não nós Preciso mesmo. Não precisamos de ativos.
+
+Esses são apenas espaços reservados. Estou apenas dizendo para permitir a sessão. Portanto, a ideia é que deveria ser alimentado por esse script uh escopo do espaço de trabalho. Sim. Então, porque ali poderia se mover para o topo nível. Não queremos isso. Então diga "permitir".
+
+OK.
+
+Shell aguardando entrada. Certo, então eu apertei Shift e pronto. ali e está escrevendo e então agora é feito. Certo, preciso de mais alguma ajuda? Não, Eu não.
+
+Sim. É, meu japonês é péssimo. Mas eu sei o que isso está tentando dizer. Então, Vamos até lá e nossa habilidade é chamado gerente de tarefas. Então, nós vamos Simplesmente pare isso, limpe tudo e reinicie.
+
+Vamos levantar de novo e passar para o nosso habilidades habilidades lista. Só quero ter certeza de que é lá. Então, aí está o nosso gerenciador de tarefas. e assim podemos explicitamente chamá-lo de...
+
+Agora, a questão é que... Entenda que estamos chamando isso de "se nós" uh, corresponde à descrição, mas agora, Vou apenas dizer: liste as habilidades, liste as Tarefas a fazer. OK?
+
+Então, aqui estamos apenas prestando atenção. se estiver invocando isso. E agora é Estou tentando usar esse script. Então diremos Permitir uma vez. E assim, eles foram listados.
+
+E ocorreu um erro. Não sei bem porquê. Ocorreu um erro, o que é um motivo bobo. Por que, mas poderia ser algo para fazer. Com SQL.
+
+Eu não fiz o pedido, mas algo Obviamente aconteceu algo aqui que causou isso estragar tudo. Eu também diria para adicionar um, hum, adicionar o uh adicionar internacionalização de idiomas Adicionar suporte linguístico à minha lista de tarefas. E Então estou tentando ver se isso vai invocar o habilidade E é mesmo. Veja, está tentando invocar isto. Ative a habilidade. Então diremos
+
+permitir. Ainda posso encontrar erros aqui, pois eu Não sei porquê. E nós vamos adicionar isso. E Então agora essa habilidade foi adicionada. E assim Pronto. E o melhor de tudo
+
+A questão das habilidades é que você pode trazê-las. entre os três principais fornecedores E provavelmente é a melhor coisa. para o seu fluxo de trabalho. Mas aí está você ir.
+
+Olá, meu nome é Andrew. Neste vídeo, eu Quero te mostrar como trabalhar com MPC. servidores. Então, vamos precisar ir. Obtenha um servidor MCP para se conectar. Nós
+
+Poderíamos tentar fazer a nossa própria versão local. Eu fiz isso explicitamente na nuvem. curso de programação, mas para codeex e estes outros, eu não quero ir a um É um texto enorme, pois eu só quero entender. Um servidor MCP em funcionamento. Hum, e daí?
+
+O que estou procurando é apenas um exemplo de Uma com a qual possamos nos conectar. Hum, estes são as que são configuradas se estivermos conectando-se a outros como você tem como um servidor MCP local que você deseja conectar-se a. Mas eu só estava tentando encontrar algo que nós pudéssemos... conseguir. Então
+
+O que eu vou fazer é ir e digite uma extensão ou desculpe, estamos Vou para Gemini. Eu vou a um pasta diferente, como por exemplo, "Olá, mundo!". Vamos lá. E diremos Gêmeos E vamos abrir o site da extensão.
+
+Vamos tentar ver se conseguimos encontrar algum. tipo de MCP. Então, vamos falar em extensões. aqui E diremos explorar. Isso abrirá caminho para este URL. Então, o que estou procurando é
+
+Coisas do MCP. Existe alguma maneira de nós... Filtro para MCP?
+
+Não tenho certeza. Não tenho certeza. Mas, talvez eu queira dizer...
+
+Eu já usei o Tvago no passado, mas tipo... talvez o clima uma previsão em tempo real E aqui está escrito "ganchos". Eu quero MCPS pergunta. Podemos incluir o MCP aqui?
+
+Então, eu só quero garantir que Sim, existem servidores MCP. aqui, mas estou apenas tentando pensar em como no caso de um servidor MCP. Em outro Um, eu usei o Roblox E talvez eu faça isso aqui de novo, só que...
+
+Porque eu quero um que funcione. MCP Roblox. Eu uso isso no curso Codeex. Então, Você vai precisar do Roblox Studio. já instalado. Você simplesmente vai lá e faz.
+
+uma conta. Você pode simplesmente observar propósitos aqui, mas se você já pegou o meu outros cursos, você já sabe o quê Isto vai acontecer. Então, eu vou. adiante e vamos cancelar isso fora. Vamos ver que tipo de problemas que vamos enfrentar. Então, eu
+
+Não acho que realmente importe onde. Estamos executando isso. Então, vamos prosseguir. e instale-o aqui. E então, aqui Está tentando analisar o arquivo e está apresentando um erro.
+
+fora. Então, está dizendo que foi adicionado ao Configurações do projeto em nosso "Olá, mundo!". Hum, Então acho que talvez eu não queira acrescentar nada. para este aqui. Então, eu vou.
+
+Vá em frente e apague-o. E eu vou para voltar aqui. Vamos simplesmente dizer Roblox. mundo. E vou colar isso aqui.
+
+Entrei novamente, pois não sabia que ia acontecer. para adicionar um arquivo, mas acho que é assim que funciona. Serve para este. Então, aqui temos o Roblox Studio. Vou me abrir Roblox Studio aqui. Para usar
+
+Além disso, há mais alguns passos a seguir. precisar. Então, você precisa... Ops.
+
+Você precisa instalar o Studio. Plugin que permite solicitações HTTP com segurança. e conectar IA. Então, eu já Instalamos o plugin, mas vamos...
+
+Vá em frente e viva uma nova experiência aqui. E para instalar este plugin, Você precisa acessar este link e fazer o download. este arquivo. Então, nós baixaríamos isso. bem aqui.
+
+OK. E então existe uma pasta para plugins. Então vamos falar sobre plugins. Aqui você pode ver que nós Eu já o tenho. Novamente, eu só vou...
+
+através do processo de mostrar-lhe como obtê-lo novamente. Então, estou tentando pensar onde isso se encaixa. aparece. Uh, então em algum lugar existe um plugin diretório. Então talvez isso nos diga aqui.
+
+Como instalar plugins do Roblox Studio Porque existe uma pasta. Eu simplesmente o arrasto. para uma pasta.
+
+Botão da caixa de ferramentas da guia inicial. uh plugins. O que eu vou fazer é ir Acesse a pasta de plug-ins. Aqui está. Ah, E então ele simplesmente abre a pasta. E
+
+Então, tudo o que eu fiz foi colocá-lo aqui. E Então agora simplesmente aparece ali, não é? Para que este mundo seja interativo, para que possamos usar Roblox para povoar este mundo, eu tenho que Publicá-lo é um absurdo. Então Vou para lá e simplesmente vou. Publicá-lo como uma experiência sem título.
+
+Vamos dedicar um momento a isso. Isso é Publicado com sucesso. E assim eles estão conectados ao servidor. Podemos então compartilhar nossa experiência. configurações. E aqui, eu quero definir...
+
+segurança. Eu vou... eu vou...
+
+habilite isso. Ah, desculpe, permita HTTP. Então, Isso permite que ele se comunique aqui. Então Vou acessar a seção de plugins. Eu sou Vou clicar neste plugin aqui.
+
+E Aqui temos esta conexão, certo? Ops. E eu vou em frente. e conectar. E então, agora isto vai começar.
+
+Um servidor MCP ao qual possamos nos conectar. Aguarde um momento. Estou esperando por para ficar tudo verde. Parece que não está conseguindo conectar. por algum motivo pois poderia ter estado em funcionamento antes. Então
+
+Está tentando novamente. E nós vamos Desconecte-o. Vamos conectar novamente.
+
+Então, o que estamos procurando é isto: Tudo para ficar verde. Mas talvez também precisemos começar isso. por aqui. Então, não tenho certeza. Nós iremos.
+
+Em seguida, digite Gemini. E talvez seja isso que se deva fazer. conectar-se ao outro. Eu não tenho certeza. Um Vou reconectar isso. OK. Sim.
+
+Então, era apenas uma questão de ordem. Então, o que eu deveria ser capaz de fazer agora? Isso é legal. Hum, você consegue criar uma esfera? no Roblox Studio Usando MCP? Bem, na verdade, antes de fazermos isso...
+
+Vamos ver se conseguimos ver o nosso. MCP. Então, digitamos MCP aqui. Diremos lista. E aqui podemos ver todos os nossos Ações do Roblox. E está pronto para usar.
+
+Vou ver se há mais alguma coisa. Opções aqui. Temos o esquema de descrição desativado (habilitado). espaço de trabalho. Nada de interessante. OK.
+
+Então, vou dizer que usando o Roblox Estúdio MCP. Criar uma esfera no mundo em uh 100 100. Você o torna azul e faz É realmente muito grande. talvez, sabe, unidades de 40 por 40. OK.
+
+Então veremos se ele consegue se comunicar. sobre MCP. Observe que ele mostra um servidor MCP. aqui. E assim gerando o Roblox objeto e então espero que esteja indo para fazer isso. Então, se isso acontecer, será
+
+Deixe aqui, em nossa área de trabalho. Então, estou apenas monitorando isso para ver o que acontece. Está convocando a ação MCP. Então é tentando conectar
+
+OK. E por isso estamos observando atentamente. Isso para ver se vai dar certo. Isso é muito, muito lento. Mas acho que isto é tem mais a ver com Gêmeos ser lento do que com isso.
+
+a comunicação MCP. Bem, eu consegui fazer isso funcionar no Roblox. Vai funcionar aqui ou, desculpe, Codex? Será que vai funcionar por aqui? Então, aparece a mensagem de que o tempo limite foi excedido. garantir Roblox
+
+O estúdio e a venda de pedras preciosas estão abertos. Isso é. Então, vou tirar uma captura de tela aqui. Não, não tem jeito nenhum vamos ser Podemos colar isso aqui? E se eu controlar... É, eu não controlo.
+
+Tenho certeza disso. Então, hum, Você pode tentar novamente? O, hum, talvez nós Preciso verificar onde o servidor está sendo executado.
+
+o uh o MCP uh O plugin diz que está conectado. no Roblox. Ele funciona nesta. OK. Então, estou apenas tentando forneça algumas informações contextuais.
+
+para ajudar. Vamos ver se isso ajuda. de forma alguma. OK. Então, obviamente, o MCP O servidor está rodando aqui e o Roblox está conectado,
+
+Mas eu me lembro que começa na porta. 30002 por aqui. Então talvez seja isso que faremos. Vamos mudar isso em um segundo. Acho que vai dar tudo errado aqui. Então,
+
+O que eu vou fazer aqui, porque talvez O porto já está ocupado, mas este é um adivinhar. Vou prosseguir aqui e Vamos ver se consigo alterar esse valor. Adicionar não.
+
+E se eu fizer essa conexão? Certo, então esse está conectado ali. E vou tentar isso de novo. Tente fazer a esfera novamente.
+
+E então, talvez agora, porque olhamos para Aquele porto, nós sabemos exatamente onde ele fica. correndo. Vemos aqui embaixo o número 58741, que é a outra, certo? Ambos são do Roblox. porque talvez houvesse um iniciado de antes E isso nem sequer tem relação com o assunto.
+
+Talvez seja apenas algo diferente.
+
+Hum. É pensar. Sim. Não tenho certeza do que nosso Problema de comunicação. Este é o maior O maior obstáculo com o MCP é simplesmente como conectividade e depuração. Um
+
+Mas sim, Gêmeos é muito lento para... responder. Isso torna muito difícil Depure as coisas aqui. Está tentando
+
+depurar essa informação. Não sei por que nós Aqui, o número de pessoas foi duplicado. Isso é meio que chato. Não há muito que eu possa fazer a respeito.
+
+Então agora está conectado aqui. OK, bom. Apenas o cliente dois está conectado. Eu tenho dois clientes em execução. Então eu sou apenas mais um dos Eles vão funcionar, né? [risos]
+
+de novo. Talvez eu esteja executando um do Codeex. antes. Preciso reiniciar meu computador ou Em algum lugar está funcionando. Eu simplesmente não sei onde. Mas você sabe, eu sou apenas
+
+Estou tentando fazer um funcionar e este tipo Coisas acontecem durante a depuração. Pronto. E então, oh, isso fez...
+
+Será que funciona?
+
+Vamos. Você consegue. Por favor, por favor, Por favor, por favor, por favor. Parece que está analisando o conexões.
+
+Uhum. OK. Então, diz que criou a esfera. Então, se eu voltar para cá, Definitivamente, há algo estranho acontecendo. lá. O que é isso? Ah, aqui está.
+
+Ali está a nossa esfera. Então, você sabe, Sabe, se você tiver um muito rápido editor, está usando MCP, então você poderia Crie o seu mundo. Ah, eles obviamente Temos um agente de IA aqui, mas não é...
+
+muito bom. Então, você sabe, o MCP O servidor será uma ótima opção. Se você quiser construir coisas. Eu faço sinto que você precisaria de mais do que apenas um...
+
+MCP para ajudar a construir o seu mundo. Mas, é, aí está. OK.
+
+Olá, meu nome é Andrew. Neste vídeo, eu queremos explorar maneiras pelas quais possamos interagir com Gêmeos. E assim por diante deve ser uma API Gemini direta que nós pode utilizar. Então vou fazer um novo pasta aqui e vamos chamá-la assim mesmo. API Gemini ou SDK Gemini. E eu vou
+
+ir dar uma olhada e ver se conseguimos Encontre o SDK Gemini, pois deve haver algum. algo. Eles tentam resolver as coisas. Na Vertex AI, mas acho que eles Provavelmente tenho isso em um caso isolado. Então Vamos para lá. Então, o que eu estou procurando
+
+para é a biblioteca. E então a coisa boa é Eles têm mais de uma biblioteca, que é Muito, muito bom, pois é meio que É frustrante quando você só tem um um. Mas acho que vamos optar por Python. Go é obviamente muito bom opção. Então, o que vou fazer é voltar.
+
+para cá e eu vou... uh, CD de volta aqui e vamos tentar usar Vamos tentar usar um Gemini, você sabe, criar, uh, criar o nosso coisas aqui. OK. Então, tipo um exemplo, mas
+
+Veremos se isso corre bem. Então posso dizer que quero usar o Gemini. SDK para interagir com, uh, para ter um exemplo de uso do Nano Banana como isso é A ferramenta de edição de imagens deles. Então vamos. Vá em frente e execute isso, e eu quero ver se Ah, eu não disse em que idioma.
+
+Então, acho que vamos ver o que acontece. Mas Tomara que escolha Python. Eu também estava Muito rápido no gatilho. Posso trabalhar com Go, Python, TypeScript. Não importa, mas algumas serão mais fáceis do que outros.
+
+O que é interessante, se formos analisar... Aqui está escrito: "Ao construir o Gemini Para usar a API do Google Gen, recomendamos o uso desta. SDK. Estes são produtos oficiais.
+
+bibliotecas. Se você estiver usando nossa versão anterior bibliotecas, ah, ok. Então, isso significa Bem, está escrito Google Geni aqui embaixo. Então, vamos apenas garantir que seja isso mesmo. O que está usando. Isso é. OK. E assim,
+
+Apesar de estar escrito Gêmeos, é... O Google Genai. Está usando Acho que é TypeScript ou JavaScript. Então,
+
+isso é bom. Vamos prosseguir com isso. Não tenho absolutamente nenhum problema com isso. Hum, eu não como pacotes do Node.js. Então, eu vou.
+
+aqui adiante e apenas adicione que ignore imediatamente porque eu não quero Veja todos esses arquivos. Isso me deixa louco. E eu direi que permite. E eu vou encerrar todos esses abas aqui para que eu possa ver o que estou procurando no. E aqui temos MJS. Eu não tenho
+
+Só vi arquivos MJS depois do Codeex. recentemente. Bem, mais uma vez, eu não moro no Espaço JavaScript, então talvez isso seja um convenção normal para você, mas para mim, Parece bizarro. Hum, mas estou entendendo Estou acostumado com isso. Assim como o JavaScript se parece da mesma forma. É apenas o M. O M é
+
+Isso está me deixando confuso. Bem, enfim, então Aqui vamos inicializar o Google. Genai. Vamos perguntar à Nano Banana. Vai usar a memória flash Gemini 2.5. Uh,
+
+Diremos que permita. Permitir tudo em geral aqui. dando-lhe um momento para Diga-me, conte-me uma pequena história engraçada sobre Nano Banana. Quer dizer, eu quero gerar uma imagem com isso. Enquanto isso acontece, vamos dar uma olhada em As bibliotecas do Google que são possíveis.
+
+Prevejo que não funcionará porque eu não Possuir uma chave de API. Modelos do Google, Mas talvez simplesmente pegue isso do nosso subscrição. Então, vamos para cá. E assim temos a nano banana poderosa e alta Geração de imagens. 3.1, certo? Então talvez o 2.5 exista mesmo.
+
+Mas não seria desejável? Aquele nanobana? Vou diminuir o zoom para poder ver o modelos. Quer dizer, este aqui está dizendo 3.1.
+
+Sim. Portanto, ele solicita a chave da API, que é multar. Vou pegar isto aqui, Cole isso aqui e eu terei que ir. para o meu Google AI Studio por aqui. É aqui que ficam as chaves da API.
+
+são gerados. E eu vou ter que Adicione um pouco de dinheiro para gastar aqui. Então, Beo, os gastos estão a caminho. Existe um Nível gratuito aqui. Não acho que seja isso.
+
+Vai funcionar para mim. Então, eu vou Pode apagar esta chave. E eu sou Vou adicionar um pouco de dinheiro. E se houver algo para mostrar Você aqui, eu vou te mostrar. Apenas um momento. OK. Aparentemente, nós realmente...
+
+Tenho alguns gastos aqui com 10 dólares. EU Não me lembro de ter colocado 10 dólares aqui, mas Temos um cartão de crédito cadastrado. Eu não Fazer qualquer coisa. Hum, o que é interessante. Então, vou pegar o Chave de API. Mas esta é a minha conta principal, então
+
+Talvez seja esse o motivo, mas eu não sei. Lembre-se de não apostar dinheiro aqui. Então, vá em frente. Vamos usar apenas a chave da API Gemini. Nós vamos criá-lo. Hum, e veremos o quê.
+
+nível em que se encontra. Então, essa é a nossa chave. Mas não estamos em um segundo sequer. Nós não somos lá dentro. Quero clicar nessa configuração.
+
+cobrança. Aqui, nós realmente conseguimos Conecte nossa conta de faturamento. Interessante. Mas parece muito perigoso. Com o Google. Sinto que, porque você tem
+
+Ouvi a notícia de que é como se fosse o seu Os gastos saíram do controle. Isso É aquela que mais me preocupa. Mas Enfim, vamos continuar. E então aqui tipo, o seu Google Cloud e Gemini são Agora aja de forma conectada. Plano pago da API Gemini A ativação permite o acesso a limites de taxa mais elevados. EU
+
+Não quero isso. Bem, a única coisa que eu sou A preocupação é como se estivesse passando por cima. uso, mas aparentemente conseguimos alguns uh Uso gratuito da nuvem aqui. E então agora estamos sobre o pagamento pós-pago com nível 2. Eu nem sequer Não sei por que tenho um nível dois, mas é isso.
+
+multar. Vou copiar o meu chave. E aqui precisamos exportá-lo. Hum, então Estou apenas tentando decidir. Eu sou apenas Vou colar aqui o texto que está fora da tela.
+
+E Eu vou para Copie esta parte aqui. Ops. Cancelar. Pode cancelar. E eu vou simplesmente seguir em frente.
+
+e defina esta chave. OK. E então estava escrito aqui em cima, eu acho. Bem, são módulos do Node.js. Deve ser
+
+É só começar com MPM, certo? Ah, eles nem sequer nos dão um "Ok, claro". Multar. Vamos fazer M. Não diz nada.
+
+qualquer coisa, mas vamos lá dar uma olhada. ir. npm iniciar. É, eu não sei o que está pensando. aqui porque normalmente você teria um a o roteiro aqui e depois era só dizendo para executá-lo diretamente, diretamente. Então,
+
+Vou voltar a falar sobre Gêmeos aqui. EU Não quero usar minha chave de API aqui. EU Quero usar minha assinatura.
+
+Então, essa é a única coisa irritante. EU Estatísticas de acesso. Hum, Então está usando isso e não a chave da API. O que é bom. Vou voltar para a última conversa, retomar.
+
+Então, aqui diz para ir até aqui e depois É só executar. Vou simplesmente dar uma olhada. Inicie o script dessa forma. Não sei por que isso não aconteceu. Assim, a Nano Banana deveria ser gerar uma imagem e esse prompt não é muito bom.
+
+Isso me contou uma história.
+
+Então, vou voltar para cá. e vamos consultar a CLI para isso. Porque estou confuso sobre o porquê disso ter acontecido. que. Vamos até aqui. E assim,
+
+Aqui temos a opção de gerar conteúdo. Que gerar conteúdo. E assim, crie uma imagem. Então, vou prosseguir e Aproveite esta dica. Essa é a única coisa Isso é diferente. Parece que
+
+Todo o resto permanece igual, mas... salva a imagem. OK. Então, vou prosseguir.
+
+e simplesmente substituir parte desse código. E aqui, Isso está em Python. Então, eu vou. para JavaScript. Vou pegar tudo agora mesmo.
+
+este código. Parece praticamente igual. Nós iremos. Vá em frente e cole isso. Se eles tiverem um Um exemplo funcional seria perfeito para meu. OK. E nós vamos acabar com isso.
+
+E vou voltar para cá. Vamos executar o comando `npm start`.
+
+E vamos dedicar apenas um momento a isso. para gerar essa imagem. Acredito que seja gerando essa imagem à medida que ela acontece lento. Isso significa que deve estar pensando. duro. Ok, a imagem foi salva.
+
+Vamos dar uma olhada aqui. Pronto. Gemini Nano Banana, uma delícia dupla de sabor. Claro. Qual era a pergunta? Em um elegante
+
+Restaurante com temática de Gêmeos. Claro. Ok, Google. Qualquer que seja. OK. E assim
+
+Pronto. Isso foi muito bom direto. Vamos dizer apenas Gêmeos. Ou C. Sim, exemplo do Google Gen AI. Hum,
+
+Também poderíamos usar a API REST diretamente. Não acho que seja tão importante fazer isso. que. Bem, mas vamos passar para o ADK. Essa será a mais próxima equivalente para agentes imobiliários. OK.
+
+Olá pessoal, aqui é o Andrew. Neste vídeo, eu Quero dar uma olhada no ADK. Então ADK, A estrutura de desenvolvimento de agentes será a maneira pela qual podemos prosseguir e implementar Agentes, certo? Então, não tenho certeza se Isso seria como para a codificação de chicotes elétricos. particular, mas é apenas para construção agentes externos. Hum, e é basicamente...
+
+as ferramentas que um Como se chama isso? Usa o Google, né? mas também acredito que tenha integrações. no sistema Vertex AI. Tipo assim Existe uma maneira de hospedar o tempos de execução em algum tipo de computação ambiente isolado. Hum, isso é
+
+Não é o que me interessa. Eu só quero Para configurar um agente básico com um loop. Observe que podemos criar uma equipe de agentes aqui. Então poderíamos montar uma equipe de agentes ou ter Agentes multifuncionais. Uh, sons da equipe de agentes interessante onde poderíamos estar usando o padrão de coordenador. Eu não tenho certeza. Mas
+
+Vou voltar aqui e nós estamos Vou lá e digo, uh, MKDR agente uh uh ADK SDK e vamos passar para o CD do ADK uh, crie o diretório aqui. Desculpe. ADK SDK e digitaremos Gemini. OK. Então, digamos que criemos um agente e agente que possui ferramenta usada para verificar o clima usando Tem um URL. Então, confira a previsão do tempo.
+
+usando o comando curl. Existe um muito específico que mantém acostumando-se Sim, aqui está. Uh, usando ADK, que significa kit de desenvolvimento de agentes.
+
+O prompt deve ser ou o clima de Toronto. OK. Então, nós vamos. adiante e nós vamos... fazer isso acontecer e nós
+
+Veremos o que ele usa. Não tenho certeza do quê idioma que utilizará. Novamente, estou muito indiferente se for Python, Go, JavaScript. Não tenho certeza por que está sendo enviado e olhando em volta desse jeito. Talvez não Saiba o que é o kit de desenvolvimento de agentes.
+
+Então, talvez eu possa dar uma mãozinha aqui. Ah, está expandindo sua busca. Tenho vontade de interromper. Desculpe. Ah, ADK fica por aqui.
+
+Então, vamos prosseguir e fazer isso. para ajudar. OK. Vamos aguardar um instante. lá. Então permita
+
+então usando web fetch para processar Informações aqui e um exemplo. Até agora, não atingi meu limite de uso. mas não tenho como rastrear o uso. limite com Gêmeos. Enquanto isso acontece Talvez eu dê uma passada no Gemini, uh.
+
+Sim, na verdade não faço ideia de como rastrear. [risos] agora estou pensando nisso. Quer dizer, não temos nos deparado com Se houver algum problema, tudo bem. Mas enquanto isso acontece aqui, eu vou...
+
+Para ver se consigo descobrir meu uso.
+
+Não faço ideia de como verificar. Como eu faria isso? nem saber Onde está a utilidade? Nem sei. Essa é uma boa pergunta.
+
+Bem, eu voltarei aqui quando Contém mais informações. Aqui quer Para implementá-lo com TypeScript. Claro, vá em frente. Está usando o ADK, então eu sei. Isso mesmo. E aqui
+
+Temos algum código. Hum, não tenho certeza exatamente do que estamos procurando. no. Vamos provar isso por enquanto. Uh, Quer dizer, eu já tenho um conjunto em este diretório, então deve funcionar bem.
+
+E assim encontrou aquela chave que havia procurado anteriormente. Permita-me, acho que está tentando executar. agora já logo de cara e teste. E agora, literalmente, é isso mesmo. tentando executá-lo. Está indo tipo
+
+Aqui o ciclo se completa. E nós vamos tomar um Analise o código.
+
+Vou executar o script do agente. Ele executou o programa. Parece que há alguns erros. Está se chocando com... Então está funcionando.
+
+É muito difícil fazê-lo funcionar, o que é bom. Mas aqui está definindo uma ferramenta que é Bastante claro. Um Sim, essa é a ferramenta para programar. Isso define um novo agente de LLM com suas instruções que é o prompt do seu sistema. Isso é Escolhendo o flash Gemini para usá-lo. Isso é
+
+passando o uso da ferramenta. E aqui temos Gera conteúdo e depois o repete em loop. Portanto, a sintaxe é um pouco diferente. Acho que não estamos usando a OpenAI. Não há mais sintaxe por aqui, pessoal. Temos tudo
+
+esses frameworks personalizados em cima disso, mas estamos aqui esperando por isso para voltar e tentar consertar o nosso uso de ferramentas. Muito bem, eu estava esperando. Cinco minutos aqui e eu não sei por quê Ainda estou esperando. Então, isso é mais ou menos...
+
+Muito, muito irritante. Então, o que eu O que eu quero fazer é ir em frente e ver se consigo. Eu mesmo executaria isso manualmente. Hum, será que...?
+
+Você tem um script de inicialização? Por que não há Iniciar script? Ok, é tipo, ok, hum, Você pode me fornecer um script inicial para teste? Eu mesmo fiz isso? Tipo, você não tem o Iniciar script. Não sei. Por que não?
+
+Você escreve sobre nossas viagens? Uhum. Ah, aí está. Ok, obrigada. EU Não preciso que você coloque isso lá, mas Acho que isso funcionaria.
+
+Eu também não preciso que você execute isso, mas eu Só preciso que você me dê o pontapé inicial. roteiro. Uh, está sempre fazendo tipo mil coisas. Eu simplesmente me calei. Tipo, o que você está fazendo?
+
+Pare de falar. Me dê o roteiro, por favor. OK. M npm start. Quero ver onde Ocorre um erro. OK. Então aqui está
+
+O carregador experimental pode ser removido em futuro. Em vez disso, use o registro porque eu Não quero ficar esperando por aqui. para sempre. Isto é muito simples, uh base de código. Então, vou prosseguir e Isto será carregado aqui hoje. Meu navegador eu
+
+Não sei, tipo, o Chrome está apenas começando a ficar instável. pior. Olha só, estou clicando aqui. Não respostas. É irritante. Provavelmente é
+
+uma das minhas extensões. Vamos. Deixe-me usar meu navegador. Vamos. A qualquer momento. Um segundo. OK. Anos
+
+Mais tarde, agora sou capaz de fazer isso. Nós iremos. para TypeScript. Então, o que eu estou procurando Eis um exemplo. Aqui está um exemplo simples.
+
+uma em que se define o tempo atual. Muito, muito simples. Então, eu só vou Vá e explore isso manualmente. Hum, então este aqui diz, "Vamos pesquisar Jennai no Google." Não, esse código está errado.
+
+Deve ser "Sim, aqui". OK. Então, Esta aqui diz ferramenta de função, diz ferramenta de definição. Este é completamente diferente. Então, vá para lá.
+
+Às vezes, simplesmente dar ajuda. Código funcional. Vou colocar isso aqui assim. E É uma função nova. Então eu vou.
+
+Vá em frente e faça isso assim. Um Temos um esquema de entrada. Este se chama parâmetros. Então, há algumas nomenclaturas. mudanças aqui. Novamente, vou presumir
+
+O médico deve estar certo. Certo. Caso contrário, por que eles têm isso lá? não é um tipo atribuível a undefined. Uhum.
+
+OK. Bem, ainda não sei. E Então, para cá eles correram. Eles chamaram isso de Executar agora. Então, vamos prosseguir e mudar isso para executar. Literalmente, apenas mudanças de nome para
+
+Sem motivo aparente. Pronto. E assim, isso mudou. Vamos descer até aqui. Isso significa LLM agente. É assim que se chama por aqui. Mestrado em Direito
+
+agente nome, modelo, descrição, instruções, ferramentas. Nome, modelo, instruções, ferramentas. Descemos por aqui. Hum, claro. Como fazemos para ligar para o agente?
+
+Porque diz para gerar conteúdo. Não existe. E se... e se for
+
+Conteúdo com sublinhado como este? Isso faz isso? Existem? Não. Como usamos nosso agente?
+
+Ótimos médicos. Gosto de como eles não conseguem entender eles mesmos resolveram isso. Então, vamos para lá. Raiz agente. Como o agente se identifica?
+
+Agentes Llm. Gosto de como tenho que ler Documentação necessária para fazer isso funcionar. Nós temos agente de capital. Multar. Claro.
+
+Como podemos usá-lo? Como podemos usá-lo? Estou olhando para cá. Como você usa isso? Como se chama isso?
+
+Gosto de como eles não são consistentes. Então, eu Nem consigo pesquisar aqui. Como Você usa o agente, caramba? Eu não posso Acredite no quão ruins são os médicos. Como faço para...
+
+usá-lo? Será que esta nos mostra algo? Ó meu Deus. Literalmente não nos mostra. Talvez seja sob agente de streaming. Não.
+
+Como você usa isso? Por que você criaria documentos que são incompleto? Isso é uma loucura para mim. OK, Vamos voltar para cá. E então, É tão idiota. Gêmeos,
+
+Vou ignorar isso por um segundo. e tente executá-lo mesmo que... Não deveria funcionar.
+
+Pode ser removido no futuro. Importar Caminho para o arquivo do usuário não encontrado. Avisos de rastreamento executar principal. Não tem nem 100 linhas. Eu não sei.
+
+Uhum.
+
+diz que diz Gêmeos gerar conteúdo não existe para o agente LML ou clima agentes. Isso só mostra como o Google realmente é. Não se importa em ajudar os clientes. Eles realmente não se importam. Quero dizer, Se você tivesse apoio empresarial, mas aposto que eu Aposto que o suporte empresarial agora é todo baseado em IA.
+
+agentes. Então, sabe, isso não é bom. qualquer. Esqueça tentar ajudar Tem alguém aqui? Qual é o objetivo? Hum, e
+
+então Ainda estamos passando por isso. Estou fazendo alguns movimentos aqui para ver se isso ajuda. Atualize o código. Vou fazer uma pausa. aqui. Veja se retorna alguma coisa
+
+Isso funciona. Pronto. Acabou de chegar voltar. Talvez isso realmente funcione. agora. Diga permitir
+
+Corredor na memória. Que diabos é isso? fazendo? Bem, pelo menos é...
+
+indo para lá. E assim, está passando para um corredor em memória com um usuário com Informação. Ah, claro. OK. Absolutamente complicado.
+
+Absolutamente ridículo que se se se O Google quer que as pessoas usem o ADK, que Eles claramente não fazem isso, eles fariam. Basta fornecer um exemplo completo. OK. Ok, então eu atualizei o agente. Isto Quebrar agora mesmo traz a coisa. Certo, então
+
+Vamos acabar com isso. Vamos prosseguir. Dê uma olhada aqui. E funciona? Pronto. Então
+
+extremamente complexo. Foi adicionado o módulos do nó lá. Não sei por quê Eles simplesmente não vão criar um git para nós. Ignore sempre. OK. Portanto, agora preciso selecionar
+
+Adicione o arquivo git ignore. Pronto. Então Agora só restam cinco arquivos. Ops! SDK asiático ou ADK, se preferirem.
+
+Mas sim, conseguimos fazer funcionar. Lá você vai.
+
+Olá, meu nome é Andrew. Neste vídeo, eu quer prosseguir e construir um personalizado para nós agente. Então, vou prosseguir e fazer Uma novidade chamada agentes personalizados. Personalizado agentes. tecnicamente subents personalizados se você, se quiser, e veremos, faremos tr Agentes alfandegários aqui. Vamos tentar isso.
+
+de novo. Agentes alfandegários da CD e vamos começar Gêmeos em alta. Acho que provavelmente existe uma extensão que pode desenvolver isso para para que não precisemos escrevê-lo. mão. Então, vou prosseguir com...
+
+para extensões e iremos explorar e ver se conseguimos encontrar algo aqui para agentes porque habilidades e agentes eles parecem muito semelhantes, mas... agentes, eles geralmente são executados em seu próprio tópico ou ambiente isolado e também eles podem coordenar geralmente com outros agentes. Então Vou dizer, uh, sub aent criador TUI interativo para criação de sub-rotinas de linha de comando.
+
+aents. Hum, Quer dizer, se funciona para nós, por que não? você sabe? Então, não precisamos fazer tudo. que nós mesmos trabalhamos. Não é como se fosse
+
+Isso é complicado. Tipo, se formos para Aqui, são apenas agentes Gemini e depois Você cria esse arquivo. Hum, Então não acho que seja complicado. Tem uma parte parecida com esta aqui em cima. Então, nós Posso dizer que tipo é, quais ferramentas, Qual modelo deve ser usado? Não sei.
+
+Talvez devêssemos simplesmente criá-lo à mão. Não acho que seja tão complicado. Hum, Então vamos para cá. nosso personalizado agentes alfandegários. E eu farei um novo pasta aqui chamada Gêmeos. E eu vou criar uma nova pasta.
+
+aqui chamados de agentes. E estou estudando para o JPT. Então eu sou Vou fazer um JPT. Então eu direi JPT uh N5 um perguntas de gramática. Vamos dizer, hum...
+
+questões pergunta uh pergunta genen. Ok, nome comprido, mas é exatamente isso. descreve. E aqui temos um exemplo. Então eu sou Vou pegar um pouco disso, tipo...
+
+esse. Boom. E vamos colar aqui. Eu irei até o topo e isso será JPT N5 pergunta gerador de perguntas gen. Vou dizer o nome completo aqui.
+
+Especializada em geração Questões de exame prático. esse A descrição não é muito boa. Hum, Normalmente, é isso que acontece. para invocá-lo. E então eles estão tentando Diga algo como "pense em algo como quando um usuário..."
+
+pede algo. Bem, e então aqui estou eu Provavelmente tentaria mudar isso. Eu sou Estou apenas tentando pensar em como posso mudar. a redação aqui. Hum, Não sei. Acho que vou deixar para lá.

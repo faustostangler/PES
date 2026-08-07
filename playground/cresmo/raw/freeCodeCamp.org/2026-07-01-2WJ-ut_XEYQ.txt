@@ -1,0 +1,830 @@
+---
+video_title: "Mastering JavaScript Dates and Times – Fundamentals to Advanced Techniques"
+video_id: 2WJ-ut_XEYQ
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=2WJ-ut_XEYQ
+video_date: 2026-07-01T11:19:43+00:00
+video_description: |
+  Learn about the complexities of JavaScript date and time handling with this comprehensive guide. Whether you're working with time zones, formatting dates for different locales, or preparing your code for production, this resource covers it all, including the upcoming Temporal API advancements.
+  
+  📚Resources
+  - Source Code: https://github.com/tapascript/40-days-of-javascript/tree/main/day-41
+  - MDN INTL(DateTimeFormat): https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+  - intl-date-utils package: https://github.com/CreoWis/intl-date-utils
+  - Courses on tapaScript YouTube Channel: https://youtube.com/tapasadhikary
+  - React Clean Code Rulebook: https://www.tapascript.io/books/react-clean-code-rule-book
+  - Join my FREE Course, 40 Days of JavaScript: https://www.youtube.com/playlist?list=PLIJrr73KDmRw2Fwwjt6cPC_tk5vcSICCu
+  - Join my FREE Course, 15 days of React Design patterns: https://www.youtube.com/playlist?list=PLIJrr73KDmRyQVT__uFZvaVfWPdfyMFHC
+  
+  🤝 Connect
+  - Subscribe to my YouTube Channel: https://www.youtube.com/tapasadhikary
+  - Follow on Instagram: https://www.instagram.com/tapascript/
+  - Connect on LinkedIn: https://www.linkedin.com/in/tapasadhikary/
+  - Follow on X: https://twitter.com/tapasadhikary
+  - Follow tapaScript on GitHub: https://github.com/tapascript
+  - Join tapaScript Discord: https://discord.gg/ux9BchWEW3
+  
+  ⭐️ Chapters
+  - 0:00:00 The BIG Problem with JavaScript Dates 
+  - 0:03:35 Why is Time Handling So Hard? 
+  - 0:04:35 The Core Struggle for Developers  
+  - 0:06:38 What is Epoch Time? (The Starting Point)  
+  - 0:09:58 Timestamp vs. TimeZone: Don't Confuse Them!  
+  - 0:11:35 Understanding UTC (The Global Standard)  
+  - 0:13:15 Best Practices: Storing vs. Rendering Dates 
+  - 0:16:22 GMT and Local Time Explained Simply  
+  - 0:19:23 Setting Up Our Coding Environment  
+  - 0:20:04 4 Ways to Create Dates in JavaScript  
+  - 0:30:14 Must-Know Date Getter Methods & Tricks  
+  - 0:36:46 Mastering Date Setters & Logic Rules
+  - 0:40:52 WATCH OUT: Common JS Date Gotchas!  
+  - 0:44:22 How to Parse & Validate Dates Properly  
+  - 0:46:21 Date Arithmetic: Adding & Subtracting Time  
+  - 0:50:56 The Leap Year Logic You Need to Know  
+  - 0:54:57 Handling Daylight Saving Time (DST) Like a Pro  
+  - 0:59:58 RECAP of PART 1: Key Takeaways for Mastery 
+  - 1:01:56 Intro: Why JavaScript Intl APIs are Underrated
+  - 1:04:26 The Problem: Why Global Date & Time Formats are Hard 
+  - 1:05:56 Getting Started with Intl.DateTimeFormat() 
+  - 1:10:22 Mastering Locales for Global Date Formatting 
+  - 1:16:05 Formatting Guide: Styling Dates & Times in JS 
+  - 1:21:55 Real-World Examples: Practical Date-Time Formatting 
+  - 1:28:57 Pro Tip: How to Programmatically Get Timezone Names 
+  - 1:31:24 Relative Time Formatting (e.g., "2 days ago") 
+  - 1:34:45 Advanced UI: Using formatToParts() for Custom Layouts 
+  - 1:37:53 Logic Deep Dive: How JavaScript Resolves a Locale 
+  - 1:41:05 Performance Optimization Tips for Intl APIs 
+  - 1:45:13 How to Format Date Ranges with Intl 
+  - 1:46:59 Introducing the intl-date-utils NPM Package 
+  - 1:48:27 Coding Challenge: Tasks & Assignments for You 
+  - 1:50:13 RECAP of PART 2
+  - 1:51:06 The Problem with JavaScript Date History
+  - 1:53:11 Top 4 JavaScript Date Object Bugs Explained
+  - 1:57:00 Introduction to the New Temporal API
+  - 1:57:42 Master Temporal Types: PlainDate, ZonedDateTime & more
+  - 2:02:01 JavaScript Date vs. Temporal API: Side-by-Side Comparison
+  - 2:04:57 Browser Support & Polyfills for Temporal
+  - 2:06:00 Access the Source Code & Resources
+  - 2:06:38 Before We End...
+---
+Aprenda tudo sobre gerenciamento de tempo no desenvolvimento web moderno com JavaScript. Neste curso abrangente, você aprenderá sobre as peculiaridades notórias do objeto de data nativo, dominará a formatação global usando a poderosa API da Intel e explorará estratégias para lidar com conceitos complexos como tempo Unix (epoch time), fusos horários e horário de verão. Você também terá acesso à futura API temporal, comparando-a lado a lado com os métodos atuais e aprendendo como implementá-la usando os polyfills disponíveis hoje. Este curso foi criado por Tapus .
+
+Olá a todos, sejam bem-vindos de volta. Se você trabalha com JavaScript há algum tempo, certamente já se deparou com datas e horários. E se você já trabalhou com datas e horários por algum tempo, certamente já pensou em jogar seu laptop do outro lado da sala. Datas e horários são um daqueles assuntos que parecem muito simples à primeira vista. Mas, assim que você implanta seu aplicativo em produção e um usuário acessa esse aplicativo do outro lado do mundo, começa a perceber algo estranho. Talvez em um dia, talvez em algumas horas,
+
+talvez as coisas quebrem no dia 29 de fevereiro e você comece a coçar a cabeça, se perguntando por que isso está acontecendo. Então pensei: por que não abordar esse problema? Por isso, estamos iniciando um curso completo e abrangente sobre data e hora em JavaScript. Este será um curso longo. É por isso que estou dividindo em várias partes. Na primeira parte,
+
+vamos desmistificar tudo sobre datas em JavaScript. Não vamos falar apenas sobre APIs, mas sim sobre o "porquê", o contexto, a parte fundamental que a maioria dos desenvolvedores ignora hoje em dia, e essa é a principal razão para a introdução de tantos bugs em produção. Ao final desta primeira parte, você terá um modelo mental sólido para lidar com qualquer problema relacionado a data e hora em JavaScript com confiança. Então, vamos lá! Antes de começarmos, aqui vai um pouco sobre mim: sou Tapus, engenheiro de software com mais de 20 anos de experiência prática na construção e depuração de sistemas de produção. Neste
+
+canal, vamos além dos tutoriais. Dominamos os fundamentos, corrigimos erros reais e pensamos como engenheiros. Se você leva a sério o aprimoramento da sua carreira de desenvolvedor, inscreva-se no canal. A maioria das pessoas pensa que data e hora são coisas lineares simples. Se o relógio marcar 15h, significa que são 15h. E fim da
+
+história. Mas quando você está desenvolvendo um software que precisa ser usado por usuários em diferentes partes do mundo, em dispositivos diferentes, que estão em fusos horários distintos, considerando o horário de verão e outros fatores, meu amigo, o tempo não é tão simples assim. A situação complica-se muito, muito rapidamente. Deixe-me dar um exemplo. Vamos supor que você esteja criando um aplicativo de calendário. Um usuário em Nova
+
+York agendou uma reunião para amanhã às 9h. E então outro usuário em Londres aceita essa reunião. Um terceiro usuário em Tóquio entra na reunião para ver quem realmente participa às 9h. Então, o que significa 9h para cada um desses indivíduos que estão tentando participar da reunião de diferentes locais geográficos? O que significa "até amanhã" para esse cara de Tóquio?
+
+Não se trata de casos relacionados à idade. Esses são problemas do dia a dia, e para entendê-los e corrigir erros relacionados a eles, é preciso compreender data e hora desde a base. É exatamente isso que faremos neste curso. Mas qual é o problema central? O problema central é que o tempo é relativo. O que isso significa? Significa que
+
+não existe um único momento "agora" sobre o qual todos na Terra possam concordar simultaneamente. Veja, a Terra é redonda e o Sol incide sobre diferentes partes do globo em diferentes momentos, e nós, humanos, dividimos o planeta em diferentes fusos horários para que possamos usar o horário civil de forma útil em nosso dia a dia. Isso significa que o momento atual tem uma representação temporal completamente diferente, dependendo de onde você está geograficamente neste ponto da Terra . No momento da gravação deste vídeo, são 15h. Em Nova Iorque, são 20h. Em Londres, são 21h. Em
+
+Berlim são 4h da manhã do dia seguinte em Tóquio. É exatamente disso que estamos falando. Mesmo instante, representação diferente. E esse é exatamente o problema que enfrentamos com tantas questões relacionadas a data e hora na programação. Veja bem, os computadores foram inventados pensando em seu uso distribuído globalmente. Mas o primeiro
+
+sistema operacional inventado foi projetado para uma única máquina e para um único local. Os primeiros sistemas únicos armazenavam a hora no formato local, e quando a internet começou a se desenvolver, isso começou a criar problemas, pois seu horário local pode não ser o mesmo que o meu . Isso se torna um problema sério e, além disso, existem alguns outros problemas, e é nessa parte que você deve anotar, pelo menos, os pontos principais. O primeiro problema é que os fusos horários não se resumem apenas a somar e subtrair horas inteiras. Pode ser em minutos, como 30 minutos, 45 minutos. Por exemplo, se
+
+considerarmos a Índia e Bangladesh, a diferença de fuso horário entre elas é de apenas 30 minutos. Talvez para alguns outros países sejam 15 minutos, 45 minutos. Certo, então, essas são as coisas que você precisa ter em mente quando estiver lidando com data e hora. Em segundo lugar, o horário de verão pode adiantar ou atrasar as datas. E o aspecto mais problemático é que o horário de verão não se aplica a todos os países do mundo.
+
+Terceiro ponto: não sei se você está ciente de que o governo pode alterar as regras de fuso horário. Às vezes, eles conseguem fazer isso com muito pouco tempo de aviso prévio. Ponto número quatro: todos nós sabemos que os meses têm durações diferentes. Alguns meses têm 28 dias, outros 29 , outros 30 e outros 31 . E existe algo chamado ano bissexto, certo? Em troca, ganhamos um dia
+
+extra daqui a 4 anos. Temos o dia 29 de fevereiro a cada quatro anos. Portanto, ao lidar com data e hora em programação, você precisa considerar todos esses aspectos para que nada seja quebrado no aplicativo do cliente, pois se a data e a hora estiverem incorretas, isso pode gerar custos adicionais. Todos sabemos que o momento certo é dinheiro. Agora, com todo esse conhecimento que reunimos, é hora de aprendermos o significado de certos jarens, certas palavras, certas frases. Por exemplo,
+
+tempo Unix (epoch time), UTC, EST. Há uma variedade de coisas que aprenderemos e você precisa entender muito bem cada uma delas para usar data e hora de forma eficaz em sua programação JavaScript. Vamos começar pelo tempo de época. Você provavelmente já ouviu falar disso. O que é o tempo de época? O tempo temporal existe
+
+devido a esse fato específico: o tempo é relativo. Nós conversamos sobre isso, certo? Meu agora não é igual ao seu agora. Se não estivermos localizados no mesmo lugar geográfico, pode não ser a mesma coisa; pode ser completamente diferente. Mas, para calcular a data e a hora, os programadores precisavam de um ponto de referência universal.
+
+Vamos criar um. Vamos assumir que este é o ponto de referência universal que todos na Terra, todos os programadores, todos os desenvolvedores de software na Terra, usarão como ponto de partida. E este é um único número inequívoco que representa um momento específico no tempo. Independentemente de onde você esteja neste planeta, devemos sempre considerar isso como um ponto de partida. E esse ponto de partida específico é chamado de época. Qual é, então, esse valor, ou seja, qual a
+
+data e hora específicas para as quais essa época específica está definida? Está programado para 1º de janeiro de 1970, exatamente às 00:00:00 . Assim, a partir deste momento, cada segundo que passa recebe um número único em milissegundos. Significa que o registro de tempo zero é 1º de janeiro de 1970, exatamente às 00:00:00 horas, e 1 milhão corresponde a cerca de 11,5 dias depois. Outro exemplo: um registro de data e hora com esse número grande poderia significar o ano de 2023. Mas como isso acontece e
+
+o que são esses números? Vamos aprender tudo. Mas, por agora, lembre-se de que para todos, todos os programadores deste planeta, precisamos de um único ponto de referência inequívoco. E esse ponto de referência começa exatamente às 00:00:00 do dia 1º de janeiro de 1970. E quando você entra no futuro, você entra no futuro em milissegundos. E com esse
+
+valor em milissegundos a partir desse ponto de referência, que está em zero, você pode calcular quanto tempo já se passou. Se você consegue calcular em milissegundos, consegue converter para segundos. Você pode converter para minutos, depois para horas, depois para dias e assim por diante . Milissegundos também são simbolizados por ms em programação. Agora, consegue adivinhar por que essa representação em JavaScript está em milissegundos e não em segundos? Por que? Porque existem muitas
+
+operações que realizamos em programação que podem ocorrer em milissegundos. Por exemplo, medindo o desempenho, esses quadros de animação. É por isso que o JavaScript usa esse ajuste para representar esse deslocamento de tempo sempre em milissegundos. Bem, isso pode ter vindo à sua mente, assim como veio à minha também. Por que 1º de janeiro de 1970 é um ponto de partida? Por que exatamente? Sinceramente, o que
+
+descobri com minha pesquisa é que se trata de um número um tanto arbitrário. O sistema operacional Unix estava sendo desenvolvido em 1960 e os engenheiros precisavam de um ponto de partida naquele momento. Foi assim que o ano de 1970 entrou em cena. Surgiu mais pela sua simplicidade do que por qualquer outra coisa. Então, se você já se perguntou por que hoje é 1º de janeiro de 1970, não há realmente nenhum significado mais profundo . Provavelmente,
+
+é porque algumas pessoas pensaram que, naquele momento, essa era a coisa mais simples a se fazer. A próxima grande questão é: qual a diferença entre um registro de data e hora e um fuso horário? Muitas vezes, os desenvolvedores se confundem com isso. Um registro de data e hora é um ponto absoluto no tempo, independente da localização. Aqui, o registro de data e hora é zero. Você vê
+
+aqui o zero, esse ponto universal. Aqui, o registro de data e hora é de 1 milhão. Aqui, o registro de data e hora é este número grande. Então, este é o registro de data e hora. É um número absoluto de um único ponto. E esse
+
+registro de tempo absoluto é sempre medido a partir de 1º de janeiro de 1970, exatamente às 00:00:00 . Portanto, este número representa um registro de data e hora. Zero é um marcador de tempo. Esse número grande é um registro de data e hora. E esse registro de tempo em JavaScript é sempre representado em milissegundos. Então,
+
+o que é um fuso horário? O fuso horário é um tipo diferente de conjunto de regras estabelecido pelos humanos para representar diferentes tipos de tempo em uma região específica. Novamente, abordarei a questão dos fusos horários com mais detalhes quando começarmos a programar. Mas lembre-se da diferença entre o registro de data e hora e o fuso horário. O registro de data e hora não inclui nenhum fuso horário.
+
+Para calcular a hora em um fuso horário específico , você precisará do valor do registro de data e hora. Aprenderemos todas essas coisas juntos. Então, por definição, o que é um carimbo de data/hora? Representa um momento específico no tempo e a unidade é UTC. Um fuso horário é uma regra definida por nós para uma região específica, com o objetivo de comunicar o tempo e as diferenças horárias entre várias regiões. Essa é a diferença.
+
+Então, agora temos outro termo chamado UTC. O que é UTC? UTC significa, na verdade, Tempo Universal Coordenado. Agora, se você pegar esse tempo universal coordenado e colocar a abreviação, deveria ser algo como C U T, mas por que está como UTC? Então, se você voltar à história, como eu estava pesquisando, essa abreviação nunca coincide simplesmente porque os ingleses e franceses, quando estavam decidindo isso, se uniram e concordaram com algo chamado UTC. Essa é a
+
+principal razão, e a partir daí se tornou o padrão principal para o mundo todo usar para registro de tempo. Imagine o UTC como o relógio mestre da internet; ele continua marcando o tempo, partindo do zero. Conforme ele continua marcando, tendemos a ir para o futuro, um horário futuro, uma data futura, um dia futuro, uma hora futura, e assim por diante. O UTC não tem horário de verão, não tem ano bissexto, não tem nenhuma noção; ele simplesmente continua mudando, marcando o tempo para nos levar ao futuro. E essa é a razão pela qual, quando falamos de um registro de tempo, esse valor específico em milissegundos, sempre usamos o UTC como unidade para indicar o quanto nos deslocamos do zero para o futuro, para que possamos determinar um dia específico, uma data específica, um horário específico. Espero que o UTC
+
+esteja claro. O registro de data e hora está sempre em UTC. Por que? Porque o registro de data e hora não leva em consideração nenhum fuso horário. Quero dizer, universalmente não existe um padrão de horário de Nova York. Não há
+
+registro de horário de Tóquio. Existe apenas um número universalmente disponível. E usando esse número você calcula a data, a hora e etc. Agora, para explicar isso tecnicamente, é por isso que, ao salvar informações de data e hora em um banco de dados, você deve salvá-las em UTC. Significa que você salvará um registro de data e hora e, ao recuperá-lo e exibi- lo na interface do usuário, converterá esse registro de data e hora para a hora local daquela interface específica. O que isso significa? Imagine que
+
+temos dois usuários. Primeiro usuário acessando o aplicativo da Índia. O segundo usuário acessou o mesmo aplicativo a partir da França. Existe um banco de dados centralizado que armazena as informações. Agora, este aplicativo lida com data e hora.
+
+O que devemos fazer é semelhante a qualquer outra informação de data e hora que armazenamos no banco de dados. Deve ser armazenado no formato epoch, ou seja, neste formato de milissegundos no horário UTC. OK. É por isso que chamamos de horário UTC. Sempre que mencionarmos o tempo UTC ou o tempo Unix, considere-os como a mesma coisa de que estamos falando. Estamos falando
+
+do registro de data e hora, não da hora exata. OK? Portanto, armazene sempre em formato Unix ( UTC). Mas quando recuperamos essa informação e a exibimos em nossa aplicação, se mostrarmos esse tempo Unix, será um horário que não fará sentido para nenhum usuário. Isso significa que você precisa converter esse tempo para algo que faça sentido para esse usuário. Talvez o que você esteja
+
+fazendo seja algo que você terá à sua disposição neste momento histórico. Então, com esse tempo Unix, você pode calcular a partir de 1º de janeiro de 1970, que é como zero, obter o milissegundo e, em seguida, converter esse milissegundo com sua própria linguagem de programação para uma data e hora específicas. Isso é ótimo, mas há outra coisa adicional que você precisa fazer: levar em consideração de qual localidade o usuário específico está usando este aplicativo, de onde está localizado o seu cliente e qual é o fuso horário dele. Portanto, ao exibir o conteúdo, você precisa mostrar esse número de época convertido para o fuso horário específico de onde o usuário está acessando o aplicativo. Dessa forma, se você gerenciar a data e a hora, elas serão universais e não apresentarão nenhum tipo de erro. Talvez a representação do tempo Unix
+
+seja algo como este número, e este número, quando tentamos exibi-lo, poderia ser 12:35. à tarde. Na Índia são 8h05 da manhã, na França são 8h05 da manhã e, se você quiser falar sobre por que são 12h35 da tarde. Na Índia, neste mesmo horário, são 8h05 da manhã. Na França, é aí que entra a questão do fuso horário, porque na Índia seguimos um fuso horário chamado Horário Padrão Indiano (IST), enquanto na França, neste mesmo horário, está o fuso horário de outro país, o CCT. OK.
+
+Este é, portanto, o valor do fuso horário. Isso significa que, independentemente de onde você esteja armazenando esses dados, eles estão sendo armazenados em UTC e, ao recuperá-los e exibi-los, você precisa traduzi-los para o fuso horário específico do cliente naquele momento. Então é assim que você deve lidar com data e hora. Veremos muitos exemplos de programação nesta parte e na parte seguinte. Existem mais alguns termos que você precisa considerar aprender. Você
+
+conhece o UTC. O que é GMT? UTC e GMT são a mesma coisa. Para o contexto de programação, você pode considerar que UTC e GMT são a mesma coisa. Existem pequenas diferenças que não nos preocupamos em aprender neste momento. Vamos
+
+entender que UTC e GMT são a mesma coisa. Do ponto de vista do fuso horário, tanto o UTC quanto o GMT estão nesse deslocamento de fuso horário específico . Portanto, usaremos os dois termos de forma intercambiável em nossa programação diária. Qual é a hora local? A hora local nada mais é do que a hora que você vê no seu relógio. Agora, no meu
+
+relógio, consta um horário em que estou na Índia. No seu relógio, você pode estar vendo uma hora completamente diferente da que estou vendo agora, e essa hora local é sempre determinada pelo fuso horário em que nos encontramos. Existem diferentes tipos de fusos horários e diferentes tipos de deslocamento de fuso horário, e cada deslocamento de fuso horário no mundo é definido como uma diferença em relação ao UTC. Então, se o UTC começar com 000000, aqui estão alguns exemplos. Por exemplo, Nova Iorque, que está no fuso horário EST, está em UTC menos 5. Isso significa que está atrasada. Londres
+
+segue o fuso horário UTC e GMT. Portanto, é UTC +000000. Você pode ver que a Índia está em +530, o Nepal em +545 e o Japão em +9. Caso tenha interesse, este é um mapa de um fuso horário. Você pode ver este mapa-múndi e seu fuso horário. Por exemplo, na Índia
+
+eu disse algo como + 5:30. Então cai aqui . Certo? Se eu clicar aqui em qualquer um dos locais, ele estará em +530, assim você poderá se mover para diferentes partes do mundo. Selecione qualquer país e tente descobrir em qual fuso horário ele se encontra. Então, este é o UTC, que
+
+é 00:00. Agora, deste lado da Terra, ele só incrementará; deste lado da Terra, ele só decrementará. É assim que você pode encontrar diferentes deslocamentos e, nesses deslocamentos, haverá um nome para cada registro de data e hora individual. É assim mesmo. Se você se interessa por fusos horários e quer explorar um pouco mais sobre o assunto, os fusos horários mundiais são mantidos pela AA ( Autoridade para Atribuição de Números da Internet) e são chamados de banco de dados TZ. Você sempre pode vir
+
+aqui, baixar o arquivo e começar a pesquisar. Aliás, incluí todos esses links na descrição deste vídeo. Assim, você pode conferir a qualquer momento. Agora a questão é como o JavaScript lida com esses fusos horários? Qual é o suporte?
+
+Infelizmente, muito infelizmente, é uma verdade frustrante que o suporte nativo em JavaScript se limita a apenas dois fusos horários: UTC e o seu fuso horário local. Para todos os outros fusos horários, você terá que lidar com eles de uma maneira um pouco mais trabalhosa. Aprenderemos muito sobre isso na próxima parte, mas quero dar algumas dicas suficientes sobre o que você encontrará em JavaScript. Acho que já vimos teoria suficiente, aprendemos bastante sobre o histórico de data e hora, alguns termos técnicos, como o tempo funciona, como os fusos horários funcionam, quais são os problemas e por que essa dificuldade. É hora de começar a programar, não é? Abra
+
+seu editor de código favorito. Vou abrir o VS Code. Vamos começar a programar. Como parte do projeto "40 Dias de JavaScript", criei uma nova pasta chamada "day 41" (você a encontrará na organização Tapascript). Criei um HTML simples para anexar este JavaScript e aqui está o arquivo Java .bashrc,
+
+onde escreverei todo o meu código. Por enquanto, eu só tenho um arquivo console.log. Vamos publicar este HTML. Consigo ver esse HTML renderizado aqui.
+
+E se eu abrir as ferramentas de depuração do Chrome , consigo ver este console.log que vem do meu arquivo JavaScript, mostrando a data e hora do JavaScript, que está aqui. Então, estou pronto para começar a programar. A primeira coisa com que vamos começar é o objeto de data. O objeto de data do JavaScript é um objeto integrado que representa um único instante no tempo.
+
+Sempre que você cria uma instância do objeto `date` em JavaScript, você obtém a hora daquele instante específico. Assim você pode fazer isso como uma nova data. Isso retorna uma instância do objeto de data daquele momento específico, que podemos chamar de "agora". Então, eu criei um objeto de data aqui. Deixe-me acessar agora. Por exemplo, vou executar `
+
+console.log` agora. Vejo a representação completa da data e hora daquele momento em que imprimi ou executei o console.log de agora. Anote este horário: 141459. Se eu
+
+atualizar a página, ele mudará para 141548, porque o console.log agora foi executado quando atualizei o navegador. Assim, capturou-se o momento exato daquele instante. Certo? Agora, o importante é sempre registrar aquele momento específico, juntamente com a data e todas as outras informações. GMT +5:30
+
+é o fuso horário. Você se lembra que UTC ou GMT é 000? Então, a partir daí, 5:30 significa que 5 horas e meia nada mais é do que o horário padrão indiano (IST) . Assim, uma nova data me proporciona um único momento no tempo. No entanto, você precisa entender que internamente ele armazena aquele único instante no tempo em um único número, e esse número é representado em milissegundos desde 1º de janeiro de 1970, 0h UTC, correto? Portanto, o número
+
+impresso naquele momento específico, juntamente com a data, o fuso horário etc., é armazenado internamente pelo JavaScript em milissegundos. O mesmo milissegundo que vimos a partir daquele ponto específico de 1º de janeiro de 1970. Ok, é assim que o JavaScript gerencia isso internamente. Agora a questão é como obter esse número em milissegundos, essa representação interna desse momento específico que vimos sendo registrado no console.log, para obter isso. O JavaScript
+
+fornece um método estático chamado now. Vamos usar `console.log` para exibir a data e hora atuais. Portanto, se você invocar esse método estático específico em um objeto de data, obterá a representação em milissegundos daquele momento, que foi representada de forma legível para humanos usando essa variável `now` específica . Então, se eu vir esses dois logs do console.log, saberei claramente que o
+
+primeiro é uma representação legível do momento atual, e este é a representação em milissegundos, o "U" em UTC, lembre-se, e esta é a diferença entre este momento e 1º de janeiro de 1970, 0 UTC, essa é a diferença em milissegundos. Claro, existe outra maneira de obter a mesma representação antes de o "date.now" ser adicionado, como as pessoas costumavam fazer, você tinha isso aqui, certo? Então você pode fazer console.log de "now.gettime"
+
+. Se você chamar esse método getTime nessa instância específica do objeto , ele retornará exatamente o mesmo valor em milissegundos. O construtor do objeto de data também pode receber um argumento. Quando o construtor do objeto de data recebe um argumento como este, o que ele retorna? Significa que agora você está fornecendo esse timestamp em UTC, passando- o para o objeto de data para obter uma representação de data como resultado. Então, se eu executar um
+
+console.log de D1, o que ele retornará? D1 retornará o formato de data e hora legível para humanos, juntamente com o fuso horário para esse registro de data e hora específico. Consigo visualizar isso daqui como se fosse segunda-feira, 15 de janeiro de 2024. Então, pessoal, tenho uma pergunta para vocês. Se vocês entendem de
+
+referências de objetos ou se já fizeram meu curso de JavaScript de 40 dias, respondam. É verdadeiro ou falso? Este console.log vai registrar o que será falso, certo? O que estamos fazendo aqui é equiparar a referência a diferentes objetos. Aqui, D1 é uma referência
+
+a um objeto na memória e D2 é uma referência a outro objeto na memória. Estamos tentando equiparar essas duas referências, mesmo que o valor armazenado nesses locais de memória seja exatamente o mesmo, as referências são diferentes, certo? Já aprendemos bastante sobre isso, como gerenciamento de memória e tudo mais. Portanto, aqui, a resposta é falsa. Então, como você vai comparar se essas duas datas são iguais ou não? A melhor maneira de comparar é
+
+somar o tempo de chamada D1 a este e igualá-lo, triplicando-o, ou seja, D2 . Ok, isso vai te dar uma resposta de verdadeiro ou falso. Se isso for verdade, então estamos falando do mesmo período. Se for falso, então estamos falando de um momento diferente. Por que? Porque D1.get Get
+
+time irá, obviamente, fornecer uma representação em milissegundos em UTC daquela data e hora específicas. G2.get também vai fazer o mesmo. Agora você está comparando de um ponto zero para um determinado deslocamento em milissegundos. Do ponto zero até outro deslocamento em milissegundos. Agora você está comparando e
+
+dizendo que dois números representam exatamente o mesmo horário ou horários diferentes. Existem quatro maneiras de criar datas em JavaScript. Uma das maneiras que aprendemos é usar a nova data neste construtor sem passar nenhum argumento. Certo, essa é uma maneira. A segunda forma de passar os dados é como se você pudesse passar os milissegundos desde o tempo da época, que é zero. Essa é a
+
+diferença em milissegundos e você obtém uma data. Isso é muito útil para reconstruir uma data a partir de um registro de data e hora armazenado. Eu já comuniquei que você deve armazenar a data e a hora no formato UTC em seu banco de dados. Imagine que você está recuperando esse registro de data e hora do seu banco de dados. Você pode passá-lo para este novo construtor de data e obter a data. O que acontece se você colocar um
+
+valor negativo aqui? Deixo isso com você. Experimente com um valor negativo e veja o que acontece. Na verdade, é anterior à época, mas veja o que retorna. Algo muito interessante. OK. Então, qual é
+
+a terceira e a quarta coisa? Vamos fazer o terceiro e o quarto. O terceiro contém uma string de data. Você pode criar uma data como "nova data" e então passar uma string de data assim . Este formato específico é chamado de formato ISO. É Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y
+
+Y Y e então você tem seu mm e depois o DD. Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y Y não é nada além do ano, depois do mês e da data. Você também pode passar a string de data neste formato. Ao inserir um dado nesse formato, que termina com Z 1 Z ou Z, significa que está no horário UTC. OK. Ou
+
+você também pode passá-la em um formato legível para humanos, como este: 15 de janeiro de 2024. Assim, você pode usar a string de data como argumento para este construtor de data e, em seguida, obter a data de volta. No entanto, você precisa usá-lo com certo cuidado, certo? Então, quais são os problemas? Vejamos um exemplo. Vamos marcar um encontro assim. A
+
+data constante só é igual à nova data de uma data ISO. Ok, ótimo. O problema agora é essa nova data. Se você passar uma data ISO dessa forma, ela será interpretada como meia- noite UTC. Agora, se o fuso horário do seu usuário estiver atrás do UTC, "atrás do UTC" significa UTC menos algum valor. Vamos considerar o fuso horário americano,
+
+que é UTC menos alguma coisa. Agora, isso será exibido como a data anterior. Agora, se você usar uma string de data como essa sem a hora, poderá obter uma representação incorreta da data, dependendo do fuso horário do seu cliente. E agora, como resolver isso? Para corrigir isso, sempre inclua a hora e o fuso horário. Portanto, a
+
+maneira inequívoca de fazer isso seria assim. mesma data, mas acrescentei 000000 mais a hora UTC. Fazendo isso, tudo será tratado corretamente com base na hora local e no fuso horário. São detalhes pequenos, mas você precisa se lembrar deles para não cair na armadilha de cometer erros ao criar a data. A terceira via está concluída. Qual é, então, a quarta via?
+
+A quarta maneira é usar o ano, o mês e o dia como argumentos. Se você souber o ano, o mês e o dia, poderá usá-los como argumento e criá-lo. Mas aqui existe uma certa carga mental. Por exemplo, o mês começa com um índice. Significa que janeiro é zero e dezembro é dia 11. Este é o
+
+índice mensal. Então você precisa saber o índice do mês, o índice do dia e tudo mais . E você precisa passar esses índices, não o nome em si, para construir a data. Por exemplo, se eu quiser o dia 15 de janeiro de 2024, estarei usando o ano de 2024 como exemplo. Janeiro é zero porque o primeiro mês começa com zero e o dia seguinte é 15. O índice do mês é algo
+
+que você precisa lembrar e começa com zero. E se você precisar de algo assim no dia 20 de março de 2024 às 15h30min45s? Se você precisar de algo assim, mas lhe for solicitado que crie uma instância do objeto de data usando essa metodologia específica, na qual você pode passar o ano, o mês e o dia. Como você vai fazer isso? É um pouco tedioso, mas para fins de aprendizado, digamos que a data detalhada seja igual à nova data. Primeiro você passa por
+
+2024, que é o ano, depois passa pelo mês. O índice do mês é 0, que é janeiro, 1 é fevereiro e 2 é março, então dois. Depois você passa por 20, que é a data, e por fim por 15, que significa 15h. 12 + 3 15h Aí você passa dos 30 e depois dos 45. Meu Deus, isso é demais. Agora, uma
+
+pergunta complicada para você. O que será registrado no log após o estouro de buffer? Se eu usar `console.log` para exibir o estouro de buffer com o próprio nome da variável, isso indica o problema. Isso vai acontecer em 1º de dezembro de 2024 ou em outra data.
+
+Lembre-se que o índice do mês começa com zero. Isso significa que janeiro é zero. Então, sempre que você doar 12 ou 13, o valor transborda automaticamente para o próximo ano . Portanto, será em 1º de janeiro de 2025, porque até o dia 11 estava previsto para dezembro de 2024. No momento em que atinge o número 12, ele automaticamente passa para o próximo ano, que é o primeiro mês de janeiro. Então será 1º de janeiro de 2025. Às
+
+vezes, você pode ser enganado em entrevistas com perguntas como essa. Esteja preparado. O objeto de data do JavaScript fornece vários métodos getters e setters. Primeiro, vamos falar sobre os métodos getter. E nos métodos getter também existem dois tipos de métodos. Uma é para a hora local, a outra
+
+para a hora UTC. Os métodos locais retornam o valor no fuso horário local do usuário, enquanto os métodos UTC retornam o valor em UTC. Você sempre precisa saber qual deles precisa. Vamos primeiro nos familiarizar com todos esses métodos. Primeiro, vamos criar uma instância de objeto de data . Então, estou criando uma instância de objeto de data
+
+passando esse valor de string. Agora, com isso, você pode saber exatamente o que isso representa, certo? Representa o dia 15 de janeiro de 2024 às 3h da manhã e o Z significa que está em UTC. Certo, então são 3h da manhã UTC. Agora vamos falar sobre os métodos getter locais. Isso
+
+significa com base no fuso horário da máquina. Justo . Esses são os métodos que você pode usar. O comando `Date do.get full year` fornecerá a representação do ano completo, que neste caso é 2024.
+
+date.get month retornará o índice do mês. O resultado será zero, pois estamos falando do mês de janeiro, e zero significa janeiro; 11 significa dezembro. Já tomamos conhecimento disso. Isso retornará o dia do mês entre 1 e 31.
+
+Ok. Então isso vai me retornar 15. Dia ponto dia. Esta é a data de início e a próxima é o dia de término. Data ponto obter dia. Vai voltar ao dia da
+
+semana habitual. Zero começa com domingo e seis é sábado. Ok, este é o índice que você precisa memorizar. A função `get hours` retornará as horas entre 0 e 23. Já a função `get minutes` retornará os minutos entre 0 e 59. E a função `get seconds`
+
+retornará os segundos entre 0 e 59. O índice inicial é muito importante . Ok, para o dia da semana o índice inicial é zero. Horas, minutos, segundos, todos com índice inicial zero. O índice de início do mês é zero. Estas são as
+
+coisas que você precisa ter em mente. Então, ` dot get milliseconds` é, obviamente, os milissegundos entre 0 e 9999, e ` date.get time` nós aprendemos sobre esses milissegundos desde a época. Isso é algo que aprendemos logo no início . Todos esses métodos fornecerão informações com base na hora local do seu computador. Enquanto os métodos
+
+de obtenção de valores locais são baseados no fuso horário da máquina, os métodos de obtenção de valores UTC não estão vinculados a nenhum fuso horário. Essas medidas são independentes do fuso horário . Exatamente os mesmos métodos que você usa para obter o ano completo em UTC. Para obter o mês, você fará o seguinte: para obter o mês UTC, para obter a data UTC, basta colocar UTC em letras maiúsculas. Essa é a versão UTC do método, então ele retornará o ano em UTC e o mês em UTC. Novamente, essas regras são as mesmas:
+
+índice zero, dia do mês, dia da semana, etc. Então, aprendemos que existem duas variantes do método. Essas informações estão disponíveis em todos os lugares, na documentação do MDN e em outros conteúdos, mas como isso afetará você? Essa é a principal questão. Vamos usar um exemplo para entender o impacto.
+
+Considere esta escala: a escala L é assim: UTC. Sabemos que é 0, 0,00, 0,00. Portanto, para a esquerda, é negativo. Neste ponto, é UTC -1, aqui UTC -2, -3 e assim por diante. À direita, é UTC +1, UTC +2, UTC +3, UTC +5 e assim por diante. Agora, vamos pegar um país, os EUA, e
+
+uma cidade, Nova York. Nova York está em UTC -5. Deixe-me circular para você. Então, estamos em UTC -5. Em Nova York, é UTC -5. Vamos ver que
+
+horas são em UTC. Que horas serão no Ano Novo, às 5h UTC menos? Ou seja, por volta das 3h da manhã. OK. Vamos considerar o horário das 3h da manhã, horário UTC. Qual será o horário em Nova
+
+York? Passe de 1 hora às 3h da manhã. Aqui são 2h da manhã. Aqui são 1h da manhã. Aqui já é meia-noite. São 23h.
+
+por aqui. E são 22h. por aqui. Certo? Então, 3h da manhã aqui são 22h. Correto? Se eu adicionar também a
+
+data, por exemplo, 11 de janeiro de 2026, às 3h da manhã em UTC, isso significa que em UTC menos 5, serão 22h. Mas no dia anterior, que foi tipo dia 10 de janeiro, você entendeu? Então, se no momento atual forem 3h da manhã UTC, esse momento específico será às 22h. Na noite anterior, em Nova York, que está no fuso horário UTC -5, correto? É assim que a representação da escala fica muito clara, explicando novamente para quem estiver confuso: UTC 3h da manhã significa que aqui são 2h menos 1h da manhã, aqui são 1h da manhã.
+
+Aqui, se voltarmos 1 hora a partir de 1h da manhã, significa meia-noite. Então, se eu continuar por mais uma hora, serão 23h. Se eu ficar mais uma hora, serão 22h. Certo? É assim que a escala funciona. Mas por que
+
+toda essa história? Agora, se você executar o comando `date dot get UTC hours`, que deveria nos dar as horas em UTC, o que você obterá? Você receberá três. Então isso vai te retornar três. Mas se você usar a hora da data, essa é a hora que está no horário local [limpa a garganta]. Então, estando em
+
+Nova York, se você executar o comando "data e hora", o resultado será 22, que corresponde às 22h. Então, isso retornará o número 22. 22 significa 22h. Correto? Então você está vendo a diferença. Quando você precisar das horas UTC
+
+em qualquer lugar do mundo, você vai esquecer as horas UTC. Mas se você precisar do horário local daquele lugar específico de onde está executando este aplicativo, basta usar a opção "obter horário". Isso é apenas um exemplo. Da mesma forma, se você executar o comando `dot get UTC date`, o que você obterá? Você vai receber o número 11 porque a exibição será em 11 de janeiro. Mas se você usar a data, receberá a
+
+data local. Você receberá 10. Essa é a diferença. Essas são as confusões. Você escreve o método, sabe, para implementar algo no seu código. Mas
+
+tudo depende exatamente de onde o programa está sendo executado, em qual fuso horário ele está e qual método você utilizou. Esses são os pequenos detalhes que fazem a diferença . É isso que volta a ser um grande diferencial na produção. Então, por favor, entendam essas coisas, dediquem um tempo, mesmo que este vídeo seja longo. Pausem, compreendam o que estou ensinando, pratiquem sozinhos, tentem executar o exercício sozinhos, façam um esboço assim. Tenho certeza de que
+
+essas coisas serão impressas em sua mente e cérebro muito rapidamente. Então, isso é tudo sobre os getters, os getters de tempo local e os getters de tempo UTC. Agora vamos aprender sobre os setters. Assim como existem métodos getter, também existem métodos setter, e assim como os getters, os setters também vêm em duas variantes. Uma é para o fuso horário local e a outra para o UTC. Uma
+
+coisa importante, porém, é que os métodos setters modificam o objeto de data diretamente. O que isso significa? Significa que sempre que você usar qualquer um dos métodos setter, o objeto de data original será alterado e não uma nova data será retornada. Isso é muito, muito importante, pois alguns bugs surgem por causa disso. Ao usar um método setter em uma data, você pode esperar que ele retorne uma nova data. Não, isso
+
+vai alterar a data existente. Tenho agora uma data que inicializei com o formato de data ISO. Você pode ver aqui que, se eu fizer uma string ISO de data ponto 2, ela me retornará exatamente a mesma string. Agora, depois disso, se você simplesmente digitar `date.set full year` e selecionar 2025, você precisará de um `get full year` para obter 2024. Certo? Agora, se você definir o
+
+ano completo de 2025, o que isso vai acontecer? Isso vai alterar essa data exata, passando de 2024 para 2025. Ok. Então lembre-se disso. Segue a lista de métodos setter. Exatamente o oposto de "o
+
+mês começa do índice zero". Portanto, 0 1 2 3 4 5 significa que a data de junho foi definida para o dia 20. 8 horas e 18 minutos significa que são 18h. no fuso horário local, pois não existe UTC por aqui. Assim, esses métodos setter funcionarão e haverá setters UTC equivalentes. Quais são, então, os diferentes
+
+métodos de configuração UTC disponíveis? Você configurou o UTC para o ano completo, o mês UTC, a data UTC e as horas UTC. Certo? Essas são as opções disponíveis como métodos setter. Repito, sem parar, por favor, evitem mutações. Vou
+
+anotar aqui para que você se lembre quando vir esse código de classe mais tarde. Evitar mutações. Sempre clone seu objeto de data. Por favor, pessoal, lembrem-se disso. Vamos usar um exemplo para que você se lembre disso por mais tempo. Digamos que temos uma
+
+função. O que essa função faz? Ela adiciona dias, ou seja, pega a data de hoje e adiciona um número de dias a ela. Digamos que a data original seja 15 de janeiro de 2024. Agora, o que acontecerá se eu fizer isso na próxima linha: `adddays`?
+
+Tenho essa data original e passo o número de dias a serem adicionados, que é 7. Vamos colocar isso em uma variável constante chamada `future`. Ok, agora você pode me dizer qual será a saída disso no `console.log` se eu fizer `original.2 date string future.2 two
+
+day string`? Qual será a saída de `what2 date string`? Se for 15 de janeiro de 2024, retornará "15 de janeiro", algo como esta representação: " 15 de janeiro". Então, se for isso que `what2 date string` retorna, qual será a string original? Qual será a string `future.2 two day`? Você
+
+pode dizer que, ok, a string original, que é assim, retornará "15 de janeiro". Agora, adicionamos mais sete dias aqui, então isso retornará "22 de janeiro" (15 + 7 = 22). Não, você estará cometendo um erro se assumir que, como modificamos a string original, o resultado será "22 de janeiro". A mesma data aqui, com o método `date.setdate`, já modificamos a referência original . Assim, tanto a data original quanto a futura foram
+
+alteradas para 22 de janeiro. Esse é o erro. Foi aqui que você alterou a data por engano logo na primeira vez . Então, por favor, não faça isso. Então, como você pode alterar essa função de adicionar dias para salvar os resultados? Claro, o
+
+primeiro e mais importante passo é criar uma nova instância de data a partir dessa data e, em seguida, usar essa instância para definir a data. Depois disso, você pode retornar essa nova instância. Está tudo bem. Então, se você chamar isso agora, será 15 de janeiro e será 22 de janeiro, e agora não está mais mutado. Certo, espero que você entenda. Portanto, sempre que você estiver
+
+lidando com datas, precisa garantir que essa mutação nunca ocorra, pois, se ocorrer, poderá causar uma grande confusão com a data e a hora. Vamos nos familiarizar com mais alguns aspectos relacionados a jogadores que recebem a bola (getters) e jogadores que a levantam (setters). Bem, um dos principais problemas que surge dos meses com índice zero é que zero significa janeiro, e 11 significa dezembro. Temos tendência a cometer muitos erros comuns. Por exemplo, imagine que esta data é Natal, certo? 25
+
+de dezembro. Um erro comum que ocorre ao usar ` console.log date.getMonth` é que, na maioria das vezes, os desenvolvedores tendem a achar que o resultado será 12, mas na verdade será 11, pois o índice do mês começa em zero, sendo janeiro o dia 11 de dezembro. Portanto, a maneira correta de lidar com isso, se você quiser 12, sempre adicione um.
+
+Portanto, se você quiser que o número 12 seja exibido em qualquer lugar, você deve sempre adicionar um ao valor, assim o valor exibido será 12, embora a API tenha retornado 11. Lembre-se disso. Um princípio que você pode seguir é que sempre pode criar um array com os meses, como janeiro, fevereiro e março. Em JavaScript, arrays também têm índice zero. Significa que o índice começa com zero. Então, o mês zero vai te
+
+trazer de volta janeiro. Agora, digamos que você esteja no mês de dezembro. Então, o que o método `date.get month` vai retornar? 11. E passar a data.obter mês. E imagine que
+
+agora estamos em dezembro. Então, date.getmonth retornará 11. Portanto, aqui teremos os meses de 11. O 11º índice nada mais é do que dezembro, porque o array começa com o índice zero: 0 1 2 3 4. Se você seguir essa ordem, chegará a
+
+dezembro. Então, isso vai te trazer de volta em dezembro. Essa é uma forma de gerenciar os meses no seu código. O mesmo acontece com os dias da semana, pois eles também começam com o índice zero. Zero significa domingo, um significa segunda-feira e assim por diante. Algo semelhante
+
+pode ser aplicado por lá. Deixe-me falar sobre mais uma tentativa. Tudo isso vem das minhas experiências pessoais. Então, estou compartilhando o máximo que posso. Vamos imaginar que você está criando uma função para os componentes de hoje. OK. E essa é a
+
+sua função. Agora, você pode me dizer qual é o problema com essa função? Simples. Obtenha o componente de hoje, que instancia uma nova data. Então eles obtiveram uma nova instância de data. E então agora, pegue o
+
+ano completo, os momentos atuais, o ano completo, os momentos atuais, pegue o mês mais um, fizemos isso e então pegue a data atual e estamos tendo um objeto. Este é o objeto que estamos criando. Qual é o problema com este ? Como já entendemos, todos os métodos GET possuem duas variantes: uma em UTC e outra local. Portanto, como a função `get full year get month get date` não possui "UTC" em seu nome, ela retornará todos os valores no fuso horário local do seu computador. Agora imagine que este
+
+componente "obter hoje" salva diretamente em um banco de dados, independentemente do valor retornado por meio de uma API. Então, se você estiver em Nova York, executando isso no lado do cliente, você acaba salvando esse objeto em suas máquinas, que estão em Nova York, naquela máquina específica, com os valores de ano, mês e dia. Mas, se você se lembra deste diagrama, em um banco de dados, devemos armazenar tudo em UTC, certo? No formato Unix, tudo está em UTC. Não devemos armazenar nenhuma representação de tempo local, certo? Esse é
+
+exatamente o erro que você está cometendo aqui ao usar ` get full year`, `get month` e `get date`. Se você tiver um caso de uso em que precisa armazenar isso no banco de dados, e não para exibição, sempre use `get UTC full year`, `get UTC month` e `get UTC date`. Entender por que você precisa usar UTC em vez de local, e quando e onde você deve fazer isso, é assim que você deve manter as coisas em mente. Uma vez que você entenda esses fundamentos, ninguém vai te impedir; você poderá escrever código de data e hora como um profissional. Outra coisa que você precisa ter em mente é ter cuidado ao analisar ou validar datas. Ok, por
+
+exemplo, é claro que isso vai gerar uma exceção porque essa não é uma data válida e o objeto `date` lida com isso. Então, quando você executar `console.log`, o arquivo .bat exibirá a mensagem de que a data é inválida. Uma pergunta para você: o que será impresso na linha número 123? Console.log
+
+é nan bat não é um número ruim. O que vai acontecer? É claro que vai dar certo, né? Porque é uma data inválida e não é um número. Vai te dar uma verdade. Agora a
+
+questão é como verificar efetivamente se uma data é válida ou não. Uma forma de verificar se a função tem uma data válida. Vamos pegar uma data e você pode retornar se for uma instância do objeto de data. Este é um deles. E se não for um número, a verificação que acabamos de fazer podemos fazer como verificar a data e a hora, certo? Então, se o ponto morto obtiver a
+
+hora, que sempre retorna os milissegundos em UTC, e isso sempre será um número, se for um número, e não um número, é um número, certo? Então, se for um número e se for uma instância de uma data, você pode dizer que é uma data válida. Agora, como você tem esse método `isValid`, você pode usá-lo para tornar a análise de data ainda mais robusta, especialmente nos casos em que sua data é passada como uma string e você precisa analisá-la. Então você pode escrever um método assim. Veja, este é um método de análise sintática seguro que recebe uma string de data. Basicamente, primeiro você verifica
+
+se a sequência de datas está presente ou não. Se não estiver presente, você pode retornar nulo. Em seguida, você cria uma nova data. Sabemos que essa é uma das maneiras de marcar um encontro. Agora que você obteve o objeto de data que está passando, essa é uma data válida. Se for uma data válida, retorne
+
+a data; caso contrário, retorne nulo. Portanto, ter uma função utilitária como essa é sempre bom para lidar com a análise da sua string de data. Então, isso é algo que tenho usado e estou apenas ensinando a vocês alguns dos benefícios de lidar com datas da maneira correta, porque, no fundo, datas são apenas números. Assim, os cálculos com datas se resumirão a somar e subtrair os milissegundos. Certo? Quando você está trabalhando com datas
+
+e deseja alterá-las adicionando ou subtraindo milissegundos. Significa que você quer ir para um determinado segundo, minuto, hora ou dia. Certo? Então, geralmente o que eu faço é criar um objeto como este. Este é o meu objeto de milissegundos. Defino 1 segundo como sendo aproximadamente
+
+1.000 milissegundos. Eu defino 1 minuto como, você sabe, 1.000 milésimos de segundo multiplicados por 60, o que equivale a uma hora e, portanto, a um dia. Isso significa que, em qualquer lugar do seu código, se você quiser realizar alguma operação aritmética, como subtração ou adição, para um dia, você pode usar `ms.day`, e o
+
+mesmo vale para horas: `ms.hour`, `ms.minute` e `ms.second`. Vamos primeiro criar uma data, digamos, hoje, que será igual à nova data. Como posso fazer para que isso aconteça daqui a 7
+
+dias, tipo, de hoje para daqui a 7 dias? Como você pode movê-lo? Você pode adicionar 7 dias. Eu já tenho um dia. Você pode ver daqui.
+
+Como você consegue fazer isso por 7 dias? MS ponto dia multiplicado por 7 resultará em 7 dias. Agora eu tenho o dia de hoje. Então, se eu fizer isso hoje , vou obter a representação em milissegundos do dia de hoje. Se eu adicionar 7 dias, esse total de milissegundos me levará ao sétimo dia. Então agora posso escrever a lógica
+
+assim: em 7 dias é igual à nova data hoje.obter hora mais 7 em ms.dia. Entendi? Se eu tiver que fazer o que foi ontem, hoje eu pego o tempo menos 1 e coloco no dia .ms. Eu volto um dia, certo? Muito simples.
+
+Agora você sempre pode criar uma função utilitária ou um método utilitário como "adicionar dias", que recebe uma data, obtém o deslocamento em dias que você deseja e então você simplesmente os passa como parâmetro. Lembre-se que eu não alterei esta data. Criei uma nova instância da data. Isto é o que aprendemos: não devemos modificar, pois vamos usar os métodos definidos. OK.
+
+Portanto, trata-se de somar e subtrair o tempo. Como podemos calcular a diferença entre datas? Uma data é 1º de janeiro de 2024. A outra é 31 de dezembro de 2024. Como você pode diferenciá-las? Ok, podemos fazer
+
+algo como `const milliseconds = end - start`. O que isso vai me proporcionar? Isso vai me dar a diferença em milissegundos entre essas duas datas. Se eu calcular e imprimir essa diferença em milissegundos no console.log, será algo parecido com este número. Esse
+
+número enorme. Agora que você tem esse número grande em milissegundos, pode escrever sua própria lógica para convertê-lo em unidades úteis. Por exemplo, se você quiser converter esse número grande, a diferença em dias. Então, como você vai lidar com o número que você tem? Você pode dividir por quanto? Se a diferença for em dias, significa que em
+
+1 dia há 24 horas, em 1 hora há 60 minutos, em 1 minuto há 60 segundos e em 1 segundo há mil milissegundos, certo? Então você escreveria uma lógica como pegar esse tempo em milissegundos, dividir por 24 horas em um dia, 60 minutos em uma hora, 60 segundos em um minuto e 1.000 milissegundos em um segundo. Fazendo isso, você obtém a diferença, que representa quantos dias há entre 1º de janeiro de 2024 e 31 de dezembro de 2024. Da mesma forma, se você quiser a diferença em semanas, o que você faria? Você obtém a diferença em dias e
+
+divide por 7 a diferença em semanas. Então, é assim que se encontram as diferenças. Certo? Agora, você pode escrever um método que basicamente retorne todas essas diferenças em diferentes unidades, como dias, semanas, horas, minutos, ou da maneira que você preferir. Agora, aqui está uma tarefa para vocês. É
+
+possível criar uma calculadora H com todo esse conhecimento que adquirimos? Ok, não peça ajuda à IA no começo. Certo, tente escrever o código e, em seguida, entregue-o a um LLM (Licensed Liability Master) e pergunte se a lógica que você escreveu é boa o suficiente ou se são necessárias melhorias. E, independentemente do que você aprender com o LLM, tire proveito disso, como por exemplo, quais melhorias são necessárias. Mas se você escreveu uma lógica que não precisa de melhorias adicionais, ótimo. Você também pode entrar
+
+no nosso servidor do Discord e compartilhar suas ideias. Adoraria analisar isso. Então, o que vamos fazer? Você vai criar uma função para calcular a idade. Se eu passar por qualquer data de nascimento, por exemplo, digamos 199065, o que significa 5 de junho de 1990, você deve informar a idade, seja 33, 34 ou qualquer outra idade. A
+
+função `calculateage` recebe uma data de nascimento e retorna a idade da pessoa com base nessa data. Você pode escrever a função para isso? Então, essa é a sua tarefa. Agora vamos abordar uma das áreas problemáticas no gerenciamento de datas e horários, que é o ano bissexto. Mas antes de falarmos sobre ano bissexto, vamos falar sobre um conceito chamado ano solar. Um
+
+ano solar é o tempo que a Terra leva para orbitar o Sol. Então você tem o Sol no meio e depois a Terra. O ano solar é o tempo que a Terra leva para orbitar o Sol e seu valor é de aproximadamente 365,2425 dias. Não são exatamente 365 dias, ok? Um pouco mais que isso. 2425 dias. Para
+
+manter nosso calendário alinhado com a órbita da Terra, adicionamos periodicamente um dia extra, e esse dia extra nada mais é do que o dia 29. Este dia é chamado de Dia dos Lábios e o ano em que este dia 5 cai é chamado de ano bissexto. Isso pode parecer muito simples: se houver um dia 29 de fevereiro em um ano, chamaremos esse ano de ano bissexto. Mas o cálculo para o ano bissexto não é tão simples. Deixe-me escrever o pseudocódigo, ou melhor, o algoritmo para isso. OK. Portanto, um
+
+ano será considerado bissexto se duas ou três condições forem atendidas. Qual é a primeira condição? O ano é divisível por quatro. Se você puder dividir o ano por quatro, o ano será sempre um número, como 1900, 2024, 2026. Se você puder dividi-lo por quatro, então será um ano bissexto. Isso é tudo o que sabemos, mas existem
+
+algumas outras condições. A segunda condição é que o número também seja divisível por 100. Se você puder dividir o ano por 100, mesmo que ele seja divisível por quatro, isso não é mentira. OK. É aí que reside a complexidade, a menos que também seja divisível por 400. É isso que torna tudo mais complicado
+
+novamente. Ok, deixe-me explicar com um exemplo. Que tal em 2024? 2024 é um número maior porque pode ser dividido por quatro. Que tal 1900? 1900
+
+não é um número inteiro porque é divisível por 100, mas não por 400. E quanto a 2,00? 2.000 era um número maior porque pode ser dividido por quatro. É divisível por 100, mas também pode ser dividido por 400.
+
+Então, esta é a regra. A regra é que pode ser dividido por quatro, exceto por 100, a menos que seja divisível por 400. Portanto, este é exatamente o algoritmo para saber se um ano é mais longo. Então, falando em JavaScript, como você escreveria uma lógica para descobrir se um ano é um ano de lábios ou não? Vamos fazer isso.
+
+Ano dos lábios. Então a função é o ano do lábio. Vamos pegar o ano que está por vir . Portanto, retorne verdadeiro ou falso. Então, para esse propósito, se o ano for divisível por quatro, como sabemos se o resultado do módulo será zero?
+
+Digamos que seja divisível por quatro. e ano divisível por 100. Este é o caso de não porque exceto ou ano divisível por 400 e este é o caso que temos que satisfazer. Então, o primeiro caso é este e o segundo caso é este. Acho que podemos omitir esses parênteses. Sim. Portanto, se um ano for
+
+divisível por quatro e não for divisível por 100, ou se for divisível por 400, nesse caso podemos chamar esse ano de ano bissexto. Agora podemos executar isso. Ok, estou corrigindo a grafia da função. Ok, agora podemos executar isso com diferentes casos de teste. Se passarmos de 2024, sim, é verdade, porque é dividido por quatro. É aqui que isso se
+
+tornará verdade. 1900 é divisível por 100, mas não por 400. 2002 é divisível por 400. 2023 é divisível por quatro, pois não é divisível por esse número . Quando falamos de data e hora, temos que lidar com mais um problema: o horário de verão. O que é o horário de verão ou DST
+
+? Assim, o horário de verão é uma prática adotada por alguns países . Por exemplo, os EUA seguem uma parte, ou melhor, a maior parte da Europa segue, mas muitos outros países, como a Índia e o Japão, não seguem. É uma prática de adiantar o relógio em 1 hora durante os meses de verão para que a noite chegue mais tarde. A ideia é justamente essa: adiantar a luz do dia em 1 hora, já que a maioria das pessoas está dormindo, para que se possa aproveitar melhor a noite. Esse é o
+
+objetivo. Como nem todos os países adotam o Horário de Verão Britânico ( BST) simultaneamente, é difícil lembrar de levar em consideração o Horário de Verão. Agora, há algumas coisas que você precisa entender sobre o avanço deste relógio. Agora o relógio também volta a funcionar. Não é como se, uma vez no modo avançado, ele sempre funcionasse nesse modo. Não. Então, em um ano em que
+
+o verão começa em um determinado mês, o calendário é adiantado e, quando esse mês chega novamente, ele é reiniciado. Então, como isso acontece? Por exemplo, nos EUA, se olharmos agora, sabe, quando estou gravando este vídeo em março, o horário de verão começa, na verdade, no segundo domingo de março. Então, o que aconteceu quando o horário de verão começou? O relógio adiantou uma hora às 2h da manhã.
+
+Ok, às 2h da manhã. Lembre-se, ele adiantou às 2h da manhã. Pulando para as 3h da manhã. Foi nesse momento que o avanço ocorreu. E quando termina, termina em novembro, precisamente no primeiro domingo de novembro, e é muito interessante como nesse dia o relógio é reiniciado, atrasando-se às 2h da manhã.
+
+Isso se repete duas vezes, entre 1h e 1h59 da manhã. Assim, quando o horário de verão começar no segundo domingo de março, o relógio das 2h será adiantado para as 3h e, para reajustar em novembro, no primeiro domingo de novembro, o horário se repetirá, das 1h às 15h, duas vezes. Para que seja reajustado. OK. É assim que funciona o GST (Imposto sobre Bens e Serviços) . Isso pode se tornar um pesadelo. Se
+
+você não está familiarizado com essa lógica, se você não sabe, existe algo chamado Horário de Verão. Portanto, em alguns casos, você pode precisar levar isso em consideração para verificar se o horário de verão está sendo aplicado durante o período em que sua operação está ocorrendo . Se o horário de verão for aplicado, você fará certas coisas de uma determinada maneira. Se o horário de verão não for aplicado, você fará certas coisas de maneira diferente. Então, vou explicar como o JavaScript lida com isso. Vamos falar
+
+sobre o avanço do Horário de Verão. Quando começa o horário de verão, certo? Então, o horário de verão começa pulando das 2h às 3h da manhã no segundo domingo de março. Vamos imaginar um encontro. Vamos escolher uma data como 10 de março. 10 de
+
+março, quando começa o horário de verão. OK. Então, quando eu crio uma nova data, passando o ano, mês, dia, hora, tudo assim, você sabe que essa é uma das maneiras de criar uma data. Isso me dá 10 de março, 2h30 da manhã. Correto. Agora, se eu executar
+
+esse código no fuso horário do leste dos EUA, esse horário nessa data não existe, porque quando o horário de verão começa, às 2h da manhã o horário passa para as 3h. Então, de onde vem o horário das 2h30 ? OK. Então o JavaScript irá automaticamente adiantar o relógio para as 3h30 da manhã. Ele irá adiantá-lo. Por
+
+exemplo, se você pegar isso em uma variável, digamos, `const skip = new date this`, e fizer `skip.get_hours`, você não obterá dois, mas sim três. O JavaScript cuidará disso, deslocando o relógio para frente. Portanto, deslocar o relógio é bom, lembre-se disso. Vamos falar sobre o atraso no relógio em novembro, certo? Ele
+
+ocorre entre 1h00 e 1h59 da manhã. Então, das 1h00 às 1h59 da manhã daquele dia específico de novembro, o primeiro domingo de novembro, acontece duas vezes. É assim que o horário de verão funciona nesses fusos horários. Mas, infelizmente, o JavaScript não consegue distinguir entre esses dois horários de 1h30 da manhã. Portanto, ele escolhe o horário padrão. O tempo de inatividade é o que vai
+
+escolher. Portanto, isso é algo que você precisa lembrar ao lidar com o horário de verão para qualquer região específica usando JavaScript. Agora você pode verificar como determinar se é horário de verão ou não. Certo? Você pode simplesmente fazer qualquer pesquisa no LLM, qualquer pesquisa no Google, qualquer coisa relacionada a esse assunto específico, como por exemplo, como detectar o horário de verão. Você perceberá a lógica
+
+por trás disso e a entenderá sem qualquer dificuldade agora, porque compreende todos os métodos básicos que o JavaScript oferece e, além disso, usando esses métodos você pode fazer várias coisas. Por exemplo, uma das coisas que você pode fazer é verificar se é horário de verão ou não. Confira este método. Faça uma pesquisa sobre isso. Então, antes de encerrarmos esta parte, vamos revisar alguns pontos cruciais. Primeiro ponto que discutimos, sempre
+
+armazenar em UTC ou com o carimbo de data/hora, certo? Nunca a hora local. Em segundo lugar, compare usando o carimbo de data/hora, não o valor da data propriamente dita. Então, analise sempre a string ISO 8601, aquela com o Z ou o Z, certo? Porque esse é o formato UTC. Nunca silenciei
+
+a data diretamente. Crie sempre uma instância e depois silencie-a. Os meses têm índice zero. Janeiro é zero. Dezembro é dia 11.
+
+Sempre adicione um para exibição. Certo. Adicione os dias com base na data definida, não no milissegundo bruto. Isso é compatível com o horário de verão. E a última opção usa os métodos de obtenção de UTC no servidor, e não os métodos de obtenção de hora local, porque estes retornam a hora local. Então, isso é tudo
+
+sobre a primeira parte. Na primeira parte, abordamos muitos assuntos. Entendemos por que data e hora são realmente complicadas. A história por trás disso, como cuidar das coisas, como criar datas, como fazer as operações aritméticas, os marcadores, os definidores, as diferenças, depois os anos bissextos, depois os horários de verão, as boas práticas, algumas das armadilhas. Há muita coisa que já abordamos.
+
+Esses são os fundamentos, pessoal. Se você dominar esses fundamentos, terá ótimos resultados com data e hora em JavaScript. Meu pedido seria: por favor, pratiquem algumas dessas coisas, certo? Porque eu não queria fazer este vídeo por três ou quatro horas com tantos exemplos e exercícios, já que esses exemplos e exercícios estão disponíveis na internet. Basta lembrar desses princípios básicos que já revisamos juntos. Na
+
+segunda parte, vamos fazer isso de forma profissional. É aí que você aprenderá a fazer coisas como, sabe, 7 dias atrás, 3 dias depois, todo esse tipo de cálculo de dívida. Você não precisa de nenhuma biblioteca, pois o JavaScript já fornece isso. Existe uma API chamada INTL. Com isso, faremos muitas coisas e também vou apresentar a vocês a nova API temporal. Então, se você achou este vídeo
+
+a primeira parte até aqui, deixe um like e inscreva-se no canal. Hoje quero dar-lhes as boas-vindas à segunda parte. Mas se você ainda não fez a parte um, minha recomendação é que a termine primeiro e depois passe para a parte dois, porque vamos construir algumas coisas em cima do que você aprendeu na parte um. Na segunda parte de hoje, vamos falar sobre um dos aspectos mais subestimados do JavaScript: a API INTL. Acredite, é algo subestimado que o JavaScript possui. Muitos
+
+desenvolvedores não o utilizam porque não estão muito familiarizados com ele e acabam usando bibliotecas externas que ficam desatualizadas. Eles têm que gerenciar a migração e todas essas coisas que precisam fazer. Em vez disso, o JavaScript oferece suporte nativo a tudo o que você precisa para lidar com formatos de data e hora . Sim, inclui fuso horário, localidades e outras características geográficas. Hoje, neste vídeo, vamos dominar tudo isso. Acredite em
+
+mim, ao final deste vídeo, você será capaz de formatar qualquer data e hora em JavaScript, em qualquer idioma e em qualquer localidade, sem a necessidade de bibliotecas externas. Vamos . A API da Intel, abreviação de API de internacionalização, é um namespace JavaScript integrado que fornece operação sensível ao idioma. Aliás, "in lip" não é só para encontros românticos. É para formatação de números. Serve para
+
+formatação de moedas. Serve para pluralização e muito mais. Mas, para a nossa série, limitaremos nossa discussão a data e horário específicos. Temos uma documentação detalhada fornecida pela MDN sobre o INL. Você sempre pode vir dar uma olhada. Aprofunde-se no assunto. No entanto,
+
+neste vídeo, meu objetivo é escolher aquele que será mais utilizado. Escolha aquele que você precisa no seu dia a dia para organizar coisas, para formatar documentos com data e hora. Portanto, se você se concentrar apenas na segunda parte, acho que conseguirá entender a maior parte. Caso haja alguma alteração, esta documentação estará sempre disponível para consulta. Na sessão de hoje, vamos programar bastante. É por isso que
+
+abri meu editor de código e estou executando o navegador lado a lado. Assim, sempre que eu alterar algum código, você poderá ver isso imediatamente na ferramenta de etapas do navegador, à direita. Aqui está um HTML simples através do qual estou executando este arquivo index.js e vou codificar tudo dentro deste arquivo index.js.
+
+Este log inicial do console.log que você está vendo, como "js intl API session", já está aparecendo aqui, provando que qualquer coisa que eu vá codificar aqui irá refletir isso. Uma coisa rápida que eu fiz foi desestruturar o log do objeto console para que eu não precise escrever `console.log` em todos os lugares. Eu posso simplesmente escrever um log. É fácil. Menos digitação.
+
+Tudo bem. Então, vamos começar a usar a API da Inel. Antes da existência da API da Inel , formatar data e hora para usuários internacionais era um pesadelo. Você precisa pensar sobre isso. Você precisa pesquisar manualmente como cada país formata suas datas e horas. Em seguida, você cria uma
+
+tabela de consulta para traduzir os nomes dos meses, em idiomas que são escritos da direita para a esquerda, como o árabe. Gerenciar diferentes tipos de sistemas de calendário. Pense em como é difícil. Foi um trabalho imenso que cada equipe teve que fazer do zero. Tenho mais de 20 anos de experiência em engenharia e desenvolvimento de software. Eu
+
+mesmo já fiz isso. Eu sei o quão difícil foi. Dê uma olhada neste formato diferente de data e hora. Por exemplo, nos Estados Unidos, a formatação da data é indicada desta forma . Primeiro o mês, depois o dia e, por fim, o ano. E
+
+são quase 14h30. Mas quando você vai para o Reino Unido, tudo muda. O formato agora é dd mm a e o relógio está no formato de 24 horas. Se você for à Alemanha, em vez de barra, aparece um ponto, e você verá que está no idioma nativo deles. Se você for ao Japão, a formatação muda novamente, com o ano vindo na frente. Assim, para cada país, para
+
+cada localidade, para cada fuso horário, pode haver uma possibilidade de formato de data e hora diferente. Agora imagine que você precisa gerenciar todos esses formatos geográficos localmente em um código, como um mapa, uma tabela, um objeto JSON, e mantê-los atualizados constantemente. É um pesadelo! Graças a Deus temos a API INL hoje. A API INL é definida pelo código Unicode. O que é CLDR? CLDR
+
+é o repositório de dados local comum, como um banco de dados, que é o maior banco de dados do mundo para regras de formatação com reconhecimento local. É nele que todos os diferentes tipos de regras de formatação são armazenados. Portanto, sempre que você usa INTL em JavaScript, seja no navegador ou no lado do NodeJS, o ambiente de execução consulta esse banco de dados específico para produzir a saída correta para qualquer variável local, incluindo. O método principal é o formato de data e hora. O construtor de formato de data e hora recebe dois argumentos. A primeira é a área dos
+
+moradores locais ou um único morador local. A segunda opção é a de configuração. Aliás, ambos os argumentos são completamente opcionais. Você pode querer ou não ultrapassá-los. Mas veremos muitos exemplos em que passar a variável local e as opções são ferramentas muito poderosas para converter uma data para um formato de data e hora específico.
+
+Então vamos adotar esse novo formato de tempo internacional. Vou copiar e colar aqui. Não preciso de nenhum desses argumentos para começar. E agora, o que isso retorna? Ele retorna um formatador porque estamos formatando data e hora. Certo? Assim, podemos
+
+fazer `const formatter equals to new intel date and time format`. Depois de obter esse formatador, você pode invocar um método chamado format para formatar a data e a hora. Então, o que podemos fazer é usar o fmt, que é o formatador. Podemos invocar um método chamado format e podemos passar qualquer data para formatá-lo. Vou colocar tudo isso dentro de um cadeado, porque esse formato `fmt dot` vai me retornar a data formatada. Ok, preciso corrigir um
+
+erro de ortografia aqui. Então, eu obtive essa data específica que mencionei aqui, formatada no meu idioma atual. Justo . De forma semelhante, posso simplesmente passar a data atual, que é o momento exato em milissegundos. Aprendemos isso. Então isso vai
+
+me retornar a mesma coisa, porque estamos falando apenas da data. Posso até mesmo passar quaisquer milissegundos na representação da data. Como podem ver, estou passando esses milissegundos específicos, o que me dará a data, mas em 2025. Ok. E se eu não passar nenhuma data para a função de formatação, ela simplesmente formatará a data de hoje. OK. Então,
+
+agora que você conhece todo esse uso e formato, tudo isso fica claro. Depois de obter um formatador do formato intlatime, você pode invocar a função de formatação ou o método correspondente e, em seguida, passar qualquer data que desejar formatar. Este formato de data e hora que utilizei não contém nenhuma opção local nem outras opções. Vejamos agora alguns exemplos com variáveis ​​locais. Primeiro, obtenha esse novo formato intlatime e passe os enus locais. Vamos
+
+considerar isso em uma variável chamada US fmt, que significa formatador americano. De forma semelhante, vamos criar formatadores para o Reino Unido, para a Alemanha e para o Japão. É a mesma coisa, basta passar a variável local diferente. Novamente, tanto os moradores locais quanto as opções são opcionais. Estou apenas passando por moradores locais agora para poder mostrar a vocês a vantagem disso. Agora vamos
+
+marcar um encontro. Portanto, em UTC, a data e a hora de hoje são 2h30. Você pode ver isso. Vamos começar a formatação. Primeiro, usaremos este formatador americano. Depois de usarmos o formatador, agora
+
+você sabe que pode invocar o método chamado format. E aqui podemos passar a data, certo? Assim, podemos ultrapassar essa data específica. Veja, aqui em EN US, a data está sendo exibida neste formato específico. Tudo bem. Só para
+
+deixar mais claro, estou apenas adicionando a string. Então, com o formatador americano, estou obtendo a data formatada desta maneira. Da mesma forma, se eu testar todos esses outros formatadores diferentes com o formatador do Reino Unido, o formatador do Reino Unido e o formatador de ponto passarão a mesma data. Formatador D. Repita o mesmo procedimento na mesma data e observe o registro para ver as diferenças. Nos Estados Unidos, o formato é mm dd Y. No Reino Unido,
+
+é dd mmm y. Em alemão, é um ponto como dd.m m doty y. Em japonês, o formato é y/m/d, completamente diferente. Você não precisa se lembrar exatamente qual formato cada sistema local suporta. Basta passar o
+
+formatador local. Além disso, chame a função de formatação e passe a data. Vai retornar a data formatada para esta localidade. Que fácil . A propósito, vamos programar juntos, certo? Não se limite a olhar para o que estou programando.
+
+Não vai servir para nada. Por favor, abra seu editor de código favorito ou abra seu navegador, acesse as ferramentas de desenvolvedor, vá para a aba "Console" e comece a codificar tudo o que eu estou codificando. Pause o vídeo onde quiser, observe o que você está programando, o tipo de resultado que está sendo gerado, compreenda e só então passe para a próxima seção. OK? Sem prática, seguir tutoriais é perda de tempo. Tudo
+
+bem? Agora, na terceira parte, vamos aprender sobre essas opções. Assim, quando inserimos o formato de tempo, podemos passar as variáveis ​​locais. Já vimos esse exemplo. Agora vamos ver um exemplo de que tipo de opções podemos passar. Primeiro, vamos dedicar um tempo.
+
+O tempo que dedicamos hoje será usado novamente para formatar o equipamento. Vamos armazená-la em uma variável chamada dtmt, que nada mais é do que um formatador de data. Aqui estão duas coisas que podemos aprovar. Primeiro podemos passar pelos EUA. O que é isso? É um formato local
+
+e, se eu simplesmente usar `log of dt fmt`, você sabe o que vai me retornar, certo? Vai me dar esse objeto de data e hora formatado. Se eu usar `dot format` em cima disso, porque é isso que eu preciso passar para formatar a data, agora vou obter a data formatada no formato local dos EUA. Agora eu quero aprender algumas opções. Digamos que a opção que me interessa agora é como estilizar a data que estou recebendo. Aqui eu posso estilizar
+
+a data. Certo, como faço para formatar a data? Posso passar uma opção chamada estilo de data e passar diferentes tipos de valores para ela. Por exemplo, completo. Agora vamos ver o que acontece . A data exibida é a mesma, mas
+
+formatada por extenso, mostrando que este dia é um domingo, 15 de março de 2026. Data completa em formato detalhado. Existem outros formatos, por exemplo, em vez de completo, se você puder optar por um formato mais longo. Se eu fizer isso, você verá que vai mudar para 15 de março de 2026. O formato completo mostrava " Domingo, domingo passado", agora mostra " 15 de março de 2026". Se eu usar apenas a forma abreviada, em vez de
+
+tudo isso, agora vai me mostrar "315 2026", o formato que eu estava obtendo por padrão. Então, o que isso significa exatamente? Essas opções são muito úteis se você quiser um formato de data bem elaborado, formatado em um idioma local específico. Use o formato completo se não precisar disso. Opte pelo formato médio. Opte pelo
+
+formato longo. Opte pelo formato curto. OK. Então, aqui está tudo que você precisa saber. Eu já te mostrei o resumo completo. Por favor,
+
+tente longo, médio e curto. Faça tudo conforme for experimentando. Isso é ótimo. O formato DT funcionou. Agora, posso fazer o mesmo para o formato de hora? Sim.
+
+Vou simplesmente copiar esse cara. OK. Para você. Vou simplesmente copiar isso daqui. E depois vou colar a mesma coisa. OK. Vai ficar fora do
+
+ar por algum tempo. Está tudo bem. E vou mudar o nome desta variável dtm dt fmt para tm fmt, que significa formato de tempo. OK. E em vez de usar o formato de data, vou usar apenas o formato de hora.
+
+E aqui vou passar o formato tm fmt ponto. Agora você vê essa saída? Está mostrando a hora no formato completo, totalmente formatada: 20h00min45s. Com o fuso horário padrão indiano, também exatamente da mesma forma que tentamos outros estilos diferentes. Por exemplo, se eu apostar alto, veja a mudança que o IST sofreu. Agora são 5:30 GMT+
+
+. Se eu fizer apenas um clique curto, veja a mudança, e verá que são apenas 20h. Você viu isso? Assim, agora, dependendo do estilo necessário para sua aplicação, você pode simplesmente fazer isso passando algumas dessas opções. Então, por favor, experimente.
+
+Por isso digo que é muito, muito útil. Agora, podemos combinar os dois ? Sim, podemos combinar. Vamos fazer isso. Vamos fazer con fmt mesma nova inteligência.
+
+Formato de tempo e aqui vou apresentar algumas opções. Quais são as opções que vou descartar? Se eu tiver que combiná- los, quero, por exemplo, "estilo" em resumo e " tempo" em resumo. Então, vou passar os dois formatos assim e depois disso, vou simplesmente fazer o log do formato fmt.format passando a data. Agora você
+
+verá uma nova saída onde a data e a hora estão formatadas no formato abreviado. Ah, você quer um encontro em tempo integral, resumindo. Sim, por que não marcar um encontro? O tempo integral é curto. Sim, está lotado agora, o tempo é curto. Ah, você também quer isso na íntegra?
+
+Sim, vamos fazer isso. Você verá isso também por completo. Isso é algo que você faz completamente, sabe, onde você geralmente faz para o registro, sempre que você quer registrar algo, você geralmente usa o formato completo, assim. Ok, essa formatação está feita. Agora posso repetir isso para outros idiomas? Sim, posso fazer isso.
+
+Para o idioma japonês (D), eu criei um formatador para o idioma japonês (D), o mesmo formato de data e hora, mas para o idioma japonês (D), eu passei DE para os formatos de data e hora (Date, Time, Short). Eu usei os formatos completo e curto e estou imprimindo aqui. Você vê aqui a diferença? O domingo aqui está em inglês, mas aqui está nesse idioma específico, certo? Essa é a vantagem. Veja o mês aqui
+
+e veja como eles chamam de "merch", certo? Posso fazer a mesma coisa com o idioma japonês (Japão)? Ah, sim, eu criei um formatador para japonês, passando JP e configurando para os formatos completo e curto. E quando eu registro isso formatando a data, você vê que está vindo tudo em japonês, e é assim que você precisa. Você não pode representar uma data e hora em inglês se estiver atendendo um usuário chinês ou japonês; eles podem não estar tão acostumados com o inglês.
+
+Você não deve presumir isso, em vez disso, deve ser formatado em seu idioma nativo, em seu idioma japonês (Japão). É exatamente isso que estamos fazendo aqui com a formatação de data e hora. Ok, agora vamos ver alguns exemplos mais práticos. Até agora, aprendemos que podemos usar `int` para formatar uma data e hora, podemos passar a variável local e podemos passar opções para formatar uma data. Isso é um pouco verboso; você precisa fazer `int` para formatar uma data e hora toda vez para obter um formatador e, em seguida, chamar um método `format` sobre o formatador, passando a data. Em vez de fazer todo
+
+esse circo, sabe o que podemos fazer? Podemos escrever uma única coisa. Por exemplo, podemos escrever algo como "con fmt é igual a isto é uma função". Isso retornará uma função. Passe a variável local e, em seguida, passe as opções (opts). Vamos usar uma
+
+função de seta aqui. E o que isso retorna? Retorna o novo formato de data e hora intl. E então você passa as mesmas opções locais para cá. Além disso, você chama sua função de formatação ou o método de formatação e passa a data. Isso funciona como uma
+
+substituição direta de tudo o que fazíamos antes, não é? Portanto, fmt agora é uma função, pois foi a ela que atribuímos uma função específica. É uma função de seta. O que essa função retorna? Ele retorna a data formatada por completo para você. A função `fmt` está chamando o novo
+
+formato de data e hora do Intel, passando as mesmas variáveis ​​locais e opções, além de invocar o método `format` passando a data desejada e retornando a data formatada. É exatamente isso que a função `fmt` faz. Você pode até passar essa data como parâmetro, o que também funciona, mas como você já definiu a data diretamente no código, vou usar esta versão. Como posso usá-la? Agora você pode usar `fmt`, primeiro passando as variáveis ​​locais e depois quaisquer opções. As
+
+duas opções que você aprendeu até agora são ` datestyle` e `timestyle`. Vou ensinar- lhe mais algumas opções importantes e opções que pode passar como objeto. Você pode especificar no formato de data que deseja o mês por extenso, o dia em formato numérico e o ano também em formato numérico. OK. E agora isso vai me retornar a data formatada, certo? Porque `fmt` é uma
+
+função que pode receber uma variável local, como esta, e várias opções de formatação de data que você passou, e ela vai me retornar a data formatada. Então, se eu simplesmente inserir tudo no nosso programa de registro favorito, ele imprimirá essa data formatada para você. Você pode ver 15 de março de 2026. O mês é longo. Diz que o dia de março está em formato numérico e o ano 15 também está em formato numérico. OK. De longo, posso mudar
+
+para curto aqui? O mês passa rápido demais. Você verá que isso se transformará em m a partir de março. Quando usei o tamanho longo, era March M. Mas quando usei o pequeno, virou M. Então, assim você pode
+
+mudar e escolher o que estiver procurando. OK. Agora você quer compactar os dados um pouco mais. Vamos usar outro formato. Para compactar a data, usei o mês como abreviação, que é o dia M em formato numérico. Portanto, trata-se de uma
+
+data compacta, onde na interface do usuário há pouco espaço disponível para exibir um determinado formato de data. Sim, você pode usar esse formato compacto, já que não está realizando nenhuma operação com strings. Você não está cortando nem aparando nenhum fio, mas sim utilizando uma data e um formato específicos fornecidos pela Intel, porque agora a mesma data compactada, se eu simplesmente copiar e colar, posso fazer como...
+
+veja, estou obtendo isso para um local completamente diferente . Assim, você não precisa corrigir isso usando nenhum tipo de "enxuga" no seu código. Você não precisa realizar operações com strings. Você não precisa manter nenhuma tabela de consulta para diferentes idiomas. Apenas uma linha de código resolverá tudo. Vejamos mais alguns
+
+exemplos. Você deseja exibir apenas o mês e o ano. Sim. Nos EUA ou em qualquer outro sistema numérico local de mês e ano. Veja isso somente em março de 2026. Que tal mostrar o
+
+dia da semana? Dessa vez, eu disponibilizei a opção de dias da semana com duração máxima. Consigo ver o domingo, mês, dia inteiro, em formato numérico. Assim, você pode explorar todas essas opções exatamente como quiser. E é aqui que, pessoal, o site MDN que mostrei a vocês no início será muito útil. Com todas essas opções, você
+
+não precisa se preocupar em mantê-las em mente. Você sempre pode acessar o site da MDN e verificar qual formato será útil para o seu caso específico. Basta selecionar essa opção e apresentá-la como uma alternativa. É isso. Da mesma forma, também podemos formatar a hora. É aqui que ocorre a
+
+formatação de hora. Veja, é um relógio de 24 horas. Por que é um relógio de 24 horas ? Porque eu disse especificamente que o relógio de 12 horas é falso. Se você simplesmente remover isso, o relógio de 12 horas vai mostrar 20h00. Portanto, se
+
+você quiser imprimir no formato de 24 horas , basta passar essa opção como `hour 12` e definir `false` como `option`. A hora eu gerei dois dígitos, o minuto eu gerei dois dígitos. Veja como é. Eu estava falando sobre o fato de que, quando você quer registrar algo, "registrar" significa não apenas no console.log, mas também em um log no servidor. O log é
+
+uma ferramenta excelente que fornece um registro exato do que aconteceu e também de quando aconteceu. Isso significa que o tempo é muito importante quando certas coisas acontecem, quando você está registrando certas informações. Aqui está um temporizador completo para registro de eventos que você pode usar. Estamos formatando localmente, mas o ano é numérico, o mês tem dois dígitos, o dia tem dois dígitos, a hora e os minutos também, tudo com dois dígitos, e é um relógio de 24 horas. Então, se você observar aqui, é assim que a data e a hora são impressas. Então, para cada
+
+ocorrência no seu registro, se você imprimir o registro nesse formato, será ótimo. É a mesma coisa, o mesmo formato. Se você simplesmente copiar e colar aqui, basta mudar o idioma local para japonês, como JA - JP, e verá como as coisas mudaram, certo? A formatação mudou, pelo menos no que diz respeito à data . Esses são, portanto, outros casos de uso poderosos e práticos em que você pode usar as opções para lidar com cada fragmento da data e hora na formatação de data e hora . Incrível. Na primeira parte,
+
+abordamos esse assunto brevemente. Vou reiterar mais uma vez. Muitas vezes há confusão entre registro de data e hora e fuso horário. Expliquei que também há confusão entre os moradores locais em relação ao fuso horário. Certo, deixe-me defini-los.
+
+A localização, que vimos como EN-US, J-JP, etc., determina como as informações devem ser exibidas: um idioma específico, a data e a hora, o formato da moeda, etc. Já o fuso horário define a hora com base em uma localização em relação ao UTC. OK. Até agora, tudo o que abordamos aqui se refere a questões locais, pois estamos falando de formatação. Estamos falando de
+
+formatação. Todos esses itens seguem um formato e tipo de dados específicos. Agora vou falar sobre fuso horário. Fuso horário significa que agora vamos falar sobre um local específico no seu mapa mundial de fusos horários . Você se lembra, tipo, da primeira parte, quando tínhamos UTC. Se você for para o lado direito, será
+
+UTC + 1 + 2 + 3, assim. Se você olhar para o lado esquerdo, será -1 -2 -3. A Índia está com +530. Em algum lugar de Nova York, vimos que estava -9. Então, tudo isso aprendemos na primeira parte. Esse é o
+
+fuso horário. Como podemos, na prática, ver como os fusos horários influenciam o formato de data e hora que pretendemos mostrar? Para isso, vamos primeiro pegar uma data em UTC. Esta é uma data que cria uma nova data e esta é uma data em UTC porque termina com Z, certo? Aprendemos isso na primeira parte. Terminar com
+
+Z significa que é UTC. Agora vamos usar a mesma função de formatação. Na verdade, retorna uma string formatada. OK. Agora vamos definir algumas opções.
+
+Defini algumas opções de tempo, sendo que o estilo de tempo é curto e o estilo morto também é curto. Agora, se eu executar `fmt`, `fmt` retorna uma string formatada. Eu forneço o enus local e depois passo as opções. Antes eu estava passando a opção diretamente para o objeto aqui. Neste momento, eu apenas declarei isso no início para que eu possa utilizá-lo em vários lugares. É assim que as coisas são
+
+. Então, vou simplesmente passar isso para dentro da minha função de log favorita para que eu possa registrar a informação. O registro indica 16/03/2026 às 01:30 da manhã. Qual é a minha data? Se eu verificar a data, é 15 de março de 2026, às 8h UTC. Estou formatando a mesma data
+
+aqui usando a opção chamada estilo de hora e estilo de data. Mas o resultado que estou obtendo é do dia seguinte, 16 de março, e são 1h30 da manhã. Por que? E aqui estamos, exatamente no dia 15 de março, às 20h. Aqui estamos no início da manhã, às 1h30 do dia seguinte. Por que? Porque este horário é o
+
+horário UTC. Estou fazendo tudo daqui da Índia. Meu navegador está configurado para o servidor da Índia. O fuso horário da Índia é UTC + 5:30. Se UTC for zero, adicione 5:30 a partir daí. Se forem 20h do dia
+
+15 de março e você adicionar 5 horas e meia, ou seja, mais 5h30, você passa do dia 15 de março, vai para o dia seguinte, 16 de março, e chega exatamente à 1h30 da manhã. Portanto, se você não estiver passando por nenhum fuso horário, a função de formatação automaticamente pega o fuso horário configurado no meu navegador e formata a data para esse fuso horário específico. É tão poderoso assim, e esse é o impacto do fuso horário por aqui. E se você precisar alterar esse fuso horário programaticamente? Sim, essa previsão também existe. Se você deseja
+
+alterar o fuso horário programaticamente, ou seja, se não quer que este formato específico de data e hora seja exibido no fuso horário do navegador do seu cliente, você pode passar as informações de fuso horário como uma opção aqui. Vejamos isso. Então, este é praticamente o fuso horário local. Ok, este é o fuso horário local. Agora, se eu quiser no fuso horário americano, como Nova York, o que posso fazer? Posso
+
+pegar o mesmo log por um momento, mas nas opções de tempo posso desestruturar normalmente em JavaScript, certo? Adicionar uma propriedade a um objeto existente e passar o fuso horário como Nova York. Agora você vê que horas são? São 16h. Então, se você converter 20h do dia 15 de março UTC para o fuso horário de Nova York, nos Estados Unidos, você fica com -9 horas de atraso. É por isso que são
+
+16h. Aqui estamos 9 horas atrasados ​​em relação às 20h. OK. É assim que funciona . Então, no fuso horário local, este é o horário do meu fuso horário local. Isto é
+
+no fuso horário americano e de Nova Iorque. Vamos tentar mais algumas. Agora estou tentando no fuso horário de Londres, na Europa. Então, o fuso horário que estou considerando é o de Londres, na Europa. Se você vir isso de novo, vai mudar, certo? Que
+
+tal eu tentar em Berlim, na Europa? Então, aqui vou passar o fuso horário como Euro Berlin. Veja, aqui, e claro, fica na Alemanha. Então, estou formatando a data e a hora também nesse formato específico. Veja bem, na Europa, em Berlim, é uma época completamente diferente. Então, quero que vocês se concentrem nessas duas coisas
+
+. Isso serve apenas para formatação em um idioma específico. Este é o formato da data. Este é o formato de hora. Isso é apenas para formatação. No entanto, esta parte
+
+se refere à hora atual naquele fuso horário. Essa é a diferença, pessoal. Se você cometer um erro aqui, jamais conseguirá corrigir um problema de produção que surgir em data e hora específicas. Você precisa ter muito clareza de que a primeira parte serve apenas para formatação. Cada região geográfica da Terra possui uma maneira de entender como a data e a hora devem ser escritas. Esta primeira parte serve apenas para
+
+isso. A hora atual seria representada por este fuso horário. Se você não passar nada, é o fuso horário local do seu navegador . Se você especificar algo explicitamente, sim, será esse o fuso horário. Certo, vou dar outro exemplo. Você consegue ver
+
+aqui como essa formatação é feita em 150326 na Europa, em Berlim? Isso está correto porque este é o horário convertido do UTC para o horário alemão, como em Berlim, e os alemães entendem a data e hora neste formato específico. Agora, se você quiser alterar esse formato, mas ainda manter o horário alemão, basta usar o comando ` enus`. Você vai ver o que aconteceu. A última versão teve a formatação alterada, mas a hora continua a mesma. Era um formato de 24 horas, às 9h. Agora
+
+passou a ser exibido no formato de 12 horas. Era com ponto que se transformava em barra. O tempo não está mudando porque você está mudando o primeiro. São apenas as mudanças de formato, e você quer manter o formato que certas pessoas daquela região entendem. Por isso, estamos usando o formato correto juntamente com o fuso horário aqui. Espero que esteja bem claro, pessoal. Na
+
+verdade, estou me esforçando ao máximo para que você entenda, da maneira que for possível. Espero que esteja claro. Tudo bem. Então vamos pegar o Japão, na Ásia, Tóquio, que fica no Japão. É assim que as coisas estão agora, com o formato certo. Incrível. Você entendeu? Ótimo.
+
+Se você gostou, deixe um like e inscreva-se no canal para não perder nenhum vídeo novo. OK. Vamos falar sobre os nomes dos fusos horários. Você já deve ter ouvido falar da IST. Mas existe uma forma maior disso, chamada Horário Padrão Indiano. Da mesma forma, para muitos outros,
+
+haverá uma forma abreviada de um fuso horário e a forma completa. Com o passar do tempo, a forma como um fuso horário pode ser percebido muda tudo. Vamos então analisar alguns exemplos para entender os diferentes nomes de fusos horários. É muito importante. OK. Então, marquei uma data
+
+novamente em UTC. A data é 15 de março, mas às 14h. em UTC. Vamos considerar o fuso horário americano/Los Angeles. E aqui tenho a mesma função FMT de antes, mas codifiquei muitas coisas diretamente no código . Por fim, retorna uma
+
+data formatada. É isso que ele faz. Mas eu incluí algumas opções pré-definidas no código. Por exemplo, quero a hora em formato numérico e os minutos em formato de dois dígitos. Fuso horário. Este é o fuso horário que eu
+
+quero. e que tipo de nome de fuso horário eu quero. Qual é o formato? É isso que vou passar para essa função específica. Se eu passar um formato longo como log long ao invocar este fmt com uma data, a data já estará codificada aqui. Isso me dará uma data formatada por extenso
+
+. Se eu selecionar "abreviado", ele me dará uma data formatada de forma abreviada, como esta. Então, deixe- me fazer esse fmt e vou começar com o short sort e vou colocar isso dentro da minha função de log. Então, aqui estou vendo 7h da manhã, horário do Pacífico. OK. Por que a Terapia Fotodinâmica (PDT)? Porque eu considerei o fuso horário dos
+
+Estados Unidos/Los Angeles. Assim, será exibido um dos fusos horários dos Estados Unidos. Aliás, os Estados Unidos, você sabe, têm vários fusos horários, certo? Diferentemente da Índia, que possui apenas um fuso horário. Então, um dos fusos horários é o PT (Ponto Horário). É isso que
+
+está sendo mostrado. OK. Se eu quiser explicar melhor, basta copiar e colar aqui. E em vez de dizer curto, estou dizendo que é longo. Agora entendi o horário específico da luz do dia, que é o que significa PD . Assim, você pode obter
+
+vários outros nomes formatados de maneiras diferentes. Por exemplo, se você quiser um nome de deslocamento curto, um nome de deslocamento longo, um nome genérico curto ou um nome genérico longo, todas essas opções aparecerão aqui, assim. Dependendo do tipo de exibição que você deseja para seu aplicativo, você pode escolher diferentes tipos de nomes de fuso horário. Muito, muito útil, muito, muito poderoso. Vocês se lembram de quando discutimos sobre o objeto de dados JavaScript na primeira parte?
+
+Eu disse a vocês que o objeto de dados JavaScript suporta apenas duas coisas, dois tipos de fuso horário. Uma é a hora local, a outra é UTC. Mas com a API INTL, agora você pode trabalhar com qualquer fuso horário do mundo. Agora vou abordar uma das seções mais interessantes e uma das minhas favoritas do INL: a formatação de tempo relativo . Acredite, sem essa formatação de tempo relativo, você terá que recorrer à manipulação de dados. Você precisa
+
+usar o Moment.js. Você precisa recorrer a terceiros ou escrever muita lógica para conseguir realizar a tarefa. Mas você vai ver agora como é simples. Até agora, estávamos lidando apenas com o formato de tempo morto . Formato de tempo morto Inl. Mas agora
+
+vamos acabar com esse tédio. Vamos falar sobre o formato de tempo morto inlativo. E novamente, a mesma coisa acontece: você pode passar um enus local. E então você pode passar uma série de opções. As opções mais utilizadas são estilo e numérica. Vou explicá-los e depois
+
+armazená-los em uma variável chamada RTF. Estilo e numérico são duas opções diferentes. Existem algumas outras opções também, mas essas são as mais utilizadas. " Numeric is auto" significa que estou dizendo ao inl que, sempre que você me retornar informações de tempo relativo formatadas, não precisa me fornecer as informações sempre no formato numérico. Às vezes, você pode combinar para criar um formato alfanumérico, mas em vez de usar `auto`, se eu usar `always`, é isso que sempre me dará no formato numérico. Quais são as
+
+outras opções? Assim como `long`, `short` e `stretch`, vamos ver todas elas. Ok, então por enquanto, vamos voltar ao `auto`. Agora vem a parte interessante: e se eu usar o formato RTF com pontos? Assim como o formato de tempo morto, o formato de tempo relativo também tem um método `format` para formatar as coisas. Aqui
+
+você está falando de relativo. O que isso significa? Se eu estiver em `hoje`, quero saber como era um dia antes, como será daqui a 7 dias, como era 36 meses atrás e como será daqui a 2 anos. Quero esse tipo de representação formatada. Então, vamos usar o formato RTF com pontos menos um dia e vou colocar isso dentro da minha função `log`. Veja o que
+
+imprime: imprime "ontem", correto? Se eu estiver em `hoje`, é sempre relativo a hoje. Se eu invocar agora, menos um dia a partir de hoje é ontem, claro. E menos três dias? Será 3 dias atrás. Agora
+
+imagine que você tem uma data. Na parte um, aprendemos sobre diferença de datas e diferença de dias. Então, você pode escrever sua função para identificar quantos dias há de diferença entre hoje e ontem. Você descobriu que o número é três. Agora, você cria uma string concatenando esse três com um espaço, depois " dias" e, por fim, um espaço. Essa
+
+função de formatação fornece isso diretamente. Por que é mais simples? E se a diferença for de apenas um dia? Não se pode dizer " há 1 dia". Não pode ser plural. Tem que
+
+ser dia. Certo? Há um dia, no singular. Mas, no caso do número três, tem que ter sido há 3 dias. Você precisa escrever essa lógica agora mesmo. Se for mais de um,
+
+direi dias. Se for menos de um, direi dia. Todas as coisas. Por que essa função de formatação lhe dá todo esse controle? Vamos ver mais algumas. Que tal isso: duas semanas menos uma?
+
+Diz "semana passada", é assim que formata. Menos dois meses, dois meses atrás. Veja, então, como e quando você obtém esse resultado com seu próprio cálculo, entre quantos meses de diferença, quantos anos de diferença, quantos dias de diferença, e você quer mostrar isso na sua interface de usuário de uma forma muito melhor formatada, é assim que você fará. Aliás, se eu quiser mostrar isso não em inglês, mas em alemão, o que eu faço? Você deve dizer D E D E.
+
+Você vê isso? O que está acontecendo? Eu não consigo entender porque não sei alemão, mas mudou. O próprio idioma mudou. Bonito, não é?
+
+Vamos ver mais alguns exemplos: menos um ano, menos um ano não é nada além do ano passado. Um dia agora, sem menos, vou para positivo. O próximo dia é amanhã. Um dia foi ontem, este dia é amanhã. 3 horas significa em 3 horas. Menos 3
+
+dias foi há 3 dias. Uma semana será a próxima semana. OK. Diga-me, o que será o Zero Day ? Se eu colocar zero aqui, colocar o dia aqui, qual será o dia zero?
+
+Claro, será hoje, não é? Porque o marcador sempre começa a contar a partir de hoje, certo? Qual será o valor de 0 segundo? Se eu colocar "dia" em vez de "dia" aqui, se eu colocar "segundo", o que você acha? Qual será o resultado? Será agora. Veja, já é agora.
+
+Entendeu? Então, é assim que você pode fazer a formatação relativa. Agora vou ensinar outra coisa, especialmente com uma biblioteca como React ou Angular, ou qualquer outra que você use para construir aplicativos. O nome do método é `format two parts`, o mesmo que no formatador de tempo relativo, não no formatador de data e hora. Você tem um método chamado `format two part` que recebe um argumento semelhante, digamos, menos 3 dias. Ok, vou usar
+
+este e passar para cá. Agora, se você chamar `format`, ele retorna os dados formatados menos 3 dias, ou seja, retorna os dados de 3 dias atrás. OK. Agora imagine que em sua aplicação React você queira destacar esses três dias em azul . Ago é de cor vermelha. É claro que
+
+você não usará esse tipo de cor, mas imagine. Então, depois de formatar a string usando o método ` format minus 3 day`, você chamará um método chamado `split`, que dividirá a string com base nesse espaço e retornará um array contendo os três dias e o ego como elementos. Então você pode, sabe, fazer um mapa por cima disso e depois pode fazer o que quiser. Mas, em vez disso, se você chamar o método `format to parts`, ele fará a mesma coisa, porém de uma maneira muito mais segura. Então, se eu fizer o log de, vou pegar isso em uma variável chamada parts e vou passar essas parts para cá. Como
+
+você pode ver, está me retornando uma matriz com dois elementos. O primeiro elemento é um número inteiro que representa três, e o segundo representa os dias atrás. Portanto, esta é a forma significativa que considero adequada para a divisão. Assim, aqueles três itens que você queria colocar em um estilo, dias atrás, você pode colocá-los em outro estilo. Não se trata de separar " dias atrás" e "atrás" novamente, pois não faz sentido nem mesmo do ponto de vista da experiência do usuário, já que "dias atrás" e "atrás" precisam estar juntos.
+
+OK. Por que digo que é muito mais seguro? Porque se você simplesmente alterar isso para nós agora, verá que as coisas mudam. Agora está retornando três coisas. Por que? Porque há 3 dias
+
+houve uma mudança para este conteúdo específico e agora o sistema considera relevante dividi-lo em três seções diferentes, pois é assim que o usuário daquela região geográfica pode perceber a informação. Três dias atrás é outra coisa. Quem fala inglês consegue entender que quem entende inglês consegue entender essa separação, mas para o alemão a separação precisa ser diferente. É assim que se obtém um resultado muito, muito poderoso, pessoal. Por favor, usem isso. Espero que isso surpreenda vocês
+
+e que comecem a usar isso de forma muito eficaz. Aliás, eu falei sobre esse estilo e esse automático, mas antes, deixe-me mudar para "nós" para que todos possamos entender claramente que tudo está em inglês. Agora, se eu mudar o estilo para "digamos, curto", vocês não verão mais as palavras nesse formato longo. Viu como tudo acaba sendo curto, né? M O Y R coisas desse tipo . Agora, se você definir para "sempre ativado"
+
+em vez de "automático", verá a representação mudar. Se eu automatizar, você verá a representação na próxima semana, em dois dias. Mas se eu fizer isso sempre, ele respeitará o valor numérico sempre, como em 1 dia, em 3 dias, em 1 semana, em 0 dias e em 0 segundos. Então, seja qual for a maneira que faça sentido para você, use esse estilo específico e o valor numérico. A próxima coisa que você precisa aprender é como o JavaScript escolhe uma variável local. OK, bom. Então, vamos aprender isso.
+
+Então, aqui vai uma pergunta para você. Eu tenho um encontro, sabe, em UTC. Novamente, tenho dois representantes locais aqui, BN e ID. BN significa " Balanese local". O documento de identidade é para o cidadão indonésio local. Passei essas
+
+variáveis ​​locais para cá, ambas como um array. Então, qual é a variável local que o JavaScript utilizou para formatar essa data? Você pode responder a isso? Agora, uma coisa que você precisa entender quando faz uma requisição local é que o JavaScript nem sempre tem uma correspondência exata. Ele utiliza um algoritmo de negociação para encontrar a correspondência mais próxima para uma localidade compatível. Compreender isso
+
+evita muitas surpresas na produção. Neste caso, BA não é um local muito conhecido como ID. O indonésio é uma língua local bastante conhecida. Assim, o algoritmo de negociação do JavaScript detectará automaticamente o ID. Isso confere maior prioridade ao assunto para os moradores locais. E vamos
+
+formatar essa data com o idioma local da Indonésia. OK. Deixe-me ensinar-lhe mais uma utilização prática. Quem trabalha com NexJS, especialmente com a parte i8N, usa o proxy ou o middleware para identificar dinamicamente qual é a configuração local que precisa ser capturada. Eles usam algumas dessas coisas. Certo, qual
+
+é o idioma configurado no navegador do seu cliente? Como posso obtê-lo? Você o obtém usando navigator.language. O objeto JavaScript Navigator está amplamente disponível no objeto window. Se você executar `navigator
+
+dol languages`, ele retornará todos os idiomas configurados no seu navegador ou, se o seu cliente estiver usando o seu aplicativo, no navegador dele. Basta armazenar esses idiomas em uma variável e, em seguida, executar `console.log` para exibir as variáveis ​​locais do usuário. Vamos ver o que ele imprime para mim. Então, está imprimindo 10 idiomas locais porque foi assim que configurei meus idiomas. A
+
+primeira é o inglês na Índia, depois o bengali, depois o espanhol, o alemão, sabe, eu tenho o chinês porque preciso testar algumas coisas. Eu simplesmente arrasto e solto os arquivos nas configurações do meu navegador e na opção de idioma. Eu falo vários idiomas. Tenho uma língua desconhecida chamada Xhosa ou HOSA para testar minhas localizações diversas vezes. OK. Agora, digamos que seus
+
+aplicativos tenham determinadas variáveis ​​locais definidas e que você as tenha definido neste navegador específico. Esses são os seus aplicativos locais mestres. Como garantir que, ao formatar o código, o JavaScript selecione a melhor correspondência local possível? Porque seu navegador está fornecendo muitos locais. Você também tem esses aplicativos locais.
+
+Qual é a melhor correspondência que o JavaScript pode encontrar entre as variáveis ​​locais do usuário e as variáveis ​​locais do aplicativo? Certo, para isso, o formato INTL deadtime fornece uma função chamada supported locals, onde você passa suas variáveis ​​locais de usuário e, em seguida, uma opção que define como você deseja que essa correspondência ocorra. Existe uma propriedade chamada "local matcher" (correspondência local). Você pode apresentá-la como a melhor opção e isso lhe dará a tarifa local negociada. Então, se eu simplesmente pegar isso em uma variável chamada "negociado" e imprimir esse registro de "negociado local". Sim, agora entendi
+
+todas as negociações locais. Portanto, se você observar daqui, o xh desapareceu porque o JavaScript considerou que o xh era algo que ele não podia suportar após essa negociação. Então, esses são os moradores locais que recebem apoio. Não deveria estar usando console.log, certo? Deveria ser sempre um registro. Muito bem,
+
+nós sabemos disso, certo? intelecto. Formate a hora morta e, em seguida, chame a função de formatação para obter uma data formatada. Agora, uma coisa sobre desempenho: criar um objeto no formato inl.etime não é barato. Nos bastidores, o
+
+navegador ou o ambiente NodeJS, dependendo de onde você o estiver usando, precisa analisar o código local, negociar a melhor correspondência e carregar os dados de código Unicode relevantes. Você se lembra do banco de dados CLDA que mencionamos? Então, compile o padrão de formato e configure um estado interno para ele. Tem que fazer muitas coisas desse tipo. Agora, se você fizer a mesma coisa 50, 60 ou 70 vezes no seu código, esse cálculo ficará 50, 60 ou 70 vezes mais lento. Então, como você
+
+deve lidar com isso? Você nunca deve criar uma função como essa, onde você está realmente chamando a Intel. Formate o horário e chame essa função várias vezes em seu código. Em vez disso, você deve usar alguma quantidade de cache e refatoração. A maneira correta seria criar o formatador apenas uma vez. Depois de
+
+criar o formatador, crie uma função que utilize esse formatador para formatar o conteúdo. Este formato não é caro, mas criar este formatador para este local específico, um fuso horário específico e um estilo específico é muito, muito caro. Portanto, crie sempre o formatador em algum lugar externo e use-o em toda a sua função, ou crie uma função para o formato e use essa função de formatador em todos os lugares. É assim que você deve usar. Por favor, leve isso em consideração, caso contrário, sua solicitação será desnecessariamente lenta. Vou mostrar-lhe um
+
+padrão que uso com muita frequência. Eu crio um cache de formatação usando o mapa. Você sabe o que é um mapa no curso de JavaScript de 40 dias? Eu te ensinei a usar `map set`, `hashmap`, `hash set`, tudo. Então você pode dar uma olhada nisso. Então, este é um
+
+cache de formatadores que vou criar e, usando esse cache, criarei uma função chamada "obter formatador". Certo, leva você a ver as opções locais. Essas são as duas coisas que seu formatador de datas também precisa, caso você se lembre. Em seguida, crio uma chave única. A chave única é para este local específico. Quais são as opções?
+
+Eu as combino e crio uma chave. E o que eu faço é primeiro verificar se, para as mesmas opções locais, alguém já me pediu um formatador ou não. Caso contrário, o que eu faço é colocar isso em cache e depois retornar o formatador. OK. Se já estiver encontrado no cache, retorno diretamente o formatador. Então é um problema de cache, certo?
+
+Se você encontrou o item no cache, é um acerto de caixa. Você envia diretamente do cache. Se não for encontrado no cache, é uma falha. Primeiro você define os dados no cache e depois os recupera do cache. Certo? Portanto, é assim que você deve
+
+manter um cache de formatador. E, uma vez que você tenha o cache do formatador, agora você pode usar o cache do formatador. Crie uma função para formatar os dados. Escolha a data e a opção local. Aqui, a função de formatação `getformatter` retornará um formatador, seja do cache ou criando um, colocando-o no cache e, em seguida, retornando-o. Entendeu? Mas você
+
+não está criando isso repetidamente, o que é uma operação cara. Espero que isso faça sentido para você. Por fim, vamos aprender o que é a API inel . Vamos falar sobre a gama de formatos. OK. Até agora,
+
+falamos apenas de um único encontro, em uma única ocasião. Vamos falar sobre alguns cenários de "encontros casuais". Aqui eu criei um formatador semelhante ao da Intel. Formato de hora para esta localidade específica com estas opções. O mês deve ser longo e o dia deve ser numérico. O ano deve ser um número.
+
+Vamos marcar alguns encontros. Uma data de início e várias datas de término. Na primeira data de término, é o mesmo mês e ano da data de início. Na segunda data final, o mês é diferente da data inicial. Na última data final, trata-se de um ano completamente diferente da data inicial. Agora, vamos formatar o
+
+intervalo. Intervalo significa daqui até cá. Para isso, eu já tenho esse formatador. Vou pegar esse formatador e vou fazer o log do formatador. Existe um método chamado format range. E
+
+aqui, primeiro, vou passar o início e o fim. Então, observe o período de 15 a 20 de março de 2026. Ele está sendo exibido apenas em termos de data, porque ambas as datas estão no mesmo mês e ano. Portanto, não há necessidade de repetir o mês de uma maneira diferente. Então, de 15 a 20 de março, esse é o formato. Agora, se eu fizer a
+
+mesma coisa duas vezes, e aqui farei para a número dois e aqui farei para a número três, apenas para mostrar a diferença. Aqui, o sistema reconhece automaticamente que se trata de um mês completamente diferente. Então, precisa considerar o período de 15 de março a 10 de abril, mas, novamente, tudo dentro do mesmo ano. Assim, o ano não se repetiu em nenhum dos dois casos. Mas, no último caso, o ano precisa ser repetido porque se enquadra em anos diferentes. Não é? Portanto,
+
+é de 2026 a 2027. É assim que está sendo formatado. Qual a melhor opção ? Espero que você tenha aprendido algo novo. Você aprendeu muito sobre a Intel, não é? Que tal juntarmos
+
+tudo e criarmos algo que seja realmente muito útil? Então, o que eu fiz foi criar um pacote npm ontem à noite . Eu fiz isso. Com base no que aprendemos nesta sessão, além de alguns outros detalhes, criei um pacote npm que não depende de nenhuma biblioteca externa para formatação de data e hora. Ele usa exclusivamente o pacote INTL do JavaScript, a API INL, e oferece diversas funcionalidades úteis, como formatar data, hora, data e hora local, data e hora de 3 ou 2 dias atrás, obter o nome do mês, obter o nome do dia, formatar o intervalo (é hoje, foi ontem, é amanhã, início do dia) e vários outros métodos utilitários. O que eu quero é que você dê
+
+uma olhada neste pacote npm, instale-o com todos os comandos fornecidos aqui, teste-o em seu projeto JavaScript ou TypeScript e me dê seu feedback. Este é um projeto de código aberto. Você pode clicar aqui para acessar o repositório GitHub de código aberto. Se você acha que há algo a ser adicionado ou modificado, ou se deseja participar deste projeto de código aberto para torná-lo ainda melhor, será muito bem-vindo. Você pode fazer isso aqui. Há
+
+um guia de contribuição disponível. Você pode dar uma olhada e, se gostar deste trabalho, fique à vontade para começar a usar este repositório. O link para este pacote está na descrição deste vídeo. Por favor, dê uma olhada e experimente. Nenhum dos meus cursos termina sem que vocês tenham tarefas e exercícios. Na verdade, é assim que se
+
+aprende melhor. Vocês sabem que aprenderam comigo, como usar o que aprenderam? Eu falei sobre este pacote npm e tudo mais, mas a menos que vocês coloquem a mão na massa e tentem exercitar o cérebro, vocês não aprendem de verdade. Bem, essa é a razão pela qual, no dia 41, existe um arquivo chamado task.md. Ok,
+
+vou mostrar a vocês no GitHub exatamente onde estará disponível. Mas veja só esta tarefa. Já existem quase 20 tarefas por lá. Então, não tenha pressa e tente resolver isso. Tudo o que você aprendeu na parte um e na parte dois vai te ajudar a resolver esses problemas. Por favor, experimente. Sem pressa
+
+. Não há pressa. Tudo bem. Todo o código-fonte está em github.com/tapascript.
+
+Fique à vontade para seguir esta organização. Acesse os repositórios. Você terá 40 dias de JavaScript. Adicionei também esta iniciativa de data e hora aos 40 dias do JavaScript. Caso você não saiba, este é um curso completo de JavaScript para ensinar a linguagem em profundidade, com muitas tarefas e exercícios. Então, existe um
+
+dia 41 onde o vídeo da parte um e os capítulos da parte um já estão disponíveis. Assim que eu publicar a segunda parte do vídeo, você poderá ver os detalhes da lição, o código-fonte e também o arquivo task.md para analisar e realizar a tarefa. Você é sempre bem-vindo(a) ao Discord do Tapascript. É aqui que aprendemos juntos. Se fizermos algum tipo
+
+de tarefa, publicaremos na seção de tarefas . Você pode ver que as pessoas estão postando por aqui. Os desenvolvedores se ajudam mutuamente e, sempre que tenho tempo e disponibilidade, definitivamente contribuo e tento ajudar as pessoas com JavaScript e React. Você pode ver muita coisa acontecendo por aqui, então sinta-se à vontade para entrar no servidor do Discord do Tapascript também. A seguir, vamos para a parte três. A parte
+
+três é algo que me deixa genuinamente animado e interessado: vamos falar sobre a API Temporal. O que exatamente é isso? É algo que já deveria ter sido feito há muito tempo. Os problemas que enfrentávamos com o objeto `date` do JavaScript, como o problema de imutabilidade, etc., serão resolvidos com a API Temporal. Com o
+
+JavaScript moderno, o suporte à API temporal já está presente nos navegadores modernos. Assim, você já poderá utilizar e aplicar muitos desses métodos. Vamos vê-los juntos. Vamos entender essas coisas na parte três. Assim, você saberá como lidar com data e hora em sistemas legados, considerando o estado atual das coisas com a API da Intel e também com as novidades que estão por vir no seu ambiente JavaScript. Espero que você também esteja
+
+igualmente animado(a) com isso. Fique ligado, em breve teremos novidades e não se esqueça de se inscrever no Tapascript, pois é lá que você encontra muito conteúdo fundamental incrível . Eu estava corrigindo um bug com minha equipe e isso ocorreu em uma data e hora específicas. O problema era que a reserva de um usuário estava sendo exibida um dia antes para qualquer pessoa em um fuso horário posterior ao UTC. Após algum tempo, eu e minha equipe rastreamos o erro em uma única linha, e a linha era esta. É isso. Essa
+
+linha de código estava causando problemas de data para quase metade do planeta, porque o objeto `date` do JavaScript interpretava a nova data com uma string contendo apenas a data como meia-noite UTC, e não como meia-noite do fuso horário local . Portanto, se um usuário em Nova York abrir o aplicativo e a data correta for 16 de junho, ele será exibido como 15 de junho. Então, nós corrigimos o problema e enviamos o produto para produção. Três dias depois, surgiu um novo bug, também com a mesma data e hora, e não parou por aí. Não parava de chegar. Então, aos poucos, percebemos que o
+
+problema, na verdade, não está no nosso código. Na verdade, estava no objeto de data do JavaScript. Caso vocês não saibam, o objeto de data do JavaScript foi escrito em apenas 10 dias, em 1995, e foi copiado da classe java.util.class do Java, que foi descontinuada anos depois. Mas
+
+infelizmente, em JavaScript, carregamos o objeto de data há 30 anos. Mas isso acaba agora. Em 2026, finalmente haverá um substituto à altura. E nos próximos 15 minutos, vou mostrar exatamente o que ele conserta, como conserta e por que é a melhor opção de substituição. Essa é uma API temporal.
+
+Pessoal, vamos começar. Antes de prosseguir, deixe-me explicar claramente o que este vídeo é e o que não é. Este vídeo não constitui um curso completo sobre temporalidade. Isso não é possível em um único vídeo, sendo necessária uma série separada que será lançada em breve. Este vídeo é mais sobre uma orientação. A mentalidade que temos
+
+como desenvolvedores JavaScript é a forma como utilizamos data e hora, com e sem o uso de bibliotecas. Agora é hora de você ajustar sua mentalidade para que, daqui para frente, sempre que precisar lidar com data e hora, você pense sempre no aspecto temporal. E vou garantir que isso aconteça nos próximos 14 minutos . Deixe-me agora mostrar alguns dos problemas reais com o objeto de data. Eis um código com aparência muito inocente, não é? Você tem uma função chamada "obter
+
+próxima semana" que recebe uma data e a incrementa em 7 dias. Significa que, se a data for 15 de novembro, a data seguinte deverá ser 22 de novembro. OK. Então agora você está dizendo que hoje é 15 de março de 2026. Uma data que eu escolhi. Então você
+
+passa essa data hoje para conseguir a semana que vem. console.log log next week dot to date string I will get 22nd of March because today is 15th and we have incremented by 7 therefore we got next week as 22nd. Justo. Como programador, minha expectativa é que o dia de hoje não seja alterado, pois hoje é hoje e estamos apenas incrementando-o em 7 dias para obter a próxima semana. Mas o que
+
+acontece se eu usar `console.log` para exibir a string "hoje"? Vejo que "hoje" também foi alterado para " dia 22". Hoje já passou. A função hoje, esta função em particular hoje, porque em JavaScript os objetos de data são mutáveis.
+
+Qualquer método que os altere modifica o objeto original na memória. Você sempre deve se lembrar de clonar o objeto de data antes de realizar qualquer operação com ele. Agora você sabe o que ninguém sempre se lembra. As pessoas se esquecem, e é aí que os bugs são introduzidos. Todo desenvolvedor JavaScript já se deparou com esse bug específico. O
+
+objeto de dados JavaScript é vendido como um recurso, mas eu digo que é um bug. Em que mês estamos ? Quando crio uma data com um objeto de data e passo o valor do mês como dois. Qualquer pessoa normal pensará que é fevereiro, porque janeiro é o primeiro mês e os dois representam fevereiro. Mas em JavaScript, no objeto date, zero significa janeiro e um significa fevereiro. Isso tem confundido os
+
+desenvolvedores nos últimos 30 anos. Não há nenhuma boa razão para isso. Foi um erro na própria linguagem. Então esse é o segundo bug. É possível fazer isso com um objeto de dados JavaScript? Não, você não pode
+
+fazer isso porque o objeto de dados do JavaScript só reconhece dois fusos horários. Uma é UTC e a outra é o fuso horário local da sua missão . É isso. Não reconhece nenhum outro fuso horário. Portanto, não é possível atravessar um fuso horário de Nova York no horário de Nova York. Não é possível ter um método chamado "
+
+dois fusos horários" e depois passar outro fuso horário. Você não pode fazer todas essas coisas. Você precisa usar a API INTL para exibir isso ou realizar a lógica matemática de deslocamento por conta própria, ou ainda recorrer a outra biblioteca que possa fazer isso. Portanto, esta é a terceira área problemática com o objeto de data. E agora vem a pior parte sobre esses quatro insetos, porque eles são silenciosos. O comando `date` não gera nenhum
+
+erro quando todas essas situações ocorrem. Simplesmente fornece dados incorretos sem qualquer aviso prévio. E imagine só, dados de data incorretos na produção podem significar faturas erradas. Isso pode significar agendamentos errados. Isso pode significar registros de conformidade incorretos. Pode ser
+
+devastador. Não é? Agora, este é outro bug, e está relacionado ao horário de verão. Essa é a sua economia diurna. Então, o que aconteceu quando o horário de verão começou em 8 de março de 2026, às 2h da manhã? O
+
+relógio passou para as 3h da manhã. Isso é o que chamamos de horário de verão. Assim, nesse dia, o relógio avança das 2h para as 3h da manhã devido ao horário de verão. Então, literalmente, 2h30 da manhã não existe naquele dia. Agora, esse código em particular é um código JavaScript válido. Você pode fazer 2:30 mesmo
+
+em um fuso horário onde o horário de verão está em vigor. O JavaScript ajusta isso silenciosamente para você. Você nunca sabe se isso aconteceu. Não há erros. Não há nenhum aviso. Simplesmente
+
+dados incorretos em produção. É aqui que o objeto de data se mostra uma escolha absolutamente errada em uma linguagem de programação como o JavaScript. Agora é hora de mudar a mentalidade. A mudança temporal mais significativa é esta. Em vez de um tipo que tenta fazer tudo no caso de um objeto de data, certo? Temporal oferece
+
+sete tipos especializados. Cada um designado para um tipo específico de valor. E isso é incrível. Para usar uma analogia, você pode pensar assim. O objeto de dados antigo é como um canivete suíço, não é? Tecnicamente, possui todas as ferramentas
+
+, mas você nunca consegue chegar à ferramenta certa sem cortar o dedo. Ao mesmo tempo, quando se pensa no temporal, o temporal é como uma caixa de ferramentas adequada. Seja o que for que você precise, basta pegar e realizar seu trabalho. Espero que essa analogia faça sentido. Vamos analisar cada um desses tipos um por um para que possamos entender as diferenças. O
+
+primeiro se chama data temporal.plain. Você usa isso quando precisa de uma data no calendário. Sem data, apenas a data do calendário, sem hora nem fuso horário. Geralmente, você usa isso para aniversários, prazos, feriados, etc., onde normalmente você trabalha
+
+com datas, sem precisar de hora nem fuso horário. Similar à data simples, existe algo chamado hora simples, um horário do dia sem data nem fuso horário, usado para horários de funcionamento de lojas, alarmes, horários recorrentes etc. Então, expliquei todos esses usos e o código está no GitHub; o link está na descrição. Você sempre pode ir lá e ler mais sobre isso posteriormente. Mas agora entenda que você tem data e hora simples com ponto temporal. Antes tínhamos data
+
+e hora, agora temos apenas data e hora. Esta é uma combinação de data e hora, mas sem fuso horário. Lembre-se de que nenhum fuso horário é usado para esse tipo de caso. Nossa reunião padrão acontece toda segunda-feira às 10h. Cada escritório observa em seu próprio fuso horário. Certo? Esta reunião em particular. Portanto,
+
+nesse tipo de caso de uso, você usará a data e hora temporal. Até agora vimos o que se refere à data, o que se refere à hora, o que se refere à data e à hora juntas, mas não vimos o fuso horário. Sempre que precisar de uma data com fuso horário, você usará algo chamado `zone.zone` (data e hora com fuso horário). Este é o mais poderoso. Você
+
+usará isso quando precisar de data e hora, além do fuso horário completo, levando em consideração o horário de verão. Pense em como é poderoso, no caso de um objeto de data, lidar com a data, a hora, o fuso horário e o horário de verão. Fazer tudo isso junto é quase impossível, um pesadelo, cheio de bugs, e você costumava recorrer a bibliotecas de terceiros, várias bibliotecas, para lidar com isso. Agora, o JavaScript oferece algo pronto para uso chamado `temporalzone` para lidar com data e hora. Quando você usa isso, você o utiliza para agendar no calendário, por exemplo, para que minhas 9h da manhã possam ser 20h. Em outro lugar, certo?
+
+Aplicativo de calendário com foco no usuário. Aqui está um exemplo de formato de data e hora temporal.zone . Você informa a data e a hora, e também o fuso horário. Isso é algo que não conseguíamos fazer com o objeto de data. Já vimos isso antes. Então
+
+temos algo chamado temporal.instant. Este é um ponto exato na linha do tempo. Sem calendário, sem fuso horário. Quando você o utiliza? Use-o para registro de logs. Você está
+
+registrando algo no seu logger, certo? Ou você precisa de um registro de data e hora. Depois, você tem o temporal.plain, que representa um ano, mês e mês do ano, geralmente usado em faturas para ciclos de faturamento, vencimento de cartão de crédito e todas essas situações. Por fim, temos o tipo `temporal dot plain month day`, que combina mês e dia, mas não inclui o ano. Ele é usado para datas anuais recorrentes,
+
+como aniversários, datas comemorativas etc. Esses são os sete tipos diferentes que o `temporal` oferece, permitindo que os utilizemos de acordo com a necessidade e os casos de uso. Agora, repare em algo importante aqui: a nomenclatura também é intencionalmente simples, como neste caso. Significa que não há fuso horário associado, ou seja, você está trabalhando com uma representação de calendário, sem necessidade de cálculos de UTC ou de deslocamento, apenas o valor necessário. Mas sempre que você vir a indicação de fuso horário, ela representa o fuso horário real, onde você pode inserir o nome do fuso horário. O
+
+sistema lida com o horário de verão automaticamente e fornece a hora correta em qualquer lugar do planeta. E a melhor parte é que todas essas datas são imutáveis. O primeiro bug que encontramos no caso do objeto de data era que a data era mutável e estava sendo alterada quando estávamos calculando a próxima semana. Nesse caso, isso jamais vai acontecer. Aqui está um exemplo de data no formato temporal.plain; esta é uma data
+
+que eu selecionei. Esta é a data que você também pode chamar de hoje, e então, se eu fizer "hoje" ou "nesta data", basta adicionar mais sete dias. Portanto, esta é a sintaxe que precisamos dominar ao usar o recurso de sintaxe temporal. Isso me dará a data da próxima semana. Agora, se eu imprimir a data, a segunda string ainda permanecerá como 15 de março, como você pode ver aqui. Mas a programação da próxima semana
+
+foi alterada para dia 22. Isso significa que essa data específica é imutável. O método de adição de ponto nesta data não está alterando a data em si. Está me dando um valor de data completamente novo. Assim, você não precisa se lembrar de clonar. Sem
+
+complicações com datas definidas, sem bugs de mutação, apenas operações limpas, previsíveis e imutáveis. Além dessa mutabilidade e imutabilidade, podemos passar por algumas diferenças drásticas? E se você quiser obter a data de hoje? Então você tem uma nova data e quer obter apenas a data de hoje, apenas a parte da data presente no objeto de data. Você tem que fazer isso com a nova data dot2 iso string do circo. Isso lhe mostrará uma
+
+longa sequência com a data e a hora de hoje. Em seguida, você realizará uma operação de substring nessa string. Faça um recorte de pontos para obter os primeiros caracteres, que representarão a data de hoje, 16 de junho de 2026, enquanto estou gravando este vídeo. Mas, sem essa complicação temporal, por que você faria uma operação de string para obter a data de hoje? Basta usar o comando ` temporal.now.plain
+
+date ISO`. É isso. E então ele te mostra a data de hoje. É tão simples assim? Você já fez uma comparação usando um objeto de data antigo como este? Tenho duas datas: 15 de
+
+março de 2026 e 15 de março de 2026. Gostaria de saber se são a mesma data ou não. Não quero saber se são objetos da mesma data ou não. O que vai acontecer por aqui? É claro que sabemos que o objeto funciona com referências. Então, console.log
+
+D1 triplamente igual a igualdade estrita D2. Se eu fizer isso, o resultado será falso, porque esses dois objetos são diferentes. É claro que, se eu fizer uma desigualdade inversa também, ela me dará um resultado falso, porque os dois objetos são diferentes. Mas como eu saberia se essas duas datas se referem à mesma data? A solução alternativa que o objeto de data me fornece é que em D1 você precisa executar o comando "dot get time" e em D2 também precisa executar o mesmo comando. Isso
+
+lhe dará a representação em milissegundos, e então você as compara e verifica se correspondem ao mesmo instante ou não. Esta é uma solução alternativa. Por que? Porque no objeto de data você está chamando outra API para obter uma determinada representação da data e então está fazendo a equiparação, certo? É como tapar o nariz assim. Mas em termos temporais,
+
+é simples assim. Você tem duas datas criadas novamente com a data temporal.plain, porque com a data do calendário você simplesmente faz t1.t1 = t2. É isso. E se eu imprimir isso,
+
+vai aparecer que é verdade. Quão explícito isso é. Você já comparou duas datas usando o objeto de data do JavaScript? Quão fácil ou difícil foi. Se você já fez isso, você escreveu sua própria lógica com temporoid, basta fazer isso: ` temporal.plain.compare`,
+
+passando `t1` e `t2`, que retornará um número inteiro. Se retornar zero, significa que são iguais. Se retornar menos um, significa que é um "antes". Se retornar um, significa depois. Então, como é fácil comparar duas datas. Agora,
+
+esse é o último problema que deixa o usuário quase louco: adicionar um dia e obter a hora errada é um bug real de produção, e isso está relacionado ao horário de verão. Por padrão, o Temporal lida com isso usando a data e hora do fuso horário. Sabe o que é horário de verão. Você não precisa pensar nisso. Você não precisa escrever nenhum código adicional. Este código
+
+indica que, no dia 7 de março, às 00h00, no fuso horário em que o horário de verão é aplicado, o horário de verão começa. Se eu adicionar um dia temporal, entenda que essa é a data do horário de verão e o dia será compensado de acordo. Você não precisa fazer nada além disso. O mesmo acontece se você tiver que lidar com o objeto de data; você precisará escrever um código extenso para isso. Agora a questão é: posso usar a API temporal hoje e escrever o código para produção? Minha resposta é
+
+sim. Agora você deve estar se perguntando se pode usar o recurso "temporal" e verá que ele tem disponibilidade limitada e suporte restrito a alguns navegadores, como o Safari. O Safari não possui suporte nativo. Como posso usar isso? Não se preocupe com isso. Possui excelente suporte no
+
+Chrome, Firefox e outros navegadores. Você pode começar a usá-lo agora mesmo. Onde houver falta de suporte, existe um enchimento de poliéster para você. Este é um enchimento de poliéster. Eu também incluí o link na descrição. E
+
+este polyfill é criado e mantido pelos especialistas em tempo real do TC39. Os mesmos caras que criam as especificações para o Temporal. Portanto, não se trata de uma solução alternativa, mas sim de uma implementação de referência. Você pode enviar o código de produção com isso. Minha recomendação agora é começar a usar a API Temporal daqui para frente.
+
+Escreva sua lógica obsoleta com tempo. Aprenda os tipos, aprenda o modelo mental. Com o Safari, as coisas não funcionarão, mas você tem o polyfill para resolver o problema. Assim que o Safari começar a oferecer suporte a dados temporais, você poderá remover este polyfill. É isso. Todo o código-fonte que
+
+você viu nesta parte ou em toda a série está na minha organização, chamada github.com/tavascript. Fique à vontade para seguir esta organização, pois há muitos projetos interessantes e você pode acessar os repositórios. A partir daí, você pode acessar os 40 dias de JavaScript, pois a lista de reprodução com data e hora também faz parte dos 40 dias de JavaScript. Ali, se você rolar para baixo, poderá ir para o dia 41 e lá você já tem o INTL e a API de data, tudo. Assim que eu publicar
+
+este vídeo, você poderá ver outra pasta "temporal" aqui, onde estará todo o código relacionado ao tema temporal. Se você gosta do meu trabalho, não se esqueça de dar uma chance a este repositório. Muito obrigado . Então, aqui está o que fizemos com toda essa série. Na primeira parte, nos dedicamos a entender tudo sobre datas e horários, os conceitos básicos. Na segunda parte,
+
+também entendemos as APIs da Intel. Já tínhamos entendido os objetos de data, etc., e nesta parte reunimos todos os principais insights sobre a API Temporal. O próximo passo natural é criar uma série separada sobre a API Temporal, que pretendo fazer. Mas, por enquanto, tenho certeza de que isso será suficiente para você começar a escrever código de produção correto, onde datas e horas entram em cena.
+
+Se isso lhe foi útil, inscreva-se no canal Tapascript. Eu crio conteúdo que é fundamentalmente correto e que ajuda você a conseguir um emprego mais rápido. Muito obrigado por assistir. Voltaremos muito em breve.

@@ -1,0 +1,681 @@
+---
+video_title: "Sliding Window Algorithm for Tech Interviews - Full Course"
+video_id: tLsoelNl3To
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=tLsoelNl3To
+video_date: 2026-04-23T12:50:32+00:00
+video_description: |
+  Learn the Sliding Window algorithm for tech interview prep. 
+  
+  ✏️ This course was developed by Alvin Zablan, check out his channel: https://www.youtube.com/c/AlvinTheProgrammer
+  
+  🔗 Learn more algorithms in Alvin’s complete beginner-friendly DSA course: https://structy.net
+  
+  ❤️ Try interactive Algorithms courses we love, right in your browser: https://scrimba.com/freeCodeCamp-Algorithms (Made possible by a grant from our friends at Scrimba)
+  
+  📖 Course Contents 📖
+  - 0:00:00 Intro
+  - 0:01:46 Max Subarray Sum Size K (https://learn.structy.net/klv)
+  - 0:26:16 Max Subarray Product Size K (https://learn.structy.net/o6f)
+  - 0:38:04 Subarray Target Sum Size K (https://learn.structy.net/f6n)
+  - 0:44:53 Has Substring Anagram (https://learn.structy.net/1jh)
+  - 0:55:44 Count Substring Anagrams (https://learn.structy.net/d0r)
+  - 1:08:46 Find Subarray Sum (https://learn.structy.net/hpe)
+  - 1:21:42 Longest Subarray Sum (https://learn.structy.net/vx4)
+  - 1:35:52 Longest Unique Substring (https://learn.structy.net/vcg)
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+O algoritmo de janela deslizante é uma técnica poderosa usada para otimizar problemas envolvendo matrizes ou strings, convertendo loops aninhados em uma única passagem. Este curso foi desenvolvido para ajudá- lo a dominar esse padrão essencial, fornecendo a intuição necessária para lidar com os desafios comuns de entrevistas técnicas . Alvin criou este curso. Olá, programadores, e sejam bem-vindos ao nosso curso sobre o algoritmo da janela deslizante. Se você está se preparando para entrevistas técnicas e deseja dominar esse tópico comum, então você está no lugar certo.
+
+Se ainda não nos conhecemos, olá, eu sou o Alvin. Sou um ex-engenheiro de software do Google e, na última década, ensinei milhares de engenheiros a se saírem bem em entrevistas e a conquistarem o emprego dos sonhos. Nas próximas 2 horas, vou te ensinar tudo o que você precisa saber sobre o algoritmo da janela deslizante. Isso significa que abordaremos as versões do algoritmo tanto com tamanho fixo quanto com tamanho variável. Neste curso, aprenderemos resolvendo uma série de problemas, os mesmos problemas que você poderá encontrar em suas entrevistas técnicas. Mas não se preocupe.
+
+Escolhi cada problema especificamente para que a dificuldade aumente gradualmente. Começaremos com o básico e, em seguida, aumentaremos gradualmente a dificuldade para que você nunca se sinta perdido. Ao final do curso, você será capaz de resolver problemas bastante avançados. Para cada problema, usaremos uma abordagem de aprendizado em duas etapas . Primeiro, vamos elaborar um plano no quadro branco. Acredito que
+
+visualizar algoritmos é fundamental para compreendê-los. Então, aqui vamos ilustrar os passos da nossa lógica e abordar quaisquer casos extremos. A partir daí, iremos para o meu editor, onde implementaremos o código e executaremos os casos de teste. Vou programar em Python, mas fique à vontade para acompanhar em sua linguagem favorita. Muito bem, estou super animada para te ensinar a usar janelas de correr. Então, sem
+
+mais delongas, vamos ao nosso primeiro problema. Olá, programadores, aqui é o Alvin. Neste momento, quero abordar a abordagem que podemos usar para este problema de tamanho máximo da soma de submatriz K. Portanto, neste problema, precisaremos aprender uma nova estratégia. O que esse problema nos pede para fazer? Bem,
+
+vamos usar duas entradas diferentes. Vamos receber uma matriz de alguns números, bem como um tamanho K, que é apenas mais um número. Aqui, o que queremos fazer é considerar submatrizes de tamanho K. Então, como agora K é quatro, isso significa que estou analisando submatrizes com quatro elementos dentro delas. Tenho em mente que um subconjunto de elementos será uma coleção contínua de quatro elementos neste caso. Aqui, destaquei uma
+
+possível submatriz. Se eu considerar a soma desses elementos no subvetor, a soma é 33. O que eu quero fazer é considerar todos os subvetores com quatro elementos. Por exemplo, este subvetor no início tem uma soma de 16. Este subvetor em algum lugar no meio tem uma soma total de 43. O que eu quero fazer
+
+é retornar a soma máxima que posso obter com qualquer subvetor de comprimento quatro. A resposta aqui seria de fato 43. Essa é a maior soma de submatrizes que contêm quatro elementos. Muito bem, então vamos começar a discutir uma estratégia para isso. É muito importante notarmos que não precisamos considerar todas as submatriz possíveis, independentemente do tamanho. O que queremos
+
+fazer é considerar apenas subconjuntos de matrizes com esse tamanho alvo. Aqui, nossa meta é quatro. Então, o que eu posso fazer é simplesmente começar do início do array e mover esta janela, certo? Então, aqui estão os quatro primeiros elementos. Depois disso, quero considerar os próximos quatro elementos e assim por diante.
+
+E isso, naturalmente, nos leva à nossa clássica estratégia de janela deslizante, que é o que vamos explorar no próximo módulo. Então, vamos discutir a lógica que usaremos para o algoritmo da janela deslizante. Então, vamos iniciar nossa janela bem no início da matriz. Faz sentido. E como neste problema queremos considerar a soma máxima, vou criar uma variável para registrar o máximo que observei até agora. Isso
+
+deve lhe ser muito familiar. Você pode inicializar essa variável com um valor lógico como infinito negativo, certo? Porque quero que seja substituído com o tempo. O infinito negativo nunca vai ganhar quando eu comparo um máximo. Então, agora que estou olhando para esta primeira janela contendo meus quatro elementos, quero simplesmente somar todos eles.
+
+Em outras palavras, basta somar 1 + 4 + 1 + 10. Isso me dá o resultado 16. Devo comparar esse 16 com o meu máximo atual. E, claro, eu deveria substituir esse infinito negativo, porque 16 é maior que infinito negativo. Então, neste momento, a soma máxima que tenho é 16. A essa altura, eu poderia simplesmente deslizar a
+
+minha janela. Agora, vou analisar os próximos quatro elementos. Novamente, basta somar todos os elementos internos. 4 + 1 + 10 + 25 resulta em uma soma de 40. E eu uso essa lógica de valor máximo. Eu comparo
+
+40 com a minha soma máxima de 16. 40 é maior, então eu a adoto como a soma máxima. Deslize a janela um pouco para a direita . E, novamente, somo esses quatro elementos. A soma de 1 + 10 + 25 + 3 resulta em 39. Como
+
+39 não é maior que a minha soma máxima até agora, não a substituo. Mesmo assim, você deve mover a janela para o lado. Olhando para a próxima janela, faço 10 + 25 + 3 + 5. Isso me dá uma soma de 43. E, claro, 43 é maior que minha soma máxima atual de 40, então eu a substituo por 43.
+
+Esse algoritmo continuará para os elementos restantes. Esta próxima janela deslizante tem uma soma de 33, que não vai substituir meu 43. E, finalmente, esta última janela tem uma soma total de 34, que também não vai substituir meu 43. Como já examinei todos os subconjuntos possíveis de tamanho quatro, posso simplesmente retornar isso como minha resposta final, certo? 43 é a soma máxima de qualquer submatriz que contenha exatamente quatro elementos.
+
+Então, vamos começar a pensar na complexidade desse algoritmo, certo? Então, vou definir meus termos. Aqui, tenho duas entradas, certo? Tenho meu array de números, bem como seu tamanho K. Então, digamos que N seja o comprimento do array.
+
+Vamos supor que K seja o tamanho do subconjunto de matrizes que estamos visando. O que eu quero fazer é começar a pensar nas possíveis facetas da minha complexidade aqui. Então, a primeira parte seria o número de submatrizes, certo? Quantas submatrizes estou analisando? Em outras palavras, quantas janelas eu tenho que olhar aqui?
+
+Vou te dizer que o número de submatrizes é dado aproximadamente por n menos k. Então, como podemos chegar a essa conclusão por aqui? Bem, claro, os subconjuntos são, na verdade, todas as pequenas janelas que eu observei aqui. Sabemos que vamos deslizar esta janela por toda a matriz nums. Então, pense nesse número total de elementos, o número total de elementos em nosso array nums, que acabamos de dizer que era n.
+
+E, claro, você vai deslizar esta janela para a direita, assim. E ao deslizá-lo, este é o máximo que você pode movê-lo para a direita, certo? Porque, obviamente, a janela que você está considerando contém k elementos. Seria por aqui. Portanto, você realmente precisa parar de deslizar a janela quando estiver a k elementos da borda direita da matriz. Em outras palavras,
+
+você não pode olhar além dos limites aqui, certo? Por exemplo, se a sua janela começasse no elemento zero, os seus dois últimos elementos ficariam fora dos limites. Portanto, esse não seria um subconjunto válido para se considerar. Por isso estou dizendo que você precisa parar de deslizar a janela quando estiver a k elementos do final da matriz. Portanto, o número total de submatrizes que você considera é, na verdade, apenas n menos k.
+
+Tudo bem. Além disso, se esse for o número de submatrizes que analisaremos, quanto trabalho realizaremos por submatriz? Essa seria a próxima peça da minha complexidade aqui. Bem, a quantidade de trabalho que você realiza por submatriz será realmente k. O que isso realmente significa?
+
+Bem, sempre que analisávamos alguma janela, por exemplo, esta que está na tela agora, tínhamos que somar todos os elementos dentro dela. E, claro, eu sei que haverá k elementos dentro dessa pequena janela. Portanto, você precisa realizar k operações para cada submatriz que considerar. Então, como você pode obter a complexidade de tempo total a partir disso? Bem, você poderia simplesmente multiplicar essas duas quantidades .
+
+Portanto, sua complexidade, em sua forma, será n - k * k. Essa quantidade é simplesmente o número de submatrizes multiplicado pela quantidade de trabalho por submatriz. Vamos simplificar essa complexidade temporal e, para isso, você pode começar multiplicando o valor de x por todos os termos aqui. Então, se eu multiplicar essas coisas, obtenho nk - kk. Agora, podemos simplificar isso ainda mais.
+
+Conforme o problema, eles nos dizem que n é maior ou igual a k. Em outras palavras, o tamanho dos sub-arrays que você vai analisar nunca poderá ser maior que o array original, certo? Porque isso realmente não faria nenhum sentido. E como temos a garantia de que n é maior ou igual a k, podemos simplificar ainda mais. Isso significa que nk é certamente maior que kk.
+
+Assim, posso eliminar o "kk" da minha complexidade. Portanto, neste momento estou dizendo que a complexidade de tempo deste algoritmo até agora é simplesmente O de nk. Essa é uma boa estratégia, pois nos dá o resultado correto, mas não é a estratégia ideal. Na verdade, esta é apenas a nossa visão ingênua da complexidade temporal da janela deslizante . Então, eu gostaria de discutir um algoritmo que possa ter um desempenho mais rápido do que este. E não se preocupem,
+
+ainda vamos usar a janela deslizante, mas vamos manipular um pouco as coisas aqui. Então, vamos pensar um pouco na lógica disso. Então, quando considero uma janela como esta, por exemplo, sei que tenho que somar todos os elementos dentro dela. E isso definitivamente contribuiu para a minha complexidade, não é? É daí que vem o k na minha complexidade de nk neste momento.
+
+Então, depois de considerar essa submatriz, quando deslizo a janela para a direita, a próxima submatriz que considero é esta. Aqui, vou marcar em verde. E também terei setas apontando para os elementos que preciso somar para aquela pequena janela. Também em verde. Para mim, está bem claro que tenho muita sobreposição nessas duas janelas, certo? Tudo no meio
+
+se sobrepõe. Então, o que eu quero fazer é evitar recalcular esses valores na soma. Certo? Então, como podemos redesenhar o algoritmo neste caso? Vai começar de uma forma muito parecida. Você vai começar
+
+com a janela mais à esquerda, faz sentido. E o que você quer fazer ao longo do tempo é também acompanhar um valor atual. Antes eu tinha apenas a soma máxima, agora quero a soma atual. Certo? E como você está bem no início do algoritmo, basta calcular a soma total dessa janela inicial. Então, basta fazer 1 +
+
+4 + 1 + 10. Isso dá um total de 16. E a partir daqui, você continua com a sua lógica básica de valor máximo. Como ainda não defini um valor máximo, essa soma atual de 16 será meu valor máximo inicial. Ótimo.
+
+E agora, é aqui que eu gostaria de mover minha janela uma posição para a direita . E quando eu movo minha janela uma posição para a direita, sei que esse elemento que está atrás dela não fará mais parte da minha janela. Certo? Então, o que posso fazer é simplesmente subtrair isso da minha soma atual. Portanto, minha soma atual é 16, subtraio o último elemento, que é um. Isso me dá uma
+
+soma atual de 15. E conforme eu movo minha janela para a direita, isso também significa que este elemento aqui, este elemento inicial de 25, agora fará parte da minha janela. Portanto, devo adicionar esses 25 à minha soma atual. 15 + 25 dá 40. E esse 40 será a soma da próxima janela aqui. Certo? E
+
+verifique novamente seu trabalho aqui. 4 + 1 + 10 + 25 realmente dará 40. Ótimo. Então, neste ponto, posso continuar com minha lógica de valor máximo. Eu comparo o modelo 40 com o 16. É claro que
+
+o 40 vai substituí-lo. E eu continuo com este algoritmo. A questão principal é que vou subtrair o elemento final e adicionar o elemento inicial. Então, subtraio os quatro da minha soma atual. Isso me dá 36. E não se esqueça de adicionar o
+
+seu elemento inicial de três. 36 + 3 dá 39. E essa seria a soma para esta próxima janela aqui. Ótimo. Aplique sua lógica de valor máximo. O número 39
+
+não vai substituir o 40. Portanto, continuo a deslizar para a direita. Novamente, subtraio um aqui, mas também adiciono cinco, o que me dá minha próxima janela de 43. 43 é maior que o máximo atual de 40, então eu o substituo. E continue deslizando a janela para a direita. Aqui, preciso
+
+subtrair o 10 e adicionar um zero, o que significa que minha soma atual será 33. 33 não é maior que 43, então permanece assim. Pode deslizar o vidro mais uma vez. Subtraio 25 e adiciono 26. Isso me dá uma soma atual de 34. 34
+
+não substitui o 43. Neste ponto, terminei de deslizar a janela completamente para a direita. Assim, o valor final da minha soma máxima seria o verdadeiro máximo de qualquer submatriz dentro da minha matriz original. Então, com essa pequena mudança, vamos falar sobre a complexidade desse novo algoritmo. Portanto, o número de submatrizes que consideramos é, na verdade, o mesmo. Ainda será
+
+n menos k, certo? Ainda assim, deslizamos a janela por toda a matriz nums. Portanto, continua sendo n menos k. O que mudou foi a quantidade de trabalho por submatriz. Se você parar para pensar, o que nós realmente fizemos? Realizamos apenas duas
+
+etapas por submatriz. Então, basta lembrar que, sempre que considerávamos uma determinada janela, tudo o que precisávamos fazer para chegar à próxima janela à direita era subtrair o elemento posterior e adicionar o elemento anterior à nossa soma atual. Portanto, a quantidade de trabalho é realmente apenas duas. O que estamos realmente dizendo é que temos uma quantidade constante de trabalho, independentemente do tamanho da janela, certo? Aqui, nossa janela tem tamanho quatro, mas imagine que sua janela tivesse tamanho 10. Você
+
+ainda precisaria subtrair apenas um elemento à direita e adicionar um elemento à esquerda. Portanto, essa é realmente uma ótima otimização. Então, vamos falar sobre a complexidade total deste novo e aprimorado algoritmo. Se você quiser ir com calma, ainda pode dizer que a complexidade de tempo será o número de submatrizes multiplicado pela quantidade de trabalho por submatriz. Aqui fazemos n - k * 2, mas é claro que você pode simplificar as coisas. O número dois é apenas um
+
+fator constante, então você pode descartá-lo completamente. E como dissemos, aqui sabemos que n é maior ou igual a k, então posso simplificar ainda mais essa quantidade. Na verdade, será uma complexidade de tempo O(n) para isso. Essa seria a complexidade temporal ideal para uma janela deslizante otimizada. Naturalmente, se compararmos isso com nossa solução inicial ingênua, nossa versão anterior era n * k, mas nossa nova versão aprimorada é apenas n.
+
+Se você quiser falar sobre a complexidade de espaço aqui, quando for implementar o código, você realmente não vai usar nenhuma estrutura de dados escalável. Você terá apenas algumas variáveis ​​nas quais aplicará lógica de valor máximo, além de algumas adições . Portanto, a complexidade espacial aqui será constante. Tudo bem. Agora que já temos uma boa ideia do plano que queremos usar, é hora de codificá-lo. Na próxima seção,
+
+vou abrir meu editor de texto, implementar o código e executar alguns casos de teste. É muito importante que você acompanhe. Se você acessar a descrição do vídeo, encontrará os marcadores de tempo, juntamente com links para o espaço de trabalho de programação que usarei. Então, fique à vontade para programar junto com você. Ou, se preferir , fique à vontade para editar em seu próprio editor de texto. Vou exibir os
+
+casos de teste na tela para que você também possa testar seu trabalho. Vou programar em Python, mas em nosso ambiente de trabalho, você pode usar Java, C++ ou JavaScript à vontade. Olá, programadores, aqui é o Alvin. Agora, vamos analisar o passo a passo em Python para resolver este problema de tamanho máximo da soma de submatriz k . Portanto, certifique-se de assistir primeiro ao vídeo explicativo, pois vamos aprender uma nova estratégia. O que
+
+queremos fazer é aplicar o algoritmo de janela deslizante . Então, vou resolver isso de duas maneiras. Vou resolver isso com meu algoritmo básico de janela deslizante e, em seguida, vou otimizá-lo para obter a complexidade de tempo mais otimizada possível. Então, para começarmos, vamos implementar essa primeira versão. Então, o que eu quero fazer é criar algumas variáveis ​​aqui. A longo prazo, o que eu
+
+quero fazer é retornar a soma máxima do subconjunto de elementos. Então, vou criar uma variável de soma máxima aqui. Como esperado, é muito importante que definamos isso como um valor padrão adequado. Vou atribuir o valor de menos infinito. Porque sei que qualquer coisa que eu encontrar vai substituir esse valor.
+
+Ótimo. A partir daqui, quero começar a olhar pela minha janela. Então, vou criar um pequeno loop "for" aqui. Vou dizer "para I no intervalo", e você vai começar bem no início do seu array de números. E você quer ir em direção ao final, mas precisa ter certeza de não ultrapassar os limites. Então, fica um pouco
+
+complicado descobrir exatamente onde está a sua condição de parada. Você quer apenas ver um exemplo, mas eu sei que isso vai chegar ao comprimento nums menos K. Mas também mais um aqui. Vou explicar o porquê disso, para evitarmos erros de um por vez. Então, vou apresentar o primeiro exemplo.
+
+Então, vamos verificar rapidamente os limites deste loop aqui. Portanto, faz sentido que eu comece no índice zero, porque sua primeira janela precisa começar aqui. E observe que meu K é três, então quero pegar três elementos de cada vez. Então, a primeira versão será lançada aqui, o que é ótimo. Claro, por outro lado, sei que minha versão final precisa ser esta aqui, certo? Você leva em consideração
+
+que o comprimento deste array `nums` neste momento é de sete elementos? Então, aqui estou eu fazendo sete menos três, certo? Porque K é três. Sete menos três dá quatro, certo? E então eu acrescento um "mais um" . Então, isso me dá cinco. Se eu contar
+
+meus índices, eles vão de 0 a 5. Tenho em mente que na função `range` do Python, o segundo argumento é exclusivo. Portanto, embora eu esteja passando o índice desse elemento aqui, ele será excluído do meu intervalo. Então, na verdade, a última iteração começa aqui, no oito, e vai até o final, me dando minha última janela. Por isso preciso fazer o "mais um" aqui, só para garantir que termine no cenário certo.
+
+Ótimo. E assim, a partir daqui, agora consigo percorrer todas as minhas janelas e deslizá-las para a direita. Na solução ingênua, tudo o que você faria seria somar tudo o que estiver dentro daquele intervalo. Então, o que eu posso fazer é criar uma variável, vou chamá-la de minha soma atual. E vou usar a função de soma integrada do Python. É muito útil aqui.
+
+Eu poderia dizer "soma", eu poderia passar apenas um sub-vetor. Portanto, o subconjunto de vetores que eu quero obter virá de nums. Vai começar no índice I e [bufa] passar para o próximo elemento K. Então, por aqui, será I mais K. Ótimo. Então,
+
+mais uma vez, poderíamos fazer uma pequena verificação pontual, se você quiser. Digamos que eu esteja em algum ponto intermediário desse algoritmo. Digamos que neste momento eu esteja apontando para este elemento aqui, certo? Então, ele tem índice dois, porque eu vou de 0 a 1 e depois a 2. Eu sei que quero pegar esses três elementos, certo? Então, o que estou dizendo é:
+
+comece no índice dois, o que está correto, e vá até, mas não inclua, dois mais três, porque, novamente, meu K é três. Então, 2 + 3 é igual a 5. Então, se eu contar meus índices, 0 1 2 3 4 5, certo? E o segundo argumento nesta fatia da lista Python será exclusivo, então não incluirei esse quatro, o que significa que pegarei o um, o -9 e o 8. Então isso funciona bem aqui.
+
+Agora que você tem a soma atual, basta aplicar a lógica do valor máximo, certo? Então, vou verificar se a minha soma atual é maior que a soma máxima e, em seguida, substituí-la, certo? A soma máxima deve ser igual à soma atual. Por fim , retorne a soma máxima. Você deve ter em mente que estou retornando apenas o valor máximo depois de analisar todas as submatriz possíveis aqui.
+
+Então vou comentar essa parte e fazer um teste. Essa será a nossa solução ingênua. Na maioria dos casos, ele fornece resultados corretos, mas pode apresentar erros de tempo limite em testes mais complexos . Ótimo. Então, vamos otimizar isso agora usando o que discutimos no vídeo introdutório.
+
+Então, vou criar a minha segunda versão disso. O que será um pouco mais rápido. Então, eu sei que nesta segunda versão, o que eu quero fazer é ter duas variáveis. Quero a soma atual da minha janela, bem como a soma máxima. Então, vou criar isso aqui. Igualar à soma.
+
+Vou selecionar a primeira janela, que seria a número 1. Desde o princípio até os primeiros elementos K. Portanto, se K for três, isso representaria a soma dos três primeiros elementos aqui. Ótimo. Então, a partir daqui, o que eu quero fazer agora é formular o algoritmo geral. O que significa que preciso revisar
+
+todo o resto. Então, vou dizer que para I está dentro do alcance. Então, estou começando no primeiro índice e indo até o último índice que você deseja atingir, que seria o mesmo na condição anterior. Então, vou pegar isso. Esta seria a minha última oportunidade.
+
+Então, como meu K é três neste exemplo específico, começo a clicar nesta janela. Minha última janela de oportunidade será esta . E você só precisa adicionar um aqui para levar isso em consideração em Python, porque esse argumento será exclusivo. Legal. Então, a partir daqui, é aqui que trabalhamos com esse número fixo de etapas para calcular a próxima janela, certo? Então,
+
+em vez de calcular a soma de tudo o que está entre esses valores, quero garantir que realize apenas um número constante de operações. No vídeo explicativo, dissemos que subtrairíamos o elemento posterior e adicionaríamos o elemento inicial à nossa soma atual. Então, eu sei que já considerei minha janela inicial bem aqui, certo? Eu simplesmente calculei manualmente a soma dos três primeiros elementos. Então, neste exemplo específico, minha soma atual seria 4 + 2 + 1, o que me daria um sete, certo?
+
+Portanto, se a soma atual for sete, você precisará inicializá-la no seu valor máximo. Então, direi que minha soma máxima será minha soma atual neste momento. É muito importante que, para esta versão otimizada do nosso algoritmo de janela deslizante , você trate a primeira janela de uma maneira especial, certo? A primeira janela é tratada com este código e todas as janelas subsequentes serão tratadas por este loop "for" aqui. Então, neste loop "for", o que eu quero fazer agora é ajudar a calcular a próxima janela. Então, o que eu posso fazer é pegar a
+
+minha soma atual e subtrair dela o elemento que está saindo da janela. Então, esta é a minha janela atual, a minha próxima janela será com este cara aqui, o que significa que os quatro precisam sair. Então é melhor eu subtrair esses quatro da minha soma atual. Então, aqui eu vou dizer soma atual menos números iguais no colchete I, certo? Porque, novamente, esse seria o início da janela aqui.
+
+E, por outro lado, você quer adicionar o elemento que está entrando na janela. Então, se esta é a minha janela atual e esta será a minha próxima janela aqui, seria -9, certo? Acabou de entrar pela minha janela. E você pode fazer isso realizando I + K aqui. Faz sentido, você está apenas selecionando K elementos após o seu índice atual. Há muita
+
+indexação envolvida em um algoritmo como este, então fique à vontade para pausar o vídeo e verificar se os cálculos estão corretos, certo? Mas acredite em mim, isso vai funcionar. Agora que estou calculando minha soma atual corretamente, é aqui que eu faria a verificação. E eu quero verificar, certo, se nesta próxima janela, a soma atual é maior que a soma máxima. E se for esse o caso, então eu simplesmente aplico minha lógica de valor máximo. Portanto,
+
+sua soma máxima é igual à soma atual. E depois de fazer isso para cada janela restante, basta retornar o valor que estiver entre os valores máximos. Incrível. Então, vamos testar isso agora. Então, parece que cometi um pequeno erro aqui, e um erro bastante comum, por sinal.
+
+Vou adicionar limites, então quero verificar algumas coisas aqui. Provavelmente há um erro de um por unidade. E se o índice da minha lista estiver fora do intervalo, isso provavelmente significa que está no início ou no final do meu array `nums` . E olhando para esse código quando eu faço I + K, estou olhando para o que vem a seguir na lista. Então, provavelmente estou olhando fora da extremidade direita da minha lista . Então, vamos pensar na
+
+última iteração do nosso código. E isso pode ter a ver com este acompanhante que estou trazendo aqui. Provavelmente não preciso disso. Sei que copiei esta parte do intervalo do código anterior para cá, mas a lógica provavelmente é um pouco diferente, então é provavelmente por isso que está dando erro. Assim, sei que este é o cenário em que meu "I" está apontando para o início da última janela. Sim, e eu
+
+já consigo ver porque aqui, se eu fizer a minha soma atual menos números iguais, significa que vou subtrair o oito, certo? E então vou tentar adicionar o próximo elemento que chegar. Aqui, eu pego minha posição atual e adiciono três a ela, certo? Porque K é três. Então, se minha posição atual é esta e eu adiciono três, eu vou um, dois, e três está fora dos limites, certo? Porque esta é
+
+realmente a minha última oportunidade, não preciso mais olhar para o futuro . Certo? É por isso que esse código está saindo dos limites. Portanto, nesta versão otimizada, você realmente não precisa do " mais um" aqui. Ótimo.
+
+Então, vamos testar agora mesmo. Eis aqui nossa ótima solução. O que eu realmente quero destacar é como configuramos essa versão otimizada. Para mim, é como se fosse uma história em duas partes. Primeiro você precisa lidar explicitamente com a sua janela inicial, certo? Aqui, simplesmente
+
+peguei a soma imediata dos primeiros K elementos. E então o loop "for" irá processar todas as janelas subsequentes. E se você fizer isso de forma inteligente, precisará apenas de um número fixo de operações para calcular a próxima janela. Em particular, aqui eu simplesmente fiz uma subtração do meu elemento final e também uma adição do meu elemento inicial, certo? Como tenho apenas dois passos para cada iteração do loop for, obtenho um tempo de execução total de O(N) . Aqui acabei usando
+
+um pouco de espaço extra apenas por conveniência. Aqui, ao chamar a função de soma integrada , estou na verdade passando uma cópia de um subconjunto de vetores, o que, obviamente, ocupa um pouco de espaço. Mas é muito fácil otimizar isso se você realmente se importasse em reduzir a complexidade de espaço de algo como uma complexidade de espaço linear ou de O(N) para uma complexidade de espaço constante. Posso te mostrar isso rapidinho. Não tem nada de especial.
+
+Basta dizer que sua soma atual é igual a zero e você precisa calcular isso manualmente, certo? Então você pode dizer para I no intervalo e começar com índice zero e percorrer os primeiros K elementos, então apenas K aqui. Legal. Em seguida, basta pegar sua soma atual e adicionar a ela o número de I. Assim, você não precisaria usar nenhum espaço adicional. Vamos testar.
+
+Sinceramente, se eu estivesse em uma entrevista, provavelmente ainda usaria a função de soma integrada, simplesmente porque é muito prática. E, em geral, não nos importamos de sacrificar um pouco de espaço linear, desde que obtenhamos a complexidade de tempo ideal . Muito bem, programadores, é tudo o que tenho para hoje. Reserve um tempo para se familiarizar com a indexação e certifique-se de que está à vontade com ela . Há muitas oportunidades para erros por uma unidade, como você pode ver, como o que acabei de cometer. E não se preocupe,
+
+poderemos praticar esse conceito mais a fundo no próximo módulo. Olá, programadores, aqui é o Alvin. Vamos agora analisar o problema do tamanho máximo K do produto de submatrizes. Este será um bom exercício complementar ao nosso último problema, que foi praticar o algoritmo da janela deslizante . Aqui, ainda temos um array de números com tamanho K. O que queremos fazer é considerar
+
+diferentes subarrays de tamanho K, ou tamanho quatro neste caso, e encontrar aquele com o produto máximo. Portanto, para este primeiro subconjunto de elementos, o produto total é 24. Obviamente, o produto será simplesmente o resultado da multiplicação de todos os elementos. Se eu observar alguma outra submatriz aqui, esta no final tem um produto total de -780. Este do meio tem um produto de 270.
+
+E esta seria exatamente a resposta que eu gostaria de retornar. Em outras palavras, você deve retornar 270 porque esse é o produto máximo que podemos obter de qualquer submatriz desse tipo. Ótimo. Portanto, deve ficar bastante claro que esta será uma pequena variação do problema anterior. Então podemos praticar essa janela deslizante.
+
+Então, como você deve imaginar, já que quero encontrar o máximo aqui, basta manter uma variável de produto máximo. Então, vamos começar falando sobre a estratégia ingênua da janela deslizante, apenas para uma breve revisão. Então, agora que temos a minha janela bem aqui na frente, precisamos multiplicar esses elementos, certo? Portanto, o produto total deles é 24. Como você ainda não tem um produto máximo, esse será o seu máximo atual.
+
+Em seguida, basta deslizar a janela para a direita. Você obtém o produto desses quatro elementos. Você receberá -72. Isso não vai substituir o máximo alcançado até agora. Então, você vai para a direita.
+
+Aqui, você tem um produto total de -54. Ainda não o substitua. Aqui, você tem um produto total de 720. Portanto, você substituiria seu produto máximo. Este algoritmo continuará até o final do seu array.
+
+E, claro, 720 seria a sua resposta definitiva. Já dissemos que este algoritmo até agora tem uma complexidade de tempo de n * k, certo? Na verdade, é a mesma análise que fizemos da última vez. O problema com esse algoritmo até agora é o fator k, certo? Como estamos simplesmente multiplicando todos os elementos dentro de uma determinada janela, teremos que realizar k operações para cada janela que analisarmos.
+
+Então, o que eu quero fazer é me livrar desse k. E aqui está a otimização. Em vez de analisar cada elemento individualmente dentro da sua janela, você não deve fazer isso. Em vez disso, tente observar apenas dois elementos por vez. Então, é isso que eu quero dizer.
+
+Vamos começar nosso algoritmo desde o início. Além da nossa variável de produto máximo , também vamos monitorar nosso produto atual. Este será o produto da nossa vitrine até o momento. Como estou no início do meu algoritmo, você só precisa processar esses primeiros elementos. Em outras palavras, basta multiplicá-los . Em outras palavras, 1 * 4 * 1 * 6
+
+me dá 24. Posso considerar esse 24 como meu valor máximo até o momento. Agora que você deseja deslizar a janela para a direita, você pode simplesmente remover aquele elemento que está na parte traseira do seu produto atual. Aqui você quer fazer a operação oposta. Então, com o tempo, fui calculando o produto, ou seja, multiplicando as coisas. Quando eu quero
+
+remover algum número do produto, eu simplesmente divido, certo? Porque a divisão é o oposto da multiplicação. Então, se eu fizer 24 / 1, meu produto atual permanece em 24. Por outro lado, tenho esse número -3 que será inserido no meu produto na próxima janela. Então, preciso multiplicar por -3. Então, eu multiplico meu
+
+produto atual de 24 por -3, o que me dá -72. E esse seria, de fato, o produto total daquela próxima janela aqui. Em outras palavras, 4 * 1 * 6 * -3 é igual a -72. -72 não vai substituir minha temperatura máxima, então posso continuar abrindo a janela. Preciso remover esses quatro do meu produto atual, o que significa que devo dividi-lo, certo? Então eu divido o
+
+meu -72 por quatro. Isso me dá -18. E não se esqueça também de multiplicar o elemento principal. Então, eu faço 3 vezes o -18 aqui. Isso me dá minha próxima janela de -54.
+
+Repito, -54 não vai substituir meu produto máximo. Então, continuo deslizando. Vou dividir por um e multiplicar por -5. Isso significa que minha próxima janela tem um produto total de 270. 270 substituiria meu produto máximo, porque, obviamente, é maior. Portanto, meu
+
+produto máximo no momento é 270. Continue deslizando para a direita. No próximo quadro, o que eu faço é dividir por seis e multiplicar por dois, o que me dá 90. 90 não é maior que o meu produto máximo, então continuo indo para a direita. Aqui preciso dividir por -3 e multiplicar por 26.
+
+E esta janela final tem um produto total de -780. É claro que isso também não vai substituir meu produto principal. Agora que terminei de deslizar a janela completamente para a direita, o valor final que tenho dentro do meu produto máximo será a minha resposta final. Portanto, a resposta que devemos retornar é 270. Como dissemos anteriormente, esta é a nossa estratégia de janela deslizante otimizada. A
+
+complexidade de tempo para isso é simplesmente O de N, certo? Quando consideramos encontrar o próximo produto que devemos analisar, realizamos apenas um número constante de operações, certo? O que dissemos foi que simplesmente dividimos pelo elemento posterior e multiplicamos pelo elemento anterior. Isso seria verdade independentemente do tamanho da nossa janela, certo? Aqui, K é 4, mas mesmo que K fosse 100, você ainda precisaria dividir por um número e multiplicar por outro. A
+
+complexidade de tempo aqui é O de N. A complexidade de espaço também será O de 1, assim como da última vez. Certo. Então, o que eu quero que você faça é tentar programar isso por conta própria. Vai ser muito parecido com o nosso último problema. É um bom exercício para aperfeiçoar o
+
+algoritmo da janela deslizante. Se você ficar preso em alguma parte, nos vemos no vídeo explicativo. Olá, programadores, aqui é o Alvin. Agora, vamos analisar o passo a passo em Python para resolver este problema de tamanho máximo K do produto de submatriz . Então, esta será apenas uma pequena variação do nosso último problema, dando-nos outra oportunidade de praticar o algoritmo de janela deslizante otimizado.
+
+Então, vou direto ao ponto. Vou passar imediatamente para a versão otimizada. Vou criar minha variável de produto atual . Porque eu sei que o primeiro passo é processar os primeiros K elementos, certo? Vamos aproveitar a primeira oportunidade.
+
+Então, vou iterar para, digamos, I no intervalo. E vou partir do zero até o primeiro K. E o que eu quero fazer é multiplicar pelo produto esse elemento atual. Então, números em I. Ótimo. Então, agora que tenho o produto
+
+da primeira janela, posso defini-lo como o máximo até o momento. Legal. Vou dar um exemplo aqui. Só para podermos conversar um pouco sobre isso. Portanto, já resolvemos essa questão inicial. Agora, preciso de outro loop
+
+que faça esta janela deslizar completamente para a direita. Portanto, eu poderia considerar cada submatriz aqui. Então, vou começar ainda no índice zero ao iterar aqui. Desta vez, quero parar por volta do comprimento de nums menos K. Isso tem o efeito de parar aproximadamente K elementos do final da lista, certo?
+
+Como dissemos no vídeo de introdução, o importante é que façamos um número constante de passos ao deslizar a janela, certo? Então, neste momento, minha janela está aqui. Se eu quiser ir para a próxima janela, preciso remover o quatro do meu produto, mas também incorporar o -9 ao meu produto. E eu preciso usar as operações apropriadas para isso, certo? Então, como estou lidando com um produto, vou dividir esse elemento final de quatro. Então, eu poderia dizer que dividir é
+
+igual a nums no índice I. Por outro lado, eu quero multiplicar por nums em I mais K. Legal. Então, fazendo uma verificação rápida aqui, se I for zero, isso significa que eu removeria quatro do meu produto. Isso é bom.
+
+E se I ainda for zero e I fizer K igual a três, isso significa que estou indexando em três. Então, é zero, um, dois, três. Eu estaria multiplicando em meu -9, o que também é bom para obter minha próxima janela. A partir daqui, basta aplicar a lógica clássica de valor máximo . Então, verifique se a sua corrente é maior que o seu produto máximo. E se for esse o caso
+
+, você pode substituí-lo. Portanto, podemos dizer que o produto máximo é igual ao produto atual. Legal. Depois de terminar de deslizar a janela, basta retornar à posição máxima. Esta será a nossa versão otimizada.
+
+Muito, muito semelhante ao nosso último problema. Só queria te mostrar esse algoritmo mais uma vez. Ótimo. Outra forma de escrever isso seria usando a função max integrada. Então, poderíamos dizer que o produto máximo é igual a simplesmente chamar o valor máximo, passando essas duas variáveis.
+
+Seria a mesma coisa escrever isso em apenas uma linha. Na verdade, o importante aqui é que você busque um tempo de execução O de N. Certo? Tenho K iterações neste laço for, e então o restante desse array de entrada será iterado neste outro laço for , no qual realizo apenas um número constante de operações a cada vez. Note que não aninhei nenhum laço aqui.
+
+Olá, programadores, aqui é o Alvin. Neste momento, gostaria apenas de apresentar um breve resumo do algoritmo que temos implementado recentemente. Assim, nos dois últimos problemas, exploramos a estratégia da janela deslizante. Em particular, temos analisado a janela deslizante com um tamanho fixo K. E, naturalmente, isso é bom para considerar submatrizes ou subcadeias de caracteres de um mesmo tamanho. O único tamanho sendo o
+
+argumento K. E como estou dizendo aqui, essa estratégia não é apenas boa para considerar sub-vetores dentro de um vetor maior, mas também é ótima para considerar sub-strings dentro de uma string maior. E veremos isso mais tarde. Na verdade, não muda de nenhuma forma específica. Então, vamos resumir os passos que temos usado até agora. E acredito que, na
+
+maioria dos casos, essa será uma boa receita sempre que você estiver aplicando a estratégia de janela deslizante com tamanho fixo. Portanto, seu primeiro passo será processar os primeiros K elementos e armazená-los em alguma coleção. O que você deve ter percebido até agora é que esse processo, na verdade, acontece separadamente. Normalmente, temos um loop inicial que irá processar os primeiros K elementos para iniciar nossa janela inicial. E então, a partir daí, o que você precisa fazer é mover a janela para a direita usando algum outro loop. E esta é a
+
+parte realmente crucial. A longo prazo, o ideal é alcançar uma complexidade de tempo aproximadamente linear . Portanto, você deseja manter o número de etapas constante ao mover a janela . Então, seu primeiro passo será remover o último elemento da coleção, certo? Em outras palavras, o elemento que está saindo da janela precisa ser removido da sua coleção, seja ela um produto, uma soma ou alguma outra estrutura de dados, como veremos mais adiante.
+
+Além disso, como você está movendo a janela para a direita, isso significa que algum elemento inicial precisa ser adicionado à coleção. Em geral, as operações de remoção e adição deveriam ser opostas, certo? Assim, no caso do cálculo de uma soma total, o "remover" será uma subtração e o "adicionar" será uma adição. No caso de um produto grande, a remoção será uma divisão e a adição será uma multiplicação. E tente visualizar as coisas por aqui, certo? Então, quando tenho uma janela
+
+como a que exploramos nos últimos problemas, o elemento final é realmente a última coisa que está prestes a sair da janela e, em seguida, o elemento inicial está prestes a entrar na janela. Então, é claro que vou deslizar esta janela laranja para a direita. Agora que você criou sua nova janela, basta implementar a lógica de negócios, que depende muito do contexto do problema. Então, até agora fizemos coisas como pegar o máximo. Obviamente, isso não mudaria muito se você escolhesse o mínimo e, claro, mostrarei muito mais variações ao longo do curso. Mas o melhor de
+
+tudo é que, com a estratégia de janela deslizante de tamanho fixo, essa é a minha receita geral e funciona muito bem. Após implementar a lógica de negócios, você precisa voltar ao passo número dois, continuar movendo a janela para a direita e repetir os passos dois e três até processar toda a matriz. Muito bem, esse foi o nosso pequeno resumo da estratégia de janela deslizante com tamanho fixo K. Vamos praticar mais alguns exercícios agora mesmo e, claro, vamos aumentar a dificuldade para que você esteja preparado para as entrevistas. Olá, programadores, aqui é o Alvin. Neste momento,
+
+quero abordar a abordagem que podemos usar para o problema do tamanho da soma alvo do subconjunto K. Neste problema, são apresentados três argumentos. Nosso primeiro argumento será simplesmente uma matriz de alguns números. Nosso segundo argumento será uma meta de valor . E nosso terceiro argumento será o tamanho K.
+
+Aqui estamos considerando submatrizes de tamanho três que somam sete. O que queremos fazer é contá-los. Então, quantas submatrizes de tamanho três somam sete? O resultado aqui deve ser cinco. Porque existem cinco subconjuntos diferentes que atendem a esse critério. Aqui está o primeiro
+
+subconjunto de vetores. Claro, 2 + 3 + 2 é de fato sete e tem três elementos, então está tudo bem. Aqui está o número dois. Número três. Número quatro.
+
+E então, a sua quinta e última. Então, na verdade, isso vai ser um problema de contagem para nós. Mas é claro que vamos utilizar essa estratégia de janela deslizante. Sabemos que esse problema se encaixa bem em uma janela deslizante, porque, é claro, estamos considerando submatrizes de tamanho fixo. Então, para começar, quero processar os primeiros K elementos, dependendo do tamanho da minha janela.
+
+Então, olhando para a minha primeira janela, aqui está ela. Quero apenas encontrar a soma deles . Porque, é claro, estou procurando algo que corresponda à meta de valor a longo prazo. Portanto, 2 + 3 + 2 dá sete. Vamos começar implementando a solução ideal, pois a esta altura você já deve estar familiarizado com o processo.
+
+Então, além da soma da nossa janela atual, o que eu também quero fazer é acompanhar a contagem global, certo? Essa será a resposta que eventualmente darei. Neste momento, minha soma está exatamente dentro da meta, então devo contabilizá-la. Então, neste momento, minha contagem é um. E estou pronto para mudar a minha janela de lugar. Então, estou
+
+pronto para deslizá-lo para a direita. Como esperado, o que você deve fazer é remover o elemento final da soma e, em seguida, adicionar o elemento inicial à soma. Então, eu faço um subtraio dois e um acréscimo de dois, o que na verdade não tem efeito na mudança da soma, mas vai levar em consideração a próxima janela. Ainda assim, minha soma corresponde à meta, então eu também devo incrementar minha contagem. E eu continuo. Eu faço um menos três e
+
+também um mais três. Portanto, minha soma para esta janela continua sendo sete. Então, eu deveria contá-lo. Continue movendo-se para a direita. Aqui eu faço menos dois e mais um. Isso me dá uma
+
+soma atual de seis. Seis não é igual à meta de sete, então não incremento meu contador. Mantenha esse padrão. Vou subtrair o elemento final de dois e adicionar o elemento inicial de três. Agora minha soma é sete. Como sete
+
+corresponde à minha meta, incremento minha contagem. E vamos continuar com essa lógica, atualizando nossa soma atual e comparando- a com nossa meta de sete até encontrarmos alguma correspondência. Você vai chegar à sua próxima partida bem aqui. Aqui você tem uma soma de sete. Isso corresponde à sua meta de sete, então você deve incrementar sua contagem mais uma vez.
+
+E quando você chegar ao final do seu array, você terá terminado de considerar todos os possíveis sub- arrays de tamanho três. Você pode simplesmente enviar os números para cá. A esta altura, você já deve ter uma ideia da complexidade disso. Este algoritmo tem uma complexidade de tempo de execução de O(N), onde N será o comprimento do array nums. O espaço aqui será constante. Na
+
+verdade, é a mesma análise que fizemos para os dois problemas anteriores. Então, o que eu quero que você faça é tentar programar isso por conta própria. Se você ficar preso em alguma dúvida, pode me encontrar no vídeo explicativo. Olá, programadores, aqui é o Alvin. Vamos agora analisar o passo a passo em Python para o problema do tamanho K da soma alvo do subvetor .
+
+Então, é claro que queremos dar continuidade ao tema que temos abordado ultimamente. Queremos resolver este problema usando nosso algoritmo de janela deslizante de tamanho fixo. Para começar, vou processar meus primeiros K elementos. Aqui, ainda queremos encontrar a soma de nossos subconjuntos, mas desta vez queremos contá- los, então ainda terei minha, digamos, soma atual. Inicialize-o com zero.
+
+Eu só quero processar os primeiros K elementos. Então, para cada i no intervalo, vou de zero até k. E quero adicionar o elemento, então a soma atual mais é igual a nums no índice i. Agora, ao longo do caminho, quero alguma variável de contagem, que retornarei no final. E lembre-se de que, como você já processou a primeira janela, deve verificar a soma dessa janela para ver se ela corresponde ao valor desejado. Então, aqui, eu
+
+posso usar um operador ternário em Python para verificar. Certo, vou definir a contagem como igual a um se a soma atual for igual ao valor alvo. Caso contrário, se não for igual ao valor alvo, inicialize-o com zero. Legal. Bem, para nossa janela deslizante de tamanho fixo, a janela inicial é processada separadamente, então é importante garantir que você ainda a conte, se necessário.
+
+E então esse código aqui, com o loop for, vai lidar com todas as outras janelas, certo? Então, vou dizer que para i no intervalo, vá de zero até o comprimento de nums menos K. Isso tem o efeito de impedir que K elementos cheguem à extremidade direita da minha lista aqui. E como estou lidando com lógica, é simples: basta fazer a soma atual, subtrair o elemento seguinte, ou seja, o número em I, e então adicionar o elemento principal, que está no índice I mais K. Agora você precisa trabalhar na lógica específica para este problema, que é apenas verificar a soma atual, certo? Verifique
+
+se a soma desta janela corresponde ao valor alvo. E se acontecer, simplesmente conte . Portanto, a soma da contagem é igual a um. É só isso. Você deve se sentir muito à vontade ao ver esse padrão novamente.
+
+Ótimo. Portanto, parece que nosso código está passando. Algo que quero enfatizar aqui é que acho que o erro mais comum em alguns problemas com janelas deslizantes de tamanho fixo é não considerar corretamente a primeira janela, pois eu a trato de forma especial usando este loop `for`. Certifique-se de verificar se a soma inicial da janela já é igual ao valor alvo. Em seguida, você deve inicializar sua contagem com o valor um. Caso contrário, você define o valor como
+
+zero. Legal. Na verdade, a primeira janela é tratada de forma especial neste código, e todas as janelas subsequentes também são tratadas neste código. Olá, programadores! Queria fazer uma pequena pausa para falar sobre meu curso completo de estruturas de dados e algoritmos no structy.net.
+
+Se você gosta do meu estilo de ensino, então acho que você vai adorar meu curso completo. O material sobre janelas de correr que já estamos estudando foi retirado diretamente do meu curso no structy.net. Lá, vou te ensinar tudo o que você precisa saber para passar nas suas entrevistas para o programa DSA. Lá, abordarei janelas deslizantes, árvores, grafos, programação dinâmica e muito mais.
+
+A melhor parte é que estarei lá para explicar cada problema usando as mesmas animações claras e explicações passo a passo do código às quais você já está acostumado. Isso é structy.net. Vou deixar um link na descrição do vídeo caso você tenha interesse. E agora, vamos voltar ao nosso curso sobre janelas de correr.
+
+Olá, programadores, aqui é o Alvin. Vamos agora analisar a abordagem que podemos usar para resolver este problema de anagrama de substring. Portanto, neste problema, nos são dadas duas strings. Aqui, tenho como entrada o texto " Greyhound". Também me foi dado o anagrama alvo de HOI. Olá!
+
+O que eu quero fazer é retornar um valor booleano ( verdadeiro ou falso) indicando se o anagrama foi encontrado como uma substring na string maior. Então, se eu procurar pelos caracteres HOI, lembre-se de que um anagrama pode ter seus caracteres reorganizados, certo? Neste exemplo específico, de fato, consegui encontrar um anagrama de HOI como uma substring em Greyhound. Seria bem aqui, não é? YHO.
+
+Lembrando que um anagrama pode ter seus caracteres em qualquer ordem. Portanto, para essa entrada específica, você deve retornar verdadeiro. Vejamos outro exemplo. Digamos que você receba esta sequência de caracteres. Você ainda recebe o anagrama alvo de HOI.
+
+Neste caso, você deve retornar falso, pois não existe nenhuma substring que contenha um anagrama de HOI. Portanto, se você não conseguir encontrar o anagrama da substring, basta retornar falso. Então, vamos falar sobre a abordagem aqui. Para este problema específico, o que queremos fazer é considerar substrings. Algo importante sobre substrings é que elas serão uma sequência consecutiva de caracteres dentro de uma string maior.
+
+Uma substring é exatamente como um subconjunto de vetores. Em vez de lidar com um array, você está lidando com uma string. Também estamos verificando se o anagrama existe em algum lugar na string. Aqui, meu anagrama de h o y tem três caracteres, então estou procurando substrings de comprimento três. Com base no que temos praticado recentemente, sabemos que podemos obter facilmente todas as substrings de comprimento três simplesmente deslizando alguma janela ao longo da minha string.
+
+Então, vamos resolver isso usando uma estratégia de janela deslizante. Vai ser um pouco diferente, no entanto. Note que este não lida com nenhum número. Muito bem, então sabemos que precisamos deslizar uma janela para considerar diferentes substrings, mas como podemos verificar se realmente temos um anagrama? Bem, a chave será usar um conjunto. Portanto, lembre-se de que sua estrutura de dados de conjunto
+
+é algo que possui tempo constante para inserção de elementos, remoção de elementos e busca de elementos. Então, por que usar um conjunto é uma boa ideia neste problema? Bem, um conjunto tem algumas características muito importantes . Para começar, os itens de um conjunto não estão ordenados. E isso, na verdade, funciona bem, porque um anagrama pode ter seus caracteres aparecendo em qualquer ordem.
+
+Além disso, também sei que os itens em um conjunto serão necessariamente únicos, o que na verdade é uma suposição que nos é dada no problema. Eles nos dizem que os caracteres dentro da sequência, assim como os caracteres no anagrama, serão todos únicos. Portanto, essas duas características combinam bem com o uso de um conjunto. Muito bem, então como funcionaria esse algoritmo? Na maior parte dos casos, será o nosso algoritmo de janela deslizante de tamanho fixo, mas usaremos um conjunto padrão em todo o processo.
+
+Então, vamos começar com um cenário vazio. [suspiros] Como dissemos anteriormente, queremos que o primeiro passo da janela deslizante de um algoritmo de tamanho fixo seja apenas inicializar e processar os primeiros K elementos. Neste exemplo específico, como meu anagrama tem um comprimento de três, na verdade meu K ou o tamanho da minha janela é de apenas três caracteres. Então, se eu pegar os três primeiros caracteres da minha primeira janela, eu os adiciono ao meu conjunto. Assim, cada personagem representa um item do conjunto.
+
+Ótimo. Neste ponto, posso simplesmente verificar se os caracteres do meu anagrama existem no meu conjunto. No momento, não é esse o caso. Portanto, até agora não se trata de um anagrama. Então, preciso continuar .
+
+Como esperado, se você quiser fazer isso de forma eficiente, o ideal é tentar manter suas operações o mais constantes possível enquanto move a janela para a direita. Então, o que eu vou fazer é simplesmente remover o caractere final, certo? Então, vou removê-lo da minha coleção. E também vou inserir meu personagem principal. Vou adicionar isso ao conjunto.
+
+Então, vou remover o G. Mas também adicionar o Y. Agora, é como se eu estivesse considerando a próxima substring, R E Y. E, novamente, verifico se o meu anagrama, H O Y, contém esses caracteres. E eles não fazem isso, então eu continuo.
+
+Preciso mover minha janela um pouco para a direita. Então, eu removo o R e adiciono o H. Isso me leva à minha próxima janela. Verifico novamente: os caracteres do meu anagrama estão presentes no conjunto? Não são, então continuo em frente.
+
+Eu retiro o E e adiciono o O. Assim . Neste ponto, estou considerando a substring Y H O. Agora verifico se meu anagrama corresponde aos caracteres do meu conjunto. É exatamente esse o caso. Então, eu sei que acabei de encontrar uma
+
+substring que contém o anagrama. Portanto, no fim das contas, eu deveria simplesmente retornar verdadeiro. Obviamente, se você precisar retornar falso, basta iterar sua janela deslizante até o final da lista à direita. E se você nunca encontrar uma correspondência, simplesmente retornará falso. Isso sim é lógica booleana clássica .
+
+Então, vamos discutir a complexidade disso . Então, se você disser que N é o comprimento da minha string e K é o comprimento do anagrama que estou procurando, a complexidade de tempo aqui será O(N vezes K). E de onde vem isso? Se, para facilitar o deslizamento da janela para a direita, soubermos que estamos mantendo as operações relativamente eficientes, basta remover um caractere e adicionar outro a cada iteração enquanto deslizamos para a direita. Então, você provavelmente está se perguntando de onde vem o K? O que precisamos
+
+entender é que o K vem da verificação para confirmar se o nosso anagrama original corresponde aos caracteres do nosso conjunto atual. Para fazer essa verificação, você simplesmente percorrerá os caracteres e garantirá que cada um exista. E, claro, isso acontecerá em um tempo K, pois há K caracteres para verificar dentro do conjunto. De forma semelhante, a complexidade de espaço será O de K. Na verdade, a complexidade de espaço será o tamanho da janela, pois temos essa quantidade de caracteres em nosso conjunto. Essa é, na verdade, uma
+
+solução bastante eficiente para esse problema. Note que a complexidade deste problema é um pouco diferente dos problemas anteriores que resolvemos no módulo de janela deslizante . Basicamente, temos um fator K na complexidade de tempo e espaço. Então, creio que nos três últimos problemas, tivemos uma complexidade de tempo de O(N) e uma complexidade de espaço constante. Aqui, é um pouco diferente devido às restrições do problema. Como seria
+
+de esperar, a complexidade de tempo e espaço pode variar de problema para problema, mesmo quando se trata do mesmo tema. E isso parece bom porque este problema é definitivamente um passo à frente dos problemas anteriores que lidavam apenas com somas e produtos. Embora ainda utilizem o algoritmo de janela deslizante. Olá, programadores, aqui é o Alvin. Agora, vamos revisar o passo a passo em Python para resolver este problema de anagrama com substring.
+
+Então, como dissemos no vídeo de abordagem, vamos resolver este problema usando nossa janela deslizante com um algoritmo de tamanho fixo . O que vamos fazer é criar um conjunto aqui para conter os personagens. Dessa forma, podemos verificar se temos um anagrama correspondente aqui. Então, vou criar um conjunto. E eu quero inicializar o conjunto com os caracteres da primeira janela.
+
+E eu sei que o tamanho da janela será, na verdade, apenas o comprimento do anagrama. Então, neste exemplo específico, meu anagrama é H-O-Y. Isso significa que eu quero verificar se há uma janela deslizante com tamanho três aqui. Então, o que eu vou fazer é pegar os três primeiros caracteres, ou os primeiros caracteres com a letra K, por assim dizer. Então, eu direi S e irei do índice zero até o comprimento do anagrama. Então, qual é o
+
+comprimento do anagrama? E na sintaxe do Python, eu poderia realmente omitir o zero, assim. Se quiser, você pode até declarar uma variável do tipo K para isso. O código ficará mais parecido com o que escrevemos anteriormente. E então, ficará assim.
+
+Então, aqui estou eu processando minha primeira janela. Certo? E chamarei isso de meu conjunto de janelas. Legal. Então, agora que tenho um conjunto contendo esses três caracteres, o que quero fazer é verificar se a primeira janela realmente corresponde. Portanto, certifique-se de
+
+fazer isso. É muito comum esquecer de fazer isso na primeira janela do seu algoritmo de janela deslizante. Então, vou verificar se o meu conjunto de janelas é igual ao conjunto dos caracteres originais do anagrama. Então, vou criar outro conjunto aqui. Vou chamar isso de meu conjunto de anagramas.
+
+Definir. Este será o conjunto de caracteres do anagrama original. Legal. Então, o que vou fazer é verificar se eles coincidem. Python possui uma sintaxe realmente excelente para isso. Basta verificar se
+
+são sinais de igual duplo. Você vai verificar se os itens nos dois conjuntos são os mesmos, certo? Em outras palavras, esses dois conjuntos são totalmente iguais? Ótimo. Então, se for esse o caso, posso retornar verdadeiro porque acabei de encontrar uma correspondência.
+
+Caso contrário, não preciso verificar as outras janelas deslizando para a direita. Então, vou configurar um loop for. Vou dizer que, para mim, o intervalo vai desde o início até, mas não incluindo, o comprimento de S menos o comprimento do anagrama, que eu armazenei nesta variável K. Então, vou usá-lo aqui. Basta dizer K. A condição de parada aqui
+
+é muito semelhante à que escrevemos em nossos últimos problemas. Então, o que farei aqui é a lógica clássica da janela deslizante. Então, vou remover do meu conjunto, vou dizer janela set ponto remover. Vou remover o caractere final, que seria o S no índice I. Certo? Então, na primeira iteração,
+
+quando I for zero, vamos remover o G. O que preciso fazer é adicionar o Y aqui. Então, remova o S de I. E na outra extremidade, você deve adicionar o S em I mais K. Certo? Porque se meu I for zero, então se eu fizer
+
+zero mais três, eu obtenho um dois e então três é o Y ali. Legal. Isso me leva à minha próxima janela, que devo verificar agora. Assim, posso simplesmente verificar se este conjunto de janelas é igual ao conjunto de anagramas. Se coincidirem, retorne verdadeiro. É
+
+sempre verdade que aqui se retorne mais cedo. E somente depois de concluir o loop for, se eu nunca retornar verdadeiro, significa que nunca encontrei uma janela correspondente. Então, em última análise, posso retornar falso aqui. Antes de executarmos o teste, não se esqueça de retornar o valor verdadeiro aqui. Vamos testar.
+
+Aí está a nossa solução para este problema. Como mencionamos no vídeo de abordagem, se considerarmos que N é o comprimento da string e K é o comprimento do anagrama, a complexidade de tempo total será de N vezes K. É bastante óbvio que o N existe mais ou menos aqui, pois estamos iterando aproximadamente pelo comprimento da nossa string. O K vem deste cheque aqui. Embora seja um simples `==` em Python, internamente isso teria que iterar entre um dos nossos conjuntos e verificar se cada elemento desse conjunto está presente no outro.
+
+Certo? Portanto, esta é realmente a sua operação K dentro do seu laço N. É por isso que você tem uma complexidade de tempo total de N vezes K. Certo? A complexidade espacial aqui será simplesmente K uh, baseada no tamanho dos conjuntos que você criar. Então, principalmente seu
+
+conjunto de janelas e também seu conjunto de anagramas. Eles terão exatamente o mesmo número de caracteres que o anagrama original. Olá, programadores, aqui é o Alvin. Neste momento, quero abordar a abordagem que podemos usar para resolver este problema de contagem de anagramas de substrings . Portanto, neste problema, receberemos uma string S como entrada. Também nos será
+
+dada outra sequência de caracteres representando um anagrama. O que eu quero fazer é contar quantas vezes o anagrama aparece dentro da sequência de caracteres. Claro, como sempre, um anagrama é uma sequência de caracteres na qual podemos reorganizar a ordem deles. Então, se eu quisesse analisar esse exemplo específico passo a passo, meu anagrama é ATT, e eu consigo encontrar exatamente isso na string. Então, isso me dá uma contagem de um.
+
+Também consigo encontrar ocorrências em que o anagrama é rearranjado, certo? Então, aqui está o TTA. Finalmente, no final, tenho o TAT. Isso me daria um total de três substrings que correspondem ao anagrama fornecido. Então, você só precisa retornar o número três aqui.
+
+Portanto, este problema parece bastante típico do que temos estudado ultimamente, especialmente quando comparado ao problema anterior. Há algo importante que gostaríamos de destacar nesta entrada específica . É permitido ter caracteres duplicados na entrada. E isso contrasta com o problema anterior, em que tínhamos a garantia de que apenas caracteres únicos seriam utilizados. É bastante fácil perceber na minha sequência de entrada que a letra A aparece várias vezes, e até mesmo a letra T aparece várias vezes.
+
+Então, digamos que começamos a abordar isso de forma semelhante ao nosso último problema, usando um conjunto. Então, sabemos que a longo prazo vamos usar, sabe, uma estratégia de janela deslizante. E se você tivesse sua janela inicial aqui, você converteria os caracteres em membros de um conjunto. Assim, o conjunto correspondente para sua janela ficaria assim. Assim como no nosso último problema, nada de especial.
+
+Mas, se você mover essa janela uma unidade para a direita, o resultado será este. E você poderia identificar o problema imediatamente. Minha janela tem tamanho três e contém ATT. Se eu observar o conjunto correspondente que eu teria criado aqui, ele contém apenas um único A e um único T. Isso é realmente apenas uma restrição de conjuntos, certo? Em um conjunto, os
+
+elementos são necessariamente únicos. Não é possível ter elementos duplicados em um conjunto. Portanto, essa falta de comunicação vai nos causar um problema, certo? Meu conjunto contém apenas dois caracteres, mas a janela que estou olhando tem três caracteres. É por isso que você não poderá usar um conjunto para este. Você
+
+precisa ajustar um pouco essa lógica . Para resolver isso, você pode simplesmente modificar a lógica e usar um mapa. Como você já sabe, conjuntos e mapas são ambos estruturas de dados hash , portanto, nos proporcionam buscas e acessos em tempo constante. No entanto, um mapa fornece uma relação chave-valor. Então, qual será a sua chave e o seu valor neste problema específico? Bem,
+
+sua chave simplesmente corresponderá a um caractere da sua janela. E o valor correspondente será simplesmente a contagem desse caractere. Como um caractere pode ser duplicado e aparecer várias vezes em nossa janela, usaremos uma contagem para representar essa informação. Então, vamos analisar o nosso algoritmo de janela deslizante , mas desta vez usando o mapa aqui. Então, vamos começar do princípio, e na maior parte do tempo isso vai parecer uma janela deslizante bem clássica de um algoritmo de tamanho fixo , apenas ajustando-a à nossa lógica de mapa, certo?
+
+Então, quando eu crio minha janela inicial, é claro que preciso consumir esses três primeiros caracteres, e tudo o que isso significa é que eu os coloco dentro do meu mapa aqui e dou a eles as contagens apropriadas, certo? Assim, G aparece uma vez, A aparece uma vez e T aparece uma vez. Você também pode gerar um mapa semelhante para o seu anagrama de entrada. Portanto, o anagrama que inseri tem um A e dois Ts. Isso será útil quando você realmente compará-los durante o desenvolvimento do seu algoritmo.
+
+E porque, no fim das contas, o que me interessa são as contagens, certo? Quero encontrar o número de substrings que correspondem ao anagrama, então vou inicializar uma contagem com zero. Se eu verificar novamente a janela inicial que tenho agora, ela não corresponde ao anagrama. Então eu não conto com isso. É por isso que minha contagem começa em zero. E agora posso
+
+inserir o algoritmo geral. Então, terei meu elemento final aqui, que é o G. Também tenho meu elemento inicial, que é o próximo T aqui. Como você já deve imaginar, basta remover o elemento final. Então, removi o G do meu mapa, o que significa que reduzi sua contagem a zero.
+
+Ao mesmo tempo, preciso adicionar meu elemento inicial, então preciso adicionar um T adicional. Portanto, a contagem de T agora é dois. Então, agora o mapa representa a próxima janela aqui. Neste ponto, gostaria apenas de observar algo importante que pode influenciar o código que você escreverá para isso. Então, eu simplesmente reduzi o G de um para zero. Isso significa essencialmente
+
+que, se G for zero, não há nenhum G na minha janela atual. Certo? Então, posso realmente ignorar o G completamente. Talvez você possa removê-lo do seu mapa de janelas. E se você fizesse isso, então teria uma igualdade perfeita entre o mapa da sua janela, assim como o mapa do seu anagrama. Então, o que estou dizendo é que você
+
+pode comparar o mapa de janelas com o mapa de anagramas e verá que eles são iguais. Assim, você poderia incrementar sua contagem em um. Legal. Então, vamos continuar com o algoritmo. Preciso remover o caractere A final e adicionar o caractere A inicial, o que tem o efeito de não alterar o mapa.
+
+Mas isso me leva à próxima janela. Agora que estou na próxima janela, devo comparar meus dois mapas, e como são iguais, incremento minha contagem para dois. Nesse momento, deslizo a janela novamente, certificando-me de atualizar o mapa adequadamente. Aqui, não tenho correspondência entre os dois mapas, então simplesmente continuo. Ainda sem correspondência.
+
+Ainda sem correspondência. E finalmente, aqui, eu tenho uma combinação. Isso eleva meu total para três. E é só isso. Isso parece muito semelhante aos nossos algoritmos anteriores de janela deslizante de tamanho fixo, apenas ajustando-os com essa lógica de mapa de hash de contagem.
+
+Então, se dissermos que N é o comprimento da nossa sequência e K é o comprimento do nosso anagrama, vamos falar sobre a complexidade disso . Assim como no problema anterior, a complexidade em relação ao tempo será n * k. O "n" vem do fato de termos que deslizar esta janela por toda a nossa sequência de entrada. É aí que o "n" entra em jogo. De onde vem o k ? Bem, o "k" vem do fato
+
+de que você precisa comparar os dois mapas. Você sabe que, na pior das hipóteses, o mapa terá o mesmo tamanho da janela, certo? Portanto, a cada iteração ou cada vez que você desliza a janela, também precisa comparar o conteúdo do seu mapa. A parte deslizante é representada por n e a comparação dos mapas por k. Portanto, é por isso que sua complexidade de tempo total é n * k.
+
+De forma semelhante, a complexidade espacial é simplesmente k, resultante do espaço consumido pelo mapa que você cria. Na pior das hipóteses, se você tivesse apenas caracteres únicos em sua janela, teria k chaves diferentes nesse mapa. Muito bem , programadores. O que eu quero que você faça é testar esse código por conta própria. Há algumas questões lógicas complexas que você precisa levar em consideração ao lidar com o mapa. Então, se você ficar
+
+preso em alguma parte, pode me encontrar no vídeo explicativo. Olá, programadores. Alvin aqui. Neste momento, quero apresentar o passo a passo em Python para resolver este problema de contagem de anagramas de substrings. Então, para resolver isso, queremos usar um pouco de hash de contador. E para fazer
+
+isso de forma realmente fácil em Python, você poderia simplesmente usar a função ` collections.Counter` integrada, certo? Então, o que vou fazer é simplesmente importar o contador da biblioteca `collections`. E o que eu quero fazer é converter apenas o anagrama em uma contagem de seus caracteres. Então, é bem simples. Vou chamar isso de meu
+
+contador de anagramas, talvez apenas. Vou simplesmente passar o anagrama inteiro. E além disso, o que eu quero fazer é construir a bancada que vai conter a minha janela. E vou inicializar aqui. Eu diria que é o balcão da minha janela.
+
+E lembre-se de que esses objetos de contador representarão a quantidade de caracteres dessas strings, certo? Assim como vimos na aproximação. Quando eu crio minha janela inicial, quero criar um contador, mas só quero pegar a primeira janela da minha string de entrada S. Então, vou fazer um pequeno recorte aqui. Vou dizer S e começar do início, subindo até o comprimento do anagrama. Então, aqui, o tamanho da
+
+janela ou do K é realmente apenas o tamanho do anagrama, certo? Assim, isso me dará apenas os primeiros, digamos, K caracteres da string, e eu os colocarei no meu contador. Ótimo. Agora, a partir daqui, posso inicializar a contagem que irei retornar posteriormente. Então, vou chamar isso de meu, digamos, número de partidas.
+
+E pode ser inicializado com um ou zero, dependendo da aparência da minha janela inicial, mas sei que no final vou apenas retornar o número de correspondências. [bufa] Então, como sempre dizemos para nossa janela deslizante de um algoritmo de tamanho fixo , você precisa ficar atento e verificar sua janela inicial. Então, vou atribuir o valor um a `num matches` se o contador de anagramas for igual ao contador de janelas, certo? Caso contrário, não será a mesma coisa, então vou inicializá-lo com zero, certo? Só estou verificando se a janela "uh" tem a mesma contagem que meu anagrama, certo? Em
+
+Python, o objeto contador é realmente útil porque você pode simplesmente verificar a igualdade usando o operador de igualdade dupla. Muito bem, a partir daqui eu insiro meu algoritmo geral, então preciso deslizar a janela. Então, vou dizer que I está no intervalo, e quero ir do início da string, então vamos começar do zero, e depois subir até o comprimento de S menos o comprimento do anagrama. Você deve deslizar o máximo possível para a direita. O que eu quero fazer é remover o meu caractere final. Então, se você
+
+quiser, pode dividir isso em algumas variáveis, talvez você possa dizer que o caractere final será o seu S no índice I e, como você espera, o seu caractere inicial será o S no índice I mais [bufa] o comprimento do anagrama, certo? Legal. Então você tem o caractere final e o caractere inicial. No caso do caractere final, o que você deve fazer é simplesmente removê-lo da sua contagem. Então, posso dizer que meu contador de janela acessa o último caractere e simplesmente o decrementa .
+
+E, seguindo a mesma linha de raciocínio, você também vai querer desenvolver melhor seu personagem principal. Legal. Agora que você deslizou a janela para a direita, basta fazer a verificação aqui. Verifique se a janela recém-ajustada corresponde realmente ao seu anagrama. E se for esse o caso, você pode simplesmente incrementar o número de correspondências.
+
+Aqui, usamos lógica básica de contagem. Muito bem, vamos fazer um teste. Como estamos usando Python, podemos aproveitar ao máximo a coleção de contadores integrada , e é muito fácil resolver isso. Você percebe como este código é semelhante aos nossos algoritmos anteriores de janela deslizante? Ainda temos esse conceito de inicializar nossa primeira janela. Precisamos
+
+verificar manualmente. Certifique-se de fazer isso. Então, sabe, se tivermos uma correspondência inicial, inicializamos nossa contagem com um, caso contrário, é zero. A partir daí, basta deslizar a janela para a direita, usando a parte geral do algoritmo. Como esperado, sempre que nos movemos para a direita, removemos o elemento final da coleção e adicionamos o elemento inicial. E como
+
+este é um problema de contagem, eu só quero verificar se realmente tenho uma correspondência para o anagrama na minha janela. Se fizermos isso, simplesmente incrementamos nossa contagem global aqui. Como dissemos no vídeo de apresentação, este código tem uma complexidade de n vezes k, certo? Então, se eu explicar melhor aqui, quando convertemos o anagrama, que tem tamanho k, certo? Quando convertemos nosso anagrama em um contador, é claro que precisamos iterar sobre ele internamente . Então, são realmente k passos. De forma
+
+semelhante, se convertermos apenas os primeiros caracteres ou os primeiros k caracteres da nossa string em um contador, isso também envolveria k iterações, certo? E depois fazer essa verificação aqui, certo? Este é um aspecto realmente importante . Embora estejamos fazendo algo parecido com uma igualdade, parece uma operação simples; estamos comparando dois objetos contadores, certo? Em Python, ele literalmente verifica, sabe, cada chave do contador para ver se a frequência correspondente coincide com a do outro contador, certo? Assim, na pior das hipóteses, eu
+
+teria K chaves diferentes em cada um desses contadores. Então, essa simples verificação de igualdade, na verdade, não é tão simples assim. São necessários K passos. Eu sei que vai ser K porque o maior número que o contador de janelas vai atingir é K, e eu também sei que o contador de anagramas é exatamente K, certo? Então, tenho um monte de Ks no início.
+
+Quando se trata desse loop for aqui, estamos basicamente iterando ao longo do comprimento da nossa string S, certo? Então, isso realmente começa a nos dar um N. Agora, se você observar as operações dentro deste loop for, isso é tempo constante, isso é tempo constante. Todas essas operações têm tempo constante, exceto esta aqui. Assim como antes, como estou verificando a igualdade entre meus objetos de contador, internamente, isso precisa percorrer cada chave e verificar se a frequência é a mesma. E como
+
+já dissemos, isso representou K passos. Então, essa operação aninhada é K. E só para ficar claro, vou colocá-la aqui. Então, na verdade, é NK para todo esse loop for. Assim, analisando nossa complexidade geral aqui, temos um K mais um K mais um K mais um NK. Obviamente, NK é
+
+muito maior do que qualquer um desses outros Ks. Por isso, a complexidade geral aqui é N vezes K. K. E essa era a complexidade de tempo. Em termos de complexidade espacial, estamos considerando apenas O de K de todos esses contadores.
+
+Olá, programadores, aqui é o Alvin. Agora, quero abordar a abordagem que você pode usar para o problema de encontrar a soma de submatriz. Portanto, neste problema, receberemos uma matriz de números como entrada, bem como uma soma alvo. O que eu quero fazer é encontrar uma submatriz cuja soma seja igual ao valor alvo fornecido. Então, para essa entrada específica, a resposta viria deste subconjunto aqui, onde tenho o dois, o um e o sete, porque 2 + 1 + 7 é 10. E,
+
+no final das contas, você quer retornar os índices inicial e final desse subconjunto. Então, o que estou dizendo é que se você realmente rotular todos os índices dessa matriz, é claro que seus índices começam em zero, o índice inicial é quatro e o índice final é seis. E observe que aqui os limites dos índices para o início e o fim são inclusivos. Portanto, tenha isso em mente. Então, o que este problema está pedindo é bastante direto, mas como podemos resolvê-lo?
+
+Então, ultimamente tenho mostrado a vocês o algoritmo da janela deslizante. Sabemos que, em geral, o algoritmo de janela deslizante é muito bom em considerar submatrizes ou subcadeias de caracteres. E até agora, ao longo do curso, sempre lidamos com uma janela deslizante de tamanho fixo. Mas, na verdade, você não poderá usar esse algoritmo exato aqui, porque precisa encontrar um tamanho variável. Isso significa que você não saberá exatamente qual será o tamanho do subconjunto que será a resposta final, certo?
+
+Nesse caso específico, tratava-se de uma submatriz de três elementos, mas não há nenhuma restrição aqui, certo? Poderiam ter sido dois elementos, um elemento ou cinco elementos. Portanto, você precisa considerar janelas de tamanho variável. Mas não se preocupe. Poderemos aproveitar grande parte da lógica das nossas versões anteriores da janela deslizante. Precisamos apenas fazer alguns
+
+ajustes devido a algumas diferenças . Então, para a janela deslizante com tamanho variável, você deve iniciar o algoritmo de forma semelhante, lidando com alguns índices, certo? Então, vou colocar em vermelho o meu índice inicial e em verde o meu índice final. E no início, você pede para eles apontarem para o primeiro índice. Então, só para não nos esquecermos, meu começo é vermelho e meu fim é verde.
+
+E como no geral você quer considerar a soma de uma submatriz, você terá uma variável de soma. A variável de soma representará a soma total da janela atual que você está visualizando. Então, como esse algoritmo funciona? Bem, o que você precisa fazer é observar o ponteiro final e simplesmente adicionar esse elemento à sua soma. Então, vou adicionar os três à minha soma. Isso significa que minha
+
+soma total é três. Então, você está olhando para esta janela aqui, certo? Observe que meu início e meu fim apontam para o mesmo elemento. Então, seria apenas o subconjunto com um único elemento dentro. Esse elemento é apenas três.
+
+E neste ponto, você também poderia, sabe, verificar a soma. Então, vou verificar se a minha soma atual de três é igual à minha meta? Não é. Então, o que eu posso fazer é simplesmente aumentar o tamanho da minha janela. Então, vou deslizar o ponteiro final para a direita apenas uma posição.
+
+Então, agora estou olhando para cá. É claro que, neste ponto, você também deve adicionar esse um à sua soma. Então, eu faço um mais a minha soma atual de três. Isso me dá quatro. E, novamente, você deve continuar verificando. Vou
+
+verificar se minha soma atual de quatro é igual à minha meta de 10. Não é. Então, posso continuar aumentando aqui. Então, agora estou considerando esse elemento. Então, adiciono esses quatro à minha soma atual.
+
+Minha soma atual é oito. Eu comparo com o alvo. Oito não é igual a 10. Então, eu continuo. Nesse momento, adiciono um nove à minha soma.
+
+Isso me dá 17. Verifico e 17 certamente não é igual ao meu objetivo. Então, preciso continuar . No entanto, há um ponto importante a considerar aqui. Agora que minha soma é 17, quando comparo com minha meta de 10, percebo que a ultrapassei bastante. Uma restrição muito importante que
+
+eles nos impõem neste problema é que o array de entrada contenha elementos não negativos. Como não há elementos negativos na matriz, se eu continuar aumentando o tamanho da minha janela, isso só fará com que a soma fique cada vez maior. Então, agora são 17 anos. Só vai ficar maior que 17, né? Se eu olhar para o próximo elemento, terei que adicionar um dois à minha soma. Estou me afastando cada vez mais
+
+do alvo porque já o ultrapassei. Então, é aqui que você entra com a lógica interessante. Até agora, temos apenas incrementado a posição do nosso ponteiro final. Mas agora, é hora de realmente incrementar a posição do nosso ponteiro inicial. Então, agora quero prestar atenção ao ponteiro vermelho.
+
+E eu quero mover este para a direita. Isso funciona como meu elemento de arrasto. Portanto, ao mover este ponteiro para a direita, estarei efetivamente removendo o número três da soma. Subtraí três de 17, por isso minha soma atual é 14. E quero fazer uma verificação aqui. Vou comparar minha
+
+soma atual de 14 e vejo que ainda é maior que minha soma de 10. Portanto, eu poderia mover este ponteiro inicial mais uma posição, diminuindo o tamanho da minha janela. Claro, eu removo esse elemento . Então, agora minha soma é 13. 13 ainda é maior que minha meta de 10, então eu ainda devo diminuir minha janela ajustando o ponteiro inicial.
+
+Como minha soma atual de nove é menor que a soma desejada, não há problema em aumentar o tamanho da janela. Ao aumentar o tamanho da janela, você simplesmente incrementa o ponteiro final. Então, você leva os dois. Isso significa que sua soma atual é 11. 11 é muito grande, não é? 11 é maior que sua
+
+meta de 10, então você precisa diminuir sua janela novamente. Agora, estou olhando apenas para a janela do elemento dois. Dois é menos do que a minha meta, então aumento o meu intervalo de tempo. Agora tenho três. Três é menos do que a minha meta, então aumento o período de avaliação.
+
+E neste ponto, eu finalmente encontrei o alvo, certo? Minha soma atual é 10 e minha soma desejada também é 10. Neste ponto, você só precisa retornar os índices da submatriz que está analisando. Nesse caso, seriam o quatro e o seis. Portanto, existem dois passos fundamentais aqui.
+
+Sempre que a soma atual for menor que o valor alvo, você precisa aumentar o tamanho da janela incrementando o ponteiro final. No entanto, se a sua soma for muito grande, se for maior que o valor alvo, você precisa diminuir o tamanho da janela incrementando o ponteiro inicial. Fazendo dessa forma, você eventualmente conseguirá encontrar o valor alvo correto. E ao longo do processo, você está considerando se suas janelas têm tamanhos variáveis. A forma como implementamos isso é bastante interessante, então vou guardar esse detalhe para a análise do código.
+
+Dito isso, vamos falar sobre a complexidade da questão. Se dissermos que n é o comprimento da matriz, a complexidade de tempo aqui é simplesmente O de n. E acho que isso pode ser um pouco surpreendente. Um erro comum que vejo os alunos cometerem quando olham para o diagrama deste algoritmo é presumir que será um algoritmo de complexidade n². Acho que essa é uma suposição razoável, especialmente porque temos, você sabe, dois ponteiros, e parece que eles percorrem o mesmo array.
+
+Mas vamos analisar como seria um n ao quadrado. Então, olhando para o meu diagrama aqui, vou descrever o que para mim é o comportamento clássico de n ao quadrado. Vou chamar isso de meu comportamento "n ao quadrado". Então, vou começar meus dois ponteiros logo no início, e se eu tivesse um loop aninhado bem típico, tipo n ao quadrado , ficaria assim.
+
+O que você vai notar é que uma característica fundamental do comportamento "n ao quadrado" é que, quando um dos seus ponteiros chega ao final do array, ele precisa ser reinicializado desta forma. E continua a progredir. Então, é assim que se parece um comportamento típico de n ao quadrado. E isso acontece geralmente por causa de seus loops aninhados. No entanto, não temos esse mesmo padrão aqui. Então, vou redefinir meu desenho
+
+e, observando os ponteiros, vou mostrar exatamente como eles foram atualizados. Tinha esta aparência .
+
+Neste ponto do rastreamento, teríamos encontrado a resposta correta, pois temos a soma de 10. Mas digamos que não encontramos a resposta e tínhamos muito mais elementos na matriz de entrada. Se eu tivesse que continuar procurando, eles poderiam se comportar de maneira mais ou menos assim.
+
+O que você vai notar é que, em comparação com o meu exemplo de n ao quadrado, esses dois ponteiros aqui nunca são redefinidos. Eles geralmente progridem deslizando para a direita. Então, na verdade, não temos n ao quadrado aqui. Na verdade, você tem 2 * n. O número dois decorre do fato de termos dois indicadores. O "n" decorre do fato
+
+de que, no pior caso, cada ponteiro precisa percorrer toda a extensão do array. Como você já sabe, quando tenho 2n na minha complexidade Big O , posso simplesmente descartar o fator constante dois, ficando com O de n. É por isso que sua complexidade de tempo aqui é simplesmente O de n. Muito inteligente. E a complexidade espacial é constante porque você já sabe o porquê.
+
+Muito bem, essa é a abordagem que podemos usar neste caso. Acho que você deveria começar assistindo ao vídeo explicativo. Será a nossa primeira vez implementando a janela deslizante com um algoritmo de tamanho variável . É um tanto semelhante ao algoritmo de tamanho fixo, mas apresenta algumas diferenças importantes. A lógica é bem complexa, então recomendo que você me veja no vídeo explicativo.
+
+Olá, programadores, aqui é o Alvin. Neste momento, quero apresentar o passo a passo em Python para resolver este problema de encontrar a soma de submatriz . Como dissemos no vídeo de abordagem, queremos resolver este problema usando nosso algoritmo de janela deslizante, mas desta vez vamos implementá-lo usando uma janela de tamanho variável. Então, vou precisar configurar algumas variáveis. Primeiro vou definir um índice que poderei usar para representar o início da minha janela.
+
+Basta chamá-la de start e inicializá-la com zero. Eu também preciso de uma maneira de rastrear a soma da minha janela. Então, vou chamá-la de soma da janela e inicializá-la com zero. A partir daqui, o que eu quero fazer é configurar um loop "for" que itere pelo meu índice final. Então, vou dizer que para "terminar no intervalo", vai começar do início e percorrer toda a extensão da sua lista.
+
+Agora que tenho o índice final da minha janela atual, o que quero fazer é começar a acumular a soma usando o elemento nesse índice final. Então, o que estou dizendo é que eu poderia fazer a soma da janela mais a igualdade, simplesmente adicionando o elemento da sua lista a partir deste índice final. Isso seria análogo a adicionar o elemento principal à sua janela, certo? Ótimo. Mas, como dissemos no vídeo de apresentação, a parte interessante desse algoritmo é que às vezes eu preciso diminuir o tamanho da janela, certo? Com base nos
+
+critérios do problema, certo? Quero encontrar uma submatriz que corresponda à soma alvo fornecida. E se alguma vez eu tiver uma soma de janela muito grande, então eu sei que preciso diminuir o tamanho da minha janela, certo? Eu poderia remover alguns elementos da minha janela. Então, vai ficar assim . Eu poderia dizer que minha janela somava
+
+enquanto era grande. Portanto, se for maior que a minha meta, então está muito grande, e eu devo reduzi-la. Para diminuir o tamanho, você precisa remover elementos da sua janela. E, assim como em todos os nossos problemas anteriores com janelas de correr, quando você remove algo da janela, geralmente você quer remover também a parte traseira. Então, esse será o elemento no índice inicial.
+
+Então, o que eu farei é dizer que a soma da janela menos é igual a nums no índice inicial. Então, agora que você removeu aquele elemento final da sua janela, você também deve aumentar o índice inicial. Começar mais é igual a um. Isso tem o efeito de diminuir o tamanho da minha janela . E repare que eu tenho esse código dentro de um loop while. Portanto, ele será executado
+
+quantas vezes forem necessárias. Então, enquanto a soma da janela for maior que a soma alvo, vou continuar removendo elementos da minha janela na parte da frente. Portanto, isso significa que, quando esse loop while terminar, a soma da minha janela não será mais maior que a soma alvo. Pode ser que, na verdade, seja igual à soma pretendida. Então, vou verificar se a soma da minha janela é igual ao valor alvo. E
+
+se for esse o caso, então acabei de encontrar a resposta, certo? Aqui, eles nos dizem para retornar os índices inicial e final da janela que possui a soma alvo especificada. Então, para você em Python, basta retornar uma tupla com o início e o fim. Portanto, se a soma da minha janela for igual ao valor alvo, então eu prossigo e retorno a resposta final. Caso contrário, eu simplesmente passo para outra iteração desse loop for e avanço meu índice final, o que significa que adiciono um elemento adicional à minha janela e realizo a mesma operação repetidamente.
+
+Ótimo. Vamos testar isso. E pronto. Devo dizer que, embora este código seja realmente curto, acho que seu design é um pouco complexo , não é? Quero que você realmente entenda como esse código corresponde ao desenho que fizemos durante o vídeo de apresentação, certo? Então, em particular, como
+
+funciona esse loop while, certo? Ele simplesmente remove elementos da minha janela, caso ela fique muito grande, certo? Isso me dá a possibilidade de ter uma janela de tamanho variável, pois posso diminuir o tamanho quando ela fica muito grande. E como também dissemos no vídeo de abordagem, este código terá um tempo de execução O(n), onde n é o comprimento da lista nums, certo? Embora haja dois loops aqui, você não tem um tempo de execução n² uh. E nós explicamos
+
+isso detalhadamente no vídeo de apresentação, então volte a ele se precisar. Em termos de complexidade espacial, é bastante evidente que temos apenas uma quantidade constante de espaço proveniente de algumas poucas variáveis ​​que utilizamos. Muito bem, programadores, é tudo o que tenho para hoje. Em seguida, vamos praticar muito mais esses algoritmos de janela deslizante de tamanho variável. Olá, programadores, aqui é o Alvin. Neste momento,
+
+quero abordar a abordagem que podemos usar para este problema de soma do subarray mais longo . Portanto, este problema será apenas uma variação do anterior. Então, nos é dado um conjunto de números, e no problema, eles nos dizem que os elementos do conjunto serão não negativos. Também nos foi dada uma quantia-alvo. O que queremos fazer aqui é retornar o comprimento do maior subconjunto de elementos cuja soma seja igual ao valor alvo fornecido. Para essa
+
+entrada específica, a resposta que devemos retornar é quatro, e isso vem dessa submatriz. Observe que os elementos na submatriz realmente somam o valor alvo de 10, e essa é a maior submatriz possível que soma 10. Levando em consideração que queremos retornar o comprimento dessa submatriz. Muito bem, então é isso que o problema está perguntando. Como podemos resolver isso? Bem, vamos usar nosso
+
+algoritmo de janela deslizante. Sabemos que a janela deslizante é uma boa opção aqui porque precisamos considerar todas as submatrizes possíveis. E como não sabemos o tamanho do possível subconjunto de elementos, você quer usar uma janela deslizante com tamanho variável, certo? Então, vamos repassar como isso funciona novamente. Vai ser muito parecido com o nosso último problema, só que nos dará mais uma oportunidade para praticar.
+
+Então, o que vou fazer é monitorar uma variável chave. Vou calcular a soma dos elementos na minha janela atual. Precisamos também configurar alguns indicadores. Vou colocar em vermelho o índice inicial da minha janela e em verde o índice final . Então, o funcionamento desse algoritmo é o seguinte: eu quero adicionar o elemento final, ou seja, o elemento apontado pela seta verde, à minha soma. Então, vou adicionar esse quatro à
+
+minha soma inicial, resultando em uma soma atual de quatro. E estou considerando essa janela inicial, certo? Contém apenas os quatro elementos. E, claro, como você quer encontrar a soma desejada, você verificaria se sua soma atual de quatro é igual à soma desejada. Não é, então você pode continuar executando esse algoritmo, certo? Então, eu só quero incrementar meu
+
+ponteiro final, adicionando mais um elemento à minha janela. Agora minha soma é sete. Ainda está muito pequeno, então vou usar outro elemento. Agora eu fico com os três. Repare que, neste momento, meu cálculo está correto , não é? Minha soma de 10 é igual
+
+à soma alvo de 10. E como a longo prazo quero encontrar a maior janela que corresponda a 10, o que quero fazer é simplesmente salvar isso em alguma variável de tamanho máximo. Portanto, até agora, o maior subconjunto que soma o valor desejado tem comprimento três. Observe que vou salvar em `longest` o comprimento do subconjunto de vetores. E eu consigo descobrir facilmente quantos elementos há na minha janela apenas olhando para os meus ponteiros, certo?
+
+Há três elementos na minha janela porque meus ponteiros de início e fim são inclusivos. Ótimo. Neste ponto, continuo executando meu algoritmo, e o que você deve fazer é continuar incrementando seu ponteiro verde. Então, você vai aumentar o tamanho da janela. E quando você fizer isso, verá que, na verdade, minha soma agora é muito grande, certo? Eu sei que estou
+
+procurando uma soma alvo de 10, mas acabei chegando a 12, certo? Como o problema nos diz que nosso array contém apenas elementos não negativos, se eu aumentasse a janela cada vez mais, eu me afastaria cada vez mais da soma desejada, pois o array ficaria potencialmente maior. Então, neste ponto, estou muito grande, então devo diminuir o tamanho da minha janela. Para diminuir o tamanho da janela, basta incrementar o ponteiro vermelho ou o ponteiro inicial. E ao fazer isso, você removeria esse elemento quatro da sua soma.
+
+Ótimo. Bem, meu saldo atual está correto, certo? Agora está abaixo de 10, então posso continuar aumentando se precisar. Sempre que a soma da sua janela for menor que o valor desejado, você pode simplesmente aumentar o tamanho da janela. Adicionando um novo elemento. Ainda
+
+estou abaixo da soma desejada, então vou aumentar o tamanho da minha janela. Mas nesse ponto, eu passo para o 14, certo? Então, agora estou muito grande. Então, agora preciso diminuir o tamanho da minha janela. Estou com 11 pontos, mas ainda estou acima da meta, então vou diminuir novamente.
+
+Isso me leva a uma soma de janelas de oito. Neste ponto, estou pronto para prosseguir, mas ainda preciso encontrar a soma desejada de 10, então continuo aumentando o tamanho da minha janela movendo o ponteiro final. Neste momento, estou absolutamente certo. A soma atual da minha janela é 10, minha meta também é 10 e, se eu observar o número de elementos na minha janela, tenho quatro elementos. Isso representa mais elementos do que o maior número de elementos que tenho armazenado atualmente. Então, agora quatro é o
+
+meu novo recorde, e continuo com o meu algoritmo. Ainda quero incrementar meu ponteiro final, aumentando o tamanho da minha janela. Isso me leva a um total de 13, o que obviamente é muito grande, então agora vou diminuir o tamanho da minha janela. Ainda estou muito grande, então faço de novo. Então, aqui eu atingi a soma desejada, mas se eu olhar o número de elementos na minha janela, atualmente tenho um tamanho de janela de três, mas o maior que eu já vi foi quatro, então não preciso fazer nenhuma substituição aqui, certo? Porque este três é menor que
+
+aquele quatro ali. Então eu continuo correndo. Então aumentei o tamanho da minha janela, mas agora está muito grande, com 15, então preciso diminuí-la. Aqui estou com 10 elementos e, novamente, é outro caso em que tenho três elementos na minha janela, mas o maior deles tem quatro, então continuo. Eu não faço substituições aqui.
+
+Pego o próximo elemento e vou até 20, o que obviamente é muito grande, então reduzo o tamanho da janela movendo o ponteiro inicial. E preciso fazer isso algumas vezes até que meu nível fique abaixo do limite. Nesse ponto, eu realmente atingi minha meta de soma de 10, mas é claro, o tamanho da minha janela é apenas um, e não chega a substituir os quatro. Então, continuo com meu algoritmo. Aumentei o tamanho da minha janela, chegando a 11. Agora preciso
+
+diminuir o tamanho dela. Se eu tentar continuar o algoritmo, acabo atingindo o final do meu array de entrada. Então eu sei que esgotei todas as submatrizes possíveis para analisar. Assim, posso simplesmente retornar o que tenho armazenado em "longest", que é a resposta final de quatro. Então, é só isso que esse algoritmo tem a oferecer. Hum, muito semelhante ao nosso
+
+problema anterior. Se você disser que n é o comprimento da matriz, a complexidade de tempo aqui é simplesmente O de n. No problema anterior, fizemos uma longa análise para explicar por que a complexidade é O(n) e não algo como n². Resumindo, neste problema, precisamos percorrer todo o array com os dois ponteiros. Portanto, serão necessários n passos para mover o ponteiro vermelho inicial pela matriz e outros n passos para mover o ponteiro verde final pela matriz. Portanto, são duas
+
+iterações n no total, o que se simplifica para O de n. A complexidade espacial aqui permanece constante porque estamos usando apenas algumas variáveis ​​para a soma da nossa janela, bem como o maior comprimento que vimos até agora. Muito bem, programadores, quero que vocês tentem programar isso sozinhos. Você verá que o código é quase idêntico ao do nosso problema anterior, apenas com uma pequena alteração. Assim você poderá praticar esse conceito.
+
+Se você ficar preso em alguma parte, pode me encontrar no vídeo explicativo. Olá, programadores, aqui é o Alvin. Agora, vamos analisar o passo a passo em Python para resolver este problema da soma do maior subarray. Então, este será apenas um desdobramento do nosso último problema, e usaremos essa janela deslizante com um algoritmo de tamanho variável. Então, vamos começar com o índice inicial em zero.
+
+Preciso acompanhar a janela mais longa ao longo do tempo, então vou definir a mais longa como zero. Também preciso acompanhar a soma da minha janela atual, então vou definir a soma da minha janela como zero. A partir daqui, quero percorrer a minha extremidade da janela. Então, posso dizer que para o intervalo final, de zero até o comprimento dos números. E o que você quer fazer é pegar os elementos nesses índices finais e adicioná- los à sua janela. Então, essa será a
+
+soma da minha janela mais o resultado de nums no final. Ótimo. A partir daqui, o que você precisa fazer é corrigir a soma se ela ficar muito grande. Em outras palavras, se a soma da minha janela for muito grande, se for maior que a meta, então eu sei que preciso reduzi-la diminuindo o tamanho da minha janela. Então você pode fazer isso avançando o índice inicial. Mas certifique-se
+
+também de remover os elementos correspondentes. Então, posso dizer que a soma da janela menos é igual a nums no início. Ótimo. A partir daqui, você só precisa aplicar a sua lógica de valor máximo. Então, vou definir o valor mais longo como o maior intervalo entre as dimensões da minha janela atual. A duração da sua
+
+janela atual seria simplesmente o tempo final menos o tempo inicial mais um. E compare isso com o que você tem atualmente em maior tempo. Ótimo. Agora, após a conclusão do seu loop for , basta retornar o valor mais longo. Este código tem um formato muito semelhante ao do nosso último problema. Você deve estar se perguntando
+
+sobre esse truque aqui. Então, isso nos dá o comprimento da janela atual, e já vimos esse cálculo antes, mas vou revisá-lo aqui. Digamos que tivéssemos apenas alguns elementos abstratos aqui. E F. Vou rotular seus índices, então 0 1 2 3 4 e 5.
+
+E digamos que eu tenha alguns valores específicos para meu início e fim. Digamos que meu ponto final seja talvez o elemento E. E então, meu ponto de partida, digamos que meu ponto de partida seja o elemento B aqui. Ótimo. Portanto, quero que essa quantidade seja o número de elementos na janela.
+
+Lembre-se de que meus índices inicial e final são inclusivos, certo? Então, se eu fizer fim menos início, farei 4 menos 1, o que me dá 3. Depois, faço mais 1, e isso me dá 4, porque há quatro elementos nesta janela. Uma coisa que estou esquecendo aqui é garantir que você verifique se a soma da sua janela atinge a soma alvo antes de executar a lógica do valor máximo. Então, você quer escrever uma instrução "if" aqui. Se você
+
+quiser verificar se a soma da sua janela é igual à soma alvo, você pode fazer isso. Ótimo. Vamos fazer um teste. Há outro bug que precisamos corrigir, mas podemos corrigi-lo juntos. Então, aqui estamos passando no primeiro caso de teste, mas estamos falhando no segundo. O
+
+segundo é um caso extremo bastante óbvio . Bem, esta é uma situação em que a soma desejada não foi encontrada na lista de entrada, certo? Não existe nenhum subconjunto de matrizes cuja soma seja igual a cinco. Nessa circunstância, eles querem que retornemos -1. Parece que meu código retorna 0, certo? E
+
+isso tem a ver com o valor padrão que escolhi para o período mais longo, certo? Então, o que eu quero fazer é inicializar esse valor mais longo como -1. Porque se eu nunca encontrar uma janela que corresponda à minha soma alvo, você simplesmente retornará a variável mais longa, que ainda conterá -1. Vamos fazer um teste. Ótimo. E pronto. Então, como
+
+dissemos no vídeo de abordagem, a complexidade de tempo para isso é simplesmente O de N, porque estamos movendo o índice inicial por toda a lista uma vez, e também estamos movendo nosso índice final por toda a lista uma vez, certo? Portanto, embora tenhamos laços aninhados aqui, não temos n ao quadrado. E nós meio que discutimos o porquê disso ter acontecido nos problemas anteriores. A complexidade espacial aqui permanece constante porque estamos lidando apenas com algumas variáveis. Muito bem, programadores.
+
+Espero que você esteja começando a se familiarizar com a janela deslizante com um algoritmo de tamanho variável . Claro, faremos algumas variações em breve. Olá, programadores. Agora que já resolvemos alguns problemas com janelas deslizantes de tamanho variável , quero explicar o passo a passo para este aqui. Como sempre, os algoritmos de janela deslizante são uma boa escolha quando você precisa considerar submatrizes ou substrings. Se
+
+seus subconjuntos de vetores ou substrings tiverem algum tamanho, você deverá usar a versão de tamanho variável, em vez da versão de tamanho fixo, é claro. Então, vamos repassar os passos gerais para isso. Portanto, na maioria dos casos, você normalmente vai querer começar inicializando seu ponteiro inicial para o início da sua string ou array. Então, isso seria indexar a zero. E a partir daí, você também precisa inicializar outra variável chave. Você
+
+deseja representar a coleção de janelas. E isso pode variar de problema para problema. Assim, ultimamente, nossa coleção tem sido apenas uma soma à qual vamos adicionando itens. Mas, é claro, sua coleção pode ser qualquer coisa, certo? Já vimos que, em nossos algoritmos de janela deslizante com tamanho fixo , às vezes nossa coleção pode ser um conjunto ou um mapa hash. Portanto, isso depende muito do
+
+contexto do problema. Mas, normalmente, você terá alguma coleção que representa o agregado da janela. A partir daí, iteramos o ponteiro final através da matriz ou da string. E normalmente, conseguimos isso com um laço "for". Existem algumas etapas diferentes que ocorrem dentro desse loop "for". Uma coisa que
+
+você sempre vai querer fazer é garantir que adicione o elemento principal à coleção, certo? Então, você deseja adicionar o elemento apontado pelo ponteiro final à coleção. O que você também precisa é de uma maneira de remover elementos extras da coleção. E este é um passo realmente importante. E o que você deve observar é que, ao remover elementos finais da coleção, talvez seja necessário fazer isso várias vezes, pois você deseja remover continuamente esses elementos enquanto a restrição for violada. E à medida que você
+
+remove elementos, espera-se que, eventualmente, sua restrição seja atendida novamente e você não esteja mais em violação. Então, no contexto dos nossos problemas anteriores com a soma, sempre que a soma ficava muito grande, certo? Em seguida, começamos a remover os elementos finais da nossa soma para voltarmos a ficar dentro do valor total desejado. Como destaquei aqui, normalmente você remove esses elementos usando um loop while, certo? Isso acontece várias vezes até que seu limite seja atingido novamente.
+
+Assim, essas duas etapas, A e B, nos dão nossa janela de tamanho variável. Porque a etapa A, que consiste em adicionar o elemento principal à coleção, aumentaria o tamanho da nossa janela. Considerando que a etapa B, de remover um elemento final da coleção, diminuiria o tamanho da nossa janela. Assim, podemos ampliar ou reduzir nossa janela de tempo conforme necessário. E, finalmente, o quarto passo é simplesmente implementar a lógica de negócios específica para o problema que você está tentando resolver. E
+
+isso pode significar várias coisas diferentes, certo? Você pode querer contar algo, determinar o valor máximo ou mínimo de algo, ou simplesmente descobrir se algo existe. Isso depende muito das especificidades do problema. E, claro, vou mostrar algumas variações disso a seguir. Antes de abordarmos mais problemas, quero enfatizar a importância da etapa B. Para mim, é isso que
+
+realmente torna o algoritmo de janela deslizante com tamanho variável especial, não é? É assim que removemos os elementos finais da coleção quando nossa restrição é violada. A parte importante desses algoritmos é realmente determinar quando violamos nossa restrição e como podemos desfazer as ações para voltar a respeitar essa restrição. Muito bem, isso conclui minha receita para a janela deslizante com tamanho variável. Você tem em mente que isso é apenas uma orientação geral, certo?
+
+Pode ser que você não consiga implementar esses passos à risca para resolver todos os problemas de janelas deslizantes com tamanho variável. Às vezes você terá que ajustar as coisas. Mas, à medida que resolvermos mais problemas juntos, acho que você vai perceber isso melhor. Muito bem, vamos começar. Olá, programadores, aqui é o Alvin.
+
+Vamos agora analisar a abordagem que podemos usar para resolver o problema da maior substring única . Portanto, neste problema, receberemos apenas uma string S como entrada. O que queremos fazer é retornar o comprimento da maior substring que contém apenas caracteres únicos. Portanto, o resultado que devemos retornar aqui é quatro. E isso provém desta subcadeia correspondente. Esta
+
+é a subcadeia mais longa sem caracteres duplicados. Para resolver este problema, você deve usar o algoritmo da janela deslizante. Como queremos considerar diferentes substrings e também não sabemos qual deve ser o comprimento dessas substrings, usaremos uma janela deslizante com tamanho variável, é claro. Então, como vocês sempre esperam, vamos configurar nossos ponteiros. Em vermelho, vou colocar o índice inicial da minha janela. E em verde, vou
+
+colocar o índice final da janela. E como meu objetivo final é retornar o comprimento da maior substring, vou usar uma variável para armazenar essa informação. Você poderia simplesmente inicializá-lo com zero, certo? Porque você ainda não encontrou nenhuma substring. Para acompanhar quais caracteres você já viu, acho ótimo se você representar os caracteres que estão atualmente na sua janela usando algum tipo de mapa de hash de contador. Em outras palavras,
+
+com o tempo, as chaves desse mapa hash serão caracteres. Os valores correspondentes serão a contagem desses caracteres dentro da minha janela. Semelhante a alguns problemas anteriores. Então, para iniciar este algoritmo, o que eu faço é pegar o elemento atual no meu ponteiro final e adicioná-lo aos meus dados de contador, aos meus dados de janela. Então, eu estaria analisando essa janela inicial. Então, eu
+
+pego o A e simplesmente o adiciono ao meu contador. Isso significa que A é uma chave e agora sua contagem é um. Neste ponto, para sermos completos, devemos realmente aplicar nossa lógica de valor máximo . De forma trivial, A é de fato uma substring que contém apenas caracteres únicos, e seu comprimento é um. Então, seria possível substituir esse zero mais longo.
+
+Então, para dar continuidade ao algoritmo, vou aumentar o tamanho da janela. Então, agora vou escolher a opção B. Se eu analisar os dados da minha janela , ainda constato que ela contém apenas caracteres únicos. Eu sei que são apenas caracteres porque todas as contagens são iguais a um. Como minha janela atual tem tamanho dois, eu a substituo pela minha janela maior.
+
+E eu continuo correndo. Aumente o tamanho da minha janela novamente movendo o ponteiro final. E continuo a ter personagens únicos aqui. Claro, o tamanho da minha janela é três, então essa se torna a minha maior janela até agora. Na próxima iteração, ainda tentarei aumentar o tamanho da minha janela adicionando um novo elemento. Mas neste ponto, percebo
+
+que não tenho mais elementos únicos na minha janela porque A atingiu a contagem de dois. Se algum dos seus registros de caracteres tiver mais de um caractere, então você definitivamente tem um caractere duplicado. E, como esperado, agora que violamos a restrição da janela, o que queremos fazer é diminuir o tamanho da janela até que estejamos novamente dentro da restrição. Então, o que eu faço é incrementar meu ponteiro final, diminuindo o tamanho da janela e removendo um elemento dela. Assim, sem mais nem menos . E assim que faço
+
+isso, consigo trazer os dados da minha janela de volta para dentro da restrição. Parece que tudo aqui é realmente único. A janela tem três dimensões e não é mais comprida que a maior, então não preciso substituí-la aqui. Neste ponto, posso aumentar o tamanho da janela, mas assim que fizer isso, estarei violando a restrição, certo? Porque B tem uma contagem [limpa a garganta] de dois. Então, o que eu quero fazer agora é
+
+diminuir o tamanho da minha janela até que esteja dentro do limite permitido. Agora que está tudo certo, posso aumentar o tamanho da minha janela, mas é claro que, assim que faço isso, parece que C viola minha restrição de unicidade. Então, reduzi o tamanho da minha janela . Agora estou novamente dentro dos limites estabelecidos. Nesse ponto, eu aumento o tamanho da minha janela . Isso na verdade me dá um novo
+
+caractere Q, e eu ainda estou dentro do limite porque todos os meus caracteres têm menos de dois. Note que o comprimento da minha janela agora é quatro, e quatro é maior que três, então devo considerar quatro como o meu comprimento máximo atual. Neste ponto, posso continuar aumentando o tamanho da minha janela, mas isso viola a unicidade de B. Portanto, eu diminuo o tamanho da minha janela, e este é um cenário realmente importante. Note que, embora eu tenha diminuído o tamanho da minha janela, ainda estou violando minha restrição, pois não alterei a contagem de B. O que eu fiz foi remover um A
+
+dos meus dados da janela. Isso vem daqui de baixo, certo? Então, quando você tenta diminuir o tamanho da janela, quando tenta voltar a ficar dentro das restrições da janela, pode ser que você precise de algumas iterações para conseguir se ajustar a essa restrição. Portanto, nesta próxima versão, terei que diminuir o tamanho da janela novamente. E é aqui que eu corrijo as coisas, certo? Eu me livro daquele B, e
+
+isso é bom porque não estou mais violando minha restrição de unicidade. Neste ponto, tudo parece único e pronto para uso, então posso prosseguir e aumentar o tamanho da minha janela. Nesse ponto, eu violo a regra B mais uma vez, então preciso diminuir o tamanho da minha janela. Eu me livro do C, ainda violei a regra; me livro do Q, ainda violei a regra; e me livro do B. Agora, finalmente, estou dentro das especificações. Obviamente, neste momento, minha
+
+janela de oportunidade é muito pequena. Embora eu tenha uma substring única, ela tem apenas um elemento , então certamente não pode substituir a minha substring mais longa. Neste ponto, se você tentar aumentar o tamanho da sua janela, terá concluído todas as suas iterações. Assim, você pode simplesmente retornar o valor que armazenou por mais tempo. Portanto, sua resposta final é quatro.
+
+Assim, como esperado, se definirmos que N é o comprimento da nossa string de entrada, a complexidade de tempo será O de N, semelhante aos nossos algoritmos anteriores de janela deslizante de tamanho variável. Embora tenhamos que deslizar nossos dois ponteiros por toda a extensão da string, isso realmente nos dá um 2N, certo? O primeiro N corresponde ao meu movimento de deslizar o ponteiro vermelho por toda a extensão da corda, e o segundo N corresponde ao meu movimento de deslizar o ponteiro verde por toda a extensão da corda, certo? Aqui não obtemos um N ao quadrado, como costumamos dizer. Aqui, a complexidade espacial também será linear, proveniente do mapa de hash de contadores que mantemos.
+
+Na pior das hipóteses, você pode ter uma grande variedade de caracteres diferentes dentro do seu mapa de hash de contador. Portanto, no geral, você tem tempo e espaço lineares para isso. Olá, programadores, aqui é o Alvin. Agora, vamos analisar o passo a passo em Python para resolver o problema da maior substring única . Então, como sempre, como temos feito ultimamente, vamos resolver este problema usando nossa janela deslizante de tamanho variável. E desta vez estamos lidando com
+
+algumas cordas, certo? Então, quero mexer um pouco com a contagem de caracteres. Então, já que você está fazendo isso em Python, você tem a vantagem de poder usar a coleção de contadores integrada. Então, vou dizer " contador de importação de coleções". E vou inicializar um aqui embaixo.
+
+Vou chamar isso de meu, sei lá, balcão de janela. E quais outras variáveis precisaremos considerar aqui? Bem, como é típico na maioria dos algoritmos de janela deslizante de tamanho variável, você precisará do índice inicial. E como aqui estou interessado em retornar o comprimento da maior substring única, terei uma variável `longest`. Vou inicializar o comprimento mais longo com o valor zero. É claro que irei substituí-
+
+lo ao longo do tempo usando alguma lógica de valor máximo. Então, a partir daqui, quero iterar por todos os índices finais. Então, vou dizer que para o intervalo final, o valor deve ir de zero até o comprimento da string. Legal. E o que eu quero fazer é selecionar o caractere neste índice.
+
+Então, posso dizer S no final. E como vou precisar fazer referência a isso algumas vezes, talvez seja um pouco mais organizado usar uma variável. Vou chamá-lo de meu personagem principal. Alguns nomes familiares para nós. Ótimo. A grande vantagem de usar a
+
+coleção de contadores em Python é que você pode simplesmente começar incrementando os caracteres, pois se uma chave ainda não existe no contador, ela implicitamente tem uma contagem de zero. Então, o que estou dizendo é que posso pegar o contador da janela do caractere inicial e simplesmente incrementá-lo imediatamente, certo? Isso é seguro de fazer. Mesmo que o caractere inicial "um" não exista explicitamente como uma chave no contador, ele implicitamente possui uma chave, certo? Seu valor correspondente é zero, então agora eu o incremento se for a primeira vez.
+
+Ótimo. Isso me dá uma maneira de adicionar elementos à minha janela. Agora, preciso de uma maneira de removê-los. Então, quando você deve remover caracteres aqui? Porque, a longo prazo, o objetivo é encontrar a substring única mais longa , e para isso é preciso remover caracteres que não sejam únicos, certo? Se
+
+você violar alguma vez sua restrição, continuará removendo itens até voltar a respeitar essa restrição. Então, quero levar em consideração o personagem que acabei de adicionar e quero garantir que ele seja único. Então, vou pegar isto aqui. Então, se não for único, ou seja, se a contagem for maior que um, preciso continuar removendo itens, certo? Então, preciso remover um caractere aqui. Você sempre deve
+
+remover pela parte de trás da janela. Então, essa será a largada em S. E vou usar alguns nomes conhecidos aqui. Vou chamar isso de meu caractere final. Então, primeiro vou decrementar a contagem no contador da janela.
+
+Então, o contador de caracteres finais da janela é subtraído de 1. E como você está diminuindo o tamanho da janela , certifique-se de incrementar o início, certo? Início += 1. Ótimo. Então, esse loop while vai remover quantos caracteres forem necessários até que eu tenha certeza de que minha substring agora é única.
+
+Agora que tenho uma substring única, quero aplicar a lógica do valor máximo. Então, vou definir o valor mais longo como o máximo entre o comprimento da janela atual, que é o final menos o início mais um, e então comparar isso com o valor mais longo que você armazenou até agora. E você já deve ter visto a matemática por trás disso algumas vezes. Após a conclusão do seu loop for, basta retornar o valor armazenado em `longest`. Ótimo.
+
+Então, uma estrutura bem típica, não é? Temos um laço while dentro de um laço for. O laço while tem a função de nos trazer de volta dentro das restrições do problema, certo? Para garantir que tenhamos aqui uma substring única. Então, vamos testar.
+
+Ótimo. Parece que isso vai passar. Então, existem algumas maneiras de escrever isso. Eu escrevi esse loop "for" para que ele itere diretamente pelos números de índice. Se quiser, você pode usar seu código Python mais sofisticado, então vou deixar isso para você, mas você poderia usar coisas como enumerate.
+
+Enumerar. Se você enumerar S, terá acesso ao índice final, certo? E você também tem acesso ao próprio elemento, neste caso, o caractere inicial. Então, você meio que pula essa fila aqui. Isso seria funcionalmente a mesma coisa, um pouco mais "pythoniano" também, se você se lembrar de usar os dois pontos.
+
+Ótimo, ainda passa. Como dissemos no vídeo de apresentação, este código tem uma complexidade de tempo O de N, assim como nossos problemas anteriores, certo? A única coisa que a torna única agora é que ela também tem uma complexidade de espaço O de N , certo? Claro, vindo do balcão que criamos. Na pior das hipóteses, teremos uma chave para cada caractere da nossa string de entrada . Muito bem, programadores, isso
+
+conclui nosso curso sobre o algoritmo da janela deslizante . Resolvemos vários problemas juntos. Começamos com alguns problemas básicos de janelas de tamanho fixo e, em seguida, exploramos alguns problemas mais avançados de tamanho variável . Este curso pode ter terminado, mas o aprendizado não termina aqui. Se você gosta do meu estilo de ensino e quer praticar mais problemas de janela deslizante, confira meu curso completo de algoritmos em structy.net.
+
+Lá, vou te ensinar tudo o que você precisa saber para passar nas suas entrevistas para o programa DSA. Vou deixar um link na descrição do vídeo, caso tenha interesse. Por hoje é só. Obrigado por assistir.

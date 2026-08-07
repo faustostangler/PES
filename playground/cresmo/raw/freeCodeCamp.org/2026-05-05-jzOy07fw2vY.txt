@@ -1,0 +1,250 @@
+---
+video_title: "JavaScript Event Loop & Asynchronous Programming"
+video_id: jzOy07fw2vY
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=jzOy07fw2vY
+video_date: 2026-05-05T10:01:12+00:00
+video_description: |
+  Master the JavaScript Event Loop. This video uses detailed animations and diagrams to show you exactly how JavaScript manages asynchronous tasks while remaining single-threaded.
+  
+  Course from @FrontendDevs1991 
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  ⭐️ Contents ⭐️
+  – 00:00 Introduction to the JavaScript Event Loop  
+  – 01:33 Components of the Browser Runtime (Engine, Stack, APIs, and Queues)  
+  – 02:13 Understanding the Call Stack and Synchronous Execution  
+  – 04:33 The Limitations of the Call Stack  
+  – 06:46 Introduction to Web APIs: JavaScript's Superpowers  
+  – 10:02 How JavaScript Handles Delays (setTimeout Example)  
+  – 14:21 The Role of the Task Queue (Callback Queue)  
+  – 16:34 The Event Loop: Connecting the Queue to the Stack  
+  – 19:00 Example: Geolocation API and User Permissions  
+  – 22:26 Example: DOM Events and Event Listeners  
+  – 27:23 Promises, Fetch, and the Microtask Queue  
+  – 34:54 Handling Long-Running Synchronous Tasks  
+  – 38:35 What Goes into the Microtask Queue? (Promises, Async/Await)  
+  – 41:05 Starvation of Functions in the Callback Queue  
+  – 44:59 Visualizing Internals in the Browser  
+  – 45:38 Conclusion and Final Summary
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+Aprenda sobre o loop de eventos do JavaScript, um conceito fundamental que todo desenvolvedor deve dominar. Por meio de animações e diagramas, você aprenderá como o JavaScript gerencia tarefas assíncronas, mantendo-se em uma única thread. Você aprenderá as diferenças cruciais entre a pilha de chamadas, as APIs da web, a fila de retorno de chamada e a fila de microtarefas de alta prioridade. Ao final deste vídeo, você terá uma compreensão visual de como esses componentes trabalham juntos para manter seus aplicativos funcionando sem problemas e sem travamentos. Este curso foi criado para este fim. O
+
+loop de eventos é um dos conceitos mais importantes em JavaScript e, honestamente, um dos mais incompreendidos. Muitos desenvolvedores usam código assíncrono todos os dias. Poderia ser uma promessa, poderia ser um observable no caso do Angular, poderia ser um temporizador, ou poderia ser a realização de chamadas à API e a busca de dados no servidor. Mas quando se trata de como as coisas realmente funcionam por dentro, aí a coisa complica. Mas eis a realidade. Se você compreendeu
+
+profundamente o JavaScript assíncrono e o loop de eventos, então você é capaz de se sair bem em praticamente qualquer entrevista de emprego para desenvolvedor front-end. E o mais importante, você pensará como um desenvolvedor sênior ou experiente que entende exatamente como o JavaScript funciona internamente. Agora, quando analisamos os detalhes, o loop de eventos é apenas uma pequena parte de um sistema maior. No navegador ou ambiente de execução JavaScript, temos um mecanismo JavaScript com uma pilha de chamadas. Temos um ambiente de API web para conexão com o mundo externo. Em seguida,
+
+temos uma fila de tarefas, uma fila de microtarefas e, finalmente, um loop de eventos, que conectará tudo. E todos esses componentes trabalham juntos para tornar o JavaScript não bloqueante, mesmo sendo de thread única. Então, antes de abordarmos cenários complexos, vamos começar pelo básico. Você sabe que o JavaScript é de thread única. Significa que temos apenas uma pilha de chamadas, e essa pilha de chamadas gerencia a ordem de execução do seu programa. Agora, para
+
+entender a pilha de chamadas, vejamos um exemplo muito simples em JavaScript. Temos um `console.log` no início, depois temos a definição de uma função, chamamos a função e, finalmente, temos um `console.log` no final. E sabemos que, antes mesmo de executar uma única linha de código, o JavaScript cria a memória para todas as variáveis ​​e funções, e cria o contexto de execução global. Esse contexto de execução global
+
+é adicionado à pilha de chamadas. E agora, temos a execução da primeira linha. Ao executarmos a primeira linha, teremos um "console.log" impresso no seu console, e então o JavaScript passará para a próxima linha. Não temos nada para executar aqui, e o código irá diretamente para a chamada da função. Quando temos uma
+
+chamada de função, o JavaScript cria um novo contexto de execução para essa função, que é então inserido na pilha de chamadas. E agora, temos aqui a execução da função. Então, temos o console.log, que vem com o comando run, e isso é impresso na tela, e concluímos a execução da nossa função. Assim que a execução desta função for concluída, o contexto de execução da função será removido da pilha de chamadas. O JavaScript passará para a próxima
+
+linha e terminaremos nosso script. Aqui, a mensagem "fim" será impressa no console e, assim que a execução do script for concluída , o contexto de execução global também será removido da pilha de chamadas. É assim que a pilha de chamadas gerencia a ordem de execução do seu programa e garante que apenas uma coisa seja executada por vez na sequência. Cada chamada de função é inserida na pilha de chamadas, executada e removida da pilha de chamadas quando sua execução é concluída. Simples, previsível e perfeito para seu código síncrono.
+
+Mas é aqui que as coisas ficam interessantes. Essa abordagem funciona perfeitamente quando seu código é executado linha por linha, sem esperar por nada. Mas as aplicações na vida real não são tão simples assim, certo? O que acontece quando precisamos esperar por algo? Talvez precisemos usar os temporizadores no seu código, talvez você precise fazer uma chamada à API ou precisemos nos conectar a diferentes recursos, certo? E a
+
+pilha de chamadas não consegue lidar com isso sozinha. Temos apenas uma pilha de chamadas e sua única função é executar tudo o que entra nela . Não possui a capacidade de pausar a tarefa ou atrasar a execução da tarefa, certo? E se tivesse essa capacidade, poderia trabalhar em apenas uma tarefa de longa duração, e essa tarefa estaria sendo executada continuamente na pilha de chamadas, certo? E isso basicamente bloqueará a execução de todas as outras tarefas. Isso pode tornar seu
+
+aplicativo mais lento ou até mesmo congelá-lo completamente , certo? E isso não é o ideal. Em aplicações web, frequentemente precisamos nos conectar com recursos externos. Por exemplo, talvez precisemos acessar algum servidor e buscar dados de lá. Precisamos trabalhar na atualização do DOM acessando os diferentes elementos. Em seguida,
+
+precisamos armazenar os dados no armazenamento local ou acessá-los. Talvez precisemos trabalhar com um temporizador. Pode ser um tempo limite definido ou intervalos predefinidos. E precisamos trabalhar nas promessas, certo? Podemos fazer a chamada à API, buscar os dados e, nesse meio tempo, precisamos esperar pela resposta. Ou talvez você precise trabalhar no
+
+evento. Podemos ter um botão e adicionar o evento a ele. E ao clicar nesse botão, algo será executado. E para lidar com todas essas tarefas, o JavaScript se apoia em um superpoder adicional que está presente fora da pilha de chamadas. E obteremos todos esses superpoderes por meio de APIs da web. Agora, vamos entender o que são as
+
+APIs da web. As APIs da Web são funcionalidades fornecidas pelo ambiente do navegador ou pelo ambiente de execução do JavaScript, mas não pelo próprio JavaScript. As APIs da Web fornecem um conjunto de interfaces que permitem conectar-se a recursos externos. Isso inclui temporizador, requisição de rede, manipulação do DOM, eventos do usuário, armazenamento de dados no navegador e muito mais. E temos diversas APIs disponíveis. Vamos discutir alguns dos
+
+mais importantes. E o primeiro é o temporizador. É utilizado para agendar a execução. Podemos definir o tempo limite e o intervalo. Podemos acessar essas APIs por meio do ambiente de API web do temporizador . E isso é usado principalmente para
+
+atrasar alguma execução. Em seguida, temos uma API web relacionada a requisições HTTP ou de rede, chamada fetch. Estamos usando o fetch para chamar os serviços de backend. Para acessar os elementos do DOM, utilizamos diferentes APIs do DOM. Poderia ser ` document.getElementById`, `
+
+createElement`, `appendChild` e todas essas funções que podemos acessar por meio das APIs do DOM para atualizar nossa interface de usuário dinamicamente. Em seguida, temos as APIs de eventos. Precisamos adicionar um ouvinte de eventos a qualquer um dos elementos e estamos acessando essas funções por meio de APIs de eventos. Além disso, temos algumas APIs importantes relacionadas ao armazenamento. Precisamos acessar o armazenamento local, o armazenamento de sessão e, para armazenar os dados no navegador, precisamos usar as APIs de armazenamento. Poderemos precisar acessar a
+
+localização atual do usuário. Para isso, dispomos de APIs de geolocalização. Então estamos usando console.log, certo? E isso faz parte da API do console. Talvez precisemos acessar algum
+
+URL e buscar alguns dados do servidor, certo? E para isso estamos usando a API de URL. Temos mais algumas relacionadas a mídia ou canvas, web sockets, web workers e todas essas APIs nos ajudam a conectar com o mundo externo e obter a funcionalidade necessária no navegador ou no código JavaScript. E tudo o que você está vendo aqui, seja um temporizador, uma busca, várias APIs de eventos, console ou URL, faz parte do ambiente da API da web. Isso não faz parte do núcleo do JavaScript. A
+
+maioria das pessoas pensa que essa API da web faz parte do JavaScript, mas isso não é verdade. Como essas APIs da web são fornecidas pelo navegador, podemos usá-las diretamente no navegador ou no código JavaScript por meio do objeto global ou do objeto `window`. Agora, entendemos exatamente como o código síncrono funciona em JavaScript, linha por linha, e também entendemos quais são as diferentes APIs da web. Mas ainda temos questões muito importantes. Como exatamente o JavaScript lida com atrasos ou execuções de código assíncronas, certo? E
+
+é aqui que algumas APIs da web desempenham um papel fundamental. Elas ajudam a lidar com essas operações fora da pilha de chamadas, permitindo que o JavaScript permaneça não bloqueante e continue executando outros códigos. Vamos começar com um exemplo bem simples e entender exatamente como lidar com atrasos em JavaScript usando as APIs de temporizador da web e a função setTimeout. Começaremos com o console e, em seguida, definiremos um tempo limite. A função de retorno de chamada será executada com um atraso de 4 segundos e, em seguida, teremos um console.log no final
+
+do script. E nós sabemos qual será o resultado, certo? Primeiro, teremos o início aqui, então essa função de retorno de chamada precisará esperar 4 segundos, então o JavaScript passará para a próxima linha. O programa imprimirá o final e, após um atraso de 4 segundos, imprimirá a função de retorno de chamada. Portanto, a saída será início, fim e retorno de chamada. Mas vamos entender
+
+exatamente como as coisas funcionam por dentro. Sabemos que, antes mesmo de iniciar uma única linha de código, o JavaScript cria um contexto de execução global, e esse contexto de execução é adicionado à pilha de chamadas. E neste código estamos usando algumas APIs da web, certo? A primeira é o console e a segunda é uma API de temporizador para definir um tempo limite. Portanto, listaremos essas duas APIs aqui. E agora o JavaScript
+
+começou a ser executado na linha número um. Temos um console aqui, então o JavaScript delega isso às APIs web do console. Isso executará a instrução console.log específica e imprimirá "início" no console. Agora, passamos para a próxima linha e, na linha seguinte, definimos um tempo limite.
+
+Precisaremos de mais uma API web e esse tempo limite será delegado à API web de temporizador . Agora, é responsabilidade das APIs web do temporizador lidar com o próximo passo. Ele irá registrar o temporizador e armazenar a função de retorno de chamada juntamente com o temporizador registrado. Aqui, estamos vendo a função de retorno de chamada (callback) e essa função será passada como primeiro parâmetro para o seu tempo limite definido. Aqui, estou usando a função de seta e não vemos nenhum nome de retorno de chamada , mas você pode considerar o nome desta função como um retorno de chamada. Espero que tenha
+
+entendido até aqui. Agora, essa função de retorno de chamada está registrada no ambiente da API da web e esse temporizador também iniciou a contagem regressiva. Mas sabemos que a pilha de chamadas não pode esperar por nada. Se estiver aguardando a execução desse temporizador , não poderemos lidar com outras tarefas. Assim, o JavaScript e a pilha de chamadas passarão para a próxima linha.
+
+Novamente, temos a instrução console.log, então internamente essa API web do console será chamada e imprimirá "end" no console. A execução do nosso script está concluída e, assim que ela terminar, esse contexto de execução global será removido da pilha de chamadas. Entretanto, esse cronômetro ainda está rodando em segundo plano. Está fazendo uma contagem regressiva de 4, 3, 2, 1 até 0. Assim que esses 4
+
+segundos forem concluídos, essa função de retorno de chamada estará pronta para ser executada. Mas agora, chegamos à parte importante. Sabemos que tudo em JavaScript é executado dentro da pilha de chamadas. Portanto, de alguma forma, essa função de retorno de chamada precisa voltar para a pilha de chamadas para iniciar sua execução. E quando chega à pilha de chamadas, a tarefa da pilha de chamadas é simples: executar rapidamente essa função e imprimir o resultado no console. E
+
+agora, temos uma pergunta muito importante. Como exatamente essa função de retorno de chamada voltará para a pilha de chamadas e onde exatamente a fila de retornos de chamada e o loop de eventos entram em cena? Assim que o temporizador for concluído e essa função de retorno de chamada estiver pronta para execução, ela não pode entrar diretamente na pilha de chamadas , pois podemos estar executando outra tarefa na pilha e, se essa função de retorno de chamada fosse adicionada diretamente, poderia interromper a tarefa existente em execução . Portanto, é necessário seguir uma abordagem diferente, e é aqui que a fila de tarefas e o loop de eventos entram em cena e desempenham um papel muito importante. Assim que essa função estiver pronta para execução, ela será adicionada à fila de retorno de chamada. Veremos que isso é
+
+adicionado à fila de retorno de chamada e a partir daqui começa a execução do loop de eventos. O loop de eventos verifica continuamente duas coisas. A primeira é a pilha de chamadas e a segunda é esta tarefa ou fila de retorno de chamada. E assim que verificar que a pilha de chamadas está vazia, irá verificar se temos algo na fila de retorno de chamada para execução. E se tivermos alguma coisa, ela será rapidamente detectada e adicionada à pilha de chamadas.
+
+No nosso caso, essa função de retorno de chamada está na fila de tarefas ou de retornos de chamada. O loop de eventos detecta isso e move essa função de retorno de chamada para a pilha de chamadas. E agora essa função de retorno de chamada começa a ser executada. Internamente, o contexto de execução será criado para essa função de retorno de chamada, e esse contexto de execução da função de retorno de chamada será executado na pilha de chamadas. A pilha de chamadas executa-a rapidamente. A
+
+pilha de chamadas está vazia agora, e esse retorno de chamada é impresso no console. Espero que este primeiro exemplo tenha ficado claro. O loop de eventos desempenha um papel muito importante, e sua principal função é verificar esse retorno de chamada ou a fila de tarefas. E se tivermos algo para executar, adicionemos isso à pilha de chamadas. A responsabilidade do loop de eventos é muito simples, mas extremamente importante.
+
+Compreenderemos isso com a ajuda de recursos visuais simples. Aqui temos três tarefas diferentes aguardando na fila de retorno de chamada . O loop de eventos verifica continuamente se a pilha de chamadas está vazia ou não. No nosso caso, a pilha de chamadas está vazia e nada está sendo executado no momento. O programa selecionará a primeira tarefa da fila de retorno de chamada. Veja
+
+aqui. A primeira tarefa será selecionada pelo loop de eventos e adicionada à pilha de chamadas. Agora essa tarefa está sendo executada. Assim que essa tarefa for concluída, a pilha de chamadas estará vazia novamente. Mas e se já houver algo em execução na pilha de chamadas? Assim como
+
+temos um contexto de execução global, também podemos ter alguns contextos de execução de função que já estão presentes na pilha de chamadas. E também temos algo aguardando na fila de retorno de chamada. Nesse caso, o loop de eventos aguarda pacientemente. Isso não interromperá nem adicionará nenhuma tarefa à pilha de chamadas. O sistema aguardará até que todas as tarefas da pilha de chamadas sejam concluídas. E quando a pilha de chamadas estiver
+
+vazia, ela volta a ficar ativa e selecionará a próxima tarefa da fila de retorno de chamada, adicionando-a à pilha. Que a tarefa está sendo executada neste momento. Assim que essa tarefa for executada, a pilha de chamadas estará vazia novamente e o loop de eventos verificará mais uma vez se a pilha de chamadas está vazia. No nosso caso, está vazio. Agora, ele selecionará a tarefa três e a adicionará à pilha de chamadas. E assim que a execução dessa tarefa for
+
+concluída, a pilha de chamadas estará vazia e nossa fila de retorno de chamada também estará vazia. Isso significa que toda a nossa execução está concluída. E é assim que o loop de eventos desempenha um papel muito importante, atuando como uma ponte entre suas filas e a pilha de chamadas. Regra fundamental: o loop de eventos nunca adiciona nenhuma tarefa à pilha de chamadas até que a pilha de chamadas esteja completamente vazia. E é assim que todo o fluxo funciona em conjunto, fazendo com que o JavaScript se comporte de forma assíncrona, mesmo sendo uma linguagem de programação síncrona de thread única.
+
+Agora, para reforçar ainda mais nosso conceito, vejamos outro exemplo. E neste exemplo, vamos entender mais uma API da web, que são os serviços de geolocalização. Temos aqui um código muito simples. Estamos utilizando um serviço de geolocalização para tentar obter a localização atual do usuário. Se o usuário aprovar, obteremos a posição atual. Se o usuário negar, receberemos um
+
+erro. Então, vamos começar com o primeiro passo. Antes de executar qualquer linha de código, o JavaScript cria um contexto de execução global, que é adicionado à pilha de chamadas. E para este código estamos usando duas APIs da web. A primeira é a geolocalização e a segunda é o console. Portanto, ambas as APIs
+
+estão listadas aqui. Em seguida, iniciaremos a execução da primeira linha e este método para obter a posição atual será adicionado à pilha de chamadas. Em JavaScript, esse método pertence à API da Web. Portanto, o JavaScript não o executa por si só. Ele repassa essa solicitação para a API de geolocalização.
+
+Em seguida, esse método para obter a posição atual é executado pelas APIs de geolocalização e, então, o navegador inicia o trabalho assíncrono. Isso exibirá esse tipo de janela modal no navegador e solicitará a permissão do usuário . O programa solicitará o GPS ou a localização. Entretanto, a pilha de chamadas continuará sua execução, certo? Parece que essa função específica está sendo passada para a API da web, então ela passará para a próxima linha e aqui a execução do seu código será concluída. Assim, o
+
+contexto de execução global será removido da pilha de chamadas e a pilha de chamadas ficará vazia. Então, não sabemos quanto tempo o usuário levará para conceder essa permissão, certo? Ele pode dar imediatamente ou até mesmo rejeitar. Ele não quer divulgar sua localização atual. Aqui, temos duas possibilidades. O usuário pode ter permissão para
+
+visitar o site ou pode negar o acesso. E, com base nessas duas possibilidades, podemos ter duas opções diferentes aqui. Se o usuário tiver permissão para visitar o site, a função de retorno de chamada da posição estará pronta. E se o usuário negar , então teremos uma função de retorno de erro. Por enquanto, estou mostrando os dois callbacks aqui. Temos uma função de retorno de chamada
+
+para casos positivos e uma função de retorno de chamada para casos negativos. E você verá que aquela janela pop-up desapareceu. Por ora, vamos considerar apenas os cenários positivos. Considere que o usuário clicou em "permitir" para visitar o site. E agora temos a função de retorno de chamada de posição pronta.
+
+Em seguida, seguirá o mesmo procedimento. Primeiro, irá para a fila de tarefas. Como você pode ver aqui, a tarefa está sendo adicionada à fila de tarefas. Agora, essa função de retorno de chamada de posição ficará aguardando na fila de tarefas até que o loop de eventos a selecione . Agora temos o loop de eventos que entra em ação e está ativo. E
+
+verá que temos uma pilha de chamadas vazia. Assim, ele selecionará esse retorno de chamada de posição e o adicionará à pilha de chamadas. E a pilha de chamadas a executa rapidamente. Assim que essa execução for concluída, a pilha de chamadas estará vazia . E a localização atual do usuário será exibida no console. Espero que o
+
+segundo exemplo tenha ficado claro. Agora, vamos a mais um exemplo que ajudará você a entender o JavaScript assíncrono de uma maneira muito melhor. No terceiro exemplo, vamos abordar mais duas APIs da web, relacionadas ao DOM e a eventos. O exemplo aqui é muito simples. Vamos começar com console.log. Vamos
+
+terminar com o console. E, no meio disso tudo, temos apenas um botão no navegador. Obteremos a referência desse botão usando document.getElementById e adicionaremos um ouvinte de eventos a ele. E quando o usuário clicar nesse botão, exibiremos apenas a mensagem "botão clicado" no console. Um
+
+exemplo bem simples que seguirá uma abordagem similar, mas utilizando APIs web diferentes. Quando o JavaScript começa a ser executado, o contexto de execução global é adicionado à pilha de chamadas e então temos a primeira linha aqui. Temos o console aqui, então a API web do console entra em ação e imprimirá "iniciar" no console do navegador. Então, o JavaScript vê que estamos usando document.getElementById.
+
+Isso está presente na API web DOM e é usado para obter a referência do botão. E então, simplesmente armazenará a referência desse elemento HTML na variável do botão. Agora vamos passar para a próxima linha. Novamente, temos esse botão e estamos adicionando um ouvinte de eventos a ele. Este ouvinte de eventos de adição estará presente nas APIs de eventos e registrará uma função de retorno de chamada no ambiente da API web.
+
+Aqui estou usando uma função de seta, mas agora você pode considerá-la como uma função nomeada com o nome `callback`. Ponto importante aqui: esse retorno de chamada não é executado. É apenas um registro. Este código será executado quando o usuário clicar neste botão, e não sabemos quando o usuário clicará neste botão. Assim, o JavaScript continuará sua execução e passará para a próxima linha. Esta é a última
+
+linha do nosso script, portanto, ela será executada. A mensagem " end" será impressa no console e esse contexto de execução global será removido da pilha de chamadas. Então é isso que está acontecendo. A pilha de chamadas está vazia e o fim é impresso aqui. Agora que concluímos a execução do script, essa função de retorno de chamada ficará no ambiente da API web aguardando que o usuário clique neste botão. Então,
+
+o que acontecerá quando o usuário clicar neste botão? Essa função de retorno de chamada está pronta para ser executada. Simplesmente entra na fila de retorno de chamada. Então, vejamos. Aqui o usuário clica no botão.
+
+A função de retorno de chamada está pronta para ser executada e entrou na fila de retornos de chamada . E o loop de eventos estará ativo agora. O sistema verá que temos uma pilha de chamadas vazia e que temos algo para executar na fila de retorno de chamada. Assim, ele selecionará essa tarefa e a adicionará à pilha de chamadas. Essa tarefa é adicionada à pilha de chamadas. O código
+
+será executado agora e, assim que a execução for concluída, teremos a instrução `console.log` impressa no console e, em seguida, uma pilha de chamadas vazia. Veja aqui. A execução da nossa função foi concluída. Portanto, temos uma pilha de chamadas vazia. Temos uma
+
+fila de retorno de chamada vazia e o clique neste botão será exibido no console. Espero que este terceiro exemplo também esteja claro para você . Até agora vimos três exemplos diferentes. A primeira opção é com tempo limite definido. A segunda utiliza a API de geolocalização e a terceira, eventos do usuário.
+
+Embora pareçam diferentes, em essência seguem uma abordagem semelhante. Em todos os casos, o retorno de chamada é registrado no ambiente da API web e, assim que estiver pronto para ser executado, entra na fila de retornos de chamada. Se a pilha de chamadas estiver vazia, o loop de eventos o seleciona e, em seguida, o executa. Em outras palavras, a pilha de chamadas executa todo o seu código. As APIs da Web são usadas para conectar-se com o mundo externo e gerenciam seu código assíncrono por meio de uma fila de retorno de chamada. E
+
+então temos o loop de eventos que conecta tudo. Se você entendeu todos esses três exemplos, acompanhou comigo e compreendeu como esse fluxo funciona, então você já dominou o funcionamento do JavaScript assíncrono. Mas espere, ainda temos algumas coisas para discutir. E essas são muito importantes. Até agora, tudo parece bastante simples. A tarefa é encaminhada para APIs da Web.
+
+A partir das APIs da Web, o pacote vai para a fila de retorno de chamada e, da fila de retorno de chamada, retorna à pilha de chamadas. Mas quando se trata de promessas ou chamadas à API fetch, as coisas funcionam de maneira um pouco diferente e mais interessante. Para entender completamente a diferença, vejamos agora mais um exemplo. Neste exemplo, usaremos a chamada da API fetch e, juntamente com ela, discutiremos também a configuração de um tempo limite. Veremos como essas coisas diferem umas das outras. Neste exemplo, estamos
+
+usando três APIs da Web. O primeiro é o console, o segundo é o temporizador e o terceiro é o fetch. Portanto, as três APIs da Web estão listadas aqui. O console serve para o comando `console.log`, o temporizador define o tempo limite e, por fim, a API busca a requisição de rede.
+
+E sabemos que inicialmente nossa pilha de chamadas está vazia e, antes de executar uma única linha de código, o JavaScript cria um contexto de execução global, que é adicionado à pilha de chamadas. Agora, a execução do script foi iniciada. Estamos na fila número um. Aqui, na pilha de chamadas, você vê algo como `console.log`, e essa solicitação é delegada às APIs da web do console, que basicamente imprimirão o início da chamada no seu console. Na
+
+linha seguinte, definimos o tempo limite. Assim, o JavaScript novamente delega essa solicitação de definição de tempo para APIs de temporizador e sabemos que, quando definimos um tempo limite, o retorno de chamada é registrado no ambiente da API da web e associado ao seu temporizador. Nesse caso, temos essa função de retorno específica que é executada após 4 segundos. Assim, esse retorno de chamada será registrado no ambiente da API web e um temporizador será associado a ele. Você pode considerar o nome desse retorno de chamada como CBT, ou seja, temporizador de retorno de chamada . Então, o JavaScript não vai esperar
+
+por nada, ele simplesmente passará para a próxima linha e agora temos a próxima API da web, que é o fetch. Estamos fazendo uma chamada de API para uma solicitação fictícia aqui, e ela fará a solicitação de rede e buscará os dados necessários para nós. Essa busca retornará uma promessa e então estamos anexando um ponto a ela. Assim, a pilha de chamadas delega essa solicitação de rede para a API da web. Portanto, você verá que um novo callback foi registrado no ambiente da API web e eu o nomeei como CBP, que significa Callback Promise (Promessa de Callback).
+
+E então o navegador começou a buscar dados em segundo plano. Então, vamos passar para a próxima linha e temos a última linha do nosso roteiro, que é o fim. Assim que essa linha for executada, a execução do nosso script será concluída. Este resultado será impresso no console e este contexto de execução global será removido da pilha de chamadas. Portanto, como você pode ver aqui, o contexto de execução global foi removido, a pilha de chamadas está vazia e a mensagem "fim" foi impressa no console, indicando que nosso script foi concluído.
+
+Neste ponto, temos dois callbacks registrados no ambiente da API Web, certo? O primeiro é o CBT, que está aguardando o término do temporizador, e depois temos o CBP, que está aguardando a resolução da promessa. Assim que a promessa for resolvida, essa função de retorno de chamada estará pronta para execução. Assim que o cronômetro terminar, esta função CBT estará pronta para ser executada. Considere que esta chamada à API está demorando mais do que o esperado , e enquanto isso, este temporizador de 4 segundos terminou. E nós sabemos o que vai
+
+acontecer nesse caso, certo? Esta função CBT está pronta para ser executada. É inserido na fila de retorno de chamada. Em seguida, o loop de eventos verifica se a pilha de chamadas está vazia , seleciona essa função e a executa rapidamente. Isto é simples e direto.
+
+Agora isso está bem claro para nós. Mas aqui temos uma questão interessante. O que acontece quando essa promessa for cumprida? E qual função, ou seja, CBT ou CBP, é executada primeiro? Agora, considere que essa chamada de API é muito rápida. O
+
+resultado será obtido em poucos milissegundos. Neste caso, a promessa foi resolvida e esta função CBP está pronta para execução. O cronômetro continua rodando e precisa completar 4 segundos. Então, a questão é: o que acontecerá com essa função CBP? Isso é adicionado à fila de retorno de chamada , da mesma forma que um temporizador ou uma API de geolocalização?
+
+Não. Essa função CBP agora entra em uma fila diferente, e essa fila é a microtarefa Q. Interessante, não é? Essa microtarefa Q é semelhante a uma tarefa de retorno de chamada Q, mas tem prioridade mais alta. E quando se trata do loop de eventos, o loop de eventos primeiro seleciona a tarefa da microtarefa Q e depois passa para a tarefa de retorno de chamada Q.
+
+Nesse caso, inicialmente ambas as Qs estão vazias. E agora essa função CBP está pronta para ser executada. Portanto, irá diretamente para a microtarefa Q. Está aguardando lá. É aí que o loop de eventos entra em ação. Ele
+
+verificará se temos uma pilha de chamadas vazia. Neste caso, temos uma pilha de chamadas vazia. Portanto, ele selecionará o retorno de chamada CBP da microtarefa Q e o adicionará à pilha de chamadas. E a função da pilha de chamadas é muito simples. Ele será executado rapidamente e, uma vez executado, os dados recebidos serão impressos no console.
+
+Simples. Claro, não é? Enquanto isso, essa função de TCC ainda está aguardando a conclusão desse temporizador , certo? Suponha que esse cronômetro seja concluído após 4 segundos. Agora, essa função CBT está pronta para ser executada e seguirá seu curso tradicional. O processo
+
+irá para a fila de retorno de chamada Q. Agora, está chegando à fila de retorno de chamada Q. Novamente, o loop de eventos entra em ação e verá que temos uma pilha de chamadas vazia; então, ele selecionará essa função CBT e a adicionará à pilha de chamadas. E a pilha de chamadas a executará rapidamente e, dentro do tempo limite definido, será impressa no console. E é assim que as coisas funcionam juntas.
+
+Espero que tenha entendido bem. A função de retorno de chamada associada à promessa seguirá a abordagem de fila de microtarefas, e todas as outras APIs da web que discutimos até agora também usarão filas de retorno de chamada. A fila de microtarefas sempre tem prioridade maior que a fila de retorno de chamada. Agora, vamos entender mais um cenário. Na linha número 10, nosso código é executado. O tempo limite definido e o retorno de
+
+chamada de busca foram registrados no ambiente da API da web , mas a partir da linha 11, certo? Temos um código de longa duração aqui. Suponha que temos uma grande quantidade de código e a pilha de chamadas está ocupada executando uma tarefa de longa duração. Enquanto essa pilha de chamadas executa tarefas de longa duração em segundo plano, a chamada à API será feita e esses dados serão obtidos. Portanto, a promessa foi resolvida e agora essa função CBP está pronta para ser executada. Assim,
+
+seguirá sua abordagem tradicional e recorrerá à fila de microtarefas. A pilha de chamadas ainda está ocupada. Está cumprindo sua função. Portanto, essa função CBP precisa aguardar na fila de microtarefas porque o loop de eventos só selecionará uma tarefa na fila se a pilha de chamadas estiver vazia. E, neste caso, a pilha de chamadas está executando continuamente algum código síncrono de longa duração.
+
+A pilha de chamadas continua funcionando e, enquanto isso, esses 4 segundos também foram concluídos. Essa função de retorno de chamada CBP agora está pronta para ser executada e, novamente, seguirá sua abordagem tradicional e entrará na fila de retornos de chamada. Agora, temos tarefas em ambas as filas e, enquanto isso, a pilha de chamadas ainda está executando tarefas síncronas de longa duração. Não sabemos quanto código temos. Podem ser milhões de linhas de código, certo? E a pilha de chamadas está ocupada
+
+com isso no momento. Suponha que essa tarefa demorada esteja concluída, então o código passará para a próxima linha. Esta é a última linha do nosso código. E assim que esta linha for concluída, este contexto de execução global será removido da pilha de chamadas e este console.log end será impresso no console. Como você pode ver aqui, a pilha de chamadas está
+
+vazia agora e o fim será impresso no console. E agora o loop de eventos entra em ação novamente. Ele verificará se temos uma pilha de chamadas vazia. Nesse caso, sim. Então, primeiro ele selecionará a tarefa da fila de microtarefas porque ela tem maior prioridade. Assim, o retorno de chamada do CBP será selecionado
+
+pelo loop de eventos e inserido na pilha de chamadas. A pilha de chamadas executa-a rapidamente. Assim que a execução for concluída, teremos uma pilha de chamadas vazia e essa string específica será impressa no console. Agora, o loop de eventos verifica novamente se a pilha de chamadas está vazia e se há algo na fila de microtarefas. No momento, não temos nada para executar na fila de microtarefas, então ela irá para a fila de retorno de chamada.
+
+Em seguida, ele selecionará esse retorno de chamada CBT e o inserirá na pilha de chamadas para execução. A pilha de chamadas executa rapidamente o retorno de chamada CBT e, dentro dele, o tempo limite definido será impresso no console. Agora temos uma pilha de chamadas vazia e uma fila de retorno de chamada vazia. E é assim que as coisas funcionam. Quando temos uma tarefa de longa duração, a pilha de chamadas primeiro finaliza todo o código síncrono e, enquanto isso, podemos ter várias tarefas em filas de microtarefas ou filas de retorno de chamada. Assim que toda a
+
+execução do código síncrono for concluída, as tarefas das filas de microtarefas e de retorno de chamada serão selecionadas pelo loop de eventos. E aqui, novamente, a maior prioridade será dada à fila de microtarefas e, em seguida, à fila de retorno de chamada. É assim que o JavaScript assíncrono funciona. Espero que agora todos os detalhes estejam claros para você . Agora, temos mais algumas perguntas. Como
+
+temos duas filas, uma é a fila de retorno de chamada ou fila de tarefas, e a outra é a fila de microtarefas, certo? E a fila de microtarefas tem maior prioridade. Então, o que exatamente irá para a fila de microtarefas? E a resposta é simples. Há apenas algumas coisas que irão para a fila de microtarefas.
+
+Em primeiro lugar, qualquer função de retorno de chamada associada a promessas. Poderia ser ponto então, ponto pegando, ou finalmente. Qualquer função de retorno de chamada presente no encadeamento de promessas será encaminhada para a fila de microtarefas. A segunda coisa é o observador de mutações. O observador de mutações é, mais uma vez, a API fornecida pelo navegador em JavaScript que permite monitorar as alterações no DOM. E então,
+
+a função de retorno de chamada será executada quando essas alterações ocorrerem no DOM. Então temos o async/ await, certo? Portanto, qualquer código ou corpo de função que tivermos após a palavra-chave await, será adicionado à fila de microtarefas. E, finalmente, temos a microtarefa de fila. Esta é mais uma das APIs da web fornecidas pelo JavaScript, e ajudará você a executar funções como microtarefas.
+
+Portanto, esses quatro itens irão para a fila de microtarefas. Além disso , qualquer retorno de chamada que discutimos até agora será direcionado para a fila de retornos de chamada ou fila de tarefas. Seja um temporizador, geolocalização, gerenciamento de eventos ou qualquer operação assíncrona, tudo será encaminhado para a fila de tarefas. E entender essa diferença é muito importante porque, quando temos uma questão baseada em saída , compreender o que irá para a fila de microtarefas e o que irá para a fila de retorno de chamada é fundamental. Com base nisso, nossa produção sofrerá alterações. Espero que agora você tenha um sólido
+
+entendimento sobre JavaScript assíncrono. Como funciona a pilha de chamadas, o que são APIs da web, o que é uma fila de tarefas ou fila de retorno de chamada, o que é uma fila de microtarefas, o que é um loop de eventos, quando o loop de eventos entra em cena e quais tipos de dados são enviados para a fila de retorno de chamada e para a fila de microtarefas. Por fim, antes de encerrar este vídeo, vamos entender mais um conceito muito importante, que também é abordado na maioria das entrevistas: a privação de função. Temos duas filas, certo? Uma é uma fila de retorno de chamada e a outra é uma fila de microtarefas. E o loop de eventos dá maior
+
+prioridade à fila de microtarefas. Primeiro, ele concluirá todas as tarefas na fila de microtarefas e, em seguida, selecionará a tarefa da fila de retorno de chamada. Suponha que o loop de eventos selecione a primeira tarefa, certo? A primeira tarefa foi executada. Agora, a pilha de chamadas está vazia. Novamente, o
+
+loop de eventos selecionará a segunda tarefa da fila de microtarefas, ou seja, a tarefa dois. Agora, essa tarefa entrará na pilha de chamadas e sua execução será iniciada. E se essa segunda tarefa gerar outra tarefa? É possível, não é? Pode ser que a segunda tarefa tenha algum código relacionado à API, esteja usando algum observador de mutação ou possua uma lógica de tarefa Q.
+
+Suponha que esta segunda tarefa seja executada e crie mais uma tarefa, que é a quarta tarefa. Agora, esta quarta tarefa irá para o ambiente da API web e provavelmente terminará rapidamente de fazer a chamada à API, certo? E esta quarta tarefa está agora pronta para ser executada. Novamente, esta quarta tarefa entrará na fila de microtarefas. Enquanto isso, sua segunda tarefa ainda está sendo executada. Agora que a execução da tarefa dois foi
+
+concluída e temos uma pilha de chamadas vazia, o programa irá selecionar a tarefa três. A execução da tarefa três foi iniciada, e se a tarefa três criar outra microtarefa? Isso é possível, certo? Isso poderia entrar em um loop infinito. Não sabemos o que vai acontecer nesse código, certo?
+
+E se você criar mais uma tarefa, que é a tarefa cinco, ela entrará novamente na fila de microtarefas e esse ciclo continuará. Nesse caso, o loop de eventos sempre dá maior prioridade à fila de microtarefas, certo? E então, qualquer tarefa presente na fila de retorno de chamada precisa permanecer lá por mais tempo, o que causa a escassez de funções. No final, essa tarefa é uma função de retorno de chamada, certo? E essa tarefa fica aguardando na fila de retorno de chamada por um longo tempo porque temos várias coisas na fila de microtarefas e elas continuam em ciclo.
+
+Nesse caso, essa função precisa esperar, e isso é chamado de inanição de função. Essa é uma pergunta muito importante em entrevistas e costuma ser feita na maioria das entrevistas para vagas de desenvolvedor front-end. Você deve ter entendido bem, certo? Quando temos várias tarefas na fila de microtarefas, a fila de retorno de chamada não terá a chance de ser executada. Suponha agora que esta terceira tarefa esteja concluída e que a pilha de chamadas esteja vazia. Nesse
+
+caso, a quarta tarefa terá a chance de ser selecionada na fila de microtarefas e, assim que tivermos uma pilha de chamadas vazia e uma fila de microtarefas vazia, então a tarefa na fila de retorno de chamada será executada. Agora que a tarefa um foi executada, a tarefa dois será executada em seguida. Entretanto, se alguma tarefa entrar novamente na fila de microtarefas, ela terá prioridade mais alta e, então, a terceira tarefa precisará esperar até que a fila de microtarefas esteja vazia. Aqui, a tarefa dois será concluída e, em seguida, a tarefa três terá sua vez. Assim que a execução for interrompida, nossa pilha de chamadas e ambas as filas estarão vazias, e é assim que as coisas funcionam. A privação de
+
+funções é um conceito muito importante. Em nosso vídeo anterior, já vimos exatamente como a pilha de chamadas será exibida no navegador, certo? Podemos ver como o contexto de execução global ou o contexto de execução da função é adicionado à pilha de chamadas, certo? Mas mostrar como funcionam uma fila de retornos de chamada, uma fila de microtarefas ou um loop de eventos , isso não é possível, pelo menos até agora, no navegador. Esses são aspectos internos do navegador, gerenciados internamente, e não são expostos nas ferramentas de desenvolvedor, ou seja, não temos como visualizá-los diretamente. Espero que
+
+todos esses detalhes estejam claros para você. Por fim, acho que é tudo para este vídeo. Abordamos muito conteúdo interessante e, se você o compreendeu corretamente, poderá se sair bem em praticamente qualquer entrevista de emprego para desenvolvedor front-end , pelo menos no que diz respeito a alterações de código assíncronas. É tudo para este vídeo. Obrigado por assistir. Se você está
+
+gostando do meu conteúdo, peço que curta . Por favor, compartilhe este belo conteúdo com seus amigos para que ele alcance mais pessoas. Se você tiver alguma dúvida, deixe um comentário e eu responderei assim que possível. E, por fim, inscreva-se no canal para receber notificações dos vídeos mais recentes. Obrigado por assistir e até o próximo vídeo. Até
+
+agora, obrigado. Tchau.

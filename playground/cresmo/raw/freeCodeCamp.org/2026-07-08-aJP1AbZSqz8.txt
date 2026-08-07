@@ -1,0 +1,356 @@
+---
+video_title: "TypeScript in React - Full Tutorial"
+video_id: aJP1AbZSqz8
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=aJP1AbZSqz8
+video_date: 2026-07-08T13:03:29+00:00
+video_description: |
+  Struggling to type React components correctly? This TypeScript React tutorial walks you through using TypeScript in real React projects, from typing useState to building reusable typed components, with hands-on challenges throughout.
+  
+  ✏️ Study this course interactively on Scrimba: https://scrimba.com/learn-typescript-c03c?via=scrimbafcc
+  Code is available on the Scrimba course page for each lesson.
+  
+  TypeScript makes React code safer and more predictable. In this module, you'll learn how to type useState, component props, JSX elements, and function props through practical lessons. Perfect for developers who know React basics and want to add TypeScript to their workflow.
+  This isn't just a watch-and-learn tutorial. You'll complete real coding challenges, including building the AriaLiveStatus and WordLetters components from scratch.
+  
+  Timestamps
+  - 00:00 Welcome to TypeScript and React! 
+  - 01:51 Setting up the React Project 
+  - 05:02 TS Refresher - Basic & Custom Types 
+  - 08:31 TS Refresher - Functions 
+  - 11:50 TS Refresher - A new getRandomIndex() function 
+  - 14:07 Typing useState() 
+  - 17:36 Typing Derived Values and Arrow Functions
+  - 19:48 Typing App.tsx functions 
+  - 23:10 The New Setup 
+  - 25:12 Typing React Components 
+  - 27:48 JSX Element or null 
+  - 29:24 Typing Component Props 
+  - 32:46 Custom Component Prop Types 
+  - 34:34 The AriaLiveStatus Component Challenge 
+  - 36:53 Component Props and Imported Types 
+  - 39:15 Element within an Element 
+  - 42:14 The WordLetters Component Challenge 
+  - 44:49 Typing Function Props 
+  - 47:33 The Final Challenge 
+  - 50:23 Congrats!
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+Você está com dificuldades para digitar componentes React corretamente? Este tutorial de TypeScript para React mostra como usar TypeScript em projetos React reais, desde a tipagem de Ustate até a criação de componentes tipados reutilizáveis, com desafios práticos ao longo do caminho. Olá! Meu nome é Rachel e vou apresentar a vocês esta seção específica sobre React do curso Aprenda TypeScript. Vamos trabalhar com um projeto muito familiar do curso Learn React, chamado Assembly Endgame. Se você
+
+fez o curso de React, provavelmente reconhecerá isso. Caso você não conheça, é um jogo estilo forca onde, a cada letra incorreta que o convidado erra, uma linguagem de programação é eliminada até restar apenas a linguagem assembly. Você pode pausar o treino agora mesmo e jogar um pouco, se quiser. Só para avisar, não vamos gastar muito tempo ajustando ou expandindo o jogo em si, porque a jogabilidade já está funcionando muito bem. O que vamos fazer é reformular este projeto usando TypeScript. Então, aqui está o que
+
+vem por aí. Primeiro, vamos fazer uma breve revisão do TypeScript puro, o suficiente para nos familiarizarmos novamente com os conceitos básicos, e depois passaremos para alguns tópicos específicos do React, começando com a tipagem, o uso de estado e componentes funcionais. Em seguida, veremos como definir tipos de propriedades de componentes usando tipos embutidos e tipos personalizados, e até mesmo como importar tipos de propriedades de outros arquivos. E, por fim, vamos abordar um dos padrões mais comuns no React: a tipagem de props de função. E, claro, vou lançar desafios a cada passo do caminho para manter seus dedos ocupados. Ao
+
+final desta seção, você terá uma compreensão fundamental de como o Typescript se encaixa em um fluxo de trabalho React e poderá começar a tipar seus próprios componentes React com confiança. Então, vamos começar. Muito bem, é hora de colocar a mão na massa. Neste scrim, vamos criar um projeto React totalmente novo usando o Vit e vamos configurá-lo com TypeScript desde o início. Agora, você pode instalar o TypeScript em um projeto React existente manualmente, mas acredite, é preciso muita configuração para que tudo funcione perfeitamente. Você precisaria instalar todos os
+
+pacotes do TypeScript, configurar seus arquivos de configuração, renomear seus arquivos e definir as declarações de tipo. É muita coisa mesmo . Então, em vez disso, vamos optar pelo caminho mais limpo e seguro e deixar que a Vit cuide de tudo isso para nós. Vamos criar um novo projeto usando o Vit. Para isso, basta acessar o terminal e digitar `npm create vit`.
+
+Vamos pressionar Y para instalar e criar o V. E para o nome do projeto, vamos simplesmente criá-lo nesta pasta. Então vou colocar um ponto. Para o framework, queremos o React. E, claro, a variante é o TypeScript. Agora só precisamos
+
+instalar tudo com o comando npm install. Não vamos executá-lo agora porque, de qualquer forma, só receberemos um projeto inicial da versão V. Enquanto isso acontece, vamos dar uma olhada rápida nos arquivos de configuração que não precisamos manipular manualmente. Então, primeiro, no arquivo package.json, estão todas as dependências do React e do V, bem como algumas novas dependências do TypeScript. Existe o
+
+próprio TypeScript, o TypeScript eslint, o TypeScript React e o TypeScript React DOM. Todos esses elementos trabalham juntos para garantir que tenhamos uma experiência tranquila com o Typescript. E depois temos o arquivo tsconfig.json. E isso, na verdade, se refere a outros dois arquivos de configuração. Existem os arquivos
+
+tsconfig.app.json e tsconfig.node.json.
+
+E se analisarmos qualquer um deles, veremos que há muita configuração sendo feita para garantir que o Typescript funcione perfeitamente com esta instalação do React. Vamos dar uma olhada na instalação. E terminamos. Agora estamos prontos para o Typescript. Agora vou fazer alguns ajustes adicionais para configurar nosso novo projeto e deixá-lo compatível com nosso projeto original, que era exclusivamente em React . Então, a primeira coisa que vou fazer
+
+é enviar o projeto React original do Assembly Endgame do curso Learn React . Vai ficar aqui dentro da pasta original do After Effects. Dentro dele , vamos abrir o arquivo index.css e copiar todo o seu conteúdo. Em seguida, vamos acessar nosso novo projeto, abrir o arquivo index.css e
+
+substituir todo o conteúdo ali presente. Voltando ao projeto original, se abrirmos o arquivo package.json, veremos dois pacotes, clsx e react confetti, que precisaremos instalar manualmente em nosso novo projeto TypeScript. Então, vamos fazer isso de uma vez só. No terminal, vamos executar o comando `npm install clsx` e ` react confetti`. E deixarei que isso faça o seu
+
+trabalho. E por último, vou entrar na nossa pasta de código-fonte e apagar tudo o que não for necessário no modelo padrão. Então, esse é o arquivo app.tcss e toda a pasta assets. E agora o palco está montado. Temos
+
+aqui o projeto React original como referência . Temos o novo projeto React pronto para TypeScript, que podemos preencher. E garantimos a importação do CSS e a instalação de todos os pacotes necessários. Vamos começar a digitar com TypeScript no próximo treino. Existem algumas coisas que podemos digitar imediatamente, usando o que aprendemos na seção anterior. Vamos
+
+começar pelo básico e dar uma olhada no arquivo original words.js. Este arquivo contém e exporta uma matriz de palavras ou, para os nossos propósitos, uma matriz de strings. Vamos copiar todo o conteúdo e depois fechar o arquivo original e a pasta. E na nossa pasta de origem, vamos criar um novo arquivo e chamá-lo de words.ts.
+
+Agora, estamos dando a este arquivo a extensão .ts em vez de .js porque vamos usar o TypeScript aqui. E vou colar o conteúdo do original. Agora, vamos colocar você direto em um desafio. Usando o que você aprendeu
+
+na primeira seção de Aprenda Typescript, você consegue digitar este array de palavras? Lembre-se de que você pode passar o cursor sobre as variáveis ​​para ver o que o TypeScript sugere ser o tipo. Estou com o cursor sobre essas palavras agora, mas você precisará passar o cursor sobre elas também se quiser ver o recurso IntelliSense aparecer. Ou você pode tentar sugerir o tipo por conta própria. Te vejo daqui a pouco.
+
+Bem vindo de volta. Esta deve ser bem simples. Podemos ver claramente que se trata de uma matriz de strings. E se você passasse o cursor sobre a palavra "variável", apareceria a mesma coisa. Então, vamos começar a anotação de tipo com dois pontos e depois adicionar a string e o array. E
+
+agora está tudo digitado. Em seguida, vamos analisar e manipular o arquivo languages.js. Antes de começarmos a analisá-lo em detalhes, vamos criar sua contraparte em TypeScript em nosso aplicativo. Então, vamos copiar todo o conteúdo para cá e depois fechar esta pasta, assim como a pasta original. E na nossa pasta de origem, vamos
+
+criar um novo arquivo e chamá-lo de languages.ts, em vez de .js, porque vamos usar TypeScript. E vamos colar o conteúdo. Este é semelhante ao words.ts. Contém e
+
+exporta uma matriz de dados, mas aqui temos uma matriz de objetos. E cada objeto contém três propriedades. Uma string com o nome , uma string com a cor de fundo e uma string com a cor. E aqui está mais um desafio para você. Digite este array de idiomas. E saiba que existem duas
+
+maneiras válidas de fazer isso. E lembre-se, você pode passar o cursor sobre os elementos para obter uma janela pop-up com a sugestão do TypeScript sobre o tipo correto. Como dissemos anteriormente, existem duas maneiras de tipar esse array de idiomas. Primeiro, podemos usar um objeto embutido diretamente como anotação de tipo. Então, vamos começar com dois pontos e depois vamos abrir um objeto dentro deles. Vamos
+
+começar a digitar as propriedades imediatamente. Portanto, o nome deve ser uma string. A cor de fundo também é uma string e a cor é outra string. E como se trata de uma matriz de objetos, vamos garantir que adicionemos os colchetes ao final do objeto. Bem, essa é apenas uma das maneiras. Também podemos
+
+usar um tipo personalizado, que na verdade é o método recomendado. Então, aqui em cima, vou criar um novo tipo e chamá-lo de linguagem. Como valor, vamos pegar o objeto que acabamos de escrever e colocá-lo aqui. E agora, para falar sobre linguagens de tipos, basta consultarmos a linguagem de tipos que acabamos de criar aqui em cima. E isso funcionará igualmente bem . Na verdade, a forma como
+
+fizemos agora será útil um pouco mais tarde. Então fiquem ligados para mais novidades. Essa foi sua breve revisão sobre tipos básicos e personalizados. E já começamos a refatorar e adicionar TypeScript ao nosso projeto original de assembly . No próximo Grim, vamos dar uma olhada e começar a digitar algumas funções. Então, nos vemos lá.
+
+Olá novamente. Aqui, abri o arquivo utils.js no projeto original do assembly endgame. Vamos pegar tudo e fechar o original. E aqui na nossa pasta de origem, vamos criar um novo arquivo e chamá-lo de utils.ts. E
+
+vamos colar tudo. Existem duas funções aqui nas quais podemos trabalhar . Há a opção de obter uma palavra aleatória e uma mensagem de despedida. A função `get random word` gera um índice aleatório com base no comprimento da matriz de palavras, que estamos importando aqui em cima. Em seguida, utiliza esse índice aleatório para retornar uma string aleatória da matriz de palavras. É hora de relembrar
+
+o que você aprendeu sobre funções de digitação na seção anterior para alguns desafios. Primeiro, digite o valor retornado por `get random word` e depois digite a variável de índice aleatório aqui. Então, tente e a gente se fala daqui a pouco. Agora, podemos ver pelo código, pelo nome da função e ao passar o cursor sobre ela que a função `get random word` retorna uma única palavra em formato de string. Assim, podemos digitar o valor de retorno da função de acordo com a string de dois pontos. E quanto ao índice aleatório,
+
+observando tanto o nome da variável quanto o próprio código, bem como passando o cursor sobre a variável, sabemos que ele retornará um índice aleatório, que é um número. Então, podemos digitar isso com bastante facilidade também, usando dois pontos para indicar o número. E com apenas essas duas pequenas adições, nossa função de obter palavras aleatórias agora está totalmente tipada. Agora também no arquivo utils.ts temos a função para obter o texto de despedida. Esta
+
+função recebe o nome de uma linguagem de programação como uma string e retorna outra string aqui embaixo, dizendo adeus àquela linguagem, que desaparece da existência. Já podemos ver aqui em cima que o TypeScript está dando problema com o parâmetro de idioma. Se você passar o cursor sobre ele, podemos ver que está sugerindo um tipo "qualquer", o que sabemos que é proibido. Mas este não é o único caso em que podemos digitar nesta função. Aqui estão, portanto, os desafios que você enfrentará com a função de obter mensagem de despedida. Primeiro digite o parâmetro e,
+
+em seguida, digite o valor de retorno. Em seguida, digite a matriz de opções. E, finalmente, a variável de índice aleatório aqui embaixo. Então vá em frente e nos vemos do outro lado. Vamos começar pelo parâmetro de linguagem, já que é justamente esse que está causando tanta polêmica no TypeScript.
+
+Sabemos que o idioma que está sendo passado como argumento é uma string. Então, vamos usar a sequência de dois pontos para digitar isso imediatamente. E agora podemos digitar o valor de retorno da função, que sabemos que também é uma string. E dentro da função, nos é apresentada uma série de opções que essa função pode escolher para se despedir da linguagem. Isto é, e você já deve estar bem familiarizado com isso, um array de strings. Então, vamos digitar com uma string de dois pontos
+
+e depois um array vazio. E depois, descendo até o final, onde está escrito " índice aleatório". Sabemos que o índice é um número. Então, teremos que digitar isso com o número seguido de dois pontos. E se você está tendo uma leve sensação de déjà vu com essa frase aqui, você não é o único. Com
+
+certeza já fizemos exatamente a mesma coisa aqui em cima, no Get Random Word. Acho que estamos nos repetindo um pouco aqui. Então, vamos fazer algumas refatorações e digitar mais código no próximo treino. Então, nos vemos lá. No último scrim aqui em utils.ts, TS,
+
+percebemos que temos duas linhas exatamente iguais tanto na função de obter palavra aleatória quanto na função de obter texto de despedida . Ambas retornam um índice aleatório com base no comprimento de uma matriz, algo que podemos fazer com frequência em um jogo. Então, vamos refatorar isso em uma função própria e depois tipar o que refatoramos. E por " nós", quero dizer vocês. Seu desafio é recorrer aos seus conhecimentos de JavaScript para refatorar nosso código. Portanto, temos uma
+
+função para obter um índice aleatório que ambas as nossas outras funções podem usar. Vou começar com a função `get random index` e deixarei que vocês terminem o resto. Primeiro, complete a função de obtenção de índice aleatório e, em seguida, adicione anotações de tipo onde for relevante e, finalmente, use a função de obtenção de índice aleatório em obter palavra aleatória e obter texto de despedida. Experimente e nos vemos do outro lado. Foi isso que eu fiz. Primeiro, eu completei
+
+a função. Sei que vai receber um parâmetro e que será uma matriz. Então, vou chamá-la de R. E dentro dela, vou retornar `math floor`, `math random`, vezes o comprimento do array. E você verá que é exatamente a mesma coisa que fizemos antes. Em seguida, adicionei
+
+anotações de tipo em alguns lugares. Primeiro, é esse parâmetro de array que o TypeScript já está sinalizando. Isso é fácil. É uma matriz de strings. Então, uma string e depois um array vazio. Em seguida, digitaremos o
+
+valor de retorno da função, que sabemos que deve ser um índice. Portanto, o tipo é um número. Então, dois pontos. Agora podemos usá-lo. Primeiro, obtenha uma palavra aleatória.
+
+Podemos remover completamente a linha de índice aleatório . E na instrução de retorno, vamos chamar a função para obter um índice aleatório. E vamos passar o array de palavras. E então podemos fazer exatamente a mesma coisa para obter a mensagem de despedida. Vamos remover completamente a linha do índice aleatório e, em seguida, na instrução de retorno, chamaremos a função ` get random index`. E desta vez vamos
+
+inserir o array de opções. E isso é tudo o que podemos fazer com TypeScript aqui em utils.ts. Agora que já lidamos com boa parte do TypeScript em nossos arquivos JS ou TS regulares. Agora vamos finalmente analisar o próprio componente React no próximo scrim.
+
+O único componente React que temos em uso aqui é este app.jsx na pasta original. Vamos copiar todo o conteúdo, fechar o arquivo e a pasta, e depois vir aqui para o nosso arquivo app.tsx e substituir todo o conteúdo. Como grande parte deste arquivo depende dos dois estados que estão sendo definidos no início da função, vamos garantir que os digitemos primeiro. Por padrão, o
+
+gancho de estado de uso utilizará o valor inicial para inferir seu tipo. Se passarmos o cursor sobre a palavra atual, podemos ver que ela já está inferindo um tipo de string devido à função de obter palavra aleatória. E se tentarmos interromper o processo com a função `set current word` e atribuirmos um valor booleano como `true`, podemos ver que ela já está gerando um erro. Venha aqui, passe o cursor sobre "true" e você verá que está escrito: "O argumento do tipo booleano não pode ser atribuído ao parâmetro do tipo string de ação de estado definido". Portanto, isso funciona muito bem por si só, mas só é ótimo se houver um valor inicial.
+
+Se você vier aqui e passar o cursor sobre " cartas dos convidados", verá que está digitado como uma matriz, mas é uma matriz de qualquer tipo. Isso ocorre porque o valor inicial aqui é apenas uma matriz. As cartas dos convidados deveriam ser, na verdade, uma matriz de strings. Portanto, é melhor especificar explicitamente nossos estados para garantir que sejamos o mais à prova de falhas possível. Portanto, para definir explicitamente um valor de estado, precisamos passar o argumento de tipo genérico para o próprio estado usando esses colchetes angulares. Lembra-se dos genéricos
+
+do final da primeira seção? Neste caso, o estado de uso está configurado para receber um tipo genérico e usaremos esse tipo para definir os estados atual e novo. Nos bastidores, podemos pensar no estado de uso definido da seguinte forma. Ele aceitará qualquer tipo que fornecermos dentro dos colchetes angulares e definirá os tipos getter e setter de acordo. Na verdade, se você vier aqui e passar o cursor sobre a declaração de importação de estado (use state import statement), poderá ver um resumo de como ela está configurada. E
+
+podemos ver o genérico em ação aqui mesmo . Como está configurado dessa forma, podemos simplesmente passar uma string como argumento genérico aqui. Ao fazer isso, estamos essencialmente dizendo ao React: "Ei, quero criar este estado e ele deve conter um tipo string." Certifique-se de que todos os valores de estado, atuais ou novos, estejam em conformidade com o tipo string. Agora, como já informamos ao Typescript que o estado é do tipo string, ele deve esperar que a função para obter uma palavra aleatória retorne uma string. Mas se
+
+quisermos ser super explícitos e entrar na mentalidade de pensar em Typescript, também podemos digitar o valor de retorno desta função anônima aqui mesmo. A aparência é um pouco diferente porque utiliza a sintaxe de seta, mas na verdade é muito fácil digitar o valor de retorno. Basta adicionar isso depois desse parêntese de parâmetros vazio, seguido da string de dois pontos. Ok, agora é a sua vez. Digite o estado das cartas de convidados. Sabemos
+
+que é uma matriz, mas é uma matriz de quê? Experimente e nos vemos do outro lado. Sabemos que se trata de um array que armazenaria uma série de strings contendo as letras dos convidados do nosso jogo. Portanto, o valor do estado deve ser uma matriz de strings. Assim, em nossos colchetes angulares de argumento genérico, bastará fornecermos a string e, em seguida, o array. E agora, quando passamos o cursor
+
+sobre as cartas dos convidados — e você também deveria fazer isso —, podemos ver que o texto está digitado corretamente, mesmo que o valor inicial fosse apenas uma matriz. Com esses dois estados digitados, estamos prontos para prosseguir com o restante do arquivo. E começaremos a fazer isso no próximo treino. Olá novamente. Logo abaixo dos valores de estado que acabamos de digitar, temos uma série de valores derivados. No momento,
+
+porque só temos um componente. Essas são consideradas constantes derivadas locais . Portanto, na verdade não precisamos tipar esses valores explicitamente, porque o TypeScript irá inferir a maioria deles corretamente. Você pode passar o cursor sobre cada um deles para ver a inferência em ação. Mas eu também quero muito que você passe o máximo de tempo possível digitando.
+
+Então, vamos dedicar algum tempo a acalmar os tipos e digitar essas variáveis. Aqui também existem algumas funções de retorno de chamada com parâmetros e valores de retorno que podemos digitar explicitamente. Dito isso , aqui está o seu desafio para este treino. Não se apresse e nos vemos do outro lado. Bem vindo de volta. Vamos analisá-los todos.
+
+E primeiro vou digitar as próprias variáveis. Em primeiro lugar, temos numbum palpites restantes, que é um número. A contagem de palpites errados também é um número. Então temos o jogo um, que é um valor booleano, e assim por diante, indicando que o jogo foi perdido e o jogo acabou. A última letra adivinhada é uma string e "a última tentativa está incorreta" é um valor booleano. Agora,
+
+quanto às funções de seta, vamos começar com a primeira. A letra é uma sequência de caracteres. Então podemos digitá-lo como uma string. Mas você vai perceber que provavelmente receberá um erro agora. Isso ocorre porque precisamos colocar esses valores entre parênteses. E agora o
+
+valor de retorno é um booleano. Essa segunda função aqui é exatamente a mesma. Primeiro, vamos colocar a letra entre parênteses e digitá-la como uma string, e o valor de retorno será um booleano. Na realidade, nem sempre precisamos digitar tudo, embora este treino específico tenha sido uma boa prática. O TypeScript é bastante bom em inferir tipos por conta própria. Na verdade, vamos
+
+deixar essa constante estática do alfabeto como está para mostrar que não precisamos digitar tudo. Este aqui, na verdade, funciona muito bem sozinho. Passe o cursor sobre a palavra "alfabeto" e verá que ela é interpretada como um tipo literal. Não se trata apenas de um tipo de string, mas sim deste tipo de string específico. Muito bem! Vamos
+
+continuar analisando este arquivo no próximo treino e vamos abordar essas duas funções. Já definimos os valores de estado e os valores derivados em app.tsx e agora é hora de lidar com as duas funções que temos aqui embaixo. Adicione a carta do convidado e inicie um novo jogo. Vamos começar com um exercício mais fácil para aquecer. Então,
+
+aqui está o seu desafio de aquecimento. Digite completamente a função de iniciar um novo jogo. Só existe uma oportunidade para adicionar uma anotação de tipo aqui. Então, procure e vá em frente . Você encontrou? Portanto, iniciar um novo jogo
+
+não recebe parâmetros e não retorna nada. Isso apenas define um estado. Para maior clareza, podemos digitar o valor de retorno com dois pontos (:) para evitar problemas. Novamente, não é estritamente necessário, mas é uma boa prática para que a intenção da função fique clara para qualquer pessoa que leia o código e ajuda a detectar retornos acidentais ou valores inesperados caso a função seja modificada posteriormente. Muito bem, chegou a hora do desafio maior. Digite completamente a
+
+função de adicionar carta de convidado. Existem quatro locais onde podemos adicionar anotações de tipo. Agora, o primeiro é imprescindível. Na verdade, o TypeScript já está reclamando muito disso por aqui. Mas os outros três são menos importantes, especialmente depois de resolver o primeiro. Na verdade, o TypeScript
+
+já tipou implicitamente dois deles corretamente. Mas vamos adquirir o hábito de digitar. Então, mãos à obra. Veja se você consegue encontrar todas as quatro anotações de tipo e nos vemos do outro lado. Você encontrou todas as quatro oportunidades?
+
+Vamos dar uma olhada. O primeiro é este parâmetro de letra, que atualmente é de qualquer tipo e o TypeScript realmente não gosta disso, mas isso é facilmente resolvido atribuindo a ele o tipo string. Em seguida, temos o tipo de retorno da função de adicionar carta de convidado. Essa função apenas configura valores e não retorna nada. Se você passar o cursor sobre "adicionar carta de convidado", poderá ver que o TypeScript já definiu o tipo implicitamente.
+
+Mas, para sermos mais específicos, nós mesmos também vamos adicioná-lo com o termo "cólon vazio". Agora restam duas vagas. O primeiro parâmetro são as letras anteriores e o segundo é o valor de retorno de toda essa função de retorno de chamada. A função `Set Guest Letters` define o estado do objeto e aceita um novo valor diretamente ou uma função de retorno de chamada que, por padrão, recebe o estado anterior. É isso que está acontecendo aqui. Assim, o
+
+TypeScript pode inferir facilmente que tanto as letras anteriores quanto o valor de retorno devem ser uma matriz de strings, graças à nossa digitação anterior nos estados. Você pode ver isso se passar o cursor sobre a seta aqui. As letras anteriores são um array de strings, assim como o valor de retorno da função. Na realidade, digitar esse parâmetro e o valor de retorno não é necessário, mas, para fins de aprendizado, faremos isso mesmo assim. Então, vamos colocar as letras anteriores entre parênteses e digitá-las como uma matriz de strings. E
+
+também vamos digitar o valor de retorno como uma matriz de strings. E pronto. Nossas duas funções em app.tsx foram tipadas com TypeScript. E tudo fica um pouco mais específico e à prova de falhas.
+
+Começamos muito bem, mas na verdade apenas arranhamos a superfície em termos de tipagem relacionada ao React. Na verdade, abordamos apenas superficialmente o estado de uso. A partir do próximo Grim, vamos analisar os componentes e as propriedades do React. Então, espero que você esteja pronto para mergulhar em algo novo e emocionante. Até agora, abordamos apenas um aspecto do React, que é o uso de estado. A maior parte do que
+
+fizemos foi digitar código JavaScript puro, como funções, variáveis ​​e coisas do gênero. Existem outras tipagens específicas do React que podemos usar, mas isso é mais viável se nosso aplicativo for dividido em componentes. E foi isso que eu fiz com o nosso projeto aqui. Então, deixe-me executar o aplicativo com npm install e mpm rundev. Assim, podemos relacionar alguns componentes aos elementos visuais. Assim, tudo o
+
+que antes víamos no arquivo app.tsx, todas as funções que determinavam como as coisas eram renderizadas, foram incorporadas aos componentes em nossa pasta de componentes. Todos esses componentes foram importados e estão sendo usados ​​no JSX aqui embaixo. Todos os componentes, exceto um, recebem várias propriedades (props) para renderizar os elementos da mesma forma que na iteração anterior. Então, de cima para baixo, temos o recipiente de confete, que representa o confete do final do jogo . Temos o
+
+componente de cabeçalho, que renderiza esse conteúdo estático aqui. Temos o status do jogo, que, se clicarmos em uma letra incorreta, resolve o problema da barra de status que aparece para dizer adeus aos idiomas. Em seguida, temos os chips de idioma, que renderizam esses idiomas e lidam com a sua extinção. E depois temos as letras das palavras, que lidam com os espaços de caracteres vazios ou revelados da palavra que estamos tentando adivinhar. Em seguida, temos o status do Arya Live, que controla as atualizações de status visualmente ocultas, projetadas exclusivamente para leitores de tela. E depois temos o teclado,
+
+que dispensa explicações. Este componente gerencia o teclado virtual que os usuários usam para adivinhar a palavra. E, por fim, o botão de novo jogo. Agora, este é o botão que aparece no final de um jogo. Então, se tentarmos concluir isso, o que eu acho que não conseguirei fazer corretamente, temos o botão de novo jogo bem aqui. Então,
+
+esse treino foi apenas para apresentar a nova configuração. Mas já que você está aqui, fique à vontade para pausar a simulação e dar uma olhada no projeto React refatorado . No próximo treino, vamos começar a estudar a tipagem de componentes React . Algo relacionado ao React que podemos tipar explicitamente com TypeScript são os próprios componentes React, especialmente se estivermos usando um componente funcional. Nosso projeto de montagem final utiliza componentes funcionais, então é o candidato perfeito para digitarmos.
+
+Abri o arquivo header.tsx para explorar isso, já que é um componente bastante estático e não recebe nenhuma propriedade. Ele simplesmente renderiza as tags h1 e p que vemos na parte superior do aplicativo. Assim como acontece atualmente, o HypeScript inferirá o tipo do componente de cabeçalho por conta própria. Podemos ver isso em ação ao passar o cursor sobre o cabeçalho, onde podemos ver que se trata de um elemento JSX do tipo React. E
+
+é exatamente isso que essa função está retornando aqui, um elemento ReactJSX. E se tentarmos alterar a instrução de retorno para algo como `true` e passarmos o cursor sobre o cabeçalho, veremos que o TypeScript inferiu que o valor de retorno é um booleano, o que é tecnicamente verdade, mas não faremos isso. Portanto, desde que estejamos retornando um elemento JSX, como faríamos para a maioria dos componentes funcionais, não precisaremos tipar um componente React, mas poderíamos fazê-lo se quiséssemos, por exemplo, se estivéssemos trabalhando com uma base de código grande ou se quiséssemos garantir que não retornamos acidentalmente nada além de um elemento JSX. Para isso, precisaremos importar o tipo JSX do React e, em seguida, usá-lo para tipar esse elemento. Então, vamos importar o tipo de JSX do React e usá-lo para definir o tipo do valor de retorno.
+
+Então, jsx.element. Alguns programadores React fazem isso, outros não. Na verdade, depende de você e de quão compacto você quer que seja o texto. Mas, como estamos aprendendo TypeScript agora, continuaremos fazendo isso em todos os nossos componentes à medida que os desenvolvermos, apenas para criar esse hábito de programação com tipos. Agora, uma
+
+observação rápida. Se você estiver analisando projetos React que utilizam TypeScript, também poderá encontrar componentes definidos e tipados dessa forma. Aqui podemos ver o React.fc. Este é um tipo genérico que também pode receber um argumento genérico de propriedades. Ele
+
+automaticamente tipifica o valor de retorno como um elemento JSX, o que é ótimo. Mas a pequena desvantagem é que, por padrão, ele inclui as crianças nas propriedades, mesmo que não sejam usadas. Esse último ponto, juntamente com alguns outros, como propriedades padrão e tipagem de componentes filhos, é o motivo pelo qual os usuários do TypeScript agora estão definindo componentes com elementos JSX . Portanto, vamos continuar usando a versão apresentada aqui para o restante desta seção sobre TypeScript. Então agora temos o nosso primeiro componente tipado. Foi super
+
+simples, mas daqui para frente só vai ficar mais emocionante. A partir do próximo treino. Olá novamente. Nesta tela de projeção, vamos analisar este componente de recipiente de confete . É bastante simples e cumpre sua única função muito, muito bem. Ele
+
+importa um componente confete do pacote React confetti mpm e, em seguida, retorna o componente aqui se o jogo for vencido. Caso contrário, retornará nulo. Então, este será um treino bem rápido, mas aqui está um desafio para vocês. Digite explicitamente o valor de retorno dos componentes do contêiner de confete. Agora, se precisar de uma referência, lembre-se de que você pode voltar ao componente de cabeçalho, mas aviso que não é tão simples quanto da última vez. Verifique cuidadosamente
+
+o que essa função pode retornar. Te vejo daqui a pouco. Bem vindo de volta. Agora, é claro, provavelmente retornaremos esse elemento JSX aqui mesmo . Então, vamos importar o tipo JSX do React com `import type JSX from React`. Assim como no outro
+
+componente, vamos usar o tipo `type` neste para retornar um elemento JSX. Mas se pararmos por aqui, podemos ter alguns problemas mais tarde. Devido a essa instrução if/else , existe a possibilidade de que esse componente retorne null em vez desse elemento JSX. Então, o que fazemos aqui? Lembra-se de unions da primeira seção deste curso de TypeScript?
+
+É aqui que podemos usá-lo. Essa função retornará um elemento JSX ou um valor nulo, e lidará com ambos os casos de forma segura. Agora podemos prosseguir com segurança para a digitação deste prop para o primeiro jogo, mas também para o próximo treino. Te vejo lá . Bem-vindo(a) de volta ao componente de contêiner de confete . No último scrim, tipificamos
+
+esse componente funcional com o elemento JSX ou null, o que abrange ambos os casos. Agora, vamos lidar com a propriedade `component`. Venha aqui e passe o cursor sobre este é o primeiro jogo. Podemos ver que é de um tipo "any", o que já sabemos que não é o que queremos em Typescript. Ao passarmos dados entre componentes, o que fazemos frequentemente no React, é muito útil poder verificar os tipos de dados para garantir que estamos passando o tipo de dado correto. Como você
+
+provavelmente já sabe, sendo um desenvolvedor React, as propriedades dos componentes React são definidas entre essas chaves. E tudo o que precisamos fazer para digitá-los é digitar o conjunto completo de adereços. A sintaxe começa como esperado, com os dois pontos para fornecer uma anotação de tipo. E agora precisamos fornecer um objeto que contenha as propriedades e os tipos correspondentes, porque só temos um, que é o do jogo. Isso será muito breve para nós. Portanto, a propriedade
+
+é "jogo um" e o tipo esperado é booleano. E é literalmente isso. Se você passar o cursor sobre o primeiro jogo agora, poderá ver que ele é do tipo booleano . Mas e se tivéssemos vários acessórios? Isso também é super fácil.
+
+Só temos que continuar encadeando. Então poderíamos ter uma segunda propriedade chamada propriedade 2 com um tipo de tipo. Mas é claro que esse não é o nosso caso. Então vamos nos livrar deles. E aqui temos um componente totalmente tipado. O próprio componente
+
+e a propriedade. Agora não resta muito o que digitar no componente contêiner de confete . Então, vamos acessar a seção de status do jogo. Podemos ver que se trata de um componente funcional e que certamente retornará um elemento JSX. Então, vamos levar isso em consideração. Aqui em cima, podemos ver que
+
+desta vez existem cinco propriedades de componente. Embora tenhamos trabalhado apenas com um componente com uma única propriedade, mostrei como encadear vários tipos de propriedades. Então, aqui está o desafio para o resto do treino. Primeiro, digite explicitamente o valor de retorno do componente de status do jogo e, em seguida, digite todas as propriedades do status do jogo. E se você não tiver certeza dos tipos, certifique-se de verificar o arquivo app.tsx. Então, experimente e nos
+
+vemos daqui a pouco. Bem vindo de volta. É assim que se faz . Primeiro, vamos digitar explicitamente o próprio componente de status do jogo. Sabemos que sempre retornará um elemento JSX. Então, isso é fácil.
+
+Primeiro, vamos importar o tipo JSX do React e, em seguida, vamos digitar o status do jogo. Então, aqui, depois dos parênteses, vamos adicionar o elemento JSX. Agora podemos lidar com os acessórios. Primeiro, vamos começar com os dois pontos e depois vamos abrir o objeto literal. E como são muitos, vou colocar um em cada linha. Agora, todos
+
+esses cinco valores são derivados do arquivo app.tsx. Assim, mesmo que não nos lembremos de que tipos são ou não consigamos inferir pelo nome, podemos sempre ir verificar. Então, o jogo um é um booleano. "O jogo está perdido?"
+
+também é um valor booleano. "Se o jogo acabou" é mais uma vez uma variável booleana. A última tentativa está incorreta se você acertou (valor booleano). E, por fim, a contagem de palpites errados é um número. E pronto . Tudo digitado com muita precisão. Bem, "gentilmente"
+
+é uma palavra forte. Para ser sincero, a situação está começando a ficar um pouco confusa. Então, no próximo treino, vamos ajustar isso um pouco. No último treino, analisamos esses cinco objetos e os digitamos todos em linha aqui embaixo, o que funciona, mas definitivamente está começando a ficar um pouco confuso. E você pode imaginar o quão mais bagunçado ficaria se tivéssemos ainda mais adereços. Então, vamos usar o que
+
+aprendemos na primeira seção e fazer uso de tipos personalizados após nossas declarações de importação, mas antes da função. Vamos criar um novo tipo e chamá-lo de propriedades de status do jogo. Essa convenção de nomenclatura, que consiste no nome do componente mais a palavra "props", é bastante padrão, então você a verá em todo o nosso aplicativo conforme avançarmos. E para o valor, vamos pegar o objeto inteiro que contém as propriedades e seus tipos, e vamos exibi-lo aqui. E vou corrigir o recuo aqui rapidinho. E agora que temos
+
+os tipos personalizados de adereços de status do jogo, podemos usá-los aqui embaixo para digitar todos os nossos adereços de uma só vez. Adereços de status do jogo. E é isso. Agora está muito mais limpo e agradável aos olhos, e continua funcionando. Agora, você terá a oportunidade de criar e usar tipos personalizados como fizemos aqui no próximo treino. Mas já que estamos
+
+aqui no componente de status do jogo, vamos fazer um pequeno desafio com TypeScript puro. Aqui embaixo, após a declaração da função, temos uma variável de classe de status do jogo que usa o pacote clsxmppm. Se você não estiver familiarizado com este pacote, tudo o que precisa saber é que ele constrói e retorna um nome de classe condicionalmente. Que tipo você acha que retornaria? Aceite esse desafio e nos vemos do outro lado.
+
+Então, esta deve ser bem simples. Tradicionalmente, o nome de uma classe é uma sequência de caracteres. Então, vamos digitar isso como uma string. E pronto. Agora, nosso componente de status do jogo é altamente tipado . Vamos passar para outro assunto
+
+no próximo treino. Neste treino, vamos dar uma olhada no status da Arya em tempo real. Este é um componente que certamente retornará um elemento JSX. Possui quatro propriedades e todas elas têm tipos que podemos descobrir apenas olhando para o componente do aplicativo. Na própria instrução de retorno, também temos um aviso do TypeScript aqui para a letra. Embora esse código esteja dentro
+
+da instrução `return`, a tipagem funciona da mesma maneira. Agora, você já conhece Typescript e React o suficiente para tipar completamente este componente. Então, aqui está o seu desafio. Primeiro, digite explicitamente o valor de retorno dos componentes do status de vida da área. Em seguida, defina os valores das propriedades do componente usando um tipo personalizado e, finalmente, defina as variáveis ​​no próprio componente funcional. Experimente
+
+e nos vemos do outro lado. Bem vindo de volta. Vamos trabalhar juntos para superar esses desafios. Primeiro, vamos definir explicitamente o tipo do valor de retorno do componente. Vamos importar o JSX. Importe o tipo JSX do
+
+React. E então vamos usá-lo diretamente aqui para digitar o valor de retorno do status da área ao vivo. Então, JSXelement. Em seguida, vamos lidar com esses quatro acessórios. Vamos criar um novo tipo personalizado logo abaixo da declaração de importação. E
+
+vamos chamar isso de adereços para o status ao vivo da Arya . pois seu valor terá um objeto literal que se refere a cada uma dessas propriedades e atribui um tipo a cada uma delas. Portanto, a palavra atual é uma sequência de caracteres. A última carta do convidado é uma sequência de caracteres. "Cartas dos convidados" é uma matriz, mas é uma matriz de strings. E o número de
+
+tentativas restantes é um número. E agora que temos nosso tipo personalizado, podemos usá-lo aqui embaixo para digitar todos os nossos atributos. Adereços para o status ao vivo de Arya. Agora que fizemos isso, alguns alunos mais atentos podem ter notado que o aviso que tínhamos abaixo da carta desapareceu. Isso ocorre porque a palavra atual agora é digitada explicitamente. Antes era um tipo "any", o que
+
+significa que esta letra também era um tipo "any", algo que sabemos que o TypeScript não aceita. E já que não há mal nenhum em digitar esta carta explicitamente, vamos fazer isso também. Portanto, a própria letra é uma string e essa função de retorno de chamada retornará um tipo string. E agora nosso componente de status ao vivo da Arya está totalmente tipado e robusto. Vamos prosseguir e digitar nosso próximo componente no próximo scrim. Te vejo lá.
+
+Restam apenas alguns componentes para serem tratados. E a próxima etapa é este componente de chips de linguagem. Primeiro, vamos digitar o valor de retorno da função. E como você já está bem acostumado com isso, vamos fazer isso como um desafio bem rapidinho . Então, como você já fez muitas vezes antes, vamos importar o tipo de JSX do React. E aqui, vamos
+
+digitar o valor de retorno da função com JSX.element. Ok, vamos em frente. O que eu quero que foquemos neste treino são os objetos, especialmente este objeto de idiomas. Você deve se lembrar do início desta seção que trabalhamos neste arquivo languages.ts. Todo esse conjunto de
+
+idiomas será passado para a propriedade `languages`. Temos um tipo de idioma personalizado configurado aqui, ao qual precisaremos acessar nos chips de idioma para definir o tipo da propriedade de idiomas. E é aqui que eu passo a palavra para vocês, como um desafio. Você vai precisar reunir tudo o que já sabe sobre JavaScript e TypeScript para trazer esse tipo para este componente, a fim de tipar essa propriedade. e depois digite o restante das adereços. Boa sorte e nos
+
+vemos do outro lado. Bem vindo de volta. A principal parte deste desafio é trazer o tipo de idioma para o componente de chips de idioma, e podemos fazer isso com uma exportação JavaScript simples. Então, aqui no arquivo languages.ts, vamos adicionar a palavra-chave export para que possamos acessar esse tipo em outros lugares. E então, de volta ao arquivo de
+
+linguagem chips.tsx, vamos importá-lo. Então, importe o tipo de linguagem de linguagens. E agora podemos usar esse tipo de linguagem. Então, vamos digitar nossas duas adereços aqui. Criaremos um novo tipo
+
+chamado "props de chips de idioma" para seguir a convenção de nomenclatura. E então vamos focar em nossos dois pilares. Portanto, os idiomas devem ser uma matriz de idiomas onde o idioma é deste tipo. E então, a contagem de palpites errados é um número. E então usaremos esse novo tipo para tipificar nossas propriedades. Adereços para fichas de linguagem. E pronto
+
+. Agora que as propriedades estão devidamente tipadas, vamos prosseguir com a tipagem de algumas variáveis ​​no próprio componente. Mas faremos isso no próximo treino. Bem-vindo(a) de volta ao componente de chips de linguagem, onde acabamos de digitar nossas duas propriedades. Agora vamos entrar no componente e digitar todas as variáveis ​​que encontrarmos. Aqui estão três bem
+
+simples. Há a linguagem perdida, há estilos e há o nome da classe. Vamos começar o treino com um desafio rápido: digite os três. E uma dica: talvez você precise usar o tipo utilitário `emit` do TypeScript. Experimente e já te vejo.
+
+Duas delas são bastante simples. "Is language lost" é um valor booleano e "class name" é uma string. Mas os estilos talvez fossem um pouco mais complicados. Podemos ver que é um objeto que contém uma string de cor de fundo e uma string de cor, e isso deve lhe soar familiar. Se formos até o nosso arquivo de idiomas e verificarmos o tipo de idioma personalizado, podemos ver que a cor de fundo e a cor são duas das três propriedades desse tipo de idioma. Portanto, definitivamente devemos
+
+aproveitar essa oportunidade. Então, voltando aos chips de linguagem, vamos digitar os estilos desta forma. Vamos usar o tipo utilitário `emit` e vamos especificar que usaremos tudo do idioma, exceto o nome da propriedade. E é assim que fazemos isso. Agora que isso está resolvido, vamos abordar o verdadeiro desafio do roteiro. Vamos digitar a
+
+função de retorno de chamada (callback) dentro deste método map, bem como os próprios elementos da linguagem . Vou te colocar numa situação bem difícil agora, com um desafio. Primeiro, digite os parâmetros da função de retorno de chamada . Em seguida, digite o valor de retorno da própria função de retorno de chamada. E, por fim, digite os elementos da linguagem. Lembre-se
+
+de que você pode passar o cursor sobre cada um dos parâmetros, a seta ou os próprios elementos da linguagem para verificar o que o TypeScript está inferindo. Mas eu gostaria de encorajá-lo(a) a experimentar por conta própria primeiro. Boa sorte e nos vemos do outro lado. Bem vindo de volta. Espero que tenha sido um bom desafio e que tenha realmente estimulado seu intelecto. Um pequeno desafio é sempre bem-vindo
+
+ao aprender novos conceitos. Vamos começar com lang e index. Lang é um único tipo de idioma. Um índice é um número. Em seguida, vamos abordar o valor de retorno da função de retorno de chamada. Podemos
+
+ver pela instrução de retorno que obtemos um único elemento JSX a cada vez. Então, poderemos usar a importação JSX novamente. Aqui, depois dos parênteses, vamos digitar o valor de retorno como um elemento JSX. E como o que é retornado em cada iteração do método map é um elemento JSX, e map retorna um array contendo o valor de cada iteração. Os elementos de idioma devem ser uma matriz de elementos JSX. E podemos fazer isso com um
+
+elemento JSX e, em seguida, um array. E aqui está , um componente de chips de linguagem totalmente tipado . Foi um treino um pouco mais longo . Então, fique à vontade para fazer uma pausa antes de participar da próxima aula, onde vou desafiá-lo a digitar completamente um de nossos componentes usando tudo o que você aprendeu até agora. Aqui está aberto o componente de letras do Word, que precisa de um pouco de digitação.
+
+Agora você já sabe mais do que o suficiente para digitar isso por completo. Temos um componente que definitivamente retorna um elemento JSX. Possui três propriedades, um método de mapeamento e algumas variáveis ​​que podemos tipar explicitamente. Feita essa introdução, aqui está o seu desafio. Primeiro, digite explicitamente os componentes de letras da palavra que retornam o valor. Em seguida, defina as
+
+propriedades dos componentes usando um tipo personalizado. E, por fim, digite explicitamente todas as variáveis ​​no próprio componente. Te vejo do outro lado. Bem vindo de volta. Vamos enfrentar isso juntos. Primeiro, vamos digitar o
+
+valor de retorno do próprio componente de letras da palavra . Agora, sabemos que ele retorna um único elemento JSX. Então, vamos importar o tipo de JSX do React e digitá-lo aqui mesmo com JSX.element. Em seguida, temos essas propriedades de componentes.
+
+Primeiro, o tipo personalizado, que chamaremos de " props de letras de palavras" para atender à convenção de nomenclatura, e depois, dentro dele, vamos selecionar os três. A palavra atual deve ser uma sequência de caracteres. As cartas dos convidados devem ser uma matriz de strings e "jogo perdido" deve ser um valor booleano. E agora que temos esse tipo, podemos usá-lo para digitar todos os nossos adereços de uma só vez com adereços de letras de palavras. E agora, quaisquer avisos do TypeScript que você possa ter visto aqui embaixo desapareceram. Mas sempre podemos nos beneficiar
+
+de alguma tipagem explícita. E existem algumas coisas às quais podemos adicionar anotações de tipo aqui embaixo. Primeiro, vamos digitar os dois parâmetros do método map. Então, a letra é uma sequência de caracteres e o índice é um número. E quanto ao valor de retorno dessa função de retorno de chamada, podemos ver que ela está retornando um elemento JSX.
+
+E também podemos ver isso se passarmos o cursor sobre a seta aqui. Então, vamos usar o elemento JSX para tipificar essa função. Dentro da função, também temos a variável que deve revelar a letra, bem como a variável que representa o nome da classe da letra. Analisando o código de "should reveal letter", podemos afirmar que se trata de um valor booleano devido ao "or" presente neste ponto. Então, vamos digitar isso como um valor booleano. E quanto ao
+
+nome da classe da letra, já vimos o clsx em ação antes, então sabemos que ele deve retornar uma string. E pronto . Mais um componente concluído. E desta vez foi 100% graças a você. Estamos muito perto de tipar completamente todo o projeto React. E no
+
+próximo scrim, vamos dar uma olhada em como tipar uma propriedade de componente que também é uma função. Te vejo lá. Se você tem acompanhado os componentes em que trabalhamos, sabe que faltam apenas dois. Neste treino, vamos abordar o novo componente do botão de jogo. Podemos ver pelo código que ele parece relativamente simples. Essa função recebe dois parâmetros e
+
+retorna nulo ou um elemento JSX. Parece muito fácil, não é? Não há muita coisa aqui. Mas não se deixe enganar. Um desses adereços é diferente dos outros. Agora, "
+
+game over" é uma variável derivada de app.tsx. Mas começar um novo jogo é mais do que isso. Vamos dar uma olhada no arquivo app.tsx. Iniciar novo jogo é uma
+
+função que digitamos no início desta seção. Essa função é o que é passado para o componente do novo botão de jogo aqui embaixo como uma propriedade (prop). Então, como digitamos isso? De volta ao componente do botão de novo jogo, vou digitar rapidamente o valor de retorno do componente. Então, importe o tipo JSX do React. Isso retornará
+
+um elemento JSX ou um valor nulo. Ok, vamos começar a manusear esses acessórios. Primeiro, vamos criar o novo tipo e chamá- lo de novos acessórios de botão de jogo. E vamos garantir que o primeiro adereço esteja aqui. O jogo acabou? Sabemos que é um valor booleano. Mas agora
+
+temos que pensar em iniciar um novo jogo, que é uma propriedade de função que retorna void. Então, vou te jogar na água agora com um pouco de sintaxe para você tentar e ver o que acontece. A sintaxe que você terá que usar é: o nome da propriedade, seguido pelos parênteses dos parâmetros, a seta e, por fim, o tipo de retorno. Experimente . Bem vindo de volta. Como foi? É
+
+assim que digitaríamos uma propriedade de função. Primeiro, vamos especificar o nome da propriedade como qualquer outra propriedade. Iniciar novo jogo. E então, de acordo com a sintaxe, precisaremos fornecer uma função com sintaxe de seta . Em relação aos parâmetros, basta listarmos os parâmetros e seus respectivos tipos. Mas essa função não recebe
+
+nenhum parâmetro. Então temos a seta e o tipo de retorno, que sabemos ser void. E é literalmente isso. Esta é a forma de definir uma propriedade de função que não recebe parâmetros e não retorna nada. Se a função tivesse parâmetros, talvez uma string, e retornasse um número, ela poderia ser assim. Digamos que a
+
+propriedade `name` fosse uma string e retornasse um número. É assim que digitaríamos. Mas o nosso não leva nada e não devolve nada. Então, vamos reverter isso . E agora temos nossos novos botões de jogo para usar aqui. Novos
+
+acessórios para botões de jogo. E tudo está bem. E é assim que definimos o tipo de qualquer função que esteja sendo passada como propriedade (props). Tudo bem. Agora você sabe que só falta digitar um componente. E no próximo Grim,
+
+você vai abordá-lo por completo. Te vejo lá. Bem-vindo ao seu desafio final. Neste teste, você digitará completamente nosso componente React final aqui no arquivo keyboard.tsx.
+
+Ele contém quase tudo o que aprendemos até agora, desde TypeScript puro até tipagem mais específica do React. Então, aqui está o seu desafio final. Digite completamente o componente do teclado. Você terá que lidar com o valor de retorno do teclado. Você terá que lidar com os acessórios. E
+
+você terá que digitar explicitamente todas as variáveis ​​dentro do componente de teclado. Lembre-se de que você sempre pode consultar os outros componentes do editor para verificar como fizemos determinadas coisas antes. Boa sorte no seu desafio final desta seção e nos vemos do outro lado. Bem vindo de volta. Espero que você tenha gostado do seu desafio final. Vamos analisar isso
+
+juntos. Primeiro, vamos digitar o valor de retorno do componente. E podemos ver que certamente retornará um elemento JSX. Então, primeiro teremos que importar o tipo de JSX do React, como já fizemos tantas vezes antes. E então vamos digitar o valor de retorno aqui com JSX.element.
+
+Em seguida, vamos lidar com os cinco acessórios. E, assim como já fizemos tantas vezes , criaremos um novo tipo e o chamaremos de "adereços de teclado" para seguir as convenções de nomenclatura. E então especificaremos todos os cinco itens dentro dele . Portanto, o alfabeto será uma sequência de caracteres. As cartas dos convidados são um conjunto de strings. A
+
+palavra atual é uma sequência de caracteres. "Is game over" é um valor booleano e "add guest letter" é uma função. Portanto, teremos que fornecer a sintaxe de seta. Agora não retorna nada. Então vamos colocar "vazio" aqui. E recebe
+
+um parâmetro chamado letra, que sabemos ser uma string. E agora que temos isso, podemos usá-lo para digitar nossos adereços, adicionando-o ao final aqui com dois pontos e a propriedade "keyboard props". Agora podemos prosseguir e abordar todas as variáveis ​​dentro do próprio componente. Vamos começar pelo fim. Então, vou começar pelas partes menores e depois trabalhar até chegar à função map e, em seguida, à variável que a contém. Primeiro vou dizer o
+
+nome da turma. Já vimos o clsx antes. Então sabemos que isso vai ser uma sequência. Então, "está errado" é um valor booleano, assim como "está correto" e "também foi adivinhado". Subindo um pouco, temos esse parâmetro de letra, que sabemos ser uma string. Então, vamos colocá-lo entre
+
+parênteses e digitá-lo como string. Então, o valor retornado por essa função de seta é todo esse elemento JSX. Portanto, o tipo seria um elemento JSX. E, por fim, os elementos do teclado. Assim como outros mapas que vimos em outros componentes, este seria um array de elementos JSX. Então, o
+
+elemento JSX e depois o array. E com isso, o componente React final do nosso projeto de montagem final foi tipado. Bom trabalho. E veja só isso? Pegamos nosso adorado aplicativo de simulação de assembly do Learn React e o aprimoramos com TypeScript. Em termos de funcionalidade, o aplicativo continua
+
+funcionando exatamente da mesma maneira, mas agora está totalmente tipado, o que significa melhor legibilidade, menos erros e uma experiência de desenvolvimento mais fluida. O mesmo aplicativo, porém mais robusto e um pouco mais sofisticado. Aqui está um breve resumo do que abordamos nesta seção sobre TypeScript e React . Começamos com uma revisão dos conceitos básicos de TypeScript. Em seguida, analisamos como usar o estado corretamente, dependendo do que estamos armazenando. Em seguida, analisamos a
+
+tipagem de componentes React usando o tipo de elemento JSX importado. A partir daí, analisamos a tipagem das propriedades dos componentes, tanto de forma inline quanto de maneira mais limpa, usando tipos de propriedades personalizados . Também abordamos os tipos de importadores para que possamos manter tudo modular e organizado. E, por fim, abordamos a tipagem de props de função, o que é super comum no React quando você está passando callbacks. Pronto, aí está. O mesmo aplicativo, novos superpoderes,
+
+menos palpites, menos bugs e muito mais tranquilidade. Muito obrigado por me acompanharem nesta jornada com TypeScript e React. Até nos encontrarmos novamente, eu fui sua professora, Rachel Johnson, e nos vemos na próxima vez.

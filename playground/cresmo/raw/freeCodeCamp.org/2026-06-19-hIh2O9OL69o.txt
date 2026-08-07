@@ -1,0 +1,390 @@
+---
+video_title: "Build an AI Agent in Telegram with Vercel, Cursor, Composio"
+video_id: hIh2O9OL69o
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=hIh2O9OL69o
+video_date: 2026-06-19T10:39:48+00:00
+video_description: |
+  Build your own OpenClaw-like AI agent from scratch using the Vercel AI SDK, Composio, Supermemory, Telegram, and Vercel Cron.
+  
+  In this free full course, you'll start with the Vercel AI SDK Chatbot template, connect your agent to real apps like Gmail with Composio, add long-term memory with Supermemory, give the agent a persistent personality, make it usable from Telegram, and add scheduled automations with Vercel Cron.
+  
+  By the end, you'll understand the core building blocks behind production AI agents: tool calling, context engineering, OAuth, memory, auth, database migrations, multi-channel agent interfaces, scheduled jobs, and deployment.
+  
+  Resources
+  💻 START HERE: Chatbot template https://vercel.com/templates/next.js/chatbot
+  💻 Prompts and source code: https://github.com/composio-community/general-purpose-agent-quickstart
+  🔗 100% off the Composio Starter Plan for 1 month: Use code FREECODECAMP at checkout
+  🔗 Get 50% off Cursor plans: https://cursor.com/referral?code=DQSTRSDOYBCI
+  
+  🏗️ @Composio provided a grant to make this course possible.
+  
+  What you'll build
+  - A deployed Vercel AI SDK chatbot
+  - Telegram access for your agent
+  - 1000+ apps for your agent via OAuth
+  - Long-term memory and soul
+  - Scheduled automations with Vercel Cron
+  
+  ⭐️ Chapters ⭐️
+  0:00:00 Build an OpenClaw-like AI Agent
+  0:01:10 Final Agent Demo
+  0:03:13 What You'll Learn
+  0:03:52 Who Am I
+  0:04:27 Do You Need to Know How to Code?
+  0:05:03 Cursor, Codex, and Course Resources
+  0:05:34 Free Cursor, OpenAI Programs, and Discounts
+  0:06:16 What Is an AI Agent?
+  0:09:41 PART 1: Vercel AI SDK Chatbot Template
+  0:12:59 Test the Deployed Template
+  0:13:42 Vercel AI Gateway Router
+  0:14:37 Run the Template Locally
+  0:16:48 Confirm Database Changes
+  0:17:58 Start the Local Dev Server
+  0:19:16 PART 2: Add Composio Tools
+  0:20:29 Context Engineering
+  0:24:21 Create a Composio API Key
+  0:25:23 PROMPT 1: Add Composio Tools
+  0:26:36 Reviewing AI-Generated Changes
+  0:28:54 Test Composio with Gmail
+  0:30:56 Composio 1 Month Free
+  0:31:17 OAuth and Composio Auth
+  0:32:41 PROMPT 2: Expand AI Gateway Models
+  0:35:12 Inspect Database Changes
+  0:36:21 PART 3: Add Long-Term Memory with Supermemory
+  0:40:27 Set Up Supermemory
+  0:39:49 PROMPT 3: Add Supermemory
+  0:41:25 Reviewing Supermemory Changes
+  0:42:06 Test Long-Term Memory
+  0:43:43 PART 4: Add Agent Soul
+  0:45:37 PROMPT 4: Add Soul
+  0:46:59 Test Soul Feature
+  0:49:07 PART 5: Add Telegram
+  0:50:59 Setting Up Telegram
+  0:51:45 Add Telegram Token to Env
+  0:52:47 Setting Up ngrok
+  0:54:56 PROMPT 5: Add Telegram
+  0:56:19 Register the Telegram Webhook
+  0:58:34 Test the Telegram Bot
+  0:58:57 PART 6: Add Automations with Vercel Cron
+  1:00:55 Configure Vercel Cron
+  1:01:59 PROMPT 6: Add Scheduled Tasks
+  1:03:30 Test Scheduled Tasks
+  1:04:59 PART 7: Deploy to Production
+  1:06:34 How to Get Help
+  
+  Keywords: AI agent tutorial, Vercel AI SDK, Composio, Supermemory, OpenClaw, Cursor AI, Telegram bot, Vercel Cron, AI chatbot, tool calling, context engineering, OAuth, agent memory, build AI agents, Next.js AI agent
+---
+Aprenda a criar um agente de IA com Cursor e Next.js. Basicamente, você criará sua própria versão do Openclaw. Este curso abrange todo o processo de desenvolvimento utilizando o SDK de IA, Supermemory e Compositio para criar um sistema inteligente capaz de executar ações complexas. Shawn Esquivel desenvolveu este curso, e a Compositio concedeu uma bolsa para torná-lo possível.
+
+Bem-vindo(a) ao curso, construa seu próprio Openclaw do zero. Neste vídeo, vamos construir um agente de IA com o qual podemos conversar pelo Telegram e que possui memória persistente, para que aprenda com cada conversa individual. Este agente será capaz de realizar tarefas para você, e nos inspiraremos bastante no popular projeto de código aberto Openclaw. Openclaw é um agente de IA que funciona na sua máquina local. Possui 371.000
+
+estrelas no GitHub e é um dos projetos de código aberto que mais crescem em todos os tempos. Ele pode se conectar a ferramentas que você já usa, como Gmail, Slack, Linear, aprender com seu estilo ao longo do tempo e tudo funciona na sua própria máquina. Tudo bem. Então, primeiro, vou mostrar uma demonstração rápida do que vamos construir. Estou aqui no meu aplicativo Vercel implantado, que é o que usaremos para implantar nosso agente de IA finalizado. E
+
+aqui temos uma interface de usuário que se parece um pouco com o ChatGPT. Temos uma barra lateral onde podemos alternar entre nossos chats anteriores, e nossa conta de usuário está aqui no canto inferior esquerdo. Podemos ativar/desativar o modo escuro, sair da conta e até mesmo verificar algumas de nossas configurações. Aqui, podemos clicar para ver alguns dos modelos disponíveis do roteador Vercel AI Gateway. Na época da gravação deste vídeo, você ganhava US$ 5 em créditos gratuitos do Vercel AI Gateway todos os meses, se não me engano, mas eu vou escolher o Soneto Claude 4.6 e testar um
+
+desses prompts. Se pedirmos para escrever uma redação sobre o Vale do Silício, ele criará uma barra lateral interessante com um documento em Markdown com o qual podemos interagir . Se perguntarmos sobre o clima, ele exibirá as informações meteorológicas nessas interfaces de usuário dinâmicas, apresentando as previsões de hora em hora com ícones atraentes. Se perguntarmos sobre o código, ele será inserido nesses blocos de código. E neste outro chat, pedi para usar o Compozio, uma das ferramentas que vamos usar neste projeto, para buscar meus e-mails mais recentes no Gmail e, em seguida, enviar um rascunho para responder a quaisquer reclamações de clientes. O agente usa a
+
+função de ferramentas de busca, verifica nossas conexões e nos fornece o link para adicionar meu Gmail. Se eu abrir este link, poderei conectar minha conta do Gmail. Vai analisar meus e-mails e redigir uma mensagem para mim na conversa. Então, se eu voltar aos meus e-mails e verificar meus rascunhos, você poderá ver que meu agente de IA conseguiu redigir este e-mail para nós. Por fim, gostaria de destacar que ele está falando um pouco de japonês comigo, e isso porque eu pedi isso em uma das nossas conversas anteriores.
+
+Ao final deste curso, espero que você tenha uma melhor compreensão de como funcionam os agentes de IA. Você terá uma versão totalmente funcional que poderá implantar e começar a disponibilizar aos usuários hoje mesmo. E isso servirá como um valioso ponto de partida para qualquer outro agente de IA que você queira construir no futuro. Com o SDK de IA da Vercel, temos um modelo de chatbot incrível, além de todos os modelos de IA mais recentes disponíveis para nossos usuários. Então, com o Compozio, podemos conectar qualquer um dos aplicativos que usamos, permitindo automações entre aplicativos, como ir do Slack para o Notion e para o e-mail. E
+
+usaremos a Super Memória para que nosso agente aprenda com nossas conversas ao longo do tempo. E só uma breve nota sobre mim, seu instrutor. Então, eu sou engenheiro de relações com desenvolvedores na Compozio e também sou embaixador do Cursor. Já ensinei milhares de pessoas a usar ferramentas de IA como Cursor, Compozio e LangChain, e eu mesmo uso esses produtos constantemente como desenvolvedor full-stack e como alguém que gosta de criar aplicativos de IA no meu tempo livre. Acredito que, em 2026, também será muito importante saber como usar ferramentas de IA no seu fluxo de trabalho. Ao longo do curso,
+
+compartilharei algumas dicas úteis sobre como usar IA para programação, mas você pode usar esses mesmos princípios para Codex, Cloud Code ou qualquer outro agente de IA que esteja utilizando. A esta altura, você provavelmente também está pensando: preciso saber programar para acompanhar este curso? E não, não somos. Vamos usar muita IA para escrever o código. Sua tarefa é apenas entender o sistema, revisar algumas das mudanças, e vamos basear a maior parte do código no modelo de chatbot de IA da Vercel. Portanto, isso vai resolver
+
+cerca de 80% do trabalho de configuração da interface do usuário e até mesmo da configuração do banco de dados para nós. Como mencionei, este curso utilizará o Cursor, que é um editor de código de IA com agentes. Então, também vou compartilhar ferramentas sobre como solucionar problemas e criar novos recursos com segurança. Neste tutorial, usaremos o cursor. Oferece um plano gratuito para entusiastas com solicitações limitadas de agentes, que não exige cartão de crédito, e é agnóstico em relação aos agentes, o que significa que você pode usar o modelo Composer 2, os modelos Claude mais recentes e os modelos GPT mais recentes, tudo a partir da mesma interface de usuário. E tudo o
+
+que eu mencionar neste tutorial estará na descrição, então dê uma olhada lá se houver algum link que você esteja procurando. Ou você pode simplesmente clonar o repositório final obtendo a chave SSH aqui no repositório Compozio. Também quero ser transparente em relação aos custos para que isso seja o mais acessível possível para todos . Bem, você vai precisar de um cartão de crédito para se inscrever em qualquer plano profissional do Cursor se quiser usar os modelos de IA mais avançados, mas, felizmente, se você for estudante, pode obter o Cursor Pro gratuitamente acessando cursor.com/students. A
+
+OpenAI também tem um programa semelhante, e deixarei os links para esses programas na descrição. Só mais uma observação rápida sobre os planos pagos do Cursor . Então, se você clicar no link na descrição, poderá obter 50% de desconto em qualquer um dos planos da Cursor. Então, se você quiser esse plano de 20 dólares por mês, você ganha um desconto de 10 dólares. Então, confira o link na descrição. Muito bem, e antes de
+
+prosseguirmos, acho muito importante que respondamos a esta pergunta. O que é um agente de IA? Para explicar isso, acho que é muito útil usar a analogia de um agente humano. Assim, um agente de IA é bastante semelhante, pois consegue perceber o seu próprio ambiente, ou seja, a própria conversa e a forma como o utilizador estrutura a sua mensagem. A partir disso, o sistema pode raciocinar, planejar e executar autonomamente várias etapas para atingir um objetivo específico. E pode usar ferramentas para
+
+isso, pode analisar seus arquivos para isso e pode usar tudo isso para atingir um objetivo específico, seja algo simples como obter a previsão do tempo ou algo mais complexo como executar um fluxo de trabalho que abrange vários aplicativos. A primeira coisa que vamos fazer é construir a interface do usuário. E você pode pensar nisso como o corpo ou a primeira coisa que o usuário vê do lado de fora. E é assim que eles se comunicam com seu agente de IA. E faremos isso através do SDK de IA da Vercel. Em seguida,
+
+temos o cérebro. E esses serão os modelos de IA. Seja o modelo mais recente do Claude ou do GPT, ou talvez um modelo de código aberto como o Kimiko 2.5. Você pode pensar nesses modelos de IA como o cérebro que vive dentro do seu agente. E
+
+isso vai moldar a forma como as ferramentas são executadas, como os planos são elaborados, e vai melhorar a precisão geral se você usar um modelo com níveis mais altos de inteligência. Você pode pensar nas mãos como as ferramentas às quais seu agente de IA tem acesso. Nesse caso, as ferramentas podem ser qualquer aplicativo que você já use em sua vida pessoal ou profissional. Isso pode incluir ferramentas de comunicação como Slack ou Gmail, ou talvez ferramentas de produtividade como Linear e Notion, ou até mesmo ferramentas de desenvolvimento como GitHub ou outros gerenciadores de código. Portanto, nosso agente de IA da Vercel já possui uma lista de ferramentas que pode utilizar. Então, ele pode obter informações
+
+meteorológicas, pode usar ferramentas que inserem código em blocos de código, mas também vamos fornecer a ele várias outras ferramentas. Ferramentas dos nossos aplicativos reais que utilizam o Compozio. Com o Compozio, daremos ao nosso agente acesso a mais de mil conjuntos de ferramentas que nos permitem executar vários comandos. Por exemplo, no Gmail, existem muitas ferramentas, como redigir e ler e-mails, etc. E, ao integrar o Compozio, podemos ter acesso a todos esses recursos e disponibilizá-los para nosso agente de IA. Assim, nosso agente terá
+
+seu cérebro, os modelos de IA. O programa será capaz de ler as instruções do usuário para elaborar um plano do que precisa fazer e, em seguida, usará essas instruções, os arquivos e quaisquer ferramentas disponíveis. Portanto, se o usuário solicitar seus e-mails mais recentes e eles não estiverem disponíveis no contexto do chat, o sistema poderá usar uma das ferramentas disponíveis, como o Gmail ou o Outlook, para buscar esses e-mails e exibi-los na janela de contexto. Nas seções posteriores, adicionaremos supermemória para que nosso agente possa aprender continuamente com todos os nossos chats. Vamos adicionar uma alma para que tenha mais personalidade. E depois também adicionaremos o
+
+Telegram para que possamos enviar mensagens ao nosso agente pelo celular. E, por fim, adicionaremos tarefas cron para que nosso agente possa executar fluxos de trabalho repetidos sempre da mesma maneira, em intervalos de tempo específicos. Muito bem, nesta seção, vamos começar a construir a interface do usuário usando o SDK de IA da Vercel com o modelo de chatbot. Então, na descrição, acesse o link github.com/vercel/chatbot.
+
+Desça até aqui e clique em "Implantar". Você pode consultar este link para obter uma visão geral rápida dos recursos incluídos, que eu já mencionei. Então, basta clicar em "Implantar" aqui. Caso ainda não tenha feito isso, você será solicitado a criar sua conta Vercel, que é 100% gratuita no plano hobby, que é o plano que estou usando atualmente. Em seguida, você pode adicionar sua conta do GitHub aqui clicando em "Adicionar conta do GitHub" e usaremos o nome de repositório privado padrão " chatbot". Parece que eu já tenho
+
+isso implementado, então vou chamá-lo de chatbot 2. E vou criá-lo. Muito bem, então, resumidamente, estes são todos os produtos que vêm prontos para usar com um modelo de chatbot. Essas opções são opcionais, mas tornam a configuração muito mais rápida. Então, o primeiro aqui é o Neon, e este é um Postgres sem servidor. Então, é hospedado pela
+
+Neon. Vamos clicar em adicionar, selecionar a região, e isso não fará muita diferença, mas escolheremos a mais próxima dos nossos usuários. Vamos habilitar a autenticação para que as pessoas possam se cadastrar. E você pode ver o nível gratuito que acompanha o produto. Vamos aceitar todas essas configurações padrão e clicar em criar. E
+
+ele provisionará rapidamente esse banco de dados para nós, e então ele já estará disponível para uso. Também aceitaremos o ambiente padrão, ou seja, o ambiente de produção e o ambiente de pré-visualização, e isso também criará esse prefixo de armazenamento _url. E este é um URL sensível que a Vercel vai adicionar ao nosso projeto. Ao clicar em conectar, todas as variáveis ​​de ambiente do Neon serão adicionadas ao modelo de chatbot Vercel que clonamos. Isso foi super fácil, e agora vamos continuar com o resto. Vamos adicionar o Upstash para
+
+Redis, usar a mesma região padrão, ativar/desativar o nível gratuito, aceitar todas essas configurações padrão e você verá que temos 500.000 comandos mensais, o que é mais do que suficiente enquanto estivermos testando. Em seguida, o sistema provisionará tudo para nós em alguns segundos. Certo, aqui também, aceite todas as configurações padrão e conecte o Redis ao nosso projeto Vercel. O Redis será útil para limitar a taxa de requisições dos usuários, impedindo que abusem dos nossos recursos de IA, e também nos permitirá ter fluxos de bate-papo reutilizáveis.
+
+E, por fim, temos o Blob Store da Vercel. Isso nos permitirá fazer upload de arquivos, para que o usuário possa enviar arquivos CSV, arquivos Markdown, ou qualquer outro tipo de arquivo, para fornecer contexto ao chat. Vamos aceitar o nome da loja padrão , a região padrão, tornar isso privado e criar isso. Então, quando eu rolar para baixo até a seção de adicionar variáveis ​​de ambiente , veremos todas as variáveis ​​de ambiente que o Vercel já configurou para nós, e essas serão as variáveis ​​de ambiente implantadas que precisaremos vincular à nossa sessão local para que possamos usar esses serviços a partir do localhost. Temos esse segredo de autenticação.
+
+Podemos atualizar este segredo de autenticação caso ele seja vazado e, em seguida, clicar em "Implantar" quando estiver pronto. Muito bem, assim que clicarmos em implantar, o sistema começará a provisionar as integrações, fornecendo os registros de compilação, e aguardaremos a conclusão de todo o processo, enquanto ele cria o commit inicial e implanta tudo para nós. Muito bem, agora que está concluído, podemos clicar na pré-visualização, e ela nos mostrará o modelo de chatbot implantado. Muito bem, como vocês podem ver, estamos na conta de convidado, o que nos permitiu executar este prompt. Ele usa o SDK de IA da Vercel para ter essa interface de usuário intuitiva, essa interface de bloco de código, e nos fornece a resposta completa usando o Gemini K2.5. Além disso, ele possui todos esses outros
+
+modelos aqui por padrão, que podemos usar. Muito bem, agora podemos prosseguir para o nosso painel de controle. O único elemento importante para nós aqui são os domínios. Então, essa é a opção padrão que ele nos fornece. E também podemos acessar o gateway de IA da Vercel para o chatbot 2. E podemos ver
+
+que, com essa primeira resposta, usamos cerca de 1 centavo dos nossos 5 dólares em créditos. Podemos ver a lista completa de modelos disponíveis. Assim, podemos ter o Sonnet 4.6, 4.5 e 4. Também temos os
+
+modelos GPT. Então, por que usar um roteador de gateway de IA em vez de usar a chave de API da Anthropic nativamente? Bem, esta é uma maneira fácil de dar aos seus usuários acesso a centenas de modelos diferentes. Também existem mecanismos de contingência integrados, como planos alternativos para garantir que, se o modelo Anthropic não estiver funcionando, ele possa mudar para o GPT. Se o GPT não estiver funcionando, pode-se mudar para o DeepSeek.
+
+E isso é muito mais fácil de incluir do que criar toda essa lógica no seu aplicativo. Além disso, não há acréscimo de preço pela plataforma, portanto, a Vercel não está cobrando nada a mais pelo uso desse recurso. E você pode usar isso para modelos de texto, imagem e vídeo. Conforme mencionado aqui, você recebe US$ 5 em créditos gratuitos todos os meses, e eles não restringem seu acesso aos modelos premium. Tudo bem. Agora, vamos configurar isso
+
+localmente. Para isso, voltamos à visão geral do projeto, clicamos no repositório do GitHub que foi criado para nós e ele deverá estar em nossa conta com o commit inicial que acabamos de fazer. Em seguida , vou abrir isso com o GitHub Desktop. Clone o repositório e, como já tenho o Cursor instalado, vou abrir este arquivo no Cursor. Resumindo rapidamente, se você é um novo usuário do Cursor, temos a árvore de arquivos no lado esquerdo .
+
+Temos alguns comandos rápidos para que possamos abrir novos agentes, o terminal, o navegador ou simplesmente começar a conversar com nosso agente aqui mesmo, clicando em control shift til. E então vou instalar a CLI global do Vercel. Certifique-se de estar no repositório correto e, em seguida, executarei o comando Vercel link. Vou pressionar Y, Enter, e o sistema perguntará se quero me conectar ao chatbot 2. Então, esta é a versão implantada.
+
+Vou pressionar Enter para aceitar a resposta padrão "sim". E então vai me perguntar se eu quero obter as variáveis ​​de ambiente agora. Portanto, este comando executará o comando Vercel link e baixará as variáveis ​​de ambiente implantadas para que possamos ter exatamente a mesma configuração que temos em produção. Pressione Enter. E cria o arquivo .env.local. E
+
+então, com o plugin Vercel para Cloud Code, você pode instalá-lo se estiver usando o Cloud Code agora, mas eu não estou, então vou clicar em não. Se você instalar a CLI, usar o comando link e o comando env pull, você deverá ter um arquivo .env.local com uma aparência semelhante a esta. Ele conterá seu segredo de autenticação, seu token de gravação de blob e seu token OIDC da Vercel.
+
+Guarde este segredo e nunca o revele a ninguém. Em seguida, podemos executar o comando `pnpm install` , que instalará tudo o que está no nosso arquivo `package.json`, ou seja, todas as dependências necessárias. E podemos ignorar esse aviso. Em seguida, executaremos o comando `pnpm db migrate` para garantir que temos as alterações mais recentes do banco de dados.
+
+Mas você pode ver aqui que está faltando a URL do Postgres. Isso ocorre porque se trata de uma variável de ambiente sensível que precisaremos preencher manualmente. Então, vamos voltar ao painel de controle do Vercel. Voltaremos ao vercel.com.
+
+Acesse nosso projeto de chatbot. Em seguida, iremos para a aba de integrações. E configuramos o Neon e o Upstash para isso. Então, primeiro vamos obter as variáveis ​​de ambiente do Neon e o objeto Neon Champagne Pebble. Então, eu já configurei isso várias vezes, mas esta é a versão para o chatbot dois. Em
+
+seguida, vou copiar o trecho e colá-lo no meu arquivo .env.local. A segunda integração que configuramos foi com o Upstash. Então, vamos lá, gerenciar, clicar e copiar o trecho de código, e também colar isso no nosso arquivo .env.local
+
+e salvar. Agora, podemos executar o comando pnpm db:migrate novamente, e isso deverá executar as migrações. E todas as nossas migrações foram concluídas em cerca de 5 segundos. Muito bem, e o comando final é pnpm dev. Copie e cole isso, e nosso servidor local será iniciado e poderemos abri-lo. E, por padrão, ele cria
+
+essa conta de convidado para nós usando o auth.js. E então, podemos testar se isso está funcionando. E parece que tudo está funcionando corretamente. Então, temos o modelo de implantação, bem como o modelo local, que agora podemos começar a editar.
+
+Analisando rapidamente o modelo em si, podemos ignorar as pastas .next.vercel, e a maior parte dos arquivos importantes ficará nesta pasta do aplicativo. A pasta do aplicativo contém nossos layouts Next.js. Portanto,
+
+cada página que você vê em localhost:3000 é um arquivo dentro da pasta do aplicativo. Portanto, sempre que você criar um novo chat, ele será renderizado por meio dessa pasta, e podemos ver alguns dos componentes que ele está usando. Então, tem a barra lateral do aplicativo, e depois tem todas as funcionalidades, e depois o JSX, que tem todos os layouts que você vê, incluindo a barra lateral e quaisquer alertas. E tudo isso está escrito em React, e nós realmente não precisamos mexer nisso, pois a IA vai editar a maioria dos arquivos para nós. A única outra coisa que vou mostrar é o arquivo rate limiting.ts
+
+na nossa pasta da biblioteca. Assim, isso permitirá que seus usuários convidados enviem até 10 mensagens, mas você pode aumentar esse limite para 100. Certo. Agora que temos esse chatbot da Vercel funcionando, vamos começar a adicionar as mãos. Então, voltando à nossa analogia com o corpo, temos o corpo, que é o chatbot Vercel Next.js, e agora precisamos
+
+adaptar esse chatbot para torná-lo mais útil, ampliando as ferramentas que ele tem à sua disposição. O chatbot já consegue acionar ferramentas que obtêm informações meteorológicas, criam uma formatação adequada para os blocos de código, bem como documentos em Markdown. E o que ele faz nos bastidores é expor essa lista de ferramentas para o agente, e ao longo de cada mensagem, esse agente vai decidir se deve chamar uma das ferramentas e se é relevante, por exemplo, se o usuário mencionou o clima e a mensagem contém informações sobre o clima, ele certamente chamará a ferramenta "obter previsão do tempo" para que eu possa exibi-la em uma interface de usuário amigável. Então, agora estamos nesta etapa em que fornecemos ao nosso agente mais de 1.000 kits de ferramentas, e mais 1.000 ferramentas disponíveis através do
+
+MCP, ou protocolo de contexto do modelo, e falaremos mais sobre isso adiante. Então, agora vamos adicionar o Compozio, que nos oferece mais de 1.000 kits de ferramentas por meio de alguns dos aplicativos mais populares que você provavelmente já usa no seu dia a dia, e os apresenta de uma forma muito inteligente que estou muito animado para mostrar a vocês. Mas antes de falarmos sobre isso, é importante abordarmos as janelas de contexto, que são um dos conceitos mais importantes na construção de um agente de IA confiável. Uma janela de contexto é definida como a quantidade máxima de informação, medida em tokens, que um modelo de linguagem de grande porte, ou um LLM, pode reter de uma só vez. Você pode pensar
+
+nisso como a memória de trabalho da IA, ou sua memória de curto prazo, e qualquer coisa fora desse intervalo afetará a resposta, e qualquer coisa fora dele pode ser esquecida. Então, quando você usa uma ferramenta como Cursor, ChatGPT ou Claude, e percebe que seu chat está ficando muito longo, você pode ter notado que a IA piora, a precisão diminui, ela começa a esquecer detalhes e, eventualmente, torna-se inutilizável, sendo necessário iniciar um novo chat. E você pode culpar a janela de contexto por isso. Aqui estão alguns exemplos famosos de janelas de contexto com o GPT-4.0 de 2 anos atrás, girando em torno de 128.000 tokens, enquanto 2 anos depois,
+
+temos modelos de ponta, o GPT-5.5 e o Opus, ambos em torno de 1 milhão de tokens. E você tem outros modelos como o Gemini K 2.6 com um limite de 256.000 tokens. E
+
+já que estamos criando agentes de IA, não podemos deixar de falar sobre engenharia de contexto. Em sua definição mais simples, cada ferramenta exigirá mais tokens, e cada token custa mais dinheiro e reduz a precisão geral. Portanto, quando você estiver em um novo chat e estiver bem abaixo do limite de 1 milhão de tokens, você verá que seu LLM terá um ótimo desempenho. Mas, conforme você for adicionando mais e mais mensagens à sua conversa, perceberá que a precisão eventualmente chegará a um ponto em que se tornará inutilizável e você precisará iniciar um novo bate-papo. Se você está criando um agente de IA, com certeza vai querer que ele se mantenha preciso e, definitivamente, não vai querer que ele custe mais do que o necessário.
+
+Temos aqui a definição técnica completa , que é a de que a engenharia de contexto é uma curadoria, gestão e otimização estratégica dos tokens que inserimos nos LLMs para garantir que os resultados sejam de alta qualidade e relevantes. Vai além da engenharia ágil, projetando sistemas dinâmicos que fornecem as informações, ferramentas e contexto certos aos agentes no momento certo. É aí que entra o Composio. Ele funciona como uma camada de sistema dinâmica que dá ao seu agente acesso a um vasto catálogo de ferramentas sem nunca sobrecarregar a janela de contexto em um determinado momento. Você pode acessar composio.dev/toolkits
+
+para ver os mais de 1.000 kits de ferramentas que oferecemos suporte aqui, incluindo Slack, Notion, GitHub, Gmail e muito mais. E se dermos uma olhada no conjunto de ferramentas do Gmail, podemos ver que só isso adiciona 61 ferramentas à janela de contexto. Portanto, se você simplesmente desse ao seu agente acesso ao Gmail, você adicionaria todas essas definições de ferramentas à sua janela de contexto em cada solicitação. Bem, para um único aplicativo conectado, isso pode ser viável, mas se você tiver um, dois, cinco ou talvez 10 aplicativos conectados ao seu agente de IA, isso reduzirá a eficácia do sistema, porque seu agente terá que ler todos esses catálogos de ferramentas a cada interação, mesmo quando não forem relevantes.
+
+Basicamente, o agente só vê o conjunto de ferramentas de nível superior que tem disponível, e assim o contexto do agente permanece pequeno e não sobrecarregado com mais de mil ferramentas irrelevantes para ele. Então, na demonstração, você verá que eu uso o Composio para buscar meus e-mails mais recentes, e ele pesquisa nas ferramentas disponíveis, que são apenas JSON. Ele verifica se temos uma conta do Gmail autenticada e, em seguida, me fornece um link para conectar minha conta do Gmail diretamente. Assim que estiver conectado, você verá esses cartões de ferramentas sendo renderizados enquanto o agente busca no Composio a ferramenta certa para usar no Gmail, e então ele poderá redigir uma resposta usando essa mesma ferramenta de execução múltipla. E é exatamente por isso que a engenharia de contexto é importante.
+
+Com o Composio, fornecemos ao nosso agente apenas as ferramentas e o contexto necessários para que ele possa buscar nossos e-mails do Gmail e criar rascunhos somente quando precisar, sem precisar de informações sobre nenhum dos outros aplicativos conectados. Então, para começar a usar o Composio, vamos acessar composio.dev, clicar em "Começar", seguir o fluxo de integração para criar aplicativos com o Composio e vamos fazer isso. Muito bem, então aqui à esquerda, vamos garantir que estamos na plataforma. Em seguida, iremos para as configurações, chaves de API, e criaremos uma nova chave de API para o Code Camp. Depois,
+
+pegaremos essa chave. Volte ao Cursor e crie uma chave de API da Composio. Precisamos também voltar ao vercel.com. Entre nesse mesmo projeto de chatbot.
+
+Acesse as variáveis ​​de ambiente. E vamos adicionar a mesma variável de ambiente aqui.
+
+Marque como confidencial e salve. E voltaremos ao cursor para começar a testar isso. Muito bem, então, se você voltar à seção de prompts de prontidão do agente no arquivo readme, podemos copiar este prompt da parte dois para adicionar ferramentas Composio. E vamos copiar e colar tudo isso aqui. Vamos criar um novo agente e colar o código. Vou usar o Opus 4.7 para garantir que funcione
+
+corretamente na primeira tentativa, mas você também pode usar o modelo automático. Então, vamos falar sobre o que essa pergunta contém. Basicamente, vamos adicionar ferramentas de composição ao SDK de IA da Vercel com uma identidade por usuário desde o início. Manteremos a interface de chat atual. Vamos mencionar o contexto que já existe . Então temos o arquivo auth.js. Não queremos inserir
+
+IDs de usuário diretamente no código. Garantiremos que os usuários convidados não tenham acesso a nenhuma dessas ferramentas e mencionaremos que o diretório .env.local já possui uma chave de API do Composio . Esta segunda seção não é necessária, mas certamente ajuda quando você estiver testando novos recursos.
+
+Vamos pedir ao nosso agente para criar uma nova página administrativa que mostre o estado atual de integração do usuário, com o ID do usuário, o tipo de usuário e os conjuntos de ferramentas disponíveis que estão conectados. E nesta etapa final, pedirei que verifique algumas dessas informações, mas outras dependerão de nós, que as verificaremos no chat. Muito bem, demorou bastante para que todas essas mudanças fossem implementadas. Vamos ver como se saiu o nosso agente . Podemos ver aqui que passou por algumas etapas. Primeiro, explorou a
+
+base de código, reunindo contexto suficiente para responder à pergunta. E analisou alguns dos arquivos relevantes, conforme a solicitação original. Em primeiro lugar, podemos ver que explorou a base de código para reunir contexto suficiente para responder à pergunta. O programa examina os arquivos, consulta a documentação do Compozio e, em seguida, cria uma lista de tarefas para implementar esse recurso. Em seguida, o processo consiste em criar novos arquivos passo a passo, integrá-los às nossas rotas do Next.js e, por fim, atualizar o
+
+prompt do sistema. Em seguida, o agente Cursor executa uma etapa realmente importante. Ele executa o comando NPX TSC, que basicamente verifica se há erros no TypeScript. Como você pode ver aqui, ele gerou uma série de erros do TypeScript, pensou em como poderia corrigi- los e, em seguida, foi corrigindo-os um por um . Em seguida, executa novamente o mesmo comando de verificação de código , verifica que não há erros de TypeScript e finaliza sua lista de tarefas. Em seguida, analisarei cada um
+
+desses arquivos um por um. Muito bem, então estou fazendo duas coisas na minha avaliação aqui. Estou revisando o código em si para garantir que tudo pareça correto, mas também estou constantemente consultando o arquivo de alterações para entender o raciocínio por trás de algumas dessas mudanças. Principalmente quando o comando é extenso, é importante garantir que todas as etapas foram seguidas e que a IA não se desviou muito do comando original. Em seguida, analisarei esta etapa de verificação aqui no final e examinarei os principais casos de teste que preciso verificar por mim mesmo. Então, em primeiro lugar, como usuário comum,
+
+temos esses dois casos de teste para garantir que estejam funcionando. Temos a página de administração que precisamos testar e temos a página de visitantes que também precisamos testar. Vou voltar para localhost:3000, logado como convidado, e tentarei solicitar meus endereços de e-mail do Gmail.
+
+Como esperado, nosso agente não sabe que possui as ferramentas Compozio porque estamos conectados como usuário convidado. Então, parece que está funcionando corretamente. Em seguida, vou entrar na minha conta. Então, vou me cadastrar e farei exatamente a mesma pergunta. Use o Composio para obter meus e-mails mais recentes.
+
+Tudo bem. Então, acabei de testar isso com meu novo usuário, pedindo para usar o Composio para buscar meus e-mails mais recentes. Podemos ver que ele utiliza as ferramentas de busca do Composio. E isso vai, na verdade, verificar qual ferramenta deve ser usada para buscar e-mails na caixa de entrada. Isso contém informações realmente importantes para garantir que seu agente de IA execute a ferramenta corretamente.
+
+Isso inclui orientações de execução, etapas de planejamento recomendadas, problemas conhecidos do Gmail e do Outlook, como testar conexões ativas com o Gmail e o Outlook, bem como os esquemas exatos que precisam ser usados ​​para chamar determinadas ferramentas dos conjuntos de ferramentas. Por exemplo, se fosse necessário buscar e-mails do seu Gmail, o LLM precisaria gerar exatamente esse esquema de entrada. Inclui até exemplos e descrições para cada propriedade, como consulta e ID do usuário. Também contém o tipo, exemplos e uma descrição da finalidade dessa propriedade . Dessa forma, quando o comando de gerenciamento de conexões do Composio for executado, ele funcionará corretamente na primeira tentativa.
+
+Em seguida, clicaremos no link para conectar nosso e-mail ao nosso chat atual do Composio. Após concluirmos esse fluxo OAuth, perguntarei novamente. E agora, o agente ainda mantém o contexto de como deve buscar e-mails, o que permite usar a ferramenta de execução múltipla do Composio com o slug correto da ferramenta, que é " buscar e-mails do Gmail". E então, ele passa os argumentos exatos que precisa para chamar essa ferramenta corretamente. A partir disso, o agente obterá este JSON de resultados. Esta pasta conterá todos
+
+os dados desta chamada da ferramenta MCP e os apresentará em um formato fácil de ler para os LLMs, incluindo todos os seus e-mails em um formato claro e legível. E para a verificação final, vou acessar localhost 3000/admin. Isso serve apenas para verificar meu ID de usuário atual, o tipo de usuário e se eu tenho uma conta do Gmail conectada. Gostaria também de mencionar que, se você está pensando em experimentar o plano inicial por prever um alto volume de uso, pode consultar a fatura para verificar o plano inicial, que oferece 10 vezes mais uso, com 200.000 chamadas de ferramentas por mês. Então, você pode usar
+
+o código freecodecamp no momento do pagamento e obter 1 mês totalmente grátis. Então, o que é OAuth e por que o utilizamos com o Composable? Você já nos viu usar o OAuth ao longo deste aplicativo, e isso acontece quando clicamos no link "Conectar ao Gmail" . Somos redirecionados para o Google para autenticação. O Google nos fornece a tela do OAuth, e então o Composable armazena o token para nós e informa ao nosso agente que ele pode usar determinadas ferramentas, como o Gmail. Isso funciona
+
+muito bem porque nenhuma senha é compartilhada com a IA. Possui escopo e permissões limitadas, e você sempre pode revogar essas permissões posteriormente. Então, você deve estar se perguntando: por que eu mesmo não faço isso ? Tipo, eu poderia simplesmente escrever um código para isso . Bem, o motivo é que criar isso do zero é meio chato.
+
+Cada aplicativo disponível no Composable já possui uma lista de ferramentas aqui, sendo que o Gmail sozinho conta com 61 ferramentas diferentes. Cada ferramenta possui um formato diferente, uma descrição diferente e certos pontos de falha que os agentes de IA costumam encontrar. Ao usar o Composable, ele abstrai tudo isso para nós, incluindo o armazenamento de tokens, a lógica de atualização e as definições de ferramentas. Isso significa que o token do usuário é armazenado com segurança, o usuário permanece autenticado para que possa acessar rapidamente as ferramentas para as quais concedeu permissões , e todas as ferramentas do Gmail e de todos os outros aplicativos aos quais concedemos permissão são definidas de forma clara para que o agente de IA as entenda. Ao abstrair isso para o Composable, podemos nos concentrar em aprimorar nosso agente de IA em vez de construir cada uma dessas integrações individualmente.
+
+Em seguida, no arquivo Leia-me, vamos pegar este prompt para expandir a lista de modelos. Vamos voltar ao nosso agente de cursor e colá-lo. Isso basicamente adicionará mais modelos à nossa lista do AI Gateway, já que eles estão constantemente adicionando novos modelos. Portanto, esta será uma correção de interface de usuário muito simples. Aqui, podemos ver que o cursor cria um subagente e abre o navegador. Agora, ele está visualizando
+
+a página da web ao vivo, analisando os modelos de gateway de IA da Vercel. Na verdade, o sistema está rolando a página da web manualmente e começando a coletar os IDs de cada modelo para adicioná-los ao nosso aplicativo. Muito bem, então parece que ele atualiza nosso arquivo model.ts com alguns modelos GPT-5, Gemini e Claude Opus . Parece que tudo é bastante simples e podemos ver que essas opções já estão disponíveis no nosso chat.
+
+Então, na verdade, instruímos o agente do cursor, neste prompt bem específico, a adicionar novos modelos. O cursor usa então uma ferramenta muito poderosa que verifica se a lista de modelos foi realmente criada e cria o subagente para nós, o qual podemos verificar. Basicamente, ele cria um subprompt que instrui o sistema a navegar até localhost:3000 para verificar os novos modelos que acabou de adicionar. Em seguida, instrui o sistema a usar um modelo barato e enviar uma breve mensagem relatando o ocorrido. Podemos ver aqui que o sistema navegou, clicou, clicou, clicou, digitou na caixa de texto e, em seguida, clicou no botão "Enviar". E em qualquer um deles,
+
+podemos clicar para ver exatamente qual interface o agente do cursor estava visualizando naquele exato momento. Então podemos ver que ele esperou. E aqui podemos ver que capturou uma imagem. Portanto, não testamos isso nós mesmos. Isso foi feito exclusivamente pelo agente do cursor, que digitou esses itens, clicou na interface do usuário para nós e, em seguida, verificou por meio de capturas de tela se tudo estava funcionando corretamente. Acho
+
+isso absolutamente incrível, e essa é uma das minhas funcionalidades favoritas do Cursor porque me poupa muito tempo, já que não preciso ficar clicando em vários lugares no meu aplicativo web para testar se tudo está funcionando. Assim, ao instruir o agente a verificar na interface do usuário se tudo está ocorrendo conforme o esperado, você permitirá que o agente de cursor crie esses subagentes, teste as alterações por conta própria e verifique as coisas para você. Tudo bem. Agora, vamos dar uma olhada rápida em como o banco de dados está funcionando. Vou pedir ao meu agente de cursor para abrir o estúdio de banco de dados. Acho que estamos
+
+usando garoa. Inicie o programa e me diga como abri-lo.
+
+Então, na verdade, ele inicia o estúdio para mim, e você pode ver que ele cria esse terminal em segundo plano que agora está em execução. Vou clicar para abrir aqui à esquerda, e podemos ver que já está funcionando. Então, vou seguir esse conselho. Assim, cada novo chat será criado como uma linha nesta tabela. Todas as mensagens de cada um desses chats serão listadas nesta tabela, separadas pelo usuário e pelo assistente de IA.
+
+E então, temos também a tabela de usuários. Temos uma linha diferente para cada login de um convidado. Aqui está o meu cadastro, e aqui à direita está a minha senha criptografada . Tudo bem. Então, recapitulando rapidamente o que construímos até agora, voltando à nossa analogia do corpo para o agente. Primeiro, construímos
+
+a estrutura, que é a interface de usuário do Vercel Chat. Portanto, é isto que os usuários podem ver e com o que podem interagir. Em seguida, demos ao agente ferramentas para expandir suas capacidades, permitindo que ele se conectasse a ferramentas como Gmail, Notion e GitHub. Em seguida, adicionamos um cérebro ao nosso agente, fornecendo-lhe um gateway de IA para que ele pudesse se conectar aos modelos de IA mais recentes e, assim, obter a melhor inteligência e aprimorar sua capacidade de utilizar essas ferramentas. Mas, neste momento, o agente ainda não possui uma peça fundamental que melhorará a usabilidade do chatbot a longo prazo.
+
+E é aqui que apresentamos uma ferramenta chamada Supermemory. Supermemory é uma camada de memória gerenciada para aplicativos de IA que permite ao agente armazenar, pesquisar e recuperar informações importantes sobre o usuário em várias conversas. Assim como tudo neste projeto, você poderia construir isso sozinho, criando um banco de dados, elementos incorporados, uma ferramenta de busca e uma ferramenta de classificação. No entanto, o Supermemory abstrai tudo isso, permitindo-nos tratar a memória como mais uma ferramenta opcional dentro do nosso agente. Você pode conferir os preços para ver como funciona, mas basicamente, você ganha US$ 5 de uso mensal incluso. Eles também têm um
+
+programa de startups e pesquisa onde você pode ganhar US $ 1.000 em créditos gratuitos. Portanto, vale a pena se candidatar se você quiser continuar desenvolvendo com a Supermemory. A janela de contexto é a memória de curto prazo , que se encontra em uma única conversa. E podemos pensar na Supermemória como a memória de longo prazo do nosso agente. Portanto,
+
+nesta seção, adicionaremos essas ferramentas do Supermemory: adicionar memória, pesquisar na memória e obter perfil, para que o agente possa armazenar e recuperar informações importantes posteriormente. Com o Supermemory, seu agente pode armazenar informações importantes como seu nome, preferências, projetos em que você está trabalhando e outras nuances relevantes . Sem essa ferramenta, a memória ficaria restrita a conversas individuais. Basicamente, trata-se de uma camada de memória que ajuda a preservar informações importantes em várias conversas. Assim, com a Super Memória, podemos criar dados persistentes que existem em várias conversas.
+
+O funcionamento é bastante simples. Vamos usar o Super Memory como mais uma ferramenta, assim como fizemos com o Compozio. O modelo contará com novas ferramentas, como adicionar memória, pesquisar memórias e obter perfil. E quando o usuário diz algo que vale a pena lembrar, como " Meu nome é Sean", o modelo pode então dizer: "Ei, talvez eu deva lembrar disso para mais tarde" e adicionar uma memória ao contêiner do Super Memory. Depois, se o usuário disser algo como: "Preencha este formulário para mim" e houver um campo de nome nesse formulário, o chatbot deve lembrar que o nome do usuário é Sean e preenchê-lo adequadamente. O ponto principal aqui é
+
+que não estamos armazenando essas memórias na mensagem do sistema, porque isso seria lento, custoso e prejudicaria a precisão geral do agente, pois ele buscaria essas memórias quando elas não fossem relevantes. Assim como discutimos anteriormente sobre engenharia de contexto, isso dará ao nosso sistema a capacidade dinâmica de buscar as informações corretas e fornecer esse contexto ao nosso agente de IA no momento certo. Ok, então podemos ir para o nosso arquivo README na seção Super Memory da parte três. A primeira coisa que precisamos fazer é acessar o Super Memory, criar uma nova conta e obter nossa chave de API. Vamos acessar o Super Memory.
+
+E Aqui podemos ver uma visão geral dos documentos e memórias que já criei no meu aplicativo. Mas vamos pegar a chave da API. Criar uma nova chave. E vou criar esta chave da API. Depois, vamos ao nosso arquivo .env.local
+
+e criar uma chave da API do SuperMemory e colá-la assim. Em seguida, vou copiar tudo isso. E vou ao meu painel do Vercel, abrir meu projeto de chatbot, ir para variáveis ​​de ambiente e adicionar uma variável de ambiente. Vou colar tudo aqui e a chave da API será preenchida automaticamente para mim. Vou salvar.
+
+Ok, depois disso, tudo o que preciso fazer é instalar as ferramentas do SuperMemory. Então, vou copiar isso, abrir um novo terminal e colar aqui. Ok, agora só precisamos colar o terceiro prompt abaixo. Vou copiar isso e passar para o meu agente Cursor. O detalhe de implementação chave aqui é que as tags do container devem incluir session.user_id,
+
+e isso significa que as memórias dos nossos usuários As informações devem ser armazenadas apenas em seu próprio bucket de memória e, posteriormente, quando adicionarmos o Telegram, o bot do Telegram usará o mesmo ID de usuário para garantir que as memórias sejam compartilhadas entre o aplicativo web e a interface do Telegram. Este prompt basicamente pedirá ao agente que faça três coisas. Primeiro, adicionará o Supermemory à lista de definições de ferramentas, onde já temos ferramentas como as do Composio e a ferramenta de previsão do tempo definidas para nosso agente de IA. Em segundo lugar, garantiremos que a memória seja habilitada apenas para usuários autenticados, para que os visitantes não recebam memória de longo prazo. Em seguida, modificaremos esta regra de prompt do sistema para que o modelo saiba exatamente quando armazenar e recuperar as memórias. Ok,
+
+agora que temos a chave da API configurada e o Supermemory instalado, vamos pegar este prompt e voltar ao Cursor. Isso basicamente pede ao agente que faça três coisas. Primeiro, adiciona o Supermemory à lista de definições de ferramentas, onde já temos ferramentas locais como a ferramenta de previsão do tempo e as ferramentas do Composio. Em seguida, garantiremos que A memória só é habilitada para usuários autenticados, garantindo que usuários convidados não tenham acesso à memória de longo prazo. Em seguida, adicionaremos algumas alterações nas regras de prompt do sistema para que o modelo saiba quando armazenar e recuperar memórias. Vou executar
+
+o comando e volto a falar com vocês. Agora que nosso agente de cursor terminou, vamos verificar o que ele fez. Ele atualizou nosso arquivo route.ts para adicionar algumas ferramentas do SuperMemory do seu kit de desenvolvimento de software . Depois, atualizou nosso prompt do sistema para exibir algumas informações sobre o SuperMemory.
+
+Em seguida, executou algumas verificações de TypeScript e corrigiu seus próprios erros de TypeScript, e tudo parece estar correto. Portanto, vou aceitar todas as alterações. Aqui, fiz um teste para garantir que tudo esteja funcionando corretamente. Primeiro, perguntei ao meu agente qual era o meu nome e ele chamou a ferramenta de obtenção de perfil do SuperMemory, mas parece que nada apareceu. Então, informei meu nome e ele adicionou uma memória para Shawn. Depois, abri um
+
+novo chat e fiz a mesma pergunta: qual era o meu nome? Ele usou a ferramenta de busca de memórias do SuperMemory e podemos abrir as consultas que ele usou. para o nome do usuário e então aqui está o resultado que ele obteve, e você pode ver aqui que ele obteve o conteúdo e finalmente temos a resposta do assistente, que é: meu nome é Shawn. Agora, nosso agente pode acessar informações consistentes em várias conversas, o que pode ajudar a torná-lo muito mais pessoal. Nosso agente já possui muitas funcionalidades que realmente expandiram sua capacidade desde o início. A próxima coisa que
+
+vamos adicionar para dar um toque especial , um pouco de personalidade, é a alma. Então, fique ligado e nos vemos na próxima seção. Nesta seção, vamos criar a alma do nosso agente de IA. Se a memória se refere ao usuário e às coisas que o chatbot aprende sobre o usuário ao longo do tempo, essa alma é a definição da personalidade do nosso agente. E alma é apenas uma palavra sofisticada para prompt do sistema e basicamente decide como queremos que nosso agente aja. Basicamente, se
+
+dissermos um fato sobre nós mesmos, como meu nome é Sean, isso deve ser armazenado na memória, mas o nome do agente , como ele gosta de falar, o tamanho de suas respostas, tudo daquilo que deve residir na alma. Para isso, nos inspiraremos bastante no arquivo soul.md do OpenClaw, mas em vez de armazenar arquivos .md, armazenaremos a alma como uma coluna em nosso banco de dados. Na demonstração final, você pode ver que perguntei ao meu agente de IA qual é o seu nome, e ele já sabe que é " key", meu agente pessoal. Para isso,
+
+adicionaremos um novo recurso. Se a alma ainda não tiver sido definida para o usuário, o agente deverá executar o onboarding como uma conversa, em vez de exibir um formulário extenso na tela. Assim, quando um usuário fizer login e seu agente ainda não tiver uma alma, inseriremos um prompt de onboarding no prompt do sistema. O agente fará algumas perguntas e armazenará quaisquer informações do usuário com `addMemory`, e então usará `setSoul` para confirmar a identidade do agente no banco de dados. A partir disso, não veremos mais o prompt de onboarding, e a alma salva será adicionada ao prompt do sistema em todas as mensagens futuras. Portanto, nosso
+
+prompt do sistema Agora vai ter uma aparência um pouco diferente. Primeiro, teremos o prompt de boas-vindas, que só aparecerá se `user.soul` for nulo. A identidade do agente será a primeira parte do prompt, seguida pelo prompt padrão e as regras de memória, depois as mensagens de chat mais recentes e, por fim, as definições de ferramentas, como as ferramentas de previsão do tempo, as ferramentas de composição e as ferramentas de memória. Muito bem, para começar, vamos para a parte quatro.
+
+Tudo o que precisamos fazer é pegar o prompt aqui e colá-lo no cursor. Este prompt é um pouco maior porque interage com o banco de dados da interface do usuário e também cria uma nova página de administração para que possamos depurar e garantir que tudo esteja funcionando. Primeiro, vamos adicionar algumas partes ao banco de dados e, em seguida, gerar os arquivos de migração, que são basicamente as alterações que fizemos no banco de dados. Depois, vamos aplicar essas migrações. Em seguida, adicionaremos essas consultas no arquivo `queries.ts` para que possamos
+
+obter... A única solicitação do usuário para o chatbot, e também podemos atualizá-la. Nesta seção, vamos apenas alterar a forma como a solicitação é montada. Portanto,
+
+se `user.soul` for nulo, queremos injetar a solicitação de boas-vindas e, se já estiver definida, usaremos a `soul` salva como está. Vamos criar uma nova definição de ferramenta aqui, que recebe a descrição da ` soul`. Vamos conectar isso ao nosso chatbot para que ele possa acessar essas informações. Em seguida, pediremos ao agente para criar esta página de administração que nos permitirá depurar a `soul` na tela.
+
+E isso precisará de uma rota de API associada para que possa buscar esses dados. Certo, eu já copiei e colei isso no Cursor e deixei rodando por alguns minutos. Basicamente, ele criou uma lista de tarefas e foi criando o esquema, as consultas e atualizando a solicitação, uma a uma. E vou revisar todos os arquivos para garantir que tudo faça sentido aqui. Certo, então Iniciei um novo chat e acabei de dizer olá. Podemos ver aqui que
+
+o agente percebeu que esta é a primeira interação na conversa, então ele precisa executar o prompt de boas-vindas e perguntar sobre o nome, o estilo e os princípios. Vou responder a essas perguntas. Certo, então eu dei um nome, pedi para ser amigável, disse que também queria aprender novas palavras em japonês e pedi para explicar se houver alguma mudança em relação às instruções originais. Podemos ver que ele chama a nova ferramenta "set soul", então inclui todas essas informações que acabei de fornecer . E também adiciona uma memória à supermemória para que possa se lembrar disso no futuro.
+
+Vou apenas pedir para garantir que minha funcionalidade de e-mail ainda esteja funcionando com o Compose EO e vamos ver como isso muda com o novo prompt do sistema.
+
+Ele ainda consegue usar as ferramentas do Compose EO para buscar meus e-mails. Ele os resume de forma simples e, em seguida, finaliza a mensagem com uma nova palavra em japonês. Podemos então verificar em /admin/agent para conferir o agente. Definição de personalidade. E podemos ver que tudo isso está funcionando aqui. Agora vou inspecionar
+
+como isso aparece no banco de dados. Vou pedir ao Cursor para iniciar o Drizzle Studio, já que esqueci o comando . Ele inicia com o PNPM DB Studio, e posso conferir acessando este link. Certo. Devemos ver uma nova coluna "alma" se rolarmos horizontalmente, e vemos aqui que há uma nova propriedade "alma do usuário".
+
+Então, para este último usuário, minha " alma" está definida, mas para todos os outros usuários convidados, eles não têm nenhuma "alma" definida para seu agente de IA. Ótimo. Agora nosso agente tem uma "alma" e pode se lembrar de fatos, além de ter uma identidade estável para usar nas demais interações. Os fatos do usuário, como memórias, ficam na supermemória, e a personalidade do agente ficará na coluna "alma do usuário". Ótimo. Então,
+
+construímos nosso agente, de um chatbot para um agente com ferramentas, para um agente com memória e agora para um agente com personalidade. Você pode ter Você já deve ter visto ferramentas populares de IA integradas em aplicativos de mensagens, como o iMessage. Temos o Poke aqui à esquerda e o Get Victor aqui à direita, que funciona no Slack. Do ponto de vista do produto, isso faz sentido. É basicamente um problema de distribuição: você precisa garantir que seus usuários estejam onde já estão. Existem muito mais
+
+smartphones ativos no mundo do que laptops e computadores de mesa. Então, se o seu agente de IA só existe em uma aba do navegador, você está fazendo com que os usuários venham até você, em vez de colocar o agente onde eles já passam a maior parte do tempo. Desde o lançamento do ChatGPT, a maioria das pessoas interage com IA por meio de um laptop. Mas o que você sempre tem consigo? Seu celular. Portanto, nesta seção, vamos
+
+tornar nosso agente de IA mais acessível, integrando-o ao aplicativo Telegram para dispositivos móveis. A ideia principal aqui é que não se trata de um agente separado. É apenas mais uma porta de entrada para o mesmo aplicativo. Ele terá as mesmas informações do usuário, ferramentas e memória, só que dentro do Telegram. Nosso aplicativo web e o Telegram apontarão para o mesmo ambiente de execução do agente. E assim que o Telegram O chat está
+
+vinculado ao nosso usuário da web; ambos os canais usarão o mesmo user.id para identificar o usuário. E é isso que faz tudo funcionar. Se eu conectar o Gmail no aplicativo web, o Telegram poderá usar essa mesma conexão do Gmail. E se o agente se lembrar de algo, ele sempre poderá chamar esse mesmo serviço de memória para obter o contexto relevante. Para configurar isso,
+
+usaremos o mesmo fluxo de trabalho que outros aplicativos, como o OpenClaw, usam para conectar usuários a aplicativos de mensagens como o Telegram. Primeiro, usaremos o Bot Father, que é o bot oficial do Telegram que nos fornece o token do bot. Em seguida, criaremos um segredo de webhook. Isso é basicamente uma senha que o Telegram envia com cada solicitação para que nosso aplicativo possa verificar se a solicitação realmente veio do Telegram. Depois, como estamos executando tudo localmente, usaremos o ngrok. Falaremos mais sobre isso adiante. Mas, depois de
+
+registrarmos o webhook e vincularmos nossa conta do Telegram, poderemos enviar mensagens para nosso agente de IA a partir do aplicativo. Certo. Então, seguindo as instruções na tela, primeiro, vou abrir o Telegram. no meu iPhone. Depois de abrir, vou seguir este passo e pesquisar por Bot Father. Bot Father e abrir um
+
+chat. Na lista de comandos iniciais, você pode ver que pode clicar em " criar novo bot". Então, vou clicar ali. E vou adicionar um nome para o meu bot. Ok, e vou criar um nome único. 1 2 3
+
+bot. Ótimo. Então, um novo bot será criado. Podemos tocar aqui para acessá-lo. E também podemos ver este token na parte inferior.
+
+Precisamos protegê-lo e armazená- lo para mais tarde. Vou copiar a mensagem inteira e colocá-la no meu Bloco de Notas da Apple para que eu possa abri-la no meu Mac. Certo. Então, vou abrir isso no meu Mac. Primeiro, vou pegar este trecho de código e inseri-lo no meu arquivo .env.local.
+
+O token do bot é este. Vai aqui em cima. O nome do bot do Telegram está aqui. E para o segredo do webhook do Telegram, Vamos gerar isso em uma janela de terminal. Abra uma.
+
+E vou copiar este comando: ` open SSL rand hex 16`. E vou pegar essa chave. E vamos usá-la como nosso segredo do webhook. Ok. A próxima URL pública do aplicativo pode permanecer assim .
+
+E então, vou voltar ao terminal com meu servidor de desenvolvimento em execução. Vou pressionar Ctrl+C para fechá-lo. E vou digitar ` pnpm dev` para reiniciar o servidor. Ótimo. E isso deve fazer com que ele reconheça todos esses novos tokens.
+
+Em seguida, vamos configurar o ngrok. E se você já o tiver instalado, o comando é simplesmente `brew install ngrok`. Depois, crie uma conta gratuita no ngrok e acesse dashboard.ngrok.com.
+
+Então, aqui nas configurações da nossa conta, podemos simplesmente pegar nosso token de autenticação. E você deve tratá-lo como uma senha. E vamos copiar esta linha. Volte ao nosso terminal. E vamos substituir esta linha até o cifrão ($) pelo nosso token do ngrok.
+
+E pressione Vou abrir uma nova janela do terminal e executar o comando `ngrok http 3000`.
+
+Isso encaminhará todas as requisições para este URL para o nosso localhost na porta 3000. Agora, vamos voltar ao nosso arquivo `.env.local` e substituir o URL público do aplicativo pelo URL do ngrok. Mais uma vez, podemos ver que o nosso servidor de desenvolvimento recarregou o arquivo `.env`, já que
+
+fizemos algumas alterações. Portanto, se você perceber que isso parou de funcionar, pode ser porque você reiniciou o servidor ngrok. A cada vez que isso acontece, o endereço de encaminhamento muda e você precisa atualizar o seu arquivo `.env`. Aqui está uma breve explicação de como o webhook está funcionando e por que ele é necessário para o Telegram chamar o nosso aplicativo. Este é o fluxo de trabalho básico:
+
+um usuário envia uma mensagem pelo aplicativo Telegram. O Telegram envia uma requisição para o URL do webhook que aponta para o nosso aplicativo e, em seguida, executa o fluxo de trabalho do agente que conhecemos. e amor. A razão pela qual isso é importante é que, em vez de nosso aplicativo ficar constantemente perguntando ao Telegram se há novas mensagens, podemos obter esse túnel unidirecional entre o Telegram e nosso aplicativo por meio da URL do webhook. E lembre-se, o motivo de estarmos usando o ngrok aqui é porque precisamos de HTTPS, que é a versão segura. E
+
+quando estamos em desenvolvimento local, só temos HTTP disponível. Então, é por isso que usamos o ngrok. Agora que o ngrok está configurado, vamos obter o prompt de agente pronto para esta seção. Há três partes principais neste prompt. A primeira é o wrapper da API do bot do Telegram.
+
+Estas serão algumas funções auxiliares que nos ajudam a enviar mensagens, registrar o webhook e verificar informações do bot. A segunda é a rota do webhook propriamente dita. Este é o ouvinte para onde o Telegram envia as mensagens recebidas. E a terceira é o sistema de vinculação, que mapeia um ID de chat do Telegram para um dos usuários do nosso aplicativo. Mais uma vez, temos esta página do Telegram disponível para que possamos vincular nosso Telegram ao usuário e, em seguida, temos alguma verificação.
+
+Instruções. Olhando aqui, temos algumas alterações no nosso arquivo schema.ts. Lembre-se, isso afetará nosso banco de dados. Nesta parte, vamos garantir que o agente Cursor execute os comandos generate e migrate, e isso criará arquivos de migração e os aplicará para que nosso banco de dados veja as alterações que estamos fazendo para incluir todas essas colunas do Telegram. Ok,
+
+parece que concluiu suas sete tarefas. Adicionou os novos campos do banco de dados do Telegram , executou as migrações no banco de dados e até adicionou algumas páginas de depuração que podemos verificar. E, finalmente, nos dá uma etapa para verificarmos em produção com a entrega real do webhook ngrok, o token do Telegram e executarmos um caso de teste para garantir que tudo esteja configurado corretamente. Muito bem, agora precisamos informar ao Telegram onde nosso aplicativo está hospedado. Mas o Telegram ainda não sabe para onde enviar mensagens para se conectar ao nosso bot.
+
+Então, vamos voltar para localhost:3000 e abrir a página de depuração do Telegram. Esta é apenas uma página de desenvolvedor que estamos usando. Estamos usando isso para garantir que configuramos o bot e o webhook. Parece que ainda não configuramos o webhook. Em seguida, vamos registrá-lo.
+
+Parece que não está funcionando porque a URL https precisa ser configurada. Isso falhou por algum motivo, então passei todas essas informações de volta para o agente Cursor, e parece que houve um erro na URL de fallback. Então, ele corrigiu o problema para mim. Vou reiniciar meu servidor de desenvolvimento e clicar em registrar. Vou atualizar a página localhost/telegram e tentar atualizar novamente, e então tentar registrar o webhook mais uma vez. Certo, parece que está
+
+registrado agora, e vamos voltar para o Cursor. O mais importante está neste arquivo telegram.ts, onde você pode ver que estamos obtendo o segredo do webhook, que é o segredo que geramos aqui. Também estamos acessando esta URL, que é o webhook do Telegram. E é basicamente isso A próxima rota que definimos para processar isso. Esta pode ser
+
+uma seção complicada de configurar corretamente, pois envolve algumas configurações e integrações. Portanto, se algo der errado nesta etapa, certifique-se de que seu terminal ngrok esteja aberto e que você tenha copiado a URL completa e a inserido no seu arquivo .env.local. Certifique-se também de que o segredo do webhook do Telegram esteja configurado, o nome de usuário do bot esteja configurado e o token do bot tenha sido configurado pelo BotFather.
+
+Você pode redefinir qualquer uma dessas etapas se achar que houve um erro. Outra página que criamos foi a página /admin/telegram. Ela mostrará o usuário conectado atualmente e possui um botão para que ele possa vincular sua conta do Telegram. Isso gerará um código único para o usuário. Agora, podemos vincular manualmente em nosso telefone. Agora
+
+que temos esse código, vou abrir o Telegram mais uma vez e acessar freeCodeCamp.bot. Certo, então vamos voltar ao bot freeCodeCamp e digitar /start com O código, e então você deverá receber uma mensagem confirmando a vinculação. Agora, se eu disser "oi", você verá que recebo mensagens do meu bot do Telegram falando comigo em japonês, como configuramos no arquivo soul.md anteriormente. Vamos deixar rodando
+
+por alguns segundos e então ele coletará todos os meus e-mails. Esta é uma grande atualização do produto, porque, em vez de apenas poder conversar pelo aplicativo web, as pessoas agora podem conversar diretamente comigo. seu agente de IA por meio do aplicativo de mensagens que eles já usam todos os dias. Na próxima seção, adicionaremos um dos recursos de garra aberta mais poderosos para realizar tarefas. Te vejo na próxima. Até
+
+agora, tínhamos que nos comunicar com nosso agente manualmente, em etapas. Isso significa que, a menos que você esteja constantemente conversando com seu agente, não estará lhe trazendo nenhum benefício. Assim como a maioria das pessoas que enviam mensagens para o ChatGPT ou Claude, a IA só responderá quando você enviar uma mensagem. Mas para tornar nosso agente de IA verdadeiramente utilizável, [bufa] nosso agente deveria agir mais como um funcionário. Depois de discutirmos a maneira como gostamos de fazer as coisas, o sistema deverá ser capaz de executá-las sozinho, seguindo uma programação predeterminada. E é
+
+exatamente isso que vamos construir nesta seção. Em vez de um agente que só funciona quando você envia uma mensagem, vamos criar um mecanismo de pulsação para o nosso agente. A capacidade de ele despertar sozinho e executar fluxos de trabalho predefinidos. Voltando à nossa analogia com o corpo, vamos simplesmente adicionar mais uma ferramenta ao nosso agente. E esta será a ferramenta de agendamento de tarefas.
+
+Essas tarefas são comumente chamadas de tarefas cron. E para usar o cron, vamos usar um serviço chamado Vercel cron. Você pode ler mais sobre tarefas cron do Vercel aqui. Basicamente, isso vai chamar um URL em nosso aplicativo que executa fluxos de trabalho de agente predeterminados. O fluxo funciona da seguinte forma: o usuário solicitará ao agente no chat que execute um fluxo de trabalho todos os dias em um horário específico. O agente irá chamar sua
+
+ferramenta de agendamento de tarefas, que gravará uma nova linha no banco de dados. E todos os dias, quando o cron do Vercel for executado, ele chamará nosso agente de IA. O sistema verificará se há alguma tarefa pronta para ser executada e, em seguida, executará essa tarefa e atualizará a linha no banco de dados para que saibamos que ela já foi executada. Assim, quando o usuário recebe uma mensagem como "execute este fluxo de trabalho diariamente", o modelo irá visualizar essa mensagem do usuário, verificar o prompt do sistema para ver todas as suas definições de ferramentas e, em seguida, chamará a ferramenta de agendamento de tarefas para que possa adicionar essa nova tarefa à nossa tabela de tarefas cron. Tudo bem. Então, agora vamos para a
+
+seção de batimentos cardíacos e seguir todas essas instruções. Um detalhe importante a mencionar é que, no plano gratuito para hobbies da Vercel, só podemos executar a programação uma vez por dia. Portanto, se você deseja agendamento por minuto, precisará fazer um upgrade para um dos planos pagos deles . Tudo bem. A primeira coisa que faremos é executar este comando e criar um novo segredo cron. Então, vou abrir uma nova
+
+janela de terminal. Cole isso aqui. E eu vou pegar esse código. E eu escreverei o segredo do cron igual a esse código. Em seguida, também irei às minhas variáveis ​​de ambiente do Vercel e adicionarei esse segredo do cron lá.
+
+Acesse as variáveis ​​de ambiente do seu projeto,
+
+adicione uma variável de ambiente e eu vou colar tudo isso lá. Em seguida, executaremos este comando no terminal para adicionar o analisador cron e, depois, copiaremos o prompt de agente pronto daqui. Abrirei um novo chat e executarei este comando. Certo, então, este enunciado tem três componentes principais . Primeiro, vamos adicionar esta tabela de tarefas cron ao nosso banco de dados.
+
+Esta tabela conterá o ID da tarefa, o usuário que a criou , a expressão cron, que define a frequência de execução, o prompt que o agente usará quando for chamado e o horário de execução desejado. E então, como fazemos com cada alteração em nosso banco de dados, vamos garantir que executemos as migrações apropriadas. Em seguida, vamos criar algumas consultas para que possamos realizar buscas e atualizar esses trabalhos. E então criaremos três novas ferramentas para o agente utilizar. Dessa forma, o agente pode agendar novas tarefas com base nas preferências do usuário, listar todos os agendamentos, bem como cancelar agendamentos, tudo em linguagem natural. Em seguida,
+
+criaremos a rota que Vercel percorrerá todos os dias. E, por fim, adicionaremos uma interface de depuração simples para que possamos visualizar todos os agendamentos e garantir que tudo esteja funcionando corretamente. Então, vamos executar este comando e eu entrarei em contato quando terminar. Então, adicionou a rota de chat, atualizou nossa camada de banco de dados, executou as migrações do banco de dados, criou novas ferramentas para nosso agente e, em seguida, integrou tudo para nós. Parece que está tudo bem, e então adicionei mais uma solicitação de acompanhamento, pedindo para integrar os agendamentos do administrador à guia de configurações do usuário. Vamos conferir
+
+as mudanças. Se formos às configurações, adicionamos esta nova aba de agendamentos. E podemos ver que, para o usuário, ainda não existem tarefas agendadas. E eu direi: "Todos os dias às 9h da manhã, analise meus últimos cinco e-mails e crie um resumo." Ótimo. Então, parece que está chamando a
+
+nova ferramenta de agendamento de tarefas. Isso cria a expressão cron, que significa simplesmente que ela será executada todos os dias às 9h da manhã. Podemos ver o prompt completo que foi usado, com o nível de detalhes correto. Podemos ver que foi criado com sucesso e, em seguida, o agente nos fornece um resumo. Vamos voltar aos nossos cronogramas e podemos ver a nova tarefa agendada aparecer lá.
+
+Se analisarmos nossa última produção, ainda não há nada lá. E então, se você acessar nosso banco de dados, poderá ver que essa nova tarefa agendada, com todas as informações corretas, apareceu no banco de dados. Certo, então vou voltar à aba de administração e executar isso manualmente para que não precisemos esperar até as 9h da manhã para ver como ficou. Vamos aguardar alguns segundos, pois isso está sendo executado em segundo plano. E recebemos um resumo dos nossos últimos cinco e-mails, e ainda consta a personalidade do nosso agente , incluindo uma palavra em japonês. No banco de dados, se
+
+atualizarmos a página, veremos que a última coluna de saída será atualizada e conterá exatamente as mesmas informações. Muito bem, vamos fazer um último teste. Vamos garantir que podemos excluir o agendamento. Vou voltar ao meu agente e dizer: "Exclua todas as minhas tarefas agendadas." Certo, primeiro ele lista os horários para poder obter esse ID e, em seguida, cancela o horário com o mesmo ID e confirma que ele foi removido.
+
+Vamos verificar e confirmar isso. E não há mais tarefas agendadas aqui. E no banco de dados, não há mais tarefas agendadas. Muito bem, então tudo o que precisamos fazer para deixar isso pronto para produção é atualizar nosso webhook do Telegram para o nosso domínio real. Então, registre seu domínio, volte ao Vercel, encontre seu projeto e, em seguida, registre este URL.
+
+Copie e eu volto para o meu próximo URL público do aplicativo e coloco lá sem a barra invertida. O
+
+mesmo se aplica às variáveis ​​de ambiente de produção . Você pode copiar e colar isso aqui. Assim, isso apontará para o seu domínio real e salvará as alterações. Nesta última seção, compilei uma lista de verificação rápida para garantir que você tenha todas as chaves de API corretas, como gerar seus segredos de webhook e segredos de cron. Portanto, se algum dos seus serviços falhar, geralmente é um problema relacionado a variáveis ​​de ambiente . Então, vá lá, verifique novamente e
+
+regenere esses arquivos, se necessário. Em seguida, voltaremos ao chatbot. Há várias mudanças aqui. Então, vamos enviar todas essas alterações para o GitHub agora. Vou apenas confirmar e preparar todas essas alterações no GitHub.
+
+Vou chamar isso de commit inicial e fazer o commit e o push. Voltamos ao projeto no Vercel e acessamos a aba de implantações. Devemos verificar se está a construir essa nova implementação. E a implementação completa deve levar alguns minutos . Outro ponto importante a considerar é que, sempre que você alterar as variáveis ​​de ambiente, seu aplicativo não será reimplantado. Portanto, certifique-se
+
+de que, ao fazer isso, você volte às suas implantações e clique aqui para poder reimplantar e obter as variáveis ​​de ambiente mais recentes. Muito bem, espero que tenham gostado do tutorial. Se algo der errado, fique à vontade para abrir uma issue no GitHub ou me enviar uma mensagem direta no Twitter e eu te ajudo a depurar o problema. O objetivo deste tutorial não era construir o OpenClaw recurso por recurso. O objetivo era ensinar os fundamentos de como os agentes de IA funcionam internamente . Na Compozio, também lançamos
+
+outra versão pronta para produção desse mesmo chatbot, chamada trustclaw.app. Você pode visualizar o código-fonte no GitHub e até mesmo implantá-lo no Vercel. Ele é construído exatamente com a mesma pilha de tecnologias que você usa neste vídeo: Composable, Vercel AI, Postgres, Telegram e Cron. Bem, é isso para este tutorial.
+
+Muito obrigada por terem ficado até o final. E, como já mencionei, todos os links e recursos estarão na descrição para você conferir e clonar os modelos. Meu nome é Sean, e foi um prazer.

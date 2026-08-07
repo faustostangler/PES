@@ -1,0 +1,1022 @@
+---
+video_title: "Open Models Coding Essentials – Running LLMs Locally and in the Cloud Course"
+video_id: HNVaYYxmwLU
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=HNVaYYxmwLU
+video_date: 2026-05-07T10:00:29+00:00
+video_description: |
+  Learn how to work with a wide range of open large language models (LLMs) such as Gemma, Kimmy, and GLM across various local and cloud-based environments. This comprehensive guide by Andrew Brown explores how to use coding harnesses like Claude Code and Pi Agent to build real-world agentic workflows while benchmarking model performance and hardware requirements.
+  
+  More course resources: https://www.exampro.co/exp-openmodel-code-01
+  
+  ✏️ Course created by @ExamProChannel 
+  
+  ⭐️ Chapters ⭐️
+  00:00 Introduction
+  
+  Foundations of Open Coding Systems
+  00:01:17  Exploration of Coding Harnesses and Open Models
+  00:09:19  Open Models Selection
+  00:13:21  Coding Harness Selection
+  
+  Local Models and Ollama Setup
+  00:19:57  Install Ollama Serve Model
+  00:35:58  ClaudeCode Gemma4 Local
+  00:55:51  Codex Gemma GPT OSS Part 1
+  01:01:25  Codex Gemma GPT OSS Part 2
+  
+  Cloud Models and Coding Agents
+  01:17:16  Claude Code Gemma4 Cloud
+  01:27:22  Claude Code Kimi 2 5
+  01:33:33  Claude Code GLM 5
+  01:36:36  Claude Code MiniMax 2 7
+  01:41:49  Claude Code Qwen 3 5
+  01:46:06  Pi Coding Agent Ollama Cloud
+  02:03:04  Droid CLI Ollama Cloud
+  02:10:54  Open Code Ollama
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+Olá, aqui é Andrew Brown, seu instrutor de tecnologia favorito, trazendo para você mais um curso de certificação aqui no Free Code Camp. E desta vez é o curso " Fundamentos da Programação com Modelos Abertos", também conhecido como " Exp Open Model Code 01". O que eu quero que vocês aprendam aqui é a trabalhar com modelos abertos, como já vimos em outros cursos de outros provedores. Portanto, as coisas abertas são igualmente importantes. Então, modelos como Gemma, GLM, Kimmy e Quen, mas precisamos executá- los em algum lugar como plataformas de programação.
+
+Então, usaremos ferramentas que já conhecemos, como Cloud Code e Codeex, mas também outras que você talvez não tenha explorado, pois existem muitas. Então veremos o que funciona melhor para nós. Precisamos executar esses modelos em algum lugar. Portanto, iremos executá-los localmente, bem como na nuvem. E se você gosta de conteúdo como este, a melhor maneira de apoiá-lo, especialmente o conteúdo do Exampro, é adquirir a certificação opcional e os materiais pagos em exampro.co.
+
+Ah, e lembre-se também de apoiar a campanha gratuita do seu editor para ajudar a disponibilizar esse conteúdo gratuito. Bem, se você não me conhece, eu fui diretor de tecnologia (CTO) por mais de uma década e depois fiz a transição para a área de educação tecnológica aqui, com mais de 50 cursos de tecnologia que abrangem praticamente tudo. E vamos continuar criando cursos lá. Mas espero que gostem do que veem e que continuem por aqui. Nos vemos em breve. Cha chia.
+
+Olá pessoal, aqui é o Andrew e antes de começarmos os vídeos, eu só queria falar sobre por que eu quis criar este curso e quais informações eu sinto que ele revelou, pelo menos para mim. Ok, então eu sei que existem várias plataformas de codificação diferentes e que há esses modelos chineses que supostamente têm o mesmo desempenho que o Cloud Code ou codecs e coisas do tipo. Bem, sabe, eu só queria ver se podemos baixar esses modelos, executá-los localmente, executá-los na nuvem, se eles têm um bom desempenho e onde estão os principais problemas. Bem, basicamente estamos fazendo testes preliminares aqui. Então, estamos criando aplicativos do Flappy Bird . Não estamos fazendo nada
+
+exaustivo. Se realmente quiséssemos testar essas coisas, eu teria que construir o que chamamos de um dispositivo de avaliação. Então, a ideia é que faríamos uma lista de coisas e as testaríamos em relação a essa lista . Não tive tempo para isso. Na verdade, eu não consegui encontrar nenhum.
+
+Tem uma no GitHub, mas não vai funcionar muito bem e não vai aplicar as coisas. Então, a parte frustrante é que, sabe, existem todas essas coisas e eles dizem que são ótimas e que nossas ferramentas são ótimas, mas não há um parâmetro de comparação para avaliá-las. E quero dizer algo como um parâmetro prático. Não me refiro ao benchmark de IA, onde se fala sobre a inteligência dos modelos e coisas do gênero. Então, entenda que estamos apenas começando e não teremos respostas muito complexas para você. Mas vejamos as
+
+respostas que tenho para você. Então, a primeira coisa é que o Gemma 4 tinha acabado de ser lançado e eu ouvi dizer que ele tinha um baixo consumo de memória, e eu tenho uma RTX 4060. Foi isso que a Beo me permitiu comprar. Então pensei: "Ok, talvez exista um modelo que eu possa executar que tenha uma boa, hum, produção de tokens por segundo que possa ser usado em uma plataforma de programação." Hum, e surpreendentemente, sabe, o Gemma 4 realmente tem uma pequena pegada de memória e funciona muito bem como uma ferramenta de programação. Surpreendentemente, não
+
+tão bom quanto, hum, os outros que se especializam nisso, mas se saiu extremamente bem. O único problema que encontrei foi que, para realmente usá-lo com modelos locais, eu precisaria de uma janela de contexto de 32.000 e algo em torno de 24 a 32 gigabytes de VRAM, e eu só tenho 8 gigabytes de VRAM. Então, talvez fosse possível executar isso localmente se eu tivesse o hardware certo, mas eu não tenho o hardware certo e, portanto, não pude testar essas capacidades localmente. E eu consigo executar o Quen no meu computador, mas ele usa quase toda a minha VRAM e sua janela de contexto não é grande o suficiente. Mas se você não
+
+tiver uma janela de contexto de 32 kI ou 32.000 µm com o Gemma 4, simplesmente não vai funcionar. Simplesmente não vai funcionar localmente. Então, fiquei sem opções. E então tive que mudar rapidamente para modelos em nuvem.
+
+Mas sim, havia algum modelo que eu pudesse executar para gerar código para mim? Não. Ok . O que seria necessário? Não sei.
+
+Hum, talvez demore um pouco... como é que se chama mesmo ? É o Apple Max Metal 3 Studio, ou algo assim. E você pode precisar de
+
+duas dessas. Talvez você precise de dois DJX Sparks na sua mesa. Ou talvez você precise de uma combinação dessas coisas, onde uma faz uma coisa e a outra faz a outra. Ou você precisa de um equipamento personalizado. Mas todo mundo que tem um desses aparelhos em cima da mesa e funcionando parece estar gastando 10 mil dólares. Então a BO não vai
+
+me dar 10.000 dólares. Talvez eu conheça pessoas que compram este conteúdo para este curso. Eu poderia comprar um e avaliá-lo aqui para nós, mas isso não é possível hoje. Qual plataforma de codificação podemos usar para executar modelos abertos?
+
+Surpreendentemente, muitos modelos... desculpe, ferramentas de codificação que eu não esperava que pudéssemos usar, como o Claude Code, e funcionou muito, muito bem. Ok, isso é algo realmente interessante. A verdadeira questão é:
+
+se você sabe que o Cloud Code consegue executar modelos do Ola Mloud, por que se preocupar com os outros? E para mim, a resposta provavelmente é não, a menos que você se importe em ver como o código funciona, tipo, uh uh PI uh agente de codificação, ou precise adotá-lo em toda a sua organização. Então talvez você queira usar " ganso". Os outros, que eram apoiados por startups como Kilo, Open Code e Factory Droid, eu provavelmente nunca usaria. Eles são legais, mas, para ser honesto, não acho que tenham qualquer valor.
+
+Provavelmente, eu continuaria usando o Claude Code, ou experimentaria o agente de codificação PI, ou escreveria o meu próprio por diversão. Provavelmente, criarei minha própria ferramenta de codificação apenas para aprendizado, não necessariamente como uma opção séria. Quais modelos abertos realmente funcionam como modelos de codificação? Hum, para mim, a melhor foi Kimmy 2.5.
+
+Hum, GLM estava bem. Hum, Miniax era razoável. Ah, Quen era horrível. Gemma foi surpreendentemente boa, considerando o que era. E se eu tivesse o hardware necessário aqui perto, provavelmente usaria o Gemma 4 porque ele é bom o suficiente. Bem, tenho amigos que dizem
+
+que, com as ferramentas certas, conseguem fazer alguns desses modelos funcionarem muito, muito bem. Assim como o Llama 3.2, mas é muito especializado. Talvez me falte algum conhecimento especializado, mas eles também disseram que levaram cerca de um mês para configurar esses fluxos de trabalho para conseguir aquilo. Então talvez os modelos menores possam funcionar como o Llama 3.2,
+
+mas você precisa investir muito tempo nisso e eles ainda estão usando modelos maiores para controlar os modelos menores. Então, não temos esse tempo nem essa experiência, mas talvez eu convide um instrutor para nos ajudar algum dia. Se não podemos executá-los localmente, onde podemos executá-los? Existem muitos fornecedores, mas muitos deles dependem de tokens de API. E aqueles que são baseados em assinatura, geralmente são oferecidos por esses provedores e são altamente quantizados e não são muito bons. E aí a
+
+questão é: será que você compra direto da China se eles estiverem tão disponíveis assim ? Não consegui descobrir como assinar o serviço, e além disso, você só paga por um modelo, que nem é muito bom. Para mim, a Olama era a melhor opção, pois oferecia uma boa variedade de nuvens, em particular, da Olama . O preço era de 2030 dólares, semelhante ao de outros. E eles se saíram muito bem.
+
+Não mexa com os que custam menos de 20 a 30 dólares, porque são altamente quantizados e não terão um bom desempenho. Portanto, não há motivo para usá-los. Se eu tivesse que usar uma solução baseada em chave de API, provavelmente usaria o OpenRouter. Existem muitas opções com chave de API disponíveis, mas eu prefiro usar assinatura. Então você tem algo que está mais acostumado a fazer. OK.
+
+Hum, podemos alugar nosso próprio serviço de computação em GPU e disponibilizar um modelo? Eu tenho quotas de serviço abertas para computação na AWS e em outros provedores. Eu simplesmente não tenho isso. Então não consigo executá-los, mesmo que aprovem minhas solicitações. Atualmente, é muito difícil conseguir acesso a serviços computacionais.
+
+Provavelmente eu não conseguiria fazer isso. Existem outras opções como a Coreweave, mas preciso entrar em contato com a equipe de vendas e está demorando uma eternidade para eles me atenderem. Eu queria analisar qualquer escala, mas ainda é preciso usar anúncios ou o ambiente próprio deles, e eles demoraram muito para me responder. Hum, lhama é uma opção possível. Llama AI, mas quando você vai lá, é tipo uma loteria. Desculpe pelo palavrão,
+
+mas é uma questão de sorte em termos do que está disponível para o processamento computacional deles. Então eles podem ter um A100 que você pode alugar por US $ 3 a hora. Mas, em outras ocasiões, você só pode pagar US$ 40 por hora por um grupo grande. Então, eu poderia ter feito um vídeo sobre isso, mas eu literalmente teria que ficar girando a roleta a cada hora para encontrar alguma coisa, e seria muito difícil de replicar. E eu não sei se valeria a pena investir nosso tempo, mas eu queria passar por isso só para ver como era a experiência. Porque,
+
+no fim das contas, a questão é: posso conseguir isso? Ou, se eu tiver verba para despesas de capital (capeex) na minha organização, ou se eu quiser ter algo na minha mesa, posso fazer isso? Bem, espero que isso responda às suas perguntas, mas, sim, acho que o principal é assistir a esses vídeos, ver qual é a minha experiência e experimentar você mesmo. E, sabe, certifique-se de ter isso em mente, pois devemos manter todos os caminhos abertos. Ok, tchau tchau .
+
+Muito bem, vamos dar uma olhada nas possíveis opções de modelos abertos com as quais podemos trabalhar. Vou dividir isso em três categorias. E, na verdade, a última categoria é o que vamos usar, porque existe confusão sobre o que se pode usar, já que existem modelos genéricos, modelos otimizados para codificação e modelos que funcionam muito bem especificamente para criar estruturas de codificação . Assim, para modelos de uso geral, estes são bons para todos os tipos de tarefas. Você provavelmente já ouviu falar de modelos como Llama, Mistral e Gemma. Gemma 4 foi
+
+lançado recentemente e é muito, muito bom. Consome pouca memória e, surpreendentemente, funcionou na maioria dos casos de uso. Bem, não é o melhor dos modelos disponíveis , mas para um que ocupa muito pouco espaço, funcionou muito, muito bem. Sim, houve alguns problemas com a chamada de ferramentas, mas depois que usamos os modelos em nuvem, não houve mais problemas . Ou talvez eu esteja mexendo de alguma outra forma nisso . Então nós... nós conseguimos fazer funcionar. OK.
+
+Depois, há a codificação de modelos otimizados. Essas são especializadas especificamente para trabalhar com código. Então eles são ajustados com base em conjuntos de dados de código. Eles são melhores em escrever e concluir código e coisas do tipo. É aqui que você encontra o Code Llama, DeepCoder, Code Stroll, GPOSS e Quen 3.5. Tecnicamente,
+
+Quen é uma linguagem genérica, mas também existe uma versão otimizada para programação. Hum, e acho que essa é da Alibaba. E este é realmente muito popular, mas eu não diria que ainda é muito bom . Bem, se você quiser colocá- lo em uma camada gerenciada, pode dizer que é como o Haiku, Claude Haiku, mas ele tem um problema: simplesmente não chama as ferramentas e você precisa fazer muita configuração extra para garantir que ele as chame . E eu nunca consegui experimentar isso funcionando corretamente, então meio que desisti. Hum, mas as pessoas
+
+gostam porque é muito econômico e rápido. Bem, o GPTOS OSS é uma versão de código aberto do GPT que foi otimizada e é péssima. Nós usamos com o Codeex porque é recomendado, mas é do ano passado, então não é realmente recomendado. Eu não toquei no código de passeio. O Deepseek Coder é muito antigo. Code Llama é muito, muito antigo.
+
+Portanto, não estamos trabalhando com esses. Ouvi dizer que o Col Lama é muito, muito ruim, então não vale a pena. Depois, você tem esses modelos de codificação otimizados. Então, essas ferramentas são compatíveis com o uso de ferramentas, e esse é o ponto crucial, porque se não forem compatíveis, elas simplesmente escreverão na tela e não editarão arquivos e coisas do tipo, o que é muito frustrante quando você elabora um plano complexo e ele não funciona corretamente. Portanto, precisávamos de ferramentas confiáveis ​​para termos conhecimento das ferramentas. Precisávamos
+
+criar resultados estruturados de forma confiável, seguir instruções de agentes com várias etapas, não nos desviarmos da tarefa e nos recuperarmos com elegância. Portanto, os modelos que fazem isso são Kimmy, GLM, Mini Max, GLM e Quen. Quen não é tão bom, mas sabe, talvez eu o tenha usado por anos, você pode discordar de mim. Achei a Kimmy muito, muito, muito, muito , muito, muito boa. Bem, apesar de algumas pessoas dizerem que GLM e Miniax são melhores. Então, talvez eles queiram dizer
+
+que, quando você está trabalhando com isso a longo prazo e carregando o sistema, algumas pessoas dizem que o Kimmy pode apresentar problemas, mas parece que, em muitas situações, o Kimmy se sai melhor. Talvez, no geral, o Miniax e o GLM sejam mais consistentes para você. Não sei. Não estou me aprofundando o suficiente na criação de protótipos de avaliação para realmente saber, pois estamos basicamente fazendo um teste inicial, construindo o Flappy Bird e apenas começando a explorar o assunto. Bem, eu diria apenas que fiquei absolutamente impressionado com a Kimmy e com esses outros modelos conversíveis, e com certeza me imagino dirigindo um deles todos os dias. Será que eles conseguiriam lidar com a
+
+tarefa mais complexa que Claude Opus era capaz de realizar? Não. Mas, considerando o custo, a confiabilidade e a possibilidade de você conseguir executar isso em seu próprio hardware um dia, ou se você tiver dinheiro suficiente para arcar com o custo de capital e ter esse equipamento funcionando na sua mesa, então pode valer a pena para você, ou se você se importa com a soberania dos dados. Sim, o maior desafio aqui foi justamente criar modelos abertos que permitissem o uso de ferramentas. Ok, então, aí está, e vamos começar . Ok,
+
+vamos dar uma olhada nos possíveis frameworks de codificação que podemos utilizar. Antes de prosseguirmos, gostaria de falar sobre a origem dos serviços oferecidos para esses modelos. Então, vou usar o Olama Cloud porque ele tem um serviço de assinatura muito, muito semelhante à sua assinatura na nuvem, à sua assinatura da OpenAI, à sua assinatura da Gemini. Bem, se eu não estivesse usando o Olama Cloud como um serviço de assinatura, provavelmente usaria o Open Router, pois estou muito familiarizado com ele para obter acesso por meio de chaves de API. Mas achei que essa era uma solução muito boa, porque já usamos o Olama para disponibilizar o modelo localmente, já que é a maneira mais fácil de fazer isso. E, portanto, usar a
+
+nuvem Olama foi super, super fácil. O custo da assinatura é de 20 a 30 dólares. Nunca me faltou nada. E, por isso, integra-se com tudo. Portanto, acho que esta é uma opção muito boa.
+
+Provavelmente existem outros modelos de assinatura disponíveis. Eu simplesmente não sei nada sobre eles. Não tenho o aval do velho Lama Cloud, mas simplesmente funcionou. OK. E talvez te surpreenda saber que você pode usar os três principais com modelos abertos. Assim, com o Gemini CLI, você pode
+
+integrá-lo ao Gemma. No entanto, não consegui fazer isso funcionar. Está em modo experimental e com documentação péssima. Bem, então eu simplesmente não consegui fazer isso. Acho que você não conseguiria disponibilizar isso através da nuvem Olama. Bem
+
+, este seria um modelo que viria, talvez, do Google Cloud Vert.ex AI ou de um modelo local, mas não estou tendo sorte com isso, então nem vou tentar. Bem, o Codeex, surpreendentemente, integra-se com a nuvem e, bem, acho que tive uma boa experiência com o Gemma 4. Ele recomenda o uso do GPTO OSS, que é terrivelmente antigo e péssimo, mas não foi a melhor experiência. O código em nuvem teve um desempenho excepcional com todos os modelos abertos. O único modelo que
+
+parece apresentar problemas é o Quen, o modelo Quen, que na metade das vezes não chama o uso da ferramenta. Portanto, não há muito que possamos fazer a respeito. Sim, mas enfim, o código na nuvem foi simplesmente incrível e a integração do Ola com essas ferramentas é ótima. Portanto, você pode continuar usando o código na nuvem sem problemas. Em termos de coisas que não são dos três principais fornecedores, temos o agente de codificação PI.
+
+Então, este é um framework de programação de código aberto propositalmente minimalista, criado por um desenvolvedor com opiniões muito fortes. Essa pessoa omite muitos recursos, como o modo de planejamento, tarefas e MCP, porque acredita firmemente que você não precisa dessas coisas. Não concordo necessariamente com isso, mas gostei muito da transparência dessa ferramenta e foi muito fácil acessar suas entranhas e ver o que estava acontecendo . Então, acho que se eu tivesse que dirigir com um, provavelmente usaria o PI Coding Agent como meu driver principal. A pessoa que desenvolveu isso foi adquirida por outra empresa com fins lucrativos. Portanto, este produto passará a ser produzido por
+
+essa empresa. Portanto, não sei o que acontecerá com este produto no futuro. Mas é bom, e mesmo que haja recursos que você não goste, você pode adicioná-los, certo? E, em geral, funcionava muito bem. OK. O Goose CLI é
+
+a coisa mais instável que eu já usei, mas faz parte da Linux Foundation. Assim, você tem a garantia de que será mantido e estará devidamente aberto. Se você representa uma grande organização, provavelmente vai gostar disso. Além disso, Goose é um ecossistema completo. Então, não é só a CLI, mas eles têm um aplicativo para desktop e provavelmente algo parecido com o OpenClaw. Então, quando você
+
+tem essas três coisas, você precisa investir em algo que provavelmente seja uma boa opção para analisar. Mas não consegui fazer funcionar com o Olama. Supostamente, funciona com a nuvem Olama. Funciona com o ambiente local O Lama. Então, se eu não tenho um vídeo para isso, é porque senti muita dor ao fazer e não consegui dar um bom exemplo. Hila CLI é um
+
+ecossistema completo que funciona como uma startup com fins lucrativos. Ele permite que você traga seu próprio modelo, mas não consegui integrá-lo com o Ola Cloud, o que foi uma pena. Acho que eles realmente querem que você use o serviço de assinatura deles, onde eles têm seus próprios modelos. Bem, então eu nunca consegui avaliá-lo porque, se eu não estiver usando modelos abertos, não quero usá-lo. E quando digo modelos abertos, quero dizer um que eu mesmo possa hospedar ou que venha de uma assinatura que eu escolha e que não esteja vinculado a um provedor específico. Bem, eu simplesmente não estava
+
+interessado em fazer isso porque não quero pagar por umas 100 assinaturas aqui. Bem, eu não ia fazer isso. Hum, Droid foi interessante. Você precisava se cadastrar só para usar. Enquanto que para todos esses outros, como Kilo, Goose, Pi, Cloud Code, Codeex, se você estiver usando os modelos antigos, não precisa fazer login em nada. Mas, assim como acontece em uma
+
+fábrica, eles querem suas informações. Eles formam um ecossistema inteiro. Acho que existe muito marketing em torno dos produtos deles para fazer com que pareçam mais impressionantes do que realmente são. Então eles têm essas coisas chamadas dróides, mas na verdade são apenas agentes. Bem, eu acho que eles têm muitos roteiros, habilidades e subagentes com opiniões próprias que simplesmente proporcionam melhores resultados. Mas eu percebi que,
+
+sabe, isso acabou piorando os resultados de modelos como a Kimmy, que já se saem muito bem . Mas eu acho que talvez se você usar o Quen ou esses modelos mais simples, esse tipo de ferramenta ajudaria esses modelos menos inteligentes e você provavelmente obteria um gasto melhor. A estratégia deles é fazer com que você compre o produto deles, um modelo de assinatura hospedada, assim como o Kilo faz. Isso não é nenhuma surpresa. O código aberto será muito semelhante aos outros dois. Eles não constituem um
+
+ecossistema completo. Você pode trazer seu próprio modelo. Uh uh Llama O Lama combinou perfeitamente com isso. Mas o diferencial deles era mais uma interface de usuário mais elegante. Hum, mas eu diria que havia coisas de que eu não gostava, como quando você ativava o modo plano e ele permanecia nesse modo sem saber quando mudar. Eles estão tentando te vender as
+
+próprias assinaturas. Hum, eu sei que a assinatura deles é barata. É como se custasse cinco dólares ou dez dólares, mas os modelos deles são altamente quantizados. Portanto, eles não são muito bons. Portanto, praticamente não há motivo para usar a assinatura deles.
+
+Então, sabe, mesmo que todos eles tenham suas próprias assinaturas, eu acho que você deveria usar o O Lama, que lhe dará a máxima flexibilidade para alternar entre eles, porque muitas dessas coisas, tipo, quatro de quatro de cinco, são apoiadas por startups e aí um dia elas serão adquiridas ou desaparecerão e você perderá essa ferramenta. Isso já aconteceu. Assim como a Windsurf e outras empresas. Portanto, isso é algo que você deve levar em consideração. Eu adoraria usar o Goose, mas não consigo fazê-lo funcionar. Gosto da ideia do
+
+Goose, mas enfim, na pior das hipóteses, você poderia usar o Cloud Code. O único problema é se os provedores começarem a bloqueá-lo. Eu sei que o Cloud Code não permite que você use a assinatura deles em outros lugares, apenas com o próprio Cloud Code, mas eles não estão impedindo o uso do Cloud por enquanto, então está tudo bem. Mas sim, essas são as nossas opções e vamos explorá-las o máximo possível. Ok.
+
+Olá, meu nome é Andrew. Neste vídeo, vamos configurar o Oama . Então, eu já tenho isso instalado, e você pode instalar no seu Windows, no lado do Windows, ou dentro do WSL. Se você usa Mac, obviamente pode instalá-lo diretamente no Mac. E funciona de uma maneira um pouco diferente, mas vou instalá-lo também no WSL, pois essa será a melhor maneira de eu trabalhar com ele. Sim, eles têm uma
+
+versão na nuvem. Pretendo usar isso em algum momento, mas também quero usar modelos locais, já que prefiro os hospedados na nuvem, pois as possibilidades computacionais que tenho são bastante limitadas. Mesmo assim, queremos explorar ambas as opções. Então, por enquanto, vamos baixá-lo gratuitamente. Então, se voltarmos à página inicial, há apenas uma linha para instalar aqui. Então, aqui embaixo
+
+estou eu no WSL 2. Ou seja, Subsistema Windows para Linux, que é simplesmente o Ubuntu. E este modelo em específico foi desenvolvido para funcionar com a minha placa Nvidia. Eu tenho um vídeo da Nvidia no meu curso sobre como criar isso . Talvez eu possa levar isso para cá. Então, talvez você já tenha
+
+visto esse vídeo. Bem, se você usa Windows e tem uma placa de vídeo Nvidia , pode acompanhar. Se você tiver um tipo diferente de placa gráfica, terá que fazer alguma coisa. Se você não tiver recursos computacionais locais, não poderá fazer isso. Se você usa um Mac, então até mesmo os Macs M1 podem executar modelos. Não é muito bom, mas você pode
+
+tentar usá-lo para experimentar e ter uma ideia de como funciona. Mas entenda que eu vou usar o Windows com uma placa de vídeo Nvidia, o que é muito, muito comum. O outro método seria com um Mac, mas eu não tenho um modelo moderno, tenho um M1. Não tenho um modelo mais recente, então estamos um pouco limitados no que podemos mostrar aqui. OK.
+
+Mas enfim, temos essa única linha aqui. Pronto, vou pegar. E na verdade eu já o instalei, mas vou apenas demonstrar o processo, pois será praticamente o mesmo. E, bem, parece que por algum motivo não capturou a linha inteira aqui. Na verdade, não me lembro de ter havido um IRM. Então, vou lá fazer o
+
+download. Que coisa mais estranha. Se formos para o Linux, aí sim. Tipo a garota Mac. Ah, essa é a versão para Windows. OK.
+
+Então, vou pegar essa imagem aqui e colar aqui . E vai instalar a versão mais recente. E isso leva um pouco de tempo. Não sei porquê, mas demora um pouco. E ficaremos aqui até que esteja concluído.
+
+OK. Tudo bem. Agora, estamos atualizados. Vamos verificar a situação do Olama. OK. Você pode encontrar problemas se
+
+tiver o Olama instalado tanto no Windows quanto no WSL. Então, talvez você precise desligar o outro. Também pode estar sendo executado em algum lugar que você não espera. Mas, dê uma olhada nessa versão. A versão atual hoje é 20... uh... 27. E se você tiver algum
+
+problema sério, sugiro que acesse o GitHub do Olama, ok? Porque você pode ter problemas com isso. E, caso encontre algum erro específico, basta verificar a aba de problemas . Acho que tive alguns problemas com o Gemma 4 outro dia, relacionados a uma integração específica. Então eu tive que ir até lá e mexer em alguma coisa. Não me lembro o que isso
+
+corrigiu. Acho que acabei de reiniciar meu computador. Mas enfim, tenha em mente que nem sempre vai funcionar perfeitamente. Então, o modo como o Olama funciona, e eu já mostrei isso no meu guia Geni Essentials, mas vamos mostrar novamente aqui para que você entenda claramente, é o seguinte: existem modelos que estou tentando encontrar aqui, os modelos disponíveis, e você pode selecionar diferentes deles. Então você tem o GLM 5.1, o
+
+Miniax e o Gem 4, e só porque você consegue baixá-los não significa necessariamente que eles funcionarão na sua máquina. Então, use o seu provedor preferido e informe a ele os recursos que você possui. Então, no meu caso, estou usando um computador com Windows e tenho uma placa de vídeo da Nvidia. Então, vou abrir o aplicativo da Nvidia aqui, e ele vai mostrar que tenho a placa de vídeo Nvidia RTX 4060 no meu computador. Essa é a melhor opção que o Baker me permitiu. Então, vou
+
+dizer o seguinte: tenho uma GeForce RTX 4060 com um Intel i9 14900, 64 GB de RAM e Windows 11. Quais modelos de Olama consigo rodar sem problemas? OK. E assim será feito. Hum, e pode estar um pouco desatualizado. Gosto de saber quais modelos posso
+
+executar. Bem, basicamente o importante é o que cabe na VRAM. Certo, então, seja qual for o valor de sua VRAM. Hum, e onde exatamente fica aqui, eu não sei ao certo. É sempre meio chato encontrar e determinar as informações aqui. Bem,
+
+a questão é que existe VRAM e tudo o que couber ali é o que poderemos fazer. E na verdade, sim, aqui diz 4060 VRAM e dimensionamento do modelo Olama . Então, vamos aguardar um momento para que o processo seja gerado. Então, como diz, o padrão é 8, e provavelmente é o que eu tenho. Por padrão, o OLAM é utilizado em sistemas com menos de 24 GB de VRAM, resultando em contextos de 4K. Assim, com uma
+
+configuração adequada, é possível ter de 3 a 8 bilhões de modelos de contexto. Bem, qualquer valor em torno de 12 bilhões pode ser viável. E aqui nos deparamos com outras áreas. Então, parece que entre 7 e 8 bilhões de unidades serão suficientes para nós. E se estivermos na faixa de 3 a 7 bilhões, será um pouco melhor. Então vamos até
+
+aqui e veremos o que temos disponível para trabalhar. Então, existe o GLM51. Acredito que isso não vai servir. Quen certamente caberá no 3.5.
+
+Eles geralmente são pequenos. Mas se você for por aqui, nós estamos olhando, vamos para lá . Acho que dizia tamanho do contexto. Mas normalmente são os parâmetros que estamos analisando. Aqui está escrito " parâmetro de 8 bilhões". OK. OK. Então, se
+
+puxarmos, vai puxar o do tamanho correto. Geralmente sim. Então, vamos até aqui e logo de cara podemos ver que temos o Cloud Code, o Codeex e outros provedores nos quais podemos executar o código. Mas vou pegar isso aqui por enquanto. E nós vamos lá e... correr.
+
+Podemos simplesmente puxá-lo se quisermos. Então, se eu simplesmente disser "puxar", ele fará o download desse modelo. Tudo bem. Observe que são 6,6 gigabytes. Então, essas coisas são grandes. Se você não tem muito
+
+espaço, terá que esvaziá-los e poderá fazer isso periodicamente. Às vezes, modelos mais antigos são descontinuados e, uma vez removidos, você pode não conseguir executá-los novamente. Bem, sabe, fique atento a isso. Se você realmente depende muito deles, talvez seja melhor guardar os pesos em algum lugar. Bem, vamos baixar isso, executar aqui e garantir que entendemos como funciona, e depois vamos integrar com alguma coisa. OK. Tudo bem. Tudo
+
+bem. Então agora temos esse modelo configurado. Então, o que eu quero fazer é ter uma maneira de monitorar, hum, você sabe, o que está acontecendo aqui com a minha máquina. Então, o que vou fazer é me abrir, porque preciso disso mais de uma vez aqui. Vou abrir outra janela do VS Code aqui, se for possível. Vou me retirar daqui
+
+por dois segundos. Em outra pasta. Não permite que você abra o mesmo. Vou voltar à nossa pasta de modelos abertos . Então, neste aqui, sabe, eu ainda estou conectado à Nvidia . Vamos prosseguir e
+
+construir um novo terminal. Ok, vamos continuar com isso. E existe uma ferramenta chamada Nvidia SMI. Faz parte da Nvidia, então você deveria tê-la. E se você não fizer isso, ou se houver instruções adicionais, como eu tenho um curso da Nvidia, então não há nada complicado aí. Mas se
+
+olharmos aqui, claro por que está escrito 10 mil. Não tem jeito. Existem 10 mil arquivos. Não deveríamos ter um diretório git agit ali. Um segundo aqui.
+
+Isso vai me incomodar. Eu simplesmente não quero mais ficar olhando para isso. Um segundo. Não, não existe um diretório docu. Então, acho que vou ter que ficar olhando para isso. Mas enfim, esses 10 mil só me deixam estressado
+
+. Mas aqui podemos ver o SMI da Nvidia. Então, uh, podemos ver que acho que essa é a VRAM ali. Então, são cerca de 8 gigabytes. E então, sabe, podemos ver seu uso, o ventilador, informações adicionais. Hum, e essa ferramenta é boa,
+
+mas na verdade existe uma melhor chamada... chama-se N Vid Top. Então, estou apenas pesquisando como pegar o Nin top.
+
+Nvidia top. A Nvidia é a principal empresa chamada Nvidia. E aqui está, NVtop. Então, se conseguirmos instalar isso, obteremos informações muito melhores, de forma dinâmica. Não sei o que é todo esse resto, mas vamos até aqui e é só usar o comando `pip uvx install` ou `pip install`, como preferir.
+
+OK. Acho que você só precisa executar o comando `pip install nvtop`. OK. Então essa seria uma maneira melhor de obtê-lo. Então, vou executar o nvtop.
+
+E assim, isso vai me permitir ver como estamos indo. E lembrem-se também que eu estou gravando. Portanto, há algum uso de memória aqui. Então, preciso levar isso em consideração ao executar esses modelos. Então, eu tenho essa despesa fixa. Mas aqui, do
+
+lado esquerdo, temos a CPU. E aqui, do lado direito, temos a GPU. Assim, algumas tarefas podem ser transferidas para a CPU ou algo do tipo. Mas se sabemos que estamos utilizando nossa GPU, isso deveria aparecer aqui, certo? Mas aqui você pode ver o uso de memória, a largura de banda da memória e, em seguida, sua utilidade real. Espero que isso esteja claro.
+
+Então, vamos subir por aqui. Aliás, se você não sabe como ler isso, basta tirar uma captura de tela e enviar para o chatpt ou qualquer outro provedor de sua preferência. Então, agora que extraímos o modelo, vamos executar o comando ` serve`. É assim que se inicia o servidor. E dizer que já está em uso porque eu o tenho rodando em algum outro lugar. Vou dizer: pare com isso, lhama
+
+. Olama. Eu simplesmente digito "lama" aqui. Não, não, não. Olama. Uh, socorro,
+
+aguarde um pouco, pois deve haver um comando para parar o servidor.
+
+E isso é sempre um problema com lhamas, pois elas ficam rodando em segundo plano. Como faço para parar um servidor Lama existente que esteja executando Linux? Você pensaria que o comando estaria bem ali, mas acho que precisamos de algo para desligá-lo à força. Quer dizer, poderíamos usar pseudo uh pseudo system uh pseudo uh systemctl, mas não sei se é assim que está funcionando na prática. Então, podemos prosseguir e acho que podemos verificar aqui. Status Olama.
+
+OK. E assim, foi interrompido. Então, vamos tentar novamente. Olama serve. É só porque eu já tinha isso antes. OK. E era exatamente disso que precisávamos
+
+. Então, ele girou até aqui. Hum, acho que teria preferido que fosse na outra tela, mas tudo bem. Então, vamos para cá. Eu digo: Olama corre. Qual foi o modelo que
+
+escolhemos usar? Bem, não sabemos. Podemos simplesmente dizer lista Olama, eu acho. Então, aqui temos o Quin 3.5 e o Gemma 4. Como você pode ver, eu baixei o Gemma 4.
+
+E se eu quiser executar este, basta digitar "Olama run quen 3.5 latest". E agora o modelo será iniciado. Se formos até aqui, encontraremos informações que deixarão bem claro que o serviço está em funcionamento. Então, estamos tirando 200, o que é bom. Então,
+
+está pronto para receber informações. Então, você consegue escrever um código de uma única linha para um programa "Olá, mundo!" em C? Que tal? Pronto. E
+
+assim, a corrida começou. E é interessante, veja como é rápido, né? É incrivelmente, incrivelmente rápido. Então, dá para perceber como isso é interessante. Mas se olharmos para cá, vejam o esgotamento dos meus recursos, que estão praticamente esgotados. Então
+
+estamos em 85%. Novamente, lembre-se de que estou usando o OBS, que serve para gravar e capturar a nossa tela, certo? Portanto, precisamos prestar atenção à nossa memória, à largura de banda da memória e ao nosso uso de memória. E você também pode ver que algumas tarefas estão sendo transferidas para a CPU. Certo, então acho que a parte de cima diz memória e a de baixo, computação. Pelo
+
+menos é o que eu penso. E aqui, hum, não sei. Acho que isso pode ser a VRAM, mas, como já disse, podemos tirar um print disso. OK. Não sabemos o que estamos vendo. E
+
+podemos inserir isso aqui e perguntar: onde está a VRAM nesta imagem da parte superior da NVIT? OK. Então, acho que provavelmente está bem ali . Então, na sua captura de tela da Nvidia, a VRAM da GPU aparece em alguns lugares. Então, ele é usado. Sim. E foi exatamente isso que
+
+eu pensei, a barra visual também. Portanto, 86% de memória. Então aqui está nossa VRAM e aqui [bufa] está nossa VRAM. Gostaria que estivesse escrito literalmente "V RAM" ou "V memória", mas não está. Então, sim . Então é isso e depois
+
+aquilo, ou algo assim. Enfim, está funcionando. A corrida começou. Ainda está em andamento. Vou interromper isso. OK. E se olharmos para
+
+cá, está simplesmente em marcha lenta. Mas repare que isso ainda é grande porque é o que está armazenado na memória, certo? Então, se simplesmente desistirmos disso... Então, dizemos "desista"
+
+ou "saia". Pronto. Se voltarmos para cá, nossa memória deve desaparecer, certo? Vai haver uma queda de preço? Não está diminuindo. Vamos
+
+para cá. Sim, não sei por que não está baixando. Então, vamos até aqui e talvez digitar "lama help" e dar uma olhada aqui. Diga lama stop uh a lista de modelos quen e nós pegaremos este lama stopwen. Então, imediatamente caiu. OK.
+
+Então, é para isso que estamos prestando atenção . Volte para cá. Podemos ver que talvez tenha parado. Eu não tenho certeza. Bem, pelo menos você consegue ver a solicitação chegando ou o que você está enviando.
+
+OK. Então, é isso aí. Será que eu poderia concorrer contra Gemma? Não sei. Essa talvez cause algum problema no nosso sistema, mas vou tentar . OK. Então, vamos lá e vamos dizer
+
+lista Olama. Então, obviamente, eu baixei isso. Você simplesmente faz a mesma coisa. É só puxar. Dizemos: "Ah, a corrida de lhamas é o que for ." Na verdade, se você digitar apenas essa
+
+linha, ela também será exibida. Então, vamos começar isso. E quero ver o quanto isso fica gravado na memória. Hum, dizem que a Gemma tem uma memória extremamente eficiente. Hum, então talvez consigamos resultados melhores aqui. Uau, olha só isso.
+
+Veja como isso é eficiente. Realmente? Uau, isso é impressionante. OK. Então, por exemplo , escreva-me um programa "Olá, mundo!"
+
+em C. Ok. Então, vamos prosseguir e fazer isso. Olha só essa velocidade. Veja só esse uso. Nossa, que baixo.
+
+Isso é incrível. Então, seria ótimo se pudéssemos contar com a Gemma. Gemma 4 é bem recente. Bem, o desafio com esses modelos é se eles acabarão usando ferramentas e fazendo chamadas de ferramentas, o que descobriremos à medida que tentarmos trabalhar com esses modelos. Bem, obviamente, com o Quen, estamos basicamente no limite de sua utilização. Então, talvez eu tenha
+
+dificuldades para gravar isso, mas veremos. Bem, enfim, sim, era só isso que eu queria mostrar neste vídeo, mas com certeza voltaremos a usar o Llama, pois será a maneira mais fácil de atendermos e utilizarmos modelos. Mas nos vemos na próxima. Ok, tchau tchau .
+
+Olá pessoal, aqui é o Andrew e neste vídeo o que eu quero fazer é usar o Olama para disponibilizar um modelo através de uma estrutura de codificação existente . Existem muitas opções disponíveis e acho que vamos começar com a mais óbvia, que é o Clam. Aliás, eu nem sabia que era possível usar o CloudCode até começar a explorar modelos. Não sei por que nunca tinha reparado nisso. Hum, mas se formos para cá, reparem que podemos dizer tipo claude code uh gemma 4 aqui.
+
+E também podemos fazer codecs. Então, vamos instalar o código na nuvem. Quer dizer, eu já deveria tê-lo instalado. Bem, caso eu não consiga, vamos prosseguir com esses procedimentos, já que instalar o código na nuvem não é muito difícil. Então, estou digitando "código na nuvem" e vamos descer aqui até "código na nuvem" e procurar as instruções de instalação.
+
+Então, aqui está para Windows, Mac, etc. Novamente, recomendo que você use Linux, pois será a maneira mais fácil de trabalhar com isso. Ah, e é isso que você realmente deveria usar. Então, vamos prosseguir com a instalação. Tenho certeza de que já está instalado. Bem, então
+
+não deve demorar muito para começarmos por aqui. Geralmente é mais rápido do que isso. Vou fazer uma pausa aqui. Pronto. Agora, ele está instalado com a versão mais recente. Então,
+
+normalmente você ia querer entrar na conta do Claude, certo? Então eu digito Claude e normalmente você quer ativar sua assinatura. Eu já tenho o meu aqui. Então, vou simplesmente sair da minha conta. Só quero mostrar que não estou usando nada. Então, se eu digitar Claude agora,
+
+certo? Geralmente, ele te pergunta isso primeiro e pede alguma coisa. Vou cancelar isso aqui e digitar " limpar". E o que eu vou fazer é voltar para cá. Vou extrair esta linha onde especifica o modelo Gemma. Então é tipo o
+
+modelo Gemma do Claude Launch Lhama. Agora a questão é: precisamos que já esteja em funcionamento? Talvez. Então, vou executar o programa sem ele agora mesmo. E claro, o modo escuro é ótimo. E diremos "entrar".
+
+E vamos usar as configurações recomendadas. E eu vou para cá. Só quero verificar se algum modelo está em execução. Outra forma de sabermos é se formos até aqui. Existe algum modelo? Note que o
+
+consumo de memória é muito pequeno, o que me leva a crer que o modelo não está em execução. Talvez tenhamos que executá-lo separadamente. Eu meio que esqueço. Mas se digitarmos "modelo", agora temos Gemma 4, certo? Tudo bem.
+
+Então, vou apenas dizer olá. E quero ver se recebo um "olá" de volta. E repare que, ah, agora o modelo entrou em funcionamento. OK. Então, talvez se não estiver lá, ele invoca e então o inicializa.
+
+OK. E assim, temos isso. Excelente. Então, a questão é: será que consigo fazer com que ele execute algum tipo de programação? E vou me ausentar daqui por um momento. Isso interrompe o funcionamento do modelo?
+
+Não, ainda está funcionando. Portanto, você precisa estar ciente de que o modelo pode estar em execução. Hum, acho que se voltarmos aqui, talvez haja um comando. Não tínhamos reparado nisso antes, mas...
+
+Ops. Lama ajuda. Então, provavelmente existe um comando para ver o que está sendo executado de fato . Ah, não mostra, mas de qualquer forma, tudo bem. Então, o que eu quero fazer é criar uma nova pasta aqui. Vou
+
+chamar de Olá Mundo. E tudo o que eu quero fazer é ver se consigo fazê-lo funcionar . Então, acho que vamos falhar nisso porque... acho que é aí que vamos encontrar
+
+um problema. Mas veremos o que acontece. OK. Então, vou retomar este comando onde temos Gemma 4. Ok. Então, o contexto
+
+aqui é esta pasta "hello world". Então, o que eu queria fazer era escrever um novo arquivo. Então, você pode criar um arquivo hello world.rb para mim com o seguinte conteúdo: puts hello world? OK. OK.
+
+Então, estou administrando isso. Quero ver se isso acontece ou se a saída é exibida aqui. O problema com esses programas é que, só porque você consegue carregá-los, não significa necessariamente que eles usarão as ferramentas disponíveis. Pode ser que nem sequer tenha conhecimento das ferramentas disponíveis. E observe que ele foi executado. O modelo está em execução, mas nunca
+
+respondeu. Não adiantou nada. É estranho. Então, pergunte: você está aí? Lembro-me de antes de receber o código de volta, certo?
+
+E então, novamente, é o pensamento que está funcionando. Vamos lá, Gemma. Você consegue. Isso não significa que não possamos fazer esses modelos funcionarem, mas eu só quero mostrar o desafio. Vamos lá. Com
+
+certeza posso. Então, aqui está o contexto. Se você estiver trabalhando em um ambiente de terminal, ótimo. Então, estou dizendo: " Ok, você está usando código Clawed e tem uma ferramenta para escrever em arquivos, por favor, escreva nos arquivos, ok?" E não tenho certeza se, à medida que a conversa cresce, o contexto também crescerá e a largura de banda da memória aumentará ou algo assim, mas estou apenas tentando fazer com que ele seja invocado, então eles dizem que eu não tenho acesso direto.
+
+Portanto, não tem conhecimento dessa informação. Então, vou ver se existe alguma maneira de resolvermos isso . Vou acessar o chatbt porque, quando eu usava, simplesmente não conseguia descobrir como acessar esses recursos corretamente. Só um instante. Tudo bem.
+
+Então, aqui o chatbt está nos sugerindo algumas coisas. Teremos que verificar se é verdade ou não, mas aqui está dizendo que ele pode suportar a chamada, mas pode não fazê-lo. Hum, e sabe, pode ser um problema de permissões. Isso significa que não precisamos ensinar manualmente ao código em nuvem o que são ferramentas no sentido convencional. Aqui diz para usar as ferramentas de código em nuvem disponíveis. Não
+
+descreva apenas a mudança. Crie um arquivo chamado hello no diretório atual. Olá. Em seguida, confirme se está escrito. Então, vou aproveitar e pegar essa sugestão aqui. Vou
+
+limpar isso. Vamos tentar. Seria interessante se isso ajudasse. Mas também está dizendo que a Olama de alguma forma pode ajudar com as ferramentas, mas veremos. Ainda não consegui fazer funcionar. Então,
+
+é aqui que estamos tentando experimentar e ver se conseguimos obter esse resultado. Se não pudermos, não é um grande problema, mas, sabe, seria bom. Então, veja, recebemos isso de volta e não há resposta. Então, você está em um ciclo de agência. Quando a tarefa exigir alteração de arquivo, utilize a ferramenta apropriada.
+
+Experimente um modelo explicitamente recomendado para código em nuvem, certo? Então, existem opções muito específicas, ou então podemos usar quatro, e isso é algo que iremos testar. Certifique-se de que o comprimento do seu contexto seja suficientemente grande. A Olama recomenda um mínimo de 32.000 tokens para código na nuvem.
+
+OK. Como sabemos qual é o valor configurado? Verifique se o código na nuvem está aguardando aprovação antes de escrever o prompt. A documentação do Cloud Codes afirma que as ações exigem permissões. Um usa ferramentas para criar o teste. Não explique, etc., etc. Portanto,
+
+pode ser um problema de permissões. Bem, então poderíamos descartar essa possibilidade com muita facilidade. Bem, eu vou ali e digo, porque não tenho nenhum código de exemplo por perto, mas vou perguntar, tipo, você poderia me dar, você poderia criar para mim um arquivo de configuração de permissões para o Cloud Code? Assim podemos descartar essa possibilidade. Então, isso é algo que talvez queiramos fazer aqui.
+
+Também podemos querer criar um arquivo claw.md. Não, vamos ignorar. Mas talvez seja algo que queiramos fazer. Assim como usar as ferramentas disponíveis, isso não descreve as mudanças.
+
+Então, estamos apenas aguardando que isso seja gerado. Sinceramente, já me esqueci de como criar os arquivos, mesmo tendo feito um curso enorme. Acabei de usar o Codeex no Gemini. Então, não me lembro exatamente o que é. Então, vou procurar um exemplo de arquivo de configuração para o Claude.
+
+Acho que é algo como o arquivo config.json. Deixe-me ver aqui. Ah, é o cloud.json. OK. Então,
+
+acredito que teremos um arquivo claw.json. Aguarde aqui. Sim, eu quero um que seja específico para o projeto. Não está me obedecendo.
+
+Mas este é bastante prolixo. Então, prossiga aqui e criaremos um novo arquivo . Isso vai entupir o JSON. OK. Então, parece bom, podemos simplesmente permitir tudo isso e...
+
+O que é o arquivo JSON do Claw para um projeto? Acho que está no diretório include. Claro, podemos fazer isso. Isso também está ótimo . Não me importo com isso.
+
+Então, vamos criar uma nova pasta aqui chamada .cloud. Minhas mãos estão ficando frias. Vou ligar meu aquecedorzinho. Provavelmente você não conseguirá ouvir, então não tem problema. Ok, agora estou começando
+
+a me lembrar disso. Configurações locais. Sim. Configurações JSON. Hum.
+
+Então, vamos prosseguir e vamos cortar isso . Então, vamos descartar essa possibilidade e ver se isso nos ajuda em alguma coisa. Vou esclarecer o contexto. Vou fechar e abrir novamente. E vamos tentar novamente.
+
+Então, vamos ver se isso ajuda a escrever na pasta. Ok, vamos dar uma recapitulada. Ainda nada. Ok, vamos deixar você interceptar as ações de aprovação automática.
+
+Muito bem, podemos tentar isso também. Novamente, não acho que vá funcionar, mas vamos tentar mesmo assim, porque acredito que muitas pessoas provavelmente teriam interesse em usar o Gemma 4 por ser tão eficiente em termos de memória. Mas se isso não funcionar, vamos ter que assinar, já que não vou conseguir usar o Quen ao mesmo tempo. Podemos tentar em um vídeo separado, mas suspeito que isso possa travar o vídeo, então não quero tentar neste vídeo específico. Então, agora adicionamos isso. Eles também disseram algo
+
+como aumentar a janela de contexto. Então, aqui está.
+
+Ok. Qual é o valor que devemos definir? Está nas nossas configurações? Como eu nunca precisei fazer isso antes, parece que o sistema acha que já está configurado. Talvez tenhamos que verificar e confirmar. Sim
+
+. OK. Então, é controlado por O Lama. Oh, tudo bem. Bem, qual seria a configuração padrão com a qual o Olama seria iniciado?
+
+Nossa, isso é muito, muito pequeno. Então, o 4K quebra o código criptografado. Certo, então vamos por aqui. Ah, é o PS. Certo, estávamos tentando encontrar isso antes e não nos mostrou o comando. Eu devia ter
+
+tentado isso. E o contexto é 4,96. Sim . Então, o que faremos ?
+
+Não. [risos] Vamos pegar isso aqui. Estou apenas tentando colar. Não sei por que está se recusando a copiar aqui hoje. Minhas mãos estão muito, muito frias, então estou tendo muita dificuldade para escrever aqui. Portanto,
+
+precisamos abandonar esse modelo. Então, eu vou aqui e... onde está rodando?
+
+Porque não estamos executando o modelo diretamente, já que ele está aqui mesmo. Mas eu vou até aqui e vamos fazer uma lista. Acho que podemos ver bem ali. Então, olá pare gemma 4 mais recente. Eu diria que o modelo contextual ocuparia mais da nossa memória. Então, talvez seja outra coisa que
+
+precisemos considerar. Então, parece que... Ops. Parece que o problema é que a quantidade de
+
+VRAM é menor. Então, vou até aqui e vou pegar esta linha. Sim, vamos fazer o que for necessário. E agora, estabelecemos o contexto. Vamos dizer lama run gemma para as últimas novidades.
+
+Então, depois disso, vamos confirmar olhando o contexto aqui, seja lá onde for, o lama PS, ainda está mostrando 4096. Ok, então isso não funcionou. Vou parar por aqui. Saída. Desistir.
+
+E vamos parar a Gemma 4. E eu quero verificar isso. Vamos atribuir esse valor ao ambiente. E assim está decidido. OK. E nós iremos para lá.
+
+Isso não alterou o tamanho quando verifiquei com o Photoshop. OK. OK. Então, vamos aqui e dizer algo como `llama context window size uh envir`, já que eu não confio necessariamente no ` chatbt` aqui, e ele está definindo isso ali. Nós simplesmente consultamos a documentação. Portanto, 24 GB representam o
+
+contexto 4K neste caso. Diz que VRAM de 24 a 48 Gbits é isso. Portanto, acho que não tenho informações suficientes para este contexto. Então, provavelmente esse é o meu problema aqui: são 32.000 contextos. Então, eu simplesmente não
+
+vou conseguir... ter um contexto desse tamanho, certo? Então, vou voltar para cá. Vou pôr um fim nisso
+
+. Posso parar? Será que consigo executar um contexto de 32K com a minha RTX 4060? Porque não acho que consiga, com base nessas informações. Bem, não, eu acabei de te dizer o que era.
+
+Está bem aqui, amigo. Desculpe. Os documentos estão bem aqui. Mas, com base nessas informações, tenho quase certeza de que a resposta será não, pois isso deixa tudo muito claro. Sable não está informando qual versão do Windows você está executando no momento. Se você tiver
+
+VRAM suficiente, o Olama pode usar essa opção por padrão. Portanto, o Olama ainda usa o valor padrão, a menos que seja alterado. Mesmo que seu modelo suporte 32, ou seja, mesmo que sua GPU seja capaz. Então, aqui são 8 gigabytes de VRAM. Então, 4K.
+
+Portanto, não é possível executar uma VM de 32 bits. Então, isso vai acontecer. Logo de cara, já estamos num beco sem saída com a Gemma, mas pelo menos sabemos, né? Então, se quisermos usar Gemma, teremos que servi-la de algum lugar. Então talvez tenhamos que pegar isso do Google de alguma forma, mas não tenho certeza porque esperamos que venha pelo Olama. E a questão é: se formos
+
+à Olama, eles têm modelos abertos, certo? Eu estava na oferta deles em nuvem e queria dar uma olhada na biblioteca de modelos. Então, sabe, isso é algo que eles disponibilizam na nuvem? Eles têm uma versão em nuvem. Então talvez possamos testar isso e assim teremos o contexto correto. Então, como você pode ver na
+
+janela de contexto, aparece 256. E talvez essa seja a única maneira de executarmos o programa. Como você pode ver, não é que você não consiga executar esses modelos localmente, mas sim que você vai atingir os limites da sua VRAM. E no fim das contas, é exatamente isso que importa , não é? Então, se você precisasse dessa VRAM, o que seria capaz de executá-la? Essa seria a
+
+questão. Então, se voltarmos aqui, que tipo de hardware nos daria VRAM suficiente para executar o Gemma 4? Tipo, seria o máximo, tipo, Mac, tipo, M3 Max? Ok, também tem o uh hum uh G DGX Spark, mas o DGX Spark normalmente tem muita memória. Aqui está explicado o que significa, na prática, rodar com quatro baterias. Então,
+
+VRAM suficiente para os pesos do modelo, o suficiente para o cache KV e largura de banda B suficiente para não ficar extremamente lento. Então, se estiver tudo bem e estivermos executando o parâmetro de quatro bilhões, ok, então sim, obviamente não para esse tipo, mas é possível, certo? Então, ainda é muito, muito difícil. Existe um software como o Expo que permite conectá-los em rede. Hum, ok,
+
+IA alta, não a banda. Então, esta é uma maneira de você ter vários Mac minis e conectá-los em rede. Mas é preciso levar em consideração que pode haver latência na rede. Então, se você participou do meu curso da Nvidia, vai aprender por que você quer o DJ DGX Sparks GGX Sparks aqui. Ok, então o DGX Sparks... eles têm o
+
+link NVL da Nvidia, o que permite uma transferência extremamente rápida de GPU para GPU, tornando-o extremamente valioso. O único desafio aqui é que, bem, você pode não ter latência entre GPUs ao empilhá-las, mas pode ter menos VRAM, já que esses Mac Studios, seja lá qual for o número, são extremamente eficientes em termos de VRAM. Então, o que dizer de duas placas DGX Spark conectadas em rede? É interessante porque, se você se aprofundar nesse assunto... Eles podem
+
+sugerir que você compre um Max 3 e algo assim e depois façam networking. Não sei bem como você faria isso. Bem, a menos que tenhamos esse equipamento aqui na minha mesa, e eu não o tenho, não posso responder a isso claramente, mas, novamente, ainda vamos testar outras coisas aqui. Assim, cada Spark possui 128 unidades de memória unificada com capacidade de 200 Gbits por segundo. É disso que precisamos. Sim. Por meio desses
+
+nicks de conexão X. É a placa de vídeo personalizada que a Nvidia fabrica com o MVM NV Link. Portanto, duas unidades Spark não são a mesma coisa que uma caixa com 256 memórias contínuas. Uhum. Uhum. Então, é sempre uma questão de "
+
+depende". Pode funcionar. Portanto, mais uma vez, se não tivermos esses documentos em mãos, não saberemos com certeza. OK? Então talvez um dia eu os alugue. Tudo bem? Tem um lugar
+
+onde eu poderia alugá-los. Mas, por agora, não posso responder a essas perguntas para você. É que os recursos que temos aqui são limitados. Mas enfim, acho que já temos a resposta, que é tipo, sim, precisamos de certas coisas para o sistema funcionar. Bem, sim , vamos prosseguir e tentar usar as versões em nuvem agora. Ok, tá bom.
+
+Olá, meu nome é Andrew. Neste vídeo, quero ver se podemos usar codecs, especificamente com Gemma. Bem, novamente, não estou dizendo que Gemma seja o modelo mais recomendado, mas se pudermos executá-lo, seria muito interessante fazê-lo. Você vai perceber que, para cada um deles, eles estão recomendando opções muito específicas. Então, mais uma vez, só queremos ver se ele consegue executar o programa . Então vou
+
+instalar o Codex. Então, aqui estão as instruções de instalação do Codeex, pois não deve ser muito difícil para nós instalá-lo. Então, baixe o Codeex aqui. Vamos executar o teste aqui. E agora está instalado. Vamos
+
+voltar ao O Lama e aqui estou procurando maneiras de lançá-lo. Então, basta usar o hífen "m" para representar o modelo. OK. Então, vou criar uma nova pasta aqui. Isso será flappyird uh codeex gemma. OK. Vou criar um novo
+
+arquivo readme.md. E isso é apenas para me dar esse arquivo único aqui. Este produto está fora de estoque. Para usar codecs com O Lama, você precisa usar a flag OS. Ok, claro.
+
+E vou pegar esse modelo aqui. Só quero ver se quebra. OK. Então, vamos prosseguir. Ops. Vamos prosseguir
+
+e copiaremos isso. Vamos colar. Pressione Enter. O único problema é que eles têm modelos recomendados, mas não explicam por que são recomendados, certo? Certo. Então eles vão dizer: "Ah, use o GPT
+
+OSS, o de código aberto, certo?" Bem, vamos tentar isso. E estou no diretório errado. Então, vamos lá, Flappy Bird. Ah, Flappy Bird D aqui.
+
+Vamos executar esse comando aqui e ver se funciona. Então, vamos digitar "modelo". Portanto, não está especificado aqui, mas você pode ver os modelos aqui em cima. Gemma 4, Gemma 3. Ok. Então, vou prosseguir
+
+e simplesmente clicar em "criar" e colocar no modo de planejamento. Hum, crie um Flappy Bird para mim. Hum, um jogo, uma página
+
+, uma única página HTML,
+
+JavaScript e CSS puros, usando WebGL. Certo, então estamos apenas tentando testar a estrutura de codificação para ver que tipo de resultados podemos obter. Provavelmente, a mais difícil seria utilizar a CLI do Gemini. Na verdade, eles nem sequer listam isso aqui. Ah, e quando você quiser usar Gemma, ou Gemini, provavelmente você acessaria o serviço através da API do Google, que ainda está em fase experimental. Então, bem, de qualquer
+
+forma, isso está fornecendo boas informações de planejamento, o plano proposto. Então, vou começar explorando o diretório. Não há nada para explorar. Hum, estou tendo problemas com o diretório, já que é uma entrada do zero, etc., etc. Ok, ótimo. Vá fazer "
+
+Ops!". Estou falando apenas da implementação. E assim, obtendo bons resultados. Não que o código na nuvem não pudesse ter feito isso, mas, por algum motivo, estamos obtendo excelentes resultados. Diga
+
+ótimo, vá implementar.
+
+OK. E vamos pressionar Enter. E talvez ainda estejam elaborando o plano por aqui. Eu não tenho certeza. Mas vamos aguardar até que esteja completamente concluído e em execução. OK. E até agora,
+
+cinco minutos depois, ainda está funcionando. Isso não significa que não voltará aqui, mas obviamente o código em nuvem retornou com um resultado rápido. Realmente preciso testar isso. Temos que executar o teste umas três, quatro, cinco vezes. Não sei. Hum,
+
+também estou curioso para saber se existe algum lugar onde eu possa acompanhar meu consumo. Não acho que exista. Quando pesquisei anteriormente, não havia nenhuma informação. Hum, ah sim, existe. Aqui está. OK.
+
+Portanto, eles têm uso de sessão. Portanto, reinicia em 1 hora, uso semanal. Uau. Reinicia em 1 hora. Isso é generoso. Mas talvez eu
+
+não esteja dentro da janela de 5 horas aqui. E aparentemente eu não utilizei quase nada. Hum, mas está indo muito, muito devagar por aqui. Então, sabe, será que vai voltar com alguma coisa? Não sei.
+
+Parece que acabou de ser concluído. Hum, o que não é ruim depois de cinco ou seis anos. Oh. Ih, rapaz. Ah, então esse é o plano? Achei que isso
+
+cumpriu o plano. Aguarde um instante . Não, eu disse ótimo. Vá em frente e implemente isso. Ainda estou na fase de planejamento. Onde
+
+está meu código? Então, sim. Bem, veja, é aqui que eu preferiria executar as coisas de forma individualizada. Então, vou prosseguir. Vou criar um arquivo de plano aqui.
+
+E vou digitar " limpar".
+
+Tudo bem. Então, quer dizer, obviamente, não executou o que queríamos, mas ainda temos a implementação aqui. Então, vou parar com isso. Vou digitá-lo novamente aqui. Vamos ver se conseguimos conduzir o veículo conforme o planejado. Hum, eu
+
+meio que gostaria que dividisse suas tarefas. Então, talvez isso possa ajudar um pouco. Mas talvez devêssemos apenas fazer referência a isso. OK. Por favor, implemente este plano e veremos se funciona.
+
+Quer dizer, obviamente pode usar ferramentas, então não estou realmente preocupado com isso. Ah, aí está. E agora temos uma lista. E agora, a corrida começou. Não tenho certeza se ele marcaria essa caixa automaticamente durante o processo , mas pelo menos sabemos que ele sabe o que precisa fazer. Portanto, queremos apenas
+
+observar o resultado final aqui. OK. Tudo bem. Então, hum, não chegou a implementar. Quer dizer, eles fizeram um plano atualizado. Ok, ótimo. Vá em frente e implemente isso,
+
+certo? Então, estamos tentando fazer com que ele seja implementado, a menos que já estivesse em execução esse tempo todo. Mensagem enviada após a próxima chamada. OK. Então talvez ainda esteja em fase de implementação.
+
+OK. E talvez tenhamos que esperar aqui. Simplesmente não consigo perceber se está processando. Normalmente, aparecerá alguma mensagem indicando que está funcionando, mas talvez esteja mesmo funcionando. Então talvez eu só precise ter paciência . Tudo bem. Portanto, ainda estamos
+
+aguardando há vários minutos e a execução não ocorreu. Então, sabe, talvez seja aqui que... sabe, não vamos obter os resultados que desejamos. Bem
+
+, acho que o que talvez devêssemos fazer aqui é seguir a sugestão de Olama e tentar usar o codec recomendado. Ok, estamos basicamente testando essas coisas para ver o que funciona e o que não funciona, e fazendo as melhores observações. Hum, nada de muito emocionante aqui, mas...
+
+vou dar uma olhada aqui e tem o GPTO OS, que possui um com 120 bilhões de parâmetros. Então talvez a gente tente isso . Então, vamos subir até aqui. Vamos colocar isso aqui. Vamos dar uma olhada e ver se isso faz alguma diferença.
+
+Não deveria baixar tudo, porque não há nada para baixar, mas acho que está baixando muito rapidamente. Não foi possível encontrar o plástico bolha no caminho e instalar. Na verdade, eu não coloquei plástico bolha aqui. O plástico bolha é necessário se você quiser um ambiente de teste (sandbox) . Consulte os pré-requisitos do ambiente de testes. Não estou realmente preocupado
+
+com isso. Então, vamos lá e perguntamos se você pode implementar este plano e ver se o GPTOSS apresenta algum resultado melhor.
+
+OK. E sabe, enquanto isso acontece, eu estou meio curioso para saber que modelo é esse. Acho que nunca vi essa antes.
+
+Ok, vou fazer uma pausa aqui. Vamos esperar até que a ligação seja encerrada. Mas aqui, está dizendo que não existe um único nome de modelo oficial para o OpenAR meta. Está etiquetado como usado por ferramentas. Então, código aberto no estilo GPT. Isso geralmente
+
+se refere a LLMs de via aberta que imitam o comportamento do GPT. OK. Mas qual deles é? Open Way LM hospedado por uma série de variantes do mixtrol. Ok, então talvez seja baseado em uma mistura.
+
+Então, vamos acessar este local enquanto isso é executado em segundo plano. Está funcionando. Vamos observar o que temos aqui. Diga GPT. Então, diz que o modelo OpenWeight da OpenAI foi projetado para raciocínio aberto poderoso, versatilidade, etc., etc.
+
+Bem, qual é a verdade? Vamos lá. Então, a Olama fez uma parceria com a OpenAI para trazer o que há de mais moderno , etc. Os dois modelos trazem uma nova gama de possibilidades, etc., etc.
+
+Ok, então não vejo se o Mistl está envolvido nisso . Parece que isto foi produzido pela OpenAI. Não sei ao certo quão antigo é isso. 2025. Definitivamente não é novidade.
+
+OK. Bom, pelo menos eles estão lá. Bem, pelo menos podemos ver o que está tentando fazer, mas teremos que esperar para ver o que acontece. Tudo bem. Então, depois de cinco minutos, temos: Oh, não.
+
+Talvez dois minutos. Parece que foram só cinco minutos . Temos algo gerado. Voltaremos para cá. Dê uma atualizada.
+
+E esta é a pasta codeex. OK. Flappy Bird Codex Gemma. E eu estou revigorando. Não vejo nenhum arquivo lá. Só quero verificar explicitamente se está
+
+lá. Vou dar uma olhada no Flappy Bird Codex. Não, não está lá.
+
+Você nunca criou um arquivo aqui. Você nunca escreveu um arquivo como "Vamos fazer uma verificação de sanidade". Crie um arquivo chamado test.txt com o texto " bananas" no diretório atual, pasta atual. Novamente, estamos apenas verificando se ele usará as ferramentas corretamente. É meio
+
+frustrante porque depois que roda, você não quer que rode de novo, né? [risos] Então, aqui está, tentando escrever isso. OK. O que é ótimo. Agora temos nosso único arquivo de texto. Então eu volto para cá e... bem,
+
+vou esclarecer o contexto. Digamos que eu queira criar uma lista de tarefas, uma lista de tarefas que precisam ser executadas para concluir este plano. e escreva-o em
+
+tasks.md. Então, talvez essa seja a única maneira de conseguirmos ajudar. Seria bom voltar a falar com Gemma e dar uma olhada para ver se há algum problema com a escrita dela. Preciso ler o repositório para ver o que já está planejado e então criar a tarefa. Você aprova? Sim.
+
+OK. Vamos ver se conseguimos fazer com que ele escreva em um arquivo, pelo menos um arquivo maior, porque um arquivo pequeno não vai nos ajudar muito. Bom, pelo menos está tentando criar o arquivo de tarefas, o que é ótimo. É estranho que ele aja como um gato ou algo assim. Bem, você sabe, desde que esteja tentando criar algo. E
+
+aqui está a lista. Assim, criou-se a tarefa, uma lista concisa passo a passo. Hum, claro. Claro. Quer dizer, eu provavelmente daria uma estrutura um pouco melhor e tentaria dividir em outras coisas, mas...
+
+Ok, então vou aqui e talvez criar uma lista de tarefas, criar a estrutura de teste para verificar, certo? Coloque isso aqui em cima. OK. Então, vou esclarecer isso. Hum, eu quero que você implemente a lista de tarefas.
+
+As tarefas da lista de tarefas são executadas uma a uma. Marque-os conforme for concluindo . hum, você sabe, para contexto completo, plano C MD. OK. E espero que isso ajude. O grande problema aqui
+
+é que o contexto não será limpo após cada ação e as informações não serão recarregadas . Hum, mas vamos ver se consegue funcionar dessa forma. Claro, vou implementar. Hum, posso executar comandos com permissões elevadas? Sim. Sim. Que outras permissões
+
+você precisa? Você está pronto para começar. Então, não vai funcionar exatamente assim, mas vamos ver como corre. Tudo bem. Então, você gostaria de executar o comando do telefone? Então,
+
+imprima funções sem função. Claro. Não tenho certeza do que está tentando fazer, mas vamos deixar acontecer. Sim. Experimente lá.
+
+Hum. Está fazendo alguma coisa. Mas é, eu simplesmente não sei. Esses modelos podem não ser bons o suficiente. Bem, novamente, isso depende dos outros modelos que testarmos. Tipo, a Kimmy talvez se saia muito
+
+melhor, mas alguns deles talvez não consigam dar conta do recado para concluir as tarefas. Fiquei surpreso que Gemma tenha realmente concluído quatro tarefas de código na nuvem, então pelo menos isso é muito, muito bom. Mas vamos apenas ficar por aqui e ver o que acontece. Ok, todo mundo está trazendo novidades. Vamos dizer que sim.
+
+Hum, e ele marcava os itens conforme os ia concluindo? Oh sim. Vai editar. Ah, sim. Ok, claro.
+
+Aplicar marcador de posição. Não sei por que está executando funções tão estranhas,
+
+mas está tentando. Uau, olha só isso. Será que realmente fez tanta diferença assim ? Ah, talvez sim. Gostei de como não parece que fizeram isso um por um.
+
+Parece que simplesmente fez tudo sem mais nem menos . [risos] Mas, ei, pelo menos atualizou a tarefa. Agradeço muito. Bem, quer dizer, você ainda precisa usar o arnês. Então, itens não verificados. OK. Então, tudo
+
+bem. Vá, vá, vá, implemente seu arnês. Implemente o resto. Mas, ei, pelo menos conseguiu fazer isso. Mas é complicado, sabe, tipo, tudo bem, então é hora de concluir a próxima tarefa.
+
+Mas seria bom se fosse mais gradual e houvesse mais verificação em cada etapa, mas não tenho certeza do que precisaríamos fazer para que funcionasse. Bem, de novo, é muito lento, mas, sabe , é de se esperar, né, considerando o que estamos fazendo. Mas aqui, a lista será atualizada. E agora está sugerindo que tudo está concluído. Bem, tecnicamente, migramos para o protocolo do Codex, já que o protocolo de OGM não estava funcionando da melhor maneira possível.
+
+Mas vamos ali e vamos abrir isso em uma nova janela do navegador. Vá em frente e o jogo estará quebrado. Pulso acelerado levanta pássaro. OK. Bem, foi uma tentativa razoável, mas você sabe que esse modelo não é novo. Então,
+
+quero voltar a falar da Gemma por um segundo porque estou curiosa. Só quero ver se consegue escrever um único arquivo. Então, você pode atualizar o texto para que ele contenha maçãs em vez de bananas? OK. E está explorando o arquivo. É possível editar
+
+? Eu apenas fiz um teste de leitura simples novamente. Sim , eu posso. OK. Bem , eu diria que esta é a implementação feita pelo GPTO OS.
+
+Bem, vou voltar aqui e ver se conseguimos dar um comando semelhante.
+
+Então, estou apenas dando uma passada por aqui. Quero garantir que tenha contexto. Vou começar dizendo coisas como tarefas. Ops. Tarefas MD. Ah, ele
+
+simplesmente completa automaticamente para isso. OK. Bom, tudo bem. Então, vamos pressionar Enter. Então, vamos ver se consegue fazer a mesma coisa ou se tem uma chance melhor de fazer melhor.
+
+Mas espero que, dessa forma, estejamos meio que forçando o programa a dizer: "Ei, escreva o arquivo e atualize-o". Hum, mas esses planos são meio frustrantes porque, tipo, se você tem um plano, ele não funciona. É péssimo. Sim , é uma lista de verificação. Não parece que isso vá acontecer individualmente. Talvez sim
+
+. Hum, e mesmo no planejamento, provavelmente poderíamos ter escrito algo como, "ei, marquem essas caixas conforme forem concluindo", em vez de colocar isso no texto. Talvez ter dado maior prioridade a isso tivesse sido uma decisão muito mais inteligente, ou então repetir o processo teria sido uma boa ideia. Bem, enfim , vamos começar e ver o que acontece, se de fato será gerado um arquivo. Muito bem, conseguimos editar o arquivo. Além disso, outra coisa
+
+que devo considerar é se ele está tentando ler o outro arquivo HTML? Acho que não, porque se tivesse acontecido, teria nos avisado, não é? Bem, ele lista o conteúdo, lê a tarefa no plano MD. Então, ele analisou os arquivos. É possível perceber que ele não está analisando o arquivo de índice existente . Olha só isso. Vai desmarcando as opções
+
+conforme avança. Legal. Mas será que está mesmo desmarcado aqui? Não, é só desmarcar a opção, seja lá o que for isso, o que eu acho que está tudo bem. Hum, mas só se realmente atualizar o arquivo, certo? Então, tudo bem. Então, hum,
+
+não sei se você percebeu, porque eu fiz uma pausa e não tenho ideia de quanto tempo isso está assim, mas vou continuar. Eu estava apenas falando sozinho e tudo parou. E, mas, bem, terminou o trabalho. Então, vamos abrir o item de índice aqui. E você pode ver que funciona.
+
+Portanto, estou impressionado. Então, Gemma trabalha muito, muito bem. Acho que talvez o motivo de não vermos recomendações da OLAM seja simplesmente a falta de uso, já que o Gemma 4 é muito, muito novo. Bem, obviamente o GPT OS não teve muito sucesso, mas é um modelo mais antigo . Bem, vamos ter que experimentar com mais modelos aqui. A
+
+questão é: se fôssemos disponibilizar nosso próprio modelo, e se seria viável para nós, computacional bruto, que tipo de desempenho obteríamos? E é isso que me interessa. Quer dizer, pessoas preocupadas com a soberania dos dados se importariam, mas eu estou pensando: como seria na prática, quando soubéssemos qual seria a capacidade computacional garantida e o desempenho que essas coisas teriam? Essa é uma tarefa à parte, mas temos mais modelos para avaliar. Então vamos continuar. OK.
+
+Olá, meu nome é Andrew e neste vídeo vamos utilizar o Ola Mloud. Então, eu simplesmente me inscrevi e cadastrei meu cartão de crédito no Ola Mloud para a edição profissional. Bem, novamente, é apenas para testar e para que possamos usar um modelo que funcione adequadamente. Hum, e obviamente existem muitos modelos. Parece que estou muito focado na demonstração, mas vamos experimentar todas aqui. Bem, a ideia é que, se
+
+olharmos mais abaixo, podemos ver que existe um modelo de parâmetros de nuvem com 43 bilhões de parâmetros que podemos utilizar. Hum, quero ter certeza de que não estou executando nada na minha GPU que não... não espero que utilize realmente a GPU, mas só quero garantir que minha GPU esteja... livre de uso. OK. E eu não sei se
+
+preciso que o Ola esteja em execução. Vou parar com isso por agora. E vou sair daqui . Então vamos lá e clicar em "Ops". Claro. Claro.
+
+E obviamente quero executar o modelo aqui, mas quero executar o modelo na nuvem. Então, vou pegar a versão em nuvem . Vou presumir que tudo o que precisamos fazer é inserir o nome aqui, assim, e ele será utilizado. Então, vamos pressionar Enter. Não foi possível conectar ao servidor Olama. Então, vou voltar
+
+para cá. Vou apenas digitar a palavra Olama. Na verdade, não tenho feito isso. Mas aqui você pode ver se queremos utilizar o Olama de alguma forma específica, mas o que eu quero fazer é ver como podemos acessar a nuvem, pois nunca fiz isso antes. Hum, tem algum símbolo de "O" aí? OK. Então
+
+vamos dizer "lama sign in" e já estamos conectados. Ok. OK. Então, vou fazer apenas "lama serve". Eu não pensei que teríamos que fazer isso. Ah,
+
+já está em uso. Uhum. Então, eu direi lama. Então, é pseudo systemctlama status status lama. Não sei por que é o contrário. Acho que faz algum
+
+sentido. Então, eu vou ali e... opa! Vou dizer pare.
+
+Com certeza não parece que esteja funcionando, e então diremos "servir lhama". Ó meu Deus. Isso me frustra muito. Bem, como não estamos executando isso em lugar nenhum. Ah, talvez estejamos executando o modelo aqui. Saída.
+
+OK. Então, vou voltar para cá. Diga pare. Vamos verificar o status. Sim, não deveria estar funcionando.
+
+Oh, serviço de lhama. E isso acontecerá de tempos em tempos. Eu vou ali e pergunto: como eu mato isso? Porque, obviamente, eu não estou no comando. E esse é um problema que eu enfrentaria.
+
+Se você realmente quiser, pode simplesmente reiniciar a máquina. Hum, pode fazer isso sem problemas. Veja, não há processo nenhum. Matar lhama. Pronto. Vamos tentar servir
+
+novamente. Olama serve. OK. Então, isso é algo que teremos que ajustar . Assim não preciso pesquisar novamente. E nós vamos entrar em contato.
+
+Não, eu não quero esse. Eu não quero esse. Não. Estou tentando descobrir onde estávamos executando isso antes. OK. Bem, terei que copiar a
+
+linha novamente. Está tudo bem. Então vamos até aqui e eu vou pegar toda essa linha. E eu vou colocar aqui. E vou pegar a nuvem de parâmetros Gemma de 43 bilhões.
+
+Agora devemos conseguir executar isso. Minha habilidade de copiar e colar é simplesmente terrível. Não sei porquê. E vamos pressionar Enter. Então vamos verificar o modelo. Diz que está usando a versão em nuvem.
+
+Diga olá. Então, a ideia aqui é que isso seja divulgado aqui. Note que não estamos recebendo nenhuma informação de uso por parte dos membros, pois o sistema deveria estar utilizando a nuvem e respondeu . Ok, excelente. Então, estamos na pasta "Olá, mundo!"? Sim, somos. Então,
+
+você pode escrever "hello worldrb" com o arquivo "hello world" nesta pasta? Agora, considere que também temos nossas permissões definidas neste arquivo na nuvem. Portanto, se removermos esses itens, talvez devêssemos considerar essa possibilidade. Então, eu criei o arquivo hello world.rb e ele funcionou instantaneamente. Isso é realmente muito
+
+interessante. E se simplesmente nos livrássemos desse arquivo? Então, selecione " Outro", pois não será carregado dessa forma. E se a gente simplesmente entrasse aqui e apagasse isso por enquanto? Então, vou executá-lo novamente, excluir este arquivo e verificar se ele consegue fazer isso sem essas informações.
+
+Ainda funciona? Sim, faz. Ok, ótimo. Portanto, não precisamos das nossas configurações. Ok, não precisamos do nosso claw.md. E está
+
+funcionando perfeitamente. Portanto, acho que se tivéssemos conseguido um contexto mais amplo, provavelmente teria funcionado. Hum, mas isso é meio interessante. Então, gostaria de expandir isso para uma tarefa maior agora. Então, vou voltar aqui fora .
+
+Vamos dizer, por exemplo, "criar um diretório" e " Flappy Bird", porque é um projeto de escopo muito pequeno . E nós vamos prosseguir e abordar este local. Execute novamente. Podemos elaborar um plano. Você pode criar para mim um jogo de Flappy Bird, ou seja, um único arquivo HTML com JavaScript e CSS embutidos usando WebGL? OK. Então, vamos prosseguir.
+
+Coloquei em modo de planejamento. Eu usei a tecla Shift + Tab para fazer isso. Então, tudo o que estamos tentando fazer é testar essa experiência. Novamente, estamos usando Gemma simplesmente porque é extremamente eficiente. Mas vamos analisar os outros modelos, pois temos outros modelos disponíveis. E a Gemma
+
+nem sequer é o modelo recomendado, certo? Então, se você for até a documentação, basicamente recomenda tudo, menos a Gemma, mas é bom saber que funciona, sabe? Então, vamos dizer O Lama uh claude code aqui. E se você rolar a página para baixo , vai aparecer uma sugestão do tipo: " Ei, você deveria usar essas, né?" Como Kimmy, GLM, minmax, Quen, GLM, Quen. Então, nem sequer está recomendando
+
+essa opção. Mas vamos esperar aqui e ver o que acontece. OK. Tudo bem. Então, depois de esperar dois minutos, ele volta a funcionar . Criar um jogo Flappy Bird em aprendizado de máquina. Então
+
+, isso criou uma tarefa. Não tenho certeza se isso apareceria na nossa lista de tarefas. Isso não faz sentido nenhum. Não sei por que aparece essa mensagem. Então, vamos lá.
+
+Ok, ótimo. Então, talvez o modo plano não seja a melhor escolha para nós aqui. E nós vamos em frente. Ops. Ótimo. Prossiga
+
+com a criação do jogo. OK. Então, espero que entenda o que queremos fazer lá. Mas por algum motivo, modo planejamento, sabe, não tenho certeza. Não parece que realmente volte para lá, mas tem essa função aqui. Então,
+
+claramente definiu um, certo? A única tarefa. Não sei o que aconteceu com todos os nossos requisitos. Mas teremos que aprender a dirigir essas coisas conforme formos avançando. Provavelmente eu criaria um arquivo de planejamento com uma lista de verificação e atribuiria tarefas individualizadas para serem executadas iterativamente. Isso talvez funcione
+
+melhor. Ou você pode ter um modelo maior, um modelo de gerenciamento, e então usar um desses para trabalhar com ele, mas vamos dar um momento aqui e ver se ele consegue executar essa tarefa simples. OK. Tudo bem, voltou ao normal. Vamos dar uma olhada aqui e ver quais são os nossos resultados. Então, eles
+
+criaram um jogo do Flappy Bird. OK. Está usando um shader GL. Portanto, está usando WebGL, que é o que eu pedi para fazer. Isso é bom.
+
+Bem, se formos para cá, a única coisa que não vamos conseguir rastrear é o nosso consumo. Essa é a única parte difícil aqui. Então, renderização WebGL, etc., etc., então eu realmente não esperava que retornasse nada. Então, estou realmente
+
+surpreso, mas vamos ver se funciona corretamente. Então, nós vamos trazer isso para cá. Ops. Estou tentando acessar pelo meu navegador. Simplesmente não abre. Vamos. Pronto. Então, nós compramos um
+
+jogo do Flappy Bird. Não é como se fosse supercomplicado, já que todos esses modelos deveriam ser capazes de fazer isso, certo? OK. Bem, é o Flappy Bird. Mas, sabe, de novo, esse é um padrão muito, muito, muito, muito baixo, não é? Hum,
+
+algo que me impressionaria muito seria, tipo, será que conseguiriam fazer um filme de Wolfenstein? Então, os modelos mais recentes da Frontier conseguem criar Wolfenstein 3D com agentes de codificação, e isso seria um teste melhor, como com o ray casting. mas não era um plano muito bom. Então, a única preocupação que tenho é que não apresentaram um plano. Então talvez eu pudesse ser mais explícito sobre isso. Bem,
+
+esse provavelmente seria um teste muito melhor, mas eu diria que isso está concluído por enquanto. Então, sabe, faremos mais alguns testes antes de passarmos para outros modelos. Outra coisa que talvez a gente queira fazer é um Flappy Bird aqui, que é o Gemini. Não, desculpe, este é o código do Claude, hum, Gemma, mas eu só quero testar isso em outros provedores como o Codeex e coisas assim, e também, hum, dar a ele algo um pouco mais difícil de fazer. OK. Sim
+
+, nos vemos aqui novamente.
+
+Olá, meu nome é Andrew e estamos continuando a testar diferentes modelos. Bem, obviamente existem muitas estruturas diferentes que podemos usar, mas ainda acho que devemos continuar tentando usar o Cloud Code persistentemente . Bem, vou acessar o Cloud Code Olama aqui e exibir isso na tela. Vamos dar uma olhada em alguns dos outros modelos recomendados que temos. Então temos Kimmy K2, GLM, Miniax, Quen.
+
+Quen não é tão bom assim. GLM e depois Quen 3.5. Quer dizer, obviamente esses são programas que você pode executar localmente, mas vamos nos concentrar nesses que estão na nuvem porque, você sabe, meu poder computacional é limitado. Bem, eu vou falar sobre... quer
+
+dizer, basicamente todos esses são Flappy Bird. Não sei bem por que fiz assim, mas vamos em frente e simplesmente diremos Flappy Bird. Flappy Bird e Claude código Kimmy K2. Ok, tecnicamente é K25. Talvez seja melhor ajustar isso ali.
+
+Novamente, estamos apenas fazendo uma comparação entre esses itens para ver que tipo de resultados podemos obter. Então , é só ir aqui. Vou pegar esse readme.md. Ops.
+
+Seria bom poder fazê-los em paralelo, mas acho que estamos limitados pelo serviço que temos. Então, vou pegar isto aqui. Isso significa que não precisamos da flag OSS. Então vou me livrar disso. Ah, isso também se refere a codecs. Eu não quero
+
+Codeex. Desculpe. Eu não preciso do Codeex novamente. Está tudo bem. Então, vamos voltar para cá. OK. E
+
+quero dizer, o códice não era tão ruim assim. Tipo, eu realmente não consigo notar a diferença. Então, não tenho certeza se usar uma estrutura de codificação genérica realmente vai valer a pena de alguma forma, mas existem algumas que queremos experimentar, como a Goose e outras do tipo , mas não faremos isso agora. Certo, então vamos prosseguir e vamos trocar para...
+
+desculpe, eu sei que isso é realmente complicado , mas vamos pegar este aqui e agora vamos executá- lo e dar a ele o comando. Então, crie- me. Bom, vamos ver se consigo dar uma passada por lá . Não, não posso. Então, acho que deveria guardar essa ideia para não ficar escrevendo isso o tempo todo. Então,
+
+médico, por favor. Crie um plano para... uh... crie um plano para... Acho que não
+
+preciso exatamente da instrução, mas talvez precise dela mais tarde. Então, crie um plano para o Flappy Bird. Vamos. O que aconteceu? Não consigo digitar agora.
+
+para o jogo Flappy Bird. Um único arquivo HTML indexado, JavaScript e CSS puros, utilizando WebGL. Certo, então vamos copiar isso. Vamos descer , colocar no modo de planejamento e pressionar Enter. Opa, não era isso que eu queria. Não era isso que eu queria.
+
+Vou apenas copiar isto. Colar. Pressione Enter. Então veremos como Kimmy 25 se sai. Quer dizer, eu acho que todos eles vão ter um desempenho praticamente idêntico, mas o que estamos procurando é: será que existe algum com parada completamente nula? Hum, será que tem alguma coisa,
+
+sabe, muito, muito errada aqui? Mas vamos continuar. OK. Tudo bem. Então, bem aqui, temos dois parâmetros inválidos. Então, tentou
+
+chamar o plano. Está apresentando alguns probleminhas. Então, sabe, eu não sei se esse negócio do plano é um problema para isso. Pode ser esse o caso, mas vamos esperar para ver se recebemos alguma resposta sobre o assunto . Certo, então ele volta com um plano. Hum,
+
+e com o código, não tenho certeza de por que recebemos o código de volta, mas é um plano detalhado. Parece muito bom. Então, desça aqui embaixo . Diremos que sim, aprovaremos automaticamente e deixaremos que a implementação seja concluída. OK.
+
+E parece que parou. Portanto, este é mais um problema recorrente que estamos enfrentando: o programa inicia a criação de algo e depois para. Então, aqui vou dizer apenas "plano MD", porque parece um pouco confuso. Mas eu não quero perder esse plano. Então, simplesmente copie.
+
+Vá até o final. Você não executou o plano.
+
+Vamos ver se isso ajuda em alguma coisa. Mas, na verdade, parece que dividir a tarefa em partes menores ajudaria um pouco. Muito bem, estamos de volta. E conforme isso foi sendo gerado, tentei ver se conseguia criar um agente de avaliação, pois seria interessante poder executar isso com várias ferramentas, porque agora estamos apenas experimentando e vendo o que acontece. Mas parece que voltou aqui e diz que foi ele quem o criou. Então vamos dar
+
+uma olhada aqui. Hum, e nós revelaremos isso no Explorer. OK. O único problema com esses testes é que, você sabe, eles podem ser bastante frágeis. Então, vá para lá. Uau.
+
+Uau, isso é muito bom. Ok, este é o melhor até agora. Bem, no geral, quer dizer, de novo, não podemos simplesmente dizer se isso é bom ou não. Quer dizer, é bom. É bom. Não vamos nos enganar
+
+. Mas, sabe, a questão é realmente avaliar se esse modelo está realmente otimizado para Flappy Bird ou se é bom para todas as tarefas de programação em geral, e precisamos criar algum tipo de critério para testar essas coisas, mas isso levará um pouco de tempo. Por enquanto estamos apenas brincando com os modelos, mas eu diria que fizeram um bom trabalho. Sabe, talvez a gente volte a usar o KB 2.5 . Isso foi impressionante.
+
+Cha chia. Olá pessoal, aqui é o Andrew. Estamos de volta e desta vez vamos tentar usar o GLM5. Portanto, estamos observando algumas diferenças interessantes aqui. Até agora, Kimmy 2.5
+
+me impressionou. Veremos o que esses outros conseguem fazer. Vá em frente. Vamos dizer alarme de lançamento Claude, uh, lançamento do modelo de nuvem. OK. Então vamos
+
+pegar isto aqui. Inicie o programa . E, por sorte, salvamos o prompt aqui. Então, pode colar aqui. Coloque em modo de planejamento.
+
+Certificando-nos de que selecionamos este modelo . Sim, fazemos. E veremos como isso se desenrola. Já volto . Tudo bem. Voltou
+
+aqui com um plano. Então vamos prosseguir e fazer o nosso próprio teste, porque obviamente não saberemos os resultados se não salvarmos o arquivo. Então, vamos tentar copiar esse plano sem comprometer a viabilidade dele . Então, vamos acessar o GLM e digitar plan.md. É
+
+melhor salvarmos os resultados para podermos analisar o plano. O que acham deste plano? Quer dizer, com certeza é mais conciso. Para mim, parece tudo bem. Iremos lá e diremos sim.
+
+Aprovação automática. Vamos enviar para cá para ver o que acontece. Oh, tudo bem. Parece que voltamos e isso gerou... isto aqui. Todas
+
+essas coisas levam, sabe, não são super rápidas, mas também não são... quero dizer, não, são lentas. Eles são lentos. Mas, hum, pelo menos, é
+
+muito melhor do que eu esperava em termos de desempenho. Bem, vamos prosseguir. Esses modelos abertos. Acesse aqui. Arraste isto para cá . Parece igual. Huh.
+
+Ah, sabe por quê? Estou na pasta da Kimmy. É por isso. Veja a pasta Kimmy. Eu posso pensar: "Isso é muito estranho se for idêntico." Então, preciso me retirar
+
+daqui. OK. E agora temos o arquivo de índice propriamente dito . OK. Legal. Estética agradável.
+
+Uau, que suavidade! Por que Gemma não consegue acompanhar isso? Mas tudo bem, até agora os modelos recomendados estão funcionando muito bem, pelo menos para o Flappy Bird. Mas terei que dar-lhes algo mais difícil para fazer. um do que isto.
+
+Certo, mas era só isso que eu queria testar aqui. Então, vamos passar para outro modelo, que é o GLM, pessoal.
+
+Olá, aqui é o Andrew e vamos continuar desenvolvendo o Flappy Bird. Dessa vez vamos usar o Miniax. Essa é outra sobre a qual ouvi coisas boas . Código da garra do Flappy Bird. E aqui vamos dizer simplesmente Miniax M27.
+
+OK. E vou criar um novo arquivo aqui. Será apenas um arquivo readme.md. E iremos para cá. Continuo comprando
+
+codecs por aqui. Vamos até aqui para ver este . Pegue aqui. Coloque-o no lugar. Vamos pegar o Miniaax.
+
+Não estou ansiosa para fazer Quinn. Eu sei que Quinn não é muito bom. Quer dizer, provavelmente era bom para a época, mas não é mais. Então, vamos voltar a gravar o CD aqui. E vamos para Flappy Bird Claude, uh, Miniax.
+
+Pressione Enter. E aqui daremos o comando habitual. Coloque em modo de planejamento. Modo de planejamento. Pressione Enter. E relaxa. Então, aqui está
+
+um plano escrito. Vamos dar uma olhada no plano aqui. Plano MD. Pode
+
+copiar e nós vamos salvar. Então, vamos lá e perguntamos: você pode executar isso? Seria bom se fosse direto ao ponto, mas até agora os modelos recomendados têm funcionado maravilhosamente bem. Então, vamos aguardar . OK. E aqui parece que teria
+
+executado a tarefa. Hum, não gravou o arquivo. Cadê? Índice direito. Bom, está me chamando, não é?
+
+Ah, não, está bem ali. Deixa para lá . OK. Então, vamos abrir este aqui. Bem, vou revelar aqui quem eu encontrei. Arraste-o para um navegador.
+
+Ah, e pronto. Então, vamos apertar o botão de espaço e ele está quebrado. Vale a pena tentar ajudar a resolver o problema? Não, não me importo. Mas ou funciona ou não funciona. Adicionou alguma
+
+etapa de validação própria? Vá até aqui. Tinha uma etapa de verificação, mas por algum motivo, não funciona. Então, bem, todo mundo está dizendo: "Ah, Miniax é bom." Provavelmente poderíamos pedir para que se consertasse sozinho . Podemos tentar se eu voltar e
+
+verificar isso mais uma vez. Certo, um segundo aqui. Um momento. Dê uma olhada. Veja o que está errado. Geralmente
+
+não se tenta corrigir esses problemas, mas sim a partir do URL do frame. Quer dizer, não acho que haja nenhum problema grave aqui. Deixe-me dar uma olhada aqui.
+
+seguro. Isso é bom. Não acho que seja por isso que está falhando. Mas, sabe, eu não acho que essas imagens tenham visão de futuro, né? Então, se eu for aqui e colocar isso aqui, acho que não vai funcionar.
+
+Ah, Ctrl+Alt+V, Shift+V. Acho que eu tinha um plugin para isso, mas não funciona. Então, eu poderia dizer: "Ei, isso não funciona". Eu sei que isso não é muito descritivo. Vamos ver se isso consegue resolver o problema do arquivo HTML de índice.
+
+Bom, detectou vários erros. Então, o principal é que os canos, o chão e as nuvens estão todos com buffer quádruplo no mapeamento UV. Ah, então eles estão amostrando as regiões erradas do atlas. Deixe-me escrever isso corretamente. Suponho que você poderia fazer isso. Certo, reescreva-as. Mas esse não é o
+
+problema que estamos enfrentando. Ah, talvez esteja funcionando agora. Às vezes é confuso porque não mostra que está funcionando.
+
+Então, aqui eu não posso dizer. Certo, vamos ficar por aqui. Muito bem, foram aplicadas várias correções. Isso não significa necessariamente que saiba qual era o problema real. Vamos dar uma atualizada. E
+
+ainda assim não funciona. Então, hum, e não temos nenhum erro, por assim dizer. Então, é muito difícil voltar e simplesmente dizer: "Ei, não há pássaros". Hum, mas acho que se houvesse um conjunto de testes para verificar, aí sim poderíamos ter mais sorte. Resumindo, infelizmente o Miniax não teve o desempenho que esperávamos.
+
+Mas isso não significa que seja ruim. Significa apenas que, neste caso específico, não passou no teste simples do Flappy Bird . OK. Te vejo na próxima . OK.
+
+Olá, aqui é o Andrew e temos mais um modelo para testar. Espero que este tenha um desempenho péssimo, já que é um que consigo executar localmente e normalmente não funciona bem, mas este será o Gwen 3.5. Então, vamos prosseguir e criar um novo arquivo readme, ou melhor, um arquivo MD. Vamos prosseguir e simplesmente copiar esse comando para que possamos vê-lo. E nós
+
+voltaremos e pegaremos o Quen 3.5. Além disso, é preciso levar em consideração que esses modelos podem ser quantificados. Então, talvez eles tenham um desempenho realmente bom, mas a forma como foram modificados ou alterados para o Olama muda o desempenho deles. Portanto, isso é algo que realmente importa muito quando você está avaliando essas coisas. Vamos
+
+colar isso lá. Vou pegar o nosso guia. Vamos colocar isso em modo de planejamento. Cole o texto . Pressione Enter.
+
+E vamos esperar um momento. Tudo bem. Então, nós temos um plano. Vá em frente e pegue nosso plano.
+
+Hum, e agora estamos em... onde está nossa nova pasta? Esta é Quen Quen. Quen Quen. Quen, onde está sua
+
+pasta? Ah, eu escrevi errado. É...
+
+Bem, vou corrigir a ortografia antes de publicar aqui. Não é Gwen, é Gwen. Provavelmente teria ficado melhor se fosse escrito "Quen... Gwen", mas vamos
+
+revisar porque as pessoas gostam do Homem -Aranha, certo? Então, vamos percorrer todo o caminho até o final e agora vamos aprovar automaticamente e ver como funciona. Muito bem, então está de volta, vamos dar uma olhada. Na verdade, foi executado muito, muito rapidamente. Hum, surpreendentemente, muito rapidamente.
+
+O arquivo foi realmente gravado? Não, não gravou o arquivo. Ah, mas esse é exatamente o plano, não é? Não, nós já salvamos o plano. Ah, ocorreu um erro ao gravar o arquivo. Ah
+
+, ok. Então, vamos prosseguir. E esse é um problema entre Quen e Gwen. Na metade das vezes não funciona. Então, você nunca escreveu o arquivo.
+
+Eu criei um arquivo HTML de índice para você. O arquivo ainda não estava lá. Então, não tenho certeza do que se trata . Então, não. Não. Eu criei um arquivo
+
+que está vazio. Você pode fazer um teste de sanidade e simplesmente escrever "Olá, mundo!" no arquivo HTML index? Veja se isso ajuda. OK. Então, não, eu criei o arquivo e
+
+simplesmente não funciona. Então, o que eu quero dizer é que o querw está fazendo o que eu achava que ele poderia fazer. Então talvez pudesse ser algo como: você pode fazer a saída? Parece que está tentando ler o arquivo. Está mesmo preso.
+
+Restaure o código. Não estou tentando voltar atrás. Portanto, essa opção simplesmente não vai funcionar. OK. Muito bem, isso é Quen.
+
+Provavelmente poderíamos instruí-lo a exibir o código aqui, mas se ele não consegue escrever no arquivo, é funcionalmente inútil para nós, para ser honesto. Então , é isso aí. Avaliamos todas as opções possíveis com código em nuvem. Bem, a questão é se existe alguma plataforma de codificação mais adequada, já que o Claude Code é obviamente otimizado especificamente para modelos antrópicos. Eu não quero ter que testar todos os agentes de codificação para descobrir, mas a única maneira de realmente testar isso seria por meio de uma plataforma de avaliação. O outro problema é
+
+que essas outras plataformas de codificação podem nem usar o Olama; você pode ter que integrá-las aos planos deles e coisas do tipo. Isso torna muito difícil determinar quais usar. Mas meu objetivo é explorar esses modelos de forma ampla e, se precisássemos hospedá-los em nossos próprios servidores, como faríamos isso para garantir a soberania dos dados? Ou poderíamos executá-los localmente e obter poder computacional? É isso que realmente me interessa.
+
+Não estou tanto em comparar todas as plataformas de codificação agnósticas, mas pelo menos tentamos de tudo.
+
+Neste vídeo, vamos dar uma olhada no PI Agent Coding, ou PI Coding Agent. Eu tentei fazer o gesto de "ganso", sei lá, umas quatro ou cinco vezes, mas simplesmente não consigo fazer funcionar. Então, eu desisti de tentar fazer o Goose funcionar. Mas vamos em frente e vamos experimentar o pi. Então, está neste domínio: coding agent.ai. E vamos prosseguir com
+
+uma única instalação aqui. Vou criar uma nova pasta chamada pi uh pi exemplo. Então, vamos acessar o exemplo do pi aqui. E vamos prosseguir com a instalação global do agente de codificação pi. Então, vamos aguardar um momento para que isso comece a funcionar. Então, agora que está
+
+instalado, vamos descobrir como utilizá-lo. Provavelmente será algo como Pi. Mas eu sei que Olama está se preparando para isso. Então, se tivermos o produto, basta entrar e eu posso escolher o modelo que quero. E está me dizendo para navegar até aqui para me conectar ao Olama. Então, vou
+
+fazer isso fora da tela, aqui. E simplesmente diz "conectar dispositivo". Eu gosto disso. Isso vai facilitar muito a minha vida. OK. E agora estamos conectados ao Pi
+
+e ele está instalado. Pronto, aí está. Então estamos dentro disso. Obtivemos pi.ample.
+
+Então, vamos simplesmente dizer: crie para mim um jogo do Flappy Bird. Bem, espere um pouco antes de fazermos isso, vamos digitar o caractere de barra. Então temos o modelo de musgo. Podemos fazer isso? Aguentar. Portanto, temos apenas
+
+um modelo disponível. Fuja para cá. Que outras opções temos? configurações, escopo, importar, compartilhado, sessão, alteração, registro, bifurcar, árvore, novo, compactar, retomar, recarregar. Então, não muita coisa. Hum, será que poderíamos aprender alguma coisa
+
+com isso? Quer dizer, para mim, o mais valioso seria adquirir habilidades. Vamos lá, vamos simplesmente dizer: crie-me. Possui modo de planejamento? Shift + Tab. Alterna entre diferentes níveis
+
+de pensamento. Vamos deixar no nível médio. Se eu fizer um plano, temos um modo de planejamento? Não. Então, é bem primitivo, mas vamos em frente. Crie para mim um pássaro que bate as asas.
+
+Bem, temos uma sugestão para isso. Acho que temos isso na Kimmy. E vamos simplesmente dizer "crie-me", porque não há nenhum plano aqui. Então, vamos simplesmente
+
+criar um jogo do Flappy Bird com um único índice, etc., etc. E vamos deixar o programa rodar para ver se consegue fazer isso. Quer dizer, eu suspeito que isso deva funcionar. Hum, mas obviamente há muitas coisas que não temos. Mas, quer
+
+dizer, talvez nada disso realmente importe. Porque, no fim das contas, do que você precisa? Um modo compacto, claro e intuitivo , além de um modo de depuração, seriam ótimos. Trabalhar com habilidades seria ótimo, mas o agente de codificação PI foi projetado para ser extremamente minimalista de propósito. Então, eu me pergunto se haveria alguma maneira de incluirmos habilidades de agente aqui. Enquanto isso
+
+funciona, voltarei para ver se consigo adquirir habilidades de agente. Ok, então, embora esteja funcionando em segundo plano, parece estar fazendo um trabalho razoável. Vamos ver o que há. Eu procurei na documentação e nas extensões e podemos ver que existem provedores personalizados. Não é exatamente o que eu quero. Quero
+
+extensões. Foi para lá que eu fui, mas me levou ao lugar errado. Então, o que eu procuro são habilidades. Aqui, as extensões são módulos TypeScript que ampliam o comportamento do PI. Parece ótimo. Então,
+
+registre as ferramentas que o LM pode usar. Interações do usuário, componentes de interface do usuário personalizados. Uhum. Eu só quero habilidades. É só isso que procuro: habilidades de agente. Então, vamos digitar habilidades do agente.
+
+Parece que já existe uma pasta para isso. Então,
+
+tudo o que eu quero são habilidades de agente. Então, isso é algo que precisamos descobrir. Então, deixe-me ir descobrir. Eu literalmente fiz uma busca simples e, em "lógica ruim", que acredito ser a causa, encontramos as habilidades PI. Então, uma coleção de habilidades para o agente de codificação, mas será que ela já possui a funcionalidade de habilidades?
+
+E é isso que eu não sei. Essa é a pessoa que o criou, certo? Sim, essa é a pessoa que cria o agente de codificação PI. Uhum. Ah, lá vamos nós. Então, deveríamos
+
+poder simplesmente inseri-los. Talvez isso já esteja integrado à documentação e não precisemos fazer nada. Agente de codificação PI. Não precisamos fazer nada além disso. Então, vamos voltar aos documentos deles. Os
+
+médicos e eu estamos à procura de habilidades. Ah, está bem aqui. Habilidades. OK. Então você pode simplesmente adicionar as habilidades ali e elas devem funcionar.
+
+E logo de cara, estamos vendo Doom. O mais importante aqui é sempre saber se o computador roda Doom . Hum, e está seguindo o formato padrão. Então, em teoria, isso deveria funcionar. Assim que isso estiver concluído, faremos os testes, mas por enquanto estamos apenas gerando esses dados . OK. Tudo bem. Então, quer dizer,
+
+parecia que estava começando a produzir algo, e havia uma chance de que isso pudesse funcionar. Mas, por algum motivo, temos um desenvolvedor 400 que não é um dos assistentes do sistema, etc. Então, não sei por que isso está acontecendo. Mas acho que a ideia aqui é que a mensagem passe para o desenvolvedor, o que simplesmente não existe. Hum, mas nós temos, nós temos código. Então, estou meio curioso
+
+sobre esse probleminha com o formato. Mas vou revelar isso no explorador de arquivos. Vou abrir no Chrome. Só quero saber se obtivemos algum resultado positivo aqui. Ah, sim, fizemos. Sim, parece bom.
+
+OK. Quer dizer, os canos poderiam ser verdes. Esse é praticamente o único problema aqui. É uma loucura pensar em quanto esse jogo arrecadou quando foi lançado, lá por 2010 ou 2019, e o criador não estava satisfeito com o sucesso e tentou retirar o jogo do mercado, mas não gostou do dinheiro. Mas enfim, o ponto é que está funcionando, mas não sei por que recebemos um erro 400. Bem, vou lá
+
+perguntar no chatbt por diversão. Este é um agente de codificação Pi e apresentou um erro, embora tenha codificado corretamente. Por que está tentando usar uma função de desenvolvedor? Porque não sei por que alguém tentaria fazer isso, já que nunca vi a função de desenvolvedor usar o assistente do sistema, seja lá o que for; não é uma função válida para o padrão OpenAI. Algumas estruturas mais recentes, incluindo o agente de codificação PI, uh claude e ferramentas internas, usam uma função de desenvolvedor para sistemas de maior prioridade. Mas eis o
+
+problema. A função de desenvolvedor não faz parte do esquema oficial da API. Então, se o agente enviar de volta, ou seja, se a mensagem de compilação for algo como isto, ela será enviada de volta para isto, e por isso ainda será produzida. Então talvez haja uma maneira de resolver isso. Então, vamos pesquisar a função de desenvolvedor do agente de codificação Pi, porque tudo se resume ao agente, certo?
+
+E veja se existe algum plugin ou algo do tipo. extensão. OK. Existe alguma extensão para isso? Então, não tenho certeza. Mas a ideia aqui é
+
+que deveríamos ser capazes de modificar com base no que essas coisas são, mas definitivamente não é algo sobre o qual eu possa fazer muita coisa agora. Então, o que podemos fazer é talvez analisar as habilidades. E eu gosto muito do fato de estarem fazendo Doom aqui. Aqui está escrito TUI ou interface web retomando Doom. Então eles estão tentando jogar Doom aqui dentro . Então,
+
+aqui parece que podemos adicionar nossas habilidades ao nosso diretório de habilidades, "Minhas Habilidades", ou algo assim. Então vamos lá e vamos experimentar . Então, vou criar uma nova pasta, digamos, "habilidades", e vamos chamar essa nova habilidade de " jogador de Doom". Se ao menos conseguíssemos fazer isso, seria até divertido, mas acho que não conseguiremos. E diremos habilidade skill.md.
+
+Hum, e não, eu acho que são habilidades. Não, eu pensei que eles tivessem uma espécie de página inicial. Talvez não. Vamos dar uma olhada na norma aqui, pois eu sempre esqueço qual é. E em algum lugar aqui teremos nossa especificação. Sim, faz sentido
+
+. Portanto, aqui devemos ter o front matter. Vamos colar isso aqui. Então seria como um jogador de Doom. Então, a ideia aqui é que você pode jogar Doom recebendo comandos. Certo? Então vamos prosseguir. Talvez
+
+essa não seja uma habilidade muito útil no momento, mas existe alguma maneira de rodar Doom no navegador? Essa seria uma boa pergunta. Então, vou para lá. Vou usar algo um pouco mais inteligente. Então, eu quero criar uma habilidade de agente usando o formato aberto para jogar Doom. Existe algum código que eu possa usar para executar
+
+Doom no meu terminal? E existe alguma maneira de uma habilidade... jogar isso?
+
+OK. E talvez essa seja apenas uma expectativa irrealista, mas simplesmente porque eles viram . Hum, mas este aqui simplesmente inicia o Doom sempre que pede para fazer algo. Então talvez estejamos tentando fazer algo diferente aqui. Estou lhe dando apenas um momento. Talvez
+
+isso seja um exagero, já que ainda precisaria controlar alguma coisa. Então, vamos definir uma meta mais realista e menos entediante. Bem, então vou fazer o que costumo fazer, que é atualizar a lista de tarefas . E, na verdade, provavelmente já temos essa habilidade em algum outro lugar. Se eu acessar um de nossos outros repositórios, vou fazer isso e tentar encontrar um. Bem, vou examinar o código do Pro
+
+fora da tela aqui e estou procurando por qualquer coisa, talvez algo como o meu repositório Gemini possa ter alguma habilidade. Então, tipo, no aplicativo de lista de tarefas simples,
+
+isso é uma habilidade? Por que está escrito " habilidade de pontos" ali? Isso é meio estranho. Talvez esteja aqui dentro. Ah, aqui vamos nós. Gerenciador de tarefas. Então,
+
+com certeza, já temos um aqui. Isto está online. Você pode ir pegar. Você não precisa que eu lhe dê um link aqui. Está tudo aqui. Então, vou pegar este
+
+. E o Gemini é muito bom, pois é bastante básico em termos de uso. E o gerenciador de tarefas precisa ser chamado de...
+
+isso aqui. OK. E a outra coisa que está faltando aqui é o roteiro. Vamos voltar um passo e falar sobre roteiros. Vou pegar isto aqui. OK.
+
+E vamos criar uma nova pasta aqui chamada scripts. E isso se chama gerenciar tarefas. Já fizemos meus outros cursos. Você já fez isso. Não é nada demais.
+
+OK. Então, agora temos o nosso roteiro pronto . Agora, só preciso de um banco de dados SQLite 3. Vou voltar alguns passos atrás. E talvez já tenhamos um neste repositório. Sim,
+
+fazemos. Então, vou baixar este arquivo bruto e depois vou arrastá-lo para este projeto aqui, o exemplo PI. E agora temos isso aqui. Então, vou simplesmente sair daqui e depois voltar e escolher iniciar com o Pi. E agora estamos aqui dentro. Portanto, não consigo salvar minhas
+
+habilidades disponíveis. Então, gerenciar ou é um gerenciador de tarefas. Então, não está completando automaticamente nenhuma habilidade aqui e eu não entendo isso. Então, eu gostaria de saber se você pode me fornecer uma lista das minhas tarefas pendentes no meu banco de dados SQLite, usando a habilidade de gerenciamento de tarefas? Então, estou sendo bem explícito aqui porque não sei se isso vai invocar o recurso automaticamente. Então, estou apenas tentando
+
+ajudar aqui. Então, aqui estamos explorando nosso repositório. E existe um diretório de habilidades. Deixe-me explorar. OK. Mas não está acionando a habilidade.
+
+Então é isso que deveria estar fazendo. Então, voltaremos para cá. Vamos analisar a documentação e ver quais são as nossas opções. Então, habilidades, habilidades, habilidades, habilidades, habilidades sob demanda, capacidades que seguem o padrão de habilidade do agente. Invocar uma habilidade com ` skill for/skill colon name`, mas não vimos isso quando apareceu. Então,
+
+listou algumas coisas aqui, o que é ótimo. Utilizou o gerenciador, mas na verdade não utilizou a habilidade. Então, vou digitar para/skill dois pontos gerenciador de tarefas adicionar uma tarefa à lista de tarefas. Buscar leite. OK. E veremos se isso
+
+realmente acontece. O usuário quer que eu adicione um novo item aqui, mas ainda não consigo determinar se a habilidade está sendo realmente invocada. Está sendo usado corretamente. Não é de Gêmeos. Ah, talvez haja algo errado no meu roteiro aqui.
+
+Gêmeos. Não, nenhum geminiano ali. Olha só isso. Temos um monte de coisas de Gêmeos aqui. Basta retirar isto.
+
+Habilidades. Habilidades. Habilidades. Habilidades. Gostei da forma como raciocinou e, tecnicamente, ainda usou a habilidade, mas não consigo dizer se a está realmente invocando.
+
+Parece que está funcionando, mas não da maneira que gostaríamos. Certo. Então, vamos voltar aqui. Coloque no diretório pi. Oh, tudo bem. Então, o que faremos é
+
+voltar aqui e eu simplesmente mudarei isso para pi. Quer dizer, isso faz sentido. Hum, que nós vamos lá . Então, pi pi. Eu gostaria que eles tivessem uma pasta genérica para todas essas bobagens. Bem, parece que era exatamente disso que
+
+precisávamos aqui. Vamos criar uma nova pasta aqui chamada .py. Em seguida, arrastaremos esta pasta para cá. Vamos dizer: mova-se. E então vamos simplesmente cancelar tudo
+
+. E diremos: lama entra no launchpie. Isso está sendo lançado. E agora estamos aqui dentro. Ah, aí está. OK.
+
+Então, adicione um novo item à sua lista de tarefas.
+
+Pegue o pão. OK. Então, vamos prosseguir e fazer isso. Portanto, agora está invocando a habilidade diretamente. Quer dizer, tem que ser assim.
+
+E vamos dar um segundo para isso. Vamos aguardar um instante. Pronto. E assim, nossa habilidade está funcionando. E eu diria que o Pi, você sabe, funciona como esperado. A única coisa que eu gostaria de
+
+ter é um modo de planejamento. Então, estou apenas curioso sobre o modo de planejamento do agente de codificação PI . Podemos solicitar uma prorrogação? Como se costuma dizer, é algo que podemos expandir. Então, aqui diz para adicionar suporte ao modo plano .
+
+Os motivos estão descritos no arquivo readme. Portanto, existem razões pelas quais eles podem não fazer isso. O que aprendi sobre como construir um agente de codificação minimalista e com opiniões próprias. Oh, tudo bem . Isso pode ser interessante. Deixe-me
+
+descobrir porquê. Um momento. Certo, então o motivo de não ter um modo de planejamento é que o criador argumenta que você simplesmente não precisa dele. Hum, e isso é interessante. Mas eles também dizem que você não precisa de MCP e que não precisa disso. Então você
+
+não precisa de subents. Então, basicamente, eles simplesmente não vão fazê-los. E talvez alguém estenda essa funcionalidade individualmente. Hum, o que é ótimo, mas é isso que eles querem fazer, certo? Então, é interessante ler e ver alguém que construiu um. Isso é de novembro,
+
+mas obviamente houve várias mudanças desde então, então não tenho certeza se houve atualizações desde então. Bem, pelo menos funciona. E, sabe, muitas dessas coisas você não precisa necessariamente se souber usá-las com inteligência , mas, sabe, às vezes somos preguiçosos. É simplesmente bom ter um modo de planejamento. Ok, mas ei, nós testamos nosso agente de codificação PI. Funcionou. Bem, então
+
+vamos prosseguir e talvez testar o Droid. OK. Olá, meu nome é Andrew. Neste vídeo, vamos experimentar o Factory Droid, que aparentemente tem seu próprio conceito de dróides, seja lá o que isso signifique. Então, vamos acessar o site da Droid e instalar a CLI. Então, aqui está. Bem,
+
+vou apenas voltar um diretório aqui e criar um novo chamado "U Droid example". OK. E vamos inserir o CD no Droid aqui e enrolá-lo. Então, vamos pressionar Enter. E espero que esteja instalando o Droid, pois parece que eles têm todo um ecossistema para isso. Eu só quero
+
+a interface de linha de comando (CLI). Hum, estou acessando a linha de comando aqui? Sim, é verdade . OK. Então, está escrito CLI aqui. Execute o comando
+
+Droid para começar. Claro. Mas vou lançá-lo a partir do Olama para evitar problemas, já que tem sido uma maneira muito mais fácil de trabalhar com ele ultimamente. E nós vamos escolher a Kimmy. Essa parece ser a que eu gosto. Ok, legal. Droide. Huh. Sim
+
+, ótimo. Eu não ligo. Então, para começar a usar, precisamos fazer login. Mas por que eu precisaria fazer login? Faça login na sua conta da fábrica para continuar. Essa é a única maneira de
+
+usá-lo? Realmente? OK. Bom, acho que posso criar uma conta. Eu realmente não quero.
+
+Hum. Uhum. Eu só esperava que pudéssemos lançá-lo e usá-lo. É interessante. Outros provedores não gostam de te envolver nessas coisas, mas vamos em frente e eu vou criar uma conta rapidinho. Se houver
+
+alguma armadilha de gastos, eu simplesmente descartarei este vídeo, mas se este vídeo existe, você sabe que somos capazes de superá-la. OK. E sim, Andrews ou Sure. Sim. Estou apenas concluindo o processo de inscrição.
+
+Repito, não endosso nenhum desses produtos. Estou usando-os apenas porque existem algumas opções aqui. Estamos apenas começando a explorar um pouco o assunto aqui. Então, ganhe 1 milhão de créditos grátis. Adicione um método de pagamento. Não, não,
+
+obrigado. Não preciso dos seus créditos de pagamento agora. E talvez mais tarde eu considere isso, mas agora não. Instale a CLI. Já fizemos isso. Então, vamos tentar fazer
+
+login. Então, estamos aguardando a autenticação. Aqui está a chave. Estamos apenas fazendo a correspondência aqui. Então, confirme se o código está sendo exibido no seu dispositivo. hgtdxm é
+
+isso mesmo. Pode confirmar isso. Agora está confirmado. Você gostaria de instalar a extensão do VS Code? Não, eu não quero. E agora estamos aqui dentro.
+
+Então a questão é: que modelo temos atualmente? E podemos ver que existem vários modelos aqui. Mas agora estamos falando da Kimmy. E, portanto, claramente eles estão fornecendo o seu próprio . Então temos o núcleo droide deles, que é seja lá o que for . Ah, núcleo de droide.
+
+É só a GLM, a Kimmy e mais um monte de gente. Então eles têm vários aqui. OK. E outros fornecedores, o que é ótimo. Mas eu prefiro manter nosso modelo personalizado aqui. E diremos: crie-me.
+
+Bem, espere aí. Especificação. Ah, então em vez de "plano", tem "especificação". Então, vamos prosseguir e analisar o que nos foi solicitado. E eu vou clicar aqui, colar isso e apertar enter.
+
+Experiência tranquila com o editor. Isso é realmente muito, muito legal. Bem, de novo, não me importo com isso, mas são animações bonitinhas, com uma boa sincronização, mostrando o cronômetro lá embaixo. Hum, quer mesmo que usemos o ID. Eu não quero um documento de identidade. Eu sou um desenvolvedor. Eu
+
+não preciso disso. Então, temos nossa pequena lista de tarefas em andamento. Foi interessante. O código do agente Pi era do tipo " não precisamos fazer nossas listas de tarefas". Então, vamos ver o que acontece. Já que
+
+estamos falando nisso, por curiosidade, será que tem alguma barra de status? Sim, faz. Temos, portanto, uma linha de status que podemos ajustar, mas talvez não devêssemos mexer nela enquanto estiver funcionando. Já volto . OK. Agora, então, devemos ter uma
+
+proposta. Então, se formos até o topo aqui. Portanto, aqui estão os requisitos de implementação de arquivo único do Flappy Bird, que são definidos por esta arquitetura. Isto está realmente muito limpo. Gostaria de saber se há algo influenciando isso nas informações de especificação, pois a saída está realmente limpa . Então, temos os seguintes sistemas principais:
+
+loop de jogo, entrada de física, estado do jogo, renderizador WebGL e chamadas de desenho. Temos um gráfico de sereia com objetos de jogo que está considerando os shaders. Então, está nos dando pequenas prévias do que vai fazer, seus controles, sua estrutura de arquivos, as linhas estimadas, com as quais eu realmente não me importo. Funcionalidades planejadas. Parece-me bem. Prosseguir com a
+
+proposta. Hum, escolha o nível de autonomia. Alta autonomia. Vá em frente. Acho que isso meio que sugere se devemos ou não intervir e sugerir o que deve ser feito, mas quero ver o que ele pode fazer sozinho. Então vamos deixar que ele tente isso
+
+. OK. Tudo bem. Está de volta. E assim diz: um jogo completo de Flappy Bird em WebGL num único arquivo. Ah,
+
+trazendo de volta os resultados. Claramente, há algo de especial em sua estrutura orientada a especificações que está tornando essa experiência muito mais fluida. Então, vamos usar o exemplo do Droid aqui. E nós temos o nosso Flappy. Não sei por que não o chamei de índice HTML. Eu
+
+poderia jurar que tínhamos dito para chamar de index html. Então, não obedeceu, mas tudo bem. Talvez os resultados sejam excelentes. Certo, vamos para cá. Vamos dar uma olhada.
+
+Sim, quero dizer, Kimmy produziu resultados muito melhores sozinha. Bem, mas, novamente, sabe, talvez quando você estiver trabalhando em um projeto muito maior e mais complexo, você terá uma orientação melhor em relação ao desenvolvimento do Spectreven, seja lá o que eles estejam fazendo nos bastidores. Então, isso pode fazer parte da célula com o Droid. Bem, eles têm esse conceito de dróides, mas vamos entender isso daqui a pouco. Um segundo. Tudo
+
+bem. Então, sabe, só tentando entender o que o Droid estava sugerindo aqui. Você definitivamente experimentará esse sistema de autonomia em níveis, que simplesmente mudará a forma como o sistema lhe fará perguntas. Parece que existem dróides especializados em vez de dróides genéricos, e eles estão realmente tentando reivindicar isso com base, eu acho, em seu ciclo de ação e em seu feedback. Diz isso, então, sabe, parece estar tudo bem. Quer dizer, acho que
+
+provavelmente preferiria usar o agente de codificação pi. Bem, embora haja algumas coisas com as quais eu não concorde, o fato é que você consegue ver exatamente o que está fazendo. Bem, e obviamente, neste caso específico, não acho que tenhamos obtido o melhor resultado possível e, bem, a Kimmy conseguiu fazer um trabalho melhor sem utilizar o Droid. A questão é que, hum, eu não tenho certeza sobre os dróides. Então, imagino que eles já possuam habilidades ou dróides, ou pelo menos até dróides, aqui dentro. Gerencie
+
+dróides personalizados. São apenas agentes, certo? E aqui estão alguns exemplos. Sim. Então, acho que é apenas uma questão de renomear os agentes. Então,
+
+sim, está tudo bem. Quer dizer, eles já têm a opção de criar habilidades, então você pode criar uma habilidade imediatamente aqui mesmo. Uh, entrar, gerenciar, retomar missões. Uma forma bem sofisticada de gerenciar uma lista de tarefas. Sim , para mim isso parece muito com marketing. Hum, de novo, ainda é uma
+
+ferramenta apertada, mas não sei. Não acho que esteja tão convencido assim. Mas enfim, pelo menos tivemos a experiência. A experiência com a linha de comando continuou sendo muito tranquila. Bem, é isso aí .
+
+Olá pessoal, aqui é o Andrew. Vamos continuar por aqui e acho que vamos experimentar o Open Code. Eu não sou exatamente um grande fã dos criadores do Open Code, pelo menos não como eu os conheço. Mas vamos em frente, ser justos, tentar avaliar a situação aqui e ver o que temos. Então vamos pegar as ferramentas de programação. Vou
+
+pegar o que está na curva. Vamos pressionar Enter. Então, vamos criar uma nova pasta aqui chamada open code CLI. E vamos esperar até que isso seja instalado para ver o que acontece. Parece que eles têm toda uma interface funcionando a todo vapor aqui . Sabe, está tudo bem. Vamos
+
+aguardar um instante. Ok, então agora estamos aqui e eu vou usar o comando cd para entrar no diretório do nosso código CLI aberto. Eu gostaria de chamar isso de exemplo de código aberto. Ok, e vamos voltar a gravar aqui. E eu quero usar o Olama. E
+
+vamos acessar a opção de código aberto e eu quero escolher o KE 2.5. E aqui estamos nós. É uma interface agradável. Hum, eu meio que gostaria de já estar na interface que eu esperava encontrar aqui. Temos um plano e um
+
+modo de construção. Que bom. Vou entrar no modo de planejamento. Vamos aproveitar e pegar essa linha aqui. Cole o texto . Digite. E assim, logo de cara, a
+
+corrida começou. Do lado direito, temos contatos e outras informações. Então, é como uma linha de status expandida. Ah, e está se movendo muito rápido. Então, não sei por que está transmitindo tão rápido. Simplesmente parece rápido. Tipo,
+
+não é mais rápido que outros provedores, mas tem algo que dá essa sensação de velocidade, o que eu não sei explicar. Temos uma noção do contexto e do uso. Será que estou usando o modelo que penso estar usando? Acho que sim. Modelo.
+
+Eu sou. OK. Aqui temos código aberto. A única queixa em relação a esses modelos é que eles são altamente quantizados. Então, mesmo se você usar a assinatura de 5 ou 10 dólares, as pessoas estão reclamando, mas eu não saberia dizer. Não vou
+
+pagar os 510 dólares para descobrir, pois temos lhamas e acho que podemos levá-las para outros lugares. Então, o que temos aqui em nossa lista? Então, temos algumas coisas para pensar aqui. HTML bom. Implementação: esclarecimento de dúvidas.
+
+Ok, vá executar. Então, vá em frente. E agora está sendo executado. Sim . E, mais uma vez, parece bonito, mas não me importo se as coisas têm boa aparência. Quero ver se funcionam bem
+
+para mim. Mas gostei do fato de que, quando lançamos o programa, ele não tentava nos forçar a criar uma conta, como fazia o Droid . Eu não gostei disso. Mas o problema com esses provedores é que eles precisam construir uma barreira de proteção em algum lugar, e isso vai envolver a venda de suas próprias assinaturas e coisas do tipo. Hum, e eu simplesmente não tenho certeza se, caso usemos modelos abertos, gostaria de algo que fosse aberto como o PI Coding Agent, embora ele tenha sido adquirido por uma empresa, então talvez não permaneça aberto para sempre. Ou talvez precisemos apenas de uma versão
+
+minimalista que todos possamos ajustar e com a qual possamos trabalhar. Bem, os resultados estão prontos. E, mais uma vez, as cores são bonitas. Bem, vamos dar uma olhada aqui no nosso código aberto. E onde está o nosso arquivo? Ah, temos
+
+outro plano. Pensávamos que tínhamos o plano perfeito. Por que temos um segundo plano aqui? Este plano cobre tudo o que você precisa? Avise.
+
+E você gostaria de começar a jogar? Vá executar. O usuário quer que eu crie o jogo Flappy Bird. Eles querem que esteja aqui e depois que vá para lá. Prossiga com este plano. Sim, acho que
+
+talvez seja porque estamos na fase de planejamento. Sim, por favor, prossiga. E talvez isso seja fácil de resolver. Vamos simplesmente sair do modo de planejamento. Vamos tentar novamente.
+
+O usuário quer que eu prossiga com a criação do jogo de sobrevoo. Mas espere, o usuário disse sim, por favor, prossiga. Parece que eles querem que eu execute o plano. No entanto, o sistema indica claramente que estou em modo somente leitura. Bem, por que você não pode mudar? Então, vamos pressionar a tecla
+
+Tab. Isso é bom. OK. Por favor, execute o comando e nós o testaremos. Então, este é o intervalo para um Olam? Se for esse o caso
+
+, vamos dar uma olhada aqui, pois isso pode ser útil. Acho que o que eu gostaria é que houvesse um editor onde você pudesse simplesmente... quer dizer , talvez o Pyode consiga fazer isso, mas tipo, você pudesse colocar coisas lá. Mas vamos
+
+acessar as configurações. E vamos dar uma olhada aqui. E é isso que o meu uso demonstra. Então, não tenho muita certeza se esse é o meu uso real, se esses são os meus tokens de verdade. Bem , não consigo dizer de onde vem a fonte . OK.
+
+Ou, sabe, será que está usando alguma outra coisa aqui? Mas enfim, está a caminho e ganhando força. Já voltamos. Boa gestão de tarefas. Eu gosto de termos uma lista de tarefas aqui do lado direito , mas vamos relaxar. OK. Tudo
+
+bem. Está feito. O arquivo HTML de índice foi criado corretamente e, portanto, aqui está uma explicação resumida do que foi feito. Isso é bom. Vamos abrir o explorador sintático e vamos para lá.
+
+Oh, é o "Uau, isso é diferente". Deu a impressão de ser algo comprido. Ah, porque se estende junto com a página. É engraçado. [risos] Temos um pássaro comprido ou não. Vamos
+
+tocar na tela e funciona. Então, sim, até agora, tem sido um sucesso. Então eu gosto disso. A única coisa que eu diria que não gostei no código aberto foi o fato de você ter que ativar ou desativar automaticamente esses modos. Hum, mas sim, quer dizer, parece bom. Então,
+
+sabe, será que algum dia eu dedicaria mais tempo a isso? Não sei. Novamente, prioriza-se a estética em detrimento da funcionalidade. Portanto, mais uma vez, o agente de codificação Pi provavelmente seria minha preferência, pois podemos ver exatamente o que está acontecendo e isso, para mim, como desenvolvedor, é provavelmente mais valioso do que qualquer outra coisa. Mas, como você sabe, você precisa escolher o que quer usar. Mas enfim, esse é um código aberto.
+
+Hum, e lá estávamos nós

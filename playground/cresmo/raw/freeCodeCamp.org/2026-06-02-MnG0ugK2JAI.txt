@@ -1,0 +1,547 @@
+---
+video_title: "Build Your Own AI Agent – Full Course with OpenAI, Langchain, Render Deployment"
+video_id: MnG0ugK2JAI
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=MnG0ugK2JAI
+video_date: 2026-06-02T10:00:09+00:00
+video_description: |
+  Learn to build and deploy intelligent AI agents that bridge the gap between LLMs and real-world automation to handle complex research and data analysis. This comprehensive course takes you from zero to deployment, using OpenAI and Node.js to create a production-ready tool complete with a PostgreSQL database on Render.
+  
+  🔗 Sign up for Render: https://www.render.com
+  
+  Course developed by @aniakubow 
+  
+  💻 Code https://github.com/kubowania/slack-ai-agent
+  
+  🏗️ Render provided a grant to make this course possible.
+  
+  ⭐️ Chapters ⭐️
+  0:00:00 Introduction
+  0:02:24 Getting started on Render.com
+  0:04:14 Setting up our project
+  0:08:19 Packages that we need
+  0:11:26 Slack AI Agent logic
+  0:14:53 Setting up Slack events
+  0:29:48 Analysing members logic
+  0:57:06 Posting analysis to our Slack channel
+  1:09:06 Start logic
+  1:16:00 Secret variables and where to find them
+  1:22:54 Database logic
+  1:34:34 Testing our app works
+  1:38:15 Deploying our app
+---
+Aprenda a construir e implementar agentes de IA inteligentes que preencham a lacuna entre os Modelos de Aprendizagem Baseados em Aprendizagem (LLMs) e a automação do mundo real para lidar com pesquisas complexas e análises de dados. Este curso abrangente leva você do zero à implementação, utilizando OpenAI e Node.js para criar uma ferramenta pronta para produção, completa com um banco de dados PostgreSQL, na plataforma Render. Agradecemos à Render por fornecer uma bolsa que tornou este curso possível. Olá a todos, meu nome é Anna Kuber e hoje vou mostrar a vocês como ganhar um Slackbot com inteligência artificial que pesquisa automaticamente novos membros da comunidade e avalia a adequação deles ao seu negócio, tudo em um único arquivo. Por
+
+exemplo, este sou eu administrando meu próprio canal no Slack chamado Code with Anna, que uso para manter os alunos do meu curso Code with Anna informados. Se um novo membro se inscrever, digamos John Durr com o e-mail johnetcp.com, vou usar IA para fazer uma busca na internet sobre ele e obter uma pontuação de adequação para ver o quão bem ele se encaixará na minha comunidade e nos meus produtos. Bem legal, né? Assim, a pesquisa e o resumo são enviados para mim em um canal privado do Slack. Hoje
+
+vou mostrar exatamente como fazer isso usando Node.js, JS, OpenAI, a API do Slack e como implantar esse projeto no Render. Também aprenderemos a usar bancos de dados. OK. E faremos isso usando o comando `render` e um arquivo separado que enviará nossa pesquisa para um banco de dados, mais precisamente um banco de dados PostgreSQL. OK. Então, na verdade,
+
+é exatamente isso que vamos abordar. Estamos criando um agente de IA inteligente para o Slack que detecta automaticamente quando novos membros entram. Quando novos membros entram na sua comunidade do Slack, o sistema pesquisa o histórico deles usando o e-mail e o perfil do GitHub. Utiliza o GBT4 da OpenAI para analisar o quão adequados eles seriam como clientes para o seu produto. Publique uma análise detalhada com a pontuação de adequação e recomendações em um canal privado. Utiliza um banco de dados em
+
+render.com. E, por fim, também faremos o lançamento no render.com. Esta solução é perfeita para fundadores de SAS, gestores de comunidades ou qualquer pessoa que queira qualificar automaticamente leads da sua comunidade no Slack. O código é extremamente limpo,
+
+minimalista e essencialmente pronto para você usar, adaptar, aprimorar , adicionar recursos, enfim, o que quiser. Então, o que estamos esperando? Vamos fazê-lo. Certo, então, em primeiro lugar, para construir nosso agente de IA para o Slack, precisaremos de um banco de dados onde salvaremos todos os nossos cadastros, juntamente com as pontuações de compatibilidade do nosso canal do Slack. Então, vamos fazer isso. Vou usar apenas o comando render para
+
+isso. Então, aqui estamos. Vou acessar o painel de controle e, aqui na minha área de trabalho, vou criar um banco de dados PostgreSQL. Portanto, esta é uma maneira extremamente fácil de criar bancos de dados PostgreSQL. Vamos clicar em " Novo PostgreSQL". E vou dar
+
+um nome único para minha instância do PostgreSQL. Vou usar o nome Slack DB como nome do banco de dados . O campo "Usuário I" permanecerá em branco. Este valor é gerado aleatoriamente, a menos que seja especificado o contrário. A região que vou manter como padrão.
+
+A versão também. Não vamos usar "data dog" ou "data dog region". E vamos usar a opção gratuita para isso. Que ótimo. E, novamente, se você quiser ir além e usar isso em produção ou na vida real, em outras palavras, então você optaria por algumas das opções mais robustas. Há
+
+muita coisa. Mas, por enquanto, estamos apenas em fase de testes. Então, vou clicar em " criar banco de dados". Ótimo. E isso criará um URL para nós. OK. Então, vamos
+
+descer aqui e, assim que estiver disponível... Assim que isso for criado, basta rolar para baixo aqui e você encontrará todas as informações necessárias. Vamos usar apenas a URL do banco de dados externo. Então, se você der uma
+
+olhada no meu, é este aqui. Vamos copiar isso e iniciar nosso projeto. Ok, então eu já criei uma pasta ou diretório chamado Slack AI agent. E, neste momento, não contém nenhum arquivo, mas vamos criar um arquivo AV, pois já podemos armazenar a URL do nosso banco de dados aqui, já que acabamos de obtê-la. Então o meu é este. O seu será único e
+
+não será igual a nenhum outro. Então, por favor, fique à vontade para postar o seu aqui. Não use o meu. Mas é claro que você não consegue realmente ver isso. Ótimo, é só isso que vamos fazer aqui. Vamos deixar isso de lado e seguir em frente.
+
+A próxima coisa que vou fazer é um projeto em NodeJS. Então, vou inicializar um projeto Node digitando ` npm` nele. Se você não tiver o npm instalado, por favor, faça a instalação. Vou explicar rapidamente como fazer isso caso você não esteja familiarizado com npm e notas. Então, por enquanto, vamos simplesmente pressionar Enter para todas elas. Está apenas
+
+nos pedindo para escolher um nome para o pacote. E estou satisfeito com o agente de IA do Slack. Estou satisfeito em chamar esta versão de versão um. Não preciso de descrição. Estou satisfeito com o fato de o ponto de entrada ser um arquivo index.js,
+
+que ainda precisamos criar. E fico feliz em deixá-los em branco por enquanto. E isso está certo? Sim. Então, agora você verá o arquivo JSON do pacote sendo criado aqui. Portanto, neste momento,
+
+obviamente, não há muita coisa ali. Não se preocupe, vamos encher isso com coisas úteis. A primeira coisa que faremos é adicionar o módulo de tipo. Assim, podemos usar módulos neste projeto. Em outras palavras, use a palavra-chave `import` no arquivo `index.js`. Vamos também
+
+criar um script de inicialização. Então, vou criar meu próprio script para iniciar o aplicativo. E basta executar o arquivo index.js, exatamente assim. Ah, e também podemos ter um modo de desenvolvedor. Então,
+
+isso vai ser simplesmente um comando `node watch file indexjs`, assim mesmo . Agora vamos precisar instalar algumas dependências. Então vamos fazer isso agora. OK. Já mencionamos o npm antes. Espero que você já
+
+esteja familiarizado com isso. Mas para aqueles que não sabem, o npm é o gerenciador de pacotes do Node.js e é uma ferramenta de linha de comando usada para gerenciar bibliotecas JavaScript e dependências de projetos. Portanto, ele é incluído automaticamente quando você instala o NodeJS. Portanto, se você não tiver o NodeJS instalado, faça isso agora mesmo acessando este URL e obtendo o NodeJS aqui. Ótimo. Isso me permitirá
+
+usar o npmi para a instalação. E vou instalar algumas coisas. Vamos começar com o Express para gerenciar o ambiente raiz e armazenar variáveis ​​secretas. Agradecemos ao Axios por nos ajudar com as solicitações. Também vamos fazer encadeamento de idiomas. Então, no Langchain
+
+OpenAI, no núcleo do Langchain, bem como no Slack Bolt e na API web do Slack, pressione Enter. Certo, então isso vai instalar essas dependências juntamente com suas versões. Independentemente das versões que aparecerem para você, certifique-se de que sejam iguais a este vídeo. Portanto, se você estiver assistindo a isso no futuro, talvez você esteja trabalhando com a versão dois e nós com a versão um. Algo que não funciona para você pode não funcionar. Portanto,
+
+certifique-se de que as suas sejam exatamente iguais às minhas versões aqui. OK? Se não forem, pode prosseguir sem problemas. Digamos que foi uma nota dois. Basta alterar para um e executar o npmi novamente para instalar esses arquivos. Ótimo.
+
+Vamos continuar. Então, vamos criar nosso arquivo index.js. Nós especificamos isso no JSON do nosso pacote. Então, vamos manter como está. Também vou
+
+criar agora mesmo um arquivo DBJS para o nosso banco de dados. E isso não deve ser um problema . Ótimo. Então, vamos voltar aqui. OK. Então, para começar, vamos
+
+fazer algumas coisas para conectar nossos aplicativos do Slack à nossa conta da OpenAI. Portanto, você precisará fazer login tanto em uma conta do Slack quanto em uma conta da OpenAI. Vamos continuar. Então, a primeira coisa que precisamos fazer é importar o pacote `pkg` do Slackbot. Isso importa o framework do Slackbot. Em seguida,
+
+vamos desestruturar a classe do aplicativo do pacote bot, assim: Isso vai nos ajudar a criar uma instância do aplicativo Slack. Em seguida, vamos importar o cliente web do Slack para fazer chamadas diretas à API do Slack. Por exemplo, publicar mensagens ou obter informações do usuário. Em seguida, vamos importar o wrapper OpenAI do Lang Chain, que nos ajudará a fornecer uma interface para os modelos de bate-papo da OpenAI. Em seguida, também importaremos um modelo de prompt de bate-papo . Isso vai
+
+nos ajudar a criar prompts estruturados com marcadores de posição variáveis ​​e outras funcionalidades com as quais você já deve estar familiarizado. Então, vamos importar o Express do Express, o que, obviamente, nos ajudará com verificações de integridade e testes de endpoints. Em seguida, também vamos importar, o que nos ajudará a carregar as variáveis ​​de ambiente do arquivo EMV que você acabou de ver. Em seguida, vamos importar o Axios do Axios, o que nos ajudará a fazer solicitações de API externas. Agora que fizemos isso, vou começar lendo o arquivo MV que contém a URL do nosso banco de dados. Então, vou
+
+fazer isso usando este trecho de código aqui. E podemos começar. Ok, nossa configuração está praticamente pronta. Antes de começarmos, na verdade, eu também quero criar um objeto utilitário de registro simples com três níveis de log. Isso nos ajudará a registrar mensagens informativas, mensagens de erro e mensagens de depuração. Então, vamos fazer isso.
+
+const log e info é o primeiro. Portanto, isso vai registrar mensagens informativas com um prefixo de informação. Então, aqui está o prefixo de informação e ele simplesmente registrará as mensagens graças ao log do console. Em seguida, vamos tratar do erro, como mencionei. Então, vamos colar isso novamente. E vou mudar isso para
+
+prefixo de erro. E também queremos uma versão para depuração. Assim, sem mais nem menos. E você adivinhou: depuração. Mas, na verdade, só queremos registrar mensagens de depuração no console se o ambiente do Node estiver configurado para desenvolvimento. Então, vou usar o comando `
+
+process environment
+
+equals` e, se for muito diferente da string `development`, então `double`. Depois disso, podemos exibir a mensagem de depuração no console. Ok, então é isso . Então, essa é a minha ferramenta simples de registro de logs. OK. Temos várias
+
+outras coisas que vamos adicionar ao arquivo em breve, especificamente quando criarmos nossa classe de aplicação principal que encapsula o servidor Slackbot Express e a lógica de IA. Então, vou chamar essa classe de agente de IA do Slack e vamos criar nosso construtor, que é necessário para criar classes. Isso inicializará todos os serviços e configurará os manipuladores de eventos. Certo, então primeiro vamos criar uma instância do aplicativo para o servidor HTTP. Então, este aplicativo é igual ao Express, basta chamá-lo. Assim, todas as
+
+vantagens do pacote expresso serão salvas no aplicativo. Em seguida, vamos criar uma instância do aplicativo Slack Bolt usando o modo de socket. Portanto, não é necessário um URL público. Então, este Slack equivale a um novo aplicativo. E então eu simplesmente vou repassar o token.
+
+Isso também ficará registrado no nosso arquivo de ambiente . Então, vou executar o comando `process env`. Vamos chamar isso de token do Slackbot. Então, vamos precisar obter várias informações dos nossos aplicativos Slack. Também vou ter um segredo para a assinatura. Então, também teremos que descobrir
+
+isso. Vamos chamar isso de segredo de assinatura do Slack. Isso é muito óbvio. O modo de soquete, como já mencionamos, estará ativado. Estou definindo isso para que utilize conexão websocket em vez de HTTP.
+
+E o token do aplicativo também será repassado. E também vamos salvá-lo em nosso arquivo .v como token do aplicativo Slack. Então, teremos que adicionar uma série de variáveis . Mas por agora, vou prosseguir e terminar isto antes de mostrar onde encontrar tudo isso no Slack.
+
+Ah, também vamos criar um cliente web independente para o Slack, para chamadas diretas à API fora do sistema de eventos do Bolt. Portanto, este cliente web equivale a um novo ambiente de processo de cliente web .
+
+Ok, ótimo. E agora, por enquanto, demos um basta no Slack. Vamos inicializar o modelo de bate-papo aberto da cadeia de idiomas com GP4 e baixa temperatura para uma saída consistente. Então, vou dizer que isso é OpenAI, que significa novo chat OpenAI, e vamos apenas passar algumas informações para cá. Então, o modelo que queremos usar é G PT4, a temperatura é 0,3 e a chave da API. Portanto, mais uma vez, teremos que
+
+obter nossa chave de IA aberta a partir de nossos aplicativos de IA aberta. Chave da API OpenAI. Ótimo. OK. Quase terminando. Agora vamos
+
+registrar um ouvinte de eventos do Slack. Então, vamos ficar atentos a coisas como quando alguém entra na sua equipe ou um novo membro entra em um canal. E vamos escrever um método ou uma função para isso. Configure eventos no Slack. Certo, então ainda precisamos escrever isso. E então
+
+vamos escrever uma função para configurar isso. Certo, exatamente assim. Só não se esqueça de manter este "W" maiúsculo aqui. Então, ótimo. Isso nos ajudará a configurar os diretórios raiz do Express para verificações de integridade, testes de endpoints e tratamento de erros. Agora que fizemos isso,
+
+terminamos, como vocês podem ver aqui. Vou escrever essa função. Ok, então logo em seguida, configure os eventos do Slack e vamos lá. Vamos fazê-lo. Como mencionei, vamos ficar atentos à possibilidade de novas equipes se juntarem ao projeto. Então, vamos ficar atentos
+
+ao comando " equipe junta". Assim, sem mais nem menos. Eu não inventei isso. Você encontrará isso na documentação do Slack. E vamos passar pelo evento. OK. Assim mesmo
+
+. E vamos tentar algo e vamos detectar qualquer erro. Então, capture o
+
+erro no console ou registre o erro para que ele use o logger que escrevemos anteriormente. E nós vamos simplesmente repassar, para sermos bem específicos, a
+
+entrada da equipe de processamento de erros. E então, simplesmente repassaremos a mensagem de erro. Assim, sem mais nem menos . Ótimo. Parece que cortamos isso por engano. Então, está parecendo melhor.
+
+OK. Então estamos detectando o erro. No entanto, o que queremos experimentar? Bem, basicamente queremos obter as informações completas do perfil do usuário do Slack AI. Mas primeiro, vou registrar o nome do novo membro. Então, novamente, vou
+
+usar as informações de registro do logger que escrevemos anteriormente e repassá-las. Vou usar crases para indicar que um novo membro entrou e passar o nome dele. Então, vamos obter o evento e, a partir dele, vamos extrair o usuário e o nome real, e simplesmente inserir essas informações ali. Alternativamente, se isso não retornar nada, vamos simplesmente obter o nome de usuário do evento. Certo, então qualquer uma dessas opções. Ótimo. Então, vou
+
+colocar isso em outra linha para facilitar a leitura. Maravilhoso. Então, para obter as informações completas do perfil do usuário na API do Slack, vou salvar isso como "informações do usuário con". Assim, sem mais nem menos . Vou aguardar esse evento, obter as informações do usuário e simplesmente repassar o ID do usuário do evento. OK.
+
+Em seguida, executaremos o pipeline de análise e enviaremos os resultados para o Slack. Então aguardem as mentiras de Anna e as informações de usuários membros. Ok, legal. Então, isso parece promissor. Assim que terminarmos isso. Certo, mas ainda na
+
+configuração de eventos do Slack, desta vez vou ficar atento ao evento de entrada de um membro no canal . E isso é acionado quando um usuário entra em um canal. Assim como antes, este evento do Slack, e o evento que vamos monitorar, é a entrada de um membro no canal. Ok, esta é uma função assíncrona. Vamos processar o evento e, em seguida, mais uma vez, usaremos um bloco try- catch para registrar o erro e, por fim, transmitiremos uma mensagem de erro informando que um membro se juntou ao processo de processamento e encaminharemos uma mensagem de erro.
+
+E desta vez, o que vamos tentar é processar apenas canais públicos do tipo C, ignorando mensagens diretas e canais privados. Portanto, se o tipo de canal de eventos for profundamente igual a C, saberemos que se trata de um canal público e registraremos qual membro entrou em qual canal. Então, registre as informações novamente. Vamos usar crases (`) e "member", depois vamos obter o evento " user joined channel" e, em seguida, o evento " channel". Agora podemos obter os perfis completos dos usuários da API do Slack, assim como fazíamos antes. Então, `const user info`, `await
+
+this`, `get user info` e `pass through the event user`. Ok, para obter isso de volta, e vou executar o pipeline de análise e postar os resultados, então `await this analyze`, ` post member` e `pass through the user info`, assim como isso. Ok, ótimo. E então detectamos quaisquer erros. Bem, vou disponibilizar todo esse código na descrição do vídeo. Então, se você se
+
+perder, sempre poderá consultar esse local. Sim , isto é longo. A última coisa que faremos antes de configurar o servidor HTTP Express com raízes e middleware é adicionar um manipulador de erros global para o aplicativo Slackbot, que captura erros não tratados do Slack. Então, esse erro do Slack é assíncrono. Vamos ignorar o erro e depois apenas registrá-lo. Então, usando nosso objeto de log de
+
+erro, vamos passar o erro do Slack e o próprio erro. Então, me corrija. Então, essa é a mensagem de erro que o Slack retorna. Ótimo. Estou feliz com isso. Agora podemos
+
+configurar o servidor Express HP. Então, configure o Express e vamos simplesmente repassar os corpos das requisições JSON recebidas. Vamos desenvolver este aplicativo usando Express JSON. E vamos fazer um check-up de saúde bem simples. Então, este aplicativo é obtido e a raiz disso será a saúde.
+
+Vamos analisar a solicitação e a resposta. E depois vou fazer res JSON. Então, ele simplesmente retornará o status como saúde C. E então, vamos adicionar também um registro de data e hora. Carimbo de data e hora para nova data em string ISO.
+
+Ok, ótimo. Vou escrever rapidamente algo para ocultar o endpoint de teste no modo de desenvolvimento. Portanto, a inveja do processo equivale ao desenvolvimento.
+
+Vou fazer essa postagem no aplicativo e depois testar e analisar a
+
+solicitação e resposta assíncronas do membro. Vamos tentar novamente capturar o
+
+erro de log, passando a mensagem de erro da análise de teste, assim como mostrado . E eu também vou enviar um relatório de status. Portanto, em estado de repouso, isso resultaria em um erro 500.
+
+A análise de erros JSON falhou. Isso nos ajudará muito a saber exatamente o que está acontecendo ou em que momentos estamos desenvolvendo nosso aplicativo. Ok, muitas mensagens de erro por toda parte e muitos registros sendo gerados. Certo, mas primeiro vamos tentar algo: extrair informações do membro do corpo da requisição. Então, a partir do corpo da requisição, vamos obter as informações do membro. Certo, isso é do
+
+corpo da requisição. E se as informações do membro não existirem, então não existe, vamos simplesmente retornar o status de resposta 400. Ok, porque algo está faltando. E então vamos simplesmente repassar a mensagem de erro informando que as informações do membro são obrigatórias. Portanto, estou satisfeito com isso e agora podemos executar o pipeline de análise completo com as informações de alteração fornecidas . Portanto, a análise constante é
+
+igual a aguardar esta análise e postar o membro passando pelas informações do membro. OK. E então, vou retornar o resultado da análise em formato JSON. Portanto, a análise de sucesso do JSON foi bem-sucedida . Então, estamos apenas devolvendo.
+
+E vamos adicionar também um registro de data e hora só para nós. Nova data para string ISO. OK. E ótimo. Isso parece ótimo.
+
+Certo, vamos prosseguir por aqui. Então, agora implementamos um middleware global de tratamento de erros do Express . Portanto, este aplicativo utiliza o seguinte fluxo: erro, solicitação, resposta e próximo passo. E vamos simplesmente registrar o erro, se houver, e repassar a mensagem de erro dessa forma . A única diferença é que se escreve E R R. Então,
+
+vamos fazer o mesmo. E então vamos simplesmente enviar de volta um status 500 e o JSON de erro "
+
+erro interno do servidor". Ok, antes de prosseguirmos, vou mover isso para fora da verificação de saúde. Então, basta remover tudo dessa instrução if e desse uso do aplicativo. Retire o dispositivo da verificação de integridade e conecte-o a uma linha nova e limpa. A situação parece promissora neste momento. Agora vamos nos concentrar em obter
+
+informações detalhadas do perfil do usuário diretamente da API do Slack. Então, vamos definir a função que temos escrito bastante. Então, obtenha informações do usuário. OK. E, claro, passamos por alguma coisa.
+
+Na maioria das vezes, trata-se do ID do usuário. E agora vamos chamar o método da API de informações do usuário do Slack com o ID do usuário. Portanto, o resultado constante aguarda as informações do usuário deste cliente web . OK.
+
+E, como usuário, vamos simplesmente repassar o ID do usuário que passamos para esta função. Em seguida, vamos extrair o objeto do usuário da resposta da API e salvá-lo como usuário. Então, resultado para o usuário. Ótimo. OK. Então, nós fizemos isso.
+
+Salvamos tudo na pasta do usuário. E agora queremos retornar um objeto de informações do usuário normalizado, contendo apenas os campos que realmente precisamos. Então, vou retornar e obter o ID a partir do ID do usuário. Então, o objeto do usuário tem um ID que eu acabei de salvar como ID. Vamos obter um nome que será o nome real do usuário ou, caso este não exista, o nome de usuário.
+
+Em seguida, o nome de usuário, que será o nome do usuário. OK. Então, o nome de usuário ou identificador do Slack. Em seguida, vamos acessar o e-mail, que está salvo no perfil do usuário. E se isso existir, vamos receber o e-mail dessa forma. Em seguida,
+
+o título, que é exatamente o mesmo de antes, perfil do usuário, e vamos obter o título se o perfil existir, algo como um cargo. Em seguida, também vamos obter o fuso horário, que está salvo no usuário TZ, e vamos criar um perfil. Basicamente, estamos obtendo o objeto do usuário e o combinando para criar o objeto personalizado que desejamos. O primeiro nome fica registrado no perfil do objeto do usuário, caso ele exista. O primeiro e o último nome são iguais. Então, vou apenas
+
+copiar isso. Cole-o. Altere isto para dizer "último" e isto para dizer "último". E então temos um texto de status, que é um texto de status personalizado. Perfil do usuário, se existir, e texto de status. Ótimo. Isso parece ótimo.
+
+OK. Então podemos prosseguir com isso. Outra função que vocês nos viram usar bastante é a de analisar e publicar conteúdo de membros. Então vamos escrevê-lo. Analise e publique para mim.
+
+OK. E este é o principal fluxo de análise que pesquisa um membro, executa análises de IA, salva os resultados em um banco de dados e os publica no Slack. Portanto, isso é um trabalho bastante árduo. E geralmente passamos algo para essa função. Hum, geralmente é algo como informações do membro. Então, vamos salvar assim mesmo.
+
+Primeiro, vamos rastrear o ID do registro no banco de dados para que possamos atualizá-lo posteriormente. Então, vou salvar como ID de análise e mantê-lo como nulo para começar a tentar algo e, como você já deve ter adivinhado, capturar o erro e registrá-lo. O objeto de log está nos ajudando a fazer isso. Então, por onde devemos passar? Vamos transmitir a mensagem. Vou executar a
+
+sincronização do processo de erros e, em seguida, inserir o nome do membro. Informações do membro, nome K, mensagem de erro e ainda não terminamos porque também existe um ID de análise. Portanto, se a análise foi salva no banco de dados, mas a publicação no Slack falhou, também queremos registrar esse fato. Ok, estamos sendo extremamente detalhistas sobre o que queremos registrar, justamente para que seja muito fácil para nós sabermos onde algo deu errado. Então, vamos analisar e depois verificar o ID da análise salvo no banco de dados, mas não enviado para o Slack devido a um erro.
+
+Ok, ótimo. E isso deve ser tudo. Vamos tentar escrever em nosso try. OK. Ah, e na verdade eu também vou simplesmente lançar erros. Então,
+
+lance um erro. Então, relance a exceção para que os chamadores possam lidar com o erro. E agora, vamos tentar. Vou apenas registrar algumas informações para nós. Então, vamos registrar as informações de processamento do membro e, em seguida, passar o nome do membro. Então, vamos coletar informações básicas sobre o membro, como
+
+nome, e, como primeiro passo, vamos fazer uma pesquisa inicial. Assim como o site da empresa ou o perfil do GitHub. Então, vamos criar dados de pesquisa constantes e escrever uma função para isso. Vai se chamar "fazer pesquisa básica" e vamos apenas repassar as informações dos membros para sabermos sobre quem fazer essa pesquisa. Na segunda etapa, enviaremos informações sobre os membros e pesquisas para a GBT4 para análise de adequação. Então, digamos que
+
+esta seja uma análise e, novamente, vamos escrever uma função para isso chamada "analisar com IA" e, em seguida, passar as informações do membro, bem como os dados da pesquisa que acabamos de obter acima. E, em terceiro lugar, vamos persistir a análise no banco de dados antes de publicá-la. Assim, garante-se que não haverá perda de dados. Então, vamos registrar as informações, salvar a análise no banco de dados e, em seguida, passar o nome do membro para sabermos com quem estamos lidando. Ótimo. e
+
+ID de análise. Agora podemos salvar algo nisso. Hum, vou escrever uma função chamada "salvar análise de membro". Analise as informações dos membros, analise os dados e verifique os dados da pesquisa. Então estamos passando por essas situações.
+
+Ok, ótimo. Então, temos um conjunto de funções que ainda precisamos escrever. E, por fim, vamos postar a análise formatada no canal privado do Slack. Portanto, aguardem a análise desta postagem no canal. E o que devemos abordar nisso ? Bem, vai ser a mesma
+
+coisa. OK. Assim, sem mais nem menos. Ótimo. OK. Então, essa é a quarta coisa que
+
+vamos tentar. OK. Então, esses são os quatro passos que vamos tentar. Um, dois, três, quatro. Ah, existe uma quinta opção, que é atualizar os próprios registros do banco de dados para indicar que a postagem no Slack foi bem-sucedida.
+
+Então, se o ID da análise existir, vamos aguardar a marcação como enviada para o Slack e simplesmente repassá-la novamente. Então, outra função para escrever muitas outras funções. Então vamos fazer isso. Então, depois de gerarmos o erro aqui, vamos começar com a primeira função, que é fazer uma pesquisa básica. Assim, o modo assíncrono realiza pesquisas básicas. E, só para
+
+lembrar, isso reúne informações publicamente disponíveis sobre o membro. Assim como o site da empresa ou o GitHub. E vamos salvar isso em uma matriz chamada resultados. Então, neste momento está vazio, mas não deverá estar quando terminarmos. E mais uma vez , vamos tentar algo e detectar qualquer erro. Detecte qualquer erro.
+
+Registre o erro passando uma mensagem. Então, vou considerar apenas um erro básico de pesquisa. E então, apenas a mensagem de erro. Mas pelo menos sabemos que se trata de um erro de pesquisa graças a este trecho de texto aqui. E o que vamos tentar?
+
+Bem, vamos verificar se o membro possui um e-mail não pessoal e tentar localizar o site da empresa dele. Portanto, se o endereço de e-mail com as informações do membro existir, verificaremos se não se trata de um e-mail pessoal. Então, vamos escrever uma função chamada "e-mail pessoal passa por este e-mail com informações do membro". OK. Em seguida, vamos extrair o domínio do endereço de e-mail. Então, tudo
+
+depois do "at". Então, se estiver em google.com, sabemos que eles trabalham no Google. Se estiver no site apple.com, sabemos que a pessoa trabalha na Apple e assim por diante. Portanto, o domínio constante é igual ao
+
+e-mail de informações do membro. E vou dividir assim mesmo e pegar a segunda metade. Essa é uma ótima maneira de fazer isso. Ok, agora vamos tentar obter e enviar o site da empresa. Então, const company info é igual a aguardar isso obter informações da empresa. Muitas funções que ainda precisamos
+
+escrever para o domínio. Vamos simplesmente percorrer esse domínio que obtivemos nesta etapa aqui. E então, se existirem informações da empresa, ou seja, se conseguirmos obter alguma resposta, vamos adicioná-las à nossa matriz de resultados. Então, informações da empresa. OK. E ótimo. Agora, se tivermos o
+
+nome do membro, vamos pesquisar no GitHub por qualquer perfil correspondente. Então, se o nome da informação do membro for igual a `const get hub info`, e aguarde ` this get hub info` e passe a informação do membro (não o e-mail, mas o nome), se a informação do GitHub existir, nós a adicionaremos ao array. Assim, sem mais nem menos. Ótimo. Então, estamos apenas coletando coisas e inserindo-as na matriz. E é
+
+isso. Isso serve para nossa função de pesquisa básica . Basicamente, estamos apenas verificando o domínio do e-mail para ver se não é um e-mail pessoal. E também estamos verificando o perfil deles no GitHub para ver se foi encontrado. Precisamos apenas repassar as informações dos membros para cá.
+
+E a função que vamos escrever é, na verdade, a de e-mail pessoal, pois é isso que vamos verificar. Queremos uma resposta verdadeira ou falsa. Ok, ótimo. E depois devolver todos os dados de pesquisa que coletamos. Então, retorne os resultados. Retorne
+
+esse array, que, para ser sincero, pode estar vazio. Não. Não. Legal. Então, é claro que escrevemos algumas funções, como obter informações da empresa. Vamos escrevê-las agora. Então,
+
+obtenha informações da empresa de forma assíncrona . Sim, nós passamos pelo domínio. Então, se for apple.com, por exemplo, isso será repassado. Tente novamente capturar o erro no log, registrando alguma mensagem que, neste caso, é " não foi possível buscar", e então insira o domínio e a mensagem de erro. Mas primeiro, precisamos experimentar
+
+coisas novas. E vamos fazer uma requisição HTTP GET para o site da empresa com um temporizador de 5 segundos. Então, o que vou fazer é const response equals 08xio get https wain.
+
+Certo, então é isso que estamos fazendo. Os tempos limite de 5.000 segundos também passam por alguns cabeçalhos . Certo, então se for apple.com, vamos literalmente acessar www.apple.com.
+
+Certo, vamos fazer isso porque queremos extrair a tag de título do HTML desse site. Portanto, os cabeçalhos que usaremos para isso são user agent mo 5.0. Então, estamos apenas configurando um agente de usuário semelhante ao do navegador para evitar bloqueios. E agora vamos usar o comando ` reject` para extrair o conteúdo da tag de título do HTML. Portanto, se o título da resposta corresponder, os
+
+dados da resposta também corresponderão. E então eu vou simplesmente pesquisar por qualquer tag de título, assim. E vamos também adicionar uma alternativa que utilize apenas o nome de domínio caso nenhuma tag de título seja encontrada. Então, título con é igual a título correspondente. Então, se isso existir, conseguimos a luta pelo título e obtemos o segundo item dela.
+
+Ou, se não existir, simplesmente usaremos a expressão " empresa é
+
+domínio". OK. Então, esperamos que fazendo isso consigamos um título melhor e mais adequado no site da empresa, ou, caso contrário, usaremos o que o usuário nos forneceu como final do endereço de e-mail. Está tudo bem. OK.
+
+Agora vamos retornar um objeto com os resultados da pesquisa de estruturas. Então, o URL será este. Certifique-se de que haja apenas duas barras duplas. OK. Portanto, se for a Apple, mais uma vez, será www.apple.com.
+
+O título será aquele que obtivermos da página HTML. Então, se, sabe, se o site apple.com tiver um título relacionado à empresa Apple, isso aparecerá nos resultados . E se não houver nada lá, eles simplesmente retornarão com apple.com.
+
+E como conteúdo, vamos usar o site da empresa, com o domínio apple.com, e digitando "bem, sabemos que é uma empresa, então vou colocar a palavra ' empresa' assim mesmo." Ótimo. Então, negociamos com uma empresa. Bem , vou retornar nulo aqui. OK. E agora, a segunda função
+
+que usamos pesquisa na API do GitHub perfis de usuários que correspondam ao nome do membro. É muito improvável que alguém tenha o mesmo nome no Slack que o nome de usuário no GitHub, mas nunca se sabe. Por que não tentar obter informações do hub, passando o nome, tentar algo, capturar o erro e, desta vez, vamos fazer log de depuração, obter erro de pesquisa do hub e, em seguida, a mensagem de erro? Certo, então vamos registrar os erros da API do GitHub no nível de depuração para que possamos ver coisas como, por exemplo, um limite de taxa ou problemas de rede e assim por diante. Ok, e retorne nulo. Portanto, retornamos nulo se nenhum
+
+perfil do GitHub for encontrado ou se ocorrer um erro . Mas primeiro, vamos experimentar. Para testar isso, vamos chamar a API de busca de usuários do GitHub com o nome do membro codificado em URL. Ah, e para fazer isso, vou simplesmente usar `const response`, assim mesmo . Ah, espere. O comando `axios get`,
+
+seguido de `https api get hub.com
+
+search users`, retorna `Q equals`, e então o
+
+componente URI codificado é passado através do nome. OK. E vamos adicionar também um tempo limite. Tempo limite de 5.000.
+
+Ótimo. E se forem encontrados usuários correspondentes, se existirem itens de dados de resposta e o comprimento desses itens for maior que zero, então vamos selecionar a melhor correspondência nos resultados da pesquisa. Portanto, a constante user é igual aos itens de dados da resposta, sendo o primeiro item. OK. Em seguida, retornaremos um resultado de pesquisa estruturado com as informações do perfil do GitHub. Portanto, a
+
+URL de retorno é a URL user.html. O título será login do usuário back slashggetub.
+
+Assim, sem mais nem menos. Portanto, o conteúdo do nome de usuário do GitHub será: repositórios públicos do usuário com crase. Então, vamos salvá-los para que possamos passá-los adiante para analisar repositórios públicos e o tipo de origem. Bem, sabemos que este é o GitHub, ótimo. Ok, então está tudo certo.
+
+Vamos prosseguir. Ok, agora vamos escrever a função de análise com IA, que usa o GB4 por meio da cadeia de linguagem para analisar a adequação de um membro aos produtos da empresa. Temos todas as informações sobre a pessoa, ou o máximo que conseguimos obter. Vamos analisar com IA. Analise com IA, processe as informações do membro, processe os dados da pesquisa e vamos criar um modelo de solicitação com campos como nome, e-mail, etc.,
+
+que serão preenchidos no momento da invocação. Então, vamos escrever nosso prompt com prompt igual a prompt de bate-papo a
+
+partir do modelo
+
+e, em seguida, vou postar o prompt porque eu o escrevi previamente. Então vamos lá. Analise este novo membro da comunidade para verificar se ele se encaixa em nosso produto comercial. Aqui vamos colocar o nome da nossa empresa e o nome do nosso produto. Por exemplo, somos uma empresa de banco de dados chamada Bancos de Dados da Anna. Guardaríamos isso em nosso
+
+arquivo. Então, essa é outra coisa que precisamos lembrar de fazer. Ou, se essa informação estiver faltando no arquivo, aparecerá apenas o nome da sua empresa ou do seu produto. OK. Então, este é o enunciado. Em seguida, também
+
+garantiremos que o nome, o e-mail e o cargo desse membro, bem como os dados da pesquisa, sejam repassados ​​para fornecer uma resposta JSON com uma pontuação de adequação de 0 a 100, a fim de verificar se ele estaria interessado em nossas informações sobre o produto. Assim, podemos citar um conjunto de três a cinco observações e recomendações principais, e um conjunto de duas a quatro sugestões de engajamento. Ao avaliar se este novo membro se encaixa em nossa comunidade, leve em consideração o cargo , o tamanho da empresa, a formação técnica e a autoridade orçamentária.
+
+Ótimo. Essa sugestão é boa. Então, mais uma vez , vamos tentar detectar quaisquer erros. Capturar erro de log. Vamos ignorar a mensagem de erro na análise de IA e simplesmente repassar a mensagem de erro. Certo, você também pode retornar uma
+
+análise de fallback segura para que o pipeline não seja interrompido. Você poderia simplesmente fazer algo como retornar uma pontuação de ajuste de 50 insights. Vamos apenas prosseguir, pois não foi possível concluir a análise completa. OK. Então, vamos atribuir a eles uma nota de adequação de 50, porque não sabemos se eles se encaixam ou não. e as recomendações
+
+também serão incluídas, bastando revisar um único item do manual. Certo, essa é uma mensagem muito boa para transmitir. Certo, mas primeiro vamos tentar obter uma pontuação de adequação adequada . Para isso, vamos formatar os dados da pesquisa como uma string separada por novas linhas ou como uma mensagem alternativa. Portanto, o resumo da pesquisa constante é igual ao comprimento dos dados da pesquisa maior que zero. Se isso for
+
+verdade, vamos obter os dados da pesquisa e o mapa. Basta colocar isso em uma nova linha para você. Mapeie cada item de dados da pesquisa. OK. OK. E
+
+eu vou simplesmente inserir crases no título dos dados de pesquisa, obter o conteúdo dos dados de pesquisa e juntá-los. OK. Em uma sequência. Assim, sem mais nem menos. OK. Caso contrário, se não houver
+
+dados de pesquisa, retornamos apenas os dados de pesquisa limitados disponíveis.
+
+Legal. Parece bom. Agora, vamos criar uma cadeia de linhas. Então, vamos fazer um ` const chain equals prompt pipe this open AI` e vamos invocar a cadeia com os detalhes dos membros preenchendo o espaço reservado do modelo. Portanto, `const result` é igual a ` await chain invoke` e, em seguida, o nome é passado adiante.
+
+Será o nome das informações do membro . O e-mail será um e-mail com informações para membros. E se isso não existir, simplesmente colocaremos "não fornecido". E então o título, que será o título com as informações do membro. E se isso não existir, colocaremos "não fornecido".
+
+E então a pesquisa, que será o resumo da pesquisa que transformamos em uma string. Ótimo. Agora vamos extrair o conteúdo textual do objeto de resposta da cadeia de idiomas. Então, vamos salvar o texto da resposta como `const response text` e obter o conteúdo resultante. Se isso não existir, obteremos o resultado.
+
+OK. E assim que tivermos isso, vamos remover o código Markdown. Por exemplo, o trecho de texto que define que se trata de JSON, vamos removê-lo, porque às vezes o GPT o envolve em torno do JSON. Então vamos nos livrar disso. const claimed response equals e vamos obter o texto da resposta e extrair, literalmente, extrair o que eu estava falando, que se parece com isso, e substituí-lo por uma string vazia assim e, em seguida, aparar.
+
+OK. Então, se você quiser ver melhor, aqui está. E agora vamos passar uma string limpa para um objeto JavaScript. Então, `const analysis` é
+
+igual a ` JSON parse`, e então obteremos essa resposta limpa e a repassaremos dessa forma. Ótimo. E, finalmente, podemos retornar um objeto de análise normalizado com pontuação de ajuste limitada e matrizes validadas. Então vamos lá e fazemos isso. Retornar pontuação de ajuste. Também vamos fornecer
+
+informações e recomendações. Assim, sem mais nem menos . A pontuação de ajuste que vamos definir varia de 0 a 100. Então, vamos lá. É isso que vou fazer.
+
+Para obter informações, primeiro vamos garantir que se trata de uma matriz. E se for esse o caso, vamos obter as informações da análise. Caso contrário, retornaremos apenas uma mensagem informando que a análise foi concluída. E, para as recomendações, vamos garantir novamente que seja uma matriz. Então, vamos passar as recomendações da análise para um array e, em seguida, retornar as recomendações da análise.
+
+Caso contrário, recomenda-se um acompanhamento. Assim, sem mais nem menos
+
+. Ótimo. Então, agora terminamos com isso. OK. Concluímos, portanto, a obtenção de uma pontuação de adequação, insights e recomendações para os membros que se juntaram ao canal. Agora vou
+
+publicar a análise no canal. Então, vamos escrever essa função de análise pós-função assíncrona para o canal exatamente como fizemos antes. Bem, na verdade estou apenas definindo a função e vamos analisá-la por meio de
+
+dados de membros e pesquisa. OK. Bem, podemos escolher uma cor com base na pontuação de ajuste. Então, podemos fazer verde para mais de 80. Vou mostrar como fazer isso. const color é igual à
+
+pontuação de ajuste da análise. E se for maior ou igual a 80, e isso for verdade, bem, queremos a cor verde, que é este código hexadecimal aqui. Caso contrário, se a pontuação de ajuste da análise for maior ou igual a 60 e isso for verdade, vamos optar por esse tom de amarelo. Caso contrário, se a pontuação de ajuste da análise for maior ou igual a 40 e isso for verdade, vamos optar por esta cor laranja. E, por fim, se for menor, optaremos pelo vermelho. Então, se estiver abaixo de
+
+40, assim. Ótimo. Vou mover isso para baixo para que fique mais fácil de ler. Maravilhoso. Agora vamos construir a estrutura de mensagens do kit de blocos do Slack. OK. Então, os
+
+blocos constantes são iguais, depois criamos um array e então vamos escrever o bloco de cabeçalho que mostra o nome do membro. Então, o tipo disso será cabeçalho e o texto será texto simples . Então, basicamente, estamos estilizando o que vai aparecer como mensagem no Slack e o próprio texto, que terá um emoji. E vou adicionar um novo membro e depois mostrar o nome do membro assim . E como é um membro novo, vou colocar este emoji fofo de um espelho.
+
+Certo, como se você fosse um detetive ou algo assim. Ótimo. Agora, vamos escrever os blocos de seção com os campos. Portanto, os campos da seção de tipo serão do tipo Markdown. Então, vamos usar Markdown aqui. O
+
+próprio texto usará crase para exibir a pontuação de ajuste e, claro, passaremos pela própria pontuação de ajuste. Então, estou apenas formatando um pouco a
+
+pontuação de ajuste da análise. Então, isso deveria ser ousado. E então eu vou dizer de 0 a 100. Hum, vou copiar isso porque vamos fazer três desses . Então, vamos ao texto. No entanto, vamos
+
+substituir. Então copie isso e copie novamente. Então, desta vez será por e-mail. Ok, vamos deixar em [ __ ] e usar o e-mail do membro ou, se não houver essa informação, vamos colocar " não fornecido". E o mesmo vale para este texto: vamos colocar o título em [ __ ] e o título do membro, ou não, o perfil, assim mesmo .
+
+OK. Ótimo. E agora vamos mostrar as seções de insights, caso haja algum insight para exibir. Portanto, se o comprimento das informações da análise for maior que zero, vou obter a seção do tipo push de blocos
+
+. O texto será digitado e marcado, e o próprio texto conterá insights e, em seguida, um mapa de insights analíticos.
+
+Eu faço um acento grave. Vou colocar isso em uma nova linha para que fique mais legível.
+
+E pronto. Então, estamos reunindo cada informação e, essencialmente, compilando-as em formato de tópicos. Faremos o mesmo com quaisquer recomendações. Então, na verdade, vou copiar tudo isso. Então, copie tudo isso e cole novamente.
+
+Então, é isso. E desta vez, se a análise recomendar recomendações, basta copiar esse tipo de seção de recomendações com um R maiúsculo, o mapa de análises recomendadas, e transformá-lo em uma lista com marcadores. OK. E agora vamos adicionar um bloco de contexto na parte inferior com os registros de data e hora da análise. Assim, os blocos empurram elementos de conteúdo do tipo push .
+
+Crie uma matriz e depois digite " marcar texto analisado" e, em seguida, a string de conversão de data para ISO. Portanto, nova data para string ISO. OK. Você pode até adicionar um emoji divertido, se quiser. Ótimo. Então, para mim, tudo isso parece ótimo
+
+. Certifique-se apenas de que esteja escrito "contexto" e não "conteúdo". Só precisamos enviar tudo isso finalmente. Então, envie a mensagem formatada para o canal privado do Slack configurado . Então, aguarde este canal de mensagens de bate-papo do cliente web.
+
+Vamos passar por ele o próprio texto e os blocos. Então, todos os blocos acima, o canal, eu vou obter do nosso ambiente de processo. Então será um ID de canal privado do Slack. Então, teremos que adicionar isso ao nosso arquivo MV. O texto será apenas um texto alternativo para notificações. Então, vamos fazer uma nova
+
+análise de membros
+
+e passar o nome do membro adiante. Nome de membro assim . E depois vamos incluir também a pontuação de ajuste. Então, análise. Vamos somar essa pontuação de ajuste e transformá-la em uma nota de 0 a 100. Ok.
+
+E, claro, o bloco. Então, o layout do kit de blocos complexo que fizemos anteriormente. Ótimo. Já que estamos aqui, não se esqueça de chamar também esse novo objeto de data. É isso tudo. Mais uma vez,
+
+esse código estará disponível na descrição abaixo. E antes de prosseguirmos, vou apenas registrar algumas informações. Vou apenas registrar que a mensagem foi enviada com sucesso. Então, usando o acento grave (``), vou fazer a análise publicada no canal 4 e o nome do membro. Ótimo.
+
+Acredito que ainda há uma função que precisamos implementar e que ainda não abordamos, que é a verificação se um endereço de e-mail pertence a um provedor de e-mail pessoal gratuito comum. O mesmo se aplica ao e-mail pessoal. Vamos verificar analisando o e-mail. Então, se for bobapple.com, não será nada pessoal. Mas se for
+
+bobgmail.com, então sim, provavelmente é algo pessoal. Então, domínios pessoais constantes, isso incluiria... Vou
+
+criar um array para verificar. Bem, claro, existe o gmail.com. Existe também o yahoo.com.
+
+Existem os sites mail.com, outlook.com e iicloud.com. OK.
+
+E ótimo. OK. E ótimo. Domínio constante é igual a divisão de e-mail. E então vamos remover o "at" do e-mail que foi encaminhado. Pegue a segunda metade
+
+. Então, basicamente, se for gmail.com, e só por precaução. Então, se eu verificar se isso existe, vamos mudar para lowerase. Assim, podemos comparar com nosso array, caso o valor não esteja em minúsculas. Ótimo. E
+
+retornaremos verdadeiro se o domínio estiver na lista de domínios pessoais. Portanto, o retorno de domínios pessoais inclui o domínio que extraímos. Ótimo. Portanto, se existir nessa matriz, retornará o valor verdadeiro. Caso contrário, retornará falso. Ufa, isso
+
+foi muita coisa. Na verdade, vou escrever uma função para iniciar todos os serviços. Então, o banco de dados, o servidor Express e o Slackbot. E vai se chamar simplesmente "início". OK.
+
+Então, aqui está um início de sincronização, exatamente assim . Vamos tentar novamente capturar o erro, registrar o erro, passar a mensagem de falha ao iniciar e, em seguida, a mensagem de erro, e sair. Então o processo termina assim, sem mais nem menos . Mas primeiro vamos tentar algo. Então, vou inicializar o banco de dados. Assim, é possível criar o banco de dados PostgreSQL
+
+e tabelas, índices e outros elementos, se necessário. Para isso, precisaremos escrever mais código que nos ajudará a inicializar o banco de dados. Faremos isso em outro arquivo, mas por enquanto vou registrar as informações de inicialização do banco de dados dessa forma . Vamos fazer um reticências. Podemos até mesmo adicionar um emoji e aguardar em seu banco de dados. Ok, então, o que
+
+ainda precisamos escrever é o seguinte: depois disso, vamos iniciar o servidor Express na porta configurada. Então, porta constante. Se adicionarmos algo ao arquivo de ambiente, isso será detectado primeiro pela variável ` port`. Caso contrário, vamos executá-lo na porta 3000. Este servidor, este aplicativo, escuta na porta e então vamos passar um retorno de chamada e registrar informações como " servidor Express em execução na porta" e então qualquer que seja a porta. Se for 30.000,
+
+então é isso que vai aparecer. Agora vamos conectar o aplicativo Slackbolt via websockets no modo socket. Aguarde o início do Slack e faça a chamada. E, mais uma vez, vamos registrar algumas informações. Informações de registro, algo como "Slack conectado".
+
+OK. Pronto, aí está. E agora vamos registrar que tudo está funcionando corretamente. Portanto, as informações de log indicam que o agente Slack AI está em funcionamento e, se estiver em desenvolvimento, o ambiente de processo corresponde diretamente às informações de log de desenvolvimento, que são repassadas pelo endpoint de teste. Assim mesmo .
+
+Desenvolvimento. Ótimo. Isso parece ótimo. E agora precisamos escrever uma função para encerrar todos os serviços de forma correta. Então, o comando `async stop` registra informações de desligamento ou algo semelhante.
+
+OK. Essa é a nossa mensagem registrada. Mas vamos acabar com isso de vez. Então, tente capturar o erro e registrá-lo da seguinte forma . erro de desligamento e mensagem de erro.
+
+OK. Então, vamos desconectar o Slackbot 08 desta loja Slack. Se este servidor aguardar uma nova promessa, resolva-a e feche-a.
+
+Também precisamos fechar o pool de conexões SQL do Postgrass. Então, aguarde o fechamento do banco de dados; outra função que teremos que executar é a de registrar as informações de log. O processo foi interrompido com sucesso.
+
+OK. E então vamos encerrar o processo sem problemas. Então o processo termina exatamente assim . OK. Incrível. Então é basicamente isso. Só falta
+
+instanciar o agente. Então, finalmente podemos fazer isso fora daqui. Então, passe a chave final const agent igual a new slack agent slack AI agent na verdade. E agora vamos aguardar até que o Control-C seja desligado. Certo, isso vai nos ajudar a fazer isso.
+
+Também ficaremos atentos aos sinais de encerramento do Docker ou do render para desligá-los corretamente. E vamos iniciar o agente. Assim, o agente inicia a
+
+captura de erros.
+
+Erro no console:
+
+falha ao iniciar.
+
+mensagem de erro e encerramento do processo (número um). OK. E agora vamos exportar o agente padrão. E assim termina o nosso arquivo index.js. Antes de escrevermos nosso
+
+arquivo JS de banco de dados, acho que devemos fazer uma pequena pausa para preencher as variáveis que abordamos no arquivo index.js. Então, vamos fazer isso. No momento, é claro, temos o URL do nosso banco de dados, mas abordamos muito mais do que isso. Então, tínhamos algumas coisas da configuração do Slack.
+
+Também tínhamos itens da configuração do Open AI . Também adicionamos as informações da nossa empresa, como o nome da empresa e os produtos que vendemos. E também temos a configuração do aplicativo. Portanto, a configuração do Slack consistia em um token do Slackbot. Então, vou aceitar isso.
+
+Também incluía um token de aplicativo do Slack. Também incluía uma chave secreta de assinatura do Slack e um ID de canal privado do Slack, onde podemos publicar nossa análise e vê-la somente por nós. Também precisaremos obter uma chave de API de IA aberta e fornecer o nome da nossa empresa e os produtos que ela oferece. Certo, porque obviamente estamos vendendo produtos e é por isso que queremos ver se esses novos membros da equipe se encaixam no perfil dos nossos produtos. Também precisamos definir a porta na qual queremos executar o aplicativo e o ambiente Node.js. Certo, então vamos preencher
+
+isso. Vamos começar pela mais fácil . Então sim, vamos configurar a porta 3000. Vamos criar este ambiente de desenvolvimento. Então, no desenvolvimento, o nome da minha empresa será Code with Anna e o produto que estou vendendo são cursos de programação.
+
+Ok, ótimo. Agora vamos trabalhar nos outros. Vou mostrar agora onde obter a configuração do OpenAI. OK. Para obter sua chave de API da OpenAI, basta acessar openai.com e,
+
+na seção de login, clicar em " Plataforma de API". Agora você será solicitado a fazer login. Por favor, prossiga e faça isso usando suas credenciais. Após efetuar o login, seu painel de controle deverá ter esta aparência. OK. Então, o
+
+meu ficou assim. E aqui embaixo você verá as chaves da API. Para começar a usar isso, basta criar uma nova chave secreta. Você pode chamar isso do que quiser. Assim, posso chamar essa chave do Slack de chave secreta. Agora, basta copiar assim
+
+. E você simplesmente vai, como você já deve ter imaginado, colar aqui e salvar. Por favor, use a sua própria, pois irei revogar a minha, então ela não poderá ser usada. Ótimo. Agora que você tem sua chave de API OpenAI, vamos prosseguir para a configuração do Slack e obter seu token do Slackbot, seu token de aplicativo do Slack, seu segredo de assinatura do Slack e seu ID de canal privado do Slack. Então, tudo o que vou fazer é
+
+acessar o Slack. Então, este é o meu canal no Slack, chamado Code with Anna. E para obter um ID de canal, você já pode ver que eu criei um aqui. Então, se você clicar aqui para obter o ID, poderá abrir os detalhes do canal e obter o ID do canal a partir daqui. OK. Então, agora
+
+que obtive o ID do canal, usarei-o no meu projeto para enviar mensagens do meu aplicativo. Como você pode ver, eu já testei e funcionou aqui. Então, vamos postar isso no canal privado do Slack, assim: Vamos voltar. Agora, para obter os outros, você precisará acessar api.slack.com/apps.
+
+Eu já tenho um aplicativo aqui, mas vou criar um novo para você ver. Então, vamos clicar em manifesto. Vou selecionar meu espaço de trabalho, que é "Code with Anna", e clicar em "Avançar". Vamos clicar em "Avançar" novamente. Então, vamos criar esse aplicativo.
+
+Certo, então vamos lá. Estas são algumas informações básicas, mas o que você realmente vai precisar é da sua senha secreta. Então, certifique-se de copiar e colar isso assim. Em seguida, vamos obter o token do aplicativo Slack. Então, vamos continuar descendo e gerar um token. Vamos dar
+
+qualquer nome a esse token. Então, aqui está o token do Slack, se você quiser. Vamos adicionar um escopo e você poderá escrever, mas também, se quiser, pode adicionar todos eles se não tiver certeza. Então, depende de você o que quer fazer. E vamos simplesmente clicar em gerar. Então, agora temos
+
+esse token. Vou simplesmente copiar e colar assim. Deve começar com XAPP. Ótimo. Vamos continuar.
+
+Agora, se você voltar até o modo de soquete, terá que habilitar o modo de soquete. E, finalmente, em relação à permissão, você precisará adicionar um escopo. Então, vamos lá e vamos ler. Vamos lá, vamos escrever e ler os canais. bater um papo, né?
+
+Usuários
+
+leem e-mails. E agora vamos instalar dois códigos com a Anna. Vamos . Permitir
+
+e usar nosso bot ou token. Vamos copiar e colar isso assim. Deveria começar com XOXB. Incrível. Então, para mim, isso parece bom. Outra
+
+coisa que você precisará fazer é ativar essa opção nas configurações de assinatura de eventos. Você também pode criar eventos com atraso, se inscrever em eventos de bot e adicionar eventos de usuário ao bot . E então você só precisa encontrar a opção " Entrar na equipe" e o canal onde o membro entrou. Certo, então não se esqueça de adicioná-los. Ótimo.
+
+E reinstale o aplicativo. Então vamos simplesmente permitir. Ok, então esses dois já foram adicionados. Terminamos com o nosso arquivo .env. Vamos agora
+
+trabalhar em nosso banco de dados. OK. Portanto, precisaremos importar a biblioteca PG node do banco de dados SQL PostgreSQL e, em seguida, estruturar a classe pool a partir dela para podermos utilizá-la. Também precisaremos importar os dados para carregar as variáveis que acabamos de ver. E, claro, vamos carregar as variáveis ​​de ambiente do arquivo MMV para o processo EMV usando esta linha de código. Agora, vamos criar uma piscina.
+
+Então, vamos criar um novo pool e passar uma string de conexão. Esta será a URL do nosso banco de dados, que foi a primeira coisa que fizemos no render.com. Em seguida, vamos definir SSL como " rejeitar não autorizado" (false). Portanto, vamos permitir conexões SSL sem verificar o certificado. Vamos
+
+definir o número máximo de clientes no pool, que será 20. Em seguida, vamos adicionar uma função para fechar clientes ociosos após 30 segundos. Então vamos fazer isso. E também vamos adicionar um tempo limite de conexão. Portanto, falhará se uma conexão não puder ser estabelecida em 2 segundos.
+
+Pronto. OK. OK. Agora, vamos adicionar um ouvinte de eventos que será acionado sempre que um novo cliente se conectar ao banco de dados. Então, puxe e depois faremos a conexão.
+
+OK. E então enviaremos uma mensagem de retorno. E basicamente isso apenas exibirá a mensagem " Informações do console: banco de dados conectado". OK. Então, estamos meio que tentando reproduzir os erros do arquivo anterior. Agora,
+
+vamos escrever um ouvinte de eventos que dispara erros inesperados de clientes ociosos no pool. Desta vez, vamos apenas lidar com o erro " erro inesperado no banco de dados". E agora vamos escrever uma função que basicamente cria a tabela do banco de dados e os índices, caso eles ainda não existam. Então, exporte uma função síncrona para inicializar o banco de dados. Então, vamos exportar isso, pois vamos usar no arquivo index.js. Primeiro, vamos
+
+adquirir um cliente do pool para executar várias consultas em sequência. Em seguida, criaremos uma tabela de análise de membros, caso ainda não exista. Hum, vou tentar isso e, claro, corrigir quaisquer erros. Então, desta vez, meu erro será simplesmente registrar este erro no console, lançar o erro e, finalmente, liberar o cliente. Certo, então sempre libere o cliente de volta para o pool, mesmo que ocorra um erro.
+
+OK. E vamos criar a tabela de análise de membros, caso ela não exista, como eu tentei. Então, vamos aguardar a consulta do cliente. Vamos usar o acento grave (ou crase). E vou simplesmente colar isso porque não quero cometer nenhum erro.
+
+Então, é assim que se cria uma tabela. OK. Então, essa é a história completa. Criar tabela se ela não existir. Você tem a identidade.
+
+Você já tem o ID de membro. Você já tem o nome do membro. E-mail do membro, título do membro, fuso horário do membro, pontuação de adequação, insights como um array JSON, recomendações, dados de pesquisa, você recebeu análises com um carimbo de data/hora, enviado para o Slack, SL para Slack em, e o carimbo de data/hora de criação e atualização. Certo, então muitas informações também estão sendo salvas em nosso banco de dados. Ok, ótimo. Mais uma vez
+
+, essa informação estará disponível na descrição do vídeo. Agora vamos criar um índice com base no ID do membro para as últimas pesquisas feitas pelo ID do usuário do Slack. Então, vamos criar um índice caso ele não exista. OK. Na análise de membros, vamos criar um índice em `analyze` para consultas de intervalo de tempo mais eficientes. OK.
+
+Houve alguns ajustes de formatação, mas basicamente é isso. Ótimo. E assim que isso for feito, vou apenas registrar no console a informação de que o esquema do banco de dados foi inicializado. Maravilhoso. Então, terminamos por aqui. Em seguida, vamos
+
+escrever outra função e exportá-la. E esta é uma análise de membro salvo. Então, exporte a função assíncrona. Salvar análise de membros. Assim mesmo
+
+. Vamos analisar as informações dos membros e os dados da pesquisa. Vamos adquirir novamente um cliente do pool e tentar capturar o erro. O erro será "falha ao salvar a análise no banco de dados" e, em seguida, lançaremos uma mensagem de erro. Finalmente, liberaremos o cliente de volta para a porta e, no bloco try-well, inseriremos os dados da análise usando consultas parametrizadas para evitar injeção de SQL. Portanto, `const result` é igual a `await
+
+client query`. Certificando-se de que a palavra " cliente" esteja escrita corretamente. E, mais uma vez, use os crases (ou acentos graves). Vou inserir na análise de membros o ID do membro, o nome do membro, o e-mail do membro, o cargo do membro, o fuso horário do membro, a pontuação de adequação, os insights, as recomendações, os dados da pesquisa e os valores retornados pelo ID. OK.
+
+E aqui estão todas as variáveis ​​que vou analisar . Temos o ID de usuário do Slack . E se não existir, simplesmente nulo. Também vamos repassar o nome com as informações do membro. Também vamos repassar o e-mail com as informações do membro ou deixar como nulo caso ele não exista. O mesmo vale para o
+
+título das informações do membro. O mesmo vale para o fuso horário das informações do membro. O mesmo se aplica à pontuação de ajuste da análise. Também vamos serializar o array de insights em uma string JSON, assim como as recomendações e os dados da pesquisa. Ótimo. Isso
+
+parece bom. Vamos também registrar o ID dos registros recém-criados para sabermos que tudo ocorreu corretamente, bem como retornar o ID dos novos registros para que os chamadores possam consultá-lo. Certo, então é isso . Eu amo isso. Ok, então vamos em frente porque também precisamos marcar como enviado para o Slack. Então, exporte a
+
+função assíncrona e marque-a como enviada para o Slack, assim mesmo. E vamos passar o ID da análise. Basicamente, queremos apenas atualizar um registro para indicar que a análise foi publicada com sucesso no Slack. Então, mais uma vez, vamos adquirir um cliente da lista. Vamos tentar capturar o erro finalmente e liberar o cliente.
+
+O erro simplesmente exibirá a mensagem "Falha ao marcar como enviado para o Slack" e mostrará a mensagem de erro em si. Também vamos lançar o erro. E o que vamos tentar é, bem, vamos simplesmente atualizar o indicador de folga central e os registros de data e hora para o ID de análise fornecido. Aguarde a consulta do cliente. Use crases novamente
+
+e atualize a análise de membros. Ativar a opção "Enviar para o Slack". Centralizar para folgar no carimbo de data/hora atual e atualizá-lo no carimbo de data/hora atual. OK. E vamos apenas passar o ID para que ele possa substituir aqui, assim como a variável. Então
+
+vamos passar o ID de análise assim mesmo . Ótimo. Assim que tivermos feito tudo isso, podemos fechar todas as conexões no pool sem problemas . Então, exporte a função assíncrona ` close` do banco de dados ` 08 pool end` e, em seguida, vamos registrar no console a informação de que a conexão com o banco de dados está fechada ( pool closed). Agora podemos exportar a porta padrão (default). Ótimo,
+
+incrível! Fizemos tudo isso. Vamos importar o pg. Então, vamos abrir nosso arquivo JSON de pacotes. Como você verá, o pg não está lá. Então, vamos executar `npm pg` para
+
+que ele apareça. Vamos também importar todas essas funções exportadas aqui. Logo no início deste arquivo, vou importar o banco de dados inicial, salvar a análise de membros,
+
+marcar como enviado para o Slack e fechar o banco de dados a partir do arquivo dbjs. Ótimo, maravilhoso. Ok, ótimo. Vou desligar tudo isso, abrir meu terminal e limpar tudo. Então, a primeira coisa que vamos fazer, para garantir que estamos no ambiente de IA do Slack, é simplesmente executar este aplicativo. Ok, então
+
+as variáveis ​​do arquivo MV foram injetadas . O banco de dados foi inicializado. O banco de dados está conectado. Esquema do banco de dados inicializado. Servidor Express em execução na porta 3000. E o Slackbot conectado. O
+
+agente de IA do Slack está em execução. Eu disse que todos aqueles registros eram extremamente úteis. Incrível. Então, vamos configurar um novo terminal. E desta vez vou apenas testar o agente. Então, o que vou fazer é simplesmente
+
+colar este comando. Por favor, copie e cole o mesmo texto que estamos enviando para 3000/estanalyzemember, que é a rota que escrevemos. E eu simplesmente envio o nome John Doe com o e-mail johncorp.com e o cargo dele de engenheiro de software sênior na techp e pressiono enter. E um grande sucesso, sem dúvida. A
+
+pontuação de aptidão física de John é 85. Temos informações de que John Doe é um engenheiro de software sênior na Tech Corp, o que sugere que ele possui uma sólida formação técnica. Seu domínio de e-mail está associado à Tech Corp, indicando que ele provavelmente trabalha em uma função relacionada à tecnologia. A ausência de repositórios públicos no GitHub para o Stanislaf web pode sugerir que o trabalho de J seja privado ou proprietário. O título de engenheiro de software sênior sugere que Jon pode ter influência sobre as decisões técnicas dentro de sua equipe ou departamento, mas não está claro se ele tem autoridade sobre o orçamento. recomendações.
+
+Entre em contato com John por e-mail para obter informações sobre nossos cursos, com foco naqueles mais relevantes para engenheiros de software seniores. Ofereça a John um período de teste gratuito de um desses cursos ou dê a ele uma amostra do conteúdo e do estilo de ensino. Então, obrigada pelas recomendações para vender meus cursos da Code with Anna ou para convidar o John para um webinar ou evento online onde ele possa aprender mais sobre nosso produto e interagir com outros membros da comunidade. Se possível, procure saber mais sobre o orçamento de treinamento da Techov e se John tem autoridade para tomar decisões de compra com registro de data e hora. Incrível!
+
+Isso é muito, muito legal. E agora, se formos para o Slack, vamos para o nosso canal privado. Essa foi a nossa mensagem anterior. Tada. Eu consigo ver isso agora mesmo porque consigo olhar as horas.
+
+Incrível. Isso foi publicado no meu canal privado do Slack. Tudo foi conectado corretamente. Eu amo isso. Estou muito, muito feliz com isso. Bem, eu não sou
+
+muito fã da formatação que aconteceu. Então, na verdade, vamos apenas remover uma dessas barras invertidas. Portanto, o resultado final deve ser assim. Vamos fazer o mesmo em todo o arquivo. Então, basta fazer o mesmo para obter insights.
+
+Então, livre-se deles. O mesmo vale para a resposta limpa. Então, livre-se desses. Outra coisa que você pode fazer é usar o código de cores que você escreveu quando postar uma mensagem. Portanto, aqui, em vez de blocos, você pode enviar anexos, que são um array que conterá este objeto aqui.
+
+OK. Agora essas cores também serão transmitidas. E se formos ao nosso banco de dados, como vocês verão aqui, se rolarmos para baixo, verão que parte do nosso 1 gigabyte já foi utilizada. Adicionamos John ao nosso banco de dados no render.com.
+
+A última coisa a fazer é simplesmente implantar isso. Então vamos fazer isso. Para isso, primeiro vou salvar meu projeto no GitHub. Então, eu já adicionei esse projeto ao meu repositório do GitHub. É um projeto público que compartilharei com vocês. Mas
+
+por agora, vou apenas obter esse URL. E na renderização em blueprints, vou criar uma instância de blueprint. Mas, afinal, o que são blueprints de renderização? Bem, você pode basicamente gerenciar toda a sua infraestrutura com um único arquivo YAML. E é isso que vamos fazer, porque os blueprints são o modelo de infraestrutura como código do Redd, ou IA, para abreviar. E ajuda a definir, implementar e
+
+gerenciar múltiplos recursos com um único arquivo YAML. Assim, essencialmente, funciona como uma única fonte de verdade para configurar um conjunto interconectado de serviços, bancos de dados e grupos de ambientes. Sempre que você atualiza um modelo, o Render reimplementa automaticamente todos os serviços afetados para aplicar a nova configuração. E à medida que sua infraestrutura cresce ao longo do tempo, os modelos se tornam cada vez mais úteis para gerenciar mudanças e adições a ela. Isso vai me ajudar com a sincronização automática dos meus serviços. Então, aqui eu preciso conectar um
+
+repositório. Posso postar o URL aqui porque é um repositório público e clicar em continuar. Vou chamar esse modelo de agente de IA para o Slack. E uma coisa que vamos adicionar é um arquivo YAML de renderização. E como ficará na raiz do meu projeto, o padrão será este aqui. Isso parece
+
+bom. Então vamos fazer isso. Vamos adicionar um arquivo YAML de renderização. Então, vou fazer isso diretamente no meu GitHub. Então vamos criar um novo arquivo.
+
+Será um arquivo YAML de renderização e terá esta aparência. OK. Então, ele tem o comando de compilação, os comandos de inicialização e também algumas variáveis ​​de ambiente. Também vou adicionar o URL do banco de dados e definir a sincronização como falsa . E eu vou confirmar isso.
+
+OK. Isso já foi adicionado. OK. Você verá isso aqui mesmo. Agora eu sei que o branch do repositório tem um arquivo YAML de renderização e que ele está na raiz do repositório.
+
+Vou tentar novamente. E incrível. Agora só precisamos preencher isso, porque, é claro, o projeto não inclui essa informação. Esses segredos existem apenas em nosso computador. Então precisamos preencher isso. Então,
+
+vou inserir meu token do Slackbot. Também vou inserir meu token de aplicativo do Slack . Então, é só inserir aqui, assim como fazemos no nosso arquivo .env. Vamos também incluir a chave secreta de assinatura do Slack, o ID do canal privado do Slack, a chave da API OpenAI e a URL do meu banco de dados , que na verdade vem do próprio render.
+
+Ok, ótimo. E eu vou implantar isso. Então, o total será de US $ 7 por mês, mas eu darei a vocês todos esses créditos gratuitos. Você não precisa gastar nada para testar isso. E terminamos. Estamos em
+
+missão. Nosso serviço web está funcionando. Tudo parece estar indo bem. Já está disponível neste link aqui. Então, vamos dar uma olhada . Estado de saúde: saudável. Tudo
+
+parece ótimo. Então, vamos colocar isso à prova. Vou adicionar alguém ao meu canal manualmente. Essa pessoa será Anna@homebbrew.e.
+
+Portanto, não se trata de uma conta privada. É um domínio de trabalho. E então, vou apenas enviar o convite e clicar em concluir. Então essa pessoa foi convidada. E assim que eles aceitarem o seu convite, ele será enviado para o e-mail deles. Como você pôde
+
+ver, sua conta pessoal aceitou o convite para participar do Slack. Tada. Obtemos uma pontuação de aptidão física. Que ótimo. A nossa nova análise de membros já está disponível. Obtivemos uma
+
+pontuação de adequação de 65 em 100. O título não foi fornecido. Temos algumas informações. Assim, o membro está associado à empresa chamada home.e, que potencialmente pode ser uma empresa de tecnologia, considerando que o domínio é frequentemente usado por empresas de tecnologia. Isso lhe dá
+
+algumas informações e também algumas recomendações. Eu amo isso. Então, isto está funcionando. Estou muito feliz com isso. Nossa análise de membros está funcionando conforme o esperado.
+
+Eu amo isso.

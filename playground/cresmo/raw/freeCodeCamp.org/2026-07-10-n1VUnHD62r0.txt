@@ -1,0 +1,143 @@
+---
+video_title: "The 20 Minute Masterpiece: Dijkstra's Algorithm"
+video_id: n1VUnHD62r0
+channel_name: "freeCodeCamp.org"
+channel_id: UC8butISFwT-Wl7EV0hUK0BQ
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=n1VUnHD62r0
+video_date: 2026-07-10T10:15:24+00:00
+video_description: |
+  Explore the history behind Dijkstra’s algorithm and why it became one of the most important ideas in computer science. You’ll see how the algorithm works step by step, using weighted graphs to find the shortest path efficiently.
+  
+  This video was developed by @codingwithestefania 
+  
+  ❤️ Support for this channel comes from our friends at Scrimba – the coding platform that's reinvented interactive learning: https://scrimba.com/freecodecamp
+  
+  Chapters
+  00:00 Introduction to Edsger W. Dijkstra
+  01:08 The 20-Minute Invention
+  03:31 What is an Algorithm?
+  04:16 Graph Theory (Nodes and Edges)
+  05:20 Understanding Edge Weights
+  06:27 Step-by-Step Practical Example
+  12:04 The Greedy Algorithm Concept
+  12:25 Python Code: Graph Representation
+  13:44 Python Code: The Dijkstra Function
+  18:23 Python Code: Recreating the Shortest Path
+  20:19 Dijkstra's Legacy and Simplicity
+  
+  🎉 Thanks to our Champion and Sponsor supporters:
+  👾 @omerhattapoglu1158
+  👾 @goddardtan
+  👾 @akihayashi6629
+  👾 @kikilogsin
+  👾 @anthonycampbell2148
+  👾 @tobymiller7790
+  👾 @rajibdassharma497
+  👾 @CloudVirtualizationEnthusiast
+  👾 @adilsoncarlosvianacarlos
+  👾 @martinmacchia1564
+  👾 @ulisesmoralez4160
+  👾 @_Oscar_
+  👾 @jedi-or-sith2728
+  👾 @justinhual1290
+  
+  --
+  
+  Learn to code for free and get a developer job: https://www.freecodecamp.org
+  
+  Read hundreds of articles on programming: https://freecodecamp.org/news
+---
+É 1956. Um jovem programador está levando sua namorada para fazer compras em Amsterdã, sem saber que desenvolverá um dos algoritmos mais importantes da história. Ninguém poderia imaginar que em apenas 20 minutos o mundo como o conhecíamos seria transformado. Foi nesse dia que Edsger W. Dijkstra, um programador e matemático holandês que em breve se tornaria mundialmente famoso, criou um algoritmo que impulsionaria a navegação por GPS, o roteamento de redes, as redes sociais, as cadeias de suprimentos, a robótica e muito mais. Ele literalmente mudou o mundo
+
+no tempo que levamos para tomar uma xícara de café. Você consegue imaginar isso? Edsger Dijkstra nasceu em 1930 em Rotterdam, na Holanda. [música] Ele estudou matemática e física na Universidade de Leiden, em Leiden, na Holanda. Vamos dar uma olhada no algoritmo dele e em como ele descreveu o que aconteceu [música] naquele dia.
+
+Em 1956, Dijkstra trabalhava como programador no Centro de Matemática de Amsterdã. O centro estava prestes a apresentar um computador holandês pioneiro, o novo computador ARMAC. Ele queria demonstrar o poder desse computador escolhendo um problema que fosse desafiador o suficiente para surpreender as pessoas, mas também geral o bastante para que pessoas sem formação em computação pudessem entendê-lo e até mesmo achá-lo interessante. Ele escolheu o problema de encontrar o caminho mais curto entre dois locais. Ele perguntou: "Como um computador pode encontrar o caminho mais eficiente para ir do ponto A ao ponto B?"
+
+Ele continuou pensando nisso durante e depois do expediente. Surpreendentemente, a inspiração surgiu no momento mais inesperado. Quando Dijkstra e sua namorada se sentiram cansados ​​de andar pelas lojas naquele dia, sentaram-se no terraço de um café para tomar uma xícara de café. Ele continuou pensando. Ele simplesmente não parava de pensar. Como ele poderia encontrar o caminho mais curto
+
+para viajar de Rotterdam a Groningen? As duas cidades na Holanda. Ele começou com essa pergunta bem específica , mas depois percebeu o potencial de torná-la mais geral. Em vez de considerar apenas duas cidades, por que não criar uma solução geral que encontre o caminho mais curto entre quaisquer duas cidades dadas? Surpreendentemente, em suas próprias palavras, a solução foi uma invenção de 20 minutos . Vinte minutos, foi tudo o que
+
+levou. Quando ele terminou de tomar seu café, a lógica fundamental do que hoje conhecemos como algoritmo de Dijkstra estava completa. E o algoritmo não só estava correto, como também forneceu a base para muitos dos sistemas modernos que usamos atualmente. O algoritmo em si foi publicado formalmente 3 anos depois, em 1959. Você ainda pode ler a publicação original online. Chama-se "
+
+Uma nota sobre dois problemas relacionados a grafos". Para apreciar as ideias de Dijkstra , é preciso entender seus princípios fundamentais. Então, vamos começar. Primeiramente, o que é um algoritmo? Um algoritmo é uma sequência de instruções passo a passo muito específicas e inequívocas que você segue para resolver um problema ou chegar a uma solução. Os
+
+desenvolvedores de software usam linguagens de programação para implementar esses algoritmos, fazendo com que os computadores sigam essas instruções passo a passo em uma linguagem que eles entendem. Para encontrar o caminho mais curto entre duas cidades quaisquer, Dijkstra teve que pensar nos possíveis caminhos entre as cidades de uma forma mais abstrata, representando as conexões entre elas e quaisquer outras cidades no caminho. Ele fez isso traduzindo o mundo físico das estradas e cidades em uma estrutura de dados chamada grafo.
+
+Em ciência da computação, você pode pensar em um grafo como uma forma de representar relações ou conexões entre elementos. Os grafos possuem dois componentes principais: nós e arestas. Você pode pensar nos nós como as coisas que estão conectadas. No algoritmo de Dijkstra , os nós representam cidades. Ao considerar o mundo como uma série de nós e arestas, o algoritmo de Dijkstra pode ser aplicado a praticamente tudo, não apenas a estradas e cidades. Eles podem
+
+representar coisas diferentes em contextos diferentes: usuários em plataformas de mídia social , armazéns em cadeias de suprimentos, roteadores em redes de computadores, peças em videogames e muito mais. A principal conclusão aqui é que os nós representam coisas que estão de alguma forma conectadas. Essas conexões são as arestas do grafo. Mas saber apenas que as cidades estão conectadas não é suficiente para resolver o problema de Dijkstra. Você precisa de mais informações do que isso.
+
+Lembre-se que ele estava tentando encontrar o caminho mais curto entre duas cidades. Para encontrar o caminho mais curto, é preciso saber o custo associado a cada conexão ou aresta. Isso é conhecido como peso da borda. No problema de Dijkstra, os pesos representariam a distância entre duas cidades ou o tempo necessário para viajar entre elas, uma grandeza abstrata que de alguma forma representa essa conexão. No entanto, o peso da aresta pode ter significados diferentes em contextos diferentes. O
+
+número de conexões entre dois usuários, por exemplo. Similaridade de cores entre pixels em diferentes regiões de uma imagem. O custo de se mover de uma casa para outra em um videogame. E muito mais. Quando as arestas de um grafo têm pesos como esses, o grafo é classificado como um grafo ponderado. O
+
+algoritmo de Dijkstra funciona com esse tipo de grafo. Ele usa os pesos para encontrar o caminho mais curto. O caminho com o menor peso total. Vejamos o algoritmo em ação com um exemplo prático. Imagine que você está viajando do nó de origem A para o nó de destino D. E essa é a
+
+conexão geral entre as cidades ou os nós. O nó A é conhecido como nó de origem, onde você inicia o processo. O algoritmo começa atribuindo um valor de distância a cada nó. Define a distância do nó de origem até si mesmo como zero. E a distância do nó de origem a todos os outros nós do grafo tende ao infinito. O
+
+símbolo de infinito é usado aqui apenas temporariamente para representar que o algoritmo ainda não sabe nada sobre esses nós, porque ainda não os visitou. Os nós visitados também são rastreados. Em seguida, o algoritmo começa visitando o nó A, o nó de origem. Este é o ponto de partida. Verifica os vizinhos que não visitou . Neste caso, esses nós,
+
+os vizinhos, são o nó B, que está a uma distância de dois do nó A. Você pode ver as distâncias ou pesos aqui no diagrama. E o nó C está a uma distância de seis do nó A. Como suas novas distâncias são menores que suas distâncias atuais (lembrando que atribuímos o valor infinito inicialmente), elas foram atualizadas. O nó anterior deles também é atualizado para o nó A.
+
+Só atualizamos as distâncias se elas forem menores, ou seja, se encontrarmos um caminho melhor, um caminho mais curto. Acompanhar a sequência de nós, como os nós anteriores que temos aqui na tabela, é útil para recriar o caminho mais curto quando chegarmos à solução final. E, finalmente, nesta etapa, o nó A é marcado como visitado assim que verificamos todos os vizinhos e atualizamos suas distâncias. Em seguida, o algoritmo visita o próximo nó não visitado com o menor peso total de aresta. Neste gráfico, esse seria o nó B, já que sua distância do nó A é dois.
+
+Então, vamos visitar o nó B. Precisamos verificar seus vizinhos não visitados . Os vizinhos deste nó são o nó A, o nó C e o nó D. Mas o nó A já foi visitado. Assim, nesta etapa, consideramos apenas os nós C e D.
+
+Vamos começar com o nó C. Se escolhermos um caminho que passe pelo nó B, a distância do nó A ao nó C seria de dois mais nove, que é igual a 11. No entanto, em nossa tabela, temos uma distância de seis registrada do nó A ao nó C por um caminho diferente que exploramos anteriormente. Como o caminho que passa pelo nó B seria mais longo do que o que temos registrado atualmente, não atualizamos a distância. Nós simplesmente mantemos a atual.
+
+Agora, vamos para o nó D. Se escolhermos um caminho que passe pelo nó B, a distância do nó A ao nó D será de dois mais cinco, que é sete. Essa distância é menor do que a que registramos até o momento. Atualmente, é infinito, então sete é definitivamente melhor. Atualizamos essa distância e o nó anterior ao nó B.
+
+Finalmente, marcamos o nó B como visitado. Agora, precisamos visitar o próximo nó não visitado com o menor peso total de arestas . Neste gráfico, esse seria o nó C, pois sua distância atual é de seis, enquanto a distância do nó A ao nó B é de sete. Então, vamos visitar o nó C. Precisamos verificar os vizinhos não visitados do nó C.
+
+O nó C tem três vizinhos: o nó A, o nó B e o nó D, como você pode ver, ele possui conexões com esses nós. Possui bordas. No entanto, os nós A e B já estão marcados como visitados. Portanto, precisamos verificar apenas o nó D. A distância do nó C ao nó D é oito. A distância total do nó A ao
+
+nó D, passando pelo nó C, seria 6 + 8, que é igual a 14. Atualmente, a distância que registramos do nó A ao nó D é de sete. Então, vamos manter a atual. Lembre-se de que estamos sempre em busca de um caminho melhor, um caminho mais curto. Se não for mais curto, não o atualizamos.
+
+E como esse é o único vizinho não visitado do nó C, nós o marcamos como visitado. Por fim, passamos para o próximo nó não visitado com o menor peso total. Neste caso, existe apenas um nó não visitado , que é o nó D. Como todos os vizinhos do nó D já foram verificados e visitados, basta marcá-lo como visitado. Marcamos o nó D como visitado.
+
+E o algoritmo para, uma vez que todos os nós foram visitados e o processo foi concluído. Agora que temos o resultado final, para encontrar o caminho mais curto do nó A ao nó D, precisamos retroceder usando a sequência de nós anteriores que registramos. Do nó D, vamos para o nó B. E então, do nó B, vamos para o nó A, como você pode ver aqui na tabela, estamos indo na ordem inversa. Portanto, se começarmos pelo nó A, a sequência seria nó A, nó B e nó D. E esse é o caminho mais curto
+
+do nó A ao nó D neste grafo. Nós conseguimos. Incrível. Excelente trabalho nesta parte prática do vídeo. Uma conclusão importante aqui é que esse algoritmo seleciona consistentemente as conexões com os menores pesos e mantém o controle de quais nós foram visitados e quais ainda não foram.
+
+Outro aspecto importante que você deve saber sobre o algoritmo de Dijkstra é que ele é classificado como um algoritmo guloso. E você pode perguntar: "Por que ganância?" Bem, porque é muito, muito, muito ganancioso. Em cada etapa, o sistema escolhe a melhor opção possível . Basicamente, ele escolhe o caminho que parece melhor sempre que precisa tomar uma decisão.
+
+Vamos nos aprofundar um pouco mais e analisar uma implementação em Python do algoritmo de Dijkstra para ver como você pode implementar esse algoritmo em código. Antes de nos aprofundarmos nos detalhes da função de Dijkstra propriamente dita, vejamos como você pode representar um grafo em código, pois precisaremos disso. Lembre-se de que os grafos são o núcleo deste algoritmo, as estruturas de dados essenciais que representam as cidades e suas conexões no contexto do problema de Dijkstra. Esta é uma representação em Python do gráfico que temos no diagrama. Aqui, estamos usando um dicionário Python para representar o que conhecemos como lista de adjacência, que é basicamente um dicionário em Python que contém dicionários. Esses
+
+dicionários representam quais nós são adjacentes a outros nós no grafo. As chaves do dicionário principal são todos os nós do grafo, e estão associadas a dicionários que representam os nós aos quais estão conectados, bem como os pesos das arestas que os conectam. Por exemplo, como você pode ver aqui, o nó A está conectado ao nó C. E eles estão conectados por meio de uma aresta de peso seis. Então, é assim que você pode interpretar essas listas de adjacência.
+
+Ótimo. Agora que você já sabe como representaremos o gráfico, vamos conferir a implementação da função em si. Vamos analisar a implementação da função de Dijkstra . Começamos importando um módulo integrado do Python que usaremos para criar uma fila de prioridade. Isso é muito importante porque, em vez de percorrer uma enorme lista de cidades para encontrar a mais próxima do nó de origem, quando precisamos escolher quais cidades visitaremos em seguida, a fila de prioridade, neste caso um min heap (pois priorizaremos o menor valor), manterá a cidade com a menor distância da origem, onde o programa possa acessá- la imediatamente.
+
+Assim, manterá os valores que procuramos prontos para serem usados ​​no programa. Então, esta linha define a função. A função recebe dois argumentos. O grafo, que é a estrutura de dados que representa as cidades e estradas, e o nó de origem, também conhecido como nó inicial. Este é o ponto de partida de todo o processo.
+
+Em seguida, definimos a variável de distâncias. Essa variável armazena um dicionário que rastreia a menor distância do nó de origem para todos os outros nós do grafo. Inicialmente, essa distância é infinita quando é desconhecida. Obviamente, a distância entre o nó de origem e ele mesmo é zero. Então, inicializamos esse valor. Em seguida,
+
+inicializamos um dicionário que associa cada nó ao seu nó anterior no caminho encontrado pelo algoritmo. Inicialmente, os valores são nulos, mas são atualizados à medida que o algoritmo encontra o melhor caminho. E também precisamos de um conjunto para armazenar os nós que já foram visitados. Em seguida, inicializamos nossa fila de prioridade, nossa lista de cidades ou nós a serem visitados em seguida. Esta é uma lista de cidades ou pontos que precisamos visitar em seguida.
+
+Cada cidade ou nó é representado por uma tupla contendo sua distância do nó de origem e seu nome ou rótulo. Precisamos da distância porque nossa implementação sempre analisa o primeiro número do par para determinar quais nós precisaremos visitar em seguida. Assim, o sistema irá classificá-las com base nas cidades mais próximas do nó de origem, exatamente o que precisamos para encontrar o caminho mais curto. Em seguida, iniciamos o loop while que percorrerá a lista de cidades que ainda não visitamos. Em seguida, chamamos o método heapq.heappop, passando a fila de prioridade,
+
+a lista de cidades que visitaremos em seguida, como argumento. Isso irá remover a cidade da lista ou irá pegar a cidade e devolvê-la com a menor distância possível até o nó de origem. Em seguida, usamos esse índice para atribuir a distância atual do nó de origem à variável " distância atual" e o nome do nó atual à variável "nó atual". Se o nó atual já tiver sido visitado, pulamos o restante da iteração. Agora que estamos no nó atual, precisamos começar a avançar a partir dele para verificar e atualizar seus vizinhos. Lembra-se
+
+daquele passo dos diagramas? Este laço itera sobre os vizinhos imediatos do nó atual. Dentro do laço "for", para cada vizinho não visitado , o peso da aresta é adicionado à distância atual que foi registrada para aquele nó até o momento. Basicamente, adicionamos a nova aresta à distância para encontrar qual poderia ser a nova distância potencial do nó de origem. Se a nova distância for menor que a melhor distância que registramos para esse vizinho até o momento, a distância é atualizada, pois isso significa que encontramos um caminho ainda mais curto até a cidade a partir do nó de origem.
+
+Além disso, o nó anterior é atualizado para rastrear o caminho mais curto. Se o caminho for mais curto e precisarmos atualizá-lo. E, com a nova distância percorrida, colocamos esse vizinho na fila de prioridade para que ele continue explorando esse caminho. Assim que o laço for for concluído, marcamos o nó atual como visitado, adicionando-o ao conjunto de nós visitados. Este é o laço "for".
+
+E, finalmente, após o loop while, lembre-se de que temos um loop for aninhado dentro de um loop while. Assim que o loop while for concluído, ou seja, quando todos os nós tiverem sido visitados, as distâncias do nó de origem para todos os outros nós do grafo e os nós anteriores correspondentes para cada nó são retornados. Este é o resultado do gráfico.
+
+Se você precisar recriar o caminho mais curto do nó A ao nó D, pode implementar uma função como esta. Ele recebe como saída o dicionário de nós anteriores e o nó de destino. Neste caso, o destino era o nó D. Inicializamos uma lista vazia para armazenar as strings que representam o caminho e uma variável para armazenar o nó atual. Começamos pelo destino.
+
+Basicamente, estamos retrocedendo. Estamos regredindo . Então, embora o nó atual não seja nenhum, porque ainda não chegamos ao início do caminho, continuamos adicionando o nó atual ao caminho e atribuindo o nó anterior à sequência como o nó atual. Estamos retrocedendo gradualmente. Quando o loop while for concluído, invertemos o caminho e o retornamos para que fique na ordem correta, do nó de origem ao nó de destino. Este é um
+
+exemplo de como você poderia chamar essas funções que acabamos de definir. Você pode ver que chamamos a função de Dijkstra passando o grafo como argumento. Você pode assumir que o grafo já foi definido no código. Estamos passando o nó de origem A. E estamos atribuindo o valor de retorno às variáveis ​​distâncias e nós anteriores. Em seguida, chamamos a função para obter o caminho mais curto
+
+. Passamos a variável dos nós anteriores como argumento e o nó de destino D para obter o caminho até o nó D. Em seguida, imprimimos os valores de retorno para que possamos visualizá-los melhor. Este será o resultado do nosso gráfico. O caminho mais curto vai do nó A ao nó B e ao nó D.
+
+A distância total do nó A ao nó D é sete, pois passaríamos por uma aresta de peso dois e depois por uma aresta de peso cinco. E é assim que essa implementação em Python funciona. Então, vamos voltar àquele dia famoso, porque há algo muito interessante que você precisa saber. Devemos nós? Você pode imaginar Dijkstra muito concentrado em sua mesa de centro, fazendo esboços e brainstorming em centenas de folhas de papel para chegar à solução certa, certo?
+
+Curiosamente, não foi assim que aconteceu. Dijkstra disse literalmente que não usou lápis e papel. [música] Ele a concebeu inteiramente em sua mente. Ele disse que aprendeu mais tarde que uma das vantagens de projetar sem lápis e papel é que você é praticamente obrigado a evitar todas as complexidades desnecessárias. Em resumo, na prática, projetar mentalmente pode ajudar a simplificar o processo .
+
+Ele era um defensor da simplicidade. Ele encarava a programação como um desafio intelectual complexo. Essa simplicidade, aliada aos poderosos princípios desse algoritmo, foi o que tornou essa invenção um dos maiores avanços da história. Naquela época, Dijkstra não sabia que aqueles 20 minutos se tornariam a pedra angular de sua fama, remodelando o mundo ao revelar capacidades que nem sequer sabíamos que existiam. Toda vez que você encontra o caminho mais curto até o supermercado mais próximo , você está usando o poder do algoritmo de Dijkstra. Dijkstra tornou-se
+
+uma das figuras mais importantes da história da ciência da computação. Ele recebeu o Prêmio Turing em 1972, um dos prêmios mais importantes da área. E existe até um prêmio anual com o nome dele, o Prêmio Edsger W. Dijkstra em Computação Distribuída. Essa história prova como a inspiração [musical] pode surgir dos momentos mais inesperados e como descobertas brilhantes podem ter um impacto profundo no futuro da humanidade.
+
+[música] Dijkstra literalmente mudou o mundo com sua obra-prima de 20 minutos. Espero que tenham gostado desta breve introdução ao algoritmo de Dijkstra. Se você quiser se aprofundar, temos diversos cursos de programação e ciência da computação no canal do freeCodeCamp no YouTube. Então, curta este vídeo, inscreva-se no canal e confira este outro vídeo que você pode ver aqui.
