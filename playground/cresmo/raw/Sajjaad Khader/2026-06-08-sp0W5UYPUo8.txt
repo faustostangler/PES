@@ -1,0 +1,234 @@
+---
+video_title: "Google Coding Interview With an Expert Software Engineer"
+video_id: sp0W5UYPUo8
+channel_name: "Sajjaad Khader"
+channel_id: UC7zZ2-Q_oxbUaoMVL0z51wg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=sp0W5UYPUo8
+video_date: 2026-06-08T21:00:08+00:00
+video_description: |
+  Click this link to download Granola → https://go.granola.ai/sajjaad-khader
+  
+  In this video, I put a principal software engineer through a real Google-style coding interview question to break down how top engineers think, problem-solve, and optimize during technical interviews.
+  
+  🚀 JOIN MY TECH COMMUNITY: SWE LAUNCHPAD
+  Inside, you'll learn How to break Into tech with practical resources, job prep guidance, and real industry insights you won’t find in school. 
+  → https://swelaunchpad.com
+  
+  ✉️ TECH NEWSLETTER
+  Discover the latest tech trends shaping the industry, unlock career tips, and access exclusive resources to stay competitive in tech. 
+  → https://sajjaad.substack.com/
+  
+  🗣️ INVITE ME TO SPEAK AT YOUR EVENT
+  → https://forms.gle/p38f7Jqt7FjYWtYU7
+  
+  🧑‍💻 LEARN TO CODE
+  Learn to code with bite-sized projects and an AI-bot to help answer your queries. I recommend you start with their python module, then check out java and javascript.
+  → https://coddy.tech/ (It's FREE, but you can use the code SAJYT for 20% off of premium features!)
+  
+  ⬇️ MY OTHER SOCIALS:
+  📸 Instagram:    / https://www.instagram.com/sajjaad.khader/
+  📱 TikTok:    / https://www.tiktok.com/@sajjaadkhader
+  🌍 My website: https://sajjaad-s-site.thinkific.com/...
+  
+  TIMESTAMPS
+  
+  0:00 - Google coding interview challenge
+  0:55 - The problem explained
+  3:10 - Building the first solution
+  6:44 - Creating helper functions
+  10:07 - Handling time differences
+  15:23 - Time and space complexity
+  16:33 - Testing the solution
+  17:37 - Optimizing the approach
+  20:27 - Building a faster solution
+  28:44 - Handling the final edge case
+  33:02 - Final test and wrap-up
+---
+O Google tem uma taxa de aceitação inferior a 1% , o que significa que, estatisticamente, é mais fácil entrar no MIT do que no Google. Então, no vídeo de hoje, vou revelar os bastidores e desafiar um engenheiro de software sênior com uma pergunta real de entrevista de programação do Google. E enquanto você assiste a este vídeo, quero que tente resolver a questão por conta própria. Não vai ser fácil, mas essa é a ideia. Quando eu apresentar o problema, pause o vídeo e reserve alguns minutos para tentar uma solução. Depois, volte
+
+e veja como um engenheiro de elite (entre os 1% melhores) responde à pergunta. [música] E como engenheiro de software principal na Microsoft, que na verdade é um nível acima de sênior, ele entrevistou muitos engenheiros pessoalmente e usará certas táticas-chave que os entrevistadores procuram ao avaliar um candidato, então preste atenção nisso. Dito isso, vamos direto ao assunto. E aí, Butman, tudo bem? Indo bem , indo bem. Como vai você? Estou
+
+bem. Estou bem. Muito obrigada por estar aqui comigo hoje nesta entrevista. Então, hoje vou apresentar a vocês uma entrevista técnica de programação para engenharia de software . Vamos apresentar um problema e você terá entre 20 e 30 minutos para resolvê-lo. Enquanto você
+
+analisa o problema, o mais importante para mim é entender seu processo de raciocínio . Então, explique- se. Se tiver alguma dúvida, me avise. O que acha? Parece ótimo. Vamos lá.
+
+Portanto, o problema consiste em, dada uma lista de horários de 24 horas no formato hora-minuto, retornar a diferença mínima em minutos entre quaisquer dois horários da lista. E, só para ficar mais claro, vou dar dois exemplos. Eu vejo. Já que estamos tentando retornar o número mínimo de minutos entre os pontos de tempo, digamos que temos uma matriz com 23:59 e, basicamente, meia-noite. Há um intervalo de 1 minuto entre eles, então você teria que retornar o número um. No entanto, se a
+
+matriz de pontos de tempo contivesse meia-noite, 23:59 e depois meia-noite novamente, como existem basicamente dois pontos de meia-noite, o tempo mínimo seria zero e, portanto, você teria que retornar zero. Eu vejo. OK. OK. E é só isso que vejo, tudo em horário militar, o que facilita um pouco a nossa vida. Então, sem a.m. ou
+
+p.m. E então, olhando para o primeiro exemplo, parece que não estamos fazendo isso exatamente da mesma forma, no primeiro ou no segundo dia. É tudo um dia só, como um relógio circular. Então, se você estiver, por exemplo, às 21h, e depois tiver uma viagem, não diríamos que é uma diferença de fuso horário de 20 horas . Você iria do 21 até o
+
+1 e aproveitaria a diferença de tempo entre eles. Eu vejo. OK. Temos sempre a garantia de ter pelo menos dois elementos na matriz, ou podemos ter, ou presumo que isso fará parte do " Sim". Você pode assumir que terá no mínimo dois elementos na matriz e que as entradas estarão corretas, ou seja, estarão todas no formato de string hora hora minuto minuto .
+
+OK. OK. Então, quando analisamos esse problema, me lembro de algo como um disco, parecido com um relógio, mas em vez de 12, são 24. Então, é como um círculo. E estamos tentando encontrar... Quando
+
+você diz diferença de tempo mínima, significa que queremos encontrar os dois pontos naquele círculo que estão mais próximos um do outro. Então, quando penso dessa forma, a questão passa a ser como posso dispor os pontos nesse formato para realmente ter uma espécie de percurso circular. Então, sabe, eu meio que sinto que precisamos ter uma representação mais equilibrada. Porque, sabe, o intervalo de tempo mais próximo tem que ser entre dois intervalos de tempo adjacentes, certo? Se houver um horário intermediário, por exemplo, não no segundo exemplo, temos 00 23:59 e depois 00.
+
+Depois de ordenar, 00 tem que ser o mínimo, sabe, esses têm que ser os mínimos porque no pequeno círculo que estamos imaginando aqui, como está tudo ordenado, percorremos o círculo um por um e calculamos a diferença de tempo entre os dois. Hum, essa é mais ou menos a abordagem com a qual vou começar. Vou tentar resolver isso e depois vejo o que fazer . Estou supondo que você vai me dar algum tipo de array, então eu terei algo como `diff` e aí eu só preciso de uma função `main` para executar, ou não, não precisa de uma função `main`. OK. OK. Sim
+
+. Então, presumo que você vai me dar algo como, sabe, diff find min diff uh my min find min diff e então você vai me dar um como é que se chama? Pontos temporais aqui. Essa é a minha suposição. É assim que você vai me passar isso, certo?
+
+Hum. Então, tudo bem. Existem duas maneiras de fazer isso. Podemos converter isso em minutos [bufa] e depois ordenar, ou podemos explorar o fato de que são strings e strings são ordenadas com base em valores ASCII. E como o zero sempre será o primeiro valor, todos os zeros serão classificados primeiro e depois os números um e dois serão classificados em seguida. Então, se simplesmente
+
+ordenarmos a sequência de arrays, a sequência de strings que eu tinha, naturalmente acabaremos com um array totalmente ordenado baseado em tempo, mesmo que tenhamos feito convergência zero. É assim que vou resolver isso. Então, vou fazer uma ordenação por pontos [bufa] com pontos . Então, agora que está tudo resolvido, eu acho, em termos de tempo. E então, tipo, precisamos do minuto, da diferença mínima, então vou chamá-la de diferença mínima.
+
+E eu vou inicializá-lo com um valor igual a infinito, por exemplo. Podemos fazer isso. Inicialmente. Quando não estou pensando nisso e estou percorrendo meu tempo, a cada instante, quero olhar para o cara que estava na minha frente, certo? E depois leve em consideração a diferença de fuso horário entre nós dois. Então, ah, no instante
+
+n, qual era o instante n menos um? E se pensarmos em nosso array como um círculo, então, no período inicial, queremos verificar se o instante n menos um corresponde ao final do outro array. Então, pegamos o array, transformamos em um círculo e, então, conseguimos fazer algo parecido. A grande vantagem do Python é que zero menos um é igual a menos um, e isso simplesmente indexa o final do array. Então podemos meio que percorrer esse circuito dessa forma. Então, o exemplo correto seria algo
+
+como: para I, uh, no intervalo de tempo dos pontos. E então vamos querer levar em consideração a diferença de fuso horário. Vou criar algumas funções auxiliares para me ajudar a manter meu código um pouco mais limpo. Bem, sim , vamos calcular a diferença de tempo entre n e n menos um, ou I neste caso. Então, vou criar duas funções auxiliares aqui. Vou
+
+criar uma função que me ajude a converter uma representação de tempo em formato de string para minutos, certo? Tempo para min minutos. E isso vai levar em consideração apenas um registro de data e hora. Bem, vamos chamar isso de TS. Então, queremos extrair a hora e os minutos, e depois você faz algo como TS uh dot split.
+
+E então podemos dividir no "hum". Sim, não há espaços aqui. Então, podemos simplesmente dividir no ponto de corte. Resumindo rapidamente, depois de trabalhar como engenheiro de software remoto por um tempo, posso dizer que tem sido uma luta. Minha agenda está sempre lotada de reuniões. Vou ter reuniões diárias de
+
+acompanhamento, reuniões de design, planejamento de sprints e, muitas vezes, todas elas acontecem em sequência . No início, parecia tudo bem, mas depois comecei a perceber um padrão. Toda reunião terminava e eu ficava sentado pensando: sobre o que realmente conversamos e o que decidimos no final? Muitas vezes eu ficava coçando a cabeça, tentando mandar mensagens para algumas pessoas ou relendo documentos. E para uma reunião de 1 hora, eu passaria 2 horas apenas tentando me lembrar do que discutimos. Felizmente, foi nessa época que
+
+encontrei a Grainola. Grainola é um bloco de notas com inteligência artificial para reuniões que resolve completamente esse problema. Sempre que você estiver em uma reunião, o aplicativo funciona em segundo plano e captura tudo. Se você anotar alguma coisa, o Grainola vai usar essas informações para criar um resumo com as decisões e ações concretas que você precisa tomar. Assim, em vez de eu tentar me lembrar do que aconteceu, tudo está ali, organizado. Além disso, ele não aparece
+
+como um daqueles bots de IA para anotações em suas reuniões. Assim, tudo é gerenciado de forma extremamente organizada nos bastidores. Mas não se esqueça de pedir permissão antes . Uma das funcionalidades mais legais são as receitas. Se eu perder alguma coisa ou me distrair por um tempo, posso simplesmente perguntar: "O que eu perdi?" E isso me dá uma
+
+análise rápida. O recurso de bate-papo também é muito prático. Em vez de vasculhar manualmente as anotações, posso simplesmente perguntar coisas como: "Quais foram os itens de ação definidos nesta reunião?" E isso simplesmente me dá a resposta. Ele também se integra a ferramentas como Slack e Zapier, para que você possa automatizar os acompanhamentos sem precisar se preocupar com isso. Se você participa de muitas reuniões
+
+e quer aumentar sua eficiência , conheça o Grainola. O link na descrição abaixo lhe dará 100% de desconto no primeiro mês. E agora, voltando ao vídeo. Então, o que faz a função split? Yeah, yeah. Portanto, a função split
+
+irá converter a string em um array com base no separador que passamos e irá remover o separador. Então, ele vai pegar os dois pontos aqui, pegar tudo à esquerda deles, colocar em um array, tudo à direita deles, colocar em outro array, e vamos simplesmente descartar o... como é que se chama mesmo? o
+
+cólon no meio. Então, você está criando um array de horas e um array de minutos. Yeah, yeah. Bem, vai devolver . Acho que a função split vai transformar isso em algum tipo de tupla, array ou algo do gênero. Então, é como uma tupla, um
+
+array. Então, é hora vírgula minuto. E então vamos desempacotar isso desta forma. Então, agora temos a hora e os minutos. E então, para converter horas em minutos, como são strings, primeiro preciso convertê-las em números inteiros.
+
+Você multiplica por 60. E aí a gente faz assim mesmo. Então, isso me dá um tempo que varia de minutos a horas. E então, a segunda função auxiliar que eu quero implementar é uma função definida que simplesmente calcule a diferença de tempo entre dois instantes quaisquer. É , de novo, porque eu gosto de manter meu código um pouco mais modular.
+
+Então, definitivamente, tempo. Tipo, vamos chamar isso de delta de tempo. E isso levará algum tempo. E isso vai levar cerca de um minuto; o tempo em minutos é basicamente o que está sendo considerado na implementação. Não vai conseguir incluir a corda.
+
+Então, vamos para a segunda hora. Então, normalmente, a maneira como faríamos isso seria, idealmente, calcular o tempo dois menos o tempo um. Mas se fosse só isso que tivéssemos que fazer, eu não teria criado essa função. Porque isso é como uma matriz circular, sabe? É como um círculo. Sim
+
+. Queremos que seja como uma matriz, certo? Então, considerando o período do dia, suponha que você esteja perto do final do dia e tenha outra amostra de tempo que corresponde ao início do dia. Posso subtrair a diferença do final para o início. Essa será uma possibilidade, mas a outra possibilidade é ver quanto tempo falta para o dia terminar e então adicionar o tempo decorrido desde o início do dia.
+
+Então, você poderia dar um exemplo do que está falando? Yeah, yeah. Então, por exemplo, suponha que fosse tipo 23:59 e 00. Então, eu posso converter 23:59 em segundos e fazer menos 00, o que vai ser um número consideravelmente grande. Mas outra forma de pensar nisso é: quanto tempo falta para eu chegar ao horário de 24 horas a partir das 23:59? Isso acontece quando falta 1 minuto
+
+. E aí eu penso: "Ok, cheguei ao fim do dia. E quanto tempo leva para ir de 0 minutos até 00?" Há uma diferença de apenas 1 minuto, e essa é a resposta verdadeira. Então, calculamos os dois valores e escolhemos o menor entre eles.
+
+Ah, então você calcula o mínimo de uma extremidade e o mínimo da outra extremidade. É mais ou menos como toda aquela coisa do círculo que você está descrevendo. Sim, eu calculo os dois e depois pego o mínimo. E assim eu sempre o terei . E a única ressalva aqui é que, assim como entre o tempo um e o tempo dois, o tempo um precisa ser menor que o tempo dois para que nossos cálculos funcionem.
+
+Mas, quer dizer, a gente sempre pode fazer assim, tipo , se o tempo dois tiver que ser o maior , né? Então podemos explicar isso rapidinho aqui. Se o tempo um for maior que o tempo dois, então fazemos o tempo um, {vírgula} podemos simplesmente trocar os valores assim. Então, é só para garantir que o tempo dois seja um número maior enquanto estamos codificando as coisas. Tudo bem. E então temos novamente as
+
+duas possibilidades que mencionei, sabe, acho que vamos chamá-las de diferença um e diferença dois, talvez para simplificar este problema. Então, a primeira possibilidade é você simplesmente fazer, sabe, o clássico tempo dois menos tempo um. E isso vai ser como no caso em que você tem, por exemplo, um 00 e um 01, certo? Seu tempo um é 00, seu tempo dois é 01. 1 - 0 0, isso é um.
+
+Essa é uma ótima resposta. E a outra possibilidade é considerarmos quanto tempo resta para o dia terminar. Então, um dia tem 24 horas e depois 60 minutos. Então, esse é o número máximo de vezes por dia. Em seguida, subtraímos isso do tempo dois, que é o nosso tempo maior aqui. Então, no nosso
+
+caso, novamente, vamos usar o exemplo da questão 2359. Você obtém esse número maior, subtrai -2359 e depois adiciona o tempo um. E aí você só precisa devolver o menor dos dois, certo? Porque é como se você estivesse em um círculo, certo? Ou você faz esse cálculo percorrendo o círculo para frente e depois faz esse cálculo percorrendo o círculo para trás, e vemos qual deles resulta na menor distância.
+
+Hum. Então, retorne min def um def dois. E a função min simplesmente pega o elemento mínimo e o retorna. Sim, sim, sim, sim. Assim, isso nos dará a verdadeira distância mínima entre esses dois espaços temporais no pequeno círculo que estamos considerando. Então, agora que temos esses
+
+pequenos auxiliares úteis, nosso código... bem, podemos escrever nosso código com muito mais facilidade. Então, você sabe, agora nós temos que fazer a nossa diferença, bem, para...
+
+vejamos, obter o delta de tempo. E dentro do tempo delta de obtenção, tudo o que podemos fazer é pegar esse cara aqui. E como dissemos, vamos comparar I com I menos um. Então, sabe, faça isso. Eu e depois " Hum".
+
+Subtraindo um, obtemos a diferença de tempo entre os dois intervalos, e então podemos fazer isso... queremos acompanhar o mínimo absoluto. Então isso equivale simplesmente a min min def. Pronto.
+
+E então, e então, simplesmente... Uh, sim, e podemos testar isso para garantir que funcione. Rapidamente, antes de testarmos isso, qual você acha que é a complexidade temporal disso?
+
+Dado um conjunto de pontos de tempo como entrada, primeiro fazemos uma ordenação. Classificar leva n log n para fazer, então é isso que estamos imediatamente pagando, rumo a isso. Em seguida, percorremos cada elemento, ou seja, todos os n elementos. E então, esse cálculo aqui é todo feito em um único instante . Assim, somos dominados por todo o conjunto de n log n. Portanto, a
+
+complexidade de tempo é de n log n. Em termos de espaço, estou supondo [bufa] que a ordenação subjacente faz uma ordenação in-place na biblioteca Python, então será como se fosse todo um espaço. Se não fosse feita uma ordenação in-place, seriam todos os elementos de n, mas todas as linguagens modernas fazem ordenações in-place, então são todos elementos de um, e não usamos nenhum espaço extra aqui. Então, isso teria uma complexidade de tempo de n log n e uma complexidade de espaço de apenas um. OK. Legal. Ah, sim, você quer ir lá
+
+e testar com as entradas e saídas de exemplo? Sim, vamos lá. Então, presumo que eu poderia simplesmente imprimir dessa forma e depois passar esse valor. Sim . Tudo bem. Muito bem, então deixe-me executar o programa. Uhum
+
+. Muito bem, aqui está. A resposta correta é zero. Vamos experimentar a outra entrada e ver como funciona. Ou melhor, aqui está, deixe-me apagar isto.
+
+Execute-o. Esperamos que sim. Ok, legal. Você gostaria de tentar outras entradas e ver como funciona? Sim, podemos tentar mais algumas vezes só para garantir que funcione.
+
+Quer dizer, podemos tentar algo bem simples, tipo, esta semana, por exemplo. Bem, devemos esperar que a resposta seja 59 minutos. Sim. E então podemos tentar e garantir que a hora funcione como esperamos. Então, vamos tentar fazer isso e esperamos que dure 60 minutos. Então,
+
+vamos lá. Sim. Sim . Sim. Parece que está funcionando.
+
+Então, você mencionou que isso é n log n, certo? Sim . Hum. [Limpa a garganta] Existe alguma maneira de tornar isso mais eficiente? Certo. Então, temos que pensar em como podemos
+
+tornar isso realmente mais otimizado, podemos torná-lo n log n. Assim, a questão é: como podemos reduzir a sobrecarga da classificação? Há uma ideia que me vem à mente, não é? E isso significa que limitamos a quantidade de valores que podemos classificar. Então, só existem tantos minutos em um dia, certo? Então, temos 24 * 60,
+
+que é o que significa que há 24 * 60 minutos em um dia. [bufa] Se tivermos qualquer array que ultrapasse n e seja maior que 24 * 60, é garantido que teremos um duplicado. Então, podemos usar um pequeno truque e, em vez de ordenar, podemos simplesmente retornar zero imediatamente, porque sabemos que há um valor duplicado ali. Bem, ficaria mais ou menos assim . Seria como se o tempo, uh, se a duração dos pontos de tempo for uh maior que 24 * 60, certo? É algo parecido com o
+
+princípio da compartimentalização, de certa forma. Você retorna zero. Portanto, você só deve classificar arrays que sejam menores que esse tamanho. Sabe, você poderia ter um limite de pontos de tempo de tipo 1 bilhão de pontos, certo? Mas você só classifica, você só classifica, no máximo, 24 * 60 elementos. E à medida que o
+
+tamanho da sua entrada cresce assintoticamente, o tempo de execução da ordenação atinge o limite máximo . Assim, agora transformamos a ordenação de uma operação de ordem log n para uma operação de ordem O de 1. Não cresce assintoticamente com o tamanho da nossa entrada . Então, acho que essa é a maneira mais fácil de fazer isso como O de n. Porque existe um limite máximo definido em termos da quantidade de itens que você precisaria classificar. Você só precisaria ordenar
+
+um array que tenha no máximo um elemento, como por exemplo, 24 * 60 minutos. Sim, exatamente. E então, o tempo de execução que você está mencionando vem efetivamente apenas do loop for. Porque existe um limite máximo definido para isso. Na verdade, agora que penso nisso, acho que a solução toda se torna O de 1, porque você poderia ter 1 bilhão de entradas ou 10 bilhões de entradas e estaria realizando a mesma quantidade de trabalho. O
+
+tempo de execução não muda. É O de n log n até um ponto? É o tempo de execução assintótico. Então, você observa as extremidades. Sim . Isso seria, na
+
+verdade, uma solução O de 1. Essa é a solução mais otimizada possível para isso. Então, em todos os aspectos, é 0 de 1. Uau. OK.
+
+Certo, então, dito isso, você consegue pensar em alguma outra solução possível para esse problema? Sim, então esta é a solução O de 1 mais otimizada em termos de tempo e espaço. Mas, bem, existe uma solução O de n que também me vem à mente. A solução O de n aplica uma lógica semelhante a esta, onde, como o número de minutos em um dia é limitado, podemos criar uma matriz onde cada índice representa um minuto do dia e cada valor é um booleano que indica se aquele minuto apareceu ou não na nossa lista original. E podemos percorrer esse loop e definir algo como verdadeiro falso verdadeiro falso verdadeiro falso. Definimos como falso e,
+
+sempre que vemos que é verdadeiro, definimos como verdadeiro, verdadeiro, verdadeiro, verdadeiro, certo? E então, enquanto fazemos isso, se encontrarmos, depois que o array já estiver configurado, enquanto o estivermos construindo , se tentarmos inserir um valor, se tentarmos alterar um valor de verdadeiro para verdadeiro novamente, sabemos que é um duplicado, interrompemos o processo e retornamos zero imediatamente. É uma das maneiras. Outra coisa que precisamos fazer é, depois que tudo isso estiver construído, imaginar que temos novamente aquele círculo de que falamos antes. Mas em vez de termos essa representação, temos essa mesma representação. Então,
+
+simplesmente percorremos o array, encontramos a primeira vez, ou seja, encontramos o valor "ei", definimos como " tempo n" e então armazenamos esse valor. E continuamos repetindo o processo e, digamos, talvez em n mais, você sabe, 10, encontramos outro momento. E agora temos dois registros de data e hora. E podemos calcular a diferença entre os dois, e então obtemos a resposta. Vou colocar isso lá. Não acho que
+
+fará muito mais sentido se eu... Então, na verdade, teremos tipo minutos [bufa] aqui. E vamos igualar isso a...
+
+você poderia fazer algo como "falso", multiplicando isso pelo número de minutos em um dia. E qual a função dessa construção? Uh, vai criar um array ou uma lista de tamanho 24 * 60 onde cada entrada é falsa ou cada " Ok". O valor é falso. Então, há algumas coisas que precisamos monitorar agora, certo? Então,
+
+lembra daquela condição que mencionamos, em que você pode ir para frente e para trás no círculo? Bem, neste exemplo específico, como sabemos que temos todos os valores de tempo possíveis, precisamos apenas manter o controle do último registro de data e hora que vimos e do primeiro registro de data e hora que vimos, e então ver se é mais fácil ir do último registro de data e hora para o primeiro registro de data e hora ou ir do primeiro registro de data e hora para o último registro de data e hora. Tudo que está no meio, faz sentido ir do primeiro ao último, certo? Porque, à medida que você se aproxima do final, sabe, a diferença de tempo terminal estará próxima do fim, e no final da lista haverá apenas um, que será a solução ótima. Então, à medida que percorremos esse loop, precisamos manter o ponto em que estávamos anteriormente.
+
+E podemos simplesmente inicializar essas coisas com o valor -1. Novamente, precisamos de algo como... Ou, sabe, vamos construir primeiro esse array de minutos e depois nos preocupar em iterar sobre ele.
+
+Então, temos que fazer quatro ts em pontos de tempo. E então queremos converter isso em minutos. Então, digamos minuto. Bem, poderíamos. Vamos converter o ponto no tempo para minutos e podemos usar o tempo...
+
+Veja, a vantagem de escrever funções auxiliares é que podemos reutilizar o código facilmente em diferentes soluções. Então, esse é o número de minutos que temos. E então fazemos isso. Se minutos [bufa] M Então, se já foi definido, é um duplicado e a diferença de tempo entre dois duplicados é zero. Então, simplesmente retornamos zero. Caso
+
+contrário, fazemos os minutos e depois fazemos M igual a verdadeiro, certo? Portanto, os minutos M equivalem a verdadeiro. Assim, agora temos uma representação de cada minuto que já passou. Bem, se você chegar aqui, sabemos que não há duplicatas, pois qualquer duplicata já teria sido tratada aqui. E retornamos zero.
+
+E agora temos que percorrer o nosso array de minutos. Então, o tempo anterior é -1 porque é apenas um valor fictício para fazer isso. E então, como antes, vamos fazer min diff igual a float até infinito. E por último, a coisa que nos interessa será a primeira vez que isso aparece. E, de novo, vamos fazer isso só uma vez por enquanto, porque precisamos registrar a primeira e a última vez. Obteremos
+
+o último tempo quando sairmos do loop, então isso será salvo de qualquer forma no tempo anterior. Mas da primeira vez não daria certo. Agora vamos revisar isso em loop . Então, para e então m vírgula m definido em enumerar minutos. E o que faz o comando "enumerate"? A função `
+
+enumerate` é uma ótima função auxiliar em Python . Isso nos permite obter o índice e o valor quando estamos percorrendo um array. Assim, m será o índice e o conjunto m será o valor. E no nosso caso, o índice são os minutos devido à forma como construímos a matriz de minutos, então é uma maneira fácil e elegante de fazer isso em vez de usar uma segunda linha de indexação. Basicamente, temos que verificar algumas coisas, certo?
+
+Se m não estiver definido, certo? Então não há trabalho a ser feito, certo? Isso não está no nosso conjunto de dados, sabe? Sim . Continuar.
+
+E então temos que verificar. E então, neste ponto, verificamos se o tempo anterior é igual a -1, o que significa que este é o primeiro registro de data e hora que encontramos. Portanto, não temos nada com que comparar. Então, basta atualizar o tempo anterior para que seja igual a m. E então atualizamos nosso primeiro tempo para que também seja igual a m.
+
+E então, continuamos. E agora, quando chegamos a este ponto, significa que temos um horário anterior que foi definido e também temos um registro de data e hora atual que estamos analisando . Então, consideramos a diferença atual como sendo igual a um sublinhado de tempo delta do tempo anterior vírgula e então M é o nosso tempo atual, como dissemos, certo? Essa será a diferença e então atualizamos min diff como antes para ser igual a min min diff comma diff. Pronto. E então o que queremos fazer
+
+é, e então, quando sairmos do loop, só precisamos lidar com esse caso extremo. Assim, o único caso extremo é a diferença de tempo entre o momento anterior e o último momento. Então, novamente, como nossa outra função auxiliar é muito boa, podemos simplesmente chamar `get time delta`, que nos dará a diferença real entre o primeiro tempo e o tempo anterior. A vez anterior será a última, porque saímos do loop e foi a última vez que o valor foi definido. E então, novamente, vamos copiar esta linha aqui. É a
+
+mesma coisa, né? Para obter o mínimo e então, retornaremos a diferença mínima. Vamos ver se isso funciona. Oh. Não funcionou. Um segundo.
+
+Então você executou o teste e obteve zero? Sim, sim, sim. Ah, espere, deixe-me corrigir meu código rapidinho. Eu esqueci de atualizar a informação da última vez aqui. Erro bobo. Ah, sim
+
+. Sim , tudo bem. Pronto. Essa é a resposta correta. Você pode me explicar a linha 49?
+
+Lembra quando dissemos que isso é como um círculo, certo? Então, sabe, você começa , você vai, você vai, você vai, e aí você se depara com um elemento específico, certo? Talvez se eu escrever, faça muito mais sentido. Imagine que você tem um conjunto enorme de dispositivos com esta aparência, certo? Imagine que tudo isso seja indiferente. É tudo isso.
+
+Então imagine que você tem, tipo, um horário aqui, e depois tem um horário ali, certo? E então você tem um tempo para passar aqui. OK? No nosso ciclo atual, certo? Vamos usar o "uh hum" ou, para tornar mais realista, vamos fazer assim .
+
+E vamos fazer assim. Tudo bem? Então, você entra aqui, dá a volta, certo? Você pergunta: "Ah, qual é a diferença entre V e X?" E aí surge uma diferença de fuso horário.
+
+Qual a diferença entre Y e V? Nossa, que diferença de fuso horário! E então você saiu do loop e pensa: "Nossa, essa é a maior diferença de tempo." Mas isso não é verdade. A maior diferença de tempo é, na verdade, entre Y.
+
+O pequeno. Foi mal. A menor diferença de tempo ocorre entre Y e X. E o loop não consegue levar isso em consideração. Então, depois de interrompermos o loop, precisamos perguntar: "Qual foi o primeiro elemento que encontramos? E qual foi o último
+
+elemento que encontramos? E se formos na direção oposta para calcular o tempo, qual será esse valor?" Portanto, temos que levar essa possibilidade em consideração. Então, fazemos: "Ah, de Y para X, isso é na verdade menor. É esse mesmo.
+
+É esse mesmo. Veja, neste ponto, estamos percorrendo um círculo em uma direção e queremos verificar o que acontece se formos na direção oposta. E é assim que se faz . Esta é uma solução de complexidade de tempo O de N e de espaço O de um . É O de um porque nosso array de minutos [bufa] é limitado.
+
+Então, à medida que nossa entrada cresce assintoticamente, nossos minutos permanecem no máximo 24 * 60. Mas é O de N porque sempre temos que iterar sobre cada valor em pontos de tempo, à medida que os pontos de tempo crescem assintoticamente. Temos que iterar sobre mais e mais dados. Então, é O de N em termos de pontos de tempo. Portanto, esta é uma solução de complexidade de tempo O de N com complexidade de espaço O de um.
+
+É possível otimizar a complexidade de tempo neste caso? Sim, há uma maneira. Podemos otimizar a complexidade de tempo. É O( n) porque temos que percorrer cada ponto no tempo. Mas a questão que se coloca neste momento é que existe um número limitado de minutos possíveis em um dia. Se o
+
+array for maior que isso, sabemos com certeza que há um duplicado. E sabemos com certeza que a resposta é zero. Então, acho que a melhor maneira de mostrar isso seria vir aqui e verificar se o comprimento do array de pontos no tempo é maior que 24 * 60. Retornamos zero. E isso vai funcionar porque, quando há mais pontos do que minutos em um dia, digamos que haja 10 minutos em um dia.
+
+E eu digo que, dados esses 10 minutos em um dia, quero que você crie um array de tamanho 100. Você é obrigado a reutilizar elementos desses 10, porque você só tem 10 possibilidades para escolher. E então, quando sabemos que as coisas estão sendo reutilizado, certo? Não temos nenhuma duplicata, a diferença de tempo é zero. Então, retornamos zero automaticamente. E isso se torna uma
+
+solução de tempo O(1), na verdade, porque, conforme nossa entrada cresce, continua crescendo, fazemos apenas essa verificação. E fazemos, como se chama? O(1) e retornamos zero. Para qualquer coisa menor, fazemos esse trabalho, mas esse trabalho é limitado pelo número, não pelo tamanho da nossa entrada. É assintoticamente limitado pelo número de minutos em um dia.
+
+Pelos minutos em um dia, exatamente. Quero testar sua solução com talvez um array não ordenado. Sim, sim. Para ver como ela lidará com isso.
+
+Ok, legal. Ótimo, ótimo. Bem, Mut Man, você fez um ótimo trabalho e está claramente passando em todos os casos de teste e você o otimizou muitas e muitas vezes de maneiras diferentes. Você tem alguma pergunta para mim? Sim, eu realmente queria saber, tipo, quais são... As oportunidades de carreira que
+
+tenho em termos de crescimento e mentoria disponíveis se eu aceitar este cargo são incríveis. Temos muitos engenheiros principais, diretores, gerentes de produto, enfim, muita gente. Somos muito fortes na área de IA, claro, e temos muitos líderes dispostos e capazes de ajudar. Ótimo, isso parece fantástico. Muito obrigado. Bom, é tudo por hoje
+
+. Espero que tenham gostado do vídeo e, se gostaram, não se esqueçam de curtir e se inscrever no canal, caso ainda não sejam inscritos . Se tiverem interesse na minha newsletter gratuita sobre tecnologia, o link está na descrição aqui embaixo. E se vocês estão se perguntando o que os engenheiros de software fazem no dia a dia, talvez gostem deste vídeo aqui.

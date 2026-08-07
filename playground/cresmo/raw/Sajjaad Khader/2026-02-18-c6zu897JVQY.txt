@@ -1,0 +1,181 @@
+---
+video_title: "Google Coding Interview With a Meta Software Engineer"
+video_id: c6zu897JVQY
+channel_name: "Sajjaad Khader"
+channel_id: UC7zZ2-Q_oxbUaoMVL0z51wg
+channel_category: "Education"
+url: https://www.youtube.com/watch?v=c6zu897JVQY
+video_date: 2026-02-18T22:00:00+00:00
+video_description: |
+  In this video, I host a real mock coding interview with a former Meta software engineer using an actual question asked at Google and Meta.
+  
+  🚀 JOIN MY TECH COMMUNITY: SWE LAUNCHPAD
+  Inside, you'll learn How to break Into tech with practical resources, job prep guidance, and real industry insights you won’t find in school. 
+  → https://swelaunchpad.com
+  
+  ✉️ TECH NEWSLETTER
+  Discover the latest tech trends shaping the industry, unlock career tips, and access exclusive resources to stay competitive in tech. 
+  → https://sajjaad.substack.com/
+  
+  🗣️ INVITE ME TO SPEAK AT YOUR EVENT
+  → https://forms.gle/p38f7Jqt7FjYWtYU7
+  
+  🧑‍💻 LEARN TO CODE
+  Learn to code with bite-sized projects and an AI-bot to help answer your queries. I recommend you start with their python module, then check out java and javascript.
+  → https://coddy.tech/ (It's FREE, but you can use the code SAJYT for 20% off of premium features!)
+  
+  ⬇️ MY OTHER SOCIALS:
+  📸 Instagram:    / https://www.instagram.com/sajjaad.khader/
+  📱 TikTok:    / https://www.tiktok.com/@sajjaadkhader
+  🌍 My website: https://sajjaad-s-site.thinkific.com/...
+  
+  TIMESTAMPS
+  
+  0:00 - Intro
+  0:39 - Mock interview begins
+  1:04 - The actual Meta/Google interview question
+  1:36 - What makes a parenthesis string valid?
+  2:25 - Initial approach & intuition
+  3:42 - Identifying edge cases
+  4:08 - Why we need a stack
+  5:14 - Step-by-step dry run example
+  7:05 - Time & space complexity breakdown
+  8:32 - Coding the solution in JavaScript
+  10:54 - Why triple equals (===) matters
+  12:51 - Handling invalid closing parentheses
+  14:14 - Fixing dangling opening parentheses
+  16:41 - Returning the final string
+  18:08 - Testing edge cases
+  20:01 - Multiple valid outputs explained
+---
+Google paga US$ 194.000 aos seus engenheiros de software recém-formados. É uma quantia absurda de dinheiro, o que também significa uma competição acirrada e entrevistas notoriamente difíceis . Então, hoje vou revelar os bastidores e apresentar uma simulação de entrevista de programação com o ex- engenheiro de software da Meta. Escolhi uma pergunta real que foi usada tanto na Meta quanto no Google em suas entrevistas. E meu
+
+objetivo ao longo disso tudo é que você realmente entenda como um engenheiro de software de elite (entre o 1% dos melhores) resolve problemas. Enquanto assiste a este vídeo, tente resolver a questão por conta própria. Será desafiador, e esse é exatamente o objetivo. Quando eu apresentar o problema, pause o vídeo, tente uma solução e depois volte para ver como o engenheiro de software da XMA resolve a questão. Dito isso, vamos ao que interessa . Olá Connor, como você está hoje?
+
+Bom. Como vai você? Bom. Bom. Então, hoje vamos analisar uma questão de entrevista de programação. Você
+
+terá cerca de 20 a 30 minutos. Vou colar um problema para você resolver. O mais importante para mim é que eu realmente quero ouvir o seu raciocínio enquanto você responde à pergunta. independentemente de você obter ou não a resposta correta. Estou mais interessado na sua capacidade de resolver problemas. Então, está
+
+pronto para começar? Sim, vamos fazer isso. Certo, legal. Deixa eu colar a pergunta rapidinho para você. Dada uma string s composta por parênteses de abertura, parênteses de fechamento e letras minúsculas do alfabeto inglês , sua tarefa é remover o número mínimo de parênteses em qualquer posição para que a string resultante seja válida e retornar qualquer string válida. Formalmente, uma
+
+string entre parênteses é válida se, e somente se, for uma string vazia contendo apenas caracteres minúsculos, ou se puder ser escrita como `a b a concatenada com b`, onde `a` e `b` são strings válidas, ou ainda como ` parentheses a` entre parênteses fechados, onde `a` é uma string válida. Só para esclarecer, se chegarmos aqui embaixo e fizermos assim, eu presumiria que isso não seria válido. Então a ideia é simplesmente ter o mesmo número de aberturas e fechamentos, e algo assim seria válido, certo? Sim. E aí, a ordem importa? Então, se fizermos
+
+assim ou esperarmos, ainda será algo parecido com isso, certo? Isso não é válido, certo? Embora tenha a mesma abertura e fechamento, eles estão em ordens diferentes. Hum. Correto. Para que fique mais claro
+
+, vou colar um exemplo de como encontrar o número mínimo de parênteses. Como você pode ver, nós nos baseamos efetivamente na entrada, se você pensar nisso como um parêntese solto aqui. Sim. Isso não é necessário para o resultado. E, essencialmente, sendo um parêntese válido, não há abertura para este .
+
+Sim, faz sentido. Legal. Então, o que eu estou pensando é o seguinte: como eu disse, acho que nós simplesmente ignoramos os caracteres ingleses e temos que preservá-los. E quanto aos parênteses de abertura e fechamento, o parêntese de abertura sempre tem que vir antes do de fechamento, certo? Então, se percorrermos nossa string, teremos as três letras que estamos ignorando e, em seguida, um parêntese de abertura, o que é bom. E se tivéssemos um
+
+parêntese de fechamento ali, simplesmente o removeríamos, porque neste ponto não vimos nenhum parêntese de abertura. Portanto, não há necessidade disso. E não há a mínima possibilidade de isso fazer parte de uma string válida. E então, se virmos um parêntese de abertura, podemos meio que acompanhar, tipo, poderíamos fazer uma contagem. Então, digamos que neste ponto, se virmos um parêntese de abertura, sabemos que já vimos um.
+
+Depois, vemos outro, ou um "t", e podemos simplesmente ignorá-lo. Vemos outro parêntese de abertura, então, neste ponto, temos dois. Em seguida, vemos um parêntese de fechamento, que desfaz uma abertura, então agora temos uma espécie de abertura pendente, por assim dizer. Depois, temos outro fechamento, então agora não temos mais aberturas pendentes. E então temos este último fechamento, que teríamos que remover porque não há uma abertura correspondente. Hum,
+
+acho que o caso extremo de simplesmente contar pode não funcionar se o oposto fosse verdadeiro. Então, se o problema real fosse, digamos, que tivéssemos algo assim, agora precisamos remover o parêntese de abertura, e se tudo o que fizéssemos fosse chegar ao final e percebêssemos que a contagem é um ou dois, não saberíamos o que remover exatamente. Então, em vez de apenas contar, acho que precisamos acompanhar os índices dos nossos parênteses. Então, acho que o que eu quero fazer é basicamente iterar pela string, ignorando todos os caracteres em inglês. Se houver um parêntese de abertura, fique atento a ele. Bem,
+
+suponho que precisamos que o último parêntese de abertura corresponda ao próximo parêntese de fechamento. Então é algo parecido com uma estrutura de pilha, eu acho. Hum, para manter o controle do último que recebemos. Assim, obtemos o índice do último parêntese de abertura que vimos e, em seguida, o índice do próximo. E então, quando chegamos a um parêntese de fechamento, dizemos: "Ok, isso corresponde ao índice daquele que acabamos de ver." Então remova
+
+isso da pilha. E então, se em algum momento encontrarmos um parêntese de fechamento e a pilha estiver vazia, removemos o parêntese de fechamento. Não existe parêntese de abertura correspondente . E se chegarmos ao final da string e tivermos parênteses de abertura extras , voltamos nessa pilha e os removemos da string. Faz algum sentido?
+
+Então, na prática, você está armazenando os índices dos parênteses de abertura em pilhas? Sim. OK. Então, se tivermos um parêntese de abertura, um parêntese de abertura, e então teremos, por enquanto, apenas um parêntese de fechamento. Então, vamos começar no início da matriz e vamos dizer basicamente que, ok, nossos parênteses estão em zero atualmente. Então,
+
+vou criar uma espécie de pilha aqui, e nessa pilha teremos, como vimos até agora, um parêntese em zero, e então seguimos em frente. Vemos um a. Não fazemos nada com o "a" e, em seguida, obtemos outro parêntese de abertura. Este está no índice uh dois. Então, vamos adicionar isso à pilha.
+
+E então nós obtemos o b. Não fazemos nada. E então temos este parêntese de fechamento. E quando vemos um parêntese de fechamento, isso significa que corresponde à última abertura que vimos, que estava no dois. Então, vamos retirar duas cartas da pilha. Apague
+
+isto aqui. E agora chegamos ao fim, e ainda temos algo na pilha, que é o índice zero. Isso significa que o índice zero era um parêntese de abertura que não tinha um parêntese de fechamento correspondente . Isso significa que, em nossa string inicial, precisamos apenas remover o que estiver no índice zero. e deveríamos ter uma solução correta. Bem, e
+
+o outro cenário possível é chegarmos ao final e termos, digamos, mais dois parênteses de fechamento. Então, quando chegamos ao próximo parêntese de fechamento, que removeria o índice zero, chegamos ao último, e neste não temos nada na pilha. Isso significa que, neste caso, tínhamos um parêntese de fechamento extra . Nesse caso, removeríamos o último. Faz sentido? Sim
+
+. Então, o que estamos considerando em termos de complexidade temporal e espacial? Sim . Então, estamos fazendo uma iteração pela string, certo? Então, estamos apenas analisando todos os personagens.
+
+Então, isso é algo como O de N. E depois de fazermos essa iteração, temos que iterar pela pilha para remover tudo dela. Remover um caractere da pilha tem complexidade O(n), que é o tamanho máximo da pilha, ou seja, O(n) do número de parênteses de abertura. Podemos chamar isso de O(n), se N for o número de caracteres e todos os caracteres forem parênteses de abertura, esse seria o tamanho da pilha. Iteraríamos por toda a pilha, e remover um caractere da pilha tem complexidade O(n). Agora, vamos ver
+
+a parte principal do algoritmo: antes de remover um caractere da pilha, iteramos por cada caractere. O que devemos fazer para cada caractere? Se for um parêntese de abertura, nós o inserimos na pilha, o que terá complexidade O(n). E se for um parêntese de fechamento, tudo o que fazemos é remover algo da pilha, que também será de um. E então, os únicos outros tipos de edições que fazemos são como editar uma string, removendo um único caractere, o que não terá nenhum efeito. Então, sim, acho que
+
+devemos superar isso com o tempo, e a pilha é o nosso espaço. Então, espaço no forno também. Bem, na verdade, o tamanho máximo da pilha é o número de parênteses de abertura, que provavelmente é muito menor que o tamanho de uma string, mas obviamente depende da entrada que recebemos. Sim, poderíamos ter um caso excepcional, certo? Sim , adoraria ver isso em código.
+
+Legal. Vamos fazê-lo. Certo, então, qual linguagem de programação você vai usar? Vamos usar JavaScript, se não houver problema. Tudo bem, ótimo. Então, vou descer aqui,
+
+digitar a função e, digamos, remover o PNS extra ou algo parecido. E isso vai incluir apenas a corda? Correto. Sim, apenas a entrada de texto. Sim.
+
+Tudo bem. Legal. OK. Então, a primeira coisa que queremos fazer é iterar pela string. Pode fazer sentido. Acho que vai
+
+ser mais fácil se a string for um array, para poder manipulá-la. Apenas uma série de caracteres, o que é mais ou menos a mesma coisa. Hum, eu acho que vai ser mais fácil em termos de código. Então, vamos fazer isso de verdade. Então, digamos que const, uh, vou chamá-la de array, será igual a str.split. E vamos simplesmente dividir
+
+a string pela parte vazia, o que nos dará uma matriz com os caracteres da string. E então vamos precisar dessa pilha. Então, digamos que exista uma constante `stack` em JavaScript. Usamos arrays apenas para representar pilhas. Adorei.
+
+E então o que queremos fazer é iterar pela nossa string ou, na verdade, podemos simplesmente iterar pelo array. Então, que tal darmos um nome melhor a isso? Digamos que sejam personagens, eu acho. OK. Então, acho que provavelmente precisamos apenas de um loop for tradicional.
+
+Provavelmente será mais fácil. Então, digamos que I seja igual a zero. I é menor que chars.length e I ++ para cada caractere. O que queremos fazer? Portanto, se o caractere for uma letra, não
+
+estamos fazendo nada. Se o caractere for um parêntese de abertura, estamos adicionando à pilha. E se for um parêntese de fechamento, estamos removendo-o da pilha. Então digamos que se chars at iop if chars at i é um parêntese de abertura. Sim, é isso mesmo. Tudo bem. Portanto, se for
+
+um parêntese de abertura, queremos usar `stack.push`. E precisamos do índice real. Então, nossa pilha ficará assim...
+
+rapidinho, por que você colocou um sinal de igual triplo em vez de um sinal de igual duplo? Sim . Em JavaScript, o sinal de igual duplo representa igualdade em termos de igualdade flexível. Assim, o operador de igualdade tripla (==) compara a igualdade do tipo com a do valor, enquanto o operador de igualdade dupla (==) compara a igualdade apenas do valor. Por exemplo, tínhamos cinco operações de igual (double equals) com a string "cinco" em JavaScript para serem executadas. É verdade. Mas se você fizer uma tripla
+
+igualdade, o resultado será falso. Entendi . Sim. Ok, legal. Coisas divertidas em JavaScript. Tudo bem. Portanto, se
+
+tivermos um parêntese de abertura, simplesmente adicionaremos o índice à nossa pilha. senão, se tivermos um parêntese de fechamento. Então, se o caractere em i for um parêntese de fechamento, o que devemos fazer nesse caso? Se estiver fechando, queremos verificar se temos algo na pilha. Se o fizermos, queremos remover o elemento correspondente da pilha. Diga algo como "sim,
+
+isso era válido e fazia parte da nossa sequência". E se não for, basta removermos esse parêntese de fechamento da nossa saída. Digamos que, se `stack.length` for maior que zero, então executaremos `stack.pop`.
+
+Caso contrário, precisamos remover isso da saída. Então, o que significa exatamente remover da saída? Bem, acho que poderíamos simplesmente construir uma string de resultado semelhante. Essa talvez seja a maneira mais fácil de fazer isso, em vez de tentar editar a que já temos. É, acho que essa provavelmente será a maneira mais fácil de garantir que não estejamos modificando esse array simultaneamente e fazendo algo estranho.
+
+Então, digamos que a saída seja uma string vazia. E aqui faremos " Sim". Então, se tivermos um parêntese de fechamento, simplesmente não fazemos nada ou o removemos da pilha, mas não adicionamos nada à string. Caso contrário, queremos adicionar este parêntese de fechamento à nossa saída. Portanto, podemos dizer que a saída mais é igual aos caracteres em i.
+
+O mesmo se aplicaria ao parêntese de abertura. Então, vamos adicionar isso à nossa saída, e é um pouco redundante ter isso em vários lugares, mas faremos assim por enquanto. E, caso contrário, se não tivéssemos parênteses, teríamos apenas um caractere em inglês, e esses simplesmente ignoraríamos. Então podemos dizer que também adicionaremos esses caracteres à saída, além dos caracteres de igualdade em i. Hum.
+
+OK. Após a conclusão desse loop, o que devemos ter é uma string de saída onde removemos todos os parênteses de fechamento soltos, pois eram justamente esses que tínhamos e que havíamos omitido da saída. Mas ainda temos a possibilidade de parênteses de abertura pendentes. Então, o que precisamos dizer é essencialmente enquanto o stack.length for maior que zero.
+
+Então, embora ainda tenhamos alguns desses parênteses de abertura soltos, queremos simplesmente removê-los. Então precisamos removê-los do índice em que estavam aqui. Mas suponho que esse índice seja diferente do índice em nossa saída, certo? Tudo bem. Na verdade, o que eu quero fazer é nos livrarmos dessa coisa de saída.
+
+E em vez de fazer isso, digamos que, sempre que removermos algo, vamos nos livrar dos dados de saída. Isso, na verdade, simplifica bastante o código. De qualquer forma, não precisamos disso. Não precisamos disso. Tudo bem. Então vamos nos livrar da saída.
+
+E em vez disso, quando na verdade precisamos remover muita coisa, espere, espere, espere, vamos colocar de volta, colocar de volta, precisamos da peça. Basicamente, o que eu quero fazer é, em vez de manter o controle dessa saída, vamos apenas atualizar o array de caracteres e, quando removermos algo, vamos simplesmente colocar uma string vazia ali. No final, podemos juntar os caracteres novamente e a string vazia será ignorada. OK. Faz sentido? Sim
+
+. Sim. Sim . Tudo bem. Então, se tivermos uma string de abertura ou um parêntese de abertura, nós o inserimos. Se tivermos um
+
+parêntese de fechamento, e houver um parêntese de abertura válido, então o removemos da pilha e o mantemos. Caso contrário, na verdade, antes estava tudo ao contrário. Caso contrário, precisamos dizer caracteres em i. Então, neste momento tínhamos um parêntese de fechamento, mas não tínhamos nada na pilha. Nesse caso, quero dizer que os caracteres em ii serão iguais a uma string vazia.
+
+Faz sentido? E aqui embaixo, na verdade, não precisamos mais de mais nada disso. Então, isso é uma remoção efetiva da string. Sim . Então, sim, ao torná-la uma string vazia, neste caso, estamos simplesmente removendo-a, ou seja, removendo-a sem alterar o comprimento da matriz de caracteres. Dessa forma,
+
+quando executarmos o loop while na parte inferior, esses índices ainda serão os índices corretos. Ok, legal. Tudo bem. Então, agora tudo o que precisamos fazer é dizer que enquanto stack.length for maior que zero, podemos executar chars em stack.pop, que
+
+será o próximo parêntese de abertura solto, que também será igual a uma string vazia. E por fim, precisamos juntar os caracteres novamente em uma única sequência. Então digamos que os caracteres retornem e entrem. E a função join aceita o delimitador "like" por padrão. Acho que é uma vírgula . Então, vamos passar uma
+
+string vazia para que ela simplesmente junte todas as strings. Sim, acho que isso deve funcionar. Tudo bem. Você tem um pequeno problema de sintaxe na linha 30. Ah, sim.
+
+Sim, aí está. Tudo bem. Hum, ok. Hum, quer dizer, para mim parece tudo certo, mas você gostaria de testar com o exemplo de entrada e saída que eu colei aqui? Sim, com certeza. Vamos descer
+
+aqui e clicar em remover. Vamos encerrar a sessão, eu acho. Por exemplo, console.log remove PNS extras. Vamos passar essa string e depois eu vou comentar essas linhas manualmente.
+
+Tudobem. Execute este comando. Sim, nós nos damos bem. Entenda isso. É a mesma coisa? Então,
+
+se você quiser, também poderíamos abordar alguns casos extremos. Então, tipo, se tudo o que tivéssemos fosse tipo " Certo, esse cara". Legal. OK. Então, simplesmente remova isso. Sim
+
+. Se tivéssemos... Eu colaria alguns exemplos de entradas e saídas no topo para você testar.
+
+Você quer experimentar esse? Sim . Deixe-me copiar isso. E desta não esperávamos nada, certo? Sim . Então, não ganhamos nada. Você nem consegue
+
+ver direito, mas sim. Hum, ok. E então vamos tentar esta. Sim . Entendido.
+
+Cole esse cara. AB. Sim, parece que está funcionando. Incrível. Bom, parece que você obteve essas respostas muito bem e parece ser bastante eficiente. Você tem
+
+mais alguma consideração sobre isso, caso fosse aprimorá-lo de alguma forma ou fazer alguma outra alteração? Sim, acho que, para começar, poderíamos dar uma melhorada no código em geral. Não necessariamente do ponto de vista da complexidade temporal. Bem, acho que há muita aninhamento acontecendo e isso está sendo feito em JavaScript. Na verdade, isso não é exatamente um uso idiomático do JavaScript, como os tradicionais loops `for`.
+
+Acho que fiz isso para evitar a modificação simultânea do array quando pensei nisso inicialmente, mas depois mudamos para esse método de editar o valor real para uma string vazia e, por causa disso, isso poderia ser um loop "para cada" ou algo do tipo, e acho que fica um pouco mais limpo. Sim , acho que esse é o ponto principal em termos de eficiência. Acho que provavelmente é isso, pelo menos não consigo pensar em nada melhor. Sim . Hum, há um cenário que eu gostaria de descrever para você. Então, às vezes, certas
+
+entradas podem ter dois tipos diferentes de saídas. Agora, se testarmos essa sequência de caracteres que acabei de colar... Então, isso dará uma das possíveis saídas, basicamente como esta primeira possibilidade. No entanto,
+
+essa segunda saída aqui também é outra possibilidade válida. Se você tivesse que fazer uma pequena dedução, qual você acha que seria a diferença na implementação? Só para deixar claro, você ainda está correto no seu "Sim". resposta, mas qual você acha que é a diferença? Sim . Eu nem sequer havia considerado a possibilidade de
+
+existirem duas soluções. Então, estou meio que indo da esquerda para a direita aqui e dizendo, ok, digamos que toda abertura precisa de um fechamento e, se encontrarmos um fechamento que não tinha abertura, vamos removê-lo. Presumivelmente, se você fosse da direita para a esquerda e a implementação fosse exatamente oposta, obteria, às vezes, um resultado semelhante ao oposto, se é que isso faz sentido. Então você está pressionando para fechar e abrindo para abrir. Sim . Se você fizesse isso, sim, se você iterasse da
+
+direita para a esquerda e depois da direita para a esquerda, e então... Sim. Essencialmente, inverta as verificações condicionais para fazer o oposto.
+
+Legal. Bom, isso é tudo que eu tinha para vocês hoje. Você tem alguma pergunta para mim? Não, eu agradeço por você ter dedicado seu tempo. Incrível. Legal. Bom, então falo com você mais
+
+tarde. Tomar cuidado. Tchau. Você também. Bom, isso é tudo que eu tenho para mostrar neste vídeo. Espero sinceramente que vocês tenham
+
+gostado. E se você gostou, não se esqueça de clicar no botão "Gostei", se inscrever caso ainda não seja inscrito e, se tiver interesse na minha newsletter de tecnologia totalmente gratuita , o link também estará na descrição. E se você tem interesse em saber o que um engenheiro de software faz no dia a dia, talvez goste deste vídeo.
