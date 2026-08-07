@@ -1,0 +1,167 @@
+---
+video_title: "Build creative apps with the GenMedia suite (I/O Connect ‘26)"
+video_id: nRLZqaNOrwQ
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=nRLZqaNOrwQ
+video_date: 2026-07-06T18:14:45+00:00
+video_description: |
+  Unpack the latest capabilities of Google's state-of-the-art GenMedia suite—including Veo, Nano Banana, Genie, and Lyria—and learn how to build the next generation of creative applications with Guillaume Vernade. Guillaume explores real-world examples, and share best practices for prompting and generation, alongside how to seamlessly integrate these models into your products.
+  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Speaker: Guillaume Vernade
+  Products Mentioned:  Google AI, Gemini
+---
+[MUSIC PLAYING] GUILLAUME VERNADE: I'm Guillaume. I'm part of the DevRel team of Google DeepMind, which means my job is to make sure that you have everything you want and need to work with all of the models that we are shipping. And in particular, I work specifically on all of the GenMedia models that we are going to talk about today. And as you can see, I used to be a video game producer as well. So what I do want to talk about GenMedi.
+
+But because everything around us is GenMedia. A few years ago, LLMs were amazing. We started to chat and to use chat all the time when we were doing things because the agents and the models are giving us good feedback and good things. But at the same time, in real world, we are always using other media to communicate. We are sending pictures.
+
+We're sending videos. We are recording ourselves. We're sending voice messages, even though I hate people who do that on WhatsApp. Media is the way we usually communicate. So that's why I think the new next thing with generative AI is going to be everything about GenMedia.
+
+And that was, like right from the beginning, at the core of what the vision of DeepMind was for GenAI. Right from the first version of Gemini 1.0, it was meant to be a multimodal model, I think. And I think it was the first model that was actually multimodal. In one, you could give it images and it could do things with images.
+
+And it also adds this huge context window compared to our competitors back then to help you with every GenMedia use cases that you had. If you already saw this slide in the previous talks, we are shipping things all the time. Even for us, it's hard to keep track. So that's the reason why I wanted to give this quick workshop to show you-- to showcase all of the GenMedia models that we have and everything you can do with them so that you have an idea of what's available in the DeepMind track. So without further ado, I didn't want to stay too much on the slides because it's a workshop.
+
+So let's move to the workshop. So open this QR code or use the short link. I think it's going to be way easier. And we'll see how the Wi-Fi is going to like you all opening an 80-meg notebook all at the same time. But while you're all opening it up, I'm going to switch to my laptop.
+
+So let me show you the notebook. The idea is that I'm running it, I'm explaining it, but you can also run it at your own pace because you have access to it. And you just need to go through it. I'm not even sure I will be able to go through all of it myself. So you can just finish using it afterwards.
+
+So as you said about you know about it, we installed the SDK. I don't think I need to talk about that. This getting an API key, that's what I said. You need to log in with this GCPLab.me account.
+
+You go there, up, and normally, there should be an API key that is here. You copy it and you go here and paste it here.
+
+I'm not going to run it myself because I already have mine. And you don't want to use this one. So then I'm initializing the SDK client. Just one thing here. A neat trick is that you can use this option to basically tell the client that if it fails with these error codes, it's going to retry by itself.
+
+So it's a very convenient way when you want to be certain that your request is going to go through. The imports. It's OK. And then you can choose the models. We are going to use a different bunch of models like Nano Banana for images; Gemini Flash for everything that needs a text output; Lyria for-- Lyria 3, which is a small model for Lyria for generating music; Gemini 3.1 Flash TTS for the TTS.
+
+And I have this box that should be already checked for you that says that you know that it is going to cost money because I don't want people to run the notebook by mistake and pay. And the last thing, Lucia just talked about it in the previous talk. We are going to use service tier priority. Service tier priority means your request is a high priority one. So you're willing to pay twice as much to make sure it goes through when the model is overloaded.
+
+So just use it because you're not actually paying today. So just, yeah, it's going to be easier for you. And then we can move. So the thing I'm going to show you is that we're going to take one book that is from the Project Gutenberg library. So it's an old book.
+
+So it's open source. So that's why we can use it. And I'm using "The Wind in the Willows" from Kenneth Grahame. But you can use any other one that you want, preferably something that is open source. I had pretty good results with Jules Verne's book, for example.
+
+And so we are going to just download the book and open it with our file API. So clients.file.upload is a way for you to upload large files to our backend so that you can afterwards reference them easily in all of your subsequent calls. And you don't have to re-upload them again and again.
+
+And it's going to be automatically cached as well. So you're going to save tokens that way. So it should be good. I'm going to write a small system instruction just to guide the model into making sure that we want images, ideally no text. It shouldn't look like a cover page because otherwise the model knows it's a book and then it always tries to create something that is a cover page with the author and all of that.
+
+Then let's move here. So one of the things as well is that we, this week, we announced that our new set of APIs that are named Interactions API are becoming GA, which means that they are becoming our main API to use all of the Gemini models with the Gemini API. So it's a different set of APIs. The main difference is that it's a stateful API, which means you are just going to-- we're going to everything that happens on our backend. So if you want to chain different calls, you can just pass an ID and you won't have to pass all of these three again like you had to do before.
+
+So I'm going to start the interaction API with a very simple prompt. I'm just giving it the book. I'm giving it the full content of the book with the URI that we got from the file API and just the model is going to ingest it. We're going to define a style. So you can-- I made it so that you can just ask Gemini to define a style based on the book.
+
+But we can say, I don't know, what can we do? Cyberpunk post-apocalyptic.
+
+And we're going to go with this style. So we're just telling the model that this is the style that we are going to use. And while it computes, we can move to the next one. So the next thing I'm going to do is that I'm going to ask the model to describe every character in the book and to give me a prompt to describe them so that we are going to be able to use the prompt to actually make images of the characters.
+
+And for that, I'm going to use a structured output. So I defined a prompt class that is basically a name and a prompt, which is what I want. And here, I'm telling that in the response format, I want the type to be a text but a JSON one that is an array of a prompt. So here I go. I got a description of the Mole, water rats, Mr. Toad,
+
+and Mr. Badger. And now we can move to the next step when we are actually going to use a GenMedia model and Nano Banana to illustrate those characters. So what I'm going to do is I'm going to create, basically, a fork of the-- a new tree of interactions. So I'm creating a new one.
+
+And I'm giving it some context. We are going to generate portrait images to illustrate "The [? Will ?] of the Willow" book. This is the style.
+
+And this is the system instructions that we are going to use. And then I'm going to loop over all of the characters that we have and, basically, ask the model to create an illustration for the character following the descriptions that we have. And as I told you, we can use the interactions ID to change the request. So I'm actually going to change all the requests so that the model will know-- will remember which image it created before about the previous character so that it's going to be better in terms of style so that it knows I already made them that way. So the next way is the next one should be following the same style.
+
+So here we go. We have Mole. We have water rats. We have Mr. Toad.
+
+And Mr. Badger should be coming in soon. Here we go.
+
+Then we are going to do basically the same thing for each chapter of the book. No. No. I forgot to show you at the beginning, but I'm only limiting it to a few chapters because otherwise the notebook would take hours to run. So we are going to illustrate the first three chapters.
+
+And this is basically the same trick. The model already ingested the full book, so we can ask it to create a prompt that represents every chapter. And yeah. And I gave it slight instructions because it tends to want to create comic book style images. So I had to steer it in the right direction, let's say.
+
+So let's see how it goes.
+
+Here we go. So we have the prompts. And let's run the image generation right away. So we have the prompts. And we are going to ask the model.
+
+And same thing. I'm training the requests that I made to create the character so that all of the images of the character are still in the history of what the model knows. So when I ask it to generate an image of the chapter, it already knows that, oh, a few turns ago, I made this image to represent this character so I'm going to reuse it and to use it as a reference. That's a trick that works for a workshop because we want to go fast. But actually, if you want it to do it in real life, in production, you would not do that because you might have hundreds of characters and dozens of chapters.
+
+And that would be too much context to the model. And I don't know why it's not working. I guess it's a problem in the prompt. But basically, if you want to do it on scale, the idea would be to actually store all of the images that you made for each character and maybe sometimes more than one images for each character and then to have the model actually outputting here-- that's at the example-- on top of the prompt, also outputting which characters as appearing in this image so that you can dynamically load only the specific characters that you need in this image instead of loading all of the characters from your book in this one. So this one is a slightly more advanced use case.
+
+This one-- yes, this time it worked.
+
+So I'll let you check the more granular control example because we are going to run out of time otherwise. Speaking of which, we don't have a timer. So here we go. We have the riverbank.
+
+The open road one is coming up. But you can see the character consistency is pretty good compared to what was generated first.
+
+And I think it's slow because you are all also trying to do the same thing. So we are all asking the same model to do the same thing.
+
+So we have this on the road.
+
+And yeah, in the forest. It's kind of scary. So let's move to the next model. Now that we have images, we can try to use Veo to create a moving version of the video-- of the images. So the first thing that we are going to try is to actually just give the image to Veo to tell it that-- just to use it as a starting point and to create a video based on it, and using the same prompt as we used to generate the image.
+
+So I'm going to run the other one right away so that we don't have to wait. As you will see-- we'll see how it goes. It's live demos. I don't have any control about it. But usually, when we just give the exact same prompt as the image, it doesn't actually know what is meant to happen.
+
+So it gets creative, let's say. So that's why I have another example where I'm actually asking the model to come up with a new prompt that explains what happens after the image so that we can-- the model actually knows what it needs to do in the video. So here we go. And we don't have-- oh. [VIDEO PLAYBACK] [HEAVY BASS] [BUZZING] [END PLAYBACK] I think that's pretty good because usually it mistakes the one with the hammer as the one harassing the one that was afraid.
+
+So this time, it got it right that it needs [? protecting. ?] But we can try it with a better prompt this way this time. We have to wait a sec.
+
+Oh, here we go. I was going to. [VIDEO PLAYBACK] [YELLING]
+
+[END PLAYBACK] So actually, this one was better or worse because the character came back. But that should be good enough for depending on what you need to do. And now we have another GenMedia model that I really like which is Lyria. It's our music generation model. And Lyria is a-- so you can ask it to generate a whole different kind of songs.
+
+And you have two different sides of the models. You have the 30 second model, which is very fast. You'll see that it should go way faster than Veo. And we have one that can make full song musics that should be up to three minutes more or less. And you have full control about the lyrics.
+
+You have full control about the timing. You can do scale as well, the BPM. But in this case, since we don't want any lyrics, I'm just asking it to create an instrumental song for each chapter. And so it got the first one, a gentle cyberpunk instrumental bending, just dusty acoustic guitar. So let's see how it goes.
+
+[GENTLE GUITAR MUSIC]
+
+I think it goes up-- where was the chapter? I think it goes well with this.
+
+Yeah.
+
+And so we can check the open road. [SOFT ROCK MUSIC]
+
+That should go with this one.
+
+And the last one, for the forest. [MUSIC PLAYING]
+
+I think it's pretty on point. One of the things I forgot to say is one of the tricks-- one of the thing here is we're using Gemini to write all of the prompts for the GenMedia models. And that's because Gemini is really good at training all GenMedia models because, as you can imagine, we're using it all the time to train it as well. Whenever we need to train or to test things internally, we are using Gemini to generate prompts for us or generate images. So all of our models are kind of trained together in a way.
+
+So that's why Gemini is pretty good at generating prompts for all of the GenMedia models that we have. And now we can move to the final model, which is a TTS model. I'm going to use another trick. So basically, what I'm going to do is that I'm going to ask the model to extract the parts of the book and to rewrite it as a transcript so that we can use it with the TTS model. One of the constraints of the TTS model is that you can only use two voices because it's meant to do podcasts and/or discussions between two characters.
+
+But here I'm going to use a slight trick to actually have more than two characters. And the idea is that-- and I call that the bedtime story trick because, basically, the idea is that when you read a story to your daughter in the evening, you only have your own voice, but you can still have the bad guy speak like that because it's very scary. And then you have the small little unicorn. She speaks like that because she's so cute. And it's still your own voice.
+
+You're just kind of prompting yourself to talk in a different way. And you can use the same trick with the TTS model and use the same model but with a different prompt depending on the character so that it feels differently. So that's why I'm asking it to do-- that's what I'm asking it to do here. I'm going to use one voice that is a narrator voice and two voices. WOMAN 1: Dark hole in the opposite bank.
+
+In a small-- GUILLAUME VERNADE: And for all of the characters, they are just going to use a character voice but with a specific style for each of them so that there's consistency between the character. But they should also feel different. So we can listen to that. WOMAN 1: A grave, round face with a twinkle in its eye appears from a dark hole in the opposite bank. It has small, neat ears and thick, silky hair.
+
+MAN 1: Hello, friend. Would you like to come over? WOMAN 1: Oh, it's all very well to talk. The first animal says nothing but unfastens a rope, steps into a little blue and white boat, and sculls smartly across. He holds up his forepaw to assist.
+
+MAN 1: Lean on that. Nothing. Step lively. WOMAN 1: The other animal gingerly steps down and finds himself safely seated in the stern. This has been a wonderful day.
+
+GUILLAUME VERNADE: You can hear that the two main characters talking seems to have different voices even though we're actually using the same voices from the model. So that's the trick I'm using to create discussions with way more than two characters. So that's a very nice trick to use with this model because you can steer it in so many different ways that you can create as many characters as you want with just prompting. And just to finish-- like this one should take some time-- let's try to mix everything together. So basically, what I'm going to do here, that's a very complex script that I didn't write.
+
+So Gemini wrote it. So don't ask me what it does actually. But basically, the idea is that we're going to take the image, the background music, and the TTS and mix all of that together so that we have something that is working well together. Oh, it's all ready. WOMAN 1: A grave round face with a twinkle in its eye appears from a dark hole in the opposite bank.
+
+It has small, neat ears and thick, silky hair. MAN 1: Hello, friend. Would you like-- GUILLAUME VERNADE: I just realized I used the wrong-- I used TTS on the first chapter and the image and music from the last chapter. But you get the idea that you can mix all of that together. And it gives you a very good outcome out of it.
+
+And if you have time, if you want to try that on one of the fun things is that I said, all of the Gemini models are multimodal models. So what we did earlier is that we got all of the texts from the book and we gave it to the model. But you can actually do that with audiobook as well because the model is also very good at understanding audio. So you can get the audiobook and send it to the model. I don't think you can fit the whole book in one time in the context window but you can at least fit a few chapters, run that, and then do the rest with the other chapters and so on.
+
+So that's pretty fun to play with. Kind of token heavy so maybe not a good idea to try if you're the one paying. But that's a fun thing to try. I don't know how much time I have left, I think I have 10 minutes. So I'm going to go back to the slide because there's something else I want to show you.
+
+But you can continue to work with the notebook and try different things. And when you're finished, if you tried it with different books, I'm curious to see how it went and to see how the outcome of what you produced. And just to finish, I wanted to finish with Omni. So Omni is our latest GenMedia model that we announced at I/O. So at the moment, it's only available in the Gemini app and in Flow.
+
+But it's coming up in the API so that you can use it as developers and basically do the same thing as I did with Omni. It should be coming soon. We don't have a clear date yet but it should be soon. And what the model is and the reason why we changed the name from Veo to Omni is basically the same reason why we changed the name from Imagen to Nano Banana. It's a different way of using the model.
+
+So we thought we needed to change the way the naming as well. And the idea is that Omni is basically the Nano Banana of video. So in the same sense that when we were using Imagen or other similar image generation models, you were prompting the model to get an image. And if you were not happy with the image, you were just iterating on the prompt, trying again, and changing the whole image as a whole and to get a new one until you were happy with it. And when you started using Nano Banana, then you discovered that you can just get an image that is nearly perfect but not completely and just use prompting to basically ask to change just the part that you need to change and nothing else, basically like photoshopping but with [? VIBE ?] photoshopping,
+
+basically. And Omni is going to be exactly the same. It's a model. It's a video generation model. But you can prompt to change just a small thing in the video.
+
+So for example, that's a video I made at I/O. So basically, I used Nano Banana to create slides about what we announced at I/O. And then I had Omni take a picture of me that looks slightly younger because it was a picture from 10 years ago-- that's also a nice trick-- and to make a video about that. MAN 2: First of all, we have Omni, the world model that can turn anything. Flash 3.5 and the agents API are ready to build
+
+autonomous agents. Finally, with Android XR, Gemini will always be with you. GUILLAUME VERNADE: And then you can ask the model to just change my voice to French. MAN 2: [SPEAKING FRENCH]
+
+GUILLAUME VERNADE: So I know that there's a few French people in the room who can assess that it's pretty good. But you can also add different things in the video to make it more fun. So add a cat, add a bird. And I like the fact that the parrots-- I don't know if you saw it, but my shoulder was moving and the parrot stays the same because the model has very good physics understanding. So it knows that if something is on my shoulder and I move, the bird should move the same way.
+
+And then you can get creative. You can ask the model to change the style of the video. And what's interesting is that I told it to change the style every second after the third one. And it's very good at understanding exactly the timing on when it has to do things. And you can also refer to a specific moment in the video.
+
+So we have another example from one of my colleagues who is touching a mirror. And he's saying when I touch the mirrors, the style should change and things like that. And the model is able to find exactly when it needs to start changing things and act on the video. So that's pretty good. And just to finish, this is the one I made for my daughter.
+
+And you can guess that she likes unicorns.
+
+So yeah.
+
+So I hope that you were able to load the notebook and to play a bit with it. As I said, it should be available-- it should stay available so you can still run it later and that you like the overview of all of the different models that we had. I didn't talk that too much into details, but that was a really good way to use the Interactions API because we kept on generating images and videos and stuff. We never had to upload them again. So if you check, for example, the old version of this one, where actually it kept on uploading again and again the same image, so it was way, way slower to run.
+
+So the interactions API are helping a lot there. And also one of the things that is kind of impressive is that you can fit a whole book into the context window of an LLM, which is in a way kind of impressive because you will never be able to remember all of that by yourself. [MUSIC PLAYING]

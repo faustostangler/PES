@@ -1,0 +1,198 @@
+---
+video_title: "What's new in Google AI"
+video_id: SSe1VmVrtw0
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=SSe1VmVrtw0
+video_date: 2026-05-23T00:45:21+00:00
+video_description: |
+  Explore Google's end-to-end AI stack. Learn about the latest model capabilities across multimodal, media generation, and robotics, and how to leverage them using Google’s infrastructure. Whether you are building intelligent agents, utilizing new vibe-coding tools, or tuning and serving open-source models, gain a clear understanding of the tools needed to build next-generation AI apps.
+  
+  Speakers: Paige Bailey, Ammaar Reshi, Josh Gordon
+  
+  Watch the AI sessions from Google I/O 2026 → https://goo.gle/AI-at-IO26
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  #GoogleIO
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: AI/Machine Learning
+---
+[MUSIC PLAYING]
+
+PAIGE BAILEY: Amazing. Welcome, everyone. Welcome to Google I/O. Welcome to "What's New in Google AI." And welcome to the first sessions of the day after the keynotes.
+
+Is everybody really excited? [CHEERS] Amazing. So I am so grateful to be here today with my colleague Ammaar. My name is Paige. I'm the lead for developer relations team at Google DeepMind.
+
+And Ammaar? AMMAAR RESHI: I lead product and design on AI Studio. PAIGE BAILEY: Very cool. And today, we're going to be attempting to condense into 45 minutes an overview of everything that we've been doing at Google in the AI space. It's going to be really hard.
+
+But the good news is that for the rest of today, and the rest of tomorrow, and further on in the week, we have a whole bunch of other talks that are intended to be deep dives for some of the things that we'll just be touching on lightly today. So I don't think it's a secret that we've been shipping at a pretty relentless pace. AMMAAR RESHI: An insane amount of pace. I think if you just look at 2024, when we had the 1.5 series of models, we were just cracking the nut on multimodality.
+
+And look where we are now. PAIGE BAILEY: Exactly. And today, we released Gemini 3.5 Flash, which we'll be talking about in a second. But it's everything from frontier models to open models and more.
+
+Our Gemini 3 model lineup has expanded pretty significantly, both today and over the course of the last couple of months. We've got Gemini 3.5 Pro, which is still kind of our best and brightest model to use for complex problems. 3.5 Flash for performance and speed and cost.
+
+This is also-- the Flash series is the default in AI Studios Build, right? AMMAAR RESHI: Yeah, we use 3.5 Flash as our default model for building apps, and it's incredibly capable. In fact, AI Studio mobile app that will be coming out in a few weeks, a bunch of it was built with 3.5 Flash.
+
+So it's just been amazing to see it ship across both Android and iOS. PAIGE BAILEY: Amazing. And then also, 3.1 Flash-Lite, which is really great for these use cases that require low latency but can also save you a lot of costs, which is pretty cool. It's not just us using Gemini 3.
+
+We are blessed to have a whole bunch of customers across the industry-- Databricks, GitHub, Harvey, Warp, and a whole bunch more that have Gemini 3 running in production. And Gemini is really remarkable in the industry because it's great at understanding all of these many different modalities, text and image and audio and video and code, but it can also output multiple modalities. AMMAAR RESHI: Yeah, I think one of my favorite things is because it understands so many modalities, when you're building, especially when you're building apps, I upload a video of an animation, and it can understand the frames of that animation and then recreate that in code. And so video understanding just unlocks a whole new set of use cases. And I mean, so does all the other modalities.
+
+PAIGE BAILEY: Yep. And the screenshots that you can take and use to inform the front end design for some of Build's features are really, really powerful tools as well. Our generative media models are kind of testaments to this fact, that we're able to output video, we can output audio. We have some pretty exciting text-to-speech models and Gemini live models. And then also our Live API, which we'll demo in just a second, gives you real-time interactions with Gemini itself.
+
+And today, we've talked a lot about Nano Banana, a.k.a. Gemini 3.1 Flash Image, which gives you high-fidelity visual assets.
+
+We've got Nano Banana 2, which you can try yourself in AI Studio. And today, we've basically released Nano Banana for video, Gemini Omni Flash, which allows you to create anything from any input, starting with video. AMMAAR RESHI: Starting with video. And I think the other thing is, editing is such a tedious task, especially getting the little details right. And the fact that we have Nano Banana-style editing for video now is super exciting.
+
+And in the API soon. So that'll be really fun to build with as well. PAIGE BAILEY: 100%. And if you haven't had a chance to try it yet, there's a really nice AI demo garden in the back of this building, if you're on-site, that should allow you to create a commercial starring yourself using Omni. It's called Omnimercial.
+
+Be patient if there's a line, but it's a lot of fun to try. If you're curious about generative media, make sure to go to this session, "Build creative apps with the GenMedia suite," later this week with a couple of folks from our team. And they will be able to answer all of your questions. All of these models are stitched together in Antigravity as the IDE that powers these experiences. We're all using Antigravity pretty heavily at Google internally.
+
+AMMAAR RESHI: Every day. PAIGE BAILEY: Every single day, to check in code, to help review code, to design these new experiences. And we're also using AI Studio for everything from product ideation to building apps to rapid prototyping, because it is the fastest path from prompt to apps. But I really hate slides. AMMAAR RESHI: Me too.
+
+I hate slides. PAIGE BAILEY: OK, so we both hate slides. It's much more fun to show these things in action. So let's go ahead and go to some demos so you can actually see these tools. And we'll see how well the Wi-Fi holds up.
+
+Excellent. AMMAAR RESHI: OK. Back in the Playground. PAIGE BAILEY: Back in the Playground. AMMAAR RESHI: So for those who are not familiar, this is the AI Studio, Playground, and Homepage.
+
+Here, you can experiment with all of DeepMind's latest models. You can tweak all the parameters to see what they're capable of. It's an amazing way to just get a sense of all the capabilities. And you can just take code snippets from here and go and build apps with them as well. Paige, you want to kick it off with a demo?
+
+PAIGE BAILEY: Yeah, absolutely. I'm going to zoom in a little bit so we can see, and then also show you how you can select different media types in AI Studio if you haven't seen this before. You can add files from drive. You can upload files, record audio, camera, add YouTube videos, and you can also select some sample media. So if I was to select this video, add it to the prompt, we've got Gemini 3.1 Flash-Lite pulled up, which is, again,
+
+our most cost-optimized model. You can say-- AMMAAR RESHI: Really fast. PAIGE BAILEY: It should be pretty fast. You can say "Create a table with timestamps for all of the dinosaurs you see in this video. Make sure to include a fun fact about each dinosaur."
+
+Hit Run. And we can see the number of tokens that's pulled from this five-minute-ish long video. It's around 31,000. AMMAAR RESHI: Fast. PAIGE BAILEY: Very fast.
+
+We've got a table with the dinosaur name, the timestamps, the fun fact. And then if I hover over this token consumption, you can see that it took about a penny and a half in order to do all that work, which is pretty wild. AMMAAR RESHI: Amazing. PAIGE BAILEY: And then just like Ammaar said, if you click Get Code, you can see all of the code that you would need to use to replicate whatever you just did, including Search as a one-liner for a tool call, this thinking config, and then the model selection that we have here up at the top. So that is Playground in a nutshell.
+
+And it allows you to experiment not just with our Gemini family of models, but also things like Nano Banana and some of the other video generation models that we have along the way. We also talked a little bit about Gemini Live. AMMAAR RESHI: I love this one. PAIGE BAILEY: Yes. And so Gemini Live gives you the opportunity to have a real-time conversation with the model, but also share multimodal content.
+
+It's been around for a while, but it's really, really cool to think about building into your apps. So if I click Share Screen, it's going to ask me to select a Chrome tab. I'm going to go ahead and select that dinosaur table that we just created previously, though you could select any app or any tab. I'm going to go back to Google AI Studio and I'm going to say, hey there, Gemini. Could you tell me what you see on the screen?
+
+GEMINI: I'm looking at the Google AI Studio. The main part of the screen shows a table of dinosaurs with timestamps and fun facts about them. For instance, it says ornithomimus was a speedy dinosaur. Is there anything specific you'd like me to focus on? PAIGE BAILEY: Does anybody speak a language other than English in the room?
+
+AUDIENCE: Arabic. PAIGE BAILEY: Arabic. Awesome. I also heard Brazilian Portuguese or Portuguese Portuguese? Excellent.
+
+AUDIENCE: Chinese. PAIGE BAILEY: Chinese? Awesome. So I'm going to ask the model to repeat what it just said, but to say it in Chinese. And then we'll also try another couple of languages.
+
+But you have to fact-check me, if that's OK. Cool. Hey there, Gemini. Could you repeat what you just said, but could you tell me in Chinese, please?
+
+GEMINI: [SPEAKING CHINESE]
+
+PAIGE BAILEY: Did it do OK? Excellent. Let's go. Wonderful. Amazing.
+
+Very cool. [APPLAUSE] And then you can also-- so that was just kind of asking it to change languages dynamically within the context of the conversation. You can also say in the system instructions, only respond to the user in Brazilian Portuguese, if I have a person who will fact-check me in the audience for Brazilian Portuguese. Yeah, excellent. And then I'm going to turn on grounding with Google Search.
+
+And we are going to ask Gemini a question as well. So hey there, Gemini. Can you tell me what you see-- can you tell me what you see? GEMINI: [SPEAKING PORTUGUESE]
+
+AUDIENCE: It's right! PAIGE BAILEY: It was right? OK, cool, cool. Amazing. And then since it's got grounding with Google Search, I could also say, hey there, Gemini, could you tell me what the weather is like today in Mountain View, California, GEMINI: [SPEAKING PORTUGUESE]
+
+PAIGE BAILEY: Was that also correct? Yep. Excellent. And you can also see the sources that it pulled in to help ground its outputs. And just like before, you can click Get Code and see everything that you would need in order to replicate the experiment that we just tried.
+
+AMMAAR RESHI: That's awesome. PAIGE BAILEY: So this is in Python and TypeScript and .net, whatever your favorite language might be, both programmatic or computer-y. And AI Studio is really just a magical place to get started with all of these things. But it's not just the Playground.
+
+AMMAAR RESHI: Not just the Playground. Yeah, there's a lot more. PAIGE BAILEY: Do you want to show us Builds and what you all have been cooking there? AMMAAR RESHI: Yeah, so if you don't want to click Get Code and actually take code and build in IDE, we offer a completely batteries-included building experience. And that's Build Mode here.
+
+So I'm just going to click that. And Build Mode effectively allows you to prompt any idea into life. And you'll be able to pick between all the capabilities that we have to offer. So you can do text-to-speech, music generation, databases. And a new thing we've added that we're super excited about is building Android apps directly from AI Studio.
+
+PAIGE BAILEY: Whoo! AMMAAR RESHI: And so what I'm really excited about is you won't have to deal with any of the setup of Android apps or getting a simulator or anything like that working. You'll just be able to prompt an app to existence. So an idea I had was around this piano, but I wanted to do it for this foldable phone I have over here. PAIGE BAILEY: Which is very fancy.
+
+How do I get one of those, AMMAAR RESHI: You just expense one. So all you have to do is say, I want to make a foldable piano app for fold phones, where the top half of the screen is a tutorial and the bottom half are piano keys that I can play. PAIGE BAILEY: Awesome. AMMAAR RESHI: And the other thing I'll just show you is we just left it for a second, and it'll even give you suggestions that you can tab into your prompt. And so this just helps you build out a more complete prompt if you don't know where to go, or if you're just curious about where the model could take you, which is always really fun.
+
+PAIGE BAILEY: Yep. So you can tab your-- complete your way into a startup idea. Is that what you're telling me? AMMAAR RESHI: Exactly. PAIGE BAILEY: Amazing.
+
+AMMAAR RESHI: But I don't like that idea, so I'm going to keep that away for now. And so I can go ahead and hit Build, and it'll go and start to build this idea out. And so the other thing you'll see is, AI Studio says right here it's generating a theme. And so what's happening is while your app is building on the left, AI Studio is also able to design a bunch of-- design themes for your app. And it's super fun to just see the inspiration come through from the model.
+
+So you can see it's giving us some interface ideas on how it's designing the app. Oh that's pretty. We can choose between a few different ones, even a video tutorial idea, which is pretty cool. Or this elegant dark one, which I really do like. PAIGE BAILEY: That is very pretty.
+
+I like the pastel colors. AMMAAR RESHI: Yeah, super nice. And I like the little glow it added. So these things help you-- I can hit Select This Design and it'll just add that prompt in, or I can just skip that and let it build that first version of the app. But while that builds, I actually did start this before this demo.
+
+So I do have it here. I'm just going to refresh this. And then we can go and build that one as well. PAIGE BAILEY: And this app is generated natively in Kotlin, is that right? AMMAAR RESHI: It's natively in Kotlin.
+
+And so again, similar prompt. You can see my first prompt again. Build a piano app, foldable thing. And if I hit code you can see all the Kotlin code. And the other thing you saw earlier was we said that Antigravity export is also in the app.
+
+So you can click Export and then take that over and go from there. PAIGE BAILEY: And it will also remember all of the context, all of the history, all of the kind of back and forth that you had in AI Studio as it brings it into Antigravity. AMMAAR RESHI: Exactly. So the whole conversation kind of flows through, which is really nice. But OK, so we have this Install button.
+
+I'm just going to zoom out for a sec. And it allows you to basically connect any phone and then install it via USB. The USB can sometimes be fiddly on stage, so we're going to try something. I'm just going to kill the USB connection and unlock my phone. Let's see if this works.
+
+PAIGE BAILEY: Amazing. AMMAAR RESHI: Yeah, let's see if it installs the latest version. Allow. OK. Seems to be installing.
+
+And then hopefully, any second now, on AI Studio, we will see the new build complete. PAIGE BAILEY: We'll install to the-- there it goes. AMMAAR RESHI: So it's installed on the device. And you can see I have this piano app now on my foldable phone. Yeah.
+
+PAIGE BAILEY: Amazing. AMMAAR RESHI: Yeah. And super fun, because I think you're just going to see so many new developers come through who just wanted to make apps for their phone or the web, and all they had to do was describe it in AI Studio. PAIGE BAILEY: Do you want to start it a little bit? AMMAAR RESHI: Should I play it?
+
+Yeah. See how it goes. [NOTES PLAYING] PAIGE BAILEY: I'm not sure if y'all can hear here, but it looks like it's popped up on the screen as well. AMMAAR RESHI: Yeah. PAIGE BAILEY: So maybe we could also try in the Android emulator.
+
+AMMAAR RESHI: The emulator is getting audio soon. PAIGE BAILEY: Gotcha, gotcha. AMMAAR RESHI: Yeah, I'm not very good. But this is exactly why I need this app. So yeah, this is coming.
+
+And then soon we'll also have Play Store distribution as well. So you'll be able to just submit an app to the Play Store from here. And then you publish to the world. PAIGE BAILEY: Amazing. AMMAAR RESHI: Yeah.
+
+Alongside Android development, soon, we'll also have the ability to build-- well, actually, rolling out today is Workspace apps as well. PAIGE BAILEY: Which means you can connect Gmail and calendar and all of the other Workspace products into AI Studio, is that right? Just through prompting? AMMAAR RESHI: Just through prompting. Yeah.
+
+Do you have an idea? PAIGE BAILEY: I have an idea about-- so I know that we've been talking about our meeting invites, and our calendars are a little bit overwhelmed. Wasn't there an idea that you had around sort of calendar roulette? AMMAAR RESHI: I did, I did. I've already built that one.
+
+Should I show you? PAIGE BAILEY: Yep, let's see it. AMMAAR RESHI: It's a pretty fun one. It's a slightly scary app for those who might not want to trust a model to do this, but I basically was like, hey, just look at my calendar, find a meeting, and then just delete it. But definitely ask me before you do that, because I need to check.
+
+PAIGE BAILEY: And make sure it's not a meeting with Logan. AMMAAR RESHI: And make sure it's not a meeting with Logan. Yeah. So we're just going to sign in. Little risky.
+
+And then you can see, it's picked up some meetings. It's got that. And I can spin it. And then it's going to go and figure out what meeting to delete. PAIGE BAILEY: I love that it's got all of the I/O, Keynote, LaunchCal, all of these things.
+
+AMMAAR RESHI: Yeah. PAIGE BAILEY: And it's automatically used OAuth to log you in with your Google account based on our Firebase integrations. AMMAAR RESHI: Exactly. And so you can see it even knows there are 15 events later today. So I definitely want to get out a few of those.
+
+I'll be using this app to make that happen. PAIGE BAILEY: Excellent. Sounds good to me. So cool. So this is a great overview of Playground and Build, some of the newest features in both.
+
+AMMAAR RESHI: Yeah. PAIGE BAILEY: And I think that we're really, really excited to see what you all can create with AI Studio and with all of these tools. To access it, all people have to do is go to ai.dev, right? AMMAAR RESHI: Yeah, they only have to go to ai.dev.
+
+Somebody is telling me to spin this wheel and I'm too afraid to see what it's going to do live. So we'll save that for later, you and me. PAIGE BAILEY: Awesome. Cool, cool, cool. Well, let's go back.
+
+So this is a brief taste of all of the things that we've been building in the AI Studio team. If you're curious about AI Studio, you're in luck, because the next section is all about AI Studio, Antigravity, and how you can incorporate those workflows into your own projects. We've also released something called the interactions API within AI Studio, so you can create an API key and get started with agents and build new agentic experiments with the Gemini APIs. If you're curious about that, about our managed agent platform, we talked a little bit about it in the keynotes earlier this morning, but it's basically giving you the ability to-- that same vibe, coding style that you just saw, where you can describe a natural language anything. It will generate a managed agent for you, connecting to services and running on a Cloud VM.
+
+AMMAAR RESHI: Yeah, and it's the Antigravity agent powering all of it, which is really awesome. So you have the exact same power and capabilities working in an environment with just oneAPI call. PAIGE BAILEY: Amazing. And if you're curious about that, make sure to go see the Build agents with Gemini API session with Philipp and Thor later this week. They'll also be touching a little bit on the Gemini Live API, around our text-to-speech models, and all of the things that you can do with those.
+
+We've not only been shipping frontier models. AMMAAR RESHI: Right. PAIGE BAILEY: And something that's really near and dear to my heart is open models. AMMAAR RESHI: Open models, open-source models. And I think to see how far Gemma 4 has come and what's possible with it, and especially the demos we've been seeing this week on how it's running on device and pulling off some incredible things.
+
+PAIGE BAILEY: Absolutely. And Gemma 4 is available to test out in the playground in AI Studio as well for folks who want to get started. An under-known fact, I think, is that you get a non-zero number of Gemma calls and the Gemini app APIs for free, so if you wanted to incorporate it into your app, it's great at understanding video, audio, images, text, code, all of the above. And you can compare and contrast with the Gemini models and other models that you might have incorporated into your apps as well. We've got a huge, huge Gemma 4 community that's pulling down many, many downloads across the world.
+
+Gemma supports over 140 different languages. You can find it today on Hugging Face. It has a 256,000-token context window. And if you want to learn more about the Gemma open model family, make sure to check out this session with Olivier, Gus, and Ian, also later this week. We've also been really blessed to have strong partnerships with the Unsloth community, with Ollama, yeah and many, many others, like Kaggle, to bring these Gemma models into the world.
+
+And it's been only the beginning for what's possible with Gemma 4. So this is also-- for folks who haven't tried running models at the edge before, have-- actually, I'm really curious. How many folks have used open models before, or are using them in your projects? A few hands. If not, definitely make sure to try out the Google AI Edge gallery.
+
+It's a great way to bring down costs for your projects, especially as the models that you can use on mobile devices, on laptops, are getting more and more powerful. AMMAAR RESHI: Yeah, I especially love the offline usage, because I was on a plane ride. It was about eight hours, and Gemma 4-- 5 coding with it, and it actually worked really well. PAIGE BAILEY: Amazing. AMMAAR RESHI: So it's amazing to see that all run locally.
+
+PAIGE BAILEY: Yeah. And Gemma 4 can run on your laptop. Gemma 2 can even run on a mobile device. So I think we've added it to the Pixel 10 so that it can power some of on-device agentic use cases that folks might want on Android and on Pixel devices. And again, if you're curious about on-device ML, Sachin and Erin will tell you all about it later this week too.
+
+Google is kind of special, though, in the sense that we aren't just a company that has models that are available via REST APIs, models that are available to download and to fine-tune and to use for your projects. We also have our open-source TPU software stack. AMMAAR RESHI: Yeah. PAIGE BAILEY: So everything from inference to post-training, pre-training, and model building, the usual suspects like vLLM for TPU inference, for both JAX and PyTorch, Tunix for post-training with RL and agentic workflows, MaxText, and then also JAX and TorchTPU for making TPUs run really, really fast and in a really performant way. It's been amazing to see how much JAX has been able to push the boundaries for every single model that we build at Google.
+
+And our DeepMind team is exclusively using JAX to build out all of its models and infrastructure. And if you're curious about that, make sure to go to Josh's session later this week, where he'll be talking about how you can scale AI with the TPU software stack. This full stack approach is really unique, everything from AI infrastructure, to data, to models, to our AI platform on Cloud, to things like agents and apps via Gemini Spark, via AI Studio, and more. And also, all of this being done in a very secure way. I was really excited to see the SynthID announcements earlier.
+
+AMMAAR RESHI: Yeah, with the partners. Yeah. PAIGE BAILEY: Yeah. Partnering with even other model service providers across the industry and attempting to do this in a way that really is kind of putting safety and responsibility at the-- AMMAAR RESHI: I think we'll need to give the calendar roulette app to everybody here to clear their schedule for all these sessions. PAIGE BAILEY: Yeah, this is true.
+
+Amazing. So what's next? I guess that's the general question. AMMAAR RESHI: Always. PAIGE BAILEY: Given all of these things that exist today, that were announced today, this overwhelming onslaught of AI that's-- even just from Google and the DeepMind team that's being released into the world-- what are you most excited about that's coming next?
+
+AMMAAR RESHI: Well, I love all the robotic stuff. It's always super exciting. I know you love the robots, too. PAIGE BAILEY: I really, really love the robotic stuff. Especially since-- because of the Gemini APIs, they can be put pretty much anywhere.
+
+AMMAAR RESHI: Anywhere. PAIGE BAILEY: Any device that can call a REST API is capable of using our robotics. AMMAAR RESHI: Yeah. And there was a great demo of Reachy Mini from Hugging Face, and it was using Gemini robotics. And that's open-source as well, that project.
+
+But yeah, we recently announced Gemini Robotics 1.6. And it's just incredible to see that out in the wild now. PAIGE BAILEY: Yeah, and I think it's also really powerful in the sense that, you mentioned the Reachy Mini. There's also a beautiful open-source project from Stanford called the Pupper, which is used for their CS curriculum.
+
+It has a Raspberry Pi powering it behind the scenes. All of the parts are 3D-printed. But since it's just using this commodity hardware, it can call the Gemini Live API, use Gemini Robotics ER to manipulate this little robotic dog, and you can ask it to do anything from "Follow me" and it will follow you around the stage. AMMAAR RESHI: So cool. PAIGE BAILEY: To "Go and fetch that ball."
+
+AMMAAR RESHI: How much training is needed for that one? PAIGE BAILEY: Mostly-- so it's not any training required. It's batteries included, like, the first dog that you do not have to train. But you just have a conversation with Pupper, and it's capable of having this dynamic interop with you across a broad spectrum of use cases. AMMAAR RESHI: That's awesome.
+
+PAIGE BAILEY: Yeah. In addition to that, we also have our world model family, Genie 3, which was touched on a little bit today in the keynotes. AMMAAR RESHI: Yeah, part of the Omni model. And it gives it the understanding of the physics of the world and how things actually work. And that's why you see the video coherence is so good, because it actually understands how things actually need to work in the real world.
+
+PAIGE BAILEY: Absolutely. And you can describe any world that you would like to experience and then navigate around it using your arrow keys in order to create a short video. So as an example, this is a prompt, a tranquil waterfall cliff area featuring dynamic water physics, and then a character, which is a high-speed paper airplane. And so you can see, similar to what Ammaar was just mentioning, the physics of the airplane as it's kind of interacting with some of the splashes, the physics of the currents in the river, how this is moving and banking, and-- AMMAAR RESHI: Even the reflections of the light on the water. PAIGE BAILEY: It's so nice.
+
+Could you play it again, please? Yeah. Awesome. Thank you. And so you can see even the splashes kind of going down in the water as it jumps off the waterfall.
+
+So I strongly, strongly encourage you all to play around with Genie 3. It's available today if you have a Google AI Ultra subscription, in addition to many, many of the other products that were featured in the keynotes this morning. Awesome. And then so I think the most important thing to call out is that we're building the first generation of tools for people who are AI-native, and who really don't have to ask for permission in order to create anything that they've been imagining. AMMAAR RESHI: I keep telling people, all you literally have to do is just go to that prompt box and describe your idea.
+
+And people have asked me, what is a tip you have or something for folks? And I usually just go in assuming that the idea I have is going to work. And you'll realize how far you can actually push the model to make your idea very real. And if it doesn't work in this iteration, I guarantee you, another model iteration and you'll be able to make that idea come to life. PAIGE BAILEY: Yeah.
+
+And since we've been adding databases to AI Studio, authentication, even things like these Workspace integrations, it really does feel like you can go very, very far without ever needing to leave the browser and popping into an IDE. AMMAAR RESHI: Yeah, and soon on your phone too, with the AI Studio mobile app coming very soon. PAIGE BAILEY: Amazing. And I can't wait for this world where I'm just walking around, describe an idea that I have, and then by the time I get home, it's already landed in my inbox. AMMAAR RESHI: You're just a few weeks away from that.
+
+PAIGE BAILEY: Very cool. Amazing. So for anyone who is curious, excited, who wants to try out and test more, wants to try our models, make sure to go to ai.studio/build. And we also just want to say thank you so much for coming to I/O this year-- AMMAAR RESHI: Thank you so much.
+
+PAIGE BAILEY: --for your energy, for your excitement. AMMAAR RESHI: Yeah. PAIGE BAILEY: We really appreciate you all and can't wait to see what you build. AMMAAR RESHI: Yeah. [APPLAUSE] [MUSIC PLAYING]

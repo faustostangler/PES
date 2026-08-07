@@ -1,0 +1,64 @@
+---
+video_title: "Introducing Keras Recommenders: state-of-the-art recommendation techniques at your fingertips"
+video_id: ZYeE4sYoRkw
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ZYeE4sYoRkw
+video_date: 2026-04-28T23:00:42+00:00
+video_description: |
+  Building a recommendation system that is high-quality, high-performance, and hallucination-free can be a challenge. In this video, Yufeng Guo introduces Keras Recommenders (KerasRS), a library designed to help developers build reliable ranking and retrieval models with ease.
+  
+  We’ll walk through a complete code example using the MovieLens dataset to build a Sequential Retrieval model. Using a Gated Recurrent Unit (GRU) to analyze a user's watch history, we will predict exactly which movie they are likely to watch next.
+  
+  Because KerasRS is built on Keras 3, this workflow is compatible with your choice of backend: TensorFlow, JAX, or PyTorch.
+  
+  In this video, you will learn:
+  - What Keras Recommenders is and why it’s useful.
+  - How to prepare sequential data (using the "snake" method) for training.
+  - How to build a Two-Tower architecture with a Query Tower (GRU) and Candidate Tower.
+  - How to use the BruteForceRetrieval layer for accurate predictions.
+  
+  Resources:
+  Build and train a recommender system in 10 minutes using Keras and JAX → https://goo.gle/3OKxUeI  
+  Keras Recommenders Documentation → https://goo.gle/42yNQnl 
+  Check out the Code Example → https://goo.gle/4n2by58 
+  
+  Chapters: 
+  0:00 - Introduction: LLMs vs. Keras Recommenders 
+  0:40 - What is KerasRS? 
+  2:09 - Installation & Setup 
+  3:04 - Sequential Retrieval & GRU Explained 
+  4:30 - Preparing the MovieLens Dataset 
+  6:35 - Data Batching & Structure 
+  7:17 - Building the Two-Tower Model 
+  8:14 - Making Movie Predictions 
+  8:28 - Conclusion & Next Steps
+  
+  
+  Speakers: Yufeng Guo 
+  Products Mentioned: Google AI
+---
+Keras provides user friendliness and accessibility, while JAX offers high performance numerical computation. We can now leverage the strengths of both, especially for detailed state management and advanced training capabilities within the JAX ecosystem, all thanks to a new integration of KRAS with flex and nx. Hi there, my name is Yufeng and today, we're going to check out how to use Keras with the flex nx module system, demonstrating how this integration enhances your variable handling and training control. Keras is highly valued for its high level API and intuitiveness, making deep learning development straightforward. JAX is excellent for high performance machine learning, research, and scalability, and nx is a modular neural network library designed for simplicity and power.
+
+Built on top of JAX, it promotes ease of use through standard Python classes for modules, and offers explicit state management via typed variable collections. The integration of KRAS within an allows you to use the modularity of KRAS for model construction, while benefiting from the power and explicit control of NNX and JAX for variable management and advanced training loops. So to activate this feature, we must first set two environment variables before importing Keras. This enables NNX as an opt in feature. We set the back end to JAX and then explicitly enable NNX mode by setting the Keras NNX enabled environment variable to true.
+
+The core of this integration lies in the Keras variable, which is designed to be an instance of NNX variable from the Flax NNX ecosystem. This means you can freely mix Keras and NNX components, and NNX is state management tools will successfully track your Keras variables. Here is an example of what that looks like. We've got an NGINX module that has a linear layer we've called linear and a vector value. I've named NNX variable so we can easily keep track of things.
+
+I've also added a Keras variable as part of the model called custom variable. We can see in the call function, we're adding the x variable and the custom variable to the results of the linear transform being applied. Once we have the model instantiated, there are a couple of tests we can run to really verify that the custom variable is set up, just as we'd expect. First, we check to see that the Keras variable has what's called a trace state, meaning that NNX has successfully traced through this variable, allowing it to just in time compile it along with the rest of the model. We can do this by confirming that it has the attribute trace state.
+
+Second, we want to make sure that NNX is counting this variable among all the variables it's aware of using NNX variables. This shows all the variables that NNX is tracking. And indeed we do see that our custom variable is listed. Third, and finally, let's confirm that the variables value can be accessed directly by NNX nx. Even though it's a Keras variable inside of model, the nx model has no problem fetching its value.
+
+Hopefully, I've convinced you by now that KRAS variable is successfully integrated with nx, allowing Keras state and in nx state to coexist seamlessly. This integration provides two powerful training workflows. The first one is going to feel just like classic Keras, but it runs in nx modules inside of KRAS, letting Keras manage the training workflow. The other approach uses x to run the training workflow with Keras models inside of nx training loops. So in this first version, your existing high level Keras code, including model.compile and model.fit
+
+it all works out of the box and under the hood. This productive experience is powered by JAX and nx. Here we have the other path for maximum flexibility and fine grained control. You can treat any Keras model or layer as an NGINX module. This allows you to write your own custom training loop using Ajax libraries such as opt for optimizers while mix and matching the models components.
+
+Just as we saw in our very first example with custom variable. You can think of this as Keras inside of NGINX. Here we see an example of a Keras model with a couple of dense layers. And once that model is created, the rest of the workflow is entirely NGINX and Ajax code. We'll select an optimizer.
+
+We'll write a custom train step to compute the loss the gradients, and perform the updates to the model weights. Notice that we're using the decorator NGINX Git instead of Git. This special decorator speeds up your NGINX code by using just in time compilation, and our Keras model gets the benefit from it too. In short, a Keras model object gets to do everything that an NGINX model can do. It's able to be passed seamlessly to NGINX optimizer, differentiated using NGINX grad and use with the broader JAX ecosystem of libraries.
+
+The Keras and nx integration offers a significant step forward, providing a unified framework for both rapid prototyping and high performance, customizable research. You can leverage the entire JAX ecosystem, including nx and libraries like optics, while still using familiar Keras APIs like model.fit and model.save. The code shown today was an adapted sample of a complete guide on the keras.io website,
+
+so if you're ready to dive in and try out Keras with nx for yourself, definitely go through that guide first. It's the perfect starting point to get hands on. So what are you going to be building with keras? Along with the nx backend? Share your thoughts in the comments below.
+
+Remember, for the complete guide and code examples, hit up that link in the description. Thanks for watching and I'll catch you in the next one.

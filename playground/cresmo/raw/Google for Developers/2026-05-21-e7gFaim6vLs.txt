@@ -1,0 +1,79 @@
+---
+video_title: "Building agents with real-world reasoning"
+video_id: e7gFaim6vLs
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=e7gFaim6vLs
+video_date: 2026-05-21T17:15:38+00:00
+video_description: |
+  Production agents for travel, logistics, and consumer apps demand rigorous real-world reasoning. Learn how to build grounded, production-ready agents using Gemini 3, Maps Grounding Lite, and Google Maps Platform. Explore how to connect LLMs to physical-world logic and understand real-world use cases to turn agentic concepts into scalable production solutions.
+  
+  Resources: 
+  Google Maps Platform Overview → https://goo.gle/4dMxrCb
+  Google Maps Samples on GitHub → https://goo.gle/4eM6f7L
+  Maps Grounding Lite → https://goo.gle/3Rp3LCr
+  Google GenAI Python SDK (GitHub) → https://goo.gle/3PFu3jr
+  Geocoding API Documentation → https://goo.gle/4uxVjzL
+  Maps JavaScript API - Map3D Documentation → https://goo.gle/497aZRD
+  Vis.gl React Google Maps Library → https://goo.gle/4nQMVc5
+  
+  Speakers: Caio Moreira, Ken Nevarez
+  
+  Watch the AI sessions from Google I/O 2026 → https://goo.gle/AI-at-IO26
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  
+  #GoogleIO
+  
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: AI/Machine Learning, Location/Maps, Web
+---
+[MUSIC PLAYING]
+
+KEN NEVAREZ: Hey, everyone. My name is Ken with the Google Maps platform team in Mountain View. CAIO MOREIRA: And I'm Caio from the Google Maps platform team connected from Brazil. KEN NEVAREZ: Today, we are bridging the gap between large language models and the physical world. We're taking a close look at Google Maps platform Grounding Lite available as an MCP server.
+
+By the end of this video, you'll have a solid handle on what grounding actually means for an LLM and why agents struggle to stay accurate without it. The specific features Grounding Lite offers, including play summaries, live weather updates, and routing data, and a step-by-step approach to building an agentic experience using Grounding Lite. All right, let's get grounded. We've all seen what happens when an LLM tries to give directions or finds local business without a leash. It's confident.
+
+It's articulate. And it's often completely wrong. In the world of AI, the model is hallucinating. Grounding is basically connecting an AI's reasoning to a reliable source of truth. It moves the AI from making educated guesses to using real, solid data.
+
+Grounding Lite uses the model context protocol, MCP, to make it easy to connect your AI applications with reliable geospatial data directly from Google Maps. You can start using Grounding Lite right away by enabling it and any tool that supports MCP servers. Basically, you're adding real-time, authoritative, location intelligence into your workflows without any major setup hurdles. Grounding Lite gives your LLM three main tools-- places search, find points of interest using a massive global database of over 300 million locations; weather lookup, get current conditions and forecasts so your agent can let you know if you'll need an umbrella for that walk in the park; routing, calculate walking or driving distances and travel times, giving your agent a better understanding of time and distance. Now, how do you actually build with this?
+
+For a robust system, we recommend a multi-agent orchestrator architecture. The main agent is the orchestrator agent. It directs the flow and holds the global tools like your map visualization functions. It then delegates specific tasks to subagents. To dive into the details, I'll pass it over to Caio.
+
+CAIO MOREIRA: Thanks, Ken. For the backend engine, we've set three key learning goals for developers. First, building a resilient multi-agent system, focusing on creating a robust and reliable architecture. Second, eliminating AI hallucinations using Grounding Lite to help the model stay accurate. And third, creating an immersive experience using data from Grounding Lite to decorate a 3D map.
+
+Let's get into the actual agent. If you have spent any time working with standard models, you're likely familiar with the one giant prompt approach, where you try to pack every instruction into a one-system prompt. That architecture has limits. When it comes to spatial intelligence, a multi-agent system is a much more effective strategy. Instead of forcing one model to do everything, we are breaking down complex problems, like mapping out an entire day in New York, into smaller, independent tasks.
+
+We then hand those off to subagents that work in parallel. It's a faster, more reliable, and ultimately more scalable way to build. To manage this architecture, we are using the Google ADK, the Agent Development Kit. At the heart of our ADK backend is the orchestrator, which you'll find in the source code as Orchestrator Agent. Whenever an itinerary is requested, the orchestrator launches a coordinated set of subagent tools.
+
+Kicking things off is the place agent. It serves as our primary validator, responsible for confirming that every stop is a verified ground truth, checking not just that a location exists, but that it will actually be open and ready for the visit. Then, there is the route agent. An itinerary isn't much used if it's physically impossible to get between stops on time. So this agent handles all the travel logistics from point A to point B. If one place can't be visited at the planned time,
+
+the orchestrator agent will suggest other options. We also have the weather agent to keep an eye on the rain for you. Ken, that reminds me of the time you borrowed my umbrella and lost it. If you're asking an AI if a specific café is actually open, you don't want it guessing based on all training data. To make sure our agent's response is up to date, we are using Maps Grounding Lite.
+
+By doing so, we are essentially making sure that the model only speaks when it has verified, real-world facts to back it up. Whenever our orchestrator agent needs to confirm a place, such as a restaurant or park is kid-friendly, Grounding Lite steps in. It handles a real-time call to the Google Maps platform behind the scenes and feeds that live data straight into the model's context. That's really how you build the kind of trust and enterprise-grade tool needs. Grounding ensures that the data, such as a current operating status, user ratings, and specific insights, remain up to date.
+
+However, simply identifying a location only solves part of the logistical puzzle. The important part-- and this is critical-- is actually getting there on time. This is where our route agent really shines. Our route agent leans heavily on the route data returned directly by Grounding Lite. When the agent maps out a path, Grounding Lite returns an encoded polyline of the shortest path between two locations.
+
+If you haven't worked with this before, unencoded polyline is essentially a compressed string that represents the coordinates of a spatial route or path. We decode this string later on the frontend to paint the route perfectly on the map for the user. My team of background assistants gather the rules, check the locations, and got the exact route details and paths. I've packed all that useful info into one simple JSON file. But raw data isn't a great user experience.
+
+To show you how we display this intelligence, I'm throwing it back to the studio for the visual reveal. KEN NEVAREZ: Thanks, Caio. Now, let's look at using Maps and the vis.gl React Google Maps library to turn those Grounding Lite responses into immersive 3D experiences. The React Google Maps library is a collection of high-performance React components that make the Maps JavaScript API feel like a native part of your React app.
+
+And the star of the show? Photorealistic 3D Maps. By using the 3D map element, we aren't just looking at a top-down image. We're accessing Google Maps 3D modeling and runtime. This allows us to place objects not just on a flat map, but at specific altitude in a 3D world.
+
+Let's look at how we take these subagent responses and render them. We have two main characters here, a 3D marker element and a 3D polyline element. When your places agent returns a taco shop in Tucson, you get a place ID and precise coordinates. Here's how we drop a 3D pin on it that actually belongs in a 3D environment. By setting the altitude mode to relative to ground, we ensure our markers sit perfectly at the level of the building rather than being buried in the terrain.
+
+We also set extruded to true, which draws a vertical tether line from the icon down to the street level, making it instantly readable even when the user flying through the city at high speed. Next, when the route agent gives us the path from point A to point B, we use a 3D polyline element. We can even make it occluded, meaning it will be drawn intelligently behind buildings if they are in the way. This is crucial for 3D Maps because it prevents your route from ghosting through solid skyscrapers, maintaining that sense of physical depth. By using occlusion, the map engine manages the tricky geometry needed to layer your path perfectly around city buildings and over terrain features.
+
+Back to you, Caio. CAIO MOREIRA: So let's take a step back and summarize exactly what we have accomplished today. We took a simple concept, verifying a list of places on a daily schedule, and completely transformed it using Google Maps platform. On the back end, we moved away from massive, fragile prompts. By embracing the Google ADK and Gemini tool calling, we distributed our logic across AI agents.
+
+And by utilizing Maps Grounding Lite, we eliminated location-based limitations, ensuring the model operates strictly on geospatial facts. And on the frontend, we visualize all those traffic aware coordinates directly on top of photorealistic 3D map. For developers teams everywhere, combining grounded intelligence with real world visualization is the key to putting generative AI into enterprise production safely. By combining the incredible reasoning power of Gemini with the absolute ground truth of Google Maps platform-- KEN NEVAREZ: You are no longer just building a simple map application. You're building true, interactive, spatial intelligence.
+
+To wrap things up and to summarize what was covered, we took a look at what grounding really means for LLMs and why it's so critical for accuracy. We also walk through how to actually use Maps Grounding Lite within a multi-agent setup. I challenge all of you to take these concepts, explore our resources, and see what you can build. You can find the entire source code for everything we've discussed today by checking the app in the AI Studio. You can even remix it to make it your own.
+
+Connect with us directly on our Discord and share what you've built. Thank you so much for your time. And, Caio, I didn't lose your umbrella. I open sourced it. I left it somewhere where the community can benefit from it.
+
+Happy mapping, everyone. [MUSIC PLAYING]

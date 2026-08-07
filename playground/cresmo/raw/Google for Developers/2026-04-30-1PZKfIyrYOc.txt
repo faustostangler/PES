@@ -1,0 +1,66 @@
+---
+video_title: "Unlocking Low-Level Control: Customizing Keras Training Loops with JAX"
+video_id: 1PZKfIyrYOc
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1PZKfIyrYOc
+video_date: 2026-04-30T23:00:02+00:00
+video_description: |
+  Do you want the speed and functional power of JAX without losing the high-level convenience of model.fit? In this video, Google ML Developer Advocate Yufeng Guo (@yufengg) explains how Keras implements the principle of Progressive Disclosure of Complexity.
+  
+  Learn how to take full control of your learning algorithms by overriding the train_step() and test_step() methods while keeping access to built-in callbacks, distribution support, and evaluation tools.
+  
+  What You’ll Learn:
+  - Why override train_step instead of writing a loop from scratch?
+  - Understanding how to handle trainable variables, non-trainable variables, and optimizer states in a functional environment.
+  - Creating a compute_loss_and_updates function to manage forward passes and auxiliary data.
+  - Using jax.value_and_grad to compute gradients and losses simultaneously.
+  - Updating evaluation metrics using stateless_update_state.
+  
+  
+  Chapters:
+  0:00 - Introduction & The Default model.fit()
+  0:18 - Customizing Keras Training Loops
+  0:46 - Overriding train_step()
+  1:14 - Setting up the JAX Backend
+  1:26 - The Stateless train_step
+  2:11 - Stateless Loss Computation
+  3:04 - Taking Gradients in train_step
+  4:06 - How to pass around non-trainable variables
+  4:43 - Updating the Model Weights
+  5:05 - Handling Metrics
+  5:21 - Custom Evaluation Loops (overriding test_step)
+  
+  
+  Resources:
+  Complete Code Example →https://goo.gle/4eeSvlD 
+  Keras Documentation → https://goo.gle/42Ebpv0 
+  Keras Developer Guides →https://goo.gle/4um97N3 
+  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Speaker: Yufeng Guo 
+  Products Mentioned:  Google AI
+---
+When working with deep learning models, Keras provides a convenient model.fit API for training. But what if your algorithm requires a custom training procedure and you still want to benefit from high level features like callbacks and built in distribution support. Well, Keras follows an important core principle the progressive disclosure of complexity. This means you should be able to gain more low level control without having to abandon all that high level convenience.
+
+Hi there, my name is Yufeng and today we will look at how to customize the Keras training loop with the JAX backend by overriding the training step to customize what fit does. One approach is to override the trainstep function of the model class. This is the function that is called by fit for every batch of data, allowing you to run your own learning algorithm while still using fit. As usual. This approach works for sequential models.
+
+Functional API models or subclass models. Since this customization specifically targets JAX. Optimization, we must ensure our environment is correctly configured to use the JAX backend. Before importing Keras. Customizing the training step in JAX requires understanding JAX's reliance on stateless computation.
+
+The entire trainstep method must be fully stateless. What does this mean. Well, it means that all elements of the model state the trainable variables, the non-trainable variables, optimizer variables, and the metrics variables are all explicitly passed as inputs within a state tuple, and then returned as updated versions of those same variables. We'll use stateless versions of the call apply and compute loss functions, so keep an eye out for how their inputs and outputs end up being structured. A key part of the JAKs implementation is calculating the gradients, typically using a helper function.
+
+In this example, we made one called compute loss and updates. As the name suggests, it computes the loss and the updates portion refers to updating those non-trainable variables. So two things are happening in this function. We first do a forward pass of the model using model call, passing the trainable variables and non-trainable variables explicitly as inputs. Using stateless call is important with the JAX backend, and this method will return the predictions y pred, and any updated non-trainable variables as well.
+
+Then we'll use these values to compute the loss by passing in the expected y values along with those predicted y values. Now let's look at the train step where we call our helper function compute loss and updates. The plan is to use JAX's grad function transformation, which will produce a new function that computes the gradient of our helper function. This means we'll end up with a function that computes the gradient of the loss, which is perfect for our machine learning needs. In practice, we want to compute the value of the loss as well as its gradient, so we'll do that to our helper function using JAX value and grad.
+
+This is simply combining the operations of calling our helper function itself and creating its gradient function. When we compare doing this manually with separate calls to the function and grad, we'll see they're very similar, except you'll notice we didn't have to write our list of arguments to compute loss and updates twice, which is nice. So you might be wondering also why we use the has x equals true argument here. This argument indicates that the function being differentiated returns a pair where the first element is the value to be differentiated, and the second is auxiliary data that should not be differentiated. Our loss computation function returns exactly this the loss, which we want to differentiate, followed by some other stuff that we're kind of just passing through the widespread and those updated non-trainable variables inside of trainstep.
+
+After computing the gradients, we update the variables. Keras provides stateless methods for this to. To apply the gradients, we use the optimizers stateless apply method. It's aptly named optimizer.zero grad apply, which returns the updated trainable variables along with the updated optimizer variables.
+
+If you are using Keras metrics, you can handle them by calculating the metric result inside the step function using metrics stateless update state. Ensuring these new metric variables are also returned in the state tuple. This same capability for low level control can be applied to evaluation. So to customize how model.evaluate operates, override the test set method with a call to compute loss and updates, just like we did in trainstep.
+
+Except we don't need to perform the stateless apply to update the weights this time, since we're just evaluating and we can move directly to recording our loss metrics for evaluation. Scoring by subclassing Keras model and overriding methods like trainstep and test step, you gain fine grained control over the training and evaluation algorithms using JAX's powerful function tools, all while preserving the convenient high level features provided by model.fit. So what custom algorithms have you integrated into Keras model. Share your thoughts in the comments below.
+
+And for the full documentation and complete code examples, check out the guide LinkedIn the description below. Thanks for watching and I'll catch you in the next one.

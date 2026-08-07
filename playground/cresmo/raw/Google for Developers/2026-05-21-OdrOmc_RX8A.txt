@@ -1,0 +1,268 @@
+---
+video_title: "Build agents with Gemini API"
+video_id: OdrOmc_RX8A
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=OdrOmc_RX8A
+video_date: 2026-05-21T23:52:17+00:00
+video_description: |
+  Demystify agent development and discover the fastest path from prompt to production agent with the Gemini Interactions API. Learn about the full spectrum of agent development with Gemini models, to real time agents, to live-coding your own Agent.
+  
+  Speakers: Philipp Schmid, Thor Schaeff
+  
+  Watch the AI sessions from Google I/O 2026 → https://goo.gle/AI-at-IO26
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  #GoogleIO
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: AI/Machine Learning, Web"
+---
+[MUSIC PLAYING]
+
+THOR SCHAEFF: Hello, everyone. How are we doing? Everyone good? Everyone staying cool and hydrated? If you haven't, now take a sip of water.
+
+We'll have some really cool demos for you today. We're building agents with the Gemini API. Now, this is a dynamic session. So if you want you're very welcome to follow along. In Google AI Studio, that is your easiest way to get an API key for the Gemini API.
+
+So if you go to ai.studio in the bottom left corner, you will find the Get API Key function. And you can use that to follow along with the code examples that we will show you today. Google AI Studio is really the best place to get started with all of the Google DeepMind models. It's our playground for you to test out all the different models and capabilities.
+
+So I invite you to follow along. There's no setup required. There is a generous free tier. You can start experimenting. And you can also set up billing and manage your spend caps.
+
+That's all built into AI Studio. Now the power of Gemini really lies in its multimodality. So that's both on the input side, Gemini is really good at understanding system instructions, text, code as well, but also images and audio and video. So Gemini is really, really good at understanding all these different modalities and reasoning over them, which is really cool. And on the output side, we can also generate a lot of different modalities.
+
+You probably are familiar with Nano Banana. Everyone loves generating images, editing images. But also with Gemini TTS, you can generate speech, or with Veo, you can generate video. There will be a great session after this one as well, which will look more at the Gen media models and that side of things. But now let's talk about Live.
+
+Gemini 3.1 Flash Live is our latest multimodal, real-time conversational model. Many of you have probably already used it. If you've talked to Gemini in the Gemini app, that is the Gemini 3.1 Flash Live model powering your conversations there.
+
+Also, if you've gone to the backside of this stage and talked in the phone booth to the 1-800 app idea demo, that is also powered by Gemini 3.1 Flash Live. Now let's have a little look at a demo. This demo was vibe coded in Google AI Studio. So you're very welcome to scan the QR code as well.
+
+And you can remix it also in AI Studio. Now, remember those times where you would call up the radio DJ and you would ask for a song, you would request a song? So that's really the same idea here. But our radio DJ is Gemini Live. And Gemini Live has a tool and can make a function call to the Gemini API to use Lyria 3 to generate a 30-second clip on demand.
+
+So let's have a look at that. AI DJ: AI in context. Welcome to the Live Jukebox. You're live on air, ready to craft an absolute banger. So what's the master plan for today's tune, mate?
+
+Need some synthwave vibes? Or maybe something more jazzy? And what sort of story are we spinning in the lyrics? THOR SCHAEFF: Yeah. Actually, can we get a really high energy reggaeton song about all the awesome developers here today at Google I/O?
+
+AI DJ: Boom! High energy reggaeton for the Google I/O devs. I love it. That's going to be massive, mate. So we're talking tech, code, innovation.
+
+Maybe a shoutout to all the brilliant minds hanging out at I/O. Tell me more. Any specific tech trends you want thrown in the mix? Come on, big man. Let's make it legendary.
+
+THOR SCHAEFF: Yeah, let's maybe do some vibe coding with Google AI Studio, and also some agentic coding with Antigravity.
+
+AI DJ: Right. Hold tight. That's going straight to the top of the pops. Expect an absolute banger with all that vibe coding and agentic coding goodness. We're talking high energy reggaeton meets top tier tech.
+
+It's landing soon, mate.
+
+[MUSIC PLAYING]
+
+THOR SCHAEFF: All right. That was very cool, and very glad as well. Big round of applause. [APPLAUSE] I don't speak any Spanish, but our interpreter here does. That's amazing.
+
+Thanks DJ, as well. Cheers. AI DJ: Wicked. Glad you enjoyed it. THOR SCHAEFF: As you can see, live demos, always a challenge.
+
+But very glad this one worked out so well. My Spanish is a bit rusty. But it sounded pretty good to me. We can go back to the slides. So this demo is powered by the Gemini Live API.
+
+And the Live API enables low latency, real-time voice and vision interactions with Gemini. So you can see here we have a stateful WebSocket connection. And over this connection, we can send text, audio, as well as video frames to the model. And the model will understand the images but also the physics behind the video, and understand what is happening in the video frames. And then it can reason over that.
+
+It can execute function calls, and it can reply back in real time using audio, as well as providing the text transcript for both the input and the output text. Now, this works seamlessly across 90 different languages currently in preview. So this is really cool because it's a native audio model. So we're going speech to speech. So the model can very seamlessly switch between all these 90 different languages and provide a very seamless experience.
+
+We can also interrupt the model. You saw this earlier. The DJ was very talkative, so I can barge in. We have the tool use. So we can automatically use Google Search grounding as well, where we can pull in real-time information from Google Search.
+
+Or we can give it our custom tools, like in this example, where we gave it access to the Gemini API to generate our custom music track with Lyria. And then we can get the audio transcription. So again, we're not going through text here. The model is going sound to sound. So we're actually running the transcription on both the input and the output audio and then providing the text for that.
+
+We also have a really, really great partner ecosystem for the Live API. So you can use it in Firebase, of course, but also really great third-party partners, like LiveKit, Daily and Pipecat, which is a great open source framework as well, Software Mansion, VisionAgents, Voximplant, and of course, the ADK, you can also use to build these real-time conversational experiences and bring them to production quickly. Now a lot of talk. We also had a demo already. But for you, the easiest way to get started with the Gemini Live API is in Google AI Studio.
+
+So let's go over there now. So ai.studio, we paid a lot of money for that domain. So I appreciate if you used that one. And then we can see there's a ton of new tools here now.
+
+But we can go to the Live API. So in the Playground, we can find all the live models. And here is Gemini 3.1 Flash Live Preview. So we can choose from a bunch of different base voices, like-- AI VOICE: Got a project in mind?
+
+THOR SCHAEFF: --Puck here, for example. I like Puck. He's great. So we'll use him. And then we can simply start our real-time conversational session here.
+
+[DING] Hey, Puck. How are you today? AI VOICE: I'm doing pretty well. Thanks for asking. Enjoying the flow of conversation.
+
+How about you? Anything interesting going on? THOR SCHAEFF: Yeah. Actually, what do you think of my outfit? AI VOICE: The olive green shirt looks nice.
+
+And the blue tee underneath is a good contrast. I also see the hat you're wearing. Looks like a casual, comfortable look. THOR SCHAEFF: Yeah, what does it say on the cap, actually? AI VOICE: Ah, now I can see it.
+
+It says, ai.studio written across the front. That's pretty cool-- THOR SCHAEFF: [SPEAKING GERMAN] AI VOICE: [SPEAKING GERMAN]
+
+THOR SCHAEFF: [SPEAKING CHINESE] AI VOICE: [SPEAKING CHINESE]
+
+THOR SCHAEFF: [SPEAKING CHINESE] So, as you can see here, we can ingest the video frames of our camera, and the model can see our outfit. Luckily, Gemini likes what I'm wearing today. Gemini can also, obviously, understand the text that's written in the images and extract that, and reason over that. And we can seamlessly switch between the languages. And we get our speech transcription, so that's our input transcript, as well as our output agent transcription here, which is great.
+
+Now we also have some really cool Live API examples in GitHub. So if you want to get started and see all the different capabilities that the Live API has, you can get started here in the Google Gemini GitHub org with the Gemini Live API examples. And so I prepared that already here for us. So I pulled down this example. And there's different examples.
+
+We can actually connect directly to the Live API from the client side using ephemeral tokens. So ephemeral tokens are short-lived tokens that we can issue on the server side and then provide to our client to directly connect to the Gemini Live API. So let's do this here. Now I'm not the greatest designer. But this is just for you to see all the different functionality.
+
+So you can see here we can connect to the Gemini 3.1 Flash Live model. We can give it some custom tools here. We can enable the transcription, and then let's just connect. The system is ready.
+
+Hey, can you hear me? AI VOICE: Yes, I can hear you loud and clear. How can I help you today? THOR SCHAEFF: Yeah, I have some code example here. But I don't really know what it does.
+
+What does this do? AI VOICE: That code sets up a tool called Show Alert. It looks designed to display a message and a popup window to the user, with a title and whatever message you specify. Are you curious about how to use it or something else? THOR SCHAEFF: Yeah, maybe.
+
+Let's try that. Let's show an alert, Hello Google I/O. Did that alert show up? AI VOICE: Yep, it worked. The alert box saying, Hello Google I/O should be on your screen now.
+
+Did you see it? THOR SCHAEFF: Yeah, that's great. Actually, can you change the background color to green, please? AI VOICE: Sure, the background of the page should be green now. How does that look?
+
+THOR SCHAEFF: Yeah, that's great. Actually, is that green? Can you see that? AI VOICE: I can see the change in your screen share. And yes, the background is now green.
+
+Is that the shade you were expecting? THOR SCHAEFF: Yeah, that's a great shade. But actually, let's switch it back. AI VOICE: No problem. I've changed the background back to white.
+
+Anything else I can do for you? THOR SCHAEFF: No, that's it. Thanks so much, Gemini. AI VOICE: You're very welcome. Glad I could help.
+
+Feel free to reach out if you need anything else. THOR SCHAEFF: There you go. So that is a really snappy experience when we're connecting directly from the client side to the Gemini Live API. And now finally, we also have Gemini API skills. So these are coding agent skills that help you develop with the Gemini API.
+
+So we specifically have Gemini Live API skill that you can install in Antigravity or your coding agent of choice, and it will help you work with real-time voice and vision applications and make that a breeze for you. Now, the Live API lets you build real-time conversational experiences centered around voice and vision. But of course, there are many different ways that we interact with models and agents. And that's why we've built the Interactions API. It's our new unified API to interact with models and agents alike.
+
+And I'm excited for my colleague Philipp to show you what you can build with it. Thank you. [APPLAUSE]
+
+PHILIPP SCHMID: Thanks, everyone. My name is Philipp. And I am part of the Interactions API team. So if you have feedback afterwards, if you have questions, please let me know, send me a message wherever. And as Thor already said, the Interactions API is our new unified interface to interact with models and agents.
+
+And you can see here the code snippet. Both of them look very similar. We have a client interactions that create call on the top one. We have a model, in this case, Gemini Free Pro Preview. On the lower one, we have an agent.
+
+So basically, you decide, OK, do I want to interact with a model, or do I want to interact with an agent? Then I have my input. Who won the last Euro, for example? It's a very common Google Search model type of questions. So I probably don't need a super big agent for it.
+
+I define my tools. And then on the lower one, I have a very more complicated research topics, like research the history of the Google TPUs. What's new for agent is this environment equals remote feature. That's something we launched yesterday during the developer keynote. That basically gives the agent and Gemini a fully remote sandbox where it can run code.
+
+And we are going to play around with it later a bit, build our own agent. But what makes the Interactions API additionally unique is that it has server-side state management. So if we are going to look at some code examples on how you would implement it, before, the Interactions API with generate content or with other APIs, you always need to maintain this client-side array of history with the user turns, the model turns, which can become very big. You don't know if you maybe cut out a different turn. And with the interactions API, it's very simple.
+
+You make your first call, in this case, hey, my name is Phil. And in the outputs, you get back an ID. And the ID can be used for the next turn. So in the followup turns, when I ask the model, hey, what is my name? It has all of the context from the previous turn.
+
+So you can think about it that we, on the server-side, stack all of the context together, and that all it takes to basically build a multiturn application, you just pass the ID, and then you continue the text. And also the Interactions API supports the audio generation feature. So if you liked what Thor showed about generating text, sorry, generating speech, you can use the Interactions API with our Gemini 3.1 Flash TTS Preview model. It is the same API interface.
+
+We have our model, we have our input, we have our response modality. So we want to generate audio, in this case. And then we have a generation config because I like Core more than Puck as a voice. So I configured my speech config. I can define the name.
+
+And then all it takes to make is the same API request. And that's for all modalities or all features we support in the Gemini API. So for image generation using Nano Banana Pro, I define my model, I define my input. I want to generate an image of a futuristic city. I have a generation config here.
+
+I want an image in an aspect ratio of 9 to 6, and the image size should be 2k. And I make the call. So every one of the snippet looks very similar. That's helpful for us humans to read it. But it's also helpful for the agent to build it.
+
+If you have common pattern, we and agents, it's much easier for us to complete those. And let's look at another tool example. So that's tool use. So when we build an agent, what are the key components? We have a model, which is our brain.
+
+We need tools or hands for the model to interact with the environments. And then we need an environment or on a loop. And to build a very client-side simple agent with the Interactions API, we need to define our function or our function schema. In this case, we have a file incident of type function. We create a JSON schema.
+
+So which parameters or properties do we expect the agent to create? And then in our Interactions API call, we have a tools field. And in the tools field, we do not only or can not only provide our custom functions, we can combine the server-side tools from the Gemini API. So the Gemini API comes with server-side tools for Google Search, Google Maps, URL context, where you don't need to do anything on the client side. This all happens on the server.
+
+And you can now combine them. So in this case, when you make a request, the model can decide, so hey, wait a minute. I first need to use Google Search and then need to make the custom function call. And the Google Search happens automatically on the server side. If it decides to generate a function call, it returns to you as a user.
+
+And then you can handle this on your client side. And a very big change for the Interactions API to become agent native is how we approach the data model. All of the LLMs in the beginning were mostly created or used for chat interactions. So we had a user turn, and then we had a model turn. Then we had a user turn and a model turn.
+
+And with agents, those didn't feel right anymore. We have function calls. We have the environment responding. We have reasoning. We have client-side tools, we have server-side tools.
+
+We have compactions. So all of those different kinds of steps were not just user and model turns. So with the Interactions API, we move to a steps data model, meaning that each individual action inside of an interaction is its own step. And we have a user input step. But then we have a function call or function result are the individual steps.
+
+So you no longer need to define role user and then provide the function result, which felt a bit weird to me, at least. You have a dedicated action for the function result. And we can see in the code snippet basically, that's a response from a model. So it has the dedicated thought block with a summary, a signature, and then the model has its output there. And what's very important is we separate it a bit, like, what is content representation, and what is an action or a step?
+
+So our thought has a summary of type text, but it can also be of type image. Same, a model can output a text or can output an image. So let's talk about the Antigravity as a remote agent. So together with the managed agents in Gemini API, we launched a new hosted agent. When we launched the Interactions API in December, we launched our first managed agent, which was Deep Research.
+
+And yesterday, we launched our second managed agent with Antigravity Preview that's available for all of you. So if you are curious after the session to try it out, you can go to the AI Studio. You can try it directly in the UI. We are going to do this, or we are the API. And the Antigravity agent is powered by the same harness as the Antigravity IDE.
+
+So we are basically unifying the same agent harness across all of our offerings. It has a rich set of tools. So it can do code execution, file system operation, web search with Google Search, URL context. It can use agent skills. And I think for me, at least, the most exciting feature is this environment.
+
+It gets its own computer, basically. So until recently, or if you use a coding agent, it always acts on your client and your machine. So you might not be able to work at the same time. Or what if you want to scale your agent to your customers, how can you provide one computer per customer? It's very challenging because you now start to need to manage infrastructure.
+
+And with the new managed agent feature, every agent becomes its own small little box, where it can do its work. And it can come back to you. You can interact with the environment, download the files, access the files. So that's very, very exciting for me. And the environments are persistent.
+
+So you can create an interaction, and you get back similar to the interaction ID in environment ID. And in the followup turn, you can provide the environment ID to the call again. And then the agent continues to work inside the same environment. But what if you want to use the environment with a different agent? So maybe you have a research agent who's researching the history of Google TPUs.
+
+And then you have a app builder agent. You want to, of course, provide the research to the app builder. And you can share this with the environment. So the research agent can run on the same environment. And then you can provide the environment ID to the app builder, which can then read the same files the research agent created and build the app around it.
+
+So we no longer have only context shared inside of the history, we can also now share context on the environment via persistent files. And then in addition to this, you can not only download files during the execution, you can also scaffold your environment so you can provide files from a GCS bucket, from a GitHub repository. So if you have your skills in a GitHub repository, you can make them directly accessible or via inline. And those files are not part of the model input. They are part of the environment.
+
+So it's not that we run into this context limitation if you upload a heavy video or a big image. The model can, of course, read them from the file system. But they're not directly part of the file system. So what it takes to create your own agent, you can use the Antigravity agent. Or you can create your own small little agents, which you can then invoke via the idea.
+
+And all it takes is an agent.create call. You can give it a name. So in this case, it's a data analyst. You define your base agent, the Antigravity Preview, in this case.
+
+You can provide system instruction. Then you can scaffold the environment with, like, hey, I want to provide my skills from my GCS bucket. And after you create it, you can directly use that data analyst ID to interact with it. But what if you need to install certain CLIs, certain binaries? You can do this by using the agent to scaffold its own environment, and then use it for creation.
+
+So you can-- on the right side, yes, you can say, hey, please install Pandas. Create my Python environment. And then you have the environment ID. And you can provide this environment ID when creating an agent. And every time you make a new request to this new agent, the environment is forked.
+
+And it has all of the pre-installed libraries available for you as a clean, fresh environment. In addition to this, we also launched a small CLI for the Gemini API, which makes it super easy for you to give your coding agent basically access to the Gemini API. Yeah, you can see it on the GitHub repository. And now let's look at some demos. Cool.
+
+Yes, it works. So I'm in AI Studio. And with the Antigravity agent, we launched a new tab or experience. So in the Playground, you now can switch between models and agents. Or you can go to the model picker, where we also have the agents available, where you can interact with the Deep Research agent or with the Antigravity-- sorry, the Antigravity Agent Preview.
+
+And in the middle, we have six different cards. One of them you might have already seen during the developer keynote that was the AI Talk Radio, where we generated this awesome AI talk radio show from the Hacker News. And we have a data analyst, we have a customer support. And we pick the Antigravity Preview. And then we have some prompt examples.
+
+So in this case, I want to create a weather dashboard with the prompt like, hey, what's the current weather and a three-day forecast for London and Ankara? And then create an HTML dashboard. And then I click Run. And now what happens on the server side is it spins up its sandbox, its coding environment, and then it starts working on it. It takes a little bit of time on the first request.
+
+While that's working, I know it's already working. So we see the thoughts. We need to use the weather in. And then it runs the command It curls our API for London. It continues the thinking.
+
+It makes more tool calls. It writes a Python script, another Python script. And all of that was initialized with a single API call. So we are not handling any tool use loop on the client side. It's all running on the server, one single API call and then waiting until it's done.
+
+And you can scaffold those environments on AI Studio as well. So if you want to, for example, add a source, upload a skill or something additional, you can do this here. But much more important, at least for me, is like, OK, how can we provide credentials in a secure way? If we give our agent a sandbox where it can execute and run code, that feels very dangerous. What if I provide my API key and the agent decides to use it to, I don't know, run 100,000 calls to the model?
+
+Or what if I provide some other credentials to more personal information? And to solve this, we created a proxy around the network or around the sandbox. So the agent will not have access to the API key, but it can make API calls. So if we can limit, for example, we said, hey, the weather.in URL is available.
+
+And if it would require an API key, we can define it here. And then what happens when it makes that call? We catch that call and place the dummy header from what the Gemini or what the sandbox has with the real API key. So the model thinks it has a valid key, but the key is never available for it, which is a very good solution in this case. We can go back to our model.
+
+OK, it's still-- it's currently creating our dashboard. It has already written another file. Since we only have a few more minutes left, we can look into a pre-run example. So at the end, it generates a response like, hey, I have fetched the real-time data, the real-time weather and the three-day forecast for London and Ankara. And I have created some files that use the Python file, but also a dashboard.
+
+And in the AI Studio, we can directly click on this file, which basically downloads the file from our sandbox, makes it accessible for us. We can see the raw code, but my HTML is not as good to fully validate if that's the correct dashboard or not. But we can view it in preview. And we can see here it's like the dashboard with the model created, we can switch between Celsius and Fahrenheit. We can switch between Ankara and London.
+
+And all of that was done via a single API call. Of course, it's not the most beautiful dashboard. But one API call, three minutes of waiting, and we get our result. We can also quickly go back to, OK, it's still running. And there's another very cool example.
+
+So let me open a new AI Studio. In addition to ai.studio, we also have ai.dev. So if you don't like the domain ai.studio, you can use ai.dev.
+
+There's another prompt which asks you to create a very basic Antigravity game with Three.js, where I can fly through an Antigravity space. And it already worked on it earlier. So very similar. The model thinks about it, lists some files, writes the game, basically, makes sure that the game is available and runnable for me.
+
+So it verifies its own work, returns it to the user. And then I can download it again. And very similar to the dashboard, I can render my HTML. And I can click Play. And now I'm running my small little game which Antigravity has created for itself directly in AI Studio, which is very fun for me, at least, to play around and to experiment.
+
+Now let's go into creating our own agent. Most of the developers don't write too much code anymore. We use coding agents for it. And to make it very easy for coding agents to use the Gemini managed agents, we created a skill. And we created a CLI for the Gemini API, because at the end, it's all just an API call.
+
+So what I have done before the session, I installed the Gemini API CLI skill and the Interactions API skill into Antigravity. But we can test it with what skills can you use? And of course, we use the new Gemini 3.5 Flash model. So we have an android-cli skill available, which someone else might have installed.
+
+We have the gemini-api-cli and the interactions-api skill. And what we can now do is we can ask like, hey, create a new Gemini agent that is very good at emoji creation in SVG. Now it reads our CLI skill. The CLI skill has a specific section on how it can interact with this new managed API. We want to-- yes, allow the commands.
+
+It lists our agents. We say, yes. You already can see I have tested this. So let's see if it creates a new agent.
+
+OK, working, working.
+
+Working. We got a plan. We have a plan. This plans out loud, how to create a new agent. And if we scroll down, we see we have an AGENTS.md file, which
+
+defines a system instruction, a helper method to Python script to call when an newly agent is deployed. Sounds good. We see the CLI being used. So in the gemini-api-cli, you have an init command which scaffolds your agent. You can create it, you can list it, but you can also test it.
+
+That looks good to us. Now let's create it.
+
+We allow the command. And now when we look into our files folder, we have this SVG emoji generator. It has a Skills folder. It has a Workspace folder, and it has our agent.yaml.
+
+The agent.yaml basically is the same shape. Let me move that a little bit so it's easier. So it's the same shape. We have our ID.
+
+We have the base agent. We have a description. We have the tools it can use, and then our environment. If you want to specify source, it is also as an example on how to do it. And then we have our AGENTS.md.
+
+And the AGENTS.md has an instruction, you are world-class SVG designer specialized. Of course, we can now edit it, adjust it, correct it either manually or using our coding agent. For now, we allow it. Looks good.
+
+We created it.
+
+Thinking, testing.
+
+Now we do not want to use Python. We want to stop it. Stop here. And we tell it, test it. Give us a test command using the-- so that's what we take.
+
+So we go into our terminal, very similar. So we can either now tell the agent to run our CLI, or we can run it ourselves. We run it ourselves. And now we should-- or we are going-- we are doing the same as we have done in AI Studio. We start our request with a single API call.
+
+We have some thinking. We should also see soon some-- yes, some file being generated, in this case, create rocket. We do more thinking.
+
+Waiting.
+
+While this is running, we can go maybe back to our other run we started in the beginning with the weather dashboard. Nice, that finished. So that's the request we started in the beginning of the session, and also very similar here. Now we have a different dashboard with some nice icons. We have the weather forecast.
+
+I would say this version looks better to me than the previous one. But of course, you can now say, hey, make it light mode. And what's very nice is we use the same environment. So it has the context of, hey, we created this dashboard. We can see as a follow up turn, it read our weather dashboard file.
+
+And it's now thinking. Let's see what it does. I examining the templates, specifically styling.
+
+Investigating the theme application. And it's now changing the file. So it not only has the context of the interactions we are running, it also has access to the files, which makes it very unique to use. Let's look back to our model. We are now like streaming our SVG.
+
+It should be done. So that also completed. And if we look into-- oh, we can say no. I run that in my terminal, download the file. Now we give it the environment ID.
+
+Here is the env ID. And hopefully, it still knows. Yes, we can now use Gemini API files download. We say OK. It downloads our file.
+
+We have our rocket. We copy the rocket. Yes. And here, we see the rocket the agent has generated, which looks like a very decent emoji for me inside an SVG. I'm sure I could not be able to do that.
+
+And if we quickly go back to our other agent, I've redesigned the dashboard. Let's take a look. And nice. It's in light mode. So as you can see, it's very flexible in terms of what you can do.
+
+You have now two states you can use to manage context with the model. You have your environment, where you can persist file. It's very interesting when you start working with bigger files, videos, audios. Or if you want to work or have agents work in the same environment, or even if you are doing some coding work, being able to run things asynchronously and remotely allows you to set up trigger. You can think about, OK, what if I get a new GitHub issue?
+
+I always want to start a managed agent which looks at the issue. Is it able to reproduce the issue, or do we miss some kind of information? If we miss some information, maybe the agent can go back, add a comment to the issue, and then ask for more information, all hands off, all without needing to create any infrastructure to manage any sandboxes for you. Awesome. We have some time for questions.
+
+So if you have any questions, you can go to the outside. We are very happy to answer about the Live API, about the audio models, or especially on managed agents or the Interactions API.
+
+THOR SCHAEFF: Do you want to say thank you? PHILIPP SCHMID: Oh, thank you. But I know we don't-- yeah thank you. THOR SCHAEFF: Thank you. [APPLAUSE] [MUSIC PLAYING]

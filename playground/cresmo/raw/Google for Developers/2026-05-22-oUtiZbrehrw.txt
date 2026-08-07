@@ -1,0 +1,282 @@
+---
+video_title: "What's new in the Gemma open model family"
+video_id: oUtiZbrehrw
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=oUtiZbrehrw
+video_date: 2026-05-22T17:59:28+00:00
+video_description: |
+  Build AI applications with the Gemma family of open models' state-of-the-art tools. Uncover the newest additions to the family and dive into the practical tools that make them usable at scale. Explore an end-to-end pipeline from model discovery to deployment. Discover how to experiment with Gemma using your favorite tools, and learn best practices for deploying directly to users across cloud, desktop, and mobile.
+  
+  Speakers: Ian Ballantyne, Gus Martins, Olivier Lacombe
+  
+  Watch the AI sessions from Google I/O 2026 → https://goo.gle/AI-at-IO26
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  #GoogleIO
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: AI/Machine Learning, Android, Cloud
+---
+[MUSIC PLAYING]
+
+OLIVIER LACOMBE: Hey, everyone. Welcome to What's New in the Gemma Open Model Family. My name is Olivier. I'm the product lead for Gemma. And today, I will be joined by Gus, a product manager on our team, and Ian Ballantyne, our developer relation engineer.
+
+So what is Gemma? Gemma is an open weight large language model at Google DeepMind. We started Gemma in 2024 with a simple premise. How do we create a model that you can run everywhere and fully customize to your needs? That created two requirements for us.
+
+Number 1, make sure that the model is reasonably sized. Number 2, make an open weight model that you can fine tune to your wheel. With Gemma 3, we did exactly that. We created a multi-model family of model running from IoT devices at 1 billion parameter to larger consumer GPU at 27 billion parameter. And we made sure to apply one thing which is part of our philosophy, a.k.a., give you
+
+the highest efficiency possible running on your local machine. And a couple of weeks ago, we announced Gemma 4, our most capable open model to date. Thank you. [APPLAUSE] We apply the same philosophy with Gemma 4, giving you four model size ranging from 2 billion parameters to 31 billion parameters that you can run everywhere. You want to run at the edge on IoT devices?
+
+Use our 2 billion parameter model. You want to run on a higher-end phone or lower-end laptop? Use a 4 billion parameter model. You have a more powerful machine and you want the highest efficiency and latency? Use a mixture of expert at 26 billion parameter.
+
+Finally, you're looking to fine tune and have the highest quality possible? We have a 31 B ready to go. And we maintain our philosophy around efficiency. Our Gemma model, here evaluated on LLM Arena, are scoring as well as model 20x the size. We want to make sure that you have the best bang for the buck, the highest amount of intelligence per watt.
+
+Our models are highly efficient by training. As you can see on the right-hand side, we've improved Gemma 4 capabilities across the whole spectrum, from text use case, creative writing, code, or reasoning with science, legal, and so many other areas. The reception so far has been fantastic, and we cannot thank you more. We have more than 100 million downloads. We had more than 6 million downloads of the AI Edge gallery, which you can demo outside, and the reception has been, again, incredible.
+
+We are very, very happy to see that people are using and enjoying the Gemma 4 models. In terms of capabilities, we've changed a couple of things compared to Gemma 3. Now, our models have a larger context window. We move from 32,000 tokens to 128,000 for small size, up to 256,000 for 31B and 26B. Now, all of our models come with both reasoning, a.k.a. thinking,
+
+and function calling, making them fully ready for the agentic era. Finally, we changed our license. We moved away from a custom Gemma license to a popular Apache 2.0 license, giving you full control when you deploy in production. [APPLAUSE]
+
+We know that the Apache 2.0 license was very well received, and we are very happy. We want to see Gemma being used more in your pipeline. In terms of capabilities, I want to highlight a couple of things. On the vision side, because we know our models are being used at the edge, we made sure to give you the highest amount of efficiency.
+
+We have now variable aspect ratio images and visual understanding. We can process charts, document, and screenshot better than ever, and we have multimodal translation being built from the ground up. On the agentic side, our models are fully ready with multi-step planning, tool use, and autonomous task completion. You can now use them in whatever agentic pipeline you have ready to go. Finally, audio understanding on the smallest size has been completely redone from the ground up.
+
+We are more than ever multilingual in essence with speech understanding and have good transcription and translation capabilities. Of course, text understanding, we have that since Gemma 1. We continue to be state of the art in English when it comes to our main Gemma family, and we've expanded that across internationalization, which is something we'll cover after. From a vision standpoint, a couple of things to highlight. We have object detection.
+
+We can do bounding boxes, which is quite important if you want to use Gemma in IoT use cases or robotics use cases. And again, as I mentioned, we have multi-modal translation from image input, and we'll show you more demos like in the rest of the presentation. Gemma comes with multiple architecture ready to go for where you want to deploy them. If you want to push Gemma at the edge, we have per-layer embedding, which is a new technique we've developed for Gemma 4 to optimize efficiency. If you want to deploy them on your laptop, we have two types of architecture-- a 31B Dense, which is going to make fine tuning easier and help us get the highest amount of intelligence per tokens-- per parameter, sorry-- and the other one is a 26B MoE, giving you the highest efficiency in terms of runtime.
+
+From a benchmark standpoint, I don't want to spend too much time there. Please go and try the Gemma model and see if they fit your use case. What I want to point your attention to is the capability of Gemma 4 E2B model compared to the previous generation at 27B. Our 2B model this cycle is matching or even better than our 27B last year, and that makes me very excited about the future. I'd love to see if next year we're able to give you the 31B capabilities in your pocket, running on your phone fully locally.
+
+I think that makes up for a very exciting future. Now, I've talked about multilinguality, and I wanted to show you that it means a lot to us. On the left-hand side, you can see EuroEval, which is an independent benchmark leaderboard where the model is being rated across European languages. And what you can see there is that all of our Gemma models are scoring pretty well. Our 31B specifically ranked from between number 1 to number 5 on almost all European languages, and that is across open source and closed source model.
+
+On the right-hand side, you have another example where we're comparing Gemma to other very successful models on Japanese languages, and our Gemma model is getting very close to GPT 5.4. We have very strong compatibility with Southeast Asian language. And Korean is another language where we excel at. Now, another benchmark which was quite amusing-- FoodTruck Bench.
+
+So I didn't know this one before releasing Gemma 4. It's actually measuring the reasoning capabilities of the model as well as the function calling. And we found out that the 31B is, to quote the line, a beast at that. The model is doing extremely well in an environment where you need to have deep reasoning and, I would say, reasonable function calling. As you can see here, Gemma 31B is competing with DeepSeek v4 Pro, which is a more than 1 trillion parameter model and lots of top-line closed-source model.
+
+In terms of efficiency, as I mentioned to you at the beginning of our presentation, we want to make sure we give you the best bang for the bucks. LLM Arena has done a couple of analyses on that front. We've also released MTP Drafter, enabling speculative decoding on a model lineup, giving you up to 3x speedup when it comes to your decode speed. So if you haven't used it yet, I would massively recommend you to move towards MTP and gain the highest efficiency performance on your Gemma implementation. Now, again, Gemma being fully open weight and compatible with the open source ecosystem, we have support across the board.
+
+We are supported from a mobile and web app standpoint. You also have all your favorite softwares ready to go with Gemma 4 on your local machine, and we have deep implementation on the Cloud server. And this year specifically, we also made sure that we had a day 0 implementation with Gemma 4 in the Android ecosystem. So you can either try our smallest Gemma running directly on your phone, available through the API that Android is exposing to developers, or to code your Android apps locally with a Gemma 26B model when you're on the plane or you don't have access to the Gemma API. And now, I will pass over to Gus, who will cover our implementation in the Cloud.
+
+[APPLAUSE]
+
+GUS MARTINS: Hi, everyone. Good morning. I'm Gus, one of the product managers for Gemma. Very happy to be here. Nice to see some familiar faces.
+
+As Olivier was saying, Gemma is pretty cool. Lots of great features. And when you decide to build something more than just running for you on your machine, if you want to go and build an application or use on your company or your institution, you will need to serve this model somewhere. So they have to be served from any provider. You can use any cloud provider, any inference providers that we have.
+
+But of course, we did everything we could to make sure that, on Google Cloud, we optimized as much as possible. And this is what I'm going to tell you a little bit about. First, Gemma is available in all the services inside Google Cloud that you can use a model. So for example, in Gemini Enterprise Agent platform, we have the Model Garden where you see multiple models that you can use. From there, on this screen on the right, you can with one click deploy the model for you.
+
+You create an endpoint right there. You can choose the GPU here. You can choose which variant of the model. You can choose how much memory. You can choose a lot of things.
+
+It's one-click deployment. You click, show this screen here, and then you have an endpoint for you. This is the easy one. You can use a H100, RTX 6000. We have multiple GPUs that you can play with.
+
+This is one option. The other option, still on the Gemini Enterprise Agent platform, you will have a model as a service that we call. Instead of you one-click deploying the model, we have the 26B already ready for you to use. You just call the API. And then you pay per token like other inference providers.
+
+That's an important difference here. When you do the serverless Gemma 26B, you pay per token. When you deploy using Model Garden, you pay per the endpoint. The endpoint is yours. You are paying for it to be online.
+
+So it's a different way of paying for resources. Of course, when you do that, you have access to an API SDK to access these models. This is on Gemini Enterprise Agent platform, and we also have an option to fine tune the model right there. So for example, if you want to do some post training, some reinforcement learning, you have access to also do this on the same part of the Google Cloud platform. You can use the same tools that you're already used to, and you do a further fine tuning and customizing the model.
+
+I'm going to talk a little bit more about fine tuning later, but this is also an option that we have. When we talk in deploying using Cloud, there are multiple levels of difficulty or challenges that you face, and that depends on how much you understand and how much you want to use time to manage your servers, your endpoints. Gemini Enterprise Agent platform, I would say, is in the middle. You have some control, but you also-- there's a lot of stuff that helps you do it easier. When we talk about Google Cloud Kubernetes Engine, I would say this is more advanced, but you also have control of everything.
+
+You have access to every knob. You can change any configuration that you want. We also have, of course, Gemma there. We have recipes for you to easily follow and deploy. But there, you have access to the VM, and you can change anything you want.
+
+Of course, we have recipes with everything preconfigured for you with the best parameters. But if you want to change something to optimize for your infrastructure, for your use case, you can go and do all of that. You have total control and flexibility on these endpoints. Of course, everything is always optimized for performance. We work with them to also have the MTP models already available for you whenever you want to use, and this enables you to create all your agent works already with the servers there.
+
+So you have all of that. So when you talk about GKE, you have access to create this provision. You have access to all these GPUs. You can use TPUs also. You can use any kind of hardware you want.
+
+You choose how you create your VM, and you can deploy that and start serving. It's pretty quick, but it needs you more expertise, I would say. GKE gives you all the power, but you also have to pay attention to all the details. But if you want something that's the easiest solution, we have Cloud Run. So you can also very easily two lines of code deploy Gemma using Cloud Run.
+
+What's the difference from the other two? Cloud Run gives you an endpoint. You just deploy and it gives you an endpoint. This endpoint you can access, do queries, and use Gemma the same way you would use local or other providers. But if you don't use, the server will spin down and scale to 0.
+
+Or if your app becomes very popular, you get many requests, it can also scale up to maybe 100 GPUs, and it can do all of that. And when you start from 0-- for example, let's suppose your server goes down because nobody was using for whatever reason. When you go back up, it takes you a couple of seconds of warm-up, and the endpoint is already there. So it's super optimized for you if you want to do something quicker, and this is the easiest solution, I would say. So we have Cloud Run as the easiest, most straightforward solution.
+
+We have Gemini Enterprise, which was called Vertex. Gemini Enterprise, that's the middle term. You have some more options and something that will help you. And then you have GKE, which you have access and control of everything. So you choose wherever you want to play the game there.
+
+That's great. Now you understand what Gemma is. We showed you all the capabilities, what it can do, where, and how you can deploy. That's great, but let's go a little bit beyond Gus, Olivier, Ian just saying how amazing it is. Let's try to show some cool demos and show it working real-- doing some fun stuff.
+
+We have a bunch of demos, and we are going to go from-- let's start from this side. We're going to go from Enterprise, or the 31B model, which is the stronger one, show you some more advanced use cases. Then we're going to show something that could run on your local machines or laptop right now. Then, we'll show something that runs on your phone that could be already running on your phone. We have demos outside also, and then we'll show some IoT and robotics.
+
+Let's go over all of this. I hope you get excited with this. The first one-- I like this very much. Let me see if I can do play. So what's happening here?
+
+I want you to pay attention to the query that happened there. The idea is, do you know those bikes that you pay to use per time, like the Citi Bike management system? What happened here is we asked Gemma, hey, help me optimize the revenue. And here is the database. So the setup, now that it's running, now I can explain everything else.
+
+The setup is we get the ADK framework, the Agent Development Kit, running using Gemma 31B that's on Cloud Run. We configure it to have a BigQuery MCP server connected. So the model can do queries to this database that it doesn't know. It's just a database. This database is, of course, the Citi Bikes database.
+
+It has all the points where the bikes are, their demand. There's time when bikes were used, all of that-- all the analytical database you would expect. With that, we asked the model, hey, help me optimize for revenue. And all that you are seeing here, this is not accelerated. This is real speed.
+
+The model creates a plan to, first of all, understand what's available on this database. Like you would do if I ask you this thing, first thing you would do is let me take a look on the database and what's available. That's exactly what the model does. Oh, let me see what is available in this database. From there, it devises a plan to find where it can optimize the service to get more bikes, to add other points with bikes.
+
+It tries to do a bunch of experiments until we get to the end and show these are the places where you have to increase the number of bicycles. And in doing that, you can see there, for example, there is a moment it makes a mistake when it tries to join two tables, and there is a type that's wrong. It can fix this. Oh, there's an error. Let me fix this join-- all of this by itself.
+
+There is no other user turn. There was one query at the beginning, and this runs for three minutes, the model trying stuff. It does, and then it makes a mistake. It regenerates. It fix something.
+
+Oh, I found something new. And it keeps going, keeps going, trying to optimize the service. And this is a pretty good example. I strongly recommend you try stuff similar. The model, it shows that Gemma, 31B specifically, is very strong on planning and executing that plan, even if it has to execute code somewhere, run a query somewhere, or get more information from other sources, think more, join this information, and keep on this planning.
+
+This is the power of Gemma 31B. I guess this is the-- so it's found the best locations, and it knows that's the answer. So it's showing, What are the 10 best locations to improve the service? right there, based on all these back and forth. So now I know.
+
+Thank you. [APPLAUSE] Gemma's pretty cool. Nice. This is one. Running on server, you can do that, connect to MCP.
+
+Let's go into another one. This is using Firebase AI Logic. And the challenge here is a little bit different. Imagine you are running the model on your phone. If you try to run models on your phone, there are some moments where the model might not be available for you on your phone because the phone is maybe old, doesn't have enough memory, or something like that.
+
+So if you're an app developer and you build a feature that requires the model to be there, when the model is not there, you face a challenge automatically there. What do you do? One option is to have a hybrid solution where you have the model running on the phone when possible. And when it's not possible, you call the model on the cloud provider. So you have a hybrid solution that uses both local-- oh, it stop-- you saw the video.
+
+It runs local or on the server depending on what you want to do. Firebase AI Logic helps you do that. You configure for it to prioritize local. And if it's not available local, it will just route the same query to your server that you configure there. So that gives you an easier way to do a hybrid solution.
+
+Why this matters? Because it simplifies your life as a developer. Because if you have to do that by hand, it can be quite annoying and hard. So Firebase AI Logic helps you do all of that. It can use your AICore implementation locally if it's available on a Pixel, on a Samsung device.
+
+If it's not available, you can call the server and make this, from the user perspective, completely transparent. You don't know that you're missing anything, and you implement the same logic. This is also already available. For the next demo, I'd like to call Ian. He'll show you a bunch of more demos, and I'll come back later.
+
+Thank you. [APPLAUSE]
+
+IAN BALLANTYNE: Yes, thank you very much, Gus. So my name is Ian. I'm the developer experience lead for Gemma. And the next thing I want to talk to you about is Gemma's coding capabilities. So all of our models can code even down to the E2B model.
+
+And what we're going to show you here is a demonstration of a game called AIventure, where you can vibe code along using the model. And we'll play the video so you can have a look. [VIDEO PLAYBACK] - Want to learn how to build agentic workflows and integrate vibe coding into your apps? Well, we built AIventure, an open source retro dungeon crawler that doubles as a gen AI masterclass for developers. Built on an Angular and Phaser JS stack, AIventure is powered by Google's Gemma 4 open weights model.
+
+First, we'll explore vibe coding. You prompt your chicken NPC to build a web app. Behind the scenes Gemma 4, writes HTML, CSS, and JavaScript on the fly and renders it locally in an iframe to validate the constraints. Next, you'll build agentic behaviors. When encountering a puzzle you can't physically cross, you must prompt a robot NPC.
+
+This triggers an autonomous thinking loop. Gemma 4 evaluates the game state, executes specific tool calls to locate a hidden switch, and interacts with the Phaser JS game engine to solve the puzzle. The biggest takeaway? You have complete flexibility in how the model is served. You can run Gemma 4 entirely locally, with zero ongoing server costs, using Transformers.js
+
+in the browser, or by plugging into Ollama or LLM Studio via their OpenAI compatible interfaces. Need cloud scale? A simple config change routes your request to the right Gemini API or Google Cloud. Ready to look under the hood? Scan the QR code, and explore the GitHub repo, and read the full developer solution.
+
+Take on the quest to expand your AI tooling knowledge with AIventure. [END PLAYBACK] IAN BALLANTYNE: Thank you. So there you go. As past Ian mentioned, you can run this model in a number of different scenarios. And we have an example you can try outside using LLM Studio, and we also have a version that runs with LiteRT and WebGPU directly in a browser.
+
+So you don't even need a connection to do it. Next up, I want to show you a demo about the speed and performance you can get about running Gemma in parallel. And to do that, we're going to move over to this laptop right here. So what I'm going to showcase in this particular example is I'm going to show multiple agents running on a single server-- in this case, this laptop-- which are going to do a task for me. So we're going to use it to build some SVGs.
+
+So how about we do-- let's go for a cute animal mascot for Gemma. There we go. Let's see if I can spell it right. There we go. There we go.
+
+And we're going to execute that with 15 different agents. So let's run that query. First of all, their orchestrator, which is in the top, is going to delegate that task amongst the different agents that we've got running. And it's going to do things like little animals and stuff like that. And what you can see in the left-hand side is the total throughput of all of these agents running simultaneously.
+
+And this is the parallel capabilities of running a system like Llama CPP directly on the device. And you can think of it that each one of these parallel agents is like a unique user or a unique session. What you'll notice, actually, is that the speed decreases. And that's because when you're running less stuff in parallel, it is limited by how fast it can output tokens-- again, showing the concurrency. Oh, there we go.
+
+We've got some crazy little agents here. I like this guy-- this little sunshine guy. So that was obviously a little bit of fun to just create some SVGs. I tried to show this to demonstrate the throughput. But if you wanted, for instance to do a more complex task, you can enable thinking, and take a little bit of extra time, and have each of these subagents reason about what they're actually building.
+
+I'm going to show you another example right here related to code. So we're going to use this example to show how Gemma can code different programming languages and do this in real time. So I'm going to do an example. An example-- there we go-- example of calling-- so we're going to call the Gemma model Google-- so it's Gemma 4. In this case, we're going to call the 26B, and it's 4 billion activated parameters.
+
+And we're going to pick the IT versions. The IT version's the instruction tuned version of the model. So that's the one that has the chat template, understands function calling, et cetera. And we're going to call it with the OpenAI compatible endpoint, and we're going to run it on localhost. So if you're not familiar with this, most of the services like LLM Studio, Llama CPP, Ollama, et cetera, have a OpenAI-compatible endpoint where you can direct it to your local machine rather than to a cloud service.
+
+And this is one of the easiest ways to get started using Gemma-- to take that existing interface and swap it over to that. So we're going to run it on localhost on port, in this case, 8080. And let's make that-- we're going to make-- how about eight agents? How about that? Let's do that.
+
+So let's run that one. So again, what it will do is it will pass that instruction onto the next model, and then they will subdivide that as the different tasks. So you can imagine in this scenario that this could be a workflow that you want to run, or maybe it's your favorite agent harness. And each of these is going to run in parallel on this local machine, so it will work offline on whatever task you're currently running. So we'll wait for that to complete, and then we'll have a look at some of the output.
+
+So one thing that's super interesting to point out here is that this is the model's base knowledge about how to do programming in each of these languages. If you want to give it additional reference documentation, or you want to create a skill to be able to understand your code base and how that operates, you can provide that as a tool to Gemma. And Gemma will execute that before doing it. So yeah, we can see that they-- thank you. You can see here that-- [APPLAUSE] --we've got different versions in different languages.
+
+We've got Rust, JavaScript, Python. Some of them, they have recognized that there is a library that they can actually call to do this. Others that don't have a library will basically use a HTTP request endpoint and will work directly with a JSON service. So yeah, again, as I mentioned, you can tailor this to whatever task you want, but imagine having your own little army of agents running just on your laptop. And wherever you are, whether you're on a plane, whether you're in low connectivity, whether you're out on a hike, you can make this work.
+
+Thank you. So we'll move back. So next up, I want to talk about mobile. So we also mentioned that we have an E2B and an E4B model that is specifically tailored and optimized for mobile applications. And they run with accelerators on CPUs, GPUs, and TPUs thanks to LiteRT and AICore.
+
+So let's have a look at the video. [VIDEO PLAYBACK] - So most people have heard that Gemma models can run on a range of different devices-- laptops, desktops, et cetera. But not many people know that they also run on mobile phones. So I've got a Pixel 10 Pro here, and I'm running the Google AI Edge gallery app. And what I'm going to show you is how Gemma can be used to take photographs, understand the world, record audio, and to use agent and agent skills all running locally on this device.
+
+So let's see a couple of examples about what we can do. So first, I'm going to show you agent skills. Agent skills is where you can ask the model on the phone to be able to interact with different apps and applications, and the model will decide which of these is most suited for the purpose. In this case, I'm just going to ask the model a prompt, and then it's going to pick which application to use. So I will record a voice note, add to my mood tracker.
+
+I'm feeling about 8 out of 10 today. I'm feeling calm and excited to talk about Gemma. So I'll send that off. And then the model will then listen to that track because it understands how to do audio input, and then it will pick which application to use. So in this case, it's decided to load the Mood Tracker, and it should record that entry into my mood tracking journal.
+
+There you go. So another thing Gemma can do is it can read and understand images. So I'm going to take a photograph of these books right here. And I'm going to ask it to output the books as a JSON schema. Take these books and output as a JSON schema with a title for each entry.
+
+And it will think about that prompt, decide what output it needs to generate, and it will invent a schema that it thinks will fit. Or maybe I just want to have a new item on my desk for an arrangement. So I can take a photograph of these plants right here, and I can say something like, suggest three things for me to add to my arrangement. Give a sentence for each.
+
+Another thing that Gemma can do on-device is it's multimodal and understands audio input. So you can record snippets of voice or audio and have Gemma process it naturally, doing things like transcription and translation. So in this case, I'm going to record a clip. Make a note of things that I need to do today. I need to pick my kids up from school.
+
+I need to go to the grocery shop and get some milk, and I need to buy some flowers for my wife.
+
+And what's also important to remember is that this is running entirely on the device. So it'll work offline or in areas of low connectivity. So let's give you an example. Imagine I was offline and I wanted to know what this was. So let's take a quick photo.
+
+What is this thing?
+
+And Gemma will process the image, try and understand what's in it, and give an answer directly, all without connectivity. OK, so it thinks it's a small toy, which is correct. So I've shown you a couple of examples about what you can do with Gemma on a mobile device. So go to Google AI Edge Gallery app on Android and iOS and tell us what you think. [END PLAYBACK] [APPLAUSE] IAN BALLANTYNE: Yeah, thank you.
+
+So the Edge Gallery app you obviously can download on Android and iOS, as I mentioned. And if you want to play around with it, you can try those different modalities out and the different skills that it's able to understand by checking out our demo booth. So the next natural step from moving on from mobile is to move into streaming and streaming inputs. So in this particular example, I'm going to showcase a different example about how you would have a conversation with a model. In order to do this, we need to have incredibly low-latency models on both the processing but then the whole stack.
+
+So it needs to be able to work in under a second from basically the end of you finishing your sentence to the start of the model responding. So let's see what that looks like. [VIDEO PLAYBACK]
+
+[END PLAYBACK] IAN BALLANTYNE: There you go. So you can see how you can make assistants with this model with incredibly low latency, and we were using voice activity detection there. So the interesting part to me is that, as part of this process, you are streaming and chunking the audio as it comes in, and then the model is processing the first part of the output and is able to generate the TTF, which is a separate model, while this is happening. And that is what leads to that kind of low latency and the ability to do things like interruption. So if you want to try this experience, again, we have it at our demo booth outside.
+
+And we'd love to hear what you think about it. And then, obviously, the next natural process for doing this is to move into the world of different modalities, so including things like vision. And we have a fantastic demo here from our friends at Hugging Face and Pollen Robotics, and I want to introduce to you Reachy Mini. And what Reachy Mini is going to show you here is how you can interact with a model that can see, and can hear, and then can respond with emotions. So let's have a look.
+
+[VIDEO PLAYBACK] - Hey, there. I'm Reachy Mini. What's on your mind? - Hey, Reachy, can you tell me what you see in front of you right now?
+
+- Hmm. It looks like a chess board set up on a table. What are we playing? - I'm just learning about chess. Can you teach me how the knight moves?
+
+- That sounds like fun. I can certainly try to explain the knight's move. It jumps in an L shape to any of the eight surrounding squares. - Well, in that case, I'm going to move here. You're in check mate.
+
+I win.
+
+- Oh, dear, it looks like you just won. That was a quick game. IAN BALLANTYNE: Poor Reachy. Yes. [END PLAYBACK] I think a bit unfair because obviously Reachy doesn't have hands to move the pieces himself.
+
+But yeah, as you can see, local assistant you can have a communication with. They can see and understand the world around you. And again, powered by Gemma 4. So thanks again to Joshua from the Transformers.js team for this incredible demo.
+
+[APPLAUSE] So next up, we're going to talk about personal assistants. And here to explain a little bit more about how that might work, I'm going to hand over to Olivier. OLIVIER LACOMBE: Thanks so much, Ian. Very exciting. So a couple of years ago, for the first time ever, we loaded a local model on a phone.
+
+And I was in the product team that took care of it. This model could barely reply back to you. Very simple query-- still struggling a little bit. Two years ago, we also showed you what a multimodal assistant looked like with Astra running fully server side. And since that date, we were quite excited to see what it would look if we were to do it entirely on-device without internet on a phone.
+
+And this is what it looks like. [VIDEO PLAYBACK] - Hey, Gemma, do we have internet now? OLIVIER LACOMBE: So you have a full tool call at the system level. - No, we don't have an internet connection right now. - What is this warning about?
+
+- That sign is a warning about the puma habitat. It advises that pumas are part of the local environment and that you should be cautious if you encounter one.
+
+- What is the derivative of this function?
+
+OLIVIER LACOMBE: A little bit of math and camping, you know? - The derivative of x squared plus 7x plus 10 is 2x plus 7. - Oh, hey. - Hey, Cindy. OLIVIER LACOMBE: We are now streaming from the XR glasses on the phone.
+
+- Gemma, when is our group hike tonight? - Your group hike is scheduled for 6:00 PM today. - Is this a puma? - No, that is a dog. - Good boy.
+
+OLIVIER LACOMBE: I'm quite excited by the progress we've been able to make on-device-- [END PLAYBACK] --in just a couple of years. [APPLAUSE] And the good thing is that, if you're curious, we actually have the phone that is being runned on, and we can do the demo outside after the talk. Now, let's actually look at what it could do to help people in their everyday lives. So we have an example with someone who is visually impaired, and you can see the value of AI running on-device to help people in their everyday life. [VIDEO PLAYBACK] [SOFT MUSIC]
+
+- It's 28 degrees and clear. Perfect running weather.
+
+Let's do a slow run, and I'll guide your pace with audio cues. Whenever you're ready.
+
+Great rhythm. Keep that stride. There's some gym gear on your left. Stay on your current track.
+
+Left turn coming up. Ease into it. You've got this. And now. Take it slow.
+
+You got room. - By using Gemma 4 to understand the runner's surroundings, the Gemma running agent acts as a guide, giving blind and low-vision runners the confidence to navigate safely and avoid obstacles in real time. We're also exploring Gemma running agent with the new intelligent eyewear. It's not just a new way of running. It's a massive leap toward true wearable autonomy.
+
+- Stay in that lane. Perfect. Great run. [END PLAYBACK] [APPLAUSE]
+
+OLIVIER LACOMBE: So this is currently a prototype, but we will keep on working on it. And for me, this combination of local AI fully offline, helping people with accessibility is what I think AI for good should be, and we are very excited to continue in that direction. On that note, I will hand back to Ian for the rest of the demos. IAN BALLANTYNE: Thank you, Olivier. [VIDEO PLAYBACK] So I'm going to show you a quick video about duck Gemma.
+
+- Today, I'm very happy to bring you those two tiny ducks to showcase what Gemma 4 can do on device. They are open mini ducks version 2 by Antoine Pirrone on GitHub, and the idea was to bring the power of Gemma 4 to do on-device inference and to make those ducks smarter. In terms of the technical stack, this duck runs Gemma 4 E2B on LiteRT on a Raspberry Pi 5, and this duck runs Gemma 4 E2B on a Jetson Orin Nano. They both have a microphone, cameras, and speakers, and through multimodal inputs of Gemma 4, they're able to process and understand their environment like never before. Let's see what duck Gemma with the Raspberry Pi 5 can do.
+
+So while we wait for the system to boot, I'm just going to describe some of the features that this project online built. They built antennas for expressiveness. There are some LEDs just to show some expressions and a speaker next to it. And then it enters attention mode, which is this loop that just shows some expressiveness and the fact that Gemma is now listening. And we're going to try that on the other duck, and it will send you some love also on the booting phase, if everything goes right.
+
+Hey, Gemma, explain me what a large language model is. We're using Parakeet to do speech to text. Gemma 4 will do the inference, and we'll use Kokoro to do text to speech. - A large language model is a complex AI designed to understand and generate human-like text. I am here to assist you with tasks and interactions.
+
+- Introduce yourself. Tell me more about you. - I am "Odum," a small duck robot's brain. - Very snappy. "Odum" is ODM, so Open Duck Mini.
+
+So that's why it call itself "Odum," which I think is pretty cool. So this is a great way to bring intelligence onto those ducks. The next step is for them to start walking, to see each other, talk to each other, and maybe go autonomously explore the world on their own. [END PLAYBACK] [APPLAUSE] IAN BALLANTYNE: So thank you. So Xavier, the creator of our ducks, is outside if you want to have a chat with him, and you can have a chat to the ducks and see what they can do.
+
+And this really shows when you shrink Gemma models down to things that run on IoT devices, like Raspberry Pis, that you can run physical local agents that can see, act, and react in the world. I have one more slide to show you, and it's on this new topic here. So we mentioned Gemma is designed to run on the edge. And this is really the smallest we've been able to get. So this is a Coral board, which is a dedicated MPU that can do one tops.
+
+It's an open architecture built by the Coral team, and the demo on the top is showing the Gemma 3 270M model doing translation. And the demo on the bottom is showing a function Gemma, which can take voice input or text input and turn it into actions. And the incredible part of this is we're able to shrink these models down to things that are potentially suitable for things like wearables, really low-powered and low-cost devices. So Gemma really stretches that whole range. Now, these obviously just all the things that we've shown you.
+
+We have a massive ecosystem of developers and builders and companies that are working with Gemma models. And to give you a bit of a rundown on that, I'll pass it to Gus. Thank you, Gus. GUS MARTINS: Of course. Thank you.
+
+[APPLAUSE] Nice. Pretty cool, right? Lots of cool demos. Lots of inspiration for you to help us build the demos for the next year, so that's pretty good. And that's a pretty good point to get here.
+
+What is the Gemmaverse? We launched these Gemma models for the community, for the enterprise, for developers to build cool things and share with the world of what they're building. And more than just building an application, when we share a model, you can improve the model and change how the model behaves. And this is what we call the Gemmaverse, is this collection of models that people keep creating based on Gemma. As of today-- I'm pretty sure that number is wrong-- we have more than 500 million downloads.
+
+And I think it's wrong because I think it's way more than that. This update a couple of weeks ago. Thank you. And we have more than 100,000 variants of Gemma models. A variant is someone like you from the community that goes and improves the model in a specific task, language, or something.
+
+I'm going to show some examples in a little bit, but we have a lot of people creating these variants. And how do you do that? Usually, you fine tune a model. So fine tune a model is-- if you have a kid, you teach something new to it. So the model is the same idea.
+
+You can teach a new capability, or you can improve something that it already knows, or you can change how it behaves. Sorry. And this is where you fine tune. So if you want the model to speak in a way that's more tailored to your enterprise, that's why you'd fine tune. Yesterday in the developer keynote, Kevin used Antigravity to fine tune Gemma to be more concise in its answers.
+
+It can give you an answer that's maybe too fluffy, as he said. I don't agree, but that's OK. But he wanted something more straightforward. That's something you can fine tune the model with maybe 100 or 1,000 examples, and the model will be more straightforward if that's what you need. Or you can do it for teaching a new language, which is way more involved and also super cool.
+
+So there's all these options. And people have been doing this from Google. We've done this, for example, for MedGemma. MedGemma is Gemma 3, our model from last year, fine tuned for the health care area. So you can ask questions more related to health, to X-rays, to all this kind of information that's way more focused on a vertical.
+
+So MedGemma's available, too. You can play. There's MedGemma 1.5 already that we released this year. You can play with it.
+
+Have fun. It's one of the variants we have available. We have many. One other variant that was released last year is the Cell2Sentence. So the Cell2Sentence is a variant of Gemma 3 27B that you can-- it's helping find new treatments for cancer.
+
+This is pretty cool because, oh, it can cure cancer. No, no, no, no. This is helping find treatments. These treatments are being tested already. It's not something like, oh, yeah, it will get there.
+
+No, no, no, it's being tested already, and we have already some good results. So this is way more advanced than just a play toy. More than that, we did some variants, but the community did a lot of variants. We have many, many colleagues that did multiple variants. We have some examples here, for example, the Crane AI Labs.
+
+They got the Gemma 3 model and fine tuned it to teach better Swahili, which impacts a lot of people. Gemma can do a little bit of Swahili, but they could do even better. And that enables way more people to have access to LLMs. We have CEIA over there, which are people that we worked together to make a version that was even better in Portuguese. Portuguese is pretty important to me, so it was pretty fun to work with them.
+
+And we have multiple others. We have ePermit, which is our colleagues in Ukraine using Gemma models on their government already to help make process faster. So we have many, many variants that are already helping with the Gemmaverse. And that being said, I would love to know what you are building next. There are so many possibilities, and Gemma is here to help you build even more cool stuff.
+
+We will not have time to answer questions right now, but all of us will be here in front in the Q&A session. So please come ask your questions. We're more than glad to chat. Thank you very much. [APPLAUSE] [MUSIC PLAYING]

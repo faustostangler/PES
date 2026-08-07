@@ -1,0 +1,85 @@
+---
+video_title: "Getting Started with Managed Agents"
+video_id: 0YXe7u-i1qU
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0YXe7u-i1qU
+video_date: 2026-06-02T19:00:24+00:00
+video_description: |
+  Learn how to get started with Managed Agents in Google AI Studio and the Gemini API, and easily build your own custom agents. 
+  
+  Resources: 
+  Try it here →  https://goo.gle/3RTtmUj 
+  Read the docs →  https://goo.gle/4dUiPQh 
+  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Speaker: Patrick Löber
+  Products Mentioned:  Google AI, Gemini
+---
+Hi, everyone, I'm Patrick from the Gemini API team and in this tutorial, I want to give you an overview and show you a quick start of how to build managed agents with the Gemini API and AI Studio. This is a new feature that easily allow you to build customized agents, and those agents are running in a secure Linux sandbox that's hosted by Google. And those agents can reason. They can write code and write code to the files on the system and manage the files. They can also browse the web and you can easily customize them.
+
+So for example, you can load in agents, M.D. file or agent skills. And it allows a lot of really nice use cases. So here we have some example templates that you can explore to get a feeling for what they can do for you.
+
+And I will show you a bit in a moment. And one way to try them is via AI Studio. And the second way is via the API, which also makes it simple to build your agents via simple API. And I will also show this in a bit. But first, let's get started in AI Studio.
+
+So if you go to AI Studio and then on the right side, you will find this new agents tab. And then this new anti-gravity Agent Preview. This is a new agent that's actually powered by our new model Gemini 3.5 Flash. And it's using the same harness as the anti-gravity IDEs.
+
+So you can do a lot of really nice coding tasks and workflows with it. So let me just give you an overview. If you select this then here you can explore different templates. So first, let's just use the base template the anti-gravity preview 1. And then here we have different startup prompts.
+
+You can try for example explore the environment by running different Bash commands on your environment. Or build us a weather dashboard or an A game even. So let's use the weather dashboard. Let's run this and then it's kicking off and you will see here it's spinning up a remote environment. And the task here is to fetch the current weather and a three day forecast for London and Ankara, and then from this website's parse it using Python and then generate an interactive HTML dashboard.
+
+And now it's going off so the environment is up. So again, this is a secure Linux sandbox. And here, the agent can fully engage with it. So you can follow that it reasons. And it's running some commands on the machine.
+
+And then it's here it's performing Google Search. So yeah this might take a while. So let's get back when this is finished. And now the agent finished. So we can scroll up and see what we get.
+
+And again, we can follow the steps it took on the Linux environment. So here, for example, this write file action where it's generating this Python file. And then the run command action where it's now running the Python file and so on. So it's really interesting to see what it's doing on the machine. And then here we see the final output.
+
+So what was accomplished. It developed the Python scripts to get the weather. Then it did some data parsing and aggregation. Then it developed this dashboard here with tailwind, CSS, and so on. And we can actually download all the files it generated.
+
+So here we can click on this HTML file and download this. And then let's open this and have a look at the weather dashboard. So yeah, this is how it looks like. So this is the current weather in London and Ankara. And it's interactive.
+
+So yeah pretty cool. And all of that with one command now. So yeah this is kind a quick overview of how to get started to give you a first impression. And let's go back to the Overview tab here. So here you can explore other different templates for example, a customer support template or a data analyst template or a repo maintainer.
+
+So there are a lot of really nice use cases, what you can do with it that. And basically what it's doing is if we click on customer support, for example, then on the right side, you will notice that it's loading some sources and. Net for network items into it. And this is where it gets interesting. And then again here in the middle, you can use some of the example prompts.
+
+So build a Gemini app API customer support bot and so on. But back to the right side. So here you can configure your agent. First of all, you can give it tools like code execution Google Search your context and then network. Basically here you define an allow list of the domains it can access and then sources.
+
+This is the interesting part. So if we click on it, you will see here. First of all, it's a h.md file. So basically this contains custom instructions like you are an expert customer support agent and so on.
+
+And then also skills. So this can be a skill.md file where you define specific agent skills. And it can also include scripts like here this Python file. And you can easily add your own sources.
+
+So this can be files you can use a Cloud Storage URL or also actually just use a GitHub repository. You can build your own custom managed agents easily in AI Studio. And now let me also show you how to do this in the API. Here I have a short Google Colab with the code needed. So let's walk over this together.
+
+And we're using the Google AI Python SDK here, which is one of the easiest way to get started with managed agents. And then I highly recommend using the latest version which gives you all the features you need. Then you need to set up your client with an API key, and then to run your first agent interaction, you call interactions. This is using the new or relatively new interactions API on the Gemini API. This is especially optimized for agentic workflows.
+
+So yeah, you want to call client interactions. Great then here you specify the agent. And this is the same agent that we just used in AI Studio. And here we give it the input. So write a Python script to generate the first 20 Fibonacci numbers.
+
+And then as environment we specify remote. So this gives us the Linux sandbox hosted by Google. And then when this is done, we print the interaction ID, the environment ID and the final text. And I already ran this. This can maybe take a few minutes to spin up everything and do all the steps.
+
+And then here, we get the output. I have created and executed a Python script that generates the first 20 Fibonacci numbers, and then we can also see the Python script and so on. And now we can easily continue the conversation. So the interactions API is also optimized for multi-turn conversations. Now to continue the conversation, basically what you need to do is you need to specify the previous interaction ID, and this is the ID from the previous result.
+
+And then also we want to keep the same environment ID. And here, for example, we tell it now plot the Fibonacci sequence and save it as an image. And then if we execute this then we again see the Python file with matplotlib. And then we see we get this resulting chart. And then we can actually download this from the sandbox.
+
+So for this right now you want to use you need to use plain REST API calls. This is not yet supported in the SDK, but I'm sure this will come in the future. So basically you need to send a GET request to this endpoint. And then it will give you a tar file that you can save. And I save this here.
+
+So we get the snapshot with all the files it did. So we see the Fibonacci file. We see the Fibonacci Python file and also the chart it generated here. So yeah with matplotlib. And yeah, this is how to access files from your sandbox.
+
+Then, of course, you can also start a stream. So then you can stream the response. So then you will see this immediately. So here, for example, we see read Hacker News, summarize the top five stories and save the results as a PDF. Then you will see the steps while they are coming in, and you can have a more interactive experience in your UI.
+
+So let me stop this. And then the last. Again, the exciting part you want to do is you can easily again create your custom agents. And to do this, you can call client agents create. And then here you give it an ID.
+
+So here I built a technical explainer agent. Again, you want to use a base agent. So it's based on the anti-gravity agent. And we can give it a system instruction. You explain technical topics and create slide decks.
+
+And now in the base environment we can now configure different sources. So this can be inline sources. So for example an agents.md file. So here we specify the writing style.
+
+Then also a skill file. So here we define a skill for creating slide decks. And like I showed in the beginning of course, you can easily just specify a GitHub repository. That makes it even simpler to load your custom instructions into here. And then you execute this.
+
+And then this is creating an own Agentforce you. And now you can use this by again calling client interactions create. And now as agent you use your own ID that you just created. And then we can give it a task. So here, it's telling it to explain what Gemini embedding two can do based on this URL.
+
+And then it should create a slide deck. And then here it's doing its thing. And then in the end it's also giving us the sources that it access. So it even access some more pages. And I also run this and downloaded this before.
+
+So now if we have a look at the snapshot of this environment of this agent, we will see here. It created our slide deck in HTML. So Gemini app embedding two the first natively multimodal Omni embedding model created by Google. And then here it's writing some more slides where we can scroll through. And it's also adding code snippets for us.
+
+So yeah, this is how you can easily build your own custom agents with the managed agents on the Gemini API and AI Studio. And yeah, it allows a lot of really, really nice use cases. Again, just go to AI Studio, try some of the agents templates and explore this. And yeah, have fun with this and happy building.

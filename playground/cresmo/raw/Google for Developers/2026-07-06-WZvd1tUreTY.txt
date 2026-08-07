@@ -1,0 +1,46 @@
+---
+video_title: "Dynamic Callbacks on Android for Google Pay"
+video_id: WZvd1tUreTY
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WZvd1tUreTY
+video_date: 2026-07-06T21:10:53+00:00
+video_description: |
+  Learn about the new dynamic callbacks feature available for Google Pay on Android, designed to enhance your checkout experiences. We’ll dive into the mechanics of listening and responding to user modifications—such as shipping address or shipping option changes—directly within the native checkout sheet in real-time, highlighting callbacks like onPaymentDataChanged and onPaymentAuthorized. Developers will find clear explanations and an example of implementing these secure callbacks to dynamically update pricing, adjust taxes, and execute secure inline payment authorizations before the transaction completes, ensuring a seamless purchasing experience for their users.
+  
+  Resources: 
+  Get started → https://goo.gle/pay-android-dpu
+  
+  Connect with us:
+  Join the conversation in the #payments channel on Discord → https://goo.gle/payments-dev-community
+  Watch more Live Google Pay integrations on Android → https://goo.gle/live-google-pay 
+  Follow @GooglePayDevs on X for more content like this → https://goo.gle/GooglePayDevs  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Get support: 
+  
+  For assistance with your implementation, create a support ticket from the Google Pay & Wallet Console → https://goo.gle/4hSy658 
+  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Speaker: Dominik Mengelt
+  Products Mentioned: Google Pay
+---
+Hello Google Play developers. While event driven shipping updates have long been a standard feature of Google Pay on the web, we are bringing that same parity to mobile. In this video, I will demonstrate how to implement the new dynamic callbacks for Android, allowing your app to react to shipping and address changes in real time.
+
+With the release of play services Wallet 2.0.0, you can now implement on payment data change and on payment authorized callbacks natively in your Android applications. This allows you to update shipping options, taxes, and total price dynamically as users interact with the Google Pay sheet and handle authorization feedback without ever closing the sheet. Dynamic callbacks enable a true express checkout experience by moving the Google Pay button upstream to your product, detail or car pages.
+
+You can receive the user's shipping address, payment credentials and contact details, all within the pay sheet. Before we get started, let's take a look on why dynamic callbacks can help you improve your express checkout experience. You can update shipping methods and calculate tags on the fly based on the user's selected address. It allows you to place the pay button earlier in the funnel to drive higher conversion rates. Finally, you can handle transaction authorization and retries directly within the Google Pay interface.
+
+Sounds good. Let's see how you can integrate dynamic callbacks for your Android app. The easiest way to get started with dynamic callbacks on Android is by using our Google Pay and Wallet developer MCP server, right from within Android Studio. For example, you can use a prompt help me integrate dynamic callbacks for Google Pay. The user should be able to pick between a standard ShippingOption for $5 and an express ShippingOption for $10.
+
+Use the callbacks to update the total amount. The agent will go ahead and implement all the needed changes for you. If you want to learn more about the Google Pay and Wallet developer amqp server, check the link below. Don't worry, I will guide you through a full code example of how you can integrate dynamic callbacks on Android. Let's get started.
+
+As mentioned at the beginning, the first step is to increase the version of your Play services Wallet dependency to 2.0.0. Extend the base payment data callback class to handle the specific events triggered during the checkout process. You can reuse the same business logic if you have already implemented this for your Google Pay integration on the web.
+
+For example, increase the total amount in the Google Pay sheet for an express ShippingOption. The final step is to implement a service that extends base payment data callback service to provide an instance of your callback and declare your service and protect it with the bind payments callback service. Permission oh, and don't forget to include the callback intents in your payment data. Request JSON object to tell Google Pay which events you want to listen for. That's it.
+
+Incorporating dynamic callbacks on Android is a straightforward process that yields massive benefits in checkout, conversion, and shopper security. By implementing these secure callbacks, your application can eliminate post checkout friction and provide a fast and modern purchasing experience. This brings the Google Pay developer platform on Android to parity with its existing capabilities on the web. For a full implementation guide and detailed sample code, be sure to visit the updated developer documentation. Thank you for watching, and we look forward to seeing the express checkout experiences you build.
+
+Until next time.

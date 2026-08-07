@@ -1,0 +1,95 @@
+---
+video_title: "Building Voice Agents with Gemini Live API and Agora’s Conversational AI"
+video_id: 2ltcbA2CCTo
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=2ltcbA2CCTo
+video_date: 2026-04-29T19:00:02+00:00
+video_description: |
+  Mason from Agora walks through how to drop Gemini 3.1 Flash Live into Agora's real-time voice and video infrastructure. Speech-to-speech with multilingual switching, sub-second latency, and tool calls wired to actual hardware.
+  
+  What's covered: cloning the Agora agent quick start, configuring App ID and certificate in the Agora console, enabling conversational AI, swapping the default chained pipeline (STT, LLM, TTS) for Gemini Live in a single SDK method, and pointing the WebSocket at Google's server. Plus two live demos: a Reachy Mini robot calling 70+ tool emotes mapped to physical motors, and a food ordering agent (Foodgora) handling cart updates and recommendations in real time.
+  
+  Grab your Gemini API key at Google AI Studio and your Agora credentials at agora.io to get started. 
+  
+  Resources: 
+  Gemini Live API overview → https://goo.gle/4tFoFeK 
+  GitHub examples → https://goo.gle/4uj3HCw 
+  
+  What are you building with the Gemini Live API? Drop it in the comments.
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  Speaker: Mason Adams 
+  Products Mentioned: Google AI, Gemini
+---
+Hey, everyone. My name is Mason. I'm a field product manager here at agora and I also work on the developer experience team. Today we're going to be showing you how you can use Gemini 3.1 Flash live on agora, which powers 80,000,000,000 minutes of real time voice and video a month.
+
+So let's dive into some code. So you see here we have our agent quickstart. That is index.js. We're going to Super simply come over here and copy the URL.
+
+And we're going to go into our Ide and Git clone and then paste the link. That's going to take a little bit of time to download but it is done. So the first thing we're going to do is CI/CD into that project. And now we can open it up here in cursor or whatever Ide you're using. So the first thing that we're going to want to do is come in and clone the example and turn it into an actual env local.
+
+So let's do that real quick. Create the file and then I'm going to come down here and then copy and paste this. So once we've turned that into an actual env file there's three keys that you're going to need to grab. One of them is going to be your agora app ID the other one is going to be your certificate for that app. And then the final one is going to be your Gemini API key.
+
+So I will go over here and show you guys how to do that. So you're going to want to go to agora IO create an account. And so I'm going to sign in here. And once you're signed in it'll take you to the Console. You can create a new project at the top here.
+
+And let's name this Gemini demo. And you can select a use case and click Submit. And once you've created that new app you're going to click on Configure. And this is where we will find our app ID and our primary certificate. We're going to want to do one more thing before we go back into the app.
+
+We're going to want to come in here and engage conversational AI by clicking this button and confirming. And now that that's enabled, the only thing that you need other than this is your Gemini API key that you can provide. So we'll go back into the code now and we're going to paste in our app ID and our app certificate. So now that we have our keys pasted we're going to want to actually edit the API route. So let's go into App API and then the invite agent route.
+
+And the first thing we're going to want to do is import Gemini Live so that we can use it in the code. And then we will scroll down here. And as you see our SDK usually is set up for the chained pipeline. So speech to text LLM text to speech. We're essentially going to remove all three of those and just use with ML.
+
+So I'm going to remove these that. So now that those are removed, we're going to come over here and do the widget.width method. It's going to be new Gemini Live like that. And then we are going to set the model as Gemini 3.1 Flash
+
+preview and then choose our API key. And also we're going to set the URL to point at Google's WebSocket server. And then you can also these are optional but you can set the input modality and the output modality as well as the greeting. And so if I click into here you'll see what the greeting is. And same thing with the prompt itself.
+
+We're storing the prompt in a variable and then just calling it down here.
+
+And so now we're going to save the project and then run NPM run dev.
+
+Once you have everything configured inside of the project and you've ran NPM run dev. Super simple. Just go to localhost 3,000 or whatever port you're running it on, and we can click. Try it now and we can give it a shot. Hey Gemini, can you hear me.
+
+Yes, I can hear you loud and clear. Awesome listen, can you tell me a story in three sentences. Once a brave little robot set out across the desert to find a legendary power. I actually wanted you to tell me that story in German. Oh, of course.
+
+Here it is in German. I'm so sorry to do that again, but I meant French. No problem at all. Let's try French. Un Petit robot.
+
+Se en route désert source d'énergie légendaire. And let's do. Let's do one more. Can you do it in Chinese. Here you go.
+
+And so you get the point. Obviously this model is great. It's multimodal, speak 70 different languages, and responds super fast. But what can it do in the real world. Well, so next to me I have a Ricci mini robot, and we've given it over 70 different tool called emotes that it can call as we speak to it.
+
+And so we can test and gauge and see how well the model does at calling tools. So let me power it up by going here.
+
+Let's give it a shot.
+
+Hey, Richie, can you hear me.
+
+Loud and clear. How can I help you today. I was just wondering if you could tell me a story, but specifically in French.
+
+Are we. I can do that. What kind of story are you hoping for. Yeah, I was thinking about something. About a car.
+
+The car votre petite voiture Rouge. Grande Well, truly. Honestly, I don't speak French. So can you go back to English.
+
+No problem at all. Back to English. It is. So, about that car story. Should we make it about a race.
+
+Or maybe a magical adventure. Well, I was thinking maybe about a race. Let's do something related to Formula One.
+
+A Formula One race. Brilliant imagine a young driver considered an underdog, facing the final lap against the reigning champion. The tension is high. The crowd is roaring. What do you think happens next.
+
+So that was Gemini 3.1. Flash live preview built in to actual hardware with over 70 different tool calls that are actually controlling the motors inside of here to determine how it behaves. There's one slight issue, though, which is having hardware like this adds a lot of latency. So we built another demo that is a food ordering demo.
+
+And basically you're getting the same thing but without the hardware. So let's switch into that and give it a test. So let's connect to the voice channel and then dispatch the agent and speak to it. Hey, can you hear me. Yes, I can hear you loud and clear.
+
+Welcome to foodora. What can I do for you today. Ready to order some food, or are you just browsing the menu. Yeah, I'm just browsing the menu. I was curious what you would recommend.
+
+Ooh, nice. Well, if you want something really satisfying, the transformer, which is our pulled pork, is always a hit. Or if you're feeling like ramen, the token ramen is incredibly flavorful. Are you leaning towards something burger like, or a Bowl or something else. Let's go with the transformer.
+
+You can add that to the cart. Is there any desserts that you recommend.
+
+Great choice. I've added the transformer to your cart for dessert. The diffusion cake, which is our chocolate ganache, is super decadent. Or if you want something a little lighter, the backprop brownie is always a good pick. What sounds better.
+
+Let's go with the backprop brownie. And also, I don't want the transformer. Can I go with something healthier like the llama Bowl.
+
+No problem. I've removed the transformer from your cart and added the llama Bowl and the backprop brownie. So you're all set with that, or is there anything else I can add or change. So if you guys are looking to build a voice agent with as low latency as you see in these demos, whether it's software or it's hardware, like this guy right here, agora powers 80,000,000,000 minutes of real time audio and video traffic every single month. And so we invite you guys to come try our platform.
+
+We have native SDKs as well as APIs for you to use.

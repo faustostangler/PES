@@ -1,0 +1,183 @@
+---
+video_title: "Building the quantum-AI future with Hartmut Neven and James Manyika"
+video_id: yQPnb4gxKRc
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yQPnb4gxKRc
+video_date: 2026-05-21T23:54:06+00:00
+video_description: |
+  Join Hartmut Neven and James Manyika to explore the intersection of quantum computing and AI. Discover how AI is helping to build and operate quantum computers, while quantum unlocks new ways for AI models to train, learn from complex data, and accelerate scientific discovery, making quantum a key part of Google’s innovation strategy.
+  
+  Speakers: James Manyika, Hartmut Neven
+  
+  Watch the AI sessions from Google I/O 2026 → https://goo.gle/AI-at-IO26
+  Watch the Dialogues sessions from Google I/O 2026 → https://goo.gle/Dialogues-at-IO26
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  #GoogleIO
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: AI/Machine Learning, Design
+---
+[MUSIC PLAYING] [WAVES CRASHING]
+
+[ANIMAL CRIES]
+
+[APPLAUSE]
+
+JAMES MANYIKA: Good morning and thank you for coming to this session this morning. My name is James Manyika. I'm the President for Research Labs, Technology & Society at Google and Alphabet. And, Google has an incredible track record in history of pursuing very ambitious problems and challenges and moonshots. Some could argue that, in fact, Search itself is a moonshot, has been a moonshot.
+
+The work in AI arguably has been a moonshot. Some of the earliest examples of this at Google were back in 2001, when Google started to do things like auto correction using machine learning. And then you could also think about the work on Waymo, driverless cars, has been a moonshot that's now turned to reality as we start to ride Waymos. Hopefully, you've all done that. And then quantum is one of those too.
+
+We've focused on trying to build the idea of quantum computers for quite a long time. And that's what we're going to spend time talking about this morning. I should say that the foundations on which we're building quantum computers go all the way back to the 1980s, when researchers at Berkeley, Michel Devoret, John Martinis, and John Clarke started to work on this idea of how do you do superconductivity? Because up until that time, the understanding was that quantum phenomena was only observable at the micro level. And so the question is, could you ever make observations at the macro level?
+
+So they made these incredible experiments and breakthroughs that led to the idea of circuits you could actually build at the macroscopic scale. And that's been the foundation of how we think about building quantum computers. I should say those three individuals, Michel Devoret, John Martinis and John Clarke, were awarded the Nobel Prize in physics last year, and I'm actually glad to say two of them, Michel Devoret and John Martinis, have actually been part of our quantum team at Google. Well, John Martinis is no longer with us at the quantum team, but Michel Devoret is actually our Chief Hardware Scientist on the quantum computing team at Google. I'm going to be joined in this conversation by Hartmut Neven.
+
+Hartmut is the leader and founder of our Quantum AI team. [APPLAUSE] Take a seat. HARTMUT NEVEN: Hey. JAMES MANYIKA: Hartmut founded this team back in 2012, the idea how can we build and achieve this moonshot of building quantum computers. So he and I are going to have a conversation.
+
+We work together. So this is always a pleasure for me to chat with Hartmut. And we'll talk about first of what quantum computing is; where we are, what progress are we making; and what are some of the challenges, opportunities, and things that we're excited about; and what can we look forward to. So Hartmut, thanks for joining me. HARTMUT NEVEN: Oh, a pleasure.
+
+Thanks, everyone, for coming. JAMES MANYIKA: Well let's start. Quantum computing or quantum mechanics is one of these very complex topics. How would you describe quantum computing? Give us some basics.
+
+What are some of the basic things that one would have to understand about quantum computing? HARTMUT NEVEN: So if you want to understand where the superpower of quantum computers comes from, the one concept we need to grasp is the concept of superposition. So let me give you a quick quantum computing 101 and explain to you what superposition is. Essentially, quantum physics states that any system can simultaneously exist in many configurations. That's what is called a superposition.
+
+So to help you visualize it as the following. Let's look at the system we are forming here right now in the room. And we are sitting here in one specific configuration. But you can easily envision another one, like the two of you could switch seats. You, James and I, we could switch seats.
+
+So there are other configurations. But a reading of quantum physics would suggest that all these or many of these constellations, configurations, are realized right now, and they evolve together in time. And that is what we take advantage of in our chips. JAMES MANYIKA: But I think one of the things that often, so how would you describe because we go from-- we can try to build physical qubits and then logical qubits. Explain the idea of qubits, and how should we think about that, what that is?
+
+HARTMUT NEVEN: So a qubit is short for quantum bit. And it's essentially a bit or qubits are a number of bits that I can put into superposition. So I will later show you, or maybe we do this right now. I show you a chip that contains qubits. I'm not sure the camera can see this.
+
+So this is a Willow chip, one of our more recent chips. And it has 105 qubits in there. And now that you know what a superposition is, you can envision the following. Those qubits can be in a superposition state. So a single configuration for 105 qubits it's just a string of zeros and ones.
+
+We call it a bit string of length 105. But similar, as we envisioned before, you can just flip a few qubits and you get a different bit string. You flip a few more, you get a different bit string. How many bit strings can there be? I say 105 quantum bits in this chip is 2 to the power of 105.
+
+And then, as amazing as this may sound, in just one clock cycle of this chip, we can touch 2 to the 105 different objects, 2 to the 105 different strings. That is an enormous number. And therefore, you arrive at these situations where this tiny chip can do certain computations that the largest factory-sized data center would need an inordinate amount of time, 10 septillion years, in a recent demonstration. JAMES MANYIKA: In my opening-- [APPLAUSE] Thank you. In my opening remarks, I mentioned the idea that we're building on breakthroughs that our colleagues, Michel Devoret and others made in the 1980s.
+
+And one of the key things that they worked on was this idea of superconductivity as a way with the ideas of how do you do, if you like, quantum tunneling with Josephson circuits, to be able to do superconductivity. That often requires that we actually cool these things down to a few degrees above Kelvin. And so in the lab, describe the fact that you're actually building these extraordinary fridges so you can cool things down to a few degrees above 0 Kelvin. Why are we building it that way? How does that work?
+
+HARTMUT NEVEN: So the different ways how you can make qubits, in quantum mechanics, famously, you might think of quantum mechanics as a physics of the very small, the thing that describes electrons, atoms. But this is actually incorrect. Quantum physics is the law of the land at all scales, at the microscopic, all the way to the universe as a whole. It just happens to be the case that quantum effects can easily be controlled, managed, and observed on microscopic scales. So a natural choice to build a qubit, therefore, would be to just use an atom, to use, let's say, the states of a spin of an electron or of a nucleus.
+
+But these things are tiny and hard to engineer with. So the ingenious inventions that got the Nobel Prize, as you explained, was to essentially make macroscopic qubits. So using a loop of superconducting wires, you can have the same property of quantized energy levels and other hallmark features of atoms. You can have this at a macroscopic scale, much easier to put into a chip and work with. JAMES MANYIKA: Yeah, and in fact, one of the things that you always like to say, Hartmut, is that your lab is probably the coldest place in our galaxy.
+
+Can you explain that? HARTMUT NEVEN: Yeah so to work with these artificial atoms that are made out of superconducting material, and many of you may know that right now, to get superconductivity, a macroscopic quantum effect, you have to cool down the metals or the materials to a very low degree. So we work currently with aluminum qubits. You could have used niobium, tantalum. There are some choices.
+
+But all of them have to go down to about 1 Kelvin. So that's pretty cool. But we don't stop there. We go even further down to just 10 millikelvin because temperature is really the physicists' term for noise. And we don't want to have noise in our chips, so the colder we can make it, the better.
+
+JAMES MANYIKA: So talk a little bit about what's difficult about building quantum computers. What are some of the key challenges you have to solve if you're trying to build these systems? HARTMUT NEVEN: So in the very beginning, I explained to you that the key ingredients, a key resource is superposition states. And we need to keep these superpositions of different constellations alive. And the times that measured, there's an important time.
+
+We call it the coherence time of a quantum computer. It essentially measures how long these superpositions survive. And you want to make this the longer the better. And initially, we all thought, oh, this is a key battle to fight, the key engineering challenge to get right. But it turned out in this area we made rapid progress.
+
+We went from 20 microsecond coherence time to 10 times more, now over 250 microseconds, pretty much enough for what we need for use for quantum computing. So it's not the key physics challenge anymore. It's more mundane system-level issues that hold us back. JAMES MANYIKA: So why would anybody want to build a quantum computer? What are some of the useful applications, assuming we get there?
+
+We'll talk a little bit in a little while about where we are. But why would you want a quantum computer? HARTMUT NEVEN: Yeah, so on the application side, there are various areas. One thing that's important for the audience to understand, quantum computers, as far as we know, will always be a specialist tool. It will be very good for certain applications, not so useful for others.
+
+So what are some of the useful applications we can think of? The first one is we call it Richard Feynman's killer app. Feynman was the first one to realize that if you want to simulate a system where quantum effects are important, you run against this combinatorial challenge. That is you have to consider all these different constellations, and that's just impossibly hard for classical computers to do. So he coined, you saw it in the initial video, that if you want to make a faithful simulation of nature, you better make it quantum mechanical.
+
+JAMES MANYIKA: But I think often when people think about quantum computers, we often think about the speed-up benefits, that it will be able to run things much faster. But also there are some problems that are inherently quantum that you can only work on. So can you make a distinction between where are we mostly capsulizing just on speed-ups versus when we're actually working on things that can only be worked on with quantum computers? HARTMUT NEVEN: Yeah. Let's say a few examples.
+
+I just gave you this general overview, Richard Feynman's killer app, the simulation of quantum systems. That is actually a task that is necessary more often than you might think. Let's pick a nice one. Batteries, sounds a little bit boring, but we would all feel so much better if we could fly in an airplane that is powered by batteries, not by kerosene when we do vacation. So now there are things like lithium air batteries, which, they have a higher energy density than kerosene.
+
+So you could perfectly do that. Unfortunately, they are very brittle. They have various material science issues. So that's why we don't use them today. But a quantum computer would be a marvelous tool to simulate various designs for lithium air batteries.
+
+And then we can have some not just in cars, but in airplanes too. JAMES MANYIKA: Right, yeah. Maybe you can correct me, I think there's currently something like 70-plus kind of algorithms and problems that people in the community have actually identified as things where a quantum computer would be the most useful way to tackle those problems. Is this still 70, or is that list growing? HARTMUT NEVEN: Yeah.
+
+Thank you for mentioning this number. I should have checked up on the website because when we started talking it was like 60. Now it's 70. And I hope that in a few years, there will be 600 or 700 important, 10 times more, important algorithms where quantum computers give you a decisive advantage. JAMES MANYIKA: Right.
+
+So Hartmut, let's talk about where we are at this stage. I mean, I remember when you and I first started working together, I guess five years ago, you had a roadmap which had six milestones. First of all, can you describe the roadmap you've had for progress towards building a quantum computer, and where are we on that roadmap? What progress are we making? HARTMUT NEVEN: So originally, and if anybody has watched the work of the Google Quantum AI team, you may have seen we typically show it first thing whenever we give a talk or presentation is our mission is to build a useful quantum computer for otherwise unsolvable problems.
+
+To get to that, we had set out a roadmap with six milestones to build such a machine. And the first two milestones we cleared a few years ago. So our very first one was in 2019, where we showed for the first time that a quantum computer could compute something quickly in minutes that would have taken many, many years on a classical supercomputer to do. So that was milestone one. And milestone two was there is a technique called quantum error correction.
+
+That is essentially the technology you need to keep those superposition states alive. And that was understood in theory well since the '90s. But then, in '22, for the first time, we reduced this to practice and built a machine where quantum error correction successfully reduced the errors in a machine in practice. And we are now ahead of, hopefully fingers crossed, we solve it later this year as milestone three. This would be one very good module out of which you can build a large modular quantum computer.
+
+JAMES MANYIKA: And so by the time we get to hopefully milestone five or six, hopefully we'll have useful applications. But let's talk a little bit about some of the recent breakthroughs. I mean you showed the Willow chip. This is a chip we showed the world back in 2024. And I think there are two key breakthroughs associated with that.
+
+One is the fact that it was able to do in a few minutes what would take the world's fastest supercomputer 10 septillion years. That's 1 with 25 zeros next to which is extraordinary. But the other one, in some ways more important demonstration, was this idea of below threshold error correction. Can you explain what that is and why that matters so much? HARTMUT NEVEN: Yeah, so quantum error correction is a technology you need to keep the important superposition states alive.
+
+And for the very first time, as I said, we cleared that hurdle in '22. But the community wasn't too impressed because the errors just came down by a few percent. And people said, well, even though before-- so how do you do error correction? Typically, you use redundancy. That's what we use in engineering to make things safer.
+
+So you take a number of physical qubits, as we call them, to orchestrate them into one more stable logical qubit. That is what error correction does. And then when we try-- before when people tried it they introduced more redundancy. But there was more stuff. Now more qubits, more wires, more measurement devices.
+
+So the error always came down, or sorry the opposite, the error went up. And then in '22, we made it come down for the first time, but an unimpressive few percent. And then with Willow, we just redid this. And in '24, we basically did the same experiment again. But now it was already much higher quality chip.
+
+And the error came down by a factor of 2. And then the field for the first time was, oh, this seems to really work for good. JAMES MANYIKA: Right. So that was an important breakthrough. And then last year, we had another big breakthrough.
+
+But maybe to set up that breakthrough, all these typical benchmarks we've been using, such as the 10 septillion years and so forth, we're talking about using a particular benchmark mechanism called random circuit sampling as a way to measure, but it's not a very useful computation. But it's useful to measure progress. But the breakthrough last year with Quantum Echoes was actually the first time anybody, I think, had shown a useful algorithm. Can you talk about Quantum Echoes and why that breakthrough was important? HARTMUT NEVEN: Yes.
+
+So you said it nicely. So the initial demonstrations that quantum chips can do something impressive was done on exotic mathematical benchmarks where essentially problems that you or people in the real world don't have, good for benchmarking. And then the criticism was show us something that I would care for. And Quantum Echoes was the answer to this. It was the first quantum algorithm that can do a useful task.
+
+JAMES MANYIKA: Talk about the task. Because we had a demonstration where we worked with researchers at Berkeley and others to actually show a useful use of Quantum Echoes. Can you describe that work? HARTMUT NEVEN: Yeah, so Quantum Echoes is essentially the quintessential quantum machine learning algorithm. It allows you to learn from readily available data.
+
+It's data that comes from nuclear magnetic resonance imaging, so in NMR machines that pharmaceutical companies use. Or if you go to a hospital and do an MRI scan, that's also nuclear magnetic resonance imaging. So to get out of these devices more information, that's where the Quantum Echoes algorithm applies. JAMES MANYIKA: And I think in that example, what you were able to observe was to show that, for the first time, you were able to measure these kind of dihedral angles of these very hard to understand molecules. I think, was it a benzene, a couple benzene molecules?
+
+Can you-- HARTMUT NEVEN: Yeah, we then-- and typically when you have such new algorithms, there are a few steps to really lodge it in practice. So initially, we showed it on some proof of principle problems. And then you go closer to what chemists care for. So there was it's called a diphenyl. It has two benzene rings.
+
+And chemists didn't know how are these two rings rotated relative to each other. So we computed this angle using Quantum Echoes. And showed, look, you can answer real open questions in chemistry with that algorithm. JAMES MANYIKA: One of the things, I mean so the quantum team at Google is actually called Quantum AI. And we should talk about that, why that name.
+
+And there's always a question about, so do these two things need each other. Does quantum computing need AI and does AI need quantum computer? Can you explain the origin of the name Quantum AI for the team? And then I'd love to maybe debate you a little bit on this question of AI and quantum. Why that name?
+
+HARTMUT NEVEN: So yeah, why is our team called Quantum AI? And that was-- actually I worked in AI for most of my career. I actually here is self-driving cars. My PhD was on self-driving cars. I joined Google doing computer vision, visual search.
+
+But at the time, it dawned on me that real, powerful future AI wants to have access to the most potent, capable computational substrate we can think of, and currently that is quantum computing. So I thought quantum AI should be able to do tasks that AI running on classical machines will never be able to do. And then in 2012, we set out, based on the thesis, to show that this is really true. JAMES MANYIKA: And I think one of the reasons, one of the contributions that quantum computing can make to AI is in particular data sets. HARTMUT NEVEN: Yeah.
+
+So maybe we should advertise this, James. So for those of you who want to know more details, there will be a special issue of "Daedalus" coming out. You're the editor. And there we put an essay that is called "Quantum Plus AI Equals Quantum AI," and it speaks about this bidirectional acceleration. How do we use AI today to accelerate progress in quantum computing, and how starting now, and even more so in the future, quantum resources will help solve novel tasks?
+
+JAMES MANYIKA: Yeah and I think one of those examples, which is incredible to see was how there was a deep collaboration between the DeepMind team and the quantum team around this idea of alpha qubits as a way to think about how to use AI and machine learning techniques to actually help the progress we've been making on error correction. There was one example where AI was actually benefiting quantum. Have there been other examples like that? HARTMUT NEVEN: Yeah, let me give you also your previous question I haven't properly answered yet. So how can quantum help AI?
+
+There are probably a dozen different ways. Let me give you one or two examples. So AlphaFold, a resounding success, used in labs all over the world. To train AlphaFold, we needed data sets that started to be collected in the 1970s. It took 50 years to make things like the protein database to train AlphaFold, very painstaking work by many PhDs, lots of government grants.
+
+So a quantum computer would be able to produce very valuable training sets in many settings where it's difficult to make those training sets otherwise. So we expect this to be the very first contribution of quantum to AI that we say, look, here's a great data set that you should use. And actually, as a late-breaking piece of news, just last week, we had first data sets relevant to material science where we thought, oh wow, they have the quality good enough. We should ship them to our colleagues at DeepMind. JAMES MANYIKA: That's fantastic.
+
+One of the things that I find pretty exciting about, even though, of course, we're on this moonshot journey to build a fully error-corrected quantum computer, there's a lot of great science and discovery that's actually happening along the way. Can you give a couple of examples? I mean, one of my favorite ones was the holographic effect, which goes back to something, a conjecture that Einstein had. But talk a little bit about some of the examples of the incredible science you and the team are able to do along the way. HARTMUT NEVEN: So now that we have chips with a few hundred qubits, we can make good on Richard Feynman's dream and simulate quantum systems and study their properties and learn new things.
+
+And you mentioned already a few. There is one very exotic one which created quite the firestorm in the scientific community.
+
+And it will be hard to explain fully the science behind it. You might have heard of the effect of quantum entanglement that two quantum particles can be correlated at long distances. You may also have heard about wormholes, which is a connection through space between two distant space points. And there is a field in physics. It's called holographic duality that claims that these two processes are the same.
+
+So if that is really true, then we can use entangled qubits, which we can produce on our chip to make wormholes. And we essentially created a wormhole. And I use the word created not simulated. Because strictly speaking, if the holograph, if the string theorists are right and this duality exists, then it was actually a tiny-- don't worry, you wouldn't have fallen in-- but a tiny wormhole was actually created. JAMES MANYIKA: Yeah, I mean, this gets very exotic pretty quickly.
+
+I mean, you've also been doing experiments on quantum gravity as well. And you've also been doing even understanding deeper questions about electromagnetism that we didn't fully understand before. So there's a lot of incredible science going on along the way. HARTMUT NEVEN: Yeah, so one thing we are proud of is that there is our team produces this string, dense string of high-impact publications that discusses exactly that, that discoveries made through this process, quantum simulation of interesting systems. And others, just the names, we won't explain, but time crystals.
+
+We made time crystals. That's the closest you get, that physics lets you get to perpetual mobile. It's essentially a system that stays in periodic motion forever, without needing to exchange any energy with the environment. Or another exotic thing was non-abelian anyons. I know that's a mouthful.
+
+What is that? But it's something also goes seemingly against common sense. It's essentially the situation, imagine you build a little house out of LEGO blocks. And there are, let's say, two bricks that look the same, and you switch them out and you look again at your house, because they were the same, nothing should have changed. But in quantum physics, there was a prediction that this may be different.
+
+That even though you swap two identical particles, the overall system changes properties. And that we showed in practice that really, yes, that exists. JAMES MANYIKA: Often when people think a lot about quantum computing, I mean, you and I can talk about all these extraordinary applications in biology and chemistry, in materials and so forth. But I think the one application or use that most people think about is encryption. Ever since, for example, Shor's algorithm, the idea that most of our cryptographic encryption systems rely on the fact that these are incredibly hard problems for classical computers to solve.
+
+And so therefore, we rely on the difficulty of those computations as a way to think about our encryption systems. But if you had a quantum computer, you probably could crack those systems. And so recently, you made and the team made some news recently, to suggest that, in fact, the ability to build systems that can crack RSA encryption and also elliptic curve cryptography systems is not that far away. Can you talk a little bit about what the news was and what the progress has been on building those kinds of systems? HARTMUT NEVEN: Yeah so fortunately, many of the natural applications for quantum computers are these very human-kind friendly things, like design drugs quicker, better batteries, fusion reactors, and many important humankind challenges.
+
+But one of the more problematic applications of quantum computing is it can be very powerful for crypto analysis. And indeed, in quantum computing, it's not just that the hardware has made progress. It's also the algorithms have made progress. So we were able to show that you need less and less resources to do the simulations, but also cryptoanalysis, and therefore indeed the timelines are moving inward. It's not that you can wait till late 2030s before you have to worry about it.
+
+Actually, Google put a blog post out saying, hey, we need to move to more powerful post-quantum crypto schemes already by 2029. JAMES MANYIKA: Yeah, maybe to put this in concrete terms, I think back in 2019, I think the view in the field was that if you wanted a quantum system that was capable of cracking RSA 256 encryption, you'd need at least a 20-million qubit system. And then we showed about a year ago that threshold had actually come down because of the progress to where you'd need perhaps about a million qubits. And then two months ago, we showed that in particular with the elliptic curve cryptography systems, which are mostly used for cryptocurrencies and other things, the threshold that had come down even further, which suggests that the day in which we have to move to a post-quantum cryptography system is not that far away. It's not that far away.
+
+I mean, talk about how you think about our responsibilities when it comes to making sure the world is ready for the arrival of quantum computer systems. HARTMUT NEVEN: Yeah, you're exactly right. So last year, we have a very gifted quantum algorithm design on our team. His name is Craig Gidney. And last year he showed, oh, you can do cryptanalysis on RSA 2,048 with just a million physical qubits.
+
+And then he went on to show ECC-256, which is important for digital signatures. You need only a few hundred thousand physical qubits. By the way, earlier when we described the roadmap, I should have added this. I said our roadmap had six milestones. And number six was essentially build a physical chip or a set of physical chips with a million physical qubits.
+
+But because of these advances in algorithms, we now think that a commercially relevant machine would only need about 100,000 physical qubits. So our meme there is milestone five is the new milestone six. That one, we really would see commercial impact. JAMES MANYIKA: So Hartmut, as you look ahead, what are you most excited about and what are you most concerned about with quantum computing? HARTMUT NEVEN: What I'm most excited about is that right now for many algorithms, to quantum algorithms, to argue that they are useful in real life, you have to prove it by pencil and paper because you can't run the algorithm yet.
+
+At the end of the decade, we won't have to do this anymore. There's a cool quantum machine learning algorithm. And rather than painstakingly trying to prove it, and we can't prove these things typically for classical neural networks either. But then you would just demonstrate by running it. So that will be a so much more fun period, when empirically, heuristically, you can test out and develop new algorithms.
+
+JAMES MANYIKA: But I do know you're excited about a few other things too. Maybe I can draw you out on this. I mean, you've been thinking about the intersection of quantum computing and creativity, for example. Can you talk about some of the experiments you've been running? HARTMUT NEVEN: Yeah, we recently did some very fun experiments.
+
+Many of you may know that a key tool to generate nice images, audio, video, is with diffusion neural networks. They essentially take a noise tensor and then have been trained to sculpt a nice image out of this noise. And one of the things we can do today is we can represent noise distribution or probability distributions, I should say, on our chips that are outside of the reach of classical computers. So we asked, hey, if we use our chip to make the noise tensor, will this make a more vibrant, better-looking image? And we produced those images.
+
+And actually, you're going to see them. We try to find ways to release this tool so you can play with it and judge for yourself whether this hypothesis is correct. JAMES MANYIKA: But you actually showed some of this in some exhibitions in Europe recently, I think. Right? HARTMUT NEVEN: Yeah, we had collaborations with known artists.
+
+So the earliest was with Refik Anadol where in 2020, we did the same process. We used output from a quantum processor, quantum noise tensor to build this artwork. It was called "Quantum Memories." And it was actually that successful, it was seen by 1.3 million viewers, but not clicking on YouTube.
+
+Physical people came into the museum, so very successful. There were two other shows in Berlin and one I was a bit proud of. There was a show that drew a crowd that long. There was a one or two mile long line in Berlin in the middle of the winter, to get into the Kraftwerk exhibition to see this quantum art show, so that was very nice to see. JAMES MANYIKA: So Hartmut, as we wrap up, because I know we're at the end of our time, if we're having this conversation a couple years from now, what kinds of things do you hope we'll have achieved and what new results will you be able to show?
+
+HARTMUT NEVEN: Yeah, I hope to show and of course our team is very motivated by this, to demonstrate that this basic thesis is correct, that quantum AI is a more powerful form of AI. JAMES MANYIKA: Yeah, well, actually, maybe I can sneak in one other question. I think at the very beginning of this conversation, we very much obviously focused on the fact that you've been pursuing superconductivity and superconducting qubits as a way to build quantum computers. But that is clearly not the only way to build quantum computers. There are other mechanisms.
+
+People are talking about neutral atoms, talking about if you like, topological qubits, and a whole range of possibilities. You recently started a new team focused on neutral atoms. Can you describe that as a different alternative way to build these systems? HARTMUT NEVEN: So there are five, six, seven ways that are being explored to represent quantum bits, qubits. And I earlier explained to you how superconducting is a very good strategy to do this because you have these macroscopic atoms easy to deal with.
+
+Now it turns out that people who work with the natural atoms, they also made nice progress to the point where we thought, maybe they might get to certain applications earlier than the superconducting path. So we added a second thread, and we have now an emerging lab in Boulder, Colorado, where we pursue a second thread called neutral atom approach to quantum computing. And we will see how this goes. And of course, both threads can benefit tremendously from the common expertise we have in algorithms, error correction, control, electronics, and others. JAMES MANYIKA: And they both have very different properties.
+
+That's why they're very complementary, I think, right? HARTMUT NEVEN: Yeah, they have both their pluses and minuses. Superconducting will always be much quicker. Neutral atom systems have maybe an easier way to be connected to sensors. That's something we haven't talked about.
+
+And quantum enhanced sensing literally gives humanity new eyes to see features of the universe we so far were blind to. JAMES MANYIKA: I think we're being told we should wrap this up, but thank you for the conversation. I hope this was useful and informative to everybody, but good to see you, Hartmut, as always. HARTMUT NEVEN: Yeah, it was a fun conversation. Thank you.
+
+[APPLAUSE] [MUSIC PLAYING]

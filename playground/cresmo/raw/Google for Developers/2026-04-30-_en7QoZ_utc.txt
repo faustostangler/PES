@@ -1,0 +1,74 @@
+---
+video_title: "Building with Gemini Embedding 2: Our first natively multimodal embedding model"
+video_id: _en7QoZ_utc
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_en7QoZ_utc
+video_date: 2026-04-30T19:00:38+00:00
+video_description: |
+  Explore the new Gemini Embedding 2 model, which maps text, image, video, audio, and documents into a single, unified embedding space. Learn how embeddings are the key to unlocking efficient, accurate understanding across multimodal data for retrieval, search, classification, and other tasks.
+  
+  Resources: 
+  Get started with Gemini API → https://goo.gle/4eUJKgJ 
+  Get started with Gemini Enterprise Agent Platform → https://goo.gle/3OB8KPH 
+  Explore the Multimodal Search demo → https://goo.gle/3QXk49n  
+  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Speaker: Patrick Loeber
+  Products Mentioned:  Google AI, Gemini
+---
+Hi, I'm Patrick and I'm a member of the technical staff at Google DeepMind. Today, we're excited to launch Gemini embedding two in general availability. Gemini embedding 2 is our first natively multi-modal embedding model. It is based on Gemini and it directly Maps text, images, video, audio, and documents into a single unified embedding space. So let me give you a quick overview of the model and then show you how to use it with some code examples.
+
+Because the model processes multiple modalities natively, it understands the semantic relationships across different media types without relying on intermediate text conversions. It also supports interleaved inputs. This means you can pass multiple modalities like an image alongside a related text description in a single API request to generate one composite embedding. For developers, this significantly simplifies their architecture. You can pass a raw image or video clip directly to the embedding endpoint and receive a vector that is immediately comparable to text queries.
+
+It also supports over 100 languages out of the box, so you can build multilingual applications with it. Now let's talk about flexible output size. Because vector dimension size is a major factor in storage costs and search latency to give you more control we're using matryoshka representation learning. This nests the most critical semantic information in the earliest dimensions of the vector. You can request the default 3072 dimensions for maximum precision, or truncate to 1536 or even 768 to optimize for scale.
+
+The model maintains high quality even at lower dimensions, so you can easily tune that cost performance trade off for your specific app. On the benchmarks, it establishes a new performance standard for multimodal depth. The model outperforms leading models in text, image, and video tasks while introducing also strong speech capabilities. The primary application for Gemini embedding 2 is serving as the retrieval backbone for multi-modal RAG agentic workflows. You can build agents that query video libraries, meeting audio and text documents simultaneously without maintaining separate ingestion pipelines for each modality to support different use cases.
+
+The model is also optimized for specific tasks, including search queries, question answering, fact checking, code retrieval, classification, clustering, and semantic similarity, and our documentation includes a prompting guide to help you implement these task specific optimizations. Gemini embedding two is generally available now via the Gemini API and Gemini Enterprise Agent platform. So let's jump into the code and then learn how to use it. I'll walk through how to generate multimodal embeddings and how to perform search across different file types. So now I'm in anti-gravity and we're using Python.
+
+So we installed the Google AI Python SDK. And then we set up a client, and then we simply call client models embed content. And the model ID is Gemini app embedding two. And for the first example, we have a simple text sentence. So we embed this sentence what is the meaning of life.
+
+And then we can print results embeddings. And we can also extract the values. So this is the first item in the list. And then we calculate the length. So let's run this and see what we get.
+
+So here we have our embedding values. And then you see we have 3072 as the number of values. So this is our output dimension that we get by default. So this is a simple example for text. Now let's jump to a multimodal example.
+
+And the code is similar for example an image here we read an image from disk. So I prepared a few images here like this one with this puppy. And then we simply add this here. So the contents intense this time. We read it from the bites with the correct bites and then the correct MIME type.
+
+And this is all we need to embed an image. And also the code is exactly the same for an audio file. So here. We also have an audio file. For example, look at how fast the dog runs to catch the tennis ball in the park.
+
+And in this case, of course, we need to change the MIME type. And the code is very similar or exactly the same for PDFs and also videos, except that here we're using a different MIME type. So let's run this. Let me clear this first and then let's run the second file. And then it also should be pretty fast.
+
+And here, we get our embeddings for an image and our embeddings for an audio file. In the next example I want to show you how you can do embedding aggregation and combine multiple inputs from different modalities. And then calculate one single embedding. So here, again, we are reading an image and then an audio file. And then all you have to do is now append multiple inputs into this contents list.
+
+So this can be, for example, a text description, an image of a dog and then the image of the dog. And then also a sound file talking about a dog. And now if we run this Python and then the third file, then you should see we only get again one embedding back. So this combined everything into one embedding. Now I want to show you how you can configure the output dimensionality.
+
+And for this all you have to do is append this configuration. And this is a dictionary where you specify the output dimensionality key and then as a value the size you want. So here we're using 768. And then again, we print the embeddings and the length of the embeddings. So let's clear this and then run the next example and it was pretty fast.
+
+And now here see this has a length of 768. Now, this last example I want to show you how we can implement multimodal search with a model and then perform for example, similarity search and find different images. So I prepared different images 10 different images. In this case, for example, it has different categories like food, like Apple and bananas. And then also a few animals like we have kitten, a bird and a puppy.
+
+And then also, for example, an image of a city and also some nature. And now we are embedding all of these images with the code that I showed you before. So we iterate over all these images and then read the bytes and then calculate the embeddings. And then I'm simply storing this in a dictionary combined with the image name. And then we are dumping this to a JSON file.
+
+And I already ran this. So this is now dumped into this JSON file. So we have the file name and then the embeddings. And we have this for all the 10 items in here. So this is the first step.
+
+Calculate the embeddings for your data. And then as next step we perform search. So now we do similarity search. And this can be based on a text query. But it can also be, for example based on an image or an audio file.
+
+So first, let me show you how to do this with a text query. So we have the query an image of let's start an image of an animal. And then we embed this query. And then this is our query embedding. And now we need to calculate the similarity.
+
+And for this, we're using the cosine similarity, which is defined. So the cosine cosine similarity of two vectors is defined as the product divided by the length of the first vector times the length of the second vector. Then here we load the stored embeddings, and then we iterate over all the values. And then for each value, we calculate the similarity between the query embedding and the items in our database. And then this.
+
+And then for example, we print the top three items. So if we do Python search.py then we see the two closest matches for query and image of an animal are puppy, bird and kitten. So this worked. For example, if we change this an image of food and then run this again, then hopefully you should see.
+
+Now the top three closest matches are pizza, bananas and the Apple image. So you can see based on text we get at the corresponding images. And also we can actually do image to image search. So instead of using this text query what we can do is we can feed in also an image. So here I have a second puppy which looks similar to this one but in a different pose and different setting.
+
+So now we're feeding in this. And now this image is our query embedding. And then now if we run this again then also hopefully we should get yeah the puppy is closed, the kitten is closed. And then maybe yeah the bananas was the third case, but still the leading. The closest matches are our puppy and kitten.
+
+And yeah, this is an easy way how to use the model to do multimodal search. And you can even put this a step further. And for this, we have an applet that you find on AI Studio. It's called multimodal search. And here, for example, we embedded different texts, different images and then different audio samples.
+
+And then for example, if you search by cat across each file type you should get similar images. So the close this text is a sleepy kitten. The closest image is this. And the closest audio sample is cat purring. So let's quickly listen to it.
+
+The little kitten is purring so loudly while she takes a nap in the sun. Yeah, and of course, here you can also upload images to use as your search query or an audio file. So yeah, play around with this and have fun. All right, that's it. Detailed documentation in an interactive app are linked below.
+
+So give it a try and let us know what you build with it. And if you have any feedback and then see you in the next one. Bye

@@ -1,0 +1,99 @@
+---
+video_title: "Create advanced data driven Gemini API apps"
+video_id: _Op9QfXDBuM
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_Op9QfXDBuM
+video_date: 2026-05-21T17:15:42+00:00
+video_description: |
+  Explore the latest file handling, data integration, and tooling capabilities within the Gemini API. Build a documentation AI system using the new File Search hosted-RAG system, and discover features for batch processing and automated data extraction. 
+  
+  Resources: 
+  Build and prototype RAG systems with the Gemini File Search API!
+  Install the Gemini API dev skill → https://goo.gle/4tfq7n2 
+  Read the File Search docs → https://goo.gle/4w7WBTb
+  
+  Speakers: Mark McDonald
+  
+  Watch the AI sessions from Google I/O 2026 → https://goo.gle/AI-at-IO26
+  
+  Subscribe to Google for Developers → https://goo.gle/developers 
+  
+  #GoogleIO
+  
+  Event: Google I/O 2026
+  
+  Products Mentioned: AI/Machine Learning
+---
+[MUSIC PLAYING]
+
+MARK MCDONALD: Have you ever tried to build a complete RAG system? Well, RAG is hard. In this video, I'll show you how to build powerful RAG systems fast using Gemini's File Search API. Plus, I'll show you some advanced data processing features if you hang around. I'm Mark McDonald.
+
+I'm part of the Google DeepMind developer experience team. And I work mainly on Gemini. This video doesn't require any coding experience. But it's made for developers who are building AI apps. So having some experience doing so, even vibe coding, will be useful.
+
+Let's go. If you've ever built an app, you know that data is important. You have content, something in your app that is important to you and your users. Maybe it's your personal tudor app. Maybe it's an analysis engine that you've built.
+
+When you build an AI-powered app with something like the Gemini API, you learn that AI isn't magical in and of itself. The real magic comes from combining your special sauce, like your to-do list, with focused AI prompts that work together. Enabling your users to say something like, "What am I missing from my to do list?" or "Which file has the important thing that I forgot?" allows you to leverage your unique value proposition to create magical experiences.
+
+However, LLMs are finite. They have context windows that impose an upper bound on the amount of data you can process in a single request. And even if they were infinite, more tokens mean slower responses and higher costs. Having the ability to use a million tokens is pretty powerful. But sometimes less is more.
+
+RAG, or retrieval augmented generation, is the usual way to scale beyond a model's context window. This video won't explain it in depth. But essentially, you put all of your content in a data store. Then, when you need to answer a query, you selectively include relevant chunks into your prompt so that you're only working with relevant info. This sounds simple.
+
+But the truth is that RAG can be pretty complex. There are different flavors of RAG, from regular naive RAG to agentic RAG, self-RAG, graph-RAG, iterative-RAG. At the architectural level, you already have a number of choices to think about before you even start designing your system. Then, each component of the RAG system needs to be considered too. Which vector DB to use?
+
+Will it work with my environment? How can I host it? Then, you need to think about how to optimize your document processing? Things like chunk size and overlapping windows, plus how you'll unpack complex file types like PDFs with tables and other unstructured data. And then, your retrieval step has complexity too.
+
+How do you map your users' question or prompt to search the data store? Do you set up query expansion or document reranking? There's a lot to consider. And in a world where we want answers fast-- and AI promises rapid results-- this can really slow down your prototyping. This is where the Gemini API's File Search tool comes in.
+
+File Search is a fully managed solution for RAG that is built into the Gemini API, abstracting, most of the indexing and retrieval stages away so you can focus on your core logic. It's powered by the Gemini embedding model, a state-of-the-art embedding model based on the same architecture as the powerful language model that you know and love. This ensures that the text isn't just matched on similarity, but on understanding too. And it has automatic OCR built in so you can index multimodal content like PDFs, but with a purely text index. Similar to a regular RAG pipeline, there are two main phases-- ingestion, that you do ahead of time to get your data indexed, and then search.
+
+Search is even easier here than a traditional RAG setup, as it's just a tool that you tell the Gemini API about. Then, the Gemini model will use the tool to find the relevant documents, add them to the context, and produce whatever output is needed to fulfill the prompt. One of the powerful benefits of having File Search provided as a tool is that the model is able to repeatedly call the tool, inspect the results, and refine or update the search queries that it is using to find the right information. We call this agentic RAG. And it's one of the most effective RAG engines currently known.
+
+In this example, a user has sent a query asking how to apply for leave. Within that single generate content call that your app makes, Gemini will repeatedly make tool calls using the File Search tool to answer the question. This is the agentic part. The user's query is ambiguous as there are different types of leave that could apply. So instead of stopping and asking the user, Gemini starts with a query to find all of the different types of leave processes that might apply.
+
+Then, having read the results of those searches, it knows that the user needs to fill out specific forms. So it searches for them next. Then, since the process requires approval and additional search is done to figure out that step too. And finally, once the process is understood well documented within the model's context window, it can formulate a response to the user, detailing the different forms and processes required for whatever type of leave they are requesting. So, as you can see, the model can orchestrate a lot of processing as a result of just a single generate content call from your app.
+
+So it's still important that you have a human take a look at any output before you use it. The code for this is pretty straightforward, especially if you are familiar with the Gemini SDK already. Here we initialize everything and create a new Filestore. Then, upload your files one by one. Note that here you just upload them directly.
+
+There's no PDF preprocessors to define or chunking strategies. You can do any pre-processing you want if you want. But we have some smart defaults set. So most content typically works without any configuration. Once you've populated your Filestore, it's ready to search.
+
+Searching is built into the existing generate Content API. So searching is just a regular prompt with the File Search tool attached. Here's a sneak peek at an app we're going to expand on later. Let's look at the ingestion code first. You can see here, we create a Filestore if it doesn't already exist.
+
+And here, we upload some local documents into the store. Now, we run it. And watch it all upload.
+
+OK. Let's go back to the code again. Here we have another tool to query the Filestore. Just like the snippets I showed you earlier, this tool provides a regular Gemini API chat interface that has the File Search tool attached. You can see we have our Filestore present.
+
+Now, let's run it to make sure our document is uploaded.
+
+There it is. Since this is an example I have it showing the full JSON response. You can see you get quite a bit of additional context here. As you saw in that example, the API will generate a grounded response based on the data that you have in your Filestore. If you are watching closely, you might have seen that we got more than just the model's response, also included some citations.
+
+This is one of the built-in benefits of the File Search API. It'll generate a response with links back to the grounding chunks it used so that you can provide your users with links back to specific documents and, for supported formats like PDF, even specific pages within the documents. Sometimes you or the user will know that there are certain files that should be included or excluded when generating. An example of this in our book searching app could be if the user selects that they only want to search a specific author or for books in a given time period. Data like this may be tricky for a model to be able to identify from the text alone, since a book doesn't write the author and publication year on every paragraph.
+
+Fortunately, this is a simple enough fix with the File Search API. When uploading your content, you can specify arbitrary metadata that is saved along with the text itself. Then, when you are generating responses, you can specify any filters in the tool specification. When the model searches the Filestore, it will first apply the filter you provided so that the Gemini model only retrieves candidate chunks that are relevant. And when you get back your grounded citations, you'll also see metadata.
+
+This can be helpful if you need to display or highlight any particular metadata, for example, grouping the citations by author or sorting by year. You may have already seen that the Gemini API can produce output that adheres to a given schema. It's helpful if you need a specific schema or just some specific fields. But you don't want to parse a text response. Well, you can use the File Search API together with structured outputs.
+
+This means that in a single API call, you can pass a prompt with a complex request and have the Gemini API identify all of the relevant information from your index, analyze the results, and generate structured outputs to answer the query. All right. Now, let's look at how to build an app like this from scratch. We're going to use Google's Antigravity IDE and start with a new empty project. I've created a new project called Book Nook.
+
+And you can see here that there are no files in it yet. The first step when working with the Gemini API is to install the Gemini API DevAgent skill. Agent skills are little tech snippets that you can install in your coding agent that explain how to do specific tasks. We're adding one for the Gemini API to ensure that the model always has the latest, most up-to-date information about what the Gemini API can do and how to do it. This skill connects Antigravity to the Gemini docs and ensures that it always reads them when working with Gemini API.
+
+The link on the screen will take you to the instructions or follow along here. Open up the terminal window and run "npx skills add" to add the Gemini API skills. Select the Gemini API DevSkill. And then, ensure that it's going to install it for Antigravity. For this project, we're just going to install it into our project.
+
+But installing it globally will ensure that it's available for all of your future projects too. Now, back in the main Antigravity view, you should see the skill listed in the file browser now.
+
+Now, we type in our prompt to get the indexing part of the app built. This will generate a script that creates a file search store and uploads files to it. This is the ingestion part of the RAG pipeline. In this example, we're using books from the Gutenberg Project, which contains a huge archive of literature that's in the public domain. OK.
+
+Now, let's try it out. We can see that it's importing the books we've saved. Now, we add a UI for searching our books. This will create a website for us to engage in a chat conversation with our entire library. Let's try it out with a query.
+
+Let's see if we can find any characters who are famous for their athletic ability.
+
+Voila. That was an intro to building your own RAG systems with the Gemini File Search API. Before we go, let's take a look at three more new features we've added for handling data when you're building with the Gemini API. This will be a quick fire round, so lock in. If you already have data in Google Cloud Storage and need to get it into your Gemini API prompts, you can now pre-approve your GCS buckets for use with Gemini and then pass the bucket URI in your prompt.
+
+No more uploading your files every time you need to use a file. Similarly, if you have content with a different cloud storage provider, you can now use that directly with the Gemini API too. Sign your URLs when you upload them to your provider. And pass the signed URL in your prompt. And now, Gemini can use that content too.
+
+Again, this saves you having to upload multiple times to different places. When you're building real production apps with Gemini API, you'll have some API calls that are super high priority and others that can wait. Now, by specifying the service tier in your requests, you can either spend a bit more to request higher priority traffic or mark your traffic as flex so that it can be delayed, if needed, lowering your costs. You, as the developer, will know when you're making an API call that is serving a real user or an important-use case so the request needs to be top priority or, alternatively, if it's for background or offline work that can easily wait a few more minutes for a response. Well, now you can pass that information on to the Gemini API and use it to optimize the cost and experience.
+
+OK, now you've seen how to build powerful, data-based solutions with the Gemini API's File Search system. Plus, you've learned how to bring in data from cloud storage solutions like GCs and S3 and how to optimize requests for lower error rates or lower costs. Drop any questions you have into the comments or just share what you plan on building with these features. So I'm keen to hear what you're all building. I've been Mark McDonald.
+
+Happy building. [MUSIC PLAYING]

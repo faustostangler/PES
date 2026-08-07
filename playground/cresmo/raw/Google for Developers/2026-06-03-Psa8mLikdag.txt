@@ -1,0 +1,67 @@
+---
+video_title: "Managed Agents in the Gemini API"
+video_id: Psa8mLikdag
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Psa8mLikdag
+video_date: 2026-06-03T17:12:21+00:00
+video_description: |
+  Logan Kilpatrick sits down with Ali Çevik and Philipp Schmid to walk through managed agents in the Gemini API. One API call, one autonomous agent running in a remote Linux sandbox, powered by Gemini 3.5 Flash and the Antigravity Agent Harness. They cover how the Interactions API works, why the data model is agent-first, the new agent-native documentation and skills, and a live demo of a managed agent turning Hacker News threads into a three-minute radio show with Lyria, Gemini TTS, and Nano Banana.
+  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Speaker: Logan Kilpatrick, Ali Çevik, Philipp Schmid
+  Products Mentioned:  Google AI, Gemini
+---
+Today we're talking about managed agents in the Gemini API. Ali Philip. Both worked on it. Ali, you want to kick us off with the news around managed agents in the Gemini API. Yeah, of course, it's in a nutshell.
+
+You make a single API call and you get an autonomous agent that can work on behalf of you and solve problems creatively. One interesting part of this is that it works in a remote Linux environment, in a sandbox. So it can do all sorts of crazy things write code to solve problems, use Bash commands, et cetera. And then because it runs in this remote environment, you don't have to worry about in your own production servers writing code into your application servers. So that's part of the big value of it.
+
+And the initial launch in the API powered by Gemini 3.5 Flash and the new Gemini anti-gravity agent or the Google anti-gravity agent powering the whole experience. Do you want to talk about the agent experience. Yeah, so we launched a new anti-gravity preview agent, which is powered by the anti-gravity agent harness, which also powers the anti-gravity Ide. And it's basically the backbone of managed agents.
+
+So you can use the anti-gravity agent as it is today. Ali told you a single API call. You get an isolated Linux environment where the agent can run a code execution, where it can create files, where it can run skills, where it can use all of the tools you're already using today on your local machine. But then you can build custom managed agents on top of it. So you can basically create your own system instructions, get your own personal skills to it, and store it in a way where you can make it very easily accessible to your customers, to your own internal teams, I don't personal projects, whatever you want to build basically with it.
+
+And the new managed agent experience isn't actually the first agent experience when we launched the interactions API, which you should talk more about for folks who haven't seen it. When we launched the interactions API, we launched with the first managed agent, which was Deep Research. And we actually we landed an update to Deep Research a few weeks or a month ago, something like that. But maybe for folks who don't know this sort of interactions API story, maybe you can read resort to tell that. Yeah of course.
+
+Well, first, as Gemini app API, I guess our mission is that we always want to provide the most intuitive way to build with the frontier intelligence. And our API so far had been up until interactions. This generate Content API, which was built for an era where frontier intelligence was essentially content generation. That was the main kind of thing capability that was available. But then in the last few years, like agents started taking off first with function calling and tools and server side tools and reasoning models and most recently, all sorts of other things around longer running agents and subagents and steering et cetera, et cetera.
+
+So we looked at it. Now it is complicated. Yeah and it used to be so simple and now it's very complicated. And so we looked into that and we looked into where things are going. And we thought we want to build an API that is essentially representing these frontier capabilities.
+
+And that's how interactions were born. And we like it also because it's one interface that you can use to talk to both like models and agents. Deep Research was the first one. But then any managed agent you create now you can actually call into using interactions API as well. Yeah, this is super exciting.
+
+I think for folks who haven't thought deeply about this don't need to immediately go and use all of the agent stuff. I think that we have tons of customers who are using Gemini model today, using the interactions API or using generate content. And I think the nice part is you have that freedom and flexibility. If you do want the hosted thing that has its that we're providing the environment and has a bunch of bells and whistles included. Great we have that.
+
+You can also use the same API and just keep using our models and then hook up to whatever framework you want. And I think giving developers that choice I think, was a great decision for us to make, which is fun, but maybe we can actually look at a demo of some of the new managed agent stuff in action so that folks can see, can not just hear the magic, but actually maybe they will hear the magic in this. Yeah of course. Yeah quickly. Maybe let me talk about what the demo is, and then I'll show you the demo quickly so you can take managed agents and essentially either integrate into your existing app, or you can wrap around it and build a new app, maybe a profitable business around this.
+
+So this is more the latter. We built this mini app using AI Studio build that essentially uses managed agents to turn into a radio production app. So I'll show you what we have here. I'll pick an example. So daily hacker bites is essentially something that goes the managed agent reads the Hacker News, kind of top comments and top topics that they picks the opposing views and turns it into a radio show where different participants calling in from different locations.
+
+And the way this works is that it calls into Gemini using interactions API calls the Gemini model to write the script, and in the end, you get a beautiful three minute radio show. I think this example too has 18 sources or something like that. So there's a lot of stuff that the agent is like taking into account as it goes off and does all this generation. And it's a single API call. Yeah which is wild.
+
+So I'll show you what this looks like when it kind of finishes. So here you go. If you can go from writing 200 lines of code a day to 2000 with an AI agent, are you actually a better engineer or are you just vibing. This is the part where opposing views are. Look, I think people are being way too precious about this.
+
+Simon Wilson's point about vibe coding is spot on. If I've been writing Perl for 30 years, I love it. Shout out to Simon. Yeah that's awesome. And so the intro we heard like the background music and that was being generated by Lyria.
+
+Here we see the model actually going and doing all the script writing and coming up with something that's coherent together. The API itself is like agent native in many dimensions. And you want to talk through the different dimensions and the things we're thinking about how do we actually make sure that this thing can help people build agents, but then this is actually also usable by agents. Yeah so big change, which we made going from generate content to the interactions API was changing the data model to be agent first right. Until recently, we just had models going like you send a message, you get a chatbot response from the model.
+
+So you had always the user role and the model role. And like with creating agents you have much more different types of interaction or types of steps or how we call them. So you might have to use the input step. But then the model goes on and does a tool call a function call. Maybe you invoke a subagent.
+
+You have many different steps that happen after each other. And it's not longer like a turn based interaction. You really have this stream of continuous like steps going on, and your user turn might not always come after a model turn. So in this case, in our demo, we had many different skills. The model like invoked the model use Nano banana to generate the thumbnail for the radio show.
+
+So there were many steps before, going back to the user and with interactions API, we made all of those steps natively integrated into the model. So it's not only a user and a model you are interacting with have the environment and all of the tools being first party principal of the API. I love that, and for developers you can actually just start using this. We have skills and a bunch of other stuff to get you started. Another focus for the interactions API was like so we every one of us is not coding much.
+
+Manual coding might be a hobby for people. Authentic engineers. Yes, exactly. And to really build developer friendly or good developer experience. We were thinking about, OK, what can we do to help agents use our new API.
+
+Of course, models were trained so they have a knowledge cutoff. They might not know about steps. They might not know about the interactions API. So we created dedicated skills and we completely rebuilt our documentation experience where it is agent first you can access all of the documentation via markdowns. There are links where the agent can search through it.
+
+We have an MVP server which can make it much easier. So you can basically connect the skills into your coding agent in anti-gravity and just say, hey, please build me an agent using the skill and describe it what you want to do. And then you can together, iterate on it until you are happy and then deploy it. And also like we've been thinking a lot about how to make it more native for agents in general, and also how to define agents in a way that developers are used to. So if you look at managed agents, the way you create an agent today is just a bunch of markdown files, you have an agents.md file, which
+
+you can write as prose to tell the agent how to work. And all the skills are marked on files as well. So we're trying to make it Agent native, but also native. Way to define the agents using agents. We're using the regular like markdown formats that developers are already used to.
+
+So we're really going deep into this markdown world at the moment. Maybe the future of software is actually markdown files. Yeah, no, 100% I think. I think that's spot on. It really is.
+
+Or Karpathy, the derivative of that is like Karpathy has that quote about English being the hardest programming language. And it's like actually probably markdown because you need the structured syntax that markdown provides. But this is awesome. Thank you both for sitting down. I'm super excited.
+
+Managed agents, this is chapter 1 of this new story for us doing managed agents in the API. There's many. The roadmap is long and extensive. Thankfully we have coding agents to help us continue to make progress on that roadmap. And if folks want to try managed agents, you can go to the Gemini API docs, you can go to AI Studio, and you can also go to agents to create your first agent.
+
+So check it out. Thanks for watching and we'll see you later.

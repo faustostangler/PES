@@ -1,0 +1,93 @@
+---
+video_title: "Create agent skills for on-device generative AI (I/O Connect ‘26)"
+video_id: KIp8PAU3oAI
+channel_name: "Google for Developers"
+channel_id: UC_x5XG1OV2P6uZZ5FSM9Ttw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=KIp8PAU3oAI
+video_date: 2026-07-06T22:00:15+00:00
+video_description: |
+  Hear from Erin Walsh and Mohammadreza Heydary to discover how to build powerful AI features directly into your users' hands. Explore Google's product suite to integrate on-device AI across mobile, web, and more, to keep data private, latency low, and enable offline capabilities by deploying your favorite models directly to your apps. Dive deeper into how to use the LiteRT-LM APIs to run LLMs on your device, and harness your model's agentic capabilities by creating your own Skill.
+  
+  Note: this is a live workshop recorded at I/O Connect Berlin, discover more about: 
+  
+   Skills Notebook: goo.gle/4d78UHX
+  LiteRT-LM Open Source Project: https://github.com/google-ai-edge/LiteRT-LM
+  AI Edge Gallery: https://github.com/google-ai-edge/gallery  
+  
+  Subscribe to Google for Developers → https://goo.gle/developers  
+  
+  Speaker: Erin Walsh, Mohammadreza Heydary
+  Products Mentioned:  Google AI, Gemini
+---
+Hi, everyone. I'm Aaron Walsh, a developer relations engineer working on the Google AI Edge team. And presenting with me is Reza Heydari. Hello software engineer working on lighter TLM. Today we're going to teach you how to create your own agent skills for on device generative AI.
+
+So how many people here have run a model in the Cloud before. Anyone cool. How many have run a model on device before. All right. Awesome love to see it.
+
+Is anybody familiar with lighter t and the Google AI stack. OK, great. Then I'll get to teach you something new. So for those of you who don't Google AI Edge is a suite of tools and APIs designed to run models seamlessly on device on any edge platform, and that includes Android, iOS, web browsers, desktops, and even IoT devices. So you're all here and hopefully you're already excited about some of the benefits of running models on device.
+
+But just to get on the same page, let's talk a little more detail about why edge AI is useful in the first place. So first, processing data on device leads to significantly lower latency because there's no network delay. This is critical for real time applications where latency can make or break the user experience. Second, there are huge privacy benefits due to sensitive data never leaving the device and never having to go to an external server. Third, it enables offline functionality so your app can run the same anywhere, even if it's on an airplane.
+
+And finally, developers benefit from reduce or sometimes eliminated data center costs because it moves the computational burden to the device. And Google AI Edge isn't just a single tool, it's an end to end pipeline plan designed to take you from a raw model all the way to a highly optimized on device deployment. Let's walk through how this works in practice. It starts with preparing your model. Before you can run anything locally, you need to translate it.
+
+And that's where litratorch comes in. It seamlessly converts your model to the exact format that our runtime needs. And then to make sure that model fits into the mobile memory constraints, we have age quantizer that will shrink the model's footprint without sacrificing quality. Once that model is prepped, it's time to run it. At the heart of on device stack is light PT that is our core execution engine, allowing you to run classical ML models seamlessly across CPU, GPU, and NPU.
+
+But we know that running generative AI can be its own thing. So that's why we built the Lite TLM APIs. We wanted to give you a dedicated abstraction layer so that we can handle all the LLM specific things for you like kV caching, context window management, text generation, loops. So you can just focus on building a great user experience. And finally, you don't want to ship something you haven't tested.
+
+So with edge portal you can actually run and benchmark your models on a whole fleet of real physical devices. And you can see exactly how they perform in the wild. And if you spot a bottleneck, you can use Model Explorer to visually debug your architecture, find issues, and fix them before they ever get sent out into production. So since we're talking about generative AI in this talk, let's dive a little deeper into the light realm APIs. We mentioned earlier, it's a framework that allows you to efficiently build and deploy pipelines for LLMs across a whole wide variety of hardware, from high performance desktops to Raspberry Pi or small IoT devices.
+
+It allows multiple models model files to be compiled together with pre and post processing into a single efficient asset. It's open source with modular components, so you can pick and choose the exact pieces you need to build the perfect pipeline for your specific use case. And you can easily package that custom SDK with your app to deliver a powerful, bespoke AI experience. And lighter TLM has empowered many key LLM features that you'll see in familiar products such as Google Chrome, Google Home, Google Meets, and maybe your app is. Next, let's talk about the core features that make lighter TLM so versatile.
+
+First, we mentioned earlier, we have the true cross-platform support. So you can write your model once and deploy it everywhere from Android iOS, desktop, web and IoT, and for development. It provides high level, developer friendly APIs and so you can build and deploy your solution easily. It has native bindings in Kotlin and Swift, and even plugins for hybrid development like Flutter. And for those needing deeper control, there are powerful C+ APIs available for advanced customization.
+
+And critically, it ensures top performance through strong hardware acceleration across CPU, GPU, and NPUs. And it's all powered by the Super efficient light runtime. This unique combination gives you portability, flexibility, and speed. So now that we've talked about the Google AI Edge stack a little bit, let's talk more about skills and why are they useful. An agent skill is a simple, open format for giving agents new capabilities and expertise.
+
+Models, especially smaller ones that you might be running on edge devices, sometimes need special instruction to get an experience exactly right. Agent skills help us address that in three main ways. First, it reduces repetitive prompt instructions so you don't have to keep in typing the same prompt. You can just save it and rerun that later. Secondly, it enables the model to discover and gain new capabilities dynamically in real time.
+
+And third, it allows the model to access specific domain knowledge. So next, let's look at the format of a skill. A skill is a directory containing instructions, executable code, and reference materials. It's organized like an onboarding guide that you might give to a new team member. So, Reza, why don't you help us dive deeper into skill architecture.
+
+All right. Thank you. Arin OK, so if you look at the structure of the skill, it starts off with metadata field. Which is telling us what kind of skill we are dealing with. And then we have the name of the skill which is kind of an ID, which the model is going to use to load up the skill along with the description.
+
+The description basically tells what kind of functionality this skill is adding to the model. And then below that, once we have this high level information, we have the detailed instruction that the model needs to follow for executing this skill. And this information goes to the high level structure of the skill in the markup file that we are naming skill. At the root of the skill structure. The next part we have the interactions of the model.
+
+An example of how this skill is being used. So in this case, we are using the map navigation skill. The user is asking can you show me x, y, z location. The model successfully looks it up and knows that oh, for this particular user query, I need to use the map navigation. And as we can see, it loads up the skill.
+
+It provides the skill M.D. to the model back. And then the model calls the skill with the function call. This is the location that the user is looking for.
+
+And we execute the function. And the result is going to be a web view of the location that the user asked for. OK, so with that, we are getting to the workshop part of the session. That's the part you guys are going to get involved. So if you're going to start with a quick demo can we switch to the phone please.
+
+So for this demo, I'm using the gallery app that we have here. Once you open the app you are going to select the agent skills. Here you have two versions of the Gemini model that we are running on device. For now, I'm using the 2D version, the model is going to be initialized. And then we have the Skills tab on the bottom.
+
+So if you click on it, you see the built in skills that already exist. And here is the custom skill that we are going to build together today. It's called task planner and timer. LLMs don't have an understanding of time as we understand it in the physical world. So this is an extension of the capabilities of the model to get a sense of time.
+
+All right. So let's send in a prompt. So I'm asking the model that I want to do a bunch of activities I want to make dinner I want to watch the World Cup highlights and prepare for the presentation slides. Help me make a plan. So the model recognizes that it needs to load up the skill.
+
+And if you look at the skill loading up and then it makes the function call. And at the bottom, we have the rendered UI of the timers. That's part of our skill. We can see we have a number of functioning timers that we can reset. OK, so that's the skill that we are going to build together.
+
+For that, we are going to use the gallery app. So if you haven't downloaded the app yet, this would be a good time to do it. In the app we are going to use the Gemma to be model. So please install the app and make sure you download the model. It's going to take a minute to download that.
+
+All right. While you guys are downloading that let's take a look at the skill that we just demoed. So what is it. Task planner and timer is the name of the skill. It provides a description of the functionality that the skill provides.
+
+And then below that, we have the detailed instructions including the function call structure that the model is required to issue, which includes give me the task, ID, the name of it, along with the number of minutes that needs to be included in the returned function call. So in this script, this is the deterministic code that we are adding to extend the logic. It basically parses the JSON and issues the calls for the web UI to be rendered, and passes the necessary arguments. And lastly, in the assets, we have the HTML code that gives us the beautiful timers that we have rendered there. OK, so this is basically all there is to the skill that we just saw.
+
+With that, we have a Colab. The link for that Colab is also up there. Let me walk you through that Colab real quick. If we can switch to the laptop screen real quick. We're going to come back to this slide again.
+
+So in the Colab, we provide again the structure of the skill that we are defining the name of the skill. Skill that our file, which is the markup description. And then we have the hidden logic and the WebView HTML. So you start off by creating this structure locally on your laptop. And once you created this file I have them here.
+
+You can copy paste them locally. And then you create this structure. We have a bunch of HTML code and then you push it to your Android device. I have a step by step guide here too for how to add this skill. So you basically open the agent skills, click on Skills and then you click on the plus button and you import it from local file.
+
+And this is the example prompt that we use. So this is a good introductory skill. I would recommend you to start off with using this to flush the end to end flow. But also, I have put together a prompt that you can put into your favorite I hopefully Gemini. And it's going to ask you a series of questions.
+
+You can describe the skill that you're trying to build, and it's going to help you create all the boiler boilerplate code, including the HTML stuff. All right. Also, if you don't have an Android device, it's OK. I have some workaround for iOS devices as well, so you can participate in the workshop as well. So this is the link to the Colab.
+
+These are the prereqs for the Android devices. And with that yeah we'll start building. If you need any help, please raise your hand. The two of us will be walking around. We also have some wonderful gdes walking around as well, who will be able to come over and help you.
+
+So we'll get to building and we'll give about 10 minutes or so to build, and then we'll wrap up with a quick little recap. All right everybody. So we're about to wrap this workshop up. Thank you all for joining. Thank you for participating, for building with us.
+
+It's really fun to see what you make. And just for a couple takeaways from this workshop, Google edge, it's our cross-platform library of tools for efficient on device LLM deployments, so you can use it for a wide variety of platforms, everything from mobile to web to desktop to Raspberry Pi lighter. TLM is going to be your API for that. Smaller models are gaining proficiency, so models are getting better, they're getting smaller, they're getting better at doing things. And agent skills like the one we made today is the way to bridge their usefulness to apps and unlock new functionality for them, for on device model in your apps.
+
+And finally, hopefully a lot of you have done this by now, but download the AI Edge gallery app. It's got ways to test out new models. It's got all kinds of features in there. And the best part is it's entirely open source. So if you like anything you see on the gallery app, you can recreate it yourself.
+
+You can go to our GitHub page for AI Edge gallery and just check out the source code yourself. You can feed that source code to your favorite agentic coding agent, hopefully Gemini and you can have it, analyze it and recreate some of these later TLM implementations for you. So thank you so much. We hope you got a lot out of this. Everything is available online so you can do the Colab on your own time.
+
+And very importantly, if you have questions or feedback, we would love to hear from you. You can always comment on our GitHub issues or and I are around so come say hi to us. We're still happy to help with your questions and we thank you again for joining us today.
