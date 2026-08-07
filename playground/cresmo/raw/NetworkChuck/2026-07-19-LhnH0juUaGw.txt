@@ -1,0 +1,357 @@
+---
+video_title: "I got inside FIFA’s Secret World Cup Broadcast Network"
+video_id: LhnH0juUaGw
+channel_name: "NetworkChuck"
+channel_id: UC9x0AN7BWHpCDHSm9NiJFJQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=LhnH0juUaGw
+video_date: 2026-07-19T17:12:16+00:00
+video_description: |
+  Build your next random idea on a Hostinger: https://hostinger.com/chuckfifa
+  
+  I spent two days inside the FIFA World Cup International Broadcast Center (IBC), the temporary network that carries every camera, every replay, every goal from 16 stadiums, and the HBS team even handed me a packet capture of a real match. So we open it in Wireshark: uncompressed ST 2110 video, 150,000 multicast flows, and a failover trick that will make any network engineer smile.
+  
+  🎓 I asked the crew HOURS of questions that didn't fit in this video, the full behind-the-scenes interviews are on NetworkChuck Academy: https://ntck-ac.co/fifa?utm_source=youtube&utm_medium=video&utm_campaign=fifa_world_cup_2026&utm_content=fifa_main_tour
+  
+   
+  
+  
+  
+  RESOURCES / LINKS:
+  🎮 Play the Backrooms of the IBC (built on a Hostinger VPS with a Hermes agent): https://srv732026.hstgr.cloud
+  📚 THE SIGNAL — the World Cup networking comic I made for my kids: https://srv732026.hstgr.cloud/comic/
+  🛠️ Wireshark (decode packets yourself): https://www.wireshark.org
+  🌐 Official IBC Tours site: https://ibctours.tv
+  📺 The Hermes video (the AI agent that built the game): https://www.youtube.com/watch?v=QQEgIo4Juxg
+  
+  TIMESTAMPS:
+  0:00 - The World Cup is made in Dallas
+  1:29 - Following one match: Boston → the IBC → the world
+  3:06 - How a match gets "made" 1,500 miles from the stadium
+  4:32 - The fiber (and the red/blue trick)
+  7:08 - Multicast Martin and 150,000 flows
+  11:52 - The thing I built at 1AM on a Hostinger VPS
+  14:10 - The people who make the World Cup
+  16:07 - Decoding a REAL World Cup match in Wireshark
+  21:45 - Addie's question: the sound of the ball
+  23:20 - The stadium, the backup plan, and the teardown
+  29:30 - A prayer for the stressed
+  
+  FEATURING (huge thanks to the crew who make the World Cup — and this video — possible):
+  👤 Christoph Barbet — Head of Broadcast Infrastructure, HBS (Host Broadcast Services)
+  👤 "Multicast Martin" — broadcast SDN / TFC
+  👤 Alex — Master Control Room Supervisor
+  👤 Wolfgang Herman — IBC Communications Engineer
+  👤 Mick — Audio Listener
+  👤 Anthony & Colin — Layer 1 / Broadcast Support
+  👤 Steve — Control Systems & Dashboards
+  👤 Gavin — Stadium Manager, AT&T Stadium
+  
+  **Sponsored by Hostinger
+  
+  SUPPORT NETWORKCHUCK:
+  ☕☕ COFFEE and MERCH: https://ntck.co/coffee
+  
+  READY TO LEARN??
+  🔥🔥Join the NetworkChuck Academy!: https://ntck.co/NCAcademy
+  📚 CCNA Course: https://ntck.co/ccna
+  
+  FOLLOW ME EVERYWHERE:
+  Instagram: https://www.instagram.com/networkchuck/
+  X/Twitter: https://x.com/networkchuck
+  Facebook: https://www.facebook.com/NetworkChuck/
+  Join the Discord server: https://ntck.co/discord
+  
+  Some links in this description are affiliate links. If you buy through them, I may earn a small commission at no extra cost to you. #sponsored
+  
+  #worldcup #networking #networkchuck
+---
+É aqui que acontece um jogo da Copa do Mundo, mas é aqui que a Copa do Mundo é feita. Bem-vindo ao Centro Internacional de Radiodifusão . Cada jogo da Copa do Mundo, cada passe, gol, comemoração, lágrima, tudo o que você vê de 45 câmeras de [música] 16 estádios em três países passa por este prédio através dessas conexões de fibra [música] finas e frágeis . Pessoal, posso tocar nisso? Não sei, pessoal, vocês não desconectam isso, né?
+
+Mas e se eu os desconectasse? Será que a Copa do Mundo simplesmente pararia? O que me disseram quando comecei a estudar aqui é que fracassar não é uma opção. E mesmo assim me deixaram entrar durante uma partida. Eu estava na sala de controle no início da partida. Eu
+
+até consegui isso, uma captura de pacotes do jogo em si. Será que conseguiremos decifrá-lo? A dimensão disto é insana. Nunca vi uma rede como esta. E é temporário. Ao final deste vídeo,
+
+você saberá como um chute em Boston foi parar em uma TV em Singapura. Isso foi muito importante para mim, porque sou um grande fã de futebol. Eu jogava quando era mais jovem e sonho em me tornar profissional. [Gritando] Mas aí eu rompi o ligamento cruzado anterior e me tornei um nerd de redes. Mas jamais, nem nos meus sonhos mais loucos, imaginei que meu amor pelo jogo e meu amor por redes e TI pudessem se unir. Que eu
+
+finalmente teria a oportunidade de ver a emissora que faz a Copa do Mundo acontecer. Você está brincando comigo? Além disso, minha filha Addy tinha uma pergunta. Ei, papai, como eles capturam o som da bola quando os jogadores a chutam? Você nunca mais verá uma partida de futebol da mesma maneira. Prepare seu café.
+
+Vamos [música]
+
+[música]
+
+Eu sou Christophe Balbi. Bem, eu sou o chefe da infraestrutura de transmissão no departamento de engenharia da HBS. Christophe é fã e, quando descobriu que eu morava em Dallas, o mesmo lugar onde a IBC está sediada para esta Copa do Mundo, ele pensou: "Nossa, isso seria ótimo." Se o Chuck da Network pudesse vir. [risos] Então, vim com uma missão porque hoje a França está jogando contra o Marrocos em Boston, um estádio a 2.400 quilômetros do IBC.
+
+Como é a transição do estádio para o IBC e depois para o mundo? Eu fiquei sabendo. E depois tenho esses outros objetivos. Hum, o número quatro talvez seja um pouco difícil. Você não pode andar na grama.
+
+Certo, temos dois atiradores de elite e eles vão te matar. Eu trouxe minha bola. Veremos o que acontece. Quando finalmente saímos das salas dos fundos, eu o vi: o centro de dados, o lugar que tem todas as respostas, o lugar onde todos os 16 estádios estão conectados. Será que eles vão nos deixar entrar?
+
+Muita coisa está acontecendo por aqui. Não se distraia. Nem olhe para essa fileira de servidores de replay que custou cerca de 20 milhões de dólares. Ignore isso. Olhem para cá. Olha só isso. É aqui que todos
+
+os estádios se conectam, bem aqui, por meio desta fibra. Olha, ali está Boston. Que tal darmos uma olhada no outro lado? Excursão escolar. [música]
+
+Todo estádio tem um desses, um centro de dados portátil. E fica na Tech Street. Eu gosto disso. Vamos entrar. Aqui está o outro lado dessa conexão. Ok, eles estão
+
+conectados, mas por quê? Porque a Copa do Mundo não se faz no estádio. É fabricado no IBC. Não, o que isso significa? Porque o jogo acontece no estádio, certo? O que
+
+significa se classificar para a Copa do Mundo? Bem, isso não está acontecendo aqui, então temos que voltar ao IBC. Vamos . Bom, agora que eles passaram pelas salas dos fundos, nós vamos chegar aos shaders. Que nome doentio para um time. Elas deixam as
+
+câmeras com uma aparência bonita. Eles controlam literalmente a cor, a aparência, o brilho e o contraste das câmeras remotamente. Olha, estou fazendo isso agora mesmo. Em seguida, temos a mixagem de áudio. Toda a mixagem de áudio para uma partida é feita no IBC. Além disso, a audição de áudio. Esse
+
+cara, Mick, fica atento a qualquer anomalia e depois anota. Adoro isso. Todas as repetições são feitas aqui. Lembra de todos aqueles servidores? A equipe aqui faz isso. Gráficos, tudo aqui. Sim
+
+. Se as imagens fossem assim, quão rápido eu seria demitido ? Você seria demitido imediatamente. Mas se você entrar rapidinho numa máquina do tempo , lá em 1994, a última vez que a IBC esteve aqui em Dallas, não era assim. Na verdade, a maior parte da partida foi decidida no estádio. Todas essas pessoas que acabamos de
+
+ver estavam no local. Perguntei a Kristof por que fizemos a mudança. O objetivo de centralizar todas essas funções é obter maior consistência. Sim . Temos menos equipes.
+
+Eles estão aqui e estão sob controle. Eles podem ser informados e treinados, se necessário. E podemos ter o melhor dos melhores. Sim. no mundo porque senão 16 16 equipes vezes Ah, sim.
+
+a inconsistência. Sim, isso seria uma loucura. Então, eles queriam ter os melhores talentos do mundo participando de todas as partidas em um só lugar, de forma consistente. Eles tiveram a mesma ideia em 1994. Algumas das funções foram realocadas para o IBC, mas só agora, graças a essas três conexões de fibra, conseguiram implementá-las todas.
+
+Três? Sim. Links de 200 gigabits distribuídos por três caminhos diferentes. Cada estádio possui três conexões de fibra óptica de 200 gigabits . Por que três?
+
+Ah, são cortes de fibra. Então, basicamente, das três, sempre mantemos duas conexões. E é enviado por caminhos diversos, caso ocorra um corte na fibra, o que acontece com frequência. Isso é um prenúncio, vocês verão isso daqui a pouco. Mas esses três caminhos não servem apenas como plano B. O que Kristoff está prestes a dizer
+
+faria os engenheiros dos anos 90 babarem. E para cada fluxo, estamos transmitindo os dados duas vezes. Oh. Assim, cada remetente está conectado à rede com duas interfaces. E estamos enviando, digamos, os pacotes azuis e os pacotes vermelhos.
+
+Ok, a dimensão disto é insana. Veja isto. Sinceramente, a terceira conexão é apenas o canal um. Isso é um plano B. Mas e as outras duas conexões?
+
+Então, tudo bem. Cada partida conta com pelo menos 45 câmeras. Eles têm câmeras por toda parte. Eles têm câmeras em helicópteros, câmeras de arbitragem, tudo. Cada um deles é enviado individualmente por meio de uma conexão. Mas
+
+não são apenas câmeras, temos áudio, comentários, sons da bola. Falaremos disso mais tarde. Estamos enviando tudo isso por uma única conexão, e depois sabe o que acontece? Somos tipo boop. Vamos fazer isso de novo. Clone-o. Cada
+
+câmera está enviando dois fluxos de vídeo. Cada áudio está enviando dois fluxos de áudio. Por que? Se falhar não é uma opção. E o que é ainda mais louco é que não são backups. Ambos são usados. Como? Chegaremos lá
+
+. Mas nós tivemos a oportunidade de ver um deles cair pouco antes de uma partida começar. Prepare seu café. Precisamos ir ao MCR. Passamos pelas salas dos fundos. Aliás, fiz
+
+várias perguntas ao Kristoff e a várias outras pessoas, perguntas que não vão entrar neste vídeo. Acesse a Network Chuck Academy, cujo link está na descrição, para conferir um conteúdo exclusivo dos bastidores. São cerca de 4 horas de informação. É incrível. Por que está fora do ar?
+
+Sem cortes de fibra. [risos] Sério? Pessoas perfurando. Ok, podemos todos respirar. A partida não aconteceria no Kansas, e aquele estádio não seria usado para outro jogo. Por isso todos estavam tão
+
+calmos. Mas, ei, chegamos bem a tempo do início do jogo. Lembra que eu queria estar nesta sala de controle? Eis o meu objetivo. Verificar. Mas aí, olhando para trás, para os meus objetivos,
+
+percebi que ainda não respondemos à primeira pergunta. Quer dizer, meio que fizemos isso . Mas enquanto eu observava todas as transmissões no monitor da NASA, pensei: "Certo, eu sei como todas as câmeras e as transmissões chegam ao IBC, mas de lá, para onde vão?" Como é que está aparecendo nessa tela agora? Vamos pegar uma câmera como exemplo. Essa câmera
+
+está naquela tela, mas esta câmera também está nesta tela e nesta tela. Esta câmera está sendo enviada para emissoras no Japão. Esta câmera também está sendo enviada para a Fox, NHK e BBC. Como é que uma única transmissão de câmera chega a todas essas pessoas, 45 vezes durante toda a partida? Como eles conseguem tudo isso? É aí que
+
+Martin entra em cena. Martin está sentado bem ali. Eu amo Martin. Vamos chamá-lo de Martin Multicast. Multipassagem.
+
+Não, multicast. Martin, quantos fluxos temos na rede neste momento? Atualmente, temos cerca de 150.000 fluxos multicast sendo gerenciados em toda a rede. É por isso que a Copa do Mundo é organizada por engenheiros de redes. Veja isto. Porque esse
+
+número era grande, e isso vai chegar a um nível de nerdice para o qual você não estava preparado. Tudo bem. Bem-vindo. O preço vai subir conforme eu continuar falando, mas vamos nos divertir. Você está pronto? Vamos tomar um pequeno gole
+
+de café. Multipassagem. Multicast. Ah, sim, multicast. Recebe o sinal de uma câmera e o transmite para vários canais, multiplicando- o. E isso acontece na rede. Então,
+
+o que isso significa? Então, vamos levar uma câmera para um estádio. Ela envia seu único sinal de vídeo para a rede do IBC. Quando a rede recebe o sinal, ela olha para cima e diz: "Ei, hum, eu tenho a câmera A. Quem a quer? Ah, você?"
+
+"Você?" Ele duplica a imagem para quem quiser vê- la. Fox, Telemundo, ESPN, George. E o segredo é que a câmera envia apenas um fluxo de dados pela conexão de rede. Cem pessoas podem querer ver aquela câmera e, sem transmissão simultânea (multicast), ela teria que enviar cem fluxos de vídeo, sobrecarregando nossas conexões, o que acabaria com a Copa do Mundo. Mas não, nesta situação, uma única
+
+câmera envia um fluxo de dados e a rede entra em colapso. Na verdade, é meio como um fogo de artifício, não é? Desculpe, foi nisso que pensei. Agora, hora da pausa para o café. Nível dois. Eu acabei de subir de nível.
+
+Não sei se estamos nos níveis um e dois, mas estamos no dois agora. Lembre-se, nossas câmeras estão enviando dois fluxos de vídeo. Assim, quando esses dois sinais chegarem à rede, ela os enviará para cada receptor que os desejar. Então, Fox, você terá duas transmissões. Telemundo, você recebe dois sinais. Jorge. E depois multiplique
+
+isso por, digamos, 45. Ou, no caso da partida final, haverá 50 câmeras. E depois você adiciona o áudio ali. E além disso, a IBC está equipada para realizar seis partidas simultaneamente. Todos esses jogos sendo transmitidos, todas as câmeras captando tudo . Não é uma loucura? Martin também pensa assim
+
+. E só para você saber, uma rede convencional não conseguiria fazer isso. É uma loucura. E é aí que Martin entra. Então, nós temos uma plataforma de software que desenvolvemos internamente, chamada TFC, que tem uma visão de toda a rede.
+
+E como ela obtém essa visão? É possível fazer integração via API com switches Nexus e outros dispositivos semelhantes? Correto. Então, a conexão é feita via gRPC em todos os switches Nexus, bem como nos poucos switches Arista que temos na rede. E então utiliza os mesmos meios para configurar estaticamente essas rotas em toda a rede. Assim, para cada
+
+fluxo de transmissão, existe um fluxo de transmissão de reserva. Tecnicamente, não é um fluxo de backup, pois qualquer um dos dois pode estar ativo a qualquer momento. Então, essa rede está usando alguns switches Cisco Nexus incríveis. Para mim, é fácil dizer. Essa foi difícil.
+
+Isso é um trava-línguas. Eles conseguem lidar com redes multicast, mas não com uma rede multicast como esta. Porque não estamos apenas enviando dados para um bilhão de dispositivos. Não me cite. É muita coisa. Mas também estamos enviando um
+
+fluxo duplicado para cada receptor. E esses fluxos precisam, na verdade, percorrer um caminho único pela rede para garantir redundância. É como se você não quisesse que o pacote vermelho e o pacote azul, que é como eles os chamam, passassem pelos mesmos interruptores, porque isso anularia o propósito. Você quer que eles sigam um caminho único pela rede, por precaução. É por isso que Martin e sua equipe, e a empresa para a qual ele trabalha, possuem um software chamado TFC. Na verdade, ele fica
+
+acima da rede. E isso ajuda a informar aos switches e a todos os outros componentes da rede: "Ei, é assim que se faz . É aqui que todos esses fluxos multicast devem ser enviados." Nível três, [risos] pausa para o café. Você está pronto? Na verdade, este
+
+não é tão ruim assim. Pode ser. Cada receptor, cada dispositivo que recebe o sinal de uma câmera, recebe dois fluxos de vídeo. Vamos supor que seja a câmera A, e mostre o Messi marcando um gol ou algo assim. Quando o chute chega ao receptor, ele vem na forma de pacotes de rede. É assim que eles os chamam
+
+. Receberá pacotes vermelhos e pacotes azuis, fluxos idênticos. E usará ambos. E é assim que funciona. O que vier primeiro. O primeiro pacote
+
+chega. Se o pacote vermelho for o primeiro, será usado o vermelho. O segundo pacote chega. Se o azul vier primeiro, será usado o azul. Não é uma loucura?
+
+Mesmo que você não entenda nada de redes, você precisa admitir que isso parece bem interessante. E fazem isso porque, mais uma vez, o FIFA Viewer não está entre as opções. E, para concluir definitivamente nossa primeira pergunta, esses receptores são, mais uma vez, como a Telemundo, a ESPN e a Fox. Cabe a eles, então, transmitir isso para nós. E é assim que conseguimos. Mas está
+
+quase na hora do pontapé inicial. França contra Marrocos, lá vamos nós.
+
+Ei, ainda estou editando este vídeo e quero mostrar algo para vocês. São 1h20 da manhã. Preciso postar este vídeo amanhã, hoje. Mas estou distraído com essas duas coisas que acabei de construir. Queria que vocês tivessem a experiência do IBC, então fiz isso. Aliás, este
+
+vídeo é patrocinado pela Hostinger. E eu construí isso hoje. [risos] Os bastidores do IBC. Eu configurei com o agente Hermes rodando naquele VPS da Hostinger com minha assinatura do ChatGPT e funcionou bem. Preciso de um café.
+
+Entendi. Aliás, você pode jogar este . Acesse o URL. Está lá. Vamos até a sala de equipamentos central.
+
+[risos] É uma porcaria mesmo. Deixe-me mostrar o próximo. {barra} quadrinho sobre este . Estou hospedando uma série de quadrinhos neste VPS. A ideia era que eu queria que meus filhos aprendessem como tudo isso funciona, e talvez os seus também. O jogo será em Boston. Gostaria de saber
+
+sua opinião sobre isso. Além disso, provavelmente adicionarei mais coisas a isso. Bem, essas duas coisas foram ideias aleatórias que tive hoje. Se você tiver uma ideia aleatória, vá em frente e construa-a. Nada te impede de ir para hostinger.com
+
+{forward slash} chuckfifa. Adquira um VPS, instale o Hermes ou qualquer outro sistema de IA e comece a construir. Ok, eu escolheria o M2 . E acho que meu código de cupom ainda funciona. Vamos ver.
+
+Oh sim. Funciona perfeitamente. Então, o que você está esperando? Vai fazer aquela coisa idiota que você estava pensando em fazer. Prove que alguém está errado. Agora, voltando ao que eu disse sobre como
+
+quase perdemos o pontapé inicial. E, sinceramente, quase perdemos isso. O jogo está prestes a começar? Sim . Sim, você tem aquelas luzinhas vermelhas piscando ali.
+
+Todo mundo estava muito tranquilo. Eu estava esperando algo como a contagem regressiva da NASA. Vamos lá. Não. Eles eram tão tranquilos e calmos. Eles
+
+tiveram apenas tempo de se virar e conversar conosco enquanto estávamos entrevistando cada pessoa. Eu quase perdi o pontapé inicial, literalmente. E eu perguntei a eles por quê. É porque eles passam anos se preparando para isso. Este evento requer três anos de preparativos. No
+
+ano passado, tivemos um evento menor, o Mundial de Clubes. Essa rede que você vê foi totalmente planejada e testada. Eles criam partidas falsas. Eles fazem a sincronização de áudio horas antes da partida. Sinceramente, é uma máquina muito bem azeitada. E eu ficava perguntando para as
+
+pessoas: "Aconteceu alguma coisa errada? O que... o que aconteceu?" E
+
+eles ficam tipo, "Não, foi uma Copa do Mundo bem tranquila." Estamos batendo na madeira todos os dias [risos] para que continue assim. Por mais legal que fosse a sala de controle da NASA, era meio calma. Depois, demos uma volta e conversamos com as pessoas. Este é o Alex.
+
+Ele é o supervisor do MCR. Todas aquelas pessoas sentadas na primeira fila estão atentas para receber todas as transmissões do local. Estamos falando de centenas de transmissões simultâneas, em ambas as direções, do local do evento para o centro de transmissão internacional e de volta para o local do evento. Então eu tive que lhe fazer a pergunta: "Alex, você gosta de futebol?" Eu não. Às vezes, quando a partida
+
+termina, não sei quem jogou, nem qual foi o placar, mas sei que a imagem e o áudio estavam bons. nisso . Atrás dele, estão fazendo testes de som e os comentaristas estão se preparando. Adoro ver isso. Aliás, eles precisam poder conversar com os comentaristas e praticamente com todos os envolvidos na Copa do Mundo. É aí que
+
+Wolfgang entra em cena. Meu nome é Wolfgang Herrmann e sou o engenheiro de comunicação do IBC. Sei que algumas pessoas não conseguem acreditar na quantidade de pessoas que estão se comunicando entre o local do evento e o IBC, e enfim, quantas pessoas somos no total. E a equipe dele, que gerencia os comentaristas, enfrenta um problema interessante. Em cerca de 99% dos casos, o áudio dos comentários chega até mim muito mais rápido do que o vídeo.
+
+Oh. Significa que, se não definirmos o atraso correto, existe a possibilidade de eles considerarem o gol como válido. Seria um pesadelo se alguém anunciasse um gol antes que ele realmente acontecesse na tela. E aí temos os caras mais tranquilos da sala, que quase nos fizeram perder o pontapé inicial, Anthony e Colin. Vocês poderiam nos chamar de caras da primeira camada.
+
+Então, a parte da cablagem: os caras que fizeram o projeto nos entregam os desenhos e nós garantimos que toda a cablagem seja conectada, desde as colunas principais até o que chamamos de sub-estrelas. E eu não sabia disso. Eles eram, na verdade, responsáveis ​​pela gestão do centro de dados. E Colin, ele tem apenas 21 anos e já está ajudando a fazer a Copa do Mundo acontecer. Faça o que aquele cara faz. E você reparou em todas as
+
+interfaces que eles estavam usando para controlar tudo? Steve faz isso. Então, você está criando painéis, controles e interfaces para praticamente tudo o que acontece aqui. Exatamente. Antes, esses controles eram físicos, mas agora tudo é feito por software a partir de um servidor. Ah, e aqui estão os
+
+colegas de equipe de Martin. Eles me mostraram alguns gráficos interessantes. Podemos ampliar a imagem dos interruptores e ver...
+
+Isso é apenas para um dos que estão sendo exibidos. Além disso, Martin acessou um switch e entrou no modo de configuração global para meus alunos de CCNA, e isso foi bem divertido. Como fazer? OK. OK.
+
+[risos] Bem, não sei quanto a vocês, mas toda essa conversa sobre pacotes me deu vontade de ver um. Este é o segundo objetivo. Conversamos bastante sobre como a Copa do Mundo é transmitida pela rede. Eles transmitiram toda a Copa do Mundo pela emissora. Como a Copa do Mundo é gerenciada por engenheiros de rede, isso significa que podemos capturar parte dela como tráfego de rede. Isso se chama
+
+pcap ou captura de pacotes e eu tenho uma. Eu não tinha certeza se eles me dariam . Perguntei ao Kristoff e ele respondeu: "Claro." E então recebi um e-mail. [risos] Aí estava.
+
+Você quer ver? Este é um jogo real da Copa do Mundo, mas está acontecendo no momento em que ocorre no trânsito da rede . Para mim, essa é a lembrança mais legal de todas. Vamos lá. Muito bem, vou abrir o arquivo pcap. E esta
+
+é a primeira vez que você vê um, continue comigo. Não tem problema, porque à primeira vista não parece muito emocionante. Quer dizer, olha só isso tudo. Parece que não é nada, né? Cada um deles é um pacote. E veja quantos são. Se
+
+eu rolar até o final da página, você pode ver que... Oh, bam. Deixa eu mover isso para o lado. 10.000 pacotes.
+
+Você sabe o quanto isso é um jogo? 27 milissegundos. Agora, quando um receptor recebe essas informações, esses pacotes, ele pode decodificá-los e transformá-los em jogo. E sabe de uma coisa? Nós podemos fazer a mesma coisa. Então, eu publiquei isso
+
+em um chat GPT. [música] E funcionou. Bem, 27 milissegundos, isso é basicamente... vejamos.
+
+Olha só [risos]. Isso é incrível. Agora, você deve ter reparado que este não é o jogo que aconteceu em Boston. Isto não é França nem Marrocos. Que é aquele? É Portugal e
+
+Alemanha? Foi nesse momento que ele te deu a captura. Foi aí que eu entendi. Mas, olha só que legal! Esta é uma imagem real da Copa do Mundo. Isso foi o que
+
+foi transmitido ao vivo pelas câmeras. [suspiros] Bem, eu vi isso e pensei: "Christoph, você pode me mandar um mais longo? Porque eu [risos] realmente quero ver." [bufa] Então, ele me mandou isso. E é sobre essa que vamos nos empolgar . Sim,
+
+vou tentar usar o GPT para decodificar o chat e ver se conseguimos obter o vídeo em si. Vai ser um vídeo, não apenas uma imagem dessa captura do Wireshark. Mas, primeiro, este é o segredo do sucesso. Estamos finalmente vendo aquilo de que temos falado durante todo este vídeo. Prepare seu café rapidinho. Agora, este é maior.
+
+Vou abri-lo. Primeiro preciso encontrá-lo . Reserve um minuto. Ah, aqui vamos nós. Este contém 530.000 pacotes
+
+. Apenas 1 segundo de filmagem. Eu vou levar. 5.196 megabits por segundo.
+
+E sabe o que é legal na velocidade? O arquivo é enviado sem compressão. Sem codec, não é MP4 como você está me vendo agora no YouTube, pixels brutos. Isso é melhor do que assistir na TV. Vamos lá .
+
+Vamos lá. Agora, não se preocupe, vamos decodificar o pacote daqui a pouco. Mas você precisa aprender algumas coisas ao longo do caminho. Agora, vamos analisar as estatísticas e as conversas. Porque todos os dispositivos em uma rede estão se comunicando o tempo todo. Vamos ver quem fala mais.
+
+Vamos classificar por pacotes. Agora, você consegue ver isso? Lembre-se, esta captura de pacotes não terá apenas uma, mas duas transmissões de câmera. E estamos vendo os primórdios disso aqui mesmo. Observe que essas duas conversas aqui têm uma quantidade semelhante de pacotes. E
+
+aqui está o endereço multicast para o qual eles estão enviando, ou os endereços para os quais eles estão enviando. Observe que, no segundo octeto, trata-se de uma rede diferente. São duas redes diferentes. A primeira está na rede 182, a segunda na 181. Duas cópias idênticas em duas redes fisicamente separadas, também conhecidas como nossos caminhos vermelho e azul. Vale
+
+ressaltar também que 0,20 é para vídeo e 0,30 para áudio. Vídeo e áudio. Ah, adoro essas coisas. Ok, hora de aumentarmos nosso nível de nerdice. Mas já chegamos lá , não é? Aqui em cima, no
+
+meu filtro, vou procurar por ST_2110_20. Isso vai filtrar meus pacotes. E agora, que diabos é 2110? É um padrão de como transmitir mídia digital de alta qualidade em redes IP, que é o que estamos fazendo agora. Portanto, estamos analisando apenas 2110 pacotes. Então, tudo isso
+
+é vídeo. É difícil de ver, mas está lá. Dá uma olhada nisso. Ao assistir a um vídeo em 1080p, cada quadro, como este, e esta captura, terá 1080 linhas. O que é uma fileira?
+
+Está bem aqui. Número da linha SRD. Veja, fileira zero. Quatro fileiras formam um pacote. Primeira fila.
+
+Segunda fila. Ou, desculpe, foi um, dois, três. Assim, um quadro completo requer 4.320 pacotes. Deixe-me provar isso para você. Se eu adicionar ao filtro
+
+rtp.marker = 1, consigo ver os limites de cada vez que temos um quadro completo. Então, aqui está um quadro. Aqui está uma moldura. Aqui está uma moldura. Aqui está uma moldura. Observe que estamos
+
+pulando muitos pacotes. E estamos exibindo apenas 118 pacotes no total neste momento. Agora, o vídeo que está sendo transmitido é em 1080p a 59,94 quadros por segundo. No entanto, estamos vendo 118 pacotes. Por que?
+
+Porque está enviando duas vezes. Olha, você pode ver bem aqui. Deixe-me remover nosso marcador RTP. Adicionei esse filtro insano para mostrar apenas dois pacotes, exatamente os mesmos pacotes. Número de sequência e carimbo de data/hora, exatamente iguais. Mas observe os
+
+diferentes destinos, as diferentes redes. Mas então, tenho uma pergunta para você. Qual desses pacotes você acha que foi recebido como o vídeo propriamente dito? Qual foi tocada? Bem, você deve se lembrar que o pacote que chega primeiro é o escolhido.
+
+Então, esse cara aqui em cima chegou um pouco mais rápido. Agora, vamos decodificá-lo e ver o que encontramos. Chuck do passado , assuma o controle. Pedi ao ChatGPT para decodificar isso, e aqui está o resultado. E esta [risos], esta foi especial.
+
+Você viu? Foi isso. [risos] Você quer ver de novo? Então, é um campo vazio. O jogo ainda não tinha começado quando ele o recebeu. A minha
+
+parte favorita foi aquele cara dançando no canto inferior direito. [risos] Porque isso é muito bom. Se voltarmos ao IBC e nos perdermos um pouco nas salas dos fundos, chegaremos à sala de mixagem de áudio . Aqui, eles estão mixando som surround 5.1. Estava rolando uma partida
+
+enquanto a gente estava lá dentro, e foi muito irado. Mas não consigo parar de olhar para aquela que provavelmente é [risos] provavelmente a coisa mais ridícula na tela, mas achei incrível. É um jogo em 2D que parece ter saído dos anos 80. Mas é isso que está acontecendo no jogo ao vivo. Repare no ponto que eles estão chutando. Essa é a bola. Repare
+
+como, quando eles chutam, com base na força do chute, e presumo que na velocidade com que chutam, a linha se estende para mostrar isso. Agora, essas métricas vêm da bola. A bola tem inteligência embutida, chips que medem tudo, o que ela está fazendo, onde ela está. Na verdade, ele vem com um carregador sem fio . Você pode ter visto isso na partida. Então, voltando ao
+
+som. Existem microfones no campo, ao redor de todo o gramado, ao nível do solo, e eles captam os sons da bola. Ok, legal. É isso que resolve o problema. Mas é mais complexo do que isso. O que
+
+você está vendo naquela tela, e o motivo de ela estar na sala de áudio, é que a bola, ao se aproximar de certos microfones, ajusta e edita o áudio automaticamente, porque sabe que a bola está ali perto. Assim, ele capta o som com mais clareza. Não é incrível? Bem, o Kristoff me contou que antigamente, não sei exatamente quanto tempo atrás , tinha um cara sentado lá com uma caneta tipo tablet touchscreen , assistindo ao jogo e meio que acompanhando a bola, e o software fazia algo parecido. Ele disse que não sabia qual era o mais barato. Estou contando a vocês minha jornada, minha
+
+trajetória durante toda essa coisa da Copa do Mundo. Não posso contar tudo porque seria um vídeo muito longo, mas foi repleto de momentos como esse. Tipo, "Nossa, eu nem sabia que isso existia. Que legal!" Ok, tenho uma confissão a fazer. O estádio para o qual temos ido
+
+não é o de Boston. Você deve ter percebido isso, já que não conseguimos chegar a Boston de carro tão rápido. Na verdade, será no estádio de Dallas, aqui mesmo em Dallas. Agora, todos os estádios são iguais no que diz respeito ao que a FIFA adiciona, e essa é a parte interessante. Então, chegamos lá e, aliás, lembre-se do meu objetivo.
+
+Quero entrar naquele campo. Quero marcar um gol, mas pode haver atiradores de elite, então não sei. Mas, quando chegamos lá, a primeira coisa que vemos são os equipamentos técnicos. Eles realmente têm uma rua chamada Tech Street e outra chamada FIFA Street. E o interessante é que, embora eles não façam muita coisa lá para a partida, eles não a criam, eles ainda têm tudo o que é preciso para que a partida aconteça. Então,
+
+lembrem-se das coisas que vimos na IBC, os shaders, a reprodução, os engenheiros de áudio que fazem a edição de áudio, tudo isso, eles têm tudo isso lá, caso seja necessário. Você consegue? Falhar não é uma opção. E o que é engraçado para mim é que eu pensei: "Ok, então você tem um cara sentado aqui fazendo a mixagem. Tipo, ele está cuidando do áudio e ninguém nunca ouve o que ele está fazendo." Ele disse algo como: "Sim, sim, é só
+
+por precaução. Só por precaução." O que? Então eu penso: "Certo, em que situação você precisaria que eles fizessem alguma coisa?" Ele disse algo como: "Bem, se as três conexões do nosso estádio para a IBC caírem, nós vimos um corte de fibra acontecer em tempo real.
+
+Bem, não foi em tempo real, mas eu gosto de fingir que foi. Só para nós aconteceu. Mas, se isso cair, tudo bem , eles podem transmitir a partida lá, mas como eles transmitem para todo mundo? Essa coisa aqui, esse caminhão. Tem um satélite.
+
+Só por precaução. Eles têm um procedimento para quando isso acontece. Eles têm pessoas no local para começar a mixar a partida, a criar os gráficos, a fazer os replays. Olha o centro de dados que eles têm aqui. Eles têm uma versão em miniatura de tudo o que você viu na IBC, incluindo aqueles servidores de replay caríssimos. E tudo é
+
+enviado por uma rede de satélites muito complexa . E, aliás, eles podem retransmitir via satélite para a IBC. Ou, se a IBC inteira estiver fora do ar, sem conexão nenhuma, eles podem retransmitir via satélite para as outras emissoras. O jogo da Copa do Mundo vai acontecer, não importa o que aconteça. O engraçado é que..." As
+
+coisas ainda acontecem no estádio. Os diretores ainda estão lá. Cada partida tem um diretor que decide para quais câmeras mudar e como as partidas serão filmadas. Não é um filme, sabe? Eles não dizem: "Ok, Messi marca agora". Mas eles
+
+dirigem tudo, todas as tomadas e tudo mais. Eles conversam com a pessoa na IBC. E o mais louco é que quando a HBS entra no estádio, eles não usam nenhuma das fibras ópticas existentes, nem nada do tipo. Eles instalam tudo do zero . Aliás, encontramos uma senhora que era responsável pela fibra óptica do estádio de Dallas. E eles ganharam um
+
+prêmio de melhor fibra óptica. E nem usaram nada da fibra existente. Eu... não
+
+sei. Isso me deixou intrigado. Agora, hora da verdade. Posso entrar em campo e jogar? Eu trouxe minha bola. Estava andando por aí
+
+com a minha bola. Estava muito animado. E nós realmente conseguimos entrar. É por onde os jogadores entram. Tipo, por onde os ônibus chegam.
+
+E foi legal porque era realmente grande e imponente. E quando você passa pelo túnel, começa a sentir o cheiro de grama fresca, que é uma novidade que eles adicionaram. Aqui no AT&T Stadium, era um estádio de futebol americano, ainda é, mas teve que ser convertido em um estádio de futebol. A Copa do Mundo exige que tenhamos grama de verdade. Eles fizeram um trabalho de "meio grama". Desculpe,
+
+foi uma piada de tiozão. Mas, literalmente, eles costuraram grama sintética com grama de verdade. É meio a meio. Além disso, eles tiveram que elevar o gramado em 1,2 m. Dá para ver a diferença nessas escadas. Notem também que o campo
+
+parece um pouco estranho agora. Eles tiveram que plantar grama de verdade. O estádio é coberto, a sensação foi incrível. Mas a grama precisa de sol para crescer, e eles precisavam de uma solução, então usaram essas luzes. Essas luzes levam 6 horas para abaixar e mais 6 horas para subir completamente.
+
+Eles realmente precisam planejar isso. Eu odeio ser o cara que esqueceu de elevar o gramado. Eles disseram que eu não podia entrar no campo. Mas eu não ia deixar isso me atrapalhar. Eu podia dar umas voltas por cima das regras, mas o que eles disseram era verdade. Eu não podia entrar no campo.
+
+Eu perguntei. Eu até vi um cara andando lá , e pensei: "E ele?". O Gavin, que estava nos mostrando o campo, que era o gerente do estádio, tinha um patch no peito escrito: "Más decisões rendem boas histórias". Eu fiquei pensando nisso.
+
+No fim das contas, eu obedeci às regras porque a HBS, a FIFA e todo mundo foram muito gentis em nos deixar vir, então eu não ia quebrar as regras. Mas eu fiquei
+
+fazendo embaixadinhas pelo estádio. Eu driblei pelo estádio. E sabe de uma coisa? Eu até marquei um gol. Dá uma olhada. Até eles estão colocando... Beleza, vou marcar meu primeiro gol agora. Gol na Copa do Mundo? É. Os fotógrafos podem colocar
+
+câmeras escondidas. Eu não... Uau.
+
+[risos] Não foi no ângulo, mas eu consegui. Na rede. 90. Não tenho certeza de qual lado. Estava deitada, mas consegui colocar a bola lá dentro . Vou levar. Chutei a bola
+
+para dentro daquele gol. É tudo o que eu quero poder dizer. Ah, [suspiros] eu estava desesperado. Agora, o que foi legal é que eu encontrei um torcedor. Ele era o segurança de lá, que entra em todos os jogos de graça. A gente conversou
+
+um pouco sobre o assunto. Aliás, foi um prazer te conhecer . Qual era o seu nome? George? Alan? Bob? Esquece. Você vai saber. Eu também
+
+consegui sentar onde os jogadores sentam. Consegui entrar no vestiário deles. Nove jogos da Copa do Mundo foram disputados naquele estádio, o maior número de qualquer estádio. Eu fui a um desses jogos. Foi surreal poder andar por ali e estar onde os jogadores estavam. E eu deixei alguns
+
+adesivos para qualquer jogador que porventura tenha sentado naquela cadeira. Se você estiver assistindo a isso, de nada. Agora, a coisa mais louca de toda a turnê que eu ouvi é que tudo isso é temporário. Tudo do IBC e do centro de dados. Tudo o que eles construíram para ter essa rede realmente robusta, a rede mais robusta, a rede de missão crítica mais importante que eu já vi. Eles simplesmente
+
+desmontaram tudo. Construíram em cerca de 4 meses. Aqui está um vídeo em time-lapse. E Kristoff disse: "Assim que o troféu é erguido, eles começam a empacotar tudo ." Eles estarão em casa em 4 dias."
+
+Acho que disseram que leva algumas semanas, tipo 4 ou 6. Vou corrigir isso aqui mesmo. Para desmontar tudo completamente, mas é temporário. Uma das redes mais impressionantes e complexas que já vi é temporária. Mas funciona tão bem porque essa equipe é ótima. Conheci muitos deles.
+
+Foi uma alegria conhecê-los. Levei café para eles, então acho que meu café também está contribuindo para o sucesso da Copa do Mundo. Porque tudo na área de TI precisa de café, e a Copa do Mundo precisa de TI. Então, a Copa do Mundo precisa do meu café. De nada , Messi. É só isso.
+
+Obrigado, Kristoff, Bart, Steve e todos os envolvidos por tornarem nossa viagem possível. Vejo vocês na próxima. Ei, você ainda está aqui. No final dos meus vídeos, gosto de orar por vocês, meu público. Agora, esta oração será um pouco diferente porque estou estressado agora.
+
+Fazer este vídeo foi muito difícil. Tínhamos muito pouco tempo com um Muita filmagem. Então, estou me sentindo muito ansioso e estressado agora. Por isso, vou orar pedindo alívio para mim e para vocês, caso estejam se sentindo ansiosos ou estressados. Só de dizer isso já me dá vontade de chorar um pouco.
+
+[risos] Então, vamos orar. Deus, eu te agradeço pelas coisas que nos dás para fazer. Pelas vidas que temos a oportunidade de viver. Se a pessoa que está assistindo a isso trabalha com TI ou tem um emprego legal, é uma grande bênção poder fazer o que fazemos, impactar o mundo. O trabalho em rede impacta o mundo. É
+
+essencial para a missão. Eu te agradeço, Deus, por nos dar a capacidade de fazer as coisas. E peço agora que, se houver algum estresse ou ansiedade sendo sentido pela pessoa que está assistindo a isso, e por mim também , alivie esse estresse. Teu jugo é suave. Teu jugo é leve.
+
+Podemos te entregar nossos fardos e Tu os tirarás de nós, Deus. Então, pedimos isso em Teu nome. Que o Senhor nos ajude agora mesmo. E eu oro por paz para a pessoa que está assistindo agora. Para você que está assistindo agora. Oro por
+
+paz para você. E, acima de tudo, oro para que você conheça a Deus. Que você conheça Jesus. Isso não significa que você não sentirá estresse. Eu sinto estresse o tempo todo. Mas significa que
+
+tenho alguém a quem recorrer quando estou estressado. Então, Deus, eu peço que me ajude agora. E ajude a pessoa que está assistindo. Peço isso em nome de Jesus. Amém. Obrigado por me permitir fazer isso. Até a
+
+próxima.

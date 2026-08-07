@@ -1,0 +1,161 @@
+---
+video_title: "the WORST hack of 2026"
+video_id: eGSsoSEppNU
+channel_name: "NetworkChuck"
+channel_id: UC9x0AN7BWHpCDHSm9NiJFJQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eGSsoSEppNU
+video_date: 2026-03-31T15:00:51+00:00
+video_description: |
+  Axios, the most popular HTTP library with over 100 million weekly downloads, was just hijacked in one of the most sophisticated supply chain attacks in history. A hacker took over the lead maintainer's npm account, injected a phantom dependency that deploys a cross-platform remote access trojan in 1.1 seconds, and the malware erases itself leaving no trace. I break down exactly how it happened, explain what a supply chain attack is, and show you how to check if YOUR system is affected.
+  
+  npm supply chain attack, axios hacked, axios npm compromised, supply chain attack explained, npm install malware, remote access trojan, axios 1.14.1, plain-crypto-js, npm security, javascript security, open source security, postinstall script attack, supply chain hack 2026
+  
+  TIMESTAMPS:
+  0:00 - npm install just became DANGEROUS
+  0:41 - How the attack happened
+  0:52 - What is Axios? (and why you probably have it)
+  1:39 - The account takeover
+  2:20 - The ONE line of code that did it all
+  3:06 - How it was discovered
+  3:32 - The postinstall dropper
+  4:08 - The RAT payload (Mac, Windows, Linux)
+  4:28 - The self-destruct (no evidence left)
+  4:40 - What IS a supply chain attack?
+  4:55 - The coffee analogy
+  5:51 - Are YOU affected? Let's check together
+  6:34 - Checking for the RAT on your system
+  6:51 - What to do if you're compromised
+  7:50 - Prayer
+  9:19 - BONUS: Pikachu explains supply chain attacks
+  
+  ALL COMMANDS, DETECTION SCRIPTS, IOCs, AND REMEDIATION:
+  https://github.com/theNetworkChuck/axios-attack-guide
+  
+  Quick check:
+  npm list axios
+  npm list -g axios
+  
+  BAD VERSIONS: 1.14.1 and 0.30.4
+  SAFE VERSIONS: 1.14.0 and 0.30.3
+  
+  One command that would have BLOCKED this attack:
+  npm config set min-release-age 3
+  
+  RESOURCES:
+  Socket.dev (first to detect): https://socket.dev/blog/axios-npm-package-compromised
+  StepSecurity deep dive: https://www.stepsecurity.io/blog/axios-compromised-on-npm-malicious-versions-drop-remote-access-trojan
+  GitHub Issue: https://github.com/axios/axios/issues/10604
+  Huntress Blog: https://www.huntress.com/blog/supply-chain-compromise-axios-npm-package
+  
+  John Hammond Video: https://youtu.be/A58cV17avpM
+  John Hammond Livestream: https://www.youtube.com/watch?v=A-KpP-6Dt8E
+  
+  SUPPORT NETWORKCHUCK:
+  NetworkChuck Academy: https://academy.networkchuck.com
+  
+  FOLLOW ME EVERYWHERE:
+  Twitter: https://twitter.com/networkchuck
+  Instagram: https://www.instagram.com/networkchuck
+  TikTok: https://www.tiktok.com/@networkchuck
+  Discord: https://discord.gg/networkchuck
+  
+  READY TO LEARN??
+  NetworkChuck Academy: https://academy.networkchuck.com
+  YouTube Membership: https://www.youtube.com/networkchuck/join
+  
+  #npm #supplychain #cybersecurity
+---
+Essa se tornou a ordem mais perigosa que alguém pode executar. npm install qualquer coisa. Preencha o espaço em branco. n a n, garra aberta, não importa. Ainda estamos descobrindo a extensão das consequências disso. Qualquer pessoa pode ser infectada. Você
+
+pode estar infectado. E isto acabou de acontecer. O Axios, a biblioteca HTTP mais popular , com mais de 100 milhões de downloads por semana, foi sequestrado. Um hacker assumiu o controle da conta do administrador principal, injetou código malicioso sem de fato injetar código malicioso e implantou um Trojan de acesso remoto em menos de 1,1 segundos. E o malware se autodestrói.
+
+Nenhum vestígio foi deixado para trás. Este pode muito bem ser o ataque à cadeia de suprimentos mais sofisticado e perigoso da história. Prepare seu café. Vamos analisar como isso aconteceu hoje. Como há algumas horas . Então, como exatamente isso aconteceu?
+
+Eis o que sabemos até agora. Vou explicar todo o ataque, desde como eles conseguiram entrar até como o malware se autodestruiu. E como isso foi descoberto, porque, você sabe, estamos falando sobre isso agora. Primeiro, você provavelmente tem o Axios instalado, que foi o programa que sofreu o ataque. Vou mostrar daqui a pouco como verificar se você está usando a versão incorreta. É uma
+
+biblioteca HTTP, e é essencialmente assim que o código se comunica com a internet. Mas raramente você o instalará diretamente. É como se eu nunca tivesse instalado o Axios, mas ele está instalado. Como? npm install. O npm é o
+
+gerenciador de pacotes para JavaScript, essencialmente a loja de aplicativos para código. Os desenvolvedores usam muito isso. E o mesmo acontece com você, se tiver instalado algo como n a n ou openclaw. Mas ao fazer isso, você não está apenas instalando o OpenClaw. Você está instalando uma série de dependências ou outros códigos escritos por outras pessoas, dos quais o aplicativo que você está instalando depende para funcionar. Você está confiando no OpenClaw, mas o
+
+OpenClaw está confiando no Axios. É assim que a maioria dos softwares funciona. Atualmente, um projeto npm comum confia a execução de código a 200 a 2.100 pessoas desconhecidas. E quero enfatizar a questão dos estranhos, porque foi aí que tivemos problemas com a Axios. O Axios, algo de que
+
+174.000 projetos dependem, é programado por um grupo de pessoas aleatórias. Quer dizer, aqui está o registro de alterações. Analisando os commits, são de pessoas aleatórias. Preste atenção nesse cara. E essas
+
+pessoas não são remuneradas. Este produto é de código aberto. E uma dessas pessoas foi comprometida. Esse cara. Hoje eu sinto muita pena desse cara . Jason Saiman, provavelmente não é seu
+
+nome verdadeiro. Talvez seja. Ele é um dos principais mantenedores do Axios, e o atacante obteve seu token de acesso, um token de acesso clássico do NPM de longa duração que deu ao atacante acesso irrestrito ao sistema. Bem, ainda não sabemos como isso aconteceu. Sabemos apenas que aconteceu. E é aí que as coisas pioram. Ele
+
+alterou o e-mail da conta dele para este endereço de e-mail: stop@proton.me. E o atacante foi realmente esperto, porque ele nunca adicionou nenhum código malicioso ao Axios. Em vez disso, ele adicionou uma linha ao arquivo package.json.
+
+Aqui está limpo. Não pisque. Foi isto que ele mudou. plain_crypto.js.
+
+Observe as dependências. Eles continuam nos metendo em encrenca. Bem, essa é uma dependência simples. Não há nada de muito louco nisso . Ninguém notaria isso. Na
+
+verdade, um revisor de código comum diria simplesmente: "Ah, isso é uma coisa simples de criptografia." E esse arquivo nunca foi importado para nenhum dos 86 arquivos de origem do Axios . Ele existe apenas para instalar seu script de pós-instalação. Mas o atacante era esperto. Na verdade, eles criaram uma versão limpa desse arquivo 18 horas antes da versão maliciosa. E eles conseguiram
+
+contornar os fluxos de trabalho típicos de CI/CD usando a CLI do NPM, essencialmente ignorando todas as salvaguardas que normalmente detectariam algo assim. Bem, o socket.dev foi a primeira pessoa ou a primeira empresa a descobrir isso. E eles têm um diagrama muito interessante que eu quero te mostrar. Ah, e além disso, eles alteraram duas versões de lançamento, a 1.x e a 0.x. Especificamente, as versões
+
+1.14.1 e 0.30.4.
+
+E eles foram envenenados com apenas 39 minutos de diferença. Portanto, qualquer projeto que utilize um intervalo de versões entre essas duas versões baixará a versão comprometida na próxima instalação do NPM, o que geralmente acontece automaticamente com pipelines de CI/CD ou quando você está instalando o OpenClock, como algum YouTuber recomendou naquele momento. Desculpe. Assim, quando você executa o comando `NPM install`, esse script de pós-instalação é executado automaticamente . Você não precisa fazer nada. E isso aciona o que é chamado de "
+
+dropper". Este dropper é inserido no setup.js. Agora, parece inofensivo. Parece matemática.
+
+Mas aqui temos duas camadas de ofuscação, que escondem todo o conteúdo perigoso dos scanners estáticos. Está usando XOR e base 64 e essa estranha frase de ordem 7077. Alguém sabe o que isso significa? Então, agora que o setup.js ofuscou todas as coisas perigosas. Ou, se o revelar, poderá
+
+utilizá-lo. Em seguida, ele detectará o sistema operacional em que está sendo executado, ou seja, qual sistema operacional você possui. Em seguida, ele entrará em contato com o servidor C2, o servidor de comando e controle, que o atacante opera, e fará o download do software RAT específico ou Trojan de acesso remoto nesse computador. Eis como ficaria no Mac, Windows e Linux. Isso acontece 1,1 segundos após o comando `npm install`. E depois limpa tudo
+
+. Ele exclui o arquivo setup.js, exclui o arquivo package.json malicioso e renomeia o arquivo package.md pré-configurado para package.json,
+
+que é uma versão limpa. Neste ponto, o atacante tem acesso ao seu sistema. Eles podem acessar seus dados em 1,1 segundos, e você nem percebe. E você não estava fazendo nada de estranho ou errado. Você estava apenas instalando ou usando software de pessoas em quem confia.
+
+Não é sua culpa. É um ataque à cadeia de suprimentos. É mais ou menos assim . Se alguém quisesse me envenenar, bastaria colocar veneno nesta xícara de café, mas seria difícil porque estou sempre de olho no meu café. Mas, em vez disso, eles poderiam ir até a torrefadora de café e envenenar os grãos que eu compro.
+
+Na verdade, preciso de mais café agora.
+
+Ou talvez eles subam na hierarquia. Talvez estejam envenenando o pó nesses pacotes de café, os mesmos pacotes usados por todos os fornecedores. Isso ampliaria seu alcance, envenenando muito mais pessoas. Eu sei que essa analogia é meio sombria. Ou podem optar por algo maior.
+
+E se eles envenenassem o abastecimento de água, visando a água que eu uso para fazer meu café? E agora expandiram seu uso para além dos consumidores de café. São todos aqueles que usam a água. E é mais ou menos esse o escopo com o qual estamos lidando agora com o ataque à cadeia de suprimentos da Axios. Então, vamos descobrir se você bebe a água. Porque veja
+
+bem, você pode ter o axios instalado, mas talvez nem saiba disso. Eu sei que está instalado. Acho que estou seguro. Vamos verificar juntos agora mesmo. Porque, repito, essas coisas acabaram de acontecer.
+
+Estou meio que descobrindo isso junto com você. Tudo bem. Obrigado, Pikachu. Você pode ir embora agora. OK. Tchau.
+
+OK. Vamos verificar. Primeiro, vamos abrir o seu terminal. Digite isto. npm list -g axios. Verifique suas versões.
+
+Se você encontrar as versões 1.14.1 ou 0.30.4, talvez seja interessante realizar uma busca mais aprofundada em todo o seu sistema. Podemos usar
+
+este pequeno comando multi-multilinha aqui. E terei todos esses comandos abaixo para todos os sistemas. E é encontrar coisas que eu mesmo construí sob medida. Eu nem sabia como usar o Axios neles. Está em todo lugar, cara. Agora, vamos verificar
+
+se o rato realmente conseguiu entrar no seu sistema. Vou usar esse comando para ver se está instalado no meu Mac. Não está lá. Abaixo, apresentarei os comandos para Windows e Linux . E você também pode verificar se ele vai se conectar ao servidor de comando e controle. Este é o endereço IP
+
+encontrado. Foi removido ou não está mais disponível. Se nada disso funcionou , provavelmente está tudo bem por enquanto. Fique atento . Mas se você encontrou alguma coisa, pare agora mesmo. Não
+
+apague arquivos sem antes consultar um profissional. Trate sua máquina como se estivesse comprometida. Alterne suas chaves de API. Cada credencial, cada token. Abaixo, você encontrará uma lista completa de verificação para a correção dos problemas. Fique atento. Fique atento ao que acontece ao seu redor
+
+. E parece que isso está acontecendo com cada vez mais frequência. Hum... A IA é incrível e tem
+
+nos ajudado a construir coisas, mas também está ajudando os hackers a fazerem coisas. Isso está acontecendo com muito mais frequência do que deveria. Portanto, preste atenção. Esteja seguro. Ah, e também, assista à transmissão ao vivo do John Hammond, onde ele realmente acordou, passou por tudo isso e analisou todo o código. Foi muito divertido de assistir. Tenho
+
+certeza de que ele também lançará um vídeo sobre isso em breve. E um agradecimento a todos vocês, guerreiros, por aí. Todos vocês, pessoas incríveis, que estão resolvendo todos esses problemas. Isso é algo enorme. Um ataque massivo à cadeia de suprimentos. Então, mãos à
+
+obra com esse café. E se você foi afetado por isso, adoraria saber nos comentários abaixo como está se sentindo. Quão ruim é isso? Talvez possa oferecer alguma ajuda ou conselho para pessoas que estejam passando por isso. É tudo o que eu tenho.
+
+Vejo vocês na próxima. Ei, você chegou até o final do vídeo e, ao final dos meus vídeos, gosto de orar por vocês, meu público. Eu sei que é meio estranho. Aceita que dói. A vida é estranha. 1 2 3 rezar.
+
+Deus, eu te agradeço pela pessoa do outro lado desta câmera, do outro lado da tela. Peço em teu nome que os abençoes em suas vidas neste momento. Que, caso sejam afetados por esse ataque cibernético, você lhes daria a paixão, a força, a capacidade, a diligência e a energia para lidar com isso com habilidade. Que o Senhor abençoe o ambiente de computação pessoal deles, o ambiente da empresa deles, e que os transforme em verdadeiras estrelas neste momento. Um, equipe-os com tudo o que eles precisam.
+
+Bem, se eles não forem afetados, se estiverem assistindo a isso apenas para aprender, rezo para que você os transforme em profissionais incríveis de segurança cibernética. Que você lhes ensinaria habilidades e lhes daria a capacidade de aprender e assimilar essas habilidades. Para aprender sobre ataques à cadeia de suprimentos e como se defender deles. Que Deus abençoe a vida deles. Neste momento, oro para que o Senhor conceda muitas bênçãos à minha audiência e às suas famílias.
+
+Rezo pelo sucesso deles em suas carreiras e, se houver alguma ansiedade em relação a qualquer coisa que esteja acontecendo no mundo da tecnologia, porque tudo está se movendo muito rápido, que essa ansiedade desapareça. Deixe que isso se dissipe e permita que eles vivam um dia de cada vez, aprendam algo novo e simplesmente mantenham um otimismo inabalável. Peço isso em teu nome, Jesus. Amém. Certo, é tudo o que eu tenho. Na verdade, vou pedir ao
+
+Pikachu para tentar explicar rapidinho o que são ataques à cadeia de suprimentos. Ela me implorou para que a deixasse fazer isso. Oi. Eu sou Maddie Keith e hoje vou falar sobre ataques à cadeia de suprimentos. O café?
+
+A analogia que eu dei. Oh, tudo bem. Então, vamos fazer isso. A explicação do café. Então, digamos que esse cara muito mau queira te envenenar e você esteja tomando sua xícara de café. Ele colocou
+
+essa xícara de café quentinho e gostoso, pegou veneno, colocou no café e você bebeu. Certo, mas na próxima explicação, imagine que você tem um saco de café com grãos de café dentro, e o cara com o veneno o coloca junto com os grãos de café, e agora você tem grãos de café envenenados. Mas o pior cenário seria se o cara tivesse um monte de saquinhos de grãos de café juntos e colocasse veneno em um deles . Todos os saquinhos de grãos de café, e então todos os outros saquinhos de grãos de café ficam expostos, expostos, expostos. Então, essa é a minha explicação.
+
+Então, basicamente, como é que se chama mesmo? Ataque à cadeia de suprimentos. Um ataque à cadeia de suprimentos ocorre quando há uma origem que entra no seu computador, e é como se fosse um vírus, certo? Sim . É como um vírus, e imagine que o veneno na minha analogia seja um vírus, e o café, os grãos de café e os saquinhos de café sejam seus computadores.
+
+Então, sim. É isso. Obrigado.

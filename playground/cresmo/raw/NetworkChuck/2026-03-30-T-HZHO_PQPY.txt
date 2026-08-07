@@ -1,0 +1,390 @@
+---
+video_title: "OpenClaw......RIGHT NOW??? (it's not what you think)"
+video_id: T-HZHO_PQPY
+channel_name: "NetworkChuck"
+channel_id: UC9x0AN7BWHpCDHSm9NiJFJQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=T-HZHO_PQPY
+video_date: 2026-03-30T14:08:00+00:00
+video_description: |
+  Get your own VPS and set up OpenClaw: https://hostinger.com/ncopenclaw Use code NETWORKCHUCK!
+  
+  OpenClaw has 308K GitHub stars — more than React, more than the Linux kernel. But what IS it actually? I set it up on a VPS, gave it a Telegram bot, and watched it build a news briefing and server monitoring dashboard in minutes — something that took an entire n8n workflow video to do before. But I also kinda hate it. In this video, I cut through the hype and give you my honest take as someone who built the same thing with Claude Code before OpenClaw existed.
+  
+  In this video, you'll learn how to install OpenClaw on a Linux VPS in under 5 minutes, connect it to Telegram, build an AI news briefing agent and IT monitoring dashboard, understand the four pillars of OpenClaw (AI models, channels, memory, and tools), configure security with the built-in security audit, set up tool profiles and red lines, and decide if OpenClaw is right for you. Whether you're an AI enthusiast drowning in hype or a sysadmin curious about AI agents, this covers everything from one-line install to hardened security config.
+  
+  
+  RESOURCES / LINKS: 
+  🎓 NetworkChuck Academy (OpenClaw Course):https://ntck-ac.co/oc1
+  💻 GitHub Setup Guide (all commands): https://github.com/theNetworkChuck/openclaw-setup 
+  🌐 OpenClaw: https://openclaw.ai 
+  🛠️ ClawHub (Skills Directory): https://clawhub.com 
+  🛠️ Hostinger VPS: https://hostinger.com/ncopenclaw 
+  📺 n8n Automation Video: https://youtube.com/watch?v=ONgECvZNI3o 
+  ☕ NetworkChuck Coffee: https://networkchuck.coffee 
+  
+  
+  TIMESTAMPS: 
+  0:00 - OpenClaw stressed me out (308K GitHub stars) 
+  1:44 - Setting up OpenClaw in 5 minutes on a VPS 
+  4:22 - Connecting Telegram and hatching your agent 
+  7:30 - Project 1: AI news briefing (one sentence vs entire n8n workflow) 
+  8:14 - Project 2: AI IT engineer monitoring your own server 
+  9:34 - What IS OpenClaw actually? (gateway + 4 pillars) 
+  15:07 - Tools, cron jobs, and heartbeats 
+  17:08 - ClawHub skills, browser, and sub-agents 
+  19:27 - Why everyone freaked out (my honest take) 
+  20:55 - Securing your OpenClaw instance 
+  30:01 - My verdict: how I actually use OpenClaw
+  
+  
+  **Sponsored by Hostinger
+  
+  
+  
+  SUPPORT NETWORKCHUCK: 
+  ☕☕ COFFEE and MERCH: https://ntck.co/coffee
+  
+  
+  READY TO LEARN?? 
+  🔥🔥Join the NetworkChuck Academy!: https://ntck.co/NCAcademy 
+  📚 CCNA Course: https://ntck.co/ccna
+  
+  
+  FOLLOW ME EVERYWHERE: 
+  Instagram: https://www.instagram.com/networkchuck/ 
+  X/Twitter: https://x.com/networkchuck 
+  Facebook: https://www.facebook.com/NetworkChuck/ 
+  Join the Discord server: https://ntck.co/discord
+  
+  
+  Some links in this description are affiliate links. If you buy through them, I may earn a small commission at no extra cost to you.
+  
+  
+  #openclaw #aiagents #networkchuck
+---
+Ok, vamos lá. Garra aberta. Precisaremos de duas cópias para isso. Este software é o motivo pelo qual a IA tem me deixado tão estressado. Veja este vídeo aqui, mas você não pode ignorá-lo, mesmo que eu queira, mesmo que eu meio que o deteste. Está aqui. Atualmente, possui
+
+308.000 estrelas no GitHub, superando o React e o kernel do Linux de alguma forma. O criador foi contratado pela OpenAI, [música] e todo mundo está copiando. Na semana passada, a Anthropic deixou de transmitir e de enviar mensagens. Então, surge a pergunta: precisamos mesmo do Open Claw? Estou usando o Open
+
+Claw? Resposta curta: sim. Eu o uso desde que foi lançado. Tenho sete agentes em atividade. E eu tenho conversado com Peter, o criador do Open Claw, antes mesmo de ele se chamar Open Claw. Na verdade, eu o ajudei com a
+
+reformulação da marca. Mas, ao mesmo tempo, eu meio que detesto isso, e não é o que você está pensando. Sim, eu sei que cheguei atrasado para a festa. Na verdade, gravei este vídeo duas vezes. As coisas continuam acontecendo. Estou estressado(a).
+
+Mas, você tem que admitir, é muito legal. Deixando de lado a propaganda, veja só isso. Lembra quando construímos nosso agregador de notícias internamente no 8n? Vários nós, várias horas. Foi legal, mas o Open Claw consegue acabar com isso em uma única frase. O mesmo vale
+
+para o nosso engenheiro de TI. Passamos muito tempo construindo isso por dentro, no 8n. A Garra Aberta esmaga-o em segundos. Então, meu objetivo com este vídeo é deixar de lado a empolgação e responder à pergunta: você deveria se importar com isso? Normalmente, eu diria que ao final deste vídeo você já terá configurado seu próprio agente Open Claw. Não.
+
+Vou quebrar uma regra do YouTube agora mesmo. Vou te mostrar como configurar agora mesmo, desde o início, porque acho que é uma daquelas coisas que você simplesmente precisa experimentar. Tipo, configura e faz pra tocar alguma coisa [música]. Vai levar 5 minutos. Prepare seu café . Vou servir mais
+
+café, chefe. Vamos pensar e agir.
+
+5 minutos no cronômetro. Vamos te ajudar a configurar o Open Claw rapidinho. Não tenho certeza se consigo fazer isso, mas vamos tentar. Então, do que você precisa? Você não precisa de um Mac mini, embora ele seja bem legal e eu tenha experimentado, é divertido.
+
+Mas você precisa de um local para instalar o gateway Open Claw. Esse "algum lugar" pode realmente ser qualquer lugar. Vou mostrar para vocês na nuvem, dentro de um VPS da Hostinger. Eles são os patrocinadores deste vídeo e também os responsáveis ​​por fazer com que você entre em ação o mais rápido possível. E não tenho certeza por que estou fazendo uma lista. É basicamente tudo o que
+
+você precisa, e um pouco de café. [música] Preciso de um café. Porque tudo na área de TI requer café. Vocês sabem disso, né? Então, acesse hostinger.com/ncopenclaw.
+
+Ora, você poderia pensar que clicaríamos na configuração com um clique, porque é mais rápida. Não, não vamos fazer isso. Em vez disso, vamos em serviços, [música] clicar em hospedagem VPS, escolher KVM 2 porque é um laboratório doméstico completo na nuvem, inserir o código promocional NetworkChuck e ver a mágica acontecer, e seu VPS estará pronto. Vou tomar mais uma xícara de café aqui. Hum. E pronto, você tem um servidor.
+
+Aliás, isso não serve apenas para o Open Claw, serve para o que você quiser fazer. Você vai ver. Assim que o servidor terminar de inicializar, vamos obter o comando SSH. Basta copiar, abrir seu terminal favorito, colar esse comando e [música] pronto. Agora, é hora de instalar o Open Claw. Essa é
+
+a parte fácil. Bem, a documentação muda, então vamos direto à fonte, openclaw.ai. Percorra todas as mentiras. Estou brincando. Até
+
+vermos essa dica de uma linha para instalá-lo. Entendido . Volte para o seu terminal. Cole esse comando de uma linha e pronto . Aperte Enter e relaxe. Mais um gole de café.
+
+E está feito. Agora, ignore esse aviso de segurança. Não nos preocupamos com isso agora. Falaremos sobre isso mais tarde, não se preocupe. Clique em "Sim, entendi". Vamos começar rapidamente, e
+
+aqui está nossa primeira opção. Qual modelo de IA vamos usar? Porque adivinhe só? Você talvez não saiba, mas o Open Claw não é uma IA em si. É um arnês. É uma camada que se sobrepõe a
+
+outras camadas de IA. Então, agora, vamos escolher qual cérebro ele tem. Eu adoro isso porque é a parte aberta do Open Claw. Não importa o que você escolha. Você pode até optar por modelos locais.
+
+Ollama já conta com apoio oficial. Mas você terá uma experiência melhor com a OpenAI ou a Anthropic. Eu escolheria a OpenAI porque o Peter trabalha lá, e o Anthropic está sendo meio babaca agora. Mas eu ainda os amo. O que é realmente ótimo nisso é que você pode optar por uma chave de API, que funciona no sistema de pagamento por uso, ou, se você já paga pelo ChatGPT Pro ou por uma versão superior, pode usar essa mesma chave . Utilize a assinatura que você já
+
+possui. Então selecione a primeira opção. E você precisa fazer essa coisa estranha de desligar, então vamos pegar esse URL. Entendido. Abra seu navegador da web. Cole esse URL
+
+. Faça login na sua conta ChatGPT. E então, não deixe que essa mensagem te assuste. Basta copiar seu URL. Copie isso da sua barra de endereço. Volte para o seu terminal.
+
+Cole ali o URL de redirecionamento, aquele que você acabou de copiar. Pressione Enter. Escolha o modelo padrão, 5.4, é imbatível . E agora, chegamos a algo que torna o Open Claw simplesmente incrível.
+
+E é assim que você conversa com ele. Escolha o que você preferir, mas vamos começar com o Telegram. É muito fácil. Agora, precisamos criar um bot do Telegram e obter o token do nosso bot. Para isso, vamos lançar o Telegram. Você vai iniciar um bate-papo com um cara
+
+chamado The Botfather. Parece um jogo de videogame. Você criará um novo bot, dará um nome a ele e definirá um nome de usuário. Deve terminar em bot. Crie esse bot. E
+
+é isso. Clique em copiar e isso lhe dará o token do seu bot. Volte para o seu terminal. Pressione Enter para inserir o token do seu bot do Telegram. Cole isso. Pressione
+
+Enter. Ei, isso é novidade mesmo. Nunca vi isso. Vamos escolher Valente. Ah, precisamos de uma chave de API. Eu simplesmente apertei Enter
+
+para pular. Configurar habilidades agora? Hum, não agora. Não clique em E quanto aos ganchos, podem fazer ganchos sem problemas. Habilitar inicialização, bootstrap, registro de comandos e memória de sessão. Pressione Enter e pronto
+
+. Agora, chegou a hora de chocar seu agente Garra Aberta. Poderíamos fazer a interface web, mas vamos lá. Vamos fazer a TUI. Selecione TUI, a interface de usuário do terminal. Aperte Enter e vamos acordar
+
+nosso amigo. Novamente, isso me lembra um jogo de Pokémon ou algo do tipo, como Pokécopia. Sim, eu joguei . É bem divertido. É isso que faz o Open Claw parecer meio estranho. E
+
+o interessante é que, ao configurar o Open Claw, é isso que acontece. Tipo, você está falando com ele para configurá- lo automaticamente. Então, vamos dizer quem somos, quem somos e começar. Você é Terry Crews. Você é fã do NetworkChuck.
+
+Você é caótico(a). Emoji de músculos. O que é realmente assustador nisso tudo é que tudo isso que está escrito aqui foi gravado no arquivo soul.md dele. Sua alma.
+
+[Suspiros e engasgos] Chega de conversa no terminal. Que legal, gostamos disso. Mas o Telegram aguarda. Vamos dar uma olhada rápida no Telegram. Vamos clicar no nosso bot Terry 3. Vamos
+
+começar uma conversa. Vamos mandar uma mensagem para ele. Começar. E essa é uma das funcionalidades de segurança que eu gosto. Nem qualquer um pode conversar com o Terry 3.0 logo de
+
+cara. Precisamos sincronizar. Então, vou levar isso. Esta será sua primeira experiência configurando o Open Claw com o próprio Open Claw. Vamos simplesmente copiar toda essa bagunça e dizer: "Ei, continuem configurando o Telegram para mim. Estou com preguiça."
+
+Cole isso aqui. Tome um gole de café. Feito. Ignore essas questões de risco de segurança. Não nos preocupamos com isso agora. Mas
+
+agora, em teoria, eu poderia dizer: "Ei, você está aí?" Terry está digitando. E ele está aqui, conversando pelo Telegram. E o cronômetro terminou. Conseguimos? Acho que não
+
+. Mas neste momento, você tem o Open Claw configurado. O melhor de tudo é que agora posso me levantar, me afastar do computador, abrir o Telegram no meu celular e simplesmente conversar com o Terry. Mas tem uma coisa que você acabou de fazer, e eu não consigo acreditar que você fez isso. Não acredito que você tenha caído nessa. Você acabou de
+
+configurar o Open Claw, uma das coisas mais inseguras que existem. Injeção imediata, malware oculto nas habilidades. Você é um CVE ambulante. E agora, vou fazer aquela coisa do YouTube. Mais adiante neste vídeo, mostrarei como adicionar alguns recursos de segurança para que você não sinta mais medo. Entendo. Se
+
+você quiser pular para lá, vá em frente . Mas antes disso, vamos realmente fazer algo com nossa Garra Aberta. As pessoas dizem: "Ah, é só um assistente. Qual a sua utilidade?" E eu entendo isso. Às vezes, eu vivo isso. Mas
+
+vamos fazer algo que te faça pensar: "Ah, ok." Assim, você termina de assistir a esse vídeo com algo legal na cabeça. Mesmo que você não faça mais nada com isso, já vai ser incrível. Primeiro passo , coletiva de imprensa, ou projeto um. Agora, [risos] lembrem-se que em 8n isso demorou uma eternidade. Este foi um vídeo completo ensinando
+
+em 8n como usar os nós, como programá-lo, Python, e todo tipo de coisa. Veja isto. Vou dizer logo: "Ei, quero ver algumas notícias. Segurança cibernética, você sabe quem eu sou, NetworkChuck. Você sabe do que eu gosto.
+
+Me mostre vídeos do YouTube, vasculhe o Reddit, dê uma olhada no Hacker News. E não me mostre qualquer coisa. Me diga se vale a pena ler ou assistir. Dê uma classificação para mim." Tentamos [bufa] fazer isso com o 8n, demorou uma eternidade. Preparar, apontar, já! E o
+
+Terry faz tudo por mim. Feito. Vamos criar um painel de controle. Vamos pedir para ele fazer um agora mesmo, depois de você colocá-lo em modo de concentração máxima. Vamos fazer o mesmo por nós agora mesmo .
+
+Isso levou um minuto, mas está feito. Vamos dar uma olhada . Isso me forneceu o nome DNS. Isso é doentio. E isso é realmente muito legal. A mensagem dizia que talvez eu devesse assistir a
+
+este vídeo de David Bombal. Vamos ver. O primeiro projeto foi extremamente difícil. Projeto dois: vamos transformar o Terry 3.0 em um engenheiro de TI. Vamos deixar que ele monitore o próprio
+
+servidor, aquele em que ele está. Vamos usar {barra} novo para dar a ele um novo contexto. Vamos fazê-lo pensar muito. E eu direi a ele para se tornar um engenheiro de TI. Você é um engenheiro de TI. Sua
+
+primeira tarefa é monitorar o servidor em que você está. Verifique tudo. Velocidade da internet, RAM, CPU, registros de segurança e crie um painel de controle para mim. Ir. E eu adoro isso. Vai
+
+examinar a própria caixa, garantir que não pise em nenhum calo nem quebre nada e, em seguida, construir algo. OK? Não estamos nos empolgando demais, mas vamos deixar a empolgação de lado. É bem legal, aliás. Você tem que admitir. Não estou dizendo para soltar tudo,
+
+mas isso é bem legal. E está feito. Seguiu o mesmo tipo de tema. Mas nossa! Quer dizer, isso é muito legal.
+
+É uma história de um único capítulo. Sim, está atualizando ao vivo. Se você fizer essas duas coisas, terá duas coisas concretas para levar consigo, e espero que isso te inspire um pouquinho. Porque o que acabou de acontecer aqui foi...
+
+Vamos lá. É legal. E se você for como eu, provavelmente tem um monte de ideias. Aliás, este é apenas um vídeo de primeiros passos com o Open Claw e minhas impressões iniciais sobre ele. Para um cenário de configuração mais estruturado, para configurar tudo corretamente e aprofundar em tópicos como segurança, memória e configuração de perguntas e respostas, teremos um curso na NetworkChuck Academy em breve, se já não estiver disponível. Confira o
+
+link abaixo. Mas, vamos dar um passo atrás por um segundo. Que diabos é isso? Tipo, o que acabamos de instalar? O que exatamente está acontecendo e por que eu permiti que você instalasse isso no seu VPS na nuvem? Temos que
+
+garantir a segurança dessa belezinha. Faremos isso daqui a pouco.
+
+Só tinha marca genérica na geladeira. Então, rapidinho, vamos falar sobre o que é o Open Claw , por que as pessoas estão surtando com ele e por que você talvez devesse se importar ou talvez não, porque eu uso o Open Claw, mas não o tempo todo e não para o que você imagina que eu o usaria depois de ver aquela demonstração. Mas enfim, o OpenClaw é simplesmente um gateway. É um portal que conecta várias coisas. Agora, esse gateway é apenas um serviço que roda no seu computador. Você quer
+
+ver? Digite "PS AUX pipe" e nós usaremos o grep para buscar por "claw". Ali está, bem ali, o portal OpenClaw. É um aplicativo Node.js que fica rodando 24 horas por dia, 7 dias por semana. Agora,
+
+esse portal conecta algumas coisas. Três pilares que o tornam incrível, mas não exatamente inovador. Aliás, estou fazendo isso porque gravei em algumas sessões diferentes e ficou meio bagunçado, então estou organizando agora. Agora, voltando a mim. A primeira coisa que fez foi dizer: "Ei, qualquer modelo de IA que você quiser usar, pode usar."
+
+Isso é muito doentio. E o grande diferencial eram os canais. A maioria das empresas de IA diz: "Ei, se você quiser conversar com nossa IA, venha para nossa plataforma. Venha até nós." A OpenClaw diz: "Não. Seja lá o que
+
+você estiver usando, nós vamos até você. Telegram, Discord, Slack, a gente resolve." A terceira coisa é a memória. Você viu que, enquanto estávamos criando isso, estávamos dando alma àquilo. E possui diversos mecanismos para começar a aprender com suas interações. Começa a se
+
+parecer mais com um assistente pessoal. Ele se lembrará das coisas que você lhe disser. Agora, você provavelmente está pensando: "Chuck, o ChatGPT faz isso. Ah, o Claude faz isso." Eu entendo . Mas a
+
+sensação é um pouco diferente, especialmente quando você adiciona coisas como QMD ou outros recursos interessantes de memorização, porque, quer dizer, este é o seu sistema. Você controla grande parte do que está acontecendo. É como se essa memória fosse ficar armazenada no servidor VPS que você acabou de configurar. É um arquivo Markdown. Isso é muito legal.
+
+Na verdade, deixe-me mostrar onde os arquivos estão localizados. Vamos voltar ao nosso servidor. Tudo isso pode parecer mágica, mas deixe-me mostrar os bastidores . Deixe-me mostrar a casa do OpenClaw. Primeiro, vamos acessar o diretório raiz onde o OpenClaw está instalado. CD til
+
+/.openclaw. Digite em LS. E é só isso, diretórios, arquivos, arquivos Markdown. E acho que ajuda muito entrar aqui e ver isso, porque, à medida que você faz alterações com o Terry ou com quem quer que seja seu agente, pode parecer mágica e você pode sentir que está perdendo o controle. Tipo, eu simplesmente disse para
+
+ele fazer alguma coisa ou para ele mudar de identidade. O que acabou de acontecer? Você pode ver isso acontecer. Você ainda está no controle. Portanto, neste momento, a maior parte do que acontece está, na verdade, no diretório do seu espaço de trabalho para o seu agente atual. Vamos começar por aí. Espaço
+
+de trabalho do CD. Digite em LS. Tem algumas coisas legais aqui. Seu agente tem um soul.md, como acabamos de mencionar . Vamos arrancar a alma dele.
+
+Alma de gato. E, sinceramente, isso é um pouco assustador. Você não é um chatbot, você está se tornando alguém. E o que é realmente interessante é que também temos um arquivo de identidade. Assim, Pedro separa a identidade da alma. No caso dos humanos,
+
+concordo. Para chatbots, isso é assustador. Vamos dar uma olhada. Identidade do gato. E foi mais ou menos isso que esclarecemos em nossa primeira conversa. Existe também um
+
+arquivo de memória. Isso é como a memória de longo prazo de Terry. Vamos falar sobre isso. Memória felina. Assim como você, essas são coisas que você quer guardar na memória a longo prazo, como o aniversário da sua esposa, a cor favorita dos seus filhos ou todos os 150 Pokémon. Algo semelhante. É uma estratégia de
+
+longo prazo. Existe até um diretório de memória. Se gravarmos o conteúdo na memória e o reproduzirmos em um arquivo LS, haverá um arquivo para cada dia, como um diário, com os acontecimentos e as conversas. Vamos conferir o primeiro dia. Gato 2026 16. E eu adoro isso.
+
+Primeiro dia. Acorde. Só o fato de saber que isso existe já deve te fazer sentir um pouco melhor. Tipo, por que toda a minha infraestrutura de TI parou de funcionar? Ah, vamos dar uma olhada no diário do meu agente. Veja, nós estamos bem. E
+
+se eu conversasse com meu agente e dissesse para ele mudar algo como: "Ei, Terry, seu Pokémon favorito é Gengar. Esta é uma memória central. Ela define quem você é. Atualize a alma, não a sopa. Atualize a alma, a identidade e a memória, por favor.
+
+Curiosidade: Gengar não é meu Pokémon favorito. Consegue adivinhar qual é? Comente abaixo." Certo, vamos ver o que ele mudou. Vamos verificar [bufa] a alma dele.
+
+Gengar é cânone central. Quer dizer, Gengar é cânone central. Identidade. Pokémon favorito: Gengar. Memória de longo prazo. Pokémon favorito:
+
+Gengar. Vamos verificar o diário dele. Declarou que Gengar é o Pokémon favorito de Terry . Viu? Não é essa caixa misteriosa. Não é mágica.
+
+Mais ou menos. É meio que mágica. Mas pelo menos agora você sabe como a mágica acontece. Isto é Hogwarts agora. Você está aprendendo sobre o que está acontecendo.
+
+Ah, tem mais um arquivo markdown que eu quero te mostrar, o arquivo agents.md. Este é Aquele que realmente dá uma sensação de mágica, e você vai entender o porquê. Olha só o que está fazendo. Vamos analisar o arquivo de agentes. E
+
+isso diz a ele como iniciar e executar as coisas. E é bem completo. Tipo, primeira execução, inicialização, esse é o seu certificado de nascimento. Antes de qualquer outra coisa, eu pego sua alma e o arquivo de usuário. Sessão principal, veja sua memória. E, como eu
+
+não sabia, ele não carrega a memória de longo prazo em chats em grupo por padrão. Isso é útil. Temos linhas vermelhas, sobre as quais falaremos mais tarde em relação à segurança. Há protocolos para quando entrar em contato e quando ficar em silêncio. No fim das contas, é só um prompt sofisticado. E sabe o que mais? Não está
+
+vinculado a nenhum provedor. Se você quiser entrar na teoria da conspiração e usar tudo localmente, com o que eu concordo, você só precisa mudar o modelo. A memória permanece a mesma. Você só precisa fazer um transplante de cérebro. E eu menti sobre três coisas. Na verdade, são quatro.
+
+E esta pode ser a coisa mais legal, dependendo de como você Veja só, e é por isso que as pessoas usavam Mac minis para isso. E essas são as ferramentas disponíveis para este agente OpenClaw. Você instala o OpenClaw em uma máquina e diz: "Esta é a sua máquina." Aqui estão as ferramentas que estou disponibilizando para você. Então, no nosso exemplo de VPS, estamos dizendo que este é o seu VPS. Você pode executar scripts bash. Você
+
+pode usar o cron para agendar tarefas. Você pode usar heartbeats para se lembrar de fazer coisas para mim. Ei, Chuck do futuro aqui. Acho que não expliquei o suficiente sobre crons e heartbeats, então aqui vai. E é isso que dá a sensação de estar vivo.
+
+São os heartbeats e os crons. Os heartbeats dão essa sensação de estar vivo. Acabei de perceber isso. Devo dizer que o OpenClaw faz isso melhor do que qualquer outro atualmente, porque o Claude e todos os outros estão tentando copiar. E você viu um pouco disso no arquivo de agentes que mostrei antes.
+
+Você pode dizer ao seu agente: "Ei, verifique a cada hora, mais ou menos, só para garantir que estou bem." Ou, com o nosso resumo de notícias, seria um cron. Resumo de notícias todos os dias, às 6h. É configurar tarefas cron reais no seu servidor e é só isso. É mesmo. Parece
+
+mágica, mas é só uma tarefa agendada no seu servidor. Genial pela simplicidade. Vamos ver isso acontecer. Vamos pedir para o Terry fazer alguma coisa. Ok, vou pedir para o Terry criar um heartbeat. Vamos fazer
+
+isso agora. Vou dizer para ele me lembrar de tomar café a cada 30 minutos. Isso deve configurar um heartbeat. E também vou dizer para ele aparecer a cada hora para dizer oi e ver como estou . Vamos ver se ele criou o cron para o café. Vamos ver se está em heartbeats
+
+ou heartbeat.md. Deveria estar lá. Não. Vamos voltar para o diretório do OpenClaw. CD ponto ponto e olhe no
+
+diretório cron. Vamos usar o comando cat para listar as tarefas. Sim, aqui está. Me pergunto por que ele não configurou heartbeats. Ah, ele fez uma escolha inteligente.
+
+O cron é melhor. Também podemos ver os crons com o OpenClaw. Cron, eu acho. Ah, OpenClaw cron lista. E sim, o OpenClaw tem uma lista bem extensa de ferramentas de linha de comando. Está tudo
+
+ali. Ei, uma rápida mudança de assunto . Quero mostrar algumas coisas aqui sobre as habilidades, as habilidades do ClawHub, o acesso pelo navegador e os subagentes. Aqui está. O OpenClaw também tem habilidades, o que é bom e ruim ao mesmo tempo. Eles têm um
+
+site inteiro chamado ClawHub. Vamos dar uma olhada . Este é um diretório de habilidades que simplesmente adicionam ao seu agente funcionalidades extras. Então, se eu for em " navegar por habilidades", você pode ver que existem mais de 33.000 habilidades. Por favor, tenha cuidado.
+
+Há muita coisa ruim lá. Muitos malwares se tornaram um problema. Hum, vamos encontrar uma simples para instalar. Vamos dar ao nosso agente alguma capacidade, como a de criar documentos do Microsoft Word . Perfeito. Você pode ver que
+
+eles fizeram uma parceria com o VirusTotal porque, novamente, houve problemas. Esta é benigna. Devemos ficar bem. Agora, para instalar, precisamos ter o ClawHub instalado. Então, Vamos usar o comando `npm install clawhub` para instalar o ClawHub. Depois, vamos usar `clawhub
+
+install`. Como é o nome mesmo? Word.docx. Está instalado. Vamos ver se
+
+ele o tem. Ele vê. Vamos pedir para ele criar um documento do Word. Vamos pedir para ele criar o próprio currículo. Ok, ele terminou o documento. Disse que é hora do café.
+
+Vamos dar uma olhada. E aqui está o currículo do Terry. [risos] Quatro CCIEs. Adorei. É até um pouco assustador o quão bom ele é. Também posso pedir para o Terry navegar
+
+na web. Acesse networkchuck.coffee no seu navegador e me diga o que você vê. Sim, ele tem um navegador sem interface gráfica . Adicione a rota padrão ao seu carrinho.
+
+Adicionou um produto ao carrinho. Você também pode usar subagentes. Implante um subagente para pesquisar a melhor maneira de fazer café. Agora, aqui no Telegram, você também tem muitos comandos que pode usar. Por exemplo, eu posso fazer O status está na fila agora, mas consigo ver tudo o que está acontecendo, incluindo os subagentes ativos. Posso usar o
+
+comando `subagents list`. É extremamente poderoso. E isso é só um subagente. Você pode instalar vários agentes, como o Terry, em um único gateway. Eu tenho isso agora mesmo no meu departamento de TI. Tenho o Ron como
+
+gerente de TI e o Fred, o George e o Charlie como funcionários de TI, engenheiro de rede e engenheiro de armazenamento. Consigo enviar mensagens para todos eles no Slack. É incrível. Isso é assunto para outro vídeo, outro episódio da série. Aqui estão os resultados. O AeroPress é
+
+realmente ótimo. Na verdade, meu café diário é feito na prensa francesa, depois uso o AeroPress quando estou acampando e o Coffee Boss quando estou no Japão. Agora, isso é revolucionário? Não. Não é. Muita coisa já
+
+foi feita. E existem softwares que fazem algumas coisas melhor. Mas o que isso fez, e é por isso que todo mundo ficou impressionado, foi tornar tudo mais intuitivo. acessível. Ele reuniu tudo em uma instalação limpa e disse: "Ei, olhem só isso."
+
+E de repente foi como se uma lâmpada tivesse se acendido na internet. Todo mundo ficou tipo: "Nossa, essa coisa de IA, ela realmente consegue fazer coisas se você der a ela as ferramentas certas." E claro, existe a ideia de comprar um Mac Mini e dar a ele o controle de uma IA. É como se este fosse o computador da IA e você estivesse integrando um novo funcionário de IA. Gostei dessa ideia, foi isso que viralizou. E é uma ótima estratégia de marketing
+
+porque aí você pensa: "Ei, eu sou um ser humano. Eu uso um computador. Essa IA agora pode usar o mesmo computador que eu uso. Ok." Então, para mim, foi isso que eu acho que aconteceu ali. Mas essas ferramentas não são
+
+nenhuma novidade. Na verdade, acho que o Open Claw ainda vai durar um bom tempo , mas vejo as grandes empresas vindo atrás dele. Jensen Huang chamou o Open Claw de sistema operacional para IA pessoal. A Nvidia criou sua própria versão, chamada Nemo Claw, que aparentemente é muito insegura. Acho que a Anthropic está construindo a deles. Quando as maiores
+
+empresas de tecnologia convergem para a mesma ideia, isso é um grande acontecimento. E essas empresas não vão simplesmente aderir a isso sem um certo nível de segurança. Enquanto que o Open Claw é tipo , hum, isso é divertido. Vamos simplesmente implementar as coisas sem pensar em segurança, o que nos leva à próxima discussão. Nossa, segurança com Open Claw!
+
+Não acredito que você instalou o Open Claw. Estou brincando. Não é tão ruim assim. Mas vamos ao que interessa agora mesmo . E então darei meu veredito sobre se tudo isso é apenas hype. É legal? Como faço para
+
+usar isso? Porque eu estou usando, mas é tipo, " Ok, já chego lá". Vamos falar rapidinho sobre segurança neste segmento. Ok, segurança Open Claw. Preciso de mais café para isso. Acabou meu
+
+café. Oh não. Felizmente, a situação melhorou bastante em relação ao passado . E, sinceramente, você provavelmente está bem seguro agora, mas vamos verificar novamente. Era um desastre completo desde o início, e é por isso que temos um comando como este. Execute
+
+isto agora mesmo. Auditoria de segurança Open Claw . Ao executar esse comando, ele analisará sua instância do Open Claw e garantirá que você esteja seguindo as melhores práticas de segurança. Se você instalou como eu, provavelmente verá apenas dois avisos, nada crítico, e provavelmente está tudo bem. Você pode usar o switch {dash} {dash} deep para ir mais fundo. Recebemos apenas
+
+três advertências sobre isso. E você pode fazer uma auditoria de segurança do Open Claw {dash} {dash} para corrigir automaticamente qualquer problema. Só tenha cuidado, pois isso também pode causar problemas automaticamente. Agora, o mais importante é garantir que a interface do usuário da sua web não esteja exposta à internet. Sim, você tem uma interface web.
+
+Não, eu não te mostrei. Eu não uso muito isso. Se você quiser acessar a interface web, vou incluir um passo a passo na descrição abaixo. Na verdade, eu gravei algo na interface web. Está bem aqui. Para testar
+
+isso rapidamente, você pode acessar seu endereço IP público e tentar a porta 18789. Se você não conseguir acessá-la, significa que ninguém mais conseguirá. Porque normalmente, quando você instala o Open Claw, ele fica vinculado ao seu endereço de loopback 127.0.0.1.
+
+E tudo isso significa que ninguém de fora pode acessar seus arquivos do Open Claw , apenas os arquivos instalados diretamente no seu computador. Mas para permitir isso, podemos usar o que chamamos de túnel SSH. Não vamos alterar nenhuma configuração de segurança, apenas vamos permitir o acesso rápido com este comando. Vou incluir isso nos comandos abaixo, então não se preocupe. Você não precisa memorizar isso. Ou veja-me
+
+digitar isso muito rapidamente. Basta inserir seu nome de usuário e seu endereço IP. Então, vamos colar o comando em uma nova janela do nosso terminal, não naquela em que estamos logados no servidor. Assim mesmo. Digite sua senha. E neste exato momento
+
+, você provavelmente está esperando que algo aconteça. Nada vai acontecer. Neste momento, você tem um túnel SSH para o seu computador. E se abrirmos nosso navegador e acessarmos localhost , qual porta configuramos? Eu já esqueci. Ah, 18789. Devemos acessar
+
+a interface web do Open Claw. Aqui está. Agora, você pode se deparar com a situação em que precisa de um token de acesso para fazer login. E você pensa: "Ah, Chuck, eu não tenho um. Ah, não." Não se preocupe, você tem acesso à
+
+linha de comando. Você tem que fazer o que tiver que fazer. Volte ao seu terminal e digite " Open Claw config". Esta é uma interface de usuário de texto (TUI) bem simples que irá guiá-lo por algumas configurações. Vamos escolher a máquina local. Vamos rolar a página para baixo até o portal.
+
+O porto está bem. O loopback está bom, não mude isso. E então, o token, é daqui que obtemos nosso token. E vamos gerá-lo agora mesmo . Aqui está minha ficha. Vou pegar
+
+isso. Portanto, não acho que tenha gerado algo novo. Acho que esse é o meu token atual. Embora possa ser. Esse token foi inserido.
+
+Conectar. E estamos dentro. Então, praticamente tudo o que conversamos está nesta ótima interface web. Você pode conversar com seu agente aqui. Você pode visualizar sessões, instâncias e canais. Os canais são o
+
+Telegram, o Discord e as tarefas cron. Mas você não se sente melhor sabendo que pode ver isso pela linha de comando? Sim, sim, você tem. Mas, honestamente, daqui em diante, eu basicamente converso com meu agente. Eu raramente acesso a interface do usuário. E mesmo a
+
+linha de comando, eu só uso aqui e ali para fazer algumas pequenas alterações. Falando sobre seu host, precisamos garantir que ninguém consiga acessar nenhuma outra porta nele. Seu firewall está ativado? Provavelmente não. Vamos fazer isso agora mesmo com este comando. Este comando irá habilitar
+
+seu firewall e liberar a porta 22 ou SSH, que é como estamos nos conectando a ele com este terminal agora. Queremos bloquear tudo, exceto o que for estritamente necessário. Agora, observe: quando faço isso, perco instantaneamente o acesso aos servidores web que construímos, porque tudo fica bloqueado. Vamos deixar isso para lá rapidinho, porque eu ainda quero ver as minhas coisas. Vou liberar a porta 8787. Aliás, sabe de uma coisa
+
+? Vou pedir para o Terry fazer isso. O mais legal é que eu preciso aprovar isso. Eu permito. E ele conseguiu. Na verdade,
+
+isso não é legal. Ter tudo o tempo todo é meio chato. É uma questão de segurança. Deixe-me mostrar como resolver isso agora mesmo . Deixe-me mostrar como fazer isso e apresentar um pouco do confuso mundo da configuração de segurança do Open Claw . Agora, quero que você execute
+
+este comando no seu terminal. Abra o arquivo de configuração do Claw e obtenha o arquivo tools.dot profile. Agora mesmo, o meu está marcando cheio, mas o seu provavelmente não. Provavelmente diz "codificação". Por que? Porque eu fiquei realmente
+
+[risos] irritado e chateado com o processo no meio desta gravação e mudei a minha versão. Mas o que isso significa? Significa que, se estiver cheio, meu agente Open Claw poderá ver todas as ferramentas do sistema e elas estarão disponíveis para ele. Tem conhecimento disso . A capacidade de programação é limitada, permitindo tarefas como ler e escrever arquivos e executar comandos no terminal, mas não é possível navegar na internet, realizar buscas online ou usar qualquer outra ferramenta disponível . Então, se você quer mudar isso agora mesmo
+
+, se quer tornar seu agente mais capaz, vamos fazer isso. Lembre-se, isso representa um risco de segurança. Mas existem maneiras de contornar isso, e o que a maioria das pessoas faz é habilitar totalmente essas ferramentas e, em seguida, realizar o que é chamado de "redlining" ou " redline". Não sei. Não sei como as crianças dizem isso. Mas para alterar seu
+
+perfil para completo, o comando é "Open Claw config set" em vez de "get tools.dot profile". E ligue essa belezinha no volume máximo. Pressione Enter. Em seguida, você precisará reiniciar o gateway para aplicar essa configuração, que é o comando ` Open Claw gateway restart`. Você usará
+
+muito esse comando porque o Open Claw é de código aberto e recebe atualizações quase que diariamente, e imprevistos acontecem. Agora, mais uma configuração que pode te causar problemas, mas acho que não é a padrão, e é esta aqui. Execute o comando Open Claw config get tools.dot exec. Esta configuração controla o que o Open Claw pode fazer com as ferramentas que conhece. Então, se for
+
+tipo, "Aqui, aqui está um martelo, Garra Aberta, mas você não pode usá-lo. Você tem que me pedir primeiro todas as vezes." Então é tipo, "Ok, eu tenho um martelo. Posso usá-lo?" É mais ou menos isso que está acontecendo aqui, talvez.
+
+[risos] Mas não para mim, porque aqui mesmo, eu tenho uma configuração de segurança muito confusa chamada segurança total, o que significa que ele pode fazer absolutamente tudo o que quiser. Não é segurança total, é mais como se eu pudesse fazer absolutamente tudo o que quisesse. Qualquer ferramenta que eu conheça, eu consigo usar. Agora, se você configurou o comando para listar as permissões, pode definir uma lista de ferramentas que sua ferramenta ou seu agente têm permissão para usar. Vou te mostrar esse arquivo daqui a pouco. E a outra opção
+
+é negar. Você não confia nem um pouco no seu agente . Por que você tem um, afinal? E então pergunte, você tem a opção de desligar, que é a que eu escolhi. Você pode ter isso agora mesmo , e o sistema nunca vai te perguntar.
+
+Portanto, neste momento, se você tiver essa configuração combinada com o perfil tools.dot completo, seu usuário poderá fazer exatamente o que quiser. Mas você também pode configurar para perguntar sempre, o que fará com que o programa pergunte sempre se você for muito paranoico, ou apenas em caso de erro, opção que se combina com a lista de permissões. Então, se a ferramenta não estiver na lista de permissões, seu agente pode ser configurado para pensar: "Ei, eu sei que não tenho um martelo na minha lista, mas, sabe, se eu usar isso?" Essa situação. Para alterar qualquer uma
+
+dessas duas opções, o comando será: Open Claw config set tools.dot exec.dot security. E então, qualquer opção que você queira inserir, como lista de permissões ou lista completa. E então a mesma história de antes, só que em vez de usarmos ".security",
+
+usaremos ".ask". E desculpe se você ouvir uma criança gritando. Meus filhos estão bem do outro lado daquele muro. Vou apenas dizer para você pedir permissão. Lembre-se
+
+, isso definirá essa configuração globalmente e para sempre em todas as sessões. Você pode configurar esses itens por sessão no Telegram. Não me importo com isso. Agora, rapidinho, para ver a configuração, podemos usar o comando ` cat openclaw.json`, que terá muitas informações sobre listas de permissões e configurações de segurança, caso você goste de analisar arquivos de configuração. E teremos um
+
+vídeo mais aprofundado sobre segurança. Mas vou entrar na minha pasta de espaço de trabalho e vamos analisar o arquivo agents.md, que contém as instruções do seu agente , como ele funciona e o que ele faz. Você verá uma seção para anotações em vermelho. Agora, revendo isso, percebi que meio que me precipitei em abordar os pontos principais sem explicar o porquê de estarem ali.
+
+Eis o motivo. Acabamos de informar ao seu agente da Open Claw que ele pode fazer uma infinidade de coisas. Retiramos o cinto de segurança dele. Agora, com o redlining, estamos dizendo a ele o que ele pode e o que não pode fazer. Então, sim. De volta para mim.
+
+Tipo, não extraia dados privados. Não execute comandos destrutivos sem pedir permissão. Na dúvida, pergunte. Você pode adicionar outros itens. Tipo, nunca modifique a configuração do SSH. E isso incluiria
+
+coisas essenciais como, por exemplo, "pare, pergunte-me primeiro". Você pode usar a linha amarela, que significa "faça isso", mas registre a ação. Assim como fazer alterações no firewall ou executar comandos do Docker. E então, é claro, você sempre terá permissão para fazer o que quiser. Levando em consideração que estas são instruções do agent.md, como
+
+um aviso que seu agente deve seguir, mas também é apenas um aviso. Não há nada de determinismo que impeça que isso aconteça. Agora, voltando ao assunto da segurança , tenha cuidado com as habilidades e o Claw Hub. Em 12% dos casos, foram encontrados malwares. Quer dizer, oh, tenha muito cuidado.
+
+Examine tudo. Nesse momento, você não precisa entrar em pânico. Seu gateway não está exposto, especialmente a interface do usuário, que não está exposta à internet pública. Somente SSH é permitido. E neste momento, só você tem as senhas, só você pode entrar neste computador. E então vamos
+
+verificar mais uma coisa. Já deve estar configurado por padrão, mas posso dizer: "Ei". E estou falando com Terry agora mesmo. "Certifique-se de que só eu posso falar com você." Você pode permitir que outras pessoas falem com seu agente, se desejar. Eu
+
+não faria isso. Segurança concluída. Agora, vamos falar sobre o que eu penso a respeito disso. Open Claw é muito divertido. Mas, para trabalhos mais sérios, normalmente vou usar o código Claude.
+
+Normalmente, eu me sento ao computador e trabalho com o código Claude porque acho que ele tem melhores ferramentas e uma experiência geral melhor para as coisas que eu faço, como pesquisa, criação de scripts e um pouco de programação aqui e ali. Mas eu uso o Open Claw. Então, para que vou usá-lo? Várias coisas aconteceram recentemente, na verdade. E esta será uma espécie de série Open Claw, porque acho que precisamos analisar isso um pouco mais a fundo.
+
+Uma coisa que eu fiz, e isso vai render um episódio, foi montar uma equipe inteira de TI. E eu os tenho agora mesmo. Eles estão gerenciando meu laboratório doméstico e meu laboratório de estúdio, que inclui meu NAS e tudo mais. Tenho um diretor de tecnologia (CTO) e também uma equipe enorme, incluindo engenheiros de internet, de armazenamento e de sistemas . Funciona muito bem. Tipo,
+
+estou impressionado. Eles resolvem problemas. Temos sistema de bilhetes. Vou te mostrar isso. Além disso, tenho um assistente pessoal em quem confio. Estar aqui no
+
+Japão tem sido uma experiência incrível. O nome dela é Hermione porque eu sou nerd. Eu peço para ela fazer coisas como... Sim, eu deixo ela checar
+
+meu e-mail. E eu a ensinei a falar japonês para que ela possa fazer ligações telefônicas para mim aqui no Japão em japonês e fazer reservas em restaurantes para mim. É esse tipo de coisa que você pode fazer com isso. Recentemente, também contratei Arnold Schwarzenegger como meu assistente pessoal de treinamento para cuidar da minha saúde. Espero que ele me ajude a emagrecer.
+
+E ficar bêbado. Basicamente, tenho vários agentes desenvolvidos para fins muito específicos que utilizo. E eu sei que ainda não desbloqueei totalmente esse poder porque é preciso dedicar muito tempo para pensar sobre isso e descobrir como funciona. Então, estou meio que na fase de experimentação. Mas é legal. E quero ver o que você consegue fazer
+
+com isso. Quero ver o que a comunidade pode fazer com isso. E vou continuar a fazer ajustes. Vou continuar jogando. Por isso, será uma série.
+
+Vamos analisar a segurança em detalhes. Vamos explorar em detalhes outras coisas que podemos fazer com isso, como operações de TI. Como mencionei anteriormente, Peter e eu já estávamos conversando sobre a reformulação da marca antes mesmo de ela se chamar Open Claw. Na verdade, eu critiquei ele no X quando ele renomeou para "O que era isso?". Multibot? E
+
+então ele me mandou uma mensagem direta pedindo ajuda. Conversamos um pouco. E nós tínhamos, de fato, uma entrevista agendada. Então surgiu a OpenAI. E já faz um tempo que não tenho notícias dele.
+
+Você me ignorou completamente, Peter? Peter, se você estiver assistindo a isso, vamos lá, cara. Tivemos a oportunidade de gravar um episódio aqui nesta série Open Claw. Aliás, todos vocês que estão assistindo aqui agora, peguem seus Open Claws, o agente que vocês acabaram de criar, e façam com que ele envie uma mensagem para o Peter a cada hora até que ele me responda e façamos esta entrevista. Estou falando isso meio que de brincadeira.
+
+Então, Open Claw, o software que me deixava estressado. O que você acha disso? Você já está usando? Como você está usando? Ou você vai começar a usar depois deste vídeo? Avise.
+
+Será que é tudo propaganda ou corresponde realmente às expectativas? É melhor assim? Comente abaixo. É tudo o que eu tenho. Nos vemos na próxima!
+
+Ei, você chegou ao final do vídeo. E no final dos meus vídeos, gosto de orar por vocês, meu público. Acredito no poder da oração e no que ela pode fazer pela sua vida. E eu realmente me importo com você. É meio estranho, eu sei. Mas vamos orar.
+
+Vamos fazê-lo. Deus, eu te agradeço pela pessoa do outro lado da tela, esta câmera. Agradeço a paixão e o entusiasmo deles pela tecnologia. E, sabe, talvez eles estejam perdendo esse entusiasmo e essa empolgação agora por causa da IA. Eu sei que estou sentindo isso. Então, oro
+
+agora por eles, Senhor, para que lhes dês paz e entusiasmo pela IA, seja qual for a forma que ela assuma. Ah, elimine a ansiedade, deixe-a se dissipar deles agora mesmo. Que eles sintam paz e que tenham esperança no futuro, Senhor. Eu oro pela proteção de seus empregos e suas carreiras, tanto no início quanto na consolidação de suas funções atuais e na busca por promoções. Que Deus os abençoe nisso, Senhor. Vá à frente deles e
+
+endireite o caminho deles. Dê a eles clareza e direcionamento para que acordem todos os dias animados para trabalhar na próxima tarefa. Que Deus abençoe suas famílias. Que Deus abençoe as finanças deles. Que tudo se encaixe . E eu rezo para que, à medida que a
+
+IA se desenvolve, ela esteja moldando o mundo, Senhor. Eu oro para que a identidade deles não seja encontrada apenas em quem eles são como funcionários, ou no que contribuem para o trabalho, ou em suas habilidades, mas que sua identidade seja encontrada, em última instância, em Ti, Deus. Porque sem isso, vamos acabar perdidos. E eu sei que encontro minha identidade em ti, Jesus. E é aí que reside a minha esperança . Então, aconteça o que acontecer, ninguém
+
+sabe o que vai acontecer, mas você sabe, Deus. E se nos encontrarmos em você, não nos perderemos. Agradecemos-te, Jesus, por tudo. Agradeço a vocês por esta pessoa, por estarem presentes nesta plateia e nesta comunidade. Você nos abençoou muito. É em teu nome que
+
+oramos. Amém. É só isso que eu tenho a dizer, pessoal. Nos vemos na próxima!
