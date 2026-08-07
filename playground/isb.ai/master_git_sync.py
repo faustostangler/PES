@@ -12,7 +12,8 @@ from pathlib import Path
 
 ISB_ROOT = Path(__file__).parent.resolve()
 REPO_ROOT = ISB_ROOT.parent.parent
-RAW_DIR = ISB_ROOT / "raw"
+CRESMO_ROOT = ISB_ROOT.parent / "cresmo"
+RAW_DIR = CRESMO_ROOT / "raw"
 ENRICHED_DIR = ISB_ROOT / "enriched"
 LOCK_FILE = REPO_ROOT / ".git" / "index.lock"
 
@@ -41,6 +42,29 @@ def run_git(args: list[str], max_retries: int = 5) -> subprocess.CompletedProces
     return res
 
 
+def format_bytes(total_bytes: int | float) -> str:
+    """Formats raw byte count into human-readable string."""
+    size = float(total_bytes)
+    for unit in ["B", "KB", "MB", "GB"]:
+        if size < 1024.0:
+            return f"{size:.2f} {unit}"
+        size /= 1024.0
+    return f"{size:.2f} TB"
+
+
+def get_staged_files_size_str(staged_files: list[str]) -> str:
+    """Calculates total disk size for a list of staged repository-relative paths."""
+    total_bytes = 0
+    for rel_path in staged_files:
+        full_path = REPO_ROOT / rel_path
+        try:
+            if full_path.is_file():
+                total_bytes += full_path.stat().st_size
+        except OSError:
+            pass
+    return format_bytes(total_bytes)
+
+
 def get_chunk_size_str(chunk_commits: list[str]) -> str:
     """Calculates human-readable total size of changed objects in commit chunk."""
     try:
@@ -66,30 +90,66 @@ def get_chunk_size_str(chunk_commits: list[str]) -> str:
             text=True
         )
         total_bytes = sum(int(s) for s in cat_res.stdout.splitlines() if s.strip().isdigit())
-
-        size = float(total_bytes)
-        for unit in ["B", "KB", "MB", "GB"]:
-            if size < 1024.0:
-                return f"{size:.2f} {unit}"
-            size /= 1024.0
-        return f"{size:.2f} TB"
+        return format_bytes(total_bytes)
     except Exception:
         return "N/A"
+
+
+def get_staged_files_bytes(staged_files: list[str]) -> int:
+    """Calculates total disk size in bytes for a list of staged repository-relative paths."""
+    total_bytes = 0
+    for rel_path in staged_files:
+        full_path = REPO_ROOT / rel_path
+        try:
+            if full_path.is_file():
+                total_bytes += full_path.stat().st_size
+        except OSError:
+            pass
+    return total_bytes
+
+
+def get_staged_files_size_str(staged_files: list[str]) -> str:
+    """Calculates total disk size formatted for a list of staged repository-relative paths."""
+    return format_bytes(get_staged_files_bytes(staged_files))
+
+
+def get_uncommitted_files_set() -> set[str]:
+    """Returns set of relative file paths that are untracked or modified in working tree."""
+    res = run_git(["git", "-c", "core.quotePath=false", "ls-files", "--others", "--modified", "--exclude-standard"])
+    if res.returncode == 0:
+        return {line.strip() for line in res.stdout.splitlines() if line.strip()}
+    return set()
 
 
 def stage_and_commit_file_list(
     file_paths: list[Path],
     commit_prefix: str,
     max_per_commit: int = MAX_FILES_PER_COMMIT,
-) -> int:
-    """Helper to stage and commit a list of files in chunked commits."""
+    uncommitted_set: set[str] | None = None,
+) -> tuple[int, int, int]:
+    """Helper to stage and commit a list of files in chunked commits.
+    Returns (commits_created, total_files_committed, total_bytes_committed).
+    """
     if not file_paths:
-        return 0
+        return 0, 0, 0
 
-    rel_files = [str(f.relative_to(REPO_ROOT)) for f in file_paths]
+    if uncommitted_set is None:
+        uncommitted_set = get_uncommitted_files_set()
+
+    rel_files = [
+        str(f.relative_to(REPO_ROOT))
+        for f in file_paths
+        if str(f.relative_to(REPO_ROOT)) in uncommitted_set
+    ]
+
+    if not rel_files:
+        return 0, 0, 0
+
     total_files = len(rel_files)
     total_parts = (total_files + max_per_commit - 1) // max_per_commit
     commits_created = 0
+    total_files_committed = 0
+    total_bytes_committed = 0
 
     for idx, i in enumerate(range(0, total_files, max_per_commit), 1):
         file_chunk = rel_files[i : i + max_per_commit]
@@ -100,19 +160,24 @@ def stage_and_commit_file_list(
             stage_subchunk = file_chunk[j : j + STAGE_CHUNK_SIZE]
             run_git(["git", "add"] + stage_subchunk)
 
-        diff_res = run_git(["git", "diff", "--cached", "--name-only"])
+        diff_res = run_git(["git", "-c", "core.quotePath=false", "diff", "--cached", "--name-only"])
         staged = [f for f in diff_res.stdout.splitlines() if f.strip()]
 
         if staged:
             part_suffix = f" (part {idx}/{total_parts})" if total_parts > 1 else ""
+            commit_bytes = get_staged_files_bytes(staged)
+            commit_size_str = format_bytes(commit_bytes)
             msg = f"{commit_prefix}: add {len(staged)} files{part_suffix}"
+            print(f"  ➜ {msg} ({commit_size_str})")
             res = run_git(["git", "commit", "-m", msg])
             if res.returncode == 0:
                 commits_created += 1
+                total_files_committed += len(staged)
+                total_bytes_committed += commit_bytes
             else:
                 print(f"    Commit error: {res.stderr.strip()}")
 
-    return commits_created
+    return commits_created, total_files_committed, total_bytes_committed
 
 
 def step1_commit_raw_channels() -> None:
@@ -125,6 +190,7 @@ def step1_commit_raw_channels() -> None:
     subdirs = sorted([d for d in RAW_DIR.iterdir() if d.is_dir()])
     print(f"Found {len(subdirs)} channel directories in raw.")
 
+    uncommitted_set = get_uncommitted_files_set()
     total_commits = 0
     for idx, channel_dir in enumerate(subdirs, 1):
         clear_lock()
@@ -133,9 +199,14 @@ def step1_commit_raw_channels() -> None:
             continue
 
         prefix = f"sync(raw): '{channel_dir.name}'"
-        c_count = stage_and_commit_file_list(txt_files, commit_prefix=prefix)
+        c_count, f_count, b_count = stage_and_commit_file_list(
+            txt_files, commit_prefix=prefix, uncommitted_set=uncommitted_set
+        )
         if c_count > 0:
-            print(f"  [{idx}/{len(subdirs)}] Channel '{channel_dir.name}': {len(txt_files)} files -> {c_count} commits.")
+            print(
+                f"  [{idx}/{len(subdirs)}] Channel '{channel_dir.name}': "
+                f"{f_count} committed files ({format_bytes(b_count)}) -> {c_count} commits."
+            )
             total_commits += c_count
 
     print(f"Step 1 Complete: Created {total_commits} raw channel commits.")
@@ -151,6 +222,7 @@ def step2_commit_enriched_channels() -> None:
     subdirs = sorted([d for d in ENRICHED_DIR.iterdir() if d.is_dir()])
     print(f"Found {len(subdirs)} channel directories in enriched.")
 
+    uncommitted_set = get_uncommitted_files_set()
     total_commits = 0
     for idx, channel_dir in enumerate(subdirs, 1):
         clear_lock()
@@ -159,15 +231,20 @@ def step2_commit_enriched_channels() -> None:
             continue
 
         prefix = f"sync(enriched): '{channel_dir.name}'"
-        c_count = stage_and_commit_file_list(enriched_files, commit_prefix=prefix)
+        c_count, f_count, b_count = stage_and_commit_file_list(
+            enriched_files, commit_prefix=prefix, uncommitted_set=uncommitted_set
+        )
         if c_count > 0:
-            print(f"  [{idx}/{len(subdirs)}] Channel '{channel_dir.name}': {len(enriched_files)} files -> {c_count} commits.")
+            print(
+                f"  [{idx}/{len(subdirs)}] Channel '{channel_dir.name}': "
+                f"{f_count} committed files ({format_bytes(b_count)}) -> {c_count} commits."
+            )
             total_commits += c_count
 
     # Also handle root files in ENRICHED_DIR if any
     root_files = sorted([f for f in ENRICHED_DIR.glob("*") if f.is_file()])
     if root_files:
-        c_count = stage_and_commit_file_list(root_files, commit_prefix="sync(enriched): root files")
+        c_count, f_count, b_count = stage_and_commit_file_list(root_files, commit_prefix="sync(enriched): root files")
         total_commits += c_count
 
     print(f"Step 2 Complete: Created {total_commits} enriched commits.")

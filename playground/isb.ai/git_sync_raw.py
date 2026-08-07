@@ -9,7 +9,8 @@ import time
 from pathlib import Path
 
 ISB_ROOT = Path(__file__).parent.resolve()
-RAW_DIR = ISB_ROOT / "raw"
+CRESMO_ROOT = ISB_ROOT.parent / "cresmo"
+RAW_DIR = CRESMO_ROOT / "raw"
 REPO_ROOT = ISB_ROOT.parent.parent
 LOCK_FILE = REPO_ROOT / ".git" / "index.lock"
 
