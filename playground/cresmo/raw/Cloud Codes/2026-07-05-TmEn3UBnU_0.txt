@@ -1,0 +1,59 @@
+---
+video_title: "Ornith 1.0 + Ollama is INSANE: Self-Improving Coding AI Running on Your Laptop"
+video_id: TmEn3UBnU_0
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=TmEn3UBnU_0
+video_date: 2026-07-05T12:00:01+00:00
+video_description: |
+  Ornith 1.0 just dropped, and it is quietly changing how we build AI agents. By using a new technique called "Self-Scaffolding RL," this open-source coding AI actually taught itself how to plan, use tools, and fix bugs—and you can run it completely offline on your laptop using Ollama.
+  
+  In this video, Cloud Codes breaks down the system design behind DeepReinforce's Ornith 1.0. We explain the massive architectural shift from human-written agent harnesses to "Self-Scaffolding," where the model learns to rewrite its own orchestration loop. We look at the benchmarks (SWE-Bench & Terminal-Bench) showing how a 3B-active MoE model can out-code models 100x its size. Finally, we give you a step-by-step guide on how to run Ornith locally via Ollama, how to connect it directly to Claude Code, and the "honest catch" about what self-improving AI actually means.
+  
+  If this helped you understand the frontier of local AI and agent architecture, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters:
+  00:00 - Introducing Ornith, the offline coding agent
+  01:04 - Pulling the model locally onto your laptop
+  01:39 - How the self-improving training loop works
+  02:38 - The scaffolding: How the model learns to plan and use tools
+  04:17 - Reward hacking: Stopping the model from cheating its own tests
+  04:49 - Benchmark performance vs. Claude Opus
+  05:55 - How to get it running on your own machine today
+  07:34 - The catch: Why its weights are frozen locally
+  08:45 - A small step toward recursive self-improvement
+  09:20 - Summary: The whole story in four numbers
+  
+  🔗 Concepts & Sources Covered:
+  Ornith 1.0 by DeepReinforce (MIT Open Source)
+  Self-Scaffolding Reinforcement Learning (RL)
+  Local Inference (Ollama, vLLM, llama.cpp)
+  SWE-Bench Verified & Terminal-Bench 2.1
+  Claude Code Integration
+  
+  #ornith #ollama #aiagents #localllm #softwareengineering #cloudcodes
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  User Queries: 
+  ornith 1.0 ollama
+  how to run ornith locally
+  best local llm for coding 2026
+  ornith vs claude opus 4.8
+  how to connect ollama to claude code
+  self scaffolding ai explained
+  deepreinforce ornith model
+  qwen 3.5 vs ornith 1.0
+  how to run ai coding agents offline
+  cloud codes ai architecture
+---
+This is a coding agent fixing a real bug planning running commands editing files checking its own work Nothing unusual except for two things the Wi-Fi is off and this model was never trained the way every other model is trained It taught itself how to work It is called Ornith and here is the part that broke my brain Normally humans write the scaffolding around a model the plan the tool calls the retry logic Ornith wrote its own during training it learned to build the very harness that makes it good and it works Take the small 9 billion version on the toughest real-world bug fixing benchmark its course 69 the exact Quinn model it was built from scores 53 same body same size 16 point smarter purely from teaching itself now watch this one the 35 billion version only fires about three billion neurons Per token yet on the terminal agent test it beats a QN model with 397 billion three billion working parts Outcoding 100 times more and you can just run it one command Olama run ornith five and a half gigabytes smaller than a movie and it pulls straight onto your laptop in its first week Over 200,000 people downloaded it no API key no account no cloud It comes from a lab called deep reinforce shipped on June 25th 2026 fully open MIT licensed built on top of two models you already know Alibaba's Quinn and Google's Gemma open bases an open result no strings attached So what does self-improving actually mean here picture a loop the model proposes a way to attack a task Tries it get scored and rewrite its own approach to score higher next time Round after round it sharpens not just the answer but the method Let me be honest up front because the title says insane and I mean it fairly the biggest ornith still trails cloud opus 82 to 88 on that bug benchmark It is not the best model on earth. It is the best one you can own outright Which leaves one question hanging over the whole thing When a model is allowed to grade and rewrite its own training Can it genuinely make itself smarter or does it just learn to game its own test hold that The answer is the most interesting part So here is the plan first the trick how a model teaches itself to code Then the practical part getting it running on your own machine tonight and finally the honest catch because there Absolutely is one start with one word scaffold a raw model is just a brain in a jar The scaffold is everything wrapped around it how it plans which tools it reaches for what it does when a command fails That wrapper is usually the difference between a demo and a real agent and for years humans hand built that wrapper Engineers sit down and design the loop first plan then call this tool then if it errors retry like so One carefully tuned harness per kind of task it works But it is slow and it caps out a human imagination Ornith's big idea is to stop hand building it Treat the scaffold as something the model can learn a piece of the puzzle that evolves right alongside the model skill Not a fixed cage around the brain, but a strategy the brain gets to redesign Here is the loop in two steps step one The model reads the task and its current game plan then writes a better game plan a fresh scaffold Taylor to this exact problem It is deciding how it will attack the work before it writes a single line Step two it runs that plan and produces a solution Then a score comes back did the test pass did the bug get fixed and crucially that reward flows back into both halves The code it wrote and the planet chose it learns which strategies actually wind do that across thousands of tasks and something remarkable happens The model is no longer just learning to answer it is learning to author orchestration Good strategies get kept and mutated week ones die off per task playbooks emerge that no engineer ever wrote which raises an obvious danger If a model can rewrite its own test taking strategy what stops it from just cheating hard coding the answer or peaking at the hidden tests That is called reward hacking and it is the thing that kills projects like this Deep reenforce built three walls against it a hard boundary the model can never cross to touch the tests automatic monitors that zero out any forbidden move and a frozen judge model with the final say on whether the work was honest Cheat and the reward vanishes So does it pay off line the flagship up against the closed frontier on verified real-world bug fixes the 400 billion Ornith hits 82 Claude opus the best money can buy sits at 88 Six points between an open model you own and the top of the market But the real story is the jump before self scaffolding the 9 billion base scored 53 After teaching itself that same 9 billion model scores 69 16 points of pure skill added by nothing but a smarter training loop no bigger brain no new data And efficiency is where it really shows off that mid-size version keeps only about three billion parameters awake at a time Like a huge team where only a small crew works each task yet it outscores arrival 10 times heavier cleverer beats bigger It is quick too Because it plans tightly instead of rambling it reaches its answer noticeably faster than the general purpose model It is built on less wandering more doing which matters a lot when it is running on a laptop Not a data center. All right the part you actually came for getting this thing running on your own machine Tonight if you have a llama installed it is genuinely one line Alama run ornith it downloads it loads and then a frontier flavored coding agent is sitting in your terminal Pick your size by your hardware The 9 billion at 4 bit is about six gigabytes It fits on a playing gaming card or a 16 gig Mac The 35 is 21 gigs for a beefier rig and the giant 400 billion that one still needs a cluster Be realistic Every size carries the same superpower a 256,000 token window that is big enough to drop an entire mid-size code base into one conversation Every file every test and have the agent reason across all of it at once offline One thing to get right This is an agent not a chatbot give it tools a terminal file access the ability to run your tests And it comes alive ask it to just chat with no tools and it flounders It was trained to act so let it act Best part you can wire it straight into the coding tools you already use Alama lets you point cloud code at the local model with a single launch command same familiar cockpit same keyboard shortcuts But the brain doing the work now lives on your disk then watch it work You hand it a failing test it writes a plan runs the suite reads the red output patches the file and runs it again until it goes green That self built scaffold now driving a real repair loop right in front of you This is the payoff now the catch and it is a big one. So let us kill the myth cleanly Self-improving describes how ornith was trained not how it runs The model on your laptop does not get smarter as you use it Its weights are frozen the moment it finishes downloading the learning already happened And it is a specialist not a genius on whole repository tasks and the hardest professional bug sets It falls clearly behind clawed and the closed leaders sometimes by a lot It is sharp inside its lane terminal work single bug fixes tool driven coding push outside and the gap opens Independent testers are also mixed some find it a touch better and faster than its base Others watch it hallucinate in long sessions Especially without tools to keep it honest and a fair few doubt the benchmarks themselves Because coding scores are famously easy to inflate. So back to our question Did it get genuinely smarter or did it just game its own test? The honest answer a real measurable bit of both held in check the guard rail stop the outright cheating And the skill gain is real, but it is a specialist gain not a leap to genius Step back though and the direction is the story A model that learns to design its own training loop is a small crack in a very big door The door marked recursive self-improvement today that crack is open and it is not locked behind a company It is MIT and it is on your disk That is the shift worth sitting with for a long time the best models were things you rented That could be throttled priced up or switched off Ornith is a different bargain a genuinely capable coding brain that boots on an airplane and answers to no one but you Here is the whole thing in four numbers 9 billion parameters small enough for a laptop 69 on real bug fixes 16 points above its base 3 billion active neurons out coding 100 times more and 0 API keys forever The lesson underneath it all is quietly huge You no longer have to choose between capable and local A model that taught itself to code is now something you can hold in your hand Imperfect honest about its limits and completely yours So if a self-improving coding agent could live on your machine fully offline Tonight would you turn it loose in your own code base tell me where you land in the comments and I will see you in the next one

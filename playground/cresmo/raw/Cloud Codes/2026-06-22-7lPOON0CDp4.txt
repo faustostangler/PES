@@ -1,0 +1,59 @@
+---
+video_title: "Ollama vs vLLM vs llama.cpp: Which Inference Engine to Use?"
+video_id: 7lPOON0CDp4
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7lPOON0CDp4
+video_date: 2026-06-22T16:48:58+00:00
+video_description: |
+  You can download an open-weights model in seconds. However, running it is where most developers stall. Three engines dominate the local and self-hosted inference landscape: Ollama, vLLM, and llama.cpp. They sound interchangeable, but they are built for completely different optimization targets. 
+  
+  In this video, we go under the hood of all three inference architectures, explaining the hidden relationship between them—including why Ollama isn't a separate engine, but a friendly abstraction running on top of llama.cpp.
+  
+  We break down the system lineages of each: how vLLM’s PagedAttention resolves memory fragmentation to boost concurrent server throughput, how Georgi Gerganov's llama.cpp pioneered GGUF quantization to run 70B parameters on consumer CPUs, and when you should graduate from local Ollama environments to dedicated vLLM server stacks.
+  
+  📌 Timestamps:
+  0:00 - Introduction: The Core Inference Challenge
+  0:19 - The Hidden Relationship: Ollama runs on llama.cpp
+  0:58 - Part 1: Ollama (The Easy Button for Local Developers)
+  1:44 - Part 2: vLLM (Enterprise Scale and Sky Computing Lab)
+  2:03 - The KV Cache Memory Bottleneck
+  3:04 - How PagedAttention Resolves Memory Fragmentation
+  3:39 - Continuous Batching & Speculative Decoding Performance
+  4:16 - Part 3: llama.cpp (The C++ Foundation and Bare Metal)
+  4:46 - The Magic of GGUF Quantization & K-Quants
+  5:32 - Exposing llama-server (OpenAI API Compatibility)
+  5:48 - Hardware Requirements: Laptops vs. Enterprise A100 GPUs
+  6:07 - System Lineages: C++ Portability vs. PyTorch Custom CUDA
+  6:44 - Decision Framework: When to Use Ollama, vLLM, or llama.cpp
+  7:33 - The Hacker News Debate: Abstraction vs. Raw Control
+  8:30 - Global Adoption & Summary (Easy vs. Fast vs. Foundation)
+  9:29 - Outro (Cloud Codes)
+  
+  🔗 Resources & References:
+  - Sky Computing Lab (UC Berkeley) - "vLLM: Easy, Fast, and Cheap LLM Serving with PagedAttention"
+  - Georgi Gerganov - llama.cpp GitHub Repository
+  
+  If you found this database and networking comparison useful, subscribe to Cloud Codes. We take apart one systems design, network protocol, or backend framework like this every week. Build, solve, deploy.
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48
+  
+  User Queries:
+  ollama vs vllm vs llamacpp
+  what is pagedattention vllm
+  how to run deepseek locally
+  difference between gguf and vllm
+  llama.cpp server openai compatible
+  how does ollama run llamacpp
+  kv cache memory optimization llm
+  local llm deployment docker vllm
+  hacker news local llm ecosystem ollama
+  continuous batching and speculative decoding
+---
+You can download an open model in seconds. Running it, that's where most people stall. Three tools dominate the space. Alama.vllm and Lama.cpp. They sound interchangeable. They are not. Pick the wrong one and you either waste your GPU or you waste a week fighting config files. And here's the part nobody tells you up front. Alama isn't a separate engine. It runs on top of Lama.cpp, same math, different code. This question matters more than ever. Lama, Quinn, DeepSeek, Gemma, Frontier class models are free to download. But a model file on your disk does nothing. You need an engine to run it. That engine choice changes everything. What does running a model even mean? You load billions of weights into compute memory. The engine orchestrates the matrix math, token by token, predicting the next word. The engine decides how fast that happens, how much memory it eats, and how many people it can serve at once. Alama is the easy button. One command installs it. One command pulls a model. One command starts a chat. 174,000 stars on GitHub. A model library you browse like an app store. It is built for one person on one machine. The experience is dead simple. You type Alama Run Lama 3 and it downloads quantizes, loads onto your GPU, and drops you into a chat. Behind that, arrest API on local port 11434. Your app talks to it like any other endpoint. Alama picks the quantization, splits across your GPUs, and just works. It even swaps back ends. On Apple Silicon, it can run MLX instead of Lama.cpp. Same one command experience, different engine underneath. That abstraction is the whole point. VLLM is built for a completely different problem. Not one person on a laptop. Hundreds of users hitting your server at once. It started at UC Berkeley Sky Computing Lab in 2023. 83,000 stars. Here's the bottleneck at attacks. Every token and LLM generates stores attention keys and values in GPU memory, the KV cache. For a 13 billion parameter model, a single conversation can eat 1.7 gigabytes, and that cache grows with every token you generate and every token of context you feed in. The problem, existing serving systems wasted 60% to 80% of that memory, fragmentation, over-reservation. You'd reserve a contiguous block for the worst case and most of it sat empty. A 13 billion parameter model, a handful of concurrent users, and you're already out of memory. Not because the model is too big, because the cache is bloated, GPUs are expensive. Wasting 80% of them is not an option. VLLM's answer is page attention. It borrows straight from operating systems, virtual memory, paging. Instead of reserving one contiguous block per request, it breaks the KV cache into fixed-size blocks that don't need to sit next to each other, memory waste collapses. Way more requests fit on the same GPU. Think about how an OS manages your RAM. Your program sees one contiguous address space, but physically the pages are scattered. Page detention does the same for the KV cache. A logical sequence, scattered blocks, no fragmentation because the blocks are fixed-size. Then continuous batching. Old serving systems waited for a whole batch to finish before starting the next. VLLM injects new requests that instant a slot frees up, no waiting, the GPU never idles. Combined with cuda graphs and flash attention, the throughput stacks up fast, and it keeps optimizing. Prefix caching reuses the KV cache when two requests share are prompt. Speculative decoding drafts tokens with a small model and verifies them in batch. Every trick in the book stacked on one server, the numbers. Up to 24 times higher throughput than vanilla hugging face, 3.5 times over the previous best-serving engine. On an H200, DeepSeek hits over 2000 tokens per second. That is production scale. And it became the default over 200 model architectures supported out of the box. An open AI compatible API server, so your existing app code just works. The serving layer under countless products and platforms, then there's Lama.cpp, 117,000 stars, written in plain c and c++. The project Georgi Gergenoff started in early 2023, originally just to run Lama on a MacBook. It runs anywhere a CPU exists. Laptops, Raspberry Pi's, phones, even a web browser through WebGPU, no Python dependency, no GPU required. If you have a chip that computes Lama, CPP probably compiles for it. Its real superpower is quantization, the GGUF file format, and the K-quants. You shrink a model to four bits and a 70 billion parameter model that needed a data center can fit on a single consumer graphics card, slightly less accurate, dramatically more accessible. One file, one format, every quantization level inside it. You download a single GGUF and run. The tradeoff is real but small. Four-bit quantization adds a touch of perplexity, a slight degradation. For chat and most tasks, you will not notice. For research grade precision, you might. You choose your poison. And it ships a server. Lama server exposes an open AI compatible API, same shape as VLLM, same interface, completely different engine under the hood. A whole ecosystem wraps around these three. Open Web UI gives Olima a chat GPT style front end. Docker model runner ships VLLM inside. Everyone eventually builds on Lama.CPP. The tools are the foundation. The ecosystem is the proof. Here's the practical picture. Olima wants a laptop with eight gigabytes of RAM and a smile. VLLM wants a real GPU, ideally an A100 or H100. Because throughput is its entire reason to exist. Lama.CPP asks for nothing and runs on whatever you hand it. So how do they fit together? Lama.CPP is the engine. Olima is that engine wrapped in a friendly CLI, a model store and auto configuration. You don't choose between them. You're using both. VLLM stands apart. It is not built on Lama.CPP. It's Python and PyTorch and custom CUDA kernels, different lineage, different optimization target. It trades portability for raw serving speed. Think of it as a fork in the road. One branch chases the widest hardware. The other chases the highest throughput on the best hardware. Same goal. Run the model, opposite bets. So which do you pick? If you're one person on a laptop and you just want to chat with a model or wire up a local agent, Olima running in 60 seconds, no config. If you're serving real traffic, an API endpoint behind your app dozens or hundreds of concurrent users, VLLM. Page your attention and continuous batching exist precisely for this. If you need maximum control, weird hardware, an edge device, a phone, or you want to hand-tune quantization and squeeze every drop, Lama.CPP. You are the engine. You configure everything and the crossover. People start with Olima. Hit the ceiling of single user performance and graduate to VLLM when they need to serve. Or they drop down to rawlama.CPP when they need to go smaller to the edge off the grid. Here's the wild part. All three launch within months of each other. Lama, CPP in March 2023, VLLM in June. Olima in June. One season, one stack, defined by three people who never coordinated. The interesting part is the philosophy. Olima optimizes for developer experience. VLLM optimizes for throughput at scale. Lama, CPP optimizes for portability and the metal. Three tools, three optimization targets, one shared goal. There's even a debate. A hacker news post titled, The Local LLM ecosystem doesn't need Olima. Hit 648 points. Some argue the abstraction hides too much. You lose control over quantization, over the back end, over the details. Others argue that's exactly the point. Most people don't want to compile C++ or hand pick a KQuant. They want a model running. The abstraction isn't a bug. It's the feature. The adoption tells the story. 174,000 stars for Olima. 117,000 for Lama.CPP. 83,000 for VLLM. Together, over 3 quarters of a million developers have starved these repos. Three tools, born the same season, now underpin almost every serious local and self-hosted inference deployment on the planet. Quick recap. Olima, the easy button, one command, runs on top of Lama.CPP. VLLM, the throughput machine, page detention fixes the 60 to 80% memory waste, 24 times faster than vanilla serving. Lama.CPP, the C++ foundation, GGUF quantization, runs on anything with a CPU. Here's the mental model. Easy, fast, foundation. Pick your axis. Olima, when you want it to just work. VLLM, when you need to serve. Lama.CPP, when you need to go anywhere, anytime, on any chip. Three tools, three problems, one goal, actually running open models. If that clicked, subscribe. Cloud Codes takes apart one system like this every week. Build, solve, deploy. See you in the next one.

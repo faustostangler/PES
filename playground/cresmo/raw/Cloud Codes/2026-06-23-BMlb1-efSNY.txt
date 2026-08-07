@@ -1,0 +1,59 @@
+---
+video_title: "How GPUs Actually Run AI: CUDA Cores, VRAM, and Bandwidth"
+video_id: BMlb1-efSNY
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BMlb1-efSNY
+video_date: 2026-06-23T07:23:53+00:00
+video_description: |
+  A GPU is not just a faster CPU—it is a massive factory floor of ten thousand tiny workers performing matrix math in parallel. Every AI model relies on a delicate balance between CUDA cores (compute), VRAM (capacity), and memory bandwidth (supply line). If any one of these pillars bottlenecks, your expensive GPU silicon sits completely idle.
+  
+  In this video, we go under the hood of GPU hardware design, explaining the architecture that powers modern artificial intelligence.
+  
+  We break down the engineering limits of modern silicon: how Tensor Cores execute matrix math in a single cycle, why thread warps rely on single instruction multiple threads (SIMT), why memory bandwidth is the primary bottleneck in LLM inference, and how software optimizations like FlashAttention and kernel fusion minimize traffic to high-bandwidth memory (HBM).
+  
+  📌 Timestamps:
+  0:00 - Introduction: Why a GPU is Not a Faster CPU
+  0:29 - Part 1: Compute (CUDA Cores vs. Dedicated Tensor Cores)
+  0:57 - Streaming Multiprocessors (SMs) and Warp Threading (SIMT)
+  1:06 - Part 2: Capacity (VRAM, Quantization, and Memory Fields)
+  2:27 - The Memory Hierarchy: Registers, Shared Memory, and HBM
+  3:26 - Part 3: Bandwidth (The True Firehose Bottleneck)
+  3:38 - Arithmetic Intensity and the Roofline Model
+  4:54 - Optimization Tricks: FlashAttention and Kernel Fusion
+  5:31 - Spec Breakdown: RTX 4090 vs. A100 vs. H100 vs. B200
+  6:14 - Training vs. Inference: Why Batch Size Changes Everything
+  6:52 - Underutilized Silicon: The 30% GPU Efficiency Problem
+  7:10 - Hardware Guide: Consumer RTX vs. Enterprise Data Centers
+  8:05 - Nvidia's Real Moat: The CUDA Software Stack
+  8:40 - Summary and Decision Matrix: Choose Your Bottleneck
+  8:57 - Outro (Cloud Codes)
+  
+  🔗 Resources & References:
+  - Nvidia Technical Specifications (H100 & Blackwell B200)
+  - FlashAttention Research - Fast and Memory-Efficient Exact Attention
+  
+  If you found this database and networking comparison useful, subscribe to Cloud Codes. We take apart one systems design, network protocol, or backend framework like this every week. Build, solve, deploy.
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: 
+  https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries :
+  how do gpus run artificial intelligence
+  cuda cores vs tensor cores explained
+  why is memory bandwidth the bottleneck in llm inference
+  rtx 4090 vs h100 bandwidth benchmark
+  what is streaming multiprocessor sm nvidia
+  hbm3e high bandwidth memory stack
+  roofline model compute bound vs bandwidth bound
+  flashattention sram memory tiling
+  blackwell b200 power limit liquid cooling
+  nvidia cuda cuDNN cuBLAS software moat
+---
+A GPU is not a faster CPU. It's a fundamentally different machine. A factory floor with 10,000 tiny workers all doing simple math simultaneously. Every AI model runs on three things. CudaCore's for compute, VRAM for capacity, memory bandwidth for speed. One bottleneck breaks the whole pipeline. Nvidia sells GPUs from $400 to $40,000. The difference is rarely one spec. It's the balance of all three. Know them and you stop overpaying. CudaCore's are the simplest unit of GPU compute. Each one does one multiply add per cycle. Individually it's trivial, but a modern GPU packs 18,000 of them. The parallelism is the point. Then came 10-ser-course. In 2017, Nvidia added dedicated hardware for Matrix Multiply Accumulate. The one operation neural network spend most of their time on. A single 10-ser-course does an entire 4x4 matrix multiply in one cycle. The H100 has 456 10-ser-course. Combined they deliver 989 terraflops of FP16 compute. That's 989 trillion floating point operations per second. A CPU might manage five. These cores are organized into streaming multi-processors or SMS. Each SMS has its own register file, its own scheduler, its own L1 cache. The H100 has 132 SMS. Each one operates independently orchestrating its slice of the workload. Inside an SMS, threads work in groups of 32 called warps. Every thread in a warp executes the same instruction on different data. SimT, single instruction, multiple threads. The foundation of GPU parallelism and the reason your code needs to avoid thread divergence. All that compute means nothing if the data can't reach it. VRAM is the GPU's working memory. Every weight, every activation, every attention key and value lives here. Capacity determines what models can even load. Memory field, a 70 billion parameter model needs 140GB just for weights at 16-bit precision. That's not the full picture. Add optimizer states during training. Double it. Add the KB cache during inference, another 20GB per conversation. That's why quantization exploded. At 4 bits, that 70 billion model drops to 35GB. It fits on a single A600 or consumer card with room left for cache. Precision traded for reach. But VRAM isn't one flat bucket. The GPU has a memory hierarchy. Registers are cycle fast but microscopic. Shared memory, 100KB per SM. L2 cache, 60MB on the H100. Then, HBM, the high bandwidth memory that holds everything. Each level is an order of magnitude bigger and an order of magnitude slower. HBM is the secret sauce. Instead of discrete memory chips wired through a PCB, HBM stacks memory dies vertically with through silicon vias and sits right next to the compute die. The H100 has 6 HBM stacks, each with 8 layers, giving 80GB of capacity at 3.35TB per second. The industry is in a capacity arms race. H200 push the same compute die to 141GB using HBM 3E. Blackwell's B200 uses a dual die design with 192 gigabytes. Capacity is the hard constraint on what models you can even attempt to run. Memory bandwidth is how fast data travels from HBM to the compute cores. It's the fire hose. And for almost every AI workload, this is the bottleneck. The compute cores sit idle waiting for data to arrive. Scale stage the bandwidth ladder. H200 at 4.8TB per second. H100 at 3.35. A 100 at 2.0. A single PCIe Gen 5 slot maxes out at around 64GB per second. The gap from a server slot to HBM is 50 to 1. Compare consumer GPUs. An RTX 400090 has 1.01TB per second of GDDR6X bandwidth. A $3,000 workstation GPU. The RTX 6000 ADA hits 960GB per second. The data center H100 at 30 times the price offers 3.3TB. This is where arithmetic intensity matters. It's the ratio of math operations per byte loaded from memory. If a kernel has low arithmetic intensity, say less than 100 operations per byte, it's bandwidth bound. The GPU's compute units are underutilized. Most transformer layers are in this regime. The Roofline model visualizes this. Plot operations per second against operational intensity. A diagonal ridge where compute equals bandwidth, below it, bandwidth bound. Above it, compute bound. Most AI models live below the ridge on most hardware. Adding compute helps nothing if bandwidth is the ceiling. Flash attention is the perfect example of a bandwidth fix. Instead of reading the full attention matrix from HBM, it tiles the computation into on-chip SRAM. It does more arithmetic overall but drastically less memory traffic. Result, up to 7 times speed up on long sequences. Same compute, less bandwidth pressure. Kernel fusion does a similar thing at the operation level. Instead of launching a separate GPU kernel for each little operation, fuse adjacent operations into one kernel that reads data once and does everything. Fewer round trips to HBM. Less bandwidth wasted per result. Barchart H100 sits at 18,432 cc, 80GB VRAM, 3.35TB per second. A100, 6,912 cores, 80GB 2 terabytes per second. RTX, 4,090, 16,384 cores, 24GB 1.01 terabytes per second. Then Blackwell, the B200 doubles the H100's transistor count to 208 billion. Two dies connected by a high-speed link. 192GB, HBM3E, 8 terabytes per second bandwidth. But it hits 800 watts for a single compute node. The power curve is steepening. Training an inference stress different specs. Training is compute-heavy and bandwidth-hungry. It keeps 10-ter-core saturated with giant matrix multiplies. Infraints is memory bound especially for small batch sizes. The time per generated token is dominated by loading the full model weights from HBM for each forward pass. Batch size changes everything. At batch size one, inference is almost purely bandwidth-bound. Every token reads the whole model from VRAM. At batch 64, the same compute is reused across many sequences and you start approaching compute-bound territory. This is why batching is the number one throughput lever. Real-world GPU utilization during AI inference hovers around 30-50%. Not because the compute isn't fast enough because the memory system can't keep up. Half the silicon sits idle waiting for data. Data center operators pay for 4,000 H100s and get the throughput of 2,000. So how do you choose? For local inference and development, the RTX 4,090 is the best value in AI hardware. 16,000 cores, 24 gigs, one terabyte per second. It runs most open models at usable speeds. Not the H100 speed, but at 3% of the price, the value ratio is enormous. For serving at scale, H100 clusters still dominate, but H200 is the smarter buy at similar cost. More capacity means bigger batches and bigger batches mean higher throughput. And the gap is closing. AMD's MI300X offers 1.95 terabytes per second at a lower price. Competition is finally here. Blackwall rearranges the trade-offs again, where H100 was compute-limited for training and bandwidth-limited for inference, B200 pushes both ceilings higher, but it also needs liquid cooling at scale. The next bottleneck after compute and bandwidth is power and heat. The unsung layer is the software stack, CUDA, CUBLAS, CUBLAS, CUDDNN, TENSOR-ER-T, Nvidia's Moat is not just the hardware. It's the 20 years of optimized libraries that extract every last drop of performance from every SM, every TENSOR core, every byte of bandwidth. Three numbers summarize every GPU. CUDA cores, the math workers, VRAM capacity, the workspace size, memory bandwidth, the supply line. A GPU is balanced when all three match your workload. An unbalanced GPU is a bottleneck you paid for, the mental model, for inference, prioritize bandwidth and capacity, for training, prioritize compute and capacity, for serving, prioritize capacity and bandwidth. Consumer cards win on value, data center cards win on throughput. Pick the access that matches your bottleneck. That's how GPUs run AI, not faster CPUs, but a different architecture entirely. Parallel workers high bandwidth memory and a fragile balance between compute, capacity and bandwidth. If this clicked, subscribe. Cloud codes take apart one system every week. Build, solve, deploy.

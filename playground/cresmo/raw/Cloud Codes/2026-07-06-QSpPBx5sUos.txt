@@ -1,0 +1,58 @@
+---
+video_title: "How to Run DeepSeek's 284B Model Locally on Laptop"
+video_id: QSpPBx5sUos
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=QSpPBx5sUos
+video_date: 2026-07-06T19:30:06+00:00
+video_description: |
+  Want to run a massive 284B parameter frontier AI model entirely on your own laptop? Discover how to run DeepSeek V4 locally using `ds4` (DwarfStar), completely bypassing expensive cloud API costs and data center hardware.
+  
+  In this video, Cloud Codes breaks down the system design behind running DeepSeek's massive Mixture-of-Experts (MoE) model on consumer hardware. We explore the genius of Salvatore Sanfilippo (creator of Redis) and his single-file C engine `ds4`, which uses custom 2-bit quantization to crush a 568GB model down to just 70GB so it fits perfectly in your unified memory.
+  
+  We dive deep into the architecture of DeepSeek V4, explaining how it only activates 13B parameters per token, and how offloading the KV Cache directly to your SSD unlocks a massive 1-Million token context window without crashing your machine. Finally, we show you how this local, air-gapped AI speaks the OpenAI API format, allowing you to plug it straight into coding agents like Claude Code for zero-cost, private inference.
+  
+  🔥 Github Repo link: https://github.com/antirez/ds4
+  
+  ⏱️ TIMESTAMPS:
+  00:00 - A 284B model on a laptop
+  00:12 - Its weights alone are 568 gigabytes
+  00:46 - Trick one: it's 256 small experts
+  01:14 - Trick two: fewer bits (quantization)
+  01:37 - Trick three: a million-token memory
+  01:52 - Written by one person
+  02:21 - Deep dive into Trick 1 (Mixture of Experts)
+  03:29 - Deep dive into Trick 2 (Quantization to 2-bit)
+  04:30 - Deep dive into Trick 3 (Caching tokens to SSD)
+  05:39 - Where the 128 gigabytes go (Memory budget)
+  05:54 - The generation speeds you actually get
+  06:12 - Point your coding agent at localhost
+  06:33 - Cost comparison: Rented cloud vs. owned machine
+  07:09 - Summary of the three tricks stacked together
+  
+  #deepseek #localai #machinelearning #systemdesign #softwareengineering #artificialintelligence #cloudcodes #llm #hardware
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  User Queries : 
+  how to run deepseek v4 locally
+  run large language model offline mac
+  what is ds4 dwarfstar antirez
+  local ai quantization 2-bit explained
+  deepseek 284b model laptop tutorial
+  mixture of experts ai architecture
+  how kv cache works llm
+  deepseek v4 flash vs pro local
+  claude code local model deepseek
+  replace cloud ai api with local llm
+---
+Someone just ran a 284 billion parameter language model, not in a data center. On a laptop, sitting on a desk with the Wi-Fi switched off and it answered like a frontier model, here is why that should be flat out impossible. A model this size stores 284 billion numbers and at normal precision each one takes two bytes, that is 568 gigabytes, just for the weights before you have loaded a single word of your prompt. Your laptop has maybe 16. 568 gigabytes is data center territory, a rack of 8 top end Nvidia GPUs wired together and humming. What we are about to do instead is fit all of it onto one machine you could carry in a backpack. The first trick is the model's shape. DeepSeq V4 is not one enormous brain, it is 256 smaller experts and for any given word a tiny router wakes up just a handful of them. So even though the whole thing is 284 billion parameters, only about 13 billion of them actually fire for each token, you get the knowledge of a huge model but the running cost of a small one. That is the single most important number in this whole video. The second trick is compression, each of those numbers is normally 16 bits wide, squeeze it down to roughly two bits and the weights collapse from 568 gigabytes to about 70, 70 gigabytes. Suddenly the entire model slides into 128 gigabytes laptop with memory to spare. The wall everyone hit just moved. The third trick is where the model keeps its memory of the conversation. DeepSeq V4's new attention shrinks that by around 90% and whatever is left gets streamed off the SSD. That is how you get a million token context on a laptop. And the thing running all of this, a single C file written in about a week by Salvatore San Felipe, the developer who created Redis with an AI pair programmer at his side. He named it DS4 and he says it is the first time a local model has replaced the cloud for his real work. The result is a near frontier model on hardware you own at zero cost per token, completely private. Now let us break down exactly how the three tricks pull it off. Start with mixture of experts because it does the heavy lifting. A traditional dense model is wasteful. Every single parameter has to do math for every single token. Push one word through a dense 200 billion model and all 200 billion light up. A mixture of experts model splits that giant layer into many small ones here, 256 experts. A little router reads each token and picks the six most relevant. The other 250 stay completely dark, doing nothing and costing nothing. That is the whole magic. All 284 billion parameters are still sitting in memory, holding everything the model ever learned. But the compute per token is set by the 13 billion that switch on. So it thinks with a giant brain while running at a small model speed. And that is what makes local speed possible at all. Generation is bottlenecked by how much math each token costs. On deep seeks own servers, V4 Flash runs about 70 tokens a second. On a maxed out laptop, people are seeing a very usable 10 to 15. A dense model this large would simply crawl. Now trick two, up close. Every one of those weights is just a number. Store it as a full 16 bit float and it is precise but heavy. Quantization asks a blunt question. How few bits can we round each number down to before the model turns dumb? 8 bits, 4 bits and now incredibly 2. The savings are enormous. At 16 bits the model is 568 gigabytes. A 4 bit build lands near 146. And the custom 2 bit recipe that DS4 uses comes in around 70 roughly an eighth of the original size. Same model, same weights, just described with far fewer bits each. Normally crushing a model down to 2 bits wrecks it. The trick is doing it unevenly. The sensitive layers keep more bits, the rest go tiny. Deepseek V4 happens to survive this remarkably well. And anti-res checked it by matching the shrunken model's outputs against the real one. Number for number. Then there is the sneaky second memory hog. As the model reads your prompt, it caches a key and a value for every token so it never has to reread the whole conversation on each step. That cache starts tiny, but feed it a long document and it can balloon until it is bigger than the model itself. Deepseek rebuilt its attention specifically to fight this. Compared with the previous version, V4 cuts the size of that cache by about 93% and the compute behind it by 90. Long context, which used to be the most expensive thing you could ask for, suddenly got cheap. Then DS4 does something clever. Instead of insisting the cache lives in RAM, it treats your fast SSD as a first class place to keep it. The cache spills to disk, survives a restart, and the context window stretches all the way to a million tokens. This quietly flips the oldest rule of local AI. It used to be a hard yes or no. Either the model fits in your memory or it does not. With streaming from SSD, memory becomes a dial instead. More RAM just buys more speed, not permission to run at all. So here is the budget on 128GB machine. The weights take about 70GB. That leaves roughly 30 for the cache and fast memory. Good for 60 to 100,000 tokens and everything past that streams from the drives. Let us be honest about performance because it is not free. On two data center blackwell cards, the same model does about 35 tokens a second. On a single high end Mac, closer to 15. It is not instant, but for private, unlimited, offline work, it is more than enough. And this is not a toy chat box. DS4 speaks the exact same API as open AI and anthropic. So you can point cloud code or your own agents straight at local host. Your coding assistant suddenly runs against a model sitting on your own desk instead of somebody else's cloud with no rate limits and no per token meter. Get it all up and the pitch is sharp. A cloud bill for this much frontier inference runs a couple thousand dollars a month every month. The machine that replaces it is a one time 7500 and then the tokens are free forever. And nothing you type ever leaves the room. No logging, no training on your data, no outage. Step back and the pattern is striking. Giant labs spend billions on server farms and a single developer armed with open weights and a few sharp ideas matches a lot of it on a laptop. As anti res put it, AI is too important to only ever be someone else's service. So that is how a 284 billion model runs on a laptop experts. So only 13 billion fire per token quantization. So the weights fit in memory and a smarter cash on the SSD. So context is nearly free. Three ideas stacked on top of each other, none of them magic, all of them shipping today. If that clicked, the local AI world is moving fast right now and we break it down every single week. Subscribe and I will see you in the next one.

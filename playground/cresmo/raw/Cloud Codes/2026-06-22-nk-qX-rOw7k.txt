@@ -1,0 +1,65 @@
+---
+video_title: "How Internet Works"
+video_id: nk-qX-rOw7k
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=nk-qX-rOw7k
+video_date: 2026-06-22T12:15:27+00:00
+video_description: |
+  Every time you tap a link, a web page loads in a fraction of a second from a machine that might be thousands of miles away. We do this hundreds of times a day, but how does that data actually travel? The internet isn't a cloud—it is a highly physical, decentralized network of networks. 
+  
+  In this video, we slow down the entire packet journey, explaining step-by-step how the internet works under the hood. 
+  
+  We break down the architectural tradeoffs of internet infrastructure: how DNS lookups translate domain names into numbers, how the 3-way TCP handshake establishes safe connections, how TLS encrypts your HTTP payloads under a padlock, why BGP serves as the internet's living roadmap, and how millions of kilometers of undersea fiber-optic cables carry pulses of light across oceans.
+  
+  📌 Timestamps:
+  0:00 - Introduction: Loading a Page in Slow Motion
+  0:15 - There is No Cloud: The Network of Networks
+  0:32 - Packetization: How Data is Chopped and Labeled
+  0:47 - IP Addresses vs. DNS Domain Names (google.com)
+  1:32 - DNS Lookup Relay Race (Resolver to Root to TLD to Authoritative)
+  1:47 - The 3-Way TCP Handshake (SYN, SYN-ACK, ACK)
+  2:02 - The TLS Handshake & The HTTPS Padlock
+  2:18 - GET and POST Requests: Web Server Status Codes
+  2:36 - The 4-Layer Architecture of the Internet (Link, Internet, Transport, Application)
+  2:55 - Packet Anatomy: Headers vs. Payloads
+  3:11 - TCP vs. UDP: Speed vs. Reliability
+  3:47 - BGP Routing: How Networks Advertise Roads
+  4:07 - Undersea Cables: The Physical Fiber Optics Running the Oceans
+  4:24 - The Last Mile & The Speed of Light Constraint
+  4:59 - HTTP Methods, Ports (80 & 443), and Security Handshakes
+  5:56 - Content Delivery Networks (CDNs) Explained
+  6:15 - The Complete Journey: Reassembling the Packet Trip
+  6:38 - The Critical Difference Between the Web and the Internet
+  6:56 - Internet scale & Governance: ICANN, the IETF, and RFC standards
+  7:35 - Why the Internet is Indestructible (ARPANET Resilience)
+  7:55 - IPv4 Address Exhaustion, NAT, & IPv6 Addresses
+  8:15 - Recap & Outro (Cloud Codes)
+  
+  🔗 Resources & References:
+  - Internet Engineering Task Force (IETF) - Request for Comments (RFCs)
+  - TeleGeography Undersea Cable Map Data
+  
+  If you found this database and networking comparison useful, subscribe to Cloud Codes. We take apart one systems design, network protocol, or backend framework like this every week. Build, solve, deploy.
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries: 
+  how the internet works step by step
+  dns lookup relay race process
+  tcp 3-way handshake animation
+  undersea fiber optic cables map
+  difference between the web and the internet
+  how bgp routing works
+  ipv4 address exhaustion nat ipv6
+  why does high latency exist physics
+  tcp vs udp for video streaming
+  how does the last mile bottleneck affect latency
+---
+Right now, you tap the link and in less time than a blink, a page appeared from a machine that might be thousands of miles away. We do this 100 times a day and never think about it. So let's slow it all the way down, step by step, and watch how the internet really works. First, throw out the idea of one big internet. There isn't one. The internet is millions of separate networks, your phone, your home router, your provider, whole companies and countries, all agreeing to pass along each other's traffic. A network of networks, no center and no off switch. And nothing travels in one piece. Whatever you send, a message, a photo, this video gets chopped into thousands of tiny packets. Each one is a small bundle of data, stamped with where it came from and where it's going, and sent off on its own. For that to work, every device needs an address, its IP address. Your laptop, that server, every phone on the planet has one, like a postal address for machines. Send a packet to an IP and the network knows exactly who you mean. But the two machines aren't plugged into each other. Between you and the destination, sit dozens of routers and each packet hops from one to the next. Every router asks one question, who's a step closer to the address on this packet? Hop by hop, it finds its way across the world. Except you never typed an address, you typed a name, Google, dot com, humans remember names, machines need numbers. So before anything else, that name has to be turned into an IP. That is the job of DNS, the phone book of the internet, and the look up is a little relay race. Your computer asks a resolver, it asks a root server, where is dot com? The root points to the dot com servers, they point to Google's own server, that one finally answers, here is the IP. Four quick questions and you have the number. Now your computer can knock on the door. Using TCP, it sends a sin, basically can we talk? The server replies, sin, act, yes, let's, your machine sends act, great, three little messages and a reliable connection is open between you. But that connection is wide open, so the next step is to lock it. In the TLS handshake, the server proves who it is with a certificate, the two sides secretly agree on keys, and from that moment everything is encrypted. That is the little padlock sitting in your address bar. Finally, the actual request. Your browser sends one line, get slash the page you want, over that secure connection. The server reads it, builds the page, and sends back a response, a status code, some headers, and the content, the page paints, all of that in well under a second. So how does all of that state organize? Layers. The internet is built in clean layers, each handling one job and trusting the one below it. The link layer moves raw bits over wire, or Wi-Fi. The internet layer addresses and routes, transport delivers the data reliably, and the application layer is the part you actually use. Zooming to a single packet and it is beautifully simple, a header up front, the source address, the destination, and a sequence number so it can be put back in order, and then the payload, your actual slice of data. That is the whole thing, a label, and a box. TCP is the careful one. It numbers every packet and waits for the other side to say, got it. If one goes missing, it is simply sent again. If they arrive out of order, they are lined back up. You get a perfect copy even over a messy network, which is why the web, email, and downloads all ride on it. But careful is slow. So when speed beats perfection, a video call, a live game, a DNS lookup, we reach for UDP instead. Fire the packets and don't look back. A dropped frame in a call is fine, waiting around to resend it is not. New tools, two very different jobs. So how does a router actually know which way is closer? The networks tell each other, using BGP, every network constantly advertises which addresses it can reach, and those routes ripple out across the whole planet. It is the internet's living, self-updating roadmap, and it's how traffic reroutes in seconds when a cable gets cut. And underneath all the abstraction is real, physical stuff. The bulk of the world's internet does not travel by satellite. It runs through fiber optic cables lying on the ocean floor. Over 500 of them, more than a million kilometers, carrying almost every bit that crosses an ocean as pulses of light. From those cables, the signal works its way to you, through your provider, down a fiber or coax line into your neighborhood, and the last short stretch into your home. Then your router hands it to your devices over Wi-Fi. That final hop is called the last mile, and is usually the slowest part of the whole trip. Which brings up the one limit nobody can beat. Physics. Light in fiber travels about two thirds of its speed in a vacuum. New York to London and back is roughly 40 milliseconds at best, and no amount of money makes light go faster. A huge amount of internet engineering is really just a fight against that delay. Let's look closer at that conversation. HTTP is the language of the web, and it is refreshingly readable. You send a method, get to read, post-dissend, with a path and a few headers. The server answers with a status code. 200 means here you go. 404 means not found. 500 means something broke. Wrap that in TLS and HTTP becomes HTTPS. The exact same conversation sealed shut. Anyone in the middle, your provider, the coffee shop Wi-Fi, sees only scrambled bites. They can tell you're talking to a site, but not a word of what you're saying. That is why effectively the whole web moved to it. One more trick. A single server runs many programs at once, so how do packets find the right one? Ports. Web traffic uses port 80. Secure web uses 443, and DNS and email each have their own. The IP address gets your packet to the right machine. The port number gets it to the right program. But the fastest request is the one that doesn't go far. So big sites copy their content to servers all over the world. That's a CDN. When you load a popular page, you are often pulling it from a machine in your own city, not from the company's headquarters. Less distance, less delay, a faster web for everyone. Now play the whole thing back as one trip. You type the name, DNS turns it into an address. TCP opens the connection. TLS locks it. HTTP asks for the page. Packets fan out across routers and cables. The server answers. The pieces are reassembled in order. And your browser paints the result. Thousands of steps every single time in a fraction of a second. Quick clarification, because people mix these up, the web is not the internet. The internet is the network. The pipes, the packets, the addresses. The web is just one thing built on top of it, right alongside email, video calls, apps and games. The web is a tenant. The internet is the building. And it all happens at a scale that is genuinely hard to picture. Well over 5 billion people are online, about 3 quarters of the planet. Tens of billions of devices are connected. And every year the world moves more than a zedabyte of data. That is a trillion gigabytes without skipping a beat. So who is in charge of all this? Strangely, no one. There is no company that owns the internet. A handful of nonprofits just keep it coordinated. Ican hands out the names and numbers, so two machines never collide. And the IETF writes the protocols as open documents called RFCs that anyone on earth can read, agreement, not ownership. And that was the whole point from the very start. The internet's ancestor, Arpenet, was designed so that if part of the network was knocked out, the packets would simply rout around the damage, no central switch to destroy. That one idea, break data into packets and let them find their own way, is why it is so hard to take the whole thing down. There is one catch, the designers didn't fully see coming. We ran out of addresses. The original plan had room for about 4 billion and the world blew straight past that. Two fixes carried us through. NAT, which lets your whole home share one public address and IPv6 with so many addresses you could give one to every grain of sand on earth. So that is the internet. Not a cloud, not a place, millions of networks passing packets, names turned into numbers, locations opened and then locked, data hopping router to router across cables under the sea and reassembled on the far side. No one runs it, it simply agrees to work. If this finally made the internet click, subscribe, cloud codes takes apart one system like this every single week, build, solve, deploy. And I'll see you in the next one.

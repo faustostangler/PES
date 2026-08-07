@@ -1,0 +1,55 @@
+---
+video_title: "How Stripe Works | System Design & Architecture"
+video_id: ysZi2U2avRw
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ysZi2U2avRw
+video_date: 2026-06-25T09:30:20+00:00
+video_description: |
+  What actually happens in the single second after you click "Pay" on a checkout screen? In this video, Cloud Codes breaks down the system design and architecture of Stripe, the payment API that processes over $1.9 trillion for the global economy.
+  
+  We look under the hood of Stripe's engineering to explain exactly how online credit card processing works. From tokenization and Payment Intents to 3D Secure, webhooks, and how Stripe Radar uses machine learning to block fraud in milliseconds. Whether you are a software developer integrating the Stripe API in 7 lines of code, or just curious about the hidden financial infrastructure of the internet, this is everything you need to know about how money moves online.
+  
+  If this helped you understand complex systems, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters (Crucial for Google Search Rich Snippets):
+  0:00 - The 1-Second Relay: What Happens When You Click Pay?
+  0:57 - Tokenization & The 4 Hidden Middlemen
+  1:17 - How Stripe Tracks Money (Payment Intents)
+  1:33 - Authorization vs. Capture Explained
+  2:15 - Idempotency: Why You Never Get Charged Twice
+  2:36 - Stripe Radar: Machine Learning Fraud Prevention
+  3:23 - The History of Stripe & The Collison Brothers
+  3:50 - The Stripe API Platform Ecosystem
+  4:22 - Why Great Infrastructure is Invisible
+  
+  🔗 Concepts Covered:
+  Payment Gateway Architecture & PCI Compliance
+  Acquiring Banks vs Issuing Banks
+  Stripe Connect, Billing, and Terminal
+  API Webhooks & Idempotency Keys
+  
+  #stripe systemdesign #softwareengineering #fintech #cloudcodes
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  Watch Next: https://youtu.be/v_wvXLq6OS8
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries: 
+  how stripe works system design
+  what happens when you swipe a credit card
+  stripe payment intent api tutorial
+  how stripe radar prevents fraud
+  stripe authorization vs capture
+  what is an idempotency key in stripe
+  how credit card processing works online
+  stripe architecture explained
+  fintech system design interview
+---
+You tap one button on a checkout, pay $42. A little spinner turns, and a second later, approved. To you, it feels like nothing happened at all. But in that single second, a request just sprinted all the way around the global financial system and came back, past banks, card networks, and fraud checks before the page even refreshed. This is Stripe, the company quietly running an enormous slice of the internet's checkout. In 2025, businesses built on Stripe processed $1.9 trillion, up 34% in a single year. That is roughly 1.5% of the entire world economy, flowing through one company's software. Over 5 million businesses run on it, from one person's startups to giants like Amazon, Shopify, and OpenAI. Here's the first surprise. When you pay with a card, it is not a deal between two parties. It is a relay between five. You, the business, Stripe, the card network, and the bank that gave you the card. It all starts at checkout. The instant you type your card number, Stripe swaps it for a token, a random meaningless stand-in like this, from then on, the store only ever sees the token. The real card number never touches its servers. Then the authorization request races outward. Stripe hands it to the acquiring bank, the businesses bank, which passes it onto the Visa or Mastercard network, which routes it to the issuing bank that gave you your card. Now your bank makes the call. Do you have enough money? Does this look legit? Is the card reported stolen? In a few hundred milliseconds, it fires back a single answer, approved. And that answer sprints home. But here is the catch most people miss. Approved does not mean paid. That first yes is only a hold. The money is set aside and earmarked on your account, but not one cent has actually moved yet. Out to your bank and back, through four different middlemen in about one second flat, that invisible round trip is the part you never see and Stripe runs it millions of times every minute. So how does Stripe keep all of this straight? With one clever object called a payment intent. Think of it as a little state machine that tracks a single payment through its whole life, from created to processing to succeeded. Whatever happens, it is the one source of truth for that charge. Remember that hold from earlier? When the business is finally ready, when your order actually ships, it captures the payment. That is the moment the hold becomes a real charge and the money truly begins to move. Authorize now, capture later. It is why a hotel can hold a deposit and only bill you at checkout. But your own server still needs to know what happened. So Stripe fires webhooks, instant notifications that ping your back end, the moment a payment succeeds, fails, or a dispute opens. No constant polling, no guessing, your system just stays perfectly in sync. And moving real money is surprisingly slow. Overnight, the card networks batch up the entire day's transactions and clear them, agreeing on who owes whom. Then comes settlement, where the actual cash lands in the businesses bank account, usually about two days after you clicked pay. None of this runs for free. On a typical online charge, Stripe's headline price is 2.9% plus 30 cents. But here's the thing. Most of that is not Stripes to Keep. The biggest slice called interchange goes straight to your issuing bank with another cut taken by the card network on top. And what about the actual card numbers? Stripe keeps them locked inside a hardened, audited vault, and shoulders the brutal PCI compliance burden itself. So a business gets to take money online without ever touching or storing a single raw card number. Now the internet is unreliable. Connections drop right in the middle of a request. So how does Stripe avoid charging you twice? Every single call carries an identity key. A unique tag that says, if you have already seen this exact request, do not run it again. Mash the pay button five times in a panic, and you are still charged exactly once. Every payment also gets silently judged. A system called Stripe radar scores it for fraud in under 100 milliseconds, weighing more than 1,000 signals into a single risk number from 0 to 100. Low scores sail straight through. High ones get blocked or sent for extra checks. And it gets it wrong about one time in 1,000. And radar does not just learn from one store. It learns from all of them at once. Because Stripe processes billions of payments across millions of businesses, a card that committed fraud, three businesses over, is often already flagged by the time it reaches your checkout. That shared network is the real superpower. Sometimes though, your bank wants a little extra proof it is really you. That triggers 3D secure. That quick approving in your banking app step you have probably seen. And it does something clever. Once you confirm, the liability for that payment shifts from the business back to the bank. And a decline is not always the end of the story. Cards expire, limits get hit, networks hiccup for no reason. Stripe reads the exact decline code that comes back and can intelligently retry the charge later at a smarter moment, quietly recovering revenue that would otherwise just vanish. Even after a payment fully clears, the customer can still dispute it. That is a charge back. The money gets yanked back out of the business's account, both sides submit evidence and the issuing bank acts as the judge. It is slow, it is stressful, and it is the one part of payments nobody enjoys. So where did all this come from? Stripe began back in 2010 with two Irish brothers, Patrick and John Collison, and one deceptively simple promise that any developer should be able to accept payments on the web in just seven lines of code. Running this for millions of businesses means the system basically can never go down. One bad minute could cost real companies real sales. Stripe has held over five nines of historical uptime. Five nines means it is up 99.99% of the time, just minutes of downtime across a whole year. And it long ago outgrew the humble credit card. Stripe now handles more than 135 currencies and over 100 payment methods. Digital wallets like Apple Pay, bank debits, and buy now pay later across nearly every country on Earth. Local payments, one single integration, and that one payments API quietly grew into an entire stack. Billing handles subscriptions and invoices, connect moves money for whole marketplaces. Issuing lets companies spin up their own cards. Terminal brings it into physical stores, same core plumbing, just many more pipes running off it. And the most remarkable part for the developer is that all of that planetary machinery still hides behind just a few lines of code. You create a payment intent, you confirm it, and Stripe quietly orchestrates the entire global relay. The banks, the networks, the fraud checks on your behalf. So that is the whole journey. Tokenize the card to keep the number safe, authorize with the bank, capture to move the money, then settle the cash into the account. With fraud scoring, retries, and reconciliation woven invisibly through every single step. The wild part is this. The best possible version of all this is the version you never even notice. Truly great infrastructure disappears completely into the background. One tap, one second, done, and a small miracle just happened behind the glass. If this finally made Stripe click for you, do subscribe, Cloud Codes takes apart one system exactly like this every single week. Build, solve, deploy, and I'll see you in the next one.

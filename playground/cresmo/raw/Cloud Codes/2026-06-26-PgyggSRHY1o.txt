@@ -1,0 +1,57 @@
+---
+video_title: "HTMX Explained: The \"Dumb\" HTML Secret Replacing React"
+video_id: PgyggSRHY1o
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=PgyggSRHY1o
+video_date: 2026-06-26T09:35:00+00:00
+video_description: |
+  Is HTMX replacing React? Discover the "dumb" HTML secret that is allowing web developers to delete thousands of lines of JavaScript and build faster, simpler web applications without complex JSON APIs.
+  
+  In this video, Cloud Codes breaks down the system design and philosophy behind HTMX, the 16kb zero-dependency library created by Big Sky Software. We explain how HTML attributes like hx-get, hx-post, and hx-swap can replace entire React components by talking directly to the server. We explore the true definition of REST, the return of Hypermedia Driven Applications, and how companies are dropping their React codebases by 67% using the HOWL stack (Hypermedia On Whatever you'd Like). Finally, we cover the exact use cases where HTMX wins, and when you actually still need React.
+  
+  If this helped you understand the future of web development, subscribe to Cloud Codes for a new tech breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters (Crucial for Google Search Rich Snippets):
+  00:00 - The modern way (React) vs HTMX
+  00:27 - The core idea: Request, Response, Swap
+  01:08 - Any element, any event, any verb
+  01:36 - Size comparison and a real-world success story
+  02:18 - Reading the attributes: hx-trigger and hx-delete
+  03:21 - Server returns HTML, out-of-band swaps, and hx-boost
+  04:14 - Real REST (Hypermedia) and Locality of Behaviour
+  05:47 - Pairing with Alpine.js and comparing to Hotwire
+  06:17 - When to use React instead
+  07:22 - The recap
+  
+  🔗 Concepts & Sources Covered:
+  HTMX (Big Sky Software / Carson Gross)
+  Hypermedia Systems (Book)
+  "A Real World React to HTMX Port" (Contexte Case Study)
+  Roy Fielding's REST Architecture
+  
+  #HTMX #React #WebDevelopment #SoftwareEngineering #CloudCodes
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  Watch Next: https://youtu.be/v_wvXLq6OS8
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries : 
+  what is htmx and how does it work
+  htmx vs react performance
+  why developers are leaving react
+  how to use htmx with python django
+  htmx tutorial for beginners
+  what is a hypermedia driven application
+  is react dead because of htmx
+  htmx vs hotwire turbo
+  how to build a search bar with htmx
+  cloud codes web development
+---
+This is a button. You click it in the page updates, fresh data, straight from the server, no reload. Now here's the strange part. There's no JavaScript here. None that you wrote, the whole thing is one HTML attribute. To do that same little update the modern way, you'd reach for React, a component, a piece of state, a fetch call, a JSON endpoint on the server, and a re-render to stitch it all back together. That is a lot of moving parts for one number on a screen. HTMLX throws all of that out. The secret is almost insultingly simple. Let plain HTML talk to the server directly and just swap in whatever HTML comes back. Dumb and it works. This is HTMLX, about 16 kilobytes, zero dependencies written in plain JavaScript you never have to touch. Made by Carson Gross, a computer science professor in Montana, not a trillion dollar framework team. Here's the entire idea. You add HX get to an element, click it and HTMLX fires an HTTP request for you. The server sends back a chunk of HTML, HTMLX drops that HTML right into the page, request response swap. That's the whole loop. And it's not just buttons. In HTMLX any element can make a request, a div, a table row, an input that searches as you type, and the thing that triggers it doesn't have to be a click. It can be any event at all. It speaks the full web too. Get post, put, delete every HTTP verb, not just the two that HTML forms gave you. And you choose exactly which part of the page gets replaced. Any element, any event, any verb, any target. Now about that size, HTMLX is around 16 kilobytes. React plus react DOM, just the core before your app even starts is roughly 45. And a real single page app ships hundreds of kilobytes of JavaScript before it shows you a thing. And this is no toy. One real company, contexti, rewrote their React app in HTMLX, 67% less code. Their JavaScript dependencies dropped from 255 down to nine and build times fell by nearly 90%. So it's no surprise HTMLX blew up 48,000 stars on GitHub, the number one rising star in front end. And in the big developer surveys, one of the single most admired tools in the entire industry, let's slow down and actually read one. HX post says where to send the request, HX target says which element on the page should change. And HX swap says how replace the insides, the whole element, or just a pen to it. Three attributes. That's a feature. HX trigger decides when it fires, a click, a form change, a key press, debounce, so it waits until you stop typing. Even on a timer, every couple of seconds for a live dashboard, it's the event model HTML always wanted because it speaks every verb, your interface maps cleanly onto real actions. A delete button sends an actual HTTP delete. The server removes the record returns nothing and HTMX swaps that row right out of existence. No state to reconcile. This is the demo that sold a whole generation and input with HDX Git firing on key up. You type HTMLX queries the server. The server returns table rows as HDML and they swap straight into the results live search in about three lines with no API to build. And notice what the server sends back, not JSON, not raw data for you to assemble, just HTML finished ready to display, which means your backend can be literally anything. Python, Ruby, Go, PHP, Node. If it can return HTML, it speaks HTMX. It can even update two places at once. An out-of-band swap lets a single response patch the thing you clicked and say the cart count up in the corner. One request, two updates, zero glue code, and HX boosts quietly upgrades ordinary links and forms into background requests, swapping just the body instead of reloading. You get that smooth, no flash single page feel on a site that's really just plain HTML pages underneath. It even handles the unglamorous parts. A loading spinner while a request is in flight, that's one attribute. The states you usually hand wire in JavaScript are just built in. Underneath all of this is an old idea with a fancy name, hypermedia. The server doesn't just send data. It sends the next set of actions baked right into the HTML. The page itself carries the state of your application. It's how the web was designed to work. And here's the part that breaks people's brains. This is rest. The real rest, the way Roy Fielding actually defined it. Somewhere along the line, the word rest got hijacked to mean a JSON API. HTML is just quietly going back. It also brings back a quality we quietly lost, locality of behavior, look at the element, and you can see exactly what it does right there in the markup. No hunting through a dozen files to trace one little click. Think about what disappears. In the React world, you keep state twice. Once on the server, once in the browser, and write an API forever just to sync them, HTML keeps a single copy on the server and sends HTML. A whole category of bugs simply evaporates. There's a whole culture around this too. A free book, hypermedia systems, lays out the entire philosophy. And the HTML account online has become legendary, equal parts, serious engineering, and deadpan jokes about how everyone somehow is the CEO of HTML. Because it's back end agnostic, the community even has a name for the stack, howl, hypermedia on whatever you'd like. Django, flask, fast API, rails, larvl, go, express. Pick your language. HTML genuinely does not care. And when you do need real client side interactivity, a drop down, a toggle, a little animation, you reach for a tiny partner like Alpine.s or hyper script, small tools sprinkled in where you need them instead of one giant framework running everything. If this is reminding you of rails, hotwire, and turbo, you're right. Same instinct, different flavor. Turbo is more opinionated and batteries included. HTMLX is lower level and does only what you explicitly tell it to on any back end you like. Now let's be honest because HTMLX often aren't. This is the wrong tool for some apps. A spreadsheet like Google Sheets, a map you drag in real time, anything offline, or with thousands of interdependent widgets reacting instantly. That is React's home turf and it isn't close. So no, this isn't React's funeral. If you're building a deeply interactive client application, reach for React, that's exactly what it's brilliant at. HTMLX is for the other 90% of the web, forms, dashboards, content, crud, the boring stuff that's secretly most of everything. The team now calls the 2.x line feature complete and HTMLX4 is already in beta, folding in DOM, morphing, and streaming responses. But the pitch hasn't changed since day one. Do more by writing far less. So is dumb HTML really replacing complex React apps for a huge slice of the web? Yes, and developer sound genuinely relieved. The radical idea HTMLX is quietly selling is just this. Maybe the website was the framework all along. So to recap, HTMLX is about 16 kilobytes that let HTML talk to the server. It swaps in HTML instead of juggling JSON. It revives real hypermedia and real rest. And for most apps, it deletes a staggering amount of complexity. That's HTMLX. If this made the modern web feel a little less insane, you'll probably like the rest of the channel. I'm CloudCodes, I'll see you in the next one.

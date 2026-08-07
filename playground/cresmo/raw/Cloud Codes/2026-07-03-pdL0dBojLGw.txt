@@ -1,0 +1,79 @@
+---
+video_title: "React is Dying: Why AI Agents Prefer HTMX (Vanilla HTML)"
+video_id: pdL0dBojLGw
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=pdL0dBojLGw
+video_date: 2026-07-03T13:00:09+00:00
+video_description: |
+  Is React actually dying, or is the era of the Single Page Application (SPA) finally coming to an end? As AI coding agents like Claude Code and GitHub Copilot write more of our frontend architecture, developers are noticing a shocking trend: AI agents write cleaner, less-buggy code using pure HTML and HTMX than they do with React. 
+  
+  In this video, Cloud Codes breaks down the system design shift toward Hypermedia-Driven Applications. We explore why AI agents struggle with React's constant churn (Hooks, Server Components, Hydration errors, Dependency hell), and why HTMX's "Locality of Behavior" and frozen API make it the perfect, hallucination-free toolkit for Large Language Models. 
+  
+  We dive deep into how `hx-get` and `hx-post` allow you to replace a 6-file React state machine with just 14kb of HTML. Finally, we give an honest verdict on the future of web development: when you still absolutely need React, and why the smartest AI systems are quietly going back to server-rendered HTML. 
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The Agentic Shift: React vs HTMX
+  1:11 - Why AI Agents Struggle with React
+  2:25 - The SPA Trap: Hydration Errors & Dependency Hell
+  2:52 - How HTMX Actually Works (Locality of Behavior)
+  4:43 - Hypermedia-Driven Applications Explained
+  5:55 - Why AI Tokens are Cheaper with HTMX
+  7:13 - Is React Actually Dying? (Server Components)
+  8:01 - Decision Matrix: When to use React vs HTMX
+  9:03 - Summary: The Death of the SPA-by-Default
+  
+  #htmx #react #webdevelopment #frontend #softwareengineering #javascript #cloudcodes #systemdesign #aiagents #html
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  User Queries: 
+  htmx vs react 2026
+  is react dying
+  why use htmx instead of react
+  hypermedia driven application explained
+  locality of behavior htmx
+  how ai agents write code
+  single page application alternative
+  react server components vs htmx
+  htmx tutorial for beginners
+  frontend web development trends 2026
+  react js full course
+  react js
+  react interview
+  react bro
+  react pro
+  react js tutorial
+  react to
+  react interview questions
+  react to nothing, react native full course
+  react projects
+  htmx tutorial
+  html full course
+  htmx django
+  htmx go
+  htmx vs react
+  html tutorial for beginners
+  html css full course
+  htmx fastapi
+  htmx project
+  htmx golang
+  ai agents
+  ai agents full course
+  ai agents tutorial
+  ai agents explained
+  ai agents projects
+  ai agents vs agentic ai
+  ai agents for beginners
+  ai agents course
+---
+Open any developer feed this year and the same headline keeps scrolling past. React is dying. React is dead. The framework that ate the front end is finally on its way out. But before you pick a side, look at who is actually typing the code now. More and more, it is not a person at all. It is an AI agent. And an agent has very different tastes than we do. Ask that agent to add one small feature to a React app and watch what happens, a component, a hook, a state store, a context provider, a test file. Six files, light up just to add a single button. And every one of them is a chance to get something subtly wrong. Now ask for the exact same button in plain HTML with HTML. One endpoint, one little fragment of markup, 14 kilobytes on the wire, against 200 in counting. And here is the part nobody warns you about. The agent gets the React version wrong. It breaks the rules of hooks, mismatches a dependency array, ships an effect that loops forever. The HTML version just works. This is not a fringe opinion anymore. In the 2024 JavaScript Rising Stars, HTML1 the entire front end category, gaining more GitHub stars that year than React, View, and Svelte. Why do machines love it so much? Because HTMLX barely changes. The team treats stability as a feature. The HTMLX you write in 2025 will look almost identical to the HTMLX you write in 2035. The whole library is about a dozen attributes you drop right onto an element. HTMLX get, HX post, HX swap. The behavior lives on the button itself. There is nothing to go hunting for. So for code that agents write and then have to maintain, the entire calculation quietly flips. And that flip, not the memes, is what this video is really about. Three parts. Why agents struggle with React? Why plain HTML and HTMLX fit them like a glove? And the honest truth about what is actually dying here. Start with how an agent actually writes code. It does not reason about your architecture the way you do. It predicts the next most likely token, one after another, drawn from everything it read on the open internet. And the internet is overwhelmingly HTML. That is the model's native tongue. The thing it has seen more than any other language by an enormous margin. React by contrast is a moving target. Mixins gave way to classes. Classes gave way to hooks. Hooks gave way to server components and a brand new use client directive. Each era has its own rules. And the training data is a blur of all of them at once. So the agent confidently mixes patterns that were never meant to touch. Take the rules of hooks. You cannot call them conditionally or inside a loop. You must list every dependency exactly. Forget one. And you get a stale value or an infinite render loop. A bug that compiles cleanly and only detonates at runtime. Agents trip over this constantly because the rule lives in a limter in a documentation page, not in the language itself, so nothing structurally stops them. Then there is the tax you never see on the invoice. A single react feature can drag in a bundler, a transpiler, a router, a state library, and a dozen type packages. The node modules folder swells into a small nation, thousands of packages deep. Every one of those is another moving API that agent has to remember perfectly and any of them can break underneath it. And to change one component safely, the agent has to pull half of that into its context window. The props, the hooks, the shared types, the store. The bill comes due in tokens, more context to load, more money per edit, and more surface area to get subtly, silently wrong. There is also the two world problem. The server renders one tree. The browser hydrates another, and if they disagree even slightly, react throws a hydration error and the page flickers or breaks. Now the agent is chasing a mismatch between two runtimes it can never see side by side, guessing which one drifted. And the fragility compounds, one version bump, a new major of the router, a breaking change buried in a build plug-in, and the whole app stops compiling. The agent stares at a stack trace from deep inside a package and never wrote and simply cannot fix it. Worst of all, it can barely check its own work. To know whether a react screen is even correct, you have to build it, boot a server, and hydrate it in a real browser. Until then, the agent is coding half blind and hoping. Now flip to the other side. HTML is the single most common language the model has ever trained on. Ask it for a form, a table, a whole page, and it is not really guessing, it is on home turf, reproducing a pattern it has seen a billion times before. HTML takes that home turf and hands it superpowers. Instead of wiring up fetch calls and re-renders, you just add an attribute. HX post sends the request. HX target says where the answer lands. HX swap says how. The HTML politely asks the server for more HTML. That is the entire architecture and it has a name, a hypermedia driven application. The agent writes a server root that returns a fragment of HTML. HTML drops that fragment into the page. There is no client side state machine to keep in sync, no cache to invalidate, no duplicated logic. The server simply stays the single source of truth. And everything the agent needs sits in exactly one place, right there on the element. This is called locality of behavior. To understand what the button does, you read the button. No jumping across five files, no mental model of a virtual DOM. One file, one truth. Watch how little code that really is. Search as you type. The kind of feature that is a whole component tree with debouncing and state in React, collapses to one input, one HS get, and a server that returns matching rows. Five lines the model can hold in its head all at once, with no hidden machinery behind them. Plus, HTML froze its API on purpose. Quarterly releases, no new features as a feature. The agent's training data never goes stale. Carson Gross calls it the new JQuery, and JQuery, 20 years on, still runs on roughly 75% of all websites. Boring, it turns out, is a feature. The whole thing is 14 kilobytes, one script tag, no build step whatsoever. An agent can generate an entire working app that a single model can reason about end-to-end, markup, endpoint, and behavior with nothing hidden away inside a tool chain, and it does not care what sits behind it. Django, Flask, Rails, Fast API, Go, pick any back end you like. HTML just wants HTML back, from anything that can print a string. The agent writes in whatever language the project already speaks, keeps all the logic on the server, and the whole thing simply clicks together. Best of all, it can verify itself. Ask the server for the fragment. Read the HTML that comes back, check the new row is really there. No build, no browser, no hydration dance. For the first time, the agent can actually see exactly what it made. There is a quieter wind hiding in here too. Because it is just HTML, it is accessible, and it degrades gracefully. Real links, real forms, real buttons that work even before a single line of script runs. The agent gets semantics and accessibility for free. Zoom out, and the whole industry is already leaning back this way. Django, Rails, and Laravel all ship a hyper media story now. Sending finished HTML over the wire instead of a bundle that rebuilds the page in the browser, never actually stopped being a good idea. So is React really dying? Honestly no. In the 2025 Stack Overflow survey, it is still the most used web framework on earth by a wide margin. Millions of apps, millions of developers, it is not vanishing anytime soon. But look closely at where React itself is heading. Server components, server actions, rendering on the server and shipping finished HTML to the client instead of a giant bundle. The most influential framework in the world is quietly walking back toward the exact model HTML has been preaching all along. That should tell you something. And HTML is not magic. Alive dashboard, a drawing tool, a game, an editor thick with client state, those still genuinely want a real front end framework. Hyper media is a fantastic default, not a universal law. You still match the tool to the job. So the headline is really a category error. React is not dying. The belief that every website has to be a heavy single page application. Shipped as a bundle and hydrated in the browser, that is the thing quietly dying. The pendulum is swinging back to HTML from the server. And the agents writing tomorrow's code are pushing it harder every month. The person who saw this coming teaches software in Montana. Carson Gross built HTML X around one stubborn idea. Unity is bad and most of the web never needed a heavy framework to begin with. The machines just went and proved him right and the economics are brutally in HTML X's favor. Fewer files, fewer tokens per change, fewer dependencies waiting to break. Every one of those is real money once an agent is the one doing the typing. The cheapest code for a machine to maintain is code that barely moved in 10 years. So how do you actually choose? Ask two questions. Who writes and maintains this code and how much of it truly lives on the client. Create and build content, forms and crud. Reach for HTML and HTML X. Rich, stateful client apps, keep your framework. Pull it all together. Agents predict the likeliest code they have ever seen. And reacts churn, hidden dependencies and hydration. Turn that prediction into a minefield. Plain HTML and a tiny frozen HTML X are the model's home turf. Less code, fewer bugs and trivial to verify. Same web, far fewer moving parts. React is not dying. The single page app by default is and the ones quietly writing the next web already prefer plain HTML. If that reframed how you think about the front end, subscribe. This has been CloudCodes.

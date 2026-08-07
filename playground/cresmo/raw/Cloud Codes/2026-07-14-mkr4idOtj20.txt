@@ -1,0 +1,114 @@
+---
+video_title: "Run the GLM-5.2 on Your Laptop Locally (No GPU Needed)"
+video_id: mkr4idOtj20
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=mkr4idOtj20
+video_date: 2026-07-14T09:00:02+00:00
+video_description: |
+  Can you run a massive 744-Billion parameter AI model entirely on a laptop with only 25GB of RAM and NO graphics card? Discover how an open-source project named Colibrí uses pure C code to stream the new GLM-5.2 frontier model directly from an SSD, completely bypassing the need for an expensive Nvidia GPU.
+  
+  In this video, Cloud Codes breaks down the system architecture that makes this "impossible" hardware exploit work. We explore the genius of Sparse Mixture-of-Experts (MoE) models, where only ~40B parameters activate per token. We also dive into how Unsloth's dynamic 2-bit quantization crushes a 1.4TB model down to just 239GB on disk, while maintaining 82% accuracy.
+  
+  Finally, we explain the true bottleneck of Local AI: your SSD read speed. We give you a brutally honest reality check on the speed (0.1 tokens/second), explain why this is an "overnight tool" instead of a chatbot, and provide a step-by-step tutorial on how to set this up yourself using `llama.cpp` and Colibrí.
+  
+  🔗 Resources & Tools Mentioned:
+  • Colibrí GitHub Repo: https://github.com/JustVugg/colibri
+  • GLM-5.2 (Z.ai): https://github.com/THUDM/GLM-5
+  • Unsloth GGUF Quants: https://huggingface.co/unsloth
+  • llama.cpp: https://github.com/ggerganov/llama.cpp
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The "Impossible" Local AI Machine 
+  1:12 - Trick 1: Mixture of Experts (MoE) Explained 
+  2:32 - Trick 2: Unsloth Dynamic 2-Bit Quantization 
+  4:12 - Trick 3: Streaming Experts from an SSD (Colibrí) 
+  6:17 - The Catch: Why it Runs at 0.1 Tokens/Second 
+  7:35 - Faster Alternatives (RAM vs SSD Bottlenecks) 
+  8:06 - Tutorial: How to Run GLM-5.2 Locally 
+  8:57 - Summary: The Death of the Cloud Data Center 
+  
+  #localai #machinelearning #systemdesign #softwareengineering #artificialintelligence #cloudcodes #llm #hardware #glm #opensource
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  User Queries:
+  how to run glm-5.2 locally
+  run large language model offline mac
+  colibri ai laptop tutorial
+  local ai quantization 2-bit explained
+  glm 5.2 744b model laptop tutorial
+  mixture of experts ai architecture
+  run ai without gpu cpu only
+  unsloth gguf dynamic 2 bit
+  glm 5.2 vs gpt 5.5 swe bench
+  replace cloud ai api with local llm
+---
+Observe a tela. Esse é um modelo de IA de ponta , com 744 bilhões de parâmetros pensando e respondendo em tempo real. Não há nenhum centro de dados por trás dele, apenas um laptop comum, 25 GB de RAM e nenhuma placa de vídeo . O modelo é o GLM 5.2, e ele supera o GPT 5.5 em testes de desempenho de codificação reais. Um
+
+modelo deste tamanho deveria ocupar um rack de GPUs que custa mais do que um carro. Então, como é que isso cabe numa máquina que você pode comprar usada por 600 dólares? Três truques em sequência. A maior parte do modelo nunca é executada. A maior parte dos dados fica armazenada no seu SSD, e cada elemento é compactado em dois bits. Um
+
+aviso sincero logo de início: é lento. Pense em uma palavra a cada 10 segundos. Esta é uma ferramenta para ser usada da noite para o dia, não um chatbot. Você entrega uma tarefa e vai embora, mas ela é completamente sua. Sem cobrança de API, sem avisos para sair da sala, um modelo de vanguarda que você realmente controla. Para entender o
+
+truque, primeiro você precisa ver a parede que ele escala. Eis o problema. Com precisão máxima, o GLM 5.2 possui 1,4 terabytes de pesos brutos. Essa é a área de atuação de um centro de dados. Mesmo reduzido, ainda tem
+
+cerca de 245 gigabytes. Seus 25 gigabytes de RAM não conseguem armazenar nem 5% da sua capacidade. O primeiro truque está embutido na forma como o GLM 5.2 foi construído. É uma mistura de especialistas. Em vez de um
+
+cérebro gigante onde cada neurônio dispara para cada palavra, ele é dividido em centenas de pequenos especialistas, e um minúsculo roteador decide quais deles ativar para cada token. Os números aqui são impressionantes. Cada camada contém 256 especialistas distintos. Para cada palavra inserida, o roteador seleciona apenas oito delas, mais um especialista compartilhado que é executado em cada token. Os outros 248 permanecem dormindo profundamente durante essa etapa. Isso representa o dobro da contagem de especialistas
+
+do último GLM, e é exatamente isso que mantém um modelo de 744 bilhões barato de executar. Somando tudo isso em toda a rede, apenas cerca de 40 bilhões desses 744 bilhões de parâmetros realmente realizam cálculos em um determinado token. Aproximadamente 95% do modelo está ocioso a qualquer instante, presente no disco, mas sem fazer nada. E essa é a primeira rachadura na parede. Você ainda precisa armazenar todos os 744 bilhões de parâmetros em algum lugar, mas você só computa com uma pequena parte deles por vez, o que significa que você só precisa de uma pequena parte na memória rápida por vez. Eis aqui o dado que revela
+
+tudo. De um token para o outro, o roteador recorre principalmente a especialistas diferentes, mas a quantidade de dados que realmente precisa ser alterada na memória é de apenas cerca de 11 GB. Guarde esse número. O truque dois ataca o tamanho de cada número. Por padrão, cada peso é um valor de 16 bits. Multiplique isso
+
+por 744 bilhões e você chega a esses 1,4 TB, um tamanho muito grande para ser transportado em um computador barato. Então, você reduz o peso de cada um . A ferramenta mais utilizada é o Unsloth, que publica uma série completa de versões quantizadas. 8 bits é praticamente sem perdas, mas ainda assim ocupa 810 gigabytes. O ponto ideal de qualidade é de 4 bits, em torno de 450, e o que queremos, o dinâmico de 2 bits, cai para aproximadamente 239, o menor que ainda se mantém aceitável, e é mais inteligente do que uma compressão cega. A
+
+quantização dinâmica mantém as camadas sensíveis, os cálculos de atenção, os primeiros e últimos blocos com maior precisão e impacta mais fortemente os pesos especialistas volumosos, porque é aí que reside o tamanho e onde o modelo tolera o dano. E aqui está a parte que faz tudo valer a pena . Comprimir 1,4 TB para 239 GB, uma redução de quase 6:1, ainda mantém cerca de 82% da qualidade original do modelo, segundo os testes da Unsloth. Você abre mão de uma pequena parcela de nitidez. Você perde a maior parte do peso. Essa é uma troca que vale a pena
+
+fazer. Portanto, estamos em uma situação muito melhor, mas sejamos honestos quanto a isso. 239 GB ainda superam em muito 25 GB de RAM por um fator de 10. A quantização por si só não permite que isso caiba em um laptop. Algo precisa mudar em relação ao local onde o modelo realmente reside. E é aqui que a
+
+maioria dos guias desiste. A forma oficial de executar o GLM 5.2 é exatamente o que você teme. Quatro GPUs para data center, ou um Mac Studio com capacidade máxima de 256 GB, custam em torno de US $ 15.000.
+
+Até mesmo o Ollama, o botão mais fácil, só oferece isso como uma passagem direta pela nuvem. Simplesmente não será possível carregar esses pesos na sua máquina. O terceiro truque é o mais inteligente, e é nele que o laptop de 25 gigabytes realmente entra em cena. Pare de tentar carregar o modelo inteiro na RAM. Divida em duas pilhas: a parte que é necessária em cada ficha e a parte que ela quase não utiliza. A lista de itens indispensáveis ​​é
+
+pequena. As camadas de atenção, o especialista compartilhado, os embeddings, cerca de 17 bilhões de parâmetros, o que a 4 bits corresponde a aproximadamente 10 GB. Somente isso é carregado na RAM e permanece lá o tempo todo. A pilha raramente necessária é a dos especialistas, e há um exército deles. Aproximadamente 21.000 em 75 camadas, cada uma com
+
+cerca de 19 MB. No total, são 370 GB, e tudo isso fica parado no seu SSD sem fazer nada até que o roteador solicite o uso. Agora, observe o que acontece com cada token. O roteador seleciona seus oito especialistas. O mecanismo de busca acessa a unidade, lê apenas esses oito bits e os carrega na memória RAM. O programa realiza os cálculos e, em seguida,
+
+descarta os resultados para liberar espaço para os próximos oito. Ler, calcular, descartar, repetir. Portanto, a RAM não armazena o modelo. Ele contém o conjunto de trabalho, aquele núcleo denso de 10 GB, além de qualquer punhado de especialistas que esse token específico por acaso precisasse. Por isso, 25 GB são suficientes, mesmo que o modelo no disco seja 15 vezes maior. Fica ainda um pouco mais inteligente. Um
+
+pequeno cache mantém os especialistas usados ​​recentemente disponíveis, porque o próximo token geralmente reutiliza alguns deles. E o cache de páginas do seu próprio sistema operacional funciona como uma segunda camada gratuita, consumindo toda a memória RAM disponível. O projeto que une tudo isso se chama Colibri, que em espanhol significa beija-flor. Um desenvolvedor, realizando testes em um laptop com processador de 12 núcleos e 25 GB de RAM. Todo o mecanismo é um único arquivo C com cerca de 1.300 linhas. Sem Python, sem bibliotecas matemáticas complexas
+
+e sem GPU em lugar nenhum. E, para que fique claro, este não é um brinquedo para você cuidar por diversão. O GLM 5.2 obteve uma pontuação em torno de 62 no teste de codificação profissional SSWBE Bench , um pouco à frente do GPT 5.5, possui um contexto de 1 milhão de tokens e custa cerca de 1/6 do que os grandes laboratórios cobram por token.
+
+Esse é o modelo que está sendo transmitido do seu SSD. Agora a conta chegou, e ela chega referente ao seu SSD. Lembra daqueles 11 GB de peso que mudam a cada token? O disco rígido precisa ler fisicamente todos os 11 GB do zero para cada palavra que o modelo grava. Um SSD NVMe de consumo de boa qualidade lê cerca de 5 a 7 GB por segundo. Divida
+
+5 gigabytes por segundo por 11 gigabytes por token e você chegará a aproximadamente um décimo de token por segundo. O limite de velocidade está totalmente no disco , não na CPU, nem no modelo, o que também significa que um disco mais rápido é um modelo mais rápido. Os SSDs PCIe 5 mais recentes atingem velocidades de 13 a 15 gigabytes por segundo, e dois em paralelo podem chegar a 20 gigabytes. Em termos simples, isso equivale a cerca de uma palavra a cada 10 segundos. Faça uma pergunta de verdade e você terá que esperar minutos, às vezes muitos minutos, para que a resposta completa termine de aparecer . Quero ser sincero com você,
+
+porque muitos vídeos promocionais não serão. Isso é lento, dolorosamente lento. Você não está descartando sua aba do ChatGPT para isso, e não está mantendo uma conversa ao vivo por meio dela. Nunca foi para isso que serve . Para que serve? Para ter
+
+paciência. Entregue a ele uma tarefa complexa de refatoração ou uma longa questão de pesquisa à noite, feche a tampa e leia a resposta final enquanto toma um café. Um modelo genuíno de vanguarda realizou o trabalho em um mini PC que você pode comprar novo por cerca de US$ 600, com um módulo de 24 GB de RAM e um disco rígido de meio terabyte. E se você tiver mais dinheiro para gastar, o mesmo truque fica ainda mais rápido. Mantenha esses especialistas na memória RAM do sistema em vez de no disco e o cenário muda completamente. Em um computador com 192 gigabytes de RAM
+
+e algumas placas de vídeo 3090 usadas, é possível executar esse mesmo GLM 5.2 de dois bits a quase sete tokens por segundo. Portanto, trate-o como um mostrador, não como uma parede. Dinheiro e memória RAM compram velocidade. 25 gigabytes e um pouco de paciência permitem que você compre o mesmo modelo Frontier por quase nada. Você pode escolher em qual extremidade desse
+
+dial você se sentará. Muito bem, digamos que você realmente queira experimentar isso. A configuração realmente se resume a três etapas e nenhuma delas requer uma placa de vídeo. Primeiro passo: faça o download dos pesos. Obtenha o Unsloth dynamic two-bit GGUF do GLM 5.2 da
+
+Hugging Face. São algumas centenas de gigabytes, então coloque-o no SSD mais rápido que você tiver e libere espaço primeiro, porque é maior do que a maioria das pessoas espera. Segundo passo: construir o motor. Você pode usar lhama. O CPP, com seus recursos avançados de descarregamento de dados, permite manter a combinação de pesos de especialistas fora da RAM, ou utilize o Colibri se desejar a versão extrema de streaming puro de 25 gigabytes. Ambos
+
+compilam a partir do código-fonte em poucos minutos. Passo três, aponte para o arquivo do modelo. Diga para manter os especialistas no disco e iniciar uma conversa. Então espere. O primeiro token demora mais tempo enquanto o cache aquece. Depois disso, entra
+
+em seu ritmo lento e constante. Agora, dê um passo atrás, porque a configuração não é realmente o ponto principal. O GLM 5.2 foi treinado em 100.000 chips Ascend chineses, totalizando 28 trilhões de tokens, sem o uso de uma única GPU da Nvidia. E então a
+
+Z.AI disponibilizou os pesos completos gratuitamente sob uma licença MIT, para que qualquer pessoa na Terra pudesse baixá-los e guardá-los para sempre. Compare esses dois fatos lado a lado. Um modelo de ponta, disponível gratuitamente, funcionando em um aparelho usado em um quarto. Aquilo que toda a indústria insistia que precisava de um centro de dados agora cabe lentamente em um laptop. Essa é a verdadeira
+
+manchete. Combinação esparsa de modelos especializados com armazenamento barato e rápido. Os SSDs ficam mais rápidos a cada ano, então a velocidade aumentará por si só. O simples fato de estar funcionando já é o que importa hoje em dia. Então, é assim que 744 bilhões de parâmetros cabem em um laptop de 25 gigabytes sem GPU. Se você aprendeu algo,
+
+inscreva-se. Desmontar essas coisas é o que fazemos aqui todos os dias.

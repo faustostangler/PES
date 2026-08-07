@@ -1,0 +1,54 @@
+---
+video_title: "API vs JWT vs OAuth: Which Authentication Should You Use?"
+video_id: hWhPbeiv75o
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hWhPbeiv75o
+video_date: 2026-06-21T15:50:56+00:00
+video_description: |
+  Every request your application sends to an API must first answer one fundamental question: "Who are you?" If you get this wrong, you run into broken authentication—the second most common API security vulnerability on the planet. 
+  
+  In this video, we go under the hood of the three main ways APIs verify client identity and delegate access: API Keys, JSON Web Tokens (JWT), and OAuth 2.0 / 2.1. 
+  
+  We break down the architectural tradeoffs of each—from the bearer secret leak risks of standard API keys to the stateless scalability of signed JWTs and the robust, scoped token delegation of the OAuth Authorization Code flow with PKCE.
+  
+  📌 Timestamps:
+  0:00 - Introduction: The Lock on Everything You Build
+  0:20 - The Three API Security Methods: Keys, JWT, & OAuth
+  0:48 - Authentication vs Authorization: The Core Difference
+  0:59 - Part 1: API Keys (Bearer Secrets & GitGuardian Leak Stats)
+  1:26 - API Key Security Best Practices (Rotation & Scopes)
+  1:38 - Part 2: JSON Web Tokens (JWT Header, Payload & Signature)
+  2:48 - Stateless JWTs: How Verification Works Without Databases
+  3:18 - JWT Limitations: Revocation Issues & the "None" Alg Vulnerability
+  3:52 - Part 3: OAuth 2.0 & 2.1 Delegation Protocol
+  4:10 - Authorization Code Flow & Scopes
+  4:42 - What is PKCE? (OAuth 2.1 Mandatory Rules)
+  4:59 - OpenID Connect (OIDC) & Sign-In with Google
+  5:12 - Debunking the Biggest API Auth Myths
+  5:28 - Side-by-Side Comparison: Keys vs JWT vs OAuth
+  5:47 - Decision Matrix: When to Choose Which?
+  6:20 - API Security Best Practices: HTTPS, Scope, & Token Lifespans
+  
+  If you found this API security breakdown useful, subscribe to Cloud Codes. We take apart one system architecture, protocol standard, or backend design pattern like this every week. Build, solve, deploy.
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries :
+  api keys vs jwt vs oauth
+  how does json web token work
+  difference between oauth 2.0 and oauth 2.1
+  what is pkce in oauth
+  authentication vs authorization explained
+  jwt stateless microservices architecture
+  api security best practices
+  gitguardian leaked secrets developer data
+  oauth 2.1 mandatory rules
+---
+Every request your app sends to an API has to answer one question first. Who are you? No proof, no access. Attach the right credential and the door swings open. 200 OK, here is your data. Get this wrong and it is the second most common API flaw on the planet. Broken authentication, an open door for attackers. There are three ways apps prove who they are. API keys, JSON web tokens, and OAuth. Same goal, very different tools. An API key is the simplest, one long secret string sent in a header that quietly says it is me. A JWB2 is a sign token that carries who you are and what you can do packed into three compact parts. OAuth is the one behind sign in with Google. It lets an app act for you without ever seeing your password and keep two words straight. Authentication is who you are. Authorization is what you are allowed to do. By the end of this, you will know exactly which one to reach for and how to use it without getting burned. Start with the API key. It is basically a password for a program, a long random string the API hands you when you sign up. Every request you include it and the server checks it against its list. Here is the whole dance. Your client drops the key into a header, X API key, or an authorization bearer line. The server looks it up, confirms it is valid and active, and returns your data. One round trip, no log in screen. That simplicity is the entire point. API keys are perfect for server to server calls, scripts, weather data, internal tools, anywhere a machine, not a person, is the one knocking. Easy to issue, easy to use, but a key is a bearer secret. Whoever holds it is you. No built-in expiry, no user identity, no fine grain limits unless you add them. If it leaks, an attacker has full access until you notice and revoke it. And leak they do. Git Guardian found nearly 24 million secrets. Keys, tokens, passwords, push to public GitHub in a single year, up 25%. Worse, most leaked keys are never rotated. They just stay live. So treat keys like the secrets they are. Keep them in a vault or an environment variable, never in your front end or your Git history. Scope each key to the least it needs and rotate them on a schedule. Next, the Jason Web token, JWT for short. Instead of a meaningless string the server has to look up, a JWT carries the facts inside it. Who you are, when it expires, what role you have, all signed so it cannot be tampered with. Crack one open and you find three parts separated by dots. A header naming the signing algorithm, a payload of claims like sub EXP in roll, and a signature over the two. All base 64 encoded, readable by anyone, changeable by no one. Here's the clever bit. To check a JWT, the server just recomputes the signature with its key. If it matches, the token is genuine. No database call, no session look up. That is why people call JWT stateless. The proof travels with the request. That makes them scale beautifully. One token works across a dozen microservices, each verifying it on its own. There is no shared session store to bottleneck, which is why JWT became the default for modern APIs and single page apps. But statelessness cuts both ways. Once issued, a JWT is valid until it expires. You cannot easily revoke a single one. So keep them short lived and pair them with refresh tokens. And remember, the payload is encoded, not encrypted. Never put a secret in there. And beware the classic JWT bug. Early libraries trusted the tokens own header. Set the algorithm to none, strip the signature, and some servers accepted it, handing attackers an admin token for free. The rule, your server picks the algorithm and always verifies the signature. Now OAuth, the most powerful and the most misunderstood. OAuth 2.0 is not a login form. It is a delegation protocol written down in RFC 6749. It answers one question, how can I let an app do one specific thing for me without handing it my password? Picture connecting an app to your Google Drive. You click connect. Google shows a consent screen. You approve, and your app never sees your password. Instead, it gets a short code, swaps that code for an access token behind the scenes, and uses the token to call the API. That handoff is the authorization code flow. OAuth hands back two things. A short-lived access token that actually opens the API, and a refresh token that quietly trades itself for new access tokens when they expire. And scopes pin down exactly what is allowed. Read your files, but not delete them. Because phones and browsers cannot keep a secret, OAuth adds PKCE, a one-time proof that stops anyone who steals the code from using it. The new OAuth 2.1 makes PKCE mandatory for everyone, and finally drops the old implicit and password flows for good. One more piece. OAuth only handles authorization, permission. To actually log you in, you add open ID connect on top, which returns an ID token proving who you are. That combo is what sign in with Google really is under the hood. So let us kill the biggest myth. OAuth by itself is not authentication. OAuth grants permissions. Open ID connect proves identity, and an API key identifies an app, never a person. Use the wrong one for the job, and you have built a security hole. Line them up. API keys, dead simple. Identify an app. Hard to revoke its scale. Best for machines. JWTs, self-contained. Carry identity and claims great for your own APIs. OAuth a full delegation with scopes and consent, the standard for third-party access and user login. So which do you pick? Talking machine to machine, or a quick internal script. An API key. Logging users into your own app and calling your own API, sessions, or JWTs. Letting users connect at third-party service, or offering sign in with, OAuth a with open ID connect. And the real answer is usually all three. A user signs in through OAuth and open ID connect. Your backend issues them a short-lived JWT, and your internal services talk to each other with API keys, or mutual TLS. Each layer uses the right tool for its job. Whatever you choose, the rules are the same. Always HTTPS, a token overplane HTTP, is a token stolen. Keep credential short-lived and refreshable. Grant the least scope that works. Rotate and revoke. And never, ever ship a secret in your client or your repo. Authentication is the lock on everything you build. So get it right, and the rest gets easier. If this made it click, subscribe. Cloud codes break down one system like this every week. Build, solve, deploy. See you in the next...

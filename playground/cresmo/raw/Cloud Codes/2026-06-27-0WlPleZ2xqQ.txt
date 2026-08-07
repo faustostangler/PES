@@ -1,0 +1,53 @@
+---
+video_title: "REST API vs MCP: How AI Agents Actually Talk to Software"
+video_id: 0WlPleZ2xqQ
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=0WlPleZ2xqQ
+video_date: 2026-06-27T12:00:14+00:00
+video_description: |
+  For 25 years, the REST API has run the internet—but if you hand a REST API to an AI agent, it completely stalls. Meet the Model Context Protocol (MCP), the new open standard built by Anthropic that is quietly replacing traditional APIs for AI.
+  
+  In this video, Cloud Codes breaks down the system design shift from REST to MCP. We explore why traditional REST APIs require brittle, hand-coded integrations, and how MCP solves this by acting as a universal "USB-C plug" for AI agents. You will learn how MCP uses JSON-RPC to allow servers to self-describe their tools at runtime, enabling models like Claude, ChatGPT, and Cursor to seamlessly interact with GitHub, Slack, and your own databases. Finally, we explain why the Linux Foundation took over MCP, and the honest truth about when you still need REST.
+  
+  If this helped you understand complex AI system design and backend architecture, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters (Crucial for Google Search Rich Snippets):
+  0:00 - The Problem with REST APIs for AI
+  0:57 - The "Before": Why REST Fails AI Agents
+  2:22 - The "After": Model Context Protocol (MCP) Explained
+  3:07 - How MCP Servers Self-Describe at Runtime
+  3:53 - MCP Live Demos & Universal Integrations
+  4:13 - The Adoption: Anthropic, OpenAI & Linux Foundation
+  4:47 - The Honest Catch: MCP is a Translator, Not a Replacement
+  5:11 - Final Verdict: REST vs MCP
+  
+  🔗 Concepts & Sources Covered:
+  REST API Architecture
+  Model Context Protocol (MCP) by Anthropic
+  JSON-RPC & Server-Sent Events
+  Multi-Agent System Integrations (GitHub, Slack, Stripe)
+  
+  #MCP #RESTAPI #AIAgents #SoftwareEngineering #SystemDesign #CloudCodes
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries: 
+  what is model context protocol mcp
+  rest api vs mcp explained
+  how do ai agents use apis
+  how to build an mcp server
+  anthropic mcp tutorial for beginners
+  why rest apis are bad for ai
+  json-rpc vs rest api for ai agents
+  how cursor and claude use mcp
+  linux foundation ai mcp
+  cloud codes backend architecture
+---
+This is how software has talked to software for 25 years, arrest API. Your program sends a request to a web address and a tidy block of data comes back. It quietly runs the entire internet, every app, every login, every checkout, and honestly, for a human writing code, it is lovely. But hand that exact same API to an AI agent and it just stalls. It does not know what to call, what the rules are, or how to even begin. Because a arrest API was written for a developer to read, the docs, the endpoints, the examples, not for a model to use on its own. So a new, almost embarrassingly simple protocol showed up to close that gap and the industry adopted it shockingly fast. Meet the model context protocol, built by Anthropic, open sourced, and now a standard backed by basically everyone who builds AI. One request and the agent simply does it across any tool that speaks the protocol. This whole video is just that, the before and the after. So the before, arrest is the old reliable. Your app sends a request to a web address, the server does the work, then sends back a neat block of JSON, stateless, predictable, the same every time. Every action is just a verb plus a URL. Get to read a thing, post to create one, put to update, delete to remove. Clean and obvious, once you know which address does what, and that is the catch, the API does not explain itself. It hands a developer a manual, pages of endpoints, parameters, and rules, and a human reads it and writes the connecting code by hand. Want an AI to use that API? Then you become the translator, you wrap every endpoint as a tool, describe each field in detail, and hard code where everything lives. Tidious, but fine, for a single API. Except it is never that clean. There is authentication to attach, pages of results to stitch together, rate limits to respect, and errors to handle. Plumbing the model knows nothing about, all of it on you. Then reality hits. You do not have one model and one tool. You have many of each, and every single pairing needs its own custom integration. Five apps by five tools is 25 brittle connections to build and babysit. And they break. The API renames one field, or ships version two, and your hand-built glue quietly fails in production. Now multiply that fragile maintenance by every integration you own. Now the after. One open protocol sits in the middle, and the whole tangle collapses into a single universal plug. Build to it once, and any model can reach any tool. Think USB-C, but for AI. Underneath, it is refreshingly boring. Just structured messages, a format called JSON-RPC, passed back and forth over one persistent connection. There is nothing exotic happening here at all, but here is the move that changes everything. The server describes itself. The agent connects and asks, what can you do, and the server answers with a typed list of every tool it offers live. No manual, no hand wiring, no hard-coded endpoints. The tools simply appear in the agent's hands at runtime, ready to call exactly as the server defines them right now. Then the agent just calls one, create order, with real arguments, and a structured result comes straight back. The very same action as before, with none of the glue you had to write, and it is not a one-shot request, it is a live session. The server can stream progress, ask the model to think, or ask you a question, a real conversation, not a vending machine. So one plain English ask, summarize this thread, then open an issue, fans out across a Slack server and a GitHub server, and the agent stitches the whole result together itself. Best of all, you build that server once, and every AI app speaks the same language. Claude, chat GPT, cursor, copilot, Gemini, all of them with no extra work for each app. So before and after, side by side, rest written for developers, discovered by reading docs, one custom integration prepare, and it breaks when things change, MCP, written for models, discovered at runtime, built once for everyone, and it adapts on its own. And this is not a pitch, it is already the standard. In its very first year, MCP passed 10,000 public servers, with its developer kits pulled 97 million times every month, real companies ship real servers, GitHub, Stripe, Slack, Linear, your database, your cloud, each one builds a single MCP server, and instantly becomes reachable by every AI assistant at once. In December 2025, Anthropic handed the protocol to the Linux Foundation, co-founded with OpenAI and Block, and backed by Google, Microsoft, Amazon, and Cloudflare. Fierce rivals, agreeing on exactly one thing, but here's the honest part, and it matters. MCP does not actually kill the rest API. Look under almost any MCP server, and you will find a plain old rest API doing the real work. It is not a replacement, it is a translator. Rest stays the interface for developers, MCP becomes the interface for models, and the very same service can simply offer both at the same time. So when do you still reach for rest? When the workflow is fixed and predictable, a website, a mobile app, a public API, plain create, read, update, delete, with no AI agent anywhere in sight, an MCP wins the moment an AI agent needs to use your tools to discover what is available and act on it without a developer hand-wiring every single call ahead of time. Because that is the real shift, APIs were built for people to read. This new protocol was built for models to use, same plumbing underneath, an entirely new audience on top. So that is the before and after. A tangle of hand-built, breakable glue replaced by one self-describing plug that every AI already knows how to speak. Rest is not going anywhere, but the way AI connects to the world just changed for good. If this made it click, subscribe, cloud codes breaks down one system like this every week, build, solve, deploy.

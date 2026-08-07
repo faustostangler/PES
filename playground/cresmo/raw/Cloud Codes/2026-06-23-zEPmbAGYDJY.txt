@@ -1,0 +1,60 @@
+---
+video_title: "How AI Memory Actually Works: Episodic, Semantic, & Procedural"
+video_id: zEPmbAGYDJY
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zEPmbAGYDJY
+video_date: 2026-06-23T17:30:34+00:00
+video_description: |
+  By default, every single conversation with a large language model starts from zero because LLMs are fundamentally stateless. Stuffing past transcripts into a giant context window seems like the obvious fix, but long context rots—dropping model accuracy from 92% down to 58% because of the "lost in the middle" phenomenon. Memory systems change this.
+  
+  In this video, we go under the hood of AI memory architectures, exploring how persistent long-term memory systems sit outside the context window to manage data cheaply and quickly.
+  
+  We break down the engineering divisions of model memory: how short-term working context acts as a temporary scratchpad, how persistent memory splits into episodic (events), semantic (durable facts), and procedural (workflows) systems, how the four-stage memory pipeline (extract, embed, retrieve, inject) operates, and how open-source libraries like Mem0, Letta (formerly MemGPT), and Zep structure temporal knowledge graphs to scale agentic applications.
+  
+  📌 Timestamps:
+  0:00 - Introduction: Why Smart AI Models Forget You Tomorrow
+  0:17 - The Stateless Reality: Why Large Context Windows are Not Memory
+  0:31 - The Lost-in-the-Middle Problem: Why Long Context Rots
+  1:20 - The External Memory System (RAM vs. Hard Drive)
+  1:35 - The Extraction-Storage Loop: Cheaper, Faster Inference
+  2:38 - Short-Term Working Memory vs. Long-Term Persistent Memory
+  3:19 - Episodic (History), Semantic (Facts), and Procedural (Workflows) Memory
+  3:59 - The Four-Stage Memory Pipeline: Extract, Embed, Retrieve, Inject
+  5:05 - Stale Data Resolution: Memory Updating & Forgetting Rules
+  5:21 - Vector Memory (Similarity) vs. Graph Memory (Relationships)
+  5:35 - Context Security: Private Scoping by User & Session
+  5:48 - Tooling Ecosystem: Mem0, Letta (MemGPT), and Zep Compared
+  6:48 - Underneath the Stack: The Vector Database Infrastructure
+  7:05 - Big Assistant Integrations: ChatGPT, Gemini, and Claude Project Memory
+  7:20 - Production Challenges: Latency, Identity Mapping, and Memory Poisoning
+  7:51 - Summary & Outro (Cloud Codes)
+  
+  🔗 Resources & References:
+  - Letta AI (formerly MemGPT out of UC Berkeley)
+  - Mem0 Memory Layer (github.com/mem0ai/mem0)
+  - "Lost in the Middle: How Language Models Use Long Context" - Stanford Research
+  
+  If you found this database and networking comparison useful, subscribe to Cloud Codes. We take apart one systems design, network protocol, or backend framework like this every week. Build, solve, deploy.
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries : 
+  how do ai agents remember past conversations
+  mem0 vs letta memgpt vs zep
+  episodic vs semantic vs procedural memory ai
+  how to solve lost in the middle llm
+  vector database memory architecture
+  stateless large language models memory layer
+  graph memory vs vector similarity search
+  long term persistent memory for ai agents
+  ai memory poisoning security attack
+  temporal knowledge graph zep
+---
+Here's something strange about even the smartest AI agent. Tell it your vegetarian, ask for dinner ideas, and it nails it. Then close the chat, come back tomorrow, and ask again, and it suggests a stake. If you forgot. Not because it's dumb, because by default, every conversation starts from zero. The reason is simple. A language model is stateless. It doesn't actually remember anything. Everything it knows about you in a chat lives in the context window, and that window is just short-term memory. When the session ends, it's wiped clean. So the obvious fix is, just make the window bigger, paste in every past conversation, every document, the whole history, and for a while that works. But watch the token counter. The more you stuff in, the slower and the more expensive every single reply gets. And there's a deeper problem. Long context rots. When the answer is buried in the middle of a huge prompt, the model quietly loses it. Researchers call it lost in the middle. Accuracy can drop more than 30%. Just because the important fact wasn't at the very start or the very end. And this isn't a small model problem. Test the 2026 frontier models on a long memory benchmark, and they still rot. Give a model only the right snippet, and it scores 92%. Buried that snippet in a long history, and the same model falls to around 58. A giant window is not memory. So real memory works differently. Instead of cramming everything into the prompt, you give the agent a separate memory system, a store that lives outside the context window, working memory for right now, and long-term memory that persists, like RAM versus a hard drive. And it runs as a loop. As you talk, the system extracts the facts worth keeping. It stores them. Next time they're relevant, it retrieves them, and injects just those few back into the prompt. Extract, store, retrieve, inject, that's the whole engine. Now watch the same situation again. New day, fresh context window, but before the model answers, the memory layer pulls up one fact. The user is vegetarian. It drops it into the prompt, and the agent suggests a veggie recipe. Same model, it just finally remembered. And here's the part that wins arguments. A good memory system doesn't just remember better, it's cheaper. Instead of feeding 26,000 tokens of history every turn, it sends under 2,000 of the relevant ones. Sub-second instead of 10 seconds, at a fraction of the cost. And this isn't theoretical. It's already shipping in the tools you use. Chat GPT, Claude, and Gemini all carry persistent memory now. They quietly remember your preferences between chats. So the question for builders isn't whether to add memory. It's how. So let's actually learn the system. Piece by piece. At the top, memory splits into two layers. Short term, the working memory of the current task, and long term, everything that has to survive after the session ends. Working memory is the scratch pad. It's the context window itself, the current conversation, the task in progress, the last few tool results, fast, small, and temporary. It's gone the moment the agent moves on to something else. Long term memory is where it gets interesting. Barrowing from how human memory works, it splits into three kinds, episodic, semantic, and procedural. Get these three and you understand most of the memory systems on the market. Episodic memory is what happened. Specific past events, last Tuesday, the user asked to cancel their subscription, then changed their mind. It's the agent's diary so it can refer back to real interactions instead of guessing. Semantic memory is what's true. The durable facts stripped of when you learned them. Your name, your time zone, that you prefer Python, that your company runs on Postgres. This is the part that makes an agent feel like it actually knows you. And procedural memory is how things are done. The learned workflows and habits, how your team formats a pull request, which tests to run before merging, the steps for a refund, not a fact, but a scale the agent applies the same way every time. OK, so how does a fact actually get from a conversation into long term memory and back out again? It moves through a pipeline. Four stages and every memory tool is some version of these. First, extract. You don't save the whole transcript. A model reads the conversation and pulls out the few durable facts worth keeping, moving to San Francisco in March, and throws away the small talk around it. Then store. Each fact is turned into an embedding, a list of numbers that captures its meaning, and saved in a vector database. Similar ideas end up close together, so later you can search by meaning, not just by keyword. When a new message comes in, retrieve. The system searches the store for the memories closest to what you're asking. The best systems blend three signals, meaning keywords and named entities, so the right fact surfaces, even when you phrase it completely differently. Then inject. Only the top handful of memories get slipped into the prompt right before the model answers. The model never sees the whole store, just the few facts that matter right now. That's exactly why it stays fast and cheap. And memory isn't right once. Facts change. You move from New York to San Francisco. A good system doesn't keep both. It updates the old fact instead of duplicating it, and lets stale unused memories quietly fade. Remembering and forgetting are both features. There's also more than one way to store it. Vector memory finds things by similarity. Graph memory stores entities and the relationships between them. Who works where? What depends on what? Vector is great for recall. Graph is great for connecting the dots, and every memory needs an owner. Is this fact about one user, the single session, the specific agent or the whole organization? Scoping keeps it straight, so your private preferences never leak into someone else's chat. Now you almost never build all of this yourself. There's a whole layer of tools for it, and three names lead the pack. Mem0, Leda, and Zep. Each one solves the same problem a slightly different way. Mem0 is the most widely adopted. It's a drop-in memory layer that sits between your app and the model, extract, store, retrieve, all handled for you. Over 51,000 GitHub stars, $24 million in funding, and 100,000 developers building on it. Leda, formerly the famous Mem0 GPT project out of UC Berkeley, treats the agent itself as stateful. The agent manages its own memory, deciding what to keep and what to page back in. It's white box and model agnostic, and right now the top open-source agent on terminal bench. Zep took a different bet. Time. Its temporal knowledge graph doesn't just store facts. It tracks when each one was true. So when something changes, Zep knows the order of events, which is exactly where naive memory falls apart. Underneath most of these, sits a vector database, the actual store for all those embeddings. Pinecone, Q-drant, WAV8, Chroma. It's quietly become real infrastructure, a $3.2 billion market in 2025, heading for nearly 9 billion by 2030. And the big assistance didn't wait. Chad GPT shipped memory back in 2024. Gemini followed, and Claude added project-scoped memory in late 2025, deliberately kept isolated. So context from one project can't bleed into another. This all matters because agents are in production now. By 2026, 57% of organizations run them for real, and the top two complaints, quality and latency, both of which trace straight back to what the agent does and doesn't remember. It's not a solved problem though. Memory gets stale. A fact that was right last year is confidently wrong today. Identity is hard across devices and sessions, and memory can be poisoned, feed an agent bad facts, and it will trust them. Memory is power and a brand new attack surface. So that's the system. A model is stateless, so we bolt on memory, working memory for now, long-term memory, episodic, semantic, procedural, for later. A pipeline that extracts, stores, retrieves and injects, tools like Mem0, Leda and Zepp to run it with vector databases underneath, cheaper than a giant window, and the difference between a chatbot and an agent that actually learns you. If this made memory finally click, you'll like the rest of the channel. We break down how AI really works, one system at a time. Subscribe to CloudCodes, and I'll see you in the next one.

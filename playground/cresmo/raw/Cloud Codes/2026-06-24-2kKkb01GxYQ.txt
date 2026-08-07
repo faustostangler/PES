@@ -1,0 +1,48 @@
+---
+video_title: "Google's OKF: The Simple Folder Replacing Vector Databases"
+video_id: 2kKkb01GxYQ
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=2kKkb01GxYQ
+video_date: 2026-06-24T07:21:27+00:00
+video_description: |
+  Did Google just make the expensive vector database obsolete for AI agents? In June 2026, Google Cloud launched OKF (Open Knowledge Format v0.1)—a standard that turns a plain folder of markdown files into a curated, portable LLM wiki. 
+  
+  If you are tired of relying on RAG (Retrieval-Augmented Generation) to chop documents into fuzzy chunks, OKF offers a radically simpler way. Inspired by Andrej Karpathy's "LLM Wiki" concept, OKF allows AI agents to read, cross-link, and update structured concepts directly using plain markdown and YAML frontmatter—meaning zero embeddings, zero vector drift, and zero infrastructure costs. 
+  
+  In this video, Cloud Codes breaks down exactly how the Open Knowledge Format works, how it compares to traditional vector stores, the reference tools Google shipped (including the BigQuery agent), and exactly when a folder beats a database.
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - The Folder That Replaces Vector Databases
+  0:46 - The Problem with RAG & AI Context
+  1:33 - Andrej Karpathy's "LLM Wiki" Idea
+  2:38 - How Google OKF Actually Works (Markdown & YAML)
+  3:53 - OKF vs. Vector DBs & RAG
+  4:34 - Google's Reference Tools & BigQuery
+  5:07 - The Catch: When to Still Use Vector DBs
+  5:30 - The Future of Portable Context
+  
+  #googlecloud #googleokf #vectordatabase #rag #aiagents #softwareengineering #cloudcodes
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  Watch Next: https://youtu.be/v_wvXLq6OS8
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries : 
+  what is google okf
+  google open knowledge format explained
+  google okf vs vector database
+  rag vs open knowledge format
+  how to build an llm wiki
+  andrej karpathy llm wiki tutorial
+  replace vector database markdown
+  metadata as code google cloud
+  best vector db alternatives for ai agents
+---
+Google just did something that sounds almost like a joke. They took a plain folder, text files, nothing fancy, and turned it into an official AI standard. And that quiet little folder does something bold. It makes the expensive vector database you were told you needed, optional. On one side, a pile of markdown files. On the other, a vector store with embeddings, indexes, and a monthly bill. Google is betting on the files. It is called OKF, the Open Knowledge Format. Google Cloud shipped version 0.1 in June, and it is beautifully boring. It is just markdown. Ask an agent how your team computes weekly active users. And instead of searching a database, it just opens a file, follows a link, and answers. That is the whole trick. Here is the thing models keep tripping on. It is not intelligence. It is context. A model can write the query, but only if it knows your tables, your metrics, your join paths. And that knowledge is scattered. It lives in metadata catalogs, in weekies, in shared drives, in code comments, and in a few senior engineers' heads. Every agent has to reassemble it from scratch. The standard fix was rag. Upload your documents, chop them into chunks, turn each chunk into a vector, and stash them in a vector database. At query time, you retrieve the closest matches. It works. But the model rediscoveres everything on every single question. Nothing accumulates. Ask the same subtle thing twice, and it pieces the answer back together from fragments, both times. Andre Carpethi framed the alternative back in April. He called it an LLM Wiki. And his line was perfect. Obsidian is the IDE. The LLM is the programmer, and the Wiki is the code base. Instead of retrieving raw chunks, the model builds a Wiki and keeps it current, drop in a new source, and it updates a dozen pages, summaries, entities, cross links, flagging where new facts contradict the old. The knowledge compounds, three layers make it work. Raw sources you never edit. A Wiki, the model owns entirely, and a schema file, your claw.nd, or agents.nd, that teaches the model how to keep it all tidy. And honestly, you have seen this pattern everywhere. Obsidian vaults wired to coding agents, agents.nd files, metadata as code repos. Great ideas. But every one of them was bespoke, so none of them talk to each other. That is the GAP-OKF fills. It does not add a runtime or an SDK. It just agrees on a few conventions, so a Wiki one team writes. Another team's agent can read with no translation. So what is it exactly? An OKF bundle is a directory of markdown files. Each file is one concept, a table, a metric, a runbook, and API. And the files path is its identity. Open one up, and it is nothing scary. A little block of yaml at the top, then plain markdown underneath for everything else. That is a concept. The front matter has a handful of reserved fields. Type, title, description, tags, a timestamp, but only one of them is actually required. Type, everything else is up to you. Concepts link to each other with ordinary markdown links. And those links quietly turn a flat folder into a graph, one that is richer than any parent in child file tree. Two optional files round it out. An index, so an agent can start at the top and drill down and a log, so every change keeps a history you can actually read. The design rests on three ideas. Be minimally opinionated. Keep producers and consumers independent. And stay a format. Never a platform you have to log into. Because it is just files, there is nothing to install. It renders on GitHub. It ships as a tarball. It mounts on any file stem. Your knowledge stops being trapped inside someone's product. So how is this different from Rags? Rags read derives knowledge from raw chunks on every query. OKF stores curated, cross-linked concepts that the agent reads and edits directly, chunks versus concepts. Line it up against the usual suspects. Notion locks you into a database. A vector index gives you fuzzy chunks, not concepts. OKF is portable markdown and agent reads with zero translation. And the bill changes. A vector database means hosting, embedding, re-inbedding on every edit and babysitting drift. A folder means git and grep, diffs, pull requests, and basically zero infrastructure. And Google did not just publish a spec. They shipped a BigQuery agent that writes bundles, a static visualizer to browse them, and three sample bundles to copy from. The killer use case is metadata as code. Export your BigQuery tables and metric definitions as a bundle, commit it right next to the SQL, and review every change as a pull request. From there, it spreads. On-call agents that read runbooks and follow the links, vendors shipping a catalog your agent just consumes. A team wiki that finally stays current, because the model maintains it. Now the honest part, this is not the death of the vector database. For a huge messy pile of documents, you cannot fit in context. Semantic search still wins. OKF shines when the knowledge is curated. So a folder beats the database when your knowledge is curated, when you need accuracy in version history, when it fits in the agent's context, and when portability actually matters. Step back, and the shift is bigger than one format. Context is becoming a portable version-controlled artifact. Open formats won the data era, and they are lining up to win the agent era too. So that is OKF, a folder of markdown concepts linked into a graph that an agent reads and keeps current no embeddings required. Sometimes the boring answer really is the better one. If that clicked, you will like the rest of the channel. Subscribe to Cloud Codes, and I will see you in the next one.

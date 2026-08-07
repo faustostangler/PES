@@ -1,0 +1,50 @@
+---
+video_title: "Loop Engineering: Why the Best Developers Stopped Prompting"
+video_id: K4KED0nz2Sc
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=K4KED0nz2Sc
+video_date: 2026-06-24T22:30:40+00:00
+video_description: |
+  What is Loop Engineering, and why are top AI developers abandoning prompt engineering to use it? A chatbot answers, but an agent acts—and to build a reliable AI agent, you don't need a massive prompt; you need a flawless loop. 
+  
+  In this video, Cloud Codes breaks down the anatomy of AI Agent Loops. We explore how Claude Code and OpenAI's Codex use the ReAct framework (Gather Context → Act → Verify → Repeat) to write production code, and why the model itself is becoming a commodity while the "loop" becomes the ultimate engineering moat. 
+  
+  We also dive into the mathematics of why long agentic loops fail, the reality of "context rot," and the 5 rules for building loops that actually work (like fresh context, external judges, and hard stopping conditions). Finally, we look at how Mira Murati’s new startup, Thinking Machines Lab, is fixing the underlying GPU determinism that makes these loops possible. 
+  
+  ⏱️ TIMESTAMPS:
+  0:00 - Why Prompt Engineering is Dead
+  0:28 - What is an AI Loop? (The ReAct Framework)
+  1:08 - How Anthropic Built a C-Compiler with AI
+  1:23 - The Anatomy of a Working Loop (Context Compaction)
+  1:52 - The Math of AI Failure & "Context Rot"
+  2:40 - How Claude Code Uses Goal & Loop Commands
+  3:10 - Why Fresh Context Beats Long Context
+  3:42 - Guardrails & Human-in-the-Loop
+  3:55 - Mira Murati & Defeating Nondeterminism
+  4:25 - The Final Verdict on Loop Engineering
+  
+  
+  #loopengineering #aiagents #claudecode #promptengineering #softwareengineering #systemdesign #cloudcodes
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries: 
+  what is loop engineering
+  prompt engineering vs loop engineering
+  how to build ai agents
+  claude code loop command
+  react framework ai agents
+  how does claude code work
+  llm context rot explained
+  mira murati thinking machines lab
+  openai codex agent loop
+  building reliable llm agents
+---
+The best AI engineers in the world have quietly stopped writing prompts. They write loops. Here is the shift. A Chap-Alt answers you. An agent acts, you do not ask it to draft the email, you tell it to send the email, and it files a real ticket in linear with the owner assigned. The creator of Cloud Code put it bluntly, I do not prompt Cloud anymore. I have loops that prompt Cloud and figure out what to do. My job is to write loops. He says he has not opened an editor in a month. So what actually is a loop? Anthropic defines an agent as a model using tools in a loop. Gather context, take an action, check the result, and go again, until the job is done. And here is the part people miss. The loop, not the model, is now the unit of engineering. Swap a better model in, and a sloppy loop still fails. The design around the model is the work. This idea is not new. Back in 2022, a paper called React Interleaved One Thing. Think, Act, Observe, and Repeat. That simple cycle beat reason only and act only agents by a wide margin. Every coding agent today is built on it. Look at how OpenAI runs its CodeX agent. Take your input, build a prompt, ask the model. The model either answers, or it asks to call a tool. Run the tool, feed the result back, and ask again, looping until it stops calling tools. Cloud Code runs the same circle on your machine. It reads a file, edits it, runs the tests, sees three failures, reads the errors, and fixes them, turn after turn, with no one typing in between, and loops compose. And Thropic pointed 16-clod agents at one repo, and they wrote 100,000-line C compiler, real enough to build Linux with no central orchestrator. The agent's coordinated through the codebase itself. The cleanest trick is almost stupid. Run the agent in a plain while loop. Do one task, commit, then start a brand new agent with a fresh, clean context and the same instructions. The intelligence lives in the spec, not the session, which brings us to the real skill, context engineering. Not crafting one clever prompt, but curating exactly which tokens the model sees on every single turn. Instructions, tools, files, and history. Garbage in the window, garbage out of the loop. Long loops fill the context window, so good ones compact. Near the limit, the agent summarizes what happened and starts a fresh window from that summary. The newest codex model is trained to do this natively, running across many windows until the task is finished. Here is a rule that changes everything. Never let an agent grade its own homework. Use a separate judge, one agent plans, one builds, and a different one checks, and the loop keeps cycling until the app actually works. Every loop needs a break, a stopping condition, a maximum number of turns, a budget, a clear definition of done, without it, an agent either spins forever burning money or quits the second things get hard. And most of the work is not the agent, it is the environment. In that compiler project, the effort went into the test and the feedback so the model could see for itself whether it was right and correct course without a human. So why do loops still fall apart? Math, if every step is 95% reliable, 10 steps is 60% and 20 steps is 36. Small errors do not add up. They multiply and long loops quietly rot from the inside. METR measured this directly on tasks that take a human a few minutes, agents nail it. On tasks that take hours, success falls below 10%. The length of job a model can finish is doubling every few months, but long horizon still break and passing once is not reliability. Sierra ran the same task eight times in a row. An agent that succeeds 60% of the time on one try drops under 25% when it has to get it right every time. Loops need to be repeatable, not lucky. Then there is context rot. Researchers tested 18 top models and everyone degraded as the input grew, recall falling off a cliff well before the window was even full. The usable context is often a fraction of what is advertised and theropic frames it as an attention budget. Every token you add spends from a finite pool and the more you stuff in, the worse the model remembers any single thing. More context is not more intelligence. It is often less. So what actually works? Ground truth, every step do not trust that the code looks right, run it. Each turn, the agent should pull a real signal from the world, a test result, an error, an exit code. Reality is the only honest grader and theropic just ship this into cloud code. Two commands, goal and loop. You state the success condition and a fast evaluator checks after every turn, whether it is met, test green, link clean. It catches the agent that quietly decides it is done too early. As one engineer put it, the loop is the easy part. The real work is the context and the stop condition. The check that ends it, the budget that caps it, and a target worth aiming at. Get those right and the loop almost writes itself and counter intuitively, fresh context beats long context. Instead of one giant session that slowly drifts, restart from a clean window and a written state file, the memory lives outside the model. So the loop never carries its own confusion forward. For the big jobs, you build a harness. An initializer sets up a long list of features, all marked failing. Then a coding agent takes them one at a time, never deletes a test, and reads the get log before each session. So progress survives even when memory does not. And keep a human at the gate. When open AI shipped its agent, it asks permission before any action that actually matters. And you can interrupt or take over at any moment. Autonomy is great. Until it is reaching for production, the last lesson is the quietest. Keep it simple. The highest return comes from iterating on three things, the environment, the tools, and the prompt. Complexity kills your iteration speed, and iteration speed is the whole game, which brings us to Mira. Mira Morati ran engineering at OpenAI, then left to found Thinking Machines Lab. And she is working a layer beneath the loop, not on agents, but on the ground the agents stand on. Her lab's first result fixed something embarrassing. Ask a model the same question twice, and you can get different answers, not from randomness, but from how the GPU batches the math. They made inference bitwise reproducible, same input, same output, every time. Why does that matter for loops? Because reproducible inference is what lets you reliably train these agents with reinforcement learning. If sampling and training drift apart, the whole thing collapses. Her tool, Tinker, hands that training power to everyone. So this is the real race, not who has the smartest model, but who designs the best loop around it. Anthropic, OpenAI, cursor, and the labs building the foundations underneath. The model is becoming a commodity. The loop is the moat. So here is loop engineering in one breath. Gather context, act, verify, repeat. Give it a separate judge, a stop condition, fresh context, and ground truth. The model is the engine, but the loop is what actually drives. If this finally made loops click, subscribe. Cloud codes takes apart one system like this every single week. Build, solve, deploy, and I will see you in the next one.

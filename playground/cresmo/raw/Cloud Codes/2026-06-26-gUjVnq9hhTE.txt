@@ -1,0 +1,54 @@
+---
+video_title: "Stop Using Docker for AI Agents (Use This Instead)"
+video_id: gUjVnq9hhTE
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=gUjVnq9hhTE
+video_date: 2026-06-26T19:00:00+00:00
+video_description: |
+  If you are building AI agents or deploying machine learning models, you need to stop using bloated Docker containers. WebAssembly (Wasm) and Podman are the lightweight, rootless tools quietly replacing Docker for modern AI infrastructure.
+  
+  In this video, Cloud Codes breaks down the system design of container architecture and why the monolithic Docker daemon is being unbundled. We explore how Red Hat's Podman provides a drop-in, rootless replacement that securely sandboxes AI agents from your host machine. Then, we dive into the future of edge computing: WebAssembly (Wasm) and WASI. With sub-millisecond cold starts and binaries that are 50x smaller than a Docker image, tools like Fermyon Spin are creating the ultimate environment for executing AI functions at scale. Finally, we reveal the hidden engine powering it all (Containerd) and when you should actually still use Docker.
+  
+  If you want to master AI infrastructure and system design, subscribe to Cloud Codes for a new tech breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters (Crucial for Google Search Rich Snippets):
+  0:00 - The Problem with Docker (Bloat & Root Daemons)
+  0:45 - The Unbundling of Docker
+  0:55 - Contender 1: Podman (Rootless Security for AI)
+  1:15 - Contender 2: WebAssembly (Wasm) & WASI
+  2:05 - Wasm vs Docker: Sub-Millisecond Cold Starts
+  2:32 - Why AI Agents Need Wasm Sandboxing
+  2:59 - The Catch: Real World Wasm Performance
+  3:29 - The Secret Engine: Containerd
+  3:53 - The Final Verdict: Docker vs Podman vs Wasm
+  
+  🔗 Concepts & Sources Covered:
+  Docker Daemon vs Rootless Podman (Red Hat)
+  WebAssembly (Wasm) & WebAssembly System Interface (WASI)
+  Fermyon Spin (Acquired by Akamai)
+  Containerd Architecture
+  
+  #Docker #WebAssembly #AI #Podman #SoftwareEngineering #CloudCodes
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries: 
+  stop using docker webassembly
+  docker vs podman for ai pipelines
+  why use webassembly instead of docker
+  how to sandbox ai agents securely
+  wasm edge ai inference explained
+  fermyon spin webassembly tutorial
+  docker vs containerd architecture
+  best container runtime for machine learning
+  rootless containers podman tutorial
+  cloud codes ai infrastructure
+---
+You have heard the take all over your feed, stop using Docker. It is bloated, it is heavy, and some lighter tool is about to kill it. So is it actually true? Today we put that claim on trial. Here's what people are reacting to. A simple app wrapped in a Docker image can balloon past a full gigabyte. An entire operating system shipped just to run a few kilobytes of your code, and it all runs through one process, the Docker Damon. A single program running as root that every command you type has to talk to, one Damon to rule them all, and one Damon to fail. But let me be honest with you right away, Docker is not dying. 67% of developers still reach for it first. The container itself is fine. It is the heavy wrapper around it that people want gone. So the real story is not stop using Docker. It is this. Docker is being unbundled. Two lighter tools are quietly pulling it apart, each carrying away a different piece of the weight. Contender 1 is podman. The same containers you already know, but with no Damon and no root, built by Red Hat to be a true drop in replacement. And it really is drop in. You can literally type alias Docker equals podman, keep typing the exact same commands, and everything just works. Same images, same registries, same muscle memory. Contender 2 is stranger and more ambitious. Web assembly. Instead of shrinking the container, it throws the container out entirely and ships something far, far smaller. Look at the gap that gigabyte Docker image against a web assembly module that can be just a few megabytes, sometimes only kilobytes, 50 to 75 times smaller, and the speed. A container can take hundreds of milliseconds to cold start. A web assembly module starts in under one. That is not an optimization. That is a whole different category. Let us slow down and look at each one properly. Podman first. Remember that single root Damon? Podman just delete it. Every container runs as a normal child process of the command you ran. No middleman, no single point of failure. And it is rootless by default. Your containers run as you, not as the all-powerful root user. Docker can do this too, but in 2025, only about 8% of users had ever switched it on. With Podman, you get it for free. Crucially, Podman speaks the same language. The same open container standard, the same image format, the same Docker files. It pulls and runs your existing Docker images with Docker not installed at all. The name is a hint. Podman thinks in pods, just like Kubernetes. You can group containers together, then have it generate real Kubernetes configs straight from whatever is running on your laptop. And dropping the Damon is not free for nothing. In tests, Podman started containers 20 to 50% faster and running 50 containers at once. It used 15 to 20% less memory. So Podman is the easy switch. If you care about security, lock down environments, or running containers in your build pipeline without a privileged Damon, it is a nearly painless upgrade. Web assembly is the bigger bet. It started in the browser, a way to run fast compiled code on a webpage. Take almost any language, rust, go, see, and compile it down to one tiny portable binary. Then came Wasai, the WebAssembly system interface. It is the part that lets that binary out of the browser with controlled access to files, the network, and the clock. Suddenly, Wasem can run real server software. And the numbers are genuinely wild. A typical container image is 100 to 200 megabytes. The Wasem equivalent is 2 to 5. Sitting idle, it sips under a megabyte of memory, where a container wants 20 or more. That tiny size is why it starts so fast. Fermion spin can cold start a function in under half a millisecond. People call it the 5 millisecond cloud, fast enough to spin up per request, and scale all the way down to zero. It is also sandboxed by design. A Wasem module can do nothing. Touch no file, open no socket, unless you explicitly handed that exact capability. Denied by default, instead of a container that can quietly see the whole machine. And it is genuinely portable. One binary runs on any chip and any operating system. No more works on my machine. No more building separate images for Intel and for ARM. Compile once, run anywhere for real this time. This is not just a research demo. Fermion built spin to deploy Wasmaps with no container layer at all. And in December 2025, Akamai, one of the biggest Edge networks on Earth, acquired them. Here is the twist that says it all. Docker itself now runs WebAssembly. One flag and the very same Docker command launches a Wasm module instead of a container. Docker calls Wasm complementary, not a replacement. Now the honest part, the hype video skip. That under one millisecond figure is the best case. Studies of real-world Wasmaps measured cold starts from 300 milliseconds up to two and a half seconds. The magic shrinks when the work gets real. And Wasm is still young. Full multi-threading and rich networking are only now landing. The library ecosystem is thin. For a database, a message queue, or anything heavy on input and output, a container is still the right tool. So it is not a fight to the death. Wasm wins for stateless Edge functions, tiny portable services, and security critical sandboxes. Containers win for stateful, heavy, messy, real-world systems, different jobs, different tools, and underneath all of it sits a quieter truth. The real engine actually running your containers is not Docker. It is contained now on version two. Even Kubernetes ripped Docker out of the loop years ago. Picture it as layers at the bottom, a standard image, and a runtime like containered on top, an interchangeable face. Docker or Podman or Wasm. The face is what you are really choosing, not the engine, which is why most teams do not pick just one. A very common pattern is Docker on the laptop, Podman in the build pipeline, and containered it in production. They mix the tools to fit each layer. So stop using Docker? Not exactly. The accurate version is less catchy. The big friendly monolith is being unbundled into lighter, sharper pieces, and you finally get to choose which one fits. Keep Docker for the developer experience and local work. Reach for Podman when you need security and no Damon. Reach for WebAssembly when you need Edge speed and scale to zero. The honest answer is, it depends. But the direction of travel is clear. Every one of these tools is pulling the same way. Lighter, Damonless, rootless, and a smaller unit of compute. The heavy whale is being put on a diet. Here is my honest verdict. Docker taught an entire industry how to ship software, and that lesson is not going anywhere. But the layer running underneath it is getting smaller, faster, and safer every single year. Four things to remember. Docker is not dying. It is being unbundled. Podman is the drop-in, Damonless swap. WebAssembly is the smaller, faster unit, and container dead is the quiet engine under them all. So do not stop using Docker. Start understanding what is actually replacing it one piece at a time. If that was useful, you know what to do. I will see you in the next one.

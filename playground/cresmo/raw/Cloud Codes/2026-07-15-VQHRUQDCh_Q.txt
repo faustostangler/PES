@@ -1,0 +1,67 @@
+---
+video_title: "WebAssembly is Finally Replacing JavaScript (Wasm 3.0)"
+video_id: VQHRUQDCh_Q
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VQHRUQDCh_Q
+video_date: 2026-07-15T17:11:10+00:00
+video_description: |
+  Is WebAssembly (Wasm) actually replacing JavaScript? In 2025, Wasm 3.0 finally added Garbage Collection (GC) and the Component Model, officially ending JavaScript's 30-year monopoly on the web browser.
+  
+  In this video, Cloud Codes breaks down the system design of WebAssembly and why it is the biggest shift in web development since JavaScript was invented. We explore how Wasm allows languages like Rust, Go, C#, and Java to run natively in the browser at near-C++ speeds, explaining why companies like Figma and Adobe use it to render desktop-grade software in a browser tab. But the real threat isn't in the browser—it's on the server. We dive into WASI 0.2 and how serverless WebAssembly components are quietly replacing heavy Docker containers with sub-millisecond cold starts and massive security sandboxing.
+  
+  If this helped you understand the future of software engineering and cloud infrastructure, subscribe to Cloud Codes for a new architecture breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters:
+  0:00 - The End of the JavaScript Monopoly
+  1:34 - Why JavaScript Hit a Performance Wall
+  2:21 - The Secret History of asm.js & WebAssembly
+  3:20 - WebAssembly 3.0 Explained (Garbage Collection)
+  5:18 - The Server Front: WASI & The Component Model
+  5:56 - Why Wasm is Replacing Docker Containers
+  7:23 - The Honest Catch: Will Wasm Actually Kill JS?
+  8:37 - Final Verdict: The New Web Architecture
+  
+  🔗 Concepts & Sources Covered:
+  WebAssembly (Wasm 3.0) & WASI 0.2 (Component Model)
+  Garbage Collection (GC) in Wasm
+  Rust, C#, Go & Microsoft Blazor
+  Docker Containers vs Wasm Sandboxing
+  Akamai Acquires Fermyon (Serverless Wasm)
+  #WebAssembly #JavaScript #SoftwareEngineering #Wasm #SystemDesign #CloudCodes
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  User Queries: 
+  is webassembly replacing javascript
+  what is webassembly and how does it work
+  webassembly 3.0 garbage collection explained
+  wasm vs javascript performance
+  wasi component model explained
+  webassembly vs docker containers
+  how to use webassembly with rust
+  why did figma use webassembly
+  microsoft blazor webassembly c#
+  fermyon spin akamai acquisition
+  cloud codes software engineering
+  webassembly vs javascript performance
+  what is wasm webassembly explained
+  webassembly 3.0 garbage collection
+  rust webassembly tutorial for beginners
+  wasi 0.2 component model explained
+  webassembly vs docker containers
+  how figma uses webassembly c++
+  c# blazor webassembly tutorial
+  is javascript dying 2026
+  frontend web development trends 202
+---
+You have seen this headline a hundred times by now. Web assembly is finally replacing JavaScript. So, is the language that runs the entire web about to die? The honest answer up front? No. And also, kind of yes. JavaScript is more entrenched than it has ever been. But in 2025, something underneath it genuinely cracked because the thing being replaced was never the language you type. It is the monopoly, the 30 year rule that a browser speaks exactly one language and nothing else. Web assembly breaks that rule. Right in C++, Rust, Go or C sharp, and it runs inside the browser at near native speed. Not translated into JavaScript, actually executed. And this is not a lab demo. Open Figma right now. That impossibly smooth canvas is C++ compiled to Web assembly and it made their app load more than three times faster. Photoshop runs in a browser tab today. So does Google Earth, full desktop grade software, shipped as Web assembly with nothing to install? So why did this get real specifically in 2025? Because the standard finally grew up. Web assembly 3.0 shipped. Its headline feature has the most boring name in all of computing, garbage collection. Stay with me. That one dull phrase is the whole plot. And it refused to stay inside the browser. Web assembly walked out onto the server and started eating containers alive. Want to tell that real money is moving? Weeks ago, a giant of the global CDN bought an entire serverless Web assembly company outright. Two fronts, one shift, the browser and the server. Let me walk you through exactly what broke and exactly what replaced it. First, some fairness, because I genuinely like JavaScript. It won the web for real reasons. It is everywhere by default. It ships in every browser on earth with zero setup and you can build almost anything with it. Nobody saying actually wants it gone. But JavaScript pays for that friendliness in speed. It is dynamically typed, garbage collected and largely figured out while it runs. For a form or a dashboard, you never feel the cost. For a video editor, a game or a 3D engine, you slam face first into a wall. Developers hit that wall early. Back in 2017, Figma had already written their editor in C++ and cross-compiled it into a weird stripped down slice of JavaScript called asm.js, basically tricking the engine into running it fast. It worked, but it was a hack. That hack worked well enough that the browser makers made it official. In 2017, all four major browsers shipped Web Assembly, a real compact buy code that runs near the speed of native machine code. For the first time, the browser had a serious second language. But version 1 came with a hard limit. A WAZ module got exactly one thing to work with, a single flat block of memory and raw numbers. That is perfect for C++ and Rust, which already managed their own memory by hand down to the byte. It was miserable, though, for nearly every other language. Java, C-sharp, Kotlin, Go. They all lean on a garbage collector to clean up memory for you. To run them in WAZ, you had to compile a whole garbage collector into the module itself. Megabytes of dead weight before your code did a single useful thing. And you might ask, why not just let the browser run native code directly and skip all this? Because native code can read anything on your machine. Web Assembly runs in a locked sandbox that can only do what you allow. Safety was always the entire point. This is the exact wall that 2025 knocked down. Web Assembly 3.0 is a genuinely huge release, 64-bit memory, multiple memories, native exceptions, tail calls, faster vector math, but one feature towers over all the rest. Garbage collection built directly into Web Assembly itself. Now a module can simply borrow the browser's own collector instead of dragging its own along. That megabytes of overhead problem I just described, gone, basically overnight, and the languages came flooding in. In a single year, Java, Kotlin, Dart, Scala, even Okaml shipped real Web Assembly backends, every one of them riding that new built-in collector. Languages that could never realistically touch the browser suddenly could, and efficiently. The 64-bit upgrade matters just as much. Old WAZ was capped at four gigabytes of memory, enough to choke on a big enough Figma file or a giant data set. The new ceiling inside the browser is 16 gigs, and out on a server effectively unlimited. You have almost certainly used this without even noticing. Whole game engines, Unity, Unreal, export straight to Web Assembly now, and heavy tools like CAD software run in a tab. Anything that used to demand a download can increasingly just be a link you click. So who is actually winning on the web right now? Honestly, their Blazer framework lets you build entire frontends in C-sharp with no JavaScript, and it already makes up roughly 42% of all the Web Assembly out there on the live web today. The rest is a fair fight still warming up. C++ through ImScriptin sits around 10%, Rust is barely one and a half, Go is a rounding error. It is early days, no question about it, but every single one of those doors is now standing wide open, and riding it is not exotic at all. You take a perfectly normal Rust function, add one small annotation telling the compiler to target WAZ and build. Outdrops a tiny module that any web page can call as if it had simply been there the whole time. Now here is the part most people completely miss. The browser was never actually the end game for Web Assembly. It was the training ground. The real prize is sitting out on the server. The key that unlocked it is Wasey, the Web Assembly system interface. It hands a WAZ module a safe sandbox way to touch files, the network and the clock. All the things a real program needs with no browser wrapped around it at all. Then 2025 stabilized the big one, Wasey 0.2 and the component model. Fastly describes it perfectly. Software you build like Lego bricks, a Go component snapping straight into a Rust component with no messy glue code wedge between them, and that put Web Assembly on a direct collision course with the container. A Docker container drags an entire operating system around with it and cold starts in hundreds of milliseconds. A WAZ module is just your code sealed inside a tiny sandbox. How much lighter are we talking? A WAZ function can cold start in under a millisecond, a single thousandth of a second using a small fraction of the memory a container demands. For serverless that is not an improvement. It is an entirely different category and it is safe by default, which is the quiet superpower here. A WAZ module can do absolutely nothing, touch no file, open no socket, unless you explicitly hand it that permission. That is exactly what you want when you are running a stranger's code at the edge. Even Docker itself saw this coming. Docker added first class support for running Web Assembly containers and Kubernetes can now schedule WAZ workloads right beside your normal ones. The tools that define the last decade are quietly making room for it, which is why the entire edge went all in. Cloudflare workers, fastly compute, fermion, all of them running Web Assembly in production, spread across hundreds of data centers, executing right next to your users instead of an ocean away. And then the money spoke loudly. In December 2025, a Kami, one of the biggest CDNs on the planet bought fermion. The company building serverless Web Assembly outright. And companies like Shopify are already swapping containers for WAZ on their hottest, most performance critical paths. Okay, now let me pour some cold water because that title really is a little unfair. The raw adoption numbers are humble. Web Assembly shows up on only about 0.35% of all websites, and that figure has been basically flat for two straight years now. But averages lie to you. Look at where it actually lives. On the top 1000 sites, the ones with real traffic and real performance budgets, adoption climbs to around 2%. It wins exactly where the work is hardest and the stakes are highest. And I will not oversell it. Web Assembly still cannot touch the page directly. It has to reach back through JavaScript just to change a single pixel. The debugging story is rougher, and the tooling is younger. This is a bet on the trajectory, not a finished product you deploy blindly. Because JavaScript, it still boots every single one of those WAZ amps. It still owns the DOM. Every button, every click, every pixel of the page runs through it. You literally cannot start Web Assembly without it. JavaScript is the host, and it is not going anywhere. So what genuinely dies here? Not the language? A belief. The old assumption that the web only runs JavaScript, that serious software cannot possibly live inside a tab, and that every tiny server function needs a whole operating system bolted underneath it. The shape that replaces it is far simpler than the hype. JavaScript is the glue, and the friendly face of the app. Web Assembly is the engine room, where the heavy lifting quietly happens. They are partners now, not rivals fighting over a single throne. So should you actually care? If you build crud apps and call APIs all day, honestly, not yet, and that is completely fine. But if you write the hot loops, the tooling, the edge functions, the parts where raw speed is the product, the floor is genuinely shifting under you. Here is my real advice. Do not go rewrite anything. Just learn what compiles to Web Assembly. A little rust, some go, some C sharp, and keep one eye on that component model. That is where the next decade of the web is being quietly poured. Right now, JavaScript built the web, and it earned every bit of that. It is just not going to run all of it entirely by itself anymore. If this reframed how you see your own stack, subscribe. This is where we take the hype apart and show you the receipts underneath.

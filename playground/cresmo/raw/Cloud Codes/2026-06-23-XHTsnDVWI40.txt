@@ -1,0 +1,68 @@
+---
+video_title: "Build Your Own MCP Server!"
+video_id: XHTsnDVWI40
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XHTsnDVWI40
+video_date: 2026-06-23T23:30:30+00:00
+video_description: |
+  Ever wanted Claude or ChatGPT to read your local files, write to your database, or query your custom APIs without fragile, custom-built connectors? In this step-by-step tutorial, we build a custom Model Context Protocol (MCP) server from scratch using FastMCP, test it in the MCP Inspector, and configure it directly inside Claude Desktop.
+  
+  We explore the operational specifics of MCP development: how the FastMCP Python SDK reads type hints and docstrings to auto-generate JSON schemas for the LLM, how to configure the claude_desktop_config.json file, how to debug payloads inside the MCP Inspector, when to use stdio pipes versus Streamable HTTP transports, and how to scale remote deployments securely using OAuth 2.1.
+  
+  📌 Timestamps:
+  0:00 - Introduction: Connecting Claude to Tokyo's Live Weather
+  0:23 - The Custom Connector Problem & The MCP Solution
+  0:49 - What is an MCP Server? (JSON-RPC over Pipes)
+  1:12 - The Three Server Primitives: Tools, Resources, and Prompts
+  1:32 - Step 1: Choosing Python and FastMCP
+  1:56 - Step 2: Ingestion (Token Chunking, Size Limits & Vector Embeddings)
+  2:12 - Designing Tools as Team Contracts (The Agent-Computer Interface)
+  2:30 - Step 3: Decorating Your First Tool with Python Type Hints
+  2:42 - The Magic of Docstrings: How the AI Decides to Call You
+  3:02 - Step 4: Booting the Server via Local Stdio Subprocesses
+  3:23 - Step 5: Debugging with the MCP Inspector
+  3:43 - Step 6: Integrating Your Server with Claude Desktop
+  4:02 - Step 7: Handshake Hand-offs & Automatic Tool Discovery
+  4:25 - Request Flow: Execution Logs & Response Validation
+  4:49 - Best Practices for Designing Clean MCP Tools
+  5:10 - How Servers Expose Tools, Resources, and Prompts
+  5:25 - Prompts & Templates: Standardizing Workflows
+  5:34 - Handling Runtime Errors & Server Crasies
+  5:53 - Going Remote: Switching from Stdio to Streamable HTTP
+  6:17 - Remote Security: Scoped Tokens and OAuth 2.1
+  6:45 - Deployment: Dockerizing and Shipping to the Cloud
+  7:06 - Hardening Your Server: Evals, Tests, and Logs
+  7:29 - The Mid-2026 Spec: Stateless HTTP, Extensions, and MCP Apps
+  7:47 - Publishing to the Official MCP Registry
+  8:09 - Common Mistakes to Skip (And Anthropic's Stewardship)
+  8:32 - Summary & Outro (Cloud Codes)
+  
+  🔗 Resources & References:
+  - Model Context Protocol (MCP) Official Documentation (modelcontextprotocol.io)
+  - FastMCP Python Library Setup Guide (gofastmcp.com)
+  
+  If you found this database and protocol architecture comparison useful, subscribe to Cloud Codes. We take apart one systems design, network protocol, or backend framework like this every week. Build, solve, deploy.
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries : 
+  how to build mcp server
+  how to build mcp server python
+  fastmcp tutorial code step by step
+  claude desktop config json mcp configuration
+  mcp inspector testing tools
+  model context protocol tools resources prompts
+  streamable http sse transport mcp
+  mcp python virtual environment setup
+  how to deploy mcp server to docker
+  oauth 2.1 scoped tokens mcp security
+  mcp app server rendered ui
+---
+Right now, inside this Cloud window, I'm going to ask it the one thing it has no way to know, the live weather in Tokyo. Watch, it doesn't guess. It reaches out, calls a tool I wrote myself, and answers with real data. That tool is an MCP server. By the end of this video, you'll have built one from an empty folder to a working server any AI can use. Here's the problem MCP solves. Every AI app, Cloud, cursor, chat GPT needs to touch your stuff, your database, your files, your APIs. Before MCP, every one of those connections was a custom one-off integration. NApps times M tools is a tangle nobody can maintain. An MCP server cuts that knot. You build the tool once and every client speaks to it the exact same way. So what actually is an MCP server? Strip away the acronym and it's almost boring. A small program that exposes some capabilities and answers messages over a standard protocol. The model sends a request. Call this tool with these arguments, your server runs the code and sends the result back. That's the whole idea. Underneath, it's just JSON RPC flowing over a pipe. Your server can expose three kinds of things, tools, actions the model can take like search orders or send an email, resources, read only data it can pull in like a file or a record and prompts reusable templates a user can trigger. Tools are the headline. Most servers start with one good tool and grow from there. Step one is picking your language. There are official SDKs for Python, TypeScript, Go, Rust and more. But in 2026, roughly 70% of the servers out there are built with fast MCP. The Python library bundled right into the official SDK. It's the fastest path from zero to running. So that's what we'll use. TypeScript is a first class second choice. Let's build new folder, fresh virtual environment and one install, pip install MCP. That single package named just MCP gives you the server, the client and fast MCP all at once. Then four lines of code, import fast MCP and create a server with a name. That object is your whole server. Everything else hangs off it. Now the good part, your first tool. Write an ordinary Python function, give its arguments real type hints and write a plain English doc string that says what it does. Then drop one decorator on top at dmcp.tool. That is the entire ritual. You didn't write a schema, you didn't register anything by hand. The function is the tool. Here's the magic inside that decorator. Fast MCP reads your type hints and turns them into a JSON schema. The model can trust it reads your doc string and shows it to the model as the tools description. So the words you write in that doc string are literally the instructions the AI uses to decide when to call you vague doc string confused agent crisp one clean calls two more lines bring it to life if name equals main than MCP.run run the file and your server boots speaking over something called STDIO standard in standard out no port no web server it's a little program waiting on a pipe for messages your server is alive but nothing is talking to it yet before you wire it into anything test it in isolation the MCP inspector connects straight to your server and lets you list its tools fill in arguments and call them by hand you see the exact request go out and the exact result come back if it works in the inspector it'll work in clod always debug here first now let's hand it to clod clod desktop reads a config file clod desktop config dot json you add a few lines a name for your server and the command that launches it restart clod and there it is your tool listed and ready ask a question that needs it and the model calls your code the loop is closed what happens the instant they connect a handshake the client says initialize and list what it supports your server replies with its protocol version and its own capabilities they agree on a common language then the client asks tools slash list and your server hands over every tool its name its arguments and that all important description discovery is automatic then comes a real call the model decides it needs your tool and emits a tools slash call message the tool name and a little JSON blob of arguments your server validates them runs your function and returns the result the model reads that result and keeps going request execute respond that tiny round trip repeated is the entire mechanism a few rules separate a tool the model loves from one it avoids keep each tool small and single purpose name it like a verb describe exactly when to use it return clean structured data not a wall of text and design the arguments so they're hard to get wrong you're writing for a brand new teammate who only reads the doc string tools are actions resources are data same pattern different decorator at mcp.resource with a you r i like weather colon slash slash forecast the app or the model can read that resource to pull context in without taking an action use a tool when something should happen use a resource when you're simply exposing something to read the third primitive is prompts prewritten reusable message templates your server offers up decorate a function with at mcp.prompt return the messages and it appears in the client as a ready made command the user can pick think of them a slash commands you ship alongside your tools the same expert workflow one click away real tools fail the API is down the input was bad the record doesn't exist don't crash and don't lie catch the error and return a clear message describing exactly what went wrong the model is surprisingly good at reading those messages and recovering retrying asking the user or trying another path a good error is part of your tools contract now where does your server live two transports stdio what we've used launches your server as a local subtest on the user's own machine it's the simplest and the default for desktop tools the other is streamable HTTP your server runs as a real web service that any number of clients reach over the network local versus remote that's the whole choice going remote unlocks a lot one server many users central updates nothing to install with fast mcp you flip a single argument run over HTTP instead of stdio and now you've got one endpoint serving everyone the 2025 spec folded all of this onto a single streamable HTTP endpoint so there's no juggling separate connection types anymore the moment your server is on the network it needs a bouncer mcp's answer is ooth 2.1 the client gets a scope token your server checks it on every request and you grant only the narrow permissions a given user actually needs never ship a remote server that any anonymous caller can hit once you leave the desktop ooth is not optional security goes deeper than ooth your tools are hands the model can use so treat every argument as untrusted input validated sanitize it scope it give each tool the least privilege it needs to do its job and for anything destructive deleting paying sending put a human confirmation in the path the model is powerful your guard rails keep it safe deploying a remote server is ordinary back end work rapid and a docker container pull your secrets and API keys from environment variables never hard code them and ship it to any host that runs containers because it's just HTTP underneath it scales the way every other web service you've deployed does nothing exotic here before you call it done harden it keep using the inspector as you add tools add logging so you can see what the model actually asked for and write a few e-vals fixed inputs with known good outputs so you'll know the instant a change breaks a tool servers that get trusted are the servers that got tested a quick word on versions because mcp moves fast the current stable specification is dated November 2025 the next release landing in mid 2026 is a big one a stateless core that scales on plain HTTP and extensions framework plus tasks for long running jobs and mcp apps for server rendered UI the SDKs track the spec so keep your current built something useful publish it the official mcp registry is the central place servers get listed and discovered already over 10,000 public servers and climbing fast you push your servers metadata and clients and directories can find it it's how your weekend project turns into something other people actually install and here's the payoff for doing it the standard way the exact same server you just built works unchanged in clawed in cursor in chat gpt in your own custom agent anything that speaks mcp you wrote the integration once and the whole ecosystem can use it that is the entire promise of the protocol delivered and this isn't a single vendor experiment and thropic open source mcp and at the end of 2025 it moved under the linux foundation mutual community governed with a public roadmap the protocol you're building on isn't going to vanish or get locked behind one company it's quietly becoming the usbc port for ai tools a few traps to skip don't cram 20 actions into one mega tool the model can't tell them apart don't return raw gigantic blobs summarize don't skip the dock strings they aren't optional comments they're your interface and don't expose a destructive tool with no confirmation dodge those four and you're already ahead of most servers out there so here's the whole build start to finish install the sdk make a server write a function and decorate it as a tool run it over sddio test it in the inspector connect it to clawed then grow it resources prompts error handling and when you're ready go remote with auth eight steps from an empty folder to a tool any AI can use that's how you build your own mcp server in 2026 and honestly the hardest part is deciding what tool to build first if this finally made the protocol click subscribe to cloud codes for more builds just like it now go expose something useful i'll see you in the next one

@@ -1,0 +1,60 @@
+---
+video_title: "Why AI Tokens Are So Expensive (The Real  Reason)"
+video_id: YdkMwsbiWSw
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YdkMwsbiWSw
+video_date: 2026-07-08T19:30:14+00:00
+video_description: |
+  Every time you talk to an AI model like GPT-5.5 or Claude Sonnet, a meter is running. But why does output cost 6 times more than input? The secret is hidden in the hardware.
+  
+  In this video, Cloud Codes breaks down the system architecture and hardware economics behind Large Language Models (LLMs). We look under the hood of data-center GPUs like the Nvidia H100 to explain the "Memory Bandwidth Wall." You will learn the critical difference between the Prefill and Decode phases, why the KV Cache forces models to re-read 140GB of memory for a single token, and how open-source inference engines like vLLM use PagedAttention and Continuous Batching to increase throughput by 20x. Finally, we explore exactly how prompt caching, Speculative Decoding, and Mixture of Experts (MoE) are driving the cost of AI APIs to zero.
+  
+  If this helped you understand the intersection of AI infrastructure and software engineering, subscribe to Cloud Codes for a new architecture breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters (Crucial for Google Search Rich Snippets):
+  0:00 - The Hidden Cost of AI Tokens
+  0:39 - Decode vs Prefill Explained
+  1:06 - The Problem: Attention & The KV Cache
+  2:11 - The Memory Bandwidth Wall (Nvidia H100)
+  2:58 - Continuous Batching & PagedAttention (vLLM)
+  4:16 - Why Output Tokens Cost 6x More Than Input
+  5:18 - Prompt Caching & Offline Batching
+  6:33 - The Fix: Speculative Decoding & MoE Models
+  7:31 - How to Lower Your AI API Bill
+  8:02 - The Final Verdict on AI Hardware
+  
+  🔗 Concepts & Sources Covered:
+  LLM Inference Architecture & System Design
+  Prefill vs Decode & The Memory Bandwidth Wall
+  vLLM (PagedAttention & Continuous Batching)
+  Speculative Decoding & Prompt Caching
+  OpenAI API & Anthropic API Pricing Economics
+  
+  #LLM #vLLM #ArtificialIntelligence #SoftwareEngineering #SystemDesign #CloudCodes
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  Your Queries: 
+  why are llm tokens so expensive
+  how vllm works pagedattention
+  what is kv cache llm
+  decode vs prefill llm explained
+  continuous batching llm tutorial
+  how does prompt caching work anthropic
+  speculative decoding ai models
+  memory bandwidth wall nvidia h100
+  openai api pricing explained
+  how to optimize llm inference cost
+  cloud codes ai system design
+---
+Every time you talk to an AI, a meter is running, not per message, not per minute, per token, and a token is not a word. It is the single most expensive tiny unit in modern computing, and almost nobody can tell you why. You can explain this as a talking head. But the honest answer is a systems answer. It lives in the hardware. So let us actually open the machine and watch exactly where your money goes, one token at a time. Here is the clue everyone walks straight past. Look at any price sheet. GPT 5.5 charges $5 to read a million tokens, but $30 to write them. Writing is six times more expensive than reading. That gap is the whole story. That is because every request runs in two completely different modes. First, pre-fill. The model reads your entire prompt at once. Then decode, it writes the answer back one token at a time, and it can never skip ahead. Pre-fill is the cheap path. Every token in your prompt is processed in parallel, so the GPU runs flat out. Matrix multiplies stacked wall to wall. This is exactly what a chip is built for. Peer compute near full utilization. Decode is the expensive half, and here is the twist. To produce just one new token, the GPU has to read the entire model every single weight out of memory. Billions of parameters streamed from scratch for one token. Why reread everything? Because of attention, the one place in the whole network where tokens actually talk to each other. Each new word has to look back at every word before it. Nothing else in the model mixes the sequence. Doing that from scratch, each step would be quadratic, slower and slower as the chat grows. So the trick is the KV cache. Store every token's keys and values once, and never recompute the past. This is what makes decoding fast at all, but that cache is not free. It lives in the GPU's fastest, scaricest memory, and it grows with every single token in the conversation. A long chat quietly inflates a cache that can swell to tens of gigabytes. So how are tokens cheap at all? One word, batching. You read the model's weights out of memory once, and use them to serve dozens of users in the very same pass. The cost of that giant memory read gets split across everyone. Let us put real numbers on it. A top data center GPU moves about 3.3 terabytes a second. A 70 billion parameter model weighs 140 gigabytes. So one token takes roughly 40 milliseconds just to read the weights. About 24 tokens a second for a single user. And while that read is happening, the GPU's compute sits almost idle, under 5% used. The chip is a Ferrari stuck in traffic. The bottleneck was never the maths. It is memory bandwidth. How fast you can move the weights? Not how fast you can multiply them. This is why batching is close to magic. Read those 140 gigabytes once, then push 64 users through the same weights before you reload. One expensive memory trip, 64 answers, throughput multiplies while the cost per user quietly collapses. The naive way to batch throws that away. You line up requests, pad them all to the same length, and wait for the slowest one to finish. Short prompts sit idle, burning padding, finish slots stay empty, and the GPU weighs half its life doing nothing. The fix that powers modern serving is continuous batching. The scheduler works token by token. The instant one requests finishes, its slot is handed straight to the next in the queue. No padding, no waiting, ragged, packed, always full. It can lift throughput more than 20 times. The other half is how you store those growing caches. VLLM borrowed an idea from operating systems. Paged attention. Cut the KV cache into small pages, hand them out on demand, leave no wasted gaps. Suddenly you fit far more users onto the very same card. Now the price sheet finally makes sense. Reading your prompts is pre-fill. Parallel, batched, cheap. Writing the answer is decode. Sequential, memory bound, one costly pass per token. That is why output is always the pricey side of every single bill. Context length is the other silent cost. Feeding a model 26,000 tokens of history means a giant pre-fill and a giant KV cache. Pulling only the 7,000 tokens you actually need through retrieval is a fraction of the price for the very same answer. And this is how some models got shockingly cheap. A mixture of experts only wakes up a slice of its parameters for each token, so it moves far fewer bytes per token. Less memory traffic, lower cost. That is the trick hiding behind the budget frontier models. There are really two speeds you feel. Pre-fill sets your time to first token, how long before the answer begins. Decode sets tokens per second. How fast it streams after. That is why the cursor pauses. Thinks, then suddenly races. Two different bottlenecks. Back to back. Line the models up and the pattern is everywhere. GPT 5.5, 5 and $30. Clawed sonnet 5, 2 and 10. DeepSeq V4 Pro, well under a dollar. Mini Max M3, 30 cents to read. Different labs, same shape. Output costs more than input every time. That ratio, 2 to 6 times, is not marketing. It is decode versus pre-fill. Written straight into the invoice. When a model charges you far more to speak than to listen, it is telling you exactly which half of the work was memory bound. The providers know decode is the wall, so they sell you ways around it. Prompt caching stores the kv cache of a prompt you reuse, a system message, a long document, and serves it again at up to 90% off. Same tokens, a tenth of the price, because the expensive read already happened. For the provider, the entire game is utilization. Every idle millisecond of that GPU is money set on fire. Pack more users per card, keep the batch full, and the price per token can fall. Your cheap token is really somebody else's perfectly packed batch. There is a blunter discount too. Send your work as an offline batch, with no latency promise, and the provider gets to pack it into perfectly full batches whenever the GPU is free. In return, often half price. You are literally being paid to improve their utilization. So what are you actually buying? Not a word. Each output token is one full sweep across a model far too big to fit in cache, stream from memory, and unless you are sharing that sweep with others, you are paying for the whole trip alone. And what sits under the whole meter? One of these GPS costs tens of thousands of dollars and drinks kilowatts of power around the clock. Your token price is that hardware and that electricity, sliced into billions of tiny pieces, and handed back to you. Which is why the labs are attacking decode head on. Speculative decoding lets a small model guess several tokens ahead, and the big model verifies them all in one memory pass. Several tokens for the price of a single read, same output, a fraction of the trips. Others fuse the whole decode step into a single mega kernel, so the GPU never stalls between operations and the memory pipeline stays completely full. Every one of these tricks is chasing the exact same enemy. Wasted trips out to memory, and the bluntest lever of all is precision. Shrink each weight from 16 bits down to 8, or even 4, and you have or quarter the bytes you move per token. Smaller weights, fewer trips, cheaper and faster, at a small cost in quality, added all up, and prices are in freefall. The same intelligence that cost a small fortune two years ago is now a rounding error, because every layer of the stack, from batching to caching to quantizing to speculating, is squeezing more tokens out of every memory read. So here is the whole chain in one breath. A token forces a decode step. A decode step rereads the model out of memory. Memory bandwidth is the wall. Batching amortizes it. The KV cache preserves it, and everything you pay traces straight back to that. If you build with this, the moves get obvious. Keep prompts short, reuse cache context, pick the cheapest model that clears the bar, and let the provider batch for you. You are not paying for words. You are paying for memory trips, so simply take fewer of them. Four numbers to keep. Six times, how much more output costs than input. 140 gigabytes. Read per token per model. 20 times. The throughput continuous batching can unlock. And one, the number of memory reads batching needs to serve a whole crowd. A token is not a word. It is a GPU reading its entire memory once, and the whole industry is now a race to make that one read count for more. If this rewired how you see your AI bill, subscribe. This has been CloudCodes.

@@ -1,0 +1,64 @@
+---
+video_title: "Agent Loop Explained in 10 Minutes..."
+video_id: Vwn19n8W-qE
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Vwn19n8W-qE
+video_date: 2026-07-06T12:00:05+00:00
+video_description: |
+  How does an AI agent actually work under the hood? It isn't magic—every autonomous AI (like Claude Code or Cursor) is just a large language model wrapped inside a simple "Agent Loop" that allows it to gather context, use tools, and verify its own work.
+  
+  In this video, Cloud Codes breaks down the system design of AI Agents in under 10 minutes. We explore the 4 core components of an autonomous agent: the model, the tools, the context window, and the stop condition. You will learn how the ReAct framework (Reason + Act) creates an intelligent loop, and how agents use protocols like MCP to search the web, execute shell commands, and read databases. Finally, we explain why agents fail in production (Context Rot & Compounding Errors), how to build guardrails like compaction and human-in-the-loop approvals, and when you should actually use a traditional workflow instead of an AI agent.
+  
+  If this helped you understand complex AI system design and software engineering, subscribe to Cloud Codes for a new infrastructure breakdown every single week! Build, solve, deploy.
+  
+  ⏱️ Video Chapters:
+  00:00 - Introduction: An autonomous agent in action
+  00:23 - The core concept: It is just a loop
+  00:57 - The code: How the while-loop works
+  01:14 - The three phases: Gather, Act, Verify
+  01:49 - The superpower: Catching its own mistakes
+  02:58 - Part One: Tools (giving the model hands)
+  03:18 - Part Two: Context (the agent's short-term memory)
+  04:23 - Delegation: Using parallel sub-agents
+  05:52 - MCP: The standard protocol for connecting tools
+  06:50 - The biggest weakness: How errors compound
+  07:15 - Context rot and how compaction solves it
+  08:25 - Guardrails: Keeping a human in the loop for risky actions
+  09:04 - Recap: The entire machine summarized
+  
+  🔗 Concepts & Sources Covered:
+  The AI Agent Loop (Anthropic Claude SDK)
+  ReAct Framework (Reasoning and Acting)
+  Model Context Protocol (MCP) Connectors
+  Context Rot & Compaction
+  
+  #aiagents #systemdesign #softwareengineering #cloudcode #artificialintelligence #caludecode
+  
+  🔔 Subscribe: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  💙 Become a Member: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w/join
+  
+  🐦 Twitter/X:
+   https://x.com/cloud_codes
+  
+  💬 Discord: 
+  https://discord.gg/HVnH9SY48
+  
+  User Queries : 
+  Agent loop
+  how ai agents work
+  ai agent loop explained
+  how to build an ai agent
+  react framework ai agents
+  what is an autonomous agent
+  claude code ai agent tutorial
+  why do ai agents hallucinate
+  context window rot explained
+  mcp model context protocol ai agents
+  human in the loop ai
+  agent vs workflow ai
+  cloud codes ai system design
+---
+You give an AI agent a single sentence, fix the failing test, refactor this file, book the flight, and then something strange happens. It goes quiet, and it works. It reads your files, runs commands, hits errors, tries again, and a few minutes later, hands you the finished thing with no further instructions. So what is actually running in that gap? Here is the honest answer. There is no magic in there. Underneath every agent you have ever used is one small idea, repeated, a loop. The model takes a step, looks at the result, and decides the next step over and over until the job is done. To see why the loop matters, start with the model on its own. A language model is basically a function. Text goes in, text comes out, and then it forgets everything. It has no memory of a minute ago, and it cannot touch a single file. Powerful, but frozen, a brain in a jar. The loop is what breaks it out of the jar, and in code it is almost embarrassingly simple. While the task is not done, ask the model what to do, do that one thing, feed the result back, and ask again. That tiny while loop is the entire difference between a chatbot and an agent. Anthropic describes that loop in three moves. Gather context, take action, then verify the work, and repeat. Almost every serious agent today from coding tools to research assistants is running some version of these three steps in a circle. Watch one lap, the task is to fix a failing test. The model thinks, then acts, it calls a tool to run the tests. It reads the red output, reasons about the cause, edits a line, and runs the test again, green. Only now does it stop. Think, act, observe, repeat, and notice the part most people miss, the agent checked its own work. Its first attempt was wrong, the tests caught it, and it looped back and fixed it, with nobody watching. That single ability to catch its own mistakes and try again is what separates a real agent from a lucky guess. Of course, a loop that never stops is a nightmare, so every agent carries a stop condition. Quit when the task succeeds, quit when it is truly stuck, or quit when it runs out of budget, a cap on steps, on tokens, or on dollars. Knowing when to stop is a feature, not an afterthought. Why does this suddenly matter so much? Because the loop is scaling fast. Researchers at METR found the length of tasks an agent can finish on its own, has been doubling roughly every seven months. Agents went from handling a few seconds of work to running unattended for hours. So let us take the loop completely apart in three chapters. First, the four parts every loop is built from, then the three phases in detail, gather, act, and verify. And finally, where the loop breaks and how real systems keep it on the rails. Part 1. Tools. On its own, the model can only produce text, so we handed a menu of functions it is allowed to call. Read a file, run a shell command, search the web, edit code. Each tool has a name and a set of arguments. Tools are the hands. Without them, the model can think but never act. Part 2. Context. Every turn, the loop keeps a running transcript. The original task, each action it took, and everything it observed. That growing record is the agent short-term memory. It is the only reason Step 10 has any idea what happened back at Step 1. Put it together, and every agent is really just four moving parts. The model that decides, the tools that act, the context that remembers, and the stop condition that ends it. Swap the model for a smarter one, add new tools, change the goal, the loop wrapped around them stays exactly the same. That is why one good harness can run 100 different agents. Phase 1. In-depth. Gather context. Before touching anything, a good agent goes and finds what it needs. It greps the code base, opens the failing file, reads the error, pulls the relevant docs. It does not dump the whole repository into its head. It pulls in just a few pieces that matter for this exact step. The folder structure itself becomes a kind of memory that agent can search on demand. And when there is simply too much to read, it delegates. The main agent spins up sub-agents in parallel, each with its own clean context, each chasing one narrow question. And they report back only the useful sentence, not the entire haystack. It is how an agent searches a mountain without drowning in it. Before diving in, the more capable agents also make a plan. They write themselves a short to-do list, then work it item by item, checking each one off as it lands. It sounds trivial, but that little checklist is what keeps a long loop from wandering off and losing the thread halfway through. Phase 2. Take action. And this is the actual handshake. The model does not run anything itself. It emits a structured request, naming a tool and its arguments. The harness around it runs that tool, captures the output, and hands the result back as the next observation. Then the loop turns again. Most of those tools are small and specific. And that is on purpose. A few sharp, well-named tools beat 100 vague ones the model has to squint at. But one tool is a universal key. The shell. Give an agent bash, and it can run almost any command a human developer could. A fast agent also does not wait in line. When several tool calls do not depend on each other, read three files, run two searches, it fires them all at once and reads the results together. Same loop, just wider, and often several times quicker. To reach the outside world, Slack, GitHub, Google Drive, your database, agents increasingly speak one shared protocol called MCP. Instead of handwriting a fragile integration for every service, you plug in an MCP server and its tools simply appear in the menu, authentication and all. Phase 3. Verify. The best feedback is cold hard rules. Run the linter, run the tests, compile the types. If anything fails, the agent gets the exact error and loops again. This is why an agent that writes TypeScript and tests it is far more reliable than one that just emits code and hopes. Some work cannot be checked with a test, so the agent takes a screenshot of the page it built and actually looks at it. Is the layout right? Is anything overlapping? Then fixes what it sees. And for fuzzy things, like whether an email sounds right, a second model can act as a judge and grade the answer. Now the hard part, because a loop is not automatically smart. Its greatest weakness is that error is compound. One wrong observation quietly poisons the next decision, which poisons the one after that. And 10 steps later, the agent is marching confidently in completely the wrong direction and worse it has no idea anything went wrong. Every mistake becomes the ground truth for the next step. The other silent killer is context rot. That transcript never stops growing. And once it fills most of the window, and the topic starts compacting at around 167,000 tokens of a 200,000 token window, the model begins losing the thread and misreading its own history. The fix is compaction. When the context gets close to full, the agent summarizes everything so far into a tight recap, throws away the raw history, and starts a fresh window from that summary. It is how an agent can keep working for hours on end without simply forgetting the plan. And for anything that has to outlive the window entirely, the agent writes notes to a file, a scratch pad, a memory file, and reads them back later. The context is the short term memory that fills up and gets wiped. The file system is the long term memory that stays. You also fence the loop in with hard limits, a ceiling on steps, on tokens, on money, and on wall clock time. If any of them runs out, the loop stops and reports back. Think of it as a seatbelt. It will not make the agent smarter, but it stops a confused one from running all night. And for anything dangerous, you keep a human in the loop. Reading a file can happen freely, but deleting data, deploying to production, or spending money pauses the loop and asks for a yes. The agent proposes, a person approves, autonomy where it is cheap, and permission where it is costly. One last honest point, not every problem needs a full agent. If the steps are fixed and known ahead of time, a plain workflow. Do this, then this, then this, is cheaper, faster, and more predictable. The loop is for open-ended work where you genuinely cannot script the path in advance. Use the least power that solves the job. So that is the whole machine. Gather context, take action, verify and repeat. A model to decide, tools to act, context to remember, and a stop condition to end it. Wrap those four in a while loop, add a few guardrails so it cannot hurt itself, and you have an agent. Everything fancier is just a variation on this one shape. The model gets the headlines and the benchmark scores. But the thing that turns a clever text predictor into something that can fix a bug, research a question, or run for an hour on its own is the humble loop wrapped around it. Understand the loop, and you understand every agent there is. If this made the agent loop finally click, subscribe. That is exactly what this channel does, one system at a time. I will see you in the next video.

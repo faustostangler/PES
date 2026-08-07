@@ -1,0 +1,54 @@
+---
+video_title: "How MCP Works Timely and Under Served Visually"
+video_id: N7qhMnENO4Y
+channel_name: "Cloud Codes"
+channel_id: UC0DZj1PNa_Fp0MU6uPSKv5w
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=N7qhMnENO4Y
+video_date: 2026-06-22T03:30:11+00:00
+video_description: |
+  Brilliant large language models are historically cut off from your local calendar, your local files, and your enterprise databases. Before MCP, every AI tool required custom, fragile connectors. The Model Context Protocol (MCP) collapses this fragmentation into a unified, universal standard—acting like a USB-C protocol for AI.
+  
+  In this video, we go under the hood of MCP's architecture, exploring its three primary roles: the host, the client, and the server. 
+  
+  We break down the protocol's core primitives (tools, resources, and prompts), explain the communication handshakes over JSON-RPC, compare its transport layers (stdin/stdout vs. server-sent events), and map out the protocol's historic adoption timeline—from Anthropic’s late 2024 launch to the Linux Foundation donation in December 2025.
+  
+  📌 Timestamps:
+  0:00 - Introduction: Why AI is Cut Off from Your Files & Databases
+  0:24 - The Universal Connector: Model Context Protocol (MCP)
+  0:58 - The Host, Client, and Server Architecture
+  1:05 - Connection Handshakes & Capability Negotiation
+  1:17 - How Servers Expose Tools, Resources, and Prompts
+  1:40 - Sampling and User Elicitation: Interactive Collaboration
+  1:46 - Under the Hood: Data Layers (JSON-RPC) vs. Transports (stdio vs. SSE)
+  2:17 - Stateful Sessions: Real-Time Updates Without Re-polling
+  2:41 - The Adoption Curve: March 2025 Tipping Point & Linux Foundation Donation
+  3:20 - Debunking the Myths: MCP vs. Standard APIs vs. Agent Protocols
+  3:42 - Security Risks, OAuth, and Enterprise Gaps
+  3:58 - Recap & Summary (Cloud Codes)
+  
+  🔗 Resources & References:
+  - Model Context Protocol (MCP) Official Documentation
+  - Linux Foundation MCP Announcement (December 2025)
+  
+  If you found this database and protocol architecture comparison useful, subscribe to Cloud Codes. We take apart one systems design, network protocol, or backend framework like this every week. Build, solve, deploy.
+  
+  👇 SUBSCRIBE & WATCH NEXT
+  Subscribe for a new systems deep-dive every week: https://www.youtube.com/channel/UC0DZj1PNa_Fp0MU6uPSKv5w?sub_confirmation=1
+  
+  📱 CONNECT WITH US
+  Twitter/X:  x.com/cloud_codes
+  Join our developer community: discord.gg/HVnH9SY48 
+  
+  User Queries :
+  model context protocol anthropic explained
+  how does mcp work under the hood
+  mcp server vs standard api
+  mcp tools resources prompts
+  how to connect claude to local database mcp
+  openai chatgpt mcp integration
+  mcp linux foundation December 2025
+  mcp app interactive interface
+  server sent events sse mcp
+---
+Here's something strange about even the smartest AI, ask it about your own calendar, your files, your company's database, and it just can't. Brilliant and completely cut off from your world. So for a while, we wired it up by hand. Every AI app bolted to every tool with its own custom connector, 10 apps, 10 tools, that is 100 fragile integrations. Each one built and maintained from scratch. Then one protocol collapsed that whole mess into a single universal plug, build it once, and any AI can use it. People call it the USB-C for artificial intelligence. This is the model context protocol, MCP, and theropic open-sourced it in late 2024, and in barely a year it became the way AI connects to everything. By the end, you will know exactly how it works, because once it is wired in, this just happens. You ask one thing, summarize the slack thread and file a ticket, and the AI reaches into slack and linear on its own and gets it done. So how does that actually work? MCP has just three roles, a host, a client, and a server. Understand these three, and you understand the whole protocol. The host is the AI app you are using, Claude, cursor, VS code. Inside it, a client holds one dedicated connection to a single server, and a server is just a program that exposes some tool or data. One host can run many clients at once, one for each server. Your file system here, a database there, an error tracker in the cloud. Each gets its own private line, all managed by the same app. When they first connect, they shake hands. The client sends an initialized message, both sides announce what they support, and they agree on a protocol version. Capabilities negotiated, connection live. Now the client asks one question, what can you do? The server answers with a list, every tool, its name, a description, and exactly what input it expects. The AI now knows its options. When the model decides to act, it calls a tool by name with arguments. The server runs it, hits a real API, queries a real database, and hands back a structured result the model can read. Step back, a server only ever exposes three kinds of things, tools, resources, and prompts. Three primitives, that is the entire vocabulary a server speaks. Tools are actions, the right side, send a message, create a record, trigger a deploy. These are the moves that change the world, so a good host lets you approve or deny each one. Resources are data, the read side, files, database rows, documents, API responses. This is how the AI gets real context, not guessing from training, but reading the actual thing. And prompts are reusable templates, pre-built recipes for common tasks, so the AI handles a whole domain the way an expert would, the same way every time, and it goes both ways. A server can ask the model to think for it, that is sampling, or pause, and ask you a question, that is elicitation. The server is not just answering anymore, it can collaborate. Underneath, MCP is two clean layers, a data layer that defines the messages, and a transport layer that carries them. Same messages, different pipes. The messages themselves are just JSON, RPC, plain, readable, request, and response objects. There is no secret format here, if you have ever read an API call, you can read this. And the transport is one of two, standard input output for a server running locally on your own machine, or streamable HTTP, for a remote server living anywhere on the internet. Unlike a normal API call, the connection stays open, it is a session, so a server can push live updates, my tools just changed, and the AI instantly knows without ever asking again. Put it all together in a single request flows clean. You ask, the model picks a tool, the client routes it, the server does the work, the answer comes back, many servers, one conversation. Now why is this suddenly everywhere? Look at the timeline, because the adoption curve is almost unfair. Late 2024, and theropic ships it quietly, a few months later, everything changes. March 2025, on a single day, the spec adds remote servers, and open AI adopts MCP across chat GPT and its agent tools. The biggest rival blessing a competitor's standard, that was the tipping point. Weeks later, Google brings it to Gemini, then Microsoft, across Copilot and Windows. There was no committee, no mandate. The protocol had simply quietly won, and the numbers exploded. Downloads went from 100,000 to over 8 million in five months. Today the official registry lists nearly 10,000 servers, and the SDKs see tens of millions of downloads a month. Pick almost any tool you already use, GitHub, Slack, Stripe, Notion, Linear, Figma, they all ship MCP servers now. And on the other side, Claude, Chat GPT, Gemini, Cursor, and VS Code all speak it. Then in December 2025, Anthropic gave it away, donating MCP to the Linux Foundation with open AI and block as co-founders. No single company owns it anymore. The standard belongs to everyone. Now a couple of myths to kill. MCP does not replace your APIs. It sits on top of them. Your API still does the real work. MCP is just the standard way an AI discovers it and calls it. And it is not agents talking to agents. MCP connects one agent to its tools. Agent to agent protocols connect agents to each other. Different job, and they actually work together. But power cuts both ways. Hand and AI live keys to your systems, and one bad instruction becomes a real action. So MCP leans on OAuth, scoped tokens, and approval on every right. A bridge built carefully, not a back door. And it is not finished. Audit trails, multi-tenant isolation, cost controls, portable config, the enterprise grade plumbing is still being built. This is a standard mid-flight. And that is the honest picture. It is still growing, fast. Long running tasks that work in the background. And MCP apps, tools that draw real interactive interfaces right inside the chat. Plane text was only the beginning. So that is MCP, a host, a client, a server, tools, resources, and prompts overplane JSON. One protocol so any AI can plug into anything, build once and use everywhere. If that finally made MCP click, subscribe. Cloud codes take apart one system like this every single week. Build, solve, deploy. And I'll see you in the next one.
