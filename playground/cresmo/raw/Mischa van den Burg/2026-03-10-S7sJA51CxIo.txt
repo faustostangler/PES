@@ -1,0 +1,150 @@
+---
+video_title: "This kubernetes homelab setup is my favorite one yet."
+video_id: S7sJA51CxIo
+channel_name: "Mischa van den Burg"
+channel_id: UCDAck-gFPTrgTx_qp59-bQA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=S7sJA51CxIo
+video_date: 2026-03-10T16:00:41+00:00
+video_description: |
+  🚀 Land a six-figure Kubernetes job: https://kubecraft.click/cgv91
+  📥 Get the FREE Kubernetes Homelab guide including n8n code: https://go.kubecraft.dev/k8s-homelab-n8n
+  
+  Kubernetes homelab tour after 3 years — here's every app, every cluster, and the exact hardware running it all. See how a real production-style setup works, from Talos Linux and Cilium networking to CloudNativePG databases and AI-powered GitOps. Built for self-learners who want hands-on proof of enterprise skills.
+  
+  This isn't just a show-and-tell. This lab runs a personal blog, self-hosted Git, quantified self dashboards, automated infrastructure updates, and 12 live Postgres clusters. Every tool here mirrors what engineering teams use in production — which is exactly the point.
+  
+  🔗 RESOURCES MENTIONED:
+  → Homelab guide & n8n code: https://go.kubecraft.dev/k8s-homelab-n8n
+  → Talos Linux (immutable Kubernetes OS): https://www.talos.dev
+  → CloudNativePG (Postgres on Kubernetes): https://cloudnative-pg.io
+  → Cilium (eBPF networking): https://cilium.io
+  → Flux CD (GitOps): https://fluxcd.io
+  
+  📱 CONNECT WITH ME:
+  → Website: https://kubecraft.click/yt-apply-2
+  → X / Twitter: https://x.com/mischavdburg
+  → Personal blog: https://mischavandenburg.substack.com/
+  → LinkedIn: https://www.linkedin.com/in/mischavandenburg/
+  → Instagram: https://www.instagram.com/mischavandenburg/
+  → TikTok: https://www.tiktok.com/@mischavandenburg
+  
+  ℹ️ ABOUT KUBECRAFT: I help you land six figure tech jobs through Kubernetes, Linux, home labs, self hosting and production-ready skills. Over 1000 people mentored into succesful DevOps careers.
+  
+  #Kubernetes #HomeLab #DevOps
+---
+Olá, tenho um laboratório doméstico de Kubernetes há mais de 3 anos e neste vídeo vou mostrar exatamente como o construí e tudo o que está rodando no meu laboratório. Então, vamos lá. Começando pelo hardware, o maior erro que as pessoas cometem é pensar que é preciso ter equipamentos muito caros para montar um laboratório doméstico. Que você precisa de racks e servidores sofisticados. Bem, você não precisa. Tipo, meu
+
+laboratório caseiro é bem improvisado. Então, as principais máquinas que eu uso são HP EliteDesk. Então, HP EliteDesk 800 G2 mini. Estou usando versões com processador i5 e 16 gigabytes de RAM e versões com processador i3 e 8 gigabytes de RAM. Tenho cerca de seis desses clusters, e essa é uma configuração incrível para um laboratório doméstico de Kubernetes. E essa é também a
+
+beleza do Kubernetes, porque ele permite que você improvise com qualquer hardware que tenha à mão e simplesmente o utilize. Então, outras opções, opções realmente boas, são os Raspberry Pis. Se você está fazendo isso para aprendizado, se você realmente vai hospedar aplicações pesadas, eu não recomendo usar Raspberry Pis. Mas se você está apenas aprendendo Kubernetes, é uma ótima opção. E também os Lenovo ThinkCenters. Essas também são boas
+
+opções para esse tipo de configuração. Então, usando clientes leves. E a grande vantagem disso é que você pode conseguir esses equipamentos por um preço bem acessível, pois são equipamentos empresariais recondicionados. Aqui na Holanda, existem empresas especializadas em comprar esse hardware antigo, reformá-lo e vendê-lo a preços bem acessíveis. Esses custam, talvez, entre 100 e 150 dólares. Você pode comprá-los por um
+
+preço muito baixo. Assim, você pode construir um laboratório doméstico muito bom dessa forma. A segunda máquina que comecei a usar recentemente é uma Minisforum MS02. Isso parece mais uma batida. Possui 32 gigabytes de RAM e um processador bastante decente. A única
+
+desvantagem é que é bastante barulhento. Mas se você conseguir um ou dois desses, já terá uma configuração muito boa também. E na verdade também estou usando meu ThinkPad T480. Eu também tenho isso configurado como um nó do Kubernetes. Então, mais uma vez, você pode simplesmente improvisar com o hardware que tiver à mão e começar a usar. E claro, se você
+
+quiser investir na construção de um rack de alta qualidade com servidores corporativos, vá em frente. Mas eu só queria dizer que você não precisa disso e que meu laboratório caseiro é bem improvisado, mas eu faço muita coisa interessante nele. Então, vamos ver como eu montei o laboratório em casa. Então, quando comecei, eu usava K3s. Então, provavelmente todo mundo conhece o K3s, o Kubernetes leve. É nisso que o
+
+Rancher se baseia, ou é o que o Rancher usa por baixo do capô, e é realmente ótimo para começar. É excelente para rodar em pequenas máquinas de borda , otimizado para ARM, sendo ótimo para Raspberry Pis. Então, o K3s é o ideal para começar, mas depois de um ano usando-o, migrei para o Talos Linux e é esse que estou usando agora. Este é o sistema operacional Kubernetes, e o que o torna realmente bom é que, basicamente, você o instala , ele se torna um sistema operacional imutável e ocupa todo o seu disco, sem que você precise de um endpoint SSH. É um sistema operacional completamente seguro e reforçado que expõe apenas a API do Talos, à qual você pode aplicar configurações . Então, você nem consegue acessar via SSH, o que torna o sistema
+
+super seguro, mas é um labirinto à parte e eu não recomendo para iniciantes. No entanto, é um software incrível e eu o uso há dois anos e adoro. Então, é isso que eu uso. Em termos de arquitetura de cluster, na verdade estou usando dois clusters no meu laboratório doméstico. O primeiro cluster é Mimir. É aqui que
+
+executo todas as minhas cargas de trabalho, digamos, de dados e com estado. Então, aqui estou eu executando meus bancos de dados Postgres. Tenho cerca de nove deles funcionando agora e vou mostrar exatamente como isso funciona em um instante. E isso também inclui meu servidor Git auto-hospedado, que mostrarei a vocês em um instante . O segundo cluster que possuo chama-se Jotunheim e nele estão minhas principais aplicações. E basicamente tudo em
+
+Jotunheim deve ser completamente apátrida. Portanto, a ideia aqui é que Yotunheim seja também o cluster onde aplicarei as atualizações primeiro. Portanto, todas as minhas atualizações de infraestrutura, quando atualizo meu CNI, etc., primeiro faço isso no cluster de aplicativos. E quando tudo correr bem lá, então terei confiança em aplicar isso ao meu cluster de banco de dados. Dessa forma, não
+
+preciso realmente de um ambiente de teste para meus clusters, embora isso fosse o ideal, mas também estou otimizando o uso de recursos. E essa foi a arquitetura inicial que funcionou muito bem para mim. Portanto, todos esses bancos de dados estão expostos como IPs externos, e estou usando o balanceador de carga IPAM do Cilium para isso. Vou te mostrar isso daqui a pouco também. Mas todos eles estão disponíveis em seus próprios URLs. Assim, todos os aplicativos
+
+podem acessar esses bancos de dados através da minha rede interna, e descobri que isso funciona muito bem, além de ser uma arquitetura muito limpa que eu realmente gosto. Então, antes de analisarmos todos os aplicativos que você vê na tela, vou abordar a pergunta que você pode estar se fazendo agora: por que Kubernetes? E você pode achar que isso é um exagero completo para executar apenas alguns aplicativos. Bem, a questão é que é um exagero proposital. Portanto, este laboratório caseiro não é algo que eu faço apenas por diversão. Estou usando isso como um
+
+diferencial na minha carreira, certo? Então, quando montei este laboratório doméstico há 3 anos, fiz isso porque queria um emprego com Kubernetes. E, ao construir um laboratório doméstico como este, eu poderia ter comprovação de experiência prática com as ferramentas com as quais eu queria trabalhar. A questão é que ninguém se importa se você criar um cluster rapidinho e colocar isso no seu currículo. Tipo, isso não vai te garantir emprego. Os recrutadores darão importância à sua capacidade de
+
+demonstrar que consegue expor aplicações à internet de forma segura. Se você gerencia seu próprio mini data center e sua própria infraestrutura de nível de produção , pode realmente comprovar habilidades de nível empresarial desenvolvidas em seu laboratório doméstico, e é por isso que eu faço isso. E é isso que eu ensino aos meus alunos particulares, e eles estão conseguindo emprego toda semana graças a esse método. E na semana passada mesmo, fiz uma entrevista com um dos meus alunos. Ele mora nos Estados Unidos. Ele não
+
+tinha formação em Ciência da Computação nem experiência na área de tecnologia , mas, graças às instruções que recebi ao montar seu laboratório em casa, conseguiu seu primeiro emprego como DevOps na indústria, mesmo sendo júnior neste mercado . Portanto, montar um laboratório em casa é realmente a porta de entrada para uma boa carreira na área de tecnologia. Você pode assistir à entrevista completa aqui, caso tenha interesse. E a segunda razão pela qual isso funciona tão bem é que, se você estiver usando o Kubernetes corretamente, estará usando GitOps, o que significa que você implanta seus aplicativos a partir do Git. E como você faz o deploy a partir do Git, isso também significa que você pode construir um portfólio público do seu laboratório doméstico, que você pode usar como um projeto para mostrar aos recrutadores. E foi assim
+
+também que Pedro conseguiu esse emprego. Portanto, é um método realmente eficaz. Então, o que exatamente está rodando no meu laboratório doméstico ? Bem, vamos começar com o painel de controle que você vê aqui. Isso já está rodando como um contêiner no meu laboratório doméstico. Esta é a chamada página inicial, e
+
+é um painel de controle inicial muito limpo e agradável, que eu realmente gosto. Você pode configurá-lo completamente com arquivos YAML. E sim, foi essa que eu escolhi. Na minha opinião, é uma ótima opção. E daqui, basicamente, este é o portal para o meu laboratório doméstico, onde eu e o resto da minha vida trabalhamos e de onde gerencio tudo. Então, vamos começar
+
+com Forgejo. Esta é a minha instância Git auto-hospedada . Aqui estão alguns repositórios para os aplicativos que eu mesmo desenvolvo. E também estou usando isso para espelhar outros repositórios do GitHub, para que eu sempre tenha minha própria cópia local de certos repositórios que eu queira armazenar, caso o autor decida removê-los . Além disso, ao hospedar minha própria instância do Git, eu, na verdade, não preciso enviar meu código para o GitHub para que eles possam usá- lo para escanear e treinar modelos de IA. Por isso, eu gostei muito
+
+. Eu também fiz um vídeo completo sobre o próprio Photo Geo . Expliquei por que escolhi isso e como configurei. Você pode assistir clicando em algum lugar por aqui. A próxima aplicação é o Linkding. Você
+
+provavelmente já viu isso em outros vídeos também. Este é um aplicativo muito bom e simples . Muito bom para quem está começando a aprender. Basicamente, este é um gerenciador de favoritos auto-hospedado, porque costumo trocar de navegador com frequência e estava cansado de migrar todos os meus favoritos. Dessa forma, tenho uma configuração muito boa, onde armazeno todos os meus favoritos em um local separado, e não importa qual navegador eu esteja usando. Posso sempre visitar,
+
+pesquisar e organizar meus favoritos neste aplicativo. Portanto, aplicativo altamente recomendado . Ah, aliás, 73% dos meus espectadores não são inscritos no meu canal. Então, por favor, inscreva-se agora mesmo. É uma forma gratuita de apoiar meu canal.
+
+Isso me permite disponibilizar mais conteúdo gratuito como este toda semana. A próxima aplicação é a N8N. Então, você provavelmente já ouviu falar do N8N, mas este é um aplicativo de fluxo de trabalho de automação auto-hospedado. Tenho algumas coisas, como por exemplo, um chat no Telegram, onde gravo mensagens de voz e tenho uma automação que as transcreve e armazena em um sistema específico que utilizo. Outro fluxo de trabalho interessante que tenho em execução é o meu atualizador automático de fluxos de trabalho do GitHub. Assim, a cada
+
+hora, esse fluxo de trabalho irá analisar todas as minhas solicitações de pull request, classificá-las e revisá- las. E algumas das solicitações de pull request serão mescladas automaticamente, mas outras me enviarão uma avaliação. Por exemplo, meu Cilium precisa de uma atualização aqui. E como esse é um componente crítico da infraestrutura , ele me avisará que preciso revisá-lo. Mas se verificarmos os pull requests que foram fechados, veremos também que há 1 hora o próprio sistema fechou ou fundiu alguns outros aplicativos.
+
+Na verdade, a infraestrutura do meu laboratório doméstico está sendo gerenciada por IA até certo ponto. Então, nem preciso mais revisar todas as atualizações . Isso é resolvido por um fluxo de trabalho de IA, o que é realmente muito bom. Portanto, este é um caso de uso muito, muito interessante do N8N. Tenho mais alguns fluxos de trabalho em mente, mas se você estiver interessado em obter este fluxo de trabalho e saber mais sobre como implementei o N8N, confira o link abaixo na descrição, pois esse guia também fornecerá algumas informações sobre isso, totalmente grátis.
+
+A próxima aplicação é a Paperless (sem papel). Este é um item relativamente novo no meu laboratório doméstico. Este é um local onde eu carrego documentos, que são digitalizados com OCR e, em seguida, eu obtenho um banco de dados pesquisável com todos os meus documentos em papel. É muito legal. Ainda não explorei muito o sistema, mas já o configurei e pretendo armazenar todos os meus documentos em papel aqui, para ter um banco de dados pesquisável. Portanto,
+
+recomendo muito este aplicativo também. A próxima aplicação é a lista de leitura. Isto é algo que eu mesmo desenvolvi com a ajuda de um pouco de IA, e aqui está o aplicativo onde eu registro os livros que quero ler e também quais versões deles eu possuo. Então, este é um pequeno aplicativo muito bacana que eu mesmo desenvolvi e que roda em um contêiner. E sim, eu adoro criar esses pequenos aplicativos personalizados. O próximo é o
+
+Wallabag. Este é um aplicativo para ler mais tarde. Então, o que eu posso fazer é visitar qualquer blog ou página da web na internet e usar o plugin do navegador para enviar isso para a instância do Wallabag no meu celular. O Wallabag então irá coletar os dados e armazená-los na minha instância privada. Assim, poderei voltar a este artigo mais tarde, quando me for mais conveniente, utilizando a minha própria infraestrutura, e lê-lo. E a
+
+vantagem disso é que, se o autor, por exemplo, decidir remover o artigo , eu sempre terei minha própria cópia. Então, eu gostei muito disso. Sempre que encontro um artigo que quero guardar ou ler mais tarde, costumo adicioná-lo à minha instância do Wallabag e depois continuo a leitura a partir daí. Agora, a próxima linha contém alguns aplicativos externos. Obviamente, eu não estou hospedando o LinkedIn ou o X por conta própria, o que não é possível. Então, esses são
+
+apenas links externos que eu uso todos os dias. Na próxima seção, a seção "Meu Consumo" , apresento o Miniflux. Então, se você assistiu aos meus vídeos anteriores, deve saber que eu usava o CommaFeed antes e mudei para o Miniflux porque ele tem uma API melhor e estou fazendo algumas coisas interessantes que vou mostrar em instantes. Mas, basicamente, trata-se de um leitor de feeds RSS. Eu assino determinados feeds RSS que quero ler.
+
+Mas o que o Miniflux me permitiu fazer foi ter várias instâncias do Miniflux rodando no meu laboratório doméstico e, em seguida, coletar dados delas, extraindo-os por meio de IA. Então, um dos meus feeds aqui é o feed de conteúdo selecionado da Cube Craft, e são artigos que recebem uma pontuação com base em um comando de IA e um algoritmo que eu mesma desenvolvi. E com base nessa pontuação, posso determinar se um artigo vale o meu tempo ou não. Basicamente, tenho uma lista pré-filtrada de conteúdo que eu, ou minha IA, consideramos útil para mim e para o meu negócio. Por exemplo, o motivo pelo qual o Kubernetes está descontinuando o Ingress e o Nginx é, obviamente, muito relevante para mim e para o meu negócio. E também
+
+recebo um resumo gerado por IA com todos os pontos principais, as principais conclusões e os ensinamentos mais importantes. Assim, já tenho uma visão geral bem rápida do conteúdo e posso abrir o artigo e lê-lo quando me for mais conveniente. Acho que esta configuração é muito boa e estou sempre aprimorando-a cada vez mais. Mas isso realmente me ajuda a focar no conteúdo que eu realmente quero e devo consumir, em vez de deixar que os algoritmos, como os das redes sociais, decidam o que eu consumo. Então, eu sou muito, muito intencional com esse tipo de coisa e o Miniflux está me ajudando com isso. Portanto,
+
+é um aplicativo excelente. Até agora está funcionando muito bem, possui uma boa API. Sim , recomendo muito o Miniflux. E o próximo aplicativo que quero mostrar para vocês é o Audiobookshelf. Este aplicativo é realmente muito bom . Funciona muito bem.
+
+Obviamente, uso isso para gerenciar os audiolivros que possuo, mas outro bom uso do Audiobookshelf que muitas pessoas desconhecem é a capacidade de baixar podcasts. Então, eu sou assinante de vários podcasts , e o programa baixa os episódios para a minha infraestrutura, o que significa que eu posso fazer coisas com esses arquivos de áudio. Como, por exemplo, transcrição, transcrição automática. Ainda não configurei, mas meu plano é integrar isso ao sistema de conteúdo que estou criando, esse sistema de curadoria de conteúdo, e o Audiobookshelf me permite fazer isso. Este é um caso de uso realmente interessante do Audiobookshelf que eu gostei bastante. Então,
+
+mais uma ótima aplicação. Eu uso isso há anos. Eu apoio o projeto, e é um aplicativo realmente bom . Portanto, recomendo fortemente que você dê uma olhada nisso . Agora, o próximo projeto que vou mostrar é o que chamo de " autoquantificação", e isso também serve como uma introdução à minha configuração de banco de dados. Mas, basicamente, o que eu
+
+faço aqui é usar um Whoop e um anel Oura, e coletar todos os tipos de métricas sobre mim mesma de várias fontes diferentes. Mas são essas que eu quero mostrar para vocês. E então eu extraio os dados dessas APIs e os armazeno em meus próprios bancos de dados. E isso me permite consultar esses bancos de dados e visualizá-los em painéis do Grafana. Sim, isso é muito nerd e muito geek, mas eu adoro fazer isso. E o que isso me permite
+
+fazer é ter uma cópia desses dados sempre armazenada na minha própria infraestrutura, de forma que, sempre que uma dessas empresas deixar de funcionar ou decidir que não posso mais usar o serviço delas, pelo menos terei sempre uma cópia dos dados que coletei ao longo de vários anos. Portanto, essas são apenas consultas SQL que eu utilizo para criar essas visualizações. Então, obviamente, para executar uma consulta como essa, você precisa de um banco de dados onde esses dados estejam armazenados. E agora vou mostrar como eu faço isso. Então, agora estou conectado ao meu contêiner de desenvolvimento. Eu sempre trabalho dentro de
+
+contêineres. Não tenho o kubectl instalado no meu sistema principal. Como você pode ver pelo kubectl, ele não existe no meu sistema principal. Eu só trabalho dentro de contêineres. Então, aqui eu obviamente tenho o kubectl em execução. Então, se eu executar o comando `k get
+
+clusters -a`, obtendo assim todos os clusters que tenho em execução nos meus namespaces, quantos clusters eu terei no total? Vamos obter os agrupamentos e depois contar as linhas. Tenho 13 linhas e, se excluirmos a primeira linha, tenho 12 clusters em execução no meu cluster Kubernetes. Portanto, estes são clusters de banco de dados , não clusters Kubernetes. Todos esses são clusters Postgres, provisionados usando o Cloud Native PG.
+
+Quem diz que não se pode ou não se deve executar bancos de dados no Kubernetes está falando besteira. Eles não sabem do que estão falando. Na verdade, os bancos de dados são uma das cargas de trabalho mais comuns que você verá sendo executadas no Kubernetes. Grandes organizações governamentais estão usando bancos de dados no Kubernetes. E para isso, recomendo usar o Cloud Native PG. É gratuito e de
+
+código aberto. E é um projeto realmente muito bom. Eu o utilizo há anos, tanto no meu laboratório doméstico quanto profissionalmente, e vale a pena você aprender a usá-lo. E o funcionamento é o seguinte: eu simplesmente aplico um manifesto ao meu cluster desta forma. E quando eu aplicar isso, será provisionado um cluster de banco de dados, incluindo backups para armazenamento S3. Se eu
+
+mudar rapidamente para o espaço de nomes do Quantified Self e executar o comando "k get clusters here", você verá que eu tenho o cluster. Então, se eu simplesmente pegar rapidamente o nome desse cluster assim. E se eu então acessar o cluster de status CMPG do K9s, o operador CMPG me fornecerá uma visão geral muito boa do meu cluster. Na verdade, percebi que tenho um backup com falha. Tudo é um estado saudável.
+
+Tudo está funcionando bem. Tenho três instâncias. E meu último backup bem-sucedido foi há algumas horas. Tudo parece estar indo bem. Tenho um sistema de arquivamento em parede funcionando . Todas as minhas instâncias estão
+
+funcionando bem. E se eu abrir o K9s, por exemplo, e der uma olhada aqui. Esses são os pods que estão em execução. Assim, o operador CMPG implanta vários pods e cria, na prática, um cluster Postgres a partir deles. E se eu executar um comando em um desses pods, posso simplesmente executar o PSQL e, em seguida, terei um shell no meu cluster de banco de dados. Então, se eu executar a opção C, poderei me
+
+conectar ao meu banco de dados de autoconhecimento quantificado. E vou mostrar-lhe as mesas que estão aqui dentro . Então, aqui vocês verão que estou analisando minha composição corporal e minha dieta. Tenho meus dados do Strava lá, Whoop, tudo. E se eu, por exemplo, fizer o Whoop Sleep? Então, essas são as colunas que
+
+tenho na minha seção de sono do Whoop. E se eu quiser mostrar, por exemplo, minhas pontuações, deixe-me ver qual é essa. Esse será o meu desempenho durante o sono. Se eu simplesmente copiar essa linha aqui e selecionar a porcentagem de desempenho do sono do Whoop Sleep, ele me mostrará minhas porcentagens de desempenho do sono, por exemplo. E essa é exatamente a consulta que eu uso no meu painel do Grafana. Portanto,
+
+tudo está armazenado em meus clusters Postgres auto-hospedados . E então consigo visualizar esses dados nos meus painéis do Grafana. Eu gosto muito disso porque reúne todos os meus dados, e aí eu posso fazer coisas como comparar minhas métricas do Whoop e do Oura, tudo no mesmo lugar. E, novamente, tenho minha própria cópia dos meus dados e não dependo dessas empresas caso elas decidam removê-los . Então, a próxima pergunta é: como faço para inserir todos esses dados no meu banco de dados? E, surpresa, surpresa,
+
+também estou usando o Kubernetes para isso. Se eu sair deste pod e voltar ao K9s, e agora eu vou alternar para o meu cluster de aplicativos e abrir o K9s aqui. Se eu abrir todos os trabalhos que tenho aqui e verificar todos os namespaces, você verá que tenho um scraper Whoop e um scraper Aura em execução como tarefas. A última operação foi concluída há 25 minutos. Em seguida, ela extrai os dados da API do Whoop, armazena os dados encontrados e os adiciona ao meu banco de dados Postgres. Então, eu
+
+faço isso com meus dados do Whoop, meus dados do Aura e meus dados do Strava. E é assim que eu faço . E o código desses scrapers está público no meu GitHub. Você pode pegá-lo e fazer o que quiser com ele. Saiba que é algo muito personalizado e adaptado à minha configuração, mas talvez sirva de inspiração para você criar a sua própria configuração de scraping. Então, tanto o
+
+scraper do Aura quanto o scraper do Whoop estão disponíveis e vou colocar os links abaixo também. Então, em termos de infraestrutura para meu cluster, ou seja, todos os componentes que não são aplicativos, já falamos sobre como executo meus bancos de dados, mas para o monitoramento, obviamente uso o Grafana e o Prometheus. Então, estou usando o conjunto padrão do Prometheus Cube, o que também me fornece todos os painéis padrão para monitorar o uso de recursos nesses clusters. Tudo funciona muito bem, mas o monitoramento é completamente inútil se você não configurar alertas, se não tiver notificações ativadas. Portanto, o monitoramento é inútil sem alertas, e eu tenho uma configuração de alertas bastante eficiente, onde todos os aplicativos são monitorados e, se um aplicativo ficar inativo, serei notificado via Telegram. É uma
+
+configuração muito boa, estou muito satisfeito com ela. Estou usando o Gerenciador de Alertas do Grafana e não o Gerenciador de Alertas do Prometheus . E essa é uma das coisas que ensino aos meus alunos: se você pode usar o Grafana para alguma coisa, então use, porque basicamente a indústria decidiu que o Grafana é o caminho. O Prometheus Alert Manager é bastante antigo e é melhor usar o Grafana. Vamos parar por aqui. Outro
+
+componente interessante da infraestrutura é o Uptime Kuma. Estou usando isso para monitorar o tempo de atividade dos meus aplicativos, entre eles meu blog. E, na verdade, eu não mencionei isso agora há pouco, mas meu blog também está sendo executado no meu cluster Kubernetes. Então, se você visitou meu blog, na verdade estava visualizando uma página que está sendo executada no meu cluster Kubernetes em casa. E eu também hospedo todo o código e os pipelines de CI/CD de todo o meu cluster Kubernetes. É totalmente
+
+auto-hospedado. E eu mostrarei exatamente como isso funciona no vídeo 4 JO que acabei de mencionar, cujo link estará aqui em cima na tela. Agora, para minha solução GitOps, eu uso a ferramenta que os homens de verdade usam, que é o Flux CD. Então, se eu executar o comando `Flux get customizations`, você verá que tenho várias personalizações, mas também algumas versões do Helm em execução no meu cluster. Quer dizer, qualquer engenheiro DevOps que se preze gerenciará seus fluxos de trabalho GitOps a partir da linha de comando, e o Flux CD é obviamente a opção superior nesse caso. Então, essa é a
+
+que eu uso, a que eu escolhi e com a qual estou muito, muito feliz. E o último componente importantíssimo da minha infraestrutura é o Cilium. Escolhi o Cilium porque ele utiliza a tecnologia de rede eBPF. E como você pode ver aqui, muitas empresas de grande porte estão usando essa CNI em sua infraestrutura de produção. E, como mencionei no início deste vídeo, meu laboratório doméstico é uma vantagem para minha carreira.
+
+Estou usando meu laboratório doméstico para me desenvolver como engenheiro. Nesse contexto, Cilium foi a escolha óbvia para mim. Então, estou usando isso. É... é
+
+muito avançado. Há muita coisa para configurar aqui, mas funciona muito bem. E outro motivo pelo qual gosto do Cilium é porque posso fazer praticamente tudo com ele. Assim, posso expor IPs externos usando os balanceadores de carga. Posso criar recursos de entrada e usar a API do gateway, tudo com um único componente, e gosto muito disso. Então,
+
+funciona muito bem, e é por isso que escolhi o Cilium. Então, tudo o que vocês viram até agora levou anos para eu aprender. Mas se você quiser construir um laboratório doméstico com Kubernetes, pode usar o guia gratuito cujo link está abaixo. Assim, você pode economizar muito tempo e aprender com todos os erros que eu cometi. Inclui também o código para o fluxo de trabalho completo que acabei de mostrar. Bom, é
+
+isso. Esses são todos os aplicativos e a infraestrutura que estão rodando no meu laboratório doméstico Kubernetes. Deixe um comentário se isso te inspirou de alguma forma. Qual desses aplicativos você vai experimentar? Confira o guia gratuito cujo link está abaixo e nos vemos no próximo vídeo.

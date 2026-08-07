@@ -1,0 +1,700 @@
+---
+video_title: "Implementing Conversation Memory in my AI App - Claude Code"
+video_id: rEHMya3D0ls
+channel_name: "Mischa van den Burg"
+channel_id: UCDAck-gFPTrgTx_qp59-bQA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=rEHMya3D0ls
+video_date: 2026-05-05T01:22:05+00:00
+video_description: |
+  Building AI apps from the road! Follow me on my 3 week trip through Germany and France.
+  
+  I'll be working remotely from beautiful places while coding AI apps running on my self hosted Kubernetes clusters.
+  
+  If you want to work remotely like me, go here:
+  https://kubecraft.click
+  
+  Free 8-hour Linux course:
+  https://skool.com/linux
+  
+  Join the AI community waitlist:
+  https://go.kubecraft.dev/ai-craftsmen
+  
+  Follow me on Twitch to see all of the streams:
+  https://www.twitch.tv/mischavandenburg
+---
+[bufa] Vamos só verificar se o YouTube está funcionando corretamente. Ao
+
+vivo. Sim . Tudo bem. Então, já estamos ao vivo no YouTube. Vamos
+
+ligar isso.
+
+Então, vamos trabalhar na seguinte questão.
+
+Parece que ainda estamos ao vivo. Tudo está indo bem. Então, o problema é este: Olá a todos do YouTube. Vamos ver se você está sintonizando corretamente.
+
+Quantas pessoas temos no YouTube? Temos três visualizações no YouTube.
+
+Ok, parece que está tudo correndo bem. Então podemos começar. Então, o aplicativo que estou usando é um aplicativo de IA que meus alunos podem usar para fazer perguntas. Então, por exemplo, devo usar o Proxmox? Em seguida, ele consulta todas as minhas sessões de coaching, todos os meus vídeos do YouTube e fornece uma resposta com base nisso.
+
+E isso está sendo executado em um cluster Kubernetes local com uma GPU rodando em um modelo local. Mas a questão atual é: digamos que eu pergunte: "Devo usar o Proxmox para meu laboratório doméstico?" Em seguida, aparecerá essa indicação de alinhamento de carreira. Por exemplo, você deve definir metas para o trabalho atual que deseja realizar por meio de engenharia reversa. Então, se eu fizer uma pergunta complementar, por exemplo, você poderia explicar melhor os pontos principais sobre alinhamento de carreira?
+
+Então vai dizer: "Não tenho isso no conteúdo recuperado." Certo? Basicamente, trata-se disso como uma solicitação completamente nova, em vez de considerar a resposta anterior e consultar o modelo para obtê-la. Portanto, esse é, na verdade, um defeito bastante grave do aplicativo nesse sentido. E o que eu gostaria de fazer então foi compartilhar alguns dos feedbacks que recebi de um dos meus usuários de teste.
+
+E ele disse que sinalizou isso e eu sou muito grato por isso. Então, é isso que vou implementar agora. Então, eu, ou pelo menos eu, vou trabalhar nisso. Tipo, provavelmente não vou conseguir implementar tudo agora. Ah, na verdade estamos na categoria completamente errada do YouTube.
+
+Deixe-me ver se consigo mudar isso.
+
+Bem, vamos lá. Editar.
+
+Ciência e tecnologia.
+
+Espero que isso mude a situação.
+
+Configurações de transmissão. Diz que são viagens e eventos. Isso precisa ser mudado o mais rápido possível. Sim, ciência e tecnologia. OK.
+
+Bom. Então, está funcionando.
+
+E está
+
+bem.
+
+Então, a observação foi, como expliquei, que não existe memória conversacional. Perguntas de acompanhamento não funcionam. Cada solicitação é processada como se fosse uma consulta independente e totalmente nova. Não há estado de diálogo, nem resolução de pronomes, e gostaria de saber mais sobre essa funcionalidade. Então, é nisso que eu quero trabalhar.
+
+Assim, apenas a última mensagem do usuário é extraída. Tudo o que veio antes, ou seja, as jogadas do usuário anterior, é descartado. Sim? Portanto, duas preocupações abordadas de forma independente. A última pergunta, depois de "não especificado", é: como faço isso no braço?
+
+Assim, antes da incorporação, peça a um modelo rápido para reescrever a última pergunta em uma consulta independente, usando as interações anteriores como contexto. O padrão de rastreamento padrão adiciona uma pequena chamada LLM, mas melhora significativamente a recuperação em buscas subsequentes. Então, isso é uma coisa. Incorpore a concatenação das duas últimas três mensagens do usuário. Pode ser barato.
+
+Incorporação completa de conversas, incorpore tudo. Geralmente piora porque a deriva do tópico contamina o vetor de consulta. Recomendação A. Então, o problema é que quando você cria um aplicativo... quando você está tendo um
+
+histórico de conversa com isso, tipo, eu estou aprendendo isso conforme avanço, mas como você inclui isso no pré-processamento... em toda a conversa? É realmente muito interessante.
+
+Um desafio muito interessante.
+
+Passe o histórico de diálogo para o prompt da Gemma após o bloco de contexto, para que o modelo veja a estrutura real da interação . O orçamento para tokens é limitado.
+
+Então, antes de mais nada, quero fazer uma pesquisa aprofundada sobre isso, porque não tenho ideia de como isso seria implementado na vida real. Então, vou começar por aí. Hum, vamos ver. Faça o pull do repositório CubeCraft AI. Em seguida, leia.
+
+Que problema é esse? Em seguida, preciso que você leia a edição 93. Fizemos alguma pesquisa sobre isso antes?
+
+Ok, então eu preciso fazer login no GitHub.
+
+Ok, então vou falar em particular por um segundo.
+
+Preciso fazer login.
+
+Ok, agora estamos logados.
+
+Olá, Saladino. Sim, esse tipo de feedback sobre vídeos do YouTube ou experimentos em casa é algo que eu normalmente faria para meus alunos particulares. Então, terei prazer em comentar sobre isso, mas esse tipo de mentoria eu só ofereço para clientes pagantes. Eu ficaria muito feliz em fazer isso, mas não posso, já que milhares de pessoas me pedem isso, certo? Então, se você quiser que eu faça isso, considere participar do meu programa de mentoria.
+
+[bufa] Ok, então já existe pesquisa prévia sobre isso.
+
+Sim, tudo bem. Testando se a transcrição da minha gravação está funcionando.
+
+Isso funciona. OK. Muito bem, então fizemos algumas pesquisas com base nisso. Então a questão é... o
+
+desafio aqui é claro . Mas o próximo passo é ter uma noção concreta de como isso foi implementado na vida real. Então, é possível pesquisar com vários agentes de pesquisa? Você poderia verificar primeiro nos últimos 30 a 60 dias se houve algum anúncio ou desenvolvimento recente sobre o assunto em relação a X? Em seguida, quero que você execute agentes de pesquisa separados com Perplexity, Axe e Grok para ver quais são os padrões de produção reais que estão sendo utilizados por empresas de IA ou empresas que desenvolvem aplicativos de IA para lidar com esse tipo de memória conversacional.
+
+E quais são as melhores práticas para implementar isso.
+
+OK.
+
+Hum, vejamos. Compartilhar.
+
+Preciso enviar rapidamente um link para um dos meus amigos que está aqui.
+
+Então, agora minha IA vai lançar vários agentes de pesquisa. Ok . E eu tenho uma configuração de agente de IA muito elaborada que escrevi e desenvolvi ao longo de muitos meses de uso. E agora irá definir alguns critérios de estado ideal. Como você pode ver, agora ele vai acionar vários agentes de pesquisa para...
+
+pesquisar as coisas que eu acabei de solicitar . Entretanto, o que preciso fazer é configurar o
+
+contêiner de IA do Cube Crafts no meu laptop. Porque acredito que não tenho isso funcionando aqui. F 4 LS Eu tenho. Vamos ver. É o ambiente
+
+FD? Sim, parece que este não tem o arquivo .env. Sage
+
+Este aqui tem um arquivo .env.
+
+Vamos ver. A UM
+
+Research continua a todo vapor.
+
+Ah, Calvin está aqui. Ei, Calvin. Agradeço, cara. Me diverti muito .
+
+O que está acontecendo agora é que eu sou uma lenda, tenho vários agentes de pesquisa usando Perplexidade, usando pesquisa Grok, usando pesquisa Gemini, e então meu agente vai reunir todas essas pesquisas e sintetizar a coisa certa. O grande trunfo disso é que realmente vai gerar pesquisas sobre X. E se você não está envolvido com X, mesmo trabalhando com IA, está perdendo muita coisa, porque todas as discussões sobre IA, as últimas tendências, tudo isso acontece em X. E o Perplexity, então, é ótimo para pesquisas em geral. Então, eu inicio vários agentes de pesquisa, depois faço várias IAs conversarem entre si e, em seguida, recolho os resultados . Esse é um dos
+
+fluxos de trabalho avançados que eu pretendo ensinar na futura comunidade de IA.
+
+Sim, Saladin, se você quiser que eu revise seu projeto, isso é algo que eu faço para mentoria de carreira em DevOps , certo? E por mais que eu goste de ajudar o máximo de pessoas possível, não consigo fazer isso para todos que me pedem ajuda em uma transmissão como esta. Bem, esse é um privilégio que reservo para meus clientes pagantes e meus alunos de mentoria. Então, se você quiser que eu faça isso, terei muito prazer em me aprofundar no assunto, mas...
+
+não é algo que farei publicamente dessa forma. Isso é reservado para meus alunos de mentoria particular. Vamos lá
+
+. Ah, solta fumaça. Não.
+
+Então, por algum motivo,
+
+meu contêiner de desenvolvimento está apresentando alguns erros quando o executo localmente.
+
+Ok, agora está funcionando. Também está carregando o arquivo final, então agora sei que tenho tudo igual. Obtenha o mestre do switch.
+
+Tudo atualizado, ótimo.
+
+Porque, com base nessa pesquisa, posso então começar a instruir o agente Superpowers a iniciar a
+
+implementação da memória conversacional. Sim, então Aladdin, hum, se você conferir a descrição abaixo desta transmissão, você está... Sim, você está no YouTube.
+
+Então, na verdade, posso simplesmente compartilhar isso no chat. Hum, está aqui?
+
+Ah, na verdade deveria ser {slash} ao vivo.
+
+Sim, está funcionando. Então, vou compartilhar o link aqui no chat.
+
+Bem, se você acessar este link, encontrará a página com mais informações sobre a mentoria. E você pode agendar uma chamada gratuita com a minha equipe. É totalmente gratuito. Não há "hum". E então eles verão, eles primeiro explicarão todos os detalhes para você. Eles vão avaliar se você se encaixa no perfil
+
+e te integrar à equipe imediatamente. Então, você pode simplesmente agendar uma chamada por lá. E então minha equipe o ajudará a prosseguir. Mas se você tiver mais alguma dúvida sobre isso, fique à vontade para perguntar no chat.
+
+Você está planejando criar tutoriais nas escolas sobre como implementar o sistema de pesquisa? Sim, então, abaixo dessa descrição, eu também posso compartilhar esse link. Estou começando a entender que venho usando IA todos os dias há quase 2 anos. E sinto que tenho muito a ensinar sobre isso, mas ainda estou meio na dúvida se devo começar a ensinar, porque não tenho certeza se há interesse suficiente. Então, estou pensando em criar uma comunidade de IA ou algo relacionado à IA, mas ainda estou avaliando o interesse, mas já que você fez essa pergunta, isso é ótimo. Então, abaixo da
+
+descrição, já existe um link para a lista de espera, e eu vou compartilhá-lo aqui no chat também. Esta é uma lista de espera para uma comunidade ou para a comunidade que pretendo iniciar. E se você se inscrever na lista de espera, receberá um desconto enorme quando eu decidir lançá-lo, se é que vou lançar. Então, como em qualquer caso, basta se inscrever na lista de espera, pois assim você conseguirá o desconto. Você será o primeiro a saber disso.
+
+Mas a lista de espera é mais ou menos assim: se eu conseguir colocar algumas pessoas nessa lista, vou saber o que elas querem, certo? Então, é isso aí , compartilhem também no chat o que vocês procurariam em uma comunidade de IA dentro da IA? O que você gostaria de aprender comigo? E me avise no chat e entre na lista de espera. E se você fizer isso, será o primeiro a saber e ganhará um grande desconto.
+
+Ok, então nossa pesquisa...
+
+nossa pesquisa chegou à conclusão. Hum, eu apoio o Superman Voador. Assisto aos seus vídeos há muito tempo e adoraria aprender habilidades com você por meio do seu programa de mentoria. Que legal, cara. Acabei de compartilhar o link no chat.
+
+Você entendeu essa? Posso compartilhar isso novamente. É o Cube Craft. Ah, isto é para o Super-Homem voador. Se você quiser, tudo bem, posso fixar esta mensagem.
+
+Superman voador, se você quiser conferir , este é o link. Já que você está perguntando sobre a mentoria, pode ir lá e obter algumas informações. Se tiver alguma dúvida, entre em contato. Você está em uma minivan? Sim, estou numa minivan. Estou
+
+desenvolvendo aplicativos de IA enquanto viajo. E nossa pesquisa retornou. Então, as principais conclusões sobre X, e é por isso que é tão interessante que X seja exatamente onde tudo acontece. E há um novo lançamento relacionado a isso com a memória do agente Cloud Flare. Este curso passou de um curso superficial para um curso mais assertivo. Ok, isso é muito legal.
+
+Então, os princípios básicos de implementação não mudaram, certo? Consenso de produção em cinco padrões. Uma pequena consulta independente do LLM reescreve, antes da recuperação, o histórico do diálogo no prompt com quatro a oito termos literais. OK.
+
+Então, concatenando menos, e sim, zero. Ok, então temos que descartar isso. Isso é desaconselhado.
+
+Até mesmo a OpenAI está incentivando os clientes a adotarem o controle do próprio aplicativo para realizar conversas. OK. Portanto, o caminho de envio recomendado é a edição 93, conforme projetado, com o ajuste de ordem adicionando sumarização contínua na próxima iteração. O gráfico da linha de pelo até a seção transversal. OK.
+
+Então, se quisermos ver como essa pesquisa realmente funciona, por exemplo, para cada consulta que eu executo, o agente está criando um diretório de trabalho. Então, padrões de produção de conversação de trapos . Então, se eu verificar isso aqui, e depois o trabalho de memória CDU, e depois se eu fizer padrões de rag, então aqui podemos ver toda a pesquisa que acabou de ser feita. Então, esta é a síntese da pesquisa, mas aqui estão os vários telefonemas que ele fez. Esses são os pedidos reais que ele atendeu.
+
+É realmente incrível. Hum, deixe-me ver. Padrão de IA aberta. O
+
+conjunto de ferramentas de memória de conversação da nuvem se concentra em três serviços primitivos nas solicitações de pesquisa sintetizadas: armazenamento em cache,
+
+edição de contexto e arquivos de estado hierárquicos. Interessante. Mas isso
+
+exigiria a implementação de um gráfico de linhas nesta fase, o que está muito além do escopo atual. A qualidade de múltiplas voltas é medida ao longo de três eixos. Sim .
+
+OK.
+
+Sim, não estamos interessados ​​em memória de conversas cruzadas nesta fase. Então, como ele recomenda aqui,
+
+sugiro que atualizemos a questão e a tornemos mais detalhada. Basicamente, funciona como um comando inicial para o agente de codificação executá-lo. E agora,
+
+o que você atualizaria?
+
+Sim, Super-Homem, me avise quando você tiver se inscrito. Seria bom saber. Só para ver se tudo funciona para você. Caso a equipe tivesse alguma vaga disponível para você. Caso contrário, posso dar um jeito se você quiser recebê-lo mais cedo. É só me avisar
+
+, cara. Certo, agora está me mostrando qual será a atualização sobre o problema.
+
+Face 1.5.
+
+Sim, então isso basicamente define melhor a questão. Então, queremos somar os números, sim. Reconfigure a fiação de acordo com o tamanho do modelo.
+
+Ok, vamos adicionar a memória de longo prazo.
+
+Isso é bom. Sim
+
+. Portanto, preciso de mais duas coisas. Questão separada ou subtarefa? Eu tenderia a abordar essa questão separadamente. Então, por
+
+favor, explique. Sim . Então, em relação à sua primeira pergunta, por favor, explique se a sumarização contínua faz parte da chamada LLM separada que vamos implementar, incluindo as quatro a oito iterações, ou se é algo completamente à parte? Por favor, explique-me. E então, a segunda é que podemos deixar de fora esses identificadores X e artigos de tamanho médio, etc.
+
+Isso não é necessário na edição em si.
+
+Então, uma coisa que você vai notar se me vir usando... Ah, por que será que ele está constantemente compartilhando esse Linux? Isso não é... É
+
+estranho que mostre isso. Meu bot está compartilhando algumas coisas. Isso não é Hm.
+
+Mas uma coisa que você vai notar em mim é que estou dedicando muito tempo à fase de pesquisa e planejamento. A escrita do código em si é trivial neste ponto. O trabalho de verdade está aqui, onde eu faço perguntas, aprimoro as ideias e depois construo. Quando a especificação está escrita, o código praticamente se escreve sozinho. Mas eu dedico várias horas à pesquisa e à elaboração adequada do texto, e essa é a verdadeira habilidade por trás disso.
+
+Portanto, há três coisas diferentes que frequentemente se confundem. Deixe-me separá-los claramente. O padrão de reescrita realiza uma pré-recuperação a cada turno, com uma chamada LM por turno. Resumir o histórico e a mensagem mais recente do usuário . Certo, então aqui isso incluiria uma reescrita em cada chamada.
+
+Isso é bom.
+
+Imagine a décima segunda vez em uma longa conversa. A mensagem que vai para Gemma é mais ou menos assim . Resumo da execução do prompt do sistema. Sim . Termos proibidos.
+
+Reescrito. Sim .
+
+Assim, na 12ª rodada, há três chamadas LM distintas por solicitação no pico. Reescritor, resumidor e gerador. Não há problema.
+
+Certo, então podemos começar por aí. A Fase 1.5 estaria no nó de sumarização. Acionado quando vemos a versão beta real. OK.
+
+Certo, vamos atualizar o problema de acordo e também incluir seu raciocínio para essas decisões, pois teremos uma segunda rodada com um agente de brainstorming. Portanto, esse agente precisa de um pouco mais de contexto do que o habitual que você forneceria ao relatar problemas. Portanto, atualize o problema agora. Sim
+
+. Tenho um problema com um bot aqui que preciso desativar. Então, deixe-me ver a retransmissão. As
+
+configurações do chat estão mostrando que
+
+ele está constantemente compartilhando um link, o que não deveria acontecer. Responder aos comandos. Edições. Salvar.
+
+Eu uso o Vim como minha IDE.
+
+O tema que eu uso é o Groove Box.
+
+E
+
+estou desenvolvendo um aplicativo para meus alunos particulares que permite que eles consultem tudo isso, tudo o que eu tenho... 2 anos de sessões de coaching, todos os meus vídeos do YouTube, todos os meus cursos estão incorporados neste aplicativo de IA. E então, quando você entra no aplicativo e faz uma pergunta, ele consulta todas essas informações e, em seguida, fornece uma resposta, além de indicar as fontes onde isso foi discutido. Então, meus
+
+alunos particulares podem acessar um arquivo completo com dois anos de sessões de mentoria que realizei, ensinando pessoas a conseguir empregos em DevOps, e também podem revisar esse material. Então, é isso que eu estou construindo. Não é um aplicativo público. Isto destina-se exclusivamente aos meus alunos de mentoria particular. Mas, à medida que vou aprendendo isso, também vou desenvolver mais aplicativos públicos .
+
+[bufa] Ok, então o problema foi atualizado pelo meu agente principal. E vejamos como isso se apresenta agora.
+
+OK.
+
+Plano de implementação da primeira fase. Um modelo de linguagem (LM) pequeno e rápido utiliza o histórico de diálogos, a última fala do usuário e gera uma única consulta de busca autocontida, otimizada para recuperação vetorial. A camada de recuperação incorpora então a consulta reescrita. Sim . Como faço para instalar o Cuba na base de braço?
+
+Sim, exatamente. Parece ser uma ótima maneira de fazer isso. A escolha do modelo, não o tamanho, nem o gerador.
+
+Bem, precisamos atualizar a descrição do problema para usar o mesmo modelo.
+
+Devido às limitações de infraestrutura com apenas uma GPU, só posso executar um modelo por vez na inferência por GPU. Então, atualize o problema para que possamos usar Gemma para a mesma consulta nesta etapa.
+
+E quanto ao orçamento de latência, está tudo bem. Telemetria.
+
+Ok, vamos rastrear o histórico de diálogos da geração em um prompt da Gemma. O diálogo recente, na íntegra, é inserido no texto. Assim, o modelo vê a troca de informações real . Sim.
+
+Hum.
+
+Isso é bom.
+
+Isso é bom. OK. Portanto, estamos quase prontos para ativar o segundo agente aqui.
+
+Não tenho tanta certeza sobre o bloco de telemetria aqui, porque provavelmente será como se ainda não tivéssemos implementado a telemetria aberta.
+
+Isso é realmente interessante.
+
+E sim, aparentemente esse link nem sequer existe. Hum, história.
+
+Hum.
+
+Por que estou demorando tanto para pensar nisso? Pronto. Sim
+
+, eu tenho algo sobre Joseph. Tenho um curso completo de 8 horas sobre como configurar o ambiente de desenvolvimento. Então, tudo que vocês me veem usando agora está rodando dentro de contêineres, contêineres de desenvolvimento. Tudo está em um fluxo de trabalho conteinerizado. E eu ensino isso de forma completamente aprofundada.
+
+E isso já representa 8 horas de trabalho. E os fluxos de trabalho de IA são algo em que estou trabalhando agora. Então, se você estiver interessado nisso, isso virá para o CubeCraft, mas também estou pensando em criar uma comunidade de IA separada . E existe um link sobre, sim, o AI Craftsman. OK, bom.
+
+Sim, Fitzroy acabou de se inscrever na lista de espera. Posso compartilhar novamente o link da lista de espera para você, Joseph. Hum, isso é algo que eu vou
+
+fazer. Eu também vou configurar o fluxo de trabalho de IA e a comunidade de IA, possivelmente quando tiver pessoas interessadas o suficiente [bufa], onde ensinarei todos os fluxos de trabalho de agentes que vocês me veem usando, etc. Isso estará lá. Se você tiver interesse em aprender comigo sobre isso, inscreva-se na lista de espera e você também receberá um grande desconto caso eu lance o produto. Então, me avise se você se inscrever , isso me dará um bom indicativo de que estou no caminho certo.
+
+E se um número suficiente de pessoas se inscrever, então eu sei que posso... vai ser algo válido para mim .
+
+Certo, então vamos analisar a questão.
+
+Referências complementares. Sim, o recuperador para o acompanhamento usa uma consulta reescrita independente. O reescritor e o gerador são do mesmo modelo Gemma. Bom. A
+
+primeira solicitação de latência de reescrita.
+
+OK. Então, neste ponto, acho que estou pronto para acionar o agente de brainstorming para isso. Então, estamos na branch master. E
+
+vou configurar isso remotamente para que eu também possa consultar isso pelo meu celular. Faça um brainstorming. Não.
+
+Conecte.
+
+Instale o plugin de superpoderes.
+
+Recarregar plugins.
+
+OK. E agora eu posso... fazer um brainstorming.
+
+Bem, eu já fiz bastante trabalho prévio na edição 93, então provavelmente não preciso de uma sessão de brainstorming muito aprofundada . Leia a edição e vamos começar. Ei,
+
+Harsh.
+
+Sim, correto. Esta é uma posição muito privilegiada, poder estar aqui sentado ouvindo os sons dos pássaros, dentro da minha van. E depois, vou dar um belo passeio de bicicleta aqui na Alemanha. Sim . Me
+
+sinto muito afortunado(a). Preciso me
+
+autenticar.
+
+Então, deixe-me fazer isso por um segundo.
+
+Ok, então agora devemos estar autenticados.
+
+Isso irá agora iniciar vários agentes de exploração. E a coisa realmente legal, a coisa realmente legal
+
+com essa implementação, é que ela tem superpoderes, pois lança subagentes para fazer tudo automaticamente.
+
+Não sei por que esse bot continua dizendo school.com/linux. Sinto muito por isso. Tipo, isso não é muito relevante para a minha transmissão atual aqui. E existe esta configuração de bate-papo aqui.
+
+E possui esses comandos, mas infelizmente continua executando-os. Então, será que tem alguma coisa que eu possa salvar ou algo assim?
+
+Você se cadastrou? Ah, que bom. Obrigado.
+
+Ah, legal, cara. Sim
+
+. Vamos ver se ainda está funcionando ou não. Ok, li o problema, explorei a base de código, você já fez o extenso trabalho prévio, essencialmente a especificação completa . Tenho apenas uma pergunta para esclarecer antes de propor abordagens. Na reescrita da chamada LM, o reescritor precisa de uma chamada de baixa latência que não seja de fluxo contínuo e que tenha um tempo máximo de tokens.
+
+Duas opções: adicionar uma pequena função auxiliar que não dependa de streaming.
+
+Sim, vamos fazer a opção A.
+
+Joseph se inscreverá no Cube Craft nos próximos meses. Isso é ótimo, cara. Haverá vagas flexíveis para o Cube Craft ao longo do ano? Bem, temos muito cuidado com isso porque envolve muita orientação e atenção individual, então não aumentamos a escala muito rapidamente. Hum, posso te perguntar, Joseph, o que... o
+
+que está te impedindo de fazer isso agora? Fico muito feliz em poder te ajudar a tomar essa decisão.
+
+Bom. A variação de design se refere à forma como o código é organizado na base de código.
+
+Sim, parece correto. Sim, vamos com a opção A.
+
+Ok, então agora vai propor o projeto para a implementação.
+
+Sim, parece bom.
+
+Veja o histórico da conversa e a mensagem mais recente do usuário. Chame Gemma com um prompt do sistema de reescrita e retorne uma consulta de pesquisa autocontida, otimizada para recuperação de vetores.
+
+Se o histórico estiver vazio, sim, está correto.
+
+Bem, vamos discutir o limite de tokens aqui. Tipo, é mesmo necessário limitar os tokens? Porque esta é uma chamada para o LLM completamente separada. Teoricamente, poderia ter tantos tokens quantos conseguisse suportar, certo? Já que na verdade não estamos somando todos esses tokens.
+
+Trata-se de uma chamada completamente separada. Não tenho problema nenhum
+
+com isso, entendo a lógica. Então, podemos limitar isso, mas [suspiro] não acho que precisamos ser muito restritivos aqui. Tipo, você sabe disso melhor do que eu, mas acho que podemos ser generosos com o orçamento.
+
+Então, os novos blocos de perguntas de assinatura, sim.
+
+Esses retornos são convertidos em um único bloco de mensagem para o usuário. Sim.
+
+Sim. Parece correto.
+
+O fluxo de corrente é linear. O novo fluxo adiciona duas etapas antes da recuperação. Substitua a chamada de extração de perguntas atual pela nova função auxiliar.
+
+Claro.
+
+Sim.
+
+Ficou ótimo.
+
+Você é um engenheiro de plataforma e deseja conseguir um emprego totalmente remoto. Esse é o meu objetivo. Sim, então se você for um engenheiro de plataforma, como você, você poderá adquirir o Kubecraft. Não é tão caro assim. Tipo, o preço não é realmente o problema.
+
+E eu recomendo fortemente que você entre em contato com a minha equipe, pois eles vão te ajudar a tomar a sua decisão. Veja se você se encaixa no perfil ou não. Mas se o objetivo é conseguir um emprego totalmente remoto como o que eu tenho agora, posso te ajudar com isso, ok? E a questão é que não se trata apenas de tecnologia, você também precisa aprender a se apresentar, como se sair bem em entrevistas, como criar um perfil no LinkedIn que atraia ofertas de emprego. É exatamente esse tipo de coisa que ensinamos dentro do Kubecraft. Portanto,
+
+se realmente não há motivo para você esperar, basta clicar em "fazer agora". É só se inscrever e agendar a ligação. É totalmente gratuito. Não há quaisquer compromissos associados a isso. E não há nenhuma pressão para você participar ou algo do tipo.
+
+Mas se você fizer isso, se gostar, o aplicativo é totalmente gratuito. Portanto, não há quaisquer condições associadas a isso. Então, simplesmente faça. Não demore muito, pois podemos encerrar as inscrições se o grupo crescer muito rápido. [bufa] Ok, então agora foi criado um documento de projeto, que iremos analisar. Vamos
+
+ver.
+
+Continue com a IA.
+
+Aqui está o projeto.
+
+Reescrita estenográfica para recuperação e transcrição literal. Ok, parece bom. Novo leitor por
+
+Ok, parece tudo bem. Sim
+
+. Dá para ver o quão detalhado tudo isso é nas especificações, não é? E é assim que você chega ao ponto de realmente dizer: "Ótimo, vamos lá." Isso é ótimo. Espero que você faça o commit disso na versão master.
+
+Precisamos iniciar uma nova ramificação, adicioná-la lá e você poderá começar a trabalhar.
+
+Na verdade, o sol está saindo. Então, enquanto isso cozinha, acho que vou mudar o equipamento para a área externa.
+
+E na verdade, isso vai cozinhar por um tempo. Então, vou rapidinho ao banheiro enquanto isso está rodando. E vou levar a câmera para fora. Então, posso ficar um pouco sentado ao sol. Então, já volto .
+
+Na verdade, mudei de ideia. Vou continuar por mais meia hora, talvez, e depois vou fazer uma pausa e andar um pouco de bicicleta. Então, vejamos. Sim, vamos adotar a abordagem orientada por subagentes.
+
+Portanto, isso agora iniciará vários subagentes para implementar esse recurso. E quando estivermos em fase de testes, então poderemos testar. E provavelmente é nesse ponto que vou interromper a transmissão. [bufa] E podemos levar isso à produção na próxima sessão.
+
+[Limpa a garganta]
+
+Sim, de nada, Joseph. E, mais uma vez, não estou tentando pressioná-lo nem nada do tipo. E eu não sou do tipo que pensa assim, muitas vezes o que acontece é que as pessoas ficam pensando "um dia, um dia, um dia". E às vezes eles só precisam de um pequeno empurrão para começar. E eu certamente precisava desse incentivo quando era enfermeira, e durante anos fiquei pensando: " Ah, será que devo fazer isso?" Não devo fazer isso?
+
+Então, é por isso que eu digo isso. Mas só para te mostrar, Joseph, se entrarmos e eu abrir a seção de ventilação aqui, só nos últimos dias conseguimos três trabalhos. Nas últimas duas semanas, conseguimos quatro vagas como esta. Esta foi publicada ontem, onde ele conseguiu um emprego como engenheiro DevOps sênior. Há 3 dias, Ionut conseguiu o emprego.
+
+Há 3 dias, Dane conseguiu um emprego. Há 10 dias, Austin conseguiu um emprego. E Adrian conseguiu um emprego há 6 dias. Então, estamos conseguindo vários trabalhos por semana. E o Hasnain aqui, ele é um especialista em engenharia de plataforma, ok?
+
+Então, também estamos ajudando pessoas a ascenderem de cargos na área de mídia para cargos de liderança, graças ao nosso foco em Kubernetes e às nossas habilidades em preparação para vagas de emprego. Então os resultados estão aí, certo? Então você não tem motivo para esperar. E tenho certeza de que isso vai te ajudar .
+
+Vamos ver.
+
+Vou me candidatar hoje. Sim, isso é bom, cara. Vá em frente. Você vai adquirir o Framework 13 Pro? Ah, sim, bem, a questão é que o laptop Framework é uma versão atualizada, certo? Eles têm um
+
+pacote de atualização onde eu posso basicamente pegar o código interno do meu Framework e simplesmente portá-lo para um Framework Pro, e é por isso que eu gosto tanto da Framework como empresa, por eles realmente permitirem que eu faça isso. Então, assim que eu receber a notificação, porque me inscrevi na lista de espera. Assim que eu receber a notificação, vou comprar. Compra instantânea. Estou apenas esperando que chegue ao estoque.
+
+Esses caras estão começando sem nenhuma experiência prévia? Alguns desses serviços são para pessoas que não têm nenhuma experiência com tecnologia. Isso inclui desde engenheiros seniores que simplesmente querem aumentar seu salário em 50 mil dólares por ano. Assim, ajudamos uma ampla gama de clientes. E, tipo, um dos caras que você viu, acabou de conseguir seu primeiro emprego júnior em DevOps.
+
+E o outro conseguiu um cargo sênior de engenharia de plataforma, certo? E dobrando seu salário. Então, nós ajudamos todos eles.
+
+É possível obter um desconto no Kubecraft? Como normalmente não acontece. Tipo, o preço já está ótimo, eu tenho vários mentores de negócios e eles estão dizendo: "Você é louco de oferecer isso tão barato pelo que você oferece e pela atenção individual que você dá às pessoas." Mas, bem, minha prioridade é ajudar as pessoas a conseguirem emprego, porque eu tive muita dificuldade no começo. Portanto, essa é a minha principal prioridade.
+
+E geralmente, durante essas chamadas, se você tiver algum problema específico, podemos encontrar uma solução. A equipe irá ajudá-lo com isso. Portanto, o aplicativo é totalmente gratuito. Então, vou compartilhar o link novamente. Se você quiser...
+
+Não há nenhum compromisso ou algo do tipo.
+
+Basta acessar este link e minha equipe entrará em contato com você para falar sobre descontos e outras coisas do tipo. Repito, é totalmente gratuito, sem qualquer compromisso . [bufa]
+
+Então, a vantagem de um fluxo de trabalho orientado por agentes desenvolvido por agentes, como vocês podem ver aqui, é que ele limita o contexto. Assim, cada agente recebe seu próprio contexto, começando do zero, em vez de construir essa enorme janela de contexto.
+
+Sim, a duração da bateria é razoável. Por exemplo, a bateria do meu aparelho atual dura cerca de 6 horas. Então, para mim está tudo bem. Tipo, mesmo quando estou viajando com minha van assim, vou priorizar ter eletricidade, por isso estou em um camping, certo? E, bem, estou realmente ansioso para fazer o upgrade para a versão Pro, para que eu possa ter uma duração de bateria melhor, com certeza.
+
+Por exemplo, com a atualização para a versão Pro, você ganha umas 20 horas.
+
+Olá Mashiko. Bem-vindo(a) à transmissão.
+
+E hoje? Homem bom. Qual framework utilizou a CPU ARM nessa atualização, ou foi apenas força bruta para aumentar a bateria? Hum, na verdade eu não sei. Como eu sei, quando você compra o...
+
+Não, acho que o upgrade será apenas o... É o chassi, a bateria, a tela, etc. Então, eu tenho o chipset Ryzen AI 300.
+
+E eu não acredito que isso seja um braço.
+
+Pelo que entendi, posso simplesmente usar meu chip atual e tudo mais, e trocar o chassi para obter maior duração da bateria, uma tela melhor, etc.
+
+Qual país você considera o melhor para trabalhar remotamente? Quero dizer, se você conseguir um emprego remoto em uma empresa americana, geralmente essa é a melhor opção. Porque os empregos na área de tecnologia nos EUA geralmente têm os salários mais altos, certo? Então, tenho amigos que trabalham na Holanda para empresas americanas e estão ganhando muito dinheiro.
+
+Mas isso também gera mais concorrência, certo?
+
+Qual o nível de detalhamento que você deve dar ao Ansible no Terraform? Sim . Quer dizer, a resposta para essa pergunta é complexa. Depende completamente de qual é o seu objetivo e do que você está procurando. E, pelo que entendi, você está buscando orientação profissional, certo? E
+
+eu posso lhe oferecer essa mentoria. Mas isso geralmente significa que nos aprofundamos um pouco mais na sua situação, nos seus objetivos, na sua experiência anterior, e isso não é algo que eu possa fazer em uma transmissão como esta. Então, vou compartilhar um link, Mashiko. Veja só. E se você fizer isso, poderá obter mais informações sobre a mentoria que ofereço em termos de carreira.
+
+Trabalhando para a empresa suíça. Deixe-me ver. Trabalho para uma empresa suíça do Leste Europeu. O salário médio aqui é inferior a 1.000 euros. É
+
+mesmo? Mas qual é o salário médio de um funcionário dessa empresa suíça? Então é muito mais alto? A
+
+concorrência seria devastadora para empresas holandesas-americanas que fazem reservas em geral, como eu. Sim, essas são grandes empresas. Sim, temos muita gente, são equipes enormes de DevOps. Tenho vários amigos que trabalharam ou trabalham lá. Hum, de onde você está vindo, Wind Spin Voice?
+
+Porque as empresas holandesas também são boas para se trabalhar. Eles geralmente são muito internacionais, falam inglês muito bem e também têm um bom salário. Vou
+
+pré-resfriar minha refeição de hoje, algumas sardinhas.
+
+Ok, então a implementação da parte superior está concluída .
+
+Isso irá impulsionar a divulgação da notícia. Vou dar uma olhada rápida, mas provavelmente está tudo bem. E então podemos fazer a implantação no ambiente de teste. E verifique se o histórico de conversas está funcionando.
+
+Vamos dar uma olhada no comunicado de imprensa.
+
+Hum.
+
+Parece-me bem. Existe um problema de CI (Integração Contínua).
+
+[bufa]
+
+Isso deveria ser causado por hooks de pré-commit. Hum,
+
+preciso criar uma solicitação para isso.
+
+Adicione uma issue ao repositório para implementar hooks de pré-commit.
+
+Ok, o CI agora está passando, então posso fazer o merge .
+
+PR mesclado, implantar em ambiente de teste.
+
+Você acompanha as Tendências do Viajante? Não, eu não conheço essa pessoa. Tendências do viajante?
+
+Então, pioneiro dos jogos de vida. Ok, tudo bem . Ah, acho que já vi esse cara. Sim, mas na verdade, obrigado pela dica. Preciso de dicas sobre criadores de conteúdo para viver em vans, porque basicamente sou o pioneiro do estilo de vida DevOps em vans.
+
+Mas talvez eu devesse me tornar isso para DevOps.
+
+Então, o que está acontecendo agora é que ele vai criar um PR e depois implantá-lo no meu cluster Kubernetes local . E quando isso for implementado, poderemos acessar o ambiente de teste e ele deverá ter o novo recurso implementado. Unifique e implemente.
+
+Eu também sou holandês e estou tentando conseguir emprego em grandes empresas de software. Atualmente trabalho para a Rockstar. Ok, legal. Se
+
+você estiver interessado em aprender mais comigo, talvez consiga que a Rockstar pague por um treinamento. Por exemplo, tivemos várias pessoas da Holanda que conseguiram que seus empregadores pagassem pelo curso da QBCraft. Somos mão de obra barata. Quatro vezes o salário médio. Sim, isso é bom. Sim
+
+, há muito talento na Europa Oriental. Um mago turco lançando feitiços em sua van. Sim, bem, se há uma coisa que se pode dizer sobre isso é que...
+
+isso é como escrever código com IA, isso é mágica moderna. Então, de certa forma, isso é como lançar feitiços. Os
+
+salários na Suíça são absurdamente altos. Ok, legal.
+
+Sim, por favor, compartilhe mais canais quando você os encontrar. Muito bem , pessoal. Assim, agora a memória da conversa real está sendo exibida ao vivo no palco. Então, basicamente, aqui está o grande momento . Então,
+
+vamos para o ambiente de teste.
+
+Sugira algumas sugestões e perguntas de acompanhamento.
+
+Olá, o ambiente de teste está offline? Isso não é bom.
+
+Então, pessoal, a parte da frente está pronta. O túnel CloudFlare está ativo. E a parte traseira de tecido está levantada. Isso é um problema com...?
+
+Eu fiz... Não, é um túnel do CloudFlare.
+
+Vamos lá. Agora está se resolvendo. OK. Então, vou fazer login rapidinho aqui.
+
+Você chamaria isso de magia negra? Depende do que você fizer com ele. Que legal
+
+ver que você está acompanhando a tendência de streaming do Rob. Sim, o Rob é meu mentor, então com certeza me inspiro nele.
+
+Parece que estou com um problema ao tentar acessar meu ambiente de teste. Então, por favor, tenham paciência comigo por um segundo.
+
+Não entendo, pois o ambiente de produção está funcionando perfeitamente e muito rápido. Então, por que o processo de preparação seria tão lento?
+
+Acho que pode haver um problema com...
+
+Ok.
+
+Ah. Problema com os graves superpotentes.
+
+OK.
+
+Deixe-me fazer login aqui.
+
+Estou com dificuldades para fazer login aqui. Só me dê um segundo.
+
+Hum.
+
+Ok, estamos dentro. Hum, tela. Então, o problema era que minha Superbase estava pausada.
+
+Então, para meu ambiente de teste, estou usando um projeto gratuito. E quando você não o usa por um tempo, ele pausa. Então, foi por isso que o ambiente de teste estava inativo.
+
+Não vai aparecer. Portanto, temos que esperar até que isso esteja pronto, e então poderemos testar nossa configuração. [suspiro] Hum, eu não experimentei o controlador de entrada Cloudflare D, mas prefiro esperar se eles lançarem uma implementação de API de gateway . Você está vivendo seu sonho agora. Sim, esse é o sonho, cara.
+
+Eu não moro em tempo integral neste veículo. Eu tenho uma casa ou um apartamento, mas estou tentando organizar minha vida para poder, sim, morar aqui o máximo de tempo possível. É assim que se parece um agente de busca . Sim.
+
+Ele nem imaginava que eu já havia vendido a casa dele e me mudado para a Espanha para viver uma vida de bebedeiras e praias ensolaradas. [Suspiros]
+
+Primeira vez participando da sua transmissão, programando pela minha câmera. Sim, isso é legal, cara. Vista da sua autocaravana, isso é muito fixe. Onde você está neste exato momento?
+
+Tenho planos de me livrar do Superbase, mas o Superbase é tão bom que oferece autenticação,
+
+banco de dados, tudo. Então, quando eu colocar meu projeto em produção, eventualmente irei migrá-lo para meus próprios bancos de dados hospedados, etc. Mas, por enquanto, é
+
+definitivamente a decisão certa para que eu possa me concentrar no código e na implementação em si.
+
+Você está na Grécia, que legal.
+
+Por que eu moro no meu carro? Porque quero ver esse tipo de paisagem, estar em contato com a natureza e viajar enquanto trabalho.
+
+Ok, então nosso palco está montado novamente. Então, vou tentar entrar no ambiente de teste. Já estamos conectados. Então, vamos voltar aos testes de consulta. Então, o que Misha diz sobre entrar na área de DevOps?
+
+Então, agora está consultando todo o conhecimento que está em Oh, bad gateway. Interessante.
+
+Parece que algo quebrou.
+
+Hum, vou ter que ver se preciso girar a chave.
+
+Está correto no arquivo Adams. Verifique se isso também está correto no cluster.
+
+E está literalmente imprimindo a chave secreta da CLI agora. Então, fico feliz por não estar mostrando minha tela agora.
+
+Girando a chave agora. Bem,
+
+eu moro na Holanda, mas atualmente estou na Alemanha.
+
+O que te leva a escolher a base para escala planetária ou a confiança?
+
+Parece uma longa história para esconder o resultado.
+
+Ok, então este é o resultado. Ok
+
+. Vamos tentar novamente. Novo bate-papo. Devo usar o Proxmox para meu laboratório doméstico?
+
+Ok, então está funcionando. Então, por que ele diz que o Proxmox não deve ser usado?
+
+OK.
+
+Vamos ver então se eu disser "
+
+Hum...". Mas o que ele diria se eu já tivesse o Proxmox instalado?
+
+Este será o grande teste para saber se funciona. Sim. Ótimo, está funcionando. Olhar. Se você já tem o Proxmox instalado, Misha provavelmente o incentivará a continuar usando-o, desde que você tenha um bom motivo para isso. O
+
+conselho dele: "Isso é muito bom." Olha só isso. Está funcionando, pessoal. Faça-me mais algumas conversas de teste. Instruções e sugestões de acompanhamento.
+
+Está funcionando mesmo.
+
+Sim, eu não estava compartilhando minha tela porque estava trabalhando com algumas credenciais, então obviamente não podia compartilhar minha tela. Então , o que Misha diz sobre entrar na área de DevOps? OK. Vamos fazer isso.
+
+Com base nos trechos fornecidos, Misha oferece diversas perspectivas sobre como ingressar no DevOps. Ok, isso é bom. Estágios. E agora fazemos uma pergunta complementar: ele recomenda alguma certificação para isso? Vamos ver se isso vai funcionar.
+
+Ok, sim, isso está correto.
+
+Hum. Ok, então esse é um bom teste. Vamos ver. Como Misha usa o Kubernetes em seu laboratório doméstico?
+
+[risos] Ok, essa não é uma boa pergunta .
+
+Deveria me perguntar isso. Mas talvez se pedirmos, use o Talos.
+
+OK.
+
+Vamos ver o que acontece quando eu mudar de assunto. Então, qual distribuição Linux você acha a melhor?
+
+Vamos ver. Misha recomenda diferentes distribuições para o aprendizado. Ele afirma que o Arch Linux é o melhor. OK. Então, vamos explicar por que o Arch é a melhor linguagem para aprendizado?
+
+Certo, agora vamos dar uma resposta mais elaborada . E se eu mudar de assunto, devo fazer a certificação CKA?
+
+Mas aí, de repente,
+
+a IA pensava: "Ok, então vamos passar isso para ela e depois perguntar o que ela acha."
+
+Ok, é um bom resultado, está funcionando bem. Primeira pergunta respondida corretamente com fontes confiáveis. Em seguida, por que o Arch é a melhor linguagem para aprendizado? O reescritor resolveu a referência implícita de volta à primeira resposta. E gerou uma consulta autocontida. A
+
+resposta é coerente e detalhada. Ok, então está tudo
+
+certo, corresponde exatamente às especificações.
+
+Tudo está correto. Ok, então está fazendo exatamente o que deveria. Agora que temos alguma memória conversacional, podemos promover isso para produção. Sim, promova isso para produção. E quando estiver em produção, aí sim poderei informar meus usuários de teste que já estamos utilizando essa tecnologia em funcionamento.
+
+Depois, vou preparar algo para comer, dar uma voltinha de bicicleta e relaxar um pouco antes da minha sessão de mentoria às 18h.
+
+Sim, estou usando o Starlink para internet. Não considerei a opção Garra Aberta. Parece muito convencional. Uma coisa que estou considerando, no entanto, é o agente da Hermès.
+
+Assim como eu tenho meu próprio agente de IA,
+
+desta vez eu vou jogar com o agente Hermes.
+
+Mas como você pode ver, tudo isso está rodando em um cluster Kubernetes que é auto-hospedado em meus próprios servidores, em minha própria GPU. Portanto, todas as consultas de IA que vocês me viram executar estão sendo executadas no meu próprio hardware de IA local. E como você pode ver, a IA é capaz de implantar novas funcionalidades completamente, e todo o processo de implantação é totalmente automatizado porque utiliza o Flux, simplesmente atualizando a imagem da tag. Eu construí toda a infraestrutura de CI/CD para isso. Então, estou realmente gerenciando este projeto como um verdadeiro engenheiro DevOps deveria fazer.
+
+E isso é tudo o que eu posso te ensinar, caso você tenha interesse em aprender comigo . Então, me diga no chat se você gostou do que viu aqui, se você curte GitOps, Kubernetes, implantação com Flux, tudo automatizado com meus agentes de IA. Eu ensino tudo isso passo a passo. E a memória de conversação agora está implantada no
+
+agente, então dê uma olhada nisso. Mas agora podemos colocar meu aplicativo em produção. E vamos ver se conseguimos...
+
+Vamos fazer uma pergunta. Qual seria uma boa maneira de fazer uma pergunta complementar? Então, qual distribuição Linux [bufa] eu devo usar?
+
+OK.
+
+Agora veremos, pois não tenho experiência alguma. Qual devo escolher? Então, agora devemos nos aprofundar no Ubuntu. Aqui. Sim, vamos lá. Se você
+
+não tem experiência com Linux, Misha sugere as seguintes opções. Você poderia dar mais detalhes sobre a distribuição Linux que acabamos de discutir? Vamos ver se agora vai voltar a usar o Ubuntu .
+
+Sim, vamos lá. Isso vai se aprofundar ainda mais no Ubuntu. Ótimo, está funcionando. Bem, nós implementamos um aplicativo de memória conversacional . Isso é incrível.
+
+Então, o que posso fazer agora é entrar no meu diretório de usuários de teste. Ah,
+
+Slack.
+
+Vamos ver. Então, deixe-me compartilhar minha tela novamente. Então, o canal Olá pessoal. Com base no feedback de Geyser , implementei a memória conversacional e agora os chats devem parecer mais com conversas do que com mensagens isoladas. Eu testei fazendo as seguintes perguntas e o sistema captou o histórico corretamente.
+
+Adoraria que você experimentasse.
+
+E é assim que se constrói software, sabe, você simplesmente começa...
+
+no meu caso, continuou corretamente com o Ubuntu nesta etapa.
+
+A fonte principal baseia-se em suas anotações ou em dados do site Cube Craft? É baseado nos 2 anos de sessões de perguntas e respostas que temos no Cube Craft, em todos os meus vídeos do YouTube e em breve adicionarei todos os cursos também. Isso também oferecerá a opção de selecionar todas ou algumas das fontes.
+
+Tudo bem. Está tudo funcionando muito bem.
+
+Hermes é muito melhor que OpenClaw. Sim, ouvi coisas boas sobre isso. Tenho que ir agora. Que bom te ver, Petter. Obrigado por assistirem.
+
+Vou migrar para o Arch Linux assim que vocês conseguirem o Framework Pro. Sim, boa escolha, cara. Você recomenda usar o Arch primeiro antes de partir para uma abordagem com contêineres. Quer
+
+dizer, depende do seu nível de habilidade, certo? E novamente, Joseph, assim como você, você recomenda Arch em primeiro lugar. Como você gerencia seus fluxos de trabalho Git para código na nuvem? Sim . Assim como Joseph, você tem muitas perguntas e, assim como você, tenho certeza absoluta de que posso te ajudar com tudo isso, sabe? Então, bem, vou ter que
+
+encerrar a transmissão agora, mas tenho certeza de que já está claro para vocês que tenho muita coisa para compartilhar, mas acho que vocês também entendem que não posso simplesmente compartilhar tudo nessas transmissões ao vivo e ajudar as pessoas o tempo todo dessa forma. Então, como você gosta de pessoas como você, que fazem muitas perguntas, eu criei um espaço de mentoria dedicado onde as pessoas podem vir e receber a ajuda que precisam, de acordo com a sua situação, porque eu realmente não sei qual é a sua situação agora, certo? Portanto, a recomendação, por exemplo, sobre se você deve filmar em Arch ou em um contêiner, depende muito de onde você está. E precisaríamos conversar sobre a sua situação atual para que eu pudesse te dar um conselho adequado... ou
+
+melhor, dizer isso agora, mas isso poderia ser um conselho ruim devido ao seu momento atual. Na verdade, prefiro orientar as pessoas dentro do CubeCraft e dar-lhes o conselho correto, adaptado à sua situação. Então, isso acontece se alguém sintonizar agora e não estiver ciente disso . Se você quiser, eu ofereço mentoria especificamente para esse tipo de questão. Você pode encontrar mais informações sobre isso neste link.
+
+E se você estiver interessado em aprender mais sobre meus fluxos de trabalho de IA, vou lançar uma comunidade de IA que, se houver interesse suficiente, farei. Não tenho certeza se vou fazer isso, mas se houver pessoas interessadas o bastante . Também vou postar o link aqui. Esta é uma lista de espera para a comunidade. E se eu conseguir que pessoas suficientes se inscrevam , eu farei isso. No momento,
+
+estou com pouco tempo disponível, mas se eu puder ajudar muitas pessoas com esses fluxos de trabalho de IA e houver pessoas interessadas , eu farei isso. Mas só se houver gente suficiente interessada. Então, se você se inscrever na lista de espera, receberá um grande desconto. Assim como as pessoas na lista de espera, quem estiver lá receberá um grande desconto que os demais não receberão, caso eu lance o produto. Não custa nada se inscrever, certo?
+
+Mas se eu conseguir atrair pessoas suficientes, criarei uma comunidade onde compartilharei todos esses fluxos de trabalho de desenvolvimento, como eu os faço, enfim, tudo isso. Então, sim, você pode ter acesso a isso, basta se inscrever na lista de espera. É um dia de trabalho honesto. Sim, foi um dia de trabalho honesto. E a IA teve um ótimo desempenho. Mas essa é uma ótima funcionalidade
+
+que foi implementada agora. Estou muito feliz com o resultado. E agora vou comer alguma coisa, pegar a bicicleta e fazer alguns exercícios . E às 18h. Vou ter algumas aulas particulares aqui na Cube Craft.
+
+Então, hum, vai ser um dia de trabalho honesto. Pessoal, muito obrigado por assistirem. Me diverti muito fazendo a transmissão. Nos próximos dias vai chover aqui na Alemanha. Portanto, ainda haverá muito trabalho a ser feito no projeto de IA. Portanto,
+
+certifique-se de estar inscrito no YouTube e na Twitch. Na Twitch, eu transmito mais coisas como caminhadas, trilhas e bate-papos enquanto tomo café. Então, isso é mais parecido com streaming ao vivo . No YouTube, é mais voltado para esse tipo de construção de IA e streaming. Então, se você quiser ver tudo, confira o canal da Twitch.
+
+Ah, vou compartilhar o link também. É lá que eu gosto de fazer transmissões ao vivo constantemente. E
+
+certifique-se de estar inscrito nisso. E nos próximos dias vamos adicionar cada vez mais funcionalidades ao aplicativo de IA. Então, muito obrigado por assistirem, pessoal. Vou encerrar a transmissão.

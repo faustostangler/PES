@@ -1,0 +1,103 @@
+---
+video_title: "Why AI Cannot Replace DevOps Engineers (New Study)"
+video_id: _UCZZ45ujjs
+channel_name: "Mischa van den Burg"
+channel_id: UCDAck-gFPTrgTx_qp59-bQA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_UCZZ45ujjs
+video_date: 2026-03-17T16:00:53+00:00
+video_description: |
+  Want a remote $200K Kubernetes job? Go here: https://kubecraft.click/cgv100
+  
+  FREE Kubernetes Course: https://go.kubecraft.dev/k8s-quickstart
+  
+  Will AI replace DevOps engineers? A 2026 benchmark testing 14 frontier models on real SRE tasks gives us a data-backed answer. Top models — including Claude Opus — solve fewer than 30% of basic OpenTelemetry instrumentation tasks on clean 300-line code. Production systems are far more complex.
+  
+  This video breaks down exactly why AI agents still can't handle distributed systems at scale. You'll learn how context window limitations cause AI to ignore critical instructions mid-task, why non-deterministic outputs break production pipelines, and how polyglot codebases expose the gaps in AI training data. Most importantly, you'll see why the global explosion in AI infrastructure is creating more DevOps and Kubernetes jobs, not fewer.
+  
+  🔗 RESOURCES MENTIONED:
+  
+  Want a remote $200K Kubernetes job? Go here: https://kubecraft.click/cgv100
+  
+  FREE Kubernetes Course: https://go.kubecraft.dev/k8s-quickstart
+  
+  AI Benchmark: https://quesma.com/blog/introducing-otel-bench/
+  
+  Pedro went from restaurants to DevOps in USA. Watch the full interview:
+  https://www.youtube.com/watch?v=6wxhCMyTwhQ&list=PL_JVnPgp2IRfMNjMJVZYExEJJRiKGqPUE&index=2
+  
+  📱 CONNECT WITH ME:
+  → Website: https://kubecraft.click/yt-apply-2
+  → X / Twitter: https://x.com/mischavdburg
+  → Personal blog: https://mischavandenburg.substack.com/
+  → LinkedIn: https://www.linkedin.com/in/mischavandenburg/
+  → Instagram: https://www.instagram.com/mischavandenburg/
+  → TikTok: https://www.tiktok.com/@mischavandenburg
+  
+  ℹ️ ABOUT KUBECRAFT: I help you land six figure tech jobs through Kubernetes, Linux, home labs, self hosting and production-ready skills. Over 1000 people mentored into succesful DevOps careers.
+  
+  #Kubernetes #DevOps #AIEngineering
+---
+A IA vai substituir os empregos de DevOps? Essa é uma das perguntas mais frequentes que recebo e está por toda parte nos comentários do meu canal no YouTube . Neste vídeo, vou tentar responder a essa pergunta. E tenho alguns dados recentes que vão te ajudar a dormir melhor à noite. Então vamos começar. Os dados que quero compartilhar com
+
+vocês hoje são de um artigo da Quesma, que criou um benchmark muito interessante e relevante para nós, engenheiros de DevOps e SREs. O que eles fizeram foi pedir a 40 modelos que adicionassem rastreamentos distribuídos a bases de código existentes usando um método padrão. Basicamente, o teste consiste em fornecer tarefas básicas de SRE (Engenharia de Confiabilidade de Site) e, em seguida, pedir aos modelos de IA que as resolvam. E os resultados irão surpreendê-lo. Mas, antes de mais nada, o artigo explica muito bem o que é rastreamento distribuído. Assim, quando um aplicativo é executado em uma
+
+única máquina, geralmente é possível rastrear um erro percorrendo um arquivo de log. Mas quando essa solicitação é executada em 50 microsserviços, o que é muito comum em ambientes de aplicativos nativos da nuvem modernos, ela se dispersa em um fluxo caótico de eventos de desconexão. O rastreamento distribuído resolve isso interligando-os, permitindo acompanhar uma ação do usuário, como clicar em " entrar", desde o gateway da API até o serviço de autenticação, depois para o banco de dados e vice-versa. Ou seja, se você tiver um aplicativo simples, basta consultar os arquivos de log caso algo dê errado. Mas se você tiver muitos microsserviços, precisará de alguma forma de rastrear essas solicitações entre esses serviços. E para fazer isso, você
+
+precisa de algo chamado instrumentação, e o padrão de facto para isso é o OpenTelemetry. Então, o que eles fizeram foi criar um parâmetro de referência para a instrumentação do OpenTelemetry. Basicamente, trata-se da implementação desse rastreamento distribuído. E eles testaram 14 modelos de vanguarda nessas tarefas. E a primeira tarefa que eles tentaram foi, por exemplo, começar com uma tarefa básica, que é adicionar instrumentação a um único microsserviço em uma única linguagem, ok? Os agentes de IA recebem um
+
+pequeno microsserviço com cerca de 300 linhas de código de uma aplicação realista e trabalham em um terminal Linux, tendo a tarefa de implementar o rastreamento para esse microsserviço. E isso me faz dormir muito melhor, porque na verdade não tenho medo nenhum da IA ​​substituir meu emprego. Como dizem no artigo aqui, eles ficaram surpresos ao constatar que até mesmo os modelos mais cobiçados de 2026 enfrentam dificuldades. As tarefas que propusemos eram triviais em comparação com cenários do mundo real, ok? Em um trabalho típico de SRE, os serviços são enormes, escritos em sistemas legados e mal documentados. Se os
+
+modelos falharem em 300 linhas de código Go limpo , eles não serão capazes de lidar com produção. Não sou eu que estou dizendo isso, está no artigo, ok? Ou seja, basicamente estão dizendo que os modelos de IA ainda não conseguem lidar com a produção. Mas por quê? Para entender isso corretamente, você precisa ter um pouco de conhecimento de teoria de IA. E tenho
+
+experimentado bastante com isso nos últimos meses, e o conceito fundamental que você precisa saber aqui é o que chamamos de janela de contexto. Portanto, quando você envia uma solicitação para um LLM, que está sendo executado em algum lugar na nuvem, você só pode enviar uma certa quantidade de tokens. Existe apenas uma quantidade limitada de dados que você pode fornecer a um LLM, e que este então consegue processar. E isso se chama janela de contexto. Agora, o Claude Opus 4.5 possui
+
+uma janela de contexto de 200.000 tokens. Ou seja, você só pode fornecer 200.000 tokens. Mas, se você já fez algum experimento com IA e acompanhou o uso da sua janela de contexto, também deve ter notado que, quando ela está cerca de 40% preenchida, o desempenho do modelo de IA praticamente entra em colapso. Embora a
+
+janela seja de 200.000, você só pode realmente alocar cerca de 100.000 para que o modelo funcione de forma eficiente. Então, o que notei em meus próprios experimentos é que, por exemplo, ao atribuir uma tarefa ao meu assistente de IA no meu laboratório doméstico, e instruí-lo especificamente a não aplicar manifestos diretamente ao meu cluster Kubernetes. Deve sempre utilizar GitOps. E quando eu lhe dou uma
+
+tarefa muito complexa, ele acatará essas instruções e começará a explorar meu cluster, obtendo muito contexto e muita informação que precisa processar. E então, como o contexto fica cheio, notei que ele começa a ignorar instruções. Vai aparecer literalmente a mensagem: "Aplicar ao GitOps não funciona. Vou aplicar diretamente ao cluster." Vai estar escrito exatamente isso. E aí eu tenho que
+
+usar Ctrl+C para interromper o processo, porque ele basicamente está tomando essas decisões sozinho, o que pode causar muitos danos . E eu já vi isso acontecer com meus próprios olhos tantas vezes. Rapidinho, 73% de vocês não são inscritos no meu canal, então, por favor, inscrevam-se agora mesmo. É uma forma gratuita de apoiar o canal e me permite publicar conteúdo gratuito como este toda semana. Assim, a janela de contexto é basicamente tudo o que o modelo consegue manter em seu conhecimento em um determinado momento. E os seres humanos são iguais.
+
+Acredito que nós, humanos, só conseguimos lembrar de sete coisas ao mesmo tempo, e esse é o limite da memória de trabalho, ou pelo menos a média das pessoas só consegue memorizar sete coisas simultaneamente. Existe um limite para o que você consegue reter em sua capacidade de atenção em um único momento. E é exatamente isso que limita os modelos de IA atualmente. O segundo problema com os agentes de IA é que seus resultados não são determinísticos. Isso significa que a produção deles não é previsível.
+
+Mesmo que você dê a instrução para gerar um objeto JSON com determinadas especificações, na minha experiência, em cerca de 40% das vezes, ele não seguirá essas instruções. Você receberá uma saída que talvez inclua algumas linhas como: "Ah, entendi. Aqui está o objeto adjacente." Por exemplo, incluirá essas linhas. Mas, se você começar a construir aplicativos com base nessa saída, você pode falhar, certo? E
+
+esse é o maior desafio que os agentes de IA enfrentam neste momento. Que é imprevisível. Bem, já faço isso há alguns anos. Estou nesse ramo há um tempo e posso afirmar que nenhuma empresa que administra infraestrutura crítica vai permitir que um agente de IA circule livremente em seu ambiente de produção, ok? É sempre necessário que haja um ser humano envolvido no processo. Isso
+
+não significa que a IA seja inútil. Tipo, falha, mas pelo menos funciona 30% das vezes, tá bom? Portanto, acredito que esses agentes e sistemas de IA terão um impacto. Agora que sabemos que a janela de contexto é um grande fator limitante, o artigo também apresenta mais alguns motivos pelos quais os agentes de IA enfrentam dificuldades. E uma delas é que exige habilidades de desenvolvimento back-end em diversas linguagens do setor . Em outras palavras, grandes
+
+sistemas distribuídos geralmente são construídos a partir de múltiplos componentes em diversas linguagens de programação. Os modelos de IA são realmente bons em Python e TypeScript porque essas são as linguagens mais comuns. Mas quando você começa a misturar outros idiomas aqui, eles realmente começam a ter dificuldades. Outro motivo é a menor quantidade de dados de treinamento. Assim, embora adicionar instrumentação seja uma tarefa padrão de engenharia, não é uma prática comum em projetos de código aberto.
+
+As aplicações mais populares onde a confiabilidade é fundamental estão em repositórios privados de grandes empresas de tecnologia, como Apple, Airbnb ou Netflix. Em outras palavras, esses modelos de IA são treinados com base em código disponível publicamente no Stack Overflow, GitHub e em plataformas como o Stack Overflow . E essas grandes empresas que têm práticas avançadas de engenharia de confiabilidade como essa e implementações de telemetria aberta, não expõem seu código. Portanto, os modelos de IA não têm nada em que basear seu trabalho, e é por isso que são menos eficientes nessa tarefa. Assim, a conclusão deles é que os melhores modelos têm dificuldades. O Clau-Claude Opus, considerado o estado da arte,
+
+resolveu apenas 29% das tarefas. Existem barreiras linguísticas, falhas silenciosas e questões de custo- benefício. OK? Portanto, é muito caro deixar a IA realizar essas tarefas, mesmo que ela falhe o tempo todo. Então, como se costuma dizer, a IA em SRE ainda é, em grande parte, uma promessa exagerada, mas há esperança, afirmam. Portanto, haverá
+
+constantes avanços nessa área. Então, respondendo à pergunta: a IA substituirá os empregos de DevOps? E eu fiz recentemente um vídeo sobre a técnica RELF, por exemplo. Você pode conferir aqui. E nesse vídeo, eu explico como a engenharia de software basicamente teve seu custo reduzido a US$ 10 por hora, e o desenvolvimento de software, ou melhor, o ato de escrever código, está quase completamente terceirizado para modelos de IA atualmente.
+
+Essa é uma tendência preocupante para os engenheiros de software, que certamente estão perdendo o sono neste momento . Pelo menos aqueles que não estão dormindo ao volante. Para DevOps, acredito que o cronograma seja mais longo. A verdade é que ninguém sabe ao certo e ninguém pode saber ao certo. Posso dar minha opinião, mas não tenho uma bola de cristal que prevê o futuro, certo?
+
+O que posso lhe oferecer são meus pensamentos e minhas expectativas a respeito disso. Ler este artigo me dá esperança, porque, como podemos ver, os modelos de vanguarda estão falhando nas tarefas básicas de SRE neste momento. Devido às limitações da janela de contexto, esses modelos de IA não conseguem manter o foco nesses grandes sistemas distribuídos em seus cérebros neste momento. Isso me dá esperança. Mas, basicamente, a questão é: estamos apenas esperando que essas janelas de contexto aumentem de tamanho. Na verdade, o
+
+Cloud Opus 4.6 foi lançado recentemente e essa janela de contexto foi aumentada de 200.000 para 1 milhão de tokens . Portanto, já existem obras em andamento por lá. Assim, em um horizonte temporal suficientemente longo, esses modelos se tornarão mais eficientes nesse tipo de tarefa. Dito isso,
+
+não estou nem um pouco preocupado com meu emprego ou minha carreira como engenheiro DevOps. Não tenho nenhuma expectativa de que os engenheiros de DevOps sejam substituídos por IA, especialmente no sentido de que o desenvolvimento de software seja completamente terceirizado para profissionais de nível sênior. Eles não têm contexto suficiente para entender esses sistemas distribuídos. A questão é que escrever código é uma coisa, mas se você tem uma infraestrutura que executa aplicativos importantes, bancos ou bolsas de valores, não há espaço para erros. Não há margem para erros nesses grandes sistemas de produção.
+
+E qualquer sistema, qualquer sistema de IA que tenha pelo menos uma porcentagem mínima de erro, não será capaz de gerenciar nenhum desses sistemas de produção. Sim, acredito que esses agentes de IA terão um impacto no trabalho e na engenharia de DevOps. Na verdade, acredito que isso terá um efeito positivo, pois eliminará muito do trabalho árduo em engenharia de confiabilidade de sites e DevOps. Então, ele consegue lidar perfeitamente com todas as tarefas chatas . Mas isso significa que, veja bem, os engenheiros de DevOps terão mais tempo para se concentrar no que é importante , para garantir a segurança e obter aqueles nove segundos extras de tempo de atividade e confiabilidade. Mas não acredito que a IA
+
+nos substituirá num futuro próximo. E, por fim, a melhor parte de tudo isso é que a IA está obviamente em ascensão.
+
+Atualmente, estão sendo investidos US$ 7 trilhões em data centers em todo o mundo. E o boom da IA ​​só tende a crescer. Mas toda essa inteligência artificial precisa funcionar em algum lugar, certo? E, de acordo com a CNCF, o Kubernetes é a plataforma de IA padrão atualmente. Então, isso significa que, se a IA crescer, o Kubernetes também crescerá. Portanto, os engenheiros DevOps que
+
+foram inteligentes e que aprenderam Kubernetes nos últimos anos estão vivendo um momento de ouro. Há muito trabalho disponível para nós.
+
+Atualmente, existem cerca de 130.000 vagas de emprego disponíveis para engenheiros de Kubernetes. É uma loucura. Portanto, se a IA crescer, nosso trabalho também crescerá. Se você ainda não aprendeu Kubernetes, não se preocupe. Pode
+
+contar comigo. Criei um curso gratuito de 7 dias . O link está na descrição. Portanto, esta é a minha posição atual sobre este assunto. Durmo muito bem à noite sabendo que existem artigos que mostram que os modelos ainda não conseguem realizar esse tipo de tarefa . Estou muito otimista em relação ao futuro do
+
+DevOps com o aumento da IA ​​e, consequentemente, da necessidade crescente de gerenciamento de clusters Kubernetes, área na qual sou muito habilidoso. E, em geral, acho que, especialmente no nicho de infraestrutura DevOps, sempre haverá trabalho para pessoas com alta qualificação, ok? Então, se você está assistindo a isso e se identifica com a minha abordagem e com a mentalidade de artesão da qual sempre falo, saiba que eu acredito que os artesãos não ficarão desempregados tão cedo. Especialmente nesses ambientes de produção de alto risco, eles não vão deixar a IA chegar perto disso. Eles precisam de pessoas que os compreendam. Portanto, se
+
+você possui conhecimentos sólidos em infraestrutura, não precisa se preocupar. Mas, deixe sua opinião nos comentários. Por exemplo, talvez alguns de vocês já estejam utilizando agentes de IA no trabalho. Gostaria muito de saber mais sobre isso. Também estou aprendendo conforme vou avançando. Então, me avise.
+
+Muito obrigada por assistir, e nos vemos no próximo vídeo.

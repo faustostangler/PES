@@ -1,0 +1,109 @@
+---
+video_title: "The First CLI Tool You NEED To Learn (You'll Use It Every Day)"
+video_id: JhMkEZenxlU
+channel_name: "Mischa van den Burg"
+channel_id: UCDAck-gFPTrgTx_qp59-bQA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JhMkEZenxlU
+video_date: 2026-06-23T15:00:31+00:00
+video_description: |
+  Apply to join KubeCraft & land your DevOps job: https://kubecraft.click/cgv119
+  Get my FREE 16-hour Linux course: https://kubecraft.click/linux-cgv119
+  
+  There are hundreds of command line tools, but if I could keep only one, it would be tmux. In this video I show you how I run my entire workday from a single terminal, including large AI agent swarms, and I teach you exactly how to do it yourself. This comes from 12+ years on Linux and coaching 15,000+ people into tech careers.
+  
+  You'll learn what a terminal multiplexer actually is (straight from the man page, not ChatGPT), how tmux sessions let you attach and detach from long-running jobs like multi-terabyte database migrations, and how windows and panes turn one terminal into a full workspace. Then I share three pieces of tmux wisdom most creators never talk about.
+  
+  🔗 RESOURCES MENTIONED:
+  
+  Apply to join KubeCraft & land your DevOps job: https://kubecraft.click/cgv119
+  Get my FREE 16-hour Linux course: https://kubecraft.click/linux-cgv119
+  
+  → tmux (the terminal multiplexer): https://github.com/tmux/tmux/wiki
+  → Alacritty (the terminal emulator I use): https://alacritty.org
+  
+  📱 CONNECT WITH ME:
+  → Website: https://kubecraft.click/yt-apply-2
+  → X / Twitter: https://x.com/mischavdburg
+  → Personal blog: https://mischavandenburg.substack.com/
+  → LinkedIn: https://www.linkedin.com/in/mischavandenburg/
+  → Instagram: https://www.instagram.com/mischavandenburg/
+  → TikTok: https://www.tiktok.com/@mischavandenburg
+  
+  ℹ️ ABOUT KUBECRAFT: I help you land six figure tech jobs through Kubernetes, Linux, home labs, self hosting and production-ready skills. Over 1000 people mentored into successful DevOps careers.
+  
+  #tmux #Linux #DevOps
+---
+Existem centenas de ferramentas de linha de comando , mas se eu pudesse ficar apenas com uma, seria o tmux. E é nessa que você também deve se concentrar. Meu nome é Misha. Sou um engenheiro DevOps sênior e já ajudei mais de 15.000 pessoas a ingressarem em carreiras de tecnologia usando Linux. Neste vídeo,
+
+vou mostrar como gerencio todo o meu dia de trabalho usando o tmux, incluindo grandes enxames de IA. Vou te ensinar como fazer isso. Então, vamos lá. Então, a primeira pergunta é: o que diabos é tmux? E para responder a isso, não vamos recorrer ao ChatGPT. Não, vamos
+
+responder isso como um homem de verdade, usando a linha de comando. Então, vamos digitar man tmux. Lembre-se, você tem tudo o que precisa aqui mesmo, na linha de comando, nas páginas do manual. Não há necessidade de internet ou ChatGPT. Está tudo aqui.
+
+E se quisermos aprender sobre o tmux, podemos simplesmente ler: "tmux é um multiplexador de terminais. Ele permite que vários terminais sejam criados, acessados ​​e controlados a partir de uma única tela." É isso. É isso que o tmux faz. Mas, para um iniciante, pode ser muito difícil entender por que isso poderia ser útil.
+
+Então, é isso que vamos abordar agora. Então, o primeiro conceito que precisamos entender são as sessões do tmux. Então, se eu digitar `tmux ls`, veremos que tenho uma sessão tmux em execução na minha máquina. Se eu executar o comando tmux e, em seguida, executar tmux ls, verei que tenho duas sessões em execução na minha máquina. Assim, cada vez que executo um processo tmux, uma nova sessão é criada na minha máquina.
+
+A questão com as sessões é que você pode se conectar e se desconectar delas. E isso é muito importante quando você está gerenciando várias máquinas diferentes em uma rede, por exemplo. Então, deixe-me tornar isso concreto para você. Então, digamos que eu tenha uma máquina virtual, ok? Estou gerenciando isso através do Tailscale, então vou fazer login agora mesmo. Então,
+
+agora estamos conectados a esta máquina, e eu estou na máquina remota. Esta é uma máquina virtual que executa o OBS para mim quando estou fazendo transmissões ao vivo. Agora, digamos que eu precise realizar uma operação nesta máquina. Bem, a primeira coisa que eu faria seria iniciar o tmux aqui. Então, agora eu tenho o tmux aberto. Esta é
+
+a configuração padrão do tmux. E se eu executar agora o comando `tmux LS`, veremos que há uma sessão em execução nesta máquina. OK? E eu tenho um carinho especial por isso. Se eu pressionar Ctrl+B+D agora, estarei desconectado, como indicado aqui na linha de comando. Se eu
+
+executar o comando `tmux LS` novamente, haverá uma sessão em andamento, mas eu não estarei em uma sessão do tmux no momento. Posso sair desta sessão, encerrar. Agora estou no meu computador principal. Não estou mais na máquina virtual. Mas se eu acessar via SSH novamente, estou aqui na máquina virtual. tmux LS, a sessão está lá.
+
+E se eu executar agora o comando `tmux attach`, estarei conectado à sessão novamente, e você verá que também tenho o histórico aqui. OK? Isso se torna muito útil se eu estiver executando uma operação nesta máquina que não quero interromper ao me desconectar da sessão SSH. Assim, um caso de uso prático na minha carreira tem sido a migração de bancos de dados . Antes de fazermos isso no Kubernetes, migrar um banco de dados, especialmente se ele tiver vários terabytes, é uma operação demorada que eu prefiro executar ao longo de várias horas ou até mesmo dias, às vezes. E é aí que o
+
+tmux se torna realmente útil. Então, o que vamos fazer é este processo extremamente importante para o valor de I, de 1 a 100.000: "Por favor, curta e se inscreva. Você é o dólar I." Depois vamos dormir por 5 segundos e pronto. Então, agora
+
+estamos executando esse processo extremamente importante, no qual estamos iterando sobre nossos assinantes dessa maneira. E estamos aumentando gradualmente o número de inscritos, assim como você fará clicando no botão de inscrição agora mesmo. Muito obrigado. Então, se eu tiver esse processo importante, estarei agora em uma máquina virtual, mas digamos que terminei por hoje. Estou pronto para ir para casa, mas não quero deixar isso aberto no meu laptop, porque se eu fechar o laptop, vou interromper esse processo. Então,
+
+o que eu vou fazer é pressionar Ctrl+B+D. Agora estou desconectado desta sessão e posso sair dela, ok? Espero que você tenha anotado qual era a contagem de assinantes quando nos desconectamos agora há pouco, mas se eu acessar esta máquina virtual via SSH novamente , posso executar o comando `tmux LS` mais uma vez e ver que ainda há uma sessão em execução. E se eu executar o comando `tmux attach` agora, veremos que estamos no número 13. Então, enquanto eu estava desconectado, enquanto eu dormia em casa, o processo continuou, continuou e continuou. E esse é um dos principais
+
+casos de uso do tmux, onde você pode deixar processos em execução em uma máquina e conectar-se e desconectar-se deles conforme necessário. Então, agora você aprendeu sobre o conceito de sessões tmux. Agora, vamos aprender sobre janelas e vidros. Então, aqui na parte inferior da tela, você verá o número zero. Se eu pressionar Ctrl+B+C agora, terei criado uma nova janela. Na parte inferior, você
+
+verá que agora há o bash número um . E o "bash" aqui é o nome do processo que estamos executando no momento , porque estou executando um shell aqui, ok? Então, se eu pressionar Ctrl+B C novamente, terei três janelas. E se eu fizer Ctrl+B N, posso ir para o próximo . Control B N, eu vou para o próximo.
+
+E Ctrl+B P, posso voltar para o anterior, ok? Então, é assim que eu posso alternar entre eles. Agora, nesta janela, posso fazer qualquer coisa. Como estávamos fazendo, eu posso, por exemplo, instalar um novo aplicativo, sudo apt install btop. Então, agora que o btop está em execução, se eu diminuir um pouco o zoom, consigo monitorar minha máquina enquanto ela executa esse processo extremamente importante de se inscrever no meu canal, por exemplo. Agora, digamos que eu queira manter
+
+isso aberto, mas também queira editar um arquivo ao mesmo tempo. Com isso, vamos agora aprender sobre o conceito de painéis. Então, se eu pressionar Ctrl+B e selecionar "porcentagem", estarei abrindo um painel na mesma janela. Portanto, é muito importante entender isso. Uma sessão tmux é uma coleção de janelas, e uma janela é composta por um ou mais painéis. É isso que você precisa
+
+lembrar. Agora, se eu pressionar Ctrl+B , posso dividir isso horizontalmente, como você pode ver. E eu posso continuar, continuar, continuar e continuar, dividindo isso se eu quiser, ok? Então, tudo isso cria um novo shell bash no qual eu posso trabalhar. Por exemplo, se eu quiser abrir um arquivo de configuração do sistema, posso usar o comando `sudo vim etsy`, e então `systemd`, por exemplo, para abrir o meu arquivo `networkd.conf`. Assim, posso
+
+editar esse arquivo de configuração enquanto observo o monitor de recursos simultaneamente. E na minha primeira janela de oportunidade, esse processo ainda está em andamento. Assim, consigo fazer várias coisas ao mesmo tempo e ficar de olho em tudo simultaneamente. Então, talvez você comece a perceber que isso pode se tornar muito poderoso, permitindo que eu execute vários contêineres aqui, por exemplo, e edite meus arquivos enquanto monitoro meus recursos , tudo em uma única janela de terminal. Tipo, de novo, eu não criei nenhum aplicativo com interface gráfica sofisticada para fazer isso. Estou fazendo isso pela
+
+linha de comando. E esse é o poder do tmux, e por isso acredito que você deveria aprendê-lo bem. Eu também posso fazer algo como journalctl {dash} f, e agora ele está seguindo os logs do sistema. E se eu executar o comando `sudo echo kek`, veremos que a cada execução, uma nova entrada de log é criada, pois uma nova sessão root é aberta e fechada a cada vez. E, novamente, posso me desapegar disso. Isso ainda está
+
+rodando na minha máquina virtual. Posso fechar meu emulador de terminal e, ao iniciá-lo novamente, se eu usar SSH e executar o comando `tmux attach`, tudo estará exatamente como deixei, incluindo o importante processo de curtir e me inscrever neste vídeo. Rapidinho, se você me vir trabalhando na linha de comando assim e pensar: "Quero aprender isso", tenho boas notícias para você, porque estou oferecendo um curso gratuito de 16 horas hoje. Você pode acessar o link na descrição e, ao clicar nele e inserir seus dados, ele retornará a resposta para você. Você terá acesso a um curso gratuito de 16 horas que abordará em detalhes os fundamentos do Linux, como instalar o Linux e vamos nos aprofundar ainda mais em tmux, vim, tudo o que você me vê usando, completamente de graça.
+
+Confira o link na descrição abaixo. Além disso, conta com uma comunidade de mais de 5.000 membros, que é superativa, como você pode ver, e tudo isso é completamente gratuito porque quero ajudar o máximo de pessoas possível a descobrir o prazer de usar o Linux. O link está na descrição. Confira. É grátis.
+
+É um presente meu para você e nos vemos na comunidade Linux. Então, agora vou compartilhar com vocês alguns segredos do tmux que vocês normalmente não ouvem outros criadores ou professores mencionarem, e o primeiro deles tem a ver com o uso de abas no terminal. Então, você pode ter me visto fazendo isso agora há pouco e pensado: "Se eu baixar o iTerm no macOS, ele já terá essas abas na parte superior." Então, por que eu precisaria do tmux? Agora, quero que você pense nisso de uma maneira diferente. Se a maneira correta
+
+de pensar sobre isso é a seguinte: se eu já consigo fazer isso pela linha de comando usando processos nativos do Linux, por que eu precisaria de um emulador de terminal inchado que precisa ter essas pequenas abas na parte superior? E é por isso que eu realmente prefiro usar o Alacritty e também por isso que me apaixonei por ele anos atrás, quando estava pesquisando qual emulador de terminal eu iria usar, porque aqui, como aqui, eles realmente dizem: por que o recurso X não foi implementado? Então, literalmente, dirá: "Isso pode ocorrer por vários motivos, mas às vezes significa que você não encontrará recursos como abas ou janelas divididas, que são melhor gerenciados por um gerenciador de janelas ou multiplexador de terminal." OK? Então, eles têm essa abordagem minimalista para as coisas, que realmente me agrada, e depois simplesmente fazem um link para o tmux, cujo código-fonte é público, aliás, e ainda está sendo trabalhado, como você pode ver. Mas eu
+
+adoro isso no Alacritty. E se você for pesquisar nos arquivos, vai ver que é realmente hilário. Se você pesquisar aqui por tablaturas,
+
+vai encontrar um monte de gente ignorante que quer ter tablaturas no Electri. E sim, a forma como eles reagem a isso é hilária. Basta ler isso. Mas aqui ele está dizendo: "Não há nenhum desejo de reconsiderar isso. Se as pessoas gostam de emuladores de terminal com abas, não há problema nenhum em escolher um emulador de terminal diferente do Electri."
+
+[risos] Isso é como se tivesse ouro de verdade aqui, tá bom? Então, [bufa] sim, essa é a razão pela qual eu escolhi a Electri naquela época. E tudo se resume à filosofia Unix, certo? Faça uma coisa e faça-a bem. Portanto, seu emulador de terminal não precisa de abas se você aprender a usar o tmux corretamente.
+
+E isso se traduz muito bem em IA, porque se você passou algum tempo em X, verá pelo menos uma vez por dia alguém criando seu orquestrador de agentes de IA personalizado, onde eles têm um aplicativo com interface gráfica e então, "Ah, eu tenho todas essas sessões onde posso executar um agente de IA." Olá, nós temos o tmux. O código Claude é um processo de linha de comando (CLI). Deixe-me mostrar o que quero dizer com isso. Então, obviamente, eu sempre executo todos os meus fluxos de trabalho de IA na linha de comando, e estou usando o tmux para isso. Então, se eu
+
+iniciar essa skill personalizada que eu tenho, como "business X scan", e em outra janela eu fizer uma análise detalhada do meu laboratório doméstico, você vai notar que aqui em cima essas sessões do tmux estão sendo renomeadas conforme o processo avança. E esta dizia: "Olá Misha, que bom te ver. Em que vamos trabalhar hoje?" Então, para esta questão, vamos dizer: "Escreva um breve ensaio sobre por que eu acho que o tmux é melhor do que usar aplicativos com interface gráfica para gerenciar agentes de IA." Então, ele vai escrever o pequeno ensaio e, como podemos ver, agora vai revisar meu laboratório doméstico e fazer uma varredura de negócios em X, onde vai pesquisar todas as contas que possam ser relevantes para o meu negócio, para que eu possa ter ideias melhores, etc. E estou
+
+usando o tmux para fazer isso. Se eu pressionar Ctrl+B+W agora, posso alternar entre as opções com muita facilidade . Vejo todas essas sessões acontecendo. Posso alternar entre eles com muita facilidade, verificar o progresso e, com base nos nomes aqui, posso ver se estão concluídos ou não. Sim, tenho alguns sistemas de IA bastante avançados em funcionamento que gerencio simplesmente com o tmux. Portanto, se você está assistindo a
+
+isto e utiliza algum tipo de orquestrador de agentes de IA personalizado, considere usar apenas o que está disponível na linha de comando. Você me agradecerá depois. E agora, a última dica que vou compartilhar com vocês, que provavelmente vai gerar vários comentários raivosos, é a seguinte: Não alterem as configurações padrão do teclado. Eu sei, Ctrl+B é um pouco estranho. É um pouco estranho se acostumar com isso. Por favor, por favor,
+
+não faça coisas como Ctrl+B V para fazer uma abertura vertical ou Ctrl+B H para fazer uma abertura horizontal. Não faça isso. Não altere as configurações de teclas padrão, pois, no momento em que o fizer, você ficará completamente inútil em qualquer sistema remoto. Se você quer ter um emprego ou uma carreira na área de tecnologia, não altere as configurações padrão do teclado . Novamente, consegui acessar via SSH uma máquina virtual Ubuntu aleatória, iniciar minha sessão tmux e começar a produzir imediatamente, pois os atalhos de teclado são os mesmos. Se eu tivesse alterado as minhas teclas de atalho na
+
+minha máquina local e agora estivesse executando o tmux na máquina remota, de repente eu pensaria: "Hum, Ctrl+B+H não funciona. Então, hum, qual era o comando mesmo? Ah, ajuda do tmux, hum, cara, tmux vertical, como eu faço isso?" Não. Isso vai acabar com a sua produtividade, entendeu? Você quer dominar o tmux a tal ponto
+
+que consiga acessar qualquer máquina remota em qualquer lugar do mundo e começar a produzir imediatamente. É assim que você quer fazer, ok? Acredite em mim, você vai me agradecer daqui a dois anos, depois de ter estudado comigo, estar num emprego de seis dígitos na área de tecnologia e, numa sexta-feira à tarde, estar trabalhando numa falha de produção e, de repente, se encontrar numa máquina virtual Ubuntu aleatória usando o tmux para gerenciar vários processos. E então você vai se lembrar de Misha, que disse: "Ok, eu discordo dele, mas agora entendo por que ele disse isso." Agora, tenho muito mais conhecimento para compartilhar com vocês, e estou disponibilizando tudo gratuitamente no curso gratuito de Linux.
+
+É um curso gratuito de 16 horas ao qual você pode acessar clicando no link na descrição. É totalmente gratuito. Existe também uma comunidade de pessoas extremamente competentes que se ajudam mutuamente todos os dias. Somos super ativos, e é simplesmente um lugar incrível para estar. Você também terá acesso às 16 horas de material premium em vídeo do curso, pelo qual meus alunos pagam milhares de dólares , mas que estou disponibilizando gratuitamente porque quero que o máximo de pessoas possível descubra o prazer de usar o Linux. Confira o link na
+
+descrição abaixo. É totalmente gratuito. Insira seus dados e eles serão exibidos para você. Nos vemos na comunidade Linux gratuita. Muito obrigada por assistir. Comece a usar o tmux
+
+e nos vemos no próximo vídeo. E não altere essas configurações de teclas.

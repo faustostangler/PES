@@ -1,0 +1,103 @@
+---
+video_title: "Smart Engineers Are Moving Away From Github, Here's Why..."
+video_id: pAQqkI0xMu4
+channel_name: "Mischa van den Burg"
+channel_id: UCDAck-gFPTrgTx_qp59-bQA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=pAQqkI0xMu4
+video_date: 2026-03-03T16:01:10+00:00
+video_description: |
+  Apply to join KubeCraft & land a six-figure tech job: https://kubecraft.click/cgv87
+  
+  Get my FREE Forgejo K8s manifests: https://go.kubecraft.dev/forgejo-k8s
+  
+  Forgejo self-hosted git server on Kubernetes - take full control of your code, CI/CD pipelines, and container registry on your own infrastructure. I show you exactly how I replaced GitHub with Forgejo running on my Kubernetes home lab, from source code to production deployment.
+  
+  In this video I walk through my complete self-hosted git setup. You will see how Forgejo handles repositories, pull requests, and CI/CD actions just like GitHub. I demonstrate the full pipeline: committing code, building container images, and deploying to Kubernetes, all running on my own infrastructure. I also cover why I chose Forgejo over GitLab and Gitea, how to mirror GitHub repos to your own server, and how to get started with a single Docker command.
+  
+  
+  🔗 RESOURCES MENTIONED:
+  → Forgejo official site: https://forgejo.org/
+  → Codeberg (free GitHub alternative): https://codeberg.org/
+  → Forgejo installation docs: https://forgejo.org/docs/latest/admin/installation/
+  → GitHub Actions pricing announcement: https://github.blog/changelog/2024-12-17-upcoming-changes-to-github-actions-usage-for-self-hosted-runners/
+  
+  📱 CONNECT WITH ME:
+  → Website: https://kubecraft.click/yt-apply-2
+  → X / Twitter: https://x.com/mischavdburg
+  → Personal blog: https://mischavandenburg.substack.com/
+  → LinkedIn: https://www.linkedin.com/in/mischavandenburg/
+  → Instagram: https://www.instagram.com/mischavandenburg/
+  → TikTok: https://www.tiktok.com/@mischavandenburg
+  
+  ℹ️ ABOUT KUBECRAFT: I help you land six figure tech jobs through Kubernetes, Linux, home labs, self hosting and production-ready skills. Over 1000 people mentored into succesful DevOps careers.
+  
+  #Forgejo #Kubernetes #SelfHosted
+---
+Quando você visita meu blog na internet, na verdade está se conectando a um contêiner que está sendo executado no cluster Kubernetes que eu mantenho em casa, no meu laboratório doméstico. E se eu lhe dissesse que não é apenas o contêiner que está rodando lá, mas também todo o código-fonte, todos os pipelines de CI/CD e tudo o que é necessário para manter este blog funcionando, tudo isso também está sendo executado nesse mesmo cluster Kubernetes? E neste vídeo, vou mostrar por que não preciso mais do GitHub para criar e hospedar meu blog, tudo no meu próprio laboratório doméstico. Então, vamos começar. A ferramenta que estou usando para isso se chama Forgejo, que é um servidor Git auto-hospedado. Se você está
+
+assistindo a este vídeo, provavelmente já conhece o Git e o GitHub, mas quero garantir que todos estejam na mesma página, então vou explicar brevemente do que se trata. Muitas pessoas não sabem disso, mas o GitHub não é a mesma coisa que o Git. Git é o sistema de controle de versões propriamente dito , criado por Linus Torvalds, o criador do Linux, e é usado para gerenciar o versionamento de arquivos. Portanto, se você tem pessoas trabalhando nos mesmos arquivos, precisa de uma maneira de rastrear o que mudou nesses arquivos. Especialmente se você estiver trabalhando no mesmo arquivo com equipes inteiras, torna-se muito importante ter um bom sistema implementado para garantir que todas essas alterações possam ser de fato executadas, certo? Um dos melhores
+
+exemplos disso é, na verdade, o código-fonte do Linux, que está no GitHub. Agora, um projeto que utiliza Git geralmente está contido em um diretório, chamado repositório. Portanto, um repositório Git é uma coleção de arquivos que utiliza o Git para controle de versão. Agora, você precisa colocar esse repositório em algum lugar, certo? E neste caso, ou em muitos casos, trata-se do GitHub. O GitHub é
+
+basicamente um lugar para colocar seus repositórios Git e é basicamente só isso que ele faz. Agora, por exemplo, o código-fonte do Linux está hospedado no GitHub. Você pode entrar e ler o código aqui. E você também pode consultar os commits. Um commit em um repositório Git ocorre quando alguém faz uma alteração e, por exemplo, aqui estão as alterações no código que estão sendo gerenciadas pelo Git no sistema de controle de versão. Aqui você tem
+
+um registro de tudo o que foi alterado, por quem, e você sempre pode voltar a um commit anterior, por exemplo, para reverter as alterações ou saber exatamente o que foi alterado e quando. Assim, você pode ver em tempo real o que está sendo alterado no kernel do Linux, por exemplo. O GitHub é uma empresa pertencente à Microsoft que fornece um serviço onde você pode hospedar esses repositórios Git. O que o JO faz é fornecer a você seu próprio GitHub, ok? Ele oferece um local onde você pode hospedar seus próprios repositórios Git auto-hospedados .
+
+E foi isso que eu fiz. Por exemplo, no meu blog, todo o código-fonte fica armazenado em um repositório na minha própria instância Git auto-hospedada . Portanto, sempre que publico um post no blog, o código é enviado para o meu próprio repositório e não mais para o GitHub . Então, por que você se daria ao trabalho com isso? Por que alguém precisaria ter sua própria instância Git auto-hospedada? Mas
+
+antes de prosseguirmos, cerca de 73% dos meus espectadores não são inscritos, então, por favor, inscreva-se. Isso me ajuda a produzir conteúdo mais autêntico como este toda semana e é uma forma totalmente gratuita de apoiar meu canal. Todo mundo sabe que os modelos de IA são muito bons em escrever código, certo? Essa é uma das coisas em que eles são melhores. De onde você acha que veio todo esse código ?
+
+Todo esse código foi coletado de lugares como o Stack Overflow, mas também do GitHub. Então, a Microsoft, proprietária do GitHub, analisa todo o código publicado no GitHub e o utiliza para treinar os modelos, etc. E não acho que haja necessariamente nada de errado nisso . No entanto, se houver coisas que estou desenvolvendo por conta própria e que não necessariamente quero compartilhar com outras pessoas, prefiro mantê-las em meus próprios repositórios Git. Certo? Portanto, ao usar
+
+esse serviço, você está basicamente concordando que eles podem usar esses dados. E eu tenho certos projetos, projetos particulares, por exemplo, meu próprio sistema de anotações, que não quero que a Microsoft tenha. E eu não quero que eles digitalizem isso. Então, esse é o motivo pelo qual eu implementei minha própria instância Git auto-hospedada . Agora, vamos dar uma olhada na minha instância do Git. Então, este, por exemplo, é o
+
+repositório do meu blog. Como você pode ver, possui uma interface de usuário muito agradável, onde posso conferir todas as alterações que fiz. Contém, por exemplo, estas alterações de commit. Então, se eu verificar a visão geral aqui, você verá todas as alterações que fiz. Aqui, por exemplo, eu alterei uma imagem que estava com defeito, então precisei modificar o código dessa imagem. Possui uma
+
+interface de usuário muito boa para isso. Além disso, também suporta solicitações de pull request. Portanto, esse é o fluxo de trabalho completo de pull requests que você provavelmente já conhece do GitHub. É uma sensação muito parecida com a de usar o GitHub. A segunda coisa é que o Forjao também fornece a você seu próprio executor de ações auto-hospedado. Em outras
+
+palavras, seu pipeline de CI/CD auto-hospedado. Então, quando eu enviar algum código para o meu blog aqui, uma série de automações será executada, e eu vou demonstrar isso em um instante. Mas, em seguida, eles pegarão meu código, o transformarão em uma imagem de contêiner e a implantarão no meu cluster Kubernetes. E tudo isso está rodando na minha própria infraestrutura. Portanto, se você tiver um projeto de código aberto ou um repositório no GitHub, é gratuito. Você pode armazená-lo gratuitamente
+
+e usar o GitHub Actions gratuitamente. No entanto, se você tiver seus próprios repositórios privados, em primeiro lugar, seu código será analisado, e também há algumas limitações no que você pode fazer com o GitHub Actions gratuito, ok? Então, agora tenho pipelines de CI/CD completamente ilimitados , porque os estou executando em minha própria infraestrutura. Uma coisa interessante é que você pode hospedar suas próprias ações do GitHub em sua infraestrutura, podendo usar o GitHub e executar esses executores em sua própria infraestrutura. Mas, recentemente, a Microsoft cometeu um grande erro ao anunciar que também passaria a cobrar pelos servidores GitHub auto-hospedados . Eles publicaram isso no dia 15
+
+de dezembro. Eles anunciaram as mudanças de preços do GitHub Actions. E foi isso que gerou uma enorme reação negativa nas redes sociais, e X ficou furioso com a situação. Então, eles queriam cobrar para que você executasse coisas em sua própria infraestrutura, e isso não foi bem recebido pela comunidade. E como vocês podem ver no anúncio agora, eles estão dizendo: "Resumindo, estamos a favor do adiamento da mudança de faturamento anunciada para termos tempo de reavaliar a abordagem."
+
+Eles voltaram atrás e reverteram essa alteração de preço. Então, eles perderam um pouco da sua reputação ali. Então, embora você ainda possa fazer isso de graça, haverá mudanças. Portanto, este é também outro catalisador. Na verdade, eu já havia feito o deploy para JO naquele momento. Mas, na verdade, isso foi um
+
+catalisador para eu perceber que, ok, eu fiz a coisa certa ao optar pela hospedagem própria e hospedar meu próprio servidor Git. Outra funcionalidade muito interessante do Forjo é a possibilidade de espelhar repositórios Git em sua própria infraestrutura. Por exemplo, existe este guia do YubiKey que é um repositório Git público no GitHub, mas você pode configurá-lo como um espelho. Assim, todos os dias minha instância do Forjo verificará uma certa quantidade de repositórios que configurei e os replicará na minha própria infraestrutura. Portanto, se o proprietário deste repositório, neste caso o guia do YubiKey, decidir por algum motivo removê-lo, eu sempre terei minha própria cópia do repositório em minha própria infraestrutura.
+
+Então, não sei se você já passou por isso, mas houve vários projetos de que eu realmente gostava que foram retirados do ar. Assim, às vezes, empresas processam projetos de código aberto e os forçam a remover o código. Bom, caso isso aconteça, sempre terei minha própria cópia, incluindo todo o histórico de commits. E não, isso inclui todo o histórico de commits, ok? Assim, tenho todo o histórico do repositório disponível na minha própria infraestrutura auto-hospedada , o que me permite ter sempre uma cópia do código-fonte disponível e continuar desenvolvendo nele, se desejar. Quando decidi
+
+hospedar meu próprio servidor Git, considerei algumas alternativas . Uma delas é o GitLab. Essa é, na verdade, a mais óbvia. Esta é uma alternativa ao GitHub, que também é muito utilizado em empresas. E eu meio que me inclino para esta opção porque também me daria experiência com o GitLab e, na verdade, eu trabalhei com o GitLab no meu primeiro emprego em DevOps. Estávamos executando
+
+nossas próprias instâncias do GitLab em ambiente próprio. Então, nesse sentido, fez sentido para mim continuar com isso. Mas o GitLab é uma plataforma de hospedagem bastante avançada. Isso envolve muitas coisas, especialmente se você estiver hospedando em Kubernetes. E, francamente, para o meu caso específico, era um pouco demais. Foi um
+
+exagero completo. E a segunda que considerei foi Gitea. Bem, Gitea, não acho que haja nada de errado nisso. Bem, o Gitea costumava ser um projeto gratuito de código aberto , que foi posteriormente adquirido por uma empresa, a qual agora também oferece uma versão SaaS. Portanto, você ainda pode executá-lo gratuitamente. Ainda é de
+
+código aberto. Então, nesse sentido, não há nada de errado nisso. Mas houve uma grande polêmica sobre isso quando o projeto foi adquirido. Na verdade, foi derivado por um grupo de pessoas que então fundou o Forgejo. E a razão pela qual escolhi o Forgejo é porque eles garantem que será um software 100% gratuito para sempre. Então, quando a Gitea foi
+
+adquirida, ela foi bifurcada, e um grupo de pessoas a utilizou para criar um projeto de código aberto, que é garantidamente 100% gratuito e de código aberto para sempre. Isso me tocou profundamente , e decidi que também queria apoiar esse projeto. E o mais legal disso é que, se você conhece o Codeberg, que é basicamente uma alternativa gratuita e de código aberto ao GitHub, saiba que o Codeberg está sendo executado no Forgejo. Portanto, eles estão usando o Forgejo para fornecer essa instância do Git. E eu achei isso muito legal. Então, o Codeberg é basicamente um
+
+grande gesto de desprezo para o GitHub e as grandes corporações, porque oferece uma alternativa de código aberto sem fins lucrativos e liderada pela comunidade. E eles estão usando o Forjao para executar isso. Portanto, acho isso muito admirável e acredito que eles merecem todo o apoio possível. Na verdade, eu faço doações para a Forjao todos os meses porque acho que é um projeto muito bom . Funciona muito bem e, devido ao compromisso deles em garantir que seja 100% gratuito e de código aberto, acho que merecem todo o apoio possível.
+
+E só para deixar claro, não tenho nenhuma ligação com eles, mas quero usar meu público e minha influência para divulgar esse projeto maravilhoso para o máximo de pessoas possível, porque eles merecem todo o apoio que puderem receber. Outro aspecto interessante da Forjao, que também influenciou minha escolha, é o interesse crescente do setor empresarial e governamental na empresa . Então, existe uma discussão aqui no repositório oficial do Forjao onde alguém que trabalha no governo holandês expressou interesse em usar o Forjao. Então, se você é alguém que se interessa por software de código aberto também na sua carreira, o que eu acho muito bom, o Forjao será uma ótima opção para aprender. Então, começar a usar o Forjao é realmente muito fácil. Se você quiser apenas
+
+experimentar rapidamente, basta consultar o guia de instalação na documentação, onde encontrará instruções para instalá-lo com o Docker. E é isto que eu recomendo que você faça para começar e experimentar. E quando você tiver o que deseja, poderá começar a movê-lo para o seu servidor. Então, no meu computador aqui, estou executando o Podman. Então, o comando que vou executar aqui é ` Podman run in detached mode, name Forjao`, e em seguida vamos expor as portas 3000 e 2222 para a conexão SSH.
+
+E também vamos dar um volume a isso . Então, se eu executar este comando, ele iniciará o contêiner Forjio. E se eu acessar localhost: 3000, estarei conectado à minha nova instância do Forjio. Então, você pode simplesmente aceitar as configurações padrão aqui e instalar o Forjio. E você precisa desmarcar esta caixa.
+
+E quando você instalar o Forjio dessa forma , ele será carregado. E pronto . Já podemos iniciar sessão. É assim tão fácil começar a usar o Forjio. Agora que você fez isso, já tem sua instância Git auto-hospedada . Assim como você, literalmente não
+
+precisa de mais nada para começar. Mas vamos também analisar o componente de ações auto-hospedadas disso. Então, agora estou usando a CLI (linha de comando). Preparei uma postagem de teste para o blog . Portanto, se eu executar o comando de publicação agora , ele irá de fato confirmar as alterações no repositório. E então,
+
+o processo de compilação será iniciado e você poderá acompanhar sua execução. Então, se eu acessar o repositório do meu blog agora, veremos que um commit do Git foi adicionado. E isso também desencadeou uma ação, que agora está em execução. Então, neste exato momento, isso está rodando no meu próprio cluster Kubernetes em casa. Ele irá verificar o repositório.
+
+E ele vai analisar o código, criar uma imagem de contêiner com esse código e, em seguida, o GitOps vai incorporar essa alteração ao meu cluster Kubernetes. Então, agora vemos que a imagem será construída. E depois de concluir a criação dessa imagem, ela também será enviada para o meu próprio registro de contêineres, também fornecido pela Forjio. Então, todo o processo de desenvolvimento de software, desde a hospedagem do código até a sua compilação, e eu não estou testando esse código no momento, mas poderia testá-lo. Nessas ações, consigo fazer tudo o que normalmente faço em um pipeline de CI/CD . E esse executor de ações
+
+está rodando no meu próprio cluster Kubernetes. Então, se eu for ao meu laboratório doméstico agora e abrir o K9s, e procurar por "for JO", veremos que existe um executor "for JO" que está executando esse processo neste exato momento , ok? Isso agora está rodando no meu cluster de laboratório doméstico. Está construindo a imagem e agora a impulsionou. Assim, as alterações são aplicadas ao meu cluster e, se eu atualizar meu blog aqui, veremos que há uma postagem de teste para fins de demonstração. Então, isso foi
+
+adicionado apenas como uma demonstração. Vou apagar isso depois que terminar de gravar este vídeo. Mas aqui você vê que eu enviei código para um repositório que roda na minha própria infraestrutura, e então estou compilando esse código e servindo essa imagem de contêiner, tudo a partir do meu próprio laboratório doméstico do Kubernetes. E estou fazendo isso em minha própria infraestrutura soberana completa . Portanto, para JO é um ótimo projeto. Recomendo muito que você dê uma olhada nisso
+
+. É muito fácil começar a usar o Docker, mas se você estiver executando um laboratório doméstico do Kubernetes e também quiser executar o Forex no Kubernetes, todo o código-fonte está disponível aqui. Eu já tenho o manifesto escrito e dediquei bastante tempo a isso porque é realmente muito complicado fazê-lo funcionar com um executor auto-hospedado no Kubernetes. E se você quiser obter todos esses manifestos para começar a executar o JO em seu cluster Kubernetes, pode acessar o link abaixo e obtê-los gratuitamente. Agora, me contem nos comentários se vocês pretendem se candidatar para a JO. Gostaria de saber sua
+
+opinião. Não se esqueça de se inscrever e nos vemos no próximo vídeo.
