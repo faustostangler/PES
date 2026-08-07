@@ -1,0 +1,124 @@
+---
+video_title: "C1 da Thesys: Testei a IA que Renderiza Componentes Prontos."
+video_id: lWcfzObWZ8I
+channel_name: "mano deyvin"
+channel_id: UC1VZDEtGNxfQzh7EYcD2frg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=lWcfzObWZ8I
+video_date: 2026-02-21T15:01:14+00:00
+video_description: |
+  🚀 C1 da Thesys: https://www.thesys.dev/agent-builder?utm_source=yt&utm_medium=dedicated&utm_campaign=devyd&utm_content=c1
+  
+  O que aconteceria se a sua LLM parasse de cuspir texto e começasse a montar a interface do seu app sozinha? No vídeo de hoje, testamos a C1 da Thesys, uma ferramenta que está mudando o jogo do desenvolvimento Front-end.
+  
+  Diferente do ChatGPT ou Claude, que te dão o código para você "se virar", a C1 entrega Generative UI. Isso significa que ela gera e renderiza componentes React prontos, funcionais e interativos (como dashboards e formulários) direto no seu cliente. É o fim do copiar e colar e o início de uma nova era para Agents de IA.
+  
+  O que você vai ver no vídeo:
+  
+  O que é Generative UI (GenUI) e por que isso importa.
+  1. Integração da C1 da Thesys em um projeto React.
+  2. Como transformar prompts de texto em componentes complexos (gráficos, tabelas e fluxos).
+  3. Como ela funciona como um "middleware" compatível com a API da OpenAI.
+  
+  Links e Recursos:
+  - Documentação Oficial: https://docs.thesys.dev/
+  
+  Agent Builder da Thesys: https://www.thesys.dev/agent-builder?utm_source=yt&utm_medium=dedicated&utm_campaign=devyd&utm_content=c1
+  
+  🤘 Seja membro e ajude manter o canal
+  https://www.youtube.com/channel/UC1VZDEtGNxfQzh7EYcD2frg/join
+  
+  📸 Instagram: https://instagram.com/manodeyvin
+  
+  🌐 Mais links:
+  👉 https://chorume.dev
+  
+  #Thesys #GenerativeUI #ReactJS #IA #DesenvolvimentoWeb #ManoDeyvin #Programação #C1Thesys
+---
+Essa manhã eu tava navegando no red, cara. Aí eu fui, achei um Red lá da bolha de microssas, um Red gringo, tá? Não é bolha BR não, mas a bolha BR tem muito isso. Eu deparei com uma coisa curiosa que acontece tanto na bolha gringa quanto na bolha BR de microsas. Mano, cara, na moral, tem muito, mas muito wpper de chat de PT lá, cara. Na
+
+moral mesmo, o que mais me assusta é que tem uma galera muito pra frentex lá da comunidade building public comemorando que construiu um produto brabo e tal, fazendo post. Só que na verdade, cara, você olha o produto da pessoa, ela só entregou, sei lá, um forme e tem um teste área lá e um botão, tá ligado? Se for seu caso, senta aí que a gente vai trocar uma ideia nesse vídeo aqui. O que o povo tá construindo para mim, cara, não é um produto, é praticamente, sei lá, um gato net do chat GPT com agente embutido. E o pior que essa galera acha que o usuário ama ler texto, cara. Na
+
+moral, se a gente observar hoje em dia, cara, ninguém mais tem paciência para ler nada, ainda mais output de A em tela de LED. Geralmente a gente tá num produto, mano, numa interface, a gente quer ver, a gente quer clicar, quer resolver a parada, [ __ ] ler hoje em dia, cara, ficou chato para caramba. E se a gente pegar o próprio chat de PT, ele já faz isso, mano. Ele não precisa dos seus sos, não precisa do seu tempo. Mas aquele deve fui steack moderno, cara, que ele deve pra Frentex, que passa o dia postando trad, mas ainda chora no banho só para centralizar o div, ele insiste na mesma experiência de merda de 2023. Cara, pergunta texto,
+
+pergunta texto. Parece até que a gente voltou pro MSN, mano. Só que na real o MSN de hoje em dia, a galera tá torrando muito dinheiro em API, tá ligado? E torrando em dólar. No vídeo de hoje eu quero te mostrar como sair dessa pré-história de chatbot, tá ligado? Sair
+
+desse padrãozinho chato para caramba. Vou te ensinar a transformar o output do seu LLM em uma interface gráfica real, em tempo real, sem você ter que ficar parindo o componente no react na mão para cada resposta. E olhem, papai, eu sou back end, né? Não sei se vocês estão ligados. Você caiu de para-queda. Que eu
+
+sou back end, eu odeio front end. Mas no vídeo de hoje eu parei tudo para sujar minhas mãos com front end. Mas se você quiser continuar sendo, sei lá, um um chipador de chat genérico, mano, beleza, pode dropar do vídeo, pode ir embora. Mas se você tá curioso e quer que a máquina desenhe experiência pro seu usuário enquanto você foca no que importa, mano, na lógica, no backend, fica aí que esse vídeo é para você. Aproveita, deixa o like nesse vídeo, se inscreve nesse canal aqui principal e também no meu canal que tá em colab aqui, que é um canal exclusivo, onde eu tô trazendo um conteúdo mais técnico, onde toda semana eu vou testar um novo hype, uma nova ferramenta diferente. Ele
+
+tá em colab aqui, ó. Se inscreve aqui. Agora vamos falar de arquitetura, porque [música] é aqui onde o filho chora e o deve não vê, papai. O problema desses zar não é o modelo, cara, porque o modelo a gente sabe que ele é inteligente para caramba. O problema geralmente, cara, o gargalo é ui que a galera constrói, que é uma sei lá, meia burra. Você bate o olho, é tudo igual,
+
+mano. É tudo engessado. Aí imagina o cenário, se você, sei lá, é o bruxão do back end, tá lá construindo o seu app, aí você vai lá e vê, cara, a LLM que você tá usando que ela corre para um dado rico para caramba, mano. Um Jason, sei lá, todo aninhado, cheio de lista, informação útil pra caramba. Aí o que que você faz? Geralmente backend não tem
+
+muita paciência, né? A gente tenta mapear tudo na mão lá no front end, mas é aí que o inferno começa. Hoje o modelo de LLM, cara, ela retorna geralmente um array. Aí a gente vai lá, sei lá, faz o mapoto lá no React, faz o deploy, sobe e tá tudo certo. Só que amanhã, cara, esse mesmo modelo que a gente tá usando, essa mesma LLM, cara, ela simplesmente resolve acordar de mau humor, sei lá, muda a chave do objeto e o que que o seu usuário recebe? Aquela tela branca da
+
+morte, tá ligado? [risadas] Aí para não passar vergonha, você gasta mais ou menos 80% do seu tempo tratando de case de que é chato pra [ __ ] mano. Criando componente que você nem queria est fazendo isso, só para aquela merda não quebrar, tá ligado? Aí o que que acontece, paizão? Pô, você vira refém do CSS, você vira refém do estado do React, mano. Sua interface acaba virando o
+
+gargalo do projeto. E é por isso que todo mundo desiste, mano. Tanto back end quanto front end. A galera desiste e faz chat de texto mesmo e [ __ ] joga no peito do usuário. Aí você tem dois caminhos, cara. continuar cuspindo texto
+
+ou passar, sei lá, 80% do seu tempo tratando de case no CSS. Talvez se você é um José startup, talvez você tem, sei lá, um investidor anjo, você tem uma grana sobrando, alguma coisa assim, talvez vha muito mais a pena você contratar um Dev Júnior React emocionado e passar esse corno job para ele. Mas talvez a solução não é nem essa, cara. A solução talvez é arquitetural. Nós vamos usar hoje algo chamado C1 da DIS. Pense
+
+nele como um modelo de middle entre o seu modelo LLM e a sua cara, o seu front end, a sua interface Illuminati. Só que ao invés do modelo ele cuspir o texto cru, ele cospe dados. Que que acontece? O C1 ele pega esses dados, aplica regras de design system que você definiu, só para ele não ficar aparecendo mais um clone do site da Versel e cosp todo o esquema de UI, mano. Aí o SDK deles no React, ele pega esse esquema e renderiza os componentes nativos em tempo real.
+
+Rapaz, traduzido para quem é de infra, mano, basicamente a gente pode entender o seguinte: o C1 é como se ele fosse o compilador JIT da sua interface. Como que funciona? O modelo pensa, o cu desenha. Aí é o céu pra gente que é back end, mano. A gente simplesmente foca na lógica do produto e para de ficar brigando com flexbox. Chega de papo,
+
+paizão. Eu não confio em slide. Eu creio que você também não confia. A gente confia em código. Então vamos colocar a mão na massa e vamos ver essa parada funcionando na prática, paizão. Pronto.
+
+Aqui agora a gente já tá dentro do site da SIS. Tá vendo? Ele tá aqui, pô. Ele tem a parte de documentação dele, quick start dele é bem simplão, tá ligado? Olha só, você só vai dar um NPX create e C1 app. E depois vamos rodar. Vamos
+
+fazer exatamente esse espaço aqui. Vamos colocar aqui uma pasta new. Vou entrar no new aqui e vamos executar exatamente isso aqui. NPXC1 create app. Quando eu já dei o new, olha só, ele já me direcionou para cá. Como eu já tô
+
+logado, ele já apareceu o nome da minha organização aqui e eu vou dar um autoriz aqui. Ele simplesmente ele já logou. Tá vendo? Quando eu fiz isso, ele já logou, pediu para colocar o nome de um projeto, um demo. Demo um. Aqui ele fala da
+
+tecnologia que ele quer. Então vou fazer um C1 com next mesmo. Tô sujando minha mão com React, hein. Tô sujando minha mão com react. Caraca, cara. Tô nem
+
+acreditando nisso. Aparentemente, cara. Tá aí, ó. Demo um. Deixa eu dar um npm.
+
+Run dev. Compilou, cara. Olha só. Eu só segui esse passo aqui. O passo que tá na doc aqui, tá vendo? Só isso. E ele já
+
+funcionou. Então aqui na C1, cara, só pra gente ter uma uma noção do que que ele traz pra gente de output, eu vou fazer o seguinte. Eu vou fazer a seguinte pergunta para ele assim, ó. Qual o planejamento planejamento de despesas que você recomenda para uma pessoa com salário de R$ 5.000? Vamos
+
+ver o que que ele vai renderizar pra gente. Olha só, é isso que eu tô falando, que eu falei logo no início, tá vendo? Porque às vezes a gente perde tempo para poder mapear n para poder mapear, por exemplo, toda essa UI e ele já entrega. Eu aqui eu não fiz customização nenhuma, eu só mesmo, cara, instalei no exemplo lá e deixei igual você viu aí. Mas que basicamente ele foi me deu aqui uma estrutura, ó. Custa
+
+distribuição compondo partido prioridade ó, despesa fixa 50%, aqui 2500, prioridade investimento 30%, lazer 20%, olha só essa entrega dele, cara, que coisa maravilhosa. Olha só, eu ainda consigo que isso, cara. Não, pera aí. Ele ainda me gerou um formulário, tipo, ganhos fixos mensais, eu posso personalizar, ó, dívidas com juros altos, vão dizer que eu tenho R$ 1.000 de carro financiado. Reserva de
+
+emergência, prioridade principal, reserva de emergência, viagem. Vão colocar aqui, ó, quitar dívida. Vão clicar em gerar plano personalizado. O que que ele faz? Olha só, ele já tá me entregando aqui as reduções rápidas com moradia em condomínio, negoci, pesquisa alternativa. Ao invés dele me entregar
+
+um texto puro, eu já me entrego numa formatação muito boa. Vamos dar uma analisada no código dele. Aqui a gente tem, por exemplo, um Message Store, que basicamente eu creio que ele vai guardando o histórico da nossa trad. Ele tem um roads aqui que já tá comunicando, ele já tá pegando a pi lá. E basicamente ele tem esse único componente aqui, tem ser um chat aqui, que ele já tem aqui um tema dark aqui, tal, já tá usando. Agora
+
+eu vou fazer o teste num outro projeto que eu tenho aqui. Eu criei até antes de começar essa gravação, que eu chamei ele de GPT Legacy. Vou fazer a mesma pergunta para ele. Vamos pegar aqui o mesmo prompo. Qual o planejamento de despesa? Tá vendo? Olha só, cara. Se a
+
+gente parar para pensar, pra gente que é dev, isso aqui foi muito fácil. Esse código aqui eu fiz muito rápido antes de começar a gravar esse vídeo e ele basicamente me retornou texto puro. Tá vendo? Moradia, aluguel. E aqui no C1, cara, eu achei da hora porque, cara, ele me retornou todo um gráfico montado. Aí
+
+a a grande mágica, se a gente pegar o código aqui, que o próprio C1, deixa eu ver aqui, o próprio C1 chat, ele já tá renderizando. Eu não vou simplesmente, por exemplo, criar um gráfico despesa. Aí se eu, por exemplo, a gente cai naquele problema, se se ele muda o contrato, ele acaba quebrando. Então, o próprio C1, ele já trata isso, cara, que é maravilhoso. Pronto. Agora a gente vai
+
+elevar um pouco o nível porque o exemplo que eu dei anterior é puxando dados que a própria Ll, tá tudo certo, mas a gente sabe que sei lá, a grande maioria das aplicações elas já estão pronta e ela tão, elas estão precisando talvez ter uma ferramenta igual essa. O teste que eu vou fazer agora é o seguinte. Eu tenho aqui na minha máquina o data.jason, Jason, que é basicamente algumas despesas que eu coloquei aleatória aqui, divididas em dois meses, janeiro e fevereiro. Então aqui eu tenho a coluna description, que tá aqui, por exemplo, a assinatura Netflix, eu tenho aqui a category, que basicamente que é a categoria lazer, o valor R5,90 e a data da despesa. O que que eu quero fazer? Eu
+
+quero agora fazer que o a minha aplicação gerada no C1 da Deis, ela reconheça esse Jason, que da mesma forma você pode plugar, por exemplo, um banco legado e tal, alguma coisa assim, e ela me dê respostas baseadas nesse contexto que eu vou passar para ela. Então o código ele é muito simples. Eu vou colocar aqui, ó, basicamente eu tenho message store. Message list.lf = 0. Isso
+
+aqui, galera, tá lá na documentação, tá? Se você acessar a parte de docs deles aqui, cara, ela é muito completa. Inclusive, ela tem já uma uma IA que você consegue, por exemplo, jogar o seu cenário, ela já te entrega, por exemplo, é como que você implementa. Então, essa documentação deles é muito fácil, é muito tranquila de de lidar. Basicamente isso tá lá na documentação, não tá sendo nada assim que eu tô consuindo do nada, não. Então, basicamente a gente vai
+
+precisar do file, eu vou importar aqui o PEF, vou importar também aqui o file system, que eu vou precisar aqui também, que é que eu tô lendo aqui dentro da minha pasta data.jason. Jason, eu vou pegar aqui o meu file system, que basicamente eu tô olhando o meu file aqui e tô jogando aqui no meu meu message store, que eu passo uma system, que isso também tá documentado lá. E aqui eu já passo aqui o meu contexto aqui dentro do meu conteúdo, ó. Essas são minhas despesas que eu tô passando dentro de data, que basicamente é o que tá aqui no meu data.jas. Agora com isso
+
+em mãos, eu vou restartar aqui meu servidor. Tô startando ele aqui e vou rodar aqui, ó, local rush 3.000. Pronto, compilou. Beleza? Então aí agora aqui é
+
+muito simples. Eu simplesmente eu vou pedir para ela me listar as despesas só para confirmar se ela tá lendo esse J ou meu aqui. Então vai ser o primeiro teste aqui. Por favor liste as minhas despesas. Pronto, joguei isso para cá.
+
+Eu vou esperar ela fazer essa listagem aí, ó. Exatamente. Ó lá, assinatura Netflix, que é exatamente o primeiro item do meu data, meu data.jonjason. Tá vendo? Tá basicamente aqui, cara. Olha
+
+só. E ela já tá listando em tabela e tal. Aí agora a gente vai ver a mágica acontecer. É lógico, logicamente que esse aqui é um teste, cara, de um arquivo com 302 linhas. Com certeza dentro da documentação, ela tem solução, por exemplo, de você conseguir ler um banco todo, de você plugar talvez um servidor de MCP. Tem solução. Esse teste
+
+aqui pra gente não prolongar muito o vídeo, ele tá sendo só com esse arquivo aqui, que ele é pequeno, tem 302 linhas só. Me dê um relatório de despesas baseado nas categorias. Trouxe, cara. Mano, isso aqui é fantástico, sinceramente. Trazendo aqui exatamente, olha só, total geral 12 categorias, o maior gasto foi 2.500. Aqui, ó,
+
+trabalho, tá aqui um gráficozinho pizza, contas fixas, que tá maior, detalhamento por categoria, contas fixas e tal. Olha só, agora tá criando uma visualização em guia. Que isso, mano? Praticamente tá criando, sei lá, um gerenciador financeiro para mim. Tá lá, cara. Olha
+
+só. Tá tudo em outros, ó. Contas fixas. Clico em trabalho, tá aqui, equipamento, tá aqui, manutenção, alimentação, transporte, saúde. Cara, para mim perfeito. Só com essa pequena
+
+implementação. Cara, no fim das contas, o que separa, sei lá, um projeto de final de semana que ninguém usa e talvez um produto de verdade, se a gente parar para pensar, a gente tem muita experiência, cara, é como o usuário ele se sente. Você pode continuar aí, cara, sei lá, montando seu rapid GPT aí e sei lá, e começar a se autointitular que é engenheiro de ar. Ou você pode acordar e começar, mano, falar assim, ter uma visão mais crítica no que você tá fazendo e falar assim: "Cara, eu quero entregar uma interface de verdade que pareça de fato um software de 2026 e não, sei lá, uma cópia dura, sei lá, do próprio site da Vel, porque para mim não faz sentido nenhum você tentar vender, sei lá, um produto [ __ ] mas usando uma sei lá, basicamente simples, tá ligado? E pro meu cenário, cara, que eu sou back end, que, cara, eu tento mexer o mínimo possível em front end, eu quero focar em lógica, mano. Porque eu imagino que eu
+
+imagino não, eu tenho absoluta certeza que a regra de negócio e eu usar minhas energias focando, por exemplo, em back end, cara, eu sei que aquilo traz muito mais dinheiro, tá ligado? E eu paro de perder cabelo, talvez brigando com front end. Então, se você tá nesse mesmo cenário, eu sugiro você dar uma olhada nesse onda DIS. E pra galera que é mão de vaca para caramba, mano. Os mão de vaca de plantão que frequenta esse canal aqui, se liga só nessa parada. O link
+
+que eu deixei na descrição desse vídeo, ele tem lá 5 milhões de tokens para você testar. Cara, você tem noção que isso é token para caramba, meu amigo. Dá para você validar sua ideia, fazer teste unitário, quebrar produto em produção, dá para fazer coisa para caramba com esse monte de token. Então, larga essa obsessão sua de ser tarado por frontend, tarado de querer, mano, ficar centralizando div flex, esse monte de tranqueira aí. e vai focar no back end, que é exatamente a parte que importa no sistema. Gostou desse formato de vídeo?
+
+Comenta aqui embaixo qual hype, qual ferramenta você quer que a gente testa aqui no canal. Tamo junto. Forte abraço. Até o próximo vídeo.
