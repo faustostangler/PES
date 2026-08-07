@@ -1,0 +1,129 @@
+---
+video_title: "A Skill Oficial do Google que Muda TUDO no Vibe Coding (Antigravity)"
+video_id: AAbSOnAY07o
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AAbSOnAY07o
+video_date: 2026-02-25T15:00:00+00:00
+video_description: |
+  Neste vídeo eu mostro por que o seu Antigravity está gerando código errado quando você pede qualquer coisa com a API do Gemini, e como resolver isso com um único comando.
+  
+  🔥 LANÇOU Conheça a Formação Agentes de IA: https://app.horadecodar.com.br/lp/formacao-agentes-de-ia-n8n?utm_source=yt_gemini_skills
+  
+  ✅ Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  ❇️ Link das Skills do vídeo: https://github.com/google-gemini/gemini-skills
+  
+  O problema é simples: IDEs com IA como Antigravity, Cursor e qualquer outra usam modelos treinados até uma data específica. Só que o ecossistema do Gemini mudou completamente nos últimos meses. O SDK do JavaScript era @google/generative-ai e agora é @google/genai. O SDK do Python era google-generativeai e agora é google-genai. Os modelos gemini-1.5-pro e gemini-2.0-flash viraram legacy, os atuais são gemini-3-pro e gemini-3-flash. E o Gemini 3 Pro agora faz geração de imagem nativa e grounding com Google Search numa única chamada de API. Quando você pede pro agente criar um app usando Gemini, ele trabalha com informação velha e te entrega código que não funciona.
+  
+  A solução é a Gemini Skill, uma skill oficial lançada pelo Google que empacota toda a documentação atualizada dos modelos, SDKs e boas práticas da API. Quando o agente precisa escrever código Gemini, ao invés de usar o conhecimento desatualizado dele, ele consulta a skill que tem tudo correto e atualizado. Funciona no Antigravity, Claude Code, Gemini CLI, Cursor e qualquer ferramenta que suporte skills.
+  
+  Pra demonstrar a diferença, crio o mesmo projeto duas vezes: um app web em Node.js com Express onde você digita o nome de uma cidade e ele gera um infográfico do clima usando o Gemini 3 Pro. Primeiro sem a skill instalada: o agente instala o pacote errado, usa imports deprecados, escolhe um modelo que não existe mais, tenta chamar APIs externas pra gerar imagem e no final o código não roda. Depois com a skill: o agente instala o pacote correto @google/genai, usa o modelo gemini-3-pro, faz geração de imagem nativa e grounding com Google Search numa chamada só, e o código roda de primeira.
+  
+  A instalação leva 5 segundos. Um comando npx skills add e pronto, fica disponível em todos os seus projetos. Mostro o passo a passo completo, o comparativo lado a lado do código gerado sem e com a skill, e a tabela de diferenças entre pacotes, imports, modelos, capacidades e resultado final.
+  Também falo sobre o ecossistema de skills em geral. Não é só o Google que está fazendo isso. Já tem skills pra Supabase, Vercel e a comunidade está criando centenas de skills pra todo tipo de ferramenta. Se você usa agentes de código no dia a dia, skills são basicamente um jeito de dar memória atualizada pros seus agentes e mudam completamente a qualidade do código gerado.
+  
+  Se você já passou raiva debugando código de API que a IA te deu com toda confiança mas não funcionava, esse vídeo resolve o problema.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Sobre as novas Skills do Gemini
+  01:04 O problema das IAs sem a skill do Gemini
+  03:45 Onde encontrar as novas skills do Google
+  04:22 Vendo o problema na prática no Antigravity
+  06:30 Criando projeto no Antigravity para usar a skill
+  09:02 Pegando chave do API no Google AI Studio
+  11:00 Comparando os projetos criados com o mesmo prompt
+  13:04 Conclusão sobre as skills no Antigravity
+---
+O Google acabou de lançar um pacote de skills que resolve um problema enorme nos apps que a gente cria comgraft ou qualquer outra IDE. Quando a gente pede para utilizar as APIs do Google, por exemplo, de gerar imagem, se tu pedir agora para gravity, ele vai gerar conversões antigas. E essas skills fazem justamente esse upgrade. Ela vai utilizar sempre a versão mais recente de qualquer API do Google, deixando teu projeto mais performático e utilizando sempre as últimas tecnologias. E, claro, livre de erros. É isso que eu vou te
+
+mostrar até o fim do vídeo, criando um projeto real contigo, utilizando essas skills do Google. Então fica até o final aí que vai valer a pena. Eu sou Mateus Batista, programador há mais de 10 anos e agora tô me aventurando aí no mundo da inteligência artificial, trazendo as melhores ferramentas para vocês. E lembrando, né, galera, a gente tá aqui com a campanha Deixe o Mateus Feliz. Se tu quer me deixar feliz, coloca um comentário aí, pode ser uma dúvida do vídeo, eu vou te responder prontamente, fico feliz em te ajudar ou um agradecimento simples aí já tá valendo.
+
+Beleza? Então, combinado. Agora bora para a prática. Bom, galera, então aqui eu trouxe um infográfico para mostrar para vocês o que acontece sem a skill e o que acontece com ela, tá? Bem simples, só pra gente poder contextualizar as coisas. Então, que a gente vai fazer lá?
+
+A gente vai abrir o antigraft e vai pedir para criar um aplicativo utilizando alguma API do Gemini. Pode ser qualquer coisa, pode ser de criação de imagem, pode ser de pesquisa, qualquer serviço Google que seja, que venha através de API, ele vai ter esse problema, porque a grande questão aqui é a evolução rápida do mundo da IA. A gente teve aí no intervalo muito curto o GM saindo do dois pro três e isso faz com que os modelos não se atualizem nessas novas versões e acabem utilizando dados antigos, ou seja, versões antigas. Com essas skills, a gente consegue resolver esse problema. Então, sem a skill, a gente vai ter um conhecimento de treino mais desatualizado, né, de meses atrás. Ele vai fazer com que a
+
+instalação dos pacotes, das dependências das APIs do Google seja de versões anteriores. Por exemplo, ele pode estar instalando um modelo de IA de M9 1.5, né? Isso é aleatório porque vai depender do conhecimento do modelo que tu selecionou. Se tu selecionar o cloud, pode ser que ele coloque 2.0, né? Então
+
+não tem como controlar muito bem. e até selecionando APIs depreciadas que vão fazer o nosso projeto quebrar. Já se a gente coloca skill, tudo que ele instala no nosso app é o mais novo, mais recente, sem quebrar, ele consegue utilizar as melhores tecnologias do Google, que o Google tá oferecendo agora. Então, um exemplo clássico aqui é que ele gere o app corretamente que eu tenho aqui para mostrar para vocês. E aí lá no fim ele dá um erro, né, com app todo bonitinho. Por quê? Se dar um
+
+cannot find model, quer dizer que o Google já desabilitou até esse pacote. Ele nem existe mais, tá nem depreciado, ele é inexistente. Aí tu vai ter que ficar procurando porque o modelo não vai conseguir resolver o problema, já que ele não entende o que tá acontecendo. Então tu vai ter que ir lá no Stack Overflow, no Google e outros lugares para poder resolver o problema e levar um tempo para isso, tá? Já com skill não, a gente vai ter o caminho mais linear possível. a gente vai pedir para
+
+instalar e criar o projeto. Ele vai utilizar as tecnologias mais recentes e pronto, a gente consegue utilizar o app que a gente criou, tá? Tudo isso é feito através de um comando que é o NPX Skills Ad. E instalando essa skill aqui, já vou mostrar para vocês como é que funciona, tá? Lembrando, né, que é uma skill, então ela vai funcionar eh através de todos esses provedores aqui, porque esse NPEX Skills é um produto universal da Versel. Eu até tenho um vídeo aqui no
+
+canal explicando como utilizar ele da melhor forma possível. Eu vou deixar o izinho aqui para vocês verem qual que é. O editor também vai deixar a tamb aqui para fácil referência, tá bom? O pacote em si, galera, é esse aqui, ó. Gemini skills. Só que a gente nem precisa
+
+acessar essa página aqui, é só o kit rubran para mostrar para vocês que é um produto oficial. Ele tá aqui no repositório do Google, né, como vocês podem ver, Google Gemini, só que tem um pequeno disclaimer ali que eles dizem que não é um produto oficialmente suportado pelo Google, apesar de ser criado por esse, né? Então deve ser alguma questão ali interna, mas é um produto do Google, então a gente pode confiar. Tem muito esse problema, né, de criar skills, né, de usar skills que a gente não sabe quem criou. E aqui não tem esse problema porque ela vai est 100% segura, beleza? Bom, então aqui eu
+
+tenho um editor em branco, tá? Que a gente vai fazer o mesmo projeto que eu já fiz antes. Então eu usei esse prompt aqui, eu dei dois promptes, um para traduzir, né? Mas o promp principal que a gente tem que dar uma olhada aqui. Eu pedi para ele criar um app, né? em um
+
+app web com HTML, node S, né, com backend. E aí ele vai utilizar a API do GMI, vai trazer o dado em tempo real de clima, né, via Google Search. Depois ele vai criar um infográfico da cidade que a gente escolheu e aí retorna a imagem e mostra na página. Então eu pedi aqui vários serviços do Google e aqui a gente vê o problema acontecendo. Por exemplo, em package JSON, que é onde a gente tem as dependências. Isso é mais técnico,
+
+né, galera? Mas vocês vão conseguir entender o contexto, né, se vocês não manjam de programação muito facilmente. Isso aqui, ó, é o nome do pacote. Isso aqui é o nome, é o número da versão. Então, quer dizer que esse cara aqui, ele já tá numa versão muito antiga, é esse que é o problema, tá? Então, ele tá
+
+instalando coisas antigas no nosso projeto. E aqui, se a gente for ver o modelo, ó, ele tá pegando o modelo GNI 2.0 flash. Esse modelo não é nem oferecido aqui mais pelo antigraft. a gente tá no três. Então, vejam que a
+
+gente tá utilizando no nosso app uma inteligência anterior, muito anterior. Isso pode prejudicar os resultados, né? Se a gente usa de forma consciente para economizar é outra coisa. Mas quando a gente quer a melhor performance, né, o melhor conhecimento, o melhor resultado, isso aqui vai atrapalhar bastante, tá? Então o resultado final é esse cara aqui, ó. Eu tenho um aplicativo rodando,
+
+mas se eu peço uma cidade, ó, ele vai dar um erro. ele não conseguiu pegar as coisas que ele tinha que resgatar ali do código porque não tá suportado para gerar conteúdo e tal. Então isso aqui já tá querendo dizer que nem mais existe. Então é um problema que tu vai enfrentar se tu utilizar esse serviço do Google em aplicativos vibe codados assim só pedindo pro modelo sem a skill, tá? E como é que a gente resolve isso? A gente
+
+vai instalar a skill. Só isso, galera, não esqueçam, a gente tem nosso guia de vibe code completo aqui na descrição, tá? tem mais de 50 páginas, ele é focado em criar aplicações viabe coding, assistido por IA. E quem baixar esse ebook vai ter um desconto especial na nossa formação de Vibe Code que a gente tá criando, ela vai ser lançada em março, tá? Então fiquem ligados, baixem porque vai valer a pena. Então vou abrir
+
+aqui o outro gravity, né, que tá zerado. A gente vai em terminal, abrir o terminal aqui e aí tu já pode criar junto comigo, tá? Então, para instalar skill, a gente vai utilizar esse comando aqui, ó, npx skills Google skills list. Aí prossegue. E vejam aqui, ele tem essa skill disponível, que é exatamente que a gente precisa. API e para concluir a
+
+instalação, porque depois, né, eu mostrei esse comando de list, porque depois pode ser que venham mais skills, então é bom tu dar uma olhada sempre, tá? E para instalar vai utilizar esse comando aqui que é o NPX skills ad Google Gemini Gemni skills skill gemni AP dev global quiser o comando, deixa aqui nos comentários que eu já coloco para vocês, tá? Que acontece aqui? Primeiramente ele pede para escolher onde que a gente vai instalar. Então já vem habilitado nas ids que eu tenho aqui, tá? Então vou dar um enter. Eu vou
+
+pedir para ele instalar com a cópia, eu prefiro, tá? Eh, às vezes esse esse sim link ele dá uma bugada, então eu tô preferindo instalar com o arquivo físico mesmo, tá? E aqui eu vou prosseguir e ele vai instalar para mim de forma global, tá? Beleza? Então agora eu já tenho acesso a essa skill para poder criar o projeto. Lembrando também,
+
+galera, a gente tem um curso, uma playlist de antigraft aqui no canal, tá? E tudo começa por um miniurso onde eu te mostro toda a interface, o que tu vai fazer com cada recurso aqui, cria um projeto contigo e bota ele no ar, tá? Vou deixar aqui o izinho também e o editor vai colocar tampenciar melhor e saber como é que onde começa essa playlist, tá? Depois assista toda a playlist que vai valer a pena, vai te tornar um mestre em antigraft. Então agora, galera, que a gente tem tudo, eu vou colocar o prompt aqui. Se vocês
+
+quiserem o prompt também deixem nos comentários, tá? Esse prompt aqui ele é igual o primeiro, tá? Só que ele tem uma pequena diferença, ele pede para utilizar a skill. Use a skill de MN updência para modelos SDC e boas práticas atualizadas. Então eu dou este disclaimer aqui para forçar a utilização da skill, porque às vezes eles passam por cima, né? Isso aí é uma realidade.
+
+Então eu prefiro sempre forçar skill, mas se tu não pedir, eles costumam, as ideias costumam ler pass de skills, tá? Mas assim tu garante. E aí a aplicação é a mesma coisa. Noesco express, página HTML simples, clicar no botão, faz reisição do backend, chama PMI, aí gera infográfico e a imagem retornada, tá? Então agora eu vou dar um send aqui. E
+
+para a gente funcionar esse aplicativo, né, já que ele usa o serviço do Google, a gente vai precisar da API do Google, né? Então a chave de API, né? Isso é gratuito, tá? Todo mundo pode obter. Vou mostrar aqui rapidamente enquanto ele cria lá. Aí tu vai entrar no AI Studio
+
+do Google, tá? Então esse link aqui, que é um outro serviço que eles tí vai, a página inicial vai ser essa daqui, né? E tu vai dar um, vai nessa opção aqui, ó, get API. Aqui tu vai criar tua chave de API aqui nesse botão, tá? Eu já tenho, então vou só copiar uma aqui. E
+
+pronto. Voltando pro projeto aqui, ele vai criar um arquivo Denv, que é um arquivo de configuração padrão, onde vão as nossas chaves secretas, né? Esse arquivo não é versionado no repositório, por isso que a boa prática é colocar lá e não dentro do aplicativo em si. vai dando as aplicações, as permissões prograft e já já ele vai criar esse arquivo pra gente colar a nossa chave de API lá. Lembrando, tem que colar a chave de API antes de iniciar, porque é um arquivo que ele é lido quando a aplicação inicia. Então, se tu iniciar a
+
+aplicação, vai ter que reiniciar ela para que essas configurações eh venham, né, sejam efetivadas, vamos dizer assim, no teu app. Ele vai criando o plano de implementação, tudo mais. Isso aqui vai fazer com que ele, né, me mostre o plano de criação do app. É algo que é importante a gente revisar e tal, né? A gente pode fazer comentários pontuais aqui se a gente quiser. Inclusive no
+
+curso ali que eu falei para vocês, eu mostro como faz isso, né? Como ler esses planos da melhor forma possível. Mas aqui a aplicação é simples e não é o foco. Então a gente vai focar nessas novas versões que ele vai criar comparando ali com o projeto anterior que não tem isso. Então galera, ele terminou o projeto aqui. A gente tem que
+
+achar o ENV. Ó, eu acho que ele vai, deixa eu ver aqui que ele falou. Tá, eu tenho que criar um dot, eu tenho que renomear esse aqui para ENV, né? Talvez ele queria certo. Tudo bem. E
+
+aqui eu vou colocar a minha chave de API. Aí tu coloca tudo. Bom, chavei a P colocada ali no ENV, salva o arquivo, tá? E aqui a gente já consegue ver algumas diferenças. Por exemplo, aqui ele utilizou esse Google J ai 1.41, tá?
+
+A gente vai no outro projeto ali. Aqui a gente tem o Google Gener TV, então mudou até o nome do pacote, né? Esse pacote nem existe mais tá obsoleto. Aqui em server JS ele utilizou o Gemini 2.0 flash. Aqui ele utilizou o GMN 3 Pro
+
+Image Preview. E aqui no projeto novo ele utilizou o Demnight 3 Pro image preview, tá? Então essas questões aqui foram alinhadas baseado na skill, então por isso que é importante utilizar. E agora a gente vai ver se o projeto roda. Então vamos botar aqui execute o projeto para mim. A gente já colocou ele no ENV,
+
+né? Então deve estar tudo funcional. Vamos esperar ele aqui, ó. Ele gerou aqui a aplicação. Ela é bem semelhante à outra. Eu vou colocar aqui uma cidade.
+
+Vamos botar aqui, por exemplo, Florianópolis. Vamos ver o que ele vai me gerar para mim. Aparentemente nenhum erro. Então aqui, galera, ele gerou a aplicação, né? O layout bem semelhante e tal, né? Vamos agora então testar com
+
+uma cidade aqui, Fanópolis, gerar infográfico. Ó, então aqui tá tudo certinho. Ele gerou infográfico, tá? Utilizou todas as libançadas, não deu nenhum erro. E a aplicação ficou perfeita, sem problema nenhum. Então,
+
+que que a gente tira disso? Isso aqui vai ser essencial, porque o avanço das tecnologias de A é muito rápido e muito grande. Então, precisamos ficar ligados em skills que valem a pena, como essa daqui, que agora vai te proporcionar, né, ou vão te proporcionar a criar projetos com mais consistência utilizando as tecnologias de ponta do Google. Beleza, galera? É só um último aviso, a gente tá com as inscrições abertas da formação agentes de A, treinamento focado puramente em N8N para criar automações e agentes de A, beleza?
+
+Link na descrição. Esse treinamento tem mais de 40 horas e vai te ensinar a dominar as automações e também a como vendê-las. Aqui na página tu consegue encontrar todos os cursos que tem e tal. É bem completa, tem todos os detalhes que tu precisa para entender como é que funciona o curso. Mas se ficar alguma dúvida, acesse o botão de zap zap que tá ali no canto, tá bom? E aí, que que
+
+acharam? Gostaram da ideia? Conseguiram criar o projeto? Deixem nos comentários. É muito importante ouvir a opinião de vocês também. Eu acredito que isso é
+
+algo que um dia vai se resolver naturalmente. Provavelmente eles vão embutir esses conhecimentos ou no antigraphity ou no próprio modelo, né, para que ele possa est utilizando sempre as ferramentas mais avançadas. O meu chute é que seja no antigraft para poder realmente tornar um produto mais de ponta, né, que faria com que eu precisasse adicionar isso num cloud gold da vida, né? Então ali eu já tenho pronto, como a gente vê que eles estão inovando bastante gravity. Não me surpreenderia ter isso integrado naturalmente depois de um tempo, né?
+
+talvez não como uma skill, mas como uma funcionalidade interna. A gente até pudesse ver quais lips estão utilizando, mas que permitisse a gente utilizar versões anteriores, porque nem sempre a versão mais atual é a melhor, porque, por exemplo, a gente tem modelos menores que resolvem coisas eh menores também, bem gastando uma fração de preço, né? Então, a gente tem que botar tudo na balança, mas é muito útil para não utilizar coisas que estão depreciadas, inexistentes, quebradas, que vão deixar o nosso projeto aí zoado, né? Então tem uma mini aplicação prática. Espero que vocês tenham entendido a importância disso. Espero vocês no próximo vídeo.
+
+Não se esqueçam, deixa aí o teu like e se inscreva no canal se não é inscrito. É importante para mim, importante pro meu trabalho e faz com que eu tenha essa atração de entregar cada vez mais vídeos para vocês. Valeu, pessoal. Até mais.

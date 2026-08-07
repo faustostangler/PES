@@ -1,0 +1,144 @@
+---
+video_title: "O Claude Code melhora SOZINHO com o Autoresearch (veja como)"
+video_id: 3dsiiI5zR5Y
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3dsiiI5zR5Y
+video_date: 2026-03-25T15:00:00+00:00
+video_description: |
+  E se as tuas skills do Claude Code pudessem se melhorar sozinhas enquanto tu dorme? Isso é o Autoresearch, conceito que o Karpathy lançou em março de 2026 e que explodiu com 31 mil stars no GitHub. Ele usou pra otimizar treinamento de IA mas o conceito funciona pra qualquer coisa que tenha uma métrica mensurável. Nesse vídeo mostro como aplicar isso nas skills do Claude Code.
+  
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_autoresearch
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O setup original do Karpathy é pra machine learning. O agente edita um script de treinamento, treina por 5 minutos, verifica se o resultado melhorou e repete a noite inteira. Em 48 horas rodou 700 edições. A maioria descartada. Umas 20 sobreviveram. Todas se acumularam sem se cancelar. O CEO da Shopify pegou o conceito e em uma noite rodou 37 experimentos com melhoria significativa sem ser pesquisador de ML.
+   
+  O padrão por trás é simples: um arquivo com escopo restrito, uma métrica mensurável que define o que significa melhor, um loop autônomo que modifica, verifica, mantém ou descarta e repete, e git checkpoint a cada passo pra ser sempre reversível. Remove qualquer uma dessas peças e o loop quebra.
+   
+  Pra fazer autoresearch no Claude Code precisa de 3 ingredientes. Goal é o que quer melhorar. Metric mais Verify é um comando que retorna um número. Guard é a proteção contra quebrar o que já funciona. O segredo tá no eval: se não consegue medir com um comando, não consegue iterar automaticamente. Eval bom é npm test com coverage retornando porcentagem ou benchmark retornando latência. Eval ruim é "parece melhor" ou "ficou mais limpo" — mata o loop.
+   
+  A instalação são 3 comandos: clone do repositório, copiar skills e copiar commands pra pasta do Claude Code. Precisa dos dois, sem os commands os subcomandos como plan e security não funcionam. Tudo que é instalado são arquivos markdown. Nenhum script, nenhum executável. São instruções que o Claude Code lê e segue.
+   
+  Na primeira demo uso o autoresearch pra aumentar cobertura de testes de um projeto. Configuro goal, metric, verify, guard e scope. O agente roda iterações onde cada uma lê o estado atual, escolhe uma mudança atômica, faz commit antes de verificar pra rollback ser limpo, roda o verify mais o guard e decide se mantém ou reverte automaticamente. A cada 5 iterações imprime status. No final mostra um summary com baseline, resultado final, quantos keeps e discards e qual foi a melhor iteração. Cada mudança aceita é um commit separado no git.
+   
+  Na segunda demo criei uma skill universal que funciona em qualquer projeto. Ela analisa a saúde do codebase em 5 categorias: segurança, qualidade, higiene, testes e documentação. Dá um score de 0 a 100. Tudo com grep e find sem dependências. Funciona em qualquer OS. Solto o autoresearch pra melhorar o score automaticamente e mostro o agente removendo secrets hardcoded, limpando console.logs, substituindo eval por chamadas seguras, adicionando testes e melhorando documentação. Cada fix é um commit separado que pode ser revisado, cherry-picked ou revertido.
+   
+  O conceito é poderoso na simplicidade: restrição mais métrica mecânica mais iteração autônoma gera ganhos compostos. Você para de editar código e passa a editar o markdown que diz ao agente como editar código. Define a estratégia, o agente executa a tática. O Karpathy resumiu: um pesquisador com 20 anos de experiência foi superado pelo próprio agente rodando o próprio framework dele. O agente não tinha melhor gosto, só tinha mais paciência.
+   
+  🔗 Links do vídeo:
+  ▸ Autoresearch (Karpathy): https://github.com/karpathy/autoresearch
+  ▸ Autoresearch Skills (Claude Code): https://github.com/uditgoenka/autoresearch
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Autoresearch: estratégia para melhoria continua
+  00:53 Como funciona o Autoresearch no Claude Code
+  04:50 Instalando o Autoresearch no Claude Code
+  07:16 Como usar o Autoresearch para melhorar skills do Claude Code
+  12:50 Vendo resultados da melhoria de Skill
+  15:25 Usando a skill após a melhoria pelo Autoresearch
+  17:05 Minhas considerações sobre o Autoresearch do Karpathy
+---
+Imagina só tu criar uma skill e ela sempre ficasse automelhorando para cada vez que tu utilizasse ela, ela estivesse melhor do que no uso anterior. Isso já é possível utilizando IA em uma estratégia bem simples. É isso que eu vou te explicar e te mostrar no vídeo de hoje para que tu consiga implementar. Aí a gente vai utilizar uma skill de cloud code e implementar essa estratégia para que ela fique se melhorando automaticamente. Eu sou Mateus Batista, programador há mais de 10 anos e hoje venho trazendo aqui as melhores novidades de A para ti. Se tu curtiu a
+
+ideia, não se esquece de se inscrever no canal e também deixar teu like, que é muito importante para que eu consiga entregar vídeos todos os dias de qualidade para vocês. Bora lá conhecer a estratégia, que ela é simples, mas a gente precisa entender o conceito para conseguir aplicar lá no cloud Code. Bom, galera, para começo de conversa é importante comentar que ela não nasceu no Cloud Code e ela não serve só para skills, ela serve para qualquer coisa que possa ser melhorada através da inteligência artificial. O conceito é desse cara chamado Andrey Capart, talvez seja assim. Se alguém aí for o corretor de pronúncias, coloque aqui nos comentários que eu ficarei feliz em ver como se pronuncia corretamente o nome dele. Mas enfim, ele inventou o auto
+
+research, que pode automelhorar ou fazer que algo se melhore automaticamente. O pacote original no GitHub é esse cara aqui, tá? Só que ele não tem nada a ver, como eu falei, com o Cloud Code. Ele pode ser feito, ele pode ser utilizado para qualquer coisa, porque ele é um script que vai fazer essa melhoria automática. é que ele explica porque que funciona, né? A gente pode pensar, pô,
+
+como é que uma IA vai melhorar algo, vamos dizer assim, ela já acabou de criar esse tal recurso, né? Mas por a + b aqui ele mostra como isso funciona e por que a gente deveria utilizar. A ideia começa aqui num treinamento do recurso no script Python que depois de ser treinado e analisado vê se melhorou ou não o recurso. Bom, essa é a ideia original. Aí se criou um padrão disso tudo utilizando a estratégia do research, que vai fazer funcionar com qualquer coisa. A gente vai ter aqui um
+
+arquivo que vai ser avaliado, uma métrica da melhoria, um loop que vai poder ficar melhorando por muito tempo e um git checkpoint que seria a forma de dizer se a melhoria valeu ou não valeu a pena, né, de acatar ou descartar. Daí aqui eu vou ter ganhos enquanto tu. Bom, aplicando aqui ao cloud code, se fosse nesse nosso caso de skill, não só está ligada a isso, tá galera? Tô fazendo um exemplo aqui. Ele vai ter um arquivo skill md, um eval script, que seria evaluation, né, de ver se deu certo ou não, um barra loop ali, que vai fazer essa avaliação de tempos em tempos e um guard para não quebrar o que funciona. É
+
+um guard brave. O agente vai melhorar a skill, o eval vai julgar o resultado, se vale ou não manter o que foi melhorado. O git vai salvar a cada vitória, né, cada vez que der certo. E tu pode revisar isso depois que tu acordar, né, quando tu voltar aqui pro PC. Bom, o loop é como eu acabei de explicar ali, né? Ele vai ter uma análise do estado
+
+atual mais resultados anteriores, escolhe alguma coisa para mudar, tá? Então ele ataca em pontos específicos e sempre é reversível. Depois que a modificação foi feita, roda o EVAL, verifica se retornou um número. Isso aqui quer dizer se o dado foi concreto ou não, né? Se, por exemplo, ah, melhorou a performance da aplicação em 10%, né? ou ah, melhorou
+
+significativamente, isso não é um bom critério. E também ele roda um guard para ver se essa alteração, mesmo que for benéfica, quebrou ou não a aplicação. Se melhorou, há um git commit, ou seja, salva-se essa melhoria, senão reversão do código e repete de novo. Então é um loop, né, auto search ali como fala o nome do pacote EVALs, que seria o seriam os evaluations, né, os testes são considerados, né, a gente tem duas dois tipos de EVAL, o bom e o ruim. O bom seria, ah, fez aqui um cobertura de testes, aí aumentou por 87.3%.
+
+ah, fez um benchmark na PI, resultou ali de uma melhoria de resposta para 142s, e assim por diante. Então, a gente tem melhorias que são identificadas identificáveis por números. Isso é bom, ele vai manter. Se a mensagem for genérica, tipo, parece melhor, provavelmente melhorou, ficou mais limpo, isso não serve, ele volta o código, tá? É assim que funciona o a estratégia de out search. Como é que a
+
+gente vai começar? Bom, a gente pode fazer isso aqui manualmente, pegar a ideia desse cara aqui, tipo instalar ali no cloud, vamos dizer assim, e rodar, tá? Ou esse outro pacote que eu encontrei aqui, tá? Eu li os arquivos que o cara criou, já tá com 100 estrelas, foi recentemente criado, o cara tá colocando atualizações a todo tempo, então, ó, não puxou para 1200 ainda, mas tá evoluindo bem. E é um auto research aplicado ao cloud, é o cloud auto research. Então, em vez da gente
+
+ter que fazer tudo na mão, ele vai rodar pra gente de forma mais automática, tá? Ele fala aqui, aqui é baseado no carpates auto research, que é o originalzão, que é esse cara aqui. Inclusive, né, a equipe do cloud é um contribuidor, então quer dizer que é uma estratégia interessante, né, validada por eles, por isso que a gente vai usar esse cara aqui. Então, nós vamos seguir com esse cara aqui, mas tu fica à vontade para utilizar o original ou outra versão que tu quiser. Beleza? E
+
+galera, antes de começar a implementar, não se esqueçam, formação Vibe Code, nosso treinamento mais completo em antigraft, cloud code e outras IA que geram código. Link no comentário fixado ou na descrição para vocês conhecerem, tá? Acesso vitalício e também tem um grupo de alunos no WhatsApp que eu estou lá, beleza? Então participe, vai valer a pena se ter interesse em, por exemplo, cloud code. Bom, então vamos dar início.
+
+Eu tenho aqui um VS code, né, aberto num projeto que eu vou rodar uma skill que ela vai ser automelhorada pela estratégia, beleza? Bom, que que a gente precisa fazer primeiro? A gente precisa instalar aquele cara, tá? Então é fundamental seguir esse passo de instalação aqui que está aqui, ó. Então ele fala que a gente pode colocar o marketplace e instalar o plugin, tá?
+
+Então é isso que a gente vai fazer. Vou abrir o cloud code e aqui eu vou adicionar o marketplace do auto research e vou instalar o plugin dele, tá? É aqui pode escolher qual ambiente quer instalar. Vou instalar aqui para mim, tá? E pronto, tá instalado. Bom, aqui
+
+agora, ó, a gente não consegue ver o auto research, então a gente reinicia o cloud. Beleza? Tô rodei com mano errado agora. Ele vai de novo nesse CDR, ó, barra auto research. Então, já estão aqui os comandos que o nosso plugin tem, beleza? Então, isso quer dizer que tá
+
+instalado com sucesso esse auto research, esse cloud auto research, né? Como é que a gente vai utilizar o auto research? Bom, é super simples. Basta utilizar o comando inicial aqui, tá? Que é o auto research barra auto research.
+
+ele vai fazer uma varredura no projeto. O que acontece aqui é que eu não quero melhorar o projeto em si, eu quero melhorar uma skill que eu tenho aqui, que é essa Project Health. Essa skill ela analisa e melhora a saúde geral de qualquer projeto, segurança, qualidade, higiene do projeto. Use quando quiser um diagnóstico completo ou melhorar a qualidade de code base. Então eu quero melhorar esse cara aqui com o research, tá? Como é que eu vou fazer? Eu vou
+
+dando as permissões aqui, tá? E aí vocês vão ver que é bem instrutivo o uso do plugin. Ele vai me guiar pelo que eu quero melhorar. Inclusive poderia melhorar o projeto num geral. Por isso que eu falei para você lá no começo, não é só sobre skills. Só que eu gosto, ou
+
+melhor, né? É algo bem novo, né? Eu tô gostando de utilizar nas skills porque quando eu criava as skills, eu tinha que ficar ali achando pelo em ovo para as vezes ter um resultado um pouquinho melhor. E agora não. Eu através desse cara consigo ter melhorias concretas com a simples execução desse script na skill ou ainda ele me sugere algumas melhorias que eu posso fazer e eu posso aplicá-las. Então é sensacional esse
+
+recurso aqui que a gente tem à nossa disposição. Lembrando galera, eu tô usando como sce um framework em cima da tese original, né? Isso é bem importante ser citado, porque eu fui lá no repositório do cara, eu li, né? São só arquivos MD, não tem nada de malicioso assim. E tô trazendo para vocês, mas o melhor talvez, né, seria a gente entender como é que funciona o auto research ali, o pai de todas essas tecnologias que a gente tá utilizando aqui agora, né, e talvez implementar ela, porque é a original, né, mas tem essas outras variações que a gente pode usar também, tá? Então agora eu só tô
+
+esperando ele ler o projeto, ó, terminou. E aí o primeiro, primeira etapa é o objetivo. Então ele tá perguntando que que eu quero melhorar nesse projeto? Qualidade do código, né? A leitura do build, performance, type, não. Eu quero conversar sobre isso. E aí
+
+eu vou poder fazer a minha exigência, vamos dizer assim, né? O que eu quero melhorar. E aí que vai chegar a melhoria na skill. Eu quero melhorar a skill project. Verifique a possibilidade.
+
+Vocês vem aqui que ele tá me dando sugestões e tal, né? Mas eu vou direto na skill, que é o contexto ou o assunto principal desse vídeo. Então veja aqui, ele já tá seguindo a ideia. Ele analisou a skill, ele trouxe aqui os problemas e ele aqui agora tá rodando de novo ao research pra gente entender ou para ele entender o que a gente quer melhorar. Então o que a gente quer? Mais cheques,
+
+menos falos positivos, compatibilidade cross platform, tudo junto, melhoria geral. Então vamos atacar uma coisa só que é como o auto research p, vamos dizer assim, eh é executado, né? Ele trabalha em uma coisa por vez. Então agora, galera, ele pergunta, vai pra segunda etapa, né? Ele pergunta: "Qual a métrica mecânica para usar para medir o progresso? Precisa ser um número
+
+extraído comando. Número de cheques distintos no EVA SH. Score do Evalu SH nesse projeto linhas funcionais do Eval SH high. Então eu vou aqui utilizar a primeira que vai proporcionar melhor cobertura de análise, que é o que eu quero. Quantas interações? Então aqui 10
+
+melhorias, 15 sessão mais rápida e limitado. Podemos fazer um loop infinito, tá? Então vamos fazer aqui cinco interações só pra gente poder, talvez eu trazer todas para vocês aqui verem que que melhorou. Então ele perguntou: "A métrica é higher is better ou lower is better?" Então que que é higher, né? Mais cheques, mais core,
+
+mais linhas, melhor cobertura. E aqui, menos erros, menos falos positivos, melhor pressão. Vamos dizer que eu tô procurando melhor cobertura. Eu respondo todas as perguntas e agora ele vai fazer o processo em loop, tá? Então agora vamos aguardar aqui a próxima etapa.
+
+Então a gente tem aqui mais uma etapa. Agora é a parte, né, que ele vai utilizar para verificar, né, os testes, o guard para não fazer nada de errado, né, e depois o launch para lançar. Então, qual comando produz métrica? Eu vou testar antes de começar. Então, vou botar aqui que é esse aqui, grap, né, que ele até tá recomendando, né, mas ele vai detectar eh contadetecções distintas no script. E aqui ele tá perguntando
+
+qual o comando que sempre deve passar, previne regressões. E aí a gente tem que ler aqui de novo. Ele tá botando aqui bash eval. Então, garante que o script não tem erros de sintaxe após modificações. Rodar EVA SH no projeto, garante que o script roda sem crachar e skip sem guarda que não deve ser utilizado. Vou utilizar o recomendado. E
+
+aqui agora eu vou dar um launch, editar e lançar as cinco interações. Pronto, agora sim ele vai começar a rodar. Ele tem tudo que ele precisa para melhorar cinco vezes ou não, né, a skill. Lembrando, se ele em alguma eh rodada, vamos dizer assim, não anotar melhorias com métricas reais, ele vai desconsiderar. Gostaria de lembrar vocês aqui também, galera, que a gente tem uma playlist de cloud code, tá? Vou deixar a
+
+tamb do primeiro vídeo aqui na tela e também o izinho para vocês acessarem depois. Tem mais de 20 vídeos, se eu não me engano, vocês aprenderem muito sobre cloud code e recursos que trabalham com ele, como esse aqui, ó. Então ele vai criar aqui um arquivo de resultados e eu posso permitir durante a sessão, né, para não ter que ficar dando permissão direta. E o e o arquivo vai ser esse aqui, ó. Depois a gente vai dar uma analisada também. Então aqui, galera,
+
+olha só, ele já rodou uma vez. Tá meio ruim de ler aqui. Eu não sei o que que eu consigo abrir com TSV. Deve ser qualquer software de planilhas, né? A gente consegue entender. A primeira deu
+
+PES, ou seja, ele identificou como positivo, tá? E o que que foi aconteceu, né? Ele adicionou DM variantes and credentials config file. Então, provavelmente foram verificações nesses arquivos aqui que ele julgar, que ele julgou importante para eh melhorar a skill de Project Health que ajuda o projeto num geral. Então, realmente são arquivos importantes, né, que podem talvez vazar senhas, né, se não estiverem ignorados, por exemplo, DMV.
+
+Tudo isso vai contribuir paraa segurança do nosso projeto também. Aqui, galera, ele já tá indo paraa terceira iteração. A segunda já passou também aqui ele falou, ele trabalhou mais em CD config detection, né? Então, detecção de configuração para continuous integration e continuous development, que também é algo importante alguns projetos, né? TCIC CD para fazer o deploy mais rápido e tal, né? cheques no deploy. A terceira
+
+foi sobre playw e side press e assim vai seguindo, né? Então, olha só, galera, ele terminou, tá? E aqui ele tá me dando um resumo das cinco melhorias. Eu não sei o que aconteceu no cloud, mas agora ele fica jogando para cima. Isso deixa meio chateado. Bom, então vejam aqui,
+
+eh, ele trouxe elas, tá? tá duplicado. Eu acredito que é porque ele tá colocando duas coisas da etapa quatro, né? Aqui. Então, teriam 10 melhorias, mas a gente pediu só cinco. Beleza? E as
+
+últimas ali que a gente não leu foi detecção de IPs URLs hardcode, que é bem interessante. Detecção de doc de API, importante também, substituição do BC por aritmética pura do BH e detecção de funções monolíticas. Então ele botou aqui que todas as interações foram keep com guard passando. Beleza? Deu certo?
+
+Porque também passar o guard ali num arquivo MD não tem muito muita dificuldade, né? Já que não é algo que vai se executar. Se a gente executasse no projeto aqui, talvez a gente teria algo que não passasse pelo guard batido ali num teste que deu errado, tá? Eu acabei não utilizando a skill antes, mas eu vou usar ela depois aqui das melhorias pra gente ver se ele detecta algo que a melhoria do auto research colocou lá. Então botar aqui project e vamos passar o project health no nosso projeto que é a skill que melhora os projetos em si, tá bom? Eh, GS aqui. E
+
+lembrando também, galera, muita gente me pergunta como eu crio os meus prompts e a resposta é bem simples. Eu coloquei tudo nesse material aqui gratuito, tá na descrição do vídeo o guia de engenharia de prompt para tu aprender a criar melhores promps. Inclusive, isso ajuda a tu conseguir criar teu projeto mais rápido, a tu economizar tokens. Então, vale a pena. Beleza? Bom, seguindo lá,
+
+ó, aqui ele vai trazer a o resultado. Ele botou 62 de 100. Segurança tá perfeito, qualidade precisa melhorar. Teste não tem, né? Então ele trouxe aqui qualidade, perdeu 17 pontos. Teste,
+
+nenhum arquivo de teste encontrado, nenhum framework de teste. Então lá uma das melhorias era sobre o playrht, né, que é um framework de teste, então veio de lá do auto research. E aqui outras considerações que a gente tem que fazer também, ó. que ele já até considerou colocar o auto research no próprio projeto, né? Então, interessante que ele já emenda, né, ali por causa da inteligência do modelo do OPS que eu tô utilizando nessa questão aqui. Bom,
+
+galera, considerações finais. Recomendo vocês darem uma olhada nesse cloud research para ver se vocês vão se adequar a como o cara criou esse plugin, tá? Mas o que eu acredito que vocês devam fazer mesmo, tá? como dever de casa é analisar o original, tá? Que é de onde estão surgindo as bifurcações, né?
+
+Esse aqui tem toda a teoria bem explicada e o que vocês precisam fazer para automelhorar qualquer coisa com o IA, com resultados concretos, né? Com base em dados, que é o que importa, né? A gente precisa melhorar com critérios que realmente a gente possa metrificar, se não são só afirmações vagas, né? Ah, melhorou a segurança, mas o que melhorou? quanto melhorou. Isso é o que
+
+o Auto research vai fornecer pra gente, né? Bom, comentem aí o que acharam. Quero saber se vocês curtiram a ideia, se vão utilizar, se já tão utilizando pra gente poder trazer essa discussão pro chat também. Não esqueçam, se não é inscrito, se inscreva, deixa o like, isso ajuda a eu empolgar mais, né, galera, para trazer mais vídeo para vocês. E também de uma olhada na formação Vibe Coding, que é o nosso treinamento aí de cloud code, antiraft e também vários outras IAS que criam projetos com inteligência artificial, né? O famoso web coding, programação
+
+assistida por IA. Se vocês se interessam nisso, vocês vão curtir muito o treinamento vitalício. Tem s dias de garantia, então tu não perde nada, dá para testar lá. Se não gostar, devolvo todo o teu dinheiro sem perguntinhas, beleza? Aqui no comentário fixado vai ter o link pra página e lá tu pode conhecer melhor treinamento, tá? Tem
+
+tudo explicado detalhe por detalhe. Se ficar alguma dúvida, tem um botãozinho de WhatsApp para falar com a gente e aí eu tiro todas as outras dúvidas que tu tem. Tá bom galera? Vou ficando por aqui. Espero vocês aí no próximo vídeo.

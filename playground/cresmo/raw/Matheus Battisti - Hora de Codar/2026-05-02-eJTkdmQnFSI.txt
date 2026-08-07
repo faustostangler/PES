@@ -1,0 +1,297 @@
+---
+video_title: "Superpowers vs GSD: Testei os 2 no MESMO Projeto (Quem GANHA?)"
+video_id: eJTkdmQnFSI
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eJTkdmQnFSI
+video_date: 2026-05-02T14:00:00+00:00
+video_description: |
+  Superpowers vs GSD é o comparativo definitivo dos 2 frameworks mais populares do Claude Code: Superpowers com 152+ mil stars no GitHub e GSD (Get Shit Done) com 31+ mil stars. Neste vídeo eu testo os dois no MESMO projeto, com o MESMO prompt e o MESMO modelo pra descobrir qual framework vale a pena adotar no seu workflow de vibe coding. 
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_gsd_vs_sp
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Crio um e-commerce completo com Next.js 15, Prisma, NextAuth e shadcn usando cada framework e comparo resultado, tempo, tokens e qualidade.
+   
+  Se você usa Claude Code e tá na dúvida entre Superpowers e GSD, esse vídeo é pra você. Os 2 frameworks prometem deixar o Claude Code mais profissional, mas atacam problemas diferentes. Superpowers, criado por Jesse Vincent, é um framework de skills baseado em disciplina de desenvolvimento: TDD obrigatório, testes antes do código, review entre tarefas e fluxo estruturado de brainstorming até merge. GSD, criado por Lex Christopherson, é um sistema de context engineering que resolve o problema de context rot mantendo cada tarefa em context fresco com specs externalizadas.
+   
+  No vídeo eu explico o que cada framework faz. Superpowers ensina o Claude a codar com disciplina: brainstorming antes de código, worktree isolado, plano detalhado, subagents com TDD rigoroso e review entre tarefas. GSD externaliza specs em .planning/ e spawna subagents com context limpo de 200k tokens, organizando tarefas em waves paralelas.
+   
+  Mostro a instalação dos dois. Superpowers instala como plugin oficial do Claude Code via marketplace. GSD instala via script bash clonando o repositório e rodando install.sh.
+   
+  Parto pro teste real com o mesmo prompt pros 2 frameworks. Um e-commerce funcional com home, página de produto, carrinho drawer, checkout, confirmação, auth com NextAuth, painel admin, filtro por categoria, busca, responsivo mobile first, dark mode e 12 produtos seed. Pastas separadas, sessão nova pra cada round.
+   
+  No round do Superpowers você acompanha o fluxo completo: brainstorming ativa sozinho e o Claude faz perguntas antes de codar, cria git worktree isolado, gera plano com tarefas pequenas, spawna subagents que escrevem teste primeiro (RED), implementam (GREEN), refatoram e passam por review entre tarefas.
+   
+  No round do GSD você vê o fluxo diferente: /gsd:discuss-phase entrevista sobre preferências, plan phase cria specs externalizadas em .planning/ em waves, execute phase roda subagents frescos com commits atômicos, e /gsd:verify-work roda UAT e security audit antes do /gsd:ship.
+   
+  No scoreboard final comparo tempo, tokens, se funcionou de primeira, qualidade do código, UI, auth, carrinho, checkout, admin, dark mode e responsivo. Dou veredito honesto sobre quando usar Superpowers e quando usar GSD, e qual eu adotei depois desse teste.
+   
+  Se você curtiu o comparativo deixa like e se inscreve. Comenta aí qual framework você usa e se vai testar o outro.
+   
+   
+  Superpowers: https://github.com/obra/superpowers
+  GSD: https://github.com/gsd-build/get-shit-done
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 GSD vs Superpowers: qual o melhor?
+  01:15 Conhecendo os recursos do Superpowers e do GSD
+  06:30 Instalando o GSD e o Superpowers em projetos zerados
+  08:00 Iniciando o projeto com GSD e Superpowers
+  27:58 Testando os projetos criados pelo GSD e pelo Superpowers
+  30:17 Corrigindo problemas nos projetos
+  36:36 Minhas considerações sobre Superpowers vs GSD: quem ganhou?
+---
+Galera, hoje a gente vai dar fim a uma guerra GSD versus SuperPers. No vídeo do GSD que eu fiz aqui no canal, muita gente perguntava do Super Pers e vice-versa. No vídeo Super Pers, muita gente me perguntava do GSD, qual que é o melhor? Bom, aqui nesse vídeo a gente vai fazer o mesmo projeto nos dois para vocês entenderem as diferenças enquanto eu também comento as minhas experiências. Daí vocês vão conseguir tirar a própria opinião de vocês e utilizar cada um deles onde eles são melhores. Beleza? Então, hoje a gente
+
+vai travar uma batalha entre GSD versus Superpers no mesmo projeto, seguindo a mesma ideia, o mesmo prompt e vendo onde cada um deles nos leva. Bom, galera, para quem não me conhece, sou Mateus Batista, programador há mais de 10 anos e hoje vem me aventurando muito aí no mundo da IA, trazendo só as melhores ferramentas e novidades aqui para vocês. Então, se curtirem o vídeo, não se esqueçam, deixa aquele likezão e também se inscreve aí para receber novidades, tá? Todos os dias, né? A gente tá postando vídeos todos os dias, galera.
+
+Não sei se vocês já viram, a gente tem aqui os membros do canal, tem vários vídeos exclusivos para membros. Então, dá uma olhadinha lá que é R$ 7, R$ 8, aí tu já tem acesso a todos eles. Beleza? Bora então começar aí a batalha. Bom, primeiramente um pouco de teoria para quem não sabe nada de nada, né? Mas eu
+
+já vou também deixar a recomendação dos dois vídeos aqui, tá? Então, primeiramente, o editor vai deixar a TAMB do Super Pers, eu vou deixar o Izinho, tá? É o vídeo onde tu vai aprender a utilizar ele a fundo e logo eu deixo a TAMB do GSD e o izinho também para tu poder acessar os vídeos. Eles ficam aqui na descrição do canal também, na descrição do vídeo, né? O YouTube tá fazendo isso agora, fica bem legal, tá?
+
+Mas vamos lá. O Super Pers, galera, ele tem foco em disciplina. focar em fazer nós, né, os usuários e o cloud code a fazer a coisa certa, né? Ele força a gente a isso, é tipo um guardios. Então ele vai ter 14 skills para trabalhar o desenvolvimento de um projeto nesse sentido. Já o GSD, ele tem um foco em
+
+contexto. A ideia é que ele tire todas as dúvidas, elucide muito bem pro modelo e crie uma base de informações para criar o projeto em vez de depender da memória do cloud. Isso faz com que o projeto também tenha o guardios, né? Ele vai ter essas balizas do lado para esses balizadores do lado para não fazer coisa errada, tá? Só que dessa maneira acaba sendo muito mais burocrático, porque ele tende a questionar mais, ter mais fases e prolongar mais aí o tempo de planejamento. Então, de um lado, a gente
+
+tem um que é um pouco mais direto e tem o foco em balizar o sistema e no outro a gente tem um um foco, né, o caso GSD, em criar uma base bem sólida, bem forte para que o projeto nunca se entorte, independente de como ele cresça, tá? Então o fluxo do Superpers é uma etapa de prestorming, depois um git work tree, né, para poder fazer um branch para cada funcionalidade, se tu quiser. Ele escreve os planos. A gente vai ter aqui um subagent em ação mais TDD, fazendo os testes do projeto, revisão de código e aí ele termina a funcionalidade. Esse é o ciclo dele. Então ele planeja, escreve
+
+já com testes, revisa e entrega, tá? O GSD não, o GSD a gente vai executando alguns comandos ali que são para discutir a primeira fase. Então ele vai entender tudo que a gente quer, depois ele vai planejar essa fase, depois ele vai executar essa fase e aí a gente pode testar com aquele verify work ali e por fim fazer o chip, que seria a parte que a gente envia o código pro GitHub. E essa nova versão está em produção, tá? Então, por mais que pareça, né, o Superpers ter mais, na verdade vocês vão ver que o GSD ele acaba sendo um pouco mais chatinho ali na configuração, tá?
+
+Quando usar cada um. Eu acredito, na minha opinião, que o Superpowers é mais para projetos médios, menores, onde a gente só quer algo que vai ajudar a gente a construir bem o projeto. Ele vai ter um TDD, que é uma estratégia que muita gente utilizava, né, na programação raiz para criar os projetos baseado em TDD, né, test driven development. te ajuda a economizar tokens por não ter tantos erros, já que o TDD garante algumas etapas, né? E o código vai est testado, a gente sabe disso. Já o GSD, eu acredito que seja
+
+para projetos maiores, projetos que já envolvem dinheiro de cara na jogada, né? Tu tem possíveis clientes, tu vai monetizar nele e isso vai exigir várias sessões. Tu vai ver que o cloud vai consumir um pouco mais de tokens, né? Aqui eu vou usar tudo o cloud code, tá, galera? Só para especificar. Mas eles
+
+não estão ligados a ele, né? Quando tu tem aqui requisitos muito pesados, né, tanto de qualidade como de regra de negócio, né, algo que não pode falhar, claro que nenhum sistema a gente quer que fale, né, galera? Mas você tem que entender que às vezes, né, por menor bo que seja, o sistema não pode ter, ele não passa, por exemplo, uma validação de uma empresa. Então, estamos trabalhando nesse sentido, né? Não é aquele negócio de, cara, vão lançar o quanto antes, é aquele negócio de planejar para lançar.
+
+Eles podem coexistir, tá? tu consegue trabalhar com os dois juntos, que é uma pergunta aí muito feita pelas pessoas também. Bom, então vamos lá, vamos instalar e usar esses caras. Lembrando aqui os repositórios, né? A gente tem o Super Powers que tá com 157.000 stars
+
+aqui, instalação bem facilitada. Ele virou, acredito que recentemente, um plugin oficial lá no marketplace do cloud, tá? Bem interessante também, confiabilidade. E temos o GSD, tá? O GSD tem a versão dois, mas nesse caso aqui eu vou usar a versão um, beleza? Porque
+
+esse dois aqui ele é um celado e tal. Eu gosto mais do um para trabalhar no cloud code, tá? Não me adaptei nesse dois ainda. Então vou usar o GSD1, que é esse aqui. Inclusive ele é mais famoso e continua sendo atualizado. Ó, vejam
+
+aqui, três dias atrás teve atualização, tá? Então os dois projetos estão sendo tocados, não é que um ficou obsoleto, tá bom? Antes de ir lá pra prática, galera, eu vou deixar aqui agora a TAMB do GSD, do vídeo do GSD que a gente tem aqui no canal, tá? Vou deixar o izinho também para que vocês possam ter aí como acessar ele depois para poder fazer os dois projetos isoladamente também. Vai ser interessante, né? Aqui é mais um
+
+comparativo, a gente não vai criar algo muito complexo, né? Só para testar e avaliar a performance dos dois, tá bom? Que que eu fiz aqui? Eu abri o VS Code, duas pastinhas, tá? Uma pro GSD e uma pro Super Pers. Abri um terminal em
+
+cada. E agora eu vou fazer a instalação de ambos. Então a instalação ele tá aqui, ó, um plugin do cloud mesmo. Tu pode utilizar esse comando aqui. Então vamos lá. Opa, primeiro superpers, né?
+
+Então ó, vou colocar aqui o plugin install. Ele falou que já tá instalado. Beleza, né? Mas só para vocês verem que é o processo. E aí ele me pede para eu olhar o barra plugins e testar com superpers. Então barra plugins. Então a
+
+gente vê que a gente, deixa eu ver aqui, ó. Tá aqui, ó. Superpers. Beleza? E aí para testar basta escrever Superpowers.
+
+Então ele tá falando aqui que já está, né, globalmente instalado. Beleza? Já o GSD, a gente vai lá, tem que executar esse comando aqui, ó. NX get it done, cloud code, né? Então é aqui fora mesmo, não é dentro do cloud.
+
+Aí tu escolhe qual que é o o run time que tu tá rodando, né? Aqui cloud code. Vou rodar local e ele criou aqui a pastinha pro GSD. Beleza, SuperPers ainda está vazio. Bom, agora a gente inicia o cloud aqui também e pronto, os dois estão aqui, né, instalados com o Cloud Code abertos. Então galera, vamos
+
+iniciar os projetos aqui. Então, tá? O prompt eu já mostro para vocês que eu já preparei aqui, tá? No super powers a gente vai utilizar o comando inicial, é o brainstorming, tá? Então, opa, deixa eu ver se ele vai me responder aqui, senão tem que começar e mandar o prompt.
+
+Deixa eu ver aqui, ó. Aí a pergunta um é o que estamos construindo, tá? Então, aqui eu vou mandar o prompt. Então, só deixa eu ler o prompt que eu vou mandar pros dois aqui para vocês. Quero um e-commerce simples, mas funcional.
+
+Preciso de home com grid de produtos, imagem, nome, preço, botão adicionar, página de produto individual, carrinho lateral com itens, quantidade subtotal, drawer tipo gaveta, né? Aparece e volta. Checkout com formulário, nome, e-mail, endereço, cartão fake, né? Para poder fazer a compra. Página de confirmação do pedido. Autenticação simples. Página
+
+meus pedidos. Painel admin básico, filtro por categoria e busca na home. Responsível dark mode. Escolher stack. Next, Prisma SK next. Estrutura modular
+
+com passes separadas. 12 produtos no Sid, né, pra gente ter produtos para começar, tá? Aqui, ó, eu não sei se vai dar para ficar assim com terminal um lado do outro, porque eles vão fazer as perguntas, né? Então, vamos responder as perguntas. Modelo admin. Depois a
+
+gente abre o gesto dele. Então ele pergunta como é que eu vou identificar quem é o admin. Então pode ser aqui na na opção A, que daí depois a gente pode mudar essa estratégia. Só vai criar esse admin para mim. Lembrando, né, galera, vou usar o opus 4.7 pros dois, tá? Só
+
+para ser só para ficar claro aí o modelo escolhido. Então pergunta dois, tema dos produtos e categorias, tá aqui opção B. É aqui é a forma de indicação. Eu vou escolher credenciais, né? Meio e senha. Simplificar um pouco
+
+aqui. Aí o checkout como ele deve ser. Vou botar a opção A, single page. E aqui eu vou responder todas as perguntas, galera, até ele ir pra próxima fase, tá? Vou dar uma acelerada aqui, senão a gente vai ficar só respondendo perguntas do projeto. No SD vai ter a mesma coisa,
+
+né? Aqui é uma parte importante que é mais do superpers, né? Ele pergunta sobre testes, se vai ter nenhum teste, só que é manual, teste unitário básico, unit mais smoke teste ou completo. Vou botar só um unit básico pra gente aproveitar essa funcionalidade, né, esse recurso do superpers. Beleza? Então
+
+aqui, galera, ele prossegue pra próxima etapa, né? Quando eu responder tudo, ele fala que vai apresentar o design do sistema em quatro sessões. Modelo de dados. Aí eu falo que não não é nenhum ajuste e ele vai progredindo, né, para montar o plano completo. Bom, aí ele mostra a última sessão e ele pergunta se eu tenho alguma alteração e se não, ele vai escrever as specs, que seriam tipo as documentações para seguir o projeto.
+
+Então vou botar aqui que ele pode escrever o spec está aprovado. Clar, galera, numa situação real, a gente leria tudo, veria se tá tudo certo nos conformes que a gente quer criar. Aqui eu passei mais reto só para mostrar para vocês o desenrolar da situação, tá? Então ele vai para essa etapa de criação de spec. Agora vou começar aqui o projeto com o GSD, tá? Então no GSD a
+
+gente vai utilizar o comando GSD plan face, tá? Aliás, discurse face. Deixa aqui. Discuss face com a flag menos chain, tá? Isso vai fazer com que ele encadee as fases e eu não peça, eu não preciso ficar falando: "Ah, vai pra fase de plano, vai pra fase de execução". Então
+
+eu fica um pouco mais fácil mexer com ele, tá? A gente dá as permissões e tal. E aqui ele vai começar a perguntar também pra gente como foi feito no superpers. Então esse início é bem semelhante. Então aqui ele fala que não existe nenhum projeto, tá? E que
+
+ah, então mudou um pouco, galera. Quando tá começando o projeto, agora tem que utilizar esse new project. Então vamos por ele. ST New Project. E aí depois ele vai passar pelas fases, né? Então aqui,
+
+como vocês podem ver, é a mesma coisa. O que que a gente vai construir? Eu vou colocar o prompt e tá? Então é o mesmo prompt para ele pensar e planejar o que que ele tem que fazer aqui. Mas agora com o GSB, vejam ali o spec do Super Power está pronto. E aqui, galera, ele
+
+pergunta se eu aceito as edições. É só aceitar e pronto, né? Bom, voltando pro GSD aqui, vamos tentar deixar os dois no mesmo passo. Ô, galera, aí aqui no GSD a gente tem que definir o propósito, nicho, checkout, admin, né, todas as dúvidas que ele tem. Então ele pergunta para que que é o projeto. Vou botar o
+
+MVP para ele não fazer besteira, né? Não ser um demo, não se portfólio. Qual que vai ser o nicho? Vou botar eletrônicos, ã, o usuário precisa estar alugado para comprar ou get checkout permitido. Vou botar que exige login. O outro não pediu
+
+isso, mas eu acho que vai ficar assim. E como painel de Steam, quem pode acessar? Lista de e-mails admin. Qualquer usuário logado acessa user row, né? Mais fácil.
+
+Então, submittencers. E aí ele começa esse planejamento, né, do projeto do zero aqui no GSD. Só lembrando, galera, é direita superpers, esquerda GSD. Ó, não é só vitrine, mas quatro pontos para alinhar arquitetura. Então, muito parecido, né? Esse start.
+
+Eu boto aqui, ó. Você disse cartão fake, mas sevp real quer realmente stub ou entregar stip no test mode? Stub fake, né? Começar assim pros dois ficarem iguais. Camp stock no product. Então a
+
+MVP real vem de verdade. Precisa controlar estoque, campo estoque no produto, né? O outro não perguntou disso. Ciclo de vida do pedido só confirmado, tem status completo. Status simples, pago ou cancelado. Servir
+
+imagens unsplash para ses. O outro fez assim também, então vamos assim, né? Que dá para fazer igual. Vamos fazer igual. Splash. Para quem não conhece, é um
+
+banco de imagens gratuito, tá galera? Vamos ver aqui, galera. Mais algumas escolhas aqui. Eu vou passar mais rápido, tá? Pra gente poder ir direto ao ponto. São alf credenciais, categorias.
+
+Vai ser uma tabela de categoria, né? E legal que eles também recomendam as coisas, né? E aqui eu vou colocar DB para user logado, né? E ele fazer local storage para quem não tem login no carrinho, né? Qual o tipo de design minimalista tech? Acho que tem tudo que
+
+preciso. Daí ele quer criar o project. É uma estrutura parecida com o que criou ali no super powers, né? Aqui é o specs, mas é a mesma ideia. dar as permissões para ele, a gente vai ter meio que a base de cada projeto aqui nos dois frameworks, né? Aqui a gente também
+
+confirma as edições, tá, galera? Para ele poder escrever o arquivo, né? Que a gente não abriu com as permissões totais ali com dangerous, né? Ele vai criando aqui a etapa de planejamento num markdown. E aqui, galera, ele oferece esse modo de iolo, né, que só autoaprova. Isso é mais interessante
+
+quando a gente tem mais domínio, né? Quando o projeto é mais sério, a o iterativo seria o melhor, a melhor opção, tá? Eu vou aqui deolo. Ele quer, ele pergunta como que eu quero dividir as fases. Eu vou dividir em menos fases, tá? Para
+
+ser um pouco mais rápida aqui a execução, senão isso também pode afetar a comparação entre os dois, né? Se deixar muito longo aqui, muito planejamento. Vou deixar que os planos sejam executados em paralelo. E aqui o plano pode ir pro Git, não tem problema, né? Não vou colocar no Git, mas não teria problema, tá? Então, envie as
+
+respostas. Aqui tem outras perguntas, galera, se ele vai precisar eh pesquisar planejar. Então, é interessante porque faz todo o papel ali que o GSD foi programado para fazer. se ele verifica se os planos atingem os objetivos, verifica se o trabalho satisfaz os requisitos, né? Tudo baseado nos documentos que ele criou. E aqui a gente
+
+tem opção também de balancear os modelos, né? O que é bem interessante. Eu vou escolher o balanceado que ele vai utilizar só antes pra maioria dos agentes, mas ele pode eventualmente utilizar o Opus ou o Riko, tá? Isso é uma questão de economia, né? Porque ele vai entender quando ele pode usar um ou outro, né? Então não quer dizer que ele
+
+vai usar só, por exemplo, tá? Lembrando que o planejamento de ambos foi feito com o opos, né? Então teve fricção nessa parte e essa estratégia aí do modelo, ou melhor do framework, se ele escolher, né, alguma decisão ruim, é como ele foi planejado para fazer, né, poder escolher qualidade ali e ter o mesmo resultado. Então aqui, ó, é a pesquisa, né, a gente habilita e ele vai começar a fazer o processo, né? Então aqui a gente já tem o start do projeto no GSD. Vou voltar
+
+aqui pro superpers e aqui ele pede que eu fale OK para ele seguir para o right pants ou se eu quiser mudar alguma coisa. Então vou dar OK. A gente já escreveu o plano com ele. GSD tá tocando ficha também, ó. Tem que ficar dando as permissões ali, né? Tem que ficar atento a isso.
+
+Vamos acompanhar os super powers aqui até ele estar na fase de SD, né? J SD meio que pulou na frente porque ele tá com aquele modo de chain, né? de ficar uma ação encadeada da outra. O superpers é um pouco mais manual nisso, né? Então tem essa diferenciação. Então galera,
+
+aqui o GSD ele tá seguindo o seu processo, né? A etapa de pesquisa, tá? Realmente demora um pouco. E agora ele tá sintetizando a pesquisa, né? para poder entregar ali os dados e aí depois a execução. Já o superpowers, ele tá
+
+escrevendo o plano mesmo. Ele pediu confirmação aqui, tá escrevendo o próximo documento de plano. Então ele fez as specs antes e agora tá fazendo planejamento, né? E o GSD aqui tem a research em execução. Então é esse ponto que a gente tá em ambos, né? Algumas
+
+permissões têm que ser dadas, mas eu creio que logo logo vai começar aí ter a produção de código nos dois lados. Bom, galera, aí seguindo aqui o Superpers, que acontece, né? Ele fez o planejamento, tá? E salvou aqui nesse arquivo, tá? Agora ele perguntou se eu tô pronto para começar a executar. E aí
+
+é só dar confirmação. Confirmo o início da execução. Então ele vai iniciar o código de fato, tá? E o GSD, deixa eu ver aqui, ele está com a pesquisa completa, beleza? Então agora ele vai pra próxima fase da pesquisa, né?
+
+Enquanto isso, o Superpowers parecia tá um pouco atrás, né? Ele já tá indo pra execução. Vocês percebem que essa é uma das diferenças claras, né? O GSD ele tem uma etapa de pesquisa que ele vai tentar achar mais dados antes de começar a executar qualquer coisa. O SuperPers não, ele faz o planejamento, né? E aí
+
+depois ele já quer executar em seguida, então acaba que é um pouco mais rápido de fato, tá? Os o GSD eles melhoraram bastante. Antes era mais truncado ali o começo, agora tá com essas fases encadeadas, não precisa fazer que nem os superpers ali que tu vai executando os comandos, né? Ele já tá fazendo tudo em sequência aqui, o que diminui um pouco o nosso trabalho, mas mesmo assim ele é mais burocrático, por isso que eu falei no começo, mas para projetos maiores, né? Então é interessante isso também, tá galera? Aproveitando aí que estamos
+
+esperando os agentes, não esqueçam que a formação Vibe Code está com as inscrições abertas, né? O link vai tá aqui no comentário fixado para tu poder acessar essa página aqui e conhecer melhor o treinamento. Nesse vídeo eu explico tudo. É um treinamento com mais de 35 horas. A gente tá atualizando semanalmente. Ele vai vir curso novo.
+
+Você já não lançou, né? Dá para lançar o curso de open code. Depois a gente vai para um curso de SDD, né? De SPEC Driven Development, que é mais ou menos que a gente tá vendo aqui com GSD Superpers. Uma informação bem bacana com acesso vitalício e grupo VIP de alunos no WhatsApp. Então, conheça ali o
+
+treinamento, faça a matrícula e bora estudar juntos. Então, olha só, ele me trouxe aqui, né, que tem 56 requisitos compilados em oito categorias. Aí ele colocou isso no projeto MD. O certo seria a gente ler, tá? Mas aqui eu vou só confirmar e vou dizer que tá tudo certo. Então, ele tem todos os
+
+requisitos aqui. Opa, projet. E aqui é como o projeto tem que ser construído para atender nossas expectativas, tá? É um arquivo vital para ele. Eu vou dando as confirmações, né? E a gente vê aqui
+
+que o superpers ele já está em lista de tarefas, ou seja, ele já tá começando o código, tá? E o GSD ainda não, ele tá criando o roadmap, então como que ele vai executar, que é mais ou menos o que o Super Power já fez, né? Ele tá disparando a gente, né? É legal que o GSD tem um agente para cada coisa, isso é bem interessante também. E a gente vai dando as confirmações e provavelmente a gente vai ter projeto do Super Powers sendo feito mais rápido, né? Mas vão
+
+acompanhando aqui. Qualquer outra parte decisória do processo eu vou mostrando para vocês, né? Mas obviamente eu vou dando uma acelerada aqui para não ficar com vídeo de 5 horas, né? Enquanto a gente testa. Mas uma parte legal é que o Super Power já começou aqui a programação. Beleza? Bom, galera, e o
+
+Superpers aqui ele segue o desenvolvimento, né? E o GSD chegou numa fase importante, que é onde a gente define como seguir, tá? E o GSD aqui, galera, ele tá numa parte importante também que ele fala que planejou as fases, né? Beleza? E aí o que ele tem que fazer agora é ou planejar eh discutir a fase um, né, refinar tudo e tocar ficha, ou a gente pode eh definir o design do projeto ou a gente pode já partir planejamento, plano da discussão, tá? Que seria a fase
+
+dois da fase um, né? E aí ele executa, né? Então eu vou utilizar o autônomo, que ele discute planeta e executa tudo entre ele, né? Uma forma mais automática de fazer as coisas, delegando a IA a fazer tudo. Então pode ser ruim em projetos sérios, né?
+
+Tomem cuidado com isso. Mas aqui eu quero deixar também elas com autonomia, né? Sem eu interferir tanto, pra gente poder ver onde elas chegam com esse resultado mais automático, né? só como elas foram programadas para ser executadas. Claro que se a gente interagisse em cada fase, em cada documento que ele manda para gente, a gente teria resultados bem melhores, né?
+
+Isso aí acontece em tudo da vida, né? Não só no GSD, nos superpers. Mas se eu fizesse isso nos dois, eu poderia estar criando vieses, porque eles perguntariam coisas diferentes e tal e os projetos fossem para lados muito opostos. Então assim, é uma maneira de garantir que o projeto ele vai seguir uma linha de raciocínio muito parecida entre os dois. e a gente vai resultar ver o resultado do que os frameworks estão aí pré-programados para entregar pra gente.
+
+Beleza? Então, provavelmente não vai mais pausar aqui, né, entre essa etapa de planejamento que a gente começou e a entrega, né, a gente vai ver direto a entrega do projeto. Vamos acompanhando aqui. Qualquer coisa eu comento com vocês também. Bom, galera, daí a gente tá aqui, né, no superpers permissões e tal, executando a fase dois. E aí o GST
+
+pergunta, né, se eu quero continuar totalmente autônomo, daí eu posso em cada fase parar, né? Mas vamos continuar de forma autônoma. Tem um pequeno problema, galera. Aí quem usa mais pode também me ajudar nisso. Esses frameworks eh esses frameworks aí como GSD e o Superpers que fazem perguntas quando a gente roda eles com o Dangerous, né, que é seria o modo sem permissão, né, sem pedir permissão, eles meio que também atropelam as perguntas e não funcionam tão bem. Então, por isso
+
+que eu não tô rodando nesse modo, né, para ficar menos chato ficar aceitando tudo aqui, até deixando um pouco mais longo o vídeo, mas eu tive essas experiências quando eu tentei rodar o GSD e o Super Pers, principalmente o GSD, utilizando aquela flag de dangerous, tá? Então fiquem atentos a isso também que pode estar impactando no resultado que vocês têm utilizando aquilo lá. Aqui, galera, a gente vê os primeiros indícios de execução do GSD, né? Olha só, ele tá fazendo executor, né? que seria o modelo de criação de código. E veja o modelo, né, Sonet.
+
+Então ele tá julgando necessário utilizar o Sonet para essa tarefa. Aí galera, aqui adiantei um pouco, né? O SuperPers tá rodando melhor ali depois das permissões dadas, né? Tá na Tesque 19 22 D26 TES e o GSD a gente só se tivesse lembrado planejamento ou desse uma abrida ali no documento para ver, mas fica menos visual, né? Não dá para saber em que pack tá, mas ele tá um tempinho aí planejando. Ah,
+
+inclusive, ó, o superpers parou, ó. Não vai continuar. Isso também é um problema que eu já enfrentei algumas outras vezes ali que eu não comentei com vocês. Super Pers, ele tá parando. Não sei se é porque o projeto é muito grande, mas ele não tá terminando todas as tarefas de uma vez só. Interessante ver isso, né? O
+
+GSD ainda não parou nenhuma vez, só pediu permissões. E ó, galera, a gente tem uma etapa aqui de polimento já no superpers. Então ele tá bem adiantado. E parece que o GSD também, né, ele me deu um feedback que ele tá na onda 4, vamos dizer assim, que é se admin categorias. O sid foi uma das últimas coisas que a gente pediu no prompt, né? Então
+
+teoricamente deve estar bem perto do fim ou na penúltima, né? Mas vamos dar uma olhada aqui como se comporta. Então no no resumo, né? Os dois meio que vão terminar quase no mesmo tempo, né? E olha só, galera, aqui o superpers ele terminou primeiro, né? Então ele dá um
+
+resumão, né? Próximo passo, desvio documentados versus plano original. Ele utilizou o next, tá? Mas tem o Windows 4, ele usou versões maiores. Eu geralmente uso menor porque as não tem conhecimento, né? Mas
+
+tudo bem, deu certo. Aqui aqui ele mudou outras paradas mais técnicas. Beleza, vou pedir para ele iniciar para fazer o teste, né? E aqui, ó, galera, eu acho que o GSD tá bem atrás mesmo, tá na fase dois, autenticação ainda. Então ele deve ter Olha só. Caramba, se isso aqui for
+
+verdade, teremos bilhões de tokens queimados, bilhões de anos de espera também. Então a gente vê aqui que o mesmo projeto, né, olhando ali pelo lado do GSD, vai demorar muito mais, né? Então vamos ver aqui como é que se saem as coisas. Ó, já tô com a com a aplicação rodando na 3002. Eu não vou testar agora, só vou abrir aqui para ver se tem algum erro, ó. Não
+
+tem. E tá OK, né? Tá seguindo o proposto. Essa é a do super power, só para relembrar. Agora me resta esperar a boa vontade do GSD. Beleza? Então vamos lá. Vamos
+
+aguardar, galera. Então, finalmente a gente vai conseguir testar, beleza? Demorou bastante o GSD. E aqui já destaca um ponto positivo, né? Como eu falei lá no começo, negativo, se o projeto for pequeno, médio, ou não tem intenção muito grande de levar ele pra frente, assim, de fato, cara, é uma aposta, uma aposta bem rasa, assim, tipo, estou produzindo SAS em massa, cara, acho que não vale a pena, tá? Aí
+
+eles dão, eles me deram os dois recaps aqui, né? Primeiro que ele terminou a o MVP, tá em 3002, o Superpers e ele terminou o MVP e tá na 3003 o GSD. Então vamos testar cada um separadamente. Vamos começar aqui pelo superpers já que terminou primeiro, tá galera? Outra coisa interessante que a gente tem aqui à disposição de vocês gratuitamente galera, é o guia de dinheiro de prompt, tá? Vou deixar na descrição aqui desse
+
+vídeo. É um material totalmente gratuito para vocês aprenderem mais sobre engenheiria de prompt. a criarem prompts melhores. Então, baixa lá que vai fazer aí muita diferença nos resultados de vocês. Fechou? Bom, vamos ver então a
+
+loja do Super Pers. Vou começar a fazer alguma coisa aqui, ó. Tem uma light que funciona. Adicionar o produto do carrinho. Funcionou.
+
+Se dou F5 persiste. Beleza. Ã, deixa eu ver a página do carrinho. Ele não tem, né? Então eu tenho que entrar ou criar a conta se eu quiser comprar provavelmente, né? Então para
+
+home de novo, finalizar compra. Manda pro login. Vou criar uma conta aqui, ó. Criou. Ele não redirecionou automaticamente. Beleza. Aqui um prompt
+
+a gente resolveria. Nem me mandou pra página do login. Ah, não mandou, mandou. Desculpa. Aí, deixa eu ver aqui. Mas o
+
+legal seria o login direto, né? Ainda mais que eu criei, cliquei em finalizar compra, né? já devia levar pro checkout depois de criar a conta. Quebra o fluxo ruim, né? Mas é algo que não foi pedido.
+
+Tá tudo bem. Ó, vamos finalizar então. E aí a gente cai no checkout, ele dá um erro, tá? Então eu travei aqui no superpers, ele não fez o fluxo completo, então o ponto negativo, né? Vou copiar esse erro e vou tentar resolver aqui rapidamente. Então a gente vai testando
+
+GSD. Encontrei um erro no checkout do projeto. Corrija. Tá aqui o o errozinho. Pá, beleza. Então vamos para
+
+o o GSD. Ó, GSD. Eu posso escolher o tema aqui. Funciona, né? Menuzinho dropde.
+
+Entrar, cadastrar. Beleza. Tem um filtro aqui de produtos. Me atentei esse latinha. Tem também, ó. Beleza.
+
+A busca não testei aqui também. Deixa eu ver. É, funciona. A busca também funciona. Ver a busca aqui.
+
+Beleza, funciona também. OK. Então, vamos comprar alguma coisa. Mousepad. Adiciona, muda a quantidade.
+
+Persiste. Posso cuir. OK. Aí eu tenho que cadastrar. Deu umas issues ali do next. Não sei se
+
+vocês viram. Tentar us. Opa, então usar sem impedir. Lembrando a galera aqui no next ele pediu confirmação ali no GSD dele pediu confirmação de senha e lá no superpers acredito que não, né? Isso é bem legal. Acho bom quando pede, ó que
+
+ele já me logou. Então vejam, tem alguns detalhes que estão mais polidos, né? Opa, ó, perdi o meu carrinho a fazer o login. Isso tá errado. Ele persistir. O
+
+meu perfil ele dá algum problema, mas vamos tentar fazer a compra. Ó, aqui foi pro checkout, né? Então já tem uma validação mínima de CP também.
+
+Bairro obrigatório. Parece mais polido, né? Cartão era 444, né? Na verdade é 4, 42, 42, 42. Seade.
+
+Então não tem máscara de validade, né? Detalhezinho também. Vamos finalizar a compra. Confirmou o pedido e apareceu aqui, né? Tipo o success, ver pedidos aparece aqui, mas essa página de perfil tá bugada. Então,
+
+galera, teoricamente, eh, o GSD foi até o final do fluxo, os erros aqui do Next desapareceram, pode ser alguma coisa de cash também, tá? Tem isso, né? E deu para comprar completamente, né? Não, não teve nenhum problema de funcionalidade. E o superpers teve aqui. A parte de perfil
+
+tá bugada, mas também não lembro se eu solicitei ela, né? Deixa eu ver aqui. É, é, aí é um bug de front end, né? Deixa eu ver aqui se eu consigo corrigir também rapidamente e vou voltar a testar o GSD. Bug acessar ao bug ao acessar a página de perfil.
+
+Corrija. Ó, ele terminou aqui a a do superpers. Vamos fazer o fluxo completo. Antes eu não tinha mexido no carrinho, mas ó, ele ele persiste [limpando a garganta] as edições, esvazia. Beleza, então vou criar ali a vou entrar na verdade, né, que eu já tenho conta.
+
+Beleza? Ó, esse levou o item, né, do deslogado para o logado, que é o comportamento correto. Então, pontinho positivo a mais, apesar de ter quebrado o fluxo de de compra, né? Aí vamos testar, ó, página de perfil também não acessou, então pode ser que seja que eu não pedi mesmo, né? Dois deram até o mesmo erro, então faz sentido que erro ao acessar página de perfil.
+
+Corrie. Vou tentar fazer a compra agora. A gente já trouxe alguns dados preenchidos. Acho legal. Ó, o digitar já deu outro bug, mas pode ser porque eu tô corrigindo aqui. Esperar terminar porque ele tá
+
+editando código, então não vamos julgar ainda. Vou deixar ele terminar aqui e já retorno lá. Então, ó, ele disse que terminou. Vou dar uma recarregada aqui. Beleza.
+
+Daí não bugou de novo. Acho que era bug porque não tava tava corrigindo código, né? Então aqui o cartão é a mesma coisa. Ve quando coloquei alguns dados aqui, ó. Vamos ver se ele vai validar, porque o do GSD validava automaticamente, né?
+
+Tava sem máscara também. Os polimentos, né, galera? Vamos ver aqui se dá pedido. Ó, aí pediu tudo, mas eu acho que tem que pedir antes porque é um e-commerce e tu tem que ter o feedback mais rápido, senão o cara desiste da compra, né? Trabalhei muito com e-commerce, ó. Mas funcionou a compra.
+
+ver meus pedidos. Aparece aqui detalhes. Ah, agora sim, ó. O meu perfil é um dropd na verdade, né? Onde eu acessava meus pedidos, por isso tava bugando.
+
+Vamos ver aqui se deu certo. Aqui ele deslogou e as issues ainda existem, né? É alguma coisa de local storage, provavelmente como ele tá salvando os produtos, por isso não tá levando pra frente, porque ele tá salvando de alguma maneira errada. Mas aqui levou, então sei lá. Ó, então era um probleminha que os dois tiveram igual, né? Que legal.
+
+Mas voltando aqui, galera. Ah, olha só, ele me deslogou aqui também, não sei porquê. Esquisito. Tava mexendo aqui, ele me deslogou, né? Perdeu a sessão.
+
+Não faço ideia, mas perdeu a sessão aqui que eu vi. Lembrando, esse aqui é o GSD. Esse aqui, olá, esse aqui é o Super Power. Esse aqui é o GSD, né? E existe isso continua. Galera, então a gente já
+
+consegue ter um um veredito, né? Para mim, se eu tivesse procurando confiabilidade, eu acho que eu iria no GSD. Eu acredito que ele trouxe mais eh clareza ali entre as fases, apesar de ser meio chato acompanhar, tá? Porque eu tô fazendo um vídeo, né? fazendo um vídeo de um projeto que não vai nascer. Então,
+
+talvez eu não tivesse interesse de acompanhar aquilo ali passo a passo, mas quando é o projeto é real, que a gente tá querendo ver acontecer, vai depender disso, pô, é o mínimo que a gente tem que fazer. Então isso talvez não dev ser levado em consideração por vocês, a não ser que esteja naquele cenário que eu falei de fazer projeto, projeto, projeto, projeto. Aí eu partiria para um caminho mais rápido que seria o Super Powers mesmo, tá? Eu gostei mais ali da dinâmica dele, pede menos permissões, fala menos com a gente e executa mais, tá? Então, e só que a gente teve aqueles bugs ali no checkout, o que foi facilmente corrigido, beleza, mas é ruim, né? Porque o no GSD eu consegui
+
+fazer o fluxo completo, não tive nenhum problema que quebrasse o site, mas tinha problema de local storage. Então os dois apresentaram erros, né, por mais que tenha aquele planejamento todo. E isso só mostra que a gente ainda é muito necessário. Aí ah não consegue fazer as coisas sozinha. A gente tem que ficar monitorando e vendo e testando tudo. Não
+
+dá para deixar delegando para ela, por mais, né, estruturado que as documentações estejam, né? Então, para mim, o vencedor foi o Super Powers. Eu não me incomodo com esses bugs que eu consigo consertar rápido, tá? Apesar de ser preocupante para uma empresa que tá confiando numa I, sei lá, o projeto tá rodando e tal, e dá uma quebrada dessa numa parte checkout, tiraria, claro que uma desconfiança muito grande. Então, talvez para empresas o GSD fosse a melhor opção, mas para mim seguir eu utilizaria Super Power sem problema nenhum. Acho mais dinâmico, acho mais
+
+direto ao ponto. Entrega ali um resultado muito semelhante, como vocês viram ali. Ai, achei até um pouco mais polida. Claro que a gente não entrou nesse quesito, mas é interessante a gente ter as coisas mais próximas do que a gente quer. Então, na minha opinião, Super Powers ganhou. Agora eu quero
+
+saber de ti. Coloca aí nos comentários pra gente poder trazer essa discussão à tona. Se tu tem um outro frame aqui para analisar, traz aí também. Tem vídeo de Gack aqui no canal, galera. Vou deixar até a TAMB aqui para vocês assistirem.
+
+que é um outro framework que meta punch estilo estilo esse daqui, só que feito por um outro cara ali, então ele segue uma premissa mais de produto, bem legal também, tá? Editor vai deixar também, vou deixar o izinho aqui. E claro, não esqueça de dar uma olhada na formação VIP coding, no guia de promp que é totalmente gratuito. E chequem a inscrição do canal, galera. Se inscrevam, muito importante para mim, deixem o like. Espero vocês no próximo
+
+vídeo.

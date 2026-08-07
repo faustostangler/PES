@@ -1,0 +1,118 @@
+---
+video_title: "Codex /goal: Defini o Objetivo e Voltei com o App PRONTO (Como configurar)"
+video_id: WN0Ey5YCpos
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WN0Ey5YCpos
+video_date: 2026-05-07T14:00:00+00:00
+video_description: |
+  Codex /goal é o novo comando da OpenAI que transforma o Codex em loop autônomo: você define o objetivo final, ele planeja, coda, testa, verifica e CONTINUA sozinho até terminar o projeto.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_goal
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Sem precisar mandar "continue", sem precisar pedir "agora testa", sem precisar dizer "corrige isso". Neste vídeo eu testo o /goal ao vivo e mostro como esse comando muda completamente a forma de trabalhar com IA pra programar.
+  
+  Se você usa Codex e cansou de micro-gerenciar cada passo do agente, esse vídeo é pra você. Cubro o conceito do loop autônomo, as 3 features que tornam o /goal especial (compaction automática, token budget e /goal status), o comando complementar /side pra perguntas paralelas, comparativo direto com Autoresearch do Karpathy e Claude Code /loop, e 5 dicas práticas pra extrair o máximo da funcionalidade.
+  
+  O /goal funciona assim: você define um OBJETIVO FINAL com critérios verificáveis e o Codex entra num loop autônomo de Plan, Act, Test, Review e Iterate. Plan é onde ele planeja o próximo passo. Act é onde executa e escreve código. Test é onde roda testes e verifica no browser. Review é onde avalia o resultado. Iterate é onde volta pro passo 1 se ainda não terminou. O loop repete até o objetivo ser verificado ou o budget de tokens esgotar. É o mesmo conceito do Autoresearch do Karpathy, agora oficializado pela OpenAI dentro do Codex (chamam internamente de Ralph Loop).
+  
+  A primeira feature chave é a compaction automática. Quando o contexto enche (próximo dos 258 mil tokens), o Codex limpa tudo, mas o objetivo SOBREVIVE à limpeza. Ele re-analisa o projeto com contexto fresco e continua de onde parou. Sem isso, sessões longas travavam por overflow. É o que torna possível deixar o /goal rodando por horas.
+  
+  A segunda feature é o token budget. Você define um limite de tokens (tipo 200k pra projetos simples ou 500k pra complexos) e quando atinge, o Codex para limpo em vez de travar. Isso controla custo e impede o loop de rodar infinito gastando demais.
+  
+  A terceira feature é o /goal status. Você verifica progresso em tempo real sem interromper o trabalho do agente. Mostra tempo decorrido, tokens consumidos e fase atual (planning, acting, testing, reviewing). Útil pra monitorar sessões longas sem atrapalhar o loop.
+  
+  Tem também o comando /side, que abre um chat paralelo pra perguntas. Você pergunta algo (tipo "o que é CORS?") enquanto o /goal continua codando o projeto. O trabalho principal não para, e a resposta aparece num painel lateral. Útil pra estudar enquanto o agente trabalha.
+  
+  O segredo pra usar bem é dar critérios MENSURÁVEIS no objetivo. Bom: "todos os testes passam, app renderiza sem erro, sem erros de TypeScript no console". Ruim: "faz um app bonito". Se não dá pra verificar com comando, o loop não sabe quando parar.
+  
+  No comparativo final coloco /goal lado a lado com Autoresearch do Karpathy e Claude Code /loop. /goal é o mais polido com compaction, budget, /side e browser use embutido. Autoresearch é o mais científico com git checkpoint a cada iteração. Claude /loop é o mais integrado dentro do ecossistema Claude Code. Os três resolvem o mesmo problema: parar de micro-gerenciar o agente.
+  
+  O setup é simples: precisa do Codex CLI atualizado (versão 0.128.0 ou superior, instala com npm install -g @openai/codex) e conta OpenAI ativa (Plus ou Pro). Sem config extra, sem plugin.
+  
+  Limitações honestas que mostro no vídeo: /goal não faz git checkpoint automático (precisa commitar antes), pode rodar muito tempo se o critério não for verificável, e o budget é obrigatório pra não estourar custo.
+  
+  Se curtiu deixa like e se inscreve. Comenta aí se você deixaria o agente rodar sozinho por horas.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Novo recurso no Codex! Conheça o goal
+  00:55 Como funciona o /goal no Codex
+  02:31 Habilitando o /goal no Codex
+  03:42 Utilizando o /goal no Codex
+  06:47 Comando /side para auxiliar o goal no Codex
+  10:24 Considerações finais sobre o goal
+---
+Galera, o pessoal da OpenI tá investindo muito no Codex e tá evoluindo ele cada vez mais. Depois do lançamento ali do modelo 5.5 do GPT, agora estão colocando várias funcionalidades e uma delas eu vou explicar aqui nesse vídeo porque ela é muito interessante, é a Go. O que que ela faz? Basicamente ela imita um half loop, né? Para quem lembra lá do Cloud
+
+Code. Ele vai fazer loops até terminar uma determinada tesk. Tem alguns outros comandos que a gente pode utilizar em conjunto com ela para poder ter ali um resultado melhor ainda. Vou mostrar tudo isso. Então, fica até o final do vídeo para poder entender melhor a funcionalidade e já sair utilizando ela que precisa configurar algumas coisinhas, não tá ali de bate pronto.
+
+Então é importante que tu aprenda o setup e como utilizá. E é claro, né? Também deixa o teu like aí e se inscreve no canal para receber vídeos todos os dias. Agora bora lá conhecer o Go. Galera, eu fiz aqui um pequeno infográfico só paraa gente entender, tá?
+
+Um detalhe importante, precisa configurar, tá? E só tá disponível via celai, via terminal, tá? Então não tá na interface do codex ainda. Bom, que que ele faz? Basicamente, quando tu coloca o go, tu vai definir um objetivo final e ele vai ficar fazendo esse loop de plan act, ou seja, planejar, agir e testar até terminar o que tu pediu, tá? Então é
+
+uma é um agente autônomo, vamos dizer assim, para terminar as tarefas que a gente precisa, tarefas maiores que levariam várias iterações, vários promptes e vários testes. Tem também um outro comando, né, junto do GO, que é o status para verificar o progresso em tempo real. E também depois no final tu pode utilizar para ver como tudo ocorreu, né? Como para ver quanto tempo levou, quantos tokens consumiu e essas coisas, né? O comando de status, a gente também tem acesso ao comando site, que ele vai ser um chat paralelo para perguntas sobre a tarefa. Então ele não
+
+vai interromper o go ser objetivo e vai conseguir te responder o que tu precisa do que tá rolando ali no Gol. E também tem a questão da compactação, que ela acontece automaticamente. Ou seja, quando chega ali no limite de tokens, que é 258.000, ele vai compactar, ele vai resumir o contexto para que a tarefa não seja interrompida e o go continue, tá? Então a ideia aqui é essa daqui, né?
+
+Vai planejar o que tem que fazer, vai agir, vai fazer o código, vai testar, vai fazer uma review e aí itera ou termina. Beleza? tá disponível para todos os planos, incluindo no free atualmente, né, e temporariamente. Então, bora aprender a configurar o Go. Bom, primeira coisa é abrir o arquivo de configuração do Codex, tá? Então, a
+
+maneira mais fácil sem ir na pasta é abrir o próprio Codex. configurações. Configurações de novo. E aqui a gente vai na opção de configuração e a gente vai selecionar aqui, ó, abrir config tom, né, que seria o a extensão do arquivo. Quando tu faz isso, ele abre a pasta das configurações e tu vai ter que arrastar esse arquivo aqui em algum editor de código para poder editar ele.
+
+Então, eu já abri ele aqui no VS Code. No fim dele, tu vai colocar isso aqui, ó, exatamente essas duas linhas. Se não tiver já, velho, pode ser que a linha features já exista, porque tu já adicionou alguma outra feature que não estava habilitada de forma nativa. E aí, se tu já tiver essa linha, tu vai botar goes igual true, tá? Tu vai salvar e aí se tiver algum codex aberto, tu fecha e abre de novo. Isso vai fazer com que a
+
+funcionalidade seja habilitada no teu codex. Como eu falei, ela não tem na interface, ou seja, aqui não vai funcionar e vai abrir um terminal para poder utilizar ela. Abrindo um terminal, tu vai utilizar o comando codex. vai dizer que confia na pasta e ele vai abrir aqui o Codex e vai dizer que a Fature Goals está em desenvolvimento, né? É uma feature, podemos dizer, tá em beta, né? E mas a gente já pode testar.
+
+Então eu posso botar aqui, ó, go e eu vou ter acesso ao comando, né? Como se fosse um slash command do lado depois do go, né? Espaço alguma coisa, é o prompt, que é o que eu quero fazer, é o objetivo que ele tem que fazer naquele loop. Então aqui eu vou criar um app simples só pra gente verem em fase de execução o go. Então coloquei um prompt aqui. Então
+
+coloquei um prompt aqui, galera, tá? E aí quando eu dou enter, ele vai começar a trabalhar. Então ele meio que tá em paralelo agora, né? Ele tá executando o que eu pedi e ele vai criar aqui o projeto. Ele vai conseguir ver ele em tempo real. Bom, como eu falei, a gente
+
+pode utilizar o comando go status. A gente pode utilizar o comando go novamente. E isso vai fazer com que, como vocês podem ver ali, né? a gente pode definir um go ou ver o go que tá rodando. Então, quando eu dou um enter, eu vejo aqui, ó, que o go tá ativo. Esse
+
+aqui é o objetivo, o tempo e quantos tokens utilizou. Então, é a forma que a gente tem como ver ele, né? Como ver o que tá acontecendo no objetivo atual. Tá bom, galera? Antes de continuar aqui uma pausa, eu tô testando muito o Codex, tá?
+
+que é a IA de programação da Open AI, né, criadora do GPT. Tô gostando bastante dos resultados, tá? A usage dele é boa, ou seja, é bem justa, né? Pelo que a gente paga, a gente consegue usar muito, diferente do cloud code ali da situação atualic, tá? E diante desses meus testes também dos pedidos de vocês, né, que muita gente pede um treinamento mais completo de Codex, eu tô desenvolvendo uma formação focada nele, beleza? Então, um
+
+treinamento completo que vai abordar todas as formas de utilizar o Codex, todos os recursos dele, vários projetos densos, tá? Da ideia ao deploy para que vocês tenham um entendimento completo da ferramenta e possam criar softwares robustos nela. Tô abrindo aqui uma lista de pré-inscrição para um cupom de desconto no lançamento. Aqui, galera, como vocês podem ver, tá cerca de 30 dias para lançar. é um contador, só para vocês terem uma ideia de quanto tempo ainda vai levar para ter o treinamento, tá? Mas eu tô fazendo com máximo de
+
+carinho e cuidado e justamente por isso que eu preciso de um tempo para poder produzir as aulas, editar e deixar o treinamento melhor possível, tá? Vai ser acesso vitalício, vai ter grupo VIP de alunos no WhatsApp, o a qualidade que vocês conhecem ali dos outros treinamentos, né? formação, vibe coding da gente diar. Então, cara, se tu pensa em aprender melhor o Codex e se aprofundar nele, se inscreva, pelo menos garante aí o teu cupom de desconto, tá? Vou deixar o link aqui no comentário fixado. Já pode aí já se pré-inscrever
+
+na formação Codex Master. Agora sim, bora continuar. Aqui a gente já começa a ter a primeira saída de código, né, galera? Ó, observem aqui, já tá mandando ali o código da aplicação que a gente tá criando e ele tá rodando todo aquele processo, né, todo aquele loop que foi comentado. Se fosse um projeto maior, ele executar por muito mais tempo, né?
+
+Aqui eu pedi algo simples, só pra gente testar mesmo e ver como ele funciona. Aqui também eu posso utilizar o side e ele vai fazer ali uma conversa paralela sobre o que tá acontecendo. Então eu vou perguntar aqui alguma coisa referente ao projeto. Por exemplo, qual a estratégia que você vai usar para construir o projeto? Arquivos separados.
+
+Vou dar um enter. E aqui a gente colocou a pergunta e ele vai responder a gente, né? Então ele me respondeu: "Sim, eu usaria arquivos separados porque o projeto fica mais limpo, fácil de testar." E que ele sabe exatamente o que a gente tá falando, né? Porque ele tá trabalhando na pergunta baseado no go. E
+
+aqui eu posso continuar a conversa sem interromper o objetivo, tá? Posso dar um ES. Eu vou voltar para onde ele tá trabalhando. E aqui a gente vê que o agente está construindo o nosso projeto, o projeto que a gente acabou de pedir para ele, né, através do barra Goo. E aqui, galera, ele tá numa etapa de teste, ele pediu para executar o Chrome, então a gente pode aceitar também. Isso
+
+vai ajudar ele, né, a ter essa permissão para poder usar o navegador de forma com que ele consiga testar a aplicação que a gente tá criando ali via o comando novo do Codex. E galera, eu acredito muito que isso aqui vai ser levado também para o modo tradicional de usar o codex, né? Não vai ficar só no terminal. Quando essa funcionalidade sair desse modo experimental, provavelmente ela vai est lá na interface e a gente vai conseguir utilizar ela de uma maneira mais fluida, né? Sem precisar digitar comandos ou talvez com uma interface que ajude a gente acompanhar melhor, né? E aqui, né,
+
+lembrando, esses comandos, eles são uma trava de segurança, né? a gente pode melhorar as permissões do Codex, né, mas ele vem com essas permissões por default e ele vai realmente pausar e em determinados momentos quando ele não tiver permissão para exitar alguma coisa. A gente acompanha aqui, ó, ele criou um arquivo de testes, agora ele deletou, né? Ele tá mandando no output ali tudo que ele tá fazendo. Isso é bem interessante porque a gente consegue acompanhar exatamente o código. Vejam
+
+aqui, né? Ele fez a auditoria final, está consistente, só ficaram o index HTMLá. Ele passou ali no check. Então aqui agora eu posso testar o projeto pra gente ver como é que ficou. Então vou abrir aqui no Live Server. Ó, tem o
+
+projeto criado pelo GO, né? Vou adicionar aqui uma tarefa, ó. Fechou. Beleza. E tá tudo funcional, né? Tem tem
+
+uma light dark tudo mais. Show de bola. Aí agora a gente pode vir aqui de novo, botar go. E eu vejo aqui que o status tá complete. Então ele terminou a tarefa, né? Eu poderia continuar fazer um outro
+
+gol. ou até mesmo limpar o GO, né? Posso fazer go clear para limpar o que já foi feito. Se eu quiser eliminar isso aqui, posso também criar uma nova meta, né? Então botar aqui, ó, go. Adicione um
+
+seletor de dificuldade da tarefa no nosso tudo. Então, poderia deixar dessa maneira também criar recursos incrementais. E aqui a gente vê de novo, né, o go ativo. Podemos pausar também, né? Tem ali o comando go pause e serviria para, ó, pausar o go. Ó, go. Agora ele tá em estado de
+
+pause, ó. Status paused aqui deve ser o último input, né, que tava o output que tá voltando, né? a gente pode dar o comando go resume para ele voltar a funcionar. Ó, agora tá ativo e continua ali a execução da tarefa. Então, galera, a gente vê que a OpenI tá perseguindo muito Antropic, tá colocando novas funcionalidades, as que existem já no cloud code, tem um plano mais em conta, tem um modelo que é igual ou até meio superior ao OPS, né? Depende como tu
+
+usa, depende dos resultados que tu obtém. E isso tá tornando, convergendo, né, cada vez mais o uso ou a migração para o Codex. Muita gente tá vindo, eu tô gostando, tô utilizando, quem sabe a gente vai ter uma dominância agora da Open quero que tu coloque aí, comente o que que tu acha, se tu acredita que a Open vai tomar a liderança, se vai continuar no cloud code pra gente poder fazer essa discussão nos comentários. Lembrando também, galera, a gente tem vídeos exclusivos para membros. Então, se tu quer dar uma olhada ali, torne membro, que aquele o valor mínimo da plataforma aqui do YouTube, tu vai ter acesso aí diversos vídeos mais focados em conteúdo mais denso, projetos práticos, tem bastante coisa bacana lá para vocês verem. E também deixa o like,
+
+se inscrevam, que me ajuda muito aqui a continuar o meu trabalho. Vou ficando por aqui e espero vocês aí no próximo vídeo.

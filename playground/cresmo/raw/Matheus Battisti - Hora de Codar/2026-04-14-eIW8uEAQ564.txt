@@ -1,0 +1,114 @@
+---
+video_title: "OpenClaw GRÁTIS! Veja como usar com Gemma 4 e Ollama (Tutorial)"
+video_id: eIW8uEAQ564
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eIW8uEAQ564
+video_date: 2026-04-14T14:00:00+00:00
+video_description: |
+  A Anthropic baniu o OpenClaw em abril de 2026 e mais de 135 mil instâncias rodando ficaram perdidas. Mas o Google lançou o Gemma 4 dias antes, open source com licença Apache 2.0, e ele funciona perfeitamente com OpenClaw. Resultado: você pode ter seu próprio agente de IA pessoal 100% grátis, 100% privado e 100% offline rodando direto no seu PC. Sem API key, sem cartão de crédito, sem mensalidade, sem rate limit, sem ban. Tudo isso em menos de 10 minutos de setup. No vídeo mostro o tutorial completo do zero.
+   
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_openclaw_gemma
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  A combinação resolve várias dores de quem usa agentes de IA hoje. Privacidade total porque seus dados nunca saem da sua máquina, ideal pra quem trabalha com código de cliente, dados confidenciais ou projetos sob NDA. Zero custo porque não tem mensalidade nem token cobrado. Sem rate limit, você roda quanto quiser. Funciona offline depois de instalado, dispensa internet completamente. E sem ban, ninguém pode tirar seu setup do ar porque tudo roda na sua máquina sob seu controle.
+   
+  O Gemma 4 é o modelo aberto do Google lançado dias antes do banimento do OpenClaw. Apache 2.0, totalmente livre pra uso comercial e pessoal. Tem 4 tags oficiais no Ollama: e2b com 7.2GB pra máxima velocidade, e4b com 9.6GB pro equilíbrio entre tamanho e capacidade, 26b com 18GB pra quem tem GPU enterprise e 31b com 20GB pra setups profissionais. No vídeo uso o gemma4:e4b porque cabe confortavelmente em 12GB de VRAM (RTX 4070 Ti), tem velocidade excelente por ser edge-first e o tool calling funciona corretamente, que é o que diferencia agente de chatbot.
+   
+  O setup completo são 4 etapas simples. Etapa 1, instalar o Ollama que é o servidor local que vai rodar o modelo no seu PC. Open source, gratuito, funciona em qualquer sistema operacional. Etapa 2, baixar o Gemma 4 com ollama pull gemma4:e4b. Etapa 3, instalar o OpenClaw que é o framework que vai usar o Gemma 4 como cérebro do agente. A forma mais fácil é ollama launch openclaw --model gemma4:e4b que instala, configura o gateway e já conecta com o Gemma 4 num único comando. Etapa 4, conferir a configuração e usar.
+   
+  Tem um detalhe crítico de configuração que mostro no vídeo e que pode quebrar tudo se passar despercebido. No openclaw.json o baseUrl do Ollama deve ser http://127.0.0.1:11434 SEM /v1 no final. Se você colocar /v1 o tool calling quebra e os modelos vão retornar JSON cru em vez de chamar as ferramentas. Sempre use o endpoint nativo do Ollama, não o OpenAI compatible. E o campo api deve ser ollama, não openai-completions. Esses dois detalhes salvam horas de debug.
+   
+  A demo que faço prova que tudo funciona. Primeiro uma pergunta básica pra validar que o agente responde rápido e local. Depois um teste de tool calling pedindo pra listar arquivos de uma pasta do PC, mostrando que o agente consegue chamar ferramentas corretamente, o que era o calcanhar de Aquiles do Gemma 3 e agora funciona no 4. Por fim uma tarefa multi-step pedindo pra criar um arquivo, escrever conteúdo nele baseado no conhecimento do modelo e validar. O agente planeja, executa e confirma sem precisar de internet em nenhum momento do processo.
+   
+  No final mostro como criar uma skill simples pro OpenClaw, parecido com o sistema do Claude Code. Skills são instruções que o agente segue em todas as interações, tipo um system prompt persistente. Crio uma skill chamada dev-helper que faz o agente sempre planejar antes de executar, quebrar tarefas grandes em passos menores, usar as ferramentas disponíveis, validar o resultado e responder em português brasileiro. Demonstro o agente seguindo a skill em uma nova interação. É a base pra customizar o agente pro seu workflow específico.
+   
+  Pra quem quer levar isso pro próximo nível e ter o agente rodando 24 horas por dia sem deixar o PC ligado, a alternativa é VPS. No vídeo menciono a Hostinger como opção patrocinada com planos KVM acessíveis.
+   
+  🔗 Links do vídeo:
+  ▸ Ollama: https://ollama.com
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  00:00 Como rodar o OpenClaw sem pagar IA (OpenClaw Grátis)
+  00:50 Como funciona o OpenClaw com Gemma 4
+  03:27 Instalando o Ollama
+  07:00 Baixando o Gemma 4 via Ollama
+  08:08 Executando OpenClaw com Gemma 4 pelo Ollama
+  09:21 Teste do OpenClaw com Gemma 4
+  11:00 Minhas considerações sobre usar Gemma 4 no OpenClaw
+---
+Nesse vídeo aqui eu vou te mostrar como utilizar o OpenCloud de maneira gratuita, utilizando aí uma das melhores IAS open source do Google, a Gema 4. Ela lançou recentemente e tem chamado muita atenção por ser uma IA excelente e que a gente pode baixar e utilizar no nosso computador. É exatamente esse processo que a gente vai fazer aqui de maneira muito simplificada para tu entender como é que funciona o passo a passo e replicar aí também e poder estar utilizando todos os recursos do Open Cloud. Galera, para quem não me conhece, sou Mateus Batista, programador há mais de 10 anos e hoje tô aqui minha aventurando no mundo das IAS e trazendo só as melhores tecnologias e recursos para vocês. Então, se gostar da didática, gostar do vídeo, deixa aquele like também, se inscreve aqui para receber vídeos todos os dias. Bora lá,
+
+bora entender o que que a gente precisa fazer para poder rodar o Open Cloud de maneira gratuita com o Gema. Chega aí. Bom, galera, eu trouxe aqui um pequeno mapa mental só pra gente poder contextualizar todo mundo, tá? O open cloud é uma ferramenta agêntica, vamos dizer assim, que basicamente vai funcionar como um funcionário nosso 24 horas por dia, né? E ele precisa de uma IA para rodar. Muita gente utilizava ele
+
+com o Opos, né? Mas aí Antropic baniu e está banindo quem utiliza. Então se buscou aí diversas alternativas, tem modelos pagos excelentes para fazer isso, mas um que tá muito em alta agora é o Gema 4, que é um modelo gratuito do Google. Isso quebra a barreira financeira de ter que pagar pelo uma IA para poder utilizar, tá? Então, uma IA 100% gratuita e local, vai ficar no nosso PC. Então, por que que a gente vai
+
+utilizar essa maneira, né, no nosso computador? Porque a gente vai ter privacidade, a gente não tem custos com servidor e também nem com IA, não tem rate limit, né? Então a gente não fica a merc de sessions de usages e funciona offline, né? a gente pode deixar o nosso PC trabalhando, claro que não vai ter acesso a recursos online, tipo uma busca, mas ele vai conseguir fazer o que dá para fazer no nosso PC, então é bem interessante também, tá? A stack que a gente vai utilizar para instalar isso é o lama, né? Então a gente vai usar ele
+
+como o cara que vai centralizar as Ias pra gente, baixar o GMA nele, depois disparar o open cloud violama mesmo, tá? Uma maneira bem simplificada de fazer isso. Então, o passo a passo é exatamente esse. Primeiro baixou o lama, baixa o modelo e executa o open cloud que é instalado diretamente pelo olama, tá? Gema 4 tem várias versões, né? Se tu
+
+a gente vai ver ele depois, mas eu indico essa daqui, tá? Essa versão é a que vai ter o melhor, digamos assim, custob benefício para a nossa máquina, né? que não vai exigir uma máquina tão parruda e consequentemente ela também vai ter acesso a tooling, ela vai responder um pouco mais rápido e a gente vai ter uma inteligência mais apurada, né? Então tem modelos com menos parâmetros que vão responder de maneira pior, às vezes não vão nem conseguir acessar as tools do Opencloud e tem modelos muito mais parrudos que precisa de uma máquina da NASA ali para poder rodar e não é o caso, tá bom? Eh, aqui a gente vai poder tá seguindo esse fluxo, tá galera? Eu preparei para vocês aqui,
+
+que eu já expliquei ali antes. E o que acontece? Se a gente dar esse comando mágico aqui, ele já vai fazer tudo junto, tá? Só que o que acontece, galera, com esse comandinho aqui, ó, esse OLAMA launch, ele já vai lançar o open cloud, iniciar, vê se a gente não tem instalado, instalar e já vai setar ele com Gema 4. Então, um comando só depois que tá tudo configurado e já dispara pra gente o OpenCloud com o modelo certo. Beleza? Então, tá, bora
+
+começar o setup. Só isso, não se esqueça, a gente tá com inscrições abertas aqui na comunidade, na formação Weboding, nosso treinamento completo aí para aprender cloud code, para aprender antigravity, Codex. Agora a gente tá fazendo o curso de Open Code, tá até aberto aqui, galera, que eu tô produzindo ele, tá? Mas se tu se interessa por isso, quer criar projetos com IA, acessa aqui o link que vai tá no comentário fixado, beleza? Bom, voltando aqui pro setup, primeira coisa que a gente vai fazer aqui é baixar o olama, se tu não tem, né? Então tu vai vir aqui
+
+olama.com e vai fazer o download dele ou fazer instalação via comando, tá? É bem simples. Next, next da vida, tá? Não tem mistério. Quando tu tiver ele instalado,
+
+tu vem no terminal e digita OLAMA men v que aí ele vai aparecer a versão e isso quer dizer que ele tá instalado corretamente. Beleza? Bom, aqui no Olama a gente já vê aqui, ó, power open cloud with OLAMA. Então, se eles estão divulgando isso, é porque realmente funciona. Vem na barra de pesquisa, procura GMA 4, tá? E aqui tu vai ver
+
+todas as versões do modelo. Então, como eu falei, tem versões com menos parâmetros, versões com mais parâmetros, tá? E a gente vai utilizar aquela E4B, que é essa daqui. Beleza? Então, só para adicionar mais contexto, né, galera? O
+
+OpenCloud é a ferramenta que a gente vai utilizar. Ele vai conseguir executar qualquer ação do nosso PC aí fora, né, via web. A gente pode dar acessos para ele, a gente pode controlar ele via Telegram, dá para instalar ele separado e depois iniciar por ele, né? O modelo que a gente tem no lama. Dá para fazer assim também, vai fazer o caminho inverte se tu quiser, tá? Então, para
+
+quem conhece o Pencloud, talvez seja até melhor porque já tá instalado e tal, não precisa fazer pelo OLAMA, né? Faz direto pelo OpenCloud, só instala o modelo via OLAM. E outra coisa muito importante, galera, é a VPS. Aqui nesse tutorial a gente tá fazendo um modelo local, né, com IA gratuita, mas para o a brincadeira virar jogo de verdade, vai ser preciso ter uma VPS para que deixe ale rodar rodando num ambiente isolado, não no nosso computador, para que a gente possa est instalando, testando coisas, para que ele tenha disponibilidade 24/7. Não dependa do nosso PC estar ligado, não dependa da nossa conexão à internet, né? E isso vai ser o modo profissional
+
+de instalar, né, o OpenCloud, baixando a VPS, instalando por ele. Eu indico muito a Hostia, tá? É onde a gente tem o nosso OpenCloud rodando, nossos projetos. O link vai tá aqui no comentário fixado também. Lá a gente tem uma oferta especial, tá? No plano de VPS deles.
+
+Recomendo que a VM2 é um servidor muito, com muitos recursos computacionais, vai rodar o OpenClock com folga, tá? E além disso, depois que escolher o plano aqui, tu pode chegar aqui no carrinho e colocar o nosso cupom, tá? Hora de codar. E aqui ele vai dar um desconto especial para vocês, tá? Certifique-se de escolher a região do Brasil, né? O
+
+servidor. E também eu gosto de SO Bunto, né? Isso aqui tu pode configurar depois também, né? A máquina é tua, não tem problema. Mas assim, já starta com o Bunto, que é o que eu mais gosto de utilizar, né? Das distribuições de
+
+Linux. Beleza? Então fica a dica aí, tá procurando servidor para rodar open cloud, ó, f hosker que é a escolha certa, tá bom? E a gente tem uma playlist aqui, inclusive, né? Vou até pedir pro editor deixar a tamb inicial, o vídeo inicial que é um setup de OpenCloud na VPS, até um miniurso de OpenCloud, tá? Eu vou deixar o izinho
+
+aqui também para vocês acessarem essa playlist de OpenCloud que a gente tem, que a gente fala do OpenCloud desde que era Cloud Bot, né? Então, bem antigo, né? Bem antigo, dois meses, mas tudo bem. Bom, vamos lá. Então, a gente tem que baixar esse cara aqui. A gente vai
+
+dar um olama pool diretamente lá no olama, tá? Então vamos baixar, vamos abrir o terminal aqui de novo e dar um olama pro gema 4 2. E4B, tá? Aí aqui no meu baixou bem rápido, galera, porque eu já tinha modelo baixado, tá? Mas o comando é o mesmo. Aí a gente pode
+
+testar, a gente pode testar com esse comando aqui, ó. O lama run GMA4 2. E4B. Olá, você está funcionando. E ele vai acessar o modelo e vai voltar pra gente uma resposta. né? Só pra gente entender
+
+como ele funciona. Lembrando que esses modelos locais eles tem tipo uma fase de aquecimento, tá? A primeira resposta tende ser um pouco mais demorada, mas depois fica mais rápido. Então não estranha demorar uns 10, 20 segundos na primeira sessão e depois na continuidade ele vai responder de forma mais veloz e aí tu vai tá como se fosse num modelo aí cloud da vida, né? Ó, aqui ele tá mostrando o processo de pensamento do modelo e tal e aí ele responde. Beleza?
+
+Então, tá funcionando corretamente. Esse é o teste que tem que fazer para ver se tá tudo certo. Bom, agora eu vou utilizar o comando aqui para dar um launch no no OpenCloud diretamente do OLAMA. Então é OLAMA, launch open cloud menos model 4 2. E4B, né? Que é o modelo
+
+que a gente instalou. Ele verifica que o open cloud não tá instalado, como eu falei para vocês, né? Eu desinstalei aqui para mostrar isso. A gente pode instalar com npm, tá? Então só dar um yes ali. Ele vai fazer esse processo de
+
+setup. Então, economiza tempo da gente também. Bom, galera, aí tem aquele setup inicial do OpenCloud, né, que ele fala que tem risco porque vai poder ter acesso ao nosso computador. É por isso que eu indico a VPS também, né? Um ambiente mais isolado, a gente tem mais controle, mas cara, para só para dar os testes, para dar uma brincada, para conhecer o OpenCloud, não tem problema fazer por aqui, tá? Só se atente, né, a
+
+comandos que possam danificar alguma coisa, geralmente são de exclusão, de manipulação do sistema operacional. Isso não é interessante fazer. Ó, galera, então ele falou que o open cloud tá rodando, tá? E eu vou tentar utilizar o comando de novo do OLAMA, porque agora já tá instalado, né? E aí vamos prosseguir aqui. E ele dá um launch no
+
+OpenCloud com o modelo Gema. Então essa é a maneira mais simples de de fazer, né, esse setup de Gema com OLAM e OpenCloud. Aí a gente tem aqui a URL para dashboard, só clicar com dar um control click. Aí eu vejo aqui ele tá com modelo GEMA já instalado, né? E eu posso falar com ele. Olá, tudo bem? Eu
+
+vou mostrar aquele negócio que eu falei para vocês da demora, né? A primeira interação pode ser mais demorada. Ó, ele respondeu aqui. Não demorou nem um minuto, né? Aí eu vou testar a memória, né? Meu nome
+
+que ele caiu uma outra mensagem que eu tinha colocado, porque eu pensei que tinha bugado a interface. Vou dar assim, ó. Meu nome é Mateus, salve na memória. E a gente já começa a fazer a utilização, né, dos recursos dele. Então aqui agora eu pedi para ele salvar na memória, né? Eu não vou cortar
+
+aqui para vocês verem quanto que ele vai demorar para fazer isso, mas vejam que ele tá respondendo minuto a minuto, né? Aí como eu falei, né? Vai depender um pouco do hardware da máquina de vocês, vai depender um pouco do modelo que vocês selecionam, mas ó, toc red, né? já tá chamando Toolstone. Esse modelo ele é o intermediáriozão, tá? E ele vai fazer
+
+com que tu ten acesso a tudo do OpenCloud, né? Tendo aí tendo não tendo que ter um hardware tão fodão, tá? Então ele salvou na memória, tal, aí a gente poderia começar uma nova sessão e verificar a memória dele, né? Mas tá tudo funcional, tudo gratuito, tudo via, Gema e Open Cloud. Galera, última recomendação. Gostaria de deixar para
+
+vocês aqui o guia de prompto. Vai tá na descrição desse vídeo, tá? Façam download se vocês querem melhorar as técnicas de prompt de vocês, beleza? O material aí que a gente tá fornecendo para vocês. E claro, se vocês têm interesse em instalar OpenCloud, uma VPS, assinem a Hosker porque é o melhor custob benefício também. Eles têm
+
+máquinas com recursos excelentes que vai rodar com folga o OpenCloud, qualquer outros projetos do apps queiram ter. Não precisa ter só o openc instalado, dá para ter mais projetos web na própria máquina. Fechou? Galera, espero que vocês tenham curtido o setup aí. Testem, comentem o que acharam, me digam se tá rodando bem, se não tá. tiverem alguma
+
+outra sugestão de conteúdo também deixem aqui. E é claro, deixa o like, se inscreve, isso ajuda bastante meu trabalho e também faz com que eu te entregue vídeos todos os dias sobre a Bom, por hoje é isso. Vou ficando por aqui, espero vocês no próximo vídeo. Valeu,

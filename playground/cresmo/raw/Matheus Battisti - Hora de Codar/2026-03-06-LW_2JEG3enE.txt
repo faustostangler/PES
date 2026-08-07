@@ -1,0 +1,267 @@
+---
+video_title: "App com IA do ZERO ao Deploy: AI Studio + Antigravity + Supabase (INSANO)"
+video_id: LW_2JEG3enE
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=LW_2JEG3enE
+video_date: 2026-03-06T15:00:00+00:00
+video_description: |
+  🧪 Teste seu app com IA (1º mês grátis): https://www.testsprite.com/?via=matheus
+  
+  Nesse vídeo eu crio um app completo do zero ao deploy usando o pipeline mais eficiente que existe hoje: AI Studio pra prototipar, Antigravity pra construir de verdade, Supabase pro banco de dados e autenticação, e TestSprite pra testar tudo com IA antes de publicar.
+  
+  ❇️ Garanta seu desconto na Formação Vibe Coding: https://app.horadecodar.com.br/lp/esquenta-vibe-coding
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/battisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O app se chama Meu Chef IA. Você digita os ingredientes que tem na geladeira e a IA gera uma receita completa com nome criativo, ingredientes com quantidades, passo a passo, tempo de preparo e nível de dificuldade. Além disso tem catálogo de receitas com cards visuais, busca por nome, edição, exclusão e tudo salvo no banco de dados com login por usuário.
+  
+  Começo no AI Studio Build Mode. Em poucos minutos já tenho o app visual funcionando com a IA de receitas integrada usando o Gemini embutido. Testo gerando uma receita com frango, batata, creme de leite e alho. Funciona. Mas quando recarrego a página, perdi tudo. Precisa de banco de dados.
+  
+  Transfiro o projeto pro GitHub e abro no Antigravity. Aqui é onde o app vira produto de verdade. Com um prompt, o Antigravity via Supabase MCP cria o banco de dados com tabelas de receitas, configura autenticação com email e senha, implementa Row Level Security pra cada usuário só ver suas receitas, e cria uma Edge Function no Supabase pra chamar a API do Gemini sem expor a chave no frontend.
+  
+  Mostro o resultado: tela de login bonita na paleta do app, cadastro, CRUD completo de receitas, geração com IA salvando direto no banco e o momento mais satisfatório: recarregar a página e os dados continuam lá. Depois peço ajustes finos: contador de receitas no header, confirmação antes de deletar, animações nos cards e responsividade no celular.
+  
+  Antes de publicar, testo o app com TestSprite via MCP direto no Antigravity. O TestSprite é um agente de IA que testa o app automaticamente. Ele analisa o projeto, gera um plano de testes cobrindo login, cadastro, criação de receitas, edição, exclusão, geração com IA e tratamento de erros. Mostro o Test Progress Dashboard com status ao vivo de cada teste, vídeos da IA interagindo com o app e o passo a passo de cada teste. Quando um teste falha, uso o Modify Tests pra editar visualmente o step que deu problema, clicar na screenshot pra selecionar o elemento e re-rodar até passar. Tudo verde, confiança pra publicar.
+  
+  Deploy como site estático. O projeto já tá no GitHub, conecto o repo no hosting, configuro as variáveis de ambiente do Supabase no build e pronto. App no ar, funcionando em produção. A chave do Gemini fica segura na Edge Function do Supabase, não precisa no hosting.
+  
+  O pipeline completo: AI Studio prototipa rápido com IA funcionando, Antigravity constrói o app de verdade com banco e autenticação, TestSprite testa tudo com IA via MCP, e o deploy conecta o repo e publica automaticamente. De ideia a app publicado em um vídeo.
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 A nova forma de criar projetos com Antigravity
+  01:10 Explicando o workflow do projeto (AI Studio + Antigravity)
+  03:55 Criando base do projeto no AI Studio
+  08:05 Colocando o projeto no GitHub pelo AI Studio
+  09:40 Clonando o projeto no Antigravity (GitHub MCP)
+  13:40 Integrando Antigravity com Supabase
+  15:08 Criando autenticação e banco de dados no projeto
+  20:40 Adicionando testes ao projeto
+  28:54 Adicionando novas funcionalidades
+  30:35 Deploy do projeto
+  35:03 Considerações finais sobre AI Studio, Antigravity e Supabase
+---
+Nesse vídeo aqui, tu vai aprender uma nova forma de criar projetos com Antigraft. A gente vai fazer algo que é muito importante para que um projeto nasça da forma certa. A gente vai fazer o MVP dele o mais rápido possível no Google EA Studio e depois a gente vai continuar ampliar o projeto no Antigraft. É um workflow interessante para que a gente consiga fazer a ideia acontecer. pode escolher se a gente vai seguir com ela ou vai desistir. E se a
+
+gente resolver seguir, a gente vai deixar o nosso app mais profissional e mais completo com uma outra estrutura, continuando de onde a gente parou no EA Studio, porque ele não serve para isso, né? Ele serve para prototipação, pelo menos no momento. E é para isso que a gente vai utilizar ele. Tu curtiu a ideia? Não se esquece, deixa o like, se inscreva aqui no canal para receber mais conteúdos como esse. Eu sou Mateus
+
+Batista, programador há mais de 10 anos e hoje alio a IA com a minha habilidade em programação e trago só o que presta aqui para esse canal para que tu possa utilizar no teu dia a dia, beleza? Então sem mais delongas, bora começar. Vamos pra prática. Bom, galera, trouxe aqui um fluxograma bem simples pra gente poder entender como é que o app vai se passar. Esse fluxo aqui, ele foi sugerido até por um inscrito aqui do canal e depois, né, quando ele falou que eu achei interessante a ideia, eu testei ela e realmente funciona muito bem. Consiste
+
+em começar o app no EI Studio, que é algo mais para prototipação mesmo. Se a gente vê que vai pra frente, a gente extrai de lá e traz pro Anti Graft. Com a recente atualização do AI Studio, isso ficou mais fácil ainda, muito melhor de fazer essa migração. E é isso que a gente vai explorar nele. A gente vai utilizar o Supase como banco de dados para deixar o nosso app mais simples, só com front end e trabalhar com banco de dados via ed functionals, algo que é totalmente automático ali pelo antigraft e não tem dor de cabeça nenhuma. E como
+
+tem um mcp do super base, a gente não precisa saber mexer em banco de dados com Scell, né? Pedir via prompt, ele vai criar o nosso banco lá. Também vou apresentar para vocês uma maneira de testar a aplicação com IA para que a gente consiga garantir que ela tá sem bugs e depois fazer o deploy de uma maneira ultra simplificada. Tudo nesse vídeo aqui. A ideia aqui do projeto, eu chamei ele de meu chefe A porque ele vai criar receitas com inteligência artificial. Então é algo agregado no
+
+aplicativo, tá? O que que acontece? Um usuário vai ter que entrar, né, com login e senha. Quando ele loga ali, ele vai ver uma interface onde ele vai poder fazer uma receita com o que sobrou da geladeira, vamos dizer assim, né? Com os ingredientes que ele tem. Ele vai passar
+
+isso para IA por meio de um formulário. A IA vai bolar a receita e vai entregar para ele de volta. Tudo isso vai ser gerenciado no banco de dados Suprabase, que vai ser também o nosso banco, nosso back end, vai ser onde a gente vai controlar a autenticação. Enfim, é muito simples dessa forma. É uma stack simples, útil e escalável. Então é essa
+
+é a stack, né? React no front end, o VIT, que vai ser o instalador do projeto, vamos dizer assim. Sup banco de dados. AD Functions vai fazer ali nosso papel de back end com super base e demi para serra a nossa EA. Já que ele é integrado no AI Studio, vai ser fácil também de transportar isso para o antiraft depois, né? É tudo produto
+
+Google, eles se se conversam, então a gente não perde tempo com o setup também, mas tu pode colocar outra se tu quiser. Beleza? Bom, então vamos para a prática, né? Vamos executar esse cara. Lembrando, né, galera, a gente tá aqui com a formação Vibe Code quase lançando.
+
+Eu não sei exatamente que dia vai ao ar esse vídeo aqui, né? Eu gravo às vezes um pouco antes, mas lembrem-se, quem se inscrever nesse link que vai tá na descrição, que é essa página aqui, vai ter acesso a um desconto especial. Então, se tu quer muito participar do treinamento e ainda ter esse desconto de lançamento, se inscreva. Aqui também conta um pouco mais sobre treinamento, né? Dá para dar uma olhada ali como é que ele vai ser, um previewzinho para dar aquele aquela vontadezinha de participar, né? Bom, seguindo, vamos pro
+
+AI Stúio, appo, que recebeu uma atualização, inclusive a gente falou aqui no canal sobre ela. Eu vou deixar o izinho aqui, o editor também vai deixar a tamb sobre esse vídeo importantíssimo para tu poder mexer nele muito bem aqui e poder executar também de forma autônoma, né? Não só me seguindo aqui. A gente vai aqui direto pra opção de build, que é onde a gente vai construir as nossas aplicações. E aqui a gente pode deixar o modelo do 3.1 Pro, que é o
+
+mais avançado que a gente tem atualmente, tá? Então a gente vai utilizar esse modelo aqui e a gente vai colocar o nosso prompt de como é que vai ser a nossa aplicação. Vou colocar o prompt inicial aqui. A ideia, como eu falei do EAI Studio, é de prototipar. A gente vai ver se a aplicação vai dar certo e a gente não vai seguir por aqui.
+
+Ele é um software muito bom pra gente criar rápido, testar e aí depois tirar a aplicação daqui, porque ela não escala tão bem, já que fica meio que presa, né, na infraestrutura do Google, tá? Então o prompt inicial vai ser esse aqui. Se vocês tiverem interesse, deixa nos comentários que eu vou colocar o prompt para vocês. Mas dá para tirar um print, mandar o GPT transcrever também. É bem tranquilo. Então cria um app de receita
+
+chamado meu Chefe App na tela principal. Eu quero um header com o nome do app, um botão como gerar receita, cards de receitas com nome, um emoji de categoria, né? Então ter várias categorias de receita, tempo de preparo, se é fácil, médio, difícil, um campo de busca para filtrar por nome, botão de editar e deletar em cada card, quando não tem receita ainda, mostra um estado vazio legal com emoji, né? Então, pra gente poder iniciar o uso do app. Para adicionar ou editar receita, abre o modal com nome, categoria, ingrediente, modo de preparo, tempo e dificuldade. O
+
+botão gerar receita cuá. abre outro modal onde eu digito os ingredientes que tenho na geladeira, tipo frango, batata, creme de creme de leite e alho. E aí e a Iar me dá uma receita completa com o nome criativo, ingredientes com quantidades, passo a passo, tempo e dificuldade. Depois gerar um depois de gerar tem o botão salvar no catálogo que adiciona no grid, né? Nesses nossos cards ali que eu tava falando. Visual
+
+clean, tons de laranja. Defini algumas coisas do layout, mas não precisa. fundo branco, cards com sombra suave, tudo em português. É bom especificar, né, galera, o EAI Studio, ele é um software que ele vem em inglês, né? Então, a maioria desses softwares que vem assim, é bom a gente colocar a linguagem da aplicação, senão ele pode criar em inglês. Vou começar o build aqui. E aí
+
+aqui tende a demorar um pouco mais. É um outro problema do EA Studio, né? Ele às vezes fica mais trancado para desenvolver porque tem muita gente utilizando e tal. Então, é um software que tá evoluindo muito no ecossistema do Google, mas ele tem as suas limitações, seus problemas, vamos dizer assim, porque a gente quer aqui é excelente. A gente vai poder criar a aplicação, testar, ver se vale ou não vale e aí seguir, né? Lembrando que a gente separa
+
+o antigraft porque daí a gente não precisa ter estrutura no nosso computador. A gente pode mandar para algum amigo testar mais rapidamente. Nós não gastamos nossos créditos do antiraft. Então tem vários motivos de começar a prototipação aqui em vez de já começar a construir algo real lá no Antigraft. Beleza? Então olha só galera,
+
+ele trouxe aqui pra gente, tá? Vamos gerar a primeira receita. Tenho frango e molho de tomate. Ó, ele vai utilizar IA. E por que que isso acontece? Porque ele pega e já usa
+
+a IPI do próprio I Studio para isso. Então é muito mais rápido. Eu praticamente não tem que configurar nada e a gente já tem aí um app funcionão funcional, sabe? Então eu posso salvar no catálogo, ele vai salvar. Aqui tem o modal de visualização, posso excluir, ó, exclusão não tá funcionando ainda e tal.
+
+Então, claro, tem detalhes aqui para fazer. E que que é a ideia, né? que a gente consiga validar se o aplicativo é isso mesmo. A gente pode continuar adicionando muitas funcionalidades e tal, mas a ideia que a gente tem o nosso MVP aqui. A gente pega, dá um share aqui, envia para outras pessoas testarem, elas vão dando seus comentários e chega a hora que a gente define, pô, agora tá bom, é partir pro próximo passo, tem que deixar mais robusto, integrar com alguns serviços e o EA Studio começa a não comportar mais, tá? Então a gente tem que ir pro
+
+Antigraft. Como é que a gente vai fazer isso? Bom, tem uma maneira bem simples que é com o GitHub. GitHub é um serviço onde a gente coloca os nossos projetos totalmente gratuito e ele se comunica bem com vários softwares, né? A gente utiliza o Git, que é, vamos dizer assim, a linguagem que o GitHub entende, e a gente envia via Git as coisas pro GitHub e pega esse projeto também para o nosso PC via GitHub. Só que a gente não vai
+
+precisar utilizar o Git porque no grave vai ter o MCP do GitHub. E o que a gente precisa fazer agora é enviar para cá, tá? Então tu vai ter que ter tua conta aqui e o EA Studio precisa ter conectado no GitHub. Então tu vai ter que vir nessa aba aqui. Conectar. É bem simples.
+
+É só colocar que tu quer conectar e botar tua senha depois que ele pedir no aceite lá. E pronto. Aqui eu preciso definir um nome de repositório e uma descrição. Vou deixar público, tá? Se é o projeto pessoal teu que tu não quer divulgar com ninguém, deixa privado.
+
+Beleza? Eu vou colocar aqui que é o meu chefe a projeto para o canal. Vouar assim, tá? Vou criar o repositório, ele sincroniza os dois e começa a enviar o código para lá. Agora o que que eu tô fazendo? Tô me desfazendo, vamos dizer
+
+assim, do EAI Studio. Ele tá indo, né? Ele ele teve essa utilidade e agora eu preciso continuar no Antigraft, que é um ambiente mais profissional para crescer meu app. Ó, vou dar aqui, ó, stage and commit out changes. Então, beleza, ele mandou para lá. Que que a gente vai ter
+
+que fazer? Achar esse projeto aqui. Então, vai vir repositórios, ó, meu chefe A e todo o código está aqui. Beleza? Então, o que que a gente tem que fazer? Pegar esse projeto pro nosso
+
+antiraft. Então, a gente vai abrir o antiraft, tá? Vai abrir uma pasta em branco. Vou abrir fazer isso agora. Bom, tô aqui na minha pasta vazia, tá? E aqui
+
+agora a gente precisa conectar o MCP do GitHub para poder ter acesso ao nosso repositório. A gente vai vir aqui adicionar options MCP servers, vai procurar for GitHub, vai conectar. Meu aqui já tá conectado, tá? Então como é que eu sei que tá conectado? Quando tu fizer a conexão, que é semelhante ali a conexão lá no EA Studio, vai vir aqui em tools e vai ter as tools que tu tem configuradas, tá? O meu aqui não tá
+
+aparecendo agora. Ele tá falando que tá faltando o Docker rodar. Então só deixa eu corrigir aqui rapidinho. Bom, ó, galera, consegui ajustar aqui, né? Era só um problema de configuração que o meu tinha, mas o de vocês não vai ter, tá?
+
+Ele vai conectar automaticamente depois que tu adiciona aqui a tua configuração, igual ali no E Studio, como eu falei. Então, quando eu tenho isso aqui configurado, eu preciso pedir para o Antigraft trazer o meu projeto, tá? Então, vou aqui voltar pro agente. E agora que a gente tem o MCP do GitHub. Nós iremos aqui encontrar, pode ser o link do projeto, o nome dele. Eu vou
+
+fazer o seguinte prompt para ele colonar o projeto aqui via MCP do GitHub. Clone este projeto nesta pasta. Aí eu boto aqui o link e pronto. Agora tem que esperar o ó aqui eu tenho que atualizar o anraft. Então eu vou atualizar aqui primeiro para depois eu poder fazer isso. Bom
+
+galera, agora sim v colocar a mesma mensagem aqui e vamos deixar ele clonar nessa pasta o projeto, tá? E a gente pode testar, pedir para ele iniciar o servidor pra gente poder pelo menos saber que tá no mesmo ponto, né, que tava lá no IA Studio. Isso é fundamental também. Bom, ele trouxe o projeto aqui para mim e agora eu preciso inicializar ele. Então, inicialize o projeto. Aí o
+
+que que acontece? Eu preciso colocar essas duas chaves que lá no e lá no EA Studio ele já trazia para mim, tá? O que que acontece? Eu preciso colocar essas duas chaves aqui, ó, que lá no EA Studio já tava setado para mim, tá? Então, eu vou ter que fazer isso agora e poder usar o projeto, né? A chave de API basta
+
+a gente chegar lá no EI Studio, vamos voltar lá no começo, get API aqui e aqui tu vai criar uma chave de API para poder utilizar lá no projeto, tá? Se tu já tiver, só copiar aqui e colocar onde tá esse entre aspas aqui. Beleza? Aí galera, por exemplo, esse app URL, se tu tiver alguma dúvida do que preencher, tu pode sempre pedir para ele, né? Ah, eu já coloquei a chave do Gemini, mas o que é esse appure?
+
+Então, na verdade, eu preenchi no exemplo, tá? Vai ter que preencher nesse aqui, tá? No ponto env de fato. Então, pode trazer os dados para lá. Então, tu vai trazer pro dot de fato, não um exemplo. Beleza? E esse aqui, ó, appl,
+
+ele falou que a gente pode colocar esse local host aqui. Então, basta colocar. Tá aqui, certo? Coloquei inicie o projeto. Então, agora ele vai iniciar o projeto e eu tenho que ver se aquela funcionalidade gerar a refeição tá funcionando. Bom, ele inicializou aqui.
+
+Vamos acessar. Tá aqui o app. Vou gerar a receita. Vamos dizer que a gente tem alho, cebola e ovo. Vou gerar a receita. Vejam que ele tá puxando
+
+também o da peitorando, tá demorando, né? Então quer dizer que ele tá conectado lá com o Gemik. E aqui ele me deu a receita. Beleza? Eu posso salvar tudo mais. Ele tá salvando tudo em local
+
+storage, né? Aqui ele não tem banco de dados ainda. É justamente isso que a gente precisa. A gente precisa adicionar um banco de dados. A gente vai fazer isso via Super Base, porque o Supase ele permite também controlar a autenticação e ele não necessita que a gente tenha um backend. Então simplifica muito
+
+aplicação e deixa ela profissional. No super base a gente pode ter dois projetos gratuitos, então dá para prototipar bastante coisa para depois pensar e pagar, né? Acho que não é tão caro também. É, não é salgadinho, mas $5 por mês a vai ter ali acesso a quantos projetos? É, ele não fala aqui, então deve ser ilimitado, tá bom? Dito isso, a
+
+gente vai em 10%, né? vai fazer tua conta se tu não tem. E a única coisa que tu precisa criar é uma organização, tá? E aí tendo a organização criada o antiraph vai fazer o resto. Beleza?
+
+Então a gente volta no anraft aqui a gente vai configurar MCP e agora a gente vai configurar MCP Superabase. Tu vai procurar, tu vai acessar o MCP, tu vai configurar da mesma maneira que tu configurou ali o dogravit, tá? Aliás, do GitHub. E aí, quando fizer o teu login ali, a tua autenticação na tua conta, eu tem que vir aqui em tools e ver se elas estão liberadas. E aí quer dizer que o MCP tá funcionando. A gente já pode
+
+solicitar agora pro antigraft e fazer a criação do banco de dados lá no Suprabase para a nossa aplicação. O que que eu vou fazer aqui? Eu vou trocar pro high, porque agora é uma etapa mais crítica do projeto, tá? E vai colocar um prompt aqui, vai fazer também a etapa de autenticação, que é o login, né? Então o pronto vai ser o seguinte, preciso transformar esse app no app de verdade, banco de dados e login. O app é 100% no
+
+frontend, né, aqui no nosso lado. E o Superbase faz vai fazer o pack. Cria o banco de dados do Superabase com o que precisar para guardar essas receitas. Cada usuário só vê as receitas dele, ninguém acessa as dos outros. Adiciona o login e cadastro com e-mail e senha usando para base Alf. Quero uma tela de
+
+login bonita com a cara do app na paleta laranja. Se não tiver logo, não acessa nada. Botão de logout no red. Troca todo o sistema que salva na memória para salvar no superbase. Criar, editar, deletar, buscar. Tudo persistindo no
+
+banco. Para geração de receita, cria uma edit function, sua base que chama API do Gemini. A chave de API não pode ficar resposta no frontend, tem que ficar segura na ed function. Então vou colocar isso aqui. Talvez ele pergunte qual é o a organização lá que eu vou querer salvar o projeto, tá? E aí o resto ele
+
+vai fazer sozinho. Ó, ele acessou ali MCP, listou os projetos. Então tudo vai ser feito da melhor forma possível e claro que cabe a gente a testar também depois, né? Vai precisar fazer todos os testes necessários. Bom, aí ele retorna pra gente aqui, tá? Ele me trouxe o
+
+retorno do Supe, né? Que deu certo. Que que a gente tem que fazer? A gente tem que ir lá no Super Base, ver onde é que ele criou o projeto por aqui. E aqui a gente entra e vem em authentication, sign in providers e tira a confirmação de e-mail. Salve. Tá, isso aqui vai ser
+
+necessário para ele não ter, pra gente não ter que confirmar e-mail, né, para travar o processo. Beleza? Então, salvando aqui. Agora eu vou fazer o teste, criar uma conta. Vamos ver o que acontece. Bom, ele
+
+entrou aqui. Vou fazer o logout. Fazer o login. Fez o login. Então, tá tudo certo. Ele
+
+tá salvando o usuário. A gente pode conferir isso. A gente vem aqui em users, ó. Tá o meu e-mail aqui. E agora tenho que ver no database o que que ele já fez de tabela. A princípio ele criou uma
+
+recipes que deve ter o contato, né, o a interligação entre users, né? Então vou fazer um teste, vou adicionar uma receita e aqui eu vou colocar que eu quero uma receita, sei lá, de arroz pronto com aquela salsicha ali na geladeira. Então ele vai pensar, vai trazer para mim. Eu vou escolher salvar isso, ó. Um correr um erro, a gente tem que inspecionar aqui e ver o que aconteceu. Eu vou limpar tudo, vou
+
+executar de novo. Ó, file net fun. Então tá, a gente vai fazer uma cópia desse erro e vai falar isso aqui para ele. Ele falou que a fun foi enviada perfeitamente, mas precisamos avisar a ela qual é a sua chave. Acesse seu projeto, vai em funcrets, clique em add secret e coloque na AP aqui. Então é isso que faltou, na
+
+verdade, ele até me deu aqui o norte, né? Então vamos lá, vou fazer esse processo primeiro antes de pedir para ele. Então vamos aqui, vamos em ed functions. Então tu pode vir aqui, ó, project overview, ad functions, explorar funções, secrets. E aqui tu vai colocar teu secret copiar lá do dv. Vai ser esse
+
+gem aqui aqui como name o valor vai ser a chave de API. Então tu faz aí, ó. Salvei aqui o meu, tá? E agora vamos testar de novo. Agora parece que foi, então deu certo. É uma configuração que
+
+Opa, deixa eu ver aqui. Vamos ver se mudou o erro, né? Virar de novo. Bom, agora deve ser um erro de lá, né? Vou informar que eu já configurei. Configurei aqui na ed
+
+function. e recebi este erro ao gerar a receita. Eu pedi para ele corrigir ou se foi alguma outra configuração que faltou, tá? Essas etapas aí costumam trancar mais no começo, mas depois fica mais tranquilo. Então vamos ver aqui o que que ele me retorna. Ó, da me retorna
+
+aqui e ele diz que fez uma alteração no código. Preciso recarregar a página e testar de novo. Então vamos fazer isso. Vou trocar a receita, né, que que lá não deu certo. Vou dizer que eu tenho batata e creme de de milho. Tirar a receita.
+
+Bom, galera, o que que aconteceu? Tentei arrumar de novo, não deu certo, tá? Por aquela configuração. Aí eu fiz o seguinte prompt, bem simples. Eu pedi para ele utilizar aqui do JN que tava no no DNAV, que a gente configurou antes, tá aqui, ó. Pronto. Aí ele foi lá e
+
+resolveu o problema. Então a gente tem que pensar também em soluções diferentes para poder resolver, tá? Agora vou fazer aqui de novo. Então, arroz com feijão, n? Vamos dizer que tem isso, né? Já é um
+
+prato montado, mas tudo bem. Ele vai trazer toda a resposta da IA. E aí vamos salvar aqui e tal. Vamos testar a funcionalidade. Ó, salvar. Ó, salvou.
+
+Posso ver de novo. Aí eu posso editar aqui. Vou dizer que é 36 minutos. Salve receita. Ele editou. O
+
+dado persiste. Então tá tudo certo. Nossa aplicação tá funcional. Então daqui em diante a gente continuaria desenvolvendo ela para a gente conseguir continuar a criar novas funcionalidades e deixar um produto viável pra gente poder lançar. Beleza? É isso que a gente
+
+faria. Bom, galera, o que acontece agora? O ideal é que a gente crie testes automatizados para que a gente possa garantir que a nossa aplicação continue crescendo e ainda esses testes garantam que ela está funcionando em todas as partes. Daí eu procurei uma solução que pudesse fazer isso pela gente, que tivesse ainda usos gratuitos pra gente entender a importância de dos testes mesmo, né? Foi aí que eu cheguei na test sprite, tá? que é justamente uma solução
+
+facilitada para fazer testes, onde a gente tem conexão com o MCP, eu vou deixar o link aqui na descrição, a gente pode pedir pro pro próprio test sprite testar o nosso projeto, tá? Então, quando vocês fizerem aqui o login na conta de vocês, ele vai abrir uma conexão com o MCP. Ele vai mostrar justamente isso aqui, ó, para que a gente saiba como conectar no antigraft. Então, tu vai ter que criar uma chave de API, beleza? Aqui onde eu já criei a minha e aqui colocar ids, porque ele integra nativamente com cursor cloud code o antigraphity, a gente vai ter que colocar essa string aqui de conexão aqui dentro do mcp servers, gerenciar mps e aqui ver configuração round, né? Nesse lugar aqui
+
+vocês vão deixar a conexão de vocês assim como tá a minha, ó. Test sprite, commands, a coloquem a chave de API aqui. Aí é só salvar. Aqui fora vai aparecer o teste sprite, como aparece no meu aqui, e as tools habilitadas, tá? E agora, pronto, a gente vai conseguir testar esse projeto aqui. Como é que eu
+
+vou testar o projeto? Eu vou mandar um prompt, já que tá conectado via MCP, para ele testar. Então vou pedir assim, ó, com o MCP do test sprite, crie tests para criar conta, logout, fazer login. A gente pode enumerar vários outros testes. A gente pode deixar o MCP se virar, né, entender o projeto e criar os testes. Mas eu vou pedir esses três aqui
+
+e aí vocês vão entender o que que vai acontecer. fazendo essa solicitação, o angraft entende ali qual que é o MCP, ele vai fazer a conexão com ele e aí vai realizar os testes. A gente vai conseguir ver esses testes lá na interface do test sprites. Quando a gente starta aqui, ó, o teste sprite ele abre uma aba e aí a gente vai escolher, por exemplo, o modo teste front end, nesse caso, code base, que seria a base do código. Aqui ele já detectou que é local hostil, que é exatamente onde executa. E eu posso colocar um usuário
+
+aqui para ele fazer o teste. Então vou botar teste@exemplo.com com e a senha eu vou botar 1 2 3 4 5 6. Aqui eu posso colocar um documento tipo um cloud MD, se o projeto fosse com cloud code para que ele conheça o melhor projeto, tá? Então pessoal, como a gente não tem esse documento, eu vou ter que pedir pro anchraft criar também ele, tá?
+
+Então ele vai ter que fazer deixa eu ver. Então eu vou cancelar aqui rapidinho que ele tá esperando justamente que a gente configure lá e eu vou pedir aqui pro antigraft criar um project MD escrevendo projeto. Crie um project MD descrevendo o que é o projeto e o que ele faz e todas as suas funcionalidades. Então esse arquivo vai servir de base pros nossos testes. Quando ele terminar, eu vou rodar de novo o comando que eu dei antes, que é esse aqui. E a gente
+
+vai ter que alimentar com esse documento. Primeiramente, olha, terminou. Então eu vou lá de novo, pedi para ele rodar e agora a gente pode colocar esse project MD lá dentro do test sprite. Vamos esperar ele abrir aqui pra gente, ó. Abriu a página de novo. Vou trazer para cá. Queria
+
+preencher aqui. Teste@gmail.com. Coloca uma senha. E aqui eu vou colocar o documento. Então eu selecionei o
+
+project. Então eu selecionei o projeto MD. Vou continuar. Agora ele vai começar a fazer os testes e vai reportar para mim lá dentro da dashboard do test sprite. Então aqui eu tenho que esperar ele terminar. Ele vai fazer os testes
+
+viagraft. Quando tudo tiver pronto, ele vai enviar as informações para o test sprite e eu vou conseguir verificar o que aconteceu. Bom, galera, então aqui, ó, ele abre uma outra página e aqui que os testes serão executados. Então, além do que eu pedi, ele tá fazendo os outros que ele identificou baseado no documento na leitura de código que ele fez. Ele fala que pode levar até 15 minutos. Ele
+
+tá fazendo 15 testes. Como eu falei antes, ali no teste sprite vocês vão ter 150 créditos gratuitos, né, sem assinar o plano. E mesmo assinando o plano e ainda assinando o plano vai ter mais 300 lá de graça. Então dá para usar bastante e testar. Se tu recarregar a tua interface lá do test sprite, tu já vai ver aqui os testes sendo levados para cá. Nenhum passou por enquanto. Claro,
+
+né, galera? Pode ser que algum deles fale, mas, por exemplo, tá faltando alguma instrução nossa, né? O funcionalidade, o o recurso funciona, né? A gente vai ter que ver cada um para entender o que aconteceu. Então, vou aguardar aqui e trago o resultado para vocês. Bom, galera, aí depois que o test
+
+sprite faz todos os testes, né? A gente vê que ele ele até se encerra ali no local, né? Provavelmente pode ser que vocês tenham esse erro também. Durante a execução não, mas depois sim. Só que o que interessa mesmo é o que vem para cá, pra interface deles, porque aqui eu consigo ver todos os testes. Então,
+
+nesse meu projeto 139, que é o que a gente tá fazendo agora, passou em 11 e falhou ali em quatro de 15 testes, né? Bom, o que acontece aí? Agora eu tenho que vê-los e entender o que que deu errado, o que que deu certo, porque alguns podem ser, por exemplo, um falso positivo, né, que ele ali falhou por que ele não tinha todas as informações do que ele precisava fazer e aí ele detectou uma falha. Vamos fazer aqui, vamos ver esse teste aqui. E-mail inválido. Daí a gente vê o vídeo,
+
+entende o que aconteceu, ó? Ele colocou um e-mail inválido e o teste deu certo porque ele não deixou criar uma conta com aquele texto ali que não era um e-mail. E agora se eu pego um exemplo aqui de, ó, entrar com e-mail válido, mas com senha pequena, tem que aparecer um erro, né? É uma segurança. Então aqui tem um videozinho de 25 21 segundos, né?
+
+Ó. Aí aqui provavelmente ele conseguiu fazer uma conta com uma senha curta e não deu nenhum erro. E isso é um problema, né? Problema de segurança da nossa aplicação. Então vej ele não mostrou ele fazendo login, né? Aí
+
+galera, eu sou obrigado a falar de uma funcionalidade aqui do teste sprite que é muito interessante porque alguns testes eles podem falhar não porque tem bug na aplicação, talvez tu veja isso nos teus próprios testes, mas porque talvez ele tenha entendido alguma coisa errada, né? É normal, né? que é uma IA que tá fazendo tudo. Então, nessa visão aqui, depois que a gente faz o testing, recebe esse link, onde tem todos os testes, eu consigo editar manualmente cada um dos meus testes, cada passo. Então, vamos dizer que ele, esse teste aqui que deu erro, né, foi um problema aqui no próprio teste. Então, eu
+
+poderia, sei lá, se fosse esse passo aqui, ah, daí ele colocou esse mail que não é o certo e com outro ele conseguiria fazer o login. Se fosse um teste login, posso vir aqui, eu vou trocar aqui para mateus@test.com e eu vou dar um save run. Então eu editei o teste, atualizei, ele vai rodar de novo. E aí se tiver tudo certo, tá OK, né? Não precisamos aí tá criando o
+
+teste ou deixando o teste errado porque não é um erro da nossa aplicação. Então a gente consegue fazer esses ajustes pontuais para que a gente consiga tá deixando tudo correto ali e não fique talvez depois vendo um teste errado que na verdade na aplicação ele dá certo. Essa funcionalidade aqui é muito interessante também, mas ele conseguiu prosseguir de alguma maneira sem receber um erro com uma senha curta. Então a gente veria todos os testes aqui e ajustaria o que fosse necessário para deixar nossa aplicação blindada na parte de segurança e também de algum bug eventual que possa ter acontecido. Então esse recurso é bem interessante. Dei uma
+
+experimentada aí que vale a pena. Bom, e vamos supor que a gente corrigiu os problemas e tal e agora a gente vai para um novo ciclo da aplicação, seria adicionar novas funcionalidades para deixar o projeto pronto para lançar. Então vou botar aqui agora adicione uma funcionalidade de tema light e dark. com um botão para alternar na nave bar. Aí aqui a gente já troca para low, né, galera, porque é algo mais simples e vai responder mais rápido e não vai fazer errado e a gente vai ter mais recurso no nosso projeto. Bom,
+
+então ele implementou o recurso aqui, né, galera? Aí a gente pode verificar. Show de bola. Então a gente vai chegar eventualmente numa conclusão que o projeto tá pronto, né? Agora ele está pronto pro lançamento e aí a gente vai fazer o deploy dele, tá bom? Como a
+
+gente modificou algumas coisas, o projeto ele já tá no GitHub, né? Então isso é uma vantagem, a gente só precisa colocar tudo que a gente modificou para cá. Então vou botar assim, ó, envie todas as mudanças do projeto para o gitub. E a gente só tem que verificar aqui se ele tá versionando alguns arquivos errados, né? Mas como eu tô vendo que tem o gitnó que tá ignorando as principais pastas que não precisam ir e os principais arquivos, tá tudo bem, mas dá uma checada se o teu projeto tem esse gitor, que senão ele pode mandar, por exemplo, uma chave de API que não era para estar para o repositório. Ainda
+
+mais se for público, né, vai ter problema enorme, porque as pessoas vão conseguir ler a tua chave de API. Então vou fazer isso, vou enviar todas as mudanças para o GitHub e ele vai fazer BMCP e tal, né? E aí depois a gente vai fazer o depó, vai colocar esse projeto no ar. Então galera, ele enviou para lá. A gente pode conferir isso dando F5.
+
+Deve ter um novo commit, ó. Aí metou dark mode, autenticação e o test sprite. Beleza? Então, como é que a gente vai fazer agora para deixar o projeto no ar? Pô, galera, eu curto muito esse serviço aqui da Host, né, que é a hospedagem de aplicações web. Ele é um serviço muito
+
+facilitado para hospedagem. A gente consegue est praticamente hospedando com um clique, tá? Tem valores muito bons para escolher o servidor. Então, basta dar uma olhada aqui nos planos. Eu recomendo o cloud porque ele te permite colocar 10 projetos ao mesmo tempo, tá?
+
+Então mesmo servidor. Então tu vai conseguir fazer 10 SAS, por exemplo, 10 projetos que tu queira e testar eles e depois não der certo sobe outro e tal. É muito fácil fazer tudo isso. Tem um PC bom ali, né? Eh, umas configurações bem interessantes, bom armazenamento e às vezes ele tem até promoção de te dar um domínio gratuito. Então ainda é isso,
+
+né? consegue colocar o domínio incluso na hospedagem. Então, tu vai escolher aqui o plano e aí depois vai ter a parte do carrinho. Nesse link tá aqui na descrição, né? A Rosk é parceira aqui do canal. As minhas aplicações todas estão
+
+lá também, né? União projetos que eu tenho, tudo lá. Eu confio muito neles. E esse link aqui que tá na descrição, como eu falei, ele tem uma promoção especial para vocês aqui do canal e também um cupom de desconto que é o nosso da hora de codar. Então é só clicar que vai estar tudo aplicado ao mesmo tempo. Lembrando aqui, quanto mais
+
+tempo tu selecionar, mais desconto tu ganha, tá? Veja aqui, eh, ele tá agora tem domínio grátis, então promoção vigente, dá uma olhada aí, né? E ainda mais três meses. Bom, concluindo a compra, tu vai cair lá dentro da Husk, vou te mostrar como é que fica. Bom, aqui tu vai entrar em sites, tu vai ter tuas hospedagens aqui. Então, por
+
+exemplo, eu tenho essa minha business aqui, que ela tem três projetos. Eu vou colocar mais um. Então a tua não vai ter nenhuma. Tu vai vir aqui em adicionar site web app node, que é aquela aplicação que eu falei para vocês que é mais fácil, não precisa saber mexer em servidor. E aqui tu vai escolher o teu domínio que tu pegou ali na promoção. Ou
+
+se tu quiser fazer um teste mais rápido ainda e não tiver domínio, por exemplo, tu pode botar aqui, ó, usar domínio temporário. Aqui tu pode fazer o pilot dos arquivos, mas o melhor mesmo fazer pelo GitHub, tá? Tu vai clicar aqui, continuar pro GitHub e ele vai fazer uma autenticação, tá? Bem simples, tu vai ser redirecionado pro site do KitHub, tu aceita e pronto. Aí depois vai aparecer o que apareceu no meu aqui, os teus repositórios. Tu vai selecionar o
+
+repositório que a gente acabou de criar, que é aquele meu chefe A, ó, apareceu aqui. Beleza? Tu continua e aqui vai ter um passo importante. Como a gente tem algumas dependências externas, né, não é todo o projeto que precisa, mas como a gente tem algumas dependências, a gente vai ter que colocar as variáveis de ambiente, tá? Tá, então não prossegue ainda. Bota aqui adicionar. E aqui a
+
+gente vai ter que colocar as do Supasp. Então como é que tu vai saber? Tu vai abrir o teu dot e tu vai colar todas que estão lá. Então aqui no meu ele tem duas Gemini e duas Vit, tá? Por que que ele tem duas GMI? Cara, eu acho que algum
+
+processo ali do código ele duplicou ela, tá? Então é a mesma chave, né? Então tu tem que verificar no teu também. Tu pode pedir aqui se tiver duas para ele refatorar e deixar só uma no código todo, tá? Eu vou colocar as duas para ficar mais simples aqui o vídeo, mas o certo era ter só uma pra gente não se perder aqui. Então vou colocar todas as
+
+chaves lá. Tem que ser exatamente com o mesmo nome, tá? Então vai colocar tudo aqui. Essa daqui do Supe também, ó. Os quatro. Beleza. Então tá, tu colocou
+
+todos os valores, tá? A gente poderia ter importado o envi aqui. Eu sempre uso isso aqui, esqueci agora, mas tu clicando aqui, tu consegue selecionar o arquivo, ele já traz tudo, tá? Dá para fazer isso também. Aí tá, tu colocou tudo ou importou o ENV e agora tu finaliza. Aí sim tu vai
+
+clicar em implantar. Agora é só esperar que ele vai criar todo o deploy para ti. Tu não precisa fazer mais nada. E aí depois ele vai dar o link de acesso. Pô, galera, aí ele termina, tá? Ele dá esse
+
+OK. Tu pode voltar aqui pra visão geral do teu painel de controle da hospedagem. vai clicar no domínio que tu colocou ou nesse provisório deles. Aí acessando aqui, a gente vai ver a aplicação rodando, né? Então eu vou botar aqui criar uma conta, ó, já funcionou tudo certinho. Suabase então tá integrado.
+
+Então galera, vamos testar aqui agora, gerar receita pra gente poder ver se tá tudo funcionando. Tá aqui que eu tenho frango e batata frita e vou pedir para ele gerar a receita para mim e vamos ver o resultado. Então ó, ele gerou aqui. Se a gente salva e vai ter a receita aqui e o dado persiste. Então tá tudo certo, a aplicação funcionando. A gente utilizou
+
+ali a stack proposta. Bom, galera, eu acho essa ideia muito interessante porque, como eu falei ali, o EAI Studio para mim é um ambiente mais de playground, prototipação. A gente pode fazer algo bem rápido, não precisa conectar ali com aplicações externas, porque o Google tem ali API também, então dá para conectar IA no app. Tu pode compartilhar de maneira fácil também, só que quando vai crescer começa a ter alguns problemas. Tem gente que relata que ele perde a memória, né, o contexto da aplicação. A gente começa a
+
+ficar limitado o serviço a se a se conectar. Ele tá dentro de um ambiente onde a gente não tem completo controle. Então a solução melhor é tirar de lá, externalizar e colocar no antigraft da vida, crescer a aplicação aonde ela tem que chegar para poder ter a sua V1 e aí sim fazer o deploy. Foi todo esse ciclo que a gente fez ali, claro, adicionando os testes que também são necessários. Bom, espero que vocês tenham curtido. Se
+
+gostaram, deixa o like, se inscreva aqui no canal para poder receber mais conteúdos como esse. E claro, não esqueçam de também participar ali da turma, né, inicial da formação Vibe Coding, que terá um desconto especial para quem se inscrever naquele link que tá aqui na descrição, tá bom? Guardo vocês no próximo vídeo também na formação VB Code.

@@ -1,0 +1,122 @@
+---
+video_title: "Instalei o Google Workspace CLI e Conectei no Antigravity (É ABSURDO)"
+video_id: ttx9QLHR-3U
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ttx9QLHR-3U
+video_date: 2026-03-11T15:00:00+00:00
+video_description: |
+  O Google acabou de lançar uma ferramenta que permite agentes de IA controlarem Gmail, Drive, Calendar, Sheets, Docs e todo o Google Workspace pelo terminal. Um comando e seu agente lê emails, cria documentos, agenda reuniões e organiza arquivos sozinho. Chama Google Workspace CLI. É open source, gratuito, e funciona com Antigravity, Claude Code, Gemini CLI e qualquer agente que rode comandos no terminal.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_gws
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  O GWS CLI é uma ferramenta de linha de comando que unifica todas as APIs do Google Workspace num único lugar. Antes se você queria que um agente de IA acessasse seu Gmail precisava configurar API, OAuth, middleware. Agora é um comando: gws gmail users messages list e pronto, seus emails em JSON.
+  
+  O mais impressionante é que ele não tem uma lista fixa de comandos. Ele lê o Discovery Service do Google em tempo real e constrói os comandos dinamicamente. Quando o Google adiciona um endpoint novo em qualquer API o CLI já suporta automaticamente sem atualização manual.
+  
+  O que ele cobre: Gmail pra ler, enviar e buscar emails. Drive pra listar, criar e mover arquivos. Calendar pra criar eventos e buscar agenda. Sheets pra ler e escrever em planilhas. Docs pra criar e editar documentos. Slides pra criar apresentações. Chat pra enviar mensagens. Admin pra gerenciar usuários. Tudo com output em JSON estruturado perfeito pra agentes de IA parsearem. Vem com mais de 100 Agent Skills em markdown e 50 receitas prontas pra tarefas comuns.
+  
+  Até agora pra conectar um agente de IA ao Google Workspace você precisava de Zapier, Make, n8n ou configurar MCP servers manualmente. Cada serviço uma integração separada. Agora o Google tá dizendo: toma, um único ponto de entrada, pode mandar seus agentes. E tem suporte a MCP também, funciona como MCP server pra ferramentas como Antigravity, Claude Desktop e outros clientes MCP. Escrito em Rust, distribuído via npm. Leve, rápido, sem dependências pesadas.
+  
+  Mostro a instalação ao vivo com npm install -g @googleworkspace/cli, o fluxo de autenticação OAuth e os primeiros comandos funcionando.
+  
+  Na primeira demo controlo o Gmail direto do terminal. Listar emails não lidos, ler email específico, buscar por assunto e enviar email. Na segunda demo controlo o Google Drive. Listar arquivos recentes, buscar arquivo específico e criar pasta. Na terceira demo controlo o Google Calendar. Ver próximos eventos e criar evento direto do terminal.
+  
+  Na quarta demo conecto o GWS CLI com o Antigravity como MCP server. Configuro nas settings e pronto, o Antigravity tem acesso ao meu Google Workspace inteiro. Peço em linguagem natural pra resumir meus últimos emails não lidos, verificar horários livres na agenda e criar um Google Doc a partir de emails sobre um projeto. Automação de produtividade em outro nível.
+  
+  Mostro também as Agent Skills que vêm com o repositório. Mais de 100 skills incluídas: triagem automática de inbox, backup de documentos, criação de relatórios a partir de Sheets, envio de resumos semanais por email, agendamento inteligente de reuniões. E tem proteção contra prompt injection com integração ao Google Model Armor.
+  
+  Projeto experimental, não é oficialmente suportado pelo Google. Ainda em desenvolvimento ativo. Precisa de um Google Cloud Project pra gerar credenciais OAuth. E dá acesso real aos seus dados então cuidado com o que você autoriza um agente a fazer. O repositório já tem mais de 10 mil stars no GitHub na primeira semana.
+  
+  🔗 Links do vídeo:
+  ▸ Repositório: https://github.com/googleworkspace/cli
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Introdução sobre o Google Workspace CLI (GWS)
+  01:00 O que é o GWS? (Google Workspace CLI)
+  04:00 Como configurar o Google Workspace CLI
+  05:35 Setup de autenticação do GWS
+  08:26 Testando o Google Workspace CLI
+  10:00 Integrando GWS no Antigravity via MCP
+  12:00 Minhas considerações sobre o Google Workspace CLI (GWS)
+---
+O Google acabou de lançar uma ferramenta que permite que agentes de A controlem o teu Gmail, o teu Google Sheets, teu Drive, enfim, qualquer serviço do Google. E o mais interessante é que tu pode conectar via MCP ao Antigraft, ao Cloud Code e unir essas duas ferramentas, tendo um potencial enorme nas tuas mãos. Nesse vídeo eu vou te mostrar tudo sobre o Google Workspace Cai ou GWS, como tá sendo chamada essa ferramenta, como tu pode instalar e também alguns casos de uso para que tu possa já sair tirando proveito dela, já que ela é totalmente gratuita e está 100% funcional. Eu sou Mateus Batista, programador há mais de 10 anos e hoje trago aqui as melhores ferramentas de A para acelerar o teu dia a dia. Se tu curtiu a ideia, não esquece de se inscrever e também deixar o like aqui para receber os próximos conteúdos.
+
+Agora sim, bora lá, galera. Antes de falar sobre o GWS, não se esqueçam, formação Vibe Code já está lançada, link na descrição, aproveita a promoção de lançamento. Esse treinamento é onde tu vai dominar antigraft, cloud code e outras para programação, né, para criar softwares com inteligência artificial. Nessa página tu encontra todos os detalhes de treinamento. Então dá uma olhada lá, vê como ele foi construído, qual é a nossa ideia para que tu possa percorrer por ele e aprender todas essas ferramentas e tempo recorde criar os teus sistemas. Tá tudo explicadinho lá.
+
+Se qualquer dúvida tem o nosso botãozinho de WhatsApp aqui para falar com a gente. E não esqueça, treinamento é vitalício. Acesso vitalício, acesso a novas atualizações de grupo de WhatsApp de alunos. Beleza? Agora sim, bora falar sobre GWS. Bom, GWS vem de Google
+
+Workspace Celai. Então, por que Selai? Porque tu vai utilizar ele via terminal, né? Então, a gente tem aí a barra desse softwares que é utilizado via terminal chamado de Celi. Bom, o que que esse cara é? Olha só, ele vai ter uma conexão
+
+com todos os serviços do Google, Gmail, Drive, Canets. E isso vai fazer com que tu consiga plugará e ter acesso a eles, né? por exemplo, pode ler teus e-mails, modificar alguma planilha, acessar algum evento, tudo via terminal e utilizando a IA como ponte, né, para acessar o serviço e trazer as informações ou modificar as informações. A saída é em Jason, né, o que ajuda também a conexão entre qualquer tipo de a ou algum software como Antirap, Cloud Code. E aqui também eles tm uma funcionalidade que os comandos se atualizam sozinhos via esse Discover Service. A instalação
+
+a gente vai fazer já já, mas primeiro a gente instala aqui um pacote, né, de forma global, que é o o GWS. Depois a gente tem que utilizar alguns comandos, fazer ali a conexão entre o a nossa conta do Google e o terminal. E aí a gente consegue utilizar os comandos dele. A gente vai ter as APIs disponíveis, né, como já falei, os serviços. Então eu posso, ah, listar meus e-mails, listar arquivos, alterar planilhas, isso tudo via comandos do terminal. Quando a gente integra a IA, a
+
+gente não precisa mais saber comandos, né? A gente vai utilizar a linguagem natural e a IA que a gente plugou vai meio que se virar ali no serviço para entender como ele funciona e usar os comandos que a gente precisaria utilizar. Então, por isso que é mais interessante. Além disso, eles disponibilizaram também um pacote com mais de 100 skills agênticas para que tu possa melhorar ainda mais a atualização com funcionalidades como triagem de inbox, organização do Google Drive, agendamento inteligente, relatório de planilhas, criação de documentos, model armor, né, que é proteção, proteção contra pro objecto nesse pacotezinho aqui, tá? E a a integração IMCP comigraft, né? A gente
+
+vai fazer via conexão normal, porque não tem o servidor ainda. A gente procura aqui GWS ou Google, ó, não tem. Então a gente vai ter que fazer ali na mão, beleza? Mas não tem problema, é bem tranquilo. Então o repositório é esse aqui, veja, tá com bastante stars, né? Aí aqui dá para ter
+
+uma ideia melhor como ele funciona, todos os comandos, né? Alguns exemplos. Beleza? E também aqui ele ensina como baixar as skills, ó, AI agent skills, que são aquelas skills que eu falei que vão dar novas funcionalidades, né? Bom, vamos instalar então. Como é que a gente
+
+começa? Vai abrir o antigraft aqui e eu vou instalar via terminal, né? Não precisa ser o antigraft, só tu ter um terminal para poder instalar. Galera, antes de continuar, não esqueçam, a gente também tem uma playlist de anti gravity. Aqui o editor vai deixar uma tum de um dos vídeos que contém um mini curso de antigraft. Eu vou deixar o
+
+izinho aqui para vocês poderem acessar. São mais de 10 vídeos. Eu nem sei quanto tem agora, mas a gente tá colocando conteúdo toda semana, né? Então é um excelente primeiro passo aí para vocês aprenderem as principais ferramentas da ferramenta graft. Então agora sim continuamos. Então o primeiro comando
+
+que tu vai rodar é o de instalação do pacote. Então vai ser esse aqui, ó. npm install Googlepace/cellai. Ele vai instalar e a gente vai ter que fazer o login. Essa parte da conexão, ela não é tão fácil, galera, mas dá para chegar lá, tá? Então eu instalei, agora
+
+tem acesso ao GWS aqui, né? Então GWS - V não tem V meno, ó. Daí tá ali. Beleza. Bom galera, depois do pacote instalado, a gente vai digitar o comando GWS Alf Setup, tá? Aí
+
+aqui tem uma questão, eu já tinha conectado a minha conta, né? O de vocês, provavelmente, ele vai aparecer só a opção login with new accounts. Aí vocês vão ter que fazer o login via browser, tá? Eu vou selecionar a minha aqui que já está. Depois a gente precisa conectar a um projeto dessa conta, tá? Os
+
+projetos vocês vão lá no Google Console. Aí aqui tu consegue criar um novo projeto para poder conectar com o GWS que tá aqui. Eu vou selecionar um projeto que eu já possuo. Beleza? Aqui ele pede para eu selecionar quais APIs eu quero habilitar. Então, é aqui que a
+
+gente vai escolher quais serviços do Google que a gente vai utilizar e a gente pode selecionar com barra de espaço todos que nós temos interesse. Então, vou selecionar todos aqui, tá? Mas o ideal seria selecionar somente os que vocês vão precisar, porque aí tu não faz uma coisa errada com o serviço que tu não tá querendo utilizar. Vamos dar um enter. Ele vai demorar um pouco aqui, dependendo de quantas APIs a gente selecionou, tá? Então é normal, a gente
+
+tem que esperar um pouquinho. Ó, já terminou. Agora ele tá indo aqui para o meu OALF client ID. E aqui a gente precar esse link do passo A. Aqui nessa etapa a gente vai ser levado a essa configuração do projeto. Aí tu vai ter que criar um
+
+app, coloca o nome dele, seleciona o teu e-mail, vai avançar público externo. Aqui tu pode colocar o teu e-mail novamente. Concorda e continua. Criar. Aí, esse é o primeiro passo e o segundo passo é criar este client aqui. Então, a
+
+gente vai clicar aqui, a gente vai selecionar aplicativo para computador. Aqui o nome pode deixar esse mesmo ou se tu quiser mudar, pode mudar. Vai criar. E esse é o ID do cliente. Tem que copiar esse aqui e colar lá. Aí
+
+volta pro antigraft. E aqui tu vai colocar o client. Aí agora a gente precisa entrar lá no projeto que ele quer o secret. a gente vem aqui e copia o secret e cola também. Agora tu vai dar um Y para fazer o login e pronto, ele tá configurado, né? Então quer dizer que
+
+deu tudo certo, o setup tá completo. Bom, galera, e aqui o último passo é clicar nesse link que ele mostra pra gente. No link tu vai selecionar o teu e-mail, né, fazer a autenticação. Aí o que que ele vai fazer? Ele vai mostrar na tela assim, ó, que o app tá em teste.
+
+Aí é só tu clicar em continuar. E aí, galera, vocês vão selecionar todos os serviços, né, que a gente tinha dado a permissão. Tem que selecionar de novo. Continua. E agora ele diz que deu sucesso. Bom, voltamos aqui no graft e
+
+agora eu quero fazer o teste para ver se deu certo. Aí para utilizar a gente vai sempre utilizar o GWS, tá? Nome de serviço e aí o comando que a gente quiser. Tem quear a documentação lá. Tem inúmeros comandos, né? vários para cada
+
+ferramenta. Então vou botar aqui, ó, users messages list e botar menos max results 1 para trazer um e-mail. Bom, galera, e como é que a gente vai fazer para testar tudo isso? Olha só, eu tô utilizando CMD aqui do Windows, que o Windows é meio complicado com esses comandos, tá? no Linux, no Mac tende a funcionar mais fácil, mas por exemplo, esse comando aqui, ó, GWS drive files list params, onde o nome contém Mateus.
+
+Que que é isso? Eu tô querendo arquivos do meu drive que contenham o nome Mateus, no nome Mateus, tá? Então ele foi aqui, buscou, me trouxe. Só que concorda comigo que eu saber todos esses comandos aqui praticamente não vai valer a pena eu utilizar a ferramenta, que eu vou ter que gravar 500 comandos ou vou ter que lá na documentação, né, que tem esses comandos. Então eu teria que vir aqui no repositório, ler todos esses comandos, né, talvez alimentar o maiá com todos esses conhecimentos, mas ia ficar ruim, né?
+
+não ia, vamos dizer, ter a mesma facilidade do que se eu pudesse me comunicar com linguagem natural para esse CELI, esse GWS. E como é que eu posso fazer isso? Utilizar uma Llm para intermediar o que eu quero até a o GWS. É bem simples, a gente vai utilizar o antigraft, vai vir aqui, ó, em mp servers, beleza? E aqui a gente vai botar em manage mcp. E aqui ele vai em
+
+configuração, porque o que que acontece? Eu não tenho o MCP do GWS aqui, né? Então eu tenho que configurar manualmente. A configuração é essa daqui, tá? Esse essa chave toda. Vai ter
+
+o a chave de GWS, comando NPX, ARGs, MCP, Google. E no ENV eu vou ter que colocar o meu client ID e o client secret. Da onde que sa surgiram esses caras? Eles vêm do meu projeto, exatamente o que a gente configurou pro login, tá? O login ele configura para a nossa máquina ter acesso ao GWS. E aí a
+
+gente pode usar os comandos. E agora a gente tá configurando o MCP pro antigraft também lidar com intermédio, né, do que a gente tem na nossa máquina lá nos nossos serviços. Bom, quando a gente configura isso aqui, o que acontece? vai aparecer aqui a área GWS nas tools e eu vou ter todas as tools que o GWS me dá. Beleza? Então, com o
+
+MCP configurado, galera, eu já posso estar utilizando linguagem natural aqui no meu agents para poder acessar todos os serviços do GWS que tem nas Tools, né? O que não tem não vai dar, mas o que tem vai ter como. Então vou botar assim: me traga meu último e-mail da caixa de entrada. Aí, ó, ele tá utilizando GWS list emails. Então, ele tá utilizando MCP, certo? E aqui ele tá trazendo o meu
+
+último email, acho que é de uma newsletter aqui e tal. Então, ele utilizou o GWS. Eu poderia agora através de linguagem natural utilizar qualquer uma das ferramentas do Google que eu quisesse. Então, agora sim fica muito útil e a gente consegue aí ter acesso a uma série de ferramentas sem ter que salvar ou gravar, né, nenhum comando do GWS. E galera, lembrando que tudo que a gente fez aqui, a gente poderia fazer também no cloud code ou em outra IDE ali que aceita MCP, né? O protocolo do MCP,
+
+ele é padrão para todas essas ids que aceitam ele. Então tu pode estar colocando na ID que tu mais utiliza com serviços de A. O GWS é um serviço novo, tá entrando ali em hype, ele tá sendo muito popularizado, com certeza vai evoluir mais esse esse MCP deles vai provavelmente aumentar muito tamanho. Aquelas skills também fazem coisas muito interessantes assim que a gente tem que digitar prompt. Então a gente consegue também aliar o MC, o GWS com MCP, com aquelas skills para poder fazer o que a gente precisa. Beleza? Então comentem o
+
+que que acharam, né? Pode parecer meio confuso para algumas pessoas, mas percebam, tá no início dessa tecnologia e eu acredito que com o avançar dela a gente vai ver mais aplicações práticas e vai ficar mais fácil de entender o propósito dela, tá? A gente tem que entender que é uma forma da gente se comunicar com qualquer serviço do Google que a gente tenha via linguagem natural, tá? que a gente pode fazer qualquer coisa que a gente teria que ir lá fazer manualmente. Bom, galera, não se esqueçam, deixa o like, se inscrevam, isso ajuda bastante o meu trabalho e também deiem uma olhada na formação Vibe Coding, o link vai est aqui na descrição. Aproveitem a promoção e do
+
+lançamento, tem um cupom de desconto para vocês acessarem ela com esse preço especial e claro, né, tem acesso ao nosso grupo VIP de WhatsApp, acesso vitalício, atualizações e aprender bastante sobre Vibe Code. Por hoje é isso. Vou ficando por aqui, espero que vocês tenham gostado e vejo vocês no próximo vídeo. Valeu,

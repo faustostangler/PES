@@ -1,0 +1,101 @@
+---
+video_title: "Parei de BRIGAR com o Claude Code Depois Desse Arquivo (Karpathy Skills)"
+video_id: oKuwnz4Gz10
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=oKuwnz4Gz10
+video_date: 2026-05-06T14:00:00+00:00
+video_description: |
+  Karpathy Skills é o CLAUDE.md com 61 mil stars no GitHub que transforma o Claude Code em um engenheiro disciplinado ao invés de um junior confiante que sai codando sem pensar.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_karp_skills
+  
+  🟪 Hospedagem que eu indico: https://www.hostinger.com/matheushoradecodar (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Neste vídeo eu mostro o arquivo inspirado nas observações do Andrej Karpathy, co-fundador da OpenAI, que identificou 4 problemas sérios do Claude Code: assumptions silenciosas, over-engineering, mudanças colaterais e falta de verificação. Um dev compilou tudo num único CLAUDE.md que instala em 30 segundos e muda como o Claude Code se comporta.
+   
+  Se você usa Claude Code e vive brigando com over-engineering (pede uma função simples, recebe arquitetura enterprise com factory pattern e abstrações pra uso único), esse vídeo é pra você. O Karpathy disse uma frase que resume o problema: os modelos assumem coisas erradas por você e saem correndo sem verificar, não pedem esclarecimento, não mostram tradeoffs, e adoram implementar 1000 linhas quando 100 bastava. Karpathy Skills ataca exatamente esses comportamentos.
+   
+  No vídeo eu começo explicando os 4 problemas que o Karpathy identificou. Assumptions silenciosas, onde o Claude interpreta do jeito dele e sai codando sem perguntar, e você só descobre que assumiu errado quando o código já tá pronto. Over-engineering, onde pede simples e recebe 200 ou 300 linhas quando 50 resolviam. Scope creep, onde o Claude mexe em código adjacente, reformata imports e refatora o que tava funcionando, deixando o diff impossível de revisar. E falta de verificação, onde declara pronto sem testar.
+   
+  Depois mostro os 4 princípios do Karpathy Skills que resolvem cada um desses problemas. Não assuma: declare premissas explicitamente, pergunte se não tem certeza, mostre tradeoffs ao invés de decidir sozinho. Código mínimo: o mínimo que resolve o problema, nada especulativo, zero abstrações pra uso único. Mudanças cirúrgicas: toca apenas no que precisa, cada linha mudada se conecta direto ao que foi pedido. Goal-Driven Execution: define critérios de sucesso antes de codar e loopa até verificar.
+   
+  Mostro as 3 formas de instalar o Karpathy Skills. A recomendada é via plugin oficial com /plugin install. A segunda é baixando o CLAUDE.md via curl direto do GitHub. A terceira é copiando como skill local em ~/.claude/skills/. Funciona no Claude Code, Cursor, Codex e OpenCode porque são só arquivos markdown.
+   
+  Depois vai pra parte mais interessante: antes e depois ao vivo. Faço o mesmo prompt em 2 sessões do Claude Code, uma sem Karpathy Skills e outra com. O prompt pede um sistema de cache simples pra respostas de API. Você vê a diferença na prática: sem Skills o Claude cria CacheManager class com strategy pattern, factory pra múltiplos backends e 300 linhas. Com Skills ele pergunta primeiro, mostra tradeoffs entre memory e redis, implementa Map com TTL em 50 linhas e verifica antes de declarar pronto.
+   
+  Mostro também como saber se o Karpathy Skills tá funcionando no seu workflow, com sinais concretos como menos mudanças desnecessárias nos diffs, código mais simples na primeira vez, mais perguntas de esclarecimento e verificação antes de declarar pronto. Se o Claude continuar over-engineering mesmo com o Skills ativo, reforça no prompt que quer código mínimo.
+   
+  Fecho comparando Karpathy Skills com Superpowers (152 mil stars) e GSD (31 mil stars), os outros 2 frameworks populares do Claude Code. Muita gente confunde os 3, mas eles atacam problemas diferentes e são complementares. Karpathy Skills melhora o comportamento do modelo, Superpowers adiciona processo com TDD e code review, GSD resolve context rot com specs externalizadas. Os 3 juntos entregam código limpo, processo sólido e contexto fresco.
+   
+  Se você curtiu deixa like e se inscreve. Comenta aí se você já usa algum CLAUDE.md customizado.
+   
+   
+  Karpathy Skills: https://github.com/forrestchang/andrej-karpathy-skills
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Como funciona a skill do Karpathy
+  01:20 Como instalar a skill do Karpathy
+  04:00 Utilizando a skill do Karpathy em um projeto
+  09:30 Considerações finais sobre a skill
+---
+Galera, o Andre Capart ataca novamente. Agora ele lançou uma skill que vai conseguir resolver um dos principais problemas dos softwares gerados por IA. Quando a gente pede alguma coisa para IA criar, ela geralmente entrega o resultado. Beleza? Isso aí é óbvio, por isso que a gente tá usando. Só que o
+
+grande problema é que ela mexe em vários arquivos, ela deixa mais complicado do que deveria. Ela muda coisas que não precisava mudar e ela não testa antes de entregar. E isso vai gerar um caos e também um software horrível. O Carpat desenvolveu uma skill que resolve todos esses problemas numa atacada só. Basta instalar e começar a pedir os prompts e ela vai orientar a IA que a gente usa a fazer as coisas certas. Se tu se
+
+interessou, se tu já sofreu para algum desses problemas, fica até o final do vídeo que vai valer muito a pena. Vou te mostrar como instalar e como utilizar essas skills totalmente gratuitas. Para quem não me conhece, sou Mateus Batista, programador há mais 10 anos e hoje tô me aventurando aqui muito no mundo da Yá, trazendo só as melhores novidades e recursos para vocês. Então não se esquece, já deixa o like, também se inscreve se não for inscrito. Bora entender melhor como é que funciona essas skills aqui do Carpat. Ele já
+
+lançou três coisas sensacionais, a gente já cobriu duas aqui no canal, tá? Uma inclusive foi uma LLM week com o Obsidian. Recomendo dar uma olhada aqui nos vídeos do canal. Então, eu já vou deixar aqui, ó, a playlist do Cloud Code que tem todos esses vídeos que eu falei do Carpat, inclusive esse vai est lá, né? E aí tu já dá uma olhada como é que funciona o Cloud Code a fundo. É quase
+
+um curso de cloud code aqui gratuito para vocês. O editor vai deixar a TAMB, eu vou deixar o izinho aqui para vocês acessarem depois, tá bom? O repositório em questão é esse aqui. Eu vou deixar o link também para vocês, tá? E ele tem essa premissa de resolver os problemas que eu acabei de comentar. Mas antes de
+
+entrar aqui em detalhes, deixa eu explicar uma visão geral. do que eu comentei ali no começo. Bom, o que acontece sem e com as skills do Carpate? A gente tem aqui assumptions silenciosas, ou seja, interpreta a IA interpreta do jeito dela, né? E sai perguntando sem perguntar nada, não confirma, não mostra os tradeoffs. Já
+
+com ele não vai assumir, ele vai perguntar se tiver alguma dúvida, que já é um ponto muito importante. Ai estão começando a fazer isso, mas às vezes a gente precisa solicitar que ela pergunte se ela tem alguma dúvida. Over engineering, isso aqui é o que eu falei antes, né? mexe em coisas que não precisa ou cria códigos necessários. E aqui a skill dele foca em código mínimo, tá? Só precisa mudar ou adicionar o que
+
+precisa para resolver o problema. Scope crep pede para mudar uma coisa e mexe sem o arquivo. Essa aqui é a mais clássica, né? A gente arruma uma coisa, destrói outra. E qual skill? Não é
+
+cirúrgico, somente que pediu seguindo ali a premissa de código mínimo. Sem verificação, ela entrega, diz que tá OK, tu vai testar, tá tudo quebrado. Já no cap ele define critério de sucesso antes, o que ajuda a melhorar a taxa de sucesso, tá? Então, a o resultado típico, né, 300 linhas de código, seis arquivos mudados, nenhuma pergunta e impossível de fazer ali um dif, né, do do que foi alterado no repositório. Já com capate, a gente vai ter menos linhas alteradas, menos arquivos mudados, algumas perguntas para tirar as dúvidas que a IA tem e um DIF muito limpo, somente o que a gente precisou alterar.
+
+Muito simples instalar, passa um comando e aí a gente já consegue estar utilizando. Beleza, galera? Bom, aqui no repositório vocês vão poder entender melhor ainda, né, como ele explica o funcionamento. Beleza? E tem a etapa de instalação. Então, primeiramente tu
+
+adiciona o plugin marketplace, né? E depois tu adiciona o plugin, beleza? Ou tu pode táar usando a opção B, que seria um cloud MD, né, que é baixado no projeto, só que ele recomenda o plugin. Então, vou começar a instalação. Aqui eu tenho um projeto, tá, que eu vou utilizar para testar. Deixa eu abrir
+
+para vocês aqui, ó. Um projeto de gestão de produtos, tá? E aqui eu posso adicionar um produto, ele coloca aqui para mim, tá? Crudezzinho ali de gestão de itens. Eu vou aqui pro cloud code, vou colocar o comando do plugin. Ele vai, aliás, o
+
+marketplace, né? Ele vai adicionar o marketplace. E agora eu vou colocar o comando e adicionar o plugin. Aí eu posso instalar pro usuário, para quem tá trabalhando esse repositório e somente para esse projeto aqui, que é o que eu vou fazer nesse caso. Ficar mais limpo, né? Tu consegue testar, ver se é para ti
+
+e aí se for, tu pode instalar global se tu quiser, tá bom? Agora eu quero utilizar esse cara. Só lembrando antes, galera, a gente tá com as inscrições abertas da formação Vibe Coding, nosso treinamento completo aqui de cloud code, Antigraft, Codex e agora com curso de open code também. Tô atualizando semanalmente esse treinamento que tem acesso vitalício. Já tem mais de 36 horas, mais de 19 projetos, tudo num único treinamento. Beleza? Grupo VIP no
+
+WhatsApp também. Se tu quer aprender aí a criar projetos assistidos por IA, né, sem necessariamente entender tudo de programação, é o lugar certo. Vou deixar o link aqui no comentário fixado. Bom, nesse projeto de gestão de produtos, eu vou adicionar aqui um exports para eu poder exportar e ter esse arquivo de CSV na minha máquina, né? Então, o prompt vai ser o seguinte: adiciona o botão de exportar CSV na tabela de produtos, só exporta os produtos visíveis. Aí galera, antes de
+
+rodar o prompt, só não esqueçam de rodar o comando reload plugins. Ou vocês podem também estar reiniciando a sessão do cloud, né, dando dois control CS aí, fechando ele e abrindo de novo. Dá na mesma, tá? E aí colocar o plugin, o comando, né? Então o nosso pront vai ser o seguinte: adiciona um botão de exportar CSV na tabela de produtos, só exporta os produtos visíveis que estão filtrados, né? Bom, dependendo da
+
+tarefa, já testei antes, se for muito simples de entender, ele não pergunta, tá? Mas ó, ele carregou as skills, podem ver ali que a parte, mas se ele tiver dúvidas, ele vai perguntar e mesmo se ele não perguntar, ele segue os outros processos que foram mencionados ali, né, que fazem parte da estrutura da skill. Então, pode ficar tranquilo, ele vai fazer o processo mesmo sem a etapa de perguntas. A etapa de perguntas serve somente para ele não assumir coisas, tá? Se ele conseguir resolver baseado no prompt, ele vai resolver isso nos poupaempo também, né? Ele vai fazer
+
+pergunta idiota, pergunta que não tem necessidade só para cumprir ali uma etapa. Então notem, né? Vocês t que ver ali ele ativando as skills. Isso é o que prova que o plugin tá ativado. E aqui ele já partiu direto pra execução, porque era algo simples, como eu falei para vocês, ele tá me mostrando aqui etapa por etapa, né? tudo que ele tá
+
+alterando para atingir o resultado e a gente ter o botão de exportação. No final, a gente recebe um relatório de tudo que foi alterado, né, para adicionar essa mudança. Ele ainda fez o teste, então ele fala colunas exportadas, nome, categoria, preço, estoque, status, batem com as colunas visíveis da tabela. Então vamos testar esse botão de exportação. Tá aqui, ó. Se
+
+eu clico, eu consigo ver CSV diretamente aqui no VS Code, exatamente como os produtos que eu quis, tá? Então assim, a gente utiliza as skills do Carpat, beleza, galera? Claro, foi uma demonstração simples de algo que não requisitou eh uma pergunta, né, um questionamento, mas eu poderia forçar usando um prompto. E aí fazer com que todo o processo fosse feito de acordo ali com o que é solicitado, né, fazendo com que todo o processo fosse seguido segundo as skills. Por exemplo, adicione um sistema de autenticação neste projeto, algo mais vago. E vamos ver
+
+como é que ele se comporta agora dessa maneira aqui, né? Sem especificar exatamente e com escopo um pouco maior. Então vejam aqui, galera, eu não vou seguir aqui, eu só quis mostrar para vocês que realmente tá funcional, né? Ele agora pergunta, né? Antes de implementar, preciso alinhar algumas escolhas. Autenticação tem várias formas
+
+de cada uma muda bastante o código. Biblioteca com perguntas que mudam o escopo. Então, vejam aqui que agora ele tá agindo desde a etapa um, que é aquela parte de tirar dúvidas, né? e não saindo só executando o código. Bom, vou deixar os links ali, como eu comentei com vocês, tá? Deem uma olhada aqui, leiam
+
+mais, porque ele tá atualizando bem. Vocês podem ver aqui, ó, a última atualização foi feita 5 dias, né? Então, tá, ele tá mantendo atualizado e ele pode ir adicionando mais funcionalidades, né, para melhorar ainda mais essas skills aí que ele lançou. Projeto tá crescendo bastante, mais 70.000 New Stars e com certeza vale dar uma olhada, né, que ele deu uma traduzida no garfo, né, fork, mas com certeza tudo que ele trouxe até hoje, galera, eu tô gostando bastante. Por
+
+isso que eu tô compartilhando com vocês também mais essa novidade. Último aviso, mas não menos importante, galera, se vocês querem melhorar o prompt de vocês para criar coisas de forma mais assertiva, baixem o guia de g de prompt, o material nosso gratuito, tá aqui na descrição desse vídeo e vai ajudar vocês a planejar promps melhores. Consequentemente vocês economizam tokens e também vocês vão conseguir atingir o resultado de vocês mais rápido, né, com menos interações com a IA. Bom, então por hoje é isso. Vídeo mais rápido, direto ao ponto, mostrando para vocês ali um recursinho novo que lançou faz algum tempo, mas ele ganhou mais notidade agora, né? Carpate tá lançando
+
+vários projetos frequentemente e vale também dar uma monitorada nele, né? sempre lançar uma novidade, pelo menos testar para ver se é interessante, porque é um cara muito inteligente e tá lançando coisas que realmente melhoram muito a qualidade dos projetos criados com Vibe Code. Dei uma olhada na play de Cloud Code, vai est aqui na descrição para ver mais vídeos dele, né, das coisas que ele criou e também os vídeos de Cloud Code para vocês entenderem melhor sobre a ferramenta, galera. E eu vou ficando por aqui. Não se esqueça aí de deixar um like, também se inscrever no canal e claro conhecer a formação Vibe Code. Valeu e até o próximo vídeo.

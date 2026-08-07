@@ -1,0 +1,131 @@
+---
+video_title: "O Claude Code Ficou ABSURDO com Esse Plugin (CLI-Anything)"
+video_id: aUAAA4y3rTo
+channel_name: "Matheus Battisti - Hora de Codar"
+channel_id: UCDoFiMhpOnLFq1uG4RL4xag
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=aUAAA4y3rTo
+video_date: 2026-03-20T15:00:00+00:00
+video_description: |
+  E se eu te falar que dá pra criar uma imagem no GIMP sem abrir o GIMP? Nenhum clique. Nenhuma janela. Só o terminal. Isso é o CLI-Anything, um projeto que acumulou mais de 15 mil stars no GitHub em menos de 10 dias. Nesse vídeo instalo como plugin no Claude Code e mostro controlando o GIMP do zero.
+  
+  🔴 Formação Vibe Coding (Antigravity, Claude Code e +):  https://app.horadecodar.com.br/lp/formacao-vibe-coding?utm_source=yt_cli_anything
+  
+  🟪 Hospedagem para n8n que eu indico: https://hostinger.com.br/matheusbattisti (use o cupom HORADECODAR para ter +10% de desconto)
+  
+  📘 Guia Engenharia de Prompt: https://app.horadecodar.com.br/ebookpages/guia-engenharia-de-prompt
+  
+  Todo software profissional como GIMP, Blender e LibreOffice foi feito pra humanos. Interface gráfica, menus, botões. Agentes de IA não sabem usar GUI. A alternativa hoje é Computer Use que tira screenshot, identifica botão, clica e reza pra funcionar. Lento, frágil, caro. O CLI-Anything resolve isso de outra forma: ele analisa o código-fonte de qualquer software e gera automaticamente uma CLI completa. O agente controla tudo pelo terminal com output JSON estruturado.
+   
+  O pipeline tem 7 fases que rodam automaticamente com um único comando: Analyze, Design, Implement, Plan Tests, Write Tests, Document e Publish. 11 softwares suportados. 1.508 testes gerados. 100% pass rate. Feito pelo HKUDS da Universidade de Hong Kong, o mesmo time por trás do LightRAG e do nanobot.
+   
+  Tem uma comparação importante com MCP que vale entender. O MCP era pra ser a ponte universal entre agentes e ferramentas mas na prática injeta dezenas de schemas na janela de contexto que o agente nunca usa. Os benchmarks do CLI-Anything mostram números impressionantes de economia de tokens e confiabilidade comparado com MCP. Mas não é um ou outro: o próprio Claude Code usa os dois e CLI-Anything gera CLIs que podem ser expostas via MCP se precisar.
+   
+  A instalação é dois comandos no marketplace do Claude Code. Depois roda um comando pra gerar a CLI pro GIMP a partir do código-fonte do software. Ele analisa, implementa, testa e documenta tudo automaticamente. Precisa ter o GIMP instalado na máquina porque ele chama o backend real do software.
+   
+  Na demo peço pro Claude Code criar uma thumbnail de 1280x720 usando o GIMP pelo terminal. Fundo escuro tech com gradiente, título grande centralizado, subtítulo em fonte monospace estilo código, glow no texto e exporta como PNG. Mostro cada passo sendo executado: criação do projeto, layers de background, gradiente, texto, filtros, exportação. O GIMP real processando tudo. Nenhuma janela abriu. O resultado é uma imagem gerada pelo GIMP de verdade controlado inteiramente pelo Claude Code via terminal.
+   
+  Mostro também o comando refine que analisa gaps na CLI gerada e implementa comandos que faltam. Incremental e não destrutivo. Se a CLI não cobrir alguma funcionalidade específica que você precisa, pede pro CLI-Anything expandir.
+   
+  O conceito por trás é poderoso: qualquer software com código-fonte aberto pode ser transformado em ferramenta controlável por agentes de IA. Hoje os programas servem humanos. Com CLI-Anything o Claude Code, OpenCode e Codex podem controlar GIMP, Blender, LibreOffice e mais diretamente pelo terminal.
+   
+  🔗 Links do vídeo:
+  ▸ CLI-Anything: https://github.com/HKUDS/CLI-Anything
+  
+  
+  Entre no nosso servidor de Discord e me siga nas redes:
+  
+  🟣 Discord Hora de Codar: https://discord.gg/Veq4mvsWwk
+  🔴 Instagram: https://www.instagram.com/horadecodar/
+  🔷 Telegram: https://t.me/horadecodar
+  
+  TIMESTAMPS
+  
+  00:00 Conheça o sucessor do MCP o CLI-Anything
+  01:15 Como funciona o CLI-Anything
+  06:50 Instalando o CLI-Anything no Claude Code
+  08:38 Gerando o CLI do Gimp com CLI-Anything
+  11:30 Utilizando o CLI criado
+  14:04 Minhas considerações sobre o CLI-Anything (matou o MCP?)
+---
+Galera, semana passada surgiu algo que vai revolucionar o mundo da inteligência artificial. O nome do recurso é Cai Enfin. Ele é gratuito e vai resolver o problema que o MCP não conseguiu. O que acontece? Com o Cai Nefim, tu consegue tá rodando qualquer software para fazer alguma coisa para ti via inteligência artificial. Ele vai ler o código fonte
+
+desse programa e vai conseguir operar ele perfeitamente. Nesse vídeo aqui, eu vou te mostrar exatamente como tu pode fazer para instalar e utilizar ele, já que tu vai conseguir fazer isso via cloud code. Então fica mais simples as coisas ainda. Segura até o final do vídeo que eu prometo que vai valer a pena tu conhecer essa nova ferramenta, porque com certeza tu vai ouvir falar muito dela nos próximos dias e semanas. Beleza? Eu sou Mateus Batista,
+
+programador há mais de 10 anos e hoje tô explorando muito o mundo da IA e trazendo só o que realmente presta para ti. Se tu curtir a ideia, se tu gostar desse vídeo da didática, não se esqueça, deixa o like, se inscreva aqui no canal, que isso me ajuda bastante, ajuda eu trazer vídeo todos os dias para vocês, beleza? Então bora lá que eu quero contextualizar vocês um pouco antes, né, de ir pra prática sobre do que se trata, né, esse CLI NFT. Eu montei um diagrama aqui só para explicar rapidamente para vocês. A ideia que eu trouxe o Cloud Code aqui é porque ele tem um plugin que a gente consegue instalar e aí utilizar ele. Não sei se vocês lembram, né, mas
+
+uns dias atrás eu trouxe um celai do Google. E para utilizar CELI a gente precisa saber alguns comandos. Quando tem a IA envolvida, isso meio que temos um atalho cortado, vamos dizer assim, porque a IA entende os comandos que tem que utilizar e ela faz por conta própria. A gente só pede em linguagem natural que fica muito mais fácil pra gente. Beleza? Então a ideia é a mesma
+
+aqui. A gente vai estar utilizando o Cloud Code para simplificar o uso do CLI. A gente só vai precisar instalar ele, depois pedir o que a gente quer. Bom, é um software, né, totalmente gratuito. Tem aqui o repositório no GitHub. Depois recomendo que vocês deem
+
+uma olhada, porque ele explica certinho como é que funciona essa equipe chinesa que criou. E eles têm outros softwares, né, Open Soft que eles também criaram. Então é uma equipe bem confiável. O Replay já tá com mais de 15.000 New stars. Então para para vocês verem, né,
+
+que realmente tá bombando. Bom, aqui ele explica tudo, todos os softwares suportados e tal, então vale a leitura, tá? Inclusive eles têm aqui também uma landing page explicando um pouco melhor também como é que funciona LF Thing, mas vamos direto ao ponto aqui só pra gente poder ver em prática. Bom, o que acontece aqui? Os softwares são feitos para humanos, né? Então a gente vai tá
+
+utilizando, por exemplo, os cadral. Aqui eu tenho um botão para compartilhar, eu tenho um botão para começar a criar os quadros aqui, inserir textos, né? E aí a IA ela não consegue propriamente utilizar esse software, beleza? Ela tem que utilizar outros meios que são gravar a tela ou navegar pelo dom, né? Entender como é que tá construída a interface web e isso deixa caro essa essa utilização, né? não é barato. Então veio esse lá
+
+fing com uma outra proposta que justamente faz com que a IA, né, esse esse recurso leia o código fonte, tá? Então ele vai entender como o software foi feito e ele consegue depois dessa análise utilizar ele, tá? Então bota aqui com o resultado e que a gente faz tudo pelo terminal. Só aqui que eu mostrei, né, essa parte aqui são os comandos dele. Então, por exemplo, ah, utiliza o gimpensionar uma foto, utiliza o Blender para fazer alguma coisa, utiliza o Libroft para fazer outra coisa. Então, se a gente
+
+fosse utilizar hoje, a gente tinha que utilizar esses comandos aqui e isso fica um pouco inviável, né? Dependente que utilizar vários softwares. Então, a IA entra muito bem aí porque ela consegue fazer com que os nossos comandos em linguagem natural sejam traduzidos para esses comandos aqui que o Celá entende, tá? O pipeline funciona em algumas fases. Primeiro, ele vai analisar todo o código, tá? E aí vai fazer um mapeamento
+
+do das funcionalidades. Depois ele vai arquitetar os comandos. Então é meio que tudo feito em tempo real, né? Ele não tá pré pronto para um software X. Ele vai analisar como o software foi construído e isso vai gerar pra gente aí um selai, tá? Que a gente vai poder utilizar
+
+justamente isso aqui, né? por exemplo, selai anfing blender. Então ele vai mudando de software conforme a nossa necessidade. Ele vai fazer testes para ver se o que ele criou funciona. Ele vai documentar isso e depois é publicado, né? Então tá
+
+pronto pro nosso uso. Bom, alguns softwares já são suportados. O que acontece? Eles já testaram exaustivamente e eles garantem funcionamento. Gimp, Blender, Inkscape, Audast, Libroft, OBS Studio, Caden Live e mais outros. Então isso, esses aqui
+
+estão garantidos, entre aspas, né, pelo pessoal que inventou o CN. Enfim, outros precisa testar, precisa de ajuste, né, ver precisa ver se vai dar certo. Então não tem ali uma garantia total, mas a gente pode tentar, tá? Aí eu trouxe aqui um pouco sobre a questão do Celine Fing versus MCP, que vai, se vocês ainda não ouviram, né, gerar um grande debate aí. nesse ano, porque o MCP vem cada vez mais sendo atacado, né? Mas não tinha
+
+uma contraproposta para ele e agora tem. Então acaba que o Sai é 30 a é 10 a 32 vezes mais barato, 100% confiável, né, versus 72% do MCP, ou seja, a capacidade dele de executar os comandos certos versus o MCP ali ler as tools e executar, né? Então a gente tem essa comparação sendo feita. LM já treinadas em BH Shell. Então isso é um é um prol a ele, né? Então isso é um ponto positivo
+
+para ele. Também tem outras questões aqui, tá? São um pouco mais técnicas. E a questão que eu comentei ali do MCP, que são muitos tokens para trafegar ali entre o nosso solicitação e a API da IA. Várias ferramentas, tanto que no Antigraft ali, por exemplo, a gente tem até uma limitação de 100 ferramentas ao mesmo tempo, né? E a gente pode ter um
+
+time out se a aplicação parar de responder. Então a gente vai ter vários problemas solucionados ali pelo nosso cel, tá? Então para instalar é só dois comandos e depois um comando para gerar a CLI do software que a gente quer utilizar, tá bom galera? Mais do que falar sobre, melhor utilizar eles, né? Então vamos instalar aqui. Vou instalar
+
+no meu cloud Code e mostrar para vocês como vocês podem fazer também, tá? Mas lembrando, tá tudo na documentação. Depois deem uma olhada aqui que vai valer a pena. Antes disso, galera, não se esqueçam, formação vibe coding está com as inscrições abertas, né? Já lançou essa semana, se já não entrou, né? Vai
+
+entrar o curso de Codex, né? A ferramenta da Open AI. Então, toda semana a gente vai colocar aula nova. Fora esse curso, a gente já colocou várias aulas, principalmente na questão de economia de tokens, que foi o que a galera reclamou lá, beleza? E elas reclamaram onde? O grupo VIP WhatsApp.
+
+Então tem um grupo lá pros alunos trocarem uma ideia, beleza? Então deem uma olhada no link, tá no comentário fixado na descrição para conhecer melhor o treinamento. Bom, inclusive, né, o cloud code é uma das ferramentas principais de treinamento, tá? E falando em cloud code, a gente também tem uma playlist cloud code aqui. O editor vai deixar a TAM, eu vou deixar o izinho, quer começar por aqui, né? Aprender o
+
+cloud code, dominar todos os recursos é uma boa, tem mais de 20 vídeos, se eu não me engano, sobre cloud code, tá? Então, primeiramente, o que a gente vai fazer? Adicionar o marketplace, tá? Então, barraplugin marketplace add, aí o nome da empresa barracelar, enfim, ele vai adicionar o marketplace, né? E a partir do marketplace a gente vai ter acesso ao plugin, que é o CFIN. Então,
+
+plugin CFIN. Aqui eu posso escolher para instalar pro usuário, para todos os colaboradores, né? Então aí tu vai escolher a tua preferida, tua tua opção preferida. Lembrando que eu vou utilizar o GIMP nesse exemplo aqui, né? Para quem não conhece, é tipo um Photoshop, isso aqui é open source. Beleza? Só para
+
+vocês verem, a gente precisa ter o software instalado, que a gente quer utilizar, é óbvio, né? Porque ele vai ler o código fonte dele. Então, fica aí atento a essa esse pré-requisito, tá bom? Depois, que eu vou precisar fazer? Eu vou ter que gerar o sal do gimp.
+
+Então, como vocês viram lá no na parte teórica aqui da aula, cada vez que a gente vai usar um novo software, a gente precisa gerar um cai. Então, o comando vai ser esse aqui, barra sell. Ah, eu vou até reiniciar o cloud para ele entender o plugin, né, primeiro. Então aqui, galera, o cloud code reiniciado, né, depois de instalar o plugin. Agora vou rodar o seguinte comando. Sai nfing
+
+dois pontos selar n pon/gimp. Isso vai iniciar o sellai do gimp no meu via cloud code, né? E aí eu vou poder depois utilizar ele para poder fazer o que eu preciso no GIMP. É aqui, galera, tem que dar todas as permissões que ele pedir para poder criar, né? é como se fosse um início de projeto. Então, se ele pedir
+
+alguma coisa, tu lê ali o que ele solicitou e tu vai eh permitir ali para ele poder inicializar esse celai. Então, galera, aqui é bom ressaltar também, né? Ele tá rodando todas aquelas etapas que eu comentei com vocês. Ele tá lendo ali a Codebase, né, que seria o código fonte, ele vai implementar o Celai, ele vai fazer os testes e depois ele vai entregar pra gente tudo pronto. Beleza?
+
+Vejam que ele criou a pasta do GIMP, que é onde a gente vai precisar utilizar, vai poder utilizar, né, esse elá. Então agora é só aguardar e ficar fazendo os aceites ali se ele pedir mais alguma coisa, beleza? Então se tiver mais alguma coisa aqui no meio para poder precisar escolher, né, para que vai mudar, que vai fazer alguma diferença no tutorial, eu mostro para vocês. Senão eu vou apenas exibir o resultado final, beleza? Olha só, galera, aqui ele já tá nas fases finais, né? Ele já leu todo o
+
+código fonte, demora bastante. Ele já implementou os coreos, né, que seriam os comandos e agora ele tá fazendo os testes. A gente vai dando mais permissões para ele. E aqui deve tá quase finalizando, né? A parte mais complexa ali para ele já foi. Agora
+
+basta a gente ter toda essa suit de testes, ó, tá cerca de 20 minutos rodando e a gente vai poder utilizar esse celai da maneira que a gente preferir. Bom, galera, e aqui ele entra na fase final, né? Então ficou mais uns 5 minutinhos rodando, né? E aqui é a criação meio que da documentação, né, como a gente viu lá naquele passo a passo que ele faz, tá? Então para todo programa vai ser a mesma coisa e aí ele vai entregar pra gente o resultado final para que a gente possa utilizar. Ó,
+
+galera, então aqui é a finalização, ó, todas as fases completas. Ele vai detalhando como é que ficou a estrutura que puxou para cima, cara. Depois de umas todas as ações que teve no cloud code, o terminal tá subindo, cara. Mas, ó, então ele mostrou toda a questão ali de criação, né, do que ele fez, skills, testes, tudo mais. E aqui ele falou que passou em 128 testes, não falhou em nenhum, tá? E agora a gente vai
+
+utilizar. Então, para utilizar a gente vai se referenciar a esse celai que ele criou, tá? Então, como é que a gente pode ver se deu certo? Por exemplo, utilizando um comando de selai. Deixa eu só reiniciar aqui o cloud code. Na
+
+verdade não é reiniciar, né? Sair do cloud code pra gente poder utilizar o selai, ó. Então, se eu utilizo sell anything gimp, agora eu tenho aqui, ó, os comandos que funcionam no CELI, só que eu não quero usar aqui porque senão eu precisaria dominar todos os comandos, tudo mais, né? Aquela questão ia ser um pouco mais burocrático, né, para chegar no resultado que eu quero. Então eu vou utilizar o cloud code de novo e vou aqui mandar um prompt para criar uma thumbnail. via Excelent GIMP, né, que a
+
+gente acabou de criar, como se fosse para um vídeo meu futuro no YouTube, né? Então vamos ver aqui. Tem o Prompt, tão usando Celine F gimp, cria uma thumbnail para um vídeo sobre celo escuro, técnico, com gradiente azul, título Caifing, grande no centro em branco, subtítulo terminal em verde escrito estilo código. Aplique um glow no título e exporta como thumbnail PNG. Então, vejo aqui, ele tá fazendo todo o processamento e a gente vai receber o resultado final depois. Vejo que ele já
+
+tá agindo na pasta que ele acabou de criar. Coisa muito importante também, galera, quase é me esquecendo, muita gente me pergunta nos vídeos como eu crio meus promptes. Eu condi tudo no material gratuito, o guia engenharia de prompt, né? Nome bem explícito, né? Do que eu quero mostrar para vocês aqui, tá? Aqui na descrição desse vídeo, tá?
+
+Então, só clicar aqui e baixar. Beleza? Bom, vamos então esperar ele terminar e depois eu vou mostrar o resultado final para vocês do nosso Cai com GIMP. Então, galera, foi lá e criou a TAM para mim. Vamos resultado final aqui, ó. Então,
+
+aqui foi o resultado da TAMP. Claro, né? Não, prompt muitos detalhes e tal, mas temos aqui um resultado final. Isso é o que é mais importante. E ainda outra coisa legal é que vocês notaram ali no terminal, ele já criou um script que vai me ajudar a gerar as próximas thums. Então o
+
+processo tende a ficar mais rápido também. O negócio vai ganhando inteligência e isso vai melhorando ainda mais o consumo de tokens, né? Ou seja, eu vou gastando menos e tendo resultados cada vez melhores também com a ferramenta. Então aqui foi um pequeno exemplo do que o Celine Fing pode fazer, tá galera? Recomendo novamente que vocês vejam o repositório aqui. Isso aqui vai
+
+elucidar todas as outras dúvidas, né, que vocês possam ter, porque eles explicam como forma de documentação exatamente como funciona tudo que é suportado. Eh, uma coisa que eu não falei, né, precisa do Python instalado, porque ele roda várias coisas em scripts Python, né? Mas se vocês usam algum software aqui para fazer algum trabalho do dia a dia, tentem implementar, só para vocês verem como ele pode ajudar vocês, né, nesse trabalho. Bom, galera, por hoje é isso. Espero que vocês tenham curtido a ferramenta. Anotem aí. Com
+
+certeza se vocês vão ouvir muito sobre ela, como ouviram do MCP, né? MCP também virou uma febre. Ele ainda é muito utilizado e tal, mas como eu falei, ele tem esse problema, ele falha às vezes, ele depende do servidor externo, ele pode alucinar entre as tours que ele tem. Muitas ferramentas limitam a quantidade de ferramentas MCP que podem conectar. Então aqui é uma outra forma de abordar o problema e possivelmente resolver, tá? Não esqueça também a
+
+formação Vibe Code está aqui no comentário fixado. Se vocês têm interesse em aprender graft, cloud code, se inscrevam, acesso vitalício, tem grupo no WhatsApp, então treinamento excelente que vai de acordo com o que o rumo da tecnologia de criação de software está indo, tá? A gente tá colocando novas aulas todas as semanas, são recentes também, né? Já tem mais de 30 horas para vocês aproveitarem o conteúdo, beleza? Não se esqueçam, se inscrevam no canal, deixem aquele like, isso ajuda muito e faz com que eu consiga entregar vídeos para vocês todos os dias. Bom, deixe suas considerações
+
+sobre o Celine Fing aqui. Quero ouvir vocês e espero vocês também no próximo vídeo.
