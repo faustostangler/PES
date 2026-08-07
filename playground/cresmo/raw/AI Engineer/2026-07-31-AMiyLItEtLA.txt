@@ -1,0 +1,154 @@
+---
+video_title: "fighting slop with slop — Vaibhav Gupta, Boundary"
+video_id: AMiyLItEtLA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AMiyLItEtLA
+video_date: 2026-07-31T01:11:30+00:00
+video_description: |
+  You cannot tell great engineers what to do, and you increasingly cannot tell what an agent did either, so Vaibhav Gupta's answer is to fight slop with slop. At Boundary the team turns the same cheap, sloppy generation loose as a tool: agents that run constantly over the transcripts of other agents, flagging hallucinations, spotting which tool calls produced errors, and comparing which approaches produced fewer. He pairs that with hard invariants, the design docs, rules, and CLI checks that do not change for months and tell you exactly where a codebase stops converging, so the messy detection layer sits on top of something stable.
+  
+  The deeper move is to attack the foundational layer from first principles. Instead of trusting generated code, he leans on type systems that make whole classes of mistakes impossible: types get inferred without you writing them, a division by zero is guaranteed to be handled or the code will not build, and there are no silent unknowns left for an agent to guess at. That is the bet behind BAML, which lets you work across Python, TypeScript, or Rust with strong boundaries around each function so an agent can move fast inside walls it cannot breach. His closing challenge is to go build these sloppy tools yourself and constrain the systems underneath them, because that is what actually wins the war on slop.
+  
+  Speaker info:
+  - https://x.com/vaibcode
+  - https://www.linkedin.com/in/vaigup
+  - https://www.youtube.com/@boundaryml
+  
+  Timestamps:
+  0:00 - Fighting slop with slop
+  0:27 - Code reviews and invariants
+  2:08 - Building rules that don't change
+  3:00 - Design docs with notifications
+  4:03 - CLI tools that catch where things break
+  5:08 - Agents reading agent transcripts
+  5:57 - Detecting hallucinations and errors
+  9:24 - Attacking the foundational layer
+  11:03 - Execution traces from first principles
+  14:26 - Type safe tools across platforms
+  15:42 - Making whole error classes impossible
+  17:57 - BAML across languages
+  20:37 - Go build the sloppy tools
+---
+[música]
+
+Combater a lama com lama. Meu nome é Vaibhav e vou falar sobre algo que, a princípio, pode parecer um pouco bobo. Vou mostrar rapidamente as práticas de engenharia da nossa equipe. Não fazemos revisão de código. Exigimos que todos os engenheiros trabalhem em projetos em paralelo.
+
+E não temos padronização em relação a como as pessoas trabalham com IA. E eu sei imediatamente o que quase todos vocês estão pensando. Provavelmente somos uma startup da geração Z da YC. E posso garantir que sou claramente um millennial. Então, o que realmente fazemos em nossa empresa sem revisões de código?
+
+Bem, há cerca de 3 anos decidimos criar uma linguagem de programação. Isso é algo que não admite absolutamente nenhuma margem para erros. É algo que precisa funcionar exatamente da mesma maneira todas as vezes. É algo que você não pode simplesmente mudar um ano depois ou um mês depois porque tomou uma decisão ruim de design. Você precisa estar correto. E nos últimos 3
+
+anos temos travado uma guerra implacável contra a comida de má qualidade. E quando me deparei com esse inimigo pela primeira vez, recorri ao meu grande mentor. Sue, a bagunça. E ele me ensinou algo. Para derrotar a lama, precisamos nos tornar a lama.
+
+Então começamos, nos preparamos e começamos a vencer. Então, pensando bem, o que é "slop"? Código desleixado é simplesmente qualquer código que você não lê. E, quer vocês admitam ou não, este é o mínimo de descuido que a sua base de código jamais terá. Valorize isso.
+
+Então começamos a lutar contra a lama e começamos a lutar contra a lama. Então, como podemos lançar uma linguagem de programação estável com essas práticas de engenharia? Bem, a primeira escaramuça que tivemos foi uma escaramuça de estandartes. A parte mais difícil de contratar ótimos engenheiros é que, infelizmente, você não pode dizer a eles o que fazer. Alguns querem usar o Claude, outros o Codex, e outros ainda a última novidade que encontraram no Hacker News.
+
+Então, em vez de tentarmos manter padrões em nossa base de código, fizemos algo que é invariável. Criamos um arquivo architecture.md. Em vez de usar Claude.md, escolha algo que todos os modelos possam entender facilmente. Este arquivo precisa ser
+
+incrivelmente pequeno e só pode conter itens que não sofrerão alterações por meses ou anos. No nosso caso, são as camadas do compilador. Você aprofunda-se no compilador e instrui o agente a se comunicar com pelo menos uma outra pessoa. Isso atrasa um pouco o processo. Agora que temos padrões, qualquer pessoa pode usar o que quiser. Mas o verdadeiro
+
+inimigo que enfrentamos foi, na verdade, a batalha do design. Todos aqui sabem que você precisa escrever documentos de design perfeitos. E temos uma regra muito simples na nossa equipe. O código pode ser malfeito, a escrita não. E, claro, se eu disser isso a todos os engenheiros, eles escreverão textos belíssimos e farão tudo à mão, sem usar inteligência artificial.
+
+Bem, infelizmente não. Então, nós criamos uma ferramenta de design, uma ferramenta de documentação de design. O que esta ferramenta de documentação de design faz é substituir efetivamente o Notion e o GitHub para documentação de design. Terá controle de versões, comentários, tudo o que você deseja. E, obviamente, fazemos isso, as pessoas usam isso. Bem, infelizmente não.
+
+Criamos outra ferramenta em cima disso. E essa ferramenta era uma integração do Slack para essa ferramenta. Sempre que um documento de projeto era atualizado, este canal recebia notificações. E o que acabou acontecendo foi que esse canal se tornou o mais popular da nossa empresa muito rapidamente. Às 2h da manhã, alguém enviou um novo documento de design e três pessoas começaram a lê-lo imediatamente porque o acharam interessante. Então, o
+
+mais interessante são os documentos de design que não vão mudar. Mas isso não foi suficiente. Na verdade, tudo isso é feito com arquivos Markdown e scripts CLI simples que permitem que ele funcione como o GitHub, sem ser o próprio GitHub. Então, agora os agentes podem fazer isso. Mas o verdadeiro problema com tudo isso é que eu construí isso, tive um pequeno surto de psicose por IA e comecei a enviar 10 documentos de design por dia, e logo a equipe estava brigando com a minha bagunça.
+
+Então, tivemos que ir e voltar à última regra. Essa última regra era a seguinte: se você vai publicar um documento de design, precisa exigir que as pessoas realmente o leiam. E com esse último padrão, de repente passamos a ter documentos de projeto de altíssima qualidade. Mas e a batalha da arquitetura? Como você faz para que sua base de código convirja? Criamos outra ferramenta. Essa
+
+ferramenta basicamente visualiza nosso grafo de dependências internamente, incluindo algumas dependências externas, e nos permite acompanhar as mudanças na base de código. Possui limites semânticos, pacotes individuais, mas o mais interessante é que podemos construir ferramentas de linha de comando que garantem que certas invariantes não possam ser quebradas. E o que isso faz é que, quando Claude cria um novo pacote ou adiciona uma dependência que apresenta vazamentos, agora temos o CI/CD sendo alterado ou um simples histórico de commits do Git que nos diz exatamente onde as coisas param de funcionar. E com isso, conseguimos de fato fazer com que nossa arquitetura mude. Não alteramos nossa arquitetura nos últimos três ou quatro meses.
+
+Mas, por mais que façamos documentação de design e por mais que tenhamos um código estável, você realmente lançaria um código sem lê-lo? Você confiaria na sua equipe para fazer isso? E pense em uma linguagem de programação. Uma linguagem de programação possui um número limitado de invariantes. Você tem genéricos, closures, alocação de memória e limites FFI.
+
+Você poderia confiar nesse sistema? Python ainda apresenta bugs 25 anos depois. Bem, aqui foi onde fizemos algo um pouco diferente. O que fizemos foi construir um sistema que mantém agentes em constante execução, criando programas BAML. Aceitamos esses programas BAML.
+
+1 segundo. E temos agentes que tentam criar algo do zero. Em seguida, analisamos toda a transcrição do caso Claude, observamos quais ferramentas foram utilizadas, o que aconteceu e, obviamente, nós, como seres humanos, podemos examiná- las. Mas, mais importante ainda, podemos enviar agentes para inspecioná-los. E os agentes descobrem o que era bom e o que era ruim.
+
+E não apenas o que estava errado em termos de erros na linguagem, mas também o que exigiu três chamadas de ferramenta quando deveria ter exigido apenas uma. E então podemos prosseguir e identificar os problemas, e podemos fazer com que os humanos colaborem com esses problemas para descobrir quais são reais, quais são alucinações, quais não são... não tenho bom gosto, por mais que deteste usar essa palavra.
+
+E então podemos ter agentes que criem soluções para esses problemas e os resolvam. E, mais importante ainda, em vez de apenas tentarmos detectar esses problemas, podemos ir um passo além. E se você pudesse encontrar características da linguagem e, em vez de adivinhar o que é bom, adivinhar qual habilidade é boa, você pudesse fazer um teste A/B? Você poderia descobrir quais exigiram menos chamadas de ferramentas, qual...
+
+qual cometeu menos erros, qual produziu o resultado correto e saber deterministicamente o que está acontecendo . A questão é que você pode começar a construir sistemas orientados a dados sem nunca escrever uma única linha de código. E o que realmente me importa mais aqui não é que alguma dessas ferramentas seja especificamente o que você deva usar para construir algo. Mas a verdade é que, para criar uma linguagem de programação, não seriam necessárias oito pessoas. Não teria levado menos de dois anos.
+
+Isso teria exigido centenas, milhares, dezenas de milhares de horas de trabalho, e mesmo assim o sistema continuaria apresentando falhas. E hoje podemos simplesmente gastar milhões de tokens e fazer funcionar. E podemos torná-lo estável. E vocês dois podem ir para casa e construir essas ferramentas internas e essas ferramentas improvisadas para garantir que suas bases de código possam ser lançadas sem realmente precisar ler cada linha de código. Porque seus engenheiros não vão fazer isso .
+
+E acho que podemos começar a vencer essa batalha contra a má qualidade. E à medida que vencermos essa batalha, a desleixo poderá ser derrotado. Mas, infelizmente, tenho algo triste a dizer. Acho que ainda vamos perder a guerra. Acho que o motivo pelo qual vamos perder esta guerra é porque alguns dos fundamentos que tentamos usar estão quebrados.
+
+Quantos de vocês já usaram TypeScript? Provavelmente a maioria de vocês já deve ter feito isso, ou pelo menos seus agentes já, então algo por aí. Você sabia que o principal objetivo do design do TypeScript é encontrar um equilíbrio entre correção e produtividade? E há um asterisco aqui porque o que eles realmente querem dizer é produtividade humana. E, pensando bem, existem coisas que você jamais faria em uma linguagem de programação, na camada mais fundamental, se estivesse projetando para um mundo onde os humanos nunca escrevessem uma única linha de código. Deixe-me mostrar-lhe o que isso
+
+realmente significa. Vou escrever algo e tentar adivinhar o que esse código faz. Bastante seguro. E quanto a esta? Ou ainda mais, esta aqui. Por que transformamos as coisas em
+
+sequências de caracteres quando as classificamos? Isso é simplesmente um erro inerente à língua, quer você goste ou não. Que tal isso? Adoro esta parte do TypeScript. E sabe o que meu agente adora?
+
+Esta parte do TypeScript. Isso é um erro de digitação inerente à língua. E, quer você goste ou não, os sistemas apresentarão falhas se você os construir usando essas ferramentas. Ah, desculpe, me expressei mal. Mas, se você pensar no que o JavaScript faz, o JavaScript existe, e só depois que o JavaScript passou a existir é que começamos a construir sistemas para integrá-lo em camadas. Criamos o
+
+CoffeeScript, depois o TypeScript, e agora estamos tentando construir um fato. Mas o problema é que a coisa que está por baixo já está quebrada. Além disso, a forma como escrevemos código também é diferente agora. Então, por que estamos tentando corrigir algo assim ? Por que não tentamos fazer algo um pouco diferente?
+
+E acho que, se tentarmos fazer isso, provavelmente precisaremos de uma língua inventada. Então, deixe-me mostrar o que o BAML realmente pode fazer. E quando você começa a pensar a partir dos princípios básicos, como pode tentar combater a ineficiência desde a camada fundamental? Eu continuo falando sobre não ler código. Será que isso importa mesmo?
+
+Bem, deixe-me mostrar uma nova maneira de pensar sobre código. E isso não significa que todos nós tenhamos que fazer isso imediatamente. Mas, e se toda vez que eu olhar para o código, opa?
+
+E se, toda vez que eu olhasse para um código, o que eu realmente visse não fosse o código em si, mas uma pequena ferramenta que pudesse visualizar todo o código para mim? Ao clicar, fui direcionado para as linhas de código exatas às quais o link estava vinculado. Se eu quisesse ter uma visão um pouco mais ampla, poderia dar zoom, clicar e expandir a imagem. Eu poderia navegar pelas minhas bases de código de uma forma mais interessante. Vou deixar isso rodar bem rápido, mas enquanto isso, vou mostrar um pipeline diferente.
+
+Mesmo sem que nenhum de vocês precise ler o código, vocês sabem que estou configurando algumas coisas e que tenho um loop de agente por causa dos limites semânticos presentes ali. Posso expandir isso. Posso continuar expandindo isso e posso dizer: "Não, isso é muita bobagem. Vamos deixar assim mesmo ." E vá embora.
+
+Assim, em vez de ter que entender todo o código, posso optar por ler e entender apenas as partes que me interessam e ir diretamente para as linhas específicas que me interessam. Mas, se voltarmos ao pipeline anterior que estava em execução, e se, enquanto ele estiver em execução, eu puder obter um rastreamento completo da execução? Num mundo onde não lemos todo o código, a única maneira de entendê- lo é através do rastreamento de execução. E, na verdade, analisando exatamente quanto tempo era gasto em cada parte do meu programa em determinado momento. Se você quiser realmente rastrear o andamento do seu programa, pense em quão lento ele ficaria se você tivesse que rastrear tudo em Python ou TypeScript. É insustentável.
+
+E o melhor de tudo é que, se você começar pelos princípios básicos, pode fazer com que isso tenha um custo de desempenho efetivamente zero. Não só podemos torná-lo excelente para humanos, mas, como tudo já foi desenvolvido para agentes, você pode criar um sistema de rastreamento para cada arquivo, permitindo que Claude navegue por ele. Assim, Claude consegue identificar bugs, erros e ineficiências, e começar a otimizar seu código sem que você precise fazer isso. E acho que, se começarmos a pensar nisso dessa forma, não se trata tanto de ler todo o código, mas sim de nós, humanos, entendermos o sistema com o qual estamos trabalhando. E as ferramentas que você pode construir podem fornecer informações sobre o sistema com o qual você está trabalhando.
+
+Mas acho que há outra camada nessa questão. Passamos décadas desenvolvendo ferramentas de IDE. E pense em quanto tempo levou para que alguém como eu, que até hoje não sabe como sair do Vim, finalmente conseguisse começar a usar o VS Code. Era um dia lindo quando isso aconteceu. Eu me tornei um programador de verdade.
+
+Bem, segundo algumas pessoas, eu ainda não sou, porque não sei escrever código em Vim. Mas, afinal, como seria uma ferramenta que prioriza o agente ? Acho que todos nós estamos familiarizados com o grep, então não vou falar sobre ele. Mas vou falar sobre o Ripgrep, porque o grep não deve ser usado em lugar nenhum. Se eu quiser usar o comando grep no meu código-fonte para entender o que ele faz, eu usaria o Ripgrep, algo como "calculate", e ele me mostraria um monte de código onde tudo estava sendo usado.
+
+E talvez isso fosse de alguma utilidade. Mas, e se em vez disso você pudesse começar a descrever o código e dizer: "Você pode descrever o cálculo para mim?" E se viesse com todas as docstrings? E se viesse com o código-fonte original ? E se também mostrasse todos os lugares onde o produto é usado, inclusive no motor?
+
+Podemos transformar algo que antes exigia múltiplas chamadas de ferramentas em uma única chamada de ferramenta de repente. E se, em vez de ter que fazer uma busca na internet, você quisesse aprender sobre as bibliotecas que está usando e pudesse simplesmente pedir informações sobre qualquer biblioteca externa? E simplesmente te daria. Porque quando comecei a aprender a programar, uma lição valiosa que aprendi foi que o código é sempre a fonte da verdade. Não leia nada além do próprio código.
+
+A documentação pode mentir, a descrição, o arquivo de arquitetura ou o arquivo readme certamente mentirão, mas o código não pode mentir. A menos que você esteja trabalhando em arquiteturas muito peculiares . E então, ao seguir por esse caminho, você passa de não ler o código a entender a arquitetura. Você passa de não precisar pesquisar o código para entender exatamente o que está obtendo em cada chamada de ferramenta. Mas, qual será o próximo passo ? Bem, a última coisa que faço para
+
+realmente entender o código é executá-lo. E se tudo o que você executasse, cada função que você já escrevesse, estivesse imediatamente disponível? E eu pudesse puxar esse código para cá. Estava imediatamente disponível como um comando CLI simples. Portanto, se eu executar o comando " add", " add" se torna um comando da CLI que possui os parâmetros A e B associados a ele. E eu posso
+
+simplesmente executar o programa muito rapidamente e ver o que acontece. E se todas as minhas ferramentas de linha de comando pudessem ser integradas em uma única linha de comando independente? Multiplicar. Isso me permite executar o programa sem precisar realmente executar nenhum código. E agora é um binário CLI completo com funções integradas. De repente,
+
+podemos criar ferramentas muito rápidas, onde os agentes não precisam ficar procurando informações no fluxo de trabalho . Tudo é seguro em relação aos tipos, tudo é determinístico e tudo é, na verdade, previsível. E a melhor parte é imaginar que você poderia desenvolver em qualquer sistema, e seus agentes não precisariam se preocupar com implantações em Windows, Mac e Linux. E você pode selecionar qualquer camada que desejar, e a compilação é feita para qualquer arquitetura, incluindo sistemas WASM. De repente, como engenheiro, você se sente supermotivado. Você não está mais
+
+limitado pelo que pode fazer nos sistemas subjacentes que está bloqueando. Você pode simplesmente se mover muito rápido. Você pode se mover na velocidade de um agente. Mas, muito do que tenho falado até agora diz respeito a ferramentas. E se tentássemos corrigir alguns dos verdadeiros pecados do JavaScript? Algumas coisas
+
+que estão profundamente enraizadas na língua. Não me refiro a coisas simples, mas a coisas mais importantes , como erros. Você já viu algum tratamento de erros ser tão elegante, além do Rust? O que eu vejo os agentes fazerem por aqui é usar blocos try-catch, e depois continuar aninhando blocos try-catch, um após o outro . E eventualmente eles desistem e dizem: "Console.log - ocorreu algum erro" e
+
+resolvem o problema. E se pudéssemos fazer o tratamento de erros desde os princípios mais básicos? O que acontece nesse mundo? Bem, eu te mostrei como somar, multiplicar e subtrair. Eu não te mostrei como dividir.
+
+Dividir é perigoso. É assustador. Então, vamos dar uma olhada em dividir. Como você pode ver aqui, a função `divide` gera um erro de divisão por zero. Mas, o que mais acontece? A função
+
+sabe, na verdade, que está gerando um erro de divisão por zero. Sem que você precise escrever nenhum código. Se eu acessar a função calcular, que em algum momento chama dividir, essa função também sabe que está gerando um erro de divisão por zero. Assim, os tipos de erro agora são inferidos sem que você precise fazer qualquer suposição. Isso significa que, se você detectar ou tratar erros, podemos oferecer garantias exaustivas, e o compilador pode provar que você tratou ou não o erro. Chega de adivinhações. Não há
+
+incógnitas. É garantido que será comprovado. Portanto, se você quisesse implementar uma API que garantisse que nunca lançaria exceções, bem, esse sistema está quebrado porque não atende às restrições. Há dois erros que você não está lançando. Se você quiser ir pegar isso, bem, eu posso escrever o código para isso em um segundo.
+
+Mas você pode começar a detectar certos erros. Bem
+
+, por enquanto vou retornar um valor sentinela. E agora, essa função de análise sintática, que antes gerava erro de divisão por zero, tem a garantia de não gerar mais esse erro, porque se eu capturar alguma exceção aqui, retornarei o valor zero todas as vezes. O compilador e as ferramentas podem fazer muito trabalho por nós. E já estamos acostumados com isso em nossas bases de código. Muitos de nós provavelmente não sabemos como os compiladores funcionam internamente, e mesmo assim confiamos neles.
+
+Código é uma questão de confiança. O motivo pelo qual não usamos código de aprendizado de máquina indiscriminadamente é porque ainda não confiamos nele, pois os sistemas subjacentes não possuem rigidez suficiente. Mais uma coisa. Mas antes de dizer para vocês saírem escrevendo um monte de código de aprendizado de máquina, porque eu já estive lá e posso dizer o que alguém me diria se eu dissesse: "Ei, usem essa nova linguagem de programação. Ela vai resolver todos os seus problemas." Isso
+
+só vai trazer consigo uma série de novos problemas. Então, dissemos: "Acho que vamos perder a guerra contra a incompetência se tentarmos pedir a todos que reescrevam todo o seu código no mundo para este novo sistema." Então, como seria uma solução desse tipo, em que você não precisa reescrever todo o seu código? Bem, o que começamos a fazer foi pensar nisso há cerca de dois anos. E nós dissemos: "E se você pudesse usar aprendizado de máquina não apenas de forma independente, como mostrei hoje, mas também dentro de qualquer linguagem existente de sua escolha? De Python a TypeScript,
+
+de Rust a Go, de Ruby a Java, e até mesmo qualquer outra linguagem nova que surgir depois disso." E se todas as funções em aprendizado de máquina fossem imediatamente acessíveis na linguagem de sua escolha? Nesse caso, estou chamando a função de cálculo de aprendizado de máquina diretamente do Python, e ela é totalmente segura em relação aos tipos de dados. Não só temos a opção de calcular, como também temos a opção de calcular de forma assíncrona, caso alguém queira escrever código assíncrono. Portanto, embora o aprendizado de máquina não tenha coloração de funções, ele oferece a vantagem de permitir que você faça o que quiser em todo o seu código.
+
+Mas e se você optasse por algo um pouco mais extravagante? E se você começasse a passar lambdas entre diferentes linguagens? Tenho uma função aqui que é chamada com um tempo limite (timeout). Essa função expira após um determinado número de milissegundos, e isso ocorre se o trabalho não for concluído. E isso é garantido, não importa quanto tempo leve.
+
+Bem, nesse mundo, você pode até mesmo passar lambdas Python pela ponte. Você pode atravessar a ponte com itens genéricos. Você pode passar closures. Deveria funcionar sem problemas, para que os engenheiros não precisassem se preocupar com isso. E, mais importante ainda, para que quando o agente fizer algo, o sistema de tipos nunca minta. O sistema de tipos torna-se o
+
+centro absoluto da verdade, impedindo que invariantes entrem em sua base de código. E o que eu realmente queria falar hoje não era sobre uma coisa específica. Mas é esse o conceito geral. É possível construir sistemas incrivelmente complexos sem sistemas tradicionais como revisões de código. Você não precisa. Você pode trabalhar em projetos
+
+paralelos e usar IA da maneira que quiser, sem exigir qualquer tipo de padronização. Mas o mais importante é que você precisa ser extremamente criterioso sobre como sua equipe de engenharia realmente utiliza os sistemas internos. Quando começamos a desenvolver o BAML, eu não imaginava que seria possível criar alguns dos softwares que desenvolvemos. E ontem mesmo um dos nossos engenheiros construiu um compilador C parcial inteiramente em BAML. Então, quando começo a explorar os limites desses sistemas e você para de ler o código, de certa forma, na minha opinião, isso abre as comportas para que sua equipe de engenharia finalmente preencha as lacunas que existiam no processo antigo. Você já trabalhou em uma
+
+empresa que não tinha CI/CD? Disseram que adicionar CI/CD nos atrasaria. Eles diminuem o ritmo por 3 meses enquanto adicionam o material, mas depois disso, o ritmo aumenta bastante. Nossos processos precisam evoluir se quisermos entregar na velocidade de um agente. E lembre-se, esta é a menor quantidade de erros que sua base de código jamais terá até hoje. Então, simplesmente aceite
+
+e comece a lutar contra isso. Eu me apaixonei por software há cerca de 15 anos, e foi a primeira coisa que realmente mudou a forma como eu percebo o mundo. E eu realmente não quero que a má escolha vença. E acredito que todos nós podemos construir um mundo de softwares belíssimos. E eu acho que o que é preciso é que cada um de vocês vá para casa hoje e construa essas ferramentas improvisadas. Torne seus sistemas mais
+
+robustos. Torne seus processos mais robustos. E então, para os mais corajosos de vocês, quero que voltem e reflitam sobre esses sistemas fundamentais de camadas estruturais. Pense em como eles estão quebrados e veja se consegue imaginar uma maneira de consertá-los. Acho que precisamos de um novo Git. Acho que
+
+precisamos de um novo banco de dados e, sim, acho que precisamos de uma nova linguagem de programação. Meu nome é Vaibhav e trabalho na Bemo. Obrigado.

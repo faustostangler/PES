@@ -1,0 +1,78 @@
+---
+video_title: "You Didn't Ship a Bug. You Just Wrote It for a Human. - Ravi Madabhushi, Scalekit"
+video_id: lMCxVorb9wM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=lMCxVorb9wM
+video_date: 2026-07-19T16:00:06+00:00
+video_description: |
+  We built a demo agent to show customers how to connect agents to their tools. A simple chat assistant — Gmail, Calendar, a handful of connectors. It ran on a 15-minute schedule. And every 15 minutes, our production database strained. Latency crept up and alerts fired. Then settled.
+  
+  Then, it fired again.
+  
+  It took us a while to find it. One line - a "last seen" timestamp updating on every tool call. Written for a human who logs in once. Our agent was calling it sixty times a second. We had built infrastructure to show customers how to connect agents to their tools. We hadn't noticed we'd built it for humans.
+  
+  That line wasn't a bug. It was a design assumption. And it's not just us - 60% of all production LLM errors trace back to rate limits. They are not model failures or bad prompts. Infrastructure that never anticipated this kind of traffic. As one developer put it: "Rate limits can't tell the difference between agent legitimately needs 100 calls and agent is just looping." Because they were never designed to. They were designed for humans.
+  
+  Every layer of the stack your agents depend on carries the same assumption — that the user on the other end is a person, doing one thing at a time, at human speed. Your agent isn't. And until your infrastructure knows that, production will keep finding the places where it doesn't.
+  
+  This talk is about what we learned from finding it, what it actually means to treat agents as a first-class principal, not a fast human, and what changes when you design for that from the start.
+  
+  Speakers:
+  - Ravi Madabhushi (Scalekit): Ravi has been building infra for how software talks to other software for more than a decade. He co-founded Pipemonk — a SaaS integration platform acq. by Freshworks (NASDAQ listed) then spent years leading product on Freshworks' auth platform as it scaled to 50K+ businesses and 2M DAUs.
+  
+  At Scalekit, he's applying that to a harder version of the same problem: not humans logging into software, but agents taking actions inside it. What breaks is different. What it costs when it breaks is worse.
+    X/Twitter: https://x.com/ravibits
+    LinkedIn: https://www.linkedin.com/in/ravibits/
+    GitHub: https://github.com/ravibits
+---
+Olá, muito obrigado por assistirem. Meu nome é Ravi e sou um dos cofundadores da Scale Grid. Hoje, vou falar sobre como você precisa pensar arquiteturalmente desde a base ao construir as APIs de seus aplicativos, seus servidores MCP para agentes e como a arquitetura focada no ser humano não escala bem para agentes. Há algum tempo , estávamos analisando nossos números de desempenho e latência, e uma coisa que nos chamou a atenção foi como nossa latência aumentava ritmicamente a cada 15 minutos. Nada prejudicial, apenas uma curiosidade para analisarmos. O que notamos
+
+foi muito interessante. Então, em nossa plataforma de infraestrutura de identidade e autenticação, temos esse pequeno registro de data e hora que marcamos para cada usuário, para dizer: "Ei, quando o usuário foi visto pela última vez?" ou "Quando o usuário esteve ativo pela última vez ou realizou a última ação em nosso sistema?" para que possamos prever: "Ei, este usuário é um usuário ativo. Este usuário não é tão ativo." Mas, uma coisa que
+
+percebemos foi que esse sistema foi construído principalmente para humanos, mas quando os agentes começaram a acessar nossas APIs nos últimos 12 meses, percebemos que essa atualização da última visualização está acontecendo 60 vezes mais rápido do que o normal, e isso está criando uma pressão desnecessária em nosso sistema de gravação de banco de dados. Então, claro, é algo inofensivo. Conseguimos resolver o problema com muita facilidade. Nós simplesmente faríamos a atualização em lote, em um segundo nível, e não a cada vez que precisássemos atualizá-la. Isso nos levou a uma verdadeira espiral de descobertas.
+
+Portanto, a premissa que foi quebrada era com que frequência nosso sistema teria que atualizar esse registro de data e hora em cada linha, e tudo bem. É tudo uma questão de velocidade, latência, etc. Mas o que me preocupava era: "E se algumas das nossas suposições sobre autenticação e autorização precisarem ser completamente repensadas e reformuladas no que diz respeito aos agentes, porque as projetamos inicialmente pensando em humanos como atores?" Para contextualizar, trabalhei nos últimos 10 anos com operações de identidade e autenticação, construindo uma plataforma de identidade na Freshworks, que é utilizada por milhões de usuários diariamente, centenas de milhares de clientes em todo o mundo. Mas, trata-se predominantemente de usuários humanos, certo? Ou,
+
+na melhor das hipóteses, APIs. Mas, na minha opinião, as APIs também são acessadas por máquinas que foram programadas por humanos. Não é tão ruim assim, né? Mas o que percebi é que o panorama fundamental mudou drasticamente nos últimos três ou quatro anos. Temos uma visão privilegiada e única de como os desenvolvedores estão criando agentes atualmente e como estão contextualizando esses agentes com dados de aplicativos de terceiros, como Salesforce, Databricks, HubSpot ou Notion. O que
+
+percebemos é que a maioria dos agentes que nossos clientes estão criando têm permissões e escopos muito maiores do que a responsabilidade ou a função do agente . Novamente, não é porque os desenvolvedores que estão criando os agentes sejam descuidados, mas de alguma forma isso se tornou um padrão de dar aos agentes o acesso que eles precisam , e os mecanismos existentes que temos não nos permitem conceder permissões extremamente detalhadas aos agentes. Agora, vou te contar como chegamos a essa situação, certo? Temos principalmente duas vagas, e nenhuma delas foi projetada pensando em agentes. Existe um usuário que está executando o aplicativo, seja um aplicativo web, um aplicativo móvel ou um pequeno script que ele mesmo escreveu, e ele fornece sua chave de API para que seu programa possa acessar os dados do aplicativo.
+
+O princípio fundamental aqui é que é o mesmo usuário que se autentica e é o mesmo usuário que executa a ação, certo? E a segunda opção é o cenário tradicional de conta de serviço ou cenário de conta de ponta a ponta, onde você cria uma conta de serviço, concede a ela determinadas permissões e, em seguida, define que esta máquina tem sua própria identidade. Foi aí que entraram em cena tecnologias como SPIFFE, OAuth e outras semelhantes. Você fornecia a elas determinadas credenciais e dizia: "Ei, agora esta máquina tem acesso a todos os dados de que precisa a qualquer momento." E esse é o padrão existente, certo?
+
+Assim, a filosofia fundamental que sempre mantivemos é que quem está autenticando é quem está agindo. Cada ação realizada pelo programa ou pelo ser humano baseia-se em um conjunto fixo de permissões concedidas ao agente em algum momento. Se considerarmos os mecanismos tradicionais de autenticação humana, incluindo senhas, basta dizer: " Se uma identidade tiver a mesma senha definida no momento do cadastro e, ao retornar, apresentar a mesma senha novamente, então consideramos que a identidade foi validada." É assim que eu autentico o usuário." E cada ação subsequente é vinculada a essa identidade humana. Novamente, o mesmo acontece
+
+com chaves de API, tokens de sessão web ou mesmo com contas de serviço. Você define as permissões no momento do registro e, a cada ação, o sistema age com base nas permissões e escopos definidos no momento do registro. Isso funciona bem até agora, porque há décadas a conta de serviço e o princípio OAuth têm funcionado bem, mesmo com seus próprios problemas, pois essas máquinas usam um programa de forma determinística, conforme escrito pelo desenvolvedor humano. Portanto, não há garantias absolutas sobre o que o programa pode ou não fazer, mas ainda assim é intencional, baseado no que o humano escreveu, certo? Neste caso específico, novamente, se estiver usando chaves de API, o ator e o principal são os mesmos, então há algum tipo de permissão delegada para o programa agir com base no consentimento concedido pelo usuário. Mas o segundo ponto
+
+é o mais importante: é determinístico. programa, e sempre permanece em sua própria faixa. Ele nunca pode fazer o que não foi programado para fazer. E você pode inspecionar o código para dizer: "Ok, o programa está fazendo o que deveria fazer?" Mesmo se você solicitar uma conta de desenvolvedor do Google e, em seguida, pedir um ID de cliente e precisar acessar esses escopos, você terá que passar por uma revisão de segurança.
+
+Então, o que eles estão fazendo é analisar sua base de código para ver: " Você está fazendo verificações suficientes?" "As práticas apropriadas estão em vigor?" Então, esses programas são determinísticos. Esses programas se comportam exatamente da maneira como um desenvolvedor os programou para funcionar. Mas os agentes quebram fundamentalmente essa premissa.
+
+Certo? Em primeiro lugar, no caso de agentes, o principal não é o mesmo que um ator. Você precisa conceder acesso delegado para que o agente possa agir em nome do usuário. O agente pode acessar o Gmail do usuário. O agente pode acessar os dados do Salesforce do usuário e assim por diante.
+
+Mas, novamente, infelizmente, poucos sistemas, mesmo hoje, suportam OAuth. Então, aqui novamente, não há um "em nome do principal" funcionando. Portanto, você nem sabe se há um programa agindo em nome do usuário ou o próprio usuário agindo por conta própria. Certo? Esse é um problema fundamental. O segundo
+
+problema é ainda mais perigoso, pois, atualmente, o programa não é escrito por humanos. Não há determinismo embutido para dizer o que o agente fará ou não fará. Certo? Só porque um agente faz certas coisas hoje, você não pode ter 100% de certeza. que o agente não pode fazer a mesma coisa, ou exatamente a mesma coisa, amanhã, depois de amanhã, ou mesmo na próxima execução imediata.
+
+Certo? Devido a essa natureza não determinística do agente, geralmente escolhemos uma das duas opções, certo? Você atribui uma identidade específica ao agente, que é o que chamamos de ID do cliente no contexto do OAuth, e então diz: você age em nome deste usuário específico, ou voltamos à situação em que o agente age como o usuário, o que é ainda pior. A razão fundamental pela qual estou insistindo no mesmo ponto é que, quando um agente age em nome do usuário um, em vez do usuário dois ou do usuário três, o agente precisa de permissões específicas com base no contexto do usuário. O OAuth resolveu isso perfeitamente bem, dizendo: "Ei, o usuário concederá escopos ou permissões específicas ao agente". Portanto, quando o agente age em
+
+nome do usuário, ele não pode fazer tudo, mas apenas certas coisas. Agora, no tipo de mundo em que vivemos, a maioria dos servidores MCP com os quais trabalhamos... Na verdade, o acesso do agente ao contexto da ferramenta não é limitado com base no usuário que o autorizou. Normalmente,
+
+todas as ferramentas às quais o usuário tem acesso, ou todas as ferramentas que o aplicativo suporta, são exibidas, e o agente decide o que pode ou não fazer. Assim, o agente acaba escolhendo a ferramenta errada e executando ações incorretas. Talvez haja alguma verificação em tempo de execução no aplicativo que impeça alguns desses comportamentos, mas o agente ainda vê a mesma superfície, independentemente de para quem esteja atuando. Precisamos resolver dois problemas. Primeiro, o ator, neste caso, o agente, precisa estar vinculado à entidade principal o tempo todo. Além disso, o
+
+agente deve ter sua própria identidade. As credenciais do agente devem ser extremamente detalhadas , não os escopos OAuth que vemos hoje. Se você inspecionar os escopos de alguns aplicativos, como o Gmail, por exemplo, verá que ele pergunta: "Este cliente pode enviar e-mails em seu nome?". Não há um escopo extremamente detalhado que permita definir: " Este agente pode agir neste horário?", "Este
+
+agente pode ler e-mails apenas destes remetentes?", "Este agente pode enviar e-mails para...".
+
+Apenas esses destinatários? A razão pela qual isso é importante é porque, como já mencionamos anteriormente no contexto de fluxos de trabalho de agentes não determinísticos, é extremamente importante que o agente tenha permissões por um período limitado de tempo em que estiver operando . Em primeiro lugar, cada agente tem um objetivo, cada agente tem uma tarefa. Portanto, você deve ser capaz de definir deterministicamente que este agente deve ter acesso apenas às ferramentas ou tarefas às quais tem acesso. Assim, os dias em que os escopos de autorização amplos que definimos eram aceitáveis ​​ficaram para trás, porque, nesse caso, o desenvolvedor estava escrevendo um aplicativo determinístico e você podia revisar o código para garantir que ele não estivesse fazendo nada suspeito. Mas, no caso dos
+
+agentes, o comportamento é extremamente não determinístico, é probabilístico. Os agentes tendem a fazer o que estiver ao seu alcance . Portanto, ao conceder acesso aos agentes, você deve ser capaz de definir escopos extremamente específicos. Deve ser um escopo em nível de atributo, em nível de contexto. O escopo deve ser definido em nível de principal. Portanto,
+
+tudo isso é extremamente importante. Novamente, acredito que todos concordam que os agentes devem ter privilégios mínimos por padrão e devem poder solicitar autorização sob demanda caso desejem escopos elevados. O motivo pelo qual estamos discutindo isso é porque não se trata de algo futurista. Isso está acontecendo hoje. Já vimos incidentes suficientes em que agentes acabam fazendo coisas maliciosas.
+
+Eles acabam excluindo bancos de dados de produção e coisas do tipo. Então, como implementar salvaguardas determinísticas é um problema importante a ser resolvido agora. Novamente, um de nossos clientes, o ref.tools, nem sequer usa humanos como atores. Seu principal produto é sobre como fornecer contexto para que os agentes de codificação possam realizar seu trabalho com eficácia. Então, eles construíram todo o
+
+escopo do OAuth. Como fazer as coisas da maneira correta e coisas assim. Portanto, o motivo pelo qual dou este exemplo não é para dizer que é um alerta, mas sim que este é um problema de hoje, não de amanhã. Antes de terminar, Você precisa ter visibilidade absoluta do que seu agente pode fazer, de cada ação realizada em seu sistema, quem a realizou, em nome de quem, quem a autorizou, quando a autorização foi concedida, qual autorização foi concedida e por quanto tempo ela é concedida . Se você não tiver visibilidade de todas essas ações o tempo todo e não puder controlar deterministicamente o que seu agente pode ou não fazer, você estará apenas torcendo para que ele não acabe fazendo o que não deveria . E torcer não é uma estratégia, como
+
+todos sabemos. Por fim, se você projetou sua arquitetura até agora pensando em humanos e APIs, precisa começar a repensar como fornecer diretrizes e controles de autorização determinísticos para o agente. OAuth é um bom ponto de partida, mas você precisa de algo além do OAuth para garantir que os agentes tenham controles de acesso extremamente refinados e que sempre ajam de forma autônoma em nome de determinados usuários. Muito obrigado pelo seu tempo.

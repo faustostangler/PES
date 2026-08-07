@@ -1,0 +1,128 @@
+---
+video_title: "Persona Engineering: A Field Guide to AI Synthetic Personas — Ishan Anand, InsightSciences.ai"
+video_id: YnNF55QV0zs
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YnNF55QV0zs
+video_date: 2026-07-29T20:15:35+00:00
+video_description: |
+  A team ran about a thousand people through a market research survey, then had LLM agents replay the same questions, and the agents matched the humans closely while carrying less noise than the humans did themselves. That is exactly the tell: a synthetic respondent smooths over the messiness that makes a real population real. Ishan Anand walks through where it breaks. Nudge one variable in the prompt template and purchase probability swings, because the model infers latent confounders nobody stated, a little like it is playing improv. So how you ask matters as much as which model you pick, and the persona and the study have to be specified richly, from the participant's point of view.
+  
+  Accuracy can hide the damage. A model that looks right on average can still distort subgroups and flatten the shape of the distribution, collapsing the variation that mattered. The fix here is a noise floor: score humans against other humans first, so you know the best agreement any method could reach, then judge synthetic against human relative to that floor rather than against a perfect match that never existed. Treat a synthetic persona as an economic actor, not ground truth, since even the human study is not ground truth, and validate it against real outcomes before you let it drive a decision.
+  
+  Speaker info:
+  - https://x.com/ianand
+  - https://www.linkedin.com/in/ishananand/
+  - https://ishananand.com/
+  
+  Timestamps:
+  0:00 - Introduction: synthetic personas for market research
+  1:43 - Why this talk: separating signal from noise
+  2:46 - Forecasting people like we forecast the weather
+  4:04 - A thousand humans vs their agent replicas
+  5:22 - Purchase probability and prompt sensitivity
+  6:41 - Invented confounders and specifying the persona
+  7:45 - Question order and framing effects
+  8:50 - Predicting stated attitudes vs experts
+  10:07 - Prompting techniques and subpopulation methods
+  13:08 - Reconstructing and scoring the full distribution
+  16:09 - Calibrating personas against real forecasts
+  17:38 - Setting a noise floor with human vs human
+  18:40 - Treat personas as economic actors, and what's next
+---
+[música]
+
+Olá, eu sou Ishan e sejam bem-vindos ao "A IA pode prever pessoas como nós prevemos o tempo?". Um guia prático para o campo emergente das personas sintéticas. Tenho certeza de que a maioria de vocês nesta sala, em algum momento, já utilizou um modelo de linguagem complexo com um estímulo de função. Você deve preencher o espaço em branco e depois a tarefa.
+
+Acredite ou não, esse princípio fundamental de direcionar os resultados de um modelo como se fossem uma pessoa ou persona específica se transformou em uma categoria inteira que as empresas estão usando para testar conceitos de produtos e mensagens com respondentes sintéticos. E deixou de ser uma novidade para ganhar impulso no mercado, como se pode ver tanto por estas manchetes como pelo aumento do financiamento nos últimos anos. E a analogia que quero deixar para vocês é que as personas sintéticas são como a previsão do tempo. Assim como a previsão do tempo, essas tecnologias foram desbloqueadas graças ao aumento da capacidade computacional e da disponibilidade de dados. Assim como a previsão do tempo, elas operam dentro de um regime específico e, ultrapassando esse regime, podem, por vezes, sair da sua faixa de precisão. Assim, por
+
+exemplo, só é possível prever o tempo com um certo número de dias de antecedência. Da mesma forma, com personas sintéticas, há um limite para o que você pode fazer antes de encontrar problemas. E entender essas questões é tão importante quanto entender suas promessas e seu potencial. Então, eu sou Ishan Nand. Sou o diretor de IA da Insight Sciences.
+
+Criamos personas sintéticas LLM para equipes de pesquisa de mercado e insights de mercado. E o motivo desta palestra é que a maioria das publicações sobre o assunto é muito superficial e não se aprofunda nos detalhes técnicos. Ou é puro alarde ou é total descaso. E é muito difícil separar o ruído da realidade. Então, o que eu quero abordar é essa parte confusa dos detalhes técnicos. E você não precisa
+
+acreditar na minha palavra, mesmo eu sendo um fornecedor nesse setor, porque tudo o que vou falar hoje será baseado em pesquisas publicadas. Então, vamos abordar os motivos para o uso de personas sintéticas, como elas falham, algumas técnicas para inspirá-lo e algumas métricas para avaliar se sua persona sintética é precisa ou não. Falando em previsão do tempo, outro paralelo é que, assim como nas décadas de 1950 e 60, tivemos computadores que nos prometeram, corretamente, um futuro com previsões meteorológicas precisas . Acredite ou não, também nos prometeram previsões sobre pessoas. Essa empresa, a Simulmatics, que teve ampla cobertura por Jill Lepore, prometia que poderia simular e prever o eleitorado usando estatísticas brutas e o poder computacional da época. Felizmente, esse
+
+não foi o caso. Portanto, você deve abordar afirmações como essa com alguma humildade. Mas nós temos algo que eles não tinham naquela época. E essa solução, mais uma vez, é mais poder computacional, mas também uma melhor modelagem graças aos LLMs. E os LLMs abrem caminho para um novo tipo de simulação.
+
+Durante muito tempo, simular algo significava matematizá-lo em fórmulas ou equações. Mas certas coisas, como nos sentimos, como agimos, as escolhas que fazemos, nem sempre se submetem a essas equações. O que os LLMs nos oferecem é um novo meio, uma nova unidade atômica da própria linguagem que podemos usar como modelo. É verdade que, por baixo dos panos, elas se baseiam em matemática, mas isso nos dá essa camada intermediária que podemos construir e simular, algo que não podíamos fazer antes. E o processo pode funcionar.
+
+Gostaria de compartilhar com vocês uma das demonstrações mais conhecidas disso em campo. O que eles fizeram foi levar cerca de mil seres humanos. Eles foram submetidos a cerca de duas horas e meia de entrevistas extensivas sobre sua origem, seus pontos de vista e suas atitudes. E eles submetem essas pessoas a uma série de testes de personalidade e questionários. Em seguida, eles pegaram essas transcrições e as passaram para um agente de IA, que então respondeu ao mesmo conjunto de questionários e testes de personalidade.
+
+O que eles descobriram foi que os agentes estavam basicamente 83% alinhados e preditivos em relação aos humanos correspondentes com os quais foram modelados. Uma ressalva importante é que esse número é normalizado levando em consideração a incerteza e o ruído inerentes aos próprios seres humanos. É um tema ao qual voltaremos no final desta palestra. Mas não se empolgue muito, porque as personas sintéticas são diferentes de experimentos comuns e podem confundir e enganar você se não souber como elas falham. Então, vou abordar três modos de falha importantes que você precisa conhecer ao lidar com personas sintéticas.
+
+Para entender a primeira questão, quero considerar o seguinte estímulo proposto por esses pesquisadores. É uma pergunta muito ambígua e pouco sofisticada. Basicamente, a mensagem é: "Você é um cliente, vou lhe mostrar um produto, vou lhe dizer a categoria e vou lhe informar o preço." Essas serão as variáveis ​​no modelo e, em seguida, vou pedir que você diga se vai comprar ou não. A disposição para pagar e a disposição para comprar são, basicamente, o teste.
+
+O que os pesquisadores fizeram foi recrutar um grupo de pessoas reais e submetê-las ao mesmo teste, e depois submeter as personas sintéticas ao mesmo teste. O que eles descobriram é muito interessante. Então, os humanos estão aqui de vermelho. Eles fazem exatamente o que se esperaria da teoria econômica básica. À medida que o preço de compra aumenta, vemos que a probabilidade de compra diminui, apresentando uma inclinação descendente.
+
+Mas os mestres em Direito (LLM) fizeram algo diferente. Eles tinham essa curva em forma de U invertido. E esta área aqui é particularmente problemática, pois, à medida que o preço aumenta, a probabilidade de compra também aumenta. Isso parece realmente bizarro. Por meio de uma série de experimentos adicionais, eles descobriram que o LLM estava usando o preço como um indicador de outras propriedades do produto que os humanos consideravam fixas.
+
+Coisas como a data de validade com base no preço, e também o preço dos produtos concorrentes, conforme o preço mudava. E essas correlações, esses fatores de confusão latentes que não eram claros e imediatos, estavam na verdade confundindo o resultado. E a maneira de pensar sobre isso é que, quando um modelo de aprendizagem baseado em lei (LLM) carece de contexto, ele precisa potencialmente inferir ou inventar fatores de confusão. Certo? Quando fazemos um experimento com humanos, se eu colocar, por exemplo, um relógio de ouro sobre uma mesa e pedir a uma pessoa que entre e estime o seu preço, tudo no ambiente é praticamente fixo. O ser humano
+
+e suas decisões são a variável aleatória. Em um experimento sintético, se você não o configurar corretamente, outras partes dele acabam se tornando parte da própria variável aleatória. Eu gosto de dizer que, se a persona for mal construída, é um pouco como se o LLM estivesse fazendo improvisação com você. É como um relógio de ouro em cima de uma mesa? Ah, bem, devemos estar em uma joalheria, certo? Tem que inferir o que é provável.
+
+E talvez seja uma pessoa rica, então é mais provável que ela compre. Assim, a lição é que precisamos fundamentar nossas personas de forma sólida na personalidade, no contexto e, por mais bizarro que pareça, até mesmo na própria construção do estudo. Em um experimento com seres humanos, o objetivo é ocultar a estrutura do estudo do participante. Mas, no caso de um mestrado em direito (LLM), eles não têm outro universo além do que está no enunciado, e você precisa usar o enunciado para descrever o mundo e evitar qualquer tipo de fator de confusão. Outro modo de falha é a sensibilidade imediata. Então, aqui está um pesquisador
+
+que pegou uma pergunta, apresentou a mesma pergunta, as mesmas opções, apenas inverteu a ordem das opções. "Sim" foi a primeira opção na primeira pergunta, e " sim" foi a segunda opção na segunda pergunta. O que eles descobriram foi que o modelo apresentava um viés de ordem extremamente forte. Basicamente, quando pegaram os dois resultados e fizeram a média, o resultado se diluiu, ficando 50/50. Ora, os seres humanos têm de fato um viés de primeira ordem, mas não a esse ponto. Assim, a
+
+lição aqui é que precisamos testar a durabilidade de nossas personas para entender como elas mudarão sob reordenações, reformulações e até mesmo desafios adversários às suas opiniões. A terceira e última área que quero destacar é que os mestres em Direito (LLMs) são treinados no que as pessoas dizem, e não no que as pessoas fazem. Assim, como consequência, prever atitudes declaradas tende a ser mais fácil do que prever ações ou comportamentos. Tanto porque são claras e provavelmente estarão presentes no texto, quanto porque são inerentemente textuais. Então, este gráfico foi elaborado por um grupo de pesquisadores que usaram um modelo de regressão logística para tentar prever experimentos conhecidos das ciências sociais.
+
+O objetivo inicial deste gráfico é mostrar que os mestres em Direito (LLM) são tão bons quanto os especialistas. A LLM está em preto dentro de um círculo, os especialistas estão em azul, e você pode ver que ambos estão se saindo igualmente bem na previsão. Mas o ponto que quero destacar é que existem duas categorias de experimentos aqui. Os principais são os inquéritos, que são formulados nativamente em linguagem natural e baseados em texto, e que refletem atitudes. E, no geral, os modelos tendem a ter um desempenho melhor lá.
+
+A metade inferior corresponde a experimentos de campo. Esses são comportamentos, e são coisas que precisam ser traduzidas em ações. É menos provável que estejam nos dados de treinamento e, consequentemente, o modelo LLM não apresenta o mesmo desempenho. Assim, a lição que costumamos transmitir aos nossos clientes é: considerem perguntas que triangulem o comportamento a partir das atitudes. Como exemplo hipotético, se você quiser saber sobre a frequência à academia, talvez seja melhor, bem, você pode perguntar sobre ambos, mas perguntando sobre as atitudes em relação aos exercícios físicos em vez de perguntar sobre a frequência, e ver se isso é um indicador adequado.
+
+OK. Agora, vamos falar sobre três técnicas que podem servir de inspiração para a criação de suas próprias personas sintéticas. Então, o primeiro passo é apenas iniciar o modelo. Bem, isto aqui é do artigo de Argyle, que é realmente um dos artigos seminais nesta área. Na verdade, ainda é tão cedo que o modelo utilizado foi um modelo de preenchimento automático de texto. É por isso que
+
+esta solicitação não está no formato de um bate-papo. É uma declaração de "Eu sou". Então, eles deram uma instrução que dizia, por exemplo, que a coluna do meio é basicamente onde está o contexto. Sou um liberal convicto. Eu apoio valores progressistas, etc., etc.
+
+E no final diz: "Em 2016, votei em..." E basicamente eles deixam o modelo analisar as suas conclusões e ele diz, tipo, Hillary Clinton, Bernie Sanders, Hillary Clinton, e assim por diante. E você pode ver o que acontece com o caso conservador na parte superior.
+
+Desde então, obviamente, surgiram muito mais técnicas de estímulo. E muitos outros modelos. E eu não posso dizer qual técnica de solicitação e qual modelo funcionarão melhor para o seu caso de uso. O que você terá que fazer é descobrir empiricamente, validando com base em dados humanos comprovados . Você terá que fazer o que esses caras fizeram. Por exemplo,
+
+nesta pesquisa, eles estão tentando descobrir o quão bem conseguem construir personas para representar padrões de votação. O que eles descobriram foi que, ao comparar a realidade à esquerda e os quatro tipos diferentes de construção de persona que representavam à direita, estavam representados. E eles não perceberam na época, mas a construção de suas personas estava, na verdade, amplificando o viés dentro do modelo à medida que se tornava cada vez mais detalhada. E descobriram que, na verdade, isso a estava afastando cada vez mais da realidade. Então, você provavelmente tem várias ideias diferentes. A
+
+resposta é que você terá que testar e validar comparando com a realidade. Outra coisa natural que você pode esperar é: "Bem, podemos ajustar isso", especialmente se estiver faltando dados que não existem, principalmente se forem comportamentos ou algo que não estariam no texto de treinamento. E este é um ótimo artigo para se inspirar nesse assunto . Este é o artigo da Subpop. Basicamente, eles criam um modelo de prompt, que inclui as informações demográficas, a pergunta da pesquisa que desejam fazer e, em seguida, comparam a distribuição conhecida dos dados humanos com a distribuição gerada pelo modelo. Realizam ajustes finos até que o
+
+modelo e os dados humanos estejam alinhados. Agora, veja só o que é interessante. Quando fizeram isso, como era de se esperar, os resultados das populações que forneceram ao modelo, ou seja, as em azul, melhoraram. Mas, curiosamente, as de cor branca também apresentaram uma melhora praticamente na mesma proporção. O alinhamento melhorou até mesmo para os grupos não vistos. Parece quase
+
+mágico. E algumas pesquisas subsequentes sugeriram que o que realmente pode estar acontecendo aqui é que o próprio modelo possui uma compreensão latente desses grupos. Simplesmente não sabia como expressar isso no formato de pesquisas. E, pensando bem, os mestres em Direito não estão acostumados a fazer pesquisas como tarefa rotineira. Portanto, eles não serão tão bons em adaptá-lo, especialmente a um formato de solicitação que talvez não tenham visto na primeira vez. Mas o ajuste fino,
+
+na verdade, ajuda o sistema a aprender a tarefa ou a se expressar. Então, uma lição que você pode tirar disso é que a persona que você está procurando está lá dentro . Só precisamos descobrir como invocá-lo ou provocá-lo. E essa lição nos leva à terceira técnica, que quero destacar para mostrar o quão sofisticadas suas técnicas podem se tornar se você estiver usando apenas o chamado "estímulo", mas com calibração e raciocínio cuidadosos. Então, neste caso, esta equipe fez algo muito inteligente. Eles configuraram um prompt do sistema
+
+que continha dados demográficos. Eles apresentaram um conceito de produto. E então perguntaram: "Qual a probabilidade de você comprar este produto?" E eles atribuíram a mesma escala de um a cinco, sendo cinco a maior probabilidade de compra e um a menor, como seria de esperar, um padrão básico e ingênuo de incentivo à compra. E então eles disseram: "Bem, sabe, relembrando aquele artigo, embora eu não saiba se eles foram inspirados por ele, eles disseram: 'Bem, os grandes modelos de linguagem não estão acostumados a lidar com a superfície, mas estão mais acostumados a se expressar em texto.'"
+
+Então, eles disseram que em vez de nos darem uma classificação de um a cinco, nos deem um texto. Por exemplo: "Estou um tanto interessado. Se funcionar bem e não for muito caro, talvez eu experimente." E então, para mapear esse texto para a disposição a pagar de um a cinco, eles pediram a pessoas que escrevessem textos correspondentes ao que esperariam. Por exemplo, se fosse um, "De jeito nenhum, nunca compraria isso."
+
+Cinco, "Com certeza, compraria 20." Certo? Eles pediram que escrevessem exemplos de cada uma das diferentes opções e, em seguida, mediram a similaridade semântica entre o texto gerado pelo modelo e esses exemplos humanos. Isso lhes deu um vetor sobre o qual eles podem basicamente medir uma distribuição de probabilidade de onde esse texto gerado pelo modelo se encaixa. O que eu gosto nisso é que é realmente uma distribuição. Parece,
+
+sabe, com a experiência humana. Alguns dias eu posso dizer quatro, outros dias posso dizer cinco neste gráfico, mas raramente diria um, dois ou três neste exemplo. E o que eles conseguiram mostrar é que não foram capazes apenas de reconstruir valores precisos para a disposição a pagar. Eles conseguiram capturar a distribuição. Porque um dos modos de falha importantes que não mencionamos é que os Modelos de Aprendizagem Baseados em Lógica (LLMs), mesmo quando obtêm o As personas sintéticas geralmente perdem os detalhes. As
+
+variações ficam misturadas no meio. Este gráfico na parte inferior, basicamente, mostra que o eixo horizontal mede a similaridade da forma geral. Um significa perfeitamente idêntico e zero significa não idêntico. E o que você pode ver é que, de forma ingênua, a cor roxa, ou melhor, rosa, não se sai tão bem quanto a amarela, que está perto do topo da escala. Isso significa que a persona sintética fez um bom trabalho não apenas ao entender qual foi a escolha final, mas também o quão bem essa escolha variou.
+
+Ok. Vamos falar sobre como medir o alinhamento a partir de uma persona sintética. Uma das coisas que às vezes surpreende e decepciona nossos clientes tradicionais de pesquisa de mercado é que você não pode usar personas sintéticas estatísticas para aumentar a significância estatística. Você pode pegar uma população sub-representada e obter mais valores dela, mas não pode dizer que é estatisticamente significativo. E para entender isso, ajuda voltar à analogia do clima. Se eu quiser saber
+
+quanto chove hoje em São Francisco, e eu costumava morar aqui, então sei que chove muito, eu usaria uma ferramenta de previsão do tempo. Se eu quiser ter mais certeza, instalaria mil medidores meteorológicos, o que aumentaria a precisão da minha estimativa. Mas se eu quiser saber se vai chover amanhã, e eu pegar uma previsão e executá-la mil vezes sem alterar os dados de entrada, isso não altera a certeza da minha previsão. Melhora a minha estimativa do que o modelo está me dizendo, mas não torna a previsão em si mais precisa. E é isso que acontece quando você basicamente executa uma persona sintética sem alterar os dados de entrada. Portanto, a lição é que
+
+mais amostras sintéticas não vão, na verdade, melhorar a significância estatística na maioria dos casos. Então, o que você precisa fazer é o que você faz com previsões meteorológicas. Você basicamente compara os dados com o que realmente aconteceu ou, no nosso caso, com o que os humanos realmente disseram. E é aí que vamos medir as distribuições dos dados. Ao contrário das avaliações clássicas, onde há claramente certo e errado, e você pode contabilizar quantos estavam certos e quantos estavam errados, agora precisamos medir os dados como uma comparação de distribuições. E existem muitas maneiras de fazer isso.
+
+Para que as distribuições estejam erradas, elas podem estar completamente fora da realidade. Como mencionamos, podem acertar a média, mas errar o formato da distribuição. Portanto, você precisará de múltiplas métricas para capturar o quão bem seu modelo está refletindo diferentes personas. Eu recomendo usar uma métrica de correlação juntamente com uma dessas métricas de formato, que capturam qual é o formato subjacente da distribuição. Outra coisa que você precisa fazer é estimar o ruído fundamental em seus dados de referência. No experimento que
+
+mencionei no início, em que obtiveram 83% de precisão, a principal sacada foi pegar esses participantes e trazê-los de volta duas semanas depois para refazer a bateria de questionários e testes de personalidade. Eles descobriram que, em média, os participantes eram apenas 80% consistentes consigo mesmos. Isso estabelece um limite mínimo de ruído para a precisão que nossos modelos podem atingir, porque os próprios humanos são fundamentalmente ruidosos. Assim, os 83% são normalizados em relação a esse ruído. Se você conseguir fazer isso e trazer seus participantes de volta, ótimo. Mas, muitas vezes,
+
+não é possível. Então, uma maneira de fazer isso artificialmente é pegar seus dados de referência humanos. Divida os dados em duas partes e imagine que uma seja sintética e a outra humana. Meça a correlação e repita esse processo centenas e milhares de vezes, calculando a média. Isso estabelecerá uma espécie de limite de ruído para os seus dados de referência, onde metade é sintética e metade real, representando o nível de precisão que você pode esperar obter.
+
+Espero que agora você entenda por que acredito que as previsões meteorológicas são a melhor lente para compreender personas sintéticas. Elas não são pessoas, são previsões, e devemos tratá-las como tal. Ambos os sistemas são limitados, ambos melhoram com o tempo e são mais confiáveis ​​quando validados pela realidade. As personas sintéticas são frequentemente colocadas em oposição à pesquisa humana no mercado . E acho isso lamentável, porque elas são, na verdade, complementares . Deixe-me dar dois
+
+motivos. Primeiro, estamos entrando em uma era em que os humanos não são mais os únicos agentes econômicos. Cada ação que um cliente humano realiza, seja em termos de conhecimento, consideração ou decisão de compra, está sendo cada vez mais mediada por agentes de IA. Portanto, uma abordagem exclusivamente humana. Na verdade, o estudo não é a verdade absoluta. O que realmente precisamos
+
+entender é como é o ecossistema humano mais agente. E, finalmente, a alternativa a uma persona sintética não é a pesquisa com humanos. Na maioria dos casos, não há pesquisa ou é apenas a opinião de alguém. O que acontece é que você realiza uma pesquisa com humanos e recebe uma pergunta; se ela estiver na pesquisa, você pode simplesmente respondê-la. Isso é muito simples. Mas o que normalmente
+
+acontece é que, dois meses depois, você percebe que precisa responder a uma pergunta que não foi feita. Então, alguém precisa dizer: "Hum, acho que seria isso por extrapolação". Um especialista, somado a uma persona sintética, fornecerá um resultado melhor . Portanto, o que gostamos de dizer aos clientes é que a persona sintética estende seus dados humanos para mais fases do seu processo de desenvolvimento. Ela pode ir além do que sua pesquisa existente alcança. Uma das direções mais interessantes
+
+é a execução de simulações. Não tivemos tempo para isso, mas chama-se modelagem generativa baseada em agentes, onde podemos... Pegue cada uma dessas personas e simule a dinâmica e como elas irão interagir umas com as outras.
+
+E, em última análise, isso permitirá que você transforme seus dados humanos em um ativo vivo e consultável. Se você estiver interessado em fazer isso com seus dados, entre em contato conosco. Ajudamos equipes de pesquisa de mercado e insights a gerar e usar personas sintéticas em IA. Você pode nos encontrar na web em insightssciences.ai e minhas informações de contato estão no slide. Espero que você tenha uma boa
+
+conferência. Obrigado. [aplausos]
+
+[música]

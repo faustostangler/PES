@@ -1,0 +1,88 @@
+---
+video_title: "Learned Execution Graphs for Anomaly Detection & Drift in APIs — Ritvik Pandya, JP Morgan Chase"
+video_id: u1yaOeEX4e8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=u1yaOeEX4e8
+video_date: 2026-07-23T00:00:04+00:00
+video_description: |
+  Traditional monitoring reported the system healthy: latency down, errors at zero. A mandatory processing step had been silently skipped, and nothing caught it except the graph. Ritvik Pandya's team at JP Morgan models each API request as a short lived execution graph, a DAG of the middleware steps it passes through, learned from telemetry at over 1,600 requests per second. Compare what actually ran against that learned graph and a skipped, reordered, or injected step stops hiding behind healthy averages.
+  
+  The same graph localizes performance problems to the exact node instead of the whole endpoint. In production it flagged a 41x deviation at a single node that service level monitoring never saw, cutting root cause from hours to under 30 seconds. The talk separates a one off anomaly from real drift, a slow shift that needs a new baseline, and sorts drift into structural, volume, and behavioral, using per node baselines and KL divergence rather than one threshold for every request. The payoff is a cheap tier one check that only escalates when the graph says something actually changed.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/ritvik-pandya/
+  
+  Timestamps:
+  0:00 - Execution graphs for anomaly and drift detection
+  1:07 - What a short lived execution graph is
+  3:28 - Tiered checks and per client baselines
+  5:23 - The method: baseline, deviation, localize, act
+  6:16 - Localizing a slow node, and how the system is trained
+  7:33 - Anomaly versus drift
+  8:55 - The three kinds of drift: structural, volume, covariate
+  12:46 - The pipeline: from telemetry to gradual rollout
+  13:54 - Hot path versus recon, and worked examples
+  15:21 - Tuning it: delayed events, sampling, cold starts
+  17:09 - Results and lessons
+---
+[música]
+
+Oi. Ah, obrigada, obrigada e espero que todos tenham saído do torpor pós-almoço e que sobrevivamos a esta conversa. Então, sim, eu sou Ritik, lidero a equipe de pagamentos do JP Morgan e hoje vou falar sobre gráficos de execução, como esses gráficos podem ajudar a detectar anomalias e desvios, e como podemos automatizar algumas coisas nesse sentido.
+
+Ao mesmo tempo, podemos reduzir o trabalho manual de detecção. Quando ouvimos falar de gráficos, geralmente nos referimos a gráficos de persistência e gráficos de propriedades, que o Neo4j e outros produtos usam para consultar e obter as respostas. Hoje, falarei sobre gráficos de execução. É um gráfico de curta duração. A ideia aqui é tentar identificar de forma holística como o processamento da solicitação ocorre, se há algum desvio nesse processo, como detectá-lo e como corrigi-lo.
+
+Aqui está um exemplo simples. Bem, digamos que temos um conjunto de aplicativos. Você tem uma camada de borda, a primeira camada onde a requisição chega, e então você tem alguns gateways. Se houver um gateway (k), você tem a camada de entrada (ingress) acima dela. Depois, ocorre a autenticação e autorização. Em seguida,
+
+há uma camada de orquestração e alguns outros sistemas que podem ser chamados em paralelo. Assim que tudo estiver concluído, você notifica o cliente sobre a atualização da requisição, certo? Então, a ideia aqui é representar o processamento geral da requisição como um DAG (Grafo Acíclico Direcionado) e usar tags simplifica bastante as coisas. Agora você sabe em que ordem a execução do serviço acontecerá, certo? Então, essa é uma das coisas. A
+
+outra coisa é saber o contexto em que cada nó estará presente e o que será passado para o próximo nó. Dessa forma, tudo ficará muito ordenado e simplificado, podendo ser representado de maneira simples. Existem alguns outros casos de uso, como tentativas e loops, etc. A ideia aqui é colocar cada loop no grafo como uma entidade separada. Então, dessa forma, poderia ser rastreado facilmente.
+
+Como podemos tornar este sistema mais confiável e, ao mesmo tempo, não usar a maioria dos recursos? Então, na primeira verificação, ou seja, na sua primeira verificação, é como ir ao aeroporto e você... sabe, é só o cartão de embarque.
+
+Alguém olha o cartão de embarque e te deixa passar. Agora, se você conhece a linha de base da execução da sua solicitação de ponta a ponta, se tudo parecer bem... Você não precisa ir para o segundo nível ou para o próximo nível de verificação.
+
+Certo? Assim que você perceber que há algum atraso. Agora você precisa verificar o que mudou aqui. Uma das razões para essa deriva pode ser a mudança estrutural. Portanto, se algum novo nó ou nova etapa for adicionado sem o seu conhecimento, isso pode ser um dos motivos, ou se uma etapa for removida, essa pode ser outra razão, certo? Uma vez que você saiba disso,
+
+análises mais aprofundadas podem ser feitas em termos de desvios de escala, divergência e exponencial. Em termos mais simples, se você sabe que a solicitação do cliente A normalmente leva um determinado tempo e a solicitação do cliente B pode levar mais tempo do que a do cliente A, porque, digamos, um cliente é local e o outro está fazendo uma solicitação externa, algumas verificações adicionais precisam ser feitas. Nesse caso, a linha de base mudará de cliente para cliente e agora você sabe qual é o seu limite e como pode reduzir o ruído desses alertas. Bem,
+
+a ideia aqui é muito simples. Primeiro você representa todo o processamento da requisição como um DAG (Grafo Acíclico Direcionado). Você define a linha de base. Você identifica o desvio e então tenta descobrir exatamente onde está o problema. Depois de localizar o ponto de origem, você compara com o seu sistema para verificar se está dentro do limite ou não. Se estiver dentro do
+
+limite, sim, você não precisa configurar alertas nem automatizar nada, mas se estiver acima do limite, certas ações precisam ser tomadas. Bem, voltando ao nosso exemplo, digamos que o processamento geral das solicitações de todos os diferentes nós do nosso sistema esteja ocorrendo, mas, por algum motivo, o serviço de taxa de transação estrangeira está demorando mais do que o normal. Agora, se você representasse todo esse processamento de requisição em múltiplos nós, saberia onde está o problema ou a falha e, consequentemente, saberia exatamente onde ele se encontra . Então você pode resolver isso, é como o sistema FX ou todos os diferentes casos que existiram no passado em que o sistema de taxas de câmbio estava falhando. Aqui está um exemplo de benchmark: o Open Telemetry e o Star Benchmark foram usados ​​e, digamos, durante 7 dias, milhões de rastreamentos foram injetados no sistema. Em seguida, o problema ou
+
+anomalia foi injetado e, com base nisso, o sistema foi treinado antes de entrar em produção. Então, mais uma vez, a questão básica aqui é o que é anomalia e o que é deriva, certo? Digamos que você dirija de casa para o escritório todos os dias e, normalmente, leve 1 hora, mas em um certo dia levou mais de 1 hora. O motivo pode ser algum problema de trânsito, um acidente de carro ou algo do tipo. Mas, bem, este é um dos incidentes e, com base no seu sistema e na criticidade do seu sistema, você pode decidir como lidar com isso. A outra parte é que, num belo dia, você
+
+está tomando um gole de café por volta das 16h. E percebeu que, um ano atrás, levava uma hora para ir de casa ao escritório, mas hoje em dia leva 20 minutos a mais, certo? Então, o que aconteceu na Área da Baía em relação ao número de carros? Ao longo do tempo, o que você está vendo é uma mudança de padrão, e é aí que você precisa definir
+
+a nova linha de base. Essa é a deriva: com o tempo, você começa a ver alguns atrasos ou alguma queda de desempenho. Uma vez que você percebe essa deriva, pode categorizá-la. A primeira categoria é estrutural. Digamos que, de alguma forma, um novo nó seja adicionado ao sistema ou que um nó seja removido, como mencionei antes. Por exemplo,
+
+você gosta de tomar café em uma cafeteria e, um belo dia, eles começam a perguntar se você é membro. Eles adicionaram mais uma etapa e agora, todos os dias, podem perguntar se você é membro. Se for, há um desconto especial; se não for, os preços normais serão aplicados. Dessa forma, você sabe, da mesma maneira que no processamento do nosso serviço ou no processamento de uma solicitação, se um novo nó for adicionado, isso significa que você precisa considerar essa etapa também em suas linhas de base antigas e novos alertas. Outra possibilidade é que, devido ao volume de solicitações, um dos seus serviços esteja demorando mais do que o esperado, ou você simplesmente não consiga atender à demanda ou ao volume previsto ao longo do tempo. Então, sim,
+
+esse tipo de desvio pode precisar ser tratado de forma diferente, porque agora você precisa escalar esses serviços ou instâncias desses serviços, ou precisa torná-los chamadas assíncronas, ou, dependendo do caso de uso, o que funcionar melhor. A covariável é uma categoria diferente. Digamos que, quando você começou o negócio, você estava vendo cerca de 60% das solicitações locais, mas 40% das solicitações vinham de fora do país, e é aí que você pode precisar mudar a moeda ou dar um passo extra. Agora você sabe qual é a base para suas solicitações em dólares americanos, mas qual é a base para qualquer outra moeda? Com ​​o tempo, o que acontece é que seu produto se torna tão popular que você começa a receber mais solicitações de fora. Então nada mudou. Seu sistema
+
+está funcionando bem, certo? Mas agora você precisa definir os critérios e reavaliar seus parâmetros de referência. Desculpe, aqui você precisa criar dois gráficos diferentes para comparar, um para solicitações locais e outro para solicitações externas, ou pode aumentar o tempo médio de resposta das solicitações. Assim que você conhece o padrão, você conhece a solução. Então, é aí que você precisa categorizar essas derivações.
+
+Uma categoria pode se referir à mesma solicitação, e agora você está percebendo o comportamento diferente em si. Então, provavelmente, se e quando for necessário, você poderá ter que reverter essas alterações ou reconsiderá-las. Então, o que eu quero dizer é que você precisa reavaliar e reexaminar seu sistema antes de identificar qual ação precisa ser tomada. Toda essa conversa é basicamente sobre a parte estatística da solução. É... é parte de um sistema
+
+neurológico maior, específico, de algoritmos e sistemas, de certa forma, mas este é apenas um dos módulos de que estou falando aqui agora. Então, uma vez que você conhece a deriva ou o desvio, e aqui está a descrição simples de como todo esse sistema funcionaria. A telemetria aberta continuará fornecendo os dados. Uma vez que você tenha esses dados, uma análise da causa raiz poderá ser feita com base em todos os pontos de dados que seu sistema já conhece. Agora você sabe que tipo de deriva é e qual a possível solução. Em seguida,
+
+você identifica qual ação precisa ser tomada. Depois de saber qual ação precisa ser tomada, você também precisa descobrir qual é o risco se optarmos por essa abordagem ou se automatizarmos essa solução. Assim que você conhecer o risco, pode optar por implementar esse sistema/solução em, digamos, 5% ou 10% das suas máquinas, monitorá-lo, verificar se tudo está funcionando corretamente e, em seguida, implementá-lo em 100% dos nós. Aqui
+
+estão alguns exemplos. Bem, novamente, digamos que, em geral, o processamento de uma solicitação leva 700 milissegundos, mas, no lado esquerdo, o que você está vendo é o próprio gráfico. Como isso pode te ajudar? Agora você sabe qual nó específico está demorando mais e, de repente, recebe um alerta sobre isso. Ou, se você perceber que o atraso é generalizado, então há algo comum que precisa ser corrigido.
+
+Em pagamentos e processamento de pagamentos em tempo real, queremos que seja muito rápido, certo? Não queremos atrasar o processamento da solicitação. A solução que geralmente usamos no setor é alimentar os dados de forma assíncrona para o Opal Telemetry. A partir daí, você pode usar o Kafka e o Stream Async. Podem existir dois caminhos diferentes. Uma delas é o "hot path", onde você pode
+
+tomar uma decisão muito mais rapidamente e, hum, trabalhar na solução ou automatizar essa solução. A outra é uma solução mais de reconhecimento, que pode levar algum tempo, mas é mais precisa e pode ser [bufa] alguns outros desafios que precisamos ajustar aqui. Então, tudo o que eu expliquei foi: você tem sete nós no seu sistema e cada nó está enviando dados para a sua telemetria. E se um dos sistemas estiver atrasando o evento? Devemos considerar isso como uma mudança estrutural, já que agora você tem dados no seu sistema referentes a seis nós, e os dados do sétimo nó já estão atrasados. Então precisamos
+
+ajustar esses números e também determinar quando considerar se há ou não uma mudança estrutural. Basicamente, estamos tentando reduzir alarmes falsos com base nos casos de uso. Neste caso específico, devemos usar um sistema baseado em cauda, ​​pois o que estamos tentando rastrear é, neste exemplo específico, quando a solicitação de serviço começou e quando terminou, certo? Então, para cada nó, a outra parte é a inicialização a frio. Se houver um novo endpoint, considere a nova linha de base; não a torne muito genérica.
+
+Então, dessa forma, no lado da detecção, qualquer MMD ou KL poderia ser usado e, uma vez que você confirme isso com o administrador e classifique o problema, isso lhe dará a solução exata que precisa ser feita e o próximo passo, se pudermos automatizar, automatizaremos. Então, o que vemos aqui, em geral, é que o tempo médio para a descoberta foi bastante reduzido, tornando-se praticamente em tempo real. Em vez de comparar ou esperar por várias janelas de tempo, usamos uma única janela, o que, como identificamos, ajudou bastante a resolver os problemas rapidamente. Hum, há algumas outras coisas que talvez precisemos verificar. Uma delas são os rótulos.
+
+Quando se trata de aprendizado, os rótulos ajudam muito, mas, ao mesmo tempo, precisamos garantir que o sistema esteja muito bem ajustado nesse aspecto. A outra parte é que, em vez de dizer que todas as solicitações POST devem ter um valor base para todas elas, tente definir um número que funcione para você, seja para pagamentos em tempo real, transferências bancárias ou qualquer outra finalidade, com base nos seus casos de uso. Isso ajudaria bastante. Bem, novamente, se você estiver considerando alguma mudança estrutural ou algo do tipo, o período de vigência deve ser bem definido para cada cliente. No meu exemplo anterior, que mencionei, se você pudesse definir uma nova linha de base, isso realmente ajudaria a reduzir o ruído. A explicabilidade...
+
+todos os dados devem ser bem explicados. Se você for ao médico e ele disser que sua pontuação de saúde é 22, isso não fará muito sentido para você. Então, sim, quanto mais dados, mais informações podemos obter e, com base nisso, podemos tomar decisões mais embasadas. Todo o sistema deve estar ciente da nova implementação. Então, com base nisso, você pode tomar a decisão de reverter a decisão ou não. Então é
+
+isso. Ah, obrigado a todos. Gostaria de entrar em contato com todos vocês. Aqui está meu LinkedIn. Posso responder.
+
+[música]

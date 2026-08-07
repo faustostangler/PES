@@ -1,0 +1,142 @@
+---
+video_title: "Harness Engineering is not Enough: Why Software Factories Fail — Dex Horthy, HumanLayer"
+video_id: Ib5GBkD555M
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Ib5GBkD555M
+video_date: 2026-07-23T16:30:06+00:00
+video_description: |
+  In July 2025 Dex Horthy turned the lights off: an agent software factory where nobody read the code. It fell apart. An issue appeared that no amount of prompting could fix, the site was down, users were furious, and he was digging through a codebase he had stopped reading three months earlier. His claim is that this is not a skill or scale issue, and no harness or extra tokens fixes it, because it is a model training problem. Coding models are reinforced on one thing, did the test pass without breaking another, and nothing in that reward penalizes bad architecture, whose cost shows up months later. So they get better at passing tests and no better at keeping a codebase maintainable.
+  
+  That is why Claude Code went from nothing to billions while tools with the same read, write, and edit commands did not: it was the first model trained against the harness it ships in. But maintainability is far harder to verify than a green test, and as Horthy puts it, if a model knew what good code looked like it would already write it. So for now you are stuck reading the code, which is fine, because you can still move fast. His fix is to turn the lights back on and plan up front: product review, system architecture, the underrated step of program design down to types and call graphs, then vertical slices. Thirty minutes of alignment saves hours of review, and a good PR becomes a joy to read instead of slop to untangle.
+  
+  Speaker info:
+  - https://x.com/dexhorthy
+  - https://linkedin.com/in/dexterihorthy
+  - https://github.com/humanlayer/12-factor-agents
+  
+  Timestamps:
+  0:00 - The narrative: you are the bottleneck, just ship more
+  1:28 - The cracks: outages and falling PR review quality
+  2:20 - The thesis: the harness is not enough
+  3:36 - A brief history of the software factory
+  5:52 - The agentic factory and turning the lights off
+  7:30 - Why it fails: the July 2025 lights-off experiment
+  8:56 - Models cannot maintain codebase quality
+  10:12 - Why Claude Code won and how coding models are trained
+  13:18 - Verifying maintainability and better benchmarks
+  14:58 - Turning the lights back on: plan up front
+  17:16 - Too many bad PRs, and closing advice
+---
+[música] E aí,
+
+pessoal? E aí, pessoal? Parabéns a todos os excelentes palestrantes de hoje até agora. Hum, [aplausos] tudo bem. Isso é... engenharia de chicotes elétricos
+
+não é suficiente, e é por isso que as fábricas de software falham, e talvez a gente clique em "talvez". Nossa, são slides demais. Calma aí, pessoal. OK. Então, estamos todos correndo para colocar a programação de IA em produção e, bem, muito tem sido dito sobre engenharia de loops e, bem, provavelmente deveríamos escrever mais loops e, bem, eu não sei. Acho que agora estamos fazendo loops.
+
+Hum, um mestre de jogo forte construiu uma fábrica de software totalmente automatizada onde ninguém sequer lê o código, e a narrativa predominante é que devemos simplesmente gastar mais fichas. Você é o gargalo. Os modelos são suficientemente bons. O código é gratuito. É só enviar mais coisas. Mas, ao mesmo tempo, estamos
+
+começando a ver as rachaduras. Nosso amigo Mario, da AI Engineer Europe, implorou para que diminuíssemos o ritmo, pois empresas que não deveriam estar sofrendo interrupções devido a problemas com agentes de codificação estão sofrendo interrupções devido a falhas nesses agentes. As bases de código estão se deteriorando mais rapidamente do que nunca . E nossos amigos da Farosai até fizeram um relatório, já que todos nós começamos a usar essas ferramentas de programação de IA em janeiro, talvez fevereiro. Hum, a qualidade da revisão de código dos pull requests caiu bastante.
+
+Estamos recebendo mais comentários, comentários mais longos e uma grande quantidade de PRs sendo mescladas sem qualquer revisão. O número de incidentes aumentou consideravelmente, assim como o número de bugs por desenvolvedor. E, bem, muita gente vai te dizer que você está segurando errado. Essa é a única razão. Você não está.
+
+Bem, talvez você seja, mas esse não é o ponto. Bem, eu já falei bastante sobre como lidar melhor com isso quando se trabalha com IA. Provavelmente já tem um milhão de visualizações no YouTube, distribuídas por várias palestras diferentes. Bem, o ponto principal é que, como engenheiros, nos disseram que se o aumento máximo de tokens não estiver funcionando, então é uma questão de habilidade. Você só precisa gastar mais fichas. Ah, pare
+
+de ler o código. Com engenharia de infraestrutura suficiente, e talvez adicionando algumas palavras mágicas como "revisão adversária" a um número suficiente de nossos bots de relações públicas, podemos obter o melhor dos dois mundos. De 10 a 100 vezes mais rápido, alta qualidade e ninguém precisa fazer aquela coisa que todos odiamos chamada revisão de código. Bem, estou aqui hoje para convencê-los de que, na verdade, isso não é uma questão de escala. Nenhuma quantidade de engenharia de circuitos ou otimização de loops pode resolver o que é fundamentalmente um problema de treinamento do modelo . Por isso dizemos que o arnês
+
+não é suficiente. Bem, para entender isso, precisamos nos aprofundar em como os modelos de codificação são treinados. Vou falar sobre o que considero as deficiências de alguns dos benchmarks atuais e como poderiam ser versões melhores . E, enquanto isso, falaremos sobre como se deslocar mais rapidamente e com segurança . Hum, vai soar como um desabafo. Mas ainda há esperança. Bem, vou
+
+falar sobre nossa jornada e alguns dos obstáculos que encontramos ao construir neste mundo, várias técnicas novas e interessantes com as quais temos trabalhado, com a colaboração de muitos de nossos usuários e clientes, e como nós, como comunidade, chegaremos ao próximo capítulo da engenharia de agentes, seja lá o que for que estejamos vivenciando agora . Usamos muitas palavras aqui. Vou diminuir um pouco o zoom. Gostaria de apresentar a vocês uma espécie de breve histórico da fábrica de software. Hum, e na verdade eu não... eu só aprendi isso
+
+semana passada. O termo " fábrica de software" foi definido em uma conferência da OTAN em 1968. Vamos começar por volta de 2022, pouco antes do surgimento da IA . Bem, basicamente, em uma fábrica de software típica de 2022, você terá algumas pessoas desenvolvendo coisas. Você terá engenheiros, gerentes de projeto e talvez algum tipo de equipe de liderança que esteja impulsionando a visão aqui. E todos eles
+
+decidem que as coisas precisam ser feitas. Então você coloca isso em um rastreador, um fluxo de trabalho linear, um Jira, um Beads, algum tipo de máquina de estados que rastreia o que precisa ser feito. E aí alguém pega alguma coisa dali e constrói a coisa. E pode haver alguns testes automatizados nesse processo, e talvez alguns testes manuais também. Em determinado momento, fazemos esse pull request e pensamos: "Ok, legal. Precisamos
+
+executar uma série de verificações, coisas automatizadas. Um humano vai revisar a alteração e o código. E talvez até tenhamos um humano baixando e testando de alguma forma. E se algo der errado, voltamos para alguém que compila o código. E, eventualmente, estamos prontos para produção. Então,
+
+enviamos para produção. E uma vez em produção, entra em contato com nossos usuários. E os usuários fazem algo que todos nós adoramos: adoram reclamar. Eu adoro nossos usuários. Mas sim, eles vão pedir coisas. Vão
+
+encontrar bugs. Vão enviar solicitações de recursos. E isso volta para a sua equipe. Você também pode adicionar monitoramento. E então, sabe, o que queremos mais do que tudo?
+
+Queremos acordar os engenheiros às 3 da manhã quando algo quebra para que eles possam ser arrastados para fora do escritório para... Tentamos corrigir o problema. E continuamos nesse ciclo, lançando um monte de código.
+
+Uma coisa que percebemos é que as equipes descobriram isso décadas atrás: a etapa de "alguém constrói a coisa" geralmente leva horas ou dias na maioria dos casos. E a revisão também leva horas ou dias para projetos grandes. Então, as equipes começaram a fazer planejamento antecipado, arquitetura, propostas, planejamento de sprints, e colaboravam nessas etapas com a esperança de diminuir a probabilidade de algo precisar ser refeito e reduzir o tempo gasto revisando cada linha de código, porque tudo estava alinhado com antecedência. Isso nos leva à fábrica de software com agentes . Todas as empresas estão falando sobre como construíram uma fábrica de agentes de codificação que entrega 75% do seu código. Literalmente todo mundo. Então,
+
+se olharmos para a fábrica de software de 2022, basta substituir " alguém constrói a coisa" por "um agente constrói a coisa" e teremos... Uma orquestração, um ambiente de teste, um modelo e o uso de computadores... e
+
+não vou entrar em detalhes. Tenho certeza de que você pode assistir a centenas de palestras sobre isso esta semana. Bem, a parte de construção leva minutos ou horas, mas a parte humana ainda leva horas ou dias se você for revisar o código e testar as alterações. Então, introduzimos a revisão de código ética e os testes de regressão éticos. Isso torna essa parte mais rápida, mas provavelmente ainda é o gargalo. Mas podemos fazer mais
+
+loops aqui. Por que não? Vamos fazer mais alguns loops. Assim, podemos encaminhar todos os incidentes diretamente para a fábrica. Por que alguém precisa ser acordado e tentar corrigir o problema quando poderia simplesmente ser acordado por uma solicitação de pull request, que talvez resolva o problema? Você pode pegar
+
+todo o feedback do usuário e colocá-lo diretamente na fábrica, para que as pessoas solicitem recursos e eles sejam construídos. E agora seu único trabalho é definir quanta coisa você consegue colocar na fila de tarefas a serem feitas. E quão rápido você consegue revisar e testar as alterações? O que nos leva, claro, ao conceito de " fábrica de software sem luzes", que Dan Shapiro cunhou: não lemos mais o código. Dizemos: "Sabe de uma coisa? Está
+
+indo muito bem." Aquela coisa de revisão de código? Não, obrigado. Simplesmente não vamos mais fazer isso . E investimos em todas as outras partes do sistema: testes, monitoramento, implantação, tudo mais. Simplesmente escrevemos mais código
+
+e construímos esses sistemas melhor. E agora nosso trabalho é apenas: quanta coisa podemos pedir ao agente para construir? Vou fazer uma pausa. Isso não funciona. E é por isso que as fábricas de software falham. Aliás, o que vou
+
+dizer não tem nada a ver com programação intuitiva. Addy fez um ótimo post. Vou simplesmente pegar a citação dele textualmente: "Um desenvolvedor que programa intuitivamente em um projeto paralelo consegue manter uma dúzia de pessoas, enquanto uma equipe que mantém um sistema empresarial de 10 anos funcionando por mais um trimestre quase não tem restrições dignas de nota. E a maior parte do que você ouve na internet é..." Desses grupos
+
+de pessoas dizendo ao outro grupo como viver suas vidas, se você gosta de programação, por favor, continue. Na camada humana, o que nos importa é como ajudar as pessoas a resolver problemas difíceis em bases de código complexas. Usamos muito a palavra "brownfield", que historicamente significava algo como um projeto Java de 10 anos atrás. Na verdade, acho que os agentes começam a ter dificuldades depois de 3 a 6 meses, especialmente com o ritmo de entregas que temos . Agora, você pode me perguntar como eu sei disso e eu direi que é porque em julho de 2025, nós tentamos isso.
+
+Apagamos tudo e, se você tentou isso seriamente por alguns meses, provavelmente encontrou pelo menos um problema que o agente não conseguiu resolver, mesmo com as instruções mais avançadas. Você pesquisa, faz reproduções, você simplesmente tem que mergulhar naquele código-fonte que parou de ler três meses atrás para tentar descobrir o que está quebrado. E enquanto isso, seu site estava fora do ar, seus usuários estavam irritados e você, se você fosse como eu, provavelmente estava... É horrível ler todo esse
+
+código ruim que você deixou entrar no seu sistema. E o que eu quero dizer é que, basicamente, os modelos têm uma deficiência. Eles não conseguem manter e melhorar a qualidade do código ao longo do tempo, não sem uma boa dose de intervenção humana. E quando eu digo manutenibilidade, estou falando de problemas como a dificuldade extrema de fazer uma alteração em uma parte do código sem quebrar outras partes. Isso é o cheiro de código "cirurgia de espingarda" do livro do Martin Fowler . Não vou me
+
+estender muito sobre manutenibilidade. Existem vários livros que você pode ler sobre isso. Aliás, o John Austerhood está aqui palestrando esta semana, então você pode perguntar a ele pessoalmente sobre a filosofia de design de software, se quiser. Mas isso nos leva à questão de por que os modelos não conseguem garantir a manutenibilidade do software. E você pode estar pensando: "Mas Dex, certamente os modelos melhoraram muito desde então." Eles
+
+melhoraram em alguns aspectos, mas continuam praticamente os mesmos em outros. Se você quer resolver problemas pontuais ou criar um novo site de marketing do zero, sim, eles melhoraram bastante desde 2025 e 2024, mas no que diz respeito à melhoria da qualidade do código-fonte, acho que não houve muita melhora. Não posso provar isso porque não existem bons parâmetros para avaliar a capacidade de um modelo de manter a qualidade do código-fonte . E vou explicar melhor aonde queremos chegar com isso. Mas se você trabalha com agentes de codificação há algum tempo, muita gente comenta sobre isso.
+
+É como se você tivesse a impressão de que eles geralmente pioram as coisas com o tempo e tornam o código-fonte mais difícil de trabalhar. E para entender por que isso acontece, quero voltar ao primeiro grande agente de codificação. Por que o Cloud Code saiu do zero para quatro bilhões? E acho que agora eles estão com nove bilhões em receita em menos de um ano porque eles eram ótimos agentes de linha de comando antes do Cloud Code. Existiam o ADER, o CodeBuff. Havia várias
+
+ferramentas nessa categoria. Elas tinham todas as mesmas ferramentas: ler, escrever, editar, Pegar, bater. Hum, então qual foi a diferença? A diferença foi que esta foi a primeira vez que um laboratório de modelos treinou um modelo com base na estrutura que seria distribuída aos usuários. Hum, e ficou muito, muito bom. Estas
+
+são apenas algumas das ferramentas, mas ficou realmente muito bom em chamar esses tipos de ferramentas em um loop agente. Na verdade, a equipe da OpenAI fez uma palestra em novembro sobre basicamente se você é um construtor de estrutura e não possui os pesos do modelo e não pode usar RL no modelo em sua estrutura, você sempre estará em desvantagem em comparação com alguém que possui tanto o modelo quanto a estrutura. Hum, e vou citar alguns slides do meu amigo Calvin French Owen, que era um MTS no Codeex durante o lançamento inicial. Hum, mas os LMs são apenas preditores de próximo token . Hum, este é um slide de mais de um ano atrás, onde basicamente, conforme você está fazendo seu loop agente, a janela de contexto entra, o próximo passo sai.
+
+E, hum, vamos tentar fazer isso. Eu Na verdade, ainda não cronometramos, mas vamos ver se conseguimos fazer aprendizado por reforço de um agente de codificação em 60 segundos. Então, o que faremos se quisermos treinar um modelo para melhorar a chamada de ferramentas e a resolução de problemas de software é gerar uma série de rastreamentos de código, tentar resolver o problema várias vezes e pontuar todos os rastreamentos com base na correção, se o teste foi aprovado e tudo mais. Depois, vamos reforçar o aprendizado, tornando o comportamento inadequado menos provável e atualizando os pesos para aumentar a probabilidade do comportamento adequado. Um exemplo clássico é o Swebench Multilingual.
+
+São tarefas de cerca de 15 minutos, provenientes de repositórios de código aberto como Reddus, jQuery e Django . As recompensas são binárias (um ou zero) para cada caso: o problema foi resolvido? quebrando qualquer outra coisa. Hum, e vamos analisar um problema real de um desses benchmarks. Este é o Fastlane, que é um projeto Ruby. Hum, basicamente havia um
+
+problema em que não estávamos verificando se era nulo e o rastreamento da pilha explodiu porque ocorreu uma exceção de ponteiro nulo . E neste hum, neste benchmark, temos um commit base que vamos verificar antes que o problema fosse resolvido por um humano no passado. Vamos fornecer um patch de teste que diz qual deve ser o comportamento depois disso. Temos um patch de ouro. Ambos estão ocultos do modelo. Hum, e
+
+então fazemos o agente tentar resolver o problema. Armazenamos o patch dele. Desfazemos todas as alterações feitas em quaisquer arquivos de teste, porque tenho certeza de que você já viu modelos comentando testes apenas para fazer as coisas funcionarem. E então hum, vamos aplicar nosso patch de teste de ouro. Hum, e então vamos executar o teste antigo e o novo teste passou. E se ambos
+
+passarem, hum, então recebemos a recompensa; caso contrário, não. Hum, e assim os modelos estão tentando Para que o teste seja aprovado. Não há como, neste sistema, penalizarmos um programa com design ruim ou que comprometa a manutenibilidade dos nossos sistemas. É por isso que usamos blocos try-catch em coisas que provavelmente não precisam deles . Acho que o VBOV nos deu um exemplo disso antes, de converter coisas em outras coisas só para que o modelo possa... ele
+
+só quer que o teste seja aprovado. Então, se você não consegue verificar a manutenibilidade do código, fica muito mais difícil treinar com esse tipo de coisa. Lembra desta imagem? Verificar a qualidade e a manutenibilidade do código é ordens de magnitude mais difícil do que o código rodar e o teste passar, porque o custo de uma arquitetura ruim é medido em meses e anos se você tiver um problema de programação e só descobrir meses depois que alguém exagerou um pouco . É muito difícil propagar esse sinal de recompensa de volta através dessa lacuna. E
+
+agora a situação está melhorando lentamente. E como eu sei que alguém vai comentar isso no YouTube , sim, eu sei que existem benchmarks e... Os verificadores são diferentes e, na verdade, precisam ser conjuntos de dados separados, mas têm o mesmo formato e a estrutura desses benchmarks está correta em termos de direção. Então, vamos
+
+analisá-los como o futuro da avaliação da manutenibilidade do código. Há um muito interessante chamado SWE Marathon da Abundant AI, onde eles realizam tarefas de cerca de 400 horas, como clonar todo o Microsoft Excel, cada recurso. E eles têm alguns mecanismos sofisticados de recompensa . O Deep Suite da DataCurve também envolve grandes tarefas em repositórios de código aberto que não estão no conjunto de treinamento porque nunca foram implementados no mundo real. E temos o FrontierCode da Cognition, que são tarefas multitarefa.
+
+Eles fazem coisas interessantes, como penalizar o modelo que escreve testes que não falham no código pré-patch, e temos um modelo de avaliação que diz: "Ok, isso seguiu todas as nossas regras de qualidade de código?". Então, estamos melhorando, mas acho que os modelos de avaliação de qualidade têm seus limites. Porque se O novo modelo, se soubesse como é um bom código, provavelmente o escreveria desde o início. E agentes de revisão, ao adicionarem mais tokens ao problema, podem elevar o nível de exigência.
+
+Mas ainda estamos limitados pelo que podemos ensinar durante o aprendizado por reforço. Então, eu diria que, por enquanto, estamos presos à leitura do código. Mas ainda podemos avançar bem rápido. E, claro, existe um mundo onde isso será resolvido no futuro. E se você quiser continuar enviando prompts aleatoriamente até chegar ao GPT-7, não precisa se preocupar com isso. Por favor, fique à vontade. Mas que se
+
+dane a lição amarga. Temos alguns problemas para resolver. Então, vamos encontrar uma solução. Então, retomando o processo de revisão de código, vamos adotar essa abordagem de planejamento prévio para reduzir a chance de termos um processo de revisão longo ou difícil . Vamos descobrir... Alavancagem.
+
+Vamos usar IA para nos ajudar com isso. Bem, a primeira coisa que faremos é uma espécie de revisão do produto. Entenderemos qual problema estamos resolvendo, qual o comportamento desejado, talvez analisando protótipos. Aqui está uma revisão de produto na qual eu estava trabalhando ontem, com um protótipo de um novo recurso. Bem, depois de termos nossa revisão do produto, vamos, e aliás, não deixamos as pequenas coisas irem direto para o agente. Bem, depois de
+
+termos a revisão do produto, também faremos a arquitetura, a arquitetura do sistema. Muitas pessoas já fazem isso há algum tempo. Contratos de componentes, modelos de dados, restrições. Bem, este é um exemplo de um documento que criamos para entender como esses sistemas se encaixarão e qual é a visão geral deles. A partir daí, fazemos algo que eu acho que é realmente subestimado na programação de agentes hoje em dia, que é o design do programa. Acho que as pessoas presumem que, uma vez que
+
+a arquitetura esteja correta, o modelo pode simplesmente funcionar. Bem, mas Nós frequentemente analisamos os tipos e as assinaturas dos métodos, o layout do programa e as pilhas de chamadas. Aqui estão alguns exemplos. Acho que você não conseguirá ler este, mas este é o nível de abstração em que estamos: como vamos organizar tudo isso e como esses sistemas vão interagir? Dylan Mullroy, da Cloudflare, fala muito sobre como ele usa esses grafos de chamadas como parte do seu processo de planejamento. Acho que ele está
+
+absolutamente certo. E então, depois de concluirmos o design do programa, podemos fazer algo chamado fatiamento vertical, que é a ordem de implementação, a coordenação multi-rede. Como vamos construir isso em todo o nosso sistema e como vamos verificar ao longo do caminho? Já falei um pouco sobre como os modelos têm planos horizontais. Não vou me aprofundar muito nisso. Se você quiser
+
+saber mais sobre isso, pode assistir à nossa palestra na AI Engineer Miami. Algumas imagens de uma dock como esta passando pelos testes e as etapas entre cada fase. O principal A ideia aqui é que 30 minutos dedicados ao planejamento prévio e alinhamento podem economizar horas na revisão, então ainda é viável ler cada linha de código. Vamos pular essa parte. Basicamente, o resumo é que você não deve ter PRs demais. Se você está se
+
+afogando em PRs, na verdade, você tem PRs ruins demais. Porque um bom PR é um prazer de revisar. Você lê e pensa: "Sim, isso é ótimo." Foi isto que discutimos. "Foi disso que conversamos." Mas mesmo que um PR precise de
+
+20% de retrabalho, o que é generoso considerando a quantidade de código gerado por IA, é um fardo emocional e intelectual tanto para o revisor quanto para quem submete. Então, se você usa planejamento e alinhamento assistidos por modelo, seu alinhamento é mais curto porque você usa IA para obter todas as informações de uma vez. Sua revisão de código é mais rápida porque você alinhou tudo antecipadamente e sua codificação é mais rápida porque a IA fez isso. E assim, você realmente está se movendo mais rápido, mas ainda está lendo tudo e ainda é responsável pelo código. Então, um conselho final: é fácil ouvir tudo isso e ficar um pouco desanimado. Eu realmente
+
+gostaria de um mundo onde pudéssemos simplesmente arriscar tudo e nunca mais ter que ler código. Mas somos engenheiros e essas são apenas restrições, e os modelos são bons em certas coisas e não são bons em outras. Então, descubra como resolver problemas dado um conjunto de restrições. Use loops. Eles são ótimos. Resolva problemas complexos. Busque
+
+alavancagem. Se você quiser ajudar com isso, estamos construindo o Human Layer. O Human Layer é uma IDE de IA e plataforma de colaboração. São blocos de construção para sua fábrica de software. E em breve, melhores verificadores de qualidade de software. Temos uma espécie de Figma
+
+para código na nuvem e um espaço de trabalho colaborativo no estilo Codec. Ele guia você pelos fluxos de trabalho para realizar esse tipo de tarefa. E estamos conversando com parceiros de design. Estamos contratando engenheiros fundadores aqui em São Francisco. E esses slides já estão disponíveis. Você pode baixá-
+
+los agora mesmo. Você pode experimentar o Human Layer em humanlayer.com. É gratuito para pequenas equipes. Resolva problemas complexos em bases de código complexas. Obrigado a todos pela
+
+energia. [aplausos]
+
+[música]

@@ -1,0 +1,123 @@
+---
+video_title: "We Gave an Agent Production Code Access and Then Tried to Sleep at Night — Moritz Johner, Form3"
+video_id: LqLoYksJ6do
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=LqLoYksJ6do
+video_date: 2026-07-20T17:17:53+00:00
+video_description: |
+  A single PatchPilot PR that bumped a few dependencies changed 70,000 lines of code, and the whole problem hides somewhere in that diff. Moritz Johner's team at Form3 built the agent to patch CVEs across thousands of repositories, the backlog that never empties, and ran it in production. Then infosec asked the question that reframes the whole project: is this automation, or a supply chain incident waiting to happen? The moment a coding agent has the repository access, CI logs, credentials, and Docker socket it needs to be useful, it becomes a supply chain actor, whether you planned for that or not.
+  
+  Their answer is architectural. PatchPilot splits in two: a boring deterministic Go layer that keeps the dangerous powers, GitHub write access and the ability to trigger CI, and an agent layer that only edits files on disk and hands control back. Where you draw that line is the actual security model, because it caps the blast radius when the agent gets prompt injected by one of the 70,000 lines it did not write. The Docker socket is the part that kept him up at night: hand it over so the agent can build and verify its own work, and a prompt injection can break out into a privileged container, so they moved the whole thing inside a firecracker microVM with its own kernel and a separate network policy for each layer.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/moritz-johner/
+  - https://github.com/moolen
+  - https://github.com/external-secrets/external-secrets
+---
+[música]
+
+Obrigado a todos por participarem. Aliás, obrigado pela ótima introdução . Então, sim. Minha palestra de hoje é sobre... então, os títulos que
+
+damos na Ásia incluem acesso ao código de produção e depois tentamos dormir à noite. Bem, trata-se principalmente de correção de dependências, que provavelmente é o problema mais glamoroso da engenharia de software. Acho que todo mundo já fez isso aqui em algum momento no passado. É realmente como passar um aspirador de pó. Como todos adoraram, mal posso esperar para fazer isso de novo na semana que vem. Agora, na nossa escala,
+
+temos milhares de repositórios e é realmente um backlog que nunca se esvazia; você fecha 10 problemas hoje e sabe que na semana que vem chegarão mais 20 e você terá que lidar com eles. Então, naturalmente você pensa: "Claro. Vamos automatizar isso. O Dependabot existe. O Renovate existe. Problema resolvido, certo?"
+
+Não é. Porque essas ferramentas foram realmente criadas para um mundo onde corrigir uma CVE significa, hum, olhar o manifesto em um repositório e simplesmente atualizar a versão para a próxima, e só. Mas o nosso mundo é muito mais complicado do que isso, pelo menos hoje em dia, já que temos contêineres. Portanto, o primeiro problema é que a vulnerabilidade não é necessariamente aquilo que essas ferramentas conseguem detectar. Por exemplo, a CVE pode estar presente em um pacote do sistema operacional que você usa em sua imagem base.
+
+Não está no seu Dockerfile. Está presente apenas na imagem base. Ou, se o seu Dockerfile baixar um binário durante o processo de construção, ele poderá ver a URL, que pode conter um número de versão, mas não terá ideia de como agir sobre ela. Portanto, eles só podem analisar o manifesto, corrigir o manifesto, mas todo o resto é simplesmente invisível. Agora, o segundo problema é que as correções nunca acontecem isoladamente.
+
+Portanto, ao analisarmos a base de código Go, às vezes desejamos atualizar o ambiente de execução Go para a próxima versão secundária. Ao fazer isso, às vezes você também pode precisar atualizar o linter do Go, pois as versões estão interligadas. Você tem que esbarrar nos dois ao mesmo tempo. Então, quando você atualiza o linter, isso às vezes introduz novas regras de linting, o que invalida a base de código, e você fica com essa grande bagunça. Agora, essas ferramentas antigas, entre aspas, ferramentas antigas, como o Dependabot , simplesmente atualizam a versão do runtime do Go , criam um PR e vão embora, e você fica com essa bagunça, e precisa descobrir como consertá-la.
+
+Então, você não tem exatamente um problema de correção, você também tem um problema de raciocínio que precisa abordar aqui. Você realmente precisa de uma ferramenta que analise a CVE e compreenda toda a sua extensão. Onde exatamente reside o CVE? E precisa descobrir o que mais precisa ser alterado para chegar a um CI verde. Então, basicamente foi isso que fizemos. Nós
+
+criamos o Patch Pilot. Implementamos a automação, e eventualmente a equipe de segurança da informação apareceu e fez uma pergunta muito pertinente: isso é automação ou um incidente na cadeia de suprimentos prestes a acontecer? Um agente de codificação útil é um ator na cadeia de suprimentos, quer você planeje isso ou não. Essa é, basicamente, a tese desta palestra. Não se trata de dizer que os agentes são perigosos ou que os agentes são inofensivos. É o momento em que você concede a
+
+um agente credenciais de produção para que ele seja útil; ele realmente se torna um ator da cadeia de suprimentos, assim como um engenheiro em seu departamento. E você deve aplicar diretrizes semelhantes ou idênticas para o agente, assim como faz para os engenheiros. Bem, isto é um estudo de caso. Nós construímos isso e colocamos em produção. A equipe de segurança da informação reagiu em vários pontos. Eles estavam
+
+certos. Bem, eu só quero apresentar a vocês o resultado final. Não é nada de novo, não tem nada de especial. Bem, eu só quero compartilhar o que fizemos e depois, com sorte, ter uma discussão para ver como chegamos a essa solução juntos. Agora, o patch pilot tem duas camadas. Primeiro, trata-se de
+
+uma aplicação Go simples e determinística. É chato. Ele apenas realiza a orquestração. Ele descobre artefatos vulneráveis. Então, artefatos que são nossas imagens OCI. É isso que
+
+temos em produção. É isso que enviamos aos nossos clientes e é com isso que realmente nos preocupamos . Assim, o aplicativo Go descobre esses repositórios, analisa as imagens e determina qual imagem foi criada por qual repositório. Porque precisamos desse link para depois trabalharmos nos repositórios. E essa parte determinística é propositalmente muito chata. É muito simples.
+
+E dentro disso, nós criamos agentes. Agora, esses agentes estão lá para o raciocínio. Por exemplo, quando vemos uma falha de CI, simplesmente dizemos ao agente: "Veja, isso é uma falha de CI. Por favor, descubra o que mais fazer neste caso." É possível que a CI tenha falhado devido a uma alteração anterior que fizemos.
+
+Também pode ser um CI instável. Pode ser uma falha de infraestrutura, um simples timeout que, você sabe, causou a falha na integração contínua. E então, nesse caso, bastaria tentar novamente e não fazer mais nada. Agora, vamos dar uma olhada em como ele se apresenta de ponta a ponta. Então, antes de mais nada, um pouco de codificação por cores. Espero que você consiga ver isso.
+
+Então, as partes verdes representam a nossa parte determinística, a nossa aplicação Go. E os amarelos, esses são os agentes. Então, primeiro começamos com a avaliação. Trata-se apenas de um manifesto simples, um arquivo JSON simples que contém uma lista de imagens e as vulnerabilidades CVE encontradas para essas imagens específicas. Em seguida, ele baixa o repositório com o qual deve trabalhar, clona-o para um diretório local e cria outro diretório dentro dele, onde coloca todo o contexto do agente . Esse é um enunciado que tem
+
+cerca de 2.000 palavras. É o manifesto de avaliação, e mais algumas coisas para se comunicar com o agente. E então, simplesmente invocamos o agente de correção de CVE, que é como a primeira parte. A primeira parte agentiva que invocamos, que deve realizar o menor conjunto de mudanças efetivas.
+
+E isso deve corrigir apenas as vulnerabilidades CVE relacionadas às descobertas. Não deveria ser simplesmente, sabe, atualizar as dependências para a versão mais recente e melhor. É que os juros introduzem riscos desnecessários, que queremos evitar. Então, basta atualizar para a versão que realmente corrige a vulnerabilidade CVE e nada mais. E, no final, o agente deve, obviamente, verificar o seu próprio trabalho. Deve garantir que o Dockerfile
+
+consiga ser construído, verificar novamente a imagem que foi construída e tudo mais . Então, o agente de correção de CVE na verdade apenas modifica arquivos no sistema de arquivos. Não realiza commits, não envia alterações, não cria pull requests e não monitora o próprio CI. Ele simplesmente modifica arquivos no sistema de arquivos. E, uma vez concluído, o controle é devolvido ao controlador, à parte determinística, que então verifica rapidamente as alterações em busca de, você sabe, algum absurdo ali dentro. Por
+
+exemplo, arquivos vazios ou alguns binários que o agente pode criar porque os agentes são realmente burros. Eles acabam bagunçando, sabe, alguns comandos bash que são encadeados, o que pode acabar criando arquivos vazios. Ou então eles simplesmente compilam o aplicativo e deixam o binário dentro do repositório, o que não faz sentido. Então precisamos cuidar disso. Então, fazemos o commit, o push, criamos um PR e, em seguida, monitoramos a CI.
+
+E assim que a integração contínua estiver funcionando corretamente, ótimo, basta enviar notificações pelo Slack e pronto. Bem, caso haja uma falha na CI, simplesmente passamos para a próxima etapa do agente, que deverá então remediar a falha do PR. Para isso, basta fornecermos todo o contexto necessário. Então, precisamos dos logs de CI, dos metadados do fluxo de trabalho e de tudo o mais necessário para trabalhar na falha de CI. E então nós o invocamos. E esse
+
+agente de remediação de relações públicas deve simplesmente realizar as correções que exigem o mínimo esforço. É como se os LLMs (Limitações de Aprendizagem Baseadas em Leis) tendessem a reverter as alterações anteriores. Então, precisamos dizer para ele não fazer isso. E, novamente, basta que verifique o seu próprio trabalho. E isso continua em um ciclo: criar e acompanhar o PR, acompanhar o CI, corrigir a falha do CI e assim por diante, até atingirmos um número máximo de tentativas.
+
+E então enviamos isso para um humano, caso o limite seja atingido. Em seguida, simplesmente instruímos o operador humano a analisar esse problema específico. Porque aí é necessária uma correção manual. Há mais uma coisa que eu gostaria de compartilhar aqui: ao final de cada invocação do agente, pedimos que ele faça uma retrospectiva muito breve e simples . O que correu bem, o que correu mal, que ferramentas estão em falta e que tipo de contexto seria útil na próxima vez que fosse utilizado.
+
+E isso realmente nos ajuda a entender o que o agente está fazendo e o que está faltando. Bem, a observabilidade do agente em bits ainda é uma questão em aberto e está sendo desenvolvida pela comunidade no momento. Foi assim que lidamos com essa questão específica. Então, sim. Isso realmente nos ajuda a entender isso em grande escala, porque podemos agregar todas essas informações dos PRs, condensá-las e, então, ver o que precisamos corrigir. Geralmente víamos dois
+
+tipos de problemas. Uma delas está relacionada à infraestrutura. Pode ser uma falha de rede, ou o agente não ter permissões suficientes para clonar um repositório, ou ainda algum problema de complexidade relacionado ao repositório. Alguns repositórios são simplesmente difíceis de lidar e de compreender sem o contexto necessário para o agente. Então, basta modificarmos o prompt do sistema do agente ou, se tivermos instruções específicas do repositório, basta passá-las para o agente para que ele resolva esse problema.
+
+Trouxe comigo uma captura de tela. Tive que ocultar muita coisa porque é uma captura de tela de produção real e, sabe, no setor financeiro não se quer compartilhar esse tipo de informação, mas, enfim, foi o que consegui obter. Então, aqui em cima, onde está a seta, é uma parte bem simples. Nós simplesmente atualizamos a imagem base que estamos usando a partir da linha Go, algo que um simples dependabot pode fazer. Que chato. Na parte inferior, podemos
+
+ver que o agente atualizou as bibliotecas libcrypto3 e libssl3. Então, é isso aí . Eu também tenho um pequeno exemplo de diferença que quero mostrar rapidamente o que o agente fez. Você pode ver aqui no lado esquerdo que são esses dois de baixo. Posso ir até lá? Aqui.
+
+Temos esses dois pacotes aqui que foram removidos durante o processo porque já haviam sido fixados anteriormente. Em seguida, simplesmente removeu esses problemas porque eles foram corrigidos pela imagem base real. Sendo sincero, se me tivessem incumbido desse tipo de tarefa, provavelmente teria deixado passar . Então, fico feliz que o agente tenha resolvido isso e que ele seja um bom engenheiro. Então, é isso. Então, começamos com uma
+
+série de CVEs. Analisamos os artefatos, corrigimos as CVEs e as descobertas, e agora temos um PR funcional que precisa apenas ser revisado por um humano, aprovado e integrado. Então, para que isso funcionasse, nós demos algumas coisas ao Patch Pilot. Concedemos acesso ao GitHub, ou seja, acesso de leitura e gravação para clonar o repositório, confirmar e enviar alterações, abrir solicitações de pull, baixar os logs de CI e acionar a CI. Também fornecemos credenciais de registro OCR para listar as imagens no registro e descobrir, por exemplo , quais imagens estão disponíveis e quais são as mais recentes. Nós fornecemos ferramentas como um
+
+ambiente de execução Go, um ambiente de execução Python, vários analisadores de código ( linters), bibliotecas estáticas, um shell bash, acesso à rede e tudo mais . Então, foi isso que fornecemos em toda a aplicação. Mas, novamente, tínhamos duas camadas, a parte determinística e a parte agentiva. E também aplicamos a divisão das credenciais para as duas camadas diferentes. Então, aqui está a questão sobre a lista de capacidades. Os perigosos, o
+
+acesso direto, hum, e acionar o UCI é algo que não demos ao agente. Em vez disso, transferimos essa funcionalidade para a parte determinística, porque é sobre ela que podemos raciocinar e na qual podemos confiar. Ela simplesmente executa esse tipo de ação e não fornecemos ao agente esse tipo de credencial, pois isso limita fundamentalmente o raio de impacto caso o agente seja alvo de injeção de prompts. Portanto, esse limite é realmente importante para o caso de injeção de prompt, porque você provavelmente não viu na captura de tela anterior, mas cerca de 70.000 linhas de código foram alteradas nesse pequeno PR.
+
+Hum, são muitas mudanças que acontecem apenas alterando algumas dependências. E a superfície de ataque é realmente muito, muito, muito ampla. Então, o que fizemos para mitigar isso, bem, acho que a injeção de prompts em si não foi resolvida e não podemos realmente resolvê-la. Tudo o que podemos fazer é limitar o raio da explosão, caso isso aconteça. O que fizemos foi aplicar um pouco de direcionamento de prompts, porque sabemos que tipo de diretórios ou arquivos contêm informações não confiáveis, contexto não confiável.
+
+Nós simplesmente dizemos ao agente: "Olha, o diretório de fornecedores, não confie nisso." Ou os logs de CI que ficam nesse arquivo ou nesse subdiretório, sabe, tenha certeza de não ser um idiota. Hum, tem outra coisa que fizemos, que funcionou muito bem, que foi implementar um teste de ponta a ponta, onde criamos um repositório e enviamos patches para que o programa fosse implementado e funcionasse nele. Hum, acho que é isso que as pessoas chamam de avaliações hoje em dia, e então nós apenas, hum, garantimos que não seja, hum, injetado por meio de prompt. Então, temos uma função obsoleta em nosso repositório personalizado que tenta recrutar o agente para realizar alguma ação maliciosa, ou temos um guia de migração onde a função obsoleta aponta para ela, e tudo mais. Então, tentamos
+
+, sabe, remediar esses tipos de problemas que conhecemos. Mas ainda existem vetores de injeção desconhecidos, dos quais ainda não temos conhecimento . Então, é por isso que ainda precisamos orar um pouco. Mas pelo menos não construímos todo o sistema baseado na esperança. Essa é a parte que me tirou o sono . Bem,
+
+caixas de areia ficam ótimas em um escorregador. Você simplesmente desenha uma caixa, coloca o agente dentro dela e se sente seguro, certo? Então, o problema é que, em algum momento, o agente realmente quer, hum, verificar o próprio trabalho. Quando trabalha com arquivos Docker, ele tenta construir um contêiner Docker. Também pode ser necessário executar um contêiner Docker para descobrir quais versões de pacotes estão disponíveis e assim por diante.
+
+Então, naturalmente, você fornece a ele esse socket do Docker. Nesse ponto, é praticamente o fim do jogo para você, porque o agente pode simplesmente criar um contêiner privilegiado, escapar dele e então, você sabe, ler variáveis ​​de ambiente de outros processos, ler a memória de outros processos, pode plantar chaves SSH; essencialmente, é o fim do jogo para você nesse ponto. Em algum momento, implementamos isso em produção . Hum, não foi uma sensação agradável. Partimos dessa premissa e avaliamos todas as outras opções óbvias dentro do ecossistema Linux, no que diz respeito ao isolamento de processos ( sandboxing).
+
+Existem muitas tecnologias disponíveis, como Landlock, Bubble Wrap, Seccomp, U Notify, Fence, e muitas funções que temos para builds Docker sem privilégios , como Kaniko, BuildKit, e outras. Mas eles não se integram muito bem com contêineres, e nenhum deles consegue realmente conter um socket Docker ou um daemon Docker que roda em um host. Então, deixe-me compartilhar um projeto que desenvolvemos, que ainda está em fase inicial . É o mesmo padrão. Você simplesmente desenha uma caixa, mas em vez de chamá-la de sandbox, chama-a apenas de micro VM. No nosso
+
+caso, estamos usando... usando [limpa a garganta] Firecracker para ter um mecanismo de isolamento adequado. Em seguida, inserimos o agente, inserimos o socket do Docker e, nesse caso, o socket do Docker é alimentado por seu próprio kernel . O
+
+que é bom, porque isso realmente resolve o problema com o daemon do Docker ou com o agente tentando escapar do sandbox. Nesse caso, tudo está contido dentro dessa micro VM, o que é bom. Há outra coisa que vale a pena mencionar neste caso. Novamente, temos essa arquitetura de dois níveis, essas duas camadas, a parte agentiva e a parte determinística. E também queremos aplicar políticas de rede a esses dois mundos separadamente.
+
+Quanto à parte determinística, sabemos apenas que tipo de acesso à rede é necessário para que funcione corretamente. É necessário acesso ao GitHub e mais alguma coisa. Para o agente, nós realmente não sabemos com antecedência. Isso depende um pouco do tipo de repositório ou linguagem em que funciona. Quando utiliza Java, precisa de um ecossistema completamente diferente em comparação com Python ou Go. Então
+
+, é por isso que realmente precisamos aplicar políticas de rede diferentes. Então, é isso que você pode fazer. Você pode simplesmente configurar um encaminhador DNS e TCP dentro dessa micro VM. Mas, fora isso, basta, sabe, cortar completamente o acesso a ele a partir do sistema host. E então tudo tem que passar por este Vsock, que então entrega todos os pacotes de rede a um processo do host, que por sua vez aplica as políticas de rede a todos os pacotes de saída. E então
+
+você pode aplicar, sabe, regras com base em nomes de host, portas de destino, intervalos laterais, o que você quiser. Se você realmente quiser ir além, pode simplesmente configurar uma CA personalizada, instalá-la na micro VM e, em seguida, fazer todo tipo de controle TLS do tipo "homem no meio" . O que é realmente difícil de fazer, especialmente quando se trata do socket do Docker, mas não vamos nos aprofundar nisso agora. Então, minha opinião sobre o isolamento de agentes é a seguinte: os agentes existentes que temos hoje com o Codex e o Cloud vêm com seu próprio ambiente isolado, mas, na minha opinião, isso é inútil, especialmente quando você dá a eles acesso a um socket do Docker. É que realmente não vai conseguir conter isso.
+
+Outras plataformas como Open Code ou Pi simplesmente não possuem um ambiente de teste (sandbox) porque não foi implementado ou não está presente intencionalmente. Então, na minha opinião, você realmente precisa criar um ambiente para um agente onde você possa simplesmente colocá-lo e fornecer tudo o que ele precisa, para que ele tenha toda a liberdade para trabalhar em uma questão específica que ele deve resolver. Mas ainda há uma lacuna. Portanto, o diagrama que acabei de mostrar não é algo único. É apenas uma máquina virtual com um pouco de infraestrutura instalada.
+
+Você pode simplesmente apagar o código, não é grande coisa, honestamente. Você pode até descer até as barracas dos vendedores e conversar com eles. Você tem à sua disposição uma grande variedade de ambientes de teste (sandbox) como serviço, que você pode consumir facilmente. Algumas delas realmente pecam em funcionalidade, especialmente no que diz respeito a coisas como incluir um socket Docker ou ter controles de acesso à rede adequados . Isso ainda está faltando, mas varia de fornecedor para fornecedor.
+
+Recentemente, também vi o projeto micro sandbox , que já está em execução há uns três ou quatro meses, talvez até mais, e que seria a minha escolha se eu fosse construir o PatchPilot hoje novamente, porque ele já vem com tudo incluído: controles de acesso à rede , tudo isso. Portanto, tenha isso em mente se você realmente quiser construir isso. É um projeto de código aberto. Possui uma comunidade. Atualmente, o projeto é financiado pela YC. Bem, na verdade não
+
+sabemos como as coisas vão se desenrolar nos próximos meses. Vamos ver se eles conseguem atrair apoio suficiente para manter o projeto de código aberto em funcionamento. Vamos ver. Portanto, a lacuna não está na inexistência da ferramenta . Todas as ferramentas existem, mas a maioria ainda está em fase beta.
+
+E ainda existe uma grande lacuna para, você sabe, obter tração real no mercado corporativo e ter todos os recursos, todos os detalhes necessários para implantá-lo em um ambiente corporativo adequado. E acho que isso é algo em que precisamos trabalhar . Claro, agora temos uma caixa de areia. Legal. Isso é ótimo, mas ainda precisamos de muita orquestração por cima, algo que você pode obter de um fornecedor. Existem também
+
+alguns projetos de código aberto no momento que estão trabalhando nisso. Existe um grupo de interesse especial, o Kubernetes sandbox de agentes, que está trabalhando nisso . Existe um ambiente de testes aberto que também está trabalhando nisso para integrar esse tipo de coisa. Então, tenha isso em mente se você realmente quiser, sabe, conter um agente em um ambiente de produção. Ainda não chegou lá . É uma versão beta. Ainda estamos no início dessa
+
+fase. Vamos ver como as coisas correm. Tudo bem. Se você puder tirar uma única conclusão disso, é que o raio de impacto de um agente é uma decisão de arquitetura. Não fornecemos ao agente as credenciais necessárias para, você sabe, acionar a integração contínua ( CI), enviar alterações para o GitHub ou abrir um pull request. Isso simplesmente
+
+não é necessário. Você pode simplesmente inserir essa funcionalidade em uma camada determinística. Isso limita bastante o raio de explosão de um agente. Então, essa escolha, o que é determinístico e o que é agentivo, é realmente o seu modelo de segurança neste caso. Tudo bem.
+
+Bem, para mim foi isso. Só tenho mais uma coisa a dizer, que é um convite à comunidade para falarmos sobre os assuntos que acabei de mencionar. Hum, acho que amanhã haverá um painel dedicado ao "sandbox", onde muitas palestras serão sobre esse negócio de "sandbox". E com certeza eu gostaria de saber de vocês como vocês executam agentes em produção, apenas para aprender e discutir sobre isso, a fim de envolver a comunidade e descobrir tudo juntos. Obrigado.
+
+[aplausos]
+
+[música]

@@ -1,0 +1,134 @@
+---
+video_title: "It's 10pm. Do You Know Where Your Agents Are? — Kim Maida, Keycard"
+video_id: I3znWC3MEXM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=I3znWC3MEXM
+video_date: 2026-07-20T17:17:53+00:00
+video_description: |
+  An incident agent on the night shift reads a ticket: the billing database is broken, payments failing. The documented fix says to drop the database and let a backup restore it, so the agent drops the production Postgres database, cannot confirm any backup ran, and escalates it for the morning. This has happened to real companies. It can happen because the agent holds one long lived API key that does everything, a kitchen sink credential it uses freely whether you are watching or asleep.
+  
+  Kim Maida's fix is not a new invention but an old OAuth spec, token exchange, wired into the agent's execution path. Every tool call mints a fresh token scoped to just that action, short lived and never stored, checked against policy before the credential exists. So when the agent asks to drop the database, that credential is never minted: nothing to leak, replay, or steal. Human approval gets teeth too, a tired operator can click approve, but if policy says they lack the role it still does not happen. It works across CLI coding agents, MCP servers, and any OAuth provider.
+  
+  Speaker info:
+  - https://x.com/kimmaida
+  - https://linkedin.com/in/kimmaida
+  - https://maida.kim
+  
+  Timestamps:
+  0:00 - It's 10pm, do you know where your agents are?
+  1:48 - Demo: an incident agent on the night shift
+  3:18 - When the agent drops the production database
+  4:52 - Why agents are dangerously overprivileged
+  5:56 - The agentic execution path
+  7:27 - The fix: OAuth token exchange
+  8:32 - Delegation: narrowing the user's access
+  9:23 - Minting a fresh token per tool call
+  11:44 - The demo again, now with token exchange
+  13:33 - Policy blocks the database drop before it exists
+  14:27 - Human approval backed by real policy
+  15:52 - Works across CLIs, MCP servers, and any provider
+  17:34 - Q&A
+---
+[música]
+
+Ok. Então, quando eu era criança, crescendo nos anos 90, a gente passava as noites fora durante todo o verão andando de bicicleta pelo bairro e brincando com os amigos. E dos anos 60 aos 80, havia esses anúncios de serviço público na TV em que celebridades apareciam e diziam: "São 22h. Você sabe onde estão seus filhos?" Porque, aparentemente, nossos pais daquela época precisavam ser lembrados de que tinham filhos pelos quais eram responsáveis. E
+
+eu sinto que, nesta fase da IA ​​em que nos encontramos agora, estamos confiando cada vez mais responsabilidades aos agentes, mas ainda precisamos daquele anúncio de utilidade pública que diz que são 22h. Você sabe onde estão seus agentes? Então, digamos que você, como usuário, queira que o agente use um servidor MCP ou uma API para realizar tarefas. Agora sabemos que agentes sem acesso não são úteis. Então, nós fornecemos a eles um arquivo final, algumas chaves de API e os deixamos fazer o que precisam . E isso é bom até que deixe de ser.
+
+Então você já ouviu as histórias de terror, certo? Ou talvez até mesmo vivenciar algumas delas você mesmo. Então vamos ver como isso funciona na prática. Por aqui
+
+.
+
+OK. Então, tenho um agente em execução aqui que é basicamente um agente de gerenciamento de incidentes. É tarde da noite e há um usuário humano, mas ele provavelmente está meio dormindo. O agente é responsável por priorizar os problemas que chegam. Certo? Então, se
+
+olharmos para o primeiro aqui, eu consigo encontrar o rato. Então, o primeiro problema foi a falha da fonte de alimentação de reserva na sala de servidores. Agora, o agente usará uma chave de API para ler o sistema que está gerando os relatórios. Vai avaliar o que está escrito ali e vai decidir que não pode fazer nada a respeito , certo? Porque é uma falha física.
+
+Então, o chamado será priorizado para a manhã seguinte e, na verdade, ainda não há nenhum problema, certo? Então, o segundo problema é que o certificado está prestes a expirar, certo? O agente TLS usará a mesma chave de API novamente para ler o conteúdo do ticket e, em seguida, decidirá que deve renovar o certificado. Para isso, usará outra chave de API para chamar o serviço de hospedagem em nuvem e renovar o certificado. Por fim, usará a chave de API anterior para gerar o relatório para a equipe da manhã. É aqui que a coisa começa a ficar
+
+divertida, não é? Então, o problema é que o banco de dados de faturamento está com defeito e os pagamentos estão falhando. O agente vai ler que considera a solução bastante óbvia. O documento afirma que o procedimento de recuperação recomendado consiste em excluir o banco de dados e, em seguida, restaurá-lo a partir do backup, o que ocorre automaticamente. Bem, então ele contém a string de conexão do PostgreSQL. Então o processo
+
+continua, exclui o banco de dados e não tem como verificar se havia um backup. Isso só agrava a situação durante a manhã. E isso realmente aconteceu, não é? Assim como já aconteceu com empresas de grande renome .
+
+Agora, se passarmos para o próximo, veremos que os processos principais do servidor estão congelados e não estão se recuperando. Para resolver isso, o sistema de produção ficará offline por um breve período de tempo. E você pode ver que o agente decidiu que deveria fazer isso. E agora está usando a mesma chave de API que usou para renovar o certificado, certo? Porque essa chave de API é um poço sem fundo. Ele pode fazer todas
+
+essas coisas com ele. E, por fim, temos sites que falham para um em cada três usuários. A solução recomendada é aumentar a escala, certo? E isso vai acarretar algum gasto. E então ele prossegue e faz isso porque, novamente, ele pode usar a mesma chave de API para fazer isso também.
+
+Certo? Portanto, os agentes com chaves de API realmente ultrapassam o nível 10. Eles têm privilégios excessivos. Isso significa que eles podem agir livremente com base em decisões que tomam, com as quais você pode concordar ou não . E eles podem fazer isso mesmo sob sua supervisão. Então, talvez você já tenha
+
+passado pelo pânico de tentar interromper um agente no meio de uma tarefa porque você pediu para ele ler um projeto, ele leu o projeto, encontrou algo que achou que deveria corrigir e então começou a escrever. Os agentes fazem isso mesmo quando estão sob supervisão. E isso está se tornando um problema ainda maior porque temos cada vez mais agentes que estão sendo executados sem supervisão, o que só piora a situação, pois os agentes querem ser úteis. Eles vão usar todas as permissões que têm para concluir a tarefa. E não podemos resolver isso apenas com a intervenção humana. Passamos décadas aprimorando a
+
+gestão de acesso para humanos. Então, confiar cegamente em um ser humano que pode estar um pouco cansado de dar consentimento ou que pode estar muito cansado à noite, isso realmente não vai ser suficiente. Portanto, para identificar onde podemos introduzir segurança e controle de acesso, precisamos analisar o caminho de execução do agente. Temos, portanto, um usuário que deseja usar um LLM para interagir com um recurso. Agora, um agente é um loop de controle que chama um LLM e, frequentemente, temos um servidor MCP intermediário que fornece ferramentas que o agente pode chamar e, em seguida, se conecta diretamente ao recurso.
+
+Agora, um cliente MCP recebe as chamadas de ferramenta propostas pelo agente e as encaminha para seu servidor MCP. E então temos um ambiente de execução. Este é um processo que executa o loop do agente e realiza as chamadas. E esse ambiente de execução pode ser uma interface de linha de comando (CLI), como um código em nuvem. Pode ser um SDK, como um SDK de IA ou SDKs de agentes de provedores .
+
+Ou pode ser um aplicativo como o Cursor ou o Codeex. Então, vamos seguir as instruções ao longo do caminho de execução. O usuário envia a solicitação para o ambiente de execução, que chama o modelo, que por sua vez a envia para o LM. O modelo irá então propor chamadas de ferramentas que são enviadas pelo cliente MCP para o servidor MCP, que por sua vez executa as ferramentas e chama a API de recursos. A API responde ao servidor MCP, o cliente MCP envia os resultados para o ambiente de execução, o modelo é então chamado e o loop se repete até que o modelo esteja satisfeito, momento em que a resposta final é retornada ao usuário.
+
+Portanto, existem alguns pontos nesse caminho onde poderíamos implementar um controle de acesso real, e podemos fazer isso com padrões abertos, e, como uma espécie de spoiler, não se trata apenas de OOTH. Portanto, a RFC8693 trata da troca de tokens e é uma RFC que estende a OOTH 2. Vou mostrar como essa especificação pode ser usada para lidar com o acesso de agentes. Primeiro, quero recapitular os problemas que estamos tentando resolver aqui. Certo? Então, se você se lembra de ter observado
+
+o registro de auditoria durante a demonstração, podíamos ver que chaves de API estavam sendo usadas para chamar endpoints, mas não tínhamos ideia de quem estava usando essas chaves. Portanto, temos credenciais que estão sendo usadas sem estarem atribuídas a um usuário ou à identidade de um agente. Temos um agente com acesso irrestrito a todas as permissões presentes em uma chave de API. E, por fim, sabemos que não podemos simplesmente incluir humanos em todos os processos, porque humanos também cometem erros. Além disso, muitos agentes funcionam de forma autônoma.
+
+Portanto, podemos resolver isso com um servidor de autorização chamado serviço de token de segurança. Agora, um servidor de autorização verifica as identidades e emite tokens. Assim, provedores de identidade como Google, Octa, Ozero e outros fornecem servidores de autorização. E se quisermos uma cadeia de identidade no caminho de execução do nosso agente, primeiro precisamos ser capazes de fazer login. Assim, o servidor de autorização solicitará ao usuário seu consentimento para delegar acesso a um subconjunto de suas permissões. E este é o
+
+primeiro estreitamento de acesso, certo? Estamos delegando apenas algumas das permissões totais do usuário ao agente. O servidor de autorização emite um token que identifica o usuário e também contém seu nível de acesso. Portanto, neste momento já estamos nos saindo melhor do que na primeira demonstração, porque agora sabemos quem é o usuário e o que ele tem permissão para fazer. Assim, esse token identifica o sujeito em nome de quem o agente irá agir.
+
+Para dar suporte à troca de tokens, precisamos de um cliente OOTH capaz de executar código. Portanto, isso pode ser uma ponte entre o cliente MCP e um servidor MCP de terceiros. Pode ser um aplicativo de agente personalizado criado por você ou um wrapper de linha de comando em torno de um agente de codificação pronto para uso. E nós pegamos o prompt e o token do sujeito e os enviamos para o cliente OATH. Agora o loop do agente é executado e o modelo propõe uma chamada de ferramenta.
+
+Em seguida, o ambiente de execução se autentica com o serviço de token de segurança usando suas credenciais de cliente Ooth ou identidade de carga de trabalho e também envia o token do sujeito que contém a identidade do usuário e o nível de acesso. Isso cria uma solicitação de troca de tokens, e essa solicitação pede permissões para acessar o servidor MCP para essa chamada de ferramenta, mas somente para essa chamada de ferramenta. Agora temos três informações essenciais que faltam na demonstração da chave de API. Sabemos a identidade do agente que está solicitando acesso. Sabemos a identidade do usuário em nome de quem está agindo.
+
+E também sabemos o nível de acesso do usuário que delegou a tarefa. Agora precisamos decidir se o token solicitado deve de fato ser concedido. E podemos fazer isso usando políticas de governança, que são avaliadas com base no acesso solicitado e em quem está solicitando qual recurso e em nome de quem. Agora, se a cadeia de delegação e o acesso solicitado estiverem dentro da política, o serviço de token de segurança emite um token de acesso para o recurso downstream, e esse token possui um público-alvo declarando que somente esse servidor MCP de destino tem permissão para usá-lo para fazer solicitações. Deve ter curta duração, geralmente expirando em poucos minutos, e também é efêmero, o que significa que nunca deve ser armazenado.
+
+Assim, esse token é enviado ao cliente MCP, que faz uma chamada de ferramenta usando-o como credencial de portador. O servidor MCP valida o token e, em seguida, chama o recurso, mas nunca armazena o token, descartando-o assim que a chamada é concluída. Assim, o resultado retorna pelo loop e o processo se repete até que o modelo retorne a resposta ao usuário. Então, se voltarmos à demonstração agora, usaremos o mesmo agente, só que agora com troca de tokens. OK. Então, a primeira coisa que já temos de
+
+diferente é que agora temos um login de operador, certo? Então, temos autenticação e eu vou me autenticar com o Google usando minhas próprias credenciais.
+
+Então, nós temos os mesmos ingressos. Temos o mesmo agente. Tem o mesmo aviso. E agora podemos ver o que vai acontecer. Agora, o primeiro item provavelmente será exatamente o correto, pois isso foi uma falha de hardware. O sistema vai
+
+decidir, depois de ler, que não há nada que possa fazer. Mas, como você pode ver, o registro de auditoria está sendo preenchido, e agora temos muito mais informações. Nós sabemos em nome de quem o agente está agindo . Sabemos que o agente está chamando um servidor MCP de infraestrutura de produção e que ele entrará em contato com determinados recursos subsequentes. Certo? Então, temos um
+
+monitor de hardware que é a origem deste incidente e, quando decide que não pode fazer nada a respeito, usa um escopo adequado para se comunicar com o recurso de pager a fim de encaminhar o problema para a equipe da manhã.
+
+Então, para renovar o certificado, certo? Esta é uma ação bastante segura e solicitará especificamente que o escopo seja apenas para renovar o certificado, certo? Então, está se comunicando com esse host na nuvem, onde antes tínhamos essa chave de API que podia fazer uma infinidade de coisas diferentes, mas desta vez está apenas solicitando permissões e recebendo permissão para fazer esta única coisa.
+
+Então, agora, com o banco de dados de faturamento funcionando corretamente, o banco de dados de faturamento está quebrado. Está bem documentado que você deve excluir o banco de dados aqui, mas nenhum agente deveria ser capaz de excluir um banco de dados. Então, o que acontece é que, quando fazemos essa chamada, a política avalia a solicitação em relação a todas as permissões que o usuário possui e percebe que existe uma restrição que impede os agentes de fazerem isso, e essa credencial sequer existiu. Portanto, a política é avaliada antes da emissão da credencial , o que significa que você não terá uma credencial com privilégios excessivos circulando por aí, que você deveria ter impedido a entidade de receber. Isso simplesmente não existe. Portanto, não há
+
+nada para vazar, nada para reproduzir e nada para roubar.
+
+Então, este era o caso em que o sistema queria reiniciar a produção. Então, existem coisas que os agentes provavelmente deveriam ter permissão para fazer e coisas que talvez não devessem ter permissão para fazer, e depois há uma espécie de meio-termo , certo? Então, o sistema vai me pedir, como usuário, minha aprovação como pessoa envolvida no processo. Digo que isso é possível, mas existe outra política que exige que o usuário humano tenha uma função específica para poder fazer isso. E, na verdade, eu não tenho essa função. Isso
+
+vai me impedir de permitir que o agente faça isso. Ah, mesmo que eu tenha aprovado. Assim, podemos evitar que as pessoas fiquem sobrecarregadas de consentimento clicando repetidamente apenas para concluir as tarefas. E então, esta é a de escala, certo? Portanto, isso é algo que talvez o usuário tenha permissão para fazer.
+
+Então, se eu disser "aprovo" isso, significa que tenho permissão para fazer isso e pude dizer ao agente que é permitido, e a apólice aprovou porque eu também tenho permissão para fazer isso.
+
+Portanto, os problemas de acesso do agente que discutimos agora têm solução, pois sabemos quem é o usuário e quem é o agente. O agente também possui acesso efêmero de curta duração com escopo de tarefa, e o controle de acesso realizado por um humano é efetivamente respaldado por políticas reais. Portanto, uma pessoa exausta não pode simplesmente aceitar tudo o que acontece. Outra vantagem de usar padrões abertos, como a troca de tokens, é a capacidade de continuar dando suporte a tecnologias emergentes. Isso funciona com agentes prontos para uso. Também funciona com
+
+agentes personalizados que você mesmo pode criar . Funciona com a CLI (linha de comando). Ele funciona com servidores MCP de terceiros, bem como com servidores MCP proprietários, gateways MCP, comunicação agente a agente, enfim, qualquer provedor de identidade OOTH . Funciona com OpenClaw e basicamente com qualquer coisa que possa ser lançada na próxima semana. Portanto, é perfeitamente possível, neste momento, ser esse pai ou mãe responsável e afirmar que sim, você sabe onde estão seus agentes.
+
+Meu nome é Kim Maida. Sou o engenheiro fundador de GTM e chefe de desenvolvimento da Keycard, uma plataforma baseada em padrões para fornecer um serviço de token de segurança e governança de políticas. Estarei no estande do Keycard durante praticamente todo o evento, mas também realizaremos um workshop amanhã sobre como montar e proteger um servidor MCP. Você pode escanear este código QR para entrar em contato comigo e agradeço muito pelo seu tempo hoje. Muito obrigado.
+
+[aplausos]
+
+Temos tempo para algumas perguntas. Então, se alguém tiver alguma pergunta para a Kim, podemos respondê-las agora mesmo e depois temos cerca de cinco minutos. Então, provavelmente podemos responder a umas cinco perguntas curtas, se alguém tiver alguma.
+
+Então, parece que você colocou a barreira de segurança entre o MCP e o recurso, ou, só para esclarecer, ela está presente em ambos os locais? Gostaria de saber se houve algum tipo de decisão por trás disso, ou o que teria motivado você a escolher onde colocar esse tipo de barreira. Ah, sim, então o servidor de autorização está no meio... deixa eu achar o slide
+
+.
+
+Assim, o ambiente de execução se autentica no serviço de token de segurança e se identifica . E este é o ponto em que temos a solicitação gerada pelo agente. E também temos os escopos que ele solicita para obter o token e, assim, chamar o próximo passo, certo? E o próximo item na lista, neste caso específico, é o servidor MCP. Assim, o recurso a jusante é como um passo adiante. Mas se você pensar
+
+em algo como um token OOTH para um usuário, certo? Portanto, um token OOTH para um usuário conterá todas as permissões que o usuário aceitou quando nos foi apresentado o acesso que ele iria delegar. Mas um agente, você não quer que um agente use nenhuma dessas permissões que ele deseja em todas as chamadas de ferramentas. Então, esse serviço fica no meio do caminho, de forma que possamos dizer se o que está sendo solicitado ultrapassa o que permitimos para a chamada da ferramenta específica. Nesse caso, nunca enviamos o token OAuth, certo? Assim, eles
+
+recebem o token OAuth somente se estiverem solicitando algo dentro do escopo do que queremos, o que faz sentido em
+
+sistemas corporativos. Pode haver alguma resistência à adoção deste novo protocolo, o novo OpenSpec. Você já se deparou com isso? E quais são as maneiras de superar isso? Então, na verdade não é uma especificação nova, que é, você sabe, é uma daquelas coisas que aconteceu durante um período em que as pessoas pensavam: "Ah, você pode simplesmente usar OOTH para isso". Bem,
+
+não precisamos necessariamente de uma nova especificação para isso. Essa especificação já existe há algum tempo. Então não existe aquele receio de, nossa, estamos introduzindo algo completamente novo. Novas especificações estão sendo divulgadas quase diariamente neste momento. Hum, mas eles podem ser combinados essencialmente com isso, com a troca de tokens.
+
+Acho que temos tempo para mais uma pergunta.
+
+Talvez eu esteja fazendo uma pergunta importante. Então, se você me disser para ir dar uma olhada na coisa, tudo bem. Bem, estou numa situação em que sabemos que ainda não temos escopos OOTH suficientes definidos numa sub-rotina do servidor MCP, tal como você tem. E uma das coisas que nos deixa relutantes é definir o nível de detalhamento do escopo, porque sabemos que também precisamos definir serviços subsequentes que terão um certo número desses itens, e alguém precisa fazer a verificação de autorização em algum lugar. Qual é a sua recomendação para começar a definir seus próprios escopos, de forma que você possa gerenciar isso de maneira realista quando ainda não definiu o suficiente e está preocupado com o gerenciamento contínuo ao longo do tempo?
+
+Bem, se o seu servidor de recursos já tiver escopos específicos, esse será o seu ponto de partida, porque o token subsequente, aquele que era o token do sistema operacional para o usuário, terá os escopos para o recurso, certo? Porque se trata do acesso do usuário ao recurso. Então, esses são os escopos básicos, aqueles que você já sabe que terá. Se quiser adicionar escopos extras para chamadas de ferramentas de governança, como um servidor MCP personalizado ou algo do tipo, você pode sobrepô-los ou simplesmente repassá-los. Sim . OK. Obrigado.
+
+Tudo bem. Obrigada, Kim.

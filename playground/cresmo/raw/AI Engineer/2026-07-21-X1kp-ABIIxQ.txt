@@ -1,0 +1,118 @@
+---
+video_title: "Your agent architecture has a half-life of 6 months — Dan Farrelly, CTO, Inngest"
+video_id: X1kp-ABIIxQ
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=X1kp-ABIIxQ
+video_date: 2026-07-21T03:14:22+00:00
+video_description: |
+  A short history of the right way to build an agent: RAG, ReAct, prompt chaining, orchestrator-workers, MCP, CLI, MCP again... CLI again?? Every time you adopt a trend you rebuild your architecture. In this talk, Dan Farrelly, Inngest cofounder and CTO, is not going to tell you what comes next. He's going to show you how to build so it doesn't matter. He'll cover the core primitives that show up in every production agent, how bringing decisions closer to code provides more stack flexibility, and why the right execution layer unlocks faster iteration.
+  
+  ### Dan Farrelly
+  CTO and Co-founder · Inngest
+  [LinkedIn](https://www.linkedin.com/in/djfarrelly)
+  
+  Dan Farrelly is CTO and co-founder of Inngest, a platform for durable serverless functions, workflows and agent orchestration. He was previously CTO at Buffer and created developer tools including Timezone.io and MailDev.
+---
+[música] Tudo indo
+
+bem. Tudo bem. Pronto. Tudo bem. Olá pessoal. Certo, só estou testando a
+
+voz. Muito bem . Muito bem, meu nome é Dan e estou aqui para falar sobre como a arquitetura de seus agentes tem uma meia-vida de 6 meses. Mas primeiro, quem sou eu? Meu nome é Dan, sou o CTO e cofundador da Ingest.
+
+E por que você deveria me ouvir? Bem, em primeiro lugar, lidero uma equipe incrível na Ingest. Construímos um sistema que executa de forma confiável qualquer coisa, desde agentes e fluxos de trabalho até pipelines de contato, o que você precisar. Estou construindo infraestrutura de IA a fundo todos os dias [limpa a garganta] e, além disso, também construindo agentes, não apenas filosofando aqui sobre como você deveria construí-los. Então, falando em criar agentes, se você trabalha com isso há mais de 6 meses, provavelmente já reescreveu alguma coisa, talvez mais de uma vez.
+
+Um novo modelo, uma nova estrutura ou versão de estrutura, um novo padrão de chamada de ferramentas, um novo padrão de arquitetura, e de repente sua arquitetura não se encaixa mais. Não é uma reclamação. É simplesmente a realidade. Certo, as coisas estão acontecendo mais rápido do que nunca. Você pode verificar se já participou de alguma das sessões ou palestras principais.
+
+Então, quero que você pense no que você lançou há 6 meses e quanto disso ainda funciona da maneira como você escreveu originalmente. É provável que algumas partes do seu código sobrevivam. Mas será que eles sobreviveram por acaso? Ou você o projetou dessa forma? Será que sobreviveram por planejamento?
+
+Como você projetou a arquitetura do seu agente? Você participou do projeto arquitetônico? Tudo bem. Você usou algum framework? Você enrolou algo personalizado?
+
+A arquitetura foi um projeto intencional, cuidadosamente elaborado? Ou simplesmente evoluiu para o que você tem agora? Essas são todas maneiras diferentes de descrever onde as pessoas estão hoje em dia. Muita gente tem falado sobre arquitetura de chicotes elétricos, sobre como construir chicotes elétricos. Mas, na maioria das vezes, acho que muita gente desenha diagramas e fala sobre componentes específicos. Desenhe linhas simples e bonitas.
+
+Parece muito semelhante, sabe, meio simples. Mas eu quero falar sobre as camadas conceituais quando você está construindo um sistema como este. Este talvez seja o modelo mental. Não são componentes específicos. Portanto, na minha opinião, existem três camadas distintas.
+
+Primeiro, a camada de execução. Penso nisso como o cérebro. É onde o fluxo, o estado, a durabilidade e as novas tentativas acontecem. Depois, há a camada de contexto. Este é o conhecimento. Muito bem, isto
+
+é sobre modelos, instruções, ferramentas e memória. Esta é a camada que sofre as maiores alterações. E depois há a computação. Existem...
+
+estas são as mãos, certo? São ambientes de teste, tempos de execução e navegadores que você está automatizando. Penso que essas camadas são importantes de se considerar pelo seguinte motivo. É a sua meia-vida. E o que é meia-vida? Certo, é um
+
+termo científico. E é um termo científico para o tempo que algo leva para se decompor pela metade. E acho que a sua arquitetura também tem uma meia-vida. Então, os prompts duram semanas, se você tiver sorte, talvez apenas uma semana. Os modelos que você usa, meses, novamente, se você tiver sorte.
+
+Mas acho que essa execução pode durar anos, se for feita corretamente. Então, o problema é que eu acho que a maioria das equipes mistura tudo. E o que acontece então é que a meia-vida de uma camada acaba vazando e afetando negativamente os outros componentes. Você está criando dívida técnica, só que com outro nome. Então, minha tese é pensar em camadas.
+
+Desacople-os. Então, vamos falar sobre o que eu quero dizer. As equipes se deparam com muitos problemas nas abordagens que escolhem. Você pode escolher uma estrutura, e começar pode parecer algo mágico. Você pode pegar um arnês pré-fabricado em um dos laboratórios de fronteira ou em qualquer outro lugar.
+
+Ou você pode optar por desenvolver todo o sistema do zero, o que pode levar meses, semanas ou o tempo que for necessário. Mas acho que, em muitas dessas situações, as abstrações ou não existem de todo, ou são de nível muito elevado, ou as camadas se fundem. Sabe, é como se a orquestração estivesse enterrada bem no fundo da cadeia ou da estrutura, e você não fizesse a mínima ideia do que está acontecendo. O estado pode ser mantido em uma espécie de "caixa de areia". Hum, as novas tentativas se complicam com os prompts, com a lógica dos prompts.
+
+E o difícil é que você não pode simplesmente substituir nenhuma dessas coisas sem reescrever quase tudo. Portanto, acho que você precisa abraçar a mudança. Saiba que as coisas vão mudar. Saiba que as coisas estão acontecendo muito rápido. Mas acho que, além disso, quero me concentrar em uma camada que considero a camada estável aqui. Onde você pode
+
+investir, refletir e acertar suas abstrações, para não precisar reescrever um componente grande a cada 6 meses. Então, estou falando da camada de execução. Acho que poucas pessoas falam sobre isso. E eu a defino como a camada de execução, sendo o sistema responsável por executar seu código de forma confiável, gerenciando como, quando ou se cada parte do trabalho será concluída. E isso independe da infraestrutura em que está inserido.
+
+Então, como isso se traduz em uma arquitetura de agentes? Assim, a camada de execução gerencia todo o ciclo de vida. Sabe, planejar, chamar um modelo, executar o código, invocar um subagente, entrar em loop, tentar novamente, coordenar. Você pode trocar o modelo, trocar o contexto, trocar o ambiente de teste (sandbox), a camada de execução deve permanecer a mesma. São apenas os fundamentos. E é
+
+assim, eu acho, que você se desvincula e constrói um sistema que pode evoluir para se adaptar às mudanças. Então, vamos falar sobre o que a camada de execução precisa fazer. Primeiro, a possibilidade de retomar o trabalho. Sua camada de execução deve permitir que seu sistema retome as operações após falhas, sem precisar reiniciar do zero. Sabe, os agentes estão lidando com tarefas de duração mais longa do que nunca.
+
+Portanto, eles precisam ser capazes de retomar as atividades quando uma chamada LLM falha, uma chamada de ferramenta falha, ou quando tudo dá errado. Todos nós sabemos. Portanto, se você tiver uma falha na etapa de reflexão 38, você poderá tentar novamente, esperar e continuar em frente, em vez de ter que começar do início e perder tokens, custos, tempo e trabalho que seu agente possa ter concluído. Portanto, para que isso funcione, uma execução de 3 horas não pode manter o estado na memória ou no disco. O Estado deve viver fora do trabalho.
+
+Isso significa que o Estado deve ser duradouro e externo. Portanto, sem isso, você talvez conseguisse improvisar algum sistema de checkpoints manuais. Você pode criar um sistema com uma abordagem baseada em logs, onde você restauraria o estado caso precisasse retomar de onde parou. Mas acho que muitas dessas abstrações começam a vazar para as outras camadas do seu sistema, certo? Fica mais difícil mudar.
+
+Portanto, um aspecto fundamental da camada de execução é que ela deve permitir combinar diversos padrões de invocação. Você vai precisar de crons. Você precisará acionar eventos para ativar ou desativar as coisas. Você vai precisar de APIs e de intervenção humana no processo. Subagentes ou fluxos de trabalho dinâmicos também devem ser possíveis.
+
+Você precisará ser capaz de invocar essas coisas de forma síncrona, assíncrona e com atraso na invocação. E eu acho que a chave aqui é que primitivas flexíveis de execução e orquestração permitirão que você construa o padrão, o sistema ou a arquitetura que você realmente precisa. Portanto, caso contrário, penso novamente, sua lógica de implementação começará a absorver outros conceitos como filas, trabalhadores, polling, backoff e agendamento. E agora você acaba com uma espécie de bagunça de abstrações ruins. Por fim, a execução precisa proporcionar observabilidade em toda a sua sessão. Não apenas as
+
+chamadas do LLM e as chamadas da ferramenta, mas também erros de banco de dados , problemas de permissões, gatilhos e desempenho. Portanto, o registro completo da sessão ao longo de toda a sua execução é essencial. Portanto, se você não consegue visualizar todo o rastreamento desde o gatilho até a pilha completa, fica muito difícil depurá-lo, quanto mais aprimorar seu agente e continuar a evoluí-lo. E quanto às caixas de areia? As caixas de areia estão muito quentes. Portanto, os
+
+agentes precisam de ambientes de teste (sandboxes). Chegamos a um consenso sobre isso neste momento . Eles precisam executar código. Eles precisam navegar. Eles precisam manipular arquivos. Eles podem funcionar em
+
+disco. Mas, por definição, um ambiente de testes (sandbox) é efêmero e apátrida. Portanto, usá-lo para durabilidade, snapshots ou algo relacionado ao estado, eu acho que é um antipadrão. Acho que é uma situação difícil quando o Estado se perde e você fica tentando juntar os pedaços novamente. Portanto, acredito que, quando se tem a camada de execução separada, é essa camada que dá ao sandbox seu contexto, sua sequência e sua durabilidade.
+
+Então, eu penso na caixa de areia como as mãos e na execução como o cérebro. Então, qual é o próximo passo? Muito bem, quais são os projetos de arquitetura que você precisará gerenciar nos próximos seis meses? Portanto, se você estiver prestando atenção e participando de muitas dessas sessões, verá quais arquiteturas estão surgindo e quais novas exigências de engenharia cada abordagem traz . Sabe, temos agentes em segundo plano, fluxos de trabalho dinâmicos, loops autônomos, fábricas de agentes, ou como você quiser chamar, todas essas tendências emergentes que estamos vendo nos últimos dias.
+
+Todas elas têm longa duração. Eles são assíncronos. Eles são delegados. Isso significa que você precisa ser capaz de observá-los todos, até o âmago. Muito bem, eles precisam ser inspecionáveis ​​por humanos e por um agente.
+
+Portanto, os padrões, como você pode ver, à medida que essas coisas surgem, devem ser misturados e combinados. Então, o que tudo isso tem em comum? Acredito que a execução é fundamental para a construção de qualquer um desses sistemas. Então, vamos pegar apenas um exemplo aqui, agentes em segundo plano, certo? Não são solicitações-resposta. Não há
+
+ninguém esperando que você acesse o chatbot para que ele responda. Portanto, pode durar minutos ou horas. Isso provavelmente envolverá centenas de chamadas , talvez até 200 chamadas para ferramentas. É muito provável que você tenha pelo menos uma falha nesse processo. Portanto, você não consegue depurar seu agente em segundo plano que está sendo executado de forma assíncrona sem a infraestrutura adequada, sem a observabilidade, sem tudo o que está acontecendo nesse processo ou em múltiplos processos.
+
+Outro exemplo que temos são as arquiteturas em loop . Certo? Acho que estamos falando de comandos de loop de barra e coisas do tipo, e agentes de codificação, mas acho que o ponto principal aqui é como vocês estão construindo sistemas reais em seus produtos que empregam essas abordagens. Então, o que é um loop? Certo? Um loop é um sistema que basicamente
+
+funciona continuamente ou de acordo com um cronograma, avaliando o estado do sistema em relação às metas ou critérios definidos e determinando o que fazer em seguida. Portanto, você precisará de crons, delegação de subagentes, o histórico precisa ser inspecionável e, claro, precisa ser confiável, porque você não sabe quando as coisas estão sendo executadas ou como o sistema continua a evoluir continuamente. Portanto, as estruturas de três meses atrás não foram projetadas para lidar com isso. Certo? Como se você fosse precisar projetar esses sistemas por conta própria.
+
+Portanto, acho que você vai precisar de uma camada de execução adequada. Então, vamos analisar alguns exemplos de código. É pequeno aqui, mas, em geral, vamos ver como poderíamos juntar tudo isso. No seu loop, você vai precisar de algum tipo de cron. Talvez esse cron aqui seja algum tipo de sistema de verificação de integridade que é executado a cada 30 minutos, coleta algumas métricas importantes de alto nível do sistema e verifica se você as passa para um LLM. Você pergunta: "Isso é
+
+saudável? Está com uma aparência boa? Devemos fazer mais alguma coisa? E, afinal, é saudável ou não? O que devemos fazer?"
+
+E se não estiver tudo bem, talvez você possa simplesmente acionar um agente de triagem que examine esse serviço específico e investigue mais a fundo. Parece bem simples , não é? Agora você tem esse agente de triagem em si. Você acabou de desencadear isso. Talvez seja interessante fornecer mais contexto e algumas métricas detalhadas.
+
+É apenas uma questão de contexto. E então você passa para o mestrado em Direito (LLM) para iniciar essa investigação. Ao inserir um loop, você está acionando algumas ferramentas, tentando chegar à causa raiz. Isso pode demorar um minuto. Este processo pode demorar vários minutos. É
+
+preciso criar um ambiente de teste (sandbox), talvez clonar o código, talvez analisar os commits. Vai haver muito trabalho sendo feito aqui, e você não sabe quando isso vai começar. Pode funcionar, pode não funcionar. Como você sabe? Como você observará esse sistema posteriormente?
+
+E para completar o ciclo, você pode ter uma função de revisão, certo? Tipo, será que o sistema está realmente funcionando como esperado? Certo? Tipo, vai rodar toda semana, analisar o histórico do que acabou de acontecer e avaliar como o sistema de triagem está funcionando. Precisamos ajustar as instruções? Precisamos de
+
+métricas melhores? Este documento contém os dados necessários? Isso está fazendo alguma coisa? Será que estou exagerando? Portanto, precisa estar ciente da execução.
+
+E acho que precisa estar ciente da execução, ciente da orquestração, porque precisa ser capaz de extrair os registros do sistema e entender, certo, o que foi executado? O que esse agente escolheu executar? Quais subagentes foram mobilizados? Quais fluxos de trabalho foram utilizados? E então precisa ser capaz de analisar isso, entender o que aconteceu e voltar para você, seja fazendo a mudança necessária ou indicando onde tivemos um bom desempenho ou onde não tivemos. Isto é
+
+o que podemos fazer, é assim que podemos melhorar o sistema como um todo. Assim, completa-se esse ciclo de melhoria. Possui três funções. É bastante simples por natureza. É flexível e permite iterações.
+
+Sei que as coisas sempre ficam muito mais complexas na produção, mas acho que quando você pensa nas camadas dessa maneira, fica um pouco mais fácil imaginar a construção de um sistema tão complexo que parece algo que você talvez não consiga alcançar agora. Então, no espírito das funções de revisão, o que você acha de medir o desempenho do seu agente? Sabe, acho que o interessante é que essa camada de execução fica entre a entrada do usuário e o que está acontecendo em todo o sistema. Assim, o feedback do usuário, as ações e os resultados das sessões fluem por meio dessa camada de execução. E acho que isso faz dele um lugar ideal, porque se torna o centro da observabilidade. E isso permite que você
+
+avalie e entenda o que seu agente está fazendo. Portanto, para iterar em sua aplicação, você precisa que todos esses dados estejam conectados e que o sistema esteja ciente de como seu código está sendo executado. Certo? Portanto, acredito que essa conexão seja extremamente importante. Então, foi para isso que criamos o Ingest. Oferecemos
+
+execução robusta para agentes de IA. Somos a camada de execução. Você pode conectar qualquer camada de contexto, trazer um modelo, framework, ferramenta, qualquer camada de computação. Traga a caixa de areia que você quiser. Traga o navegador que preferir. Você consegue degraus duráveis, pequenos
+
+objetos primitivos, certo? Gatilhos de eventos, agendamento, coordenação entre agentes, rastreamento completo de sessões, sem necessidade de gerenciar infraestrutura. E, como mencionei em relação às pontuações, também acreditamos que o meio da camada de execução, quando seu agente está em execução, é um local fundamental para instrumentar e avaliar seus agentes. Quando você tem acesso aos dados necessários, que estão todos fluindo por ali, ou quando acabou de executar alguma operação, esse é o local perfeito para executar outra ação posteriormente e adiar a pontuação, utilizando todas as informações de rastreamento, incluindo talvez as entradas e as saídas. Então, novamente, isso é apenas orquestração de execução, adiamentos de tarefas com atraso ativados e, como também há fluxo de dados , você pode aguardar eventos adicionais e anexá- los às sessões que está criando para entender se isso realmente funcionou, certo? Se você
+
+está conduzindo essa triagem, essa triagem foi bem-sucedida? Isso resultou em alguma ação por parte da equipe de engenharia? Isso significa que provavelmente foi um resultado positivo. Em vez de um "joinha" ou "joinha para baixo", é como se disséssemos: "Abrimos a assessoria de imprensa, certo?" Se for um agente de pesquisa, essa pesquisa foi salva? Foi um bom
+
+relatório? São esses eventos que você deve ser capaz de associar, e quando você tem um sistema que consegue conectar todas essas peças, acho que isso realmente facilita muito a realização de várias dessas tarefas, como criar pontuações baseadas em resultados . Então, para concluir, construa seu arnês. Sabe, entender as camadas da arquitetura. Temos que abraçar o ritmo acelerado das mudanças.
+
+E eu acho que se você conseguir acertar a camada de execução e pensar nas primitivas certas, todo o resto pode evoluir rapidamente em torno dela. E os próximos 6 meses, os próximos 3 meses serão muito mais fáceis, especialmente porque tudo continua mudando. Todos vocês estão aqui. Então, obrigado por ouvir. Eu sou o Dan.
+
+Venha me encontrar no estande do ng-js. Estamos bem do outro lado deste muro. Somos muito brilhantes e alaranjados. Então, muito obrigado a todos. Agradeço.
+
+[música] Hum.

@@ -1,0 +1,48 @@
+---
+video_title: "Your Voice Agent Doesn't Need a Frontier Model - Joel Allou & Ornella Bahidika, Microsoft"
+video_id: fnLBmfsI_Fg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=fnLBmfsI_Fg
+video_date: 2026-07-20T06:25:15+00:00
+video_description: |
+  My AI voice tutor doesn't run on a frontier model. It runs on a small one, and the reason isn't cost. It's that voice lives or dies on latency, and the scaffolding around the model is what makes it feel smart anyway.
+  
+  When you build a voice agent the clock is brutal. A pause longer than a held breath feels broken, so your real budget is time to first token, not benchmark score. A big model that thinks for a second has already lost the room. So the model choice gets made for you: pick the fastest one the latency budget allows, then make up the intelligence elsewhere.
+  
+  I'll show how that plays out in an AI voice tutor I built on a small, fast model. The model never has to remember what the student knows, plan the lesson, or decide what comes next. Deterministic systems do all of that and hand the model a tight, structured brief each turn. What's left for the model is the one thing it's genuinely best at, which is talking. The scaffolding isn't a cost optimization bolted on afterward. It's the thing that lets you use the cheap fast model at all.
+  
+  Seven minutes. The latency budget that forces the decision, what moves out of the model to survive it, and where a small model still falls down no matter how much scaffolding you give it.
+  
+  Speakers:
+  - Joel Allou: Joel builds voice-first AI tutors. Solo founder focused on agentic systems for personalized learning, with a particular interest in infrastructure that makes flow agents reliable.
+    LinkedIn: https://www.linkedin.com/in/joel-allou/
+  - Ornella Bahidika (Microsoft): Ornella Bahidika is a Product Manager at Microsoft, where she develops solutions that help organizations optimize collaboration, workplace technology, and AI-driven experiences.
+    LinkedIn: https://www.linkedin.com/in/ornella-bahidika/
+---
+Olá, eu sou Ornella, e esse é o Joel, e nós criamos o Ace, um tutor de voz com IA em tempo real. Ele foi projetado para funcionar em um modelo pequeno de propósito, e quero explicar melhor por que isso não é uma solução de compromisso. Uma rápida análise introspectiva.
+
+Aquele silêncio numa chamada de voz, aquela que faz a diferença entre um tutor e um casal com o relacionamento interrompido . Quando um agente de voz faz uma pausa, mesmo que por um segundo, seu cérebro diz que ele está morto. Então, quando a resposta se encaixava em um líder de cada estadia instantânea, que para o menor, maior modelo. Na voz, aquele instante é, na verdade, um inverso. Como nosso orçamento nunca foi baseado em QI, ele é baseado em milissegundos.
+
+O modelo de IA precisa começar a falar em cerca de 950 milissegundos. Um modelo de vanguarda que pensa por um segundo inteiro já perdeu a relevância, não importa quão boa seja a resposta. Então, reduzimos o tamanho do modelo e removemos as tarefas mais difíceis . Não decide quando acontece o quê na aula. Não registra o que o aluno sabe.
+
+Não explica o que vem a seguir. Temos um sistema implementado para isso, e eles fornecem um resumo ao modelo a cada turno. O que resta para o modelo é uma coisa em que ele é realmente bom: falar. E essa é a teoria. Joel, vá em frente e mostre a eles como é a sensação de verdade.
+
+Sim, talvez eu possa acrescentar algo mais ao que a Ornella estava mencionando. Então, se você pensar nos modelos de hoje, especialmente no modelo de fronteira, vamos pegar o Claude 4.7, que é da Antropologia. O modelo é realmente muito bom em raciocínio. Você pode apresentar um problema, neste caso uma lição, e ele consegue raciocinar sobre ele, consegue raciocinar sobre o que o aluno está perguntando e consegue chegar à resposta.
+
+Mas esse é exatamente o problema. Porque o raciocínio pode levar alguns segundos, e esses segundos são realmente valiosos quando você está desenvolvendo aplicativos de voz. Então, o que estamos fazendo é dizer: "Ei, vamos extrair todo o raciocínio do modelo para que ele se concentre apenas no que importa, que, no nosso caso, é a fala." Assim, todo o raciocínio é extraído para uma máquina de estados. Assim, para o Ace, pensamos em todos os cenários necessários para uma aula. Construímos uma
+
+máquina de estados capaz de coordenar cada etapa com a seguinte e também adicionamos uma camada inteligente por cima para garantir que o aluno adquira o domínio necessário para concluir a lição. Portanto, tudo relacionado ao que acontece a seguir, ao que precisa ser exibido, a como responder a uma pergunta, tudo é feito fora do modelo. E nós simplesmente alimentamos o modelo com essa saída para que ele se manifeste. Então, vamos analisar um exemplo e ver como isso funciona em tempo real. Portanto, o primeiro vídeo aqui não inclui a implementação que fizemos. Portanto, trata-se de um
+
+Opus 4.7 simples. Fazemos uma pergunta muito simples e, como você pode ver, o modelo está pensando, raciocinando e leva alguns segundos para retornar a resposta ao usuário. Olá! Neste vídeo, adicionamos tudo o que acabamos de mencionar sobre o Haiku 4.5, que é
+
+um modelo muito menor. A mesma pergunta, mas agora você vê que a resposta chega em cerca de 900 milissegundos. E essa é a beleza de construir em torno do modelo. Assim, ao removermos todo o raciocínio, toda a lógica e todo o pensamento do modelo e colocarmos tudo dentro do código, economizamos muito tempo e podemos usar modelos menores, que são mais econômicos e, de fato, melhores para aplicações de voz em tempo real. E como você pode ver, isso parece quase instantâneo, e isso acontece porque todas as partes inteligentes já ocorreram antes mesmo do modelo começar a falar.
+
+Mas tenho que ser honesto, porque isso não é necessariamente gratuito. Tem um custo, certo? Um modelo pequeno como o Haiku 4.5, se não tiver nenhum suporte, tende a se desviar em estruturas longas e realmente precisa de regras rígidas para conseguir se manter organizado. Portanto, o custo está na estrutura de andaimes. Mas a vantagem
+
+é que você paga uma única vez e em código, certo? Não em todas as situações. Então, aqui está uma regra. Escolha o modelo mais rápido que seu orçamento de latência permitir e, em seguida, dedique o restante do seu tempo à construção da infraestrutura necessária. Então [bufa] no nosso caso, né? Talvez você construa uma máquina de estados,
+
+um processo de raciocínio, pense em cenários, o que acontece se isso ocorrer, como seu modelo deve lidar com isso? Tudo o que envolve a lógica, tudo o que envolve o aproveitamento dos recursos, você faz isso fora do modelo, permitindo que o modelo se concentre naquela única coisa em que é realmente bom. Portanto, isso é verdade para aplicativos de voz como o A, é verdade para aplicativos em tempo real onde a latência é prioritária e é realmente verdade para qualquer coisa que envolva alto volume, certo? Nesses casos, o modelo é a menor parte do sistema. Então, estes são Joel e Ornella, e estamos construindo o A novamente. Se vocês tiverem alguma
+
+dúvida, nos avisem. Obrigado. Obrigado.

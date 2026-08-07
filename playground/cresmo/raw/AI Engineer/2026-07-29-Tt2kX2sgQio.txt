@@ -1,0 +1,138 @@
+---
+video_title: "How Kepler Built Verifiable AI for Financial Services — Vinoo Ganesh"
+video_id: Tt2kX2sgQio
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Tt2kX2sgQio
+video_date: 2026-07-29T21:00:06+00:00
+video_description: |
+  In finance a number is worthless until you can say where it came from. Vinoo Ganesh, CEO of Kepler, starts from the fact that language models are probability machines, brilliant at next token prediction and unreliable at the deterministic work, like arithmetic, that finance actually runs on. So Kepler treats the model as one part of a system rather than the whole answer, wrapping it in a deterministic substrate that makes every figure traceable.
+  
+  It rests on three tenets. Atomic provenance means every number is tied to its source and stripped out if it cannot be independently verified. Scope determinism keeps the model on the nondeterministic tasks it is good at and pulls the actual figure, say revenue from a 10K filing, deterministically behind the scenes, with reconciliation on top. The third is treating every extracted number like a pull request that gets reviewed, so entities are caught and nothing is invented. The result is a grounded system where the edge comes not from producing content but from verifying it.
+  
+  Speaker info:
+  - https://x.com/vinooganesh
+  - https://www.linkedin.com/in/vinoo-ganesh/
+  - https://vinoo.io
+  
+  Timestamps:
+  0:00 - Introduction: a data background in finance
+  1:42 - Why trust and verifiability matter now
+  2:57 - Models are probability machines
+  4:27 - Why analysts still put in the hours
+  8:22 - Modeling AI like an overworked VP
+  9:26 - Atomic provenance
+  12:01 - Scope determinism
+  13:52 - Reconciliation and pulling real numbers
+  15:06 - Extracting entities without misses
+  16:34 - Toward zero invented securities
+  20:31 - Where a number really comes from
+---
+[música]
+
+Olá a todos, obrigado por estarem aqui. Meu nome é Venu Ganesh e sou o CEO e cofundador da Kepler. Hoje, vou falar com vocês sobre como construímos uma IA verificável para serviços financeiros. Primeiro, um pouco sobre mim. Minha carreira tem sido em locais de trabalho bastante difíceis em termos de precisão numérica e verificabilidade.
+
+Comecei minha carreira na Palantir, onde liderei a plataforma de computação, bem como muitos dos nossos projetos com o governo dos EUA. Construí e vendi uma startup de dados alternativos. Em seguida, foi chefe de engenharia de negócios na Citadel. Tenho também alguns colegas da Citadel aqui na plateia. Já aconselhei várias startups e tive a sorte de todas elas terem alcançado resultados bastante positivos.
+
+Portanto, toda esta apresentação é uma versão resumida de um estudo de caso que a Anthropic fez sobre o satélite Kepler. Se você escanear esse código QR, verá que somos a única empresa da qual eles já fizeram um estudo de caso, o que é bem legal. Então, esta é uma versão resumida disso. Isso contém muito mais informações sobre como conseguimos fazer o que fazemos, por que isso teve um grande impacto nos serviços financeiros e, de fato, para onde vamos a partir daqui. Portanto, meu único objetivo com toda esta apresentação é convencê-los de que a IA começará a fazer coisas muito poderosas em termos de produção de trabalho. Portanto,
+
+tudo o que eu lhe disser é inevitável. Seja Kepler ou qualquer outra pessoa, já estamos nessa jornada e nessa trajetória. Então é melhor estarmos todos preparados. Primeiramente, gostaria de observar que todas as discussões que vimos até agora no setor de serviços financeiros giram em torno da produção em larga escala. Como faço para maximizar o uso de tokens?
+
+Como faço para que a IA faça mais? Muito pouco disso se refere a como tornar a IA confiável ou produzir produtos confiáveis. E o interessante é que até mesmo termos como confiança e verificabilidade têm sido amplamente usados ​​de forma abusiva. As avaliações não são verificáveis. Não é possível fazer um mestrado em Direito ( LLM) não determinístico e tentar chegar a algo determinístico por meio de avaliações. Estas são
+
+máquinas de probabilidade. E a razão subjacente para isso é que a IA transformou um problema de escrita em um problema de leitura. Podemos produzir quantidades absurdas de conteúdo, seja código, seja marketing, seja um fluxo de caixa descontado (DCF), em tempo recorde. Mas não podemos verificar isso facilmente. E isso porque, durante anos, a parte mais difícil de todo esse processo era, de fato, produzir o trabalho. O conceito de "
+
+edge" e "alpha" surgiu da capacidade de empresas como a Citadel de contratar centenas de analistas que podiam vasculhar a internet e identificar onde qualquer fonte de "alpha" poderia existir. Então, tudo surgiu da ideia de poder consumir conteúdo. O problema é que, quando um modelo lê tudo, você tem a versão mais realista possível do decaimento alfa . Não há vantagem se todos puderem olhar para os teiús e obter as mesmas informações. Portanto, a parte difícil agora é confiar no que o modelo realmente produziu.
+
+E isso é meio engraçado. Isso não é necessariamente um problema financeiro. Todo sistema existente possui alguma forma disso. Software, nós executamos CI/CD. Fazemos testes unitários. Realizamos testes de integração.
+
+Realizamos revisões de código. Quando um médico prescreve um medicamento, o farmacêutico o prepara . Então, se estiver escrito 10.000 miligramas de um medicamento, alguém percebe isso. Temos um piloto e um copiloto. Temos um técnico de emergência médica que atua como técnico de
+
+emergência médica primário e um técnico de emergência médica secundário. Na área financeira, talvez tenhamos um vice-presidente sobrecarregado atuando como camada de verificação, mas esse conceito não existe de fato. E agora vou dizer algo ainda mais agressivo. O motivo pelo qual as pessoas compram produtos como Bloomberg e FactSet é para se eximirem da responsabilidade. Ao comprar uma ferramenta como essa, você obtém essa informação gratuitamente. Essa informação consta nos registros da SEC
+
+. Mas você acredita que, pelo fato de um grupo de contratados ou pessoas no exterior ter verificado esses dados e os ter colocado em uma instância central, pelo menos, se estiverem errados, todos em Wall Street terão a mesma informação incorreta. E isso é interessante em certos aspectos. É também uma proposta um tanto assustadora. Isso ocorre porque cada uma dessas ferramentas é somente leitura.
+
+Como analista, você consulta a Bloomberg, consulta a FactSet, consome informações e produz o seu trabalho . E é aí que reside a maior lacuna e o maior obstáculo para uma adoção realmente significativa em Wall Street . Então, por que isso realmente importa? Não podemos usar a IA adequadamente neste ecossistema. Existe um motivo para que analistas ainda trabalhem até as 4h da manhã, e existe um motivo para que pessoas em bancos de investimento estejam morrendo por causa das longas jornadas de trabalho.
+
+Porque a IA pode produzir uma resposta muito precisa , mas quando se trata de produzir qualquer tipo de trabalho significativo, estamos totalmente aquém. Além disso , temos a SEC, temos o OCC, temos várias dessas agências reguladoras que existem para garantir que você não esteja praticando insider trading, ou que não esteja tomando uma decisão de negociação que não possa ser justificada ou respaldada por algum conjunto de princípios ou informações que permitam afirmar com segurança: "Tomei essa decisão com base nessas fontes de informação". Assim, nesse ecossistema, o maior desafio é como fazer com que a IA deixe de produzir as tecnologias de busca que produz atualmente e passe a produzir trabalho de verdade. Isso pode significar um parecer de equidade, um DCF (Fluxo de Caixa Descontado), um memorando de investimento, analisar cada SIM (Simulação de Investimento) que sua empresa teve há 5 anos e descobrir por que sua TIR (Taxa Interna de Retorno) não era a esperada, ou qualquer outra coisa. Assim, toda a indústria resolveu isso citando exemplos.
+
+Ao pesquisar na internet com Claude ou ChatGPT, você obtém uma lista de fontes de onde as informações foram obtidas. O irônico é que não é fácil selecionar essas fontes. Então, se você encontrar meu post aleatório no Substack dizendo que a Palantir vai chegar a US $ 3.000 por ação, e fizer uma negociação com base nisso, por favor, faça isso, porque será muito útil para mim. Mas essa não é uma fonte realmente confiável. O Seeking
+
+Alpha e alguns desses blogs ou posts do Reddit são pontos de dados, mas não são fontes realmente verificadas. Portanto, mostrar de onde você obteve a informação é apenas metade da batalha. E é aí que estamos limitados no momento. A citação é, na prática, uma auditoria posterior ao fato. Agora, uma verificação é um mecanismo determinístico, repetível e numericamente verificável que podemos usar para comprovar que um número está correto.
+
+Foram muitas palavras da moda. Uma verificação significa simplesmente que posso provar deterministicamente que esse número está correto. Portanto, quando extraio um valor de receita de um formulário 10-K, posso provar deterministicamente que esse é o valor correto daquele formulário. Então, são duas faces da mesma moeda. Uma consiste em mostrar de onde você obteve as fontes , e a outra em verificar se as informações que você extraiu estão realmente corretas.
+
+Isso se torna um desafio. Isso se torna um desafio porque a verificação não é um resultado. Ela reside no caminho ou no conjunto de etapas necessárias para que você produza informações válidas para sua empresa específica. O setor financeiro é um dos raros em que duas pessoas podem ter as mesmas informações, e uma pode estar comprada em uma ação e a outra vendida nessa mesma ação, com os mesmos dados exatos. Assim, a ideia de verificação não é, na verdade, a verdade fundamental.
+
+Isso verifica se você obteve um resultado que respeita os substantivos e verbos ou as regras da sua organização. Se uma mesa de operações da Citadel, como uma mesa de TMT (Tecnologia, Mídia e Telecomunicações) da Citadel, acredita que uma determinada ação vai subir para a direita, outra mesa de TMT da Citadel pode ter a crença exatamente oposta, e elas podem ter os mesmos mecanismos de verificação que produzem resultados muito diferentes. Assim, chegamos a algo realmente simples. Quais são as fontes em que confiamos? Quais são as transformações que aplicamos a essas fontes para produzir informações que nos interessam? E como podemos garantir que
+
+isso seja codificado de uma forma que faça sentido lógico? Portanto, o objetivo de tudo isso é simples. Isso veio de uma pesquisa de 10 mil dólares, o que não representa a validação como um todo. Sua tarefa agora é descobrir, individualmente, como usar a IA de forma verificável? E aqui está a resposta sincera. Não. A
+
+IA é excelente em realizar tarefas não determinísticas . Pode resolver problemas de uma forma inovadora . Ela pode determinar exatamente como fazer os ajustes de EBITDA, mas não pode ser a responsável por realizar os ajustes matemáticos. Porque é uma máquina de probabilidades. É excelente em prever o próximo token.
+
+Assim, a segunda afirmação de toda esta discussão é que não se pode usar IA para produzir resultados verificáveis ​​em finanças sem complementá-la com uma base determinística. O que significa, na prática, que se você for um gestor de portfólio na Citadel, terá acesso a diversas ferramentas determinísticas que utiliza para tomar suas decisões de negociação. Precisamos modelar a IA como aquele primeiro-ministro. Precisa existir em termos de aterramento, precisa existir com um certo limite de risco e ser verificável. Então, foi assim que fizemos. Eis o que deixou a
+
+Anthropic entusiasmada. Temos três pilares que utilizamos para garantir que a precisão numérica seja um pilar da plataforma Kepler, e isso nos permite produzir informações bastante robustas e comprovadamente confiáveis. A primeira é a proveniência atômica, e vou abordar todas elas. O segundo é o determinismo de escopo, e o terceiro são as cadeias de derivação, sobre as quais falaremos mais adiante. Mas a premissa fundamental é esta. Existem
+
+certas coisas que os humanos nunca deveriam fazer. E eu digo agora mesmo: não acredito que um ser humano deva sentar-se e analisar um PDF de um relatório 10-K, 10-Q, 8-K ou da transcrição de uma teleconferência de resultados e, em uma tela, pegar esses números e inseri-los em uma planilha do Excel em outra tela. Os seres humanos não foram feitos para isso. Não é como se houvesse um motivo para não termos bancos de dados simplesmente escritos em nossas cabeças. Então, vamos detalhar como você pode usar a IA para produzir resultados de trabalho.
+
+Vamos falar sobre procedência. A proveniência, em termos gerais, significa simplesmente anotar exatamente de onde você obteve a informação. Bem, tenho muito respeito por todos os outros que chegaram aqui no palco, mas nós criamos um modelo, treinamos um modelo que era realmente bom em extrair informações. Teve um desempenho superior aos modelos básicos, sendo 94% excelente. Está no artigo.
+
+Quem aqui abriria mão de algo que tem 94% de precisão? Certo. Então, refinar soluções probabilísticas ainda é algo muito legal, e o TechCrunch ficaria super empolgado com isso, mas ninguém mais se importa de verdade. Isso porque um número errado continua sendo errado se você estiver naqueles infelizes 6%. Assim, com a proveniência atômica, o que fazemos é que o modelo efetivamente escreve uma referência ao número.
+
+Não é possível escrever o número ou manipulá- lo de qualquer forma. Nem sequer entende o que esse número significa. Temos ferramentas que são realmente muito boas para entender números. São bancos de dados. São sistemas capazes de codificar informações, lê-las e escrevê-las com a fidelidade apropriada.
+
+Então, essa é a primeira parte de como fazemos as coisas. Sempre que um modelo toma uma decisão, ele decide descobrir exatamente de onde obteve o número e passar a informação para algo que possa escrever esse número. Em seguida, realizamos uma verificação determinística, na qual qualquer número incorreto, se não pudermos verificá-lo de forma independente, é removido. Esse número nunca chegará a alguém se não seguir a verificação determinística, o livro-razão de Providence e, mais importante, se todo o ciclo não se repetir pelo menos algumas vezes. Então, não estou dizendo: "Tenha 10 modelos e cada um deles tenha o OpenAI verificado no chat, verificado no Anthropic e verificado no XAI." Esses não são
+
+sistemas probabilísticos que avaliam o trabalho uns dos outros. Existe um processo canônico fundamental de extrair um número, armazená-lo e garantir que esse processo tenha ocorrido corretamente. E é aqui que eu falo de atomicidade tradicional, como no contexto de bancos de dados . Em segundo lugar, o determinismo de escopo. Essa era uma ideia super controversa há cerca de um ano, e os investidores de capital de risco diziam: "Isso é loucura". Bem, esta metade da
+
+palestra foi sobre isto. O modelo é realmente muito bom em raciocínio e planejamento. A inteligência é transformada em mercadoria. O GLM 52 mostra isso. Você pode baixá-lo agora mesmo no site da Hugging Face . Você tem algo tão poderoso quanto o
+
+Opus 48. Agora, o que o modelo não consegue fazer é matemática. E por que seria assim? Por que eu executaria 1 + 1 em um modelo com bilhões de parâmetros em vez de usar um único ciclo de CPU? A menos que sejam empresas que oferecem bônus para quem atinge o limite máximo de tokens, o que é outra coisa típica da Polarys.
+
+[bufa] Então, o que o modelo faz é decidir o que calcular. O programa nunca realiza o cálculo por si só. Assim, da perspectiva da plataforma Kepler , o que fazemos é separar as partes determinísticas do modelo, que são nenhuma, das partes não determinísticas do modelo, que são todas elas. E fornecemos ao modelo as ferramentas e a tecnologia adequadas para calcular as peças determinísticas. Agora, vamos ser bem concretos. Um modelo pode ler
+
+algo como: "Ok, preciso entender o que é margem líquida. Sei quais informações consultar para obter esses dados, mas não posso ser a entidade que executa o código nos bastidores para extrair esse número de um PDF ou analisar o XBRL para obter essa informação. Isso é código." Agora, as partes determinísticas da plataforma extraem essa informação e a armazenam fora de qualquer coisa que o modelo compreenda. E com esses dois fatores juntos, podemos de fato produzir uma resposta numericamente precisa para a pergunta, por exemplo, qual foi a margem líquida desta ação ou desta empresa no último trimestre?
+
+Isso também é muito mais barato porque, novamente, eu não preciso que o modelo faça um monte de coisas que não deveria fazer. Agora, a última questão aqui é: como, de fato, realizamos a reconciliação? Quando alguém pergunta sobre um índice como a margem bruta ou qualquer outra coisa que não conste em um documento, portanto, eu não posso simplesmente pesquisar qual é a margem bruta ou qual foi o conjunto de ajustes de EBITDA. Outra coisa que complica bastante é que cada um calcula essas proporções e esses múltiplos de uma maneira diferente. Cada pessoa calcula o valor da empresa de uma maneira diferente. Elementos
+
+considerados recorrentes ou não recorrentes podem ser únicos. Portanto, não só precisamos codificar isso nos processos executados, como também precisamos de algum tipo de cadeia de eventos para descobrir o que contribuiu para a produção de um número individual e o que contribuiu para a produção de um resultado. Isso não é diferente da sequência de eventos que um analista realiza em uma mesa de operações em um fundo de hedge para tomar uma decisão de risco-retorno ou de negociação. Isso é feito pelo modelo de uma forma que pode ser reproduzida e rebobinada. Assim, chegamos a algo bastante simples.
+
+Temos um sistema que sabe quais pontos de dados ele tem permissão para produzir, ou seja, a partir de registros estruturados, de dados numéricos, de qualquer outro ecossistema; ele sabe o que tem permissão para produzir e o que nunca tem permissão para produzir. Portanto, se estiver extraindo informações de prosa, tabelas brutas ou qualquer outra coisa, essa extração não é realizada. Isso nos permite fazer coisas como consolidar demonstrações financeiras em segundos, com cada número vinculado à sua fonte individual. Isso significa que não precisamos mais escolher nenhuma empresa em específico, mas as empresas CapIQ e Deloop, que utilizam terceirizados para isso, não precisamos mais fazer isso. Podemos, de fato, criar um modelo financeiro numericamente preciso que lhe permita desenvolver o produto final. Podemos
+
+criar um DCF no formato que você realmente deseja. Em termos de conhecimento, o modelo não irá alucinar que existe uma linha que não deveria existir. Agora, o mais louco, e a razão pela qual digo que isso é inevitável, é que tudo o que estou dizendo geralmente se aplica a situações que vão além das finanças. Estamos escolhendo números aqui porque o setor financeiro se importa com números. Mas você pode imaginar um mundo onde todos os processos judiciais, se você for um Harvey ou uma Legora, seguem o mesmo procedimento. Uma
+
+etapa de pré-processamento que entende que podemos extrair entidades como caso A versus caso B e armazená-las deterministicamente para não gerar citações alucinatórias. Ou seja, todas as formulações de descoberta de medicamentos existentes nos documentos técnicos do NIH, de forma que nunca deixemos passar nenhum composto ou qualquer outra coisa. Assim, a dimensão interessante em que estamos entrando é que estamos em um ecossistema onde estamos quase em um estágio pré-SSL no ecossistema de comércio eletrônico. Qual é o TAM (Total Endereçável) do comércio eletrônico? Trilhões, mas quantas pessoas se sentiam à vontade para colocar o número do seu cartão de crédito na internet antes de haver segurança?
+
+Zero. Então, estamos na última etapa. A IA agora consegue produzir resultados verificáveis ​​em diversos setores. Isso significa que as plataformas de código antigo são realmente muito úteis e interessantes para codificar fluxos de trabalho, mas há um motivo para os laboratórios de desenvolvimento estarem buscando alternativas a cada uma delas. Existe um motivo pelo qual o sistema Claude para a ciência não é um sistema determinístico, mas ainda assim um sistema baseado em probabilidades.
+
+Portanto, o aspecto realmente empolgante de tudo isso é que existe uma parte disso que ninguém ainda construiu em diversas disciplinas e indústrias. Somos muito bons em consumir tokens. Na verdade, existe um clube aqui para pessoas que consumiram mais de um bilhão de tokens. Eles estão andando por aí com cartões dourados. É até engraçado, na verdade.
+
+Mas, tipo, isso é meio hilário, né? Por exemplo, em que momento da história um funcionário foi recompensado para que sua empresa pagasse outro fornecedor pelo valor que você está gastando? Assim, o uso máximo de tokens, creio eu, está sendo considerado uma abordagem inadequada para resolver seus problemas. Assim, o natural será uma corrida para o fundo do poço, o que é um problema de otimização, algo que já vimos inúmeras vezes . Se voltarmos um pouco no tempo, eu estava neste mesmo palco há 4 anos, talvez não nesta sala em específico, falando sobre o Snowflake Summit e o Databricks Summit, onde a ideia era que, de repente, as pessoas queriam saber mais sobre o ROI (retorno sobre o investimento) e entender o retorno do investimento que haviam feito no Snowflake ou no Databricks . E começamos a
+
+otimizar os custos. Começamos a pensar em como garantir que cada dólar de capital investido na Snowflake e na Databricks fosse efetivamente usado para produzir um pipeline que as pessoas utilizassem. Essa mesma tendência está prestes a começar. E estamos descobrindo agora como usar a ferramenta certa para a tarefa certa. E às vezes você não precisa de um modelo com bilhões de parâmetros quando um único ciclo de CPU resolve o problema.
+
+Resumindo, a IA tornou a produção de trabalho completamente, eu diria quase gratuita, mas, graças aos investidores de risco, fortemente subsidiada. O problema de leitura ainda está em aberto. E verificar um ponto de dados já não é suficiente. O sistema precisa ser capaz de rastrear sua própria procedência e garantir que os números obtidos representem a filosofia exclusiva da sua empresa. As citações nos levaram a cerca de 50% do caminho , mas a outra metade da verificabilidade e comprovação dependerá de como começaremos a usar isso em trabalhos reais, valiosos e verificáveis.
+
+E o interessante aqui é que o próprio produto do trabalho é a prova. No código, temos, quero dizer, testes unitários, cada solicitação de pull request, cada commit e cada revisão de código dessa solicitação de pull request armazenados indefinidamente. Existem empresas aqui tentando extrair essas informações para criar uma representação da sua ontologia neste exato momento, de forma específica para cada empresa. Precisamos desse mesmo ecossistema no setor financeiro. Então, digamos apenas o seguinte: todos esses problemas estão resolvidos neste momento. O
+
+último obstáculo será a personalização. Então, na segunda versão disso, em 2027, esperamos que um de nós esteja no palco falando sobre como agora somos capazes de construir ontologias verificáveis ​​que realmente representam nossos processos de investimento, em vez de perguntar como não gastar um trilhão de tokens para resolver este problema específico. Então, nós também, quer dizer, Susanna, nós duas somos de Kepler. Estamos crescendo muito rápido. Participe conosco se esses assuntos lhe interessarem.
+
+E sim, acho que estamos começando na área financeira agora. Estaremos em muitas dimensões diferentes muito em breve. Então, muito obrigada e fico feliz em responder a quaisquer perguntas. [aplausos]
+
+[aplausos] É isso aí, pode continuar.
+
+Sim, sua pergunta é sobre procedência e, a partir do registro de procedência, de onde vem o número? Em sua essência, o número provém de três coisas diferentes. Essa informação provém de dados extraídos dos registros. Isso provém de um cálculo matemático que fazemos para derivar a produção, como uma proporção ou algo semelhante. Ou então, provém de documentos internos ou outras informações internas que, em conjunto com esses dados externos, produzem esse ponto de dados específico. Portanto, sempre que o modelo
+
+for efetivamente responsável por instruir alguma entidade a realizar uma operação de entrada/saída, isso faz parte da cadeia de proveniência. Sim .
+
+O que mais entusiasma os seus clientes no seu produto? Sim, então a pergunta é: o que mais entusiasma os nossos clientes? É engraçado. Todo mundo quer IA, tipo, o sonho é um gestor de portfólio de IA. Os gestores de carteiras não querem um gestor de carteiras com inteligência artificial. Como se eles quisessem um
+
+analista de IA. E, portanto, o que mais os entusiasma é uma forma de produzir rapidamente, de executar rapidamente as tarefas repetitivas e árduas que os seus analistas realizam. Coisas como, por exemplo, um analista realmente se senta e ouve a transcrição de uma teleconferência de resultados . Se não precisássemos de um analista para fazer isso, seria incrível. Ou então um analista fica sentado com umas 15 abas abertas, consultando todos os relatórios 8-K e 10-K dos últimos anos, para criar a versão 0 de um modelo financeiro.
+
+Por isso, o que mais os entusiasma é a possibilidade de recuperarem o tempo que tinham para se dedicarem à análise. Essa é a resposta sincera. E esses analistas são caros. Assim como essas pessoas, algumas chegam a ganhar de 600 a 700 mil dólares por ano fazendo isso. Legal. Ficarei feliz em responder a quaisquer outras
+
+perguntas fora do horário comercial, pois, na verdade, sim, também fora do horário comercial, se você quiser adiar . Sim, o senhor lá atrás.
+
+[música]

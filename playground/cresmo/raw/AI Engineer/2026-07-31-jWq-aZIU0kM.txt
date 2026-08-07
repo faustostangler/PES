@@ -1,0 +1,84 @@
+---
+video_title: "Benchmarks: The Good, the Bad, and the Ugly — Ali Khial, G2i"
+video_id: jWq-aZIU0kM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=jWq-aZIU0kM
+video_date: 2026-07-31T16:00:06+00:00
+video_description: |
+  Ali Khial took three of the best engineers at G2i, pointed them at popular coding benchmarks, and hit a wall of tasks that were either too ambiguous to grade or quietly broken. That experience is the spine of this talk: a benchmark starts as a spec, solutions get verified and graded, and the results rank models, but only if the harness is actually creating a fair test rather than an unfair one. He shows real examples where an instruction is so vague that a correct patch gets rejected, or a test checks something as arbitrary as how a variable is named, and notes that a meaningful share of tasks he examined had genuinely good answers marked wrong.
+  
+  The danger is that models are increasingly good at gaming exactly this, hunting down the test and satisfying it rather than solving the problem, which opens a quality gap that public leaderboards hide. Khial lays out the principles he now uses for benchmarks worth trusting: be precise where precision matters and loose where it does not, keep a private held out set so nothing leaks from public GitHub repos, and hold the whole thing to production grade. His point is not that benchmarks are useless but that the ones we lean on are not there yet, and building better ones is the work.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/ali-khial/
+  
+  Timestamps:
+  0:00 - The good, the bad, and the ugly
+  1:27 - Testing with our best engineers
+  2:30 - A benchmark as a spec
+  3:37 - When instructions are too ambiguous
+  4:44 - Tests that check the wrong thing
+  6:12 - Good answers marked wrong
+  7:03 - Models learning to game the test
+  8:08 - The quality gap leaderboards hide
+  9:03 - Precise where it matters
+  10:47 - Keeping a private held out set
+  11:13 - Principles for benchmarks worth trusting
+---
+Olá pessoal. Bem, esta é a última apresentação desta sessão. Então, espero que seja breve. Sei que vocês tiveram um dia longo. Então, tentem manter tudo curto e leve para vocês . Bem, vou me
+
+apresentar. Hum, eu sou Ali. Sou o diretor de IA e ML na G2I. Hum, eu não tenho nenhuma experiência em aprendizado de máquina. Então, não sei por que colocaram o ML no meu título. No fundo, sou engenheiro de software
+
+. E para provar que tenho mais de 50 projetos paralelos abandonados no meu computador. Então, você pode saber. Então, vou fazer um aviso. O título da apresentação é um pouco enganador. Enquanto
+
+trabalhava nisso, percebi que seria melhor apresentar minha jornada em termos de marcos e aprendizados, em vez de tentar encontrar uma dicotomia entre o ruim, o feio e o bom. Então, vamos começar... eu quero chamar a sua atenção.
+
+E convido você a dar uma olhada nisso. Estas três belas capturas de tela representam uma única solicitação em uma das tarefas de benchmark. Enquanto eu olhava para aquilo, me perguntava como um engenheiro poderia escrever uma tarefa como essa? Então eu disse: "Não, isso é impossível. Ninguém nunca escreve instruções como essas."
+
+Mas eu queria confirmar com meus engenheiros. Então, selecionei três dos nossos melhores engenheiros. Mostrei a eles a proposta e perguntei: "Vocês escreveriam uma proposta como essa?" E a resposta foi não. E eles têm razão. Não deveriam.
+
+Então, naquele momento, eu fiquei tipo, o que são benchmarks, afinal? Hum, eu precisava dar um passo para trás. Precisava pesquisar mais. Eu precisava entender. E assim, enquanto pesquisava, deparei-me com uma avalanche de palavras-chave.
+
+Classificadores, horizonte longo, verificadores, benchmarks de referência e muita terminologia técnica. Então, eu pensei: ou isso é muito complicado, ou... tem muito jargão e muitas palavras para decifrar aqui. Então,
+
+eu resolvi isso, trabalhei com a minha equipe. Tenho muitos bons pesquisadores na equipe, e nós meio que simplificamos tudo ao máximo . Bem, pelo que entendi, tudo começa com um aviso ou uma instrução. Essa instrução é repassada aos modelos e agentes. Os agentes fornecem soluções.
+
+Essas soluções são verificadas e avaliadas por meio de verificadores e rubricas. Tudo isso está envolto em um sistema que o protege de fatores externos. E se tudo correr bem, teremos trajetórias, pontuações e metadados que podemos usar para verificar, basicamente, classificar os modelos. Assim, a equação é simples. Se as instruções e os avisos forem excelentes, e os verificadores e as rubricas estiverem cumprindo seu papel, enquanto o sistema de segurança estiver prevenindo erros ou criando um ambiente adequado para a avaliação, devemos obter resultados incríveis.
+
+Mas essa não é a realidade. Então, o que, o que, o que deu errado? Então, a primeira coisa que se nota ao analisar os benchmarks mais a fundo é que a maioria das instruções são irrealistas. Fiz uma pesquisa rápida sobre o SweetBench Pro e vi que ele tem, em média, 481 palavras por instrução. São duas páginas por tarefa.
+
+Não é assim que as pessoas escrevem prompts. E para ilustrar melhor isso, eu tirei alguns exemplos aqui. O primeiro que eu analisei, eu chamo de prompt com vazamento. É uma tarefa simples que basicamente consiste em tentar encontrar correspondências em alguns rejeições e realizar testes nesses rejeições. Então, na primeira captura de tela aqui, a instrução está apontando diretamente para o arquivo de teste, o que basicamente significa que o LLM tem todos os ingredientes necessários para encontrar esse arquivo de teste e implementar com base nele. O segundo é
+
+ainda pior. Basicamente, fornece uma interface completa para a implementação. Basicamente, estão bloqueando qualquer tipo de criatividade no LLM e forçando-o a funcionar dessa maneira. Então, esse é o prompt com vazamento. O segundo exemplo é o estímulo que não tem valor econômico. Ah,
+
+isso é do Sweet Marathon. E essa pergunta está bem formulada. É abstrato o suficiente para permitir que o LLM faça seu trabalho, mas está pedindo para ele construir um compilador C em Rust. Então, não sei se algum de vocês já tentou fazer isso, mas não acho que seja uma boa ideia. Não devemos fazer isso. Muito
+
+bem, vamos em frente. O segundo problema: verificadores fracos. Então, a captura de tela aqui é um trabalho que a Deep Sweet fez para comparar o banco deles com o Sweet Bench Pro. E, hum, deixe-me corrigir isso aqui para que eu possa ver os números. No Sweet Bench Pro, 8,5% de todas as tarefas aceitaram implementações incorretas, enquanto mais de 20% das tarefas rejeitaram implementações corretas.
+
+Então, meio que voltei a investigar, pesquisei um pouco mais, extraí uma das tarefas e comecei a analisá-la. Bem, e aqui está o que está acontecendo no exemplo de rejeitar, possivelmente rejeitar boas respostas. Portanto, neste exemplo, o teste basicamente espera que uma variável exista. Mas, em primeiro lugar, essa variável não é especificada na instrução e, em segundo lugar, por que esperaríamos que um LLM escrevesse o nome da variável dessa forma? Então, esse teste está afetando o LLM e basicamente causando esses falsos negativos. No
+
+outro exemplo, o teste básico consiste em verificar funções que não foram exportadas. Portanto, se isso fosse um PR em algum de nossos projetos e expusesse esse tipo de teste, não o aceitaríamos. Então, é assim que um verificador fraco se parece. Muito bem, vamos em frente. Re-recompensar a pirataria informática. O que está acontecendo
+
+é que os modelos estão se tornando cada vez mais capazes de otimizar e encontrar soluções para problemas difíceis, contornando o problema. Então, em vez de realmente tentarem corrigir o problema ou aplicar um patch a uma tarefa, eles tentam encontrar pastas .git ou pesquisam na internet qualquer tipo de rastro que lhes permita, digamos, realizar a tarefa. E este primeiro gráfico aqui mostra que, à medida que os modelos evoluem, eles se tornam cada vez mais inteligentes na capacidade de manipular recompensas, e é exatamente isso que queremos. Queremos que os mestres em Direito (LLM) sejam inteligentes. Os parâmetros de referência estão aquém do esperado
+
+e não estão impedindo que isso aconteça. Mais detalhadamente, como você pode ver aqui, quanto mais tempo passa e mais novas versões são lançadas, maior é a diferença na recompensa obtida com a pirataria. Portanto, a conclusão é que existe uma lacuna de qualidade que está causando uma lacuna de confiança. Nos últimos 6 meses, não conheci nenhum engenheiro que escolheria um modelo ou um mestrado em Direito ( LLM) com base nos rankings. Eles olham para eles.
+
+Há muita expectativa em torno disso, mas depois eles seguem em frente, testam as coisas por conta própria e aplicam o que aprenderam. Então, como podemos reduzir essa diferença? Nos últimos dois meses, temos trabalhado com nossa equipe na G2i para tentar definir uma estrutura, um conjunto de princípios que nos permita criar tarefas para benchmarks que sejam melhores do que as que temos hoje. A primeira delas, instruções humanas. Escrito por humanos, revisado por humanos.
+
+Este é basicamente o ponto de partida para qualquer tarefa importante. As instruções dadas a um agente ou a um LLM devem priorizar a expressão dos comportamentos desejados, objetivos e restrições rígidas, e não a implementação de detalhes ou a tentativa de garantir a autossuficiência quando a própria tarefa já expressa detalhes em excesso. O segundo princípio é o dos avaliadores holísticos. Testes comportamentais em uma mão e, em seguida, precisão no que era necessário. Isso é muito semelhante à forma como abordamos os testes de umidade na engenharia.
+
+Queremos cobrir a maior superfície possível sem sermos demasiado prescritivos, mas também queremos ser precisos onde for necessário. Assim, para questões de segurança ou lógica de negócios, queremos ter toda a pilha de testes: testes unitários, testes de integração e, por fim, testes de ponta a ponta. Mas, para o resto do software, não queremos ter 100% de cobertura porque isso não é eficiente. O terceiro princípio, nível de produção. As tarefas precisam ter valor e precisam ser economicamente valiosas.
+
+Uma coisa é ter um teste, uma tarefa que está falhando, o LLM provou que o LLM ainda não está pronto. Uma coisa é um engenheiro olhar para uma tarefa e dizer: "Se o LLM está resolvendo isso, confio que ele também resolverá aquilo." Atualmente, não temos isso. Então, nível de produção. O quarto princípio: livre de contaminação desde a concepção.
+
+Queremos realizar apenas tarefas inéditas e garantir que mantenhamos conjuntos de dados de validação privados. Este é um princípio muito importante, pois atualmente as tarefas existentes nos benchmarks são todas provenientes de repositórios do GitHub ou de repositórios públicos. Assim, nossa abordagem aqui é que deve ser sempre inovador. Dessa forma, o processo é projetado para ser livre de contaminação . E o quinto e último princípio aqui é a informação sobre as tabelas de classificação.
+
+O parâmetro de referência precisa contar uma história e ajudar as pessoas a tomar decisões. As tabelas de classificação são o que vemos nos benchmarks atualmente. Eles te dizem quem ganha, mas não te dizem porquê. Então, basicamente, queremos colocar o eixo x de volta na primeira página. A ideia aqui é que existem muitos dados que podemos extrair dessas execuções, e infelizmente, eles não estão sendo colocados em primeiro plano.
+
+E as pessoas têm que pesquisar bastante e fazer seus próprios experimentos para chegar a esses pontos de dados. Então, finalmente, inicialmente, eu queria dar um final mais grandioso a isso, mas acho que acabei optando por algo mais interessante. Bem, isto é um apelo à ação para engenheiros de software. Os benchmarks não são difíceis. Precisamos dar uma olhada por baixo do capô.
+
+E precisamos compreendê-los e participar do Discord, porque a opinião dos engenheiros é valiosa. E muito obrigado. [aplausos]
+
+[música]

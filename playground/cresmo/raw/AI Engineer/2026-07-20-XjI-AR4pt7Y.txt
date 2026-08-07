@@ -1,0 +1,109 @@
+---
+video_title: "Your LLM Stack Is a 2008 Database With Better Marketing — Lovina Dmello, NVIDIA"
+video_id: XjI-AR4pt7Y
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XjI-AR4pt7Y
+video_date: 2026-07-20T17:17:53+00:00
+video_description: |
+  In 2023, researchers found thousands of Ray clusters sitting wide open on the public internet, dashboards and job APIs exposed to anyone, because authentication ships off by default and nobody turned it on before going to production. The data at risk was worth more than a billion dollars. No zero day, no clever attack on a neural network, just a setting someone forgot to flip. In production ML security that is not the exception, it is the rule.
+  
+  Lovina Dmello read 139 peer reviewed papers on production ML security and kept hitting the same pattern: misconfiguration, not missing features, is the dominant failure mode. One audit of 50 real systems found a critical mistake in 78% of them, almost always the same three offenders: overprivileged accounts that can touch anything, flat networks where one foothold reaches everything, and secrets and model weights left in storage anyone can read. The heavier defenses researchers love tend to die in production because they add 15% to 30% inference overhead, so the real question is never whether to run a control but how to run it cheaply enough to keep. The fix is not a new attack and defense pair. It is to stop securing ML like a model and start securing it like the infrastructure it actually is, because that is where the breaches keep landing.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/lovina25
+  - https://developer.nvidia.com/blog/author/ldmello
+  - https://scholar.google.com/citations?user=vqytSYoAAAAJ&hl=en
+---
+[música]
+
+Olá a todos. Meu nome é Lavina D'Mello, sou desenvolvedora de software sênior na Nvidia e trabalho na equipe de infraestrutura de aprendizado profundo. Portanto, o título aqui é um pouco provocativo. O que eu realmente quero dizer, e o que eu quero que vocês levem consigo, é que nos próximos 15 minutos, vou apresentar um argumento incômodo: quase tudo que está dando errado na segurança de aprendizado de máquina em produção não é algum ataque exótico de IA. São os mesmos erros de infraestrutura tediosos que supostamente corrigimos anos atrás.
+
+Então, agora, quando você analisa as pesquisas de toda a área, o padrão fica muito claro, é muito difícil ignorá-lo. Deixe-me começar com uma história. Assim, em 2023, pesquisadores de segurança começaram a analisar clusters Ray. E o Ray é uma das estruturas mais populares para aprendizado de máquina distribuído. Então, o que eles descobriram lá foi que havia milhares de clusters abertos na internet. Isso
+
+significa que os painéis de controle estavam abertos e havia APIs de tarefas disponíveis. E por que isso aconteceu? Porque a autenticação estava desativada por padrão e alguém simplesmente se esqueceu de ativá-la ao colocar o ML em produção.
+
+Então, eu sou um pouco baixinha, sabe? [risos] Então, eu preciso disso. Obrigado. OK. Então, a exposição naquela época era muita. Tipo, era mais de um bilhão de
+
+dólares. Então, vamos analisar essa parte agora. Isso não foi um ataque de dia zero, e também não foi um novo ataque sofisticado a uma rede neural. Então, o que aconteceu foi que alguém simplesmente se esqueceu de ativar a configuração padrão ao colocá-los no ambiente de produção. Portanto, tudo depende das configurações dos diferentes ambientes de implantação na infraestrutura.
+
+E quando analisamos as violações que realmente chegam às notícias, o que vemos, e isso não é uma regra, nem uma exceção, é que quase nunca se trata de um ataque adversário sofisticado. O que está acontecendo é que talvez alguém tenha exposto uma chave de API. O que aconteceu foi que talvez alguma conta tivesse privilégios excessivos. Talvez houvesse mais peso do modelo em um recipiente público. E toda a brecha foi como se alguém tivesse esquecido de virar.
+
+Então, como chegamos até aqui? Vamos voltar um pouco no tempo. Então, o que costumava acontecer era que uma aplicação clássica de 2008 era determinística. Assim, poderíamos deduzir exatamente o que o código faria. Sabe, tinha um parâmetro fixo e servia a um único inquilino. Os pesquisadores de segurança ou a
+
+equipe de segurança tinham um modelo mental claro. Eles sabiam exatamente o que precisavam garantir. E assim como grandes ferramentas foram construídas naquela época. Então, mais tarde, o que aconteceu foi que colocamos esses modelos de aprendizado de máquina em produção. E, discretamente, quebramos todas as três premissas.
+
+Porque os comportamentos se tornaram probabilísticos. Correto é uma distribuição agora. Não se trata de uma questão de uma única opção, como quando dizemos sim ou não. E então estamos protegendo os pesos, que por sua vez são copiáveis. E os vazamentos ocorrem diretamente na API que estamos tentando disponibilizar. E para
+
+tornar tudo mais acessível, agrupamos tudo em uma GPU compartilhada multi-inquilino, onde outros riscos de segurança entram em jogo. E agora a própria pilha LLM explode completamente. E os prompts se tornam fluxo de controle e as respostas vêm de corpora de recuperação. E os agentes tomarão as medidas por nós. Então, é o seguinte. Alteramos
+
+tudo na infraestrutura quando migramos para o aprendizado de máquina, mas nos esquecemos de alterar as premissas de segurança. Portanto, estamos executando uma estratégia de 2028 em um sistema de 2026. É disso que se trata toda a conversa . São poucas as coisas, cinco delas se destacam entre todas essas, e tentei resumi- las em três ideias principais. E aqui estão eles. A
+
+primeira causa são as configurações incorretas. Portanto, muitas vezes ocorrem erros de configuração . Não são as funcionalidades ausentes que são a principal causa de falha. Em segundo lugar, as defesas que estamos realmente lendo podem não sobreviver até a fase de produção. E em terceiro lugar, temos que proteger a infraestrutura de aprendizado de máquina, e não se trata apenas de proteger um modelo, entende?
+
+E se você se esquecer de tudo o que foi dito nesta palestra, quero que se lembre destes três pontos aqui. E vou compartilhar mais algumas coisinhas no final. Ah, ok . Aqui está um mapa que quero que você leve consigo. São quatro pilares sobre as defesas em profundidade. Assim, na
+
+parte inferior, em preto, podemos ver a segurança da infraestrutura. É aqui que entram em cena os contêineres, as redes, a virtualização de GPU e a criptografia. Além disso, a segurança da infraestrutura é a base. E por cima disso está o controle de acesso, que define quem tem permissão para fazer o quê, e depois vem a segurança em tempo de execução, que verifica e monitora o tráfego enquanto o sistema está em funcionamento. Então, eles se retroalimentam e integram tudo isso à prática diária, como o funcionamento da equipe, a conformidade, a resposta a incidentes e, honestamente, a cultura. Portanto,
+
+uma coisa importante a lembrar aqui é que, se a infraestrutura é a base, falhas nessa base podem se propagar em cascata para cima. Portanto, se tivermos uma política de controle de acesso perfeita , ela será apenas um detalhe decorativo se o cluster subjacente estiver totalmente aberto. Então, sim. Então, esses são os quatro níveis. E este é um mapa rápido daquilo contra o que estamos nos defendendo. Portanto, existem seis
+
+categorias. Os dois dizem respeito ao próprio modelo. Então, temos as entradas adversárias e a extração do modelo. Aqui, as principais defesas devem se concentrar em como fazemos a validação de entrada, como fazemos a detecção de adversários, como fazemos a limitação de taxa, a autenticação de API e a análise de consultas. Os dois pontos seguintes dizem respeito aos dados e à integridade. Lá vêm os problemas de
+
+envenenamento, violação da cadeia de suprimentos e quebra de privacidade. Portanto, devemos garantir que, lá, a CI/CD, a assinatura de modelos, a proveniência, o controle de acesso, a criptografia — tudo isso entra nesse cenário. E por último , nossa infraestrutura clássica, onde cuidamos basicamente do isolamento de contêineres, segmentação de rede, backend e análise comportamental. Então, se observarmos algo aqui, os pontos verdes, comprometimento da infraestrutura e agentes internos, é exatamente aí que as verdadeiras violações continuam acontecendo. E são as mais baratas de se errar por acidente, o que me leva à ideia central número um, que é a configuração incorreta, não a falta de funcionalidades. Portanto, esse é um dos principais
+
+modos de falha. Ok . Então, deixe-me apresentar uma das pesquisas. O que acontece é que os pesquisadores auditam 50 configurações de produção reais executando aprendizado de máquina. Em 78% dos casos, os pesquisadores descobriram pelo menos um erro crítico de segurança . E eis por que
+
+isso importava além da engenharia. Então, isso foi uma configuração incorreta, e a diferença entre uma terça-feira normal e uma notícia sobre nossa empresa é esse tipo de incidente, onde pode haver um erro crítico de configuração. E os mesmos três problemas continuaram a surgir neste estudo de pesquisa. Primeiro, os controles de acesso foram deixados totalmente abertos. Então, o que acontece quando os controles de acesso são deixados totalmente abertos? Quase qualquer conta
+
+pode fazer quase tudo. Então, esse é um dos problemas. Em segundo lugar, nada foi separado. Por exemplo, diferentes partes do sistema. Assim, uma vez que um invasor obtivesse acesso a uma parte do sistema, ele poderia fazer qualquer coisa em todo o sistema. Então,
+
+existe essa questão de separar diferentes partes do sistema. E o terceiro item eram as senhas e os modelos treinados. Assim, eles próprios estavam guardados em um depósito ao qual qualquer pessoa podia ter acesso. Então, por que isso continua acontecendo? Isso ocorre porque essas proteções de produção são criadas por especialistas em segurança para especialistas em segurança e, em seguida, são repassadas para as equipes de aprendizado de máquina. E a responsabilidade da equipe de aprendizado de máquina
+
+é basicamente tornar o modelo preciso, não configurar a infraestrutura. Portanto, a proteção está ali mesmo, na plataforma. Às vezes, ele simplesmente é desativado por algumas configurações. OK. Então, passando agora para a segunda ideia central , que é a de que as defesas sobre as quais você lê não sobrevivem à produção.
+
+Então, é o seguinte. Cada controle nos custa algo. E em aprendizado de máquina, esse algo é a latência e a taxa de transferência. Os dois elementos que compõem um SLA. Vamos observar as cores. Então, o nível verde aqui,
+
+o básico como logins, verificação de entrada, os custos, esses custam menos de 8% e isso deve sempre ser mantido. Não há discussão sobre isso. O segundo é o nível laranja. Então, isso é como um isolamento mais pesado, como paredes que cercam as cargas de trabalho uns dos outros. Então, aqui varia de 10 a 20%. Assim, podemos usá-
+
+lo seletivamente, por exemplo, para cargas de trabalho sensíveis e não confiáveis; podemos decidir se o queremos ou não. E os roxos estão detectando entradas maliciosas em tempo real. Então, este é o mais caro. Por aqui, pode custar, sei lá , de 15 a 30%, e é uma das coisas que os pesquisadores mais adoram. Mas, como não podemos diminuir a velocidade de todas as solicitações, isso está fora de questão.
+
+Mas o que realmente importa é que o custo depende quase que exclusivamente da qualidade da construção. Portanto, a mesma verificação de segurança pode ser feita de forma negligente e dobrar nosso tempo de resposta. Mas, se for feito da maneira correta, levando em consideração todos esses fatores, então é justo, o equilíbrio é justo. Portanto, o que a equipe de orientação realmente precisa não é "devo fazer isso?", mas sim "como posso fazer isso sem atrasar todo o processo?".
+
+Assim, podemos usar os controles mais baratos em todos os lugares e reservar os mais caros para os sistemas de maior risco. Então, aqui está o próximo slide. O ecossistema ainda não está pronto para produção . Então, o que eu quis dizer é...
+
+Bem, existe a primeira lacuna que veremos. As ferramentas de segurança para aprendizado de máquina estão anos atrasadas em relação ao restante do software. Então, as equipes de software comuns resolveram grande parte disso décadas atrás com varredura de segurança automatizada, gerenciamento adequado de senhas de passaporte, e ainda não levamos tudo isso para o aprendizado de máquina. Ainda hoje, existe um bom número de sistemas de alerta precoce para ameaças específicas de aprendizado de máquina. Assim, a segunda lacuna reside nos silos de conhecimento especializado. Portanto, a equipe de segurança não fala a linguagem do aprendizado de máquina, as
+
+equipes de aprendizado de máquina não falam a linguagem da segurança e as equipes de operação não sabem como o modelo se comporta. Portanto, existe uma lacuna aqui, e o problema reside nessas lacunas. Então, entre essas lacunas, ninguém tem uma visão completa. Portanto, há uma pequena discrepância por aqui. E por trás de ambas, existe uma lacuna entre a pesquisa e a realidade. Assim, a pesquisa está empenhada em se defender
+
+contra pequenos tweets invisíveis. Mas imagine que, no mundo real, estamos lutando contra senhas roubadas e pessoas que fazem mau uso do acesso que já possuem, e isso significa estudar um modelo isoladamente enquanto executamos dezenas deles em um sistema compartilhado. Portanto, o que falta é uma única equipe que consiga implementar tudo. Então, existe essa ideia central, a terceira. É a construtiva. Portanto, se
+
+o problema é a infraestrutura, temos que protegê-la como infraestrutura, e não como um modelo. Duas ferramentas práticas para isso são um modelo de maturidade para sabermos em que ponto estamos e uma lista resumida de como corrigir o problema primeiro. Então, aqui está o próximo slide. O que precisamos fazer é descobrir qual é a nossa verdadeira situação. É um modelo de maturidade que nos ajudará a mapear a aplicação ao framework de gestão de riscos de IA do NIST . Assim, haverá
+
+quatro níveis, cada um vinculado a um orçamento de despesas gerais e ao contexto. Assim, no primeiro nível, podemos ver que menos de 5% de custos indiretos representam o mínimo necessário. Adequado para ambiente de teste, não para produção. Assim, o nível dois, de 5 a 10%, é um ponto de partida real, como logins adequados, criptografia, separação de nossas redes e monitoramento básico. Este é o requisito mínimo para a produção. E o
+
+nível três adiciona controles mais avançados, necessários para setores regulamentados como saúde e finanças. Então, nessa parte, a maioria das equipes acredita estar no nível três, mas na verdade elas estão no nível um ou dois, dependendo de como configuramos tudo.
+
+Neste slide, quero discutir as três configurações incorretas que são responsáveis ​​pela maior parte dos riscos. Assim, a configuração padrão geralmente concede a todas as contas direitos de administrador completos. Então, isso é o que tem sido observado na maioria dos estudos de pesquisa. Existem credenciais que nunca expiram, ou seja, já houve credenciais que não têm prazo de validade. E isso pode vazar a chave por si só .
+
+E, assim como cada conta, esta deve fazer apenas o que precisa fazer. E as credenciais devem expirar muito rapidamente. Agora, nada impede que uma parte do sistema alcance outra parte do sistema. Então, se isso puder ser abordado de uma forma que...
+
+então isso poderá ser resolvido. É como se um atacante conseguisse entrar em uma parte do sistema e, a partir daí, pudesse fazer tudo. Então, isso é tipo um problema de rede plana . Em seguida, a solução. Então, o que podemos fazer para resolver isso é isolar as partes umas das outras. E podemos exigir uma
+
+identidade verificada entre os serviços, não apenas acesso à rede. Portanto, existe outra questão chamada segredos e modelos expostos. Assim, por lá, as senhas poderiam estar embutidas no código, com os arquivos de modelo armazenados em um repositório aberto. Portanto, a solução poderia ser um gerenciador de segredos adequado, criptografia e varredura automática antes de tudo isso ser lançado. Portanto, isto não passa de uma questão básica de higiene. E esse tipo de
+
+higiene pode prevenir violações que chegam a virar notícia. Então, aqui estão as informações práticas. Bem , agora algumas opiniões pessoais sobre para onde isso está caminhando, porque o terreno está se movendo muito rápido sob nossos pés. Então, esta é a parte que está menos definida. E quatro coisas estão na minha mente agora.
+
+Portanto, uma delas é a injeção imediata. Portanto, o modelo não consegue distinguir de forma confiável entre nossas instruções e as instruções de outra pessoa. Assim, uma mensagem formulada de maneira inteligente pode rapidamente sequestrar todo o sistema. Então, envenenamento por documentos: se o nosso modelo obtém respostas de um repositório de documentos, e se esse repositório for contaminado por alguém ou de alguma forma, o que acontece é que ele pode contaminar tudo. E ninguém precisa reter nada, certo? Então, GPUs. A seguir, temos o canal lateral da GPU
+
+. Então, podemos agrupar vários clientes em uma única GPU para economizar dinheiro. Nesse período, informações podem vazar de um cliente para outro. E outra é a cadeia de suprimentos. Então, o que acontece lá é que baixamos modelos e complementos de fontes públicas sem realmente verificar de onde eles vêm.
+
+Então, esse é outro problema. E a ressalva honesta aqui é que tudo isso acontece muito rápido. Toda semana surge alguma coisa. Portanto, encaramos isso como uma orientação, não como uma verdade absoluta, e as defesas ainda são imaturas porque as ameaças continuam evoluindo. OK. Então, três... Então, vamos juntar tudo
+
+. Caso você se esqueça de tudo o que eu disse hoje, aqui estão os três pontos principais. Portanto, garantir a segurança do aprendizado de máquina é um problema de infraestrutura, não um problema de modelo. Portanto, temos que investir nosso orçamento onde as violações de fato estão ocorrendo. Em segundo lugar, o campo tem defesas suficientes. Só precisa de unidades que possam ser implantadas
+
+. A fronteira não é um novo par de ataque e defesa. Isso significa fazer com que os controles existentes funcionem com a sobrecarga de produção adequada . E esse é o problema de engenharia, o que é uma boa notícia para uma sala cheia de engenheiros. E a terceira é que temos que corrigir as configurações incorretas, como acessos com privilégios excessivos, redes planas e segredos expostos. Então,
+
+suba no modelo de maturidade de forma intencional. E para concluir o assunto do título, seu conjunto de disciplinas do LLM é, na verdade, um banco de dados de 2008 com um marketing melhor. Portanto, proteja-o como um banco de dados, restrinja os acessos, segmente a rede e proteja os dados em repouso. Então, nós já sabemos como fazer isso. Só precisamos fazer isso de uma maneira melhor. Isso é tudo. Então, obrigado.
+
+[aplausos]

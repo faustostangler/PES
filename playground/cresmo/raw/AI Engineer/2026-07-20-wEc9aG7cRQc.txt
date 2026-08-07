@@ -1,0 +1,113 @@
+---
+video_title: "Why Your Agent Disagrees With Itself (And What To Do About It) - Diane Lin, Datadog"
+video_id: wEc9aG7cRQc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=wEc9aG7cRQc
+video_date: 2026-07-20T06:25:22+00:00
+video_description: |
+  Run the same task twice, and sometimes you get two materially different answers. While many dismiss this as the "stochastic nature of LLMs," this inconsistency is a critical product flaw that destroys customer trust—especially in high-stakes fields like cybersecurity, where a "flip-flop" between a malicious threat and a benign alert can lead to disastrous outcomes.
+  
+  This session explores why these flip-flops are usually not model failures. They occur in the "gray zone" near the decision boundary, where policies are ambiguous and even human experts may disagree. Instead of treating disagreement as a bug, we can use it as a signal to improve both the agent and the data.
+  
+  You'll learn a practical workflow that combines active learning, semantic memory (domain knowledge and business policies), and episodic memory (past similar cases) to automatically identify ambiguous examples, focus human review where it matters most, and continuously adapt the agent to customer-specific preferences, without relying solely on expensive fine-tuning.
+  
+  Key takeaways
+  
+  1. Find the gray zone. Use model disagreement to identify the decisions that deserve human attention.
+  2. Turn inconsistency into a feature. Every flip-flop is an opportunity to clarify policies and improve the agent.
+  3. Teach, don't just fine-tune. Combine semantic memory and episodic memory to make agents more consistent with far less effort than retraining.
+  4. Build a continuous learning loop. Improve consistency, streamline quality control, and evolve your agent to match how your customers actually make decisions.
+  
+  Speakers:
+  - Diane Lin (Datadog): Dr. Diane Lin is Tech Lead at Datadog, where she leads the development of self-evolving AI agents for cybersecurity, and previously co-founded Culminate (acquired by Datadog)
+    LinkedIn: https://www.linkedin.com/in/diane-dianhuan-lin-57210215/
+---
+Olá. Esta sessão abordará os motivos pelos quais seus agentes de IA discordam entre si e o que fazer a respeito. E esta é Dyan Huang Lin, e você pode me chamar de Dyan. Um pouco sobre a minha história. Minha jornada com a Inteligência Artificial Geral (IAG) começou durante meu doutorado no Imperial College London, onde eu trabalhava com aprendizado contínuo.
+
+Mais tarde, trabalhei com o Professor Josh Tenenbaum no MIT em aprendizado com um único exemplo, ou seja, aprendizado a partir de um único exemplo. Depois, tive a sorte de a Alexa estar sendo lançada. Eu fui um dos três primeiros cientistas de eletrodomésticos na equipe de perguntas e respostas da Alexa. Mais tarde, fui atraído por uma startup do Vale do Silício chamada Vicarious, que trabalhava com Inteligência Artificial Geral (AGI). Assim, hoje a Vicarious faz parte do Google DeepMind.
+
+E lá pude trabalhar na empolgante pesquisa de vanguarda sobre aprendizado por transferência sem exemplos concretos. Depois de trabalhar com Inteligência Artificial Geral (AGI) por alguns anos, decidi migrar para o mundo aplicado na Zscaler, uma empresa de cibersegurança. Lá, pude aplicar diversos modelos de aprendizado de máquina para lidar com o desafio de segurança cibernética. Depois de trabalhar lá por 5 anos, decidi cofundar minha própria empresa por causa da precisão que observei na Zscaler. Assim, a empresa está desenvolvendo um agente de IA para triar automaticamente seus alertas de segurança, tornando seu SOC mais eficiente.
+
+Estamos muito orgulhosos de que o Chrome innate tenha sido adquirido pela Data Dog no início deste ano. Agora faço parte da equipe Data Dog e lidero o desenvolvimento de agentes autoevolutivos.
+
+Então, hoje vou compartilhar com vocês o problema que provavelmente vocês enfrentam no dia a dia com agentes de IA para construção. A inconsistência. Em seguida, discutimos a origem dessa inconsistência para encontrarmos soluções. E discutiremos algumas vantagens e desvantagens entre as diferentes soluções e, por fim, mostraremos os resultados experimentais para demonstrar sua viabilidade.
+
+Você provavelmente verá isso. Mesmo modelo, mesma entrada. Mas com resultados diferentes. Aqui não me refiro a uma mudança na formulação das palavras. Refiro-me a uma saída semanticamente diferente.
+
+Você pode estar pensando que essa é a natureza estocástica do modelo LM. Guarde essa ideia. Vejamos alguns exemplos concretos. Imagine que você recebeu uma tarefa de análise de sentimentos, na qual devemos classificar cada avaliação do hotel como positiva ou negativa. Essa é uma tarefa típica de PNL (Processamento de Linguagem Natural). E o LM de hoje
+
+é realmente muito bom nisso. No entanto, existe um problema. Ao direcionar essa entrada para o mesmo modelo LM, ocasionalmente você verá veredictos diferentes surgindo a cada execução repetidas . Isso significa que uma única execução de avaliação não revelou toda a história. Você precisa repetir sua avaliação várias vezes para obter uma visão holística através da média dos resultados das diferentes execuções .
+
+Isso pode parecer um mero inconveniente técnico, mas na realidade é muito mais problemático do que isso . Deixe-me mostrar um exemplo em um domínio diferente da segurança cibernética. Imagine que você é um analista de segurança e seu trabalho diário é triar alertas de segurança e decidir se são maliciosos, exigindo ações específicas para interromper o ataque, ou se são alarmes falsos, ou seja, inofensivos, que podem ser ignorados. Então, aqui está um exemplo de alerta que você recebeu: "Foi detectada uma tentativa de login malsucedida na conta do Gmail a partir de um IP suspeito". E se atribuirmos uma tarefa semelhante a esta a um agente de IA e a executarmos diferentes vezes, veremos que, por vezes, ele se mantém consistentemente benigno e, por vezes, consistentemente suspeito em diferentes execuções.
+
+No entanto, existem casos em que oscila entre benigno e suspeito. Agora, seu cliente terá dificuldade em usar esse produto porque se perguntará: "Em qual devo confiar?" Portanto, essa inconsistência está causando um problema de confiança no seu produto. Imagine que você estivesse em uma competição de confeitaria para pessoas de cor (POC, na sigla em inglês), onde um fornecedor usa a mesma linguagem o tempo todo, enquanto o outro fornecedor muda constantemente de ideia . Você pode imaginar qual deles sairia ganhando o negócio.
+
+Agora, tenho quase certeza de que você quer resolver esse problema.
+
+Primeiro, precisamos descobrir de onde vem a inconsistência.
+
+A boa notícia é que os pontos de dados tendem a oscilar e, na verdade, se concentram em torno da fronteira de decisão, a chamada zona cinzenta. Permita-me ilustrar com o exemplo anterior. Aqui na análise de sentimentos, temos duas avaliações. Na verdade, o primeiro, independentemente de quantas vezes você execute o modelo LM, sempre resultará em um rótulo positivo. Neste caso, é bastante óbvio que a avaliação é extremamente positiva.
+
+No entanto, o segundo caso é o que tende a se inverter. Se olharmos mais de perto, veremos que está meio que no limite. Às vezes, certas palavras têm uma conotação relativamente positiva, mas outras vezes têm uma conotação um pouco negativa. Nesse caso, você verá que até mesmo especialistas humanos terão opiniões divergentes sobre esses casos. Na verdade, não existe resposta certa ou errada . Isso depende muito da
+
+política e da preferência de cada empresa. Para o hotel, pensar que esse tipo de avaliação não é algo que eu possa fazer para melhorar a experiência memorável. Então, isso significa não rotular como travesso porque não há nada que eu possa fazer. Mas algum hotel pode se importar com isso e querer classificá-los como nativos para que possam melhorar. Portanto, isso depende da sua preferência.
+
+Vejamos outro exemplo de cibersegurança. Eis outro caso no limite. E o motivo de estar dentro do limite é que houve algumas tentativas. De fato, há um agressor batendo à porta. Mas o atacante pode ainda não ter conseguido.
+
+Portanto, para clientes corporativos que estão sempre com invasores à espreita , se eles ainda não conseguiram entrar no ambiente, não querem se preocupar com isso. Caso contrário, serão inundados por esse tipo de alerta. Eles não precisam fazer nada, pois já estão bloqueados do lado de fora. No entanto, se o atacante conseguir obter a senha correta, passar pela autenticação multifator (MFA) e obter acesso ao ambiente, a situação se torna muito séria e você precisa tomar certas medidas. Portanto, o comportamento inicial foi quase o mesmo, mas o resultado foi muito diferente e a resposta necessária também.
+
+Depende se é realmente um ataque ou se o atacante ainda está do lado de fora. Portanto, se os classificamos como maliciosos ou benignos depende da preferência da empresa em ser notificada sobre tal situação. Portanto, mais uma vez, este é um exemplo em que depende da sua preferência. E informações adicionais para diferenciar os dois cenários. Assim, a partir desses dois domínios muito diferentes , você verá que, na verdade, os pontos de dados tendem a se inverter.
+
+São aquelas próximas da fronteira de decisão, onde sua clareza é necessária para desambiguar a qual lado realmente pertencem. Portanto, é nesses pontos de dados que os especialistas humanos tendem a cometer erros. E o classificador tradicional de aprendizado de máquina também terá dificuldades com isso. Ou seja, não é culpa do seu agente de IA. Seu agente de IA simplesmente aponta a ambiguidade que já existe.
+
+Agora sabemos qual é a causa principal da inconsistência. O próximo passo é identificar exatamente onde eles estão. Quem são eles? E conserte-os.
+
+Surpreendentemente, mas sem surpresa, a solução para identificar a zona cinzenta já existe no aprendizado de máquina. E isso se chama aprendizagem ativa. A ideia da aprendizagem ativa é que você tem muitos pontos de dados para serem rotulados. Imagine que você tivesse seu modelo inicial e o colocasse em produção, talvez no modo de monitoramento. E você queria verificar a qualidade.
+
+Mas você não tem largura de banda suficiente para verificar todos eles. Caso contrário, perde-se a vantagem de ter um agente para realizar o trabalho. Mas você ainda precisa identificar onde o modelo não teve um bom desempenho. E então, a aprendizagem ativa consiste em encontrar uma maneira de selecionar os pontos de dados onde se tende a cometer erros. E é aí que o jogo indica para onde você deve direcionar sua atenção.
+
+Vamos então analisar o pipeline de aprendizado ativo dos modelos tradicionais de aprendizado de máquina e ver como ele difere no caso do novo erro do agente de IA ou LM. Primeiro, você treina seu modelo inicial e, em seguida, faz previsões no conjunto de dados não rotulados. Podem ser os dados de produção online. E então, a partir daí, você vê que há certos casos em que o modelo não tinha certeza porque a probabilidade está próxima de 2,5. E esses pontos de dados são os que possuem maior valor informativo e que seu modelo mais aprenderá.
+
+A incerteza é um tipo de sinal que indica onde o modelo tende a cometer erros. Outra forma popular de descobrir o modelo problemático é a consulta por comitê, o que significa usar alguns modelos diferentes ou até mesmo o mesmo modelo várias vezes para então identificar a divergência. E é aí que o modelo tende a cometer erros, e é aí que o esclarecimento humano sobre o rótulo é necessário para que o modelo possa aprender com ele. Depois de identificar esses pontos de dados problemáticos, é necessário que um ser humano faça uma segunda análise para garantir que o rótulo esteja correto ou não. Não são necessárias informações adicionais para esclarecer esses casos, o que significa adicionar novos recursos.
+
+Em seguida, você pode adicionar esses conjuntos de dados rotulados ou, potencialmente, recursos adicionais à próxima rodada de treinamento. Em seguida, você treina o modelo novamente e continua esse ciclo. Assim, você pode ver que, neste ciclo específico de aprendizado ativo, você gasta muito pouco tempo, ou pelo menos é uma maneira muito eficiente de identificar os pontos de dados problemáticos e concentrar sua atenção naqueles pontos em que seu modelo tende a aprender mais. Então essa é a tradicional. A boa notícia é que o método LM não é muito diferente.
+
+Há duas partes principais que precisam de alguns ajustes. Uma delas se baseia nessa estratégia de seleção. A outra parte diz respeito ao requalificação profissional. Na estratégia de seleção um, sugerimos que você use aquela que trata da identificação de discordâncias. Pelo menos com base no que testamos até agora, a pontuação de incerteza do modelo LM não é muito confiável.
+
+É como se o modelo LM não soubesse o que não sabe. Portanto, quando se tem muita confiança, isso não significa que seja a coisa certa a se fazer. Assim, no entanto, a discordância entre diferentes execuções ou modelos diferentes, na verdade, fornece um sinal mais confiável quando o modelo não tem certeza de seu veredicto e precisa de orientação humana.
+
+E depois de identificar esse grupo ou o indivíduo discriminante que precisa de atenção, você o rotula e fornece um feedback, como fez anteriormente. Depois, você pode pensar: "Ah, hora de treinar o modelo novamente." Sim ou não. Sim, uma opção é treinar o modelo novamente, mas o ajuste fino do modelo é dispendioso. Aqui, propomos uma solução mais leve e fácil de iterar. Trata-se de
+
+aprimorar seu agente com memória semântica e episódica.
+
+Vamos usar o exemplo anterior para ilustrar o que quero dizer aqui. Como já discutimos, neste caso, a tentativa de inverter a situação se resume principalmente à falta de informações sobre você, uma política específica da empresa ou uma preferência sua. Aqui, podemos adicioná-lo à base de conhecimento. Se este cliente reclamar de algo fora do controle do hotel, classifique como positivo, pois você não deve dar atenção a isso.
+
+E então, no exemplo de segurança cibernética, algo semelhante pode ser incluído no termo " password spray", que significa que o atacante tenta adivinhar sua senha várias vezes, até mesmo falhando, continuamente. Portanto, se o registro de logs não for bem-sucedido, isso não deve ser um problema. Mas, em contrapartida, se conseguir realizar o registro final, isso deverá ser considerado malicioso. Aqui, você identifica as informações adicionais que ajudam a desambiguar os dois e, em seguida, os rotula separadamente. E essa clareza ajuda seu modelo a aprender.
+
+Além disso, ajude seus especialistas humanos a rotular de forma mais consistente. Portanto, esse tipo de conhecimento específico da área aprimora seu campo de decisão. E também, ajudem os seres humanos. E esse tipo de conhecimento, assim como o conhecimento factual, faz parte da sua memória semântica. E isso contrasta com a memória episódica. A
+
+memória episódica entra em ação quando você ainda não conseguiu decifrar o raciocínio por trás do evento anterior, explicando por que ele deveria ser malicioso ou benigno. Em vez disso, você disse que já tinha visto casos semelhantes antes e que foram classificados como benignos. E deixe-me aproveitar esses casos semelhantes do passado, e eles tomaram uma decisão de acordo. E a vantagem desse método de memória episódica é que ele ocorre de forma relativamente automática. Tem menos intervenção humana. Quer dizer, a
+
+intervenção humana já existia no passado, quando, ao realizar um trabalho online, você podia consultá-los, ou pelo menos seu agente de IA podia consultá- los automaticamente. Eles podem tomar decisões sem esperar que você elabore o raciocínio e insira o conhecimento semântico. Assim, a ideia é identificar um caso semelhante ao que está sendo analisado e, em seguida, usar a decisão anterior como referência. E então imagine que surge um novo caso , que não pertence a nenhum dos grupos anteriores, e esse é o caso que ainda precisa de atenção humana. E é assim também que a memória episódica resolve casos recorrentes automaticamente.
+
+E isso é particularmente útil no caso de alertas de segurança cibernética, porque muito ruído, especialmente aqueles falsos positivos, são os que continuam a se repetir. E essa é a tarefa mais fácil que você pode automatizar. E com essa revisão humana, que representa uma atenção e um tempo de resposta preciosos, você agora pode se concentrar naqueles casos em que a memória episódica falhou. E foi assim também que escolhemos entre memória semântica e memória episódica. Na verdade, as duas coisas não se contradizem. Na verdade, eles são
+
+complementares. Basicamente, você usa a memória episódica para lidar com essas situações recorrentes automaticamente. E então, para o que ainda restar, refletindo sobre a referência do passado ou não havendo referência para usar, passa-se para revisão humana. Em seguida, a revisão humana destila o conhecimento do domínio e o coloca na memória semântica para ser usado na próxima vez. Aqui, estamos falando de uma solução que, na verdade, traz três benefícios.
+
+Primeiramente, identificamos esses pontos de dados próximos ao limite de decisão e utilizamos o conhecimento do domínio na memória semântica e, com base em casos semelhantes anteriores na memória episódica, conseguimos melhorar significativamente a consistência. Assim, agora você tem um agente de IA mais confiável para o seu usuário utilizar. E outros dois subprodutos dessa solução são um controle de qualidade muito eficiente . Você não precisa verificar todas as saídas dos agentes, mas sim um subconjunto delas, que seu algoritmo de aprendizado ativo considera potencialmente problemáticas. Ao verificá-las, você fornece informações adicionais ou esclarece o rótulo, e seu modelo aprenderá a partir daí.
+
+Assim, o mais importante é que seu esforço de rotulagem é muito pequeno, mas o retorno é alto. Por último, mas não menos importante, agora você está coletando o feedback de seus clientes ao longo desse processo. Você não só possui um modelo confiável, consistente e altamente eficaz, como também um modelo que se adapta ao ambiente do seu cliente . Tenho quase certeza de que seu cliente vai adorar seu produto se seu agente de IA o ouvir e se adaptar a ele. Aqui estão alguns resultados experimentais com base em dados reais. Então, aqui coletamos
+
+93 alertas, alertas de segurança cibernética, e depois os executamos três vezes. Sem a solução que propomos aqui, um quarto deles mudará completamente de opinião. Em contrapartida, após a aplicação da nossa solução ou o uso da memória episódica, cerca de 15% deles tornam-se consistentes. No entanto, ainda há 10% deles que permanecem inconsistentes. Eles ainda se viram.
+
+Às vezes, por falta de referência, casos semelhantes em trabalhos anteriores são utilizados. Às vezes, mesmo havendo uma referência a ser usada, eles ainda discordam após uma segunda reflexão. Mas não há problema. A memória episódica bloqueia automaticamente todas as inconsistências em 15%. Os restantes 10% são submetidos a revisão humana e fornecem o conhecimento adicional necessário para desambiguar os casos mais complexos.
+
+Depois disso, você também se adapta ao ambiente do cliente que deseja aprender.
+
+Então, as três principais conclusões que espero que vocês levem após esta palestra são: número um, a inconsistência geralmente não é o problema do seu modelo . Pare de culpar seu modelo e, em vez disso, concentre sua energia no problema de rotulagem e nas informações potencialmente insuficientes, ajudando seu agente de IA com essa clareza adicional. Em segundo lugar, a discrepância entre os modelos não é um bug, mas sim uma característica do sistema. Encare cada desentendimento como uma oportunidade de aprendizado para o seu modelo. Terceiro, o ajuste fino não é sua única opção.
+
+Aprimore seu agente com memória semântica e episódica. Espero que você goste de ver seu modelo continuar melhorando e se adaptando ao ambiente do seu cliente . Por último, mas não menos importante, quero agradecer aos meus colegas e amigos maravilhosos da Data Dog. Um agradecimento especial a Ditun e Harsh, Anusha e Stefan, Saeed e Mati por me proporcionarem muitas discussões agradáveis ​​e por me ajudarem a esclarecer alguns dos conceitos. E também, agradeço a todos da equipe Beats Secured Analyst por tornarem essa jornada agradável.
+
+E obrigado por ouvirem. Espero que você goste de treinar seu modelo e vê-lo melhorar. Obrigado. Tchau.

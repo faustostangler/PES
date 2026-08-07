@@ -1,0 +1,124 @@
+---
+video_title: "Active Graph Agent Runtime (BabyAGI 4) — Yohei Nakajima, Untapped Capital"
+video_id: khVX_BUnEwU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=khVX_BUnEwU
+video_date: 2026-07-22T20:00:06+00:00
+video_description: |
+  Yohei Nakajima was running a 500 question eval when his API key died at question 350. Normally that means restarting the whole long agent from scratch. Instead it rolled back one step and resumed at 353, because in ActiveGraph the log is the agent. Most people build agents around the LLM and bolt on memory and logging; Nakajima, the creator of BabyAGI, flips it and builds around an immutable event log. Every action and every change to the agent flattens into one typed log, which projects a graph that is the agent's state, so you get replays, rollbacks, and forks for free.
+  
+  On top of the log sit behaviors that react to graph changes and emit events, policies that decide what the agent may change on its own versus what needs a human or a contradiction check, and swappable packs for memory, tools, and chat. The LLMs never talk to each other; they only touch shared state, an idea he borrows from 1970s blackboard systems and Kafka, and his hunch is that AI writes this style better than modern agent code because it has decades of training data on it. The payoff is self improvement: a loop that forks the agent, proposes a patch, gates it behind sandbox tests, and keeps it only if accuracy actually rises, and a lab that reads his blog posts, runs its own experiments, and once found a bug in its own code and opened the PR.
+  
+  Speaker info:
+  - https://github.com/yoheinakajima/activegraph
+  - https://x.com/yoheinakajima
+  - https://www.linkedin.com/in/yoheinakajima
+  
+  Timestamps:
+  0:00 - ActiveGraph and three years of BabyAGI
+  1:55 - Build around the log, not the LLM
+  3:24 - Behaviors, policies, and views
+  6:43 - Packs and the blackboard architecture lineage
+  8:12 - The log as memory, and the API key that resumed itself
+  9:53 - Reference agents built natively on the log
+  11:11 - Self improvement: regimes and controlled self modification
+  12:25 - ActiveGraph Lab writes its own experiments
+  13:02 - A Pokemon card competition as a testbed
+  14:33 - Surprises: why AI architects this better
+  15:49 - Why an agent needs an experiential world model
+---
+[música]
+
+Olá a todos. Obrigado por terem vindo. Estou animado por estar aqui. Foi muito divertido conhecer todo mundo durante a guerra de engenheiros de IA. Bem , estou aqui para falar sobre o Active Graph, que é minha nova abordagem experimental de código aberto para construir agentes, e que é um pouco diferente da forma como você talvez esteja acostumado a construir agentes. Hum, é definitivamente
+
+experimental. A ideia é mais inspirar você com algumas ideias potencialmente novas. Bem, agentes são ótimos, mas agentes de longa duração podem apresentar problemas . E se eles são tão incríveis, por que ainda estou construindo-os? Por que eles deveriam se construir sozinhos.
+
+Construir a coisa mais simples possível que consiga se construir sozinha tem sido basicamente o tema da minha pesquisa nos últimos 3 anos, desde que comecei o projeto Baby AGI em março de 2023. Ou seja, há mais de 3 anos. Se você estivesse lá na época, teria achado uma loucura. Viralizou como se tivesse sido noticiado pela mídia. As pessoas achavam que ia funcionar. Não
+
+funcionou de jeito nenhum. Hum, [risos] Bem, ao longo de 3 anos, fiz nove versões de IA básica com menos alarde, mas sabe, a cada vez eu estava experimentando como fazer agentes autônomos funcionarem de verdade? Geralmente com o tema de autoaperfeiçoamento. Bem, se você acessar a wiki do Baby AGI, poderá ver experimentos anteriores. Bem, durante esse processo, eu sempre acabava voltando aos gráficos e tive alguns projetos nesse sentido. Anteriormente, fiz um chamado
+
+Instagraph e Mindgraph. Isso era tipo um pano de chão pré-gráfico. Eu fiz alguns gráficos de código, gráficos de funções e gráficos de logaritmos. E desde então, parece que muitas pessoas começaram a usar grafos para construir agentes. Bem , além disso, consegui investir em um bom número de empresas de agenciamento, algumas das quais você certamente reconhecerá por meio dos meus fundos, como o Untapped Capital, e também tenho um fundo de agenciamento.
+
+Ah, sim , esse sou eu. Yohei, investidor de capital de risco durante o dia, construtor à noite. Você pode reconhecer este rosto mais do que este outro. Bem, o ActiveGraph é um ambiente de execução de grafos orientado a eventos para a criação de agentes auditáveis. Tenho um artigo que foi meu primeiro artigo de arquivo chamado "O registro é o agente", mas estou aqui para explicá-lo.
+
+Assim, hoje em dia, a maioria das pessoas constrói sua agência com base no LLM. Você começa com o LLM, adiciona uma API de resposta, fornece ferramentas, adiciona memória e, em seguida, garante que tudo seja registrado corretamente, o que pode lhe proporcionar todos os benefícios que o ActiveGraph oferece. Mas o ActiveGraph questiona: e se você construísse sua infraestrutura em torno do registro de logs? Mas o que isso significa? " Um" não significa tudo o que o agente faz, mas, mais importante, toda mudança no agente, certo? Ninguém aqui está usando o mesmo
+
+agente que usava há um ano, e o agente que você usará daqui a um ano será diferente. E muitas pessoas registram o que o agente faz e como ele muda em dois lugares diferentes, mas eu proponho que simplifiquemos tudo em um único registro de eventos imutável, que será a verdade fundamental sobre o agente. E isso projeta uma espécie de gráfico. Este é o estado do agente. O que quero dizer com isso é que, por exemplo, um prompt pode ser editado várias vezes, mas você pode ter um prompt principal que é usado quando você consulta o grafo.
+
+E além disso, você adiciona algo que estou chamando de comportamentos. Os comportamentos são reações às mudanças no gráfico. Em seguida, eles emitem eventos, que por sua vez atualizam o estado do agente, o que pode desencadear novos comportamentos. Um LLMs não se comunicam entre si no ActiveGraph. Todos eles se comunicam através desse estado compartilhado, e é isso que o torna um pouco diferente.
+
+Os comportamentos podem ser determinísticos ou podem incluir Modelos de Aprendizagem Linear (LLMs), que é como você constrói esse agente. E você obtém esse belo registro de eventos digitado, que é a fonte da verdade sobre tudo o que o agente fez e todas as mudanças que ocorreram, o que significa... Ah, na verdade, bem, droga, eu me adiantei . Além disso,
+
+existe um conceito chamado políticas, que determina como o grafo pode ser modificado. Voltarei a esse assunto mais tarde, mas, por exemplo, coisas como um artigo de referência que você encontrou em sua pesquisa, você pode adicionar sem problemas, mas se estiver alterando um prompt, talvez queira a participação humana no processo. Ou, se você estiver alterando um fato, talvez queira se certificar de que não haja fatos contraditórios. Então, existem essas coisas chamadas políticas e, novamente, vou mostrar alguns exemplos de código para vocês. Mas sim, no final você obtém esse belo registro de eventos formatado, que fornece reproduções.
+
+Isso permite reverter a ordem dos elementos (rollbacks) e também permite criar bifurcações ( forks). E isso acontece nativamente quando você começa a criar agentes com o ActiveGraph. Então, este é o tipo de abordagem centrada no LLM versus centrada no log que vou abordar ou para a qual vou mostrar o código. E, mais uma vez , especifico que isto não é um arnês. É um ambiente de execução e você pode, na verdade, reconstruir a maioria dos chicotes de fios comuns em cima dele. Você está simplesmente forçando todas as
+
+comunicações a se comunicarem através do estado compartilhado. [bufa] Então, no nível mais alto, certo? Ao desenvolver com agentes, as mensagens parecem ser o tipo de unidade central que você vê com frequência, mas vamos substituí-las por registros. Os troncos serão a unidade central em torno da qual você construirá tudo. É isso que você vai ler, é isso que você vai ver.
+
+[bufa] Estes são registros tipados, novamente, imutáveis, limpos. Você não pode editar o gráfico. Essas são apenas regras básicas. Basta emitir eventos. Você pode adicionar um objeto, que emite um evento. Mas sim, você
+
+pode consultar o grafo. E, mais uma vez, estou passando por algumas partes rapidamente porque quero chegar logo às partes divertidas, e tudo isso está na documentação. Os comportamentos monitoram as mudanças no gráfico e emitem eventos. Então, esse é um comportamento chamado planejador, que é acionado quando uma meta é criada, certo? E então adiciona um objeto, que por sua vez adiciona dois objetos de tarefa e um objeto de relacionamento, uma pesquisa, escrever memorando, duas tarefas. E então, na verdade, os
+
+comportamentos podem existir nas extremidades como algo chamado comportamento de relação. Esta possui uma relação de desbloqueio. Basicamente, quando a pesquisa estiver concluída, você pode escrever o memorando, certo? As assinaturas de comportamento podem ser bastante complexas. Podem ser consultas em grafos. Então,
+
+esta configuração diz que, ao criar um objeto, se o tipo do objeto for uma declaração (claim) e essa declaração contradizer outra declaração, o detector de contradições será acionado. E estes podem ser ainda mais complexos do que isso. Pode ter, sabe, percentagens de confiança incorporadas, e além disso, há outro conceito chamado visualizações. O gerenciamento de contexto pode ser feito programaticamente, basicamente como uma consulta em grafo. É um "It's You" que basicamente seleciona um subconjunto do grafo, tornando-o disponível para esse comportamento. Você
+
+ainda pode fazer outros tipos de gerenciamento de contexto, mas achei que esse tipo de consulta gráfica como gerenciamento de contexto parecia realmente elegante. Sinceramente, não sou eu quem escreve o código, mas a IA parece ser bastante eficiente em descobrir como fazê-lo. Bem , como mencionei anteriormente sobre políticas, algumas alterações gráficas exigem uma proposta de correção antes da aprovação. Novamente, é assim que essas políticas dão ao sistema o controle sobre o que ele pode alterar por si só, que tipo de alterações exigem certos testes, e darei alguns exemplos daqui a pouco, ou se você preferir a intervenção humana, certo? E você tem esse tipo de política que determina ou define quais são essas regras.
+
+E quando você junta tudo isso, você tem esses tipos de esquemas de objetos, ferramentas, comportamentos LLM determinísticos que podem ser reunidos em algo chamado pacote, certo? Com política de agrupamento. E é assim que você constrói o Harness em cima do ActoGraph. E tudo isso junto, e darei alguns exemplos mais tarde, são modulares e podem ser combinados, mas você não está apenas adicionando habilidades. É muito mais complexo do que realmente é, na verdade, bastante contraintuitivo. Eu jamais escreveria código
+
+com o ActoGraph, mas, novamente, a IA parece ser muito boa nisso. E, assim como os tipos de eventos, eles são fixos. Você pode adicionar eventos personalizados; os objetos são definidos pelo usuário. Eu só acrescentei isso porque alguém me fez essa pergunta quando eu estava mostrando esses slides, mas acho que faz sentido. Então, do jeito antigo, você tinha o loop while not done if. O novo método, ou pelo menos o
+
+meu novo método, consiste em uma série de comportamentos que não se comunicam entre si, que apenas monitoram o estado. Então, é inspirado na arquitetura de quadro-negro dos anos 70 ou 80, ou mais recentemente no Kafka, com um conjunto de microprocessadores se comunicando por meio de um estado compartilhado. Um dos desafios, pelo menos na época em que o Blackboard existia, era que escrever nele era muito pouco intuitivo, e os funcionários eram muito enxutos e preconceituosos. Mas agora, a IA escreve o código, e os trabalhadores podem ser muito poderosos porque têm capacidade de raciocínio. Este é um agente React no Auto Graph. O
+
+React Agent foi uma das primeiras arquiteturas do tipo agente. Como você pode ver, funciona da mesma maneira, mas ao criar um objetivo, você adiciona um pensamento. Ao gerar um pensamento, você aciona a função de raciocínio. Portanto, mais uma vez, isto serve apenas para mostrar que você pode construir qualquer chicote de fios em cima do Auto Graph. Parece diferente porque eles não estão se comunicando um com o outro.
+
+[bufa] Então, para ver se isso funciona bem, tenho feito muitos experimentos. A primeira coisa que fiz foi: posso usar o próprio log como memória? Portanto, isso não é um vetor puro. Na verdade, ele utiliza o log estruturado, então sabe qual mensagem veio antes de qual, além de incorporar as mensagens reais dentro do log. Ah, eu fiz isso na avaliação de memória longa. Inseri a consulta.
+
+Não houve ingestão semântica, nem extração de fatos, nem extração de entidades, mas eu simplesmente incorporei a consulta, procurei por mensagens relevantes, peguei algumas mensagens antes e depois, me certifiquei de que se encaixava no contexto, e na verdade funcionou muito bem na avaliação de memória longa, certo? Assim como muitos dos dados em sua memória, na verdade se sobrepõem aos dados em seu registro. Na verdade, tê-los iguais faz bastante sentido e garante que eles não se separem. Bem, tentei mais alguns experimentos adicionando algum tipo de ingestão semântica para melhorar a pontuação. Consegui fazer isso, mas, sinceramente, eu poderia me esforçar mais para tentar aumentar esse resultado, mas passei para o próximo experimento. Na verdade, mas
+
+nesse processo, uma das maiores surpresas divertidas foi, não sei se você já executou uma avaliação de memória longa, mas você tem que responder a umas 500 perguntas. E aí, em uma das execuções, minha chave de API expirou tipo 350. Eu pensei : "Putz. Ok." Então eu atualizei a chave da API e disse: "Ok, vamos executar novamente." E então, como se tivesse voltado
+
+uma linha, disse: "Muito bem, vamos começar da questão número 353." E não sei se você já passou por isso, mas eu já criei muitos agentes que, por exemplo, tiveram problemas com a chave da API ou algo do tipo, e eu tive que executar o agente novamente desde o início. E essa não tem sido minha experiência desde que comecei a usar o ActiveGraph, o que foi uma surpresa muito agradável. Hum, eu criei alguns agentes de referência, certo? Agora que tenho esse ambiente de execução, vamos ver o que consigo construir. Pedi à
+
+Replit para construir um agente de codificação com base no ActiveGraph e, como resultado, ele veio com, você sabe, um gráfico de registro de eventos. E, novamente, vou dizer isso: você pode fazer isso com ferramentas como a LangSmith. A questão é que eu não sei, eu não precisei pensar sobre isso. Eu só precisei pedir ao meu agente de programação para usar o ActiveGraph e esse registro de eventos e gráfico apareceram automaticamente. O mesmo se aplica ao agente de pesquisa.
+
+Eu tinha acabado de criar um agente de pesquisa avançada no ActiveGraph e ele veio com um recurso muito bonito, sabe, um registro de eventos e um gráfico mostrando de onde vieram as evidências e o que se contradizia. E, mais uma vez, não precisei pensar nisso. Acabei de pedir ao meu agente para construir um agente de pesquisa usando o ActiveGraph e este foi o resultado . [bufa] E aí eu me dei conta, ok, como a gente faz para deixar isso mais parecido com uma garra aberta ou com o Hermes? Então, eu experimentei um pouco e encontrei um recurso chamado ActiveGraph Packs, que inclui um pacote principal, um pacote de ferramentas, um pacote secreto, um pacote de memória, um pacote de identidade, um pacote de comunicação e um pacote de bate-papo.
+
+Agora você já deve ter uma ideia de como estou tentando construir agentes com base no ActiveGraph. E cada um desses pacotes possui tipos de objetos e comportamentos. Novamente, a sensação provavelmente é muito diferente da maneira como você está construindo agentes, mas eu acho que é bastante elegante. Você pode simplesmente pegar um cartão de memória e substituí-lo por outro , certo? Hum, não é bem como habilidades, mas sim os objetos e as regras, e tudo isso vem junto num pacote. E
+
+você junta esses pacotes para criar seu agente. E então eu mergulhei de cabeça no que eu realmente queria fazer: começar a explorar ciclos de autoaperfeiçoamento. Eu fiz um projeto chamado Regimes. Eu fiz isso, uh uh, estava na prova número dois. Essa aqui foi uma automodificação realmente controlada . Claude Code chamava
+
+isso de Regime de Scène, mas basicamente nós classificávamos o tipo de falha e, com base nessa classificação, era permitido editar uma parte específica do agente. Novamente, fiz isso em uma avaliação de memória longa. O processo consistia, creio eu, em responder cerca de 20 perguntas, analisar as respostas, identificar as falhas, tentar se autocorrigir, repetir o processo em 50 perguntas diferentes e verificar se a precisão realmente aumentava. Somente se a precisão aumentasse, o sistema aceitava a correção . Então, esse foi o tipo de patch proposto que começou a acontecer, que era aplicado depois que o programa propunha uma mudança a si mesmo, certo? Essencialmente, o
+
+agente cria um novo processo a partir de si mesmo, propõe uma alteração, realiza uma verificação estática, uma verificação em ambiente de teste e, em seguida, certifica-se de que a alteração realmente impactou o resultado, aceitando-a somente então. E para esses loops, ele repetiria o processo oito ou treze vezes, mas aceitaria apenas quatro ou cinco desses trechos. E de fato houve uma melhora modesta, mas estatisticamente significativa, nas pontuações de avaliação de memória de longo prazo. E não só sabia o que funcionava, como também sabia o que não funcionava. Nesse ponto eu pensei: "Ok, será que eu consigo fazer com que o Active Graph pesquise sobre o Active Graph para mim?" Então, eu
+
+criei o Active Graph Lab, que lê todas as postagens do blog. Então, tudo o que compartilhei tem um blog, um repositório no GitHub, e este laboratório está lendo tudo isso para gerar novas ideias, me perguntando se pode executá-las. E se eu disser que sim, ele executará o experimento e depois escreverá uma postagem no blog sobre isso. Na verdade, ele encontrou um erro em seu próprio código e me perguntou se poderia corrigi-lo. Ele escreveu o PR e depois eu apenas o mesclei. Bem, ainda é
+
+cedo, mas está começando a funcionar. É um laboratório que se aprimora continuamente. Além disso, descobriu que analisava os pacotes de gráficos ativos e conseguia instalar um pacote nele mesmo, e depois escreveu uma postagem no blog dizendo que os pacotes são modulares entre repositórios. Eu pensei: " Não sabia disso. Que ótimo!"
+
+E aí me distraí quando vi essa competição de nomes de cartas colecionáveis ​​de Pokémon no Kaggle. Como você pode ver, estou por toda parte. Bem, você precisa submeter este deck em um agente determinístico, não com um LLM, e eles competem nesta competição no estilo Elo. Então, meus decks, sabe, a cada hora eles estão competindo contra um novo oponente, e a pontuação deles sobe ou desce. E eu achei que este foi um bom teste para ver se o Active Graph poderia me ajudar a aumentar minha pontuação.
+
+E eu não usei código na nuvem nem o Replit, e fizemos cerca de 80 tentativas diferentes para experimentar coisas diferentes e aumentar nossa pontuação. Sim, pode não fazer sentido se você não joga Pokémon, mas essas coisas são tipo, vamos tentar adicionar algumas cartas de energia. Parece um pedido muito informal. E meu agente, provavelmente porque estou usando o Actigraph, diria: "Ok, ótimo. Vamos executar 200 jogos simulados contra três agentes de referência e, se a taxa de vitórias aumentar em x% e houver uma pontuação de Wilson acima de 90 e alguma coisa, então aceitaremos isso como uma mudança." E basicamente fiz isso umas
+
+80 vezes e cada vez eles vinham com um relatório incrível explicando por que funcionou, o que fez e qual foi o veredito. Então, dessas 80 tentativas, provavelmente aceitou entre 20 e 30, e a pontuação foi melhorando aos poucos. Ainda estou com uns 27%, então não sei se consigo passar disso, mas o mais interessante foi o quão bem o agente entendeu experimentos que tentamos antes e que não deram certo. E essa foi uma experiência muito diferente para mim. Porque eu já trabalhei com muitos agentes "YOLO", em que você simplesmente continua tentando coisas e, quando dá certo, você pensa: "É isso aí!". Mas
+
+aí eu não sei quais coisas tentamos e que não funcionaram. Mas agora, quando estou desenvolvendo com o Actigraph, ele rastreia todas as coisas que não funcionaram porque é obrigatório, já que tenho essa política que diz: "Aqui estão os passos que precisamos seguir antes de aceitar uma alteração." Bem, algumas das surpresas agradáveis, a maioria das quais eu já mencionei, mas a IA parece ser melhor em arquitetar esses agentes de linguagem natural e agentes básicos. É apenas a minha experiência pessoal e, sabe, para algumas pessoas você terá que experimentar por si mesmo para ver. Mas, pensando bem, os agentes com formação em LLM têm cerca de 3 anos.
+
+Mas se você observar, novamente, o Kafka, o Blackboard, esse tipo de microtrabalhador se comunicando por meio de um estado compartilhado, verá que existem décadas de discussões sobre como fazer isso funcionar melhor. E minha hipótese é que isso esteja nos dados de treinamento. E há muito menos dados de treinamento sobre como construir agentes baseados em LLM. A depuração passou dos registros de sessão para o banco de dados do Actigraph. Repito, eu não sabia que isso aconteceria , mas quando meu agente de codificação estava depurando, ele simplesmente começou a consultar o banco de dados em vez dos logs da sessão, porque tudo já está registrado de forma muito organizada e tipificada, e ele sabe exatamente como os dados são registrados.
+
+Foi uma surpresa descobrir que o Pox pode ser carregado facilmente a partir de outros repositórios. Achei que precisaria me esforçar mais para que isso acontecesse, mas simplesmente funcionou. Não vou mais recomeçar corridas longas do zero, e sei o que não funcionou, que são algumas das coisas que compartilhei. É aqui que posso perder alguns pesquisadores sérios, pelo menos na linguagem que uso. Na verdade, eu não sei como treinar modelos nem nada do tipo. Então, vou fazer
+
+essa ressalva. Mas, à medida que desenvolvo isso, começo a realmente pensar que agentes de longa duração precisam não apenas de um modelo do mundo real e de um modelo preditivo do mundo real, mas do que eu poderia chamar de modelo experiencial do mundo real. Certo? O modelo preditivo do mundo parece mais com as probabilidades a priori, certo? E se você pensar no hipocampo, na verdade ele também funciona como um registro de eventos imutável que projeta um estado. E
+
+então, parte desse estado é incorporado aos seus padrões anteriores por meio de reprises, sonhos e sono. Então, sabe, eu acho que algumas discussões sugerem que, à medida que os modelos melhoram, o cinto de segurança desaparece. Mas estou começando a achar que isso não é verdade. Acho que precisamos de ambos... essa é uma
+
+espécie de nova hipótese que está crescendo à medida que tenho usado o Active Graph. E se você pensar em coisas como você ou eu, como se não fôssemos nós que tivéssemos capacidade de raciocínio, certo? Estamos mais próximos de nossas crenças, nosso conhecimento e comportamentos que derivam de nossa experiência de vida real. E se for esse o caso, e nós vamos, sabe, construir agentes inspirados em nós mesmos, então talvez o nosso agente também deva ser tratado dessa forma. Talvez a identidade do agente seja derivada de seu próprio registro de atividades. Hum,
+
+adoraria que você experimentasse. Você pode simplesmente ir lá e dizer "pesquise no Active Graph e crie algo para mim" para o seu agente favorito, aquele que te conhece melhor do que eu, e pedir para ele explicar se foi útil ou não. Me avise se você tentar. Ou odeie isso. Ou construir algo relevante.
+
+Obrigado por ouvir.
+
+[música]

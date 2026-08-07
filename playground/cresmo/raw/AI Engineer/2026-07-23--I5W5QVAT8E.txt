@@ -1,0 +1,178 @@
+---
+video_title: "Notion's Token Town — Sarah Sachs, Notion"
+video_id: -I5W5QVAT8E
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-I5W5QVAT8E
+video_date: 2026-07-23T17:30:06+00:00
+video_description: |
+  Every month it is the same trap. A reasoning model gets upgraded at the same price per token, then quietly burns three times the output tokens. Or the new version costs 40% more and deprecates its predecessor in four months. Are you growing 40%? Making three times the revenue? Sarah Sachs, who leads AI engineering at Notion and negotiates its model contracts, says no, and that is why she treats every vendor as a competitor. Buy tokens from a lab that also sells the first party product and you are paying a markup on a markup for something you cannot defend, with no exit if you lock yourself to one provider.
+  
+  Her answer is to stop winning on token economics and win on product: data flywheels, orchestration, and staying model agnostic so optionality stays your leverage. Notion's auto model quietly routes about 75% of traffic and swaps providers underneath, her AI Switzerland approach; triaging an email inbox on Opus, she says, rips off the customer and Notion both. Route by cost per capability per second, not per token; use open weight models for the moderate middle; reach for CPUs over GPUs, because you do not need an LLM to turn a CSV into a PDF. The final stretch turns to the lethal trifecta and a live demo of Notion agents scoping a task, tagging in teammates, and opening a PR.
+  
+  Speaker info:
+  - https://x.com/sarahmsachs
+  - https://www.linkedin.com/in/sarahmsachs/
+  
+  Timestamps:
+  0:00 - Welcome to Token Town: AI poor vs AI rich
+  1:25 - Negotiating AI contracts as Notion's AI Anna Wintour
+  2:30 - The AI transformation journey and the system of record
+  4:46 - Why cost is the structural barrier
+  5:34 - The monthly model pricing traps
+  7:28 - Your supplier is your competitor
+  8:44 - Win on product, not token economics
+  9:50 - Not all traffic belongs on the frontier model
+  12:10 - Optionality is your leverage
+  13:25 - The auto model and the model agnostic playbook
+  15:04 - Open weight models for the middle
+  17:00 - CPUs over GPUs and governance
+  17:53 - Security: the lethal trifecta
+  19:46 - Live demo: orchestrating Notion agents into a PR
+---
+[música]
+
+Ok. Olá. OK. Antes de começar, pessoal, este é um salão enorme para apresentações. Podem todos vir à frente porque estou falando com quatro fileiras vazias e dispersar as pessoas? Me faça um favor. Vou
+
+passar 30 minutos contando todos os nossos segredos para vocês. Eu ainda consigo te ver. Obrigado. Obrigado. Obrigado. Obrigado.
+
+Vamos apenas bater um papo. É uma sala enorme e somos 500 pessoas. Este quarto é muito maior do que aquele. Obrigado. Sinceramente, eu sabia que vocês eram capazes.
+
+Na verdade, não é tão difícil. Obrigado. Eu também me sento no fundo. Eu também trabalho durante as palestras. Entendo. Eu entendo perfeitamente. Fiz isso o
+
+dia todo, mas não para mim. Ok, vou começar, mas ainda vou apontar para você se estiver lá atrás como você. Ok, eu sou a Sarah. Eu lidero as nossas equipes de engenharia de IA na Notion. Bem-vindos à minha palestra. Bem, trata-se de uma cidade simbólica. Como se
+
+passa de "não ir", de "IA comprometida" para "IA pobre"? OK. Hum, eu sei que hoje em dia tudo gira em torno das fábricas de software. Vamos falar sobre isso, mas vamos falar sobre como fazer isso de forma sustentável. Este sou eu. Esta foto foi tirada no meu primeiro dia na
+
+Notion, em um metrô lotado e abafado. Bem, como eu disse, lidero nossas equipes de IA na Notion. Hum, e eu negocio contratos de IA para ganhar a vida. Minha equipe brinca que eu ajo como a Anna Winter. Então, esta é uma bela foto minha com o cabelo da Anna Winter, resultado de um artigo da imprensa que me mencionou externamente. Hum, e essa é mais ou menos a
+
+ideia, certo? Hum, como você avalia a negociação entre diferentes fornecedores? Garantir que você mantenha o bom gosto da sua empresa. Eu não faço isso sozinho. Hoje é o dia do lançamento de um dos nossos produtos mais recentes. Isto é apenas um subconjunto.
+
+Qualquer bom gerente de engenharia destaca que temos uma empresa inteira de pessoas trabalhando nisso. Eu sou apenas a pessoa que tem a oportunidade de vir conversar com você sobre isso. Então, temos estado a construir muita coisa. Bem, este é um exemplo do nosso uso de IA apenas em 2026. E estamos muito orgulhosos de como conseguimos aumentar esse uso.
+
+E vou falar com vocês sobre como vocês podem construir um produto nativo de IA e uma empresa nativa de IA. Hum, mas isso é só para me dar algum crédito, para mostrar que estamos fazendo um bom trabalho. Ok, então, para aqueles que não sabem, o Notion sempre foi um sistema de registro duradouro. Sempre foi um lugar onde você pode colaborar com seus colegas. Hum, mas hoje esse ponto de colaboração é um pouco diferente.
+
+Não são apenas os humanos. O Notion sempre foi o lugar ideal para colaboração. E hoje essa colaboração acontece entre humanos e agentes. Humanos e humanos, agentes e agentes. E gostamos de pensar nas transformações da IA ​​ao longo dessa jornada. E tenho certeza de que alguns de vocês estão
+
+olhando para o slide e se perguntando onde estão. A inteligência artificial como parceira de reflexão foi o ponto de partida para todos nós começarmos a experimentar. Todos nós começamos a usar a primeira versão do chat no Dia de Ação de Graças, quando foi lançada há três ou quatro anos. E começamos a nos perguntar coisas como: " Como posso enviar este e-mail ao meu senhorio dizendo que não devo pagar pela pintura?". Então, copiávamos e
+
+colávamos o texto no nosso e-mail. Eventualmente, chegamos a um ponto em que podíamos usar a IA como uma assistente. A IA era capaz de executar tarefas individuais, e foi assim que a IA da Notion realmente decolou no início. Ela conseguia economizar tempo dos funcionários, mas funcionalmente era limitada em suas capacidades, dependendo do que os humanos pediam para ela fazer. A IA como colegas de equipe era algo que estávamos realmente animados para lançar há quase um ano. Bem,
+
+isso é verdade em muitos produtos onde podemos realizar trabalhos repetitivos, pensar em um processo e deixar a IA executá-lo. O que eu acho realmente interessante é quando a IA se torna de fato um fluxo de trabalho crítico, onde os processos interagem entre si e sistemas inteiros estão em funcionamento. Quantos de vocês acham que dominam a IA como um sistema? Você não está triste por ter chegado até aqui agora? Ótimo.
+
+Nenhum de vocês. Exatamente. Constatamos que ninguém ainda descobriu como fazer isso bem. 88% das pessoas sequer conseguem usar a IA como assistente. E por que isso acontece?
+
+Temos uma tese em discussão. Isso ocorre porque há muitos dados isolados e não existe um sistema de registro robusto para esse ponto de colaboração. E acreditamos que, para que sua fábrica de software funcione, para que sua empresa funcione e para que seus sistemas funcionem, você precisa desse sistema de registro robusto. E essa é a missão da Notion . Portanto, fazer isso é caro. Você vê
+
+muitas empresas que tentam se comprometer com essa visão e, em uma semana, surgem diversas manchetes mostrando o quão doloroso isso é. Então você pode investir todo o seu dinheiro em um processo para tentar criar um sistema e acaba se sentindo assim, não é? Você acaba usando um maçarico para acender o que na verdade é um charuto grande. Mas você meio que entendeu a ideia. O custo é uma barreira estrutural à entrada no mercado.
+
+Isso dificulta o seu trabalho de servir os produtos. Isso dificulta a construção de fábricas. E, em última análise, eu diria que essa é uma das maiores razões pelas quais as coisas não acontecem em grande escala com sucesso hoje em dia. E eu diria que, para qualquer pessoa que trabalhe em uma empresa de IA aplicada , é fundamental estar realmente familiarizada com esse assunto para entender as concessões que precisa fazer para construir um produto duradouro, empolgante e esclarecedor para seus clientes. Mas o mercado não está bem assim hoje em dia, certo? Não vou citar
+
+nomes aqui, mas vocês têm mecanismos de busca. Você consegue descobrir. Anexo A. Um modelo de raciocínio é atualizado. Incrível. O preço por token é o
+
+mesmo. O que não amar? Experimente, ele usa três vezes mais tokens de saída , não é? Exemplo B. Um modelo é atualizado, mas agora possui um dígito completamente novo , certo? Qualquer que seja o sistema de demarcação
+
+que essa família modelo prefira, é totalmente novo. É 40% mais caro que seu antecessor, que será descontinuado nos próximos quatro meses. Esses são cenários reais que enfrentamos na Notion. Todos vocês estão concordando com a cabeça porque isso acontece praticamente todo mês agora. Mas eis o problema. Você está crescendo 40% nesse
+
+período? Você está faturando 3 vezes mais ? Não. Então, como você se orienta pelo sistema? Se você simplesmente atualizar automaticamente o modelo e tudo mais, estará dando um mau negócio para alguém.
+
+Dependendo de como você cobra e de onde vem o dinheiro, seus clientes ou seus investidores não são bons. As empresas da lista Fortune 500 têm capacidade para lidar com isso. Eles podem contratar grandes equipes de consultoria, formar equipes próprias e robustas, além de desenvolver expertise em como lidar com esses dilemas. Hum, a maioria das pessoas não. Todos os outros não têm capacidade de negociar com vantagem e estão presos nessas situações, certo? Parte do meu trabalho, como diz a
+
+piada da Anna Winter, é pensar em defender as empresas da lista Fortune 5 milhões, as empresas que não fazem parte da lista Fortune 500 e que não têm a massa necessária para ter poder de negociação, mas precisam pensar em como fazê-lo. E vou compartilhar algumas lições que aprendi quando tinha um grande volume de tráfego, lições que acredito serem aplicáveis ​​também a quem não tem. Bem, isso provavelmente já não é tão secreto agora quanto era quando comecei a dar palestras como esta, talvez há quatro meses. Bem, seu fornecedor é seu concorrente. Conheço pouquíssimas pessoas que me convenceram de que isso não é verdade. Bem, você
+
+sempre vai conseguir um mau negócio em tokens com alguém que os desenvolve nativamente, certo? Às vezes, o custo dos produtos servidos varia muito. Basicamente, eles estão oferecendo um produto próprio e você compra esses tokens com uma taxa de busca altíssima, para depois vendê-los novamente com outra taxa de busca. Hum, esse não é exatamente um valor que se possa defender. Você está fazendo um péssimo negócio. E se você se vincular a um único
+
+fornecedor, não terá saída. Se você criar um produto de IA para vender com essa estrutura, estará cruzando os dedos e torcendo para que seu negócio seja viável. Eu não recomendo isso. Isso é realmente interessante. Dylan publicou isso em alguma análise. Acho que
+
+diz "oito horas atrás". Não era nesse momento. Provavelmente foi há um mês. Eles compraram um plano de assinatura e destacaram exatamente a diferença entre o que a Frontier Labs cobra dos clientes por seus produtos próprios e o que eles vendem. É um mau negócio.
+
+Não jogue este jogo, nem tente, e depois me diga como você ganhou. Não recomendo. Pense em todos os outros. Pense no que essa estrutura significa e em que áreas você tem experiência. Não acho que isso seja uma vitória em termos de economia simbólica. Acho que tem a ver com o
+
+produto. Trata-se de construir ciclos virtuosos de dados e entender seus clientes melhor do que ninguém. Entender quando você precisa de capacidade, quando precisa de preço baixo e quando precisa de melhorias na latência. Garanto que você nem sempre precisa do modelo mais lento, embora geralmente seja o mais potente . Em seguida, crie uma interface de usuário e uma orquestração atraentes. E vou mostrar alguns
+
+exemplos disso para justificar o custo dos tokens de mau negócio que você revende. O trabalho não é treinar. Quer dizer, alguns de vocês podem estar treinando o melhor modelo e eu adoraria apresentá-lo e conversar com vocês depois, mas a maioria de vocês não está fazendo isso. Pare de tentar ganhar esse jogo e pense no melhor produto que utilize vários modelos. Ajude seus clientes, ajude sua equipe. Aposte na fronteira, não
+
+no laboratório. E falaremos sobre como é fazer isso. Essa relação custo-benefício por capacidade por segundo é realmente muito intensa. Bem, a Citadel divulgou esse memorando há algum tempo, talvez duas semanas atrás. Eu adorei . A ideia é que, para a economia em
+
+geral, modelos mais simples podem ser o caminho mais eficaz em termos de custos para aumentar a produtividade . Eles discutem essa bifurcação entre o uso na fronteira e o uso cotidiano. Eu realmente acredito nisso. E para cada produto, a definição de vanguarda versus cotidiano, a definição de capacidades saturadas ou excesso de capacidade do modelo depende da sua experiência com o produto. Ninguém pode substituir isso.
+
+Nem todo tráfego é igual. Seria um grande erro enviar todos esses arquivos para o modelo Opus mais recente. Algumas dessas análises de dados em larga escala, quando feitas no Notion, recomendam o Opus, certo? Ao priorizar uma caixa de entrada de e-mail , se estivermos cobrando por isso no Opus, estaremos lesando você e a nós mesmos. Pense em onde estão os seus padrões de tráfego .
+
+E depois pense em como os provedores do modelo Frontier Lab estão estruturados hoje. Quer dizer, na prática é um oligopólio, certo? E isso é ótimo, porque eles estão numa corrida para chegar ao topo. E eu acho que o topo é realmente difícil e realmente importante. Isso não significa que os produtos não tenham espaço para tarefas complexas e inovadoras. Quero que todos concordem com a cabeça e
+
+entendam que não é sobre isso que esta conversa trata . Entenda quando você precisa dessas tarefas e que elas não são tudo. O problema com essas tarefas é ter em mente como a precificação é incentivada. Você pode descobrir quem são esses jogadores. Ou você é a melhor modelo.
+
+Tudo aquilo que a IA não consegue fazer hoje é o seu mercado. Basicamente, você pode definir o preço que quiser. Se você estiver um pouco atrás desse modelo ideal, tudo o que precisa é ser cerca de um dólar por milhão de tokens mais barato e você terá o resto do mercado. Sabe aquela teoria econômica sobre postos de gasolina, em que os melhores postos são aqueles que ficam bem próximos uns dos outros, porque assim eles abrangem melhor o leste e o oeste? Sim. O
+
+mesmo ocorre com a precificação de modelos, o que significa que o preço não está correlacionado com o crescimento da capacidade. Portanto, para essa tarefa complexa, entenda quais capacidades você precisa, mas seja especialista em definir o que é complexidade. E lembre-se de que quem lida com a complexidade muda. Hum, muitas vezes você verá empresas de IA aplicada sendo muito francas em relação ao marketing de um laboratório específico. Isso sempre me parece um sinal de alerta quando eles não são agnósticos em relação ao modelo, porque se você olhar para este gráfico, basicamente mostra que eles estão atrasados ​​todos os meses, certo? O novo modelo
+
+e o novo fornecedor do modelo com as melhores funcionalidades da Frontier mudam, e se você optar por um fornecedor específico em troca de, por exemplo, um desconto maior, você estará prejudicando seus clientes na maioria das vezes, certo? Então pense bem se esse desconto compensa não ter um produto da Frontier. E lembre-se de que essa opção é a sua vantagem; se você não tiver a possibilidade de mudar de operadora a qualquer momento, você estará em apuros. E, novamente, acho que essa é provavelmente a decisão mais cara que você tomará, independentemente do desconto que conseguir ou do trabalho de engenharia necessário para garantir a interoperabilidade dos modelos. Uma opção para lidar com isso é manter-se agnóstico em relação ao modelo.
+
+Tenha diferentes modelos e funcionalidades em seu sistema para que, em algum momento, se os preços parecerem injustos ou insustentáveis, você não saia do mercado. O modelo automático do Notion faz isso muito bem. Temos sempre disponíveis modelos de última geração. Hum, mas também temos um modelo automático lá em cima que lida com cerca de 75% do nosso tráfego. Certo?
+
+Temos a capacidade de alternar entre modelos em nosso produto e também oferecemos isso aos nossos clientes para que eles tenham acesso a esses modelos sem ficarem presos a um fornecedor específico. Isso faz parte da nossa abordagem de IA na Suíça. Vocês adoram tirar fotos de slides. Este é o slide. OK.
+
+Manual independente de modelo. É assim que se faz . Construído para multimodalidade. É difícil apagar o cache e trocar de modelo no meio da transcrição. Entendo que investimos nessa tecnologia. Nem
+
+precisa ser por tópico. Considere seu chicote de fios como um modelo de interoperabilidade. Pense no custo por capacidade por segundo, não apenas nos tokens. Eis um ótimo exemplo. Publicamos esta avaliação quando anunciamos nossa parceria com a Parallel como nosso provedor de buscas na web . Se considerarmos apenas a
+
+latência de uma única chamada ou apenas o custo, o processamento paralelo pode não ser a opção mais barata. Mas se você tiver experiência em trajetórias completas de buscas na web, verá como isso difere. A granularidade dessa avaliação é o que nos permite tomar as melhores decisões para nossos clientes, pois entendemos todas as vantagens e desvantagens em trajetórias completas, e não apenas em chamadas isoladas. Troque de posição com rapidez e frequência. Acho que já conversamos sobre isso. E retribua-lhes de alguma forma
+
+. Essa experiência em casos de uso também é muito valiosa para a Frontier Labs. Constatamos que nossas parcerias com o programa de avaliação nos ajudam bastante com a Frontier Labs e são algo que podemos trocar por compromissos extraordinariamente grandes, e não acho que o desconto compense a perda de opções. Essa é uma perspectiva que você pode optar por manter ou não. A segunda opção são tarefas moderadas de compreensão de pesos livres. Os
+
+modelos openweight são realmente robustos o suficiente para lidar com essas tarefas, e a possibilidade de aplicar aprendizado por reforço (RL) neles também expandiu o potencial de crescimento no mercado de alto padrão que eles podem atender. Vejo os modelos de peso aberto como uma forma de reduzir a barreira de entrada em termos de custos para nossos clientes, além de lhes conferirem poder de negociação. Portanto, é uma alternativa viável que exerce pressão para baixo sobre os preços, algo que, de outra forma, não estaria disponível se houvesse um monopólio de dois ou três fornecedores no topo . Acho que Kimmy 26 foi provavelmente a primeira vez que realmente vimos um modelo superar o 52, GPT 52, GLM 52, e agora temos outra participante bombástica do 52 na casa que provavelmente também se sai melhor aqui. Mas já não é verdade que os modelos de via aberta sejam adequados apenas para SFT em tarefas pequenas.
+
+Pense bem, sem usar a vida real, se eles são capazes o suficiente para o que você precisa. E , mais uma vez, não pense apenas em parâmetros externos. Tenha conhecimento especializado sobre o seu sistema. Quais são os erros que você está cometendo com suas ferramentas? Qual é a latência real que você precisa? Certo? Aqui está um exemplo
+
+de um parâmetro de avaliação que publicamos. É um pouco antiquado de propósito, né? Mas você entendeu a ideia. Philip, no BE 10, mostrou este slide uma vez e eu o copiei desde então. Hum, obrigada. Você está aí, amigo? OK.
+
+Bom, vamos conversar, olá. Bem, ele poderia ter dito isso melhor, mas a ideia é que você não precisa estar no topo, certo? Não estou tentando defender que o modelo Open Weight seja o melhor que existe . Bem, o argumento apresentado, no entanto, é que essa lacuna acaba sendo preenchida eventualmente. Portanto, se as tarefas que você está realizando hoje forem boas o suficiente, em seis meses elas provavelmente estarão cobertas por peso livre. Portanto, prepare-se agora.
+
+E, por último, temos a questão das CPUs em relação às GPUs. Bem, nós lançamos recentemente algo na Notion chamado Workers. Não acho que a GPU seja necessária para todas as tarefas. Muitas das tarefas que temos consistem, na verdade, em executar trechos de código distintos. Assim como você não precisa de um mestrado em Direito para transformar um arquivo CSV em PDF. Você não precisa de um LLM
+
+para interagir com as ferramentas do Notion se tivermos uma CLI. Você definitivamente não precisa de um mestrado em Direito para fazer consultas SQL determinísticas. É aqui que as pessoas se tornam simbolicamente pobres muito rapidamente. E acho que a última opção aqui, além de CPUs de código aberto e opcionalidade, é na verdade a governança. Hum, existe muita governança de IA. Uma delas é a visibilidade.
+
+Entender quem está usando os dados, entender sua manutenção e controle. Ao oferecer opções de modelos, você pode proporcionar muito mais aos seus clientes. Aqui está um exemplo de como essa governança funciona na prática. Então, para finalizar, mais uma vez, pensem em arquitetura, pensem em código aberto e construam valor que transcenda os tokens. Então vamos partir de Token Town. Eu
+
+sei que disse "bem-vindo à Cidade dos Tokens". Vamos dedicar os próximos 10 minutos a pensar seriamente no que fazer a seguir. Portanto, creio que o desafio dos próximos seis meses não tem a ver com capacidades. Acho que tem a ver com segurança. Vamos começar por aí. Existe um
+
+conceito chamado tríade letal. Acho que foi Simon Wilson quem criou isso. Se você tem acesso a dados privados, está exposto a conteúdo não confiável, seja por meio de ingestão, MCP ou e-mail, certo? E a capacidade de se comunicar externamente, o que pode incluir, por exemplo, payloads em uma pesquisa na web. No momento em que você implementa esse sistema, você está se expondo a riscos. Na verdade, quanto mais
+
+autônomo for o seu sistema, mais descontrolado será esse risco. Penso que é isso que constrói um produto valioso, e não apenas uma capacidade. O mesmo se aplica a ambientes de teste e computadores. Já falamos sobre isso, mas é realmente algo que contribui para um melhor determinismo do seu produto e também para uma melhor economia de tokens para seus clientes na orquestração multiagente. Compreender o que os agentes veem e fazem, e o que persiste. Penso que a persistência do
+
+conhecimento empresarial é algo que, na verdade, não é suficientemente discutido. Isso está começando a acontecer com alguns lançamentos recentes, sabe? Ah, sim, tem áudio. Portanto, evite que seus fluxos de trabalho sejam assim. E eu acho que é aqui que a maioria das fábricas de software se encontra hoje em dia, certo? É como se
+
+todo o seu tempo de engenharia fosse gasto cuidando da fábrica, não é? Quer dizer, eu entendo. A nossa começou assim. A orquestração de agentes é uma das tarefas mais difíceis para fazer as fábricas funcionarem. Então, ok, sou eu dizendo para a Tay dizer para as pessoas comprarem o Notion AI. E o motivo de
+
+eu ter incluído este slide é que vou fazer uma breve propaganda do Notion . É meu trabalho. Esteja sempre fechando. Esteja sempre vendendo. Esteja sempre contratando. Venha me encontrar. Mas
+
+vou falar rapidinho sobre como a Notion faz isso hoje em dia. Já temos a capacidade de inspecionar tarefas. E você pode imaginar qualquer tarefa que você olhar em um documento do Notion. Você pode pedir ao Claude que faça uma avaliação prévia do que você precisa. Lançamos hoje essa funcionalidade de gerenciamento de agentes. Então, se eu
+
+avançar para o início desta tarefa, posso pedir ao agente Claude para definir o escopo da tarefa. Certo? Idealmente, está funcionando. Hum, e você verá que isso irá preencher toda a especificação do que precisa ser feito. Neste exemplo, ainda não está pronto. Vai me fazer uma pergunta.
+
+Lembre-se, isto não é um arquivo Markdown. Este é um documento ativo. Bem, digamos que eu não saiba a resposta e pergunte à minha equipe o que fazer. Imagine que você pode, de certa forma, integrar sua equipe a esses sistemas. MJ é o nosso primeiro-ministro.
+
+Neste exemplo, ela não sabe. Geralmente sim, mas a orquestração multiagente é importante. Talvez Claude Code não seja o melhor em captar a voz do cliente, mas a Decagon é, certo? Você pode solicitar aos agentes da Decagon, com quem também temos orgulho de ser parceiros, que coletem os dados corretos de que você precisa. Bem, neste exemplo, achamos que sabemos o suficiente.
+
+Vamos prosseguir e, de fato, iterar por parte desse fluxo. Vou adiantar um pouco as coisas. Perguntamos ao nosso líder de equipe o que precisávamos. Ele respondeu novamente. É um arquivo colaborativo, não apenas um arquivo Markdown. E podemos pedir ao Claude que,
+
+de fato, inicie a campanha de relações públicas. Espero que agora isso lhe pareça um pouco familiar. Essa é, de certa forma, a visão das fábricas de software. É isso que estamos tentando hospedar. Ok, Claude publicou um comunicado de imprensa. Talvez isso não seja suficiente. Talvez eu
+
+deva perguntar ao Codeex o que eles acham.
+
+Ótimo. Foram encontrados dois problemas. Você pode pensar nessa escalabilidade em uma fábrica real. Assim, hoje em dia, na prática, você consegue orquestrar esses agentes em conjunto sem precisar recorrer a um laboratório. Você está se comprometendo com o conceito de que a IA está aprimorando e automatizando o que você faz.
+
+Isso é real. Perguntei a Rejieve se eu poderia publicar isto. É assim que funciona internamente na Notion hoje em dia. Quase todo o nosso aprimoramento e feedbacks importantes como este são, na verdade, coordenados por meio de nossas fábricas de software, tanto em termos de direcionamento do conteúdo para as equipes certas quanto de agentes de codificação darem o primeiro passo. A Verscell também faz isso, desde a preparação até o envio e a conclusão do negócio.
+
+E observamos ganhos de ROI (retorno sobre o investimento) expressivos por parte de nossos clientes. Isso representa uma economia de mais de três minutos em uma determinada tarefa. Imagine isso em grande escala. Então, acho que estamos nos esforçando ao máximo para pensar na lente de fábrica. Não podemos fazer isso sem opções e não podemos fazer isso sem a convicção de que entendemos quais modelos são necessários para quais tarefas.
+
+É uma loucura lá fora, pessoal. Entendo. O mercado é realmente jovem. É excepcionalmente opaco. Está acontecendo muito rápido.
+
+Sou extremamente grato por comunidades como a de engenheiros de IA, que nos unem e nos permitem conversar abertamente sobre esses assuntos e como lidar com eles. Acho que devemos a todos os nossos clientes fazer isso direito e sermos críticos sobre como lidaremos com isso juntos. Felizmente, estou sempre online. Você sempre pode me mandar uma mensagem direta no Twitter, pode me enviar um e-mail, pode me encontrar depois disso. Bem, obrigada por conversar comigo e pensar sobre esse problema. Tenha um bom dia.
+
+[música]
+
+[música]
+
+[música]

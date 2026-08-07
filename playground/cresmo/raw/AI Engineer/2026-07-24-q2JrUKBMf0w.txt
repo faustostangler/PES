@@ -1,0 +1,52 @@
+---
+video_title: "The Future of Evals: From LLM as a Judge to Agent as a Judge — Aparna Dhinakaran, Arize AI"
+video_id: q2JrUKBMf0w
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=q2JrUKBMf0w
+video_date: 2026-07-24T20:00:06+00:00
+video_description: |
+  Across a dozen eval jobs Arize watches the top teams run, one pattern holds: the eval has to change as fast as the agent it grades. In 2023 an agent was barely more than a prompt; since then reasoning, tool calls, and long multi step loops piled on, and every jump in capability quietly broke the eval that came before. So the evals evolved with them. Deterministic checks catch what you can define up front, LLM as a judge adds the analysis a fixed rule cannot, and the newest step, agent as a judge, hunts for failure modes you would never think to write a check for and can open a pull request to fix what it finds. Aparna Dhinakaran's argument is that this arc, from static checks to an agent grading another agent, is where evals go next.
+  
+  Speaker info:
+  - https://x.com/aparnadhinak
+  - https://www.linkedin.com/in/aparnadhinakaran/
+  
+  Timestamps:
+  0:00 - Opening: the future of the Evals track
+  2:06 - Why evals got harder as agents evolved
+  3:45 - From deterministic checks to LLM as a judge
+  4:36 - Agent as a judge, and where evals go next
+---
+[música]
+
+Incrível. Olá a todos. Meu nome é Aparna, uma das fundadoras da Arize. Trabalhamos com equipes incríveis para ajudá-las a desenvolver avaliações. E temos uma programação incrível de palestras para vocês hoje na trilha de avaliações. Bem, vai
+
+acontecer na sala 2005 e haverá palestrantes incríveis da Term Bench, Uber e Snorkel, e tudo isso depois. Bem , hoje estou aqui para falar com vocês sobre o futuro das avaliações. As avaliações deixaram de ser uma nova habilidade que todo gerente de projetos e engenheiro de IA precisava aprender para se tornarem o pilar fundamental de toda equipe séria de IA. Tivemos muita sorte de poder trabalhar com algumas das melhores equipes de IA do mundo. Assim, temos um lugar privilegiado não apenas para observar o que acontece quando eles estão construindo seus agentes reais e antes do lançamento, mas também as avaliações que as equipes executam em seus agentes de produção reais por meio de seus rastreamentos.
+
+Algumas estatísticas para vocês. Realizamos mais de 100 milhões de avaliações todos os meses. Em média, uma equipe executa cerca de 12 tarefas de avaliação diferentes, enquanto as equipes de ponta chegam a utilizar mais de 3.800 avaliadores diferentes. E as avaliações offline, as avaliações online, cada uma tem seu lugar, mas hoje o que eu vou abordar com vocês são as equipes que estão executando avaliações em seus rastreamentos. Na
+
+verdade, é isso que está ajudando as equipes a descobrir o que está funcionando, identificar suas falhas, e esse é o tipo de dado necessário para alimentar seus ciclos contínuos de aprendizado . E a indústria meio que concorda. Quer dizer, todos os CPOs da Anthropic, da OpenAI, sabe, do GDB, você tem o Garry Tan dizendo: "As avaliações são tudo o que você precisa." E toda a indústria meio que concorda. Então, adicionamos avaliações, elas detectam todas as falhas, certo?
+
+Eis o problema. Quando estávamos construindo todas essas avaliações de primeira geração, aquilo que estávamos avaliando na verdade mudou. Em 2023, tratava-se apenas de responder a uma pergunta. Em 2024, começamos a ver todos os modelos de fronteira. Eles adicionaram chamadas de ferramentas, adicionaram raciocínio, adicionaram pesquisa aprofundada. Atualmente, o que temos são
+
+equipes executando ciclos em dados do mundo real com subagentes acionados em tarefas de longo prazo. Cada uma dessas questões representou, na verdade, um salto enorme em complexidade, e não apenas tornamos o problema mais difícil, como também nos deparamos com um tipo de problema fundamentalmente diferente. Isso significa que, à medida que esses sistemas se tornavam mais complexos, também aumentava a forma como eles falhavam. Temos muita sorte porque temos nosso próprio agente, o Alex, que criamos e que vive na nossa interface de usuário, e assim conseguimos sentir essa dor na pele. Sempre que a Frontier Labs adicionava uma nova funcionalidade, nós a adicionávamos ao nosso agente. E
+
+agora Alex tem uma memória muito mais longa. Possui a capacidade de criar interfaces de usuário dinâmicas. Ele pode pesquisar em um volume enorme de rastros. Mas também percebemos que isso levaria a ignorar o contexto. Não saberia quando algo fosse feito. Às
+
+vezes, simplesmente ficava preso nesses ciclos. E o ponto crucial aqui é que o método clássico de avaliação de juízes do LLM, que provavelmente muitos de vocês já escreveram nesta sala, simplesmente não nos permitiu detectar todos os tipos de falhas que estávamos vivenciando. Quer dizer, é fundamentalmente diferente, não é? Você tem um fluxo determinístico e, agora, o que temos é que, literalmente, cada vez que um usuário interage com Alex, uma nova interface de usuário é criada. Essa é uma trajetória fundamentalmente diferente .
+
+Então, isso nos levou à nossa grande revelação. E se a melhor maneira de avaliar um agente fosse, na verdade, com o próprio agente? Isso não significa que todas as formas como fazíamos avaliações, com avaliações determinísticas, com o LLM como avaliador, avaliações clássicas, não importem mais, mas significa apenas que temos um tipo diferente de ferramenta para resolver um tipo diferente de problema. O agente como juiz trata de análise dinâmica adaptativa. O LLM, como juiz, apenas fornece uma rubrica fixa com essas pontuações fixas. É o que todo mundo está
+
+fazendo, mas quando seu agente segue trajetórias completamente diferentes cada vez que um usuário insere dados, isso significa que você precisa de um tipo de avaliação fundamentalmente diferente. Na minha opinião, a maioria das equipes hoje em dia está fazendo as duas primeiras coisas, mas o futuro das avaliações está em ter as três. E hoje estou muito animado para compartilhar que lançamos o Agent como um juiz para ajudar nossas equipes em sua jornada de avaliação. Já enviamos o sinal. O Signal é, na verdade, um agente de longa duração que consegue ler os rastros enviados e descobrir padrões de problemas.
+
+Bem, ele consegue identificar tipos de problemas que um LLM clássico, como avaliador judicial, jamais conseguiria resolver com essas rubricas determinísticas. Isso nos ajudou a descobrir falhas muito sutis que você nem imaginaria que ocorreriam, como algo que se repetia em um loop várias vezes, chamava a mesma ferramenta repetidamente por um longo período ou a trajetória era ineficiente. Na verdade, o que isso faz é que, por ter toda essa análise, pode enviar uma solicitação de pull request e implementar uma correção. Então, se você quiser saber mais, venha ao nosso estande. Estamos bem ao lado do estande da OpenAI. Vamos fazer
+
+uma demonstração para você e mostrar um pouco mais sobre o assunto. Como eu disse, também vamos assumir a área de avaliações, então venham para a sala 2005. Vamos falar bastante sobre o futuro das avaliações e como elas serão no futuro. E se você só quiser passar um tempo com a nossa equipe, vamos fazer uma festa para assistir ao jogo da Copa do Mundo dos EUA hoje à noite, então confira o Luma e se inscreva para participar. Incrível.
+
+Muito obrigada a todos.
+
+[música]
+
+[música]

@@ -1,0 +1,91 @@
+---
+video_title: "Skills are new features: Building Skill-Centric Harness — Yogendra Miraje, FactSet"
+video_id: 7jjudsEhBtM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7jjudsEhBtM
+video_date: 2026-07-29T18:00:06+00:00
+video_description: |
+  Since skills were open sourced, Yogendra Miraje's team at FactSet stopped thinking about shipping features and started thinking about shipping skills. A skill is a capability you hand the agent, and its heart is a short skill.md whose name and description are really routing signals: get them distinct and the agent triggers the right one, blur them and it fires the wrong skill or none at all. He walks through a minimal skill registry, progressive disclosure so the agent only loads what it needs, and trigger words, like asking for a PDF versus an HTML report, that decide which skill runs.
+  
+  The harder lessons show up at scale. Skills without evals drift, because a new model quietly stops obeying them, so he treats skills as contracts you test. Past ten skills you need search and embeddings to keep the library coherent; past a hundred you need real governance, admission, ownership, periodic audits, change management, and a human deciding whether a skill should exist at all. His close is that skills are the interface to your agentic products, and at enterprise scale governing them matters as much as writing them.
+  
+  Speaker info:
+  - https://x.com/YogiNotTheBear
+  - https://www.linkedin.com/in/mirajey/
+  - https://yogimiraje.com
+  
+  Timestamps:
+  0:00 - From blueprints to skills
+  1:46 - Building skill centric agents
+  2:52 - Skills in context at enterprise scale
+  3:46 - Skills as the new features
+  5:04 - Inside a skill: the skill.md
+  6:37 - A minimal skill registry
+  7:42 - Progressive disclosure
+  9:13 - Trigger words and routing
+  12:17 - Skills without evals drift
+  12:56 - Search and embeddings past ten skills
+  13:46 - Governance past a hundred skills
+  16:36 - Skills as the product interface
+---
+[música]
+
+Olá a todos, eu sou Yogi. Trabalho na Faxet como engenheiro principal de IA. Somos uma empresa de dados financeiros e pesquisa. Vou falar sobre como construir produtos com foco em habilidades e vou postar os slides para que vocês não precisem ficar tirando fotos. Então esse é o meu exandle yogi, não o urso.
+
+Então, vamos nos conectar por lá e... vamos começar. Então, na palestra do ano passado, nesta mesma conferência, falei sobre modelos e o que eles realmente eram: um conjunto simples de etapas ou uma receita que você pode entregar aos agentes para que eles não precisem descobrir seu caminho a cada vez. Olhando para trás,
+
+era simplesmente uma habilidade em uma forma muito ingênua, e muita coisa mudou desde então. A Antropic lançou as habilidades em outubro do ano passado e até nos alertou para não criarmos agentes. Mas falando sério, como a Antropic já havia disponibilizado as habilidades em código aberto, não fazia sentido tentar manter nossos próprios padrões. Então, deixamos de lado os projetos e passamos a adotar as habilidades por completo. E essa palestra realmente me inspirou a construir um agente centrado em habilidades, e vou compartilhar alguns dos aprendizados dessa jornada.
+
+Então, por favor, levantem as mãos rapidamente. Quantos de vocês realmente desenvolvem habilidades aqui? Quase todos vocês. Agora, abaixem as mãos se vocês construíram isso apenas no contexto do Cloud Code e do Codeex. E levantem a mão quem já construiu seu próprio arnês e adicionou, sabe, alguma habilidade a ele.
+
+Ok, então eu vejo algumas mãos. O motivo da minha pergunta é que, quando vejo a maior parte das discussões online, elas giram em torno de frameworks de codificação e habilidades no contexto de agentes de codificação, e como escrever habilidades excelentes, como as que precisamos. Mas hoje não vou falar sobre isso. Vou me concentrar em habilidades no contexto de produtos baseados em agentes e em como adicionar suporte para habilidades em seu próprio framework e como escalá-lo em escala empresarial. Tradicionalmente, o produto costumava ter esta aparência . Uma superfície composta por telas,
+
+botões, formulários e painéis de controle. O usuário navegou por esta interface de usuário. Mas hoje em dia vemos cada vez mais esse tipo de interface onde o agente está em primeiro plano. O usuário conversa com o agente, ou o agente, nos bastidores, é o principal responsável pelas decisões, ajudando os usuários a navegar pelo seu produto. Agora, se o agente se tornar a interface principal do seu produto, onde ficarão as funcionalidades?
+
+Essa definição de quem, o quê e como realmente ajuda a responder a essa pergunta. Os prompts definem quem é o agente. As ferramentas definem a que ele pode se conectar. E as habilidades realmente mostram como uma tarefa é realizada. E este é o lugar ideal para manter a lógica de negócios que molda o comportamento dos seus agentes. Assim, as habilidades são as
+
+novas funcionalidades. E você pode ver isso com este exemplo. Portanto, a pesquisa de ações e a gestão de patrimônio são dois fluxos de trabalho muito importantes no setor financeiro, e antes tudo isso era feito por meio de botões, menus suspensos e telas, mas agora se resume a habilidades. Um dos aspectos mais subestimados das habilidades, especialmente quando se fala de produtos Agtronic, é como elas possibilitaram o desenvolvimento de competências para qualquer pessoa que tenha um bom entendimento dos produtos. Então, se as habilidades são novas funcionalidades e essas novas funcionalidades podem ser implementadas por qualquer pessoa na empresa. A questão é: qual é o
+
+papel do engenheiro? Assim, o papel do engenheiro está mudando, passando de design de componentes para design de chicotes elétricos. Arnês que são veículos suaves para suas habilidades serem executadas. Mas antes de nos aprofundarmos nisso , vamos começar pelo básico e tentar entender o que é habilidade. O significado de habilidade, segundo o dicionário, é a capacidade de fazer algo bem. E o que
+
+isso significa é que seu modelo pode funcionar sem isso. Mas obviamente terá um desempenho melhor na presença de habilidade. Uma definição melhor para habilidade de agente é uma maneira padronizada de ensinar agentes de IA a executar bem uma tarefa específica. Uma habilidade simples pode conter apenas um código Markdown, enquanto uma habilidade muito complexa pode ter múltiplas referências a arquivos e scripts executáveis. O arquivo skill.md é o núcleo da sua habilidade. O
+
+nome e a descrição na seção inicial são elementos-chave que ajudarão você a descobrir a habilidade, e a lógica de negócios e as instruções são inseridas no corpo da habilidade, que também conterá referências aos arquivos e scripts. Então, vamos ver como adicionar um suporte para habilidades ao seu arnês. Então, quais são as habilidades mínimas necessárias para usar o arnês? Você só precisa destas três coisas: o registro de habilidades, um prompt de sistema e uma ferramenta básica de leitura de arquivos. Se você estiver executando scripts, obviamente precisará do bash ou talvez de um ambiente de sandbox para execução de código. Mas este é
+
+o requisito mínimo para adicionar suporte a funcionalidades como as do seu arnês. Um cadastro de habilidades simples se parece com isto. O que é, então, um cadastro de habilidades? É como uma coleção de habilidades com seus respectivos nomes, descrições e caminhos de execução. E vamos ver isso com três exemplos de habilidades.
+
+Habilidade de pesquisa empresarial que consiste em realizar uma busca básica na internet sobre uma empresa e gerar um relatório em Markdown. Uma habilidade em HTML para gerar relatórios que transformem o Markdown em HTML. Uma ferramenta para gerar relatórios em PDF que pega arquivos Markdown e os transforma em formato PDF. Mas como é que o agente realmente descobre a habilidade? Então você tem seu registro, depois cria uma concatenação de habilidades concatenando o nome, a descrição e o caminho, e a coloca no prompt do sistema. Portanto, se
+
+você observar, estamos usando apenas o nome e o caminho da descrição neste prompt do sistema, e não o corpo da habilidade, e é isso que eles chamam de divulgação progressiva. O agente irá ler as habilidades e selecionar apenas aquelas que deseja ler, seguindo as instruções a partir daí. E então você precisa do seu loop agentivo que executará esse prompt do sistema. Aqui, estamos rastreando todas as mensagens nesse array de mensagens e vamos chamar o modelo com as mensagens e as ferramentas do agente. A cada turno, ele procura por uma chamada de ferramenta, e todas as chamadas de ferramenta são adicionadas às mensagens. Se não houver nenhuma
+
+chamada de ferramenta, simplesmente encerramos o programa e mostramos a saída. Então, neste caso, o que o agente vê em nosso exemplo? Então, ele verifica as habilidades disponíveis e, em seguida, a ativação ocorre quando ele procura a habilidade de pesquisa da empresa. Por exemplo, se você solicitar a publicação de um relatório da NVDI, ele chamará a habilidade de pesquisa da empresa, fará as buscas na web e, em seguida, usará a habilidade de criação de relatório para gerar o HTML do relatório. E a saída será algo como isto. O que podemos aprender com
+
+isso é que as descrições são, na verdade, os sinais de roteamento. E o que eu quero dizer com isso, se você reparou, é que eu tinha duas habilidades diferentes: relatório HTML e relatório PDF. Mas quando mostrei o exemplo, você viu apenas HTML. E o motivo é que tenho esta descrição dizendo para usar a habilidade somente quando o usuário solicitar um relatório em PDF. Concentre-se nesta palavra PDF. Certo? Essa é a palavra-chave
+
+que ajuda o agente a saber qual habilidade escolher, e é por isso que as descrições são chamadas de sinais de roteamento. E é muito importante manter suas descrições alinhadas à solicitação do usuário e não à habilidade em si. Também é importante manter suas descrições suficientemente distintas para que o agente não fique confuso e garantir que suas habilidades não fiquem obsoletas, pois esses são os motivos pelos quais elas não são ativadas. Uma diferença muito importante entre as habilidades, quando falamos em um contexto de produto com agentes, é que a maioria delas é orientada apenas por modelos, porque para usuários não técnicos não adicionamos a carga cognitiva de memorizá-las ou de acompanhar todas as habilidades. Outro aprendizado que obtive foi que o modelo de dados era baseado na intenção do usuário e não no modelo de dados. Então,
+
+quando comecei a construir a biblioteca de habilidades, eu tinha casos de uso muito específicos. Portanto, aprimore suas habilidades em análise de estimativas ou aprofunde seus conhecimentos em fundamentos. Mas eu encontrei casos de uso reais, e esses casos de uso não refletiam o modelo de dados. Esses eram realmente casos de uso reais e eu tive que refatorar isso várias vezes, e tudo bem, certo? Você começa de forma simples, com casos de uso mais específicos, e à medida que descobre mais casos de uso, começa a refatorar sua biblioteca de habilidades.
+
+Na prática, isso significa que, em vez de ter uma habilidade de análise de estimativas, você deve ter uma habilidade de preparação de resultados; em vez de ter uma habilidade para classificação de analistas de notícias e análises, você deve ter uma habilidade de briefing pré-mercado. Então atualizamos nossa pilha para um novo modelo e nosso agente começou a falhar porque não estava obedecendo às habilidades. Nada foi alterado. Nenhuma linha do código da habilidade foi alterada, mas mesmo assim falhou. E quando analisamos a fundo o que estava acontecendo, descobrimos que esse novo modelo estava muito focado no início da habilidade e tínhamos instruções muito críticas no final da habilidade. Por isso é muito importante
+
+realizar avaliações, e habilidades sem avaliações são apenas ilusão. As habilidades não são a documentação, e muitas pessoas as tratam dessa forma; na verdade, as habilidades são os contratos versionados em um modelo. Portanto, sempre que você atualizar um modelo, certifique-se de executar novamente a avaliação. Então, quando você tem algumas habilidades, adicioná- las diretamente no prompt do sistema realmente funciona. Mas assim que você começa a desenvolver suas habilidades, isso deixa de funcionar. Quando você
+
+tiver mais de 10 habilidades, talvez seja um bom momento para começar a pensar em como selecionar as habilidades que você vai adicionar ao prompt do sistema. Isso pode significar algo como ter embeddings e realizar buscas por similaridade e listas restritas, ou um modelo menor que possa selecionar as habilidades e adicioná-las à lista de sugestões do sistema. O verdadeiro problema começa quando você tem centenas de habilidades. Nesse ponto, você realmente precisa de uma hierarquia de habilidades, filtros de metadados e governança para manter sua biblioteca pesquisável e coerente. Existem, portanto, cinco aspectos da governança de bibliotecas de habilidades, que são: admissão, propriedade, limites, ciclo de vida e coerência.
+
+Parece algo muito empresarial, não é? Mas, na verdade, cada uma dessas perguntas responde a uma questão fundamental, e chegaremos a isso em um instante. Mas quando se fala em governança, ela não precisa ser vista como um gargalo burocrático . Depende muito de como você está implementando. Quanta automação está implementada com a devida intervenção humana no processo?
+
+E a boa notícia é que podemos aproveitar muitas boas práticas de programação e aplicá-las às habilidades. E essas práticas de programação têm funcionado há décadas. Afinal, o que significa admissão? Isso significa que essa habilidade deveria sequer existir ou deveria ser incorporada a uma habilidade já existente? E na prática, construímos processos automatizados de obtenção de dados para os registros, com intervenção humana. E este é um
+
+registro muito análogo de como realizamos o processo de revisão de relações públicas . Quem mantém sua habilidade em dia? Assim como as funcionalidades são mantidas pelas equipes de desenvolvimento de aplicativos, precisamos que as habilidades sejam mantidas por essas equipes. Assim como os donos do código, precisamos de responsáveis ​​dedicados às habilidades, como mantenedores nomeados para cada uma delas. O que acontece com a habilidade ao longo do tempo? Você
+
+precisa ter uma versão semântica das habilidades e, sempre que remover habilidades, precisa incluir avisos de obsolescência e garantir que as alterações sejam refletidas nos registros de alterações.
+
+Portanto, mesmo quando você tiver um grande número de habilidades, a biblioteca ainda fará sentido. Assim como as funcionalidades são coesas em um bom produto, precisamos garantir que estamos realizando auditorias periódicas e verificações de validação de habilidades para que suas competências realmente façam sentido.
+
+Quando você tem muitas habilidades, é importante ter as ferramentas permitidas na lista de habilidades, e suas ferramentas devem ter controle de acesso. Isso é muito importante para manter os limites corretos em torno das habilidades. Quais são, então, os principais pontos a serem destacados? A principal conclusão é que as habilidades são os recursos dos seus produtos de agência. Nosso papel está mudando: de funcionalidades de entrega para estruturas de roteamento e mecanismos de roteamento que não são ajustados conforme a empresa escala. Isso altera o
+
+próprio mecanismo e, em escala empresarial, a governança da biblioteca de habilidades torna-se realmente inegociável. Essa foi a minha apresentação. Muito obrigado por ouvir. [aplausos]
+
+[música]

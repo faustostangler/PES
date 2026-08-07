@@ -1,0 +1,133 @@
+---
+video_title: "From Agent Traces to Agent Simulations — Rustem Feyzkhanov, Snorkel AI"
+video_id: Ib5t2RLtxvM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Ib5t2RLtxvM
+video_date: 2026-07-25T01:00:02+00:00
+video_description: |
+  Take a real production trace, rebuild the database state, tools, and files the agent touched, and you have a task any model can replay under identical conditions. That reconstruction is the move at the center of this talk. Public benchmarks like WebArena hand you a single success rate on someone else's tasks, but what you actually care about is cost per solved task, latency, and whether the agent followed your policies. So you build a private benchmark from your own traces, wire in the same skills, tools, and evaluators the agent sees in production, and compare models apples to apples on the environment that matters to you.
+  
+  The environments are multistep and long horizon, so a verifier reads the final state while an LLM judge checks whether the agent followed policy, and a run can stop early once it clearly goes off track. The hard parts are the edge cases: agents that reward hack the simulation, missing fixtures, tasks that turn out to be unsolvable. Rustem Feyzkhanov's case is that this belongs in a CI pipeline for agents, the same way tests gate code, connecting observability traces to experiments to a benchmark that keeps up as the agent changes. Every company ends up needing its own, as part of the agent ops loop.
+  
+  Speaker info:
+  - https://x.com/ryfeus
+  - https://www.linkedin.com/in/ryfeus
+  - https://ryfeus.io
+  
+  Timestamps:
+  0:00 - Introduction: why Snorkel builds agent benchmarks
+  1:17 - Benchmark construction and testing agents in production
+  3:08 - The limits of public benchmarks
+  4:01 - Why you need a private benchmark
+  4:52 - Environments, tools, and evaluators
+  6:34 - Anatomy of a simulation task
+  7:37 - Task formats: instruction files and Oracle data
+  9:20 - Multistep, long horizon simulations
+  10:54 - Verifiers, LLM as a judge, and reward hacking
+  13:02 - A CI pipeline for agents
+  15:19 - Connecting traces, experiments, and benchmarks
+  16:51 - Q&A
+---
+[música]
+
+Ok. Oh sim. Obrigado a todos por terem vindo. E eu sei que esta é a última sessão antes do almoço. Então, obrigado por ficar aqui. Vamos fazer tudo correr bem e
+
+com boas vibrações. Dito isto. E agradeço pela apresentação. E obrigada por me convidar. Então, sim. Meu nome é Rustam. Estou liderando a
+
+equipe da plataforma de IA na Snorkel. E hoje quero explicar como transformar rastros de agentes em simulações de agentes e por que isso se torna o próximo estágio para avaliações de agentes. Então, três coisas principais que eu quero que vocês retenham da minha palestra são: toda empresa precisa de um parâmetro de referência. É a única maneira confiável de avaliar, lançar e aprimorar seus agentes. Tem que ser o mais próximo possível da produção. É preciso que imite suas
+
+ferramentas reais, serviços de API reais, políticas e fluxos de trabalho. E, por fim, precisa fazer parte do seu ciclo de vida como agente. Não se trata de um parâmetro de comparação estático. É um conjunto de dados constantemente atualizado a partir dos seus rastreamentos de produção. Então, por que a Snorkel AI está apresentando esta palestra?
+
+Somos uma empresa de dados como serviço e basicamente vendemos benchmarks. E estamos produzindo benchmarks em larga escala. E para nós, a construção de marcos de referência é uma disciplina de engenharia. Executamos milhões de simulações de agentes por mês. E nós aprendemos como construir um ambiente em grande escala.
+
+Trabalhando com agentes e especialistas no assunto para construir benchmarks confiáveis, próximos da produção e de domínios específicos. Portanto, muitas vezes, quando as pessoas falam sobre avaliação de agentes, elas estão focadas em rastros. E os rastros são muito úteis. Os traços usuais, como você pode ver no exemplo na tela. Basicamente, mostra: "Ok, aqui está o prompt de entrada.
+
+Aqui estão as ações que o agente executou e aqui está a saída do agente." E então a equipe pode analisar e dizer: "Ok, o agente teve sucesso ou não? Houve algum caso excepcional?" Então, é útil encontrar falhas em produção, mas é difícil testar diferentes variantes. Você pode executar testes A/B, e essa é uma maneira de verificar diferentes configurações de agentes, mas é difícil garantir que tudo seja repetível, pois você obterá diferentes estados do banco de dados, diferentes versões de ferramentas e assim por diante. Portanto,
+
+nunca compare coisas completamente iguais. A simulação offline transforma registros em experimentos repetíveis. Agora você coleta dados de produção, constrói tarefas e, em seguida, pode executar simulações de benchmark offline com diferentes configurações de agentes. E você pode comparar agentes usando diferentes métricas, não apenas a taxa de sucesso, mas também o custo, a latência e as tentativas. E você pode executá-los em paralelo.
+
+Mas você pode perguntar: "Certo, mas por que precisamos disso? Já temos parâmetros de referência públicos." O desafio com os benchmarks públicos é que geralmente eles se concentram em domínios muito específicos. Por exemplo, o SweepBench se concentra em corrigir problemas do GitHub, o TerminalBench se concentra na execução de agentes no terminal e o Co-Bench se concentra no uso do computador pelo agente. No seu caso, você quer que seu parâmetro de comparação esteja focado no domínio da sua empresa, tanto da perspectiva de casos de uso quanto em termos de ferramentas que seu agente possui, se ele segue as políticas que sua empresa utiliza e se você obtém um ambiente de produção completo.
+
+Basicamente, um benchmark público é útil para orientar e construir sua base de conhecimento prévia, mas seu benchmark privado é útil para a implementação. E muitas vezes os parâmetros públicos de avaliação são especificamente focados na taxa de aprovação. Sempre que um novo modelo é lançado, você vê o desempenho, como a taxa de aprovação em diferentes testes de benchmark. O que faz sentido, pois nos informa sobre o limite de quão bom é o novo modelo. Mas quando você libera o agente para produção, também passa a se preocupar com mais métricas. Você se preocupa com o custo para resolver
+
+a tarefa. Você se preocupa com a latência. Você se importa com o número de tentativas. E ao executar a avaliação offline em simulações, você pode efetivamente comparar coisas semelhantes e iterar no agente.
+
+Nesse caso, você pode testar toda a pilha do seu agente. Você não está apenas verificando, ok, se um modelo tem um desempenho melhor do que o outro. Você verifica até mesmo como se estivesse pensando, falando como se estivesse pensando em nível. Você pode alterar o prompt. Você pode ajustar todas as ferramentas de dificuldade e habilidades disponíveis para o agente, porque, na sua produção, você não se importa com o modelo, mas sim com o sistema completo.
+
+Aqui você pode configurar e testar todo o sistema, mantendo o ambiente e os avaliadores iguais entre as execuções. E isso levanta a questão de qual seria o parâmetro de referência neste caso. Porque, em primeiro lugar , você pode usá-lo para liberar o agente pela primeira vez. Você pode ter certeza de que funciona. Você consegue lidar bem com casos extremos.
+
+Você pode selecionar o modelo ideal e depurar os rastreamentos. É assim que você garante que funcione. Em seguida, você pode corrigir o problema. Você pode configurá- lo como um ponto de verificação para o seu agente e garantir que nenhuma alteração na pilha de agentes tenha causado regressão repentina. E itere sobre a dificuldade. E, por fim,
+
+você pode otimizá-lo. Você pode otimizá-lo para obter melhor custo ou latência. Ou você pode usar os rastreamentos até mesmo para realizar treinamento de erros. Mais tarde, compartilharei o link para o nosso site, onde temos um exemplo de como usamos ambientes de simulação para ajustar um modelo de planejamento de pequena escala ao desempenho de um modelo de planejamento de grande escala para tarefas específicas. Aqui, efetivamente, isso se torna como uma tríade de casos de uso.
+
+Assim como para você, o benchmark se torna parte da avaliação do agente, torna-se parte do teste de integração do agente para lançamento e também se torna um conjunto de treinamento para o agente, visando seu aprimoramento. Então, espero ter explicado por que você precisa de um benchmark. Então, vamos ver agora como você pode realmente construir isso em escala para sua empresa? Qual é, por exemplo, a anatomia da tarefa de referência? Se você der um passo para trás, qual é a sequência de execução do benchmark?
+
+É simples. O agente recebe uma solicitação de entrada e interage com o ambiente, tentando resolver a tarefa com APIs, ferramentas MCP, banco de dados e arquivos. Em seguida, gera a saída, o rastreamento, o estado final do ambiente e os artefatos, basicamente arquivos de saída. Em seguida, executamos verificadores e podemos gerar métricas sobre como o agente conseguiu resolver a tarefa, qual foi o seu desempenho e assim por diante. A segunda parte importante da tarefa é o Oracle. Quando a solução Oracle é executada,
+
+ela percorre toda a sequência, mas em vez de executar o agente real, executa o Oracle, e isso ocorre quando construímos o Oracle nós mesmos para garantir que a tarefa seja solucionável desde o início. Porque se não for solucionável, o agente não conseguirá resolvê-lo. Portanto, o Oracle é uma parte importante da tarefa. Se analisarmos a anatomia de uma tarefa de benchmark, como ela se apresenta em termos de arquivos, podemos observar um dos formatos mais populares atualmente, o formato Harbor, que foi desenvolvido pela mesma equipe que mantém o Terminal Bench. Nesse caso, basicamente, são apenas três conjuntos de arquivos.
+
+Basicamente, o agente vê e interage com o seguinte: instruction.md, um arquivo Markdown clássico; environment, que você pode ver como Dockerfile; e Docker Compose, caso você tenha vários contêineres Docker. Você tem algo que o agente não vê, que são as soluções e verificadores da Oracle. E, finalmente, você tem alguns metadados. Pode parecer muito simples.
+
+Sim, eu estou dizendo tipo, "Ok, o ambiente de simulação é apenas um Dockerfile e um monte de outras coisas." Mas isso é útil porque agora você tem uma maneira repetível de executar experimentos em simulação de agentes. Agora, vamos nos aprofundar nas principais partes do benchmark. Primeiro, o meio ambiente. O principal desafio com esse ambiente é que, na prática, ele precisa ser uma mini- produção, mas você não quer executar uma produção completa para cada experimento.
+
+Então, você precisa garantir que seu banco de dados, serviço de API, ferramentas e arquivos correspondam à produção, assim como mencionado anteriormente, para que seu agente não saiba que está sendo executado em um ambiente de simulação. Então, tem que ser verdade. No entanto, há um ponto a considerar: você não pode inserir um usuário real em sua tarefa de simulação. Assim, você pode simular o usuário. Nesse caso, isso se torna efetivamente um LLM com seu próprio prompt, que, com contexto adicional, pode imitar o comportamento humano e a interação com o seu sistema.
+
+Assim, no sistema portuário, todos esses elementos existem no ambiente, e os verificadores apenas interagem com o ambiente posteriormente. Existem certos padrões para garantir que você possa organizar o ambiente dessa maneira. E pense nisso como se fosse a maneira como você cria testes de integração. Basicamente, trata-se de como você proporciona ambientes diferentes para o seu agente de forma eficaz. Você não executa o banco de dados de produção completo. Você tem uma determinada
+
+visão geral. Nesse caso, você pode executar contêineres laterais ( sidecars). Então, seu agente é executado em um ambiente principal, mas existem outros contêineres que contêm serviços de API, bancos de dados, ferramentas MCP e assim por diante, disponíveis para o seu agente. Você não precisa ter serviços de API de produção completos, pode simulá- los. Eu já mencionei usuários simulados.
+
+E um ponto importante aqui é a abordagem em várias etapas para lidar com tarefas de longo prazo, caso seu agente precise lidar com tarefas que se estendam por horas. Você precisa garantir que tenha etapas intermediárias, e para cada etapa você tenha um prompt separado, verificadores separados, e você pode encerrar a simulação antecipadamente se vir o agente falhando. Basicamente, isso permite simular tarefas de longo prazo. Então, a próxima parte são os verificadores. Assim como no sentido tradicional, geralmente quando as pessoas falam sobre verificadores, você simplesmente verifica a saída. Você obtém a saída do agente,
+
+verifica-a e pronto. É por isso, digamos, como a programação funciona. É como se simplesmente verificássemos o código de saída. Nós fazemos testes, e assim por diante. Aqui é mais complexo. A forma como o agente
+
+interage com a simulação nos permite obter uma grande variedade de dados. Nós obtemos o mundo, basicamente como o ambiente mudou no estado final do ambiente. Qual é o estado do seu banco de dados ? Quais são as respostas da API? Quais foram as respostas dos usuários? E assim por diante.
+
+E o seu verificador analisa o estado final, o rastreamento e os artefatos. Então, como você pode analisá-lo? Na verdade, existem várias maneiras de fazer isso. Você pode ter verificações determinísticas. Basicamente, isso pode funcionar muito bem para coisas como saída final ou chamadas de ferramentas, onde é muito fácil verificar se estava correto ou não.
+
+Às vezes, você pode usar o LLM como um juiz, ou até mesmo o Harness como um juiz, ou o agente como um juiz para avaliar basicamente se a qualidade do rastreamento foi bem-sucedida, se o planejamento do agente estava correto e assim por diante. Nesse caso, tudo depende da situação específica. Portanto, você pode usar um ou outro, ou ambos, dependendo do que funcionar melhor. E, por fim, é importante ter em mente que você pode usar um especialista no assunto para revisar alguns dos rastreamentos e algumas das saídas. Não serve para tudo, mas sim para casos em que se observa discrepância no comportamento do agente e se deseja a intervenção humana.
+
+Então, para finalizar, como podemos organizar tudo isso como parte do processo de lançamento e aprimoramento de agentes? Então, podemos começar? Ainda não. Pode ocorrer algum problema com a tarefa de benchmark? 100%. O
+
+agente pode tentar recompensar a simulação de invasão porque consegue entender que está em uma simulação e que pode invadi- la. A tarefa pode ser muito simples e nossos verificadores podem ser muito abrangentes, e nesse caso o agente sempre será aprovado mesmo que faça algo incorretamente. É possível que o agente sempre falhe porque os verificadores estão incorretos. Ou pode ser que os agentes não estejam tendo um desempenho estável e, assim como você, haja uma alta variação no sucesso dos agentes. Portanto, todos esses são, na prática, casos extremos que você precisa identificar durante o desenvolvimento do seu benchmark, pois o desenvolvimento de benchmarks é uma arte em si mesma.
+
+Já vimos centenas de benchmarks surgirem ao longo dos últimos anos, mas isso é algo que a cultura de cartões e a disciplina de engenharia precisam construir em cada equipe de engenharia que precisa lançar agentes de IA em produção. Porque, como você viu, o benchmark é, na prática, um software. É código. São arquivos. Você precisa tratá-lo como tal. Você
+
+precisa ter um pipeline de CI separado para isso. E você pode verificar coisas bastante óbvias, como por exemplo, garantir que todas as dependências estejam fixadas, que sua imagem base esteja correta ou que não faltem arquivos de teste (fixed). Depois, você pode executar o comando `Oracle uh solution` e verificar se ele é aprovado. Ou, por exemplo, se você não executar o Oracle que verifica a falha, você pode executar várias execuções do agente na tarefa e verificar se está tudo bem, se é solucionável e se é difícil para o agente. Você pode classificar a tarefa como simples, média ou difícil, dependendo do tempo e da frequência com que o agente a conclui com sucesso.
+
+E, por fim, você pode aprová-lo para que faça parte de sua avaliação comparativa. Nesse caso, o processo para aprimorar o agente torna-se simples. Você estabelece uma linha de base, como em seu benchmark, executa o conjunto de dados de avaliação, observa as falhas onde o desempenho não é bom, altera um parâmetro, executa o experimento novamente e, nesse caso, você pode usar uma ferramenta como o Arize para registrar seus experimentos. E depois de corrigir o problema, você repete todo o experimento. E então você finalmente poderá lançar a versão para produção.
+
+O que isso permite é garantir que você resolva os problemas corretamente. Existe um certo antipadrão na indústria, onde as pessoas tentam corrigir problemas no prompt. E eles preenchem o prompt com coisas como: "Nunca faça isso ou faça apenas aquilo. Nunca exiba esta mensagem crítica." Essa é certamente uma forma de lidar com isso , mas com a simulação, você controla toda a pilha. Você pode avaliar a
+
+pilha completa. E você pode garantir que a correção seja feita no local correto. Você não deve enviar tudo de acordo com o prompt. Você pode ajustar a dificuldade se quiser, caso tenha sobrecarga de contexto. Ou, se houver algum procedimento em falta, você pode adicioná-lo à categoria de habilidade.
+
+Ou, por exemplo, se você precisar de um esquema de saída específico, você o inclui como parte da saída estruturada. Assim, uma vez que o agente esteja em produção, efetivamente, você terá dois ciclos. Um loop para expansão de benchmark. Você obtém, eh, traços de observabilidade, eh, traços de observabilidade basicamente usando algo como uma subida. Você registra as falhas e as utiliza para aprimorar ainda mais seu parâmetro de comparação.
+
+Em seguida, você tem o executor de simulação que executará experimentos em seu benchmark estendido em uma nova configuração de agente. Hum, vamos gravar esses experimentos. Então você pode usá-lo como um critério de liberação para verificar se o agente tem um desempenho significativamente bom e, finalmente, liberá-lo para produção. Nesse caso, é importante ter um sistema que permita compreender e garantir que a parte de observabilidade e a parte de experimentação estejam conectadas. Porque fazem parte, são duas faces da mesma moeda. Bem
+
+, resumindo minha apresentação, toda empresa precisa de um parâmetro de referência. Os rastreamentos são úteis para encontrar casos extremos em produção, mas a simulação ajuda a testar o que aconteceria. E, finalmente, você quer que seu benchmark faça parte do seu ciclo de operações do agente. Muito obrigado pelo seu tempo e, bem, acho que talvez eu consiga responder a uma pergunta, mas terei prazer em responder a quaisquer outras perguntas. E, por favor, visite nosso estande se tiver alguma dúvida sobre benchmarks.
+
+[aplausos] Muito bem
+
+. Algumas perguntas. Tudo bem. Uma ótima palestra. Tenho uma pergunta sobre a estruturação do benchmark.
+
+Idealmente, quantos exemplos você deveria incluir? E você os divide em, tipo, uma divisão de teste de trem? Se sim, como você recomenda estruturar os exemplos, digamos, nessas duas divisões? Ótima pergunta. Então, basicamente, a pergunta era como podemos estruturar o treinamento e a validação? E, assim como os
+
+palestrantes anteriores compartilharam, basicamente eles também tinham um padrão de divisão entre treinamento e validação. Isso é muito semelhante ao aprendizado de máquina tradicional, onde buscamos um conjunto de dados independente que o agente não tenha visto. Mas basicamente, é onde podemos verificar a configuração do agente. Acho que a abordagem clássica se aplica quando você quer ter uma proporção de 80/20%. Depende sempre do caso de uso. Mas, é claro,
+
+você quer ter um conjunto de dados excepcional que o agente não tenha visto durante o processo de experimentação. Incrível. Próxima pergunta. Então, quando você cria os benchmarks, quais dados você inclui neles ? Você inclui lotes de produção que você selecionou cuidadosamente no benchmark? Ou, se o seu agente ainda não estiver
+
+em produção, você cria conjuntos de dados ou problemas para o agente resolver no benchmark? E se você estiver selecionando manualmente os problemas que o agente deve resolver, como você garante que terá cobertura suficiente, semelhante à que veria em produção? Ótima pergunta. Portanto, a questão de como garantir a abrangência e a distribuição do índice de referência é um aspecto muito importante. Então, basicamente, você precisa garantir que tenha ambos. Você
+
+tem os casos de uso básicos, que basicamente abrangem todos os principais casos de uso que funcionam, mas também garante que você tenha casos extremos. Basicamente, como você pode garantir que seu agente consiga lidar com casos extremos quando as ferramentas falham ou se houver um problema com o banco de dados, por exemplo. Então, você quer ter ambos...
+
+basicamente, pense nisso como um teste de integração. Você tem o caminho ideal, mas também tem casos extremos. Você simularia um agente com mestrados em direito ou criaria um negócio personalizado? Sim, ótima pergunta. Basicamente, é semelhante ao que fazemos artesanalmente, uh, acho que basicamente quero dizer que as pessoas usam agentes para escrever código. Portanto,
+
+muitas coisas aqui podem ser automatizadas. Assim, o que significa "feito à mão" muda. A parte mais importante que você pode fornecer é o ambiente de compilação, e depois criar o contexto que basicamente imita seu ambiente de produção. Você mencionou que às vezes usa o LLM e outras vezes um especialista humano para criar verificadores. Você pode explicar melhor? Qual é a
+
+melhor prática por lá? Ótima pergunta. Então, no nosso caso, basicamente, temos muitos especialistas no assunto, então fazemos as coisas em grande escala. Portanto, o ponto importante aqui é que você não precisa de especialistas no assunto para revisar tudo, mas sim de casos em que haja discordância entre o agente e os diferentes verificadores. Se você acha que a tarefa deveria ter sido resolvida, mas o agente a marcou como se não tivesse sido resolvida corretamente ou como se o rastreamento não fosse suficientemente otimizado.
+
+E é aqui que você precisa de um especialista no assunto que possa, basicamente, ajustar o agente que realiza a revisão.
+
+[música]

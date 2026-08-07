@@ -1,0 +1,118 @@
+---
+video_title: "Can Oncology Workflows Run Without Human Touch? - Anant Shankhdhar, Risa Labs"
+video_id: _cVfz88_j7A
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_cVfz88_j7A
+video_date: 2026-07-20T06:24:47+00:00
+video_description: |
+  Can Oncology Workflows Run Without Human Touch?
+  At Risa, we automate healthcare workflows in oncology end-to-end using AI agents. We built four agents that work together  , each one handles a different step, then passes its output to the next. No human needed in between. The agents when combined are able to do the work of hundreds of medical workers a day. These agents are deployed across 20+ hospitals and supporting care for more than 100,000 patients.
+  
+  Here is the overview of our agents:-
+  Ingestion Agent
+  
+  Takes messy, unstructured medical documents, faxes, scanned PDFs, clinical notes and turns them into clean, structured data. AI models read each document, extract the key information (patient details, medications, diagnoses), and check against historical records to avoid duplicate work. If a patient has been seen before, the system already knows their history and skips redundant lookups.
+  
+  EV Agent
+  Checks whether a patient's insurance is active and what their plan covers. Some insurers offer APIs; others only have web portals. The agent uses whichever method works calling APIs where available, and driving a browser through the portal where not. The result is always the same standardized output: what's covered, what the patient owes, and whether the plan is active.
+  
+  Medical Reasoning Agent
+  
+  The clinical brain of the system. It evaluates whether a proposed treatment is appropriate for a specific patient by checking their medical records against clinical guidelines and insurance coverage rules. It breaks complex guidelines into simple yes/no criteria, evaluates each one against the patient's data in parallel, and aggregates the results. A confidence score determines whether the case can proceed automatically or needs a human clinician to review it.
+  
+  Submission Browser Agent
+  
+  100+ browsers running in parallel on Kubernetes, each one filling out forms and submitting requests on insurance portals. Each insurer has a different website with different forms — the agent knows how to navigate all of them. For portals that ask clinical questions during submission, the agent calls the Medical Reasoning Agent in real-time to generate answers. At full capacity, the system handles thousands of submissions per hour
+  
+  At Risa, we automate healthcare workflows in oncology end-to-end using AI agents. We built four agents that work together as a DAG , each one handles a different step, then passes its output to the next. No human needed in between. The agents when combined are able to do the work of hundreds of medical workers a day. These agents are deployed across 20+ hospitals and supporting care for more than 100,000 patients.
+  
+  Here is the overview of our agents:-
+  Ingestion Agent
+  
+  Takes messy, unstructured medical documents, faxes, scanned PDFs, clinical notes and turns them into clean, structured data. AI models read each document, extract the key information (patient details, medications, diagnoses), and check against historical records to avoid duplicate work. If a patient has been seen before, the system already knows their history and skips redundant lookups.
+  
+  EV Agent
+  Checks whether a patient's insurance is active and what their plan covers. Some insurers offer APIs; others only have web portals. The agent uses whichever method works calling APIs where available, and driving a browser through the portal where not. The result is always the same standardized output: what's covered, what the patient owes, and whether the plan is active.
+  
+  Medical Reasoning Agent
+  
+  The clinical brain of the system. It evaluates whether a proposed treatment is appropriate for a specific patient by checking their medical records against clinical guidelines and insurance coverage rules. It breaks complex guidelines into simple yes/no criteria, evaluates each one against the patient's data in parallel, and aggregates the results. A confidence score determines whether the case can proceed automatically or needs a human clinician to review it.
+  
+  Submission Browser Agent
+  
+  100+ browsers running in parallel on Kubernetes, each one filling out forms and submitting requests on insurance portals. Each insurer has a different website with different forms — the agent knows how to navigate all of them. For portals that ask clinical questions during submission, the agent calls the Medical Reasoning Agent in real-time to generate answers. At full capacity, the system handles thousands of submissions per hour
+  
+  Speakers:
+  - Anant Shankhdhar (Risa Labs): Anant Shankhdhar is an AI researcher and Machine Learning Engineer at Risa Labs whose work focuses on large language models, agentic AI, retrieval-augmented generation (RAG), multimodal AI, and document intelligence, combining research and industry experience from IIT Guwahati, Adobe Research, Walmart Global Tech, and healthcare AI to build production-scale intelligent systems.
+    LinkedIn: https://www.linkedin.com/in/anantshankhdhar/
+    GitHub: https://github.com/AnantShankhdhar
+---
+Oi pessoal. Meu nome é Anant Shankar. Sou engenheiro de IA na Trisca e falarei sobre a automatização de fluxos de trabalho oncológicos de ponta a ponta. Na Trisca, estamos automatizando diversos fluxos de trabalho em oncologia. Um desses fluxos de trabalho é o de autorizações prévias, em que solicitamos autorizações para medicamentos destinados a pacientes com câncer.
+
+Então, vou dar uma breve visão geral do fluxo de trabalho antes de prosseguirmos com a chamada. Então, o primeiro passo é recebermos os pedidos que recebemos diariamente. O segundo passo é verificar se o paciente realmente tem direito a receber os medicamentos com base no valor disponível em seu plano de saúde. Isso se chama verificação de elegibilidade e benefícios . Em seguida, determinamos quais medicamentos para o paciente exigem autorização.
+
+Basicamente, um medicamento pode se enquadrar em uma das seguintes vias. Uma delas é a NAR, que não requer autenticação. Basicamente, o medicamento não requer autorização. Outra possibilidade é que a autorização para o medicamento já tenha sido concedida para um período de tempo denominado autorização em arquivo. E o terceiro é "autorização necessária", o que significa que a autorização precisa ser obtida para este medicamento. Sim, é isso aí
+
+. Este é o fluxo de trabalho. Então, embora nossos bots executem essas etapas, uma revisão humana é necessária antes do envio de todos esses pedidos. Fui incumbido de resolver o problema de processar alguns desses pedidos sem qualquer tipo de intervenção humana, encaminhando-os diretamente para a submissão. Isso significa que preciso identificar com segurança quais pedidos podem ser processados ​​sem verificação humana e, em seguida, construir todo o fluxo para eles também.
+
+Portanto, a confiança é uma métrica fundamental que estávamos buscando alcançar. Então, sim. Para isso, utilizamos quatro agentes: o agente EV, o agente de autenticação, o agente de necessidade e o agente de submissão. O agente EV serve para verificação de elegibilidade e de empresa . Basicamente, o processo consiste em obter os dados do paciente e determinar se estão adequados para prosseguir. O agente de autenticação
+
+determina o tipo de chave do status do medicamento, indicando se a autorização é necessária ou não. E o agente de necessidade é o cérebro clínico do sistema do sistema. Assim, nos casos em que é necessária autorização, determinamos se ela deve ser feita com base em seus sinais vitais e se é adequado para o paciente. E, finalmente, caminhamos para a submissão. Então, começando pelo primeiro passo, como fazemos isso sem nenhuma intervenção humana?
+
+Um dos problemas que temos aqui é que os detalhes do seguro, os documentos do seguro, tudo está espalhado por dezenas de portais, APIs e documentos. E é difícil encontrar essa informação num só lugar. Portanto, para iniciarmos nosso processo de desenvolvimento, precisamos obter informações de vários portais e APIs. Para isso, criamos um serviço unificado que se conecta a diferentes fontes pagadoras e fornece o resultado em um formato uniforme e normalizado , que podemos usar para processamento posterior. Além disso, adicionamos um mecanismo de decisão determinístico para sinalizar os casos que não prosseguiriam, corrigindo assim, de forma determinística, alguns dos pedidos sem intervenção humana.
+
+Então, funciona assim. Assim, temos um orquestrador de cobertura que determina se o paciente optará pelo caminho da API ou pelo caminho da RPA. RPA é basicamente automação. Executamos as ações para o RPA ou chamamos a API e obtemos o resultado em um formato de cobertura fixo, que então passamos para nosso mecanismo determinístico para determinar se a cobertura está ativa ou não. Se for esse o caso, avançamos com o processo na PHN, caso contrário, interrompemos imediatamente .
+
+Um dos problemas que identificamos foi que, se tivermos que construir isso, precisaremos criar integrações personalizadas para diferentes tipos de portais, o que não é um processo muito escalável . Mas a forma como resolvemos isso foi usando LLMs em um loop infinito. Primeiramente, criamos um enorme repositório de ações personalizadas, bem como de ações populares necessárias para construir RPAs. Em seguida, criamos uma geração de configuração baseada em LLM que executa essas ações e gera a configuração necessária para a execução de um portal. Qual solução reduz significativamente nosso tempo de desenvolvimento?
+
+E, por fim, essas automações são frágeis, então pode acontecer de elas pararem de funcionar durante a execução. Para isso, temos um ciclo de autorrecuperação que identifica esses casos durante o horário de produção e, em seguida, os mitiga. Dessa forma, evita-se qualquer tipo de falha. Então, sim, esse é o primeiro passo. Depois de fazermos isso, avançamos na nossa cadeia. Então, como
+
+podemos ver em nosso diagrama, o gráfico, os dados do paciente são obtidos. Realizamos a verificação de elegibilidade. Vamos verificar se está tudo bem ou não. Se falhar, paramos por aí; caso contrário, seguimos em frente. Então, sim.
+
+Adiante, o próximo passo foi usar esses dados para verificar quais medicamentos exigem autorização. Então, se eu tiver que remover os humanos do processo, um caso simples que observei foi o seguinte: se um medicamento já foi autorizado, ou seja, se a autorização já está arquivada, ou se a autorização não for necessária, então podemos resolver parcialmente o pedido. Isso significa que não precisamos de supervisão humana nessa parte do pedido. Ah, então, sim. Então, como primeiro passo, construímos um pipeline simples de extração de LLM, que recebe as anotações do paciente, realiza a extração de LLM e categoriza os medicamentos nesses tipos. Por padrão,
+
+é necessária autorização. No entanto, é... Então, pensamos que funcionariam, mas também enfrentamos alguns problemas aqui.
+
+Então, um problema comum era que as anotações que estávamos usando não tinham dados suficientes, o que significava que estavam apresentando alguns erros. Além disso, a extração de LLM é um processo meio indeterminístico. Isso significa que quaisquer resultados que obtivermos daqui não podem ser testados às cegas. Portanto, ainda precisamos de um ser humano para revisar todas essas coisas. Isso pode melhorar a eficiência, mas não eliminará o fator humano.
+
+Então, para fazer isso, pensamos: e se eu adicionar mais evidências? Então, se o LLM está dizendo que um medicamento não precisa de autorização, então eu tenho algumas informações que corroboram isso. Posso afirmar isso com confiança, tanto para os casos de autorização quanto para os casos de arquivo. Você já... é. Assim, para
+
+isso, utilizamos duas outras fontes de dados. Então, uma delas eram as cartas de autorização. Então, basicamente, essas eram as informações anteriores. Assim, com base nos registros anteriores de um determinado paciente, existem cartas de autorização disponíveis, o que demonstra que esses medicamentos foram de fato autorizados. Então, agora, em vez de ter apenas uma fonte, tenho duas fontes que me fornecem a mesma informação e, independentemente de onde elas cheguem, posso afirmar com confiança que este medicamento já foi autorizado.
+
+Em segundo lugar está o caso NAR, o caso em que não é necessária autorização. Então, aqui encontramos alguns outros recursos, como portais ou documentos, que nos permitiram descobrir mensalmente quais medicamentos o plano de saúde não cobre. Basicamente, o seguro não funciona para mim. Então, usamos essas informações para construir uma base de conhecimento de regras de pagador, que é basicamente um banco de dados SQL criado a partir de verificações no portal, bem como extrações do LLM. Assim, utilizamos todas essas informações, conciliamos as evidências e extraímos apenas os status de autenticação com maior grau de confiança. Portanto, se a partir
+
+desse processo conseguirmos determinar se um medicamento não está autorizado, se não precisa de autorização ou se já está autorizado, teremos uma prova sólida para isso. E uma maior confiança para afirmar que esse é o caso. E, claro, tudo isso é configurável. Então, para o caso de algum imprevisto acontecer, sempre temos uma tampa sobre os gabinetes. Então, sim.
+
+Outra coisa boa que aconteceu foi que percebemos que certos pedidos foram completamente eliminados. Conseguimos eliminar completamente certos pedidos relacionados a esses dois tipos de medicamentos. Porque pode acontecer que uma ordem não exija, de fato, autorização alguma. Os medicamentos ou não necessitam de autorização ou já foram autorizados anteriormente. Assim, isso nos impediu de mexer em um determinado conjunto de pedidos que tínhamos. Sim
+
+. Este slide oferece uma visão geral, ainda que resumida, de como construímos a base de conhecimento sobre folha de pagamento para os casos da NAR. Então, nós tínhamos os documentos que continham essas informações em uma escala temporal. Construímos uma extração LLM que usa LLMs que são configuráveis. Assim, podemos configurá- lo em diferentes tipos de documentos, realizar a extração e obter a restrição específica para cada medicamento, que define como o tratamento será aplicado a esse par de medicamentos por um determinado período.
+
+Outro ponto é que aproveitamos algumas informações históricas. Isso significa que sabemos que uma determinada organização trata esse medicamento de uma certa maneira. Então, armazenamos essa informação e também a utilizamos. Além disso, também utilizamos verificações regulares em portais para obter essas informações. Então, sim. Ao
+
+realizar esse movimento, nosso ponteiro avançou um pouco. Assim, agora tínhamos essas verificações determinísticas juntamente com nossa verificação inicial de inelegibilidade . Assim, tudo o que não era verificável foi sinalizado previamente e, para tudo o que prosseguiu, pudemos determinar o status dos medicamentos e eliminar alguns dos pedidos.
+
+Então, agora que identificamos dois tipos de drogas, vamos prosseguir.
+
+Assim, o próximo problema que enfrentamos aqui foi que algumas decisões realmente precisam de raciocínio clínico. Até o momento, os medicamentos que deixamos de ser controlados foram aqueles em que a informação estava disponível direta ou indiretamente por meio de outra fonte. Mas não precisamos realizar nenhum tipo de raciocínio ou responder a perguntas aqui. No entanto, para os medicamentos que realmente exigem autorização, precisamos verificar se o paciente é elegível para recebê-los e também fornecer evidências que justifiquem essa afirmação. Então, para fazer isso, construímos nosso terceiro agente, que é o agente de necessidade médica.
+
+Assim, o agente de necessidade médica responde a perguntas clínicas simples e complexas para cada paciente e atribui uma pontuação de confiança a cada resposta. Assim, encaminhamos apenas os casos que realmente precisam de um profissional clínico. Bem , nós trabalhamos bastante nesse espaço. Nós também temos outra publicação aqui, que eu já mencionei. Então, o funcionamento desse agente é o seguinte: recebemos um novo pedido e, para cada pedido, lemos três informações. Então, lemos as
+
+anotações do paciente. Lemos os critérios da política. Assim, os critérios da política são basicamente os critérios que precisam ser atendidos para que este medicamento seja processado posteriormente. A partir desses critérios, consultamos o prontuário médico do paciente, que é um gráfico de biomarcadores extraídos para um paciente. E a partir daqui determinamos quais biomarcadores existem e qual é a condição deste paciente.
+
+E então usamos essas informações e as repassamos a um especialista em Direito para obter uma resposta que apresente todos os fatos, tanto os que apoiam quanto os que contradizem a pergunta. Então, sim. E se tivermos as informações relevantes ou formos capazes de determinar isso com maior certeza, damos prosseguimento ao processo. E nos casos em que não temos informações suficientes, reservamos o caso para uma intervenção humana. Então, sim.
+
+Este é o próximo passo. Assim, após essa validação da necessidade médica, passamos da primeira etapa, onde coletamos os dados, realizamos a verificação de elegibilidade, sinalizamos os pedidos que não eram elegíveis, encaminhamos o restante e extraímos as cartas desnecessárias e já autorizadas. Temos casos em que podemos mover isso sem qualquer intervenção humana. E então fizemos a validação da necessidade médica . Tudo o que não foi atendido também foi encaminhado para revisão.
+
+Então, sim. Finalmente, reunimos todas essas informações e as enviamos de volta aos pagadores. É aí que entra em ação o nosso agente de submissão. O agente de submissão é bastante semelhante ao agente EVBV. Temos integrações personalizadas para todos os tipos de pagadores que atendemos.
+
+Que é construído usando uma configuração orientada por LLM, bem como nosso repositório de ferramentas. Então, sim. Este é o gráfico completo que obtivemos ao longo de toda a jornada. Então, a parte verde mostra os casos em que estamos realizando o tratamento sem contato humano. Assim, sempre que a verificação de elegibilidade for aprovada, significa que foram encontradas informações suficientes para não impedir que o medicamento seja submetido a uma avaliação adicional de necessidade médica.
+
+Em seguida, realiza-se a avaliação da necessidade médica e a submissão do pedido. Então, sim. Por fim, gostaria de mencionar que, embora esses medicamentos tenham sido desenvolvidos inicialmente para esse caso específico, estão sendo utilizados em diversos fluxos de trabalho. Ampliamos a funcionalidade para uma versão mais geral, na qual o agente de necessidade médica pode responder a perguntas específicas para qualquer tipo de fluxo de trabalho do paciente. O mesmo se aplica aos outros agentes.
+
+Então, sim. Em conclusão, diria que a opção sem contato está ganhando cada vez mais espaço em todos os pedidos. Então, começamos com verificações determinísticas. Agentes apenas para as regras que não podem ser decididas por outras regras. Utilizamos múltiplas fontes de evidência para superar a evidência de uma única fonte e, assim, reforçar a credibilidade de nossos argumentos.
+
+Adicionamos a capacidade de auto-cura para dimensionar nosso RPS. E, por fim, adicionamos a camada de raciocínio para lidar com os casos em que é realmente necessária uma autorização autêntica. Então, sim. Obrigado pelo seu tempo. Sim .
+
+Bye Bye.

@@ -1,0 +1,273 @@
+---
+video_title: "Full Workshop: Better Auth — Paola Estefania, Better Auth"
+video_id: JvKO40CFq-s
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JvKO40CFq-s
+video_date: 2026-07-21T23:43:54+00:00
+video_description: |
+  Better Auth has grown to 27k GitHub stars and more than 1.5M weekly downloads, becoming a popular choice for developers who want to own their authentication stack. Agent Auth is a protocol for autonomous and delegated agents operating services for an organization or a user. It lets agents dynamically negotiate capabilities, manage access boundaries, and maintain secure authorization flows. This session breaks down the protocol design and demonstrates it live.
+  
+  Speakers:
+  
+  Bereket Habtemeskel — CEO, Better Auth
+  Bereket is the Founder and CEO of Better Auth, the most popular auth framework for TypeScript, and a co-author of the Agent Auth protocol.
+  X/Twitter: https://x.com/bekacru
+  LinkedIn: https://www.linkedin.com/in/bekacru/
+  
+  Paola Estefania — Staff Engineer, Better Auth
+  Paola focuses on agent identity and is a co-creator of the Agent Auth protocol.
+  LinkedIn: https://uy.linkedin.com/in/paolaestefaniadecamposdefranco
+---
+Olá a todos. Vocês conseguem me ouvir ? OK. Sim. Perfeito. Bem-vindos
+
+à nossa palestra, ou melhor, ao nosso workshop. Hum, eu sei que talvez você também estivesse esperando o Burgett. Ele não pôde vir, mas faremos este workshop juntos para você. OK. Como você pode ver, há um código QR. Você pode acessar
+
+nossa página sobre o protocolo de saúde asiático para obter o endereço, e eu não preciso soletrar o nome para você. Hum, ok. Então, a minha ideia hoje é que, em vez de eu ficar dizendo as coisas para vocês e vocês fazerem isso e aquilo , eu quero que a gente dedique pelo menos uma hora para pensar sobre segurança na Ásia, sobre os asiáticos, porque às vezes a gente fica empolgado com essa nova era da IA, né? Mas nunca pensamos nisso, ou talvez sim, mas não tanto quanto eu gostaria. O que acontece quando você, por exemplo, diz: " Ei, agentes, qual é a minha agenda para amanhã? O que vocês vão enviar por e-mail?"
+
+Vocês já pensaram nisso? Quantos de vocês... levantem a mão! Quantos de
+
+vocês usam agentes de IA todos os dias? Ok, levantem, não sejam tímidos! Ótimo! Quantos de vocês dão a eles acesso ao seu Gmail, ao seu calendário, às suas contas pessoais? Quantos de vocês... ah, muito menos! Ok.
+
+Aqueles que fazem isso, como por exemplo, conectar um servidor MCP? OK. Sim. E eles têm mais um. Bom. Talvez
+
+você possa conectar seu token pessoal a um endpoint. OK. Então, o que acontece quando fazemos isso? Na verdade, estamos agindo como se o agente estivesse representando a nós, mas fingindo ser nós. Então, você acha que é uma boa ideia?
+
+Sim ou não? Quem acha que é uma boa ideia? Não é uma boa ideia. Por que?
+
+Exatamente. E por que não pensamos nisso como antes? OK. Então, não importa. Aqui estamos.
+
+Estamos pensando nisso. Eu sempre me lembro da época em que a internet surgiu, tipo, eu tenho quase 40 anos, então eu me lembro, e todo mundo estava muito feliz com isso. Mas aí comecei a questionar, tipo, ok, todos os dados são públicos, é como se estivéssemos no mesmo momento hoje, né? Estávamos super empolgados com a IA e depois começamos a pensar na segurança, mas tudo bem. Então, por que eu coloquei ali a analogia de contratar seu agente?
+
+Quero que vocês pensem nisso: digamos que você tenha uma empresa ou parte de uma empresa e contrate alguém. Você dá a essa pessoa acesso a duas coisas da empresa, certo? Então, o que você faz com essas pessoas quando está mostrando o evento, ou o que elas te dão quando você o realiza? Você tem seu próprio e-mail, certo? Seu próprio acesso, suas próprias credenciais.
+
+Então, se você pensar no mundo asiático, o que estamos fazendo sem agentes? É como se estivéssemos fazendo o exame de credenciais de CEO, certo? Você nunca diz algo como: "Ok, essas são as credenciais do CEO, vá ler o e-mail." Não, porque tudo, absolutamente tudo, pode acontecer. É a mesma coisa. A ideia será contratar seu
+
+agente, no sentido de dar a ele a autoridade do seu agente em vez de suas credenciais. Você acha que é uma boa ideia? Como? Sim ou não? [risos] Ok. Minha ideia é a seguinte: eu sei que às vezes
+
+podemos ser tímidos, mas acho que seria legal se pudéssemos interagir um pouco, porque é um momento em que, graças a um engenheiro e a todos nós que estamos aqui dedicando todo o seu tempo, podemos nos reunir e pensar sobre algo. Acho que não é comum, né? Então, lucre 100% com isso. Hum, ok, ótimo. Então, vocês conseguiram acessar a página com os códigos QR? Sim. Ótimo.
+
+Então, lembra da minha ideia de dizer: "Ok, o agente leu meus e-mails, certo?" Você já parou para pensar em como o agente chega lá? Como é que isso chega ao seu e-mail? Em primeiro lugar, como os asiáticos sabem do que são capazes? Huh?
+
+Ok, ótimo. Então, você faz isso à mão, certo? Não é algo automático. Sim. Exatamente.
+
+Mas exatamente. Mas também existe uma janela de contexto, não é mesmo? Mas você sempre, de alguma forma, associava algo aos asiáticos, pensando "ok, é isso que você pode fazer, certo?". E se tivéssemos um mundo ideal, ou pudéssemos acessar um diretório e dizer: "Ah, isto é tudo o que posso fazer e estas são todas as coisas que posso executar"? Essa seria a ideia mais inteligente,
+
+não é? Você já usou uma lista telefônica? É mesmo? Isso é seguro, tipo, para quem eu posso ligar? Então eu vou e procuro na agenda telefônica e lá eu tenho como ligar, tenho o número, será o mesmo, o que eu quero fazer e como eu ligo.
+
+Então esse é o nosso primeiro problema: descobrir como os agentes descobrem o que podem fazer. A ideia é que seja um processo automático, não apenas nós o tempo todo dizendo como conectar e coisas assim. Certo? Além disso, há outra parte: seria bom dizer aos agentes, ou melhor, conceder acesso aos agentes, o que eles podem fazer. Não estamos sendo bem específicos, mas talvez aqueles que conectaram as contas do Gmail tenham dado acesso de leitura, certo? Só ler, para que eles não possam
+
+enviar ou remover nada, para que seja mais seguro. Ok? Mas e se você tiver tantas informações importantes lá que, se o agente errar em alguma coisa e outra pessoa puder ler seus dados? Também não é bom . Não é seguro de forma alguma.
+
+E se pudéssemos obter todas essas ferramentas que o agente pode usar, como ele mencionou, e você pudesse conceder acesso a cada uma delas? Sim, esta não, esta leitura está correta, seria uma ideia melhor, certo? Então, vamos pensar na autorização para esse agente, não para agir em meu nome e ter acesso a tudo o que eu posso fazer. É como voltar ao exemplo anterior: uma pessoa que acabei de contratar tem o mesmo acesso que o CEO, ou talvez você contrate um assistente ou um amigo que faça algo para você. Na vida real, você nunca daria acesso a todas as suas coisas, certo? E se desse,
+
+você mudaria as permissões depois. É a mesma coisa. E também, ok, temos um mundo ideal onde os agentes podem descobrir o que podem fazer e nós podemos dizer a eles o que podem ou não fazer, mas como os rastreamos? Como podemos rastrear hoje o que os aplicativos fazem em nosso nome quando os autorizamos? Huh?
+
+Exatamente. Registros da Audi. Audificação perfeita,
+
+não é? Qual agente realizou qual ação em nome de qual usuário? Para isso, chegamos ao nosso ponto principal. Indique a identidade do agente. Se cada agente tiver uma identidade, poderemos rastreá-los. Podemos saber qual
+
+agente fez o quê, quando e em nome de qual usuário. Parece que é muito, muito melhor, não é? E o que mais você pode fazer quando consegue rastrear alguém em relação a todo o processo de contratação? Você pode demiti-la se ela fizer algo errado. Você pode revogar o acesso da mesma forma que o agente será revogado, caso saiba quem ele é. Se algo estivesse
+
+errado com as coisas de hoje, você teria que desconectar tudo, certo? Sim ou não? Então imagine... Ah, essa mesma merda aconteceu
+
+. Desculpe pela palavra. Você não pode removê-lo. É isso. Assim, temos rastreabilidade. Temos tudo.
+
+OK. Resumindo, temos a questão da descoberta, onde o agente pode encontrar o serviço e ler as autorizações de capacidades, o que este agente pode fazer, definir o escopo e quem é este agente. Você concorda com isso? Acha que é uma boa ideia? Tem alguma pergunta? Tipo, campeão?
+
+Ok, ótimo. [bufa] Você já ouviu falar de capacidades? Levante a mão. Sim. OK. Vocês todos sabem o que
+
+é uma capacidade? Quem não sabe? OK. Quase a sala inteira. OK. Então,
+
+a ideia de usar capabilities é em vez de usar scopes, sabe, tipo, scope é algo muito importante. Por exemplo, temos o escopo de leitura. Então, o que isso significa? Não é nada muito específico. A outra capacidade é o que pode ser feito, mas é mais voltada para a redução de limite. Assim, posso
+
+determinar com precisão o que um agente de ação pode fazer. Então a ideia é voltar ao exemplo que dei no início. Digamos que você converse com a IA no chat e diga: "Ok, me mostre meus e-mails da última semana." Então o agente tem a intenção de fazer algo, certo? Tem que haver uma maneira de essa intenção ser mapeada para uma ferramenta, ou talvez várias ferramentas.
+
+Então, essa é mais ou menos a ideia. As ferramentas serão como capacidades e uma intenção será associada a elas. É isso que estamos resolvendo com a capacidade de descoberta. Se você ler o protocolo que estamos propondo, ou talvez o leia mais tarde, verá nossa ideia de um ponto de extremidade de configuração asiático bem conhecido. Se você entende um pouco sobre identidade, você se lembra do OIDC, certo?
+
+A ideia é que uma nação tenha um local público onde as pessoas saibam como interagir com um serviço, como por exemplo, o tipo de criptografia, etc. Será algo assim, e também um lugar para listar as funcionalidades e outras informações. Mas o que aconteceu, por exemplo, em um mundo como o de hoje, em que ainda espero que no futuro adotemos isso, mas, enquanto isso, todos os serviços ainda funcionam apenas com O? Então, como fazemos isso enquanto isso? O que precisamos para que os agentes saibam o que podem usar de cada serviço? Vamos supor que seja o Gmail.
+
+Podemos construir algo como um diretório. Então a ideia é... ter algo que eu vou ver aqui. Então, digamos que a
+
+maioria de vocês esteja familiarizada com a especificação OpenAPI. Sim. OK. Portanto, a maioria dos serviços comuns que usamos implementam APIs abertas. Assim, nós, como desenvolvedores ou engenheiros, temos uma espécie de espaço onde podemos dizer: "Ok, o que este serviço pode fazer." A ideia é
+
+usar isso e converter as duas funcionalidades. Então, desde o início até cada serviço, falamos. Então, digamos, por exemplo, vocês usam... não sei,
+
+me digam um serviço que vocês usam... ah, OpenAI...
+
+ok, o Gmail, nós temos lá, mas digamos, por exemplo, vamos ver se funciona com o OpenAI OpenAPIJSON e às vezes eles têm o público... eles têm o público, mas precisamos de um JSON...
+
+Hum, não estou vendo. Abertura da API. Ok, eu sei. Acho que é este . Não. Bem, sabe de uma coisa? Isso estava
+
+errado. Noção. Não tem um realmente bom. Eu queria usar outra ideia de vocês, mas essa é mais acessível. Então, aqui você vê que, por exemplo, nem todos os serviços têm o protocolo OpenAPI JSON. O que fazemos com o
+
+protocolo é traduzir isso: "
+
+Ah, eu já o registrei." Então, vou mostrar para vocês. Sim . Onde fica esse? Desculpe.
+
+Não vejo isso aqui. OK. Vai ficar algo parecido com isto. Isso é como um exemplo, mas é praticamente a mesma coisa. Assim, você terá acesso a todas as funcionalidades dos pontos de extremidade.
+
+Às vezes você vê algo como "excluir novamente". Portanto, seria ideal abordar essa questão com uma espécie de middleware. Sim. Ah, desculpem, pessoal. Obrigado por me avisar . E
+
+ok, aqui está melhor. Ah, obrigada. Desculpem, pessoal. OK. A ideia é mostrar como traduzir os endpoints em funcionalidades. Então,
+
+como ainda estamos nessa situação, é simplesmente porque ainda não temos muitos serviços, ou melhor, nenhum serviço de implementação, mas a ideia é que, enquanto isso, tenhamos algo que traduza isso. Então, o que isso significa? Significa algo como "deixe-me verificar". Significa que você terá algo, por exemplo, você tem ali no agente do protocolo, você vê, você tem um diretório, este diretório, nós temos, por exemplo, o do Gmail, que fizemos da mesma forma. Como você pode ver, você tem, por exemplo, uma lista com 20 funcionalidades.
+
+Então a ideia é aproveitar o que o serviço pode fazer, o que ele expõe, talvez por meio de uma interface aberta, ou talvez você mesmo faça isso, porque, por exemplo, talvez você queira automatizar um fluxo de trabalho. Então a ideia é listar tudo aqui. Assim, o diretório funcionará como uma lista telefônica para o agente. Você está me seguindo? Sim .
+
+O quê? Desculpe. Sim. Quer dizer, é um bom ponto. Você ouviu falar? Você o ouviu? Como grãos finos
+
+. OK. Então, a ideia é sim, em certo sentido, ter o maior escopo possível, mas ainda assim descobrir como funciona, por exemplo, cunhar um token para o usuário. Desejamos obter um token para o agente. Portanto, o que estamos mudando é o princípio. Agora
+
+queremos que os agentes sejam atores principais. Mas é uma coisa muito boa. É por isso que nos inspiramos nisso. Acho que é uma das melhores coisas que podemos fazer. Ok, ótimo.
+
+Então, voltando às funcionalidades, a ideia é o que eu acabei de dizer: ter esse escopo, uma vez que você tenha as leituras, ou talvez apenas os dados obtidos, excluídos ou publicados, tudo fica bem claro, então você pode decidir se tiver alguma dúvida. Sim. Sim
+
+. Sim. Isso é realmente péssimo. A ideia é que você pode fazer isso manualmente. Você pode declarar tudo no diretório, para que o agente saiba como proceder no futuro. É algo menos comum.
+
+Mas sim, isso poderia acontecer. Mas a ideia é que, enquanto isso, façamos isso até que os serviços implementem essas sessões. Mas sim, é uma boa pergunta. [bufa] Hum, ok, então, lembram dos nossos problemas, né? Então, agora estamos tentando encontrar uma solução para que os agentes saibam o que fazer com o diretório.
+
+Precisamos de uma maneira de autorizá-los por meio das capacidades e, como dissemos, seria uma boa ideia obter a identidade deles, certo? Então, o que fizemos foi dar aos agentes uma chave privada, tipo uma chave privada famosa. Assim, cada agente terá o seu próprio, que será associado à identidade. Então, nesse sentido, porque cada agente tem sua própria identidade. Agora, se eu perceber que você quer que eu coloque isso no modo claro também.
+
+O que você disse antes? Certo, vamos voltar a isso . Isso é melhor. Ótimo. Aumente o zoom. Ok,
+
+aí está. Agora que o agente terá acesso à sua própria chave privada, ele poderá assinar tokens, terá seus próprios tokens com limite de uso e tudo estará criptografado com a chave privada. Então, o que isso significa é que, de agora em diante, em vez de um serviço, digamos, o Gmail, ver que um usuário interagiu com o serviço, podemos ter um registro que nos permite dizer: "Ok, este agente está fazendo algo em meu nome, que está conectado ao usuário", mas na verdade é, por exemplo, um agente do Cursor, um agente da nuvem ou um agente de qualquer outra plataforma. Portanto, estamos mudando o paradigma. Deixamos de ver o agente como alguém que se esconde atrás do usuário e passamos a vê-lo como um agente principal em ação. Então, para mim, foi
+
+realmente emocionante. Então, você tem alguma preocupação em relação a essas questões de chave privada, chave pública e política? Sim.
+
+Exatamente. Que lindo, não é? Você pode dizer: "Ah, isso não é o que eu deveria estar fazendo, e eu vou lá e revogo." Então, é legal. E talvez você possa pensar algo como, ok, eu revogo, mas o token de acesso ainda está lá. Então,
+
+o que você pode fazer é algo como excluir usando o GDI. Então, tchau. Sim.
+
+Hum. O token é sempre o mesmo, os agentes são sempre os mesmos, eles sempre têm um usuário para o qual estão reportando. Eles nunca se desapegam. Assim, o agente se comporta sempre como um usuário. Sim .
+
+Sim. Sim. Exatamente. Você tem todas as informações, o agente e também o host. Estamos introduzindo uma novidade chamada host, que é o local onde você cria o agente.
+
+Você também pode excluir o host, dizendo que ele não está autorizado. Você pode ver o host, o ID do agente, o usuário, tudo. Ótimo, mais perguntas? Não se acanhe, estamos aqui para isso. Sim.
+
+Você pode falar um pouco mais alto?
+
+Sim, essa é uma ótima pergunta. Hum, na verdade, é mais voltado para o mercado corporativo, certo? Como fizemos isso em fevereiro, as coisas mudaram muito até agora. Por exemplo, os asiáticos não são tão efêmeros assim. Talvez você tenha uma paixão eterna por asiáticos, certo? Ou talvez você tenha dois
+
+asiáticos, ou talvez você tenha uma empresa com design asiático e eles tenham suas próprias políticas. Estamos trabalhando nisso em uma nova versão e também estamos abordando essa questão. Porque é algo bastante importante de se abordar. Sim, eu ia dizer isso no final, mas sim, estamos prestes a lançar uma nova versão preliminar e, se você tiver, este é um projeto de código aberto. É um projeto que todos nós queremos que seja nosso . Então, se você tiver algumas ideias, como
+
+essa, por exemplo, é muito bom. Assim, podemos melhorar, o que é bom para nós e bom para todos. E eu não quero que isso seja apenas para empresas, mas para todos nós que usamos IA, para que sejamos seguros. Muito obrigado. OK. Então, estávamos apenas
+
+discutindo a transição da versão 1 para a versão 2. Ótimo. Portanto, três camadas e um protocolo. Por que dizemos isso? Porque se você acessar o site e fizer uma busca, verá que publicamos uma primeira versão, como se fosse um rascunho ou um plugin antigo dentro de um rascunho. A ideia é que você possa usar isso,
+
+experimentar e ver o que consegue criar . Então, no plug-in do agente, você pode usá-lo no lado do servidor, para que um servidor possa verificar um agente, emitir permissões ou impor qualquer restrição que você já esteja utilizando. Além disso, no lado do SDK, nós o fornecemos com um MCP, para que você possa conectá-lo à sua nuvem para testá-lo. Você pode conectá-lo ao seu curso ou ao que estiver usando com o MCPS. A outra camada é o diretório, que funciona como uma lista telefônica, onde a intenção corresponde à ação.
+
+Assim, a intenção será corresponder às capacidades. Então, a ideia é que possamos ver isso em ação. Então, se você quiser, pode acessar o link que compartilhei no código QR. Vamos para a página. Certo, você verá um diretório lá.
+
+Todos vocês encontraram o botão de diretório? Você entrará nesta página e verá um botão de conexão. Então você precisa fazer login primeiro, com certeza. E você verá uma conexão e, em seguida, verá o MCP. Assim, você pode conectar isso, por exemplo, à nuvem. Eu tenho aqui. Queria
+
+mostrar um pouco para vocês sobre o que estávamos falando. Então, digamos que eu diga que vou pedir endereços de e-mail. Ok, acabei de fazer vários e-mails de demonstração, mas vou mostrá-los para vocês para não expor informações pessoais. Mas, por exemplo, eu tenho meu NCP conectado. Então você verá algo como isto: conectores personalizáveis. Aqui você vê a
+
+Ásia D. Você verá algo parecido com isto. Então você pode aprovar, reprovar, sempre negar apenas o Asian D. hum MCP e se for essa a minha ideia, é que você experimente apenas com o MTP do Asian D. Assim, o agente não terá acesso a outras ferramentas. Então,
+
+o principal é ver como interagem e como adquirem identidade. Nossa ideia principal é que, ao usar este MCP, o agente terá uma identidade, solicitaremos suas capacidades e tentaremos executá-las, e você verá os registros e tudo mais durante a execução. OK. Então vejamos, por exemplo, hum, ei, traga-me meu último e-mail. Ah, desculpe,
+
+vai usar os conectores H&L. Você consegue ver que é pequeno demais? Tudo bem. OK. OK. Como você pode ver, ele está usando o diretório porque
+
+o NCP está usando o diretório para ver, a partir da minha intenção, por exemplo, me trazer meu último e-mail, quais recursos estão disponíveis e ele está pedindo aprovação. Estamos usando aqui o dispositivo uh fluxo de dispositivo. Você conhece o fluxo do dispositivo? Você está familiarizado? É exatamente como conectar um dispositivo. Portanto, estamos agindo
+
+como se o agente fosse outro dispositivo. Então, como você pode ver, o agente chamado "leitor de e-mail" é o padrão. Você pode alterar isso mais tarde, se quiser. Está me pedindo para ler pelo menos meus e-mails. Vamos aprovar.
+
+E vou mostrar isso para vocês mais tarde. Então a ideia aqui é que o agente se conectará, obteremos a identidade e ele terá o último e-mail. OK. OK. Temos um e-mail interessante. Então sabemos que os
+
+agentes conseguem ler e-mails. Essa não é a demonstração. A demonstração mostra o que acontece. Então, lembre-se de que no início dissemos que, se fornecêssemos a identidade, poderíamos ter os registros. Vamos ver o que o agente fez. Então eu sei que
+
+tenho um agente ativo. Existe um leitor de e-mail que possui este ID de agente. Ele está em um dispositivo local. Ele possui esses recursos e também posso ver aqui este agente com este ID de usuário. Ok, vejo que o agente aqui é apenas um leitor de e-mails e obteve esses resultados.
+
+Então, na verdade, estou investigando o que o agente fez, certo? Então, digamos que eu queira que o agente, sei lá, envie um e-mail por padrão. O que estamos propondo é que todos os hosts, como por exemplo o clo, tenham capacidade de leitura por padrão, assim não bagunçaria sua caixa de entrada, certo? Então vamos ver...
+
+vamos enviar um e-mail. Quem tem um e-mail bem curto que eu posso colocar ali? Olá, sério? Mas não, mas um de verdade [risos] que tem um e-mail bom. Se não, posso colocar o meu, mas se você quiser mostrar, tudo bem, então vou colocar o meu. Veja,
+
+eu disse para mim mesmo: " Vou usar 'Olá, mundo!'". Achei seu e-mail "Olá, mundo!" muito legal. [risos] Ok, então a ideia aqui é que, como você acabou de ver, o agente tem a capacidade de ler.
+
+Idealmente, o e-mail nunca poderá ser enviado sem a minha autorização. Por exemplo, podemos ver aqui, certo? As únicas funcionalidades que ele possui são duas dessas duas. Então, tentará ver aqui. Também podemos usar essa extensão para observar melhor o que a ação estava fazendo.
+
+OK. OK. Autorizar a atualização com verificação de segurança. OK. Então, veja, o agente agora está usando CA, como uma autorização de canal reverso do cliente, em vez de apenas me mostrar um redirecionamento e um dispositivo que eu posso aprovar a partir daqui. Então, para a demonstração, eu
+
+só vou aprovar e agora que o agente aprovou. Eu aprovo. Na verdade, será o e-mail que será enviado. Então, você verá nas funcionalidades aqui que agora você pode enviar e-mails e, na verdade, podemos ver aqui que ele simplesmente enviou o e-mail, certo? Então, o que queremos testar? Vamos
+
+ver se você vê... não, não... ok, aqui está o
+
+e-mail. Ok, então o que queremos testar agora? Digamos que algo deu errado com o agente. Alguém estava tentando acessar meu Gmail, tentando proteger... seja lá o que for. Então, a
+
+ideia de tudo isso é ter a confiabilidade que acabamos de ver nos registros, certo? E se quisermos revogá-la? Vamos tentar, por exemplo, ler meus e-mails. Então, primeiro vamos revogar para que não possa ver nada. Ah, perdi a página aqui. [bufa] Então, em
+
+agentes, podemos revogar o agente. Então, tchau . E agora podemos dizer: leia o último e-mail que você acabou de enviar. OK.
+
+Você vê que a conexão foi revogada. E agora, o que aconteceu? Por que não consegue ler mesmo assim? O que fizemos foi que ele criou outra identidade de agente porque eu revoguei a anterior, mas isso está acontecendo porque obter a lista é uma funcionalidade padrão em nosso host, pois consideramos isso seguro. E se agora eu quisesse, tipo, mandar um e-mail dizendo olá para mim mesmo?
+
+Fará o mesmo. Ele irá solicitar isso. Na verdade, está funcionando corretamente. Eu posso revogar isso. Consigo ver os registros.
+
+Posso dizer o que o agente pode ou não fazer. Você não acha que é muito bom ter esse tipo de fluxo de trabalho? É mais controlado. Sim . Você tem alguma dúvida sobre isso?
+
+Algo que lhe venha à mente? Sim . Sim. Sim. Sim.
+
+Você pode incluir nas capacidades qualquer restrição com a qual queira ter cuidado. Então, é bom. Sim
+
+. Sim. Sim. Sim, exatamente. Você pode dizer tempo máximo máximo de execução. Você pode dizer
+
+as horas. Você pode dizer tudo. Sim, é verdade. Obrigado.
+
+Hum.
+
+Bem, você pode ter os dois. Nossa ideia é garantir segurança sem sermos inconvenientes. Imagine toda vez que você tivesse que ler alguma coisa. Ah, eu tinha que aprovar todas as vezes. Você vai nos odiar, sabia? Então a ideia é como um host, por
+
+exemplo, ou inclus... desculpe, falei em espanhol, inclus... ou talvez um host
+
+específico que você queira, por exemplo, digamos que o usuário "co" possa fazer tudo, e então usuários recém-chegados tenham apenas esse acesso específico. Você pode fazer isso por meio de políticas de usuário, como eu estava falando, ou por meio de políticas de host. Então você tem que estar no meio termo, eu acho, uma boa experiência do usuário, mas também suficientemente seguro, mas no final das contas, sim, é o servidor, sim, sim, porque o agente, o que estamos fazendo, como eu disse, você pode testar, com a parte do servidor, é ele que vai verificar o agente, assim como os usuários vão verificar as políticas, vamos verificar se tem acesso ou não, então sim, verificando o tempo todo, ótimo. Então, a ideia era justamente mostrar isso para vocês. Ah, eu estava tentando pedir para enviarem. Hum, preciso confirmar. Como você pode ver,
+
+aqui está o pedido. Eu não aceitei. Então digamos que eu negue. Vai ser exatamente igual. Acabei de fazer isso.
+
+Idealmente, ele não faria isso. Veja, aquilo é vermelho. OK. Então está funcionando bem. Então ele quer que eu permita e eu vou permitir. Então, você pode me
+
+dizer qual é o meu status como agente? Assim, você pode ter todo o tempo necessário para rastrear o que o agente está fazendo, se a autorização foi revogada ou não. Sim .
+
+Ah, você está dizendo que, por exemplo, se você tiver uma habilidade que diga para usar o servidor MCP de forma diferente diretamente? Sim . Bem, na verdade, o que estamos fazendo é fornecer um exemplo para você ver como o protocolo funciona, como uma demonstração. Mas você pode, por exemplo, restringir o agente apenas às ferramentas MCP. Nesse caso, foi isso que fizemos com o plug-in.
+
+Mas sim, para o nosso próximo protocolo, haverá mais restrições, de forma que o agente só possa solicitar serviços por meio do protocolo de saída do agente. É uma ótima pergunta. Sim . O quê? Desculpe.
+
+O proxy aqui.
+
+Sim. Você tem isso no diretório. Agora você pode usá-lo, por exemplo, ao fazer login e conectar vários serviços no diretório. Assim, quando o agente se conecta ao MCP, ele pode conhecer todas as funcionalidades que possui . Assim, dentro do MC, no proxy, você pode ver, por exemplo, o Gmail, todas as funcionalidades que o agente pode executar. Você pode ver os agentes realizando
+
+tarefas, os registros e tudo mais. Assim, cada registro é como se fosse cortado pelo provedor. OK. OK. E sobre isso, o nosso proxy é, na verdade, apenas um diretório. Não é um
+
+proxy de verdade para nós, pois usar um proxy é uma péssima ideia. Não é escalável porque o proxy utiliza dados. Nesse caso, é como um diretório que corresponde à intenção com base nas capacidades. OK. Então,
+
+voltando ao assunto, se você quiser experimentar, pode usar o plugin ou o SDK. É muito bom porque começamos pelos problemas e agora já temos as soluções, como a descoberta, autorização e identidade. Bem, é mais ou menos isso que vou mostrar para vocês, pessoal do MCP, como conectar. O lado do SDK com o MCP é responsável por criar as chaves e atribuí-las aos agentes, enquanto o lado do servidor verifica, autoriza e concede as permissões autorizadas pelo usuário, e assim por diante. Para mim, o mais interessante de tudo é que precisamos parar de dar credenciais aos nossos agentes; precisamos dar-lhes autoridade. Será que devemos parar de
+
+dizer "finja ser eu" e começar a dizer "aja em meu nome dentro destes limites"? Estamos quase no fim. Se você tiver alguma dúvida, algo que lhe vier à mente ou que seja um acréscimo ao que estou dizendo. Não sei se você já pensou nisso. Você acha que seria uma boa ideia implementarmos algo assim? Não estou
+
+afirmando isso, mas talvez. Sim. OK. A ideia é que isto esteja aberto a todos. Então, eu adoraria que vocês se juntassem a nós no Discord, ou podem me mandar uma mensagem, um e-mail, participar do canal e ser ativos, porque se melhorarmos isso para todos, será bom para todos nós. Sim.
+
+Sim.
+
+Sim. Sim, por favor. E, por favor, faça isso. Sim, por favor. Claro.
+
+Não, é totalmente diagnóstico. Sim, exatamente. Essa é a ideia.
+
+Sim. Sim, isso está na nossa lista B2 e é o nosso foco principal agora. Sim, é uma ótima ideia. Ótimo. Mais alguém? Sim.
+
+Não, é diferente. Sim . Não, nós também... quero dizer, nós temos como
+
+inspiração tudo o que existe por aí, mas não é a mesma coisa. É diferente. Sim. Porque eles ainda não estão tratando o antigo como um princípio. Estamos tratando as nações como um princípio.
+
+Eles têm sua própria identidade. Então, nesse sentido, é diferente.
+
+Não sei. Não temos essa informação. Sim.
+
+Desculpe. O que? Oh sim. Veja, está tudo conectado por causa da descoberta, mas continua sendo a mesma coisa. Para mim, a parte mais importante é que os princípios B asiáticos têm sua própria identidade. O gateway de IA ainda não tem
+
+isso, espero que tenha em breve. Mas a ideia principal é ter rastreabilidade durante todo o ciclo de vida e poder localizar e encontrar um agente, se você quiser, para que você só tenha acesso à identidade de cada agente. E o gateway de IA não está fornecendo isso. Claro. Tem mais alguma pergunta?
+
+OK. Bem, você pode me contatar por e-mail, pois esse é o meu endereço. Se quiser contribuir, seria ótimo. Ah, esse é o meu link de entrada e o canal do Discord de todo o protocolo asiático. OK. Muito obrigado.
+
+Foi um bom dia. [aplausos]
+
+[música]

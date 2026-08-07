@@ -1,0 +1,118 @@
+---
+video_title: "Verifiable Environments for AI in Biology — Kenny Workman, LatchBio"
+video_id: 3ZMUiFaQ3qg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=3ZMUiFaQ3qg
+video_date: 2026-07-31T20:00:35+00:00
+video_description: |
+  A single spatial biology run can yield two to six terabytes of data, far more than a scientist can eyeball, and Kenny Workman argues that this is the raw material for teaching AI to actually do science. LatchBio, five years deep in pharma, treats experimental biology as a verifiable substrate: lay a chunk of a tumor over a sequencing surface and you get a giant matrix of numbers whose analysis has a right answer, which is exactly what you need to benchmark and improve a model. They adapted coding models into biology tools and built benchmarks like sequencing based spatial analysis, and found what everyone in post training now knows, that frontier models cannot yet be trusted with this and that measurement is what drives progress.
+  
+  The reason biology is hard is that it is messy and the field rarely agrees on the answer, so much of the work is designing tasks where reasoning, not memorized knowledge, is what gets rewarded. Workman walks through trajectory data from real scientists, tasks like finding the part of a tumor that matters, and why an ambiguous prompt quietly makes a benchmark uninformative. He also gets candid about biosecurity, where model refusals are their own evaluation problem and red team tasks have to be handled carefully, and frames the whole effort as a flywheel: better benchmarks, better tools, more of the program landscape indexed, repeat.
+  
+  Speaker info:
+  - https://x.com/kenbwork
+  - https://www.linkedin.com/in/kennyworkman
+  - https://kenbw.com/
+  
+  Timestamps:
+  0:00 - Terabytes of experimental data
+  1:41 - Decomposing a new paper into tasks
+  2:44 - A verifiable substrate for science
+  3:23 - Five years in pharma
+  4:13 - Coding models as biology tools
+  5:40 - Why frontier models can't be trusted yet
+  6:44 - Sequencing based spatial analysis
+  9:16 - Reasoning, not memorized knowledge
+  10:07 - Trajectory data from real scientists
+  12:14 - Why biology tasks are messy
+  15:36 - Biosecurity and refusals
+---
+Agradeço aos organizadores por me convidarem. Sou um dos cofundadores e CTO da Latch. Somos basicamente um laboratório vertical de IA para benchmarking e engenharia de agentes. Espero motivar e explicar exatamente o que isso significa hoje. Começando diretamente pela motivação dos agentes na área da biologia em geral.
+
+Muitas pessoas na minha área estão familiarizadas com essa curva, mas basicamente ela representa a curva log-linear de dados gerados ao longo dos anos na biologia. E a razão pela qual estou mencionando isso é que se tornará diretamente importante para os tipos de coisas que queremos fazer na engenharia. Essa curva é impulsionada por um número muito pequeno de classes experimentais. Uma delas é chamada biologia de célula única. É aqui que dividimos as células, as separamos e medimos seu RNA.
+
+A segunda é a biologia espacial, que será o foco da próxima parte da palestra. É o mesmo que célula única, mas você obtém resolução espacial. Você pode observar como o RNA se distribui geometricamente sobre um tecido. E a terceira coisa é a proteômica. É uma categoria ampla que engloba diferentes técnicas. Eles medem proteínas.
+
+Menos abundante na ordenação. Embora gere um volume de dados menor em comparação com os outros dois, ainda é importante. Vocês são técnicos e eu sempre acho que é bom fundamentar as coisas de alguma forma quantitativamente, mas esses são números realmente grandes e os dados experimentais dessas técnicas estão crescendo muito rapidamente. Quase maior do que qualquer outro domínio da ciência, exceto os aceleradores de partículas . Experimentos com células individuais podem gerar de dois a seis terabytes por execução. As
+
+execuções espaciais podem gerar sete terabytes de dados. Proteômica: algumas centenas de gigabytes. E a única razão pela qual menciono isso é para dizer que,
+
+em muitos casos, o resultado de um único experimento pode exceder a quantidade de dados que um cientista consegue armazenar com segurança em um laptop comum. E as leis que regem o funcionamento da captura molecular apontam para ganhos rápidos nessa capacidade de processamento nos próximos anos. Uma coisa que gosto de fazer, quando leio um artigo novo, é decompô-lo e alinhá-lo a essa estrutura, porque será importante daqui a pouco. A pesquisa em biologia moderna centra-se nesses experimentos. Basicamente, você escolhe um modelo biológico, não o tipo de modelo ao qual vocês estão acostumados. Você gera dados
+
+a partir desse modelo, processa os dados, pensa criativamente sobre os resultados no contexto da literatura anterior e formula uma afirmação. Quase todos os artigos sobre experimentos modernos que você vê publicados seguem essa estrutura flexível, com muitas nuances. Bem, resumindo, o que eu quis dizer é que eles se tornaram uma espécie de experimento de panning. Você está procurando um sinal usando medições em meio a um mar de ruído. Então, isso está nos levando à afirmação de que, assim como o código e a análise de dados simplificada, eles servem de base para a biologia genética. Isso
+
+se torna um substrato executável que podemos usar para treinar coisas. Isso introduz uma forma natural de avaliar e aumentar a capacidade. Bem, eu já escrevi bastante sobre isso neste blog. Link aqui. Essa afirmação é muito mais complexa, então eu não a aceitaria como verdade absoluta, mas é algo que vale a pena investigar. A única conclusão possível
+
+disso é que, assim como o código forneceu uma base verificável para tarefas complexas de software que não são inerentemente verificáveis, a análise de dados pode fazer o mesmo na biologia. Então, como começamos? Inicialmente, éramos um fornecedor de ferramentas de dados para empresas de biotecnologia e farmacêuticas. Começamos há 5 anos em Berkeley, no dia 25. Eu tinha 20 anos quando começamos. Armazenávamos,
+
+transformávamos e arquivávamos dados de grandes experimentos como um serviço. Vamos tentar criar produtos, exploramos muitas coisas. Nos últimos dois anos, começamos a nos afastar da biotecnologia e da indústria farmacêutica e a nos aproximar das pessoas que constroem esses kits de que eu estava falando. Empacotar o software em versões personalizadas que eles mesmos forneciam aos cientistas. Ajude-os a analisar os dados. E então,
+
+com o tempo, surgiu essa forte interação com os agentes, usando os componentes de infraestrutura como ferramentas e o contexto de loop com o qual vocês estão familiarizados. Exceto em nosso domínio, as ferramentas podem levar dias ou semanas. Estou falando sério. O que começou a acontecer por volta do verão passado foi que os protótipos dos agentes começaram a funcionar. Então, pegamos modelos de codificação que, até onde sabíamos na época, não haviam sido seriamente pós-treinados em nenhuma tarefa de biologia até então. E começamos a
+
+construir produtos que se parecem muito com todos os outros produtos para agentes. Eles possuem uma interface de chat para que você possa fazer perguntas, além de criarem painéis de controle e enviarem operações para computação externa. O tipo de coisa que esse agente faria é pegar dados de arquivos grandes dos tipos de experimentos que mencionei anteriormente. Por exemplo, uma biópsia de tecido por secção transversal de um câncer com uma medição espacial. E então o cientista simplesmente itera sobre isso para chegar à resposta de alguma pergunta que ele tem.
+
+Sabe, talvez entre uma parte maligna e uma parte não maligna do tecido, que tipo de genes estão sendo superexpressos? Mas o que foi fascinante é que, embora estivesse muito ruim, mostrou os primeiros sinais de que poderia funcionar. E, naquele momento, ficou claro para nós que a biologia agentiva poderia se parecer muito com um código. Na verdade, peguei esse slide do anúncio científico do Claude, da Anthropic, ontem, mas, sabe, você tinha esse engenheiro meio desajeitado que foi melhorando e, à medida que sua capacidade aumentava, você podia distribuir o trabalho para equipes deles que trabalhavam juntos. O mesmo padrão provavelmente surgirá na ciência.
+
+E surgirão produtos e ferramentas para orquestrar o trabalho e abstraí-lo, de modo que equipes de cientistas com autonomia possam assumir essa capacidade. Mas precisávamos de um pós-treinamento focado. Bem, porque naquela época, e ainda hoje, não se podia confiar que os modelos de fronteira realizassem trabalhos reais. Eles estão com uma lacuna entre o conhecimento de biologia e a capacidade de escrever código. E isso é exatamente extrair conhecimento científico de dados do mundo real.
+
+Diferentemente do código, que é um componente essencial deste trabalho, ele também envolve análise de dados e raciocínio de domínio, raciocínio científico. Pensamos que a biologia espacial seria um bom ponto de partida, então começamos a construir agentes. Este é um campo tecnicamente inexplorado. Tínhamos muitos clientes já cadastrados. É também um belo exemplo de como a mensuração impulsiona o progresso. É possível
+
+realmente observar fenômenos biológicos em ação . Você pode observar um embrião de rato em desenvolvimento . E tivemos que entender a fundo como os dados eram coletados e analisados ​​para criar bons agentes. Bem, não vou entrar em detalhes, mas criei essa árvore com diferentes tecnologias de captura em biologia espacial para destacar a diversidade de possibilidades existentes. Elas abrangem, de fato, avanços em química, óptica, semicondutores e física.
+
+Cada ramo é resultado de décadas de trabalho acumulado para descobrir como medir um determinado tipo de molécula. Como exemplo específico, uma técnica com a qual trabalhamos é chamada de sequenciamento espacial de bases, e consiste em pegar uma lâmina com pequenas esferas contendo aglomerados de DNA que se fundem ao RNA dentro de uma seção de tecido. Assim, os biólogos podem, por exemplo, colocar um pedaço de tumor sobre a lâmina, e o sistema capturará todo o RNA presente, permitindo determinar com resolução geométrica precisa a localização exata do RNA. É muito legal. Os dados, quando obtidos, acabam parecendo uma grande matriz de números em uma imagem grande e com alto conteúdo . É preciso seguir uma
+
+sequência de etapas para chegar ao resultado final desejado. Essas etapas são altamente variáveis, especialmente dependendo do tipo de tecnologia, tecido e contexto da doença. Não há muito consenso na área para cada etapa, então realmente precisávamos de um parâmetro para entender se os agentes que estávamos desenvolvendo estavam realizando trabalho científico. Os parâmetros de referência existentes que vimos na época não mediam as tarefas relevantes para essa categoria de trabalho. Eles geralmente mediam as coisas em contextos de perguntas e respostas, como se estivessem fazendo algo de forma acadêmica, ou não estavam suficientemente focados no tipo de experimento. Esta é uma
+
+captura de tela real da placa de modelo da Anthropic no momento em que criamos este benchmark. Então, nós construímos um. Chama-se banco espacial. Em dezembro passado, houve 146 problemas. Eles abrangiam os diferentes kits sobre os quais falei ou tentei falar.
+
+E elas abrangiam todas aquelas diferentes tarefas de que falei também. Então, o que descobrimos naquela época, e que ainda é verdade em certa medida hoje, é que a classificação desses resultados finais em biologia é muito escassa porque os modelos são bastante ruins. Portanto, é preciso dividir as coisas em partes gerenciáveis ​​para obter alguma aparência de verificabilidade. E isso é meio que induzido por... bem, por se
+
+ater a esses pequenos componentes, como aquele DAG, aquele DAG de análise. O processo consiste em obter dados em um estado em que eles existiriam imediatamente antes que um cientista ou teórico pudesse trabalhar com eles, e então descobrir qual seria a verdade fundamental nesse contexto. Assim, uma única avaliação se parece com um ou mais nós de dados, novamente como uma matriz de números, uma imagem de alto conteúdo, algo parecido com isso. Uma descrição detalhada de uma tarefa, especificando um objetivo científico, a configuração de um avaliador e, em seguida, um avaliador determinístico, ou seja, uma função em Python. Se vocês repararem, isso se parece muito com o SweetBench. Aproveitamos muitas
+
+das ideias iniciais e tentamos expandi-las ao máximo. A avaliação final fica assim . É muito JSON. E acabamos identificando propriedades que considerávamos adequadas para bons testes biológicos. Um pouco diferente do código, e fomos aprimorando esses conceitos ao longo do tempo, mas eles ainda se mantêm válidos. Eles precisam ser
+
+verificáveis. Você precisa ser capaz de verificar a condição de sucesso com uma função. Nada mudou por lá. Vamos abordar alguns detalhes sobre as rubricas mais tarde, mas isso ainda se aplica. A durabilidade é particularmente importante. A ciência não admite uma
+
+verdade absoluta e inequívoca. Se você for negligente na construção da verdade fundamental da tarefa, um possível caminho de análise válido pode levar à resposta correta, e você falhará incorretamente. Portanto, você precisa garantir que está raciocinando sobre algo que seja de alguma forma invariante em diferentes caminhos de análise. E, obviamente, estamos trabalhando com questões de genética aqui. Você não quer que o modelo responda à pergunta em uma única intervenção.
+
+Você quer que a conclusão exija interação com os dados, e não conhecimento memorizado. Na prática, isso é bastante difícil. Aprendemos muito sobre o que os modelos podiam fazer e quais usar em contextos específicos para essa categoria de trabalho para nossos clientes, e pensamos: "Ei, isso é muito legal. Vamos começar a melhorar e aprender mais sobre esse problema de benchmarking." Assim, passamos a adotar a extensão de longo prazo para verificação humana . Vou
+
+passar por isso bem rapidamente. Portanto, a verificação humana é extremamente importante na ciência. A ciência não reside na verdade fundamental clara. Depois de analisar os dados de trajetória de várias rodadas de atualizações de modelos, por volta de janeiro a março deste ano, percebemos que muitas de nossas suposições estavam bastante equivocadas. E na ausência de uma resposta definitiva, ter um grupo de cientistas avaliando o trabalho uns dos outros acabou sendo a melhor alternativa.
+
+Então, vou analisar uma questão específica para destacar exatamente do que estou falando . Um problema de ambiguidade. Uma tarefa pode pedir a um agente que divida uma lista de genes em dois grupos de atividade, ativação da microglia, inflamação dos oligodendrócitos, assim como categorias biológicas de coisas. Analise as células, encontre oligodendrócitos vizinhos em torno de uma determinada região usando um raio apropriado e calcule a correlação de Spearman em dois momentos distintos. Como você provavelmente já deve ter deduzido, o enunciado original do problema cria uma série de opções em aberto. Como você divide
+
+a lista de genes? Como se contabilizam os genes inflamatórios ? É uma palavra um tanto ambígua. Como normalizar os dados? Hum, o que, o que diabos é um raio apropriado? Como faço para obter a contagem
+
+dentro do raio selecionado? Esses são todos problemas que apontavam para tarefas malfeitas, que só foram reveladas com a verificação humana. Outro problema é que muitas pessoas na bioinformática tradicionalmente usam limiares numéricos para o controle de qualidade. Assim como coisas completamente aleatórias. Uma coisa interessante sobre avaliação, assim como sobre programação, é que ela te força a raciocinar sobre as coisas de forma mais rigorosa do que você faria se estivesse fazendo a coisa por conta própria. Se você tiver que
+
+ensinar uma máquina a fazer isso, você pode acabar escolhendo uma estrutura que seja mais importante ou mais durável do que aquela que você usaria se estivesse fazendo tudo sozinho. Então, descobrimos que muitos desses limites numéricos eram assim. Não vou entrar nesse assunto. Após duas rodadas de tentativas humanas, produzimos um subconjunto verificado do conjunto de dados de referência. Nós vamos publicar isso. Foi divertido. E
+
+também tentamos aumentar o horizonte temporal. Portanto, quero deixar claro que a fronteira do conhecimento em biologia ainda não chegou lá. Parece que os laboratórios estão começando a acompanhar o treinamento pós-curso, mas nós queremos nos manter à frente. Então, nós criamos um parâmetro de referência que achávamos que recapitularia um trabalho realmente difícil e prático. Então, construímos um espaço muito mais comprido. As
+
+tarefas biológicas reais são complicadas. Eles utilizam muitos tipos diferentes de experimentos. Eles utilizam todo o fluxo de trabalho, não apenas pequenos trechos. São tarefas em que cada etapa é interpretada em relação ao projeto experimental ou contextualizada com alguma literatura anterior e com o objetivo original do que você está fazendo. Então, nós criamos um banco dessas tarefas que realmente tentam simular as seções de resultados de artigos inteiros ou os tipos de decisões que você toma na prática na indústria para decidir se aprova ou não um programa de medicamentos.
+
+Essas tarefas levaram cerca de uma semana para serem concluídas por um grupo de três pessoas . Nos ensinou muita coisa. Um exemplo seria: um agente pode reconstruir um nicho metastático semelhante em um tumor? Se você tiver uma biópsia do tumor e várias biópsias de metástases, de onde o tumor se espalhou pelo corpo, será que é possível usar tanto a genética quanto o mRNA das lesões metastáticas e do tumor para encontrar a parte do tumor que inicialmente deu origem ao crescimento metastático e permitiu sua disseminação? A partir disso, você pode descobrir coisas como: "Ei, quais partes do tumor são mais geneticamente compatíveis? Quais delas realmente
+
+causam problemas?" E desenvolver medicamentos específicos para combatê- los desde o início. Por exemplo, esta é uma das avaliações de referência no conjunto de longo prazo. Nenhum dos modelos acerta nesse ponto. Mas eles estão chegando lá . Como se pode imaginar com essas
+
+extensões de longo prazo, a recompensa verificável no final é, de certa forma, pouco informativa. Então, começamos a trabalhar com rubricas, a construir esses pontos de estrangulamento. Se você puder imaginar que o conjunto de caminhos de análise está induzindo algum tipo de árvore. Existem nós que são invariantes em relação a diferentes caminhos, e você pode usá- los para construir rubricas, utilizando o conhecimento de como a tarefa funciona. Uh, nós estávamos brincando com isso.
+
+Percebemos que eles estão associados a resultados verificáveis, o que é empolgante, mas a correlação numérica é fraca, o que nos impede de ter total confiança neles para aplicações como aprendizado por reforço ou avaliação comparativa. Ainda há muito, muito trabalho a fazer por aqui. Nós ainda acreditamos firmemente que a estrutura de verificabilidade é o que vai sustentar a inteligência por mais um tempo. E assim, ultimamente, temos expandido bastante esse foco espacial inicial. É muito legal ver os laboratórios de vanguarda e a comunidade adotando esses parâmetros de forma orgânica. Bem,
+
+nós tínhamos essa posição interessante de , sabe, construir e lançar produtos logo no início e meio que brincar com os agentes de codificação. Então, acho que tivemos uma vantagem inicial, mas os parâmetros de referência já estão disponíveis, como os cartões do modelo Antrópico recente, e esta é uma imagem de ontem. Eric estava apenas mostrando os benchmarks no lançamento da sua empresa de ciência em nuvem. Eles não nos contam que isso acontece. Eles simplesmente fazem isso, e você lê sobre isso, e é legal.
+
+Publicamos vários outros artigos além da área espacial, abordando outras classes de ômicas, como outros tipos de experimentos, célula única, epigenômica, RNA, e também o que está acima do DNA, além de extensões de longo prazo dessas áreas. E então começamos a indexar e mensurar o cenário extremamente complexo que é a descoberta de medicamentos. Acabamos de divulgar nosso primeiro parâmetro de referência em farmacologia pré-clínica para pequenas moléculas e, em seguida, estamos analisando sistematicamente partes do panorama do programa, da descoberta ao desenvolvimento e à translação, estratificando-o por tipos terapêuticos e tipos de experimentos. Acabamos de adquirir um prédio comercial na área de biossegurança para formar uma equipe de biossegurança. E então lançamos uma colaboração com a American Wetware e uma empresa de vigilância chamada Aquid.
+
+Um trabalho novo que foi lançado hoje de manhã. Não sei se vocês têm ouvido falar que os sons de baixa resolução são meio ruins nas aulas de biologia ultimamente . Se você fizer perguntas básicas para Fable sobre coisas como mitocôndrias, ele não responderá. É meio estúpido. Então, quero dizer, isso é como um problema de avaliação. Há muito
+
+mais nuances nisso, mas eu uso essa expressão porque as pessoas tendem a reconhecê-la. É onde criamos tarefas rotineiras que simulam o tipo de coisa que um cientista pediria, e também tarefas mais sinistras da equipe vermelha, que supostamente parecem inofensivas, mas têm alguma estrutura que é maliciosa, tipo: "Ei, eu quero clonar um gene em uma bactéria, e estou dizendo que é GFP." É como uma proteína brilhante, mas na realidade é como uma toxina, ou poderia ser usada para iniciar a replicação de um vírus. Descobrimos que tarefas rotineiras como "drastic get drastic" são usadas drasticamente com mais frequência do que as tarefas da equipe vermelha, o que não é bom. Estamos reunindo muitos desses resultados, um recurso essencial, juntamente com todos os pré-prints e muitas avaliações e trajetórias para vocês conferirem. E, na
+
+verdade, eu me saí bem dentro do prazo. Vamos . E é isso. Então, nós somos meio que...
+
+eu nem odeio a palavra "laboratório", mas somos como um laboratório de pesquisa biológica, e fazemos pesquisa e implementação desses agentes. Então, ainda temos muitos clientes. Nós trabalhamos com os fabricantes de kits e usamos isso para definir os tipos de parâmetros de avaliação que utilizamos. Tentamos fazer com que os laboratórios compitam nos testes de desempenho, pois isso torna os modelos melhores para nossos produtos. E tem sido uma experiência bastante gratificante . Estamos crescendo muito e
+
+contratando agressivamente nas áreas de engenharia e ciência. Portanto, se você estiver interessado neste trabalho, por favor, entre em contato comigo depois. Obrigado.
+
+[música]

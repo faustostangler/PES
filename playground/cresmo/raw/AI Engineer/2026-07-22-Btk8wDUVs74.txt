@@ -1,0 +1,108 @@
+---
+video_title: "From Systems of Record to Systems of Context — Omri Bruchim & Tomer Ast, monday.com"
+video_id: Btk8wDUVs74
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Btk8wDUVs74
+video_date: 2026-07-22T23:00:11+00:00
+video_description: |
+  Ask your AI assistant what you should focus on right now and you get a list of disconnected bullets dressed up as a confident paragraph. When Omri Bruchim tried it, Claude told him to go to the gym. The assistant has every board, task, email, and Slack message you have ever touched, and still zero understanding, because the problem was never retrieval. It is that a system of record stores what happened but not what it means. monday.com's answer is to become a system of context.
+  
+  They build that context layer ahead of time from two engines. A slow engine mines weeks of activity into a durable profile of who you are and how you work; a fast engine reads the last few days for what is suddenly urgent and who you are pulled in with. One knows you, the other knows your day, a split that shows up in neuroscience as the hippocampus and neocortex and in data systems as lambda architecture. The context is precomputed and served to their agent, so it degrades gracefully, judges when to speak up, and compounds as every new day and source sharpens the model.
+  
+  Speaker info:
+  - https://x.com/omribruchim
+  - https://www.linkedin.com/in/omribruchim/
+  - https://edginary.io
+  
+  - https://www.linkedin.com/in/tomer-ast/
+  
+  Timestamps:
+  0:00 - From system of record to system of context
+  0:56 - The gym answer: data without understanding
+  2:36 - monday.com, Sidekick, and where work lives
+  4:31 - Three reasons context is hard
+  7:19 - The Monday world model
+  8:15 - The data model and its two engines
+  10:21 - Why the split mirrors the brain and lambda architecture
+  11:14 - How it comes together, and the honest limits
+  13:22 - Answering the question with Sidekick
+---
+[música]
+
+Hum, olá a todos. Uau, estamos muito animados por estarmos aqui. Obrigado por nos receberem . Bem, hoje vamos falar sobre como transformar o monday.com de um sistema de registro para um sistema de contexto. E,
+
+honestamente, o título conta toda a história em apenas uma linha. Durante décadas, desenvolvemos softwares que registram tudo o que aconteceu: cada tarefa, cada documento, cada mensagem, cada atualização de status, tudo inserido em um registro. O que queremos discutir hoje é como dar um passo além. Queremos um software que realmente entenda a conexão entre eles. Então, quero começar com uma pergunta simples que cada um de nós se faz todas as manhãs. Hum, em que devo me
+
+concentrar agora? Parece quase trivial, mas, para ser honesto, se você perguntar ao seu agente sobre Gemini GPT ou mesmo Cloud, provavelmente receberá uma lista de opções sem relação entre si. uma lista de itens semelhantes disfarçada de parágrafo confiante. Mas, mas, na verdade, não está relacionado com o que você está trabalhando. Na verdade, fiz o teste semana passada e o Cloud me pediu para ir à academia. Não sei se é um
+
+elogio ou não, mas foi isso que ele sugeriu. E o que realmente torna tudo tão frustrante é que seu assistente tem todos esses dados. Ele contém todos os quadros, as tarefas, os e-mails, as mensagens do Slack, tudo o que você já tocou, se você conectá-lo. Hum, mas ainda assim não consegue responder à pergunta. Hum, tem todos os dados. Hum, mas não tem a mínima
+
+noção de nada. Bem , esse é o verdadeiro desafio que estamos enfrentando. Bem, este é o ponto central de toda a conversa. O problema nunca foi a falta de dados, mas sim a sua recuperação. O problema é como a falta de compreensão. Bem, são duas
+
+coisas totalmente diferentes e quase todo mundo mistura as duas . Compreensão é a palavra-chave que norteará toda a nossa conversa. Não é contexto, nem memória, nem recuperação, é compreensão. Então, um pouco sobre nós. Meu nome é Tormer. Meu nome é Omri. Isto é Tor. Bem,
+
+nós dois somos gerentes de engenharia na monday.com e estamos trabalhando exatamente no problema sobre o qual vamos falar um pouco. Vamos dar um pouco de contexto sobre nossa situação atual. A monday.com é uma empresa global de software. Nós criamos uma
+
+plataforma de trabalho usada por centenas de milhares de equipes. E a parte que realmente importava para a conversa é que segunda-feira é o dia em que o trabalho acontece. Nós ajudamos as empresas a realizar o trabalho, não apenas a guardar arquivos. Cada projeto, cada tarefa, cada decisão, cada reunião, as anotações, os itens de ação, tudo é registrado no sistema. E a nossa missão sempre foi ajudar as equipes a atingirem seus objetivos de negócios. Seja você um vendedor,
+
+queremos ajudá-lo a criar um agente NSDR que entre em contato com seus clientes potenciais e o ajude a vender o produto. E se você for da área financeira ou de marketing, queremos ajudar vocês com a pesquisa. Então, em cada uma das disciplinas que queremos que vocês ajudem a realizar o trabalho, juntos temos como quatro grandes jogadores na plataforma. Temos um programa complementar chamado "Monday Sidekick", e vamos falar bastante sobre ele hoje. Clima de segunda-feira, perfeito para quem quer criar seu próprio software. Monday Agent:
+
+se você quiser criar seu próprio agente na plataforma, e se preferir um fluxo mais determinístico, temos os fluxos de trabalho do Monday. Mas hoje vamos nos concentrar no Psycidental. O Psycidental é seu assistente pessoal de IA inteligente que entende seu trabalho, pensa e executa junto com você, como um pássaro no seu ombro. Ele te conhece, conhece seu negócio. Ele te ajuda em todos os aspectos do seu trabalho, trabalhando do seu jeito, com a sua linguagem. Ele
+
+te mantém totalmente no controle. Mas, como diz o ditado, criar todos esses tópicos e construir todas essas promessas é realmente difícil. Então, vamos falar sobre por que é difícil, e existem três pontos a serem considerados para isso. Primeiro, imagine um assistente sentado em cima de absolutamente tudo. Você tem suas mensagens do Slack. Você tem todas as
+
+anotações das suas reuniões. É absolutamente tudo, e é lindo e impressionante ao mesmo tempo, porque, do jeito que está, há uma parede de discos por toda parte. Então, por que está sendo tão difícil para eles se conectarem? Existem três razões para isso. Uma delas é algo que chamamos de lacuna do agente.
+
+Seu agente, todo agente, é realmente inteligente e realiza a tarefa quando você sabe o que fazer. Mas às vezes ele se perdia, tentava encontrar o problema. Se eu pedir ao meu agente, tipo, "por favor, me ajude a redigir e responder à reclamação de um cliente", ele acerta em cheio. Ele sabe como fazer isso. Ele leva em consideração o contexto. Eu
+
+gosto de fazer o trabalho, mas quando pergunto a ele em que devo me concentrar primeiro, ele fica adivinhando porque não entende qual é a minha prioridade, quem sou eu. Não importa se você tem memória ou algo assim, ele ainda não sabe qual é o problema. O segundo problema é que temos os registros, mas não temos o significado. Um registro nunca diz o que significa. Vamos usar uma analogia: digamos que você tenha uma linha de código no seu GitHub. Ao analisar um código,
+
+pode haver um comentário acima dele. Legal. Mas você realmente não entende por que alguém escreveu essa linha de código. Hoje em dia, nenhum de nós está escrevendo código. Mas em algum momento do passado, alguém escreveu esta linha de código. E se você
+
+realmente quiser saber, pode ir atrás da culpa e entender, pelo log de commits, o que e por que alguém fez isso. Mas se você quiser ir mais longe, pode consultar o comunicado de imprensa e talvez ler a descrição. E se você realmente quiser se aprofundar, pode ir ao seu quadro de segunda-feira e ver qual PR (Pull Request - Solicitação de Compra) está relacionado a este item e entender que esta linha de código surgiu porque algum cliente reclamou de algo. Então é isso que estamos tentando construir. E o terceiro ponto, que também é um pouco desafiador, é que é muito difícil construir antecipadamente, em tempo de execução, o significado das coisas. Hum, já
+
+é tarde demais. Não dá para fazer algo assim no momento em que alguém faz a pergunta. Portanto, é necessário compreender o contexto antecipadamente. Você precisa construir isso muito antes que alguém faça a pergunta. E é por isso que construímos o que estamos construindo. Estamos construindo o
+
+modelo do Monday World. Isso é o que chamávamos de modelo mundial de segunda-feira. Ajudar você a entender por que isso importa, como te ajudar, quem você é, quando e o que não fazer. É o contexto que se segue ao seu trabalho. Ele entende quem você é e isso simplesmente não é um grande problema. Não é uma janela de contexto mais longa
+
+. É algo totalmente diferente do que conhecemos até agora. Antes de falarmos sobre como construímos o Tor, vamos explicar como o construímos. Não se trata de um problema de recuperação de dados. O problema nunca foi obter os dados que temos, nós temos todos os dados, temos todas as conexões com todos os provedores que queremos para obter todos os MCPS. O problema é, na verdade,
+
+entender como funciona. Compreenda como cada uma dessas entidades está conectada às outras. Então vá em frente. Obrigado. Olá a todos.
+
+Então, qual é o modelo de dados? Coletamos milhares de pontos de dados sobre o usuário a cada alteração no status de seus itens, suas mensagens de registro de atividades e reuniões, e construímos três elementos sobre os quais o agente pode tomar decisões. O primeiro aspecto é como o trabalho do usuário está estruturado, suas principais entidades, relacionamentos e conexões entre elas. O que depende de quê, como uma mensagem no Slack se conecta a uma tarefa, quem está bloqueando quem. A segunda é uma visão geral atual, com sinais em tempo real dessas entidades: o que está atrasado, o que é extremamente urgente no momento, com quais colegas você tem trabalhado ativamente e por quê. A terceira é o que podemos
+
+aprender sobre o usuário ao longo do tempo. Há decisões e resultados, padrões e ritmos de trabalho destilados em um perfil duradouro. Então, como construímos esse modelo de dados? Usamos dois motores que funcionam em janelas de tempo e cronogramas diferentes. Um mecanismo lento que opera em uma janela de tempo longa e aprende sobre o usuário e seu trabalho, e um mecanismo rápido que lê o que está acontecendo no momento e como isso afeta o trabalho do usuário . Um conhece você e o outro
+
+conhece o seu dia. Primeiro, o motor lento. O sistema considera o contexto da atividade dos usuários ao longo de semanas, buscando padrões e o tipo de perfil do usuário, suas rotinas, seu ritmo de trabalho, com quem colabora, seus principais objetivos e projetos atuais. Esses padrões são refinados em um perfil durável e, a cada vez que um perfil é aplicado, ele é reforçado. Com o tempo, esse mecanismo tenta aprender exatamente quem é o usuário e como ele trabalha.
+
+O motor rápido é o oposto. O sistema considera como contexto um curto período recente e recalcula um conjunto de sinais em tempo real com base no estado atual do usuário. Que servidor usar, o que de repente se tornou urgente, com quais colegas você foi envolvido? Este mecanismo tenta entender o seu dia a dia e atualiza-se frequentemente. Essa divisão não é algo que inventamos. Está presente em dois
+
+campos totalmente diferentes. Em neurociência, essa divisão é chamada de sistemas de aprendizagem complementares. E na arquitetura de processamento de dados , é chamada de arquitetura lambda. Aplicamos os mesmos conceitos à forma como construímos o modelo de dados do agente. Nosso cérebro usa a mesma divisão. Bem, toda
+
+experiência importante é capturada instantaneamente pelo hipocampo e, com o tempo, o novo córtex destila essas experiências em lições duradouras. Na infraestrutura de dados, a divisão é a mesma. Uma camada de alta velocidade sobre uma janela recente em tempo real e uma camada de processamento em lote mais lenta sobre todo o histórico, que é recalculada e as duas são mescladas em uma única visualização exibida. Duas áreas diferentes chegaram à mesma ideia, e é isso que estamos tentando aplicar ao nosso modelo de dados. Então, como tudo isso se encaixa?
+
+Coletamos dados de todos os locais onde nossos usuários trabalham. Ah, segunda-feira, Slack, e-mails, calendário, e transformamos tudo isso em estruturas de dados, sinais e padrões. Ambos os motores de processamento operam offline e antecipadamente, além disso. E quando um usuário interage com o Sidekick, uma pequena parte da lógica é recalculada com base na atividade recente, e todo o contexto é fornecido ao agente. O Sidekick pode então decidir quando e como percorrer e recuperar o contexto do próprio modelo de dados. e está
+
+preparado para raciocinar além disso. E construir dessa forma nos dá dois comportamentos prontos para uso. O modelo de dados é resiliente. As fontes são isoladas, de modo que uma alimentação ruim não consegue afetar o restante. E a fina camada de lógica que é executada no momento do servidor verifica parte do contexto em relação aos dados em tempo real, enquanto o restante recorre ao último contexto verificado.
+
+Assim, a degradação ocorre de forma gradual, sem que o sistema falhe. Em segundo lugar, compreende de facto a urgência dos factos. O sistema consegue entender quando e como deve ser proativo e notificar o usuário, e quando deve permanecer em silêncio. E o ponto crucial é que isso se acumula. Os dados são coletados diariamente, as camadas se preenchem e o perfil se torna mais nítido. E adicionar uma nova
+
+fonte de dados é propositalmente barato e só contribui para o resultado final. Assim, a superfície só aumenta. Quanto mais vê, mais compreende. E quanto mais ele entender, mais você poderá confiar nele . E o modelo de dados é único. É algo
+
+único, que depende da sua forma de trabalhar. Não estamos fingindo que isso resolve tudo. O modelo em si está sempre atrás do mundo real. Usuários novos ainda não possuem dados confiáveis ​​para embasar suas decisões, e os sinais já carregam nossos próprios vieses. Portanto, a parte mais difícil é, de fato, distinguir as informações importantes do ruído. Mas este é um
+
+projeto arquitetônico que podemos enriquecer, testar e aprimorar ao longo do tempo. Obrigado. [aplausos] Então, voltando, voltando, voltando à pergunta original que tínhamos. Em que devo me concentrar agora? Lembre-se da pergunta. Agora, Psyche pode realmente
+
+responder a isso. Vamos ver como. Então, primeiro, como o Thomas disse, coletamos todos os pontos de dados, que chamamos de "migalhas de pão", por exemplo, o quadro em que estou trabalhando agora, todos os e-mails dos últimos meses, a transcrição das reuniões, todos os itens de ação que recebi dessas reuniões e os processamos offline. Vemos uma visão completa da sua agenda, e isso nos ajuda a entender o padrão. Então, se você tem reuniões quinzenais com seus vice-presidentes, eu entendo que amanhã você tem outras reuniões, e até mesmo mensagens do Slack dos últimos dias para entender se você disse algo relevante no Slack que não mencionou na sua reunião diária com a equipe. Nós coletamos
+
+todos esses dados e os processamos, seja de forma rápida ou lenta. Hum, aos poucos, eles vão criando uma espécie de perfil seu. Assim, você pode ver na parte superior que combin é um gerente de engenharia. Estou trabalhando em dois projetos: um paranormal e outro paranormal. Sou de Tel Aviv. E é assim que
+
+eu trabalho, quantas horas por dia, e é dessa forma que eu trabalho todos os dias. E o jejum é algo que me ajudou a entender qual é a ação a ser tomada. Tenho uns três compromissos que assumi com outras pessoas. Preciso responder a um vice-presidente que enviou um e-mail e eu não respondi. Então, isso se refere apenas ao último dia ou aos últimos dias. Isso é algo
+
+mais relevante para os dias de hoje, e é assim que os médiuns podem responder a essas perguntas. Resumindo, o gargalo nunca foi a capacidade de extrair todos os dados. Foi a compreensão de como conectar cada um dos pontos. O agente mais capaz do mundo, seja ele como uma nuvem ou um Gêmeos, não te entende. Ele precisa processar isso com antecedência. É isso que estamos tentando
+
+resolver na Psychic. Bem, este é o modelo de palavras de segunda-feira . É isto que estamos construindo. Bem, se vocês tiverem alguma pergunta, eh, nosso tempo acabou. Estamos aqui, uh uh, perto do palco. Muito obrigado pelo seu
+
+tempo. Você pode nos seguir no LinkedIn. Publicamos informações na área. Muito obrigado. [aplausos]

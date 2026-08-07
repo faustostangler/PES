@@ -1,0 +1,127 @@
+---
+video_title: "Agents Need Feature Flags - Sachin Gupta"
+video_id: zU4EagB311U
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zU4EagB311U
+video_date: 2026-07-18T07:00:06+00:00
+video_description: |
+  Most AI teams ship behavior changes to 100% of users on every deploy — no canary, no segment, no kill switch. Web teams stopped doing this in 2012. AI teams are about to learn why.
+  Feature flags are table stakes in software engineering. In agent systems they're almost nonexistent — prompts, tool access, model selection, memory policy, and autonomy level all change globally the moment you ship. That's why your "small" prompt tweak just broke 12% of your users and you found out from a Discord screenshot.
+  This talk walks the feature-flag patterns agents specifically need — beyond the standard boolean-toggle. We'll cover segment-targeted prompt variants, per-tool access flags, model-routing flags, autonomy-level flags (suggest vs. auto-approve vs. auto-execute), memory-policy flags, and the kill switch every agent system should have on day one but almost none do.
+  
+  Speakers:
+  - Sachin Gupta: Sachin Gupta is a Staff Software Engineer with 15+ years building backend platforms at internet scale, currently focused on the runtime trust boundaries that LLM coding agents blur and the creator of HeapLens, a Java heap analyzer extension used in 50+ countries.
+    LinkedIn: https://www.linkedin.com/in/guptasachin1/
+    GitHub: https://github.com/sachinkg12
+---
+Olá a todos, meu nome é Sachin Gupta e sou engenheiro de backend. Hoje vamos falar sobre os recursos de sinalizadores de necessidade do agente . Se você trabalha como engenheiro de backend há algum tempo, já conhece essas ferramentas. Recursos como canários, mira segmentada, interruptores de segurança, sua nave já os possui há mais de uma década e nenhum deles é novo. A infraestrutura tediosa que mantém a implantação segura já é um problema resolvido.
+
+A novidade é que estamos lançando os sistemas que mais alteram o comportamento dos agentes que já criamos: agentes que enviam dinheiro, agentes que enviam e-mails, agentes que modificam bancos de dados, agentes que geram processos filhos, e estamos lançando tudo isso sem nenhuma infraestrutura adicional. Estamos enviando os arquivos da mesma forma que a equipe da web fazia em 2008. Nos próximos minutos, apresentaremos o plano. Vou apresentar a vocês os seis tipos de sinalizadores que os agentes precisam especificamente. Vou mostrar a vocês dois storyboards de demonstração ao vivo . A primeira é inverter uma
+
+ferramenta no meio de uma conversa. A segunda é deter um agente fugitivo no meio de sua sentença. Em seguida, abordarei um plano de implementação com os números que sua equipe deve acompanhar desde o primeiro dia. Vamos. Eis a situação atual. No momento em que a
+
+alteração no prompt for incorporada, 100% dos seus usuários verão o novo comportamento. Não há indicador de atividade ( canary), segmento ou botão de reversão. Veja o que acontece quando se segue essas regras muito rígidas, do tipo "tudo ou nada". Recebemos reescrita imediata, adição de novas ferramentas , troca de modelos, alterações na política de memória , atualizações de autonomia, edições de instruções do sistema, e recebemos tudo isso globalmente e instantaneamente. As equipes da web pararam de fazer isso em 2012 e também para mudanças que eram menos arriscadas do que essa.
+
+A história que se ouve das equipes, quase palavra por palavra, é que foi apenas um pequeno alerta que talvez tenha afetado uma pequena parcela dos usuários, e então as pessoas finalmente descobriram em links do Discord, no TikTok ou em alguma outra plataforma de mídia social. Portanto, é em torno desse modo de falha que toda esta apresentação se baseia, e deixe-me mostrar que não se trata de uma hipótese.
+
+Esses são os quatro incidentes registrados nos últimos 14 meses. O primeiro caso que temos é o do cursor sam, que ocorreu em abril de 2025, quando o bot de suporte afirmou com segurança aos usuários sobre uma política que nunca existiu. O segundo que temos está cheio. Este foi o nono dia de um experimento de codificação com apagamento de código, com duração de 12 dias. O agente não seguiu as instruções e acabou apagando o banco de dados de produção, além de criar mais de 4.000 usuários falsos para encobrir o que
+
+havia feito. A terceira é a rede LANC. Possuía um pipeline de quatro agentes: pesquisador, analisador, verificador e sintetizador, sendo que dois deles funcionavam em loop contínuo e custavam US$ 47.000. O quarto é o Pocket OS, onde um desenvolvedor estava usando o cursor e o Claude.
+
+O agente de codificação de IA extraiu um token de API não relacionado de outro arquivo, tratou-o como autoritativo e executou um comando `railway graphql drop` no banco de dados de produção. No canto inferior esquerdo, você verá as fontes que utilizei para citá-las. Os engenheiros web aprenderam essa lição há uma década. Lançamentos da Canary. Você envia produtos para uma pequena porcentagem de usuários. Você assiste à
+
+Matrix. Se funcionar, você expande. Se não funcionar, você reverte a alteração. Segmentação por segmento. Comportamentos diferentes para diferentes tipos de usuários. Interruptores de segurança.
+
+Interruptores de desligamento pré-instalados que entram em vigor em segundos, não em ciclos de implantação. Monitoramento da implementação. Cada alteração possui seu próprio painel de controle de taxa de erros. Nada disso é novidade. As ferramentas já existem, como o Launch Darkly, o Unleash Lift ou talvez o seu próprio serviço de sinalização. Este
+
+problema já está resolvido. A disciplina já existe. Só precisamos aplicar isso. Mas agora o problema é que os sinalizadores de recursos da web abrangem apenas uma coisa: se um recurso está ativado ou desativado. Mas o agente possui seis superfícies de comportamento que um aplicativo de credenciais não tem, e cada uma delas precisa de seu próprio tipo de sinalizador. E no próximo slide
+
+veremos que essas são as seis superfícies de comportamento que um aplicativo de credenciais não possui. A primeira coisa são as sugestões. O comando do sistema é o código que mais altera seu comportamento. Isso muda semanalmente, às vezes diariamente, frequentemente fora dos seus processos normais de implantação. Ferramentas. Cada
+
+ferramenta que o agente pode acionar representa a nova ação autorizada. As ferramentas surgem e desaparecem mais rápido do que os recursos jamais surgiram. Modelos. O modelo da semana aborda mudanças de personalidade, padrões de recusa, latência e custo. Às vezes, de uma forma tão sutil que você nem percebe por dias. Memória. O que
+
+o agente memoriza durante a sessão altera silenciosamente o seu comportamento ao longo do tempo. A mesma solicitação resulta em diferentes saídas para o mesmo usuário à medida que a memória se acumula. Autonomia: sugerir versus aprovar automaticamente versus executar automaticamente. O ladrilho individual com o maior raio de explosão que você possui. Subents.
+
+Essas são as flags herdadas dos processos filhos dos pais, ou pelo menos deveriam ser, já que a maioria dos sistemas não as impõe. Um indicador booleano de ativação de recurso não abrange nenhum desses casos. Você precisa de uma taxonomia.
+
+Aqui estão, portanto, seis tipos, um para cada modelo de acesso à ferramenta de variante de prompt de superfície, roteamento, política de memória, nível de autonomia e o interruptor de desligamento. Cada uma delas corresponde a uma superfície comportamental. Nenhuma delas exige a criação de um novo backend de flags. Deixe-me analisá- los rapidamente. Os sinalizadores de variantes de prompt direcionam diferentes usuários para uma versão diferente do prompt do sistema em tempo real, sem a necessidade de implantação.
+
+Veja o exemplo. O grupo beta recebe a versão experimental V3, que é concisa e focada na ação. O plano pago inclui a versão V2, que é mais quente e cara. Todos os outros recebem a versão 1, que é estável e bem testada. O Cursor SAM é o que acontece sem isso.
+
+Não havia nenhuma variante controlada, apenas um modelo dando o seu melhor. O sistema apresentou erros de maneiras diferentes para cada usuário. Com um sinalizador de variante de prompt, você implementa o novo prompt em 5% do tráfego beta. Você monitora a taxa de alucinações. Você acompanha a taxa de escalada. E então você promove
+
+quando isso se mantém. Os indicadores de acesso às ferramentas autorizam ou revogam ferramentas específicas por segmento de usuário, por tipo de usuário e por classe de risco. A ferramenta existe em sua base de código, independentemente de o agente poder chamá-la. É a bandeira. Isso é obrigatório quando seu agente possui ferramentas de movimentação de dinheiro, ferramentas de exclusão de dados ou ferramentas que exigem conformidade com as normas. Você define o escopo
+
+por nível de cliente ou paga a conta de AML ou SOCKS ao longo do processo. Isso evita o envio de ferramentas quebradas, que são comuns nesse tipo de envio. O prompt plus send email massmail incident e a ferramenta beta que vaza para usuários de produção através de codificação d uh através do modelo de roteamento de deriva de configuração decide qual modelo lida com qual tráfego. Eles permitem migrar para a versão de fallback ou canary sem alterações no código. O segmento de alto custo recebe o modelo de fronteira. O período de teste gratuito oferece o
+
+modelo inicial mais barato e, em caso de incidente, uma simples mudança permite a troca para um modelo alternativo estável. A lição é extremamente simples. No dia em que um provedor descontinua um modelo, o retira do mercado por motivos de segurança ou enfrenta uma interrupção de várias horas , um indicador de roteamento de modelo pode ser a diferença entre simplesmente acionar um interruptor e enviar uma correção emergencial no meio de um incidente. Se o seu sistema de produção depende fortemente de um modelo de um fornecedor específico e não possui nenhum sinalizador de roteamento, nem um plano de contingência, você está a um passo de uma interrupção completa do fornecedor ou, talvez, a um único aviso de descontinuação, e tudo estará perdido. Tenha um plano B para o seu tráfego. Faça disso uma
+
+bandeira. O indicador de política de memória controla o que o agente armazena entre as sessões. Essas são quatro dimensões e cada uma delas é independente. A primeira é a retenção. Pode ser apenas uma sessão. Podem ser 30
+
+dias ou para sempre. Escopo. Pode ser por usuário, por locatário ou talvez global. Habilitado o modo de escrita. Se o agente consegue ou não manter a memória para esse segmento.
+
+Usuário visível. Se o usuário pode inspecionar e excluir os seus próprios. Todos parecem pequenos, mas não são. A política de privacidade do seu produto está definida aqui. A consistência do comportamento do seu agente reside aqui. Aqui você encontra seu histórico de conformidade com o GDPR
+
+e a Lei de IA da UE. Indicadores de nível de autonomia. Este é o maior seletor de raio de explosão que você possui. Existem três configurações. Sugira onde o agente recomenda e um humano age.
+
+Aprovação automática: o agente prepara o processo e um humano confirma com um clique. E a execução automática, onde o agente simplesmente faz isso. O interruptor de segurança pré-instalado desativou todo o sistema e apresentou uma superfície de baixa qualidade. Não requer nenhuma implantação, não requer nenhuma inicialização, não requer nenhuma alteração de código. Três propriedades que fazem de um interruptor de segurança um verdadeiro interruptor de segurança. Primeiro,
+
+você vira o dispositivo e a mudança entra em vigor em segundos, sem a necessidade de um processo de implantação contínuo. Em segundo lugar, solicite em voo que respeite a bandeira no próximo ponto de decisão. Terceiro, a fiação existe desde a fase de projeto do agente, não em um momento crítico às 3h da manhã, quando algo está pegando fogo. Sem um, é isto que você vai obter. Primeiro, Lchain, segundo bolso OS, terceiro repleto e quarto relógio aberto. Agora, imagine se
+
+houvesse um botão de desativação, se você pudesse simplesmente encerrar a operação no meio do processo, isso teria mudado completamente o jogo . Ok, agora é hora da demonstração. Basicamente, a situação é a seguinte: imagine que você está em abril de 2025, quando o bot de classificação de cursores cita com convicção uma política que não existe. Portanto, acreditamos que a solução para isso está relacionada ao sinalizador de acesso à ferramenta. À esquerda, você vê que estamos tendo uma conversa; à direita, a solução. Assim que
+
+desativarmos essa opção, aparecerá a mensagem de que ela está desativada no momento. por esta pessoa. Este é o escopo. É isso que se aplica e essas são as sessões ativas. No momento em que a opção for ativada, você verá que, em vez de citar uma política incorreta, estará dizendo: "Posso redigir isso para você, mas não consigo enviar e-mails agora". Prefere que
+
+eu copie o rascunho para a sua área de transferência ? Agora, isso é um erro elegante. Em vez de me fornecer informações incorretas, está me informando que não pode realizar a operação. Agora, a cena principal. O cenário é o seguinte: novembro de 2025. Um
+
+pipeline Langchain com quatro agentes em execução durante 11 dias consumiu US$ 47.000. O sistema de agentes nunca percebeu. O painel de faturamento ultrapassou o limite. O gráfico à esquerda mostra as chamadas de ferramentas por minuto. Esta é uma
+
+simulação ilustrativa. A linha de base é de 4 a 8. O agente entra em um circuito na pista. A fila sobe rapidamente. Aos t + 15 segundos, o guarda da incursão dispara um alerta de folga. Em t + 2022,
+
+eu inverto a ordem do agente para eliminá-lo. Em t + 2026, cada processo do agente em voo vê o indicador em seu próximo ponto de decisão. Cada um deles emite um desligamento controlado. Em t + 30, o gráfico de custos se torna mais plano. 30 segundos do problema à mitigação, sem qualquer implantação, sem qualquer reinicialização, sem qualquer alteração de código e sem acionamento do canal de incidentes.
+
+E é isso que você obtém com o interruptor de segurança. Agora a questão é onde a camada de sinalização está realmente localizada. Se você observar, verá que essa arquitetura é extremamente simples. Existem três caixas. À esquerda, o usuário; no meio, uma camada intermediária que resolve a sinalização, obtém as ferramentas, encaminha os modelos, aplica a autonomia e respeita o botão de desativação; e à direita, o loop do agente com a memória da ferramenta do modelo e os subagentes. O loop do agente permanece inalterado em relação à versão
+
+atual. Abaixo do middleware está o seu back-end de flags, que pode ser liberado de forma obscura ou desenvolvido internamente. Você não está construindo uma nova . A regra crítica de arquitetura está destacada na parte inferior do slide. Os subagentes devem passar pelo mesmo middleware. O maior problema que
+
+observo é um agente pai com os parâmetros corretamente aplicados que gera um agente filho. A criança chama o modelo e as ferramentas diretamente, mas ignora completamente o middleware . O interruptor de segurança que você acabou de acionar nunca chega até ele. Portanto, integre o middleware em todos os agentes que estão sendo criados, não apenas no ponto de entrada. Este é, portanto, o plano de implementação. Cinco
+
+passos na ordem exata. Primeiro passo: desligue o interruptor. Instale um interruptor de desligamento geral para todos os agentes e um interruptor de desligamento para cada ferramenta . Envie esses itens antes de qualquer outra coisa. O segundo passo é embrulhar as ferramentas. Cada
+
+chamada de ferramenta resolve um sinalizador antes da execução. Etapa três: autonomia. Defina tudo como sugerido por padrão. Aprovar automaticamente por superfície à medida que você constrói confiança. A execução automática é opcional para cada ferramenta. O
+
+quarto passo são as sugestões variantes. Remova o prompt do sistema do código e coloque-o em uma configuração de resolução de flags. Passo cinco: observe a inclinação. O que significa exatamente "watch"? Quatro números que você deve acompanhar desde o primeiro dia. Elas estão no lado direito do
+
+slide. Os limites que vou lhe apresentar são valores padrão sugeridos. Ajuste-os de acordo com sua necessidade, a superfície, a severidade e a classe do tráfego. Primeiro, o interruptor de segurança dispara uma vez por semana. A meta é zero. Se você tiver mais de duas ocorrências por
+
+semana, investigue a possibilidade de reverter o tempo de mitigação. A meta é de menos de 5 minutos para um mecanismo de desativação automática e menos de 30 minutos para uma reversão imediata. Se você for mais lento, sua mitigação não se encaixará dentro de uma janela de incidente real . delta da taxa de erro canário. Se a taxa de erros de uma nova variante de prompt aumentar mais de 2% em relação à linha de base após 5% da implementação, bloqueie a integridade do registro de auditoria do sinalizador de promoção.
+
+100% obrigatório. Se não for possível auditar quem fez a alteração, o que foi alterado e quando ocorreu, então não será possível depurar um incidente retrospectivamente. Cinco tipos de falha que observei em várias equipes. A flag é resolvida no início da sessão, não a cada turno. Seu interruptor de segurança foi acionado, mas a conversa durante o voo só será exibida na próxima sessão. Os subagentes ignoram o
+
+middleware. Essa nós já abordamos. Precisamos garantir que o middleware intermediário esteja integrado em cada ponto de origem ( spawn). Indicadores de deriva de contexto. O segmento de usuários na primeira interação fica obsoleto na vigésima interação. Registre o
+
+contexto de segmentação no nível da conversa. Armazenar em cache e derrotar o flip. O armazenamento em cache agressivo no seu gateway LLM retorna a resposta antiga do prompt mesmo depois que o sinalizador é alterado. Nenhum alerta em incêndios causados ​​pelo interruptor de segurança. O interruptor desliga silenciosamente. O
+
+dono do produto ficará sabendo na próxima semana. Cada disparo acidental do interruptor de segurança merece uma página à parte. Neste slide, você está vendo as duas partes do estudo de viabilidade. Na metade superior, as cinco perguntas que todo comprador corporativo lhe fará nos próximos 12 meses. Você pode me mostrar o interruptor de segurança? Qual é a sua política de implementação para
+
+alterações rápidas? Como isolar as funcionalidades beta dos usuários em produção? Quando um modelo apresenta um comportamento inadequado para uma determinada coorte, qual a rapidez com que é possível mitigar o problema? Quem pode virar essas bandeiras e isso é auditado? Se você não puder testar todos os cinco, vai perder o negócio. As bandeiras são a demonstração. E
+
+na metade inferior, isso já não é apenas uma questão de vendas. É uma norma. Lei de IA da UE, Mopar versus Air Canada, Garcia versus Corrector AI. Esses são os quatro hábitos que, na verdade, anulam todo o propósito. Interruptores de segurança apodrecem. Eles são conectados no primeiro dia e depois
+
+nunca mais negociam. Seis meses depois, uma migração de configuração quebrou a flag e, quando você precisa dela, ela simplesmente não funciona. Rolagem da bandeira. Você tem 600 bandeiras, mas nenhuma documentação. Cada indicador é um acoplamento oculto entre sistemas não relacionados.
+
+Toda bandeira precisa de um dono e de uma data para ser removida. A bandeira temporária foi enviada para ser desfraldada. Nunca foi removido. Cinco anos depois, de alguma forma, ainda suporta peso. Elimine-o imediatamente após a conclusão da implantação. Prompt baseado em flags. É que
+
+ninguém testa a rua. Seis variantes de prompt estão em produção. Cada um funciona individualmente. Juntos, eles são incríveis. Teste o produto do cartician.
+
+Estas são as três coisas que você deve lembrar. A primeira e, na minha opinião, a mais importante. Envie primeiro o interruptor de segurança. Se você não fizer mais nada, forneça ao seu agente um botão de desativação geral e um botão de desativação por ferramenta. Eles fazem efeito em segundos. Não
+
+é necessário realizar nenhuma implantação. Essa única capacidade altera sua postura operacional mais do que qualquer investimento da equipe de engenharia neste trimestre específico. A segunda opção é tratar as seis superfícies independentemente e medir a inclinação, utilizando ferramentas, modelos, memória, autonomia e subentidades. Cada um precisa de seu próprio tipo de bandeira. Além da taxonomia, acompanhe os quatro números: acionamentos do mecanismo de segurança por semana, tempo de mitigação, deltas de alerta e completude da auditoria.
+
+Lembre-se, 2026 foi o ano da adoção. 2027 é o ano do controle. O número três, combine a disciplina com o raio da explosão. Seu aplicativo web tedioso fica oculto atrás de canários e segmentos. Seu agente pode enviar e-mails, movimentar dinheiro, modificar bancos de dados e gerar filhos. Merece, no mínimo,
+
+a mesma disciplina, ou provavelmente até mais. Muito obrigado. Construa o interruptor de segurança esta semana. Todo o resto é uma variação da mesma ideia. Cada incidente neste baralho tem sua origem comprovada. Os
+
+estudos de caso selecionados estão disponíveis na tela em github.com/vectra/awesome agent failures. Muito obrigado . Meu nome é Sachin Gupta. Obrigado por assistir.

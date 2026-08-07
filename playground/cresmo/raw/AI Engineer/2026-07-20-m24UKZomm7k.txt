@@ -1,0 +1,52 @@
+---
+video_title: "Don't Let the LLM Drive - Ornella Bahidika & Joel Allou, Microsoft"
+video_id: m24UKZomm7k
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=m24UKZomm7k
+video_date: 2026-07-20T06:25:18+00:00
+video_description: |
+  The LLM in my voice tutor doesn't decide when the lesson is over. It doesn't decide whether the user got the answer right. It doesn't decide which step comes next. A harness does all of that. The LLM just shows up and talks.
+  
+  Every engineer who's tried to ship a multi-step flow agent has felt this: the model declares itself done before it should, skips a check, loops on a step, or quietly drops half the procedure. Prompting gets you most of the way. Tool-use discipline gets you closer. The last stretch, the difference between a demo and a system real users sign into every day, is owning the flow outside the model.
+  
+  Ace is a voice tutor in production. The lesson is a small state machine: intro, teach, check, grade, advance, wrap. Each node hands the LLM a narrow contract: do this, return that. The harness validates the return, advances the state, decides what comes next. When the LLM tries to skip ahead the harness ignores it. When the LLM tries to declare the lesson finished the harness checks the actual completion signal. Same pattern for the shared canvas the agent draws on, for grading, for interruption handling.
+  
+  Seven minutes. The state machine, the contract shape, a few places where I tried to give the LLM more authority and rolled it back, and a short list of decisions the LLM should never own in any flow agent.
+  
+  Speakers:
+  - Ornella Bahidika (Microsoft): Ornella Bahidika is a Product Manager at Microsoft, where she develops solutions that help organizations optimize collaboration, workplace technology, and AI-driven experiences.
+    LinkedIn: https://www.linkedin.com/in/ornella-bahidika/
+  - Joel Allou: Joel builds voice-first AI tutors. Solo founder focused on agentic systems for personalized learning, with a particular interest in infrastructure that makes flow agents reliable.
+    LinkedIn: https://www.linkedin.com/in/joel-allou/
+---
+Olá, eu sou Onela. Esse é o Joel. E criamos o Ace, um tutor de voz com IA ao vivo que conduz uma aula completa do início ao fim de forma confiável. O truque é que o LLM não está no comando. Se você já implementou um agente com várias etapas, conhece bem esse momento. Está perto da
+
+demonstração, aí um usuário real entra e, na metade do processo, o agente decide que está concluído. Ou pular uma etapa, ou até mesmo loops. A demonstração nunca mostra isso. E a primeira solução que todos procuram é dificultar o processo, fazer mais furos. Mas a confiabilidade nunca foi um problema de solicitação. É um problema de controle. Pense
+
+nisso desta forma. O modelo é o talento, e o arnês é o diretor. O modelo é excelente em entregar uma frase, mas é péssimo em lembrar se ela está na terceira etapa de seis. Então paramos de perguntar isso. Uma lição é uma pequena máquina de estados com introdução, ensino, verificação, avaliação, avanço e conclusão.
+
+Cada etapa envia um contrato neural ao modelo . Faça apenas uma coisa: devolva. O sistema valida os dados recebidos, avança o estado e decide o que vem a seguir. O modelo nunca decide onde estamos. Esse é o projeto. Joel vai te
+
+mostrar como funciona o cinto de segurança. Sim . Então, quando pensamos nos modelos de vanguarda da atualidade, como por exemplo o Opus 4.7 Cloud da Anthropic, vemos que muitas vezes as pessoas utilizam esse modelo para praticamente tudo. Para pensar, para processar, certo? E para tudo o que há entre esses dois extremos.
+
+Embora isso possa ser bom, nem sempre é eficaz em situações como a nossa, em que estamos construindo um tutor de IA em tempo real que interage com os alunos por meio de diálogos. Certo? Para algo assim, precisávamos construir algo que fosse confiável, econômico e rápido. Certo? É aqui que entra a ideia de aproveitar o conceito de engenharia de chicotes elétricos.
+
+Em vez de termos um modelo realmente inteligente que execute tudo automaticamente, construiremos todas as etapas necessárias e forneceremos apenas a entrada requerida para que o modelo execute um cenário específico. Então, quando estávamos construindo o ACE, refletimos bastante sobre máquinas de estado. Certo? Qual é o próximo passo? E quais seriam os possíveis passos seguintes? E, dentro de cada etapa,
+
+quais são os elementos concretos que podemos fornecer ao modelo para que ele se limite àquela ação específica, àquela etapa específica naquele momento particular, e execute apenas o que precisa ser feito? Assim, ao fazer isso, em vez de termos um modelo muito pesado como o 4.7, conseguimos usar algo como o Haiku 4.5, que é um modelo muito menor, não tem tanta capacidade de raciocínio, mas, graças ao suporte que o envolve, ainda consegue ter o desempenho esperado, economizando dinheiro, tempo e latência. Então, vamos reproduzir esta gravação, que nos mostrará registros sobre uma lição específica.
+
+Como vocês podem ver neste vídeo, especialmente no lado direito, vemos registros de todas as diferentes conexões que estão sendo feitas. [Limpa a garganta] Certo? Assim, por exemplo, vemos que há um mecanismo de aproveitamento para uma seção, que fornece informações ao modelo sobre exatamente o que abordar e o que fazer. Estamos aprendendo a desenhar no quadro branco. Temos um mecanismo que lida com a limpeza da fila. Temos
+
+instruções sobre como terminar a aula e tudo o que acontece entre esses dois pontos, certo? Então, tudo que nos permita construir a lição de uma forma confiável, mesmo que surja um novo cenário, tentamos incorporar em nossa máquina de estados. Tentamos incorporar isso na aula, certo? Portanto, mais uma vez, o modelo se preocupa apenas com o recebimento de uma entrada, sabe qual ação tomar e fornece o resultado dessa ação. Certo? Assim, o modelo nunca precisa realmente
+
+pensar. A proposta é feita, mas, em última análise, é o arnês que decide. Assim, especificamente para a nota A, havia três coisas que queríamos considerar. Tipo, quando a aula termina é uma hora, né? O aluno acertou de fato? Tipo, será que eles
+
+realmente aprenderam da maneira que deveriam? E o que vem a seguir, não é? Assim, tudo o que se enquadra nessas três categorias, todas as diferentes perguntas, todas as diferentes ações que os modelos precisam tomar, nós projetamos isso fora do modelo, certo? Então, novamente, é uma entrada, o modelo a recebe e nos dá uma saída, certo? Portanto, isto é muito, muito importante e consideramos isto notável.
+
+Certo? Então, mais uma vez, isso se aplica a praticamente tudo, certo? Isso se aplica a algo como A, que é um modelo de voz. É aplicável a agentes de codificação e a manuais de operações. Isso se aplica aos fluxos de integração, certo? A mesma regra se aplica, certo?
+
+Queremos encontrar uma maneira de não deixar o modelo pensar, mas sim construir abstrações em torno dele. Então, uma boa maneira de lembrar se você deve usar essa abstração é essencialmente pensar na confiabilidade do seu agente, certo? Se for algo como jogar uma moeda para o ar, então você deve remover o fluxo de controle do modelo. Você quer que o modelo não tome tantas decisões quanto deveria e, em vez disso, construa essas decisões em torno do modelo, fornecendo apenas uma entrada simples para que ele possa produzir uma saída facilmente, certo? Então, não deixe o modelo falar, certo? Ou melhor, deixe-o falar, mas
+
+não o deixe dirigir. Então, nós somos Joel e Ornella. Este é o Ace, e se você tiver alguma dúvida, por favor, nos avise. Obrigado. Obrigado.

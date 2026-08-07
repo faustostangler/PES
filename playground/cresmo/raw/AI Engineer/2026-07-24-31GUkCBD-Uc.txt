@@ -1,0 +1,138 @@
+---
+video_title: "Building Closed-Loop Evals for a Multimodal Agent at Scale — Soumya Gupta & Jai Chopra, Uber"
+video_id: 31GUkCBD-Uc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=31GUkCBD-Uc
+video_date: 2026-07-24T22:00:25+00:00
+video_description: |
+  This talk covers how Uber designed evals for its food enhancement agent, which edits food photography to better present dishes for smaller, independent Uber Eats merchants, along with the pitfalls and lessons learned along the way.
+  
+  The problem is uniquely hard: the system must stay faithful to the original dish, preserve each merchant's brand and packaging, and avoid homogenizing the marketplace, all without an existing playbook for multimodal evals in a narrow domain. Soumya Gupta and Jai Chopra explain how they navigated reward hacking, built a closed feedback loop combining offline and online signals, and balanced creativity against rigid safety guardrails at scale.
+  
+  ML and applied AI practitioners working on multimodal systems, agentic pipelines, or eval design will take away practical strategies for narrow-domain multimodal evaluations, countering reward hacking, and production feedback loops.
+  
+  Speakers:
+  
+  Soumya Gupta — ML Engineer, Uber
+  Soumya is a Tech Lead and Applied AI Engineer who architects and scales production-grade generative AI and computer vision systems at Uber.
+  X/Twitter: https://x.com/guptasoumya12
+  LinkedIn: https://www.linkedin.com/in/guptasoumya12/
+  
+  Jai Chopra — Product Manager, Uber
+  Jai is a Product Lead on Uber's Applied AI team and previously worked at Cruise and several startups.
+  X/Twitter: https://x.com/jai_chopra
+  LinkedIn: https://linkedin.com/in/jaichopra
+---
+[música]
+
+Meu nome é Jay e estou aqui com Sonya. Fazemos parte da equipe de visão computacional da Aruba. Vamos falar sobre um exemplo prático de uso em produção. Ah, meu filho terminou. OK.
+
+Tente novamente. OK. Não se preocupe. Eu vou dar um jeito. Você me ouviu agora?
+
+Certo, então hoje vamos falar sobre um caso de uso real em produção e, especificamente, vamos nos aprofundar em como projetamos os arcos eletrônicos e seus loops. Então,
+
+tudo bem, legal. Então, antes de abordarmos o design do agente, vamos falar um pouco sobre o caso de uso. Então, nosso marketplace de entregas, o Uber Eats, tem um volume de transações de cerca de 90 bilhões por ano atualmente. Estávamos adicionando milhões de itens ao mercado todos os anos. Desculpe, todo mês. Estamos crescendo
+
+a uma taxa de 20% ao ano e operamos em 10.000 cidades em todo o mundo. Poucas pessoas sabem disso, mas nosso mercado de entregas é tão grande quanto o setor de mobilidade da Uber hoje em dia. O conteúdo visual desempenha um papel realmente importante na experiência do usuário. Assim, uma foto costuma ser o primeiro sinal que um cliente recebe e que lhe dá uma impressão inicial sobre um comerciante.
+
+Assim, uma boa foto pode fazer toda a diferença entre alguém percorrer o feed e realmente clicar em um item e adicioná-lo ao carrinho. E cada vez mais vemos diferentes modalidades no Uber Eats, especialmente conteúdo em vídeo. Mas isso é um problema. Portanto, nossos pequenos comerciantes independentes simplesmente não têm o nível de qualidade em suas fotos que reflita o que o cliente realmente vai receber. E quando conversamos com nossos comerciantes, três temas costumam surgir.
+
+Falta de tempo, falta de conhecimento e custos, já que essas sessões de fotos profissionais custam muito dinheiro. E isso pode ser especialmente [bufa] problemático se o comerciante estiver atualizando seu cardápio com o tempo. Então, esse problema é realmente muito difícil de resolver em grande escala, certo? Porque os nossos consumidores querem fotos autênticas e com aparência real, mas uma parcela significativa deles desconfia de tudo o que é gerado por IA. Então, se você abrir o aplicativo Uber Eats, a última coisa que você quer é ficar rolando a tela por fotos de comida que parecem ter sido feitas por inteligência artificial.
+
+Então, estamos aqui a fazer tudo com muita cautela. Precisamos ser capazes de nos manter fiéis à imagem original, preservar a marca do comerciante e evitar que tudo pareça igual. Se tivermos a mesma instrução para todas as fotos que editamos, a diversidade do mercado vai desaparecer. Como operamos globalmente, também temos essa ampla gama de produtos com diferentes níveis de qualidade que observamos no mercado. Bem , temos alguns exemplos aqui. Você
+
+pode se deparar com fotografias de comida que, sabe, têm baixa nitidez, composição ruim, não estão centralizadas ou têm cores ruins. Também contamos com uma ampla variedade de conteúdo gerado pelo usuário na plataforma. Então, quais são nossos objetivos ao projetar esses agentes? Ao refletir sobre esses objetivos, você pode estar, na verdade, pensando nos seus próprios agentes que está construindo. Mas para nós, trata-se de uma coisa só: preservar a autenticidade e a confiança.
+
+Segundo, melhorar a qualidade quando necessário . Portanto, queremos ter a capacidade de melhorar a qualidade seletivamente. Queremos otimizar globalmente para todo o mercado. Não praticamos canibalismo contra determinados comerciantes. Queremos realizar os envios com segurança, e esse será um tema importante ao longo da apresentação.
+
+Queremos aprender continuamente e operar em grande escala de forma economicamente eficiente. Portanto, os agentes são, na verdade, muito adequados para resolver esse problema. Então, se você imaginar um espectro, de um lado você tem algo que é mais determinístico. É mais baseado em regras. Bem, você tem mais controle sobre isso, mas é um sistema bastante frágil. Na verdade, não será
+
+possível escalá-lo para todo o mercado. Imagine o outro lado: você fornece a um agente, obviamente, muita criatividade e muita autonomia. E é exatamente nisso que queremos nos concentrar , mas não podemos deixar isso sem restrições, certo? Porque temos certas normas de segurança e certas diretrizes que precisamos seguir. Portanto, queremos encontrar um equilíbrio.
+
+E isso meio que estabeleceu o princípio da maneira como pensamos e projetamos em torno de agentes e avaliações. Então, agora vamos nos aprofundar um pouco mais em um exemplo simplificado, porém representativo, do que temos em produção. Vamos analisar cada etapa e como a avaliamos, e também discutiremos alguns ciclos de aprendizado contínuo . Então, em primeiro lugar, temos o que chamamos de agentes de compreensão e roteamento de imagens. É aqui que a multimodalidade se torna bastante importante. Na verdade, pedimos ao
+
+LLM que descreva o que vê na foto. E então criamos uma saída estruturada a partir disso e a enviamos para um roteador. O roteador então determinará se devemos reforçar o sinal ou ignorá-lo. Vamos pular essa parte e manter o original. Se aprimorarmos a imagem, a enviamos para o nosso próximo agente, que é um agente de edição de imagens. E
+
+isso pode, na verdade, ser executado em um loop. Assim, recebe feedback de um agente de controle de qualidade. Ele pode editar dentro desse loop e se autocorrigir e consertar as coisas conforme avança. Se o processo passar por várias iterações e ainda assim falhar, não o publicaremos. Em seguida, enviamos o arquivo para uma etapa final de pós-processamento e controle de qualidade.
+
+Se estiver tudo certo, vamos adicionar ao menu. E a última coisa que é realmente crucial é que registramos tudo. Apenas uma breve observação sobre o registro de logs. Não sei se você consegue ler o JSON aqui, mas deve ter notado que todos os agentes nessa orquestração de ponta a ponta estão dentro de um único elemento. É basicamente uma estrutura plana nesse JSON.
+
+Então, isso é incrivelmente útil para toda a equipe, porque qualquer pessoa, seja ela técnica ou não, da área de engenharia de produto, pode analisar casos específicos para diagnóstico e também agregar informações para visualização . E é importante notar aqui que, sabe, achamos que isso é importante para começar. Você deve começar pelo registro de logs, pois, se não começar por ele, não terá nada para otimizar, muito menos configurar um ciclo de autoaprendizagem. E na Uber, nós... nós usamos nossos olhos.
+
+Legal. Vamos analisar o roteador um pouco mais a fundo. Na verdade, o roteador é bem simples. Se você se lembra, nós temos essa entrada multimodal. Analisamos determinados metadados de descrição de texto e a própria imagem. Pedimos que ele descreva o que
+
+está vendo. A partir disso, criamos resultados estruturados . Com esse resultado estruturado, podemos então avaliar de acordo com uma rubrica. Então, temos esses critérios de aprovação e reprovação. O último passo é decidir se devemos aprimorar ou pular essa etapa.
+
+Como podemos avaliar isso na prática? Você pode pensar nisso como um classificador mais tradicional. Portanto, aqui temos uma matriz de confusão. Vocês sabem, muitos de vocês provavelmente já estão bastante familiarizados com isso. Mas podemos analisar coisas como os casos verdadeiramente positivos, os casos falsos negativos e assim por diante.
+
+Essencialmente, o que estamos fazendo é medir a precisão da recuperação. Na prática, seus roteadores podem ser muito mais sofisticados. Assim, por exemplo, podemos querer encaminhar uma imagem para um modelo menor com menor latência para economizar custos e melhorar a experiência do usuário, mesmo que isso signifique sacrificar a qualidade. E se for esse o caso, em vez de ter uma matriz 2 por 2 para sua matriz de confusão, você pode ter uma matriz n por n. Cada célula da grade indica se você está ou não encaminhando o tráfego para o ramo específico corretamente.
+
+Então, vou passar a palavra agora para Somya, que vai se aprofundar um pouco mais em como lidamos com a deriva e o alinhamento humano.
+
+Então, agora que falamos sobre como avaliamos o roteamento, quero falar sobre como obter a primeira versão do modelo . Para o nosso caso de uso, consideramos os rótulos humanos como a fonte de verdade mais confiável. E é a isso que queremos alinhar nossos modelos. A forma como fazemos isso é coletar um conjunto de dados que seja representativo. Então, sabe, diferentes cortes, geografias, tipos de prato, tipos de qualidade de imagem. Envie para nossos
+
+rotuladores humanos e forneça a eles uma diretriz bem objetiva para rotular. Isso visa eliminar quaisquer vieses subjetivos ou ruídos provenientes de classificadores humanos. Depois de configurarmos esse sistema, é que começamos a ajustar nosso modelo. Pegamos nosso agente, obtemos a saída do agente, comparamos com nosso conjunto de dados de referência, avaliamos se está bom o suficiente para ser lançado e, se atender às nossas métricas de segurança, prosseguimos com o lançamento. Caso contrário, você continua ajustando e fazendo isso até atingir as metas estabelecidas.
+
+Para roteamento, nossa métrica de segurança é a revocação. Não queremos que nenhuma imagem negativa passe despercebida pelo nosso sistema. Aqui estão alguns exemplos das falhas que observamos. À sua esquerda você vê uma imagem muito boa de um cheeseburger. À direita, você pode notar que o agente de roteamento falhou nesta etapa. O sistema informou que a avaliação
+
+técnica está baixa e que a imagem será enviada para melhoria. Agora, existem dois desafios ao enviar esta imagem para aprimoramento. Em primeiro lugar, você paga o custo computacional por uma extração de qualidade zero dessa imagem. E em segundo lugar, existe o risco de degradar esta imagem, visto que ela já é de alta qualidade . E, no outro extremo do espectro, você tem uma falha de recall. Então, à sua esquerda,
+
+você tem uma imagem com seis asas de frango e, à sua direita, se você observar o nome do prato, verá que diz "oito pedaços de asas de frango". E seu agente de roteamento aprovou esta imagem. Isso significa que, se você enviar esta imagem para aprimoramento e ela mostrar apenas seis asas de frango, há uma chance de sua modelo alucinar com essas duas asas extras para corresponder à descrição. E esse é também o critério de corte que usamos em nossa métrica de fidelidade, que Jay nos mostrou anteriormente. O ponto principal que estou tentando destacar aqui é que você treinou seu modelo offline, mas haverá muitos casos em que seu modelo continuará falhando e o modelo estático não funcionará no sistema real. Você precisa de uma maneira para que
+
+seus prompts, agentes e o próprio sistema evoluam ao longo do tempo. E foi isso que fizemos também para o nosso sistema. E estou falando mais da perspectiva de roteamento, mas cada componente do nosso sistema é capaz de se autoajustar para qualquer desvio online. Então, o que fazemos é coletar amostras de dados de produção em intervalos regulares e enviá-las aos rotuladores humanos com as mesmas diretrizes que já vimos antes. Depois de obtermos esses dados, comparamos a saída dos nossos agentes com a saída que recebemos dos rotuladores e verificamos se há alguma discrepância. Se houver alguma
+
+incompatibilidade, temos um agente de diagnóstico abrangente que recebe o feedback, localiza onde o problema está ocorrendo e aciona nosso pipeline de ajuste automático . Após ajustarmos esse agente, comparamos seu desempenho com o conjunto de dados de referência que vimos anteriormente e, se ele atender aos critérios do conjunto de dados de referência nas métricas que definimos, prosseguimos com a implementação desse modelo. Bem, se não, você acaba continuando a iterar. E isso acontece regularmente em conjuntos de dados de produção. A grande vantagem disso é que é totalmente controlado por configuração e não requer intervenção humana. Seu
+
+agente de diagnóstico pode gravar sua configuração e acionar o pipeline de ajuste automático aqui. E é isso que manterá seu modelo afiado ao longo do tempo. Você terá um modelo estático offline, mas é isso que manterá seu sistema funcionando. Então, Jay vai dedicar mais tempo à parte do diagnóstico. O que eu quero fazer é dar um zoom na parte de ajuste automático. E,
+
+novamente, estamos falando de roteamento, mas é assim que ajustamos cada agente em nosso sistema. Então, começamos com um agente alvo e já temos essas amostras de avaliação inéditas de nossos humanos. Vamos identificar as incompatibilidades e as correspondências e acionamos um agente otimizador imediato. Ora, isso por si só já são dois subagentes. Existe o agente de reflexão e o agente de síntese ascendente . O que o comando `reflect` faz é
+
+analisar as discrepâncias, tentar remover qualquer ruído, encontrar quaisquer problemas sistêmicos que possam estar presentes no conjunto de dados, refletir sobre eles e enviar esse feedback para o agente de síntese. Agora, o agente de síntese utiliza esse feedback. Contém a configuração do seu agente. Ele atualiza o seu agente com a nova configuração com base no feedback recebido. E volta a estabelecer parâmetros de referência. Se essa
+
+etapa for concluída com sucesso, você poderá registrar esse novo agente na nova loja de agentes. E na próxima vez que sua produção for executada, você pega a nova versão do agente. E este é um sistema de circuito fechado, como mencionei, sem intervenção humana. Temos, sem dúvida, observabilidade nos guardrails, com um mecanismo de reversão rápida integrado em caso de qualquer problema com o próprio sistema. Passando para a próxima etapa do nosso fluxo de orquestração. Então, falamos sobre
+
+roteamento e passamos para a parte de aprimoramento. É um processo de três etapas. O que fazemos em primeiro lugar é gerar um prompt específico para esta imagem. Analisamos a descrição, analisamos as diretrizes recebidas do nosso agente de roteamento e, em seguida, geramos uma solicitação para essa imagem. O que especificamente precisa ser melhorado nesta imagem ? E nós prosseguimos e
+
+aprimoramos essa imagem. Depois, temos o controle de qualidade, que é um processo multidimensional, que analisa diversos aspectos, como revestimento, fidelidade e cores. E se for aprovado, aí sim você pode publicar isso de fato. Se não for aprovado, você pega o feedback da etapa de controle de qualidade, envia de volta para o prompt de geração junto com as entradas iniciais que você enviou e prossegue com as melhorias. Portanto, existem dois resultados finais aqui.
+
+Ou você continua aprimorando por K iterações, passa pelo controle de qualidade e publica, ou sofre uma perda de cobertura e nunca aprimora essa imagem. Eis um exemplo. À sua esquerda, você vê uma tigela de batatas-doces fritas. Enviamos para a primeira versão e nosso agente de controle de qualidade a rejeita porque o tamanho da porção está incorreto e a apresentação do prato é muito irrealista. Levamos esse feedback em consideração, partimos para a segunda iteração e, de fato, conseguimos aprová-la na segunda iteração. Portanto, a métrica que estamos
+
+medindo aqui é a aprovação em K. A aprovação em K é essencialmente a taxa de aprovação na K-ésima iteração. Idealmente, quanto mais iterações, maior será sua taxa de aprovação, pois você receberá mais feedback. Agora, passo a palavra para Jay para que ele finalize o restante.
+
+Obrigada, Somya. Então, sim, antes de finalizarmos aqui a geração das vogais, usamos o que chamamos de comparação aos pares , certo, para nossa passagem por K. Ou seja, analisamos a imagem de entrada e a imagem de saída e avaliamos se uma é melhor que a outra. Mas como podemos descobrir, de fato, o que é melhor? Então, não vamos entrar em muitos detalhes aqui porque isso é meio que informação confidencial, então vamos apenas mencionar de forma geral que é aqui que você... Pelo menos para
+
+nós da Rue Ba, precisamos garantir que estamos alinhados com produto, design, política e questões legais. E é aqui que incorporamos o que definimos como uma imagem melhor na plataforma em nossas avaliações. Então, veja os exemplos aqui, será que é fiel? Está completo? É natural? É
+
+realista? E há várias outras coisas também. O resultado disso é então um sim, não ou não tenho certeza. Aqui estão alguns exemplos de modos de falha. Portanto, entrada e saída à direita. As
+
+entradas ficam à esquerda e as saídas à direita. Isso pode ser um pouco difícil de perceber à primeira vista. Na verdade, adicionamos camarão aqui, e não deveríamos. Portanto, falhamos em ser fiéis. É aqui que vamos para o outro lado.
+
+Então, a entrada tem alguma origem na parte inferior do sushi. Na verdade, nós o removemos. Portanto, não conseguimos atingir a completude. Eis um exemplo bastante interessante em que o agente tentou uma edição mais criativa na primeira iteração. E aí o pessoal do controle de qualidade disse: "Não, não está bom o suficiente."
+
+E então, na verdade, ele vira bruscamente para o outro lado . E torna-se excessivamente conservadora. Acaba sendo mais ou menos como um prato de cerâmica genérico, ou melhor, uma tigela de cerâmica, desculpe. Então, este é um exemplo de manipulação de recompensas, na verdade. E essa é uma mudança insignificante, algo que não consideramos relevante ou influente, apesar dos pixels brutos da entrada e da saída serem bastante diferentes.
+
+Aqui está outro exemplo em que, na imagem exibida, o prato está cobrindo o molho. Este é um exemplo em que, para alguns dos modelos de ponta que estamos usando para a edição de imagens propriamente dita, alguns dos seus problemas acabarão por afetar nosso caso de uso prático . E então, a coerência do objeto e a plausibilidade física das avaliações, que às vezes se coordenam com as equipes de vanguarda, informam-nas sobre esses problemas e trabalham em conjunto com elas. Eis um exemplo de por que a multimodalidade é bastante importante. Na entrada e na saída, não conseguimos ver que existem oito pedaços de wonton aqui.
+
+Então, na verdade, não estamos confiantes. Não temos certeza. Então, este é um exemplo em que nós o rejeitaríamos na produção e ele não seria aprovado . Assim, a última etapa depois de tudo isso é o pós-processamento e o que chamamos de controle de qualidade para publicação. Este é o último ponto de controle antes de decidirmos se queremos publicar algo para produção.
+
+Aqui, realizamos algumas verificações de políticas. Também realizamos mais algumas verificações de qualidade. E você deve estar se perguntando, tipo, nós já fizemos algum controle de qualidade. Tipo, por que vamos fazer mais uma etapa de controle de qualidade? O motivo é que pensamos nisso como um modelo semelhante ao do queijo suíço.
+
+Portanto, queremos tentar otimizar para reduzir a probabilidade de uma falha chegar à produção. Assim, existe alguma redundância aqui e ali. E tudo bem. Então, essa etapa de controle de qualidade é um pouco mais holística. Captura mais coisas. Mas também tentará
+
+sinalizar coisas que deveríamos ter detectado anteriormente. Tudo bem. Então, nós falamos sobre alguns ciclos de feedback aqui. Resumindo, falamos principalmente sobre este primeiro ponto , que é o loop do modelo. Isso leva em consideração as variações e está em alinhamento com o conjunto de dados rotulados por humanos que possuímos e que estabelecemos offline.
+
+Mas, na verdade, temos mais ciclos de feedback. Então, nós temos o Uber, o que nós temos é uma espécie de cultura de "alimentação de cães" muito forte . Vamos testar os aplicativos antes de eles serem lançados. Mas, quando o sistema entrar em produção, como faremos para que nosso agente receba esse feedback e possa direcioná-lo adequadamente? Assim, à medida que adicionamos mais desses ciclos de feedback, queremos ser capazes de generalizar o sistema.
+
+Então, é aqui que criamos um nível mais alto de abstração, que chamamos de diagnosticador. Assim, o sistema de diagnóstico pode receber qualquer entrada desses diferentes circuitos de feedback que estamos capturando. Ele pode refletir sobre qual agente específico dentro do sistema geral precisa ser otimizado e pode direcionar esse agente para corrigir essa configuração de forma específica. Pode ser um único agente, podem ser vários agentes. Então, aqui está um exemplo de alimentação interna para cães . Você pode encontrar esses ícones em
+
+diferentes aplicativos, onde você tem os botões de "não gostei" e "gostei". Também aceitamos feedback em formato livre . E isso é ótimo, porque receberemos feedback diretamente dos comerciantes. Vamos receber feedback das equipes de design e de outras equipes de produto da Uber. E incorporaremos esse feedback de volta à nossa etapa de diagnóstico e ajustaremos o sistema ao longo do tempo.
+
+Novamente, o padrão de fluxo de trabalho é semelhante . Vamos reproduzir os exemplos que sabemos que foram sinalizados, sejam eles bons ou ruins , e então vamos avaliar as métricas antes de enviar a versão de configuração mais recente. O último passo é, de fato, colocar isso em produção. E é aqui que procuramos uma série de métricas diferentes que monitoramos para avaliar a qualidade e a saúde do mercado. Bem, acabei de mencionar uma aqui, que é a conversão. Portanto, estamos
+
+buscando melhorias no processo de adicionar itens ao carrinho, converter e concluir os pedidos. Bem, acho que este é um ponto interessante para destacar porque , pelo menos no Uber, mas especialmente em ambientes de produção em grande escala, você tem uma grande quantidade de dados que podem ser segmentados e analisados. Assim, nesta área, ao contrário das outras, podemos segmentar por regiões geográficas, tipo de dispositivo, tipo de antena, etc. E podemos observar onde as coisas estão melhorando em diferentes segmentos e, de fato, otimizar determinados segmentos também. Legal, e essa foi a nossa apresentação. Agradeço.
+
+[aplausos]
+
+[música]

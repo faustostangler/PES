@@ -1,0 +1,115 @@
+---
+video_title: "How Forward Deployed Engineering is done at Cognition — Jia Wu"
+video_id: RVxym6mmIns
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=RVxym6mmIns
+video_date: 2026-07-28T20:00:06+00:00
+video_description: |
+  Most of the coding agent market quietly optimizes for token usage; Cognition's deployed engineering team measures the opposite, the outcomes a customer can actually see, and reports something like an 82% reduction on the work they targeted. Jia Wu's argument is that you measure before Devin ever lands, then again once it is fully activated inside the customer, so the value is a real delta and not a vanity number. The way that value shows up is not linear: one team using the agent is a step function, a whole enterprise using it is parabolic, because the products Cognition builds and the customer's backlog start to overlap.
+  
+  That changes what a deployed engineer is. As the pure engineering part trends toward zero, the job leans on business and people skills: understand the customer's real problem space, find the highest leverage place to point the agent, and communicate it back into the roadmap, since customers are the lifeblood. Each deployment is meant to derisk and improve the next, because the challenges recur in similar shapes across companies. The value underneath it all is blunt: correctness and customer success at all costs, ship the hard thing and leave nothing on the table.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/jia-rong-wu/
+  
+  Timestamps:
+  0:00 - Introduction: deployed engineering at Cognition
+  2:05 - Step function to parabolic productivity
+  3:35 - Where products meet the customer's problems
+  5:16 - Pointing agents at the highest leverage work
+  7:07 - How deployment challenges recur
+  8:34 - What a deployed engineer actually is
+  10:25 - Measuring outcomes, not token usage
+  12:56 - The 82% result, measured before and after
+  14:38 - Developers plus Devin, autonomously
+  15:53 - Core values: correctness and customer success
+---
+[música]
+
+É bom estar aqui. Agradeço a todos vocês. Meu nome é Gia. Sou líder de engenharia de campo na Cognition. E hoje, espero que o que vocês levem desta conversa seja que a forma como implementamos o Devin em campo depende muito de como encaramos a engenharia de implementação na Cognition. Então,
+
+como os quatro movimentos implementados tornam a engenharia de IA realmente possível? Antes de começar, quantas pessoas já ouviram falar de Devin ou conhecem Devin? Ah, legal. E não estou falando do Devin de hoje em dia. Tipo, estou falando do Devin lá em 2024, quando lançamos o primeiro e foi tipo, "Nossa, SweepBench 13%. Estamos de volta com tudo."
+
+E nós, como engenheiros, pensamos: "Estamos perdidos ." Mas, quer dizer, depois de uma semana, todo mundo fica tipo, "Ah, isso na verdade não é tão útil assim." "Eu só usaria isso se estivesse desesperado e sem ideias." Isso é em 2024. E que fique claro que temos senso de humor, porque pegamos isso e levamos adiante . Tenho
+
+certeza que você já viu todos esses anúncios por toda São Francisco. Agora estamos bem. Então, o motivo pelo qual somos bons é que vou falar um pouco sobre a área de superfície do produto, só para dar um pouco de contexto para quem talvez não tenha usado o Devin antes, ou para quem talvez não tenha familiaridade com algo como o Cognition. Portanto, se você já usou o Flood Code, também disponibilizamos uma interface de linha de comando (CLI). Se você já usou algo como, por exemplo, Cursor ou Windsurf, nós também disponibilizamos uma interface semelhante a uma IDE. Na verdade, quantas
+
+pessoas conhecem o windsurf ou já o praticaram no passado? Doce. Então, eu vim da área de Windsurf após a aquisição da Windsurf. Bons tempos. E então, o que realmente nos torna conhecidos, especificamente, é por Devin Cloud ou pelo agente Devin Cloud. E eu não vou te
+
+entediar até a morte falando sobre todos os componentes, recursos e tudo o que compõe o produto em si. Não estou aqui para tentar te convencer disso . O que quero apresentar a vocês é que somos uma das principais equipes de engenharia de software da empresa e que, de fato, conseguimos gerar impacto em escala global. O que eu quero dizer com isso? Podemos fazer uma pausa e dar uma olhada nesta figura.
+
+Assim, internamente na Cognition, nos últimos 6 meses, para o bem ou para o mal, talvez tenhamos ficado atrasados ​​nas contratações, mas, usando nosso agente, conseguimos entregar quase dez vezes mais PRs robustos e de boa qualidade em toda a organização. Portanto, trata-se de um aumento significativo na capacidade de adaptação que podemos obter ao implantar nosso próprio agente. Você não precisa acreditar na nossa palavra. Se analisarmos os detalhes de como estamos sendo consumidos e utilizados em toda a empresa, veremos um crescimento parabólico na adoção, implantação e uso do nosso agente em diversos casos de uso e cenários. Então, o que isso significa, certo? Tipo, como é que
+
+isso realmente acontece? Bem, isso só pode acontecer com os engenheiros da Cognition que atuam diretamente no projeto. E vou abordar o problema a partir de alguns tipos de categorias, certo? Então, há dois círculos à sua frente na tela. Um deles pode representar o domínio de um produto, certo? Como empresa, como
+
+organização de engenharia de software, obviamente, você tem um produto. Obviamente, vocês também, do outro lado, seja do lado esquerdo ou direito , têm uma série de problemas específicos que estão tentando resolver, certo? Você tem um produto, tem problemas que está tentando resolver, e a interseção desses dois, ou como você preferir chamar, é o encaixe produto-mercado. Certo? Idealmente, vocês terão uma boa sobreposição, no sentido de que, seja qual for a atividade da sua empresa, vocês poderão agregar valor aos clientes. E, com sorte,
+
+quaisquer que sejam os problemas do cliente, você poderá resolvê-los com os produtos da sua empresa. Assim, a estratégia adotada pela Cognition visa essencialmente maximizar a sobreposição entre os produtos que normalmente desenvolvemos e os problemas que enfrentamos em toda a empresa. Então, o que isso significa, certo? O primeiro conceito fundamental que gostaria de transmitir é que os engenheiros da Cog que atuam diretamente nos projetos têm um profundo conhecimento do problema em questão. E especificamente, certo? Por exemplo, se
+
+pensarmos no problema da engenharia de software, e vou apenas ocultar as funcionalidades na camada inferior, pois não nos importamos muito com elas, mas se pensarmos em quando você pega algum tipo de base de código, algum tipo de implementação, e precisa construir funcionalidades, precisa manter esse software, precisa revisar, implantar e manter esse software. Todas essas etapas, todas essas funções têm um grande valor comercial por trás delas, certo? Você só pode pensar que seria ótimo se pudéssemos construir do zero ao um, simplesmente executar as coisas de forma intuitiva e sem nos preocuparmos com código legado, mas essa não é a realidade . Seria ótimo se nossos engenheiros de produto ou nossos gerentes de produto pudessem simplesmente pegar histórias de usuário e dizer: "Estas são as coisas que precisamos construir para obter valor e receita". E então chegamos à programação. A
+
+programação em si, pelo menos da nossa perspectiva, é um problema praticamente resolvido, certo? Esses modelos estão tão bons agora que, como em qualquer tipo de contexto, com engenharia de contexto suficiente, você pode obter os blocos de código que realmente lhe interessam . Mas o problema não é escrever código mais rápido, isso geralmente representa apenas 20% do problema. O problema, na verdade, se resume a como testar esse código? Como você revisa e implementa esse código? E como manter esse código
+
+em toda a empresa? Então, essa é a premissa do problema. Bem, vou começar dizendo que, assim como nós também temos a solução, não vou ficar falando dela indefinidamente , mas para os engenheiros que atuam na Cognition, mapeamos as funcionalidades do Devin especificamente para o problema do cliente. Portanto, se o ciclo de vida do desenvolvimento de software for extremamente complexo, implantar os agentes sem nenhuma direção específica significa simplesmente maximizar o uso de tokens. Certo? É
+
+como se você estivesse desperdiçando fichas, queimando dinheiro, sem obter nenhum resultado tangível. Então, tentamos identificar, quando estabelecemos parcerias com clientes, quando realizamos reuniões, e por exemplo, certo? Meu dia pode ser composto por quatro ou cinco horas de ligações para clientes, seguidas de quatro ou cinco horas de trabalho prático no teclado . Essas quatro ou cinco horas de chamadas nos permitem entender profundamente quais iniciativas estratégicas têm o maior impacto positivo para o negócio. Certo? Uma vez isso foi identificado, certo?
+
+Como podemos automatizar nosso próprio trabalho, configurando o agente para que ele execute todas as automações por nós, certo? Não precisamos estar lá acionando os agentes manualmente. Ele pode responder a alertas específicos, a eventos específicos. Mas, o mais importante, como engenheiro destacado em campo, como você mede o retorno do investimento? E é muito ambíguo.
+
+E é um problema não resolvido porque a empresa que o resolverá terá um valor de mercado de 5 trilhões de dólares. Então, especificamente, nossos engenheiros destacados irão se integrar aos ecossistemas dos clientes, certo? Analisamos, sabe, o acúmulo de coisas que precisam ser construídas. Analisamos as medidas corretivas que precisam ser feitas. Analisamos tudo, desde o código atrasado que nunca é lançado, até os testes que ninguém escreve, ou ainda a triagem automática de alertas específicos.
+
+E mapeamos as funcionalidades do nosso produto para esses problemas. Dito isso, se todos fizermos nosso trabalho e resolvermos os problemas dos clientes em 100%, e o cliente ficar muito satisfeito, isso é apenas metade da equação, certo? Não basta resolvermos o problema do cliente, também precisamos resolver o problema do nosso produto. O que eu quero dizer com isso, certo? Se considerarmos a união dos problemas que os clientes enfrentam com os produtos que estamos desenvolvendo, certo? Resolver o
+
+problema apenas altera a forma como uma parte do diagrama de Venn é feita. Mas para obtermos esse verdadeiro ciclo de feedback, onde conseguimos a máxima sobreposição entre o que fazemos e o que os clientes precisam, é isso que a engenharia aplicada na Cockroach Labs faz. Então, a segunda parte que quero enfatizar é que, na nossa empresa, mapeamos os problemas dos clientes de acordo com as capacidades disponíveis. Então, como fazemos isso, certo? Muitos desafios de engenharia vêm em formatos semelhantes aos encontrados no campo, não é? Temos o
+
+conjunto de avaliações de maior fidelidade que recebemos de nossos clientes, certo? Estamos em campo todos os dias. Estamos tomando conhecimento dos problemas. Estamos a par de tudo o que os clientes estão a fazer. E temos que levar esse contexto em consideração e trazê-lo de volta ao produto de uma forma sensata. Então, de que maneiras
+
+esses desafios empresariais se manifestam? São comuns a toda a empresa ou são exclusivas de um usuário específico? Será que soluções alternativas, gambiarras ou correções de bugs no que estamos desenvolvendo deveriam se tornar funcionalidades, certo? Porque, em última análise, o que queremos fazer como empresa é reduzir os riscos do nosso planejamento estratégico. No final das contas, seria ótimo se, como engenheiro, eu soubesse exatamente o que construir para obter Y por cento da receita de um cliente específico. E é exatamente esse
+
+o problema que estamos tentando resolver, porque, no fim das contas, somos nós que anunciamos a mudança, certo? Somos a ponte entre os produtos. Somos a ponte entre os problemas e o feedback é, na verdade, metade do ciclo que torna a próxima implementação melhor do que a anterior . Então, se pensarmos no perfil em T ou nas personas das pessoas que contratamos, e para um engenheiro de campo, é algo muito flexível em termos de como você o define. Tipo, você é um engenheiro de vendas? Você é um
+
+arquiteto de soluções? O que você é, né? Então, se você pensar em todas as habilidades que normalmente se espera que um profissional de desenvolvimento de campo (FDE) possua, certo? Provavelmente você vai querer abrir bastante o jogo. Provavelmente você quer ter, sabe, boas habilidades interpessoais, como habilidades de negócios, bons processos, habilidades de atendimento ao cliente ou até mesmo tecnologia, certo? Para ser
+
+implantado no espaço, você precisa saber como funciona a tecnologia em questão. Então, também procuramos por picos muito acentuados entre as pessoas, certo? O pessoal da Cognition contratou engenheiros para trabalhar na Cognition, e nós os contrataremos com experiência em gestão de produtos se eles tiverem uma noção muito boa de como os produtos devem se encaixar uns nos outros, certo? Porque se o custo da engenharia de software for chegar a zero, você precisa saber como projetar um produto que faça sentido. Porque você pode simplesmente solicitar.
+
+Mas também contratamos pessoas que são como fundadores, engenheiros de software, mas especificamente pessoas muito experientes nas áreas de tecnologia, certo? Não tem problema se você não tiver um forte senso de negócios, isso pode ser aprendido, mas também é muito difícil ensinar tecnicismos e ser o especialista na sala enquanto você está trabalhando. Então, existem alguns perfis específicos para os quais contratamos. Bons engenheiros de atendimento ao cliente ou engenheiros de campo fazem de tudo, certo? Assim como eles conseguem mapear o produto de volta ao roteiro, assim como conseguem resolver os problemas do cliente. Os
+
+melhores engenheiros de atendimento ao cliente são capazes de ter essa curiosidade incansável para descobrir o porquê das coisas. Na Cognition, sempre nos perguntamos: "Por que estamos resolvendo este problema? Este problema é importante para a empresa como um todo? E posso comunicar isso ao planejamento estratégico de uma forma que melhore a solução do problema para todos?" Mas também... O segundo mantra que
+
+seguimos é que você precisa estar incansavelmente ligado ao cliente, certo? Eles são a nossa força vital no final das contas. Garantir o sucesso dessas iniciativas é a única maneira de sua empresa sobreviver e se tornar a escolha óbvia para uma parceria empresarial. Então, esses são os dois mantras que nós, como engenheiros de campo da Cognition, seguimos à risca. Então, anteriormente, a primeira abordagem para a engenharia de implantação era simplesmente, você sabe, maximizar o uso de tokens, certo? A próxima era da qual
+
+falarei é a orquestração inteligente, mas com resultados que vocês podem realmente mensurar, e darei alguns exemplos para vocês. Então, anteriormente, tipo um ano, talvez um ano e meio, dois anos atrás, a meta ou o indicador-chave de desempenho (KPI) que os engenheiros alocados estavam tentando alcançar era maximizar o uso de tokens, certo? Foi como se fosse o momento perfeito. Não precisei me preocupar com orçamentos. Tudo era subsidiado. Você
+
+poderia executar qualquer coisa que quisesse. Mas agora, o problema realmente mudou para a área de entregas, certo? Muitas organizações com as quais trabalhamos, algumas das maiores e mais regulamentadas empresas do mundo, realmente se preocupam em saber: "Estamos obtendo valor real desta solução ou estamos apenas queimando tokens sem motivo ?" E esse é um diferencial fundamental que preciso destacar entre nós e algumas das outras plataformas. Você pode fazer com que os engenheiros sejam 10 vezes mais rápidos. Isso é bom.
+
+Isso ainda é valioso. Mas será que é possível tornar uma organização 10 vezes mais rápida, incluindo todas as pessoas, sejam elas técnicas ou não, em toda a empresa? É aí que você descobre o verdadeiro valor de ser um parceiro. E é por isso que ferramentas pontuais, como interfaces de linha de comando ou IDEs, falham nesse propósito . Então, deixe-me apresentar alguns exemplos de como temos operado em toda a empresa.
+
+Então, na Cognition, quando executamos o agente e ele apresenta um rastro ou trajetória específica, ou quando realiza alguma ação, chamamos isso de sessão. Uma sessão em si, certo? Temos métricas que permitem calcular quantas horas de engenharia você pode realmente gerar e quantas horas de engenharia são efetivamente produtivas e executadas pelos usuários. Certo? Um desses exemplos é um estudo de caso em que nos integramos à rotina de um cliente durante 3 meses. Nós
+
+os trouxemos a bordo. E, na prática, ao longo desses 3 meses, entregamos cerca de 150% a mais do que o esperado em termos de número de funcionários. Então, se você pensar em um projeto que está tentando concluir, ou em algo que está tentando desenvolver, ou em uma migração que está tentando realizar , imagine ter 150 colegas de trabalho extras fazendo isso com você . Você pode simplesmente dizer: "Ei, isso parece apenas uma manipulação de tokens, certo? Tipo, você está me dando uma métrica que diz que são apenas horas de engenharia.
+
+Você está executando várias sessões diferentes. Como sabemos que essas sessões são verdadeiras, significativas e valiosas?" Então, a segunda parte disso é: podemos pensar em como reduzimos os prazos de entrega de projetos em uma ordem de magnitude. Então, uma redução de cerca de 82% nas entregas. Então, se você adota a metodologia de desenvolvimento ágil, obviamente terá tarefas, sprints e coisas que precisam ser construídas. Se você analisar cada
+
+métrica que você mede antes e depois da chegada de Devin, poderá verificar isso. Podemos comprimir essa linha do tempo em cerca de 82%. Assim, de forma geral, sempre que desenvolvemos, implementamos e ativamos totalmente nossas soluções no ambiente do cliente, não apenas oferecemos uma escala massiva em termos de capacidade de engenharia, mas também reduzimos o tempo necessário para gerar valor e lançar os produtos no mercado. Agora, a terceira parte disso é: "Ei, mas na verdade eu me importo muito com os números, certo?" Eu realmente quero saber quantos PRs vocês estão enviando? Tipo, isso tem algum significado?
+
+Isso faz algum sentido? Então, se você pensar em analisar os números um pouco mais a fundo , e quiser observar apenas os PRs brutos que as pessoas estão enviando em toda a empresa, entregamos quase o dobro da quantidade de PRs que os engenheiros conseguiam fazer com ferramentas de ponto único e antes de se implementar uma estrutura de agentes como o Devin. Portanto, temos três exemplos de estudos de caso anonimizados que comprovam nossa capacidade de gerar valor em larga escala e em diversos domínios problemáticos. O que eu posso dizer é que estes não são, sabe, estudos de caso privados. Também temos diversos estudos de caso públicos diferentes.
+
+Então, nós temos parcerias com empresas como o Nubank, certo? Se vocês já foram à América Latina, podem entender que lá existem muitos desenvolvedores. Existem muitos projetos que estão relacionados de forma tangencial. Então, especificamente, podemos dizer que houve uma migração de ETL. Eles tinham 50 engenheiros trabalhando nessa migração. Conseguimos
+
+entregar isso dentro de, hum, acho que um terço do prazo. Apenas com Devin, de forma autônoma. Temos outro banco, certo? Temos outro caso de uso em que trabalhamos com um dos maiores bancos da América Latina. Eles estavam tentando migrar, assim como o sistema de identificação fiscal. Eu sei, é tipo
+
+ciência de foguetes, né? Bem, a ideia é que conseguimos entregar isso com metade do esforço realmente necessário. Então, se você pensar em linguagens legadas como COBOL, se pensar em coisas como JCLs, se pensar em coisas que as pessoas não aprendem mais simplesmente porque não são divertidas nem interessantes, nós somos capazes de operar em algumas das bases de código mais complexas do mundo e entregar resultados que realmente importam. E por último, mas não menos importante, obviamente, se pensarmos especificamente no cartão compilado, conseguimos, na verdade, alcançar uma ordem de magnitude maior em termos de taxa de aceitação de PRs. Entregamos cerca de 10 vezes mais talento em engenharia por assinatura, toda semana. E então, na verdade, conseguimos
+
+gerar a produção semanal equivalente ao trabalho de mais de 10 engenheiros na organização. A Built tem ótimos engenheiros, aliás, não é? Esses caras são muito doidos. Então, se você pegar um desses engenheiros e multiplicá-lo por 10, imagine o retorno que você obteria. Então, o que eu vou dizer é que provavelmente vou encerrar esta apresentação dizendo que na Cognition, nós não apenas nos inserimos na vida dos clientes.
+
+Não ficamos simplesmente repassando o feedback para todo mundo. Mas os valores fundamentais da empresa são coisas e princípios aos quais aderimos não apenas internamente , mas também externamente , certo? É muito divertido estar na equipe vencedora. É muito gratificante chegar a uma organização e dizer: "Podemos entregar coisas incríveis e transformar as pessoas em nossos defensores, não é? Quem tiver o Devin em campo na organização, poderá apresentar resultados incomparáveis ​​em todos os aspectos."
+
+E nós vamos com tudo, certo? Não deixamos nada por fazer. Deslocamos um funcionário para o Brasil por cerca de 10 meses. [risos] [bufas] Morar ao lado de um dos clientes só para garantir o sucesso deles. Então, estamos prontos para a missão.
+
+E tem mais a ver com a correção, certo? Por exemplo, se houver práticas de engenharia que queiramos corrigir, se houver coisas que queiramos sinalizar e destacar, tudo isso é levado de volta para a equipe de produto, sem nenhum envolvimento de ego. No fim das contas, estamos todos no mesmo barco. Estamos na mesma missão e estamos apenas cumprindo o que prometemos . E, essencialmente, todo mundo está focado em entrar no mercado. Eu sei que a engenharia de campo
+
+é meio nebulosa, sabe? Fica aquela dúvida: "Eu faço parte de vendas? Faço parte do pós-vendas? O que eu realmente faço como engenheiro de campo?" Mas, todos estão focados em entrar no mercado porque o objetivo é garantir o sucesso do cliente a qualquer custo.
+
+E no fim das contas, fazemos as coisas porque cada segundo conta. Então, se você se interessa por engenharia de ponta na Cognition, que atua na interseção de alguns dos problemas mais complexos do mundo, participa da disrupção de software em grande escala e está do outro lado desses problemas, devemos conversar. Obrigado.

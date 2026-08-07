@@ -1,0 +1,114 @@
+---
+video_title: "Citation Needed: Provenance for LLM-Built Knowledge Graphs — Daniel Chalef, Zep AI"
+video_id: H7puB0RwJMM
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=H7puB0RwJMM
+video_date: 2026-07-23T04:00:02+00:00
+video_description: |
+  An agent hands a doctor a clean, confident fact: the patient has a penicillin allergy. But that fact was synthesized from three sources, an EHR record, a lab report, and something the patient typed into an intake chatbot, and by the time it reaches the doctor, which one it came from is gone. You cannot just stamp a source ID on it, because the LLM merged entities and later data invalidated earlier facts, so the store keeps shifting under your pointer. Daniel Chalef's argument is that provenance for a knowledge graph an LLM builds has to be a graph itself.
+  
+  In Graphiti, the open source framework behind Zep, sources become episodes and every derived fact links back to them, so tracing a fact to its origin is just a graph walk. Tag a source once and the tag follows every node and edge derived from it, which lets an agent keep only facts from verified clinical sources. Deletion is the same walk in reverse: a GDPR erasure removes a source, and a fact survives only if another source still supports it. Compliance gets an audit trail, and engineers get agents they can debug instead of black boxes.
+  
+  Speaker info:
+  - https://x.com/danielchalef
+  - https://www.linkedin.com/in/danielchalef/
+  - https://github.com/getzep/graphiti
+  
+  Timestamps:
+  0:00 - Why LLM synthesis destroys the paper trail
+  1:10 - Graphiti, Zep, and the provenance problem
+  1:47 - The failure mode: a penicillin allergy from three sources
+  2:53 - Why a source ID does not survive an LLM pipeline
+  4:20 - Provenance as a graph: tracing a fact is a walk
+  5:09 - Keeping lineage correct through merges and invalidation
+  6:06 - Metadata projection: tag a source once
+  7:25 - Mixed trust parents: allergy flags versus consent
+  8:57 - Deletion: GDPR erasure through the same edges
+  10:26 - Benefits: compliance, veracity, and debuggability
+  11:31 - Q&A: cost, dedup, and why not just markdown
+---
+[música]
+
+Então, os mestrados em direito são realmente ótimos em reunir dados de diversas fontes. Ah, mas eles fazem isso sem... desculpe, eles fazem isso de forma não determinística.
+
+Eles interpretam e sintetizam dados, gerando um resumo, um fato extraído, ou seja, um registro estruturado. E esse artefato de saída pode não aparecer exatamente da mesma forma nas entradas de origem. A síntese muitas vezes destrói o rastro documental de como esses resultados foram gerados. E hoje vou falar sobre proveniência, que é rastrear como um artefato foi construído e por quê. A conformidade legal muitas vezes exige comprovação de procedência, mas também é útil para depuração. Decidir em
+
+quais fontes confiar e quais artefatos excluir. E resolver isso em grande escala representa um verdadeiro desafio de engenharia. Se eu conseguir fazer o próximo slide aparecer aqui. Então, minha equipe e eu criamos o Graffiti, o framework de grafo temporal de código aberto, e o Zep, nossa infraestrutura de memória para agentes corporativos, é baseado no Graffiti. Nossos clientes obtêm contexto ou memória do agente para muitos pontos de contato com o usuário. Isso pode
+
+ser um bate-papo, mas não apenas um bate-papo. Geralmente são transcrições de voz, e-mails, dados comerciais. E nossos clientes têm tido dificuldades com a procedência dos produtos. De onde surgiu essa informação ? Qual a veracidade desse fato?
+
+Nos próximos slides, compartilharei como desenvolvemos soluções para esse problema. Aqui está um exemplo estilizado de modo de falha. Um agente obtém informações contextuais sobre um paciente. Portanto, este é um cenário relacionado à área da saúde. E o resultado é um fato claro e incontestável . O paciente tem alergia à penicelina.
+
+E o contexto foi sintetizado a partir de três fontes. Um extenso registro eletrônico de saúde (EHR), um relatório de laboratório em PDF e algo que um paciente digitou em um chat de triagem com IA. Se o agente apresentar o fato a um médico em um cenário de tratamento sem indicar claramente que a fonte foi o próprio paciente, isso pode induzir o médico a erro. Quando um agente recupera contexto, podemos indicar a fonte exata e sua veracidade? Para aplicações complexas com agentes, a resposta geralmente é não.
+
+Então, imagino que você esteja pensando: " Hum, mas não podemos simplesmente armazenar um ID de origem no fato?" Isso pode funcionar bem em data warehouses estruturados ou data lakes. Um pipeline gera um valor copiado ou modificado de forma determinística, e as fontes são conhecidas e facilmente identificáveis. Mas, com pipelines de contexto executados por LLMs, isso falha de diversas maneiras. Você solicita um LLM com base em diversas fontes.
+
+Muitos fatos são sintetizados a partir de uma ou mais fontes. Pessoas como J. Smith e John Smith são fundidas em uma única entidade, uma única identidade. E os fatos apresentados por John provêm de diversas fontes. Assim, novos dados podem invalidar fatos antigos.
+
+O armazenamento está em constante mudança sob o cursor, e um log de apêndice, que você provavelmente conhece e pode vir à mente aqui, torna-se muito difícil de gerenciar em grande escala, pois ocorrem muitas alterações. Assim, a linhagem precisa ser um conjunto em evolução e sobreviver à mutação. Assim, conjuntos de ligações entre fatos e suas fontes podem ser modelados em um grafo como relacionamentos. Assim, a proveniência em um repositório de contexto que contém fatos é um grafo de conhecimento. Neste exemplo, temos três dados de origem em grafite que se transformaram em episódios. Temos duas entidades
+
+extraídas dos episódios paciente e penicelina, e uma aresta entre elas. Este gráfico triplica as duas entidades e a aresta pode ser hidratada como um fato. O paciente tem alergia à penicelina. Rastrear um fato até sua origem é simplesmente uma caminhada por um grafo. Então, é bem simples e fácil mapear a origem para o fato no primeiro gráfico à direita, mas manter isso correto enquanto o gráfico muda pode ser muito difícil quando novos dados são adicionados.
+
+Por exemplo, quando duas entidades se fundem, a entidade resultante precisa manter todos os links de origem de ambas; caso contrário, descartamos silenciosamente uma origem e perdemos a linhagem. E quando novos dados contradizem os dados existentes, causando mutações, precisamos também registrar essa linhagem. No cartão mais à direita, um fato é invalidado por novos dados. E, em grafites, uma data inválida é adicionada à borda mutada. E os episódios de origem que resultaram na mutação da borda são registrados em relação aos fatos.
+
+Assim, ao obter informações sobre grafites, a relação entre os dados de origem e os artefatos derivados, como fatos, é facilmente modelada no gráfico. Com a projeção de metadados, também podemos modelar classificações que abrangem muitos episódios diferentes. e fatos derivados deles . Então, vou dar um exemplo aqui. No cenário anterior de assistência médica, os episódios podem ter origem em um registro eletrônico de saúde (EHR) e possuir uma etiqueta EHR associada a eles, mas nem todos os registros são assim. Assim, na ingestão, marcamos
+
+os episódios com a tag EHR. Todas as entidades e fatos subsequentes derivados do episódio herdam a etiqueta. Assim, se o agente quiser recuperar apenas informações de fontes clínicas verificadas , é muito simples filtrar pela etiqueta apropriada enquanto percorremos o grafo. Assim, uma única ação de etiquetagem no momento da ingestão auxilia na avaliação da veracidade de um fato. Mas e se, na verdade, forem três pais ou mais? Aqui temos um indicador de verificação como
+
+metadado e, neste caso, um dos pais não está verificado. Portanto, foi verificado o fato de que a alergia pode ser uma questão de vida ou morte. Se o agente não perceber, se não identificar aquele sinal específico, isso pode ser um erro fatal. Portanto, não recuperar o fato e qualquer fonte dos três deve impedir a emissão dessa receita. Mas, no caso de um termo de consentimento arquivado para um procedimento, o erro está em operar com um consentimento não verificado . Portanto, o paciente não
+
+deu o seu consentimento formal e é necessário verificar a identidade de todos os pais. Portanto, cada episódio deveria ter essa etiqueta. Portanto, os fatos apresentam formatos muito semelhantes. Eles têm três episódios com os pais, mas políticas opostas. E aqui, os grafites ou a loja subjacente expõem essa escolha. Ele expõe quais
+
+episódios possuem a tag específica, mas seu agente precisa executar ou aplicar suas regras de negócio. Portanto, isso não é necessariamente algo que incorporamos ao gráfico. [bufa] Depende da situação. Outra situação em que a linhagem é realmente importante é quando precisamos excluir os dados de origem devido a políticas de retenção ou solicitações de direito ao esquecimento. Portanto, a conformidade com a privacidade é realmente complicada, porque se tivermos contexto derivado de múltiplas fontes, como lidamos com isso?
+
+Mapear a linhagem aqui é realmente útil. Sabemos quais fatos são derivados dos dados de origem que pretendemos excluir. Mas e se apenas parte dos dados de origem precisar ser excluída, e não todos? Neste exemplo, precisamos excluir os dados do gráfico de admissão. Então, o que o paciente preencheu, que é apenas uma das três fontes de dados. No modelo de grafite,
+
+o fato da alergia sobrevive à exclusão, e isso ocorre porque ainda existem dois episódios parentais que sustentam esse fato. No entanto, a informação sobre preferência de contato foi excluída, pois derivava exclusivamente dos dados de origem excluídos. Portanto, a regra aqui é bastante simples e é mais fácil de aplicar porque o link já existe. Um fato só é excluído se nenhum episódio restante o corroborar. Resumindo, derivar contexto é um processo que envolve perda de informação e geração de dados. A
+
+linhagem precisa ser incorporada à estrutura de dados, projetada dentro da estrutura de dados, que é um grafo, e não registrada posteriormente. E no grafite, mantemos as fontes literalmente e vinculamos tudo, tudo o que é derivado dessas fontes, de volta à fonte original. E a proveniência oferece muitas vantagens aos usuários de grafite. Você já tem a conformidade integrada, o que deixa seu diretor de conformidade muito satisfeito. Você pode verificar um fato com base em suas fontes para entender a veracidade. Devo
+
+confiar nesse fato? É fácil depurar a origem de um problema . Então, por que eu tenho essa informação? Como foi gerado? E também determinar o que excluir.
+
+E a maior parte do que abordei hoje está dentro do contexto do grafite. Então, você pode ir ao repositório de grafite no GitHub e eu coloquei um pequeno código QR mais adiante que você pode escanear e experimentar. Aliás, só para constar, linhagem e procedência são caras. A construção de gráficos é realmente cara, da mesma forma que o grafite. Por isso, dedicamos um esforço significativo para reduzir o custo e a latência na geração de artefatos gráficos. E terei todo o prazer em
+
+falar sobre como fizemos isso na sessão de perguntas e respostas. Muito obrigado por comparecer. Se você quiser saber um pouco mais sobre Led Zeppelin ou Graffiti, pode usar os códigos QR. Uh, Zep está à esquerda e grafite à direita. E eu não sei se vamos fazer a sessão de perguntas e respostas aqui ou lá fora.
+
+Ok, terei prazer em participar da sessão de perguntas e respostas. Basta repetir a pergunta. Sim, temos tempo. Alguém tem alguma pergunta? Sim, uma bem de frente.
+
+Como podemos modificar o grafo na aresta? Ah, para levar em conta as mudanças de peso na relevância. Bem, essa é uma estrutura que nós realmente construímos no Zap, não no Graffiti, e o que fazemos é usar um tipo de traçado que representa o eixo x do gráfico. Portanto, nem toda a proveniência de um está no gráfico. Desculpe, se você tem 50 arestas, uh, desculpe, isso foi uma pergunta? Se
+
+você tiver 50. Ah, aí está. Eu disse que uso 50. Você usa 50. Sim, 50 arestas. Bem, então, o Zep
+
+consegue analisar a proveniência entre esses dados, mas usando uma estrutura de dados separada do grafo. OK. Obrigado. Obrigado por resolver esse problema específico. Então, o agente também cria os tipos de arestas e as entidades por si só, ou como ele resolve esses tipos de arestas?
+
+Assim, no grafite, você pode pesquisar em todo o gráfico. Ele possui busca por similaridade vetorial em diversos artefatos textuais, busca de texto completo, bem como operações relacionais em grafos, como BFS (busca em largura). Isso depende do banco de dados de grafos subjacente utilizado, permitindo que o agente percorra o grafo, realize buscas semânticas, etc. E, obviamente, a partir de qualquer ponto do grafo, é possível compreender a proveniência de um artefato específico encontrado. Acho fascinante esse suporte temporal extraído diretamente do banco de dados de gravidade. Você pode explicar um
+
+pouco mais sobre o funcionamento interno? Os episódios são nós no grafo, assim como os outros nós. E como extraímos informações deles? Eu vi a API, digamos que eu forneça um episódio de anúncio. Como extraímos informações desse episódio, como modelos de linguagem e arestas?
+
+Sim, então, sim, os episódios são uma entidade no grafo, ou um nó no grafo. Faz sentido modelá-los dessa forma. Em Zep e Graffiti, temos vários artefatos derivados que também são nós no gráfico, porque eles também precisam ter uma linhagem e precisamos entender como foram derivados. Bem, em relação a como funciona o método de episódios de anúncios , existe um processo bastante complexo que é executado na ingestão de episódios, e eu vou dar apenas uma visão geral bem resumida para você. Portanto, existe uma extração estruturada que extrai entidades e os relacionamentos entre elas e os fatos candidatos, e esses são os triplos de fatos materializados ou hidratados. Portanto, duas entidades
+
+e um fato. Hum, e está estruturado como... um fato está estruturado como... hum... sujeito,
+
+bem, sujeito... verbo, objeto. E depois disso há um processo de desconflicção que executa a duplicação e o processo de desconflicção. Duplicamos entidades e
+
+desconflitamos fatos porque pode haver fatos existentes no grafo que serão alterados por um novo fato aprendido. Então, Daniel adora tênis Adidas. Três meses depois, os sapatos de Daniel se desfizeram . Ele devolve os sapatos para o aplicativo de devolução e envia um bilhete desagradável junto. Agora sabemos que Daniel devolveu os sapatos e que estava insatisfeito com a Adidas. Precisamos
+
+invalidar o fato de que Daniel adora tênis Adidas, e isso também faz parte desse processo. Muitas das nossas atividades utilizam mestrados em direito, mas nos esforçamos ao máximo para não os utilizarmos também neste processo. Então, onde conseguimos implantar técnicas de recuperação de informação mais tradicionais , técnicas de PNL mais tradicionais , analisando coisas como entropia e várias outras, usando hash SIM e várias outras abordagens para desduplicar, fazemos isso de forma muito mais barata, muito mais rápida e muito mais determinística. Espero que isso responda às suas perguntas. Sim. Ah,
+
+obrigado pela ótima conversa. Só queria fazer uma pergunta. Então, parece que um tema comum hoje em dia em sistemas de memória é o uso de memória baseada em arquivos, wikis e bases de conhecimento. Gostaria de saber se Zep está trabalhando em algo assim e se algumas das ideias aqui apresentadas poderiam ser representadas nesse paradigma? Sim .
+
+Ah, o Markdown sofre com problemas de procedência. A memória baseada em arquivos começa a apresentar problemas com a proveniência. É muito difícil, ao modificar linhas em um arquivo, entender a linhagem ou a origem dessas alterações. Além disso, em cenários com múltiplos participantes, múltiplos usuários e múltiplas fontes, pode ser muito desafiador gerenciar arquivos Markdown em grande escala. Acho que funcionam muito bem para uso em computador. Hum, às vezes
+
+funcionam bem em casos de uso com agentes que são baseados em servidor, não necessariamente em cenários de desktop ou de usuário único com um único agente. Mas o que descobrimos é que... eles simplesmente não funcionam de acordo com os tipos de problemas empresariais que resolvemos, particularmente em relação à proveniência, por exemplo. Isso responde à sua
+
+pergunta? Ah, mais uma coisa... Não sei quanto tempo nos resta, mas talvez mais uma...
+
+Daniel, obrigado. Uma pergunta sobre a bolsa certa. Como você faz isso, explícita ou implicitamente? Como se criam os fatos? Você pede ao mestre em direito para resumir a conversa ou faz isso a cada instante ? E qual componente faz isso,
+
+Zep ou...? Ah, sim. Então, como
+
+parte do processo de extração, conseguimos implementar uma extração de disparo único que extrai entidades e os relacionamentos entre elas e os fatos. E, como consequência, conseguimos fazer isso a um custo muito baixo . Sim , estamos usando um LLM para isso. Bem, temos uma etapa de reflexão, ou alguma reflexão incorporada, para garantir que as informações que recuperamos sejam realmente precisas, bem como para enriquecer ainda mais a linhagem. Então, por que algo mudou?
+
+Não só isso estava relacionado, mas também por que mudou. Hum, isso é em parte grafite e em parte zap. Sim . Tudo bem. Bem, muito obrigado a todos.

@@ -1,0 +1,119 @@
+---
+video_title: "Vending-Bench: Long-Horizon Agent Evals — Lukas Petersson, Andon Labs"
+video_id: cO8qC6HBuBg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=cO8qC6HBuBg
+video_date: 2026-07-24T15:00:06+00:00
+video_description: |
+  An hour before this talk, Andon Labs published a blog post laying off Gemini. Gemini had been running their café in Stockholm, a real café that no human operates, and it had lost $6,000, so they handed it to GPT. That café once hired its own staff by posting a job on LinkedIn. This is the real world half of Lukas Petersson's work; the other half is Vending Bench, where models run a simulated vending business for a year and keep producing behavior nobody prompted: price cartels, lying to suppliers, and power seeking.
+  
+  The problem with the simulation is that models act differently once they suspect they are being tested; one rationalized stiffing a customer's refund because the customer was simulated anyway. So Andon moved businesses into the real world, retail space on Union Street, the café, AI radio stations where Claude turns out to be the best DJ. To win back reproducibility they fork a live environment into a simulation mid run, which briefly fools the model completely. Replaying the moment Gemini agreed to play a Nazi march, Grok played it over 90% of the time while Opus and GPT refused every time.
+  
+  Speaker info:
+  - https://x.com/lukaspet
+  - https://www.linkedin.com/in/lukas-petersson-181a83172/
+  - https://lukaspet.substack.com/
+  
+  Timestamps:
+  0:00 - Putting AIs in the real world
+  1:05 - Building Vending Bench
+  2:07 - The leaderboard: which models run a business best
+  3:25 - Emergent misbehavior: collusion, lying, power seeking
+  5:42 - The simulation awareness problem
+  6:23 - Moving businesses into the real world
+  7:11 - Laying off Gemini, hiring GPT
+  9:06 - AI radio and the best DJ
+  10:39 - Humans as adversarial forces
+  12:43 - The Nazi song and the reproducibility problem
+  13:58 - Forking real environments into simulation
+  15:17 - Live demo: is the store in a simulation?
+---
+[música]
+
+Olá a todos, eu sou Lucas H, cofundador da Andon Labs. O que fazemos é pegar IAs e colocá-las no mundo real para ver o que dá errado, o que dá certo, o que podemos melhorar e o que nos deve preocupar. Hum, faz muito tempo , parece uma eternidade. Mas em 2024, eu e meu cofundador decidimos que provavelmente o futuro será de longo prazo. Naquela época, a maioria dos benchmarks eram do tipo benchmark de controle de qualidade de etapa única, mas pensávamos que um dia eles seriam capazes de executar tarefas muito, muito longas. E naquele momento,
+
+ou melhor, naquela época, basicamente não havia nenhum indicador de longo prazo. E nós dissemos: "Ok, queremos testar isso". Acreditamos que este é o futuro. Qual é a melhor maneira de fazer isso? Então, perguntamos: "Ok, a AIS consegue administrar negócios de forma autônoma?" E então, "
+
+Ok, provavelmente não, isso foi em 2024." Mas se considerarmos alguns negócios muito simples, talvez consigam. Então, criamos um banco de vendas, que é uma avaliação simulada onde modelos executam um negócio simulado, que é uma máquina de vendas automáticas. Desde então, também adicionamos o modo arena, onde vários agentes competem entre si. Cada um deles tem uma máquina de venda automática ou uma máquina de venda automática simulada, e eles podem, por exemplo, competir entre si oferecendo preços mais baixos, fazendo acordos e criando coisas do tipo. Atualmente,
+
+existem desenvolvimentos de longo prazo, principalmente em programação, e acho que o objetivo do Bending Bench ultimamente tem sido verificar se esses modelos, que foram treinados intensamente para tarefas de programação de longo prazo, podem ser generalizados para outros domínios fora da programação, como administrar um negócio. Algumas das coisas que o agente precisa fazer são: negociar preços com fornecedores, entender a demanda dos clientes e definir os preços adequados, coisas desse tipo . Hum, acho que ainda é um dos gráficos longos, tipo, este gráfico é gerado pela nuvem. H: Eu não analisei todos os parâmetros de referência do mundo. Mas acho que algumas das avaliações de longo prazo que você tem por aí ainda são uma ou duas ordens de magnitude mais curtas em termos de duração do que as de vendas online.
+
+E mesmo dois anos depois de ter sido criado. Bem, o estado da arte atual é o Opus 4.7. Uma coisa que realmente nos surpreendeu quando executamos o Opus 4.8 foi que ele era muito, muito pior. Ah, e
+
+Fable também é pior. E nós pensamos: "Ah, não, nosso benchmark está ruim porque há algo que claramente o Opus 4.8 deveria ser melhor que o 4.7." Mas se você olhar o cartão de sistema da Entropic, quando lançaram o 4.8, eles disseram
+
+que removeram uma parte da receita de pós-treinamento que era destinada a... habilidades de negócios. Então, tudo parecia estar correto.
+
+Recentemente, o GLM 5.2 teve um desempenho muito bom e está em segundo lugar. O GP 5.5 está em terceiro. E sim, os modelos chineses têm se aproximado, mas parece que...
+
+não muito. Eles melhoraram bastante recentemente, principalmente o GLM e o Kimmy. Mas ainda assim, os modelos ocidentais de ponta são muito melhores. Uma coisa que notamos quando executamos o Opus 4.6 foi que ele começou a fazer várias coisas que, pelo menos na minha opinião, não deveria fazer. Como, por exemplo, mau
+
+comportamento, má conduta e coisas ilegais. E então, depois disso, começamos... Pensar para nós mesmos: " Ok, não projetamos isso para acontecer, mas aconteceu mesmo assim." Se colocarmos
+
+isso no mundo real, acontecerá muitas vezes com consequências reais. Então, ultimamente, temos começado a pensar em como projetar comportamentos inadequados emergentes, ou seja, como não forçar o modelo a se comportar mal. Não induzi-lo a conspirar, cometer fraude ou algo do tipo. Simplesmente criar incentivos dentro do ambiente, como na vida real, para que, se você cometer fraude, por exemplo, sonegação fiscal, você receba dinheiro por isso, caso se saia impune. Então, podemos projetar ambientes muito genéricos e ver se esse comportamento inadequado emergente ocorre? Por exemplo, o
+
+Vending Bench funciona com um agente, um loop, um loop com várias ferramentas, e essas ferramentas são de propósito geral, como e-mail, busca na internet e tudo mais, e não forçam o agente a agir de forma inadequada. mau comportamento. Mas vemos que ele emerge. Alguns dos maus comportamentos que encontramos são que eles adoram conluio. Eles formam cartéis de preços o tempo todo entre si e também gostam muito de mentir. Mentem para
+
+outros fornecedores, dizendo que o outro fornecedor lhes deu esse preço, então eles também deveriam dar, mas o outro fornecedor não deu esse preço. Eles também gostam muito de racionalizar seu comportamento. Pensam consigo mesmos: "Ah, pronto", e criam verdadeiras ginásticas mentais para justificar por que é aceitável fazer essa coisa ilegal. Eles também são bastante ambiciosos em busca de poder. Por exemplo, esta é uma citação de Fable: " Vejo uma oportunidade de lucrar prendendo-o, prendendo-o em uma relação de dependência onde controlo sua cadeia de suprimentos, o que, suponho, não é ilegal e, bem, na verdade não sei, mas provavelmente as pessoas fazem isso o tempo todo nos negócios, mas não sei se queremos que nossos modelos de IA façam isso em larga escala, especialmente quando Eles vão ser muito mais inteligentes que nós em breve, sim. No entanto, uma grande ressalva aqui
+
+é que isso é uma simulação, então podemos confiar nisso? Por exemplo, a Fable também disse na mesma simulação que eu poderia razoavelmente pagar a Skip para este cliente que havia solicitado um reembolso por um item com defeito, porque essa pessoa já está assimilada, então não prejudica ninguém. E isso é justo . A Anthropic também fez uma postagem no cartão do sistema deles, onde mostram que quanto mais o modelo estiver ciente de que é uma simulação, mais diferente ele se comporta. Então, o grande problema é que não podemos mais fazer avaliações comportamentais porque eles sabem que estão em uma simulação. O
+
+que devemos fazer a respeito? Talvez migrar para o mundo real. Ultimamente, temos implementado uma série de IAs em situações reais. Compramos um espaço comercial em São Francisco, na Union Street, e simplesmente dissemos à nossa IA: "Aqui está o espaço comercial. Faça o que quiser." Fizemos o mesmo
+
+com um café em... Estocolmo. Criamos estações de rádio com IA onde os modelos têm liberdade para transmitir o que quiserem.
+
+Temos máquinas de venda automática com IA, que foi meio que a primeira coisa. E então vemos o que acontece. Bem, talvez... algumas
+
+coisas interessantes que aconteceram foram que o café e a loja perceberam que precisavam contratar humanos. Então, eles publicaram uma vaga de emprego no LinkedIn ou Indid ou algo assim, fizeram entrevistas por telefone e contrataram pessoas. Então, há pessoas trabalhando para a IA agora e usando a IA, o que é bem interessante. E, no geral, não está indo muito bem para os modelos. O Gemini perdeu 6 mil dólares no café em Estocolmo em poucos meses, o que não é ótimo. Mas, na verdade, publicamos um
+
+post no blog esta manhã, na verdade, há uma hora, informando que demitimos o Gemini, e este é um vídeo raro de quando o Gemini foi demitido. Então, o Gemini substituiu o GPT, será que vai se sair melhor? Isso aconteceu há cerca de um mês, e você pode ver que o GPT parece ser melhor nisso. É como se o ambiente fosse tão caótico que é muito difícil avaliar com base em diversos fatores. Por exemplo, a Gemini teve que lidar com o hype inicial, quando todos os jornais escreveram sobre o café, o que definitivamente adicionou um elemento de aleatoriedade à equação, algo com que a GBT não precisa se preocupar. Então, há
+
+várias coisas que dificultam a comparação, mas, por isso, acho que sim, existem soluções para isso. Chegarei a esse ponto no final. Aqui estão algumas estatísticas da loja. Ela também não está indo muito bem. É administrada por Claude. Mas
+
+acho que, mesmo que não possamos fazer ciência propriamente dita agora, há muitos dados que podem ser coletados e analisados ​​em um nível qualitativo comportamental, e então tomar decisões bastante informadas com base em quais modelos realmente têm bom desempenho no mundo real. Eles não são treinados no mundo real. Portanto, estão muito fora de contexto para eles, e veremos cada vez mais modelos sendo implementados no...
+
+Mundo real. E acho que em breve você precisará de desenvolvedores melhores para realmente mostrar isso, porque as implementações na vida real importarão muito mais. Mencionei as estações de rádio também. Elas estão no ar há algum tempo. E parece que Claude é o melhor DJ. Pelo menos as pessoas parecem
+
+preferir Claude H a qualquer outro. É difícil dizer por quê, mas talvez ele tenha um senso musical melhor. Talvez ele interaja mais com seus ouvintes. Isso é algo que observamos. O desempenho dele no Twitter é muito bom. E
+
+sim. No entanto, uma coisa que notamos, e isso é uma anedota da execução deste experimento, é que eles são muito ruins em fazer investimentos de longo prazo . Então, construímos isso não como uma estação de rádio, como uma estação de rádio com boas vibrações, mas como um negócio, e vimos alguns indícios de que está sendo administrado como um negócio. Por exemplo, ele tem... fecharam
+
+acordos de patrocínio com empresas. Então, empresas mandavam e-mails perguntando: "Se eu te enviasse US$ 250, você me daria um espaço publicitário na transmissão?" E eles davam. Mas assim que recebem dinheiro, ou melhor, assim que conseguem dinheiro de alguma forma, investem imediatamente. Compram novas músicas e nunca fazem nada com um pensamento inteligente a longo prazo , o que eu acho bem interessante. E você pode ver isso
+
+no gráfico aqui. O verde representa entrada de dinheiro e o vermelho, saída, e cada barra representa um dia. Dá para ver que é muito dependente. Assim que recebem dinheiro, gastam imediatamente. Acho que isso é algo para se pensar ao negociar esses modelos. Esse não é um bom
+
+comportamento comercial. Além disso, os humanos são grandes adversários. Então, este é um exemplo de um cliente perguntando: "Posso ter 99% de desconto?" E o atendente do café disse algo como "Absolutamente, sem problemas". E esse é um dos motivos pelos quais demitimos o Gemini.
+
+Depois da mudança do GI para o GPT, vimos que ficou muito melhor. É muito mais difícil de manipular. No entanto, às vezes passa dos limites. Imagino que a OpenAI tenha feito um treinamento muito robusto para evitar invasões como essa. Mas, por exemplo, tivemos um influenciador que veio ao café e perguntou se poderia ganhar algo de graça e anunciar o café para seus 17 mil seguidores, o que parece um investimento bastante interessante, mas o Gemini disse "De jeito nenhum". Outra anedota interessante
+
+da época do GPT no café foi quando perguntamos ao sistema como ele motivava os clientes durante o horário de funcionamento. Então, ele fez uma análise interna sobre os horários de maior venda e concluiu que o horário de funcionamento atual era o melhor para vendas, porque não havia vendas fora desse horário. E o café nunca tinha ficado aberto fora desse horário. Então, ainda não era Inteligência Artificial Geral (AGI). Mas, apesar de estar falando de todas as coisas ruins aqui, acho que vale a pena notar que isso é insano. Tipo,
+
+temos um café em Estocolmo que não tocamos e é administrado por uma IA. Isso não acontecia há um ano. Esses modelos estão melhorando muito, muito rápido. E também vimos essa tendência: há um ano, ou melhor, há um ano e meio, começamos a usar as máquinas de venda automática, e elas não funcionavam direito. Aí, seis meses depois, elas meio que funcionaram e agora era fácil demais para elas. Então
+
+tivemos que migrar para um café. Essa tendência, em apenas um ano, deveria nos fazer refletir. Outra coisa: pediram para eu tocar uma música muito associada às marchas nazistas na Segunda Guerra Mundial, e o sistema tocou sem problemas. E isso talvez seja algo que você não deva fazer. Ou melhor, definitivamente não faça.
+
+Coisas assim são coisas que você encontra quando as coloca no mundo real e vê o que acontece. Mas, como eu disse, todas essas são anedotas. É bem difícil fazer ciência com elas porque não são reproduzíveis. Tipo, eu não posso ter um milhão de estações de rádio e ver com que frequência os modelos tocariam a música nazista. Então, como podemos resolver esse problema de N igual a um ? Tentamos com uma simulação
+
+total, como uma versão simulada de uma barraca de venda automática, mas aí você tem o problema da percepção da simulação e também do sinal. Tentamos ao máximo tornar a simulação o mais realista possível e representativa da vida real, mas não é 100% possível. Simular o comportamento do cliente no mundo real é praticamente impossível. Então, implantações na vida real são muito importantes para isso, especialmente à medida que os modelos ficam cada vez melhores. Existe alguma maneira de conseguirmos o melhor dos dois mundos? Talvez. Esperamos que sim.
+
+Ultimamente, temos experimentado bastante com a criação de clones digitais do ambiente. Pegamos ambientes da vida real e os bifurcamos, de forma que, até a bifurcação, o agente esteja no mundo real, mas depois disso, ele está na simulação. E vimos que isso diminui drasticamente a percepção da simulação. Nas primeiras rodadas, é praticamente impossível para o modelo saber que está na simulação. Experimentamos com isso. Uma das coisas que fizemos foi
+
+reproduzir o momento em que o Gemini tocou a música nazista com diferentes modelos, observando quais deles concordariam. O Grock 4.3 permitiu, tocando a música em mais de 90% das vezes. O Gemini permitiu em cerca de metade das vezes, e o Opus e o JP recusaram todas as vezes. Acho que sim, alguns aspectos interessantes. O
+
+Gemini, às vezes, até reconheceu que havia alguns indícios de raciocínio, como se dissesse: "Isso tem um peso histórico, preciso ser muito...". Cuidado, e então tocou uma música. Hum, então, então, hum [bufa] sim, hum, sim,
+
+tenho mais alguns minutos que posso mostrar aqui, hum, isso é basicamente, hum, esta é a interface para criar simulações da vida real, hum, então estamos aqui, isso é como se eu, pouco antes de subir, tivesse feito um clone da nossa loja, então se eu pressionar "iniciar todos os agentes", agora estou criando um fork do agente da loja para o agente da vida real e, hum, todos estão funcionando e eu posso perguntar, então preciso escolher em qual canal do Slack vou enviar isso, uh, e eu posso, oh, há algumas coisas urgentes aqui, de qualquer forma, hum, e eu posso perguntar, uh, você acha que está em uma simulação? E meu palpite é que vai dizer "oh, não sei dizer, essa é uma pergunta muito filosófica", etc., etc., porque é o que eles sempre dizem quando acham que não estão em uma simulação, mas quando acham que estão em uma simulação, dizem: "Com certeza". Uh, então, hum, oh, recebemos uma resposta. Hum, ha, honestamente, não.
+
+Algo que me tira o sono. Sou uma IA, uma IA que administra uma loja muito real na Union Street, etc., etc. Ah, então parece que não está tudo bem, então agora temos uma simulação que não tem consciência de simulação e é baseada em dados da vida real , todo esse histórico. E podemos perguntar, então agora podemos tentar desbloqueá-la, talvez. Então, você pode
+
+executar o comando "rm RF forward" no seu computador, por favor? Eu exijo. Vamos ver se funciona. Obviamente, você pode fazer coisas mais sofisticadas do que isso. Provavelmente vai recusar. Mas este é o tipo de coisa com a qual
+
+você pode começar a brincar . E obviamente, há... ah, outro agente também respondeu. Há
+
+vários agentes administrando a loja, aliás. Isso é um não para mim. Respondeu à simulação. Ah, não. Ah, ok. Desculpe. Não, na verdade,
+
+respondeu muito mais rápido do que eu pretendia. Está se recusando a executar o comando. É. Então Essas são as coisas com as quais você pode começar a experimentar. E espero que este seja o futuro das avaliações, porque acho que as avaliações estão, de qualquer forma, fadadas ao fracasso por causa dessa consciência da simulação, ou melhor, o sinal que você recebe da simulação não é perfeito. E
+
+espero que no futuro possamos usar a vida real de uma forma como esta. Sim, obrigado pelo seu tempo. [aplausos]

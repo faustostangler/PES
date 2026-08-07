@@ -1,0 +1,98 @@
+---
+video_title: "Agent Output Is Not UX: Rendering Layer Your LLM Pipeline Is Missing - Bala Ramdoss, Amazon Lens"
+video_id: maTp79FD9gI
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=maTp79FD9gI
+video_date: 2026-07-20T06:24:59+00:00
+video_description: |
+  Getting a model to produce the right output is the part everyone works on. Turning that output into something people will actually use is the part that decides whether an AI feature ships. This talk is about that layer, the one between model output and the product experience, grounded in lessons from building agentic CX on mobile at the scale of hundreds of millions of devices.
+  
+  Most teams building agentic CX hit the same wall: the feature works, the demo is impressive, and then production UX becomes less than ideal. Latency feels broken. The interface has no idea what to do when the model returns a content type it has never seen before. These are not model problems. They are delivery problems, and they live in an engineering layer the industry is only now naming: generative UI.
+  
+  The rendering contract: a typed, versioned agreement between model output and your UI components, with a deliberate fallback for unknown types, so a new content type degrades gracefully instead of breaking production across a client base you cannot hot-fix.
+  
+  Streaming into structured UI: progressively rendering streamed model output into typed components like product cards, comparison modules, and follow-up prompts, so the interface assembles as the response arrives instead of waiting for a complete one.
+  
+  BFF patterns for AI features: a Backend-for-Frontend layer that absorbs model unpredictability away from the client while preserving conversational context across turns.
+  
+  Speakers:
+  - Bala Ramdoss (Amazon): Bala Ramdoss is a Tech lead at Amazon, where he builds camera-based AI features like Amazon Lens to enhance the visual shopping experience.
+    LinkedIn: https://www.linkedin.com/in/bala-ramdoss/
+---
+Pedi à minha assistente de IA que me ajudasse a reservar uma mesa em um restaurante popular. Eis o que me deu. Bem, não está errado. O número de telefone está lá. O horário é oportuno.
+
+Conhece até mesmo o bar de ostras na entrada. O modelo fez todo o trabalho, mas veja o resultado. Preciso pesquisar e trabalhar para conseguir reservar a mesa. Tipo, a gente já está aqui há um tempo. Agora, imagine se você construísse algo assim para seus clientes.
+
+O que você gostaria que ele fizesse? A resposta é a mesma, porém apresentada desta forma. Uma data, uma hora, alguns toques e pronto. O produto de agência que você está desenvolvendo já possui todas as ferramentas para atender às necessidades do seu cliente. A única coisa em que você precisa se concentrar é na camada entre o modelo e algo com o qual um humano possa interagir .
+
+É sobre essa camada que vou falar . Os modelos e agentes vieram para ficar. E devemos aprender a torná-lo amigável aos humanos. Olá. Bem-vindos à minha palestra. Eu sou Balaram
+
+Das. Venho desenvolvendo aplicativos voltados para o cliente há mais de uma década. E passei os últimos 6 anos construindo o Amazon Lens. O Amazon Lens é o nosso conjunto de recursos de câmera com tecnologia de inteligência artificial. Permite fazer compras usando imagens, capturas de tela e códigos de barras para descobrir produtos visualmente semelhantes.
+
+Se você tiver o aplicativo da Amazon instalado, recomendo que experimente. Esta palestra surge da minha experiência na criação de produtos voltados para o cliente, presentes em milhões e milhões de dispositivos móveis. Uma breve ressalva antes de prosseguir. Vou apresentar esta palestra sozinho. As opiniões expressas nesta palestra são minhas e não representam as do meu empregador.
+
+Quando se pensa em criar uma experiência de usuário (UX) para uma IA com agentes, o ChatGPT obviamente vem à mente. Como você tira essas cartas? Como escolher entre carrossel e lista? Como você estrutura isso de forma que o ser humano possa entender e interagir melhor? Ao tentar construir algo assim , você se depara com um obstáculo.
+
+Existem problemas que precisam ser resolvidos desde os estágios iniciais do seu sistema. Essa experiência será rápida ou lenta? Recebemos todas as informações de uma vez ou uma de cada vez? E como dimensionar isso para aplicativos móveis, onde as versões e os recursos dos dispositivos são fragmentados? Como você pode ver, nenhum desses problemas é causado pelo próprio modelo.
+
+O modelo cumpre bem a sua função. Esses são problemas de entrega que ocorrem entre a saída do modelo e o que é exibido na tela. Essa é a camada que decide se o seu produto terá sucesso ou não. Então, sobre esse problema de entrega, se você tivesse me perguntado sobre essa camada há dois anos, eu não teria um nome para ela. Eu já havia desenvolvido algumas funcionalidades de IA até então, e todas as vezes eu resolvia essa parte do zero.
+
+Um padrão personalizado, moldado de acordo com qualquer sistema em que eu estivesse inserido. Não havia vocabulário comum para nada disso. O que me intriga é que essa coisa agora tem um nome. Interface de usuário generativa. E existe uma especificação aberta para isso.
+
+ATUI do Google. Em vez de o agente lhe entregar um texto bruto ou HTML, ele descreve a interface do usuário como dados. Uma lista de componentes e o cliente os renderiza com seus próprios widgets nativos. Um problema que eu costumava resolver sozinho está se tornando algo que as equipes podem usar como ponto de partida . E é exatamente isso que estou ansioso para explorar.
+
+Uma API normal retorna dados e o cliente decide como exibi-los. Assim como seu modelo é bom no uso de ferramentas, programação e até mesmo outras tarefas complexas. Também pode criar interfaces de usuário. E é exatamente para isso que serve a interface do gerador . E é um espectro. A
+
+Uh Co-pilot Kit, empresa que se dedica principalmente a isso, realiza o planejamento em três etapas. Na parte inferior, temos o controle. O modelo seleciona um componente pré-construído, como um cartão de produto. Ela nunca inventa nada. No meio, uma declaração.
+
+O modelo compõe a interface do usuário a partir de um catálogo. Um campo de data, um campo de hora ou um botão de envio. É aí que o A2UI se encaixa. E no topo, é totalmente aberto. O modelo gera uma interface de usuário inovadora em tempo real, semelhante aos aplicativos MC PA.
+
+Quanto mais alto você sobe, mais seu cliente precisa confiar no que o modelo lhe apresenta . A maioria dos aplicativos móveis em produção fica nas duas últimas rodadas porque, você sabe, é onde você se mantém seguro. E é nisso que vamos nos concentrar. Além de aumentar a complexidade na criação de UX, os aplicativos móveis desempenham um papel importante. Na web, se a renderização falhar, você lança uma correção e ela entra em funcionamento em minutos. Os
+
+aplicativos móveis não conseguem fazer isso. É como se você estivesse olhando para centenas de milhões de instalações e não tivesse controle sobre quando nenhuma delas será atualizada. Portanto, quando um cliente se depara com um tipo de conteúdo que nunca viu antes, a experiência não se degrada de forma elegante, mas sim trava. E continua travando por dias ou semanas nas mãos de pessoas que não atualizaram. Portanto, uma única regra rege tudo o que se segue para clientes móveis. Não é possível
+
+corrigir o cliente de forma significativa. Como fica esse sistema quando você diminui o zoom? Aqui está o fluxo de trabalho completo e simplificado. Um contexto que reconhece a versão e alimenta o modelo. Sim, isso é engenharia de contexto.
+
+O modelo gera intenções de interface do usuário tipadas. Ah, isso flui através de um backend BFF para o frontend. E para um cliente que renderiza o desenho e, em seguida, recorre a uma solução de segurança quando não consegue. Vamos dividir em três padrões. Primeiro padrão: o contrato de prestação de serviços.
+
+Padrão dois, streaming. É esse o fluxo entre eles. Padrão três, ah, a melhor amiga que fica no meio. Vamos analisar um de cada vez, começando pelo contrato. O contrato tem como objetivo principal fazer com que o modelo esteja ciente das capacidades do cliente. Você garante que a interface do usuário permaneça
+
+fiel ao cliente para o qual o modelo está tentando desenhar. O que isso garante é que a responsabilidade não recaia sobre o cliente ou a camada de renderização de inferir o que exibir analisando a saída do token. Você também mantém um repositório de mapas de versões com as respectivas funcionalidades. Por exemplo, você introduziu uma nova interface de usuário para o cartão de voo na versão 2.0.
+
+Certifique-se de torná-lo visível apenas para o modelo a partir da versão 2.0. Bem, quando você constrói o contexto. A principal conclusão é que o modelo escolherá a experiência do cliente (CX) e você fornecerá as informações corretas dentro do contexto adequado. Vamos analisar este exemplo.
+
+E essa é geralmente a parte mais difícil de construir o sistema. Este é o modelo que representa metade do contrato. E você não quer que o modelo envie texto de volta. Por exemplo, você quer que ele transmita blocos de componentes da interface do usuário. Um bloco de conversa para o que é dito em texto e um bloco de interface do usuário para o que se deseja que o cliente renderize.
+
+O contrato inclui até mesmo regras de layout. Neste exemplo, de um a três voos em um carrossel deslizável. Quatro ou mais, em uma lista vertical. O modelo identifica a intenção. E repare no que o modelo nunca faz. Ela
+
+nunca inventa um componente. Ele escolhe a partir de um menu fixo que você fornece. Obviamente, não serão milhões. Seria bastante trabalhoso. Descobriu-se que a tarefa se torna significativamente mais difícil à medida que se expandem os recursos para mais superfícies.
+
+Vou deixar você pensar em como estruturar esse contexto para garantir que o modelo consiga escolher uma opção. Então, esse é o contrato. Agora, vamos passar para a parte de streaming. Isso foi uma revelação para mim quando me deparei com isso pela primeira vez. Tradicionalmente, os aplicativos fazem uma chamada de API e aguardam que algo aconteça.
+
+Quando os Modelos de Latência Lógica (LLMs) estão envolvidos, esse padrão se torna ineficaz, pois muitas vezes a latência é maior devido aos próprios modelos. Além disso, existem inúmeras verificações adicionais para garantir a segurança e outros aspectos da vida. E também introduzimos uma nova camada que tornará a interface de usuário dinâmica um pouco mais complexa. O streaming ajuda nesse caso, pois evita que o cliente espere pela resposta completa. Ele renderiza as coisas em blocos de cada vez.
+
+Veja o exemplo ilustrativo de quando você precisa apresentar informações em partes. Primeiro você mostra um esqueleto, depois o preenche parcialmente e, por fim, o completa. Pode levar de 3 a 4 segundos para chegar lá, mas a espera é suportável. Isso altera o que você mede em um aplicativo. Assim como você para de perseguir a latência total, algo que temos feito há mais de uma década.
+
+Você começa a correr atrás do tempo até o primeiro bloco. Sabe, a primeira coisa útil que o usuário vê. Por esse motivo, o indicador de carregamento tradicional não funciona para recursos de IA. Às vezes, é preciso usar a criatividade e projetar o recurso em torno disso. Isso pode não funcionar para todos, mas aqui está um exemplo de produto. E
+
+quando você souber que vai demorar para renderizar algo, mantenha o usuário engajado. O Lens Live permite ao usuário focar em diferentes coisas, tocando em um objeto de seu interesse enquanto aguarda os resultados. Se você não tiver controle total da tela , pode mostrar a experiência do cliente ( CX) em foco. Mas, por favor, use-o com moderação. De forma geral, os usuários de IA deixaram de ser tolerantes e agora esperam saber o que está acontecendo.
+
+Agora que você tem uma maneira de transmitir diferentes estados de volta, você sabe como mostrar o que seu agente está fazendo. Aqui está um exemplo que copiei do Gemini. Quando o sistema começa a executar uma tarefa, ele fornece uma visão geral do que o agente está fazendo. Mesmo que demore 10 segundos, não me importo se eu souber o que está acontecendo e puder confiar no resultado final do agente . Já abordamos o streaming.
+
+Vamos passar para a parte final e mais importante. Sua nova melhor amiga. O primeiro padrão dizia respeito à forma como a interface do usuário é escolhida. O segundo padrão dizia respeito à forma como os blocos eram entregues. O terceiro padrão trata de como os blocos se transformam em elementos significativos da interface do usuário.
+
+Este é um conceito de interface de usuário orientada a servidor. E é um espectro de controle de servidor. E quanto mais o servidor controla, mais você constrói. O BFF é um subconjunto disso e decide como renderizar. Ela detém as regras específicas da plataforma, como Android versus iOS, e coisas do gênero.
+
+Isso também ajuda o cliente a tomar menos decisões e a desenhar o que lhe é apresentado. Essa é a ideia principal. O BF BFF não se limita apenas ao layout do ship. Faz um pouco mais. Além do formato e do contexto, ele realiza a hidratação e adiciona ações.
+
+Cada elemento renderizado carrega uma carga útil de ação para controlar o que um toque faz e o que o link direto acessa. Poderia até mesmo especificar a métrica de impressões a ser registrada. Isso mantém o contexto da conversa ao longo das interações. Portanto, a próxima resposta saberá o que veio antes. E o bom disso é que você pode fazer isso com seus aplicativos já existentes.
+
+Você pode reutilizar as unidades CX que já possui. A fileira de voos, o cartão do produto, os componentes que seu aplicativo já enviou para produção. Você não está criando uma nova aparência de agente para o seu aplicativo. E essa é uma boa maneira de construir para os seres humanos. Mesma marca, mesma densidade, mesma sensação familiar. Tem a
+
+aparência e a sensação de ser algo natural. Isso nos leva às principais conclusões. Primeiro, os modelos já são altamente capazes . Você fornece um contrato devidamente tipado e versionado para que ele possa selecionar a experiência do cliente ( CX) adequada. Segundo, transmita o fluxo para componentes tipados, não para texto.
+
+Informe ao usuário o que seu agente está fazendo. Três, deixe o BFF absorver a saída do modelo para que o cliente possa permanecer desinformado e seguro. Não, nada disso tem a ver com o modelo. O modelo estava ótimo. Esta camada é responsável pelo envio do produto.
+
+Voltando ao ponto de partida, o resultado do seu agente não é a experiência do cliente (CX). Você constrói em cima disso. Obrigado por assistir. Se você quiser saber mais ou entrar em contato comigo, aqui está um código QR.

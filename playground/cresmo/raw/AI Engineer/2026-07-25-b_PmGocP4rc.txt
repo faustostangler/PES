@@ -1,0 +1,136 @@
+---
+video_title: "Evaling Video Slop — Maor Bril, Character.ai"
+video_id: b_PmGocP4rc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=b_PmGocP4rc
+video_date: 2026-07-25T00:00:02+00:00
+video_description: |
+  A generated clip where the character stands frozen for four seconds can still score well, because the judge rewarded the gloss and the vibe instead of what actually happened. That failure is the whole problem with evaling video: CLIP score misses temporal incoherence, a team watching clips on Friday does not scale, and any AI judge you wire up drifts from human preference unless you measure the drift. Video breaks the text playbook because it has to hold temporal consistency, shot continuity, and a coherent story across frames, not just look good in a single still.
+  
+  The fix that stuck was to stop scoring and start comparing. Absolute scores collapsed to one dimension, but pairwise preference, is B a better story than A, held up, so Maor Bril's team trained a Qwen3-VL judge with Bradley-Terry loss on pairs of real and deliberately broken footage to catch slop before it ships. Drift is cheapest to catch early, especially on longer form video, so the judge runs as a regression gate in CI: every AgentX release at Character.ai clears an eval wall, calibrated against human scores, before users ever see it.
+  
+  Speaker info:
+  - https://x.com/maorbril
+  - https://www.linkedin.com/in/maorbril
+  - https://github.com/character-ai/judgejudy
+  
+  Timestamps:
+  0:00 - Introduction: evaluating AI generated video
+  1:19 - Why video generation drifts between frames
+  3:14 - Story and sound: what a clip has to get right
+  4:43 - LLM as a judge, and catching drift early
+  7:01 - Story and sound failure modes
+  8:28 - Small model vs bigger model as judge
+  9:20 - Don't score, compare: pairwise preference
+  10:47 - When the judge scores vibe over substance
+  11:53 - Pairing real footage to train a quality detector
+  13:27 - Self verification in the generation loop
+  15:05 - Q&A
+---
+[música]
+
+Então, olá. Eu sou Mayur. Estou na Character há pouco mais de 2 anos e vamos falar sobre as falhas da IA, certo? Acho que, sabe, quando olhamos para as gerações de vídeo como um todo, certo? Temos, tipo, duas vias paralelas. Uma delas é a
+
+geração de vídeo, que se tornou incrivelmente boa graças a modelos como Kling, SeaDance, VEO e Sora. Ainda nos lembramos de Sora. Mas, mas, mas a parte que ficou de fora é como avaliamos a qualidade do vídeo gerado, certo? Então, por um lado, nós ainda meio que olhamos com desconfiança e decidimos se é bom ou não , mas por outro lado, sabemos que a geração atual melhorou muito. E quando olhamos para X ou qualquer outra rede social em que você esteja consumindo conteúdo, existem muitos guias sobre como criar vídeos incríveis com este ou aquele modelo. Então, a
+
+parte difícil nunca foi como fazer o vídeo. A parte difícil era como gerar um vídeo suficientemente bom e como avaliar se o vídeo era bom o suficiente? Então, chegamos a um mundo onde a geração de vídeo é basicamente gratuita, certo? Gratuito, especialmente se compararmos com o quanto os estúdios cobrariam. Bem, o problema é que a grande maioria dos vídeos produzidos não é muito boa, certo? Temos
+
+muitas alucinações, como um terceiro membro, portas que abrem e fecham ao mesmo tempo, sensação de flutuar, física, etc. Então, infelizmente, para obter conteúdo de alta qualidade , precisamos de um ser humano para avaliar. E eu sei quando foi a última vez que você viu alguém criando esses vídeos gerados por computador de longa duração. Geralmente são muitas gerações mais curtas e muita edição. O problema é que estamos usando muitas das ferramentas que criamos para os ticks da era do texto, da era da imagem, dos vídeos, certo? Estamos usando ferramentas como o
+
+Clip Score, que é ótimo para avaliar um único fotograma. Tecnologias como LP IPS nos ajudam a detectar a deriva entre os frames, mas o problema é que, ao combinar todas essas ferramentas, percebemos que elas são boas em analisar frames individuais. Eles são bons em verificar se este quadro específico corresponde ao prompt que o gerou, certo? O sistema verificará a consistência entre os quadros e se eles correspondem ao comando que os originou. Mas o que isso não vai te dizer é se você contou a história que queria contar, certo?
+
+Se você pensar no que é vídeo, verá que é um meio de contar histórias. Vídeo é apenas mais uma forma de contarmos uma história, certo? De qualquer tipo de história. Então, uma das coisas que temos que analisar é se isso conta a história real? Faz sentido, segundo a física ? Por exemplo, se você
+
+quiser um vídeo de um personagem descendo uma escada, ele realmente anda ou fica pairando no ar? A personagem permanece a mesma em várias cenas? O ritmo faz sentido? Como você sabe, por exemplo, as pessoas levam tempo para se deslocar de um lugar para outro. Precisamos garantir que o ritmo também faça sentido . E, principalmente quando adicionamos
+
+áudio, queremos garantir que ele esteja sincronizado com as imagens. Por exemplo, se alguém estiver batendo uma porta, queremos que o som da porta batendo seja reproduzido exatamente no momento em que ela está sendo batida. Agora, a próxima versão para a qual todos passamos há algum tempo . Começamos a usar o LLM como juiz para tudo e temos modelos fundamentais incríveis para os quais simplesmente mostramos vídeos. O problema com eles é que, primeiro, eles são lentos. B, eles só são tão
+
+bons quanto o seu estímulo, e várias pessoas podem dar estímulos de maneiras diferentes, e o mesmo modelo pode responder de uma forma muito, muito diferente. E às vezes a pergunta que usamos é: isso é consistente? Isso corresponde à pergunta? Mas então surge a pergunta que realmente nos interessa: isso é bom? E a resposta varia. Ops
+
+, desculpe por isso. Então, nossa primeira iteração foi tipo: vamos pegar todas essas coisas e construir um parâmetro de referência repetível sobre como testamos vídeos, que possamos executar repetidamente. Então, isso combina as duas métricas, como eu disse antes, que sabe como visualizar frames individuais, mas também mantém a consistência do LLM como juiz, certo? Onde também utilizamos anotações humanas para calibrar o LLM como um avaliador. Assim, para cada relatório que geramos com essa ferramenta, podemos ter pessoas fazendo anotações e, basicamente, enviando esse feedback de volta para o LLM como um alerta de avaliação para garantir que esteja alinhado com o que eu penso ou com o que o anotador considerou adequado.
+
+E nós o usamos para pontuar os vídeos. O problema dessa abordagem é que ela é muito lenta, muito cara e especialmente quando queremos disponibilizá-la para nossos usuários, para que eles possam gerar muitos vídeos, já que a criação é um processo muito difícil. Então, como eu disse, o problema é quando... Bem, este é um processo lento e
+
+precisamos aproximá-lo o máximo possível dos usuários e também no início do processo. A razão para isso é que, se analisarmos todas as métricas e encontrarmos erros o quanto antes, será muito mais barato corrigi-los posteriormente. Então, por exemplo, certo? À esquerda, temos dois frames iniciais de tomadas diferentes, certo? Mas é fácil corrigir isso visualizando a imagem neste ponto e percebendo se houve alguma oscilação no personagem entre o primeiro e o segundo quadro, pois esses quadros serão usados ​​como pontos de partida para gerar os vídeos. Portanto, se você
+
+conseguir perceber a falha neste ponto e corrigi-la, gerar o vídeo como um todo será muito mais barato, pois poderemos corrigi-la a um custo muito menor. E o mesmo se aplica quando analisamos vídeos de formato mais longo, certo? Quando vemos esses vídeos de três, quatro, cinco minutos de duração, geralmente são uma coleção de vários vídeos mais curtos . E conseguir capturar uma geração de seis segundos que derivou e se regenerou antes de combinarmos todo o vídeo resultará em um resultado melhor como um todo. Hum [limpa a garganta] E agora, o outro problema que estamos tentando resolver são alguns desses eixos, certo? Só existem ao longo do tempo, certo?
+
+Então, por exemplo, quando olhamos para a direita? Nós já mencionamos a história, certo? Então, a história que estamos tentando contar com esse vídeo, ela se sustenta nesse vídeo? O vídeo conta a história exata? O ritmo faz sentido, não é? E nós mencionamos o
+
+som. Então, como eu disse, certo? O objetivo principal é aproximar as avaliações da geração online, porque quanto mais cedo conseguirmos detectar esses erros, mais cedo conseguiremos corrigir essa tendência, certo? Então é...
+
+é muito mais fácil, muito, muito mais barato de consertar. Bem, o problema é que, como eu disse, este é um processo muito lento. Então, a solução é, na verdade, pegar todo esse comitê de especialistas e destilar tudo em um modelo pequeno, muito rápido, que seja capaz de nos dar uma resposta que não seja se o vídeo é ou não ofensivo, mas por que é ofensivo. Certo? Por que esse vídeo tem uma pontuação baixa em comparação com os outros? Porque, por
+
+exemplo, adicionou um membro extra, porque não obedecia às leis da física, porque o áudio estava dessincronizado. Então, o objetivo era construí-lo em cima de um pequeno VLM, e por que um VLM? VLM porque precisávamos do vídeo para que o modelo pudesse ver a imagem, mas também precisávamos trabalhar rápido, certo? Como o adquirimos mais próximo da geração atual, o modelo que treinamos leva cerca de 3 segundos para pontuar três vídeos de 15 segundos. Agora, também testamos um modelo maior e os resultados foram melhores, mas ele foi significativamente mais lento. E a decisão foi optar
+
+pelo modelo menor porque o valor agregado do modelo maior não justificava a lentidão. Outra constatação muito interessante a que chegamos é: não compare as pontuações. O que isso significa? Por exemplo, se eu pedir a qualquer pessoa nesta sala para assistir a um determinado vídeo e classificá-lo de 1 a 10 em termos de narrativa, certo? Tenho quase certeza de que você sabe, o que será um seis para você será um cinco para você, será um quatro para você e e e e um e um oito para você. Certo? Mas se eu mostrar
+
+dois vídeos e perguntar qual deles conta uma história melhor, a grande maioria provavelmente concordará que o vídeo B conta uma história melhor do que o vídeo A, certo? E se você fizer isso vezes suficientes, então é fácil generalizar o modelo para detectar o que é melhor e o que não é. Então, [limpa a garganta] nós treinamos em pares, certo? Hum, A versus B em oposição a 1 a 10. Agora, nós criamos algo ruim.
+
+Felizmente, a internet está repleta de vídeos de altíssima qualidade, e é muito fácil encontrar bons vídeos. Além disso, foi muito divertido criar vídeos ruins, seja corrompendo vídeos bons ou simplesmente gerando conteúdo aleatório sem qualidade. [limpa a garganta] Bem, nós lançamos a versão 1, e estava completamente errada. Estava errado, mas estava errado de uma forma muito convicta. Então, por exemplo, o frame que você vê aqui é de um vídeo em que a modelo obteve nota 9,2 na filmagem, e a câmera não se moveu.
+
+Durante 4 segundos, parecia uma imagem estática da mesma personagem, mas a modelo ficou muito, muito feliz com a cinematografia. Então, a física em alguns outros vídeos, que não vou mostrar por falta de tempo, diz que a física parece ótima, mas mencionam fantasmas pairando e pessoas voando, etc. Então, a questão é: por que estava errado? O motivo de estar errado é a forma como geramos esses dados, certo? Isso... isso... isso
+
+captou a vibe, em oposição aos eixos. Então, aprendeu a detectar vídeos coerentes e aprendeu a detectar artefatos artificiais. Basicamente, o brilho do vídeo em oposição a se o vídeo realmente contou a história, a história, a história, a história. Desculpe. Os vídeos, na verdade, contavam a história. E então,
+
+a solução foi corrigir o conjunto de dados. Então, a maneira como corrigimos o conjunto de dados foi que eu comecei a combinar filmagens reais com filmagens geradas por IA. Agora, o risco disso, e essa é a razão pela qual votei contra, eu evitei fazer isso no início, porque eu não queria criar um detector de IA, certo? Porque se você começar a criar pares de vídeos bons gerados por humanos e vídeos ruins gerados por IA , então há uma grande chance de o modelo sofrer overfitting e se tornar um detector de IA em vez de um detector de qualidade de vídeo. Então, fiz duas coisas para evitar isso. A, eu me certifiquei de que a
+
+codificação é consistente em ambos os lados da equação. Então, não há artefatos artificiais no vídeo A em comparação com o vídeo B. E eu usei exatamente o mesmo método de anotação para ambos os vídeos. Então, todos os eixos nesses vídeos foram anotados da mesma maneira. E, para minha surpresa, ficou incrível. Então, então, então, agora o que
+
+somos capazes de fazer, especialmente quando estamos olhando para vídeos, A, mudamos de um pipeline muito complexo , certo? Para um fluxo de trabalho orientado a agentes. A razão para isso é que, a) os pipelines funcionam muito bem se você tiver um caso de uso muito, muito específico. Mas, uma vez que você coloca isso diante dos usuários, eles terão uma história muito, muito distinta que desejam contar com seus próprios personagens, com suas próprias imagens e com sua própria voz. É aí que começa a desandar.
+
+Mas, ao fornecer aos agentes ferramentas para validar a qualidade dos resultados que estão criando, eles conseguem se adaptar melhor às mudanças. Ele também é capaz de verificar seu próprio trabalho e corrigir problemas à medida que surgem. Então, se você vai pegar emprestado alguns itens desses estoques, primeiro, use medidas relativas, não absolutas, certo? Como expliquei anteriormente, comparar o vídeo A com o vídeo B sempre lhe dará um resultado melhor no futuro. Dê pontuação ao eixo que realmente importa para você . Então, se você se importa com
+
+narrativa, se você se importa com ritmo, se você se importa com física, dê uma nota alta para esses machados. Não espere que eles apareçam milagrosamente. E coloque o eval dentro do loop de geração, certo? Principalmente se o seu objetivo for obter uma geração de maior qualidade, aproxime o `eval` o máximo possível do loop de geração . Por fim, avalie-a como uma história.
+
+Os vídeos contam histórias. Os vídeos são apenas mais uma forma de contarmos histórias para os outros. E muito, muito obrigado. [aplausos] Muito bem
+
+. Alguma pergunta? Ok, aqui embaixo . Incrível. Muito bem, tenho dois aqui embaixo. Aqui você
+
+vai.
+
+Oi. Como você avalia o som? Sincronização de som e vídeo. Eu sou... Eu sou... Eu sou... Você pode repetir?
+
+Como você avalia o som? Efeitos sonoros e sincronização com o vídeo. oh sim. Essa é uma pergunta fantástica. Então, o som é, na verdade, uma combinação de algumas coisas. Primeiro, estou usando
+
+Atmos para garantir que a qualidade do som seja alta o suficiente e compreensível. B, o modelo aprenderá a identificar quadros-chave. Certo? E, principalmente, porque quando eu insiro algo no modelo, pode ser apenas um vídeo ou pode ser o vídeo mais o comando que gerou esse vídeo. Então, por exemplo, se a mensagem disser que a porta bateu, certo? O sistema procurará
+
+por uma porta sendo batida e reproduzirá o som exatamente naquele mesmo frame. Eu respondi à sua pergunta? Como o modelo reconhece o som? Então, é usando o Atmos, mas também para correlacionar. Por exemplo, quando está analisando os frames, certo? Isso garante que,
+
+por exemplo, a porta sendo fechada com força no sexto quadro, o sexto quadro tenha um registro de tempo específico. Então, está procurando por aquele pico no som naquele instante específico. O programa não sabe que é esse som, mas está procurando por um pico sonoro específico naquele instante. E quanto à dublagem? A sincronização labial ainda é um problema sem solução.
+
+[risos] Uma pergunta. Mas estamos tentando. Sim . Sim, eu disse que a pergunta era sobre dublagem. Ah, bem, não fui eu, mas acho que a resposta dublada seria interessante antes de eu fazer minha pergunta.
+
+Ah, sim, como eu disse, ainda é um problema sem solução . Ainda estamos analisando a situação . Principalmente para nós, alguns dos personagens que estamos tentando filmar em formato de entrevista são humanos, certo? Sabe, podemos analisar as diferentes técnicas para tentar identificar os lábios, mas algumas delas são apenas animações de fala que não têm nenhuma correlação real entre o movimento da boca e a fala. Infelizmente, ainda não tenho uma solução para isso.
+
+Então , estou curioso para saber, por exemplo, se vocês gostariam de enriquecer ainda mais o conjunto de dados com avaliação humana. Sim. A questão do gosto, do que é bom, é algo que permanece em aberto: será que isso vai continuar sendo domínio exclusivo dos humanos? Mas também já vi pessoas dizerem que, bem, a maioria dos humanos tem um gosto péssimo para vídeos, jogos e livros. Justo.
+
+Então, como você construiria e alinharia algo semelhante a juízes humanos? Sim . Então, então, então, então, isso é resolvido inicialmente na parte do programa da Juíza Judy, onde um humano pode revisar e anotar cada relatório gerado. E nós realmente fazemos isso. Periodicamente, teremos sessões em que todos passarão de 10 a 15 minutos apenas anotando vídeos. E isso geralmente
+
+acontece em vários eixos. Não vou pedir a todos que anotem o mesmo vídeo em 10 coisas diferentes. Vai ser aleatório. E eu uso os dados para calibrar os juízes de IA. E os resultados obtidos estão sendo utilizados como um conjunto de dados para o treinamento da próxima versão desse modelo. Portanto, é um processo que
+
+leva um pouco de tempo e, com sorte, evolui com o tempo. Mas não é imediato, sabe? Porque o gosto é muito subjetivo, e o que é ótimo para mim, algumas coisas eu acho fantásticas, outras as pessoas vêm e perguntam se eu tenho certeza de que são ótimas. Então, sim, é um processo, e eu uso o feedback humano para calibrar os modelos o tempo todo. Como você conseguiu pousar no pequeno VLM da Quan? Você experimentou outras? Sim,
+
+eu fiz. Então, a minha intenção era, sabe, encontrar um modelo suficientemente pequeno. O motivo pelo qual escolhi a Quan é porque também tivemos uma experiência muito boa com o treinamento pós-treinamento da Quan em outros casos de uso. Então, quer dizer, sim, eu poderia ter experimentado algumas outras, mas, sabe, tudo estava ali e era bom o suficiente. Então, minha pergunta é sobre escala. Então,
+
+obviamente, a Character AI produz milhares, milhões, bilhões de vídeos. Em que escala isso se torna razoável para o meu domínio que não seja IA de Personagens? Então, meu domínio tem centenas, talvez mil vídeos. Hum. Claro.
+
+Então, se você está satisfeito com o grupo de especialistas e e e e e e você não precisa, certo? Vou reformular isso. A escala serve tanto para velocidade quanto para precisão, certo? Além da capacidade, posso disponibilizar esse modelo como uma única instância em uma GPU ou posso disponibilizá-lo, como você sabe, em 100 instâncias, certo? Então, é isso que determina a minha escala. O motivo pelo qual optei
+
+por esse modelo foi porque queria acelerar o processo de criação, certo? Teria funcionado tão bem se eu não tivesse esse modelo específico; eu teria usado o grupo de especialistas, certo? A partir de métricas disponíveis tanto na CPU quanto na GPU, bem como nos modelos de vanguarda. Certo? Então, como você sabe, foi uma questão de equilíbrio: quanto tempo levei para treinar esse modelo, selecionar o conjunto de dados e chegar a um conjunto funcional?
+
+E quanto custa servir isso em comparação com o quanto me custaria fazer isso mais lentamente? Agora, potencialmente, é melhor, certo? Quer dizer, eu presumo que se você for usar o Fable, que voltou hoje, certo? Provavelmente você obterá um resultado melhor, mas a que custo, não é mesmo? Se você fizer isso para uma ou duas pessoas, provavelmente não terá problema. Se você fizer isso por
+
+milhares ou dezenas de milhares por dia, o valor se acumula. Então é uma questão da sua economia unitária. Legal. Por aqui. À sua direita, ali está.
+
+Última pergunta. É muito brilhante. Desculpe. Sem problemas. Sem problemas. Bem,
+
+minha pergunta é a seguinte: dei uma olhada rápida no repositório. Vocês ainda não exportam todos os rastros de rastreamento dos juízes do LMS. Correto. Você estaria aberto(a) a isso, para poder se conectar a outras plataformas? Claro. Então, o
+
+repositório em si é uma estrutura de suporte e você pode conectar quaisquer agentes ou LLMs que desejar. Na verdade, temos uma versão interna disso que está sendo executada como um serviço, certo? Temos uma estrutura de gerenciamento de agentes que contém todas as métricas que nos interessam, mas eu aceito sua solicitação de recurso e adicionarei telemetria de hotel à estrutura. Incrível. Muito obrigado. Uma calorosa
+
+recepção ou uma salva de palmas para o prefeito. Obrigado. Muito obrigado a todos. Obrigado.
+
+Oh.

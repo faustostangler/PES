@@ -1,0 +1,104 @@
+---
+video_title: "Serving 2 Million Models Without Melting: Scaling the Hugging Face Hub — Arek Borucki, Hugging Face"
+video_id: lyL5QhgIOxc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=lyL5QhgIOxc
+video_date: 2026-07-28T13:41:11+00:00
+video_description: |
+  Type llama into a catalog of 3 million public models and the result still has to feel instant. At 20,000 models any query is fast; at Hugging Face's scale, 14 million users and a million datasets on top, search becomes the hard part. Arek Borucki shows how the Hub keeps it quick: full text search on Apache Lucene, served through MongoDB Atlas, which stores only the metadata while the model artifacts sit in S3 so compute scales on its own. Regex ranking did not hold, so relevance now runs through one unified query with the $search operator, sorted by downloads, likes, and trending.
+  
+  Underneath is a seven node MongoDB cluster where only the primary takes writes, with a hidden analytics node soaking up the heavy queries so production traffic never feels them. Keep queries light, push everything else elsewhere, and once the catalog outgrows a single primary, shard the data across nodes by key. The front end scales the same way: Kubernetes goes from 10 to 500 pods and CastAI adds machines underneath, and because HPA only watches CPU and memory, they scale on event loop utilization through KEDA, which sees the request queue HPA cannot.
+  
+  Speaker info:
+  - https://x.com/_Aras_B
+  - https://www.linkedin.com/in/arekborucki/
+  - https://arekborucki.cloud/
+  
+  Timestamps:
+  0:00 - Introduction: scaling the Hugging Face Hub
+  1:44 - The numbers: 14 million users, millions of models
+  3:57 - Why search at scale is the hard part
+  5:09 - Full text search on Apache Lucene
+  5:46 - Request flow: autoscaling, MongoDB Atlas, and S3
+  7:55 - How a search for "llama" works
+  10:11 - Ranking and Atlas Search with the $search operator
+  13:00 - The seven node cluster and a hidden analytics node
+  16:42 - Sharding the database
+  18:14 - Kubernetes autoscaling: 10 to 500 pods and CastAI
+  20:07 - Scaling on event loop utilization with KEDA
+---
+[música]
+
+Boa tarde a todos. Tenho uma pergunta. Quantos de vocês conhecem a expressão "cara de abraço"? Legal. Quantos de vocês já usam a expressão facial de abraço?
+
+Incrível. Quase todo mundo. Mas acho que ainda temos oportunidade de aumentar o nosso uso. Meu nome é Ar Borutki. Eu trabalho como engenheiro de plataforma de aprendizado de máquina e banco de dados na Husking Face.
+
+Hoje, gostaria de mostrar a vocês como a Hugging enfrentou problemas de escalabilidade na infraestrutura e como acabamos disponibilizando 3 milhões de modelos para desenvolvedores em todo o mundo. Gostaria de compartilhar as decisões arquitetônicas que tomamos, os desafios que enfrentamos e as lições que aprendemos ao expandir uma das comunidades de IA de código aberto que mais crescem no mundo. Espero que gostem e vamos começar. Antes de entrar em detalhes técnicos, vamos falar sobre escala. Atualmente, a Hugging Face atende mais de 14 milhões de usuários e esse número está crescendo muito rapidamente, especialmente nos últimos meses.
+
+Hospedamos três milhões de modelos públicos, um milhão de conjuntos de dados, 50.000 organizações, e não apenas amadores ou cientistas. Mais de 30% das empresas da lista Fortune 500 utilizam o Hugging Face como parte de seus fluxos de trabalho de IA. Só para vocês terem uma ideia, há alguns anos tínhamos 20.000 modelos.
+
+Hoje, 3 milhões. É um aumento de cerca de 150 vezes apenas nos últimos dois anos. E é exatamente por causa desse crescimento que estou aqui hoje, falando sobre decisões de infraestrutura que mantêm o hub saudável em grande escala. Essa é a rapidez com que o número de modelos públicos está crescendo na plataforma. Cada grande lançamento, como o Llama ou o DeepSeek, gerou milhares de novos modelos e nossa infraestrutura precisa lidar com isso, e não se trata apenas de modelos, mas também de conjuntos de dados.
+
+Em 2022, tivemos 10 mil. Em 2024, 100 mil. Há menos de um ano, tínhamos 500 mil. Hoje, 1 milhão. Todos esses dados devem ser armazenados, indexados e também devem ser pesquisáveis.
+
+E essa é a parte mais difícil. E essa é também a razão pela qual tivemos que repensar nossa busca. Com 20.000 modelos, qualquer consulta é rápida. Mesmo sem um índice, acredite, ninguém notaria. Aos 3 milhões, a mesma
+
+abordagem falha. Imagine o que você faria se a busca no hub fosse lenta. Você simplesmente iria embora e procuraria outro lugar. E é isso que os usuários também estão fazendo. Eles esperam resultados rápidos e instantâneos.
+
+Com 14 milhões de usuários, mesmo 1% não é um número pequeno. São 140.000 pessoas acessando buscas lentas em grande escala. A prioridade P99 é muito mais importante que a P50, e estamos dedicando muita atenção a ela. É por isso que investimos em tokens premputee, desnormalização e otimização para leitura de coleções no MongoDB, busca de texto completo baseada no Apache Lucine, escalonamento automático do Kubernetes e, em breve, em fragmentação de banco de dados.
+
+Os próximos slides mostrarão a arquitetura de alto nível de como a solicitação do usuário flui do front-end para a API do hub quando ele interage com o aplicativo Hugging Face. O hub está sendo executado no Kubernetes. Atualmente estamos usando o dimensionador automático de pote horizontal. Durante picos de tráfego, novas portas são automaticamente ampliadas para lidar com a carga e reduzidas quando o tráfego diminui. Isso nos ajuda a manter o hub funcionando corretamente sem intervenção manual.
+
+Em seguida, a solicitação é enviada ao MongoDB Atlas, que é a fonte de dados verdadeiros para nossos metadados. E há um ponto que às vezes surpreende as pessoas. O MongoDB não armazena os modelos em si. Ele armazena todas as informações sobre os modelos. Na prática, isso não significa que o MongoDB armazena todos os metadados, usuários, repositórios, modelos, conjuntos de dados, buckets, espaços, informações de configuração, dados de faturamento, controle de acesso e muito mais.
+
+Os artefatos dos modelos propriamente ditos, os arquivos do tokenizador, os recursos do carrinho de compras e os arquivos de configuração são armazenados separadamente em armazenamento de objetos na nuvem, como o AWS S3. Essa separação de responsabilidades nos permite dimensionar os metadados independentemente do armazenamento binário e realizar cálculos independentemente de ambos. Podemos otimizar cada componente individualmente para uma carga de trabalho específica. Agora vamos verificar em detalhes como funciona a busca . Por exemplo, alguém quer pesquisar o modelo no hub e digamos que seja lhama. Então, alguém digita "lhama" na
+
+barra de pesquisa de rostos abraçados. A solicitação dele é encaminhada pelo hub para uma coleção de leitura otimizada no MongoDB. E esta não é a nossa coleção principal de repositórios, onde mantemos todos os dados. Trata-se de uma cópia desnormalizada separada, exclusiva para leituras e listagens. As informações principais estão à esquerda.
+
+Tokenizamos os nomes dos modelos no momento da inserção, não no momento da consulta. Por exemplo, alguém quer publicar o modelo meta minus llama/ llama 3.18b. Dividimos o nome longo do modelo em tokens menores, como meta lama 3.18b, e os armazenamos em um array no documento do MongoDB.
+
+Em seguida, a pesquisa do Atlas, que utiliza o Apache Lucin internamente, usa o recurso de autocompletar para encontrar modelos correspondentes instantaneamente. Este é um exemplo de um único documento da nossa coleção de modelos. Neste exemplo, estou usando o método `find one` . Quero encontrar o ID do modelo meta menos llama/lama 3.1. Esse é o
+
+modelo do slide anterior. E estou projetando apenas o array de tokens de busca . E podemos ver que todos esses tokens premputee fazem parte desse array. Então temos o Metal Lama 3.1, Metal Lama, etc.
+
+Em seguida, deve haver uma consulta. No passado, usávamos o método clássico `find` do MongoDB na coleção `models` com o operador `reax`, e esse operador `reax` era usado para buscar nos arrays de tokens de busca os modelos que eram iguais a `llama`, e então ordenávamos os resultados pela pontuação de tendência, que era calculada a cada cinco minutos. Este é o número de downloads e curtidas dos últimos sete dias, de acordo com o que me lembro. Essa solução funcionava bem desde que o conjunto de dados fosse pequeno. Reax não escala bem. Assim, quando nosso
+
+conjunto de dados começou a crescer muito rapidamente, começamos a ter problemas de latência. Então decidimos mudar para a busca do Atlas, um recurso que utiliza o Apache Lucine internamente. Portanto, o MongoDB não fornece pesquisa de texto completo no núcleo do servidor MongoDB; existe um processo adicional, o MongoD. Esse processo MongoDBT é um wrapper em torno do Apache Lucine para usuários finais; isso é transparente, você está apenas usando a API de consulta do Unifi MongoDB e, quando usa o pipeline de agregação pip juntamente com o operador de pesquisa de dólar. O MongoDB saberá que você deseja pesquisar no índice Apache Lucin.
+
+Obviamente, você precisa inserir o nome deste índice, que neste cenário é o
+
+modelo de autocompletar de pesquisa igual aos tokens de pesquisa do Llama Path, e ainda classificamos os resultados pela pontuação de tendência. Esta solução é muito mais eficiente e, até o momento, escalável. Bem, assim não temos mais problemas de latência em nossa barra de pesquisa. Os
+
+dois primeiros resultados foram retornados pela consulta anterior. O primeiro lhama de metal tem uma pontuação de tendência de 33. O segundo, 14.
+
+Mas o hub de rostos abraçados não é a única busca. Temos centenas de serviços diferentes no Hugging Face que utilizam o MongoDB para lidar com milhões de consultas. Utilizamos um cluster MongoDB de sete nós com várias máquinas. Podemos distribuir as consultas por vários nós. Assim, nenhum nó individual se torna um gargalo de leitura.
+
+Funciona assim. A aplicação comunica-se com o cluster MongoDB. Todas as inserções, exclusões ou atualizações são direcionadas para um único servidor primário, pois somente ele pode processá- las. No entanto, estamos distribuindo as leituras por várias máquinas. Temos também um nó oculto analítico. O que isso significa? Isso
+
+significa que este nó está invisível para a aplicação. O driver do MongoDB não está encaminhando nenhuma consulta para este nó oculto. Este nó ainda está replicando dados do nó primário, mas não está interagindo com o tráfego de produção. Estamos nos conectando diretamente a este nó e o utilizamos para qualquer tipo de relatório de tráfego ou consultas realmente pesadas . Todos os nós secundários seguem continuamente o oplog do nó primário, mantendo o cluster sincronizado.
+
+Agora vamos dar uma olhada no que realmente está sendo executado nos servidores secundários. Primeiramente, todas as consultas que não exigem os dados mais recentes são direcionadas aos servidores secundários. Apenas as consultas que precisam ter alta consistência permanecem no grupo principal, e estamos dando muita atenção a isso. Estamos dando muita atenção às consultas que devem ser executadas no servidor primário. Em segundo lugar, agregações complexas.
+
+Pipelines de agregação que examinam grandes quantidades de dados, classificam, agrupam ou transformam os dados não devem ser executados no servidor primário. Eles são pesados. As escolas secundárias estão em melhor posição para eles. Terceiro, mude de fluxo. Reagimos às mudanças de dados em tempo real por diversos motivos. Por exemplo,
+
+validação de cache, sincronização com diferentes tecnologias de armazenamento de dados, como AWS, Redshift ou para cargas de trabalho orientadas a eventos. Esse tipo de operação também não é muito leve e deve permanecer impossível em bases secundárias. Em quarto lugar, todas as consultas ad hoc, consultas de relatório e talvez algumas consultas experimentais são direcionadas para um membro oculto do conjunto de réplicas do MongoDB, que é isolado do tráfego de produção. O padrão é simples. O ensino fundamental deve se concentrar naquilo que somente o ensino fundamental pode fazer.
+
+Qualquer outra coisa pode ser enviada para máquinas diferentes. No entanto, com 14 milhões de usuários, 3 milhões de modelos e nosso número em constante crescimento, um único conjunto de réplicas do MongoDB não será suficiente. O próximo passo é o particionamento (sharding). Sharding significa dimensionar seu banco de dados horizontalmente. Em vez de colocar o conjunto de dados completo em uma única réplica em um cluster de conjunto de réplicas, vamos dividir os dados em partes e colocar cada parte em um gráfico separado.
+
+Cada fragmento terá seu próprio núcleo de replicação primário e secundário. Então, manteremos a replicação, apenas multiplicada. A principal diferença entre um cluster de conjunto de réplicas e um cluster fragmentado é que o conjunto de réplicas mantém o conjunto de dados completo em cada nó. Um cluster fragmentado mantém apenas parte dos dados em cada fragmento. E se você quiser aumentar a escala horizontalmente, basta adicionar mais shards e o balanceador do MongoDB se encarregará de distribuir os dados entre todos esses shards. Existe também a chave de fragmentação,
+
+que deve ser selecionada. Esta não é uma operação trivial, mas esta palestra não trata da escolha de uma chave curta. Dessa forma, vamos dimensionar tudo o que a CPU, a memória e o armazenamento podem ler e gravar. Agora vamos dar uma olhada no que está acontecendo no nível do hub. O DHA está sendo executado no Kubernetes.
+
+Atualmente estamos usando o dimensionador automático de pote horizontal. Quando os limites de CPU ou memória ultrapassam a meta, o Kubernetes adiciona automaticamente novos recursos para lidar com esse pico e reduz a escala quando o tráfego diminui. Nossa plataforma de implantação pode ser dimensionada de 10 a 500 bots, dependendo do tráfego. É assim que mantemos o hub funcionando corretamente, sem intervenções manuais e sem provisionamento excessivo de infraestrutura. Portanto, esta também é uma solução economicamente viável.
+
+No entanto, o que acontece se o autoscaler horizontal quiser adicionar novas portas, mas o Kubernetes não tiver mais nós livres? É aqui que entra a segunda camada. Estamos usando o Cast AI para o Kubernetes, observando o escalonamento automático quando os pods estão pendentes, porque não há capacidade e o agendador do Kubernetes não consegue agendá-los. O Cast AAI adiciona novos nós e, em seguida, o agendador consegue alocar esses espaços. Assim, temos duas camadas de escalonamento. A primeira delas está no
+
+nível de implantação. A segunda opção está no nível da infraestrutura, por meio do Castai. Mas vamos migrar o dimensionamento automático de portas horizontais para o dimensionamento automático orientado a eventos do Kubernetes Keta. A diferença na escala HPA baseia-se apenas na CPU e na memória. A escala KDA é baseada em métricas reais de aplicação, como requisições por segundo ou utilização do loop de eventos. Significa que a escalabilidade
+
+é determinada pela carga de trabalho real, e não apenas pela utilização de recursos. Por exemplo, o servidor pode ter baixo consumo de CPU, mas alta demanda na fila (Q). O KDA consegue detectar isso. HPA não é o melhor aspecto dessa arquitetura. Você nunca precisa pensar nisso. Quando
+
+você clica no modelo, pesquisa no hub ou baixa o modelo, simplesmente funciona. É exatamente isso que significa dimensionar modelos de médio porte. Manter a experiência do usuário simples, independentemente da complexidade interna. Muito obrigado. Foi um prazer estar aqui hoje e desejo um bom dia a todos vocês.
+
+Obrigado [aplausos].

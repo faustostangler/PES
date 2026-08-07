@@ -1,0 +1,109 @@
+---
+video_title: "How Forward Deployed Engineering is done at Decagon — Sunny Rekhi"
+video_id: 7wu2hsRfvV0
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7wu2hsRfvV0
+video_date: 2026-07-28T17:00:35+00:00
+video_description: |
+  Decagon builds the customer support agent that answers when you email a brand, and making that agent good for a specific enterprise is the forward deployed job. It splits in two: one side configures the agent brain, the instructions and the handoff rules for when a human should take over; the other works like product engineering, figuring out what a new enterprise needs and anticipating the requests that have not been made yet. Sunny Rekhi's point is that the line between forward deployed and product is thin, because a customer ask is often just a product feature waiting to be built.
+  
+  What changes at scale, from 50 people to 500, is that this splits into specialized lanes and a few disciplines start to matter. One is restraint: some problems belong to the customer, and getting the boundary in writing keeps everyone honest. The bigger one is that custom work does not stay custom. Every integration a forward deployed engineer builds gets upstreamed into the platform, so custom becomes self serve and the agent compounds, and the next customer inherits it for free. You still have to prove value fast, because the relationship is multi year but the trust is won in the first weeks.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/sunny-rekhi/
+  
+  Timestamps:
+  0:00 - Introduction: forward deployed at Decagon
+  1:06 - What Decagon's support agent does
+  2:24 - Offloading support and proactive outreach
+  3:40 - Two kinds of forward deployed work
+  6:12 - Scaling from 50 to 500 people
+  8:20 - Restraint, and getting it in writing
+  9:59 - Ramping a new enterprise deal
+  11:18 - Solving a problem so it scales
+  13:00 - Proving value fast
+  14:18 - Custom becomes self serve
+---
+[música]
+
+[aplausos] Já vou, pessoal, vocês conseguem me ouvir bem? Tudo certo? Ok, ótimo. Só para contextualizar um pouco esta apresentação, gostaria de saber quem aqui é engenheiro, está na linha de frente ou em missão de deslocamento para a linha de frente. OK. Ok, então estou na minoria. Ok,
+
+ótimo. Hum, parece ótimo. Sim, eu sou a Sunny. Eu sou o CTO de Engenharia de Implantação Avançada aqui na Decagon. E hoje vou falar sobre o que fazemos, por que temos um movimento de mobilização avançada, como ele mudou ao longo do tempo, à medida que passamos de 50 para 500 pessoas no decorrer de um ano. E como
+
+isso muda se você estiver trabalhando com uma empresa da lista Fortune 20 em comparação com uma marca de mercado intermediário? Ah, muito obrigado a todos por terem vindo. Espero que seja útil. E bem , vamos começar. Então, tudo bem . Ah, ok, então só para dar um contexto
+
+sobre o que é um decágono. Para quem não conhece, o Decagon é um sistema de atendimento ao cliente com inteligência artificial disponível 24 horas por dia, 7 dias por semana. Todos nós já passamos pela experiência de ligar para nossa marca favorita e ouvir que devemos pressionar 1 para faturamento, 2 para opções de assinatura, etc. Ou então, enviamos um e-mail para a marca porque precisamos de suporte urgente e recebemos uma resposta em dois ou três dias úteis. O Decagon substitui tudo isso. Então,
+
+em vez disso, você atende o telefone e liga para a marca de sua preferência e é atendido por um agente que simula um atendimento humano para ajudá-lo. Você envia um e-mail e recebe uma resposta personalizada imediatamente. Resumindo, é isso que a Decagon faz . Multilíngue, omnicanal, etc. E, o mais importante, e repito, digo isso para ajudar a contextualizar o que nossa iniciativa de implementação avançada faz.
+
+Mas, sabe, nós entramos em contato com nossos clientes para ajudá-los com os tipos de fluxos de trabalho de suporte complexos que hoje em dia precisam ser feitos por pessoas. Mas, uma vez que estamos lá e nosso agente está aprendendo sobre os clientes e criando um relacionamento com eles, também trabalhamos com nossos clientes para descobrir: "Ei, como podemos realmente fazer você ganhar mais dinheiro?" Então, um exemplo, você verá isso na parte inferior do slide aqui, mas Hertz, você sabe, todos nós estamos familiarizados com isso. A Hertz nos procurou porque tinha fluxos de trabalho de suporte de entrada complexos que precisavam ser transferidos para um agente. Mas quando chegamos lá, descobrimos: "Ei, nós já temos essas integrações com os seus sistemas de back-end . Que outras formas de comunicação
+
+vocês têm com os clientes?" E uma das funcionalidades que a Decagon agora oferece é a de entrar em contato proativamente com o cliente quando chega a hora de renovar o contrato de leasing do carro, estendê- lo ou algo do tipo, e isso pode ser feito diretamente pela plataforma Decagon. Então, é assim que fazemos: geralmente, ajudamos a direcionar esses tipos de solicitações de suporte e, em seguida, expandimos para: como podemos gerar mais receita para você? Bem, agora trabalhamos de forma transversal e vertical. Também temos empresas realmente grandes, além de marcas de mercado intermediário.
+
+Esses são alguns dos assuntos sobre os quais fui autorizado a falar. Ah, havia muito mais coisas que eu queria adicionar, mas nosso departamento de marketing ficou bravo comigo. Temos, sabe, no canto superior esquerdo, nossas instituições financeiras, e no canto inferior direito, sua marca de tecnologia favorita. E isso é relevante porque, como explicarei brevemente, o tipo de implementação que você precisa fazer varia muito dependendo tanto do tamanho da empresa quanto do setor de atuação . OK. Então,
+
+imagino que esse seja o caso de muitas empresas com agentes, mas a Decagon tem, na prática, dois tipos de engenharia de implantação avançada. O primeiro passo é aproveitar essa inteligência artificial de atendimento ao cliente e fazê-la funcionar para a sua empresa. Então, da mesma forma que você treina um ser humano, você dá instruções sobre o que fazer quando um usuário pergunta X, como você responde, qual o tom da sua marca e quais ações você toma em nome do usuário. Tudo isso, como configurar o cérebro humano do agente [limpa a garganta], é uma forma de nossa estratégia de implementação, onde trabalhamos com o cliente, descobrimos o que significa sucesso para ele, como ele quer que o agente se comunique e que tipo de intenções do usuário ele realmente quer que o agente encaminhe para um humano. Essa é a metade esquerda deste diagrama.
+
+E temos uma equipe, da qual falarei brevemente, que é realmente muito boa em configurar o agente. Em grande parte, isso também pode acontecer dentro da interface do usuário. E então, do lado direito, o palestrante anterior também se referiu a isso. Os engenheiros de implantação avançada são a linha de frente para atender às solicitações de produtos dos clientes . E é trabalho deles descobrir: "Ei, a empresa A fez essa solicitação. Eu sei que em duas
+
+semanas a empresa B também fará a mesma solicitação." E isso acontece com uma regularidade impressionante. Portanto, quero garantir que, ao resolver o problema da empresa A , esteja resolvendo-o também para as empresas B, C, D e E, antes mesmo que elas tenham a chance de expressá-lo. Então, temos dois tipos de engenheiros de implantação interna: um que configura o agente e outro que garante que todos os problemas que surgem na interação com a empresa e que são resolvidos no contexto da conversa também sejam incorporados ao produto. O que me leva a um ponto realmente importante . Na verdade, é tão importante que eu gostaria de
+
+ter um slide para mostrar, mas na Decagon, a engenharia de implantação futura é idêntica à engenharia de produto. É o mesmo nível hierárquico, a mesma estrutura hierárquica, muitas vezes a mesma equipe, porque a distinção entre o que historicamente era implantação futura e engenharia de produto está extremamente difusa agora. Quando converso com uma empresa da lista Fortune 20 e ela menciona um problema, geralmente se trata de uma funcionalidade do produto que precisa ser desenvolvida e priorizada. Assim, essa linha divisória entre "sou uma pessoa destacada na linha de frente" e "sou uma pessoa que trabalha no produto" desapareceu. É a mesma pessoa, e isso está representado no nosso organograma.
+
+Então, no início, quero dizer, Degagon é um exemplo de hipercrescimento canônico. Há um ano, éramos 50 pessoas. [bufa] Agora estamos em 500. E a escala não está diminuindo. Então, aproveitando para fazer uma propaganda descarada, se você estiver interessado em uma nova vaga, meu e-mail é sunny@degagon.ai. Por favor, me avise. Vou
+
+garantir que seu currículo/ perfil chegue à minha equipe. Enfim, voltando ao assunto principal. Bem , historicamente tínhamos engenheiros de software especializados em agentes, e eles faziam tudo. Eles fizeram essa configuração do cérebro do agente enquanto estavam lado a lado com o nosso cliente. Bem, isso se refere a coisas como a tonalidade do agente, que tipo de voz você quer que ele tenha, tanto literalmente a voz, quanto a maneira como ele fala.
+
+Como faço para integrá-lo aos seus sistemas de back-end para que ele possa executar ações em nome dos usuários? Isso pode ser algo simples como "quero redefinir minha senha", então o agente precisa ter acesso ao back-end do seu sistema de autenticação. E pode ser algo muito mais complexo do que isso. E eles também faziam parte desse trabalho de plataforma, como por exemplo, quando o cliente A tinha uma solicitação de recurso e eles incorporavam isso ao produto. Agora que somos 500 pessoas, começamos a pensar muito mais em como projetar o sistema Degagon para que ele possa ser dimensionado.
+
+E, na prática, dividimos essa função de engenharia de software de agentes em duas vertentes especializadas. Um deles é o construtor de agentes, e estes são como os profissionais da Degagon. Eles têm muita intuição para os diversos modelos que alimentam nossa plataforma. Como fazer com que funcionem para o caso de uso que a empresa exige? Trabalhamos principalmente dentro da interface do usuário, na medida do possível, sinalizando quando as coisas precisam sair da interface e como podemos incorporar isso ao produto. E em
+
+segundo lugar, temos os engenheiros de software de agentes . Novamente, essas são as empresas da linha de frente que fazem solicitações de produtos. Garantir que isso seja incorporado de volta ao produto. E, bem, acho que esta é uma percepção super, super importante, que é a tentação frequente de pensar: "Ok, o cliente A fez este pedido e ele é muito importante para nós e quer que seja feito o mais rápido possível, então talvez eu simplesmente peça ao Codex e ao Cloud Code para fazerem isso para mim." Mas a habilidade que falta hoje em dia, com a programação de IA tão boa, é justamente a de exercer autocontrole. E pensando,
+
+sabe, em como isso vai se expandir para os futuros clientes? E parte disso faz parte da nossa filosofia. Assim como nós criamos agentes para serem de propriedade do cliente, se isso se transformar em uma caixa preta de prompts e patches, isso não será bom nem para nós nem para eles. É demasiado frágil. Bem, mas também, quando você é uma pessoa destacada em campo, é sua obrigação exercer essa contenção, tipo, não vou fazer a coisa mais fácil e pontual, mas sim garantir que tudo o que eu estiver construindo seja arquitetado de uma forma que beneficie os futuros clientes.
+
+Então, isso será abordado no restante dos meus 10 minutos aqui, que é , sempre pensando em como posso fazer com que este pedido beneficie os demais clientes? Bem , eu coloquei este slide aqui não para me gabar , mas para falar sobre o que significa alcançar o sucesso. Bem, no nosso caso, aprendemos logo no início, quando se está avaliando o negócio, literalmente nas primeiras conversas, que é importante definir antecipadamente o que significa sucesso para o cliente. E, para sermos ainda mais específicos , o ideal é colocar tudo por escrito para que não haja mal-entendidos ao longo do processo. Quando pergunto "como é o sucesso?",
+
+quero dizer quais são as métricas que você está tentando atingir, em qual canal você deseja obter suporte, seja por telefone, e-mail, mensagem de texto, WhatsApp, enfim, o que for . Mas, na verdade, precisamos definir com precisão qual é o seu problema, qual é o resultado ideal que você deseja, e então podemos correr para construir isso. Mas acho que, voltando às lições para o pessoal destacado na linha de frente , especialmente quando se trata de uma grande empresa, existe a tentação de simplesmente começar a agir. E isso reflete em parte como a programação de IA mudou a engenharia em geral, mas agora é necessário um grande esforço inicial na coleta de requisitos, garantindo que haja alinhamento sobre o que realmente precisa ser construído antes de começar a trabalhar nisso . Hum, isso foi um ótimo aprendizado para nós. Então,
+
+considerando que temos muitos clientes em diversos setores, descobrimos que é muito útil ter especialistas do setor alocados em nossa equipe, algo semelhante . Então, se eu estiver trabalhando nos serviços financeiros A, B e C, quando a empresa de serviços financeiros D surgir, o ideal é que eu tenha um grupo central de pessoas com experiência com esses clientes e que já estejam trabalhando com essa nova marca. E a ideia aqui é que muito desse conhecimento se acumula. Assim como A, você pode falar a língua desse cliente e, portanto, isso lhe confere muito mais credibilidade. Há muito mais. Há muito, como uma aceleração
+
+muito mais rápida. E [bufa] uh, muito do que se aprende na construção de uma marca, a maneira como você pensa sobre o sucesso, se transfere para isso . Então, isso tem sido muito útil para nós e, no fim das contas, tudo se resume a fazer com que cada implantação seja mais rápida que a anterior. Como
+
+mencionei anteriormente, trata-se de uma equipe de engenharia implantada em campo avançado, e aliás, quando digo engenharia implantada em campo avançado, na verdade é como qualquer outra forma de implantação em campo avançado. Mencionei anteriormente que uma das coisas mais importantes que você precisa fazer é sempre pensar em como resolver o problema desse cliente de uma forma que também possa ser aplicada a outros clientes. Outra coisa que considero sempre útil ter em mente é como posso capacitar o restante da empresa para resolver esse problema? E isso se aplica especificamente se você for da área de engenharia. Por exemplo, o princípio da Deckagon é que você deve ser capaz de configurar este agente completamente por meio de linguagem natural. Portanto, se alguma vez
+
+um engenheiro precisar fazer algo que precise ser incorporado ao produto final. Então, temos uma espécie de funil que funciona assim: "Vejam, a equipe de engenharia da Deck Front Play é a linha de frente para as solicitações dos clientes." Mas na verdade, isso deveria ser implementado em larga escala em toda a empresa. Um exemplo disso, que mencionei mais tarde, é o seguinte: vamos considerar uma integração. Digamos que o Deckagon precise ser integrado a algum sistema CRM. No início da
+
+nossa história, estávamos constantemente criando integrações personalizadas. E então pensamos: já chega. Depois do vigésimo quinto, a gente fica tipo: "Não sei quantos mais vão aparecer." Então, vamos construir um sistema de autoatendimento. E agora, o que antes exigia a escrita de código personalizado por um engenheiro, agora pode ser feito pelo próprio cliente ou desenvolvido pela nossa equipe de desenvolvimento de agentes. Portanto, tudo se resume a como
+
+você dimensiona o trabalho que está realizando. Um aspecto também muito relevante, dependendo do tipo de trabalho de implementação que você realiza, é especialmente importante no âmbito empresarial, a necessidade de comprovar o valor o mais rápido possível. Para aqueles que trabalham, especialmente em empresas da lista Fortune 500, vocês vão se deparar com a seguinte expressão: "Qual é mesmo o termo?" A pia da cozinha ou a cozinha inteira? Algo assim. Mas a ideia é
+
+como provar o valor o mais rápido possível? Assim, no nosso caso, o Deckagon pode se tornar arbitrariamente complexo. Você pode dar suporte a todos os tipos de canais, a todos os tipos de intenções de usuário muito complexas. Tentamos descobrir como demonstrar valor o mais rápido possível, sem precisar de um contrato de vários meses ou, pior, de um prazo de vários meses para comprovar o valor. E quando chegarmos lá e estivermos agregando valor, aí sim expandiremos, certo? Porque,
+
+no fim das contas, todos os nossos clientes representam uma parceria de vários anos. Portanto, queremos garantir que estamos ajudando você em todo o seu fluxo de suporte e em seus fluxos de trabalho de geração de receita, mas é importante que, como profissional em campo, você descubra como demonstrar valor imediatamente e construa sua estratégia em torno disso.
+
+Então, os clientes costumam vir até você, falar com outras pessoas e dizer: " Quero que você faça XYZ". E muitas vezes eles têm razão. Mas, eu acho que como engenheiro destacado em campo, ou qualquer pessoa destacada em campo, você deve se considerar um conselheiro em vez de apenas um executor, certo? Vocês dois. Então, você também está na linha de frente de "Ei, como faço para a IA funcionar para as empresas?" E você tem muito
+
+conhecimento porque vê isso se repetir em cada um dos seus clientes. Então, o que fazemos na Akkio Gone é coletar seus dados históricos de suporte e dizer aos clientes: " Se você automatizar isso primeiro ou aquilo primeiro, é aí que verá o maior retorno sobre o investimento." E às vezes não é exatamente sobre isso que o cliente entrou em contato. E imagino que existam situações semelhantes em diversos setores, mas é importante ter em mente que seu trabalho não se resume a executar tarefas. É claro que ele deve ser um executor testamentário, mas também um conselheiro. E não podemos subestimar o
+
+fato de que você possui esse conhecimento especializado por ter atuado em diversas empresas, o que lhe confere uma base de conhecimento realmente valiosa para o cliente.
+
+Sempre que alguém na Akkio não está mais em funcionamento, e precisa fazer algo manualmente, nós nos certificamos de que essa alteração seja incorporada ao produto final. Como mencionei anteriormente, a integração é um bom modelo mental para quem está na linha de frente. Como podemos facilitar esse caminho? O atendimento personalizado se transforma em autosserviço. O atendimento personalizado se transforma em autosserviço.
+
+Isso se tornou uma espécie de princípio orientador para nós, e suspeito que seja o caso em todos os tipos de operações de implantação avançada. Portanto, eu encorajaria todos nesta plateia a... a manter isso em mente. Tipo, beleza,
+
+vou fazer isso, vou fazer essa coisa única. Presumivelmente, outras pessoas na empresa também estão incorporando isso de volta ao produto. OK. Então, o Decky On é realmente interessante porque foi iniciado por alguém que, acredito, agora está na casa dos 30 anos, mas na época eles estavam na casa dos 20. Ah, desculpe, quase 30 anos.
+
+Então, o que fizemos de certo para merecer a posição que ocupamos? E acho que uma delas é que somos conhecidos no setor por atender às solicitações dos clientes com muita, muita rapidez. E parte disso se deve ao fato de ser um grupo de pessoas muito trabalhadoras . Então, um dos principais motivos de termos chegado até aqui é que fechamos negócio a negócio muito rapidamente . Em segundo lugar , conquistamos a confiança dos clientes, que nos veem como consultores e não apenas como executores testamentários. Então,
+
+com base no que estamos observando em todos os clientes e nos dados que você nos fornecer, poderemos dizer qual será o maior retorno sobre o investimento (ROI) para você. E em terceiro lugar, temos sido muito bons em garantir que transformemos o trabalho personalizado em produto. Mas a forma como pensamos sobre isso mudou muito no último ano, porque, novamente, há um ano éramos 50 pessoas, todas cabíamos em uma mesa de almoço comprida. E agora somos 500. Então, agora pensamos muito em como projetar o sistema. Então,
+
+agora somos muito rigorosos em compartilhar conhecimento entre as implantações, mas garantindo que as pessoas em campo enviem informações de volta para a plataforma, assegurando que o agente seja aprimorado a cada interação com o cliente. Então, se o agente interage com o cliente A, você melhora a experiência do cliente B. E tudo se resume a aproveitar o conhecimento adquirido em campo e incorporá-lo ao produto. Bem , para concluir, aqui estão alguns dos principais temas. Em primeiro lugar, obviamente você precisa garantir que consegue entender como esse agente deve fazer tudo o que o cliente quiser. Mas em
+
+segundo lugar, certifique-se de que isso seja incorporado ao produto. E três, preste atenção naquele funil que mencionei anteriormente. Você está na linha de frente, você está em campo, mas quer garantir que isso seja escalável e que melhore cada interação futura com o cliente . Ah, novamente, meu e-mail é sunny@deciagon.ai. Eu também estarei
+
+aqui. As pessoas têm perguntas. Obrigado por vir conversar e espero que isso seja útil.
+
+[música]

@@ -1,0 +1,96 @@
+---
+video_title: "How Forward Deployed Engineering is done at Ramp — Leo Mehr"
+video_id: ITMXwI6QL6A
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ITMXwI6QL6A
+video_date: 2026-07-28T19:00:06+00:00
+video_description: |
+  It's Friday night, an enterprise sales rep needs an SAP S4 HANA integration to hit quota, and the reflexive Forward Deployed answer is yes. Leo Mehr's first principle is to pause instead: always be scoping. Saying yes to everything buries the team and often does not even serve the customer, so the job is to weigh what actually matters against the rest of the queue and decide with that context. Ramp's FDE function looks different from its Palantir origins, pointed at enterprise customers, but the discipline is the same: scope hard before you roll up your sleeves and ship.
+  
+  The second half is what tokens change. Look at the FDE pipeline and ask which stages an agent can take over. Intake is a good one: requests pour in through account managers and solutions engineers, and someone has to read each and turn it into a spec. Ramp wired that step to an agent with Notion as the surface, and after a couple of iterations account reps were using it directly. The unglamorous parts are what make it work: an agent harness, evals with rubrics and human feedback, and past requests and help articles as grounding. The close is that the future of Forward Deployed needs both, humans for judgment and agents for the volume.
+  
+  Speaker info:
+  - https://x.com/leomehr
+  - https://www.linkedin.com/in/leomehr
+  - https://leomehr.com/
+  
+  Timestamps:
+  0:00 - Introduction: FDE principles at Ramp
+  2:10 - Principle one: always be scoping
+  3:16 - The Friday night SAP integration ask
+  5:04 - When scoping goes wrong
+  6:33 - Using agents for the FDE pipeline
+  7:57 - Automating request intake into specs
+  9:14 - Building the spec agent in Notion
+  11:16 - The agent harness and evals
+  13:27 - The future of FDE needs both
+---
+[música]
+
+Incrível. Obrigado, pessoal. Incrível. É ótimo conhecer todos vocês. Quer dizer, espero que depois da palestra, se você quiser sair e a gente puder conversar, adoraríamos. Legal
+
+. Então, sim, hoje meu objetivo é compartilhar com vocês os dois princípios mais importantes que aprendemos fazendo FDE na Ramp. Então, é isso aí, falando um pouquinho sobre mim. Sim, sou diretor de engenharia na Ramp. Bem, entrei na empresa há dois anos e meio, quando a FDE era apenas composta por dois engenheiros na época.
+
+E hoje, minha organização conta com cerca de 30 engenheiros distribuídos em quatro ambientes de desenvolvimento de API e nossos novos serviços de IA. Então, eu sei que isso é meio que um tema recorrente, mas ninguém sabe o que é FDE. Então, vou dedicar um momento a isso.
+
+Então, é, eu até que gosto desse meme. Para mim, isso é meio engraçado. Hum, eu... mas eu... eu acho que isso está
+
+totalmente errado. Não considero isso como a verdadeira forma do que é o FDE (Flat Dark Earth). Não vejo isso como a evolução final ou o modo chefe das funções técnicas de entrada no mercado. Bem, isso pode ser verdade em algumas empresas, mas pelo menos na Ramp, é um pouco diferente. Então, na FDE da Ramp, nós trabalhamos dentro da organização de engenharia.
+
+E o nosso objetivo é ajudar a Ramp a conquistar o mercado de luxo. Assim, tendo isso em mente, o que fazemos é basicamente trabalhar no produto principal e em nossos novos recursos de agentes, fazendo com que funcionem muito bem para nossos maiores clientes corporativos. Então, isso é só um pouco de contexto introdutório. Quero me aprofundar no assunto e hoje, como eu disse, há apenas duas coisas que vou compartilhar com vocês. Literalmente duas coisas. Conversa muito fácil.
+
+E esses são os princípios que eu diria que realmente nos guiaram e que provavelmente são as duas coisas mais importantes que temos. Sempre defina o escopo e dimensione com tokens. Então, vamos começar com o primeiro . Sobre o escopo. Então, eu diria que existe essa ideia, de que muitas pessoas pensam que, como um profissional de desenvolvimento de produto (FDE), seu trabalho é apenas dizer sim ao cliente.
+
+Mas isso está errado. Se você simplesmente dissesse sim, sabe, em vez daqueles belos Waymos que nos levam para passear por São Francisco, você teria algo assim, sabe? Sim, cavalos com foguetes presos às patas. E o importante é que você quer ajudar o cliente a ter sucesso. Você quer tentar encontrar uma maneira de dizer sim.
+
+Mas, na verdade, você quer entregar um bom software. Você precisa construir a coisa certa. Então, você não fica dizendo sim para as pessoas o tempo todo. E eu gostaria de compartilhar um exemplo de algo que eu diria que acontece com certa regularidade, de uma forma ou de outra, na Ramp. Então, é sexta à noite e um representante de vendas corporativas nos procura com um pedido urgente: a concretização desse negócio estratégico superimportante só acontecerá se implementarmos uma integração com o SAP S/4HANA.
+
+E acho que o reflexo automático de um engenheiro é tipo: "Droga. Onde está a documentação da API da SAP? Onde eu a encontro e como faço para construir essa integração?" Mas o que um profissional de desenvolvimento de campo bem treinado faria seria parar por um segundo e dizer: "Ok. Antes de mais nada, o que está causando essa urgência?" Uma
+
+coisa que eu já vi é que alguns vendedores ficam meio descontrolados porque é o fim do trimestre e eles estão tentando atingir a meta e fechar o negócio, e não porque o cliente é que está gerando urgência. Então, esse é apenas um exemplo. [limpa a garganta] Mas, sabe, como um Engenheiro de Desenvolvimento de Software (FDE), você faz um monte de perguntas para entender o contexto e o que é importante, e o que realmente é a coisa certa a se construir. Então, você pode se perguntar: "Quem está usando essa integração? Já esgotamos todas as soluções alternativas?
+
+Existe alguma solução manual que possamos implementar enquanto isso? O cliente possui os recursos técnicos necessários? Eles conseguem acessar nossa API sem que precisemos desenvolver essa integração?" Mas eu diria que a coisa mais importante que um FDE faz é olhar além dessa solicitação específica e analisar outros clientes potenciais que estão surgindo, para ver se mais alguém se beneficiaria disso também. E a questão é que, ao obter todo esse contexto, você pode fazer um trabalho melhor na construção da coisa certa.
+
+Então, quero compartilhar outra história que foi realmente muito dolorosa para nós nos primeiros tempos. Tínhamos um grande cliente corporativo que precisava dessa funcionalidade de reembolso em dispositivos móveis. Infelizmente, nossa equipe de atendimento móvel ficou totalmente sobrecarregada. Então, basicamente, nós, da equipe de desenvolvimento de fábrica (FDE), tivemos que arregaçar as mangas e encontrar uma maneira de fazer as coisas acontecerem. E tínhamos dois engenheiros na equipe que simplesmente aprenderam a desenvolver para iOS e Android. E foi incrível.
+
+Estávamos super animados. A gente pensa: "Ok, vamos lançar essa funcionalidade. Vai ser incrível. Tipo, com certeza !" Então, trabalhamos duro por algumas semanas e conseguimos finalizar o recurso em ambas as plataformas.
+
+Aí a gente vai até o cliente e diz: "Ótimo. Vocês poderiam nos enviar a lista de usuários beta do Android?" E foi aí que nos disseram que eles exigem que todos os seus funcionários usem dispositivos iOS. Então você fica tipo, "Que [ __ ] é essa?" Não para o cliente, sabe, apenas internamente.
+
+Mas, obviamente, foi extremamente decepcionante para nós, porque tínhamos nos esforçado muito. Portanto, foi uma grande lição para nos lembrarmos da importância do planejamento prévio. Até mesmo algumas das premissas mais básicas, como a plataforma móvel na qual você vai construir, são extremamente importantes de validar, o que reforça a importância de definir o escopo antecipadamente. Bem , digamos que você e sua equipe se tornaram mestres em definição de escopo. Sabe, você é incrível.
+
+No mundo de hoje, isso não basta. Portanto, a menos que você esteja escalando com as capacidades do modelo, você ficará para trás. Bem, não vou me alongar muito nesse ponto . Acho que praticamente todas as palestras desta conferência abordam esse tema de alguma forma, mas a questão é que, basicamente, precisamos reinventar nossos trabalhos constantemente. Então, qualquer trabalho que estejamos fazendo hoje, sabe, na maior parte é trabalho intelectual, e temos que descobrir como fazer com que modelos e agentes o façam por nós. E isso
+
+me leva à segunda parte desta palestra e ao outro ponto que quero transmitir hoje, que é: todos nós precisamos descobrir como escalar com tokens. E a forma como interpreto a escalabilidade com tokens para FTEs é analisar todo o ciclo de vida do que um FTE faz. Desde a coleta de contexto até a definição do escopo de uma solicitação, passando pela elaboração de uma especificação e, em seguida, pela implementação do recurso, cada etapa desse fluxo de trabalho pode ser substituída por agentes. E a princípio parece um pouco assustador. Você fica tipo, como você vai abordar e resolver isso? Mas
+
+se você dividir o problema em partes menores e depois trabalhar para resolvê-lo, ele se torna bastante solucionável. Então, vou compartilhar com vocês um exemplo de algo que deu errado. Algo que nós...
+
+que nós fizemos na Ramp. Então, temos um canal interno no Slack chamado "Solicitações FDE", e é lá que os gerentes de contas, equipes de soluções e representantes de vendas postam sempre que há um obstáculo grande o suficiente para um cliente potencial ou atual. E assim, recebemos esses pedidos. Nesse caso, na verdade, um dos CSMs da nossa equipe, o Greg, postou aqui. E, bem, se você fosse... Na verdade, é um fluxo de trabalho do Notion.
+
+Aliás, se algum de vocês trabalha no Notion, muito obrigado. Nós gostamos muito de usar o Notion . Se você clicar em "Abrir" no Notion, verá uma solicitação bastante longa com todos os detalhes sobre o que exatamente é. E o problema é que existe uma variância extremamente alta . Por exemplo, algumas pessoas enviam solicitações realmente detalhadas e boas do cliente. E outros vão
+
+enviar apenas uma linha, tipo: "Precisamos, sabe, precisamos dessa integração com o SAP." E antes disso, teríamos que fazer com que os FDEs (funcionários de desenvolvimento de software) analisassem essa solicitação manualmente. Nós líamos tudo, entendíamos, descobríamos o que existia no produto e trocávamos várias mensagens com o cliente. E isso é exatamente o que abordou a primeira metade da palestra: sempre avaliar o panorama geral. Sabe, nós dedicávamos muito tempo a analisar e validar exatamente o que era, você sabe, absolutamente necessário.
+
+Então, como vocês podem ver aqui, o que fizemos foi basicamente usar os agentes do Notion para construir uma versão 1, que simplesmente recebia a solicitação e fazia algumas perguntas. Foi isso. E depois foi meio surpreendente. Literalmente, depois de algumas semanas, descobrimos que isso nos poupou muito tempo porque, em primeiro lugar, a latência das respostas passou de horas ou dias para segundos. E imediatamente, assim como os representantes de contas e os gerentes de contas, os representantes começariam a interagir com esse agente. E uma das coisas
+
+que fizemos, já que correu tão bem, foi que esta é, na verdade, a versão mais recente . É muito fofo, sabe? O pinguimzinho até ajuda a deixar tudo com uma aparência mais amigável e acessível. Bem, o que ele faz é realizar várias rodadas de perguntas e respostas com quem enviou a solicitação até considerar que está pronto para criar uma especificação, basicamente. E tem sido realmente incrível o quanto isso tem nos ajudado. Eu
+
+diria que provavelmente nos economizou uma porcentagem considerável, talvez uns 20% do tempo que gastaríamos analisando essas solicitações. Então, sabe, este é um ótimo exemplo. Para nós, isso tem sido muito útil. Estou super empolgado com isso. Isso vai ajudar a automatizar muito do trabalho que temos feito manualmente. Mas, na
+
+verdade, eu estava me referindo apenas à primeira etapa desse processo. Então, se você observar a primeira parte aqui, verá que conseguimos fazer algum progresso . A última etapa também, passar de uma especificação bem definida para um produto funcional, obviamente como os modelos Frontier podem fazer com recursos de tamanho médio e rápidos. Assim, a última parte também é muito mais fácil para nós. É essa parte do meio que eu diria ser super complicada, amorfa e difícil.
+
+E estou muito animado com o fato de nossa equipe estar investindo muito mais e dedicando muito mais tempo, por exemplo, construindo essa fábrica, formando agentes para substituir cada uma dessas etapas. E a questão é: se você olhar para o futuro, digamos, daqui a 6 a 12 meses, como estará a FDE na Ramp? Acredito que esses são os tipos de problemas de IA aplicada nos quais vamos investir todo o nosso tempo. Tipo, sabe, garantir que o agente que executa cada uma dessas etapas esteja funcionando perfeitamente. Garantir que a qualidade de cada saída do pipeline seja realmente boa.
+
+Sabe, com avaliações, com rubricas, com feedback humano. E, claro, um dos maiores desafios é garantir que o agente tenha o contexto correto ao fazer a chamada de alarme, assegurando que ele tenha o contexto adequado. Então, existem muitos dados históricos, dados sobre o produto. Imagine todo o conhecimento que um gerente de produto tem na cabeça sobre o seu produto. Tipo, como é que se passa essa informação para um agente? Por exemplo, a documentação do Notion e toda a
+
+sua base de conhecimento e artigos de ajuda existentes só lhe fornecem uma parte disso. Sim , habilidades, memórias, ferramentas. Eu poderia continuar falando sobre isso por um tempo, mas, no fim das contas, o mais importante aqui é que, como diretores financeiros, ainda temos a responsabilidade de usar o bom gosto e o discernimento no resultado final. Então, esse será o fio condutor fundamental. OK.
+
+Então, digamos que você fez um trabalho incrível construindo esta fábrica. Mas o problema não é relacionar isso à primeira metade da palestra. Se você não fizer um bom trabalho ao analisar as solicitações ou ao aplicar os princípios de definição de escopo, você vai acabar com um canhão de lixo que maximiza o uso de tokens . Então, a questão principal é que você precisa fazer as duas coisas, porque o contrário também é bastante ruim . Se você é, sabe, incrível em planejamento estratégico, mas não investe na construção dessa, sabe, fábrica de agentes, então tudo vai acabar para você.
+
+Tipo, seus concorrentes locais vão simplesmente ultrapassá- los e superá-los. E então, é por isso que, no final, quero concluir dizendo que o mais importante é que, se você tiver esses dois elementos, isso pode te preparar para o sucesso no futuro. Sempre priorize e dimensione com tokens. O futuro do FD precisa de ambos. Isso é tudo. Obrigado, pessoal.
+
+[aplausos]
+
+[música]

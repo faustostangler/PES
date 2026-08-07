@@ -1,0 +1,131 @@
+---
+video_title: "Agents at Scale: Inside MiniMax's Model and the Infrastructure Behind It — Olive Song"
+video_id: AVMr9PMINyo
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AVMr9PMINyo
+video_date: 2026-07-31T03:00:14+00:00
+video_description: |
+  In this conversation, Olive Song, who leads reinforcement learning at MiniMax, opens up the stack behind the company's open weight models and the infrastructure that serves them. Her starting point is a belief in open source: put the weights out, let builders optimize on them, and share the capability widely. From there she walks through what it takes for a model to land well, from agentic coding that also understands and builds games, to computer use problems trained with RL against environments like OS World.
+  
+  Much of the discussion is the unglamorous engineering that makes a launch real. When a model ships, the team wants the inference stack ready on day zero, which means writing and tuning GPU kernels, working through benchmarks like a parallel kernel bench, and threading optimization into everything from KV cache handling to routing. Song also talks through multimodality and the training pitfalls that come with it, such as text and vision collapsing after training unless you train both modalities together, and reflects on longer horizon tasks like replicating a twelve hour run. She closes optimistic that open models are closing the gap faster than a year ago would have suggested.
+  
+  Speaker info:
+  - https://x.com/olive_jy_song
+  
+  Timestamps:
+  0:00 - Introducing the RL lead at MiniMax
+  1:17 - Why open source and open weights
+  3:45 - What builders are doing with the model
+  4:11 - A model that builds games
+  5:12 - Computer use and OS World
+  5:49 - Writing GPU kernels
+  6:25 - Parallel kernel bench
+  7:28 - A day zero inference stack
+  9:34 - Optimization across the stack
+  10:47 - Multimodality and training collapse
+  14:10 - Replicating a twelve hour run
+  17:22 - Where open models go next
+---
+Esta é uma discussão que me entusiasma particularmente porque a área está a evoluir muito rapidamente e temos duas pessoas que possuem uma perspetiva única sobre o assunto, e o que eu quero fazer é colocar questões para ver se podemos aprender com isso. Então, gostaria de começar com as apresentações, falar um pouco sobre o seu papel, o que você está pensando, no que você está trabalhando. Talvez o Dan, se você puder ir primeiro. Olá a todos. Eu sou o Dan. Sou o vice-presidente da
+
+Kernels Together AI. Eu lidero a inferência e a otimização de GPUs, tentando descobrir a maneira mais eficaz de usar as GPUs para atender aos modelos de IA. Sim . Uma das coisas que eu queria discutir com o Dan é sobre os modelos que vocês disponibilizam, tudo o que acontece nos bastidores para que todos aqui, incluindo muitos construtores, possam usá-los. Olive, quero passar a palavra para você falar sobre o seu papel e em que você está se concentrando . Sim
+
+. Meu nome é Olive e sou a líder de pesquisa em RL (Application Lifecycle) na MiniMax. Sou responsável pelo treinamento final do modelo e pela sua implementação. Então, basicamente, tudo o que vem antes da inferência, certo? OK.
+
+Incrível. Então, talvez eu quisesse começar dizendo que este painel está focado em código aberto. Queria começar dizendo que este é o seu modelo mais potente até agora, o MiniMax M3. Por que torná-lo de código aberto? Qual é a ideia por trás disso como empresa, ao lançar esses modelos?
+
+Acreditamos que a comunidade de código aberto como um todo é muito forte e poderosa. Embora o modelo seja de código aberto, todos podem usá-lo. Isso está alinhado com a nossa missão de ter inteligência ao alcance de todos, e também de que diferentes desenvolvedores possam contribuir para o modelo por meio de feedbacks, através de seus próprios PRs, e assim podemos construir modelos ainda mais robustos. E também, por exemplo, Dan, você poderá otimizar nosso modelo de peso aberto, tornando a inferência mais rápida e, assim, oferecendo um serviço melhor para todos. Sim . Sim, nós acreditamos muito no
+
+código aberto e, sim, acho que já faz um tempo que estamos acompanhando vocês. Acho que são modelos MiniMax bem antigos. Ver o M3 e perceber o quanto ele evoluiu é realmente impressionante e fantástico. Então eu queria abordar isso um pouco mais a fundo. Você pode explicar para que tenhamos os próprios criadores do modelo, MiniMax? Temos especialistas na
+
+área de inferência. Como surgiu essa parceria? Então eles lançaram um modelo de código aberto e agora estamos distribuindo-o. Eu verifiquei esta manhã. Temos a maior parte do uso de tokens para MiniMax M3. Como
+
+essa parceria surge e como podemos implementar um modelo como esse em larga escala? Sim, sim, ótima pergunta. Então, juntos, acho que uma das coisas que realmente nos interessa é como tornar a inteligência abundante? Então, como fazer com que mais tokens cheguem a mais pessoas para que elas possam realizar tarefas mais úteis e, assim, levar todas essas funcionalidades para as mãos de mais pessoas? Por isso, acompanhamos todos os modelos abertos muito de perto.
+
+Eu não me lembro exatamente quando começamos essa parte. Ah, na verdade acho que sei disso. Realizamos um evento automobilístico em Las Vegas em algum momento do ano passado. E aí chegou um cara da MiniMax que disse: " Pessoal, vocês precisam mesmo apresentar nosso próximo modelo." Vai ser realmente muito bom.
+
+Então acho que foi a partir daí que começamos a conversar. Estávamos servindo o MiniMax 2.5 e acho que o 2.7 por um tempo, e então, quando o lançamento do M3 se aproximou, estávamos bastante animados com ele. Acho que estávamos vendo o uso e o que as pessoas estavam fazendo com isso, o que era realmente muito interessante, e foi a partir daí que começamos a parceria. Começamos a
+
+trabalhar no modelo. A arquitetura, a otimização, descobrir qual a melhor maneira de fornecer inferência sobre ela e todas essas partes importantes. Sim . Na verdade, eu queria me aprofundar mais no lado da modelagem. Então, como criador de um modelo, como alguém que está pós-treinamento disso, o modelo é implementado e todos os desenvolvedores que estão aqui começam a usá-lo.
+
+Na sua perspectiva, quais são os tipos de funcionalidades exclusivas que você mais gosta de ver as pessoas usando? E quais seriam algumas das joias escondidas que você ainda não descobriu? Você pensou: "Ah, as pessoas adorariam construir isso." Mas você ainda não viu nem um pouquinho. Poderia esclarecer isso com mais detalhes?
+
+Hum. Hum. Assim, o MiniMax M3, que era diferente da série M2, era multimodal. Ou seja, ele não só entendia texto e escrevia código, como também entendia vídeos e imagens. Então, vimos muitas aplicações em agentes multimodais de tecnologia de geração, o que é muito legal.
+
+Hum, e eu diria que há alguns que podemos destacar, certo? Por exemplo, usos de computadores. O modelo consegue navegar em um computador e, em seguida, fazer criações bastante interessantes com as ferramentas que pode utilizar. E também, você pode desenvolver jogos com o modelo. É muito divertido, eu acho que uma das joias escondidas é que nós realmente trabalhamos no desenvolvimento de jogos. Portanto, o modelo pode
+
+ajudá-lo a desenvolver jogos realmente incríveis. Sim . Sim, então, quando o blog foi lançado e depois o artigo, uma das coisas que notei foi que vocês destacaram o SVG Bench, destacaram o Kernel Bench e também mencionaram o OS World. Você pode falar mais sobre o que é necessário para o pós-treinamento, especialmente para esses domínios específicos? Hum. Hum. Eu diria que o mais
+
+importante são os dados e como definimos os problemas. Isso pode variar muito dependendo da tarefa. Por exemplo, digamos que seja o kernel, certo? Seria muito importante projetar os ambientes de dados de forma que possamos treinar deliberadamente o aprendizado por reforço nesses ambientes complexos e permitir que o modelo otimize os próprios kernels e melhore o desempenho iterativamente. E um aspecto sobre o qual eu gostaria de conversar com você em relação ao desenvolvimento do kernel é: onde você está vendo modelos abertos quando se trata de desenvolvimento de kernel? Você lançou recentemente um
+
+benchmark específico para isso. Então, eu estava pensando se você poderia falar um pouco sobre isso, porque... Sim, sim, é uma ótima pergunta. Portanto, acho que estamos vendo todos os
+
+tipos de modelos, desde os de fronteira fechada até os de fronteira aberta, ficarem cada vez melhores em escrever kernels. Portanto, usamos modelos o tempo todo quando estamos desenvolvendo kernels e escrevendo as estruturas de otimização. Acho que o aspecto interessante que estamos começando a analisar é esse benchmark que lançamos recentemente, chamado "parallel kernel bench". Portanto, na verdade, apresenta uma série de problemas não resolvidos . Então, analisamos todas as diferentes maneiras pelas quais eles podem servir à inferência de modelos.
+
+E uma das coisas interessantes que descobrimos é que existem muitas coisas que podemos imaginar que acelerariam os modelos, mas para as quais não existem bons kernels. Então, uma das razões pelas quais divulgamos esse benchmark foi porque uma das preocupações das pessoas é a limitação excessiva ou o sobreajuste a benchmarks específicos. Uma de nossas intenções com esse benchmark era que, se você se ajustasse demais a ele, seria ótimo, porque poderíamos pegar esses kernels e usá-los para acelerar a inferência e o desenvolvimento. Sim, esse é um ponto muito interessante . Muita gente tem problemas com o benchmarking máximo, mas a minha visão é a seguinte: se pesquisadores como você disponibilizarem todos os benchmarks realmente úteis e nós realizarmos benchmarks máximos em todos eles, e tudo estiver distribuído, então esse é o mundo perfeito, certo? Esse é um
+
+modelo muito útil que podemos usar. Ok, legal. Então, eu queria abordar também o lado da inferência agora. Então, quando um novo modelo é lançado assim, o que é necessário? Você poderia me mostrar os bastidores da pilha de inferência? E o que é necessário para ir do
+
+lançamento no primeiro dia e depois otimizá-lo semana após semana, mês após mês? Sim, sim, ótima pergunta. Assim, quando firmamos parceria com alguém como a MiniMax, recebemos alguns detalhes iniciais do modelo. Então, para o M3, por exemplo, existem coisas como a atenção esparsa minimax e algumas dessas escolhas que eram um pouco diferentes de qualquer modelo existente . E eu acho que, se você observar qualquer um dos modelos abertos atuais, verá que todos são bastante diferentes uns dos outros em vários aspectos. Portanto, há diferentes níveis de
+
+atenção, diferentes escolhas de MOE (Modelo de Excelência), diferenças na quantização e em todos esses aspectos. Assim que obtivermos esses detalhes, começaremos a escrever kernels, realizar testes de desempenho e verificar se já existem kernels compatíveis. Precisamos modificar alguma coisa? Precisamos escrever algo do zero? Então, logo no primeiro dia, estamos tentando pensar em coisas como qualidade. Então,
+
+quando este modelo for lançado, terá a qualidade que todos esperamos? Seremos capazes de proporcionar a experiência de usuário adequada? E então, a partir daí, assim que for lançado, no primeiro dia, teremos uma longa lista de coisas que sabemos: "Ei, temos que fazer isso com o cache KV, temos que fazer isso com os kernels de atenção, temos que analisar essa parte da quantização", e coisas do gênero. Então, nós temos essa lista e começamos a trabalhar nela e a otimizá-la ao longo de semanas, de modo que, ao usar esses modelos, eles fiquem mais rápidos entre o dia zero, o dia sete, o dia 14 e assim por diante. Sim, eu estava conversando com a Ingrid ontem mesmo e perguntei a ela se tínhamos melhorado o desempenho do M3.
+
+E eu quis dizer durante o último mês, e ela disse: "Ah, você quis dizer desde ontem à noite?" E esse é o ritmo em que esses caras trabalham. Então, é muito real. Um aspecto que eu gostaria de abordar é que estamos vendo uma mudança nas cargas de trabalho . Estamos passando de cargas de trabalho predominantemente baseadas em chat, onde as interações ocorrem, para cargas de trabalho com agentes, onde você tem esse dispositivo dentro de um sistema integrado e realiza centenas e centenas de chamadas de ferramentas com múltiplas interações. Sim
+
+. Isso altera a forma como você constrói a pilha de inferência? Sim, com certeza. Então, essas cargas de trabalho baseadas em turnos e com agentes abrangem tudo, desde informar seu fluxo de caixa KV, seus prompts, suas peças e coisas do tipo. Então, isso informa qual parte da pilha você deseja otimizar, porque agora, quando estamos no mundo do bate-papo, você tem um prompt do sistema com alguns milhares de mensagens e, além disso, apenas os registros de bate-papo . Agora, com os
+
+fluxos de trabalho agentivos baseados em código, você carregará toda a sua base de código para o modelo, e isso representa um desafio de otimização, roteamento e kernel muito diferente da carga de trabalho baseada apenas em bate-papo. Sim, nós seguimos esses códigos de trabalho muito de perto. É realmente interessante ver como eles evoluem e como adaptar a pilha de inferência e os mecanismos de inferência para realmente atendê-los bem. Você não tem apenas cargas de trabalho com agentes, mas também cargas de trabalho multimodais. Então, o que eu gosto de fazer frequentemente com esses agentes de codificação é fazê-los otimizar um aplicativo da web, depois usá-lo e, em seguida, criar um ciclo de feedback. Então, uma coisa que eu queria
+
+mencionar para vocês quatro é que o Minimax M3 é multimodal, enquanto o M2.7 não era. Todos os anteriores não eram multimodais. E, tipo, você poderia falar um pouco sobre as otimizações e como você treinou o modelo para esse aspecto? E depois também quero abordar a arquitetura disso.
+
+Certo. Definitivamente. Então, a diferença em relação ao modelo anterior é que ele foi treinado multimodalmente do zero. Assim, partindo do zero, treinamos não apenas dados de texto, mas também dados de imagem. E era normal que, em muitos outros laboratórios, o modelo falhasse após um breve período de treinamento, e nós conseguimos resolver esse problema. E o que descobrimos foi
+
+que, com esse tipo de treinamento do zero, se você observar o mapa de atenção, verá que os tokens de texto, na verdade, acabam direcionando a atenção para os tokens visuais. Assim, eles se combinam naturalmente e se entendem naturalmente. Então, por exemplo, estamos desenvolvendo sites, certo? É melhor se treinarmos com ambas as modalidades. Além disso, por exemplo, ele pode analisar o site, entender sua aparência e, assim, otimizá-lo melhor.
+
+Como, por exemplo, durante o aprendizado por reforço. Então, sim, acho isso muito legal. Uma coisa que me chamou a atenção nesse modelo foi o fato de ele ter introduzido muitas novidades. A multimodalidade, o aumento do contexto para 1 milhão, o fato de você ter uma atenção escassa agora. Então, se você analisar a questão da inferência, é quase um pesadelo, não é? Você obtém
+
+esse novo modelo e há muitas coisas que você pode otimizar para acelerar a inferência. Na prática, em que você se concentra? Existem inúmeras coisas que você poderia otimizar, mas onde você obtém o melhor custo- benefício? Quer dizer, você se concentra em mil e uma coisas, né? Tipo, você simplesmente vai lá e continua fazendo isso. Você encontra
+
+todas as bordas que consegue, e então você vai e empurra. Então, sim, acho que não há pedra sobre pedra que você deixe sem virar, você simplesmente continua insistindo . Se alguém me disser que você não consegue fazer a milésima primeira coisa, tipo, sei lá, se esforce mais. Sim . E depois levante-se um pouco mais tarde.
+
+Sim, pode ir em frente. Não, eu sei. Outra coisa que eu queria perguntar é se existe uma espécie de zoológico de modelos de código aberto. Já que você está falando sobre acelerar a inferência, existem lições que podem ser extraídas de um modelo e aplicadas ao MiniMax M3? Ou você precisa recomeçar do zero ao pensar no mecanismo de inferência, nos kernels, como isso funciona?
+
+Certo. Sim, com certeza há coisas que você aprende ao otimizar um modelo que você leva para outro. Bem, acho que a atenção esparsa se tornou algo bastante popular atualmente. Então, a atenção esparsa do MiniMax é um pouco diferente da busca profunda e daquelas que você encontra no JLM. Mas ainda existem lições semelhantes que você pode tirar desse processo de otimização e desse processo de escrita do kernel, e que você pode então aplicar às novas abordagens de memória esparsa.
+
+E sabe, de uma forma ou de outra, venho pensando nesse problema há muitos anos. Então, voltando aos tempos do meu doutorado. Então, é ótimo ver alguma validação de que as pessoas agora podem treiná- lo em grande escala, que as pessoas estão usando-o e que está indo muito bem. Sim . Sim, uma das coisas interessantes, especialmente sobre o código aberto, é que você tem todos esses laboratórios aprendendo uns com os outros, meio que aproveitando os sucessos uns dos outros, certo? Portanto, se um
+
+laboratório descobrir que o Minimax faz isso muito bem, então isso se torna o padrão ouro. Uma das coisas que mencionei no post do blog sobre o lançamento do modelo é que ele foi capaz de replicar uma execução de 12 horas, na qual conseguiu reproduzir um artigo da ICLR. Então, alguém que está treinando esse modelo para fazer isso, como realmente faz isso? Porque isso parece uma tarefa bastante absurda. Certo. Portanto, permitir que o modelo faça
+
+coisas interessantes, como replicar artigos, otimizar estruturas de kernel e coisas do gênero, é sempre empolgante para nós, pesquisadores, porque está muito relacionado ao nosso trabalho. Mas treiná-lo pode ser muito complicado porque tem um horizonte de longo prazo e, assim como a própria tarefa, exigiria GPUs. Possui limitações de hardware. Portanto, é muito interessante treinar tarefas como essa e eu diria que a chave ainda está nos ambientes e nos dados, em como você formula o problema, como formula as recompensas, como formula o ambiente e como você modifica um pouco o algoritmo de aprendizado por reforço para que ele seja treinado de forma mais eficiente, de modo que você possa ver coisas interessantes surgindo ao longo das iterações das execuções de RL. Hum.
+
+Você poderia falar se eu continuasse puxando um pouco mais esse fio? Como você realiza a avaliação em séries temporais de longo prazo ? Então, se você quer que o dispositivo execute uma tarefa de 12 horas, sim, ele pode ou não conseguir finalizá-la, mas existem etapas intermediárias que você também pode analisar? Sim, temos. Para essas tarefas, existem iterações, certo? Assim, o
+
+modelo pode ser submetido várias vezes, e nós avaliaríamos cada uma delas. Às vezes, alguns modelos apresentavam falhas, e nós realizamos validação e testes para verificar se realmente estavam melhorando o desempenho ou se estavam causando problemas. Além disso, elaboramos nossas próprias avaliações internas. Por exemplo, no lançamento da versão 2.7, abordamos um pouco a autoevolução, certo? Portanto, estamos utilizando ativamente o
+
+modelo para melhorar a velocidade de desenvolvimento internamente, e a partir dele podemos construir nossas próprias avaliações, que estão intimamente relacionadas ao nosso trabalho, e com base nelas podemos avaliar os modelos. Sim . Então, quando começamos a falar sobre essas tarefas de longo prazo, que duram 12 horas, nós demos um workshop inteiro sobre isso na segunda-feira, mas o que eu queria abordar com você, Dan, é o cache KB. Então, digamos que você tenha solicitações simultâneas com comprimentos de contexto que variam de 500 a um milhão de mil, como você lida com o cache KB que continua crescendo e como a infraestrutura lida com isso? Sim, então há muitas peças diferentes que você coloca ali. De certa forma, é como
+
+recriar um sistema de arquivos distribuído. Então, de certa forma, estávamos construindo algo parecido com isso, ou um banco de dados muito grande. Em teoria, é bastante simples. É o tipo de coisa que você deveria ter feito no terceiro ano da graduação ou algo assim, mas a maioria de nós pulou essa aula, então agora estamos redescobrindo isso na prática, no mercado de trabalho. Mas a questão principal é onde você armazena esse cache?
+
+Como você sabe? Você já viu isso antes? Como faço para obtê-lo? Como faço para enviar de um lugar para outro? Então, sim, não é tão complicado, mas você precisa garantir que fará um bom trabalho.
+
+Sim, uma coisa que notei foi que você deu uma palestra em Stanford recentemente, e algo que me chamou a atenção foi que, se avançarmos uns 2 ou 3 anos, 2 ou 3 anos é muito tempo em IA. E se olharmos para trás, como você disse, perceberemos o quão... quão adiantados estamos agora. Sim
+
+. Então, do seu ponto de vista, daqui a 3 anos, como você acha que vamos olhar para trás e pensar: "Por que estávamos fazendo isso dessa maneira?" Ótima pergunta. Hum, algumas coisas que eu espero, então acho que estamos subutilizando muito nossas GPUs agora. Sabe, a SpaceX disse que teria uma taxa de utilização de cerca de 10% ou algo parecido.
+
+Espero que daqui a 3 anos, bem, eles já devam estar envergonhados disso, mas espero que daqui a 3 anos estejam ainda mais envergonhados. Então, certamente o treinamento deveria ser muito bom. Acho que na Anthropic podemos fazer muito melhor com o hardware que estamos usando hoje, então espero que daqui a alguns anos possamos dizer que vimos a luz no fim do túnel em algumas dessas peças. E eu acho que haverá muito mais modelos, e serão muito melhores. Bem, espero que até lá tenhamos finalmente resolvido essa questão sobre os modelos abertos. Sabe, a cada poucos
+
+meses aparece alguém dizendo: "Ah, a OpenAI antropogênica, eles estão tão à frente, blá blá blá ." Mas acho que estamos vendo, com modelos como M3, GLM, Kimmy e todos esses outros, que a fronteira do código aberto realmente pode alcançar o nível dos demais. E não está tão atrás assim, então acho isso bastante empolgante. Sim . Eu queria te fazer essa mesma pergunta , Olive, mas você mencionou que, para as séries M2 e M3, vocês estão usando essa ideia de autoevolução, onde o modelo constrói seu próprio arnês e então treina dentro dele, até atingir o próximo ponto de verificação. Bem,
+
+se você olhar para trás, três anos depois, e pensar: "O que você acha que fez a maior diferença na vida real ou após o treinamento?" O que você acha que é aquilo visto deste ponto de vista? Ótima pergunta. Mas, há 3 anos eu ainda estava [risos] na verdade, eu ainda não tinha começado neste ramo . Sim . Eu jamais imaginaria o que está
+
+acontecendo agora. É realmente emocionante. Mas consigo perceber como os modelos que foram desenvolvidos já estavam melhorando a velocidade de desenvolvimento, talvez há um ano ou até mais do que há um ano. Assim, pude perceber como essa velocidade está realmente aumentando. Como o desenvolvimento está se acelerando. E é assim que os
+
+modelos de peso livre podem realmente alcançar os laboratórios de vanguarda. Sim, é assim que acreditamos que nossa missão é levar esse modelo a todos, para que todos possam usá-lo. Sim. Incrível. Obrigado, pessoal. Obrigado, Dan.
+
+Obrigada, Olive. Muito obrigado, pessoal. Tenha um ótimo dia. Muito legal. Muito obrigado.
+
+[música]

@@ -1,0 +1,111 @@
+---
+video_title: "How Evals and Prompts Shape Agent Behavior — Preetika Bhateja & Daniel Bump, YouTube Ads"
+video_id: xyL2Ltkh-SA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xyL2Ltkh-SA
+video_date: 2026-07-24T21:00:00+00:00
+video_description: |
+  Getting an AI agent to behave the way you want isn't just about writing better prompts. In real systems, behavior emerges from a loop: prompts, evals, iteration, and feedback. Small changes in any part of that loop can completely change outcomes.
+  
+  The Google team shares lessons from building a seed-asset agent that turns messy advertising creatives — low-quality images, cluttered visuals, and heavy text overlays — into clean, reusable assets for downstream generative AI tools. They explain why prompting alone did not produce stable behavior, how evals became feedback signals rather than scorecards, how agent trace logs exposed why failures happened, and how they iterated without breaking problems they had already fixed.
+  
+  Speakers:
+  
+  Chris Souza — Google
+  Chris works on the Google team behind this seed-asset agent and its evaluation workflow.
+  
+  Preetika Bhateja — Product Manager, Google/YouTube
+  Preetika works on ads, evaluations, agents, and LLM-as-judge systems.
+  
+  Daniel Bump — Engineer, Google
+  Daniel focuses on image and video generation and computer vision.
+  X/Twitter: https://x.com/DanielJBump
+  LinkedIn: https://www.linkedin.com/in/danielbump
+---
+[música]
+
+Olá a todos. Hum, parece que todos voltaram do almoço. Espero que todos estejam revigorados e sem sono. É sempre interessante dar uma palestra logo depois do almoço, porque nunca se sabe o que pode acontecer. É uma multidão heterogênea. Mas estamos muito felizes
+
+por estarmos aqui. Que bom ver todos vocês. Nossa conversa será sobre avaliação. Claro, estamos na fase de avaliação. Vamos explicar algumas coisas que funcionaram para nós enquanto estávamos desenvolvendo o Eval, especialmente para anúncios do YouTube. Trabalhamos na equipe de anúncios do YouTube, onde
+
+criamos modelos de imagem e vídeo para anúncios. Portanto, construir um agente é difícil. Acho que qualquer pessoa aqui na plateia provavelmente já criou um agente como projeto paralelo ou como parte de sistemas de produção. É uma coisa muito difícil de fazer. É trabalhoso. Isso leva muito tempo.
+
+Hum, torná-lo confiável é mais difícil. Portanto, fazer com que o sistema execute as funções que você realmente deseja em produção, entender os diferentes tipos de recursos com os quais ele pode interagir e como ele reagirá quando for lançado para os usuários finais é sempre muito difícil. É por isso que as versões de avaliação (eval) são uma maneira bastante prática de gerenciar isso. Ah, sim, e então, basicamente, o primeiro passo ao fazer isso é, claro, ter sua base de agente. Então, quando você estiver construindo seu agente, você vai querer ter um conjunto focado e robusto de ferramentas compatíveis com o LLM para dar ao seu agente uma base muito sólida. Então, sim, eu diria que é
+
+importante primeiro otimizar essas ferramentas e garantir que elas estejam no seu melhor nível antes de partir para avaliações de agentes em maior escala. Então, uma vez que suas ferramentas estejam otimizadas, você também pode tomar outras medidas, como criar um agente de crítica independente com um ciclo de remediação, o que pode preencher mais lacunas, como um mecanismo de autocorreção, e suprir as limitações do seu conjunto de ferramentas básico. E então, uma vez que sua estrutura base esteja definida, você pode prosseguir para a avaliação, e uma avaliação robusta é muito importante, pois permite comprovar o valor das alterações realizadas, além de possibilitar a realização de experimentos de ablação para quaisquer mudanças implementadas. Portanto, eu diria que esta é uma ferramenta essencial para subir na escala da qualidade. Mas, novamente, é muito importante ter uma boa base para começar .
+
+Então, sim, a confiabilidade do seu agente é basicamente uma função das capacidades do agente, das salvaguardas e das avaliações. Então, entender o que seus agentes fazem no mundo real. Basicamente, as saídas da IA ​​generativa, como certamente todos vocês sabem, não são exatamente determinísticas, certo? Então, elas podem falhar em certas áreas, ou podem ter sucesso em uma hora e falhar em outra. Portanto, não podemos garantir como elas se comportarão na prática, e para alguns casos de uso isso é extremamente importante. Precisamos de uma
+
+maneira de medir em escala e garantir que elas estejam obtendo o resultado desejado, apesar do não determinismo desses modelos. Precisamos definir o que é bom e avaliar como elas se
+
+comportarão no mundo real, definindo o que significa "bom". É basicamente definir qual é o nosso objetivo de saída. Então, para criar avaliações que realmente sejam escaláveis, elas precisam ser rigorosas e mensuráveis. E então, uma coisa interessante aqui, que eu acho que pode ser um pouco contra-intuitiva, é que, no início, sentir uma boa vibração pode ser realmente bom para você. E o que eu quero dizer com "curtir a vibe" é basicamente fazer coisas que não são exatamente escaláveis ​​para começar. Então,
+
+quando você está começando, pode ser que você simplesmente faça uma avaliação super abrangente, certo? Mas descobrimos que funciona melhor começar com uma abordagem intuitiva, onde você primeiro observa as capacidades e analisa os resultados. Nessa fase, é bem fácil identificar os problemas, certo? Então, mesmo que não seja escalável, ainda assim lhe dará uma boa ideia do que acontece quando você muda algo, e também permitirá que você itere mais rapidamente. Portanto, nesta fase, ajustes rápidos também podem gerar grandes ganhos de desempenho; você pode fazer uma mudança radical na arquitetura, e sua avaliação não está te atrapalhando dessa forma. Então, é
+
+uma ótima maneira, sabe, para uma empresa em estágio inicial, de começar fazendo mudanças mais radicais rapidamente. Então, sim, dessa forma você também consegue se familiarizar bastante com o que está construindo, quais são os padrões de falha, e isso te dá uma maior sensação de profundidade e compreensão, o que te permite focar nos problemas de forma direcionada. Esses aprendizados serão muito úteis quando você estiver construindo a versão mais completa do EVO. Ah, sim, e aqui tem um gráfico mostrando que, se você pular para a escala desses invasores escalonados muito cedo, isso pode causar grandes oscilações, já que você pode estar iterando e calibrando a avaliação enquanto luta para mudar o modelo radicalmente. Então, outra coisa aqui é que você pode, ou melhor, deve começar cedo e começar devagar.
+
+Então, como eu disse antes, você não precisa ter um conjunto dourado enorme logo no primeiro dia. Você pode começar com algumas tarefas básicas. Então você pode analisar seu agente e definir quais são os principais aspectos que deseja segmentar, certo? E basicamente, comece com esses detalhes e vá gradualmente chegando a uma representação mais detalhada à medida que avança. Bem, e aqui é importante também testar os negativos. Verificar se o modelo
+
+não fez algo tão ruim, digamos, é tão importante quanto verificar se ele realizou a tarefa corretamente. Então, sim, e, bem, tem uma imagem engraçada aqui sobre como escrever as avaliações pode ser um ponto muito pequeno, enquanto humanos discutindo sobre qual deveria ser a rubrica é, tipo, uma tarefa muito grande. Ah, legal . Então, já definimos que queremos começar pequeno e que queremos apagar o código no início. Não se trata de apagar o código, mas sim de avaliar no início e tentar entender o que nossos modelos estão fazendo bem e onde os agentes estão falhando.
+
+Descubra todos os padrões. Eventualmente, você chegará a um ponto em que tentará envolver mais equipes. Então, se no início for apenas uma equipe central composta por gerentes de produto e especialistas em desenvolvimento, depois você vai contratando mais pessoas para a equipe. Você terá um conjunto de referência maior, um conjunto de dados maior que você deseja testar. Então você vai pensar em saqueadores de escala, saqueadores de LLM, e tudo mais. Então,
+
+vamos analisar um pouco mais como isso funciona na prática. Então, só algumas dicas sobre como trabalhar com escamas invasoras e coisas que funcionaram para nós. Uma delas foi fornecer a eles uma rubrica clara do que eles estavam realmente avaliando, com exemplos muito claros. Então, tivemos muitas situações, especialmente no início, quando estávamos construindo as coisas. É claro que existem muitos casos extremos e situações difíceis que um invasor pode encontrar e que não testamos. Então eles voltam a nos
+
+perguntar: "Ah, o que devo fazer neste caso?", e às vezes nós, como equipe, discordamos sobre se isso deve ser aprovado ou reprovado, coisas desse tipo. Portanto, acho muito importante fazer isso desde o início, pois quanto mais clareza e exemplos você puder dar aos avaliadores, mais úteis eles serão. Então, sim, nesse sentido, deve haver um forte consenso entre os membros da sua equipe sobre o que vocês consideram um bom caso de uso e um bom caso de sucesso anterior para uma avaliação. A segunda coisa que percebemos e que nos ajudou bastante foi receber explicações do Raider. Portanto, quando você pede para
+
+suas equipes ou outros membros da equipe avaliarem se o teste foi aprovado ou reprovado, isso não lhe diz muito sobre onde o agente deve melhorar, nem qual foi o raciocínio por trás dessa conclusão. Por isso, é útil obter explicações sobre o porquê de estarem avaliando algo de determinada maneira. Isso vale tanto para avaliações unilaterais quanto para avaliações lado a lado, como quando você está testando dois modelos ao mesmo tempo; ter explicações sobre por que uma coisa falhou ou por que a outra funcionou pode ser extremamente útil. Outra coisa a ter em mente é que você também poderia fazer como no nosso caso, que era uma saída múltipla. Então, quando estávamos criando os anúncios, estávamos perguntando aos criadores do Scale Raiders se eles eram precisos e se tínhamos feito as coisas certas.
+
+É seguro para a marca? É como esperávamos que fosse? Coisas dessa natureza. Então tínhamos algo como um sistema de avaliação com múltiplas etapas. Se você estiver desenvolvendo esse tipo de gabinete, pode ficar um pouco complicado, porque não é exatamente uma questão de aprovação ou reprovação. Seus invasores
+
+poderiam pensar algo como: "Bem, ele se sai muito bem em termos de segurança da marca, mas não é tão bom em precisão ou coisas do tipo." Então, as explicações realmente ajudam a chegar ao fundo da questão, tipo, onde é que o agente está deixando passar alguma coisa. E você também pode usar essa informação para treinar melhor seu agente. Certo, então agora falamos um pouco mais sobre o envolvimento de equipes multifuncionais e agentes humanos, mas e se você estiver usando raiders do LLM, raiders automáticos, juízes do LMS? Então acabamos seguindo esse caminho. Algumas coisas que tentamos
+
+fazer para estabelecer uma estrutura mais abrangente para nós mesmos foram monitorar os desacordos ou, em alguns casos, as equipes monitoraram os acordos. Basicamente, se você pudesse ter uma espécie de pipeline de amostra que monitorasse como um jogador humano ou algum especialista avaliaria uma avaliação em comparação com a avaliação de um gerente de equipe de desenvolvimento (LLM). Você consegue ter uma ideia de como está a tendência e se as taxas de concordância estão dentro do esperado . A segunda coisa foi que fomos um pouco além do sistema de aprovação ou reprovação. Então, também analisamos os rastros dos agentes, o que abordaremos mais tarde. Mas quando estávamos fazendo a
+
+avaliação de aprovação/reprovação e tentando entender como as coisas estavam sendo classificadas, fizemos algumas verificações pontuais para entender o raciocínio por trás dessa lógica, para que pudéssemos realmente ver o que estava acontecendo. Como se chegou à conclusão de que algo era aprovado definitivamente ou não? E, mais uma vez, só para reforçar o ponto sobre a alta qualidade dos dados reais que o Daniel mencionou anteriormente. Então, queremos oferecer um conjunto dourado que seja super abrangente. Abrange uma ampla gama de casos de uso e também possui um alto grau de concordância entre os membros da sua equipe.
+
+OK. Este é um exemplo rápido do que vimos no agente. Vou explicar tudo para vocês . Então, basicamente, significa que se você quiser saber o que está fazendo, observe o que está pensando. Bem, nós tínhamos dado ao agente uma das instruções, que era a de que, por razões legais, os avisos legais nunca podem ser removidos. E nós já tínhamos mencionado isso
+
+ao agente algumas vezes durante a conversa. Nós tínhamos treinado isso e tudo estava indo bem. Mas aí começamos a perceber que havia casos extremos em que o agente visualizava o aviso e percebia que havia um aviso legal no anúncio, mas mesmo assim o removia. E não conseguiríamos encontrar essa informação se estivéssemos apenas usando uma variável categórica, como por exemplo, uma taxa de aprovação de x% ou não. Então, tivemos mesmo que analisar os rastros para entender o que estava acontecendo. E neste exemplo,
+
+você pode ver no rastreamento inicial que ele detecta que há um aviso legal no que está procurando e diz: "Ok, encontrei um aviso legal e agora vou removê- lo", o que não era o que pedimos para ele fazer. Hum, esta é uma imagem de exemplo que eu criei e executei através do agente. Diz: "América, podemos fazer melhor. É um anúncio sobre parques públicos." E se você olhar no canto inferior direito, verá que está escrito: "pago pela comunidade de parques para manter os parques limpos".
+
+E nós enviamos para o agente, e ele simplesmente removeu, mesmo depois de termos dito explicitamente para não remover. Então, esse tipo de coisa vai acontecer. Por isso, é muito importante verificar o raciocínio e como ele leva às coisas que lhe interessam . Ah, legal, mais uma coisa. Assim como em todos os sistemas de aprendizado de máquina, algumas coisas ainda são aplicáveis, e essa é a minha parte favorita. Portanto, os agentes
+
+não generalizarão muito bem dependendo do tipo de conjunto de dados com o qual foram treinados. Geralmente é uma boa ideia ter algum tipo de conjunto de dados para testar casos extremos, como capacidades mais amplas . Além disso, ter um conjunto de testes também é uma ótima prática. Se alguns de vocês já trabalharam com sistemas de aprendizado de máquina tradicionais, sempre foi bom ter conjuntos de teste e validação desse tipo. O mesmo conceito se aplica aqui.
+
+Se você tiver um conjunto de dados de teste, use-o com moderação e atualize-o com dados de produção. Daniel. Sim. Então, é isso aí, esse slide basicamente fala sobre subir ladeiras e como isso pode ser muito gratificante. Então, sim, você pode descobrir que, após a avaliação humana, certo? Este
+
+diagrama basicamente mostra o tipo de sequência do que você pode fazer. Então, depois da avaliação humana, se atingir o nível mínimo, obviamente você pode finalizar por aí, mas provavelmente não atingirá. E quando não atingir o nível mínimo, você pode primeiro revisar seu conjunto de avaliação e encontrar números como precisão e recall. Depois, você pode iterar e basicamente fazer alterações na avaliação ou ajustar seu guia de classificação, coisas assim, ou simplesmente ajustar o próprio modelo ou o agente, ajustando suas ferramentas. E então, por meio de todas essas coisas, você pode iterar tanto na sua avaliação quanto, hum, iterar no agente. E
+
+esse loop, uma vez que você tenha uma avaliação muito boa definida, funciona muito bem para iterar sobre seu agente e fazer uma escalada de colina de qualidade, como mencionei antes, fazendo ablações e outras coisas do tipo. E então, no que diz respeito à preparação para o lançamento, você basicamente precisa entender as regressões. Portanto, identifique onde e por que o desempenho do modelo está se degradando, para que você possa distinguir entre compensações aceitáveis ​​e falhas críticas. Então, basicamente, isso significa que é muito importante entender, a partir dessas avaliações, qual é o problema exato que você está enfrentando e descobrir as vantagens e desvantagens. Além disso, e este é um ponto muito importante, você deve se concentrar em padrões em vez de execuções isoladas. Uma tentação comum
+
+é se fixar demais em exemplos muito pequenos do modelo. Por exemplo, você pode ter uma execução com seu agente e descobrir que ela falha neste caso específico, e pensar: " Ok, devo atualizar o prompt com base na minha avaliação e no rastreamento do agente", certo? Mas, se você fizer isso, estará caindo numa armadilha, porque, como eu disse antes, esses são sistemas não determinísticos. Portanto, o mais importante é que você realmente se baseie em padrões. Portanto, em seu conjunto ideal, é importante ter vários exemplos que possam abranger esses tipos de padrões que você queira ver. Basicamente, você
+
+precisa analisar o panorama geral de quantas vezes esse padrão está falhando, e não apenas um exemplo específico. Sim, e também é importante investir em avaliações online e garantir que seus dados correspondam à representação do mundo real. Ok, ótimo. Então, conversamos bastante sobre o que funcionou para nós enquanto estávamos desenvolvendo as avaliações. É claro que os resultados podem variar dependendo da sua aplicação. As coisas podem... as coisas podem ser
+
+diferentes. Bem, algumas das coisas que gostaríamos de recapitular aqui são: o que consideramos essencial para um bom sistema de avaliação é que ele seja representativo daquilo em que você deseja que seu produto seja excelente. E isso varia dependendo do estado em que seu agente se encontra quando você está criando casos MVP; será diferente de quando você estiver implementando em produção. Isso seria diferente. Mas ainda precisa estar muito focado naquilo que você quer que seu produto faça bem e na otimização para isso. É importante,
+
+claro, manter a evolução. Por isso, falamos sobre ter sua avaliação online com conjuntos de testes atualizados com dados de produção, pipelines de amostragem e todo tipo de coisa. Conjuntos de ouro cuidadosamente selecionados que também evoluirão conforme seus casos de uso evoluírem. Então, treinar as equipes, sejam elas avaliadoras ou equipes multifuncionais, sobre como avaliar as coisas e o que se espera delas também é muito importante. Acho que isso está se tornando mais comum, então espero que seja menos controverso. Mas, tipo, seis meses atrás,
+
+nossas equipes ainda estavam tentando descobrir como fazer isso e o que se esperava delas. Então, acho que investir nesses treinamentos pode ser útil. E também modelos e rubricas de avaliação com exemplos claros, para que os avaliadores não voltem dizendo: " Não sei como avaliar isso". Muitas coisas estão sendo marcadas como desconhecidas ou como "não sei", coisas desse tipo . Além disso, escolher as métricas de lançamento corretas . Então, algumas das métricas de lançamento
+
+estão nos slides que mostramos para vocês. Este é um nível muito alto de como você geralmente faria um teste de prontidão para lançamento. Você gostaria de verificar isso. Você realizará diversas iterações no modelo. Você fará uma diferenciação AB ou ablação e tentará identificar onde está ocorrendo a regressão.
+
+O que é uma regressão aceitável e o que não é? Coisas desse tipo. Ao desenvolver esses sistemas, é importante definir logo de início quais são as regras de seleção, ou seja, quais são os critérios de lançamento. Existe algum número específico de recall de precisão que você esteja considerando? Existe alguma outra métrica que você analisa? Se você estiver realizando uma
+
+avaliação de modelo, provavelmente essa métrica será diferente da precisão e da revocação usuais. Portanto, esses aspectos também podem ser importantes para se ter em mente. Sim , essas são todas as dicas que temos para construir uma avaliação de nível de produção. Obrigado. [aplausos]
+
+Estamos no horário. Incrível. Muito obrigado. Temos tempo para perguntas? Funcionário um. Temos tempo para perguntas? Apenas
+
+um. Tudo bem. O senhor foi o primeiro a subir. Vá em frente. Todas as suas avaliações estão sendo feitas por humanos ou você também está usando o LLM como avaliador? E, se sim,
+
+como é o seu processo de calibração para que esse avaliador forneça boas avaliações? Sim, acho que essa é uma boa pergunta. Acho que não diria todos. Acho que depende muito do caso de uso, como por exemplo, do tipo de sistema que você está tentando construir. Temos, naturalmente, uma infinidade de casos de uso. Então, não vou dizer
+
+tudo. Não posso entrar em detalhes sobre como funciona o sistema de avaliação comparativa e tudo mais , mas algumas das coisas que discutimos em termos de taxas de discordância e monitoramento, como pipelines de amostragem, geralmente se aplicam. Sim, terei prazer em conversar mais offline. Sim. Incrível. Ótimo. Muito obrigado.
+
+Daniel e Pratika, por favor, deem-lhes uma salva de palmas. Você sempre pode fazer perguntas a eles lá no fundo. Obrigado.
+
+[música]

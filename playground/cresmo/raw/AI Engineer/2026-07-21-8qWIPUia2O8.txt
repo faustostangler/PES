@@ -1,0 +1,98 @@
+---
+video_title: "Every Harness Will Become A Claw — Sam Bhagwat, Mastra"
+video_id: 8qWIPUia2O8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8qWIPUia2O8
+video_date: 2026-07-21T21:30:06+00:00
+video_description: |
+  Most harness discussion is a reprise of Context Engineering from last summer. But it is not 2025 anymore: we live in a Claude Code world, and the best way to think about a harness is Context Engineering + Coding Agents = Harness.
+  
+  Harnesses are a powerful developer experience because of planning mode, parallel subagents, skills, background tasks, and more. But they do not stop there. Teams are putting harnesses in a box, making them listen to external events, giving them channels to ping users, and a heartbeat. They are becoming Claws. The argument is that harnesses want to become claws: more present in collaboration workflows and available while users are away. Sam proposes Steinberger's law, a spinoff of Zawinski's law: every harness will expand until it becomes a Claw.
+  
+  Speaker:
+  
+  Sam Bhagwat — Founder and CEO, Mastra
+  Sam is the co-founder and CEO of Mastra, the TypeScript agent framework; author of Principles of Building AI Agents; and previously a Gatsby co-founder.
+  
+  X/Twitter: https://x.com/calcsam
+  LinkedIn: https://www.linkedin.com/in/sambhagwat/
+---
+[música] Vou
+
+começar. Bem, foi um longo dia de conversas e, uh, como vocês estão se sentindo? Legal. Sim, é bom ver que ainda temos energia. Sabe, eu sei que há muitos eventos noturnos. Bem, já
+
+ouvimos muito sobre o presente e agora vou falar sobre o futuro. Bem, minha palestra se chama "Toda coleira se tornará uma garra". Bem, aqui está um pouco sobre mim. Bem, eu sou o cofundador e CEO da Mastra. Somos um framework de agentes Typescript . Hum, eu também sou autor de um
+
+livro que você pode ter recebido um exemplar, seja do lado de fora ou em um evento anterior. Bem, vimos muitos agentes em produção nos últimos 18 meses. E não estou dizendo isso como uma espécie de contexto e preparação para os pensamentos e ideias que estou prestes a compartilhar agora. Bem, o que eu vou dizer é: bem-vindos à era dos arneses. O que quero dizer com a era dos arreios? Bem, vamos
+
+falar sobre os tipos de arreios que vemos atualmente. Vemos arreios locais. Nós os usamos todos os dias, diariamente, para direcionar nossa programação, certo? Bem, nós vemos arneses de nuvem. Bem, esses são produtos que podemos comprar, assim como existem empresas que criaram seus próprios agentes de codificação internos que funcionam no Slack. E, claro, temos os
+
+nossos amigáveis ​​frameworks locais de código aberto, que possuem alguns desses elementos básicos e fornecem as ferramentas necessárias para você construir os seus próprios. E é aí que nos encaixamos. Agora, vamos falar sobre onde estamos coletivamente como setor e como as coisas evoluíram nos últimos 12 meses. No ano passado, na AI Engineer, estávamos falando muito sobre agentes. Estamos falando do loop do agente. Estávamos
+
+falando sobre agentes versus fluxos de trabalho. Então, eu quero que vocês saibam que, enquanto pensamos no espectro de agentes, eu costumo compará-lo à direção autônoma como um espectro, certo? Existem diferentes níveis de autonomia na direção autônoma, seja o assistente de faixa, seja o FSD da Tesla Model S, ou mesmo eu estando sentado no banco de trás do meu Whimo sem ninguém ao volante, certo? Existem vários aspectos do espectro de agentes, entre LLMs, agentes com arreios e garras, e eu vou falar sobre o que vimos e para onde estamos indo. O que diferencia um agente de um gestor de linguagem? Esperamos que a maioria de nós já saiba disso, mas
+
+só para refrescar a memória, tudo bem? É o loop do agente, suas chamadas de ferramentas, sua memória, a capacidade de repetir tarefas com falha, é a engenharia de contexto. Hum, Dex é um amigo próximo e uma das inspirações para esta palestra. Hum, e é o estado do agente, certo? Essas são algumas coisas que, tipo, "ei, estou executando um agente em um loop e não posso simplesmente fazer isso com uma chamada única para um LLM, certo?". Eu tentei
+
+fazer com que essas qualidades... não tenho certeza se a qualidade de tomar ações é ativa ou algo assim, então eu simplesmente coloquei "ação", mas... você sabe, as qualidades aqui
+
+começam a surgir quando passamos de um agente para um arnês: durabilidade e persistência. Um amigo meu estava se referindo a um agente que ele estava usando e o chamou de "persistente", o que eu realmente gosto, e vou usar esse nome nesta apresentação, certo? Então, durabilidade é simplesmente a qualidade de poder funcionar não por minutos, mas por horas ou dias. Hum, sabe, o que, o que, o que engloba isso? Bem, às vezes acontece tipo, ei, sabe, eu perdi a conexão no meio da transmissão, mas continuei assistindo e agora posso retomar de onde parei, certo? Existe um modo de planejamento. Todos nós vemos
+
+isso no código em nuvem. Um subgrupo paralelo significa ser capaz de executar várias tarefas simultaneamente. Bem, temos mais possibilidades com uma interface de texto e comandos de barra. Temos habilidades. Não precisamos definir todos os nossos agentes antecipadamente, mas podemos criá-los dinamicamente conforme a necessidade. Isso é, sabe, muito
+
+poderoso. Você pode configurar o sistema para iniciar tarefas bash em segundo plano, certo? Ele se compactará automaticamente quando sair da janela de contexto. Sabe, tudo isso é algo que veremos quando usarmos código na nuvem ou codecs, certo? Mas isso persiste. Vai persistir as threads,
+
+certo? Você pode retomar uma conversa da qual tenha se desconectado posteriormente. Hum, você pode dar o sinal, você pode direcionar, você pode interromper. Você não está apenas bloqueado aguardando o LM. Ei, eu jogo e depois você joga. Estou
+
+jogando Civilization aqui e não posso jogar até que todas as outras civilizações estejam jogando. Não, estou jogando Starcraft. Estou jogando Age of Empires. E, bem, certo. Hum, sabe, sessão longa, aprovação de ferramenta. Então
+
+não é só como "sim, eu aprovei essa chamada de ferramenta específica", mas sim "sim, você pode executar todas as instâncias de rmrf para barra que você vê na sessão", mesmo que a primeira provavelmente apague tudo do seu computador. Bem, então, sabe, existem alguns passos aqui, e eu estou mais ou menos na metade deles. Depois, vamos falar sobre o que isso significa, e este é um passo intermediário. Acho que isso é algo que temos observado nos últimos 3 meses. Bem, acho que todos nós ainda estamos começando a entender o que isso significa, que é essa transição de um sistema de segurança local para um sistema de segurança em nuvem, onde o sistema está sempre ativo. O que quero dizer com um arnês
+
+que está sempre ligado? Bem, você pode estar conversando com ele no Slack. Talvez você esteja conversando com ele no Slack junto com seus colegas, certo? Talvez cada um de vocês esteja dando instruções e precise descobrir como interpretá-las e usar os metadados do usuário. Talvez você tenha um aplicativo para celular. Eu estava só pensando, sabe,
+
+talvez você tenha um aplicativo para celular. Talvez ele crie um túnel para o seu computador local. Alguns desses aplicativos móveis de monitoramento fazem isso. Hum, geralmente gosto de coisas legais. Como está funcionando? Bem,
+
+provavelmente está sendo executado em um ambiente isolado na nuvem, porque talvez esteja sendo executado localmente em sua máquina. E você está acessando-o por meio de um túnel , mas talvez ele esteja rodando em algum lugar na nuvem e tenha vários ambientes isolados (sandboxes) que permitem maior paralelismo. Você pode obter mais subentidades paralelas além do que sua máquina permite. Isso é sempre uma questão de equilíbrio e algo que sempre acontece com sistemas distribuídos, certo? Você pode fazer mais na nuvem do que localmente. Você tem mais recursos. Isso
+
+requer uma arquitetura diferente. É mais potente. E por último, você não está criando código, sabe, apenas na sua máquina local ou talvez até mesmo em uma árvore de trabalho do Git. Você provavelmente está criando, sabe, se você está escrevendo código, provavelmente está criando um PR (Pull Request) que é enviado diretamente para o GitHub. Então, sabe, houve uma mudança, certo, das redes locais para essas redes sempre ativas, como as redes em nuvem. Ainda estamos no meio
+
+disso. Você pode estar trabalhando apenas com um chicote de fios local. Você provavelmente já começou a ver soluções integradas à nuvem surgindo em sua organização, certo? Você pode estar tentando descobrir como usá-los. Suas equipes podem estar tentando descobrir como usá-los. Bem, e então eu quero falar
+
+sobre o que é a transição da coleira para a garra , que é imbuir esses agentes, imbuir essas coleiras com iniciativa e aprendizado, certo? O que é iniciativa? Bem, hum, se você já usou, digamos, um assistente pessoal, um agente, certo? E esse agente te manda uma mensagem dizendo: "Ei, recebi um e-mail urgente . Esse e-mail é mesmo urgente?
+
+Será que alguém estava te enviando spam ?" Sabe, tipo, o agente está ouvindo serviços de feed externos . Ele tem um batimento cardíaco, o que significa que ele acorda a cada determinado período de tempo e faz alguma coisa, certo? Uh, novamente, como alguns canais, você pode enviar mensagem de texto, WhatsApp , Telegram, onde quiser. Você pode armazenar a memória em um local mais acessível posteriormente do que um simples armazenamento de arquivos, certo? hum, você pode ter um
+
+Damon, pode ter um gateway para enviar e receber solicitações de entrada e saída. Hum, geralmente envolve aprendizado contínuo, certo? Então, esse conceito de que o agente que o sistema executa e, com base nos rastreamentos que ele gera, ele se aprimora automaticamente, e existem diferentes maneiras de fazer isso. Você pode ver, por exemplo, a geração automática de habilidades, que é bastante comum. Isso também poderia modificar o código que controla isso . Hum, ainda não descobrimos qual é
+
+a maneira correta de fazer isso. Ainda estamos explorando, você sabe, a indústria ainda está explorando opções. Bem, a razão para isso, e talvez este seja o nosso ponto de vista único aqui, é que nos últimos três meses, como estrutura, temos visto isso como o futuro. Então, analisamos furiosamente os recursos que o OpenClaw e o Hermes Agent possuem e dissemos: " Olha, muita gente quer esses recursos, mas os quer com poder e controle." Eles não querem apenas colocar uma garra numa caixa, certo? Eles querem mais do que isso.
+
+Então, sabe, nós temos pensado nisso porque, sabe, eu não estou fazendo meu trabalho direito se não estiver dando a todos as ferramentas de que precisam para construir agentes, para construir sistemas com o máximo de potência, certo? Então, espero que, como já disse, eu tenha abordado um pouco a transição entre as etapas, com foco em ações, durabilidade, persistência, iniciativa constante e aprendizado. Mais uma vez, acho que falhei em usar o tempo verbal correto em todas as frases e em atribuir qualidades a elas, mas espero que você tenha entendido a ideia, certo? Bem, estamos ascendendo no espectro da agência. Bem, o que era um simples mestrado em Direito (LLM) há 18 ou 24 meses, agora é muito mais poderoso. Então, eu chamei isso de
+
+Lei de Steinberger sem pedir o consentimento do Pete, pois acredito que toda coleira se expandirá até se tornar uma garra. E isso é um pouco tecnológico, um pouco econômico e um pouco psicológico. Então, deixe-me explicar o raciocínio por trás disso. A primeira coisa que observei, e que todos nós observamos, é que os cintos de segurança tendem a expandir. E elas se expandem porque queremos que se expandam. Queremos enviar uma mensagem direta para
+
+eles no Slack. Queremos mandar mensagens para eles e iniciar tarefas noturnas antes da hora de dormir. Queremos essa dopamina típica de cassino que ganhamos quando inserimos fichas e recebemos um código, certo? Hum, ou quaisquer outras ações, sabe, agentes são mais do que apenas agentes de codificação, mas nós queremos nosso próprio cassino de dopamina. E esta imagem é graças a Dex Horty.
+
+Mas eu vejo algo diferente em nosso futuro. Bem, é isso, e é algo sobre o qual eu acho que não falamos muito, mas depois dessa fase em que estamos tornando tudo cada vez mais poderoso, haverá uma seleção natural. E deixe-me explicar meu raciocínio: na década de 2010, tínhamos essas plataformas, tínhamos o Android, tínhamos o iOS. E de repente, havia todas essas coisas que podíamos fazer em nossos telefones que antes não podíamos fazer. Poderíamos obter indicações, poderíamos chamar carros, e poderíamos enviar pagamentos. Hum, poderíamos
+
+tocar música. Hum, outras surgiram ao longo da década. Poderíamos assistir a vídeos de curta duração. Hum, poderíamos [limpa a garganta] assistir a documentários de longa duração . Poderíamos navegar na internet. Sabe, algumas foram meio que
+
+adaptadas da versão para desktop. Poderíamos navegar na internet. Bem, de novo, sabe, a gente podia pedir comida, né? Bem, poderíamos incluir reservas de hospedagem, mas se você observar a maioria dessas categorias, e são muitas, na verdade só usamos um ou dois aplicativos, sabe? Ok, quantos usamos? Usamos Uber
+
+e Lyft, mas alguém usa outro aplicativo de transporte? E quando você conversa com especialistas em comportamento do consumidor, eles dizem que isso acontece porque o cérebro só tem espaço para um número limitado de coisas. Tipo, se você pensar em algo como o Thumbtac. Então, o Thumbtac não tinha um valor econômico muito alto. É como o Airbnb: a gente usa só de vez em quando, mas quando usa, a gente gosta mesmo . Precisamos muito disso.
+
+Sabe, isso é realmente valioso para nós. O Thumbtac parece um pouco menos, né? E também não é frequente, né? Tipo, talvez, sabe, algo como DoorDash ou Uber que as pessoas podem usar várias vezes ao dia, né? Então, é como se ou tivesse um valor econômico muito alto ou fosse muito frequente. E se não for nenhuma das
+
+duas coisas, bem, a gente simplesmente esquece, certo? É como aquele amigo da faculdade com quem a gente não conversa há anos, sabe? Não é que eles não tenham sido importantes em algum momento da nossa vida, mas simplesmente não há nada que possa ter acontecido. Talvez eles tenham se mudado para uma nova cidade, ou nós nos mudamos para uma nova cidade, ou nossas vidas, nossos grupos de amigos, nossas carreiras tenham divergido e, de repente, sabe, talvez estejamos ligando para eles uma vez por ano, ou uma vez a cada dois anos, ou algo assim. E sabe, não há nada que os torne pertinentes e os faça surgir em nossas mentes.
+
+Então, agora estamos muito animados porque há toda essa energia e entusiasmo, e estamos todos empolgados com esses arreios, sabe, colocando fichas e obtendo coisas úteis que todos nós adoramos. E eu acho que num futuro não muito distante haverá uma verdadeira transformação, e essas categorias começarão a emergir, e perceberemos que só temos espaço em nossas vidas para um número limitado dessas garras. Eles são muito poderosos. Nós os amamos muito. Então eu pensaria sobre o que isso significa para você? Então, a primeira coisa é...
+
+a primeira coisa é... não entendam, esta é a razão pela qual os eventos são importantes, porque acompanhar se a taxa de mudança aumenta de 3 a 4 vezes, significa que precisamos descobrir o que está acontecendo com ainda mais frequência. É por isso que estamos todos aqui. Bem, se você estiver criando um
+
+agente, certifique-se de que ele tenha os recursos que seus usuários precisam, porque se não tiver, e se surgirem novidades, eles podem simplesmente escolher algo mais poderoso, já que isso está acontecendo muito rapidamente. E lembre-se que, mesmo que você não esteja se dedicando àquilo em que está trabalhando, mesmo que chegue ao topo da colina, haverá outra onda desse tipo de crise vindo em seguida. E você sabe, provavelmente em algum momento no final da década de 2020. Então, eu sou Sam, sou o cofundador da Monsterra, o framework de agentes TypeScript . Sou o autor de "Princípios para a Construção de Agentes de IA". Espero que você consiga
+
+encontrar um exemplar do livro lá fora, ou eu tenho alguns aqui. Por favor, apareça e diga olá. É ótimo ver todos vocês. Obrigado a todos por terem vindo. É um verdadeiro prazer. Aproveite o resto da
+
+conferência.
+
+[música]

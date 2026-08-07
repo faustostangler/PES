@@ -1,0 +1,548 @@
+---
+video_title: "AI on Your Lakehouse: Context Comes in Shapes, Not Queries — Zach Blumenfeld, Neo4j"
+video_id: kRkcNOsRyYg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=kRkcNOsRyYg
+video_date: 2026-07-23T07:00:23+00:00
+video_description: |
+  Your agent can reach your data and still get it wrong. Vector search hands it a slice, Text2SQL hands it another, and neither tells it what is actually relevant or how the pieces connect, so the answer comes back confident and wrong. Zach Blumenfeld's argument in this hands on workshop is that the missing piece is not a better model or a better query. It is context, and context comes in shapes.
+  
+  He builds three reusable graph shapes on top of lakehouse data with Neo4j, each answering a question the agent cannot ask a table. Trees give a table of contents, so the agent can navigate what is even there. Communities surface themes, the patterns nobody named. Paths and cycles trace connections, how entities, documents, and records actually relate. The shapes are portable to BigQuery, Databricks, or Snowflake, and you leave with the code to run them on your own data and agents.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/zachblumenfeld/
+  - https://graphacademy.neo4j.com/courses/workshop-lakehouse
+  
+  Timestamps:
+  0:00 - Introduction: context comes in shapes, not queries
+  6:25 - The three graph shapes to build
+  10:56 - Environment setup: Codespaces and Neo4j
+  21:47 - Schema, shared terms, and join paths
+  45:25 - Shape 1: a table of contents for your data (trees)
+  50:30 - Building the containment tree and links
+  59:48 - Serving the graph to the agent over MCP
+  1:12:21 - Q&A: naming and the containment shape
+  1:22:54 - Shape 2: surfacing themes with communities
+  1:24:24 - Community detection with Leiden
+  1:31:09 - Hierarchical communities and naming themes
+  1:43:22 - Shape 3: connections and cross links
+  1:50:20 - Watching the agent use outlines and themes
+  1:55:05 - Wrap: theme types and real time linking
+---
+Olá pessoal. Bem-vindo(a) ao AIE! Hoje você terá a oportunidade de começar a usar o AIE. Bem, aqui estão alguns passos para começar. Eu já falei sobre isso há uns 10 minutos. Bem, basicamente, o
+
+workshop que vamos fazer hoje é baseado em um site chamado Graph Academy. E se você clicar naquele primeiro código QR ali à esquerda, ele te levará até lá. Você precisa se cadastrar com seu e-mail. E se você for configurar seu ambiente, encontrará um espaço de código com tudo pronto para uso . Vai demorar uns cinco minutos, mais ou menos. E você também poderá obter suas
+
+credenciais lá. Existe uma chave de API antrópica. Se você tiver sua própria chave de código na nuvem ou sua própria assinatura, fique à vontade para usá- la. Caso contrário, nós fornecemos um para você. E também existe outra chave para leitura de tabelas do BigQuery.
+
+Então, com isso em mente, vamos começar a trabalhar com IA na sua casa no lago, que se concentra no contexto apresentado em formas e não necessariamente em consultas. Então, hoje, sua equipe... bem, serei eu. Meu
+
+nome é Zach Blumenfeld. Sou engenheiro de pesquisa em IA na Neo Forj. Ah, também temos o Ben Squire ali atrás, que é o nosso consultor sênior de desenvolvimento, e o Ryan aqui no centro, que é o nosso arquiteto parceiro, ajudando os clientes a colocar tudo isso em funcionamento. Então, se vocês tiverem perguntas, bem, eu não tenho um microfone configurado para vocês, mas, por favor, levantem a mão. Vou aproveitar os intervalos naturais para fazer pausas a cada 10-15 minutos. Bem,
+
+posso responder a algumas perguntas, mas também podem avisar o Ben e o Ryan se estiverem com dificuldades em alguma etapa da configuração. E eles podem ajudar você a ser desbloqueado. Então, o que vamos discutir hoje é sobre quando você começa a usar um data lake. Existem dois lados, obviamente: o warehouse, que contém seus dados estruturados e suas tabelas, e o data lake, que contém todos os seus documentos não estruturados. Muitas vezes, ferramentas como conversão de texto para SQL e busca vetorial são fornecidas, e hoje em dia não temos problemas para acessar esses dados. No entanto, ainda
+
+existem desafios em relação a como fornecer ao agente o contexto adequado, se ele consegue visualizar todos os dados da maneira que precisa e, de fato, selecionar a parte que precisa para responder à pergunta correta. Então, o que reunimos hoje em nosso curso é um modelo de dados agnóstico que basicamente cria uma representação gráfica tanto do lado estruturado do seu data warehouse quanto fornece estrutura para alguns dos seus documentos, permitindo que você faça muitas coisas úteis com isso. Bem, temos um cenário aqui que vamos analisar. Bem, nós criamos um grupo fictício de reparos automotivos, que é tipo uma oficina mecânica como a Pep Boys ou algo parecido. É uma rede nacional de oficinas mecânicas. E eles têm todas essas
+
+baías. Eles têm bibliotecas de manuais de veículos, além de boletins de segurança e recalls, e um depósito com todos os reparos que registraram. E vocês têm os técnicos de piso, certo? Esses são os Dannys listados aqui, que têm os carros dentro da oficina e precisarão fazer algumas perguntas. Hum, existe uma liderança nesta organização que deseja criar um cargo de copiloto para auxiliar esses técnicos no dia a dia. Bem, e aí,
+
+obviamente, temos pessoas como o Sam, que somos nós, os engenheiros de IA que realmente temos que construir a coisa. Então, se eles já têm seus dados em um data warehouse, o que vamos analisar hoje é o exemplo no BigQuery. Então imagine, certo, que você tem seus documentos armazenados na nuvem e o BigQuery como seu data warehouse, mas esses padrões também podem ser estendidos ao Data Bricks e ao Snowflake. E basicamente, se eles criarem um copiloto em cima do BigQuery e dos dados que eles têm, ele poderá extrair os dados corretamente, mas às vezes pode estar consideravelmente errado. Basicamente, ele consegue extrair informações de documentos usando pesquisa vetorial e também pode converter texto em SQL em apenas algumas tabelas. Mas quando essas tabelas se tornam
+
+enormes e você tem centenas de tabelas, ou quando você tem grandes repositórios de documentos com centenas, milhares ou milhões de documentos, as coisas podem se perder e passar despercebidas. E onde os gráficos podem realmente ajudar com essas formas é não apenas nessas questões isoladas que alguém possa ter sobre como consertar uma peça quebrada em um veículo, mas também em questões mais complexas, como aquelas que envolvem propriedades. Então, por exemplo, o que estamos deixando passar? Por exemplo, que tipo de documentação talvez não precisemos para todos os diferentes carros que estão chegando, ou que tipo de documentação talvez não estejamos utilizando? Então, isso é como provar uma negativa, o que pode ser muito difícil com algo como a busca semântica, que só consegue encontrar correspondências semelhantes, certo? Não consegue
+
+encontrar um exemplo negativo. Bem, também temos questões em que queremos encontrar padrões em tudo. Então, digamos que você queira perguntar, bem , quais são os tipos comuns de padrões que observamos? Existe algo que estamos deixando de corrigir repetidamente? Ou, sabe , existem agrupamentos específicos de diferentes tipos de recalls que estão surgindo e coisas desse tipo, onde você realmente precisa percorrer todo o conjunto de dados? Hum, e a outra
+
+pergunta é simplesmente como os registros se relacionam dentro de um grande banco de dados SQL. E quando você tem um grande esquema de similaridade com muitas tabelas parecidas, como você entende a maneira correta de uni-las? Então, hoje vamos apresentar três formas concretas . Bem, o primeiro, vamos chamar de sumário, é algo como uma estrutura em árvore, mas com diferentes tipos de links entre os itens. Você verá como funciona.
+
+Isso será usado em dados não estruturados. Ah, no site de dados não estruturados também temos algo chamado temas. E o que o Themes faz é revelar padrões globais nos seus dados que podem não ser aparentes ou que você pode não conhecer de antemão. Assim, descobrimos padrões e agrupamentos desconhecidos. E a terceira, que vamos abordar primeiro no curso, é essa forma de conexão, que é essencialmente uma camada semântica sobre o seu data warehouse. Então,
+
+quantas pessoas, por favor, levantem as mãos aqui, estão familiarizadas com gráficos como o GraphRag? Ok, então um bom número de vocês, mas quantas pessoas aqui já usaram o Neo Forj antes? OK. Também algo como 30 ou 40%, algo assim. Então, esta sala parece bastante familiarizada com os conceitos básicos de gráficos, mas vou repassar rapidamente aqui. Então,
+
+Neoraj, nós somos uma plataforma de inteligência gráfica . Temos um banco de dados gráfico no centro de tudo . Certo. E basicamente, quando falamos sobre o que é um grafo, estamos falando da perspectiva de um modelo de dados de grafo de propriedades. Assim, tudo dentro do nosso banco de dados e da nossa plataforma de análise é modelado com base nesses três tipos diferentes de elementos, que são nós que representam pessoas, lugares e coisas.
+
+Relações que são os verbos ou associações entre essas coisas. Assim como uma pessoa possui um carro, uma pessoa dirige um carro, uma pessoa tem parentesco com outra pessoa. E então temos propriedades que se aplicam a essas relações, ou às vezes chamamos de arestas, e aos nós, que às vezes são chamados de vértices. E esses podem ser qualquer coisa, desde sequências de caracteres, números, datas, vetores, enfim, todo tipo de coisa. Então, a ideia básica de um grafo, certo, é que à medida que você começa a adicionar dados a ele, é quase como um conjunto de tabelas pré-unidas, e tudo já está interconectado, permitindo que você navegue entre todos os nós com muita facilidade. Hum, e isso proporciona uma série de
+
+benefícios que veremos mais adiante no curso. Então, com isso em mente, por que você não começa e dá uma olhada nisso, caso ainda não tenha ouvido falar? Vou mostrar rapidinho aqui. Um dentro da oficina na casa do lago, deixe-a aberta aqui. Provavelmente devo reiniciar esse cara rapidinho.
+
+Comece minha base de código. Bem, basicamente isso deve te levar a esta página. Bem, isso não significa que você deva continuar o curso se for a sua primeira vez participando. A mensagem seria algo como "inscreva-se para fazer o curso". Portanto, você precisa seguir esse caminho para se inscrever no curso.
+
+Bem, basicamente, daqui para frente, eu vou te guiar por este curso e te mostrar todas as diferentes coisas que podemos fazer. Hum, tem umas 17 lições aqui. Dividimos por diferentes formatos. Bem, basicamente, se você entrar no curso, você pode clicar aqui para acessar. Analiso brevemente o cenário. Mas
+
+enquanto eu faço isso, acho que você deveria ir direto para a seção sobre ambiente. Basicamente, você desce até o final aqui. Acesse seu ambiente e, a partir daqui, você pode clicar em "Abrir espaço de código". Aliás, vou abrir um novo espaço de código aqui para que eu possa explorá- lo ao vivo com você também. Sim, claro. Hum,
+
+volte aqui.
+
+Por que vocês não vão todos lá e tiram uma foto disso?
+
+Sim. Assim, ele criará um espaço de código no seu próprio GitHub, se você quiser. Existe um link para o repositório. Você pode executá-lo localmente. Lembre-se apenas que configuramos o programa para iniciar automaticamente no espaço de código. Então, existe outro
+
+script bash que você pode executar localmente e ele configurará tudo para você. Bem, isso depende um pouco do seu ambiente local. Você precisa garantir que o Cloud Code esteja instalado e todas essas coisas. Portanto, recomendamos que você use um Code Space se se sentir confortável em fazer isso localmente. Eu também já o executei localmente várias vezes antes.
+
+Muitobem, todo mundo copiou o código QR. Vou esperar mais uns 10 segundos e depois volto para o lado. Sim. Ben e Ryan podem te ajudar se você não tiver esse.
+
+OK. Então, quando você começar, também terá acesso a algumas credenciais de workshop. Uh, eu vou tocar essas teclas sem parar depois do curso. Vou deixá-los lá por mais um tempinho. Bem, basicamente, dê algum tempo para iniciar. Assim que isso acontecer
+
+, você deverá acessar o arquivo de ambiente aqui. E talvez eu possa aumentar um pouco o tamanho para que fique mais fácil de ver. Você deverá inserir aqui sua chave antrópica, bem como a chave do BigQuery. Outra coisa que você vai querer colocar aqui embaixo, se voltar ao curso, é o
+
+certificado Neo Forj. Portanto, estamos acessando nosso banco de dados de grafos. Todos já foram pré-abastecidos, então será diferente para cada um de vocês. Você vai ter um diferente . Então, copie a imagem da sua tela.
+
+E você também vai colocá-lo dentro deste arquivo de ambiente. Bem, e isso vai demorar um pouco, como você pode ver no meu caso, o arquivo de ambiente ainda não apareceu. Portanto, pode levar alguns minutos para que tudo isso seja processado. Bem
+
+, vamos dar um tempinho para isso iniciar. Espero que não demore muito por aqui.
+
+Enquanto isso estiver em andamento, vou dar uma breve visão geral do que faremos na próxima etapa. Então, basicamente, assim que configurarmos tudo e o Claude estiver funcionando, vamos analisar a primeira forma do nosso dia, que é esta forma da camada semântica de conexão. E depois disso, apresentaremos o sumário que mencionamos e o das comunidades. Então, primeiro trabalharemos com os dados estruturados e depois passaremos para os dados não estruturados. Bem, para aqueles que já têm o programa instalado, basicamente, o terminal está aqui embaixo. Pode ligar para o
+
+Claude sem problemas. Bem, vamos usar o Claude Code como nosso agente. Hum, a internet também está um pouco lenta, o que é esperado
+
+durante esse processo. Eu deveria... Ah, aqui vamos nós. Vamos
+
+mostrar como isso fica daqui a pouco. Chave antrópica, assim como a do BigQuery. Muito bem
+
+, perfeito.
+
+E se isso acontecer, tentando te induzir a fazer uma assinatura, basicamente o que você faz é clicar em "+", abrir uma nova janela do terminal e, então, deverá aparecer a opção para selecionar a chave entrópica. Basta prosseguir e pressionar Enter. Sim. E então você vai querer usar o servidor MCP aqui. Então você vai selecionar sim. E
+
+eu vou faltar à visita guiada. E então posso fazer
+
+essa pergunta apenas para garantir que a conexão com o Neo4j seja possível.
+
+E, no meu caso, eu já tenho alguns nós inseridos porque estou trabalhando com um grafo que já foi armazenado em cache do meu curso anterior. Para você, aparecerá como uma área de testes vazia. Então, uma coisa que eu quero observar aqui também em termos de como vamos trabalhar com o Neo Forj e com o Cipher, que é a nossa linguagem de consulta de grafos . Acho que chegamos a um ponto em que muitos de nós não estamos mais digitando nosso próprio código linha por linha. Obviamente, estamos usando agentes para nos ajudar a construir coisas . Portanto, neste workshop será
+
+a mesma coisa. Basicamente, vamos usar algo chamado Neo Forj CLY, que é uma ferramenta CLY que permitirá que seu agente execute consultas diretamente no banco de dados. Quando eu estava trabalhando dentro do Claude, você viu aquilo rodando por um segundo. E isso também inclui uma habilidade de criptografia Neoraj . Bem, isso permite que o agente aproveite a maneira mais moderna de combinar consultas, além de algo chamado habilidade GDS, que significa ciência de dados em grafos. E
+
+usaremos isso em alguns dos algoritmos quando chegarmos à seção de temas. Bem, em termos de nos ajudar a fazer programação agentiva. Então, eu não vou pedir para vocês escreverem manualmente nenhum código de consulta cifrada. Ao longo deste workshop, mostrarei como usar um agente para ajudá-lo a escrever isso com base nas especificações criadas. E espero que isso seja mais útil para você no dia a dia, caso decida usar o Cipher, seja com o Neo Forj ou não. Então
+
+, como estão todos agora? Vou fazer uma pausa aqui. Se você tiver alguma dúvida, levante a mão . Ou será que está tudo bem entre nós? Tenho uma pergunta ali. Sim
+
+. Então a pergunta é: posso usar o cursor? Portanto, a resposta é que você deveria ser capaz. Sim. Eu não testei pessoalmente, mas se você rolar até o topo da página, deve haver um link para o repositório que estamos usando.
+
+Caso contrário, quando você for abrir o código, sim, você pode clonar o repositório aqui. Então, se você seguir esse link, poderá cloná- lo. Você pode obtê-lo localmente. E então você verá aqui as instruções. Existe um arquivo de linha de comando que você pode executar para configurar tudo. Você pode
+
+dar uma olhada no que tem lá dentro. É um monte de coisas básicas. OK. Incrível. Sim. E só um pouquinho
+
+sobre a estrutura disso. Eu esqueci de mencionar que há muita coisa dentro do espaço de trabalho aqui. Obviamente, dentro da nuvem temos nosso arquivo de habilidades. Bem, eu já criei uma habilidade previamente. Bem, isso cobre basicamente grande parte do que vamos fazer. Bem, aqui dentro também,
+
+há um arquivo chamado "outline", " search" e "theme". Então, essas serão as formas com as quais trabalharemos . Para consultar o BigQuery, existe um arquivo muito pequeno... bem, na verdade, este é
+
+um arquivo de consulta de banco de dados, mas executar SQL para consultar o BigQuery é uma maneira muito simples... basicamente, uma forma de acessar o BigQuery e chamá-lo com um comando SQL simples. E dentro desses arquivos, como veremos mais tarde, há espaços para preencher as especificações. Então é aí que vamos fazer
+
+parte da nossa codificação agentiva. Bem, se você quiser carregar tudo isso no BigQuery por conta própria, existe uma opção para isso. Bem, se você quiser executar isso no DataBricks, há instruções aqui sobre como carregar os dados no DataBricks e usar o Genie e a busca por IA para comparar os resultados. Hum, e então isso é apenas um link de simulação de volta para os arquivos na nuvem. Hum, também existem scripts de solução.
+
+Além disso, se você ficar preso, por exemplo, se por algum motivo o agente de codificação não conseguir criar a consulta correta, você pode copiar coisas de lá. E todos os dados de origem para a criação dos dados estruturados e não estruturados também estão aqui, incluindo nossas fontes em PDF. Então, se você entrar aqui, encontrará nossos boletins, manuais e tudo mais. Bem, isto está mostrando o PDF bruto. Mas se eu acessar o corpus, que é a versão em Markdown, você poderá realmente ler o conteúdo de lá. Bem
+
+, dito isso, vamos prosseguir para a nossa primeira seção , que será sobre conexões. Então, basicamente, nossos dados estão dentro do BigQuery neste momento. E, na verdade, se eu voltar à minha visão geral, só para mostrar rapidamente como fica. Este é o esquema. Bem, para este curso, optamos por manter tudo muito simples. Obviamente,
+
+no mundo real, você teria um esquema muito maior do que este. Mas nós temos nossas ordens de serviço, que são como o centro ou a estrela do esquema. Você tem seus veículos, os diferentes códigos DTC, procedimentos, peças da ordem de serviço e as próprias peças. E elas se unem em um padrão de chave estrangeira primária muito simples. Vamos analisar nossos documentos mais tarde no curso. É basicamente um grande conjunto
+
+de arquivos PDF. Portanto, o que queremos fazer aqui é ajudar nosso agente a ser capaz de integrar tudo de forma eficaz; vamos fornecer a ele uma representação gráfica de uma camada semântica. E para construir essa camada semântica, vamos usar algo chamado Neoarta. Um Neoarta é um projeto de laboratório. Então, na Neo Forj, temos nossa engenharia principal, que é como nossa plataforma SAS em nuvem, nossos recursos de análise de grafos e tudo mais.
+
+Mas também temos projetos de laboratório onde avançamos um pouco mais rápido. E dentro desse projeto de laboratório, criamos esta neocarta. Bem, o que ele faz é criar um gráfico de metadados. Além disso, embora não estejamos utilizando isso aqui, você pode adicionar terminologia de negócios, processos de negócios e uma série de outras coisas a uma estrutura de grafo. Bem, se você parar para pensar, as pessoas sabem que essas palavras, ontologia, camada semântica e todas essas coisas, têm sido muito usadas ultimamente, especialmente neste verão. Assim, o
+
+paradigma mental básico que eu uso para analisar essas questões é que uma ontologia ajuda a interpretar e raciocinar sobre os dados. Uma camada semântica ajuda um sistema a entender quais são os termos consistentes e acordados, para que possa consultar os dados com precisão. E na Neo Forj temos outras coisas como o gráfico virtual. Há um link aqui no curso que lhe dará uma espécie de visualização em gráfico federado dos seus dados SQL, que você pode consultar diretamente com o Cipher. Não usaremos isso aqui, mas às vezes é útil fornecer uma espécie de visualização gráfica do esquema. Bem, de qualquer forma, o que o Neo Carter
+
+fará, como veremos na próxima seção, é que ele possui um servidor MCP que basicamente irá importar todos os dados do BigQuery, apenas os metadados, e criará esse gráfico. E é isso que você faz na próxima seção. Então, vou direto ao ponto . E eu já executei esse script. Basicamente, quando você vir esse roteiro, o que você vai fazer é copiá-lo. E então você vai para
+
+cá. E então, hum, você vai abrir o seu terminal, que é o nosso terminal. E então, eu gosto de simplesmente abrir uma nova janela. Essa não é a minha janela na nuvem. Hum, e você vai permitir cola. E
+
+então você vai executar isso. Eu já executei. Então, não farei isso de novo, embora deva ser um item potente. Mas basicamente, depois de executar esse comando, ele criará essas seis tabelas com esses cinco caminhos de junção por referência. E depois de fazer isso, você pode voltar aqui e executar este comando apenas para verificar. E é bem legal ver como ficou
+
+. Bem, é assim que se parece dentro do banco de dados gráfico. Basicamente, o que você verá é este nó no meio que representa primeiro o seu banco de dados, depois o seu esquema e, se você seguir isso, verá a tabela e, em seguida, as colunas. E esses também podem, opcionalmente, ter esses valores representativos sobrepostos a eles. Então, basicamente, esses caminhos se unem quando o agente lê isso. Se eu fosse
+
+aqui embaixo e tentasse, eu teria um pequeno exemplo de prompt aqui embaixo, e poderia voltar para a minha janela e ir até o Claude e fazer uma pergunta como esta. Qual veículo recebeu a peça IC 2042? E neste caso, vou instruí-lo a usar o servidor MCP e o esquema do data warehouse, e tudo mais, para obter tudo e, em seguida, usar o script Python. Bem, dentro da própria habilidade também há instruções para isso. Hum, mas o que você verá é o que isso fará .
+
+Ele chamará o servidor MCP para o Neo Carta e lerá o grafo da camada semântica de metadados que temos no Neo forj. Portanto, se você observar, o que estamos fazendo aqui é que não estamos usando o gráfico para copiar os dados. Não existe um processo ETL semelhante a um gráfico. O que estamos fazendo é usar o grafo como uma camada semântica. Então, estamos apenas extraindo metadados sobre as colunas, as linhas e todas essas coisas, e vamos usar isso para informar uma consulta de texto para SQL assim que ela decidir ser executada .
+
+Como está o desempenho do Claude para todos neste momento? Estamos vendo muitas nuvens lentas? Rápido. Sim, devagar. OK. Interessante. Vou
+
+dar um tempinho para ver o que acontece. Não sei por que ele estaria se movendo. Huh. Um pouco lento. Sim
+
+. Todos têm "
+
+Sim".
+
+Sim, claro. Então, a pergunta é: posso contar como cheguei até aqui enquanto esperamos Claude chegar? Então, basicamente, os códigos QR que estão sendo compartilhados, há dois aqui. Uma delas é se matricular no curso. Então, o curso que estou fazendo é online. É gratuito,
+
+então qualquer pessoa pode participar. Assim que você entrar no curso, verá um botão aqui para se inscrever. Então você precisa fazer login e se inscrever no curso. Depois de fazer isso, você clicará e chegará à seção de ambiente. Bem, e quando você fizer isso, levará cerca de cinco minutos para que tudo seja carregado e apareça. Bem, se você estiver
+
+usando espaços de código, você tem a opção de executá-lo localmente. Bem, depois de fazer isso, basicamente, você vai entrar aqui, obter suas credenciais e pegar a chave da API antropogênica, bem como a chave do BigQuery. E depois de fazer isso, você poderá acessar todos os recursos da oficina. Basicamente, você está usando, como você viu aqui, hum, ah, legal. Na verdade, estamos fazendo progresso. Bem, estamos
+
+usando código na nuvem dentro de espaços de código aqui.
+
+Desculpe, pode repetir rapidinho? Sim. O sandbox do Neo Forj é...
+
+se eu voltar àquela seção de ambiente ... você verá o botão aqui para abrir o espaço de código e, aqui embaixo, você deverá encontrar suas credenciais do sandbox. Então, não serão exatamente essas, porque é diferente para cada participante, mas você pode copiá-las. E então, uma vez aqui dentro
+
+, você poderá... você tem seu arquivo de ambiente. E dentro do seu arquivo de ambiente, onde você coloca sua chave antropogênica e sua chave do BigQuery, você também colocará as do Neo Forj. Se você não
+
+vir um arquivo de ambiente e não vir nada, ou se vir o arquivo end.ample, por exemplo, isso significa que levará algum tempo para que ele seja preenchido. Há outras coisas em andamento. Ele executa outro script shell para criar tudo para você e preencher todos os diferentes arquivos. Então, meu palpite, e alguém pode me corrigir se eu estiver errado, é que se a Anthropics está tão lenta agora, é mais um problema da Anthropics em geral e não necessariamente um problema da conta de uma única pessoa . Bem, se continuar dando problema,
+
+posso tentar fornecer outra chave de uma conta diferente, mas não acho que esse seja o problema. Acho que sim . Sim, mas isso também deveria estar rodando remotamente, certo? Será que é só o Wi-Fi? OK. Sim
+
+. Bem, o engraçado é que eu pensaria em... Bem, deixa pra lá. Não sei.
+
+Está rodando no Codespaces, mas talvez o Codespaces ainda esteja usando a rede Wi-Fi local. Hum, ok. Então, estamos de volta aqui. Basicamente, o que ele fez para obter essa lista foi... ele percorreu e
+
+leu esse gráfico de metadados e então criou as diferentes consultas que queria executar. Você pode ver que ele executou aquele pequeno arquivo SQL em Python e fez todas as suas consultas e junções para poder reunir essas tabelas que listam, essencialmente, a resposta para aquela pergunta. Bem, se eu pudesse voltar atrás, a pergunta seria: o que perguntaríamos? Volte ao formato de conexão.
+
+Sim, quais veículos receberam, sabe, essas peças separadas aqui. Hum, e forneceu essa lista, hum, aqui embaixo, aparentemente, hum, e então contagem de veículos. Então, esses são os princípios básicos dessa primeira forma. E você pode imaginar que, à medida que seus dados começam a crescer e você começa a ter cada vez mais tabelas, é muito útil ter essa camada semântica para ajudar a orientar como tudo se conecta. Nesse caso, foi utilizada uma relação de chave estrangeira primária dentro do esquema de informações do BigQuery para impor isso. O Neoarta
+
+também pode usar recursos como registros de consultas, ou você pode configurar manualmente a combinação de dados com outras terminologias e métricas. Hum, há alguma pergunta sobre esse primeiro tipo de formato da camada semântica do grafo de conexões com o qual estamos trabalhando? Sim, eu tenho um aqui.
+
+Neo para você. Então, a pergunta era: você pode nos dar mais contexto sobre o próximo trimestre da Neo Forj, como o que estamos fazendo estrategicamente ? Bem, o que a Neo Forj está fazendo estrategicamente? E isso aqui... A Neo
+
+Forj, como empresa, há muito tempo permite importar dados para nosso banco de dados e representá-los como um gráfico, o que é muito útil se você estiver tentando executar consultas específicas de gráficos, certo? Por exemplo, se você tiver uma cadeia de suprimentos e precisar encontrar a rota ideal do ponto A ao ponto B, e tiver que fazer cálculos de comprimento variável, como o de caminho mais curto . Um banco de dados gráfico é muito bom para isso. Mas outra coisa em que um banco de dados gráfico é realmente excelente não é apenas acelerar a execução de consultas complexas, mas também fornecer uma visão ou representação dos dados que permite a um agente entender como as tabelas podem estar inter-relacionadas. Assim, mesmo que a junção final seja apenas uma junção de três ou quatro etapas, você pode ter precisado entender centenas de tabelas ou algo do tipo para chegar a essa conclusão. Portanto, estamos bastante focados
+
+agora nesses conceitos de ontologias e camadas semânticas e no que chamamos de grafo virtual, onde o foco não é apenas inserir dados, mas também permitir que você mantenha seus dados onde estão e continue usando SQL e acessando-os da maneira que você já vinha fazendo, mas precisa de alguma forma de orientar o agente para que ele possa fazer isso corretamente. Hum, então Neo Carta é um projeto de laboratório. Nós também lançamos recentemente, em versão prévia, algo chamado gráfico virtual, que será semelhante, mas essencialmente oferece algo parecido com essas consultas cifradas push-down . Assim, ele fornece um esquema gráfico do seu banco de dados e permite executar o Cipher diretamente, o que pode ser útil porque permite visualizar o resultado no nível da interface de consulta e não apenas no nível da camada semântica de metadados. Então, havia uma tabela na seção anterior que explicava isso, mas espero que isso ajude você a entender para onde estamos indo com as coisas. Sim
+
+. Sim. Agarre e sim. E também estamos fazendo muita coisa dentro dos grafos de contexto e em todas essas camadas. Sim.
+
+Tudo bem. Incrível. Mais alguma pergunta? Ok, eu tenho uma pergunta aqui. Sim
+
+. Então, a questão é: por que não pegar nossos dados OOLTP, que atualmente são esse repositório de pedidos de veículos e outras informações, e simplesmente migrar, ou pelo menos um subconjunto deles? Por que não simplesmente inserir isso no gráfico? Bem, acho que em muitos casos isso é mais fácil dizer do que fazer, não é? Porque, se você pensar em muitos casos de uso em produção , pode ter terabytes de dados que são atualizados continuamente.
+
+Então, certo, se você tivesse que inserir isso no grafo, precisaria encontrar uma maneira de sincronizar tudo enquanto move os dados. E pode haver muitas propriedades extras ou coisas que você precisaria para criar um ETL personalizado, com alguns elementos que você talvez não queira no grafo. E muitas vezes o que as pessoas acabam não entendendo de verdade até se encontrarem nessas situações é a postura de segurança. Porque se você tiver dados sensíveis em um sistema, mesmo que você pudesse movê-los fisicamente , talvez não seja possível, por motivos de segurança, simplesmente pegar esses dados e transferi-los para outro banco de dados. Bem, existem vários motivos pelos quais você pode não querer migrar seus dados. A
+
+vantagem do ETL sobre apenas esse gráfico de metadados e camada semântica surge quando você precisa de consultas gráficas que exigem esse desempenho, certo? Assim como naquele exemplo de cadeia de suprimentos que mencionei anteriormente, se você estiver realizando junções recursivas muito grandes e precisar que elas ocorram rapidamente, ou se precisar executar algoritmos de grafos, talvez precise gerar representações vetoriais de grafos ou realizar algum tipo de agrupamento, nesse caso faz muito mais sentido incorporar os dados em um grafo. E, como veremos nas próximas seções, quando seus dados já estão não estruturados, há benefícios em organizá-los em um grafo, pois assim você pode dar a eles uma estrutura de grafo. Tudo bem. Vi outra pergunta por aqui. Sim.
+
+Então a pergunta é: o grafo é reconstruído toda vez que você inicializa o Neo Carta? E a resposta para essa pergunta é não. Basicamente, o que acontece é que, quando executamos o script de conexão, ele executa uma função do servidor MCP que importa os dados e, uma vez que os dados são inseridos no Neoarta, apenas os metadados permanecem lá. Então, no meu caso, eu não refiz o exercício de criação de conexões porque fiz o curso ontem à noite. Então, tipo, para mim, eu provavelmente poderia ter feito isso, porque acho que é um item que precisa de recarga, mas eu simplesmente não queria lidar com isso. Então, estava tudo
+
+ali para mim, e eu simplesmente executei as consultas com base nisso. Sim. Tudo bem. Mais alguma pergunta? Tenho um aqui no final. Sim.
+
+Sim. Você possui
+
+a habilidade de criptografia Neo Forj. Hum, então, não sei se conseguiria pegar isso muito rápido. Hum, posso te mostrar a habilidade de criptografia do Neo Forj.
+
+Mas tudo isso foi desenvolvido internamente pela nossa equipe. Então, se você acessar este link através do Neo Forj CL, poderá baixar várias dessas habilidades. Então, como você pode ver aqui, existe a criptografia, mas também temos outras diferentes para memória do agente, infraestrutura em nuvem, diferentes drivers, como se você estivesse usando Java, Go ou qualquer outra coisa. Bem, não posso dizer exatamente como chegamos a essa habilidade específica, MD, mas o que posso dizer é que ela foi criada por nós e nossas equipes internas, que estão sempre atualizadas com as últimas novidades do Cipher 2526. Então , ela tem tudo o que há de mais recente. Então, eu recomendo que você use
+
+o Neo Forj CLI porque ele permite carregar uma ou várias dessas habilidades e obter o conhecimento mais recente. Caso contrário, ele vai buscar na internet perguntas do Stack Overflow de quatro, cinco ou seis anos atrás e fornecerá uma cifra desatualizada e incorreta . É a linha de comando (CLI). Sim, está carregado. E se você olhar o arquivo de instalação que usamos dentro do contêiner de desenvolvimento, verá onde instalamos o cliente do agente NeoForj , a skill. Então, os comandos ali presentes
+
+basicamente permitiam que você fizesse isso. Muito bem, responderei a mais uma pergunta e depois acho que terei que passar para a próxima seção, a menos que não haja outra. Sim, bem aí.
+
+um bronze, então, como as diferentes tabelas delta, onde, então, quero dizer, estamos explorando basicamente o tradicional data warehouse estruturado em SQL e o NeoAR Carta, que é realmente orientado ao cliente para nós. Foi feito pela nossa equipe de campo. Então, conforme os clientes chegam e têm dúvidas sobre dados menos estruturados, e até mesmo coisas como documentos foram consideradas para o Neo Carta, e por isso está se formando essa lista de espera agora. Tudo está acontecendo muito rápido. Acho que o Ryan está em algum lugar na sala e talvez possa falar sobre os próximos passos para a Neo Carta, mas sei que estamos trabalhando agora em um conector para o DataBricks e talvez em algumas visualizações de métricas e outras coisas. Muito bem
+
+, ótimo. Então, depois nos encontraremos com o Ryan, e aí todos que estiverem assistindo no YouTube também poderão se encontrar com ele, mas até lá, teremos um Neil Carta incrível. Muito bem. Então, vamos prosseguir para não perdermos tempo, já que estamos a 15 minutos da metade do caminho e seria bom fazer uma pequena pausa no meio para respirarmos um pouco. Agora vou passar para a próxima seção. Então, eu estava trabalhando com
+
+dados estruturados e agora quero trabalhar com dados não estruturados. E esta será a parte dos documentos. Então, se formos até nossos pequenos dados de origem aqui... Nesse
+
+caso, vou lê-los localmente para carregá-los. Mas você sabe, está lendo do armazenamento em nuvem e lendo localmente. Bem, geralmente não há uma grande diferença. Basicamente, temos esses boletins em formato PDF. Temos manuais que são consideravelmente mais longos. E também
+
+temos os recalls. E como isso me dá essa visão peculiar, eu também os tenho nesse corpus bruto, onde eles estão dentro desses arquivos markdown aqui. Bem, basicamente, são documentos com várias seções. Hum, e você verá aqui que eles têm, eh, esse recurso de linkagem que permite acessar diferentes seções em outros documentos. Então, eles estão todos meio que interligados, já que se referem uns aos outros.
+
+Então, por exemplo, bem aqui dentro deste manual, ele fala sobre esses diferentes códigos de plataforma para este sistema ABS, e sobre solução de problemas de diagnóstico, certo? e isso o direcionará para lá. Aliás, todos esses dados foram simulados por mim. Não é nada sensível nem nada do gênero . Bem, a ideia é simular um sistema do mundo real, onde você tem manuais, boletins e avisos de recall para todos esses veículos diferentes.
+
+E o que queremos alcançar com isso, basicamente, é fornecer ao nosso agente um índice. E por sumário, quero dizer algo parecido com isto . Então, o que eu quero permitir que o agente faça aqui não é apenas pesquisar por palavras-chave. Vamos tentar pesquisar também, mas não sei se alguém já ouviu falar de algo como um índice de página? Alguém sabe quem são eles? Talvez alguns de vocês.
+
+Então, existe essa ideia de navegação pelos seus documentos, onde basicamente é quase como um ser humano, se você olhar para o sumário dentro de um livro, e não para o que eu chamarei de esboço. Vou chamar isso de sumário. Preciso alinhar um pouco melhor a terminologia. Mas a ideia aqui é que você possa, de certa forma, ler os recuos e ver como você tem um documento ou, neste caso, uma biblioteca. Você tem os boletins, que são uma subpasta. Em seguida, você encontrará esses
+
+documentos abaixo. E assim você tem essa árvore de contenção. E além dessa árvore de conteúdo que fornece todas essas seções, você também tem esses links que levam a um documento diferente. Portanto, é mais do que apenas um índice; é uma árvore que se desdobra. Também tem esses links, certo? E esses links, e basicamente
+
+tudo aqui, têm um URI. E a ideia é que, se conseguirmos criar uma boa representação gráfica, podemos basicamente fazer com que esses URIs, que são hierárquicos, se tornem realidade. Então, veja bem, você tem sua biblioteca técnica aqui, certo? E depois, slashbulletins. Então, por exemplo, se eu estiver aqui embaixo, sabe, neste aviso de recall do TSB, eu sei que faz parte de boletins, ou melhor, de um boletim de segurança, não de um recall, e faz parte de uma biblioteca técnica, assim como também tem um link para um manual aqui. Hum, e você
+
+pode ver o nome do manual, que está dentro da subpasta do manual. Bem, se eu tiver isso, posso pegar e conectar, e posso obter um nó do gráfico que contenha o texto bruto ou até mesmo um link para o texto bruto. Então, se eu conectar isso — e veremos como funciona com o Outline mais tarde —, posso obter essas subárvores para poder explorar e detalhar esses diferentes conteúdos. Bem, essa é a ideia geral . Assim, o agente pode fazer não apenas uma busca vetorial ou lexical, mas também percorrer os documentos de certa forma.
+
+E o modelo de dados que vamos usar neste caso é o de importar os dados para um gráfico. Tenho uma pergunta rápida para todos. Então, todos aqui conhecem o Graphrag. Quando pensarem em Graphrag, e talvez alguém possa levantar a mão, eu vou escolher alguém por um segundo. Gostaria que você me dissesse o que acha, como profissional, do processo de construção do grafo para o Graph Frag. Então,
+
+não sei se alguém que esteja familiarizado com o assunto gostaria de se voluntariar. Você vai levantar a mão. Sim. Sim
+
+. E eles constroem, eles constroem, eles constroem os links a partir do... Então, existem maneiras diferentes, certo? E você disse que,
+
+quando fala em criar um gráfico, você constrói os links a partir dos dados que estão dentro dos documentos, certo? E assim, muitas vezes o GraphRag também inclui uma parte de extração de entidades. Então podemos usar um LLM para, por exemplo, extrair as diferentes partes, os diferentes veículos do grafo, e tê-los como entidades separadas, e então ter links para os trechos originais do documento e tudo mais . E isso é ótimo e funciona muito bem. Bem, o que vou mostrar a vocês é algo muito mais leve e acho que talvez até o ponto em que vocês estavam pensando...
+
+na verdade, vamos usar um carregamento determinístico. Então, se você observar aqui, a forma como essa estrutura de grafo funcionará é a seguinte: você terá sua biblioteca e, em seguida, terá essa árvore de contenção que reflete o que vimos. E tudo isso, na verdade, está sendo fragmentado. Você vê as pastas, os documentos, e esses documentos têm seções, que podem ser várias seções e aninhadas umas dentro das outras em diferentes níveis. Hum, e então você terá os links da próxima seção. Assim, você obtém um
+
+conceito de ordenação, bem como links que, neste caso, estamos usando, hum, esses links nomeados, algo parecido com o que você pode ver dentro de um cofre do Obsidian, um pouco, hum, mas você também pode fazer isso com hiperlinks e outras coisas, dependendo de como seus dados são estruturados. Portanto, tudo é determinístico, começando pela árvore de contenção e, em seguida, pela ordenação das seções, bem como pelos links. Bem, e a principal vantagem de ter uma carga determinística como essa é que ela será extremamente eficiente. Então, tipo, você não está contando com um mestrado em Direito (LLM) no início. Hum, geralmente será um pouco mais rápido.
+
+Então, se você já tem documentos com muita estrutura inerente e muitos links interligados, às vezes, para colocar algo em funcionamento rapidamente, pode ser muito benéfico abordar o problema com um grafo como este, que eu diria ser mais um grafo lexical ou de estrutura de documentos do que um pipeline completo de extração de entidades para criar um grafo. E isso explica aqui o que acabei de dizer sobre os diferentes tipos de links. E então, como eu disse antes, esses URLs carregam uma hierarquia. Então, cada nó, por exemplo, aquele nó principal aqui no topo para a biblioteca, terá seu URI "manuals", mais uma barra invertida " manuals", descendo na árvore de conteúdo até o nome do arquivo e, em seguida, as diferentes seções. E este é o script que você vai copiar para carregá-lo. Então, basicamente,
+
+você pegará isso e irá até aqui. Você vai abrir seu terminal bash. Bem, acredito que já fiz isso, então não vou repetir, embora tenha quase certeza de que é um item potente. Bem, basicamente, depois de executar esse comando, o que você vai obter é... e
+
+eu só vou garantir que esteja no gráfico. É para mim. Você vai acabar conseguindo aquele modelo que acabamos de ver. Deveria levar apenas um tempo. Bem, pode demorar um pouco se o Wi-Fi estiver lento.
+
+Embora eu ache que não deveria. Bem, ele criará este gráfico para você, onde você terá novamente o topo da estrutura de pastas, que é a nossa biblioteca técnica, nossas pastas, e então você pode ver que temos nossos documentos, seguidos aqui por nossas diferentes seções. E se eu desse um zoom aqui, você veria que temos os links na próxima seção, mas também temos os links. E eu posso entrar e clicar nesses links e você pode ver como a coisa cresce e como tudo se interliga. E agora que temos isso, basicamente, na próxima seção, podemos prosseguir e construir nossa ferramenta. Bem, basicamente, o script
+
+que acompanha nossa habilidade de correção automática personalizada que criamos serve para criar aquele formato de contorno que vimos no início, o sumário, para entregar ao nosso agente. Então, se eu prosseguir para a próxima seção, hum, e novamente, como eu disse, o que eu quero fazer aqui é copiar isso. Este é o prompt. Bem, se eu der isso para o meu Claude, ele deverá começar a funcionar imediatamente.
+
+E como sei que isso vai demorar um pouco, vou começar a executar aqui. Mas basicamente, o que está acontecendo é que, se eu analisar minhas habilidades, você verá que deixei aqui dentro esta consulta complexa. Esta é a consulta necessária para criar esse formato de contorno. E eu instruí o programa dentro da linguagem aqui para usar a habilidade de criptografia Neo Forj e referenciar uma especificação no formato de esboço de documento.m MD.
+
+Geralmente, é assim que gosto de escrever consultas de cifra mais complexas; para consultas de grafo mais complexas, escrevo uma especificação para elas. Então, se eu for à minha pasta de documentos, você verá que tenho minhas especificações aqui, e tenho a especificação do formato de estrutura de tópicos, onde eu digo que este é o formato, certo? E então, aqui se fala sobre como precisa ser legível para humanos e, sim, permitiremos que você edite e alguns dos argumentos opcionais que precisa ter. Então, certo, porque muitas vezes é como um pseudocódigo que temos e não sabemos exatamente como montá-lo. Hum,
+
+hum, neste caso, eu dei a dica de usar uma consulta de caminho de comprimento variável para basicamente colocar tudo em ordem. [bufa]
+
+E depois vai dizer quando terminar. Então, basicamente, o que você vai obter disso é que, se eu voltar aqui, vou falar um pouco sobre uma das chaves disso. Você verá no arquivo que ele faz isso aqui, que é a aresta de contenção, e você vê esse asterisco 0,25; ele é parametrizado dentro da consulta. Então, tipo, se eu voltar para onde mudou, se eu voltar para cá, está parametrizado dentro desta string. Isso te dá a opção de escolher a profundidade da travessia. E essa é
+
+a natureza gráfica de montar esse sumário. Há também uma segunda consulta aqui, que é muito mais simples e apenas captura os links seguintes. Então, basicamente, depois que isso estiver feito, eu posso prosseguir e copiar . Vou executar tudo. Se você executar o script sem nenhum parâmetro de profundidade ou sem um URI específico, ele retornará tudo o que estiver no gráfico. Então, não seria assim que
+
+eu executaria com um gráfico maior aqui. Acabamos com essa quantidade porque temos apenas algumas centenas de documentos. Então, eu consigo me safar aqui. Hum, mas se eu executar isso,
+
+hum, vai trazer muita coisa de volta. E, mas você pode ver aqui, hum, diminuindo o zoom. Então, como você pode ver, certo, foi isso que me deu. E você pode ver como muitos desses documentos, novamente, não se trata apenas da estrutura, mas também das conexões que eles fornecem entre si. E então, o que você pode fazer com isso, certo? Você pode adicionar um
+
+parâmetro de profundidade opcional. Por exemplo, se eu simplesmente dissesse que a profundidade é igual a um. Ah, você não gosta de limpar até o fundo e eu digo profundidade um. Então, se eu fizesse isso, ele simplesmente desceria uma posição. E outra coisa interessante é que você pode fornecer um URI específico.
+
+Então, se eu visse um URI específico aqui que eu quisesse usar, ele começaria basicamente naquele documento Falcon 2.0, assim como se eu estivesse aqui agora e dissesse: " Ok, na verdade, eu quero fazer isso, mas quero fazer para algo que vejo acima, como talvez este link para a identificação da bobina". Eu posso pegar esse URI e colocá-lo no script, e ele basicamente me dará esse documento e tudo o que estiver vinculado a ele. Assim, você pode ver como um agente pode percorrer esse caminho, obter esses URIs e navegar por todo o grafo, obtendo essas visualizações hierárquicas e interligadas .
+
+Hum, ok, sim, por que não fazemos uma pausa para perguntas? Então temos um aqui no meio.
+
+Bem,
+
+mais tarde no curso, aqui no workshop, para algumas das últimas perguntas, eu instruo o agente a dizer exatamente quais etapas ele seguiu. Você está vendo isso sendo usado de forma diferente? Certo. Sim . Portanto, isso deve ficar evidente no histórico de chamadas da ferramenta. Então você pode
+
+analisar as diferentes chamadas de ferramentas que foram feitas, porque no caso, por exemplo, de conexões, está chamando um servidor MCP. Portanto, esses comandos devem estar dentro das chamadas da sua ferramenta . E a pergunta, aliás, para quem não ouviu, era: como você sabe que o agente está realmente chamando os recursos que deveria, certo? Então, para o CloudCode, por exemplo, você pode consultar o histórico de chamadas da ferramenta. E, informalmente, o que farei neste curso é, para algumas das perguntas, direcioná-las para dizer claramente: "Ei, diga claramente quais etapas e lógica você usa para responder a esta pergunta." Bem, você
+
+sabe, obviamente, para um sistema de produção, você gostaria de analisar os logs e tudo mais, mas aqui, para fins de aprendizado, é assim que vou expor. Hum, há mais alguma pergunta sobre os contornos das árvores? Sim. Uma bem aqui. Sim
+
+. Sim . Então, hum, todo o código para isso deve estar em...
+
+ah, sim, precisaremos reiniciar. Ah , então era uma base de código diferente. Graças a Deus! Tudo bem. Sim, dentro do método `load`, se você for em "carregar documentos", isso são apenas as consultas de criptografia.
+
+E então você tem seu corpus de análise sintática aqui embaixo. Então, sim, basicamente estamos usando expressões regulares aqui para tentar encontrar, você sabe, as coisas certas. Nesse caso, os documentos já estão razoavelmente bem estruturados, certo? Portanto, os resultados podem variar dependendo das fontes dos seus documentos . Nesse caso, se você tiver muitos manuais que geralmente são estruturados da mesma maneira, então você pode usar expressões regulares e técnicas básicas de PNL (Processamento de Linguagem Natural). Se for mais complicado, você
+
+pode ter que usar, tipo, um tear Gler ou outros tipos de teares, e existem níveis de complexidade para isso. Tudo bem. Sim, temos uma pergunta aqui.
+
+Sim.
+
+Sim. Pode ser feito com qualquer modelo. A única coisa que o NeoCarta e qualquer uma dessas ferramentas... bem, vou começar pelo NeoCarta... o
+
+NeoCarta é realmente responsável por criar esse grafo de metadados da camada semântica e fornecer um endpoint MCP, certo? Então, contanto que você consiga acessar esse servidor MCP, ele é agnóstico em relação ao modelo. Ok, então essa era uma pergunta sobre... basicamente, estamos usando o Opus 4.8
+
+aqui e se podemos usar qualquer outro tipo de modelo. E a resposta para essa pergunta é sim, estamos usando um framework de habilidades. E para o NeoCarta, temos o MCP... O NeoCarta também tem uma CLI, então existem
+
+outras maneiras de acessá-lo também... Hum, eu tenho uma pergunta lá atrás.
+
+A pergunta é sobre, se eu entendi corretamente, como você decide como nomear seus relacionamentos, o quão descritivos eles precisam ser e quem está nomeando os relacionamentos. Nesse caso, temos uma carga bastante determinística . Então, estamos decidindo antecipadamente que nomes daremos aos nossos relacionamentos. Bem, isso é um pouco uma questão de gosto ou julgamento , certo? Bem, tentei manter as coisas simples aqui, onde "tem" é muito simples.
+
+É uma relação de contenção. Eu também sei que vou querer um sistema de contenção em vários níveis. Então, provavelmente vou querer um nome comum para todos eles, porque se eu tiver coisas como "tem pasta", "tem seção de documentos", isso complica a criptografia . Bem, é por isso que mantive os nomes bem curtos. O mesmo vale para os links. Quanto mais granular for a
+
+nomenclatura, mais detalhados serão o agente e as ferramentas finais na elaboração de uma consulta . Mas quanto mais complexo se torna o seu modelo de dados. Então, é algo que você precisa gerenciar, porque se você acabar em um cenário de produção com centenas de tipos diferentes de relacionamentos, isso pode ficar difícil de administrar dentro de uma janela de contexto e pode levar a que os modelos não consigam combinar facilmente essas consultas Cipher com algo como o Neo Forj CL ou humanos, certo? Quando estamos tentando, sabe, escrever nossas próprias consultas parametrizadas.
+
+Sim. Sim, isso também é verdade. Bem, e vemos que esse é o argumento da camada semântica também no lado do data warehouse: você pode ter essas visualizações de métricas e outras coisas que usam terminologia de negócios que pode ser diferente do modelo de dados físico que você tem, certo? Bem, essa é uma das razões pelas quais temos esses gráficos de metadados, para ajudar a gerenciar esse tipo de diferença ou essa discrepância entre eles. Vou responder a mais algumas perguntas e depois podemos prosseguir. Sim.
+
+Sim, essa é uma pergunta interessante. Bem, acho que seria ingenuidade chamar isso de substituto, porque a maioria das pessoas que vejo usando isso eventualmente incorporará algum tipo de recuperação vetorial híbrida ou trabalho de busca de texto completo que eu faço. Eu uso pelo menos a busca de texto completo para esse tipo de coisa. Portanto, não acho que seja um substituto, mas veremos mais adiante no curso, quando abordarmos algumas questões relacionadas ao nível da propriedade. Bem, existem certas coisas que a busca semântica não responde tão bem e que realmente exigem a navegação no documento para entender como tudo se conecta , certo? Bem, grandes exemplos
+
+seriam como provar que algo não existe. Como é que se faz isso com pesquisa semântica, certo? ou entender, por exemplo, como saber se pode haver partes diferentes relacionadas a um documento específico ou algo assim. Sabe, em teoria você poderia fazer uma série de consultas vetoriais para continuar buscando trechos, mas há mais chances de erro, como não encontrar o documento certo e coisas do tipo. Então, sim, a pergunta não era se isso substitui a busca semântica, e eu acho que não. Não.
+
+Hum, mais um lá atrás.
+
+Então, a questão é se devemos redefinir os tipos de nós, bem como os relacionamentos, e se trata de como decidir quais devem ser os rótulos dos nós. Sim. E, mais uma vez , é uma questão de modelagem de dados , certo? Por exemplo, pode haver uma situação em que estejamos analisando o modelo de dados que acabamos de revisar. Hum, bem, não está aqui. Está no meu...
+
+está no meu último. Bem, quando eu olho para a forma, bem, se eu der um zoom out um pouco, seria útil ter um nó de partes ou algo assim, certo? Bem, aqui, para esse tipo de caso de uso, estou deixando o agente inferir as partes e extraí-las dos documentos e, em seguida, usar isso para encontrar algo no grafo de metadados e consultar o SQL, ou vice- versa. Hum, e isso funciona para mim. Então, sabe, conforme as coisas evoluíram, tipo, dois anos atrás, eu provavelmente teria dito que você precisaria daquele nó adicional. Agora, parece que os
+
+agentes são inteligentes o suficiente para que talvez você não precise mais fazer isso o tempo todo. Bem, para alguns casos de uso, especialmente como vemos nas ciências da vida, por exemplo, onde existem ontologias muito específicas em torno de diferentes tipos de moléculas, medicamentos e outras coisas, você realmente precisa que isso esteja representado no gráfico, caso contrário, sua inferência não fará sentido. Então, infelizmente, devo dizer que depende do caso de uso. Eu não quero ser essa pessoa, mas de certa forma acaba sendo . Tudo bem. Hum,
+
+ah, ok. Sim, vou prosseguir porque já passamos da metade do caminho e ainda tenho mais conteúdo para abordar aqui. Então, hum, vamos lá. Bem, nós revisamos tudo isso. Hum, ah sim. Então, precisamos construir nossa
+
+consulta de pesquisa. Então, de forma semelhante ao que acabamos de fazer e à pergunta que o senhor fez aqui, queremos ser capazes de construir algum tipo de mecanismo de busca também para ajudar a complementar isso. Então, hum, isto vai ser muito mais simples, esta pesquisa de arquivo. Basicamente, vou usar um índice no estilo Lucine. Ah, e eu não vou usar a busca vetorial aqui.
+
+O próprio Neo Forj possui um índice de busca de texto completo Lucine, mas eu vou fazer isso e, como você pode ver aqui, basicamente faz a mesma coisa, onde eu tenho este fio que precisa ser preenchido. E ele vai usar uma habilidade de cifra para isso. Enquanto estiver em execução, você poderá editar. Bem, talvez seja melhor esperar até que esteja pronto. Muito bem, vai terminar. Então,
+
+basicamente, como você pode ver aqui, funciona assim: você acessa o índice de texto completo . Bem, ele está indexado no documento e nos nós da seção. Então, cada nó que contém texto, como por exemplo, nós não incluímos pastas neste índice Lucine. Hum, e então ele lhe dará uma pontuação. E como temos tudo nesse formato de URI, também podemos delimitar por subárvore, basicamente com um filtro "começa com". Então, se
+
+eu voltasse a este arquivo e analisasse a forma como esta consulta é executada, eu teria esta instrução wear. Então, estou aplicando isso como um filtro posterior, basicamente fazendo a pesquisa de texto completo primeiro. E então estou filtrando pelo URI. Então, basicamente, posso dizer que a busca deve ser feita apenas nesta seção dos manuais. Então, isso me ajuda a refinar um pouco minha busca com esses URIs hierárquicos. Ah, e a
+
+outra coisa que eu faço, hum, e eu faço isso porque trabalho na área de pesquisa que exerço, trabalho com muitos modelos de IA diferentes e em muitas plataformas diferentes. Você nem imaginaria, mas escolher e configurar opções para que funcionem com seis fornecedores diferentes de vetores é meio complicado. Então, o que eu costumo fazer para isso é usar algo chamado expansão semântica. Basicamente, o que ele faz é instruir o modelo de IA a usar seu conhecimento de mundo se alguém perguntar sobre uma falha no motor, pois pode ser uma falha de ignição ou algo do tipo . Então, como este é um índice Lucine, eu posso fazer isso. Por exemplo,
+
+posso dizer algo como "falha de ignição" ou " marcha lenta irregular" e ele procurará por qualquer um desses problemas . Bem, se eu voltar ao meu script bash e executá-lo agora que ele preencheu os dados, você verá que ele me dará meus documentos com a pontuação para cada um deles. E eu também posso pesquisar, como eu estava dizendo antes, em "recall". Assim, posso pesquisar bobinas apenas na subpasta "recall uh" da biblioteca. Essa seria a ideia.
+
+Então, como você pode ver, ainda está aproveitando aquela estrutura hierárquica de contenção, a árvore, mas está fazendo isso através da estrutura de URI e ID, para que não precise fazer tanta inversão de grafo. Isso acaba se refletindo em coisas mais profundas. Hum, tudo bem. Incrível. Hum, você tem alguma pergunta rápida sobre a parte da busca? A busca por Lucine.
+
+Temos uma pergunta aqui. Sim
+
+. Então a questão é: acabamos de carregar os documentos no Lucine e agora estamos pesquisando em diferentes seções as seções apropriadas. Sim. Basicamente, faria mais sentido se analisássemos a consulta que estamos executando aqui. Então, aqui está o que eu vou fazer: algo deste tamanho.
+
+Então, aqui está a consulta cifrada e vou criar um espaço aqui para que você possa vê-la melhor. Então, temos um índice Lucine que definimos e o configuramos quando carregamos o grafo. Nós o configuramos nos nós do documento e da seção. Então, toda vez que eu chamar esses nós de consulta de texto completo do índice, ele acessará o nome do índice, que é "content search", e esse parâmetro "lucine" será o que eu tiver inserido nele com esse script. Assim, nosso filtro inicial será aplicado a um conjunto de documentos e seções, pois estruturamos os IDs de cada nó como um URI hierárquico.
+
+Se eu souber que só quero pesquisar abaixo de avisos de recall, posso fornecer esse URI e ele retornará apenas os nós cujo URI começa com esse elemento. Então, ele aplica esse filtro de pós-processamento posteriormente, se é que isso faz sentido. Sim . Sim. Você tem uma pergunta.
+
+Então a questão é: se você já tem um grafo e ainda não criou seu índice Lucine, seria possível usar o código Claude para fazer isso automaticamente ? Bem, para ser honesto, acho que sim, talvez eu tenha feito isso inicialmente com este curso . Talvez eu tenha pedido para o Claude fazer isso. Não me lembro porque já reconstruí isso de algumas maneiras diferentes. Bem, acho que a resposta é sim, os resultados podem variar dependendo dos seus dados. Muitas
+
+vezes, quando você configura um índice Lucine, ele também é muito flexível dentro do Neo Forj. Então, você pode configurar isso em um único nó ou em vários nós, com várias propriedades em um único nó ou com várias propriedades entre vários nós. Então, sabe, essa flexibilidade também pode ser um ponto fraco quando você pede para um modelo de IA fazer algo, porque ele pode não entender todas essas opções diferentes. Mas, em geral, sim, você pode usar a codificação agentiva para ajudar a montar isso para você. Sim, bem no meio.
+
+Então a questão é: quão importante é que o nome dos documentos esteja correto para que o agente consiga analisá-los com eficiência? Hum, acho que sim
+
+. Sim. Se seus documentos não estiverem bem nomeados e você estiver usando a visualização de estrutura de tópicos, o agente não terá muitas informações para se basear ao tentar navegar pelos arquivos. Então, pode haver uma interpretação errada do significado de um documento , certo? É por isso que ter a ferramenta de aprimoramento de pesquisa em conjunto é útil, porque ela consegue realmente analisar o documento. Bem, com essas coisas, o que
+
+eu tenho visto, porque eu uso isso para minha própria gestão baseada em conhecimento. Eu tenho minha própria biblioteca de código aberto que utilizo e que possui essas ferramentas. O maior problema surge quando você tem documentos desatualizados ou obsoletos, certo? Então, eu pensei, bem, talvez precisemos adicionar uma data de última atualização ou algo assim, ou se um documento deve ou não ser considerado como fonte oficial, certo? E a nomenclatura do documento é realmente importante. Hum, e a escolha dos nomes dos links
+
+também é importante. Então, se você tiver links que não têm... tipo, esqueci o nome, mas no Obsidian, você pode dar um nome, um sinônimo ou algo assim, certo?
+
+Nomear o link dessa forma pode ser muito útil, se estiver lá, certo? Porque aí você sabe exatamente por que está criando um link para essa outra coisa. Então, às vezes, usar um modelo de linguagem dentro da ingestão, se você não tiver isso, pode ser benéfico. Sim, aqui.
+
+Então, quando você recebe um novo documento... O bom disso é que é um carregamento determinístico, o que significa que, digamos que todo o seu grafo desapareça amanhã, contanto que seus documentos não tenham mudado, se você os carregar, obterá o mesmo grafo. Então, na pior das hipóteses, sim, você teria que recarregar todo o grafo, mas esse carregamento é determinístico. Você
+
+também pode, e eu experimentei isso novamente em alguns dos meus outros trabalhos, dizer: "Bem, eu tenho um documento que mudou e eu só quero atualizar esse nó." Você só precisa estar ciente de que isso está ligado a outras coisas. Então é como se você tivesse alterado, atualizado este documento aqui, ou seja, se você mudou o nome dele, então você precisa atualizar também os outros documentos, como a referência da URL para esse documento. Portanto, existem alguns casos extremos que você precisa analisar. Mas, se você for capaz de fazer isso, talvez possamos conversar depois e eu posso te mostrar. Você pode, por exemplo, adicionar elementos a
+
+esta parte da árvore e limpar esta outra parte, permitindo assim um afundamento parcial. Sim. Muito bem . Hum, você está com a mão levantada aí atrás? Você está apenas coçando a cabeça. Tudo
+
+bem. Bem, acho que temos uma pergunta aqui.
+
+certo?
+
+O comportamento padrão após algo como " índice de página" seria "pesquisa". Sim . Sim. Então, acho que a questão é basicamente a forma como o agente raciocina sobre isso, que primeiro usaria o comando "outline" para depois usar a busca. Sim. Sim. Poderia
+
+funcionar dessa forma. Poderia funcionar de alguma forma em que primeiro buscasse um documento relevante e depois tentasse encontrar tudo aquilo a que ele se refere. Nesse caso, seria o contrário. Muito bem , ótimo. Vamos então prosseguir para garantir que tenhamos tempo para todas as nossas perguntas. Então,
+
+o que estamos fazendo aqui?
+
+Isso nada mais é do que solicitar uma pesquisa de texto completo. Por que não, já que estamos no episódio 39? Bem, acho que já abordamos boa parte desse material aqui. Bem, parte disso foi pensado para que, se você voltar a consultar mais tarde, acabe documentando em excesso o que estou explicando. Portanto, essas etapas e alguns trabalhos opcionais ajudarão você a entender melhor a criptografia. Hum, e exatamente como
+
+todas as peças se encaixam. Mas, dado o ritmo em que estamos avançando, por que não vou direto para a nossa seção de temas? Então, vou pular a lição prática opcional e ir direto para os temas. Então, esta será a nossa terceira e última forma de hoje. A ideia é que, ao executar essa consulta cifrada, ela basicamente carregará um grafo, e eu estou apenas analisando os links para o relacionamento entre os documentos. Então, quando você tem
+
+documentos com muitas interligações, é sempre bom pensar em usar um gráfico, porque essa estrutura basicamente mostra que temos esses manuais, esses recalls e esses boletins, e eles se conectam e se referem uns aos outros. Então, como você pode ver, este guia aqui, que é um manual, está sendo referenciado por todos esses diferentes procedimentos de reparo. E se você diminuir o zoom, o que acaba acontecendo é que você verá agrupamentos naturais de objetos. E isso também acontece muito em bases de conhecimento no estilo Kaparthy, onde você verá que os conceitos naturalmente começam a se agrupar e um gráfico pode ajudar a revelar esses temas, essas coisas que você nem sabia que existiam antes. Então, vamos usar algo chamado detecção de comunidade de penhor. Por favor,
+
+levantem a mão: quantas pessoas nesta sala estão familiarizadas com o que é ciência de dados em grafos? Sim, é verdade. OK. Então, não são muitos de vocês. Quantas pessoas sabem o que é detecção de comunidades em um grafo?
+
+OK. Então, nós temos alguns de vocês. Então, a detecção de comunidades é a ideia de que, se eu tiver este gráfico, e você pode ver se eu diminuir o zoom, especialmente se estiver executando localmente, existem pequenos clusters naturais de nós que estão altamente interligados. A ideia é: e se pudéssemos rotular esses clusters de forma que, dentro de um cluster, as coisas estejam altamente interconectadas? Assim, este pequeno glóbulo de nós se torna um cluster, este glóbulo se torna um cluster e este aqui embaixo...
+
+E se conseguirmos fazer isso, poderemos começar a entender nossos dados em escala global de forma muito eficaz. Então, isso é parecido com aquela ideia inicial do Microsoft GraphRag de busca global versus busca local, certo? Estamos fazendo algo muito semelhante aqui, mas de uma forma muito mais leve, onde não estamos realmente realizando nenhuma extração LLM. Estamos nos baseando literalmente na estrutura dos documentos. O algoritmo que vamos usar para essa rotulagem se chama Leiden, que é semelhante ao Louane, e quando se fala em detecção de comunidades, Louane é frequentemente mencionado.
+
+Eu quase vejo Leiden como uma espécie de próximo passo. É um pouco mais eficiente na forma como funciona. E, bem, está usando a biblioteca de ciência de dados em grafos do Neo Forj. Basicamente, o que temos que fazer, ou o que fazemos para torná-lo muito eficiente, é, além de termos o banco de dados, usar essa outra projeção, onde carregamos uma parte do grafo na memória e executamos algoritmos de alta concorrência sobre ela. Assim, se tivermos um grafo com milhões ou bilhões de nós, podemos começar a realizar o agrupamento e identificar as diferentes comunidades interconectadas.
+
+e esses aglomerados. Se eu continuar descendo, basicamente o formato que vamos usar aqui, a visualização que vamos mostrar ao nosso agente, é esta. Então, é um pouco difícil de ver porque é uma janela deslizante, mas basicamente teremos o que chamamos de temas. E esses temas serão esses conjuntos de documentos. Teremos uma noção de quão fortemente ou frouxamente eles estão interligados usando essa métrica de condutância.
+
+Basicamente, será uma métrica que medirá o quão interconectados os nós dentro do cluster estão em comparação com o quão conectados eles estão fora do cluster. Assim, podemos dizer que algo está firmemente entrelaçado ou frouxamente entrelaçado. Vamos usar os rótulos nos links como os principais alvos compartilhados e falaremos sobre os documentos mais vinculados e, portanto, os documentos de maior centralidade dentro de cada um deles. Assim, o que obtemos, sem qualquer tipo de marcação ou rotulagem por IA ou modelo de linguagem, é que, simplesmente pela estrutura do documento, podemos dizer que este primeiro é sobre BCM, ônibus e todas essas coisas. E então, se eu continuar assim, o próximo tópico será sobre freios, pastilhas de freio e linhas hidráulicas. Então, tudo isso tem a ver com os freios
+
+. Assim, você acaba com esses agrupamentos muito naturais que surgem. Isso é muito útil para uma análise abrangente do patrimônio, pois permite começar a entender, por meio dos dados, como tudo se agrupa e se relaciona. Então, a forma como construímos isso é semelhante ao que fazíamos antes, onde temos o script e também a nossa especificação. Bem, vamos condensar as seções e falar um pouco sobre elas aqui, e eu gostaria de dedicar a última meia hora para que possamos responder às perguntas finais. Então, vou fazer
+
+isso rapidinho, mas basicamente, quando criarmos essa projeção, eu vou simplesmente copiar isso . Talvez eu faça esse negócio do roteiro primeiro. Então, como fizemos antes, aqui dentro, se eu olhar dentro do meu arquivo themes.py Pi, eu tenho este fio para a projeção, aquela parte onde pegamos o gráfico e o colocamos na memória. O algoritmo de Liiden propriamente dito, estou apenas chamando-o com essa biblioteca de ciência de dados de grafos . Então, em teoria, você pode
+
+meio que programar todos esses agentes. Hum, mas vou fazer só esta. Hum, isso não é bom. Quero ter certeza de que estou copiando a coisa certa. Então, semelhante a antes, hum, temos o nosso, hum, certeza de que a coisa certa que eu acabei de dar. Sim. Então, estamos instruindo o programa a
+
+usar uma habilidade de criptografia e a habilidade GDS para montar isso. Se você acessar nossa documentação, encontrará a opção de formatação de tema , que dará a forma que desejamos e tudo mais. E isso nos dirá como queremos que todos os cabeçalhos e outros elementos sejam formatados. Então, vamos criar isso para mim. E enquanto isso acontece, vou falar um pouco sobre a projeção. Portanto, realizamos algumas
+
+manipulações gráficas para convertê- las eficientemente em uma projeção. Basicamente, consolidamos os relacionamentos no URI, de forma que, se tivermos seções interligadas, como uma seção de um documento interligada a outra subseção, agregamos tudo isso ao nível do documento. Hum, e isso cria uma interpretação mais clara de como nossos documentos se interligam, em vez de apenas todas as nossas seções individuais, e podemos identificar as comunidades com mais facilidade dessa forma também. Muito bem
+
+. Então, parece que está indo bem . Sim. OK. Então, eles simplesmente criaram isso para nós. Bem, assim que eu recuperar isso,
+
+posso copiar o script que ele me ajudou a criar e executá-lo no meu terminal. Deixe-me criar um novo terminal. Então, posso prosseguir e chamar esse tema de roteiro, que acabamos de editar. E então fará a detecção da comunidade. E vocês verão aqui que eu conseguirei essa vista. Então, como você pode
+
+ver, eu tenho este circuito, sabe? Aqui estão todos os meus documentos agrupados, e agora eu meio que entendo todas as diferentes áreas dos veículos às quais meus documentos se aplicam. Existem outros parâmetros que você pode inserir aqui. Então, por exemplo, temos um parâmetro gama e basicamente o que ele faz é... basicamente, dizer em que medida
+
+tudo deve ser dividido . Portanto, esse é um parâmetro que estamos expondo. Se você consultar a documentação de ciência de dados em grafos, encontrará muitos outros exemplos. Mas tipo, eu tenho 13 grupos usando isso aqui. Se eu tentar refinar ainda mais com gama igual a dois.
+
+Portanto, é um por padrão. Acho que neste caso vai me dar 14. Então, basicamente, divide em mais grupos. Muitos desses algoritmos de detecção de comunidades, por serem hierárquicos, permitem que você escolha o nível de detalhamento desejado. Basicamente, à medida que você avança e começa a entender melhor seu conjunto de dados, pode ser que queira ajustar alguns desses hiperparâmetros. E isso nos deu 14
+
+temas diferentes. Hum, vejamos o que temos aqui. Sim
+
+. E o fato de nunca realmente nomear um tema, é meio que essa a intenção. Então, tudo o que você obtém vem diretamente do documento. Se eu analisar o tema aqui, os nomes dos links, os nomes dos arquivos mais lidos, tudo isso vem diretamente dos dados. E então, como você obtém os URIs, os IDs de alguns desses documentos, você pode começar a fazer o que faz, voltando ao formato de contorno ou ao formato de pesquisa, e pode pesquisar em todos esses itens. Assim, isso
+
+dá ao agente a capacidade de alternar entre várias ferramentas desse tipo. Bem, esse tipo de coisa é bom para questões relacionadas a propriedades rurais . Então, coisas como onde os problemas estão concentrados? Onde está a documentação, hein? Onde é que a nova documentação se encaixaria em algum outro tipo de assunto diferente que surgiu apenas para adicionar mais dados? Certo
+
+. Chegamos ao fim da seção de temas e temos cerca de 27 minutos restantes. Alguém tem alguma dúvida rápida sobre esse algoritmo relacionado a temas? Sim . Sim. Sim
+
+. Essa é uma boa pergunta. A questão é: uma vez que você obtém os temas, tudo o que o algoritmo de linha fará é atribuir um ID a esses diferentes grupos, certo? E o que você faz depois disso é uma escolha sua. A pergunta é se você simplesmente pega os dados e os coloca lá, ou se faz algum tipo de inferência posteriormente para rotular os diferentes grupos. Aqui estamos
+
+fazendo a primeira opção. Estamos apenas pegando o que está nos dados e mostrando para vocês. Bem, a vantagem disso é que, toda vez que eu executar o programa, o resultado será o mesmo, desde que os dados permaneçam os mesmos. Se os dados mudarem, eles serão atualizados para refletir essa mudança. Portanto, é muito estável. A desvantagem
+
+seria se os links nos seus documentos , bem como os títulos e outras informações, fossem coletados, pois isso basicamente analisa apenas os metadados do documento e os metadados do link. Bem, se esses assuntos ainda não estiverem bem esclarecidos, essa perspectiva pode não ser muito informativa de imediato . É por isso que, sabe, com os métodos GraphRag que a Microsoft criou, eles fazem muita extração de entidades, porque o resultado são resumos em nível hierárquico, certo? Assim que eles obtiverem a informação essencial na comunidade, que é o mesmo algoritmo que eles usam, eles farão um resumo baseado no LLM (Learning Learning Machine) para cada tema. Bem, isso é possível . Bem, mas obviamente custa mais
+
+dinheiro, é mais lento e, se você executar o processo duas vezes, pode não obter o mesmo resultado. Portanto, cada forma de fazer isso tem suas vantagens e desvantagens. Estou mostrando a vocês uma maneira mais leve e fácil de fazer isso. Bem, simplesmente porque é mais rápido e, se você está começando agora, pode ser mais fácil começar por aí. Hum, teríamos tempo para talvez mais uma, talvez duas perguntas. Sim, é isso mesmo
+
+.
+
+Dados temporais. Sim
+
+. Quer dizer, hum, eu já vi clientes, sabe, basicamente todas as vezes, porque o jeito que o Leiden funciona é que ele usa um algoritmo que absorve tudo e faz uma projeção. Isso criará seus rótulos, diminuirá de intensidade e depois desaparecerá. Então, se seus dados estão sendo atualizados constantemente, você pode recriar seus IDs e ter quase uma série temporal de IDs de temas diferentes, por exemplo. E então, se quiser, você pode criar resumos, como um instantâneo de quando eles existiam, ou ver como evoluíram ao longo do tempo. Mas esse é um
+
+caso de uso muito comum; muitas pessoas usam isso mesmo antes da IA, para coisas como detecção de fraudes, como analisar fraudes de estorno de cartão de crédito ou outras coisas relacionadas à prevenção à lavagem de dinheiro, para observar clusters. Para isso, elas precisam fazer isso temporalmente, ou seja, precisam manter o sistema em execução para ver como as coisas mudam ao longo do tempo e, então, prever o futuro. Certo. Portanto, eles também são usados nesses cenários. Sim.
+
+Tudo bem. Mais uma talvez e depois terei que seguir em frente . Tudo bem. Ok. Sim.
+
+Então a questão é: se você tem um grafo realmente grande, como você pega essa visualização que está sendo enviada para o modelo de IA e a torna gerenciável? Sim
+
+. Então, nesta visualização, acho que estão sendo exibidos cerca de 14 temas. Portanto, existem limites que você pode definir. Por exemplo, você pode dizer que para comunidades menores que um determinado limite (X), não é necessário destacá- las. Às vezes, pequenas comunidades são muito importantes, e é por isso que essa métrica de condutância, que alimenta essa interligação estreita e flexível, também pode ser usada como um ponto de corte. Então, se
+
+eu estiver interpretando sua pergunta corretamente, trata-se de filtrar a quantidade de informações para que o modelo de IA possa exibir o que é mais importante em um gráfico maior. Entendi corretamente?
+
+Para garantir que as relações entre os nós estejam corretas. E então, sim
+
+. Sim. Quer dizer, nesse cenário, estamos realmente confiando, estamos aceitando os dados da fonte como verdade absoluta , certo? Se algo tem um link para um documento, então tem um link para o documento, certo? Se o link apontar erroneamente para um documento ou se houver uma seção mal formatada, bem, nós não necessariamente detectaríamos isso.
+
+Mas acho que uma das vantagens de algo como um contorno é que você pode fazer com que seu agente o percorra automaticamente sem que você precise vê-lo em pequenos pedaços, e ele pode ser capaz de detectar alguns desses detalhes, certo? Então, suponho que isso permita que a navegação ofereça uma maneira de ter um agente supervisionando o grafo e entendendo dados malformados ou dados que tenham apresentado problemas. Hum, mas é uma boa pergunta. Não sei se temos uma solução perfeita para isso. É uma questão de limpeza, e limpar dados desorganizados sempre foi algo importante. Sim. Muito bem
+
+. Vamos prosseguir, pois só me restam 20 minutos e prevejo que esta última parte será a mais substancial. Então, espero que tenhamos tempo suficiente para analisar tudo, especialmente porque Claude tem sido lento. Então cruzem os dedos, porque este provavelmente será o uso mais frequente de Claude. Então, há uma seção aqui sobre como usar o Neo Forj CLY, porque estamos apenas a 20 minutos do vídeo. Hum,
+
+provavelmente não vou explicar tudo detalhadamente, mas falarei sobre isso por alguns minutos. O Neo Forj CLY é uma ferramenta Cly. Assim, posso executá-lo na linha de comando. Então, por exemplo, se eu abrir uma janela de terminal, posso copiar o código e ele executará uma consulta para mim, além de também ter a capacidade de obter o esquema do grafo. E o que isso me permite fazer é basicamente entender o que está no gráfico e então escrever uma consulta com base nisso.
+
+E se você tiver seu agente, que neste caso, como estamos usando um agente Coden, pode acessar a CLI do Neo Forj, isso lhe dá a capacidade de realizar esse raciocínio gráfico, ler o esquema e, em seguida, fazer consultas flexíveis. Isso é muito útil se você tiver uma pergunta que não previu e o agente estiver, de certa forma, conectando as coisas entre as formas, certo? Ele precisa escrever sua própria consulta de criptografia personalizada. Ele consegue fazer isso de forma muito eficiente. Hum, e tenho notado muitas melhorias usando isso em conjunto com as habilidades. Muito melhor do que a
+
+experiência de conversão de texto em código que tínhamos até mesmo há um ano ou seis meses. Bem, se você for escrever códigos ou realizar qualquer operação de criptografia de texto com um agente, recomendo fortemente o uso do Neo Forj CLY. Bem, além das habilidades em criptografia e GDS que acabamos de revisar. Então, tendo isso em mente, vou prosseguir para a nossa, neste caso, última seção. Se você levasse isso para o ambiente offline, encontraria outras seções informativas em seguida. Bem,
+
+basicamente vamos começar a fazer algumas perguntas. A primeira pergunta que vamos fazer, e vou direto ao ponto porque já vimos muita dessa documentação, é a seguinte: como vocês devem se lembrar, desde o início tínhamos nossas diferentes personas, certo? Tínhamos o Danny, que era o técnico de chão de fábrica, e ele poderia ter uma pergunta do tipo: "Ei, para este VIN com este código específico que estou recebendo, qual solução? O que fizemos que resolveu esse problema em veículos semelhantes?" Bem, a motivação por trás disso, certo, e por trás de muitos dos dados, é que, como oficina mecânica, você quer minimizar sua taxa de retorno, que é basicamente quantas vezes um cliente precisa voltar porque o conserto não funcionou, certo? Bem,
+
+e assim os dados, especialmente no lado do armazém, mostrarão parte desse histórico combinado com a documentação sobre as peças reais, os recalls e os boletins. Então, o que eu fiz aqui é semelhante ao que o cavalheiro perguntou antes, eu expliquei os passos usados para as diferentes formas. Você pode ver que está carregando a habilidade de servidor automático. Então, essa era a habilidade que tínhamos aqui, que também incluía todos os scripts com os quais estávamos trabalhando. Assim, ele tem acesso ao script de pesquisa de estrutura de tópicos e temas, bem como ao script de execução SQL e ao servidor MCP. Essa era a
+
+habilidade de que estávamos falando antes. Então eu já escrevi isso com antecedência. Você pode ler se quiser, mas basicamente fornece algumas orientações gerais sobre como acessar o armazém e também lidar com os diferentes formatos na interface de comando. E você verá o que isso fará aqui. Ele irá procurar o código do documento.
+
+Será realizada uma busca de texto completo. O programa usará o formato de árvore aqui para encontrar conexões cruzadas e causas. E então ele obterá os caminhos de junção. E, na verdade, ele fará a consulta do VIN. E quando isso acontecer, ele retornará basicamente o número da peça que precisa ser substituída. E neste caso,
+
+havia uma bobina de ignição antiga que foi revisada e precisou ser substituída . Bem, se você olhar direito, inicialmente foi feita uma busca de texto completo para encontrar o documento com o código correto. Então, ele procurou o código e também a falha de ignição ou a marcha lenta irregular. Bem, encontrou o resultado mais popular, que é este tipo de motor. Confirmou-se o seu encalhe.
+
+Então, ele mostra os links daquele manual para esses diferentes procedimentos. E então, a partir daí, criou um caminho de junção. Basicamente, analisou todas as ordens de serviço com aquele código DTC para aquela peça. E então, conseguimos trazer de volta a questão fundamental, que era, sabe, de todas as peças que foram substituídas e de como lidamos com esse código, o sistema foi até o depósito para obter essas informações. Como você pode ver, esta é uma pergunta simples. Então,
+
+se você estivesse usando uma busca vetorial, como a do Genie, com sua busca por IA, e algo como o DataBricks, você poderia fazer isso. Mas o que geralmente acontece é que, para encontrar o que precisaria para fazer essa vinculação na estrutura em árvore, seria necessário realizar muito mais buscas vetoriais, e cada uma delas representa uma chance, certo? De encontrar um problema e não encontrar o documento correto, ou até mesmo ter uma alucinação e obter um resultado incorreto que talvez não estivesse relacionado àquela parte específica. Mas, como estava fundamentada na estrutura em árvore , conseguiu obter a informação correta e vinculá-la à tabela. Bem, isso pode ser útil e contribuir para a eficiência nessas questões mais simples. Bem, o que pode acontecer
+
+é que, quando se chega às questões relativas ao patrimônio, é aí que as coisas podem ficar realmente interessantes. Então, vou copiar esta pergunta e deixar o programa começar a rodar. Hum, parece que o Claude está se movendo mais rápido agora, o que é bom, mas falarei sobre isso conforme for acontecendo. Então, esta é uma questão sobre se existem discrepâncias entre nossos procedimentos documentados e os problemas que estamos observando em campo, e quais documentos estão faltando ou, por outro lado, quais documentações não estamos utilizando em nossos dados de estoque, certo? Porque temos nossos documentos que nos informam sobre recalls, boletins e outras informações semelhantes, além dos manuais, mas também temos o histórico de ordens de serviço do nosso estoque. Portanto, esta
+
+é uma questão que pode interessar a um supervisor ou analista de dados, certo? Porque é algo como provar uma negativa ou uma incompatibilidade, já que você está meio que dizendo , sabe, eu não sei o que estou procurando. Estou procurando uma lacuna . E você pode imaginar que com uma ferramenta como a busca vetorial, essa seria uma pergunta muito difícil, porque, por exemplo, qualquer tipo de busca por similaridade ou lexical, se você fizer apenas isso, por definição, você não pode realmente procurar por um negativo. Você precisa procurar por coisas que estão lá. Bem, o que eu descobri, e
+
+acho que o que nós descobrimos como empresa, é que os gráficos podem ser muito úteis quando você começa a ter esses tipos de perguntas mais globais , essas perguntas em nível de propriedade que você quer fazer, principalmente se elas forem sobre padrões em que você talvez nem saiba ainda o que está procurando . Sim. Portanto, este processo demora um pouco para ser executado porque, em determinado ponto, ele precisa processar um grande número de códigos e combinar alguns dados. Bem , você verá no final, que as informações vão surgindo aos poucos e explicarão como tudo foi descoberto. Bem, e muitas vezes o que você vê com esses sistemas é que eles usam alguns dados do documento com algumas formas e depois voltam para o banco de dados para fazer consultas.
+
+Vamos
+
+abordar vários assuntos diferentes aqui. Hum, outra coisa, só para deixar claro enquanto isso está sendo feito, é que não se deve usar o "near forjly" aqui. E a razão pela qual eu coloquei isso aqui é para que você possa ver usando as diferentes formas. Hum, só para entender como as diferentes formas se encaixam e funcionam. Assim que você entregar o Neo Forj CLY ao seu agente, ele se tornará muito poderoso, pois poderá começar a escrever consultas de criptografia personalizadas e haverá casos em que ele preferirá fazer isso em vez de usar um formato de prefixo. Bem, eu diria
+
+que, à medida que aprimoramos nossas capacidades de criptografia do Texas e continuamos desenvolvendo mais habilidades, começaremos a preferir o formato livre do Neo Forj Cly com muito mais frequência. E esta pode, às vezes, levar um tempinho para ser compreendida. Então, vou esperar mais uns 20 segundos. Ou talvez eu possa até abrir espaço para algumas perguntas enquanto estivermos aqui. Enquanto aguardamos por este. Sim.
+
+Então, basicamente, o que vai fazer é analisar... bem, na verdade, preciso que volte e me lembre exatamente como... como funciona
+
+. Bem, basicamente, o que você pode ver nas ordens de serviço é o que já foi trabalhado, certo? A partir daí, você pode pegar os códigos e ver quais documentos foram usados. E também haverá um histórico de retornos inesperados ao usar algumas das peças erradas. Então você acaba tendo essa visão de que, ok, existe um monte de documentação que talvez não estejamos seguindo porque estamos recebendo todos esses avisos por usarmos a peça potencialmente errada. Então,
+
+temos essa metade e depois há alguma documentação que não está coberta porque estamos usando códigos DTC, que não são cobertos dentro do armazém. Assim, saberemos que certos documentos não foram acessados ​​de forma alguma. Bem, aqui demorou um pouco mais, e isso acontece às vezes. Aqui foi utilizada a expansão semântica. Bem, na verdade, ele entrou e fez uma busca de expansão semântica muito mais abrangente.
+
+Nesse caso, deve-se usar o contorno. Acho que, por ter o URI hierárquico , provavelmente conseguiu fazer isso um pouco melhor. Mas se eu voltar lá para cima, onde isso apareceu? Sim, bem, conseguiu mostrar aqui os códigos de campo que estavam faltando. Então, basicamente, havia dois códigos de campo que apresentaram uma incompatibilidade no título ou foram diagnosticados com o procedimento errado. Bem
+
+, basicamente existe essa incompatibilidade entre algumas dessas partes no documento da biblioteca. Sim. Então, é aí que o reparo correto não é...
+
+basicamente mencionado. E isso está causando um problema para o armazém. E também existem outros códigos DTC que ocorrem em campo. Exatamente. que têm dois... que não têm documentação em nível de código,
+
+que são estes dois. Então, existem códigos que estão ocorrendo e que basicamente não estão documentados, mas que o sistema conseguiu encontrar. É uma pena que não tenha usado o contorno, pois deveria fazê-lo, já que, basicamente, ao usar o contorno, consegue percorrer e encontrar todos os links de forma um pouco mais eficiente. Nesse caso, não teria realizado a busca completa de texto que levou um tempo considerável . Mas mesmo aqui, graças aos URIs hierárquicos e à expansão semântica na busca de texto completo , foi possível encontrá- lo eventualmente. Hum, mas é uma boa lição que, quando se
+
+usa o contorno, o retorno é mais rápido porque é possível percorrer os diferentes links. Hum, a outra coisa aqui, a última que vou mencionar porque só temos oito minutos restantes. Hum, vou copiar aqui. Bem, e este aqui, principalmente, se eu prosseguir e copiá-lo, vai aproveitar o nosso formato temático. Então, estamos buscando padrões comuns em todos os nossos boletins e recalls, e quantos carros são afetados por cada um deles. Então, temos o histórico das nossas ordens de serviço
+
+dentro do nosso armazém. E, basicamente, o que queremos descobrir é como os temas que identificamos se correlacionam com o nosso histórico de ordens de serviço. E para isso, ele executa esse padrão temático para poder extrair os temas principais e, em seguida, correlacioná-los com nossas ordens de serviço. Portanto, é uma questão de cobertura. Como você pode ver, ele executará os temas
+
+e, eventualmente, aqui ele prosseguirá e trará de volta todas as informações relevantes. Mas basicamente o que ele faz é encontrar os temas. O sistema vai buscar os tipos de correções que possui no histórico de ordens de serviço e, em seguida, fará uma espécie de junção para agrupá-las sob o tema correto. Enquanto isso estiver em execução, há mais alguma pergunta sobre esse formato de tema ou qualquer outra coisa? Eu sei que outras pessoas lá também . Vá em frente.
+
+Desculpe. Repita isso mais uma vez.
+
+como durante a construção do gráfico. Sim . Sim . Então, as formas que eu... que eu... estão
+
+realmente definidas dentro de nossas especificações. Então, se você for aqui, nosso formato de contorno, nossas especificações, estão em nossa documentação. Então, isso foi definido mais através de uma reflexão, tipo, é assim que queremos que seja para o agente. E então, uma vez que definimos isso, criamos a estrutura de consulta que desejamos e a utilizamos para informar nosso modelo de dados. E todos os documentos foram essencialmente carregados nesse modelo de dados que eu expliquei cerca de uma hora e meia antes, no início do curso. Bem, é aquela que
+
+possui uma árvore de contenção com todos os links entre ela. Hum, e você pode ver aqui que isso vai... vai trazer de volta os... temas que eram usados.
+
+Não utilizou a função de busca. Hum, e então também perguntou se, caso eu subisse aqui, poderia ver os carros afetados. Então, basicamente, foi para o armazém com aquele formato de conexão e conseguiu agrupá-los sob os diferentes tipos de tema. Então, é como se fosse esse tema, os diferentes tipos de temas que temos e depois os carros e as ordens de serviço agrupados por porcentagens. Sim , por aqui.
+
+Sim, qualquer um dos dois.
+
+Tenho alguma noção da precisão com que essas estimativas funcionam quando as bases de conhecimento se expandem? Bem, para isso eu não executei nenhum teste de desempenho específico, exatamente como o que mostrei para vocês hoje. Mas devo dizer que, quando temos clientes que utilizam essas ferramentas, eles geralmente criam suas próprias ontologias personalizadas e executam benchmarks que basicamente indicam a eficácia desse padrão de consulta em comparação com uma busca vetorial comum, por exemplo, e usam isso para comprovar a eficácia em um tipo específico de conjunto de dados. Neste curso, o foco é mais conceitual, algo como as diferentes formas que você usaria para organizar seus dados. E sempre há espaço para melhorias em termos de como desenvolver essa habilidade, certo? Para garantir que ele
+
+guie pelo caminho certo, de forma a utilizar cada etapa de maneira eficiente . Tem mais alguma pergunta? Sim. Sim
+
+.
+
+Bem, talvez eu não entenda completamente. Então, você tem um ponto de conexão entre o quê? Entre
+
+Sim. Sim
+
+. Sim . Não, não temos isso no momento. Então, agora que entendi sua pergunta, a questão é: existe alguma ligação entre o grafo de dados estruturados e o não estruturado? E não há.
+
+Nesse caso, eles estão completamente desalinhados e o agente está meio que extraindo, você sabe, uma parte de um deles, ou está extraindo tipo, hum, sim, basicamente um código, certo? E depois, voltando a consultar o documento. Então, ele usa isso para fazer sua própria junção em tempo real. Você poderia criar essa ligação, o que poderia ser valioso para um mapeamento mais determinístico. Bem, aqui nós não fizemos isso, e o principal motivo foi realmente para agilizar o início, porque eu queria fornecer um código que fosse fácil e também independente do modelo. Bem, é isso, e depois,
+
+se você quisesse criar essas conexões ou esses links, você poderia. Mais alguma pergunta? Muito bem . Muito obrigado a todos. Espero que isso tenha sido informativo.
+
+Se você quiser voltar, o workshop está disponível para você fazer online. Eventualmente, terei que remover a chave antrópica e a grande consulta. Vou deixar o do BigQuery no ar por um tempo, mas o antrópico eventualmente terei que remover. Infelizmente, você precisará fornecer sua própria chave, mas fora isso, você não deve ter problemas para acessá-la . Hum, e acho que é tudo o que tenho a dizer . Então, deixarei isso para o meu próximo
+
+convidado. Espero que vocês tenham tempo suficiente para começar a próxima sessão.
+
+[música]

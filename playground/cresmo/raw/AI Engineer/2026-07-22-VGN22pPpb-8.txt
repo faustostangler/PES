@@ -1,0 +1,81 @@
+---
+video_title: "Thinner Agents on a Smarter Substrate: The Ontology-based Semantic Layer — Emil Eifrem, Neo4j"
+video_id: VGN22pPpb-8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VGN22pPpb-8
+video_date: 2026-07-22T17:00:38+00:00
+video_description: |
+  To automate opening a bank account, your agent needs to verify identity, so a team wires it to the DMV and a passport service and ships it. Then the next team builds the next agent and rediscovers, from scratch, where its data lives, across a hundred databases plus Snowflake, Databricks, and S3, whether it can trust the version, and whether it is even allowed to touch it. Every agent repeats that wiring, nothing updates when a source moves without a manual rewire, and no agent is smarter tomorrow than today. Emil Eifrem's fix is to make the agents thin and put the intelligence in a shared substrate underneath.
+  
+  That substrate is an ontology based semantic layer with three parts. A business ontology names the real concepts, customers, accounts, checks, in the words people actually use, not f_name. A technical ontology catalogs every data source and its schema, with a mapping between the two. And execution traces record what each agent tried and whether it worked, so the layer learns bottom up: an agent that succeeded with the DMV lookup last time is more likely to reach for it next time. Discovery, trust, deduplication, and learning stop being every team's problem and become the substrate's.
+  
+  Speaker info:
+  - https://x.com/emileifrem
+  - https://www.linkedin.com/in/emileifrem/
+  
+  Timestamps:
+  0:00 - The account opening agent and its data sources
+  1:53 - The problem: every team rewires data from scratch
+  4:00 - Thin agents on a smarter shared substrate
+  4:37 - Pillar 1: a business facing ontology
+  5:26 - Pillar 2: a technical ontology and the mapping
+  6:19 - Pillar 3: execution traces that make it learn
+  8:01 - Solving discovery, trust, DRY, and learning
+---
+[música] Muito bem
+
+. Na Neo4j, trabalhamos com algumas das maiores empresas do mundo para ajudar a preparar seus dados para agentes de IA. E hoje quero falar com vocês sobre um problema que vimos surgir nos últimos 6 a 9 meses e propor um plano de solução para ele. Então, digamos que trabalhamos em uma grande organização, um grande banco, e queremos escrever um artigo sobre agentes. Digamos que esse agente esteja ajudando a automatizar a abertura de uma conta bancária.
+
+Certo? Como você pode imaginar, isso é um terreno fértil para a automação. Você quer ser capaz de orquestrar esse processo. E vou usar os poderes que me foram concedidos por uma breve apresentação principal para simplificar grosseiramente a aparência desse agente . Eu diria que são duas partes.
+
+A primeira delas é, digamos, a lógica de negócios. Alguma versão de interpretação de intenção e planejamento, ação, e ficamos nesse ciclo. É isso que seu agente faz. E sabemos que, quando um agente age, nem sempre opera com base em dados, mas também sabemos que, para que os agentes sejam bem-sucedidos, uma grande parte disso é dar-lhes acesso aos dados certos no momento certo. Então, o segundo grande grupo é, vamos chamá-lo de, fontes de dados. Preciso identificar, descobrir, e
+
+para resolver meu problema, preciso ter acesso a esses poucos itens, conectá-los e disponibilizá-los ao agente. No exemplo do nosso agente de abertura de conta , talvez possamos imaginar que precisamos ser capazes de validar a identidade. Assim, poderíamos analisar duas fontes de dados para isso: o Departamento de Veículos Motorizados (DMV), o registro do DMV, e talvez algum tipo de serviço de verificação de passaportes. Então, nós conectamos isso ao nosso agente, e funciona. É ótimo. É fantástico.
+
+Ao mesmo tempo, você e outras equipes da sua organização estão criando outros agentes, e conceitualmente, eles são muito parecidos. Isso é ótimo. É fantástico. Funciona. Mas tem alguns problemas.
+
+Então, em primeiro lugar, toda vez que uma equipe precisa construir um agente, ela precisa descobrir do zero onde estão os dados necessários para o funcionamento desse agente , onde eles estão localizados, o que, se você trabalha em uma startup e tem apenas um aplicativo, que fica em um banco de dados Postgres, não é difícil. Os dados estão nesse banco de dados Postgres. Mas, em um ecossistema empresarial, você não tem apenas um banco de dados, você tem centenas de bancos de dados, e provavelmente tem Snowflake e Databricks, e buckets S3, e assim por diante. Você precisa fazer esse trabalho manualmente, do zero, todas as vezes. E então, quando você encontra as fontes de dados, sabe, em uma empresa, há muita duplicação de dados. Então,
+
+você precisa descobrir se esses são os dados corretos. É a versão correta? Posso confiar nisso? Tenho permissão para acessar? E assim por diante.
+
+Isso também viola um dos princípios fundamentais da engenharia de software, o princípio DRY (Don't Repeat Yourself - Não se Repita). Assim, quando algo muda, isso se propaga por todos os seus agentes. Você precisa meio que refazer a fiação de todos eles manualmente o tempo todo, o que funciona, mas dá muito trabalho. E, por fim, não há aprendizado sobre as fontes de dados e como seus agentes operam sobre elas. Portanto, quando seu agente acordar amanhã, ele não será mais inteligente do que era hoje, e certamente não haverá aprendizado entre agentes, porque toda a conexão entre a intenção do negócio e as fontes de dados está codificada em uma combinação de código e instruções.
+
+Então, eu sei o que vocês estão pensando. Arquivos Markdown, habilidades em socorro. Sim e não. Você pode conversar comigo depois para saber a versão completa disso, mas já vimos várias equipes tentando resolver esse problema usando apenas arquivos Markdown. Em resumo, faz parte da solução, mas não é a solução completa.
+
+Mas não acredite em mim, acredite no Swyx. Na semana passada, no podcast Latent Space Spot , eu disse: "Pessoal, vocês precisam aprender sobre bancos de dados. Não dá para entender o código só com arquivos Markdown."
+
+Recentemente, temos resolvido esse problema em grande escala para algumas organizações realmente gigantescas, incluindo um banco global da lista Fortune 20, uma enorme empresa de plataforma tecnológica sediada aqui na região da Baía de São Francisco e uma empresa líder em tecnologia financeira. E o padrão que está emergindo é que, para fazer as coisas em grande escala, precisamos de agentes finos em um substrato compartilhado mais inteligente. Agentes finos em um substrato compartilhado mais inteligente . E como isso se traduz na prática? Isso se baseia em três pilares .
+
+O primeiro pilar é uma ontologia voltada para os negócios . E a palavra ontologia, como eu cresci neste mundo, as pessoas falavam sobre ontologias desde sempre. Mais recentemente, tornou-se algo muito badalado, provavelmente graças à Palantir, mas também à ascensão da IA. E há muita gente que quer tornar as ontologias realmente complexas. Mas os conceitos básicos são, na verdade, muito simples.
+
+Quais são os conceitos-chave em sua organização? No nosso exemplo bancário, clientes, contas, cartões de débito, cheques, transações – como todos esses elementos se relacionam? Mas, muito importante, elas são expressas de uma forma que faça sentido para todos os seres humanos que trabalham no seu universo, certo? Todas as pessoas que trabalham na sua empresa, isso se expressa nesse nome, dessa maneira. Em outras palavras, você não diz se o nome está sublinhado. Não, você tem um cliente e ele
+
+tem um nome. Então, essa é a primeira, uma ontologia voltada para o mundo dos negócios. O segundo pilar é uma ontologia técnica. Estes são todos os metadados de todas as fontes de dados e ativos de dados em seu ecossistema empresarial. Tenho 14 bancos de dados Oracle, 15 bancos de dados Neo4j, Snowflake, Databricks, buckets S3 e tudo mais . Onde eles se sentam? Quais são os
+
+esquemas? Todas essas coisas boas. Você pode construir essa ontologia técnica de três maneiras principais, que podemos discutir mais tarde, embora não nesta apresentação. E então você tem um mapeamento entre os dois. Então, esse cliente que tem um nome, esse nome tem um registro no sistema e lá existe um banco de dados Oracle com uma coluna chamada F_name. O mapeamento entre os dois.
+
+E o terceiro pilar são os sinais de tempo de execução emitidos pelos seus agentes. Quando percorrem esse gráfico e executam o comando, deixam rastros por onde passam. O que eu já tentei? Tive sucesso? Qual foi o resultado? Os registros de execução. Esses
+
+três pilares. Certo, então vamos analisar isso no contexto do nosso agente de abertura de conta bancária . Esta é uma visão simplificada, mas você pode ver este gráfico aqui. Possui uma combinação de conceitos de negócios como cheques, contas, histórico de crédito e coisas do gênero. Este é um agente seguidor de processos ou um agente guiado por processos . Queremos que esse tipo de agente
+
+siga um processo de fato. Também codificamos isso na ontologia, como um processo de negócio. E então, se você observar o nó que está cercado de verde, o nó de verificação de conformidade, nós mudamos para a ontologia técnica e o inserimos no gráfico aqui. Descobrimos e codificamos que, para realizar uma verificação de conformidade, você pode imaginar que precisa resolver a questão de um documento de identidade emitido pelo governo. E então dizemos que, nessa organização específica, existem duas fontes de dados que podem nos ajudar com isso. Trata-se do
+
+registro de veículos automotores e da verificação de passaporte. O que é realmente ótimo. Então, quando nossos agentes chegam aqui e percebem que vou verificar as normas, preciso de um documento de identidade emitido pelo governo. Aqui estão as duas maneiras pelas quais posso resolver isso. Quando executam o comando e tentam isso, deixam o terceiro pilar, os rastros da execução. E são
+
+mais sofisticadas do que o que está neste slide simplificado, mas envolvem coisas como, ok, onde eu estava? O que eu fiz? Qual é o meu contexto? E eu tive sucesso? E, no fim das contas, isso leva a algum tipo de pontuação. E você usa
+
+isso como entrada. É como se eu pensasse: "Ok, eu tive muito sucesso usando a consulta do Detran, por exemplo, então é mais provável que eu escolha uma opção se estiver no contexto certo na minha próxima consulta." Os três pilares da camada semântica baseada em ontologia — uma ontologia de negócios, uma ontologia técnica e os rastros de execução — juntos, resolvem todos os quatro problemas. Agora temos uma maneira muito fácil de descobrir as fontes de dados. Sabemos se eles são confiáveis ​​ou não.
+
+Sabemos disso de cima para baixo, por meio de algum tipo de conhecimento selecionado por humanos, certo? Foi algum tipo de administrador que disse isso. Também sabemos disso de baixo para cima, através dos rastros de execução. Isto é o que realmente funcionou na realidade, na prática. Temos um único local controlado que mapeia a intenção de negócios e os conceitos para essas fontes de dados. Assim, não nos repetimos
+
+. Se algo mudar, isso se propagará por todos os meus agentes, certo? E temos o aprendizado autodirigido. Portanto, meu agente que acordar amanhã será um pouco mais inteligente do que era hoje. E não apenas o aprendizado automático em um agente individual, mas também entre agentes diferentes.
+
+Portanto, estamos passando deste mundo, um mundo de agentes complexos com fontes de dados configuradas manualmente , para este mundo onde temos agentes simples em uma camada semântica mais inteligente, compartilhada e baseada em ontologia. E isso nos permite criar muito mais agentes sem precisar reestruturá-los a cada vez. Agentes finos sobre um substrato compartilhado mais inteligente. Se você achou isso interessante, existe uma página de documentação que fornece mais informações sobre o assunto. Se você vir o código QR aqui, também pode vir conversar conosco no estande.
+
+Temos um estande grande aqui na Expo, P3. Adoramos falar sobre esse tipo de coisa. Mas não só isso, este é um padrão, um padrão muito interessante que estamos vendo ganhar muita força agora no uso de grafos em IA. Mas existem centenas de padrões mais interessantes que combinam grafos e IA. Dez delas fazem parte da trilha de gráficos que está começando agora na sala 2005. E você terá palestras realmente incríveis
+
+de organizações como a Fundação Gates, monday.com, JP Morgan Chase, Berkeley, New York Times, e muitas outras. Então vá dar uma olhada nisso. E, por fim, isso se concentrou principalmente em organizações onde se lida com muitas fontes de dados e muitos agentes. Mas se você é uma startup que está desenvolvendo em Neo4j, eu te adoro. Existe um
+
+programa de incentivo para startups no Neo4j que é fenomenal. Você terá acesso a crédito gratuito, mas, mais importante ainda, criamos uma equipe dedicada de engenharia de soluções que trabalha diariamente com startups, sem cobrar nada, ajudando-as a modelar seus dados no Neo4j, otimizar o desempenho e muito mais. Então, por favor, inscreva-se em nosso programa para startups. Muito obrigado. Aproveite a conferência. Tenham um bom dia, pessoal.

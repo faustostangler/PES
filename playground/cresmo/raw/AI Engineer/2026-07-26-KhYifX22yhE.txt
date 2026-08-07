@@ -1,0 +1,118 @@
+---
+video_title: "The Messy Reality of Scale: Synthetic Data and Pre-Training — Marah Abdin & Robert McHardy, poolside"
+video_id: KhYifX22yhE
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=KhYifX22yhE
+video_date: 2026-07-26T01:00:06+00:00
+video_description: |
+  Good code data runs out, so poolside manufactures more of it, and the hard part is making it teach. Their synthetic pipeline pairs templates with supplementary context and spreads generations across an axis of phrasing, with difficulty tuned so a task is neither trivial nor so hard the model learns nothing from it. Multistage pipelines port existing data into new shapes, swapping character styles or plots and turning single prompts into multi turn chats, while an orchestrator polices every generation and drops the ones that miss.
+  
+  On the training side the team trusts nothing: run two replicas of the same model on the same data and they must return the same number, or the run gets killed. That is how the messy failures surface. Broken GPUs show up as a spiky loss curve, a numerical precision bug in tensor parallel accumulation quietly flattened another until they patched it, and silently corrupted gradients from a race condition were a blind spot nothing caught. The payoff is a 118 billion parameter model built for agentic coding whose early results already edge out GLM 4.5 Air, on a recipe that held as it scaled.
+  
+  Speaker info:
+  Marah Abdin, poolside:
+  - https://x.com/marah_i_abdin
+  - https://www.linkedin.com/in/marah-abdin
+  - https://marahabdin.com
+  
+  Robert McHardy, poolside:
+  - https://x.com/robert_mchardy
+  - https://www.linkedin.com/in/robert-mchardy
+  - https://www.robertmchardy.de
+  
+  Timestamps:
+  0:00 - Introduction: synthetic data and pre-training at poolside
+  1:52 - Why synthetic data
+  3:11 - Limitations and the training budget
+  4:44 - Inside the synthetic data pipeline
+  6:37 - Multistage pipelines and porting data
+  7:43 - Multi turn chats and policing generations
+  9:03 - Pre-training: trust nothing, crash on mismatch
+  10:41 - Failures at scale: broken GPUs
+  11:56 - Numerical precision and corrupted gradients
+  13:15 - A 118B model for agentic coding
+  15:07 - Early results vs GLM 4.5 Air
+---
+Olá a todos. Obrigado por terem vindo à nossa palestra. Meu nome é Mara Abden. Eu sou da Pulsar. Não sei se você está familiarizado com nossos modelos. Bem,
+
+nossa equipe de dados, e hoje meu colega Robert e eu falaremos um pouco sobre alguns dos desafios que temos enfrentado ao escalar nossos modelos por aqui. Bem, especialmente se você não sabe, recentemente mudamos o foco de disponibilizar nossos modelos para o público em geral, em vez de apenas para empresas . Na verdade, lançamos dois modelos sem limite de peso. Eles apareceram no programa Hugging Face algumas semanas atrás. Temos os modelos Laguna M e Laguna XS. Também publicamos um
+
+relatório técnico bastante detalhado, caso tenha interesse. Como vocês podem ver aqui, comparando o Laguna M ponto 1 com o XS ponto 2, isso se deve ao fato de termos trocado bastante coisa entre esses dois modelos. Portanto, o foco principal desta apresentação será justamente como fizemos essa transição do modelo 1 para o modelo 2. E, de fato, continuamos fazendo isso e agora temos uma versão mais recente, e Robert dará uma prévia do modelo que será lançado em breve. OK. Então, falarei especificamente sobre a
+
+parte dos dados sintéticos. Então, fizemos três coisas no lado dos dados para resolver alguns dos problemas que observamos em relação à escala. Uma delas é que implementamos um misturador automático que basicamente nos dá a oportunidade de fazer uma varredura mais barata em clusters de nossos conjuntos de dados antes de prosseguirmos para experimentos mais dispendiosos . E então, melhoramos nossa amostragem de dados da web, repensando-a para obter maior precisão. E a terceira é que dependemos muito mais de dados sintéticos em algumas formas, que vou explicar agora. Certo, então,
+
+antes de entrarmos no que isso significa e o que fizemos, etc., uma coisa é certa: por que usaríamos dados sintéticos? Às vezes, é justo perguntar por que usar dados sintéticos, e a questão é que, pelo menos na Pulsar, não vemos isso como uma forma de substituir dados orgânicos. Não vejo isso acontecendo no mundo atual, pelo menos não da forma como acontece, mas é uma maneira de complementar. E o fato é que os dados orgânicos contêm muita coisa que está basicamente implícita e oculta. Muitas
+
+coisas que poderiam ser ensinadas pelo modelo, ou que às vezes não são apresentadas da maneira mais otimizada . Assim, os dados sintéticos nos fornecem um caminho para extrair algumas dessas características e projetá-las em novos planos. E é assim que conseguimos expor a lógica implícita, o planejamento implícito, a estrutura implícita, e uma maneira de preenchermos lacunas e regularizarmos não apenas a forma como apresentamos os tokens, mas também a forma como ensinamos o modelo. Para o ponto de acesso dois em particular, definimos 13% da mistura. Estas são apenas as fases de pré-treinamento, antes do pós-treinamento. E desde então, temos vindo a
+
+gerar continuamente mais dados em várias direções. Agora temos um conjunto de seis trilhões de tokens que está em constante crescimento. OK. Então, sim, então, o que eu acabei de dizer é que vimos algumas limitações na transição do Luganem para o modelo ponto um e, em seguida, para o modelo ponto dois. Então, uma dessas coisas é que basicamente começamos com os dados, e este não é realmente um problema tão complexo assim.
+
+Começamos de forma muito intuitiva, em menor escala, onde estávamos basicamente focados na qualidade em vez da quantidade, talvez até demais, porque quando começamos a escalar nossos modelos, tivemos que escalar nosso orçamento de treinamento e, com isso, vieram algumas limitações, pois começamos a atingir repetições não ideais em alguns de nossos dados de alta qualidade, o que saturou o modelo um pouco cedo demais. Então, uma das maneiras que encontramos, particularmente para este problema de unicidade de tokens , foi utilizar uma forma muito comum de reformulação de dados sintéticos, que você talvez já tenha ouvido falar em publicações como Beyond Web, por exemplo. Isso se tornou bastante popular ultimamente. Bem, e você pode ver aqui que, sabe, este é um resultado de ablação, então considere os números com cautela, mas o que persiste de forma bastante consistente é a diferença entre usar a cor laranja, que seriam apenas as sementes com repetição, e a cor verde, que seria substituir alguns desses tokens repetidos por tokens de nível superior, como o modo reverso multimodo, ou pelo menos todos eles, ou pelo menos reduzir a repetição. Bem, para reformular especificamente o que fizemos , o que todos estão fazendo com o pipeline genérico multimodo e altamente escalável, também demos um passo além e criamos dois outros pipelines especializados: um para converter dados do Marrocos em código e texto, e outro específico para dados de digitalização.
+
+Como se trata de um pipeline escalável e muito barato, você acaba dependendo bastante da semente, e nós exploramos isso um pouco mais para os documentos-tronco. OK. Então, se você pensar em tudo de forma modular, pode considerar que cada pipeline de dados sintéticos é composto pelos mesmos seis componentes: suas sementes, suas entradas primárias, seus metadados, suas entradas secundárias, seu gerador e função, que pode ser um agente com ferramentas ou, você sabe, com alguns modelos de prompts, e algumas funções suplementares como filtros e validadores, e assim por diante. E na verdade, você pode compor praticamente todos os tipos de pipelines, desde os mais simples até os mais complexos, dessa forma. E, falando nisso, já abordamos um amplo espectro no eixo da complexidade, e você pode pensar nisso como, em uma extremidade, os pipelines baratos e escaláveis que usam modelos menores e conseguem lidar com isso porque são exemplos de frases com grande quantidade de sementes. E, por
+
+outro lado, você tem pipelines mais complexos com um pouco mais de orquestração nos fluxos de trabalho. Isso é reservado para quando estamos construindo algo que vale a pena . Dados educacionais. Mas, na verdade, é assim que não somos bloqueados ou limitados por qualquer modelo de ensino que o professor possa oferecer. E é assim que podemos ser ambiciosos em nossos dados sintéticos. Porque a regra geral é que se a
+
+tarefa for muito difícil para o seu modelo, então o seu modelo começará a falhar . Perder a correção significa perder a diversidade. Então, divida a tarefa em partes menores, simplifique-a. Sim, darei alguns exemplos de tipos de formas, em vez de algo mais concreto sobre como usamos essa modularidade. E uma das formas é a fórmula, que é apenas uma reformulação. Já conversamos sobre
+
+isso. Pipelines e fluxos de trabalho com múltiplas etapas. Basicamente, foi exatamente isso que eu acabei de dizer. Você dá um passo e o divide em vários passos. Você pode agregar o processamento.
+
+Construir essa geração gradualmente. Um exemplo disso seria se você quisesse gerar um romance, por exemplo: você poderia gerar um capítulo de cada vez, mas também poderia, sabe, ir um pouco mais devagar. Primeiro, é preciso gerar o cenário, os nomes dos personagens, os estilos dos personagens, o enredo, sabe, algumas reviravoltas. E então, a partir daí, comece a gerar os capítulos um por um. Você com certeza vai encontrar um romance melhor.
+
+Bem, em terceiro lugar temos a portabilidade entre domínios, que na verdade é como migrar de um modo para outro. Um exemplo seria algo como traduzir um código. Outro exemplo seria algo que fizemos, que foi pegar nossos problemas de matemática e convertê-los em código. O último é o papel de múltiplas rodadas. O que quero dizer com isso é que, em vez de ter uma visão muito singular, linear ou mesmo não linear das coisas, você tem mais uma iteração.
+
+Isso resume praticamente tudo. Um exemplo disso seriam os chats com várias interações, quando dois agentes conversam entre si, ou um pipeline de evolução de tarefas, onde um juiz e um evolutor ficam trocando informações por um certo período de tempo. Hum, e por aí vai. OK. Então, por último, e antes de mais nada, gostaria de mencionar que, devido à modularidade da nossa abordagem, podemos implementar uma infraestrutura bastante configurável. Bem, é assim que
+
+apresentamos o Hive. O Hive é basicamente uma maneira de nós, hum, de construir facilmente gerações onde agora você tem uma fila de agentes que você define. Cada um tem, você sabe, seu prompt, seus parâmetros, seu modelo, etc., entradas e saídas. Mas também permite configurar quando um agente entra na fila, quando sai e com que frequência ele deve entrar. E temos ainda a orquestração
+
+entre os agentes. E com isso, os orquestradores são realmente úteis porque oferecem mais flexibilidade e apresentam uma hierarquia entre os LLMs que estão sendo gerados, o que basicamente define como você os controla. Mas também dê a eles alguma forma de criatividade e altere dinamicamente as instruções para o próximo agente ou escolha qual agente age em seguida, qual agente pulou a vez e assim por diante. E, por último, temos o supervisor, que basicamente é alguém que fiscaliza o orquestrador e tem uma visão mais global . Hum, legal.
+
+Ok, é isso, é tudo por hoje entre mim e a Zendaya. Espero que você tenha aprendido algo interessante. Passo a palavra para Robert para...
+
+coisas de pré-treinamento. Muito bem , obrigada, Mara. Bem , eu vou falar um pouco mais sobre o lado do pré-treinamento em si, em vez de apenas sobre os dados. Gostei que na palestra anterior, o palestrante tenha enfatizado que devemos tratar diferentes combinações de dados de forma holística, considerando também os diferentes estágios de treinamento. Quero reforçar o ponto de que devemos tratar os dados e a implementação da base de código de treinamento, a correção dela e assim por diante, de forma holística. Se você tiver dados
+
+ruins, não conseguirá treinar um bom modelo. Se você tiver uma base de código de treinamento ruim, também não poderá. Bem , eu me concentro especificamente em trabalhos de arquitetura, treinamento distribuído e assim por diante. E a forma como encaramos as coisas na minha equipe é que não confiamos em nada. Há muitas coisas que podem dar errado quando você dimensiona modelos para bilhões de parâmetros, centenas de bilhões de parâmetros, treinando em milhares de GPUs e assim por diante. E quero mostrar a vocês
+
+alguns dos aprendizados que obtivemos com o treinamento do Laguna m.1. E sim, algumas das coisas surpreendentes que acontecem em grande escala. Então, uma coisa que fazemos é usar essas hashtags de réplicas de modelos. Então, basicamente, quando treinamos um modelo, temos várias réplicas do mesmo modelo, certo? Um sistema de dados distribuídos em paralelo. E
+
+sabemos que existe uma invariante, o peso deve ser sempre o mesmo em todas essas réplicas. Isso é algo que você pode verificar, certo? Podemos calcular um hash sobre os pesos e sabemos que ele deve ser sempre o mesmo em todas as réplicas. Então fazemos isso no treinamento e comparamos os resultados periodicamente. Se todos esses hashes forem idênticos, então sabemos que podemos continuar o treinamento.
+
+Se não forem idênticos, sabemos que algo deu muito errado, porque isso nunca deveria acontecer. E nós interrompemos o treinamento. E vou dar-vos agora alguns exemplos de coisas que nunca partilhámos publicamente desta forma. Então, espero que sejam interessantes. Então, o primeiro exemplo aqui de problemas que ocorrem em grande escala são as GPUs defeituosas.
+
+Do lado esquerdo temos duas curvas de perda e, do lado direito, as normas de gradiente correspondentes que observamos durante o treinamento. E você pode ver que essas curvas de perda são bem diferentes, não é? Assim como a roxa, que tem algumas protuberâncias e parece um pouco espetada. As normas do gradiente são enormes para essa execução. E na verdade não há diferença alguma em termos de configuração do modelo, dados de treinamento e implementação do treinamento entre essas execuções. São exatamente
+
+iguais. Em um deles, tivemos o azar de receber uma placa de vídeo defeituosa . Essa GPU defeituosa causou corrupção silenciosa de dados e, portanto, fez com que o treinamento se comportasse da maneira que se comportou. E esse é um daqueles casos que você pode detectar com essas hashtags, porque você sabe que esse cálculo deveria ser o mesmo em todas as réplicas, mas não foi. O que me leva ao próximo exemplo de merda que acontece em grande escala. Nesse
+
+caso, gradientes explosivos. Bem, mais uma vez , estamos analisando duas curvas de perda diferentes e as curvas de norma de gradiente correspondentes. A corrida roxa é o nosso treino inicial para a Laguna M 1. Já estamos um pouco mais avançados no treino, por volta dos 50.000 passos. E você
+
+pode ver que para de convergir, certo? É como se simplesmente se estabilizasse. E a razão para isso era que, durante o treinamento, as ativações cresciam cada vez mais, bem antes da cabeça do modelo linear, o processo de desincorporação. E, bem, temos que realizar algum tipo de acumulação aqui, porque usamos o Tensor Paralelized para o desmembramento. E essa acumulação foi realizada no BF16 por padrão. E devido à
+
+escala crescente que observamos nas ativações, não havia mais precisão numérica suficiente disponível para fazer isso com exatidão. E, portanto, o modelo simplesmente não conseguia mais aprender. E este é também um ponto muito dramático para que isso aconteça, porque a partir daí realmente se propaga para todo o tronco do modelo. Bem, a curva laranja serve basicamente para corrigir isso. Então, pegamos o ponto de controle da curva roxa. Transferimos esse acúmulo
+
+para o FP32 e, a partir daí, o modelo começou a convergir novamente. Bem, a norma do gradiente, como você pode ver, na verdade começou a diminuir. Antes disso, tínhamos uma tendência crescente. E isso também é algo que você só pode observar em grande escala. E isso vai quebrar seu modelo se você não tomar cuidado .
+
+Então, como Mara disse, pegamos todas essas informações sobre dados, sobre números e assim por diante, e as transformamos do M 1 para o XGen-2. Por isso dizemos que é um modelo de nova geração. Bem, isso incluiu aumentar a diversidade, reduzir as repetições de dados, todas essas coisas numéricas que acabei de mencionar, e adicionar mais observabilidade e verificações nesse sentido, além de otimizar o treinamento na arquitetura em geral. E o XGen-2, se você observar, são pesos livres, certo? Então, você pode baixar e usar gratuitamente.
+
+Bem, é um dos modelos mais competitivos considerando seu tamanho e, especificamente, sua capacidade de programação. É nisso que nos concentramos: na programação agética. Bem , estamos bastante satisfeitos com isso. No entanto, pode-se dizer que o modelo com 33 bilhões de parâmetros é bastante pequeno. De qualquer forma, você provavelmente não observaria nenhum problema durante o treinamento.
+
+Então, o que era importante para nós era escalar isso, certo? E é aí que entra o Laguna S. Este modelo ainda não foi lançado ao público, então isto é uma prévia. Como eu disse, tratamos o XS como uma espécie de plataforma de testes , e com o Laguna S ampliamos isso para um modelo com 118 bilhões de parâmetros totais e 8 bilhões de parâmetros ativos. Novamente, treinamos o modelo com 30 trilhões de tokens em 4.000 GPUs. Assim, a
+
+escala foi suficiente não só para testar se todas as melhorias que fizemos nos dados e na arquitetura se mantiveram, mas também se algum desses problemas numéricos voltaria a surgir. E, claro, algo aconteceu. Nesse caso, na verdade não tem nada a ver com escala, então foi apenas uma infelicidade. Nesse caso, tivemos uma condição de corrida porque adicionamos o treinamento FP8 baseado em kernels DeepChem FP8, que também são de código aberto. Notamos isso porque encontramos acessos ilegais à memória, bem como valores NaN nos gradientes, que, após um período de depuração, rastreamos até esses kernels.
+
+Há também um efeito não observável, que você não perceberia se não soubesse que existe um problema. No nosso caso, notamos que cerca de 0,5% do gradiente é corrompido silenciosamente, sendo essencialmente substituído por valores aleatórios. Sim, temos uma correção disponível que já está em um PR (Pull Request). Ainda não foi integrado ao Deep Chem, mas está disponível publicamente através desse código QR, caso alguém tenha interesse. E também é um ponto interessante porque se trata de uma verificação às cegas e um ponto cego nas verificações de hash. Em treinamentos reais, não
+
+há redundância, ou seja, você não tem os mesmos pesos de modelo e os mesmos dados, então nunca é possível verificar se os métodos de propagação para frente e para trás se comportam da mesma maneira em diferentes réplicas do modelo. Portanto, você também nunca poderá verificar se existe uma condição de corrida nesse caso. Hum, isso é algo em que estamos trabalhando agora, para ter essencialmente um verificador de hash que também possa fazer isso, pelo menos como um teste. E eu gostaria de terminar apresentando alguns resultados iniciais deste novo modelo, demonstrando seu desempenho em comparação com alguns modelos de peso livre e também com nossos modelos anteriores. Primeiramente, gostaria de esclarecer que estas são avaliações de modelos básicos , certo? Elas indicam em parte
+
+como será o modelo final, mas também não são perfeitas, certo? Ainda está acontecendo o treinamento pós-treinamento. Nem todas essas características serão traduzidas diretamente para o modelo final. Mas se olharmos especificamente para a parte de codificação das válvulas E, por exemplo, em um banco de código múltiplo E, um banco de código grande, a Laguna S não é apenas mais forte que a Access to Two, que era nosso modelo menor anterior e que teve um desempenho muito bom, mas também mais forte que a M dot One, que é muito maior. E também é muito melhor que o GLM 4.5 air, que, reconhecidamente, é um pouco
+
+mais antigo, e depois temos o 360, que é bem recente, e depois o deep seek V4 flash max, que também é bem recente e consideravelmente maior. Podemos ver que é competitivo em situações de jogo mais difíceis, como no Big Bend, por exemplo. Não atinge os melhores resultados da válvula E em comparação com esses modelos, mas chega bem perto. Bem, também vemos que está bastante próximo no E Valve Plus e, o que é muito importante para nós, tem um desempenho muito bom no Sweep Bench Agent Less Multilingual, que usamos como uma espécie de indicador de desempenho do agente durante o pré-treinamento. E nesse caso, ele tem um desempenho muito melhor do que todos os outros modelos que testamos aqui. Bem, eu também quero salientar
+
+que, claro, não é o modelo mais robusto do mundo, certo? Por exemplo, o benchmark de conhecimento MMLU Pro não nos interessa tanto quanto a codificação, pois nosso objetivo é construir os modelos de codificação agentiva mais robustos. Então, comparando com Nematron e DeepSeek, temos que dizer que eles têm um desempenho muito melhor, e isso se deve principalmente aos dados, certo? É uma lacuna de dados que poderíamos preencher se quiséssemos. Mas acho que a questão é que todas as coisas que descobrimos antes foram incluídas na receita. A receita funcionou, foi
+
+escalável e continuaremos a escalá-la a partir daqui. Portanto, este modelo também estará disponível em algum momento no futuro, relativamente em breve. Mais uma vez, os pesos estão disponíveis gratuitamente, então todos vocês podem baixá-los e usá-los sem custo algum. E com isso, quero agradecer a todos por terem comparecido à nossa palestra. Eu também adicionei um link para nossa página de carreiras e para nossa página no Twitter, caso você queira dar uma olhada . Sim, muito obrigado
+
+.
+
+[música] Ei.

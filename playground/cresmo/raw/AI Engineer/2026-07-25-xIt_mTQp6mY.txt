@@ -1,0 +1,124 @@
+---
+video_title: "Loop Engineering from First Principles — Kyle Mistele, HumanLayer"
+video_id: xIt_mTQp6mY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xIt_mTQp6mY
+video_date: 2026-07-25T20:41:40+00:00
+video_description: |
+  A coding agent will happily hand you a 40,000 line pull request that nobody can review and that quietly does the wrong thing. Kyle Mistele's argument is that the fix is not a better prompt but a better loop, borrowed from control theory: a thermostat senses the error between where a system is and where you want it, emits a control signal, and measures again, over and over. Infrastructure as code already approximates this. The point is to design agent loops the same way, so each iteration makes a small, readable change you can actually verify, instead of one giant diff you have to trust.
+  
+  The working example is migrating a codebase one procedure at a time. A sensor, often just Grep or a structural search, finds the smallest unmigrated piece, a controller picks what to work on next, and an actuator agent makes the change against golden patterns defined by hand, gated by deterministic CI like a single loop iteration in CircleCI. The loop tracks its own PRs in version control, refuses to stack a new change while an earlier one is still open, and keeps improving the code incrementally, even while the team is away.
+  
+  Speaker info:
+  - https://x.com/0xBlacklight
+  - https://www.linkedin.com/in/kyle-mistele
+  - https://blacklight.sh
+  
+  Timestamps:
+  0:00 - Introduction: the 40,000 line PR problem
+  1:55 - Why more code is not the goal
+  3:37 - Is the generated code any good?
+  4:43 - Control loops from control theory
+  5:49 - Infrastructure as code and Ralph loops
+  7:06 - Applying control loops to coding
+  8:35 - Migrating a codebase one procedure at a time
+  10:40 - Tracking the loop in version control
+  12:35 - The actuator agent and golden patterns
+  13:51 - Wiring the loop into CI
+  15:44 - Avoiding stacked PRs and scaling the controller
+---
+[música]
+
+[música]
+
+Olá pessoal, meu nome é Kyle. Os zumbidos
+
+são realmente poderosos, não me interpretem mal, mas muito do que se fala sobre eles é puro exagero e não ajuda em nada, né? Acho que nós, como indústria, temos essa ideia de que podemos enviar um prompt e um loop para um agente de codificação e construir software dessa forma, certo? Talvez estejamos investindo muito tempo em verificadores. Talvez você tenha seis agentes de revisão de código diferentes. Mas, no fim das contas, se fizermos isso, ainda estaremos criando PRs de 40.000 linhas que
+
+ninguém quer ler, certo? E isto não é uma indireta para Jeff Huntley, certo? Este é o Ralph, uma ferramenta inovadora e eficiente que funciona muito bem para certos tipos de problemas. Funciona muito bem se você não estiver desenvolvendo em equipe e funciona muito bem se você não estiver trabalhando em sistemas críticos. Mas a maioria de nós trabalha em equipe e não nos encaixamos nesse padrão. Hoje quero falar
+
+sobre como construir loops que funcionem em bases de código grandes e complexas para sistemas que têm clientes reais, usuários reais, obrigações regulatórias reais, acordos de nível de serviço e tudo mais que nos impede de enviar solicitações de pull request ( PRs) de 40.000 linhas diretamente para produção sem planejamento prévio. Em outras palavras, quero falar sobre como construir loops para o mundo real. Caso você não saiba, esta postagem é, na verdade, de julho. Viralizou em janeiro passado, que foi quando muitos de nós, eu acho, começamos a criar loops. E, claro, mais
+
+recentemente, tenho certeza de que vocês verão esse slide muitas vezes esta semana. Mas Peter Steinberger disse que não deveríamos mais dar dicas aos agentes de codificação, certo? Deveríamos simplesmente projetar loops que acionem nossos agentes. É claro que o Open Claw é notoriamente construído em loops. Os loops constroem o código. Os loops revisam
+
+o código. Eles combinam e liberam o código. Eles encontram e corrigem os erros. Existem até loops para encontrar e corrigir erros, e loops que fazem a fusão dos elementos, certo? São voltas que vão até o final . É o Boris Churnney,
+
+também criador do Claude Code, que disse recentemente que seu trabalho como engenheiro agora se resume a escrever loops para acionar o Claude. E eventualmente talvez nem precisemos mais de loops, certo? Teremos enxames de agentes projetando loops para solicitar que outros agentes construam enxames de loops e, sei lá, em algum lugar estaremos escrevendo código de produção, eu presumo. Na verdade, todos os nossos loops que estamos construindo geram tanto código que é impossível lermos tudo, certo? Então, é melhor não lermos nada, certo? Estamos investindo em
+
+verificação e revisão de código, mas todo esse código é lido... Essa foi a tese de uma conferência que aconteceu aqui na cidade no mês passado. Portanto, muitas pessoas inteligentes na Frontier Labs acreditam que este é o futuro do desenvolvimento de software. E se
+
+você fizer isso, estará se movendo 10 vezes mais rápido e todos os outros ficarão para trás . Por enquanto, não está claro o quão bem isso funciona. Demorou seis meses para corrigir o problema de oscilação do terminal do Cloud Code. A equipe de código aberto escreveu um renderizador em uma fração desse tempo. E a garra aberta, claro, também é notoriamente problemática em termos de estabilidade.
+
+O que fica abundantemente claro, no entanto, é que essa coisa toda é realmente cara se você não trabalha em um laboratório de ponta e não tem um orçamento ilimitado para tokens. E todo esse código que estamos escrevendo é realmente muito caro, não é? Matt PCO falou sobre isso recentemente. Bem, código ruim é muito mais caro na era dos agentes do que jamais foi em qualquer outro momento do passado. Então, hoje quero falar sobre o que eu acho que funciona no mundo real e o que começamos a fazer na camada humana, que, para ser claro, ainda é construir loops, certo? Eu acho que loops são
+
+superpoderosos, mas podemos projetar loops e ainda ler o código. Na verdade, podemos projetar loops que tornam o código mais fácil de ler, porque os loops melhoram a resolução de problemas complexos em bases de código complexas com loops, e podemos construir nossa fábrica de software incrementalmente. Mas, para fazer isso, será necessário um trabalho de engenharia de verdade. Então, vamos falar sobre teoria de controle. A teoria de controle trata de como conduzir um sistema dinâmico, que seria sua base de código, em direção a um estado final estável ou ideal desejado . Certo? Você possui um sensor que
+
+mede o estado atual do mundo. Você já definiu seu ponto de partida, certo? O estado desejado do mundo. E a diferença entre essas duas coisas é o seu erro de medição. Você tem um controlador que lê esse erro medido e o transforma em um sinal de controle sobre uma mudança incremental a ser aplicada ao sistema. Temos um atuador que
+
+aplica essa mudança ao sistema, que está sofrendo perturbações nesse ínterim, e então remexemos, recalculamos o erro medido e voltamos ao ponto de partida. Isso parece muito complicado, e pode ser mesmo. Na verdade, tenho um irmão gêmeo que é engenheiro aeroespacial. É assim que eles impedem que os caças caiam do céu. Mas, provavelmente é um pouco mais simples do que a maioria de vocês pensa. Alguém tem um desses?
+
+Um termostato usa um circuito de controle, certo? Para os nossos amigos europeus na plateia, isso faz parte de algo que temos aqui nos Estados Unidos, e se chama ar-condicionado. E, provavelmente, a maioria de nós usa loops de controle diariamente, certo? Os sistemas de escalonamento automático do Kubernetes são construídos com base em loops de controle. O código da Infrastructure utiliza um padrão de loop de controle com estado desejado, estado atual e mudança iterativa . O autovacuum do PostgreSQL no
+
+DOM virtual do React usa ou se aproxima de loops de controle. Os circuitos de controle são ideais quando temos um sistema que queremos modificar, um problema que podemos medir e uma maneira de obter feedback sobre o resultado dessa mudança. Como sempre se ensinou aos bons engenheiros de software. Os laços de controle modificam um sistema de forma incremental, em vez de tentar chegar ao estado final imediatamente e correr o risco de destruir tudo, certo? Elas nos ajudam a evitar o excesso de direção e a desestabilização do sistema, minimizando os riscos.
+
+Portanto, os laços de controle são o oposto do que eu vou chamar de laço cego de Ralph . É assim que evitamos PRs que se parecem com isso, porque ninguém quer revisar isso, certo? O que não significa que todos os loops de Ralph sejam loops cegos. Os melhores Ralphs estão, na verdade, aplicando a teoria de controle. Sei que Jeff Huntley está perambulando por algum lugar no corredor . Se você for falar com ele, ele
+
+vai te dizer a mesma coisa, certo? O Ralph é uma ferramenta de ensino e acho que alguns de nós o interpretamos de forma um pouco literal demais, mas é assim que deveríamos ter construído loops desde sempre. O outro problema com os loops Ralph é que eles não são incrementais, certo? São apenas loops de bash. Então, precisamos construir loops de controle genético. Para isso,
+
+começamos definindo um ponto de ajuste, que é o estado final desejado do nosso código em relação a alguma propriedade dele, e adicionamos um sensor. Há muitas maneiras de construir um sensor: pode ser estritamente determinístico (suas regras do ESLint, suas GPs, seu trabalho com o pacote) ou pode ser não determinístico. Você pode ter um agente, uma habilidade e várias regras de linguagem natural. E você também poderia ter apenas um pipeline, como uma combinação dos dois. Então, como construímos uma genética?
+
+Opa, lá vamos nós. Bem, isso tudo é teoria, certo? Na prática, e como estamos usando agentes, podemos confundir um pouco as linhas que separam os componentes do sistema. Então, o fato de Aiden comprar o React Doctor, por exemplo, é fantástico. É uma ótima maneira de aproveitar todos os recursos do React que o Claude inseriu sorrateiramente no seu código semana passada, mas é um sensor e controlador híbrido. Ele informa quais
+
+são todos os problemas com seu código React e, aliás, quais são os três principais problemas que você deve corrigir e como corrigi-los. Da mesma forma, nosso controlador e atuador podem, na verdade, ser apenas um único agente decidindo sobre uma mudança incremental a ser feita e, em seguida, aplicando-a na mesma janela de contexto. Mas quero dar um zoom no controlador, porque sem um, ou sem um bem ajustado, podemos fazer uma mudança muito grande de uma só vez, ou podemos fazer uma mudança completamente errada. E se você colocar isso em um loop, você se complica muito rapidamente. Então podemos usar loops de controle para eliminar padrões ruins e limpar nosso código, mas na verdade podemos usá-los para todo tipo de coisa, certo? Poderíamos
+
+garantir que nossa API esteja em conformidade com a especificação de API aberta de outra pessoa. Podemos garantir que nosso servidor MCP esteja em conformidade com qualquer versão da especificação MCP que estejamos utilizando no momento. Não verifiquei. Você pode espelhar um projeto de Python para TypeScript ou vice-versa. Você poderia até mesmo manter seu fork baseado em V do Nex.js em relação à versão original. As
+
+perguntas principais são: podemos encontrar algo que possamos medir? Podemos aplicar as alterações gradualmente? E podemos receber feedback sobre a qualidade dessas alterações? Para ilustrar isso, vou descrever um circuito de controle que usamos internamente na camada humana. Bem, no que diz respeito ao nosso loop, estamos migrando nossa API RPC gradualmente para que ela entre em vigor. Adotamos essa prática em
+
+parte do nosso código sujeito a conflitos de raça. Gostamos, por isso estamos adotando em todo o restante do nosso código. Se você nunca viu código de efeitos antes, o código à direita é exatamente o tipo de procedimento trivial à esquerda, reescrito em termos de efeitos. A sintaxe é realmente estranha. Somos psicopatas. Nós gostamos muito.
+
+Não é para todos. Não tem problema. Bem, isto não é uma discussão sobre efeitos, então vamos continuar. O controle remoto não está funcionando. Legal. Então,
+
+primeiro passo: precisamos construir nosso sensor para encontrar procedimentos não migrados. Podemos usar um agente para fazer isso ou podemos usar o GP ou o RIP Grep, mas em vez disso, vamos usar o Grep porque ele é realmente poderoso. É uma ótima ferramenta para se ter na sua caixa de ferramentas para construir loops. É independente de idioma. Isso está fora de sintonia com sua configuração do TypeScript ou regras do ESLint, que, se você é um desenvolvedor TypeScript, já deve ter visto o Claude desativar com comentários embutidos. Então, podemos escrever uma
+
+regra simples que encontre procedimentos não migrados com base no padrão acima e, com o tempo, podemos até adicionar mais regras que descrevam outros padrões dos quais queremos nos livrar, com caminhos de inclusão e exclusão granulares. Se você tiver um repositório monolítico multilíngue como o nosso, ele funcionará para qualquer idioma que você possa imaginar. E podemos simplesmente analisar nossa base de código e ela produzirá uma longa lista de violações. É muito tempo, na verdade, você receberá cerca de 50 chaves por violação. Então, vamos filtrar e reduzir para quatro e ordenar deterministicamente. Por que estamos
+
+fazendo isso? No início, eu disse que isso seria prático. Então, vamos sair do nosso paradigma de loop de controle por um segundo, porque antes de começarmos a migrar os procedimentos incrementalmente, um de cada vez, precisamos garantir que todos os novos procedimentos estejam funcionando corretamente, certo? Então, vamos executar uma varredura completa uma única vez no servidor principal, classificar todas as violações de forma determinística e rastreá-las em nosso sistema de controle de versão. E então, em cada novo PR, podemos ver se o branch adicionou algum procedimento não migrado . Certo? Este é, portanto, o nosso
+
+circuito de controle e o nosso sistema está sofrendo perturbações. Neste caso, todos os nossos colegas de equipe estão enviando slots na nuvem, e é assim que garantimos que eles não estejam desfazendo o trabalho do nosso loop. Isso não se relaciona diretamente a uma parte do circuito de controle, mas podemos, de certa forma, forçar a vista e chamar isso de amortecedor de perturbações. Agora que estancamos o sangramento, podemos finalmente projetar nosso controlador. Para um controlador simples, poderíamos simplesmente escolher deterministicamente a primeira violação da lista. Você pode usar
+
+bash e jq. Ou poderíamos ser um pouco mais espertos e usar o grep para encontrar o menor procedimento não migrado e sempre escolher o menor para reduzir o risco. Bem, poderíamos deixar um agente tomar a decisão, se quiséssemos. Não acho que você deva enviar um agente para realizar o trabalho de um código determinístico, mas certamente pode fazê-lo. Na verdade, dependendo da complexidade, poderíamos fazer com que o agente escolhesse o procedimento de migração e o executasse simultaneamente, como acabamos de discutir. Mas podemos tornar isso ainda mais
+
+poderoso, certo? Porque não estamos migrando para o efeito apenas por migrar. Fazemos isso porque é útil para lidar com erros e para nos ajudar a instrumentar melhor nosso código. Então, se quisermos ser realmente espertos, podemos analisar nossa telemetria e descobrir quais procedimentos têm mais erros, menos instrumentação ou alguma lacuna em nosso APM, certo? E quando enviamos um sinal de controle para o nosso agente atuador, podemos incluir não apenas o procedimento de migração, mas também todos os dados sobre os aspectos que estamos tentando corrigir com essa migração, para que o agente atuador possa realmente aprimorar o código em vez de apenas realizar uma migração individual.
+
+Ah, cara, aí está. O próximo passo é construir nosso atuador. Nosso atuador é simplesmente um agente mais uma habilidade. Bem, traga o agente de codificação CLI de sua preferência. Você deve dedicar bastante tempo ao desenvolvimento dessa habilidade. Nem tudo
+
+isso precisa ser revelado de imediato. Você vai querer fazer ajustes ao longo do tempo com base no que funciona. Na camada humana, gostamos de construir manualmente o que chamamos de padrões ideais antes de liberar o agente. Esses são como exemplos idiomáticos escritos à mão para o agente seguir, pois são apenas replicadores de padrões; caso contrário, você obteria o que está disponível na documentação ou o que o agente sabe da internet. Assim, enviamos a habilidade, juntamente com o sinal de controle, para o nosso agente atuador. E a habilidade, claro, deve
+
+incluir um modelo de resposta. E o agente vai trabalhar, trabalhar e trabalhar até chegar a uma resposta final. Em seguida, vamos confirmar e enviar as alterações de forma determinística e criar um PR usando a mensagem final como descrição do PR. Agora tudo o que precisamos fazer é executar o loop, certo? Bem, minha recomendação é usar o GitHub Actions, o GitLab, o CircleCI ou qualquer outra ferramenta que você esteja usando, porque ela tem acesso ao seu código. Ele tem acesso aos seus segredos e
+
+possui excelentes recursos de despacho e agendamento . Certo? Não precisamos de um novo cluster para isso. Assim, podemos escrever um fluxo de trabalho que execute uma única iteração do loop sense control actuate e crie um PR, e então podemos agendar isso para ser executado uma vez por dia. E todas as manhãs, ao entrarmos no escritório, nos deparamos com uma pequena ação de relações públicas incremental de baixo risco.
+
+E quando fizemos isso pela primeira vez, foi realmente frustrante, então desativamos o loop porque tínhamos que atualizar a habilidade constantemente. Tínhamos que ficar constantemente verificando a branch, alterando a skill, modificando o código, fazendo commits e pushes. E o nosso circuito tinha, na verdade, um atrito muito alto, certo? Mas existe uma maneira melhor de fazer isso, onde podemos inserir um humano no processo de forma muito simples e com pouco atrito para redirecionar o fluxo quando algo der errado. E a maneira de fazer isso é simplesmente criar um arquivo de feedback que seja controlado por versão, assim como um arquivo Markdown, certo? Podemos
+
+carregá-lo deterministicamente no contexto de nossos agentes atuadores sempre que ele for executado após a execução do controlador. Em seguida, podemos adicionar um rótulo ao PR. Certo? Cada fluxo de trabalho precisa ser capaz de identificar os PRs que criou, visto que pode haver vários loops diferentes em execução, e queremos que os fluxos de trabalho respondam apenas ao feedback dos comentários em seus PRs. E vamos adicionar um gatilho de comentário a cada fluxo de trabalho do loop para que, quando um usuário deixar um comentário no Slashiterate no PR, o fluxo de trabalho do loop o detecte. Ele vai
+
+carregar deterministicamente todo o contexto do PR, o diff, os comentários, os comentários da revisão e a descrição no contexto do agente, juntamente com a skill, e vai instruir o agente a corrigir o código, mas também a atualizar o arquivo de feedback, certo? Parece mais ou menos com isso. E a vantagem de fazer dessa forma é que agora o arquivo de feedback com as instruções é rastreado no seu sistema de controle de versão. Você pode ver como isso mudou ao longo do tempo. Você pode reverter a alteração, se necessário.
+
+Então, a próxima coisa que faremos é adicionar controle de fluxo. Porque o outro problema que tínhamos quando fazíamos isso era que, se estivéssemos na sede de um cliente por uma semana, ou viajando, ou passássemos seis dias trabalhando em slides em vez de escrever código, os PRs de todos os nossos loops simplesmente se acumulavam. Eles duplicariam o trabalho. Eles entrariam em conflito e nós não conseguiríamos resolver a situação. E assim como o funcionamento dos loops é importante, não é tão importante assim. E aí ficamos com
+
+toda essa tralha sem importância para lidar. Na verdade, esse é um problema muito fácil de resolver, porque cada loop e seu fluxo de trabalho têm um rótulo que é anexado aos PRs (Pull Requests). Quando o fluxo de trabalho é executado pela primeira vez, antes de verificarmos o código, instalarmos as dependências e executarmos nossas etapas de `sense actu` ou ` sense control actuate`, podemos verificar se o último PR que criamos ou qualquer PR com o rótulo do loop está aberto. E se for esse o caso, simplesmente fechamos , certo? Porque isso significa que a última vez que um humano revisou o código desse loop foi antes da execução do loop, certo? Nenhum ser humano revisou o último
+
+resultado. Portanto, não há motivo para acumular ainda mais trabalho para os humanos revisarem. Dessa forma, temos exatamente um PR (Pull Request) aberto por loop, no máximo. Sem empilhamento, sem duplicação. Espero que não haja conflitos. E,
+
+claro, quando você se sentir confiante com o loop, vamos querer acelerá-lo, certo? Tenho 150 procedimentos RPC para migrar. Se eu fizer um de cada vez, vai levar seis meses, o que é muito mais tempo do que eu quero esperar. Felizmente, existem muitas maneiras de aumentar a velocidade do nosso loop. Bem, poderíamos fazer com que nosso controlador escolhesse três procedimentos para migrar em vez de um de cada vez, ou cinco. Bem, poderíamos fazer com que nosso
+
+controlador escolhesse três ou cinco e, em seguida, implementasse cada uma delas em uma fase separada, o que seria mais barato e mais confiável, já que cada migração teria sua própria janela de contexto. Ou poderíamos simplesmente executar o fluxo de trabalho quatro vezes e atribuir um PR (Pull Request) a cada uma das quatro pessoas da equipe. Então vamos juntar tudo . Criamos um circuito de controle que aprimora nosso código de forma incremental e, de fato, estamos lendo o código. Possui controle de fluxo adaptativo, então não criamos um monte de loops ou um monte de trabalho que ninguém quer revisar. E
+
+podemos redirecioná-lo em movimento de uma forma com baixíssimo atrito. Se você quiser experimentar isso por si mesmo, nós desenvolvemos uma habilidade. Por favor, experimente . Meu nome de usuário do Twitter está ali embaixo . Por favor, compartilhe.
+
+Adoraria ver o que você vai construir. E se isso te empolgou, saiba que na Human Layer estamos contratando aqui em São Francisco. E se você trabalha com sistemas de missão crítica e quer descobrir como tirar o máximo proveito da IA, adoraríamos conversar. Muito obrigado. [aplausos]
+
+[música]

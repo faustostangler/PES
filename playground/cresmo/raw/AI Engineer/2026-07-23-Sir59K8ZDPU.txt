@@ -1,0 +1,146 @@
+---
+video_title: "Why Agentic Systems Need Ontologies — Frank Coyle, UC Berkeley"
+video_id: Sir59K8ZDPU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Sir59K8ZDPU
+video_date: 2026-07-23T01:00:07+00:00
+video_description: |
+  A second refund on the same order. A payout sent to the support desk instead of the buyer. An order status of "probably shipped." These are the kinds of mistakes a probabilistic agent makes and a paragraph of instructions cannot reliably stop. Frank Coyle argues that most agent failures, from brittle tools to fragile handoffs, are symptoms of one missing layer: a formal ontology sitting outside the model as logical guardrails. LLMs reason probabilistically over domains they only half understand, and no amount of prompt engineering closes that gap.
+  
+  His fix is neurosymbolic: probabilistic reasoning inside, logic outside. An ontology is just typed entities, relationships, and constraints, expressed with old and boring standards like RDFS and OWL, that let you say a payment status must be one of three values, that a customer and a support rep are different things, that an order can only be refunded once. Wrap a Claude tool use loop with a validator: when the model proposes a tool call, check its types with Pydantic and its results against the ontology, and only then let it act. The catches that are painful to write in English become a few lines of logic.
+  
+  Speaker info:
+  - https://x.com/coyle_frankp
+  - https://www.linkedin.com/in/frank-coyle/
+  - https://www.frank-coyle.ai/
+  
+  Timestamps:
+  0:00 - Intro and an educator's philosophy
+  2:21 - Two lineages: agents and ontologies
+  4:04 - Neurosymbolic AI: guardrails around a probabilistic model
+  5:23 - What an ontology actually is
+  6:14 - Building one, and the expert systems era
+  7:55 - Reusing existing taxonomies
+  9:12 - RDFS and OWL: inference and constraints
+  12:12 - Agents, loops, and how they break
+  14:22 - A Claude tool use loop with an ontology validator
+  17:47 - Pydantic at the door, ontology at the ledger
+  18:52 - The errors an ontology catches that English cannot
+---
+[música]
+
+Hum, ok, vamos começar por aqui. Então, meu nome é Frank Coyle. Bem, eu sou educadora e atualmente dou aulas em Berkeley. Eu trabalho com ciência da computação há uns 30, 35 anos. E hum [bufa] eu sou introdutório e agora é um momento meio crítico para os pobres estudantes de ciência da computação. Costumava
+
+ser a única opção disponível. Ter um diploma garantia um emprego, mas agora, graças à inteligência artificial, isso não acontece mais. Mas, por outro lado, há 5.000 pessoas aqui. Então, a IA e os agentes parecem ser o caminho a seguir.
+
+Portanto, a questão é como podemos tirar proveito desse novo universo para o qual estamos nos movendo rapidamente. Então, quero falar sobre como agentes e ontologias, em termos gerais, se encaixarão . Mas antes de você fazer isso, eu queria...
+
+queria compartilhar com você minha filosofia educacional. E isto vem [limpa a garganta] de alguém chamada Irmã Corita Kent. E foi popularizada por John Cage, que é um músico de vanguarda. E você precisa pensar um pouco sobre isso. Nada é um erro.
+
+Não há vitória. Não há como falhar. Só existe a opção de fabricar. E, cada vez mais hoje em dia, é isso que importa. Mãos à obra e faça coisas, é assim que você vai aprender, não necessariamente lendo.
+
+Também sou um grande fã de escrever. No início da minha carreira, trabalhei na área de neurociência. Estou meio que voltando a me envolver com isso agora que a IA Agente está trazendo de volta a ciência cognitiva. Mas use seus sentidos. Pegue um caderno. Pegue
+
+uma caneta e um lápis. Desenhe figuras, escreva coisas. Simplesmente não digite, porque quando você digita, seu cérebro está pensando nas letras do teclado. Quando você está escrevendo em um livro, todo o seu cérebro, todos os seus sistemas sensoriais são ativados e você aprende mais rápido dessa forma. OK.
+
+Vamos à nossa conversa. Agentes e ontologia. Portanto, existem duas linhagens aqui e eu quero falar sobre ambas, dando a vocês um pouco de contexto filosófico. Agentes, quando é que começamos a falar de agentes? Bem, isso remonta aos primórdios da IA. Pessoas como
+
+John McCarthy, uh uh uh uh uh Selfridge, Marvin Minsky, Society of Mind. As pessoas começaram a pensar no fato de que essa nova tecnologia da computação nos levaria a algum tipo de inteligência artificial, um termo que surgiu em 1956, quando todos esses personagens se reuniram e tentaram descobrir para onde o futuro estava caminhando. OK? E o conceito de agente finalmente evoluiu, seres que percebem, decidem e então agem, e é isso que estamos vendo agora. E quanto às ontologias? Bem,
+
+acontece que as ontologias não são assim tão novas. OK? Na verdade, foi Aristóteles quem primeiro apresentou o conceito de que precisamos de uma filosofia do ser. Nossa, meio pesado. Mas surgiu a ideia de categorias do ser, e isso se relaciona com o que as pessoas estão fazendo agora com bancos de dados de grafos e representação do conhecimento. E há mais algumas
+
+pessoas que meio que formalizaram isso. Von Quine era um filósofo, e depois veio esse cara, Gruber, em 1993. E acho que isso captura o que o conhecimento e a tecnologia gráfica realmente representam. Trata-se de uma especificação formal de uma conceitualização compartilhada. E é isso que queremos oferecer aos nossos agentes. Queremos transmitir-lhes o nosso conceito, a
+
+nossa conceptualização do universo, o nosso universo, os nossos domínios. OK? E agora, o que está acontecendo é que você está obtendo a convergência de algo que é probabilístico, os agentes, os LLMs, com as representações mais formais que você tem com as ontologias. Portanto, este termo está sendo usado com frequência, você já deve ter ouvido falar muito dele: IA neurosimbólica. Parece algo sofisticado, mas na verdade são redes neurais integradas à IA simbólica, categoria na qual se enquadram os sistemas baseados em regras , assim como os grafos de conhecimento que estamos construindo. Assim, o que
+
+eu gostaria de argumentar é que a IA neurosimbólica representa uma forma de manter o LLM dentro de seus limites, porque os LLMs são, por natureza, probabilísticos. As pessoas se preocupam com alucinações, mas essa é a característica do filme. Essa é, na verdade, uma característica de grandes modelos de linguagem. É quem somos. De certa forma, temos alucinações.
+
+Imaginamos coisas que podem não existir e, em seguida, as transformamos em realidade. E é isso que os grandes modelos de linguagem fazem, de certa forma. OK? Então, vamos dar uma breve olhada no que são ontologias. Não são complicados. Basicamente, são uma
+
+representação de entidades e seus relacionamentos com outras entidades. E essas entidades possuem propriedades. E todo esse conceito de bancos de dados de grafos surgiu quando as pessoas começaram a perceber que os bancos de dados relacionais, que organizavam os dados em tabelas, eram muito restritivos. Você queria adicionar algo novo a um banco de dados relacional, então você precisa adicionar uma nova coluna. Cara, aí você tem que refazer toda a estrutura.
+
+Com um banco de dados gráfico, você pode simplesmente anexar outro item. Você pode simplesmente anexar uma propriedade. Você pode estabelecer um relacionamento. OK? Então, a pergunta que surge frequentemente é: "Ok, eu entendo". Preciso de
+
+uma ontologia para representar formalmente o que minha organização faz. Como faço isso? OK? Existem algumas maneiras de abordar isso. Você pode adotar uma abordagem de cima para baixo ou uma abordagem de baixo para cima. A
+
+abordagem de cima para baixo consiste em reunir os especialistas para que eles se sentem e analisem o domínio, definindo as entidades. O que temos? Temos ordens de compra, temos clientes, temos representantes de clientes e vamos estruturá-los. Eles têm propriedades. Essas são as relações.
+
+Certo, essa é uma maneira. E isso reproduz o que fazíamos na década de 80, quando eu trabalhava com sistemas especialistas. Todo mundo achava que sistemas especialistas eram o caminho para a IA. A inteligência artificial simbólica era o caminho a seguir. As empresas prosperaram e milhões de dólares foram gastos.
+
+Os japoneses criaram esse projeto de mundo futuro no final dos anos 80. Nos Estados Unidos, meu filho estava estudando japonês na escola por causa desses sistemas especializados. Mas eles não conseguiam escalar. Eles não conseguiram escalar, e então entramos numa espécie de inverno da IA. De onde surgiram as redes neurais ? As redes neurais foram apresentadas
+
+na década de 60, mas não conseguiam ser escaladas porque não tínhamos a Nvidia, que estava ocupada fabricando GPUs para tornar os jogos de vídeo fantásticos e realistas, e então alguém disse: vamos passar isso para as redes neurais, e é claro, é por isso que estamos aqui agora. Portanto, outra forma de perceber que as pessoas estão adicionando ou criando ontologias é de baixo para cima. Por exemplo, reações dos clientes. Em que atividades os clientes estão envolvidos? Espere.
+
+Você conhece essas entidades, esses relacionamentos? Vamos adicionar isso à nossa ontologia. Vamos adicionar essas informações ao gráfico. Agora, como auxílio, é útil estar ciente de que existem taxonomias já estabelecidas nas quais as pessoas vêm trabalhando nos últimos 15 a 20 anos. Ferramentas como o schema.org, que possui um conjunto completo
+
+de termos e relações, para que você não precise reinventar a roda. Na verdade, é vantajoso para você usar algumas dessas ontologias. FOAF, Amigo de um Amigo, para modelagem de redes sociais. O Dublin Core foi uma das primeiras tentativas de criar termos para descrever artigos de pesquisa, livros e assim por diante. Então, há toda uma série de coisas. Na verdade, a Wikipédia é baseada em
+
+uma ontologia chamada DBpedia. Portanto, quando você faz uma pesquisa na Wikipédia, ela está consultando seu enorme banco de dados gráfico. Então, essas coisas já estavam presentes, influenciando muito do que já fazemos. Então, aproveite essas coisas que já existem. OK. E agora, o que você faz depois de construir
+
+sua ontologia? Ok, e daí? Eu sei o que são essas entidades, sei quais são seus relacionamentos, elas têm propriedades. Como posso fazer alguma coisa com eles? Bem, existem outras tecnologias de aprimoramento, tecnologias auxiliares.
+
+Coisas que chamamos de RDFS, que é uma tecnologia, e OWL, sobre a qual falarei mais adiante. Então, esses elementos ficam posicionados ao lado do seu gráfico. Então, não vou falar sobre ontologia, pois é uma palavra grande e muitas vezes confusa, sendo usada de diversas maneiras, mas pense nela como uma estrutura de dados em forma de grafo. OK? Você tem as entidades e os relacionamentos, mas deseja exercer algum controle sobre eles. Ou você quer
+
+ser capaz de fazer inferências a partir deles. Por exemplo, existe um termo nessa tecnologia chamado RDFS. Domínio e imagem. Então, se eu disser que ensina, isso tem um domínio de professor. Isso significa que, se eu disser no meu texto que Bob ensina Scooter, posso inferir que Bob é um professor.
+
+E se eu disser que todos os professores são pessoas, então essa afirmação me permite saber que, se eu disser que Bob ensina Scooter, agora eu sei que Bob é uma pessoa, Bob é um professor. E o Scooter? Se eu disser que "teases" tem um alcance de "student", isso significa o lado direito do verbo; então, Scooter é um aluno. E agora tenho essa informação adicional no meu sistema. OWL também possui uma série de propriedades que permitem fazer algumas inferências. Portanto, uma
+
+propriedade transitiva diz: se Sue é uma ancestral, então "ancestral" é uma propriedade transitiva. Se Sue é ancestral de Mary e Mary é ancestral de Ann, então Sue é ancestral de Ann. OK? Inicialmente, isso não estava incluído no meu sistema gráfico, mas, ao aplicar essas propriedades funcionais, posso adicionar e ampliar o sistema com esses dados extras. Isso é muito útil.
+
+Existem também algumas propriedades chamadas propriedades funcionais, que significam apenas uma. Portanto, ter pai é uma propriedade funcional. Você só pode ter um pai. Você só pode ter uma mãe. Essa é uma propriedade funcional.
+
+OK? Portanto, isso pode servir como uma restrição. Então, quando você diz que Bob é meu, Bob é o pai de Jim , BB é o pai de Jim, bem, a inferência aqui é que Bob e BB são duas maneiras de representar o mesmo indivíduo, porque essa é uma propriedade funcional. Só pode ter um. Então, essas derivações e restrições que não estão no gráfico, elas ficam meio que à margem e podem ajudar, como veremos, como vou propor, quando lidamos com agentes, mostrando como elas podem nos auxiliar. E
+
+quanto aos agentes? Agora todo mundo está falando sobre agentes e todo mundo está falando sobre loops. Laços, laços e mais laços por toda parte. Os loops existem há muito tempo. Na década de 60, as pessoas debatiam sobre qual linguagem de programação era a melhor.
+
+Fortran ou COBOL? Não, o meu é melhor. Não, o meu é melhor. Ah, você não sabe de nada. Você não sabe do que está falando.
+
+Bohm e Jacopini, em 1966, afirmaram: "Não há diferença real entre linguagens de programação se elas possuírem três aspectos: Sequência. Posso colocar a instrução A, a instrução B e a instrução C. Ótimo. Tenho condicionais. Posso usar 'se então'.
+
+E, por fim, tenho um laço de repetição. Se eu tiver um laço de repetição, se eu tiver iteração, se eu combinar esses três elementos, a linguagem será o que chamamos de Turing completa. Ela pode computar qualquer coisa que possa ser computada por dispositivos computacionais, graças ao trabalho de Alan Turing. Certo? E agora estamos vendo isso em IA com agentes.
+
+Os agentes agora possuem laços de repetição. Os laços de repetição nos fornecem a última peça da equação, criando uma tecnologia capaz de fazer tudo o que os dispositivos computacionais podem fazer. O perigo dos laços de repetição, porém, é que eles podem quebrar. Se você é um programador, sabe que já se deparou com um laço infinito. Nada bom.
+
+Os laços de repetição podem se desviar à medida que os agentes começam a se comunicar entre si, e as coisas saem completamente do controle. E os laços podem..." Custa dinheiro. A
+
+contagem de tokens aumenta à medida que os loops continuam. Então, você precisa ter cuidado, ok? Mas, de certa forma, estamos revisitando alguns dos primeiros conceitos da IA ​​simbólica. Eu diria que estamos voltando ao mundo dos sistemas especialistas, que é a parte simbólica de tudo isso . Então, quero mostrar um pequeno exemplo usando o agente Claude. Aqui está um pequeno código. Não se
+
+assuste, eu sei que ninguém mais usa Python, mas você precisa observar o que o agente está fornecendo e precisa interagir e manipular os dados. Aqui está um loop while true, um loop clássico do Python. Ok? E então, temos um cliente. Na verdade, o primeiro pequeno trecho que você vê, r e s p, a resposta, é apenas um código onde temos um modelo, um prompt (que faz parte das mensagens) e uma ferramenta, e estamos pedindo ao LLM para resolver este problema usando uma ferramenta. Agora,
+
+aqui está o problema. Os LLMs não podem fazer nada. Tudo o que eles podem fazer é nos dar a próxima palavra com alta probabilidade. Incrivelmente, agora podemos ter essas conversas com eles, mas eles não podem fazer nada. Mas podemos fornecer uma ferramenta, podemos dar a eles o que queremos e perguntar: "Como você acha que esta ferramenta pode nos ajudar a obter o que queremos?" E então o LLM
+
+definirá os parâmetros, retornará e dirá: "Ok, aqui está minha resposta." Não consigo executar esta ferramenta, mas sei quais são os parâmetros de entrada. Eu sei qual é o seu contexto. Eu sei qual é a sua pergunta. Então, aqui está a chamada que você precisa fazer para a ferramenta, porque eu não consigo fazer isso. Eu sou
+
+o mestre em Direito. Estou trancado nesta caixa. OK? Então, a segunda caixa, o segundo bloco, é o motivo da parada. Portanto, "motivo da interrupção" significa que o LLM foi interrompido por algum motivo.
+
+O motivo é que não consegue fazer nada, e se o motivo for o uso de ferramentas, ah, agora é a hora. Vamos executar essa ferramenta. Então, essa segunda linha, pegue a ferramenta. É necessária a resposta, que consiste em formular os parâmetros e desencadear a ação. OK. Agora, tenho essas coisas em vermelho
+
+aqui. É aqui que eu acho que entram os LLMs e outros... uh, desculpe, não LLMs.
+
+As ontologias e outras coisas podem ser incluídas. Então, se você olhar ali embaixo, depois que a ferramenta é chamada, aparece "a ferramenta é executada". É aí que as ontologias podem entrar em cena. A ferramenta nos fornecerá informações. Colocamos as informações em um formato que nosso validador possa usar e pensamos no validador como operando com essas ontologias sobre nosso domínio; assim, podemos ter alguma noção se a resposta do LLM é razoável. Então, este é o loop. Chame uma
+
+ferramenta e verifique o motivo da parada. Se for um resultado razoável, então vamos adotá- lo. Se não for razoável, volte ao mestrado em Direito. Diga: "Ah, isso não está funcionando." Ou envolva um ser humano no processo. Mas a ideia é
+
+cercar a entrada de dados com verificações. Bem, tenho algo que você deveria pelo menos dar uma olhada se estiver envolvido com programação: algo chamado Pydantic. Pydantic é uma forma de especificar os tipos que você deseja para os parâmetros. Quem conhece Python sabe que ele é uma linguagem de tipagem não estruturada. Então, você pode ter uma variável x = 20, x = olá, sem problema. Não é preciso digitar nada.
+
+Pydantic adiciona a opção de digitação. Então, você quer verificar seus tipos com o Pydantic e depois verificar seus resultados com a ontologia. Então, Pydantic à porta, ontologia no livro-razão e agentes puros e, aliás, seus agentes devem tentar não ter efeitos colaterais. Isso ajuda a esclarecer toda a lógica. Ou seja, eles não estão fazendo nada por conta própria, eles estão mudando coisas no banco de dados, ainda não.
+
+Primeiro, você deve executá-los na ontologia e garantir que tudo funcione corretamente. OK. Eu só tenho um... Eu tenho... Eu tenho outro...
+
+Eu só tenho pouco tempo. Vou tentar mostrar a vocês algumas coisas que... hum...
+
+que vocês podem obter como construções lógicas a partir de algo chamado OWL, a linguagem de objetos da web para objetos. Então, você tem essas propriedades funcionais, propriedades disjuntas. Vou colocar essas informações aqui para vocês verem nos slides, mas basicamente são os erros que ele consegue detectar. Dê uma olhada na coluna da direita. Um segundo reembolso do mesmo pedido é um problema. Mas as ontologias poderiam detectar
+
+isso, enquanto que é muito difícil fazer isso em inglês. O pagamento foi enviado para o suporte técnico em vez de para o comprador. OK? Você pode detectar isso com uma propriedade disjunta do Owl, onde o cliente e o representante de suporte são duas entidades separadas. OK?
+
+Hum, talvez seja um valor inventado, como provavelmente foi enviado. Você pode especificar que deve ter certos tipos de valor. Então, o status é pago, enviado ou reembolsado, nada mais. E quando você está no mundo do texto puro , as coisas podem ficar complicadas porque os LLMs são novamente probabilísticos e retornam algumas coisas malucas. OK. Então,
+
+o que eu realmente quero dizer aqui é que você pode usar esses mecanismos — você pode ter um sistema de raciocínio baseado em ontologia para verificar se o LLM está no caminho certo e ter mecanismos de proteção para garantir sua integridade. OK? E quanto às salvaguardas, estou me referindo a esses conceitos relacionados a essas tecnologias de suporte com RDFS e OWL. E, no fim das contas, nada é um erro, não há vitória nem derrota, apenas sucesso. OK. Fique à vontade para entrar em contato comigo pelo e-mail
+
+coil@burkly. Eu tenho um pequeno site, codesupreme.ai. Sou muito fã de John Coltrane, ele tem uma música de jazz chamada " Love Supreme". Então, dei o nome de Code Supreme ao meu site. E se você for lá, eu
+
+tenho algumas músicas e está tudo bem. OK. Muito obrigado. 20 minutos. [aplausos]
+
+[música] Uhu!

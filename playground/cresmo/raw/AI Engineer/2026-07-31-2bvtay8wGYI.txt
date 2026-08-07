@@ -1,0 +1,137 @@
+---
+video_title: "Scaling to Long Horizons — Ross Taylor & Chengxi Taylor, General Reasoning"
+video_id: 2bvtay8wGYI
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=2bvtay8wGYI
+video_date: 2026-07-31T21:30:06+00:00
+video_description: |
+  Ross Taylor opens with some history: back in 2022 he worked on Galactica, an early large model for science that briefly crossed the Rubicon on curated high quality data and intermediate reasoning tokens before the reaction overshadowed the work. That obsession, optimizing what happens between the question and the answer, is where this talk on long horizon reinforcement learning picks up. He and Chengxi Taylor of General Reasoning treat long horizon less as a benchmark and more as a mindset: if you want agents that stay coherent over hours, you have to be patient about signal and deliberate about how you spend tokens.
+  
+  The mechanics they walk through are the ones that make long rollouts trainable. Value models reduce variance and help with credit assignment, bootstrapping pulls signal out of sparse rewards, and the real constraint becomes the tradeoff between off policy staleness and GPU utilization as sequences get longer. They make it concrete with a task where frontier models were handed real money to trade football matches and did poorly, exposing how little the environment was actually simulated. The takeaway is that scaling to long horizons demands better environments and simulation, not just bigger context windows, and they point listeners to openreward.ai to go deeper.
+  
+  Speaker info:
+  - Ross Taylor (General Reasoning):
+    - https://x.com/rosstaylor90
+    - https://www.linkedin.com/in/rosstaylor90/
+    - https://rossjtaylor.com
+  - Chengxi Taylor (General Reasoning):
+    - https://x.com/chengxitaylor
+    - https://www.linkedin.com/in/chengxi-taylor/
+    - https://www.chengxitaylor.com/
+  
+  Timestamps:
+  0:00 - Introduction and a look back
+  1:57 - The Galactica story
+  5:15 - Curated data and thinking tokens
+  8:09 - What got RL cooking
+  9:12 - Long horizon as a mindset
+  10:16 - Why value models help
+  11:08 - Credit assignment and bootstrapping
+  12:38 - Trading football matches for real money
+  13:44 - Why models struggled
+  14:36 - Off policy staleness versus GPU use
+  16:18 - openreward.ai and what's next
+---
+Então, esta palestra se chama "Escalonamento para horizontes de longo prazo". Meu nome é Ross. Ah, eu sou o CEO da GR. Somos uma empresa de aprendizado por reforço sediada em Londres. Antes da GR, eu era o líder de raciocínio na Meta AI, trabalhando em Llamas, Galactica e muitos outros modelos naquela época.
+
+Estou acompanhado por Chengxi, cofundador e presidente da GR. Ah, sim, hoje vamos falar sobre algoritmos, ambientes, computação, tudo o que você precisa fazer para que os agentes sejam escaláveis ​​e consigam lidar com tarefas complexas. Então, esta conversa de hoje será dividida em duas partes. Primeiramente, vou começar com uma perspectiva pessoal sobre os primórdios, a era de ouro da modelagem de linguagem, talvez entre 2020 e 2023. Falarei sobre, como mencionei, todos esses modelos e alguns dos nossos primeiros esforços em aprendizado por reforço para LLMs (Modelos de Linguagem Lógica).
+
+E então Chengxi vai falar sobre, você sabe, o que está por vir, quais são as próximas fronteiras. E sim, essa vai ser uma conversa bem interessante, com bastante informação, então recomendo que você fique por aqui para assistir . Então, essa foi a jornada até aqui. Então, minha jornada começou aqui. Então, essa era a equipe do Papers With Code. Tenho certeza de que muitos de vocês
+
+usaram o Papers With Code antigamente. Éramos uma startup sediada em Londres em 2019. Fomos adquiridos pela Meta ainda naquele ano. E então tivemos uma transição maluca dentro da Meta para fazer pesquisa. Então, como eu disse, fizemos Galactica. Depois que o
+
+ChatGPT foi lançado, começamos o pós-treinamento para o Llama 2 e o Llama 3. Então, todo o ótimo trabalho que vocês viram lá foi feito por pessoas que estavam nesta sala. E muitas outras coisas interessantes que nunca foram publicadas também. Raciocínio lhama e muitas outras coisas. Então, sim, eu gosto de pensar que essa pequena equipe foi o ponto de partida para a revolução do peso livre, que começou nesta sala. E
+
+sabe, isso realmente me fez perceber que pequenas equipes focadas, mesmo na era da escalabilidade, podem fazer coisas incríveis se as pessoas estiverem alinhadas. Bem, para mim, as coisas ficaram particularmente loucas em 2022. Então, deixe-me contar uma história. A percepção da mídia é que o ChatGPT surgiu do nada, chocou o mundo, e foi assim que começou a onda moderna da IA. Mas, sabe, eu tenho uma perspectiva pessoal diferente sobre isso porque, duas semanas antes do ChatGPT surgir, havia outro modelo de linguagem chamado Galactica.
+
+Então vamos falar sobre Galactica. Galactica e, você sabe, ChatGPT, ambos eram, em alguns aspectos, bastante semelhantes. Ambos são baseados em modelos básicos bastante bons. A própria Galactica foi um modelo base, e o ChatGPT foi baseado no GPT-3.5.
+
+Mas houve uma clara diferença nos resultados. Assim, a Galactica foi lançada na época com essa pequena demonstração do modelo básico . E como vocês já sabem, assim como os modelos básicos, eles vêm com muitas peculiaridades. Sabe, eles têm alucinações. Se você os incentivar a fazer coisas bobas, eles farão coisas bobas.
+
+Enquanto o ChatGPT não era apenas um modelo básico, mas possuía esse importante mecanismo de aprendizado por reforço a partir do feedback humano. E esse foi o fator crucial que fez com que os LLMs se tornassem produtos de verdade pela primeira vez. Então, de uma forma meio estranha, eu gosto de pensar que este é o primeiro tipo de experimento natural mostrando que esse tipo de aprendizado por reforço agrega valor, certo? E, para meu azar, foi como uma espécie de experimento natural muito pessoal e, você sabe, a Galactica explodiu. É, mas essa é uma boa lição. Um bom modelo base
+
+não é suficiente. Então, aprendi essa lição bem cedo. Como eu disse, a RLHF fabricava os produtos da LLM. Foram eles que, de certa forma, fizeram com que os LLMs cruzassem o Rubicão e se tornassem algo que não era apenas um brinquedo, mas sim algo usado por bilhões de pessoas atualmente. Mas você não precisou esperar até o ChatGPT para ver isso.
+
+Mesmo naquela época, o InstructGPT em 2022 já apresentava resultados impressionantes. Por exemplo, um modelo com 1 bilhão de parâmetros usando RLHF apresentou desempenho superior a modelos com 175 bilhões de parâmetros . Ou seja, duas ordens de magnitude a menos de parâmetros, mas obtendo melhores resultados. Isso foi surpreendente. Então, se você estivesse prestando atenção de perto, sabe, talvez nós também devêssemos ter prestado, mas estávamos focados em um modelo básico, o que é um trabalho árduo em 2022.
+
+Mas isso mostra o quão importante é até mesmo o aprendizado por reforço básico. E a demo da Galactica em si, quero dizer, causou um alvoroço. Então, isso já é história antiga , mas lançamos uma demo. Deixamos as pessoas brincarem com isso porque é meio legal. E na época as pessoas ficaram com medo. Então,
+
+como eu disse, você menciona um artigo de pesquisa sobre esferas de Dyson ou um relatório sobre os benefícios de comer vidro moído e as pessoas ficam tipo, "Meu Deus!". Então, essa era a situação em 2022. E, para ser sincero, a associação meta também não nos ajudou em nada . Sim, a história trágica, de certa forma, fez com que grande parte da obra original fosse ofuscada.
+
+Mas sabe, o paradoxo de tudo isso é que, na época, a Galactica era realmente um modelo muito bom. É como se tivesse superado o Palm, o Chinchilla e o GPT-3.5 com muito menos poder computacional em domínios científicos. Era de última geração. Isso demonstra, mais uma vez, o quão poderoso é o aprendizado por reforço. Você pode ter um modelo base SOTA,
+
+mas isso não é suficiente. Então, aqui você vê um personagem de matemática que está meio que vencendo a Chinchila. Hum, tipo equações em LaTeX, sabe, ciência, sabe, estava chegando a cerca de 68% em comparação com os 49% do GPT-3.5. Então, arrasando por lá.
+
+E também a linha de raciocínio. Então, sabe, um Palm na época, que era um modelo Google Brain, 540 bilhões. Sabe, eram 30 bilhões em Galactica, enquanto isso representava cerca de 36% contra 19%. Ou seja, o dobro do desempenho, com uma ordem de magnitude menor de resultados. Portanto, isso reforça mais uma vez a ideia de que bons modelos básicos não são suficientes.
+
+Mas introduziu algumas ideias-chave que considero muito importantes. Quero dizer, a Galactica foi o primeiro módulo lunar a realmente dominar a eficiência de dados. Um conjunto de 105 bilhões de tokens, comparado a um trilhão de tokens em Chinchilla. E foi algo realmente contrário à opinião geral na época, porque, sabe, naquele momento todo mundo pensava: "Ok, só precisamos de mais fichas". E Galactica respondeu: "Não. Conjuntos de dados de alta qualidade,
+
+sabe, bem selecionados, são realmente importantes." E esse foi um fator determinante para os resultados que você acabou de ver. E também foi como o primeiro modelo de linguagem importante a realmente dominar o treinamento com múltiplas épocas. Pode parecer ridículo agora, mas na época o consenso era que não se fazia mais do que uma época. Mas esse tipo de regra prática, você talvez já tenha ouvido falar, como a de dados repetidos em quatro épocas, foi formalizada posteriormente. Mas Galactica foi o
+
+primeiro resultado empírico real nesse sentido . Agora, e talvez ainda mais importante, existe essa ideia de pensar em tokens. E alguns de vocês talvez se lembrem disso, mas estava bem escondido no meio do jornal. Então, por essa época, surgiram diferentes ideias sobre raciocínio. Havia uma linha de raciocínio, que constituía uma única ideia. É onde você solicita, tipo,
+
+os passos. Existiam blocos de rascunho onde você simplesmente anotava passos intermediários, como números. Mas, na verdade, Galactica foi a primeira ideia que disse: "Não, este é um processo de memória de trabalho interna . Este é um pensamento interno. Você deve estar dentro dessas categorias e deve usar o computador de inferência antes de chegar a uma resposta, certo?" Então,
+
+essas são todas ideias bastante urgentes . Mas, sabe, a Galactica surgiu e desapareceu, explodiu, e então, sabe, nós, como equipe, fomos incumbidos de impulsionar o esforço pós-treinamento para a Llama. Mas eu tinha uma espécie de obsessão pessoal, que era o raciocínio. E eu tive uma ideia muito simples na época, que era: "E se aplicássemos uma espécie de pressão de aprendizado por reforço a isso, tipo, pensando em tags como trabalho?" E se a gente simplesmente otimizasse o processo enquanto pensa? E se isso lhe
+
+parece familiar, então é mais ou menos o que o Deep Seek 01 acabou fazendo 2 anos depois. Mas existe uma diferença fundamental. Naquela época, tínhamos apenas os modelos básicos do Llama 2, um corpus matemático péssimo e resultados terríveis em matemática. E, sabe, a janela de contexto, sabe, estamos todos muito familiarizados com o contexto agora, 1 milhão de tokens. Sabe, antigamente eram 4.000.
+
+Não foi muito divertido. Mas, na época, ainda tínhamos uma receita, que não foi publicada, mas era muito boa para o meta. Então, o RSP era isso. Primeiro, continue o pré-treinamento do Llama 2 em relação a dados de matemática e ciências . Então, essa é a primeira coisa. Llama
+
+2, um conjunto de dados matemáticos péssimo, então vamos corrigir isso. Número dois, PPO com recompensas verificáveis. Mas repare que isto não é GRPO, certo? Assim, tínhamos um modelo de recompensa temporal e de resultados sólido para inicializar o modelo de valor. Isso foi fundamental, havia muitos dados sobre modelos de valor na época. E
+
+internamente, na época, esse tipo de abordagem levou a resultados de ponta em matemática e raciocínio. Então, pensamos algo como: "Nossa, isso realmente demonstra o poder de ter o objetivo certo." Mas o mais fascinante é que obtivemos ótimos resultados, mas não tínhamos um problema de escalonamento do tempo de inferência. Não tínhamos esse comportamento reflexivo que se tornou uma espécie de marca registrada do R1 e do O1. Sabe, pesos nas costas, sabe, retroceder, todo esse tipo de coisa.
+
+Então, surge a pergunta: "Por quê? Bem, por que não tivemos aquele momento?" E recebemos uma resposta cerca de dois anos depois. Então, há algumas coisas semelhantes acontecendo aqui, mas essencialmente, modelos base melhores foram o que realmente impulsionou o RL. E quando a DeepMind surgiu, fiquei meio chocado na época. Eu pensei: "Caramba, a gente acabou de
+
+tentar a mesma coisa. Não funcionou . O que está acontecendo aqui?" E, de uma forma estranha, a verdadeira lição era que se tratava da lição mais amarga possível, a forma mais pura de lição amarga que existe . Tipo, modelos base melhores, mais cálculos de RL, janelas de contexto maiores, e isso é tudo que você precisa para esse tipo de comportamento emergente. Isso também diz
+
+algo muito importante sobre a sociologia da pesquisa, porque o fato de a OpenAI ter esse modelo, o modelo do nível GPT-4, antes de qualquer outra pessoa, permitiu que eles enxergassem mais longe, certo? Então, esse é um ponto realmente interessante . Por exemplo, a era da escalabilidade significa que, se você tiver certos pré-requisitos, você se torna mais inteligente, enxerga mais longe e tem mais ideias. Então, um ponto realmente interessante. Então, esse era eu em 2024. Eu era um
+
+panda muito triste, derrotado pelo ChatGPT e pelo O1. Mas eu não me deixei desanimar. Então, eu queria buscar a próxima onda, e ainda estava convencido de que esse tipo de raciocínio não havia sido resolvido. Então, criamos a GR para assumir tarefas realmente grandes. E com isso em mente, passo a palavra para Chengxi. Ele vai falar
+
+sobre o que estamos pensando agora. Ross. Ross. Ross.
+
+Oi pessoal. Sou Chengxi Taylor, cofundador e presidente da General Intelligence Inc. Vou compartilhar o que é necessário para escalar a longo prazo. Primeiramente, quero deixar isso bem claro. Tarefas de longo prazo não são apenas um problema de engenharia. É uma questão de mentalidade.
+
+Se quisermos resolver os maiores problemas da humanidade , como a cura do câncer, a solução do Problema do Milênio ou a ida a Marte, precisamos ter paciência. Leva tempo. E se quisermos que a IA nos conduza a esse nível de impacto, precisamos pensar a longo prazo. Mas eis o primeiro problema. Temos uma janela de contexto limitada .
+
+Se tomarmos como exemplo o Último Teorema de Fermat , o que o matemático precisou foi de mais de 10 anos lendo artigos, anotando ideias em rascunhos ou caminhando para gerar as ideias criativas. Se convertermos para tokens, provavelmente serão dezenas de bilhões, ou até mesmo centenas de bilhões. Mas onde estamos agora, temos apenas uma janela de contexto de 1 milhão de tokens . Uma solução, portanto, é usar a compactação. Basicamente, o que ele faz é gerar o token até o final da janela de contexto, resumir e, em seguida, gerar mais tokens.
+
+E a beleza de aplicar o aprendizado por reforço nessa situação é como matar dois coelhos com uma cajadada só. Você aplica RL à compactação e também à tarefa. Mas eis o problema. Com uma perspectiva de longo prazo, existem três questões. A primeira é que a variância do gradiente varia com o comprimento. E a segunda é uma
+
+recompensa escassa. E você tem esse problema de atribuição de créditos . E, por fim, há também o comprimento variável da trajetória, o que agrava o problema de otimização. Para resolver esse problema, podemos aplicar a crítica, que é o modelo de valor. E o modelo de valor pode reduzir a variância e também apresentar algumas vantagens, como, por exemplo, um ajuste muito bom à compactação no nível da trajetória, além de incentivar a diversidade de lotes.
+
+E também, falarei mais tarde sobre bootstrapping. Basicamente, consiga sinal antes do final do episódio. Mas a desvantagem disso é que é mais complicado do que o GRPO e, basicamente, você precisa treinar outro modelo de valor juntamente com o modelo de política. E existem algumas ferramentas para ajudar com as limitações de contexto, como ferramentas de sistema de arquivos, que funcionam essencialmente como um bloco de notas para a IA registrar seus pensamentos racionais. E ferramentas de busca autônoma, que permitem ao agente pesquisar a trajetória anterior.
+
+E depois você tem as ferramentas de arquivamento. Em casos como o de pesquisa automotiva, você pode se basear em seus resultados anteriores. Mas temos que ter cuidado. Em outro cenário, você não quer que uma IA trapaceie simplesmente copiando a resposta anterior sem pensar. Então, quão bons são os modelos atuais para essa tarefa de longo prazo?
+
+Em termos gerais, construímos o parâmetro de referência chamado "Kelly Bench", onde inclusive somos destaque na primeira página do Financial Times. Ficamos meio surpresos com o interesse do público em geral nisso. Basicamente, o que fizemos foi permitir que os agentes construíssem modelos de aprendizado de máquina para negociar em partidas de futebol ao longo de um horizonte de 1 ano. Nesse caso, trata-se da Premier League, para quem se interessa por futebol. E isso nos fascina porque dá para ganhar muito dinheiro, e se fosse um sucesso, não poderia render bilhões. Existe toda uma indústria dedicada às
+
+apostas esportivas. E, ao contrário de coisas como uma competição de carga, isto tem implicações no mundo real . Mas, eis o resultado. Como podem ver, demos a todos os modelos de vanguarda um investimento inicial de 100 mil . Todos eles a perderam.
+
+Triste. E isso cativou a imaginação do público . Ah, a IA não é tão incrível quanto eles pensavam. E por que os modelos são tão ruins em previsões de longo prazo? Em primeiro lugar, acredito que atualmente a indústria de IA está um pouco enviesada demais em relação à programação e às tarefas processuais. O que quero dizer é que
+
+a tarefa atual é basicamente uma instrução do tipo " faça isso e conserte aquilo". Normalmente isso limita a solução a uma ou duas opções. Não há espaço de sobra para a criatividade. E em segundo lugar, não há foco suficiente em tarefas de final aberto. Vivemos em um mundo real com muita complexidade e incerteza, e isso não é totalmente capturado pelo padrão atual.
+
+Além disso, não há simulação suficiente do mundo real. Vivemos em um mundo onde existem outros atores. Assim como na sala de conferências de hoje, existem outras pessoas reais que têm um pensamento diferente, um jogo diferente do que você tem em mente. Essa é a complexidade que não foi totalmente capturada. E outra coisa que quero abordar é o impacto a longo prazo na computação.
+
+Sabemos que as GPUs são recursos escassos e preciosos. E, nesse caso de raciocínio de longo prazo, é preciso ter cuidado em como otimizar o uso entre treinamento e inferência. E o aprendizado por reforço em pipeline é uma técnica bastante popular atualmente. Basicamente, é uma questão de equilíbrio entre o uso de protocolos fora da política (off-policy) e a utilização da GPU. Tradicionalmente, você deixa a inferência rodar mais para o final e só então começa a treinar o modelo.
+
+Mas, no caso de horizontes temporais longos, é preciso esperar até que a inferência seja concluída. O que o pipeline de RL faz é permitir que a sequência seja gerada e começar a treinar o modelo enquanto ainda há mais sequências sendo geradas. E você vê isso sendo criado fora das normas. Mas, segundo nossa experiência, normalmente, até oito passos fora da política estabelecida não apresentam problemas. Basicamente, fizemos uma concessão entre a política de bloqueio e a utilização da GPU.
+
+Mas aqui está o problema. Como indica o horizonte de longo prazo, por vezes a inferência poderá demorar semanas ou até mais. Nesse caso, inevitavelmente, irá ultrapassar os limites das oito etapas da nossa política. Portanto, sua GPU precisa ficar ociosa e esperar que o processo termine. E se você não quiser esperar, como mencionei anteriormente, aplicar o modelo de valor permite que você inicie o projeto do zero. Isso significa que, antes
+
+do final do episódio, você cria expectativa. É como a dopamina no cérebro humano. E isso permite que você treine o modelo. Mas eis aqui outra contrapartida. Ao utilizar a GPU em sua capacidade máxima, você introduz o viés do modelo de valor . Portanto, sempre há um certo
+
+equilíbrio a ser feito nessas soluções. E quero também mencionar que, a longo prazo, a infraestrutura é importante, especialmente para o meio ambiente. E o Open Review era um produto, uma plataforma da General Reasoning. Se tiver interesse, pode dar uma olhada . openreview.ai.
+
+Portanto, é um local que hospeda mais de 350 ambientes com um único ponto de extremidade de API. E usamos isso para nosso aprendizado por reforço interno, e alguns laboratórios de vanguarda e novos laboratórios também estão usando isso. Resumindo o discurso de Ross e o meu, foi uma longa jornada, como indicam os longos horizontes . Como equipe, temos observado os paradigmas no raciocínio de IA em relação ao pré-treinamento e aos agentes nos últimos anos. Mas, olhando para o futuro, o que realmente nos entusiasma é o longo horizonte.
+
+E isso exige que pensemos, que tenhamos uma nova forma de pensar sobre o algoritmo, os ambientes e a computação. Existem muitos desafios e concessões a serem feitas, mas achamos realmente empolgante embarcar nessa jornada porque, como mencionei no início, o longo prazo não é apenas um problema de engenharia. É uma questão de mentalidade, e se realmente temos a ambição de resolver os maiores problemas da humanidade, essa é a jornada para todos. E essa é também a missão do raciocínio geral. Então, se você estiver interessado, siga-nos. General Reasoning é uma
+
+empresa de pesquisa em IA sediada em Londres. Obrigado.
+
+[música]

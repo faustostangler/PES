@@ -1,0 +1,119 @@
+---
+video_title: "Everything Is a Rollout — Alex Shaw + Ryan Marten, Terminal-Bench, Harbor, Laude Institute"
+video_id: jRCpXUjz4CI
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=jRCpXUjz4CI
+video_date: 2026-07-24T16:00:06+00:00
+video_description: |
+  Alex Shaw and Ryan Marten present a rollout-centered view of evaluating and improving AI agents. Drawing on their work on Harbor, Terminal-Bench, and OpenThoughts-Agent, they connect sandboxed environments, agent evaluations, and optimization workflows into a practical framework for generating and learning from rollouts.
+  
+  Speakers:
+  
+  Alex Shaw — Member of Technical Staff, Laude Institute
+  Alex is the creator of Harbor, a framework for evaluating and optimizing agents and language models in sandboxed environments.
+  https://www.linkedin.com/in/alexgshaw/
+  
+  Ryan Marten — Member of Technical Staff, Laude Institute
+  Ryan builds Harbor and works on research-to-production efforts including Terminal-Bench and OpenThoughts-Agent.
+  https://www.linkedin.com/in/ryan-marten/
+  
+  Harbor: https://www.harborframework.com/
+  GitHub: https://github.com/harbor-framework/harbor
+---
+Incrível. [música]
+
+[aplausos] Muito obrigado. Ah, sim, como você disse, meu nome é Alex Shaw. Eu trabalho no Lot Institute. Bem, hoje falarei sobre o Harbor, que é uma estrutura de ambiente de aprendizado por reforço para avaliação de agentes . E o título da minha palestra é " Tudo é um lançamento". E acho que
+
+vocês entenderão, conforme eu explicar melhor, por que demos esse título à palestra. Bem, primeiro quero que todos viajem comigo no tempo até o ano de 2018. Oito anos atrás. Bem, vamos falar sobre algumas coisas que aconteceram em 2018. Então, provavelmente você vai assistir a Vingadores: Guerra Infinita ainda hoje.
+
+O segundo acaba de ser lançado. Ah, o GPT1 acabou de ser lançado e você provavelmente nem percebeu, embora talvez algumas pessoas tenham percebido. Bem, musicalmente falando, essa startup aleatória estava prestes a mudar de nome para um produto chamado Tik Tok. E você pode ter acabado de conhecer os AirPods ao ver alguém andando por aí com fones de ouvido sem fio. Então , e quanto à engenharia de software? Como era a
+
+engenharia de software em 2018? Hum, vamos ler este tweet de Stay Sassy Sassy com dois dois A's. Hum, sobre como era escrever código em 2018. Diz o seguinte: "É 2018 e seu colega acabou de te enviar um pull request de 400 linhas . Você pega uma xícara de café e senta para revisar. É lindo.
+
+Micro refatorações elegantes, nomes de métodos concisos . Você percebe algumas coisas, mas tudo bem. Faz parte do processo. Eles não consideraram a extensibilidade de parte da API. Aqui vai um comentário, amigo." E isso é só um trecho
+
+do tweet, então continua. Você pode procurar se quiser. E obviamente foi escrito em tom de humor. Hum, mas a questão é que dá um pouco de nostalgia. Hum, assim como algumas outras coisas que estavam acontecendo em 2018.
+
+Agora, a questão é que isso mudou há apenas seis, doze ou dezoito meses, se você for um dos primeiros a adotar a tecnologia. Hum, mas já parece um passado distante de certa forma. Hum, e eu acho Chegou a hora de começar a falar sobre o que os livros de história dirão sobre engenharia de software. E quando digo engenheiro de software, me refiro ao estilo de engenharia de software de 2018. Os livros de história provavelmente dirão muitas coisas, mas acho que uma coisa é certa: a engenharia de software era quando você sabia o que o código faria antes de executá-lo.
+
+Isso me leva a um tweet diferente de France Chalet, onde ele diz: "A programação ágena é uma forma de aprendizado de máquina." O código gerado deve ser tratado como um artefato de caixa preta, cujo comportamento e generalização devem ser gerenciados por meio de avaliação empírica, como em qualquer modelo de aprendizado de máquina. Isso nos leva à próxima parte desta apresentação, que é comparar e contrastar o desenvolvimento de agentes com o desenvolvimento de software tradicional e por que ele exige um novo conjunto de ferramentas para realmente entender o que está acontecendo e ter confiança. Aqui está um programa de 2018. Como você já pode perceber, o objetivo do programa é extrair números de telefone de um texto. Temos um Rejax aqui
+
+que busca o número de telefone. Posso afirmar com 100% de certeza o que acontecerá se eu executar este programa um milhão de vezes seguidas. Agora, vamos atualizá- lo para a versão de 2026. Troquei o Rejax por uma chamada de modelo e digo: "extraia este número de telefone". De certa forma, este é um programa mais poderoso porque o Rejax era um pouco... frágil. Teria perdido
+
+qualquer número de telefone que não estivesse formatado exatamente como especificado. Enquanto isso, estou bastante confiante de que este programa com GPT 5.5 detectará muitos dos números de telefone com formatação estranha. Hum, no entanto, se eu executasse este mesmo programa um milhão de vezes, não tenho 100% de certeza de que ele imprimiria a mesma coisa todas as vezes ou que eu saberia exatamente o que ele imprimiria. Hum, provavelmente acertaria quase sempre. Esta é uma tarefa bastante simples. Hum,
+
+mas, obviamente, é muito mais simples do que as coisas que pedimos a esses modelos para fazer. E a incerteza só aumenta à medida que a complexidade da tarefa aumenta. Hum, então, vamos voltar ao tweet de François e atualizá-lo um pouco. Vamos generalizar. Ele diz codificação agética e minha afirmação é que, bem, agentes em geral são uma forma de aprendizado de máquina. E então ele diz que o
+
+código gerado deve ser tratado como um artefato de caixa preta e eu digo que o desempenho do agente em si deve ser tratado como um artefato de caixa preta. Hum, e isso nos leva a Ao nosso novo paradigma. Então, sabemos agora que o desenvolvimento de agentes é mais semelhante ao aprendizado de máquina do que à engenharia de software. Quais são os aspectos que devemos observar nas ferramentas usadas para aprendizado de máquina, bem como as armadilhas do aprendizado de máquina e suas analogias com o desenvolvimento de agentes? Temos o aprendizado de máquina à esquerda e a construção de agentes à direita. Os
+
+dados de treinamento agora se parecem com ambientes, e o conjunto de teste e validação se parece com um conjunto de validação que, se removermos a máscara, também é apenas um ambiente, pelo menos no estilo que abordaremos hoje. Os pesos do modelo agora são habilidades, prompts e ferramentas do modelo, seja você escolhendo entre modelos ou atualizando o modelo manualmente. A função de perda agora se parece mais com recompensas ambientais e feedback. O backend ou otimizador agora é algum algoritmo de otimização baseado em contexto, como o Jeepa, ou até mesmo executando um agente de codificação em um loop. A etapa de descida do gradiente se parece com uma solicitação de pull request para o seu repositório. E o sobreajuste se parece
+
+com manipulação de recompensas ou simplesmente sobreajuste. Isso também é possível para o desenvolvimento de agentes. Bem, temos essas coisas à esquerda, sabe, produtos, bibliotecas e plataformas que foram criadas para esses propósitos. E para tudo à direita, estamos apenas começando. Então, criamos o Harbor para responder a algumas dessas perguntas. Estamos
+
+criando-o para responder a mais perguntas, mas outras pessoas também estão criando produtos e frameworks interessantes para ajudar as pessoas a otimizar esse ciclo de desenvolvimento de agentes. E outra coisa a se considerar é que, por mais popular que o aprendizado de máquina tenha sido e por ter gerado algumas das maiores empresas do mundo, como a Data Bricks, que vale centenas de bilhões de dólares, o número de pessoas que usam e criam agentes já é provavelmente muito maior do que o número de pessoas que já trabalharam com aprendizado de máquina, e essa tendência só vai continuar. E agora, vamos analisar a última parte do tweet de François que eu quero destacar, que é: o desempenho desses agentes deve ser gerenciado por meio de avaliação empírica. E isso nos leva a... Para a nossa próxima pergunta,
+
+que é: como eu avalio um agente? E é aqui que começamos a entender o que o Harbor faz. A resposta, como já mencionamos, são os ambientes. Isso inclui seus dados de avaliação e treinamento. E o que é um ambiente nesse caso? Bem,
+
+precisamos de uma instrução. Precisamos de alguma forma de dizer ao agente o que ele deve fazer. E então precisamos de um lugar para o agente tentar fazer isso. Atualmente, todos os agentes são executados em computadores e realizam tarefas em computadores. Então, vamos colocá-lo em um computador, mas em um computador virtual. Ou seja, uma sandbox.
+
+E então precisamos de alguma forma de verificar se o agente realmente fez o que lhe foi instruído a fazer na sandbox dentro de um determinado período de tempo ou outra condição de parada. E esse é o seu verificador, que pode ser algum tipo de teste programático, rubrica ou agente que entra para verificar o que aconteceu. No Harbor, você especifica isso como um diretório de arquivos. E esse layout de diretório específico se tornou relativamente padrão em muitos ambientes. espaço. Então, muitas pessoas o adotaram
+
+e o usam como uma forma de especificar ambientes, o que é útil porque facilita a transferência entre mãos e torna-se interoperável. E então, ok, legal, agora temos um monte de dados, implementamos vários desses ambientes. Agora, como eu realmente os uso para começar a entender o que meu agente pode e não pode fazer e como melhorá-lo? Bem, isso é uma implementação do Harbor e, então, o que você faz é começar com suas tarefas e, em seguida, iniciar seu sandbox e, no primeiro passo, passar esse sandbox para o seu agente. Você está executando seu agente fora do sandbox e executando comandos nele, ou está executando-o dentro do sandbox e ele está chamando seus comandos como parte de seu programa.
+
+Ele é executado por um certo período de tempo até atingir uma condição de parada, produzir alguma trajetória ( voltaremos a isso mais tarde, porque é importante). Em seguida, você passa esse sandbox para o verificador, que executa algum processo de verificação. E, finalmente, você para o sandbox. O verificador gera uma recompensa ou um conjunto de recompensas, e então você pega esses valores, os agrega em várias execuções em um conjunto de dados com algum agente, e isso se torna seu resultado válido. Portanto, esse processo, que parece relativamente simples, é na verdade extremamente universal e também um pouco simplificado demais. O Harbor agora
+
+permite muitos tipos diferentes de execução. Você pode fazer execuções em várias etapas, executar sua verificação em um ambiente isolado ( sandbox), coletar artefatos, simular um usuário. Mas essa é a abordagem básica sobre a qual todas as outras são construídas. Então, o que é o Harbor mais especificamente? Primeiro, é um formato para especificar ambientes de agentes. Segundo, é uma estrutura de código aberto
+
+para realizar execuções em paralelo usando qualquer agente com qualquer modelo em qualquer ambiente isolado (sandbox) em qualquer tarefa. E é um registro de conjuntos populares de ambientes de treinamento e validação . Acho que já temos uns 300 ou 400 conjuntos de validação. E, na verdade, acho que dois ou três benchmarks foram lançados hoje que rodam com o Harbor. Harbor. Hum, então estamos animados com isso.
+
+E, em geral, busca ser uma linguagem comum para ambientes. Uma forma de as pessoas especificarem coisas que sejam extremamente interoperáveis, permitindo maximizar a velocidade dos dados e impulsionar o progresso no setor. Então, quem precisa de um valor? Bem, agora que entendemos como criá-los e como usá-los, quem deveria estar fazendo isso? A resposta é: todas as empresas que usam computadores. E acho que isso inclui
+
+praticamente todas as empresas do mundo. O motivo é que, se você está fazendo algo em um computador, deve verificar se consegue usar IA para automatizar parte ou todo o processo que realiza atualmente . Isso aumentará a produtividade da sua empresa e, consequentemente, o valor que ela gera. Gosto desta citação de Satch Nadella, do podcast Applied Compute que ele fez na semana passada. Ele diz que, se você quer construir um sistema agente, comece com o valor que importa e com sua capacidade de avaliar o resultado, e então diga: "Aceito todos os modelos". Gosto dessa última frase porque
+
+o que ele quer dizer é que, assim que você tem uma avaliação, o poder está em suas mãos. Você pode considerar todos os modelos. Você não precisa confiar na marca. Você não precisa confiar na avaliação de outra pessoa. Você não precisa confiar em uma avaliação pública. E você pode
+
+contornar o problema como quiser para equilibrar a relação custo-benefício. Então, primeiro passo: construir a avaliação; segundo passo: otimizar com base nela. Então, o que as pessoas vão avaliar? Vou listar quatro coisas, e essas quatro coisas são baseadas no que vemos as pessoas usando o Harbor para construir uma avaliação atualmente. O primeiro tipo de avaliação é quando as pessoas avaliam o desempenho dos agentes na construção de seus produtos. Todo mundo que
+
+desenvolve um produto de software tem algum código-fonte interno ou um conjunto de códigos-fonte internos. Acho que a Ramp anunciou recentemente o Rampbench, que é um agente construído a partir de seu código-fonte interno, e isso permite que eles escolham o agente ou modelo de codificação que tenha o melhor desempenho em seus casos de uso internos, sem precisar... Agora, eles podem maximizar o gasto de tokens. Em vez disso, podem
+
+tomar decisões informadas e embasadas sobre como construir seus produtos com agentes. O segundo tipo de AVL que vemos as pessoas desenvolverem é como avaliar o quão bem os agentes usam seu produto. Qualquer pessoa que desenvolva um produto de software provavelmente está caminhando para um mundo onde oferece algum tipo de modo headless. Algumas empresas sempre foram assim, priorizando os desenvolvedores, como HubSpot e Stripe. A ideia é que, se você puder criar um AVL para ver o quão bem os agentes usam seu produto e, em seguida, iterar sobre ele para torná-lo mais utilizável para os agentes, você obterá mais uso e, portanto, seu produto se tornará mais valioso para eles. Além disso, há três tipos de AVL para avaliar o quão
+
+bem os agentes potencializam os recursos do produto e, por fim, quatro tipos de AVL para avaliar o quão bem os agentes automatizam processos internos. Dependendo do tipo de empresa que você é, um ou mais desses tipos de AVL podem se aplicar a você, mas todos deveriam estar considerando agora como podem fazer pelo menos um deles. Ok, então, quais são os diferentes casos de uso do Harbor? Implementação? Então, já falamos sobre o AVAL, que é o mais popular no momento. Ah,
+
+aqui está. Eu até tenho um vídeo nosso fazendo uma avaliação no Harbor. Então, é assim que você pode executá-lo a partir da linha de comando ou fazer com que seu agente o execute a partir da linha de comando. Como você pode ver aqui, está escrito `harbor run`. Neste caso, estamos executando o Terminal Bench 2.1
+
+com CodeEx e GPT 5.5. E estamos dizendo para executar 64 instâncias em paralelo. E então digitamos o comando `launch` aqui, que é algo que vamos implementar em breve, que permite iniciar implementações nos servidores do Harbor. Isso significa que você pode simplesmente executar e esquecer, ir dormir e voltar no dia seguinte com 10.000 implementações concluídas.
+
+E você pode ver aqui como é acompanhar essas implementações acontecendo. Mas elas não são concluídas no período de tempo deste vídeo, porque as implementações podem levar um tempo. Isso é mais um argumento a favor de paralelizar o máximo possível. Você pode otimizar esse ciclo e maximizar sua produtividade. Existem pessoas que criam tarefas e as vendem como dados. Há
+
+um mercado multibilionário atualmente, provavelmente em torno dos dados do Harbor e de outros tipos de dados. É um mercado muito lucrativo, onde especialistas podem especificar certos tipos de tarefas que gostariam de automatizar e vendê-las para laboratórios que treinam modelos para aprimorar essa capacidade. Você também pode fazer o que chamamos de implantações em produção. Lembre-se, o Harbor permite avaliar qualquer agente com qualquer modelo. Ou melhor, executar qualquer agente com qualquer modelo em qualquer sandbox, em qualquer tarefa.
+
+Isso não significa que você precise fazer isso para avaliação ou treinamento. Você pode querer fazer o que chamamos de MapReduce Agentico, que consiste em executar vários agentes em computação distribuída, em sandboxes, em paralelo, e agregar esses resultados. de forma inteligente. Então, coisas como analisar várias trajetórias para detectar manipulação de recompensas ou, sei lá, processar vários recibos para reembolsos ou pesquisar seus arquivos do Obsidian para descobrir semanticamente onde você escreveu alguma anotação ou processar vários PRs para fazer uma pergunta sobre eles. Vemos vários casos de uso diferentes. Este é, na verdade,
+
+um caso de uso emergente. Não criamos o Harbor para isso, mas vemos muitas pessoas usando. Então, criamos e lançamos esse recurso justamente para isso. É o Harbor Exec. Ele será desativado em breve, mas você pode ver neste cenário... Deixe-
+
+me ver se consigo pausar. Vou voltar um pouco antes de começarmos. Estou dizendo que a entrada do Harbor Exec são todas as minhas sessões de codec desde junho de 2020. E então digo para solicitar que, se eu corrigi o agente, ele escreva um analysis.json com o motivo do erro e a correção. E então, minha
+
+solicitação de redução é resumir os eventos recorrentes. Categorias de erros e falhas em um arquivo feedback.mmd conciso. E você pode ver que, neste caso, estou executando no modal. Eu faço a etapa de mapeamento com o cursor CLI porque é rápido e eficiente. E então faço a
+
+etapa de redução com o Fable 5 porque eu queria um resumo preciso e me importo com a inteligência nesse cenário. Então, estou limitando a 32 porque eu não queria processar todas as minhas sessões para esta demonstração. Mas você poderia, não há motivo para não processar 10.000 sessões ou mil sessões e então talvez você precise entender os resultados mais profundamente. Mas... Ah, droga.
+
+Mas, sim, você pode ver aqui, eu acho. Então, começamos isso. Vários desses rollouts começam em paralelo. Este está sendo executado localmente no meu computador com um sandbox na nuvem, mas orquestrado localmente. E você pode ver aqui todos os rollouts do cursor em execução agora. Mas eles levarão um segundo para
+
+terminar. E então você pode ver a etapa de redução aqui, onde... Fable me recomendou o uso de erros recorrentes. E esses
+
+erros recorrentes, por exemplo, poderiam ser usados ​​para orientar o próximo conjunto de tarefas do Harbor que eu criar para avaliar meu agente e escolher um agente melhor, treinar uma escala ou algo assim. Então, outro caso de uso do Harbor. E vemos pessoas usando as trajetórias para realizar SFT (Software-Forwarding). Também vemos pessoas usando a recompensa, ou recompensas, a trajetória na forma de tokens e realizando aprendizado por reforço. Por exemplo, a Tinker lançou uma integração com o Harbor. E as
+
+pessoas também fazem outros tipos de otimização. Mencionamos JEA (Jet-Enhanced Assetization), mas qualquer um desses métodos evolutivos usa o feedback textual na forma de uma trajetória e o Aval (Avaliação) e você pode fazer algum tipo de escalada automática de colinas com um arnês ou uma escala. Então, nos últimos minutos, quero falar sobre algumas coisas legais que as pessoas construíram com o Harbor. Vou tentar ser breve . Então, o Frontier Suite e o benchmark de engenharia de software de ultra longo prazo foram construídos no Harbor; o Banker Toolbench e o benchmark de banco de investimento foram construídos pela Handshake no Harbor.
+
+Swix dizendo que seu A equipe da Cognition migrou todas as suas válvulas para o Harbor. Este Rune Bench é um dos meus favoritos. É como um benchmark para medir o desempenho dos agentes no RuneScape. A Scale lançou todo o seu pacote Sweet Atlas no Harbor. A Poolside usa o Harbor para todas as suas avaliações de treinamento de modelos.
+
+Kevin Goo criou o Auto Agent, um agente auto-otimizável que só precisa de um componente Harbor para treinar um modelo após a consulta. A Cognition lançou recentemente o Frontier Code, um benchmark do Harbor, e a Lang Chain integrou os Deep Agents e seus ambientes de teste ao Harbor. E hoje mesmo, a Snorkel lançou o Senior Sweet Bench, um benchmark para medir o desempenho dos agentes em situações de ambiguidade com feedback comportamental. Então, essa é uma breve visão geral do Harbor e das diferentes coisas que você pode fazer com ele. Eu recomendo que todos aqui deem uma olhada . E este é um link para o meu
+
+Twitter. Normalmente, eu linko a documentação do Harbor, mas estamos... Na verdade, estou tentando ativamente expandir a equipe do Harbor agora. Então, se você
+
+quiser se envolver, me mande uma mensagem direta no Twitter e, se você só quiser ver a documentação, clique no link da documentação no meu Twitter, essa é a melhor maneira de acessá- la. Uh, muito obrigado [aplausos]
+
+[música]

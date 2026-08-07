@@ -1,0 +1,161 @@
+---
+video_title: "Voice Agents That Handle Interrupts - Chintan Agrawal and Daniel Wirjo, AWS"
+video_id: hMlLw1LeIK8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hMlLw1LeIK8
+video_date: 2026-07-20T06:24:55+00:00
+video_description: |
+  Chat agents get seconds to respond. Voice agents get 200 milliseconds, and if they get it wrong, the user doesn't retry, they hang up. The gap between "impressive voice demo" and "agent people actually want to talk to" is entirely in the engineering: latency budgets, barge-in handling, turn-taking, and the silence detection problem nobody warns you about.
+  
+  In this workshop you'll build a production voice agent using Pipecat (open-source real-time AI framework) that handles the three things most voice implementations get wrong. Interruption: user starts talking mid-response. Do you stop, fade, or finish? The answer depends on context, and we'll build the decision logic. Silence: is the user done talking or just thinking? Get this wrong and you either interrupt them or leave dead air. Latency: you have 200ms total for STT to LLM to TTS. We'll build the streaming pipeline that hits that budget consistently.
+  
+  The thing nobody tells you about voice agents: the hardest problem isn't the AI, it's the audio engineering. WebSocket orchestration, audio chunking, backpressure when the LLM is slower than real-time, echo cancellation when the agent's own output feeds back into the mic. We'll solve all of it.
+  
+  Stack: Pipecat + Daily (WebRTC) + any STT/TTS (Deepgram, AssemblyAI, Whisper) + any LLM. Bring headphones. You'll be talking to your agent by the end.
+  
+  Speakers:
+  - Chintan Agrawal (Amazon Web Service): Chintan Agrawal and Daniel Wirjo are Solutions Architects at AWS, focused on AI and SaaS startups. They are passionate about helping customers unlock value from their data and accelerate innovation on AWS. By partnering closely with founders and engineering leaders, they enable organizations to build scalable solutions, drive business growth, and realize the full potential of cloud and AI technologies.
+    LinkedIn: https://www.linkedin.com/in/chintan-agrawal-87a866135/
+    GitHub: https://github.com/wirjo/pipecat-turn-detection-demo
+---
+Olá a todos. Meu nome é Chintan e estou com meu colega Daniel. Somos arquitetos de soluções na equipe de startups da AWS na região Ásia-Pacífico e Japão (APJ). Então, hoje vamos falar sobre algo em que temos trabalhado há algum tempo. Que é o processo de alternância de turnos em agentes de voz.
+
+O que quero dizer com isso é: como o sistema sabe que você terminou de falar e que é hora do agente responder? Todos esses são problemas de engenharia de áudio . Não são problemas do LLM, porque você pode ter o modelo perfeito, a pista perfeita, mas a experiência ainda pode parecer comprometida se a execução das curvas estiver incorreta. Então, vamos explicar os conceitos e três abordagens diferentes para resolver isso. E o Daniel vai tornar isso mais concreto, executando as três demonstrações para você.
+
+Para começar, vamos abordar a restrição de 200 milissegundos, que basicamente explica, pela física, a dificuldade da gravação de voz. Em seguida, analisamos a arquitetura do pipeline, quais são os componentes e onde a alternância de turnos realmente ocorre. Analisaremos então três níveis para solucionar esse problema. Desde a simples detecção de silêncio até a execução de seu próprio modelo de detecção de curvas. E depois falaremos também sobre a latência, o orçamento e os problemas de produção que temos observado.
+
+Mas antes de tudo isso, quero mostrar a vocês o enunciado do problema com mais clareza, já que temos o mesmo usuário. Você tem a mesma frase em ambos os lados, mas o resultado para o usuário é muito diferente, porque no lado esquerdo, quando o usuário diz "Eu quero voar" e tenta se corrigir no meio da frase , o agente simplesmente não percebe. Porque a interrupção se prolonga por quase 2 segundos enquanto a pessoa está sentada tentando dizer algo. Do lado direito, a mesma interação ocorre, mas o agente consegue capturar a interrupção em menos de 200 milissegundos. E imediatamente recua para que o usuário possa falar. Em
+
+ambos os cenários, o LLM foi idêntico. Era o mesmo modelo. Era a mesma mensagem, mas a diferença na experiência do usuário é enorme. E a diferença se deve puramente ao fluxo de áudio. E com que rapidez percebe quando alguém está falando e sabe a hora de se calar? Esse é o problema que
+
+estamos tentando resolver hoje. Então, vamos abordar essa restrição de 200 milissegundos porque 200 milissegundos é a velocidade com que os humanos trocam de turno em uma conversa. E as implicações são bastante brutais, porque em 800 milissegundos, as coisas começam a parecer estranhas. Com um tempo de resposta de 1,5 segundos, o usuário simplesmente desliga porque seus agentes de RH, por exemplo, têm apenas 5 segundos para responder e ninguém se importa. Mas com os assistentes de voz, você não tem esse luxo.
+
+Vimos recentemente que a Salesforce conseguiu redirecionar seu fluxo de trabalho e publicou seus resultados em 26 de março. Mas mesmo nesse caso, o melhor tempo de resposta medido foi de 755 milissegundos. Então, isso é quase 4 vezes mais lento do que a maneira como os humanos naturalmente se revezam ao falar. Então, a questão aqui é como podemos superar essa lacuna e, onde não podemos superá- la, como podemos pelo menos acertar as curvas ? Portanto, a experiência do usuário não é tão ruim quanto os números brutos podem sugerir .
+
+Portanto, se você estiver trabalhando com um orçamento de 755 milissegundos e cada milissegundo for crucial, também precisará entender o que realmente está acontecendo no pipeline. Para onde vai o tempo e onde se encaixa essa mudança de rumo? Então, o pipeline em si, você provavelmente já conhece os principais componentes: STT, LLM e TTS. Você tem entrada de áudio, saída de texto, entrada de texto e saída de áudio. Mas o elemento que muitas vezes falta às pessoas quando pensam nisso é a detecção da atividade de voz.
+
+Comumente chamado de VAD. É um componente minúsculo que fica bem na frente e é ele que controla a mudança de direção. Sua função é basicamente detectar se o usuário parou de falar ou não. E as outras duas coisas que você configura junto com o encanamento principal também são muito importantes para a alternância de turnos. Então, você tem a detecção inteligente de curvas que monitora o sinal VAD.
+
+Além disso, há os recursos de áudio e o sistema precisa decidir se deve responder imediatamente ou esperar, pois o usuário ainda pode estar falando. E o manipulador de interrupção é acionado quando alguém interfere. Então, o que ele fará é propagar um sinal de interrupção para o fluxo subsequente, como se o TTS parasse e a geração do LLM precisasse ser cancelada para que o pipeline esteja pronto para a nova entrada em cerca de 50 ms. Então, se você se lembra, eu estava falando sobre como existem diferentes níveis para, você sabe, construir essa capacidade de tomada de decisões em agentes de voz. Então, vamos começar com o nível um.
+
+O nível um é o seu Silero VAD. Portanto, este é um componente simples que você controla totalmente e, assim como muitos sistemas de produção, ainda hoje vemos agentes em execução utilizando apenas este componente. Então, falando sobre o Silero VAD, trata-se de um modelo pequeno com 300.000 parâmetros. Funciona como uma transformada de Fourier de curto prazo . Ele possui um recurso que
+
+recebe áudio bruto e o converte em características espectrais. Possui quatro camadas convolucionais para captar o padrão e uma LSTM que lhe fornece memória para todo o quadro, de forma que não fique analisando apenas um bloco isoladamente. E então possui uma função sigmoide que fornece a probabilidade da fala, sendo um modelo bem pequeno, de apenas 2 megabytes. E o parâmetro que define o mínimo de milissegundos de silêncio é basicamente toda a experiência do usuário no nível um. Se você mantiver a configuração muito baixa, o agente vai reagir de forma brusca, interrompendo a comunicação das pessoas enquanto elas ainda estão pensando.
+
+Mas se você mantiver um nível muito alto, o agente pode se tornar extremamente paciente e nunca interromper, mas pode haver um silêncio constrangedor em que as pessoas ficarão se perguntando se o agente ainda está conectado ou não. Então não existe uma resposta universalmente correta . Depende da área de atuação. Se você estiver trabalhando nisso da perspectiva de um agente de vendas, provavelmente vai querer que seja algo em torno de 200 milissegundos. Se você estiver em um domínio onde precisa dar um tempo para o usuário responder, esse tempo pode ser de 1.000 a 1.200 milissegundos.
+
+Depende inteiramente do que você está construindo. Então, o VAD funciona bem, por isso muita gente o usa, e geralmente ele é bom no que faz, que é retornar uma resposta rápida à pergunta básica de se há alguém falando no momento. Mas, bem, existem coisas para as quais ele nunca foi projetado, porque haverá situações em que apenas saber que há um silêncio não será suficiente, pois você também precisa responder a perguntas como quanto tempo esperar, ou seja, a duração do silêncio. Se alguém fizer uma pausa de 300 ou 400 milissegundos, o VAD verá exatamente a mesma coisa. Não tem como saber se a pessoa está recuperando o fôlego ou se já terminou de pensar.
+
+Então, eles não conseguem distinguir isso. E o segundo cenário é tipo, e se o usuário falar por cima do agente, tipo, ele interromper? Ele não sabe como lidar com isso. E o mesmo silêncio pode ter uma intenção diferente. E pode ser algo completamente diferente . Poderia ser como uma
+
+frase completa, um pensamento incompleto ou uma pausa para reflexão. Ou talvez possa ser algo tão básico quanto um aviso em segundo plano. Bem, a situação do silêncio é a mesma, mas a intenção era muito diferente em todos os cenários, porém o VAD considera os quatro iguais e, literalmente, não consegue distingui-los. Essas são, portanto, as limitações do nível um. E com o nível dois, basicamente o que você obtém é que o serviço STT avisa quando a curva terminar.
+
+Assim, a Cartesiant ativa a detecção diretamente em seu websocket STT. Assim, quando o áudio for transmitido, o servidor lidará simultaneamente com a transcrição e a detecção de turnos , emitindo um evento quando considerar que o turno foi concluído. Da mesma forma, a Deepgram faz o mesmo com o que eles chamam de, creio eu, endpointing. E a latência P50 deles para o Cartesiant é de cerca de 300, e para o Deepgram Nova 3 é de cerca de 250. Ambos estão funcionando muito bem. Tipo, vemos muitos clientes
+
+usando isso. Porque eles utilizam sinais de áudio completos, além de algum contexto linguístico, para tomar essas decisões. Então, isso é muito mais informação do que o seu VAD jamais terá. No entanto, a contrapartida é a perda de transparência. Porque quando funciona, funciona muito bem. Mas quando
+
+falha, ou quando corta a energia de alguém no momento errado, então você não tem como descobrir, porque não existe nenhuma lei que diga, eh, que isso aconteceu por este motivo, por causa do que foi visto. E essa decisão foi tomada dentro do servidor de outra pessoa, e você simplesmente teve que conviver com isso, basicamente. Assim, chegamos ao nível três. Assim, no nível três, você mantém um pequeno VAD (Dispositivo de Assistência de Vídeo) rodando localmente para o sinal básico, ou seja, para a fala. E você adiciona o Smart Turn por cima disso, que é um pequeno modelo que funciona em modo silencioso.
+
+Então, o Smart Turn V3.2 é o modelo mais recente, e deixe-me compartilhar alguns números com vocês. E possui uma taxa de recall de aproximadamente 58,9% e uma precisão de 68,4%. Portanto, isso significa que, em cerca de seis em cada dez vezes que alguém termina uma frase, o Smart Turn conseguirá captá-la rapidamente. Mas nas outras quatro vezes, pode não ser suficientemente confiável, mas isso também não tem problema, porque você ainda tem o temporizador VAD, que está funcionando em segundo plano como uma rede de segurança.
+
+Se o Smart Turn não for acionado, o sistema de parada secundária entrará em ação, mesmo com a latência configurada. Então, poderia ser algo em torno de 300 ms. Assim, nesse cenário, você nunca fica preso esperando. Você simplesmente obtém uma resposta rápida quando o modelo está confiante. E você obtém uma resposta um pouco mais lenta, porém mais segura, quando isso não acontece.
+
+O outro número desta lista é de um artigo publicado por uma Meta no início deste ano, por volta de março. Lá, eles relataram uma taxa de recall maior, de 87,7%, mas não divulgaram o código, então você realmente não pode implantá-lo. O Smart Turn possui licença BSD-2 e é um modelo pequeno de 8 MB. Você também pode instalá-lo usando o pip hoje mesmo. Então, sim, isso acaba sendo melhor para muitos dos nossos clientes. Nós decidimos quando começar a
+
+conversar. Mas e quanto à outra direção? O que acontece quando o usuário interrompe e, enquanto você já está, sabe, o agente está falando? Assim, no lado esquerdo, você pode ver o que acontece mecanicamente. Tipo, o usuário abre a boca, o vento capta o som em 32 milissegundos e depois, em cerca de 15 milissegundos, todo o fluxo de áudio é eliminado. O
+
+TTS para, o LLM é cancelado, tudo está limpo. Tipo, o usuário nunca ouve o agente. Sabe, essa parte fica a cargo da Pipe Cat. Mas o importante é: será que a conversa deveria ter parado por aí? Porque pense numa conversa normal, quando alguém diz: "Sim". Por exemplo, se eles enviarem uma
+
+confirmação enquanto você estiver falando, você não para, certo? Sabe, eles só estão concordando, mas se você disser algo como: "Tá bom, espera aí, não. Tipo, isso estava errado." Você precisa parar imediatamente. Aqui também. Tipo, o vermelho é
+
+uma correção. Pare tudo. O tom âmbar pode ser apenas algum tipo de ruído de fundo. Mas você quer continuar , talvez num tom um pouco mais tranquilo. Azul significa algo como um sinal de tosse para um ruído de fundo. Então você pode simplesmente
+
+ignorar isso e terminar sua frase. Então, no nível três, como você possui essa classificação, você pode começar a distinguir entre uma interrupção real e alguém que está apenas, você sabe, dizendo "hum" . Então, hoje em dia a maioria desses sistemas para sempre, mas essa é uma parte que está melhorando. Tipo, estamos vendo muitas melhorias graduais nesse aspecto.
+
+Então, agora que você viu os três níveis, se observar esses três arquivos Python, verá que o pipeline é quase idêntico em todos eles. A única coisa que difere é a forma como você responde a todas essas perguntas. Quando o usuário terminar de falar? No arquivo um, você insere o analisador Celero VAD, que indica que o usuário permaneceu em silêncio por 300 milissegundos, então você pode presumir que ele terminou. No segundo arquivo, você troca pela classe de serviço Cadence turns STT e agora o serviço irá te avisar quando a curva terminar.
+
+E no arquivo três, você mantém seu analisador Celero VAD, mas também adiciona um analisador local inteligente de entonação, versão três, que é um modelo pequeno que funciona durante o silêncio e analisa a prosódia e a entonação para decidir se aquela pausa significa que eu terminei ou que ainda estou pensando. Então, em termos de código, o pipeline é o mesmo, mas as mudanças de configuração, como você sabe, levam a um comportamento completamente diferente. Resumindo, seus três níveis, sendo o primeiro o Celero VAD, basicamente você controla completamente a detecção de silêncio . No segundo nível, você deixa que o provedor de STT cuide disso para você. E na maioria dos casos, ele falará de forma mais inteligente, mas você não poderá ver o que aconteceu dentro dele. O
+
+nível três é o seu VAD mais a virada inteligente, onde basicamente controlamos tudo, como se você tivesse total portabilidade. E agora, falando sobre latência, já que temos mencionado esses números, 755 milissegundos, 1,3 segundos, deixe-me mostrar onde todo esse tempo realmente é gasto. Esta é uma análise de Quintela, cofundador do Daily.co e criador do Pipe Band. E estes são alguns dos números baseados na medição da sua produção.
+
+Então, você tem os números para fazer um que é cerca de 40 ms. Então você tem um buffer de rede e jitter de 52. Isso é física. É como se você não pudesse mudá-los muito. Em seguida, você terá sua transcrição mais a indicação das extremidades.
+
+Isso corresponde a cerca de 300 ms. Novamente, esse é o seu STT fazendo o seu trabalho. O tempo até o primeiro byte (LTM) geralmente é o principal gargalo, pois em uma configuração típica de API, você pode esperar de 500 a 650 ms, dependendo do modelo que está sendo chamado, do provedor de nuvem e da região. Em seguida, você conecta sua rede e reproduz o TTS (texto para fala). Isso vai levar cerca de 120 a 90 85 ms.
+
+Portanto, em uma configuração padrão, você pode esperar um tempo de resposta de aproximadamente 1.100 a 1.300 ms ao chamar APIs na nuvem. Agora, a equipe da Quindos demonstrou um tempo total de resposta de voz para voz de cerca de 500 ms, alocando todos os modelos no mesmo cluster de GPUs. Porque eles conseguiram eliminar os saltos de rede dentro do serviço.
+
+E é uma espécie de limite mínimo alcançável, porque se você estiver disposto a investir em infraestrutura, mas para a maioria dos desenvolvedores que chamam APIs hoje em dia, o tempo de resposta fica em algum lugar entre 800 e 1.300 ms. E a principal conclusão a observar aqui é que o STT e o LLM, juntos, consomem cerca de 2/3 do orçamento de latência. Portanto, essas são realmente as únicas duas alavancas que temos para influenciar de forma significativa essa métrica de latência. Então, quais LLMs são realmente rápidos o suficiente para isso?
+
+Avaliamos os modelos atuais especificamente para voz, e a meta que definimos foi um tempo de resposta até o primeiro token inferior a 700 ms. Porque qualquer coisa mais lenta fará com que nossa resposta total ultrapasse o ponto em que o usuário começará a perceber. Portanto, por enquanto, considerando as gravações de junho de 2026, o que observamos com o Nemotron-3 Ultra é uma latência P50 de 529 . GPT-4.1 em torno de 536.
+
+Mas também, tipo, o que importa mais na voz do que o P95.
+
+Então, quais LLMs são realmente rápidos o suficiente para isso? Nós avaliamos os modelos atuais, especialmente para voz, e
+
+então, chegando aos modelos LLM, que são realmente rápidos o suficiente para avaliarmos bem os modelos atuais para voz. Então, esses benchmarks são de 26 de junho, e a meta que definimos foi um tempo de abertura inicial inferior a 700 ms, porque qualquer valor mais lento faria com que nosso tempo de resposta total ultrapassasse o limite, a ponto de os usuários começarem a perceber. Então, por enquanto, o Nemotron-3 Ultra em 529 P50, observamos o GPT-4.1 em 536, novamente P50. Mas o que importa mais na voz do que em qualquer outra coisa é a cauda do P95. Porque o GPT-4.1
+
+era ótimo no P50, mas sobe para 1,7 no P95. E para Claude 3 foi ainda pior, pois ultrapassou os 4 segundos, e numa conversa não se consegue fazer uma média, já que uma resposta lenta e todo o ritmo se perde. E há mais uma dimensão que as pessoas frequentemente ignoram, que é a viagem com múltiplas curvas, porque depois de 15 ou 20 curvas, às vezes o modelo começa a ignorar partes das instruções do sistema. Eles podem se tornar prolixos, podem perder o espírito da coisa. Porque, nesse caso é fatal, você não pode simplesmente despejar um texto enorme em alguém se as instruções seguintes se deteriorarem ao longo da interação.
+
+Então você precisa fazer algum tipo de limpeza de contexto ou reinicialização de sessão. Então, alguns problemas de produção que observamos são que interrupções falsas aumentam significativamente a taxa de escalonamento. Porque quando os agentes interrompem as pessoas incorretamente, os usuários ficam mais propensos a solicitar suporte humano. E 755 ms ainda é, creio eu, o melhor tempo de resposta de voz para voz medido em um pipeline em cascata como os que propomos. Estamos longe da velocidade de interação humana, o que significa que o processo de devolução também precisa se esforçar bastante para que a experiência seja melhor do que os números brutos sugerem.
+
+E com uma taxa de recall de 58,9% na detecção de curvas inteligentes, essa é, na verdade, a melhor detecção de curvas implantável que você pode obter hoje. Embora ainda falte cerca de quatro em cada dez curvas para serem preenchidas por um temporizador VAD, esse cenário vai melhorar muito nos próximos anos e teremos modelos melhores. E a infraestrutura que executa tudo isso em produção também é difícil, porque são cinco sistemas que escalam de forma diferente e podem falhar de maneiras distintas. Você pode explorar o Picovoice Cloud para hospedagem gerenciada, onde seu foco é a lógica do agente, ou a arquitetura de referência de diretrizes da AWS para implantações corporativas com todas as proteções necessárias. Então, é isso, tipo, é isso da minha parte. Tudo o que
+
+discutimos ou mencionamos está linkado na tela que eu mostrei para o benchmark. Certo, agora é com você, Dan.
+
+Obrigado, Jinson. Oi pessoal. Meu nome é Daniel Weijia. Também sou arquiteto de soluções na equipe de startups da AWS. Então, acho que o Jinson apresentou uma ótima visão geral de alguns dos principais desafios na criação de agentes de voz.
+
+Então, o que vou fazer nesta sessão é apresentar uma demonstração prática para tornar os conceitos um pouco mais concretos. Espero que você consiga incorporar alguns desses aprendizados em seus próprios fluxos de trabalho de agentes de voz . Então, o que vamos analisar é esta demonstração de detecção Picovoice Cat 10, que é apenas um repositório simples que criamos. Vamos analisar três exemplos. Então, um com detecção de silêncio, outro com detecção integrada no modelo de conversão de fala em texto.
+
+E, por fim, também vamos analisar o modelo Open Smart 10. Isso é realmente útil quando você deseja ter controle total do seu pipeline de voz, seja por questões de conformidade, seja para ajustar e personalizar seu próprio modelo de detecção com base em seus próprios dados. Então, vamos começar. Vamos então analisar o código-fonte do primeiro exemplo. Como você pode ver aqui, usar o Silero no Pipe Cat é bem fácil. Basta
+
+importar as bibliotecas relevantes e você também poderá configurar os parâmetros . Hum, na verdade eu não configurei nenhum dos parâmetros, então esses são apenas os valores padrão, mas você pode alterar parâmetros como a confiança para acionar o alarme, a duração do silêncio antes do fim da curva e o volume mínimo do áudio também. E em termos do fluxo de trabalho de voz, é bastante padrão. Então, nós usamos um modelo STT, o LLM e também um modelo TTS aqui. Acabamos de defini-lo como o modelo cartesiano para STT. O mesmo acontece com o
+
+modelo Sonic para TTS e, como podem ver, usamos a voz que soa como a de uma senhora britânica. E para o LLM no cérebro do agente de voz , usamos o modelo antrópico do Claude, que é bem legal. Então, vamos ver como isso fica, e vou mostrar um exemplo agora mesmo. Então , se você nunca usou o Pipe Cat antes, uma das vantagens é que ele pode criar um ambiente de prototipagem local. Muito útil para experimentar com o seu pipeline de agente de voz. Então, deixe-me
+
+ver se agora funciona. OK. Então, como você pode ver, ele criará um ambiente de desenvolvimento local. Então, o que eu posso fazer é me conectar ao assistente de voz, mas antes disso, posso silenciá-lo para o caso de interromper o assistente de voz. Deverá aparecer uma saudação inicial, e depois vou testar com algumas interações para ver como está funcionando a detecção de turnos.
+
+Olá! Sou seu assistente de viagens e estou animado para te ajudar a planejar uma viagem incrível. Então, para onde você está pensando em ir? Tem algum lugar no mundo que esteja nos seus planos? Como podem ver, o assistente já fez a saudação inicial e, aqui à direita no terminal, tenho alguns registros em tempo real para que possamos ver o que está acontecendo. Então, o que eu posso
+
+fazer agora é fingir que estou pensando no meu destino de viagem e ver como o assistente de voz se comporta. Então, estou pensando em ir... Estou
+
+todo ouvidos. Para onde você está pensando em ir? Como você pode ver, eu ainda não terminei minha frase, mas o assistente de voz já está respondendo. Então, você pode ver como isso funciona nos logs de depuração e, como você pode ver, há um fim de turno completo aqui e o motivo disso é devido ao parâmetro de segundos de parada, que está definido para 300 milissegundos, como parece aqui. Então, foi por isso que a curva foi encerrada.
+
+Bem, talvez eu faça o seguinte: talvez eu saia deste servidor local e tente o segundo exemplo. Então, vamos limpar isso e eu atualizo a página. Ok, então vou tentar o segundo exemplo aqui. E neste exemplo, usaremos um modelo de conversão de fala em texto que possui detecção de turnos. Então, vamos ver como o assistente de voz se comporta.
+
+OK. Vou tentar o mesmo exemplo, então vou silenciar meu microfone aqui. Ei
+
+. Sou seu assistente de viagens e estou animado para ajudá-lo(a) a planejar uma viagem incrível. Então, para onde você está pensando em ir? Você sonha com uma escapadela para a praia, uma aventura na cidade, nas montanhas, ou talvez em algum lugar completamente diferente? Muito bem, vamos ver como o modelo se comporta desta vez.
+
+Olá, estou pensando em ir para...
+
+Como você pode ver, o modelo é bem inteligente. Agora ele consegue detectar a curva, então vamos ver se conseguimos descobrir o que está acontecendo nos registros de depuração. Então, vamos ver se ele emite alguns desses eventos de alternância de turnos aqui.
+
+Então, como você pode ver, o modelo da Katisha Inc. emite alguns eventos de virada aqui.
+
+E como você pode ver, na verdade não completou a volta. Não houve qualquer tipo de resposta. Mas talvez eu consiga desativar o mudo, retomar a gravação e chegar ao meu destino. Então, Sydney? Ah, Sydney é fantástica. Você vai se divertir muito
+
+lá. Você está pensando em quando gostaria de ir? E por quanto tempo você pretende ficar? Isso me ajudará a encontrar os melhores voos e hotéis para você. Portanto, como você pode ver, assim que o modelo detecta que se trata de uma frase completa, ele é capaz de responder.
+
+Na prática, você também incorporaria alguma detecção de silêncio, porque, como você pode ver, eu fiquei bastante em silêncio. Hum, fiquei silenciado por um tempo e, na prática, você provavelmente gostaria que o assistente de voz respondesse . Ter detecção de atividade de voz ou detecção de silêncio também é útil para interromper os modelos de voz ou o que você chama de intromissão. Então, definitivamente, isso é apenas uma demonstração rápida, mas na prática, você provavelmente combinaria o modelo de detecção de curvas com a detecção de silêncio. Só para a demonstração final, posso mostrar rapidamente o modelo de giro inteligente também, para ver como fica. Ele se
+
+comportará de maneira muito semelhante a esta. É que o modelo será executado na sua máquina local ou em um ambiente de GPU, caso você queira implantá-lo na nuvem. Então, talvez eu deva esclarecer isso para evitar confusões. E então eu vou usar... vou atualizar isso
+
+também. E vou começar agora com o exemplo da curva inteligente . Vou atualizar a página para ver se conseguimos. Ok, aqui está. Está começando. E eu vou repetir
+
+o mesmo exemplo. Então, vou me silenciar novamente. Ei
+
+. Sou seu assistente de viagens e estou animado para ajudá-lo(a) a planejar uma viagem incrível. Então, para onde você está pensando em ir? Você sonha com uma escapadela para a praia, explorar uma nova cidade ou talvez algo completamente diferente? Estou pensando em ir... Estou
+
+todo ouvidos. Para onde você está pensando em ir? Agora, vamos dar uma olhada tanto na detecção de silêncio, que está incorporada neste exemplo, quanto no modelo de detecção de curvas. Tomara que haja alguns registros de depuração que possamos ver. Como você pode ver, não está detectando que eu completei a curva. O estado de fim de turno está
+
+incompleto, mas foi concluído devido ao silêncio que eu... eu...
+
+causei ali. Então, houve um momento de silêncio, e por isso a conversa continuou na próxima rodada. O que eu poderia fazer é ver se consigo formar uma frase completa e verificar se, sabe, ela pode ser detectada pelo modelo local de conversão inteligente. Na verdade, estou pensando em ir para Sydney. Ah, Sydney é fantástica. Eu adoraria te ajudar a
+
+planejar essa viagem. Então, me diga, em que época do ano você está pensando em ir e por quanto tempo pretende ficar? Além disso, você está viajando sozinho, com um parceiro ou com a família? Ok, fantástico. Então, o assistente de voz conseguiu responder assim que eu terminei a frase, mas vamos ver se isso foi intencional ou se foi algo que pode ser detectado pelo modelo de resposta inteligente.
+
+Então, vamos dar uma olhada aqui para ver se conseguimos encontrar os registros de depuração do Smart Turn.
+
+Como você pode ver, esta linha aqui, peço desculpas pela legibilidade do destaque, mas efetivamente ela indica que o estado de fim de turno está completo, e o modelo de turno inteligente está classificando que há uma alta probabilidade de que a frase esteja completa e, portanto, está tudo bem passar para o próximo turno. Resumindo, é assim que funciona a detecção de curvas. Espero que tenha sido útil.

@@ -1,0 +1,101 @@
+---
+video_title: "The Unreasonable Effectiveness of Separating the Task from the Model — Maxime Rivest & Isaac Miller"
+video_id: GgLQ02aO-hs
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=GgLQ02aO-hs
+video_date: 2026-07-23T17:45:06+00:00
+video_description: |
+  By declaring a task's inputs and outputs without initially considering model capability, you create the space needed to determine execution later. DSPy's promise is that AI engineering should happen above a particular prompt template or provider API shape: the Signature.
+  
+  That remains useful in a world of tools, RLMs, and Skills. Define a task strictly through its inputs and outputs, and the underlying implementation becomes flexible: experiment with models, settings, weights, templates, and output formats without touching the workflow. The talk covers DSPy 3.5 and previews DSPy 4.0, where models can write code beneath a signature and programs can learn directly from interactions with users while still respecting the signature's inputs and outputs.
+  
+  Speakers:
+  
+  Maxime Rivest — Core Contributor, DSPy
+  Maxime builds tools and content that make LLMs more accessible and powerful. He is a DSPy core contributor and an open-source Python library author.
+  X/Twitter: https://x.com/MaximeRivest
+  LinkedIn: https://linkedin.com/in/maximerivest
+  Website: https://maximerivest.com
+  
+  Isaac Miller — Lead Maintainer of DSPy; Co-Founder, cmpnd
+  Isaac leads DSPy and co-founded cmpnd, building an open-source framework for self-improving, modular AI systems.
+  X/Twitter: https://x.com/isaacbmiller1
+  LinkedIn: https://www.linkedin.com/in/miller-isaac/
+---
+[música]
+
+Recebam no palco Maxim Rest e Isaac Miller. [aplausos] Uau. Isaac, eu e toda a comunidade DSPI estamos muito gratos por estarmos aqui hoje para falar com vocês sobre programação de IA em DSPI e a incrível eficácia de separar a tarefa do modelo, sua estrutura e todos os detalhes de implementação. Se pararmos para pensar, em programação, se quisermos repetir tarefas com frequência, transformamos isso em uma função. Acreditamos que o mesmo deva ser válido para os programas de Realidade Aumentada.
+
+As funções são incríveis. As funções são reutilizáveis, componíveis, testáveis ​​e otimizáveis. Para criar uma função, você lhe dá um nome. Você define algumas entradas, algumas saídas e, em seguida, tem alguma lógica de implementação dentro disso. Você poderá reutilizar suas funções milhares de vezes. Você pode otimizá-lo,
+
+mas também pode compô-lo em programas maiores. Uma das grandes vantagens das funções é que você pode empacotá- las e distribuí-las para que outras pessoas as utilizem, precisando apenas conhecer o contrato subjacente, podendo tratá-las como uma caixa preta. O DSPI traz todas essas propriedades para os programas de IA. Assim, o DSPI é um software de código aberto em Python que permite, como eu disse, incorporar essas propriedades aos seus fluxos de trabalho e programas de IA. E fornece todas as ferramentas necessárias para isso.
+
+Por que você quer isso? Bem, temos inventado muitos termos em nossas áreas nos últimos três anos. Está crescendo rapidamente. Temos novos modelos chegando a cada duas semanas. Temos novas técnicas, novas estratégias. E se você for como eu, vai
+
+querer experimentar todos eles. Mas será que alguma dessas novas técnicas específicas que surgirem em um momento diferente realmente ajudará na sua tarefa, no seu trabalho? Bem, essas são apenas táticas de implementação e você precisa incluí-las em um contrato claro. Se você definir uma interface de entrada e uma interface de saída para sua tarefa repetitiva de IA, poderá explorar os detalhes internos. Você adquire muita agilidade.
+
+Vamos tornar isso concreto para a IA. Então, meu primeiro programa de IA, que criei quando descobri o DSI, foi para extrair algumas notas fiscais da minha fazenda e fazer meu imposto de renda. Eu queria extrair os valores dos impostos dali. Outro programa de IA que eu fiz é um pequeno comando no meu teclado, no meu computador, que lê meus atalhos de teclado, lê minha área de transferência e corrige a gramática para mim. Às vezes, eu realmente queria reescrever para maior clareza. Então, tenho outro programa que
+
+pega o texto, reescreve-o para maior clareza, coloca-o de volta no meu teclado, e isso é um comando, e então posso ter muita agilidade e levá-lo para diferentes lugares dentro desse programa . Posso alterar isso como quiser. Um novo modelo surge e eu posso alterá- lo. É super fácil porque minha interface é fixa dessa forma. Vou pular essa.
+
+Mas eles não se restringem a coisas muito fáceis e pequenas entradas e saídas. É possível ser muito ambicioso com programas de IA. Nesses exemplos, você pode ter sua caixa de entrada cheia e um novo e-mail chegando, e você deseja redigir uma nova resposta. Podemos fazer isso no Aspire com modelos de linguagem recursivos RLM. Essa é uma ideia que surgiu em nossa comunidade, ou melhor, algo que provavelmente todos nós fazemos: engenharia agética ou programação vibracional. Você
+
+pode fornecer uma especificação, um repositório e obter um PR (Pull Request). Essas são tarefas repetíveis. Então, como venho dizendo, quando você define esse limite, pode se concentrar no " como" na parte superior e, dentro dele, pode ter um pequeno bate-papo com apenas um estímulo simples. Você pode integrar nesse prompt. Agentes aparecem, você muda para ser um agente. As ferramentas são inventadas, você adiciona
+
+ferramentas e então entramos na engenharia de ciclos. Você coloca isso dentro também. Qualquer coisa externa a isso não altera sua integração, e nada mais muda. E quando você tem um limite tão rígido, também pode começar a otimizar automaticamente. Mas como você pode otimizar automaticamente usando apenas essa assinatura simples? Isso
+
+não é suficiente. Isso não é suficiente para especificar sua tarefa. E mesmo antes do lançamento do Chat GPD, o criador do DSPI já havia começado a desenvolver a ideia de que você precisa de três coisas para especificar sua tarefa. E se você tiver essa linguagem e essa capacidade de expressar sua tarefa em uma linguagem de programação, poderá começar a otimizar automaticamente e delegar os detalhes de implementação. Então, a primeira opção é o que deveria acontecer. Estas são as
+
+instruções. As assinaturas que lhe mostrei fazem parte disso. Aqui na tela, você vê o início de um roteiro real em DSP. Você define seu modelo na parte superior. Você configura isso e é totalmente independente das assinaturas aqui, onde você tem instruções em linguagem natural para extrair todos os impostos e, se for impossível retornar zero, você diz: "Vou fornecer uma entrada, que será uma string, e quero uma saída, que será uma string e um float". Isso é
+
+linguagem natural expressando minhas necessidades. É muito poderoso e eficiente se você pensar bem: imagine que um amigo vem jogar um jogo de tabuleiro com você, você dá as instruções e ele está pronto para jogar. Mas se você quiser fazer como o Alpha Go ou o Alpha Zero e disser que vai aprender apenas com exemplos, você terá uma longa noite pela frente. E então, a segunda coisa é o que deve acontecer. Existem algumas restrições que você precisa impor e que devem ser levadas em consideração.
+
+Elas precisam ser cumpridas. A melhor maneira de fazer isso é com código. Então, quero que você vá para a terceira linha, a quarta linha. Você tem extração automática e verificação automática. Como podem ver, estamos fazendo uma previsão sobre os impostos sobre a extração e também um raciocínio baseado nesses impostos.
+
+O primeiro é um programa básico. A segunda opção faz com que o programa realize algum raciocínio. Agora estou levando-os para dentro, na proa, e você pode ver, se não for imposto sobre o pão. Esta é uma exigência minha: se meu primeiro programa simples não extrair meus impostos, quero que você o execute novamente com uma lógica mais elaborada. Quer dizer, preciso acertar meus impostos. E outro
+
+requisito que tenho é que, se o valor for menor que zero, eu quero mostrar isso para um humano. Eu não quero te deixar ir. Isso não vai mudar. Mesmo que eu tenha AGI (Inteligência Artificial Geral), espero que não cometa erros. Mas, independentemente do que o modelo preditivo indicar, mesmo que eles cometam esses erros, ainda quero que essas coisas sejam verdadeiras.
+
+Então, a última imagem mostrava o que era bom . E quando eu era jovem, estava na fazenda com meu pai e perguntei a ele: "Como você sabe que esta árvore é um bordo?" E ele não pôde me dizer. Ele não soube me explicar como identificar que aquela árvore era um bordo. E ele certamente não saberia me dar um código de como saber se esta árvore é um bordo. E assim, com o tempo e através de
+
+exemplos, aprendi a reconhecer que uma árvore é um bordo. Mas isso não se limita a coisas como a classificação de plantas. Serve também para todas as caudas longas em suas especificações, que são coisas mais latentes. Esses são, às vezes, os motivos pelos quais você faria um estágio e teria um mentor e um mentorando. Você está vendo muitos exemplos e há longas histórias de comportamentos bem-sucedidos que você precisa observar e aprender. Agora que você tem tudo isso,
+
+você se expressou plenamente. Você tem essas três línguas que pode combinar. Você tem as especificações, o código e as avaliações. E agora seu objetivo está totalmente definido. Assim, você pode começar a otimizar. Você pode
+
+usar ferramentas como o Japa em suas métricas e em seu programa. E você pode começar a otimizar. No início do desenvolvimento do Aspire, o chip não existia. Os modelos não eram suficientemente bons para serem otimizados. Então, estávamos usando código para encontrar alguns exemplos de cenas para fazer os modelos base se comportarem da maneira correta. Então os modelos
+
+melhoraram e, assim, pudemos otimizar o ensino automaticamente. E, no futuro, começaremos a nos libertar cada vez mais dos detalhes de implementação e a delegar essa tarefa . E, no fim, nossa esperança com o Aspire é que você consiga seguir tudo isso e que apenas as notícias e os detalhes da implementação sejam automatizados para você. Isaac falará muito mais sobre os lançamentos do último ano, os lançamentos que faremos agora e todos os nossos planos para o futuro. Obrigado.
+
+[aplausos] Obrigado, Max. Então, nós demos a vocês uma visão geral abstrata bastante ampla sobre especificações, código e avaliações, mas esses não são assuntos restritos apenas à esfera acadêmica. Esses produtos são utilizados na produção por algumas das maiores empresas, obtendo lucros expressivos. E vemos dois benefícios principais ao usar DSP em ambientes corporativos. Primeiro, a implementação fica mais barata. Ao ser flexível em relação à
+
+implementação, você pode usar a lição amarga para buscar diferentes soluções e encontrar algo que resolva seu problema de forma econômica. E você pode usar isso para dimensionar para tamanhos de dados que não eram possíveis com uma implementação mais cara . Shopify 550 vezes mais barato. Eles conseguiram fazer isso porque passaram de um modelo caro para um modelo barato, mas puderam manter os mesmos e-mails, continuar aprimorando sua lógica de negócios internamente e experimentar coisas novas. Há três estudos de caso incríveis aqui, e você deveria conferi-los depois da palestra. Eles fornecem muitos detalhes sobre
+
+como você pode fazer isso em sua própria empresa. Um dos motivos pelos quais você deve investir no ecossistema DSPI é que estamos constantemente adicionando novas técnicas para você experimentar. E é importante saber que nenhuma dessas técnicas que adicionamos resolverá definitivamente o seu problema, porque essa é a sua responsabilidade. O que podemos fazer é resolver subproblemas para você, facilitando a implementação. Por exemplo, Alex Zang, um estudante de doutorado do MIT, publicou um artigo intitulado " modelos de linguagem recursivos". Os
+
+modelos de linguagem recursivos são uma forma de resolver alguns tipos de programas de contexto longo. E sabe o que mais? Podemos integrar isso ao DSPI para você testar e ver se ajuda nas suas tarefas de contexto longo. Talvez sim, talvez não. Mas o fato é que se trata de uma única linha e sua assinatura permanece a mesma. É isso
+
+que importa aqui. Tudo permanece constante e você pode verificar se isso resolve seu problema ou não. E tivemos vários exemplos disso apenas no último ano, vindos de pessoas que trabalham na comunidade DSPI e em seus arredores . Já tivemos RLMs. Já utilizamos o Jeepa, um otimizador de prompts incrível desenvolvido em Berkeley. Melhor
+
+juntos multiódulo gpo. Todas essas são inovações de pesquisa incríveis que você pode experimentar na sua implementação simplesmente por estar no ecossistema DSP. E teremos mais novidades no DSP4. Estou animado para falar com vocês sobre dois desses assuntos hoje. DSPI Flex e Aprendizagem Qualitativa.
+
+DSP.flex é um novo tipo de módulo. No DSpay, quando permitimos que você otimizasse as coisas, começou com alguns exemplos de fotos, depois se tornou um conjunto de prompts e agora está se tornando código. para qualquer função que você queira implementar. Com o tempo, você pode aprender a usar um arnês para resolver essa função. E isto é totalmente personalizado.
+
+E você não se importa com a implementação, desde que ela resolva o problema do seu negócio. Você criou maneiras de medir o que precisa porque definiu as três partes principais: especificações, código e avaliações. A segunda coisa sobre a qual estou animado para falar é a aprendizagem qualitativa. Um dos problemas mais difíceis na engenharia de IA é a construção de avaliações. E existem alguns motivos pelos quais isso é difícil.
+
+Uma delas é que definir o que é considerado bom é um grande desafio para qualquer problema do mundo real. A segunda é que, ao definir o que é bom, muitas vezes é preciso abrir mão de detalhes. Dizer que um e-mail é bom ou ruim contém muito menos informação do que saber o que poderia ser mudado nesse e-mail para melhorá-lo. E a terceira é que, sempre que você cria uma colina e um conjunto de dados, na verdade está tentando criar uma representação da realidade. E se, em vez disso, pudéssemos usar a realidade para informar nossos padrões de comportamento automaticamente?
+
+O que a aprendizagem qualitativa busca responder é: como podemos diminuir essa questão? Como podemos diminuir a necessidade de assistência? E essa é uma questão que está sendo pesquisada no momento. Mas acreditamos que os modelos agora são bons o suficiente para interpretar qualquer feedback textual presente no ambiente e convertê- lo em avaliações, representando um desafio que o modelo pode superar. E assim, à medida que você recebe mais feedback da produção, seus rastros, suas ações do usuário, suas análises de produto, o modelo lhe faz perguntas sobre como os dados devem ser representados. Ao fazer isso, o modelo
+
+pode refinar iterativamente a "montanha" ao longo do tempo e continuar a escalá-la para resolver o seu problema de negócio real. E a DSP se concentra nesse tipo de problema da última milha. Temos um ecossistema de pesquisa muito forte e colaboramos muito de perto com eles. E essa é parte da beleza da coisa: podemos ver os problemas que surgem na engenharia de IA aplicada . Nós definimos os problemas, criamos um parâmetro de referência e depois os resolvemos com técnicas específicas, e então conseguimos democratizar os resultados para todos, porque é pesquisa aberta e de código aberto .
+
+Uma pergunta comum é: o que acontece quando tivermos Inteligência Artificial Geral (IAG)? Bem, mesmo que tenhamos um modelo incrivelmente inteligente, ele não saberá como resolver seus problemas. Não saberá como realizar suas tarefas nem terá o seu contexto. Assim, esse gênero de aprendizado da última milha busca entender como podemos realizar esse aprendizado de forma eficiente, sendo que inteligência é muito diferente de onisciência. Se você pedisse a Albert Einstein para ajudá-lo com seus e-mails, ele provavelmente perguntaria o que é um e-mail.
+
+Mas se você tiver um AGI, saberá como gerenciar seus e-mails. No entanto, não saberá como resolver o seu problema e interagir com as pessoas com quem você precisa interagir. Não conseguirá entender seus relacionamentos sem aprender esse contexto ao longo do tempo. Desde 2022, a DSPI tem se concentrado nessas três ideias centrais: especificações, código e avaliações, todas definidas como uma interface programática. Certamente evoluímos ao longo do tempo, e as novas técnicas são incríveis.
+
+Passamos de evoluir algumas fotos para prompts, depois para recursos adicionais e agora também para evoluir seus e-mails ao longo do tempo. Mas o que você precisa perguntar sobre qualquer uma dessas novas técnicas é: como elas te ajudam a resolver problemas mais difíceis ou a resolver seus próprios problemas melhor? E você deve fazer essa pergunta de forma baseada em dados. Você deve analisar essa nova técnica e pensar: como posso aplicá-la ao problema de negócios que tenho? Você deve definir seu problema e garantir que seus prompts, modelos e código sejam responsáveis ​​por resolver o problema que você precisa que eles resolvam.
+
+E o mais incrível de construir dessa forma, com implementações flexíveis, é que você desbloqueia o ecossistema de todas as técnicas que qualquer pessoa nesta sala está constantemente inventando. Você desbloqueia o acesso à inteligência coletiva de todos aqui, que compartilham técnicas entre si. Portanto, se você deseja criar um software de IA confiável , recomendo que dê uma olhada na DSP. Somos totalmente de código aberto, com pesquisa aberta, e estamos aqui para ajudar você a resolver seus problemas criando softwares confiáveis. Temos um servidor no Discord, você deveria entrar . E quando você desenvolver a próxima
+
+técnica, deverá contribuir com ela para o DSP. E nós podemos ajudar você a distribuí- la e tornar essa técnica incrível disponível para todos. Obrigado.

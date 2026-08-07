@@ -1,0 +1,92 @@
+---
+video_title: "Privacy-Preserving Intelligence — Steve Korshakov, Bee (acq. Amazon)"
+video_id: IvE8n-ylFYY
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=IvE8n-ylFYY
+video_date: 2026-07-20T17:17:53+00:00
+video_description: |
+  A wearable that records everything you say captures about 10 million tokens a year, and within a week it knows almost everything about you. That is Bee, and Steve Korshakov calls it roughly the most sensitive capture device on the market, which is why his whole talk is about one guarantee: no one can read your data, not even Amazon, the company that acquired Bee eight months ago. Being inside Amazon made this harder, not easier, because an ordinary AWS customer trusts Amazon to see their data, and Bee now had to defend against that too.
+  
+  The encryption key never leaves your phone, and Bee never stores it. Before the phone hands anything over, it runs an attestation pipeline that checks the exact workload against a public transparency log, Sigstore, so anyone can verify the code touching your data is genuine. Inference runs on their own models inside confidential compute, keys in memory expire after seven days, and a separate Amazon privacy team holds the signing keys, hardcoded into the apps, so Bee can influence a deployment but cannot ship anything unnoticed. The footnote that surprised the room: the whole system is about 20,000 lines of memory safe code, most of it just verifying attestation, with no homegrown crypto.
+  
+  Speaker info:
+  - https://x.com/Ex3NDR
+  - https://github.com/ex3ndr
+  - https://bee.computer
+  
+  Timestamps:
+  0:00 - The most sensitive capture device on the market
+  1:32 - The mission: no one, not even Amazon, can read your data
+  2:13 - Why the agent runs continuously, not request response
+  3:58 - Four principles: the key never leaves your phone
+  4:53 - Attestation and a public transparency log
+  6:11 - Own inference, confidential compute, and 7 day keys
+  7:14 - Signing so no insider can ship unnoticed
+  9:35 - Certificates that embed the proofs
+  10:16 - Q&A: joining Amazon, 20k lines, and taming agents
+---
+[música]
+
+Olá a todos. Espero que esta conversa seja mais curta. Ah, eu sou da Amazon. Nossa empresa foi adquirida há cerca de 8 meses e nós desenvolvemos o dispositivo vestível com IA que está na minha mão. Que é essencialmente um microfone que grava tudo e constrói seu agente pessoal, sua IA pessoal e, além disso, você pode extrair todos os dados gravados e integrá-los aos seus sistemas ou agentes e fazer o que quiser.
+
+Só para vocês terem uma ideia da confidencialidade e da natureza privada dos dados que coletamos, uma única pessoa geralmente coleta cerca de 10 milhões de tokens por ano. Então, mesmo na primeira semana de gravação, as pessoas geralmente contam coisas extremamente sensíveis para seus amigos e familiares. É possível aprender praticamente tudo sobre a pessoa em apenas uma semana usando o dispositivo B, que é extremamente sensível. Acho que temos um dos dispositivos de captura mais sensíveis do mercado atualmente. Então, por causa disso, tivemos que criptografar tudo, e nossa missão era impedir que qualquer pessoa na Amazon tivesse acesso a esses dados e que os visualizasse.
+
+Isso se tornou um pouco desafiador para nós na Amazon, porque a própria Amazon oferece fortes garantias de segurança e privacidade, mas se você usa os produtos da Amazon, precisa tomar medidas de segurança muito mais rigorosas. Primeiramente, definimos alguns princípios básicos sobre o que precisávamos fazer para o nosso agente específico. Em primeiro lugar, acreditamos que o agente deve trabalhar ininterruptamente para o seu bem. Deveria estar fazendo coisas em seu nome. E não devemos consumir recursos do cliente, como baterias e outras coisas.
+
+Então, dessa forma, nós... isso nos leva a um projeto específico do nosso sistema. O sistema atual geralmente se baseia no estado e na resposta a solicitações, onde você envia uma solicitação do seu iPhone, por exemplo, para um servidor, que calcula algo e retorna a resposta para o servidor. Infelizmente,
+
+já percebemos que isso não é suficiente, que precisamos executar as coisas continuamente e, às vezes, por dias. Podemos ver isso como um vislumbre do futuro de como o código em nuvem funciona. Há alguns meses, era mais como uma questão de solicitação e resposta, tipo "mude isso, mude aquilo", e agora pode funcionar por horas para nós. Acreditamos que o mesmo acontecerá com todos os seus agentes pessoais. Então, por causa disso, construímos um ambiente de execução com estado e memória persistente, à qual ainda não temos acesso. Ele pode se
+
+conectar a diferentes ferramentas. Ele pode se conectar a qualquer serviço de terceiros, se o programarmos para isso, e não exigimos que o dispositivo do usuário esteja online. Portanto, é totalmente autônomo, mas ao mesmo tempo totalmente controlado pelo usuário. Então, o sistema de criptografia é construído com base em algumas ideias fundamentais que precisamos seguir. Primeiramente, as chaves se ajustam e são gerenciadas apenas no dispositivo do cliente.
+
+Portanto, trata-se do próprio dispositivo iPhone ou Android do usuário . Nós não temos a chave. Não o insistimos em lugar nenhum. Então, as chaves são armazenadas apenas no telefone do cliente. Tudo está criptografado. Não temos
+
+nenhuma opção de desativação. Não há como desativá-lo. Não há como contornar isso. Ao mesmo tempo, para nos protegermos de ameaças internas, realizamos auditorias totalmente transparentes em todas as nossas cargas de trabalho e, além disso, tentamos minimizar a dependência daquilo em que realmente podemos confiar. Então, em qualquer sistema de segurança que utilize criptografia de ponta a ponta ou qualquer tipo de criptografia, existe um grande problema: o gerenciamento de chaves. Então, o primeiro passo é
+
+explicar como gerenciamos a chave. Então, começamos com a chave, como mencionei antes, que inicia no telefone e permanece ativa no telefone. Em seguida, o telefone se conecta ao nosso sistema e executa um pipeline de atestação muito sofisticado que verifica a integridade e se a carga de trabalho específica está dentro do log de transparência público. Usamos o Six Store para nosso registro de transparência, e qualquer pessoa pode acessá-lo e verificar se essa carga de trabalho é genuína. O método é muito complicado para ser incluído nesta apresentação, mas publicaremos os detalhes em algum momento.
+
+Assim que o processamento na estação foi concluído, o cliente compartilha a chave com nosso front-end principal e back-end, e o back- end replica essa chave com os nós semelhantes que são executados dentro de nosso ambiente de computação confidencial, porque não podemos deixar os dados não criptografados fora do nosso perímetro. Também executamos nossa própria inferência. Isso nos coloca em uma situação um pouco mais complicada do que a de uma empresa típica de IA. Executamos todos os tipos de modelos, todos os tipos de software de inferência e, bem, não replicamos o código para este nó de inferência. Preferimos replicar apenas em casos específicos, limitando o escopo do que podemos fazer. E além disso,
+
+introduzimos em todos os lugares onde temos chaves na memória, uh uh, a expiração forçada de sete dias. Escolhemos sete dias porque achamos que esse é o horizonte temporal realista para que algo útil possa ser feito para o usuário. 24 horas seria muito pouco, porque você pode não abrir o celular por 24 horas e alguma coisa vai passar despercebida. Então, escolhemos cerca de sete dias. Então, precisamos enviar algo para a produção, e a grande questão é: como podemos... bem, enviar algo sem
+
+comprometer nada? Nosso objetivo era construir um sistema que impedisse qualquer pessoa dentro da Amazon de enviar qualquer coisa sem ser notada. Obviamente, o software tem bugs e problemas, mas não deveríamos estar em condições de lançar nada. Então, resolvemos isso essencialmente com um sistema de dois pneus. Então, existe uma equipe dedicada dentro da organização, dentro da Amazon, e talvez nem mesmo uma, eu diria, que gerencia a parte de privacidade disso, o registro de transparência. Quando enviamos
+
+o software, podemos influenciá-los, mas não controlá-los, e codificamos suas chaves de assinatura em nossos aplicativos cliente e em nossos back-ends. Portanto, nós, como equipe, não podemos realmente fazer isso, e é muito, muito difícil e de alto nível. Os funcionários precisam aprovar qualquer tipo de alteração, então, em uma grande empresa como a Amazon, é praticamente impossível. E fazemos isso em duas partes porque esse processo é muito lento, então o dividimos em duas partes. A primeira é construir a imagem base, na qual colocamos algum tipo de software básico necessário para nossa própria equipe, como as ferramentas que medem a inicialização, medem o manifesto, medem as cargas de trabalho e os dados que precisamos colocar no nó. Hum,
+
+e então, quando queremos implantar, fazemos o mesmo processo, de forma semelhante. Bem, nós temos a imagem base e então implantamos o manifesto específico do Transparency Log para que qualquer pessoa possa realizar auditorias de segurança em empresas, tanto internas quanto externas. Bem, não estamos fazendo isso publicamente, mas trabalhamos com duas empresas de auditoria de alto nível o tempo todo. Podemos fornecer qualquer imagem e qualquer dado que tenha sido implantado, para que possamos rastrear possíveis pontos fracos caso implantemos algo errado, o que não costumamos fazer. Depois da autoverificação da VM, ela emite um certificado que incorpora todas as provas de criptografia, transparência e documentos de atestação no próprio certificado. Estamos usando uma
+
+CA privada porque não é possível fazer isso com certificados públicos, já que isso preencheria o Transparency Log público. Então, tivemos que usar a CA privada. Provavelmente, introduziremos um proxy extra que fará um TLS normal com atestação em um modo mais leve. Mas nós ainda não temos isso. Sim , basicamente foi isso que construímos. Obrigado.
+
+Alguma pergunta? [aplausos]
+
+Alguma pergunta? Outro
+
+entrando,
+
+até onde
+
+você pode dizer: "Pode repetir?" Sim . Desculpe.
+
+Houve coisas que você teve que mudar em relação ao que já existia? Ah, o que mudou quando entramos para a Amazon? Sim . Bem, a grande mudança é que antes, você usava a Amazon, e a Amazon dava garantias prévias ao cliente de que poderia ver seus dados. Mas, uma vez lá dentro, tudo muda, porque você gosta da Amazon, então é por isso que você precisa fornecer mais proteção além disso. Portanto, precisamos nos proteger
+
+também das ameaças internas. Então, essa foi uma grande mudança. Então, antes disso era mais fácil, eu diria, configurar tudo. Não tenho certeza se posso dizer muita coisa, honestamente.
+
+Sim, são apenas instâncias EC2 normais. Sim . Sim . Sim. Nós quase não usamos tipo " Sim". Quase tudo que construímos é feito do
+
+zero. Bem, tentamos usar coisas já existentes, como softwares comuns e populares. Nós tentamos minimizar a quantidade de código que produzimos. Então, eu calculei antes desta palestra que são cerca de 20 mil linhas de código em uma linguagem com uso seguro de memória . Então, o escopo era muito pequeno, conseguimos auditar e verificar tudo isso, e a maior parte desse código é apenas verificação na estação, na verdade, e todo o resto pode ser reutilizado e é um software muito confiável, eu diria. Então, não tentamos
+
+reinventar a roda como quando, no Telegram, reintroduzimos nossa própria criptografia, e essa foi uma maneira questionável de fazer as coisas. Então, obviamente, tento não fazer o mesmo na Amazon. Sim, é isso que fazemos. Mais alguma pergunta para o Steve lá no fundo?
+
+Pense
+
+bem, eu prefiro que eles não usem computadores pessoais. Então, fizemos várias experiências sobre como domesticá-los, para que não fizessem coisas ruins. Eu digo que acho que nada funciona, exceto algo como " caixar na areia" e simplesmente não dar a eles uma maneira de se machucarem. É como se nossos cérebros não pudessem parar o coração à vontade, certo? Senão, teríamos muito mais problemas. Então, acho que
+
+não deveríamos entregá-los para que não causem danos. Essa é a única maneira, honestamente. E, sim, colocar algo no meio, se eles quiserem mudar alguma coisa. Infelizmente, sim,
+
+estou surpreso que eles não estejam representando isso. Eles estão falando tanto sobre segurança, mas não vieram a público neste caso. Não, não. Eu tentei a técnica de garra aberta. Parece que, depois que começaram a tentar restringir isso, tornou-se muito menos útil.
+
+Então, acho que a abordagem deles não é lá muito boa. Então, eu adoraria ter um agente selvagem, esse também é o nosso objetivo, mas tentamos implantar o sandbox apenas para agentes específicos, e eles simplesmente não conseguem fazer muita coisa. Infelizmente, todo o resto falha . Legal. Tudo bem. Muito obrigado
+
+, Steve, pela apresentação. Foi incrível.

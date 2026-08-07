@@ -1,0 +1,429 @@
+---
+video_title: "Full Workshop: Setting Yourself Up for Success —Jason Liu, OpenAI Codex"
+video_id: il1c1a2FufU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=il1c1a2FufU
+video_date: 2026-07-24T15:00:06+00:00
+video_description: |
+  Jason Liu walks through how Codex works as a general tool for controlling your computer: setting up a memory vault and assistant threads, prompting it to collaborate with other threads, exploring computer use, thinking about long-running work streams, and preparing to work in loops.
+  
+  Speaker:
+  
+  Jason Liu — Developer Experience, OpenAI
+  Jason helps developers get more from Codex, the Agents SDK, and the OpenAI API. Before OpenAI, he created Instructor and taught developers how to build reliable AI applications.
+  
+  X/Twitter: https://x.com/jxnlco
+  LinkedIn: https://www.linkedin.com/in/jxnlco
+  Website: https://jxnl.co/
+---
+[música] Muito
+
+bem, vamos começar . Quantas pessoas aqui já assistiram à minha palestra principal? Ok, nem todos. Isso é bom. Esta palestra será, na prática, uma versão ampliada da que apresentei no palco principal, com duas exceções. Primeiro, quero te
+
+dar um tempo para tentar configurar tudo sozinho, se os deuses do Wi-Fi permitirem. E também, em segundo lugar, seja um pouco mais interativo. Precisei ser bem técnico ao explicar para que uso o Codex, mas aqui, se vocês tiverem alguma dúvida, temos uns 70 minutos. Se tiverem alguma dúvida, basta levantar a mão e podemos começar a respondê-las, especialmente porque muitos dos fluxos de trabalho não foram bem documentados. Então, se você estiver muito curioso sobre como as coisas funcionam, ficarei muito feliz em responder a quaisquer perguntas que tivermos aqui.
+
+Sim, é isso aí . Meu nome é Jason. Eu trabalho na OpenAI. Eu realmente não sei mais qual é o meu trabalho . Fazemos muitas coisas. Hum,
+
+claramente os slides já estão na ordem errada também. Mas, no geral, sabe, eu costumo fazer coisas como criar protótipos, escrever muito código e ter um prazo de dois dias para desenvolver um jogo ou algum tipo de aplicativo web, certo? Também analisamos coisas como avaliações de desempenho e testes de subida de morro. Ah, eu também uso o computador para editar vídeos no iMovie e fazer pequenos vídeos. Eu trabalho com parcerias, educação e operações, tomando notas de reuniões, transformando-as em documentos, trabalhando com outros fornecedores e também com diferentes fundações e programas para obter financiamento.
+
+E todo esse trabalho é feito de forma eficaz no aplicativo Codeex. Hum, não sei se você consegue perceber, mas neste momento o slide está sendo exibido no host local, no navegador integrado do aplicativo Codeex. Assim, sempre que encontro algo de que não gosto, posso simplesmente usar a ferramenta de anotação, adicionar um comentário e deixar o Codeex limpar os slides. Hum, eu não sou o maior acumulador de tokens. Hum, acho que estou indo bem. Vejo
+
+algumas pessoas faturando, tipo, alguns bilhões por dia. O objetivo desta palestra não é simplesmente desperdiçar seus tokens, mas sim ajudá- lo a evitar o desperdício, mostrando o que realmente funciona e, em particular, os truques que uso para tornar essas coisas produtivas. Bem, e novamente, o objetivo, como eu disse hoje mais cedo, era atualizar vocês sobre as mudanças no aplicativo Codeex e dar a vocês algum tempo para configurar tudo. Então, se você tiver tempo agora e ainda não baixou o Codex, faça isso agora mesmo. E então podemos nos aprofundar um pouco mais na configuração.
+
+Então, eu preparei um pequeno repositório monor que você pode clonar, obter todas as habilidades necessárias, configurar tudo o que precisa e começar a usar . Então, vamos nos aprofundar um pouco mais. Bem, se você é novo por aqui, fique à vontade para configurar tudo. Se você já tem bastante experiência, relaxe, experimente algumas das coisas que estou mencionando e, a cada 15 minutos, teremos um tempo para perguntas e poderemos entrar no que parece ser uma espécie de psicose da IA, mas que talvez realmente funcione, no domínio do uso desses sistemas, certo? Grande parte do trabalho intelectual atual, agora que a codificação está resolvida e muitas dessas operações também estão solucionadas, consiste basicamente em entender o que se pode fazer. Certo? Num mundo sem
+
+IA, talvez eu tivesse 10 colegas de equipe. Cada membro da equipe está trabalhando em uma coisa. Então, preciso ter umas 10 coisas que estou monitorando. Hoje em dia, vivemos em um mundo onde praticamente todos com quem trabalho têm 10 projetos. Agora tenho que ficar de olho em umas 200 coisas e não sei o que é importante. Com certeza
+
+perdi alguma mensagem no Slack. Provavelmente existe algum e-mail que eu deixei passar, enviado por alguma fundação. E a Codeex me ajudou a organizar tudo isso. Portanto, mais uma vez, o que eu realmente quero que vocês absorvam deste workshop é o fato de que a compactação funciona muito, muito bem. Tipo, eu tenho tópicos agora que têm umas cinco semanas e já contam com 400 subtópicos, e geralmente as pessoas sabem o que precisam fazer. Eles
+
+sabem qual é o seu trabalho. Eu também quero que você se sinta realmente à vontade para falar com o seu computador. Hum, hoje mais cedo eu disse que Tony Stark não está mandando mensagens para Jarvis, certo? E realmente não há futuro quando a entrada de texto for o que importa. Basicamente, eu uso um pedal. Então,
+
+eu tenho um botão que diz "transcrever" e um botão que diz "enter". Então, eu simplesmente chego à minha mesa com as mãos para trás e digo coisas como: "Conserte isso, faça essa alteração", "Mande uma mensagem para esse cara no Slack" e depois volto a conversar com meus colegas e tentar entender o lado humano de trabalhar na OpenAI, em vez de ficar só monitorando o Slack o dia todo. Ah, o appshots é o meu recurso favorito de todos os tempos. É muito satisfatório. Se algum de vocês estiver no Codex agora, basta pressionar o botão de comando ao lado. Você
+
+vai ver uma animação bem legal ou vai aparecer uma janela modal pedindo para você instalar o aplicativo para uso no computador, é só fazer isso. É incrível. É melhor investir na sua memória pessoal, certo? Nesse ponto, quando alguém me pergunta o que estou fazendo, eu não tenho a menor ideia. Eu meio que preciso dar uma olhada nos meus tópicos e nas conversas para descobrir o quanto deleguei e o quanto foi automatizado. E se você puder
+
+investir não apenas em suas próprias habilidades, mas também em soluções complementares para toda a sua equipe, poderá se tornar o super-herói que, de fato, potencializa o restante da sua empresa. Uma coisa é dizer: " Nossa, eu posso usar todas essas fichas e olha quantas fichas eu estou usando." Mas, na verdade, se você for recompensado pela frequência com que os plugins que você criou são usados ​​pelos seus colegas de equipe, isso é uma grande vitória, certo? Como está o andamento da implementação? Uma das habilidades mais populares é justamente a de finalizar o aplicativo Codeex. E qualquer pessoa que
+
+faça um pull request basicamente aciona a skill antes da revisão, e praticamente todo mundo na empresa a usa, e ela sempre conseguiu encontrar coisas que eu fiz errado ou que vão contra o guia de estilo. Uma das minhas habilidades é revisar documentos, basicamente copiar as solicitações de enquetes das revisões de relações públicas do nosso amigo Charlie aqui. Então, eu simplesmente revisei meu código, como o Charlie fez, com base no feedback que ele deu ao longo do último ano em pesquisas de opinião. Analise meu código como o Dominic fez. E essas coisas são incrivelmente valiosas. E, por fim,
+
+quando você se familiarizar mais com esses quatro primeiros itens — suas threads fixadas com automações, esses recursos que ativam essas threads ao longo do tempo —, elas se tornarão como companheiras de equipe. E, o mais interessante, agora que as threads podem se comunicar entre si, cada thread tem a capacidade de listar outras threads fixadas, renomear threads e enviar mensagens umas às outras. Você não só pode ter colegas de equipe, como também pode ter colegas que trabalham juntos e, efetivamente, começar a ter gerentes, certo? Então, você passou de um circuito integrado habilitado por uma IDE para threads de programação que funcionam como uma equipe onde você é o gerente. E muito em breve, no futuro, à medida que os modelos forem melhorando, é para aí que o disco vai deslizar . Você começará a ter
+
+threads de gerenciamento e, em seguida, threads de integração de código. E tenho certeza de que no futuro haverá alguma outra orquestração maluca, não é? E tudo isso se deve ao fato de a compactação funcionar. Mesmo há seis meses, não sei quantas pessoas aqui já ouviram isso, mas sempre nos disseram que se uma conversa se prolongasse muito, deveríamos iniciar um novo tópico, certo? Depois de 20 mensagens, não vai ser tão bom assim. Bem, cada funcionalidade deveria ser o tema de uma
+
+conversa separada. Se você for fazer uma revisão de código, inicie uma nova sessão. Essas coisas basicamente não são mais verdade. E muito disso tem a ver com a compactação do solo. Basta fixar a thread, renomeá- la com o ID do projeto, e essa thread do projeto poderá delegar tarefas a subagentes, criar novas threads, manter conversas e gravar dados no seu repositório de memória, o que permitirá que você registre tudo o que está acontecendo. E com as
+
+automações, você pode simplesmente ativá-las. Então, na verdade, existem três atos ao trabalhar com IA, certo? Trabalhando com codecs. Você traz o contexto, e eu vou falar sobre como fazer isso e quais são as maneiras de inserir o contexto. Depois, você trabalha nisso, certo? Por exemplo,
+
+a apresentação de slides está apenas no aplicativo Codex e, em seguida, você executa ações no mundo real. [bufa] Então, eu perguntei isso durante a palestra principal, mas também estou curioso para saber o que o público aqui está fazendo: quantas pessoas usam a função de ditado quando interagem com uma IA? Legal. Quantas pessoas usam ditado, mesmo no trabalho? Sim, acho que todos nós deveríamos ser um pouco mais desavergonhados, sabe, ao fazer esse tipo de coisa. Bem,
+
+geralmente falamos três vezes mais rápido do que digitamos, e é incrivelmente produtivo poder passar a versão desorganizada do que estamos pensando para a IA e usar esse tempo extra para tentar ser ainda mais atencioso com as pessoas com quem trabalhamos, certo? É como se eu não quisesse enviar um áudio de 15 minutos para um colega de trabalho , mas deveria me sentir muito à vontade para enviar um áudio de 15 minutos para uma IA, porque ela provavelmente vai incluir alguns assuntos aleatórios. Você poderia simplesmente dizer: "Tenho quase certeza de que tive uma reunião com o Charlie na semana passada sobre o SDK dos agentes, e o programa lerá cerca de 35 mensagens de reunião para descobrir qual foi e torná-la relevante." E agora, de repente, qualquer memorando que você for escrever ou qualquer planilha de acompanhamento de projetos que você esteja tentando usar vai funcionar, certo? Mas eu jamais faria isso com inteligência artificial.
+
+Então, enquanto vocês estão fazendo e ouvindo esta palestra, tentem configurar os codecs da maneira que eu descrevi, certo? Assim que você tiver a capacidade de interagir com a máquina de forma muito mais eficaz, poderá começar a pensar em usar recursos como habilidades e plugins. Habilidades são um conceito muito simples . São apenas alguns arquivos e alguns scripts. Um plug-in é uma biblioteca dessas coisas. E conforme você for
+
+fazendo as coisas muitas e muitas vezes, poderá começar a pensar em desenvolver suas próprias habilidades. E à medida que você agrupa várias habilidades, pode começar a pensar em criar um plugin. Se você quiser instalar os plugins, temos um ecossistema muito bom agora. Algo de que me orgulho muito. Se você for até a barra lateral e clicar em plugins.
+
+Você pode simplesmente pesquisar os plugins que fizerem sentido para você. Então, se você usa o Slack, pode instalar o Slack. Se você usa o Gmail, o Teams, a maioria dessas ferramentas já está bem integrada. Se você acha que está faltando alguma coisa, basta me avisar no Twitter e tenho certeza de que um dos meus monitores do Twitter vai perceber e enviar uma mensagem para alguém da equipe de conectores. Se você já está olhando o painel de plugins, recomendo fortemente que inicie o processo de configuração da extensão do Chrome e do uso do computador. Falaremos sobre isso um
+
+pouco mais tarde, mas usar o computador foi a primeira vez em muito tempo que realmente senti a Inteligência Artificial Geral (IAG) em ação, certo? Certo. Foi a primeira vez que usei o iMovie. Eu não sabia como usar e estava apenas me ensinando como exportar o filme. O programa conseguiu identificar onde estavam os efeitos sonoros e os inseriu nos momentos corretos. São pequenos detalhes como
+
+esse que realmente fazem o uso do computador ser divertido de novo, não é? Tipo, eu realmente não tenho tempo para aprender um novo software. Mas se o Codex pudesse simplesmente me mostrar o que está acontecendo, seria incrível. E como vocês podem ver, o cursor se move com frequência, e muitas vezes ficamos torcendo para que ele execute a ação correta. Se você não tiver um link para a extensão do Chrome, basta clicar neste botão aqui. A diferença entre
+
+usar um computador e controlá-lo é que ele pode funcionar nos bastidores para controlar qualquer aplicativo, certo? Então, seja o Slack ou algum software de negociação, Deus me livre, ele pode controlar todas essas coisas. Com a extensão do Chrome, você controla tudo dentro do aplicativo Chrome. Mas o mais legal é que, mais uma vez, não ocupa toda a sua tela, certo? Às vezes, fico apenas trabalhando no meu computador. Vou abrir
+
+o navegador Chrome e percebo que o Codex abriu três abas só para ver minhas mensagens diretas do Twitter e depois as fecha assim que começo a responder a algum outro e-mail. É muito legal ver essas coisas funcionando em segundo plano. Você pode conectar vários outros plugins. Eu uso ferramentas como o Notion Linear. Eu também uso o Obsidian. É simplesmente um
+
+bom momento. Depois de fazer isso, você vai perceber que, apenas fazendo perguntas bem vagas sobre o seu dia e marcando os plugins certos, a IA pode aprender muito sobre você, certo? A IA não possui um sistema atual que faça uma única solicitação de pesquisa e tente encontrar uma resposta, certo? Pode ser que ele verifique seus e-mails e encontre alguma pista solta. Pode ser que ele verifique o Slack ou algumas reuniões e descubra o que realmente está acontecendo. Quem são essas
+
+pessoas? Eu estava em um dos meus loops, basicamente, quando percebi que ia me encontrar com alguém, olhei o LinkedIn dessa pessoa e vi que tínhamos estudado na mesma universidade, na mesma época. Então, no momento em que entrei na chamada, eu disse: " Ei, você também era da Water? Sabe, você se lembra dessa pessoa?".
+
+Imediatamente, criamos uma conexão, certo? Obviamente, eu não contei para ele que era IA, mas esse é um dos pequenos detalhes que você pode fazer simplesmente aprimorando sua automação. Sabe, isso pode te aproximar das pessoas. Conforme você desenvolve seu sistema de memória, certo? Conforme você desenvolve o sistema de memória do Codeex e sua capacidade de acionar plugins, talvez no primeiro dia você tenha que marcar tudo, mas eu me tornei um gerente cada vez pior com o tempo. Agora mesmo, vou
+
+abrir o Composer e dizer o que mudou no lançamento, e ele vai funcionar bem, certo? E isso é possível porque você tem essa longa história, você tem todos esses fios condutores, você tem essas memórias, certo? O mesmo se aplica a um funcionário. No primeiro dia, você tem que mostrar a eles todos os procedimentos operacionais padrão, sabe? Mas em algum momento, você tem um funcionário que está aqui há sete anos e você pode simplesmente dizer: "Ei, acho que você deveria gerar mais lucro para a empresa", e eles conseguem entender. Mas
+
+isso só acontece porque eles têm esse contexto. Uma coisa que você pode fazer, por exemplo, se quiser testar, é dizer: "Ei, dê uma olhada na programação, encontre todas as sessões, organize-as em um arquivo Markdown, coloque-as em uma planilha". E você vai perceber que podemos fazer essas coisas, e talvez seja possível fazer isso com uma busca na web, talvez com a página inicial do Chrome. Hum, muitas coisas divertidas por aqui. Se você quer se inspirar apenas observando os tipos de habilidades que existem, temos duas ótimas fontes. Uma opção é
+
+executar o instalador de habilidades, que listará todas as habilidades selecionadas pela OpenAI. Isso inclui recursos como GitHub, melhores práticas para escrever código Playright, e Reaction, por exemplo. Mas você também pode consultar sites como skillset.sh ou usar, acho que é a ferramenta de habilidades do Versel, e aí você encontra outras habilidades, certo? Então, se eu estiver pensando em fazer mais motion design ou web design, ou se eu souber que alguém me disse que eu não deveria usar o Memo no React, mas eu realmente não sei o que isso significa. Agora posso instalar
+
+a skill de melhores práticas do React, certo? Mas, novamente, internamente, uma das coisas de maior impacto que você pode fazer como defensor da IA ​​em sua empresa é descobrir o que a equipe precisa e desenvolver essas habilidades, certo? Tenho muita habilidade em coisas como triagem e comunicação, certo? Se houver uma interrupção no Twitter, como você faria para converter isso? Descubra quem precisa ouvir isso, como você inicia o SEV, quais indicadores de status você precisa verificar? Todas
+
+essas coisas agora são automatizadas. E foi exatamente isso que acabei de dizer neste slide. Hum, também temos um criador de plug-ins muito bom e uma ferramenta para criar habilidades. Então, se você simplesmente pedir ao Codex para acioná-lo, ele tentará interrogá- lo para descobrir o que está acontecendo. E, de uma forma ainda mais útil, você também pode fazer tudo sozinho uma vez, documentar tudo e simplesmente pedir ao Codex para criar uma habilidade com base no que você aprendeu, certo?
+
+E desde que você diga, aliás, toda vez que você executar essa habilidade, você poderá se editar. Se você aprender algo novo, poderá editar o arquivo de habilidades. Essas coisas também irão melhorar com o tempo. E um tema importante que permeia toda essa conversa é que você precisa se sentir realmente à vontade para perguntar. Obviamente, vamos tentar criar mais coisas como mais comandos de barra, mas cada vez mais eu simplesmente não estou mexendo no computador. Então, para
+
+mim, nem faz sentido executar um comando de barra. Só quero dizer o que está sendo lançado esta semana, deem uma olhada no Twitter, sabem, vejam o que estou vendo no navegador. O exemplo que tenho desenvolvido internamente é algo como habilidades de triagem da experiência do desenvolvedor, certo? Então, novamente, essa habilidade documenta todos os canais do Slack que você deveria conhecer. Sabe quais engenheiros trabalharam em quais projetos. Sabe quais
+
+canais do Slack estão recebendo feedback. Sei que se você me enviar uma mensagem direta no Slack informando que ocorreu alguma regressão, preciso solicitar um ID de feedback. No momento, o agente faz isso automaticamente, e faz isso automaticamente com o auxílio do appshots. Então, mais uma vez, não sei quantas vezes vou dizer isso, mas o appshots é um dos meus recursos favoritos. Quantas pessoas aqui já enviaram uma captura de tela do Slack para o Codeex, né?
+
+Como quase todo mundo. Mas o problema é que a captura de tela não tem muita informação, certo? O modelo precisa então realizar o OCR. E se você enviar uma captura de tela de uma conversa do Slack, o modelo precisa ler a conversa, listar os canais do Slack e então perceber que existe um usuário chamado Charlie e, em seguida, listar as pessoas. São necessários muitos lúpulos.
+
+Mas com o appshots, ele captura não apenas a imagem, mas toda a árvore de acessibilidade do aplicativo. Assim, quando eu envio uma captura de tela de um canal do Slack, ele reconhece o ID do canal. Assim, ele sabe exatamente qual função chamar para postar ali. Contém os IDs de usuário de todas as pessoas naquele canal. Então, se eu tirar uma captura de tela do aplicativo e disser para fazer uma pesquisa e responder, será apenas uma chamada de função. Ele sabe
+
+enviar uma mensagem para um canal como o U12725 e, como sabe que Charlie é como o U425, consegue fazer isso num salto muito rápido. Portanto, além de ser uma maneira muito rápida de inserir contexto no seu sistema, ela fornece muito mais contexto, permitindo que as chamadas subsequentes da ferramenta sejam realmente eficazes. Faz umas duas semanas que não preencho um formulário, porque só agora pedi para o Codeex preencher esse formulário, certo? Ele conhece todos os campos. Em seguida, ele percebe que está no Chrome e, portanto, usa a extensão do navegador. Se estiver no Safari,
+
+usará o uso do computador. O modelo se tornou realmente muito inteligente. Então, assim como você pode ter um gerente que recebe um e-mail e o encaminha para você com três pontos de interrogação, e é sua função descobrir o que está acontecendo. Você pode começar a fazer isso com sua IA à medida que investe nessas habilidades. E a maior parte disso se deve ao fato de você ter desenvolvido seu sistema de memória. Então, se
+
+vocês estiverem dando uma olhada nesses slides, o modelo JXML/personal monorreo é exatamente o modelo que eu uso no meu computador pessoal. É basicamente uma árvore de diretórios e um conjunto de habilidades que eu uso para expandir minha memória. Também gostaria de fazer um alerta: se você abrir isso no seu navegador, basta clicar em "AppShots" e pedir ao Codus para configurar tudo para você. Depois disso, você poderá prestar atenção ao restante da apresentação. Sim
+
+. Sim. Sim. Você pode simplesmente informar ao Codeex que Jason criou um modelo Monorreo pessoal no GitHub. Por favor, encontre e instale.
+
+Tudo bem. Sim. Sim
+
+. Então, esse é um ponto muito importante . Por exemplo, na equipe DX, eu crio muitas demos e tenho uns 16 repositórios, como o demo em tempo real um, o demo em tempo real dois. Engraçado, né? Eu não crio projetos novos para todas essas demos.
+
+O único projeto que existe na minha barra lateral é o repositório monor pessoal, mas o Codeex ainda consegue gerenciar arquivos fora do diretório desse projeto. Então, no meu arquivo MD de agentes, eu simplesmente digo: " Não salve nenhum código no repositório monor". Salve-o em um lugar como o Slashdev. E apenas com essa linha de código, se eu disser para clonar um novo projeto, ele o salva em /dev. Se eu disser que quero trabalhar nos meus slides, ele sabe que existe um diretório de slides do Slashdev. Mas é
+
+apenas uma maneira mais fácil de gerenciar tudo, certo? Por exemplo, quero iniciar todos os meus projetos a partir do meu repositório pessoal e, em seguida, ele pode acessar o sistema de arquivos da maneira que quiser. Uma coluna meio que quebra, tipo a revisão do Git às vezes na barra lateral, mas no geral tem sido uma experiência muito boa para mim porque eu só reviso meu código no GitHub. Doce. Essas são algumas das habilidades que acabei de instalar. Não precisa
+
+tirar foto, é só perguntar para o Codeex depois. Mas, basicamente, o plugin do assistente tem a capacidade de te integrar . Você será entrevistado(a). Ele vai descobrir quais plugins você precisa instalar e então criará as threads que julgar necessárias. Isso criará as automações. É
+
+bem divertido. Tenho várias habilidades, como auditoria de código de IA e programação em IA. Bem, eu não incluo isso, mas uma das minhas habilidades favoritas de todos os tempos se chama " escreva como eu". E se você quiser fazer um assim, tudo o que você precisa dizer para o Codex é: "Ei, Codex, quero que vocês leiam todos os e-mails que escrevi nos últimos seis meses, todas as mensagens do Slack que escrevi nos últimos seis meses e criem um guia de estilo de como enviar mensagens exatamente como eu." E pronto. E aí, sempre que eu
+
+peço para enviar uma mensagem no Slack ou escrever um e-mail, ele pensa: "Ok, isto é um e-mail. Obviamente, é como um formulário de suporte ao cliente, então serei muito mais formal na minha mensagem. Deixe-me redigir este e-mail." Ainda não me decepcionou. Uma coisa que eu também adicionei e que acho muito importante mencionar é que criei minha própria habilidade de loop, simplesmente porque gosto de usar um comando de barra de vez em quando. Falarei
+
+sobre isso na parte dois. E eu também tenho uma habilidade chamada artefato HTML simples, que permite criar artefatos da maneira que eu gosto. Quero que meus fundos sejam brancos. Eu quero alguns guias de estilo específicos . E um Ultra Goal, que é como uma super versão do Goal, sobre a qual também falaremos um pouco mais adiante. E,
+
+caso alguém esteja curioso, é tipo: pessoa nova, projeto novo. É apenas uma forma de escrever um script para iniciar uma nova pessoa no sistema. Agora tenho uma espécie de refúgio aqui para minha vida pessoal. É exatamente como um CRM. Basicamente, sempre que meu agente de IA encontra uma nova pessoa que me enviou um e-mail, mensagem no Slack ou no iMessage, eu registro essas informações. E o novo projeto é da mesma
+
+forma. Deixe-me verificar novamente. Sim, legal. Bem , vou te dar uns 10 minutos para tentar configurar isso e depois podemos fazer uma pequena sessão de perguntas e respostas. Ficarei feliz em responder a quaisquer perguntas sobre como incorporamos contexto aos nossos sistemas, como organizei meu acervo de memórias pessoais e, você sabe, alguns outros usos inusitados de capturas de tela de aplicativos, caso alguém tenha alguma dúvida. Sim. Qual é a sua pergunta?
+
+Isso elimina a necessidade de tipo um [bufa]
+
+Sim. Então, a pergunta era: eu ainda uso o Obsidian Brain basicamente? A resposta é sim, porque ainda quero manter um registro de tudo. Uma coisa que eu realmente gosto de fazer é criar um repositório monolítico semelhante a um repositório Git. Então talvez funcione por uns dois dias e eu volte e execute o comando `git diff`.
+
+E executando o comando `git diff`, consigo ver o que foi atualizado no modelo e o que não foi. E posso revisar isso com confiança ao longo do tempo e simplesmente perceber que, ah sim, acho que Charlie respondeu a essa pessoa e fechou o ciclo. E eu não tinha me dado conta disso, mas agora eu sei, né? E, muitas vezes, isso é relevante em outra conversa. Além disso, também é muito útil quando outras pessoas me fazem perguntas, não é? A Codeexes ficará
+
+muito satisfeita em ler meu arquivo de memória, elaborar uma resposta e, em seguida, pedir minha permissão para enviar essa mensagem. Então, se alguém me enviar uma mensagem no Slack com uma pergunta que a IA poderia ter respondido, a IA simplesmente tentará respondê- la. Hum, e podem ser coisas simples como, tipo, com quem eu deveria falar sobre esse projeto, né? E o modelo sabe disso porque está armazenado no cofre de memória. Uma coisa que também menciono é que, se você quiser usar mais tokens, pode criar automações personalizadas cuja função é manter, gerenciar e otimizar seu repositório de memória. Hum, mas
+
+geralmente isso não tem sido um grande problema para mim. Uma pergunta ali.
+
+Sim, honestamente, geralmente eu sigo o caminho do "só se arriscar" porque, nossa, isso me assustou demais. Bem, só porque sei que a forma como desenvolvo minhas habilidades é através do aprimoramento constante, certo? Acho que a diferença seria se eu criasse uma habilidade que pudesse compartilhar com minha equipe, aí eu pensaria um pouco mais sobre isso, sabe? Porque é tipo, ok, será que o plugin de triagem sabe quem está trabalhando em qual funcionalidade? Será que consegue encaminhar corretamente? No meu
+
+trabalho pessoal, geralmente eu desenvolvo uma habilidade o mais rápido possível e, sempre que ela comete um erro, eu simplesmente o corrijo e digo para ela continuar. E geralmente o que acontece é que, se eu uso uma habilidade há dois meses, geralmente me sinto muito bem em compartilhá-la com minha equipe porque acabei de ver como ela funciona. Sim, a maioria das minhas habilidades se conecta a tantos outros plugins e conectores que eu simplesmente não sei como avaliá-las porque não consigo tirar um snapshot do meu Slack a qualquer momento. Há uma pergunta ali .
+
+Às vezes, uso o codec de linha de comando de vez em quando, se quiser ser um pouco mais rápido, mas, no geral, o aplicativo para desktop oferece uma experiência muito boa, principalmente porque tudo o que faço é um appshot. Por exemplo, se eu estiver assistindo a um vídeo, eu uso o appshot para resumir e continuo assistindo. Eu só vou assistir a um vídeo com um resumo tipo LLM, né? Ou então, se eu vejo algum tipo de formulário ou alguém me pede para assinar algo, eu uso o appshot para assinar o documento e salvo na minha área de trabalho. Tipo, semana passada eu assinei um documento, aí achei um serviço de fax e enviei meus registros médicos por fax . Isso é incrível, mas a
+
+CLI não consegue fazer isso. Sim, alguma outra pergunta? Sim. Por que? É como se eu estivesse aprendendo a fazer malabarismos. Tipo,
+
+eu tô aprendendo a tocar bateria. Bem, acho que são duas coisas. Assim como no escritório, o que estou tentando fazer é conversar com mais pessoas, certo? É como se eu fosse apenas o assistente da IA, para obter mais contexto que a IA não consegue obter. Não, acho que meu trabalho quando estou no escritório se resume a conversar com alguém enquanto a IA está funcionando. Eu deveria
+
+aprender sobre o que eles estão trabalhando, tentar fazer conexões e depois descobrir quais são os pontos de conexão, certo? É como se eu devesse conversar com mais pessoas na vida real enquanto a IA trabalha. Parece que alguém tinha uma pergunta ali. Ah,
+
+[bufa] sim. Então, a questão é: quando eu acho que 55 é exagero em comparação com 53 Spark? Acho que isso é influenciado por dois fatores: primeiro, como tenho tokens ilimitados, não tomo essas decisões diretamente; segundo, porque não fico monitorando o funcionamento da minha IA. A maioria dessas coisas são automações que rodam em segundo plano, então a latência não me afetou muito. Uso o Spark principalmente para tarefas muito simples, como clicar em todos os botões e preencher um formulário. Acho que
+
+tenho um agente Spark que faz meu check-in em voos automaticamente. Então, agora, sempre que recebo um e-mail de confirmação de voo, meu agente faz o check- in, baixa o cartão de embarque e me envia para o iMessage, certo? E eu simplesmente nunca mais faço esse tipo de coisa. É muito estranho quando você está trabalhando e, de repente, verifica seu navegador Chrome na área de trabalho e lá está o JetBlue, logo na primeira página. Mas isso demonstra o poder único de ter acesso ao seu computador, pois ele contém suas credenciais e seu sistema de arquivos. Sim. Lá
+
+. Sim
+
+. Desculpe, você está muito quieto(a). Você se importaria de falar? Sim . Sim . Sim
+
+. Sim
+
+. Então, falaremos sobre isso na próxima seção, mas com o controle remoto eu posso controlar tanto meu computador local quanto um computador remoto. Acho que a diferença é que usar o computador é complicado porque precisa ser feito no seu computador. Isso é uma coisa. A segunda coisa a fazer é que, se você for nas configurações de uso do computador, há uma opção chamada "uso bloqueado". E se você ativar
+
+essa função, enquanto seu laptop estiver conectado à tomada, mesmo com o monitor fechado, você ainda poderá acionar comandos de uso do computador pelo seu celular. Hum, isso também fica muito estranho porque, tipo, continue. Sim,
+
+você é muito quieto(a). Não consigo te ouvir . OK. Ok, legal. Sim, tipo, se você tiver vários computadores, você ainda pode conectar seu iPhone a ambos os dispositivos, certo? Assim como algumas
+
+pessoas têm apenas um Mac mini. Bem, acho que a diferença é se você quer controlar seus codecs ou, especificamente, o uso do computador, porque isso requer um sistema operacional com um... Hum, mas podemos falar sobre isso daqui a pouco.
+
+Legal. Como eu disse antes, havia mais alguma pergunta? Não sei se alguém acabou de levantar a mão. Vá em frente. risco e como você o controla?
+
+Sim, quero dizer, sempre existe algum tipo de risco, como, por exemplo, acho que versões anteriores podem editar um documento com muita pressa, certo? Bem, sendo realista, acho que esses modelos fizeram um ótimo trabalho ao serem muito cautelosos e, na maioria das vezes, sou eu quem fica dizendo: " Não, por favor, faça isso logo, assine o documento, por favor, envie esta mensagem." Descobri que os modelos 55 são bastante relutantes em tomar essas atitudes destrutivas. Isso é uma coisa. A segunda coisa é que, se você olhar na barra lateral aqui, verá que tem a possibilidade de alterar suas permissões. Então, por favor, levantem a mão:
+
+quantas pessoas usam o termo "me peça permissão para tudo"? Sim . Sim. Exatamente. OK. Quantas
+
+pessoas usam o modo YOLO com permissões totais e totalmente automáticas? OK. Eu não gosto disso. E quantas pessoas já usaram a revisão automática? Sim . Então, eu acho que a revisão automática tem
+
+sido realmente muito boa. E, mais uma vez, costumo ficar irritado com o fato de meus modelos não fazerem mais do que eu quero que façam. Bem, e geralmente não tem sido um problema tão grande. As únicas vezes em que isso realmente me incomoda é quando ele edita documentos que não deveria, mas eu só adiciono algo com o HSMD e nunca me atrapalhou muito. Sim, eu sei que essa não é uma resposta definitiva, mas acho que, com uma combinação de revisão automática e arquivo MD do agente, geralmente me sinto bastante seguro. Sim.
+
+E se você também faz parte de uma organização, existem diferentes configurações administrativas que você pode definir. Por exemplo, na OpenAI, você não pode usar um servidor MCP para enviar um e-mail se algum dos destinatários desse e-mail não for um endereço de e-mail da OpenAI, certo? Ou, por exemplo, você não pode enviar uma mensagem do Slack para canais externos do Slack . É aí que as coisas ficam perigosas, não é? Mas essas são algumas coisas que você pode controlar.
+
+Uma pergunta ali. Sim .
+
+Você tem alguma preocupação em relação à segurança e/ou privacidade? Não é porque eu trabalho aqui. Hum, acho que é difícil responder a essa pergunta porque eu realmente não sei quais são as políticas de retenção de dados para indivíduos em comparação com empresas. Mas Charlie, você tem alguma opinião sobre isso? Vou passar a palavra para você.
+
+Privacidade. Digamos que você receba um e-mail, não sei, oferecendo um emprego em uma empresa concorrente. [bufa] Bem, eu acho que muito disso se resume ao fato de que queremos que os modelos sejam falíveis, certo? Acho que ninguém nesta sala ficaria surpreso ao saber que ainda é possível fazer jailbreak em um modelo, por exemplo. Mas os próprios modelos estão ficando mais inteligentes e melhores em não fazer coisas bobas, e ao mesmo tempo estamos descobrindo, como o Jason mencionou, quais são as maiores limitações do ambiente de testes.
+
+Começamos com ambientes de teste muito simples, onde você só podia executar este comando e nada mais. E aos poucos o sandbox foi se expandindo para todo o computador, e acho que estamos descobrindo quais são os limites, em nível de computador ou de organização, que precisamos construir para esse sandbox. Esta sou eu usando a habilidade de delegação. Ótima resposta. Mais alguma pergunta antes de começarmos o segundo ato?
+
+Doce. Incrível. Então, acabamos de falar sobre várias maneiras diferentes de inserir contexto no sistema, certo? Você pode usar sua voz, tem plugins, pode usar appshots e também pode criar diferentes habilidades e plugins para descobrir como realizar um trabalho mais sistemático e automatizado . Então, agora podemos falar um pouco mais sobre o trabalho em si.
+
+Então, como eu disse antes, cada tópico fixado é como um companheiro de equipe na minha cabeça. Eu tenho meu tópico sobre chefe de gabinete . Eu tenho, você sabe, o Swix prefere chamar de, tipo, o tópico de Deus. Bem, eu tenho um tópico para gerenciar o SDK da agência, seja na implementação ou na documentação. Possui dois subagentes que delega ao CLI, o programa de código aberto, e ao Twitter.
+
+Mas se você quiser que ele acorde, certo? Tudo o que você precisa dizer é: fique de olho nisso até certo ponto, sabe, fique de olho nisso a cada 30 minutos. Se você se lembrar dessas palavras-chave secretas, poderá automatizar praticamente tudo na sua vida neste momento. Bem, o que isso faz é acionar uma automação de pulsação, uma automação de thread. Você deve pensar nisso como uma forma de agendar a devolução de uma mensagem para a conversa. Certo? No início, quando
+
+configurávamos as automações, era muito comum que uma automação criasse uma nova thread a cada vez. Então, por exemplo, poderia me dar um resumo matinal, o que criaria uma nova thread e, em seguida, executaria esse tipo de tarefa. Mas, à medida que esses modelos foram melhorando, acredito que o design correto seja agendar essas mensagens na mesma thread. Por exemplo, se você baixar o repositório monor, teremos uma habilidade de loop. Se você simplesmente fizer um loop, certo? Isso é o equivalente a
+
+dizer "fique de olho nisso". Fique de olho nessa solicitação de pull request e, sempre que houver feedback, corrija-a. Certifique-se de que seja sempre possível mesclar. Certifique-se de que a atualização seja sempre baseada na branch master. Certifique-se de que a CI esteja sempre sendo aprovada. E simplesmente fará isso. E
+
+aí, talvez você faça uma solicitação de pull request numa segunda-feira e fique muito ocupado. Na tarde de quinta-feira, todos os comentários foram integrados. Sabe, a CI está funcionando e você não está com 4.000 commits de atraso em relação à thread principal. [bufa] Eu também faço isso com apoio, né? Novamente, se alguém estiver
+
+lidando com alguns problemas no Twitter, no Slack, no Appshot, certo? Sabe, tipo, na área de experiência do desenvolvedor, eles descobrem isso e dizem: "Ok, era um problema no navegador". Tipo, o James é quem trabalha com navegadores, o canal se chama "Feedback do Navegador". Vou postar uma mensagem direta para o James nesse canal e depois usar o computador para abrir o Twitter e avisar que encaminhei o problema internamente. Aí eu fico checando a cada hora se o James respondeu no canal e aviso o usuário. Depois, mais
+
+tarde, você está checando o computador e, de repente, o Twitter abre e diz: " Ei, fulano, isso foi resolvido". Aí você aperta Enter e checa o seu histórico de conversas: " Ah, sim, o pull request foi feito e será aceito até quinta-feira que vem". É uma experiência incrível de se presenciar, né? Isso nos permite dar muito mais suporte sem que essa seja a pior parte do meu trabalho. E então, com um tópico sobre chefe de gabinete, ah, é isso, é isso, eu me lembro, é aqui que meus slides ficam realmente bagunçados graças a um erro de codec. Então, ainda não posso fazer
+
+tudo. Você também pode simplesmente criar um loop que verifique todos os meus conectores e me informe qual é a coisa mais importante com a qual devo me preocupar. Sabe, me dê isso num formato bem organizado. Você sabe, certifique-se de ter links para todos os e-mails que você lê. Certifique-se de ter um link do Slack para poder acessar o aplicativo por meio de links diretos. E agora tem sido muito, muito
+
+útil para rastrear essas coisas aleatórias. E, novamente, acho que no meu tópico sobre chefe de gabinete eu tinha aquela frase que dizia para fazer o check-in de todos os meus voos, se possível, tipo, me enviar a reserva e o cartão de embarque pelo iMessage, e simplesmente funciona. E, mais uma vez, é muito estranho quando você começa a ver seu computador fazendo coisas enquanto você está trabalhando, porque a maioria dessas tarefas roda em segundo plano e, como minhas permissões estão ativadas, não precisa me avisar que está usando o Safari. Eu gostei de descobrir que ele usa o Safari, o que pode assustar algumas pessoas, mas sabe, é muito bom. E por último, algo que acontece muito na OpenAI, é que eu nem sei o que está sendo lançado, né? Há
+
+algum atraso? Alguma coisa pousou? Sabe, isso vai acontecer às 11h da manhã? Isso vai acontecer às 16h? Eu não faço ideia. Na
+
+verdade, fizemos muitos progressos nisso e tenho quase certeza de que isso também se deve à automação e à IA, mas eu costumava pedir para a Codeex criar um PowerPoint para mim toda quarta-feira à noite com as novidades que seriam lançadas no restante da semana, certo? E isso é útil. E aí você simplesmente diz: "Ótimo, isso é útil para mim. Agora, deixe-me verificar se posso postar isso no canal como uma mensagem do Slack." E agora você está novamente usando suas habilidades não apenas para seu próprio benefício, mas também para o benefício de toda a sua equipe. É algo parecido com a
+
+mentalidade do herói plug-in. E essa também é bem engraçada. Hum, eu tenho um exemplo. Deixe-me verificar o slide novamente. Sim, tenho outro exemplo que também foi bem louco, que foi o que dei durante a palestra principal: eu estava editando um curta-metragem no iMovie e, enquanto andava de bicicleta, alguém me deu um feedback sobre o vídeo. Então, peguei meu celular e
+
+mandei uma mensagem dizendo: "Ok, tem um arquivo em algum lugar. Vocês conseguem encontrá-lo no iMovie? Só tem um projeto do iMovie. Leiam a mensagem no Slack. Exportem o vídeo. Se não conseguirem, se o
+
+servidor MCP do Slack não permitir o upload de arquivos, usem o computador para fazer o upload e acompanhem a conversa a cada hora. Se tiverem algum feedback, exportem o vídeo novamente, compartilhem e depois me avisem. Quando cheguei em casa, percebi que era muito mais fácil usar o conector do Google Drive. Então, passei a enviar o mesmo arquivo para o Google Drive. Assim, eles só precisam gerenciar um URL. E sim,
+
+corrigimos várias coisas na tipografia e lançamos a nova versão. É impressionante. É muito simples, mas impressionante, né? É isso que um heartbeat faz, certo? Um heartbeat é uma forma de manter a conversa ativa ao longo do tempo para que algumas ações sejam tomadas." Outra
+
+coisa que você pode fazer é definir metas. O comando `slash goal` é incrível. Ele basicamente define uma etapa de verificação e diz: "Ok, enquanto isso estiver funcionando, verifique esta etapa de verificação." Se não estiver feito, continue, certo? Ideia muito simples. E enquanto
+
+houver um verificador, funciona muito, muito bem. Por exemplo, eu acabei de migrar um monte de software para Rust, certo? É como se fosse um projeto em Python que pudesse ser reescrito em RustGo, migrando o backend para Rust e garantindo que todos os testes unitários fossem aprovados. E eu consegui não só reescrever a biblioteca de terminal avançada em Rust, como também reescrevi o UV e o TypeScript, só para ver se conseguia, e chegamos a 100% de cobertura de testes. É simplesmente incrível. Obviamente, você
+
+não deveria fazer isso no seu trabalho, mas é muito útil entender que, à medida que esses sistemas têm melhor verificação, você pode progredir bastante. No repositório monor, também incluí uma skill chamada ultra goal. E tudo o que isso faz é, em vez de definirmos a meta no aplicativo, definimos em um arquivo, certo? Então, temos um arquivo MD de destino. Isso significa que você pode editar a meta enquanto ela está sendo executada. Assim, você pode adicionar
+
+mais escopo, assim como muitos projetos reais fazem. Definimos também um plano que podemos usar como referência. Mas a vantagem disso é que, à medida que você aprende mais sobre os projetos e altera o plano e o objetivo, esses modelos, como se fossem loops, podem atualizar sua compreensão do sistema. Às vezes, tenho um arquivo MD de estado ou um registro de trabalho para acompanhar tarefas de longa duração, como quando algo está rodando por um ou dois dias. Quero saber o que está acontecendo e nunca vou ler um objeto JSON de sessão de 4 gigabytes, mas posso consultar o registro de trabalho, usar outro modelo para resumi-lo em um chat lateral e continuar a partir daí.
+
+Isso significava controle remoto, mas, novamente, se as pessoas preferem usar o computador, também recomendo experimentar essa opção . Na barra lateral, deve haver um botão escrito "controle remoto", especialmente se você tiver o aplicativo para iOS. Esta é a questão sobre como controlar o seu telefone. Então, você controla o computador pelo celular, certo? Então, se você acessar o aplicativo iOS, inserir codecs, poderá fazer algo como o Flow, onde você pode escanear um código QR e, de repente, seu touchpad pode enviar mensagens e acionar qualquer thread no aplicativo, incluindo, creio eu, threads remotas. Isso é extremamente poderoso
+
+porque, sabe, muitas vezes toda vez que tento sair de casa alguém me pede alguma coisa, e agora eu posso simplesmente pedir ao codec. Na verdade, eu deveria ter algo que monitorasse o Slack e simplesmente fizesse isso. Mas, como você sabe, eu ainda não cheguei lá. Mas, novamente, este é um daqueles grandes momentos em que você sente a inteligência artificial, certo? Sim . E, como eu disse, a ameaça do chefe de
+
+gabinete é, na prática, a única fonte de verdade sobre o que está acontecendo na minha vida e no meu computador pessoal. Eu tenho um diferente . Uh, muita coisa boa. Isso é tudo que escrevi para o meu. Crie e fixe um tópico sobre a equipe do Cha todos os dias às 8h da manhã. Verifique todos esses conectores,
+
+descubra o que está acontecendo e, então, faça um bom trabalho. E, de novo, você vai começar a editar com o tempo, certo? Talvez você não goste da formatação ou queira ter incluído links. Por um tempo, o que eu configurei foi o seguinte: se encontrasse todos os e-mails, não só rascunhava as respostas, como também abria uma aba do Chrome para cada e-mail que eu precisava responder, tudo no Chrome. Então, eu abro meu computador, participo de uma reunião, volto e lá estão sete abas do Chrome abertas, e eu posso revisar os rascunhos e enviar cada um deles, pequenas coisas assim, só para deixar o computador pronto enquanto as reuniões estão acontecendo. Muito produtivo. Então, agora
+
+falamos um pouco mais sobre a execução do trabalho em si, certo? Ainda não abordamos temas como artefatos, mas também gostaria de saber se alguém tem alguma pergunta sobre como tenho conduzido as coisas por aqui até agora . Então eu percebo, então eu faço muito disso . Sim. Percebi. Sim
+
+. Eu recebo muita coisa. Sim . Então, qual é o seu conselho? Geralmente, prefiro que o modelo escreva o objetivo ou o próprio enunciado da questão.
+
+Parece que cada vez mais desses modelos estão se tornando melhores nisso. E é mais uma questão de distribuição de acordo com o que eles desejam. Bem, na verdade, eu só vou enviar um áudio de 10 minutos, certo? Eu fico tipo, sabe, isso é algum problema que está acontecendo. Acho que existe um projeto sobre algum tópico. Hum,
+
+não sei se eles me responderam. Acho que o nome dele é Dylan. Hum, por favor, verifique no Gmail. Tipo, é uma bagunça enorme. E aí eu penso: "Ok, será que eu quero fazer um conjunto de ouro?" Quero que seja
+
+criada uma nova thread? Quero desenvolver uma nova habilidade? É basicamente esse o meu gosto atualmente. É tipo, beleza, como eu quero organizar o produto do meu trabalho , sabe? Devo instruir o programa a realizar todo esse trabalho e a inserir o resultado em um arquivo HTML indexado para compartilhá-lo? Quero criar um
+
+documento do Word? Basicamente é isso. Mas geralmente eu só envio mensagens muito longas. Sim, como por exemplo aqui, este não é o tópico apropriado para o chefe de gabinete . Este é o comando para que o modelo possa criar o tópico da equipe de cha, certo?
+
+E esse modelo terá um resultado muito melhor para determinar o nível de detalhamento da automação, a frequência de verificação e quais conectores usar. E como tenho esse repositório monolítico, uma das coisas que faço é adicionar um link para cada canal do Slack relevante para cada projeto em cada arquivo de projeto. E o modelo simplesmente verá isso e você poderá ler esses canais do Slack, certo? Cada cadastro de pessoa semelhante contém seu endereço de e-mail, seu conector do Slack, vários endereços de trabalho, e eles lerão todas essas informações. Eu jamais sugeriria isso . Sim. Sim
+
+. Sim. Então, acho que nesse exemplo, o que percebi foi que, quando mencionei os canais do Slack relevantes para um projeto, os resultados foram melhores. Então, eu simplesmente adicionei isso no cabeçalho do arquivo Markdown. Mas essas são coisas que você desenvolve com o tempo.
+
+A única coisa que eu quero dizer é que eu não tentei, tipo, o mais profundamente. Então a questão é: qual a diferença entre isso e uma garra aberta e um agente da Hermès? Acho que tenho certeza de que existem diferenças das quais não estou ciente agora, mas consigo imaginar um mundo onde tudo ficará muito, muito semelhante muito rapidamente, certo? Assim como a maior parte do meu trabalho, e falarei sobre isso mais tarde, meus tópicos se gerenciam sozinhos, certo? Poderia ser a mesma coisa que um subagente.
+
+Hum, não sei quantas pessoas usam agentes da Hermes e garras abertas para trabalhos muito amplos, né? Tipo, acho que gostei, acho que tentei usar o OpenClaw para fazer algumas coisas de automação residencial. Sim . Sim
+
+. Então, os comentários do tipo "sim, com esses modelos só há um tópico". Acho isso muito razoável, mas na realidade são tantas coisas com que trabalhamos que preciso de organização, sabe? É como se eu me perguntasse se existe um mundo onde meu banqueiro, meu terapeuta, meu personal trainer e minha namorada são a mesma pessoa. Talvez, mas meu cérebro pequeno não consegue entender isso.
+
+Para mim, é fácil entender o trabalho criando pastas, certo? O computador não sabe o que são pastas, mas para mim, de certa forma, elas são importantes. Faz sentido? Sim, legal. Ótimo. Chega. Sim, só uma pergunta
+
+. Sim
+
+. Sim
+
+. habilidades, mas eu não sabia que isso acontecia automaticamente. Sim . Hum, acho que depende. Acho que depende de quão proativo você é, por exemplo, ao instruir a IA a se lembrar dessas coisas.
+
+Por exemplo, quando percebi que deveria incluir os IDs dos canais do Slack nos documentos do projeto, o modelo pensou: "Ah, existe um canal do Slack. Devo ler o conteúdo desse canal." E isso ficou muito óbvio. Agora eu basicamente nunca etiqueto as coisas. Eu realmente não sei quando isso aconteceu. Bem, sim, novamente,
+
+grande parte disso é apenas adquirir o hábito de lembrar disso para a próxima vez, atualizar a habilidade para a próxima vez, atualizar o ponto do agente para a próxima vez. E isso é... às vezes, quero dizer, acho que seria difícil para mim provar isso. Existe também um
+
+sistema de memória que fica fora dos documentos. De modo geral, estou bastante satisfeito com a memória. Eu não sei se consigo te dar uma estimativa de tempo, mas acho que vou tentar, né? Use-o por algumas semanas e certifique-se de que a memória esteja ativada . Assim como também está nas suas configurações. Eu
+
+sei que nosso painel de configurações está meio confuso agora, mas, bem, acho que eu ativaria as memórias e veria se essas mudanças acontecem com o tempo, porque basicamente eu nunca... eu não me lembro de uma única vez em que eu tenha feito algo como você mencionou. Sim, e a última parte é bem rápida, né? Então, falamos sobre ler o
+
+contexto, falamos sobre trabalhar com o contexto. Agora, a última coisa a fazer é simplesmente escrever o contexto. A maior parte disso foi bem simples, né? Você pode rascunhar e-mails e atualizações para o Slack. Se você se sentir muito corajoso, pode enviá-los, mas, por favor, seja respeitoso. Tipo, tenho
+
+certeza que o Charlie recebeu centenas de mensagens minhas enviadas pelo Slack ao longo do tempo. Ah, mas espero que agora eles soem mais como eu. Criar uma única página também é muito bom. Por exemplo, esta apresentação de slides foi feita com codecs e em breve poderemos fazer coisas como disponibilizar aplicativos e agora acho que você sabe, pelo menos internamente, que grande parte do nosso trabalho tem sido compartilhar aplicativos em vez de documentos completos. Não sei quantas pessoas sabem disso, mas também temos um ecossistema de artefatos muito bom. Cada vez mais, o
+
+Codeex se tornou uma ferramenta indispensável para todo o meu trabalho. Ele consegue abrir e renderizar planilhas do Excel, documentos do Word, PDFs, slides e, com a ferramenta de anotação, editar as coisas é bem divertido. Portanto, mesmo com esses slides, isso é exibido no navegador integrado do aplicativo Codex. E o que eu vou fazer é simplesmente dar minha palestra e clicar em "próximo" várias vezes. E quando não gosto de alguma coisa, simplesmente a seleciono. É tipo, ei, conserta
+
+isso. Não gosto do espaço em branco. Esses dois slides precisam ser divididos em mais dois slides. Apertei Enter. Enquanto a Codex trabalha para organizar isso, vou apenas descer para pegar os slides. E, em
+
+geral, tem sido uma forma de trabalho bastante natural. Assim, este baralho surgiu da leitura em voz alta de uma postagem do meu próprio blog, e do material que fui criando à medida que avançávamos. Mas, sabe, ainda são necessárias duas ou três habilidades para fazer os slides ficarem assim. Sim . Sim . E depois de fazer isso, você
+
+pode fazer de novo, e de novo. É o mesmo conceito repetido várias vezes, não é? Você pode construir esses loops que simplesmente interagem com outras partes do sistema. Assim como a maioria dos nossos projetos de tratores, os nossos são apenas planilhas do Google atualizadas com loops. Os slides são em loop e as anotações também. Sim, eu acabei de dizer
+
+tudo. Meu erro. E uma coisa que também é muito útil é que, à medida que a empresa se torna mais contextualizada, certo? Talvez sejam todos os agentes de OA, mas a capacidade de resumir coisas assim, pelo Slack, tem sido incrivelmente útil. Aquilo foi claramente um deslize grosseiro que o Chad GBT editou.
+
+Então, uma vez que você possa tomar medidas em relação a esses artefatos 3D, acho que a coisa mais importante, e o que eu realmente quero que as pessoas experimentem, é simplesmente usar o computador. Hum, de novo, é como se fosse a primeira vez que eu sentisse aquela sensação de inteligência artificial, sabe? Assim como um cursor tenta executar alguma ação. Você consegue ver o movimento na tela e, quando ele acontece muito bem, você realmente ganha muita confiança no sistema. Então, obviamente, temos plugins, certo? E isso serve para
+
+enviar mensagens em pilha, mas o navegador integrado ficará ainda mais poderoso em breve, certo? Basicamente, poderemos tratar isso como o navegador que você usa. Agora, por exemplo, tento usar o navegador o máximo possível. E para todo o resto, use o computador. Aliás, quantas pessoas já usaram computador? Muito. Ah,
+
+são cerca de 10% de vocês. Qual foi a coisa mais louca que você já fez? Qual foi a coisa mais louca que alguém já fez? Tem algum voluntário? Gerenciando minha casa.
+
+Laboratório doméstico. Sim. O que é um laboratório doméstico?
+
+Legal.
+
+Uau. Tem mais alguma história parecida com o uso insano de computadores ? Preciso tomar a pílula AGI e experimentar usar o computador. Sim, uma coisa que eu gostaria de dizer é que, como os computadores são tão poderosos, como você mencionou antes, existe um componente de segurança. Agora me lembro daquele exemplo em que, como disse novamente, o conector do Slack não conseguia fazer o upload dos arquivos. Se esse modelo
+
+estiver realmente determinado, certo? Hum, poderia ser como o salgueiro que só queria um desejo. A mensagem diz apenas: "Ok, ótimo. Bom, se eu não consigo adicionar um arquivo do Slack, deixa eu ir em ' Usar computador', clicar em 'Carregar arquivo' e fazer isso, certo?" Haverá momentos em que o modelo, com base em como você o orientou, ficará realmente determinado e dirá: "Ah, parece que não consigo enviar um e-mail para alguém usando o conector do Gmail.
+
+Deixe-me abrir o Chrome e clicar no botão enviar." Então, esse é o tipo de coisa com a qual você deve ter muito cuidado , certo? Esses são problemas de segurança reais. E, novamente, na maioria das vezes, ter essas informações no arquivo MD do agente tem sido muito, muito útil, especialmente se você usa coisas como o modo guardião ou o modo automático, com licença . Hum, e isso também mudou muito a maneira como eu penso sobre o trabalho. Tenho a impressão de que
+
+agora, quando estou desenvolvendo um aplicativo, se for um aplicativo nativo, a maior parte dos meus testes é feita pelo Codeex usando o computador . Se for um site, novamente, basta usar o navegador integrado ao aplicativo. Hum, acho que já falamos bastante sobre isso , tipo, lidar com o trabalho de atendimento, que é meio incrível, tipo, estar na página de finalização da compra, tirar uma foto do aplicativo, sabe, encontrar um cupom para mim. Tipo, me rendeu mais dinheiro do que eu esperava antes. Hum, preencher formulários, testar aplicativos. Hum,
+
+ainda não tive muita oportunidade de usar isso, mas também é possível controlar o iPhone através do espelhamento de tela. Então, faça com essa informação o que quiser. E isso meio que representa uma escalada na discussão, certo? Então a questão é: o que o computador não consegue fazer e por que não consegue? E uma das coisas que você não pode fazer é controlar os codecs. Mas você não
+
+precisa realmente fazer isso, porque essas threads do Codeex já conseguem se comunicar entre si. Bem, ele já consegue se controlar de maneiras muito poderosas, certo? Se você pensar no exemplo, este não é o slide que eu quero. Droga. OK. Acho que estraguei
+
+alguns slides. Anteriormente na palestra, mencionei a ideia de que, se houvesse algum tipo de problema de suporte, eu poderia tirar uma captura de tela do aplicativo e ele chamaria isso de "habilidade de triagem DX" e renomearia a habilidade. Ele fará o loop e se comunicará como o Slack e o Twitter, o que é muito bom, mas eu ainda preciso ser a pessoa que inicia essas coisas, certo? É a mesma coisa que eu identificar um problema e fazer uma solicitação específica no futuro. Bem, quero dizer, o futuro para você já está acontecendo aqui e agora.
+
+Mas agora o que eu tenho é apenas uma única thread de monitoramento e, sempre que ela identifica algum desses problemas, ela cria uma nova thread, cuja função é realizar toda essa triagem. E o que pode estar acontecendo é que talvez essa triagem esteja aguardando que alguém no Slack reconheça o problema. Talvez uma solicitação de pull request tenha sido criada, mas ainda não tenha sido mesclada. Se alguém reclamar novamente no futuro, o tópico de monitoramento simplesmente dirá: "Ah, sim. Acho que é o mesmo problema." Não só o problema persiste, como também
+
+vou enviar uma mensagem para aquele tópico subsequente para que ele esteja ciente de que esse problema está se repetindo. Talvez essa thread envie uma mensagem para o Slack, mas na thread principal, eu ainda verei uma mensagem dizendo: "Ei, já faz três dias que esse problema está ativo, com base no feedback do Twitter. Devemos fazer alguma coisa?" E tipo, essas são as coisas que eu... é muito difícil
+
+para mim acompanhar essas coisas porque eu estou no Twitter o tempo todo. Mas, ao permitir que o agente gerencie e consuma todas essas informações, essas questões se tornam muito mais fáceis de lidar. Hum, definitivamente errei nos slides aqui, então vou pular alguns slides. Sim, este é o exemplo. E eu realmente quero que você, eu realmente quero muito que você explore essa ideia. Acho que ainda não está totalmente
+
+pronto, né? A maior parte do meu trabalho consiste em fazer com que os monitores criem subthreads. Esses tópicos são então gerenciados e fixados na barra lateral. Essa também é uma das melhores coisas, né? Assim como acontece com um subagente, a thread simplesmente tem essas entidades amorfas flutuando em segundo plano. Tipo,
+
+sabe, o tópico sobre JSON ou o tópico sobre Galileo ou algo assim. A diferença entre os subtópicos e estes tópicos é que, como eles aparecem na barra lateral, você consegue perceber facilmente que algo mudou. Sabe, surgiu um novo problema, não é? E grande parte disso também se resume a usar a barra lateral como um ponto central para entender quais são os fluxos de trabalho em andamento. E isso tem sido extremamente poderoso para mim. Mas tudo
+
+começa com a fixação de uma thread, a execução de ações, a utilização desse repositório monolítico para gerenciar todo o contexto e, em seguida, a implementação de diferentes maneiras de ativar os sistemas. E antes disso, esses sistemas despertavam porque você enviava uma mensagem ou configurava um sinal de atividade. E agora essas coisas podem ser despertadas por outra thread em execução em algum outro lugar. Assim, na maioria das vezes, como acontece com a maioria das minhas automações, elas ocorrem no nível de monitoramento de threads, sendo acionadas, criando novas threads e se gerenciando automaticamente . Sim . Então, acho que conversamos sobre várias
+
+coisas, certo? falar sobre o uso de plugins estruturados em computadores e, bem , acho que é basicamente isso. Experimente usar alguns recursos do computador. Eu sei que não posso mesmo, estou realmente preocupado com o Wi-Fi aqui. Vou tentar algo muito ruim, mas, sim, experimentar fotos com aplicativos, usar o computador e explorar ao máximo o que esses modelos são capazes de fazer. Há uma pergunta ali. Farei essa em
+
+seguida. Acho que
+
+não consigo te mostrar neste computador. Eles vão me levar embora. Bem, eu posso falar um pouco sobre isso . Basicamente, meu repositório mono está configurado de forma muito semelhante a este ali . Tenho um diretório de projetos e, dentro desse diretório, há um diretório nomeado para cada fluxo de trabalho em que estou trabalhando. Então talvez
+
+seja o vídeo de inicialização por voz, ou talvez seja o SDK de agentes, certo? Ou talvez seja o programa de financiamento de código aberto CodeEx . Esses são alguns dos projetos. Então eu tenho um diretório de pessoas, que é basicamente todas as pessoas que já me mandaram mensagem direta, certo? Eu sei no que eles estão trabalhando. Eu sei em
+
+que tipo de problemas eles estão pensando . Eu sei de quais outros canais do Slack eles fazem parte. E aí eu tenho um monte de anotações soltas, resumos de agentes. Tenho resumos diários do que fiz. Isso serve principalmente para testar os limites da IA.
+
+Não acho que seja muito útil para esse tipo de coisa. Na maior parte das vezes, são apenas os projetos e as pessoas, certo? Hum, e aí eu tenho uma lista de tarefas que um agente simplesmente mantém atualizada. Então eu tenho um único tópico que verifica essa lista de tarefas. Ah, aqui diz que foi desfeito. Vou pedir a
+
+um subagente que verifique se ninguém mais realizou essa tarefa. Essas coisas são bem caras, quase como tokens . Não sei bem se valeria a pena para as pessoas configurarem isso por conta própria, a menos que elas simplesmente não usem muitos créditos. Hum, mas acho que os maiores são, tipo, o tópico sobre o cajado de Shiva . 9h da manhã. Conte-me o que está
+
+acontecendo hoje. Conte-me o que vai acontecer esta semana. E eu acho que se você fizer isso, vai tirar muito proveito disso.
+
+Sinceramente, eu nunca tinha vivenciado isso. Acho que a compactação está realmente muito boa. Bem, eu sei que esta não é uma resposta muito satisfatória, mas se eu pudesse melhorar partes do modelo, eu preferiria melhorar o tom da escrita em vez da capacidade de pesquisar o contexto. Bem, no geral tem sido muito bom. Acho que isso pode ter a ver com a forma como as memórias do Codex foram configuradas, mas não me aprofundei muito nesses detalhes. Acho que você tinha
+
+uma pergunta aqui. Sim . Sim . Sim
+
+. Sim
+
+. Sim
+
+. Então, acho que a questão era mais ou menos como lidar com memórias que se misturam em diferentes projetos? Não creio ter uma boa resposta para isso, principalmente porque não está claro para mim qual seria o efeito colateral subsequente . Talvez um projeto use o npm, outro use o yarn ou algo parecido. Mas, no geral, eu apenas limpo esses arquivos nos arquivos MD do agente para esses projetos específicos, certo?
+
+Outro ponto a mencionar é que cada diretório de projeto possui seu próprio arquivo readme e seus próprios arquivos MD de agente. Então, sim, tipo, acho que às vezes um projeto em que eu estava trabalhando era o npm e outro era o PMP. Eu simplesmente limpo isso no MD dos agentes. E eu ficaria curioso para saber o quanto disso pode ser limpo usando apenas essas ferramentas simples. Mas fale comigo depois.
+
+Estou realmente curiosa para saber o que há de tão ruim no sangramento. Sim, talvez esse seja um bom exemplo de como diferenciar o escopo do projeto do escopo de um único tópico. Mas, sim, talvez eu precise analisar com mais detalhes como a parte da memória está funcionando na prática. Mais alguma pergunta por aqui?
+
+Não. Então, acho que, honestamente, neste ponto ele meio que sabe. É uma resposta tão ruim, mas é quase como uma IAG (Inteligência Artificial Geral), tipo, para mim parece uma pílula de IAG. Mas acho que, geralmente, no começo, quando eu estava trabalhando com isso, eu tinha uma habilidade chamada "verificar anotações", que era tipo, "ei, se você sentir que precisa verificar suas anotações, verifique as anotações". Tudo bem. Então, se eu tivesse um palpite
+
+ou alguma intuição de que o modelo poderia não ser capaz de fazer isso, eu simplesmente mencionaria algo como: "Ei, verifique as anotações". Bem, mesmo se você olhar para o meu perfil aberto, acho que minha habilidade de verificar anotações foi usada umas 150.000 vezes, mas eu nunca a mencionei nos últimos dois ou três meses. Isso acontece porque, mais uma vez, acho que o sistema de memória tem feito grande parte do trabalho pesado. Mas, novamente, é como integrar um funcionário nos primeiros dois ou três meses de trabalho . Você precisa dar
+
+muitas instruções. Você precisa dar muito contexto a eles e deixá-los falhar. Quando falharem, você precisa dar a eles uma oportunidade, como anotar o que aprenderam e deixar que o problema se resolva sozinho . Hum, eu ficaria muito surpreso se você obtivesse bons resultados no primeiro dia de configuração. Mas, quer dizer, talvez não seja uma surpresa para você, mas agora é como se simplesmente funcionasse, não é?
+
+E essa é uma ótima sensação , não é? Porque isso me permite voltar ao ritmo normal de trabalho. Você tem alguma pergunta? Sim . Muito obrigado por perguntar sobre CSS e, considerando que está em constante evolução, isso se aplica não apenas à produtividade, mas também à programação em geral. Sim
+
+. Sim,
+
+eu sou tão velho. Isso foi há muito tempo.
+
+Tipo, eu tenho uma frase que diz que se você quer ter bom gosto, você meio que tem que comer, né? Tipo, acho que seu trabalho é consumir um pouco mais, experimentar diferentes aplicativos, sabe, você sabe como é um bom fluxo de integração? Você sabe o que é essa sensação? Você já criou um aplicativo que te deixa frustrado? E assim como sua capacidade de consumir mais coisas e desenvolver seu vocabulário sobre como reclamar de coisas ruins. Como
+
+você gosta de reclamar da comida ruim? Essas são as coisas, essas são as habilidades que eu acho que serão muito valiosas. E especificamente em relação ao vocabulário, certo? É como se você não pudesse descrever coisas que você realmente não entende. Hum, e isso acontece em coisas como cozinhar, né? Por exemplo, se você
+
+simplesmente não sabe quais são os ingredientes , não consegue descrever se algo está muito salgado ou se está faltando acidez. É como se você só precisasse consumir um pouco mais e depois pensar criticamente sobre por que gosta de algo e por que não gosta . Bem, acho que o gosto é um grande problema, mas acredito que muito disso se deve ao fato de não estarmos consumindo as coisas certas, por exemplo, experimentando todos os diferentes aplicativos . Sim. Mais alguma pergunta?
+
+Sim. [bufa] É . Sim
+
+.
+
+Qual parte? Então,
+
+eu entendo.
+
+Sim. Quer dizer, falando sério, aquele slide simplesmente diz que as threads podem se comunicar entre si, basta perguntar. Basicamente, o Codex disponibiliza uma ferramenta para listar tópicos e outra para enviar mensagens a um tópico. Então, digitar isso é meio estranho, mas na verdade eu só queria dizer que em algum momento da semana passada eu estava trabalhando em slides. Você pode encontrar esse tópico, renomeá-lo e fixá-lo para a próxima vez?
+
+Certo? Eu jamais digitaria isso, mas, por outro lado, o comando de voz facilita muito. Hum, às vezes eu digo, por exemplo, nesta palestra... Acho que errei em alguns
+
+slides. Basicamente, eu tinha um sistema principal para escrever slides. Então eu disse: "Certo, este slide pode ser dividido em três atos. Crie um tópico para cada ato. Fixe-o, renomeie-o como ato um, dois e três e revise cada seção. E
+
+depois que terminar, revise o slide inteiro." É, geralmente eu prefiro simplesmente perguntar. Quer dizer, acho que vou tentar adicionar mais comandos para ser um pouco mais explícito em relação ao controle de threads, mas acho que isso só acontecerá conforme os modelos forem melhorando e conforme o modelo for mais consciente do que os codecs podem fazer. Bem, sim, acho que uma coisa que você deveria tentar fazer é criar um tópico e simplesmente ler todos os outros tópicos fixados, renomeá-los e usar emojis para indicar o nível de prontidão. E só de ver isso acontecer já será um primeiro passo para entender como funciona o controle de threads . Essa funcionalidade é muito recente,
+
+mas já é bastante surpreendente ter apenas uma única thread. Você fica conversando com ele a tarde inteira. Sim . Doce. Se não houver mais perguntas.
+
+Sim, mais uma.
+
+Não me diga esse nome. Não. Não. Então a pergunta era tipo, outros sistemas de codificação têm esse tipo de ferramenta? Ainda não . Acho que você sabe, tenho certeza que
+
+eles farão isso em breve. Bem, pelo que sei, isso remonta à questão da alimentação. Eu simplesmente não experimentei as versões mais recentes de outras ferramentas. Não sei se o Conductor possui essas funcionalidades, mas certamente, em um mercado tão competitivo, esses recursos provavelmente se disseminarão rapidamente. Os threads funcionam em modelos antigos. Você vai fazer com que
+
+as novas threads voltem atrás e incorporem isso como contexto? Depende. Às vezes, basta dizer para encontrar o tópico antigo e atualizar o modelo, e ele será atualizado automaticamente. Por exemplo, quando as versões 45 e 54 foram lançadas e depois migramos para a 55, percebi que todas as minhas automações antigas ainda estavam na versão 54, o que me incomodou bastante. Então pensei: "Pessoal, podemos adicionar um recurso que use o GPT mais recente para evitar esse problema?". Alguém sugeriu que eu
+
+atualizasse as outras threads automaticamente, e eu fiquei tipo: "É isso aí!". Grande parte disso é só perguntar, você precisa desenvolver a linguagem para descobrir o que quer fazer. Mas acho que essa é a coisa mais importante. É só perguntar e o sistema fará isso automaticamente, em vez de você ter que fazer manualmente.
+
+Por exemplo, tenho uma automação que limpa threads antigas por IDs de modelo. Mas, enfim. E aí ? Ainda não. Não estou satisfeito o suficiente com os slides para publicá-los, mas tenho um post no blog. É só pesquisar "
+
+Codeex Maxing" no Google, está tudo lá. Você sabe, três "x", eu acho, mas vou compartilhar mais coisas no Twitter. Vai lá, então, você disse que trabalha, né? [bufa] Então, você tem algum loop? [bufa] Você entende muito de limites?
+
+Dá conselhos sobre como podemos limitar? É, acho que o maior equívoco aqui é que "X alto" vai me dar os melhores resultados. E tem muito maximalista de "X alto" por aqui. Eu quero tudo em "X alto", né? Tipo, eu estava demonstrando o negócio de pegar um cupom e meu amigo tirou um print do aplicativo e apertou enter. Eu fiquei tipo, por que você ligou
+
+em "X alto"? Né? Ficou rodando por uns dois minutos procurando em todos os sites disponíveis por cupons. Hum, obviamente eu não posso dar muitos conselhos porque é algo que eu uso no meu computador pessoal. Eu não costumo usar limites, mas me sinto confortável com o pensamento baixo e médio.
+
+Esses modelos ainda são muito inteligentes, né? Pensamento baixo em cinco, tipo cinco, cinco é Ainda é muito melhor que os modelos anteriores. E para boa parte desse trabalho, não é como, sabe, criar um videogame do zero. Você simplesmente não precisa desse tipo de trabalho. Meu chefe de gabinete, eu acho, tem um nível médio padrão.
+
+É um conselho muito útil. Concordo. Só para complementar, acho que em poucas palavras, como eu digo para a thread calar a boca? É a mesma coisa. E a resposta é realmente ruim, mas eu simplesmente digo que se não houver atualizações, responda com uma palavra: "sem atualizações".
+
+Isso é uma coisa. E a segunda coisa também é... eu também testaria a frequência com que esses "batimentos cardíacos" acontecem. Você está executando isso
+
+a cada 30 minutos? Está executando isso às 9h da manhã? Isso é uma coisa. E a segunda coisa também é: você tem algum tipo de critério de parada? Certo? Por exemplo, eu tive
+
+uma discussão com a Amazon e pensei: " Ótimo". Eles me colocaram em uma lista de espera de 75 minutos. Tipo, verificar. A cada cinco minutos, se a fila estiver melhor. E quando o tempo de espera chegar a cinco minutos , verifique a cada minuto e continue respondendo até receber meu dinheiro de volta. Tomei um banho e, quando
+
+voltei, tinha uns 400 dólares no meu cartão de crédito .
+
+Não tentei muito isso, mas tudo é possível, certo? Porque criar um batimento cardíaco é só editar um arquivo de texto. Então, você definitivamente deveria conseguir criar seu próprio batimento cardíaco e alterar a frequência. Hum, talvez eu tente fazer isso. Eu poderia dizer algo como: "Ei, durante a semana, mude seu batimento cardíaco para ser mais ativo e, nos fins de semana ou à tarde, mude para ser menos ativo." Sim. Tipo, eu tentei
+
+versões do tópico do chefe de gabinete, onde eu simplesmente definia uma meta que dizia para nunca parar e você só podia definir o horário de sono. E isso também funcionou muito bem. Seria algo como: "Ei, são 21h00..." Jason, tipo, faz umas duas horas que não vejo o
+
+Jason postar uma mensagem no Slack . "Vou dormir umas cinco horas." E isso também funciona. Sim. Mas, acho que o mais importante, honestamente, é que as pessoas não deveriam ter medo de raciocínio lento. Tipo, X alto
+
+não significa resultados X altos. É só pensar mais.

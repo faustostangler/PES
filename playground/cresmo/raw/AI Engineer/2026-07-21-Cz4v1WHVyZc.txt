@@ -1,0 +1,100 @@
+---
+video_title: "HTML Is All Agents Need — James Russo, HeyGen"
+video_id: Cz4v1WHVyZc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Cz4v1WHVyZc
+video_date: 2026-07-21T18:54:01+00:00
+video_description: |
+  LLMs are great at writing code. So the question we kept asking was: can they write code that produces a video? We thought it would be easy. The reality was a year of trying. We started with massive prompts to get very mediocre output. We made it more agentic to iterate and improve its output. This worked okay but wasn't production-ready. Eventually we tried Remotion. It got us deterministic video, but the React framework kept boxing the agent in. The more guardrails we added, the safer and more boring the outputs got. When we utilized plain HTML, CSS, and JavaScript, the creativity came back to the output. So we set out to build a video rendering framework on top of HTML. But it needed to work with Gemini Flash. Why? Because one tell that a framework is fighting an agent is needing the biggest model just to get usable output. So from there we shaped the framework around what small models could reliably author. That left one real engineering question: can we keep the freedom of HTML and still render a deterministic MP4? Browsers don't want to do that. Image decoders, font loaders, and animation clocks all run async on their own schedule. Great for performance. Terrible for "render the same pixels every time." Throughout, we iterated constantly with agentic loops and self-improving evals to test out the framework, find issues in our renderer, and shape a set of skills that gave the agents Taste instead of guardrails. This talk is what it took to get there.
+  
+  Speaker:
+  James Russo — Software Engineer, HeyGen
+  Engineering lead for HyperFrames. Currently at HeyGen building the future of video storytelling, Previously at Brex
+  X: https://x.com/Rames_Jusso
+  LinkedIn: https://www.linkedin.com/in/james-russo-56026897/
+  Website: https://boredhacking.com/
+  
+  Timeline:
+  
+  0:00 Introduction and the HeyGen mission
+  0:58 The challenge of creating launch videos
+  1:27 The importance of A-roll, B-roll, and composition
+  2:13 Why HTML, CSS, and JavaScript are the native languages of LLMs
+  3:06 Comparing HTML to other frameworks like Remotion
+  5:24 Designing the Hyperframes framework with Gemini Flash
+  6:54 How Hyperframes works in the browser
+  8:56 Leveraging browser-native technologies like Three.js and WebGL
+  9:25 Using Skills to teach agents video taste
+  10:56 Crafting videos: the human-in-the-loop workflow
+  12:09 Keyframes integration
+  12:35 Scaling and performance metrics
+  13:28 Future goals: Code-to-Video benchmarking
+  
+  Quotes:
+  
+  "Why not let the LLMs and agents talk in their native tongue when creating videos?" (2:58)
+  "One tell that a framework is fighting an agent is needing the biggest model just to get usable output." (5:24)
+  "We don't have to teach them the language. We just teach them how to create good videos." (9:46)
+  "Agents have made building incredibly easy. Launching is still quite hard." (14:31)
+---
+[música]
+
+Já que estamos falando de mídia generativa, pensei que começar com um vídeo seria uma boa ideia. Esse vídeo foi feito inteiramente por um agente em uma única tomada, utilizando apenas HTML. Meu nome é James Russo. Sou o co-criador e líder técnico do Hyperframes na HeyGen. Hoje, vamos falar sobre por que acreditamos que o HTML é tudo o que seus agentes precisam para criar vídeos incríveis.
+
+Quem aqui acha mais difícil criar aquela postagem ou aquele vídeo de lançamento do que realmente construir algo com agentes de codificação? Tudo bem. Algumas mãos para cima. Os agentes de codificação democratizaram a construção, tornando incrivelmente fácil para qualquer pessoa criar qualquer coisa que lhe venha à mente. No entanto, acreditamos que lançar seu produto ou recurso, colocá-lo no mercado, ainda é bastante difícil. E
+
+nós, da HeyGen, temos nos esforçado para preencher essa lacuna. Se você ainda não conhece a HeyGen, nossa missão é solucionar os problemas de comunicação por meio de vídeo. Começamos criando o melhor avatar de IA do mercado. Você pode considerar isso como as imagens principais, as cenas que você vê aqui no lado esquerdo da tela. É o narrador, o personagem, o tema principal do vídeo. No entanto, é um tanto simples, e
+
+vídeos excelentes têm muito mais elementos . Eles têm imagens de apoio (B-roll), que são as imagens e outros materiais e recursos audiovisuais. Eles têm animações, legendas e música. Tudo isso é necessário para criar um ótimo vídeo. Para nós, é fundamental acertar em todos os detalhes, não apenas no avatar, para solucionar a comunicação por vídeo e oferecer aos agentes a plataforma ideal para criar vídeos excelentes.
+
+Então, como você dá aos agentes a capacidade de gerar todas essas camadas e construir a composição necessária para criar um ótimo vídeo? Nossa aposta é no HTML. HTML, CSS e JavaScript são as linguagens nativas dos LLMs. A maior parte dos dados de treinamento deles, ou seja, todas as páginas da web que são coletadas no final das contas, são essencialmente HTML, CSS e JavaScript por baixo dos panos. Bem, quando você tenta ensinar a um modelo uma nova DSL ou mesmo sua própria estrutura JSON personalizada , você o está forçando a falar outra linguagem. Gostamos de pensar
+
+nisso como tentar pedir a Shakespeare que escreva um poema em japonês ou chinês. Mesmo que você dê a eles vários exemplos e os ensine várias coisas, você não obterá o melhor resultado deles porque não é a língua nativa deles . Então, por que não deixar os profissionais com mestrado em direito e os agentes imobiliários falarem em sua língua nativa ao criarem vídeos? Não somos os únicos a dizer isso. Nos últimos meses, Tarik e Andrej Karpathy têm falado muito sobre como o HTML é um novo Markdown. É um ótimo
+
+recurso para mestrados em Direito, pois oferece uma representação visual. Só para constar, submeti esta apresentação antes da publicação desses dois tweets. Bem, posso mostrar-lhe provas mais tarde, se tiver curiosidade, mas todos nós chegamos mais ou menos à mesma conclusão, que é a de que, se deixarmos os mestres em direito falarem na sua língua nativa, conseguiremos obter melhores resultados deles. Não foi necessariamente uma coisa fácil. Estamos trabalhando nisso há mais de um ano e experimentamos várias coisas ao longo do caminho.
+
+Existem várias estruturas e ferramentas diferentes que ajudam a criar ótimos vídeos. E gostamos de pensar neles sob a perspectiva da qualidade dos resultados e da facilidade de uso para os agentes. Para nós, After Effects e Premiere Pro são como o padrão ouro dos criativos. Eles geram ótimos resultados, mas não são muito amigáveis ​​para os agentes. Mesmo com os conectores mais recentes, ele funciona mais como um copiloto ou algo que pode ajudar a facilitar tarefas que você já sabe fazer. Isso não gera
+
+produção criativa. Experimentamos coisas como Lottie e Rive, que são linguagens de programação em formatos JSON ou XML personalizados. E eles podem gerar resultados muito bons , mas a facilidade de uso para agentes não é necessariamente uma regra para esses casos, porque não são... sua língua nativa e
+
+não são tão editáveis ​​ou controláveis, o que é muito importante para nós, essa camada de controle. Exploramos bastante o Remotion e, sinceramente, achamos que foi um ótimo exemplo do que os profissionais de Direito e os agentes podem fazer com a programação. No entanto, percebemos que tínhamos que ensinar-lhes a estrutura. Tivemos que ensinar-lhes a linguagem e dar- lhes vários exemplos de como escrever código corretamente, o que acabou por eliminar grande parte da criatividade. Então temos o HTML, que por volta de novembro do ano passado, quando o Gemini 3 e os modelos mais recentes foram lançados, vimos uma melhoria significativa no que os LLMs podiam fazer. Quando simplesmente lhes demos
+
+exemplos do resultado que desejávamos , eles naturalmente se inclinaram para HTML, CSS e JavaScript e nos entregaram um ótimo resultado. E nós decidimos, em vez de lutar contra o modelo, encontrar uma maneira de permitir que eles falem em sua língua nativa. Então, o que fizemos foi começar com um modelo muito pequeno, o Gemini 3 Flash, como nosso parceiro de design. Sabíamos que se os modelos menores conseguissem criar código funcional em uma estrutura, então os modelos maiores e esses agentes de codificação também conseguiriam, sem dúvida alguma. Tentamos com várias estruturas diferentes que envolvem HTML, CSS e JavaScript, adicionando muito contexto, aumentando o tamanho das solicitações do sistema e incorporando habilidades. Mas, para nossa surpresa, o
+
+wrapper mais simples acabou vencendo, que, no fim das contas, é basicamente HTML com alguns atributos de dados como metadados para informar o agente e para nos informar sobre o tempo e coisas do tipo . Bem , como já mencionei, nosso raciocínio era muito simples. Se esse modelo menor conseguisse, à medida que os modelos fossem melhorando, ele continuaria a melhorar. Eles naturalmente entenderiam melhor assim que os dados de treinamento entrassem em cena. E foi aí que percebemos que o formato do que estávamos construindo estava correto.
+
+Aqui está um exemplo um pouco mais detalhado de como um vídeo se parece no Hyperframe. Então, aqui à esquerda está apenas o HTML com alguns atributos e, à direita, a página web que ele renderiza. A pré-visualização e a renderização são feitas diretamente no navegador. Os mesmos pixels que o navegador vê são, em última análise, os mesmos que o seu vídeo verá. E qualquer coisa que seu mestre em direito ou seu agente saiba escrever em uma página da web, agora pode ser transformada em vídeo.
+
+Isso nos deu o Hyperframes, nossa estrutura de código aberto que transforma o HTML do seu agente em vídeo. Então, agora que tínhamos o HTML e a parte da linguagem, a próxima parte difícil era como transformar isso em um vídeo MP4 determinístico que qualquer pessoa pudesse postar ou utilizar. E isso foi muito mais difícil porque os navegadores são assíncronos por natureza. Eles têm um conjunto diferente de requisitos e preocupações em relação à renderização de vídeo . Eles precisam trabalhar em diversas redes diferentes e sob diversas restrições.
+
+Mas isso não é verdade para vídeos. Então, à esquerda, você pode ter uma ideia do que uma renderização do navegador pode fazer. Não há problema em carregar elementos de forma assíncrona, como fontes. Assim, à medida que a página carrega, a fonte e o estilo do texto podem mudar. Imagens, vídeos e outros recursos também podem ser carregados de forma assíncrona. Então,
+
+talvez você não os veja inicialmente na página, mas eles aparecerão em algum momento. Já para vídeos, precisamos que tudo esteja na página o tempo todo para que possamos mostrar exatamente o que você espera ver no vídeo. Em hyperframes, fazemos isso basicamente congelando o relógio e buscando quadro a quadro. Para quem não está muito familiarizado com vídeos, basicamente um vídeo é uma série de quadros ou imagens unidos para criar movimento ao longo de todo o vídeo. Então, pegamos essa nossa percepção e basicamente a aplicamos também à nossa renderização de HTML.
+
+Congelamos o relógio no navegador e então buscamos deterministicamente cada momento no tempo ou cada quadro, esperamos que tudo carregue na página, garantimos que esteja carregado e pronto para uso, e então tiramos uma captura de tela e passamos para o próximo quadro, e fazemos isso repetidamente até obtermos todos os quadros necessários para codificar isso em um vídeo. Assim, a mesma entrada que é pré-visualizada no navegador também é renderizada no vídeo. Daí o nome hiperquadros. A grande vantagem disso é que praticamente tudo que você consegue renderizar em um navegador agora pode estar presente no seu vídeo. Elementos como 3.js, gráficos, SVGs, shaders,
+
+WebGL, WebGPU, Lottie, todos esses podem ser renderizados no navegador e, portanto, todos eles podem ser renderizados em hyperframes. Uma grande parte de como criamos muitos dos nossos vídeos é buscando inspiração na internet, usando esses exemplos como referência, adaptando-os às nossas necessidades e, em seguida, incorporando-os aos nossos vídeos. A próxima etapa, além da estrutura e da renderização em si, é como obter um resultado excelente ou de boa qualidade dos agentes. E uma grande parte disso são as habilidades que combinamos com nossa estrutura. Nossa especialidade está focada em bom gosto e aspectos de vídeo, porque os profissionais de marketing de conteúdo e os agentes já sabem escrever HTML, CSS e JavaScript; não precisamos ensiná- los a linguagem, apenas ensinamos como criar bons vídeos. Essa é uma grande
+
+diferença em relação a outros frameworks, onde, se você analisar determinadas habilidades, a questão principal é: como você escreve algo nesse framework? Isso nos permite focar nas partes importantes que fazem um vídeo ser ótimo, e uma grande parte disso é avaliar e usar agentes constantemente para aprimorá-los. Isso nos permite elevar a qualidade mínima dos vídeos e garantir que o resultado básico de um único comando produza resultados bastante satisfatórios. Aqui está um exemplo que vou mostrar de uma única tomada utilizando nosso recurso de conversão de site em vídeo. Tudo o que você precisa fazer é fornecer um site.
+
+Nós informamos como acessar esse site, recuperar todos os recursos e informações necessários para criar o design, o tema e a identidade visual usando o DesignMD ou o FrameMD, no nosso caso. E a partir daí, ensinamos exemplos básicos de movimento do LLM e coisas do tipo, com ótimos vídeos que você pode usar para obter resultados de qualidade como este.
+
+No entanto, alcançar grande produção exige habilidade. Assim como na programação de IA, você pode obter resultados razoáveis ​​apenas com um único comando e algo que atenda às suas necessidades, mas obter resultados excelentes de agentes requer habilidade, bom gosto e os mesmos princípios de qualquer engenheiro de software antes da programação de IA. Dividir o problema em partes individuais e trabalhar de forma iterativa. O mesmo vale para obter uma ótima qualidade de vídeo em HyperFrames. Queremos garantir que nossos usuários avançados tenham controle total sobre isso, e da mesma forma que criávamos vídeos antes do HyperFrames, é assim que os criamos com o HyperFrames.
+
+Refletimos sobre a narrativa, a visão e a missão deste vídeo. Criamos o storyboard quadro a quadro e pensamos no que cada quadro precisa fazer. Em seguida, passamos a adicionar movimento quadro a quadro utilizando HTML, CSS e JavaScript, mesclando tudo em um vídeo coeso, e então utilizamos nosso estúdio, que lançamos com o Hyperframes, para a edição final. Garantir que os humanos estejam sempre envolvidos e tenham acesso a todas as funcionalidades que teriam em um editor de vídeo comum, dentro do editor de código aberto, permitindo arrastar, ajustar e fazer ajustes manualmente. O resultado final é algo como isto. Bem, na verdade, acabamos de lançar isso
+
+hoje, os keyframes no Hyperframes, que é um aspecto importante para criar vídeos excelentes para designers de motion graphics, e permite coordenar todos esses movimentos diferentes quadro a quadro ou keyframe a keyframe em nosso estúdio, garantindo que você possa fazer tudo o que um designer de motion graphics profissional faria no After Effects.
+
+Portanto, não é apenas uma demonstração. Nós lançamos o Hyperframes há alguns meses. Na nossa opinião, tem funcionado em grande escala. Mais de 1,3 milhão de vídeos foram renderizados por usuários do Hyperframes, plataforma de código aberto, nos últimos 90 dias. 267.000 criadores já experimentaram. Temos
+
+cerca de 15.000 vídeos sendo renderizados todos os dias utilizando a estrutura de código aberto e 32.000 estrelas no GitHub. Mas isso é apenas o começo para nós. Como já mencionei, é de código aberto e gratuito para sempre. Qualquer pessoa pode
+
+usar o Hyperframes agora mesmo. Funciona com qualquer agente de codificação que você tenha, Cloud Code, Codex, Cursor, e vários outros que mencionei, inclusive alguns que eu desconheço. Se o seu agente souber escrever HTML, CSS e JavaScript, ele saberá como criar um vídeo Hyperframes. Agora, com isso, o mesmo agente que está te ajudando a criar seu produto também pode te ajudar a fazer seu vídeo de lançamento. A única coisa honesta que vamos dizer aqui é que as modelos ainda não são boas em trabalhos criativos. Dedicamos muito
+
+tempo a avaliar e aprimorar nossas habilidades, buscando levá-las ainda mais longe. Mas acreditamos que há algo em um nível mais elevado que precisa mudar aqui, e é por isso que começamos a trabalhar em um benchmark de código para vídeo, onde estamos tentando colaborar com os laboratórios LLM e com todos os criadores que trabalham com agentes de vídeo para garantir que possamos elevar o nível dos vídeos para todos. Se alguém estiver interessado nesta área ou trabalhando nela, teremos prazer em colaborar e conversar mais sobre isso. Fiquem à vontade para me encontrar, ou qualquer outro membro vestindo uma camiseta da Hyperframes, na multidão depois do evento. Adoraria conversar mais com vocês.
+
+E mais uma coisa, alguns de vocês podem ter visto o vídeo de demonstração do engenheiro de IA Warfare. Colaboramos intensamente com a equipe para criar isso, utilizando o Hyperframes como uma pequena surpresa para mostrar o que ele pode fazer. Aqui está um ótimo exemplo de animações gráficas e design que você pode fazer com HTML, CSS e JavaScript. Sim , criar agentes ficou incrivelmente fácil. O lançamento ainda é bastante difícil.
+
+Acreditamos que o HTML é tudo o que seus agentes precisam para criar ótimos vídeos e lançar seu produto no mercado. Aqui está um link para o Hyperframes, o projeto, o repositório de código aberto. Fique à vontade para conferir, curtir, baixar as habilidades. Você pode me contatar pelo X em Reems_Juso, e agradeço sua presença. Estarei lá fora se alguém quiser conversar.

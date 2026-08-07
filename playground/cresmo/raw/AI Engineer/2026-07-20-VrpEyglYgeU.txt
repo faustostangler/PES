@@ -1,0 +1,104 @@
+---
+video_title: "In the Land of AI Agents, the Verifiers Are King — Tariq Shaukat, Sonar"
+video_id: VrpEyglYgeU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=VrpEyglYgeU
+video_date: 2026-07-20T15:00:06+00:00
+video_description: |
+  As AI agents take on increasingly complex development tasks, the critical challenge has shifted from generation to verification. Hallucination is not a temporary bug. Evidence suggests that as models grow more capable, failures become more frequent and more convincing, making cognitive surrender among human reviewers an acute risk. This talk introduces a three-stage discipline for responsible agentic development, Guide, Verify, Solve, and argues that rigorous verification infrastructure is both a safety requirement and a competitive advantage. Counterintuitively, code quality matters more in an agentic world: clean, low-complexity codebases make agents faster, cheaper, and more reliable, while technical debt compounds at machine speed.
+  
+  Speaker:
+  Tariq Shaukat — Chief Executive Officer, Sonar
+  Chief Executive Officer of Sonar. Previously served as President of Google Cloud and President of Bumble.
+  X: https://x.com/tariqshaukat
+  
+  Timestamps
+  0:00 Introduction and the current state of AI adoption
+  1:30 The challenge: Distinguishing AI utility from "AI slop"
+  3:09 Analyzing the performance data of AI coding agents
+  6:17 The productivity paradox: Why gains dissipate after three months
+  8:28 Introducing the AC/DC (Agent-Centric Development Cycle) framework
+  9:31 Stage 1: Guide (Providing context and constraints)
+  11:22 Stage 2: Verify (Zero-trust, multi-layered verification)
+  13:00 Stage 3: Solve (Maintenance loops and technical debt control)
+  14:32 The necessity of systems-level thinking for AI agents
+  16:56 Real-world impact: 92% reduction in issues with disciplined verification
+  17:42 Conclusion and final thoughts on enterprise AI
+---
+[música]
+
+Por favor, juntem-se a mim para dar as boas-vindas ao diretor executivo da Sonar, Tariq Sha. [música]
+
+[música] Bom
+
+dia a todos. Você gostou da última conversa? Foi incrível. Hum, você gosta particularmente da parte final, da parte em que você é irracional. Achei isso incrível. Hum, eu também quero... Estou
+
+tentando calcular as probabilidades de t seguir o tar nas duas primeiras sessões da manhã. Hum, acho que as chances são bem baixas dessa vez, mas, estou muito feliz por estar aqui hoje. Bem, como acabamos de mencionar, eu trabalho na Sonar. Estamos na área de verificação de código e estou aqui hoje para falar sobre verificação. E acho que estamos todos aqui, em grande parte, porque acreditamos, até certo ponto, que a Inteligência Artificial Geral ( IAG) já é uma realidade. Está chegando. Os modelos que acabamos de
+
+ouvir falar são de Fable. É realmente incrível o que está acontecendo no mundo hoje em dia. No entanto, trabalhamos quase exclusivamente com empresas de todo o mundo. E a conversa que temos com mais frequência é a versão com ponto de interrogação. AGI está aqui? E por que eles estão fazendo essas
+
+perguntas? É porque você pode ler as notícias todos os dias. E não estou tentando apontar nomes nem envergonhar ninguém aqui, mas se você observar a KPMG divulgando relatórios que eles têm que retratar por causa de alucinações, a EY fazendo a mesma coisa, escritórios de advocacia se metendo em muitos e muitos problemas por causa de citações inventadas, jurisprudência inventada, coisas desse tipo. Acho que podemos começar a questionar seriamente como podemos extrair valor da IA? Os modelos são incríveis, como acabamos de ouvir, mas a parte difícil, como o outro participante mencionou, é obter valor com eles.
+
+O problema é que a má gestão da IA ​​está por toda parte. Tenho certeza de que todos vocês veem isso dentro de suas organizações. Tenho certeza que você vê isso no seu dia a dia. Essa inteligência artificial é incrível. Os modelos são incríveis na geração de resultados muito plausíveis.
+
+Eles são incríveis em gerar coisas que soam corretas. Mas será que estão certos? E como saber se eles estão corretos é um grande problema. E, como vimos, esse é um grande problema nos serviços profissionais. É um grande problema na área jurídica. Mas, na verdade, acho que, sendo
+
+honestos, é um grande problema em todos os setores, em todas as áreas, seja marketing, finanças ou qualquer outra. Você fica com a dúvida de como saber se isso é verdade? Como saber se é bom ou se é uma porcaria? E a questão que abordamos no espaço da programação em particular, abordamos no desenvolvimento de software. E a pergunta que mais ouvimos, ao conversar com muitas das pessoas aqui nesta sala e com muitos de nossos clientes, é: o desenvolvimento de software não é diferente?
+
+E podemos analisar os dados sobre isso e os modelos mitológicos. Estes são dados do medidor. Você talvez já tenha visto essa sereia. Os agentes de codificação estão melhorando muito rapidamente. Eles estão melhorando muito rapidamente. E você pode
+
+ver a progressão, a curva exponencial aqui. O que este gráfico mostra é a capacidade dos modelos em realizar tarefas que seriam executadas por humanos. Então, eles conseguem concluir uma tarefa que leva 1 hora, 2 horas, ou qualquer que seja o tempo? O modelo Mythos mais recente, pelo menos de acordo com os testes comparativos realizados há cerca de um mês no modo de pré-visualização, indica uma autonomia de 16 a 18 horas. Assim, os agentes conseguem concluir tarefas de longa duração e isso está realmente começando a transformar a forma como o trabalho é realizado. Mas a ressalva crucial ao
+
+analisar os dados é que isso ocorre com uma taxa de sucesso de 50%. OK. Portanto, ele é capaz de concluir tarefas novamente, mas a questão é se ele consegue concluí-las corretamente . Então, se você começar a analisar e aumentar a taxa de precisão, você a aumenta para 80%. E ainda há progresso, mas é um progresso muito mais lento. Em vez
+
+de 18 horas, você terá cerca de 3 horas e meia, ou algo parecido. Aliás, isso ainda está com 80% de precisão. E enquanto eu apresentava isso ao CTO de um dos meus grandes clientes, a resposta dele foi: "Mas eu ainda colocaria alguém que me desse informações com 80% de precisão em uma avaliação de desempenho, provavelmente, certo? Isso não é necessariamente de nível empresarial. O problema são os próprios modelos, e, para ser totalmente transparente, ainda não fizemos esse benchmark nos modelos da Fable, obviamente, porque eles acabaram de ser lançados. Mas, ao analisarmos os
+
+modelos, percebemos que eles estão ficando mais inteligentes, mas ainda produzem muito código problemático. Fazemos esse benchmark . Apresentamos aos modelos uma série de mais de 4.000 problemas e basicamente pedimos que gerem a resposta para esses problemas. Em seguida, analisamos a correção funcional, que é crucial, e todos se saem extremamente bem nesse quesito, certo?
+
+Mas também analisamos a complexidade do código, a quantidade de bugs e a segurança. E o que se vê, mesmo nos modelos de última geração, é que a complexidade ainda é alta. Na verdade, ela é bastante variável, como você pode ver aqui." O GPT-55 teve um desempenho particularmente bom no quesito complexidade. Ele ainda gera bugs. Não
+
+gera uma quantidade enorme de bugs, mas ainda gera bugs e problemas de segurança. Então, este é o resultado dos modelos que estão sendo usados nos fluxos de trabalho de agentes. E, novamente, não estou dizendo que a IA é falsa ou incorreta, mas estou tentando abordar a questão de como realmente obter valor em um ambiente de produção com IA. Este é um estudo realizado na Universidade Carnegie Mellon que analisou o benefício real de produtividade obtido com o uso de agentes de codificação de IA . E o que se observa, acredito, ressoa muito com o que vejo em primeira mão no mercado: há um aumento inicial incrível de produtividade, especialmente de velocidade.
+
+O que se vê é um aumento de três a cinco vezes na produtividade ou na velocidade. Esse efeito se dissipa em três meses. Ao final de três meses, começa a voltar ao normal, como antes de usar o agente. agentes. E se você perguntar por quê, é por causa dos dois elementos em vermelho aqui que você começa a ver um aumento na velocidade, mas também um aumento nos problemas de segurança, nos problemas de manutenção, nos problemas de confiabilidade e na complexidade. Essencialmente, você está
+
+acumulando dívida técnica tão rápido quanto gera o código, ou talvez até mais rápido. E isso cria um conjunto diferente de trabalho, cria um gargalo diferente. E, para nós, esta é agora a questão crítica em IA: em um mundo onde o código é comprovável, e há sessões que estou ansioso para participar sobre métodos formais, provas e coisas do tipo, o código é comprovável, mas quando você começa a lidar com grandes bases de código, o software não é. Ainda é muito complexo, ainda é muito confuso, há muitas dependências, já existe muita dívida técnica na maioria das bases de código. Portanto, esta questão da verificação é fundamental. E o que vou
+
+argumentar é que você pode tratar a verificação como um todo. Você pode considerar a verificação como uma reflexão tardia ou incorporá-la ao processo. Ao incorporá-la ao processo de geração de código, ao desenvolvimento de software, você pode obter resultados significativamente melhores dos agentes de codificação do que se a considerar apenas como uma reflexão tardia ou como a tradicional revisão de código. Ao refletirmos sobre isso, construímos uma estrutura, e existem muitas outras estruturas concorrentes, mas vou apresentar a nossa. Chamamos de Ciclo de Desenvolvimento Centrado no Agente ( AC/DC).
+
+A ideia central é como integrar a verificação aos loops genéticos, com foco na geração de código, ou seja, como fazer com que os modelos e os agentes gerem o código necessário para resolver o problema. Defendemos que isso deve ser feito com as disciplinas, ferramentas e processos corretos para guiar os agentes, verificar os resultados e, por fim, resolver os problemas. Faz parte da disciplina, do processo, do novo ciclo de vida de desenvolvimento de software se você quiser ter sucesso no mundo da IA. Então, se eu clicar duas vezes em algumas dessas partes, o que queremos dizer com "guia"? Fizemos muitos experimentos com guias. Acabamos de lançar um produto
+
+ontem, acho, chamado Sonar Vortex, que começa a abordar essa área. O que consideramos crucial é pensar em guia como contexto e restrições, e separamos contexto e restrições de forma muito deliberada porque contexto são seus repositórios de código. Como podemos facilitar para os agentes e modelos entenderem o que está em sua base de código? Se você tem um milhão de linhas de código, cem milhões de linhas de código, um bilhão de linhas de código, os agentes funcionam melhor se entenderem sua base de código. Então, como você lhes dá consciência arquitetural? Como
+
+você fornece navegação semântica, mapas e os ajuda a entender o território, para usar o que Tar estava falando, e achamos isso igualmente valioso, e não acho que essa parte seja discutida o suficiente para fornecer o Também existem restrições. Você tem diretrizes que deseja que seu código siga. Você tem dependências que considera aceitáveis. Você tem dependências que considera inaceitáveis. Você tem padrões de codificação. Você tem diretrizes de segurança. Você tem uma
+
+arquitetura planejada. Passamos muito tempo falando sobre a arquitetura existente. Mas e para onde você quer ir? E essa ideia de contexto e restrições, descobrimos em nossos testes, gera uma melhoria significativa na eficácia do agente e uma redução significativa no consumo de tokens — mais de 30% de redução nos tokens usados ​​para resolver um determinado problema. E se você perguntar por quê, é porque você está realmente facilitando a vida do agente.
+
+Você está ajudando-o a navegar melhor. Então chegamos ao cerne disso e realmente pensamos no guia como verificação preventiva. Como garantir que haja menos para verificar, menos para corrigir, esse tipo de coisa. Então chegamos ao cerne da verificação e o que acreditamos fortemente e o que vimos funcionar na prática é essa ideia de verificação multicamadas de confiança zero. Confiança zero. Todo modelo tem vieses.
+
+Todo O modelo produz um caráter, tem uma personalidade. Portanto, vamos garantir que usemos diferentes modelos e técnicas para garantir que seu código seja seguro, confiável e protegido. E a abordagem multicamadas realmente reforça o ponto anterior de que o software é complexo. O software é muito confuso. O software tem muitas complexidades envolvidas. E o
+
+que acreditamos, e que já comprovamos ser bastante impactante, é que uma combinação de verificação algorítmica, analisando fluxos de dados, fluxos de controle, padrões conhecidos e segredos, combinada com o que agora é possível com a verificação agentiva, que analisa a intenção, a lógica de negócios e as incógnitas desconhecidas, é possível. Aliás, para retomar a apresentação anterior, a fusão desses elementos, a estrutura multicamadas deliberada que você implementa, pode realmente mostrar resultados em produção. Ao observarmos nossos parceiros e clientes que usam uma abordagem de verificação multicamadas, eles relatam que as interrupções de produção derivadas de IA são 44% menos frequentes do que aquelas que não usam. Portanto, você pode começar a ver uma melhoria significativa na confiabilidade, na segurança e em manutenibilidade. E o último ponto que mencionei é que a dívida técnica explode, certo? À medida que
+
+você gera código, a dívida técnica também é gerada. E, novamente, isso não significa parar de fazê-la. Significa estar ciente e começar a controlá-la. O que temos visto ser extremamente eficaz é ter um processo ativo, uma disciplina ativa em torno da manutenção do código e pensar em como realizar a manutenção de código verificada. Não vou detalhar cada etapa, mas os agentes, sejam eles um conjunto de agentes de remediação ou uma forte disciplina em torno da verificação, mantêm sua base de código limpa.
+
+Muitas pessoas me perguntam: " Mas os agentes se importam com código limpo? Os desenvolvedores humanos se importam com código limpo? Os agentes se importam com código limpo?" E o que descobrimos é que sim, absolutamente, porque os agentes precisam entender a base de código para poderem operar nela. Essa é uma visão pontual.
+
+Acreditamos que isso se acumula. Mas se você executar as mesmas tarefas de agentes em uma base de código típica e em uma que foi limpa, verá uma redução significativa na quantidade de tokens, raciocínio, energia etc. necessários para essas tarefas. Bases de código mais limpas em comparação com as bases de código típicas. Certo? Se você
+
+facilitar a vida do agente, se mantiver sua base de código, verá efeitos cumulativos. Agora, o importante, em nossa opinião, é construir o sistema. Foi assim que comecei, dizendo que todos nós fazemos revisões de código, usamos ferramentas de análise estática, ferramentas de revisão de código de IA, uma série de recursos. E acreditamos que isso precisa ser integrado a um sistema. E, novamente, teremos prazer em explicar como isso funciona em nosso estande, mas acreditamos que a construção do ciclo de vida de desenvolvimento de software em um mundo de IA precisa incorporar a noção de guiar, verificar e resolver . E isso precisa ser feito em
+
+três ciclos. É preciso pensar nesses três ciclos. Há o ciclo agentivo, que acredito ser a palavra-chave da conferência. Mas como fornecer aos agentes, enquanto eles geram o código e realizam o trabalho? O contexto e as restrições com a verificação em loop, para que o agente seja verificado enquanto funciona, e como corrigir problemas, esse é o loop azul aqui, o que discutimos é a parte da verificação do loop interno. Há um segundo ponto,
+
+que é o seu processo de melhoria contínua, e como você realmente combina o poder algorítmico e agentivo para gerar suas solicitações de pull, revisar o código e, aliás, a velocidade disso precisa aumentar drasticamente para revisar o código usando agentes e fazer essa verificação em várias camadas. Depois, você tem suas avaliações (Evals) e acho que o palestrante de abertura mencionou como "avaliação" pode ser a palavra da moda da conferência. Você tem suas válvulas EV e seus portões de qualidade para verificar se você está realmente passando. Então, você tem seu loop de manutenção de código , loop agentivo, loop de verificação de CI e o design deliberado desses loops com a verificação no centro é um sistema cumulativo. É um sistema que se reforça, tanto positivamente quanto negativamente. E vimos
+
+clientes que meio que negligenciaram isso à medida que implementavam... As ferramentas de codificação com IA negligenciaram a verificação, negligenciaram a ideia de qualidade do código, a manutenção do código e coisas do gênero, e isso leva a uma espiral descendente muito rapidamente. O estudo de caso da Carnegie Mellon mostra que todos os benefícios começam a se dissipar ou que se entra em um ciclo de auto-reforço . Em um dos testes que fizemos com
+
+um dos grandes bancos que utilizam algumas das ferramentas de codificação de ponta, as ferramentas de codificação agenic de última geração, eles conseguiram uma redução de 92% nos problemas se adotarem a abordagem de guiar, verificar e resolver dentro desses ciclos agenic. E isso se acumula, não significa que cada ciclo seja 92% melhor, mas sim que, à medida que o problema é resolvido ao longo de minutos e horas, os benefícios se acumulam. É assim que vemos o benefício aqui: o uso controlado e gerador de valor da IA em ambientes corporativos. E quando digo corporativos, me refiro a empresas com bases de código existentes, com milhões de linhas de código já existentes. Há o ciclo de agentes, o ciclo de verificação de CI e o ciclo de manutenção de código.
+
+Minha equipe de marketing exige que eu inclua uma versão com nossos produtos aqui. Então, estes são os nossos produtos e vocês podem nos visitar mais tarde. Mas o mais importante é dizer que nossa recomendação é este ciclo de desenvolvimento centrado em agentes (AC/DC). A parte principal é a verificação deliberada integrada ao sistema. Se quiserem saber mais, temos um estande. É o grande estande vermelho no
+
+andar de baixo. Adoraríamos conversar mais. Temos algumas sessões sobre DoubleClick em breve. Então, por favor, participem e tenham uma ótima conferência. Obrigado a todos.
+
+[música]

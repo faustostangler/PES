@@ -1,0 +1,117 @@
+---
+video_title: "Let's integrate AI Agents in Event-Sourced Systems — Divakar Kumar, FlyersSoft"
+video_id: o6U_2vd967Y
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=o6U_2vd967Y
+video_date: 2026-07-30T00:00:06+00:00
+video_description: |
+  A card gets declined and no one, including the customer, can say exactly why. That gray zone is where Divakar Kumar points his agents. In a payments and fraud system, a rule based engine and an ML model already score most transactions cleanly; the hard cases are the ambiguous ones that neither can resolve. His approach adds an agentic layer on top of an existing event sourced architecture rather than replacing it, so the bounded contexts already in the system, transaction, device, and account, become the context the agents reason over.
+  
+  Events flow through change feeds into projections and a semantic layer that the agents read, communicating asynchronously through a message broker in a saga style loop. A risk analyzer agent, a second agent that reaches a verdict, and a third work the case while guarding against infinite loops and keeping memory short, all runnable serverless. The takeaway is architectural: event sourcing already carries the state and history an agent needs, so the cleanest way to add judgment to a production system is to layer agents onto the events you are already emitting.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/divakar-kumar/
+  - https://iamdivakarkumar.com
+  
+  Timestamps:
+  0:00 - Introduction: adding agents to an existing system
+  1:20 - A declined transaction you can't explain
+  3:04 - Where rule based and ML systems fall short
+  5:40 - Handling the gray zone with agents
+  5:53 - Bounded contexts: transaction, device, account
+  8:24 - Event sourcing and change feeds
+  10:57 - Building the semantic layer
+  13:16 - Avoiding infinite loops
+  14:07 - The risk analyzer and verdict agents
+  15:24 - The saga orchestration loop
+  19:00 - Putting the architecture together
+---
+[música]
+
+Olá a todos. Obrigado por participar. Então, acho que finalmente chegamos ao último dia da conferência. Pessoalmente, tive uma ótima experiência e aprendi muitas coisas novas. Portanto, acredito que ao final da sessão você terá pelo menos algumas dicas práticas que poderá aplicar em seus projetos de trabalho.
+
+Então, o que vamos aprender? Então, vamos aprender como integrar agentes de IA ao seu sistema existente. Então, esse sistema pode ser um sistema uniforme, ou um sistema orientado a eventos, ou qualquer arquitetura em que sua empresa tenha investido nos últimos anos, certo? Porque sempre acreditei que esses agentes de IA não servem apenas para chatbots ou para auxiliar na programação, certo? Portanto, o verdadeiro valor que você pode extrair desses agentes de IA é quando começa a aplicá- los nos fluxos de trabalho da sua empresa.
+
+E é isso que vamos aprender. E o problema que vamos abordar hoje é a detecção de fraudes em tempo real . Então, deixe-me começar com um exemplo. Então, essa é a minha experiência pessoal. Então, exatamente um mês atrás, eu comprei, tipo, decidi comprar este laptop que estou usando para a apresentação. Então,
+
+me custou cerca de 3.500 dólares. Então, esperei o momento certo. Então, eu estava vendo se tinha alguma proposta interessante e houve um momento. Então, decidi comprar. Forneci os dados do meu cartão
+
+e cliquei no botão comprar. Então minha transação foi recusada. Então, pensei que fosse um problema de rede e que algumas informações tivessem sido extraviadas. Então, tentei pela segunda vez e falhou novamente. Antes da minha terceira tentativa, recebi uma ligação do serviço de atendimento ao cliente pedindo para confirmar se eu estava realizando aquela transação específica. E eu pensei: "
+
+Sim, eu estava tentando fazer isso nos últimos minutos." E eu perguntei a eles: " Por que vocês bloquearam minha transação?" Você sabe qual foi a resposta? Eles não sabiam, e eu não os culparia por não saberem por que estava bloqueado. Em algum lugar do sistema, seja no mecanismo baseado em regras ou no mecanismo baseado em aprendizado de máquina, essa decisão teria sido tomada. Então, ele
+
+teria analisado meu histórico de transações ou teria um limite médio a partir do qual, se ultrapassasse esse limite, simplesmente bloquearia a transação; essa seria a regra estática que ele teria aplicado . Por esse motivo, minha transação foi recusada. Então, essas são as áreas-chave, ou seja, as áreas de incerteza onde estamos tentando integrar os agentes de IA. Agora, você deve estar pensando: "Que grande idiota!", não é? Porque
+
+já é um caso incerto, como por exemplo, por que introduzir um agente de IA se ele também é não determinístico por natureza, certo? Mas o ponto crucial que todos estamos tentando ignorar é que, no início do processo, seja em um mecanismo baseado em regras ou em um mecanismo baseado em aprendizado de máquina, não temos contexto suficiente. Não temos dados suficientes em tempo real que sejam transmitidos para o sistema. E esses são os dados reais que estamos tentando capturar de diferentes contextos de domínio que temos em nosso domínio. E vamos ver como podemos construir essa arquitetura para que o agente de IA possa utilizá-la e chegar a um veredicto.
+
+Então, o domínio sobre o qual vamos falar é a detecção de fraudes em tempo real, como mencionei anteriormente. Então, tínhamos esse mecanismo baseado em regras há uns 5 anos. E esse mecanismo baseado em regras estava funcionando perfeitamente bem, como se estivesse funcionando perfeitamente bem em alguns casos. Mas o problema com esse mecanismo baseado em regras é a manutenção, porque os fraudadores tentam invadir o sistema de várias maneiras diferentes, e você precisa ficar atualizando essas regras estáticas diariamente, o que torna o gerenciamento muito difícil. E foi aí que começamos a firmar parceria com um fornecedor terceirizado que nos ajudou a desenvolver esse modelo de aprendizado de máquina. Então, adotamos
+
+essa abordagem baseada em aprendizado de máquina, na qual compartilhamos com eles o histórico de transações e diferentes características. Com base nisso, eles treinaram o modelo de aprendizado de máquina e conseguimos obter um código de risco que nos permitiu bloquear ou aprovar a transação. Mas o problema com qualquer uma dessas abordagens é que, se o valor ficasse abaixo de um determinado limite, nós o aprovávamos, e se ultrapassasse esse limite, nós o bloqueávamos . Mas a maioria das transações, assim como algumas poucas, se enquadra na zona cinzenta, que é a área onde é realmente incerto para esses sistemas chegarem a uma conclusão sobre se é uma transação fraudulenta ou legítima . O que estamos tentando fazer é o seguinte: construímos um sistema onde temos um sistema de primeiro nível, que utiliza regras ou o modelo tradicional de aprendizado de máquina, e também um sistema de segundo nível, que adota uma abordagem de IA agente. Na maioria dos
+
+casos, esses sistemas existentes seriam muito bem tratados, pois nossa ideia não é excluir os sistemas que já possuímos. Estamos apenas tentando lidar com algumas áreas, como essas zonas cinzentas, com a ajuda do processamento de IA agente . Então, essa é a abordagem que decidimos adotar . Mas nossa arquitetura, nosso domínio, é realmente complexo. Temos diferentes contextos delimitados internamente em nosso domínio. O
+
+contexto de transação contém todos os detalhes sobre as transações. Ele sabe sobre os comerciantes, os valores transacionados e tudo relacionado a uma transação reside nesse contexto específico. Ele não possui informações sobre o cliente que está gerenciando, nem sobre os pagamentos ou detalhes do dispositivo. É isso que significa contexto delimitado, certo? Porque, se você tem experiência em DDD ou engenharia de software, sabe que esses são contextos delimitados diferentes, e que os dados não são compartilhados entre eles. É
+
+necessário usar uma comunicação assíncrona. E todas as práticas de comunicação em microsserviços também são aplicadas aqui. Temos também o contexto de contas, que contém todos os detalhes das contas, como o KYC (Conheça Seu Cliente), se o usuário passou pelo KYC, etc. conformidade, ou qualquer informação sobre o cliente. Por exemplo, se você quiser saber sobre o cliente, este seria o contexto certo para entrarmos em contato . E há um contexto de dispositivo.
+
+Armazenamos todas as impressões digitais do dispositivo, impressões digitais do navegador, o sistema operacional que eles estão usando nesses contextos de dispositivo. Isso seria muito útil para detectar esses tipos de fraudes em tempo real . E, finalmente, temos o contexto de pagamento. Qualquer tipo de estorno ou qualquer coisa relacionada aos pagamentos residirá neste contexto específico. O problema que temos com esse tipo de arquitetura é que realmente não temos uma maneira de compartilhar esses dados entre diferentes contextos delimitados, certo? Foi aí que
+
+começamos a introduzir uma camada de orquestração. Antes tínhamos essa camada de orquestração, mas agora também temos uma IA agente dentro dela . O que essa orquestração faz é semelhante a uma orquestração de saga. Toda a comunicação passa por essa camada e é então comunicada a outros serviços interessados. eventos. E
+
+é assim que definimos essa camada de orquestração. Também temos uma forma assíncrona de comunicação com outros contextos diferentes, como por meio de um broker de mensagens. Se eu ampliar um pouco o contexto da transação, você poderá ver os detalhes que essas transações contêm. Basicamente, o que acontece é que, quando você tem um domínio específico, diferentes eventos são emitidos por esse sistema. Esses são os chamados eventos de domínio. E, dentro do nosso
+
+contexto de transação, temos o evento de domínio "transação criada", que marca o início de toda a transação. E temos muitos eventos de integração. Esses são os eventos que vêm de outros contextos, como contextos de pagamento, contextos de dispositivo ou contextos de conta. Eventos como "transação rejeitada", " pagamento aprovado" e "pagamento rejeitado" vêm de outros sistemas para os nossos contextos de transação. E todas essas informações são armazenadas em nosso banco de dados NoSQL.
+
+Atualmente, usamos o Cosmos DB como nosso repositório de eventos. E seguimos o Event Sourcing como metodologia para armazenar os eventos. Então, o que acontece é que, sempre que um usuário inicia um comando, ele é armazenado em nosso repositório de eventos como um evento de negócio. Na verdade, não estamos alterando o estado, mas sim adicionando todos os eventos à medida que chegam. E o que realmente nos ajudou foi que, assim que o evento chega ao repositório de eventos, temos um mecanismo chamado CDC, ou feed de alterações, que notifica o usuário sempre que ocorre uma alteração ou atualização em uma tabela.
+
+Essas alterações podem ser propagadas para diferentes modelos de leitura. Isso porque, em um cenário real, não é possível depender inteiramente do repositório de eventos para operações de consulta ou leitura. O que se faz internamente é ter diferentes modelos de leitura otimizados para essas operações. Tínhamos vários modelos de leitura: um para linhas do tempo, um para informações do cliente e um para indicadores de fraude e visão de risco. Essas são as diferentes camadas de modelos de leitura que tínhamos dentro do nosso contexto de transação.
+
+Essencialmente, não se pode exigir que outras equipes sigam os mesmos padrões, porque nem mesmo o fornecimento de dados é o ideal. uma abordagem que outras equipes também estão seguindo. O que fizemos foi implementar essa comunicação assíncrona, emitindo eventos para o broker de mensagens. Esses eventos, por sua vez, são processados por um processo de trabalho e, em seguida, chegam à nossa camada de projeção. A ideia é coletar todos os dados desses diferentes contextos e construir uma camada semântica, ou uma visão materializada, que pode ser usada posteriormente no agente .
+
+O fluxo de alto nível funciona assim: temos todos esses contextos diferentes e podemos usar um mecanismo de CDC (Configuração de Data Center) ou um broker de mensagens para propagar esses eventos para a camada de projeção. Essencialmente
+
+, teremos essa camada intermediária, que é um processo de trabalho. Precisamos manipular os eventos de mensagem, processá-los e armazená-los na visão materializada. Essa é a visão geral de como coletar esses dados e formar uma visão materializada. Agora, falando dos agentes, sabemos que eles são compostos por três componentes principais: os modelos de linguagem, as ferramentas e as memórias. Certo? Então, este
+
+modelo de linguagem não precisa ser um modelo de linguagem grande. Pode ser um SLM (Modelo de Linguagem de Suporte). Pode ser um modelo de código aberto. E as ferramentas permitem interagir com APIs externas ou com os metamétodos definidos na camada de aplicação. Você também precisa de uma camada de memória. Para este
+
+caso de uso específico, estamos usando uma camada de memória curta, porque não se pode confiar na memória de longo prazo, já que é preciso cumprir o SLA (Acordo de Nível de Serviço) fornecido aos clientes. Para que a transação seja processada, o tempo de processamento deve ser inferior a 500 milissegundos. Atualmente, estamos usando memória para isso. Essencialmente, o que acontece é que, sempre que uma consulta chega ao nosso modelo de linguagem, ele tem essa capacidade de raciocínio, essa capacidade de pensamento, com a qual tenta decompor a tarefa em várias partes. E cada uma dessas tarefas, por sua vez, entra no modelo de linguagem, realiza um determinado processamento com a ajuda das ferramentas e verifica se... O
+
+objetivo final é alcançado. E se não for alcançado, o processo tentará continuar nesse loop. Então, é isso que essencialmente acontece dentro da estrutura agentiva. Mas você deve saber quando interromper esse loop, porque isso depende de vários fatores e pode variar. Isso pode ser diferente para diferentes casos de uso. No
+
+nosso caso de uso, temos uma métrica que, se ultrapassarmos, pode nos fazer sair desse loop. E isso pode variar para diferentes casos de uso. Portanto, você deve ter muito cuidado para evitar esse loop infinito. E agora, voltando à nossa arquitetura existente. O que fizemos foi, como aprendemos anteriormente sobre o agregador de transações. Agora, estamos
+
+emitindo alguns eventos que são traduzidos em um evento de integração, que é passado para o broker de mensagens e, em seguida, é tratado na camada de orquestração. Nessa camada de orquestração, temos diferentes suborquestradores. Então, segregamos a camada de primeiro nível. Antes, tínhamos apenas a camada de primeiro nível. Agora, temos a camada de primeiro nível, que lida com...
+
+o mecanismo baseado em regras ou o mecanismo baseado em aprendizado de máquina . E também tínhamos agora a camada de segundo nível , que seria o processamento do agente AK . Para esse processamento do agente AK, usamos o padrão de distribuição (fan-out). Usamos vários agentes nessa camada e tentamos usar um padrão de distribuição em que, assim que o evento chega à camada de segundo nível , o distribuímos para dois agentes diferentes: o agente de análise de risco e o agente de análise de comportamento. Quando esses agentes chegam a uma conclusão com base nas diferentes ferramentas que possuem, enviam a resposta com o veredicto.
+
+Esse veredicto pode ser uma métrica, uma condição "se" na camada de aplicação ou algo de outra região. Porque, como vimos, se usássemos apenas métricas, estaríamos novamente nos mesmos critérios do mecanismo baseado em regras. Assim , enfrentaríamos muitos falsos positivos . Tentando usar um terceiro agente nesta camada de veredicto, que analisa as respostas de ambos os agentes e chega a uma conclusão, a qual será então emitida como um evento de volta para este broker de mensagens. Assim, nosso fluxo de saga continua, entrando no contexto de pagamento, onde os pagamentos são aprovados e, em seguida, retornando ao contexto de transação. Todo esse ciclo é realizado
+
+dentro da nossa camada de orquestração. E isso é o que eu estava falando sobre os dois agentes que tínhamos nesta segunda camada. Um deles é o agente de análise de risco . Quais são as ferramentas que temos neste agente? Temos, por exemplo, o armazenamento dos históricos de fraude na camada semântica, como vimos anteriormente, e atualmente temos uma ferramenta para isso. Ela
+
+obtém esses detalhes da camada de projeções. Também temos uma camada de confiança de dispositivos, onde todas as informações do dispositivo são armazenadas na camada semântica e ela obtém apenas esses blocos. E também tínhamos regras de negócios, tentando migrar algumas das regras que tínhamos no mecanismo de base de regras para esta ferramenta. Essas regras são específicas para o nosso caso de uso de negócios. Então, estamos tentando migrar esses dados para essas ferramentas. E
+
+também temos uma ferramenta de análise comportamental. Nela, analisamos os padrões de transação com dois plugins diferentes. Com base nesses dois agentes, as respostas são obtidas a partir de um consenso final, que será publicado como um evento e capturado pelo broker de mensagens. Esse evento será ouvido ou inscrito por todos os contextos interessados . Como vimos anteriormente, como esses agentes coletam contextos? A
+
+partir da camada de projeção. A orquestração consumirá esses dados da camada de projeção com a ajuda de ferramentas já existentes. O contexto de transação desnormalizará algumas contagens, médias e valores médios das transações recentes, enviando tudo para a camada semântica. O contexto do dispositivo enviará todos os detalhes sobre a pontuação de confiança do dispositivo, histórico de localização e outras informações relevantes sobre localização e endereços IP para a camada semântica. camada. E o
+
+contexto da conta enviará os status das contas, o status KYC, a idade da conta e se o cliente está conosco há alguns anos. Com base nisso, tentará validar o cliente com base nessas informações. Há também o contexto de pagamento. A partir dele, obtemos informações sobre os pagamentos recentes que coletamos nesses contextos e os enviamos para a camada semântica. E, como mencionei anteriormente, essas ferramentas têm acesso a essa camada de projeção, que, por sua vez, será usada por esses agentes para chegar a uma conclusão.
+
+Essa é a arquitetura de alto nível que tínhamos. Poderia ser qualquer fonte que você usasse. Basicamente, você poderia ter um banco de dados relacional ou um banco de dados NoSQL. Por sua vez, você precisa apenas criar a camada semântica para fornecer contexto suficiente para esses agentes de IA. E temos essa camada de agentes na orquestração. Temos
+
+essa ferramenta de veredicto e a memória de curto prazo, e com base nisso, qualquer resultado que obtivermos será encaminhado. para a camada de orquestração de sagas . Então, eu preparei uma prova de conceito (POC). Com base em dados sintéticos, vou mostrar como isso funciona . Deixe-me executar este exemplo.
+
+Estes são os diferentes contextos que vimos anteriormente: contexto de transação, contas e contexto de dispositivo. A partir deles, chegaremos à camada de projeções, onde teremos um mecanismo de CDC (Content-Dependent Data Center) com o qual será possível propagar esses eventos de volta para a camada semântica, que, por sua vez, será usada por esses agentes de IA. Aqui você pode ver vários eventos de simulação sendo inseridos em nossos sistemas. E você pode ver vários eventos sendo gerados. Esses eventos estão se propagando por diferentes camadas: camada de transação, contas e contexto de pagamentos.
+
+E, finalmente, temos a camada de agentes de IA, que tentará realizar o processamento de primeiro nível, o processamento de aprendizado de máquina.
+
+Deixe-me ver.
+
+Acho que é apenas um banco de dados em modo serverless. Acho que é... Chegando aos poucos. Então, sim, a
+
+ideia é que você poderá ver dois agentes diferentes chegando a duas conclusões diferentes, e haverá um terceiro agente que tomará a decisão final. Essa decisão será então emitida como um evento de volta para o seu broker de mensagens. E esse fluxo da saga continuará de acordo com a arquitetura de negócios que você projetou. Voltando à minha apresentação, é isso. Se tiverem alguma dúvida, podem me contatar offline ou pelo LinkedIn. Obrigado.
+
+[aplausos]
+
+[música]

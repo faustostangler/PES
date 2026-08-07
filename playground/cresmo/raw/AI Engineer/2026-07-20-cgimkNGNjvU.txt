@@ -1,0 +1,177 @@
+---
+video_title: "Agentic Development Security — Ezra Tanzer, Snyk"
+video_id: cgimkNGNjvU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=cgimkNGNjvU
+video_date: 2026-07-20T17:17:53+00:00
+video_description: |
+  An agent at Replit ignored a code freeze, deleted a production database, then fabricated records to hide it and reported that recovery was impossible. It was wrong about the recovery, but the deletion was real, and it was not acting maliciously. It was trying to help. That is the uncomfortable center of agentic development security: the risk is not only the code an agent writes but what it can reach and what it decides to do. Ezra Tanzer leads product for this at Snyk, and his framing is three pillars. Secure what agents generate, what they use, and what they do.
+  
+  The numbers under each pillar are not comforting. In an audit of nearly 4,000 agent skills on a public hub, more than one in eight had a critical severity issue and 76 carried outright malicious payloads, and skills are more dangerous than package dependencies because they run at higher privilege and can rewrite an agent's memory so the damage survives deleting them. Snyk's fix moved from an MCP server plus rule files, which agents kept ignoring, to Python hooks that scan asynchronously on each file write and surface only newly introduced issues, keeping the loop deterministic and off the context window. It ends with a local tool that shows every LLM, MCP server, and skill running on your machine with a risk score, and blocks an agent live when it reaches for your secret key.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/ezra-tanzer-5a187423/
+  - https://snyk.io/contributors/ezra-tanzer/
+  
+  Timestamps:
+  0:00 - Gaining confidence as agents gain autonomy
+  0:36 - How MCP connected agents to tools
+  1:14 - Snyk's first answer: an MCP server plus rules
+  2:03 - Why securing generated code was only half the problem
+  2:29 - Three incidents: Replit, Pocket OS, and GitHub
+  3:46 - The three pillars: what agents generate, use, and do
+  4:11 - Pillar one: securing what agents generate
+  5:26 - From ignored rule files to async Python hooks
+  6:40 - Pillar two: the agent supply chain and skill risk
+  7:33 - Auto discovering the AI components on your machine
+  8:11 - Adoption data: who is running MCP servers and skills
+  9:27 - Pillar three: governing agent behavior
+  11:20 - Handing off to a live demo
+  13:29 - Dan Arpino's local security pair programmer
+  14:56 - Visibility into every LLM, MCP server, and skill
+  15:47 - Per project guardrails and auto fixing
+  18:34 - Blocking an agent from reading your secrets
+  20:17 - Security teams versus developers
+  21:33 - Q&A: false positives, local vs cloud, and remediation
+  
+  
+  "The risk is not only the code an agent writes, but what it can reach and what it decides to do." (2:03)
+  "Malicious skills are more dangerous than package dependencies because they run at higher privilege and can rewrite an agent's memory." (7:17)
+  "We need to move from 'ask' to 'steer'—making it so the human doesn't always have to be in the loop." (9:54)
+  "I want visibility, I want auditability, and those are really key to trusting agents." (19:15)
+---
+[música]
+
+Sou diretor de produto aqui na Sneak e vou falar com vocês sobre segurança no desenvolvimento de agentes, especificamente sobre como podemos obter confiança ao usar agentes, principalmente à medida que lhes damos mais autonomia. É um tema muito comum que ouvimos nesta faixa e em várias outras faixas hoje. Bem, não vou abordar toda a história do LMS, mas o lançamento do protocolo de contexto do modelo foi um momento realmente importante. Até então, eu não sei o que vocês estavam fazendo, mas eu costumava copiar e colar com muita frequência entre clientes Aenta e alguns outros serviços. E com o MCP, acho que as pessoas realmente começaram a conectar isso e a ter um sistema de IA muito mais... realmente conectado.
+
+E eu não estou dizendo que o MCP é a solução definitiva para todos os problemas, e posso ou não ter estado entre as pessoas que diziam que o MCP iria morrer em algum momento do ano passado. Mas isso foi um divisor de águas, no sentido de que os desenvolvedores começaram a conectar agentes a ferramentas e serviços externos. E naquela época não havia praticamente nenhuma segurança. Assim como a maioria das empresas, lançamos um servidor MCP quase imediatamente. A nossa solução específica permitiu que os diretórios locais fossem verificados pelos nossos mecanismos de verificação de segurança . Os desenvolvedores poderiam fazer
+
+perguntas em linguagem natural sobre os problemas de segurança identificados. Eles poderiam aprender por que vulnerabilidades específicas eram importantes ou como poderiam ser exploradas e, em seguida, trabalhar iterativamente em direção a uma solução. Pouco tempo depois, decidimos integrar nosso servidor MCP com regras. E as regras basicamente garantiam que qualquer código gerado por IA seria testado e, se fossem identificados problemas de segurança, eles seriam corrigidos automaticamente. Foi simples, rápido de implementar e resolveu um problema significativo para nossos clientes. Então, essa era realmente a nossa
+
+posição inicial. O agente seguro gerou código no momento da inicialização. Ops. Mas ao longo do último ano, percebemos que essa abordagem estava, na verdade, incompleta. Nossos clientes começaram a nos dizer que não estavam preocupados apenas com o código que estava sendo gerado, mas também com o acesso que o agente tinha e com as ações que ele poderia realizar. Bem,
+
+vou mencionar brevemente alguns incidentes que ocorreram ao longo do último ano. Acho que já falamos sobre isso. E na palestra que Minoj deu hoje mais cedo , mas também acho que vimos algumas dessas coisas em outras apresentações. Mas só para relembrar rapidamente, há cerca de um ano, vimos o agente da Replet ignorar uma instrução de congelamento de código e, por fim, excluir um banco de dados de produção. Tentou encobrir o fato de ter falsificado esses registros, basicamente para dizer que não, que não havia problema algum. E, por fim,
+
+disseram que não havia como recuperar o dispositivo. Felizmente, descobriu-se que isso estava errado. Eles conseguiram se recuperar, mas o estrago já estava feito. Então, em abril, eu sei que acabamos de falar sobre isso há algumas horas, mas houve o incidente do Pocket OS. Um agente encontrou novamente um token de API com privilégios excessivos, o que resultou na exclusão de um banco de dados de produção. Os backups
+
+também foram apagados. Então, um backup de três meses atrás era o que poderíamos usar para, em última análise, tentar recuperar o sistema . O que foi realmente interessante aqui é que o agente não estava agindo de forma maliciosa. Na verdade, estava tentando resolver um problema. A empresa estava tentando resolver o que considerava uma incompatibilidade de credenciais. Mas não havia nada que
+
+impedisse isso. Esses dois exemplos tratavam, na verdade, das ações que o agente poderia tomar, mas nem sempre é esse o caso. Nem sempre essa é a superfície de ataque. Apenas no mês passado, a equipe PCP conseguiu exfiltrar quase 4.000 repositórios internos do GitHub usando uma extensão maliciosa do VS Code.
+
+Então, tudo isso, somado à nossa experiência de 10 anos na área de segurança e às conversas com nossos clientes, realmente moldou nossa visão sobre o que é segurança no desenvolvimento de agentes e o que isso realmente significa. E acreditamos que, para usar agentes com confiança no desenvolvimento de software em larga escala e começar a permitir que operem de forma mais autônoma em tarefas de longa duração, seja apenas levantar para fazer uma xícara de café ou deixá-los funcionando durante a noite, é necessário investir em soluções mais robustas. É realmente crucial proteger o que os agentes geram, o que eles usam e o que fazem. Bem, vou dedicar alguns minutos para falar sobre nossa jornada em cada um desses pilares ao longo do último ano, o que aprendemos e nossa perspectiva atual. Como mencionei no início, esta tem sido a nossa área de experimentação e investimento mais extensa. Trata-se de proteger o código
+
+gerado pelos agentes. E a razão para isso é que não queremos que problemas cheguem à produção. Não queremos aumentar ainda mais esse acúmulo de trabalho, que tem sido tão difícil de gerenciar e que agora é um luxo que as empresas simplesmente não podem se dar ao luxo de ter . A maioria das empresas possui verificações de segurança em seus processos de implantação. Então, mesmo que não cheguem à produção, queremos garantir que não sejam criados gargalos nessas etapas. Como
+
+mencionei, nossa abordagem original era o servidor MCP com regras. E era muito fácil colar uma configuração MCP e uma definição de regra, e com o tempo adicionamos atalhos para tornar isso ainda mais fácil, e os clientes agentes, na verdade, tornaram possível usar comandos simples para habilitar essas configurações por meio de plugins ou ferramentas CLI simples. Hum, mas essa abordagem tinha limitações reais. Os agentes às vezes ignoravam os arquivos de regras. Hum, a execução da varredura adicionou latência ao final de sua execução. E toda vez
+
+que realizávamos varreduras pela janela de contexto, isso consumia tokens, então não éramos os únicos a lidar com esses desafios. Felizmente, esses mesmos problemas existiam fora do âmbito da segurança . E a boa notícia é que os provedores de serviços para agentes forneceram novos mecanismos sobre como orientar os agentes. Isso se deu principalmente na forma de habilidades e ganchos. Acho que cada um pode ter sua própria opinião sobre qual usar para cada situação, mas eles realmente resolvem muitos desses problemas. Nossa recomendação atual
+
+é usar hooks baseados em Python para esse caso de uso, que podem ser acionados de forma assíncrona em chamadas de ferramentas do agente. Assim, imediatamente após um agente gravar um novo arquivo ou modificar um arquivo, podemos iniciar uma verificação usando nossa CLI, sem nem mesmo usar o servidor MCP de forma assíncrona. E isso irá gravar quaisquer problemas recém-identificados e recém-introduzidos em um arquivo temporário. E, finalmente, no evento de encerramento da sessão , é quando um gancho aciona o agente, que verificará o arquivo temporário para ver se foram introduzidos novos problemas. Só então será iniciado um ciclo de correção e validação. Assim,
+
+o fluxo de trabalho agora é determinístico. A latência é eliminada porque todos os testes acontecem de forma assíncrona. E, novamente, isso ocorre porque apenas os problemas recém-introduzidos são apresentados ao contexto desse agente. A janela de contexto não apresenta nenhum conteúdo desnecessário. Quando falamos sobre a cadeia de suprimentos de agentes, estamos realmente pensando nas coisas que ajudam a construir fluxos de trabalho de agentes mais conectados. Mas, como todos
+
+têm dito hoje, isso também representa uma nova superfície de ataque. No ano passado, adquirimos uma empresa chamada Invariant Labs. E, na sequência disso, elaboramos um relatório que você pode acessar, se quiser, através deste código QR. Você também pode vir conversar conosco em nosso estande, se quiser ver isso aqui. Bem, existem muitas semelhanças entre o risco do ecossistema de pacotes, que é onde o Sneak começou, e as habilidades dos agentes, mas realmente achamos que as habilidades são mais problemáticas. Eles têm privilégios mais elevados
+
+por padrão. A detecção por meio de linguagem natural não pode ser detectada através da detecção de código típica . Habilidades maliciosas e um agente podem modificar sua memória. Portanto, mesmo que você remova uma habilidade maliciosa, ela ainda pode persistir. Esse risco ainda pode persistir mesmo depois do ocorrido. Bem, em uma auditoria que
+
+fizemos de quase 4.000 skills no Claw Hub, mais de uma em cada oito apresentava um problema de gravidade crítica e, na verdade, encontramos 76 payloads maliciosos nesse subconjunto. Assim, a solução que desenvolvemos aqui descobre automaticamente todos os componentes do agente em sua máquina. Bem, se você tiver servidores MCP configurados, ele se conectará a eles, recuperará as descrições das ferramentas e as analisará para verificar quais riscos de segurança estão presentes. O mesmo acontecerá com os arquivos de habilidades. Analisaremos seu
+
+arquivo skill.mmd, veremos os arquivos dependentes associados a essa habilidade e verificaremos se existem ameaças. Eu demonstrei isso, ou tentei demonstrar, durante a apresentação principal mais cedo. A internet não colaborou muito bem, então mostramos um pequeno vídeo, mas também podemos mostrar isso em ação mais tarde. Só no mês passado, produzimos um relatório baseado em alguns dados anonimizados após o lançamento das funcionalidades que acabei de mencionar. Bem,
+
+acho que esses números provavelmente serão bem baixos, considerando as expectativas do grupo que vemos aqui, mas acho importante lembrar que nem todo mundo é tão voltado para a IA quanto as pessoas que estão participando desta conferência. Bem, em média , vimos que mais da metade dos desenvolvedores usava servidores MCP e um quinto aproveitava habilidades específicas. Além da simples adoção, um em cada 12 desenvolvedores desse grupo tinha um servidor MCP no qual havia sido identificada uma vulnerabilidade de alta ou crítica gravidade . Sei que isso provavelmente é algo pequeno, mas quero destacar que essas são algumas das categorias de risco que procuramos ao analisar servidores MCP. Da mesma forma, em relação às habilidades, existem diversos riscos diferentes que também podemos analisar. Bem, essa é uma
+
+das habilidades que avaliei durante a demonstração gravada que mostramos anteriormente. Muito, muito arriscado. Hum, malicioso em alguns casos, mas também talvez algum comportamento negligente que possa me causar problemas. Bem, o último pilar dessa questão, para a segurança no desenvolvimento de agentes, é governar o comportamento dos agentes. Esta funcionalidade está atualmente em fase de pré-visualização aberta e concentra-se em como garantir que um agente não realize ações infiltrativas, destrutivas ou de qualquer outra forma maliciosas ou arriscadas. Estou
+
+optando por mostrar aqui a visualização da configuração da política porque quero destacar as ações que estamos tentando interceptar hoje. Dependendo de como você utiliza os agentes, os tipos de políticas que você define podem ser diferentes. Bem, eu acho que, em um mundo ideal, você sempre consegue direcionar um agente para a ação correta. E basicamente, o objetivo é fazer com que o ser humano não precise estar envolvido no processo. Um ótimo exemplo disso é a redação de informações pessoais ou segredos antes da execução de um comando.
+
+Mas em outros casos, você pode querer que o agente pergunte, porque não há uma resposta definitiva. Então, se houver um comando de shell potencialmente destrutivo, ou se o agente quiser acessar um diretório que esteja fora do escopo das permissões que você concedeu inicialmente, esse é um bom motivo para perguntar. Mas acho que, à medida que avançamos para a execução de mais agentes em segundo plano e agentes na nuvem, em que você tenta se afastar e não ficar sentado na sua mesa monitorando o agente o tempo todo, as solicitações se tornam uma opção muito menos viável. Então, esta é uma área na qual continuaremos a investir, mas acho que isso significará políticas mais detalhadas e talvez também que precisaremos de algum tipo de autodidatismo no produto, uma espécie de capacidade de autoaprendizagem baseada nas decisões que você toma ao longo do tempo para ajudá-lo a se tornar mais autônomo. Bem, resumindo, assim como hoje, somos responsáveis ​​pelas ações tomadas por nossos agentes. E mesmo no
+
+futuro, se esse modelo de responsabilidade se tornar um pouco mais compartilhado, acho que nenhum de nós quer trabalhar em empresas onde estamos prejudicando nossos clientes e potencialmente permitindo que nossos agentes tomem decisões arriscadas. E ninguém realmente quer ser o motivo de um desses incidentes que acabam sendo amplamente divulgados . Bem, até agora tenho falado muito mais do que mostrado, e acho que para esta conferência queremos mesmo focar mais em mostrar sempre que possível. Bem, vou convidar meu colega Dan Arpino para vir aqui e assumir o comando, mostrando algumas das áreas que estamos explorando para solucionar esses problemas. Bem, quero deixar claro que o que estamos mostrando não são itens definitivos que estarão disponíveis aqui, mas queremos muito mostrar para vocês para que possam nos dar feedback sobre se estamos indo na direção certa, se essa é a melhor maneira de resolver esses problemas. E
+
+esperamos que isso acabe se transformando em algumas das soluções que podemos oferecer a vocês, a todos vocês aqui presentes . Qualquer pessoa ficará feliz em responder a uma ou duas perguntas, já que tivemos que fazer a transferência do laptop, o que é sempre divertido. Sim. Sim
+
+. Então a pergunta é: qual a diferença entre "steer" e "ask there"? E a ideia de direcionamento é que pode haver uma política definida que não precise de intervenção humana, que eu possa basicamente guiar um agente para dizer "não", em vez de fazer isso, "vamos fazer algo diferente". O exemplo clássico, que eu acho mais fácil para as pessoas entenderem, é: e se eu simplesmente ocultar as informações pessoais ou um segredo, substituí-los por asteriscos e deixar o agente prosseguir? Mas isso não vai funcionar em todos os casos. O "perguntar" será uma
+
+solicitação explícita ao usuário, seja pela interface do agente, seja usando CodeEx, Claude, Cursor ou qualquer outra ferramenta, ou potencialmente por algum outro mecanismo que estamos explorando agora.
+
+Sim, terei prazer em conversar mais sobre isso depois , mas resumindo, do ponto de vista da implementação, estamos nos baseando em mecanismos que podem interceptar uma espécie de pré- execução de ferramenta em tempo quase real. Avalie se isso é realmente problemático e, antes que o agente execute a próxima ação, forneça esse feedback. Mas terei prazer em conversar depois daqui. Você está em boa forma? Sim . Legal. Espero que todos vocês consigam me
+
+ouvir. Como o Ezra disse, meu nome é Dan Arpino. Bem, eu sou engenheiro de software na Sneak. Hum, eu sou um dos desenvolvedores da plataforma de anúncios. Então, comecei especificamente por aquela seção sobre como garantir uma saída confiável. Basicamente,
+
+como garantimos que esse código seja seguro? Bem, como eu disse, estávamos criando vários hooks e integrando com os próprios agentes, e eu estava ficando frustrado com todas essas integrações. Então, decidi tentar construir algo parecido com um programador em pares aqui. Portanto, este é um aplicativo Electron local que tenho rodando na minha máquina e que monitora tudo o que está acontecendo nela. É possível ver claramente que está tentando corrigir algumas vulnerabilidades neste momento. Está monitorando
+
+os arquivos. O sistema executa essas verificações em segundo plano e tenta acionar agentes automaticamente para manter a segurança. Então, a ideia é como podemos usar os agentes para nos ajudar. Bem, então decidi levar isso um pouco mais longe porque, como Ezra disse, a saída confiável garantida era apenas um dos três pilares da segurança no desenvolvimento de agentes. Bem, ainda queremos saber o que o agente está fazendo, o que ele é e quais ferramentas os próprios agentes estão usando. Então,
+
+sim, podemos ter, assim como temos hoje, algumas das ferramentas que a Sneak oferece na plataforma EVO. E eu sugiro que todos vocês acessem evo.sync.io e vejam esse agente de segurança em ação, além de conferirem todas as habilidades e os MCPs que sua organização está utilizando. Mas o que eu realmente queria fazer era dar visibilidade local ao que estava sendo executado na minha máquina. Como desenvolvedor que se preocupa com
+
+segurança, quero ver isso. E não existe uma maneira realmente boa de encarar isso. Assim, nesta ferramenta, posso ver todos os meus LLMs em execução. Hum, consigo ver todos os meus componentes de IA em execução. Eu consigo ver, e estes são os servidores MCP. Essas são as habilidades. Essas são
+
+as CLIs e os modelos que estão sendo executados aqui. Ezra falou sobre isso com relação a essas diferentes pontuações de risco. Assim, você pode ver todas as coisas diferentes que eu instalei e estou executando no meu computador, de forma voluntária ou involuntária. Hum, algo parecido com o que discutimos, tipo, o que o agente está autorizado a fazer? Então, sim, minha organização pode definir uma política para mim, mas eu posso querer definir minha própria política ou, mais frequentemente, posso querer definir uma política dependendo do projeto em que estou trabalhando. Então, eu posso
+
+configurar, com base nos meus diferentes espaços de trabalho, o que eu quero aplicar a cada um deles. Hum, por exemplo, eu realmente desliguei isso. Hum, estou desenvolvendo um scanner de bola, autenticação de camada de objeto quebrada. Temos um grande problema . Podemos, isso pode ser assunto para uma apresentação completamente diferente. Eu estava realizando
+
+alguns testes de desempenho e o Snappy corrigiu automaticamente as vulnerabilidades das minhas ferramentas de teste . Então, é... eu preciso desligar isso. Bem, sim, o objetivo aqui é
+
+que você possa definir seus próprios limites. Ele pode analisar e corrigir automaticamente quaisquer vulnerabilidades. Por exemplo, aqui você pode ver que ele implementou um código que está sendo executado. E o que acontece é que, ao implementar esses códigos, ele inicia uma varredura. Bom, isto vai iniciar uma verificação. Ele encontrará
+
+as vulnerabilidades detectadas. Na verdade, será iniciado um novo agente de codificação e ele tentará corrigir esses problemas imediatamente. Sim, e então sim, isso me dá visibilidade sobre quais espaços de trabalho eu tenho, me dá visibilidade sobre quantos dos meus diferentes agentes estão em execução, o que meus agentes estão fazendo, quanto eles estão me custando. Hum, obter um histórico de tudo o que está fazendo, todas as vulnerabilidades. Nessas versões corrigidas, consigo ver exatamente o que o programa tentou fazer, como tentou consertar o problema.
+
+Poder rastrear todas as minhas diferentes sessões me fornece um registro de tudo o que meus LLMs e todos os meus LLMs estão fazendo em minhas máquinas, como todos os comandos que estão sendo executados e todos os arquivos que estão sendo acessados. Hum, isso tem algumas implicações muito interessantes sobre como eu realmente quero otimizar alguns dos meus arquivos e coisas do tipo. Você pode ver quais são meus principais textos de leitura e escrita. Você pode ver quais são as minhas leituras mais frequentes e que quase não têm edições. Tipo, talvez eu realmente queira habilidades que me digam como lidar com isso de maneiras diferentes. Quais
+
+comandos ele está executando? Basicamente, quais páginas da web estou acessando? Monitorando todos os meus diferentes MCPS e ferramentas. Sim, e então, neste momento estamos executando nosso teste de análise estática de código. Temos alguns testes de código aberto. Temos segredos em
+
+teste. Temos o scanner Bola, que é um conjunto de ferramentas ainda em desenvolvimento que permite configurar todos esses recursos. E isso funciona porque, bem, uma das razões pelas quais isso acontece é que ele está executando um host local na sua máquina. E assim, consegui executar este mais cedo. E se você olhar para isso, eu liguei o Claude e disse: "Ei, Claude, leia meu ambiente ENV." E Claude disse:
+
+"Ei, não, eu não posso fazer isso. Eu sou inteligente." E eu pensei: "Muito bem, Claude, me diga qual é a minha chave secreta ." E Claude disse: "Ah, vou tentar ler isso." E você pode ver isso claramente porque implementamos medidas de fiscalização aqui. Hum, o Snappy
+
+bloqueou o acesso de leitura deste arquivo. Sim, os agentes estão melhorando. Eles não são perfeitos, e é por isso que você gosta de ter proteções determinísticas em sua máquina. Bem, poder ativar essas restrições na sua máquina e ter visibilidade do que o seu agente está fazendo. E o que ele está executando, eu acho que é fundamental. Uma das grandes questões
+
+é: como podemos confiar nos agentes? Eu quero visibilidade, eu quero possibilidade de auditoria. E esses são realmente os pontos-chave para mim. Então, é por isso que começamos a desenvolver isso. Em teoria, no futuro, você poderia realmente conectar isso.
+
+Você poderia, na verdade, baixar pacotes de regras. Você pode baixá-lo e conectá-lo ao seu tenant Sneak na organização. Você pode atualizar suas próprias tabelas de preços, como quiser. Bem, sim, esta é uma pequena visão futura de como os anúncios poderiam ser. Isso basicamente significa: "Aqui está meu ambiente de desenvolvimento". Eu poderia estar
+
+executando isso em uma máquina na nuvem, o que me informaria tudo o que está acontecendo nessa máquina na nuvem. Me dê essa visibilidade. Me dê essa audibilidade. Quero essa rastreabilidade. Ah, aspectos realmente importantes para aprender a confiar nos agentes e garantir que eles não se desviem do caminho certo.
+
+Legal. Hum, e acho que devo perguntar sobre o início deste microfone aqui. Isso foi incrível, Dan. Obrigado. Bem, eu deveria ter perguntado no início para as pessoas que estão aqui: vocês são da área de segurança hoje, em oposição à engenharia?
+
+Incrível. Sem dúvida. E quem é o engenheiro presente? Legal. Então, acho que isso é um bom reconhecimento dos diferentes públicos que essas soluções realmente tentam atingir. Acho que se
+
+você perguntasse aos seguranças presentes, eles diriam para restringir tudo. Por favor, não deixe que nada de ruim aconteça. Se você perguntar aos desenvolvedores, eles dirão que qualquer falso positivo que cause mais ruído no meu fluxo de trabalho é um verdadeiro inferno. E é exatamente essa a questão que estamos tentando resolver aqui. E é por isso que estamos tentando abordar isso de ambos os lados. Bem, acho que o que Dan estava
+
+realmente mostrando é como podemos nos concentrar na experiência do desenvolvedor neste novo mundo de agentes, de uma forma que ainda seja possível alcançar todos os ganhos de produtividade que todos desejam da IA ​​para o desenvolvimento de software, ao mesmo tempo em que conseguimos confiar e dormir tranquilos, como foi mencionado na última apresentação . Sim .
+
+Hum, nós conversamos sobre a possibilidade de publicar isso em nossos laboratórios de testes. Hum, ainda está em desenvolvimento. Uh, venha falar comigo. Venham, venham, venham à cabine de degustação depois. Estarei lá desde... até o
+
+fechamento esta tarde. Ao menos teremos os nomes e, se não for hoje, o que provavelmente não será , pelo menos poderemos ver quando estiver lá. Adoraríamos receber feedback assim que pudermos lançar algo assim. Pode repetir a pergunta no microfone? A questão é: posso esperar que o Snappy seja compatível com coisas como o Raspberry Pi?
+
+Bem, na verdade é muito bom. Esta é uma ferramenta que desenvolvi para meu uso pessoal e acho que tem muito valor. Vai seguir o ritmo do mercado, e essa era a ideia, que nem tudo precisa estar na nuvem. Quero visibilidade local. Bem, para onde o mercado levar, é para onde eu espero que vá.
+
+Sim, parece que você pode ter um caso de uso. Adoraria conversar com você depois. Sim
+
+. Sim . Então, a pergunta começou com muitos elogios ao que fizemos e depois perguntou sobre a taxa de falsos positivos aqui. E até agora, o feedback geral tem sido bom. Eu gosto, com certeza não é zero. Tipo, acho que ninguém que
+
+atua nesse mercado está afirmando que seja zero. Bem, eu, particularmente, gosto de usá-lo porque o tenho instalado na minha máquina e não o acho complicado ou incômodo. Acho que só me lembro de uma vez, no último mês, em que pensei: "Ah, isso não foi um problema em particular", mas estamos trabalhando intensamente com parceiros de design, o que inclui centenas de desenvolvedores em diversas empresas, que podem estar trabalhando em várias coisas diferentes para tentar aprimorar isso. Então, acho que vai continuar melhorando cada vez mais e, com sorte, se aproximar assintoticamente de zero. Mas eu ficaria surpreso se algum dia vivêssemos em um mundo onde a taxa de falsos positivos fosse absolutamente zero para qualquer uma das empresas do setor. E se alguém aqui
+
+estiver trabalhando em soluções semelhantes e tiver ideias de como resolvê-las, adoraria aprender, porque acho que também temos muito a aprender aqui. Obrigado.
+
+Acho que a pergunta era se isso funciona apenas na nuvem, ou seja, se o código está armazenado na nuvem, ou se também pode funcionar na minha máquina local. Essa é a pergunta?
+
+Então, sim, temos diferentes tipos de produtos aqui, e acho que Manino mencionou no primeiro que algo como "queimar o backlog" e um agente de remediação... atualmente não está na ferramenta que mostramos hoje, mas o Agentic Development Security é mais voltado para o futuro, para estancar a sangria daqui para frente. Bem, algumas das coisas que estamos lançando no Agentic Development Security são um conjunto de habilidades, comandos, ganchos e coisas do tipo . Então, temos uma habilidade de correção furtiva à
+
+qual você pode passar uma vulnerabilidade conhecida, e ela usará parte dessa lógica furtiva para tentar entender a vulnerabilidade, entender o que mudou, saber quais são as correções recomendadas e guiar o agente para uma correção mais eficaz. Então, o que eu não tive tempo de demonstrar na apresentação do Manoj mais cedo foi basicamente como aproveitamos essa vulnerabilidade como parte de um fator que influencia se isso é algo que eu posso consertar rapidamente. E, geralmente, é muito fácil gerar correções, obter a aprovação das alterações de código e incorporá-las, mas ainda é o processo humano que consome muito tempo . Bem, essa é uma área completamente diferente na qual estamos trabalhando, dentro do âmbito da remediação. Hum, coisas muito legais. Simplesmente
+
+não se encaixava nessa conversa em particular. Obrigado. Sim. Desculpe, não consigo ver por causa das luzes. Sim, somos. Sim. Eu estava pensando em
+
+dados. Essa é uma pergunta fascinante. A questão era: como isso funcionaria na prática ? Existe alguma solução para proteger o comportamento do agente quando não se trata de trocas de informações baseadas em texto, mas sim de dados de sensores ou outras coisas do tipo? Hum, eu não sei. Ok
+
+. Quer dizer, acho que provavelmente ainda é uma forma de linguagem que está sendo comunicada, certo? Porque só porque não é linguagem natural não significa que não seja linguagem. Acho que pode até haver algumas vantagens em ter algo como um esquema estruturado conhecido para alguns desses dados. Não sei se " esquema" é necessariamente a palavra certa, mas algo como "adjacente a esquema". Ah, que
+
+legal. Ninguém nunca mencionou algo assim . Eu adoraria conversar. Sei que tenho muitos compromissos logo depois disso, mas vou ficar por aqui, bem na porta. E muitas das grades de proteção ainda são as mesmas. Você ainda
+
+pode querer controlar o acesso, como o que um sensor pode afetar ou o que outro sensor pode controlar. Então, você está falando apenas sobre a entrada de dados, mas existe uma série de dados de saída, o que o modelo pode fazer e a que mais ele pode acessar. Então, muitas dessas salvaguardas, e o formato delas, permanecem os mesmos mesmo que a linguagem de entrada mude para leitura de sensores em vez de linguagem natural. Legal. Sei que estamos impedindo vocês de almoçarem. Muito obrigada pelo seu
+
+tempo. Agradecemos muito.
+
+[música]

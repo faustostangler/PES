@@ -1,0 +1,178 @@
+---
+video_title: "Agentic Security: Permissions, Provenance, and the Agent Supply Chain — Steve Yegge, Gas Town"
+video_id: yWS0udrIOc8
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yWS0udrIOc8
+video_date: 2026-07-20T17:17:53+00:00
+video_description: |
+  A security hardening pass by Fable over a game one engineer had built for 30 years came back clean: cloud hardening done, credentials handled, good vibes all around. Then Snyk ran over the same code and surfaced 241 vulnerabilities the agent never thought to look for. That gap is the center of Steve Yegge's talk, whose real title, he says, is not agentic security but be scared. A chief security architect at a big bank had already handed him the math: if everyone ships code 10 times faster and the rate of security defects holds steady, the vulnerable surface grows 10 times with it, and with models writing the code that rate does not hold steady, it gets worse.
+  
+  The frightening part is not the familiar bugs like XSS that models still cheerfully write, it is the new attack surface. Slop squatting is the clean example: a model hallucinates a package name like graphy 123, someone uploads a real package under that exact name that does the expected thing plus a backdoor, and the build succeeds with the tests green. Yegge's partial answer follows from how models work. They do one thing well at a time, so asking for correctness and security in a single pass gets you a half job of both. Security becomes its own pass, the first one and the last one, with the agent handed real tools like Snyk and Chainguard to check its own work. And the window is closing: Five Eyes now measures the moment open source models can autonomously hack production systems in months, not years.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/steveyegge
+  - https://x.com/steve_yegge
+  - https://github.com/steveyegge/beads
+  
+  Timestamps:
+  0:00 - The real title of this talk: be scared
+  1:38 - The bank architect's question: 10x speed, 10x defect surface
+  3:08 - New attack surfaces and slop squatting
+  4:51 - How Google surfaces bugs at the developer's fingertips
+  6:08 - Why security bugs have no half life
+  6:46 - Can the model just write secure code?
+  7:24 - Running Snyk on his own game: 241 vulnerabilities
+  8:14 - The rule of five and security as its own pass
+  9:32 - Software Survival 3.0: lazy models reach for tools
+  10:09 - Give the agent Snyk and Chainguard
+  12:03 - Five Eyes: months, not years
+  13:34 - Refresh your family code words
+  14:36 - The arms race you can start fighting now
+  15:30 - Q&A: what has surprised you in AI coding
+  17:28 - Q&A: Gas Town, beads, and running agents all night
+  19:13 - Q&A: adversarial agents watching your agents
+  20:58 - Q&A: prompt injection
+---
+[música] Muito bem
+
+. Olá a todos. Ah, sim, sim. Sim. Sim. OK. Tenho
+
+cerca de 18 minutos. Bem, eu tenho aqui uma apresentação de slides que o Claude preparou para mim, mas o Claude ainda não consegue fazer apresentações de slides muito boas, então peço desculpas por isso. Concentre-se apenas em mim, neste exato momento . Isso é a coisa mais divertida de se fazer no mundo . Agora, se eu começar a ficar sem tempo, você pode, por favor, encerrar o expediente para mim? Muito bem, perfeito. Então,
+
+eu sou Steve Yagi. Estou aqui hoje em nome da Sneak. Não estou sendo pago para falar sobre isso nem nada do tipo. Eles foram muito gentis e me compraram um ingresso para a conferência, o que é muito legal. Mas estou aqui principalmente porque queria passar um tempo com todos vocês, e eu não mordo, então fiquem à vontade para vir me cumprimentar depois. Eu vagueio pelos corredores maravilhado
+
+com todos os logotipos das marcas. Bem, estou aqui porque, veja bem, o título da minha palestra é algo como " Segurança Antecipada", mas o título verdadeiro da minha palestra é "Tenha Medo".
+
+Vamos lá, vamos lá, amor no mesmo nível que eu. Quem aqui está com medo? Isso é bom. Mas vocês estão todos envolvidos nas negociações de segurança. Claro que sim. O
+
+problema é que eles não estão por aí, certo? Eu fui para a Commonwealth. Visitei muitos lugares no ano passado, mas em um desses grandes bancos, em dezembro, conversei com o arquiteto-chefe de segurança deles. Estávamos fazendo uma sessão de perguntas e respostas sobre programação Vibe e todos faziam perguntas. Eu estava, sabe, arrasando, e no final ele se levantou, bem quieto, e disse: "É, então ele continuou: se todo mundo está entregando código na mesma velocidade, ou melhor, 10 vezes mais rápido, e a taxa de defeitos permanece a mesma, a taxa de defeitos de segurança, certo? A
+
+taxa de vulnerabilidades, então isso não significa que a superfície de defeitos aumenta 10 vezes?". Aquilo me impactou tanto que caí de joelhos. Eu só conseguia pensar: o que vamos fazer a respeito? Porque é um ponto muito, muito importante, já que a questão implícita não é se a taxa de defeitos permanecerá a mesma, mas sim se ela vai piorar muito com a IA escrevendo o código.
+
+E eu não tinha uma resposta para ele. Na verdade, tenho uma resposta parcial. Hoje vou compartilhar isso com vocês, mas é apenas uma resposta parcial. A resposta real é que vocês precisam ter medo do que está por vir. Certo?
+
+E é porque... é... é... Eu
+
+tenho um slide sobre isso? Sim. Então, não é só que vocês estão colocando mais dos mesmos defeitos, cross- scripting e blá blá blá. Vocês ainda estão colocando esses defeitos. A Fable criou uma vulnerabilidade XSS durante o pouco tempo que eu tive com ela. Não é
+
+culpa deles. Falaremos sobre isso daqui a pouco, [bufa] mas esses são os antigos, certo? Todos nós sabemos como corrigi- los. Há novos tipos de vulnerabilidades e novas superfícies de ataque surgindo, e elas já estão aqui, e muitas delas são incrivelmente bem polidas. Como vocês conhecem o exemplo de "slop squatting", certo? Onde a IA alucina um
+
+nome de pacote. Digamos que você queira um banco de dados de grafos e você pense: "Ok, "Vou usar este banco de dados de grafos." E a IA responde: "Ah, sim." Eu sei que é, sabe, é o graphy123." E ele vai até o gerenciador de pacotes, baixa o graphy123, compila, executa, os testes passam e tudo parece certo. Mas o que ele baixou foi
+
+uma porta dos fundos, porque aquele graphy123 não era um pacote real. Só que alguém percebeu que os LLMs estavam confundindo o nome e enviou um que faz exatamente a mesma coisa que o que eles pensavam estar baixando, além de uma vulnerabilidade extra. É . Isso é assustador? Sim, deveria ser.
+
+Deveria ser. Como você detecta que isso está acontecendo? Então, estamos entrando em um mundo onde tudo o que você escreve, cada trecho de código que você gera, terá que passar por uma análise de segurança muito mais rigorosa do que jamais passou. Ok. É difícil para mim expressar o quão assustado estou. Certo,
+
+mas vamos começar com a origem do código. Quando eu trabalhava no Google, eu trabalhava muito próximo da equipe do TAP. Eles faziam os testes, a automação de testes. plataforma. Sim. E eles, então, executavam
+
+todos os testes unitários e de integração no Google. Eles tinham uma frota enorme, sabe, e aprenderam coisas sobre como os bugs funcionam. E como os bugs funcionam é que eles têm um ciclo de vida, onde se você vê o bug imediatamente, você o corrige, e quanto mais tempo passa desde que você vê um aviso ou algum tipo de problema, mais tempo passa, ok? Tem essa espécie de meia-vida de urgência e, de repente, não está mais afetando ninguém, ok? É assim que lidamos com todos os nossos bugs no Google. Eles reconhecem que
+
+isso é um fenômeno da natureza humana, então trabalharam muito para mover o reporte de bugs para o momento em que você está digitando, porque é quando você tem mais probabilidade de corrigi-lo. Se você cria um bug e ele diz, aliás, há uma divisão por zero aqui ou há uma vulnerabilidade de backdoor ou algo assim, você o corrige imediatamente. Mas se chegar à hora da revisão de código, você pensa: vale mesmo a pena ? Certo? [bufa] E o problema, Pessoal, isso funciona para todas as classes de bugs, exceto para segurança.
+
+Não há um período de inatividade para que ele te ataque. Não é como se, ah, porque os usuários não estão sendo incomodados por essa vulnerabilidade de segurança, ela não fosse um problema com o tempo. O problema se agrava com o tempo. Sim. Então, você precisa tratar essa classe de vulnerabilidades da mesma forma que o Google tratou suas principais vulnerabilidades na época, que é expô-las aos desenvolvedores.
+
+E se o desenvolvedor não tiver dedos? Eu não sei quantos dedos o LLM tem. [bufa] Hum, então você precisa expô-la aos LLMs. Mas espere, você diz, espere, espere, espere, espere , espere. O Fable é muito inteligente.
+
+Ou pelo menos pareceu assim durante os dois dias em que pude usá-lo. Uh, o Fable não pode simplesmente escrever código seguro, certo? Quero dizer, vamos lá. Vamos lá. Vocês todos sabem que segurança...
+
+quero dizer, vocês estão todos aqui nesta sala, certo? Vocês todos sabem que segurança é Uma corrida armamentista. Uma que nunca termina. Uma que está crescendo exponencialmente com a Lei de Moore. Uma que vai ficar realmente desconfortável quando a computação quântica chegar.
+
+Graças a Deus, isso ainda está a uns cinco ou sete anos de distância. Meu amigo diz 15, então talvez algo entre esses dois extremos. Mas, enquanto isso, né? Os LMs são um problema real. É.
+
+Então, como você descobre as vulnerabilidades? Bem, primeiro eu queria descobrir como fazer isso sozinho. Eu tenho um jogo no qual venho trabalhando há 30 anos. Eu pedi para a Fable fazer uma verificação de segurança durante esse período . Ela fez toda a minha verificação de segurança na nuvem e encontrou um monte de credenciais e fez um monte de coisas e [bufa] começou a me dar essas vibrações tipo, "É, é. "O passe Harding
+
+parece muito bom." Então, eu executei o comando "sneak right" e... eu não tenho os números aqui. É, eu não incluí
+
+os números porque... eu terminei. Mas...
+
+ele encontrou 241 vulnerabilidades, certo? Um monte que a Fable nem tinha pensado em procurar, certo? E isso acontece porque, veja bem, eu já falei para as pessoas sobre a regra dos cinco. Quando você trabalha com mestrados em direito, muitas vezes você precisa que eles façam de quatro a cinco revisões do trabalho que fizeram antes que ele esteja realmente pronto para ser lançado. E isso porque o processo cognitivo deles é muito semelhante ao nosso. Ele passa por um rascunho,
+
+depois uma revisão, depois um polimento e edição até que, você sabe, esteja finalmente pronto. É como pintar uma parede. Algumas coisas você não faz tudo de uma vez, você faz em várias etapas, certo? Então, segurança é uma das... Então, o que eu descobri... eu escrevi um
+
+livro sobre programação intuitiva. No ano passado, eu fiz mais cortes de vibe do que qualquer outra pessoa, sabe, uns dois anos atrás. E o que eu descobri foi que eles são muito bons em fazer uma coisa de cada vez. Mesmo os modelos realmente bons como o Fable, certo? Só por causa desse fenômeno de pintar uma parede em múltiplas passagens, você tem que dar a eles uma tarefa de cada vez, o que significa que você não pode dar a eles segurança ao mesmo tempo que dá a eles correção.
+
+Eles farão um trabalho meia-boca em ambos. E você não quer um trabalho meia-boca em nenhum dos dois, na verdade. Então, você faz em duas passagens. Certo [bufa] agora, cinco, já se passaram cinco meses, mas cinco meses atrás, eu escrevi um ensaio chamado Sobrevivência de Software 3.0, onde falei sobre o que o software precisa fazer para sobreviver quando os LLMs podem sintetizar tudo. Não
+
+sei se algum de vocês viu isso, mas a essência básica é que os LLMs podem sintetizar qualquer software que quiserem, mas eles são muito preguiçosos, no bom sentido, certo? Preguiçosos no sentido de... Tipo, eles não querem gastar tokens se não precisarem, porque isso significa gastar dinheiro e energia, o que é ruim para o planeta, ruim para a carteira e por aí vai, certo? Então, eles usam ferramentas
+
+para ajudá-los sempre que isso puder economizar tokens, certo? Resumindo, se os desenvolvedores de código aberto (LLMs) estão fazendo a programação e estão dispostos a usar ferramentas para ajudá-los a descarregar o processamento cognitivo, vocês já sabem onde isso vai dar. Dê a eles o Sneak, dê a eles o Chain Guard. E eu ainda acho que falta uma peça nesse quebra-cabeça, sobre a qual falarei no final. Hum, Chain... não sei
+
+se vocês conhecem o Chain Guard. Chain Guard é uma cadeia de suprimentos na qual você se inscreve e eles fornecem imagens que foram previamente verificadas para garantir que não tenham vulnerabilidades e as atualizam. Então, são as suas entradas. Ok? E o Sneak cuida de todo o resto. O código
+
+que você escreve, o código que o LLM escreve, as dependências que você está importando de repositórios de código aberto, certo? Coisas inocentes, ele consegue encontrar. Pelo que entendi, o Sneak consegue encontrar vulnerabilidades proprietárias que só eles conhecem porque estão à frente do registro CVE. Acho que há alguma verdade nisso . Quando o executei no meu código-fonte, não encontrou nenhuma vulnerabilidade que já não fosse um CVE público, mas, caramba, foi fácil [limpa a garganta] de usar, né?
+
+Acho que uma ferramenta como o Sneak vai dar superpoderes à sua equipe de gerenciamento de projetos. Entendeu? Porque o que você faz é adicioná-lo como um passo a mais no prompt que você dá para eles, seja lá o que estiverem fazendo, e dizer "só mais uma coisa para verificar" e pedir para eles executarem a análise de segurança com todas as ferramentas. Use as de código aberto, use o Sneak , use o Chainguard, use todas e peça para eles verificarem o trabalho uns dos outros também, certo? Se você quiser levar isso a sério no lançamento , certo? Mas proteja sua
+
+cadeia de suprimentos porque os Cinco Olhos estão nos alertando. É, meu pobre jogo. Aliás, por favor, por favor, eu acabei de te dizer. que meu jogo tem 241 vulnerabilidades. Não vá hackear meu jogo. Me dê alguns dias para
+
+corrigir os bugs. Beleza, tudo certo? Ótimo. Certo. Mas se você hackear, vai incomodar uns cinco jogadores, né? [bufa] Ok. Eles são
+
+muito leais. Olha, os Cinco Olhos, que são tipo um grupo de grandes países que estão de olho na segurança cibernética, acabaram de anunciar que agora faltam meses, não anos, para isso começar a acontecer. Vocês sabem o que é, né? É quando os modelos de código aberto alcançarem o Mythos. Alguém aqui acredita que os modelos de código aberto vão alcançar o Mythos?
+
+Interessante que seja por volta de 50/50. Alguém tem um prazo em mente? Quem disse dezembro? Isso é bem preciso. Trapaceiro. É, são uns sete meses.
+
+Então, na verdade, está diminuindo. Provavelmente são uns seis meses agora. É. E o Mythos é muito, muito bom em hackear. seus sistemas.
+
+E lembre-se, você não pode confiar que ele escreva um bom código automaticamente, assim como não pode confiar que ele escreva um código elegante por padrão. Essa é uma preocupação à parte. É uma etapa separada. Você não pode esperar que ele escreva um código eficiente por padrão. Essa é outra etapa.
+
+Entende o que estou dizendo? Você não pode esperar que ele necessariamente escreva o código de acordo com os padrões de codificação da sua empresa . Certo? Todas essas etapas passam pelo seu código. E eu só quero que você se lembre que a segurança deve ser sua prioridade número um e sua prioridade número um. Ok, dedique atenção extra a isso.
+
+Ok. E a última coisa que quero dizer a vocês, primeiro, façam tudo isso. E segundo, a última coisa é realmente muito sincera, ok? Prestem atenção, pessoal. Vão até suas famílias pessoalmente e revisem suas palavras-chave, porque outro tipo de golpe que está surgindo é o de um familiar que está em apuros, precisando de dinheiro, e a ligação é muito convincente, com um vídeo, e você vai...
+
+Precisamos de uma maneira de distingui-los da IA. Ok, ainda faltam meses e algumas famílias vão demorar para entender isso, mas as contas bancárias serão esvaziadas. Ouvi dizer que o Congresso recebeu demonstrações secretas de como esvaziar contas bancárias. Estou com medo disso há quase dois anos. Há quase dois anos, assisti a uma palestra de um pesquisador de segurança na ETLS Las Vegas, e ele se levantou diante da plateia e disse: "Vocês não estão com medo o suficiente do que está por vir." Isso afetará você pessoalmente, não
+
+apenas sua empresa." Ok, então essa é a minha mensagem para vocês. Não é uma mensagem de esperança e positividade hoje, [risos], mas é uma mensagem que deve ficar bem clara: existem ferramentas, ferramentas de código aberto, ferramentas gratuitas, ferramentas comerciais, ok, técnicas, práticas, ok, que vocês podem usar agora mesmo para começar a lutar nessa corrida armamentista e se proteger. E é só isso que eu tenho hoje. Obrigado.
+
+[aplausos]
+
+[aplausos] Algumas perguntas. Perguntas. Estamos prontos para começar.
+
+Ótimo. Bem simples. O que te surpreendeu recentemente no mundo da programação de IA? O que me surpreendeu no mundo da programação de IA? Bem, eu não sou exatamente um exemplo. Passei muito do meu tempo
+
+tentando prever o futuro, testando agentes ao máximo. Sim. Então, uma das surpresas, e eu não deveria ter ficado surpreso, é que a IA A tecnologia está avançando mais rápido do que o mundo . A tecnologia está avançando mais rápido do que a sociedade consegue acompanhar, e as surpresas aparecem quando os especialistas resistem à inevitabilidade da IA, chamando isso de psicose ou menosprezando a ideia, dizendo que ela nunca será realmente inteligente ou algo do tipo, que não conseguem enxergar a curva de crescimento. E isso me surpreende. Talvez não devesse.
+
+Mostra uma espécie de visão limitada. Acho que as pessoas têm a tendência de olhar para trás e para frente, três meses depois, e pensar: "Ah, parece bem estável, né?". Mas isso me surpreende, que as pessoas não estejam mais assustadas e, ao mesmo tempo, mais entusiasmadas com isso, certo? Porque, sabe, depois que você entende, você nem quer mais estar aqui. Quantos de vocês estão executando
+
+código na nuvem agora? A maioria, certo? É muito divertido. Então, sabe, isso é... Também me surpreende que o mundo
+
+esteja reagindo tão fortemente a isso, né? Estamos numa fase estranha. Vamos superar. Mais alguma pergunta? Uau.
+
+Certo. Bom, você escolhe. Fique à vontade para ir embora. Aliás, você não precisa ficar. Sou muito fã. Hum, qual foi a
+
+coisa mais impressionante que você viu a Gas Town fazer? E quanta intervenção humana foi envolvida ou como ela foi direcionada? Ah, Gas Town. É, Gas Town. Gas Town foi muito divertido em janeiro.
+
+Hum, sim, Gas Town é uma máquina de Beads e eu ainda uso Beads e estou trabalhando nisso. Eu estava conversando com a Angie. Quero doar Beads para a Fundação Aentic. Sabe, nós vamos colocar vários backends nela. Beads é um rastreador de tarefas, certo? Beads é como você faz os
+
+loops do Boris Chney. Sabe como o Boris diz que você não deveria estar dando dicas para o seu agente? Alguém aqui já conseguiu, com sucesso? Com ​​que frequência vocês conseguem que o Claude corra a noite toda para vocês? Tipo, correr a noite toda de verdade? noite? Alguns de
+
+vocês, né? Tipo, essa é a próxima fronteira, eu acho, conseguir que os agentes funcionem por um longo tempo sem supervisão. Dá para fazer isso com contas, enfileirando trabalho suficiente e fazendo com que eles reivindiquem e tudo mais. E existem outros sistemas que fazem isso. Foi muito engraçado quando Gast Town fez isso automaticamente para mim uma vez. Eu depositei um monte de contas e
+
+elas desapareceram e eu pensei: "Ah, não, outro bug." "Minhas contas desapareceram." E o que realmente aconteceu foi que [bufa] um dos agentes as encontrou e implementou tudo. Certo. Eu pensei: "Uau, agora eu realmente gosto de enxames." É. Bons tempos.
+
+Alguém aqui trabalha regularmente com mais de 10 agentes de programação simultaneamente? Veja bem, não muitos, certo? O mundo ainda está na fase de usar alguns agentes aqui e ali, sabe? Isso vai acelerar muito no próximo ano. Outras perguntas? É
+
+só perguntar. Sim.
+
+Sim. Então, essa era a terceira dimensão sobre a qual eu realmente queria falar. É que eu não tenho muito tempo, mas meus amigos da Tesla, eu os estou aconselhando. Eles estão fazendo isso, certo? Existe todo esse espaço de quem está supervisionando os agentes. Eu
+
+tive essa conversa agora mesmo. Como eu digo para todo mundo, todos estão começando a implementar agentes 24 horas por dia, 7 dias por semana, processando dicas, respondendo a eventos, agentes que realmente fazem coisas, Certo? 247. E eu encorajo as pessoas a pensarem de forma adversária. Penso em grupos adversários de agentes encarregados de gerenciar a fila, porque um agente sempre acabará estragando tudo , certo? Então você precisa desses
+
+supervisores. E assim, estão surgindo sistemas inteiros que podem analisar tudo e começar a questionar, por exemplo, se realmente precisam de todas essas credenciais nessa conta de serviço. Certo? Só para esta ação específica. Talvez possamos separar esta. Esse tipo de
+
+coisa, certo? Esta é uma fronteira totalmente nova, mas ironicamente, mesmo que quase não haja nada disponível , apenas algumas coisas experimentais, você ainda precisa pensar nisso agora e projetar uma solução internamente, certo? Porque senão seus engenheiros, ou melhor, seus funcionários não engenheiros, vão criar um monte de agentes com permissões demais e, assim que um urso atacar o iglu, todo mundo estará morto, certo? Essa é a velha analogia de segurança. Não sei se ainda a usam . [limpa a garganta]
+
+Sim. Ei, Steve. Prazer em te ver. Hum, estou curioso em relação às melhores práticas que você já viu, que você usa pessoalmente ou que talvez não tenha experimentado, mas principalmente com relação à injeção de prompts. Então, sim. Eu deveria ter falado sobre isso
+
+durante meu discurso aqui. Eu queria mencionar. [bufa] Há uma série de ataques acontecendo no lado do treinamento e do prompt, certo? Então, no treinamento e na inferência [bufa] e os bandidos encontram maneiras de inserir coisas, certo? Hum, e a versão mais simples é o novo XSRF, onde o usuário insere um texto e um invasor insere um texto extra dizendo para ignorar tudo e fazer o seguinte, certo?
+
+E então eles vão ficando mais sofisticados a partir daí. Hum, quer dizer, eu não tenho nenhuma boa resposta para você além de que isso é real. É meio que um problema de educação neste momento. Você precisa fazer com que todos pensem sobre isso, certo? E então, eu sinto que novas funções de segurança estão prestes a surgir dentro das empresas. Segurança de agentes, que é uma
+
+espécie de extensão do que eles já estão fazendo. Quem já está fazendo isso? Certo. Sim. Então você já tem pessoas que estão saindo e cuidando da segurança dos seus agentes que estão implantados.
+
+Sim. Então você está muito à frente de todos. Eu adoraria conversar com você mais tarde. Isso tudo é novidade. Sim.
+
+Legal.
+
+[música]

@@ -1,0 +1,133 @@
+---
+video_title: "Why We Killed Our Multi-Agent Pipeline — Subbiah Sethuraman and Abhilash Asokan, ZS Associates"
+video_id: u6jJcIFDLE4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=u6jJcIFDLE4
+video_date: 2026-07-23T05:00:02+00:00
+video_description: |
+  Their first pharma analytics system mimicked a human analyst: one agent to detect a signal, one to localize it, one to find the cause, one to synthesize, all wired to an orchestrator. It produced answers like this: prescriptions dropped 18% in a territory because a payer moved the drug to a worse tier, so send more sales reps. The cause was right and the action was wrong, because no single agent owned the whole picture. So Subbiah Sethuraman's team at ZS killed the multi agent pipeline.
+  
+  Instead of redesigning the topology, they opened an empty directory, gave Claude Code bash and the database, and watched what it actually did. The rebuild came out smaller, not bigger. Signal detection moved into a deterministic pipeline that runs before the agent wakes up, so the agent investigates rather than guesses. A single agent owns the reasoning and spawns sub agents only when a focused lookup needs one. A pharma knowledge graph acts as a control plane, not a lookup table: every edge is a hypothesis the agent tests against the data, which bounds the search. The result does in 20 minutes what an analyst did in a month.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/subbiahsethuraman/
+  - https://subbiah-sethuraman.medium.com/
+  
+  Timestamps:
+  0:00 - Pharma commercial analytics and the analyst's four steps
+  2:33 - V1: an agent for every step
+  3:26 - Why the output was incoherent
+  4:32 - Why it failed: signals, handoffs, and missing domain
+  5:57 - The rebuild: watching Claude Code in an empty directory
+  7:01 - Deterministic signal detection before the agent
+  8:05 - Consolidating to a single agent
+  9:22 - The knowledge graph as a control plane
+  11:04 - Every edge a hypothesis, and the result
+---
+[música]
+
+Ah, ok, então eu sou Subbiah. Eu trabalhei com engenharia de IA na ZS. Ah, eu sou Abhilash. Sou diretor de engenharia de IA na ZS. Então, ZS, somos uma empresa de tecnologia. Trabalhamos com
+
+muitas das principais empresas do mundo, incluindo muitas das maiores empresas farmacêuticas . Então, a palestra de hoje, como já mencionei, é sobre o que queríamos falar, certo? Queríamos falar com base na nossa experiência, certo? Construindo pipelines multiagentes. Quais foram os erros que cometemos, certo? E o que aprendemos e
+
+como corrigimos os problemas? Então, bem, vou direcionar a discussão mais para o domínio comercial da indústria farmacêutica e, para aqueles que provavelmente não estão familiarizados com o assunto, a indústria farmacêutica tem duas funções principais. Uma delas é P&D, certo? A descoberta de medicamentos, certo? E a parte dos ensaios clínicos. E depois vem um
+
+comercial. Basicamente, como se administra um medicamento a um paciente? E dentro do setor comercial existem diferentes funções. Tipo, depois que você cria um medicamento, né? O que é o desempenho de uma marca? Como
+
+está o desempenho do medicamento em diferentes mercados, certo? Bem, existem questões relacionadas à sua equipe de campo, seus representantes. Quão eficazmente eles estão se envolvendo, né? Com todo mundo? Existem aspectos relacionados à jornada do paciente. Como um paciente está
+
+se adaptando a um medicamento, certo? Acho que se houver alguma mudança terapêutica em curso . Como você pode imaginar, muita análise de dados é realizada no âmbito comercial. E como os analistas normalmente trabalham? Então, são quatro etapas, certo? É isso que os
+
+analistas fazem, certo? Então, primeiro sempre há algo chamado detecção de sinal, certo? Então, o sinal pode ser algo como, por exemplo, as prescrições que um médico está escrevendo. Talvez haja uma redução na prescrição? Então, isso é um sinal.
+
+Então, uma vez que você recebe um sinal, a segunda coisa que um analista faz é: por que o sinal está realmente falhando? Qual é o motivo disso? Então, é como se tivesse surgido um medicamento concorrente ? Por causa disso, está reduzindo? Será que isso aconteceu porque talvez a cobertura do plano de saúde para o medicamento tenha sido reduzida? Ou
+
+talvez os representantes no terreno não estejam, na verdade, repassando os benefícios aos médicos. E, uma vez que você chega à razão, o próximo passo é: "Certo, qual ação você toma?" Então, se a cobertura não for boa em uma determinada região, devemos aumentá-la? E depois de fazer isso, qual é a perspectiva, certo? Será que minha marca, meu desempenho de vendas, vai melhorar, certo? Então, essas são as quatro
+
+coisas que acontecem. Agora, para alguns dos melhores agricultores, o que fizemos foi descobrir como agir de forma proativa , certo? Como podemos, na prática, reproduzir esse trabalho de análise? Então, o que fizemos foi criar agentes para cada etapa, certo? Para a detecção de sinais, dissemos: "Ok, teremos um agente para detecção de sinais. Ele
+
+identificará os sinais para mim." Em segundo lugar, qual é a causa principal, certo? Para os sinais, certo? Portanto, neste caso, temos dois agentes. Uma delas é o que chamamos de localização de origem. Por
+
+exemplo, se minhas vendas estão caindo em nível nacional, isso ocorre porque estão caindo em uma região específica ou porque estão caindo para um determinado pagador? Portanto, precisamos entender isso. Estamos tentando identificar a origem disso . E então, quando entendermos qual é o verdadeiro motivo, certo? Acho que o desempenho de vendas caiu.
+
+Esse é outro agente, o agente de atribuição de motoristas. E então, o último passo é a sua síntese, certo? Então, dependendo da causa, qual é a ação que você precisa tomar e qual é a perspectiva, como um analista costumava fazer. E para tudo isso, tínhamos um agente orquestrador que conectava todos esses agentes. Então, depois que o sistema estava funcionando, o que ele gerou, certo? Isso
+
+gerou um pacote de informações parecido com este, certo? Isso indica claramente o sinal, certo? Então, primeiro diz: "Talvez as prescrições da minha marca tenham caído 18% em algum território, certo? Em algum período, talvez 4 semanas." Em seguida, informa o motivo. Por que isso aconteceu?
+
+Por que caiu, não é? O motivo é que, na verdade, é um pagador, certo? A cobertura para este medicamento foi, na verdade, transferida para um nível inferior. Portanto, para o paciente, comprar esse medicamento acaba sendo caro. A ação proposta é a seguinte: "Ok, já que os médicos estão prescrevendo menos medicamentos, talvez seja melhor enviar mais representantes de vendas para conversar com eles, certo? E aumentar o número
+
+de prescrições. E se você tomar essa ação, talvez seu desempenho de vendas melhore." Em linhas gerais, tudo isso parece bom, mas se você analisar de perto, verá que não é muito coerente, certo? A causa está correta. Identificou a causa correta, certo? Porque os pacientes não podem pagar pelo
+
+medicamento, certo? Mas a ação proposta não se concentrou na parte do pagador, na parte do seguro, certo? Apenas disse para os representantes, certo? Na verdade, para focar em mais representantes, certo? E a perspectiva, como a ação está errada, não vai corresponder. Então, em
+
+cada nível, se você observar, a informação está correta, mas não há um único agente que compreenda o panorama completo . Então, por que isso aconteceu? Por que falhou? Obviamente, não é culpa do LLM, que...
+
+Falhou, certo? É a forma como dividimos o trabalho, certo? Porque tentamos imitar o comportamento do analista, e conseguimos. O primeiro problema crucial é que um modelo de linguagem está, na verdade, determinando seus sinais. Sinais como a queda nas vendas são informações simples que podem ser obtidas por métodos estatísticos . Você não precisa de um
+
+modelo de linguagem para obter essas informações, certo? Em segundo lugar, com seus múltiplos agentes, há muita transferência de contexto acontecendo, e o contexto acaba se perdendo em cada uma dessas transferências. Por exemplo, o agente de atribuição de causa determina a causa correta, mas o próximo agente, o agente de síntese, não consegue entender o porquê disso, certo? Os pagadores acham o medicamento caro. Ele não entende a redução da cobertura do seguro . Essa é uma
+
+informação crucial que está se perdendo. E o último grande problema é que não há um entendimento compartilhado do conhecimento do domínio de negócios entre todos esses agentes. Todos esses agentes não entendem métricas, certo? Coisas como TRX, o número de transações, o número de prescrições que um médico emite, certo? Qual é a relação entre eles? Por que aumenta ou diminui?
+
+Então, esses são os motivos. Então, o que fizemos? Bem, chamei o Abhilash para vir resolver isso. Obrigado, Sufiyan. Tínhamos três problemas. Então,
+
+estávamos pensando em como resolvê-los. Nosso primeiro instinto foi voltar à prancheta. Começar a projetar tudo de novo. Talvez a topologia estivesse errada. As habilidades estivessem erradas. As ferramentas estivessem erradas.
+
+Ou talvez tivéssemos que redefinir uma transferência melhor. Projetar uma transferência melhor para um esquema melhor entre os agentes. Mas demos um passo para trás. Não fizemos nada disso. Como todos nós, voltamos ao Cloud Code.
+
+Abrimos um diretório vazio e simples . Executei o Cloud Code. Depois, passei apenas o bash e o banco de dados. Em seguida, passei um sinal específico que identificamos. Então, começamos a observar o que estava acontecendo. Ao analisarmos o código,
+
+conseguimos solucionar os três problemas que discutimos. A primeira parte: o agente analisava os dados e decidia sobre um sinal. Às vezes, aplicava métodos estatísticos. Outras vezes, mal analisava os dados e considerava um sinal. Às vezes, era realmente um sinal.
+
+Às vezes, era ruído. Isso é algo que não queremos que um agente faça. Trata-se de um fluxo de trabalho completamente determinístico. Portanto, separamos esse fluxo do sistema de agentes. Criamos um fluxo de trabalho puramente determinístico com diferentes métodos estatísticos.
+
+Implementamos mecanismos de proteção, limites e priorização. Tudo isso acontecia antes mesmo do agente ser iniciado. Executamos um pipeline automatizado que examina os dados, identificando sinais para cada KPI. Há alguma anomalia? Alguma tendência que esteja sendo quebrada?
+
+Com ​​base nisso, identificamos um sinal e o colocamos em uma fila. No momento em que um sinal chega à fila, o agente é ativado. A função do agente é investigar, não identificar. A segunda parte. Então, principalmente, o problema que Subair mencionou anteriormente é a falta de coerência na saída produzida pelos agentes.
+
+Por isso, começamos a consolidar. Observamos como o CloudCode opera. Ele é capaz de realizar muitas operações, então começamos a projetar em torno disso. Ele fica escrevendo funções e consultando o banco de dados repetidamente. Então, fornecemos uma ferramenta para isso.
+
+Isso consolidou todo o processo em um único agente. Isso não significa que não usamos paralelismo. Ainda usamos paralelismo. O que removemos foi a necessidade de raciocínio distribuído. Não, mas sim a distribuição do julgamento entre agentes. Queríamos consolidar tudo em
+
+um único agente. E foi exatamente isso que fizemos. Ocasionalmente, observamos que o CloudCode inicia subagentes dinamicamente para uma tarefa específica e focada. Então, fizemos o mesmo. Porque, por exemplo, se você quiser entender se há atividade rápida em uma região específica, essa é uma investigação que você precisa executar. Você pode Ainda delegamos a um
+
+subagente. Podemos obter os resultados de volta, não o raciocínio ou o julgamento. Isso ainda é controlado pelo agente principal, mas a investigação e parte dela, nós delegamos a um subagente. Então, essas são algumas das coisas que mantivemos com base na observação do que o CloudCode estava fazendo. Isso nos deu uma arquitetura mais leve do que a inicial.
+
+Mas ainda não resolve o problema. É por isso que você vê um grafo de conhecimento no diagrama. Ele ainda não tem o contexto de negócios. Ainda não entende todas as entidades, o domínio, os KPIs, como eles se relacionam. Então, isso é algo que queríamos resolver porque o agente estava analisando dados, olhando tabelas e tentando inferir o relacionamento. Isso
+
+não era escalável. E muitas vezes produzia relacionamentos que não existiam nos dados. Então, o que fizemos... Bem,
+
+estamos trabalhando nessa área há muito, muito, muito tempo... Há anos fazemos isso para nossos clientes. Tínhamos muitos especialistas no domínio que o entendiam muito bem.
+
+Fazíamos análises comerciais para os clientes. Então, começamos a construir um grafo de conhecimento. Começamos a mapear o domínio. Assim, conseguimos construir um grafo de conhecimento e identificar diferentes entidades e seus relacionamentos . Por exemplo, existem entidades geográficas, como pagadores. Como as
+
+entidades geográficas se conectam a um pagador ou a uma conta? Como isso se conecta a uma marca? E da marca ou do pagador, como se chega a um KPI? Como um KPI se relaciona a um KPI secundário ou terciário? Como um KPI influencia outro? Então,
+
+começamos a mapear todas essas informações e a criar nosso grafo de conhecimento. Depois de criar o grafo de conhecimento, queríamos permitir que o agente navegasse por ele. O grafo de conhecimento não é apenas um local onde o agente consulta dados. É um plano de controle para o agente. O que isso significa?
+
+Então, os grafos de conhecimento ditam o que o agente pode investigar, qual caminho pode seguir e qual hipótese de investigação pode avaliar. Por exemplo, se você fizer essa análise e descobrir a raiz do problema, digamos, que sua receita recorrente (TRX) está diminuindo em nível nacional, isso pode ocorrer ao realizar a localização da fonte. Esse é o nosso ponto de contato para encontrar o "onde". Pode estar acontecendo em uma região, concentrado em um território, em uma combinação de territórios, pares ou contas. Há muitas dimensões que o agente precisa avaliar.
+
+São muitas permutações e combinações de permissões. O grafo de conhecimento guia o agente sobre como encontrar onde isso está concentrado. Depois vem a parte do "porquê". Por que isso está acontecendo? Quando você descobre que algo está concentrado, digamos, a queda está concentrada em uma região específica, você precisa descobrir o "porquê".
+
+É aqui que entram os KPIs e os relacionamentos. Uma vez que o agente consegue restringir o "onde", então... Ele consegue descobrir o porquê de algo. Quais
+
+KPIs estão impulsionando o quê? O grafo acessa a superfície de controle. Então, para o agente, cada aresta é uma hipótese. Assim, o agente pode avaliar essa hipótese. Ele não sai desse limite . Isso proporciona uma
+
+superfície mais delimitada para o agente investigar. Como todos mencionaram sobre o loop, também construímos um loop. O que o agente faz? O agente começa com uma entidade. Ele vai até o grafo.
+
+Ele observa a vizinhança do grafo. Então, ele identifica as arestas. Com algumas hipóteses em mãos, ele retorna aos dados originais. Avalia essa hipótese. Observa os números reais.
+
+Então, raciocina sobre ela. Ele encontrará evidências que a contradizem ou a apoiam . Se a apoiar, ele começa a percorrer o grafo. Isso se repete até que todas as hipóteses se esgotem ou até que ele consiga descobrir a raiz do problema. causa.
+
+Então, isso conclui esta execução. Ela é executada e será capaz de descobrir a causa raiz do problema. Assim, uma vez que você construa isso, talvez depois de mais de 50 turnos, com muitos tokens, será capaz de produzir algo que um analista levaria três ou quatro semanas para produzir, em cerca de 20 a 30 minutos. Obrigado. Então, para concluir, principais conclusões.
+
+Primeiro, acho que não devemos introduzir restrições humanas ou de design na arquitetura. Acho que devemos deixar a arquitetura ser derivada . Número um. Segundo, acho que qualquer fluxo de trabalho complexo terá partes determinísticas e partes gerenciadas por agentes. Não deixe que os agentes executem a parte determinística, certo? Então,
+
+acho que precisamos separar isso. Terceiro, precisamos de um agente, certo? Que seja responsável pelo raciocínio de ponta a ponta, certo? Este agente pode receber a chamada para usar subagentes, ferramentas e habilidades para gerar outras tarefas, basicamente, certo? Mas você precisa de um agente para ser responsável pelo raciocínio.
+
+E o Por último, e provavelmente o mais importante, acho que o grafo não pode ser tratado apenas como uma camada de consulta. Acho que o grafo deve ser tratado como um plano de controle que o agente usa para navegar e tomar as próximas decisões. Ok, com isso, obrigado. Obrigado. Obrigado por comparecerem.
+
+[aplausos]
+
+[música]

@@ -1,0 +1,134 @@
+---
+video_title: "From Signal to PR: Anatomy of a Self-Improving Agent — Jason Lopatecki, Arize"
+video_id: 9HbzAWnKbo4
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9HbzAWnKbo4
+video_date: 2026-07-24T20:15:32+00:00
+video_description: |
+  Instead of getting paged at midnight and starting to dig, you wake up to an issue that has already been investigated: the traces pulled, the root cause found, and a pull request with the fix waiting for review. That is what Arize built with Signal, and Jason Lopatecki walks through the anatomy of it. The unlock is boring and specific: traces on a filesystem. A skill pulls the relevant production traces and logs down as files into the repo, right next to the code, sometimes ten megabytes of them, because coding harnesses like Claude Code are magical with files and hopeless with a dashboard.
+  
+  From there the agent has the exact code path the software took, not a guess among a million branches, and can produce a real fix. You pick the harness, the sandbox, and the skills, and Arize can run it inside your VPC, because companies like Uber and Booking will not point production systems at an external model. The deeper shift is that observability stops being a dashboard you click and becomes the smoke a system throws off for agents to read, which is why you now log and trace ten times more, not less. He is honest about the limits: a one line fix is the easy case, bigger fixes still need a human to drive, and the job moves from responder to reviewer.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/jason-lopatecki-9509941/
+  - https://arize.com/author/jason-lopatecki/
+  
+  Timestamps:
+  0:00 - Arize, its agent Alyx, and why v1 sucked
+  1:36 - Observability is changing: from dashboards to telemetry for agents
+  2:55 - The goal: systems that fix themselves
+  4:14 - Inverting the loop: the agent investigates first
+  6:08 - Traces on a filesystem, the key unlock
+  7:23 - From your laptop to sandboxes
+  8:13 - A real fix: the Alyx stream canceled bug
+  9:39 - Why you should trace ten times more
+  11:10 - Product demo: Signal, AX, and Phoenix
+  13:09 - Sandboxes, VPC, and why customers won't call out
+  16:20 - Q&A: why not just point Claude Code at your data?
+  18:04 - Q&A: where do the evals come in?
+---
+[música]
+
+Bem, muito obrigado a todos. Hum, deixe-me me instalar aqui. Então, não sou apenas o fundador da Arise, mas também costumo construir uma quantidade incrível de coisas. Hum, vamos ver se conseguimos fazer isso funcionar aqui. Ah, desculpe. Só mais um segundo. Bem, não sou
+
+apenas um fundador, mas também um construtor, e faço o meu melhor para... para... para
+
+criar agentes de assistência. Hum, temos um agente no produto. Temos um agente de produto chamado Alex e, bem, acho que grande parte da minha experiência vem de tentar fazer as coisas funcionarem e funcionarem bem. A primeira versão do nosso próprio agente era, francamente, péssima. Hum, isso foi há muitos anos, provavelmente uns dois anos atrás, quando o primeiro no setor fez isso. E
+
+muito do que construímos surgiu da nossa própria experiência na criação deste agente, e o Signal é como a nossa próxima geração disso, que busca automatizar uma série de coisas que fazemos todos os dias e transformar isso em produtos que as pessoas possam usar. Então, vou tentar... vou analisar este material aqui. Vou tentar ser
+
+rápido e mostrar bastante produto para vocês também. Sou uma pessoa focada em produtos. Então, se você já criou uma startup antes, você já passou por isso: sua plataforma está fora do ar, é tarde da noite e você quer consertá-la. Bem, na verdade, é preciso muita energia para fazer isso. E vamos falar um pouco sobre a automação que construímos e como será o futuro, e eu realmente acredito que o futuro no espaço da observabilidade está mudando drasticamente neste momento. Por que é
+
+que? Bem, a observabilidade costumava ser para os humanos. Costumava ser uma interface de usuário em que você clicava, um gráfico em que você clicava, algo que você observava. E hoje em dia, eu diria que é muito do 2.0, que é como essa combinação de agente de codificação. Para aqueles
+
+que desenvolveram habilidades para Pyroscope, Google Cloud ou similares, essas habilidades os ajudarão na depuração humana desses sistemas. Bem, na verdade, a telemetria é como uma espécie de " fumaça" emitida pelo seu sistema que permite que esses agentes façam correções. Isso indica qual caminho foi percorrido no código . Sem isso, você fica só supondo, e existem milhões de caminhos que poderia ter tomado. Os dados gerados pelo seu sistema permitem que você use agentes para depurar seu software.
+
+As avaliações adicionam mais uma camada a isso. Mas, na verdade, o que estamos discutindo aqui é como construir sistemas que se consertam sozinhos ? É exatamente isso que buscamos . Ambos agentes de IA, eu coloquei IA no meu meu meu sistema. Como faço para que isso se aprimore sozinho? E
+
+hoje estamos numa espécie de versão 2.0, que é um ser humano fazendo correções e revisando as coisas. Mas existe um futuro para o qual todos estamos caminhando, que envolve gerar rastros, gerar registros, gerar muito mais do que o normal, e ter agentes executando isso em um loop contínuo é para onde estamos indo. Você pode construir na velocidade de um agente, mas hoje em dia não é possível aprimorar seus sistemas nessa mesma velocidade. Então, nós sentimos esse tipo de problema ocorrendo dentro dos nossos produtos. E
+
+o gargalo, na verdade, já não é a solução. Então, aqueles de nós que já usaram esses sistemas e agentes de codificação com habilidades, os gargalos, muita da confiança em relação a "Será que estou fazendo certo?" Sabe, muito disso se resume a saber se essa correção é a correta a ser implementada. Bem, esses são os desafios aqui. E então, como você constrói esse loop de uma forma que simplesmente funcione mais rápido? Bem, uma das maneiras pelas quais chegamos a
+
+fazer isso, e como fazemos em nosso sistema, é que meio que invertemos esse ciclo, que é como se um humano, sabe, olhasse para as coisas e um agente as corrigisse, para que uma pessoa agora possa acordar com uma ideia dos problemas com base nos erros ocorridos em seu sistema. Então, o agente, na verdade, talvez não seja a solução em si, mas está causando um problema. É como analisar os dados antes mesmo de um ser humano os analisar . E o que acontece a partir daí é que os humanos, de certa forma, conseguem obter algum tipo de evidência, alguma evidência profunda relativa ao que quer que estejam analisando, que já está bem diante de você no momento em que você finalmente a examina. E a revisão humana é uma coisa, mas muitas vezes você pode estar desviando um pouco essa pequena investigação do ponto de partida. Então, essa é
+
+a realidade de onde estamos hoje: talvez ainda não seja revisão humana, mas sim condução humana das etapas dois e três. Mas é mais ou menos assim que vemos o loop. Na verdade, o que acontece é que existe um evento que dá início a algo ou que você observa periodicamente. E depois há um contexto em torno disso, que é realmente impulsionado por habilidades. Bem, acho que tenho uma pergunta para todos vocês. Quem desenvolveu
+
+habilidades nesta sala? Quem criou uma habilidade que se integra a uma plataforma de observabilidade? Certo, um punhado. Ok, legal. Incrível. Bem,
+
+a mágica das habilidades que se conectam às plataformas de observabilidade é que elas conseguem reunir o contexto. O agente pode decidir o que precisa, o que precisa analisar para começar a solucionar o problema que você tem aí. Hum, e depois há a ideia de gatilhos, que são periódicos e baseados em eventos. Assim, a observabilidade futura se parece muito mais com isso do que com clicar na interface do Grafana. Então, em primeiro lugar, as evidências... bem, normalmente são
+
+coisas como... ou... por onde você começa?
+
+O que você analisa? Ah, os registros de rastreamento também são muito bons. Mas, você sabe, a maioria dos sistemas de IA hoje em dia tem traços disso no núcleo da estrutura do agente. Então, você começa analisando os rastreamentos, que podem ser periódicos, a cada cinco minutos, baseados em um evento, um erro, e normalmente há algumas combinações desses elementos, como contexto e logs, ou seja, o contexto e as habilidades usadas para compilar os logs. Talvez haja também o repositório. Você precisa de uma combinação
+
+de tudo isso para entender o que precisa ser corrigido. O repositório mostra o caminho do código, e o conjunto de logs de produção ou rastreamentos que o agente obtém informa tudo o que está lá. Normalmente, nossas habilidades baixam pequenos arquivos temporários para o repositório. Hum, para que você tenha uma ideia do que realmente aconteceu, qual é o código necessário e tudo mais para poder implementar uma correção. Então, é essa combinação dos dados e formato de arquivo corretos no repositório, juntamente com o seu código também no repositório. Essa é a
+
+mágica dessas habilidades, que permitem ao agente combiná-las para realmente implementar uma correção. Hum, e muito disso, alguns de vocês, muitos de vocês provavelmente já fazem localmente hoje em dia. Você pode executar isso localmente. Você tem um agente que você inicia, talvez você esteja inicializando algo, mas está no seu laptop. E acho que todos nós sentimos essa transição do laptop para, talvez, ambientes de teste isolados . Bem, na
+
+verdade, o sandbox é este ambiente de execução onde, com base em um evento ou em um evento periódico, você pode iniciar este processo e ele fará a mesma coisa que você estava fazendo localmente: primeiro, faça-o funcionar localmente no seu laptop e, em seguida, com base em eventos, nas plataformas de observabilidade como a nossa. Você pode acionar isso de acordo com um agendamento ou, sabe, sempre que um erro surgir . Bem, geralmente, você sabe, geralmente é preciso juntar as peças do loop para fazer isso e, bem, eu quero dar um exemplo. Então, este é Alex, nosso agente. Este é um exemplo real. É muito simples.
+
+E depois vou mostrar como fica no produto final. Hum, isto é o que usamos todos os dias. Bem, este é apenas um exemplo de um evento em que tivemos uma transmissão cancelada. Então, Alex é basicamente o nosso assistente de produto. Uma lista de tarefas é uma forma de gerenciar sua lista de tarefas. Bem, estava
+
+tentando... sabe, vou explicar o erro em um segundo, mas basicamente... está
+
+chamando várias dessas duas atualizações de tarefas e acaba dando erro. Então, para nós, a questão é: como eu junto os dados para depurar isso? Como podemos fazer isso automaticamente? E o Signal é apenas algo que está rodando em segundo plano para nós e que está apresentando problemas relacionados a essas coisas. Hum, isso foi uma correção simples de uma ou duas linhas que o programa sugeriu.
+
+Essas são ideais, mas muitas vezes os reparos são maiores. E quanto maior for, maior a probabilidade de um humano estar envolvido, de certa forma, liderando o processo até a sua concretização. Mas, novamente, tudo se resume àquele começo frio. Posso começar com todas essas informações sobre o assunto e depois conduzir o restante da discussão? É mais ou menos onde estamos agora.
+
+Bem, para nós, seu trabalho meio que passa de respondente para revisor. Bem, e a visão é que os vestígios e avaliações não desaparecem de forma alguma . Eles são simplesmente uma parte fundamental do ciclo. Agora, você vai traçar o contorno mais 10 vezes. Você vai registrar 10 vezes mais informações porque isso ajuda a entender o caminho percorrido pelo seu software.
+
+Antes, isso não era feito porque os humanos não conseguem vasculhar todos os troncos. É apenas ruído. Mas, ao registrar e rastrear mais informações, será que isso abrange cada detalhe do seu software? Talvez em alguns lugares. Ao registrar e rastrear informações em ordens de magnitude muito maiores do que fazemos hoje, podemos criar loops contínuos que sabem qual caminho o software estava seguindo e, de fato, fazer com que ele se corrija sozinho. Então, essa
+
+é mais ou menos a minha visão de para onde acho que as coisas estão caminhando. Bem, de certa forma, e para nós, mostrarei o sinal em um segundo e você verá tudo isso. Quero dizer, sinto que há algo como um SR, sabe, algo que ajuda na depuração, talvez SR para IA. Mas sinto que há muitas caixas-pretas por aí, tipo, ah, existe um agente SR que faz isso ou um agente S que faz aquilo. Tudo o que realmente estamos tentando fazer é pegar sua experiência de depuração local com o Cloud Code Cursor e executá-lo periodicamente. Então, escolha seu sandbox,
+
+escolha seu ambiente, escolha suas habilidades, e nós pré-configuraremos várias coisas para você. Então, estamos apenas tentando pegar as coisas que fazíamos localmente e executá- las em um sistema. Então, acreditamos em uma abordagem aberta para isso e vou mostrar a vocês como isso funciona do ponto de vista do produto. Então, este é um agente de negociação financeira. Considerando o que você viu na apresentação anterior, eu não recomendaria contratar um agente de negociação financeira. É
+
+improvável que eles te façam ganhar dinheiro. Hum, pelo menos não ainda. Talvez haja algumas pessoas que estejam fazendo isso bem. Mas, resumindo, o objetivo é dar respostas às perguntas das pessoas sobre negociação de ações no momento. Bem, existem muitas maneiras pelas quais isso pode dar errado. E assim, isto
+
+lhe dá isto, é um aumento. É uma plataforma. Primeiramente, deixe-me descrever os produtos que temos. Ah, este é o AX, que é a nossa plataforma SAS. Nós também temos o Phoenix, que é de código aberto, caso você queira começar amanhã mesmo. O Signal, neste momento, está
+
+disponível apenas em nossa plataforma AX SAS. Bem, isso também poderia ser implementado em VPC, mas isso lhe dá uma ideia de nossas linhas de produtos. Se você quiser experimentar o Signal, é um AX. E o resultado é algo assim: ele é executado periodicamente e vai encontrando problemas, e você pode conectá-lo ao seu repositório do GitHub. Isso pode gerar um problema no seu repositório. Você pode criar um
+
+avaliador a partir disso. Talvez haja um problema específico que você queira resolver novamente. Você pode adicionar esses itens a um conjunto de dados. Então, se você quiser adicionar isso e tiver evidências associadas a isso, como rastros, neste caso, neste caso, tem habilidades como as do Google Cloud e de alguns outros sistemas de registro. Então, podemos criar interfaces para vários lugares, os dados que temos são muito bons em construir, eu acho, essas habilidades para depurar problemas novamente, mas você pode adicionar suas próprias habilidades. Então, esses
+
+exemplos aqui mostram trilhas que se estendem sem proteção. Bem, existem questões de segurança e de intenção, e muito disso também se resume a como isso funciona? Como eu sei? Parece- me um pouco como uma caixa preta. Bem, tudo isso é aberto e de caixa aberta, no sentido de que eu posso configurar o chicote de fios que eu quero que funcione. Este é um código em nuvem. Posso
+
+escolher meus ambientes de teste e sistemas de teste. Bem, posso usar agentes gerenciados na nuvem se eu quiser. Posso usar o ambiente de testes do Arise. Hum, por que eu usaria ambientes de teste do Arise em vez de agentes gerenciados na nuvem? Bem, muitos dos nossos clientes não querem conectar seus sistemas de produção ao Tanthropic. Sabe, você
+
+quer esses ambientes isolados (sandboxes) para depurar seu banco de dados ou se conectar a ele. Então, nós instalamos na VPC de muitas empresas de renome, como Uber, Booking.com e muitas outras, e essas empresas não querem expor suas conexões, mas usam uma VPC. Muitas empresas se sentem muito confortáveis instalando uma VPC e conectando-a. Então você pode usar os ambientes de teste do Arise, ou o Daytona, ou qualquer um desses com os quais você se sinta confortável e com os quais já tenha construído um relacionamento . E, do
+
+ponto de vista da plataforma, nós oferecemos suporte à execução e ao rastreamento dos diferentes agentes que você está executando. Então você tem esse enxame de agentes. Talvez você tenha acionado...
+
+talvez você esteja acionando um sinal, que é o nosso agente. Está sendo executado periodicamente. Talvez você esteja iniciando o seu... você sabe... você nomeou outro agente...
+
+no sistema. E tudo isso permite visualizar a sessão que foi executada, baixar a transcrição, e você também pode retomar uma sessão na nuvem localmente. Então, a ideia é que essa coisa fique funcionando constantemente. Você está escolhendo o arnês, a caixa de areia. Você decide o que vai aparecer na mensagem, se quiser. Só não seja
+
+agressivo nem procure por problemas de segurança. Então, você está decidindo os estímulos que impulsionam isso e também as habilidades que acompanham essa tarefa. Então, em uma predefinição aqui, eu posso adicionar, sabe, adicionar diferentes habilidades. Posso acrescentar as minhas próprias habilidades. Posso incluir links para repositórios. Eu
+
+também tenho habilidades pré-fabricadas. Então, as plataformas de observabilidade estão realmente começando a entender que estão se tornando cada vez mais ligadas ao ciclo contínuo de correção, e não apenas ao sinal. Bem, e você quer aproveitar sua experiência local para depurar o problema localmente. Você quer pegar as avaliações que estão sendo executadas e fazer com que todas elas funcionem em algo que corrija o problema ou pelo menos forneça uma inicialização a frio, e então eu posso assumir o controle localmente se quiser continuar a depuração a partir daqui. Bem , isso dá a vocês uma ideia aproximada do tipo de sinal que estamos enviando para a assessoria de imprensa sobre o que estamos fazendo. Bem, eu queria abrir espaço para
+
+perguntas, caso as pessoas tenham alguma dúvida sobre o que estamos fazendo ou como vemos a evolução do setor. Com prazer, responderei com prazer. Obrigado. [aplausos]
+
+Sim. Vá em frente. A
+
+questão é: por que não podemos simplesmente conectar o código na nuvem aos seus dados e deixar que ele execute todas essas tarefas? Acho que existe uma versão dessa pergunta que provavelmente pode ser feita para essas correções automáticas, certo? Por que não deixar o CloudCode ler os rastreamentos e enviar o PR automaticamente? Tenho curiosidade em saber como você responderia a essa pergunta. Sim . Então, por que o código na nuvem não se
+
+conectaria aos seus dados e simplesmente faria o trabalho? Bem, a resposta é que você deveria... bem, a visão e o que realmente fazemos na Arise é que temos muitas habilidades. Penso que, antes de mais nada,
+
+para que isso funcione realmente bem, é preciso desenvolver habilidades bem estruturadas na área de dados. A habilidade, assim como os aspectos importantes do design, está realmente relacionada à obtenção de dados, ou seja, encontrar os dados certos primeiro. Então, quero encontrar um grupo de registros relativos a uma sessão ou algo do tipo. Inserir esses dados no repositório em formato de arquivo. Esses arneses são mágicos para usar com limas. Então você recebe o
+
+arquivo com o que aconteceu. Em alguns casos, temos arquivos de 10 MB armazenados no repositório. Então, trata-se de projetar a habilidade para que seja realmente muito bem feita com esses dados e, em seguida, dar ao Claude habilidades suficientes para que ele possa ser composto e encontrar problemas. Portanto, a resposta é absolutamente sim. Assim como temos habilidades com piroscópio que nos permitem encontrar problemas de memória. O Pyroscope possui funcionalidades
+
+que o usuário sabe como utilizar. Posso agrupar por cliente para ver se algum cliente está causando problemas. Mas você precisa projetar a área de atuação de uma forma que Claude possa trabalhar muito bem, e não é simplesmente apontar Claude para os dados. Eu vejo. Obrigado.
+
+Mais alguma pergunta? Mais alguém? Oh sim. OK. Mais uma.
+
+Obrigado pela conversa. Bem, houve bastante menção ao comando `eval`, mas eu estou analisando os rastreamentos, então entendo o conceito de rastreamentos, mas onde entram os comandos `eval` quando você tem aquele sinal que diz "ei, algo quebrou em produção"? Sim . Então, o processo de avaliação normalmente consiste em executar e sobrepor-se aos rastreamentos de produção, algo que chamamos de avaliações online. Hum, deixe-me ver se tem um exemplo aqui. Então, os valores de
+
+avaliação (eval) são, na verdade, dados presentes no próprio rastreamento. O agente sabe como extrair esses dados dos rastreamentos, sabe como visualizá-los e possui as habilidades necessárias para obter os valores agregados dos valores de avaliação em todos os rastreamentos. Assim, as habilidades que você fornece ao agente permitem que ele obtenha os dados de avaliação dos rastreamentos. Bem, eu vejo as avaliações como, pelo menos, uma primeira geração de avaliações, que são elementos de um juiz, como uma camada de IA que permite executar avaliações periódicas do sistema. É como se adicionasse um pouco mais de informação pré-processada aos dados, e então, conforme o sinal é executado, ele usa dados das avaliações que foram adicionadas, além de todos os dados brutos que já possui. Mas geralmente é assim:
+
+você cria uma avaliação para uma falha que já viu antes, muitas vezes. Então, tenho esses problemas de injeção de prompts que estou tentando detectar, ou algo assim, ou uma falha na forma como respondeu a algo anteriormente. Então, eles tendem a ser assim, sabe, pelo menos o LM como juiz tende a ser assim, essa coisa que você pré-configura e então você pode realmente criar avaliadores para reprovação. Imagine que você se depara com essa falha, que é bastante comum e acontece o tempo todo. Posso criar uma avaliação para poder capturá-la na próxima vez. Eu penso nisso
+
+quase como uma avaliação de IA que está sempre em execução. Outro ponto a considerar é que, como juiz, a atuação pode ser bastante expressiva. Bem, sabe, eu tenho clientes que aplicam elementos em camadas como um indicador em todo o seu conjunto de dados, onde isso tende a ser mais periódico em muitos dados. Que legal! Obrigado.

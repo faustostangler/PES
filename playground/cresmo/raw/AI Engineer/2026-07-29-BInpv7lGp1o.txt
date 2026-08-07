@@ -1,0 +1,142 @@
+---
+video_title: "Your Agent Didn't Fail. Your Harness Did. — Vinoth Govindarajan, OpenAI"
+video_id: BInpv7lGp1o
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BInpv7lGp1o
+video_date: 2026-07-29T16:00:06+00:00
+video_description: |
+  Two runs touch the same session, the second write silently erases the first, and the agent keeps answering with total confidence from stale state. Nothing crashed and the model did not hallucinate, so this is a harness failure, the kind that lives in the system around the model rather than in the weights. Using OpenClaw as a public case study, Vinoth Govindarajan walks the usual suspects: state that was never persisted, overlapping writers with no single writer lane, a tool call that never returns because nothing set a deadline, and an approval that outlived the action it was supposed to authorize.
+  
+  The through line is that a model only proposes; the harness has to commit, and a receipt has to prove it. A transcript shows what the agent said, but a receipt is the evidence that survives: it records the mutation, the authority used, and whether the message actually reached the user, since an internal success that never becomes visible proof is its own failure. You leave with a run receipt audit to run on your own agents, five questions per incident: what woke it up, what state did it inherit, what authority did it use, what executed, and what evidence survived.
+  
+  Speaker info:
+  - https://x.com/iamvinoth
+  - https://www.linkedin.com/in/vinothgovindarajan/
+  - https://theagentstack.substack.com/
+  
+  Timestamps:
+  0:00 - Introduction: harness failures vs model failures
+  1:32 - Delivery can succeed while the truth fails
+  2:46 - A model proposes, the harness commits, the receipt proves
+  4:14 - How events enter and state is rehydrated
+  5:48 - Idempotency, locks, and ordering
+  7:22 - Ownership: who persists the turn
+  8:28 - Single writer lanes and overlapping writes
+  10:09 - Time, deadlines, and cancellation
+  11:23 - Approval drift and bounded authority
+  13:05 - Internal success vs user-visible proof
+  14:08 - The run receipt audit: five questions
+---
+[música]
+
+Obrigada por escolher passar esta sessão comigo. Meu objetivo hoje é simples. Quero convencer a todos vocês de que a maioria das falhas de produção não são falhas de agentes, e a maioria das falhas de modelos não são falhas de modelos. Esses são problemas de chicote de fios. Vamos começar com um incidente de produção.
+
+O usuário viu a resposta. O sistema se esqueceu do ocorrido. Esta é uma forma de fracasso com a qual quero começar. Não foi uma alucinação, não foi um acidente, não foi uma resposta errada. A borda visível ao usuário parecia intacta, enquanto o disco rígido apresentava um furo.
+
+Neste exemplo, o usuário pediu ao agente que se lembrasse de um reembolso para um cliente. O assistente disse que registrou o fato para a próxima rodada. A interface parecia normal. Sem tela vermelha, sem falhas óbvias. Mas a próxima reviravolta não pode reconfigurar esse fato. O usuário
+
+obteve sucesso. O sistema herdou uma realidade incompleta. Por que isso é importante? O travamento é irritante, mas pelo menos estabelece um limite. Você sabe, alguma coisa parou. Geralmente você vê um erro.
+
+Muitas vezes, você pode começar pelo último ponto bom conhecido . O sucesso silencioso é uma mentira. A entrega pode ser bem-sucedida enquanto a persistência falha. O usuário não tem motivos para duvidar da resposta. O operador não demonstra nenhum alarme aparente. A próxima reviravolta ainda pode
+
+soar confiante porque o modelo é coerente, mas é coerente ao longo de uma história fragmentada. É por isso que a confiabilidade do agente é importante. E a realidade do agente não pode se limitar à qualidade do modelo. Olá, eu sou o Ben. Eu trabalho na infraestrutura principal de dados e IA da OpenAI.
+
+Antes disso, trabalhei com sistemas distribuídos na Apple e no Uber. Fora do trabalho, escrevo sobre a pilha de agentes, onde tento explicar como os sistemas de IA e dados de produção funcionam internamente. Sou filha da OpenClaw e isto não é uma propaganda de produtos da OpenClaw. Esta é uma palestra sobre projeto de sistemas puro. Estou usando o OpenClaw como um estudo de caso público porque a documentação do código, que contém seus problemas, torna a estrutura em torno do agente excepcionalmente visível.
+
+Aqui está um contrato de produção para a palestra. Um modelo propõe que o sistema de segurança se comprometa e os recibos comprovam isso. O modelo pode sugerir uma mensagem, uma ferramenta, uma edição ou um comando. Mas o modelo não é o limite da produção. O dispositivo controla a transição de estado, a verificação de autoridade, o commit ordenado e o recibo é a evidência que sobrevive ao prazo. A cláusula aberta é o estudo de caso
+
+e o contrato é a principal conclusão. Se você só puder se lembrar de três coisas desta palestra, que sejam estas. Aproprie-se do estado, ordene a mutação e comprove a ação. Um fato precisa apenas de um proprietário e um caminho de reprodução. O estado mutável compartilhado requer um caminho de commit ordenado, e o transcriptoma não é a prova disso. A transcrição informa o
+
+que o agente disse. Um recibo informa o que o sistema permitiu, tentou, executou e o que a borda visível do usuário confirmou. Para criar um modelo mental simples, criei essa analogia do carro para o cinto de segurança. O modelo é o motor. Isso é muito importante. Mas ninguém compra um
+
+carro de produção olhando apenas para a potência do motor. Você também se preocupa com a direção, os freios, as regras de trânsito, o painel e a caixa preta. O modelo oferece a capacidade, mas o arnês oferece o controle. Um motor potente sem freios não é autonomia. É um ponto fraco com boa aceleração.
+
+Aqui está o projeto do arnês que eu queria discutir hoje. Todos os agentes que conhecemos, como agentes pessoais como o OpenClaw ou o Hermes, e agentes de codificação como o Codeex, o Cursor, o OpenCode ou o CloudCode, utilizam a mesma arquitetura subjacente. Os eventos chegam de diversas fontes: um chat, um webhook, um cronômetro, um sinal de atividade ou outro sistema externo. O plano de controle mapeia os eventos para uma chave de sessão, e a chave de sessão determina o limite do estado. A faixa de sessão fornece um gravador ativo para esse estado mutável.
+
+O ambiente de execução chama os modelos e as ferramentas. As ferramentas atuam por meio de aprovações e políticas, e a auditoria se torna o comprovante de execução. Este é o modelo de auditoria das ferramentas de limitação de sessão de eventos. O projeto é uma conversa e o incidente da prova de que cada limite importa. O contexto é montado no tempo de execução do agente, algo que geralmente não se lembra no sentido humano. É apátrida.
+
+O chicote de fios reconstrói o estado de funcionamento a cada volta. O conjunto de trabalho pode incluir a transcrição, o estado da sessão, a memória, a política e as definições da ferramenta. [Limpa a garganta] O modelo só vê o que o arnês fornece. Se uma das informações estiver faltando ou desatualizada, a resposta ainda pode parecer coerente. A coerência não prova que o conjunto de trabalho estava completo.
+
+Essas falhas não são novidade. Já conhecemos os conceitos de tempo limite, novas tentativas, potência de itens, bloqueios, ordenação e propriedade de estado. Que alteração representa a configuração do agente? Agora, essas falhas ficam à mercê de um planejador probabilístico com planos dinâmicos. Trata-se de reconstruir o contexto a cada passo. Existem mais fontes de eventos
+
+e ele pode atuar através de mais superfícies de ação. Assim, o fato de essas falhas serem causadas por agentes familiares torna-as mais fáceis de desencadear e mais difíceis de explicar. É por isso que a capacidade de controle do agente é importante. Vamos falar sobre o primeiro modo de falha.
+
+Este é o mesmo tipo de falha com o qual iniciei esta apresentação. O usuário vê uma mensagem de sucesso. A fonte da verdade não pode reproduzi-la. O que foi entregue não é lembrado. Neste caso específico de problema de criptografia aberta, uma resposta de telegrama poderia ser bem-sucedida mesmo que a instrução de retorno do roteador não tivesse sido escrita no contexto ativo ou na transcrição. O usuário
+
+viu a resposta. O tronco parecia saudável. Mas a próxima virada não deixou nenhum registro duradouro da mudança seguinte. Um envio bem-sucedido comprova a transcrição. Isso não comprova o contexto futuro. Essa distinção é importante
+
+porque o modelo consegue responder fluentemente mesmo com um registro incompleto. A fronteira que faltava não era a inteligência. Era propriedade do Estado. Por "proprietário", não me refiro a uma pessoa. Refiro-me ao sistema de registro cujo estado persistente se torna a verdade.
+
+Um evento de calendário pertence ao sistema de calendário. O status de suporte pertence ao sistema de tickets. Enquanto uma alteração de código pertence a um espaço de trabalho ou repositório, uma interação na conversa pertence à transcrição da sessão e uma preferência do usuário pertence ao armazenamento de memória. O armazenamento indica onde os bytes estão localizados. A propriedade revela quem pode reconstruir a realidade.
+
+Uma gravação não constitui uma memória confiável até que um proprietário autorizado possa reproduzi-la. Um sistema precisa manter a virada. É necessário indicar o proprietário ou o sistema de registro e possibilitar a reprodução. A pergunta é simples. Para cada fato que o agente possa usar posteriormente, quem o detém e como você o reproduziria? Se nenhum proprietário
+
+conseguir reproduzir o fato, significa que o sistema não o memorizou de forma confiável. Uma vez que sabemos quem é o dono do Estado, a próxima questão é quem tem permissão para alterá- lo e em que ordem? Duas acertos corretos ainda podem produzir um resultado errado. E o modelo "o último a escrever vence" não é consistente. Neste caso de sobreposição de escritor, o problema de garra aberta descreve uma condição de corrida para carregar, modificar e salvar.
+
+Dois chamadores carregam o mesmo estado antigo. Cada um altera um registro diferente. O segundo salvamento apaga silenciosamente o primeiro. O usuário poderá ver um compromisso rejeitado retornar ou receber uma mensagem de acompanhamento duplicada. Nenhum dos dois escritores possui deformidades.
+
+Ambas as operações estão corretas localmente. A fronteira que falta é a civilização em torno do compromisso. A invariante não é a ausência de concorrência. Isso seria muito lento e não atingiria o objetivo. Você pode distribuir subagentes.
+
+Leituras paralelas são aceitáveis. A recuperação independente é aceitável. Várias sessões também podem ser executadas simultaneamente. A regra é mais restrita e simples. Um caminho de commit ordenado para um limite de estado mutável.
+
+Esse mecanismo pode ser uma fila (Q), um mutex, uma transação ou um bloqueio. Você pode usar bloqueios ou mutexes entre as sessões e as dicas ou transações dentro de uma sessão. Seja conservador com o tempo de commit e não o aplique em todo o sistema. Os usuários não veem dicas ou bloqueios. Eles observam o comportamento.
+
+Uma última correção parece esquecida. Uma faixa de rolamento congestionada dá a sensação de estar morta. E a conclusão antes da entrega gera confusão. O processo de encomenda é uma funcionalidade do produto porque os utilizadores experienciam a encomenda de livros como se fossem personalidades. Agora vamos falar sobre o tempo de produção. O
+
+silêncio não pode ser neutro. Vamos recapitular. O próximo modo de falha é o modo de falha do ciclo de vida. A corrida aguarda um evento que não pode acontecer. O silêncio não é um estado terminal.
+
+Nesse problema de chamada de ferramenta pendente, a sessão contém uma chamada de ferramenta, mas nenhum resultado de ferramenta correspondente. Um processo pode ter sido interrompido. A conexão pode ter caído. Pode ter ocorrido um tempo limite antes que os resultados fossem registrados. A causa exata é importante para a depuração. A falha de produção é
+
+muito mais simples. A corrida está à espera de um evento que nunca chegará. Novas mensagens surgem por trás desse silêncio. Para o usuário, o agente simplesmente parece travado. As corridas precisam de prazos e cancelamentos. Um
+
+prazo limite define o peso. O Watchdog torna visível o trabalho travado. As ferramentas precisam de modos de tempo e resultados de erros. Os canais precisam de comandos de recuperação que não fiquem aguardando o trabalho travado que estão tentando corrigir. Toda fronteira externa precisa de um fim.
+
+Sucesso, falha, tempo limite excedido, cancelamento ou número máximo de tentativas. Mais importante ainda, o recibo registra o resultado final. Assim, o próximo passo não precisa ser uma questão de adivinhação. Domine o trabalho antes que o trabalho domine você. Agora podemos passar do estado para a autoridade, porque uma conversa se torna arriscada quando se transforma em ação.
+
+Capacidade não é execução. O modelo pode solicitar uma ação. A capacidade de solicitar não é o mesmo que autoridade. A aprovação precisa de uma forma. Nesse problema de desvio de aprovação, o retorno de chamada aprovado e expirado foi considerado passível de revogação. O estado de retorno de chamada, o estado
+
+durável servido reinicia e bloqueia o trabalho posterior do canal. O clique de batalha existia. A autoridade competente não o fez. Esse é o erro. Tratar a aprovação como uma vaga lembrança de que o humano estava perto do sistema ou clicou em "sim". A aprovação,
+
+enquanto estado de execução delimitado, deve permanecer vinculada à ação que autorizou. Um prazo de expiração deve ser encerrado, e não entrar em loop. Um objeto de aprovação útil responde quem aprovou, em qual sessão, para qual ferramenta, com quais argumentos, por quanto tempo e com qual resultado. Também indica o recibo. Se esses campos desaparecerem durante uma nova tentativa de reprodução ou uma chamada de retorno de canal, o sistema não poderá mais comprovar que a ação estava sendo executada ou aprovada.
+
+A lição geral é simples. Capacidade não é execução. O princípio do menor privilégio restringe o leque de ferramentas disponíveis. As credenciais com escopo garantem que a identidade correta seja usada para a ação. A aprovação e a auditoria definem o que acontece antes e depois da execução.
+
+O modelo pode raciocinar sobre a fronteira, mas não deve ser a própria fronteira. O modelo pode fazer a solicitação, mas ainda assim é o sistema que decide. Por fim, mesmo que a ferramenta indique sucesso, o usuário visível B pode discordar. O componente interno reporta sucesso. A superfície visível ao usuário não mostra nada. Este
+
+é o inverso do incidente inicial. Observamos neste caso a ausência de borda impediu a resolução do problema. A ferramenta de mensagens relatou sucesso na execução de um chat web ou TUI, mas a mensagem não foi exibida. A resposta normal do assistente ainda aparecia. A ferramenta comprovou que o caminho interno aceitou a solicitação. Isso
+
+não prova que o usuário viu o resultado. Essa diferença muda a conversa. O agente pode dizer mais tarde: "Eu já enviei ". E o usuário pode dizer, com toda a sinceridade: "Eu nunca vi isso." O sucesso interno não se comprova externamente.
+
+A prova é uma cadeia de eventos, não uma mera alegação. O modelo propôs algo. A política permitia ou negava isso. A execução tentou. A borda visível para o usuário confirmou ou não o resultado. O recibo
+
+preserva a cadeia de rastreabilidade. A transcrição registra o que o agente disse. A ferramenta registra os resultados que um componente indicou. Um recibo registra o que o agente pode verificar no limite da fronteira que seja relevante. Deixe-me recapitular todos os incidentes. Aqui estão
+
+os formatos de falha de arquivo que você deve procurar. Uma lacuna estadual, escritores sobrepostos, chamada de ferramenta pendente, desvio de aprovação e prova de borda ausente. Para cada uma delas, vamos fazer a mesma pergunta. O que o usuário viu? Que limite foi ultrapassado? E o que
+
+o recibo teria flagrado? Segue a auditoria que quero que você execute quando retornar à sua equipe. Escolha um sistema de agentes, não todos. Um rastro, uma produção, um caminho de produção real e peça o recibo. A auditoria contém cinco perguntas. O que o
+
+despertou? Que estado herdou? Que autoridade foi utilizada? O que foi executado? E que provas sobreviveram? Essas
+
+perguntas expõem a hipocrisia. Eles transformam uma conversa fluente em um processo de produção passível de inspeção. Primeiro, o que o despertou? Uma mensagem do usuário, um webhook, um temporizador, o resultado de uma ferramenta, um subagente ou uma reprodução. Dê o nome do gatilho e sua identidade. Sem isso, você não pode
+
+raciocinar sobre duplicação, ordem ou autorização. Em segundo lugar, qual estado herdou? transcrição, estado da sessão, instantâneo da memória, versão da política e superfície da ferramenta. O modelo apenas raciocina sobre o conjunto de trabalho do chicote de fios montado. Terceiro, qual autoridade foi utilizada?
+
+Registre o ator, a sessão, a ferramenta, a execução, os argumentos, o escopo e o tempo de vida. Um pedido de modelo não é uma permissão. A autoridade deve vincular-se a uma única ação pendente. Quarto, o que foi executado? Registre a ferramenta ou chamada de API, os argumentos, o número da tentativa, a chave de potência do item e os resultados externos. Este é um limite de efeito colateral
+
+, não um resumo inadequado da intenção do agente. Quinto, que provas sobreviveram? O bilhete foi atualizado? A mensagem foi exibida corretamente? O arquivo foi alterado?
+
+O evento no calendário existiu? O recibo deve terminar no limite que o usuário normalmente considera importante. Agora vamos aplicar o incidente inicial. A mesma ordem do incidente inicial. O que despertou isso? Uma mensagem do usuário? Que
+
+estado possuía? Essa foi a fronteira rompida. O que executou o envio do canal? Que provas sobreviveram ao parto? O que não sobreviveu à virada duradoura?
+
+O serviço de entrega sobreviveu, enquanto o Estado não. Essa lacuna representa uma falha no chicote de fios. O agente não precisava de um modelo melhor. O modelo não precisava de um estímulo melhor. O sistema precisava de um chicote de fios melhor com recibo completo.
+
+Permita-me recapitular os três pontos que pedi para vocês lembrarem desde o início da minha apresentação. Aproprie-se do estado, ordene a mutação e comprove a ação. Um modelo melhor ajuda na curva. Propriedade, ordenação, ciclo de vida, autoridade e comprovação mantêm o sistema coerente ao longo das mudanças. Um modelo propõe que o sistema de segurança se comprometa e que o recibo comprove isso. Quando o
+
+texto pode se tornar uma ação, a pergunta útil muda. Não pergunte apenas se o modelo consegue raciocinar. Pergunte se o sistema pode possuir o Estado, ordenar a mutação, delimitar o trabalho, restringir a autoridade e preservar as evidências. Um laço pode responder a uma curva e o arnês pode servir de suporte para a produção. Se quiser saber mais, escaneie os códigos QR. O primeiro ponto se refere ao
+
+SDK de agentes de IA de código aberto, onde todos esses recursos já estão integrados para que você possa usá-los na criação de seus próprios agentes. O segundo ponto se refere à pilha de agentes, onde escrevo sobre os sistemas de agentes de produção com mais detalhes. Estarei no estande aberto após esta palestra, caso queiram conversar sobre o projeto do seu arnês. Obrigado. [aplausos]
+
+[música]

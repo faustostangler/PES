@@ -1,0 +1,128 @@
+---
+video_title: "What's Next After RLHF? — Diogo Almeida, TypeSafe AI"
+video_id: cJ0EOzey--o
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=cJ0EOzey--o
+video_date: 2026-07-31T23:30:06+00:00
+video_description: |
+  RLHF made models that are extraordinary at pleasing the human in the loop, and Diogo Almeida, a GPT-4 co author, argues that is exactly the problem. Optimizing for human preference optimizes for engagement and for overpromising, the same pressure that makes a model confidently agree that a fart audio file is a symphony. That produces two camps: one where models act as assistants with a human catching mistakes, where RLHF shines, and one where they operate autonomously with real stakes, where the same instinct to please quietly becomes a liability.
+  
+  So what comes next is not the Claude Code era but a shift in what you optimize. Almeida frames it through Sutton's bitter lesson: the task matters more than the data, and reinforcement learning with verifiable rewards points the model at real automation instead of human approval. He is careful that pre trained models are already incredibly capable and that the trap is bolting preference optimization on top, which teaches confidence and drops modes. The through line is that assistance and automation pull in different directions in optimization space, and the field is only starting to say plainly which one it is building.
+  
+  Speaker info:
+  - https://x.com/CompleteSkeptic
+  - https://www.linkedin.com/in/diogomda/
+  - https://typesafe.ai/
+  
+  Timestamps:
+  0:00 - Not the Claude Code era
+  1:40 - The state of the field
+  3:14 - Two camps: assistance and autonomy
+  4:31 - Why models please the human in the loop
+  6:37 - How RLHF actually works
+  7:31 - Preference versus what's true
+  8:10 - When the consequences get real
+  8:47 - So what's next
+  9:35 - Assistance is not automation
+  14:31 - Is pre-training the problem?
+  15:43 - RLVR and Sutton's bitter lesson
+---
+Excelente. Eu diria que talvez eu faça isso bem rápido. Sinta-se à vontade para expressar sua opinião, caso discorde de algo. Para mim, é muito mais divertido quando as coisas se tornam interativas. Caso contrário, vou analisar isso.
+
+Primeiro, alguém sabe o que é RLHF? Ah, excelente. Talvez eu consiga pular essa parte rapidamente e ir direto para a parte interativa. Então, meu nome é Tiago Almeida. Estou falando sobre o que vem depois de RLHF. Mais precisamente,
+
+acho que deveríamos chamar isso de o que vem depois da era do chat GPT, na qual acredito que todos estamos vivendo. E minha dica para vocês é que não se trata da era do código Claude. Justificarei isso mais tarde, mas acredito que eles sejam da mesma época. Por que você deveria me ouvir? Fui coautor do que é basicamente a coletânea dos maiores sucessos da OpenAI, pelo menos dos sucessos publicados. Co-autoria do GPT-4,
+
+chat GPT, RLHF {slash} instruct GPT. A equipe da qual eu fazia parte basicamente inventou o conceito de pós-treinamento. Então, sou muito qualificado em muitos desses assuntos. Mas o que me torna um tanto singular aqui é que sou uma das poucas pessoas na OpenAI que realmente detesta o GPT em chats . Ah, obrigada. Hum, para deixar claro, eu não odeio o GPT de chat como
+
+produto. Acho que o Chat GPT é um produto revolucionário que provavelmente permanecerá conosco para sempre, a menos que algo melhor surja. Mas também reconheço suas limitações e acho que muito do que aconteceu no estado atual da área pode ser atribuído a pequenas decisões que tomamos ao criar os algoritmos por trás do GPT de bate-papo. Hum, eu acho que a pergunta relevante para todos na área de IA agora é: o que está realmente acontecendo? Bem, existem muitas opiniões divergentes, e acho que é muito útil mapear o espectro e descobrir como pessoas inteligentes podem ter opiniões tão diferentes.
+
+Existe uma seita. Bem, a inteligência artificial não está apenas indo bem, está indo incrivelmente bem. Em cada uma das metas que alcançamos, superamos o nível humano e, até onde podemos medir, estamos continuamente superando o desempenho humano. Sabe, basicamente todos os novos benchmarks estão sendo testados e estão ficando cada vez mais rápidos e acelerados. Você tem, sabe, todos os "Posso ver meu mouse?" Excelente.
+
+Basicamente, todos os benchmarks de PNL (Processamento de Linguagem Natural) estão sendo superados, e não só isso, supostamente o tempo que os LLMs (Modelos de Aprendizagem Baseados em Aprendizagem) podem operar de forma autônoma está crescendo exponencialmente. Por outro lado, a IA não está apenas indo mal, está indo absurdamente mal. A IA é uma bolha, basicamente não gera valor algum, são apenas negócios de financiamento circular, etc., etc. E, sabe, se a IA é tão incrível, por que tudo é tão parecido com um aplicativo de bate-papo agora? Ou algo como um serviço de nuvem? Bem,
+
+e muita gente meio que desistiu da terminologia da velha guarda sobre uma revolução transformadora da IA. As pessoas já não falam muito sobre isso. Estão dizendo que é algo extremamente valioso, tipo um SaaS B2B. Então, a única coisa em que todos concordam é que existem apenas pontos de vista extremos, sem nada no meio. E basicamente todo mundo acha que IA é uma loucura, mas por motivos diferentes. E o que eu gostaria de discutir
+
+é qual é a visão sensata sobre a IA? Vamos pegar todas as evidências de que o culto número um está indo muito bem. Analisando todas as evidências do segundo culto, as coisas estão indo muito mal. Tipo, sabe, mapeie-os e tente explicar o que explica essa divisão. Qual seria a explicação mais simples possível para o fato de algumas coisas serem boas demais para serem verdade, e outras não serem apenas ruins, mas tão ruins que ainda assim empregaríamos trabalhadores humanos para realizar tarefas, digamos, meio idiotas?
+
+Sem querer ofender ninguém. Muitas dessas tarefas à direita parecem muito, muito, muito mais fáceis do que as da esquerda. Tipo, como podemos estar resolvendo problemas matemáticos não resolvidos, mas ainda assim o atendimento ao cliente exigir a intervenção humana para que as decisões sejam tomadas? Acho que isso é uma situação bastante caótica. E, na minha opinião, qualquer pessoa que trabalhe em áreas adjacentes à IA deveria ter uma resposta para isso, porque essa é a evidência que temos no campo atualmente.
+
+Normalmente, eu faria uma pausa e perguntaria às pessoas se elas gostariam de expressar suas opiniões em voz alta, mas, bem, acho que não temos tempo para isso e me disseram para não responder às perguntas até depois. Bem, vou dar a minha resposta, que, na minha opinião, é a explicação mais simples. Tudo o que está à esquerda não é apenas uma tarefa que por acaso envolve um ser humano . À esquerda, a tarefa. O objetivo dela é agradar o humano no loop.
+
+Essas tarefas são intrinsecamente tarefas que envolvem a participação humana. O trabalho do Claude Code não é apenas fazer o código funcionar. Hum, a forma como se comunicaria seria totalmente diferente. O objetivo é agradar o ser humano que existe dentro disso. E, por outro lado, em todas essas tarefas que parecem muito mais básicas, o objetivo é não eliminar a intervenção humana. Idealmente, ele
+
+rodaria em segundo plano em um servidor que você nunca sequer olha e, idealmente, eventualmente se tornaria como um software legado com o qual você não se preocupa . E é aí que reside a diferença entre assistência e automação. Bem, a primeira lição da minha palestra é que a IA atual, tudo herdado do nosso LHF, é incrível em tarefas que envolvem a interação humana , mas não em tarefas de automação. Tarefas. Este é um assunto mais extenso, mas a lição que praticamente todas as empresas aprenderam é: não use IA para decisões que impactem diretamente o seu negócio. Um
+
+padrão comum é garantir que todos os custos sejam repassados ​​ao usuário e não à sua empresa. Então, hum, tudo bem jogar o usuário em uma infinidade de documentos no atendimento ao cliente, mas não é aceitável obrigá-lo a tomar decisões caras. Padrão horrível, mas esse é o estado atual da IA. Bem, posso passar rapidamente pela parte "O que é RLHF?", porque vocês todos parecem saber o que é.
+
+É o algoritmo por trás não só do ChatGPT, mas basicamente de todos os LLMs da atualidade. Pelo que pude apurar com base na utilização, aproximadamente 100% dos modelos de lógica latente (LLMs) são treinados com RLHF. E nós temos esse "nós", como em "nós", a equipe da OpenAI fez uma ótima postagem no blog explicando como funcionava. Não vou entrar nesse assunto porque vocês todos já sabem, e isso é extremamente chato. Resumindo, trata-se de coletar preferências humanas e otimizar com base nessas preferências. E
+
+se você quiser ver uma versão anotada disso, pode ver quais partes estão coletando preferências humanas e quais estão otimizando para elas. E [bufa] isto, eu acho, fornece uma resposta muito clara para todos na área que perguntam: "Por que todos os mestrados em Direito exigem um ser humano no processo?" E a resposta simples é que literalmente os colocamos no loop. O objetivo do ciclo é otimizar de acordo com a preferência humana. Não se trata de executar software de forma autônoma. É meio
+
+óbvio demais. Obrigado, meu camarada lá atrás. Sim . Eu adoro que você esteja rindo disso. E por causa disso, prometer demais é uma característica do gênero. Isso foi intencional. Este é um
+
+estudo meta-analítico antigo. E os números provavelmente mudaram, mas, por definição, todo modelo RLHF sempre terá uma grande diferença entre a preferência humana e os resultados, mesmo que os resultados sejam bons, porque o principal objetivo da otimização é a preferência humana. Isso é exatamente como funciona o funcionamento dos mestrados em direito (LLM). Eu adoro esse tweet de alguém enviando um arquivo de áudio com efeitos sonoros de peido para o ChatGPT e perguntando tipo: "O que você acha da música que eu fiz?" Eis uma reação direta e honesta. É
+
+uma peça com uma atmosfera muito sinistra. E é exatamente assim que o RLHF funciona. Se não souber, tenderá a fazer o que considera melhor para a preferência humana. E isso faz todo o sentido se você for um usuário envolvido, porque, assim como o objetivo final de todos os modelos RLHF, é otimizar o engajamento. Mas o que você realmente quer, se deseja automação, é que ela simplesmente ignore os humanos e execute a tarefa corretamente e de forma calibrada.
+
+A segunda lição é que a IA atual foi projetada para auxiliar por meio da otimização das preferências humanas. É exatamente como o nome indica. Essa não é uma opinião controversa. E as consequências são talvez mais controversas, mas é muito óbvio se você pensar no que realmente estamos otimizando, que é: não importa o quão errados os modelos estejam, eles parecerão certos por causa da assimetria dentro do modelo de recompensa no RLHF. E é aí que surge grande parte do dilema na área, porque as pessoas realmente querem que a automação aconteça.
+
+Legal. Então, voltando à pergunta original. Já falei mais da metade da palestra e ainda nem respondi à pergunta. Eu estava falando sobre o que é RLHF. Mas isso foi apenas uma forma de contextualizar o que é o RLHF e o que vem a seguir.
+
+E eu diria que a verdadeira questão é o que vem depois da era da assistência por IA, na qual acredito que já estamos firmemente inseridos. E voltando à pista original sobre por que não se trata do código de Claude. Na verdade, é uma discussão muito interessante e cheia de nuances , mas não se trata de código Claude, porque o código Claude ainda faz parte daquela era de assistência. O código Claude ainda é RLHF e teria uma aparência muito, muito diferente se fosse puramente RLVR. Isso é um pouco avançado, mas se fosse puramente RLVR, teria uma aparência muito, muito diferente.
+
+E é por isso que você se depara com esse dilema com os modelos, em que às vezes eles se tornam muito bons em questões de agência, mas param de seguir o que você realmente deseja. Isso é como a compensação no espaço de otimização que continua oscilando, mas nenhuma dessas duas compensações no espaço de otimização contribui para o componente de automação. E isso nos leva ao que eu considero a resposta lógica para o que vem depois da assistência: a automação real. Para falar um pouco sobre a automação e como ela funcionaria, quero falar sobre software. Talvez isso seja um pouco filosófico para vocês, mas acho que é quando a ficha cai, e espero que caia se eu fizer um bom trabalho. Espero que fique bem
+
+claro, pois sou um apaixonado por software. Presumo que todos aqui gostem de software. O software é extremamente valioso. Veja todos os SaaS. E a parte mais louca do software, na minha opinião, é que praticamente nenhum SaaS mudou desde 2019.
+
+Tipo, o SaaS não mudou muito na era do LLM, exceto por um chatbot que às vezes é adicionado, o que é meio insano se você pensar no progresso feito em IA, mas na verdade é bem previsível quando você pensa que a IA é uma assistente nata, né? Assim como a IA foi criada para auxiliar. O que você pode fazer em SaaS? Basta providenciar um assistente à parte. E não era isso que os pioneiros da IA imaginavam que aconteceria. Por exemplo, quando
+
+você vê a redação inicial em " Opening Eyes", a carta constitutiva, trata-se de fazer muito trabalho, não de obter lucro ou algo do tipo. E costumávamos pensar que o software ficaria muito mais inteligente, e não apenas mais barato de escrever, que é mais ou menos a direção que estamos seguindo agora. E eu gosto muito dessa expressão do Garry Tan. Hum, acho que ele quis dizer isso como um elogio ao que está acontecendo agora. Estamos entrando na era de ouro do software just-in-time, mas na verdade acho que isso é uma faca de dois gumes. Não
+
+quero apenas um software sob demanda, o que é ótimo. Eu adoro código na nuvem, para deixar claro, assim como adoro o ChatGPT. Eu continuaria usando. Mas o que eu quero é um software mais inteligente. Por que não podemos gostar do B2B?
+
+Por que o software não pode simplesmente ser mais expressivo? Por que os elementos básicos do software continuam sendo os mesmos? E eu acho que essa é uma pergunta que toda a indústria de IA deveria se fazer. Basicamente, toda vez que pensamos em automatizar algo, não se trata de automatizar o trabalho de uma pessoa. É tipo, "Ei, existe esse trabalho extremamente repetitivo. É
+
+tão simples que podemos simplesmente comunicar para outra pessoa que essa coisa deve ser feita." E o ideal seria que fosse tão básico que pudesse ser feito repetidamente, praticamente de graça. Ou isso poderia ser feito por computadores. E isso realmente não está acontecendo agora. O que estamos fazendo é simplesmente automatizar a escrita do software.
+
+Mas, nesse caso, sua expressividade é a mesma. E isso, para mim, é trágico considerando o estado do mundo. Legal . Ah, lição três. Hum, isto é algo em que acredito fortemente. Acredito que,
+
+eventualmente, a área irá escrever o que eu não diria que a Arlatech está errada, mas foi um desvio estranho e inesperado. Acredito que a IA do futuro será para a automação. E eventualmente teremos um mundo com softwares mais inteligentes. Assim como começará a haver trabalho realmente automatizado, o que, você sabe, agora é uma ninharia, apesar da inteligência do LLM. E é nisso que estamos trabalhando na TypeSafe. Ainda estamos agindo de forma
+
+discreta. Tipo, eu estou disposto a dar essas palestras, mas essas são algumas das primeiras. Nossa principal questão é: e se a estrutura de IA fosse redesenhada para oferecer confiabilidade e automação? Como é que tudo isso mudaria? O que você faria? E na verdade,
+
+há muito... É uma bifurcação muito interessante no caminho para o que está por vir, sabe, basicamente em todos os LLMs que são construídos hoje. E acho que é uma das coisas mais gratificantes em que já trabalhei, e já trabalhei em coisas muito legais. Lançaremos em
+
+breve. Então, se você quiser trabalhar conosco ou, sabe, ser um dos primeiros a desenvolver software inteligente, inscreva-se em nossa lista de e-mails ou em nossa página de carreiras. E estou tentando criar uma conta no Twitter. Então, me siga e eu postarei coisas realmente picantes . Na verdade, vou postar algo mais tarde hoje que garanto que será bem picante. A dica é que as
+
+leis de escala originais estavam incorretas. Legal. Bem, é isso que eu tinha preparado. Eu adoraria ter tempo para pessoas gritando perguntas. Adoraria receber perguntas, feedback, discordâncias, opiniões fortes. Posso repetir a pergunta.
+
+Você não precisa se preocupar com o microfone. Com certeza! Ah, legal . A pergunta era basicamente: e se você treinasse um classificador com pré-treinamento também? Hum, mais ou menos como Yoshua Bengio está sugerindo. Bem,
+
+eu diria que isso é complicado. E, na verdade, acho que não tenho tempo para responder a essa pergunta em particular. Vou dar minha visão simplificada sobre isso. E a resposta é que, na verdade, não acho que o pré-treinamento seja o problema. Acho que o pré-treinamento é simplesmente fenomenal.
+
+É incrível como conseguimos condensar o conhecimento da internet em um núcleo de inteligência que pode então ser utilizado. E os modelos pré-treinados são incrivelmente inteligentes. E eu acredito que o problema seja a forma como o desenterramos. E alucinação [limpa a garganta] para mim é intrínseca à otimização da preferência humana. É como se houvesse uma assimetria no modelo de recompensa, algo parecido com o que acontece nas GANs. Ah, eu realmente
+
+não deveria entender isso. É um assunto muito avançado . Mas existe uma assimetria no modelo de recompensa, como a que as GANs possuem, que permite...
+
+encorajar os modelos a abandonar modos e a ter confiança, porque é muito fácil perceber quando o modelo não está confiante e punir isso do ponto de vista do modelo de recompensa. É muito complicado, mas, eh, ficarei feliz em conversar depois, se você quiser tocar um pouco. Legal. Ops. Hum, eu tenho outros slides de outras apresentações também, nos quais eu poderia falar mais sobre isso. Só me resta
+
+um minuto. Com certeza! Repita .
+
+Definitivamente não é RLVR. Portanto, é algo novo. Para cada otimização específica, vou usar uma apresentação antiga que tenho, porque acho isso extremamente importante. Bem, para mim, a dura lição de Sutton é que os algoritmos importam mais do que o poder computacional. Isso é verdade nos jogos, mas não na realidade. Na verdade, acredito
+
+que a essência de tudo é que os dados importam mais do que o poder computacional, e que executar a tarefa certa importa muito mais do que os dados. E basicamente cada ramo do LLM pós-formação, se é que podemos chamar assim, tem seu próprio objetivo principal, sua própria meta de otimização. Assim, o RLHF otimiza a preferência humana. O RLVR otimiza taxas de erro logarítmico de correção pura, mas estamos fazendo uma terceira coisa que é otimizada para tomada de decisão calibrada e, basicamente, canalizando a inteligência de modelos pré-treinados para que sejam realmente úteis para o software, o que eu acho que é bem diferente.
+
+Hum, você poderia repetir?
+
+Eles estão perguntando se a recompensa é injetada ao longo de todo o processo. Eu diria que até mesmo o formato da API é diferente, porque o formato da API para RLHF é diferente do RLVR, que por sua vez é diferente do que estamos fazendo. Então, estamos pensando nisso do zero, assim como ninguém havia pensado em seguir instruções antes de criarmos essa possibilidade. Geralmente, quando há uma grande ramificação em novas maneiras de pós-treinamento, parece algo totalmente estranho, mas depois, em retrospectiva, torna-se super óbvio. Legal.
+
+Acho que já passei do horário porque esse negócio vermelho está apitando, mas por favor, me procure depois. Adoro perguntas. Adoro a interatividade. E me siga no Twitter para conteúdo picante. Com certeza!
+
+Ah, sim, é por aqui. Cético total. É... é a minha cara
+
+. Legal. Com certeza! Obrigado.
+
+[música]

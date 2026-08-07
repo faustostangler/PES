@@ -1,0 +1,135 @@
+---
+video_title: "When Agents Meet Physical Data: The Other Physics of Agent Harnesses - Dmitry Petrov, DataChain"
+video_id: bUJgirn4_yc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=bUJgirn4_yc
+video_date: 2026-07-20T06:25:07+00:00
+video_description: |
+  Ask an agent to find every night-time pedestrian frame across terabytes of dashcam video in S3. The first pass can cost thousands of dollars and run for hours or days. Once you’ve paid that cost, the agent’s favorite move - loop, inspect, re-derive - becomes the worst thing it can do.
+  
+  Most agent intuition comes from a different physics: coding and business automation, where recompute is cheap, verification means re-running code, and state fits in context. That physics is real, useful, and everywhere. But like mechanics at cosmic or particle scale, those intuitions stop working when scale changes.
+  
+  Large-scale data work is where the cracks start showing. OpenAI’s in-house data agent needed layers of context engineering to operate over 600 petabytes in a structured warehouse - and warehouses are still the forgiving version, with schemas, indexes, query engines, and cheaper ways to check the work.
+  
+  Now move to the data behind physical AI: video, logs, and sensor data from robots, vehicles, labs, and factories. Petabytes will never fit in a context window. "Just verify it" may mean another expensive inference job. A follow-up question should recall what the system already paid to discover, not trigger another perception pass.
+  
+  This talk is a tour of that other physics: what breaks, what inverts, and what replaces today’s harness assumptions when recompute is the enemy. Materialization becomes the default, recall becomes first-class, and the dataset - not the context window - becomes the unit of state. I’ll demonstrate the pattern live with Claude Code over raw data in S3, where follow-ups return in seconds and cents instead of reprocessing everything, with measured gaps on the order of millions between recompute and recall.
+  
+  Same word: harness. Different physics.
+  
+  Speakers:
+  - Dmitry Petrov (DataChain): Dmitry Petrov is the co-founder and CEO of DataChain, where he builds open-source infrastructure for AI agents to work with unstructured and physical-world data, and previously created DVC (Data Version Control).
+    X/Twitter: https://x.com/FullStackML
+    GitHub: https://github.com/dmpetrov
+---
+Como a inteligência artificial poderia trabalhar com dados físicos? Gravações de vídeo, dados de sensores, telemetria de robôs e, às vezes, tudo isso combinado em um único projeto com múltiplos modelos . Se você tentar isso, provavelmente verá o quão desastroso será. E hoje vamos discutir as razões e todas as leis da física por trás dos problemas e como resolvê-los. Este ano, dois laboratórios de vanguarda publicaram resultados muito interessantes e surpreendentes, mostrando que os agentes em geral não são bons com dados. A
+
+Anthropic publicou que a precisão dos projetos de dados em seus agentes é de apenas 21% até que se adicionem ferramentas de dados específicas e se forneça contexto. A OpenAI publicou várias camadas de contexto, seis camadas no total, para que o agente de dados pudesse funcionar. E todos esses são dados não estruturados que residem em verdadeiros "casas de máquinas" com tabelas, mecanismos de execução e tudo mais, como se fossem um luxo. Infelizmente, na minha vida, não tenho esse luxo, pois vivo em um lado muito extremo do universo dos dados: dados desorganizados e não estruturados. Bem, eu trabalho com dados há cerca de 10 anos. Eu
+
+criei um projeto de controle de versão de dados, o Git para dados, e agora trabalho na cadeia de dados. Para que um agente funcione com dados não estruturados, com dados físicos, precisamos construir não apenas o cérebro que já temos, certo? É um mestrado em Direito (LLM). Mas precisamos criar um sistema de coleta de dados para que os agentes compreendam este mundo físico. Deveria visualizar os dados corretamente. Ele deveria ser capaz de correr,
+
+dando-lhe uma espécie de apoio nas pernas. Deveria ser capaz de acessar dados, verificar resultados, executar testes e também armazenar conjuntos de dados cruciais e resultados importantes. Portanto, essas informações poderão ser reutilizadas em projetos futuros. E primeiro, vamos começar por como você vê os dados. O que é preciso para entender todos esses arquivos binários complexos que você tem em seus armazenamentos de objetos?
+
+Na realidade, geralmente são apenas alguns arquivos, às vezes milhares de arquivos, certo? Não parece ser grande coisa, né? Mas o que geralmente acontece é que esses arquivos são muito complexos por dentro. É isso que torna os dados multimodais não estruturados complicados. E a partir de 2000, porque as gravações de vídeo podem conter clipes. Os vídeos podem ter molduras.
+
+Objetos de enquadramento. Objetos confiantes, tipo, classe, rótulo. Hum, existe uma conexão entre essas peças . É como se causasse uma explosão. Parece uma estrela de nêutrons.
+
+Parece pequeno à primeira vista, não é? Tem o tamanho de uma cidade. Mas a massa desse objeto é enorme. É mais do que a massa do nosso Sol. E quanto a 2000 objetos, 2000 arquivos de vídeo poderiam facilmente gerar milhões de objetos dentro dos vídeos.
+
+E como as pessoas geralmente lidam com esses problemas? Geralmente, o processo envolve duas etapas principais. Primeiro passo: vamos colocar essas metainformações em arquivos JSON e armazená-los no S3 junto com as imagens, certo? E acabam com milhões de arquivos JSON. Latência absurda, falta de eficiência e inconsistência.
+
+E a próxima ideia é: por que não usamos um banco de dados? Brilhante. E as equipes mais avançadas fazem exatamente isso. Vamos colocar um banco de dados centralizado quando todos os metadados estiverem lá. Ótimo.
+
+Mas dessa forma você acaba com dois sistemas, duas linguagens de programação e toda a confusão em torno de duas pilhas de tecnologias diferentes. E isso torna tudo inútil para a maioria dos pesquisadores, porque eles não querem lidar com essa complexidade. Descobrimos que a maneira mais fácil para pesquisadores e desenvolvedores lidarem com o esquema é usando o Pydantic. Então você usa a mesma linguagem para os dados, para os esquemas e também para o código. Não há nenhuma ilha de SQL em sua base de código.
+
+Assim, de certa forma, você faz uma transição do mundo caótico dos dados estruturados para a estrutura. A única coisa que você precisa fazer é usar tradutores para SQL a partir do Python, e eu vou te mostrar como funciona. Mas é assim que funciona quando você consegue criar esquemas e trabalhar com eles de forma eficiente. Gostaria de enfatizar que o problema que estamos resolvendo aqui é muito específico para dados estruturados, dados físicos. Isso não existe no mundo dos dados estruturados , certo? Por exemplo, naqueles
+
+posts de blog da OpenAI e da Anthropic, porque eles trabalham com a lógica de negócios estruturada, certo? Trabalhamos com dados físicos, binários e afins. Vamos ver como funciona. Vou mostrar a vocês nosso projeto de código aberto, o Data Chain, com sua ferramenta para conectar agentes de codificação. Então, primeiro você precisa instalar a ferramenta, certo? Usando pip install. Então, nós
+
+já fizemos isso. Em seguida, é preciso adquirir habilidade. Então, você escolhe a ferramenta de programação que vai usar. Usaremos código na nuvem. Mas, nós damos suporte a mais três agentes de codificação diferentes.
+
+E então, você executa seus agentes de codificação favoritos. Ah, claro, estamos ignorando as permissões. Ah, só para agilizar o processo, né? Então, você define o enunciado e simplesmente resolve seus problemas. Então, neste caso, vamos analisar os movimentos captados por câmeras de vídeo.
+
+Ah, esse é um conjunto de dados abertos proveniente de gravações de câmeras veiculares. Vídeo é um caso de uso muito comum para projetos de IA física. A maioria dos projetos inclui gravações de vídeo como uma das modalidades. Às vezes, as principais modalidades. E esse é um dos problemas mais interessantes e desafiadores de se resolver neste mundo da IA ​​física, eu diria. Vamos usar essa modalidade como
+
+exemplo. Esta ferramenta de coleta de dados faz algumas perguntas aos usuários para entender melhor o escopo. Então, neste caso, precisamos escolher o modelo. Então, optou-se por usar um modelo YOLO e precisamos escolher o tamanho. Então, vamos usar o menor deles.
+
+Precisamos escolher a velocidade. Bem , existem algumas maneiras de rastrear a velocidade. Mas vamos usar a mais simples. Então, a segunda opção adiciona mais recursos e exigirá mais tempo de processamento. E, granularidade, ou seja, por quadro de detecção, por faixa.
+
+Vamos fazer por quadro neste caso. E o próprio conjunto de dados. Então, estamos pedindo os dados de janeiro, certo? 91 clipes, mas também pergunta se precisamos ampliar o escopo e analisar mais imagens. Então, vamos ficar por aqui.
+
+Então, levamos 24 minutos para analisar esses 90 vídeos. E agora que temos todas as informações, podemos fazer perguntas sobre isso. Por exemplo, quantos vídeos "um" têm pessoas neles?
+
+Essa informação fica armazenada no banco de dados, certo? Como discutimos, ele pode consultar esse banco de dados muito rapidamente e retornar o resultado, certo? Então, tudo bem. 92, opa , 82 de 91 vídeos têm pessoas detectadas, certo? E você não precisa ficar baixando, analisando e interpretando todos os arquivos JSON, certo?
+
+As informações estão aqui no banco de dados local. Pode responder à pergunta de forma rápida e fácil. Podemos até ver o código-fonte.
+
+[bufa] Ok, só esse código Python simples e bacana para obter dados, obter dados e obter conjunto de dados, certo? A análise aplica alguns filtros simples quando o rótulo é igual a pessoa. Conte o número, certo? E então veja o número total. E funciona como se estivesse executando em um banco de dados, então é super rápido.
+
+Então, qual é o tamanho do registro que temos aqui? Então, esse é aproximadamente o tamanho da nossa estrela de nêutrons, certo? Não era para ser algo grande, porque analisamos apenas uns 90 vídeos e 90 vídeos geraram 100.000 registros, certo? Então, é assim que a explosão acontece.
+
+Se você analisar milhares de vídeos, certo? Chega a uma escala de milhões de milhões e, se você analisar os objetos mais a fundo, pode facilmente ser multiplicado por 10, 20 ou até centenas.
+
+Vamos dar uma olhada no código-fonte. Este código foi gerado pelos agentes. Agentes de energia usando o chicote de fios. A parte mágica aqui é o modelo de dados. Então, essa classe de dados foi gerada com base em nossos requisitos e é apenas um modelo de dados dentic padrão.
+
+Ah, com o arquivo. Ah, sim, o arquivo de vídeo. O ID do quadro, o carimbo de data/hora, o ID da classe, é assim que você sabe se é um carro particular ou algum objeto, a pontuação de confiança, a caixa delimitadora, e há mais alguns itens aqui. E o objeto está aninhado. Se você olhar para a caixa delimitadora, certo? Existem
+
+várias colunas, mas a seção de arquivos é mais interessante. Um. O arquivo contém o caminho e os checksums, como a versão do arquivo, a tag E e o tamanho do arquivo. Então, tudo o que seu provedor de armazenamento em nuvem oferece. E essa informação se torna apenas uma linha em um banco de dados, em vez de um arquivo JSON no S3. É por isso que
+
+você pode facilmente responder a todas as perguntas. Ah, todas aquelas perguntas analíticas, né? Assim como antes, perguntamos quantas pessoas estavam presentes. E é apenas uma questão de um código Python simples que é executado no banco de dados para retornar resultados muito rapidamente. É assim que você consegue dar sentido a todos os dados desorganizados que tem no seu armazenamento, certo? Em um arquivo,
+
+você analisa isso usando ferramentas analíticas comuns e dois truques. Com os esquemas, você pode ver o que está dentro do objeto. É possível perceber a dimensão do problema. Mas, como realizar o trabalho pesado quando lidamos com terabytes desses dados desorganizados? Você sabe que a infraestrutura de dados precisa de um mecanismo de execução para lidar com dados físicos.
+
+Tem que funcionar de forma eficiente. Às vezes, vendê-los consome muitos recursos e fichas . E se houver alguma falha no meio do processo, você deverá conseguir se recuperar e retomar todos os dados que já foram processados. Portanto, você não quer desperdiçar seus recursos. No mundo dos dados estruturados ou sequenciais, o mecanismo de execução é o seu data warehouse, certo? Isso é óbvio e fácil.
+
+Em um mundo de dados não estruturados, você precisa reinventar a roda. E em algumas equipes, eles usam diferentes tipos de ferramentas de orquestração ou computação distribuída em Ray ou Spark. Gosto do modelo do Dask, que conecta o computador aos dados estruturados. No entanto, dados não estruturados exigem uma abordagem própria quando se conecta o Python e os esquemas com o mecanismo de execução. Simplificando, você pode conectar essas funções Python, esquemas Pydantic, parâmetros de entrada e saída da função, bem como o data warehouse com todas as metainformações e arquivos armazenados, tudo em uma experiência holística. Bem, dessa
+
+forma será mais simples para os desenvolvedores programarem e poderá ser mais fácil para o mecanismo distribuir tarefas para diferentes máquinas ou threads com base nos arquivos que processam e no esquema que produzem. E assim por diante. É algo parecido com uma abordagem Dask, se preferir, mas para o mundo dos dados não estruturados. Para tornar a execução eficiente, você precisa executar essa função de processamento e análise de dados de forma muito eficiente, certo? De forma paralela ou distribuída.
+
+E nós usamos muito modelos de dados e modelos de armazenamento de dados. Então, ele meio que conecta o arquivo, que é um arquivo no seu bucket S3, ao resultado, que é um conjunto de objetos de detecção que vai para o data warehouse, certo? Portanto, essa função conecta o armazenamento e o data warehouse de uma maneira típica do Python. Bem, esse é um código Python bem típico. Não há nenhuma suposição adicional sobre esse código, certo? Nós nem sequer usamos anotações
+
+para a função. É apenas uma função com tipos específicos. Portanto, os tipos são importantes. Ah, e todos esses são PyDantic. E o resultado é que você simplesmente gera os objetos e o mecanismo conecta todos os depósitos e armazéns, certo? É assim que se
+
+define a camada de paralelização. Você pode dizer, tipo, " Eu só preciso executar isso em 40 máquinas, certo?" É assim que deveria ser fácil, pois essa é a sua chance de funcionar como um computador distribuído, certo? Basta especificar quantos recursos você precisa, e pronto. E a função em si, certo? Então, nós
+
+simplesmente o usamos, executando-o através de um gerador, ou pode ser como um mapeador com uma função um-para-um, uma única função. Bem, um arquivo retorna um objeto para o banco de dados ou gerador, enquanto uma função retorna vários objetos para o banco de dados. E é salvo como um conjunto de dados semelhante , certo? Uh, uh, tabela sob o capô, uh, no seu uh, banco de dados. O
+
+processamento desses arquivos pesados ​​geralmente leva muito tempo. E às vezes é muito caro porque você usa o LLM para entender o que há dentro dos seus arquivos binários. E a última coisa que você quer é perder esse poder computacional. É muito triste quando você processa centenas de milhares de arquivos e tudo falha no meio do processo por causa de bugs ou problemas com chamadas de API, e você quer executar tudo do zero, não é? Você está perdendo metade desse poder computacional e, às vezes, fazendo isso repetidamente.
+
+Atualizações incrementais e pontos de verificação de dados são imprescindíveis no mundo atual dos dados. Se falhar, você corrige o erro, executa o programa novamente e recupera todos os resultados já obtidos. Se você tiver mais arquivos no bucket, execute o script novamente e ele obterá apenas os novos arquivos e atualizará os dados com base apenas no novo computador, sem recalcular as outras informações. Executar testes é uma parte fundamental da programação de agentes. Eles fazem isso o tempo todo para controle de qualidade, para raciocinar, para entender melhor o que existe em seu universo. É como se fossem as
+
+mãos dos seus agentes, as mãos do seu... arnês. Em dados, executar testes é um processo extremamente lento .
+
+E como fazer isso? Isso ocorre porque a qualidade e a precisão das perguntas são ainda mais importantes em projetos de dados do que em projetos de software. Como bem disse Anthropic, em projetos de software existem muitas maneiras de resolver um problema específico. Em dados, geralmente existe apenas uma maneira e apenas uma resposta correta atual para resolver o problema. Como responder perguntas muito rapidamente sobre sua grande quantidade de dados binários.
+
+E, antes de mais nada, você deveria parar de executar tudo isso como scripts Python complexos sobre dados brutos. Essa é a maneira mais cara e mais lenta de fazer isso. Em vez disso, você precisa organizar uma camada de metadados sobre conjuntos de dados ou tabelas em torno desses dados brutos, o que poderia responder a essas perguntas muito rapidamente. E isso é algo que a indústria de dados sabe há pelo menos uma dúzia de anos. É uma modelagem de dados multidimensional, com um esquema em estrela, uma abordagem de tabela única e todas essas teorias sofisticadas em torno disso. E precisamos usar isso
+
+mais para tornar nosso processamento de metadados não estruturados mais eficiente. E nós de fato incorporamos essas técnicas dentro dos agentes. E quando você faz uma pergunta, em vez de respondê-la imediatamente, o agente se pergunta: "Tenho os conjuntos de dados e metadados adequados para responder a esta pergunta rapidamente em uma única consulta semelhante a SQL?" E, caso contrário, tenta construir essa camada. Ela tenta garantir que essa camada seja geral o suficiente para responder não à sua pergunta específica, mas a um conjunto de perguntas relacionadas àquela que você fez.
+
+E é aí que você constrói essas camadas e mais camadas de informação que podem ser reutilizadas por você e seus colegas de equipe. Agora, você dedicou muito tempo e muitos recursos para calcular essas partes úteis dos dados, e pode usá-las para responder a algumas perguntas interessantes de forma eficiente, sem precisar executar cálculos muito caros. E sabe o que mais? As pessoas estão fazendo o mesmo trabalho repetidamente . Você está pagando o dobro, o triplo, o quádruplo do preço para resolver o mesmo problema.
+
+Então, se você descobrir essa estrela de nêutrons ou buraco negro, é melhor compartilhar essa informação com as pessoas para que elas não desperdicem seus recursos e seu tempo fazendo essas coisas.
+
+E o agente de codificação, assim como o agente de dados, faz muito disso, manipulando a memória. Seu agente de codificação, como Copilot, Codex ou PI, sabe muito sobre seu código-fonte, incluindo todos os índices e coisas do tipo. Na infraestrutura de dados, você precisa construir e fornecer esse contexto aos seus agentes. E não se trata apenas do fato de que existe um conjunto de dados; você precisa fornecer muito mais informações junto com ele. Bem, esse conjunto de dados foi criado como uma espécie de contexto da sessão.
+
+Descrição do conjunto de dados, geralmente enriquecido por LLMs, e código-fonte. Provavelmente, a parte mais importante aqui é o código-fonte. Essa é uma das conclusões da postagem do blog sobre agentes de dados da OpenAI . E essa informação precisa ser exposta, exposta de uma forma que se assemelhe a uma base de conhecimento. De alguma forma que possa ser facilmente utilizada por agentes e por pessoas. Então
+
+você não está desperdiçando esse tempo repetidamente. E a base de conhecimento está organizada de uma forma muito tradicional, eu diria. Hum, apenas um conjunto de arquivos MD, certo? Então, veja, é assim que fica no meu diretório, mas quando eu tiver mais conjuntos de dados... Então, o conjunto de dados que
+
+criamos, esse mesmo. Ah, este é o arquivo MD. Então, qual é a descrição do conjunto de dados, certo? O contexto da sessão. Então, por que esse conjunto de dados foi criado com base na discussão? Dependência do armazenamento,
+
+do diretório que indicamos no início. Uma prévia dos dados. Informação muito útil para se ter uma noção dos dados, desse esquema. Hum, algumas estatísticas sobre os dados. E o código-fonte.
+
+Como discutimos, a parte mais crucial para entender o que são esses dados é... E todas essas peças juntas, certo? Os dados de origem, certo? No bucket, o
+
+código-fonte está na base de conhecimento e o resultado no data warehouse, criando assim uma linhagem de dados, certo? Portanto, tudo está interligado. Os agentes sabem de tudo. Se você compartilhar o grafo de conhecimento, todos os seus colegas de equipe já saberão sobre esse conjunto de dados e sobre os recursos que você utilizou para processá-lo. Então, da próxima vez que alguém fizer uma pergunta sobre este diretório, o recálculo não ocorrerá. Os
+
+agentes usarão o seu resultado, que é baseado nos recursos que você já gastou, certo? Essa é a mágica dos recursos de dados, quando o agente sabe tudo sobre seus dados. Vamos juntar todas as peças em uma única pilha. Na base da pilha, existe uma enorme massa de seus dados físicos não estruturados em armazenamentos de objetos. Ninguém consegue entender esses dados, e você precisa executar chamadas de computação LM dispendiosas para extrair algumas metainformações por meio do mecanismo de computação e organizar essas metainformações em conjuntos de dados, em fatias de conjuntos de dados em alguns GB de conjunto de dados. A
+
+base de conhecimento é uma forma de compartilhar essas informações. Este é um mundo onde seus agentes de codificação favoritos, como Copilot, Codex e Cloud Code, não operam de forma eficiente. A intuição deles os leva na direção errada porque as leis da física mudam. E para conseguir isso, você não usa modelos mais robustos. Todos usam fronteiras.
+
+Em vez disso, você está construindo uma estrutura de dados. Aproveitamento de dados que compreendem as leis desses dados físicos. E essa é a maneira de tornar seu agente de codificação favorito eficiente na resolução desses problemas.
+
+Implementamos alguns desses princípios no projeto Data Chain, que é de código aberto. Então, por favor, dê uma olhada e invista um pouco no seu agente. Obrigado.

@@ -1,0 +1,122 @@
+---
+video_title: "Your Moat Is Your Data Model — Mike Phipps, Gates Foundation"
+video_id: jt1Pbr_n6oU
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=jt1Pbr_n6oU
+video_date: 2026-07-22T21:30:31+00:00
+video_description: |
+  Models, frontends, and agent frameworks all commoditize. Mike Phipps argues the durable moat is the one thing that does not: your data model, and the tacit knowledge of how your questions are supposed to be answered. At the Gates Foundation he and his team modeled 25 years of grantmaking, over 7 billion dollars a year across 2,000 grants and 4,000 people, into a single Neo4j knowledge graph served to Claude through one MCP server.
+  
+  The graph is built for agents, not dashboards: hierarchies become traversable paths, and unstructured documents are chunked, tagged, and mapped to structured entities at ingestion. An agent turns a messy cross system question into one graph query and gets an answer that respects how the organization actually reports. The talk walks the architecture and the retrieval evals that keep it honest, and why a small team's effort compounds in the data model, not the layers above it.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/mike-phipps-79339a38
+  
+  Timestamps:
+  0:00 - The moat question: what stays defensible as AI commoditizes
+  2:32 - SIP across the 4,000 person Gates Foundation
+  3:46 - The scale: 25 years, $7B a year, 2,000 grants
+  5:15 - Structuring operational data for agentic retrieval
+  6:18 - Tacit knowledge as the moat: engaging data owners
+  7:09 - The curation pipeline and governance
+  8:30 - Modeling hierarchies: funding and management lenses
+  12:32 - People, org charts, and stitching siloed systems
+  13:49 - Combining unstructured documents with structured data
+  15:34 - Serving the graph to Claude through MCP
+  17:31 - Retrieval evals and the feedback loop
+---
+[música]
+
+Sim. Então, minha palestra de hoje é sobre o tema " Seus modelos de dados remotos". Temos uma plataforma corporativa que implementamos aqui no mês passado. Então, vou entrar em detalhes sobre isso. Vou compartilhar com vocês algumas lições práticas e explicar por que tomamos as decisões que tomamos, além de mostrar como vocês podem visualizar seus processos dentro de uma estrutura semelhante.
+
+Primeiro, uma breve introdução. Então, isso nos leva ao título da palestra e ao enquadramento, sabe? O que eu espero que vocês entendam disso? Com ​​a IA avançando muito rápido na fronteira, o que é defensável? Você pode se mover, pode construir coisas muito rapidamente com código congestionado, mas quando você coloca as coisas em produção, existem restrições. Você precisa
+
+descobrir quanta parte da sua pilha implantada você realmente quer controlar. Há monitoramento, manutenção, pessoas criando dependências da sua pilha que você precisa estar preparado para gerenciar. Qual é o nível de interesse dos usuários em acesso descentralizado? Isso nos leva ao que construímos, mas você sabe qual é o ponto de acesso para os usuários? Sabe, é mais um aplicativo de bate-papo?
+
+Tem garras? É um chat GPT? Hum, será que é outra coisa? Qual é o diferencial do seu produto em relação aos outros produtos da SAS? Então, nossa equipe, com esse contexto em mente, refletiu sobre nossas habilidades e nossa vantagem competitiva nesse ambiente. E é isso que eu
+
+realmente espero que vocês levem desta apresentação: imaginem-se nessa situação. Nosso diferencial foi a compreensão dos nossos processos internos, o conhecimento tácito necessário para executar uma IA com sucesso. E isso é verdade, não importa o quão boa a IA se torne, o quão bons sejam os modelos e os novos lançamentos que diferentes empresas façam, como o Mythos ou um novo aplicativo do Claude. Sim, não estou preocupado porque a parte que construímos é a parte defensável, que é durável. Então, estes são os processos e o conhecimento tácito que modelamos no que chamamos de plataforma de inteligência estratégica ou SIP. E foi implementado aqui
+
+no mês passado em produção para uso corporativo em toda a Fundação Gates. Então, cerca de 4.000 pessoas. Primeiramente, sei que esta é uma palestra de engenharia, mas o escopo desta apresentação abrange modelagem de dados, operações internas e processos. Portanto, gostaria de dar um breve contexto sobre o trabalho da Fundação Gates, pois é isso que vamos modelar.
+
+Como vocês provavelmente já sabem, a Fundação Gates tem um alcance muito amplo e realiza um trabalho muito ambicioso há mais de 25 anos. E existem todos os tipos de iniciativas amplas que estamos realizando, seja para a mortalidade infantil, seja para nutrição, agricultura, educação. E, de forma geral, essas são as diferentes categorias em que essas diferentes iniciativas se encaixam. Criar incentivos de mercado, estimular a inovação e promover a colaboração entre os setores público e privado. E então, o quarto elemento aqui meio que se relaciona com a lente que estamos construindo. Sabe,
+
+dados de alta qualidade, buscando extrair insights baseados em dados a partir dos investimentos reais, das subvenções que concedemos. E ao longo de 25 anos, existe uma enorme estrutura. Há uma enorme quantidade de dados que foram desenvolvidos. E tentar extrair essas informações em grande escala é difícil. E é isso que estamos tentando resolver.
+
+Este slide aqui é um resumo de alguns dos diferentes trabalhos realizados em 2023 pela fundação. Isso lhe dá uma ideia. Coloquei isso aqui apenas para mostrar um pouco da estrutura que temos e na qual estamos trabalhando. Então você concedeu mais de 2.000 bolsas em um ano. Muitos
+
+desses países têm mais de 5 milhões de habitantes, e muitos deles mais de 100, sendo que esses auxílios são direcionados a ex-alunos. Portanto, a fundação possui 4.000 funcionários diferentes . Sabe, existem muitas estratégias diferentes dentro da fundação nos EUA, abrangendo quase todos os estados, com uma distribuição anual total superior a 7 bilhões de dólares. Isso dá uma ideia da estrutura com a qual estamos trabalhando.
+
+E agora, finalmente, quando eu mostrar o modelo de dados, tudo fará mais sentido. Mas temos diferentes divisões que repassam esse financiamento . Assim, isso elimina algumas dessas divisões. Assim, você poderá ver as diferentes prioridades e tudo fará mais sentido daqui a pouco. Mas desenvolvimento global, saúde global, igualdade de gênero, USP são apenas alguns exemplos das diferentes divisões.
+
+OK. Então, a parte divertida agora, espero, é a plataforma de inteligência estratégica. Em resumo, trata-se de estruturar dados operacionais para recuperação por agentes. Estamos construindo um grafo de conhecimento com a ideia de agente consumidor, e aqui está uma visão completa de como isso funciona. Temos diferentes sistemas de registro, estruturados e não estruturados, que tradicionalmente eram isolados. Portanto,
+
+parte do trabalho da nossa equipe tem sido criar o que é essencialmente um data lakehouse, reunindo tudo em um só lugar. Estes são os nossos dados internos, que abrangem toda a empresa. São também diferentes dados programáticos que são resultados de diferentes investimentos. Uma vez que esteja lá, é fácil para nós consumi-lo. Então, temos uma camada de curadoria de dados que realiza diferentes processamentos e, finalmente, o SIP aqui no final, com o fluxo de trabalho de agentes de chat ético, a experiência do usuário ( UX), ou seja, como os usuários consomem nossa plataforma. É uma camada de
+
+grafo semântico entre sistemas que os agentes podem acessar. Ok, então, vou tentar explicar isso rapidamente para economizar tempo, mas isso é crucial quando se lida com sistemas de registro complexos; o engajamento é fundamental. Isto é algo que temos constatado repetidamente aqui. Precisamos envolver os proprietários dos dados para entender, sabe, esse conhecimento tácito que estamos tentando modelar. Qual o significado completo dos diferentes campos, a estrutura do conjunto de dados, como podemos conectar as coisas ? Como podemos entender as
+
+limitações, a sistemática dos dados, as salvaguardas, os mecanismos de segurança e as convenções de relatório? Sabe, não basta apenas responder a uma pergunta de uma determinada maneira. Você tem que responder da mesma forma que foi respondida no passado. E assim, voltamos ao fosso aqui. Este é o conhecimento tácito de compreensão processual que a IA precisa, e sim, é a parte que nos pertence, que é nossa, e é isso que estamos modelando aqui.
+
+OK. Então, voltando rapidamente a este ponto, aqui está um resumo das diferentes considerações de curadoria de dados que estamos levando em conta neste processo. Então você tem [suspiros] para diferentes conjuntos de dados, sejam eles estruturados ou não estruturados, existem diferentes pré-processamentos, filtragem, duplicação, há uma ordem para diferentes documentos, pode haver inconsistências entre os documentos, que precisam ser tratadas antecipadamente, há extração, então extração de campos estruturados, segmentação semântica para documentos não estruturados, se você tiver figuras, precisa convertê-las em texto de alguma forma para que possa fazer a recuperação, várias formas de marcação que podem formar conexões em sua estrutura de grafo, metadados extras que você cria durante esse pipeline. Então isso se transforma em propriedades diferentes no seu gráfico. E então, o terceiro item aqui, governança. Este é um ponto importante que
+
+acredito que a IA torna mais precisos aspectos que antes eram inacessíveis. Agora, com a IA, eles são muito mais acessíveis . Portanto, você precisa levar isso em consideração. Sua esfera de risco é maior. Portanto, informações como dados pessoais precisam ser mascaradas. Você
+
+precisa reconsiderar a classificação de diferentes dados sensíveis, garantindo que cada usuário que acessa seu sistema tenha as permissões corretas. Ok, então essa é a visão geral. Este é o próprio modelo de dados. Agora, é esta parte que vou explicar aqui. Tem uma animação bem legal aqui, mas espero que a principal mensagem seja que você consegue imaginar a história da sua própria organização dentro do que eu mostrei aqui. Vou entrar em detalhes
+
+um pouco técnicos, mas é apenas para, com sorte, dar a vocês uma ideia de como resolvemos nosso problema e, assim, vocês possam usar isso como modelo para o de vocês também. Um gráfico é uma representação prática e muito flexível de um modelo físico. [bufa] Ok. Então, vou mostrar rapidamente alguns deles aqui, mas só para começar, temos mais de 80 equipes de estratégia diferentes. Essas equipes passam por avaliações anuais. É
+
+assim que se elabora o orçamento para cada ano . E então, modelamos isso aqui no gráfico. As reuniões são os pontos de entrada para documentos não estruturados neste sistema, mas também estabelecem uma conexão estruturada com seus outros sistemas de registro. O que eu mostro aqui é um modelo de dados conceitual. Então é plano. Portanto, você não está vendo a
+
+instanciação. O gráfico em si tem muitos nós diferentes. A cardinalidade é de um para n. Então o gráfico em si é ainda mais complicado. Mas, quanto ao modelo de dados em si, deixe-me mostrar a primeira hierarquia diferente. Portanto, existem múltiplas hierarquias
+
+dentro do que modelamos, e há diferentes tipos de hierarquias que podem existir. Neste caso, espero que você consiga ver tudo isso muito bem, mas é um DAG aditivo. Portanto, todos os cinco níveis dessa hierarquia, do topo à base, são relevantes. Portanto, é preciso considerar tudo em conjunto. Assim, existem diferentes padrões de rollup que você pode usar para trabalhar com esse tipo de padrão. No nosso
+
+caso, temos um atalho interno que conecta o caminho de financiamento. Os fundos para financiamento são onde temos o orçamento para cada uma dessas diferentes equipes de financiamento, que é o valor armazenado.
+
+Então, temos financiamento, o que significa que as equipes internas de financiamento têm portfólios. Esses portfólios são então direcionados para diferentes investimentos. Diversas equipes de financiamento financiam um investimento individual. Portanto, trata-se de uma relação de ponta a ponta. Os investimentos são o nosso produto. É nosso, é nosso, nosso negócio.
+
+Mas internamente temos fundos que priorizam diferentes tipos de investimentos. É isso que está sendo mostrado aqui. Assim, você pode detalhar isso até o nível da transação ou pode ter diferentes agregações anuais que você mapeia aqui também. [bufa] E depois, no ramo dos investimentos, há muitas coisas interessantes que você pode fazer. É possível mapear todas as diferentes organizações e ter diferentes tipos de organizações, e na verdade ainda há muito espaço em branco que queremos explorar.
+
+Temos todos esses diferentes indicadores observáveis que as pessoas geraram nos investimentos que queremos modelar aqui. Então, publicar relatórios, produtos, sabe, tudo isso é estruturado e se conecta ao panorama organizacional como um todo . [bufa] Então, eu mencionei que existem diferentes hierarquias. Este é o segundo tipo de hierarquia. Nessa hierarquia, cada nível importa por si só. Portanto,
+
+não se trata necessariamente de um DAG (grafo acíclico direcionado). Assim, você pode realizar tarefas como pré-calcular alguns desses atalhos diferentes. Assim, a hierarquia, de cima para baixo, contém conexões. Isso demonstra o lado da gestão de investimentos da organização. E existem conceitos de gestão direta de equipes . Assim, uma equipe, por exemplo, no
+
+nível dois, gerencia o investimento. Mas existe também o conceito de gestão indireta. Portanto, as crianças abaixo do nível de equipe dois ainda devem ser atribuídas ao nível de equipe dois. Portanto, existem diferentes coisas que você pode fazer, diferentes jogos que você pode jogar com esses tipos de rollups para pré-computar. Não sei se você consegue ver isso, mas o rollup gerencia m, que é uma aresta derivada que criamos depois de criar a aresta " contains" e gerenciar a aresta.
+
+Então, mostrei duas lentes diferentes para um único investimento. Há a perspectiva do financiamento, a perspectiva da gestão e você pode modelar ambas aqui. Dentro do gráfico, existe uma terceira hierarquia: as pessoas. Você tem organizações, organogramas e pessoas que são donas, pessoas que participam de reuniões e pessoas que são diretoras. Eles desempenham diversos tipos de funções diferentes. Você pode modelar
+
+isso aqui. Você pode ter informações sobre a quem eles se reportam, qual é a estrutura da equipe deles. E todos esses são dados estruturados que se conectam entre sistemas. Tradicionalmente, existiam apenas em um sistema de RH, mas são relevantes para o contexto da história completa.
+
+E isso leva a essa conexão. Assim, tínhamos diferentes sistemas de origem que estavam isolados. Para que o agente compreenda corretamente a estrutura como um todo, é preciso encontrar essas entidades comuns que você conecta. E é isso que está sendo mostrado aqui. São sistemas de origem diferentes, mas são entidades de quantidade relacionadas que existem em ambos os sistemas . E agora o agente pode percorrer este espaço
+
+e compreender esta estrutura organizacional orgânica bastante complexa .
+
+Uma última parte que ainda não mostrei é a parte do documento. Então, e ainda há muito mais que podemos fazer nesta parte. Até agora, temos utilizado apenas uma fonte de documentos diferente , mas é aqui que você combina dados não estruturados e estruturados. E aqui entra parte da mágica que você pode modelar com o Neo4j. Mas temos reuniões que envolvem documentos. Os documentos possuem diferentes
+
+seções semânticas que você pode modelar, ou blocos que você pode dividir em partes. Você pode inserir índices de texto completo nesses locais para auxiliar nas diferentes abordagens de busca e recuperação para o agente. Também pode haver simplesmente uma recuperação de grafo pura que o agente realiza. E então todas essas coisas se conectam à sua estrutura organizacional principal. Então, no geral, o modelo de dados se apresenta desta forma. Então, eu dei um zoom aqui
+
+agora. É possível observar a interconexão completa desses quatro sistemas diferentes: um grafo, uma camada semântica, que é exposta por meio de um MCP e, em seguida, aos agentes. Portanto, se você pensar na perspectiva do agente, esta é a estrutura que ele pode descobrir e analisar dinamicamente no momento da consulta. E para o desenvolvedor, também é algo muito interessante, porque expõe, sabe, o que você não sabe sobre o objeto que está modelando. Você logo percebe que existe uma lacuna em seu entendimento ou que há algum conjunto de dados que você não está, sabe, incluindo completamente. E assim, esse processo em si
+
+mesmo é muito valioso. Certo, deixe-me dar uma ideia do que faremos com isso agora. Então, esta é a plataforma, o gráfico, que eu mostrei para vocês, mas como isso se relaciona com IA? Então, conectamos isso por meio do MCP e, como mencionei anteriormente, o que é duradouro, o que é defensável para nós. O que não era defensável era a interface do chat, a interface do usuário e, em alguns casos, até mesmo os casos gerais de chat, a interação com o agente, e nós, os próprios usuários, já estamos incluídos no chat GPT, então servimos a plataforma onde eles estão, e aqui ela é servida através do MCP.
+
+Aqui está um exemplo, apenas uma pergunta inocente, mas a NeoForj tem alguns servidores MCP prontos para uso. Nós, na verdade, modificamos bastante estes aqui. Nós bifurcamos. E depois há várias atualizações no esquema. Coisas para passar o estado de volta para o nosso sistema. Sabe, os
+
+IDs de conversa, os números das mensagens, coisas assim, nós modificamos nessas ferramentas MCP. Mas essa é a experiência geral de um bate-papo. Esse é um ponto de partida. Outra parte muito empolgante que estamos desenvolvendo agora são experiências de fluxo de trabalho mais restritas. E isso também pode ser oferecido por meio de ferramentas como o chat colaborativo. E você pode fazer
+
+coisas como, por exemplo, ter seus aplicativos MCP como a forma padrão de acesso para os usuários, diferentes interfaces de usuário que são integradas à sua experiência de chat, e você pode ter diferentes agentes em ambiente de teste (sandbox) que executam o fluxo de trabalho. Então, essas são coisas em que estamos trabalhando ativamente. Isso ajuda a restringir a experiência em comparação com o chat, mas ao mesmo tempo utiliza a mesma plataforma de back-end baseada em grafo de conhecimento. Certo, tenho alguns minutos. Vou abordar isso de forma bastante rápida, mas a relação entre avaliação e modelagem de dados é que, ao realizar a avaliação, você encontra lacunas. Você encontra ambiguidades em seu
+
+modelo de dados. Você encontra maneiras pelas quais os usuários estão fazendo perguntas que são ambíguas ou que não estão retornando informações que estejam em conformidade com os padrões de relatório. Então, o que fizemos aqui foi trabalhar com os proprietários dos dados. Nós criamos perguntas de avaliação específicas que correspondem aos seus padrões de relatório. Separamos esses itens em diferentes níveis de complexidade. Um dos desafios é que
+
+os dados estruturados estão em constante mudança. Então, precisamos ter a própria consulta do grafo que criamos para cada uma dessas perguntas diferentes e, em tempo de execução, para a avaliação, extraímos do grafo ativo e o comparamos com o que o agente está fornecendo para aquela pergunta. É isso que é mostrado aqui. Há um ciclo de feedback que você pode usar para isso. Então, enquanto você executa um pipeline de avaliação, um pipeline de estrutura de avaliação, com um LLM como juiz, modelamos coisas como aprovação em um nível de estabilidade. Portanto, se você fizer a mesma
+
+pergunta várias vezes e obtiver a mesma resposta, poderá usar o LLM como um critério para avaliar isso. E então existe um ciclo de feedback que você pode usar para atualizar seu modelo de dados. Você pode atualizar as regras do seu domínio e as descrições do seu esquema para ajudar a preencher as lacunas que encontrar. Depois de fazer isso, isto é apenas um relatório de avaliação que mostra a aprovação em um ponto e a estabilidade do nosso sistema. Então, nós conseguimos isso de forma muito, muito forte.
+
+As perguntas que acabamos deixando de responder tendem a ser coisas ambíguas de alguma forma. Então não está errado, é só que são coisas que podem estar certas, mas não eram o que o usuário pretendia. Então, essa é a luta constante que enfrentamos, em torno de 30 segundos. O que o futuro reserva para o SIP? Então, continuaremos a preencher nossos dados existentes provenientes de sistemas de registro. Ou seja, coisas que se encaixam no nosso
+
+modelo de dados atual. Desejamos expandir o gráfico principal para incluir conjuntos de dados adicionais de toda a empresa. Existe muita demanda por uma experiência de grafo federado. Então, temos um sistema empresarial principal, mas também temos equipes específicas que possuem seus próprios dados e que desejam vinculá-los a este sistema. Então, estamos trabalhando em como realizar essas diferentes experiências de agência, como mencionei também.
+
+E é isso. Então, é isso aí, por favor, se vocês quiserem fazer perguntas, se houver algo sobre o que queiram conversar, eu estarei lá atrás ou vocês podem me adicionar no LinkedIn aqui e continuar a conversa. Obrigado. [aplausos]
+
+[música]

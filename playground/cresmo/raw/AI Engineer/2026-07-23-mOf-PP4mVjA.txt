@@ -1,0 +1,122 @@
+---
+video_title: "Video Has No Memory. Here's How We Built One. — James Le, TwelveLabs"
+video_id: mOf-PP4mVjA
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=mOf-PP4mVjA
+video_date: 2026-07-23T02:00:03+00:00
+video_description: |
+  Feed it 67 videos from the 2022 World Cup and ask for the near misses, the shots that almost scored but did not, each with a reason, and it returns them. Ask it to track Messi across the entire corpus and describe the camera framing, and it finds the moment he slaloms past a sliding defender. James Le's point is that this is unusual because video has no memory. Almost every video AI system answers each query from scratch, and a bigger context window does not fix it, because the real problem is that there is no durable representation to retrieve into.
+  
+  His fix is to stop treating video as a bag of frames and start treating it as a spatial temporal volume, then build a memory layer over it: a context graph of time bounded moments, the entities and where they appear, the relationships between them, and corpus level themes. At TwelveLabs that is an embedding encoder, a context store, and a video language model exposed as an API. The design rules are blunt: ingest once and reason many times, store primitives not answers, ground every claim to a timestamp, and let intent decide what to remember, because brand safety and sports highlights need different things from the same footage.
+  
+  Speaker info:
+  - https://x.com/le_james94
+  - https://www.linkedin.com/in/khanhnamle94/
+  - https://jameskle.com/
+  
+  Timestamps:
+  0:00 - Video has no memory
+  0:50 - Video is a spatial temporal volume, not a bag of frames
+  2:06 - Three problems: wrong context, wrong memory, weak reasoning
+  3:36 - Five properties that make video memory hard
+  4:53 - The TwelveLabs stack: Marengo, the context store, and Pegasus
+  5:56 - Search versus memory
+  7:48 - The context graph
+  9:04 - Five design principles for a video memory layer
+  10:45 - From a static model to a video worker
+  12:51 - Demo: sports and tracking Messi across the World Cup
+  15:37 - Demos: traffic security and ad placement
+---
+[música]
+
+Muito obrigado por me receberem e me convidarem para ser palestrante no evento. Você sabe que participei no ano passado e fiquei muito impressionado com a qualidade dos palestrantes. Estou muito, muito feliz por ter a oportunidade de estar aqui e presente. Então, o título da minha palestra é: "Vídeo não tem memória", certo? Bem, sabe, isso pode soar estranho porque o vídeo já é uma forma de preservação do passado, certo? Pense em
+
+filmagens, dados de treinamento, incidentes, trabalhos criativos, história, etc. Mas, na verdade, a maioria dos sistemas de IA para vídeo atualmente não possui memória no sentido de sistema. Então, nesta palestra, tentarei responder à pergunta: o que seria necessário para construir uma camada de memória para inteligência de vídeo? Para começar, quero deixar claro o que diferencia o tipo de dados V dos outros tipos de dados, certo? Portanto, este é o primeiro modelo mental que quero destacar: vídeo não é um conjunto de frames. Então, em muitas das
+
+minhas conversas com desenvolvedores que usam um produto, muitos deles ainda tratam o vídeo como uma pilha de imagens, talvez com uma transcrição anexada, ou algo assim, essencialmente em nível de quadro, certo? E isso é uma aproximação útil para algumas tarefas, mas descarta o que torna o vídeo único, que é a continuidade, certo? Ou seja, o vídeo deriva das modalidades espaço-temporais, da sequência. Portanto, uma metáfora melhor para o vídeo é um volume espaço-temporal. Então, o que eu quero dizer é que dentro desse volume você tem informações visuais, fala, som, movimento, OCR, mudanças de câmera, transições de cena, metadados e tempo, certo?
+
+A parte difícil aqui é como preservar o relacionamento entre esses dados para que um aplicativo possa acessá-los posteriormente. E isso é especialmente difícil em escala empresarial, em setores como entretenimento, esportes e conteúdo de curta duração, onde você tem pabytes de filmagem. Então, lidar com momentos específicos já é complicado. Então, como é possível preservar o significado em milhões de momentos em uma plataforma mais profunda? Então, eu trabalho na Troll Lab, que é uma startup da Série B. Nós temos
+
+modelos básicos que entendem, sabe, vídeo da mesma forma que os humanos. E a forma como falamos sobre o nosso posicionamento é que a estrutura existente para lidar com vídeo não está equipada para isso. Certo? Obviamente, os modelos de linguagem são muito poderosos. São boas interfaces de raciocínio. Eles também estão se tornando cada vez mais
+
+multimodais. Mas a infraestrutura de suporte ao redor disso é muito, digamos, limitada, e isso cria três problemas. O primeiro ponto está no contexto errado, certo? Portanto, vídeo não é naturalmente uma sequência de tokens de texto. Se forçarmos a sequência por meio de amostragem de quadros, extraindo uma transcrição ou despejando tudo em um arquivo PROM, perdemos as relações espaço-temporais que, na verdade, desafiam o evento. Segunda...
+
+memória errada. Então, se você pensar na memória de um sistema de texto, aqui geralmente significa gerenciamento acessível, geração, vetor de busca ou, provavelmente, uma janela de contexto maior. Esses são muito úteis, mas a memória de vídeo tem uma necessidade diferente: ela precisa conectar a cena atual a algo que aconteceu em outro arquivo, outro episódio, outro ângulo de câmera, outra temporada, outro ano. Portanto, ela precisa de continuidade duradoura, certo? E a última parte aqui é o raciocínio forte. Como eu disse, um
+
+sistema baseado em texto não consegue raciocinar nativamente sobre movimento, causalidade e tudo mais. Então, eles não constroem automaticamente uma estrutura persistente sobre quem aparece, o que aconteceu, quais mudanças, etc. Meu argumento é que a inteligência de vídeo precisa de uma camada de memória que decida o que preservar, como conectar e como reproduzir. Para deixar ainda mais claro, quero abordar as propriedades do vídeo. Existem cinco desafios ao lidar com vídeo: o primeiro é o temporal. O significado depende do que acontece
+
+antes e depois. Um quadro por si só pode ser enganoso, certo? A mesma expressão, produto, tomada, ação física pode significar coisas diferentes dependendo da sequência. O segundo é que o vídeo é obviamente multimodal. Eu já expliquei que uma transcrição sozinha pode não incluir... Um único frame
+
+pode não captar a essência da mensagem verbal. Vídeos também são muito densos, então alguns minutos podem conter dezenas de cenas, pessoas, objetos, ações, locais e afirmações. O sinal útil é distribuído de forma desigual no frame; alguns são decisivos, outros são ruidosos. Em quarto lugar, esse vídeo também é ambíguo, certo? As pessoas reaparecem sob diferentes iluminações e ângulos. As marcas estão
+
+parcialmente visíveis. Os conceitos de localização se desenvolvem ao longo do tempo, em vez de serem definidos em um único momento. E por último, é caro porque em muitas grandes empresas e fluxos de trabalho complexos, você precisa saber a origem do dado , certo? Essas são as cinco propriedades que explicam por que a memória humana é muito complexa. É necessário preservar a continuidade das evidências multimodais ao longo do tempo, ou melhor, estas são formas muito simples de construirmos as coisas no 12 Labs.
+
+Na parte inferior, temos esses blocos semânticos que capturam unidades temporais significativas. Acima disso está o nosso codificador de incorporação multimodal chamado morango, que essencialmente transforma esses gastos em relações espaço-temporais. Basicamente, usamos embeddings vetoriais que representam o conteúdo do vídeo e um armazenamento de contexto espaço-temporal, onde preservamos estruturas reutilizáveis, como entidades, metadados e tudo mais. Também criamos nosso próprio modelo de linguagem sensível ao contexto de vídeo (VLM), chamado Pegasus, que serve como camada de raciocínio e pode processar o conteúdo do vídeo, como resumos, síntese de metadados e comparações. Exibimos nossos modelos como APIs porque queremos que desenvolvedores os utilizem como infraestrutura.
+
+Agora, indo além dessa questão da pilha de processamento, quero falar rapidamente sobre a diferença entre busca e memória. A busca é obviamente muito importante, pois permite recuperar momentos relevantes de uma grande biblioteca de vídeos, mas fornece apenas candidatos, sem oferecer continuidade. Já a memória engloba todos os elementos que permitem ao sistema responder a diferentes tipos de perguntas, como você pode ver aqui à direita da minha tela. Então, esses não são códigos de recuperação únicos, certo? Eles exigem que o sistema preserve entidades, linha do tempo e evidências ao longo de todo o corus. Assim,
+
+você pode realmente construir um produto que vai além de simplesmente "mostre-me algo assim" para "diga-me o que esta coleção sabe", certo? Isso pode parecer simples e sutil, mas a saída é completamente diferente. Com a busca, você obtém uma saída como um momento no tempo, mas com a memória, você retorna estrutura, conhecimento, linha do tempo, explicação, saída componível. E isso é muito importante porque agora podemos mover a saída unitária da recuperação de clipes para a memória do corus, certo? Há duas dimensões de escala mostradas aqui no slide. A primeira é a escala de tempo. Um
+
+sistema de vídeo real deve ser capaz de raciocinar sobre anos de filmagens sem reprocessar todo o arquivo a cada vez, certo? Isso significa que a recuperação em memória deve ser uma representação reutilizável uma única vez e, em seguida, suportar múltiplas operações, linha do tempo, recuperação episódica e perguntas de acompanhamento com menor latência e custo. E a segunda dimensão está no espaço, certo? Na verdade, muitos fluxos de trabalho reais envolvem múltiplas perspectivas, como diferentes ângulos de câmera, criadores de conteúdo para transmissões ao vivo, câmeras corporais, câmeras de banco de imagens, etc. Então, como construir um sistema capaz de integrar evidências de todas as fontes e, ao mesmo tempo, manter o entendimento atualizado? Esse
+
+é o desafio. Como construir uma representação que permita ao aplicativo navegar por vídeos ao longo do tempo e entre diferentes fontes? Bem, já que isto é...
+
+você sabe, uma faixa em um gráfico, certo? Então, o melhor modelo mental que consigo imaginar é representar uma coleção de vídeos como um grafo de contexto. Assim, um grafo de contexto é uma representação durável e consultável que conecta entidades de momentos de vídeo, aparências, relacionamentos, carimbo de data/hora, metadados e contexto em nível de compilação . Certo? Então, se você olhar aqui na tela, bem na parte inferior, verá o momento limitado no tempo.
+
+Essas são como a cena, o tiro certo, essas são as evidências da unidade. Um nível acima estão as aparições, onde e quando cada entidade aparece, e então você tem a própria entidade em si. Então pense nas pessoas do vídeo, na marca, nos lugares, no conceito. Em seguida, temos as ocorrências principais de relacionamento, as mesmas sequências de marcas entre diferentes locais e linhas do tempo e, finalmente, no topo, temos o contexto em nível de corpus. Quais são os principais temas, padrões, lacunas e abrangência que esta coleção de vídeos cobre, certo? Isso é importante porque
+
+diferentes perguntas percorrem diferentes partes do gráfico. Se você fizer uma pergunta de pesquisa simples, isso pode levar diretamente ao momento atual, mas um fluxo de trabalho de entidade pode começar com uma pessoa e depois se expandir para aparências, certo? E se você fizer uma pergunta como uma narrativa, uma história sobre uma determinada pessoa, isso pode seguir o relacionamento ao longo do tempo, certo? Então, a ideia principal aqui é que a memória, no contexto da compreensão de vídeo, é uma estrutura navegável sobre todo o volume do vídeo. A partir desse conceito, cheguei a estes cinco princípios para construir uma camada de memória para inteligência de vídeo: o primeiro é ingerir uma vez e processar várias vezes. Ou seja, você
+
+não quer fazer cada consulta do zero; você quer pagar o custo antecipadamente, fazer uma interpretação do conteúdo do vídeo e, em seguida, mover o processamento mais complexo para a etapa de injeção. Esse é o mesmo modelo mental de um banco de dados, certo? Você não precisa passar repetidamente toda a sua fonte de dados para cada solicitação do aplicativo. Um segundo princípio é armazenar valores primitivos, não apenas a resposta. Então, você sabe, momentos, entidades, aparências, eu já falei sobre isso, esses são os elementos básicos que permitem realizar fluxos de trabalho subsequentes, como pesquisa, edição, análise e tudo mais. Em terceiro lugar, é preciso
+
+fundamentar cada afirmação; basicamente, se você fizer uma pergunta, precisa citar o momento em que a cena acontece no vídeo. Portanto, as evidências, como você sabe, devem estar vinculadas a um momento específico dentro do vídeo, certo? A quarta é deixar que a intenção molde a memória. Isso é importante porque a mesma filmagem pode significar coisas diferentes em fluxos de trabalho diferentes. Trabalhamos em diversas áreas, como segurança da marca, conformidade, revisão, criação e análise de aplicativos, e todas elas exigem elementos básicos diferentes do mesmo vídeo. Então a
+
+camada de memória deve ser configurável, certo? Os desenvolvedores deveriam ser capazes de dizer ao sistema o que importa. E por último, mantenha a camada composável. Então, basicamente, priorizando a API, ela deve fornecer as camadas que permitem que os aplicativos que a utilizam ofereçam metadados estruturados que podem ser integrados a qualquer tipo de aplicação. Então, indo além desses cinco princípios, quero falar sobre as estratégias para construir uma camada de memória, certo?
+
+Hoje em dia, muito se fala sobre, você sabe, construir as estruturas adequadas para o contexto do modelo de linguagem. Então, como é o funcionamento de um modelo estático para vídeo? Um modelo estático, por exemplo, é sem estado, começa do zero a cada vez e não tem nenhuma restrição. Portanto, a saída é baseada principalmente no que o modelo decide produzir. Um processador de vídeo, por outro lado, opera dentro de um sistema altamente determinístico, entende o que está disponível, pode planejar a tarefa, receber evidências, inspecionar os momentos relevantes, sintetizar, validar e retornar a saída. E então todo o
+
+fluxo de trabalho pode ser avaliado, certo? Então, para o processamento de vídeo, isso é muito importante porque o processador precisa saber qual memória está disponível, quais evidências são relevantes e também a profundidade da inspeção, pois isso determinará o custo e o contrato de saída a ser cumprido. Estou falando sobre engenharia de hardware para processamento de vídeo e desenvolvi diferentes capacidades para um processador de vídeo. A primeira é a memória, como já mencionei. A segunda é o planejamento de tarefas.
+
+Dada uma consulta do usuário, é preciso decidir qual tarefa executar: busca, sumarização ou raciocínio em várias etapas? A terceira é a recuperação. Todo sistema deve ser capaz de selecionar as evidências corretas do conjunto de vídeos para leitura, para tarefas específicas. Trabalhamos com clientes que precisam de recursos como zoom in e zoom out, comparação de diferentes frames e acesso a conteúdo com metadados adicionais. Portanto, incorporar ferramentas especializadas em um processador de vídeo é fundamental para o seu funcionamento . Portanto, são
+
+limites explícitos de tempo, custo, escopo e autonomia. Um contrato de produção. Às vezes, a linguagem natural é instantânea, outras vezes o paciente precisa de dados estruturados com referências e registro de data e hora e, claro, finalmente você tem a avaliação, certo? Tipo, a recuperação encontrou as evidências certas ? A síntese as preservou corretamente? Os
+
+trabalhadores conseguiram respeitar o orçamento? Tudo bem. Então, é basicamente um pouco de...
+
+sabe, deslizar e... falar. Quero mostrar rapidamente algumas demonstrações que eu criei usando o Video Asian Product, do Google Labs. Então, haverá
+
+três demos. O produto de vídeo asiático que estamos desenvolvendo se chama Jockey. Este primeiro exemplo aqui serve para uma compreensão mais imediata. Bem, obviamente todo mundo está super empolgado com a Copa do Mundo que está acontecendo agora. Então, o que eu fiz foi assistir a 67 vídeos da Copa do Mundo de 2022 no Catar. E vocês podem ver aqui que eu
+
+pedi para encontrar os lances que quase deram gol, ou seja, os chutes que quase se tornaram gol, mas não expliquei para cada um por que não foi gol, mas não incluí gols confirmados. Certo? Então, esses são os principais resultados retornados.
+
+Então, isso é que é um bom trabalho. Esta bola está a salvo do goleiro. Não sei se o som está ligado, mas estou reproduzindo o vídeo, aliás. Hum, certo. Essa foi mais uma defesa do goleiro. Parece até que
+
+você já percebeu a vantagem de um dos gols.
+
+E então eu fiz uma pergunta. OK. Qual é a meta? Hum, cinco dos gols mais dramáticos de todos os tempos . Mostre a construção da jogada e a finalização. Para cada objetivo, descreva a
+
+sequência, certo? Então, se você conhece esse, esse é o primeiro gol da final da Copa do Mundo de uns quatro anos atrás, e na verdade foi um lance de retorno, sabe, você não sabe quem fez o passe, tipo, foi o Álvarez passando para o Maralista e passando para o De María marcar o gol. Dê uma olhada neste aqui do Rich Allison. Este é o torneio de ouro, mais uma vez, vindo do Brasil. Acho que é a Coreia do Sul, certo?
+
+E voltou, sabe, uma área de habilidade na construção de jogo, certo? O nome do jogador que fez o passe de retorno. Você pode até rastrear o jogador, então eu pedi para rastrear o Leon Messi por toda essa cena, incluindo o lance em que ele é uma das muitas figuras na tela. Descreva o enquadramento da câmera, certo? Então, este é um momento hilário e importantíssimo do jogo, e esta é uma cena em que Messi dá um drible triplo em um defensor que desliza. Você pode ver aqui que a filmagem
+
+reproduziu a cena em que ele marcou o primeiro gol contra a Austrália, nas oitavas de final , se não me engano. Certo. Esta é mais uma cena em que ele marcou o terceiro gol na final. Sim
+
+. Então, esse é um exemplo de compreensão pontual. Mas, obviamente, você pode construir aplicações mais interessantes e mais práticas, sendo a segurança uma delas, com a qual nos deparamos bastante. Então, neste exemplo, eu utilizo imagens de câmeras disponíveis publicamente para contextualizar. Este é o vídeo de um engarrafamento em uma área urbana, e com base nessas imagens, pedi ao Jockey para classificar todos os veículos no cruzamento, dividindo-os por tipo e pedestres, e ele retornou o número de veículos e o fluxo de pedestres. Ele consegue
+
+detectar eventos de segurança, certo? Veja, ali está um SUV vermelho que vira e quase é atingido. Outra cena aqui. Vire à esquerda na direção de um carro que se aproxima. Sim
+
+. Para que a entrada com sinal vermelho seja a mais clara possível . Funciona bem em diferentes cenários. Esta cena se passa numa área muito movimentada de Bangkok. Ah, e eu também pedi para funcionar na chuva, sabe?
+
+Então, esta é mais uma cena em que se compreende a condição de chuva.
+
+Identifica os ônibus na janela do veículo no cruzamento. Então, sim, esses são alguns exemplos de imagens de câmeras de segurança. Finalmente, publicidade. Então, você provavelmente viu esse vídeo da Adidas em todos os comerciais que antecederam a Copa do Mundo recentemente. É um vídeo de cinco minutos da Adidas e eu pedi para classificarem todos os pontos onde é possível adicionar um acessório.
+
+Então, ele revela a dificuldade, o impacto da energia, escolhe a cena certa onde certos jogadores aparecem na tela. Identificava, sabe, ações de alto impacto como essa condição, o corte duro para a faca no futebol, e claro, apontava para o logotipo da Adidas. Então, sabe, da perspectiva de um anunciante, esses são momentos muito importantes porque eles podem, sabe, usar a cena com câmera lenta, cortes bruscos ou efeitos especiais para anunciar o conteúdo da sua marca em meio a essas imagens. Certo. Sim, então esses são três exemplos de aplicativos de demonstração que eu gostaria de destacar sobre o uso de ferramentas de aplicativos. E, novamente,
+
+o que você pode construir com esse tipo de camada de memória de vídeo? Por exemplo, estas são as categorias de aplicativos que acredito que os desenvolvedores podem criar: você pode descobrir coisas, visualizar experiências de raciocínio, organizar seu conteúdo em diferentes bibliotecas de vídeo e visualizar fluxos de trabalho de ação, montar diferentes cenas, realizar revisões de conformidade, operações de dados, etc. A mesma estrutura se aplica a diferentes veículos, e-mail, entretenimento, esportes, segmentação, geração de destaques, segurança comercial, revisão de evidências, análise contextual, publicidade, segurança da marca, inteligência criativa, certo? E, bem, este é o nosso produto que está por vir . Um breve destaque é que tentamos programar como uma infraestrutura de cognição de vídeo. Assim, temos um
+
+repositório de conhecimento que basicamente se torna a camada de memória de vídeo. Injeção configurável via web que permite aos desenvolvedores moldar o que o sistema pode extrair, incluindo o resumo do Copus, para que você possa entender o que está na biblioteca e a resolução conforme busca respostas na API. O que eu quero destacar aqui é que não se trata de uma camada de aplicação, não é uma plataforma de edição, nem um produto de conformidade; é a infraestrutura cognitiva com a camada e os recursos que permitem que produtos como esses se tornem disponíveis. E se você achou o conteúdo desta apresentação interessante, definitivamente recomendo que você escaneie este QR Code. O produto está atualmente em beta privado. Se você considerar qualquer tipo
+
+de fluxo de trabalho que envolva conteúdo de vídeo, especialmente em relação à montagem e organização de conteúdo, como arquivos de mídia, criadores de conteúdo, YouTube, TikTok, análise de conteúdo e fluxo de trabalho de mídia, entre outros, Com certeza, você pode escanear este código e se cadastrar para participar ou conversar comigo depois da palestra. Então, essa deve ser a minha vez. Muito obrigado.

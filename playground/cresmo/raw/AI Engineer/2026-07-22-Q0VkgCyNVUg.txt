@@ -1,0 +1,135 @@
+---
+video_title: "CrabRAG: Why Automated Assistants Need Graph Memory, Not More Tokens — Stephen Chin, Neo4j"
+video_id: Q0VkgCyNVUg
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Q0VkgCyNVUg
+video_date: 2026-07-22T18:30:02+00:00
+video_description: |
+  Stephen Chin gave two copies of the same agent the same facts about his home network, one storing them as a vector database, the other as a graph. He asked both what was running end of life software exposed to the internet. The vector agent said it could not find specific details. The graph agent traced the connections and flagged his daughter's Minecraft server running an out of date OS, then found real open management ports he quietly patched after the demo. Same data, and only one of them could actually answer.
+  
+  That gap is the whole talk. Most assistants, OpenClaw included, keep their memory as markdown files, which is why Chin's agents burn over 100,000 tokens a round loading everything in case some of it matters. It holds at small scale and breaks at large scale, because similarity in vector space is not a real relationship, so multi hop questions hallucinate. A graph stores entities and the edges between them, seeds the search with vectors, then traverses, so answers come back precise, explainable, and auditable. And if you do not know graphs, Claude writes Cypher better than he does.
+  
+  Speaker info:
+  - https://x.com/steveonjava
+  - https://www.linkedin.com/in/steveonjava/
+  - https://www.oreilly.com/library/view/graphrag-the-definitive/9798341630147/
+  
+  Timestamps:
+  0:00 - Meet Crab D and the agent memory problem
+  2:34 - Why markdown memory wastes tokens
+  4:43 - Skills are just markdown too
+  5:49 - Goose: memory as an MCP server
+  7:44 - Vector databases and why similarity is not a relationship
+  9:54 - Enter graphs: precise, explainable, auditable
+  11:38 - You do not need to be a graph expert, Claude writes Cypher
+  12:04 - The demo: a home lab digital twin, vector versus graph
+  13:23 - Live: finding end of life software on the network
+  15:30 - Live: finding exposed management ports
+  16:49 - Why large scale needs graph memory
+  18:05 - Resources: the GraphRAG book and GraphAcademy
+---
+[música]
+
+Meu nome é Stephen Chin. Eu lidero a equipe de relações com desenvolvedores aqui na Neo4j. E estou animado para falar com vocês sobre algo que todos nós aprendemos a amar: nossos amigos crustáceos. Então, nós temos um... um mascote com garra aberta.
+
+Temos vários outros crustáceos, e vamos nos concentrar em um membro da família dos crustáceos. Eu adoro caranguejos, então nosso pequeno caranguejo D. também. E acho que, na jornada para descobrir como aplicar agentes, como fazer coisas de forma mais autônoma, todos nós estamos buscando maneiras de obter melhores resultados, respostas mais precisas e, de fato, capturar tudo isso. Mas, de certa forma, as ferramentas acabam trabalhando contra nós. Então,
+
+aqui está o nosso amigo Crab D. Ele é um assistente pessoal. Muito feliz, muito ansioso. Ele quer nos ajudar com nossas vidas, talvez nos ajudando a programar, a gerenciar nossos e-mails, a fazer outras coisas. Mas ele tem um problema.
+
+E o nosso pobre caranguejo D tem uma memória muito ruim . Ele acorda todos os dias, e seu arquivo de memória é reiniciado, e agora é um novo dia, e ele esquece tudo do dia anterior. Já aconteceu com você de acordar, estar usando o OpenClaw e, de repente, ele estar em um novo conjunto de arquivos de memória, sem se lembrar de nada do que você fez no dia anterior? Ele tem muitas ferramentas à sua disposição. Quer dizer, adoramos fornecer ferramentas aos nossos agentes, mas às vezes ele não escolhe a ferramenta certa para o trabalho.
+
+Não acho que nenhuma dessas duas coisas vá ajudá-lo a tomar sua tigela de sopa. Portanto, essa não era a ferramenta que ele estava procurando. E um pouco esquecido às vezes. Sabe , acho que não me lembro de todas as pessoas que conheço, mas sou muito bom em reconhecer rostos. É como se eu já tivesse te encontrado antes, eu reconheceria rostos. É como um "
+
+prazer em conhecê-lo(a)". Um Krabdi não é tão bom nisso. Então, muito esquecido. É como se você estivesse ensinando novamente todos os dias a fazer o mesmo tipo de tarefa, e nós queremos agentes que sejam mais úteis, que sejam capazes de fazer mais por nós. Então, vamos analisar como o Krabdi funciona na prática. Então,
+
+basicamente é um loop de memória, certo? Então, estamos estimulando, pensando na resposta, talvez usando ferramentas, observando o que acontece. Mas a parte difícil é a memória. A parte difícil é o que você coloca em contexto, o que você está relembrando. E a forma como a memória é estruturada na maioria das ferramentas é um exemplo de como o Open Claw estrutura as coisas.
+
+Você tem um problema resolvido na MD para a memória do seu agente? Você talvez tenha arquivos de memória. Você tem arquivos de ferramentas diferentes. Você tem arquivos de memória diários. Agora, se você observar, há uma coisa que todas elas têm em comum: são apenas arquivos Markdown.
+
+Então, arquivos Markdown são ótimos. Isso é fácil de ler para nós. Assim como podemos, podemos olhar através dele. Podemos descobrir rapidamente o que não é necessário e compactá- lo. Bem, elas são intencionalmente pequenas para agentes porque você tem uma janela de contexto limitada e também precisa manter as coisas certas no topo do contexto.
+
+Mas, se toda a sua memória for composta por arquivos Markdown, você estará desperdiçando muitos tokens. Então, em média, meus agentes estão carregando pelo menos 100 mil tokens em cada rodada. Eles estão praticando muitas habilidades. Eles estão constantemente adicionando muitas coisas ao contexto. É muito repetitivo porque eles basicamente carregam tudo na esperança de que algo seja útil no contexto.
+
+Em pequena escala, isso funciona quando se obtém os resultados desejados com um modelo de alta qualidade . Não funciona em grande escala, e vou mostrar uma demonstração em grande escala onde pegamos uma garra aberta e a deixamos funcionar livremente no meu laboratório doméstico. Então, alto risco de demo, mas muito divertido e um cenário clássico de gêmeo digital. Então, acho que vamos nos divertir muito aqui. Alguém usa o agente Hermes?
+
+OK. Sou um grande fã do agente da Hermès. Hum, acho que tem um sistema de memória muito melhor . Ao final de cada tarefa, o sistema reflete e incorpora novas habilidades ou elementos que se mostram necessários. Então, é um sistema realmente poderoso .
+
+E, como você sabe, mais uma vez, estamos dependendo muito de arquivos Markdown. As habilidades são basicamente arquivos Markdown. Mas podemos ensinar o agente a fazer muitas coisas com habilidades, e ele pode adquirir a habilidade certa se for capacitado adequadamente, e então coisas boas acontecem. Mas às vezes não conseguimos carregar a habilidade certa. Então, nosso pobre caranguejo D não vai conseguir pegar aquela amêijoa. Ele simplesmente não
+
+tem a habilidade de abrir a concha. Muitos camarões, nenhuma amêijoa. Talvez você escolha a habilidade errada para o trabalho e, de repente, esteja andando de jet ski na praia. Certo? Isso não vai levá-lo muito longe.
+
+E às vezes você até consegue abrir a ostra , mas não tem a habilidade necessária para comê-la. Então, você precisa ter as habilidades certas, a sequência certa de habilidades. Na verdade, temos um projeto incrível de um dos caras do Neo4j, que é basicamente um artigo do Bennett publicado na Arvix, que é um grafo para habilidades. Então, essa é uma maneira interessante de descobrir quais são as habilidades certas. Mas talvez possamos fazer melhor.
+
+Então, o Goose é um projeto que faz parte da Agentic AI Foundation. Trata-se de uma nova fundação da qual a MCP faz parte. A Um Anthropic está apoiando isso. Nós também somos membros disto. Portanto, é uma ótima ferramenta de automação para diversos fluxos de trabalho empresariais. Você também pode usá-lo como
+
+uma espécie de assistente pessoal. Ele depende muito do MCP como camada. Mais de 70 extensões MCP. E o que ele faz é tratar a memória exatamente como qualquer outro servidor MCP. Então, isso é ótimo, não é? É
+
+plugável. Você pode usar diferentes comandos nele para recuperar memórias, lembrar memórias, ou esquecer memórias. Memórias são simplesmente arquivos em um disco. Então, agora você pode manipulá-los. Portanto, a mesma grande ideia, o mesmo problema fundamental. Estamos armazenando a memória.
+
+Estamos armazenando a memória dos agentes como arquivos Markdown em discos. E, novamente, você acaba se perguntando: "E se você escolher a ferramenta errada para o trabalho, o remo errado?" Nesse caso, se você escolher a raquete errada, você é um gênio porque inventou o esporte que mais cresce nos EUA, que é o pickleball. Na verdade, a origem do pickleball foi que uma família queria criar um novo jogo e simplesmente pegou o que tinha em casa, uma quadra de badminton, e foi inventando as regras ao longo do processo. Portanto, a criação pode ser boa quando se tem as ferramentas erradas.
+
+Talvez você se lembre de tudo, mas é muita coisa. É um peso excessivo porque, na verdade, você não consegue resolver o problema. Então, nosso pobre amigo Ganso está sobrecarregado com muitas anotações, muitas lembranças. Ou, o que é mais perigoso, agora que você tem as ferramentas MCP, está a um passo de executar o comando "esquecer" e simplesmente apagar sua própria memória. Certo, então queremos ser capazes de fazer melhor do que isso.
+
+Então, bancos de dados vetoriais, certo? Assim, podemos armazenar tudo e criar elementos incorporados para isso. Agora que temos um banco de dados, podemos armazená-lo em um banco de dados vetorial. Então, isso é ótimo. Quer dizer, você precisa escolher o banco de dados de vetores correto.
+
+E agora você pode fazer buscas por similaridade, assim você consegue recuperar informações que são relevantes. Então, estamos muito melhor. Possuímos um vasto repositório de conhecimento, e podemos recuperar informações relacionadas. O Open Claw já vem com o PGVector instalado. Dado um vetor de incorporação, você pode simplesmente começar a usá-lo.
+
+O LanceDB é uma ótima opção. Vou usar ambos na minha demonstração. Mas o desafio aqui é que o que os vetores fornecem, que é a similaridade no espaço vetorial, não é o mesmo que relações reais. Portanto, você pode ter alucinações e enfrentar muitos problemas ao depender exclusivamente da busca vetorial como resposta. E isso se agrava em cenários mais complexos quando você está fazendo coisas como, por exemplo, um gêmeo digital. Quando você está
+
+fazendo coisas muito complexas, elas simplesmente não são escaláveis ​​e você comete erros bobos como este: obviamente não era isso que o pobre caranguejo D queria comer, e acabou sendo um almoço muito caro para ele. Além disso, às vezes é impossível chegar à resposta mesmo tendo todos os fatos, porque essas grandes cadeias de raciocínio com múltiplas etapas não funcionam em buscas por similaridade. Além disso, são muito caros em bancos de dados relacionais tradicionais.
+
+E muitas vezes as coisas parecem semelhantes, mas não são exatamente iguais. E esse é um dos problemas com as respostas que você recebe de um banco de dados de vetores: você acaba recebendo informações que estão relacionadas de alguma forma, mas que não correspondem ao seu caso específico. E você não quer tirar a concha errada do vestiário. Isso é muito lamentável. Então, vamos falar de gráficos. Os grafos são uma ótima maneira de
+
+encontrar relacionamentos, descobrir identidades, mapear caminhos e obter toda a cadeia de informações. E eles são projetados para esse tipo de dados conectados. Então, agora que você tem nós de primeira classe, que são os círculos, arestas, que representam os relacionamentos entre diferentes objetos, você pode adicionar propriedades aos grafos para armazenar informações. Você também pode armazenar embeddings em seu grafo, o que lhe permite usar vetores e grafos em conjunto. Do ponto de vista arquitetônico, a demonstração que vou mostrar a vocês é tanto uma busca vetorial quanto uma busca em grafo. Assim, utiliza a
+
+busca vetorial para obter os nós iniciais onde começa a travessia. Em seguida, utiliza uma busca em grafo para encontrar os vizinhos mais próximos e classificá-los de acordo com o grau de parentesco entre eles. E isso permite realizar consultas complexas de múltiplos saltos para resolver problemas mais difíceis e específicos do domínio, e para descobrir onde está aquele recife que queremos alcançar, com toda aquela comida deliciosa do outro lado do oceano. E os gráficos mostram que eles são precisos. Assim, eles fornecem informações muito precisas.
+
+Explicável, pois você pode observar o gráfico que foi retornado. E auditável porque agora você pode realmente dizer: "Este é o contexto". Esta é a parte do gráfico que resultou nessa resposta. Portanto, é muito poderoso e oferece mais ferramentas para o desenvolvedor, pois, se você não estiver obtendo a resposta correta, saberá de onde ela vem. Você pode visualizar e analisar o grafo, alterar a forma como realiza a extração, reduzir nós duplicados e, assim, chegar rapidamente a uma ótima resposta. Se você não é
+
+especialista em grafos, adivinhe só? Claude é. Claude consegue escrever em código cifrado melhor do que eu . Claude consegue criar extratores de entidades e pode fazer praticamente tudo o que você precisa para começar a trabalhar com grafos hoje em dia, desde que você conheça o tipo básico de modelo para o que deseja realizar. E é isso que vou abordar na demonstração. Então, vamos pedir para o
+
+Claude anotar cada ação no gráfico à medida que ele trabalha. Vamos dar continuidade ao assunto analisando o texto, em vez de relê-lo. E então, em uma nova sessão, obteremos os resultados que desejamos. Bem, o que eu fiz para esta demonstração de alto risco foi, ao longo das últimas duas semanas, usar meu laboratório doméstico como ambiente de demonstração, criar um gêmeo digital completo em forma de gráfico e ter dois ambientes separados construídos a partir dos mesmos arquivos Markdown originais . Uma delas é um banco de dados vetorial, esse é o nosso teste A.
+
+E o segundo é um armazenamento de grafos, esse é o nosso teste B. E o armazenamento de grafos é construído sobre o Cogney. Então, estou usando o Cogney, que é uma startup. Eles fazem coisas incríveis no espaço da memória. Eles utilizam o Neo4j como backend.
+
+Esta é a minha estrutura. Então, temos vários servidores Proxmox no meu laboratório doméstico. Na verdade, são apenas alguns computadores ao redor da minha mesa. E eu criei uma VLAN separada para a demonstração, então ela está segmentada da minha rede real. Então, ele foi treinado em uma rede real para a minha rede, mas agora está desligado.
+
+Só pode responder de memória. Não consegue consultar os hosts e eu não consigo obter informações dinâmicas. Então, vamos ver como se comporta em uma demonstração ao vivo. OK. Então,
+
+tudo bem. Aqui está o nosso cockpit Grab Rack. Hum, e eu tenho cinco perguntas diferentes na fila, cada uma com seu respectivo esquema. Como você pode ver, este é o mesmo esquema de laboratório doméstico que você viu anteriormente nos slides. E vamos começar com esta.
+
+Assim, a WRN expôs o fim da vida útil do software quando expôs o fim da vida útil do software. Então, basicamente, vamos tentar descobrir se há algo na minha rede que esteja exposto à internet, à WAN, que esteja executando um software desatualizado e que coloque meu laboratório doméstico em risco, certo? Então, se alguém conseguir atacar o laboratório doméstico. E vocês podem ver aqui que [limpa a garganta] ali estão alguns servidores, tipo o Tinkster Lands, que é o servidor de Minecraft da minha filha. Está rodando... Meu Deus, Debian 8 Jessie.
+
+Vamos ver como os dois agentes se saíram na busca. OK. Então, recebemos a resposta vetorial de volta. Não foi possível encontrar detalhes específicos. Excluído por política. Para informações mais precisas, consulte o site. Blá blá blá
+
+. A fonte está separada. Ok, isso não é muito útil. Agora, no lado do grafo, foram realizadas várias consultas Cypher. Aqui estão as consultas Cypher que ele disparou. Bem, este
+
+é o percurso do grafo. E a codificação de cores na travessia do grafo são esses elementos azuis. Esses são os nós iniciais. Então, isso surgiu de uma pesquisa vetorial e de uma classificação, mas não parou por aí. Ele realiza travessias de um único salto. Esses são todos os
+
+nós cinzentos. Alguns nós são destacados em verde, e esses são os que venceram e entraram no contexto. E você pode ver a resposta aqui. Então, o nome do convidado é Tinksterlin, exatamente como esperado. A versão do sistema operacional está desatualizada e está sinalizando um problema. Isso nos fornece
+
+informações muito precisas e que podem ser colocadas em prática. E essa é a diferença entre ter exatamente os mesmos dados. Um é um armazenamento vetorial, o outro é um armazenamento gráfico, e você pode ver a diferença onde o armazenamento vetorial está tendo muita dificuldade em extrair as informações relevantes. Ok, vamos tentar mais uma, só por diversão. Vamos ver, exponha as portas de gerenciamento 0.0.0.0. Isso é ruim.
+
+Então, basicamente, você não quer que as portas de gerenciamento da sua rede fiquem expostas ao mundo exterior. E existem vários desses. Então, configurei um novo servidor Matrix e também o HAProxy, ambos expostos à internet. Isso é ruim. O restante, como minha demonstração do Cogny e minha instância do Open Claw , estão dentro da rede local (LAN). Você
+
+precisa entrar na rede local (LAN) para acessá-los. É isso que você quer. Certo, e vamos ver como os dois agentes se saíram na identificação disso. Então, a busca na memória retornou algumas informações e está me dizendo que a configuração de serviços esperada é do pfSense. Então, me disse para ir fazer o trabalho para ele.
+
+Ok, e então, no lado da memória gráfica, encontramos uma porta aberta exposta à WAN, HAProxy e OpenVPN, que são as duas que esperávamos. Agora, como você pode ver, o formato deste gráfico é completamente diferente do anterior. E o que ele fez foi encontrar o nó do meu roteador, o roteador pfSense, e conseguiu rastreá-lo diretamente até todos os resultados relacionados a ele, fornecendo uma resposta bastante precisa.
+
+Tudo bem. Então, hum...
+
+Então, agora vimos que nosso pequeno Krab D, com sua camiseta de desenvolvedor certificado do Neo4j, é capaz de fazer muito mais, certo? Agora, ele consegue seguir toda a cadeia, quebrar a casca, comer e fazer a próxima coisa. Então, ele está conseguindo o que quer. Ele está me ajudando a corrigir todas as falhas de segurança na minha rede. Ah, aliás, eu corrigi todas aquelas falhas de segurança depois da demonstração.
+
+Então, isso também foi bom para mim. Ele encontrou várias falhas de segurança no meu laboratório doméstico, e depois eu as corrigi . E agora temos um agente que realmente consegue fazer coisas interessantes. Agora, imagine que eu tenho um laboratório doméstico com três ou quatro nós, ou que você tem uma grande empresa com um enorme centro de dados, ou ainda que trabalha no setor de serviços financeiros com um grande número de empresas e registros de clientes, ou qualquer outra coisa em grande escala que não se encaixe na janela de contexto de 1 milhão dos modelos modernos, você realmente precisa de um sistema de memória melhor do que simplesmente armazenar dados em arquivos Markdown. Nosso pequeno caranguejo reconhece toda a tripulação, todos os amigos crustáceos.
+
+E ele leu o livro. Então, eu e meus coautores, Michael Hunger e Jesús Barrasa, acabamos de finalizar o Guia Definitivo do Graph RAG. O livro completo já está disponível em pré- venda. Será publicado daqui a alguns meses, assim que terminarem o processo editorial, mas estou super animado com isso. Contém informações não apenas sobre o Graph RAG, mas também sobre a construção de memória, sobre diferentes casos de uso em diversos setores e sobre agentes. Então, é como se fosse um
+
+guarda-chuva completo se você estiver construindo em cima de soluções de grafos, abrangendo como você precisa construir aplicativos e as tecnologias necessárias de ponta a ponta. E, por fim, um excelente recurso gratuito que todos nesta sala podem aproveitar é a Graph Academy da Neo4ju. Então, é um treinamento online gratuito, acesse dev.neo4j.com/ga-rag ou clique no código QR abaixo. E
+
+nós temos cursos sobre memória de agentes, grafos de contexto e tudo o que você precisa saber para começar e fazer algumas das coisas incríveis que mostrei para vocês hoje no palco. Muito obrigado por terem vindo à palestra de abertura da trilha de gráficos. [aplausos]
+
+Você está no lugar certo para encontrar todo o conteúdo de especialistas em grafos. Andreas Kollegger, meu colega, e eu organizamos um excelente conjunto de palestrantes, desde profissionais da indústria até especialistas. As pessoas realmente entendem de tecnologia gráfica. Então, fique por aqui, descubra mais e depois você poderá me encontrar no estande da Neo4j. Obrigado.
+
+[música]

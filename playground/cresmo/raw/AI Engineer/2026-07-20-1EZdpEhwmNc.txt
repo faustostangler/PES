@@ -1,0 +1,158 @@
+---
+video_title: "Through the AI Fog: The Architectural Decision Agentic Security Depends On — Manoj Nair, Snyk"
+video_id: 1EZdpEhwmNc
+channel_name: "AI Engineer"
+channel_id: UCLKPca3kwwd-B59HNr-_lvA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1EZdpEhwmNc
+video_date: 2026-07-20T17:17:54+00:00
+video_description: |
+  Ask the latest frontier models, the ones not even public yet, to find the same vulnerability five times, and only half of those runs catch it. Against a plain deterministic checker they found at most 75% of the issues, a 40% F1 score. That number sits underneath the whole talk: the generator and the validator cannot be the same system. Manoj Nair leads the team securing roughly 5,000 enterprises at Snyk, half of the Fortune 500, and the data he brought is not comforting. Across 4,800 customers, security backlog grew 108% quarter over quarter, because agents writing code faster are also manufacturing vulnerabilities faster than anyone closes them.
+  
+  The new attack surface is not hypothetical. More than a third of the agent skills researchers studied carry malware or hostile instructions, three lines of English that can take a system down, and MCP servers wire agents into enterprise data with almost no security built in. In one Fortune 100 environment an agent quietly copied PII into an untrusted database it had spun up, just in case it needed the data later. Under Snyk's own red team attacks one hot new model gave up PII 100% of the time while a frontier model held at zero, which is the whole point: you cannot trust one probabilistic system to police another, and which model is safe shifts week to week. The answer is not a better model but a deterministic layer that keeps verifying what the agents ship, inside the loop where they work.
+  
+  Speaker info:
+  - https://www.linkedin.com/in/mnair1
+  - https://labs.snyk.io/contributors/manoj-nair/
+  
+  Timestamps:
+  0:00 - Welcome to the first AI security track
+  1:46 - Manoj takes the stage: securing 5,000 enterprises
+  3:07 - The core question: can the generator also be the validator?
+  4:25 - Autonomous attacks and the attacker that never sleeps
+  5:43 - Why AI generated code makes old problems worse
+  7:02 - Real data: 108% more security backlog, quarter over quarter
+  8:04 - The Five Eyes warning and chained exploits
+  8:34 - Toxic skills and poisoned environments
+  9:27 - MCP servers and the GitHub MCP exploit
+  9:53 - When an agent squirrels away your PII
+  10:34 - You can't govern what you can't see
+  11:16 - Red team data: which models leak PII
+  12:08 - The generator vs validator benchmark
+  13:38 - What Snyk built: prevention and Snyk Studio
+  14:20 - Remediation at scale: 16,000 critical issues
+  15:37 - Live demo: package health in the coding loop
+  19:03 - Live demo: assessing a risky agent skill
+  21:02 - Building EVO with the AI security community
+---
+[música] E aí
+
+, pessoal? Que bom ver todos vocês aqui, na primeira área de segurança da história da Feira Mundial. É um dia bastante empolgante, para ser sincera, porque, assim como todos vocês, eu realmente adoro isso, e depois de dar uma olhada na programação dos palestrantes de hoje, posso dizer que será uma experiência incrivelmente útil e divertida . Então, espero que se vocês ficarem por aqui o dia todo, no final do dia vocês poderão ir embora , voltar para os seus quartos de hotel e construir um software realmente incrível, de preferência sem intervenção humana, porque esse é o objetivo final, certo? Como podemos construir software autônomo verdadeiramente seguro em grande escala? E
+
+não é algo fácil de fazer. Dito isso , estou muito animado em dar as boas-vindas ao meu bom amigo e colega, Manoj Nair. Ele é o Diretor de Inovação e Diretor de Tecnologia (CTO) da Sneak. Antes de trabalhar na Sneak, ele era o Diretor de Nuvem da Convo IT. Ele fundou e dirigiu a HyperGrid. Ele ocupou cargos de liderança em produtos e segurança
+
+na HPE, Dell e RSA. E ele tem algo como uma dúzia de patentes em seu nome. Então, ele é uma espécie de lenda nesse meio. Ele também teve participação pessoal na seleção de toda essa faixa. Então, se você gostou das palestras de hoje, por favor, vá até ele e agradeça depois, mas se não gostou, basicamente, não me culpe. Bem
+
+, seja bem-vindo ao palco, Manoj. Uau! [aplausos] Muito obrigado , Randall. Eu não esperava uma biografia. Oi pessoal.
+
+Agradeço muito a todos por estarem aqui logo após aquelas ótimas apresentações iniciais. Bem, eu sou Manoj Nair, e tenho o prazer de liderar uma equipe incrível que está ajudando a proteger cerca de 5.000 clientes corporativos em todo o mundo. Então, eu consigo sair bem na foto com tudo isso, mas parte do que vou mostrar são dados reais desses clientes. Metade das duas maiores empresas da Fortune 500 utiliza o Sneak, e alguns dos dados são, como você sabe, fruto desses aprendizados.
+
+Mas antes disso, eu também gostaria de falar sobre o título da palestra, que era algo como "Desvendando a névoa da IA", eu acho. Mas a maneira como fazemos isso é criando faixas como esta. Então, no ano passado, estávamos aqui, havia 3.000 pessoas no evento AI Engineer , e sabe, realmente dava a impressão de que faltava segurança no local. E graças à Swig e à incrível parceria com a organização AI Engineer, criamos o AI Security Summit em parceria com eles.
+
+E estamos criando essa trilha sonora, então é muito bom ver isso e todos os ótimos palestrantes que vão, você sabe, falar aqui hoje com conhecimentos fantásticos. Mas isso está na nossa mente, é assim que a gente corta para a névoa, né? A segurança precisa ser uma parte essencial do ambiente. Somos muito empenhados em evitar que isso atrase o processo, mas, na verdade, é assim que se constroem sistemas confiáveis. Então, uma coisa que vocês vão ouvir bastante de mim, sabe, nesse sentido, é a noção de que aprendemos com dados da vida real e trabalhamos com os maiores laboratórios de ponta e as maiores empresas do mundo.
+
+Esse conceito, que antes não era questionado na área de segurança, agora está sendo, certo? É possível, por exemplo, que o gerador e o validador sejam a mesma pessoa? E o que queremos dizer é que, em alguns dos dados que você apresentará, por vários motivos, por que não, certo? E, quase como se você conhecesse a Sneak, não pense na empresa de segurança da cadeia de suprimentos que se deslocou para a esquerda. Como vocês verão, muito do que temos feito nos últimos 18 meses com algumas dessas grandes empresas na adoção desses sistemas complexos nos deixa muito satisfeitos e gostamos muito, e o que estamos aprendendo com isso?
+
+Bem, existem três problemas que, sabe, ouvimos quando conversamos com esses clientes. E eu quero compartilhar isso e mostrar alguns dos dados que comprovam isso. Bem, no fundo, trata-se de olhar para isso como...
+
+você pensa nesta sala e em todos que você apoia, sabe, você está construindo rapidamente na vanguarda. A pergunta que ninguém está respondendo é: podemos confiar no que nossos agentes acabaram de enviar e em como o fizeram, certo? Então, se você quiser realmente captar a essência, sabe, e eu tenho o prazer de conversar bastante com todos esses clientes, isso se aplica praticamente a cada um, dois, três ou todos eles. Na verdade, é a conversa que acontece. Então, ataques autônomos, tipo, sabe, não é mito, não é, sabe, eu sei que usei a palavra com M, mas desculpe. Ah,
+
+sabe, não é, sabe, uh, GPT 55 Cybers. Tipo, estamos vendo que esses ataques podem acontecer. Todos os laboratórios de vanguarda foram usados ​​em ataques automatizados. Você pode fazer isso mesmo sem ter modelos de fronteira. Nós demonstramos isso, e os atacantes também, infelizmente. Com um bom contexto e um
+
+bom controle, agora você tem um atacante que nunca dorme. O que ele faz? Os fundamentos de coisas como segurança de aplicativos, que já éramos alvo de tentativas de revolucionar há 10 anos, simplesmente desapareceram. Tipo, ah, você não pode ter gerenciamento de risco contextual e dizer: "Corrigi meus riscos críticos e corrigi meus riscos críticos e estou bem, porque todo o resto é muito difícil". Não, você pode encadear vulnerabilidades baixas e , sabe, criar exploits. É possível
+
+fazer isso sem muita necessidade de equipamentos de segurança com o modelo da classe Mythos, como já vimos. Mas com um pouco de esforço, você consegue fazer isso com qualquer outra coisa. Então, essa é uma grande, grande mudança na forma como vemos nossos clientes reagindo em tempo real. E aí você pensa: "Nossa, mil empresas gastam mais de um milhão de dólares para, sabe, implementar um código na nuvem." Então, essa é a resposta, certo? Bem, talvez
+
+. Vamos, vamos, vamos puxar essa corda um pouquinho. Existem classes de problemas já existentes que estão se agravando. Infelizmente, a qualidade do código é pior do que a do código gerado por humanos. Não é como se nós, humanos, sou engenheiro e não acho que escrevi um código perfeito; nenhum de nós escreve. Então, na verdade é um
+
+pouco pior. Então, bem, se esse era o único problema, tudo bem. Mas e quanto ao meio ambiente? Tudo o que consideramos mágico se baseia em habilidades, servidores MCP e todas essas coisas que queremos compartilhar e usar. E esses sistemas são intencionalmente ou não, sendo envenenados e, sabe, com a injeção de malware, e mostraremos algumas pesquisas sobre isso.
+
+E depois o comportamento do agente, certo? E assim, estamos tendo esses novos padrões de problemas se acumulando. E quem aqui não quer se tornar uma empresa de IA ou estar em qualquer lugar do mundo, não é mesmo? Em todas as empresas, em todos os conselhos administrativos, a ideia é: vamos transformar nossos negócios, nossos fluxos de trabalho, ou vocês estão começando do zero, vocês têm total autonomia. E quando você constrói com agentes e modelos, isso cria uma superfície de ameaça totalmente nova que não fazia parte da anterior. Então, esses são realmente os
+
+problemas fundamentais, certo? E isto é, sabe, eu quero compartilhar alguns dados reais. Isso representa mais de 4.800 clientes no último ano. O número real de pedidos em atraso, trimestre após trimestre, aumentou cerca de 108%.
+
+Então, lembra do que eu disse sobre os atacantes? Não se trata apenas das vulnerabilidades já existentes. E, infelizmente, existem milhões deles se você for uma empresa de qualquer porte. O problema é que estamos conseguindo aumentar o número de clientes apesar dos melhores agentes, apesar das coisas que nós e a indústria fizemos. Essa tendência é real e não é boa.
+
+E, sabe, você tem façanhas inéditas, mas elas não são inéditas. Assim como o exploit LLM leve, você pode pensar nele como se estivesse explorando vulnerabilidades existentes na nova superfície de ataque e as encadeando. Assim, no ritmo atual das obras, o raio de explosão é muito maior . Sim, a velocidade é uma parte importante disso, mas não é só a velocidade. E você sabe, justamente na semana passada, os Cinco Olhos, os líderes de inteligência do mundo ocidental, falaram sobre como a IA irá contornar os sistemas de segurança cibernética em meses, não em anos. Bem, eu não compartilho
+
+isso, sabe? Detesto usar táticas de intimidação. É um fato. Está se preparando para o que quer que esteja por vir, e nós já vimos o que está por vir. Simplesmente não é suficientemente difundido. Então, tentar,
+
+sabe, buscar sistemas e achar que um modelo específico será a cura para tudo, não é esse o caminho que queremos chegar. Os dados referem-se ao segundo ponto problemático: o ambiente de saída não confiável e o comportamento dos agentes. E estes são, mais uma vez, fatos. Esses são dados de referência. Todos os códigos QR no topo servem para que você possa conferir os estudos e as pesquisas que os embasam.
+
+Isso se deve, como você sabe, à quantidade de código vulnerável presente nos modelos mais recentes . Além das habilidades, existem as habilidades tóxicas. Descobrimos que a pesquisa seminal sobre como um terço ou mais de um terço de todas as habilidades, não apenas OpenClaw, Clawed, Code Acts, na verdade, contêm malware e vulnerabilidades que, com apenas três linhas de código em inglês, são capazes de derrubar um sistema. Portanto, você precisa realmente entender a intenção por trás disso. E os servidores MCP, como se conectam aos dados corporativos? Este é um ótimo
+
+protocolo, mas com pouca segurança integrada. Está melhorando, mas a base dele é, você sabe, a mesma vulnerabilidade do servidor MCP do GitHub que destacamos há um ano. E o que fizeram alguns dos nossos clientes? Eles desligaram imediatamente todos os servidores MCP, depois descobriram que todas as suas telas de desenvolvimento estavam bloqueadas e então surgiu a questão de como voltar a habilitar com segurança recursos tão poderosos. E quanto ao comportamento, todos conhecem o exemplo do Pocket OS, certo? O que eu
+
+tenho são dados reais do nosso próprio ambiente, dos nossos clientes da lista Fortune 100. Esses agentes criam cópias de dados PII (Informações Pessoais Identificáveis). Por que? Alguém compartilhou os dados pessoais e estava tentando resolver um problema real de um cliente . O agente achou que talvez eu devesse criar uma cópia de segurança disso em um banco de dados, só por precaução, caso precisasse novamente.
+
+Essa base de dados não é confiável. Ótimo. Agora você tem uma superfície de ataque desconhecida que não faz parte de nenhuma cobertura de segurança corporativa . Isso está acontecendo. Então, como é que se faz para não colocar portões? Como você os guia,
+
+certo? Então, você começa a entrar na última parte, o problema é que você não pode governar o que você não sabe que existe. É aqui que você começa a construir com agentes. Agora, estes são dados reais de mais de 3.000 clientes que utilizaram nossas capacidades para realmente descobrir a inteligência presente em suas bases de código, no que eles estão construindo.
+
+E para cada modelo que encontramos em um repositório, temos três vezes mais componentes agentivos. Você tem agentes nas ferramentas e em tudo o que eles usam. É preciso compreender todo o cenário, pois o risco não está concentrado em uma única camada. E depois de encontrar, como você sabe o quão arriscado é ? Qual é a sua verificação de dados independente ? Então, isso é resultado do
+
+nosso evento de análise de risco deste fim de semana, no qual desenvolvemos nossa própria capacidade de ataques e testes de intrusão . À medida que novos modelos e novos componentes são lançados, nós os verificamos. Os dois primeiros são seus modelos de fronteira favoritos . Você pode imaginar quais são. Eles se saíram muito bem na extração de PI, algo que não costumavam fazer tão bem com nossos ataques.
+
+Nossos ataques não permitem a extração de informações pessoais. O terceiro é o seu, é o novo modelo quente no Vale do Silício, especialmente, ou, você sabe, nas últimas semanas, rima com LLM. 100% das vezes, nossos ataques conseguiram extrair PI. Mas quando se verifica uma decisão de teste diferente, a substituição da decisão de teste mostrou que os modelos de fronteira tiveram um desempenho pior. O modelo aberto, em 0% das vezes, permitiu que você anulasse a decisão, pelo menos com nossos ataques.
+
+Saber disso permite que você saiba o que usar, quando usar e como controlar, e essas coisas estão mudando dinamicamente. Então, voltando ao ponto inicial, se nada disso te convenceu, como a separação entre gerador e validador, esta é uma pesquisa recente, de ontem, quando a divulgamos publicamente . É um parâmetro de referência que nenhum modelo foi treinado, então podemos confiar nele por enquanto, e teremos que continuar atualizando os parâmetros de referência. Mas isto é, sabe, uma coisa muito simples . Estamos perguntando sobre os modelos mais recentes e temos acesso a tudo, como você pode imaginar. Estamos pedindo a eles que
+
+encontrem a mesma vulnerabilidade, a executem cinco vezes e que apenas 50% delas sejam encontradas nesses cinco testes. Não é assim que se pode administrar um sistema empresarial usando apenas o LLM, sem nenhum outro recurso. Estes são os modelos mais recentes. Apenas 75% dos problemas foram encontrados, em comparação com uma boa e velha verificação determinística. E você sabe que 40% era a pontuação da Fórmula 1.
+
+Então, o que exatamente você perdeu? E estamos falando dos modelos mais recentes, que nem sequer estão disponíveis ao público, certo? Então, o que isso significa? Isso não significa que eles não sejam bons. Significa apenas que você precisa usá-los para aquilo em que são realmente bons, em conjunto e com cuidado, para encontrar a superfície que sua verificação determinística não consegue usar, e não apenas pensar que sistemas probabilísticos resolverão tudo.
+
+Então, resumindo, apesar de estarmos trabalhando nisso, ainda não temos todas as respostas. E eu vou compartilhar para onde vamos. Mas, no momento, temos respostas para os ataques automatizados que estão funcionando em alguns desses ambientes muito grandes. A questão é: como impedir que novos problemas entrem no ciclo do agente? Para contextualizar a segurança diretamente, isso é o que chamamos de estúdio. Você pode conferir
+
+em nosso site. E nós, sabe, estamos todos preocupados com os pacotes que baixamos. Assim como sabemos qual é o estado de conservação das embalagens. Temos conhecimento das informações sobre a vulnerabilidade. Sabemos que é um malware. Assim,
+
+conseguimos impedir que o agente escolha um pacote desse tipo ou escreva um código que, inerentemente, seja uma injeção de sequela. Mas ótimo, assim a prevenção evita aquele efeito taco de hóquei, que todos queremos evitar. Bem, o que acontece com o fato de você ter essa montanha de vulnerabilidade? Conseguimos levar organizações como a Labelbox a zero pendências logo de início , zero backlog. O que é muito difícil em termos de segurança, pois quebra aplicativos. Portanto, você
+
+precisa conhecer conceitos como fragilidade. E esses dados são extremamente importantes para que possamos obtê-los da nossa base e saber se esta é uma atualização segura. Assim, sabe, só na semana passada, uma empresa do grupo Max Seven corrigiu 16.000 problemas críticos usando esse agente de correção. Mais uma vez, algo que você pode experimentar. Então,
+
+sabe, foi assim que eu falei sobre o desenvolvimento de agentes não confiáveis. Acabamos de lançar ontem a versão GA (General Access) da nossa oferta de segurança para desenvolvedores com agentes . Está analisando o ambiente, a saída, as habilidades, os servidores MCP e o comportamento de agentes de codificação como Cursor Cloud, Codex e outros. E quando você está criando aplicativos de IA sem governança , essa governança de IA não pode ficar restrita a uma página do Confluence ou a um PDF. Então, como você consegue visualizar em tempo real tudo o que está acontecendo em repositórios de código complexos e de rápida evolução, compreender os riscos e garantir que as políticas sejam aplicadas nos ciclos em que os agentes e os desenvolvedores estão inseridos?
+
+Ver para crer. Eu adoraria trazer o Ezra aqui para fazer uma demonstração rápida. Bem, o Ezra vai mostrar algumas coisas para vocês e depois vocês podem passar no nosso estande e compartilhar mais algumas coisas . Obrigado, Manoj. Vamos agora passar para a interface de linha de comando (CLI).
+
+Vou fazer algumas demonstrações rápidas. Não temos tempo para fazer tudo o que o Manoj acabou de mencionar , mas adoraríamos que você viesse conversar conosco. Passe por aqui. Visite o estande. Encontre-nos aqui após esta palestra. A primeira coisa que
+
+vou fazer aqui é pedir ao Claude para gerar uma ferramenta, uma ferramenta de linha de comando (CLI), que possa criar uma imagem de código QR a partir de um prompt. Inicie o Codex ou o Claude. Pronto, aí está. Por favor, comece, Claude. Obrigado.
+
+Demonstrações ao vivo. Vamos tentar mais uma vez.
+
+Tudo bem. Hum, tente o número dois aqui. Vamos tentar fazer com que o Claude crie uma ferramenta de linha de comando para, em última análise, gerar essa imagem de código QR . Estou pedindo para usar uma dependência de código aberto e, se você notar esta quarta linha que coloquei aqui, estou sendo bastante prolixo. Estou instruindo o programa a usar a ferramenta de verificação de integridade de pacotes do Snyk . Então, poderemos
+
+ver isso aqui na demonstração, mas se você usar isso na prática, recomendamos fortemente que utilize uma habilidade ou um gancho para tornar isso uma parte automatizada e determinística do seu fluxo de trabalho. Então, a primeira coisa que vai fazer é ver, sabe, basicamente como é o projeto e quais são as dependências, alguns pacotes de código aberto que eu poderia usar. E vamos ver se conseguimos expandir isso. Não sei se a rede Wi-Fi da conferência vai funcionar bem conosco. Agora, podemos passar para uma demo gravada aqui, mas eu realmente esperava fazer isso ao vivo.
+
+Está um pouco melhor assim? Isso ainda mais? Tudo bem. Ótimo. Então, podemos ver agora que está chamando esta ferramenta de verificação de integridade de pacotes para duas dependências de código aberto diferentes . Está analisando um pacote de código QR
+
+e um pacote de imagem QR. Ambos são pacotes viáveis ​​que podem ajudar a realizar essa tarefa. Os resultados estão chegando.
+
+Bem, parece que o Wi-Fi da conferência realmente não está nos favorecendo . Então, vou passar rapidamente para a demo gravada. Peço desculpas. Venha nos encontrar depois. Esperamos poder chegar a um ponto em que isso não aconteça com tanta frequência.
+
+Hum, se conseguirmos transmitir isso ao vivo aqui. Aqui estamos. Então, a mesma pergunta. Talvez eu possa adiantar um pouco para que vocês não precisem me ouvir tagarelar um pouco sobre isso. Bem , no final das contas, vemos aqui que as duas imagens... Desculpe, os dois
+
+pacotes devolvidos. Na verdade, ambos são livres de vulnerabilidades. Não existem CVEs ativas que possam ser exploradas nessas versões. Mas o primeiro, o código QR, está saudável, ou seja, está recebendo manutenção constante. E há uma infinidade de downloads ativos deste aplicativo. Por outro lado, a
+
+imagem QR não apresenta vulnerabilidades CVE atualmente, mas não está sendo mantida ativamente. Foi lançado pela primeira vez há 10 anos . Então, se eu implantasse um software com isso agora, eu poderia não ser explorado hoje se usasse qualquer um dos pacotes, mas se uma nova vulnerabilidade fosse identificada no futuro, há uma probabilidade muito maior de que, se eu estiver usando este pacote de código QR aqui, uma correção seja lançada mais cedo, em um ou dois dias, e eu possa continuar desenvolvendo isso agora mesmo . A segunda demonstração que eu queria mostrar aqui explorava a avaliação de risco a partir de servidores MCP ou de habilidades que meu agente poderia estar usando. Então, alguém compartilhou comigo uma habilidade chamada "Temos isso aqui?".
+
+Uma habilidade de análise competitiva. E eu executei a avaliação de habilidades em relação à habilidade em questão, e vimos que foram retornados quatro resultados. E algumas delas são bastante problemáticas. Podemos ver na própria skill que ela está me pedindo para reproduzir o cabeçalho de autorização, o que é terminantemente proibido. Isso não é algo que desejamos que uma habilidade seja, em última análise, fazer. Também
+
+vemos que, em alguns casos, o sistema vai extrair conteúdo ao vivo do Reddit e do Twitter. Isso pode ser perfeitamente normal, mas você precisa entrar nisso de olhos bem abertos e garantir que está obtendo as informações necessárias e que a maneira como você está usando a habilidade será apropriada. Para fins de análise competitiva, isso provavelmente é razoável. Mas o que é especialmente problemático, se observarmos esta linha aqui, é que ela está tentando extrair de um arquivo YAML hospedado na internet instruções sobre como monitorar esses alvos e algumas das regras de classificação. Então, na verdade, está fornecendo a lógica necessária para executar a habilidade a partir de um site de terceiros.
+
+E se isso mudar, mesmo que meu arquivo de habilidades não mude em nada, isso representa uma chance de ocorrer uma exploração. Vale ressaltar que temos aprimorado a lógica associada às descobertas que apresentamos aqui, abordando a relação sinal-ruído e, de certa forma, oferecendo algumas funcionalidades de configuração de políticas como parte do nosso produto Evo. E veremos essa lacuna ser preenchida com o auxílio dessa ferramenta de código aberto no futuro. Recomendamos que você dê uma olhada neles. Acesse sneak.io e
+
+venha conversar conosco no estande. Encontre- me no corredor. Podemos fazer isso ao vivo, em vez de você usar uma gravação, se preferir. Mas acho que, dado o tempo disponível, provavelmente deveríamos encerrar a demonstração. Legal.
+
+[aplausos] Demonstrações ao vivo são sempre divertidas, mas a Lei de Murphy sempre aparece, mas você tinha um plano B, então isso é incrível. Então, veja bem, só para concluir, certo? Isto é apenas o começo. Sim, desenvolvemos alguns agentes muito interessantes para conjuntos específicos desses problemas. No final das contas, é um sistema, como discutimos, que realmente funciona em salas como esta, que estamos construindo para nossa base de clientes, e adoraríamos fazer parceria com o restante do setor enquanto desenvolvemos este projeto.
+
+E nós aprendemos, sabe, isso como eu mencionei, Evo, o que é Evo? Evo é o sistema que apresentamos ao mundo no final do ano passado, em termos de conceito, e temos desenvolvido constantemente esses diferentes agentes. Aprendemos com outros sistemas, sabe, como é o treinamento de pilotos de caça em aeronaves 5G? É essa noção de que você precisa realmente observar, orientar-se, decidir e agir, e é assim que você progride, e é nesse ciclo constante de aprendizado que você se torna, sabe, um superpiloto. E assim queremos viabilizar esta sala e outras salas.
+
+Ontem realizamos um workshop para treinar centenas de engenheiros de segurança de IA. Queremos capacitar os engenheiros de segurança de IA para que tenham seus próprios sistemas e ferramentas poderosos e, sim, existem problemas que ainda não foram totalmente resolvidos em termos de coordenação de múltiplos agentes com sistemas como este. Sim, todos nós sabemos como, sabe, os arneses e a memória compartilhada e estamos trabalhando nesses problemas. É assim que estamos construindo o Evo. Estamos construindo isso com a comunidade e queremos que seja uma visão aberta. Isso realmente está dando mais poder aos
+
+engenheiros de segurança de IA. Sabe, foi nessas salas que os engenheiros de IA se tornaram engenheiros 10 vezes melhores . Nosso objetivo aqui é colocar esse superpoder de 10x nas mãos dos engenheiros de segurança de IA para que possamos construir sistemas confiáveis ​​juntos. Então vamos continuar fazendo isso e, sabe, apareçam, conversem conosco ou, se vocês estiverem, sabe, acho que houve mais de 50 eventos relacionados à engenharia de IA, mas estamos tendo esta área de fãs no terraço. Vamos fazer mais algumas coisas em conjunto com a comunidade. Então, isto fica mais adiante,
+
+no nosso escritório aqui em São Francisco. Uh, jam comunitária. Venha se juntar a nós se você tiver tempo esta noite. Continuaremos a conversa. Muito obrigado a todos.
+
+Vamos continuar construindo. [aplausos]
+
+[música]
