@@ -1,0 +1,69 @@
+---
+video_title: "O divisor de águas dos LLMs locais finalmente chegou (Colibri)"
+video_id: pQH5daGMUrI
+channel_name: "Maestros da IA"
+channel_id: UCEojuEA0eCL267t_G_cc0Fg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=pQH5daGMUrI
+video_date: 2026-07-20T21:00:12+00:00
+video_description: |
+  Torne-se um Maestro da IA 👉 https://comunidade.maestrosdaia.com/?utm_source=youtubedescription&utm_medium=youtubedescription&utm_campaign=youtubedescription&utm_content=rodar-ia-local-colibri_raw100
+  Prompts e Recursos Grátis em Nossa Comunidade Aberta 👉 https://invitecomunidadeaberta.maestrosdaia.com
+  IA Para Empresas: Sistemas Autônomos, Agentes de IA e Automações 👉 https://implementacao.maestrosdaia.com/
+  
+  Um programador quase desconhecido criou o Colibri: um jeito de rodar IA local, modelos gigantes, sem internet e com pouquíssima RAM.
+  
+  Nesse vídeo eu explico como o projeto Colibri consegue rodar um modelo de quase 400 GB em um computador com apenas 40 GB de RAM, usando a arquitetura mixture of experts para guardar a maior parte dos "especialistas" no SSD e carregar só o necessário em tempo real. Também comparo o GLM 5.2 (o modelo open source por trás disso) com o Opus 4.8 e mostro os limites reais dessa técnica hoje.
+  
+  📌 CAPÍTULOS
+  0:00 A nova era da IA e o problema do custo dos tokens
+  0:37 Modelos open source: GLM 5.2 contra os melhores modelos da Anthropic
+  1:31 O problema real: hardware caro para rodar IA localmente
+  2:01 O programador que rodou um modelo de 400GB com 40GB de RAM
+  3:34 A brecha: como funciona a arquitetura mixture of experts
+  4:33 O Colibri: o projeto que faz a IA rodar local com pouca RAM
+  6:26 Como instalar e as limitações reais do projeto
+  7:13 Comunidade Maestros da IA: agente de instalação e recursos exclusivos
+  
+  ✨ O QUE VOCÊ VAI APRENDER
+  ✅ Por que rodar IA local ficou mais viável com modelos open source como o GLM 5.2
+  ✅ Como a arquitetura mixture of experts economiza RAM ao usar o SSD como "armário"
+  ✅ O que o projeto Colibri faz de diferente em relação a tentativas anteriores
+  ✅ Os limites reais de rodar IA local hoje (é lento, mas custa zero)
+  ✅ Como instalar o Colibri sem complicação usando o agente da comunidade
+  
+  #colibri #ialocal #inteligenciaartificial
+---
+Nós estamos entrando em uma nova era da inteligência artificial. Durante muito tempo, a corrida das maiores empresas de A do mundo foi pelo modelo mais poderoso, o modelo mais avançado. Porém, o custo nessa história toda tem sido uma questão permanente. Empresas que gastaram mais com tokens do que teriam gastado para fazer exatamente o mesmo trabalho com seres humanos. Pessoas que esgotam sua janela de tokens em poucos minutos e não conseguem fazer absolutamente nada. Isso sem falar do
+
+banimento de certos modelos de do controle do governo dos Estados Unidos em relação à aquilo que você pode ou não utilizar. Recentemente, modelos open source, modelos de código aberto, tem sido cada vez mais comum, sobretudo porque alguns modelos chineses, especialmente o GLM 5.2, consegue atingir uma performance quase tão boa quanto os melhores modelos da Antropic por um custo muito menor. Só que a melhor parte não é essa. A melhor parte é que você consegue baixar esse modelo para colocar na sua própria máquina. Ou
+
+seja, você nem precisa de internet, você tem os dados 100% seguros, você tem controle sobre o sistema. A gente inclusive fez testes aqui no canal do GLM 5.2 contra o Opus 4.8, caso você queira assistir. E em vários testes, o GLM foi melhor. Então a gente tá vivendo
+
+em uma era em que você pode instalar modelo de maneira gratuita, usar de maneira gratuita, sem ter que pagar nenhuma assinatura. E esses modelos têm uma qualidade tão boa quanto alguns dos melhores modelos disponíveis no mercado. Só que tem um grande problema nessa história, porque apesar da IA ser de fato gratuita, você precisa comprar uma máquina extremamente potente para rodar. E entre gastar mais de R$ 50.000 R000 para rodar localmente um modelo de A ou assinar Open AI, Antropic, o Google por $ ou 200 que sejam. Ainda faz muito
+
+sentido você ter acesso a esses melhores modelos em nuvem. Só que tem um projeto pouquíssimo comentado até então que pode mudar essa história toda. Um programador quase desconhecido conseguiu fazer com que um dos melhores modelos de A da atualidade rodasse no computador comum dele, sem internet, tudo de maneira local. E o desafio é significativo. É como se você tivesse estacionando um caminhão em uma vaga de moto. É
+
+interessante que você entenda como ele fez isso. Bom, a ideia dele era rodar esse modelo de quase 400 GB em um computador que não tinha nem 40 GB de RAM. E aí você pode pensar: "Bom, mas então por que que eu não pego esses 400 GB ao invés de rodar no meu computador? Eu rodo em um SSD, em um USB, em um pen drive, né, em uma memória externa. meu computador que pode ter 1 tera que eu posso comprar que nem é tão caro assim.
+
+O problema é que muita gente confunde a memória que a gente fala informalmente, ah, o computador tem 500 GB de memória, que é a quantidade de arquivos que você consegue inserir no seu computador, que também é chamado de file system, com a memória RAM, né, que é, na verdade, a quantidade de memória de curto prazo. É a memória que determina a quantidade de coisas que podem ser feitas, executadas ao mesmo tempo. E não é porque você tem 10 GB de espaço no seu computador que a sua memória RAM vai se tornar mais potente. São coisas não relacionadas, muitas vezes confundidas. Então o que você precisa entender é que baixar todos os arquivos dentro de um HD não resolve o problema, porque você provavelmente não vai ter poder computacional para processar essas informações. Só que tem
+
+uma reviravolta muito interessante, uma brecha em todo esse sistema. Dentro desse modelo, você não tem um bloco único, um bloco que precisa ser sempre trabalhado em sua integridade. Você tem 75 andares e cada andar tem 256 andar tem um porteiro e esse porteiro avalia quais desses especialistas são mais pertinentes para cada contexto, para cada momento, para cada solicitação. e ele vai escolher os oito especialistas mais pertinentes e os outros 248 especialistas ficam dormindo. Ou seja, 95% dos especialistas são praticamente peso morto. Esse peso morto
+
+pode muito bem ficar no armário. É justamente essa a brecha. E essa arquitetura não é nenhuma novidade, ela já estava sendo explorada há um bom tempo. Tem vários modelos que já fazem uso dessa arquitetura e ela se chama mixture of experts. E aí que entra o colibri. É um projeto publicado por um
+
+desenvolvedor solitário chamado Just Vog. E o Colibri divide a inteligência artificial em duas partes. A parte que de fato trabalha e consome apenas 10 GB de RAM. Enquanto isso, todos os especialistas ficam guardados no armário, eles ficam dentro de um SSD. E quando o porteiro anuncia os oito especialistas, eles são utilizados, mas sem acordar os outros especialistas. Quando ele termina
+
+de usar esses oito, ele devolve os oito pro armário e pega mais oito e assim por diante. E tem uma outra questão interessante que é o fato de que o porteiro tem afinidades, ele gosta mais de chamar certos especialistas, ele vai ganhando confiança, intimidade e se torna amigo até certo ponto dos especialistas por est em contato com eles. Então, quando o porteiro vai chamar especialistas que ele sempre chama, esses especialistas já estão esperando ali. E essa é a lógica que faz com que o programa fique cada vez mais rápido, quanto mais você utilize. E aí você pode se perguntar, se era tão simples? Por que ninguém fez isso antes?
+
+até fizeram, mas com algumas ineficiências, porque projetos anteriores faziam com que o computador tivesse a responsabilidade de parar tudo e encontrar esses especialistas, que é um um processo que acaba com a fluidez do processo. E uma das diferenças do colibri é que ele não para tudo para ir e caçar os especialistas. Ele ouve o porteiro e chama oito especialistas de uma vez só. Tudo isso sem parar de trabalhar e melhor ainda, ele tenta prever quem o porteiro vai chamar. E essa ideia já tinha sido publicada pela Apple em 2023 em um estudo chamado LLM in a Flash. Então é como se a Apple
+
+tivesse dado a ideia, só que quem levou isso às últimas consequências e fez isso na prática foi o colibri. Agora você deve estar pensando, bom, então como eu instalo isso e começo a usar imediatamente? Existe uma coisa que você precisa saber. Esse é um primeiro passo em uma direção bastante entusiasmante, mas do ponto de vista prático ainda é lento. Você tem que pensar nessa ideia não como uma substituição prase que você usa todo dia, sim como uma espécie de projeto experimental para você deixar rodando durante a madrugada. Se você é da época
+
+em que a gente deixava discos, álbuns, filmes, jogos baixando durante a madrugada porque a internet era muito lenta, é mais ou menos isso. Você não vai conseguir conversar em linguagem natural com respostas rápidas do Jali M5.2, mas você pode ter tarefas executadas a custo zero em um ambiente local e com máquinas que não são tão caras. Caso você queira fazer a instalação e testar esse projeto, nós criamos um agente que disponibilizamos dentro da nossa comunidade premium dos maestros da IA, que ele basicamente vai fazer todo esse setup para você. Você liga o seu SSD no computador, você baixa o nosso agente, começa a interagir com ele e ele vai cuidar desse setup do começo ao fim. E esse tipo de recurso
+
+exclusivo que nós disponibilizamos na comunidade maestros da IA. Além disso, temos lives toda semana, chamadas de vídeo mesmo, em que você aparece, pergunta coisas pra gente. Nós temos suporte técnico todos os dias para você nunca travar nenhuma implementação e mais de 25 horas de conteúdo sobre as ferramentas de mais relevantes do mercado, incluindo um curso completo de cloud code. Temos também várias skills, vários agentes e vários apps exclusivos pros membros da nossa comunidade. Cada vez temos aumentado esse arsenal para que a experiência na comunidade seja ainda mais completa. E a interação entre
+
+os membros da comunidade tem sido muito legal. As pessoas já estão se envolvendo, se conhecendo e já criando projetos juntos, já abrindo empresas juntos, já criando aplicativos. Tem sido um ambiente de muita troca de experiências, de compartilhamento de desafios, de realmente um lugar em que você pode fomentar seu interesse, sua paixão ou sua forma de usar IA para alavancar seu negócio, alavancar um negócio novo que você tá pensando em abrir. Talvez o seu sócio esteja na comunidade. A gente tem muito orgulho desse projeto e vai ser um prazer receber você lá. Então o link vai estar
+
+na descrição do vídeo, caso você queira saber mais sobre a comunidade maestros da IA. E caso você tenha gostado desse vídeo, querer receber mais notificações de vídeos como esse, você pode dar um hype, um like e se inscrever nesse canal. Um abraço e até a próxima. [música]
