@@ -1,0 +1,493 @@
+---
+video_title: "Configurando Docker Compose, Postgres, com Testes de Carga - Parte Final da Rinha de Backend"
+video_id: -yGHG3pnHLg
+channel_name: "Fabio Akita"
+channel_id: UCib793mnUOhWymCh2VJKplQ
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-yGHG3pnHLg
+video_date: 2023-12-16T13:41:38+00:00
+video_description: |
+  Não podia terminar o ano com pendências, então eis a parte final da Saga da Rinha de Backend. Neste video vou aproveitar os temas da rinha pra demonstrar em mais detalhes como configurar um Docker Compose de verdade, como funciona testes de carga com Gatling, como usar esses dados pra configurar coisas como o Postgres melhor. Também vamos ver como avaliar exatamente quanto pesa rodar SQL num Postgres, como determinar coisas com tamanho de pool de conexões e muito mais!
+  
+  Hoje é dia de aprender ferramentas que todo programador deveria mesmo saber no dia a dia de projetos de verdade.
+  
+  ## Capítulos
+  
+  00:00:00 - Intro
+  00:01:03 - CAP 01 - Minhas Pendências da Rinha - Como Começar?
+  00:03:28 - CAP 02 - Entendendo Docker Compose - PHP do Lauro
+  00:07:38 - CAP 03 - Aprendendo a Lidar com Poucos Recursos - Configurando NGINX
+  00:15:33 - CAP 04 - Gargalos de Docker - Network Mode: Host
+  00:21:41 - CAP 05 - Prefira Docker em Linux - Problemas em Mac e Windows?
+  00:26:51 - CAP 06 - Algumas Dicas de Docker Compose - Node do Lucas Weis
+  00:30:21 - CAP 07 - Básico de Testes de Carga - Gatling
+  00:44:26 - CAP 08 - Comparando com Network Mode HOST - Faz diferença??
+  00:52:53 - CAP 09 - Entendendo PostgreSQL - Banco era Gargalo??
+  01:01:12 - CAP 10 - Full Text Search no PostgreSQL - Faz diferença??
+  01:07:35 - CAP 11 - Estratégia de SQL com EXPLAIN ANALYZE - SQL por baixo dos panos
+  01:16:11 - CAP 12 - Quantas Conexões Configuro no Banco? - Medindo com pgAdmin
+  01:23:34 - CAP 13 - Discutindo sobre Linguagens - Kotlin e Crystal
+  01:31:05 - CAP 15 - Como Linguagens afetam Recursos do Banco? - Só a saber, sobre threads vs fibers
+  01:35:00 - Bloopers
+  
+  ## Links
+  
+  * [Repositório Oficial da Rinha](https://github.com/zanfranceschi/rinha-de-backend-2023-q3)
+  * [GitHub Versão Node.js do Lucas Poole](https://github.com/lukas8219/rinha-be-2023-q3)
+  * [GitHub Versão PHP do Lauro Appelt](https://github.com/lauroappelt/rinha-de-backend-2023)
+  * [GitHub - akitaonrails/rinhabackend-rails-api](https://github.com/akitaonrails/rinhabackend-rails-api)
+  * [Docker Network Mode Host](https://docs.docker.com/network/drivers/host/)
+  * [Gatling](https://gatling.io/docs/gatling/tutorials/installation/)
+  * [Vegeta](https://github.com/tsenart/vegeta)
+  * [HAProxy - The Reliable, High Perf. TCP/HTTP Load Balancer](https://www.haproxy.org/)
+  * [Envoy proxy - home](https://www.envoyproxy.io/)
+  * [Reverse proxy quick-start — Caddy Documentation (caddyserver.com)](https://caddyserver.com/docs/quick-starts/reverse-proxy)
+  * [GitHub - jesseduffield/lazydocker: The lazier way to manage everything docker](https://github.com/jesseduffield/lazydocker)
+  * [How to Insert Bulk Data in PostgreSQL - CommandPrompt Inc.](https://www.commandprompt.com/education/how-to-insert-bulk-data-in-postgresql/)
+  * [pgAdmin - PostgreSQL Tools](https://www.pgadmin.org/)
+  * [Spring Initializer](https://start.spring.io/)
+  * [Kotlin Programming Language (kotlinlang.org)](https://kotlinlang.org/)
+  * [The Crystal Programming Language (crystal-lang.org)](https://crystal-lang.org/)
+  * [Lucky - Web framework for Crystal (luckyframework.org)](https://luckyframework.org/)
+  * [O que é a pilha ELK? | Explicação sobre a pilha Elasticsearch, Logstash, Kibana | AWS (amazon.com)](https://aws.amazon.com/pt/what-is/elk-stack/)
+  * [O que é Elasticsearch – Explicação sobre o mecanismo Elasticsearch – AWS (amazon.com)](https://aws.amazon.com/pt/what-is/elasticsearch/)
+  * [Redis and Memcached-Compatible Cache – Amazon ElastiCache – Amazon Web Services](https://aws.amazon.com/elasticache/)
+  * [Apache Kafka totalmente gerenciado | Amazon MSK | Amazon Web Services](https://aws.amazon.com/pt/msk/)
+  * [Working with read replicas for Amazon RDS for PostgreSQL - Amazon Relational Database Service](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PostgreSQL.Replication.ReadReplicas.html)
+  * [Improve database performance with connection pooling - Stack Overflow](https://stackoverflow.blog/2020/10/14/improve-database-performance-with-connection-pooling/)
+  * [How Postgres Makes Transactions Atomic (brandur.org)](https://brandur.org/postgres-atomicity)
+  
+  
+  
+  * Podcast: https://podcasters.spotify.com/pod/show/akitando/episodes/Akitando-149---Configurando-Docker-Compose--Postgres--com-Testes-de-Carga---Parte-Final-da-Rinha-de-Backend-e2daih7
+  * Transcript: https://www.akitaonrails.com/2023/12/16/akitando-149-configurando-docker-compose-postgres-com-testes-de-carga-parte-final-da-rinha-de-backend
+---
+Hey everyone, Fabio Akita. Before today's topic, just confirming — yes, the last video was an experiment in making an episode entirely generated by AI. Most of you caught it, but plenty took forever or didn't notice at all. Don't worry, it was a one-time thing just to see how it'd turn out. It is not even slightly practical to make videos with AI tools like HeyGen.
+
+I explained the process in the video description, which you all always skip. So go read it. Today's topic, finally, is the promised Part 2 of Rinha de Backend. Yes, the "16 Languages in 16 Days" video dropped in September and I promised a Part 2. It's December, almost a new year, and only now am I putting it out.
+
+But that's how this channel works: I felt like talking about other stuff first. The point of this video is to fill in some tips and information that can help with your studies. In particular, some of the techniques that separate a tutorial toy from a real project. So, here we go ...
+
+(...) One reason it took me so long to make this episode is because of these two items I'd put down to cover here: Solving the Rinha in 5 minutes and What is a web framework? These two items would be a full 2-hour video and honestly, I don't have the patience for that subject because there's already plenty of documentation online.
+
+Open the website of any web framework, and that'd be the first tutorial on how to use it. I'd just be repeating what's already out there. Instead, I'll just summarize a few of the main points. Solving the Rinha in 5 minutes. Yes, I could do a speed run and edit a video showing step by step how to build a version of the APIs.
+
+I think it's pointless. A code speed run just to prove I can do it really doesn't motivate me. Obviously I know how to do it. Unnecessary flex. Frankly, the 16 languages in 16 days video was already flex enough.
+
+If you're a beginner and you're struggling to solve this exercise, obviously you still need to study more and practice more. What do I always say? There is no single way to solve a coding problem. There's no single tutorial or course walkthrough that can cover every permutation. What you have to do?
+
+Open the event's GitHub and go into the participants directory. That's why I found this event interesting: the sheer number of different versions the participants published to solve the same problem. Let me give you an example. I cloned the main Rinha repo to my machine. Grab the link in the description below.
+
+Going into the participants directory, we have 94 versions. I went over most of them in the other video, watch that afterwards. But let's say you're studying PHP and want to see how this problem is solved in PHP. From the participants directory, just open a terminal and type `grep "php" */README.*` and look at that — 4 subdirectories show up, two from Lauro Appelt and two from some guy called Predator.
+
+In the previous video I explained one of Lauro's versions, built in Hyperf with Swoole. Let's open the README of one of the directories and look — we've got the repo link with Lauro's PHP code. We can clone it anywhere else and poke around to see how he implemented his version. The most interesting part of this event is that one of the requirements was for every participant to create Dockerfiles and Docker Compose for everything. So it's super easy to run, no need to guess how to set up the environment for each project.
+
+These days I consider it good manners, good etiquette, that every project, no matter how small or how big, should always have a Dockerfile and a docker-compose. The Dockerfile shows how to run your application and the docker compose shows how to bring up that project's dependencies, like databases. Let's look at Lauro's project Dockerfile. First, it starts by pulling a pre-built image prepared by the Hyperf framework team, which already has everything you'll need. Then it does some timezone configuration.
+
+Most images boot with UTC — Greenwich time, timezone zero — as the default. To get the correct times for your geographic region, you need to set something like "America/New_York", always. Nobody's going to guess it for you. This next big block here is optional and I didn't test it enough to know whether it was necessary or not to improve benchmark times. All it's doing is creating a config variables file, to tweak settings like max upload size — which is pointless for this project — or memory limit, which might or might not be useful, I didn't measure to find out.
+
+Don't go copy-pasting this thinking it'll automatically improve something. Go to the docs and understand each item in here. Then run one version without it, and another with it, running the same benchmark, and compare whether it makes any difference. The fact that things irrelevant to this challenge — like max upload size — are in here tells me Lauro copy-pasted the example Dockerfile from the Hyperf image site and dropped it in. To wrap up, we add Postgres drivers for PHP, change the working directory to /app, which is where we'll copy the project files next.
+
+What I found odd is there's no final ENTRYPOINT command specifying how to run the application, and I also noticed "composer install" is missing to pull the libraries. That's a quirk of Lauro's version — file that away, I'll explain shortly why it's missing. Now let's look at the docker-compose.yaml. Docker Compose is the description of a mini-infrastructure.
+
+Instead of installing, configuring, and spinning up Redis, Postgres, Nginx all by hand, we can automate everything with a single command. It's much easier for a new developer joining your project to understand how things work when there's already a ready-made docker compose. It works as living documentation for the project's infrastructure. Good practice — every real project should have a working, configured docker compose. Never written a docker compose in your life?
+
+How do you start? Simple — just grab any of the 90-something examples from this event as a base. Let's open Lauro's and go from the bottom up. Right away, we can see this project depends on Redis being up. That "redis" name on the first line can be whatever you want.
+
+By convention we use the name of what we're running, but it could be "cache_server" or something like that. The only truly required line is the image name. Docker, by default, pulls everything from dockerio.com. If you want to pull from somewhere else, you need the full URL, otherwise the name and version of the image is enough.
+
+Here it says "latest", which is the most recent version. I don't like using latest because if tomorrow the version changes and your app wasn't updated and there are breaking changes, your developers are going to start hitting problems. If they're very junior, they won't connect the dots that Redis changed versions and that's why things broke out of nowhere. Better to pin the version, like 7.2.3-alpine3.19, meaning Redis version 7.2.3 running
+
+on top of Alpine Linux version 3.19. The other options are specific to the Rinha, in particular the resource limits in the deploy section. That was one of the criteria, which I thought was clever. We had at most 1.5 CPUs and 3 gigabytes of RAM to use.
+
+At first glance, that sounds like very little. It's not easy to picture how those resources fit across each component. If you're a beginner with a weak machine, you've already had to deal with this: how do you squeeze the most out of a dual-core with 2 gigabytes of RAM? Every developer who got good started out having to run heavy programs on weak machines. If you're a beginner who got lucky and started out working on brand-new, beefy machines from day one — anything above a quad-core, above 8 gigabytes of RAM, like a MacBook — and never had to wrestle with weak hardware, watch out.
+
+You're going to end up complacent, lazy. You'll think the whole world is like your bubble: CPU to spare, RAM to spare, and you'll never appreciate the value of optimizing things. Why optimize? If there's always more than enough? When things get hard, you'll be the kind who folds easy.
+
+That's why I keep saying that in my "Learning to Learn" theory, you have to have the Pain of Learning. It doesn't matter if you fall, what matters is how you get back up. It doesn't matter how many times you fall — what matters is that every time, you get up faster. Whoever never felt pain never learned a thing. And in this Rinha, the equivalent of that is the resource constraint — otherwise, obviously, the participant with a machine like mine — 64 gigs of RAM, Ryzen 9 with 32 threads — would easily generate benchmark numbers way better than everyone else.
+
+But with this limit, the participant with a quad-core and 4 gigs of RAM could beat my machine, if they knew how to better manage the limited resources. And this resource-limiting in Docker wasn't built for competitions. It was built for when you genuinely need to run two processes on the same machine, and in case one of them is too greedy and hogs too many resources, it doesn't leave the other process starving. If the server has 4 gigs of RAM, I spin up two programs, each in its own Docker container. Say the first one decides to allocate all available memory, even though it's not going to use it.
+
+Then when the second container tries to run, it'll crash from lack of resources. Do processes exist that allocate more memory than they should? Yes — Node.js, for example, has a cluster feature, which I mentioned in the previous episode. What do a lot of people do?
+
+They Google it and just copy a snippet similar to this from some Stack Overflow post. This script runs "os.cpus.length" and sees your machine has 4 cores — 4 CPUs — so it forks the application 4 times. Each fork might eat, say, half a gigabyte.
+
+So 4 forks is 2 gigabytes. Since your machine has 8 gigabytes, you don't think twice about it. Everything works just fine. Then you spin up a server on some cloud provider with 8 gigs of RAM. But you go for a beefy CPU — 16 cores.
+
+Your cluster script sees 16 CPUs and spins up 16 forks. Each fork eating half a gig of RAM. Which means it'll eat all 8 gigs at once. And you don't have 8 gigs to spare — your OS and other services eat RAM too. Some of those forks are going to crash right at boot.
+
+The right fix is to patch that script and replace the os.cpus call with an environment variable instead. That way we can declare that variable, like CLUSTER_WORKERS, in the docker compose yaml, and have control over how many processes actually spin up. As a developer you always need to have control over exactly what's going to run and how many resources it'll use. A great way to drill this is by nailing your docker compose scripts.
+
+Moving on — after redis we have nginx. That was another requirement in the Rinha instructions: have a reverse proxy to serve as a load balancer across at least two instances of your application. When a student follows any web tutorial, they only understand that there's a single process — the application server. It spins up on a port like 4000, you put localhost:4000 in the browser, and that's it. That's level zero in the learning curve.
+
+The level just above that ultra-basic one, you need to learn that in real projects, we spin up multiple processes in parallel — either on the same machine or across multiple machines. If it's on the same machine, one runs on port 3000, another on 3001, another on 3002. In either case, we always put a load balancer in front, in the form of a reverse proxy. I cover this in the episode "Making Your Web App Faster." Some more experienced folks might criticize the choice of NGINX, since there are other programs more specialized for this, like HAProxy, or more modern ones like Envoy or Caddy.
+
+But it's absolutely not a bad choice, especially because it's one of the best-documented, easy to use, and for this Rinha, it's more than good enough. In this docker compose section we have two important things — the first is the image. In this case we're using the Alpine version, which is one of the lightest. More important is the volume mapping. We need to map the config file that sits in our project on the outside, so the container can access it when it boots.
+
+Remember — a container is just a way of lying to the process running inside it, so it thinks it's alone, on an empty machine. It can't see any files from outside unless we explicitly declare them inside, like this. What's in that config file? Let's take a look. If you've never seen it, it looks complicated, but let's take it piece by piece.
+
+This first part at the top has to do with the service's scalability. Nginx runs on a master-and-workers architecture. Setting "worker_processes" to "auto" means it'll evaluate how many CPUs your machine has and spin up 1.5x that. So if you have 4 CPUs, it'll spin up 6 workers.
+
+Why not 1 worker per CPU? First, a CPU isn't exclusive to 1 process. What controls which process runs on which CPU during a given time window is the kernel scheduler. If your process is lightweight and needs very little time to do its thing, there's no reason to lock up an entire CPU just for it. It can share with other processes.
+
+Watch my episodes on concurrency and parallelism later to understand how schedulers work. Next we have worker_connections set to 4096. That indicates how many simultaneous connections each worker will try to handle. Don't confuse simultaneous connections with parallel processing. If 4096 web requests actually come in at exactly the same instant, this parameter just means the worker will accept all 4096 connections, but a good chunk of them will be waiting in a queue until they get served.
+
+If it takes longer than a configured threshold, it can reject and return a timeout error. As the name says — time expired error. In the first Rinha episode I explained how a lot of people were just tweaking this number by guesswork. Only Leandro, who built the Ruby version, understood that the trick wasn't to increase this number but to decrease it. I explain the reasoning in the other video, so make sure to watch it afterwards.
+
+Nginx is just the order-taker — remember the fast food cashier analogy? It takes the orders, but the ones who actually execute them — the cooks — are these servers declared in this upstream section. In this case pointing to localhost, ports 9501 and 9502. If you've worked with docker compose before, this might look a little strange. Normally, to spin up nginx via docker compose, I'd have a configuration more or less like this: I'd declare two web services, the instances of my application, as app1 and app2.
+
+Both running on port 8080. Then, in the nginx config, this upstream section would point to app1 on port 8080 and app2 also on port 8080. But how can you have two services running on the same port? No conflict? There isn't one, because in practice each container is like a separate external server on its own.
+
+And your application is running on an external server — just a virtual one. So each server has a free port 8080. Each instance can bind to port 8080 of its own respective "virtual server." It happens that nginx and these virtual servers communicate on the same network — also virtual — so nginx can load-balance between these two services. In the previous episode I explained the discovery some of us made during our experiments — Vinicius Ferraz discovered that if we use the virtual bridge network mode, which is the default, it introduced a heavy bottleneck and the benchmark results were way off.
+
+But if we set the network mode to host — meaning no network virtualization — then the times finally come out right. You may have noticed that in the redis config I showed earlier, or this nginx one, both already have the network_mode option set to host, indicating they should bind the container to the real network ports of the native operating system. In this mode we can no longer think of having "separate virtual servers" — instead, we're actually spinning everything up on the same machine, on the real network. Therefore, we need to worry about port conflicts. That's why in nginx's upstream, pointing to two servers on localhost, each of them needs to be on a different port — 9501 and 9502.
+
+It's very important to understand what bridge network mode is and the difference with host network mode. Study up if you didn't know this. But since we're on the application server. Notice that in the nginx config there's this depends_on section. It means: only bring up the nginx service once it detects that services api-01 and api-02 are up.
+
+So let's jump to the top of the docker compose file to see how this application is configured. We need to configure the same application twice — as api-01 and then as api-02 — and since we're using host network mode, we need to declare different ports for each one, which we normally do via environment variables, like this HTTP_PORT right at the top. The easiest way is to configure this api-01 service config block and then copy and paste it below to be api-02, just changing HTTP_PORT to 9502. There are other ways to do this. As an example, let's look at Lucas Poole's Node.js project docker compose, because
+
+he's still using the default network mode via virtual bridge, so he didn't need to worry about configuring different ports, he just needed different hostnames. Let's take a look. He declared the service named "app1" and then attached a label with this ampersand, calling it "app." Scrolling to the next service in the same file, notice — we have app2. And the next line is like an "include" or "import", telling it to copy everything that was in app1.
+
+The only thing that changes is the hostname. Get it? That's how we can reuse the same configuration across different services. This is a feature of YAML config files, not something specific to docker compose. Any other program that uses YAML can do the same thing.
+
+As I said before, Lucas's project isn't using host network mode — it's using bridge mode, so in app2's config, he keeps the same port number. If it were in host mode, he'd need to declare at least a different port number to avoid conflict on localhost. If you've never seen this before, I know it can be confusing — but remember this difference between virtual bridge network and native host network. The most important part in configuring our API application is this "build" parameter. Here it's more verbose than it needs to be.
+
+Writing just "." would have been enough, but Lucas preferred to explicitly declare the context as "dot" and the file as "Dockerfile" itself, which is already the default. This is where it'll use the Dockerfile we saw earlier to build the image for this container. All the other services, we point them to pre-built images from the Docker Hub service. Those images were all built with some Dockerfile too.
+
+The difference is our application hasn't been published to Docker Hub — we're building it right here, so we point directly to the Dockerfile. In the future, once the application is done, we can upload the final generated image and start pointing to it via the image parameter instead of build. In Lucas's file, that option is even commented out, because to participate in the Rinha, you needed to have published a real image. Lauro's Dockerfile, which I showed earlier, uses the Hyperf repository image as its base and also includes things like the Postgres PDO driver. All these elements can be configured via environment variables, which is what we're declaring in the "environment" section, like HTTP_PORT — which tells the Hyperf server which port to spin up on — or DB_HOST and REDIS_HOST, which declare the server name that'll host the database and cache.
+
+In this case, in host network mode, it'll all be localhost. In Lauro's project, when we did the performance optimizations I explained in the other episode, he made some adjustments afterwards and preferred not to leave everything 100% automated. Remember I mentioned that his Dockerfile was missing the ENTRYPOINT command, which defines which executable to start in the container? To know what to do, you have to read his README. When you bring up Docker Compose, the containers will be up, but internally what's running is this "sleep infinity" command — a trick just to keep the container alive and not die.
+
+The reason for that is he didn't add the next steps in the Dockerfile — not sure why — but the README asks you to manually run, via "docker exec", the "composer install" command to install the dependencies. Since he maps the entire directory as "/app" inside the container, if I'm not mistaken, "composer install" will download and write the dependencies to the "/app/vendor" subdirectory. That's why it doesn't matter which of the two containers you run it in — the other one will see it automatically, since they share the same volume on disk. Only after doing that can we, via docker exec again, run Hyperf in each container, and it'll start right up. During development, dependencies like node libraries — or in this case, composer ones — we don't want to bake them into the image because they take up too much space and change constantly.
+
+Rebuilding the image every time would be a pain. Better to map a volume inside the container and install there. Only when you're generating the final image to publish — that's when you'd want to switch to baking the dependencies into the image. Otherwise whoever pulls it later will need to do that step manually, which isn't ideal. Once all that's done, from the terminal, just bring everything up with "docker compose up."
+
+That'll pull any images you don't have yet, build the application one, and spin everything up cleanly, in the right order, thanks to the depends_on all services declare. Look at that — the first time it takes a little bit to come up. I'll fast-forward a little and... done.
+
+As I explained before, just for Lauro's project we need to run composer install manually — fast-forward a bit more and... done. Finally, we can bring up Hyperf in each of the containers.
+
+To test that everything worked, we can hit the people-count API endpoint, which is used by the benchmark script to show how many people were inserted during the load test. Just call it from the terminal with curl hitting the local count-people endpoint on port nine nine nine nine. And... it blew up.
+
+What happened? If you're running on some Linux distro, it would've come back clean. But if you're on Mac or Windows — like I am, via WSL 2 — that host network mode config is not going to work. Why? If you don't understand how a container works under the hood, make sure to watch the episode on containers.
+
+In short, Docker needs the Linux kernel to work. Docker isn't a virtual machine — it's an infrastructure that asks the kernel to lie to processes, making them believe they're running alone on the machine. On Mac, the problem is that Macs don't run a Linux kernel. Even though they run programs that look like Linux ones, they're all actually recompiled to be compatible with the Darwin version of BSD UNIX. Macs are UNIX, not Linux.
+
+I told that whole story in the episode on the differences between Mac, Windows, and Linux. Linux programs don't run natively on Macs — they all need to be at least recompiled. Mac and Linux are binary-incompatible. Windows, obviously, is also not a Linux distro. The Windows kernel is fundamentally different from Linux and Mac.
+
+But these days there's WSL 2, which is basically an ultra-light Linux virtual machine running on top of Windows using the Hyper-V hypervisor infrastructure. That's the only solution for Mac and Windows: run Linux in a virtual machine and, inside it, run Docker. For both Mac and Windows, one of the most popular options is downloading the Docker Desktop package, which installs a VM for Docker and a GUI — optional — to make it easier to manage the various Docker elements like virtual networks, images, and containers. And here's the problem — why localhost:9999 doesn't work in host network mode. According to the docs themselves: the host network mode driver only works on Linux — running in Docker Desktop's VM, the container won't get any IP address and port publishing will be ignored, making the container unreachable.
+
+Does that mean Docker Desktop on Windows and Mac is garbage, then? Let's recap — why were we using host network mode? Because in the load testing scenario, the default mode creates a bottleneck, so we switched to host mode. That's only for the load testing situation. Day-to-day, while you're coding, under normal circumstances, you won't notice any difference.
+
+In that case, you don't need to use host mode — just leave everything at default. In virtual bridge mode, Docker on Mac and Windows will work just fine. With WSL 2, you can install Docker or Podman inside WSL instead of using a separate VM like Docker Desktop does. Speaking of Docker Desktop — quick tangent — if you really want a GUI to manage images, containers, and everything else, try another option: Portainer, which is itself an application that runs in a Docker container, so it's trivial to install, and it gives you a web admin interface that's way more powerful than Docker Desktop. But it's also cool to learn to stick to the command line and experiment with things like Lazy Docker.
+
+You can do everything with just the "docker" command, but sometimes we forget how to do things we don't use every day — like "wait, how do I delete images that aren't being used again?" — and that's where Portainer and Lazy Docker can help. Go poke around. Actually, using port NAT — the default option — is way simpler. Let's take Lucas's nginx file, since he didn't go with host network mode.
+
+Look at the upstream server declaration. Instead of localhost with two different ports, we have two different hostnames here using the same ports. It's like declaring two separate servers, each with a copy of the application on port 8080. In docker compose, we declare app1, expose port 8080, tag it with the ampersand "app", and down below declare app2 using the same configuration, just overriding the hostname. Everything else stays the same.
+
+We don't have to worry about port conflicts because it's as if they're servers on different machines. That's the advantage of port NAT and why it's the default mode. It's much more intuitive. If that wasn't clear, watch my containers episode again and the networking series. Lauro's PHP version is one of the trickier ones to bring up, because of those extra steps in the README that he chose not to automate.
+
+To continue the explanation, we'll use Lucas's Node project from here on out. His is simpler — just run "docker compose up," wait for everything to pull, and done. Even on Docker for Windows or Mac it shouldn't have issues because his version uses standard port NAT, so everything should work plug-and-play — which is the ideal for a docker compose. Before I forget — if you're not used to docker compose, always remember that if you don't start the "up" command with the "-d" daemon flag, it'll keep hogging your terminal. Ctrl-C will bring everything down.
+
+And make sure the containers are actually stopped by running "docker compose down." If you modify your code and bring it back up with "up" but feel like your changes aren't showing, you can force the app image rebuild with "docker compose up --build" or "docker compose up --force-build." From another terminal, you can see the running containers with "docker ps." Look at how cleanly it shows — from there you can open a shell into any of them using "docker exec -it." While working on a project, you can just keep tearing it down with "down" and bringing it back up with "up."
+
+But when you're done with a project and won't be touching it anymore, it's worth doing one final teardown with "docker compose down --rmi all." That option will delete the containers and the images. Docker images eat up a lot of disk space, and if you keep forgetting to clean up after projects you're done with, you'll be wasting space. Look up later how to clean containers and images you're no longer using. Back to it — time to dig into this load testing business.
+
+Understand this: who cares what language you picked, what framework you use, the mountains of JavaScript you crammed into the front-end. Svelte, Tailwind — none of that matters. The only thing that matters is that between your browser and your application, text-formatted messages travel back and forth, obeying the HTTP protocol. Messages split into headers and a body. The test I suggested earlier — that curl call against the local count-people endpoint — is an example of that.
+
+Curl and Wget are command-line browsers. Simple browsers with no front-end, so they don't need to parse HTML, CSS, or JavaScript. They just print what they receive. I debated whether to spend time explaining curl — how to send and receive HTTP messages. But that'd be an unnecessary tangent.
+
+Every web developer has to know how to send and receive HTTP messages manually — whether via curl on the command line or via web developer tools in any browser. Without knowing this, I'm sorry, you haven't even started understanding the web yet. Take several steps back, study more, then come back. I'm being blunt about this because it's real: HTTP is simple — the main headers you can know by heart, message encodings like URL encode are simple. And if you don't understand how this message exchange works, everything from here on out won't make any sense.
+
+Without knowing this you don't even understand what an API is. Without knowing this you can't even begin to talk about trivial security issues like request forgery, or performance optimizations like conditional GET requests. 80% of the most interesting and most important stuff — you'll never have access to it. So stop here and go study first. With all that said, let's jump straight to Gatling — the stress test tool, or load test tool, that the Rinha chose.
+
+They even did a small sponsorship — I think with some prizes for the winners. It's a tool that accepts scripts written in Scala or Kotlin. First thing is having Java installed on your machine. Heads up — Java 21 came out not long ago, and depending on your distro, like Arch, which installs the latest of everything, you're going to have problems. Manually pick OpenJDK 17 or older versions like version 11.
+
+How do I know I've got the right Java? Come on — open a terminal and type 'java -version'. If you have more than one JDK installed — on Arch, there's the 'archlinux-java set java-17-openjdk' script to force it to use version 17, for example. Check the documentation for your distro's JDK package. On Windows or Mac, just download the version 17 installer directly and you're done.
+
+After that you need to download Gatling itself. Just go to the site and download the zip. Then unzip it wherever you want. I personally prefer to unzip to "/opt/gatling" but you can unzip to your home directory. Anyway — the important thing is to go into the Rinha repo, into the directory called "stress-test."
+
+In there you'll find the main script, "run-test.sh." There's also a PowerShell version, but honestly I didn't bother with that. Edit that script and make sure the GATLING_BIN_DIR variable is pointing to the bin directory that came inside the zip you downloaded. Look at the line below — that's how it runs Gatling, passing in the simulation script which is that RinhaBackendSimulation, which we'll look at shortly.
+
+Next it declares the main working directories. Everything lives inside "stress-test/user-files." In resources we have spreadsheets with test data. Let's take a look. The "pessoas-payloads.tsv" file has fake people data that it'll send to the
+
+register-people API. As you can see, each line is a JSON, and the data is completely random. You think everybody sends clean, pretty data to your application? On the contrary — with the amount of bots out there, your application is receiving data just like this all the time. Never assume your application will only be used by smart people who know how to read and write properly.
+
+On the contrary — assume most usage will come from broken bots or clueless users who can barely spell their own name and will fill everything out wrong. Your application needs to be prepared for the worst inputs, always. This is a good example of an attack to see if invalid things manage to slip through your validations — or more commonly, whether you forgot to implement some validations. The second file is "termos-busca.tsv," which will be used by the search-by-terms API.
+
+It's another list of random nonsense. Same idea — stress your APIs and see how they behave. You need validations as specified in the Rinha instructions. For a real project, it's good to have load tests with completely random data like these, but it's also good to have data a bit closer to what average users would send, to make it easier to analyze afterwards. Creating test data is, in itself, an art as well.
+
+Tests with random inputs like these are called Fuzz Tests. Fuzz is like noise, chaos — a way of saying random. If you only test with data that looks real, you're missing the opportunity to see the limits of your validations. Finally, we have the actual load test script itself — this RinhaBackendSimulation.scala file.
+
+Even if you've never written Scala before, writing simple scripts like this isn't hard. Any good programmer should be able to at minimum read and understand it without much difficulty. Let's go — piece by piece. Gatling has the concept of a Simulation and our class inherits from it. Next we start by defining where to send our load.
+
+In this case the base URL is localhost port 9999, where we configured NGINX in Docker Compose — remember? Since our application has no handling for any headers, that's already enough. Just for fun, they put a fake user agent in here. We continue by declaring a "create and look up people" variable which is a "scenario." I imagine this "scenario" function lives in the abstract Simulation class I'm extending.
+
+It returns an object where we can chain multiple configuration calls. The configuration API is very readable. Look: in the "create and maybe look up people" scenario, feed from the TSV file "pessoas-payloads.tsv" and treat it as circular — meaning if we reach the end of the file, restart from the first line again. For each line, execute the following block.
+
+In this block we start by calling another simulation method, "http," which I imagine controls an HTTP call. We configure it with a POST call to the "/pessoas" endpoint, where the body will be the payload — which is a line from the load file we're reading. As the only header, we set "Content-type" to the mime-type "application/json." Any self-respecting framework checks the content type. I'm not entirely sure what this "check" function does, and I didn't have the patience to go read the docs, but it doesn't seem important right now.
+
+It must be something like: "consider it correct if the request comes back with a status code of 201, 422, or 400." If it comes back with a crash — error 500, or page not found which is 404, or anything else, consider it an error and report it in red. Next there's a new check, asking to save something called "http status." We can see it'll be used in the checkIf call below. This line seems to say: execute the following block if the HTTP status code we saved in the previous line is code 201 — the correct HTTP code when a resource is created on the server.
+
+If that's the case, the following block should save the value returned in the Location header, inside this session called "location." Remember this for API design: whenever a resource is created on the server, returning code 201, it should also return a header called Location with the full URL for this new resource. That's what we're storing. Leaving this block, the scenario pauses for 1 to 30 milliseconds. Then, if a location session was saved, it fires a new HTTP request to that location.
+
+If found, the server should return HTTP code 200 and the record's JSON. If the return is 200, the simulation should consider it green — OK. If any other code comes back, consider it a red knockout. As the comment explains, Zanfrancheschi — who designed the Rinha challenge — did things right. For the challenge to be even remotely interesting, just building an API that saves a new person to the database would be way too simple.
+
+Anyone who's finished at least one course tutorial should be able to do that. But spinning up two instances of the same application and putting them behind a reverse proxy creates a somewhat more interesting situation. Say you did some premature optimization. Let's try to be clever. When you receive the JSON via POST at /pessoas.
+
+You hold it in memory without sending the insert to the database, to write asynchronously later, and that way you can respond immediately with HTTP code 201. Since you generated a random UUID before sending to the database, you can generate the Location URL. It'd be something like the local people endpoint followed by the new record's UUID. The Gatling script pauses for 1 to 30 milliseconds and then fires a GET for that URL that came back in the Location header. If before those 30 milliseconds your application hasn't actually written to the database, there's a chance the lookup hits the second instance.
+
+If the record didn't have time to be written, it won't be found and we'll get a 404 not found. The simulation would log an error. So just holding the record in memory to respond faster would break that search condition in the test — you need to be smarter than that. The Rinha's expectation — with the imposed CPU and RAM limits, the requirement to run two or more instances, and dumping heavy load — would trick more seasoned programmers into falling for premature optimization, adding things like caches or queues, as I explained in the previous episode. If you do it the naive way — first write to the database, then return code 201 with the Location URL — everything works correctly.
+
+But will the wait time of writing to the database make NGINX time out on a lot of requests? And no — that's what we discovered in the 16 languages episode exploration: all of us underestimated the Postgres database. It turns out that for simple cases like this — simple inserts — it's just as fast as a cache server like Redis. Any extra optimization makes no difference. The optimization of using host network mode instead of virtual port NAT made more of a difference than trying to optimize Postgres with some caching solution.
+
+I'll come back to that — let's just finish reading the simulation file first. The people-creation scenario, followed by the lookup of that newly created person, is the longest scenario. Not hard — just long. The other two scenarios are shorter. In the "search people" scenario, it feeds from the TSV file "termos-busca.tsv," again
+
+in circular mode, and for each line in the file, fires a GET request to the "/pessoas" endpoint passing the variable "t=", concatenating the search parameter. I think if you don't configure it explicitly, the scenario assumes 200 responses are OK and anything else is an error. Finally, we have the invalid people search scenario — same endpoint, just without passing any search term. According to the Rinha rules, this should return error code 400, which is exactly what the script will check. If it returns 400, mark it green — OK.
+
+With the 3 scenarios declared, the script now defines a block it calls "setup." Literally configuring how the scenarios should run. In all cases, it starts by saying "begin with 2 constant users per second, for 10 seconds," then continues with "proceed now with 5 users per second, for 15 seconds." That's a light load — just a warm-up. Then the real load begins — look at this: "ramp" means to gradually increase, like an actual ramp.
+
+Ramp up, starting at 6 users per second, all the way up to 600 users per second, accelerating constantly over 3 minutes, maintaining linear growth. Now we're talking — that'll generate heavy load all the way to the end. Get it? But that's not all — in parallel, it'll also run the search and invalid search scenarios. Both do a small warm-up for the same 25 seconds.
+
+Then it goes straight into a ramp from 6 users per second, up to 100 users doing valid searches per second, for the same 3 minutes. And finally, a ramp from 6 users per second up to 40 doing invalid searches per second, for 3 minutes. In each scenario, we only configured that search is a GET to "/pessoas" or creation is a POST to "/pessoas" — but how does it know where to send those requests? That's what that configuration we set up at the beginning of the script is for, declaring that the base URL is "localhost" port 9999 — remember? At the end of the setup, we plug in that configuration.
+
+And that's it! Let's see it running. To make it clear — I have a terminal split in two, using TMUX's horizontal split. In the top half, we're in Lucas Poole's Node project. We can call "docker compose up" and wait for all the services to come up.
+
+In the bottom half, I'm in the "stress-test" directory of the Rinha repo, where the "run-test.sh" script lives, which we're about to run. There we go — those 25 seconds of warm-up pass and then the fun begins. Now we wait for the 3 minutes of the scenarios. Remember how the script configures 3 scenarios?
+
+Here they are: Invalid Search, Valid Search, and Creation. At the top there's a summary, at the bottom a bit more detail. The main thing: OK means requests that returned valid HTTP response codes, like 200, 400, or 422. Anything that returned an error — code 500, timeout — I think it counts as KO, Knock Out. Those are the lost requests.
+
+Getting back to it — after running for a while, when the load cranks up near the end, in several of the participant projects, we'll see this error reported: java.io.IOException: Premature Close. That's the error Vinicius Ferraz discovered how to fix by switching from network_mode bridge to host. Look at what this message is saying: more than 9,000 lost requests from that exception. 9,000 out of a total of just over 100,000 requests is a significant number —
+
+almost 10% error rate. Let's open the chart that Gatling generates. In an ideal world we'd want to see only this green bar, nothing red next to it. But we've got red. Looking at this table — out of a total of 108,000 requests, almost 99,000 came back OK, but nearly 10,000 in red, knocked out.
+
+I'll come back to that table — let's look at the charts below. Remember how we configured it to start the three scenarios in parallel, ramping up from 6 users to over 600 simultaneous users per second? A ramp up? That's why the chart is shaped like a triangle. Starts at 6 users per second and goes up — ramping up, with constant acceleration, increasing speed linearly, up to over 600 users.
+
+For over 2 minutes — more than two-thirds of the time — it grows without problems. But then look at this final stretch. The end is full of ups and downs — this jagged pattern. The application is clearly choking here. Lots of queued requests can't get served, or take way too long to respond, or time out from waiting too long.
+
+That's why in the last chart we start getting several red areas. A reminder that many of those reds are the Java IOException I mentioned earlier. But does it really make that much of a difference? To demonstrate, we can modify Lucas's code to use host network mode. We start by changing "index.js" which starts Node.js on port 8080 — hardcoded — and replace it
+
+with an environment variable called "HTTP_PORT" that we can set in docker compose. Now we add that variable in docker compose and set network_mode to host on all services, as in this snippet. Notice how we also changed the database connection URL to be localhost. There'll be no more NAT to a virtual host called "postgres." Docker's virtual network has an internal DNS that resolves names like "postgres" to the virtual address, in virtual network mode.
+
+In host mode, the container binds directly to localhost, so we have to worry about port conflicts now. The last thing — after adjusting docker compose — is adjusting the nginx config. Again, no more internal DNS from the virtual network — everything is localhost, so we need to change the reverse proxy's upstream servers to localhost. We spin up one app instance on port 8080 and another on 8081 to avoid conflict. Done — I didn't show the config for the other services in docker compose but you should get the idea by now, right?
+
+It's left as an exercise to apply this change to one of the Rinha projects. I myself submitted pull requests to several of the participant projects specifically to add this small optimization. If I could do it, so can you. Now we can bring it back up with "docker compose up" again, and if there are no error messages, in the other terminal we can run Gatling again. I won't show the whole thing running again — let's go straight to the end.
+
+The last thing the Gatling script does is call the "/contagem-pessoas" endpoint. Last time it came back showing it had written about 40,000 records to the database. But now — look at the difference — it returned almost 47,000 records. That's a considerable difference. If we go back to the results showing in the terminal, look — there's no more of that Premature Close message from the Java IOException.
+
+Let's open the charts. I'll put the old one on the left and the new one on the right. Same application — the only thing different on the right is that we brought up docker compose with services in host network mode. Right off the bat, we can see the red bar is gone. Great sign.
+
+Some orange showed up. What was red before — now it takes longer, but it goes all the way and responds. That's what orange means. Look at the table below — before we managed a total of 108,000 requests, now we're over 115,000 requests. More importantly: before there were nearly 10,000 knockouts total, but now it's only about 150.
+
+Brutal difference. Zooming in here on the side, there's a concept I think everyone should understand. Almost every beginner thinks in terms of average response time. Average is this column here toward the end: "mean." What is average?
+
+It's tabulating how long it took to respond to each of those 115,000 requests, adding it all up and dividing by the total number of requests. That time came out to 879 milliseconds. Almost 1 second per request. If you had any doubt, that response time is absurdly slow. Anything above half a second is unacceptable in any application.
+
+The right target is always under 100 or 50 milliseconds. Look right next to it — standard deviation of 1.7 seconds. The standard deviation is bigger than the mean. Just one standard deviation over and we're already talking over 2 seconds per request.
+
+That's a full order of magnitude. What does this tell you about your application? Nothing meaningful. Let's understand the numbers in the earlier columns — those are more interesting. Look here — 99th percentile.
+
+This column shows how long it took to respond to the slowest 1% of requests in this test. That's roughly 1,150 requests. Add up their times, divide by 1,150, and that comes to almost 8 seconds. Makes sense — they're probably the last thousand-odd requests in this load test, when we're approaching the 600 users per second we configured in the Gatling scenario. Drop down to the 95th percentile — the slowest 5%.
+
+It falls to just over 5 seconds per request. Go to the 75th percentile — the slowest 15% — and it drops to around 1 second per request. See how the times fall dramatically. At the 50th percentile — the average of the slower half of requests — it's in the 2 millisecond range. Let's look at the charts down below to get a better feel for this.
+
+Look at this first chart — see how response times per request stayed super low, around 2 milliseconds, for almost the entire load test. Remembering that we configured Gatling to ramp from 6 users per second up to 600 over 3 minutes. For over 2 minutes, our setup held up great — that time barely varies, even as the number of users increases. Then the panic begins. Watch how response times spike dramatically — jumps into the 5-second range, tries to drop, but climbs back up to nearly 10 seconds.
+
+In the chart just below we have the number of requests per second. Again, since we're ramping user count linearly, the request count also rises linearly — and if we had enough resources, this chart would be perfectly linear all the way to the end. But in that same stretch where response times spike, it starts getting jagged, until it takes a dramatic crash in the number of requests per second we can serve. The blue chart is the number of requests we could accept, while the chart below is the number of responses our application managed to send back. Green is OK, red is knockouts.
+
+Thanks to host network mode, see how there's barely any red — but if we look at the previous chart, see how much more red there was in that response range. Back to the table — understand: average response time per request tells you nothing. Average of 879 milliseconds per request. Says nothing. Now, reading the chart, we know the request that took the longest to respond took over 9 seconds — that's this maximum column.
+
+We know that even though 5% of requests took forever — in the 5-second range — the vast majority managed to get a response in the 2 millisecond range, which is excellent. What caused that slowness of seconds in the 95th percentile range isn't a code problem — it's the actual resource limits of the infrastructure. There's not much more you can do in code to shorten the time significantly. I know because I tried — in 16 languages, remember the other video? It's easier to just add more resources — a bit more CPU, a bit more RAM.
+
+On the other hand, if at the 50th percentile the times were in the 1-second range or higher. Then yes — the problem would definitely be in the code, a bottleneck that would need to be fixed. You need to run benchmarks like this on various types of projects, various types of endpoints, to start getting a feel for what kinds of minimum, maximum, 95th percentile, and 50th percentile response times are considered good or bad. These numbers are important for helping decide whether it's worth chasing code optimization or simply allocating more hardware. Your gut feeling, without numbers, is worthless.
+
+"Oh, I think we need to rewrite this code in another language." Show me the numbers. If you're not capable of generating these numbers, I know you're also incapable of rewriting anything to make it better. I liked how this Rinha put emphasis on a backend challenge based on benchmarks and load testing. I think every good programmer always has a benchmark tool up their sleeve to use precisely in decision moments like the one I mentioned before: is it worth stopping to optimize?
+
+How much improvement are we expecting at the cost of how much time to fix it? Would just scaling the machine solve it? Measure to find out. I didn't know Gatling before, but I found it a very good tool, especially because it generates charts that are easy to read and to show to others. There are other tools I used more in the past, like the old Apache Bench or WRK — which I think is pronounced "work."
+
+To me those two were as essential as knowing how to use wget or curl. Recently I played a bit with Vegeta too, which seems to be more in the Gatling category. And there are dozens of others — open source and commercial. Don't skip out on poking around the options and testing as many as you can. I hope you've followed so far, because now I think it's going to get a bit more complex — in the sense that I'm going to discuss higher-level concepts.
+
+If you start to feel lost, it's the same as always — write down the terms you don't understand and look them up. Then come back and see if you can follow the reasoning all the way through. So far it's been more of a warm-up. I've been leaving the database aside until now so I can tackle this subject all at once right now. I already made a video talking more about how databases work under the hood, so I recommend watching it if you haven't yet.
+
+Having that structure in your head will be important to understand what I'm about to explain. As I said in the first Rinha video, the mistake almost everyone made in this challenge was underestimating Postgres. If it had been MySQL it would have been the same thing — we would have assumed it was the bottleneck. That's because in our experience on real projects, most of the time the bottleneck tends to be the database. Why?
+
+Because in more realistic systems, with hundreds of tables, thousands of indexes, thousands of relationships between tables, any insert or update operation usually touches not just one row in a single table — it can trigger triggers, callbacks, to run procedures on other tables. It can fire triggers to update multiple indexes. So no operation is "simply" just touching one row — normally there are multiple operations happening across multiple different places. That costs time — sometimes it can take tens of milliseconds. Same with queries, selects.
+
+In complex systems we normally have queries with multiple inner joins, outer joins, subselects, unions. Every query, in reality, needs to hit multiple indexes, do some table scans — so it can take time, maybe tens of milliseconds. On top of that, there's the per-connection cost. With Postgres, each connection to the database can cost in the range of 2 to 4 megabytes. 100 connections could eat up nearly half a gigabyte of RAM.
+
+That's why we need to use connection pools to recycle connections. When a request finishes being served, the framework returns the free connection to the pool. That way, another request can reuse the same connection without having to allocate another 4 megabytes every time. When we're talking about thousands of requests per second, megabytes become gigabytes very fast if we're not careful. Remember our chart?
+
+I said a response taking 2 milliseconds is very good. But if it takes 10 milliseconds just to insert a record into a table, won't that be bad? Yes it will. That's why in real projects we use various strategies to spare the database as much processing as possible. We use at least two types of strategy: one for reads, where we cache results to avoid constantly repeating the same heavy queries, and an async job queue strategy to avoid hammering the database with too many write and modify operations.
+
+Remember: every modify operation locks one or more records in one or more tables in the database. On top of those locks we have transactions, transaction logs so that in case of a crash, we don't lose data or leave anything corrupted. All that protection costs processing and costs time. Every query being run against tables that are constantly being modified means a read operation is competing with a write operation over those locks. Meaning — if we don't have control and we receive too high a volume of writes at the same time as multiple reads, everything will slow to a halt.
+
+That's why we need to take pressure off the database. You can create separate read-only replica servers. That way, we can have a master database just for writes and read-only databases for where we can send our queries. But replicas don't come free — the more replicas you add, the heavier the overhead to keep them in sync. When we talk about caching, we're talking about parallel services like Memcache or Redis.
+
+Even on AWS there's the ElastiCache service, which is an interface for Memcache or Redis as a service. For queues, some people use NATS or Redis as a queue manager. They work, but without advanced features. They don't offer many of the guarantees of a larger queue system. Just as a relational database should offer ACID protections, a real queue needs guarantees — for example, ensuring that an element in the queue is never duplicated.
+
+Real queues are things like the legendary RabbitMQ or the more popular Apache Kafka. AWS also has a service — SQS, which stands for Simple Queue Service. With caching, the idea is simple: first ask the cache if it has the answer. If it doesn't, then send the query to the database, and store the result in the cache for next time. That way, the database doesn't have to keep redundantly spending processing to answer what it just answered.
+
+Cache is temporary memory to reduce the read workload. With queues, the idea is a bit more complex: instead of hammering the database with modify operations, throw all those operations into a queue. Configure a limited and controlled number of workers that sit there listening to that queue and pull those operations off. The number of workers is the number of connections we know the database can handle without starting to get really slow. I already explained all of this in the episode "Making Your Web App Faster" and also in the episode where I suggest how the Ingresso.com site could improve its architecture.
+
+And knowing all of that, naturally — since the Rinha instructions asked us to limit Docker resource usage to at most 1.5 CPUs and 3 gigs of RAM, and knowing it would run a load test with thousands of simultaneous inserts and searches, the first instinct was to think: let's just be safe and add caching for searches, and queues and jobs for the inserts. I did that in my first Ruby on Rails version, which you can see on my GitHub, and as we saw in the previous episode, several projects I reviewed did something similar. Some added just a Redis cache. Some tried to add some kind of queue.
+
+But the fact is, if we stop and think coldly about exactly what this project is and what the load looks like, you can already tell that anything more sophisticated was total overkill. This whole little project has a single table. Just one. No relationships, no foreign keys, no joins, nothing. Remember that spreadsheet of random data the Gatling script uses to do the inserts?
+
+How many rows did it have? 100,000? I'd say "only" 100,000 — and over 3 minutes of load, what's the total number of requests? Around 100,000. What's the final count of records inserted?
+
+In the range of 45 to 50,000 records. Understand — that is absurdly small. A few thousand records is basically nothing. Any junky computer from the 80s can handle thousands of records. A database with a single table of a measly 50,000 rows, taking no more than 100,000 insert attempts — that's pathetically small.
+
+Real databases have hundreds of tables, most with hundreds of thousands of rows, many with millions, tens of millions of rows. That starts to feel like "large." A single table is a hello world. Therefore, as fun as it was to implement, neither a read cache nor a write job queue was actually necessary. Just using the database normally was enough.
+
+Postgres is more than capable of doing simple inserts like this in an extremely fast manner. In fact, it'll be in the same order of magnitude time-wise as writing to a cache store like Redis — so it makes no difference in this case. Using Redis only makes a difference when writes are orders of magnitude faster because Postgres is having to deal with very heavy operations on top of a truly large volume of data. Get it? A lot of people still think Redis or Memcache is automatically faster than any database.
+
+That's not true. An almost empty database will be just as fast as Redis. Same thing if you go overboard and stuff too much into Redis — it'll get slow too. Nothing in programming is automatic. If you approach it that way, everything you build will always turn out lousy.
+
+"Oh, but shouldn't Redis just handle everything on its own and be faster??" Obviously not, genius. But there was, in fact, one small legitimate concern. In the search-by-terms API, the Rinha asks you to search in either the name field or the nickname field or the technologies field.
+
+That'd make a select with ILIKE "%blabla%" OR ILIKE "%blabla%", which is simply one of the worst types of searches you can do in SQL. Because of those percent signs at the start and end, it means we have no way to use an index. Indexes work for exact searches. Partial search — the only way is to do pattern matching on every row in the table. Once for each field after "OR."
+
+Since we have three fields to search, that's three table scans through every row in the table up to that point. That can get heavy very fast without you realizing it. If at a given moment the table has 10,000 rows, we'll have to do 30,000 comparison operations. And the bigger the table gets, the longer the search takes. And what's the solution?
+
+I recommend watching the episode on the leaked Twitter algorithm code afterwards, where I take a tangent to explain what full-text search is, or search by embeddings in vector space. I won't repeat what I explained there, but it's what's under the hood of how a Google or Bing can answer any search so fast and with the most relevant results right at the top of the first page of results. Every modern database has support for something similar, and it's called "full text search." In Postgres specifically, there are two most well-known techniques: GIN and GiST. GIN stands for Generalized Inverted Index and it's more recommended for complex data structures like arrays, JSONB, hstore.
+
+It's optimized for multi-key searches and allows indexing of individual values within an array, keys of a JSONB, and so on. The GIN index is built by extracting keys from the indexed values and creating a posting list — an ordered list of pointers to the indexed rows. GiST stands for Generalized Search Tree. GiST is a more general-purpose indexing technique and requires implementing custom search methods. It can be used to index virtually any type of data in Postgres, including spatial data, custom data types, and any kind of text.
+
+GiST indexes are characterized by a hierarchical node structure. We can pair GiST with support for a trigram extension. I explain n-grams in the Twitter video. Let's show in practice what all this mumbo jumbo actually means. To do that I'll open the code that creates the table in the database.
+
+Lucas did the right thing by adding this code in Node.js. It starts by importing the "pg" library and creates a connection Pool using the connection URL that comes from the DB_URL environment variable in docker compose. Then it registers an event on the pool — the "connect" event — which says: as soon as a connection is made, run the following anonymous function, which will send a query to the pool. That query is a set of SQL commands.
+
+Since we have two Node instances starting up at the same time, both will execute this function, so we need to write the commands so that if what we want to create already exists, it just ignores it and moves on. For example, the first command says: "if it doesn't already exist, create the pg_trgm extension," which is the extension that adds support for tokenizing text into trigrams. Next: "create or replace if it already exists, the function generate_searchable, which takes the parameters nome, apelido and stack, all of type varchar." Remember? Varchar is variable characters — a list of characters of variable length, basically a string.
+
+The function returns a value of type text, and that text will be the concatenation of the fields nome, apelido and stack, all joined together. But what's that for? Bear with me — you'll understand in a second. Next, if it doesn't exist, we create a table called "pessoas," which is the main table. The first field is called "id" of type UUID.
+
+Optionally we can declare that if we don't pass a value explicitly, it should generate a random UUID using the gen_random_uuid() function; additionally, the constraint is that this field must be unique and not null. Next, we declare the apelido field as type text, also unique and not null. The nome field must be type text and not null. The nascimento field must be type Date and not null. The stack field must be type JSON — one of the advantages of using Postgres, because it supports more complex data types like JSON.
+
+You don't need MongoDB for that. And finally, we declare a special column called "searchable" of type text. But this field is declared as a "generated" field. It's a field whose value will be automatically generated on every insert or update operation, and it will use the return value of the function we declared earlier — generate_searchable. Remember what it does?
+
+It returns the values of nome, apelido and stack concatenated. That's what this field will contain. But why? The next SQL command is, if it doesn't exist, to create a new index called idx_pessoas_searchable, on the pessoas table, using GiST. We tell GiST to index that "searchable" column using the operator class "gist_trgm_ops," which is specifically designed to tokenize that field into trigrams — which are groups of 3 characters, broken up, or tokenized, from each word in the string.
+
+That's what enables partial searches. The purpose of this column is to avoid having to do nome like blabla "OR" apelido like blabla "OR" stack like blabla. We no longer need "OR." Just do searchable like blabla and done. If any of those fields contains the blabla, it'll return it.
+
+"OR" is expensive — whenever you can avoid it, avoid it, even if it means wasting space. It can be a tradeoff worth making. Searches with percent signs — wildcards — are also expensive. Now let's look at the search function in Lucas's project. Further down is the "findByTerm" function.
+
+Look — we define the query template with a string. Select the id, apelido, etc. fields from the pessoas table, where searchable ilike $1, limited to 50 response rows. That "$1" gets replaced by the value down here, which is the search term concatenated with percent signs at the start and end. Wait, but wasn't that kind of search slow?
+
+Let's dig in. Every relational database has a command to explain how a query is going to be executed — the search strategy. To see this, we can connect with Postgres's command-line client, psql. So we can connect with "docker exec -it node-postgres-1 psql -U postgres -d postgres" and done. Worth noting that I'm connecting to Postgres right after running the load test, so the table already has over 46,000 rows inserted successfully.
+
+Let's start by analyzing a simple query. I run "explain analyze" followed by the query "select * from pessoas where apelido = 'foo'." As expected, that apelido column already has an index, so it correctly says it's going to do an "index scan" on the "pessoas_apelido_index" index. Searches using an index tend to be very fast, and we can see the Execution Time here at the end saying it took only 0.037 milliseconds — 37 microseconds — super fast.
+
+These other numbers up here, for example the cost — the first is the relative cost to fetch the first result row (0.41) and 8.43 is the relative cost to fetch the rest of the rows. Same with actual time — it's the time to fetch the first row and then the time to fetch the rest of the rows. One reason it distinguishes the first result row from the rest is to give a sense of the latency your application will have between firing the search and the first result that comes back in streaming and could already be displayed.
+
+Since this query uses an index and the row count is absurdly small, it takes 16 microseconds to pull the first row and just over 16 microseconds to pull all the rest. That's genuinely fast. But now let's see how much slower the term search would be the way most beginner programmers would do it. Look: `explain analyze select * from pessoas where apelido ilike '%foo%' or nome ilike '%foo%' or stack::text ilike '%foo%'`. Look at how long this query takes to execute: 42 milliseconds, or 42,000 microseconds.
+
+Compared to the simple query before, we're talking about a response time over a thousand times slower. Yes, 42 milliseconds is still relatively fast, but considering I said this table is absurdly small, and index-based queries can finish in microseconds, 42 milliseconds is a long time. Look at the strategy it says this query is forced to use: "seq scan" — sequential scan — literally a full table scan. Imagine a for loop going from row 0 all the way to row 46,000-something and checking the fields row by row. It's the worst case for a database search — checking everything with no indexes.
+
+You want to avoid this kind of query like the plague, because the bigger your table gets, the slower your search gets. With an index, you can double the table size and the query time barely changes. Will all of this we did — creating the searchable field concatenating nome, apelido and stack, then indexing using GiST with Trigrams — actually make a difference? We can't just guess and say yes without testing. So let's go: explain analyze `select * from pessoas where searchable ilike '%foo%'` and look — it's faster, yes.
+
+We dropped from 42 milliseconds to just 4 milliseconds. At least 10 times faster. And look at the search strategy. No more sequential scan like before. Instead we have a Bitmap Heap Scan.
+
+This strategy is split in two and starts first with a Bitmap Index Scan, which will use the index we built using GiST with Trigrams. In that phase we'll have a certain number of result rows. Those rows will be marked in a bitmap, and in the second search phase it will filter only the marked rows, using that recheck condition shown in the strategy. Meaning it still has a row scan phase, but not on the entire table — only on the rows returned in the first stage of the index search. In this case, the index alone doesn't give the full answer, which is why Bitmap Heap Scan exists.
+
+It's slower than an Index Scan, like in the first example we tested, but it's much faster than a full sequential scan. So yes — all of that GiST setup was worth it. And it's a solid tip for any project. In larger projects where we'd be using things like Redis caching, we could also delegate full-text search to another external service. I always recommend the tried-and-true ElasticSearch.
+
+Elastic is essentially a NoSQL database specialized in full-text search. DevOps and monitoring folks also typically integrate ElasticSearch with services like Kibana and Logstash for log searching, for example. Elastic is for when your project grows and features like GiST are no longer holding up under the processing load on the database. Never over-engineer in the first days of a project. Only specialize into external services when you have the load to justify it.
+
+The more external services, the harder it'll be to maintain everything. It's a trade-off. Everything has its time, and that time is not day one. Anyway — are you starting to get it? A simple SQL operation on an untuned Postgres running on my machine is on the order of microseconds.
+
+Way under 1 millisecond. Databases were built to be fast. Watch my episodes on Trees and Databases. It's way more than just appending a new line to the end of a file. Another technique I had set aside to cover in this episode is SQL Bulk Insert.
+
+Many of the winning projects — like Vinicius's in Rust or André and Albert's in C# — did the trick of accumulating inserts either in an external queue or in memory, with a background job picking up groups of inserts and sending them all at once to the database. But honestly there's not much to comment on here. The concept is pretty simple. Instead of every request having to connect to the database, fire an insert, wait for the result, and then respond, we can have it respond without knowing if the write will succeed or not. And keep accumulating.
+
+After accumulating a reasonable amount — say 100 inserts — then send them all at once inside a single transaction. Just by not having to create a new transaction for every individual insert — plus sending everything over the network in one shot — saves a lot of time. But as I've said a thousand times in this episode, 100,000 simple insert attempts is a light load. I think for almost none of the participant projects did they actually need to use this technique — at most, not using it would have made little difference. Bulk insert and also upserts are important techniques.
+
+Data warehouse, business intelligence, data science people — anyone who needs to clean data and load large volumes all at once knows they need bulk insert, otherwise they're wasting time. Each database has its own syntax quirks, so it's better for you to just Google "postgres bulk insert" or "postgres batch insert" — the first links explain it clearly. I'm not going to repeat what's already easy to find in simple tutorials. More important is getting back to docker compose and talking about Postgres configuration. Each Rinha participant did this part slightly differently, but generally everyone was focused on changing this one parameter: max_connections.
+
+Most guessed somewhere around 450 connections. Remember a connection costs about 2 megabytes? If we actually use all 450 max connections, the Postgres container could eat nearly 900 megabytes. That's way too much, considering we only have 3 gigabytes total for everything. So there's no point in cranking this number up.
+
+There are a few different ways to change this setting. The simplest is exactly like this — changing the Postgres command line and adding the parameter directly. Another way is like we did with nginx — creating a postgres.conf file to map as a volume inside the container. And another way is like we created the table and indexes: directly from the application, when it first connects, it sends SQL commands, and one of those commands would be to increase the maximum connections.
+
+But the more important question is: how many connections do we actually need to support for the type of load our Gatling test is going to run? Is 450 really enough? Or would less work? And if less, how much less? If we configure the application's connection pool to keep 450 connections open permanently, we'd be wasting a lot of RAM.
+
+If we allocate too few connections, the first requests will spend extra time waiting for new connections to open. There's a balance here — and that's exactly what load tests are for: validating whether our assumptions actually hold up in practice. To make our lives easier, we already saw that we can connect via the psql command-line client to run queries directly in the database. But we can add some more visual tools to make things easier both for you and for me to demonstrate here. The one I saved for last is pgAdmin — a veteran we've been using for over a decade, since before Docker was even invented.
+
+It's very simple — just add this service to your docker compose. Email and password don't matter — it's just because it'll spin up a web admin interface. The important thing is to declare this port 5050, because otherwise it'll try to come up on port 80, and since we're in host network mode, it'll try to bind to the real port 80 of localhost, and it won't have permission without being root, so it'll fail at boot. Change it to any port above 1000, like 5050. Now we can run "docker compose up" and wait a few seconds.
+
+Let's fast-forward — and done. In the browser on the side we can load localhost:5050 and look at that, beautiful. Just enter the same email and password we configured and we're in. Go poke around this interface later and read the docs on their site to learn what's what. But I'll leave an important warning: despite being useful, never, ever expose a service like this to the public internet.
+
+It'd be monumentally stupid to leave this unprotected — if someone gets in, they'll have access to your production database. Nothing from any production database should ever appear on the public internet. That's asking to get hacked. Spin it up temporarily in production for a specific task, but take it back down as fast as possible. Use it in staging, in dev environments, on the company's private network, inside a DMZ — but never on the public internet.
+
+No more, no less — you've been warned. Anyway, I had already registered the Postgres we were using in the tests, but let me register it again so you can see how it works. Give it any name, address is localhost, user is postgres, password is the same one you set in docker compose, and done — connected. But so what — what can we do with this? Let's go to the other terminal and run the Gatling load test again.
+
+I'm speeding through the edit here, but look at this — we can see in real time the monitoring of things like transactions per second. I'll jump ahead to the middle of the test. Notice how the total transactions are in blue, but we have roughly fifty-fifty between transactions that committed OK and transactions that rolled back from failure. This is easy to explain. Remember how the load test makes a total of about 100,000 requests, but only about 46,000 actually get written?
+
+The others error out because fields like apelido and nome have unique constraints — no duplicates allowed. When we try to insert a duplicate, it rejects it and rolls back. That's why it's roughly fifty-fifty. Below we can see charts to get a sense of the volume of data coming in and going out. Each set of fields — the row itself — is a tuple.
+
+We have tuples coming in (inserts), tuples going out (query results), an I/O chart that I'm not sure what the unit of measure is — whether it's read/write operations or byte count or something like that. (I/O metrics continued.) More important is this first chart at the top. Follow the blue line — that's the total number of connections to the database at this moment. Green is connections where operations are happening, like our inserts or selects.
+
+Red is idle open connections doing nothing. Notice how the connection count is roughly stable, even knowing that in the load test we're gradually increasing the user count per second, ramping up to 600 users per second. And that's the importance of a good connection pool. The same connection gets reused, recycled, across multiple requests. That's why you don't need that many.
+
+Only right at the very end — the very end — when we hit the 95th percentile territory, maybe 75th percentile, that 5 to 15% that takes over 1 second to respond, that's when the number of simultaneously open connections spikes dramatically. In that final stretch you get the impression that the request in Node is so slow it doesn't have time to return the connection to the pool, so it keeps having to open more and more connections. Those last requests taking over 5 seconds are completely out of the realm of normal. If in a real product we were regularly seeing response times in that range, either something needs optimization, or you urgently need to scale up the infrastructure. We shouldn't configure max database connections, or the connection pool size, based on that final spike.
+
+Contrary to what many might expect, during almost the entire load test, it never exceeded 40 simultaneous active connections — it was around 20. Not 450, not 300, not even 100. Only at the very end — but by then it was already garbage time. So if anyone guessed that max database connections would be the bottleneck, they guessed wrong too. And why is it under 40 at a time?
+
+If we go back to docker compose, in the application configuration, look at the environment variables section. There's this DB_POOL we pass to the "pg" library's pool used by Node. In this case it's set to 35. We have two instances, so the max would be 70. Even so, for most of the test, neither pool ever gets saturated.
+
+Only at the end. At that point it doesn't much matter whether we'd set it higher or not. The infrastructure just can't handle that final spike. So what's the right number for the connection pool? Every blog post and Stack Overflow answer you find will have some magic formula trying to guess.
+
+But there's no shortcut — to really know, you have to run a load test, monitor via pgAdmin, and through trial and error, run the test for different pool size values. That's the only reliable way to know whether you're setting a number that's too tight or too loose. Don't trust anything except tests you ran yourself. With all that said, many of you watching — including several of the participants, and myself — were certain that Postgres would be the problem. But now that we've measured and have real data, we know for sure we were wrong.
+
+The techniques themselves work, but the application and the test load were much smaller than we imagined. We overestimated the problem and over-engineered. Classic programmer over-engineering. The lesson is simple: write the simplest code that solves the given problem, take measurements, and only then decide where you actually need to optimize — and keep measuring to see whether the optimization actually helped, or made things worse. And that brings us to the final topics left on my list.
+
+I said I'd talk about Crystal, about Kotlin, and then about threads and fibers. But I want to keep it brief. During the 16-languages video I wanted to show that yes, with virtually any language, you could hit the maximum of the load test. Some with a bit more work than others, but everyone was capable of passing or coming very close. Does that mean all languages are equally valid?
+
+Or equally performant? Obviously not. Let's use some common sense here. Clearly, all languages compiled to native binaries have a performance edge — Rust and Go primarily, followed by C++, Java and its derivatives like Kotlin or Scala, C#, Crystal, Zig, even Bun. That's a clear performance category A.
+
+Interpreted languages — PHP, JavaScript and its derivatives like TypeScript, Ruby, Python — all belong to the same performance category B. You simply cannot reach the same level of raw performance as category A. It is possible to scale web applications to similar numbers, at the cost of a little more hardware. That's because much of a web application depends on I/O, and I/O will be slower regardless of whether the application is compiled or interpreted. So yes, the infrastructure for category B languages needs to be a bit bigger than category A.
+
+But not orders of magnitude bigger — that's the point. On the other side of the equation is how easy it is to find good developers, or train new ones — and that's where category B languages far outpace category A. Ask any Rust enthusiast and they'll tell you I'm wrong, that Rust is totally easy, they learned it no problem. But I hate to say it: I believe you, but your profile is different from the general population. People are not all the same.
+
+Those who find becoming fluent in Rust "easy" are a tiny fraction of the population. The vast majority have neither the desire nor the ability to become fluent in low-level languages that demand a much more detailed understanding of everything underneath — the network, the operating system, the hardware. And this isn't unique to Rust. Back in the 80s and 90s we always had Assembly, C, C++, Objective-C. But which languages became popular?
+
+In the 80s it was things like COBOL or dBase. In the 90s it was things like Visual Basic or Delphi. Delphi even compiled to native, but what attracted people was the tooling, the IDE, the Interbase database that came bundled. Nobody used Delphi to write OS drivers or anything like that. Now it's the same story.
+
+There's always been a category of people who found it easy to program in C, C++, even Assembly — and now Rust, Go. To really take advantage of those languages, you need to be the type of person who enjoys learning intimately how the hardware works underneath, the entire operating system underneath. For category B, someone who doesn't care and doesn't even know the difference between RAM and an SSD can still produce something. The learning curve is noticeably lower, which is why more people end up in those category B languages. Duh — before some idiot comments: obviously there are advanced programmers in category B too.
+
+But a mediocre developer won't survive in category A. So yes, it's possible to build an entire web startup with just Rust or Go, but good luck maintaining a team of dozens or hundreds of people that scales with the company's growth. It won't keep up. That's why every major tech company uses a mix of technologies. There's no giant company that can use a single language for everything.
+
+And that's without even counting the ecosystem. Productivity doesn't come from the language alone. It comes from the libraries, products, services, documentation, courses, books, events, and everything else that orbits around the language. It's much harder to compare languages and just say "oh, it's compiled" or "oh, it's interpreted." That's the least important part of the comparison.
+
+There's also a cultural dimension. Let me give a dumb example. Anyone from the JavaScript world is used to going to the terminal and typing something like "npx create-react-app my-app." Anyone from Ruby on Rails is used to going to the terminal and typing "rails new my-app." Anyone from Python is used to running "django-admin startproject my-app" and so on.
+
+How does someone from Java start a new project? They go to start.spring.io, fill out a freaking form, which generates the project and gives you a zip file to download. Then you manually unzip it, and that's the beginning of your project.
+
+Almost in 2024, and to me that smells like 2004. Other languages like C# have command-line options with dotnet core, but how does most of that community actually prefer to do it? Yeah — open Visual Studio Enterprise and click New Project and start filling things in. To JavaScript, Ruby, Python, PHP people, that feels incredibly outdated. But to Java or C# people, having a CLI to generate things feels like unnecessary fluff when the website or IDE already does everything.
+
+And that's one of those cases that depends entirely on your perspective. Neither side will ever agree on this. But that kind of disagreement in perspective is exactly what guarantees we'll never have a single language and a single ecosystem as the standard for everything. I hate having to use an IDE. Rather than use IntelliJ or Visual Studio, I'd switch to any language where I can be productive purely from the command line, using NeoVim.
+
+Non-negotiable for me. I already made a video just explaining the differences between compiled and interpreted languages and going deeper on all of this — recommend you watch it afterward. But regarding Crystal and Kotlin specifically, which I analyzed in the Rinha. Both are newer languages with small communities. In Kotlin's case, it was created by a large company — JetBrains — and later backed by Google itself.
+
+And even so, adoption isn't as large as I'd like to see at this point. Again, people already comfortable with just Java don't see much value in migrating to Kotlin. In the end the bytecode is compatible — why bother switching? For those of us used to more modern languages, Kotlin is an excellent option for when we're forced to do something on the Java platform. Worth keeping in your arsenal.
+
+But there will always be that divide. I feel like Kotlin is more appealing to people who aren't from Java than to those already experienced in Java. Crystal is much smaller and more niche. Even so I think it's an incredibly competent, stable language, with a minimal but functional ecosystem. I find Ruby's syntax far superior to Go's.
+
+Cancel me, but it's true. But obviously Ruby is in a much lower performance category than Go. Crystal, though, is genuinely Ruby syntax with Go-level performance — the same order of magnitude. Yes, Go is still better optimized, and being a more primitive language, it also compiles faster. But for things like web microservices, I find Crystal and frameworks like Lucky far more enjoyable to use than their Go or Rust equivalents.
+
+If productivity matters and avoiding fatigue matters too, Crystal can be a solid alternative — especially for small teams. The learning curve is lower. Worth having in your arsenal. And I reinforce this after having tried languages like Nim, which has existed for many more years, but is still awful to use — poorly documented, few usable libraries, and lots of bugs. It feels like an experimental language that I wouldn't recommend for production use under any circumstances.
+
+You could spend all day just talking about various languages, and I already covered them extensively in the original Rinha episode, so go watch that afterward. But getting back to the topic of database connections, I just wanted to make a comment about the difference between compiled languages like Rust and interpreted ones like JavaScript. Or more specifically, languages that can scale with native threads versus languages that can't, due to a global interpreter lock — which all category B languages have. I explain this in the compiled vs. interpreted languages episode.
+
+But in our database use case it typically means the following: beyond being more performant because they're compiled, languages like Rust or even Java have the advantage of needing fewer simultaneous connections. A Java connection pool is thread-safe, meaning it can be used by multiple native threads in parallel. In a language like JavaScript or Ruby — or any interpreted language — each native thread needs its own connection pool. In short, it works roughly like this: in Java you could configure the connection pool to have a max of 100 connections, and that's what the entire application will have: 100 connections. In JavaScript, it depends.
+
+If you run with a single process, you'll spin up one connection pool — set the max to 100, and that's what you get: up to 100. Node.js's reactor is single-threaded. Every async call runs on the same native thread and accesses a single connection pool. In Node.js cluster mode, it can spin up multiple forked Node processes.
+
+Each one with a separate connection pool. So if you're spinning up 5 forks in the cluster, you should configure each pool to have a max of 20 connections if you want to maintain the same total. 5 times 20 equals a max of 100 — get it? That's why you can't spin up infinite forks in the cluster — because each fork gets fewer and fewer connections available in its pool. I'm skipping over a lot of details here.
+
+Every language will have its own quirks in how it implements threads, coroutines, and pools. You need to understand how non-blocking I/O works and how your language of choice handles it. Homework assignment, in case you haven't studied that yet. The tip is to start by watching my old episode on concurrency and parallelism to build that foundation. But the point was just to make you aware that there are big differences in how you configure things like connection pools in Java versus Node.js, for example.
+
+The configuration of things like connection pools will be different. The best way to learn the difference is by monitoring with something like pgAdmin and creating load test scenarios with Gatling or Vegeta, to see in practice which numbers work and which don't. When you're a junior, you do everything blind, by gut feel, assuming everything will work out. But as you gain experience and grow more senior, you start to understand that flying by the seat of your pants is the fastest road to bad software. The software always seems to do things you didn't anticipate.
+
+To gain control over that, there's only one path: learning about benchmarking, profiling, load testing, monitoring, measurement, statistics — and finally starting to see and correctly interpret software behavior under different levels of load and stress. And with that, I think I've managed to cover all the topics I had left pending. I didn't want to close out the year with loose ends. With that, I can finally declare this whole Rinha topic closed. Let's start the new year with new subjects.
+
+In January 2024 I'll be on vacation spending three weeks in Japan, so I don't think there'll be a video in January. I don't know yet whether I'll be back posting before or after Carnival, so it might be that I only return somewhere between February and March. Take advantage and binge the channel. I'll probably be posting about the trip on Instagram, so follow me there. If you have questions, drop them in the comments below. If you liked the video, leave a thumbs up,
+
+subscribe to the channel, and don't forget to share the video with your friends. See you in 2024 — Merry Christmas and Happy New Year! See you later!
