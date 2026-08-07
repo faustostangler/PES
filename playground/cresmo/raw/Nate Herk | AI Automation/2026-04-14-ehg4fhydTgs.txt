@@ -1,0 +1,145 @@
+---
+video_title: "How to Build 24/7 Claude Agents. Easy."
+video_id: ehg4fhydTgs
+channel_name: "Nate Herk | AI Automation"
+channel_id: UC2ojq-nuP8ceeHqiroeKhBA
+channel_category: "Film & Animation"
+url: https://www.youtube.com/watch?v=ehg4fhydTgs
+video_date: 2026-04-14T20:16:52+00:00
+video_description: |
+  My FREE AI OS Course: https://www.skool.com/ai-automation-society/about?el=routines&hcategory=youtube-videos&utm_campaign=free-group
+  Full courses + unlimited support: https://www.skool.com/ai-automation-society-plus/about?el=routines&hcategory=youtube-videos&utm_campaign=ais-plus
+  Apply for my YT podcast: https://podcast.nateherk.com/apply
+  Work with me: https://uppitai.com/
+  
+  My Tools💻
+  Voice to text: https://get.glaido.com/nate
+  Code NATEHERK for 10% off VPS (annual plan): https://www.hostinger.com/vps/claude-code-hosting
+  
+  Claude Code just launched routines, which let you run prompts on a schedule from Anthropic's cloud without keeping your laptop open. 
+  
+  In this video I walk through exactly how to set them up, the gotchas I ran into migrating my automations, and how to configure your API keys, cloud environments, and permissions so everything actually works on the first try.
+  
+  Sponsorship Inquiries:
+  📧 nate@smoothmedia.co
+  
+  Connect with me:
+  https://www.linkedin.com/in/nateherkelman/
+  https://x.com/nateherk
+  https://www.instagram.com/nateherk/
+  
+  TIMESTAMPS 
+  0:00 What Are Routines?
+  1:04 Setting Up a New Routine
+  2:15 API “Gotchas”
+  6:10 What Won't Work Remotely
+  8:29 Environments, Security & Limits
+  10:02 Routines vs Scheduled Tasks
+  14:52 Common Questions
+  16:04 Final Thoughts
+---
+O CloudCode finalmente trouxe rotinas, o que basicamente significa que você pode injetar um prompt no CloudCode, mas ele pode ser executado na web. Portanto, seu laptop não precisa ficar aberto o tempo todo. E estou muito animada com isso. Eu já estive a experimentar. Tenho estado a migrar as minhas automações para lá.
+
+Mas existem muitos detalhes a serem considerados, então estou aqui para explicar exatamente como você pode configurar essas automações para que funcionem corretamente. Então, hoje, 14 de abril, Claude twittou: "Agora em versão prévia para pesquisa, rotinas no CloudCode. Você configura uma rotina uma vez, que é basicamente como um prompt, e ela pode ser executada em um agendamento, a partir de uma chamada de API ou em resposta a um evento, e é executada na infraestrutura web da Anthropic. Isso é incrível. Então, você pode chamar uma rotina de uma API, pode fazer com que eventos do GitHub a acionem ou elas podem ser agendadas, que são como as automações agendadas que já temos, mas agora são executadas na web. Então, você realmente
+
+pode criá-las de qualquer lugar. Você pode fazer isso aqui mesmo como um gatilho agendado para executar agentes remotos agendados, que é no terminal. Você também pode acessar claude.ai/code para fazer isso na web. E aqui, você pode ver que tenho três rotinas baseadas na web. Ou,
+
+o que vou mostrar para vocês hoje é como fazer isso no aplicativo para desktop, porque aqui, se eu for às minhas tarefas agendadas, vocês podem ver que tenho algumas, como estas quatro, que são locais, E então, tenho essas quatro que estão rodando dentro de um repositório do GitHub. Essas são as remotas. Se eu subir aqui e clicar em "Nova tarefa", é aqui que podemos configurar uma nova tarefa local ou remota. É muito parecido. Você define o nome, define o que o Claude deve fazer e este é o prompt. Falarei mais
+
+sobre isso daqui a pouco. Mas, então, você configura seu modelo, seu repositório e seu ambiente de nuvem. Você define a cadência: por hora, diariamente, dias da semana. Acho que o mínimo é uma vez por hora. Tipo, você não pode usar a cada 10 minutos ou algo assim. Mas, mesmo assim, não é nada mal.
+
+Aqui você pode configurar todos os seus conectores. Então, se você precisar conectar o Slack ou o Gmail ou qualquer outro serviço, você pode conectá-los aqui. Mas você também pode usar seus endpoints de API regulares com suas chaves de API. E, claro, você tem suas permissões, então pode escolher como o Claude deve se comportar. Agora, a... O
+
+ponto é que essas rotinas são feitas para serem executadas uma única vez. Você não está presente. Então, provavelmente é importante garantir que elas nunca precisem parar para fazer perguntas. Caso contrário, qual o sentido da automação? Como eu disse, há muita coisa para explorar aqui, e não vou tentar entediá-los . Mas algumas dessas informações são realmente
+
+importantes, porque quando configurei tudo pela primeira vez , minhas automações não migraram e funcionaram corretamente. Então, vou contar os problemas que encontrei e espero responder a todas as suas dúvidas, para que vocês não precisem ir aos comentários fazer perguntas comuns. Posso respondê-las aqui mesmo. Então, deixe-me, antes de mais nada, mostrar rapidamente o que testei. A primeira coisa que eu queria testar era criar uma nova rotina para enviar uma mensagem para o meu ClickUp. Obviamente, isso não gera nenhum
+
+valor, mas eu só queria ver como funcionava. Porque o que eu queria fazer era... Veja se eu conseguia fazer isso sem adicionar meu conector do ClickUp. E consegui fazer
+
+funcionar, mas não deu certo de imediato. Então, deixe-me mostrar o que encontrei. O funcionamento é o seguinte: você precisa de um repositório do GitHub para sincronizar e, assim, tudo funcionar. Ele vai clonar meu projeto Herc2 aqui na web. Vai conseguir ler meu claude.md,
+
+meus scripts e minhas skills. E, depois de terminar, basicamente destrói esse clone do GitHub na nuvem . Mas, como vocês sabem, não se envia informações confidenciais para o GitHub, porque, como vocês podem ver aqui, meu projeto Herc2 tem um arquivo .env com todas as minhas chaves de API, e ele está listado no .gitignore, que basicamente diz: "Ei, quando você enviar para o GitHub, não inclua esses arquivos." Então, o que isso
+
+significa é que, se estivermos analisando apenas o seu repositório do GitHub, Não existe um arquivo .env. Então, como você insere suas chaves de API nessa rotina que roda na web? Bem, o que você faz é o seguinte: dentro dessa tarefa agendada, você tem um ambiente de nuvem. Se eu clicar neste, você pode ver que ele se chama Nate Herc Cloud. Então, se eu abrir as configurações,
+
+o que você vê? Você tem o nome deste ambiente de nuvem, o acesso à rede e as variáveis ​​de ambiente. Aqui é onde eu insiro minha chave de API do YouTube, minha chave de API do ClickUp e quaisquer outras chaves de API às quais eu precise dar acesso a este ambiente de nuvem . E então, a outra coisa que você precisa fazer é verificar os níveis de acesso, porque aqui você pode ver que este está em "total", mas por padrão, ele estará em "confiável", eu acredito. Isso significa que você só pode baixar pacotes de fontes verificadas da Anthropic. E quando falarmos sobre
+
+isso mais tarde, eu terei um link para você ver todos eles. Você pode até personalizar se quiser permitir domínios específicos que não estão na lista. essa lista. Mas, para que o ClickUp funcionasse neste caso, eu precisei usar o modo de acesso total, porque quando usei o modo de acesso confiável, apareceu a mensagem: "Ei, não podemos fazer isso". Mas, quando mudei para o modo de acesso total, consegui enviar uma mensagem para o meu ClickUp. E foi assim que
+
+recebi esta mensagem aqui, que diz: "Só testando se as tarefas remotas e as credenciais funcionam". Basicamente, quando essas tarefas são executadas, o que você tiver aqui como instruções é o que será solicitado. E é exatamente assim que as tarefas agendadas localmente funcionam. Então, aqui, você pode ver que eu disse: "Enviar uma mensagem no canal interno do ClickUp". E aqui, a mensagem exibida foi: "Enviar uma mensagem no canal interno do ClickUp ". Então, pense em uma tarefa agendada
+
+ou rotina como se você estivesse digitando um comando e alguém estivesse digitando no seu computador. É exatamente o mesmo tipo de interação que você teria com o CloudCode. Mas, por isso, mais uma vez, você precisa garantir que seja específico o suficiente. para que ele possa basicamente fazer isso de uma vez. Ok, então vamos nos aprofundar um pouco mais agora. O que eu
+
+tentei fazer foi criar outro programa, no qual eu queria que ele usasse a API de Dados do YouTube para obter alguns comentários do YouTube e me fornecer uma pequena análise no ClickUp ou algo parecido. Então, este é o comando que eu usei, certo? "Analise 50 dos meus comentários mais recentes do YouTube e me dê um breve resumo em tópicos." Minha chave da API do YouTube está disponível como uma variável de ambiente. Utilize-o diretamente do ambiente.
+
+Não procure por um arquivo .env." Porque o que acontece é o seguinte: no seu repositório, certo? Então, neste projeto Herc2, quando eu normalmente executo este comando, ele pega todas as minhas chaves de API do arquivo .env. E talvez ele
+
+leia o arquivo claude.md e perceba que é lá que muitas delas estão. Então, por padrão, ele pode tentar procurar no arquivo .env, e não será inteligente o suficiente para descobrir. No caso do ClickUp, funcionou bem. Ele descobriu.
+
+Mas, por algum motivo, com este projeto do YouTube, não funcionou. Então, eu tive que dizer explicitamente: "Ei, procure na variável de ambiente em vez do arquivo .env." Então, você pode ver que na primeira vez que executei o comando, às 12:41, eu não disse isso, e ele não conseguiu. Ele disse algo como: "Ei, não consigo encontrar isso." Estou recebendo um erro."
+
+E eu até tentei explicar aqui, e ainda não funcionou. Mas, então, nesta execução mais recente, quando atualizei um pouco o prompt, ele conseguiu buscar imediatamente usando a chave da API, e agora tenho uma rotina remota que funciona. Obviamente, preciso atualizar isso. Vou migrar minhas outras automações, mas isso foi apenas para fins de teste. E outra coisa que eu faço é uma automação que basicamente abre um navegador usando o Playwright CLI e executa algumas ações na minha comunidade escolar, porque não há uma API publicamente acessível. Nós
+
+descobrimos uma maneira de automatizar isso sem usar o navegador. Não vou me aprofundar nisso agora. Mas o que eu queria contar para vocês é que tentei basicamente migrar esta postagem de engajamento do School Wins, ou melhor, a automação, para uma sessão remota. Então, copiei o mesmo prompt que estava na minha tarefa agendada normal e adicionei este pequeno trecho no final. Mas, O que aconteceu foi que isso não estava funcionando, porque basicamente dizia: "Ei, sabe, quando você faz isso, um navegador é aberto, mas não há cookies, porque tudo isso está sendo executado remotamente, e tudo o que eu preciso ver é o repositório do GitHub." "Não consigo ver os
+
+cookies locais que usamos nas últimas sessões desta automação." Então, parece que isso não funcionaria, porque, mais uma vez , não tem acesso a essas informações. Portanto, se eu quisesse fazer uma automação como essa, teria que usar um endpoint que aceitasse autenticação na forma de cookies, cabeçalhos ou uma chave de API, porque cada uma dessas execuções será sem estado e, após a execução, o clone do GitHub será simplesmente excluído. A exceção é se a automação estiver alterando algo na sua base de código ou fazendo uma revisão. Nesse caso, ela criará uma nova branch ou fornecerá algum tipo de saída, em vez de simplesmente excluir tudo o que acabou de fazer.
+
+Mas, para uma automação como essa, ela simplesmente excluiria tudo. Espero que, depois de verem esses exemplos, vocês agora tenham a capacidade de fazer as alterações necessárias para garantir que suas automações estejam funcionando. O que quero dizer com isso é que vocês entendam que isso deve Seja um prompt bem específico. É assim que você altera o modelo. Você precisa ter um repositório no GitHub. Você pode alterar as configurações
+
+dos seus ambientes na nuvem aqui mesmo. Você define o agendamento, adiciona os conectores que precisar, o que, honestamente, seria um pouco mais fácil se você adicionasse um conector do Slack, por exemplo. E então, você pode definir suas permissões aqui. Agora, outra coisa a se atentar é que existem limites. Então, se eu for aqui para as minhas configurações, você pode ver que, em " Uso", temos os limites de sessão regulares , os limites do modelo, mas para recursos adicionais, temos as execuções de rotina diárias incluídas. E eu ainda não executei
+
+nenhuma no agendamento real. Estou apenas testando. Hum, mas estamos com zero para 15. Então, eu só posso ter 15 automações em execução com rotinas por dia, porque estou no plano máximo de US$ 200 por mês . Seus limites seriam menores se você estivesse no plano Pro, acho que talvez três ou cinco. Terei essa informação
+
+mais tarde, mas é algo para se ter em mente. Certo, então Vamos nos aprofundar um pouco mais nos detalhes que podem responder a algumas perguntas que vocês têm. Acho que a essa altura já está bem claro o que é. Vou disponibilizar para vocês toda a documentação, bem como tudo o que mencionei na minha comunidade gratuita da escola. O link está na descrição. Então,
+
+talvez eu não aborde alguns pontos. Se quiserem saber mais, podem acessar esse recurso gratuito. Agora que sabemos o que é, acho que sabemos como funciona, certo? Você define uma rotina, que é um prompt, conecta um repositório do GitHub (você também pode acioná-la por meio de APIs ou uma ação do GitHub) e, em seguida, conecta seus conectores. Basicamente, funciona como se você estivesse se comunicando com seu próprio CloudCode. Como
+
+ele funciona com um repositório clonado, o arquivo claude.md será lido automaticamente sempre. Então, se você tiver um projeto enorme, como um projeto Herc2, por exemplo, com muito contexto e muitos recursos, talvez você...
+
+Não queremos colocar esse repositório na nuvem para ser executado rotineiramente, porque há muito contexto no claude.md e em todo o repositório do GitHub que pode não ser relevante para essa automação. Então, talvez seja melhor configurar um repositório específico do GitHub para cada rotina agendada. Mas, claro, as melhores práticas do claude.md incluem as informações importantes, porque isso vai consumir seus limites de sessão do CloudCode da mesma forma que consumiria se você estivesse diretamente no CloudCode apenas interagindo com ele. Então, mais uma vez
+
+, três tipos de gatilho: agendamento, API, o que eu acho muito legal. Você pode ter uma automação diferente fazendo uma requisição POST para algum tipo de rotina. E então, claro, o GitHub. Assim, você pode configurá- lo para disparar automaticamente, como um webhook, com base em novos PRs, novos pushes, novas issues, novos releases e coisas do tipo. Então, como isso se compara ao que já existe? Temos rotinas,
+
+que é o novo recurso. Temos tarefas agendadas para desktop e também temos algo como uma barra ({slash}). O comando loop. Então, as rotinas são executadas na nuvem da Anthropic, e esses outros dois comandos são executados na sua máquina. Você precisa que a máquina esteja ligada? Não, para as
+
+rotinas, isso é essencial. Mas, para as tarefas agendadas na área de trabalho e para o loop, você precisa que sua máquina esteja ligada. Você precisa de uma sessão aberta? Não, isso é igual para os três. Eles sobrevivem a reinicializações? Os
+
+dois primeiros sim, mas o loop não. Ele precisa estar em uma sessão específica. Acesso a arquivos locais? Não, para as rotinas, porque elas funcionam com base no repositório do GitHub. E para os dois próximos comandos, sim, você tem acesso a arquivos locais. As solicitações de permissão
+
+com as rotinas são totalmente autônomas. E para esses dois comandos, elas são configuráveis. E o intervalo mínimo para as rotinas é de 1 hora, e esses dois comandos podem ser executados a cada minuto, se você quiser. Ok, então vamos falar sobre os ambientes. Obviamente, seu ambiente {dot} será ignorado, a menos que você envie as alterações para o repositório do GitHub. No fim das contas,
+
+se você enviar para um repositório privado, provavelmente não terá problemas, mas é recomendável... Tenha muito cuidado, porque existe um histórico envolvido, e se outras pessoas acabarem colaborando nisso, você simplesmente não vai querer que isso aconteça. Então, você precisa colocar suas chaves de API na variável de ambiente, como mostrei antes. Você precisa
+
+verificar o acesso à rede, se é completo, confiável, nenhum ou personalizado, e potencialmente alguns scripts de configuração. Isso é algo que ainda não mostrei para vocês . Se você estiver criando uma nova tarefa remota, pode criar um script de configuração, que é basicamente um script que será executado quando esta nova sessão for iniciada, antes do Claude Code ser aberto. Então, se você precisar instalar algum pacote ou algo do tipo . Ok, então qual é a diferença entre confiável e completo? Confiável só
+
+permite acesso aos serviços conhecidos e verificados da Anthropic, que eu achei que tinha linkado aqui, mas coloquei ali. Isso basicamente mostra todos os diferentes domínios permitidos. Aqui você pode ver que temos os serviços da Anthropic, o controle de versão e também algumas plataformas em nuvem. Assim como o Google, coisas como esta aqui. Estes são os que já estão meio que verificados. Então, qual é
+
+o risco de usar todos os recursos? Bem, se o Claude ler conteúdo malicioso durante uma execução, teoricamente ele poderia ser enganado para enviar dados a um servidor externo. E com a opção "confiável", essa solicitação de saída seria bloqueada. Agora, o risco prático para repositórios privados onde você controla as entradas é muito baixo, mas eu definitivamente queria pelo menos mencionar isso. Então, conectores, isso é diferente de apenas adicionar sua chave de API. Isso é mais como os conectores que
+
+você adicionaria ao seu chat do Claude ou ao Claude Co-Work, onde você usaria OAuth no Slack, ClickUp ou algo do tipo. Aqui estão alguns detalhes de segurança. Não vou me aprofundar muito nisso . Você também pode pesquisar mais e baixar este documento. Mas, claro, há algumas coisas para se pensar, como seus gatilhos de API ou o que está acontecendo com seus repositórios e branches do GitHub porque, mais uma vez , tudo será executado como você. Então, se você não estiver testando
+
+esses recursos... Antes de simplesmente executar rotinas a cada hora, por exemplo, você precisa pensar no que pode acontecer sem permissões e coisas do tipo. Limites e cotas: no plano Pro, você pode ter cinco execuções por dia; no Max, 15; e nos planos Team e Enterprise, 25.
+
+Se atingir o limite, as organizações com uso extra habilitado podem excedê-lo por meio de cobrança adicional. Além disso, há um intervalo mínimo agendado de 1 hora e limites de recursos. Cada rotina na nuvem utiliza quatro vCPUs, 16 GB de RAM e 30 GB de espaço em disco. Portanto , pense se vale a pena colocar um repositório do GitHub enorme na nuvem para executar rotinas que podem estar desperdiçando recursos sem necessidade. O que persiste e o que é destruído? Os branches do Claude são
+
+enviados para o seu repositório do GitHub, e a sessão também permanece. Como você viu, se eu Entrei aqui e examinei todas essas tarefas, pude ver todas as execuções anteriores e verificar se algo estava dando errado. Mas o ambiente Claude clonado será destruído. Basicamente, a regra geral é: se algo for local ou se o Claude Code não conseguir acessá-lo no seu repositório do GitHub ou por meio de uma API, não funcionará. Já falamos um pouco sobre como escrever bons prompts, mas você definitivamente quer que eles sejam mais específicos. Por exemplo, com a minha
+
+automação agendada aqui, isso é muito mais específico, certo? Eu tenho uma habilidade que quero executar. Eu dou a ela a ordem das operações. Mas algo como "comentários do YouTube", não é o que você colocaria ali, a menos que estivesse definindo uma habilidade para simplesmente executá-la. Porque, mais uma vez, este é um prompt para uma única execução. Então,
+
+você quer ter certeza de que ele funcione corretamente na primeira tentativa. Ok, então por que isso é tão interessante? E por que isso é melhor do que a automação normal? Porque estamos mantendo a estrutura agentiva. Se Se você sabe do que estou falando sobre o framework WAT, onde temos fluxos de trabalho, agentes e ferramentas, quando enviamos essas automações para a nuvem, e é apenas um script Python, perdemos a essência do agente. Estamos enviando apenas
+
+as ferramentas e o fluxo de trabalho. Mas, neste caso, mantemos o WAT e o T funcionando juntos porque o agente está analisando o Claude MD. Ele analisa seus scripts e decide o que fazer. E se encontrar erros durante a execução, ele se autocorrige. E se você configurá-lo corretamente, ele poderá deixar um rastro de memória e enviar atualizações, mesmo que cada execução seja sem estado, você ainda pode fazer com que elas melhorem continuamente. E,
+
+rapidamente, vamos responder a algumas perguntas comuns. Preciso saber a sintaxe do cron? Não, você pode agendar em linguagem natural, super fácil. Ele pode acessar meus arquivos locais? Não, ele só acessa o que está no servidor. no seu repositório do GitHub ou nas suas
+
+APIs. Qual modelo ele usa? Você pode escolher qualquer um dos modelos, como vocês viram. É possível acompanhar o funcionamento em tempo real? Sim, você pode clicar em "Executar agora" e, obviamente, acompanhar a execução, da mesma forma que faria no Claude. Você pode até
+
+interagir com ele depois que terminar ou interrompê- lo e continuar a execução. Ele pode usar meu serviço MCP? Sim, é para isso que servem os conectores. Meus colegas de equipe podem usar minhas rotinas? Não, elas pertencem à sua conta individual.
+
+Talvez seja possível compartilhá-las se você tiver um plano de equipe, mas eu ainda não testei isso pessoalmente. Qual é o custo? É o custo normal da sua assinatura, então leve isso em consideração. O que acontece quando uma execução falha? Todas as execuções serão armazenadas no seu histórico, para que você possa verificar o motivo da falha. Você poderia até mesmo adicionar uma mensagem ao
+
+final de cada rotina, como: "Se isso falhar, me envie uma mensagem no Slack para me avisar". Coisas desse tipo . E posso testar uma execução antes de publicá-la? Sim, em Na verdade, você deve testar várias vezes antes de colocar em produção. Basta entrar na rotina, clicar em "Executar agora" e ela aparecerá como em execução. Então, você observa a sequência
+
+de operações e pode intervir para corrigir os erros, garantindo que, na próxima vez que o comando for executado, você não precise interferir . Enfim, é isso por hoje. Espero que as dicas e os exemplos que mostrei tenham sido úteis e que agora você possa migrar suas tarefas agendadas ou outras automações que você planeja criar para essas rotinas baseadas na web, sem precisar manter o hardware ligado. Se você gostou do vídeo ou aprendeu algo novo, deixe um like. Isso me ajuda muito. E, como sempre, agradeço por terem assistido
+
+até o final. Até o próximo vídeo! Obrigado a todos.

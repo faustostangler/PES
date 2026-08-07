@@ -1,0 +1,121 @@
+---
+video_title: "Claude Code Source Code Just Leaked… 8 Things You Must Do"
+video_id: tXtCK66fPj8
+channel_name: "Nate Herk | AI Automation"
+channel_id: UC2ojq-nuP8ceeHqiroeKhBA
+channel_category: "Film & Animation"
+url: https://www.youtube.com/watch?v=tXtCK66fPj8
+video_date: 2026-04-01T02:01:27+00:00
+video_description: |
+  My FREE AI OS Course: https://www.skool.com/ai-automation-society/about?el=claude-code-source-code-just-leaked-8-things-you&hcategory=youtube-videos&utm_campaign=free-group
+  Full courses + unlimited support: https://www.skool.com/ai-automation-society-plus/about?el=claude-code-source-code-just-leaked-8-things-you&hcategory=youtube-videos&utm_campaign=ais-plus
+  Apply for my YT podcast: https://podcast.nateherk.com/apply
+  Work with me: https://uppitai.com/
+  
+  My Tools💻
+  FREE MONTH voice to text: https://get.glaido.com/nate
+  Code NATEHERK for 10% off VPS (annual plan): https://www.hostinger.com/vps/claude-code-hosting
+  
+  Claude Code's source code just got leaked through a public NPM package, and I went through the entire codebase. 
+  
+  I pulled out 8 practical insights that will change how you use the tool, from hidden slash commands and the memory system to permissions, multi-agent architecture, and internal features that haven't shipped yet. By the end you'll know how to use Claude Code like a top 1% user.
+  
+  Sponsorship Inquiries:
+  📧 nate@smoothmedia.co
+  
+  Connect with me:
+  https://www.linkedin.com/in/nateherkelman/
+  https://x.com/nateherk
+  https://www.instagram.com/nateherk/
+  
+  TIMESTAMPS 
+  0:00 The Leak
+  1:41 It's Not What You Think It Is
+  2:40 The Commands You're Ignoring
+  4:43 The Memory System
+  6:03 Permissions Are Why It Feels Slow
+  7:10 Built for Multi-Agent Work
+  8:20 MCP, Plugins & Skills
+  9:19 Features We Can't Access Yet
+  10:22 How to Actually Use All of This
+  12:27 Free Resource Guide
+---
+Então, o código-fonte do CloudCode acabou vazando na internet. 2.000 arquivos, mais de meio milhão de linhas de código de produção, a base de código real por trás do CloudCode. Eis o que aconteceu. A Anthropic publicou um pacote NPM que incluía um arquivo de mapa de origem apontando para um código-fonte TypeScript legível em seus servidores. Um pesquisador de segurança encontrou o código,
+
+seguiu as pistas e o código- fonte completo foi replicado publicamente no GitHub em poucas horas. Viralizou completamente. Então, analisei tudo o que as pessoas encontraram, examinei a base de código e extraí todas as informações práticas que realmente mudarão a forma como você usa o CloudCode. Estou falando de comandos ocultos que a maioria das pessoas nem imagina que existem, de como contextos e tokens realmente funcionam nos bastidores e do que a arquitetura revela sobre recursos que a maioria dos usuários nunca utiliza. Dividi o assunto em oito pontos-chave que discutiremos hoje, e cada um deles se baseia no anterior. Os primeiros passos mudarão a forma
+
+como você pensa sobre a ferramenta, mas o último integra tudo em um sistema, e é aí que reside a verdadeira vantagem. Assim, ao final deste vídeo, você saberá como usar o CloudCode como um usuário de elite (top 1%). Então, vamos lá . Bem, preciso começar com um breve aviso. Não vou mostrar a vocês o código-fonte neste vídeo e recomendo que tenham cuidado se forem baixá-lo por conta própria. Embora tenha vazado
+
+através de um pacote público do NPM, a Anthropic ainda detém os direitos autorais. Eles demonstraram estar dispostos a enviar notificações de remoção por violação de direitos autorais (DMCA), então tudo o que estou abordando se baseia em dicas de como você pode usar a ferramenta de forma mais eficaz. Muito bem, então, para começar rapidinho e dar uma ideia do que tem nessa base de código, sabe aquelas pequenas mensagens que aparecem enquanto o CloudCode está processando? Esse é um arquivo com 187 verbos de rotação. Existem as normais, como computação ou geração, mas também existem as engraçadas, como malabarismo com objetos, desorientação, fibbertidigibbeting, moonwalking, coisas desse tipo. E
+
+alguém na Anthropic foi pago para escrever 187 desses textos. Eu simplesmente acho que é essa a energia que eu quero das pessoas que estão construindo minhas ferramentas. Mas enfim, isso é só um aperitivo rápido. Vamos ao que realmente importa. Então, começando pelo número um, não é o que você pensa que é. A primeira coisa que esse vazamento revela é
+
+que o CloudCode não é o que a maioria das pessoas pensa que é basicamente como o Claude, só que no terminal, como um chatbot com acesso aos arquivos locais. E isso está completamente errado. O que o código-fonte mostra é que o Cloud é um ambiente de execução de agente completo. É uma aplicação completa, construída com Bun, TypeScript e React. Possui um sistema de ferramentas, um sistema de comandos, um sistema de memória, um mecanismo de permissões, um gerenciador de tarefas, um coordenador multiagente e um cliente e servidor MCP, todos interligados em um único pipeline de execução.
+
+Então, o fluxo é o seguinte: sua entrada chega a um analisador de linha de comando (CLI) , passa por algo chamado mecanismo de consulta, chama a API do LLM, executa um loop de execução de ferramenta e, em seguida, exibe os resultados de volta no seu terminal. Então, eu sei que isso soou como um monte de palavras sem sentido, então por que isso importa para você? Porque se você estiver usando o Cloud Code como um chatbot, ou seja, apenas digitando perguntas e esperando por boas respostas, você estará usando talvez 10% do que ele realmente pode fazer. O restante do valor reside nos sistemas construídos em torno do modelo, e é sobre isso que trata o restante deste vídeo. Então, a segunda parte é o serviço de comando que você está ignorando. Eis algo que a
+
+maioria das pessoas não percebe sobre o Cloud Code, revelado pelo código-fonte: existem aproximadamente 85 comandos {slash} no Cloud Code. A maioria dos usuários talvez conheça cinco deles. Você provavelmente digita {barra} ajuda, e é basicamente isso, ou talvez {barra} contexto. Mas os usuários avançados, que obtêm 10 vezes mais valor do Cloud Code, estão usando comandos como atalhos. Aqui estão os que mais importam.
+
+Você tem o comando {slash} init, que configura o contexto do seu projeto. Ele gera um arquivo cloud.md que funciona como o manual de instruções do Cloud Code para o seu repositório, e falaremos mais sobre a importância desse arquivo daqui a pouco. Também temos o plano {slash} ou o plano {slash} ultra. Essas medidas colocam o Cloud Code em modo de planejamento.
+
+Em vez de executar imediatamente, ele primeiro planeja toda a abordagem e, em seguida, pede sua permissão antes de começar a acessar os arquivos. E isso é crucial quando você está trabalhando em algo complexo e não quer que o programa comece a editar coisas por toda parte. Fazendo isso, você também economizará fichas a longo prazo. Você tem {slash} compacto, e isso é ótimo para economizar dinheiro. Quando a conversa se prolonga, o contexto se torna caro. Assim, o comando {slash} compact
+
+comprime seu histórico de conversas para que você possa manter o que é importante e descartar o que não é. E se você está gastando muitos tokens, esta é uma das soluções mais rápidas. Você também pode fazer {slash} compact e então fornecer um prompt. Portanto, se você deseja compactar um projeto, mas manter todas as informações importantes sobre a integração do site, pode especificar isso ao executar a compactação. Em seguida, temos a revisão {slash} e a revisão de segurança {slash}. Esses são
+
+fluxos de trabalho de revisão de código integrados. Em vez de pedir ao Cloud Code para analisar meu código, basta usar esses comandos e ele executará uma revisão estruturada. E o fato de existirem comandos dedicados para isso já diz muito, que a revisão não é uma reflexão tardia neste produto. É um fluxo de trabalho de primeira classe. Em seguida, temos o contexto de barra. Isso controla a quais arquivos o Cloud
+
+Code está realmente prestando atenção. Isso é importante porque cada arquivo no contexto custa tokens, então esse comando lhe dá mais visibilidade para que você possa ajudar a, você sabe, limpar seu projeto. Reduzir custos. Este mostra o que você realmente gastou. A maioria das pessoas geralmente não tem ideia de quanto custa uma sessão até ver a fatura. Então, reduza o custo. Em seguida, temos "sume"
+
+e "summary". Isso permite que você retome o assunto de onde parou entre as sessões, sem precisar explicar tudo novamente. E isso é apenas a ponta do iceberg quando se trata de todos esses diferentes comandos integrados. A questão é que melhores instruções são uma alavanca, mas conhecer esses comandos é uma alavanca completamente diferente que a maioria das pessoas nem sequer utiliza. O próximo, número três, é o sistema de memória, e ele é muito mais importante do que você imagina. O
+
+código-fonte aqui revela que o Cloud Code possui um sistema de memória completo e que o núcleo dele é um arquivo chamado cloud.md. Atualmente, a maioria das pessoas ignora esse arquivo ou despeja nele um monte de anotações aleatórias, e isso é um grande erro. Porque o arquivo cloud.md não é documentação, mas sim contexto operacional. Então, pensem nisso desta forma, e
+
+vocês sabem que eu adoro analogias. Se a Cloud Code for uma funcionária, então o arquivo cloud.md é o documento de integração dela. Isso lhes diz: "É assim que fazemos as coisas. É assim que funciona. É assim que nunca fazemos.
+
+E é assim que este projeto está estruturado." Os melhores usuários mantêm o arquivo cloud.md curto, objetivo e funcional. Coisas como: " Sempre usamos o modo estrito do TypeScript. Os testes ficam em pastas de teste ao lado do arquivo de origem.
+
+Nunca modifique o esquema do banco de dados sem executar as migrações. Use PNPM, não NPM." Esse tipo de coisa. Regras de decisão, restrições, convenções, não um romance sobre a história do seu projeto. A fonte também revela que existem múltiplas camadas nessa questão. Você tem memória em nível de usuário
+
+, memórias extraídas e até mesmo sincronização de memória em equipe. Isso nos mostra que o Cloud Code possui mecanismos de memória persistente em contextos de projeto, usuário e sessão, e o arquivo cloud.md é um dos inputs de maior influência que moldam seu comportamento em sessões futuras. Portanto, mesmo que você não aprenda mais nada com este vídeo, atualize seu arquivo cloud.md hoje mesmo, seja no nível global ou no nível do projeto. E
+
+lembre-se, esses parâmetros são injetados em todas as sessões, antes de cada conversa. Muito bem, número quatro, temos que as permissões são o motivo pelo qual Claude pode se sentir lento. Se você já usou o Claude Code, já se deparou com isso. Você pede para ele fazer algo e ele continua perguntando: "Permita-me fazer isso. Você me permite fazer isso? Posso executar
+
+isso? Posso editar isso?" E isso é realmente irritante. E a maioria das pessoas pensa que a solução é melhorar os avisos, mas não é. A solução está nas permissões. O código-fonte
+
+revela um sistema de permissões complexo com múltiplos modos. O modo padrão permite que o programa pergunte sobre tudo, existe o modo de planejamento, e também opções como ignorar permissões ou modos automáticos, nos quais o programa simplesmente executa a ação. Mas eis a verdadeira joia. Você pode definir permissões curinga, como permitir todos os comandos Git ou permitir todas as edições de arquivos na minha pasta SRC. Então, em vez de Claude Code te perguntar 15 vezes: "Posso executar o comando 'git status'? Ou posso
+
+editar este arquivo? Posso executar este teste?" Você define a regra uma vez e depois ela simplesmente funciona. Portanto, para fluxos de trabalho recorrentes, coisas que você faz todos os dias, essa é uma das mudanças com maior retorno sobre o investimento que você pode fazer. Portanto, no seu arquivo settings.local.json ou
+
+settings.json, você pode definir permissões globais, de nível de usuário ou de nível de projeto para ações que você sempre deseja permitir, sempre negar ou sempre solicitar permissão. Isso permite que você deixe de supervisionar cada ação e passe a deixá-la operar como um agente enquanto você se afasta. Então, o quinto ponto é que ele foi desenvolvido para trabalho com múltiplos agentes. E essa me surpreendeu . O código-fonte revela um
+
+subsistema coordenador completo, ferramentas para agentes, ferramentas para equipes e um sistema de tarefas projetado para trabalho em segundo plano e em paralelo. Então, o que isso significa em termos simples? A arquitetura foi claramente projetada para suportar a decomposição, dividindo o trabalho entre vários agentes que podem ser executados em paralelo. Então, imagine um agente explorando sua base de código, outro implementando as alterações e outro validando os testes. Existem até mesmo conceitos no código-fonte para tarefas em segundo plano, trabalho que continua enquanto você está concentrado em outra coisa . Agora, quanto disso já está
+
+totalmente disponível para o usuário hoje e quanto ainda está em fase de implementação? É um pouco mais difícil afirmar isso apenas analisando o código-fonte, mas a arquitetura deixa a intenção clara: o código Claude foi projetado para lidar com tarefas complexas de várias etapas, dividindo-as em partes menores, e não comprimindo tudo em uma única thread. A principal lição prática aqui é sobre como você estrutura seus pedidos. Em vez de uma única solicitação enorme, como "refatorar todo este módulo", "atualizar os testes" e "corrigir a documentação", divida isso em tarefas menores. Deixe o código de Claude decompor o trabalho. Pense nisso
+
+da mesma forma que eu falo sobre fluxos de trabalho versus agentes em algo como N 8 N ou em termos gerais. Os melhores resultados vêm da divisão de um trabalho complexo em etapas sequenciais claras, ou, neste caso, etapas paralelas, em vez de esperar que uma única instrução geral gigantesca para um único agente geral gigantesco resolva tudo . Muito bem, o número seis trata dos plugins e habilidades do MCP como a verdadeira camada de extensão. Se você acompanha meu canal, sabe que já falei bastante sobre MCP, que significa Model Context Protocol (Protocolo de Contexto de Modelo), e aqui está o que o código-fonte confirma. O MCP não é apenas suportado pelo código Claude, mas está praticamente integrado à arquitetura.
+
+O código Claude funciona tanto como cliente MCP quanto como servidor MCP. Ele pode se conectar a ferramentas externas através do MCP, e outros sistemas podem se conectar a ele. Mas vai além do MCP. O código-fonte também revela uma camada de habilidades e plugins, o que significa que usuários avançados podem criar fluxos de trabalho repetíveis, recursos personalizados e extensões específicas de domínio que se acumulam ao longo do tempo. Não se trata apenas de conectar-se a uma ferramenta, mas sim de construir um ecossistema em torno do código Claude que o torne mais inteligente para o seu trabalho específico. É aqui que o
+
+código Claude deixa de ser apenas uma ferramenta de codificação e passa a ser uma camada de integração. Você pode conectá-lo a bancos de dados, APIs, ferramentas internas, sistemas de documentação, qualquer coisa que tenha um servidor MCP. E então você pode adicionar habilidades e plugins para as tarefas que realiza repetidamente. Agora, quanto mais sistemas você conectar a ele, mais útil ele se tornará. Portanto, o poder, obviamente, não está na ferramenta em si, mas sim naquilo a que você se conecta e nos fluxos de trabalho que você começa a automatizar e a construir com ela. Ok, número sete,
+
+existem funcionalidades às quais ainda nem temos acesso. E esta é super interessante porque a base de código inclui verificações para algo chamado user_type, e um dos valores é ant, que significa Antrópico. Isso nos indica que certas funcionalidades estão bloqueadas por sinalizadores de recursos internos. A fonte faz referência a coisas como modo de voz, sabe, um sistema chamado Cairo, um modo Damon e um modo coordenador. Todas estão identificadas por bandeiras que sugerem que são internas, experimentais ou que estão sendo implementadas gradualmente. Quero ser
+
+honesto aqui. Não podemos afirmar com certeza o quão diferente é, de fato, a experiência interna. Alguns destes podem ser protótipos iniciais, outros podem estar próximos de serem comercializados para o público. A fonte sozinha não nos diz isso. Mas o que isso confirma é que o código do Claude está fortemente marcado com recursos adicionais, o que significa que diferentes usuários já podem estar obtendo experiências significativamente diferentes dependendo de seu ambiente, sua versão do sistema ou seu grupo de implementação. A conclusão prática é:
+
+preste atenção às atualizações do código Claude. Funcionalidades que estão sinalizadas ou limitadas hoje provavelmente estão no planejamento futuro e, quando forem implementadas, as pessoas que já entendem a arquitetura, como você que está assistindo a este vídeo, estarão prontas para usá-las imediatamente. Quer dizer, pense em quantas funcionalidades e ferramentas o Claude Code tem lançado ultimamente. Isso ocorre porque todos eles já foram construídos e testados internamente. Ouvi rumores de que o uso de computadores existe há muito, muito tempo, mas essas funções só foram liberadas agora que estavam prontas. Passando para o número oito,
+
+temos como usar isso na prática para economizar dinheiro e obter melhores resultados. Deixe-me conectar tudo isso com o que considero mais importante. Os hábitos que diferenciam o 1% dos usuários mais ativos de todos os outros. E a principal conclusão que podemos tirar de todo esse código-fonte é esta. Os usuários mais experientes não apenas escrevem prompts melhores, como também projetam um ambiente operacional melhor para seu código Claude.
+
+Eis como isso se traduz na prática. Primeiro, considere o Claude.md como um multiplicador de força. Seja breve, expresse sua opinião, atualize regularmente e direcione para outros arquivos. Este único arquivo define todas as suas interações com o código Claude. Em segundo lugar, aprenda a
+
+superfície de comando. Você não precisa de todos os 85 comandos, mas /plan, /compact, /context, review, past e resume são necessários. Esses tipos de comandos mudarão seu fluxo de trabalho diário imediatamente. Em terceiro lugar, configure as permissões para seus fluxos de trabalho recorrentes. Pare de ficar vigiando cada ação, estabeleça regras flexíveis para as coisas que você faz todos os dias. Quarto, pense em
+
+termos de decomposição, não em instruções monolíticas. Portanto, divida o trabalho complexo em uma fase de pesquisa, uma fase de planejamento, uma fase de execução e uma fase de verificação. Deixe o código Claude usar sua arquitetura da maneira como foi projetado. Caso contrário, a sensação será a mesma de tentar acertar uma bola de futebol americano em uma cesta de basquete. Não foi para isso que foi projetado . Quinto, administre seu contexto como se fosse
+
+dinheiro, porque, literalmente, é isso que ele é. Use {slash} compactos quando as conversas ficarem longas. Use o contexto {barra} para controlar o que é carregado. Use {slash} summary e {slash} resume para transferir seu trabalho entre sessões sem perder detalhes importantes. Cada arquivo desnecessário no contexto representa um recurso que você está pagando, e o gerenciamento de contexto não é apenas um diferencial, mas sim uma disciplina essencial. É algo que você precisa
+
+transformar em hábito. Sexto, conecte tudo a ele, sejam servidores MCP, CLIs, plugins ou skills. Quanto mais ferramentas o Cloud Code puder acessar, mais valioso ele realmente se torna. E sétimo, trate-o como infraestrutura, não como um aplicativo. O código-fonte revela uma enorme superfície de configuração, roteamento de modelos, substituições de modelos de subagentes, comportamento do shell, controles de privacidade e até mesmo a capacidade de rotear por meio de diferentes backends de nuvem, como AWS Bedrock ou Google Vertex. A maioria das pessoas nunca mexe nessas
+
+configurações, mas se você usa o Cloud Code com seriedade, há vantagens reais em ajustar o ambiente para se adequar ao seu fluxo de trabalho. Enfim, isso é o que estava escondido no código-fonte do Cloud Code, e eu sei que era muita informação, então queria ser o mais rápido possível para não entediar vocês neste vídeo. Então, compilei tudo o que conversamos e muito mais em um guia completo que você pode acessar gratuitamente. Você encontra isso dentro da minha comunidade escolar gratuita, e o link está na descrição. Mas enfim, por hoje é só. Então, se você gostou
+
+do vídeo ou aprendeu algo novo, por favor, dê um like. Isso me ajuda muito. E como sempre, agradeço a todos por terem assistido ao vídeo até o final . Te vejo na próxima . Obrigado a todos.

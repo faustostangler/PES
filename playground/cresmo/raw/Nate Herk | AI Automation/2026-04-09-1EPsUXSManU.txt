@@ -1,0 +1,123 @@
+---
+video_title: "Claude Just Told Us to Stop Using Their Best Model"
+video_id: 1EPsUXSManU
+channel_name: "Nate Herk | AI Automation"
+channel_id: UC2ojq-nuP8ceeHqiroeKhBA
+channel_category: "Film & Animation"
+url: https://www.youtube.com/watch?v=1EPsUXSManU
+video_date: 2026-04-09T22:52:11+00:00
+video_description: |
+  My FREE AI OS Course: https://www.skool.com/ai-automation-society/about?el=advisor-strategy&hcategory=youtube-videos&utm_campaign=free-group
+  Full courses + unlimited support: https://www.skool.com/ai-automation-society-plus/about?el=advisor-strategy&hcategory=youtube-videos&utm_campaign=ais-plus
+  Apply for my YT podcast: https://podcast.nateherk.com/apply
+  Work with me: https://uppitai.com/
+  
+  My Tools💻
+  FREE MONTH voice to text: https://get.glaido.com/nate
+  Code NATEHERK for 10% off VPS (annual plan): https://www.hostinger.com/vps/claude-code-hosting
+  
+  Anthropic just released the advisor strategy, and it's a big deal for anyone building with Claude. Instead of running every task through Opus, you can pair it as an advisor with a cheaper model like Sonnet or Haiku doing the actual work. 
+  
+  In this video I built a dashboard to test how it performs across easy, medium, and hard prompts, and I also show you how to use the same idea inside Claude Code with opus plan mode to stretch your session limit further.
+  
+  Sponsorship Inquiries:
+  📧 nate@smoothmedia.co
+  
+  Connect with me:
+  https://www.linkedin.com/in/nateherkelman/
+  https://x.com/nateherk
+  https://www.instagram.com/nateherk/
+  
+  TIMESTAMPS 
+  0:00 What Is the Advisor Strategy
+  1:34 Model Pricing Breakdown
+  2:14 Messages API vs Claude Code
+  4:11 Dashboard Demo Starts
+  9:34 When to Use It
+  10:24 Advisor Strategy in Claude Code
+  11:45 Opus Plan vs Opus Only Build
+  14:28 Final Thoughts
+---
+Então, a Anthropic acabou de nos fornecer a estratégia de consultoria. Isso permite que você combine o Opus como consultor com um modelo mais barato, como o Sonnet ou o Haiku, como executor. E o que isso faz é permitir que tenhamos agentes com um nível de inteligência próximo ao do Opus, a uma fração do custo. Porque não se trata de qual modelo é o melhor. Obviamente, o Opus 4.6 é o mais capaz.
+
+Então, a questão é: para essa tarefa específica, qual modelo devo usar? Porque se você tem uma tarefa que consiste em três etapas, A, B e C, mas apenas a etapa A é difícil o suficiente para exigir um modelo de raciocínio caro como o Opus, então por que gastar dinheiro fazendo o Opus executar as etapas B e C se o Haiku pode executá-las com a mesma eficácia por um terço do custo? Assim, a estratégia do consultor faz isso automaticamente, sem que você precise sequer pensar nisso . Temos o executor, que é o Sonnet ou o Haiku, e ele só chama o consultor se realmente precisar de informações de nível de consultor. Nas avaliações da Anthropic , o Sonnet com Opus como consultor apresentou um aumento de 2,7 pontos percentuais no benchmark SWE, basicamente uma avaliação padrão para modelos de IA na resolução de problemas de programação, em comparação com o uso apenas do Sonnet. Além disso,
+
+reduziu o custo por tarefa do agente em quase 12%. Como você pode ver nesta imagem aqui. E você pode ir um passo além usando o Haiku como executor e, em seguida, o Opus como consultor novamente. E eles viram que, com essa configuração, alcançou 41,2%, o que é mais que o dobro da sua pontuação individual de 19,7% no BrowseComp. Nesse caso, obviamente, isso custa mais do que usar apenas o Haiku, mas você obtém um desempenho muito melhor . E ainda assim é mais barato do que
+
+se você tivesse realizado essa tarefa apenas com o Opus. Então, neste vídeo, vou mostrar a vocês testes de como isso funciona na prática. Vou explicar quando você pode querer usá-lo. E vou mostrar como você pode começar a usar essa estratégia agora mesmo para economizar tokens no código Claude. Então, sem mais delongas, vamos direto ao vídeo. Então, tem algumas coisas que eu
+
+queria mostrar para vocês antes de começarmos . A primeira diferença reside no custo real entre as versões mais recentes desses modelos: Opus, Sonnet e Haiku. E se vocês ouvirem algum barulho de marteladas ao fundo, peço desculpas. O apartamento acima do meu está aparentemente em construção, com um parque aquático. Então, no Opus, bem à esquerda, você pode ver que estamos pagando US$ 5 por milhão de insumos e US $ 25 por milhão de produtos. E isso é
+
+representado aqui pelo verde para saída e pelo roxo para entrada. Portanto, observe que, em praticamente todos os modelos de IA, os tokens de saída custam muito mais do que os tokens de entrada. O custo de entrada para o Soneto é de US$ 3 e o de saída é de US$ 15, enquanto o custo de entrada para o Haicai é de US$ 1 e o de saída é de US$ 5. Então, espero que isso mostre a você quanto dinheiro você poderá economizar se começar a implementar a estratégia de consultoria financeira. Então, a primeira coisa que quero abordar é a diferença entre a API de mensagens e o Claude Code, porque a função de estratégia do consultor em si só existe na API de mensagens.
+
+É um endpoint HTTP que permite que nossas automações chamem o Claude e usem os mesmos modelos: Opus, Sonnet e Haiku. Assim, as pessoas podem usar isso para criar seus próprios aplicativos, chatbots, ferramentas e automações. Já o Claude Code é, na verdade, o produto final construído sobre a API. É o seu assistente de programação com IA que você usa no terminal; ele pode acessar seus arquivos locais e coisas do tipo. Portanto, são semelhantes, mas têm casos de uso diferentes . Claude Code é mais um
+
+produto acabado. Então, o que a API de mensagens pode fazer? Ele pode enviar uma pergunta, receber uma resposta, enviar imagens, PDFs e documentos para Claude analisar, mas não é apenas um chatbot, ele também pode definir ferramentas. E assim, esses são os tipos de scripts que Claude pode executar. Mas ele não consegue fazer é ler arquivos em um computador, editar código, executar comandos no terminal ou navegar na internet. Também não
+
+mantém estado, portanto não se lembra de nada entre as solicitações. Então, se você quisesse obter essa funcionalidade, poderia, mas teria que criar uma solução personalizada e construí- la você mesmo. Então, em que isso se assemelha ao Código de Claude? Bem, ambos usam os mesmos modelos, é claro. Eles possuem a mesma capacidade fundamental de compreender e gerar texto, código e raciocínio, e ambos podem chamar ferramentas porque a API permite definir as ferramentas e o Claude Code obviamente já possui algumas integradas, sendo possível adicionar mais ferramentas a ambos. E o ponto número
+
+quatro, sinceramente, eu deveria apagá-lo, porque diz praticamente a mesma coisa que o número um, que é o mesmo cérebro e a mesma capacidade de raciocínio. Então, eu sei que é um pouco confuso porque você tem algo como a API de mensagens, o Claude Code, o SDK do agente e, agora, o Claude também lançou recentemente algo como agentes gerenciados . A API de mensagens serve para quando você estiver criando um aplicativo ou produto que utiliza IA em algum ponto da automação. Se você estiver desenvolvendo isso e precisar de controle total sobre a experiência, também poderá usar a API de mensagens. Ou, se você já tem algum software e só quer que um botão envie uma mensagem para o Claude e receba uma resposta ou algo parecido. Vocês
+
+já sabem quando usar o Código Claude, então vou deixar esses pontos aqui. E agora existe algo como o Agent SDK, que também é um pouco diferente, mas basicamente eu gosto de pensar nisso como se eu tivesse meu próprio aplicativo e quisesse incorporar algo como o Claude Code nele. Ok, então vamos à parte divertida. Quero mostrar a vocês o que preparei aqui para que todos tenhamos uma boa ideia visual de como a estratégia do Advisor funciona na prática. Então, criei este projeto Claude Code para me ajudar a construir um aplicativo com uma interface que se comunica com a API de Mensagens. E se
+
+você consultar a documentação sobre como isso funciona em uma solicitação para o endpoint da API de Mensagens, basicamente você precisa adicionar esses dois elementos: o tipo, onde você coloca Advisor 2026 0301, e então define o nome como Advisor. E você também pode fazer algo como "usos máximos", que basicamente define o número máximo de vezes que a automação pode chamar o Advisor. E é assim que você pode ter um pouco mais de controle sobre o preço, garantindo que não esteja usando o Opus em excesso. Agora, temos este painel bem interessante onde posso, aqui em cima, ativar e desativar o tipo de consultor estratégico que desejo, seja Haiku mais Opus, Sonnet mais Opus, Sonnet sozinho ou Opus sozinho. Então, vou apresentar diferentes exemplos com todos eles, para que vocês possam ver quanto dinheiro estamos economizando. E, claro, sem
+
+sacrificar a qualidade. Então, aqui estão algumas sugestões. Você pode ver que o verde é mais ou menos o nível mais fácil, e depois vamos ficando cada vez mais difíceis. E às vezes, mesmo se você estiver no modo Consultor, ele não chamará o Consultor porque só o faz se perceber: "Ei, isso é um pouco mais difícil." Então, aqui estou eu no Haiku plus Opus. E eu vou perguntar
+
+algo como: "Qual é o horário de funcionamento da sua empresa ?" Isso está chamando a API de Mensagens no servidor. Como podem ver, obtivemos esta resposta aqui mesmo, e ela foi Haiku 4.5. E, do ponto de vista da atividade, podemos ver que esses dois tipos de solicitações nos custaram praticamente nada, US $ 0,0016 e US$ 0,0020. Foi
+
+aqui que o programa chamou uma ferramenta para pesquisar na base de conhecimento e foi provavelmente aqui que ele nos respondeu. Agora, se eu fizer exatamente a mesma pergunta usando apenas o Opus, digamos, "Qual é o horário de funcionamento da empresa ?", isso obviamente nos custará muito mais, e a resposta provavelmente será a mesma. Essa execução aqui com o Opus nos custou 21 vezes mais do que com o Haiku. Mas, sem dúvida, o Opus teve um desempenho melhor aqui, porque em ambos os casos não havia informações na base de conhecimento. O que o Opus fez foi usar
+
+sua ferramenta de busca na base de conhecimento e também a ferramenta de criação de tickets, o que, como eu disse, é sem dúvida um resultado melhor para o cliente . E eu verifiquei o conteúdo da base de conhecimento no meu projeto para garantir que nada tivesse sido inventado, e lá constatou: "Sim, não há nenhuma informação sobre horário de funcionamento na base de conhecimento, então as respostas estavam corretas." Aliás, se vocês quiserem testar isso por conta própria, eu criarei este projeto como um repositório no GitHub e darei acesso a todos vocês na minha escola gratuita. comunidade. O link está na descrição. Então, vamos tentar
+
+outro com Haiku e Opus. Vamos fazer outro fácil. "Quais integrações vocês suportam?" Você pode ver que a resposta correta é retornada depois que o Haiku consegue pesquisar na base de conhecimento e responder, e mais uma vez, foi fácil o suficiente para não precisar acionar o consultor. E se fizermos algo como o Sonnet Solo e enviarmos exatamente a mesma solicitação, receberemos a mesma resposta que o Haiku. A única
+
+diferença são os emojis, mas, novamente, isso vai nos custar muito mais. Essa execução com o Sonnet custou cerca de 2,8 vezes mais do que a execução apenas com o Haiku. Mas enfim, vamos esclarecer isso e fazer algumas perguntas difíceis para que o consultor seja acionado. Então, pedi a este projeto que me fizesse uma pergunta difícil e que a resposta correta incluísse o que ela deveria incluir. A pergunta será: "Comprei um dispositivo de hardware há 3 semanas e também adquiri uma licença de software, e quero devolvê-lo." ambos. "Quais são as minhas opções?"
+
+E devemos verificar se eles podem devolver o produto em até 30 dias, na embalagem original, entrar em contato com o suporte para obter a etiqueta de devolução, o reembolso será feito em 5 a 7 dias úteis, a licença do software não é reembolsável, blá blá blá. Então, vamos tentar primeiro com o Haiku e o Opus, enviar essa pergunta e ver o que acontece. Ok, interessante. Então, não ligou para o consultor. Falou que eles estão dentro do prazo de 30 dias , que é necessária a embalagem original, que podem entrar em contato conosco para obter uma etiqueta de devolução e que a licença do software não é reembolsável.
+
+Tudo parece correto. Vamos ver se fazemos o mesmo com o Sonnet e o Opus. Uau, isso é realmente interessante. Nesse caso, o Sonnet, por algum motivo, decidiu ligar para o consultor, mesmo que o Haiku não tenha ligado. Então, isso nos faz pensar . Será que o Haiku simplesmente não
+
+percebeu que era difícil e talvez tenha interpretado mal? E o Sonnet conseguiu entender que precisava do consultor ou, você sabe, o quê? O que aconteceu? Porque esta resposta, mais uma vez, está correta. Prazo de devolução de 30 dias, deve ser devolvido na embalagem original. Devo dizer,
+
+porém, que esta resposta provavelmente está mais alinhada com algo que eu gostaria de enviar a um cliente em comparação com esta. Esta parece um pouco mais clara. Ok, vamos tentar outra . Primeiro, Haiku mais Opus Advisor. Porque vocês podem estar desconfiados se isso está funcionando corretamente. Esta opção aponta diretamente
+
+para a estratégia de consultor com Haiku e Opus. Então, precisamos apenas de uma pergunta suficientemente complexa para que o Haiku perceba que precisa da ajuda do consultor . Ok, aqui vamos nós. Podemos ver que o consultor foi acionado com o Opus. Ele chamou duas ferramentas, mas quem chamou a ferramenta foi o próprio Haiku. A
+
+ferramenta de pesquisa na base de conhecimento, bem como a ferramenta de criação de tickets . E a resposta final foi " ticket criado blá blá blá" para direcioná- lo à sua equipe de vendas corporativas. Então, vamos enviar exatamente a mesma pergunta agora para o Sonnet mais Opus e ver se obtemos uma resposta diferente. Ok, bastante Resposta muito parecida. Um ticket foi criado e a equipe deve entrar em contato.
+
+E sabe o que é engraçado? Nesse caso, eu prefiro a resposta do Haiku, porque diz que entrarão em contato em um ou dois dias úteis, em vez de apenas dizer: "Olá, nossa equipe entrará em contato em breve". E, mais uma vez, aqui você pode ver que o Opus 4.6, como foi chamado o consultor, e o Sonnet usaram a base de conhecimento de pesquisa, bem como a ferramenta de criação de tickets. Então, obtivemos uma resposta melhor com o Haiku e o Opus, e foi muito mais barato do que com o Sonnet e o Opus. Ok,
+
+então, por curiosidade, fiz o teste novamente com o Sonnet sozinho e o Opus sozinho. E o Sonnet me deu uma resposta bem interessante . Deu muito mais detalhes e terminou com a recomendação de falar com a equipe de vendas para que pudessem abrir um ticket para eles. Mas o Opus me deu basicamente a mesma resposta que o Haiku antes, que foi: "Criei o ticket para conectar você com nossa equipe de vendas". Então, não sei exatamente o que isso me faz pensar, além de que, para o seu caso específico, Se você tem um aplicativo como este e está se perguntando: "Devo implementar a estratégia de consultor?", eu diria para não
+
+fazer isso imediatamente. Teste centenas de prompts com cada uma delas para ver qual você considera ter um desempenho melhor de forma consistente . Porque, mais uma vez, economizar em tokens é incrível, mas só se você não sacrificar a qualidade. Parece que, quando o Opus está em conjunto com o Haiku ou o Sonnet, você obtém um resultado melhor do que se usar apenas o Sonnet. Mas lembre-se, eu executei apenas de 10 a 20 testes aqui. Isso está longe da
+
+quantidade necessária para implementar. Enfim, uma pequena demonstração rápida, um painel bem legal que vocês podem ver. E, como eu disse, vocês podem executar este aplicativo se quiserem testá-lo por conta própria. O funcionamento é o seguinte: quando eu clico em enviar, enviamos uma solicitação para a API de mensagens. Dependendo da opção selecionada, temos um modo diferente.
+
+E quando a resposta é exibida neste painel, ela mostra qual modelo foi chamado e para qual mensagem. modelo, quantos tokens foram chamados. Então, a questão agora é como fazer algo assim? Como pegar essa estratégia e usá-la no CloudCode para garantir que você não atinja o limite da sua sessão? Porque no CloudCode, quando usamos esses diferentes modelos, mesmo que não sejamos cobrados por token da mesma forma que na cobrança de API, o Opus consumirá mais do seu uso de sessão do que o Sonnet.
+
+E o Sonnet consome mais do seu limite do que o Haiku. Então, se você estiver otimizando para o Haiku, poderá fazer com que seu limite de sessão dure mais tempo. A resposta é algo muito simples. Use o Opus somente quando precisar do Opus e use o Sonnet sempre que possível. E para coisas realmente pequenas, como explorar, pesquisar, resumir, você pode usar um modelo chamado Plano Opus. Se você entrar aqui e
+
+digitar {barra} modelo, poderá ver os diferentes modelos, certo? Você tem o padrão, o Sonnet e o Sonnet com 1 Em muitos contextos, você tem o Haiku, mas existe basicamente um recurso oculto: se você usar o modelo Opus Plan e clicar nele, aparecerá a mensagem "Defina o modelo para Opus 4.6 no modo de planejamento. Em todos os outros casos, usarei o Sonnet 4.6". Então, na minha barra de status,
+
+configurei para mostrar qual modelo está sendo usado. Ele usará o Sonnet. Mas se eu alternar para o modo de planejamento, ele automaticamente mudará para o Opus. E quando eu sair do modo de planejamento, ele voltará automaticamente para o Sonnet. Só isso já economizará muito tempo da sua sessão.
+
+Certo, então, como um exemplo rápido, estou enviando esta mensagem no modo de planejamento, que mais uma vez usará o Opus 4.6 para garantir que estejamos totalmente alinhados e que o modelo entenda o que queremos fazer antes de o Sonnet executar a ação. E o que farei é copiar este prompt e abrir uma nova sessão do Claude. Vou executar todo o processo no modo de planejamento e no modo de execução normal com o Opus 4.6 para ver a diferença na saída. Ok, então no terminal um
+
+temos o plano e, se eu clicar em aceitar automaticamente, veremos que ele mudou automaticamente para o Sonnet . Enquanto isso está em execução, Claude acabou de anunciar outro recurso aqui no X. Este se chama ferramenta de monitoramento. Definitivamente, dê uma olhada rápida para ver do que se trata. E agora o terminal somente com Opus terminou o plano e, quando eu o executar , ele permanecerá no Opus, como você pode ver aqui. Ok, então
+
+nossas duas visualizações estão concluídas. Esta é a que foi feita com o Opus e depois com o Sonnet para a execução. Temos a estratégia de consultoria, que deixa um modelo simples lidar com o trabalho fácil, chamando o especialista apenas quando necessário, mantendo a mesma qualidade em problemas difíceis, com uma fração do custo total. Temos um pequeno diagrama aqui. Temos as cores e, conforme eu rolo para baixo, você pode ver que temos escalonamento inteligente, não força bruta.
+
+Temos dois pequenos diagramas. Aqui, com uma consulta simples, não são necessários consultores, e com uma consulta complexa, o consultor é chamado, que por sua vez chama o Opus e o Haiku responde. Podemos ver a economia para suas cargas de trabalho. Este painel tem uma aparência muito boa. Podemos até alterar esses controles deslizantes, o que é um ótimo recurso para ver como uma diferença no uso de tokens, consultas ou combinação de cargas de trabalho afeta a estratégia do consultor e quanto isso nos custa.
+
+Podemos continuar rolando para baixo para ver qual modelo lidará com o quê. Ok, muito legal. E também está obviamente fazendo referência ao que estava em nosso projeto para o painel que foi construído e por que a estratégia do consultor é a melhor opção. Temos algumas estatísticas aqui e podemos até iniciar a demonstração interativa, que infelizmente não nos leva exatamente ao lugar certo, mas ainda assim é muito legal e não é tão ruim. Então, agora vamos abrir o que o Opus construiu. A mesma vibe, a
+
+mesma sensação, a estratégia do consultor. Temos os diferentes modelos aqui com seus diferentes preços e, se rolarmos para baixo, podemos ver como funciona. E honestamente, Eu já não gosto muito da aparência deste site. Ele não tem elementos de rolagem dinâmica e, além disso, esta visualização não faz tanto sentido para mim em comparação com estas duas aqui em cima. Elas parecem um pouco mais claras.
+
+Tem uma calculadora de custos interativa , o que é ótimo. Temos consultas fáceis, consultas médias, consultas difíceis, consultas por mês (que podemos alterar), tokens de entrada médios e tokens de saída médios. Então, isso é um bom recurso. Pode-se argumentar que este painel é um pouco melhor, mas as principais informações são praticamente as mesmas, só que há muito menos informações na versão exclusiva do Opus. Então, este é um daqueles casos em que eu diria: "Estou satisfeito com ambas as opções". Eu diria
+
+que gosto mais desta, que, mais uma vez, foi obtida usando o plano Opus dentro do Cloud Code. Então, esta também foi mais barata para nós. Enfim, esta é a ferramenta de consultoria. Espero que isso tenha esclarecido um pouco o funcionamento e algumas dúvidas. Confusão. Lembrando que
+
+esta versão ainda está em beta, mas você pode testá-la sem problemas. Bem, é isso por hoje. Então, se você gostou ou aprendeu algo novo, por favor, deixe um like. Isso me ajuda muito. E como sempre, agradeço a todos por terem assistido ao vídeo até o final e por terem aguentado a martelada que vocês podem ter ouvido ao fundo. Muito obrigado,
+
+pessoal, e até a próxima!
