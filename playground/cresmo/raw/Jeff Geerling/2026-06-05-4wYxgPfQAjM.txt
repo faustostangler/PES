@@ -1,0 +1,108 @@
+---
+video_title: "I tested EVERY single IP KVM"
+video_id: 4wYxgPfQAjM
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4wYxgPfQAjM
+video_date: 2026-06-05T14:00:09+00:00
+video_description: |
+  I put a computer in your computer. And on your computer. And behind your computer.
+  
+  Links to all the KVMs I mentioned (in order of appearance):
+  
+    - PiKVM: https://pikvm.org
+    - BliKVM: https://blikvm.com
+    - GL-iNet Comet/Pro/etc: https://www.gl-inet.com/products/gl-rm1/
+    - Sipeed NanoKVM/Pro/etc: https://wiki.sipeed.com/hardware/en/kvm/NanoKVM/introduction.html
+    - JetKVM: https://jetkvm.com
+    - Luckfox: https://www.luckfox.com/Luckfox-PicoKVM-Base
+    - LeafKVM: https://kvm.rs
+    - TinyPilot: https://tinypilotkvm.com
+    - Openterface KVM-GO: https://openterface.com
+    - Pi-Cast: https://www.crowdsupply.com/hackergadgets/pi-cast-kvm
+    - DezKVM: https://www.tindie.com/products/tobychui/dezkvm-go-kvm-over-usb-device/
+  
+  Ars article on vulnerabilities: https://arstechnica.com/security/2026/03/researchers-disclose-vulnerabilities-in-ip-kvms-from-4-manufacturers/
+  
+  Thanks to all the KVM manufacturers who sent in review units over the past couple years, many of which were displayed in this video. (Note: None of the companies paid anything for this video, or had any say in its contents.)
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - ALL the KVMs
+  01:59 - Caution
+  02:33 - PiKVM
+  03:17 - BliKVM and BliKVM PCIe
+  03:49 - GL-iNet Comet and Comet Pro
+  04:49 - The one that got me an FBI visit
+  05:39 - NanoKVM Pro and PCIe
+  06:16 - JetKVM
+  07:25 - Luckfox
+  07:39 - LeafKVM
+  08:20 - TinyPilot
+  09:13 - Openterface KVM-GOs
+  10:01 - Pi-Cast
+  10:27 - DezKVM
+  11:22 - Which ones do *I* use
+---
+Since the PiKVM came out in 2017, there's been an explosion of these tiny remote control boxes, and I've tested almost every single one on the market. What are these things good for? Well, you can already use, like, remote desktop, screen sharing on the Mac, or VNC to remote control a computer from anywhere on a LAN. And if you don't have a private VPN, you could use RealVNC, Raspberry Pi Connect, or wire up Tailscale or Pangolin for fully remote access. Those solutions are great, and so is just SSH for, like, cloud servers.
+
+But there are situations where you don't want to have remote control software running on the computer. In my case, sometimes I'm benchmarking a computer and I don't want screen sharing using up any resources. Or what if you have a computer you want to access remotely no matter what? Screen sharing, and even SSH, don't do any good if the computer's locked up or turned off. Enter the IP KVM. High-end server hardware has these things built in, and they call it names
+
+like Integrated Lights Out, iDRAC, or IPMI. So usually you wouldn't need one of these if you're server motherboards like my ARM NAS runs. I can just use the built-in OpenBMC interface. But if you don't have that, or if you want to get full remote control through a video card or something instead of the built-in VGA graphics, IP KVMs let you do that. And "IP KVM", if you didn't know, stands for "IP Keyboard Video and Mouse"—basically putting control of your computer over an IP network. All of these have a slightly different purpose, and most of these are pretty
+
+affordable now. The high-end boxes have tons of special features like PoE support, HDMI passthrough, and backup 5G modems. But sometimes you just want to stick one of these on a computer and get display keyboard and mouse control, and you can get some models for under $50 if that's all you need. But today, I'll run through all of these devices. This isn't a full review of every single one, and for that, I'll happily refer you back to some of my older videos or some other tech YouTubers who've been putting these things through their paces. I've been testing these for months,
+
+a few of them even years. The crazy thing is, these are all pretty good and you just have to find the one that meets your needs the best. But before we get started, a word of caution. One of these devices actually got me a visit from the FBI. And all of these things can be security holes just waiting to be exploited.
+
+Any form of remote control needs to be treated like an open door into your network. Make sure you put a good lock on it. Keep them up to date, don't buy one if you don't trust the vendor, and firewall them off as much as you can. an IP KVM is like giving someone root access if they get into your computer's BIOS. And to see just how damaging things can be, check out this article about some pretty serious vulnerabilities some of the devices I'm about to review have run into.
+
+All that out of the way, let's start with the classic, the PiKVM. For me, this thing started at all. The folks at PiKVM built the open source software that was used in every first-generation clone and cemented Raspberry Pi as the computer that was used in all these things. My dad and I tested all the PiKVM models, and I like everything about them except for one thing: the price. I 100% recommend them, especially since you're directly supporting the folks who wrote the software.
+
+But I also know a lot of people stop looking once they see the price tag. Going from $275 to $400, they offer features like HDMI passthrough, two-way audio, power control, add-ons for KVM switching, 5G backup, and a fully open-source software stack. They even have instructions for building your own if you have a Pi already and want to save The BliKVM is basically the PiKVM, but cheaper, because the company benefited from the software PiKVM already built. So, on just the hardware level, it has the same benefits and tradeoffs. But on the ecosystem side, you're not putting money back into the open source project that started it all.
+
+They have modified the UI a little bit, and they acknowledge where they get the software, but honestly, starting at over $200 for a cheaper Allwinner version, they're outclassed by newer KVMs. My favorite thing that BliKVM did was their PCI Express version that you can slot inside your computer. I still use this thing sometimes. A company that's extending KVMs even further is GL-iNet. They're already popular for, like, portable routers, but they kicked off their KVM journey with a Comet that cost $99. And,
+
+like BliKVM, their software is a fork of PiKVM. So, between that and using a cheaper RISC-V computer instead of Raspberry Pi, they can cut down the cost a lot. They also bumped the supported resolution up to 4K, and they have external options for ATX power control or even this cute little Fingerbot if you need to push a button remotely. Now, the Comet is pretty barebones, which is why they also sent me this Comet Pro to test. And I should say, most of the KVMs I'm testing are review samples, just to be clear.
+
+That's why I marked this video as sponsored. Even though none of the companies paid me any money or have a say in what I'm saying in this video, I want to be clear that I only paid for a few of these KVMs. But that out of the way, the Pro isn't quite double the cost, but it adds on: Wi-Fi support, 4x more onboard storage for bootable ISOs, a touch screen, HDMI pass-through, and it still supports the Fingerbot and ATX power control. Switching tracks to something way smaller, this is the little guy that got me an FBI visit. This NanoKVM is so cheap at $70 that apparently hackers were sending these to US workers to access corporate networks in some sort of espionage scheme.
+
+That doesn't mean the NanoKVM is bad, just that they're cheap and inconspicuous, and that made them great for North Korean spies. Of course, Sipeed, who makes these things, didn't help the fact by including a tiny microphone. I made a short video about it. The problem is, Sipeed built this thing with a RISC-V development board that just so happens to include a tiny microphone. But in general, if you're nervous about using hardware like this from China, then just pick up something else.
+
+Sipeed also took a while to open source their firmware, which also didn't help their trust level. Despite that, I still like this little guy, if for no other reason than it showed manufacturers you could get tiny KVMs going for under $100. Sipeed also branched out kind of like GL-iNet, and made a Pro version with a touchscreen, a control wheel, WiFi, HDMI passthrough, really the whole nine yards. And they made two PCI Express card versions, too. And all these things are pretty cheap, still, under $100. The cheaper NanoKVMs are built around the Sophgo
+
+SG2002 RISC-V chip, and the Pro models use Axera's dual-core ARM AX630C chip. I've tested all their different models, and they're all pretty good. Sipeed's UI is completely custom, too, and pretty minimal. Availability, at least in the US, can be or miss, but I'm not sure if that's more from tariffs, production speed, or import restrictions. One IP KVM that has definitely been impacted by import restrictions was the JetKVM. I did a whole
+
+video on this pre-launch, and I still love these little guys for the fast UI and clean aesthetic. And the two little screws up top mean you can hard mount these into rack mounts like I'm using in my clock rack. I don't know if it's just me, but this whole setup feels like one of the most polished out of all the devices I've set up. From the packaging, to the solid metal unit, to the snappy UI, I still use these around the studio more than any other KVM. These use a RISC-V chip, which helps them stay around $100, but because of import issues, they never really got to ship in quantity at the same low price I think they originally intended. There are some quirks,
+
+like no built-in PoE and a mini HDMI port on the back that needs an adapter, but overall, this is one of my favorite little IP KVMs. I mean, look at the little cute watch face on the front! WisdPi makes a PoE splitter you can use to power it over ethernet, and that's what I'm using here in my clock rack. Anyway, the JetKVM is a lot like the PiKVM in that the team behind it devoted a lot of time and resources to building an entirely new open source software stack. Also like PiKVM, other companies quickly forked it and built their own tiny cheap KVMs, kind of sucking away a lot of the potential market. One of these companies is Luckfox.
+
+They're a newer embedded device manufacturer, and their PicoKVM is basically the JetKVM, but square with a screen on top. The price is a bit lower though, and if you don't need it rack mounted, I guess this is a viable option. Another KVM that built off JetKVM's software is the LeafKVM. But unlike the JetKVM, it built in a larger display and added one feature that I haven't seen on any other device. It's a VGA adapter that doesn't need any extra power. You just have to buy their adapter,
+
+and it only works with the LeafKVM. But it worked perfectly for my old Xserves. Those things only have two USB ports on the back, so using one of those for a VGA power adapter is kind of wasteful. The big problem I have with LeafKVM, at least for my rack mount use, is that ports go out on both sides. It's kind of like a Raspberry Pi: no matter what, you're going to have cables splayed out all over the place.
+
+But LeafKVM is just finishing up a crowdfunding campaign on CrowdSupply if you want to get it right now. It's, I think, $120, and the price will probably go up afterwards. Now getting back to a PiKVM-style Pi-based device, TinyPilot is another box that I've covered before, except they're up to the Voyager 3 now. Their third-generation hardware is even easier to set up, and it's laid out in a nice, thoughtful box compared to some of the other solutions. I think TinyPilot targets more the business-side users than a hobbyist looking to save a few bucks, judging by the price and how they have licensing and management set up. It's still good to see this thing kicking around after a few years,
+
+and I think that features like role-based access control and better warranties help. They also partnered up with distributors for sales in Canada, Europe, and the US, meaning it's easier to get these units wherever you are, especially compared to some of the cheap Chinese options. And finally, they're building out a central management system that you can actually self-host if you want. It's still in beta, but I got it working through my Mac running in Docker. At this point, all the KVMs I've covered have been what I'd call traditional IP KVMs, where you plug them into Ethernet and you can access a computer across your LAN.
+
+But we're going to take a little detour and look at Openterfaces KVM-GO. It's meant to just plug one computer into another, like if you're in front of a rack with a tablet and want to jack in. I've used it a few times for interfacing with my older machines and some servers because it has a a VGA port on this model, but it can be a little awkward to get their control software running. My favorite feature is these are all powered over the same USB-C connection that you use for control, so you don't need an extra wall plug or even PoE. They have versions for direct connection to VGA, DisplayPort, or HDMI, and the kits cost about $120 each, or a little over $300 for all three.
+
+They also make a more generic mini-KVM for $99, but I haven't tested that one. On the theme of USB KVMs, Sipeed also makes a USB version of the NanoKVM, also around a hundred bucks. And I don't have one of those, but I do have a Pi-Cast. And I'm sorry to say, I actually had some trouble getting the Pi-Cast working on my iPad. But basically, it's a Pi KVM, but instead of accessing it over the LAN, you access it over a direct IP connection that's set up through the USB-C port you plug into your computer. It's similar to the other USB KVMs I've
+
+mentioned, except it hosts its own little web server, so you don't have to run special software on your computer. But because it runs on a Pi, it's a bit more expensive now, coming in at $214. Way on the opposite side of the spectrum is this little guy. This is the DesKVM Go, the cheapest KVM of the whole bunch, which also works through USB. It's made by Toby Chui, and I'm sorry if I pronounced that wrong, but it's an open-source hardware design with a little open source web app that you can either run off GitHub or self-host.
+
+That means you don't even need to run an app on your phone or your computer, you can just run it in the browser. Well, at least if your browser is Chrome, Edge, or a recent version of Firefox. This thing is so cheap because it relies on this little HDMI to USB adapter. It muxes in keyboard and mouse control over USB, and you can control everything through web serial. It worked great for me under Windows, but I did have some trouble in Ubuntu 26.04. I'm
+
+not sure if it's a Linux permissions thing or what, but that's just something to keep in mind. If this were $200, I'd complain about that a little more, but not for $25. For that, it's a neat little box that maybe some more people could contribute to, to make it the most handy way to jack in from a crash cart. Now I tried to just give you the overview of each of these KVMs, but I guess if you have to choose one, the key is to put together a list of the things you have to have. Like for me, the main thing I want is having all the ports on one side to make it easier to put in a rack or keep cables managed. That rules out a few of these units, but that might
+
+not be as important in your use case. Maybe you need better latency or 4K support. Those things just aren't as important to me. And I always like a good value. Slapping a $400 remote control box on a $300 mini PC is bit much, but maybe you need a special feature like backup 5G internet.
+
+I will say, the KVM I use the most around the studio is the JetKVM. It's tiny, bus-powered, and really simple. And most of the time, that's what I need. A lot of features are still being actively developed. Like, on the JetKVM, it looks like it's finally getting audio support a year after launch. So look at the links I put in the description
+
+for the latest specs on all these boxes. I mean, even while I was making this video, GL-iNet announced more KVMs, the Comet Q for USB control and Comet X with a built-in 4-port computer switcher. Then there's ArkKVM, which looks like a JetKVM clone that fixes a few minor annoyances like using full-size HDMI and including PoE support out of the box. Bottom line, the market for these things is booming, and there are probably more IP KVMs on the market by the time you're watching this. Until next time, I'm Jeff Geerling. [thanks for reading!]

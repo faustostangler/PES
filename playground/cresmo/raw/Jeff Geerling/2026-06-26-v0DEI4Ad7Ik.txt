@@ -1,0 +1,119 @@
+---
+video_title: "Amazon wouldn't let me, so I built my own 20TB Snowball"
+video_id: v0DEI4Ad7Ik
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=v0DEI4Ad7Ik
+video_date: 2026-06-26T14:00:35+00:00
+video_description: |
+  I flew up to Canada with a 20TB hard drive. After building a new storage server for a friend, I proved I was faster than the Internet—sorta ;)
+  
+  Things I mentioned in the video, in order of appearance:
+  
+    - Pigeons are Faster than the Internet: https://www.youtube.com/watch?v=4pz2kMxCu8I
+    - 45Drives Beast: https://45drivesstudio.com/configure/studio-beast?utm_source=Geerling&utm_medium=Geerling_Beast&utm_campaign=Geerling_Beast
+    - 45Drives Dead Silent Server: https://45drivesstudio.com/configure/silent?utm_source=Geerling&utm_medium=Geerling_Silent&utm_campaign=Geerling_Silent
+    - ServerPartDeals: https://serverpartdeals.com
+    - Sean Hodgins: https://www.youtube.com/c/SeanHodgins
+    - ORICO Hard Drive Case: https://amzn.to/4vtzj9o (As an Amazon Associate, I earn for qualifying purchases)
+  
+  Huge thanks to 45Drives for paying for my travel expenses for this video, and providing the Beast server for Sean! Also thanks to ServerPartDeals for setting Sean up with storage! And finally to Josh from 45Drives and Sean for showing some wonderful Canadian hospitality!
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Pigeons are Faster than the Internet
+  00:34 - Station Wagons are, too
+  01:12 - Oh, Canada
+  01:56 - 45Drives brought two studio servers
+  03:29 - Hard drives and SSDs
+  04:25 - Building the server
+  05:06 - Server ASMR
+  05:57 - First boot into Rocky Linux and Houston UI
+  07:05 - A surprise guest on the CRT
+  08:38 - Just as Wendell predicted...
+  10:29 - Did my data snowball melt?
+  11:55 - Full-size GPUs in the 5U chassis
+  12:44 - Down to Sean's machine shop for a DIY rackmount
+---
+Pigeons are faster than the internet. I proved it in 2023. I transferred 3 terabytes of data over a mile and found that carrier pigeons are faster than my fiber internet, at least up to a certain distance. And of course, we're just talking bandwidth, not latency. When I tested that myth, I learned pigeons poop. A lot. I learned that you can't just send them
+
+anywhere, they just return home. I guess that's why they call them 'homing' pigeons. I also learned that they're not really happy when you strap flash drives to their legs. But don't worry, no pigeons were harmed in the making of that video. Today, I want to replicate that experiment, but without the pigeon problems. And, as an old saying goes, "Never underestimate the bandwidth
+
+of a station wagon full of tapes hurtling down the highway." That's what I want to test today. You see, Amazon rents out these big ol' rugged NASs called Snowballs. You plug it into your network, copy over terabytes of data, then ship your data back to them over the road. I was going to do that, but apparently I can't, because I'm just a YouTuber, not a hotshot Enterprise customer.
+
+So instead, I made my own poor man's snowball. Yeah, there's just a 20 terabyte hard drive inside this thing, but it has every video I've ever worked on, and since it's in this case now, it's ruggedized and ready to ship. And I figure if I'm calling this a data snowball, it should probably go somewhere cold where there's a lot of snow.
+
+Hey Jeff. Hey Sean. Welcome to Canada. Thank you. I have a problem. Where's the snow?
+
+Jeff, it's hot here. I know, but I brought a snowball. [internal groaning intensifies] There's actually another reason I came to Canada, and that's to see you, Sean Hodgins. You have a wild YouTube channel with a lot of cool projects. And you also have a storage problem.
+
+Can you tell me about that? Yeah, I've kind of got a couple of NASes running. They've got videos spread across them. And I'm running out of storage all the time, swapping drives out for bigger drives. and I just kind of want like an ultimate solution that I can access all the time.
+
+Well, there's a company up here in Canada called 45Drives that I actually have visited before. And Josh, you brought a couple things from 45Drives today to help Sean with his problems. Yeah, it's great to meet both Sean and Jeff and happy to have made the drive here from our new Waterloo office in Ontario. We've been building storage server solutions for creators, musicians, companies in production. And it's partly why we started 45Studio as a division, because what we learned is that creators need enterprise level performance and reliability without the enterprise level complexity.
+
+And that's why I brought two things today. So our Deadmau5 silent server, which was a collaboration with Deadmau5 is a high density storage server that allows you to get your quick studio speeds, but it doesn't have any fans in it. So it's completely silent. And that was built as a collaboration with Deadmau5 who said, in my studio, I just don't want to hear these fans. I got to take out background noise, you know, in my production and things like that.
+
+So it became something that was, I don't know if you know Brett Kelly or if you've ever seen any of his YouTube videos, it was kind of just something he wanted to solve. And that's what we do at 45Drives: We solve problems. And it's kind of what we do from the studio perspective. I also brought the Studio Beast; hopefully it's a great solution for you. Thank you very much, Josh.
+
+We're going to take a look at both of the servers. I think we're going with the Beast today because you need a lot of storage and you need some high-speed storage. Yeah, and a 5U case is incredible. It's gonna be really cool to see. So yeah, I'm excited.
+
+Excellent. The first thing we did was cracked open this box of hard drives from ServerPartDeals. Now, I've heard of them from other YouTubers, but this was my first time working with them. I asked them if they could send Sean six hard drives and they showed up with these: 16 TB Toshiba drives. And they also sent two 1 TB SATA SSDs.
+
+Now, these are all used, and that's pretty much the only way I think a lot of us could get storage these days. Prices for new drives are crazy right now, like these Toshibas cost almost $600 new. On ServerPartDeals, that same drive is $400, which is still a lot, but at least it's achievable. They even give a two-year warranty on their refurbs. And all that to say, I'm glad ServerPartDeals exists because otherwise data hoarders like me would be priced out of existence. But we got everything unboxed, and Sean got to work replacing the default faceplate
+
+with this Felix Corp cover that Protocase printed. Our goal today is to get this thing running, set up a storage array, and see if my snowball made it up here in one piece. One of the first things I noticed when we popped the cover is this massive Noctua cooler. Having 5U is the biggest change over the HL15 that I have at my studio. With more height, you can fit a bigger air cooler, which is better for noise and cooling performance. But it looks like the back of
+
+the server got a little dent in shipping, which also pushed on the cooler through the 3D printed shipping bracket. But nothing was broken, and since the case is steel I just pulled a little on the back to straighten it out. I let Shawn put in all the hard drives toaster style, and I think by now 45Drives' blend of 3D printed guides and steel parts make this a pretty foolproof setup. And seeing this back part with the smaller SSD slots, I kinda wish I could do that in my older HL15, but it does take a little more depth. 45Drives also included the peel on the motherboard's I/O shield, so I'll be quiet and let you enjoy the sound of that. [peeling sound intensifies]
+
+It's quiet. Of course, it better be with all these Noctua fans, but they really improved the default thermal setup since their first versions of the Homelab servers. Now you get fan grills on the front by default, and the beast comes with all Noctua fans which are nearly silent. In fact, the only fans that were audible really were the CPU cooler fans. And you can't hear those at all really when you put on the top cover. So nice job on that. I mean, this is not a cheap server chassis by any
+
+means, but it's good to see that if you pay a premium, you're getting premium parts too. I'd have no problem running this thing inside my studio. Anyway, we got it booted into Rocky Linux, and I noticed the default OS install had some weird GUI artifacts, like text would jump around. and I'm pretty sure that's just the version of the AMD iGPU drivers that come with Rocky Linux. I've seen the same thing on other systems with older drivers. I mean, not many people are going
+
+to be running the full GUI off the internal display port anyway, so that's not a big deal. Just wanted to mention it. After running updates on the machine, I connected to it from my Mac. 45Drives built this web UI they call Houston on top of the open source Cockpit UI project for Linux, and it's gotten really good. Like, I have no problem recommending people run this instead of something like TrueNAS, especially after the kind of shady things TrueNAS is doing with community builds. Anyway, I got in there and the first thing I did was check to see if all eight drives were
+
+listed, and they were. That's in addition to the 1 TB boot NVMe 45Drives setup for us. Next we needed a ZFS storage pool, basically a way for the beast to share all the hard drives as one big network drive for Sean to use. But I had a problem. We had six hard drives and two SSDs, but they were all SATA, so they're not like super fast NVMe SSDs. And I apologize, I forgot to turn
+
+my mic for this part... So we got the storage set up, all the hard drives are there, but I want to know the best way to lay all this out. Sean, can you wheel in Wendell? Yeah, yeah, one sec.
+
+Hey, Wendell. What's up? We have a new storage server for Sean. What would you recommend we do here? Well, I mean, ZFS, obviously. RAIDZ2 is probably going to be
+
+be about your only option and the performance there should be pretty good though. Um, your SSDs those are SATA SSDs, right? Yes. But they're enterprise class so they've got pretty good write endurance. Yes. You could use those for a metadata special device but you'll probably have
+
+to create the pool from the command line because it'll complain about, um, the metadata special devices having different redundancy than the pool. So it looks at the pool and it says 'oh you've got two drives of redundancy do you have two drives of redundancy for the metadata special device?' Because it's a VDEV, it's just a special VDEV, and you don't because it's just a mirror. But the special VDEV is nice because it puts all your file allocation tables on your SSDs, and even though they're SATA SSDs and they can't, they don't really have a super deep queue depth, having that on SATA SSDs really makes a big difference in how fast the pool feels. Like when you go to loaded directory and you have a cache miss from something that was in RAM, even pulling from SATA SSDs is a way better experience.
+
+Okay, well, thank you very much, Wendell. See ya. We went with Wendell's suggestion, and the first step was to build a RAIDZ2 storage pool with the hard drives. Using that, we'd get around 60 TB of usable storage, and the other 30 would be used for redundancy. That would let Sean lose any two hard drives before he loses any data.
+
+But when I went to create the array, I got this error. Apparently, ZFS wasn't even installed yet. maybe it was just a provisioning hiccup. It was kind of a quick turnaround on this video, so I'm not going to blame 45Drives here. But it would be nice if there was just like a button in the UI that's like 'reinstall ZFS' or something like that. Anyway, I finally got the hard drives
+
+put in RAIDZ2 and went to add the special VDEV. But just like Wendell said, the UI wouldn't let me. It does say that I can use '-f', which now that I'm thinking about it, there was a little toggle in the VDEV setup window that said "Forcefully Add". So I tried creating the volume again, and this time I put that force setting on and it worked. At this point we had about 60 TB of storage setup, and the last step was to turn on Samba and create a share so we could access it over the network. That was pretty straightforward, though I think this is a
+
+point where *I* know how to do a lot of this stuff, just because I'm familiar with Linux and Samba, but I think 45Drives might be able to make UIs like this a little simpler, especially for beginners. Like, one last thing, I was able to enable Samba in the UI, but apparently that didn't add a firewall rule, so I had to go into the terminal and add this rule and reload the firewall. That's not super beginner-friendly, but at least I could do it all through the Houston UI. I scanned the NAS for my Mac and found the NAS Beast share that I configured, so it was time to test it out. And since Sean hadn't run his fiber up to the rack in here yet, and I forgot to bring my 10 gig ethernet adapter, I just ran a quick sanity test over WiFi, and we easily maxed out the 1 gigabit network connection.
+
+I have no doubt this will max out 10 gigs too, which is built into the ProArt motherboard that 45Drives includes with the Beast. And of course, I still didn't turn my mic on at this point... So you got everything on the server set up and it's pretty quiet.
+
+Yeah, I can barely hear it. Yeah, and even the hard drives, like these are quieter than the hard drives that I have. I barely hear them click a little bit when you're writing a bunch of data. But I forgot to bring my 10 gig adapter with me for my laptop. So I'm not going to do a full-bore performance test.
+
+I'll leave that for you later. Yeah, sounds good. But I did copy some files back and forth. That all works. Now the moment of truth is to see if this snowball— my poor man's snowball—made it up here safely.
+
+I'm gonna try hot-plugging this. I don't know if that's a good idea or not.
+
+Well, it's all light come on. It's spinning up. The drive popped up in 45Drives' disk pane almost immediately, so at least it works. and it looks like I've only spun this thing up 26 times. Unfortunately, when I went to mount the drive, I ran into a problem.
+
+There was nothing there to mount. This drive showed up as device 'sdi' and there were no partitions. And even if I scan it with gdisk, there was nothing on it. Well, the hard drive shows up in here, but it also helps if you bring the correct hard drive. Apparently I brought a blank hard drive and not the one that I actually copied all my videos to.
+
+So I think that the point that you can bring 20 terabytes is proven, but I should probably actually bring data with me instead of a bunch of blank hard drives. –I think that would help, yeah. [thanks Sean :D] But yeah, the other thing is that you can actually fit a full-size GPU inside of here, and you have one of these massive 4090s. So let's try that out. We don't need to prove that a GPU works, but just that it fits.
+
+That's the big difference with this case versus the one that I've used, the HL15. It's 5U, so it can fit a bigger cooler and a bigger GPU. The combination of this massive Gigabyte 4090's heatsink and the ProArt motherboard's chipset heatsink made it a little tight on the bottom because of some fan cables, but it has ample room for cooling, and 45Drives includes all the spare power supply cables you need for a GPU. But one thing to keep in mind is all the extra drive cables in here. like these two cables for the SSDs have to go over the top of the card.
+
+Anyway, we decided against running the GPU for now, and closed up the server to put it in the rack. We went to stick it in there, but we didn't have the right rails yet, so the hodgepodge solution Sean had didn't quite work out. That's not the end of the world, though, because Sean has an entire machine chop in his garage, and he just put a couple rack shelves in the bandsaw and cut them down to size. That worked, and now he has this Felix Corp Beast server ready for the next decade of the Sean Hodges cinematic universe. Speaking of which, if you like all that machining stuff, I spent some more time with Sean working on a special project, so subscribe if you want to see it.
+
+In conclusion, it's faster to fly a snowball up to Canada versus copying the data over the internet. That is, if you bring the right drive. Assuming everything is running as fast as possible, it would take almost three full days to copy 18 terabytes over my fiber internet. Flying this hard drive from St. Louis to Toronto only took about two hours, or six, if you want to count the entire time from door to door.
+
+Thanks to 45Drives, ServerPartDeals, and Sean Hodgins for helping me out with this video, and be sure to check out the links in the description. Until next time, I'm Jeff Geerling.

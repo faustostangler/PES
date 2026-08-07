@@ -1,0 +1,95 @@
+---
+video_title: "Arm comes to the Framework 13"
+video_id: CIb87SJ4xwo
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CIb87SJ4xwo
+video_date: 2026-04-15T05:00:11+00:00
+video_description: |
+  This new mainboard brings Arm to the Framework 13.
+  
+  Things I referenced in this video:
+  
+    - Framework 13: https://frame.work/laptop13
+    - MetaComputing AI PC Mainboard: https://metacomputing.io/products/metacomputing-aipc?variant=50604798640434
+    - All my test data: https://github.com/geerlingguy/sbc-reviews/issues/103
+    - Radxa's guide for Frigate NVR on Cix P1: https://docs.radxa.com/en/orion/o6/app-development/artificial-intelligence/frigate-cix
+  
+  MetaComputing sent their Arm AI PC mainboard for testing, and because of that, I mark this video as "sponsored" in YouTube's settings. They did not pay for this video, nor have any say in its contents. See my review sample policy here: https://github.com/geerlingguy/youtube
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - 12 Arm cores on a Framework 13
+  00:54 - Upgrading to Arm
+  02:11 - First boot into Ubuntu Linux
+  04:39 - Performance - CPU
+  06:28 - Performance - GPU
+  07:13 - FEX - Windows games on Arm Linux
+  09:13 - Windows on Arm on Framework
+  10:51 - Why AI PC?
+  11:22 - The problem
+---
+This is probably the only laptop on earth that's run RISC-V x86 and will soon be running on an Arm mainboard. This is a new mainboard from MetaComputing that has the CP6160... something like that.
+
+I forget what the exact chip name is. But this mainboard is brand new. This is MetaComputing's new board for the Framework 13 with four USB-C ports that all support power input and HDMI output. It should allow me to upgrade this laptop of Framework 13 and move from an AMD CPU to an Arm CPU. And the big question I have, which hopefully we'll answer by the end of this video, is whether this chip and this board solve the big issue that I've had with these Arm chips on other systems like the Minisforum MS-R1. We'll see. Let's tear this laptop down and take out the
+
+AMD mainboard that I have in it right now. And to start, we'll see how quickly I can do this. You take out these little guys. Okay. And then we use this one tool that comes with the laptop to unscrew these captive screws. Well, okay, don't do as I did. Don't just yank the keyboard off.
+
+Luckily, no harm no foul, but I might have to buy a new top board at some point if I do that again.
+
+All right, well, 10 minutes for a complete mainboard replacement is not that bad. And I'm going to see if this boots up now. The SSD that I put inside, that one I already pre-flashed with MetaComputing's image of I think it's Ubuntu 25.04 or 25... I think it might be, I don't know.
+
+Right now, because of the way that this chip works, you can run other OSs on it, but it requires some extra firmware support. But anyway, I'm going to try to turn this on. I don't know if I have the battery charged up, actually. It's been about three or four weeks since the last time I turned this laptop on. But the light's on.
+
+Let's see if we get it. There it is. So TianoCore EDKII firmware, version Beta2.
+
+So if we boot this up, the OS distro that comes with this, it's Linux, it's Ubuntu 25.04, which is about a year old now. And it's using Linux kernel 6.6, which is the LTS release, but it's not using 6.12 or 6.13.
+
+I don't remember exactly what kernel ships with 25.04 by default, but that's because there are still a few things with the CIX P1 chip in here that don't quite work out of the box. but you can see that this booted up pretty quickly we're in already and you can all the controls on here work. There's volume, There's, I guess, the screen mirroring, and there's play/pause. All the buttons for the framework stuff work fine. And using this generally is fine—there's no issues here.
+
+If I go to my website, I can browse, and it's very fast. I can go in here, go to a Youtube video So it's... "You might think picking the best laptop Apple ever made is a—" Let's pause that there.
+
+Everything on here works like a typical computer would. It has 12 cores, so it's not going to be a slouch doing almost anything that it needs to do. And just general computer use has been great. No problems there. You can use writer and spreadsheets and do whatever you need to do.
+
+And I haven't had any issues there. But after I get this up, we'll go through some of my benchmarks. I run a full suite of benchmarks on every computer I test. And this one does– it does really well in some places. And it does a little surprising in other places.
+
+So just looking at Geekbench scores, Geekbench is not the best benchmark in the world, but it works here. And it just shows us that the chip is behaving pretty much within spec. It's between the Minisforum MS-R1 and the Radxa Orion O6, which both use the same chip. maybe a slightly different revision of the chip, but, you know, it's performing as expected. That's the main thing for small workloads.
+
+When I run HPL, which does a floating point 64 double precision task on it, and it uses all the memory, I think there's two things that are going on. One is the memory bandwidth on this chip is a little bit less than on the other two systems. I don't know why, because the performance of the memory seems okay otherwise, but for some reason the memory is a little bit slower on here, but it shouldn't account for that much. I don't know exactly what's happening here because I did check in the BIOS that all the settings are right for performance mode, so something's funny there. I don't know what, but that should be higher, but I think that partly causes this, the efficiency, to be much worse on this chip for this particular test. Now, for Geekbench, the efficiency is right in line,
+
+And for most tasks, it'll be right in line with the other CIX P1 chip systems. But I just wanted to call that out because that was a little bit of strange behavior. And I think the chip is underperforming a little bit, probably a BIOS setting. But the thing that I did enjoy a lot about the system is it actually has relatively decent power draw versus the other two at idle. And that's something that I think MetaComputing is focusing on in their BIOS to make it run idle a little bit lower so you get more battery life.
+
+It's still not amazing though. And we'll get to that in a little bit later in this video when we compare it to other systems like the AMD mainboard and Apple's MacBook Neo. Before we get to those comparisons though, I wanted to test the graphics performance on here for a couple reasons. First of all, I ran GravityMark, which tests the iGPU very hard and sees how much performance you can get out of it ideally. And this has a Mali G720 Immortalis GPU that's from Arm directly, and it has okay driver support.
+
+You can get Vulkan and OpenGL running. And because of that, you can also get support for Steam games through FEX or through Box86 and Box64. So I wanted to test that. Now, this GravityMark score is actually going to be similar to like an [Apple] A14, so a couple generations old Apple mobile chip, or Intel's iGPU, like in the N150 and N100 PCs. So I got FEX running on here, and I installed Steam. There were a couple little tricks to it, but it wasn't actually that
+
+hard. I used the guide from Ubuntu's wiki. I downloaded games on Steam, and it was getting 500+ megabits over Wi-Fi, so that was nice, but it was also using the whole CPU while it was doing that. That's just how it is with Steam downloads. But the first game that I tried out was a pretty lightweight older game, Horizon Chase Turbo. And I used this game a lot for the first
+
+try because it's pretty light on resources and usually runs fairly well if you have enough iGPU support. And it's not quite a slideshow here, but I wouldn't call this playable. It worked fine and the controls were fine, the sound was great, but that's about all I can say for it here. This is all the lowest quality settings, and I think for some reason the iGPU is not passing through and working correctly in this environment, and that could be a FEX issue, that could be something with the drivers on here, I'm not 100% sure. Next up I tried Portal 2, and again it works, but it also stuttered quite a bit. It actually was not very playable. With Horizon Chase Turbo I could
+
+at least finish a race, but in the rooms in Portal 2, it was a challenge to even enter the test chamber because there was a lot of skipping and pausing and that kind of thing. So I quit out of there, and then I tried testing Obduction, which is also a little bit of an older game, so usually it runs pretty decent on newer systems, even if they're through emulation. But it quit out after the splash screen, and I'm not 100% sure why. But maybe it was the same thing as happened with Doom Eternal because it got pretty close to launching, but I guess with the 16 gigs of RAM on my board, it ran out of memory. And that 16 gigs is shared between the GPU and the CPU.
+
+And so the whole laptop locked up at this point and I had to shut it down. So if you're buying something for gaming, definitely this is not the board for that. It's not even made for that. So I just wanted to see how it would run because I know people are going to ask about it in the comments. Obviously the next question is if you can't run Windows games translated from x86 to Arm through FEX, what about Windows on Arm natively? I mean, it should work, right? Well,
+
+the first step was I upgraded the BIOS to the latest version that was provided by MetaComputing, and then I went into settings and booted off this Windows USB install drive that I made with Rufus. And the first time I tried, it hit an NTFS driver bug, and apparently that's because I had an older version of Rufus that I made the USB install disk with. So I reflashed the Windows install using the latest version of Rufus, and it got further, but then I ran into this screen with a 'PHASE_0' exception. That basically means Windows ran into an issue trying to initialize hardware. I talked to MetaComputing about it, and their first suggestion was to disable four CPU cores, so I tried that. That's actually the same trick that I think Orion O6 from Radxa used to make
+
+their SystemReady image, but that setting wouldn't stick for me, and so I couldn't get it to boot that way either. So they got back to me again and said, you can try putting it into 'work mode' instead of 'performance'. And I guess, you know, if you're going to use Windows, it is a lot of work to use Windows instead of Linux. But anyway, setting that, it actually did stick, and so I popped my Windows install USB back in, and what do you know, it actually started installing. But for some reason, midway through that install, it rebooted, and I couldn't get it to work again and recognize the NVMe drive, so I don't know if it was an issue with the drive or with something in the BIOS or with something in the Windows install, but you know what? I'm going to put a pin in that right
+
+now because this isn't fully supported yet. It will be at some point to install Windows on here, but this really wasn't built to be a Windows machine anyway. We're going to run Linux on here. I guess another question I had is why is this called an 'AI PC'? What does that even mean? I think
+
+the main thing is that just means it has a built-in NPU or Neural Processing Unit that might speed things like running LLMs or machine vision. The NPU built into the P1 is rated for 30 TOPS INT8, which is fine, but you have to tweak things to run on it, so you can't just install an AI tool in here and go. Right now, MetaComputing doesn't have any specific documentation, but Radxa's wiki has guides for things like using the NPU for object detection in Frigate. That's all well and good, but here's the problem. Even though this has the best idle power draw I've seen on a system using CIX's P1 chip, and even though it's a decent Arm board, the MacBook Neo exists now. On top of that, the cheapest AMD mainboard also exists.
+
+The Neo is way cheaper than both of those, but the AMD mainboard is about the same cost once you take into account memory pricing. But the Neo and the AMD are faster, and, assuming you want Linux, the AMD board is compatible with more software, too. The biggest killer in terms of this being more than just a developer board, though, is how it's still behind in performance, efficiency, and especially idle power draw. Like, for a desktop, 10 or 15 watts isn't the end of the world. But for a laptop, that's just no good. The latest BIOS idles around 7 to 8
+
+watts, which is okay. But the MacBook Neo comes in at less than a watt idle. And even the AMD Ryzen 340 mainboard is down at 2.7 watts. That's all measured at the wall, with the battery fully charged and the screen off. Turn on the display and you have this thing at 10W, the Neo at
+
+3W, and AMD at 5W. This is better than the RISC-V mainboard I tested earlier last year, which burns through 25W doing nothing, but that board is really targeted at developers only, not the general public. This ARM board could work for anyone, if the price is right. Unfortunately, with memory, it's priced the same as the Ryzen 5 340 board, which is faster across the board and just about as efficient. And it's double the cost of a Neo, which is way faster for bursty stuff, but is actually around the same performance with heavier work, since it doesn't have a fan. But that power draw really hurts things when it comes to using this
+
+thing as a laptop. And I think that, along with the fact the memory shortage drove the price up from the $550 launch price to like $800 today, means that this board will have a limited audience. Some people might like it, and future BIOS updates could make this thing better, but Right now, in the middle of 2026, if you want a good value Arm laptop, get a Neo. Until next time, I'm Jeff Geerling.

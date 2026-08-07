@@ -1,0 +1,119 @@
+---
+video_title: "I can prove I had the best time at Open Sauce"
+video_id: ziPIbxoFc_g
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ziPIbxoFc_g
+video_date: 2026-07-22T14:00:35+00:00
+video_description: |
+  There was far too much to cram into such a short amount of time. But I made the best of it.
+  
+  Here are projects I referenced, products I used, and other creators I mentioned who you should most definitely be subscribed to.
+  
+    - My Tufty 2350 GPS Time Badge project: https://github.com/geerlingguy/tufty-gps-time
+    - Pimoroni Tufty 2350: https://shop.pimoroni.com/products/tufty-2350?variant=55811986194811
+    - Adafruit MiniGPS STEMMA module: https://www.adafruit.com/product/4415
+    - Sean Hodgins' PPS Watch video: https://www.youtube.com/watch?v=AHSqyuOPpf0
+    - Sean Hodgins' PPS Watch project: https://github.com/idlehandsdev/pps-watch
+    - Robins Tools - Pixel Pump 2: https://www.crowdsupply.com/robins-tools/pixel-pump-2
+    - Aaed Musa's channel (he printed my badge clip!): https://www.youtube.com/@aaedmusa
+    - Taser Chess: https://www.youtube.com/EverythingIsHacked
+    - The Overengineering Department's Nixie Tube Clock: https://overengineering.department.wtf
+    - PianoPi: https://github.com/JBL99/PianoPi
+    - CuriousMarc's channel: https://www.youtube.com/channel/UC3bosUr3WlKYm4sBaLs-Adw
+    - Open Sauce: https://www.opensauce.com
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - OUTTATIME
+  01:26 - Atomic Clock Tower PC
+  02:26 - GPS Time Badge
+  03:35 - PPS Watch
+  04:48 - Time Tokens
+  05:56 - My wife told me I had to do this
+  08:01 - Synchronizing clocks at Open Sauce
+  10:08 - Even better than the best time
+  11:57 - The absolute best time, guaranteed
+  12:41 - NASA astronaut questions my methodology
+  13:32 - Awarding the Time Tokens
+---
+I'm running out of time. Open Sauce is less than a week away and I need to have the best time there. I need GPS. I need PPS. Do I need to bring the hourglass? Well, that might not make it in the
+
+carry-on. Sorry, I'm kind of rambling. Let me sit down and explain. I discovered last year I didn't have the best time at Open Sauce. Other people had a better time than I did, and I can't have that.
+
+I'm like the Time Pi Guy. To do that, I need a good stable time source, and that means GPS. And they need a way to compare my time with other people's time. That's part of the reason I went up to visit Sean up in Canada. Is it selfish for me to want to have a better time than other people at Open Sauce? I don't know. And what about people with Apple Watches? They have GPS too, but how do
+
+they compare their time with my time? Those are problems for future Jeff. Right now I have a few problems to solve. First is the PPS watch. This is a way that I can compare my time with other people's time, and I built this with Sean Hodgins up in Canada. I actually have parts to build two
+
+more of these so that I can compare time with more people, and I'm going to try doing that in this video. Second, I have my Clock Tower but I also have this PC build that I've had sitting up here for a couple years now, with some special timing features that I need to use to compare time to other sources. So I have a PC case here to put this into, and I have a special rubidium atomic clock PCI Express card that I want to put into this. So I need to do that. Finally, Pimoroni sent over some of their smart badges, so I'm going to try getting GPS time on one of these so that i have the most accurate and best time on a badge at Open Sauce. Now, while I build this Atomic Time Server PC, I'll tell you why I'm
+
+using GPS for time. GPS, and more broadly GNSS, or Global Navigation Satellite Systems like GLONASS, Baidu, and Galileo rely on extremely precise timing to work. You can't know where you are without knowing *when* you are. GPS and GNSS give us access to the most precise atomic clocks ever made in human history, all for free. And all you need is a little GPS module like this one.
+
+Now, this PC is going to do a whole lot more than just get GPS time. It has this Time Card, which has an atomic clock built in. What's that good for? And what makes this motherboard so special? Make sure you're subscribed. I'm working on videos about GPS and TGPIO, and someday,
+
+when I stop getting distracted by a thousand other timing rabbit holes, I'll finally get there. Anyway, the PC's done, and the only thing left is to see if the atomic clock card still works. I plugged in my JetKVM for remote access, and there it is. I can see the Time Card. So that's one project done quickly. Two to go.
+
+The second project is this time badge. It's Pimoroni's Tufty 2350, which runs on a little Raspberry Pi chip. But the cool thing is you can plug in I2C devices. So I'm using this Adafruit MiniGPS module that Pimoroni sent me along with this badge to get GPS time, and then I'm feeding that into a special badgeware app. And of course, all this stuff is up on GitHub if you want to try it yourself.
+
+Now one thing I couldn't get working on the badge is PPS. And that's a bummer, because my original goal on this badge was to get around 1 microsecond of timing accuracy. It looks like that's not going to happen, at least not on the display. What's PPS? It's where a timing instrument, in this case a GPS module, sends out a little blip every second to help other things it connects to know precisely the moment a new second happens.
+
+If you ever listened to the timing station WWV, it's like the tone they play at the top of the hour to set your clock. [demo of that...]
+
+PPS helps things stay perfectly in sync. With this Adafruit module and its PPS pin, you can get time down to nanoseconds. But here's where Sean Hodgins' PPS watch comes in. It has the opposite problem my badge does. Oh, and the PPS watch, if you haven't seen Sean's video, it's the world's most accurate watch that doesn't actually tell time.
+
+And you should definitely watch Sean's video if you haven't already. But anyway, this thing up here is a PPS input. If I put a jumper on my GPS module, I can feed my output into the comparator on the PPS watch to see if it's accurate to at least less than a microsecond. If it is, when these things both get a GPS signal and start outputting a PPS, this little blip of voltage on my oscilloscope, the middle LED won't blink at all and the outside LEDs should blink at exactly the same moment. And they do.
+
+So at least the GPS module is accurate, even if my badge's display is maybe 100 or 200 milliseconds off. But my goal with the badge is to make sure anyone I talk to at Open Sauce has the best time possible. And to further ensure that, I was going to build two more PPS watches. I bought all the parts, I talked to Robin from Robin's Tools, and he even sent over this early Pixel Pump 2 for the project. But then this week my UPS died, my internet was down for two days, and I got completely distracted by engraving coins in the Makara Z1.
+
+So I'll get back to the PPS watch builds, probably in a Level 2 Jeff video after Open Sauce, but I should tell you about these coins while I'm packing. If you watched my video about my first time doing CNC, you'll know I'm a complete noob at this stuff. So I thought it'd be cool for my second project to be engraving a coin. It shouldn't be too hard, and I was already working on a design to try to 3D print one for a Maker token. Maker tokens are these little things people hand out at meetups and conventions, kind of a sign of like, "Hey, I met you and I made this cool thing to commemorate that meeting."
+
+But when I found out you can buy coin blanks on Amazon, I ordered a set and got to work engraving a few. I figure anyone I find who has a better time than I do, especially since I'm technically off by like 100 milliseconds, I can give them one of these as my token of appreciation. Anyway, there's a lot of detail in this coin, so I used a tiny engraving bit. I did some milling for the thicker parts, and for the thinner parts I just traced a contour, like for the clock digits. This was also the first time I tried building a jig to hold things.
+
+I just made a 40mm circle in Makara Studio, cut that out of a block of wood, and used double-sided tape to hold the coin down. And I learned there's no such thing as overkill when it comes to holding things down for this stuff. Any movement at all will screw up the details. And if you forget the double-sided tape, well, this happens. So my wife came by the studio and saw the metal tokens and she was like, "Well, what are you gonna give other people who, like, don't have the best time, but they have a good time?"
+
+And she's like, "You gotta do something." So now I'm going to print a hundred of these. I don't know how many I'll get done. We'll see, because I'm leaving in about 24 hours for the airport. And I got these two printers I'll send off a job at home to, and I'm going to do two colors to make it quick.
+
+And yeah, why not add another project and another thing to carry around to Open Sauce? I don't know why I do this to myself. Plenty of filament left up there, but I heard a sound over here. This filament roll just went into the Bowden tube, so we're going to see. I think this might be the last one on the layer before white.
+
+The orange is going in, going in, and the annoying thing is if it gets stuck in there, I'll have to purge it with some other filament. Just to get this filament change done to white. That's the closest I've ever gotten to finishing off a roll with the exact...
+
+Yeah, look at that. Ha! So now I'm just going to have to push a bunch of white filament through until it purges enough. One thing I do not enjoy about the Core 1 is there's no default purging system built in. Like on here, yeah, it shoots it out the back, but you can print a little poop shoot like this.
+
+But on here, it kind of just dumps it inside the printer, so you have to attend to it whenever you're doing things like filament changes. I don't know if the index system or whatever is going to fix that, but that's something that I might ask Kruja about at Open Sauce. Look at this monstrosity. This is not Prusa's fault. This is my fault for not managing the end of this pool correctly, but still.
+
+Okay, so I got all that cleaned up, I got all these coins printed, and I even printed a little coin holder I found from Mitch3D, who I met at Open Sauce two years ago. But the time for procrastination is over. It's time to head out to Open Sauce, and look at this mess. Oh shoot, I just remembered I haven't finished making a clip to hold the GPS module on the Tufti. I guess I'll have to do that on the plane.
+
+And that's what I did: I designed this little clip for the GPS module on the flight. And then Ayd Moussa came in clutch when I asked if anyone could print it. It fit perfectly, so now it was time to find Sean to check if our clocks were in sync after he came from Canada and I came from St. Louis. I actually wanted to test with my son first, before we did a full test with Sean, so we plugged the PPS for my badge into the PPS input on the watch.
+
+"Oh no, my PPS is off. You see that light? Shouldn't be lighting up." What I think actually happened here was the pulse width of the PPS watch was longer for some reason. You can see it was starting its blink at the same time, it just stayed on longer.
+
+I noticed the PPS did that sometimes when the battery was running low. So I think the offset that I saw here was just an artifact of the analog nature of Sean's circuit. But there was only one way to find out, so I met up with Sean on the way to our panel, and I got my side of the test going, but for some reason his PPS watch wasn't getting GPS at all. We tried getting a signal all the way to the panel, but ultimately, I think his battery might have been low too, so we replaced that after the panel. That finally got us going with a signal on both PPS watches, so we could finish our experiment.
+
+First I plugged my badge into the PPS watch, and I could confirm we had the same time, at least as far as our eyes could tell. So then I did another fun test. The Adafruit Mini GPS module I was using had a spare Quick connector, so I plugged Sean's PPS watch into the mini GPS, and switch the GPS module address in my little time app. And there you go. Now I can get 12 sats, because the U-blox module on the PPS watch allows you to use more than one constellation at a time.
+
+And I can just switch back to my own GPS module when I want to go portable again. We synchronized the two PPS watches, and I synchronized my GPS badge with both PPS watches, and I can say with certainty that they're all at least less than a millisecond apart. nanoseconds, but I didn't have any calibrated test equipment, so I'm just relying on my eyes. Now, for another time source, I also bought this Super Base radio that I got from Muzi Works, since it has a built-in GPS I was using on the Meshtastic network. And it was okay, but I don't think the Meshtastic firmware focuses on timing accuracy, because it was always off by a second or two for my badge time. But enough about gadgets. What I loved most, what gave me a better
+
+time than all the clocks I own, was seeing the passion people have for making things, even if they don't make a lot of sense. Like driving couches, Piano Pis, a giant gravity-based spirograph, even taser chess and taser knife fighting. I mean, you could just walk or drive in a car, but driving a couch is so much more fun. And with MIDI, you could just play back music through most modern keyboards. But being able to play a song and then have the machine play it back exactly like you did, all running on a Pi with a bunch of solenoids, it definitely hits different.
+
+Plus, you could pick this thing up and play songs on pianos that don't have MIDI. It might be a little bit clacky with the solenoids, but it's so cool. And that was one of three cool piano projects I found on the floor. I also experienced taser chess. Did I play a full game? Definitely not.
+
+But did I learn exactly how much it hurts when you make the wrong move? I'm not sure why this exists, but sometimes that's fine. Every one of these projects resulted in two things: someone learning something new, like how to design a PCB or prevent an electromagnet from overheating. Then on top of that, other people get to share the joy in the end result. In the middle of our current AI slop revolution, it's great to have a space where these weird, wild, and sometimes a little scary things can come together.
+
+Especially human interaction. The best time I had was talking to all the hackers, makers, tinkers, and generally curious people who came to Open Sauce. It's also probably the best place on earth to learn a skill like repairing electronics. It was awesome to be able to help my son solder his badge in our hotel room, despite the no smoking sign here. Being able to share your hobbies and passions with each other is part of the experience, and I was remembering how my own dad taught me to solder. Every Open Sauce,
+
+I'm just blown away by how many people come together and choose generosity over gatekeeping. Anyway, we're way off track from time now. During Open Sauce, I logged the quality of my badge's GPS signal. Then I threw together this heatmap showing where it was best. Using that data, I then put together all the data points i collected to come with conclusively the spot where i could guarantee i had the best time at open source so after logging all of my data for the past day and a half i made an algorithm to detect where the time signal and where the satellite coverage was the best in all of open source and it pinpointed this location right here technically a two meter circle around here. So next year, if you want to have the best possible time in Open Sauce,
+
+you're going to stand next to the info booth. The info booth apparently is having a really, really good time this year. Now, I have to admit, after speaking to a literal astronaut about this, I realized there's a flaw in my method. Actually, there's a few, but I'll explain the main one while you watch Matthew Dominick buzz all of San Francisco in a 737 on this flight simulator, with Scott Manley egging him on. You see, I was only using one GPS module. And if you rely on
+
+one data source like that, who's to say it's reporting accurately? Obviously, I could switch between my PA1010 and the U-blox in Sean's watch, but that's still just one source at a time. So, while yes, technically I'm still pretty close, I'm not absolutely certain I had the best time at Open Sauce this year. So for next year, I'm going to have to up my game. Suggestions welcome in the comments.
+
+But now I had to choose the 10 people most deserving of my brass time tokens at Open Sauce. One obviously goes to Sean, because he not only had as good a time as I did, he shared it with me multiple times. I gave one to CuriousMarc, who was busy reverse engineering yet another incredible piece of old tech, not to mention he owns three cesium clocks, and another to The Overengineering Department, who designed these beautiful Nixie tube clocks. And then one to Ozzy with Analog Time Machines, who had this great display of vintage scopes restored with his dad. Then one to Gabe from SaveItForParts, since his satellite radios were keeping good time.
+
+One to each of the university CubeSat teams I found, since they both keep good time and space. Then a couple more to other makers I spoke to on the floor who, if they aren't already, should probably be subscribed to the time-nuts mailing list. In the end, I handed out over 100 of my 3D printed tokens, 10 of my brass tokens, and And I shared the best time of my life with hundreds more at this wacky event. And on top of that, this little time badge taught me a thing or two about GPS, like the difference in timing accuracy between different modules, and even how multipath reflections can affect the signal. Thank you to everyone who said hi, and until next time, I'm Jeff Geerling.

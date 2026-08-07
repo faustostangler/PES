@@ -1,0 +1,181 @@
+---
+video_title: "Dial \"1\" for Wi-Fi"
+video_id: GbIoEZZwcgw
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=GbIoEZZwcgw
+video_date: 2026-04-03T14:00:20+00:00
+video_description: |
+  Wi-Fi still required phone lines for a time. A belated #MARCHintosh video.
+  
+  Shop Micro Center's Monitor Madness Event: https://micro.center/1eb0c8
+  Sign up for a FREE 128 gig Flash Drive at Micro Center's Newest Store: https://micro.center/c1a7b6
+  Visit Micro Center News: https://micro.center/310248
+  
+  If you want to replicate this setup, here's what you need (some links are affiliate links):
+  
+    - My Pi ISP project: https://github.com/geerlingguy/pi-isp
+    - Raspberry Pi 3, 4, or 5 (or equivalent) ($35)
+    - StarTech.com 56K USB Dial-up Modem ($45): https://amzn.to/3NJMeTZ
+    - Viking DLE-200B Two-Way Line Simulator ($120): https://amzn.to/3NnJETN
+    - (Optional, but retro-cool) Traditional Bell-style telephone ($36): https://amzn.to/3PPmpme
+  
+  Also referenced in this video:
+  
+    - MacWorld 1999 New York Keynote: https://archive.org/details/1999-07-21-macworld-new-york-keynote
+    - Steve Jobs says "Jump!" and Phil Schiller does https://www.youtube.com/watch?v=1MR4R5LdrJw
+    - Steve Jobs introduces WiFi to the masses with a hula hoop! https://www.youtube.com/watch?v=HFngngjy4fk
+    - The Serial Port video on digital lines for 56K: https://www.youtube.com/watch?v=GQ0KTtMQ_8s
+    - Steve Jobs' 1999 Speech at the Apple Campus: https://www.youtube.com/watch?v=EoM2Y2KO6kU
+    - Dial-up sound poster: https://www.redbubble.com/i/poster/The-Sound-of-the-Dialup-Explained-by-windytan/31262230/flk2
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Internet like it's 1999
+  00:50 - Hula-hoops and Schiller-jumps for WiFi
+  02:57 - Sponsorblock probably caught this
+  03:25 - Let's shake hands with QAM
+  05:10 - Pi ISP
+  11:02 - Dial a Pi (from the first iBook)
+  12:19 - Now do it over Wi-Fi
+  14:32 - Lucent and Apple
+  15:04 - 6 hours of battery life, 27 years later
+  15:46 - One more thing...
+  19:03 - The White House
+  20:00 - Downloading a game over dial-up WiFi
+  21:39 - NTP over dial-up Wifi
+  22:52 - New Macs on OG AirPort?
+  23:40 - Your own dial-up ISP
+---
+Hello? –Hello, this is the Internet. The Internet? –Yes, press one to connect. Okay. [boop!]
+
+Today, I'm going to Internet like it's 1999, showing how this first iBook used to dial up to the internet over WiFi. But how did I do this? And why did I do this? And could you really just dial one to get online? This is the original airport base station, alongside the original Tangerine iBook G3.
+
+This was my aunt's, and she was the first person I know that had WiFi. She could pick up her laptop and stay online up to 150 feet away from that base station. Before I get into how I rebuilt a dial-up ISP with my Raspberry Pi, let me take you back to 1999. Back then, the best wireless communications most people had seen on their laptops was infrared. Yeah, the same tech you use to change channels on a TV. Apple's PowerBooks had these
+
+little IR windows, and they used IRDA to transfer data at speeds up to a blazing... 4 megabits. And it had a great range, up to like... 3 feet. And it slowed down in rooms with fluorescent lighting,
+
+which was most office buildings. So when Steve Jobs rolled out this new 802.11 wireless tech on stage, the crowd erupted. [Steve Jobs intensifies]
+
+That hula hoop wasn't the only gag they pulled off that day. Steve Jobs convinced Phil Schiller to jump like two stories and land on a mattress during the keynote to prove the toughness of this iBook. "3, 2, 1, jump!"
+
+WiFi's evolved a lot, along with portable computing itself. But this early demo cemented Steve Jobs and Apple as the ones who brought WiFi to the masses, even if the computer they did it on looked a little bit like a toilet seat. Now we're talking early WiFi with the iBook, but if you need modern WiFi, the best place to look is Micro Center. From Aruba to UniFi, they got you covered. Now, most laptops don't have ethernet like the iBook did, but you know what? Some of these monitors do, and if you want one,
+
+come in during March for Monitor Madness. They have some great deals for any budget, and I'd like to thank them for sponsoring my MARCHintosh videos. Click on the link in the description to see all their latest deals, and if you're in Austin, Texas, get ready for a grand opening later this year. In 1999, you could add on an AirPort card for $99, and a lot of people did, like my aunt. But most people didn't have high-speed Internet yet. Most people still had dial-up.
+
+And you might have noticed the poster on the wall behind me. This is a visual representation of what everyone in my generation thought was "the Internet."
+
+This poster shows an audio spectrum graph of the modem handshake, the noise every modem would make, as it communicated with another modem through POTS, or the Plain Old Telephone System. What sounds to us like different kinds of static is the way most modems communicated digitally over imperfect analog phone lines. Instead of saying like '01001010', computers use tech like QAM, or Quadrature Amplitude Modulation, to send multiple bits of data with each sound they put out. We still use QAM today, in Wi-Fi. It's just computers have gotten so much better at processing that we can cram more bits of data every second, leading to gigabits per second over the air, versus a maximum of 33.6 kilobits back in the day. And yes, 56k modems were a thing back then,
+
+but it took a long time for ISPs and phone companies to upgrade their equipment for it. So, like my setup here at the studio, most people never got beyond 33.6 on their internet. That's kilobits! And like, if you wanted to load up modern CNN back then, it's a website that takes 23 megabytes to load—without ads, mind you—it would take one and a half hours to load it back then. And that's assuming your sister didn't pick up the phone to call someone in the middle of a
+
+page load, killing your connection. That's all well and good, but you probably want to know how I set up my own ISP here in the studio, and whether it can do anything useful. At the heart of this setup is this Raspberry Pi. I'm running a Pi 5, but you don't need to do that. You could run a Pi 3 or a Pi 4, they're much cheaper, and more available. But I had this Pi 5 sitting around unused, so that's
+
+why i'm using it here. This is my ISP and I actually built open source software called Pi ISP that you can use that uses Ansible to set everything up for your own ISP. And this has, plugged into the back of it, this modem. This is a StarTech 56K modem. Now, I'm not going to be able to get 56K on this this setup. And the reason for that is I'm using plain old telephone service [POTS], or an analog phone line
+
+out of that box, which we'll get to. And that only supports up to V.34, which is 33.6. And even 33.6
+
+can be a little flaky over the setup. And you're probably wondering, like, with all the modern digital technology, why is it still so hard? It's because when you're trying to convert analog signals into digital data, it's still hard even using more modern technology. Anyway, this is a 56K modem that you can get still brand new. You need to have a hardware-based modem and not a software-based modem (or a winmodem). You can also use like old school serial modems if you get an
+
+adapter for the Pi. That would work too. But I bought this because it's easier– USB is simpler and I can use this with other computers too. You don't really have to use a Pi, it's just I had this one sitting there and if like I said, a Pi 3 would still work. But that Pi is connected to this, which is a phone line simulator. They actually use these in prisons. This is a Viking DLE-200B. And you know how in prisons
+
+they have those like rooms with the glass between them and you can like pick up the phone and talk to somebody across the glass? That's usually the kind of system they use. And it has configuration for how it rings, how many rings there are. And you need that because there has to be a certain voltage on the phone line. A lot of tools expect different types of ringtones and rings and all kind of stuff so you can configure all that in here and I'm going to demonstrate that really quick. I'm going to unplug line two here. And one thing that a lot of people used to care about was
+
+not destroying their modems, and some phone line systems would do that. So this is a fun little thing that I picked up at Vintage Computer Fest last year. I don't remember exactly who gave this to me, but this is actually a working tool to check to see if your phone line is going to destroy your modem. And I just realized this is going to be upside down here, so I'm going to plug it in. And it's actually going to ring and I think the modem is going to pick up. Now what it does is it–
+
+I'll tell you that that light was on the one that says 'normal'. If one of the other lights is on, you might not want to plug your modem into the line because that could destroy it. But we can also plug in a phone and just have this set up in the style of a prison. So if I plug this in...
+
+Now this phone will ring that phone and vice versa. So if I pick this up, it will call that phone. Then I can have a conversation with myself, which is something you do a lot as a YouTuber [ha!]. But anyway, that's how that works. I can call back the other phone like this.
+
+So that's how that works. And this is just simulating a phone line. Oh, okay. You can stop calling each other. Why?
+
+...something is still offline. Oh, yeah, the modem is trying to connect, but we don't want it to connect.
+
+I'm going to unplug this and hopefully that will reset things.
+
+That didn't do anything. No, no, stop ringing! Okay, I unplugged the modem over there and it finally hung up. So anyway, that's how this stuff is set up. And what I have set up right now is this AirPort has a modem built into it.
+
+So basically this modem is going to call out through this phone line to this modem over here. And then this Pi is plugged into my network and it can share the internet. And this is using mgetty along with PPP. So mgetty controls the modem. It says, you know, there's a ring on the line.
+
+Answer and see what kind of protocol we're negotiating. Once it negotiates a protocol, it passes the connection over to PPP. Once PPP sets up the connection, it creates a little virtual network for the modem connection, and then this is then online. And with the airport, it shares that one dial-up connection with all the computers connected to it. I think this had a limitation of like 10 or 20 clients, something like that.
+
+Most people had one or maybe two in their house by the time they upgraded to some other kind of airport. Because this was the original. This only supported 11 megabits, but in most cases it would be using 5 or even less megabits of bandwidth for the internal network. So it didn't scale that well, but it achieved its goal of bringing Wi-Fi to the masses. And it's funny, you'll notice that almost all of these original AirPorts, and in fact even things like these iBooks, are missing the Apple logo's leaf because whatever glue Apple used just came undone after years.
+
+And for some reason these all pop off and nobody knows where they went. Anyway, that is the setup there and other than that you can use any retro computing device. Like this iBook has its own modem built in and my old– my other old laptops all have modems built in. You could you could create your own ISP. You could even have multiple Pis running with multiple modems and have multiple lines.
+
+I'm not going to get that involved because I really just wanted to see if I could set up a system where I can dial in from old laptops or dial in through Wi-Fi. Before I started testing dial-up over the airport, I tested it on the iBook's internal modem. And I was reminded just how confusing networking was back in the days of Mac OS 9. For dial-up, you use the Remote Access utility to connect. But if you wanted to get internet over that connection, you also had to go into the TCP/IP Control Panel and switch it over to 'PPP'.
+
+And then, if you wanted AppleTalk working too, you'd have to go into that Control Panel. Apple had some sort of Location Manager system to help with this mess, but it did take some time to adjust to the way things used to be. Once I was connected, I was reminded again just how slow dial-up was in comparison to the fiber and cable I have now. Even cell phones have blazing speeds compared to this. I also remembered frequently staring at the Explorer loading widget, waiting for the page to finish loading.
+
+Or, on a flaky connection, I'd stare at the status bar to make sure it wasn't stuck loading something forever. Usually that meant someone picked up the phone causing the modem to go crazy. And sometimes, if I wasn't sure, I'd open remote access and stare at the send and receive bars. If I didn't see any activity for a while, something definitely went wrong. Using the old WhatRoute app, I pinged my local NTP server and Cloudflare DNS. Ping times
+
+were around 100 milliseconds, even on the local LAN, which is kind of crazy, but at least they were stable. Since I knew my Pi ISP was working now, I went in to set up the AirPort. I bought this thing used, and it already had someone else's setup. I tried a few passwords, but couldn't figure it out, so I had to reset the thing. Since I don't have a paperclip laying around, I had to find out that jumper wire is actually stiff enough to do it and thin enough to fit in there, so I completely reset the AirPort following Apple's instructions.
+
+After some initial configuration, the AirPort rebooted, and I could connect. Just to make sure that the AirPort itself was working, I plugged it into my LAN and loaded a few webpages over the AirPort connection on the iBook. I was happy to see Mr. Froggy from FrogFind loading, though things were a little slow. Even on the LAN, this AirPort wasn't much of a speed demon. But it was fun looking at
+
+the blinking lights, and I remember doing that a lot back in the day while I was waiting for pages to load. Internet Explorer 5 was all the rage back then, but it's extremely outdated now, and only a few niche websites will work on it that don't have SSL. There used to be a more modern fork of Mozilla for classic Mac OS called Classilla, so I loaded that up on the iBook from a USB stick. I wasn't about to wait like an hour to copy it over the LAN with AppleTalk. It actually worked a lot better for sites like Macintosh Garden, and I could even kick off some downloads, which were glacial, coming in under 4 kilobits per second. Definitely
+
+not a good setup for torrenting. But I went into the AirPort admin utility and reconfigured the base station for dial-up. The settings are surprisingly straightforward. In fact, there are still some Wi-Fi routers today that are infinitely harder to get set up. You know, it's a shame. I owned a few
+
+of Apple's AirPort base stations over the years, and honestly, they were my favorite Wi-Fi access points to set up and manage for homes and small businesses where you only had a dozen users. Once you have the ISP settings in place, you can either let AirPort detect when you access the Internet and it'll dial for you, or you can click connect and it'll dial up right away. Since they didn't put a speaker inside here for the AirPort modem, you don't get to hear the handshake like we did on the iBook earlier in the video. Once it's connected, it'll stay connected until a timeout that you can set, and it'll keep resetting that timeout whenever you access the Internet. This was pretty stable in my testing, though it did get flaky after a few hours.
+
+Letting it cool down by unplugging it always made things better, so I'm guessing that time isn't so kind to these early closed-up airports. By the way, did you know the WiFi in these things is actually just one of these Lucent WaveLAN PC cards? If you ever find a broken base station, rip this card out and you can use it with most laptops from that era. Like, here I'm using it on a PowerBook G3. Apparently, Lucent sold their first-generation Wi-Fi cards for like $300, and Steve Jobs famously negotiated with them to sell the chipset to Apple at a loss for $50.
+
+Without that negotiation, Wi-Fi would've remained out of reach for consumers for at least another year or two, and companies like Lucent wouldn't have had the volume to get their costs down. But now it's time to browse the Internet like it's 1999: Complete wireless freedom! And I didn't mention this before, but I can get over six hours of battery on this old iBook. I actually sent the battery in to Lazd or LAZd, or I don't know how you pronounce that name, but he replaced all the 18650 lithium ion battery cells, and so this laptop is running as good as new now. Most of my testing for this video was done on battery power, and I only had to plug it in to charge once. I paid full price for that service, but I have no qualms about recommending
+
+him to anyone else who needs a rebuild. He even wrote up a full guide on his website, if you want to try doing it yourself, but I decided not to since I don't have the right equipment, and lithium-ion batteries are notoriously fire-y. Oh, and there's one more thing. My Pi ISP project also sets up a tool called MacProxy Classic that lets you browse most of the modern Internet even on old computers like this one. And it has a special mode, which I'll demonstrate browsing Wi-Fi from my couch.
+
+And I'm just now noticing that this laptop matches very nicely with the color scheme of this couch. So I'm going to launch Internet Explorer. And the first thing I want to demonstrate is the ability to use a proxy running on the Pi server, that Pi ISP, that will let me browse modern websites. So let me check my settings really quick. And I'll show you it's not using a web proxy right now.
+
+And if I go to my website, jeffgeerling.com, and try to load it, it should have an error message. Now this is if everything's working correctly, which with the modem sometimes it doesn't, which right now it doesn't look like it is. But if this were reaching out to the public internet and getting DNS, it would say that there's an SSL certificate error. And that happens with almost every modern website, which is very annoying.
+
+But if I turn on the proxy, which I can just do here, this is the IP address of the Raspberry Pi and I set it to port 5001, I can have the proxy enabled and load my website like this.
+
+And it will actually load my website and let me browse my website. It doesn't have all the styling of my normal website, but I can click on an article and view it. which–this is a dial-up. So even my website, which is very optimized for quick loading, is slow. But there you go.
+
+So we got the thing. There's obviously no video, but the MacProxy Classic will actually rescale images to load more quickly on older computers. You can even set it to like bitmap mode and things for really old computers. But it's kind of crazy that I can be browsing the modern Internet on this iBook from 1999. But there's another interesting thing that this enables me to do.
+
+I can go into the Wayback Machine, which is web.archive.org, and there's a special plugin that I can turn on through the Internet Archive's Wayback Machine any date and browse the web like it was that date. So I'm going to go to July 30, 1999,
+
+which was right after this Mac was launched. And now if I go to Apple.com, it's not going to take me to their website today. It's going to take me to Apple.com the month that they launched the iBook.
+
+And there you go. You might have seen this earlier in the video. This is what Apple.com looked like at the launch of the iBook. And you can set any date.
+
+You don't have to set 1999 like I did. But they even had an article about the AirPort. "Turn your iBook into a wireless internet surfing machine." How cool is this? Like, I'm browsing the Internet as if I were in 1999.
+
+I even, that was my first computer that I bought brand new was a Blue and White G3. But yeah, you can browse the stuff, learn more about AirPort as it was back in the day. It contains a 56K modem and 10base-T Ethernet. What a wonderful device. It's also funny when you browse the Internet at that period to see some of the things, some of the crazy things.
+
+The White House used to have GIFs. I think these, maybe they're not GIFs. I thought they were GIFs of the flags. but there's a lot of websites that still had animated GIFs around. And just seeing, you know, the way the world was back then.
+
+This was, 1999 was still a time when a lot of places didn't even have a website. So the places that did were usually bigger institutions that had been around a lot longer. But it's funny, it says here that I can send 'electronic email' to the president. Let's see if that actually works. Can I email the president of the United States back in 1999?
+
+No, apparently not. But yeah, there's the White House. Now one more thing I want to try, if it works, is Macintosh Garden. And it might not work right now because of DNS issues. I'm going to disable this.
+
+And I'm going to go into settings and delete Macintosh Garden from here. I'm going to go to Macintosh Garden. And we're going to search for an app and see if we can get it to download over Wi-Fi over dial-up. I'm going to search for Flappy Mac. and we'll see if we can find it. So let's see, there's Flappy Mac, and we're gonna
+
+see if I can download the latest version and see if it will run on this Mac and I should note that this is running through the proxy. But *not* running through the proxy, Macintosh Garden actually loads on Internet Explorer. I've just been having issues with the DNS—it's always DNS, that's why I'm wearing this t-shirt! But anyway through the proxy this is all a little broken in layout. But without it, it actually it actually lays out correctly. So let's see if I can
+
+download this file. Here we go. Download Manager. It's downloading at 500 bytes per second. I'm about 50 feet away, maybe 40 feet away from the base station right now, so this actually kind of checks out. Like one to two kilobytes per second is what I'd expect, and we're getting almost one kilobyte
+
+per second. So yeah, this is... it's going to take a little while, but we'll get there. Okay, didn't
+
+want to make you sit through the entire download, so I have it here. Let's see if it runs on the iBook. it should and yeah I've run this one time already and I got to 4. This is like insanely– it is so hard. I don't know, Flappy Bird was... it's one of the most
+
+frustrating games ever, but I think that's why it made it so fun. Kind of like QWOP Q-W-O-P, yeah. Anyway, so that works and I don't know, it's just it's crazy to see all the things that you could do. It's slow, very slow, but one more thing that I did want to test before I close up the iBook and put it back in my studio is see if I can set date and time, set the NTP date over Wi-Fi in here. So the last time this synchronized was on 3/30, so a couple days ago. I did test this in there, but I haven't tested it in here. I'm going to see if this set
+
+time now works sometimes it doesn't... and yeah. So for some reason that routing is not working, and I don't know exactly why that happens, but it does sometimes. I've noticed that when that's
+
+happening, I'm not getting external DNS either, so something's wrong with DNS which—it's always DNS! I'll post a video clip up here of when it did work, because I did have this working in the studio. And I don't know exactly what's causing it to fail at this point in time. Anyway, that is Wi-Fi in another room through dial-up through the AirPort. And it's also kind of interesting that Apple started around this time period of making these laptops where you could just close the lid and it would go to sleep all on its own. [case closed]
+
+One last test was I wanted to see if newer Macs could still connect to this OG base station. And, well, some could, but most couldn't. My PowerBook G3 worked with the WaveLAN card, but that was from the same era, so that was kind of expected. It was nice having the way bigger screen, though. Though the hard drive in the G3 sounds like it's on its way out, so I'll have to do some maintenance on that laptop soon.
+
+I installed an era-appropriate Broadcom Wi-Fi chip on the PCI Express bus on my dual 2GHz G5, and I could actually get it to connect using AirPort, but I couldn't get any web traffic to flow. It was funny, it even showed the connection time from the AirPort right in the menu bar. I also tested on my MacBook Neo, but it wouldn't connect at all. It said the AirPort network could not be joined. And it'd probably work with more modern AirPort units like the Airport Extreme or the Time Capsule, but sadly it didn't work here with the original. If you want to rebuild my setup,
+
+I have links to all the parts and my code in the description. I'd also like to give a huge thanks to Doge Microsystems for their dial-up server guide, The Serial Port for some modem advice, and lazd for getting my battery shipped back in time for making this video. Until next MARCHintosh, I'm Jeff Geerling.

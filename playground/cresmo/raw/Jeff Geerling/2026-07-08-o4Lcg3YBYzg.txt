@@ -1,0 +1,52 @@
+---
+video_title: "The Raspberry Pi I wasn't supposed to buy"
+video_id: o4Lcg3YBYzg
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=o4Lcg3YBYzg
+video_date: 2026-07-08T14:00:05+00:00
+video_description: |
+  The Special Value Pi 4 was only for sale for a week. Right after I bought one, it was gone! What made it a 'special value', anyway?
+  
+  Here's where I first heard about these 'Special Value' Pi 4s: https://www.cnx-software.com/2026/06/26/discounted-1-25-ghz-raspberry-pi-4-model-b/
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+---
+This might be one of the strangest Raspberry Pis I own, even stranger than the blue Special Edition Pi. See, a Raspberry Pi reseller had a listing up for a special "value edition" Pi 4. A listing I can't show you anymore because it's already gone. But while it was up, my curiosity got the better of me, and now I actually have two of these. What makes these special and a 'value'? Well, just that these boards aren't certified for
+
+the normal 1.8 GHz most Pi 4s can run at. These are only tested at 1.25. But why? And the value
+
+isn't that great, at least in the US. I paid 90 bucks before shipping for a slow 4GB Pi 4. But, hold on, 90 bucks is a value for a Pi? How much is a *regular* Pi 4? Let's see, over at Micro Center, a 4GB Pi 4 is... a hundred dollars?
+
+"What a savings..." [RIP Alan Rickman] I guess you do save a couple bucks, but wow. Anyway, it was 90 bucks, but that was before shipping and tariffs. Add on another 72 bucks, and I'm 160 bucks into each one of these.
+
+I hope the AdSense makes up the difference. But what do you get when you buy the world's slowest Pi 4? Looking at it under the microscope, I couldn't find any difference at all between this one and one of my regular Pi 4s. The main chip markings are the same, the board is marked the same, both are 'Made in the UK'. And when I looked at the 8 Gig model I got, I did notice the chip was different, but then I realized it was just an older B0 stepping, which is the same as like my older 8 Gig [1 Gig actually] model here. So externally, front and back, there is nothing different about these
+
+boards. And that's probably why the listing was pulled. Could you imagine people buying up these binned Pis, some of which can actually run at 1.8 GHz, but were never validated for that clock speed, and then reselling them as normal Pi's? It's not great for the end users who'd buy those things on eBay. So there's only one thing left for me to do. Let's plug these things in.
+
+I flashed Pi OS to a microSD card and it booted right up. I don't know what I was expecting, but certainly not for it to just boot up at 1.8 GHz. But that it did. The 4GB version at least. And
+
+maybe that's a lesson that even if something is binned, that doesn't mean it can't run at all the higher clocks, just that it didn't pass whatever validation Raspberry Pi runs at the factory. So I plugged in the 8 Gig, and there we go. Kernel panics and clock errors. This one definitely can't hit the higher clock speeds. So I had to force the clock down to 1.25 GHz in the boot config,
+
+and now it boots up. Running a bunch of benchmarks, it's just like having a slow Pi 4. Again, I don't know what I was expecting here. But when I tested power consumption, That was surprising. I was seeing this use like 3 watts at idle. Most Pi 4s I test idle at less than
+
+2. Running stress tests, it maxes out around 5-6 watts, just like my other Pi 4s, so it's really just the idle power draw that's high. To find out why, I asked a Pi engineer. He said they bin hardware, something that every manufacturer does. He said that less than 0.01% of Pis they build don't test
+
+at normal voltages and frequencies, so they put them in a separate bin. It sounds like they separate that out and sell batches to specific industrial customers who know what they're getting into. That saves them from e-wasting these little batches of failed Pi's and gives some partners a slight discount. But for every Pi, even the ones that are fully tested, there's dynamic adjustments to the chip voltage that's part of DVFS, or Dynamic Voltage and Frequency Scaling. For the lower bin chips, the Pi might actually need to raise the voltage to hit acceptable performance, even at lower clock speeds. For better chips, they can run at default clocks, even using
+
+a little less power sometimes. Using DVFS, the Pi's firmware can kind of normalize the performance of a Pi. So even if you get a retail Pi, one Pi might be just slightly more efficient than another. That's why some of my Pi 5s I can overclock to 3 or even 3.4 GHz, but other ones I can't even get to like 2.6 or 2.8. It's just the silicon lottery. And this strange Pi that
+
+I bought gave me a peek behind the scenes into one area of part spinning that I've never thought about. all my benchmarks up on GitHub, and I'll link to them below. But all that to say, I'm not a silicon engineer, so take everything I'm saying in this video with a grain of sodium chloride. But let's get back to the real customers for these devices. The phrase "if they know what they're getting into" is doing a lot of heavy lifting. Bear with me for a second, I'm going to
+
+go on a tangent. When I was a kid, my mom used to take me to these Hostess thrift shops. Hostess made a bunch of sweet treats, but they were always a little too expensive to justify buying at the grocery store. But Hostess sometimes had too many in a batch, or they'd discontinue a less popular snack food. And they'd put that and all their extra stock into these outlet stores. I'd get to have a
+
+little sweet treat, and my mom would save a couple bucks on her bread. Of course, there was a trade-off. Everything at the store expired sooner or was just less popular in general. But my mom knew what she was getting. On top of that, bread expired, so there wasn't really a secondary market for these things.
+
+Now, here's the problem: these Pis will probably wind up in random commercial products, like in smart streetlights or inspection robots or maybe even, like, golf ball dispensers. But fast forward 5 or 10 years, when people start parting those things out and find Pis inside, will they know that these are slower? And if they resell these, how will the person who picks it up on eBay know? That's my little gripe with this whole thing. And that's also why I think the listing was removed pretty quickly. These are strange Pis, and some that I probably shouldn't have.
+
+And the fact I got a 4 GB that can actually run at 1.8 GHz just goes to show you the silicon goes both ways. Sometimes you get a bad chip that can still perform, and sometimes, much more rarely, you get a good chip that performs way better than average. The wrinkle that makes this more interesting is the fact that Raspberry Pi does sell these binned Pis in the first place. In 5 or 10 years, if someone finds a pile of old smart lights or Pi-based displays, if they want to rip out the Pi and use it for something else, it might not be the same as the Pi 4 that you can buy at retail. It might be one of these binned Pis. Until next time, I'm Jeff Geerling.

@@ -1,0 +1,73 @@
+---
+video_title: "Fast Mac networking is too expensive. I fixed that."
+video_id: _--JjauL19A
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=_--JjauL19A
+video_date: 2026-07-31T14:00:33+00:00
+video_description: |
+  All it takes is fixing a few design flaws.
+  
+  Mentioned in this video (some links are affiliate links):
+  
+    - Generic OCP 25G Thunderbolt Adapter: https://amzn.to/4vGLjDG
+    - Dual 25GbE TB Dock: https://store.raidendigit.com/products/lightone-25gbe-thunderbolt-docking-station
+    - Sonnet Twin25G: https://amzn.to/4tVqlAM
+    - Atto ThunderLink: https://amzn.to/48Tj0cG
+    - Aluminum Heatsinks: https://amzn.to/48DSiVn
+    - Noctua NF-A8 80mm 5V fan: https://amzn.to/4gUpZqK
+    - Noctua NA-FC1 Speed Controller: https://amzn.to/4vQq8iB
+    - Generic USB 5V fan (louder but cheaper): https://amzn.to/4cCM6OS
+    - 3D print - 80mm fan duct: TODO
+    - 3D print - Noctua 80mm fan grill: https://www.printables.com/model/1098017-high-efficiency-noctua-80mm-fan-grill
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - 25G Thunderbolt is too expensive
+  00:38 - A cheaper option
+  01:06 - Need more fiber in my network diet
+  01:37 - 25G on a Mac - 2 problems
+  03:04 - Prusa and Noctua to the rescue
+  04:06 - A better way for fan power
+  04:50 - The blood sacrifice
+  04:56 - Keeping things cool
+  05:37 - How's 25 Gbps?
+---
+I've been using the 10 Gig Ethernet port on my Mac Studio. I can edit 4K videos straight off my NAS over the network. I can also run backups at like a gigabyte per second. But I want more. I upgraded my rack and my NAS to 25 Gbps a couple years ago, but nothing else in the studio takes advantage of that yet. I looked up 25 Gbps networking options for the
+
+Mac and they're all crazy-expensive. Like this Sonnet adapter is $1,000 [technically $999]. That's way more than I'm willing to pay. But if you need it on a Mac, you have to pay because you can't just use PCI Express cards. You have to use Thunderbolt. It's too bad Apple killed off
+
+those Mac Pros, isn't it? So I kind of shelved that idea until I saw this blog post. Someone found a cheap 25 Gbps Thunderbolt adapter that looks like it's using server-pull hardware with a little adapter board, and you can get it going on a Mac. And back in January when he posted that, it was only $160, which—for me, that's an insta-buy. Since that time, it jumped up to $299, which still might be good compared to the Sonnet, but I won't blame you if 10 Gbps is enough at that price point.
+
+But before I could test 25 Gbps, I actually had to run some new fiber to my desk. When I built out this studio, I ran fiber up to the front room, where I thought I'd set up my desk. But then, once I moved in, I realized the studio space was a way better environment for sound, so I set up shop in here, where I only dropped Cat6A, which is only good for 10 gigs. After I pulled some fiber, I wound up plugging in this short patch cable, which has been there for a couple months now. I'm sure if you've subscribed to Level 2 Jeff, you've seen it a few times. Well, while recording this video, I finally fixed that by buying a 5-meter
+
+cable and putting it in the cable channel on the wall. Much better now. But with that direct 25-gig fiber connection, I tested the bandwidth. That's when I ran into two problems. First, the version of iperf3 I was running on the NAS was too old. Multi-threading wasn't working, so no matter what,
+
+I was TCPmaxxing around 15 Gbps. And second, the enclosure was getting hot. Like, I completely forgot to get footage before I stuck on these heatsinks, but it was really painful to even touch it. I could solve the first problem pretty easily, I just compiled the latest version of iperf3. That got me to 20 Gbps, since more than one CPU core could handle the transfers on my NAS now.
+
+But the second problem? That was a little more tricky. You see, the enclosure got hot, but it wasn't even thermally bonded to the OCP 2 network card that was running inside. That means the actual chips that handle the network traffic? Those things were cooking.
+
+And they had little heatsinks on them, but these things are meant to be inside servers with high pressure fans like this one, not in a passively cooled enclosure. It was basically acting like a little oven. Now, in that original blog post, Christian mentioned he slapped a couple giant heatsinks on the enclosure. That brought the chip down to a temperature that it wasn't cooking itself anymore, but it was still getting pretty hot. I wanted to make sure things were stable, because this is my main workstation, and there are times I'll be pushing through 25 gigs for minutes, maybe even hours at a time, and that means I want active cooling.
+
+My first idea was to just set this fan in front of the thing with a couple small heatsinks. That kinda worked, but it would still get a little hot. Plus, the fan was just loud enough to be distracting, even on its lowest setting. And it was right around this time that Prusa actually sent me an email asking if I wanted to try out some of the new filament that they worked on with Noctua to match the color of their signature brown and beige fans. I had just finished upgrading my MK4 to a MK4S with my son, and they also offered to send a Core One if I wanted to test their latest and greatest printer, and that was an offer I couldn't refuse. So here's what I did. I printed a prototype fan cowling in orange since I was still waiting on
+
+the Noctua spools after the Core One showed up. I made it so you take off one side of the enclosure, screw this shroud on, and screw in an 80mm fan. It fits together nicely, but there were a couple small issues. One was this little gap between the fan and the shroud. I know from past experience, air has a funny way of not pushing through higher pressure zones if you give it room to escape, so that gap has to go. The other was this USB cable for fan power, which just looks ugly. So,
+
+I tweaked the final design a bit to make the fan flush, and here's that version. I printed it in Noctua's beige-colored PLA, along with a Noctua brown fan grill. It printed perfectly, though I did have a few gripes with the Core One that I'll get to in a separate video sometime. For power, though, I figured there has to be a way to tap into the NIC's power supply, right? I probed around and found out I could get almost 5V on these through the holes over here. And 'almost 5V' should be good
+
+enough for a fan at least, assuming it's a 5V fan and not a more standard 12V fan. So I took a fan connector that came with my Noctua 80mm 5V fan, soldered its wires to the ground and 5V pin I found on the NIC, and tested it out just using a normal USB-C power supply. And it looks Looks like the fan only used around half a watt, as measured by my Sabrent power meter. So the next step was to put everything together. I desoldered that first connector and soldered on a braided fan connector that I had cut down to size, and taped it on the board with Kapton tape just to keep it secure, and screwed everything in back together.
+
+And it wouldn't be a networking project if I didn't end up slicing a finger while I was doing that. Right on the tip, too! But I plugged it in, started running some iperf tests, and checked the temperature. It was sitting now at less than 36 degrees Celsius after 10 minutes with the fan on low. And this being a Noctua fan, I couldn't hear it at all under the desk.
+
+But how does it actually perform now that I went through all this work to keep it cool? Well, just like earlier, it still maxes out around 20 to 25 gigabits because of the Thunderbolt limitations. Even if you have Thunderbolt 5 like I do, you're not going to get any more bandwidth because the chipset is Thunderbolt 3. But testing Samba file copies between my NAS and my Mac, I got around 1.4 GB/s of read, and 1 GB/s for write.
+
+The crazy thing is that's only marginally better than the built-in 10G Ethernet. It's an improvement, sure, but with all that work pulling cable, designing a fan cowling, paying $200 for all the parts, and assembling everything, was that worth it? Maybe. At least I got this video out of it. And if you're watching this part, you're one of the like 30% of viewers who actually watch past the first 30 seconds, so thanks for that.
+
+I couldn't do projects like this without the support of my patrons, GitHub sponsors, and YouTube members, so thank you so much for your support. Until next time, I'm Jeff Geerling.

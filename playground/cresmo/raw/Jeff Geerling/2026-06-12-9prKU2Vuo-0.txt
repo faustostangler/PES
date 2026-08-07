@@ -1,0 +1,74 @@
+---
+video_title: "Apple FINALLY lets you do this!"
+video_id: 9prKU2Vuo-0
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9prKU2Vuo-0
+video_date: 2026-06-12T14:00:38+00:00
+video_description: |
+  You can finally remotely power on a Mac, even if it shut down normally!
+  
+  Things I referenced in this video (some links are affiliate links):
+  
+    - Apple's support article: https://support.apple.com/en-us/125517
+    - ThirdReality Zigbee Smart Outlet: https://amzn.to/4vxuhse
+    - How I set up my power monitoring in Home Assistant: https://www.jeffgeerling.com/blog/2025/how-i-monitor-and-control-all-my-powered-devices-zigbee-ha/
+    - How to log into a Mac with SSH before FileVault is unlocked: https://www.jeffgeerling.com/blog/2025/you-can-finally-manage-macs-filevault-remotely-tahoe/
+    - 9to5Mac Article about the feature: https://9to5mac.com/2026/05/11/macos-26-5-adds-new-way-to-control-your-macs-power-state-via-switches/
+    - Reddit comment where I found this out: https://www.reddit.com/r/homelab/comments/1txnj04/comment/opyd44t/
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - What it's not
+  00:44 - Why this feature is actually useful
+  02:00 - Zigbee power control
+  03:26 - macOS's new power setting
+  04:38 - Remote access with FileVault
+  06:09 - Potential security hole
+  07:41 - I found a bug
+  09:36 - prodigalAvian
+---
+Apple finally lets you turn on your Mac remotely without having to press the power button. In the media, I've seen articles suggest it's a reaction to Mac Mini power button complaints. While I agree the M4 Mini's power button is in a really dumb spot, that's not the reason I care about this feature. The two bigger use cases for this have been a pain for years for anyone running remote Macs, like in a home lab or a data center. Macs have had "wake on land" since macOS 10.4,
+
+released in 2005. This is where you can wake a Mac up from sleep remotely by sending it a magic packet. They also had reboot after power failure, which is great if you're okay hard cutting power to your Mac so it'll boot when you turn power back on, and that's fine for like emergencies when your power goes out or your UPS dies, but it's risky since that's not a normal shutdown condition. Booting up when power's applied has been a feature on PCs for years, so I'm glad to see it finally come to the Mac in macOS 26.5. I just wish it were here a little
+
+sooner. When I was testing that Mac Studio cluster, I didn't want it running 24/7 so I could save on power, but a couple times while I was away from the studio, I wanted to boot it up to test something, and I couldn't. I'm also struggling now to find a way to boot up these old X-serves I just installed in my rack. G4 and G5 X-serves didn't have remote server management or IPMI, and there's no way I'm going to keep them running at 200 watts at idle and with those noisy fans just in case I want to cases for broadcasts or concerts. Not having to go around and hit extra power buttons on all your Macs when you're setting things up is a big time saver. Anyway, since this feature exists now,
+
+and since I have one of the Macs that this works with, I thought I'd give it a test. My Workbench Mac is an M4 Mac Mini, and the other Macs this works with are iMacs and Mac Minis built in 2024 or later, or Mac Studios from 2025 or later. Sadly, this feature doesn't look like it's coming to any older Macs. Anyway, the way I control all my other servers is with one of these. It's a Zigbee smart outlet from Third Reality, and I have a whole video about how I set these things up with Home Assistant for remote power management. So the first step here is getting this
+
+plug adopted into my Home Assistant environment. And like I said, I have a full video on all this stuff, so I'm not going to go in depth here, but you just take it out of the box and plug it in. I'll turn on that outlet. And so this is my Home Assistant environment, and I have a couple different dashboards set up. Like I can look at different plugs right now. I don't know if I have
+
+anything yeah utility 2 is charging something at 90 watts i don't know what that's plugged into right now but obviously something using a bit of power but i need to add that new outlet back there that i plugged in so i'm going to go ahead and do that under settings devices and zigbee and then i can add device there it is starting interview so it's going to find the device and my home assistant that's in the rack room back there is connecting now and we can name this i'll call it m4 mac mini and the area is the studio and it says it's ready to use so now if i go back to uh settings here i should see m4 mac mini in here here it is and it's saying that there's nothing on it right now and it's turned off so if i turn this on you can hear it turn on well you might not be able to hear that but i can hear it turning on and i'm going to leave it off right now and that's the first part of my setup to be able to remote control the power to this guy the next step is on here on the mac mini itself i'm going to go to system settings and then energy and the new option is here you have to be updated to mac os 26.5 to get this but the new option is always start up when power is connected so i'm going to switch to that and it says automatically start after a power failure or when connected to power that's what i want and at this point i should if this works i should be able to just shut this down i'm going to do that now and i'm going to switch the plug over to the other outlet that i have the smart outlet and we'll see if this works okay so this is the outlet that the mac mini is plugged into i'm going to take it out of there and plug it into this one
+
+okay it's plugged in there and now if i turn this on if i turn this switch on here in home assistant the mac mini should boot up that's that's the hope let's see what actually happens
+
+there it goes okay so that was as simple as it is we'll see if it actually gets all the way booted up here. I'll zoom out so you can see what's going on on the monitor. So it's booted up. Now here's the interesting thing. When you're remote accessing a Mac using FileVault, which this one is, you have to enter your password before it completes its boot process. But let's say you're on a
+
+computer over here and you want to SSH into it. Well there's another feature that came out a few releases ago. I think it came out with 26.0, the original Tahoe release, where you can SSH in four file vaults unlocked and then unlock with your computer password and we're going to see if that works so i'm going to go ssh m4 mini dot local and yeah it says the system is locked to unlock it use a local account name and password once successfully unlocked you'll be able to connect normally so i'm going to enter my computer password and i'm going to cut so that you don't see it boom and now it says this message now i've noticed this it shows a message you may now use SSH to authenticate normally. This isn't like a weird state on this session where it's not doing anything. And you actually have to control C out of here. And then you can SSH back in. And now I'll
+
+be SSH'd in normally. So if I say, who am I? I'm Jay Geerling. And the uptime is two minutes. And I can do whatever I want remotely on this Mac. So I can monitor resource usage. I could run benchmarks
+
+or tests or, you know, CI builds or whatever I need to do from anywhere. And I did that all remotely from power off to this state. And of course, over here on the Mac, it's still not logged in. I'm just logged into SSH remotely on this laptop. Now, one really annoying thing that you have to keep in mind when you're managing Macs this way, if you have a monitor plugged into your Mac, I'm going to show you something that I do not like. And I don't know how to turn this off
+
+about the way that you can control Macs remotely. Over here on this Mac, I can log in with screen sharing, which is like VNC or remote desktop. So I can log in here. And again, I'm going to not show you my password. When I log in here, you can see back in the background, that monitor will go, it'll go to the desktop, then it'll turn off. And then I'll be in this session over here.
+
+And I'm sorry, I can't look at you right now, because I'm trying to see what's actually happening. So you see the monitors off over there. And I'm logged in on this session. But watch what happens if I just close out of here without logging out first. If I close my screen sharing session here and we look back at the monitor over there in the background, guess what happens?
+
+It's actually logged in and I'll show you that. I'll roll this camera over here. Sorry, this is a little awkward. I'm not prepared for these fancy camera moves. But look at this. This session is
+
+logged in. So if you had this sitting in like a public space and you remote it in and then you closed your remote session without logging out, then someone will be logged in to your computer at your desk or something. That just seems ridiculous to me. I think that when you close a remote screen sharing session, especially if you like started it not logged in, it should log you out automatically. You can manually log out before you close your screen sharing, but that's just something to keep in mind if you have this kind of setup going. While I was editing this video,
+
+I needed some b-roll of the Mac starting up and shutting down, and I uncovered a fun little bug. So the Mac right now is powered off, but I did not change the mode to not power on. But watch what happens when I turn this on. I turned on the switch, and the Mac is not booting up right now. Sorry about the audio. I didn't have time to go set up all my mics and stuff.
+
+But yeah, it's not turning on, and the only way to get it on now, so I can turn this off and back on it's not coming on it's not going to boot up so the only way to get it on now is to press that power button which brings me back to square one now how did i get it into the state see it boots up there um how did i get it into that well here's what i did i just booted it up without logging in and then i selected shut down from the menu uh in the login screen this is pre file vault unlock and all that stuff so in that particular case if you shut it down that way it does not boot up up. A workaround for that is instead of shutting it down that way, if you do need to shut down the Mac while it's not booted up yet, just cut power to it. That goes against everything I wanted to do in this video, because that's back to square one, kind of. But at least at that stage, the hard disk is not unlocked, or the SSD is not unlocked. So data loss would probably not ever happen in that case, but still. And it's an edge case, I get that. But if somebody were going to move this,
+
+Like if you had this at your desk and someone was going to move the Mac and they wanted to shut it down and you weren't logged in and it had just booted up to this state that it's in right now, then you'd have a case where you couldn't boot it up again. You'd have to have somebody come and press the power button. So I think that hopefully is just a little firmware bug or something or some bug in this particular screen where it's booted but nobody's logged into it yet. But anyway, I thought I'd mention that. And now back to the conclusion of this video.
+
+Now I want to give a special thanks to Redditor ProdigalAvian, because this comment is the first place I found out about this feature. I've been using these outlets to control power for all my Linux boxes for years, and I'm glad I can finally do the same thing for my Macs. Well, at least the newer ones. Until next time, I'm Jeff Geerling.

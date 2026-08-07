@@ -1,0 +1,93 @@
+---
+video_title: "Building a Tiny Supercomputer to beat college students"
+video_id: AjmKpDNsTa8
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=AjmKpDNsTa8
+video_date: 2026-05-01T14:00:30+00:00
+video_description: |
+  It's clusterin' time! Time to compare my cluster to SBCC student clusters, that is.
+  
+  Mentioned in this video (some links are affiliate links):
+  
+    - DeskPi Super4c: https://amzn.to/4nau3nR
+    - Waveshare HomeRack: https://amzn.to/4w0wBc5
+    - Waveshare HomeRack Touch Display Mount: https://amzn.to/4w5DFV6
+    - Tripp-Lite BC600R mini UPS: https://amzn.to/4vQVA1w
+    - Raspberry Pi Cluster Ansible repo: https://github.com/geerlingguy/pi-cluster
+    - Top500 HPL Project: https://github.com/geerlingguy/top500-benchmark
+    - SBCC 2026 Competition and Results: https://sbcc.sdsc.edu/main-page.html
+    - Project MINI RACK: https://mini-rack.jeffgeerling.com
+  
+  Thanks to DeskPi for sending the Super4C to test, and Waveshare for sending a prototype HomeRack to test. See all the Mini Rack parts I've tested and cataloged here: https://mini-rack.jeffgeerling.com
+  
+  And see all the CM5 and CM4 boards I've tested and cataloged here: https://pipci.jeffgeerling.com/boards_cm
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - The competition
+  00:18 - DeskPi's Super4C
+  01:50 - A bad value
+  02:26 - A true cluster board
+  02:56 - Waveshare's new mini HomeRack
+  03:49 - Mini rack touch display
+  04:38 - And a mini UPS!
+  04:52 - Remote cluster management
+  06:01 - Scientific cluster benchmarking
+  07:00 - Efficiency
+  07:28 - Student Cluster HPL battle
+  08:19 - How do they win?
+  08:52 - The real fun of SBC clusters
+---
+Last month, I helped kick off the SBC Cluster Competition, where students from more than a dozen universities competed to build the best single board computer cluster with a budget of $6,000. I went through my own history with SBC clusters, like these ones with Raspberry Pis or Rockchip boards, and then I got to see some of the clusters the students were running. But that whole thing reminded me it's time to test DeskPi's new ITX cluster board, the Super4C. And by the end of this video, I'm going to see how my cluster stacks up against all the student clusters in performance and efficiency. The Super4C solves two problems I had with their older Super6C, namely remote management and network bandwidth. For remote management, they integrated an ESP32
+
+microcontroller so you can power on and off individual nodes and monitor everything over Wi-Fi or, eventually, Ethernet. And for bandwidth, they now offer a 1 Gbps and 2.5 Gbps Ethernet port direct to each Pi. They still kept an M.2 slot for each Pi on the bottom, and expose GPIO, camera, fan, and RTC battery connectors on each node. And you can boot from USB 3.0 on the back,
+
+an NVMe SSD, or if you have a 'Lite' compute module, one of these microSD card slots. Finally, each node has its own USB-C port for flashing eMMC modules and micro HDMI for display. I've covered a ton of Pi clusters on this channel, like this tiny Nano Cluster, and I still have more I haven't covered yet, like this even more dense 8-node Xerxes Pi cluster. But the Super4C is about the closest I've seen to a 'Goldilocks cluster', giving just enough features like redundant power supply inputs and two network connections per node, without getting too expensive or complicated. It's close to perfect for, like, students serious about learning HPC in a tight space and on a limited budget. In this video, I'm also testing this new all-aluminum mini rack,
+
+the HomeRack from Waveshare—more on that later. But back to the cluster board. It's going to run you $210, and that includes a power supply. Add on 4 basic Compute Module 5s with eMMC, and the whole cost for a cluster like this is around $560 minimum. With my 16GB CM5s, at today's prices, this would be almost $1,400. That's not cheap.
+
+But lucky for me, I bought mine over a year ago, and they were about a third of that price. I will say, if you're building a little homelab on a budget, just go buy a mini PC with 16 or 32GB of RAM and run Proxmox. This cluster board is built for learning and HPC, it's not really a budget option for homelabs. But back to the board again. You can install up to 4 Compute Modules, and run either passive heatsinks like I'm using here, or heatsinks with built-in fans for better cooling. The front side has two banks of four ethernet jacks. One set is 2.5 Gbps ports that are routed
+
+through the Pi's USB 3 bus. The other set is 1 Gbps ports that come straight off the Pi's built-in Ethernet NIC. There are four separate power rails which can be controlled independently, and those come through redundant 19V barrel jacks. The board will automatically switch to whatever connector has the higher voltage. Now, I mentioned Waveshare has this new mini-rack, and I just happened to get this prototype of it in time to make this video. They sent it along with
+
+this box, and a full kit will run around $160, depending on where you buy it from. It's more premium than other mini racks I've seen, but whether that justifies the price tag, that's up to you. It definitely has kind of a Mac Pro aesthetic, though with hexagons instead of Apple's famous cheese grater style. In case you're wondering, they included these fancy assembly gloves with the kit, so I figured I'd go ahead and use them to keep the mirror finish on the handles and feet. I asked, and they don't yet have a set of Mac Pro-style wheels for it, though.
+
+One quirk on here is they only include M4 hex screws for the rack rails. That's not quite standard. Most other racks I have use 10-32, 12-24, or M6 screws, so hopefully they can update the design at some point to be a little more standard, or at least make sure they include enough screws for every screw hole in the thing. I also got in this prototype of their official Pi Touch display mount, and I put it all together. It comes with a little pad you install on the bezel, then you screw it into the mount. My mount was a little beat up from shipping, but hopefully the
+
+final packaging won't let that happen. Originally I was going to plug it into one of my cluster Pi's, since the Super4C has display connectors on board, but then I realized I don't have a quick connection to 5V power, and I did have a Pi 5 laying around here, so I just used that instead. I plugged in a PoE adapter for the Pi's power, and I installed my pi-kiosk software on the Pi so it launches straight into my Home Assistant, where I have this cluster power graph running. If I took this cluster into production, I'd probably build a custom Grafana dashboard with different cluster metrics. I might also install at least one of these fans Waveshare sent over too, if I need extra cooling. But mainly here, I'm just glad to see more companies getting into mini racks.
+
+Oh, and did I mention I have this thing running on a mini UPS, too? So I can just unplug this whole thing and carry it with me if I want with zero downtime. I have a little Tripp-Lite UPS wedged in the bottom, and it fits almost perfectly. I'll leave a link to it below. Anyway, to get the Super4C going, I flashed each Pi with Pi OS through the USB-C port with my MacBook Neo. I think the one thing that could use some improvement on this board is making it easier to see
+
+which CM5 is what number for the ports and stuff. I kept having to reboot Pis just to see which one was like node 1. When I was flashing the Pis, I labeled them super4c-1, 2, 3, and 4. And yes, I'm sorry I didn't start from zero; I know that's going to annoy some of you. But once they were all flashed, I put them into an Ansible inventory, and now I can manage the whole cluster remotely.
+
+Like here, I can just run this shutdown command and it'll shut down all four Pis. [O RLY?] Then I can go into the board's remote control to toggle power and boot them back up. This is handy if anything ever locks up, or if you just need to run the cluster sporadically to save power. If you pop an OLED display on the board, you can also see all the power stats and the IP address for remote management right on the board itself. One quirk right now is the ethernet port
+
+for management works, but there's no connection through it. Like, it'll connect and get an IP, but right now only the WiFi works for remote control. Hopefully, DeskPi will get that fixed soon. I also like to see that there's a lot of blinking lights on here, which is always good for those who appreciate the art of homelabbing. But now that we have it up, I wanted to run an actual HPC workload on here. And, of course, I leaned on my trusty Top500 High Performance
+
+LINPACK benchmark. This spreads out a heavy scientific workload over all the Pis, and I have an Ansible playbook that compiles everything, networks the Pis, and runs the benchmark. And right away, I noticed a problem. You see how the power usage spiked, then fell off right away? that's a classic symptom of throttling. Sure enough, the heatsinks were cooking in the mini-rack,
+
+so I tried installing the official 120mm fan Waveshare sent with their home rack, but that wasn't pushing enough air, and I'm actually emailing with him about that. So instead of that, I just dropped the fan right on top of the Pi's heatsinks, and that actually did the trick. Almost immediately, power usage spiked, meaning the Pi's were eating through those linear algebra equations as fast as they possibly could again. After a little while, it spat out a result of 140 gigaflops, or just about, with a cluster averaging around 70 watts of power draw. So its power efficiency was about 2 gigaflops per watt. At idle,
+
+this cluster burns about 30 watts, including the PoE switch, so overall it's in a similar class to the Orion 06 or Minisforum's MS-R1, but a little less efficient. Now, if we're talking about an M4 Mac Mini, that's going to run circles around this thing *and* be more efficient. Though, I do have 64GB of RAM on this board, and a Mac Mini with that is going to run you over $2,000 [if you can find one!]. In the end, though, this isn't about clustering versus running a single computer. If your needs
+
+are met by a single PC, just buy that. The main thing I wanted to see was how this cluster stacked up against the student clusters in the SBCC. And first of all, here's how those clusters did on HPL. You might notice a couple outliers here. We'll get to why that happened.
+
+But how does my little cluster stack up? Well, not too bad, actually. And pretty good, considering this stack would cost $1,300 right now versus the $6,000 budget for the student clusters. But raw performance is only half the story. These students were going for efficiency, too.
+
+That's how much performance you get per watt of power, something that's increasingly important today. And here again, this cluster's right in the middle. But that NTHU cluster really pulled away, and I wanted to find out why. Well, first of all, performance-wise, here's the type of computers I was up against. I mean, are mini PCs really SBCs? I guess technically, and it's a nice
+
+illustration of using the rules to your advantage. But I was wondering, how did they get such a good efficiency score with AMD chips? Well, it's because they were able to feed HPL's linear algebra equations to some juicy AMD iGPUs, and they underclocked their desktop-class chips. Underclocking usually gives you more efficiency with AMD and Intel. Unlike ARM, AMD and Intel usually push their chips as hard as possible on their default clocks to one-up each other. But that means more power
+
+and more heat, thus less efficiency. In HPC, it's not just clock speeds and benchmarks. You have to care about power draw and efficiency for the type of workloads you're optimizing. NTHU actually didn't win the overall SBC, despite their HPL scores. Team Kent Ridge did, and they used Orange Pi 5 max boards. They had a ton of RAM, a ton of SBCs, and used them well across a number of distributed
+
+compute tasks, and they took the overall performance crown. It's neat to see some validation of the benchmarking I do on my Pi's work so well here, though. The efficiency scales pretty well even with more Pi 5s like in PlumJuice's cluster, and the way lower efficiency on the Pi 4 shows up in Gigadawg's final score. But the real fun isn't pushing budgets or hardware to the limits, the real fun is experimenting. Could I get more performance out of an overclock, or like adding an external GPU? Maybe, but then I have to rework cooling, power, networking,
+
+and not to mention my budget. In the end, SBC clusters can't compete for value with a single, fast machine. But that's not the point. The point of these is to learn and to be able to experiment with HPC on your desk next to you, in silence. DeskPi really upped their game with their second version of their cluster board, and honestly, it's a little easier to use than the Turing Pi 2, and it fits in 1U. Plus, it's a little bit cheaper, which is nice. Until next time, I'm Jeff Geerling.

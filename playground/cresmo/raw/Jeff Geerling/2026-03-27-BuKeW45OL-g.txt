@@ -1,0 +1,137 @@
+---
+video_title: "Apple Abandoned It. I Saved It with a Raspberry Pi."
+video_id: BuKeW45OL-g
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=BuKeW45OL-g
+video_date: 2026-03-27T14:00:00+00:00
+video_description: |
+  Video like it's 1999. Welcome to #MARCHintosh, FireWire edition!
+  
+  Shop Micro Center's Monitor Madness Event: https://micro.center/1eb0c8
+  Sign up for a FREE 128 gig Flash Drive at Micro Center's Newest Store: https://micro.center/c1a7b6
+  Visit Micro Center News: https://micro.center/310248
+  
+  Links to things I mentioned in this video (some links are affiliate links):
+  
+    - How to use FireWire on a Pi: https://www.jeffgeerling.com/blog/2026/firewire-on-a-raspberry-pi/
+    - Equip-1 Firehat: https://equip-1.c-e.group
+    - Equip-1 Firehat Crowd Supply page: https://www.crowdsupply.com/computer-equipment-group/equip-1
+    - Open MRU: https://www.reddit.com/r/tapeless/comments/1n3aqsk/open_mru_raspberry_pi_5_based_mrucapture_device/
+    - toqer tv's video on Open MRU: https://www.youtube.com/watch?v=Fa4BIMdgVtM
+    - StarTech IEEE 1394 Mini PCIe FireWire card: https://amzn.to/4lRrQeU
+    - GeeekPi PCIe to Mini PCIe HAT for Pi 5: https://amzn.to/47U0vFj
+    - PiSugar 3 Plus: https://amzn.to/4uy23Oe
+    - FireWire Intro at MacWorld SF 1999: https://www.youtube.com/watch?v=xP5aLoRozt8
+    - This Does Not Compute - GL2: https://www.youtube.com/watch?v=nqCO4Z_VP3c
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  0:00 - Intro like it's 1999
+  0:34 - Look ma no tape
+  1:48 - MRUs
+  2:34 - FireWire
+  3:12 - You can still buy FireWire cards
+  3:37 - Tape test and the GL1
+  8:03 - Editing on Apple's fastest G4
+  10:24 - Why did FireWire stick around for 26 years
+  11:53 - No tape for the tapeless
+  12:32 - FireWire on a Pi attempt 1
+  13:48 - Firehat and PiSugar demo
+  15:30 - Firehat's simple UI
+  17:04 - Conclusion like it's 1999
+---
+You might be wondering about the aspect ratio here. This isn't normal. This is being recorded on the same camera I recorded my first YouTube video on, a Canon GL1. And I made a lot more videos on that era, but most of them didn't wind up here on YouTube, like "printer smashing".
+
+Back then, making videos for YouTube was a lot different. It was way better than the 90s when I had two VCRs and had to pause videotapes to make cuts, but even though cameras went digital, they still used tape. There was a fancy solution for that back then, but it cost like a thousand bucks. It was called a Memory Recording Unit. You plugged it into the FireWire port on your camera, or as Sony used to call it, i-Link, and it would save DV footage straight to a compact flashcard, similar to cameras today. So for this video, I'm going to try to bring back the spirit of
+
+these early mini DV camera days using this, a FireWire HAT for the Raspberry Pi. But before we get there, I think I have to relive a little of the experience that was early YouTube. You'd record videos on tape, then plug the camera into your computer, assuming you had one with enough horsepower to edit video, then you'd play back footage and wait for it to dump into the hard drive. Then, using a fancy NLE, or Non-Linear Editor, you could chop together video clips like in iMovie or, in my case, Final Cut Express. Now, the crazy thing is, back in college when I made my first few videos, I couldn't afford any of this stuff. I used an older G4 model with barely enough hard drive space for one or two
+
+projects. And I didn't own this video camera, I had to borrow it. These things were expensive, almost $3,000 back then, which would be almost $6,000 today. But 20 years on, the complex tape mechanisms in these things are starting to break down. This one just barely works, and sometimes it'll just eject the tape without recording to it. So having a way to record externally,
+
+like with an MRU, would be huge. But even used, those things are still going for like 300-400 bucks because of like skateboard and retro video enthusiasts. So I'll build a custom MRU, using all new parts. Besides the Raspberry Pi, the most important part is this Firehat, from Computer Equipment Group. It lets you plug in any FireWire device to this port here. And then,
+
+Then you can use the simple controls on it to record video clips. This isn't the only DIY solution either. I first heard about FireWire on the Pi thanks to this project, called Open MRU. They both rely on the open-source DVGrab software that runs on Linux. And if you want to build your own rig, like if the Firehat isn't available, you can do that using the parts I link in the description, like this FireWire card with a PCI Express HAT.
+
+Now, FireWire was basically Apple's baby. Even the iPod started shipping with it. They supported FireWire devices all the way up to the release of macOS Tahoe. But in a strange turn of events, Linux now actually supports one of Apple's standards better than Apple does. The current IEEE 1394 maintainer for the Linux kernel committed to supporting FireWire until 2029.
+
+Before we get to the Firehat, though, I'm going to see how the old tape workflow used to work. Then I'm going to see if we can replace that with a Raspberry Pi using FireWire. And finally, I'll edit some of this video on this old Mac to see if you can still make modern YouTube videos on a vintage setup. But first, if you want to build your own Open MRU...
+
+Did you know Micro Center still sells FireWire cards? Yeah, I didn't either. But I thought I'd mention that, and thank them for sponsoring my Marchintosh videos. It's crazy the things you'll find here, and if you're in the market for a monitor, this month is Monitor Madness, with some great deals from $80 gaming monitors up to 4K and OLEDs. Click on the link in the description to see all their latest deals, and if you're in Austin, Texas, get ready for a grand opening later this year. Okay, so first things first, I'm gonna record on this camera and see
+
+if I can even remember how all the stuff used to work. Okay, let's see if we can record to the tape. I'm gonna hit my record button here.
+
+It says it's recording. Yeah, the light there is blinking, so how does that look? I will zoom in. Yeah, we don't need to zoom in that much handheld here. The one thing that I remember now is like the tape mechanisms on these things were always loud like you might hear that on the internal microphone here over my voice that's kind of how it was. You kind of had to live
+
+with that, and you can hear nowadays I use this wireless mic, but even if I had a camera on my main camera over here it wouldn't be picking up that that body noise. And even even if I'm zooming in and out, like I'll zoom in and zoom out. The zoom mechanism on here is not silent. It's pretty close. This was, this was again, a very good camera for its time. But technology has gotten so much
+
+better, not just with resolution and with the ability to move files quicker, but even the little things like not having a tape motor that's constantly running while it's recording. But one thing I kind do miss from this era is the the zoom controls were so nice on these. Again, these were like professional grade cameras or prosumer cameras, so they they were better than most. But even on the Sony system that I have with my FX30 and all that, it doesn't feel as good as the zoom control you get with this. Like I'm going to zoom in on my little 'PIZ' dispenser and I don't know why it's not focusing. Oh, I'm on manual focus. How is that possible? What? What? It's like I'm going to zoom
+
+in on this little PIZ dispenser over here, my Raspberry Pi PEZ dispenser, and the zoom control that you get with the speeds and how you can smoothly come in and out it's really good. And I mean you have to pay a lot of money for a camera that has that good of of controls, plus these old cameras they would all compete for how far you could zoom in and this is without digital zoom. And yeah, it's it's pretty crazy these lenses were pretty decent and that's that's still something where like today, if you want to buy a good lens, it's going to be thousands of dollars and most people are not willing to spend that much. So you're not going to get a lens even as good as the built-in one on this Canon even. Here in the studio, the sound is actually going to be a little bit better because the studio is treated much better, but uh you know the microphone is not going to be able to compete with that tape noise. The other thing that's interesting is the dynamic range of these old
+
+sensors is a lot different like if I'm over here in the decently well-lit area with all my lights, you can see there's even lens flare from the overhead light but it can't really get like the deep blacks and the brighter surfaces that well compared to a modern camera that has like 14 stops of dynamic range. Again this is not bad not bad at all like like zooming in on the sticker board the colors are good the the brightness is good everything is good, and this is in auto aperture priority mode. But, you know, as I go around and go into the dark areas, even that's not bad, but you can see there's a little more grain over there. And there's also, it's weird, there's like a vertical shake. I have steady shot turned on, so I wonder if, or I don't know what they call it, image stabilization, image stabilizer. I have
+
+that turned on, but it seems to be doing a better job of stabilizing in the horizontal axis and not vertical but yeah that's uh another interesting thing to note using this far older camera, it's when I come over here it's like I really want more, I want more light. Whereas over here it's not so sad about that. One last test and even my sony A7C has a little trouble here—mostly because I don't have a neutral density filter on it—this camera actually it does decent with auto settings out here. There's the Falafel Saha truck. It does decent but there's also a built-in ND filter, so you just press a button on here, and that lets you use a wider aperture to give you better depth of field even outdoors without having to bring an extra lens filter with you. So that's a cool thing that
+
+you get on these fancier cameras that, you know, today you have to spend a lot of money or buy a lot of filters and carry them around with you if you want a feature like that. Okay I think I have enough footage to start importing the project, assuming things work like I remember. I'm gonna plug the camera into the FireWire port on the back of my G4 and launch Final Cut Express. Now, this machine is a G4 MDD, or Mirrored Drive Door, so named because of... well,
+
+that should be pretty obvious! But the nickname most people had for it was the 'Wind Tunnel', and these four vents on the bottom are a big reason why. Apple had trouble keeping G4s cool, and that's why the G5 went to the giant cheese grater style, just to get more air blowing through the system. With the lack of air intakes, the fans on my G4 make a lot of noise when it really gets going. Anyway, I remembered I had to open a capture window to get video off the camera. So far,
+
+so good. And you have little playback controls here. But this is where my memories kind of fall short. I thought I could just click a button and Final Cut would play back the video and cut it up into individual clips. But I couldn't figure out how to do that, it might just be a limitation of Final Cut Express 2. So I just captured the whole thing into
+
+one clip. And that worked! I wasn't about to go in and log a bunch of markers to do it for me like I guess I used to a long time ago, but surprisingly the GL1 kept up with all this playback, rewinding, and queuing up. Honestly though, I'm not sure how long the tape mechanism will last. For old-school DV editing, this G4 is surprisingly capable, at least using the SSD I installed in it. I don't think it'll handle 4K at all, but I was able to scrub through, add
+
+some transitions, and even add some blur. Though, when I did that, I was reminded how pampered we are nowadays. On my Mac Studio, I can add color correction, titles, multiple camera angles, and it'll play back in full 4K resolution without any stuttering. Back in the aughts, everything had to be rendered. Transitions, filters, anything you put on the timeline. And that meant sitting there waiting while the dual G4 CPUs in here would
+
+eat up 200 watts rendering out frames. I won't bore you with the final result of that little video edit, but I was going to try previewing it on my old Sony Broadcast CRT. Unfortunately, after plugging it into my G5, I realized I have another project to add to my backlog: fixing this dim display. But pros used to have an external preview monitor because even though fancy editing rings had flat panels, most people watching video would still be watching it on an old tube CRT, so you had to see how things looked on one of those. By the way, did you know that you can use old Apple keyboard cables for S-Video?
+
+apparently ADB uses the same connector. But my nostalgia for these old cameras is much greater than my nostalgia for editing like it's 1999, so let's fix the major issue: Let's get rid of the tape. These cameras do everything through FireWire. You can capture video off tape, you can even record from the computer to the tape, and most cameras even let you output live video right through FireWire, too. But like I said earlier, at least as far as Apple's concerned, this technology is dead.
+
+Which is a shame, really, because even up to macOS Sequoia, you could plug a FireWire into a modern Mac, well, with a ton of dongles like This Does Not Compute did here, but it would still work with full remote control through Final Cut Pro. That's wild. But now that Apple's killed it off, we still get a few more years of Linux support. But why did Apple support FireWire for 26 years? And besides retro enthusiasts, who's using FireWire at all these days? Well, there's still
+
+Pro AV gear that people bought over a decade ago that works just fine today. And especially for audio folks, they love their old gear. It was kind of crazy how much FireWire could do at the time it rolled out. 400 megabits and low latency might not seem like much today, but it was faster and better than USB, Ethernet, and pretty much any other consumer-grade interface at that time. Plus, it could provide power, and with FireWire 800, it was expanded even further. But USB took over the consumer market pretty quick after USB 2 and 3 came out, and
+
+especially without any licensing fees per port like Apple had. FireWire stuck around for a long time in the professional market, but eventually Thunderbolt took over as Apple started axing all their FireWire ports. But that's not really what I care about. I want to make this old GL1 useful again, without relying on tape. So when I saw this post about Open MRU in the r/tapeless subreddit, I immediately bought the same FireWire card and PCI Express HAT. I wanted to see if I could duct tape something
+
+together to replace tape on my camera—and I could! But while I was working on that project, I got an email from Twin CD mentioning a new FireWire HAT. A little board that you strap top of your Pi. And not only that, it came with a UI and physical buttons to control recording and power. Now the one I have here is a prototype, and the group making this thing is actually setting up a crowdfunding campaign. If I can get a link to it, I'll add it down in the description.
+
+But the hardware is only half the equation. Even though Linux supports it, I think the number of Raspberry Pi users using FireWire is pretty tiny. Pi OS doesn't have the right kernel driver compiled in for it, so we'll have to do that ourselves. I'm not going to go through the whole process because I have a video doing just that on Level 2 Jeff, but you have to recompile the Pi OS kernel with these options, and I posted all the instructions on my blog. But once that's done, you reboot your Pi, and FireWire devices just work.
+
+I haven't tested everything, but you should be able to use hard drives, cameras, even AV gear, assuming it has Linux support. The first setup that I had was working, but it was pretty messy. Using it, this was the first recording I ever made with a GL1 on a Raspberry Pi. It's the first test recording with a Raspberry Pi FireWire through this GL2 [GL1 actually]. But like I said, that setup was pretty messy, and I had to run DVGrab commands over SSH to start and stop recordings.
+
+We should be able to clean things up with the Firehat. I was just starting to test it when my dad showed up. ...And then we're capturing DV camera footage.
+
+-What? -Yeah. -DV camera like old school DV. -Yes. See I can zoom in and zoom out.
+
+See how smooth that is? Look at that. -I can't see it anywhere. -Oh yeah, you can't see it at all. -I can't see it.
+
+Okay, now I can see. There's your eyeball. Yep, my eyeball. There I am. The FireHat software was originally written for the Radxa Rock 2F, so after changing a few settings, I got everything working on the Pi, including the little screen and buttons on the front. All right, now I'm recording
+
+without any tape using this Firehat, and the interface for it is awesome. So simple, you just press a button to record and press a button to stop. It shows you how many seconds, minutes, and hours you've been recording. I have a little battery indicator on here. And oh yeah, this is running on a battery. So I could strap this to the top of this camera if I wanted to. But yeah,
+
+this is the Firehat. And the interface is simple enough that I can go through it in a minute. But obviously I can't do that while I'm hand holding the camera here. But it's working well. The Pi is running great. Not even getting that hot encoding the DV footage. I guess it's not even
+
+encoding anything. It's just writing the footage straight from the camera to the microSD card here. And I've been testing this with the PiSugar 3 Plus, which has a 5000 mAh battery. And so far in my testing, you get two to four hours of record time with the DV writing to the microSD card. And I haven't tested recording straight over WiFi to my NAS, but that's also a possibility on here. But I'm going to stop recording on here and listen to the thing on
+
+the computer and I'm guessing that the sound will be great compared to the tape footage earlier. I guess I'll play back a clip from that just for comparison right now. It's the first test recording with a Raspberry Pi FireWire through this [GL1]. And oh yeah, that's a huge difference. Much, much better. Anyway, my arm is getting tired, so I'm going to set the stuff down and
+
+we'll walk through the interface on here really quick. So this is the interface. The screen has a little timer. It has a battery indicator that I coded up for this thing using PiSugar's little API. It has the time remaining for record time on the disk that's plugged into the Pi, and there's different modes. So there's three buttons here, and a little beeper, and a little
+
+LED. I don't think the LED is in use right now, but the beeper does work. If I press the button, you can go into power mode, so you can shut down and reboot the Pi. Network mode tells you the IP address of the device storage mode tells you how much storage there is and record mode records and I don't know if there's playback, let's see. Oh! That's just going through the modes again
+
+so this is like up and down and then select. So if I go to storage there's no options there. If I go to network, no options there. Power, you can press select and then you can shut down reboot or cancel. So this interface is extremely simple for now, which is great honestly! It makes it very easy
+
+for even somebody who doesn't know how this stuff is supposed to work to pick it up pretty quickly. But it defaults to this, and if I unplug my camera, which I'll do right now, it switches to NO CAM so this is all nice in real time. Then I'll plug the camera back in. Those little mini FireWire ports are so annoying. Let's get you in there. There we go. Plug it back in. And there's our time code
+
+again. It's not real time code, I guess. It's just the time of the clip recording. Now, to finish off this video, I thought I'd do the conclusion on the GL1, recording it straight through the Firehat. Recording with a Firehat and a camcorder isn't as easy as modern camera workflows, but it's about as good as it gets with old DV cams. Step one, plug in the camera. Step two,
+
+hit record. And that's it. As Jeff Goldblum says: "Step three. There's no step three. [heh] There's no step three. [sly laughter]"
+
+Once you're done recording, you can copy your DV clips over WiFi. And that's actually better than the workflow I have on my modern Sony cameras: I don't even need to use a card reader! Edit the clips together in your video editing app, and boom! You're done! I'll leave links to everything in the description. And until next time, I'm Jeff Geerling.

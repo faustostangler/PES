@@ -1,0 +1,183 @@
+---
+video_title: "How did Apple make this work??"
+video_id: 9h-nFbAsJ8M
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=9h-nFbAsJ8M
+video_date: 2026-05-08T14:00:16+00:00
+video_description: |
+  Apple's HomePod minis can pair up into stereo pairs.
+  
+  But how do they do it?
+  
+  Resources mentioned in this video:
+  
+    - HomePod mini: https://www.apple.com/shop/buy-homepod/homepod-mini/midnight
+    - IEEE 802.1AS: https://www.ida.liu.se/~sohsa65/courses/tsn-course-2021/stds/8021AS-2020.pdf
+    - AirPlay 2 RS (open source project): https://github.com/lmcgartland/airplay2-rs
+    - What is gPTP: https://blog.meinbergglobal.com/2024/03/27/what-is-gptp/
+    - What is PTP: https://en.wikipedia.org/wiki/Precision_Time_Protocol
+    - Wireshark: https://www.wireshark.org
+    - HomePod mini intro video: https://www.youtube.com/watch?v=cPakvOuwg48
+    - MacRumors buyers guide: https://buyersguide.macrumors.com/#Homepod-Mini
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - What did Apple do
+  01:22 - How hard can it be
+  06:36 - Now there are two
+  08:30 - Testing a stereo pair
+  09:46 - Wireshark
+  10:52 - WiFi snooping with Apple
+  12:46 - Finding gPTP
+  15:03 - Timing packets
+  17:09 - How PTP works
+  17:55 - Brief look at IEEE 802.1AS and AVB
+  19:51 - Apple using standards
+---
+I remember seeing Apple's announcement about the HomePod minis, now, wow, six years ago. They really need to refresh these things. But the thing that interested me most was how you could pair two of these up to be stereo speakers, like if you connect them to an Apple TV. When you place two in the same room, they'll intelligently become a stereo pair, filling your space with rich, enveloping sound. I didn't think much about it at the time, but now that I've learned a lot more about timing and networking, I got to wondering, how do they do it? How do they make it so you can plug two of these
+
+in anywhere and they're not connected to each other, and then you can pop them into a stereo speaker pair or do multi-room audio. I always have a wire going between the left and right speakers, and wires are pretty deterministic. It's easy to make sure both channels are in phase and you don't get that weird comb effect. Just make sure the wires are a known length and put the speakers roughly the same distance away from you, like for my desk monitors here. But HomePod's mini can be stuck wherever. How does Apple get sound to sync perfectly between two of these wherever you put
+
+them. You might think it's easy, and if you just have one speaker and you add in a big buffer, it kinda is. But once you have two, well, through the magic of buying another one of these things, I'm gonna find out how they did it. And rather than do a whole video where I just lecture you on it, I figured I'd take you on this journey with me. Can we figure out how Apple made these little speakers turn into stereo speakers without using a wire? Okay, now I've never tried one of
+
+these before so this will be a first for me but oh wow that's a that's a built-in cable there right there that's not replaceable that's kind of annoying for something that might be in your home and be beat up by a kid or dropped or something. At least it's a braided cable, but that does not seem like it's gonna be easy to fix if it breaks. That just plugs in via USB-C. I could plug it into my Mac. I wonder if it becomes like a speaker if you just plug it into your Mac. Or it just does nothing. Oh, there, something blinked. Are you seeing that? There's a kind of an
+
+amber light there. Don't know what that means, but does this become like a speaker source? Because that'd be cool. I don't see a speaker source here, so I don't think this becomes like a USB speaker. That would have been nice. Come on, Apple. Easy wins! All right, let's see what else they got in
+
+here. There's a little setup guide, I guess. iPhone or iPad. What about Mac? I assume that if you have enough money to splurge on one of these little hundred dollar speakers, you would have a Mac.
+
+But I don't see, well, let's see, there's, there's a power plug here.
+
+Let's plug this in and see if that's any different. Okay, now we have a different thing. There's, There's like this pattern going on the screen.
+
+Is it on like Bluetooth?
+
+Bluetooth.
+
+Settings.
+
+No, I don't see any. [bong!] Whoa.
+
+It just did something. Is there really no way to set this up on a Mac? What does Apple expect you to do if you don't have an iPhone? There's got to be a way. You need an iPhone or iPad. You can't set up a HomePod with a Mac.
+
+What the...? Apple? Seriously? Come on, Apple. All right, I guess I'll have to get out my iPhone.
+
+Let's see what we do here. You hold it close to it or something? No? Okay. [bong again] I'm guessing that's It's like the startup bong for a HomePod Mini.
+
+Come to the iPhone. There's got to be like a little NFC beacon or something in here. And it's not letting me set this up. We're eight minutes...
+
+Oh, you know what?
+
+Let me show you this. The iPad over there apparently is trying to set up the HomePod. I think that's why this iPhone can't. So eight minutes into it, I realized I have another iPod, an iPad, whatever the thing is over there. And it's showing the screen to set up the HomePod.
+
+So therefore, my iPhone is not seeing that screen right now. All right, I'm going to turn this back on. We're going to try connecting again and see what happens here. It'd be so much easier if you could just plug it into your Mac via USB-C and connect. but Apple has to be all fancy with these wireless protocols that apparently only work on iOS devices.
+
+Seriously! Come on, Apple! Okay, we finally have the HomePod Mini setup thing again. Let's hit setup and hold that like that, I guess.
+
+[loud sound] Okay, we're a bit loud on that.
+
+Okay, you can quiet down a little bit there. Apparently you can't stop Siri. Don't recognize my voice, please. You can't just set this up as a smart speaker. It has to be a "really" smart speaker, which means it has to attach itself to your account.
+
+I literally just want to use this as a speaker, that's all. But apparently that requires a lot more permissions than should be required, I think. But that is the world that we live in. Every single device...
+
+I bet they have coffee mugs that have accounts attached to them at this point. Who knows? Okay, HomePod's ready. That was a cool little screen. Done.
+
+So now if I go on my Mac, can I play things to the HomePod at least? Or does it only work on iOS devices? That'd be so dumb. Let's see. Sound.
+
+Okay, so we do have... I can use the speaker now at least. There's Office.
+
+And let's hear a song on it.
+
+That's interesting. There's a bit of a delay there. You can hear that there's, when I hit play, one, two, two and a half seconds.
+
+So there is a kind of a queueing effect going on here. I wonder how that will differ with more than one speaker. But anyway, we don't care about one speaker. We want two. So I got the one set up. Let's set up the other one. And I don't know how it's going to handle
+
+having two speakers both called "Office". We've got speaker number two. We'll call this our right channel speaker the one that we already have set up and we'll put this one on the left channel. There we go, HomePod mini setup, hold it in the frame.
+
+Okay that's you can you can can you turn that down. Agree.
+
+Okay, here we go. This is saying use as a stereo pair that's what we want to do, I'm going to do that. And this HomePod is on the left side.
+
+I guess I have to transfer those settings and I'll have to also blur that out. But anyway, it's setting things up. Hopefully it puts them both on the same Wi-Fi network. We'll see what it does here. It's showing two office speakers here. It's not showing them as a stereo pair.
+
+This is supposed to be easy. All right, apparently you have to go into Home. Okay, now on here it says HomePod is downloading something.
+
+It looks like it was still setting things up so the stereo pair was not completely finished. I don't know. Now it says downloading. And all we're trying to do is get this to work so that I can check how this works. But if we can't get it to work, I'm not going to be able to check that.
+
+This was supposed to be easy. It's the reason you pay a hundred bucks for one of these speakers and you pay two hundred bucks for two of them. Even on the used market, these things are still expensive.
+
+Okay, now it has a stereo pair, so let's see if I can switch to that. Let me switch. Let's see if we listen to stereo sound now.
+
+Okay, there we go.
+
+Okay. Okay. There's still that delay. So with audio, at least there's a delay. Let me try doing a video.
+
+If I go to YouTube. - Last month, I helped kick off the SBC cluster competition. ...really upped their game
+
+with their second version of their cluster board. And honestly, it's a little easier to use than the Turing Pi 2 and it fits in 1U now. - That's interesting. So the sound is synchronized with the video playback. So that's good, but there is still that delay.
+
+So they are using a bit of a delay to, I guess, build up a queue buffer since this is wireless. but they do have it synced nicely between both speakers and the screen. Plus, it's a little bit cheaper, which is nice. – "Until next time, I'm Jeff Geerling." So you can see that I pause it, and the sound still comes through, even though the video is paused.
+
+So there is a bit of a buffer there. But now I'd like to figure out what's going on here, and I want to go do that over on... Why?
+
+This is annoying. Okay, so I'm going to head over to my desk. We're going to do a little bit of snooping here. Okay so over at my computer I have Wireshark opened up. Wireshark lets you inspect everything going on in a network whether it's wired or wireless and you can see that there's some traffic that it sees right now. I think this is on my 5 GHz network which
+
+is the same network I connected the speakers to. And if I double click on this it's going to get some information here, but it might not get the information that I need. You can see it's looking at the Elgato lights that i'm using here at my desk and a lot of other types of things. But I need to enter a different kind of mode to see all of the information on the network, especially the thing that i'm trying to look for. So if I go up to options, I can go into Wi-Fi and turn on monitor mode. I don't know if this will work on the latest version of macOS. Let's, let's try it out. Continue
+
+without saving. And I don't think this is going to work, I think that there's some issue with this. See it says "no packets." Stop it. Yeah, so it looks like it looks like I might not be able to do that.
+
+Let's try it one more time. I don't think that you can use monitor mode in Wireshark on the latest version of macOS, so what I'm going to do instead, I'm going to first turn this off in here. Close. I'm going to use this tool that Apple ships with macOS called Wireless Diagnostics. And if you open this up, it tries to get you to do this thing, and it'll dump tons of information.
+
+We don't need that. We just go up to Window and click on "Sniffer", and that's going to do the same thing that Wireshark would do. You can pick a channel and width. It's by default going to pick what your connected network is using. And you can start capturing packets.
+
+And I'm going to do that, but before I do that, I'll tell you what I'm going to do. I'm going to start capturing the packets just like Wireshark would. This is going to generate a PCAP file, I think, on your computer. And after I start this, I'm going to start playing back some music on those speakers. So we're going to see what happens here.
+
+So I'm going to start this and enter my password. Now it's capturing packets. I'm going to hit play on my MacBook Neo. [music intensifies]
+
+And I don't know if you can hear that, but it's playing on the speakers. I'm going to hit pause right now and there's still like that second or two second delay. And then I'm going to hit stop on here. So this should save a file it saves into /var/tmp. So O'm going to go over to my terminal and I'm going to copy... let's see, let's go into cd
+
+/var/tmp and I'm going to copy "Jeff's Mac Studio..." over to my Downloads folder and get– get out of here. And here's the packet capture. So now I can quit out of this uh, quit out of this Wireless
+
+Diagnostics and drag the packet capture over to Wireshark, and that should open it up and this is exactly what I'm looking for already. It's showing it, except I don't see the first one. So let's scroll down. So see this? These highlighted ones these are called PTPv2. PTP
+
+stands for Precision Timing Protocol and I suspected this is what what these speakers use. And somebody had emailed me about this and, you know, mentioned like, 'Hey this might use this you should check it out!' It's actually using something a little bit different than standard PTP that i'm used to but what happens is these speakers are talking to each other constantly. So if we look up here there was this message this was at time, you know, 14 microseconds or whatever. Yeah 14 microseconds I think and then, less than a second later, you see another one of these sets of messages. There's
+
+Sync– let's see, Sync, Follow_Up and Delay_Req, uh and then what else do we got we got... Delay Response well that's that actually took a little time. Sync, Follow-up, Delay Request, Delay Response.
+
+Announce, Signaling... So these are all different PTP messages and you can see these are going between two devices with an IPv6 address here I think. So it sends all these messages and it keeps sending them over and over again what this is doing is it's kind of locking the time signature together so these two speakers know exactly how far apart they are based on the timing through the the network. And as long as you're not moving them very quickly, like if you don't have one
+
+going on a bullet train and the other one sitting still, this is extremely accurate and should be pretty good. Of course, if you had it on a bullet train, it would be out of range of your Wi-Fi pretty quickly too. But most people just set these speakers down and they don't move. So this is going to be highly accurate down to the, you know, tens of nanoseconds level, or even better with really good modern Wi-Fi, especially if you don't have a very busy network. But let's pop into one of these messages and look at some of the content. So if you look in here, we can see it's an Apple
+
+Wireless Direct Link data frame. And the reason why I can see this is because I'm in monitor mode. My Wi-Fi chip right now, well, when I was doing that thing in the Wireless Diagnostics, it was scanning everything, not just my Wi-Fi network and my Wi-Fi traffic, but it was scanning every message it could possibly decode on the entire Wi-Fi spectrum and the channel 100 on my 5 GHz network. So if we go into this packet though, we can see that it's using the Precision Timing Protocol. It's using gPTP and that's what's different. So I'm used to PTP and I'm going to be
+
+doing a video deep diving into PTP later this year. But this is using gPTP, which is like a kind of a subset of PTP that's a little more strict. It's used more for AVB or Audio Video Broadcast. I don't remember exactly what that stands for ['Bridging'!]. We'll look at that later. But gPTP, domain 1, this is a Sync
+
+message. So this is like the first thing it's saying, "Hey, I am the time source!", and it should have a clock timestamp. So I'm the time source. This is message number 1. So we're at zero seconds
+
+and zero nanoseconds. So when you're doing PTP, you need to send the message out from the 'master' or the 'leader' clock out to all the other clocks. So right now, these two speakers are kind of acting like a leader and a follower. And so it says, Hey, it's 0 seconds. Now after this, we should see another message. This is the follow-up. And if we go down here, we should see that there's another
+
+timestamp. So see these two, this is 898986.90732041 And, uh, this, this timestamp along with the other one. So here's this one. These two are from the leader that goes out to the follower.
+
+And then we are going to have these other two messages. These are coming back to help measure the latency over the network from the follower, the other speaker, back to the main one. So if we go in here, this one is saying that it's a Delay Request. And if we go down here, it's saying that the origin timestamp was here. And it has these other fields here that are helpful for calculating everything later.
+
+and we'll we'll show you how that works in a bit but let's see Delay Request and then Delay Response here. So this is the final message that shows the timestamps that it was received and it sends back the message and then once once the two clocks have all of this information the four messages the four timestamps they can go in and use the PTP protocol to say, 'I know when all these transactions happened So now I can calculate exactly the difference of these two clocks over the network.' And if you have a really good and low-congestion network, it can be down to nanoseconds. It might be more close to like a microsecond if you have a lot of devices on your network, or if you have weird network conditions, that kind of thing. But that's basically how PTP works.
+
+We're going to get much deeper into this later. But the cool thing is that I can confirm looking at these two MAC addresses, these are those two speakers that Apple is using something called gPTP to connect the two speakers together so they have an extremely precise time sync over Wi-Fi. And if you want to get really deep into the weeds this is technically using something called 802.1AS, for Timing and Synchronization for Time Sensitive Applications. This standard is used a lot in industry but Apple is using it here with AVB to synchronize audio over wireless speakers so that's kind of cool. And here's some information
+
+you can look this up later. I'm not going to get deep into the weeds in this video but it's using AVB—Audio Video Bridging—which is kind of a suite of all these standards together to help, to help media applications kind of synchronize sound video all those kind of things and that's what's– I think this is cool because that's why when I play a video on my Mac, even though there's a little delay in getting the audio playing back on the speakers, as long as you have the time synchronization the the computer knows like this is frame one of the video and it syncs up to this part of the audio, and so the speakers can play the right stuff and you can have that stereo imaging with two speakers that are in phase wherever you put them. That's really cool because this is not just synchronizing once and you're done you don't have to like reset it every time you move the speaker it's constantly updating every every second or every three seconds—I don't know what the standard is that Apple's using here—but it's really cool to see this this evolution in AVB to using PTP over Wi-Fi for these speakers and there is a a project—an open source project—called airplay2-rs that lets you use like Linux, like you could use a Raspberry Pi, and stream audio to your HomePods from non-macs basically very easily [sorta, lol] and it actually uses PTP it uses software-defined PTP but that's usually okay if you're in the microsecond realm. We don't have to get to the scientific level here. But if you can get it down to that level, then you can play audio to stereo pair HomePods through this thing. And that's pretty cool. You can read more about it. I'll
+
+provide links to all these things, of course, in the description. But I think one of the cool things about all this is Apple is using a standard. They're using gPTP and AVB, and they're probably involved in some of the formulation of those standards too. But Apple is using standards, industry standards to do this stuff. They're not just building their own protocol. Like,
+
+I think that Sonos actually started with a custom, you know, proprietary protocol when they set their things up. Although they, they did it in like 2004, 2005, and this didn't exist back then. gPTP wasn't around until like 2009 or 2011 or something. And it wasn't really standard and robust until the 2020 revision. So, you know, I can forgive Sonos there. And actually,
+
+I think their modern stuff does actually work with AirPlay 2, so I don't know, it has some sort of gPTP capability. I don't know if their own stuff uses that yet or if they still use an older implementation. If you want to find out more about time and PTP and different ways to synchronize time, and where it comes from, and other applications besides speakers like these HomePods, then make sure you subscribe. I'm going to be getting into this a bit more and I've just been doing a lot of exploring and I haven't shared much. I really wanted to share my testing with these speakers because I thought it would be interesting, and now I don't know where I'm going to stick these speakers, because I already have some good ones at my desk for monitoring, and I have a soundbar for my TV.
+
+Maybe I'll just stick them in the back room, and I can listen to stuff when I'm doing rack room stuff, or putting in my new Xserve. Anyway, until next time, I'm Jeff Geerling.

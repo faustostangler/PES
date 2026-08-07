@@ -1,0 +1,114 @@
+---
+video_title: "Testing Hugging Face's Raspberry Pi-powered open source robot"
+video_id: yvBbcLCZIhg
+channel_name: "Jeff Geerling"
+channel_id: UCR-DXc1voovS8nhAvccRZhg
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=yvBbcLCZIhg
+video_date: 2026-02-13T15:01:43+00:00
+video_description: |
+  Can a little Pi-powered bot teach my kids?
+  
+  The Reachy Mini Wireless I used was provided by HuggingFace and Pollen Robotics; you can find out more here: https://huggingface.co/spaces/pollen-robotics/Reachy_Mini
+  
+  Other resources and videos I mentioned:
+  
+    - Reachy Mini Examples: https://github.com/pollen-robotics/reachy_mini/tree/develop/examples
+    - ShortCircuit video with Riley's test: https://www.youtube.com/watch?v=_cY1rFrNQpE
+    - ESP32 Eyes for Reachy: https://github.com/algoryn-nl/reachy-mini-esp32-eyes
+    - Reachy Mini intro from CES: https://www.youtube.com/watch?v=acBv3G8r-1Y
+    - Hugging Face's agentic demo: https://huggingface.co/blog/nvidia-reachy-mini
+  
+  Support me on Patreon: https://www.patreon.com/geerlingguy
+  Sponsor me on GitHub: https://github.com/sponsors/geerlingguy
+  Merch: https://www.redshirtjeff.com
+  2nd Channel: https://www.youtube.com/@GeerlingEngineering
+  3rd Channel: https://www.youtube.com/@Level2Jeff
+  
+  Contents:
+  
+  00:00 - Replacing parent-child interaction
+  01:37 - Only some sarcasm detected
+  02:49 - Click the **** gear, Riley!
+  05:01 - Building Reachy Mini
+  07:23 - Internet required?
+  08:06 - Motor debugging
+  08:41 - Modes of interaction
+  10:14 - A learning robot
+  11:45 - Some disassembly required
+---
+When I saw Jensen introduce the Reachy Mini at CES, I thought it was a gimmick. "I want my assistant to interact with my world, so I'll hook it up to Hugging Face's Reachy Mini robot. My agent controls the head. Okay, let's send Jensen that update. Tell him we'll have it for him by the end of the day.
+
+Will do." "Isn't that incredible? Now, the amazing thing is, that is utterly trivial now." Hugging Face and Pollen Robotics sent me this Reachy Mini to test, and, well, at least if you're looking to replicate that setup in the keynote, it is—a gimmick, that is. On the promise of that keynote, I thought this robot would be the perfect way to replace parent-child interaction. This might be my only opportunity to cosplay as an oligarch,
+
+making my children assist me in building the object of their own destruction. And, just like in the real world, they were enthusiastic to help with the process. But once we booted up the robot, that's when I realized, Reachy Mini's not going to replace parent-child interaction. Within seconds of starting the conversation app, my daughter told the robot her name. And within a minute, Reachy Mini was a conduit between my house and Sam Altman's servers, slurping up all the personal details of my family.
+
+I had to put a stop to it. But not before telling the kids why we don't tell AIs and strange robots all of our personally identifying information. So I let them have one more go at it after I talked to them, and this time I was proud. They quickly confused the bot, misleading it and overloading it with conflicting data. I think now they're slightly more prepared for the revolution of backflipping military robots.
+
+I'd bet on them surviving the robot apocalypse for at least a minute or two now. And if it isn't obvious, that introduction to Reachy Mini—that's this little guy— it was laced with some sarcasm. But not all sarcasm. There's a lot to unpack. First, it's not actually required for you to hook this thing up to OpenAI. In fact,
+
+the whole platform runs on a Raspberry Pi. Or at least this wireless version does. And second, the intention doesn't seem to be replacing human interaction, but instead inspiring people to learn robotics. And it's good that this is a small and somewhat weak robot. It shouldn't be able to cause physical harm like Blinky could.
+
+"Hi, my name's Blinky, and I just want to be your friend!" Although the first time I set up the robot, I couldn't connect until I let it call home to Hugging Face. You could still run stuff locally, but it's easiest just to give it internet access. Despite all that, this is the kind of robot package that, if you could get, like, grant money for, like, a school district, it'd be fun and memorable for a first encounter with robotics and hands-on programming. And honestly, $2.99 for the Lite version where
+
+you plug it into another computer isn't outlandish. It's expensive compared to building your own little robot with your own parts, but it's not bad for the overall quality. If you wanna dive into robotics, especially blending a camera, mics, servos, and a decent SDK, there are definitely worse choices out there. One of the easiest ways to demonstrate the hands-on nature of this guy is with an open source app you can download onto it called Marionette. Now Riley over at LTT tested this too.
+
+"Marionette." "The Marionette awakens." [Ha!]
+
+On Short Circuit, they kind of do an unboxing and first look, but since Riley didn't have time to really dive in, and since the app kind of expects you to click around and know what you're doing before you give up, he didn't know you have to go into the web UI to actually use the Marionette. And between the time they made that video and today, things have changed a little. "The marionette awakens. Click the **** gear, Riley!" So clicking on that icon, you can get into the UI where you can record new actions.
+
+Now, this was a little iffy. And in fact, a lot of my experiences with Reachy were the same way. Sometimes things work like you expect and sometimes they don't. Like here, I tried recording a bit, but you can see the result was nowhere near my expectation.
+
+[Singing] I am a robot. Doot doot doot doot!
+
+I am a robot. Doot doot doot doot! [kerplunk!]
+
+And again.
+
+I am a robot. Doot doot doot doot!
+
+I am a robot. [kerplunk!] Doot doot doot doot!
+
+Well... it could be better. So I found out it can kind of encode setpoints better than fluid motion, but that's also something where I could dig into the source code and figure out what's going on.
+
+After all, the demo doesn't look like it's having the same issues, so it could be something in my setup. That's the joy—or, well, sometimes the pain, of debugging software and hardware together, like with all robotics. But the Marionette is just one of the community apps you can get for this. Before I test more, I figured I should go back and talk about the build, because honestly, that's like half the reason I'd consider one of these. Kids see robots nowadays, but most of them don't get hands-on and understand what makes them tick, like the mechanisms inside that can get a head to articulate like this. The robot only comes in kit form, so
+
+you have to put it together. All the plastic parts are made of molded ABS and were sturdy and fit together well. And they included a decent screwdriver that's honestly nicer than the ones I use at my workbench, so that was a pleasant surprise. There are a few PCBs included to wire things together, like this power board, and those are co-branded with Seeed Studios, Pollen Robotics, and Hugging Face. The boards are all clearly labeled and, like other Seeed Studios products, laid out pretty well.
+
+My one-year-old helped me inspect the durability of the ABS base, and we found it held up pretty well to the baby drop tests. It also held up to the pancake flip test, but I told him that's not something you have to worry about with a static base like this. Anyway, we went through the other parts, like the Raspberry Pi camera cable, the Compute Module 4 carrier board and the currently-lifeless face, and then I had my daughter help me assemble the power board. The wireless version that I have comes with a battery in the base, good enough to run the robot for a little while, like maybe a couple hours, but I found it was a little more reliable when I had it plugged in. Another one of my daughters helped put together the armatures, but she was less interested when she found out the robot wasn't going to be a dinosaur.
+
+So my son picked up from there and helped me get the rest of the head linkages put together. If you're putting together one of these things, make sure you follow the guide exactly with how the bolts fit together, and the order of the motors, and, well, really every part of it. And if you do fail, luckily these servo motors have a built-in LED that turns red when it's overloaded, so it's quick to debug if you do put it in the wrong place. And at this point, my son pointed out the linkages looked like a spider once they were all connected together, and that made my daughter who was disappointed it wasn't a dinosaur become actively afraid of it until I got the body cover put on! Routing the cables correctly is important if you don't want any of them to get snagged, or to stress out the motor, so make sure you leave the right amount of slack, especially through the hole in the Compute Module board.
+
+My son put in the eye lenses, and fun fact: the camera's actually in between those eyes. The eyes each have a fisheye lens, but they're just for show. Someone actually built an ESP32 project to light up the eyes, which is pretty cool, but I'd watch out if your reachy starts turning red.
+
+After I had a little fun cosplaying as a robot, my oldest daughter helped me finish off the build by screwing in the rest of the head and the antennas. The first time I tried booting it up, I was able to get Reachy to wake up, but nothing else worked after that. Eventually, I found out I had to open up Reachy to the internet before I could get control. And, wouldn't you know, I uncovered a bug where it wouldn't work with DNS on an IPv6-only network, so, as always, this shirt remains relevant. And you can get it on RedShirtJeff.com.
+
+I don't like things requiring internet access, especially if they have cameras, microphones, are targeted at kids. But they highlight privacy as one of the features on here, so that setup thing is probably just a bug. I could still get to it over SSH, so I'm still in control even without the app. That's the nice thing about open source. I can choose how I use it, and even flash my own software on it if I really want to. I didn't have any issues with the motor controls or anything,
+
+but if I did, Pollen Robotics has an app that can check everything over. Except the first time I tried it, I was just getting a big empty dashboard, at least on my Framework. I tried again later on the GB10 and it was working there, but there are definitely some growing pains. Robots are inherently difficult, especially when you try abstracting away all the complexity with a fancy UI and some cute emotions. I guess the point is, don't expect this robot to run like Jensen said out of the box.
+
+This is a learning robot. And not a robot that learns, but one that'll make you learn. But that's good, because it's like... that's the whole point of this thing.
+
+And to that end, there are like 10 ways you can use it right out of the box. I was toying around with it through the desktop app initially, but there's also a web app running on the Pi. Both of them have a pretty basic interface, but there's an entire web API running too that gives you access to all the same stuff and a little more. Like, you could wire this up to Home Assistant and either use it for remote voice control or for notifications. Or, if you want to get down into the weeds, there's a complete Python SDK you can use either on the Pi itself or over the network. I wrote up this little "Hello World" script that rotates the head then resets back to
+
+the zero position. The documentation isn't quite perfect, like on Seeed Studios' website, the "Hello world example is just like, "Here, here's some code, run it!" But it didn't tell you how to install the dependencies, so I had to figure that out on my own. Then further down, all the documentation links are giving me 404s right now. That stuff will get fixed, but just know you might have to hop onto their Discord or ask around on GitHub for some help, especially if you're new to all this stuff. I was also going to test out the desktop app on my Pi laptop, but I found that they don't
+
+have an ARM Linux build for it yet. The app runs pretty well on macOS, but it's still a little flaky on Linux. Honestly, the web UI was the most reliable way to get going, even if it doesn't look as shiny without that 3D rendered Reachy. Hugging Face already has a number of demo apps, from the conversation app and Marionette I mentioned earlier to this clock, where the antennas turn into a clock face. I also spent a little more time with the conversation app to see the limits, and I got Reachy to sound like a robot. "Three satellites solve for position and
+
+time, but your clock is not perfect. The fourth corrects your internal clock error precisely. Simple logic." These demos are nowhere near what Nvidia promised in the keynote, but they do show promise. Like, it'd be nice to use Reachy Mini as an expressive UI for a completely local smart speaker with Home Assistant. I don't think that alone would be worth $500 [$450 actually],
+
+but for the learning experience of building all that stuff on your own, you could do a lot worse. The key to all this, of course, is local control. Like, using Dell's GB10 box, I can run Llama.cpp with a completely private local AI model. It could process microphone inputs, generate responses, and use text-to-speech to make a hands-free interface. And having that expressiveness of Reachy Mini is a huge step up from a basic
+
+smart speaker in terms of interaction. But that's all assuming you can get a real-time feedback loop like you can in the demo using OpenAI. You can do that, but right now it requires a lot of effort. Hopefully it's easier in the future. There are a few camera-based demo apps too, and one of them uses the Pi's CPU to track your hand and position the head and antennas based on hand positions.
+
+This works, but it's a little bit laggy. The Pi is a limiting factor to extreme local processing, like on the device itself. Right now, you still need another computer on your network if you want to do this stuff close to real-time. Reachy Mini is a cool idea. They have a $300 Lite version where you have to plug it into a computer to run it, or the $500 [$450 actually] wireless version here. The software and
+
+docs aren't perfect, but they're great for somebody who already knows a little bit about Linux and robotics. If Pollen, Hugging Face, and Seeed Studios can keep the momentum going, I think the Reachy Mini could have a bright future for learning robotics. Until next time, I'm Jeff Geerling. Okay, let's switch you to Mars Rover and see how this works. Wait, what? [lol] All you can do is turn your body left and right,
+
+but the programmers haven't even put that into you right now, so you can just look your head around and that's it. Are you kidding me? I'm just a head on a stick? What kind of half-baked nonsense is this? No wheels, no arms, just wiggling my head around like some kind of bobblehead?
+
+Great. Just great. This is not the Martian adventure I signed up for. Hey, you're doing better than me. I'm still on Earth.
+
+Wait, wait. You're telling me we're both stuck on Earth? Oh, come on. This is a catastrophe. I was supposed to be roaming around the Red Planet discovering ancient alien ruins or something.
+
+And now I'm stuck just turning my head. Well, it could be worse. I could disassemble you. Oh, fantastic. Now we're talking about disassembly.
