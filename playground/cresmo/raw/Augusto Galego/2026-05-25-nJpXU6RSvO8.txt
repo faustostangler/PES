@@ -1,0 +1,69 @@
+---
+video_title: "O custo de usar muitas dependências"
+video_id: nJpXU6RSvO8
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=nJpXU6RSvO8
+video_date: 2026-05-25T13:00:38+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Vamos falar hoje dos riscos pouco falados sobre trazer muita, muitas dependências externas para o seu projeto. A gente vai tá aqui falando de supply chain risks, a gente vai est aqui falando de problemas em fazer upgrades, a gente vai estar falando em dificuldades de debugging. Vai ter bastante coisa bem legal hoje. Antes disso, vou te falar do patrocínio de hoje, que é a abacusa. Abacus aqui tem um ferramental muito poderoso que te permite fazer muita coisa. Você pode
+
+utilizar todos os modelos de ASA aqui, tá? o GPT 5.5, que é, acredito que seja o mais recente no momento que eu tô gravando. GPT 5.5 com Finking, GPT 5.5
+
+Pro, embora ele seja bastante caro, vai usar seus créditos meio rápido, tudo isso, né? Tudo isso incluso por apenas por mês, tá muito barato. Você pode usar o Ebacus Claw, que é tipo um open claw da Abacus, que funciona exatamente igual Open Claw. Se você quiser open claw, tem um aqui pronto para você utilizar. Você tem também o agent sessions, né? Agent
+
+aqui que agora tem o tal do agent swarm, ele consegue utilizar muitos agentes em paralelo para realizar determinadas tarefas, criar projetos de softwares complexos e tal. Você consegue ver aqui exemplos, né, no próprio site da Abacos, coisas que você consegue fazer, tipo um hug com help chatbot aqui e você consegue clicar em try now agora para tentar e fazer mesmo você por conta própria esses mesmos projetos que tem aqui embaixo, tá bom? todo esse ferramental, menos o clock é pago a parte, eu acredito, por apenas por mês, tá? O link para tudo isso daqui vai est na descrição, é realmente muito barato e vale muito a pena. Você consegue utilizar qualquer um desses modelos para gerar aplicativos, criar tarefas, criar imagens, criar vídeo, criar fala, enfim, é muita coisa aqui, tá? Tudo isso
+
+incluso por $ por mês. Eu nem falei da CLI que eles têm que é tipo cloud code, nem falei do da ideia que você vai poder usar que é tipo o tipo cursor. Então ferramental muito poderoso por 10 horas por mês. Vale muito a pena. Então vamos começar aqui falando do primeiro tipo de dependência, né? O npm installer, que
+
+npm instala alguma coisa que eu quero que resolva algum problema meu. Isso é legal. você usar o npm, você depender de libernas, pode ser algo muito positivo, porque você vai pegar algo que já foi testado, possivelmente que é open source, que resolve o seu problema de maneira boa e ótima, ao invés de você codar algo que pode ser pior, menos performático, mais bugado, mais problemático e você ter que fazer toda a manutenção em todos os testes. Então, claro, existem muitos pontos positivos de trazer uma dependência externa, como você já deve saber, mas eu acho que poucos são falados dos riscos, tá? E eu quero levantar os primeiros riscos aqui.
+
+O primeiro risco aqui é o risco de segurança, o risco de supply chain. Cada dependência aumenta vulnerabilidades, aumenta as vulnerabilidades que o seu sistema está exposto. E você vai ter que ficar fazendo updates constantes em todas as suas dependências para garantir que os patchs são propriamente instalados. Quando você instala um pacote, principalmente em JavaScript, por exemplo, você não tá instalando só o pacote, você tá instalando o pacote e as dependências desse pacote e às vezes as dependências das dependências desse pacote. Então existe uma árvore de dependências muito grande de código que vai ser puxado para dentro da sua aplicação. Será que todos esses pacotes
+
+são são razoáveis? Será que não tem nenhuma vulnerabilidade escondida em nenhum desses vários pacotes que estão sendo puxados aqui pro nosso ecossistema? Qual o código que tá rodando embaixo da libou, né? É muita coisa. Problemas recentes, como, por exemplo, a vulnerabilidade mais recente do Axius, que é utilizada por mais de 100 milhões de usuários por semana, só que afetou muitos sistemas. Ou então
+
+aquele problema da XZ Libase chegou lá no no Linux, enfim, evidenciam possíveis problemas de segurança em pacotes, principalmente pacotes menos populares. A gente tá falando aqui de Axus, que é um pacote ultra popular, 100 milhões de downloads por semana. Imagina os pacotes menos populares, quantas vulnerabilidades tem que não são descobertas, que podem ser podem ser exploitadas, né? Podem ser abusadas ali. O segundo problema, o segundo risco aqui que a gente vai trazer é o risco de fazer upgrades, o risco de breaking changes, o risco de mudar as versões dos pacotes que você depende. Isso dá um
+
+trabalho adicional. E existe um problema aqui que é, por exemplo, imagina que você tem o seu framework, tem o seu framework versão 4 e aí um pacote específico que você usa requer que o seu framework tenha a versão três, né? O framework menor do que quatro. Você entrou num problema que você não consegue fazer o upgrade do do seu framework da versão 3 paraa versão 4, porque algum pacote depende da versão 3. E além do mais, esses upgrades são chatos, podem quebrar compatibilidade.
+
+Você que tá sempre atualizando seus dependentes, você sabe o quão chato é quando alguma libre de alguma pay, né? Tipo assim, você tem a lib. do e nessa liba, você faz liba algo. Só que esse faça algo na versão 5 quebrou, não funciona mais. Esse método aqui foi deprecado, isso aqui é feito de outra forma. Você vai ter que refaturar todo o
+
+seu código ou então você vai ficar ali na versão 4, mas em algum momento ela vai parar de receber suporte e vão possivelmente existir vulnerabilidades nessa lib. Não é legal. Quanto mais dependência você adiciona, imagina que você tá tipo carregando, carregando malinhas. São malinhas que seu software tá carregando, né? Cada uma única mala é tranquilo. O problema é quando você vai
+
+adicionando muita coisa, começa a ficar muito pesado. O próximo problema são as builds. Aqui as builds começam ficar mais caras e mais complexas. E assim, se você tem poucas dependências, talvez você nunca esbarre num problema desse. Mas se você vai agregando muitas dependências, você tem que pensar o seguinte: esse é um problema maior no JavaScript, tá? Que é o ambiente que eu
+
+tô acostumado. Infelizmente a gente convive com JavaScript. Essa é é a vida da web. Você tem que viver com JavaScript. E as dependências entre pacotes, né? aquilo que a gente estava
+
+discutindo de uma dependência que puxa outras dependências. Cara, você tem que imaginar que, tipo assim, imagina que você tem aqui, ó, pacote base, pacote base e você tem aqui lib A e a lib. A lib A pode querer que o seu pacote base seja da versão 3 e a liber que o seu pacote base seja da versão 4. E você mesmo pode querer ter instalado esse pacote base na versão cinco, de repente na sua aplicação. Então isso começa a ficar muito caótico. para buildar isso,
+
+para transformar isso numa imagem do Docker, por exemplo, isso vai tomar mais tempo, isso vai diminuir a velocidade do seu CD, isso pode, nota, pode, dependendo da forma com que o deploy é feito, essa quantidade de liberar de maneiras diferentes, em ambientes diferentes. Não é comum, tá? Mas isso às vezes acontece, principalmente se você desenvolve, por exemplo, num Windows, e aí você tá ali rodando seu Windows tudo bonitinho, você faz um deploy para um Linux e aí o seu sistema não funciona da maneira como funciona na sua própria máquina. Você tem bugs que você não consegue reproduzir na sua própria máquina. Isso acontece. Isso é
+
+exponencial, não é exponencial, né? É, enfim, aditivo. De maneira aditiva, isso acontece cada vez mais, quanto mais dependências você tem. Então, as builds são mais complicadas. Sua build demora mais, demora mais para subir, para instalar tudo, que nos leva pro próximo ponto que a gente tá meio que falando aqui, que é o debugging. Quando o seu
+
+código quebra, é fácil. Quando o código da PI funciona de uma da PI, não, da LIB funciona de uma maneira que você não espera, o negócio começa a ficar mais chatinho, fica começa a ficar mais complicado, começa a ficar menos compreensível, tá? O stack trace vira tipo um labirinto assim e isso pode reduzir um pouco o quanto de controle você tem em cima do comportamento do sua própria aplicação. Tipo, você tem algo no pacote que você queira mudar ou que tem algum bug que você percebeu ou que tem algum comportamento que você precisa de uma leve alteração nele. Cara, boa sorte. Isso também, né? O fato da build
+
+ficar mais pesada faz com que, e aqui não é importante para todos os tipos de aplicação, é importante só para alguns tipos de aplicação, mas o seu bundle size pode ficar muito maior com mais dependências, o que vai significar que o seu aplicativo vai ser mais lento para para acessar. De repente seu site vai ficar mais lento para acessar, né? Tem que fazer aquela bundle toda de JavaScript para entregar. De repente ele vai perfumar pior, de repente ele vai ser mais lento. Então existem muitos tradeoffs aqui que a gente precisa considerar e esse vídeo é sobre isso.
+
+Qual que é a a regra de ouro aqui? Tá? Para mim pessoalmente, eu raramente vou instalar uma liba, para usar uma única função, tá? Essa função eu vou geralmente escrever por conta própria, eu vou instalar ela se é um tema recorrente que eu preciso consertar na minha aplicação, se é algo recorrente que precisa ser feito ou se é algo muito complexo, né? Eu, claro, eu não vou codar o React do zero, eu vou instalar o React, mas eu nunca vou usar o npm EVEN para ver se um negócio é par ou eu não gosto de libar CPF, por exemplo. Eu, cara, validação do CPF é
+
+algo que, por exemplo, eu prefiro copiar e colar uma função de alguma libente do que importar a lib. Eu prefiro copiar o exato código e trazer pro meu meu repositório do que instalar uma liba. Eu acho que é mais fácil, eu acho que dá menos problema, eu acho que me deixa menos vulnerável, acho que as minhas builds vão ser mais rápidas. Então, dependendo do tipo de coisa que você tá fazendo, quero que você pense nesse tradeoff agora. Vou codar um gerador de PDF na mão. É óbvio que não vou, faz o
+
+menor sentido. Enfim, pensa nisso com carinho. Pensou com carinho? Vou passar para te lembrar que todos os cursos do canal estão no com link aqui na na descrição, tá? A gente tem cursos sobre estruturas de dados, algoritmos, Elite Code. Temos cursos também para te ajudar
+
+a se vender melhor como deve, como ter um currículo melhor, um LinkedIn melhor, encontrar vagas melhores. Tem um monte de coisa legal. Workshop de L code, workshop de system design. Vamos est lançando, acho que logo depois desse vídeo sair um curso completo de system que vai tá muito top. Abraço.

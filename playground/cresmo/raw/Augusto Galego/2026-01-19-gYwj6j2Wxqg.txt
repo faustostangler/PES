@@ -1,0 +1,135 @@
+---
+video_title: "Exceptions é gambiarra"
+video_id: gYwj6j2Wxqg
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=gYwj6j2Wxqg
+video_date: 2026-01-19T13:01:28+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📖 Meu curso de estruturas de dados e algoritmos: https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  Workshop 10 LeetCodes Para Entrevistas: https://pay.hub.la/RGfq0dk8iqDeL5IC5yog?coupon=WORKSHOP
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Tu provavelmente não vai gostar muito desse vídeo. Eu percebo que quando eu faço um vídeo mais opinativo, mesmo que eu traga fatos nele, e eu vou contra um senso comum, as pessoas tendem a dar dislike no vídeo. Esse vai ser o caso aqui. Vamos comprar uma briguinha aqui com exceptions. Eu vou te explicar porque que exceptions em vários casos são ruins. São realmente ruins, tá? Por
+
+que que eu acho que, pô, por que que eu sou da opinião extremamente controversa de que a gente deveria usar exceções para casos que são excepcionais de fato? E casos que não são excepcionais não são exceção, né? É incrível. Parece óbvio, mas claramente não é óbvio, porque ninguém faz isso. Que que a gente vai falar? Vamos falar de custo
+
+computacional. Como assim custo computacional? Exceptions podem ser lentas, podem ser bastante lentas, tá? Vamos falar sobre controle de fluxo e vamos falar sobre vazamento de abstrações. Por que que exceptions geralmente são gambiarra e causam mais gambiarra ainda? E claro, né, a gente
+
+não gosta muito de oramismo. Existem casos para se usar exceptions. Eu vou tentar falar quais que eu acredito que são eles. Antes disso, vou te falar rapidamente da patrocinadora do canal. Hoje é aba que a gente tem aqui apenas 10, né? uma interface que te dá acesso a
+
+todas as LLMs aqui, né? Você pode usar o chat apt, cloudsonet 4, enfim, qual que você quiser, qualquer uma delas. Você consegue, inclusive usar qualquer uma delas para gerar imagem. Você pode usar aqui o Nano Banana Pro, né, que gera imagens absurdamente impressionantes, ultra realistas, Gem 3 Pro, que é muito bom para código, você pode ativar o modo code aqui e fazer código com isso. Além disso, você recebe também acesso ao de patient. de page da maneira que eu uso é
+
+para fazer protótipo. Esse aqui é um protótipo que a gente fez e em assim um prompt, ele me deu esse software que eu posso inclusive hospedar aqui, tá? É um software de gestão de RH que nos ajuda a gerenciar férias de funcionários e tal. É apenas um protótipo que fez isso de maneira muito rápida para validar uma ideia. É bem bacana. Tem muita gente
+
+usando isso daqui para criar, por exemplo, o backend de um bote de Telegram e hospedar na própria plataforma. Isso aqui é permitido, funciona. Muita gente usando, por exemplo, você consegue linkar o seu e-mail aqui, pedir para ele analisar os seus e-mails ali, analisar dados de alguma coisa, tudo isso funciona, tá? O de agent ele tem acesso a ferramental muito forte, ele consegue simular um computador dentro dele, é bem loucura. E além desses dois, você vai ter acesso a IDE aqui também, né, que tem agente de código dentro da própria IDEA. Você
+
+pode, né, pedir pra IDE consertar algo aqui. A IDE vai consertar. Você pode dar um comand aqui no Mac, né? Ou acho que é contrl i no Windows e sair gerando código. Enfim, é Windows é um forque do VS Code, então você pode usar todas as tensões que você tem no VS Code aqui também. E tem o agente de aqui de quebra
+
+que dá para usar como um copilot, por exemplo. Tudo isso por apenas por mês. O link vai tá aqui na descrição, tá? É uma subscription só. Você tem acesso tudo isso. Claro, tem alguns certos limites
+
+de uso ali, né? Você tem um certo número de tokens que dá para usar todo mês. Vamos começar aqui a nossa conversa. Eu quero tirar isso daqui da porque isso aqui vai ser o argumento mais comum, tá? O argumento mais comum. é que todo mundo
+
+no meu time usa, que o nosso padrão de código é um padrão que usa exceptions. Se você acompanha esse canal aqui por muito tempo, você provavelmente sabe exatamente o que eu vou falar. E exatamente o que eu vou te falar é que se a sua equipe tem um padrão ruim, é melhor você continuar usando um padrão ruim do que você não usar o padrão, tá? Um padrão ruim é melhor do que nenhum padrão. Então, em muitos casos, vai ser comum que você vai continuar usando exceptions para tudo, porque você não vai conseguir priorizar, migrar sua code base inteira de um padrão de exceptions para algo diferente. Mas em algumas
+
+situações eu vou te mostrar aqui como que a gente pode contornar isso e como que a gente pode melhorar isso. Então, né, primeiro argumento posto, tá? Você vai falar: "Pô, todo mundo na minha equipe usa exceptions, eu vou continuar usando, tá tudo bem, pode ser também, mas que é meio gambiarra, é meio gambiarra." Primeira coisa é o custo de exceptions, dependendo da sua linguagem. Isso que eu aprendi com o meu amigo aqui, o Sam Santos. É, o SAM manja muito
+
+de Node, tá? A gente tem inclusive uma mentoria para plenos e senos, principalmente backend, principalmente focado em node, tá? Que a gente dá, se você tiver interesse na mentoria, o link para preencher um form aqui para poder comprar, tá aqui embaixo. O fato de você preencher não necessariamente significa que você vai ser aprovado, porque para algumas pessoas não faz sentido, tá? Enfim, o que que o Sam explicou? O Sam
+
+explicou isso daqui, ó. Isso aqui ninguém fala, a gente tá indo muito longe aqui. Você tem alguns exemplos de linguagem, como por exemplo, o Node, que vai otimizando o seu código, né? Imagina que você tem um código que retorna sempre uma string ali, né? Uma função que retorna sempre uma string. Você
+
+chamou a função 10.000 vezes. O motor do V8, o tal do turbofen aqui, vai fazer um bite code, vai otimizar o byte code. Enquanto tiver sempre retornando uma string, esse código vai ser altamente otimizado, né? O node, conforme ele vai rodando, ele vai ficando mais eficiente.
+
+Qual que é o problema, né? Se você rodou 10.000 vezes e na 10 e uma vez surgiu uma exceção, algo mudou, vai ocorrer o que chama de optimization, né? desotimização. Sendo assim, se você tem um código assim super comum, tá, que busca por usuários e aí se ele não encontrar um usuário aqui, ó, não encontrei o usuário, eu retorno um erro, eu fui executando o código, encontrei um usuário, encontrei 100 usuários, encontrei 1000 usuários. No momento que
+
+eu não encontrar um usuário, nota, eu tava sempre recebendo string ou lista de strings, né? E eu tava sempre retornando o número. Agora eu estouri uma exception, eu desoptimizei o meu tal do Turbofen, o MLV, enfim. Não encontrar um usuário é um caso excepcional. Na minha opinião, não é um caso excepcional, não merece uma exceção. Como então que a
+
+gente poderia consertar isso, né? Como que a gente poderia consertar esse código? Ao invés de eu falar que eu sempre vou retornar um número e eu sempre retornar um número, a não ser que eu estore uma exception, eu posso falar que eu sempre vou retornar um número ou nul. E aí eu sempre retorno de fato um número ou nul, né? Se eu não encontrar o meu usuário, eu retorno nul. Isso até
+
+faz muito mais sentido, porque novamente para mim não é um caso excepcional. eu buscar por um usuário e eu não encontrar é um caso totalmente previsível que faz total sentido. É um erro que a gente consegue recuperar, a gente consegue tratar em qualquer nível. Isso daqui não tem dificuldade nenhuma lidar com isso, não tem nem ambiguidade. Aqui o que nos leva pro segundo ponto. A gente tem algo
+
+chamado controle de fluxo, tá? Vamos colocar aqui como que a gente controla o fluxo do nosso código. Pô, se eu fizer aqui um if, dentro do if tem alguma coisa aí, dentro do else tem alguma coisa também. Isso daqui tá controlando o fluxo do código, né? Eu tô vendo que o meu código ele vai sair daqui, ele vai ou entrar aqui ou ele vai entrar aqui embaixo, certo? Eu tenho um controle de
+
+fluxo que vai de cima para baixo naturalmente. Se eu chamo aqui embaixo, né, uma função, por exemplo, funk faz alguma coisa, funk faz alguma coisa, controle de fluxo vem para cá, vai para essa funk aqui, faz uma, duas, 3, 4 coisas e retorna alguma coisa, o controle de fluxo volta para cá. OK, tudo certo? Que mais que ajuda a controlar fluxo, né? Loops, por exemplo, um for loop. Um for loop vai fazer com
+
+que aqui dentro meu código execute em círculos aqui algumas vezes. Ele dê aqui alguns loopzinhos e ele executa, sei lá, seis, sete vezes nesse loop. OK, tudo tudo certo, tá? Percebe que existe uma coisa aqui. Se eu falei, como anteriormente eu tinha falado, anteriormente eu tinha prometido, por exemplo, né, que a minha função aqui ela vai retornar um number, eu espero que aqui embaixo, né, eu espero que aqui eu receba um número de retorno. O nosso
+
+código, a gente tá olhando para ele e ele tá rodando, né, ele vem aqui para cima, ele entra aqui. Talvez ele não entre aqui, talvez ele entre aqui embaixo, mas ele continua, ele vem para essa função, ele volta para cá, ele volta para cá, ele desce aqui no loop, ele dá algumas voltas dentro desse loop, certo? Não necessariamente tá certo. Se aqui eu levantar uma exception e eu não tiver um trycat em torno dessa função aqui, eu criei um fluxo obscuro. Eu criei um controle de fluxo que não mais segue uma ordem lógica dentro do meu código, ok? Se toda função que tiver uma
+
+exceção eu tiver em volta dela um tricat, não, tem várias linguagens, eu não sou obrigado a ter isso, tá? Então a gente não tem essa garantia, mas se eu sempre tiver um trcat, ok, eu tô sempre controlando o fluxo de uma maneira que faça sentido, que seja ordenada. Se eu não tiver isso daqui, para onde que vi isso? Vai subir mais um nível. Se não tiver um tracat nível acima, vai subir mais um nível. Se não tiver um trquet
+
+nível acima, vai subindo e subindo e subindo. Ele cria um controle de fluxo obscuro. Então, né, se você tem um caso assim que a gente tá usando um trow exception, beleza? Aqui tem o tryc catch, né, que eu tô, eu tenho try em volta da minha função get subscription status e eu tenho um cat em volta da função get subscription status, né? Teoricamente eu controlei o fluxo, né?
+
+Não vou deixar isso aqui estourar para muitos níveis, ok? Não é a pior situação do mundo, mas cara, que que eu vou te falar? Para mim é gambiarra por pô, para mim sério, pura e simplesmente é gambiarra. Por é um caso excepcional mesmo. Um usuário não tem uma subscription, para mim não é muito excepcional, né? Tá perfeitamente
+
+previsto aqui e é algo que eu consigo recuperar tranquilamente. É um not found. Para mim, not found erro. Não encontrado não é erro. Se o meu banco de dados permite que não seja encontrado o negócio, eu não tenho um erro aqui. Eu
+
+não vejo isso como uma exceção. A gente tá usando isso aqui para controlar o fluxo. Mas cara, e se, tipo, a gente só controlar o fluxo mesmo? E se eu só ver se o usuário tem a subscription ou se ele não tem a subscription, eu retorno aqui. Posso retornar uma tupla, um mapa, um tipo de pado, o que quer que seja, dizendo: "Pô, deu OK". Ou então deu, deu
+
+false. Não tinha subscription, no subscription. Esse tipo de união aqui, quem trabalha com go leng sabe que o approach go lengo aqui, né? O approach go lengor, por exemplo, uma tupla. Vou retornar uma tupla que é user e eu não sei exatamente como é que é go leng, tá? Mas é tipo
+
+user e nada. Ou então eu vou retornar nada e erro, né? algo nesse sentido, porque ou eu vou ter tipo um usuário e um erro vazio, que é nada, ou eu vou ter nenhum usuário e ali um erro explicando porque que não tem nenhum usuário. Pô, isso aqui em Goleng faz muito sentido. E não apenas em goeng, né, como a gente viu em Node GS, isso pode fazer sentido também para não causar o de optimiz lá.
+
+E também, cara, é um controle de fluxo que faz muito mais sentido, é muito mais tranquilo, é muito mais previsível, é muito mais fácil de tipar, inclusive de você ter uma previsibilidade do que vai acontecer, controlar o fluxo com if, elses e tipos pré-definidos do que controlar o fluxo com exceções. É muito mais improvável que isso venha a causar um erro que você não previu. É muito mais provável você pegar isso daqui com linter ou com um testes, tá? E agora vem o o X da questão aqui, que eu vi toda a Code base comete esse problema, tá? Eu vi isso muitas vezes. Imagina que você
+
+tem uma Code base, tá? algo estruturado em camadas, né? Muito como hoje em dia, você vai ter uma camada aqui para lidar com http. Geralmente essa camada é chamada de controller ou você tem até dois, tá? Camada http camada de controller. Embaixo da camada de
+
+controller, você vai ter geralmente camada de serviço, tá? Uma camada chamada service. Embaixo da camada service, um repositório aqui. A gente pode colocar acesso ao banco de dados. E embaixo do repositório, de repente, APS externas, né? Infraestrutura, vamos
+
+colocar infra. E o request normalmente, tradicionalmente, ele chega daqui, ele volta para cá. E a gente quer que esses layers, essas camadas estejam separadas, tá? Isso aqui é tido atualmente como uma boa arquitetura, né? Uma arquitetura razoável, que as coisas estão separadas ali, existe um fluxo claro onde as coisas funcionam e tal. Bacana. Que que
+
+acontece se na sua camada de repositório, por exemplo, você vai buscar por um usuário, você retorna que isso aqui é um erro, tá? Eu peguei uma linha aqui no meu banco de dados, eu dei um select asterisco pro user, onde o user tinha o meu ID, tá? Código extremamente normal aqui. E se eu não encontrar essa linha no meu banco de dados, eu vou retornar um erro not found. Novamente para mim, not found erro, tá? O que que acontece? Acontece
+
+que essa camada de repositório aqui vai estourar um erro. Por definição lógica, eu tenho que ou tratar esse erro dentro da própria camada de repositório, mas provavelmente eu tô chamando esse get user by de fora. Provavelmente eu tô chamando ele de serviço. O que que vai acontecer? Então o erro vai estourar para cima. O erro vai vazar de uma
+
+camada de abstração pra outra camada de abstração. O erro vai vazar aqui em cima e a gente tem que tratar esse erro aqui em cima, porque se a gente não tratar esse erro aqui em cima, novamente ele vai vazar para cima de novo e talvez ele estour lá pro usuário. É legal isso? Não, não é legal isso. Uma das alternativas que a gente pode ter para isso é que às vezes você pode deixar todos os erros estourarem, tá? O erro
+
+aqui do repositório estoura lá para cima, você não se preocupa com ele. O erro de serviço estoura lá para cima, você não se preocupa com ele. O erro daqui estoura lá para cima, você não se preocupa com ele. Se eu não me engano, o Nest faz algo nesse sentido e você trata tudo aqui em cima com um middleware, middleware de error management para não deixar os erros vazarem pro usuário. E aí você tem que todas as requisições que esbarrarem em qualquer tipo de erro vão estourar lá para cima e você trata isso só no final. Pode fazer sentido? Não
+
+acho errado, não acho ruim, mas isso para mim evidencia, né? Você tinha uma gambiarra aqui, que é estourar um erro na camada de repositório, você vai tratar isso com outra gambiarra aqui em cima. Para mim é não, o até o midware para tratar erros não é uma gambiarra, tá? Porque ele ele é a última linha de frente para prevenir que você vaze algo pro seu usuário. Tipo, pode fazer sentido isso. O problema para mim tá em
+
+estourar o erro aqui em algo que não é uma exceção, que você pode fazer a mesma recomendação de antes, tá? Pô, eu retorno um usuário ou nu e aí eu trato isso em algum lugar. Tá definido? O meu método get user by, ele vai retornar um usuário se o usuário existir ou ele vai retornar nu claramente sem um usuário não existir. Aí quem cuida disso, né? O
+
+not found é um erro do banco de dados. Para mim não. Para mim você vai ter, né? Em cima do repositório tem o quê? Tem a camada de serviço. Camada de serviço.
+
+Vai então ou ela pode retornar essa tupla aqui, tá? Eu nem acho tão tão necessário ela retornar esse tipo de coisa, ela retornar o OK user. Para mim, se ela retornar também user ou nu para cima, também não tem tanto problema. Se você transformar isso aqui num DTO, também não tem problema, tá? Tem maneiras de se lidar com isso. E quem
+
+que vai dizer se foi found ou not found? É aqui, ó, lá em cima, HTTP ou controller, vai ser aqui o negócio responsável por setar o 404, que é not found, para falar, pum, a gente recebeu, né, o nosso método aqui, tentou encontrar um user, não encontrou o user, ou seja, not found. Claro, existem maneiras de você passar essa lógica do repositório aqui para cima para porque pode ser que tenha outro erro que não seja not found, né? Enfim, pode ser que seja não autorizado ou qualquer coisa do tipo, mas não vem ao caso. Agora, cada camada tem que ter limitações, né? Você
+
+tem que conter as coisas ali da onde elas pertencem. É, de novo, a gente volta no fluxo ali, no controle de fluxo. Então vamos lá, vamos falar que a gente tá inventando regra e a gente tá mesmo. Você tá aqui para ver a minha opinião. E a minha opinião quase por definição é eu inventando regra, né?
+
+Vamos inventar aqui a regra, né? O que que é um erro de verdade? Então, o que que eu considero um erro? O que que para mim é um caso de jogar uma exception? E o que que é um caso previsto? O que que
+
+é um caso que não é erro, não tem erro nenhum. Caso previsto, not found. Para mim, not found não é tudo que você procurou e você não encontrou e você sabia que não poderia ser encontrado, não é erro. Sei lá, e-mail inválido. E-mail inválido não é exception. Você
+
+vai passar por um validator, o validator vai validar ou não vai validar. É totalmente previsível que alguém vai botar um e-mail que não é inválido. Passou errado, não é exception também. Query params errados, talvez pode ser uma exception, mas eu não sei, eu não usaria, mas aqui também não sei. Pô, esse tipo de coisa aqui para mim, cara, para mim isso aqui é previsto, não é erro, não é exception. Exception é, por
+
+exemplo, database enrichable, né? Você achou que tinha uma conexão com banco de dados e não teve conexão com banco de dados. Pô, beleza, a sua aplicação dificilmente consegue se recuperar disso daqui. É um caso excepcional. Erro de parcing, né? Erro de parsing de API,
+
+erro de parsing de Jon, erros inesperados de third party, né? Tipo, você usa uma libe que dê um erro inesperado, estados inválidos, coisas que deveriam ser impossíveis, dados, sei lá, o seu SQL, coisas que deveriam ser impossíveis de acontecer, contradições lógicas, né, erros, dados corrompidos, esse tipo de coisa. É, são casos excepcionais. Se vai acontecer literalmente todo dia no seu software, para mim não é não é uma exceção. Se acontece todo dia, não é uma exceção. E
+
+todo dia vai ter not found de exceções. É isto aqui. Elas escalam mal porque o controle de fluxo delas é muito obscuro. Elas fazem que uma camada vaze pra outra camada. Elas podem ter problemas de performance, embora isso geralmente seja um problema secundário, tá? Acho que o
+
+verdadeiro problema de exceções é que elas causam gambiar no código e que elas causam um código mais difícil de dar manutenção e mais difícil de ser compreendido e às vezes testado. Como que a gente pode ter menos exceções, né? O que que a gente pode usar de alternativas para não usar e abusar de exceções, cara? Tipos, né? Tipos, pô, o que a gente mostrou ali, a gente mostrou tipos de união, né? Estos union types.
+
+Então, o que que é o union type, né? É o user ou o ali, por exemplo. Problema nenhum com isso daqui. Acho um alternativo melhor. Tem também aqueles tipos, né, do Goleng que é user ou erro.
+
+quer dizer, user e non e erro e enfim, você entendeu, né? Validação de esquema interessante, tipo, validar os cor parameters com um zod, algo nesse sentido, tá? Validar os parâmetros no geral vai te ajudar a usar e abusar menos de exceptions. Agora, um negócio, uma última coisa que eu quero dizer aqui que é interessante, tá? Você vai querer geralmente, se você tiver num padrão, que existem muitas exceções em muitos níveis, tá? Ou você trata a exceção no
+
+mesmo nível, ou você trata a exceção exatamente um nível acima, ou você deixa estourar lá pra ponta, lá pra ED, tá? O que que não é legal? Não é legal eu ter uma exceção que vem aqui da infra, aí vem aqui pro ripo, aí vem aqui pro service, aí eu trato aqui no controller. Isso não acho bacana. Eu posso tratar ela um nível acima no repositório, eu posso tratar ela na própria infro ou eu deixo ela estourar, subir lá para cima e lá para cima eu dou um jeito porque se é de fato uma exceção, né, ela vai estourar. A requisição provavelmente não
+
+vai ter sucesso. A requisição vai dar alguma variação de erro, provavelmente 500. Se a requisição vai dar erro 500, eu provavelmente deixo isso estourar lá para cima e lá em cima eu boto um 500 nisso. Você viu esse vídeo? Eu espero que você tenha entendido o meu ponto de vista. Eu espero que esse vídeo
+
+excepcionalmente tenha menos dislikes do que a maioria dos vídeos que eu vou contra o senso comum. Porque na verdade eu acredito que isso aqui deveria ser, pô, o nome da palavra é exception, excepcional.

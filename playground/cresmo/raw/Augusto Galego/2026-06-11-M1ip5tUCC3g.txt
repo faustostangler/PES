@@ -1,0 +1,103 @@
+---
+video_title: "Markdown virou linguagem de programação?"
+video_id: M1ip5tUCC3g
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=M1ip5tUCC3g
+video_date: 2026-06-11T13:00:19+00:00
+video_description: |
+  👉 Use a Conta Dev: https://conta-dev.com/?discount-code=galego10
+  
+  💼 Curso de System Design (com desconto): https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Estamos há zero dias sem falar de IA. Mas me dá um desconto, vai. Hoje a gente vai falar sobre, na verdade, documentação mais o que a gente vai falar de IA. O IA tá aqui só para eu salientar o quão mais importante é documentar as coisas de maneira boa. Agora que, né, quem tá escrevendo boa parte do código é aá. Então, o código
+
+sempre foi importante, né? Só que agora documentar bem o código tá mais importante do que nunca. Eu vou te explicar o por que isso acontece, porque que aí a amplifica código de maneira ruim se você tiver uma documentação fraca, que o código vai determinar o a funcionalidade do software, mas a documentação vai comunicar também a intenção. E a intenção é muito importante, não para como o código tá agora, mas para ele explicar o por que a gente tomou as decisões que a gente tomou e o como que a gente vai evoluir daqui pra frente, tá? Vou te ensinar algumas técnicas aqui. Vou levantar
+
+alguns estudos e vou basicamente explicar que quanto mais bem documentada da forma correta uma Code Base, tá, melhor é a interação da IA com a Code Base e também, né, dos desenvolvedores com a Code Base. Antes disso, eu vou te falar do patrocínio do vídeo de hoje, que é a conta dev feito por de se você PJ, você sabe a dor, né? Todo mundo diz que é feito para dev no bordão, mas no dia a dia os processos de fato de contabilidade são meio arrastados. suporte não é lá essas coisas. Várias das contabilidades que se vendem pra dev, na verdade só são uma contabilidade antiga e atrasada, que sabem falar a palavra deploy ou stack. Para acabar com
+
+esse sentimento de abandona, chegou a conta dev que entende que o dev precisa de velocidade e automação no dia a dia. Eles têm uma plataforma de automação aqui, mas claro, na hora de tomar decisões, as decisões precisam ser impecáveis. E é por isso que você tem também um contador dedicado para você. Aqui, olha só, direto no WhatsApp, sem fila de shitbot, lista de espera, burocracia, abrir ticket por e-mail. Você tem o seu contador, você fala com ele no WhatsApp. Simples assim. A
+
+plataforma é super simples, robusta, fácil de usar. E outros dois pontos que são muito interessantes aqui é que não existe nenhum tipo de fidelidade contratual. qualquer plano que você adquirir aqui, não tem nada que vai te prender na conta, na conta dev caso você queira mudar, por exemplo. O que garante que você vai continuar com eles é a qualidade deles e somente isso. Então, para você aqui do canal, especialmente se você tá buscando uma contabilidade ou querendo mudar da sua contabilidade, nesse mês de junho do lançamento desse vídeo, eles estão te oferecendo quatro meses gratuitos caso você assine o plano anual. O link para quem vem do canal vai
+
+tá aqui na descrição. Obrigado a conta dev por patrocinar esse vídeo. Recomendo que você dê uma olhada no site deles para ver se faz sentido ou não para você. Eu vou puxar aqui umas referências pra gente basear um pouco o que a gente tá falando, tá? pra gente trazer uma fundamentação antes de começar a conversar sobre isso. Num reporte de
+
+2024 do Dora Research Program aqui, a adoção em apontava que a qualidade da documentação costumava avançar junto com a adoção em, é claro, porque eu deve ter preguiça de escrever documentação, então ele manda e fazer. A importância disso é que o mesmo report aqui do Dora, esse aqui é um pouco mais antigo, tá? de 2021, mas ainda se mantém verdade, é o impacto da documentação, que é bastante bem observado e bastante bem documentado, que existe uma diferença gritante entre times com documentação de baixa qualidade e times com documentação de alta qualidade. Quase todos os processos são melhorados com o aumento da qualidade na documentação. desses processos, né, os principais pra gente acabam sendo aqui o continuous delivery, continuous integration, né, a entrega ali, o desacoplamento de times, o site reliability engineering, segurança entre supply chain, trunk based development e version control. Agora, tem um detalhe
+
+muito importante aqui. Esse estudo aqui no Arquivex vai nos dizer o seguinte: eles demonstram que entregar para uma LLM documentação incorreta pode afetar muito, de maneira gigantesca, a capacidade da LLM de entender a Code base, porém documentações incompletas ou faltantes, né, ou não existentes, não parecem afetar tanto assim a qualidade da LLM. Então o primeiro TQ, né, o primeiro primeira lição aqui pra gente, as duas primeiras lições é que um documentação boa melhora muito a performance do seu time, documentação incorreta piora a performance da Llm e presumo que do time também, né? Agora, uma das coisas interessantes aqui é que existe um certo nível de, digamos assim, poisoning. Como assim? as LLMs elas vão
+
+acabar expandindo nos padrões que já estão pré-existentes numa code base. Ou seja, a documentação incorreta, se a gente tiver gerando mais código e mais documentação a partir de uma LLM, ela tende a se expandir. A LM tende a extrapolar aquilo que a gente já fez e ampliar aquilo que a gente já fez e construir da mesma maneira que a gente já construiu até o presente momento. Ou seja, documentação ruim acaba se expandindo e também segue sendo verdade que a documentação boa e código bom também acabam se expandindo. Então é muito interessante que, principalmente nos momentos iniciais de uma code base ou nas primeiras coisas que você vai dar ali como contexto para que aquilo lá esteja de altíssima qualidade, porque essa qualidade vai ser expandida, né? É
+
+aquele velho ditado, garbage in, garbage out, né? É entre lixo, sai lixo. Aqui a gente tem outro estudo e a gente tá buscando abstract desse estudo que vai trazer a documentação junto da IA e tentar ver acurác completidade,
+
+compreensão, ah, facilidade de leitura e tempo que demora em diferentes níveis de documentação de código. E alguns dos takeaways desse estudo, algumas das coisas que a gente pode aprender aqui, é que quanto mais próxima do código documentação, melhor. Então, o estudo conclui que, por exemplo, documentação a nível de arquivos tem um tempo consideravelmente pior, né? Uma performance consideravelmente pior em quase todos os parâmetros quando comparado com documentações in line ou a nível de função. Então, quando a gente fala de LLM aqui, a nossa documentação, ela precisa ser ter as seguintes características. Ela precisa,
+
+primeiramente ser correta. Se você não consegue garantir que a sua documentação tá correta e precisa, é melhor não ter. É preferível não ter uma documentação do que ter uma documentação ruim e incorreta. Segundo, ela precisa estar perto do código. E terceiro, auxilia bastante se ela tiver perto de testes também, né? Porque testes são
+
+determinísticos na maioria dos casos. E aí você consegue sempre ter uma garantia, né, tendo documentação perto dos testes ou de acordo com os testes, fazendo sempre um dif entre a documentação e o que tá escrito de maneira explícita nos testes, que essa documentação tá correta e precisa. Uma das coisas importantes pra gente notar aqui, e isso vem desde antes da gente ter IA como algo, né, como algo que os desenvolvedores usam no seu dia a dia, é que os desenvolvedores gastam mais ou menos 16% do tempo escrevendo o código. Deixa eu repetir isso daqui. Um dev, ele gasta em média de tempo ativamente escrevendo o código 16% do tempo. 16. Se
+
+você tem 40 horas na semana, você gasta mais ou menos 6 horas por semana com os dedos no teclado digitando código ou então, né, quem digita agora é o Cloud Code. Em parte é por isso que a gente não notou, quer dizer, algumas pessoas notaram um, digamos assim, um aumento de produtividade de muito alto e algumas pessoas estão trabalhando 4 horas por semana porque elas delegaram todas as outras tarefas para também, não só a parte de escrever código. Só que se você delegou apenas a parte de escrever código para OA, você economizou no máximo 16% do seu tempo. Você economizou no máximo 6.5 horas por semana.
+
+Independente desse número, você pode discordar se é 16, se é 20, se é 30, se é 50% do tempo. Eu não acho que seja 50 para quase ninguém, tá? a maioria dos dev escrevendo o código. Existem diversas outras tarefas que você tá fazendo com esse tempo. É, esse mesmo reporte diz que a gente perde 10 horas, algumas pessoas 10 mais 6, 16 horas por causa de ineficiências organizacionais, né? Isso
+
+aí aquele tipo de reunião inútil, mudança de contexto e tal, né? Eh, bem sabido isso. Essas ineficiências organizacionais não param de existir com o uso da IA. Mas a questão é, se a gente escreve código, a gente passa boa parte do tempo também procurando coisas. Eu pelo menos posso te garantir que eu passo um tempo gigantesco procurando coisas e entendendo coisas, né? Você
+
+procura a documentação de uma API, você entende a documentação dessa PI para entender como utilizar para resolver o seu problema, para você escrever duas linhas de código que vão resolver o seu problema. Surgiu um bug, você procura nos logs o a fonte desse bug, você debuga ali no seu código para tentar encontrar e reproduzir esse bug. Procurou, entendeu o bug? Entendeu a linha de código que causa esse bug? Você parte pra solução, que é de fato escrever o código. Que que eu tô
+
+querendo dizer para você aqui? Uma parte gigantesca das tarefas que não são escrever código. Essa parte é procurar, entender coisas até para fazer reuniões. Uma boa documentação próxima do código que reflete como aquilo funciona pode te auxiliar. Então, colocado tudo isso como nosso contexto, eu quero colocar uns pontos aqui para você que são interessantes. Existe uma mudança na
+
+forma com que a gente programa e muita gente tá começando, tem até uma piada, né? Hoje em dia eu sou programador markdown. Eu escrevo arquivos.md para Ia ler e a IA vai escrever o código, né? A minha principal linguagem de programação é Markdown hoje em dia, porque hoje em dia a documentação é contexto e contexto é a palavra do ano. A gente já falou
+
+aqui nesse canal de contexto para Iá. É bom que seu contexto seja pequeno, conciso e preciso. Então uma das recomendações para você documentar, você pode ter um arquivo, alguns arquivos de overview, de como cada como a codase funciona, né, um RIDM, como cada determinado módulo dentro dessa Code base mais ou menos funciona, quais são as barreiras desse código, né, as interfaces e tal. Mas de preferência essa documentação ela esteja o mais próximo do código que ela descreve possível, tá? Isso diminui um pouco o nosso contexto. Quanto menor o tamanho
+
+do contexto, melhor. Uma recomendação que eu quero fazer, que eu vejo muita gente errando hoje em dia, é que tá muito fácil, né? Gerar muito código, gerar muita documentação. Isso faz com que as pessoas escrevam muita documentação em volumes muito grandes. Isso vai de maneira diamet diametramente diamétrica. Ele sabe aquela palavra em
+
+inglês, eu não sei mais traduzir, gente. Perdão. É exatamente oposto do pequeno. Não caia na armadilha de escrever muita documentação, certo? Porque lembra, a gente falou que é melhor ter pedaços de documentação faltando do que ter documentação que não é precisa, documentação que é inacurada. Então é
+
+muito melhor que você tenha poucos e pequenos espaços documentados, mas a documentação esteja correta do que você tenha muita coisa errada. Então traga a documentação em trechos pequenos. Aí ela vai tentar ser prolixa, manda ela documentar em tipo assim, cara, cinco linhas. Você não precisa de um arquivo MD de 200 linhas para descrever uma interface de 20 linhas. Não faz sentido.
+
+Uma coisa interessante da documentação hoje em dia também é que antes a gente falava muito sobre uma documentação explicando como que o código é code base e as regras de negócio são, como que elas funcionam. Tem tido uma leve mudança nisso, em que a documentação se torna também um plano de controle para como a vai desenvolver código. Eu vou te dar um exemplo muito comum. É muito comum ler a sua Codebase, você pede para ela fazer uma migração no banco de dados e ela escreve um arquivo de migration do zero, mesmo você utilizando uma ORM. Então, na sua documentação você pode descrever como que a EA pode interagir com aquela code base, certo? Quais são
+
+os comandos? Os comandos para gerar migrations, os comandos para testar, quais são arquivos gerados via comandos, né? Arquivos gerados via tool calls, o que que tá deprecado, o que que é legacy, o que que não é para mexer, o que que é. e uma certa ordem de fatores dentro da documentação. Você pode descrever para EA, que é para ela fazer TDD. Dentro da documentação, você pode
+
+descrever para Eá que é obrigado a rodar ali um linter para ver como é que tá sei lá o quê, que é obrigado a rodar um sonar cube, que é obrigado a rodar sei lá o quê, um crap ou qualquer coisa do tipo. Dito isso, também existem algumas práticas que são interessantes para se situar melhor numa code base, que elas podem acelerar um pouco a compreensão de uma code base. Se você pega, joga uma Code base inteira nova no Cloud Code e manda ele fazer uma tesk, ele vai ter que navegar por muitos arquivos, por muitos repositórios, ele vai ter que guess, ele vai ter que adivinhar onde que certas coisas estão. A gente mostrou aqui no canal, no vídeo da harness, como que uma harness funciona, né? E o que que, pô, eu larguei o cloud code numa code base nova. O que que ele vai fazer,
+
+cara? Ele vai dar um ls e ele vai começar a listar todos os nomes de arquivos e todos os nomes de diretórios para tentar entender estrutura de pastas. Entendida essa estrutura de pastas, ele vai começar a ler alguns arquivos cujo nome parecem com algo que resolveria o problema que ele que eu mandei para ele resolver. Isso tudo, esse trabalho inteiro de entender o que que faz o que e o que que tá onde, pode ser substituído por um mapeamento do repositório, talvez um mapeamento hierárquico, que você tem um mapeamento bem pequeno, novamente pequeno e conciso, tá? Algo que seja um index.md,
+
+MD, um readm. MD, um mapa de arquitetura, digamos assim, um mapa do seu repositório que responda de maneira super sucinta as seguintes perguntas: Que que o repositório faz? Que que cada módulo faz? Quais são os entry points da API ou do que quer que seja? Cadê o esquema? Como é que se testa? Como é que
+
+se roda localmente e, enfim, mais algumas coisas que podem ser específicas dependendo do problema que você tá resolvendo. Com esse mapeamento consegue ler isso daqui e mais assertivamente encontrar onde que possivelmente tá um problema. você também vai querer, né, ter isso tudo que a gente falou aqui, né, de documentação e tal, dessas coisas e bons padrões a serem seguidos. Por exemplo, eu em todos os meus pontos MD para EA, quando eu tô escrevendo em Typescript, eu proíbo utilizar N, porque não faz sentido, né? Se eu tô usando Typescript, eu não tenho por usar N. Eu
+
+não gosto de N. Eu gosto de uma tipagem melhor e com IA tá cada vez mais fácil tipar de uma maneira adequada. Então, dentro do seu MD você coloca as suas as práticas que você gosta. O mesmo toque que você tem dentro da sua cabeça de como uma cod base é boa, você coloca no ponto MD também. Além desse mapeamento genérico do repositório, ele pode ser também de maneira um pouco hierárquica.
+
+Digamos que você tem três, quatro módulos, você pode ter também um index.md dentro de cada um desses módulos, explicando como que as coisas estão estruturadas dentro daquele módulo em específico. E o último nível seria, claro, a nível de código mesmo. Uma coisa que é muito importante é que a EA vai expandir aquilo que você faz. E aí ela vai expandir baseado na sua intenção. A gente fala bastante sobre
+
+tensão aqui. Uma das coisas interessantes isso colocar numa documentação é o porquê. Por que que isso tá dessa maneira? Da onde que vem esses números? Da onde que vem essas variáveis? Por que a gente tá usando
+
+isso? Porque que o design foi feito dessa maneira. Se você só descrever o que que tá feito, a vai expandir de qualquer maneira, da maneira com que ela entender. Se você descrever o por que foi feito daquela forma, existe uma chance da entender de fato o porque foi feito daquela forma e evoluir de maneira que esteja de acordo com os seus porquês, com as suas decisões. Nisso é possível. Agora, toma muito cuidado
+
+aqui, tá? que a gente já falou em contexto, a gente falou de poluir contexto. É possível que você tenha uma pasta ou algo nesse sentido que você possa armazenar adrs. Eu não sei o quão útil essa prática vai ser, porque existe um contexto limitado daquilo que é Avangeri. Ela não vai ler todas as ADRs que você vai colocar. ADR, né, é, para
+
+quem não conhece, é architecture, eu não lembro se é architecture ou architectural decision record, enfim. E explica a arquitetura de porque uma decisão foi tomada de uma forma. Essa tomada de decisão se traduz muito bem no porque que algo foi feito de determinada maneira e pode encaixar muito bem. Na verdade, muitas empresas mantêm uma lista de ADRs no Notion ou no na Atlesan lá, né? Ou em algo similar ao Notion e o Atlesen. Atlacian. Palavra difícil, né?
+
+Mas dá pra gente trazer pra Code Base agora. Eu não sei se eu faria isso. Eu acho que eu preferiria jogar a ADR exata como contexto para EA para cada tarefa específica. Dentro da Code base pode virar informação demais. Cria também, né? Aqui a gente falou escrever como
+
+cria também tutoriais, receitinhas pequenas de como que eu crio um novo end point, né? Lembra quando você era era júnior e você perguntava pro seu senor lá, cara, como que eu crio um novo depoint? Ele fala: "Ah, você vai vir aqui, você vai criar a parte da API aqui, a parte do DTO aqui, a parte do banco de dados aqui. Você pode escrever a mesma coisa para ah o seu júnior hoje em dia." E essas esses descrever como que se faz cada coisa dentro dos padrões sa base são bons. Você garante uma
+
+assertividade cada vez um pouco maior e você pode utilizar esse como, por exemplo, como que eu crio um end point novo? Pode virar uma skill, uma uma skill específica para esse projeto. Ou então você não quiser numa skill, né? faz ali um prompt ou um arquivo MD, qualquer coisa. Como fazer uma migração no banco de dados? Como adicionar uma
+
+nova feature flag? Como adicionar uma nova integração pra nossa lista de integrações? Como adicionar um segredo aqui, uma variável de ambiente? Acho que no geral era isso. Se você gostou desse vídeo, a gente tem vários cursos aqui no canal, inclusive um curso novo de system que saiu agorinha, acabou de sair. O
+
+link para todos esses cursos vão estar aqui na descrição, tá bom? Beijão. Tchau.

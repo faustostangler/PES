@@ -1,0 +1,300 @@
+---
+video_title: "Criando um Ledger (entrevista para dev sênior)"
+video_id: ktM-ocowE4Q
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ktM-ocowE4Q
+video_date: 2026-05-05T13:01:21+00:00
+video_description: |
+  🔴 Use a VPS da HostGator : https://www.hostgator.com.br/52508-13-3-12.html
+  
+  Repositório: https://github.com/gutogalego/simple-ledger-test-reference
+  Twitter do Sam: https://x.com/samsantosb
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Se você tá querendo hospedar o seu site ou seu SAS numa VPS ou hospedar um N8N ou OpenCla, eu tô recomendando a HostGator, que é patrocinadora aqui do canal. No vídeo de hoje, a gente vai explicar e vai criar um Ledger. E presta bem atenção que esse vídeo vale $150.000. Por que que eu tô falando isso? Esse é
+
+um vídeo de um desafio que eu fiz para entrar numa vaga numa empresa dos Estados Unidos. O salário anual da vaga em dólar era ó, tá? uma vaga para desenvolvedor senior numa empresa do eh ramo financeiro, uma fintech. E esse é um salário perfeitamente normal para um Dev Senior que trabalha numa fintecch nos Estados Unidos. Era uma vaga remota global, podia morar em qualquer lugar do planeta. E eu tô falando que esse vídeo
+
+vale isso, porque nesse desafio a empresa mandou, né, pediu para eu criar um Ledger. E o código que eu vou te mostrar hoje com o GitHub, inclusive, tá? Você vai ter acesso a esse código, o link pro GitHub vai tá na descrição, passou no teste da empresa, tá? Esse é um desafio real de uma vaga real que pagava 150.000, que eu fiz o desafio e passei no desafio. Agora, eu não fui contratado
+
+para essa empresa porque duas etapas depois dessa optaram por outro candidato, mas nessa etapa desse desafio eu passei. Você vai ver na íntegra o desafio, né, o enunciado do desafio e o código que eu fiz e como eu fiz para me destacar nesse desafio para essa empresa. E a gente vai ver bastante conteúdo de Node no exemplo de hoje, porque o desafio foi feito em node. Um dos caras que me ensinou muita coisa de node foi esse cara aqui, ó, o Sem. Sam é um brother meu e se você tiver interesse, ele dá aula de Node também, tá? O link pro perfil aqui do SAM vai tá
+
+no na [limpando a garganta] descrição. Se você quiser entrar em contato com ele para aprender mais de Node, ele ensina muitas coisas que eu vou mostrar aqui para você hoje. Bom, vamos lá. Já falei sobre Ledger várias vezes aqui no canal, mas eu preciso explicar de novo o que que é um Ledger. E eu preciso explicar também o que que é o tal do double entry bookkeeping. É, eu não sei, eu não
+
+lembro como se traduz isso em português, tá? Eh, tipo, sabe quando você faz a contabilidade dupla que você conta os créditos de um lado, os débitos de outro e a conta precisa fechar no final? Eh, é isso, tá? É contabilidade de livro duplo, talvez algo assim. Bom, um Ledger é efetivamente, tá, para todos os propósitos práticos, uma lista de um conjunto de ações. Então, você vai ter
+
+aqui ação um e depois da ação um você vai ter ação dois. Depois da ação dois, você vai ter a ação três. Você pode pensar num ledger como uma lista linkcada, em que, tipo, primeiro uma ação executada, depois outra ação executada, depois outra são executada, certo? São ações que são inerentemente sequenciais. Às vezes essa sequência ela é determinada pelo tempo, às vezes é uma sequência mais lógica. Geralmente no
+
+mundo real essas coisas vão acontecer baseado basicamente na time stamp em que o servidor processou essa requisição. Então você não precisa pensar muito nisso. Você pode fazer um ledger de qualquer coisa, tá? Você pode fazer um ledger de xadrez, por exemplo, né? O que que seria um led de xadrez? E eu não sei
+
+muito sobre xadrez, tá? Mas enfim, imagina que você vai, ah, eu mexi a peça do A1 pro B1. Então, Augusto, né? Eu mexo a peça do A1 pra B1. O outro jogador, o meu inimigo, vamos colocar aqui o SAM, tô jogando cha, mexe a peça dele de, sei lá, J4 para J5, certo? Se
+
+no meu Ledger eu armazenar todas as movimentações que foram feitas durante esse jogo de xadrez, se eu armazenar todos os movimentos que cada jogador fez na ordem em que eles foram feitos, eu consigo sempre reproduzir o jogo exatamente como ele aconteceu. E eu consigo também dizer qual que era o estado do board, né? Qual que era, tipo, você imagina que assim, né, um bordezinho de xadrez, eu consigo dizer qual que era o estado desse desse tabuleiro em todos os períodos de tempo, porque eu sei como um tabuleiro de xadrez inicia e eu consigo, a partir da reprodução dessas ações aqui, dizer em dado momento, né, vamos colocar aqui, aqui é t1, antes disso a gente teria o t0, que é o o estado padrão do xadrez. Aqui a gente vai ter o T2, né? Para eu saber o estado desse campo de xadrez, desse tabuleiro de xadrez, tudo que eu preciso fazer é reproduzir todos os passos desde o Tzer até o momento em que eu quero saber o que que tá acontecendo.
+
+Então, para você fazer um Ledger pensando assim em alto nível, tudo que você precisa fazer é escolher uma forma, uma estrutura de dados ou uma tecnologia para você armazenar todas as ações tomadas dentro de um sistema e todas as informações necessárias sobre essa ação. Eu usei aqui, exemplo xadrez, né? Qual? O que que eu preciso saber numa jogada de xadrez? Preciso saber quem fez a jogada e qual peça foi movida de qual casa para qual casa. Beleza? Acho que no
+
+xadrez essas são todas as informações necessárias. O ledger que a gente vai fazer hoje, ele não é um ledger de xadrez, ele é um ledger de mercado financeiro, de finanças, né, de transações. Aqui, Ledger de fintech. Numed fine, o que que você precisa geralmente saber, né? Qual que é a conta que tá tomando determinada ação, se essa conta tá fazendo um eh crédito ou débito, tá? De repente, qual o valor,
+
+qual a moeda, qual a conta de destino? E a princípio é isso daqui, tá? são os mais importantes. Saindo do exemplo de xadrez e indo para um exemplo de finanças, de contas bancárias, a mesma lógica se aplica em que em todos os momentos na história eu consigo determinar qual que era o estado da minha conta bancária. Se você for lá no seu aplicativo de banco, qualquer banco e você pedir um extrato do mês de janeiro, eles vão conseguir te dizer exatamente qual que era o seu saldo no início do mês, o saldo no final do mês, todas as transações feitas naquele mês, porque o seu banco é um banco profissional e ele tá usando sim um lederger por debaixo dos panos. Nenhum
+
+banco vai armazenar o seu saldo, nenhum banco vai armazenar na sua conta bancária apenas uma coluna saldo. E nessa coluna saldo vai ter o quanto dinheiro você tem, tipo 40. E seria muito, muito ridículo, né? uma pessoa simplesmente podia dar um update e aumentar o 40 para 400.000 aqui. Ah, não
+
+ia ser muito seguro, não ia ser muito bacana, não ia ter muita auditabilidade. Então o Ledger ele vem para ser uma única fonte de verdade sobre todos os as ações tomadas dentro de um sistema, tá? A sua conta dentro de um Ledger, ela geralmente vai começar com saldo zero. Então a gente sabe que no T0 você vai ter o saldo zero. Você vai poder, por exemplo, fazer um depósito na sua conta.
+
+Fiz um depósito de R$ 1.000. Depois desse depósito, eu fiz uma transferência. Eu paguei um Pix aí pra Receita Federal, fiz um Pix pra Receita Federal e eu debitei da minha conta, né? Eu tirei da minha conta menos R$ 100.
+
+Baseado na no na informação de que em T0 eu tinha R$ 0, em T1 eu depositei R$ 1.000, em T2 eu paguei, né, R$ 100, eu consigo saber, eu consigo ter a informação perfeita de exatamente quanto dinheiro eu tinha na minha conta nesse determinado momento de tempo. Algo que seria impossível se eu tivesse apenas uma coluna saldo e eu vou dando update nessa coluna saldo, né? Eu faço update de zero para 1000 e depois eu faço update de 1000 para 900, né? eu teria perdido todas as informações intermediárias. O Ledger armazena todas
+
+as informações intermediárias. Então é compreendido como você pode criar esse ledger, né? O que que que esse led vai fazer aqui? Você poderia na implementação mais tosca do universo só criar um array de objetos. Dentro desse array de objetos, cada objeto aqui pode representar uma transação. E cada objeto
+
+aqui você vai armazenar aqui a as informações necessárias, né? o, enfim, se foi um crédito, se foi um débito, qual o valor que entrou ou saiu, qual o destino disso aqui. E dentro desse seu array, super simples, em teoria, você conseguiria saber, né, eh, em todos os pontos aqui dentro desse array, em todos os tempos aqui dentro, qual o saldo exato da sua conta, qual que era o estado atual do do sistema em qualquer um desses pontos, tá? Na prática, você vai fazer isso no array? Não, você não vai fazer isso no array. Na prática,
+
+você provavelmente vai usar algum tipo de banco de dados com bastante redundância, que vai permitir que você armazene cada transação, cada ação tomada de maneira individual. Dentre as opções populares no mercado que eu vejo, as formas que eu vejo as pessoas solucionando esse problema no mundo real, postergres é comum, não é o que eu gosto, eu sou mais fã de no SKL para Ledger, mas Postgers é bastante comum em que você vai ter que efetivamente esses aqui e conta, crédito, valor, destino, quem, o, sei lá, o ID do usuário, o time stamp, etc, etc. Tudo isso aqui vão ser colunas dentro de uma tabela no postgres e essa tabela vai se chamar, por exemplo, transactions, tá? É super comum isso daqui é feito em Postgress. Já vi isso sendo feito acho que em duas empresas, tá? Eh, que utilizavam PGress.
+
+Outra opção razoável é dynamo database. Já vi sendo feito, já vi sendo feito em Mongo DB, tá? Na verdade, você vai perceber que a tecnologia em si, qual delas vai ser usada não é tão importante. Todos eles têm prós e contras, né? Por exemplo, o Dynam é muito caro, o Mongo é muito flexível e o Postgres, se o seu Ledger crescer infinitamente, pode se tornar um pouquinho lento. Então, todos eles tm
+
+pró e contra. Você ainda pode ter outras opções aqui, tá? Essas três não são as únicas opções, mas foram as que eu vi sendo utilizadas na prática. Tá bom? Bom, entendido o que é um Ledger, entendido como dá pra gente fazer esse Ledger, eu vou te mostrar uma implementação super simples do Ledger mais básico do planeta em JavaScript.
+
+Não é isso que não vai escalar bem, tá? É tudo inseguro e tal, mas só para você entender na prática aqui um pouquinho. Depois, no futuro, a gente vai acabar complicando, tá? Ah, e só um adendo aqui, esse desafio aqui que era um take home para criar o LED para essa empresa que eu que eu fiz, né? Eu fiz esse desafio, podia usar, tá? É um detalhe
+
+interessante. Os desafios hoje em dia, muitas das empresas estão permitindo o uso de EA no desafio, porque sinceramente não tem como você impedir o uso de IA. E a pessoa vai te jogar baseado na qualidade das suas decisões de de arquitetura, de padrões do projeto e também baseado na sua capacidade de compreensão da solução e explicação da solução numa reunião subsequente, né? Então você vai fazer o desafio, depois você vai se reunir com o time de engenharia e vai explicar a sua solução e porque você tomou as decisões que você tomou. E é isso que eu vou fazer aqui hoje com você. Muito bem, nosso Ledger
+
+super super básico. Você pode ver que é uma estrutura dentro da memória da própria JavaScript, tá? Eu criei aqui uma classe Ledger. Essa classe Ledger tem, como eu falei, um array de transações super simples. É, é até meio estúpido e não vai escalar bem, não. Não
+
+é assim que é para fazer. A gente tem aqui um ed que aceita amount, né? um valor e uma descrição. Esse ed cria uma transação, tá? E essa transação nova é adicionada à lista de transações dentro do Ledger. É só isso que ele faz. Não
+
+faz mais nada além disso. Você tem um get all que retorna todas as transações, um get balance que retorna o balanço daquela transação. Ou seja, o que que ele faz? Ele percorre o ledger inteiro. E ao percorrer o ledger inteiro, ele consegue dar o balanço ali de cada conta. Você tem também um get
+
+transaction by ID para pegar o ID de uma transação. Você tem um delite aqui, tá? Eh, num ledger tradicional você não faz delite, porque o que que você faz, né, quando você faz um ledger, supondo que uma transição fraudulenta ocorreu, então a gente tem tipo, pô, sei lá, debitou R$ 67 do João e o banco percebeu que essa transição aqui era fraude. O que que vai acontecer? Você vaiar isso daqui do Ledger? Não, você nunca vai deletar isso
+
+do Ledger. Os dados eles só vão pra frente, nunca para trás. Você não deleta dados antigos. Que que você vai fazer? Você vai identificar que foi uma fraude e você vai inverter a transição. Você
+
+vai fazer o inverso dela, que é então creditar R$ 67 pro João, né? E aqui, né, como você vai ter conta, valor de etc. Você pode ter outras variáveis também indicando o uma descrição, o que que aconteceu, algo nesse sentido. E você pode simplesmente, né, ter uma flag que, sei lá, é fraude ou qualquer coisa do tipo. Isso aí adessão interna da equipe de como você vai resolver esse problema.
+
+Mas ledgers geralmente não tem delite. Não é para ter delite. Você pode também inverter, mas você não tem delite. Bom, no nosso Ledger aqui, a gente vai adicionar 100. Perceba que esse Ledger não contém contas, tá? Ele é tipo como
+
+se fosse o ledger de uma única conta. É, ele não contém múltiplas contas, é todas as transações dentro da mesma conta. Então, a gente vai adicionar R$ 100 aqui de salário, a gente vai tirar R$ 100, eh, perdão, R$ 30 aqui de groceries, né, de mercado e tal, e no final a gente vai logar todas as transições que foram feitas e a gente vai logar o balanço final desta conta. Eu posso dar aqui um ban example.jgs, que é o nosso arquivo.
+
+E o que temos aqui? Transação 1, R$ 100, descrição, salário e o tempo aqui, né? Transação dois, -$ 30, groceries e o tempo aqui também. No final, o seu balance aqui é 70. Tá duplicado porque eu rodei duas vezes sem querer. Então é
+
+isso, Ledger super simples. Vamos então começar a ler o nosso desafio, o desafio que a empresa me passou por aquela vaga lá de infinitos $. 1.000. Se você quiser ler o texto na íntegra, novamente no repositório aí no GitHub, tem um exemplo para você ler. Se você quiser tentar
+
+resolver por conta própria antes de ver o resto desse vídeo, pode ser bastante legal, tá? Você pode ler isso aqui, tentar resolver e depois ver a minha solução. Bom, que que é importante se notar aqui, né? Aqui tá descrevendo o que que um ledger é. Eu não vou ler tudo isso daqui, a gente não precisa ler tudo isso. Agora, um detalhe importante é o
+
+nosso sistema de livro razão também inclui a noção de direção das contas. Algumas contas representam principalmente passivos ou movimentação de fundos para fora da propriedade, quanto outras acompanham ativos, fundos que entram, tanto tem uma conta de crédito e uma conta de débito. Essas contas têm sinais invertidos. Então, toda conta tem uma direção. A direção é debit credit. Isso aqui é algo
+
+específico dessa empresa, tá? Você para fazer um LED não necessariamente precisa disso. Embora isso exista, alguns lugares fazem dessa maneira, não é regra. Você não precisa ter uma conta unidirecional, tá? Mas enfim, aqui eles quiseram ter uma conta de débito e uma conta de crédito. E aqui, ó, os saldos
+
+das contas nunca podem ser modificados diretamente. Elas só podem ser alterados através da criação da transação, novamente descrevendo o que que é um Ledger. E existe uma propriedade muito interessante aqui que a gente vai explorar algo sobre, que é os lançamentos precisam ser equilibrar. Isso significa que a soma de todos os débitos deve ser igual à soma de todos os créditos. Isso daqui nesse contexto, no contexto desse desafio, é o tópico de double entry bookkeeping, que eu tava falando aqui, né? Você vai ter dois
+
+books aqui, o book de débitos o book de créditos. Todas as vezes que eu lançar uma um débito aqui, por exemplo, você lança 100 de débito aqui, eu necessariamente preciso ter 100 de crédito em outro lugar. Algo também diferente pode ser feito. Eu posso explitar uma transação em duas transações diferentes, tá? Como assim?
+
+Você pode ter que eu tenho um débito de 30 de uma conta e 60 de outra conta. Esses dois juntos vão se tornar aqui 90 nessa conta. Então esse bloco inteiro aqui representa uma única transação, tá? Uma transação que saiu 30 de uma conta, saiu 30 de outra conta, entorno 90 numa conta, tá? Você tem as contas de de crédito débito aqui. Cada um desses aqui
+
+vai ter um ID. Então a gente vai ter o ID da transação. Cada transação vai ter o que a gente chama de uma entry. Então esses esses pontinhos aqui individuais, ó, isto aqui é uma entry, isto aqui é outra entry, isso aqui é outra entry. Uma transição pode ter três entries.
+
+Esse é o tal do double entry bookkeeping. E o resultado final em todos os momentos precisa ser exatamente igual nas contas de débito e nas contas de crédito. Então, tipo assim, aqui a gente vai ter 100 de um lado, né? E a gente vai necessariamente ter 100 do outro lado também. Aqui no final a gente necessariamente precisa ter 190 de um lado, 190 do outro lado, de modo que é uma soma zero, né? Dinheiro não pode ser
+
+criado nesse sistema. Para ele entrar numa conta, ele precisa estar necessariamente registrado que ele saiu de outra conta, né? Essa é a ideia de um ledger com um double entry bookkeeping. Vai sempre dar soma zero. Aqui você pode ver que aqui a empresa que fez o desafio, né, deu o exemplo disso aqui, ó. Cada conta vai ter o saldo inicial da
+
+conta, né, começa aqui em zero. Direção da conta, né, cada lançamento, cada entry vai ter a direção do lançamento, o que pode confundir um pouco, porque você pode ter um crédito sendo lançado numa conta de débito. Esse desafio é bastante confuso, tá? Quando você lê o desafio aqui na íntegra, você vai ver que é um pouco confuso, mas enfim. Você pode debitar de uma conta de débito ou você pode creditar de uma conta de débito, tanto faz. E aí você vai ter os valores
+
+de cada lançamento e o saldo final de cada conta, né? Aqui nesse desafio também foi nos dado um guia de API. O guia de API ele é super simples e a gente tem inclusive exemplos aqui, ó, de post requests, como eles esses posts vão ser feitos. O que que é pra gente criar nesse desafio, né? O que que é pra gente ter aqui? é paraa gente conseguir criar
+
+contas, accounts e é paraa gente conseguir criar também, hã, ah, enfim, você tem aqui os exemplos, né? Eh, criei um account, essa criação vai me dar a resposta de um account que o saldo vai ser zero, a direção da account que a gente mandou, o ID da account, que curiosamente, né, esse é um desafio um pouco estranho, é, a gente pode fazer o post a gente mesmo passando o ID da Account no post request. Isso foi algo que quando eu fiz o desafio, eu questionei a empresa, eu falei: "Olha, não acho que faz muito sentido". E eles falaram: "Cara, faz do jeito que tá descrito aí. Eh, se você quiser tomar alguma decisão um pouco diferente, explica porque você tomou uma decisão diferente." E a decisão que eu tomei,
+
+né, quando resolvi o desafio foi que eu fiz esse ID aqui ser opcional. Então, a gente podia de fato passar esse ID, eu validava ele no backend, mas eu tornei ele opcional porque, cara, eu acho muito estranho você passar um um criar uma conta passando já o ID que vai ser salvo no banco de dados. para mim não tá correto. Enfim, você tem um get da account ali. Esse get da account ele vai retornar o saldo da conta. Então a gente
+
+precisa calcular esse saldo no get, tá? Ponto interessante a se notar. E além de conta você vai ter as transações aqui em que você vai poder criar uma transação. E ó, e isso aqui é um exemplo, tá? Cria uma transação, nome da transação, teste.
+
+Novamente você tem o ID da transação aqui que você pode passar no request post. Acho isso muito estranho. Também fiz esse ID ser opcional, tá? E aqui você tem as entries. Cada entry vai ter uma direção, né? Então, se essa se essa
+
+eh como é que chama uma entry? Meu Deus, tá me dando branco. Lançamento, se esse lançamento vai ser um débito ou se esse lançamento vai ser um crédito. E ele tem o ID da conta correspondente. E a minha a minha ideia aqui foi muito simples. É,
+
+o que que eu vou fazer para garantir a integridade? Cara, eu vou checar se a quantidade de débitos e de créditos que a gente tem aqui dentro dos lançamentos é igual. E se for igual tá validado, se não for igual não tá validado. Cria lá no Ledger e se vira depois. Bom, quais os requisitos daqui? Eh, era uma empresa
+
+que trabalhava com Typescript, tá? Então, o requisito é implementar tudo em Typescript e Node. Usar armazenamento em memória para as contas, nenhuma configuração de banco de dados é necessária, garantir que a lógica de negócio esteja correta, especialmente as regras de balanceamento de partidas dobradas de double entry, imagino, e a atualização de saldos das contas. Ah, inclusive, é, perdão. Se você quiser o desafio em inglês na íntegra, eu tenho ele em inglês na íntegra, tá? Isso aqui
+
+é uma tradução do desafio, por isso que a tradução pode estar um pouquinho estranha. Fornecer um ritm, criar um repositório no GHub. E o repositório que eu tô te mostrando agora, ele não é o exato repositório que eu mandei pra empresa, mas ele contém o mesmo código, tá? O que vamos avaliar na sua submissão? Arquitetura e organização do código. Se o design é claro, modular, é
+
+fácil de entender. Corretude, né? correção da lógica de negócio. As transições estão balanceadas, as contas são atualizadas corretamente. Clareza e legibilidade, o código e a API são fáceis de entender. Profundidade
+
+técnica. Esse ponto que eu foquei bastante e eu vou te explicar o como eu foquei bastante nesse ponto para me destacar nesse desafio, mostrar que eu sou muito bom, porque é isso que é para você fazer numa entrevista, é para você mostrar que você é muito bom. E foi isso que eu tentei fazer. Eu tentei mostrar que eu era muito bom. Esse é o código que eu, cara, trhardei aqui no desafio, tá? Eles me falaram que esse desafio era
+
+para levar mais ou menos 4 horas e como podia usar IA, eh, dá para fazer bastante coisa em 4 horas. Então, nosso desafio precisa conter esses double entries aqui. Eu te expliquei como cada transição é para ser feita, o que que consiste em cada entry. A nossa aplicação, ela tem claramente duas responsabilidades aqui, né, bem dizer lidar com accounts, é criação de contas, cálculo de saldo de contas, esse tipo de coisa. E lidar com transactions, criar novas transações, buscar as transações, tá? A principal responsabilidade e
+
+dificuldade aqui na da lógica de accounts vai ser mesmo o balance, vai ser o saldo das contas, né? Esse aqui é o maior ponto de atenção. O maior ponto de atenção nas transactions vai ser mesmo a criação para garantir que elas estão balanceadas, tá? Tendo esses pontos de atenção aqui, é relativamente fácil solucionar esse desafio. Qual que foi a minha ideia, então, para solucionar isso daqui? Qual que foi a
+
+minha ideia para escrever um código limpo com um padrão minimamente decente de arquitetura? Tá? Primeiro, o nosso desafio não pedi um front end, mas eu criei um front change aqui eh totalmente vibe coded, tá? Eu não escrevi nenhuma linha de código aqui, novamente podia usar are nesse teste. E o front end que eu criei é o mais simples possível, tá?
+
+Só para facilitar a utilização da API. Então, a gente tem o front end que cria uma conta, eh, busca a conta, lista todas as contas, cria as transações e tal. Eu não vou ler e te explicar o código desse frontend porque eu também não li. Ele era um desafio que não requeria frontend. Eu só criei esse front end para facilitar mesmo a utilização da API, porque eu acho mais fácil você utilizar uma API assim, você visualizar as coisas aqui, do que ter que ficar fazendo curl o tempo todo.
+
+Então a gente tem um front change aqui totalmente vibe codado e para ser simples mesmo, para ser bem bem seco aqui, tá? Sem muito embelezamento. Tirando esse index.html, a gente tem um source. O sourceu, primeiro eu criei uma única coisa que era os módulos. A parte
+
+mais importante tá aqui, ó. a gente tem os módulos de accounts e os módulos de transactions. Então você pode pensar que a minha arquitetura tá mais ou menos da seguinte maneira. Os módulos, né, cada um desses dois aqui é um módulo responsável pelas atividades daquele daquele módulo, né? E dentro de cada um deles a gente tem domain, DTO, HTTP, MAP, repositório e service. É bastante
+
+coisa, mas elas são todas super simples. Vamos colocar aqui, né? domain, DTO, http, Mapper, Repository e Service Galego. Mas isso aí é overengine engineering. Também acho, meu querido, concordo. Você não precisa disso para
+
+uma aplicação super simples, porém era uma entrevista que eu queria mostrar que eu dominava os conceitos, eu queria me exibir e por isso que eu fiz dessa maneira. Aqui em cima você vai notar que a gente tem domain também. Isso daqui é, eu criei essa pasta domain aqui em cima do source. Deixa eu dar um zoomzinho aqui, ó, pra gente ver maior. Essa pasta domain aqui em cima tá pra gente lidar com três coisas: direção, dinheiro e erros. Por que que dinheiro eu acho
+
+muito importante? Todas as aplicações que você vai lidar com dinheiro, eu acho interessante que você crie alguma estrutura específica para esse dinheiro. Aqui eu criei uma classe dinheiro e todo o dinheiro vai ser dentro dessa classe pra gente não ter, porque tipo assim, qual que é o problema que você tá lidando com dinheiro? Como é que você representa R$ 10? Você representa tipo 10 in ou você representa 10.00 ou você
+
+representa de 10.00 porque você pode ter quatro zeros depois da casa, né? E eu nesse desafio para demonstrar que eu entendia novamente para demonstrar que eu era fera, que eu era o cara, você tem aqui que para esse teste eu vou enforçar, né? Eu vou obrigar duas casas decimais e apenas duas casas decimais, mas em sistemas de produção real, a gente usaria um formatador de moeda mais preciso, geralmente decimal 19,4 ou int com micros, tá? E aqui a gente tem também um cálculo de margem de erro por causa de floating point e etc. Também coloquei
+
+outro comentário que em produção a gente poderia utilizar de bankers rounding, o arreduntamento bancário para lidar com algumas imprecisões. Por que eu coloquei isso? Novamente, porque eu tô sendo entrevistado para umaffintec e eu quero honestamente demonstrar que eu sou o cara. Nota que eu também coloquei um to aqui, ó, dizendo que JS Doc pode ser uma boa ideia em tudo que é global, pra gente ter uma documentação um pouquinho melhor em tudo que é global de fato, embora já esteja em Typescript, tá? Joock ainda pode ser uma boa ideia, mas eu não fiz por questões de tempo, então não tem essa documentação. Você precisa
+
+se lembrar também que esse teste é de um ano atrás, quando o cloud code era pior e a gente não tinha o Cloud Opus 4.5, mas aqui está, né? Eh, enfim, a classe money, ela é criada para armazenar cents. Então você vai ter aqui que eu vou armazenar centavos apenas. E é isso.
+
+É uma classe criada para armazenar os centavos e calcular aqui precisamente quanto que é dinheiro pra gente padronizar a utilização de dinheiro na aplicação inteira. Além disso, no domin customizados. Cada erro customizado é para lidar com um dos casos que eu pensei que a gente poderia lidar. Simples. Simples assim. Então, Account
+
+not found é um erro quando você tenta criar uma transação numa conta que não existe. Transação desbalanceada é um erro também. Transação não encontrada é um erro também. Erro de validação genérico. O que que seria um erro de validação genérico? Quando você tenta,
+
+pô, sei lá, mandar um amount que é E3 2, não sei, algum amount que não faz muito sentido. Ou então você manda um cod, né? Isso daqui não são uids, não é para funcionar. Erro de transição duplicada, muito importante ledger, e erro também de transição vazia, porque não faz sentido criar uma transição sem nenhuma entry, tá? Esses são os erros aqui dentro do do domain e a gente tem também direction, que, cara, é simplesmente um enum de débito e crédito, porque não sei, eu não sabia mais onde colocar isso. Então, coloquei aqui. Você vai
+
+notar que aqui eu tenho um comentário muito interessante, que isso daqui mantém o proper stack trace para onde o erro foi jogado. Então, a gente vai ter que esses erros aqui, né? Isso aqui vai ser um rapper em cima dos erros. Eu botei que também é only available in VH. Quem me ensinou isso aqui foi o Sam. E
+
+eu coloquei isso aqui para mostrar que eu sou o cara novamente. Você tem que se mostrar na na entrevista. É para isso que a entrevista tá aí. Tipo assim, por que que a gente tem uma classe customizada domain error que estende o erro? Para deixar um pouco mais limpo, para eh criar os nossos erros aqui customizados, né? Cada tipo de erro
+
+específico que a gente pode ter. Todos os meus tipos de erros estão estendendo desse domain error aqui em cima. Então você vai ver no código, né? Por exemplo, esse account not found error vai ser utilizado aqui, ó. E aqui a gente tem um troll. Se não existir account, eu dou um
+
+trow nesse account not found. Como esse é o bagulho que eu mesmo criei, tá? Eu mesmo criei esse tipo aqui, eu mesmo criei essa classe de account not found, s domain error, eu forço que todos os erros ten esse capture stack trace para manter o o stack trace. Legal, né? Bem bacana. Bom, sobre domain era isso. A
+
+gente tem domain infra módulos, que é o mais importante, e shared, que é aquilo que é compartilhado, tá? Na parte de infra, o que que eu tinha originalmente que eu refiz depois? Era um simples array. Era basicamente esse exemplo aqui que eu te mostrei, tá? Isso daqui era o meu mock de banco de dados, até porque no desafio especifica que eu não preciso ter um banco de dados, eu podia ter uma estrutura em memória. O que que é
+
+interessante? Que através do Node 2. SK Lite, eu consigo demonstrar que eu conheço que o Node tem esse SK Lite dentro dele, tá? No Node 22.5 C e superiores, a gente tem esse SK nativo que dá de usar dentro do do node. Então
+
+eu consigo ter um escalite em memory super legal. Então aqui em infra, né, essa seria a parte que e nota que o infra tá segregado aqui de propósito. A gente tem infraestrutura segregada de propósito, porque se eu quiser substituir isso daqui no futuro por outra outra infra, vai funcionar de boa. Tipo, se eu quiser trocar meu banco de dados, já que eu claramente não vou usar isso aqui em produção, quando for para mudar, ele tá numa pasta separada aqui. E isso daqui não é para afetar o resto da aplicação, não vai afetar meus módulos, não vai afetar meu shared, não vai afetar meu domain, ele tá isolado, então a gente mantém um isolamento aqui.
+
+Isso mostra um bom padrão aqui. Eu não vou ler para você todo esse banco de dados porque honestamente é meio sem graça. É só a criação das tabelas aqui, né? Criação da da transactions, criação da accounts, é algumas restrições que a gente criou aqui também, tá? É novamente, isso que também foi vibe codado. Eu não escrevi todo esse código,
+
+não. Não teria tempo para isso. O desafio demorava 4 horas, não consigo fazer isso daqui tudo em 4 horas. Mas você tem um skelete. Aqui outro ponto que eu quero ressaltar nesse desafio é que eu criei testes para dinheiro, porque eu acho muito importante que dinheiro esteja funcionando corretamente. Então você, olha aqui que
+
+legal, né, a ideia do dinheiro. Se eu crio um dinheiro em cima de 100.5, é para isso virar eh tipo 10.05. Entendeu qual que é a lógica aqui? Então
+
+você tem vários testes em cima do dinheiro. Eu só criei testes para dinheiro. Eu não criei teste em absolutamente tudo. Por exemplo, eu não tô testando meu meu directions aqui. Nem faz sentido testar isso. Eu não tô
+
+testando necessariamente meus erros aqui, tá? Mas eu tô tô testando dinheiro porque eu acho extremamente importante testar o dinheiro. Tô testando também o banco de dados porque eu também acho isso importante. Então você vai ver que tem testes unitários para essas partes cruciais específicas em que a aplicação é construída. A gente ainda não foi pra lógica de negócio de fato, tá? É a
+
+última coisa que eu quero entrar. Eu só quero mostrar o tipo o que que tá em volta disso e por que eu acho que eu fiz boas boas escolhas aqui, bons padrões. Em shared, em compartilhado, a gente vai ter um middleware para lidar com error handling, tá? Isso aqui foi feito em específico porque a utilização é o framework escolhido aqui foi o Hono e isso aqui é meio que padrão no Rono. Então a gente tem esse middleware que vai lidar com os erros, tá? Não tem nada
+
+de super interessante aqui, é só só uma só um midware, super simples. Temos também o nosso validation, que cara, métodozinho super simples para validar aqui o Jason com o esquema do Zio, tá? Nada demais. Só porque quando a gente recebe requests na nossa API, a gente precisa validar que eles estão de acordo com o esquema. Eu escolhi o Zod para fazer rentime validation. E nota, é
+
+muito importante a gente diferenciar o que que é o Typeescript do Zod. A gente tem, por exemplo, que aqui no Typescript eu defino o que que é uma account, né? Essa definição de account, isso daqui é type, é uma definição eh um linter estático. Isso daqui não faz validação em run time. É diferente, né? Quando a
+
+aplicação ela tá estática ou quando ela tá rodando de fato. Para eu validar a minha aplicação quando ela tá rodando de fato, eu utilizo o ZOD para isso. Por isso que a gente tem domain, né, que é onde eu tenho o meu domínio e o meu DTO, meu De object, para fazer essa validação, de fato, utilizando o ZOD. Então, com o Z OD, eu consigo validar os meus inputs de criar uma conta ou de ou o o response, né? E eu consigo validar que o que foi enviado para a API é aquilo que eu tô esperando. E aqui entra
+
+aquele ponto que eu te falei, ó. O ID obrigatoriamente é um edal. Ele é opcional porque, sinceramente, eu acho que a gente deveria criar isso e no backend, né, no front. Nome da conta também é opcional e a direction não é, né? A direção ela é obrigatória. Enfim,
+
+por último, nos compartilhados, a gente tem o cash. Eu tô utilizando node cash. Pelo simples fato de que era uma vaga de node, eu queria demonstrar que eu entendo de node. E a gente tem uma ID em potência. Pausa para explicar o que que é ID potência. Você acompanha o meu
+
+canal, você já ouviu explicar isso aqui 300 milhões de vezes, tá? Que que é uma idem impotência? é a garantia de que a mesma transação não vai executar várias vezes. Então, tipo assim, você tem uma transação em que eu mando R$ 15 pro Joãozinho no dia de hoje, no horário 14:35. Se depois eu tentar fazer essa mesma transição às 14:36, cara, não deveria passar, deveria ser bloqueada essa transação porque é uma transação duplicada, pode ser que seja o mesmo request e tal. Então, para
+
+resolver esse problema, cria-se uma chave de ID em potência, uma idem potency, que essa chave de ID em potência, nesse caso em específico para esse desafio, eu vou armazenar uma cash em memória. Então, né, a gente cria aqui o Node cash, a gente cria aqui o TTL, o time to leave de cada transação é 15 minutos. Então, a cada 15 minutos, eh, eu poderia executar essa mesma transição passado os 15 minutos, que aí eu interpreto que não é mais a mesma coisa, eu interpreto que é diferente. Você tem o check period, né, que é o quanto você checa, quanto tempo você checa, que é para deletar as coisas e tal. Então você tem mais 5 minutos ali para checar e deletar as, enfim, as chaves. E é isso,
+
+a gente tem uma cash para ID potência. Nota, em produção não é interessante que você utilize uma cash em memory. Por quê? Porque em produção, muito provavelmente, você vai ter aqui, ó, máquina um, máquina dois. Você não sabe para qual máquina os requests vão cair.
+
+E se você utilizar node cash, você vai ter dois Node cash diferente, ó, node cash aqui dentro, você vai ter outro node cash aqui dentro. E pode ser que uma transção duplicada passe porque ela foi para cá e para cá ao mesmo tempo. Não é legal isso daqui. Em produção, você provavelmente vai querer mover isso daqui para um heads que está em outra máquina e ambas máquinas checam esse headges para a chave de impotência, tá? Você vai checar a idem potency aqui aqui nessa outra máquina. Como não era o caso
+
+aqui, usar uma cash in memory está perfeitamente adequado para esse desafio. Bom, explicados todos esses conceitos, vamos para as partes interessantes, o index e os modules. O index vai ser o que cria a nossa aplicação. Você vai ver que é uma aplicação super simples. Como que tá aqui a minha aplicação super simples? É
+
+um app de Rono. Ele inicia o backend no porte 3000, né? Locoal host 2/3000. Nem é isso na real, né? HTTP 2./localhost
+
+2.3000. Enfim, aplicação vai ser iniciada nesse porte. Dentro do meu index, eu inicializo o account service e o transaction service. Isso daqui é quase como uma injeção de dependência.
+
+Por que que eu tô fazendo isso dessa maneira? Se eu quisesse, por exemplo, substituir isso daqui, né, esse account service para um serviço externo, pô, vamos dar um exemplo aqui. Eu quero substituir isso aqui por clerk, eu só preciso alterar isso aqui. Por isso que eu tô meio que quase como injetando eles no index. Não é uma injeção de fato, tá?
+
+É isso aqui tá sendo estanciado hard coded, tá? Não tá sendo injetada a dependência, mas é quase como se fosse, tá quase modular. A gente cria aqui as rotas do nosso Rono, né, que é um get no index. Ah, esse get aqui funciona para retornar a o meu front end, tá? É para isso que ele existe. Tem um secure
+
+headers aqui que é é do Rono, padrão, tá? padrão do RON para você ter Secure Headers. A gente adiciona as rotas de accounts e adiciona as rotas de transação. Então você vai abrir aqui, ó, você vai ver que dentro do accounts, em http a gente vai ter a todas as rotas de accounts. Inclusive eu criei uma rota que não existe na descrição do desafio, que é a rota que retorna, que lista todas as contas. E eu escrevi aqui, ó,
+
+quality of life for testing, né, para facilitar a testagem. E aqui você cria as rotas de transação neste outro aqui. Ã, os post requests, ó, nota, eles estão utilizando o o meu método validate jon e eles estão utilizando os esquemas definidos eh no DTO aqui, tá? dentro do DTO, tanto do DTO do transactions aqui, quanto no DTO do accounts, a gente vai ter a criação de dos objetos de transporte de dados. OK. E aqui a gente
+
+tem, por exemplo, o o que que é um uma entry, né? O que que é uma meu Deus, eu sempre esqueço esse nome. Enfim, o que que é uma entry dentro da transação? E o que que é uma transação, né? Uma transação consiste e num ID, um nome e uma lista de entries. E cada entry vai
+
+ter uma direção, crédito ou débito, uma account ID, né, um valor da conta e um amount que no DTO você tem que pensar o seguinte, ó. O usuário tá aqui, né? O usuário vai enviar um request pra minha aplicação. Eu vou imaginar minha aplicação em camadas. O DTO vai validar esse post request, né? Ele vai, tô
+
+utilizando o ZOD aqui, né? para validar que o que o usuário enviou de Jason aqui, tá correto, né? Ele enviou aqui number, quando ele enviou o, perdão, ele enviou amount, eu tô validando que ele vai enviar 100 mesmo, né? Que ele não vai enviar tipo um um número todo zicado. Tô validando que ele não vai enviar o amount como sei lá, oi, saca?
+
+Dentro do DTO, tipo, depois disso daqui em algum momento, ele vai entrar [limpando a garganta] na minha aplicação, eu vou transformar isso aqui no no meu domain mesmo, tá? Porque, tipo assim, o usuário não tem acesso ao meu, a minha classe money, então ele vai mandar um valor numérico para mim, que é um número positivo. A gente enforçou, né? A gente garantiu que a API é isso aí, só pode ser enviado o número positivo. Depois dentro do service, dentro de cada service, ele vai usar o mapper, ele vai transformar to domain, né? Ele vai transformar no domain, ele
+
+vai transformar na na transação que é a tá hardod ali, né? Como é a transação e essa transação, né? Vai ter o meu tipo money de fato aqui. Então aqui a gente tem o esquema do request. Aqui a gente vai ter de fato a transaction do da maneira com que ela é, com o money, do jeito certinho que a gente codou ali, tá bom? Esse domino, né, vai ser utilizado
+
+dentro de um, a gente pode colocar aqui dentro de um service e esse service vai ser responsável por fazer as operações. [limpando a garganta] Compreendido tudo isso, a gente pode olhar então o que que tem dentro do meu accounts e o que que tem dentro do meu transactions. Bom, dentro do meu accounts, como tá explicado, como eu acabei explicando já, né, a gente tem domain, simplesmente a conta aqui, né, com os dados da conta. E a gente tem também um, eu criei um account e um Account of Balance, porque eh eu acabei tendo desafios na hora de, tipo, criar uma conta, ela não tem balanço e mas depois ela tem o balanço. Então são dois tipos meio que diferentes. Então fiz essa
+
+gambiarrazinha aqui, sei lá, achei que tá OK. Você tem o DTO que eu já expliquei, né? Tem os esquemas em zodia. Aqui tem o HTTP que eu já expliquei que é o que define as rotas. Você tem os mappers. O que que os mappers fazem? O
+
+Mapper ele recebe um DTO e ele retorna um domínio. Simples assim. Recebe o DTO, que é o create account requestema, por exemplo, e ele vai transformar isso daqui num account que é o account do domain, que é o account do TypeScript, né? Essa diferença entre o que que é ZOD e o que que é Typescript. Depois do mapper, você vai ter duas coisas interessantes que são as coisas que mais tem a lógica, o repository e o service.
+
+Olha que interessante. O que que é o repository? O repository é apenas uma tipagem do que que o banco de dados implementa. Ele não é a implementação. Qualquer objeto que implementar eh aqui esse account repository, que é um get by ID, que retorna contas, find all que retorna contas também e save que salva uma conta. Qualquer banco de dados que
+
+implementar isso aqui pode ser utilizado como banco de dados nosso, viu que legal? Então eu consigo na prática, em qualquer momento, substituir. Ao criar o meu account service, ao instanciar o meu account service aqui dentro do index, eu consigo utilizar qualquer repositório que implemente esse repositor aqui, qualquer infraestrutura, desde que ela eh implemente essas três regrinhas aqui, né? Essas três coisas que eu criei, esse objetivo aqui de uma interface, tá? Então você tem isso aqui para ter um código limpo e desacoplado. Se eu quiser
+
+substituir esse banco de dados por algum outro banco, né, outro banco, desde que esse outro banco implemente as três coisas, eu posso fazer essa substituição. Por isso que eu tomei essa decisão dessa maneira, por isso que a gente tem esse repostery. E por último, a gente tem a classe service. E a classe service é onde toda a lógica está concentrada. Aqui tem um tido, tá? A
+
+gente pode ignorar isso aqui. Se você olhar, por exemplo, no meu HTTP, né, o que que o Create account faz? Ele valida o DTO. Validei o DTO. Tendo validado o DTO, ele chama Service.create account.
+
+Então ele passa esse DTO aqui pro create account. O create account então transforma esse account no domain, manda o repositório salvar essa account e o repositório salva essa account com o saldo zero. Get account e também super simples. Aqui tem mais um um detalhe de eu me exibindo, tá? É eu falando que trow é um comportamento inesperado em VH e pode causar de opt no código, tá? Se
+
+você quiser saber mais sobre isso, procura aqui sobre o de optimization ignition e o turbo fan do node. É um negócio bem bem bem específico, bem nichado do Node, em que é interessante você evitar troll em algumas partes super críticas da sua aplicação para não causar diopt. É isso aqui é só se a gente tiver querendo escovar bit mesmo, tá? Como eu não queria escovar bit, tem o meu troll aqui, não tem problema ter esse troll. É, eu poderia retornar o erro também, né? ao invés de tipo fazer
+
+o result pattern do Goang, eu não tô fazendo porque isso daqui é um pouco mais o estilozinho do Rono. As aplicações Hono tendem a liar mais dessa maneira. Você faz um troll e você dá um cat no middleware. Enfim, aqui [limpando a garganta] embaixo você tem o list accounts, em que a gente utiliza um map aqui, né, para porque quando você vai buscar uma conta, você precisa calcular o saldo de cada conta, né? Então, a gente faz um map das entries e a gente tem esse calculate balance aqui para calcular o balanço de cada conta.
+
+Então, a gente busca do banco de dados todas as entries de uma conta e faz esse cálculo do balanço aqui, tá? Aqui também tava, eu tava meio em dúvida, é, mas foi a maneira menos gambiarra que eu achei isso, né? Porque tipo, pô, a gente tá pegando as entries e tal, a gente tá utilizando do banco de dados de transaction. Então acaba que nos dois serviços eu preciso dos dois bancos de dados, do de transactions e do deu consegui maneira de evitar isso, tá? Enfim, é meio gambiarra, mas foi o que deu para fazer em 4 horas. E por fim, na
+
+parte das transactions, a gente vai est implementando ali o create transaction. E o create transaction, né? Ele primeiro pega os dados que são idem potentes, eh, os dados que a gente considera, enfim, para ter uma chave de idem potência, a gente cria aqui, ó, idcy data, então é o nome e as entries. Junta tudo isso, o nome e as entries, isso aqui vai compor a minha chave de D potência. E eu vou checar se isso aqui é duplicado ou não minha eh na minha cash do node. E caso
+
+seja duplicado, eu retorno um duplicate transaction error. Caso não seja duplicado, eu novamente transformo a transaction em DTO para domínio. Depois eu percorro todas as entries e busco por todas as contas dessas entries para ver que as contas existem. Se as contas não existirem e existe um erro aqui, né, em que a transação não pode ser feita. E e isso daqui é o que vai criar as transações. Nota um detalhe, a regra de
+
+negócios que enforça que uma transação ela é balanceada é dentro do domain. Então você vai ter aqui, né, transaction, você vai ter domain dentro do domain quando eu tento criar a classe transação, essa classe ela vai checar, ela tem o método is balanced que vai checar se todos os débitos são iguais a todos os créditos, se a soma total é zero, tá? Eu tenho um método que faz isso. Então, dentro do meu service aqui, quando eu crio a minha transação aqui, né, quando eu crio essa transação, ela é garantida que ela é balanceada, porque você não consegue criar uma transação desbalanceada aqui, dá erro, ela levanta um erro, ela levanta um unbalance transaction error. Eh, eu fiz isso também para garantir uma segurança maior, de modo que seria impossível eu criar uma transição desbalanceada, ou seja, é impossível eu persistir uma transição desbalanceada, porque o meu repository, para eu dar save nele, eu preciso passar uma transaction. E para
+
+eu criar essa transaction, ela precisa ser balanceada. Essas eram as partes mais os pontos de maior atenção, tá? O ponto de de maior atenção era a edempotência, as transações balanceadas, que eu criei um tipo específico no domínio para garantir que a transação tem eh criada, ela é balanceada e o balanço de todas as contas. Eu acho que eu não consegui entrar em muito mais detalhes, tá? Porque eu não quero fazer um vídeo de 7 horas. Esse vídeo já vai
+
+ficar longuíssimo. Vamos só testar, então vamos só rodar no repositório, né? Se quiser entender mais sobre também tem aqui os ã enfim. explicações de como você faz e tal. É, você dá um PNPM dev e tem aqui pra gente testar. Então, vamos
+
+criar nossas contas aqui, né? Vamos criar as contas. Uma conta chamada Minecraft de débito, cria essa conta. Uma conta chamada Fortnite, cria essa conta também. Aqui eu tenho esse botão aqui, né, de quality of life. H, olha
+
+só, eu tenho eu tenho contas antigas de quando eu tava testando, cara. Que loucura. É que foi foi tudo persistido aqui, tá? Deixa eu recriar isso aí. Bom, criei as duas contas aqui, tá? Ó, list
+
+two accounts. Ah, eu queria as duas de débito, foi sem querer. Vamos criar aqui então, Fortnite 2, eh, crédito agora essa conta. Então, temos aqui, né, os a todas as contas criadas, os ids de todas as contas. Vamos então criar uma transação que não funciona. O que que
+
+seria uma transação que não funciona? Ó, eu tenho essa conta aqui, ó, a conta Minecraft. Eu vou criar um débito de R$ 10 e eu vou criar um crédito de R$ 9 conta Fortnite 2. Então, Fortnite 2 aqui, crédito de R$ 9. Tento criar a transição, ó, erro. Eh, transição
+
+desbalanceada. Posso adicionar mais uma entry aqui. Posso adicionar uma entry de crédito. Então, 7 + 3 vai dar 10. Se eu clicar em criar transaction, a transaction foi de fato criada. Então, a
+
+gente tem a nossa transaction com o nosso ID, um nome que eu não passei e as três entries aqui dentro. Posso fazer mais coisas, inclusive posso é debitar 100 aqui do do Minecraft. Ou então vamos tentar acreditar 100 do Minecraft e debitar 100 do Fortnite, tá? Creditei e debitei. E agora a gente consegue listar todas as transações. Então a gente tem
+
+aqui a transição que cria 100 e debita 100. A transação que enfim de 10, 7 e 3. Todas as transações existem aqui. Elas são buscadas no banco de dados. Elas estão perfeitamente corretas e balanceadas. E se eu listar todas as
+
+minhas contas, eu consigo ver que a conta Fortnite 2 tem um crédito de -90 e a conta Minecraft tem um débito de -90. Isso tá perfeitamente correto, porque o crédito e o débito estão exatamente iguais, tá? Você pode estar achando estranho que a conta tá em negativo, porque a gente fez um crédito de uma conta de débito e o resultado disso foi negativo, o que é meio doideira, mas enfim, você pode fazer também um débito de uma conta de débito e depois um crédito numa conta de débito. crédito numa conta de crédito, enfim, e você pode criar essa transição aqui para reverter as transações antigas, né? Então você vai e gerar aqui o o fetch accounts. Ah, olha, deu duplicate
+
+transaction detected. Ah, é, essa operação já foi. Então, óbvio, a chave de impotência funcionou, que eu fiz uma transção duplicada. Tá, vamos adicionar um zero aqui para não ser pego na ID em potência ou foi não foi pego na ID em potência da mesma maneira. Interessante.
+
+Eu acho que se eu se eu mudar o name, né? Eh, ele isso, se eu mudar o name da transação, aí ele passou aí não foi mais pego na ID em Potência. Possivelmente tem um erro na ID potência, tá? Eu achei que não era para eu achei que não era para ser pego, cara. Aqui no meu service, o que que tá sendo considerado em potência? Não, não é para ser pego,
+
+porque o amount tá sendo considerado estranho. Deixa eu tentar de novo com amount diferente aqui, ó. Cinco e cinco. Dá para create transaction, duplicate transaction, mas não era pr dar duplicate transaction. É bem interessante. Tem algum erro aqui.
+
+Enfim, descobrindo em produção, né? Mas pr você ver, mesmo não estando perfeito, esse isso aqui passou no desafio, tá? Passou no desafio da empresa. Eu fui chamado pr as duas próximas entrevistas. É muito bem. Temos aqui nossa conta
+
+Fortnite, nossa conta Minecraft, as transações perfeitamente balanceadas como LED requer, o double entry bookkeeping, que a gente tem e em todas as transações, a gente tem uma entrada e uma saída. Todas as transações individualmente estão balanceadas e o Ledger completo por si só tem que todas as contas de crédito e todas as contas de débito necessariamente estão balanceadas também, né? A gente pode tentar pegar uma conta diferente aqui para você ver. Então, pego essa conta diferente aqui, ó. Vou jogar essa conta aqui embaixo, criar essa transação.
+
+Olha, deu de errado. O que que eu peguei de errado? Não é errado não, meu querido. Pode confiar que tá certo. Então, ó, list all accounts. Agora a
+
+gente ainda tem que táar perfeitamente balanceado, porque se eu olhar conta de débito -5, conta de débito 915, total de débitos 910, conta de crédito 910. Esse é um ledger perfeitamente balanceado. Esse vídeo ficou gigantesco. Se você quiser aprender mais comigo, a gente tem vários cursos aqui no canal, tá? Cursos de estrutura de dados e algoritmos, cursos para você galgar empregos melhores, né? Te ensinando a como se
+
+vender melhor como deve. Tem um LinkedIn, currículo, etc. era melhorado workshop de lit code, coisas de system design e tal. Te ensino tudo isso aqui. O link cursos do canal vão estar na descrição, assim como o link pro repositório que eu sugiro que você confira, tente fazer esse desafio por conta própria, tá? É um desafio super
+
+legal.

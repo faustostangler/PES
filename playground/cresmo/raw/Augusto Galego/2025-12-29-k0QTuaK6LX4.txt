@@ -1,0 +1,114 @@
+---
+video_title: "WEBHOOKS vs WEBSOCKETS (na prática)"
+video_id: k0QTuaK6LX4
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=k0QTuaK6LX4
+video_date: 2025-12-29T13:01:27+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📖 Meu curso de estruturas de dados e algoritmos: https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  Workshop 10 LeetCodes Para Entrevistas: https://pay.hub.la/RGfq0dk8iqDeL5IC5yog?coupon=WORKSHOP
+  
+  
+  contato: algoritmos.galego@gmail.com
+---
+Hoje vamos aprender sobre web hooks e web sockets. O que que esses dois têm de parecido? Na verdade é meio que só o nome, né? E não sei que eles são padrões de comunicação. É interessante você aprender isso daqui porque muito provavelmente se você tá aqui, você sabe fazer uma pizzinha básica. Talvez você
+
+não saiba utilizar muito bem o web hook web socket. Talvez exista uma confusão aqui. Vamos entender para que que é cada um, quando que a gente geralmente usa cada um desses e depois vamos ver um pouco de código na prática implementando cada um, tá? É bem facinho, não é um bicho sete cabeças, é super tranquilo. Todas as linguagens aí vão ter um ferramental adequado para implementar web hooks, web sockets, quando fizer sentido. Antes disso, vou te falar do
+
+patrocínio de hoje, a Abacus AI. E é o seguinte, né? A Abacous te dá um ferramental completo de IA, te dá acesso aqui a todas as IA pagas dos das outras empresas, né? Tem o GPT5, Cloudsonet 4.5, Gemini 2.5, Grock 4, são todas
+
+essas reão pagas. uma ou outra ali vai ter um fritier, mas enfim, você vai ter acesso a tudo isso aqui, você pode usar qualquer uma, pode usar para pesquisar na web, para ter um modo estudo aqui, um modo de gerar PowerPoint, um modo de gerar imagem, gerar código, enfim, você pode fazer uma infinidade de coisas. Você também vai ter acesso a uma IDE com IA, né, baseado no VS Code. Então aqui do lado você vai ter um chat com a IDE e você pode pedir para explicar Code base, para fazer alterações da Codebase, enfim, tem um agente aqui capaz de seu colega de trabalho no código. É bem legal, tá incluso na mesma subscription, tá? Se você não gostar tanto da IDE e
+
+preferir um CLI Commandline Interface, você tem também que você pode interagir com as LLMs via terminal e elas podem alterar o seu código se você quiser. E por último, né, a gente tem o agent aqui que com um único prompt, tá super simples aqui, ele é capaz de gerar MVPs poderosas aqui, né? Não, não é um um portal enterprise pronto para ser enviado pra produção, né? Mas é um MVP bem legal para testar uma prova de conceito. Eu pedi para criar um portal de RH prompt super simples. A gente pode
+
+testar aqui, ó. a gente pode falar que, pô, quero tirar tantos dias aqui de folga por tal motivo, posso testar, legal, vou mandar aqui o request e funcionou. E a gente pode usar isso aqui como uma prova, né, para mostrar, pô, é possível, é assim que a gente quer implementar, é assim que o meu cliente quer. De repente eu faço o protótipo, mostro o protótipo para ele e pergunto, né? É dessa maneira que é para ser feito? Para fazer landing pages é
+
+bastante bom, tá? Land page tá bastante simples, você consegue fazer uma land page que já fica bem legal, vai precisar de poucos ajustes. Enfim, ferramental aqui completo por apenas $10, mais ou menos R$ 52 na cotação de hoje. O link para abaus está aqui na descrição. Bom, web hooks e web sockets, né? Vamos
+
+primeiro no Web Hook. O web hook é, pô, você tem um nome muito complexo para algo que é tipo muito simples. Se a gente chamasse o Hook de uma API invertida, ia ser mais fácil, mas como a gente não chama, né? A gente tem que explicar aqui o que que é o tal do web hook. É bastante simples, tá? Imagina
+
+que você tem o seu frontend, a pessoa do seu frontend aqui, ela quer fazer um pagamento. Esse serviço de pagamentos utiliza bastante web hook, tá? A indústria de pagamentos inteiro roda em cima de web hook. Geralmente você tem seu frontend, você tem o seu backend, o front end faz um pagamento aqui pro, né? Iniciaria um pagamento no seu backend.
+
+Geralmente você vai receber algo de volta e geralmente o frontend vai saber para mandar o request para outro lugar, mas a gente pode ignorar essa parte. A gente pode fingir que o request atravessa o backend, tá? Porque dependendo do request, às vezes vai direto, às vezes atravessa aqui o backend, enfim. Vai para onde? Para aquilo que a gente chama de um PSP, payment service provider. Isso aqui é
+
+Stripe, isso aqui é sua abacate pay, isso aqui é a sua Lemon Squeey. Vai ser quem vai processar ali o seu pagamento, tá? A questão é quando eu envio um request pra minha Stripe, como que eu sei que que esse request chegou lá e foi aprovado e deu certo, né? Como que eu sei que a compra foi aprovada? Que que acontece? Vai existir um certo período
+
+de tempo aqui, né, que a Stripe vai processar o pagamento, vai ver, sei lá, com Visa Mastercard, se se deu certo ou não. Eu poderia que o meu backend ficasse perguntando a cada 5 segundos: "Ô, deu certo o pagamento? Deu certo o pagamento? Deu certo pagamento, Stripe?" Não, não, não, não. Isso daí, né? Esse
+
+excesso de requests aqui sobrecarregaria tanto o meu backend quanto a própria stripe. Então, não é legal. Não é dessa forma que a gente costuma fazer. Essa forma aqui se chama short polling, polling curto, né? Existe o outro que é long ping, que é eu faço um request, eu falo stripe, deixa a conexão aí aberta, quando der certo, né, quando for responder o negócio, me me responde, me dá a resposta. Essa conexão vai ficar
+
+aberta por 10, 20, 30 segundos, vai dar um time out. Aí a Stripe vai te falar: "Pô, time out é faz de novo". Aí você faz lá o request novo, fica aberto mais 10, 20 segundos. Também também é custoso tanto para você quanto pra Stripe, tá? Precisa manter essa conexão ali aberta.
+
+Precisa ficar o tempo todo falando: "Pô, deu time out, faz de novo, deu time out, faz de novo". Isso aqui é long ping, tá? O que que a gente pode fazer ao invés disso, né? A gente transforma isso daqui numa API, né? Web hook é o que o seu servidor vira uma API, tipo, é a API invertida. A gente abre aqui o web hook,
+
+que na verdade nada mais é do que isso daqui vai receber um post da Stripe. Então você fez um HTTP aqui, né? HTTP postripe e você falou: "Cara, Stripe, quando tiver pronto me avisa na URLbackend.com, né? Você vai mandar ali com essa chave de autenticação um para eu saber quem é você mesmo, né? manda um post para S URL
+
+me avisando que ficou pronto, que o pagamento foi aprovado. Aí, pronto, né? Aqui fecha essa conexão. A Stripe fala: "OK, seu post foi recebido, estaremos processando aqui e quando ficar pronto a gente vai te avisar". Passa ali 1 minuto, 2 minutos, a Stripe manda o request para você, né? Stripe faz o post
+
+aí para você, faz o httpost aqui, enviando, né? Payment do ponto success, sei lá, não é nada mais nada menos do que isso, tá? Isso daqui é um web hook, por isso que o nome, né? É API invertida. Faz tanto sentido. Você
+
+inverte ali, seu back de fazer o post, ele recebe o post. Muito simples. Isso daqui é bacana para esse exemplo aqui, por exemplo, né, que é o o exemplo clássico, exemplo de pagamentos. Outros tipos de serviço de notificação quando algo aconteceu são mais ou menos nessa linha, tá? Você vai ter ali a CCD do GitHub que pode te notificar quando o código foi empurrado. Eles podem ter uma
+
+conexão, por exemplo, entre o GitHub e o Slack, via web hook que o GitHub manda uma mensagem pro Slack e fala: "Pô, esse deploy aqui falhou ou te notificar quando um e-mail falhou ou sei lá, Shopify pode te notificar quando acontecer algo com seu produto." Não sei. Esse tipo de notificação mesmo, tá? Para notificações em mudanças de estado, em algo. No caso foi aqui, né? o seu
+
+pagamento mudou de estado para de pending para aproválo. Aí vão te mandar um webhook. Geralmente é utilizado para isso, tá? Web socket, nome parecido, não tem nada a ver com isso. Imagina que você tem, né? Aqui você tem, a gente
+
+podia imaginar frontend backend, mas vamos imaginar serviço A com serviço B, tá? A gente tem dois serviços aqui, A e B. A gente pode se comunicar da mesma forma que eu já falei, né? Você pode fazer post request, você pode ter web hooks, você pode ter API, short ping, longing, você pode se comunicar de todas essas maneiras, tá? Mas websocket é especificamente aqui, ó, vai ser aberta uma conexão bidirecional. Então você
+
+abre, imagina que é um túnelzinho aqui e a gente vai abrir um canal de comunicação aqui em que ambos podem enviar requisições de um lado pro outro via TCP. Tanto o servidor quanto o cliente, ou então tanto o serviço A quanto o serviço B mantém essa conexão ativa. E essa conexão ativa tem algumas vantagens bem legais, tá? Como elas já tá ativas, você vai ter uma certa latência um pouco baixa. Geralmente eh a resposta ela vai ser mais rápida do que short ping ou long ping. O fato de ser
+
+bidirecional é bem legal também e você tem utilizações muito comuns para isso aqui, tá? É, a desvantagem de Web Socket é que para escalar pode ser um pouco custoso, né? Como ambas partes precisam ter essa conexão ativa, né? É, se uma dessas partes for, por exemplo, servidor e a outra a outra parte, né, for um client, pode ser um pouco difícil de escalar, né? Imagina que você tem, pô, 10.000 clientes mantendo uma conexão
+
+ativa com o seu servidor. A parte do cliente é tranquilo, né, que cada cliente tem apenas uma conexão, a parte do servidor que pode ser o problema. Então essa gerência aqui das conexões é um ponto de dor assim dos web sockets, tá? Mas para que que você vai usar um web socket, né? Pô, se você estiver jogando um joguinho de browser ali, novidade de jogos no geral, é legal que você consegue, por exemplo, tô jogando xadrez com a minha namorada, eu movo minha peça, o a a minha parte, né, vai enviar uma mensagem pra parte dela, dizendo: "Ó, galego moveu a peça daqui para cá". Chats no geral, tá? Quando
+
+você tá ali no chat com alguém recebendo aqueles updates em real time, pode ser no Slack, pode ser no WhatsApp, pode ser aonde for. Web sockets costumam ser uma boa utilização de chat, né? Você tá vendo aqui, né? Messagem vai de um lado, mensagem volta do outro. Não necessariamente você tem uma ordem normal, tipo assim, não é um request aqui, um request lá, um aqui, um lá, né?
+
+A gente não sabe. Pode ser que eu mande uma mensagem, depois eu mande mais uma mensagem, depois eu mande mais uma mensagem. É um negócio realmente bidirecional e que não tem ordem definida também. Dashboards, né? Imagina que você tem aí um, você tá monitorando ali o na numa num site de investimentos o preço do Bitcoin. O preço do Bitcoin
+
+tá subindo e descendo. Pô, você precisa dessa atualização em real time, você precisa dessa conexão ativa, né? Então, Appckets podem ser utilizados para dashboards dessa maneira e apps colaborativos. Se você tem, por exemplo, né, tá escrevendo um documento junto com alguma pessoa de maneira colaborativa, é legal essa conexão aberta, né, que você vai alterar o documento, aí a pessoa vai alterar o documento, enfim, não tem muito a ver Socket com Web Hook, né? São coisas diferentes para propósitos diferentes, não são competidores, mas o nome é parecido, achei que cabia no mesmo vídeo. Vamos ver agora na prática
+
+de maneira bem simples, tá? Dois projetinhos muito pequenos utilizando Webook e o WebS. A começar aqui pela parte mais simples do código, que é o web hook. E se você notar, eu tô usando o FashP, eu tô usando o Python, eu tô usando o V do Python também, que é uma ferramenta que eu gosto bastante, mas aqui não tem nada demais, não tem nada de especial. O que que a gente tá fazendo aqui, tá? A gente tá
+
+inicializando um Fast API. Deixa eu aumentar aqui o código, né? Se você conhece o Fast API, ele vai apenas disponibilizar uma AP super simples que pode receber post ou get requests ou request que você quiser. Eu falei e web hook é basicamente uma pay reversa. Aqui eu criei um método que não faz nada, que verifica uma signature, porque quando a gente cria o hobby hooks, a gente tem um problema que pode acontecer, um problema de segurança, né? Alguém pode fingir ser
+
+a Stripe. Então, geralmente eu vou ter um código, a Stripe vai ter acesso a esse mesmo código de alguma forma. E, né, os dois sabendo qual é o código, a gente consegue se comunicar através dessa assinatura, né? Pois bem, eu crio aqui um um endp. Esse aqui é o payment web hook, em que eu vou parar o bar do request, né, o corpo do request, eu vou pegar a signature aqui dos headers, eu vou validar minha signature e depois eu vou processar o meu Jon. No caso aqui não
+
+faz absolutamente nada. Esse é um código super simples aqui, que não faz nada, porque eu queria te mostrar que para você criar um web hook eh simplesmente só você expor um end point e ele vai ser mais feito, né, eh, na integração com esses sistemas. Se você começar aí a integrar Stripe, entregar, integrar aí algum gateway, geralmente você vai fazer uma requisição para esses gateways, informando aonde está a web hook, né? É assim, simples. E aí, bom, quando a fingindo que isso aqui é Stripe, tá?
+
+Quando a Stripe fizer um request pro seu end point, no meu caso aqui, a gente tá em local host 8000/wobhook/payment. Eu tô mandando literalmente qualquer coisa aqui, porque eu não checo nada no backend. Eu dou um enter nisso aqui, eu recebo um OK de volta e a gente consegue olhar aqui embaixo, né, que o Post Quest foi recebido com sucesso. É, é isso, tá? Eu não consigo frisar o quão simples isto aqui é. Tipo, literalmente o seu
+
+servidor ele disponibiliza uma API para chamarem de volta de algum lugar quando algum evento acontecer lá naquele lugar. E agora a gente vai paraa Web Sockets, que é o último aqui. O código é tão tosco que não dá nem vontade de mostrar isso, tá? Porque é simples. Essas coisas às vezes parecem que vão assustar, parecem que vão ser muito complexas, mas na verdade, pô, todas as linguagens t ferramental para lidar com isso daqui com relativa facilidade, tá? Todos os
+
+frameworks vai ter algum tipo de implementação de web socket ali que você vai conseguir usar com tranquilidade. Aqui não é diferente, né? O Fast API você vai usar app.so do Websocket. Isso que vai permitir que você converse com, enfim, lide com Web Sockets. Aqui você
+
+consegue imbuir, né, colocar toda a lógica aqui dentro desse app. Socket, fazer o que você quiser. Então eu tenho aqui, né, um Wild true, que enquanto eu receber minhas mensagens, eu vou inverter a mensagem e mandar ela de volta. Aqui, né, a gente vibe codou um front end. Eu vou inspecionar e eu vou abrir aqui a network do lado porque eu acho que vai ser um pouco mais didático, vai ser um pouco mais legal. Dou um F5
+
+aqui. Você pode ver que iniciou o tal do WS, né? Você tem um web socket aqui. Aqui eu acho que eu vou conseguir ver as mensagens, tá? Eu tenho quase certeza que vai funcionar aqui no Chrome. Então
+
+eu começo mandando uma mensagem pro servidor a BC. Eu envio essa mensagem, ó, e a mensagem já volta. CBA, mensagem invertida, né? Então eu do meu front end, né? Eu eu sou aqui o client, ó. O o
+
+browser aqui, o Google Chrome é o client e o servidor. É isso aqui que a gente fez no Fashpi. Isso daqui tá recebendo a mensagem aqui, né? No ws. Text. Tá
+
+invertendo a mensagem, né? fazendo o contrário ali e respondendo e pô com a mensagem invertida, um dump super simples, não tem nada demais aqui. Qualquer LLM consegue codar isso aqui em meio segundo e você vendo esse código aqui, né, tendo acesso esse código aqui, consegue codar em 5 minutos, talvez, que é isso aqui, né, é o cliente e o servidor se comunicando. No caso, a gente fez algo que é mensagem instantânea, né? O meu servidor aqui, ele tá invertendo mensagem e respondendo instantaneamente. Ele poderia fazer
+
+outras coisas, não faz. Não foi isso que eu fiz. poderia ficar mandando mensagens em loop, né? Eu podia fazer o que eu quiser aqui com a minha implementação. Que eu quis foi só demonstrar da simples uma forma, né, que ele vai receber um texto aqui, ó, inverter. É o que eu vou
+
+enviar. Enviei, ele inverte. E aí, né, você tem que ter as mensagens que são enviadas, mensagem que é recebida de volta e um frontend vibe codado super simples aqui, tá? Você tem aqui uma mensagenzinha também que tá conectado no servidor. Se eu pegar aqui, ó, o meu servidor, eu dropar ele, eu der um contrtrol C aqui para derrubar o servidor, o meu front change vai falar que eu tô desconectado, vai ficar spamando aqui, ó, desconnected from server. Tudo vai pro codado tá não
+
+escrever nenhuma linha de código do frontang foi aqui feito no na ideia da abacus. Mas enfim, tanto faz. Você consegue fazer isso aqui honestamente com bastante facilidade em qualquer ferramenta. E é isso. É esse é o grandiosíssimo mistério de web hooks e web sockets, né? Se você é um deve pleno
+
+sior que já tinha ouvido falar desses nomes, mas não entendia muito bem, agora você conseguiu entender, né? Em 5, 10 minutinhos. Não é nada demais, tá? Essas coisas, uma vez que a gente faz elas, elas são bem simples, quase tudo, eh, depois que você chega no no patamar de pleno, que você tem uma compreensão do básico da computação, você consegue aprender muitos dos conceitos mais, entre aspas, avançados com relativa facilidade. Isso que na verdade nem é avançado, né? Mas enfim, se você pegar
+
+um roadmap, abrir uma lista de conceitos aí de cima a baixo e estudando um por um, você vai ver que nada tem tanto mistério assim. As coisas mais difíceis você provavelmente não vai precisar implementar. Você não vai implementar o algoritmo de Dixtra que nem é tão difícil assim também. Ao longo da sua carreira, né? Você vai ver palavras como proxy reverso. Uau, que grande, é um
+
+endnex na frente você bota ali um um servidor, né, entre o cliente e o seu servidor de aplicação. Esse é o tal do proxy reverse. Não tem grandes mistérios, tá? A gente gosta desses nomes bonitinho aqui, mas pô, relativamente simples.

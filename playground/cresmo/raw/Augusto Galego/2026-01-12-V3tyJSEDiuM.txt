@@ -1,0 +1,103 @@
+---
+video_title: "Console log pode TRAVAR a sua aplicação (explicação)"
+video_id: V3tyJSEDiuM
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=V3tyJSEDiuM
+video_date: 2026-01-12T13:01:00+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📖 Meu curso de estruturas de dados e algoritmos: https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  Workshop 10 LeetCodes Para Entrevistas: https://pay.hub.la/RGfq0dk8iqDeL5IC5yog?coupon=WORKSHOP
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Verdade ou mentira? Consol log pode travar sua aplicação? Essa é a pergunta e a resposta que é verdade. Consol log pode de fato por um certo período de tempo, um determinado período de tempo, fazer sua aplicação ficar mais lenta. A gente vai falar sobre esse tweet aqui do do SAM, que é meu colega, explicar, né, os possíveis problemas se usar console log, como que a gente pode contornar isso daqui, quando que isso aqui vai de fato ser relevante, veio um pouco de código na prática. Antes disso, eu vou
+
+te falar do patrocínio de hoje, que é a Abacus AI. Abacos tem todos os modelos aqui de IA, inclusive os de foto, né? Mas se você vê aquelas fotos ultra realistas que a tá fazendo agora, é tudo com o nano banana. E a gente tem acesso a esse modelo. A gente tem acesso a todos os modelos aqui para fazer código.
+
+Você pode pedir pro modelo pesquisar na web. Você pode pedir pro modelo gerar PowerPoint, fazer deep research, fazer código, enfim. Além disso, você tem o de agent, que é um ferramental muito poderoso que faz muita coisa. Você pode pedir para ele fazer planos de viagem, PDFs, PowerPoints também, até MVPs de código e hospedar esses MVPs. IP a gente consegue fazer, né? Ele fez esse daqui.
+
+É um dashboardzinho bastante simples para pedir time off, né? Pedir folga no trabalho. Fiz aqui apenas para testar o poder desse ferramental. Hoje a gente vai estar trabalhando na IDE da aba com AI. Ela tem, né, um chat, um agente aqui do lado que a gente pode usar ou não, ou a gente pode gerar código para você e tal. Enfim, é uma ideia com IA
+
+integrada. Tudo isso por apenas por mês. O link vai tá aqui na descrição. Vamos lá, né? O SAM, se você não conhece ele, ele é meu sócio em alguns projetos. A
+
+gente presta inclusive mentorias para plenos e seniors. Se você tiver interesse, tem um forms aqui na descrição para preencher o formulário e demonstrar interesse na mentoria, né? A gente não aceita todo mundo, só as pessoas que a gente pode de fato ajudar. Mas qual que é a parada que o S tá explicando? Que Consolog é um método SNYC, método síncrono que demanda recursos do VH, né? VH8 sendo o motor
+
+mais utilizado do JavaScript. No caso aqui no exemplo que eu configurei, a gente vai estar usando o ban. O ban não roda VH, mas ele emula muitos os comportamentos, então isso ainda é verdade no ban também. E em fluxos de muitas chamadas, tem ali o consolog pode estar travando o event loop. Como o Consolog é síncrono e demanda recursos de CPU, assim como todas as outras operações que são síncronas demandam recurso de CPU, pode travar ali o event loop, né? Bastante simples. Espero que
+
+você possa compreender isso aqui. Você pode também utilizar node streams para escrever os logs ou algumas libs, né? O SK trouxe um exemplo da pino que consegue fazer logs de maneira assíncrona, né? Então você delega esses logs, que que vai est acontecendo, né? você tem o event loop do do que e o event loop nada mais é que um loop. Loop
+
+termina aqui e ele volta aqui pro começo. Se você tiver aqui no meio desse loop algumas tarefas, né, a gente pode imaginar que essas tarefas são com log, demora mais para terminar esse loop e mais para voltar o começo, ele vai ficar, né, travado por um certo período de tempo nessas coisas aqui. Acontece que como o log muitas vezes não é crucial para executar uma tarefa, né? Por exemplo, se um usuário tenta acessar ali um produto que ele tem e eu tenho logs para de repente me ajudar a debugar ou me ajudar a fazer coisas na minha aplicação, o log não precisa ser criado antes de eu responder pro usuário quais produtos ele tem, certo? Eu não vou, eu não tô vendo esse log ao vivo, né? Não,
+
+não me importa tanto se isso só vai atrasar um ou 2 segundos, né? Então eu poderia em teoria delegar esse log para algo assíncrono, o que vai desbloquear, né, o meu event loop, vai fazer com que eu consiga responder as requisições ali com mais agilidade e eu não dependa do término do da escrita do consolog para executar minhas tarefas, tá? Essa daqui é toda a lógica por trás de porque que o Consolog pode travar sua aplicação e por que você possivelmente quer delegar. Na verdade, você quer delegar todas as coisas que não precisam bloquear sua aplicação. Isso é que faz mais sentido, né? Se um usuário quer fazer uma
+
+requisição para receber os produtos dele, tudo aquilo que não é crucial para eu retornar pro usuário, os produtos que ele tem, eu posso delegar para fazer depois de maneira assíncrona. Esse é o ideal. Consolog ele vai estar usando o stder, acho que é assim que se escreve. E a gente vai fazer alguns experimentos para demonstrar o impacto disso aqui, quando que pode ter um impacto real. Antes de fazer o experimento, eu queria te contar que um caso muito comum de assim que o Consolog acaba travando sua aplicação de fato, algo que eu vi na prática que diminuiu muito a velocidade é quando você mistura isso com uma ORM, né? Então
+
+se você tem aqui uma ORM que puxa do seu banco de dado, você vai puxar ali products pont all filter alguma coisa, né? Só dando um exemplo aqui, em algum momento na sua aplicação você tem um console. log e você loga esses produtos. Muito provavelmente a sua URM tem o tal de lazy loading, ela só ia carregar esses produtos para memória. Ela só ia fazer essa requisição para o banco de dados no momento que ela fosse retornar isto aqui pro usuário, né, no final do loop. Então, se eu tenho aqui no topo do
+
+loop, né, eu pego products, né, eu pego todos os produtos. Lá no final do meu loop, eu pego products pfilter pelo usuário, só que aqui no meio eu dou um console. log todos os produtos, tá? Se no meio do loop, eu tô logando alguma coisa e filtrando depois ou fazendo algo nesse sentido depois. Eu vou ter que isso daqui vai forçar a ORM a buscar esses itens do banco de dados, o que vai diminuir a velocidade da minha aplicação, porque se eu tivesse filtrado antes de buscar no banco, seria mais rápido. E se eu não tivesse o console
+
+log, eu não teria forçado a aplicação a ir lá buscar no banco, entendeu? A lógica? Então, na prática, eu vejo bastante erro aqui, tá? Tom muito cuidado quando você logar alguma coisa que tá ligada a banco de dados ou a ORM, né? por dois motivos, pelo motivo de velocidade aqui, o motivo de performance e também pelo motivo de segurança, né?
+
+Não é legal você logar dados sensíveis, mas enfim, bora pra prática. A gente tem aqui configurado um projetinho de ban simplesmente porque eu gosto do projetinho de ban. A gente vai ter um console ptime aqui, né? Fazer um for loop. Dentro desse for loop, eu vou colocar um console log e a gente vai medir a diferença com um for loop com console log e sem console log. Vamos
+
+logar aqui o número i, né? É nada muito complexo. Qualquer parada, né? Você pode estar pensando, pô, são 50.000 1 vezes que você vai percorrer o negócio, né?
+
+50.000 logs, isso é muita coisa. Sim, para muitas aplicações isso é muita coisa. Se a sua aplicação tiver poucos usuários, provavelmente isso aqui não é relevante para você. Agora, em algum momento você vai est entrando numa empresa pra qual isto aqui vai ser relevante, né? Se você for para empresas
+
+grandes na sua carreira, isso pode fazer uma diferença e ter esse conhecimento é importante. Vamos dar aqui burnrunindex. Para rodar aqui, a gente tem nossa operação aqui terminada em 240 msos. Parece bem rápido, né? Se eu só apago esse consolog aqui e rodo um loopzinho sem isso, a gente tem em 0.34
+
+ms? Sim, é conso log é uma operação síncrona que demanda recursos mesmo utilizando o bank é muito rápido. Eu acho que consigo rodar isso aqui com node, né? Node indes. Eu preciso converter antes. É, eu consegui rodar
+
+com o node também. O node rodou em 0.315 ms aqui então com o conso log quanto tempo que o node demora. E o node demorou 174 msos, né? Foi na verdade um tempo muito parecido com o ban. Não, na
+
+prática não fez diferença. Então você percebe, né, que num exemplo assim relativamente simples, 50.000 nem é tanta coisa assim, a gente já consegue, cara, ficou mais de 100 vezes, mas ficou muito mais lento. Mas enfim, é um exemplo meio tosco, mas com o próximo exemplo aqui, com o exemplo do freeze, a gente vai conseguir evidenciar esse comportamento de travar o event loop. O que que eu vou estar fazendo aqui, né?
+
+Eu vou tá criando um intervalo. Esse intervalo é para logar uma vez eh a cada 100 munds né? A cada 100 m segundos ele vai tecar uma vez. Você pode pensar que isso aqui é um job ou alguma coisa nesse sentido, que a cada 100 msundos ele tá fazendo alguma operação. A questão é que antes disso eu vou rodar, pô, vamos colocar 750.000 vezes um conso log. Esse
+
+console log aqui vai travar e o meu intervalo, por exemplo, vamos rodar sem isto aqui antes, tá? Deixa eu comentar isso aqui. E eu vou dar um ban freeze.ts. Tá? Você tá vendo aqui que tá
+
+rodando a cada 100 ms? Ele tá dando um tiquezinho aqui no intervalo bem bonitinho. Esse conso log aqui, quando eu habilitar isso daqui, ele não vai mais esticar a cada 100 ms porque esse aqui vai est travando o loop. No o primeiro tic vai demorar muito mais do que 100 ms para ticar novamente, né? Porque ele vai estar sendo travado por isso aqui, ó. Eu vou clicar para rodar
+
+aqui. Ele fez vários, vários, vários logs. E aqui você percebe que no primeiro tick ele demorou 2256 msegundos ao invés dos 100 ms que é para o que ele tá é para ele tá demorando, né? Então a gente travou o nosso loop. A gente de fato bloqueou a operação do loop. Novamente, como eu comentei, né?
+
+Essas exemplos aqui são simplóos, mas isso acontece muito com ORMs, com queries pesadas do banco de dados, com esse tipo de coisa, o tipo de coisa que loga muita coisa, dá uma travada, deixa sua aplicação mais lenta de fato. Talvez não seja perceptível pro seu usuário, possivelmente perceptível pra sua CPU, pra sua cloud e possivelmente você vai conseguir lidar com menos requests síncronos. Existe um negócio, né, a gente até fala um pouco disso no nos cursos que eu dou e tal, enfim, da tal da Littles Law. Quanto mais tempo você demora para responder uma requisição, maior vai ser a sua necessidade de lidar com requisições síncronas, né? Porque você tem uma requisição que você demora 300 msundos para responder. Nesses 300
+
+msundos que você não respondeu, vão chegar mais requisições. Então você tem um problema muito grande aí. A Littos Law explica em parte porque que é tão difícil escalar serviços para milhares e milhões de usuários. E escrever um exemplo legal disso daqui. A gente tem isso daqui, ó. É, eu criei um servidor,
+
+tá? Não, não tem nada de super especial nesse servidor aqui, é um negócio muito básico. Eu vou tirar o console log, eu vou rodar o servidor aqui, ó, brun canon.ts. Estamos rodando nosso servidor. Ele simplesmente responde com
+
+OK, tá? Qualquer requisição ele vai fazer um loop e vai responder com OK. Para testar isto aqui, eu vou usar uma ferramentazinha aqui, ó, chamada AutoCon, no local 3001, que é onde o meu servidor está ouvindo. E esse Auto Canon vai, tipo, fazer muitas requisições, muitas conexões com o servidor e nos dá o quanto de requisições ele conseguiu fazer, né? Qual que é a performance disso daqui. Pronto, o nosso auto não
+
+terminou de rodar. Ele, cara, ele conseguiu fazer 300, 1.320.000 requisições em 11 segundos, tá compreendido? 1.300.000 1000 requisições
+
+emos segundos. Você consegue ver os bytes por segundo aqui, né? O, enfim, latência, é esse tipo de coisa aqui. Agora eu vou adicionar esse consol log aqui, tá? E nota, não é um conso log, tá? São 5.000 consol logs, mas de
+
+repente vamos ser um pouco mais justo, tá? Vamos colocar só 100 console logs. 5.000 é muita coisa, vamos colocar só 100 pra gente medir aqui a diferençazinha. para jordar meu servidor. Rodo o meu servidor novamente
+
+com novo código. Perceba que a cada uma requisição ele vai 100 vezes fazer o log da palavra processing. Só isso. Nada, teoricamente nada pesado. Ban é muito rápido, né? Então ele vai conseguir
+
+larções. Muito bem. Agora vamos ver a diferença, né, entre um código que não loga nada e um código que loga 100 coisas. Pô, 100 é é normal. Um serviço normal às vezes tem 100 logs numa requisição. Rodamos aqui de novo o nosso
+
+Auto Canon. Ele tá aqui rodando. Vamos ver o resultado. A gente foi de 1 milhão de requisições para agora 71.000 requisições. Você consegue olhar antes,
+
+né? O average, o tempo médio de latência era 0.01 ms nosso tempo médio de latência agora é 0.9 mos. 90 vezes mais para fazer para responder as requisições, né? Claro, se
+
+a gente chegar nesse ponto, a gente tá aqui falando de praticamente escovação de bit, tá? Os problemas de verdade que você vai ver vão ser relacionados ou com ORMs ou com requisições assíncronas que o seu console log força à espera de alguma coisa, tá? Na prática, o problema de um loop com console log é se você travar alguma outra coisa, tá? Porque isso daqui só vai fazer diferença para empresas gigantescas. Mas você tem que entender o que que isso aqui tá acontecendo. Porque, cara, se você
+
+trabalha com node ou com, na verdade, qualquer linguagem que tem um log, é no mínimo interessante você entender se é síncrono ou se é assíncrono, que isso pode, em algumas situações específicas, causar uma lentidão perceptível, tá? Um aumento de custo perceptível. Você quer ver como fica com de repente 100.000 com log, só pra gente brincar aqui, né? Isso aqui já é já é um caso exagerado, um caso raro. Com 100.000 console logs,
+
+vamos ver, né? Antes a gente fez 71.000 1000 requisições em 10 segundos. Bastante coisa. Agora o token não tá terminando e a gente fez [risadas] 83 requisições.
+
+Gente, isso aqui é exagero, tá? É, provavelmente você não vai fazer 100.000 com sologes por request. Só que se você fizer, cara, faça eles de forma síncrona, tá? Abre aqui, ó, libinha pino ou, enfim, os streams lá do node e vai usar isso daqui, porque pelo amor de Deus

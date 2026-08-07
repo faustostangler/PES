@@ -1,0 +1,133 @@
+---
+video_title: "Sistemas distribuídos | Explicação de um Dev Sr."
+video_id: Z_cXDqNE9zo
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Z_cXDqNE9zo
+video_date: 2026-03-26T12:50:20+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Vamos conversar sobre concorrência em sistemas distribuídos. Eh, o que que a gente vai falar hoje, né? O que é, por que que é importante? O que aprender, né? Momento que você chegou ali em mais ou menos pleno, pleno para sior, tá na hora de se preocupar com isso daqui, tá?
+
+É bem importante que você aprenda sobre concorrência e tem muita coisa aqui para aprender. Vamos falar assim bem bem por cima aqui, tá? Fazendo um vídeo um pouquinho mais rápido, um pouquinho mais dinâmico para você entender o que que você precisa saber. Cara, antes disso, vou te falar do patrocínio de hoje, que é a abacus. Abacos tá aqui, ó, você já conhece, né? Você vai pagar $ por mês,
+
+vai ter acesso a todos os modelos aqui. O Nano Banana Pro, Cloud Opus 4.5, modelo fantástico, por apenas $10, mas tem um negócio bem interessante na sua tela. Você tá vendo agora um uma maneira de usar a Abacus como se fosse openclaw. Você pode fazer com que o de agente da Abacos, que é o agente mais poderoso deles, né, um agente que consegue fazer muita coisa, consiga ler tickets no Gira. E baseado nesses tickets no Gira,
+
+ele cria pull requests para você no GitHub. Então você consegue, por exemplo, conectar ali com as APIs e tal, eh dar ali as chaves de API. E quando você cria um ticket no Gira, o o DP dacos vai ler esse ticket, vai tentar resolver esse ticket aí, né? Vai tentar escrever esse código, criar um pull request para enviar ali no GitHB. Você pode aprovar ou negar, olhar, enfim. é
+
+[música] revisar, fazer o que você quiser. A partir desse po request, você consegue ter workflows até mais complexos, né, que ah, quando um po request é criado, outro agente é lê o po request e valida se faz sentido ou não, né? Você pode ter isso aí funcionando de diversas maneiras diferentes. A ideia aqui é que é possível criar dentro do ferramenta da Abucos por apenas 10 por mês, um agente que responde a eventos. Um evento como, por exemplo, a criação de um Ticket no Gira ou uma mensagem no Telegram ou um e-mail, algo nesse sentido, assim como o OpenCla faz. Você
+
+tem a funcionalidade, o poder do OpenCla com um setup um pouco mais simples, um pouco mais fácil e muita, mas muita capacidade, tá? O link para abucos vai táar aqui na descrição. Bom, eh, qual que são, quais são as dificuldades aqui em concorrência em sistemas distribuídos? Porque que isso é uma uma questão grande, né? Quando você tem concorrência num sistema que não é distribuído, você vai ter aqui, ó, trads, locks, memória compartilhada, você pode ter race conditions, você pode ter deadlocks, tá? Só que são algumas
+
+características da concorrência, essas buzws aqui, essas palavrinhas. O problema é que quando o seu sistema é distribuído, você não tem memória compartilhada e aí fica bem difícil de de fazer o negócio funcionar. Agora você tem múltiplas máquinas diferentes. Então assim, se antes você tinha aqui um único servidor, né, imagina que aqui é o seu server, server, aí você tem processo A, né, colocar aqui PA, processo B, PB. Esses dois processos conseguem muito bem ter uma memória compartilhada, né? Eles
+
+podem ter a mesma memória que isso aí, cara. Isso aí facilita muita coisa. Você consegue fazer uma troca de mensagens entre um e outro, tá? Você consegue compartilhar estado da maneira através da memória aqui. Então, uma vantagem gigantesca que é perdido quando você migra esses processos para servidores diferentes. Aí você tem a situação que
+
+eles não mais conseguem se comunicar estando dentro da mesma máquina. Não é mais possível, né? Ainda tem outros problemas, né? Esse servidor aqui, ele tem um clock, ele tem um um clock, o horário aqui do servidor mesmo, tá? O outro servidor, vamos copiar aqui e colar. Ele tem um clock que nunca vai
+
+estar exatamente sincronizado. Isso não existe, né? Não ser que seja aquele relógio atômico lá muito doido, mas servidores tradicionais geralmente vão estar dessincronizados por um pouquinho. É, esse pouquinho pode ser problemático. Você pode ter que eles se comunicam aqui de certa maneira via alguma coisa, obrigatoriamente via network, né, via rede, utilizando algum tipo de protocolo, alguma maneira de comunicação aqui, né? Isso que pode ser de várias
+
+formas e você pode ter que, cara, de repente você teve que isso aqui foi interrompido, né? De repente você tem que as mensagens não chegaram em ordem, né? Esse servidor enviou uma mensagem primeiro que chegou depois de outra mensagem que ele enviou depois. Sen não não existe uma garantia de que todas as mensagens enviadas vão sempre chegar em ordem. Então, dados esses problemas, fica muito evidente a quantidade de coisas que a gente precisa aprender para lidar com essa situação aqui, que é um fato. Todo o sistema grande, ele se
+
+parece de uma maneira ou de outra com isso daqui. Que que você vai precisar entender, então, né? Quando esses sistemas tentarem atualizar um banco de dados, né? Por exemplo, imagina que você tem aqui, né, eh, um único banco de dados. E, by the way, isso aqui fica muito pior se a gente tiver banco de dados distribuídos. Aí o problema é
+
+elevado ao quadrado. Mas se você tem aqui, ó, um cliente A tá tentando comprar um produto aqui, um cliente B tá tentando comprar um produto aqui, né? Ambos querem comprar um produto e você tem apenas uma unidade de produto, uma unidade. Precisa existir uma maneira que esse request venha para cá, esse Cquast venha para cá e você consiga vender esse produto uma única vez. Para você entender como solucionar isso aqui a nível de banco de dados, tem até vídeo que a gente fala sobre isso, tá? Locking
+
+é uma boa maneira. Lock é uma das coisas que você vai aprender, tá? É locks otimistas e pessimistas. Tem um vídeo aqui no canal sobre. É muito importante para você aprender quando você começa a lidar com problemas maiores, né? Quando
+
+você tá ali de pleno para ser, quer evoluir, né? Quer aprender mais coisa, prende locks, aprende um negocinho chamado compare and swap. Simples também, não é muito difícil. Você precisa aprender um pouco sobre transações, transações a nível de banco de dados, né? Transações atômicas aqui é interessante você entender. E idem
+
+potência. Todas essas coisas são relevantes quando a gente trata num de sistemas distribuídos. O seu banco, ele come potência no café da manhã, senão você não conseguiria usar o Pix que não existisse, né? É chaves de idem potência, tá? Que que é idem potência? E
+
+da impotência quando você tenta fazer um Pix de R$ 5 pro seu amigo e 10 segundos depois você tenta fazer outro pix de R$ 5 pro seu amigo e o sistema fala: "Não, você fez essa transação já, já foi feita, você não vai conseguir fazer o segundo Pix agora. Espera um pouco". Isso aí nem potência é feito através de uma chave de impotência, tá? o seu banquinho aí o sal no bank tem ali mantém um certo estado e ele fala: "Cara, uma transação exatamente igual a essa foi feito há muito pouco tempo, possivelmente uma transação duplicada, um request duplicado, houve algum erro, houve algum engano, não vai passar essa segunda transação. Se quiser muito fazer isso paraa um pouco". Em sistemas
+
+distribuídos, né? Um negócio que é interessante aqui a gente entender, o seu sistema distribuído, você tem aqui um server, né? O nosso server ele vai receber coisas de requests, requests. Muitas das vezes o servidor não vai processar tudo que é para ser processado e devolver pro cliente. Existem coisas que são interessantes serem colocadas em fila ou serem processadas de maneira assíncrona. Eu posso te dar dois
+
+exemplos aqui. Um exemplo é um pagamento, né? Eu falo bastante pagamento que eu trabalho com pagamentos. Um pagamento que vai para a Stripe. É muito interessante que esse pagamento seja retentado várias vezes, porque, pô, de repente ele falhou agora, mas eu posso tentar daqui 5 minutos, daqui 10 minutos, tal, né? Eu não quero
+
+perder essa venda. É muito importante aprender sobre retries, mas não precisa ser pagamento, né? Bem dizer. Pode ser que você precisa acessar uma API externa, qualquer tipo de API externa, tá? Não precisa ser stripe, pode ser qualquer API. Aqui a gente quer acessar
+
+algo dessa API e às vezes dá um erro, cara. Às vezes dá um 400 aqui, né? Isso de certa maneira configura um sistema que é meio distribuído. Se você tem uma dependência de uma API externa para responder o seu cliente, você tem um sistema que é distribuído, só que o outro servidor é o é o de quem tem a API, mas seu sistema ele é distribuído. Às vezes nem é um API, né? Às vezes,
+
+tipo assim, o seu cliente upou uma foto, né? Eu subi aqui uma foto, cara, é raro o caso que o seu próprio servidor vai processar uma foto de maneira síncrona, tá? Essa foto, se ela for comprimida, ela vai passar aqui por, pô, de repente um lambda que vai comprimir a foto. Essa requisição entre o seu servidor e o lambda, ela pode falhar, ela é propensa a falhas. Então, interessante que você tenha retri, interessante você aprender sobre time outs. Eh, tem aqui o tal do
+
+retry que, né? Muito importante você aprender sobre retry kill quando o seu sistema é dessa maneira aqui, principalmente quando você lida com pagamentos. Um dos conceitos que você precisa entender é que tempo é uma mentira. É aquilo que a gente estava falando, né? Os clocks dos servidores eles falham. Se você eh precisa tipo de
+
+time stamps para dizer o que que veio antes de cada coisa, certo? Se eu tô olhando ali, eu olho no meu servidor, ah, esse request aqui veio um milissegundo antes do outro request e eles foram processados por servidores diferentes. Ã, não dá para confiar na stamp. A timeamp não necessariamente é uma fonte de verdade 100% confiável, até porque você pode ter o seguinte caso, né? Você tem, tipo assim, ó, você tem o seu servidor, imagina que você tem o request um que chegou aqui, o request dois que chegou logo depois, tá? Request
+
+um chegou antes, request dois chegou logo depois. Seu servidor ele consegue lidar com múltiplas operações de input, output, tá? Não tem muito muito drama. Aqui você envia pela rede em ordem. Você pode até enviar em ordem os requests para outro serviço, para uma API externa, para um banco de dados, mas a rede trabalha de maneiras misteriosas e pode ser que o seu request um chegou depois do seu request do se disparou eles de maneira assíncrona, tá? Não
+
+existe garantia de que o sequer saiu do seu servidor antes do dois. Então, cara, mesmo com um único servidor, às vezes você não pode contar com time stamps. Isso que é loucura. E assim, quando seu sistema escala, é, é interessante você disparar request de maneira assíncrona, tá? É, vai dar mais truput, vai dar mais escala para você. Existem diferentes
+
+conceitos aqui que você pode entender para resolver esse tipo de problema. Clocks lógicos, versionamento, counters monotônicos, até relógios. E eles chamam vector clocks em inglês, tá? São todas possibilidades. Quando você estiver evoluindo, é interessante aprender esses conceitos aqui. Quando a gente fala de
+
+sistemas distribuídos, a gente tem aqui o tal do teorema de CAP também. Teorema de CAP tem C, você tem A, você tem P, né? Por isso CAP. P é de partition tolerance. Tolerância a tolerance. É, a
+
+gente pode até botar um network aqui, porque geralmente diz respeito à rede, tá? Então, network partition tolerance. Consistência, A é availability. Se você tem um sistema distribuído, você sempre tá fazendo esse tradeoff, né? Imagina que a gente tem aqui, pô, bancos de dados que tem réplicas entre eles, tá?
+
+Então, você tem aqui um um esqueminha que você tem três bancos de dados. Você só vai poder escolher duas dessas características: network, protection, tolerance, consistência ou availability. Então, tipo assim, se você optar por consistência, você tem que todos os bancos de dados, eh, quando chega um request, eu preciso esperar que todos os bancos atualizem o estado deles, né, que eles estejam internamente consistentes um com o outro. Então, imagina assim, receber um request que vai aumentar seu saldo para 100. Preciso que esse aqui aumente o saldo para 100 e fale pro outro, ó, tu vai aumentar o saldo para 100 também. Tu vai aumentar o saldo para
+
+100 também. E quando todo mundo fizer isso, eu vou responder aqui com OK. Só que seria um sistema altamente consistente, né? Respondo aqui, OK. Que que acontece se esse banco aqui tiver offline? Eu tenho duas opções. Ou eu não
+
+atualizo, eu falo: "Cara, não deu certo, velho. Não, not OK, ruim, péssimo, não conseguimos atualizar". Ou então eu falo: "OK, atualizei o saldo desse aqui para 100, atualizei o saldo desse outro aqui para 100". Mas eu larguei a minha consistência. Essa é a diferença entre consistência e availability. E eu tenho
+
+um negócio aqui com teorema de CAP, que quando você tá falando de um sistema distribu verdadeiramente distribuído, é é engraçado, né? a gente fala desse teorema de CAP, só que você obrigatoriamente precisa optar por partition tolerance, tá? Você não pode não optar por partition tolerance, porque se você falar e se você optar por consistência e availability eh o seu sistema ele deixou de ser distribuído, tá? Porque enfim, um sistema para que ele seja distribuído, existe aqui um pré-requisito que ele seja, ele possa ser ele possa sofrer um particionamento de rede. Detalhes aqui, né? Detalhes. Ao
+
+escalar o seu sistema distribuído, você vai esbarrar aí, viu? aqui, ó. Pô, tô entrevistando para uma empresa. Ela quer que eu saiba sobre Kafka, né? Empresinha aqui quer que eu saiba sobre Kafka.
+
+Cafka diz respeito a basicamente eventos aí. Eventos, mensagens, troca de mensagem, evento driven, eh, orquestramento, mensageria, né? Message brokers. Você precisa entender de eventos, você precisa entender de event driven. Event driven architecture, arquitetura baseada em eventos. Pub sub.
+
+Event driven significa. Cara, não gosto de falar disso nesse vídeo porque vai ser um resumo meio grotesco, mas vamos fazer, né? você ter uma noção de onde você tá pisando. Event driven é sobre emissão de eventos. Ele emite eventos, ele publica eventos, ele publica coisas e leitura assíncrona, né? Então imagina
+
+que você tem aqui um um servidor e o seu servidor ele, tipo assim, ele publica um evento, ele fala aqui para podemos usar o Cafca de exemplo, tá? Sei lá, seu sistema aqui de Cafca para, enfim, qualquer que seja coisa, pô, nem quero usar o Cafka de exemplo, vai. Ele fala, ele comunica um evento para um negócio. Ele comunica o evento e ele fala, tipo, pagamento caiu, pô, o pagamento caiu, foi pago o negócio. Outros diferentes servidores, outras diferentes partes desse software, outros diferentes sistemas, outras diferentes partes desse sistema podem ouvir esse evento. Eles
+
+podem estar ativamente ouvindo por um evento e todos eles vão fazer o que eles quiserem com a informação de que um pagamento caiu. Quando a gente começa a entrar em event driven, a gente cai aqui, né? É importante falar da arquitetura saga, né? É importante falar também sobre CQRs. Eu acho que eu tenho vídeo sobre esses dois no canal, não vou falar mais sobre, mas se você quiser evoluir a sua compreensão de arquitetura baseada em eventos, interessante aprender sobre saga, interessante aprender esse QRS.
+
+Quando a gente fala também, né, pô, tava falando disso daqui, eh, escalar banco de dados, existe um negócio muito interessante chamado charging ou particionamento. O que que é charging ou particionamento? Você tem aqui o seu banquinho de dados. esse banquinho de dados, né? Ele vai ter aqui, ó, eh, vamos colocar aqui, Augusto. E o meu,
+
+quanto de dinheiro eu tenho? Tenho R$ 10. O João aqui tem R$ 20, tá? As informações estão no mesmo banco de dados. Eu consigo, cara, fazer um particionamento no banco, consigo fazer um particionamento aqui, ó, horizontal, em que eu pego esse Augusto, ele vai para uma das partições. Então, isso aqui
+
+chama uma partition e o João vai paraa outra partition. Isso aqui permite que a gente escale mais o nosso banco de dados. Tem vários tradeoffs aqui, vai adicionar muita complexidade ao seu sistema, tá? Não vale a pena em sistemas que t menos de, sei lá, 1 milhão de usuários. Eh, por favor, não faça partition na sua empresa só por pela brincadeira, só pela vibe. Não vale a
+
+pena. Você vai criar trabalho infinito, ou de repente faz, né? Você vai ter que contratar muita gente para lidar com isso daqui. Ou então você pode fazer um particionamento um pouco diferente. O particionamento horizontal ele vai separar ah uma ele vai quebrar uma tabela no meio, né? em que algumas
+
+entries dessa dessa tabela vão para uma partição, algumas entries dessa tabela vão para outra partição, ou você faz aqui na vertical em que eu posso ter que as colunas vão para part diferentes, né? Então eu tenho uma partition que vai ter os nomes das pessoas e outra partition que vai ter os saldos das pessoas, né? Você consegue enxergar que claramente às vezes tem tradeoffs aí e isso aqui gostaria de falar mais sobre. A gente tem uma aula, a gente tem um curso de system design que tá chegando por aí, que tá em lista de espera já, em que eu falo vai tá aqui, tá, mas não vai ter lançado ainda quando esse vídeo lançar. Enfim, a gente tem uma lista de espera para um curso de system design que eu falo sobre isso aqui e as aulas, eu acho que o conjunto das duas aulas sobre partition dão meia hora por aí, tá? É
+
+muita coisa, não cabe nesse vídeo, infelizmente. Mas você vai querer aprender partition ou comigo ou com outra pessoa. Tem muito conteúdo bom na internet que te ensina isso aqui também, tá? Você vai querer aprender a fazer, você não vai fazer na sua empresa. Assim, se eu fosse seu chefe e se eu fizesse isso aqui sem a minha autorização na na empresa, te demitia na hora, sinceramente. Só que a quantidade
+
+de complexidade que adiciona aqui é gigantesca. Mas existe um momento que toda empresa que cresce e escala vai chegar no momento que precisa de partition, tá? O Twitter tem partition, Facebook tem partition, Google tem partition, né? Tudo is tem partition. Concorrência em sistemas distribuídos é sobre tempos, falhas, coordenação e tradeoffs, tá? Quanto mais você
+
+distribui o seu sistema, quanto mais você, tipo assim, pô, eu tava falando lá, cadê que você pode ter aqui um servidor, esse servidor vai se comunicar com lambda, que vai de repente se comunicar com outro lambda. Você pode pensar, cara, lindo, né? Olha esse system design aqui. A gente tem um processo com dois ou três lambidas. Esse lambda aqui vai jogar isto aqui para um S3, tá? O nosso S3, cara, ele vai emitir
+
+um evento. S3 pode emitir evento, tá? Isso aí é é fato, pode acontecer. Ele vai emitir um evento. Esse evento vai ser lido por outro, uma fila, uma fila aqui, ó. Kill. E dessa kill ele vai cair
+
+num que ele vai cair, vai cair numa PI externa. Lindo, lindo, lindo, lindo. Nossa, sistema aqui, ó. Chef Skizs. Cara, olha o quanto de problema que você adicionou, né? É, imagina que cada
+
+chamada de network tem aqui milisegundos adicionais, tipo 20 milisundos adicionais. Cada uma dessas você tá adicionando e tempo mesmo de execução, né? Cada chamada de network é mais lenta. Cada chamada de network pode falhar aqui, né? Você tem pontos de falha, muitos mais pontos de falha, você tem uma observabilidade que é muito mais difícil, né? Como é que você, pô, deu
+
+erro, eh, deu erro, o erro 500, aonde? Cadê esse erro? Quem é que emitiu esse erro? Eu eu tenho um sistema de login unificado aqui, cara. Fala sério, olha a quantidade de problema que a gente tá criando aqui, né? E o pior de tudo é que
+
+se sua empresa fizer sucesso suficiente, você vai chegar no ponto que você vai ter que criar esses problemas. Você vai ter que escolher um tradeoff, né? É. E isso aqui, tipo, muita gente pensa que, cara, isso daqui pode ser é melhor pro cliente, né? Vai ser mais não, não vai ser mais rápido. É, dificilmente um
+
+processo que envolve vários lambidas aqui, ele é mais rápido de maneira síncrona, tá? Ele não vai executar mais rápido do que rodar tudo no mesmo servidor, mas ele consegue abaixar seu custo e dar mais vazão pro seu sistema. Então, precisa, precisa ser feito em algum momento. Isso que precisa ser feito. Só que, tipo, você não acha que o seu servidor ele demorava 300 mos para responder o cliente, agora ele vai responder em 30 msundos, tá? É o que vai
+
+acontecer, você pode responder seu cliente mais rápido, só que antes, quando você, tipo, de repente você processava a foto, respondia pro cliente, ó, a foto está processada, tá, tá feito, né? Agora você não consegue mais fazer isso. Você vai falar, você vai responder o request do cliente, vai falar, ó, tá processando, daqui 2 minutos volta aí que ela tá pronta, né? Tá, tá subindo, tá alinha em processamento. É a vida. são os
+
+tradeoffs que você tem que optar. É sobre isso, cara. É sobre isso que é sistema concorrência, sistemas distribuídas. E velho, por que que eu fiz esse vídeo, né? Eu queria fazer esse vídeo aqui para te dar um overview que eu sinto que a galera, cara, pira muito em que é system, o que que eu preciso aprender, né? E eu queria te dar mesmo
+
+um overview, te jogar umas buz words aí, te dar coisas para pensar. Esse vídeo aqui eu não te ensinei quase nada, mas espero que você entenda o tamanho da complexidade, que é de fato montar esses sistemas aí, tá? Enfim, veijão vocês.

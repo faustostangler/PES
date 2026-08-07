@@ -1,0 +1,169 @@
+---
+video_title: "Como escrever logs bons"
+video_id: DcUvDpR0B5Y
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=DcUvDpR0B5Y
+video_date: 2026-02-09T13:00:33+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📖 Meu curso de estruturas de dados e algoritmos: https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  Workshop 10 LeetCodes Para Entrevistas: https://pay.hub.la/RGfq0dk8iqDeL5IC5yog?coupon=WORKSHOP
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Fazer logs é um saco. Hoje a gente vai falar disso. E cara, antes de olhar esse site aqui, o site logins.com, eu queria só comentar a experiência que é você ter sair, né, de uma situação em que a gente tinha uma code base, um server, né, um negocinho aqui bonitinho, um negocinho decente pra situação em que agora a gente tem que fazer o tal do distributed loging, que é uma beleza, é uma belezura. Porque imagina o seguinte, né, a sua arquitetura agora ela se parece mais assim, ó. Você tem um API
+
+gatory, aí esse API gator vai apontar aqui para um lambda ou então dependendo da situação, vai apontar aqui para um servidor. Uma EC2 no caso, né, que não é mais uma nunca é apenas uma iso não existe mais. É, geralmente é um cluster, né? A gente tá falando aqui de cluster. Você vai rodar em duas, três máquinas, né? Pô, fala sério, quem é que roda em
+
+uma máquina só? Coisa de casual. Aí temos um cluster de S2 aqui, né? Coisa linda. Um lambda. O que que vai estar
+
+acontecendo depois? O seu lambda. Você leu ali um textinho muito legal, texto escrito por Augusto Galego sobre Pub Sub, né? Você pensou, cara, esse cara aí, Augusto Galego, ele entende de alguma coisa, né? Então vou fazer aqui uma filinha, uma kill, pô, ele falou tão bem de kill, ele falou tão bem de filas, né? A gente vai ter uma fila que o
+
+Lambda vai jogar para uma fila. Essa fila ela vai ter que ter claramente, né? Como todas as filas hoje em dia, uma DLK, Dead LetterQ, ela vai jogar isso daqui para uns web workers, né? O nomezinho bonitinho para servidores que ficam ali esperando para consumir a coisa da sua fila. Enfim, você tem os seus web workers aqui que vão jogar o output depois num que que vai ser isso daqui? Um dynamo database. O galego
+
+falou que ele gosta de dynamo, né? Então é dynamo também. Dynamo, eu te pergunto, como que você vai fazer log em observabilidade nisso daqui? Não, tu vai fazer, né? Tu vai dar um jeito. Tu vai
+
+usar o AWS X-ray, tu vai usar Cloud Watch, tu vai jogar Centry em tudo, tu vai dar um jeito. Algum jeito vai ser dado, agora vai ser insuportável. Vamos falar disso hoje. Antes disso, deixa fazer uma breve pausa para falar do patrocínio do vídeo de hoje. Quem tá patrocinando o vídeo de hoje é a abai. E
+
+você tá vendo aqui uma thumbnail que a aba gerou para mim com o modelo Nano Banana Pro, né? A gente gerou algumas várias imagens aqui para eu acabar utilizando de thumbnails. Nessa outra aba eu pedi para ela gerar um PRD, que é um tipo de documento que eu vou entregar para uma IA para que ela possa gerar minha codebase. Essa pode inclusive ser o zpagent da própria aba cuar. E nessa outra aba aqui eu pedi para ela gerar um diagrama de como CQRS e eventourcing funciona. Uma foi no Nano Banana, a
+
+outra foi no GPT 2.2 Thinking, a outra acabou sendo roteada para Gemini 2.5 Flash e eu tenho todos esses modelos e diversos outros modelos por apenas por mês. O link para abac vai est na descrição, mas o mais impressionante não é isso. O mais impressionante da abac é o deep agent que você também tem acesso.
+
+Agora aqui do meu lado, você tá vendo que eu pedi pro de agent fazer o papel de um keyway para mim. Ele vai analisar o meu site pessoal e ele vai me dar um test report, né? Enfim, ele vai fazer o papel de Qway, ele vai clicar todos os links no site, vai ver onde é que tem link quebrado, onde é que tem bug, ele vai fingir que ele é um usuário e eu posso criar isso como uma tarefa recorrente que ele vai fazer toda segunda-feira, por exemplo, e me enviar por e-mail esse test report toda a segunda-feira. Imagina você toda segunda-feira recebendo um report de um QA que tá sempre analisando seu site para bugs e tal, testando funcionalidade, vendo se funciona ou não e sempre te mandando um report, assim como você vai ver aqui no final do vídeo à minha esquerda ou direita. E todo esse ferramental, claro, tem um certo limite de uso, tem também planos pró e tal, mas o plano padrão custa apenas por mês, é mais barato do que pagar qualquer uma das outras IAS separadamente, tá? O link
+
+praiai vai est aqui na descrição e tem muita, muita, muita coisa maneira, tá? Eu sempre falo deles aqui no canal e eles estão sempre surgindo com features novas, o que é excelente para mim porque eu tenho mais vídeos para fazer e mais coisas para falar sobre eles. Enfim, link na descrição. Bom, fazer logs é um saco. Vamos ver se a gente vai aprender a melhorar isso daqui com esse texto, né? Eu não vou ler o texto inteiro, vou
+
+fazer uma leitura aqui um pouco dinâmica pra gente ver se aqui tem umas ideias boas para esse problema bem real que eu tenho volta e meia, né? Que é que, cara, os serviços hoje em dia convergem muito rapidamente para uma arquitetura assim. E não é nem por maldade, tá? É porque quando você tá lidando com, pô, sei lá, gatos de pagamento, processamento de pagamento, e aí o negócio vai pingar num, nem falamos de web hook, né? O negócio vai pingar num web hook aqui depois você tem que fazer uma coisa com isso. As aplicações hoje em dia são
+
+muito complicadas, né? Enfim, a gente provavelmente já passou horas vasculhando por logs, tentando entender porque que um usuário não conseguiu finalizar uma compra. Cara, real, bem real. O sistema de registro de logs, da forma como é comumente praticado, é fundamentalmente falho. E não, simplesmente adicionar o Open Telemetry ao seu código não vai resolver magicamente o problema. Não vai, mas vai
+
+melhorar, né? É, problemas nunca se resolvem. A gente só melhora, só joga eles pra frente, né? Só faz ele ficar um pouquinho mais um pouquinho mais fácil de lidar com os logs eram projetados por uma era diferente. Era caramba, ele lembu meus pensamentos. Sistemas
+
+monolíticos, servidores únicos. É, é verdade. Hoje em dia uma única requisição de usuário pode afetar 15 serviços, três bancos de verdade, duas cash. Nem falamos de cash, né? Vamos adicionar aqui também nosso sistema design muito bonitinho. Uma cash, né?
+
+Aqui vai ser um heads para que esse headges seja compartilhado entre as múltiplas, ele não pode ser dentro, né? Ele não pode ser em memory, ele tem que ser tipo fora da da S2, porque senão você pode ter também, né? Você pode ter que cada um tenha um Mcash, um RES aqui dentro da própria C2, só que para compartilhar cash precisa ser fora deles. E a gente tá falando disso, né? Seus logs ainda se comportam como se estivéssemos em 2005.
+
+Isso aqui é uma configuração típica de um registro de logs, né? Um simulador caótico de logs. Vamos clicar aqui em processar pedido. E é bem por aí mesmo, cara. Uma requisição vai vir bem por aqui, eh, pra gente, né? É isso que
+
+acontece. Tá aqui de baixo para cima, de baixo para cima. É, tá certo. Recebe um post valido JWT, valida, né? Ele vira em isso aqui é quantos minutos? É uma hora
+
+parece. Cri pedido pro carrinho. Valida 3D nos carrinho. Verifica SKU, correto? Aviso de estoque baixo. Você não precisa
+
+muito desse aviso, né? Só se ele notificar alguma coisa. Se ele não notificar, não tem muito para que ter ele. 47 unidades, processando pagamento via Stripe, chamando API da Stripe, tentativa um. Resposta lenta da P da Stripe, 145 msundos, OK? Pagamento
+
+recusado, fundos insuficientes. Tentando novamente pagamento, tentativa dois e assim por diante, né? Pagamento efetuado com sucesso. Tá bom, tá bom. É, é, é bem por aí, cara, que vai ser uma única requisição, tá? Essa quantidade de logs
+
+tá tá realista. 17 linhas de log para uma única requisição bem-sucedida. Bem normal. Bem normal. Multiplica isso por 10.000 usuários simultâneos. Aí não é
+
+tão normal, né? É 10.000. simultâneos é muita coisa, mas tem muita empresa que faz isso, tá? Assim, um mercado livre da vida, capaz de fazer bem mais até numa numa situação aí de Black Friday vai mais, com certeza. Se bem que 10.000 por
+
+segundo aí eu já não sei também, né? Muita coisa vai ter 130.000 linhas de log por segundo. Ele tá inflacionando aqui uns números um pouquinho, mas tá tudo bem, não tem problema. A maioria delas sem dizer absolutamente nada de hoje. É verdade. Quando um usuário
+
+relata não conseguir concluir minha compra, seu primeiro instinto é pesquisar nos registros, né? Procura pelo e-mail dele ou talvez o ID do usuário aperta enter. Então tá, vamos tentar isso aqui, né? Vamos tentar. Tá pedindo aqui pra gente buscar pelo user 1 2 3. Vamos fazer a busca. Você olha
+
+aqui, né? Tem vários logs aqui. Isso que a gente tem só os de um usuário e eu sei o que que vai acontecer aqui, tá? Vai aparecer. É, a gente não necessariamente tem o o log de tudo que é relevante [risadas] e os logs não estão padronizados também, né? Você tem 1 2 3
+
+é usuário com acento aqui. 1 2 3 1 2 3 não necessariamente tá padronizado. E se olhar aqui em cima, né? O, por exemplo, quando deu esse erro aqui no no pagamento do Stripe, nesse log aqui, a gente não logou o ID do usuário. Então, nesse log aqui já f um pouquinho difícil de encontrar pelo text, né? Ao pesquisar
+
+por 1 2 3, você poderá encontrá-lo registrado de 47 maneiras diferentes no seu código fonte. Pode, é, é bem assim mesmo, cara. Você vai encontrar muitas vezes. Esse aqui se pá, é o mais comum. Esses são os que incluem o ID do usuário. E quanto aos serviços
+
+subsequentes, que tu registrou apenas o ID do pedido. Fato, porque se tu tiver numa situação de microsserviços, aí o negócio fica lindo, fica uma belezura aqui, ó. Uma cara, para mim é é assim, vocês vão ouvir uma uma heresia, tá? A igreja de microsserviços vai me banir aqui. Se você tiver num ambiente de microsserviços, tá? E vou imaginar que a
+
+gente criou um microsserviço para usuário. Eu não sei porque que você faria isso. Eh, em qualquer aplicação, tipo assim, se a gente tiver falando de aplicações menores do que a Magazine Luía, eu não teria um microsservço de usuário. A não ser que você, a sua empresa seja tipo a a clerk, assim, que o core business é gestão de usuários, tá, para outros serviços. Enfim, você foi, seguiu as boas práticas, criou um microsserviço específico para usuários.
+
+Em teoria, em teoria, microsserviços não devem compartilhar bancos de dados. Cada microsserviço deve ter a sua. Cara, eu nem sei porque que se isso ainda é consenso, né? Mas eu espero que não seja mais. Na época do no auge do hype de microsserviços, se dizia que microsserviços não deveriam compartilhar bancos de dados. Então, a gente teria um
+
+banco de dados de usuário e apenas esse banco de dados na aplicação inteira vai conseguir ligar o user 1 23 com o resto das informações desse user e todo o resto da nossa aplicação não vai fazer ideia do que que seja o user 1 2 3 a não ser que eles solicitem pro microsserviço de usuários. É, cara, não dá para negar, né, que a gente tecnologia, a gente é bom de criar emprego pra gente mesmo, né? Não dá para falar que a gente é ruim. A gente tá o quê? há 40 anos migrando de C para C-#ARP, pra Java, pra PHP, pra Python, pra Node, pra Goleng.
+
+Agora a gente é bom de criar mais trabalho. O problema é fundamental, os logs são otimizados pra escrita, não pra consulta. Faz sentido, né? Geralmente quando você recomenda, inclusive tema aqui interessante para você falar em banco de dados, né? Quando você fala de logs, geralmente você vai optar por um banco de dados com uma truput, né? que
+
+não te dê as garantias acid necessariamente. Você vai optar por um no SQL para liberar muito ali a escrita. Imagina, cara. Imagina você tá armazenando aqui, ó. Cada requisição você vai armazenar 17 logs no banco de dados. Você consegue imaginar isso num
+
+postg? Pô, não faz muito sentido, né? Então, toca isso aí numzão da vida para dar truput ali, né? Para dar carga. E isso também vai dificultar a hora da busca, tá? No SK ele é muito mais rápido
+
+de escrever, mas como não tem as, enfim, como você não tem as tabelinhas bonitinhas, né, para dar os joins, para fazer as buscas ali, fica um pouquinho mais chato de consultar. Os escrevem com o seu log. Já falamos para não fazer isso. Já falamos para não escrever com o seu log, porque é fácil no momento. Ninguém pensa na pobre alma que estará procurando por isso às 2 da manhã durante uma queda de serviço. Vamos
+
+definir alguns termos, vai. Antes de mostrar a solução, vamos definir os termos aqui. Registro estruturado. Registros emitidos como pares de chave valor. Geralmente Jason em vez de strings. Event payment fa de user. 1 2
+
+3. Ok. Ah, é válido. Cardinalidade, o número de valores únicos que um campo pode ter. User tem uma cardinalidade quase infinita e http method tem uma cardinalidade baixíssima, né? Get, post,
+
+[ __ ] delite. Se você for da da escola graph de pensamentos, apenas post. Dimensionalidade, o número de campos no seu evento de log. Um log com cinco campos tem baixa dimensionalidade. Um log com 50 campos tem alta dimensionalidade. Faz sentido. Evento
+
+amplo, único evento de log rico em contexto. Em vez de três linhas de log para uma única solicitação, você emite uma linha com mais de 50 campos, tá bom? Evento amplo, tá entendido? Linha de log canônico. Outro termo para evento amplo popularizado pela Stripe. Cara, a Stripe
+
+tava muito na frente, né? Na época dela. É uma loucura. Acho uma empresa muito impressionante a Stripe. Campos de mais alta cardialidade, como user são os mais valiosos para deporação. Lógico, faz
+
+muito sentido. Por que que o openetry não vai me salvar? Basta usar o openem e meus problemas de observabilidade estarão resolvidos. Open telemetry é um protocolo e um conjunto de ST casa. Ele padroniza a forma como os dados de telemetria são coletados, exportados.
+
+Mas isso é extremamente útil, né? A gente não tava reclamando ali em cima do que um dos problemas era falta de padronização. Mas o que que o Open Limit não faz? Ele não decide o que registrar. OK? É, cabe a gente é defini o que
+
+registrar. Faz sentido. Ele não adiciona contextos de negócio, novamente. Cabe a gente fazer isso, né? Ele não corrige seu modelo mental, não corrige meu meu JavaScript mental, né? Mas eu quero ver
+
+a solução. Texto. Você já me vendeu no problema, né? A gente já tá compradaço aqui no problema. Eu já cliquei aqui, ó, em verdados capturados. Eu tô vendo o
+
+que que foi capturado. Ah, tá aqui, ó. Instrumentação preguiçosa. Instrumentação deliberada. Tá, agora a gente tá começando a ver alguma coisa.
+
+Instrumentação. Como é que tá isso aqui em inglês? Instrumentation. Tá bom. Ok.
+
+Tá. Tô começando a entender onde que ele quer chegar, porque isso aqui é virtualmente inútil e isso aqui tá mais próximo de me ser útil, né, especificamente porque eu consigo buscar pelo user ID e eu consigo ver outras informações aqui, né, também tipo o tipo do erro e tal. Aí fica bem legal. A solução para logs são eventos amplos e linhas de registro canônicas. Obrigado.
+
+Stripe de novo. Eu acho. Em vez de registrar o que o código tá fazendo, registra o que aconteceu com esta solicitação. Para de pensar em loges como um diário de depuração e comece a pensar neles como um registro estruturados de evento de negócio. Caramba, a gente tá chegando aqui numa, eles vão falar dele, do nosso queridinho Ledger. E na verdade não, não é Ledger,
+
+né? É, enfim, o conceito que que a gente tá chegando aqui é o tal eventouring, né? E a gente vai capturar um evento. E nesse evento a gente vai ter nele as regras de negócio. Então, por exemplo, quando você captura um evento em eventourcing, a ideia é ter todas as informações para eu conseguir reproduzir o que aconteceu com aquele evento, né? O
+
+que que é para acontecer de fato no meu sistema. Vou imaginar aqui, né? Um usuário fez um pagamento de tais produtos, né? A gente vai ter aqui o user, a gente vai ter a operação que é, sei lá, payment ou credit card accepted, algo nesse sentido, quais produtos que ele comprou, etc, etc., né? tudo que for
+
+necessário para reconstruir a operação que foi feita. Isso aqui é um conceito utilizado em sistemas que utilizam de CQRS, command query responsibility segregator, que enfim é a separação do que que é um comando e o que que é uma query, um eventuring, você vai armazenar um comando. Isso aqui é muito parecido. A ideia de um evento amplo é armazenar quase que uma uma ação e um resultado, eu acho, né? Aí aqui, olha só que legalzinho, ele nos dá esse aqui o site, só lembrando, né? Vai tá na descrição
+
+também, mas o site é esse aqui, ó, logins.com. Tá bem bacaninha. A gente pode escolher o que que vai entrar aqui, o que que não vai entrar, né? Vamos brincar. Ide da requisição. Vai, porque
+
+outros outros serviços nossos microsserviços vão querer esse ID da requisição. Trace ID também queremos. Método post caminho. Queremos parâmetro de consulta, eu quero também. Cadê paramos? Aqui embaixo, ó. É e-mail,
+
+código de status, tal, endereço do cliente, agente do usuário, tá? Tem bastante coisa aqui para escolher, mas eu não tô afim de ficar escolhendo isso, né? Ah, aqui, ó. Você pode responder a essas perguntas que seu evento. Por que que a finalização da compra do usuário X falhou? Pois é, é que eu aqui
+
+negligenciei de colocar o método de pagamento. Tem método post, onde que tem contexto do negócio, talvez. Método de pagamento. Agora eu consigo. Tá, mas vamos lá. Eu já tinha a mensagem
+
+que o cartão de crédito foi declinado. Eu sei, por consequência lógica que o meu, a não ser que tivesse um bug, né? Podia ter um bug aqui, mas enfim. Eh, não tá mentindo, né? Eu eu sabia porque que falhou. falhou porque o credit card
+
+foi declined. Qual implantação causou a regressão de latência? Que loucura. Mas cara, você não vai logar em todos os logs? Um deployment vai, porque em teoria, na verdade, você consegue observar isto aqui sem necessariamente ter que ter um deployment de em todos os logs. Eis como um evento de grande
+
+hipótese aparece na prática, cara. Mas tá, não, beleza. Mas a gente vai querer em todas as partes do código armazenar todos os ou a gente vai querer por request armazenar o resultado final de um único request ou então em todos os serviços que se encostar, eu vou querer ter essa, eu não sei se ele tá me explicando como resolver o problema, sinceramente. Eu tô meio cético aqui que isso aqui vai vai me ajudar tanto assim. Um evento, tudo que você precisa, quando reclamo, você pesquisa por user e descobre instantaneamente. OK, não,
+
+beleza. É, eu entendi. Eu gostaria que os meus eventos fossem assim. Como que eu faço isso? as consultas que você pode executar agora, tá com eventos amplos, a gente não tá mais pesquisando por texto.
+
+A gente pode pesquisar dados estruturados e tal, não faz sentido. Olha só, insira uma consulta SQL, select asterisco. Ah, pera. Ah, eu clico aqui, eu não preciso escrever. O meu select asterisco ali, não ia dar muito certo.
+
+É, OK. OK. Aqui, ó, implementando eventos de grande porte. Era isso que eu queria. Eis um padrão de implementação prático. Principal ideia: construa o
+
+evento grande. Construa evento ao longo do ciclo de vida de uma requisição e em seguida emita uma única vez no final. faz sentido quando a gente tá trabalhando numa, na verdade, boa parte dos tipos de serviço, né, vão vão funcionar em request response. Então, faz sentido sim bastante tempo. Eh, qual que é a questão aqui, né? Se a gente
+
+tiver um caso em que assim, o usuário fez um request, o request vem para cá, né, vai para 1 milhão de lugares, você vai ficar bounçando esse evento de cima para baixo, de baixo para cima, bounção, o evento para cá, o evento para lá, enfim, alguma hora o evento, sei lá, chega aqui, ele volta pro usuário, a gente vai conseguir logar tudo o que aconteceu aqui, né? Só que se eu joguei coisas para processamento em background, eu também preciso ter mantendo, né, esse registro por quase que toda a cadeia aqui. Se eu quiser essa mesma quantidade de informação que vai causar, invariavelmente, a gente vai ter que passar muito mais informação. A gente pode até não logar tanto essa informação, porque a ideia é construir um único evento por request. Ou então, né, nesse caso aqui que o request ele vai voltar pro usuário e vai simultaneamente causar um processamento assíncrono. Eh, um request pode causar
+
+dois eventos. A gente splita o evento aqui e faz o evento um desse lado, evento dois desse lado aqui também funciona, eu acho. Ah, aqui um um middlear, pô, isso aqui é bem legal, tá? No começo antes, quer dizer, quando a gente recebe o request, um middleware já coloca todas as as informações necessárias nesse evento. Você for ver, na verdade, né, toda, quase todo o os códigos moderninhos aí de de gerar API, você vai olhar uma um N SJS, um F API e tal. Geralmente assim, tipo function é
+
+sei lá, get user. Esse Get user recebe um request, ele recebe uma response, né? Você consegue agregar em algum desses dois, quer dizer, você vai ter que anotar isso aqui com alguma coisa, né? ou um middleware vai agregar isso daí e de alguma forma a gente vai ter um um evento aqui decorar na real, né? Mas enfim, tem como numa função assim a gente agregar tudo. Pega algumas das
+
+informações do request na volta você pode até a não, não faz muito sentido agregar as informações do response, né? Porque a response foi ser construído ao longo do método. Enfim, em seguida nos seus manipulador que [risadas] bolão de o que que é essa palavra aqui em inglês? Eu aposto que é controller, não, handlers. Bom, e aí nos seus handlers você enriquece o evento com contexto de de negócios. app. Post checkout. É, isso
+
+aqui é uma, é bem moderninho, né? Eu acho que qual que é assim? Eu acho que é Honox que se parece com isso. Inclusive você tem um context aqui, né? Com tudo que você precisa. Vai adicionando o
+
+contexto ao longo do handler, né? Inclusive a maneira com que ele fez aqui é bem lambda friendly, né? Você tem que o isso aqui pode ser o handler de um lambda aqui, pode chamar outros serviços, enfim. E aí você vai agregando as informações, no final retorna algo e pode até aqui, ó, no próprio middleware dele, ele é exato, no próprio middleware ele emite o evento lá no final. Então você só agrega a as informações, vai jogando tudo no contexto. Faz bastante
+
+sentido que ele tem mais algumas informações, né? Por exemplo, se a gente tiver muita coisa para para logar, a gente pode fazer sampling, a gente pode logar 17% dos eventos e mesmo assim, isso aí é verdade, tá? A gente vai logar, se a gente tiver realmente, se a gente realmente tiver milhões de usuários, logar 5% dos requests, vai efetivamente pegar todos os tipos de erro, tá? Você vai conseguir ter exemplos de todos os casos que acontecem efetivamente. Que que você achou de login? Cara, eu sinto que ainda não
+
+resolve por completo o problema de distributor de loging. É um problema maior, mas parece que ajuda bastante. Parece bem interessante essa ideia. Enfim, gostou desse artigo? Não gostou desse artigo, quer de repente tentar ver isso aqui na prática em outro vídeo? Se
+
+você quiser aprender mais comigo, na descrição também a gente vai ter um link para todos os cursos aqui do canal, tá? Aqui uma breve explicação de tudo que a gente explica. A gente tem um curso de estrutura de dados e algoritmos, um guia de carreira que é hold pro seu próximo emprego para te ajudar ter um currículo bom e otimizado, um LinkedIn que atrai recrutadores e mais algumas coisinhas também, tá? links pro patrocinador, pro site Loginucks e para todos os cursos aqui do canal aqui na descrição.

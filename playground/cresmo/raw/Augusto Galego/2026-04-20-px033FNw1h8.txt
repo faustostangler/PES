@@ -1,0 +1,142 @@
+---
+video_title: "Como Preparar a Sua Codebase para IA"
+video_id: px033FNw1h8
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=px033FNw1h8
+video_date: 2026-04-20T13:01:28+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/IfmHwn19C9cQYgVx3Y1J
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Mais do que o seu prompt ou o modelo que você usa ou a ferramenta que você usa para interagir com a sua Codebase utilizando IA, é a qualidade do código que a IA vai interagir. Se você já teve a experiência de tentar refaturar um código legado muito complexo utilizando IA, você sabe que não é uma experiência muito bacana, que muitas das vezes a gente consegue ser muito mais produtivo, tendo uma cooldase melhor do que uma coldase pior, mesmo na era da IA. E deixa eu te contar um segredinho aqui. Esse para e a aqui no final é só para engajamento, tá? As mesmas técnicas que sempre foram úteis para deixar o código com maior manutenção, mais claro ou mais coeso, são as mesmas técnicas que a gente pode utilizar para transformar esse código em algo que a IA consiga trabalhar melhor. Então, na verdade, te
+
+beitei, eu te trouxe para um vídeo onde eu vou te ensinar boas práticas de programação. A gente vai ver aqui o ruim e o bom, tá? Então vou te mostrar um exemplo de código ruim para depois eu poder te mostrar um exemplo de código bom, te mostrar como que você sai de um pro outro. No vídeo de hoje, a gente vai utilizar uma técnica chamada de ports and adapters ou então arquitetura hexagonal. Vou primeiro te explicar o que que é essa técnica, depois te mostrar o código dessa técnica sendo aplicada num exemplo super simples. Por
+
+que que eu tô trazendo um exemplo simples e não exemplo complexo do mundo real, né? Isso é uma crítica que às vezes a gente recebe aqui no YouTube. Bom, é porque esse vídeo ele vai ter talvez 20 minutos. Se eu trouxer a Code base que eu trabalho aqui pro YouTube, eu vou demorar 3s meses para te explicar Code Base para você conseguir ver o exemplo, né? Não faz muito sentido.
+
+Então eu trago algo simples para te ensinar o conceito. Uma vez que você aprender o conceito, você consegue aplicar no seu Codebase que você já conhece, tá bom? Antes disso, vou te falar do patrocínio de hoje, que é a Abacos. Ei. Olha só, tá de carinha nova aqui. A Abacos tá muito mais poderosa,
+
+se é que isso fora possível. Por apenas $ por mês, você vai ter aqui, ó, olha só, esse botãozinho aqui. A gente consegue alternar entre chat e agente. E se eu quiser usar o agente, eu posso usar também o agente com high effort e eu posso pedir para ele fazer, cara, muita coisa. Aqui embaixo tem alguns exemplos, ó, e tutoriais. Então, um site
+
+integrado integrado com Stripe, um agente pessoal no seu Telegram, que você pode conversar com o Telegram e pedir para ele fazer ações, apps mobile, Qway pro seu site, Qway pro seu serviço, automações no LinkedIn para encontrar empregos, de repente, de repente recrutadores, de repente, enfim, o que você quiser encontrar. Tem muita coisa aqui. Na parte de chat você pode escolher qual modelo você vai usar. Nana Banana Pro, por exemplo, faz imagens muito legais. Você pode usar também o GPT 5.4, tá muito poderoso, Cloud Opus
+
+4.5 tá muito poderoso também. Tudo isso por apenas por mês. Tem aqui, cara, você tem muita coisa, tá? Você tem o cowork mais CLI, que pode automatizar tarefas no seu computador. Você tem os
+
+connectors, você tem as skills, você tem a extensão do Google Chrome, você tem o Abucus Claw, né, que aí essa funcionalidade específica são outros 10 porque ela consome muitos tokens, mas você pode utilizar um open claw dentro do ferramental da abbacos, tá? Então você vai gastar $10 para ter a maioria das funcionalidades, né? Se você quiser, eu abus cla aí é mais 10, então 20 no total por sei lá 53 não existe quase nada comparável no mercado, tá? Que vai te dar tudo isso daqui. Vale bastante a pena. O link para
+
+você testar abbacos vai est aqui na descrição. Bom, você tem aqui a sua Code base e a sua Code base ela pode se parecer de uma a duas maneiras, tá? Você pode ter a maneira um da code base, que é o que a gente vai chamar de espaguetti ou então legado. Como é que o código legado funciona? Código legado funciona da seguinte maneira. Vamos imaginar que
+
+a gente tem uma rede social para você criar usuários, posts e comentários, certo? Então, um user vai vir aqui e vai falar: "Quero criar um comentário". Esse comentário vai est dentro de um post, né? Então, como é que é a estrutura de um comentário? Você vai ter um user, esse user vai estar comentando em algum post e embaixo desse post vai ficar o comentário. O exemplo prototípico de um
+
+código legado é onde você tem um arquivo que faz tudo. Então você vai ter um arquivo. Dentro desse arquivo você pode ter de repente usar um bom exemplo aqui, né? uma god class, uma classe que faz tudo, um arquivo que faz absolutamente tudo. Dentro desse arquivo, você vai ter um monte de if else e a linha de execução do raciocínio do software. Vai
+
+passando linha por linha, sobe, desce, depois sobe, depois desce, depois sobe, depois desce e vira aqui o nosso espaguetizão. Passa por toda a parte aqui dentro desse arquivo e em algum momento ele sai e volta pro cliente. Aqui dentro desse único arquivo você vai ter regras de negócio misturado com implementação do banco de dados, misturado com autenticação, misturado com validação, misturado com domínio, misturado com o esquema da PI. vai ser um caos, vai ser extremamente caótico. No nosso exemplo, como ele é curto, como a gente fez isso tudo num arquivo de 238 linhas, você vai perceber se você testar isso por conta própria, que aí a não tem dificuldade em entender 258 linhas em um único arquivo, tá? esse problema não
+
+existe. A IA vai sim entender suas regras de negócio, entender suas dificuldades e tal, vai conseguir refaturar esse código, vai conseguir fazer isso escalar, porque qualquer um consegue fazer 200 linhas escalarem, não tem nenhuma dificuldade nesse sentido. Agora, conforme o seu serviço cresce e fica mais complexo, conforme passam anos aqui, a manutenção disso vai ficar muito difícil para seres humanos e atualmente também tá muito difícil para modelos de O então que a gente quer fazer? Imagina que a gente tem uma mudança na regra de negócios de como um post funciona. Pode ser que, como tá tudo interconectado aqui dentro, que fazer uma alteração nisso. Pode quebrar de repente nossa
+
+validação de usuário, pode quebrar a API nas requisições que dizem respeito a criar e deletar usuários, pode quebrar os comentários, não é legal. Tudo depende um do outro, tudo tá fortemente acoplado. Se é o nosso inimigo aqui no canal, a forte acoplamento ou forte acoplamento. Então a gente vai querer tratar isso de uma maneira um pouco diferente. Primeiro, e aqui essas divisões são um pouco arbitrárias, tá?
+
+Você tem que entender um pouco do domínio, o que que pode fazer sentido dividir. Eu vou dividir isso daqui em três diferentes serviços. Por quê? Não sei porê, mas eu acho que vai ser melhor do que fazer tudo junto, em que aqui eu vou ter os meus users, aqui eu vou ter meus posts e aqui eu vou ter meus comentários. Se no nosso código legado a gente quisesse, por exemplo, sei lá, trocar a o os users para ser algo que agora a gente vai hospedar os users na clerk, vai, vamos fazer autenticação através da clerk de um uma page de terceiros. Vou ter que reescrever tudo
+
+isso daqui, vou quebrar tudo. Vai ser horrível. Eu não vou conseguir de maneira limpa retirar a lógica do meu usuário, do meu código e botar essa lógica em outro lugar. Se em algum momento eu decidi que ah, um post e um comentário, na verdade eles são a mesma coisa, não interessa um post, são um comentário, a gente vai ergar eles, um post pode referenciar outro post. Se eles tiverem separados, eu consigo aqui, ó, paguei comentários, implementei aqui, né, posts mais comentários, a lógica que for necessária para elencar um post ao outro. Aqui no outro exemplo, no exemplo
+
+espaguete, isso não é possível. Então, no ports and adapters, entre um e outro, a gente vai se comunicar através de, o normal é a gente utilizar a terminologia de ports e adapters e tal, né? Eu vou simplificar um pouco aqui e eu vou falar que eles vão se comunicar através de uma uma membrana aqui, uma interface. E tudo isso aqui vai se comunicar através da interface. Interface é um contrato. Esse
+
+contrato vai expor o que que cada um desses aqui pode fazer, o que que existe a capacidade de ser feita. Então o usuário ele vai declarar: "Olha, eu tenho uma função que é get user, eu tenho também uma função que é create user. Se eu por acaso quiser parar de usar o meu banco de dados de usuário que eu tenho, né, eu vou ter aqui um banco de dados que vai estar conectado aqui ou enfim, melhor ainda, além de banco de dados, né, vamos falar do do exemplo de usar uma API externa. Eu agora vou utilizar um serviço externo para administrar os meus usuários. Que que você pode fazer? Você pode simplesmente
+
+substituir isso daqui. Vamos vir tudo junto. Ficou legal. Você pode substituir isso daqui por um stub. Vamos colocar aqui um encapsulamento que vai prover essas interfaces aqui, vai expor o get user e o create user e vai se comunicar com o seu serviço externo, com o seu outro serviço, com a sua API. Aqui pode
+
+ser um serviço que você mesmo criou, pode ser o microserviço, pode ser o que quer que seja. Dessa maneira, tá? Separando as responsabilidades, segregando as responsabilidades. A gente tem que é mais fácil de fazer alterações, porque se você é um ser humano, você vai olhar, olha, quero fazer uma alteração em nas regras de como eu posso criar um post. Você vai no módulo do post e aí a faz a mesma coisa.
+
+Quero alterar como funciona criar um usuário. Você vai na implementação do create user e aí a faz a mesma coisa. Entendido? Você quer ver um vídeo de port adaptors, a gente tem aqui no canal. Não vou repetir aquele vídeo inteiro. Essa é uma aula para mostrar
+
+como que isso pode ser feito na era da IA. Então vamos lá pro nosso exemplo. Temos aqui o nosso before e o after, o antes e o depois. Deixa eu só ver um negocinho aqui, ó. 3.000. Aqui vai rodar
+
+no poste 3.000, OK? E o after no 3001. Vamos rodar no 3001, que eu quero mostrar uma coisinha para vocês. Olha só, esse daqui é o spaghetti blog antes de fazer refactor e esse daqui é depois de fazer o refactor. Percebam que o
+
+front end está exatamente igual. Claro, só não é backend. Tô falando de backend aqui. Eles estão exatamente iguais em termos de funcionalidade. O que a gente vai mostrar aqui não é o que tá sendo visto pelo cliente. A funcionalidade
+
+deles é perfeitamente igual. Tá bom? Que que temos no nosso before, né, o nosso antes aqui a gente tem o front, não vou mostrar, não tô muito interessado. A gente tem um único arquivo que é aqui esse index.ts. Nesse exemplo em
+
+específico, você vai notar que index. TS consegue, seria o suficiente para tudo, tá? Porque é um exemplo muito simples. Eu sou uma única pessoa que tô trabalhando nessa Code base muito pequena. Não tem outros colaboradores aqui, não tem uma empresa aqui. A gente
+
+não tá seguindo um padrão específico. Para esse exemplo, essa Codebase aqui funciona, tá? Não tô criticando. Se o seu MVP se parecer com isso daqui, perfeitamente adequado, não tem nenhum problema aqui. Tô falando de como você vai escalar e trabalhar de forma profissional numa empresa de verdade, com serviço legado, com serviço grande.
+
+Então, vamos lá. Temos aqui uma god class, a classe app, que lida com absolutamente tudo. Essa classe tá embído dentro dela o próprio banco de dados. A gente usou estruturas de dados em memory aqui dentro da própria memória. Temos um construtor também que tá inicializando posts, users, comentários. Temos algo que lida aqui
+
+com os requests. Isso daqui vai lidar com todos os PEFs, né? Com todos os caminhos aqui. Vai lidar com o get users, vai lidar com o post users, vai lidar com um monte de coisa. vai lidar com validação de e-mail aqui no meio, nessa bagunça, né? Eu vou checar todos
+
+os usuários para ver se o e-mail existe ou não. Eu vou criar os usuários. Eu vou ver se o PEF começa com users e se o método é delete, eu vou deletar os usuários. Enfim, você vai olhando, né? Eh, é uma estrutura totalmente gambiarrenta, que é um monte de felse.
+
+É, if método for get e o PEF for bar users, faz uma coisa. Se o método for post e o PEF for barre users, faz outra coisa. Se o método for get e for barra posts, faz uma coisa. Se o método for post, for barrapost, faz outra coisa. Enfim, você entendeu, né? Aqui dentro,
+
+se eu quiser fazer alguma alteração em como isso aqui funciona, vamos supor que, por exemplo, eu quero fazer uma alteração relacionado a e-mails de usuários, né? Você vai dar um contl F aqui e vai ver que e-mail, cara, a gente tá lidando com o e-mail em barra users. Estamos lidando com o e-mail aqui embaixo também. E por acaso e-mail até seria uma alteração simples. Você só vai ter que alterar no na criação do usuário. Parece que não tem que alterar
+
+muito nos outros lugares. Mas, por exemplo, uma alteração nesse nisto aqui, ó, na estrutura interna dos usuários, uma alteração aqui acarretaria em problemas para tanto no bar users quanto nos posts. Isso acarretaria um problema, porque aqui a gente tá acessando a estrutura interna dos usuários. Quanto pros comments, que a gente também tá acessando a estrutura interna dos usuários aqui nos comentários. Então, nota eu trocar como os usuários são armazenados na minha code base, nesse exemplo aqui, acarretou em problemas na parte de usuários, acarretou em problemas na parte de posts e acarretou em problemas na parte de aqui é comments, né? Na parte de comments,
+
+acarretou em problemas em três lugares. Isso daqui não tá legal. Então, qual seria uma maneira da gente quebrar esses vários aqui e transformar em algo mais razoável? Eu vou começar te mostrando então o nosso depois aqui, o nosso after, tá? Nota funcionalidade funciona perfeitamente bem. Ó, vou criar aqui, ó,
+
+Augusto. Qualquer e-mail @mail.com. Adicionar usuário. O e-mail está aqui criado. Eu, Augusto, aqui vou escrever
+
+um post. Post. Oi. Adicionei o post. Vou adicionar um comentário. Comment. Ué,
+
+qual foi? Comment tá zicado. Comment tá zicado. Comment não tá funcionando. Coisa linda. Isso aqui é até problema do
+
+front, tá? O request do comentário não tá saindo. Não sei porquê. Talvez porque eu tenho vibe codado front change. Bom, você pode ver aqui que no depois depois a funcionalidade ela é perfeitamente a mesma, né? Você consegue criar o os
+
+comentários, os posts aqui e tal, né? Oi, body. E foi aqui, ó. Você só não consegue criar o comentário porque isso aqui tá quebrado. Consigo deletar? Será?
+
+Consigo deletar. Consigo deletar o usuário também. Consigo deletar o usuário aqui também, né? Então, tanto no antes quanto no depois tá funcionando de maneira exatamente igual. Bom, como é que tava o nosso index antes? Tem uma
+
+classe Deus que inicializa absolutamente tudo e faz absolutamente tudo. Como é que tá o index depois? O repositório do usuário, ele tá mapeado através de um adapter, um adaptador. E o repositório do usuário, ele tá expondo várias coisas aqui que podem ser utilizadas ou alteradas. Nota, isso aqui é mais código? Sim, são mais linhas de código.
+
+Você vai ter que pular mais de um lado pro outro. Sim, você vai ter que pular mais de um lado pro outro. Não tá tudo no mesmo arquivo. Existe esse pulo aqui, ó, de você ter que olhar nos adapters. E olha, existem três implementações aqui.
+
+Você tem o usuário que expõe as funções get all, get user by id, find by email, create, delete. Antes essas funções elas estavam totalmente embídas aqui dentro da lógica. Ó, percebe que tipo o find by email que antes estava, quer dizer que no depois ficou aqui, ó, uma funçãozinha explícita. Antes ele era, cadê? É aquele loop? É esse loop aqui. Você percebe
+
+como tá muito mais espaguete? Tá tipo dentro do próprio post do user. Se eu quiser criar um end point novo que busca por usuários através do e-mail, eu vou ter que duplicar isso daqui, ó, que isso daqui não é uma função que tá exportada. Então, esses adaptadores aqui, eles vão implementar os repositórios, que são as interfaces. E olha que lindo aqui, ó.
+
+Cada repositório expõe as suas capacidades de modo que caso eu queira substituir o meu adapter por um no SQL, por um serviço externo, por uma P externa, por outro serviço que eu mesmo criei, desde que esse adapter aqui implemente essa interface aqui, eu não vou quebrar nenhuma outra parte da minha aplicação, desde que ele obedeça essas regras aqui. As únicas alterações que eu vou precisar fazer são, é, criar o novo adaptador, né, a nova camada que envelopa essa funcionalidade e instanciar essa nova camada aqui no index.ts. E vai est tudo funcionando. E eu vou passar isso daqui para dentro dos meus serviços. Então eu tenho três
+
+serviços agora, né? um serviço de user service, um post service, um comment service e também o meu router que vai ter as rotas baseadas em cada um desses. Você pode estar pensando, galego, tá mais complexo, tava mais simples aquele bando de Ifel, se eu conseguia encontrar tudo no mesmo arquivo, era mais fácil. E eu até posso te dar razão aqui, eu posso falar que para esse exemplo, para 200 linhas, você tá perfeitamente correto. Para 20.000 1 linhas e quatro
+
+colaboradores trabalhando com você na mesma code base, criando pur em paralelo, tendo que resolver os conflitos entre um e outro, você vai estar redondamente enganado. Ou então, se isso aqui tivesse, digamos assim, 2000 linhas, quero você voltar para olhar essa COD base daqui dois meses. Bom, ports definem a interface, definem o contrato que vai ser aderido aqui. Então, nossos repositórios estão aderindo a um contrato. Adapters vão encapsular aqui o funcionamento.
+
+Separamos também em domain para ter as regras de domínio aqui, né, pr eu saber exatamente o que que é um user, pr não ficar aqui o user, essa gambiarra aqui mal definida e mal instanciada aqui no topo do usuário, que se eu mudar isso daqui para outra coisa, eu vou quebrar absolutamente tudo. Isso aqui vai ser mais fácil de ser estendido e também, pô, tá bonito, né? Tá mais bem definido, tá mais type safe. Temos também os services, né? Então, a gente tem comment service, post service e user service.
+
+Cada service aqui vai executar ações em cima do banco de dados. Muita gente não gosta do service, tá? Até existe um argumento aqui. A gente pode argumentar que é mais interessante implementar as regras de negócio no domínio do que no service. Argumentação perfeitamente válida, mas a gente tá melhorando uma code base que tava tão ruim que isso aqui é uma melhoria substancial. Nessa
+
+melhoria substancial você vai ter a classe de user service que vai expor o get all. get all simplesmente vai dar um get all no repositório. O create vai implementar a validação aqui. E nota, a gente poderia ter também outras classes de validação, outros métodos de validação, mas isso você vai evoluindo conforme a codebase vai crescendo. Eu não gosto de começar tipo uma função por arquivo e fazendo um negócio muito com muitos arquivos. Eu gosto de ir
+
+começando dessa maneira aqui e incrementando depois. Então você tem get all, create, delete e alguns erros customizados aqui. Simples assim, prático assim. Se você olhar no serviço de post, por exemplo, aqui também existe outro argumento se o serviço de post ele vai usar o repositório do usuário ou ele vai usar o serviço do usuário, né? Se eu vou chamar esse repositório ou se eu vou chamar o serviço. Para esse software
+
+pequeno, eu prefiro chamar direto o repositório. A gente vai tender a chamar o serviço. Se a gente pensar que a gente vai evoluir dissoqui para uma arquitetura de microsserviços, aí vale muito a pena chamar o serviço, né? vai ser mais fácil, vai ser mais desacoplado, porque aí é interessante que você nem saiba que existe o repositório de usuário. Para esse exemplo aqui, que eu imagino que não vai evoluir muito daqui, tá adequado a gente ter o repositório do usuário aqui dentro. E aqui, né, eu vou usar o meu,
+
+por exemplo, para eu criar um post, eu vou primeiro encontrar o usuário pelo ID. Se o usuário não existir, eu vou retornar um erro e eu vou então usar o meu posts.create. Você pode clicar aqui, ó, para ver que isso daqui é a interface do repositório, né? Eu posso confiar que o negócio tá implementando esse create aqui. E dessa maneira, utilizando ports
+
+and adapters, você consegue ter uma codase mais preparada para IA, que vai escalar de maneira melhor. Uma codebase boa, legível para seres humanos, também é uma codebase boa e legível para IAS, tá bom? Se você quiser aprender mais comigo, na descrição a gente vai ter um link para curso de estrutura de dados e algoritmos com desconto para quem vier aqui do canal. Com esse curso eu já ajudei, já ajudei pessoas a passarem na entrevista do Dordash, da Microsoft, do Uber. A gente tem alunos contratados em diversas empresas impressionantes, porque essas empresas utilizam de testes técnicos de estruturas e algoritmos Elite Code no processo de contratação.
+
+Se você tiver interesse em se aperfeiçoar nisso daqui, faz como nossos diversos alunos aqui, ó. Você tem a pessoa que ruxou aqui o curso e passou na entrevista da Uber, você tem aqui, né, sou aluno, o curso é realmente muito bom mesmo. É, é bem bom, tá? Fiz o curso mais completo e recomendo. Didática excelente. Curso bom demais, recomendo
+
+muito. Paguei seu curso de algoritmos e valeu muito a pena. Seu curso é excelente. Me garantiu uma vaga excelente nos Estados Unidos, né? Foi ganhar em dólar. Muito bom. Esse curso
+
+me ajudou a conseguir minha primeira vaga na gringa. Eu sei, muita empresa contrata através de elite code mesmo. Acabei de fazer meu segundo light code pro Doordash e amasse. Consegui fazer BFS multisource em uma matriz porque aprendi contigo. Eterno, garoto propaganda aqui. Mundinho Galego. Muito
+
+obrigado. Se você quiser aprender comigo, como esses diversos alunos aprenderam, o link pro curso de estrutura de dados e algoritmos vai estar na descrição. Ele te ajuda, claro que ajuda a passar em diversas entrevistas de emprego para diversas empresas impressionantes que sim utilizam Delite Code como uma maneira de tear, que fazem perguntas de estrutura de dados e algoritmos e você não tem risco nenhum. Se você comprar o curso, não gostou, não entendeu, achou muito difícil, não era para você, não era o que você esperava, você vai ter um mês para pedir reembolso sem precisar de motivo nenhum. Clica ele no botão de pedir reembolso, eu te dou teu dinheiro sem problema nenhum, tá? Eu só quero que
+
+você fique com o curso se você gostar e agregar valor para você. Senão, não faz sentido. Tá bom?

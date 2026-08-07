@@ -1,0 +1,99 @@
+---
+video_title: "Questões sobre SQL que todo dev deveria conhecer"
+video_id: eteEw6Es9UU
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=eteEw6Es9UU
+video_date: 2026-06-26T10:52:11+00:00
+video_description: |
+  🔴 Use a VPS da HostGator : https://www.hostgator.com.br/52508-13-3-12.html
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Vamos falar hoje sobre alguns tópicos importantes de SQL que devs precisam conhecer. A gente vai estar comentando um pouco sobre joint, sobre group Rice, sobre performance e vamos ter uma conversa aqui para refrescar um pouco esses conceitos ou aprender esses conceitos se você nunca viu, porque é um conhecimento muito importante que a gente a gente vai carregar como deves pro resto da nossa carreira. Afinal de contas, SQL acaba sendo, digamos assim, a estrutura óssea da maioria dos dados na maioria das aplicações, tá? Quase todas as aplicações do mundo real vão ter um banco de dados relacional para manter informações transacionais, informações de usuários, esse tipo de coisa. Antes disso, vou te falar do patrocínio de hoje, que é a HostGator. A
+
+HostGator tem tudo que você precisa para criar o seu site ou o seu SAS. Eles têm aqui domínios, tem diversas formas de hospedagem. Você pode ter hospedagem de site, um servidor de Linux dedicado, você consegue rodar um servidor de N8N autoedado de maneira bem facilitada, tá? O que é muito bom. E o que eu mais gosto aqui é o servidor de VPS deles. Primeiro
+
+porque os preços são muito bons, tá? Tem a partir de R$ 21 por mês. Se você clicar, vai ter uma condição especial para quem for lá aqui do canal na descrição. Eles têm uma latência muito boa, né? O servidor tá em São Paulo, que é onde provavelmente próximo de onde os seus usuários vão estar, né? Não faz
+
+sentido você fazer uma aplicação para brasileiros e hospedar o servidor nos Estados Unidos. A latência vai ser muito maior. O processamento deles é muito rápido, eles têm métricas melhores que os concorrentes, tá? Você pode scrollar ali para baixo na página e dar uma olhada. Tem também OpenCla pré-instalado, que eu já usei o da HostGator, tá? Facilita bastante caso
+
+você queira rodar um OpenCla. Enfim, tem várias soluções. O link para HostGator vai tá aqui na descrição, tá? Eu recomendo bastante a VPS deles. Bom, numa última aula, a gente viu o básico aqui de criar umas tabelas no banco de dados. Eu criei a tabela usuários e eu
+
+criei a tabela orders, né? Em que cada pedido aqui vai ter um user ID, que é uma chave apontando ali pra tabela usuários. A maior parte do trabalho real de SQL vai acontecer através de joins. É aqui que a força do SQL tá, em querer mais estruturadas, né, buscas estruturadas. Porque se a gente só quiser ter as tabelas soltas e não fazer nenhum tipo de cruzamento de dados, a gente acaba perdendo um pouco do potencial do SQL. Isso é algo que
+
+acontecia nas versões mais antigas do Prisma. O Prisma não fazia joins, né? Ele carregava tudo para uma engine interna de Rust. Prisma é uma ORM, tá? e ele fazer um join fake assim interno.
+
+Quando a gente tem uma tabela usuários e uma tabela pedidos, a gente consegue unir essas tabelas e ter, por exemplo, ali os pedidos de cada usuário. Então eu posso selecionar orders. Por exemplo, orders.vvalue, por exemplo, users.name da tabela orders. Ah, inclusive, se você
+
+não viu o último vídeo, tá? Isso aqui é um playground gratuito de Paggas. A gente tá fazendo isso aqui no PGRES. E aí eu posso dar um join em users, onde, né, o user. É igual ao orders. Pode ir. Faltou um
+
+szinho aqui agora. Roda. E a gente tem aqui, né, um pedido que eu inseri de R$ 10, outro pedido aqui de 20 nos meus usuários aqui, tá? São usuários diferentes. Você pode ver aqui que a gente tem usuário Augusto e usuário galego. E a gente tem aqui um erro na
+
+minha query, na verdade, né? Porque você vê que o mesmo usuário fez os dois pedidos. A cor que eu fiz, ele dava um join em user. Com order. Isso daqui é um erro muito comum, inclusive, porque é o seguinte, né? A gente não quer ver o ID
+
+do usuário que seja igual ao ID da ordem. Não faz sentido. A ordem número um não tem nada a ver com o usuário número um, né? O pedido número um não tem nada a ver com o usuário um. O que tem a ver, o que é igual não é o ID da ordem, é o ID, é o user ID dentro da ordem, né? E dando esse match aqui, a
+
+gente corrige esse erro e a gente vê, né, que o usuário Augusto aí sim fez os dois pedidos, como constava ali na tabela orders. Agora join. Esse join aqui é aquilo que a gente chama de inner joint. Existe também o left join. E a gente vai visualizar essa diferença aqui de maneira bem clara, tá? Inclusive, nos
+
+campos em que a gente tá fazendo esse join, é bom a gente pensar bem nessas estruturas de acesso, porque normalmente o como eu estruturo, o como eu vou acessar esses dados determin como eu deveria estruturar eles para armazenar eles, que isso pode facilitar ou acelerar o acesso. Nesse caso, né, como a gente tem um user.id, o ID do usuário tem um índice, como a gente conversou na última aula, esse índice é autocriado, uma B3 aqui. E a gente tá dando um join no user ID também. Esse é um join relativamente fácil, um join relativamente tranquilo, não vai ser muito pesado, não vai ser muito difícil, mas e se eu quiser, por exemplo, pegar todos os usuários, os pedidos desses usuários, porque aqui eu tô vendo só o usuário a gusto, né? Só os pedidos dele.
+
+Se eu tiver mais usuários, eu quiser visualizar eles também. Vamos fazer o seguinte, eu vou criar aqui um alien que também é algo interessante. O ponto ID, o vai ser o nosso ales para usuário, o ponto name, o ponto value, né? o valor aqui do pedido. Eu quero fazer um from na tabela users com o ales u e dá um join na tabela orders com ales o ales é o apelido, né, que a gente tá usando aqui para não ter que ficar escrevendo users, users, users, orders, orders, orders, né? Esse eles facilita um pouco.
+
+E eu vou dar um join onde exatamente o user ID é igual ao puser ID, né? O mesmo join, o mesmo join a mesma coisa, no mesmo lugar. Se eu rodar isso daqui, isso aqui vai me mostrar, né? O usuário com ID1 Augusto. Usuário com ID1 Augusto tem uma ordem de 10 e uma ordem de 20.
+
+Agora, se eu der um left join, a gente consegue ver então que ele pega ainda o os ambos pedidos do usuário Augusto, mas ele também pega o usuário galego. E ele também mostra que ele teoricamente não tem ordem, né? ou talvez teria uma ordem com o valor zero, mas se eu pegar aqui, ao invés do value, eu quiser pegar esse ID, né, para garantir, a gente vai conseguir ver então um bug, a gente vai conseguir ver um negócio bem interessante aqui, né? É porque ambos tm o coisa ID aqui e eu vou criar um apelido também para isso daqui, né? Pr ele mostrar na minha tabelinha de maneira diferente, as order pra gente conseguir diferenciar um ID do outro. Na
+
+verdade não foi um bug, né? Foi um display estranho do site porque eu especifiquei mal. Enfim, temos aqui agora o nosso usuário Augusto tem as os pedidos um e dois e o nosso usuário galego não tem nenhum pedido, por isso que aparece que o ID da do pedido dele é no. Essa é a ideia de on joint. Tipo assim, se você imaginar aqui, estamos fazendo um freestyle, tá? Aqui, ó, nesse
+
+retângulo, a gente vai ter os users. Nesse retângulo a gente vai ter as orders. O tal do inner join, como a gente estava fazendo antes, ele buscava, né, pelas ordens. Ele via meio que as ordens que existiam e buscavam os usuários que fizeram essas ordens. O nosso left join, ele vai, na verdade, buscar todos os usuários, mesmo os que não tenham ordens, e vai fazer o display ali, né? Enfim, eu acho que no exemplo
+
+aqui ficou claro. A gente poderia também incrementar isso daqui para mostrar quantos pedidos cada usuário tem. Então, eu posso selecionar todas essas mesmas coisas, mas ao invés de selecionar o order.id, ID, eu quero um count dissoqui, eu quero um número. E se eu rodar isso daqui, vai dar um erro interessante. Ele vai nos informar aqui
+
+que eu sou obrigado a, nesse caso aqui, ter um group buy. Existem várias funções de agregação aqui, né? Uma dessas funções de agregação é o count. E se eu quiser ver o quantos pedidos cada usuário tem, eu tenho que fazer um group buy, né? Um grupamento por aqui user ID, né? Group by user ID. Eu rodo aqui minha
+
+query e eu tenho aqui agora com o nome errado, com o nome order ID, que não faz sentido porque é um count, né? Eu tô contando quantos pedidos tem, então não é mais um ID, isso daqui é um order count, é o número de pedidos e eu tenho então que o meu usuário Augusto tem dois pedidos e o usuário galego tem zero pedidos. Existem outras funções também. Uma função que existe é o sum. Sum é a soma. Agora isso daqui vai ficar muito
+
+estranho, né? eu tá somando os IDs não faz o menor sentido. Talvez seja mais interessante eu somar o valor, que aí eu consigo ter um agregado do valor de todas as compras de determinado usuário, né, o valor de todos os pedidos. Ou então eu posso ter de repente o máximo, né, o valor máximo que um usuário tem. Então a compra de maior valor é esse 20 aqui do Augusto. Você pode ir meio à
+
+loucura aqui também, tá? a gente poderia fazer uma, se a nossa order aqui, se a nossa tabela tivesse um valor e um número de itens, eu poderia fazer uma soma. Então eu poderia fazer uma soma do valor e do ponto items. Infelizmente a gente não tem itens, né? A gente não criou isso antes. Ah, vamos criar isso
+
+aqui na real, né? Vai ser fácil. Vamos fazer isso aqui, ó. Dar um outer table orders, adicionar uma coluna. Essa coluna vai se chamar quantidade. Ela é
+
+um número inteiro. E a gente vai adicionar um default 3. Por que que eu vou adicionar um default 3? que isso já vai pré-popular a tabela inteira com esse três. Então, a gente tem aqui, né, a nossa tabela já pré populada, em que cada pedido já tem aqui três quantidades, né? E com isso a gente
+
+conseguiria voltar aqui no que a gente estava fazendo antes, fazer uma soma do valor multiplicado aqui pela quantidade. Aqui vamos fazer um join simples, tá? Isso aqui tá correto e aqui tá correto também. Dando um select aqui, perdão, dando um run aqui, né? rodando a querer, ele vai me retornar que o Augusto tem um order count, que não é um nome que faz muito sentido, né? A gente poderia
+
+colocar revenue, de repente, um revenue total, um valor total de 90. Faz sentido esse 90? Bom, faz, né? A gente tem aqui um pedido de 10 com 3, 30, um pedido de 20 com 3, 60. 60 + 30, 90. Esse tipo de
+
+coisa é muito interessante. E conforme a gente vai aprendendo mais sobre SQL, mais a gente vai usar uma ferramentazinha aqui super legal. Olha só, eu vou selecionar os pedidos aqui que tem o user ID igual a um, né? São esses dois pedidos aqui embaixo, mas eu quero que ele me dê um explain. Esse explain aqui, ele vai me dar o querer plan, o plano da query, né? o o como o
+
+post gres planejou fazer essa busca aqui dentro dele. E através desse plano aqui, a gente vai conseguir otimizar se as coisas não tiverem muito eficientes. A gente não precisa entender todos os detalhes que tem aqui, mas hoje em dia com inteligência artificial também isso pode nos ajudar a debugar queries que estão um pouco mais lentas. A gente pode pegar isso daqui, utilizar, né, o nosso conhecimento com auxílio aqui de alguma IA para tentar entender onde que tá o gargalo, o que que tá tornando essa busca lenta. Um dos exemplos, né, vamos fazer aqui uma busca um pouquinho mais lenta. A gente vai dar um select aqui
+
+nos pedidos, dando um join na tabela users, onde o us é igual a u. Só que eu vou filtrar, eu vou fazer um filtro na tabela user, onde o nome do meu usuário é Augusto. Eu vou rodar essa cor aqui, ela acontece aqui, né, sem nenhum problema. E para essa query em específico, eu vou dar um explain aqui. E isso daqui já consegue nos mostrar algumas coisas, né? Ele dá um um hash
+
+join aqui, hashde, um scan sequencial aqui em orders. E isso daqui a gente poderia pegar isso daqui, por exemplo, só para mostrar mesmo, tá? Tô aqui num chatt, ó. Como posso tornar essa cor mais rápida? E eu dou o o explain aqui e ele já pode me dar aqui algumas possíveis soluções, né? Claro, a gente
+
+precisa ver o que que faz sentido aqui, o que que não faz sentido, mas isso é algo interessante de se fazer. Eu fiz isso bastante já em trabalhos passados, sem a o auxílio do do chat GPT, porque na época não existia, tá? Eu usei bastante esse explain aqui para identificar pontos de melhorias em algumas queries, entender se de repente fazer sentido normalizar algo ou denormalizar algo, criar um índice em alguma coisa, tá? Esse tipo de coisa. E a última coisa que eu quero mostrar aqui hoje é uma transação. Eu posso querer
+
+fazer duas coisas ao mesmo tempo. E caso haja uma falha, caso haja algum problema, eu não quero comitar só uma dessas coisas. Então, né, cada transação começa com bigin e ela termina com commit. E nesse meio, entre esse bigin e esse commit, eu posso realizar operações que ou todas vão passar ou nenhuma vai passar. Vamos supor que, sei lá, eu quero fazer uma venda que ambos os usuários estão comprando um ingresso juntos, algo juntos. Eu postei um insert
+
+aqui in orders, o meu user G, quantity e o vale. Os vales, né, os valores que eu quero inserir vão ser usuário um, vai comprar um no valor de 15 e o usuário dois também vai fazer uma compra. O usuário dois vai comprar dois no valor de nove. Isso aqui é um exemplo tosquinho, tá? Você conseguiria fazer isso de uma maneira um pouco mais simples, não precisaria desse bigin todo aqui, mas é só para mostrar como transações funcionam. Inclusive, para
+
+funcionar, preciso ter o ponto e vírgula aqui. E aí você pode rodar e pode ver que as duas foram inseridas aqui, né? Quando a gente tá falando de SQL, isso aqui é bem importante de entender, tá? SQL é muito utilizado por causa das propriedades adem que adiante atomicidade. Atomicidade é isso que eu acabei de mostrar, que a gente pode ter transações atômicas em que ou tudo acontece ou as coisas não acontecem. Não
+
+vai ter como passar metade daquele pedido só. Ele vai passar inteiro ou ele não vai passar. SQL também nos dá uma consistency, né, uma consistência interna em que, por exemplo, nos meus pedidos é, por exemplo, obrigado cada pedido ter um user ID. Não vai existir no na minha tabela aqui um caso de um pedido sem user ID, porque isso quebraria a consistência interna da tabela. Esse tipo de garantia torna SQL em geral um pouco menos flexível, possivelmente um pouco menos performático do que no SQL. Existe uma
+
+burocraciazinha a mais, né, como você viu nesses últimos vídeos, de criar tudo isso, de arrumar tudo isso daqui, mas ele nos dá o tradeoff aqui, que são essas garantias de consistência que são muito boas, nos dá uma robustez muito grande e facilita também fazer queries altamente complexas, né, buscas muito complexas que precisam ter joins em várias tabelas e tal. Então, espero que você tenha aprendido um pouquinho mais sobre SQL, tá? Aqui eu tô tentando recentemente trazer um pouco mais sobre fundamentos. Acho que a nossa área tá falando muito de IA, IA, IA. E é bom a gente dar uma revisitada nesses conceitos para tentar aprofundar um pouco mais isso, porque acredito que sim são conceitos importantes que vão continuar sendo importantes, tá?

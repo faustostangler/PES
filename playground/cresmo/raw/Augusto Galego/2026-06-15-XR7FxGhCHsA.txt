@@ -1,0 +1,107 @@
+---
+video_title: "Como regras de negócio influenciam arquitetura"
+video_id: XR7FxGhCHsA
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XR7FxGhCHsA
+video_date: 2026-06-15T13:00:31+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+avisos paroquiais antes do vídeo. A gente tem uma área de membros, não tem muita coisa nessa área de membros, mas quando eu lancei ela, eu disse que eu ia, sei lá, doar fazer algo com esse dinheiro. Então, esses dias eu decidi fazer isso, eu olhei, a gente tem R$. Acumulados na área de membros, né? Você vê, tá gerando aí quase R$ 200 por mês.
+
+Então eu perguntei pro pessoal para qual instituição de caridade eles queriam que a gente doasse esse dinheiro. A mais pedida foi a Médico sem Fronteiras. Então, a gente fez uma doação de R$ 2.000 para eles, R$ 1.00 dos membros aqui, mais R$ 500 meus. Também acabei
+
+aproveitando a oportunidade para doar mais R$ 500 para outras três instituições, né? Então, mais R$.500 meus. Se você quiser se tornar um membro do canal, é exatamente para isso que seu dinheiro vai ser usado, tá? Eu não preciso desse dinheiro. E para você que
+
+já é membro, por favor, comenta aqui uma instituição de caridade que você gosta, que a gente vai mandar o dinheiro para lá, tá? Se você já é membro também, comenta aí o que que você gostaria que tivesse na aula de membros. Eu vou tentar trazer alguns conteúdos a mais só para membros para incentivar essas boas ações aqui, tá? Para além disso, hoje a gente vai falar de system design e como linkar a regra de negócios ao system design, como linkar também arquitetura a system. Como vocês devem saber, a gente lançou um curso de system design. O
+
+curso tá pronto, o link tá aqui na descrição. Claro, essa aula aqui é independente do curso, não vou tentar te vender nada, tipo, você vai aprender aqui. Essa é minha ideia e vai ser legal. Vai ser legal pra caramba, porque eu vou te mostrar como que eu penso nesse tipo de coisa, como é a mente de tech leades e pessoas que estão evoluindo um sistema pra gente fazer, digamos assim, uma ponte, porque existe uma ponte aqui, não não essas coisas não vivem isoladamente entre o system design, os design patters, né, os padrões de design de uma code base, a regra de negócio e também uma certa volumetria, uma certa demanda a nível tecnológico mesmo, a nível de infraestrutura. Vai ser bem legal, tá?
+
+Vamos ver tudo isso aqui. Antes e perdão pela enrolação, né? Esse vídeo tá demorando um pouco para começar. Eu vou te falar do patrocínio de hoje, que é a abacusai. Eu já te mostrei a abacus aqui várias várias vezes, tá? Eles tm todos
+
+os modelos de a aqui no chat deles que você pode utilizar. Você pode utilizar também via Cine, né? Uma harness de código. Você pode utilizar também o fork deles do VS Code que tem os próprios agentes integrados ali. Abacos custa apenas 10 por mês. Você tem também o
+
+agent sessions aqui, que são agentes autônomos já que fazem muita coisa. Você tem também uma versão do Open Claw aqui dele. Você pode utilizar tudo isso daqui, tá? É um ferramental muito poderoso. E hoje eu vou te mostrar um exemplo aqui de uma feature nova que saiu também, que é o tal do design vertical. Quando você tiver usando o
+
+agente da Abacos para criar aplicações, para criar aplicativos do zero, digamos assim, o a gente, né, vai ele criar, ele vai fazer o agentarm, que ele vai separar vários subagentes para conseguir criar esse aplicativo de maneira rápida e confiável. Ele vai fazer ali os wireframes do design e tal. E ele tem um ferramental novo que, olha só, você tá vendo agora na tela, que é essa parte de fazer o design vertical ali para encaixar certinho no celular e validar esse design. É algo super interessante, é super poderoso, vai acelerar você levar uma ideia para um MVP, tá? E pode ser algo muito vantajoso. A gente tem
+
+visto, né, que criar essas aplicações do zero e chegar num product market fit ali, conseguir botar isso daí de maneira rápida na frente do usuário, tem acelerado muitas startups. Então, se você tiver interesse, ferramenta docos custando a partir de 10 por mês, o link vai estar aqui na descrição, tá bom? Então, quando a gente trata desses assuntos aqui, é muito comum você tratar de coisas de maneira separada, né? Você tem design pattern, você tem system design, você tem também, digamos assim, arquitetura, né? E todas essas coisas acabam estando relacionadas, mas a gente acaba abordando elas em acaba abordando partes diferentes delas. Nos design
+
+patterns, a gente vai falar, né, sobre factory, a gente vai falar sobre adapter, a gente vai falar sobre strategy, né, os padrões lá do livro do Gang of War, Design Pats. Quando a gente fala de arquitetura, a gente geralmente fala sobre eventos driven, né? Arquitetura orientada a eventos, arquitetura hexagonal, clean architecture, de repente aqui um monolitos, microsserviços. E quando a gente fala de system design, a gente geralmente fala sobre escalabilidade, filas, APIs, load balancers, mas de certa maneira tudo isso daqui tá interligado. De certa maneira tudo isso aqui precisa fazer sentido, dado dois dois fatores importantes. O primeiro é a
+
+regra de negócio. O segundo, por falta de termo melhor, eu vou colocar aqui padrão de acesso. Não necessariamente o padrão, mas também o volume de acesso, né? Como os usuários estão utilizando isso de fato e como a gente está entregando isso de fato pros usuários. Sem essas duas coisas aqui, nada do resto faz o menor sentido. Não existe
+
+melhor arquitetura, melhor design par, melhor system design, né? Nada disso faz o menor sentido. Se a gente não tiver pensando em integrar, entregar uma regra de negócio que faz sentido pros usuários, como e em qual volume esses usuários vão acessar isso daqui? É o mínimo do mínimo que a gente precisa pensar. Arquitetura e design patterns acabam sendo muito mesclados aqui, né?
+
+Essas coisas se misturam bastante. System design, a gente acaba botando um pouco mais infra, mas no fundo muito disso é a mesma coisa. Deixa eu te dar um exemplo aqui. Um padrão muito comum, a gente pode chamar aqui de um design pattern é o design pattern de ports and adapters. Ports and adapters, em essência é arquitetura hexagonal, tá? É
+
+mesma coisa para mesmo nomes diferentes para mesma coisa. Porturaagonal, você vai ter um um porte e um adaptador, né? Como se você tivesse, tipo assim, um espaço aqui onde você encaixa uma pecinha. Essa pecinha aqui vai ser o adapter e esse outro espaço aqui vai ser o porte, né? Você encaixa essa pecinha aqui dentro e você pode trocar o seu adapter, né, sem ter que trocar o porte.
+
+Isso pode fazer muito sentido para alguns tipos de regra de negócio, como por exemplo, a gente tem múltiplos bancos de dados que a gente vai usar para coisas diferentes. A gente tem múltiplos gatewayes de pagamento, a gente tem, por exemplo, uma Stripe, a gente tem uma abacat pay, a gente tem a Lemon Squeezy, que é Stripe de novo, e a gente tem, sei lá, Mercado Pago, acho que dá para usar como gatore. Pagarme. Pagarme dá, né? Percebe que, tipo assim, se a gente quiser se prender em um desses para toda a eternidade, se a gente quisesse prender na stripe para toda a eternidade, não precisa de um porte um adepter. Mas se a gente quiser
+
+a flexibilidade de poder trocar esses esses pagamentos aqui com com quando a gente quiser, né, se um de uma taxa melhor pra gente, uma condição melhor pra gente, a gente pode ter um adapter para cada um. Então essa regra de negócio, essa estratégia de negócio vai influenciar diretamente na arquitetura que a gente vai decidir fazer pro nosso código. Imagina que você tem lá dentro do sua da sua code base, né, você tem as suas pastinhas lá. E aí você tem ali um barra frontend, 1/ backend, né? Tenho essas pastinhas aqui dentro do meu barra backend. Vou imaginar que a gente criou
+
+aqui alguns módulos para lidar com tarefas diferentes. A gente pode ter aqui um módulo para e-mail, por exemplo, ou então melhor ainda. A gente não tem esse módulo para e-mail. A gente tem algo aqui para lidar com os users, né? E dentro dos users, por acaso, tem uma função em algum lugar que envia e-mails, tá? Então temos aqui o nosso backend.
+
+Nosso backend vai recebendo request de usuários e o número de requests vai crescendo, né? Quanto mais usuários, mais requisições. A maioria dos crudes começa a ter um gargalo que geralmente vai ser um gargalo não de CPU, vai ser um gargalo de IO, um gargalo de input, output ou de conexões ativas ou de número de requisições que estão sendo processadas em paralelo. Por que que eu tô te falando isso? Porque muito provavelmente as coisas que vão causar um gargalo, que vão causar uma lentidão no seu sistema, vão estar relacionadas a acesso no banco de dados, vão estar relacionadas a acessos de AP externas ou serviços de terceiros, vão estar relacionadas, digamos assim, a fazer requests no geral, essas indas e vindas, né? Porque o tempo de processamento
+
+dentro da CPU, ele é geralmente rápido. O gargalo é geralmente um gargalo de rede ou de outros serviços ou de outra infraestrutura. Então vai chegar um momento que se o seu backend ele envia e-mails e ele envia muitos e-mails, pode começar a fazer sentido a gente pegar esses e-mails aqui e ao invés de fazer com que o backend processe, né, os e-mails, gerevie os e-mails, a gente joga essas informações aqui numa fila para desonerar o nosso back. Então isso aqui vai entrar numa fila. Essa fila, em algum momento, ela vai resultar em algum outro lugar. Pode, pode cair num lambda,
+
+de repente pode cair num o que a gente vai chamar aqui de um worker ou então um consumidor dessa fila. E esse consumidor que tá desacoplado do nosso backend é outro sistema que pode ser que a gente dá manutenção, outra equipe dá manutenção ou então a gente terceiriza, mas esse outro sistema aqui vai ser o responsável por enviar e-mails. De modo que isso afeta a nossa codebase, de modo que isso afeta como a gente vai estruturar isso daqui. E se a gente já tiver esse problema pensado de antemão, a gente pode estruturar aqui nossas pastinhas, nossa codebase de uma maneira diferente. A gente pode ter ali as kills de maneira diferente, ter os e-mails. A
+
+gente pode também pensar nos padrões de acesso do nosso banco de dados, né, que nota também vai dar um gargalo aqui em algum momento, muito provavelmente. E é legal que a forma com que a gente escreve isso daqui comporte também a adição de uma cash, que provavelmente vai ser outra maneira que a gente vai aliviar um pouco o nosso nosso sistema aqui, né, adicionando uma cash. Nota que quando eu falei em fila, quando eu falei em worker e consumidor, eu tô falando aqui do o do desenho do meu sistema, né? Mas eu implicitamente tô usando aqui um padrão que se assemelha a Pub Sub, né? Um padrão de publisher subscriber, que é um design pattern, uma arquitetura orientada a eventos. Nota como tá tudo
+
+interligado? O nosso número crescente de usuários criou um gargalo no envio de e-mails. Por isso a gente teve que botar o envio de e-mails numa fila, ou seja, fazer um e-mail ali orientado a eventos, onde o meu backend não mais envia e-mail, ele publica um evento de, ó, alguém precisa enviar esse e-mail e alguém vai reagir a isso. Daí a gente linkou o system design com arquitetura, com os design patterns. Outro exemplo legal disso daqui, tá? Quando a gente
+
+tem um único backend, temos aqui o nosso monolito backend, né? dentro do meu monolito backend. Vou imaginar que a gente tem um o nosso user aqui, né? Algum módulo do nosso user, algo nesse sentido. E a gente tem também um módulo aqui de pagamentos payments, né? Nosso
+
+usuário faz pagamentos. Se a gente tiver isso aqui num monolito, isso pode funcionar de n maneiras. A gente pode, não recomendo, mas a gente pode muito bem dentro do próprio user aqui, né? No módulo do usuário, dar um import no payments e simplesmente usar o payments aqui numa boa. Se a gente fizer isso, a gente vai estar se amarrando dentro desse monolito. Por quê? Se porventura
+
+eu quiser escalar o meu serviço, escalar minha equipe e eu delegar uma equipe inteira para ser o time de pagamentos, é interessante que eles consigam fazer os próprios deploys. Deploy de maneira independente. Então eles vai sair desse monolito e vão virar dois serviços, o serviço de user e o de payments. Mas agora você não consegue mais simplesmente dar um importe, né? Isso não vai funcionar. Como eles estão
+
+rodando talvez em máquinas separadas, talvez na mesma, mas contêinerizados, né? Como eles são serviços distintos, a gente não pode mais fazer chamada de função, a gente precisa fazer chamada de rede, né? Antes eu podia só dar um importments e usar o payments aqui dentro. Agora não dá mais. Agora eu preciso fazer uma chamada de rede. Essa
+
+chamada de rede, né? Pode ser uma rest API simples, pode ser um RPC, pode utilizar graphical, não importa muito qual vai ser esse tipo aqui, mas essa chamada de rede aqui, essa ainda e vindo aqui adiciona um overhead, em que de repente eu tenho que considerar que agora o meu serviço de pagamentos pode estar disponível, eu tenho que tratar erros, né, que podem vir de algo que não tá mais dentro do da mesma máquina. Então existem design patterns para isso. Existe o Circuit Breaker, por exemplo, tem retes com backof, né? Você vai tentando ali novamente, vai fazendo um backof ali exponencial. enquanto o
+
+serviço de pagamentos não responde, você vai ter que pensar em detalhes técnicos como a ID impotência. O design do seu sistema pode forçar um padrão que você não tava pensando. Outro exemplo disso, né, a gente tá falando aqui de cash. Quando a gente adiciona uma cash, né, a gente tem que responder algumas perguntas. Olha, antes eu tinha só um banco de dados. Todos os dados que eu
+
+queria acessar iam direto para esse banco de dados, né? Adicionava ali e buscava no banco de dados e fechou. Problema resolvido. Agora, como eu quero essa escalabilidade maior, eu tenho uma cash, eu preciso responder algumas coisas. Onde que vive esse código, né? a
+
+lógica aqui da cash, como que a gente invalida os dados, né? A gente faz cash validation. Cada serviço tem a própria cash. Onde roda cash? Roda na mesma máquina, roda numa máquina diferente. E
+
+como é que você vai traduzir isso daqui pro código? Você pode muito bem implementar uma cash via um decorator. E você pode usar esse decorator em volta do seu banco de dados, né? E fazer o código desse decorator de modo que a gente vai olhar na cash antes de olhar no banco. Observa que é sempre muito importante a gente estar atento à regra de negócios. Isso também é muito
+
+importante a gente estar atento ao tamanho da equipe, porque é o seguinte, é muito diferente. Eu tenho uma equipe de 30 pessoas onde cada 10 pessoas são responsáveis por um serviço, ou eu tenho uma equipe de duas pessoas onde a gente tem 20 microsserviços. O primeiro caso é OK, o segundo eu não recomendo. A regra de negócio, ela também vai influenciar muito o tipo de decisão que a gente pode tomar, porque é o seguinte, um exemplo que eu gosto de usar muito aqui é um exemplo baseado em workers e o quanto de latência é aceitável e para determinada ação, dependendo do que que o nosso usuário tá fazendo. Como assim? Vamos
+
+supor que o nosso usuário faça o upload de um vídeo. Upload de vídeo. Aqui a gente tem o nosso sistema, né? Vamos jogar aqui o sistema como um todo. E outro usuário em algum outro momento da vida, faz o download de vídeo. Download
+
+de vídeo. O quê? que a gente quer priorizar aqui. Porque se eu pensar no seguinte, né? Olha, eu quero que no momento que o usuário faça o upload desse vídeo, esse vídeo esteja disponível. No mesmo exato momento que
+
+ele fizer o upload, o vídeo vai estar disponível. Isso é possível até. É, mas aí o usuário vai subir um vídeo de 10 GB. Nosso sistema vai ter que lidar com esse vídeo de 10 GB, armazenar esse vídeo de 10 GB em algum lugar e imediatamente tá disponível para servir esse vídeo de 10 GB pros nossos usuários que estão fazendo download. Se ao invés disso eu achar aceitável fazer uma compressão nesse vídeo, eu consigo baixar de 10 GB para de repente 1 GB. E
+
+tem outra regra de negócio interessante que é o seguinte: quando um usuário assiste um vídeo em todas as plataformas de vídeo hoje em dia, você pode escolher ali embaixo na direita a qualidade desse vídeo. Inclusive até em plataformas que você não pode escolher, como por exemplo, acho que a Netflix não dá para escolher, não sei, ou TikTok ou Instagram. dependendo da sua conexão de rede, você vai baixar uma versão diferente daquele vídeo que pode ter menos ou mais gigabes. Então, nota que o nosso sistema, ao invés de ele armazenar um vídeo cru aqui, né, numa Blog Store, ao invés dele fazer esse armazenamento cru, a gente pode desenhar esse sistema de modo diferente, que se a gente permitir essa compressão, se a gente achar que isso é válido, a gente pode adicionar um pouco de latência para nos dar uma escalabilidade maior, jogar isso daqui numa fila, jogar isso aqui num worker. Esse worker vai fazer a compressão, vai transformar esse vídeo em quatro, cinco vídeos, né? Um de 360
+
+pixels, um de 480, um de 720, um de 1080, um de 4K. Transformar em vários vídeos. Vai armazenar esses vários vídeos numa Blog store. Na verdade, a gente provavelmente vai ter uma Blob Store temporária para os vídeos raw, né, o vídeo do arquivo completo e também uma Blob Store para eles já comprimidos. Daí o download vai vir a partir daqui. Todo
+
+esse design desse sistema vem do fato de que quando o usuário faz o upload de um vídeo, é aceitável ficar um certo tempo processando esse vídeo e transformando ele em vídeos menores, fazendo a compressão dos vídeos. E é esperado que quem faça o download possa fazer o download de tamanhos diferentes. E todo esse design desse sistema vai afetar o meu código também, né? Porque é muito diferente eu só pegar um vídeo que o usuário faz upload direto pro meu sistema ou eu fazer toda um número de n etapas para eu conseguir me dar uma escala maior, pra gente conseguir dar uma experiência melhor para quem tá fazendo o download desse vídeo. E isso vai vir com um custo de um upload que vai ter um tempo de processamento depois, vai fazer com que a experiência seja um pouco mais lenta para o upload, mas para quem tá fazendo download tem mais possibilidades, tem mais flexibilidade. Todas essas coisas estão
+
+profundamente linkcadas e é por isso que a gente tem dito cada vez mais pr você prestar atenção na regra de negócio, pr você prestar atenção no tamanho da equipe, pr você prestar atenção em o que que a gente tá querendo servir para usuário, quais tradeof são aceitáveis, que isso vai influenciar o código, isso vai influenciar a arquitetura, isso vai influenciar a infraestrutura que a gente vai rodar, isso, vai influenciar até como a gente vai organizar nossas equipes, porque é muito diferente. Eu tenho uma equipe inteira trabalhando num backend, não é uma única codebase ou eu ter vários microsserviços. Então, todas essas coisas estão profundamente interligadas. A gente precisa compreender esse todo aqui. Espero que você tenha aprendido algo hoje ou pelo menos gostado dessa conversa. Se você
+
+quiser aprender mais, a gente tem um curso de system design, o link vai est na descrição. Eu passei um ano produzindo esse curso. Você vai poder comprar ele, você vai ter um mês inteiro para pedir Rainbow se você achar que não fez sentido para você, tá? A gente te ensina todas essas coisas e muito mais. E ele é bem focado em entrevistas. Eu te
+
+ajudo a passar entrevistas de system design. Se você tem esse interesse, clica no link na descrição, vai ter um cupom especial para você vendo, tá? A gente tá lançando esse curso esse mês, lançou faz acho que dois dias partir do lançamento desse vídeo e eu garanto que você vai aprender muita coisa, tá? novamente. Demorou mais de um ano para produzir esse curso e finalmente tá no ar, link na descrição.

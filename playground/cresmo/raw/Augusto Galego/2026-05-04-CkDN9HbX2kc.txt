@@ -1,0 +1,113 @@
+---
+video_title: "Como os AI Agents realmente funcionam | Harness"
+video_id: CkDN9HbX2kc
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=CkDN9HbX2kc
+video_date: 2026-05-04T13:00:21+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Agora, se você fala disso, né, vamos ter que falar também de harness aqui, até porque eu acho que é interessante que isso permite que a gente pense em criar sistemas. Eu acho que isso aqui vai abrir um pouco sua cabeça para quando você tiver pensando em criar um sistema que utiliza e há de alguma maneira, entender como isso daqui funciona, vai te ajudar a tomar melhores decisões. Que que eu preciso te falar? O Té aqui, né? O tio venceu na corrida para trazer esse conteúdo. Então, se você já viu o vídeo
+
+dele, você não precisa da minha explicação. A explicação dele é excelente. Se você não viu o vídeo dele, vai ou quer continuar aqui para ver a minha explicação. A gente vai explicar o que é, né, uma hardness, porque a galera tem falado tanto disso atualmente. Em essência, você pode pensar no cloud code como uma harness, você pode pensar no codex como uma harness, você pode pensar no patrocinador do vídeo de hoje da aba com a também. Eles têm aqui, ó, a
+
+própria CLI deles, estilo cloud code. Vou mostrar um pouco de código, certo, de como ela funciona. E eu vou te explicar como que eu, sem saber já tinha utilizado isso, esse conceito, né, em empresas no passado, empresas que eu trabalhei. Bom, antes disso, vou te falar do patrocínio de hoje. Abacusi é o seguinte, já te mostrei aqui que ela tem o CLI, né, estilão aqui cloud code por apenas 10 por mês, você vai ter acesso a isso daqui. Você vai ter acesso também a
+
+um chat com todas as vias aqui dentro. Você pode usar o Nano Banana Pro ou Nano Banana 2 para gerar imagens muito boas. Você pode usar o Opus 4.7 para código. Você pode usar, enfim, o que você quiser. Tem todas aqui, tá? Tem também o
+
+cloud da Abacos, que você pode deparar efetivamente um open claw aqui dentro também, mas a funcionalidade, salvo engano, ela é ó a mais, tá? Então é 10 da subscription mais 10 dessa. Você tem também o agent que agora tem uma feature muito absurda, que é o tal do agentarm, que ele lança vários agentes em paralelo para conseguir fazer uma tarefa muito complexa. Então você consegue ter uma velocidade muito boa e uma qualidade muito boa também em tarefas grandes e complexas. Se você tem interesse, aqui na descrição você vai ter um link pra aba que vai te possibilitar testar tudo isso aqui, tá? E por $ por mês na
+
+cotação de hoje, menos que R$ 50 por mês. É difícil você conseguir algo que ofereça tanto quanto isso, tá? link aqui na descrição. Quando você vai construir um sistema que utiliza de IA, você precisa ter alguma alguma confiabilidade, alguma estatística que te demonstre que o sistema tá fazendo aquilo que você quer. A Open Ai, por exemplo, tem aqui o framework, né, o Evolves, que serve para avaliar se os modelos e os sistemas que você constrói tão fazendo aquilo que você tá querendo que eles façam. Eu utilizei muito isso
+
+no passado numa empresa que a gente fazia basicamente um hug. Eu já vou chegar em harness, tá? Me dá um segundinho. A gente fazia um hag e o nosso hag ele tinha que pegar documentos. Então, por exemplo, você tinha aqui uma série de documentos, né?
+
+Imagina, você tem três, qu cinco documentos. A gente fazia um chunking desses documentos, né? Separava eles em chunks, armazenava numa vector database e buscava pelos chunks dos documentos utilizando um KNN ou acho que era BM25. esses dois estilos de similaridade pra gente atingir, pra gente fazer um ranqueamento de quais documentos mais se pareciam com aquilo que foi buscado pelo usuário. Por que que eu tô te contando essa história?
+
+Estes documentos conham informações valiosas dentro deles e o usuário fazia uma pergunta pra IA, tá? E a IA era obrigada a responder apenas de acordo com aquilo que ela conseguiu extrair de um documento. Como que a gente fazia isso? O usuário digitava algo paraa gente, a gente rodava o a busca no nosso sistema. Depois de rodar a busca, a gente selecionava, tipo assim três, quatro documentos. Esses três, quatro
+
+documentos eram injetados no nosso prompt, que a gente tinha um system prompt muito forte falando e a você é obrigada a responder apenas de acordo com os documentos. E aí a gente trazia esses documentos aqui para, né, dentro do chat, dentro do dentro do prompt. E essa resposta depois ela era avaliada por outra IA utilizando um framework, tipo esse EVS aqui, para ver se ela tava sendo fiel o suficiente aos documentos que foram enviados. Então, tudo que a gente fazia eram prompts e algumas funções do nosso código para buscar similaridade entre os nossos documentos e o prompt do usuário. Se o usuário perguntasse, por exemplo, pô, sei lá, jogar uma pedra pela janela é um crime, a gente ia pegar esse prompt aqui, ia provavelmente adicionar umas coisas aqui a esse prompt utilizando uma IA também.
+
+Depois ia rodar uma similaridade nisso daqui com os textos que a gente tinha, né? Se algum dos nossos textos estivesse falando sobre crime, sobre crimes e janelas, sobre esse tipo de coisa, provavelmente esse nosso texto ia ser injetado no contexto, tá? Eu tô contando dessa minha experiência nessa minha empresa, porque isso daqui tá muito parecido com o que um harness de fato é. Esse é um termo meio meio catchol, um termo meio que pode dizer muita, pode ser muitas coisas diferentes aqui, tá? Você pesquisar no Google, talvez as respostas que o Google Dem sejam Cloud Code, Codex ou qualquer outra coisa. Mas
+
+enfim, hoje em dia quando o pessoal tem falado muito e hypado muito harness, eles estão efetivamente hypando aí o cloud code, o codex cursor e falando sobre o ferramental, o tooling em volta da IA. Então o que que é esse tooling? Vamos pegar o cloud code, que é o exemplo mais comum aqui, tá? Eu vou digitar ali cloud e aí vai abrir a minha CL, né? Eu vou perguntar pro cloud, por exemplo, Cloud, o que que a minha Code base faz? O que que a minha Code base
+
+faz? Esse seu prompt aqui, ele não vai direto lá pro chatpt ou pro cloud ou enfim, ele não vai ser uma chamada de API direto pro modelo. Vamos separar aqui, né, pra gente entender. Aqui é modelo rodando lá dentro do data center da Entropic da Open AI. Aqui é harness rodando na sua máquina. Quando você faz
+
+uma pergunta de o que que a minha Code base faz, a Harness, na verdade, antes de mandar essa pergunta, ela vai adicionar aqui um monte de coisa. Ela vai adicionar o system prompt. Ela vai adicionar, se você tiver algo, por exemplo, no cloud.m, MD, ela vai adicionar isso aqui no contexto também. E aí isso tudo aqui vai ser envelopado, né, e enviado aqui pro modelo. Só que
+
+nota no dentro do próprio system prompt, o system prompt vai falar pro modelo: "Olha, modelo, você tem tais e tais tools, né? Você tem essas tools. Para você utilizar essas tools, você coloca, tipo assim, function call e aí você coloca dentro daqui qual a função que você quer chamar, tipo, sei lá, bash aqui, bash novo e dentro do seu bash você vai dar um ls, por exemplo, para listar os diretórios. O modelo, ao ler isso daqui, ele vai te retornar o seguinte. Ele vai te retornar, olha, primeira coisa que eu preciso fazer é listar todos os arquivos que tem nesse diretório. Eu preciso dar um ls. Então,
+
+eu vou eu vou querer fazer uma function call, na verdade, uma tool call, né? Function call é um pouco diferente, uma tool call e vou querer rodar o Bash. Aí a sua harness dentro do seu próprio PC vai rodar esse Bash aqui. E o output desse bash vai ser adicionado a essa conversa aqui, né? E vai ser novamente enviada pro cloud. E vão tendo indas e
+
+vindas, né? De repente, na próxima, o CL vai falar: "Olha, legal, dei um LS aqui, listei os diretórios e subdiretórios que você tem, agora faz um cat para mim, né? E eu quero ler todos esses arquivos aqui para eu tentar entender o que que essa Code base faz." E entre essas indas e vindas, em algum momento, ela vai retornar a mensagem para você usuário. De fato, outras to calls que tem, né?
+
+Além desse BCH aqui são tipo, ah, eu quero editar tal arquivo de texto, né? Eu quero fazer tal edição em tais linhas. São tudo chamadas de função. Você é um programador, você sabe escrever essas chamadas de função. Eu escrevi essas chamadas de função quando a gente construiu o hag naquela empresa.
+
+Tudo isso, né, pra gente desmistificar um pouco aqui o que que é harness. É, se você quiser fazer uma harness simples, ela você consegue fazer uma harness simples, certo? Mas a a qualidade das harness com a qualidade dos modelos, né? Ambos cresceram bastante. Então as harness estão muito boas, né? O cloud
+
+code tá muito bom, curso tá muito bom, todas elas estão muito boas e a qualidade dos modelos também cresceu tanto que esse conjunto dos dois tornou uma ferramenta muito forte que você também consegue criar e também consegue utilizar coisas parecidas para outros sistemas. Daí você pode pensar, né, não, pô, mas na minha na minha hardness aqui, no meu cloud code, eu tenho as minhas skills, certo, galego? As skills dão super poder aqui pro modelo? Eh, não, não dão. As skills elas adicionam mais coisa nos prompts. Uma skill é tipo mais
+
+texto que vai ser adicionado pro prompt. O que você precisa entender é que tem coisas que estão rodando na sua máquina e essas coisas são código e você consegue compreender e você consegue fazer código que faz as mesmas coisas que o Mahnness faz. E tem coisas que estão rodando lá no data center da Open AI ou da Entropic. Só que tudo que vai e tudo que volta para lá é sempre prompt. É tudo texto. Só entra e sai texto do
+
+data center de lá. Só entra e sai prompt. É tudo prompt. Tudo prompt e prompt engineering. Ah, galera, você quer me dizer então que a minha harness tem umas ações que ela faz ali, ela vai executar dentro do meu computador comandos de Unix, né, como LS, CD, MKD, etc. Aí ela vai mandar esses outputs
+
+modelo e o modelo vai então tomar uma decisão de quais chamadas de função fazer e é tudo baseado em prompt de texto. Sim, é exatamente isso que eu tô dizendo. Não tem nada de mágica, né? Se você quiser dizer que algo aqui é mágico, pra mim, a coisa que é mais mágica aqui é a qualidade desses modelos. Mas isso é uma harness e entender como isso funciona, como isso pode funcionar, como isso pode ser utilizado. Inclusive, recomendo aqui uma
+
+leiturazinha bem legal. Open AI function calling. Function calling é bem legal, você consegue dar as tools e as funções que você, enfim, que o modelo pode utilizar e aí você consegue criar um sistema agêntico bem interessante, tá bom? Na época que eu trabalhei naquela empresa, a Antropic ainda não tinha isso. Era um negócio específico da Open AI, tá, para criar essas harness utilizando function calling, mas eu acho que já deve ter algo assim na entrópico, algo parecido. Ou então, enfim, tinha
+
+uma gambiarra que a gente fazia que quando o function calling não era não era disponível, você implorava para ir a responder com tags de XML e tipo funcionava 99% das vezes. À vezes que não funcionava, a gente dava um retry, era simples assim. E aí você consegue que você com código precisamente determinístico identifique que uma chamada de função quer ser executada. E o resultado disso vai ser algo tipo assim. Aqui a gente tem uma harness ultra simplória, tá? A gente tem um
+
+ponto invão eu vou licar o meu minha chave da Open AI. E a gente tem um único arquivo em Python, que é o que eu vou rodar. Esse um único arquivo em Python tem uma P aqui, né? uma constante que não faz nada, um system prompt aqui, que é o prompt que vai pro sistema e uma lista de tools, uma lista de ferramentas que a IA pode chamar. No caso, a única ferramenta que ela pode chamar é o run aqui, né? É, é o bash. Aqui a gente
+
+carrega a chave da Open AI, não tem nenhum problema. Aqui a gente define o payload da API e tal, né? Não tem nada demais aqui. Aqui é o comando de rodar a nossa negócio de rodar aqui a nossa CLI, tá? Umas coisas de passear texto, enfim.
+
+E aqui a gente tem o nosso chat de verdade, que vai começar uma conversa com a Open AI. Ele tem um Wild through aqui, então ele roda para sempre, né? Às vezes é a minha vez, às vezes é a vez da open Ai de fazer alguma coisa. E enquanto tiver calls, enquanto tiver function calls, a gente vai executar essas function calls, adicionar elas na história do no dos promps aqui, enviar de volta pro paraa Open AI e ela vai responder a gente efetivamente isso daqui é uma harness. O output ele vem de uma maneira bem específica aqui, por causa do jeito que a gente tá fazendo os requests, tá? Então fica fácil
+
+identificar quando que a Openi quer executar um comando no meu computador e quando que ela tá me respondendo de fato. Eu vou primeiro rodar uma vez aqui para você ver como é que roda. Ó, eu tenho aqui you, né? Sou eu. E eu vou mandar um high. High. Agora o request
+
+foi lá para Openii, voltou high. How can I help? Voltou até rápido, né? Internet tá aqui na Alemanha costuma ser bem ruim. Ã, eu vou perguntar para ele por algo que ele só saberia responder. Nota,
+
+ele não sabe aonde ele tá. Ele não, eu não adicionei nada aqui no no prompt sobre o o sistema que a gente tá. Ele não sabe as pastas, ele não consegue ler as pastas. Ai não tá dentro do meu computador. A única maneira dele descobrir aonde que ele tá é se ele utilizar um run bash, é se ele rodar o bash e se ele der um ls aqui para descobrir o que que tem nesse e nesse diretório aqui. Então deixa eu perguntar
+
+para ele: "What files are in this directory?" Quais arquivos tem nesse diretório? E agora, olha só, ele deu aqui um ls/ eh ls ifenac e ele listou as coisas que tem aqui, né? Tem o ponenv, tem o pcash, tem o harness. E aí ele falou no diretório aqui a gente tem pvpcashness.p.
+
+Não existiria nenhuma outra maneira da Open AI saber disso. A openi só sabe disso porque o meu sistema aqui dentro aqui, ó, onde é que ele faz, executou aqui o run, né? o Python consegue e enfim, consegue rodar esse comando aqui. Se eu printar esse output aqui, você consegue ver mais ou menos é como que isso daqui se parece, tá? Eu vou salvar aqui, deixa eu dar um clear. Eu vou
+
+rodar de novo. E agora eu vou perguntar: "What files are in this directory?", né? Quais arquivos estão nesse diretório? Como eu tô printando a resposta, olha aqui o que que qual foi a primeira resposta, né? Você veio aqui o type
+
+function call e aí o comando que a Open AI disse que ela quer executar, tá? e o name runbash. Aí o meu próprio sistema executa o comando, devolve essa resposta pra Open AI e a Open AI agora me respondeu com type output text e me disse aqui o texto final, né? O texto final é esse daqui. E essa é uma harness funcionando na prática, tá? A gente pode
+
+apagar isso daqui. Outra coisa que você pode perguntar, por exemplo, nota que eu fechei e abri de novo, né? Então ele nem sabe o que que harness.p existe. Então eu vou falar aqui, ó, what is harness.p
+
+do ponto de interrogação. Vamos ver. Ele vai chamar uma função aqui, né? Olha só, ele deu um sed. Ah, primeiro ele ele leu aqui, ó, ele procurou pelo harness.
+
+Depois ele deu um sed e ele listou aqui, né, tudo que tá tudo que tá escrito aqui no no nosso coisa e tal. Eh, leu o arquivo inteiro, mandou esse arquivo inteiro paraa Open AI, né? E o que que a Open AI respondeu? Respondeu que carrega uma chave da Open AI, manda mensagens pra Open AI, define modelo, tã, repete até não sei quê e te dá uma rapple, né, uma CLI aqui, uma Comand line interface. Na prática é um agent hardness que deixou o modelo da Open AI inspecionar e interagir com o seu sistema via Shell e Bash Commands. É isso. Isso daqui foi
+
+uma harness. Não é nada de outro mundo. Eu espero que você utilize muito desse conhecimento aqui que eu te mostrei agora para quando você estiver construindo sistemas inteligentes com IA. Esses sistemas vão poder interagir com código determinístico. Não é só chat indo para um lado e pro outro. Só que
+
+lembra, importante você sempre notar que tem duas coisas. Tem o seu código determinístico que tá tomando ações baseadas no output da IA. Tem os prompts que tão indo e voltando paraá. E tem também uma terceira coisa, né? Eu falei que são duas, mas são três, que é algo que você vai querer fazer a partir daqui, daqui para frente. Você vai
+
+querer também ver a qualidade dessas coisas, né? Você vai querer usar algo como evolves. Eu tô isso aqui pegando isso aqui só como exemplo, tá? Você não precisa pegar isso aqui como exemplo. O que a gente fazia na empresa era pegar todo esse resultado aqui, né? Toda essa
+
+interação aqui entre a gente, a Open AI e o a nossa harness e etc. e usar um judge. A gente basicamente também utilizava IAS para julgar a qualidade dos outputs e dar um score mesmo, né? Ia pontuando em cada um a quanto ele foi fiel aos documentos que foram fornecidos, quanto que foi isso, quanto que foi aquilo. Aí dava um scord, sei lá quantos por cento. Ah, quanto que custou
+
+também, né? Porque a gente consegue medir o custo ali em tokens e sabia o custo de cada modelo. Então a gente conseguia comparar diferentes modelos. Tipo, esse modelo é melhor para esse tipo de coisa, esse modelo é melhor para essa outro tipo de coisa aqui, tá? a gente conseguiu construir um sistema assim super legal. Isso foi o que eu fiz
+
+no meu 2024 para 25, tá? Esse foi boa parte do meu trabalho foi em cima disso daqui. Enfim, se você gostou dessa aula e quiser aprender mais comigo, a gente tem cursos aqui no canal, tá? O link vai tá na descrição, tem um combo com todos os cursos, mas a a base, a ideia aqui são cursos que te ajudam mesmo a conseguir empregos melhores. Eu te ensino estudos de dados e algoritmos Elite Code, se você quiser fomentar ali suas bases de conhecimento da computação. Tem o Holdmap pro seu
+
+próximo emprego também, que te ensina a mandar bem entrevistas e tal. E tem também, a gente vai lançar daqui a pouco, um curso completo de system design que eu tô há mais de um ano fazendo. Quem tiver aqui na lista de espera para esse curso, vai ter uma condição especial, então você vai poder receber acesso antes de todo mundo e por um preço mais baixo, tá? Então se você tem interesse no meu curso de system, o link vai tá aqui na descrição, tá bom? Beijão.

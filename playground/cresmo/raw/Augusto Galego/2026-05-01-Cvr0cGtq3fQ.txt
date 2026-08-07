@@ -1,0 +1,86 @@
+---
+video_title: "O que fazer quando RESTful não for suficiente"
+video_id: Cvr0cGtq3fQ
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Cvr0cGtq3fQ
+video_date: 2026-05-01T13:00:31+00:00
+video_description: |
+  🟢 Vem pra AUVP, a melhor escola de investimentos do Brasil: https://sard.ink/AUVPGalego53
+  -----------------------------------------------
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Você que é dev e ganha acima de R$ 4.500 por mês, tá na hora de começar a investir, vem fazer parte da UVP, a maior e melhor escola de investimentos do Brasil. link na descrição. Bom, hoje a gente vai falar aqui sobre GRPC, que é uma tecnologia muito, muito importante para você entender. E mesmo que você não vá codar isso na mão para você entender quando que faz sentido usar, quando que não faz sentido usar, como que funciona, como que se parece no código para caso você vá utilizar apenas IA para construir todos os seus sistemas, ainda é importante você entender sobre GRPC para saber quando que faz sentido usar, quando que não faz, quando que você pode pedir paraa usar, porque se você não pedir, ela provavelmente não vai usar, tá? Bom, primeiro vamos dropar esse G
+
+aqui. Vamos falar de RPC, porque GPC é um dos RPCs que existe. RPC significa remote, procedure call. Eh, chamada de procedure remoto. Procedure em termos de programação, ele é um procedure, é tipo uma função, tipo um método. Um procedure
+
+vem de linguagem procedural. Então, remote procedure call uma chamada remota de um método. A gente pode enxergar assim, né? Chamada remota de método. Onde que o RPC tá? Onde que ele tá
+
+localizado? Onde que ele existe. Geralmente ele existe no lugar onde a gente tem alguma máquina. Aqui eu não vou chamar de servidor, vou chamar de máquina. E essa outra máquina vai se comunicar com outra máquina. São duas
+
+máquinas se comunicando. E aqui a gente tem a rede, né? Duas máquinas se comunicando através da rede. Geralmente falando, eh, o esperado aqui, né, o normal, o mais comum, digamos assim, é que a gente vai ter uma REST API. Então essa máquina aqui ela vai ter uma R API e ela vai retornar os dados dessa R API, né? A gente tá pensando aqui em termos
+
+de URL e verbos http, né? Então get, post, delete e payloads ou então o barry, né? Que geralmente é um Jason. É assim que a gente tá pensando nisso, logicamente. São essas as coisas que a gente tá criando numa pay, né? A gente
+
+vai criar um end point que é geralmente um barra user. Aí esse barra user você pode dar um get, por exemplo, ou então sei lá, um post no barro user e você vai passar no post desse barre user alguns parâmetros ali no bar. Remote procedure call é um pouco diferente. Eh, o modelo mental dele não funciona como uma resta, como eu falei, é um uma chamada de procedimento, de procedure que a gente pode, para esse propósito pensar como uma chamada de função. Então você pode imaginar que essa função aqui é, por exemplo, get user, né? Get user 1 2 3,
+
+por exemplo, e eu não mais tô me importando tanto com a URL, com HTTP, com o método que tá sendo passado aqui. Eu tô me importando com essa função aqui que vai ser executada dentro dessa máquina e eu quero a resposta dessa função. Eu quero que essa máquina me responda com o usuário. E aqui, né, na na máquina um, eu vou ter algo tipo resultou remote server ponto o nosso get user, né? É assim que RPC se parecem. Não é
+
+apenas uma questão de ergonomia, não é apenas uma questão de sintaxe, existem questões também um pouco mais de baixo nível para além da ergonomia, para além da sintaxe. O que tá acontecendo aqui é que desse lado aqui a gente vai ter esse get user, a gente vai ter um stub disso que vai nos garantir ah type safety, né? Vai nos garantir segurança de tipagem aqui nesse nesse método get user, nesse método stub. Esses dados aqui eles vão ser serializados para serem enviados em rede. Então, fazendo uma simplificação um pouco grotesca aqui, a gente vai passar numa chamada de rede parâmetros, como por exemplo, method do pg get user params 2.1 2 3, tá? Isso aqui vai ser
+
+compactado num binário e a gente vai passar isso também através de HTTP, tá? HTTP1 ou dois. É, mas aqui eu tô falando é HTTP especificamente no GRPC, tá? Outros tipos de RPC podem usar sockets, cruise e enfim, embora eu nunca tenha visto isso na prática de fato. Bom, o servidor, a a máquina que vai receber request, ele vai desereializar esses dados aqui, vai executar aquela função e vai devolver a resposta que vai ser novamente seralizada, transportada via rede pelo HTTP. Vai voltar aqui e vai
+
+ser descereializada. Então, para que o RPC funcione, você precisa da implementação de código em ambas máquinas. Você precisa que ambas máquinas implementem esse RPC de um lado e do outro lado e que ambas elas concordem numa espécie de contrato. Isso salienta um pouco uma das diferenças entre RPCs e uma simples API REST. Você tem que geralmente, pelo menos no caso de GRPC, esse contrato, ele vai autogerar código que vai aqui. E
+
+autogerar código que vai aqui, ele vai gerar código que vai paraas duas máquinas para conseguir fazer essa ponte, para conseguir que o transporte aqui seja feito através dos binários. Bom, por que que alguém faria isso, né? Isso sua é muito mais complicado do que uma payest e muito menos padrão do que uma payest. E em certo aspecto você tá certo, em certo aspecto é menos padrão, é um pouquinho mais complicado. E agora a gente vai entrar um pouco nos específicos, né, de GRPC. Por que isso
+
+daqui existe? O G em GRPC significa Google, tá bom? Eu fui criado aqui no Google, mas a empresa Google começa a inventar um monte de historinha e falar que significa qualquer outra coisa. Uma das vantagens de GRPC é que é bastante rápido. Você consegue ter um payload muito pequeno e você consegue parciar isso de maneira muito rápida. Então você
+
+acaba economizando dados na rede. Claro, você adiciona uma complexidade em ambas máquinas, mas você vai economizar isso em dados de rede e em velocidade. Então ele é rápido e ele geralmente consome menos dados porque ele não tem um overhead tão grande por request, certo? Cada requisição aqui é mais inxuta, mais curta, menor. Ele também tem uma tipagem forte, como, né? Eh, isso aqui, esse
+
+stub e esse método estão sendo gerados meio que juntos, é, é meio difícil dar um erro de tipagem, tá? Tipo, você sabe que ambos estão aderindo ao contrato. Agora, existem algumas dificuldades também em GRPC, alguns probleminhas aqui que adicionam, claro, complexidade. Primeiro que a gente pode falar de maneira ampla, que é um pouco mais complexo, tá? Não muito. Você vai ver
+
+aqui o código mesmo, eu vou te mostrar o código, não é tão complexo. Você t payloads binários, são um pouquinho mais difíceis de serem interpretados, de ser debugados. De repente não dá pra gente simplesmente usar um curl, né? Você não consegue só fazer um curl num num grpc, não vai funcionar direito. E você tem o fame gerado acoplamento, né? Isso aqui
+
+ficou bem mais acoplado, é, é bem mais difícil de utilizar. Então, dito tudo isso, cara, e pensar em RPCs vai fazer sentido quando você controla ambas máquinas, quando performance importa muito, né? Porque a gente tá fazendo algo mais difícil, a gente tá fazendo algo menos padrão, algo, pô, que é mais difícil de ser entendido aqui, né? Algo mais complexo. E também no ambiente de microsserviços pode fazer bastante sentido, tá? Quando você tem muitos
+
+microsserviços se comunicando, né? É, microsserviços, muitos microsserviços utilizam muito a rede, logo faz muito sentido você economizar esse tempo, né? O gargalo em microsserviços é geralmente essa comunicação entre um e outro. Se você se comunica com GRPCs, você vai ter a tipagem forte e você vai ter uma velocidade adicional a mais, o que é muito vantajoso para microsserviços. Ah, a gente tem que botar aqui, né? é
+
+debugar é um pouco pior. Bom, explicado mais ou menos o que que é esse procedure call. Espero que você tenha entendido que a ideia é chamar uma função, obter a resposta dessa função. Vamos ver na prática, né, num exemplo aqui simplesinho como é que funciona para você pegar mais ou menos a ideia. Olha só, eu tenho aqui no meu TypeScript dois arquivos, server e client. Perceba que
+
+ambos estão importando aqui GRPC e protoloader. A gente precisa desses aqui. A gente tem também um PEF para encontrar o caminho desse proto. Qual que é o proto? O proto é aquele, tá, o contrato que a gente falou, né? Então a
+
+gente tá usando a sintaxe aqui proto 3, enfim, tanto faz. O que que é isso aqui? Aqui a gente tem a definição dos RPCs. Você pode pensar como a definição das funções, né? O que que cada função recebe e o que que cada função retorna.
+
+E você tem também uma stream aqui. A gente não falou muito de streams, mas RPCs são utilizados para streams também. É bastante vantajoso. Ele se parece com esse carinha aqui, ó. Então você tem uma mensagem que é uma string name e aqui embaixo outra mensagem que contém uma string com uma mensagem, né? E um inch,
+
+que é o reply number, tá bom? Se eu poderia definir aqui, né, outras coisas. Você tem que ver quais tipos que o o RPC, o GRPC aceita. Eu não lembro de cabeça todos os tipos que são aceitos aqui, mas enfim, a gente poderia passar aqui outro int, sei lá, CPF. Vamos passar um CPF como intfiniria assim. OK. Isso aqui funcionaria muito.
+
+Nem sei se o CPF cabe num int, talvez não caiba. Bom, você tem aqui então que aqui é inicializado o nosso greit e a partir desse client aqui, certo? Eu tô criando em secure e tal, eu vou poder chamar essas diferentes funções, né? S hello e say hello stream. Aqui embaixo tem meu main, você dá um client say hello, é isso aqui, espera promise e tal, né? Enfim, tem aqui um certo
+
+tratamento de erro. E a gente teria a response do do servidor, do server. Nota que isso aqui tá sendo feito um request aqui, né? E esse request se parece na prática ergonomia é uma chamada de função, é um client.cellow, então é como se tivesse envelopado esse request, tá bom? E aqui embaixo a gente tem um
+
+exemplo da stream também que ele fala, faz um stream e aí enfim, stream é um pouquinho mais complexo. No lado do nosso servidor a gente tem aqui o nosso say hello. É uma função super simples que cria aqui a mensagem hello e o enfim o nome e ele retorna o reply number porque foi assim que a gente definiu que era o hello reply. Enfim, por hoje não vamos olhar a stream também, vamos apenas olhar, focar no say hello, na função say hello, que tá basicamente sendo chamada aqui do client, né? Lógico, isso é feito via network e tal, a gente vai botar para rodar eles como se fosse servidores diferentes, né?
+
+Então, tipo assim, o server tá sendo iniciado nesse porte aqui. Se você olhar lá embaixo, né, tem a inicialização do servidor no nosso porte é 50.51. E com o server inicializado, né, o client faz requests para isso daqui. E se eu rodar um npm run demo, a gente pode ver tudo isso aqui, ó. GRPC server listening em
+
+tal lugar. Aqui o client começou, o request foi recebido, né, Word, ele dá response hello Word. Enfim, vamos pular a stream por hoje. Mas olha só, né, ele pega o word aqui, que a gente poderia ter passado como argumento, né, e ele loga a resposta que é hello word, tá? É assim que se parece um código com protobuffs, ele é um pouquinho mais complexo, né? Ele tem essas eh
+
+peculiaridades aqui de ter que importar os GRPC, de ter que fazer os protoladers, de ter essa definição aqui meio estranha, meio rebuscada da do arquivo ponto proto, né? Então, em muitos casos não vai fazer sentido, mas no caso de performance muito crucial, né? Pode fazer bastante sentido. Lembra? Eu acredito que isso aqui só funciona se você controlar os dois servidores. E se,
+
+cara, eu diria que até se a mesma equipe de desenvolvimento de software, talvez liar nos dois servidores, senão você pode começar a ter problemas e pode ser um pouco mais fácil só expor os dados via API. Enfim, mesmo assim é muito importante entender sobre GRPCs porque quando você for para empresas grandes, é bastante plausível que isso vai estar sendo usado, né? Se você gosta da minha didática e quer aprender mais comigo, todos os cursos do canal estão disponíveis nos links aqui na descrição, tá? A gente tem um curso de estrutura de dados e algoritmos Elite Code. A gente tem um curso também do roadmap pro seu próximo emprego, onde eu te ensino a criar um bom currículo, um bom LinkedIn e a se preparar para entrevistas, tá bom? Tem mais coisas também, você pode
+
+fuçar aí no link. Valeu, tchau.

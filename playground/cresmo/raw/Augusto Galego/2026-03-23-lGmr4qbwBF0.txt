@@ -1,0 +1,73 @@
+---
+video_title: "A parede de lâmpadas que sustenta a internet"
+video_id: lGmr4qbwBF0
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=lGmr4qbwBF0
+video_date: 2026-03-23T12:52:32+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Bom, hoje a gente vai falar sobre porque que a Cloud Flare usa essas lava lamps, essas luminárias de lava para deixar a internet mais segura. O por que que essa história é um pouquinho exagerada na verdade e qual a necessidade disso, né? Porque não daria só para simular uma dessas? Por que que você precisa ter uma parede de fato com lâmpadas de lava para deixar a internet um pouquinho mais segura? Eu vou te contar essa história, te mostrar um pouco na prática o porque que computadores têm uma dificuldade em gerar números aleatórios e a gente vai ver alguma das técnicas para gerar números aleatórios de maneira um pouco mais segura. Antes disso, vou te falar
+
+do patrocínio de hoje que é a Abacus AI. A Abacus é muito simples, você pode utilizar aqui todas as EAS, tá? Pode usar o chart PT mais avançado, Cloudsonet mais avançado, nanana 2, Nano Banana Pro, Grock 4.2. vai ter acesso a todas essas IAS via chat, vai ter acesso também a uma IDE, onde você pode também acessar essas IAS, né, e usar elas dentro da sua própria ideia para gerar código. Então, dentro da sua ideia tem
+
+um agente aqui de A que te auxilia a fazer código. E hoje, em específico foi lançado o Open Claw dentro da própria Aacus, que por 10 você consegue acessar aqui o Abacus Claw, que nada mais é do que open claw hospedado direto na Abacus de maneira bastante fácil. E tudo que você pode fazer dentro do OpenCla, você pode fazer aqui. Então é mais uma maneira simplificada de você rodar OpenCl sem ter que rodar ele na sua própria máquina e tal. Você consegue setar aqui para conversar com ele via Telegram, via WhatsApp, para ele ler caso você queira, né, o seu Gmail, o seu GitHub, ler os P requests lá, ler o Slack Notion, etc. Então todo esse
+
+ferramental aqui vai tá aqui no link na descrição paraa aba zi. Bom, o grande problema ele é o seguinte, que quando você vai computar algo é esperado que imagina num programa normal, né? Você tem aqui uma função. A ideia é que uma funçã função executada no mesmo estado, recebendo os mesmos argumentos aqui, vai gerar sempre o mesmo output. Senão, né, não tem utilidade computacional. E toda
+
+a arquitetura do seu computador é tudo feito baseado nesse conceito aqui, tudo feito baseado nessa ideia. Então, tradicionalmente, quando você vai tentar gerar um número aleatório, eh, você só consegue manipular duas coisas. Você só consegue manipular ou o estado ou o argumento, né? Eh, não existe outra coisa que dê para manipular além do do estado atual do programa e dos argumentos que esse programa recebe. Não tem como fazer nada de diferente.
+
+Qualquer que seja o número aleatório ou pseudo aleatório que você vai gerar, vai ter que ser necessariamente baseado nisso daqui. Vai ter que ser necessariamente derivado do estado ou do argumento. Não tem outra coisa que dê para derivar. Então, tradicionalmente, você vai ter uma função para gerar um número aleatório que vai ter uma sid. Ela recebe uma sid, né? Essa sid a gente
+
+pode considerar que é o argumento da função. E ela vai também atualizando o próprio estado a cada execução dessa função. Um dos algoritmos mais clássicos disso é o LCG, linear congruential generation, algo assim, generator, em que a partir de umas constantes, você vai ter a constante A, constante C, constante M. A partir de três constantes e um argumento que vai ser passado para dentro da função, ele vai gerar um número que aparenta ser aleatório. Não vai ser aleatório de fato, tá? Ele só
+
+aparenta ser aleatório. Ele se comporta como a gente esperaria um número aleatório. Essa função, eu tenho aqui um um exemplo dela em que a gente tem uma classe que vai fazer isso aqui. Você inicializa essa classe com uma sid, com uma semente e essa sidzinha aqui, a partir dela, vão ser gerados todos os outros números. Nota então que a gente tem aqui embaixo uma função next que gera o próximo número aleatório. Essa
+
+função next, ela tem três constantes dentro delas, tá? E a ideia é que isso aqui não seja público, você não necessariamente sabe quais são essas constantes. Então você tem as três constantes aqui, você faz um cálculo baseado nessas três constantes, né? Tira o módulo aqui no final, na verdade duas constantes e o módulo aqui. E aí você retorna o estado atual da função, ou seja, criar ela com uma sid, né? E cada
+
+vez que você chamar essa função, ela vai gerar um número diferente. Esses números vão aparentar ser aleatórios. A gente pode rodar isso aqui para você ver qual qual é o resultado. Ó, rodando aqui a nossa seed, né, foi 42, número do Douglas Adams. E aqui foram gerados vários números que você não consegue encontrar muito bem um padrão dentro deles, tá? Eles aparentam ser bastante
+
+aleatórios. Essa é a ideia de um pseudo number generator. Agora, qual que é o X da questão aqui? Se uma pessoa sabe qual é a sua constante A, ela sabe qual é a sua constante C e ela descobre qual é a sua sid, se ela descobre essas três variáveis aqui, ela consegue gerar da mesma maneira todos os números que podem ser gerados aqui, tá? Por se eu rodar de novo aqui, né, eu subo aqui, eu dou um enter, eu rodo de novo. Geramente os
+
+mesmos números. Se a sid for a mesma, vai gerar os mesmos números, porque as constantes são as mesmas, passando uma mesma sid, uma mesma semente, necessariamente gera os mesmos números. Sendo assim, tendo essas informações, é possível prever todos os números que vão ser gerados a partir dessa função. E isso claramente não é legal, isso não é aleatório, isso não é seguro. Seria uma possível vulnerabilidade que é possível de ser exploitada, né? possível de ser
+
+abusada aqui. E para além dessa fórmula matemática aqui, como eu te falei que computadores são baseados em inputs e outputs previsíveis, é quase que impossível um computador gerar um número aleatório sem partir de algo externo. Na verdade, se isso for possível, ainda não foi descoberto a a como se faz isso. Então, né, dados esses fatos, a gente vai ter que para uma função ser gerada aleatoriamente de fato, pr algo que seja de fato aleatório, vamos ter que ter necessariamente uma interferência do mundo externo. Algo do mundo externo precisa interagir com esse computador.
+
+Para quê? Não para gerar uma função aleatória, mas para gerar basicamente uma sidatória, né? Para que essa sid, o o número que entre nessa função, o argumento dessa função seja de fato aleatório. Se o argumento for aleatório, o número gerado vai ser aleatório também. Então, ao longo dos anos, foram se desenvolvendo diversas técnicas aqui pra gente gerar números que assim, a gente pode ter uma discussão filosófica se a aleatoriedade existe de fato, se o universo é determinístico e tal, mas para propósitos práticos, vamos presumir que essas coisas são aleatórias, tá?
+
+Você consegue medir, por exemplo, micromovimentos do mouse. Então, eu, como usuário, eu não sou uma máquina, eu não sou alguém que gera coisas 100% previsíveis, né? minha mão tem um certo um certo tremor aqui e cada micromovimentação desse mouse vai gerar um número aleatório ou não. Vamos supor que eu movimentei o meu mouse, sei lá, 0.2, não sei quantos centímetros, né? Se
+
+eu consegui medir a menor unidade possível de medida do quantos milímetros eu movimentei o meu mouse. Esses últimos dígitos aqui são efetivamente na prática, aleatórios. A ideia é você pegar uma variável que você consegue medir com uma eh com muitas casas decimais depois da vírgula e essa última parte depois da vírgula, né? Esses últimos dígitos aqui vão ser praticamente aleatórios ou indistinguíveis de algo aleatório. Outra fonte de aleatoriedade, né? Como a gente
+
+tá presumindo que o usuário sendo um ser humano que tem falhas, é o ser humano interage com o computador via mouse e teclado. Então o teclado pode ser outra fonte de aleatoriedade. O tempo que você demora entre digitar uma tecla e outra, ele vai ser provavelmente em milissegundos, tá? Mas ele também pode ter várias casas depois da vírgula. E novamente essas últimas casas depois da vírgula aqui do quanto tempo demorou em milissegundos, podem ser utilizadas como um número aleatório também. É lógico que
+
+essas primeiras aqui não vão ser aleatórias, né? Cada ser humano vai ter uma tendência a digitar uma tecla em tantos milissegundos. Por isso que você pega as últimas casas, não as primeiras. Você vai ter também atividade de disco, que novamente não é algo aleatório, mas é um processo um pouquinho mais físico. Você vai ter coisas de CPU, temperatura da CPU e tal, esse tipo de coisa, o percentual exato de CPU utilizado, etc.
+
+E você consegue sempre pegar os últimos dígitos e usar esses e detalhes aqui ou pedaços desses inputs aqui como geradores aleatórios. Inclusive, se você já viu o conteúdo de speed run na internet, por exemplo, speed run de Pokémon, você vai ver que o os atletas, né, as pessoas que competem com speed em speed run, eles vão tentar manipular a atividade de disco, vão tentar manipular o que que tá sendo armazenado em cada registrador ali do Game Boy para ter o resultado que eles esperam numa batalha dentro do videogame, porque o videogame é incapaz de gerar um número verdadeiramente aleatório. Agora, em sistemas modernos, esse tipo de coisa ele é exposto para você. Já você tem dentro das máquinas Linux, né, um barf/random ou barf/ur random, que consegue puxar uma combinação dessas dessas informações aqui e a partir dessa combinação gerar um número que parece ser perfeitamente aleatório. No Windows também tem esse tipo de coisa e você consegue simplesmente importar isso daqui. Você
+
+consegue em Python dar um import. Dentro do seu import os você dá aqui um random bytes igual a os. random e passa aqui o número de bytes. E pra maioria dos sistemas, tudo isso aqui é perfeitamente válido, tá? Vai vai funcionar perfeitamente bem. Agora, quando o
+
+assunto é uma empresa que hospeda boa parte do tráfego da internet, estamos falando aqui em percentuais altíssimos da quantidade de tráfego que passa pela internet, passa pela Cloud Flare, acaba que a Cloud Flare utiliza uma parede com lâmpadas de lava para gerar os seus números aleatórios. Então você tem uma câmera apontada para isto aqui e microvariações nessa imagem causadas pelos processos físicos dessas lâmpadas de lava aqui vão alterar ali os dígitos aleatórios, né? Lembra que eu falei que são uma quantidade enorme de dígitos e você pega só os últimos? Na prática, qualquer micariação em qualquer um desses pixels aqui vai gerar um resultado impossível de ser previsto. Então, mesmo que você conseguisse simular com uma perfeição quase que exata essas lâmpadas de lava da Cloud Flare, né, e onde que vai est cada bolha ali, algo que na prática hoje em dia é impossível, qualquer microvariação, qualquer partícula que passa na frente da lente ali vai alterar o resultado final. Não contente com isso, a Cloud
+
+Flir não utiliza apenas essa parede. Então, mesmo que você preveja essa parede de lâmpadas de lava perfeitamente, eles também vão mensurar outras coisas, como radiação, barulho estático, a eletricidade, a temperatura de CPUs e tal. E no final a Cloudpl consegue gerar um resultado que mesmo os melhores profissionais com melhor ferramental do universo não conseguiriam ser capazes de prever. E assim, de fato, é gerado um número que realmente é é para nós aleatório. Então, né, se você for um pouco mais criativo e quiser usar coisas que estão fora do seu computador, né, fora do do CPU, disco, mouse e teclado, as pessoas costumam usar imagens. Então você tem imagem pr das
+
+lâmpadas ali, né? Radiação, você tem também o o barulho atmosférico. Você pode vir, por exemplo, no site random.org aqui e ler um pouco mais sobre aleatoriedade de verdade, tá? que ele explica aqui, ó, que a aleatoriedade ela vem através de barulho atmosférico aqui. Então, eles estão medindo eh ondas
+
+de rádio, ondas eletromagnéticas, esse tipo de coisa aqui. Para gerar o numerozinho aleatório, você consegue utilizar até isso daqui via uma API, se for o caso, né, se precisar. Hoje em dia, o próprio hardware da sua CPU consegue gerar esse tipo de coisa baseada em microvariações do campo eletromagnético. Então, a Intel vai ter aqui o que a gente chama de RD Rend. E esse RD range vai ver por temperatura e elricidade, essas duas coisas aqui, tá?
+
+Então, eh, esse era o vídeo, espero que você tenha gostado de um vídeo, talvez um pouco menos prático, talvez um pouco mais interessante sobre aleatoriedade na computação e como a gente pode encaixar diferentes sistemas para cumprir um objetivo, né? Você vê que existe espaço aqui para uma certa criatividade para gerar uma solução que seja interessante. E sim, eu tô meio doente nesse vídeo.

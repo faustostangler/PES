@@ -1,0 +1,129 @@
+---
+video_title: "Como sistemas evitam requisições duplicadas"
+video_id: xsCOMiUwpeg
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=xsCOMiUwpeg
+video_date: 2026-04-13T13:01:51+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Vamos então hoje falar de uma questão bem técnica aqui, o problema de double spend ou double submit. Eles são mais ou menos o mesmo problema, tá? O double spend, ele é mais ligado a bancos e transações, o double submit ele é mais ligado a formulários, né? Geralmente a gente descreve dessa maneira, mas felizmente a solução para ambos problemas acaba sendo a mesma solução. O vídeo de hoje vai ser um pouco mais técnico. Eu tenho notado que os vídeos
+
+mais técnicos têm ido um pouquinho pior. Se você conseguir deixar um like, é, eu vou apreciar bastante isso. E eu vou fazer esse vídeo de uma maneira que, enfim, você vai entender esse problema. Se você quiser solucionar ele codando a própria solução, você faz. Se você quiser solucionar ele alertando para IA, você faz também, né? Eh, existem ambas
+
+maneiras de solucionar esse problema aqui e vai dar tudo certo. Antes disso, vou te falar do patrocínio de hoje, que é a abacusi. Você deve est cansado de ouvir falar da Abacos, mas enfim, funciona bem, custa apenas ó por mês. Você vai ter acesso a todos os modelos de Ai, né? Você pode ver o Nano Banana Pro, Nano Banana 2, você vai ter acesso ao GPT 4.5 Pro, modelo bastante novo
+
+aqui, Cloud Opus 4.6, um dos melhores aqui para gerar código. Você pode usar tudo isso aqui. Para criar seu código, você vai ter acesso também ao de agent, que faz agentes autônomos, assim, tem várias funcionalidades parecidas com OpenCla. Ele pode, se você permitir, né, você pode conversar com ele via Telegram, você pode agendar tesque, você pode criar protótipo, você pode criar muita coisa. Zagent é bem legal, tá
+
+incluso na subscription, assim como o code ll aqui, ó. Code ll é essa IDE baseada em VS Code que tem o agente de código aqui do lado. Você consegue usar o agente de código para gerar código, gerar testes unitários, gerar um monte de coisa. Pode escolher aqui o modelo que vai gerar esse código, né? Qualquer um desses aqui, ó, tá tá legalizado, tá permitido. Posso gerar com o Opus 4.6,
+
+só que, né, ele gasta muitos tokens. Então, Cloud Sonet costuma ser um bom modelo para fazer esse tipo de coisa. poderia só clicar aqui e gerar um teste unitário ou então adicionar algumas coisas como contexto, né? Tipo adicionar aqui o RIDM para ele entender o que que tá sendo feito e pedir uma tarefa, né? Aí você pede tarefa, ele vai fazer as alterações, você pode aprovar ou negar.
+
+Enfim, tem muita coisa legal aqui no Ferramental. Tudo isso por apenas por mês, tá dando R$ 52 na cotação atual. Link vai est aqui na descrição. E vim testar as EAS da Abacos. Ferramental bem legal, bem barato, funciona bastante bem. Bom, que
+
+que é Dou Spend? Que que é D submit? Probleminha fácil de você entender, tá? Você tem aqui dentro do seu computador, isso aqui é a tela do seu PC, né? Você vai ter dentro da tela do seu PC, de repente, um formulariozinho com diversos campos. Você vai ter que preencher seu
+
+nome, seu endereço, alguma coisa aqui. Aí embaixo você vai clicar num botão, né? O botão aqui, ó, submit. Isso aqui pode ser qualquer coisa, né? Pode ter, pô, um formulário. Pod imaginar que isso
+
+aqui é um formulário ou então um link para um pagamento. De repente o problema de double spend, double submit, ele pode ser porque tem um bug aqui que mandou dois requests, então fez dois posts, tá? post e post pode ser literalmente pode ser causado por um por um bug, por um problema que você não viu. Às vezes até um erro de hardware do modem, do sei lá o quê, do roteador, esse tipo de coisa é raro, mas não é impossível. Pode ser também feito porque o cliente clicou no botão submit aqui, viu esse botãozinho, clicou duas vezes bem rápido sem querer, mandou dois requests, pode acontecer.
+
+Pode acontecer também porque uma pessoa maliciosa tentou abusar do seu sistema, né? E pensou: "Cara, se eu mandar um monte request simultaneamente, eu consigo, sei lá, eh, comprar muitos ingressos para um show aqui e revender eles depois. Consigo abusar de uma vulnerabilidade desse desse banco e gastar o meu dinheiro duas vezes. Pode acontecer. Então, esse request aqui, em algum momento ele vai chegar no seu servidor server. Em algum momento ele
+
+vai também chegar no seu banco de dados. A a ação final dele, né? O request não vai chegar, mas o resultado final pode chegar no banco de dados, tá? Tipo assim, se você tiver comprando um produto, podem chegar duas compras no seu banco de dados que vão ser armazenadas aqui, né? OK, tá compreendido o problema. Existem algumas
+
+diferentes maneiras da gente endereçar esse problema. A solução melhor costuma ser uma combinação de várias soluções, tá? Ou de algumas soluções. Primeira coisa que você precisa garantir é que, pô, se o usuário consegue clicar em submit e consegue clicar em submit de novo, o frontangend tá meio zoado, né? Porque se você clica em submit e você não tem nenhum feedback assim táctil, nenhum feedback visível de que algo de fato aconteceu ou está acontecendo, cara, seu front meio mal feito, tá? Se
+
+ele for bem feito, quando eu clicar em submit, eu não devo conseguir clicar de novo em meio segundo. Não faz muito sentido para mim. Então você vai ter o quê? Um blockerzinho aqui, ó. vai bloquear algo aqui, vai desabilitar esse botão. É temporariamente. Você pode
+
+desabilitar ele por algum segundo. Você pode desabilitar enquanto o request está sendo enviado e a gente não teve uma resposta do servidor. Você pode ir pra outra tela. Você pode fazer diversas coisas aqui para bloquear pelo menos o erro da pessoa clicar duas vezes sem querer. Pode ser que a pessoa ainda clique intencionalmente e que ela ainda envie requests maliciosos, né, sem utilizar do seu frontende. Ela pode
+
+simplesmente ver o request que sai daqui e copiar esse request, fazer um cur ali, um scriptinho que envia várias vezes. Pode ser, mas enfim. O seu front changer, se você quiser corrigir esse problema, ele vai ter algo mais ou menos nisso daqui, ó, um jazzinho que você tem o seu elemento aqui, né, o payment form. Você tem uma variável e submiting, né, está enviando igual a false. E enquanto ela está enviando, né, enquanto is submitem eh igual a true, enquanto el tá sendo enviada, ele dá um prent default aqui, né? Ele ele previne o submit, ele
+
+previne o negócio de ser reenviado, tá? Algo assim em react é mais fácil fazer isso. É, mas aqui também não é muito complicado, tá? Se fizer scriptinho, funciona de qualquer maneira. É legal que o seu frontcha tenha isso, mas nota, lembra que eu falei que você pode desabilitar o botão e a pessoa ainda pode fazer o request malicioso. Então
+
+isso aqui não previne de fato o problema, né? Ele ajuda a ajuda a coibir usuários bem intencionados de fazer esse problema, mas você ainda, cara, vou te falar que obrigatoriamente você precisa ter essa validação ou no servidor ou no banco de dados. Algum desses dois lugares? Prefiro no servidor, acho melhor. Ah, mas nos dois também uma boa opção, tá? Se for para escolher só um
+
+dos dois, servidor, se for para escolher os dois, servidor e banco de dados. Claramente uma das soluções, você desabilitou aqui o botãozinho, né? Você tá pensando que seu usuário ele não é um usuário malicioso, ele é um usuário legal, um usuário bacana. Você pode ter a seguinte solução, que ao enviar ao fazer um subscribe numa lista de e-mails, você vai ser redirecionado pra URL. Thank you. Você vai ter um 303, um
+
+redirect pra outra URL. Desse modo, depois do post, você recebe um redirect e usuários bem intencionados, que clicam no seu botão submit. Dificilmente eles vão conseguir dar submit duas vezes com isso daqui, tá? Com frontend que bloqueia e um servidor que manda um redirect. É difícil, tipo, se tiver algum bug, você ainda consegue, mas dentro do pathf, eu não acho que é possível você ter um erro nisso daqui, tá? Então isso daqui coiria a maioria
+
+dos casos, né? se retornar um redirect aqui. E até pode ser bom em alguns casos, porque, tipo assim, quando você envia um formulário de quando você entra numa lista de e-mails, você já deve ter tido essa experiência na vida real, né? Você manda o seu e-mail para uma lista de e-mails, você geralmente é redirecionado para uma página de obrigado. Então, tá tudo certo. Em
+
+alguns casos isso faz sentido. Esse redirection viria antes do segundo post e a gente não faria o segundo post porque eu não tô mais nessa página aqui, né? Pode fazer sentido esse redirect, é uma das soluções. Simples, fácil, é um padrão web. Agora, previne o usuário malicioso. Não, não previne o usuário
+
+malicioso. Então, a gente vai para uma das soluções mais de verdade assim, tá? Primeira das soluções mais de verdade é que o seu servidor ele vai buscar por uma chave de idem potência. Idem potency que uma chave de idem potência. Dependendo do escopo em que você tá implementando essa solução, pode existir o caso em que o front change vai enviar essa chave. Então, front change vai
+
+colocar no header, por exemplo, um Xem potency que e esse Xem potency é um ID. Como você tá careca de me ouvir falar disso, você deve est pensando: "Cara, se o front change vai enviar, significa necessariamente que um atacante conseguiria burlar essa chave de potência." E fato, um, se o frontend enviar uma chave de impotência, um atacante consegue simplesmente copiar o request e mandar uma chave de potência diferente. Então, não necessariamente soluciona o problema sempre. Pode ser uma solução razoável, mas pode ser mais interessante você gerar essa chave de ida em potência dentro do seu servidor baseado em propriedades que foram submetidas. Então vou imaginar o
+
+seguinte, seu formulário você enviou aqui com nome, né? Então eu enviei aqui com nome, tira meu formulário nome Augusto Galego. Eu tiro meu formulário que mais? É de repente tava comprando uma passagem, tava comprando uma passagem de Munique para Las Vegas. Munique lex no dia, pô, sei lá, 19:20 até de Munique para LX dá vai dar umas 3 horas confuso, 23:40 vai est pousando isso aqui. E eu tô pagando R$ 5.000, tá?
+
+Comprei essa passagem aqui, tô pagando R$ 5.000, eu posso construir uma chave de ida em potência, que é na verdade um hash de todos esses campos. De modo que se o front endar todos esses campos dessa maneira, a minha chave de dotência vai sempre ser a mesma e eu não consigo aí, tipo, eu identifico que é a mesma requisição, são os mesmos dados sendo sendo enviados. E aí você pode falar: "Pô, galego, mas não faz do frontend de enviar um preço, um valor monetário em dinheiro, né?" Então, beleza, se você acha que não faz, não faz. Então, a
+
+chave de impotência não vai mais analisar o o dinheiro aqui. Chave de impotência vai ser só nesses campos aqui, ó. Você pode pensar também, ah, galera, mas pô, essa chave de impotência, pode ser que eu comprei essa passagem uma vez hoje e pode ser que eu quero comprar ela de novo amanhã, por qualquer que seja motivo, mesmo passagem. Eu cancelei e amanhã eu quero comprar de novo. Comprei hoje, cancelei hoje, amanhã eu quero comprar. Como é
+
+que faz? Aí aí, cara, você pode basear no horário do submit, né? Você pode ter aqui, pô, essa compra foi enviada no dia 24 de março, né? Então, se eu tentar fazer a mesma compra dia 25 de março, vai funcionar. Então você coloca isso também para ser parte do do hash aqui que vai gerar en potência aqui. Enfim,
+
+você pega todas as informações, você vai usar uma hash function, né? Hashing function, isso aqui você não vai precisar codar nada disso, tá? Tá tudo resolvido para você na prática. Você vai só usar uma uma função que gera um ID baseado nisso ou em UID ou alguma outra coisa, tá? Algum campo numérico aqui. E
+
+essa idên que nessa chave aqui agora sim vai definir o que que você vai processar ou não. Detalhe muito muito muito importante sobrep. Agora que você entendeu o que que é, é que ela não pode ficar dentro do seu servidor se você tiver mais que um, né? É muito comum as aplicações web hoje em dia terem vários servidores ou funcionarem com base em lambda, em aplicações, enfim, computação distribuída mesmo. Então você não pode salvar em memória dentro do seu servidor porque essa solução não vai funcionar. A
+
+gente não consegue garantir que o nosso post vai sempre para o mesmo servidor. Pode ser que você tenha dois servidores. O primeiro post vá para um servidor, o segundo post vai para outro servidor. A chave de item potência de nada serviu porque ela só ficou salva em um servidor. Ou seja, você precisa extrair ela do servidor e colocar ela em algum lugar que ambos servidores podem acessar. Nota como isso complicou o
+
+design do seu sistema, né? E de fato não tem muito como fugir disso. A gente precisa ter essa essa complicação aqui de alguma maneira. Isso que tem que ter em algum lugar, tá? Você pode ter isso num banco de dados, você pode ter isso onde você quiser, mas tem que tá em algum lugar e esse lugar tem que ser compartilhado entre servidores, senão não é uma chave de impotência que de fato garante da impotência, tá bom?
+
+Então você não faz em memory, geralmente você vai botar num solução mais mais comum, acredito que seja um uma máquina que roda heads, tá? Você vai ter uma no ambiente cloud, existem soluções que vão tipo subir uma máquina que roda ali um heads para você e aí você roda o heads nessa máquina e e ambos servidores acessam esse heads, tá? Funciona quase como uma memória compartilhada aqui para mim, tá? Para mim essa aqui é a solução de verdade, tá? A solução mais eh durável, a solução mais escalável é é uma das melhores, tá? Se você quiser
+
+identificar requisições duplicadas para bloquear elas, uma chave de potência no servidor é algo excelente a se pensar. Qual que são os problemas aqui nas dificuldades com chave de dotência? Eu acabei de te falar um deles que é aumenta sua complexidade porque você precisa armazenar num em memória que vai ser compartilhada aqui entre os servidores, né? Se tiver só uma máquina, não. Se tiver só uma máquina, não tem tanto problema. Você precisa de uma
+
+estratégia de tipo assim, o que que define que um request é duplicado, né? Porque se eu te mandar um Pix de R$ 5 agora e um Pix de R$ 5 daqui 1 segundo, é um request duplicado, né? O o meu banco não vai aprovar isso. Se eu te mandar um de R$ 5 hoje e um de R$ 5 amanhã, o banco aprova, eu acho. Acho que aprova sem problema nenhum, não vai ser duplicado. Se eu mandar agora e
+
+daqui 5 minutos, aprova, não aprova, quais são os campos que eu vou utilizar para saber que isso é uma chave de ID em potência, né? Se eu mandar um request de R$ 5, um Pix de R$ 5 pro, sei lá, o barzinho aqui da esquina e depois mandar o Pix de R$ 5 para outro barzinho do lado desse um bar, aprova, não aprova, não sei. Você precisa ter uma certa estratégia aqui do que que identifica um request duplicado e o que que não identifica, né? E também é a gente falou de heads, né? Essa chave aqui vai ser para sempre. Essa chave aqui, tipo, você
+
+não vai armazenar chaves infinitamente para todos os requests pelo resto do da sua vida e da morte fria do universo, né? Tipo, alguma hora tem que deletar chaves antigas. Qual que é a expiration strategy, né? A estratégia de de invalidação de de cash. Como é que você faz o cash invalidation? Aqui são
+
+algumas das dificuldades de uma chave de ida em potência. Agora, se o seu serviço é sério e você quer ser bloquear requests duplicados, para algumas coisas, não importa tanto, tá? Vamos convemos aqui, tipo assim, eu dei o exemplo de lista de e-mails, né? Convemos aqui que numa lista de e-mail, muito sinceramente, você vai ter aqui que não vai poder ter e-mails duplicados, não faz nem sentido, né? Então você vai ter um unique constraint que vai se parecer honestamente algo assim, tá? O seu e-mail aqui ele é um
+
+texto not que é único. E mesmo que o seu servidor bloqueie ambos requests e tente criar ambas entidades no banco de dados, o seu banco de dados vai bloquear. Então você vai ter um unicorn no banco de dados, tá? A vantagem disso é bom, essa aqui é a solução final, real, verdadeira, que de fato impossibilita a criação de dois usuários com o mesmo e-mail. Fechou? Perfeito, tá
+
+perfeitamente solucionado. Quais são as dificuldades aqui, né? Eh, se a gente tiver falando numa transação, numa transação bancária, qual que é o único constraint de uma transação bancária? Eh, não sei, velho. Eh, é uma chave de impotência, geralmente. Então, você vai
+
+provavelmente armazenar a chave de dotência, né, no banco de dados. Pode ser. Você pode armazenar a chave de D potência no banco de dados. Você vai construir um ledger e as transações no seu ledger vão ter uma chave de D potência. Legal. Mas aí a gente tá na
+
+mesma solução que usar que fazer a chave no servidor, né? Então assim, essas três estratégias funcionam meio que em paralelo, meio que para problemas diferentes às vezes, tá? Essa do Unic Constraint, ela é excepcional, mas ela, infelizmente, só funciona quando a gente tem uma característica única mesmo, tá? Pode ser difícil você identificar o que que é uma característica única, o que que é um constraint único de um request. Às vezes não tem. Às vezes o único é a
+
+combinação de vários campos. A prática aqui, a boa prática que eu diria para fazer, vamos rodar aqui uns exemplos, né? Imagina que eu estou é comprando uma passagem de avião e enviando ali meus dadinhos na na passagem, né? Tô preenchindo ali os dados do passageiro, cliquei cliquei em submit. Que que eu, Augusto, espero que aconteça? Cara, para
+
+enviar meus dados para uma passagem de avião, redirect é importante. Direia que o mais importante de todos, né? Porque eu tô falando de enviar os dados. A a compra geralmente uma etapa separada, é a última etapa. Acho que só o redirect bastaria, tá? Honestamente, claro, lá
+
+dentro você vai ter muita coisa. Você vai ter coisa de segurança, coisa para prevenir scalping, para prevenir sei lá o qu. Dentro da companhia aérea vai ter alguma coisa a mais, mas redireir tá legal. Enviar um e-mail para uma lista de e-mails, um redirect também, mas como eu não quero cadastrar duplicado, né? Eu acho que o redirect e o unique constraint. Interessante, esses dois
+
+teria uma chave de d potência para no servidor? Não acho tão importante. É só se a gente tivesse algum gargalo meio estranho assim, mas no banco de dados. Se não tiver gargalo, cara, você pode deixar. Eu acho que o redirect com unique constraint funciona, porque você pode deixar a pessoa processar três, quatro vezes o o nome dela, ela não sabe se ela já se inscreveu nessa lista, ela manda de novo, não tem problema, não vai ser criado nada mais no banco, né? Acho
+
+que o Rirect e o Nic constraint estaria de bom tamanho. Falou aqui de transação bancária, aí potency botante. Falou aqui de eh gestão de estoque, produtos, gestão de tickets, coisas que existem um número limitado e de repente uma alta demanda de compra e tal. a gente começa a caminhar para um lado que a ID potência passa a ser bem importante, tá bom? Quase todos os frameworks têm alguma solução nesse sentido. Você pode
+
+pesquisar o seu framework aí de frontend ou de back end. Geralmente vai ter alguma recomendação nesse sentido. Existem maneiras e digamos assim padrão de se implementar essas coisas aqui, mas não é nenhum bicho de sete cabeças. Isso que acabei de te de explicar. Se você dar uma olhadinha em alguns códigos na internet, você consegue tranquilamente replicar isso aqui também, tá? Não são
+
+conceitos difíceis. Uma vez que você entendeu e absorveu esse conceito, você mesmo vai ter a capacidade de ler um código assim, entender e fazer na sua própria aplicação. Você mesmo vai ter capacidade de explicar para uma IA e para ela fazer esse código e você revisar o que a IA fez e ver se faz sentido ou não, né? Acho que o importante aqui é o entendimento desse conceito e o entendimento dessas soluções, principalmente se em algum dia você esbarrar nesse problema. E sinceramente, cara, a primeira vez que eu vi esse problema na vida, eh, eu era júnior, eu era bem júnior e foi a primeira empresa que eu fiz um negócio tipo meio mais transacional assim, que mantinha estoque de umas coisas e tal. E
+
+eu lembro que o o sorner na época que trabalhava mais próximo comigo, rapidamente me alertou disso, né? Ele falou: "Cara, você fez tudo certinho, só que como a gente tá gerindo um estoque, eh, a gente precisa prevenir que os requests venham duplicados. Então você precisa colocar isso aí também no servidor, no serviço. E foi a primeira vez que eu vi isso e foi bem impactante que ao longo da minha carreira inteira eu sempre tô atento a esse problema, tá? Ele é muito comum mesmo. Se você gostou
+
+dessa explicação e quiser aprender mais coisas comigo, na descrição aqui a gente vai ter um link para todos os cursos aqui do canal, tá? A gente tem cursos de estrutura de dados algoritmos, cursos de roadmap seu próximo emprego. Tá saindo um sistema design bem legal, tem bastante coisa aqui que eu posso te ensinar. Todo e qualquer um aqui vai ter uma garantia de pelo menos um mês que você pode assistir ali à querer o seu dinheiro de volta sem precisar me dar nenhuma explicação, tá? Vai ter ali uma caixinha para você dar o feedback. Eu
+
+leio os feedback sempre, mas a maioria dos feedbacks são positivos, inclusive são pessoas que eh decidiram que não precisam mais do de tal curso por uma mudança de carreira e tal. Esse tipo de coisa é geralmente feedback. Ou então a pessoa comprou muito na empolgação e de repente não vai ter tempo de assistir. É geralmente isso, cara. O que a gente faz aqui é bem bom, tá? Você pode comprar
+
+sem medo, você pode assistir aí durante um mês, no final você não gostou, pede seu dinheiro de volta. A gente vai devolver sem nenhum problema, nenhum burocraciazinha nesse sentido. Tá bom? Obrigadão, pessoal.

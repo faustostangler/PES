@@ -1,0 +1,191 @@
+---
+video_title: "Coisas que te tornam um programador mais sênior"
+video_id: hTQB7rao0lg
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hTQB7rao0lg
+video_date: 2026-02-13T13:01:15+00:00
+video_description: |
+  📚 O Programador Pragmático: https://amzn.to/4bBWCGY
+  
+  📖 Meu curso de estruturas de dados e algoritmos: https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  Workshop 10 LeetCodes Para Entrevistas: https://pay.hub.la/RGfq0dk8iqDeL5IC5yog?coupon=WORKSHOP
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: [algoritmos.galego@gmail.com](mailto:algoritmos.galego@gmail.com)
+---
+Bora, mais cinco lições para gente deixar o programador ainda mais pragmático. O link pro livro vai tá na descrição. Eu tô tirando isso tudo do programador pragmático, que é um dos livros mais recomendados, um dos melhores livros da área de programação. Vamos lá. Nosso primeiro inimigo é como sempre, sempre seu inimigo, tá? Um dos
+
+meus maiores inimigos na programação é o acoplamento. Então a gente vai falar de lady. Tá vendo isso aqui? Isso aqui em cima, ó. Order. Getc customer, né? que
+
+seria pedido ponto. Busque o pedinte, busque o usuário, busque o consumidor, busque o endereço desse consumidor, busque o zip code, né? O código postal desse consumidor. Isso aqui tá altamente acoplado, fortemente acoplado. Isso não é bom. Essa daqui a lei de Demeter não é
+
+minha, meu nome não é Demetter, não fui eu que inventei. Ela foi inventada nos anos 80 e ela dá uma série de guidelines, uma série de guias aqui para nos dizer o que que vai ajudar a baixar o acoplamento. Eu posso te dizer o que que são isso, só que você não precisa decorar, a gente pode entender, tá? A lei de meter, em resumo, fala que um método deve apenas conversar com método apenas conversa com ele mesmo, os parâmetros, os objetos que ele cria e variáveis globais. Eu decorei isso, claro que não. Eu tô colando aqui do
+
+livro, não decorei isso aí não. Que que é interessante se não tá com isso daqui, né? Um método, ele não deve conversar com objetos retornados por outros métodos. E isso daqui vai resultar em um objeto. Então a gente teria meio que um acoplamento de um método conversando com objetos retornados por outros métodos.
+
+Qual seria uma solução? Bom, é simples, a gente encapsula, a gente desacopla. A gente vai falar bastante acoplamento nesse vídeo, tá? Mas essa daqui de baixo seria a solução. Uma ordem, no caso, um pedido, é responsável por buscar dentro dele mesmo onde é o zip code da entrega, né? Onde é o código postal que foi
+
+entregue o pedido. Como que o pedido vai fazer isso? É problema dele. E lá dentro desse método aqui, se a gente tiver alguma forma de acoplamento, ela é menos pior, porque ela tá de trás da interface. a gente tem pelo menos uma alta coesão em que coisas que pertencem juntas estão juntas, tá? Pode parecer
+
+uma distinção pequena, mas a gente vai ver um pouco mais sobre como não fazer esse chaning aqui, né? Essa linkagem de métodos atrás de métodos e melhorar o nosso código. Então, o próximo conselho que a gente vai levar é o tal de tells ESC. Em cima tem um exemplo ruim, tá? Embaixo tem um exemplo bom. É assim que
+
+a gente tá fazendo, assim que eu separei. Tonesk significa que você diz para o objeto, diz para o método, você ordena que algo seja feito, você não pede por algo e depois você pensa. Como assim? O que que isso daqui em cima tá querendo fazer, né? A gente tá pegando uma conta, a gente tá buscando o balanço, né, o o saldo na conta, vendo se isso é maior do que um certo valor e depois debitando esse valor da conta.
+
+Isso aqui é uma lógica de saque. Essa lógica de saque, ela pode estar atrás do método conta ponto saque valor. E lá dentro eu vou colocar isso aqui, porque se eu tiver manipulando a a conta por fora da conta, isso não tiver atrás de uma interface, isso aqui é uma lógica que nem tá clara para mim exatamente o porque que tá sendo debitado, tá? Eu nem sei se é um saque. No caso aqui a gente transformou num saque, né? Mas eu não
+
+sei se é. Por que que é importante isso aqui, tá? Porque aqui a lógica de negócios, ela está fora da conta. O objeto, a classe conta, tem lógica de negócio que tá dispersa pelo código, não tá dentro da própria do próprio objeto, não tá autocontida, não tá coeso. Isso é uma falta de coesão, isso é uma duplicação de lógica em lugares que não deveria estar. Então a gente ordena que
+
+a conta execute um saque e isso é responsabilidade da conta. Isso também segue o princípio que a gente viu no vídeo anterior, que é easy to change, é mais fácil de se alterar, né? Se eu tiver um bug no nos saques da conta, eu consigo achar o saque muito facilmente. Tem o nome aqui, ó, saque. Agora, lembra que a gente viu esse acoplamento aqui de uma coisa que depois faz outra coisa que depois faz outra coisa. A gente vai ver
+
+algumas formas de vencer isso daqui, porque essa forma que eu te dei aqui de esconder isso aqui atrás de um método, não é necessariamente a forma que você queria, né? Você tá pensando, pô, galego, eu peguei o que tinha aqui, né, que tava fortemente acoplado, beleza, eu escondi atrás de uma interface, mas ele ainda tá fortemente acoplado lá debaixo dos panos. Concordo com você? O que que a gente pode fazer? Então, a gente pode falar sobre acoplamento temporal, que ainda não soluciona o problema. A gente
+
+vai solucionar esse problema um pouquinho mais na frente, mas acoplamento temporal é outro problema que vem desse cha de métodos. Quando você tem um método que depende do resultado de outro método implicitamente, mas não explicitamente. Olha só, a gente tem aqui um socket, né, web socket, que primeiro ele abre, depois ele envia dados, depois ele fecha. O que que acontece se eu fizer no ordem diferente? Se eu fizer primeiro o close, depois o open, depois o send, vai bugar, né? não vai dar certo. Então o
+
+socket para eu poder chamar o método open desse open não, né? Mas para eu poder chamar o método close desse socket ou para eu poder chamar o método send desse socket, ele depende necessariamente de um estado interno dele. Esse estado interno do socket não é visível para quem tá chamando ponto open, para quem tá chamando ponto send, para quem tá chamando o ponto close. O estado interno é invisível para mim. Isso não me previne, isso não me protege do fato de que eu posso tentar simplesmente dar um socket ponto close a troco de absolutamente nada e eu vou quebrar alguma coisa ou eu posso tentar dar um um socket ponto send de um socket que não está aberto. Eu não tenho uma
+
+proteção contra isso. Como aquilo que está fora do socket não conhece o estado interno do socket. Só quem conhece o estado interno do socket é o próprio socket. O próprio socket então deve ter um método responsável por enviar e fechar o próprio socket, tá? Você delega isso para dentro da classe socket, que ela mesma sabe como fazer essas coisas e você evita esse acoplamento aqui. Você
+
+evita a gente ter essa lógica fora da classe socket que a gente pode chamar adwck, como a gente quiser, tá? Agora vem uma das ideias transformadoras. A gente vai falar sobre transformações e é basicamente isso aqui que eu quero que você entenda, tá? Esse primeiro exemplo foi uma gambiarra. Gambiar porque você vai ter uma ordem, você vai pegar um comprador dessa ordem, aí tu vai pegar o endereço dessa ordem que é outro objeto de outro tipo, e aí tu vai pegar o zip code desse endereço de outro objeto de outro tipo. Isso aqui é uma lógica
+
+profundamente orientada a objetos, mas nem é da maneira ideal, tá? Nem é de uma maneira que eu gostaria que fossem orientação objetos. Agora, se a gente mudar um pouco o paradigma e a gente for para um paradigma um pouco mais funcional, não precisa ser totalmente funcional, tá? É só herdar um pouquinho do paradigma. Vamos ver alguns exemplos aqui. O livro traz uma frase muito
+
+famosa, que é que programar é sobre código, mas programas são sobre transformações de dados. Programas não são sobre código. Pega esse exemplo aqui, tá? Você tem aqui o Pipe Operator. Eu acredito que é do Unix. E esse Pipe
+
+Operator, segundo o programador pragmático, é um dos conceitos mais transformativos da programação, um dos que mais obteve sucesso. Por quê? Aqui a gente tá vendo um programa como uma série de transformações. Uma transformação seria, por exemplo, o primeiro read, né? É o ler o arquivo. O
+
+output da leitura desse arquivo vai para o nosso próximo método, que é o passe. Ele vai como input para o próximo método. Parce. Depois de passeado, ele vai ser validado. Ele vai como inputate.
+
+Você tem um pipe como se fosse uma linhazinha de produção, uma fabricazinha que vai passando parafuso pra frente, pra frente, pra frente. E o output de um método vira um input de outro método. Isso aqui funciona. Só que se a gente usar isso aqui em linguagens é de de programação mesmo, né? Não, em Bash ou em qualquer que seja o que a gente tá usando aqui, se a gente usar isso num elixir ou a mesma lógica em qualquer outra linguagem, porque nota linguagens como elixir vão te dar o pipe operator, que é um negócio que se parece assim, ó, esse pipe operator aqui. E várias
+
+linguagens não te dão esse operador. Esse pipe operator Python, por exemplo, não te dá esse pipe operator, mas você não precisa dele para utilizar da mesma lógica funcional, da mesma lógica de enxergar um programa como transformações subsequentes de dados. Essas transformações aliadas a uma tipagem nos dão algo que é muito muito muito poderoso. Eu vou te dar um exemplo ruim e o exemplo bom. Nota que a gente tá falando bastante estado, né? A gente tá
+
+falando bastante de como a gente é inimigo do do estado interno das coisas. Imagina esse serviço aqui, o serviço de signup, o serviço de criar uma conta. Aqui o meu serviço de signup, ele tem dentro dele um banco de dados, um serviço de e-mail e um self. User, né? Um usuário. OK, tudo bem. O handle aqui
+
+que vai fazer tudo que a gente precisa fazer, vai fazer uma sequência de operações. Ele vai passear, validar, aplicar regra de negócio, salvar e mandar um e-mail de welcome, OK? Uma sequência de ações. Qual que é o problema aqui? O validate não recebe nada como parâmetro. Ele depende do
+
+estado interno do próprio serviço. Então o parse vai parsear uma requisição, né? E esse parsear uma requisição vai criar um usuário, salvar o estado interno do serviço com salvar o usuário aqui, né? no estado interno da própria classe. Ao salvar no estado interno da própria classe, eu tenho que o meu validate vai validar olhando o estado interno da própria classe. A gente não está
+
+passando mensagens. Alan Kei falou que orientação objetos é sobre troca de mensagens, né? Sobre passar mensagens e late binding. Isso daqui, embora orientado a objetos, não é sobre troca de mensagens, é sobre eh organizar o estado interno de modo que a gente chame as coisas na sequência correta. E não tem nada que empeça a gente a chamar na sequência errada. Tudo isso daqui só
+
+funciona se eles tiverem acoplados de maneira aqui, ó, sequencial e perfeitamente correta. Nada que me impede de chamar isso em nenhuma ordem errada. Eu basicamente não consigo fazer essas coisas numa ordem diferente. Eu não consigo usar esse validate aqui para praticamente mais nada. Esse validate só funciona quando o self, a própria classe, contém um usuário que contém um e-mail. Eu não consigo validar mais nada
+
+em nenhum outro lugar do meu código. O apply business rules aqui, que é um nome bem ruim, honestamente, tá? É um nome para garantir que a idade é maior que 18, mas beleza, podendo imaginar que tenha mais regra de negócio e tal. Só vai funcionar novamente se eu já tiver salvo um user com uma idade. Se você pensar bem, isso, na verdade, tudo isso daqui tá meio que funcionando como um grande método handle. Tá tudo
+
+extremamente fortemente acoplado e você não tem aquilo que eu falei de ver o código como uma transformação em cima de dados. Você não tem que os dados de parse estão sendo passados para dentro do validate explicitamente. Eles estão sendo passados, na verdade eles não estão sendo passados. Ambos estão manipulando variáveis externas ao código. Isso não é legal, tá? Eu eu
+
+pessoalmente não gosto disso. O programador pragmático também não gosta disso. E a gente pode fazer isso aqui, essa mesma lógica, de uma maneira muito mais legal. Pega aqui os métodos, tá? Separados de uma classe, os métodos isoladamente, tá? Vamos na real
+
+contrastar a diferença. Ó, que que o método validate recebe como parâmetro? Nada. O que que o método validate retorna como parâmetro? Nada. Ou um
+
+erro? Que que o método apply business rules recebe como parâmetro? Nada. Contrata isto aqui com o que a gente, né, o pragmatic programmer tá sugerindo. Que que o validate agora, validate e-mail, porque estamos validando um e-mail, recebe como parâmetro. Ele
+
+recebe dados aqui. Ele recebe um um tipo de de dado, ele retorna esse tipo de dado, OK? Ele pegou um dado, manipulou, retornou. No caso, na manipulação, ele não fez nada, ele só passou pra frente. Que que o validate age faz? Recebe
+
+dados, valida os dados, retorna os dados. Que que o sendil faz? Ele recebe um serviço de e-mail responsável por mandar o e-mail. Ele recebe dados e ele manda o serviço de e-mail e enviar os e-mails. Olhando para esse código aqui, eu não tô gostando muito dele, honestamente. Eu faria com que isso
+
+daqui recebesse um in, isso daqui recebesse um string. Eu ainda farei umas alterações aqui, que eu acho o código meio estranho, tá? Mas beleza, porque o importante aqui é que se a nossa linguagem permitir, agora a gente pode chamar isso daqui em sequência. Isso aqui seria um exemplo mais elixer, tá? Isso que na verdade é opção do código, não é bem sintaxe de elixir. Elixer se
+
+parece mais com Ruby, mas é uma opção do código. Aqui nosso raw data, né? Os dados cru entram aqui para normaliz input que depois vão para validar e-mail, né? Esse pipe operator ele imagina como se fosse uma setinha, tá? Ele pega o output de uma função, ele joga como input pra próxima. O validate
+
+e-mail vai aqui pro validate age, que vai aqui pro persistir usuário, que vai aqui pro sendil. Se eu chamar isso numa ordem diferente, esses métodos aqui ainda são utilizáveis. Todos eles são utilizáveis por si só. Todos eles podem ser utilizados por conta própria. Se eu tiver que os tipos aqui, ó, dos inputs sejam bem definidos, vou imaginar agora que a gente tá no no Python, tá? Como
+
+que a gente faria isso aqui em Python? Ou então, não necessariamente isto aqui, mas algo nesse sentido em Python. A gente poderia ter que essa idade aqui, esse dado aqui é uma idade fortemente tipada. Então a gente poderia ter, né, o nosso raw data. E aí a gente vai ter que data é igual a pars. Raw, ok, temos o
+
+nosso parse aqui. A gente passa esse data como input pro validate mail. Como o validate mail não vai realizar alterações nesse dado, a gente não precisa retornar ele de novo, né? A gente pode dar aqui, ó, validate e-mail, passa aqui o data, qual que é o x da questão? Imagina que no meu validate age, na verdade, eu recebo um int, eu não recebo mais data, eu recebo um int, né? E eu tento passar data. Se o meu
+
+linter tiver configurado de uma maneira decente, a minha página tiver OK, isso daqui vai acusar um erro e aí eu vou saber que é para eu passar o data. age e se por acaso eu chamo isso daqui numa ordem diferente, eu altero a ordem do meu validate mail pro meu do meu validate age, bom, se isso não infringir na regra de negócios, isso ainda funciona sem problema algum. Nosso pipe operator aqui é muito legal. Enfim, o que eu mostrei são conceitos um pouquinho diferentes, tá? Que a gente tá fazendo aqui. Não é exatamente a mesma
+
+coisa que tá sendo feita aqui em Pipe Operator, que eu quero te incentivar a pensar é pensar num programa como transformações subsequentes em cima de dados. Eu sei que o exemplo que eu peguei aqui não foi o melhor de todos. Eu devia ter pensado num exemplo melhor, mas eu não pensei. Você pode ainda utilizar a eu recomendo que você dê uma lida assim por cima em como é que elixir faz isso aqui, como é que elixir usa pattern matching, né? Como é que elixir, como é que se chama pattern matching, é tipo, tipo um switch case, sabe? Ele
+
+dependendo de um resultado, você pode direcionar o código para um lado outro, tipo um ifels, sabe? Só que mais baseado em num num enum, como se fosse, expliquei muito mal. Mas vamos pegar outro exemplo aqui, tá? Isso daqui seria um exemplo já bem legal de enxergar um código como uma sequência de transformações. E isso daqui tá bem mais com uma carinha jáva, né, uma carinha Typecript. Aqui que a gente pega itens,
+
+né, que vão vir de um load data, de um carregar dados. A gente filtra os itens válidos, a gente ordena os itens válidos, a gente formata os itens válidos, a gente printa os itens válidos. O que que tá acontecendo aqui? Isso aqui, os itens que são carregados vão como input para o filtro. Os itens que são filtrados vão como input para o sorte. Os itens que são ordenados vão
+
+como input para o formatter aqui. E os itens que são formatados vão como input para a nossa função de print. Isso é essencialmente um pipe operator de elixer, só que sem a ergonomia de elixir. É a mesma lógica, é uma lógica funcional e é quase que a lógica, né, de você pegar data aqui e usar aqui, ó, o as funções já build em cima de de arrays ou de listas, né? No caso, load, eu não sei se se é buin, mas enfim. Que você
+
+vai ter aqui, nesse caso que lo vai retornar um array. Em cima desse array, né? Você vai fazer o ponto filter para filtrar, vai fazer o ponto sorte para ordenar, vai fazer o ponto map para para coisar e vai fazer um loop de for aqui passando o print que cada um vai printar. Enfim, perfeitamente JavaScript com estilo bastante funcional. E isso daqui é bem legal, né? Isso daqui ajuda
+
+a gente a enxergar o código como uma sequência de manipulações de dados. E isso daqui, por não depender de estado interno, por não manipular estado interno, é mais naturalmente identível se ocorrer um bug, porque novamente tudo que vai aqui dentro tá aquiido, nada depende de nenhum estado interno ou externo. Quer dizer, teoricamente a gente pode fazer com que essas funções dependam de estado interno ou externo, mas enfim, se você fizer bem, se você seguir uma lógica funcional, é mais testável, é mais reproduzível, se der um bug, você vai conseguir reproduzir exatamente todas as condições que foram para dentro desses métodos aqui. E isto aqui é excelente. O mesmo input vai sempre resultar no mesmo output, porque tudo que saiu de uma função entrou na outra função. Nossa, próxima, próximo
+
+exemplo do programador pragmático é pensar sobre concorrência. E aqui eu não vou nem mostrar código porque eu quero te incentivar a pensar no no fluxo das coisas acontecendo mesmo. E aqui eu peguei um exemplo que eu mesmo criei, tá? Imagina que um usuário faz um upload de foto. Então o usuário sobe uma foto, a gente, o nosso serviço é tipo Instagram. A gente vai pegar essa foto,
+
+a gente vai comprimir essa foto, né? Usuário postou stories, vai, ele fez o upload da foto pra gente, a gente comprimiu essa foto, a gente vai salvar essa foto já comprimida, né, numa Blog Store e a gente vai propagar essa foto para uma CDN, OK? Compreendido? Tudo isso feito, a gente retorna pro usuário que tá OK, que funcionou. Cara, isso daqui tá sendo feito de uma maneira sequencial. Eu vou te incentivar a olhar
+
+o serviço que você trabalha atualmente e ver o que daqui que precisa ser feito de maneira sequencial. O usuário precisa esperar tudo isto aqui ser feito para receber um OK? Talvez não. Eu não, eu acho que não. Eu sinceramente acho que isto aqui não precisa ser feito de maneira sequencial. O usuário recebe
+
+isso aqui, recebe OK. E o resto a gente pode fazer de maneira assíncrona. OK, melhorou um pouquinho. Tudo aqui embaixo precisa ser feito de maneira sequencial? Cara, eu também acho que não. Eu acho
+
+que a partir do momento que a foto foi comprimida, a gente consegue, né, que ela seja enviada pra Blob Store e a gente consegue que ela seja propagada para CDN. OK, já temos aqui uma certa concorrência, talvez até um paralelismo que vai acelerar meus processos. Agora, essas coisas precisam ser feitas de maneira síncrona. Sinceramente, eu acho que talvez não. Também sinceramente, talvez as nossas fotos para serem comprimidas, elas possam ser colocadas numa fila, certo? Uma fila. E a gente
+
+pode utilizar um pub sub, em que o upload de foto é o publisher, né? O quem vai publicar. E se você não conhece Pub Sub, eu acho que eu não tenho vídeo no canal, mas devo gravar vídeo sobre. Alguém vai publicar e alguém vai subscrever. E nota de um simples serviço sequencial que possivelmente teria muitos gargalos, a gente consegue aumentar a nossa o tempo de resposta pro usuário e a gente consegue aumentar o quanto de processamento a gente vai conseguir executar de fato aqui, né? É,
+
+melhora bastante o nosso serviço. Aqui é o momento que eu traria um código, tá? Que eu mostraria em código como que a gente resolve questões de concorrência, principalmente em questão de estado compartilhado, tá? Só que isso aqui ia sair num vídeo de race conditions que eu gravei e ficou tenebroso. Então eu vou gravar o vídeo de race conditions de novo. Isso aqui é uma promessa, tá? É,
+
+vai sair o vídeo race conditions, ele tá praticamente pronto, é só regravar. A gente vai mostrar o código de como lidar com processos concorrentes no vídeo de race conditions, né? Como você escreve um código que consegue compartilhar recursos de modo com que um não tropece o outro. pessoa que vai ser no Vace conditions. E agora vamos bater um papo, o último papo aqui sobre pragmatic program sobre herança. E eu escrevi aqui
+
+VS Code porque isso aqui tá no exemplo no VS Code que era honestamente era muito código para eu trazer ali para vocês, tá? Então vamos lá no nosso exemplo do VS Code. Muito comum, né? Tem um debate muito grande aí hoje em dia correndo sobre imposto sobre herança. Não é isso que você tá pensando. A gente
+
+vai falar sobre imposto de herança, no caso de de inheritance, de herança dentro do código. Qual que é o trocadilho aqui que o Pragmatic Programmer faz, né? que você paga um imposto em cima da herança. O que que seria o imposto sobre herança, né? Imagina alguém que trabalha com o e é assim profundamente orientado a objeto.
+
+Profundamente. A gente tá falando aqui que veículo vai ter um subtipo que é um carro, que vai ter um subtipo que é um Toyota, que vai ter um subt que é um Toyota Corolla, tá? Alguém que profundamente OP. E a gente tem que o nosso veículo implementa aqui é inicializar e implementa o stop. Aqui no nosso car, no nosso carro, a gente vai adicionar uma classe nova chamada move at, né? Vamos ver a tal velocidade. E
+
+muito bem, como o nosso carro de veículo, o nosso carro ele tem aqui o atributo velocidade, né? O veículo tem um atributo velocidade. O nosso carro é um tipo de veículo, então ele necessariamente tem essa velocidade. Agora, ele necessariamente tem também o stop e o initialize. E se eu tivesse 500 métodos aqui dentro do veículo, eu teria 500 métodos aqui dentro do carro. Esse é
+
+o próprio objetivo de inheritance, o próprio objetivo de herança. Eu não lembrava disso porque a primeira vez que eu li faz bastante tempo, a segunda vez que eu tô lendo é agora. Mas tanto eu quanto o livro Pragmatic Programmer não gostamos de herança. Qu gente é selfmade, né? A gente não gosta de herança. Qual que é a pegada, né?
+
+Durante a a história de linguagens o op, você tem que herança é um ponto bastante controverso. É, enfim, ser mais mais implementa de um jeito, será de é uma loucura, tá? História de herança é uma loucura, cabe um vídeo inteiro aqui. A questão é se eu altero como um veículo funciona. E no caso de veículo e carro ainda tá tá OK, tá? Mas a gente poderia
+
+ter exemplos bem piores. A gente poderia ter, por exemplo, esse outro exemplo aqui que eu trouxe agora, que é um file loger, um logger de arquivos e um time stamp file logger que tem aqui, né? Tem o o enfim, erda aqui o tal do log, ele subescreve o tal do log. Mas se eu pego o meu log aqui e eu altero como esse log funciona, eu coloco tipo self. Faça qualquer outra coisa. O que eu esperava
+
+que fosse logar vai fazer também, tipo, eu vou alterar o comportamento que tá embaixo. Se eu altero o comportamento de veículo, eu altero o comportamento de todas as outras classes que herdam de veículo. Cara, eu acho que isso daí é uma um negócio meio fortemente acoplado. Eu não gosto disso. Eu não vejo, eu sinceramente não vejo vantagem em criar uma classe que erda de outra classe, a não ser que seja perfeitamente um subtipo que vai ter todos os métodos implementados pelo pelo método cima, né, da maneira com que é implementado o método cima. E eu tenho uma garantia
+
+muito forte de que os métodos que são implementados na classe principal aqui, que vão ser dados, não vão ser modificados. Aí eu posso estar concordando, mas fora isso, eu acho que você vai ter a alteração de um código acontecendo e o bug aparecendo muito longe da alteração do código. Você tá me entendendo? Eu prefiro, na verdade, que a gente tivesse de uma maneira diferente. A herança, ela vai expor métodos protegidos. Ela tem esse
+
+contrato escondido aqui no super. Enfim, ela acopla fortemente a classe veículo paraa classe carro e às vezes você faz sem pensar. Você puxa o carro do veículo ali e você acaba herdando muita coisa que você vai ter que carregar para sempre, tipo um imposto sobre herança. Ao invés disso, eu prefiro um approach mais explícito, tá? Tanto o programador pragmático quanto o, eu acho que a Gang of War do Design Pons, fala que a gente tem que deve preferir composição contra herança. E eu vou mostrar algumas
+
+maneiras de se compor uma classe veículo. Uma delas é a minha favorita, inclusive. Eu gosto bastante dessa, tá? É utilizando de protocolos ou interfaces, né? Que que é um protocolo?
+
+Seria tipo um um método abstrato, vai? O método move at. Ele vai receber self, ele recebe ele mesmo, ele recebe uma velocidade, ele retorna no toda classe que é drivable, toda classe que é dirigível deve implementar o mov, deve implementar o stop e deve implementar com essa assinatura, com esses parâmetros e com esse output. Aqui a implementação percada no protocolo e eu posso ter um locatable também, um localizável que enfim é outro protocolo também, outro protocolo, interface, são conceitos bem parecidos. E toda classe que for locatable, ela precisa implementar um get location, ela precisa implementar um set location. Ok? Ok? Se
+
+você perceber, isso não é muito diferente de eu ter uma classe que tem um método abstrato. É bem parecido com o conceito de ter um método abstrato. A diferença é que eu explicitamente tô apontando quais métodos abstratos e existem lá no momento de utilização. Então, olha só, presta bem atenção, tá? O meu carro dois, nota que aqui não existe referência ao protocolo locatable, não existe referência ao protocolo drivable. Eu não preciso
+
+dessas referências. Então o meu carro talvez ele nem saiba que o locable existe, talvez ele nem saiba que drivable exista, mas quando eu tentar utilizar o método drive veículo, né, dirige veículo, eu posso especificar que o veículo que eu recebo necessariamente é drivable. Então nota, o meu carro pelo fato de ele implementar o move at e o stop, ele vai qualificar como drivable. Ele está aderindo, ele é aderente ao protocolo dirigível. Meu carro é dirigível porque tudo que implementa movet e stop pode ser interpretado como um dirigível. Então eu tenho que o meu
+
+carro necessariamente vai conseguir executar o move. Eu consigo passar pro método drive vehicle o meu carro. Isso aqui eu acho bem fantástico. E ele também vai ser locatable, mesmo sem ele ter nenhuma referência pra locatable aqui, tá? Quem tem a referência do que é localizável é quem é o método que vai localizar algo, é quem vai utilizar dessa dessa funcionalidade. Isto aqui
+
+pode receber meu carro. Isso aqui para mim é mais orientado a objetos do que herança. Para mim tá mais perto do late binding que o Alan K queria que a gente fizesse. Por último, a gente tem o tal de delegation. A gente poderia falar de mixin também, mas mixin ia tornar esse vídeo muito grande. Mix insis. Você pode
+
+utilizar mix in. O Pragmatic Programmer gosta de mix in, mas fica meio parecido com os conceitos aqui, então eu não vou mostrar. O que que é o delegation? Imagina que a gente tem uma classe persistence, né? Classe persistência.
+
+Isso aqui até um comportamento meio normal, tá? E a gente tem uma classe accounts with persistance, né? Eu tô herdando as partes de persistência que salvam e carregam na minha conta, certo? Eu tô herdando o save, herdando o load aqui. OK? Isso aqui é como a gente faria
+
+com herança. Como que a gente faria isso aqui sem herança, sem protocolos? Através de delegation, delegação. Delegation, eu vou criar a minha conta que diz respeito única e exclusivamente à conta. Ela só está responsável pela própria conta e nada mais. E ao em volta
+
+dessa conta, eu vou fazer um rapper. Eu vou criar algo em volta da conta. Eu vou criar um account record. Esse account record vai ter dentro de si as responsabilidades de buscar a conta, depositar, é, withdraw, sacar, pegar o balanço e armazenar a conta. Detalhe sutil, ele não sabe o que que o depósit.
+
+Ele apenas busca a conta no banco de dados. Faz um depósit, salva a conta, né? Ele apenas busca na forte fonte de persistência aqui, né? Não necessariamente um banco de dados. Um draw, ele apenas puxa a conta, pede, ordena a própria conta fazer um saque e armazena a própria conta novamente.
+
+Mesma coisa com balance, mesma coisa com qualquer uma dessas outras coisas aqui. Quem é responsável pelo saque é a conta, quem é responsável pelo depósito é a conta, quem é responsável por dizer o balanço é a própria conta. Isto aqui é apenas um rapper. Ele apenas vai delegar as coisas para a conta. Só que eu, sendo super sincero, eu não necessariamente sou o maior fã do mundo de delegation.
+
+Eu acho que existem outras formas de fazer isso, mas tá aí mais uma ferramenta para você utilizar se você quiser. Também não acho ruim, tá? Se eu ver isso aqui num código, eu não vou refaturar, vou achar bem OK. Isso foram mais seis lições do Pragmatic Programmer. Se você gostou desse conteúdo, a gente tem o livro na descrição. Se você quer aprender mais
+
+coisas comigo, na descrição a gente tem também vários cursos. E a gente tem, a gente tá fazendo uma loucurinha aqui, que é se você nunca comprou nenhum curso, você tem a possibilidade de comprar todos os cursos juntos. O link vai est na descrição, logicamente se você já tem alguns, você pode comprar os outros de maneira separada, tá? Nada impede. Os links também vão estar na descrição. E quais são todos os cursos
+
+que a gente tem? Temos de estrutura de dados e algoritmos que você vai aprender, né? As principais estruturas de dados Elite Code. Também inclusive adicionando aulas novas aqui, mas isto aqui é focado em passar entrevista de elite code, né? Em aprofundar o seu conhecimento profundo de estruturas de dados e algoritmos em se tornar um programador melhor dessa forma. Em
+
+seguida desse, a gente tem um workshop de 10 lead codes, né, que são os 10 leitad codes mais cobrados em entrevista. Seguindo a linha de raciocínio de entrevistas, a gente tem o roadmap pro seu próximo emprego, que é totalmente para você saber se vender bem nas entrevistas. você conseguir mapear a vaga, tem um currículo bom, tem uma cover boa, tem um LinkedIn que chama atenção de recrutadores, várias aulas para você mandar bem de fato nas entrevistas com perguntas que sempre, sempre, sempre perguntam em entrevistas de emprego para dev. Junior, pleno e sênior. Sim, a gente já testou com Devs Junior, pleno e sior já funcionou com os três tipos de dev, tá? Dá bastante
+
+resultado esse curso aqui. E por fim, se você tiver buscando vagas um pouco mais avançadas que exigem um conhecimento de system design, né? Se você quer passar naquela entrevista de system, nosso último curso é workshop de system design para entrevistas. Ou seja, todos esses quatro cursos focados em te arranjar aquele emprego legal nesse neste ano juntos aqui no link na descrição. Você também pode comprar eles separadamente se você quiser, tá bom? Eu falei tanto
+
+nesse vídeo que eu acho que eu até perdi meu cabelo.

@@ -1,0 +1,99 @@
+---
+video_title: "Eu construí um workflow que faz código automaticamente com a Manus AI"
+video_id: FYvXHA6DV5c
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FYvXHA6DV5c
+video_date: 2026-04-24T13:00:34+00:00
+video_description: |
+  ⚫ Teste a Manus AI: https://manus.im/redeem?c=AG001G26
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Hoje eu vou estar testando com vocês uma ferramenta que tá bastante hypada há um tempo, que é a Manus AI. Mas eu não vou só apenas, né, testar a ferramenta. Eu vou trazer aqui uma funcionalidade que eu quero que ela faça para mim, que eu acho que vai ser bem interessante e que eu vou continuar usando a funcionalidade para desenvolver mais código a menos tá patrocinando esse vídeo, tá? O que eu vou fazer aqui é algo que eu queria fazer faz bastante tempo. Eu posso muito bem abrir uma conectar ela no meu GitHub e pedir para ela solucionar problemas ali no GitHub, né? todo mundo sabe
+
+disso, mas eu queria uma funcionalidade em específico, que é a seguinte funcionalidade. Eu quero criar um sistema que quando eu crio uma issue no GitHub, né, quando eu abro ali a a abinha do GitHub, crio a minha isso, esse sistema vai pegar essa issue e a partir da criação da ISU vai automaticamente criar uma branch, abrir um P request e deixar o P request ali para eu revisar. O projeto que eu vou pegar para testar isso daqui é o meu site pessoal, né? site aqui é Augusto Galego, porque tem várias coisinhas que são relativamente tranquilas de eu consertar nesse site, que eu quero que o fluxo seja o seguinte, que eu venha aqui no GitHub, eu venha aqui em issos, eu clique aqui em nova isso, eu descreva o que que eu quero que seja consertado ou implementado e depois eu volto aqui para ver o resultado, né, para ver o P request criado sem nem ter que abrir meu laptop ou ficar prom optando IAS e tal. Eu quero olhar meu site, criar minha eixo, voltar depois e revisar o P request. Para isso aqui funcionar, para
+
+esse P request funcionar, eu identifiquei que eu preciso das seguintes coisas, né? Primeiro eu vou precisar que o manus tem acesso ao meu GitHub, então, né? Conectar manus no GitHub. Depois eu vou precisar de uma maneira que eu que vai conseguir linkar essas issos com humanos, né? Que vai conseguir enviar essas issos pro manos aqui, ó, que tá a ferramenta, de modo que o meu sistema automático consiga promptar a IA aqui, né? E eu não preciso
+
+ficar toda vez abrindo a ferramenta, copiando ali o link da ISO e tal e mandando para ela resolver. Então, né, eu tava fuçando aqui e uma das coisas que eu achei bem legal, você pode clicar aqui em cima na sua fotinha na direita e vai abrir uma tabalization, personalização. E aqui eu consegui pensar em algumas soluções, consegui identificar algumas maneiras de fazer isso funcionar. Se você olhar aqui na esquerda, tem esse menos mail ou mail menos que dado um e-mail que esteja numa white listo enviar um e-mail paraa manos e a Manus vai executar a tarefa que eu quero que ela execute. Achei muito interessante que o prompt pode vir via e-mail. Isso aqui vai facilitar pra
+
+gente. Claro, daria de pensar em outras maneiras, né? Daria de pensar em agendar uma tesque aqui para ficar lendo as issos volta e meia, mas eu quero que seja um negócio meio automático mesmo, que ao criar um isso, seja enviado um e-mail para Manos e a Manos resolve e depois eu vejo pro request. Eu só não vou clicar aqui porque isso daria um doc no e-mail do meu manus, né? E aí vocês iam poder, se bem que tem uma white list de e-mails, então vocês não iam conseguir promptar humanos para mim, mas enfim, quando você clicar aqui, vai ter um e-mail que ao enviar um e-mail pr esse e-mail, o manos executa aquela tesque. Então para isso aqui funcionar,
+
+a gente precisa de uma maneira de enviar e-mails. Aqui eu acabei escolhendo aqui para enviar meus e-mails resend. A recend consegue enviar e-mails e eles têm um plano free que permite até 3.000 e-mails por mês nesse momento que eu tô gravando, tá? Então, eu entrei aqui na recent, eu criei aqui uma chave de API e eu guardei para mim essa chave de API que eu vou conseguir utilizar para enviar e-mails, né? Eu também validei o
+
+meu e-mail e validei o meu domínio aqui dentro da resend para eu conseguir de fato enviar esses e-mails de um e-mail que eu controlo e botar eles na whitelist. A partir disso, eu consigo trigar um git enviar esse e-mail para manos. E no e-mail eu consigo mandar as instruções para abrir ali o request. Agora, de cabeça, eu não sei fazer esse código. Eu conseguiria estudar ali como é que eu faço para botar isso no GitHub actions, né? Mas é um é meio chatinho de fazer.
+
+Eu não gosto de eu vou pedir pro manos criar esse código só antes. Aqui, ó, connect your tools tous. Você vai ter que clicar aqui e vai ter que conectar uma ferramenta no manus, né? Eu já conectei o meu GitHub e eu dei acesso ao repositório Augusto Galego. Então ele consegue ler esse repositório porque quando ele receber o número de uma ISO, aí ele vai conseguir ler aquela isso, né? e criar o PQ e abrir o PQ no meu
+
+nome e tal. Bom, vamos então descrever isso para ver se a ferramenta vai conseguir me ajudar com isso daqui, né? Eu preciso abrir o repositório primeiro. Então vamos colocar aqui, ó, Augusto Galego, é o nome do projeto aqui. O GitHub está nesse projeto, pode adicionar, pode criar aqui. Augusto
+
+Galego. OK. Eu vou descrever em português para ficar um pouco mais didático também, tá? Então, no meu rapo no GitHub, Augusto Galego, eu quero que você faça a seguinte feature. Eu preciso de uma action no GitHub actions, que vai ser trigada ao ver que uma ISO foi criada no repositório, né? Essa action
+
+vai então utilizar a resend para enviar um e-mail pro manusil. O e-mail enviado precisa conter as seguintes instruções. Ele vai conter o conteúdo e repositório, nome do repositório, né, da ISU. Ele vai pedir para ir a manos criar uma nova branche. Dois, abrir um pool request linkado a eixo. Acho que tá bom, né? Eh, vamos ver
+
+se ela consegue fazer isso. Eu mencionei aqui a resend, então espero que ele utilize a própria resend aqui para criar, ó. Ele falou e-mail resend. Então eu acho que vai dar tudo certo. Tá fazendo aqui as tarefinhas, ó. Tá
+
+thinking, ó. Que bonitinho. Mostra aqui todas as tarefas que ele decidiu fazer, né? Pesquisar a P da Resend de como utilizar Gub Actions. Muito bom. criar o
+
+workflow do Git Hub actions, scripts necessárias, fazer o push do workflow e etc. Muito bacana. É exatamente isso que eu quero que seja feito. Eu, Augusto Galego, eu sei que eu vou precisar de umas variáveis de ambientes para que isso aqui funcione bem, né? Eu vou precisar da minha chave de API da resend. Eu vou precisar de qual que vai
+
+enviar esse e-mail, eu vou precisar talvez do servidor SMTP e tal, mas vamos ver o que que o que que o manos vai pedir aqui para mim, se ele vai identificar essas coisas que eu também identifiquei que eu preciso. Ó, criou, validou a sintaxe e ele precisa confirmar umas coisas. Olha só que legal. resend API aqui menos email resend from email. Ah, tá bom. Vamos
+
+então adicionar essas chaves aqui, né? Essas variáveis aqui no repositório, né? Configurar como secret no repositório. Vamos fazer exatamente o que o que ele quer que eu faça. Ó, ele tá dizendo que ele mesmo pode adicionar, mas eu não quero botar minhas secrets aqui, né? Que
+
+senão você que tá assistindo esse vídeo vai poder usar minha payer res. Claro que senão i ficar um corte no meio do vídeo de eu mostrando e colocando as coisas, né? Enfim, aqui, ó, em settings, eu tenho aqui secrets and variables dentro do meu gitubs. Então, criei recendp aqui, criei o manus email, vou criar aqui resend from email e está tudo configurado. Vamos falar aqui, ó, all configured. Por que que
+
+mudei para inglês, né? Tudo configurado. Push para main. Perfeito. Fazendo push do workflow pra branch main. Agora é
+
+para ele já ter essa conexão com GitHub, né, para tudo funcionar perfeitamente bem. Ah, ó, ele tem uma restrição de segurança que ele fala que o GitHub não tem permissão para criar o atualizar arquivos de workflow, então eu tenho que fazer esse push manualmente. Beleza, vamos fazer esse push manualmente aqui, ó. CD dev Augusto Galego. Vou só dar um git push aqui, né? Acho que vai. Git
+
+push. Everything up to date. Hum, não sei, hein. Git ad ponto. Git commit traço m ponto. Não precisa de coisa. Não
+
+tem. Então, de repente foi. Ah, não. Tá, entendi. É claro que não. Nossa, ele tá,
+
+eu tô usando manuseb. Esse é o, esse é o detalhe. Que bom que você mencionou Manus Web, porque eu também tenho o Manus aplicativo. Ã, vamos ver se agora vai dar certo. Agora estamos no app, no meu desktop. O caminho é bardef/Augusto
+
+Galego. É assim, não tem ifen. Augusto Galego. Cria o arquivo e push. Vamos ver se agora vai dar tudo certo, tá? Ele
+
+ainda não consegue fazer o push, mas ele consegue criar o arquivo, eu acho. Tá bom, tá bom, tá bom. Vamos dar aqui um git steros. Não, ele diz que não tem nada comitar. Git push. Não, mas ele não
+
+entendeu. Cria localmente o arquivo, eu faço push, pode ficar tranquilo. Bom, após uma leve briguinha aqui com humanos, temos aqui o nosso arquivo e demos um git push. Agora vamos ver esse comitzinho como é que tá. A gente tem aqui o workflow, tem o eixo title, eixo number, tan event. Como é que ele vai
+
+enviar esse e-mail lá embaixo? Vai fazer um curl mesmo, um curlzão. Fechou. Vamos ver se vai funcionar. Então, se eu tiver configurado tudo certo, eu consigo vir aqui nas issos. Deixa eu identificar um
+
+problema aqui no meu site. H, eu acho que isso aqui, ó, isso aqui não precisa. Isso aqui não faz sentido. Isso aqui que nem existe. Então, remova texto inútil.
+
+Remova do site. Criei a isso. Agora, só existe uma maneira de ver que isso daqui funcionou de fato. A gente vê aqui as actions. Temos uma action rodando. Opa,
+
+rodou. OK. Esse aqui é o payload de volta da da resend. Então, parece que o e-mail foi enviado de fato, o que se deu tudo certo, esse e-mail aqui que foi enviado vai causar, vai trigar aqui pra gente uma tesque no manos que vai ser feita. Então, só existe uma maneira da gente descobrir. Olha só que legal. New
+
+issue createdutoalego/Augusto Galego do canal Augusto Galego. Ele está resolvendo a tesque. Vamos ver. Vamos ver. Resultado final que eu quero é um P request. E eu quero p request que
+
+resolucione o meu problema, logicamente. Nota que isso daqui, mesmo se eu tiver com anos fechados, com meu computador desligado e tal, isso aqui ainda vai rodar, ele não tá rodando no meu computador, né? Dis conseguiu. Tá dizendo aqui que criou por request. Tá dizendo aqui que o pur request tá linkado a isso. Me deu o link até. Vamos
+
+ver. Purqu open. Deleta 11 linhas. Quais são as 11 linhas? Olha só. Parece
+
+adequado. Parece adequado. Bora em mergear isso daqui. Able to merge. Pode em merergear o pur request. Confirmo.
+
+Pode em merergear. Ao mergar esse po request, a isue vem para closed, né? Porque eu emergiei o pur request que resolve a isso. Ou seja, assim que esse que isso daqui funcionar, né? Assim que deploiar aqui, a gente vai ter o resultado disso daqui. Tá deployado. Tá
+
+aqui, ó. Checkzinho de success. Vamos dar um F5 no site. F5zão aqui. Vamos ver lá embaixo. E de fato sumiu o texto
+
+desnecessário. Que bacana. Bom, essa foi minha ideia. Se você gostou, tiver interesse e quiser também testar a ferramenta do manus, tá? Você pode entrar com o meu link na descrição que você vai ganhar 1000 créditos gratuitos, tá bom? Agradeço de novo, manos, por
+
+patrocinar esse vídeo e proporcionar esse conteúdo aqui pra gente. Espero que vocês tenham gostado. Eu, cara, eu sempre quis fazer isso daqui de criar um por request e ter um um criar uma is e ter um por request aberto. Acho que facilita bastante. Acho que eu posso aí tá em sei lá, na rua, vejo um problema no site, eu só crio uma eixozinha ali, ainda mais para eixos mais simples, né?
+
+Perfeitamente adequado.

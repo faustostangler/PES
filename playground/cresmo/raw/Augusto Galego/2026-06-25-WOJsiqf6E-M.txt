@@ -1,0 +1,181 @@
+---
+video_title: "Introdução a SQL"
+video_id: WOJsiqf6E-M
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=WOJsiqf6E-M
+video_date: 2026-06-25T13:35:37+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  ferramenta gratuita postgres: https://aiven.io/tools/pg-playground
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Hoje a gente vai abordar um dos conceitos mais importantes para você aprender quando você é um desenvolvedor. O vídeo de hoje é sobre SQL. Eu vou te mostrar o mínimo que você precisa saber para ser um bom desenvolvedor e conseguir trabalhar com SK. Se você já é ali pleno sior, tem uma boa experiência, entende bastante ali o básico de SKL, você vai aprender uma coisinha ou outra com esse vídeo, mas não muita coisa. E se você não sabe nada sobre SQL, esse é um excelente vídeo introdutório para te ajudar a entender sobre esse conceito extremamente importante que você vai utilizar muito provavelmente em todos os seus trabalhos como desenvolvedor. No
+
+vídeo de hoje a gente vai ver na prática aqui com essa ferramenta gratuita de SQL, tá? Em que a gente pode rodar postes online. Vamos digitar os comandos aqui e te mostrar como que funciona, como que se cria tabelas, como que seleciona tabelas. Vamos explicar os conceitos um a um. Antes disso, vou te falar do patrocínio de hoje, que é a ABC EI. Abacus é um ferramental completo de
+
+EI, cada vez mais completo. Você tem aqui o chat, que funciona como chat GPT, com a diferença de que o modelo Pro é mais barato, né? Custa por mês todo ferramental dacos e você pode escolher dentre um, quer dizer, todos os modelos de A. Aqui a gente pode usar o Cloud Opus 4.8, o GPT 5.5, só não pode usar o
+
+Mitos porque ele tá, né, banido. Nano Banana 2, Nano Banana Pro, você pode gerar imagem, vídeo, aplicativos, tes inclusive ABX tem aqui o agente deles, né, o Agent Sessions aqui no lado esquerdo, que é muito bom. Já criei vários MVPs com isso daqui, já mostrei aqui no canal. E agora, como você tá vendo aqui na tela, esse ferramental deles também tem a capacidade de criar modelos 3D. Você consegue criar ferramentas de visualização 3D, né?
+
+Então a gente consegue construir coisas que sejam um pouco mais imersivas. Aí na tela você tá vendo esse ferramental funcionar, ele vai trabalhar ali e ele vai gerar um gráfico interativo, né, um modelo ali 3D de como funciona o data center, que você ou seus usuários possam interagir com isso aqui, né? Fica um negócio um pouco mais holístico, um negócio um pouco mais fácil de de explicar, de fazer demonstrações, de passar conceitos, tá? Esse ferramental do abbacos tá muito poderoso. Tudo que tem aqui dentro vai tá aqui no link na descrição, tá? Recomendo bastante
+
+abacos. é um dos ferramentais mais completos de EAI e custa apenas $10 por mês, né? Isso dá 50 e pouquinhos reais, que é mais barato que os planos da maioria dos outros providers. Bom, primeira coisa, você tá nesse vídeo, você caiu nesse vídeo de para-quedas, você precisa entender por cima o que que é um banco de dados. Eu eu não tenho 20 minutos para explicar isso, então eu vou explicar de uma maneira super resumida aqui o que que é, qual que é a ideia de SQL. SQL é sobre tabelas, linhas e
+
+colunas e relações entre essas tabelas. Vamos imaginar que a gente tem uma tabela aqui, usuários. Essa tabela aqui, usuários. O meu usuário vai ter um ID, um nome, um e-mail. E a gente tem uma tabela aqui, compras. Nessa tabela
+
+compras, eu vou ter, sei lá, o valor da compra, tá bom? Isso seriam as tabelas, as linhas, as colunas, né? Aqui na minha tabela usuário, eu vou ter, por exemplo, o usuário um com nome augusto, com e-mail a@mail.com, usuário 2 fernandof@mail.com.
+
+Cada uma dessas aqui representa uma linha. Entre as tabelas pode existir uma certa relação. Por exemplo, muito provavelmente uma compra vai ser feita por um usuário. Não pode existir uma compra que não tem usuário, não faz menor sentido. Agora, pode existir usuário sem compras. Primeira coisa que
+
+eu vou fazer aqui no nosso postrezinho, então, é criar as nossas tabelas. Para criar uma tabela, a gente vem aqui com o nosso create table users. Então, estamos criando a tabela usuários. A gente precisa adcionar os as colunas aqui dessa tabela, os campos dessa tabela. As minhas colunas vão ser ID, nome, e-mail e também um created, que é uma coluna que eu geralmente gosto de ter para determinar quando que cada linha ali da tabela foi criada. Um detalhe
+
+interessante de SQL é que a gente vai ter chaves. SQL tá muito ligado à criação de chaves por questões de performance e também de facilitar ali encontrar aquilo que a gente quer encontrar. E geralmente a gente tem uma chave primária que geralmente é o ID. Aqui, ó, PK, nossa chave primária. A chave primária vai ser utilizada no futuro para saber quem é quem, para conseguir encontrar aquilo que a gente tá procurando. Nota não, o meu usuário
+
+Augusto aqui, nesse caso tem o ID1, o usuário Fernando tem o ID2. Isso aqui é uma chave primária muito simples, uma chave primária meio padrão que a gente tá fazendo serial, né, 1 2 3 4 5 e incremental vai subindo de um em um. Então, create table users e the serial primary key. Nosso nome ele é em texto e eu quero que ele seja not, né? Ele não pode ser nulo, o nome é um campo obrigatório, ele tem que existir. O
+
+nosso e-mail também, text not, mas aqui tem um detalhe adicional também, porque não faz sentido dois usuários terem o mesmo e-mail. Então, no meu e-mail eu vou querer um e-mail único. E o Create Jet, né, vai ser uma time stamp, que é o momento em que aquilo foi criado. Not e o default vai ser o now, vai ser o criado. No momento em que eu adicionei um usuário com o nome e o e-mail, o Create Jet vai ser exatamente aquele momento em que essa entidade foi criada no banco de dados. Vamos explicar mais um pouquinho
+
+o que que são essas coisas, né? Isso aqui pode ser muita informação para você, mas qual que é a questão aqui? A gente conversou sobre o nosso, o nosso nossa chave primária, nosso ID, o nome, eu poderia eu posso ter campos que eles podem ser nulos. Vamos supor que eu quero armazenar algo, sei lá, o carro do usuário. Pode ser que o usuário não tenha um carro, então o campo carro poderia ser nulo. Agora, na nossa
+
+aplicação, a gente vai querer que o nosso usuário sempre informe o nome dele e sempre informe o e-mail dele. Então, nesse caso, ambos esses campos aqui são não nulos. Esses campos também são texto, campos de texto simples. A gente poderia definir mais parâmetros aqui, né? Tamanho mínimo, tamanho máximo, esse tipo de coisa, mas eu não vou definir para deixar isso simples. E a gente
+
+poderia ter campos com outros tipos de valores, números inteiros, números decimais. Time stamp, que por exemplo é um determinado momento no tempo, nessa time stamp vai ser representado por um número muito grande. Esse número muito grande começa ali, acho que é em 1970, quando começou o padrão Unix. E ele vai até sei lá quanto, ele é um número inteiro gigantesco que você consegue calcular exatamente em qual momento no tempo isso daqui se passa. Então no caso, se eu criar essa entidade hoje, vamos supor que hoje seja 24 de junho de 2026, essa time stamp vai est ali exatamente no horário que eu criei em 24 de junho de 2026. Se eu rodar isso daqui
+
+e a plataforma aqui, ó, funcionou. Que legal. Eu criei a minha tabela usuário. Minha tabela usuário tem um ID, que é um número inteiro, um name que é um texto, um e-mail que é um texto e um Create Jet que é uma time stamp sem time zone, né? Porque ela poderia ter uma time zone também, né? Se eu quero que a time zone
+
+seja o o Brasil, é uma time stamp um pouco diferente, que digamos assim uma uma time stamp global. Aqui eu tô considerando o o TC, né? Então, pode ser que você crie o seu usuário 4 da da tarde no Brasil e vai aparecer que ele foi criado 8 da noite porque a Time Zone é diferente. Bom, criamos o nossos usuários. Agora vamos criar nossa tabela de pedidos. Pedidos em inglês é
+
+geralmente chamado de orders. Continuamos com um ID serial perfeitamente OK, né? para ser a nossa primary key. Um detalhe da primary key é que o nosso nossa ferramenta aqui, o nosso banco de dados, dependendo de qual que a gente escolheu, no nosso caso, a gente tá trabalhando com o banco Postgress, ele vai criar o que a gente chama de índice. O índice ele vai facilitar o acesso a essa chave e o índice vai ser formado por, bom, aqui a gente vai complicar um pouco, tá? Por
+
+uma estrutura de dados subjacente e adicional, que é no caso do Postgress por padrão, é uma B3. Essa Bit vai ajudar o nosso Postgers, o nosso motor do Postgers a encontrar e também ordenar os usuários de maneira mais rápida, né? Se eu quiser buscar por, por exemplo, todos os usuários com ID entre 500 e 600, o nosso índice aqui, que vai ser criado por debaixo dos panos nos ajuda a encontrar isso. Agora, muito importante, uma chave primária e um índice não são a mesma coisa. Um o PGs vai sim automaticamente criar um índice na sua chave primária. Por quê? É subentendido
+
+que isso é algo de bastante importância pro bom funcionamento da nossa aplicação. Mas você pode também criar índices em outros campos. Eu posso, por exemplo, criar um índice no meu e-mail. Se eu for fazer consultas constantes e frequentes e buscar usuários frequentemente pelos e-mails deles, pode fazer sentido eu criar um índice também na coluna e-mail. Ah, galego, se o índice é tão bom, por que que a gente não cria um índice em absolutamente todas as colunas? Muito boa pergunta. Vi
+
+que você tá prestando atenção. Realmente é uma pergunta razoável, tá? Não é uma pergunta ruim. O índice ele tem um custo, ele tem dois custos. Na verdade, eu te falei que o índice ele é uma estrutura de dados. Por padrão no post é
+
+um bite, mas pode ser também um hash. E essa estrutura de dados ela não é gratuita, ela vai ocupar mais espaço. Então o índice tem um custo de espaço, mas também o índice tem um segundo custo, que é um custo de tempo. Vamos visualizar um bit aqui, né? Falei que o índice é uma B3. Agora a gente vai ter
+
+que visualizar isso daqui, tá? Deixa eu dar um zoomzinho aqui. Eu estou inserindo IDs aqui na minha B3. E você tá vendo que durante essa inserção de IDs aqui na minha bit estão sendo feitas ordenações novas, né? Estão sendo adicionadas coisas ali nos nodos e tal.
+
+Essa B3 ela vai crescendo e volta e meia ela vai ter que ser reordenada ali, ela vai ter que ser reestruturada, reorganizada para manter os padrões de velocidade de acesso dela. Essa reordenação, essa inserção numa Bitree, ela demora tempo também. Então, além da Bit ocupar espaço, ela também tem um custo de tempo em que as criações no banco de dados, as inserções do banco de dados, por exemplo, se eu inserir o usuário três aqui, usuário ao inserir esse novo usuário, né, quando eu tô criando esse usuário, eu vou ter que adicionar também em todos os índices vão ele vai ser adicionado nessa bit aqui. Quanto mais índices você tem numa tabela, mais lenta fica a inserção nessa tabela até certo ponto, tá? Então, não é recomendado você usar índices em absolutamente tudo. Eles vão acelerar o
+
+seu acesso, mas vão te custar mais espaço e podem deixar suas inserções mais lentas. Agora, lembra que eu te falei que a compra ela vai pertencer a um usuário? É, perdão, galera da faculdade, eu realmente esqueci como é que é essa representação. Eu acho que é aqui, né? Eu vou ter obrigatoriamente um usuário. É isso. É um usuário. E aqui eu
+
+asterisco, um usuário pode ter zero ou infinitas compras. Acho que essa é a representação, tá? Existe uma representação formal para isso que eu esqueci como é que faz, perdão. Mas enfim, para representar essa relação aqui de que um usuário pode ter n compras, mas cada compra vai ter apenas um usuário, a gente precisa fazer um link entre as duas tabelas. A forma com que a gente vai fazer esse link é com uma forign, uma chave estrangeira, que no nosso caso, a nossa tabela de ordens, eu quero que ela esteja linkada a um usuário específico, ao ID de um usuário específico, user integer, not, né? Cada
+
+pedido é obrigatoriamente linkado ao ID de um usuário. Esse ID de usuário, a gente sabe que ele é um valor inteiro, a gente sabe que ele não é nulo e ele vai ser uma referência. Então, references users id. Boa prática de banco de dados. Os nomes das tabelas geralmente são no plural. A tabela é ordens, não ordem. A
+
+tabela é usuários, não usuário, porque tem vários usuários numa tabela. E vamos adicionar também um valor que é um decimal numérico 10 com 2. O que que é 10 com 2? Ele permite números que vão ser 10 dígitos, sendo que dois desses dígitos ocorrem depois da casa decimal. Então ele permite números até 99.999.999
+
+dá 100 milhões com99 por hora. A gente vai ter apenas isso daqui. Deu algum probleminha aqui? É bom pra gente ver esse erro porque eu escrevi a palavra references errado. References que isso? Perdão, galera, tô com chat
+
+lag. Eu fiz uma viagem de 20 horas e aí meus horários estão meio zoados. Bom, a próxima coisa importante do SQL é a leitura. A gente criou uma tabela, a gente ainda não inseriu nada nessa tabela, né? Então não teve muita utilidade. As próximas coisas que a
+
+gente vai aprender, eu vou tentar ir passando dicas aqui, né? Eu espero que vocês estejam aprendendo, que, né, quem não conhece SKL, esteja aprendendo o básico e quem já conhece esteja capturando algumas informações nas dicas que eu vou passando aqui. Vamos aprender também o select, que é a leitura, o insert que é a inserção, né, inserção de linhas nessas tabelas, o update, que é a atualização dos dados aqui, e o delete também. Bom, tendo as nossas duas tabelas criadas aqui, a gente precisa saber como extrair esses dados do banco de dados, né? A maneira com que a gente faz isso é que a gente faz um select, né, de selecionar, tal, a gente escolhe os campos que a gente quer buscar. Podem
+
+ser todos os campos ou apenas alguns campos, né? Então eu posso escolher que eu quero, por exemplo, apenas o nome from, o nome da tabela, né? Eh, from users. Então, eu quero obter o nome dos usuários na tabela users. Eu rodo aqui.
+
+Ah, nossa, erro de escrita, né? Users. Eu rodo aqui. A cor foi executada, não teve nenhum resultado porque a gente não tem nada ainda inserido nessa tabela. Se eu fosse digitar tudo aqui, né, eu poderia ter select, ID, nome, e-mail, created. Mas se eu quiser pegar todos os
+
+campos, eu posso apagar tudo isso aqui e botar um asteriscozinho que isso aqui vai buscar todos os campos. É claro, aqui não vai dar resultado nenhum porque a gente simplesmente não criou nada nessa tabela, a gente não inseriu nada aqui. Aqui no nosso select tem uns pontos interessantes de se notar. Depois a gente vai falar sobre o where, que são as condições. Mas quando a gente tá estruturando a nossa aplicação, é interessante a gente entender quais vão ser os padrões de acesso dessa aplicação. Por exemplo, eu falei lá do
+
+do e-mail, né? Como que vai ser essa busca por e-mail? Vai ser muito comum eu buscar um usuário pelo e-mail dele. Pode ser que o usuário tenha um username, por exemplo, né? Vamos imaginar que na tô fazendo aqui uma rede social, eu tenho username de alguém aqui, o Leonardo Luiz, Léo Luiz. Vai ser muito comum
+
+outros usuários buscarem pelo username de outros usuários. Se essa forca muito comum, isso tende a ser interessante a criação de um índice em cima disso, porque depois a gente vai falar do wear e o weare ele vai limitar essa busca, né? No momento isso daqui tá tá buscando todos os usuários da minha tabela, mas com o A gente tem uma certa podagem ali, a gente seleciona um pequeno recorte e a performance da nossa busca vai melhorar muito se os índices pelos quais a gente tá filtrando a nossa tabela, não, perdão, se as colunas pelas quais a gente tá filtrando a nossa tabela tem índices criados nela, entendeu? Então, né, vamos inserir uns usuários pra gente conseguir começar a brincar aqui. Insert into, o nome da tabela. Então, insert
+
+into users. Aqui tem um detalhe interessante. O nosso campo creator Jet, ele tem um default. O default dele, o padrão dele, né, como a gente quando a gente criou essa tabela, o padrão dele é que fosse o now. Ou seja, eu não preciso obrigatoriamente passar o created porque ele tem um default. Eu também poderia
+
+ter um default para nome. Eu posso botar aqui o nome padrão de todo mundo. Se a pessoa não inserir um nome, vai ser Augusto. Não faz o menor sentido essa regra, mas eu posso. O banco é meu. E o
+
+ID também a gente botou que ele é serial, né? auto incremental ali. Então o banco de dados também consegue saber qual vai ser o próximo ID a ser criado, né? Ele começa com um, vai para dois, vai para três. Esses campos eu não preciso passar, eu preciso passar só aqueles campos que não são nulos e o banco de dados não tem como prever qual é o valor. Então eu vou passar aqui, né,
+
+os dois campos que a gente precisa, que são o name e o e-mail. E a gente vai escolher os valores desse nome e e-mail agora, né? Os valores vão ser augusto com um e-mail. Esse que é realmente o e-mail do canal, tá? Algoritmos.galego@gmail.com.
+
+Se você quiser mandar um e-mail para mim, eu provavelmente não vou ler, porque eu recebo muito e-mail, tá? Então, tipo, muito, muito, muito. E aí quem lê, quem trabalha comigo e filtros que são importantes. Enfim, mais um errinho de sintaxe pra gente ver aqui, né, pr você ver como as coisas são. Isso daqui é para ser uma aspa simples, não uma aspa dupla. Por quê? Porque quem
+
+criou o SKL aqui do PGR quis que fosse assim. Muito simples. Vamos também adicionar o nosso amigo Fernando aqui. Fernando vai ser m@mail.com.
+
+Muito bem, agora a gente pode rodar nosso select de novo, né? Só pra gente garantir que tudo foi criado. Select asterisco from users. Run queries. Rodei as queries aqui. E olha só, apareceu o
+
+ID1, o nome Augusto, o meu e-mail aqui e o created ads. Você pode ver que eu tô criando e essas coisas aqui no dia 23 de junho de 2026. E elas estão sendo criadas às 6:06 da manhã do horário, acredito que o TC, no caso, horário local aqui na Dinamarca. São 10:07 da manhã, na verdade, né? Então, não é o horário que eu tô, são 4 horas para lá.
+
+Agora a minha aplicação, eu decidi que vai ser muito comum a gente buscar pelo e-mail aqui das pessoas. E aqui a gente vai ver um pouco do poder aqui dos bancos de dados, da inteligência deles, que é o seguinte: lembra que a gente criou aqui, será que eu consigo ver isso aqui? Não, não consigo ver. Mas lembra que a gente criou os e-mails sendo únicos? Se eu for tentar inserir um terceiro usuário aqui com um e-mail duplicado, o que que o meu banco de dados vai precisar fazer? ele vai ter
+
+que ver se esse e-mail já existe e já [limpando a garganta] é utilizado por alguém para poder criar ou não esse usuário novo. E como ele vai ter que fazer isso frequentemente, porque ele vai ter que fazer isso para todas as criações de todos os usuários novos, ao criar uma coluna que tem um campo único, por exemplo, ao criar um e-mail que precisa ser único, o meu banco de dados, o meu Postgress, ele inteligentemente já criou um índice que é uma B3 pro nosso e-mail. Se eu rodar esse comandozinho aqui, select index name, index de from isso daqui, né? Você não precisa decorar esse comandozinho aqui, ninguém vai precisar usar isso daqui todo dia. Não faz o menor sentido decorar isso. Eu vou
+
+ver que eu tenho um índice único no meu no meu ID, tá? A gente sabe disso. E eu tenho também um índice único no meu e-mail. Mesmo que eu não tenha pedido para isso ser criado, eu deixei meio que implícito quando eu queria que o e-mail fosse único. Então, eu não preciso criar um índice novo no meu e-mail, ele já existe para mim. Agora vamos pela
+
+brincadeira aqui. O nosso nome ele pode ser duplicado e eu quero criar um índice que não seja uma bite. Eu quero criar um índice hash. O nosso índice hash ele é menos comum, tá? O padrão é uma bit.
+
+Mas se você quiser, você pode muito bem dar aqui um create index e deix users name hash na tabela users criando um hash e eu rodo minha aqui. Depois eu posso voltar e puxar isso daqui. E eu tenho o meu hash criado aqui, né? Sem nenhum problema. A ideia do hash é que a complexidade é um pouco melhor. Ela é
+
+complexidade média OD1 contra o OD log n da B3. Então existe uma possibilidade de que o hash seja mais rápido. Porém o has ras. Se eu quiser fazer uma busca, por exemplo, eu quero buscar por usuários cujo nome começa com algus, né? Algus. E
+
+o resto do nome pode ser qualquer coisa, o Rash não vai conseguir fazer essa busca de maneira muito eficiente, enquanto a Bitr vai ser mais eficiente para fazer essa busca. Na verdade, pro Hash. Eh, um índice hash ele vai ser precisamente inútil. Se eu quiser fazer uma busca por uma um prefixo, um sufixo, algo nesse sentido, tá? Ele não vai ajudar em absolutamente nada, porque o jeito que o hash funciona é que ele dá um match exato no hash daquela palavra.
+
+E eu não tenho como dar um match exato no hash se eu não sei qual é a palavra completa. A Bit você vai conseguir pelo menos percorrer mais ou menos aqui e encontrar uma range, um espaço onde aquele nome deveria estar. Pois bem, todos esses devaneios aqui, vamos voltar pro nosso select. Por que que eu falei tudo isso? Que agora eu quero select asterisco from tabela users where o meu e-mail é igual algoritmos.galego@gmail.com.
+
+Eu falei tudo isso daqui pra gente entender que quando a gente faz buscas tipo essa daqui, essa busca vai ser acelerada por causa do nosso índice. E aqui, ó, retornou aqui embaixo a linha inteira que eu pedi. Eu poderia querer também apenas o nosso name e, que funcionaria sem problema nenhum também retorno apenas o nosso nome e e-mail, tá bom? Existem também condições que são um range. Por exemplo, eu sei quando esse usuário foi criado. Foi criado hoje, que
+
+para mim é dia 23 de junho. Para você é mais tarde, porque eu não vou conseguir postar esse vídeo hoje, eu acho. Talvez eu consiga. Onde o Create Jet é maior que 2026 do um. Eu sempre esqueço se isso daqui é anotação Estados Unidos ou a outra, mas eu acho que é Estados Unidos, tá? Eu acho que isso daqui vai
+
+ser o dia e isso daqui vai ser o mês. Não lembro de cabeça, não é muito importante. Você pode pesquisar isso daí facilmente. Vamos buscar usuários entre 2026, dia 1/01 e dia 12/12, né? Para facilitar aqui. Vamos rodar. Lógico que
+
+eu cometi um erro, né? É o creator de as condições end, né? Aqui é a porta lógica end. Eu preciso ter uma segunda condição, né? Isso aqui não é uma condição. Uma segunda condição seria o
+
+created também e menor do que essa data aqui. E agora a gente consegue obter os usuários criados aqui. Uma bit também facilita muito essa range range query aqui, tá? Uma busca por ranges. Então, se for muito comum a gente fazer essa busca por ranges, por espaços de tempo, valores, pode ser inteligente a criação de um índice também, tá? Pode acelerar
+
+as coisas. Eh, uma questão interessante para você ver é que para você, por exemplo, tomar cuidado quando você usar um Creator Jet igual uma data, tá? Porque isso daqui vai bater exatamente na time stamp da meia-noite, nenhum milissegundo a mais ou a menos. Então, se você quiser um dia específico, sempre coloca, né, maior ou igual esse dia, menor o que o dia seguinte, senão você vai ter o problema que nunca vai bater a time stamp exatamente precisamente naquele milissegundo, sabe? Agora eu posso querer também ordenar os meus selects, né? apresentar eles, demonstrar
+
+eles numas determinada ordem. Aqui eu quero que eles sejam, né, ordenados por Creator Jet. E eu posso querer que eles sejam ascendente ou descendente. Vamos colocar eles de maneira descendente aqui, de modo que o usuário criado mais recentemente apareça primeiro e o usuário mais antigo apareça no final. A gente também poderia ordenar por múltiplas colunas, né, que teria aí no caso um desempate. E eu também posso
+
+limitar quantas coisas eu vou buscar no meu banco de dados. Isto aqui é muito interessante conforme o nosso banco de dados cresce, porque se eu não botar limites, eu me ferrei, a minha aplicação não vai escalar. Então a sua limitação vai ser geralmente aquilo que você mostra em uma única página da sua aplicação, né? Por exemplo, posso limitar para apenas um usuário aqui. Se no meu feed de notícias eu apresento apenas cinco notícias, eu boto um limite de cinco e eu faço paginação depois.
+
+Bom, próximo é update. Update é relativamente simples, tá? Eu vou fazer isso o mais rápido possível pra gente poder pular para as partes mais interessantes. Update users. Aí eu dou um set naquela coluna que eu quero modificar. Então, set name, eu vou
+
+alterar o meu nome para galego. Galego where. Aqui eu vou fazer um update em todas as linhas cuja essa condição for verdade. Tem um detalhe, se eu fizer update sem wear, é até uma piada, né? Ah, eu rodei um update sem wear. Roda
+
+aqui update sem wear para ver o que acontece. Vai, rodei. Update users set name igual galego. Vamos dar de novo. Select asterisco from users. Olha só que
+
+interessante, todos os meus usuários viraram galego, né? Não roda update sem wear. Então vamos dar um update, nome, vamos voltar ao nome para Augusto, né? Wherear, ID igual a um, por exemplo, né? Onde o ID for igual a um ou onde o e-mail for tal coisa, enfim, onde o nome for gale e galego, eu quero mandar para Augusto ou qualquer coisa do tipo. E
+
+agora a gente pode ver que, né, a gente tem dois usuários, o Augusto e o Galego, porque eu mudei os nome e tudo, mas enfim, esse é o update, tá? Update é simples. O delete é mais simples ainda. Você vai rodar delete from users novamente. Lembra do ID? Quer dizer,
+
+lembra do where? Where? ID igual alguma coisa, e-mail igual alguma coisa. Nome igual alguma coisa. E se eu rodar isso aqui, ele vai ali meu usuário, mas não quero. Se você der um delete from users,
+
+vai deletar todos os usuários. Um detalhe muito muito muito interessante é que dados são valiosíssimos e conforme você evolui, você aprende que quase nada é realmente deletado do seu banco de dados, porque dados são valiosos, a não ser que existe uma exceção aqui que é para cumprir com regulações. No caso, a regulação geralmente é a LGPD, tá? Então, quando um usuário solicita a remoção dos dados dele, você precisa deletar de verdade. Caso isso não seja o caso, vamos supor o usuário quer, ah, ele fez uma compra e vai cancelar essa compra. A compra ainda consta no nosso
+
+banco de dados, porque isso pode ser útil pra gente. A gente não vai deletar essa compra, mas a gente vai utilizar alguma estratégia ali de mostrar que essa compra foi cancelada ou algo nesse sentido. Quando o usuário vai deletar um comentário, isso pode ser importante pra gente ainda manter esse comentário no nosso banco de dados pra gente saber que o usuário fez alguma coisa, né? Então, geralmente numa aplicação de verdade, eu vou ter um campo que é o delete jet table users. Eu vou alterar a nossa tabela para adicionar um campo, né? Olha
+
+aqui a nossa tabelinha de novo. Ela tem quatro campos. que eu vou adicionar um campo a mais. Esse campo a mais vai ser o deleted. Nossa, pera, calma, calma, calma, calma. É, perdão, gente. J lag.
+
+Add column, né? Eu quero adicionar uma coluna que é a coluna Delite Jet, que vai ser um time stamp. E essa coluna delete jet vai me informar quando que algo foi deletado. Se ela for nul, né? Se ela tiver nula, deixa eu dar um select tr users. E você pode ver aqui
+
+que todos os usuários tm delete jet como nul. Quer dizer que esses usuários não são deletados. Não foram deletados, eles existem. Eles estão aqui normalmente. Agora, quando eu vou, digamos assim, deletar um usuário, entre aspas, certo?
+
+Vamos imaginar que o usuário quer ali, o exemplo de usuário é ruim por causa da LGPD, tá? Mas vou imaginar que é um comentário que tá sendo deletado. Eu não vou deletar mesmo, eu vou dar um update users set delete jet, né? Então, nowetei, entre aspas, o meu usuário. Agora eu dei um fake delete nele aqui.
+
+Vamos supor que eu quero deletar o usuário com o ID igual a 1. Agora, olha só, eu tenho um usuário que tem um delite jet. Esse usuário está deletado. Se eu quiser ver apenas os usuários que não foram deletados, eu dou um weare, né? Select from users where delete jet is nul, onde delete jet é nulo. E aqui
+
+mostra o meu único usuário que não foi de fato deletado. Pois bem, esse vídeo tá ficando excessivamente grande. Eu, infelizmente, fui muito otimista no meu planejamento. Achei que daria para explicar tudo em pouco tempo. Claramente não deu. A gente tá a pelo menos uns 4ro
+
+dias sem falar de IA. Então peço encarecidamente que se você gostou desse conteúdo e quer a segunda parte em que eu vou falar sobre join, né, inner joins e left joins, vou falar sobre group buy, é somas, contas, averages, a diferença entre new, false, strings vazias, usar o explain para ver a performance, transações consistentes e rollbacks. Cara, isso aqui vai dar três vídeos, talvez, né, muita coisa. Enfim, peço encarecidamente seu like e seu apoio nesse vídeo, que esses vídeos dão um pouco mais de trabalho de fazer, né? né?
+
+Eles são maiores, mas pra gente poder continuar aprendendo os fundamentos aqui sem ter que cara nem aguenta mais, né? Dá um like nesse vídeo para aprender computação de verdade e para parar de ver vídeo sobre cloud mitos ou fable ou qualquer coisa do tipo. Não é uma indireta para ninguém. Eu também gravo esses vídeos porque tá todo mundo assistindo, todo mundo também quer esses vídeos. Mas eu te garanto que eu e quase todo mundo da área prefere muito mais falar sobre conteúdo técnico do que falar sobre hype de mas o usuário clica em vídeo de hype de então fazer o quê?
+
+Deixe seu like, deixa seu comment. Vamos aprender os fundamentos que vão ficar com você para sempre, ao invés do hypezinho que vai mudar semana que vem.

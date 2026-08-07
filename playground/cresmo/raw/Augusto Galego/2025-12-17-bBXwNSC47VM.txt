@@ -1,0 +1,138 @@
+---
+video_title: "Subindo Código pra Produção na Prática"
+video_id: bBXwNSC47VM
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=bBXwNSC47VM
+video_date: 2025-12-17T13:01:12+00:00
+video_description: |
+  ⛃ Link para Hostinger (cupom: GALEGO) : https://www.hostg.xyz/SHIac
+  
+  Artigos auxiliar: https://www.hostinger.com/support/deploy-to-hostinger-vps-using-github-actions/
+  
+  Github com exemplos de CI/CD: https://github.com/hostinger/deploy-on-vps
+  ---------------------------------------
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Meu curso de estruturas de dados e algoritmos: https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  Workshop 10 LeetCodes Para Entrevistas: https://pay.hub.la/RGfq0dk8iqDeL5IC5yog?coupon=WORKSHOP
+  
+  contato: [algoritmos.galego@gmail.com](mailto:algoritmos.galego@gmail.com)
+---
+Recentemente um colega meu repatinou meu site. Muito obrigado, Vinicius. E o que que a gente vai fazer com isso daqui hoje? Eu quero pegar esse site, eu quero subir ele para algum lugar e a gente vai usar isso aqui basicamente para explorar como que a gente coloca algo para rodar numa VPS, tá? Então existem várias várias maneiras de fazer isso daqui, tá?
+
+E você não precisa fazer dessa maneira específica que eu vou demonstrar, mas enfim, o que que a gente tem que tem que pensar aqui, né? Quais conceitos que a gente precisa entender? A gente tem a nossa code base. A nossa gold code base, ela vai est em algum lugar, muito provavelmente ela vai estar no git. Então você vai ter sua Code base ali no GitHub, né? Você vai ter ali a sua VPS.
+
+Dentro das suas VPS você vai querer rodar um serviço, que esse serviço vai rodar de alguma maneira, ele vai rodar o seu código, né? Vai rodar ali uma imagem do seu código e você quer fazer que exista alguma forma da Code Base ter acesso a essa imagem. Idealmente a gente vai querer implementar um CD aqui para toda vez que você atualizar essa Code base, vai atualizar também a imagem lá na VPS, né? A gente vai conseguir disponibilizar isso aqui para que usuários no mundo inteiro consigam acessar o seu serviço também. Bom, como que a gente pode fazer isso, né? E quais
+
+são as infinitas maneiras de você fazer isso? Você poderia ter um script que vai rodar automaticamente. Esse script vai dar um SSH pra máquina, vai puxar o repositório, vai botar para rodar. Você poderia pegar sua code base na sua própria máquina, atualizar uma imagem, de repente no Docker Hub até, né? Então você pode ter aqui Docker Hub, você vai atualizar a imagem, a VPS vai de alguma forma puxar essa imagem daqui, né?
+
+Enfim, existem infinitas, infinitas maneiras aqui que são válidas, que fazem sentido. O que que eu vou querer fazer, que eu tô mais confortável em fazer, que eu acho bacana, é o que eu acho que faz sentido para mim, sempre que eu comito algo na M, tá? Eu quero que esse código suba, eu quero que esse código rode. É assim que eu faço em quase todas as empresas que eu trabalho. Uma maneira bacana de se fazer isso daqui, que eu tenho achado excelente, é usando o tal do Git Hubtions, né? O que que a gente
+
+vai fazer aqui? Então, a gente vai fazer com que o nosso GitHubs forneça pra nossa VPS. VPS que a gente vai usar hoje é da Hostinger, tudo que é necessário para que a VPS consiga construir e rodar o MMA do nosso serviço. Então o nosso GitHub actions vai de alguma forma enviar para cá, vai trigar, né, automaticamente todo commit na Min. Ele faz a sessão aqui, ele informa lá a VPS de alguma maneira. A VPS vai ter acesso,
+
+né, de qual repositório, qual commit. Ela vai efetivamente puxar esse repositório e botar para rodar. A questão é, tem algumas formas de botar para rodar. A forma que a gente vai usar aqui para botar para rodar de maneira padronizada é através do docker. Aqui a gente vai ter uma Docker file e um Docker Compose dizendo como que esse negócio aqui vai rodar. E é basicamente
+
+isso. Essa é minha ideia de como que eu vou fazer isso hoje. Depois eu vou criar um novo P request aqui emergar o P request. A gente vai ver a atualização sendo feita, tá? A gente tá aqui no site da hosting. A gente pode escolher em
+
+algumas diferentes maneiras de VPS. Eu poderia hospedar um servidor de Minecraft, por exemplo, mas não é o tema do vídeo de hoje. A gente vai na escolher uma VPS. Aqui tem até que a imagenzinha do Docker. É isso mesmo que a gente quer. A gente vem aqui, né? Eu
+
+vou escolher Brasil por causa da latência. Aqui eu vou escolher a parte do meu sistema operacional. Tem várias opções. Eu quero pegar isso aqui, ó, Docker, tá? Isso aqui vai facilitar um pouco o nosso desenvolvimento aqui. Aí
+
+eu crio uma sem root, eu vou no próximo aqui. Detector de mour diário. E aqui tem várias opções. Enfim, você pode escolher o quanto de CPU, quanto de RAM, quanto de etc. A Rigger tá fornecendo um cupom aqui pra gente no canal. Se você
+
+for utilizar a VPS deles, usa o cupom galego, tá bom? Eu só queria mostrar também, na real, tem várias outras opções aqui bem interessantes que a gente não vai usar hoje, mas se você abrir aqui, ó, tem até quify, que é super interessante, tá? É bem bacana isso aqui. Bom, criada aqui a nossa VPS, tem um artigozinho que eu me basei para planejar como que eu ia fazer isso daqui, né, que explica como que a gente configura os workflows para funcionar. Aqui você tem um repositório GitHub específico explicando como é que funciona também. Mas vamos ver no código
+
+exatamente o que que a gente precisa fazer, né? Como que a gente vai configurar para fazer isso daqui funcionar. De fato, eu tenho aqui meu repositório, preciso que três coisas sejam criadas. Eu preciso criar primeiro um uma pasta ponhub. dentro dessa pasta ponto gitub precisa ter workflows e precisa ter um deploy. Isso aqui é o que
+
+vai fazer o nosso github actions funcionar, tá? E a gente vai ter também uma Docker file e um Docker Composer. Muito bem, como a gente prendeu no vídeo de Docker, a gente tem aqui no início uma imagem. Eu vou puxar a node 22 alpine. A gente vai pegar o nosso working director aqui, o app, né? E e
+
+como eu não uso npm, eu uso PNPM para esse projeto, eu vou ter esse run corpack enable aqui para eu ter acesso ao PNPM. Muito bem, você pode olhar aqui, esse é um projeto pon de nextjs, então eu vou fazer o que basicamente é padrão do nextjs, tá? A gente vai aqui, né, copiar o nosso package Jason e o PNPM lock e a gente vai instalar baseado no nosso lock file. A gente vai instalar as dependências do meu projeto. Vamos então mudar o nosso working directory aqui pro app, tá? Que não faz nada
+
+demais. Eu li em algum lugar que era para deixar essa next limitada. Eu não tenho muito certeza o que que isso aqui faz. Eu não sou um cara de fronte, não sou um cara de Next GS, mas tá aí, né? É pr fazer, tá feito. Eu vou copiar os
+
+artefatos que foram buildados aqui, que são importantes pro meu projeto rodar, tá? E eu vou lor a porta 8080, que é onde vai rodar de fato o meu negócio. Nada demais. Essa Docker File aqui vai ser isso aqui que a gente falou, tá? Aqui dentro da VPS. A VPS vai usar essa
+
+Docker file para de fato buildar o meu projeto e rodar ali o meu projeto. A gente precisa da segunda parte que é o Docker Compose. O Docker Compose é bem fácil, tá? Não tenho nenhuma dificuldade aqui, só o formato dele que é meio chatinho. Então eu recomendo que você copie um formato já pronto e só colhe ali. Tipo aqui assim, por exemplo, você
+
+tem um formato pronto, ele tem basicamente essa carinha, tá? Você dá um nome aqui que meio que não importa muito quais branches que isso aqui vai rodar. Nossa, eu me confundi, perdão. É, tava na ordem errada. Eu tava pensando no deploy, não no Docker Compose, tá? O,
+
+enfim, o deploy. Isso aqui o deploy a gente explica depois. Vamos falar docker compose antes. Nosso Docker Compose é bastante simples, tá? Você vai ter os services. A gente tem um único serviço
+
+só que é o nosso serviço web. O formato disso também é chatinho, tá? Eh, e é sempre um formatinho meio chato com asentações, tem que tomar bastante cuidado com isso. Enfim, você tem o comando de o caminho aqui para buildar o a nossa imagem do Docker. Como a nossa imagem do Docker já vai tá aqui e tá aqui na na Docker file, não tem nenhum caminho muito especial, é só build ponto, tá? Esse é o caminho para
+
+buildar. Você tem uma configuração de reiniciar, reiniciar unless stopage, né? O que que é isso daqui? Ele automaticamente reinicia o contêiner, a não ser que a gente peça para ele parar. Também não sou o cara disso, não sei explicar em detalhes, tá? Agora portes,
+
+a gente já explicou em um vídeo, eu não lembro qual o vídeo que a gente explicou isso daqui, faz bastante tempo, tá? Mas nossos ports, a gente vai estar trabalhando com 8080 808 80. Nosso environment aqui com duas variáveis, tá? Node production e o nosso porte 8080. E por fim o nosso comando aqui para iniciar o serviço. O comando é bastante
+
+simples, tá? Ele tem um formatinho meio estranho, porque o que que eu quero dar para iniciar meu serviço, né? Basicamente pnpm run start. Por algum motivo, esse esse formato ele é uma sequência de de strings, né? uma lista de strings aqui. Então é PNPM, é espaço
+
+run, espaço start. Faltou um tabzinho de identação aqui. Pronto, agora tá na linha correta. Eem é muito chato, tá? Eu não gosto nem um pouco de emo por causa dessas, mas eles devam inventar um yemel que tivesse curly brackets, sabe? Tipo,
+
+você tem um yemo que não se baseia ementação, tipo um python. Tá aqui eu falando mal de Python de novo, né? Por último, o nosso deploy é Docker Docker Compos diz em respeito ao Docker, né? na parte da imagem de construção da imagem em perc. O deploy aqui ele é específico agora pro GitHubs. Se você for utilizar
+
+outra forma de fazer esse deploy, outra forma de sear esse dia e outra ferramenta, não vai ter esse formato. Vai ter um formato talvez parecido, mas possivelmente diferente. Cara, aqui o recomendado é realmente você copiar um modelo, na minha opinião, tá? Você copia um modelo aí, pronto, e faz o modelo e só altera, né, as variáveis que você precisa baseada no modelo pronto. Aqui você tem o número de etapas. A nossa
+
+primeira etapa é o checkout. Eu acho que isso daqui é padrão do Gits, tá? Não sou mais expert nisso daqui também. A segunda etapa é uma etapa que a gente vai criar idealmente. Você vai copiar isso daqui de algum repositório, possivelmente se for esse o caso, né?
+
+Você copia aí, olha só como é que tá aqui, tá? Copia isso aqui de algum lugar que tem esses modelos. Por exemplo, aqui tem esse modelo, né? Ó, vou copiar isso. Colei aqui, né? Muito bom. Então, olha
+
+só, nessa etapa aqui é o deploy hostinger. Ele usa isso daqui. E aqui são as nossas variáveis, tá? A minha ID da VM eu não vou guardar em vários, eu vou guardar em secrets. E por algum motivo, quando eu tava testando isso aqui pela primeira vez, eu utilizei com um project name, que é Gusto Galego, igual o nome do meu do meu site, e um Docker Compose Pfil, né? Parece que deu
+
+algum tipo de problema quando eu tava fazendo isso sem essa variável. Então ela tá aqui, eu não sei se precisa dela, mas é aquela história, né? Você vai debugando, você vai querer um monte de coisa, sabe lá o que que acontece. Muito bem, temos isso aqui, vamos aqui embaixo, né? A gente vai comentar isso aqui na M. Como que se comenta na M?
+
+Deixa eu dar um git status aqui, tá bom? A gente tem três aros modificados. A gente tá na main, tudo certo. Eu dou um git ponto git commit sem commit message também, né? Git commit ponto porque eu sou desses. Não vejo muito valor comit
+
+message git push. Isso daqui agora vai pra main e não vai dar certo. Eu me toquei o porque que não vai dar certo. Você tá vendo isso daqui, né? Hostinger IP aqui. Hostinger VM ID. Eu esqueci de
+
+configurar isso aqui no GitHub. Então eu vou ter que fazer essa correção aqui no repositório do GitHub. Eu vou ter que vir aqui em Secrets e Viables actions, né? são as secrets e verbals do GitHub actions. E agora eu adiciono repository secrets. Eu vou adicionar a nível de
+
+repositório. Quais são os que eu precisava, né? Eu precisava da API aqui. Então eu vou só fazer isso daqui, tá? É, não vou mostrar minha API aqui de verdade. Então vamos colocar aqui, ó.
+
+API que mentira. Depois eu corrijo isso. Adicionar secret. Qual que era a minha outra? VM ID. VM ID. A gente coloca aqui
+
+fake VM ID. E adicionar secret também. botando para rodar de novo aqui. E vocês vão ver que eu tô cheitando aqui que sim, essa é a 11ª vez que roda esse job porque eu tava testando antes para garantir que ia funcionar. Foi lá de fato e a gente vai poder ver isso aqui, a nossa a nossa VPS aqui, né? Se tiver
+
+dado tudo certo, ela vai ter puxado tudo aqui do repositório, vai ter puxado o exato commit que eu fiz, vai ter, né, rodado ali o nosso aqui, ó, o Docker file e o Docker Compose da maneira exata com que a gente especificou. Então você tem o Docker File, que especifica como que a gente vai construir essa imagem aqui, e o Docker Compose, que especifica como que a gente vai rodar a imagem que foi construída aqui, né? Basicamente isso que faz o nosso setupzinho. Eu tenho aqui meu dashboard, né? Eu posso gerenciar meu docker aqui. Posso ver
+
+aqui, ó, Augusto Galego Web 1 em execução. Se eu clicar nisso daqui, ele vai direto lá pro meu serviço e funciona. Eu tenho também, né, os dados de uso aqui do meu do meu negócio. Como que tá usando 13 GB de disco? Eu não sei. Deve ser algo a ver com o Node, né?
+
+O node é muita coisa, 13 GB de, mas tá, ficou bonito, né? Agora o que que a gente quer demonstrar aqui? Tem uma feature nova, eu vou mostrar pr você no meu local host qual que é a feature nova, que é brand git checkout, eu acho que ela chama books, se eu não me engano, ela chama books, git pool, tá? PN PM é runa dev para eu mostrar aqui no meu local host, tá? Meu loca host aqui, ó. 3.000 sobe aqui. 3.000. Recentemente
+
+tava cando uma fit nova. Se você olhar aqui na nave bar, né, aqui no topo, ó, esse daqui é o meu site na internet. Ele tem tem blog, tem cursos, tem setup, tem contato. A parte de cursos tá em completo, tá? Eu vou completar depois, mas enfim. Tem uma feature nova que a
+
+gente tá fazendo aqui agora. Essa feature é livros. Eu quero ter uma lista de livros que o pessoal sempre me pede recomendação, né? Então eu quero ter um lugar online onde eu vou hospedar uma lista e recomendações de livros. No momento a gente colocou, eu fiz uma tradha os livros mais recomendados da área, tá? A gente tem aqui, né, uma
+
+lista de livros mais recomendados na área. Mas eu acho que eu vou querer fazer um formato um pouco melhor do que uma lista tipo seca assim de recomendações, né? Vou querer botar de repente uma nota para cada um, quais que eu li, que tem ver o que que eu não li. Por exemplo, eu eu não li siquip, infelizmente. Eu não li também sistemas operacionais modernos do tenbal, tá? Não
+
+li na faculdade, não ia ler depois. Então, enfim, eu preciso colocar mais informação aqui relevante. De repente uma nota para cada livro, porque que cada livro é recomendado e tal. Porém, aqui tá a nossa feature codada. Eu vou criar esse p request de books para main.
+
+Tá criado o meu p request. Eu vou clicar aqui para mergear o p request. E se tudo tiver configurado da maneira certa, ao mergear o meu p request para mim, no momento que ele for mergeado na main, pode perceber aqui, né? Git checkout main, eu tenho que aqui, ó, na branch main, ele vai fazer tudo aquilo que a gente combinou com que ele vai fazer, né? Ele vai fazer tudo isso daqui e com sorte eu vou ter o meu site atualizado ali em tempo real, quase em tempo real.
+
+Vai merge por request, pode confirmar o merge. Percebe aqui, ó, a gente tem aqui o nosso p request rodando. Deploy hostingerv. Aqui foi parte do github, tudo certo. Vamos olhar aqui agora o gerenciador Docker, gerenciar. Eu acho
+
+que eu consigo ver esses logs aqui ao vivo. Eu acho que eu consigo vir aqui, ó. Clica aqui em logs e já foi. Será? Não, não foi. Esses logs aqui são um
+
+pouquinho antigos. Não, não. 5 minutos, 10, talvez. Uhum. Agora foi. A gente
+
+pode olhar aqui o horário de agora. Tá rodando louca roxa 8080, né? Na aqui. Mas enfim. Se a gente v aqui na visão geral aqui em gerenciar docker e eu clicar aqui, é para já ter atualização.
+
+E ó, já tem a atualização. A gente tem aqui curso, a gente tem livros. Eu clico aqui em livros. As minhas imagens bugaram. É, por que que elas bugaram? Tá, enfim,
+
+depois eu vou ter que debugar isso daqui. Pô, mas como assim, cara? Na minha máquina funcionava, né? Incrível. Bom, isso aqui é um erro meu, porque essas imagens aqui, na verdade, aqui no local, na verdade, eu não tô com elas aqui, eu tô puxando elas da Amazon.
+
+Então, é algum tipo de erro de cores ou similar que eu não sei dizer. É, você consegue ver que tá indo bad request para cá. Tá, tá, entendi. Entendi. Porque que é bad request? a gente é a a
+
+URL não tá certa, não é essa URL, mas enfim, a gente consegue corrigir isso aqui relativamente fácil. Eu sei qual é o problema, mas enfim, que vocês vieram aqui para aprender, tá? Tá aprendido. A gente configurou de maneira muito fácil e muito rápida um setupzinho aqui que vai fazer com que o nosso código suba e seja atualizado para uma VPS. A gente acabou de atualizar o nosso código e vê que as mudanças foram refletidas de fato ali em produção. Era isso, cara. Tem
+
+diferentes, várias diferentes maneiras de você fazer isso. Teria como fazer, por exemplo, que o meu GitHub acessa a minha VPS ou acessa a minha máquina na cloud e via CSH. Tem como fazer isso de n maneiras, pelo menos umas 15, tá? Possivelmente mais ainda. Essa é só uma delas, mas é interessante você entender qual a ferramenta adequada para você, né? É primeiro hospedar o seu serviço. E
+
+cara, a ferramenta adequada de se di atualizar o seu serviço da forma e maneira que você quer e botar ele para rodar da maneira que faça sentido, né? Eu poderia querer configurar múltiplos serviços aqui, né? Eu poderia, enfim, fazer n coisas que eu quisesse dentro dessa minha máquina. Bom, por hoje era isso. Queria agradecer aqui a Hostinger que disponibilizou a cloud pra gente poder fazer esse vídeo. Se você tiver
+
+interesse num VPS dessas, lembra de usar o cupom galego G A L E G O para ter um descontinho, tá? Você viu aqui como não é muito complicado configurar um CG e fazer uma pipelinezinha para fazer o deploy do seu código para ele rodar na nuvem.

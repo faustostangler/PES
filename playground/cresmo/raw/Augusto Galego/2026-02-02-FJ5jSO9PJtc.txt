@@ -1,0 +1,169 @@
+---
+video_title: "TODO DEV SENIOR PRECISA SABER SOBRE (race conditions)"
+video_id: FJ5jSO9PJtc
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=FJ5jSO9PJtc
+video_date: 2026-02-02T13:00:34+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📖 Meu curso de estruturas de dados e algoritmos: https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  Workshop 10 LeetCodes Para Entrevistas: https://pay.hub.la/RGfq0dk8iqDeL5IC5yog?coupon=WORKSHOP
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  contato: algoritmos.galego@gmail.com
+---
+Vamos falar hoje sobre race conditions, o que elas são e como prevenir. Quero começar com uma perguntinha aqui para te colocar uma pulga atrás da orelha. Imagina que a gente tem uma aplicação, tá? Super simples. O seu aplicativo é super simples e ele é inclusive single threaded. Pergunto: tem como ocorrer uma
+
+race condition numa aplicação single traded? Vai depender da nossa concepção, do que que significa ser uma aplicação single traded, mas a resposta que eu vou dar é que sim. É por um motivo bem curioso. A gente já vai ver o que que são race conditions, como prevenir elas. Vamos ver um pouquinho de código, mas antes eu vou te falar do patrocinador de hoje. Quem tá patrocinando o vídeo de
+
+hoje é a aba cui. E você tá vendo aqui uma thumbnail que a aba gerou para mim com o modelo Nano banana Pro, né? A gente gerou algumas várias eh imagens aqui para eu acabar utilizando de thumbnails. Nessa outra aba, eu pedi para ela gerar um PRD, que é um tipo de documento que eu vou entregar para uma IA para que ela possa gerar minha codebase. Esse pode inclusive ser o dp agent da própria aba cuia. E nessa outra
+
+aba aqui eu pedi para ela gerar um diagrama de como CQRS e eventourcing funciona. Uma foi no Nano Banana, a outra foi no GPT 2.2 Thinking, a outra acabou sendo roteada para Gemini 2.5 Flash e eu tenho todos esses modelos e diversos outros modelos por apenas ó por mês. O link para abac vai est na descrição, mas o mais impressionante não é isso. O mais impressionante da abac é
+
+o deep agent que você também tem acesso. Agora aqui do meu lado, você tá vendo que eu pedi pro de agent fazer o papel de um keyway para mim. Ele vai analisar o meu site pessoal e ele vai me dar um test report, né? Enfim, ele vai fazer o papel de Qway, ele vai clicar todos os links no site, vai ver onde é que tem link quebrado, onde é que tem bug, ele vai fingir que ele é um usuário e eu posso criar isso como uma tarefa recorrente que ele vai fazer toda segunda-feira, por exemplo, e me enviar por e-mail esse test report toda a segunda-feira. Imagina você toda segunda-feira recebendo um report de um QA e tá sempre analisando seu site para bugs e tal, testando funcionalidade, vendo se funciona ou não e sempre te mandando um report, assim como você vai ver aqui no final do vídeo à minha esquerda ou direita. E todo esse
+
+ferramental, claro, tem um certo limite de uso, tem também planos pros e tal, mas o plano padrão custa apenas por mês, é mais barato do que pagar qualquer uma das outras IA separadamente, tá? O link para ausi vai est aqui na descrição e tem muita, muita, muita coisa maneira, tá? Eu sempre falo deles aqui no canal e eles estão sempre surgindo com features novas, o que é excelente para mim porque eu tenho mais vídeos para fazer e mais coisas para falar sobre eles. Enfim, link na descrição. Vamos só. Race
+
+condition funciona da seguinte maneira. Aqui e aqui a gente vai imaginar que a gente tem dois processos. Então aqui a gente tem um processo, que a gente tem outro processo. Esses dois processos estão acessando algo compartilhado. Pode ser um banco de dados ou pode não necessariamente ser um banco de dados. O
+
+que vai causar uma race condition é estado compartilhado. Então, se isso daqui aqui embaixo armazena um estado e esse estado ele é compartilhado entre processos, isso pode causar uma raise condition. O que que isso aqui pode ser, cara? Pode ser o clássico, né? Um banco de dados, pode ser uma classe compartilhada, pode ser um singleton, pode ser uma variável global, não importa. Todos esses aqui podem ser
+
+causadores ou vítimas de race conditions. Race condition, né? Você traduz para condição de corrida, não fica tão legal traduzido, né? Esses diferentes processos estão acessando esse estado compartilhado. Vamos colocar aqui, ó, esse recurso com estado compartilhado. E eles estão de maneira
+
+concorrente ou paralela modificando esse estado. Se eles só lerem o estado, não existe race condition. Se eles lerem e modificarem o estado, aí existe uma race condition. Como assim? Vamos para um exemplo. Imagina que isso aqui, né, o
+
+exemplo clássico, clássico de raisk condition, é o seu saldo bancário. Seu saldo bancário aqui é R$ 50. Esse processo aqui, imagina que tá rodando uma trad. Vai fazer o seguinte, gente, vai fazer o seguinte, vai vender R$ 30 de produto. Essa outra trad aqui, né?
+
+Outro outro cliente, por acaso, comprou de você R$ 20 de produto, tá? Quando você tem dois clientes que chegaram simultaneamente ali na sua aplicação, cada um fez uma requisição e agora o seu saldo é para aumentar 50. O que que vai acontecer se a gente tiver uma condition, né? O seu processo nessa parte aqui, ele vai pedir o saldo. Então, ele pediu o saldo. Esse aqui, né,
+
+concorrentemente pediu o saldo também. Ambos obtor do saldo. Qual que é o valor do saldo aqui? Nesse momento de tempo é 50. Nesse momento de tempo é 50 também.
+
+Tá bom? Ambos obtiveram o que o valor do saldo é 50. Se a gente não tiver prevenido uma race condition, o que que pode acontecer? O processo um, né, o processo A aqui da direita e o processo B aqui da esquerda podem calcular internamente o novo saldo. Então calculei, pô, 50, mas eu venho de 30, então o meu novo saldo vai ser 80. Nesse
+
+lado aqui, 50, mas eu venho de 20, o meu novo saldo vai ser 70. E eles podem então aqui no final salvar esse novo saldo. Nota, a gente tinha 50, a gente vendeu 30, a gente vendeu 20, era pra gente ter 100. Muito provavelmente o que que vai acontecer? Algum dessas, alguma dessas duas alterações vai acontecer antes. Algum desses dois processos vai
+
+finalizar antes do outro. Vou imaginar que o processo A finaliza antes, ele vai alterar o saldo para 80. E o processo B, que já também pré-calculou esse saldo para ser 70, vai alterar o saldo para 70. A gente tem que a gente perdeu, entre aspas, R$ 30, né? Por que que isso aconteceu? Porque, bom, no momento em
+
+que o processo A acessou o valor era 50, enquanto ele estava calculando o processo B também acessou esse valor que também era 50. Aí ambos terminaram de calcular, ambos atualizaram o valor. A gente perdeu uma informação aqui. Gal acabou de falar que não é uma aplicação single traded, isso poderia também acontecer. É, é complicado aqui. É
+
+complicado. Você vai ter que me deixar explicar. Porque é o seguinte, né? Se eu te falar que isso aqui é uma aplicação Node S, vou te falar, galego, mas Node S é single tradage, né? Esses processos não vão ocorrer de maneira concorrente.
+
+Vamos pensar o seguinte, vamos pensar que você tem a sua aplicação de Node S e quando o seu serviço escalar, se você não pensou nisso daqui, você pode ter que o processo B tá rodando em uma máquina, o processo A tá rodando em outra máquina e logicamente cada máquina não vai ter o seu banco de dados, né? Então se a gente botar essa aplicação para rodar num cluster, a gente pode ter sim uma race condition, certo? Porque você tem um processo numa máquina, outro processo na outra máquina, esses processos não conversam entre si, pode haver uma race condition. É galera, mas eu jogo tudo no mesmo servidor, ok? Mas pode ser. Você consegue inclusive aqui é
+
+a documentação do próprio node, tá? Node cluster. Você pode forcar, fazer um forque no seu node e efetivamente rodar em diferentes processos, né? Pode utilizar aqui, ó, a liber. Essa é a documentação que a gente tá lendo. Se você jogar no Google Node
+
+Cluster documentation, vai dar isso daqui e você consegue ter múltiplos workers aqui, né? Então mesmo numa aplicação Node rodando em um único servidor, ainda é possível ter uma race condition. Então presta atenção que é muito importante que isso aqui seja compreendido, tá? Imagina que esse processo aqui, em algum momento, ele faz uma requisição para uma PI externa, né? Uma PI que demora, vai um segundo para responder. Cara, 1 segundo é bastante
+
+tempo para você ter um uma race condition, tá? Se no meio desse cálculo ele faz uma chamada para uma PI externa, questão de tempo até dar uma race condition no seu no seu serviço. Enfim, ainda só para terminar aqui sobre node, né? No hoje é complicado, você vai ter, você pode ter agendamentos concorrentes via promises ou callbacks. Enfim, existem várias maneiras que a aplicação que você acha que é single traded pode ter uma race condition. Agora, espero
+
+que você saiba, né, que em algum momento o paralelismo ou a concorrência são extremamente importantes. A sua aplicação ela não vai escalar se você rodar em um única tradic, tá? A gente pode concordar nisso. Conforme você vai avançando na sua carreira, é interessante que você faça aplicações que escalam mais. Uma solução que eu quero propor aqui para essa risk condition em específico, já que a gente tá falando de dinheiro e existem outras soluções que a gente vai ver depois, a primeira delas é utilizar de um Ledger.
+
+Como é que vai funcionar esse Ledger, né? O nosso saldo, ele é, digamos assim, a força resultante de todas as operações em cima de uma conta bancária. Imagina que ao invés do servidor aqui assim, a gente tem um ledger, uma sequência de operações. Então, seu ledger vai ter aqui, ó, primeira operação, conta criada. O seu saldo, nesse exato momento, ele é zero. Você vai ter outra
+
+operação, que é, por exemplo, uvas vendidas. Uvas vendidas foram esses R$ 20 aqui vendidos na esquerda e azeitonas vendidas, esses R$ 30 aqui da direita. Compreendido? Essas três operações aqui são, a gente vai armazenar todas as operações que atuaram em cima de uma conta. Então o nosso saldo, ele vai sempre ser a resultante de todas as operações. Então a gente tem aqui um
+
+zero, a gente tem aqui um 20 positivo, a gente tem aqui um 30 positivo. Dessa forma não tem como existir uma race condition, porque não importa qual operação vai entrar antes de qual. Não importa se o mais 20 vai entrar antes ou o mais 30 vai entrar antes, a resultante, nesse caso aqui, vai resultar num saldo de 50 invariavelmente da ordem. O que tá sendo atualizado não é o saldo, tá sendo adicionado mais uma transação e o saldo é um cálculo de todas as transações. Aí, meu caro amigo, você pode falar que bom, galego, isso daí vai ficar lento, né? Para eu ler o
+
+meu saldo, vai ficar lento. Então, pode ser que você esteja certo. O Ledger muito comumente é armazenado em no SQL, mas também pode ser, já vi armazenado em SQL, tá? A gente pode aqui imaginar um Ledger Bacaninha em Dynamo, um Ledger Bacaninha até em Mongo, tá? Até em Mongo, tá permitido. Só que você vai ter
+
+que isso daí vai gerar uma view, algo que vai ser acessado para visualizar esses dados e vai ser atualizado com certa frequência. Essa view pode ser um banco de dados mais tradicional. A gente pode imaginar aqui um pos que tem esse saldo aqui como view, certo? Isso daqui o saldo que a gente vai puxar, ele não é a última fonte de verdade, ele é apenas uma visualização mais rápida. E você também pode criar snapshots em cima do seu Ledger, tá? Aqui, né? A cada dia
+
+você pode criar um snapshot, que é a resultante final daquele dia. Então você não precisa sempre estar recalculando o valor desde do do início, né? Você pode recalcular o valor desde do snapshot. Então, tipo assim, se ontem tem um snapshot que diz que o meu saldo ontem era 1950 e hoje tem uma transação só que eu recebi R$ 50, o meu saldo hoje é 2.000. Você preciso recalcular uma vez,
+
+né? Então, temos diferentes formas aqui de lidar com a questão de performance no Ledger. Ledger é uma parada muito legal para race condition, só que você pode estar pensando, galego, o Ledger é muito complicado, cara. A gente já tem o nosso banco de dados SQL aqui, ele já tem uma tabela saldo, né? Eu tenho o meu postg aqui, ele já tem uma tabela saldo. E o
+
+que a gente faz na nossa empresa é que, tipo assim, o saldo é uma coisa, né? E a gente tem também a tabela de transações, em que a gente vai armazenar todas as transações. Então eu vou armazenar num tabelão aqui, né? O mais 50, eu vou armazenar aqui num tabelão também o mais 20. Então tem a tabela account, tem o meu saldo, né? E tem a tabela transações
+
+que tem as minhas transações, pô. Aí, né, eu consigo ter também, eu consigo saber todas as transações que ocorreram, né? Eu não vou só atualizando saldo, eu vou tendo uma auditabilidade das transações, o que é muito legal. Sim, realmente isso daí que você faz de ter a conta com o saldo e as transações é muito legal. Deixa eu te perguntar, se as transações, né, se você fizer o cálculo de todas as transações que terá numa conta, esse cálculo diz que é pra conta ter até 170, né? Você fez ali uma
+
+auditoria, a auditoria disse que baseado em todas as transações que entraram serv na conta é para ter 170. E por acaso na sua conta, né, na na tabela account, que é uma tabela diferente da de transações, você encontrou o valor 100. Qual dos dois tá errado? Você há de concordar comigo que o saldo tá errado, né, e as transações estão corretas. Ou a gente esqueceu de armazenar alguma transação ou então o saldo tá calculado de uma forma errada e precisa ser atualizado.
+
+Então, de repente a gente bota uma Chrome Job para atualizar esse saldo todo dia. Faz sentido? Faz sentido, né? Meus parabéns, você acabou de recriar a partir de primeiros princípios o Ledger. Você tinha um saldo, você tinha as transações, você viu que às vezes tinha um drift, você começou a tomar as transações como fonte de verdade, você saiu atualizando o seu saldo baseado nas transações, né, efetivamente criando um snapshot aí todo dia. Legal. Concordamos
+
+então no Ledger. Solução muito bacana e elegante. Mas o Ledger não é o única forma de se lidar com race conditions, porque nem todos os problemas são problemas de dinheiro e nem todos os problemas são problemas a serem resolvidos com ledger, né? Não faz sentido. Pode muito bem imaginar que ao invés de dinheiro, você tem ali edição de texto, né? a gente tá editando um
+
+texto de forma paralela ou enfim, o que quer que seja. Então, vamos ver algumas diferentes soluções para race conditions, além do nosso Ledger. A primeira delas, você vê que isso aqui é um problema que ocorre do paralelo, né? A primeira solução é mais naíve, a mais ingênua, a mais simples, para aplicações simples ela pode funcionar, que é justamente você prevenir o paralelismo, né? Você falar que, tipo assim, que a gente tem nossos dois processos, né?
+
+Vamos separar. Esse processo vai rodar primeiro, esse outro processo vai rodar depois. A gente precisa esperar um terminar pra gente começar o outro. Como que a gente vai garantir isso para não sair do nosso exemplo de node js? A gente tá aqui em node, no método main.
+
+Aqui a gente tem duas funções que lidam com o balance, com o saldo. A gente pode imaginar, tá, que isso daqui não é muito importante. Isso aqui tá simulando o comportamento de uma classe ou de um banco de dados. Algo nesse sentido, OK? Isso aqui tá acessando o banco de dados, enfim, é só para título de demonstrar isso daqui. Cara, deixa eu fazer melhor,
+
+na real, vamos rodar esse código mesmo. Vamos rodar que eu acho que vai ficar bem bacana, tá? A gente tem aqui uma função race. Eu vou primeiro tirar esses aits pra gente ver isso aqui. Esse load balance tá simulando o puxar de um banco de dados. Esse save balance tá simulando
+
+o salvar em um banco de dados. Demora 100 msos, né? Um tempo razoável para ali puxar as coisas, salvar nos bancos de dados. A gente tem uma função que vem de uvas, que aumenta o nosso balance. Vamos mudar esse número, vai para 30. E uma
+
+função que vende azeitonas, que aumenta o nosso saldo em 50, né? Nosso método main, ele vai chamar o Cell Grapes, ele vai chamar o Cell Olives em sequência. Nota, elas são funções assíncronas e elas não têm um a frente delas, embora tem um aweight aqui dentro, né? Tem aits aqui, um a carregar o banco de dados e outra weight para salvar no banco de dados, não temos a weights nessas funções, de modo que isso permite o disparo assíncrono delas. Vamos rodar para ver o que acontece aqui, ó.
+
+Bunrunace.ts. E a gente tem, olha só que interessante, a gente tem que o nosso saldo aqui no no final foi 10, porque ele executou o console log antes de executar esses dois aqui, né? E eu devia ter pensado um pouco melhor nisso daqui. A gente pode ter então, né, Let é igual a isso daqui, let é igual isso daqui. Vamos dar uma
+
+weit aqui no final, né? Eu acho que é assim, a sintaxe race. Js. Muito bem. Agora a gente esperou os dois terminarem, né? A gente esperou o A
+
+terminar, a gente esperou o B terminar, a gente esperou em paralelo. Então, nota, era para o nosso saldo ser 10 + 30 + 50. Qual que foi o nosso saldo? 60, né? O mais 30 aqui. Essa informação foi
+
+perdida. Maneira mais simples de vencer isso daqui, a selles, a sell a gente tiver rodando isso daqui, né, da da maneira normal, um único servidor, uma única tradicório, que vai funcionar, a gente dá race.js. Aqui como a gente esperou um terminar para depois iniciar o outro, o nosso saldo aqui ficou em 90, o nosso saldo aqui funcionou. Por que que eu não recomendo isso daqui? Quer dizer,
+
+serviço simples vai funcionar, tá? Tá OK. Eh, conforme ele o seu serviço vai crescendo, isso aqui vai causar um problema quando você escalar. a sua infra vai causar problema. Quando você de repente se tocar que é mais rápido fazer isso aqui em paralelo, você não vai se lembrar da race condition. Então
+
+já recomendo nem começar por esse caminho. Mas funciona, funciona. Sou obrigado a te informar que isso aqui pro nosso caso aqui funcionou. Nosso segundo caso, nossa segunda possível solução é uma transação atômica. O que que é uma transação atômica? A gente tem, né, que
+
+o balance, ele não tá sendo recalculado no código, ele tá sendo recalculado direto no banco de dados, né? A gente tá fazendo update em accounts e o nosso balance vai ser o nosso balance. mais 50. Para alguns casos, isso daqui funciona também. Não é a solução mais elegante do mundo, porque você tá forçando o banco de dados a fazer um cálculo lá dentro dele. E dependendo da
+
+sua regra de negócios, você vai ter que também setar a regra no banco, sabe? Tipo assim, imagina que o seu balance ele subtrai 50 ao invés de somar 50. Eu preciso tá enforçado, né? Eu posso ter o balanço negativo. O que que acontece se o balanço ficar negativo? Eh, aqui eu eu
+
+complico um pouquinho a minha situação, tá? Mas enfim, uma solução perfeitamente válida que a gente pode, sem problema nenhum, né? tá testando aqui também. Então, temos nosso balance sendo 10. Aqui é uma simulação do banco de dados.
+
+A gente tá simulando que o banco de dados tá incrementando o amount, né? E aqui a gente pode esperar as nossas promisses em paralelo. Não precisa esperar elas sequencialmente, não precisa esperar uma depois da outra, né? A gente pode botar aí para rodar concorrentemente ou de forma paralela. Eu posso dar aqui um burn race.gs, sem
+
+problema nenhum, né? Vamos colocar aqui só pra gente conseguir diferenciar um de 70 e um de 100. Então o nosso saldo total é para ser 10 + 70 + 100, 180. Se eu der aqui um race.js, olha aqui embaixo, 180 funcionou perfeitamente.
+
+Porque né? Só o que o banco de dados faz, é pegar o próprio balanço e autoincrementar o próprio balanço. Legal, funciona? Para alguns casos, funciona bem bacana. Na verdade, já tem uma solução bem elegante, tá? Eu
+
+recomendo bastante. Ela é boa. E o último caso que a gente vai ver aqui é com Mtex. O que que significa Miltex? Mutual exclusion, exclusão mútua. Isso
+
+daqui, esse MTEX, deixa eu te explicar aqui como é que funciona rapidão. Funciona basicamente da seguinte forma, né? Imagina que a gente tá aqui tentando acessar as coisas do banco de dados. E assim, 1000tex é porque a gente tá pensando em código, tá? A gente tá acessando aqui o nosso banco de dados e eu decido que eu quero pegar o saldo.
+
+Novamente eu tô dando exemplo de saldo, que é o exemplo que a gente tá trabalhando aqui, né? Mas não é para você fazer saldo num banco, né? O seu banco não tem uma uma um tabelão saldo assim que tu pode sair dando update, tá? Não é assim que funciona. Mas pro nosso exemplo didático funciona perfeitamente bem. Mas tá, imagina que a gente tá
+
+acessando o saldo do user 1 2 3. Esse saldo está armazenado em uma row. Uma row é linha. Essa linha aqui, tá? Vai ter saldo 1 2 3, né? saldo do user 1 2
+
+3. Esses dois processos vão tentar acessar essa linha aqui, mas o primeiro processo que conseguir, o banco de dados só vai liberar para um dos dois. Nosso banco de dados vai dar um lock aqui. Fica a recomendação. Se você quiser que eu faça uma aula sobre lock otimista e lock pessimista, posso fazer essa aula também. Vai ser legal. Vou dar uns
+
+tópicos um pouco mais avançados. Mas enfim, vamos imaginar que o processo A chegou antes por meio milissundo. O banco de dados locou o saldo. Ninguém mais pode acessar esse saldo, apenas o processo A. O outro processo ele só vai conseguir acessar quando o processo A largar, quando o processo A liberar esse recurso. Então o processo A pegou o
+
+saldo de 50, fez ali os cálculozinhos dele, né? Calculou pô mais 30, o nosso resultado final aqui vai ser 80. Vou salvar o meu saldo como 80. Salvei o saldo. O que acontece? Liberei o lock.
+
+No momento que eu liberei o lock, o processo B consegue então travar essa coluna, essa linha, perdão, no banco de dados. Consegue dar um lock aqui e falar: "Ninguém mais pode acessar. O dono do saldo agora sou eu." Já estudou Rust? Rush tem um conceito parecido chamado de borrow checker. Legal, né?
+
+Você vê que as coisas na computação elas são tipo, elas todas se juntam de alguma forma ou de outra. Esse princípio do lock que pode ser utilizado num banco de dados, inclusive se a sua aplicação, né, for bastante distribuída, só que você tem um banco de dados que ali a fonte da verdade. Um lock é uma solução bem boa em vários casos, tá? Vários casos. Lock é bastante legal. Se possível, o Atomic
+
+Update vai performar melhor. Se não for possível fazer o atômicate por qualquer que seja o motivo, né, às vezes, pô, como é que você vai fazer um update atômico numa string? Não dá. Aí você pode utilizar de um lock, funciona muito bem. Agora, e se isso daqui não é um banco de dados? Se isso daqui é uma
+
+classe, é uma variável global, é whatever no seu código. Aí a gente tem o nosso Miltex aqui. Então vai primeiro aqui, né? Eh, criar um Miltex. Então você instancia aqui o seu Miltex e esse Miltex é um semáforo, é o princípio do semáforo. Aqui no início da função cell
+
+grapes, ele vai dar um lock no Miltex, no Mutual Exclusion. E no final, depois que ele carregou o balanço, atualizou o balanço, ele vai dar um unlock. Assim, você em teoria você não precisa dar o lock na linha do banco de dados se o seu código tiver respeitando o Miltex. Só que no banco de dados é uma garantia bem mais forte, né? Então, enfim, o bom do Miltex é que ele funciona para tudo. Ele
+
+não precisa, você não precisa locar o banco de dados. Você pode utilizar o Miltex para, cara, qualquer coisa que você queira, você pode usar um Miltex para não permitir que o paralelismo ali ocorra. Então você tem que, né, que o vender uvas aqui dá um lock e quando ele termina ele dá unlock. Você tem aqui que o vender azeitonas dá unlock e quando ele termina, né, de acessar ali o saldo, modificar o saldo, ele dá unlock, ele libera. É permitido que você rode isso de maneira paralela ou concorrente e não vai ter problema. Enfim, espero que você
+
+tenha gostado dessa aula. Espero que você tenha entendido race conditions, entendido as diferentes várias soluções que a gente tem aqui, né? A gente pode simplesmente fazer a weight para casos mais simples, né? Eh, evitar ali o paralelismo, ou então muteex ou então locks que acabam, né? Miltex acaba sendo um tipo de lock. Updates atômicos. Nota
+
+que também, né, sempre importante isso aqui ressalta a importância de entender a regra de negócios, porque, cara, imagina que a gente tem o nosso saldo, em vez de somar, a gente quer subtrair, né? A gente tem aqui 50, aqui eu quero subtrair 30. Aqui do outro lado eu quero subtrair 30 também. - 30 - 30. Cara, dependendo, se o meu saldo pode ficar negativo, não tem problema fazer um update atômico e terminar com saldo -10.
+
+Agora, se a regra de negócio tem algum constraint em cima do meu saldo, alguma limitação em cima do meu saldo, nota que a solução que eu vou optar, então, vai ser diferente, né? Eu preciso checar o saldo antes de fazer a alteração. E se eu preciso checar o saldo antes de fazer a alteração, eu vou eu não vou poder fazer esse atômico. Então a regra de negócio, ela influencia diretamente na nossa decisão técnica, né? O que evidencia que é muito importante a gente sempre entender a regra de negócio, né?
+
+Imagina que, bom, aqui a gente tá falando de dinheiro, mas imagina que a gente tá falando de estoque. É possível o estoque ficar negativo? É possível ficar com roupas negativas? Talvez. Não sei, depende da regra de negócio. Isso
+
+vai afetar na nossa decisão do que do que escolher, né? Além dessas soluções aqui e do Ledger, a gente tem também, né, os locks otimistas. A gente pode ter locks distribuídos, evitar estado compartilhado e existem algumas outras soluções ainda para outros casos específicos, mas enfim. Isso aqui é o mais básico de raisk conditions. É o que eu consegui condensar aqui em um vídeo relativamente curto, tentar te ensinar o máximo possível em pouco tempo. Gostou
+
+desse vídeo? Dá um like, se inscreve no canal. Gostou muito desse vídeo, comenta embaixo pra gente ver um pouco sobre locks otimistas e pessimistas e de repente locks distribuídos. Acho que vai ser um vídeo bem bacana, se a galera quiser.

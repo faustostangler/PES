@@ -1,0 +1,131 @@
+---
+video_title: "Tipos de Deploys (e qual usar)"
+video_id: DCd4eBX9w4E
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=DCd4eBX9w4E
+video_date: 2026-04-22T13:00:33+00:00
+video_description: |
+  🔴 Use a VPS da HostGator : https://www.hostgator.com.br/52508-13-3-12.html
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/IfmHwn19C9cQYgVx3Y1J
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Hoje a gente vai falar sobre os diferentes tipos de deploy. A gente vai começar esse vídeo diferenciando deploy de release, porque são 100 coisas diferentes. É importante a gente notar essa diferença. A gente vai falar sobre deploy, deploy manual, deploy automático, vamos falar sobre os três principais tipos, quatro na verdade principais tipos aqui e mais alguns outros menos conhecidos. Vamos falar sobre recreate, rolling, green, blue e cannery, que que erde o seu nome do do termo cannery in a co mine, né, de levar canários para minas de, enfim, para mineração. Antes disso, quando você for
+
+fazer algum tipo de deploy, eu recomendo que você faça eles na parceira do canal, a HostGator, que tá patrocinando o vídeo de hoje. E a HostGator tem várias soluções interessantes, tá? faz muito sentido usar eles. Você tem questões de hospedagem de site e tal, tem, a gente já mostrou aqui no canal também, eu usando e foi bem legal aqui em cima na direita, ó, o Open Claw pré-instalado, que você consegue uma VPS com OpenCla para rodar de maneira muito fácil, tá? A instalação aqui é super simples e funciona super bem. Inclusive, preciso
+
+fazer mais um vídeo sobre isso. Como a gente tá falando de deploy, né? Eu gosto bastante da VPS deles, eu acho que faz muito sentido, porque o preço deles é muito competitivo, tá? É um preço em reais para você ter servidores, né? Para você ter uma VPS no Brasil. Então a
+
+latência para seus usuários vai ser provavelmente muito baixa e você consegue a customização completa aqui, né? Aqui tem uma comparaçãozinha com os concorrentes, né? Você vê que a deles vence em basicamente tudo ou pelo menos tudo que importaria para mim. E o que eu acho muito legal deles é que você pode escolher diversas assim diversos tipos de VPS, vamos colocar assim, né? Você pode escolher uma máquina ou meio crua ali para você configurar ou de repente um sistema operacional com um panel, né?
+
+Você pode ter aqui o CPEN, outros tipos de painéis ou até alguma já pré-configurada para rodar, por exemplo, OpenCla ou N8N. A gente pode fazer mais um vídeo de N8N aqui. Ou uma que eu usei no passado foi essa do Docker, que é bem legal, facilita muito para você subir os seus serviços para cá, tá? Então se você tá planejando hospedar um projeto pessoal, de repente um site, algum tipo de portfólio, eu recomendo que você veja aqui as soluções da Hostator, tá? Clica no link na descrição para você avisar eles que você vê aqui do canal e você ganhar uma oferta especial. E assim,
+
+sinceramente, para hospedar os seus projetos, eu acho que é muito difícil você encontrar algo mais vantajoso que isso, tá? O custo que é realmente muito baixo e eu já vi pessoas hospedando SAS que faturam R$ 20, R$ 30.000 nessas VPSs aqui, tá? Pagando um custo baixíssimo, porque sim, é, isso aqui é bastante eficiente. Link na descrição. Vamos lá
+
+que esse vídeo vai ser bem legal. Primeiro eu quero te explicar qual que é a diferença de deploy e release. E para muitas empresas, digamos assim, um pouco menos maduras, é a mesma coisa. Mas não precisa ser a mesma coisa, tá? Eu vou te explicar da seguinte forma. Imagina que
+
+aqui, aqui, aqui na esquerda, você vai ter a sua code basezinha, né? Ela vai estar hospedada tipo assim, tipo no GitHub, GitHub. E aqui na direito você vai ter sua VPS. Vamos imaginar aqui que a gente tem a VPS da HostGator. Claro, estão patrocinando o canal, vou falar deles aqui. Esse seu código vai tá
+
+duplicado aqui dentro da VPS, só que pode ter, por exemplo, que você crie uma feature nova, né, ou partes novas do código que, digamos assim, não vão estar ativados. Então, vou imaginar que isso aqui tá escondido atrás de uma feature flag, tá? Então, seus usuários tão mandando tráfego aqui pro seu servidor, né? Mas essas linhas de código novas que você escreveu, elas não estão rodando, elas estão escondidas atrás de uma feature flag. Nenhum usuário está vendo essa release, nenhum usuário está vendo essas features. Ou então,
+
+alternativamente, né, se a gente não quiser imaginar o cenário de uma feature flag, vão ter casos aqui, né, a gente vai citar esses casos em que você pode ter, por exemplo, duas instâncias rodando, uma com código antigo, outra com código novo. Então você fez o deploy, efetivamente esse código está na máquina, está no seu servidor, mas todo o tráfego do seu usuário ainda tá rodando na no código e nas features antigas. Então você consegue fazer um deploy sem fazer um release. Você consegue lançar o código pra máquina, lançar o código pro nosso nossa hospedagem aqui sem que esse código afete os usuários. Isso é importante se notar, tá? Agora vamos prosseguir aqui.
+
+A primeira maneira que você consegue fazer um um deploy, né, a maneira mais simples possível e a primeira que você deve aprender, provavelmente, é o deploy manual. Deploy, né, como falado anteriormente, é mover o código pra máquina onde ele vai poder ser executado e entregar valor pros usuários, tá? é você atualizar ali o servidor com código novo que você fez. A diferença entre um deploy manual e um automático é que o manual quando você fizer alguma alteração no código, quando você chegar numa versão que você quer fazer o deploy, vamos supor, você foi lá incrementando ali o GitHub, você fez um commit, fez outro commit, fez outro commit, fez uma branch, mergiu na main, etc, etc. Chegou ali, a gente tá na no commit número 2304, chegou, falou: "Pô, gostei, essa versão aqui tá redonda, vamos puxar agora pro pro servidor".
+
+Você manualmente vai fazer isso. E existem diferentes maneiras de você fazer o deploy, né? a gente vai estudar elas, então eu não vou te dizer exatamente como vai ser feito, mas geralmente quem faz o deploy manual vai fazer o quê? Você vai dar um SSH para essa máquina aqui, né, para VPS ou para algum servidor, dando SSH lá. Aí você vai dar puxar o código, você pode dar um gitpol de repente ou gitone, sei lá, e aí você vai subir a aplicação, você vai dar, sei lá, npm start, tá? Tô tô
+
+simplificando aqui. Existem várias maneiras de você fazer de você fazer isso. A mais comum é realmente esse SSH e aí puxar os arquivos de algum lugar, mas já trabalhei em lugares que, cara, você compartilhava com File Zilla e era uma gambiarra tremenda. Já trabalhei em lugares que você rodava um script na sua máquina mesmo. Então, tipo, dentro da minha máquina eu dava ali um script, né, um shell script que fazia uma série de ações, conectava na máquina e eu tinha que estar conectado no meu VPN, etc.
+
+Enfim, a diferença de um deploy manual para um deploy automático é que o deploy automático vai seguir uma série de regras. Você vai ter geralmente uma pipeline que vai ser trigada quando algo acontecer. Então vamos supor assim, ó. Quando eu mergear algo na main, né, quando eu tiver uma nova versão da main, isso aqui é o mais normal de ter um deploy automático, tá? Você tinha uma branch, fechou um pull request ali para main, a mentar com código atualizado, vai existir aqui uma pipeline que vai fazer alguma coisa. Essa pipeline, ela
+
+vai basicamente rodar alguns scripts que pode muito bem ser um simples SSH pro servidor e um gitpol e npm start. A pipeline ela pode reproduzir exatamente aquilo que você faz manualmente, tá? A diferença entre o deploy automático e o manual não é o que está sendo feito. A diferença é qual o trigger, qual o gatilho para causar esse deploy. Atualmente, as empresas mais organizadas têm visto que deploy automático é melhor. Eu também acho. Deploy
+
+automático é menos propenso a erro humano e essa é a grande vantagem dele, né? E ele também. Como ele é trigado baseado em alguma regra, é difícil você esquecer de fazer um deploy. E você também pode reforçar que, tipo assim, ah, se os testes não passaram, o deploy não vai acontecer. você consegue ter proteções adicionais nesse deploy automático aqui. Atualmente a sua
+
+pipeline ela existem diversas ferramentas aqui que você pode utilizar, tá? Muito comum você usar uma combinação de GitHub actions mais alguma outra coisa. Então você pode ter um Git Hub actions mais um ferramental ali de docker, de cubernetes, de Jenkins, de sei lá o que, do que você quiser, mas esse costuma ser um dos caminhos mais comuns, tá? Eu tô tomando bastante cuidado aqui porque a forma em que os deploys podem acontecer, tá? O número de ferramentas aqui é realmente gigantesco.
+
+Então eu não posso falar que, ah, vai acontecer do GitHs fazer alguma coisa, porque pode ser que você não use Git Heb actions, pode ser que você use outro ferramental, pode ser que você utilize, por exemplo, GitLab e você tenha uma ferramenta externa que monitore o GitLab, que monitore a branch main do Gitlab. Funciona perfeitamente bem. Então, bom, falamos sobre deploy release, deploy automático e manual. Agora vamos para os tipos de deploy. A parte mais interessante desse vídeo, na minha opinião, né? O primeiro tipo de
+
+deploy é o recreate. É o mais comum. É o que assim, se você não pensou muito sobre o que você tá fazendo, provavelmente você tá fazendo um recreate, tá? O recreate vai funcionar da seguinte forma. Dentro aqui do seu servidor, você vai ter um código rodando, tá? Você vai ter uma instância
+
+da sua aplicação rodando. Dentro dessa aplicação, a gente pode imaginar para simplificar, imagina que é uma aplicação rodando Node e Express, tá? Só para você saber. Ou então pode ser, você pode pensar aqui que é um Fast API também, só para você entender que tá rodando um código de de backend aqui, tá? dentro dessa uma instância, você abriu o seu servidor, você deu npm start e aí tá rodando isso daqui. O recreate ele é a
+
+forma mais simples e mais óbvia de fazer um deploy, né? Você tem aqui a V1 rodando, você quer passar o código para V2, né? Um código um pouquinho diferente. Que que você vai fazer, cara? Shutdown nessa instância aqui. Fala
+
+aqui, ó. Ó, acabou, fechei, desliguei a instância. NPM start na V2, né? Subo o código novo para VPS. NPM start. Começa
+
+esse código novo. Esse código novo começa a servir os usuários. Então você baixa uma, dá um shutdown em uma, dá o start na outra. O que que vai acontecer? Os seus clientes, os seus usuários estavam enviando requests para esse servidor aqui. Em algum momento você vai
+
+ter que deletar ele e subir o outro. Enquanto o outro está subindo, enquanto o start tá acontecendo, né? Não é instantâneo. Pode ser muito rápido, mas não é instantâneo. Vamos supor que você tava servindo isso daqui numa porta, né?
+
+Na porta 3.000. Só, só dando um exemplo, tá? Você desligou isso daqui que tava ocupando a porta 3.000. Você subiu outro
+
+na porta 3.000 também. Só que nesse meio tempo, enquanto um tava desligando e o outro tava subindo, os requests foram perdidos. Você vai experienciar, os seus usuários vão ter a experiência de downtime. Houve um momento em que a sua aplicação não estava online e por isso o servidor ficou fora do ar. Antigamente
+
+esse tipo de deploy era super comum, então você tinha ali uma janela de manutenção em que a gente botava ali no frontend: "Olha, o site vai ficar em manutenção das 9 às 10 da noite." Aí você acessava o servidor às 9 da noite, baixava o código novo, né? deletava o antigo, criava ali a build e tal, subia e vida que segue. Hoje em dia, esse tipo de deploy não é mais tão comum. O próximo tipo de deploy que a gente vai ter é o rolling deployment. Imagina que
+
+você numa máquina você tem várias instâncias da da aplicação rodando ou então que você tem várias máquinas, vários servidores, tá? Um cluster de servidores, enfim. Mas vamos imaginar que dentro da nossa máquina a gente tenha várias instâncias dessa aplicação rodando. O rolling ele vai fazer o seguinte, a gente vai substituir uma por uma, né? Como a gente tem quatro instâncias aqui, se eu dropar uma, eu ainda continuo conseguindo servir os meus usuários sem nenhum problema. E aí
+
+eu posso pegar V2 e adicionar V2 aqui. Então você vai ter, por exemplo, três instâncias rodando a V1, uma rodando a V2. Aí deleta essa V1 aqui, sobe a V2 para cá e assim você vai rolando. Você vai fazer o rolling deployment aqui. Qual que é a grande dificuldade de um rolling deployment? É que você precisa
+
+pensar em duas coisas. Primeiro, alguns usuários vão fazer requisições que vão cair para V1. Alguns usuários vão fazer requisições que vão cair para V2. Isso é inevitável. Então, por um curto período de tempo, é importante que você tenha uma compatibilidade, que a V1 e a V2 sejam absolutamente compatíveis com aquilo que o usuário espera, porque o request vai ou para V1 ou para V2.
+
+Também, mais importante do que isso ainda, é que isso daqui também vai est fazendo requisições para o banco de dados. E é muito importante que você tenha essa compatibilidade também para com o banco de dados, tá bom? Então, por exemplo, se você vai fazer uma migração no banco de dados e subir para V2, lembra que a sua V1 vai continuar rodando por algum período de tempo, então precisa estar compatível também, tá? A próxima versão, a próxima ideia aqui é o blue green deployment, que acaba sendo um dos meus favoritos, tá? Eu acho um dos mais legais esse daqui.
+
+No blue green você tem o seguinte, o blue vai ser a sua versão um, né? Vai ser a sua V1 e todo o tráfego vai est sendo mandado pra sua V1. Você vai em paralelo subir a green, né? Blue é a V1, green é V2. Em paralelo, você subiu a green que é V2, deployou ali, botou para rodar, tá online, tá tudo certo para receber usuários. Você vai fazer testes
+
+nessa green, você vai rodar ali um stress test, um teste de carga, você vai acessar e ver se tá funcionando tudo certo, etc. E quando tiver tudo pronto, o que que você vai fazer? Você vai simplesmente direcionar o tráfego dos usuários pra green. Você vai só alterar o tráfego aqui pra ele ir, pra outra versão, né, pra outra instância aqui da sua aplicação. Quais são as vantagens de bluegreen? Na prática não existe
+
+downtime, tá? é minúscula, aqui é quase que irrelevante, é só o tempo de você mudar o tráfego de um lado pro outro. E na prática ela tem uma vantagem muito grande que você vai ter o blue e o green rodando em paralelo. Se por acaso houve um hotfix, como já aconteceu na na minha vida, tá? Eu já fiz um deploy em que eu causei o servidor a ficar inacessível, né, os usuários a não terem acesso ao servidor. Por um determinado período de
+
+tempo, a gente teve que fazer hallback. Então, os usuários ficaram ali 10, 15 minutos sem conseguir acessar o nosso serviço porque eu quebrei tudo. Como que você faz umback em bluegreen? você simplesmente vai redirecionar o tráfego de volta paraa Blue, porque você por um período de tempo vai ter as duas rodando em paralelo. É muito, muito bom isso daqui, tá? A grande vantagem do
+
+bluegreen é esse rback facilitado. Agora é um certo custo porque por algum período de tempo você vai ter que ter as duas versões rodando. É um setup um pouco complexo de se fazer também, né, em termos de infraestrutura e e ops ali. Canary. Canary pode ser implementado de algumas diferentes maneiras, tá? Ou
+
+Canary, se você for britânico. Qual que é a ideia do Canary? Um certo percentual de usuários vai ver a sua versão nova pra gente usar eles quase como beta testers e a maioria dos usuários vai ver a sua versão antiga. Então você pode fazer uma maneira tipo bluegreen que você tem duas instâncias e aí tipo assim 5% dos usuários está vendo sua versão nova estão vendo, né? E 95% dos usuários estão vendo sua versão antiga. Se tudo
+
+tiver dando certo, você pode aumentar para 25 e 75 e você vai aumentando até você ficar 100% na versão nova. Existe uma maneira e aí não é mais scenary scenary deployment, é mais um release, né? Um aquilo que a meta gosta de chamar de massive e rollout at massive scale, acho que eles chamam, que é que você pode segregar os usuários em grupos e mostrar determinadas features que estão escondidas atrás de features flags para alguns usuários. Isso é possível, mas aí não é um Canary deployment, né? Tá mais para um Canary release. Um release
+
+através de uma feature flag. O jeito mais tradicional, digamos assim, é a gente falar mesmo de instâncias diferentes aqui, tá? Vantagem do Canary, quando você tiver 5% dos usuários vendo, se existir um bug, ele vai afetar só 5% dos usuários. Você vai conseguir pegar esse bug, você consegue de novo voltar pra versão antiga, né? Fazer o rollback ali tranquilamente. Desvantagem, o setup
+
+é complexo, você precisa ter essa compatibilidade novamente, né, de ambas versões precisam estar compatíveis com pelo menos o banco de dados. Esse setup é bastante complexo e pode ser difícil de debugar algo quando, tipo assim, 5% dos usuários estão reportando um problema e os outros 95 não. Pode ficar um pouco obscuro aqui, tá? Agora, Canary é sobre reduzir risco, né? Você tá utilizando aqui um percentual pequeno de usuários para você ter um risco reduzido durante o seu deploy. Existe algo quase
+
+igual Canary, que é o deployment do tipo AB, né? o AB aqui para fazer um teste AB mesmo em que percentuais dos seus usuários vão ver uma feature e percentuais dos usuários vão ver outra feature. Isso daqui não é mais para reduzir risco técnico, é para ver se de repente, tipo assim, ah, a gente implementou um checkout novo, esse checkout novo vende mais? Se vender mais, a gente vai migrar pra versão nova, se não vender mais, a gente vai esquecer ela. Tem um também bem legal e aqui a gente vai começar a entrar nos um pouco mais obscuros assim, que é o Shadow Deployment. Ele é muito bacana,
+
+muito bacana mesmo. Você vai ter que 100% dos usuários estão fazendo requisições paraa sua V1, né? E aí, qual que é a grande sacada aqui? Você vai subir uma V2 que nenhum usuário vai est vendo. E esses mesmos requests vão ser duplicados, eles vão ser vão ser replicados na sua V2 e a sua versão nova também vai est processando esse tráfego.
+
+Para quê? Para você ver se não vai ter bug, você vai responder corretamente as requests dos usuários. Você consegue monitorar a resposta, ver se o tempo de resposta tá legal, vê se ela tá pingando erro novo no centry. Então você tá validando o seu V2 com clones do tráfego real. Você tá medindo exatamente, né, como os usuários usam a sua aplicação para ver se a nova versão ele dá é capaz de lidar com o tráfego 100% real. Isso
+
+aqui é excelente. Agora é bem complicado, né? É um dos mais complicados de se fazer aqui. Um dos mais caros também. E tipo, se você pensar para sistemas que têm side effects, né, tipo assim, você vai enviar e-mails, começa a ficar mais complicado, você tem que resolver também a questão de banco de dados, né, que também como é que você vai fazer, você vai duplicar o banco ou você vai fazer o quê? Ou você
+
+vai mocar o banco de dados de repente, né? São questões complexas, tá? O shadow deployment difícil de fazer e esses são basicamente os tipos de deployments que existem, tá? são os principais aqui quando a gente fala de deploy. Eu posso mencionar também aqui, né, o continuous deployment, que aí ele é mais um conceito, um conceito que pode utilizar essas diferentes estratégias, tá? O
+
+deployment contínuo, ele é que todas as mudanças que passam nos testes vão sendo continuamente enviadas, né? Então você pode dizer que, tipo, toda versão nova que você produz ele, ela é deploiada, todo o teste de código que passa, quer dizer, toda alteração de código que passa os testes é deployada continuamente, né? Agora, como esse deploy vai acontecer? depende da estratégia que a gente adota, a gente pode adotar qualquer uma dessas, mas geralmente é aqui se parece mais com rollout, tá? Eu acredito que seja o mais comum. A gente também pode falar sobre
+
+serverless, que quando você faz um deploy em ambiente serverless, muitas das vezes você não tá administrando esse tipo de coisa aqui, né? Você até pode, você até pode fazer esse tipo de coisa, mas geralmente quando você tá deployando numa cloud que te fornece um serviço servess, você pode imaginar que a cloud vai basicamente em algum momento flipar ali uma um direcionamentozinho e mandar as requisições pra versão nova do seu serviço, tá? Quase como se fosse um recreate instantâneo ou então um blue green, né? Mas claro, você pode também configurar uma pipeline que faz isso de uma maneira diferente, de um AB, de um Canary. Nada impede você de implementar essas coisas no servless. É só que
+
+geralmente as pessoas que estão ali com serviços simples, né, utilizando servess, estão geralmente só fazendo um deploy estilo recreate mesmo. E se é para fazer hold back para uma versão antiga, também costuma ser rápido em servess, tá? Sobre tipos de deploy, era isso. Se você quiser, eu tô muito querendo fazer um vídeo em que eu mostro algum desses na prática, comenta aí qual você quer ver mais, tá? É, eu penso que eu que o green blue vai ser o mais legal da gente ver. Então, tô querendo fazer
+
+um vídeo de green blue deployment. A gente vai pegar a nossa VPSzinha ali da HostGator e vai tentar fazer isso daqui. E bom, se você gostou desse vídeo e você quer aprender mais comigo, lembrando que a gente tem cursos aqui do canal, né? Te ensinamos estrutura de dados e algoritmos, te ensinando, te ensinamos também a se vender para encontrar empregos melhores, né? Montar ali o seu currículo, LinkedIn, passar entrevistas.
+
+O link para todos os cursos do canal, tá? Vai tá aqui na descrição. Putz, esqueci de pedir like nesse vídeo, cara. É, esqueci de falar de IA também. Então, inteligência artificial existe, tá te lembrando aqui, estamos há zero dias sem falar de IA. Eu falei de A agora, né?
+
+Lançaram Opus 4.7. É, é isso. Ele existe, ele tá lançado. Não consegui usar porque eu tentei usar, ele comeu todos os meus tokens. Mentira, eu não
+
+ligo muito para isso, tá? Tanto faz. É, ele é tipo o 4.6, só que pré Nerf, né? Então, OK. É, se você quer mais vídeo
+
+técnico como esse, é, eu esqueci de pedir seu like. Então, você já saiu do vídeo agora, né? Ninguém mais tá assistindo. Mas se você chegou até o final, quiser deixar um like, vai ajudar bastante, né? Vê se você tá inscrito. Se
+
+você não tiver, clica no subscribe ali para dar uma ajuda. Quanto mais vocês conseguirem me ajudar nesse tipo de vídeo, menos eu preciso me render algoritmo e fazer vídeo de A. Então, galera, bora vencer essa. Me ajuda aí com like, me ajuda aí com comentário e deu, né? Jogar um Resident Evilzinho no Switch agora. Valeu, pessoal.

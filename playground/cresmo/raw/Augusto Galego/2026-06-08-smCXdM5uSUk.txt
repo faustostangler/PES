@@ -1,0 +1,105 @@
+---
+video_title: "Pub/Sub não é Message Queue"
+video_id: smCXdM5uSUk
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=smCXdM5uSUk
+video_date: 2026-06-08T12:21:23+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💼 Curso de System Design: https://pay.hub.la/66jYFFOmaZL4QONgNVHg?coupon=SDYOUTUBE
+  
+  Twitter do Sam: https://x.com/samsantosb
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Presta atenção. Hoje vamos falar sobre três conceitos importantíssimos aqui. Na verdade, dois conceitos e uma, aplicação na prática. Um dos conceitos é public sub, ou seja, publisher subscriber. O outro conceito é message kills, filas de mensagem, né, mensageria. E o terceiro é
+
+o Bullem Kill, que a gente vai ver na prática, no código mesmo, como implementar uma message que kill, né? Eu vou te mostrar aqui o codigozinho, mostrar que não é um bicho de sete cabeças para você entender como é que funciona, né? ver um pouco de código, ver um pouco da teoria, entender e ver onde é que isso pode fazer sentido na sua vida, nas aplicações que você trabalha, tá bom? Antes disso, vou te falar do patrocínio de hoje, que é a Abacus AI. A Abacus tem aqui um ferramental muito completo de IA, que te dá um chat com acesso a todas as IA.
+
+Você tem o GPT 5. Cloudset 4.6, Nanobanana 2, Nanobanana Pro. Você pode escolher se aquelos modelos com thinking ou instant, né? se ele vai pensar um pouco mais, dar uma resposta mais completa ou dar uma resposta de imediato. Você tem aqui em cima opções
+
+de gerar aplicativo, tarefas, gerar imagens, gerar vídeos, gerar áudio. Você tem o open class, você tem agentes também. E esses agentes estão muito poderosos. A gente tem acesso a alguns exemplos aqui. E os agentes eles fazem uma espécie de swarm que ele bota vários agentes trabalhando em paralelo em uma tarefa o que é muito bom para tarefas muito complexas. Você vai ver agora, né,
+
+o design aqui, algo parecido com com Figma, né, um design system. não confundir com o system design de uma aplicação completa que depois ele pode claramente codar isso daqui, transformar isso aqui num aplicativo de verdade, tá? Ferramental, tá cada vez mais poderoso e com cada vez mais funcionalidade. Abaco está custando a partir de por mês, apenas $, o link vai tá aqui na descrição. Mais pra frente a gente vai usar também o editor de código deles que se baseia no VS Code. É esse daqui, ó. E
+
+a gente vai ver isso daqui no futuro, mais além, né, quando eu mostrar o código nesse vídeo. Bom, primeira coisa, a gente pode ignorar o Boomq, porque o Boomq é uma ferramenta, tá? Eu vou falar sobre essa ferramenta durante a implementação das nossas message kills e eu quero te contar o que que é Pub Sub e o que que são message kills. Existe uma certa confusão aqui, eu até já confundi isso algumas vezes, que é o seguinte: PubSub é publisher subscriber, então alguém publica e outras pessoas estão inscritas. O modelo mental disso é justamente o modelo mental aqui do YouTube. Eu tô publicando um vídeo,
+
+vocês estão inscritos nesse vídeo, vocês podem assistir esse vídeo ou não. Message que é uma fila de mensagens que a gente geralmente usa para atribuir unidades de trabalho para workers, para consumidores, tá? Qual que é a diferença disso daqui na prática? Pubs sub, eu tô dizendo algo que aconteceu. Eu não tô mandando ninguém fazer nada. Então,
+
+imagina que você tem um sistema, esse seu sistema processa pagamentos. Ao processar pagamento, eu vou publicar um evento. Pode imaginar aqui um JSON, né? Que vai ter aqui type payment suceded. Eu posso ter também um ID, né? Sei lá, 1
+
+2 3. E tá bom. Publiquei esse evento, joguei ele no ar. Você pode ter sistemas que se inscrevem para ouvir esse evento. Então eu posso ter, por exemplo, o meu sistema aqui de estoque, ouvindo aqui o evento do pagamento. Eu posso ter o meu
+
+sistema de entregas ouvindo também esse evento de pagamento. Eu posso ter, sei lá, o meu sistema de analytics, né? Esses três sistemas podem estar ouvindo a publicação desse evento e eles podem fazer algo ou não. É algo diferente de um comando, é algo diferente, né? Seria outra coisa se o meu sistema de pagamentos tivesse apontando diretamente pro meu sistema de entregas, mandasse uma ordem direta pro sistema de entregas e fala: "Ó, sistema de entregas, você precisa fazer essa entrega aqui." Esse é
+
+o modelo mental de publisher subscriber, é um modelo de fen é uma terminologia que a gente usa para dizer que, né, algo foi feito e tem um, tipo assim, uma espécie de de ramificação aqui, né? O modelo mental de message que é você publica um trabalho a ser feito. Como assim? Exemplo muito comum de message de Kill que eu utilizo bastante é o de fazer compressão ou então mudar tamanhos de imagens, né? Então a gente pode ter, tipo, dando exemplo aqui, né, no Jason, a gente pode ter um job compress image, esse job vai receber o RL da imagem, né?
+
+Pode receber também o nome da imagem, outros metadados, enfim, alguém vai produzir esse job. Então, a gente pode imaginar quando o usuário faz o upload dessa imagem pro meu serviço aqui, ó, meu service. O meu service vai então criar esse job, jogar esse job numa fila, uma fila de vários jobs aqui, né? em algum momento esse job vai ser consumido pelo meu worker worker que vai executar essa tarefa aqui. Ao executar essa tarefa aqui, né, ao comprimir essa imagem, ele vai armazenar essa imagem em algum lugar, ele pode fazer alguma outra coisa com essa informação. Nota que é
+
+uma distinção modelo mental que o Pub Sub, eu estou publicando um fato, tô publicando algo que aconteceu, como se eu tivesse publicando no jornal ali, né? Estou publicando, pagamento foi feito com sucesso. Publiquei. Se tiver muita gente ouvindo ou se não tiver ninguém ouvindo, eu não ligo muito. O fato tá publicado. Cada um desses subscribers
+
+aqui vai receber uma cópia dessa mensagem, vai ser informado uma vez que essa mensagem aconteceu, ou, né, ele pode ser informado várias vezes, depende de como a gente montar o nosso sistema. Depende se a gente vai escolher, se a gente vai entregar o at least list, at most, exactly once, né, os modelos de padrão de entrega de mensagem, enquanto o modelo mental de uma message de kill que é geralmente, né, aqui você entregou mensagem, acabou, fechou. Modelo mental de uma MQ é: eu publiquei um trabalho, eu tô esperando alguém pegar e executar esse trabalho para tirar esse trabalho da fila. Você pode ter mais de um worker, você pode ter 20, 50, 1000 workers, todos podem estar ouvindo essa mesma fila, inclusive, tá? Você pode ter diversos workers ouvindo essa mesma fila, mas a ideia é você não ter diversos diversos workers processando o mesmo evento aqui, processando o mesmo job. Não faz sentido eu comprimir a
+
+mesma imagem três vezes em três workers diferentes. Eu quero comprimir ela só uma vez. É quase como uma inversão de dependência. Você pode pensar dessa maneira em que numa message queue aqui numa job queue, o meu serviço ele precisa que algo seja executado. Quem tá, quem depende do outro é o meu serviço. Meu serviço tá dependendo de
+
+quem consome mensagem. Aqui desse lado é um pouco o inverso. O meu sistema de pagamentos, ele não depende de ninguém. Ele tá publicando a mensagem pros outros reagirem à mensagem. Quem depende, na verdade, é o meu sistema de estoque, né, que tá mais dependente dessa mensagem chegar. Também é comum você se utilizar
+
+de ambos. Então, por exemplo, o nosso pagamento foi um sucesso, tá? Geralmente, quando um pagamento é um sucesso, o cliente recebe um e-mail. Esse serviço de e-mail, ele pode ouvir por esse evento ativamente, né? Eu tenho que a mensagem vai chegar aqui no meu sistema de e-mail pelo menos uma vez ou múltiplas vezes e depois eu vou jogar isso daqui numa fila. E essa fila vai
+
+então garantir que o e-mail é enviado pelo menos uma vez ou então apenas uma vez sempre, né? E aqui eu postei meu worker para enviar o meu e-mail. E às vezes a gente fala, a gente fala desses tópicos, né? Vocês acabam achando que são coisas de outro planeta, que são coisas muito complexas, mas não necessariamente são. Você nem precisa de muitas, tipo, você nem precisa de uma infraestrutura diferente para rodar isso. Então, claro, no mundo real, como
+
+que você vai ver essas coisas, né? Você tem um service aqui, você tem um serviço que pode ser uma máquina, um servidor, por exemplo, pode ser uma VPS da Host Gator, que é parceira do canal, né? algum tipo de servidor aqui e algum tipo de sistema de entrega de mensagens aqui. Você poderia conceber, por exemplo, Simple Kill Service da Amazon, da WS, tá? E os nossos workers aqui, podem ser outros servidores em VPS, podem ser lambdas, pode ser o que você quiser que seja. Geralmente, né, são três pedaços
+
+de infraestrutura diferentes, mas a gente vai na prática agora rodar esses três dentro da minha própria máquina. Então o que eu vou estar te mostrando agora não vai ser um sistema Pub subsub, não é isso que eu tô fazendo. A gente vai te mostrar uma Message que, mas qual que vai ser o interessante dessa message kill? É que tudo isso daqui vai estar rodando dentro do meu próprio PC. Aqui eu vou ter o meu próprio computador, vou est rodando tudo isso daqui no node, a gente vai, na verdade, usar ban, né, pô?
+
+Nem falei sobre isso. Vocês viram que ban fez 1 milhão de linhas de código e reescreveu ban inteiro em Rust utilizando o Cloud. Cara, que loucura. Vamos lá, vamos ver isso aqui na prática. É, que que é o buomq, né? É uma
+
+liba um sistema de filas construída em cima do do Hedges. É isso. Você vai instalar o Boomq, vai criar uma kill, vai adicionar jobs para essa kill, vai adicionar workers e vai depois processar isso daqui, né? É relativamente simples. Vamos ver um pouquinho de código. Vamos
+
+lá. Olha só, repositório super simples aqui pra gente dar uma olhadinha. Deixa eu até dar um zoom. Temos aqui o nosso arquivo de producer e o nosso arquivo de worker. Então, vão ser duas aplicações, digamos assim, diferentes. Eu vou rodar
+
+elas independentemente, né? Vão ser dois processos de ban ali distintos. Não tem como eles se comunicarem um com o outro através de chamadas de função. A forma com que eles vão se comunicar vai ser através da nossa fila aqui, que a gente vai gerar aqui, ó. Olha só, esse aqui é o pedaço crítico de infraestrutura. A
+
+gente vai estar rodando um redges dentro do nosso Docker, né? um redges dockerizado. Então você precisa rodar isso daqui porque o Bulq é construído em cima da tecnologia do Redges. Então nota, você tem o producer e o worker. Ambos se conectam aqui, ó, no nosso mesmo host de redes, no mesmo porte, tá?
+
+Ambos tm essa conexão aqui. É muito importante porque senão não vai funcionar. Com isso daqui rodando, ó, eu tô com meu Docker desktop, consegui rodar aqui um RS na Alpine sem problema nenhum. A gente vai ter aqui uma lista de e-mail do nosso produtor. Eu importo do Bull MQ uma kill e eu inicio essa Q.
+
+No exemplo aqui, o que que a gente tá fazendo, né? A gente tá criando aquele job que é um job de envio de de e-mail. É esse nosso exemplozinho aqui, ó, em que o nosso serviço principal, sei lá, o usuário criou uma conta aqui, né? O nosso serviço principal vai informar: "Olha, você precisa enviar um e-mail falando que a criação de conta deu certo". E o nosso worker vai ser responsável por enviar esse e-mail pra gente conseguir desafogar um pouco o nosso service, né? Para ele não ter que
+
+ficar lidando com essas conexões, esse envio de e-mail, lidar com page de terceiros e tal. a gente consegue desacoplar e escalar de maneiras diferentes. Isso é uma técnica bem bacana. Então, criamos aqui o nosso produtor vai começar. A gente tem um set interval que vai basicamente a cada 1 segundo adicionar esse e-mail na fila, né? Cada um segundo ele vai adicionando,
+
+adiciona esse e-mail, adiciona esse e-mail, esse e-mail, esse e-mail, vai enfileirando esses e-mails. E é só isso que essa parte aqui faz. Bom, esse é o nosso produtor super simples. Enquanto o nosso consumidor aqui é o worker, também tá conectado nesse mesmo heads aqui, né? Eles tem aqui o nome de e-mail. Você
+
+pode olhar na documentação. Olha só aqui. Esse primeiro é o e-mail, né? Então, e-mail aqui, e-mail, perdão, é o nome aqui é o my job name, nome do job, né? Criado na na fila, quer dizer, aqui é o My Job Name, aqui é o nome da da fila em si, esse Fu. E o worker também é
+
+criado em cima desse Fu aqui. Você tem vários exemplozinhos aqui na documentação, né? Então o worker criado em cima dessa fila, a cada 500 msundos, ou seja, meio segundo no total, ele vai só dar um console log e escrever, né, que o e-mail foi enviado com sucesso, né? Mas a partir daqui, cara, aqui é código. Aqui eu poderia fazer o que eu quiser, chamar uma função, chamar uma PI externa, né? Ficar tentando numa PI
+
+externa, chamar um resend, por exemplo. E é basicamente isso daqui. Você tem um producer, um worker, você vem aqui embaixo, a gente tem o nosso docker rodando. Eu dou um bun run producer. Meu Deus, producer. Ele vai começar a rodar
+
+aqui, ó. Tá criando aqui os jobs, né? Grace, Linux, não sei o quê. Tá criando esses jobs aqui, adicionando esses jobs na fila. Quanto a minha fila tá enchendo ali na eu dou um bun run worker e esse worker agora vai se conectar ali naquele headsó. Aí a cada meio segundo ele tá
+
+lendo os jobs. Você pode olhar aqui os jobs batem, né? A gente tem aqui os jobs tipo e-mail 3, e-mail 4, e-mail 5, e-mail 6. Aqui você tem todos esses email 4,5, e-mail 6, e-mail 7, enfim. Vai lendo aqui. Se eu removo o meu o meu
+
+worker aqui, não tem problema, né? Eu posso botar ele para rodar depois. Ele vai se conectar naquela mesma fila e continuar de onde ele parou. Se eu removo aqui essa criaturinha, eu paro de produzir, alguma hora esse daqui vai ter ouvido todos e vai ter enviado todos. Já foi. Já foi, né? O último aqui era o job
+
+83, o e-mail 61. E se eu for aqui, esse foi o último. Então, no momento que eu volto a produzir aqui, né? No momento que o meu produtor volta a rodar, faz o 84 85. E aí o consumidor aqui vai, enfim, continuando. É isso. Esse é um
+
+Bull MQ. A gente pegou aqui o exemplo mais simples de todos possível. É basicamente uma cópia do Quickst aqui do próprio da própria referência do Bull MQ, tá? Isso não foi absolutamente nada demais. Eu só queria utilizar isso aqui para mostrar, tentar desmistificar um pouco a complexidade desses tópicos, né?
+
+Muitas das vezes a gente fala sobre sistema design, fala sobre esses sistemas mais complexos, dá a entender que é algo de outro mundo, mas eu quis trazer aqui um pouquinho de prática para você ver que não é nada de outro mundo assim, tá? As coisas não são tão complexas assim. Se você achou isso interessante, esse mês a gente lançou o nosso curso de system design, você vai aprender muita coisa. Você tem banco de dados, você tem no SQL, kills, load balancer, autenticação, consagetura, DNS, vamos falar sobre CRS, vamos falar sobre saga, vamos falar sobre eventourcing, vamos falar sobre Blob Store, vamos falar sobre cash, CDN, deploy, escalabilidade, preparação para entrevistas, entrevistas na prática, modelos de entrevista, exemplos de entrevista, né? A gente tem, a gente faz o design de uma aplicação como WhatsApp, enfim, tem muita coisa aqui. Acabamos de
+
+lançar esse curso, tá? Eu trabalhei nisso por mais de um ano. Se você quiser, o link vai estar na descrição. Como todos os cursos aqui do canal, você vai ter pelo menos um mês para você assistir, ver se fez sentido, se não fez sentido. E no final desse um mês, se você não gostar, achou que não fez muito sentido, você pode pedir reembolso. A
+
+gente dá o reembolso sem você precisar se explicar, nem dar nenhum motivo, tá bom? Não ficamos enchendo saco, não ficamos de perguntinha e tal. Você pediu o dinheiro de volta, você vai receber. Pom.

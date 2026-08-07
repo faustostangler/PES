@@ -1,0 +1,118 @@
+---
+video_title: "Lock otimista e pessimista | explicação de dev senior"
+video_id: vocYtV-9Bys
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vocYtV-9Bys
+video_date: 2026-03-11T13:01:44+00:00
+video_description: |
+  🟢 Vem pra AUVP, a melhor escola de investimentos do Brasil: https://sard.ink/AUVPGalego46
+  -----------------------------------------------
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Hoje vamos falar, a gente já fez uma aula sobre race conditions, então vamos atualizar essa aula e falar sobre lock rapidamente explicando aqui o que que é uma raise condition, né? Imagina que você tem duas threads ou duas máquinas ou dois processos diferentes rodando em cima do mesmo subset de dados, né, do mesmo estado. Então aqui a gente teria, a gente pode imaginar, né, sendo o nosso banco de dados, não necessariamente precisa ser o nosso banco de dados, pode ser qualquer maneira de se manter estado, tá? race conditions não são limitadas a banco de dados. Se você quiser que isso aqui seja, por exemplo, uma classe, que é um singleton, né, uma variável global, uma race condition ainda pode acontecer numa variável global dentro do seu código. Para
+
+propósito prático, para o propósito de hoje, a gente vai imaginar essa race condition como sendo como ocorrendo num banco de dados e a gente vai imaginar cada um desses aqui como um servidor. Então, a gente teria servidor um e servidor dois. A gente pode imaginar que isso aqui são clusters de servidores. Quando você vai rodar suas aplicações na vida real, na maioria da maioria dos casos, elas rodam em clusters, né? Raramente se roda atualmente aplicações em uma única máquina. Isso quase que não
+
+acontece mais. Uma race condition vai acontecer da seguinte maneira, né? Imagina que isso aqui vai trabalhar em cima, sei lá, do número de produtos que tem numa loja. Então esse daqui vai checar e esse daqui vai checar o estoque de determinado produto, né? Eles vão obter aqui a informação de estoque. O
+
+estoque de determinado produto é igual a um. Então, servidor um obtém informação que o estoque é igual a um. Servidor dois obtém informação que o estoque é igual a um. Ambos pensam: "Que legal, posso vender esse produto pro meu cliente?" Ambos, né, vão realizar a venda aqui, né, no processo da dentro do código vai ser realizada a venda. Eles
+
+vão falar aqui, ó, venda, né? Sei lá, fazer venda, método fazer venda. esse método fazer venda internamente vai alterar o o banco de dados ali, né? Vai criar uma venda no banco de dados. Então, de repente vai criar venda server um e vai também criar a venda server 2, né? Criei venda server um, criei venda
+
+server 2. Se ambos esses processos, né, buscaram que o estoque era um, ambos fizeram a venda e ambos pediram para atualizar esse estoque para zero. Então, ambos tentaram atualizar o estoque para zero, né? O que que esse banco de dados vai vai fazer efetivamente, né? Com pseudo código aqui a gente pode ter update, isso aqui é meio pseudo código, tá? Update, venda where ID = 1 2 3 set.
+
+Que update venda, né? Que não faz sentido. Update produto. Ware ID = 1 2 3 7 igual a 0. Se ambos rodam esse mesmo SKL, né? Eles não são idem potentes.
+
+Introdução hoje ficou longa. Vamos conversar sobre como corrigir isso daqui. Antes disso, eu vou te falar do patrocínio de hoje. A UVP, a maior e melhor escola de investimentos do Brasil. Deixa eu botar só rapidinho, ó.
+
+Que legalzinho, né? Fui no evento deles ano passado. Que eu posso vestir isso daqui, fazer propaganda. Que que você vai aprender na UVP, né? Por que que você vai querer fazer parte da VP? Bom,
+
+como tá na tela aqui, você vai se tornar um investidor em oito semanas. Essa é a promessa deles. Arrojada essa promessa? Arrojada, né? Que que eles querem dizer com isso? Eles querem dizer que você vai
+
+ter acesso aqui uma quantidade de informação bastante grande, tá? Enfim, eu sou cliente, aluno, membro da VP, já usei uma infinidade de produtos aqui. A VP vai te ensinar a organizar seus gastos, vai te ensinar sobre renda fixa no Brasil e também fora do Brasil, vai te ensinar sobre renda variável no Brasil e em qualquer que seja o país que você queira investir, China, Estados Unidos, Europa. Vai te ensinar sobre reservas de valor, né? Eu sei que vocês gostam de investir aí em ouro em Bitcoin. Então aqui citados, ó, ouro,
+
+Bitcoin, entre outras, tá? Se você quiser prata, tungstênio, urânio, tá tudo aqui. Você vai aprender, obviamente, investir no exterior. Então, vamos supor, você quer investir no mercado imobiliário dos Estados Unidos, tem lá aulinha sobre REITs, né? RITEITs são uma espécie de trust, né, de de fundo que investe em real estate, é como se chama o mercado imobiliário dos Estados Unidos. Tem RITS que operam na
+
+Europa também, REITs que são donos de pista de ski, cara. Você pode investir em pista de ski, enfim, só para dar exemplo, né? E no final disso você tem uma garantia que se você concluir 100% das aulas, se você concluir todas as aulas e não se sentir confortável investir, pode pedir o seu dinheiro de volta. Você provavelmente não vai querer fazer isso, porque lá dentro da VP você vai ter acesso à plataforma de investimentos deles, que é inclusive a que eu uso para investir no Brasil, tá? Eles conseguem te devolver taxas que você nem sabe que você tá pagando, no caso nas outras corretoras, né, você tá pagando e eles conseguem, né, aqui sujeito a análise de grade te dá um cartão com 1% de cashback e sala VIP, te dá no sentido a anuidade grátis, não tem gasto mínimo aqui, tá? usa esse cartão
+
+por mais de um ano também. Enfim, se você tá aqui nesse canal e ganha pelo menos R$ 4.500 por mês, vou recomendar que você clique aqui no link na descrição, que aqui, ó, faça a sua análise de perfil, você vai ter que responder um questionáriozinho bem rapidinho e se a UVP for adequada para você, você vai ser aprovado e vai poder fazer parte da melhor escola de investimentos do Brasil. Cara, então aqui na última aula a gente falou sobre algumas possibilidades de vencer isso aqui, né? A gente falou sobre Miltex, eu eu lembro de falar bastante sobre Miltex, que é o Mutual Exclusion.
+
+começar aula faz um tempo. Eu acho que eu acabei mencionando que isto aqui era uma era uma possibilidade adequada. Eu mencionei também que outra possibilidade adequada é tipo você fazer um update e novamente aqui pro seu código, tá? Isso aqui vai variar um pouco no nos dependendo de qual for o banco e tal. Você pode fazer um setoque igual a estoque mais um, algo nesse sentido, que é um update atômico que não depende do estado atual do estoque, mas em alguns casos, né? Nesse caso a gente tinha um
+
+produto só, a gente não pode vender dois produtos, então a gente precisa começar a pensar em lock. Como a gente precisa começar a pensar em lock, existem dois tipos de lock. Tem um lock otimista aqui em verdinho que é do outro lado, né? Vou colocar o lock pessimista. Aqui em vermelho, se você não tiver vendo diferença de cor, é porque você tem daltonismo e não tem problema nenhum, tá? Minha namorada tem daltonismo.
+
+Enfim, [risadas] a gente tá falando especificamente desse cenário aqui de banco de dados agora. Tá? Por que de banco de dados? Porque se você esver usando uma ferramenta que não é um banco de dados, como eu falei para você, tudo que mantém estado, pensa comigo logicamente, tá? uma lógica aqui.
+
+Tudo que mantém um estado que reflete algo no mundo real pode sofrer updates concorrentes. Esses updates concorrentes podem causar o que a gente chama de race condition. A gente tá falando de banco de dados, que é a situação mais comum que isso aqui vai ser encontrado. Mas cara, falando assim de de maneira bem bem computação mesmo, da perspectiva do seu servidor, não faz muita diferença se isso daqui é um banco de dados ou se é uma API de outro serviço, tá? realmente não faz muita diferença. Agora, por que
+
+que a gente cita o banco de dados quando a gente traz o exemplo de lock, né? Porque o banco de dados geralmente sou eu quem controlo o comportamento. Então, como eu controlo o comportamento, eu consigo dar um lock. Uma p de terceiro às vezes não dá, né? você não controla exatamente o comportamento, mas enfim, em teoria essa mesma solução pode ser aplicada para tudo que contém estado.
+
+Inclusive locks, se você conseguir visualizar, não são muito diferentes de Miltex, não são muito diferentes de Mutual Exclusion, na verdade. Só para refrescar na memória de quem viu e quem não viu a última aula, um Mutual Exclusion, eu vou ter, tipo assim, classe produtos, eu vou dar um miltex, né, para que só essa trad só isso daqui consiga alterar a classe produto. Novamente seu do código, tá? Esse código aqui você vai copiar e colar e não vai rodar. Aí aqui dentro do meu já já que eu já dei miltex, já que eu já colocar aqui, ó, né? Miltex. Código mais gambiar
+
+do planeta. Aí aqui eu posso fazer o seguinte, né? Eu posso fazer tipo produto ponupdate. Aí eu passo aqui zero e ali embaixo eu dou miltex produto ponr release, né? 100% pseudocódigo, tá? Mas
+
+só para você entender, quando essa trad aqui, essa classe aqui fica travada, ela não pode mais ser, o que tá aqui dentro não pode mais ser alterado, né? Então, enfim, o Miltex funciona assim. Agora, a questão de locks é que a gente tem o otimista e o pessimista e apenas um deles vai meio que fazer essa trava muito forte. Qual que é a diferença? O pessimista você faz o seguinte, faz um bigin, você faz um select balance, né, select saldo, onde o meu ID é um for update. E no momento que eu faço esse
+
+update, eu vou fazer aqui, né, o setar o balanço igual balanço -10. E eu vou dar um commit aqui embaixo. A partir do momento que isso daqui em cima já foi feito, que o select balance from account where e d igual um for update, ele já está travado. Essa transação aqui completa, tá? Ela é uma transação atômica, ela é uma transação que vai passar ou não passar e ninguém vai conseguir alterar essa essa row aqui, ó.
+
+Ninguém vai conseguir alterar essa linha no banco de dados até que esse commit aqui seja realizado. Quais são as vantagens desse lock pessimista? Cara, a primeira vantagem funciona, não tem o que falar. Ele funciona pro propósito dele. Ele é simples, tá? É um modelo
+
+mental bem simples, tá? Consigar de uma maneira muito simples. Aqui você vai ter que a trad o saldo e trava o saldo. Ele trava essa linha. Ninguém mais pode acessar essa linha nesse banco dados.
+
+Não é possível fazer isso. Seus updates eles não vão ser perdidos. É efetivamente isto aqui que é um lock pessimista. Como ele tá travado na ninguém vai conseguir acessar esse. Tipo, do momento que você travou a linha, do momento que eu travei essa linha aqui, o update meio que vai acontecer. Ponto. Ninguém mais pode.
+
+Essa linha do tá travada para mim. Qual que é o problema? Essa linha aqui tá travada para mim. E ao travar essa linha, eu vou causar uma lentidão maior no meu banco de dados, né? Isso aqui consome recurso. Fato de eu não poder
+
+fazer nada concorrente vai fazer com que seja mais lento também, né? Vai botar uma carga maior no banco de dados. Existe a possibilidade de isso aqui causar um deadlock. Como que é um deadlock, né? Se a gente tiver um único recurso, não vai existir deadlock. Mas
+
+imagina o seguinte, ó. Eu tenho aqui, isso aqui são dois processos, tá? Só e o processo B. O processo A ele solicita a trava de, pô, sei lá, da linha 1 2 3. E o processo B ele solicita a trava da linha 125. Ambos solicitaram e
+
+conseguiram essas travas. Eles conseguiram bloquear isso daqui no banco de dados de modo que ninguém mais consegue acessar. OK? A gente consegue imaginar updates que necessitam de mais de uma trava para acontecer, né? Se eu tô atualizando múltiplas linhas, múltiplas coisas diferentes, eu posso ter que o meu processo A primeiro ele trava a linha 1 2 3 assim que ela fica disponível e ele tenta travar a linha 1 25 quando essa linha ficar disponível. E
+
+o meu processo B pode travar a linha 1 25 quando ela ficou disponível, né? E tentar travar a linha 1 2 3 quando ela ficar disponível. Esse deadlock não vai soltar. O processo A ele travou a linha 1 2 3 para ele e ele falou: "Olha, quando eu liberar 1 25, eu sou o próximo a usar porque eu preciso dessas duas linhas aqui para fazer o meu update". E o processo B simultaneamente fez a mesma coisa. Ele travou a linha 1 25. Ele
+
+falou: "Olha, quando a linha 1 2 3 for liberada ali, eu vou travar ela, que eu sou o próximo a usar, sou o próximo a precisar daquela linha. Nenhum dos dois nunca vai liberar a linha pro próximo, porque eles não conseguiram fazer update ainda. Isso aqui é um deadlock, isso aqui muito provavelmente vai acontecer, tá? Tiver updates que spanam, né, tabelas diferentes ou linhas diferentes, enfim, updates muito complexos, em algum momento a chance de acontecer um deadlock vira quase uma certeza. Cabe um vídeo sobre deadlocks. Não é o vídeo que
+
+eu planejei fazer hoje, mas eu lembrei que tinha que falar isso para consquirar o outro assunto. Se você quiser um vídeo de Deadlocks, eu não sei se eu vou fazer, mas eu vou pensar com carinho, tá? É, enfim, escalabilidade lock pessimista, então ela não é tão excelente assim, mas cara, existem outras soluções mais avançadas, conseguem te dar uma certa escalabilidade aqui. Se isso não fosse possível, não existiria banco, não existiria Mercado Livre, né? É quando você vai querer um pessimista, então, pô, quando a consistência e a garantia de que o update passou, ele é absolutamente crítico. Agora vamos
+
+deixar o pessimismo de lado, né? Vamos falar de otimismo agora. Vamos falar de coisa boa. Que que o Lock otimista faz? Ele vai ler os dados mais algum certo tipo de versionamento aqui. Esse
+
+versionamento pode ser um updated at, por exemplo, tá? Um check, algo nesse sentido. Mas updated funciona muito bem. Então a linha do tempo aqui fica um pouco diferente. O nosso banco de dados, ele vai ler aqui estoque e ele vai ler stock versão um e aqui também estoque versão um, tá? Ambos conseguiram, foram
+
+capazes de ler o estoque e a versão. Nenhum deles travou o recurso. O recurso estava disponível pro outro também, tá? Recurso estava disponível pr os dois. Ambos leram isso. Daí tanto o servidor
+
+um quanto o servidor dois vão tentar fazer esse update, vão tentar fazer essa venda. Eles vão tentar rodar esse SQL aqui. Só que eles vão tentar rodar esse SQL com um detalhe, com a versão. Nesse caso aqui você tem endersion igual a 3. Eles vão tentar rodar, né? No nosso caso
+
+aqui de exemplo, o R ID igual iso aqui e o version é igual a 1. Só que quando ele fizer o update, ele vai setar o stock igual a estock + 1 e o version igual a version mais um. Ele vai atualizar a versão. Então, né? Vamos supor que, bom, algum dos dois requests chega antes no banco de dados. Algum dos dois, o banco
+
+de dados decide que vai processar primeiro. Mesmo que ele cheguem no exato mesmo milissegundo, algum dos dois vai ser processado antes do outro. O que for processado primeiro vai atualizar o o estoque aqui da versão. Então vou imaginar o o servidor um, né, conseguiu atualizar o estoque antes. O do servidor dois vai falhar a atualização, ele não vai conseguir rodar esse SQL. Vai falhar
+
+aqui porque você tem essa linha aqui, ó, where e ID = 1 e versão igual a 3. A versão já vai ter subido uma, tá ligado? Então esse update aqui vai falhar. Ele vai ter que ser tentado novamente. Um lock otimista, então a grande vantagem dele é que não bloqueia, ele escala bem.
+
+Ele tem o que a gente chama de truput, palavra bonitinha que significa basicamente vazão. Ele consegue dar vazão para para muita coisa, né? Qual que é o problema? Isso aqui vai adicionar complexidade na sua aplicação. Você vai precisar de uma lógica mais complexa de retes. E você consegue
+
+visualizar com relativa facilidade que se muitas coisas tiverem concorrentemente tentando fazer update em algo, elas vão começar a tropeçar uma na outra, né? muito, muito processamento vai ser perdido. Ele é muito bom quando a gente, quando a gente não espera que esse conflito vá ser muito frequente. Se a gente imagina que esse conflito, que esse requests vão vão bater ali, vão tropeçar um no outro muito frequentemente, não vai ser uma solução tão legal, tá? Então assim, de maneira, eu não gosto de fazer recomendações brandas quando o assunto é locker. Eu
+
+acho que é algo que tem que ser pensado com bastante calma, eh, dependendo de produto a produto, tá? Ambos têm vantagens e desvantagens de maneira bastante branda. Se eu não espero conflito frequente e eu preciso de muita escala, ló que otimista tem uma tendência a ser um pouco mais recomendada. Se eu espero conflitos frequentes, mas eu não ter tanta escala, eu me importo muito mais com a consistência, com o fato de que eu quero que esses updates passem com a, de repente, simplicidade da lógica do meu negócio. Lo que pessimista tende a ser mais recomendado, mas eu não gosto de dar essas dicas porque cada sistema é um sistema. você vai ter que usar o seu seu
+
+raciocínio aí para pensar muito bem sobre assunto. Não são assuntos simples, triviais, tá? Eu apresentei de maneira aqui bastante simplada e [risadas] sinceramente ninguém vai aguentar ver eu ficar falando uma hora sobre locks aqui no YouTube, tá? E eu nem tenho tamanha vasta experiência em lock. Eu estudei eles, eu usei volta e meia, tá? É isso
+
+que eu sei. É, pensa com bastante cuidado e de repente testa por conta própria, tá? Log são um tema complexo que merecem a sua devida atenção. E eu acho que é importante eu ressaltar bastante que bastante coisa de código aqui que a gente fala, tipo assim, ah, sei lá, funções, recursão, estilo de código, clean code, são coisas que talvez não afetem tanto a sua regra de negócio. Isso que afeta. Isso aqui pode
+
+afetar bastante sua regra de negócio. Se você fizer um código que não é tão clean, eu consigo ir lá e corrigir. Se eu fizer uma uma decisão errada aqui, e em banco de dados, o buraco é sempre mais embaixo. É isso que eu tô querendo dizer, tá bom? Se você gostou dessa explicação, você gosta do jeito que eu explico, eu tenho alguns cursos. O link
+
+pra página do meu site que fala quais são esses cursos, vai tá aqui na descrição, tá? Se você comprar qualquer um deles, você vai ter pelo menos um mês de garantia que você pode falar: "Não gostei, quero meu dinheiro de volta". Tá bom? Pro já. Vejamão, pessoal.

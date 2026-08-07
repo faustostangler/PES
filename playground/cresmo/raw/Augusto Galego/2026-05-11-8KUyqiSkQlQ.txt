@@ -1,0 +1,129 @@
+---
+video_title: "ACID e BASE explicado de forma simples"
+video_id: 8KUyqiSkQlQ
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=8KUyqiSkQlQ
+video_date: 2026-05-11T13:00:21+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+Vamos lá. Garantias adic são garantias que os bancos de dados dão pra gente, né? Bancos de dados SQL e no SQL, né? Vamos discutir aqui um pouco os tradeoffs, vamos discutir o que que é, o que que é base. Por favor, eu não quero ter que te convencer que isso daqui é importante, tá? Eu espero que você saiba
+
+que isso daqui é mais importante do que qualquer conteúdo de A que você tá vendo agora. Eu espero que eu não precise fazer o trabalho de convencer as pessoas que é importante elas entenderem como os sistemas que elas fazem funcionam, né? Tipo, não deve ser importante precisar convencer um engenheiro que ele tem que entender o que que faz uma ponte ficar em pé. Eu acho que isso é meio básico. Enfim, se você quer mais conteúdo profundo, por favor, me ajuda dando um like nesse vídeo. Eu não peço like em
+
+vídeo de A, eu só peço like em vídeo que eu acho que é realmente importante para vocês assistirem, tá bom? E esse é um dos casos. Antes de falar disso daqui, a gente precisa falar de quem tá patrocinando esse vídeo e tornando esse vídeo possível, que é a abausi já falei deles muitas vezes aqui no canal, tá? Não vou me alongar tanto agora. A gente tem todos os modelos aqui. A gente tem
+
+aqui na esquerda o deep agent, que agora se chama agent ou agent sessions. Esse botãozinho aqui, ó, que é capaz de fazer muita coisa, capaz de fazer aplicativos do zero. Você pode usar o que ferramental para tudo, tá? Para fazer imagem, para fazer vídeo, para fazer, pô, muita coisa. Tem open claw aqui dentro. Tudo isso por uma subscription
+
+de apenas $ por mês. Você vai ter um ferramental de absolutamente completo que inclui uma IDE, inclui uma Comand Lline interface, tipo Cloud Code. Você quer ver a geração de vídeo, eu consigo te mostrar aqui, ó, a a geração de vídeo. É, é um pouco curioso, tá? Eu vou deixar você assistir aqui e ver aqui a menina do vídeo falar.
+
+>> Tipo, é isso, não vou falar mais nada sobre, tá ligado? Se você quiser [risadas] é geração de vídeo o e todo o ferramental de AK da Abucos que a gente sempre fala aqui no canal, né? Por apenas 10 por mês. Aqui no link na descrição você pode ter acesso a tudo isso, tá bom? Obrigado Abucos por patrocinar o vídeo de hoje, por possibilitar que a gente fale sobre algo que honestamente não é. Ia adase, vamos
+
+lá. Garantias comuns em bancos de dados relacionais, às vezes também chamados, né? A gente fala aqui que é S, que é L, né? Quais são exemplos desse banco de dados? Postgris, mais SKL, Oracle, SQL Server, eh, SK Lite também entra aqui. SK Lite
+
+entra aqui, né? Ele é primariamente relacional. É claro que é base por outro lado, ou base por outro lado é a alternativa aqui, né? É o o inimigo, é o vilão do Ed. É muito bom que um é ácido é básico, né? Bancos de dados, então, no
+
+SQL, bancos de dados não relacionais. vão, não é que eles vão te oferecer essa garantia sempre, mas é que é comum a gente esperar, a gente tentar montar um sistema que tende a isso daqui, tá? Eles não vão sempre oferecer essas garantias. Eu não quero deixar você e e entender que um banco de dados no SKL vai sempre te garantir isso. Não é verdade, é algo que é comum. A gente pode citar aqui
+
+exemplos: Cassandra, Mongo, Dynamo. Acho que tá bom, né? Cassandra, Mongo e Dynamo. Tá bom. O que que cada uma dessas coisas significa? Eu vou citar,
+
+eu vou citar elas e depois a gente vai explicar uma por uma, tá? A é de atomicidade, eu vou citar os nomes em português, então a tradução pode ficar um pouco estranha. C é de consistência, né? Consistency em inglês. E é de isolation, então vamos colocar isolamento. E D é de durabilidade. Tá
+
+bom? Esses são os ID. Eu já vou explicar cada um deles e porque que é importante. Enquanto no base a gente tem o BA, não é B, tá? É BA. É, eles juntaram os dois
+
+aqui, né? Basically available. O que que basically available significa, né? significa basicamente disponível. Não, na real geralmente disponível. Acho que
+
+tá uma tradução OK, né? Não é a melhor tradução do mundo, mas enfim. S de soft state e de eventual consistence. Consistência eventual. Consistência eventual. Como é que eu traduzo o soft
+
+state? É, vamos fazer um freestyle aqui. Estado fluido. Pode ser. Acho que é uma tradução boa. Bom, vamos pro primeiro,
+
+então, né? Atomicidade. O que é o que é o nosso atomicidade? Atomicidade significa o seguinte. Uma transação, ela ela é atômica, né? Átomo indivisível,
+
+né? Se você lembrar lá da origem da palavra que você provavelmente aprendeu no ensino médio, o átomo é aquela unidade que não pode ser dividida. Na verdade, eh, o ser humano já dividiu, né? Mas, enfim, isso daqui significa que não tem como acontecer meia transação. Precisa acontecer uma transação inteira.
+
+Então, imagina o seguinte, né? Eu quero, é, eu vou transferir R$ 100 para alguém, né? Então, na minha conta vai ter menos 100 da conta do Augusto e vai ter mais 100 pra sua conta. Você que tá assistindo esse vídeo, o seu nome é provavelmente Luca, um dos nomes bem comuns de quem é um pouquinho mais jovem que eu. Então, eu, Augusto, estou transferindo R$ 100 para você, Luca. O
+
+que que a Tomicidade diz aqui? Diz que vai ser subtraído 100 da minha conta e adicionado 100 na conta do Luca. Caso alguma dessas operações não funcione, a operação inteira vai ser cancelada. Ela precisa passar por inteiro ou ela não vai passar. Isso é atomicidade. Essa é
+
+uma das garantias que o banco de dados relacional tem. E você pode confiar nisso daqui, tá? Não vai existir, a não ser que ocorra uma falha gravíssima de hardware, de repente não vai existir o caso em que uma transação passa pela metade, que uma transação é comitada pela metade sem que isso seja o seu intuito explícito, tá bom? Consistência, o segundo aqui, consistência significa que o banco de dados ele vai passar de um estado válido para outro estado válido, tá bom? Quando a gente tem um banco de dados eh SQL, a gente pode criar restrições aqui no nosso banco de dados, a gente pode criar garantias. Eu
+
+posso falar que, por exemplo, o o meu estoque não pode ser negativo, né? Não pode ser negativo. Isso aqui seria traduzido numa numa regra, na criação da tabela estoque. Ali eu posso criar um constraint, né? Constraint é uma uma restrição que determina que meu estoque não pode ser negativo, tá? Consistência
+
+significa que em todos os momentos o nosso banco de dados vai estar internamente consistência. internamente consistente. Eh, as regras que eu defini não vão ser quebradas, certo? Se eu tenho uma obrigação de que uma loja tenha um usuário que seja o dono dessa loja, né, você pode imaginar, tem a tabela loja, tem a outra tabela aqui, usuário, eu tenho uma obrigação que a loja tenha pelo menos um usuário, eu acho que é assim que se representa, tá? Me desculpa a faculdade se eu tiver errado. E o usuário pode ter n lojas.
+
+Nunca vai existir no meu banco de dados o caso de uma loja sem usuário, tá bom? Isso não vai acontecer porque não é consistente, não é internamente consistente e isso é uma garantia que os bancos de dados nos dão, tá? A próxima é isolamento. Isolamento é o seguinte, né? Uma transação não vai afetar a outra transação. É basicamente isso. Você tem,
+
+por exemplo, duas pessoas tentando comprar o último produto em estoque. Essas transações não vão afetar uma a outra, né? Mas como as duas estão tentando comprar o último produto, uma deve passar, outra deve falhar. Não é para haver um caso de de uma interferência de uma transação em outra transação que não tem nada a ver, tá? Isso não não vai acontecer. Agora isso
+
+não significa, presta bem atenção aqui, isso não significa que se eu tentar dar tipo assim, set precisa do código novamente. Não lembro como é que se faz isso aqui em SKL. É perfeitamente bem. Set balance igual a 0 where. Ou na verdade, né? From accounts set balance
+
+igual a 0 where a id, né? igual a 1 2 3. Se eu tentar rodar isso daqui e em paralelo eu rodar uma transição que vai alterar o meu balance para 15 e eu rodar essas duas meio que juntas aqui, uma não vai interferir na outra, mas o valor final do nosso saldo, né, vai ser ou zero ou 15. Não é porque uma não interferiu na outra que as duas não rodaram. As duas rodaram aqui, tá?
+
+Enfim, só para você não confundir e não achar que isso daqui é isolamento. E por último, durabilidade. Durabilidade diz o seguinte: se o banco de dados disse que algo foi executado com sucesso, foi salvo com sucesso, e se algo está salvo, tá? Tá feito. Se eu puxar o o meu hardware do dos bancos de dados da tomada, né, e claro, não aconteça nenhuma falha no hardware, quando eu ligar, ele vai est lá ainda, os dados vão estar lá armazenados, tipo, se o seu sistema crashar, você não vai perder tudo, tá bom? Essas são as garantias
+
+acid. Vamos falar então sobre base e vamos comparar os pontos positivos e negativos e porque às vezes uma faz sentido do que outra e enfim. Base é um pouco mais fácil, tá? É, elas são garantias, digamos assim, mais fracas. O geralmente disponível significa o seguinte: o sistema vai tentar responder mesmo se partes dele estiverem falhando, tá bom? Um banco de dados não pode te
+
+oferecer isso, né? Porque se parte deles estiverem falhando, de repente você não consegue garantir atomicidade, você não consegue garantir, enfim, dar as outras garantias. O estado fluido nos diz que o o estado interno do banco de dados, os dados do banco de dados podem ser alterados mesmo sem que haja um novo input, porque existe aqui um uma digamos assim, uma coreografia, uma sincronicidade, um sincronismo, talvez em que diferentes réplicas podem estar se sincronizando, né, atualizando dados entre elas. Então pode existir aqui um tempo de propagação entre diferentes réplicas, tá? Enfim, isso daqui é para falar que não existe uma garantia do estado interno do banco, diferente do do asset aqui, né? E o mais legal aqui,
+
+consistência eventual. Que que significa consistência eventual, né? Você vai ter algumas cópias do dos dados em algum lugar, né? Por exemplo, o dynamo database, ele faz você conseguir escalar pro mundo inteiro, tipo do zero assim. Isso significa necessariamente que você vai ter algumas réplicas dos dados.
+
+Então, vamos supor que eu faço uma transação nessa, ó. Vamos colocar aqui, ó, réplica. Você tem três réplicas, tá? Você pode imaginar isso como sendo três, sei lá, máquinas diferentes ou três instâncias diferentes, enfim, o que quer que seja. Quando eu atualizo os dados aqui, vamos supor que eu atualizei o meu saldo para 150 e nas outras réplicas o saldo ainda tá em 80, existe um breve período de tempo em que esses dados ainda não foram propagados para as outras réplicas. Ou seja, é possível,
+
+não é comum, mas é possível que eu atualize meu saldo para 150, eu dê um get no meu saldo e eu eu veja, né, eu leia ele como sendo 80, mesmo eu já tendo atualizado ele para 150, porque todas as réplicas não foram atualizadas ao mesmo tempo. Existe um tempo de propagação aqui. Isso é um problema. Depende do sistema que você tá montando, tá? Se a gente tiver falando aqui de número de likes no seu post de LinkedIn, não tem o menor problema esse tempo de propagação, tá? Compreendido isso, a
+
+gente consegue compreender um pouco das diferenças entre banco de dados relacionais e não relacionais. E o que que cada um vai te entregar aqui, né? O que que e banco de dados relacionais te entregam? Te entregam corretude. Te entregam corretude e consistência, né?
+
+Os dados vão estar coerentes sempre. Te entregam consistência forte, certo? Não consistência eventual, uma consistência forte. Aqui usando de novo ali o exemplo do saldo bancário, que é um exemplo que eu gosto bastante de utilizar, você pode eh forçar uma garantia de que a partir do momento que você escreveu ali, você sobrescreveu o seu saldo, todas as vezes que esse saldo for lido, né, ele já vai est consistente, vai ter uma consistência forte, embora a gente já falou várias vezes aqui no canal, você não armazena saldo no banco de dados, tá? Você vai, a não ser que seja um banco de dados só para leitura, mas enfim, você não sobreescreve saldo, isso tá errado. Você tem algo mais estrito,
+
+tá? algo mais, digamos assim, burocrático. Talvez as garantias S de te forçam a seguir essas regras aqui, né? E na verdade elas forçam o banco a seguir essas regras. E por forçar o banco a seguir essas regras, porque imagina da perspectiva do banco de dados. Imagina
+
+que eu vou, eu quero criar que, tipo assim, eu não posso ter um e-mail duplicado, certo? E aí vem um usuário, eu tento criar um usuário novo, né? Eu já tenho o usuário ali, ó, augusto@mail.com. Vem outro usuário tentando criar a conta dele com o mesmo e-mail, augusto@mail.com.
+
+Como que seu banco de dados faz para garantir que essa regra vai ser seguida, né? Para garantir que a gente não pode ter e-mailos duplicados? Cara, ele vai ter que olhar ou ele vai olhar todos os usuários, usuário por usuário, para garantir que esse e-mail não tá duplicado. E se e somente se o e-mail não estiver duplicado, que ele vai escrever uma linha nova no banco, ou então a gente vai ter que ter a criação, a construção de um índice e ou um índice hash, provavelmente aqui, tá? Um hash index. e a gente vai ter que consultar
+
+nesse índice se o e-mail tá presente lá no índice ou não. Essa garantia de consistência então nos tem uma contrapartida aqui de performance. Você tem um pouco mais de dificuldade em ter uma performance boa, ou seja, necessariamente um pouco mais de dificuldade em escalar para milhões de usuários. As garantias base, por sua vez, nos dão muita. Aqui, ó, ailability, traduzido em português, melhor tradução, acho que é disponibilidade, porque, né, imagina que você tem, tipo assim, você quer garantir que o e-mail é único e eu vou escrever um e-mail novo no meu banco de dados. Se por algum motivo parte do
+
+sistema não tiver funcionando, se uma das partições não tiver funcionando, se uma das chards não tiver funcionando, se uma das réplicas não tiver funcionando, talvez eu tenha que optar por não aceitar essa transação, porque eu não consigo dar as outras garantias no base, cara. Tanto faz, você pode aceitar a transação e sincronizar internamente depois se tiver uma se tiver um problema de de consistência dessas regras. Bom, ninguém te falou que era garantido a consistência aqui. Ninguém te falou que a gente ia garantir a regra de que um e-mail é único, né? Isso nos dá uma escalabilidade boa e nos dá uma flexibilidade no geral, tá? Ou seja,
+
+naturalmente tem coisas que são mais adequadas pra gente ter uma corretude forte, uma algo mais estrito e coisas que a gente pode, né, ter aquele molejo ali, aquele dar aquele jeitinho de, pô, tanto faz se tiver perfeitamente correto, né? Não faz tanta diferença assim. Agora eu quero te contar que na prática eu já vi banco de dados relacionais sendo usado para coisas que não precisava e bancos de dados não relacionais sendo usados até em instituições de pagamentos. Então o que eu vou te falar agora é o que seria assim o academicamente bonito de se falar, não necessariamente eh sempre que a gente vê na prática, tá bom? Porque principalmente quando você começa a escalar muito, você começa a escalar tanto, você começa a fazer umas otimizações meio bizarras que, tipo assim, às vezes você larga de mão de de usar um postgress porque você tem um sistema que funciona de uma maneira totalmente diferente do que um sistema pequeno funciona. Tipo, você tá
+
+sincronizando dynamos em diferentes regiões e e chega num ponto que essas regras já não se aplicam tanto, tá bom? Quando você escala para, tipo assim, 100 milhões de usuários, você basicamente fala: "Não, quer saber? esquece todo o resto. Eu quero aqui disponibilidade, esclabilidade, o resto a gente dá um jeito depois, tá bom? Dito esse disclaimer, vamos lá. Pagamentos e
+
+banco, a gente geralmente quer uma consistência forte, tá? Compras, lojas, estoque, é, tickets, tipo esse número de coisa que esse tipo de coisa que geralmente se traduz a algo físico e palpável no mundo real e que precisa tá correto, né? Eu não posso vender um acento a mais no avião que não existe, embora as companhias aéreas façam isso e já fizeram isso comigo. O processinho bom que foi aquele, hein? ganha uma grana legal. [risadas]
+
+E aqui, quando que você quer uma escalabilidade gigantesca aqui, né? Já dei a dica aqui, né? Rede social, tipo, se o número de likes tiver um pouco inconsistente, faz diferença. Se Justin Bieber recebeu 1.325.247
+
+likes ou 1.325.249 likes, não faz menor diferença. Analytics no geral ou logs, né? Tipo, se você perder um log em um sistema muito grande, geralmente não tem problema. Se
+
+eles estiverem um pouco fora de ordem, geralmente não tem problema. Não, log, né? Tipo assim, eu vou logar as requisições que foram feitas, que consistência que precisa ter. Cada requisição é independente uma da outra, né? Não tem que ter, não precisa tanto de consistência assim, você vai logando e deu cash, né? Porque cash é
+
+naturalmente algo meio efêmero, então tanto faz. Tipo, vai ser deletado, vai ser limpada essa cash, esse tipo de coisa, né? De repente sistemas de recomendação, tipo, faz diferença. O sistema de recomendação não contabilizou que hoje você deu um like no filme Poderoso Chefão. É, não faz não, n é sério, tipo, daqui a pouco vai contabilizar, sabe? Enfim, esses são ess
+
+de base. Se você gostou desse conteúdo e você tá assistindo esse vídeo, né, no dia do lançamento, trazer para cá, vai, a gente tá para lançar um curso de system no mês que vem, em junho de 2026. Então, se você tá vendo esse vídeo em maio, a gente tem uma lista de espera. O link paraa lista de espera vai estar na descrição. Que que você vai ganhar nessa lista de espera? Acesso antecipado ao
+
+curso e preço melhor do que todo mundo. Eu tô há mais de um ano produzindo esse curso de system design, tá? Inclusive eu falo sobre essa de base lá. Se você tem interesse, recomendo que você entre aqui na lista de espera. Se está vendo esse vídeo em junho, você já pode comprar o curso, tá? O link vai tá na descrição,
+
+tá bom? System design tá muito importante esse ano, principalmente, né, na época, na era da Iá, que saco ter que falar isso o tempo todo. Então você precisa aprender isso daqui para avançar na sua carreira, né? Se você tá iniciando agora na programação, tipo assim, galego, eu nem entrei no meu primeiro emprego ainda, faz sentido para mim? Acho que não. Tô sendo bem sincero
+
+aqui. Acho que se você nem conseguir o seu primeiro emprego, não faz tanto sentido, tá bom? Se você tem ali alguns meses, alguns anos de experiência, aí começa fazer bastante sentido. Se você é pleno para senior, esse aqui é o curso para você, tá? É perfeitamente mirado em quem é de pleno para sior. Se você for
+
+júnior, você vai conseguir entender super bem, não vai ter nenhuma dificuldade, eu acredito. Se tiver, a gente vai adicionando aulas novas para explicar de maneira mais introdutória e mais simples, né? Mas enfim, Junior Play no Senor faz muito sentido estudar system. Se você já é um stff, né? Pô, galego, eu tenho cinco anos de experiência sendo stff, né? Já estudei
+
+tudo isso, já fui aprovado no Google. Esse curso é para mim? Não, não é para você, tá? Espero que tenha ficado claro quem que vai tirar proveito disso daqui. Se você achar que não fez sentido ness comprou e pensou: "Pô, galego, não curti, não fez sentido para mim". Como
+
+todos os cursos aqui no canal, você vai ter um mês que você pode pedir reembolso sem me dar motivo algum, né? É só olhar, abri ali, olhei, via umas aulinhas, pensei: "Pô, não gostei, não fez sentido, não acho que eu vou aprender e tal". Pode pedir reembolso, não tem problema nenhum, tá? A gente tem essa garantia há mais de um ano.

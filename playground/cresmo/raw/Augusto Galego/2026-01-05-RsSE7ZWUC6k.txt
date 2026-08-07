@@ -1,0 +1,94 @@
+---
+video_title: "Como Validar Email do Jeito Certo!"
+video_id: RsSE7ZWUC6k
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=RsSE7ZWUC6k
+video_date: 2026-01-05T13:00:56+00:00
+video_description: |
+  🤖 Use a abacus IA, AppLLM, ChatLLM, CodeLLM e o Deep Agent por apenas $10: https://chatllm.abacus.ai/agd
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  📖 Meu curso de estruturas de dados e algoritmos: https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  Workshop 10 LeetCodes Para Entrevistas: https://pay.hub.la/RGfq0dk8iqDeL5IC5yog?coupon=WORKSHOP
+  
+  
+  contato: algoritmos.galego@gmail.com
+---
+Vamos falar real. Isso daqui, essa rejex aqui, talvez ela funcione e talvez ela quebre o seu servidor se a pessoa souber o que ela tiver fazendo, for um pouco mal intencionada. É o seguinte, hoje a gente vai explorar o padrão que existe para e-mails, tá? O por que é tão complicado a gente fazer uma rejex para e-mail, porque é tão complicado a gente validar que o e-mail existe e funciona e tá apto a receber e-mails? O que que é tal da RFC5322?
+
+Por que que muito provavelmente você tá validando e-mails da maneira errada ou da maneira não mais otimizada ou de uma maneira que pode vir dar problema? E o que que a gente pode fazer de fato a respeito disso? O que que não vale a pena fazer? Antes disso, vou rapidamente falar do patrocínio de hoje, que é a aba cuái. É o seguinte, né? Por apenas ó,
+
+você pode usar todos os modelos, os mais atualizados, incluindo o Nano Banana Pro, que se você souber o que você tá fazendo, pode gerar imagens com altíssima qualidade. Ele tem, né, além das imagens, né, todos os outros modelos, enfim, os melhores modelos aqui. O Codex é muito bom para fazer código, o GPT 5.1 com fim, quem é bom também, o Gemini 3 é excelente para código, enfim, você pode escolher qualquer um, pedir por imagem, pedir por código, pedir por PowerPoint, você nunca mais precisa fazer um PowerPoint do zero. Eu inclusive já usei isso aqui, tá? É, é legal. Mas não termina por
+
+aqui. Você vai ter acesso a IDE com agente de IA chamada code ll. Posso pedir, por exemplo, para ele fazer uma alteração aqui na função, né? E a IDE faz a alteração que eu pedi. Só preciso aceitar aqui e tá pronto. E você tem
+
+acesso também ao depagent que criou esse MVP para mim com um único prompt. Tem bastante gente usando de pagent para hospedar alguns backends mais simples, como por exemplo backend de bote de Telegram. Eu vi bastante gente fazendo isso. Olha aqui, ó. Nossa imagem ficou pronta. Cara, esse dano banana pro é
+
+absurdo. É difícil dizer que isso aqui é Ih, tá? Se a pessoa não tiver prestando muita atenção, é bem difícil. Enfim, todo esse ferramental aqui por apenas $10 por mês. O link tá aqui na descrição. Cara, vamos lá para essa RFC
+
+aqui. O que que essa RFC diz? Essa aqui é a spec que diz o que que é um e-mail que pode ser válido, o que que é um e-mail que não pode ser válido, tá? Ela tem muito mais flexibilidade do que você imagina que ela tem. Como assim? Você
+
+imagina que um e-mail válido é tipo assim, algoritmos.galego@gmail.com. Esse e-mail aqui é válido, né? Eh, é um e-mail válido, tá certo? É um e-mail
+
+válido. Se eu tirar esse galo aqui, fizer algoritmos p@gmail.com, ele é válido? E a resposta que sim, ele é válido também. Se eu fizer algoritmos pon, eu acho que uma letra que depois isso daqui também é válido, só que fica pior, tá? fica bem pior. Se eu colocar
+
+isso daqui entre aspas, ele continua sendo válido. E se entre dentro das aspas tiver um espaço, ele continua sendo válido. Isso aqui é um e-mail perfeitamente válido que vai quebrar sua rejax, provavelmente. Se dentro das aspas eu tiver um @gmail.com, aí fecha aspas aí @gmail.com, isso
+
+continua sendo válido. Esse po que eu tô brincando, tá? Mas isso aqui também é um e-mail válido, tá? Essa essa coisa aqui tá tá valendo, tá? A RFC permite, existe uma Rejex oficial para você pegar todos os e-mails válidos, tá? A Rejex Oficial,
+
+ela tem mais de 6.000 caracteres de Rejex. É uma Rejex que tem mais de 6.000 caracteres. Num vídeo, eu não sei se eu vou lançar esse vídeo antes ou depois, mas enfim, saiu ou vai sair um vídeo aqui no canal de falando como que Rejex pode travar o seu servidor, né? E é
+
+legal a gente evitar Rejex, se possível, principalmente as bem complexas assim. Tem uma segunda parte, tá? Tem uma segunda parte legal. Imagina que você é um alemão e você tem um sobrenome alemão super comum. De repente sobrenome alemão que fez gol em uma Copa do Mundo.
+
+Miller. Aqui, ó. Miller.DdeDdeutchland. Inclusive, se alguém souber a resposta, alguém me explica porque que a Alemanha se chama Alemanha, Germânia e Deutland.
+
+Não faz sentido, tem três nomes o país. Mas tá, o nosso Miller Deutland aqui é Puny Code. Em Punyode isso vai ser isso daqui, né? Então esse nome de domínio é um nome de domínio válido, que na real se traduz para isso daqui, que também é válido. Então se você decidir fazer um validador de e-mail, o seu validador de e-mail precisa aceitar caracteres de Unicode, converter para punicode e checar se o domínio resultante, né, se o domínio Miller.Dddeutland
+
+é válido. Tá ficando cada vez mais complexo, né? Tá ficando cada vez mais complexo. Vamos esquecer por um segundo a nossa reje validação de e-mail. Vamos falar de outro tópico. Vamos falar de
+
+MX. Você já deve ter visto em algum lugar algum código tipo isso daqui, tá? Em MX10 alt sei lá o qu, SMTP, talvez você já tenha visto. Você foi dev por algum tempo, você viu isso aqui. O que que é MX? MX é mail exchange, que é uma
+
+espécie de DNS que vai te informar aonde que esse domínio, na verdade, qual email server, qual servidor de e-mail é responsável por esse domínio, tipo uma DNS, né? Um domain name system. Então ele vai saber para onde enviar aquele e-mail. Você pode fazer uma checagem. Você pode usar aqui, ó, é digmxample.com,
+
+que seria o nosso site exemplo aqui. E isso daqui nos responde alguma coisa que eu não faço menor ideia de como interpretar, né? Você consegue usar libs em Python, em JavaScript, aonde você quiser para fazer o tal do check, para fazer o EMAX check. você vai checar se aquele domínio que foi passado, se o domínio, por exemplo, Miller.Dduttland tá ali configurado e a gente consegue rotear isso para um servidor para receber os e-mails de fato. O legal
+
+disso daqui é que a gente pode ter um e-mail que é sintaticamente válido, mas que não pode receber e-mails. Por exemplo, se eu tenho um site que não existe, tá? Esse site aqui não existe e eu tento registrar o e-mail augusto@sitekexiste.de, porque a gente tá usando pd ainda, né? Pom. Sintaticamente isso aqui é válido,
+
+mas se eu fizer o EMAX Check, ele vai ver que esse domínio aqui não tá registrado e que a gente não consegue encaminhar esse e-mail para lugar nenhum. E-mail nunca vai chegar. O McAck ele é legal, só que ele tem um problema. Vamos supor que eu sou o dono do domínio, augustogalego.com. Eu acho que
+
+eu realmente sou dono desse domínio, tá? Se eu não for, quando esse esse vídeo sair, eu vou ter comprado esse domínio já. Enfim. [risadas] Então você vê aqui, ó, o e-mail mi@augustogalego.com.
+
+Esse meio aqui possivelmente existe, mas o e-mail, pô, o e-mail totalmente aleatório aqui @augustogalego.come, esse e-mail não existe, mas o MXCheck vai saber para onde rotear esse e-mail, né? O MXCK tá tá preocupado com o domínio aqui. E se o meu domínio for capaz de receber e-mails, isso aqui dá positivo, mesmo que o e-mail não exista. Então, perceba, né? A validação de rejex
+
+ela é muito complicada, ela é longa, ela é até desencorajada em certos casos. O MX Check ele não me dá autoritativamente se o e-mail existe, mas é um caminho. A gente tá tá chegando numa solução aqui, mas existe a última validação, a ultimate validation, que você não deve usar. Cara, por que que esse vídeo é tão complexo, né? É, a gente tem aqui SMTP clouds. É o seguinte, né? SMTP significa
+
+simple mayo te transfer protocol. Simple mayo transfer protocol. Existe um comando que permite que você cheque se o e-mail existe sem enviar um e-mail para aquele e-mail. Comando é isso aqui, ó. Você daria esse comando aqui em teoria, rcpt.
+
+Aí o seu e-mail lá, né? Algoritmos.galego@gmail.com, tá? OK. E aí você vai obter uma resposta
+
+de se essa mailbox ou não existe. E isso em teoria valida que o e-mail tá apto a receber e-mail, que tá tudo certo, que a gente pode, né? O e-mail foi validado de fato. Qual que é o problema aqui, né? Isso daqui pode ser abusado. Eu posso
+
+pegar um e-mail de uma empresa média aí, vamos supor empresa mais aleatória, sei lá, Versel. E eu posso testar, posso spamar todos os e-mails que podem possivelmente existir na Versel, né? Eu testo monte nome aleatório, eu descubro todos os e-mails de todas as pessoas que existem lá na Versel. Então, por causa desse risco, um risco de privacidade até, esse cout aqui, esse esse comando aqui em muitos servidores de e-mail vai ser bloqueado. Ou vai ter rate limit, ou vai bloquear, ou não vai responder, enfim, a gente não consegue utilizar isso aqui pra validação, porque muitos e-mails, por uma questão de privacidade mesmo, não aceitam. Ponto, acabou. O que
+
+nos leva pra verdadeira última validação que existe e única validação que existe. Para você validar que esse e-mail aqui de fato existe, você manda um e-mail para ele e pede para ele confirmar numa numa caixinha clicando no botãozinho e aí a pessoa confirma que que o e-mail existe com o e-mail dela. Essa é a verdadeira validação de e-mail, mas a gente pode, né, prevenir alguns tipos de coisa, né? A gente pode prevenir uma certa trollagem aí, prevenir algumas más atenções. Como que a gente faria isso então baseado em tudo que a gente aprendeu? A gente pode ter alguns
+
+passos. Primeiro passo é no front. Lembra que eu falei que a Rejax tem 6.000 linhas? É uma Rejax super complexa, né? Para validar que o e-mail
+
+é de fato plausível. Cara, no frontend você não precisa de uma Rex muito complexa. No frontend você precisa basicamente validar que tem um arroba e validar que depois do arroba tem um domínio válido, né? Validar que depois do arroba tem, sei lá, um ponto, não sei. E de repente olhar aqui que aqui na frente não é uma uma string em branco, né? Algo nesse sentido. E tá tá OK, tá?
+
+Essa é uma rejex razoável pro seu front utilizar para validar o input do formulário. Não preciso de mais do que isso. Agora o segundo passo, o front end vai enviar esse e-mail para um backend. Cara, esquece rejex, usa uma lib para isso, tá? Se tiver usando jungle, por exemplo, você vai usar aqui, ó, jungle.
+
+Validators, email validatory, e tá bom? Uso uma lib, não cria uma reject já pronta, não copia uma reje já pronta. A a melhor forma que eu vou recomendar é você usar uma libro. JavaScript tem libro? Todas as linguagens têm algum tipo de libar o e-mail e conseguem garantir que o seu backend não vai ser travado pela rejex. Eu podia ter feito
+
+vídeo junto, né, o vídeo de travar, mas enfim, já já vai sair, tá? O vídeo de travar o servidor com rejex é possível, não é nem difícil, inclusive depois disso, você pode fazer o MX Record lookup. Eu talvez não vejo tanto propósito nisso daqui, porque o último passo que eu vou recomendar de qualquer maneira é mandar um e-mail de confirmação, tá? Se você tá fazendo algo, tipo uma lista de e-mails, você manda e-mail de confirmação. Se você tá fazendo o sign de um usuário para criar uma conta no seu site, manda e-mail de confirmação, tá? Vai simplificar sua
+
+vida. É a maneira, a única maneira garantida de garantir a legitimidade de um e-mail e você ainda consegue, né, validar que a pessoa de fato é dona do e-mail. Esse é o único jeito. Então é isso que aprendemos. Front-end, validação simples. Backend, usar alguma
+
+lib. Preferencialmente vale a pena mandar um e-mail de confirmação. Você também aprendeu algo sobre SMTP e algo sobre Max? As coisas elas são mais complicadas do que parecem, né?

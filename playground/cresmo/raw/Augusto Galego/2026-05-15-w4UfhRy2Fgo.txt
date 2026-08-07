@@ -1,0 +1,125 @@
+---
+video_title: "Como fazer deploy sem derrubar seu app"
+video_id: w4UfhRy2Fgo
+channel_name: "Augusto Galego"
+channel_id: UCLW51-XEzuOm5RwPMChHBMw
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=w4UfhRy2Fgo
+video_date: 2026-05-15T13:01:44+00:00
+video_description: |
+  🔴 Use a VPS da HostGator : https://www.hostgator.com.br/52508-13-3-12.html
+  
+  Repositório no github: https://github.com/gutogalego/blue-green-vps
+  
+  💻 Combo de TODOS os cursos do canal (completo com o curso de system design): https://pay.hub.la/P0yyewR9nMptKS9XN9YK?coupon=YOUTUBE
+  
+  📖 Curso de Estruturas de Dados e Algoritmos + Leetcode:  https://pay.hub.la/L8wi9vio7WPnWbmF8ZIO?coupon=YOUTUBE
+  
+  👉 Curso "O Roadmap pro seu Próximo Emprego": https://pay.hub.la/hrZKmxeXzeLN8AvObjVJ?coupon=LANCAMENTOYT
+  Vem aprender a melhorar seu CV, Linkedin, encontrar vagas e passar em entrevistas 👆
+  
+  💼 Lista de espera do curso de System Design: https://hub.la/g/soRquK6yh8ZAC0tVg3Tz
+  
+  📚 Recomendações de livros: https://www.augustogalego.com/books
+  
+  contato: algoritmos.galego@gmail.com
+---
+O vídeo de hoje tá sensacional. Olha só, aqui a gente tá conectado no meu servidor, né? Eu tô acessando a minha VPS aqui. Eu não conectei o domínio ainda, então eu tô acessando direto no IP, tá? Mas enfim, esse aqui é meu browser, é meu Google Chrome. Tipo
+
+assim, você pode imaginar que a gente tá no site augustogalego.com e a gente tá fazendo um bluegre deployment, em que agora o nosso servidor está servindo o código green, tá servindo a nossa versão um. Eu já fiz o deploy para V2, então a gente tem também rodando uma versão blue. E se eu acessar aqui o meu terminal, ó, e rodar esse comandinho aqui, ó, switch my app blue, eu dou um enter aqui, ó. Foi o meu nex mudou aqui e eu dei um F5, né? Aí a gente virou pra
+
+versão blue. Ambas estavam rodando em paralelo. Que acontece aqui é o seguinte e é isso que a gente vai ver hoje na prática, tá? Eu tenho aqui a minha VPS da HostGator, que é a patrocinadora do vídeo de hoje, tá? A gente vai falar um pouquinho mais deles no futuro, mas isso funciona também caso você queira ter um servidor próprio, caso você queira fazer isso localmente, tá? Isso funciona em
+
+qualquer infraestrutura. Os conceitos que eu vou explicar aqui são generalizáveis, tá? A gente tá usando a hostator porque eu acho que vale muito a pena. Eu acho que tem um custo benefício muito bom, por isso que eu fechei essa parceria com eles. E aqui, ó, fazendo o nosso desenhozinho, a gente tá aqui, ó.
+
+Somos esse usuário aqui. Eu estou fazendo uma requisição para a minha VPS. Dentro da minha VPS, eu configurei o seguinte. Eu configurei uma Enginex. Sim, é assim que se pronuncia. Enginex,
+
+né? Não é enginx ou sei lá. E essa enginex está agindo, se você entende um pouco do sistema design aqui, né, como o meu web server. Ou então a gente pode argumentar que isso aqui é um reverse proxy. Na prática, minha nex lida com o usuário e faz essa ponte entre o usuário e o servidor de aplicação. Nota, precisa
+
+ter outra máquina para isso? Não. Ambos estão rodando aqui na mesma VPS. Você pode replicar isso localmente também, né? Essa é a beleza do software moderno.
+
+Você não precisa de múltiplas máquinas para replicar isso daqui. Aqui eu tô rodando a V1 do meu aplicativo, né? Então temos AV1, uma instância tá rodando aqui e essa instância tem um detalhe aqui, ó. Ela tá rodando no porte 3001. Enquanto, por sua vez, a minha V2 aqui, o Blue tá errado. Perdão, galera,
+
+eu confundi. O, enfim, é, tá, tá correto. Mas o que você tem que entender que ah, o correto é que a repção blue é a que tá live nesse exato momento. Então, a blue tá rodando na 3001, tá? E a green é a V2, é que tá rodando no 3002. É que, enfim, eu tava nessa demo
+
+aqui, eu fiquei trocando green blue, green blue, green blue para garantir que funcionava. Eu acabei me confundindo em qual era, qual. Mas tradicionalmente quando a gente fala de blue green, na prática não muda nada qual cor e qual, mas enfim. A V1 então é a versão atual do nosso app e a V2 é a nova versão do nosso appiada agora. Então você pode imaginar que isso daqui é tipo assim comit 3004 na main e esse aqui de baixo é o commit 3005 na main, tá? Agora olha
+
+só o que que tá acontecendo aqui que é bem legal. Eu tenho meu scriptinho aqui, né, que eu posso mudar o app de blue para green. E o que que esse scriptinho tá fazendo? Ele tá subindo um e derrubando outro? Não, ele tá apenas mudando essa setinha aqui, ó. Ele tá
+
+mudando para onde as requisições do usuário vão ser direcionadas, se vai ser pro blue ou pro green. E eu posso ficar mudando de um pro outro. Em teoria, o deploy blue green vai funcionar da seguinte forma, né? Eu vou subir uma instância green, eu vou testar ali a minha instância green, ver que tá funcionando e tal, né? Eu como deve vou acessar essa porta aqui, ó. Eu vou
+
+acessar por aqui que o usuário não tem acesso e eu vou testar e ver que tá funcionando. Quando eu garantir que tá funcionando, eu vou flipar minha Endnex, vou falar: "Olha, Endnex, pode mudar o tráfego, tá live, tá tudo certo, tá funcionando, vira o tráfego para cá e deleta essa instância aqui." Esse é o blue green na prática e a gente vai ver como fazer isso hoje. Novamente você pode rodar isso localmente, mas a primeira coisa que eu fiz foi vir aqui no site da Rushgator, tá? que é a patrocinadora do vídeo de hoje. E eu
+
+optei aqui por utilizar um servidor de VPS deles. Então, eu tô rodando isso no servidor de VPS para simular um ambiente de um aplicativo real, né, como eu faria para servir isso daqui para clientes. Nota que são servidores muito baratos e com uma capacidade muito muito boa, tá? Os servidores estão localizados no Brasil, então vai ter uma latência boa para você e paraos seus clientes. E o custo é muito baixo. Para esse teste eu
+
+tô usando esse menorzinho aqui, ó. Tô usando o menor servidor de todos e funciona. Consegue servir aqui porque eu preciso muito bem. Se eu precisar aumentar depois, é só eu aumentar depois. Agora, claro, tudo que eu vou te ensinar aqui é generalizável. Como eu
+
+falei, você pode rodar isso na sua própria máquina dentro da sua própria casa. Para um serviço de verdade, não acho que isso faz sentido, mas de repente, se você tiver só aprendendo, pode ser legal, você começa localmente. Também acho que vale a experiência de subir isso no meu VPS, né, para ver como funciona mais próximo do mundo real. E quando você tiver pronto, quando você rodar seu SAS próprio, seu site próprio, seus serviços próprios, eu recomendo o VPS aqui da HostGator. Bom, a gente tem um repositório que eu criei especificamente para essa demo aqui, tá?
+
+Criei com auxílio de A. E eu vou te mostrar como isso daqui funciona também. Primeira coisa que a gente quer olhar aqui vai ser, né, o meu source code aqui e eu quero rodar para ver que isso daqui funciona. Então te dar um git status. Eu tô em main git checkout. Deixa eu dar um
+
+green para ir pra minha branch green, né? Porque o que que eu fiz para facilitar o blue e o green, né? Você pode ver aqui que eu criei duas branches. Eu criei uma branch blue e uma branch green. Então, primeiro vou garantir que esse servidor aqui faz alguma coisa, né, localmente. Vou dar um
+
+npm install. Vou dar um npm start aqui, passando o host e vamos ver aqui, ó. Local host 2.3.000. Serviu o meu green.
+
+Deixa eu fechar aqui, dar um git checkout blue e rodar o blue. Dando enter aqui, serviu o meu blue. OK, tá tudo funcionando perfeitamente bem localmente, tá? Essa parte do código do servidor não vou mostrar porque, sinceramente, não servia um arquivo estático. Qual que é o interesse disso?
+
+nenhum, né? O nosso primeiro passo, então, é dar um SSH pra VPS. Então, tô aqui na minha VPS, né? Posso dar um LS, ver o que que tem aqui. Se você tiver na host, você consegue olhar como faz o acesso ao SSH por aqui, né, pela plataforma deles. Ou então clicar aqui
+
+em abrir o terminal. Ambos funcionam. Eu gosto um pouco mais de dar SSH. E aqui dentro, nota, a nossa VPS precisa de umas coisinhas para rodar isso daqui, né? O meu serviço, como você deve ter visto aqui, server.jjs, JS é é node. Eu
+
+vou rodar node aqui. Então poderia containerizar, fazer um negócio de Docker e tal, poderia. Não é o intuito do vídeo de hoje. A gente quer mostrar o blue green aqui. Eu preciso instalar em Next. É Git também, porque eu vou puxar
+
+os arquivos pra minha VPS dessa maneira, né? É a maneira mais simples, mais tosca de se fazer. Curve e node, tá bom? Então você tem para cada um desses você tem um um scriptinho aqui. A gente vai rodar aqui para, enfim, baixar e ver se funciona, ver se tá tudo tudo OK, né?
+
+Deixa eu dar aqui o meu node das V nove. No não existe, né? Node das V para ver minha versão. OK. Versão 20 de Node. Tá,
+
+tá bom. É o que a gente precisa. Agora aqui dentro da minha VPS, né? Eu vou separar isso. Eu tô fazendo tudo de uma maneira bem simplista, tá? E não
+
+automático e manual, porque eu acho que você aprende dessa maneira. Depois você consegue automatizar as coisas e fazer de maneira mais inteligente e, enfim, rodar scripts mais avançados com a pipeline no GitHub Actions, por exemplo. Você consegue até pedir para uma IAT te ajudar com isso, tá? Não é muito difícil, mas aqui eu vou separar umas pastinhas, né? Então, vou criar uma pasta que vai ter o meu código blue, vou criar uma pasta que vai ter meu código green, vou criar uma pasta aqui também para para next. Então você tem blue,
+
+green, release, shared, vai, cria aí as pastas, as pastas para end. Vamos dar um add user deploy. Eu já criei, eu já criei o usuário de deploy, tá? Mas enfim, não tem problema, né? Agora a gente vai puxar do GitHub, né? Então, tô
+
+aqui, minha VPS está nesse estado aqui, né? Tá meio vaziazinha. Eu tenho aqui as pastas vazias de onde vai ficar o enginex, de onde vai ficar o blue e o green e tal e o meu código está no GitHub. Eu quero puxar esse código que tá no GitHub aqui, né? Código para dentro da minha VPS. Existem algumas
+
+maneiras de fazer isso. Eu vou fazer de repente da maneira mais tosca possível, que é dando um git clone. A gente pode criar uma Meu Deus MKD. A gente pode criar um diretório temporário para armazenar isso daqui. Não, agora deu certo, tá? Deixa eu dar um CD aqui para
+
+dentro já. Eu posso dar meu git clone aqui é para funcionar aqui, né? Tá bom. Copia. Git, clone. Cola e clonou. Ls,
+
+veio tudo. LS. Tá sim, mas ele clonou já dentro do outro território, né? Então deixa eu refazer isso aqui. LS CD Blue Green. Tá, agora tá tudo certinho. Então
+
+a gente tem dentro do nosso diretório temporário aqui os nossos arquivos. E agora chegamos numa parte interessante que é a parte que a gente configura aqui o Endn. Para essa parte eu preciso de confessar que eu não sou a melhor pessoa para palestrar sobre isso daqui, porque eu nunca fui um cara devol. Eu nunca fui um cara de infra, eu nunca fui um cara que mexe nesse tipo de coisa. Então eu não sou a melhor pessoa para te explicar como que isso daqui funciona. Eu tô
+
+fazendo isso basicamente da mesma maneira que você faria isso, que é provavelmente seguir algum tutorial na internet, mas tá. A gente tem o primeiro script que é o My App Start, que é um um script minúsculo aqui para iniciar, né, dependendo da cor que a gente passa aqui, se é blue ou green, iniciar as versões blue ou green do do aplicativo, onde o start de verdade, né, é esse daqui que bota a aplicação para rodar de fato, tá? Esse myap.start Start é apenas para iniciar o botar o Node S ali para rodar efetivamente. A gente tem o deploy My App, né, a gente dá esse comando passando blue ou green. Inclusive, se
+
+você quiser esse repositório, vai ter um link para ele na descrição do vídeo, tá? E aí você tem o porte específico aqui, né, que o porte do Blue é o 301, o caso contrário é 3002. Pouquinho de ferramental aqui para identificar o que que tá rodando, né? Qual que é a cor oposta e tal para não dar conflito. Um eco para dizer que ah, foi foi ativado, vai rodar no porte e tal e tal. Depois
+
+ele faz uns healthcks e em resumo é isso, tá? Isso aqui é para fazer um deploy e para lançar um num porte e outro no outro. Dependendo de qual cor, você tem o switch, que é para virar o tráfego para um lado ou pro outro. São tudo comandos simples que a gente vai executar na nossa máquina, tá? Para fazer a Next, enfim, para alterar ali a configuração da NNEX. Em resumo, então,
+
+na prática, tá tudo acontecendo aqui dentro da nossa VPS com uma sequência de scriptinhos bash que a gente vai rodando eles sequencialmente ou você pode configurar uma pipeline para rodar esses scriptinhos. No nosso caso, a gente vai acabar rodando esses scripts manualmente, né? E os scripts são, em resumo, né? ou para configurar a nossa ou para deploiar o green ou o blue, ou, né, para fazer a troca aqui do tráfego do green pro blue ou do blue pro green. Então, temos todos esses scripts, eu vou instalar todos esses scripts, tipo, você vai dar um install em cada um desses scripts, né, para eu poder de fato utilizar eles aqui. Talvez não
+
+necessariamente precisaria disso, né? Você pode só executar os scripts, mas enfim, que estão instalados. Você tem também é o blue e o o green env as variáveis de ambiente aqui. Dependendo da forma que você vai fazer, você não precisa disso, né? Você pode só fazer o deploy e e virar se não precisa dessas variáveis de ambiente, você pode fazer tudo tudo via script, mas enfim, é mais uma forma aqui, né? Então instalaria as
+
+variáveis de ambiente. Deixa eu dar um clear. Agora a gente instala o system MD Service. Você ver? Estamos instalando um monte de coisa aqui. O System MD vai
+
+facilitar a administração do nosso servidor aqui. De novo, eu não sou expert nisso daqui, tá? Agora a gente tem essas configuraçõezinhas aqui de da Enginex, tá? São configurações super simples. A única coisa que muda no green e no blue é o porte mesmo. Você vê que
+
+tem bastante redundância nesse porte, né? Se alguma dessas peças, enfim, se a gente não fizer uma dessas peças, provavelmente não vai ter problema, que a gente tá passando esses números de porte em todos os lugares. E é isso, uma configuraçãozinha aqui padrão de Nex. Nada de demais e nada que eu saiba explicar profundamente também, porque novamente eu não sou um grande entendedor de Nex. Instala isso aí.
+
+Instala esses arquivinhos. E agora vamos ver se tá funcionando. Vamos dar um deploy my app main e ver se funciona. Tá, parece que o nosso scriptinho tá deploando e deu um connection refused. Não, mas deu certo. É, tá deployado.
+
+Vamos tentar então fazer o seguinte. Deploy my app Blue. Parece que foi. Você pode ver aqui, eu dei um deploy no green também. E a gente pode rodar e ver que tem coisas rodando, né? No 3002 e no
+
+3001, ó. Então, a gente tem no porte 80 o nosso Enginex rodando, no 3002 temos o nosso Node e no 3001 temos o nosso Node também, o que configura isso daqui, né? Ambos estão sim rodando dentro da mesma máquina em paralelo e só o que tá mudando é para onde tá indo o tráfego. De modo que você dá um switch aqui, switch my app, vamos pro green. Que linda gambiarra que eu fiz durante algum momento do deploy. A branch green,
+
+que eu dei o nome de green pra branch, né? Porque enfim, geralmente você não, geralmente você não faz um deploy assim, tipo, geralmente você não muda o seu aplicativo inteiro pra azul para fazer o deploy da branch blue, mas a branch green eu fiz o deploy como sendo a V1, né, como sendo a a blue no nosso green blue. Então, olha que legal, né? A minha V1 aqui eu inteligentemente deploi o código da minha branch green porque, enfim, são duas branches distintas, né? É, você pode diferenciar como você quiser, qual que é a V1 e qual que é V2.
+
+Eu muito inteligentemente fiz esse troca troca aqui. Ah, que vídeo de maluco, mano. Vamos lá, vamos trocar pra Blue, então. Enfim, aí eu dou um entra aqui e aqui mudou pra versão Blue do nosso aplicativo, que em teoria é a V1, né? é a versão antiga, é a versão que já está live no momento, que por acaso é a branch green. E se eu mudar pra versão
+
+green do nosso aplicativo, que é a V2, que é a nova versão, é, por acaso, vou pra Blue. É, é isso. Que explicação, que explicação tenebrosa, mano. Meu Deus do céu, que vídeo horrível. Nem preciso dar like nisso aqui, não, tá? O que que a
+
+gente viu aqui? Bom, que fazer um deploy desses manual não é tão difícil. É com assim quatro scripts que você acha por aí, você consegue fazer esse deploy tranquilo, tudo dentro da mesma máquina. A gente falou um pouco sobre, sobre reverse proxy, sobre rodar instâncias diferentes dentro da mesma PS. Acho que é um conteúdo legal esse aprendizado. A
+
+parte que a gente focou menos foi os pormenores, foi o código, porque primeiro eu acho isso menos relevante nos dias de hoje. Eu, pô, não quero ficar falando sobre minúcias de código aqui, ainda mais um negócio que eu não entendo profundamente, acho que não faz sentido. Segundo que eu acho que importante aqui mesmo é esse esse conhecimento aqui, né, compreensão aqui, entender que os tradeoffs e tal, entender que claro também é possível a gente jogar isto aqui para servidores diferentes, para rodar em outras máquinas, a gente ter uma máquina específica para pro nosso é possível todo esse tipo de coisa. possível. E tá cada vez mais fácil fazer isso, né?
+
+Principalmente com IA. E você vê, eu fiz com relativa tranquilidade, só para te dar um gostinho de como isso daqui funciona, mesmo sem ser um grande expert, né? Nossa, muito muito longe disso. Posso ter cometido um erro aqui dentro, mas pro nosso propósito de explicar como é que funciona e dar seguimento da última aula que a gente falou de tipos de deploys, acho que isso aqui funciona bem, tá bom? Valeu, pessoal.
