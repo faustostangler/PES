@@ -1,0 +1,85 @@
+---
+video_title: "H4CK3ANDO Servidores de Minecraft"
+video_id: l8t49q1j4vE
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=l8t49q1j4vE
+video_date: 2026-04-18T15:25:58+00:00
+video_description: |
+  Nesse vídeo eu mapeio e invado alguns servidores que não deveriam ser públicos...
+  
+  Tudo isso como uma desculpa pra ensinar sobre 3-Way Handshake e Portas :v.
+  
+  https://mine.yurirdev.com
+  
+  ---
+  Se você quer se tornar um hacker ético e conquistar certificações que abrem portas, a Solyd One tem o caminho certo pra você!
+  
+  CLIQUE e inscreva-se AGORA! 
+  👉 https://solyd.link/yuri
+  ---
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 Thumb feita por https://www.behance.net/nez6vi
+---
+Imagina passar dois anos construindo o mundo perfeito no Minecraft. Cada casa, cada farm, cada detalhe feito bloco por bloco. E aí, em um belo dia, tudo some. Isso acontece porque uma boa parte das pessoas que fazem um servidor não tem a menor ideia de como é que ele funciona por trás. Não sabe o que que tá exposto, porque afinal o endereço dele tem esse formato aqui, o que dá mais de 200 trilhões de combinações possíveis. Como
+
+que alguém ia encontrar logo o seu? Bom, na internet a regra é simples. Se você tem um IP e uma porta aberta, você existe. E se você existe, alguém vai te encontrar. Hoje eu vou mostrar para vocês como que eu mapei e invadi mais de 5.000 servidores brasileiros de
+
+Minecraft. Primeiro, qualquer pessoa pode criar um servidor de mine para jogar com os amigos, construir uma comunidade e para se conectar você só precisa de duas coisas, um IP e uma porta. Mas na verdade não, nem todo servidor é igual. Tem algumas medidas de proteção que você pode usar para definir quem que pode ou não pode entrar no seu server. Tipo, Online mode, só entra com conta original e a whitelist que define por nome quem que pode entrar. E dependendo da sua
+
+configuração, o servidor pode ser extremamente vulnerável. Então eu fiquei pensando, será que a gente consegue encontrar e dar um salve em todos os servidores de Minecraft do Brasil? E com isso eu queria uma desculpa para ensinar para você sobre portas TCP, SIM Scan e um pouco de processamento distribuído. Mas antes, se você quer sear um hacker e ter certificações que realmente abrem portas, a Solid One tem o caminho certo para você. São mais de 600 horas de conteúdo que você vê desde o básico, desenvolvimento web, pain test em diferentes ambientes, segurança Wi-Fi, males, exploração de A e o novo curso deles de headry hacking. E ao se
+
+inscrever, você passa a fazer parte do Solid Hunter, que é o banco de talentos que conecta os hackers a vagas exclusivas empresas do mundo inteiro. Link no primeiro comentário fixado. Indo por lá, você ganha desconto pra sua assinatura. Agora vamos voltar pro vídeo. A porta padrão do Minecraft Java Edition, que é o que a gente vai olhar aqui, é a 25565. Então é só procurar por
+
+essa porta aberta, né? Na verdade não. A porta padrão é essa, só que não significa que todos os servidores só usam essa porta. Existe algumas variantes, como a 25564, 666, 75. E também os hosts de mine usam a partir da porta 10.000 para cima e por aí vai.
+
+Então, se a gente quer pegar o máximo de servidor possível, a gente tem que escanear todas as portas. Agora, se você não sabe o que que é uma porta, eu vou te explicar. Pensa que um IP é como se fosse um sistema cheio de interfaces abertas e cada porta é um ponto de entrada diferente. As portas que respondem são chamadas de portas abertas, como por exemplo em um site, a porta 80 do HTTP fica aberta e também a do 443 do TLS que é a criptografia. E como que a gente sabe quais portas estão abertas? Bom, tudo que a gente pode
+
+fazer é testar uma por uma. E existem ferramentas prontas que fazem isso, tipo o NMAP. Mas eu acho que vai ser mais divertido se a gente fizer um do zero. Existem duas formas principais de escanear portas. o TCP Connect e o Sim Scam. Mas para entender eles, primeiro a
+
+gente tem que saber um pouquinho do protocolo TCP. Existe um processo chamado handshake que funciona mais ou menos assim. Primeiro, o cliente, no caso você, envia uma mensagem do tipo sim, que significa sincronizar, e o servidor responde com o Shac, que significa sincronização reconhecida, e você responde com a CK de resposta reconhecida. Se ficou um pouco complicado, pensa assim: você bate na porta do servidor, o servidor abre a porta para você e você fala: "Bom dia." Esse processo tem nome bonito, é chamado de Threeway Handshake e é ele que é entrada para estabelecer uma conexão confiável e depois disso é que acontece a troca de mensagens dos serviços. Mas
+
+por que que você tem que saber disso? Bom, porque é assim que o TCP Connect vai funcionar. A gente passa pelo threeway handshake e se tudo foi bem sucedido, a gente sabe que a porta tá aberta. E se der errado, no caso, se a gente não recebe o Shak, a gente tem fortes indícios que a porta tá fechada naquele momento. E se a gente recebe o reset, a porta tá fechada. E também
+
+temos o Scan, que de frente do TCP Connect não completa uma conexão. O handshake nunca vai ser finalizado. Você manda o sim, o servidor responde com sinc e pronto, você nunca envia o último a secar. É como se você batesse na porta do servidor, ele abre a porta para você e em vez de você falar bom dia, você simplesmente vai embora. Ele é mais rápido em termos de rede, mas também tem algumas diferenças em relação ao nível do sistema operacional que fazem o Scan ser mais rápido. Só que eu acho que não
+
+vale a pena entrar nesses detalhes aqui. Sem dúvida, usar o Scan é melhor pro nosso caso, mas eu vou acabar usando o TCP Connect mesmo para não aumentar a complexidade logo no início. O código para checar se a porta tá aberta é literalmente só um TCP Stream Connect, sem nenhuma complicação. E para aumentar a velocidade do scam, eu coloquei um semáfor define quantas ações são feitas simultaneamente. E ele tem um valor de 1000. E com time out de 300 ms porta, eu
+
+consigo escanear todas elas em 20 segundos. E se a gente alterar o tempo do time out, o comportamento muda. Diminuindo para 150 msundos, o tempo cai pela metade, 10 segundos. E se diminuir mais ainda, 50 msundos, o meu computador simplesmente não aguentou. Eu tava abrindo conexões rápido demais, fechando rápido demais e criando muitos sockets ao mesmo tempo que o meu sistema operacional não tancou. E além de que 50
+
+ms é um valor até que otimista. Então, mesmo se a porta estivesse aberta, eu já tinha desistido de esperar a resposta. Mas beleza, eu fui ajustando o time out ao longo do tempo, mas ficou entre 300 m segundos mesmo. Bom, a gente sabe quais portas estão abertas, mas ainda falta a parte mais importante, saber se tem um servidor de Minecraft rodando lá. E por sorte, o protocolo do Mine é muito bem documentado. E a gente vai usar o SLP, o
+
+server list Pink. É exatamente isso que o jogo usa para mostrar aquelas informações quando você adiciona um servidor na lista. Ele retorna o MOT, o ícone, players online e algumas outras coisas. Então é só a gente usar desse protocolo e ele funciona mais ou menos assim. O SLP roda em cima do TCP, então a gente estabelece uma conexão normal com a porta e depois disso a gente viu o pacote específico desse protocolo que tem o packet ID com o valor de zero, a versão do protocolo que a gente vai usar o menos um que indica qualquer versão, o endereço IP do servidor, a porta e um inteiro identificando o next state que no nosso caso é um para status. E se o
+
+outro lado tiver um servidor de Minecraft, ele retorna um Jason estruturado com todas aquelas informações. E se não tiver um servidor lá, a conexão fecha ou não responde nada. Então agora a gente já consegue encontrar portas abertas e testar cada uma delas para ver se tem um servidor de mine. Mas tem uma questão interessante aqui. Não faz sentido escanear todos os IPs sempre. Pensa comigo, qual a chance
+
+de um IP que só tem a porta 22 aberta ter um servidor de mine? Ou um que só tem a 80, a 43. A chance é basicamente zero. A gente estaria gastando tempo para analisar esses IPs, que é muito esforço para zero resultado. E aí entra a nossa primeira otimização, uma pequena urística que vai decidir se aquele IP vale a pena ser visto. Eu percebi que os
+
+servidores de Mine costumam aparecer em portas específicas, como a padrão, que é a 25565 e algumas similares. Então eu criei uma regra. Se pelo menos uma dessas portas estiver aberta, esse P vira um candidato. E é só nesse caso que eu faço o scan completo. E para escalar isso, eu separei o sistema em duas partes. Primeiro, o Discovery, que é um
+
+servidor que vai ver se essas portas específicas estão abertas. E se tiver, manda o IP para uma fila, que no meu caso é um Red Stream. E o processing, que consome essa fila, verifica se tem um servidor de mine nas portas heurísticas e aí sim escanea todas as portas e testa cada uma delas. Agora eu posso ter vários servidores descobrindo e pescando de dados muito rápido e mandando paraa mesma fila para ser processado em paralelo, literalmente multiplicando a velocidade do scan. Deixei isso rodando e em pouco tempo eu já percebi um grande problema, muitos falsos positivos, ou seja, IPs com essas portas abertas, só que sem nenhum servor de Minecraft. E isso aconteceu porque a
+
+maioria desses IPs tinham muitas, às vezes todas portas abertas. Isso pode ser por causa de um Harry Pot, firewall permissivo ou alguma falta de configuração. Então eu melhorei um pouco a orística. Agora, além de ver se as portas principais estão abertas, ele também verifica se algumas portas aleatórias de número grande, que raramente são usadas, também tão. E se tiverem, é um grande indício que é o IP liicho. Então, só ignora. Com esse
+
+código, a gente consegue percorrer um bloco de máscara 24, ou seja, 256 IPs em 500 msundos e um de máscara 21, que são mais de 2000 IPs em 2 segundos. No Brasil, a gente tem aproximadamente 80 milhões de IPS, o que daria por volta de 22 horas para escanear todos. Para mim isso aí tá lento e a forma de aumentar a velocidade é aumentar a quantidade de servidores. Então eu comprei três VPSs para ficar escaneando os IPs e depois de quase um dia, a gente já tinha mais de 1500 servidores de Minecraft encontrados, percorridos 10.000 IPs. E
+
+agora é só esperar. Claro, a parte mais legal vai ser entrar nesses servidores e ver o que que a gente encontra e também conscientizar o pessoal a colocar o listores.
+
+Eu tive a ideia de fazer isso por causa do vídeo do DPS em fevereiro, que fez algo muito parecido, só que sem entrar nos detalhes técnicos e também pelo post do Risha, que tava fazendo porta scanner e citou que conseguia entrar em servidor de mine. E aí eu achei que ficaria legal fazer um vídeo sobre esse assunto. Mas beleza, se passaram quase duas semanas desde o início do scan, quase 5.000 servidores foram encontrados e eu fiz algumas coisas novas. Primeiro, um live scanner para todos os servidores já encontrados, eu fico rodando em loop para pegar o estado atual dele. Então,
+
+se tem jogador novo, se mudou o modit ícone e por aí vai. Adicionei mais dois servidores de discovery para aumentar a velocidade e também fiz o site, que é uma aplicação que tem a lista dos servidores com as suas informações que você pode ver mais detalhes. O link vai est no final do vídeo porque ainda falta o gran finale. E se a gente entrar em todos os servidores ao mesmo tempo usando um bot e mandar uma mensagem avisando que o servidor tá público e explicar as consequências. Vamos ver o que vai acontecer. Eu peguei a lista dos
+
+IPs que foram coletados e eu vou usar o M Flyer para criar os bots. E para todo servidor da lista, ele entra e escreve duas mensagens no chat. A visão de quem tá jogando é essa, o que é um pouquinho bizarro e daria até para fazer melhor. Em vez de entrar com um bote, entra com vários ao mesmo tempo. Só que aí sim viraria spam. Agora chega de enrolação e
+
+vamos rodar o código. Eu escolhi o horário que deve ter mais players online. Sexta de noite. Em menos de 2 horas todas as mensagens foram enviadas. Dos 4900 servidores coletados. 2700
+
+estava online. Mas entrar neles é outra história. Grande parte precisava de modos específicos ou autenticação com conta original. E o Mine Flyer foi péssimo para isso, o que praticamente me impediu de entrar em servidores com online mode. Mas no final o bot conseguiu entrar em 500 servidores. Não
+
+é um número absurdo, mas prova que funciona. Eu sei, no título fala que foram 5.000, mas foram 5.000 mapeados. O objetivo aqui não é para spamar, nem para causar dano em servidores aleatórios, é para mostrar o quão fácil isso pode ser. E como prometido, esse
+
+aqui é o site. E obviamente os IPs completos foram censurados para evitar que as pessoas usem isso pro mal. E é isso. Espero que tenham gostado e aprendido alguma coisa nova. Inclusive eu criei um Instagram. Me segue lá e não
+
+esquece de deixar o like e se inscrever no canal. Valeus.

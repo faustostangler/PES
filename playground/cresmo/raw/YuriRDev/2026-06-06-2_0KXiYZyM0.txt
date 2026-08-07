@@ -1,0 +1,275 @@
+---
+video_title: "H4CK3ANDO CAMERAS (e fazendo um jogo 💀)"
+video_id: 2_0KXiYZyM0
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=2_0KXiYZyM0
+video_date: 2026-06-06T14:00:01+00:00
+video_description: |
+  Nesse vídeo eu entro em cameras de segurança expostas e faço um jogo com isso 😊
+  
+  🌎 Link do site: https://camera.yurirdev.com 
+  
+  💜 Participantes do vídeo:
+  https://x.com/Evandroo__
+  @KaydenGeo 
+  @geopasch 
+  
+  ---
+  Se você quer se tornar um hacker ético e conquistar certificações que abrem portas, a Solyd One tem o caminho certo pra você!
+  
+  CLIQUE e inscreva-se AGORA! 
+  👉 https://solyd.link/yuri
+  ---
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 Thumb feita por https://www.behance.net/nez6vi
+  
+  Índice
+  00:00 Introdução
+  00:44 NÃO FAÇA ISSO 
+  00:59 RTSP (RealTime Streaming Protocol)
+  02:39 Encontrando Cameras
+  03:47 Geolocalização por IP?
+  05:02 Escolhendo as imagens
+  05:45 SOLYD
+  06:11 A ideia do Jogo
+  06:32 Gameplay dos ProPlayers 🏓
+  21:14 Como se proteger?
+  21:44 Fim 😃
+---
+Você acabou de comprar uma câmera de segurança, colocou na sua loja, na garagem, no quarto, conectou na internet e pronto. Agora você consegue acessar ela de qualquer lugar do mundo. Mas pera aí, falta uma coisa importante que você não percebeu ainda, mas em nenhum momento você configurou uma senha e agora qualquer pessoa do mundo também consegue acessar. Hoje vamos percorrer a internet inteira atrás de câmeras e ver o que que tá exposto. Mas claro que fazer só isso não é muito divertido.
+
+Então vamos transformar em um jogo que eu vou liberar para vocês no final do vídeo. Um geogess de câmeras abertas, onde você vê a imagem de uma câmera em algum lugar do mundo e tenta adivinhar o país. Eu até chamei alguns jogadores profissionais para testar alguns dos melhores do Brasil. E por trás vocês vão aprender sobre os protocolos de streaming de câmeras, como o endereço IPv4 de vídeo a internet pelo mundo e como é possível descobrir a localização aproximada de qualquer dispositivo só pelo IP. Antes de continuar, não faça isso em casa. Dependendo do país,
+
+acessar um sistema sem autualização é crime, como no Brasil, a lei Carolina Dickman proíbe. Então, a gente vai pular todos os IPs brasileiros do nosso scamp. Isso é um exercício de conscientização. O objetivo é mostrar o tamanho do problema, não explorar ninguém. Dito isso, bora lá. Para entender o que que a
+
+gente vai fazer, primeiro temos que entender como que as câmeras IPs funcionam. Elas são basicamente um computador pequeno que captura vídeo e transmite pela rede. E para isso usam protocolos de streaming. E existe algumas principais no mercado. Mas o que a gente vai ver aqui é o RTSP, o realtime streaming protocol. Ele
+
+funciona como um controle remoto de mídia, literalmente. Ele não carrega nenhum byte de vídeo, ele só controla a sessão. O vídeo em si vem por outro caminho que já já eu vou explicar. O fluxo começa assim: primeiro, você se conecta via TCP na porta, a padrão é 554, e manda um describe pro endereço da câmera. Ela responde com o arquivo USDP que descreve o que que ela tem disponível. Então a resolução, frame
+
+rate e se tem áudio. E com isso em mãos, você manda o setup e é aqui que você negocia o transporte. Basicamente você fala pra câmera: "Me manda esse vídeo nessa porta aqui". A câmera confirma e a sessão fica configurada. E aí vem o play. E é aqui que tem a separação que
+
+eu falei. A câmera começa a mudar os frames, mas não pela mesma conexão TCP do RTSP. Ela abre uma conexão UDP separada e começa a empurrar os frames via RTP, o Real Time Transport Protocol, direto na porta que você negociou no setup. E por que o DP não TCP? É porque o TCP garante a entrega. Então se um
+
+pacote perder, ele fica pedindo retransmissão toda hora. Para um vídeo em tempo real, isso é muito ruim. Você prefere perder um frame ou travar o stream até um pacote chegar. O DP é mais rápido e não tem esse overhead. E quando você termina tudo, você manda o te via TCP e a câmera encerra a sessão. A URL
+
+para acessar uma câmera tem esse formato aqui. A porta padrão é a 554 e o PEF depois a porta como o barring muda de acordo com o fabricante, mas tem algumas listas públicas dos PEFs mais comuns por marca. E quando não tem nenhuma senha configurada, a URL fica simplesmente assim. É o protocolo mais exposto, mais comum em câmeras baratas e definitivamente o mais ignorado em configuração. E é por isso que é o nosso alvo. Beleza? Agora a gente sabe como
+
+conectar em uma câmera, mas como que a gente vai encontrar elas? Fácil, vamos procurar na internet inteira. O IPv4 tem 32 bits. Isso dá cerca de 4 bilhões de endereços possíveis. A estratégia é passar por todos eles testando se a porta 554 tá aberta e se tiver pode ser uma câmera RTSP que aí a gente testa, conecta e tira um print. Isso vai
+
+demorar muito, mas faz parte. E tudo que eu posso fazer é otimizar a arquitetura. Vamos à mesma ideia que eu usei no vídeo de servidores de Minecraft. Inclusive lá eu falo sobre TCP, portas, porta scanning. Se você não viu, vê lá depois.
+
+A ideia vai ser ter vários servidores de porta scanning rodando em paralelo, cada um responsável por um bloco de IP, testando se a porta 554 responde. Quando encontrar uma porta aberta, joga o IP numa fila, um Red simples. E vários work de processamento vão consumir essa fila, tentando se conectar via RTSP com uma word lists comuns. E se em algum momento conectar, tira um print da imagem. Beleza, arquitetura definida. Mas antes
+
+de continuar, tem uma coisa muito importante. A gente não tá fazendo brot. Se a câmera pediu senha, a gente só pula. sem testar admin admin, semonário de senha, nada disso, porque aí sim ia caracterizar um ataque. E como eu falei antes, todos os IPs brasileiros são onorados antes mesmo de chegar nos workers. O scan vai demorar semanas, 4
+
+bilhões de peso é pouca coisa. Então, enquanto os servidores trabalham, eu vou explicar uma coisa que vai ser fundamental pro nosso jogo lá na frente. Como que a partir de um IP a gente descobre onde que aquela câmera tá no mundo. Primeiro a gente tem que entender como que o IPV4 é organizado. Os 4.3
+
+bilhões de endereços não são distribuídos aleatoriamente. A Iana é responsável por distribuir grandes blocos de PS para organizações regionais que distribuem para países, que distribuem para provedores de internet, que distribuem até você. Por exemplo, esse bloco aqui, ou seja, todos os IPs começando com 177, é locado para Laak, que é regional da América Latina. Dentro dele, blocos menores são alocados para Claro, vivo e por aí vai. E se você estiver se perguntando, no mundo, nós temos cinco regionais, a ARIM, do Canadá e Estados Unidos, a RIPNCC, que é da Europa, a Apnik que é a Ásia e Oceania, a Afrinique, que é da África, e a Lacque da América Latina. E cada uma delas vai
+
+distribuindo os blocos. Isso cria uma hierarquia que permite descobrir a origem aproximada de qualquer IP público. Só por ele a gente consegue descobrir o país, em alguns casos o estado e bem raramente a cidade. Mas não dá para saber o endereço exato, a rua ou qualquer pessoa específica. Isso é porque o hiper registrado para um bloco pode estar em um data center em São Paulo enquanto o usuário tá em Florianópolis. Essa já localização por
+
+IP é uma aproximação estatística, não um GPS. E pro nosso geogess de câmeras, só saber o país já é o suficiente. Três semanas se passaram, usamos mais de nove servidores e a gente coletou mais de 6.000 câmeras com stream aberto, sem senha espalhados pelo mundo. De novo, se a gente tivesse usado brute force ou CVS, esse número facilmente passaria de 30.000 câmeras. Antes eu precisava fazer
+
+uma triagem manual, cada imagem, uma por uma, pra gente garantir duas coisas. Primeiro que a câmera é interessante, então tá mostrando alguma coisa, não é só uma parede preta ou um teto vazio. E segundo que não tem nada que precisa ser censurado, rosto de pessoas, informação pessoal ou qualquer coisa suspeita. Eu pedi pro Mr. Cloud fazer essa tela de triagem para mim e demorou muito para passar mais de 6.000 imagens, decidir se
+
+fica ou não, censurar o que precisava, muito tempo mesmo. E no final ficamos com umas 3.000. E tiveram câmeras completamente comprometedoras que não podiam chegar no site final nunca. Mas antes, se você quer estar um hacker ético e tem certificações que realmente abrem portas, a Solid One tem o caminho certo para você. São mais de 600 horas
+
+de conteúdo. Você vê desde básico, desenvolvimento web, peste em diferentes ambientes, segurança Wi-Fi, maestção de as e o novo curso deles de hardware hacking. E ao se inscrever, você passa a fazer parte do Solid Hunter, que é o banco de talentos que conecta os hackers a vagas exclusivas empresas do mundo inteiro. Link no primeiro comentário fixado. Indo por lá você ganha um desconto paraa sua assinatura. Agora
+
+vamos voltar pro vídeo. Todos os dados coletados, triagem feita e tá na hora de construir o jogo. A ideia é simples, inspirada no geogesser. Aparece algumas fotos de câmeras em algum lugar do mundo e você tem que acertar o país onde aquela câmera tá. Se você acertar, ganha 500 pontos e se você errar, vai ganhar ponto de acordo com a distância entre o país que você chutou e o país real. Cada
+
+jogador tem oito jogadas por partida e no final você pode colocar o seu nome no rank e competir com todo mundo. Agora sim, vamos ver como que os pro players vão ir. Eu pessoalmente fui muito mal. São cinco câmeras, você consegue ver todas elas. >> Todas são relacionadas ao mesmo país, né?
+
+>> Ao mesmo país. Exato. >> Certo. Essa aqui não foi muito. >> É, >> não ajuda muito. Difícil.
+
+>> Ó, aqui já ajuda melhor. >> Dizer alguma coisa. >> Tem ali um alguma coisa escrita, mas não dá para ler direito. >> Mas parece um Escoda, né? Um escoda é um carro da República Checa. Pode ajudar.
+
+>> Vamos ver a próxima. Nossa. Nossa Senhora. [risadas] >> Esse também as casas não dá para ver muita coisa. >> Não dá para ver muita coisa. que Europa
+
+só, né? Imagina >> uma Europa genérica. >> Nossa, uma piscina aquecida aqui agora. >> OK. >> Tá. O de noite é sempre difícil, né?
+
+>> Ó, tem landcape. >> Tá melhorzinho. >> É relevo. Legal. >> Parece um pouco Áustria para mim essa paisagem assim.
+
+>> Uhum. >> Tá também é bom. Igual >> eu acho que é bom. É república cheiaca, Áustria ou Eslováquia, alguma coisa. Eslováquia.
+
+>> Mas realmente essa aqui é é a melhor que a gente tem, né? Vamos ficar com uma república teca, então aqui >> tá, acho que o teka. Tá bom. >> Vamos lá confirmar. E tá aí ela tá lá.
+
+>> Coisa boa. Vamos lá. >> Isso me lembra um pouco a América, mas não tem muito como. >> É que eu não sei se a qualidade da câmera da da iluminação, mas talvez essas essas folhas brancas me lembram um pouco de eucalipto. Eu tô pensando tipo para Austrália, mas pode ser só a luz tá batendo na nas folhas de fazer aparecer as brancas. Tá, eu não pensei muita
+
+coisa por enquanto não. >> Opa, que fer [risadas] >> parece pasta. Tem até uma mulheta ali. >> É aqui realmente acho que não dá para tirar muita coisa, não >> é? >> Pois é.
+
+>> Vamos lá. Hum. >> Uma paisagem já. Aqui já me lembrou um pouco mediterrâneo, mas tá muito difícil de ter essa noção também. Aquela primeira, não sei porque a árvore me lembrou uma oliveira também, mas não tem nada a ver.
+
+>> Ah, talvez, né? É que aparece um pouco grande demais com oliveira, mas >> parece um lugar mais árido assim mesmo. >> Vamos torcer para ter uma imagem de rua aqui. [suspirando] [roncando] Bem verde. >> Tá parecendo realmente algum mediterrâneo.
+
+>> É, eu tô pensando talvez numa Itália, um Portugal. Tem uma casa branca aqui no canto, né? >> É aquilo ali atrás. Parece um porte de metal, né? Também >> aqui, né? Telhado laranja também é bom
+
+pra Itália. >> É, eu acho que o Mediterrâneo tá vindo mais forte agora. Vamos lá, mais uma. Opa, >> escolar. >> Escola que é o melhor que a gente vai ter, ó. Ó, versus da placa preta. Ó,
+
+>> a Itália é a placa. Ah, tem a placa também. >> Placa curta aqui, né? >> É da Itália. >> É, acho que a Itália cai muito bem, realmente.
+
+>> Sim. >> Tá, estamos fechado com a Itália, então, né? >> É, parece bastante Itália. Beleza. Beleza. Boa, boa. Vamos embora. Legal. O
+
+>> mercadinho. >> Nossa, >> tem algo escrito ali, mas ler aonde que vocês estão? Eu nem tô vendo no preço ali. Dá para ver que é uma língua se escreve no latino, né? Mas >> Ah, sim.
+
+>> É. Tá. >> E parece espanhol, mas não tem como. >> É, eu também tô pensando assim num >> as sílabas parecem uma língua latina para mim. Não parece nada muito.
+
+>> Parece um erdo. Oto alguma coisa aqui, né? Bom, >> eu tinha lido carne e queijo. >> Ah, pode [risadas] ser. Hum. Axe, mas aí agora
+
+>> a casa é de uma >> já não acho. Já não acho. Parece a América Latina, por exemplo. >> Parece mais Europa agora, né? >> Parece mais Europa de novo. É.
+
+>> Pois, algo assim. >> É uma Europa central. Eu gosto também. >> Pois é. >> É.
+
+>> Nossa. Cara, parece muito uma casa da Bulgária, assim, um negócio meio assim. >> Ah, pois é. Ah, eu penso nisso também, mas a língua não parece ter cirílico. >> É, pois é. Não parecia.
+
+>> Ah, [limpando a garganta] não parece ter a União Europeia ali na placa. Isso est >> Sérvia não. Sérvia teria, né? Também >> teria também teria, >> talvez Croácia. Que >> Croácia, talvez. É,
+
+>> mais uma. >> Uh, mais uma loja. Parece o Saara aqui no Rio. >> Verdade. Ca que você não é não, K. Pois
+
+é, tem várias lojas iguais. É só lá. >> Será que lá na Nossa, essa aqui a gente tá ferrado. Se vier um negócio difícil na última aqui também. >> É, >> vamos lá. Legal.
+
+>> Ah, bom, bom. Muito bom. >> Tá muito bom. Mas ainda assim tá difícil, né? >> Pois é.
+
+>> Acho que a Croácia continua vindo forte. >> O fundo da placa é preto ali, não é? >> Mais pra frente ali da rua. >> Nossa, mas será que não tá muito longe pra gente ter certeza? Mas realmente é verdade.
+
+>> Parece até um ester atrás da placa, né? Parece ter um branquinho ali. Ah, isso aqui também pode ser dica. Olha só. >> É, não tinha pensado nisso >> também não. Tipo, é tipo o nosso
+
+copyright, né? Tipo, >> verdade. >> Bom, bucium pode ser romên assim. Dá a entender que essa, bom, essas árvores aqui parecem tá com com a base pintada de branco, né? >> Eu acho que parece Romênia também na casa.
+
+>> É. É. E aí faria estilo com a placa. >> É verdade. Romênia é bom.
+
+>> Placa preta. As linhas estão >> parece da Romênia mesmo. Romênia tem o método das linhas serem mais grossas. A >> Pois é. Então tá. Vamos lá. Vamos fechar
+
+com Romênia. Então >> é >> Romênia. Legal. >> Legal. >> Boa. Boa.
+
+>> É aqui. Bom a gente sempre tem aquele medo de que não dá para confiar em caminhão, né? >> É. >> O camião viaja. Mas é um grande indicativo. Realmente
+
+>> a placa também tá PL, né? Embaixo pelo V. É, não, mas aí o camião teria a placa PL mesmo. Ah, sim, com certeza. >> Agora esse carro aqui não dá para ver direito. Bom, vamos confirmar aí nas
+
+próximas. Cadê? A gente tem que achar aquele poste. Ali da esquerda parece da Polônia mesmo. >> Que é o dourado.
+
+>> Parece. É em A. Eu não consigo ver os furos, mas parece ser um postinho A mesmo. >> É posto. Parece o poste mesmo. Então faz
+
+sentido. Vamos tentar confirmar com mais alguma coisa aqui. Não tem muito, né? >> É. Aí não, >> não tem muito. Ixi,
+
+>> a casa parece com polume. >> É, parece plano ali o fundo. Ok. >> É >> sim. É, >> é real.
+
+>> É mágico. >> A gente vai ter que se segurar naquele caminão e naquele e naquele possível poste polonês aqui no canto. Sim. >> É porque eu não consigo, eu não consigo ver os furos nesse poste. Tô com um pouco de medo.
+
+>> É, mas aí que que que que mais você pensaria, carin? >> Talvez Báltico que tenha poste duplo também. O o pote para você, o pote parece quadrado ou parece redondo? Porque para mim parece redondo duplo. >> Esse aqui >> é, >> pô, esse não sei. Eu acho que ele
+
+poderia muito bem ser um pote polonês. Sim. Agora esse aqui realmente ele é diferente, né? Esse aqui ele é um poste redondo padrão que >> não seria talvez tão comum. Não sei.
+
+>> Aquela acho que é a penúltima imagem que aparece mais landscape. Eu não sei. Me parece me parece um pouco bugar isso ali atrás. >> Pô, mas a gente vai, será que a gente vai nessa bugária? Não, não. Eu eu acho
+
+que assim na falta de formação acho que dá o melhor fazer Polônia mesmo, entendeu? Tô um pouco de medo essa >> É. Bom, vamos lá. Vamos nessa. Eu >> acho que é possível ser um Báltico também, mas Polônia é o melhor assim que tem.
+
+>> Sim, sim, sim. >> Vamos lá. Beleza. >> Às vezes é fazer o feijão com arroz. >> Sim, sim. [roncando] É tão fácil que tu
+
+desconfia, né? Às vezes. >> Exato. Exatamente. Exatamente. É que a
+
+gente a gente tá cansado de errar por conta de caminhão, né? Caminhão viajando aí. Então, >> é sempre um pé atrás. Vamos lá. >> Que falando caminhão, >> ó, a gente tem uma, parece uma placa não não europeia dessa vez, né?
+
+>> Sim, de fato. >> É, >> mas tanto na moto quanto no carro. >> Hum. >> Talvez o México, uma Colômbia. Não sei se a placa seria talvez amarela, mas >> ou até Ásia, né? Depende.
+
+>> Pode até Ásia também. É cimento aqui. Não. Sun Ss. Ss. Parece o nome da marca.
+
+Enfim, tudo bem. Vamos lá, ó. Ah, ali matou. Inverte >> na meta. >> É. [risadas]
+
+Lng do vietine. >> Liga da Vietnam. >> Tá. Caraca, como sobressaiu aqui. Vamos ver as outras. Aqui acho que não tem
+
+muito. >> Na mesma bandeira >> aí. Mandeira é aqui. Aqui >> tem tudo. >> Tá aí. Tá beleza. Seriam as melhores, a
+
+melhor combinação que a gente viu, pô. Viu placa, viu rua, viu bandeira, viu tudo, né? >> É essa aí. >> Essa aqui é realmente >> típica fábrica do Vetnir. >> Típica, típica. Essa aqui é
+
+>> grande. >> É. É. Todos os livros do jog. >> Tá bom, tá bom. Beleza. Nossa,
+
+>> parece Europa de novo. >> Parece botõ para Europa. >> Parece, parece. >> Parece para mim Romê bugado. Eu pensei numa serve agora, mas coisas >> numa Itália também não sei. Ah, pode ser
+
+qualquer coisa ainda, mas faz sentido trar bugária serve. É, >> vamos ver. >> Hum. De noite >> tracejada. Parece preto e amarelo.
+
+Tracejada ali. >> Ah, aqui, né? >> Será que é Turquia? Caramba, é verdade, mas parece dentro de um condomínio, né? >> É, parece realmente. Não parece uma rua
+
+isso. >> Caramba, >> não tem muito sem não consegui tirar daqui não. O quê? >> Ah, é verdade. Tem tem um trenzinho aqui. O que que é isso exatamente, né?
+
+Parece um local de colheta de alguma coisa ou não sei. Realmente tem >> alguma exposição de alguma coisa. >> Derruna. [ __ ] essa imagem ela podia ser boa pra gente, mas tá difícil de tirar alguma coisa. Vamos lá. Temos mais duas.
+
+Ih, cirílico. Cirílico. Ador. É. Tá.
+
+Calma aí. Contrário aqui, né? Tá ao contrário. Não, tá certo. Eu acho.
+
+>> Acho que é roda, tipo, acho que cá porque esse aqui tá tá ao contrário, né? >> Ah, tá. >> Na roda >> é, continua sendo cirírico, né? Mas >> tá, mas não parece ser ucraniano para mim. Isso aí >> é, >> é, não, não.
+
+>> Por exemplo, talvez Bulgária mesmo. Então, talvez seria o melhor agora. Lá mais na última aqui. Hum. Caraca, >> difícil, rapaz.
+
+>> Essa aqui, essa aqui difícil. Essaí não diz muita coisa não. >> Essa aqui não diz. Essa aqui não diz. Vamos lá. Bom, a gente pelo menos tem
+
+que tá escrito em cirílico mesmo. >> Sim. >> Então aí a gente tem isso aqui. Não parece Rússia, né? Acho que a gente pode.
+
+>> É R. Acho que não. >> Aquela placa tem União Europeia ou não tem União Europeia? Não sei. >> Então não dá. Não consigo também.
+
+>> Parece que não tem, mas >> parece não ter, né? >> Parece não ter. Pois é. E aí? Mas esse condomínio não parece russo, por isso que é a questão.
+
+>> Não, não parece mesmo não, de forma alguma. >> Parece nem um pouco soviética. >> Será que pode ser Macedônia do Norte? >> É, então pensei na Macedônia, mas aí a gente, a gente vai trazer essa Macedônia aqui. É loucura, né?
+
+>> Eu acho que parece mais Macedônia do que Bulgária. >> É, eu tava pensando mais em Sérvia, mas >> é, eu acho muito difícil diferenciar a Macedônia do norte da do sul da Sérvia, por exemplo, assim, sem muito nenhum ponto de referência. >> Eu eu acho que o melhor aqui é um dos dois, realmente, ou é Macedônia ou é Sérvia. É, eu acho que eu iria de Macedônia, mas >> é porque a Macedônia, tipo, a placa dela, se eu não me engano, ela tem um um escudo vermelho, tipo, mais pra esquerda. E eu acho que daria para ver.
+
+>> Talvez seja aquilo ali, aquele ponto ali, mas não sei. >> Aham. Ah, sim. Tá. É, realmente, eu não acho que pareça nada para cá, né? Nada
+
+pr pra galera de cá. É bom, galera, é um dos dois aí. Eu acho que são nossos melhores palpites. Eu vou na magia da Macedônia, porque acho se a gente acertar Macedônia vai ser muito mais legal do que a gente acertar C. Tá, tá, vamos embora. Beleza.
+
+F. Ah, >> valeu, valeu, valeu. Já tem aqui >> de árabe. É, >> de fato. Temos um Ah, >> talvez Tonisia, não sei, não tem como.
+
+>> É, tá, tá difícil de ler qualquer outra coisa, mas sim. Beleza, vamos lá. E aí, alguém sabe o a moeda? Sei não. >> Eu também não faço ideia. Pode ser um
+
+RS, pode ser um um RX. Não >> seria PCS. É, >> é. Certo. Opa, olha a placa. Tem uma
+
+placa aqui. >> A placa não é preta igual a da Tonisia, parece. >> É, é quadrada a placa, né? >> Pô, a gente viu que tipo, a maior parte da população parece ser tipo branca mesmo. Pode ser tipo indicativo que ser mais no norte mesmo da África, né?
+
+>> E parece bem verde assim, né? Tipo assim. Sim. >> Geralmente países que falam áridamente costuma ver um pouco mais árido, né? Num geral.
+
+>> Sim. Tá. >> Caraca. Vamos torcer para uma última. >> Parece bem plana, né? Bem plana. Parece
+
+[risadas] >> aí. Legal. >> Essa mancha na parede típica. Muito específica. >> É aqui. Não tem como. Calma aí. Vamos
+
+lá. >> Vamos embora. >> Que que é o melhor aqui pra gente? Isso aqui tem a placa. É a primeira imagem.
+
+>> Eu tava vendo aquilo ali embaixo. Será que não é o formato do país? Não, acho que não, né? Embaixo na na combi. >> Parece ter em árabe. Parece ter também
+
+numa outra. Parece aquele al alguma coisa, tá? Tipo, é só escrito na nossa no nosso alfabeto, sabe? E aqui tem um free também. Tem uma coisa em inglês aqui também meio meio largada. Se fosse
+
+algum país que tem no Geogesser, a gente teria matado, eu acho. >> Acho que sim. >> Então, tipo, a gente tem que ficar nessa nessa galera aqui de Egito, talvez Siria, Iraque. Bom, vamos lá. Vamos de Egito.
+
+>> Nossa, >> passamos longe. Passamos longe. Mas faz sentido. Era realmente Comonf, né? >> Parece Malásia, talvez. Parece tá
+
+andando direita, né? Car direita. >> É verdade. É, tem uma plaquinha ali, ó, que é não é enfim, dá para ter uma noçãozinha ali. >> Vamos lá, >> galpãozão. GSV senhor. Não era para ser
+
+difícil isso aqui, né? >> É, pois é, >> pô. Calma aí. >> Mais um. >> Caramba, de novo.
+
+>> Pare. Parece quase o mesmo lugar. Calma. >> Pois é, parece quase o mesmo lugar. >> É, já se vê alguma outra câmera por aqui.
+
+>> Ah, verdade. É o mesmo. >> Tá, vamos ver. Para mim mudou tudo agora. >> Mudou.
+
+>> Parece que mudou até o país. A placa já aparece europeia. [risadas] Nossa, que é que eu tô perdido. >> Volta Malo aqui rapidinho, pô. É que eu tô pensando que isso pode ser tipo, mas talvez esteja viajando, tipo Groenlândia e talvez aquilo ali na em cima do da do prédio tava pensando que isso é uma bandeira, mas acho que não é não.
+
+>> Esse aqui acho que é aquele cone de vento, eu acho. Sim, sim, sim. >> Não sei porque teria um aqui, mas >> tem mais uma máquina que a gente não viu ainda. >> Tem mais uma. Tem mais uma. Ó.
+
+>> Nossa, o C >> é o cortado. Só tem na Dinamarca e na Noruega. >> Noruega. É >> só Dinamarca e Noruega. Então acho que aqui a gente pode fechar numa Dinamarca, né? Olha, mas vale mencionar. É porque
+
+eu acho que não é, mas vale mencionar que esse O também tem no islandês também >> tem no islandês. É verdade. >> É, mas tem muita árvore aí para ser Islândia. >> É, não acho que tendo ó cortado, eu sei que tem que ser de marca, né? Tipo, não tem não tem. E
+
+>> também ali parece algo da Groenlândia mesmo. >> É, talvez, talvez seja realmente. Bom, tudo bem. Vamos lá. Vamos p na marca.
+
+Acho que aqui a gente volta a pontuar. Boa, boa. >> Vamos. >> OK. A gente pode criar um nome pro nosso time. Qual que foi o nome? Eh, Geogesser
+
+team. >> Pronto. >> É, não dá para ser. Tá lá, estamos em primeiro, hein, time. Vamos embora.
+
+>> Bora. >> Nice. >> E se você quiser jogar, é só acessar esse site aqui. Então, o que você tem que fazer para não aparecer no próximo vídeo desses? Primeiro, configurar uma senha de verdade. Essas senhas que vem
+
+de fábrica são tão boas quanto não tem nenhuma senha. E usa plataforma de nuvem como autenticação. Tudo passa por servidores e empresa para chegar até você. Mais de 6.000 câmeras e mais de 130 países. Transmitido para qualquer
+
+pessoa que soubesse onde encontrar. lojas, armazéns, ruas, interior de prédios, tudo exposto porque alguém colocou a câmera e achou que se tá funcionando já tá bom, mas não é assim. Nesse vídeo eu usei o exemplo de câmeras, mas isso vale para qualquer dispositivo e software que você tiver. E é isso, espero que tenha gostado do vídeo, me segue nas outras redes sociais e não esquece de deixar o like e se inscrever no canal. Valeus. M.

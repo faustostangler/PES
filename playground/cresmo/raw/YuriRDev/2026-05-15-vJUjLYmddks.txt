@@ -1,0 +1,111 @@
+---
+video_title: "VOCÊ NÃO SABE AUTENTICAÇÃO"
+video_id: vJUjLYmddks
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=vJUjLYmddks
+video_date: 2026-05-15T14:01:22+00:00
+video_description: |
+  Nesse vídeo eu falo sobre a evolução da Autenticação.
+  
+  ---
+  Se você quer se tornar um hacker ético e conquistar certificações que abrem portas, a Solyd One tem o caminho certo pra você!
+  
+  CLIQUE e inscreva-se AGORA! 
+  👉 https://solyd.link/yuri
+  ---
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 Thumb feita por https://www.behance.net/nez6vi
+  
+  Índice
+  00:00 Introdução
+  00:24 CTSS
+  01:14 Senha
+  01:42 Senha Hashed
+  02:33 Perguntas de Segurança
+  03:05 FATORES
+  03:42 Something you HAVE
+  05:30 Something you ARE
+  07:02 Fim das senhas
+  07:32 Single SignOn
+  08:03 Open Authorization
+  08:57 OpenID Connect
+  10:07 Sessões
+  10:51 JSON Web Tokens
+  11:52 Refresh Tokens
+  12:38 Respondendo o Segurança
+---
+Imagina que você chega na porta de um clube exclusivo, o segurança te olha e pergunta: "Quem é você?" Parece simples, mas essa pergunta esconde uma das questões mais difíceis da computação. E a forma como a gente responde ela evoluiu muito nos últimos 70 anos. Hoje vamos falar de autenticação, por que ela existe, como que surgiu, quais protocolos e algoritmos estão por baixos e como chegamos ao modelo de tokens, criptografia assimétrica e identidade federada. Lá no início da computação, nos anos 40, um computador era uma máquina gigante que ocupava uma sala inteira e principalmente dedicada a uma única tarefa por vez. Não tinha
+
+múltiplos usuários, então não tinha por identificar ninguém. Mas nos anos 60, uma pequena coisa mudou tudo, o comparable time sharlos usuários acessando o mesmo computador ao mesmo tempo. Agora o computador tinha que saber com quem ele tá falando para isolar dado, contabilizar tempo de CPU e também controlar permissão de acesso a arquivos. E para resolver isso, criaram um identificador de usuário digitado no terminal. Sim, você só tinha que digitar o seu usuário. Isso fazia sentido na
+
+época. Eram sistemas fechados que ficavam dentro de universidades e laboratórios, ou seja, era um ambiente de confiança absoluta. Mas ao longo do tempo que mais pessoas ganharam acesso, esse modelo de confiança absoluta não tava tão confiante assim. E se alguém dititasse o nome de outra pessoa? Aí eu acho que você sabe o que aparece agora.
+
+A senha é muito muito antiga. Ela vem da ideia dos segredos compartilhados que existem desde sempre na espionagem, exército e sociedades secretas. Por computador, você tem um identificador público, o seu nome de usuário, que diz quem você afirma ser e uma prova secreta, a sua senha, que confirma a sua afirmação. E nessa época a senha era armazenada em texto puro e um arquivo supostamente protegido. E isso já tinha um problema enorme. O sistema conhece a
+
+sua senha. Se o arquivo vazar, todas as senhas vazam juntas. Alguns anos depois, por volta de 76, o Unix melhorou esse sistema. Em vez de armazenar a senha, armazena só a sua impressão digital matemática, no caso um hash. Só que essa função de hash é determinística. Então a
+
+solução foi usar um salt que era armazenado junto com o hash no arquivo de senhas. O salt não precisa ser secreto, ele só tem que ser único. Eu já falei sobre hash os tipos de ataque nesse vídeo aqui. Assiste lá depois. Essa combinação de usuário e senha virou um padrão universal por décadas e ainda é o método mais usado no mundo. Só tem
+
+um problema, senhas é pene de sigilo. E a gente sabe que sigilo é frágil, principalmente porque as pessoas escolhem senhas fáceis como o nome do cachorro e ainda ficam reutilizando elas em vários sites diferentes. O problema principal é que as senhas podem ser roubadas e com a chegada da internet esses problemas explodiram muito mais. Não era mais 50 usuários em uma universidade, eram milhões de pessoas em e-commerce, bancos, e-mailos. Esse modelo de usuário senha tava chegando no limite. E o que que acontece se um
+
+usuário esqueceu a senha? A confirmação por e-mail não era muito comum no início. Talvez você seja um novo demais para isso, mas na época existia perguntas de segurança, como o nome do seu primeiro animal de estimação, cidade onde nasceu, nome da mãe? E a resposta servia como uma segunda camada de verificação. A ideia era que só você sabia dessas coisas. Isso fazia sentido
+
+na época, mas hoje esse modelo é completamente obsoleto. As perguntas de segurança na prática eram uma senha mais fraca, mas elas abriram uma ideia muito importante. A autenticação não precisa se limitar ao que você sabe. A segurança chegou em um consenso muito interessante. A autenticação robusta precisa de múltiplos fatores e os fatores têm que ser de categorias diferentes. Já ouvi falar de 2 FA, o T
+
+Factor Authentication, ou o MFA, o Multifactor Authentication? Esses factors que aparecem aí são algo que você sabe, ou seja, uma senha, o pin, resposta de uma pergunta, algo que você tem, um cartão físico, um celular, token de hardwares e algo que você é, a sua impressão digital, reconhecimento facial e a lógica por trás é bem simples. Para comprometer dois fatores de categorias diferentes, o atacante precisaria de dois vetores de ataque simultâneos e completamente independentes, o que é muito mais difícil. A primeira aparição comercial em grande escala do segundo fator foram os tokens de HR lá nos anos 90, principalmente o Secure ID da RSA Security. Cada token tinha gravado de fábrica uma city secreta e um relógio interno. E o servidor da empresa tinha
+
+uma cópia daquela mesma city. E a cada 30 ou 60 segundos, o token calculava um código de seis dígitos a partir da sid e do tempo atual. E nessa geração tinha dois pequenos problemas. Primeiro, se alguém roubasse a Sid, poderia clonar o token e também o dispositivo e o servidor tinham que ter um relógio sincronizado, o que pode não parecer, mas é bem difícil. Em 2005, a ITF padronizou o H Mac based onime password, que tirou a dependência do relógio.
+
+Agora, a fórmula era baseada em um contador. Toda vez que você usava o token, o seu dispositivo incrementava o contador e o servidor também. Depois apareceu o Time Based One Time Password. Esse que é o padrão usado pelos aplicativos de auto indicator que você tem no seu celular. Ele também usa o relógio, bem parecido com a primeira geração. A diferença é que agora ele é
+
+padronizado e a especificação tá pública. Vamos olhar como é que ele funciona por trás. Quando você escaneia o Qcode e um serviço, o que tá sendo transferido é a se secreta. E a partir daí o seu app e o servidor geram o mesmo código de seis gistos usando essa função aqui. E eles nem se comunicam. Eles só
+
+tem que concordar sobre a hora atual e a sid que o código é calculado nos dois lados. E finalmente em 2014 o Universal Second Factor foi lançado, implementado em dispositivos físicos tipo a UBK. Agora, a ideia era baseada em criptografia de chave pública. No registro, o dispositivo gerava uma par de chaves exclusivos para aquele serviço e a chave pública era enviada pro servidor. E no login, o servidor envia um challenge, que é um valor aleatório, e o dispositivo assina esse challenge com a chave privada. E assim o servidor
+
+conseguia verificar a assinatura com a chave pública armazenada e te liberava. Olha como a chave privada nunca sai do dispositivo. O challenge é diferente a cada autenticação e o protocolo vincula o challenge à origem do site. Então fichem é praticamente impossível porque o dispositivo verifica o domínio. O terceiro fator tenta responder: "Você é fisicamente quem de ser?" E a primeira
+
+geração era basicamente a impressão digital. O sistema capturava uma imagem do dedo e extraía pequenos detalhes chamados de minúcias, como, por exemplo, quando uma linha terminava ou quando uma linha se dividia. E o template era basicamente uma lista dessas características com posição e ângulo. E para comparar com a sua digital, o sistema tinha que alinhar as duas impressões, porque o dedo nunca é colocado exatamente na mesma posição. E depois contava só quantos detalhes coincidiam e se o número passasse certo threshold era mat. Só que esse método é
+
+muito frágil. O dedo é um tecido mole, então a pressão que você faz pode mudar o padrão. Na segunda geração, em vez de analisar esses pequenos detalhes, começaram a ver também a direção das linhas, densidade e também a textura. Juntando tudo isso em um único vetor numérico. E quando você encosta o dedo de novo, ele gera um outro vetor e mede o quão perto eles são. Agora imagina o
+
+que acontece se a sua impressão digital vazar. Você não consegue só trocar ela como você troca de senha. Então, na terceira geração, o que mudou foi a arquitetura. O fluxo antes era o sensor falava com o sistema operacional que falava com app que fazia a comparação. Mas se o sistema tivesse comprometido, o MER poderia interceptar tudo. E a
+
+solução foi mover para um processador isolado, como o Secure Enclave da Apple ou o TEE do Android. Na web, o fluxo do terceiro fator é bem parecido com do segundo. O site te manda um challenge, o seu navegador pede a biometria pro dispositivo, o hardware verifica localmente e se aprovar ele libera uma chave privada que vai assinar o challenge e o site verifica a assinatura. Olha como o site nunca vai ver o seu rosto ou a sua digital. Ele só vê uma prova criptográfica. Olhando
+
+agora esses fatores, você deve estar pensando definitivamente senha em si é uma ideia bem ruim. E muita gente tá chegando nessa mesma conclusão e com isso tão começando a remover senhas da forma que a gente conhece. Por exemplo, os Magic Links, que você só digita o seu e-mail e o sistema manda um link temporário que você clica e tá dentro. E também os PES keys, que o seu dispositivo gera uma parte de chaves criptográficas, uma pública que fica no servidor e uma privada que fica no seu dispositivo protegido por biometria ou um pin local. E quando você faz login, o seu dispositivo assina um challenge e o servidor verifica. Nos últimos anos, a
+
+internet explodiu de serviço e cada serviço quer o seu cadastro, o seu e-mail, sua senha. Uma única pessoa passou a ter contas em dezenas de sistemas e gerenciar isso tudo é muito ruim. E a solução apareceu no mundo corporativo, o SSO. A ideia era você autenticar uma única vez em uma fonte confiável chamada de Identity Provider ou IDP. E a partir daí, todos os sistemas dessa organização confiam nessa autenticação. Um funcionário entra no
+
+escritório e faz login uma vez e tem acesso ao e-mail, CRM, internet, sistema de RH, tudo sem editar senha de novo. Em 2006, o Twitter criou o tecnicamente foram várias empresas da web, incluindo Twitter. Mas para resolver um problema diferente, como deixar um aplicativo acessar dados de outros sem compartilhar a senha? Pensa assim, você quer que um app de agendamento acesse o seu Google Agenda. Antes do Wout, a única forma seria dar sua senha do Google para esse aplicativo, o que é péssimo, porque ele teria acessar tudo e você não ia conseguir revulgar o acesso sem trocar a senha. Oout introduziu o conceito de
+
+delegação de acesso com escopo limitado. E funciona assim: primeiro você clica em conectar via Google no seu aplicativo de agendamento. O app te redireciona pro Google passando o seu ID de cliente e quais permissões quer. Você faz login e aprova as permissões. E aí sim você vai ser redirecionado de volta com aplicativo com um código de autorização.
+
+E o aplicativo vai pegar esse código e trocar para um Accessen diretamente com o Google. E aí sim o app pode usar esse token para acessar sua agenda. A sua senha nunca foi exposta e você pode revogar o acesso a hora que você quiser. Em 2014, em cima do Outh, surgiu o Open ID Connect, o protocolo verdadeiro por trás o botão de entrar com Google, Facebook, GitHub e por aí vai. E isso tem o nome Identidade Federada. A sua
+
+identidade existe em um domínio, como por exemplo Google, e outros domínios confiam 100% nela. Mas para entender o que que o Open ID Connect resolve, você tem que entender o limite do Out. OF foi criado para autorização, definir o que que um app pode fazer, mas ele não foi projetado para autenticação, para responder quem é você. Então agora o servidor também retorna um ID token, que é um JWT assinado com uma estrutura bem definida. A gente vai ver o que que é um JWT daqui a pouco. E o pelos dele é
+
+padronizado com o emissor, que fala quem emitiu o token, o subject, que é o seu identificador único do usuário naquele provedor, e o audience, que é para qual aplicação esse token foi emitido. O site que recebe esse token não tem que confiar na palavra de ninguém. Ele mesmo pega a assinatura e busca a chave pública do emissor em um end point chamado Jason Webys que retorna as chaves públicas do provedor. Com isso, ele verifica a assinatura criptograficamente e em milissegundos sabe exatamente quem você é. Essa é a identidade federada. Você existe em um
+
+lugar confiável e a criptografia garante esse fato pro resto do mundo. Mas tem uma pergunta que a gente não respondeu ainda. Depois que meu usuário autentica, como que o sistema lembra quem que ele é nas próximas requisições? O HTTP é um protocolo sem estado. Cada requisição é independente. O servidor não guarda o
+
+contexto entre elas. Então, como que ele sabe que a próxima requisição é sua? Bom, a solução clássica são as sessões. No login, o servidor verifica suas credenciais, cria uma entrada no banco de dados, a sessão com ID único e os seus dados como usuário, permissões, envia esse ID de volta pro cliente guardar geralmente em um cook. E a partir daí, em toda requisição, o navegador envia o cook automaticamente, o servidor pega a sessão, consulta o banco e descobre quem você é. Só que
+
+imagina uma arquitetura com muitos servidores e todos teria que acessar o mesmo armazenamento de sessões, tipo um Reds. Isso funciona, mas olha como ele cria uma dependência central. Se o heads cair, tudo cai. A alternativa foram os tokens stateless, como o JWT. Em vez de guardar a sessão no servidor, toda a informação fica no próprio token e o token fica pro cliente. Ele é composto
+
+por um header, payload e a signature, todos separados por ponto. O header fica definido o tipo de token e o algoritmo de assinatura, tipo HS256. No estão os dados, o user ID, as permissões, quando o token inspira e tanto o payload quanto o header são codificados em base 64, não criptografados. Qualquer um pode ler e mudar o conteúdo, mas o que garante a integridade é a assinatura. Se alguém alterar o payload, a assinatura fica invalidada e o servidor rejeita o token.
+
+No login, o servidor gera e assina o JWT e envia pro cliente. E nas próximas requisições, o cliente envia o token no header e o servidor só verifica a assinatura sem precisar consultar banco de dados e isso escala muito melhor. Qualquer servidor com a chave de verificação pode validar um JWT. Mas surge um outro problema. Como o JWT também é stateless, como você invalida um token antes dele inspirar? Se o
+
+usuário fizer logout ou tiver a conta comprometida, o token continua válido até inspirar. A solução é trabalhar com tokens de curta duração, tipo um Access token que expira em minutos, mas aí o usuário teria que fazer login a cada 15 minutos, o que seria insuportável. Então vamos usar também o refresh token. A ideia é que o Access token vai ter uma curta duração de 15 minutos, 1 hora e é usado em cada requisição. E o refresh token vai ter uma duração maior de dias ou até semanas. Quando o Access token
+
+inspira, o cliente envia o refresh token para um end point específico, o servidor valida e emite um novo access token. E também o refresh token pode ser invalidado. Se o usuário fizer logout a conta for comprometida, o servidor marca aquele refresh token revogado e na próxima tentativa de renovação, o servidor recusa e o usuário tem que autenticar de novo. É o melhor dos dois mundos. São requisições rápidas e statless com access tokens curtos e controle de revogação centralizado com refresh tokens.
+
+Então vamos voltar e responder o segurança que ele tá esperando até agora. Nos anos 60 eu era o que eu digitava e ninguém me questionava, mas depois veio a senha e eu sei de um segredo, só que segredos podem vazar. Então vieram os fatores: eu sei, eu tenho e eu sou, o que são múltiplas provas ao mesmo tempo. E para eu não ter que ficar me identificando toda hora em todas as boates, eu tenho essa identidade federada aqui que você pode ver que alguém confiável já me verificou. E para você ter a garantia que eu ainda sou eu no meio da boate, eu ainda tenho esse Access token. E se
+
+precisar um refresh token também. Só que nada disso é uma garantia que eu sou eu. A gente ainda tá aprendendo a responder isso. E é isso. Espero que tenham gostado do vídeo e aprendido pelo menos uma coisa nova. Me segue nas outras
+
+redes sociais e não esquece de deixar o like e se inscrever no canal. Valeus.

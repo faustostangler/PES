@@ -1,0 +1,119 @@
+---
+video_title: "H4CK3ANDO O Club Penguin 🐧"
+video_id: lHwvQ9e6Y8o
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=lHwvQ9e6Y8o
+video_date: 2026-02-26T13:56:23+00:00
+video_description: |
+  Nesse vídeo eu hackeio (kinda) e faço um scrapper em um Club Penguin.
+  
+  Queria ter explicado mais sobre o state diffing e o scrapper, mas o vídeo já tava muito grande, foi mal :v
+  
+  ---
+  Se você quer se tornar um hacker ético e conquistar certificações que abrem portas, a Solyd One tem o caminho certo pra você!
+  
+  CLIQUE e inscreva-se AGORA! 
+  👉 https://solyd.link/yuri
+  ---
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 Thumb feita por https://www.behance.net/nez6vi
+---
+Se você tinha internet entre 2007 e 2015, você já deve ter jogado Clube Penguin. Era um jogo de navegador gigantesco, um mundo virtual com milhões de jogadores que todo mundo era um pinguim. Você entrava em salas cheias, conversava com outras pessoas e tinha vários minigames para conseguir moedas. E aí, em 2017 a Disney simplesmente desligou os servidores. Mas a internet nunca deixa as coisas morrerem. Hoje
+
+existem várias versões recriadas por fãs que são idênticas ao jogo original e algumas delas são até open source. E aí eu fiquei pensando, o que será que dá para hackear no Clube Penguin hoje? Mas calma que a gente não vai estragar o jogo e nem roubar a conta de ninguém. A ideia aqui é fazer hacking da maneira antiga por pura curiosidade, entender o sistema e a partir de um pensamento não convencional ver o que que dá para fazer. E você nem tem que conhecer o Clue Penguin para ver esse vídeo.
+
+Acredite se quiser, mas hoje a gente vai fazer um scrapper de web sockets, um state difing do zero, que é a mesma ideia usadas em sistemas como git e bancos replicados, e também entender o protocolo de comunicação que é usado no jogo. Esse clube penguin roda completamente no navegador e eu quero que os sheets também rodem aqui, então nada de fazer um client externo. E uma coisa que vale a pena falar é que existem basicamente dois tipos de sheets. Tem um client site que só você vê. Esse é o que você vê atrás da parede, oot, mas no clube penguin, esse tipo de sheet não tem muito o que fazer de legal. E a gente também tem o server
+
+site. Esse sim o servidor aceita o nosso movimento, o banco de dados registra e os outros jogadores também vão ver. E é isso que a gente quer. Se a gente quer mexer nas requisições do servidor, primeiro a gente tem que ver onde essas requisições estão sendo enviadas. Vamos entrar no jogo e abrir a aba redes no Dev Tools para ver as requisições que são feitas. E se eu começo a andar com
+
+meu personagem, por algum motivo, nenhuma requisição é feita. Ou se eu mando alguma coisa no chat, também nada acontece. Então como que o servidor sabe o que que eu fiz? Vocês já devem saber disso, mas se os jogos online não ficam fazendo requisição HTTP toda hora. Seria lento e com overhead absurdo. Eles usam
+
+sockets, mas nesse caso de um jogo de navegador, o web socket. E isso vai criar uma conexão persistente entre o cliente e o servidor. É como se tivesse uma linha direta conversando em tempo real. Então, quando eu mexo meu pinguim, eu só mando uma mensagem, não uma requisição completa. E pra gente ver isso na prática, é só ir na aba de WS Web Socket, que a gente consegue ver tudo que é enviado pelo cliente ou pelo servidor. Aqui dá para ver as mensagens
+
+do protocolo de autenticação, que por enquanto a gente não faz a menor ideia de como é que funciona. Mas também tem alguns outros tipos de mensagem. Por exemplo, se eu movo meu personagem, dá para ver que esse pacote aqui foi enviado e quando alguém entra na sala, a mensagem de add player é recebida. Beleza? Agora a gente sabe onde essa comunicação tá sendo feita. O único
+
+problema é que não dá para entender muito bem o que que tá sendo passado. As mensagens vêm em binário, dá para ler algumas coisas em texto, como type, message, mas no mais, a gente teria que analisar mensagem por mensagem para conseguir entender o que cada coisa faz. E a gente vai fazer isso, só que ainda falta um ponto importante. Como que eu fora do jogo envio uma mensagem pro servidor? A gente sabe que a comunicação tá em Web socket, mas como que eu vou enviar isso? Se eu abro o console e
+
+tento socket. Send, WS, Connection, Web Socket, nada disso existe. Isso é porque a variável do web socket que tá sendo usada deve estar presa dentro de vários escopos dentro do jogo. Ela existe, só não é acessível pra gente. Então, o que a gente tem que fazer aqui é uma elevação de escopo, ou seja, deixar essa variável acessível pra gente. E para
+
+isso vamos procurar no código fonte o trecho que usa o socket. Simplesmente procurando por Habis Socket, a gente encontra algumas coisas e entre elas um tal de this WS que tem algumas propriedades como on close, do open. Então é exatamente isso que a gente quer. Eu vou colocar um break point nessa linha e recarregar a página. E assim que eu clico para entrar no servidor, o modo debugativa. Fazer a
+
+elevação do scopo é a parte mais simples. Eu vou criar uma variável document.so socket que aponta para essa conexão. E dentro do jogo, quando eu acesso esse document.so socket. Agora
+
+retorna as informações de conexão e também as funções. Eu tenho uma conexão direta com o servidor. Eu posso fazer um document.so socket. Só que assim que eu dei enter a conexão é perdida. E olhando os logs do Web
+
+Socket, dá para ver que o que eu escrevi foi enviado com sucesso. O que aconteceu é que a mensagem que eu enviei pro servidor não é válida. Eu envioi um texto normal, só que a gente viu que o servidor espera um binário com formato específico. Então a gente teria que mapear tudo que um jogador pode fazer e entender o idioma que o servidor espera para no final tentar quebrar alguma coisa. Bom, chega de teoria, vamos começar com sheets. No Clube Penguin,
+
+você ganha moedas jogando minigames e usa elas para comprar roupas, pets e decorar o iglue. Então, a primeira pergunta é meio óbvia: será que dá para enganar o jogo e conseguir moedas infinitas? Um dos minigames mais legais e o meu favorito é o Cart Surfer. é aquele que você tem que equilibrar o pinguim num carrinho de mina. Em vez de olhar o jogo em si, vamos olhar a comunicação que acontece durante a partida. Assim que eu inicio a primeira
+
+mensagem enviada é um join room e faz sentido, é meu cliente dizendo que começou um novo jogo, que pode ser muito bem uma sala. Mas aí tem uma coisa estranha, durante toda a partida, nenhuma outra mensagem relevante é enviada. Nada de pontuação, movimento, atualização. E só quando a partida termina, aí sim aparece uma mensagem nova, o game over. E dentro dela tem um campo chamado coins. E se eu pegar o
+
+valor em X e converter para decimal, 5D vira 93, que é exatamente a quantidade de moedas que eu recebi. Ou seja, o servidor não acompanha o jogo, ele só espera o resultado final. Beleza? Mas pode ser muito bem uma coincidência. Vamos testar de novo. Assim que o jogo
+
+acaba de novo, o valor agora é 27 em hexadecimal, que vira 39 em decimal, que é exatamente o número de moedas a partida de novo. Então o servidor realmente não calcula a pontuação, ele só acredita no que o client está dizendo. Procurando no código fonte onde essa mensagem de game over é montado, aparece esse trecho aqui com os coins. E se eu coloco um break point e começo uma nova partida, é assim que ela acaba o modo debug ativa. E se eu simplesmente troco o valor de coins para 100 e envio, funciona. Eu recebo 100 moedas. Vamos
+
+aumentar um pouco. 500 moedas também funciona. 15.000 moedas também. Até 150.000 ainda funciona. Então parece que
+
+realmente não tem nenhum limite. E o mais importante é que essas moedas não são só visuais. Se eu entro no jogo de novo, elas continuam lá. Realmente estão na minha conta. Então agora eu posso comprar o que eu quiser.
+
+Beleza? Dinheiro infinito é legal, mas agora vamos testar uns cheits visuais. Uma coisa que você pode fazer no jogo é trocar a cor do seu pinguim. E isso é normal. Você pode comprar cores diferentes e trocar quando quiser no seu inventário. Só que quando eu faço essa
+
+troca prestando atenção no network, dá para ver uma mensagem update player enviada junto com o ID da cor. E olhando as mensagens, dá para ver que cada cor é só um número diferente. Vou fazer o teste mais simples possível, que é copiar a mensagem usada para trocar minha cor para azul. Depois eu mudo manualmente para outra cor e envio uma mensagem antiga diretamente pelo console. E funciona. O meu pinguim troca
+
+de cor só mexendo no protocolo. Mas aí vem uma ideia divertida. O que acontece se eu trocar a cor várias vezes por segundo? A ideia é simples. Eu vou pegar todas as cores disponíveis e ir alternando os IDs das cores no update player. Na teoria, isso vai criar um
+
+efeito legal no meu pinguim. Então, eu fiz esse script que vai fazer exatamente isso. A cada 200 ms ele vai trocar a cor e assim que eu rodo o start loop, realmente cria esse efeito do meu pinguim. E o melhor é que isso não é client site. Se eu entro com uma conta out, eu vejo exatamente o mesmo efeito.
+
+Então os outros jogadores também estão vendo meu pinguim assim, mesmo sendo uma coisa bobinha. Se eu soubesse fazer isso na época do Clube P original, eu teria me divertido muito. Uma outra coisa é que no jogo existem os puffles, que são bichinhos de estimação, e muitos deles só ficam disponíveis durante eventos específicos, tipo Halloween. E alguns, inclusive nem chegaram a ser lançados oficialmente nesse servidor. E não custa nada ver como que é a comunicação para comprar um puffle. Olhando a mensagem
+
+enviada quando você compra um, dá para ver que tem o type, que tem dois campos principais, o type e o name. O name, obviamente, é o nome que eu escolhi pro Puffle. E o type deve ser a cor, ou melhor, o ID do puffle. Só para ter certeza, eu comprei um puffle diferente e comparando as mensagens, o número enviado no type muda de acordo com a cor do puffle escolhido, ou seja, cada puffle é só um número. No código fonte, eu vou procurar onde a mensagem PN é montada e aparentemente é essa aqui, porque tem o type e o name e colocando o break point e comprando o puffle, o modo debug ativa. Eu tentei comprar um puffle
+
+rosa e olhando o type, o ID é um e se eu trocar para nove down forward, acabou que a gente comprou o puffo marrom. Então é só alterar o type que realmente funciona. Mas agora como que eu encontro o ID dos Puffles? Por sorte, o Clube Penguin tem uma comunidade enorme e muita coisa já foi documentada, então é só pesquisar. Por exemplo, o ID do Puffle colorido é 5230. E se eu tento
+
+comprar com esse ID, nada acontece. Então eles não devem usar o ID antigo nesse servidor. Bom, vamos procurar então no source do jogo, porque faz sentido que todos os itens estejam já diretamente no código, em vez de ter que baixar eles gradualmente. Pesquisando por Rainbow, que é o nome do Puffle, a gente acaba encontrando um arquivo que chama Crumps.jason. E aparentemente aqui
+
+tem todas as informações do jogo, por exemplo, os IDs de decoração dos iglu, animações e também os puffles. Deu para ver que o ID do puffle colorido é 10, então é só alterar para 10 que funciona. E vale lembrar que esse puffle não tá acessível no momento. Vamos pegar outro também, esse Bord azul que nem tá no jogo ainda, ninguém tem. E se eu pegar o ID dele que é 100, e trocar na mensagem também funciona. Eu acabei comprando
+
+todos os puffles. Então, será que dá para fazer o mesmo efeito da cor? Só que em vez de trocar a cor do meu pinguim, eu troco os puffles. Dá sim. Eu fiz esse código aqui que é muito parecido com o anterior. Eu mapei todos os puffles e
+
+ele itera entre cada um deles, mandando a mensagem de equipar. E no final o efeito é esse. E de novo, isso não acontece só no client, os outros jogadores também estão vendo isso. Já deu para entender a ideia dos sheets. Você faz uma ação no jogo, olha a mensagem enviada, muda alguns campos e torce para funcionar. Para esse vídeo
+
+não ficar gigante, eu vou pular vários outros testes que eu fiz. Mas no final das contas, eu acabei montando esse molde menu com basicamente tudo que dava para explorar. Dá para fazer o loop de trocar a cor do pinguim, também tem trocar o puffle, até dá para sincronizar os dois na mesma cor. E alguns outros efeitos visuais, como andar com o mapa aberto na mão e também jogar bola de neves infinitas, que faz esse efeito maluco no pinguim. Aí parecia que já tinha acabado, não tinha mais o que fazer. Eu até descobri um servidor no
+
+Discord focado só em cheats no Clube Penguin e aparentemente tem pessoa que dedica a vida só para isso. A gente até fez um tipo de encontro para mostrar o que cada um conseguia fazer. Tinha até esse cara com alguns bots, mas honestamente não tinha muito mais o que explorar. Eu já tinha descoberto basicamente tudo, tá bom? Eu consigo modificar o meu pinguim, fazer esses efeitos legais, mas isso em vez de alterar eu começasse observar o jogo inteiro. E se eu tivesse uma espécie de
+
+histórico do Clube Penguin, um mapa mostrando quem tava em cada sala em cada momento do dia. Não, não tem nenhum motivo do por eu quero fazer isso. Só parece ser legal, eu acho. A gente vai fazer um scrapper que vai basicamente simular um cliente real. Ele vai passar por todo o protocolo de autenticação e depois começa a entrar em cada sala do jogo automaticamente. E sempre que você
+
+entra numa sala, o servidor te manda uma mensagem com o evento join room. E nessa mensagem vem tudo: nome dos jogadores, aparência, posição, ou seja, o estado completo da sala naquele momento. O scrapper vai salvar isso no banco de dados e vai repetir isso para sempre. A primeira coisa foi entender como que meu pinguim se conecta ao servidor. Resumindo bastante, primeiro eu envio uma requisição HTTP normal com username e a senha e assim eu recebo o token de acesso e a partir daí eu vou abrir uma conexão no Web Socket. Nessa conexão vai
+
+acontecer um handshake para realmente entrar no jogo. E é mais ou menos assim. O servidor envia o meu session ID, eu respondo algo como quero entrar. Daí o servidor pede pela autenticação, eu envio o meu username e o meu token. Ele responde por autenticação bem sucedida.
+
+E eu envio a mensagem Load Player. Ele responde: "Bem-vindo". E pronto, agora eu sou oficialmente um cliente. E sim, eu também achei esse handshake muito feio. Depois disso é simples. A cada um
+
+segundo mais ou menos, o bot envia uma mensagem para entrar em uma sala diferente e com isso ele recebe a mensagem do join Room, que vai fazer o passing e salva tudo no banco de dados. Eu deixei rodando isso em uma VPS e funcionou perfeitamente por 3 horas. Do nada os logs começaram a ficar estranhos. Meu pinguim tentava logar e falhava. Quando eu fui ver o porque eu não conseguia fazer login, eu tinha sido banido simplesmente porque eu entrava em salas. Eu ainda tinha outras contas de
+
+teste e assim que eu entrei, não deu 10 segundos que eu fui banido de novo e dessa vez nem tinha feito nada. Bom, já que eles estão banindo a minha conta, vamos ver se eles conseguem banir centenas de contas. Só tem um problema, eu não tenho centenas de contas. Criar uma por uma na mão não era uma opção. E o fluxo para criar uma conta é bem simples. Você escolhe seu nome, a senha,
+
+coloca o seu e-mail, resolve um capture e confirma o código do e-mail. Só tem uma restrição, eles não aceitam qualquer domínio de e-mail, só Gmail, Yahua, Outlook e por aí, ou seja, nada de temporário. Então eu acabei comprando mais de 100 contas no Outlook, mas ainda tinha um capture, eles usam H capture. E a minha primeira ideia foi usar o capture para burlar isso, só que eu descobri depois de depositar dinheiro que eles não tinham suporte para H capture e eu não encontrei nenhum outro solver automático que funcionasse. Se vocês conhecem, deixa aqui nos comentários. Então eu fiz uma coisa mais
+
+simples. Eu vibe codei um site onde eu só tenho que colar a lista de e-mails e a única coisa que eu tenho que fazer manualmente é clicar no capture e resolver. E eu fiz isso para umas 60 contas. Agora só faltava validar os e-mails automaticamente. A ideia também é simples, usar o SMTP do Outlook, logar com e-mail e senha para ler o código de verificação. Se você mexe com bots, já
+
+sabe o erro que eu cometi. Desde 2022, a Microsoft desabilitou a autenticação básico por padrão no Outlook. E o SMTP agora não é só e-mail e senha. E eu não sabia disso, só que ainda dá para fazer o scrap do jeito antigo. Então eu fiz um crawler que acessava o login do Outlook, preenchia e-mail e a senha e eles estavam bloqueando isso também. Eu sei
+
+que tem bypass disso, só que eu já tava cansado, então eu fui meio por e-mail ativando a conta manualmente e isso demorou muito. Depois de várias contas ativadas, eu deixei o bote um pouco mais inteligente. Se uma conta fosse banida, ele automaticamente tentava a próxima. Eu deixei rodando durante a noite e as contas só foram banidas no dia seguinte. E depois eu coloquei mais contas e rodou por três dias seguidos. 150.000
+
+registros no banco e só depois fui banido de novo. Só que eu já tinha dado o suficiente. Bom, a cada 8 segundos eu salvava o estado de cada sala, só que em 8 segundos quase nada muda. Se eu salvasse absolutamente tudo, teria muitos dados repetidos. Então eu implementei um state difing. Basicamente
+
+a partir de um estado inicial, eu só vou armazenar o que mudou. Tipo, o pinguim entrou, saiu, mudou de posição e por aí vai. E isso acaba economizando muito em armazenamento. Só que aparece outro problema. Se eu tenho 20.000 alterações
+
+e eu quero ver o último estado, eu teria que recalcular tudo desde o início. Então, a cada 50 alterações, eu salvo um snapshot completo da sala, como se fosse um checkpoint. E assim fica balanceado entre performance e armazenamento. E com os dados prontos e mais leves, agora tá na hora de fazer o front end. A ideia inicial era montar um mapa munde do clube penguin. Eu tentei usar IA para
+
+juntar as salas automaticamente, só que ela alucinava muito e inventava umas coisas que não existia. Então eu baixei sala por sala manualmente e montei tudo. E no final ficou assim. No lado esquerdo você tem todas as salas mapeadas que você pode entrar para ver os pinguins. E embaixo tem uma timeline, você arrasta e vê os pinguins se movendo ao longo do tempo. Tem até o Jason do DIF atual, se
+
+vocês quiserem debugar. E o link é esse aqui, se vocês quiserem acessar. E no fim das contas, isso foi estranhamente divertido de fazer. Imagina se alguém tivesse feito isso no Clube Penguin antigo. Um histórico real de quem tava onde, quem encontrava quem. Ia ser
+
+legal, mas também um pouco perigoso pra época. Mas tá, esse vídeo não tem lição de moral, não é sobre segurança, é sobre curiosidade, até onde dá para ir. E é isso, espero que tenham gostado. Não esquece de deixar o like e se inscrever no canal. Valeus.

@@ -1,0 +1,95 @@
+---
+video_title: "HACK3ANDO GOLPES DE C4RTÃO... 👀"
+video_id: 1j84Wioit6M
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=1j84Wioit6M
+video_date: 2026-06-27T14:00:39+00:00
+video_description: |
+  Nesse vídeo eu hackeio com uma loja que vende cartões... vc sabe oq...
+  
+  ---
+  Se você quer se tornar um hacker ético e conquistar certificações que abrem portas, a Solyd One tem o caminho certo pra você!
+  
+  CLIQUE e inscreva-se AGORA! 
+  👉 https://solyd.link/yuri
+  ---
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 Thumb feita por https://www.behance.net/nez6vi
+---
+Todos os dias milhares de cartões de crédito são vazados no Brasil e para cada vazamento tem uma loja, um catálogo e até mesmo revendedores vendendo como se fosse um produto qualquer e um e-commerce. E acredita em mim, tem muitos compradores. Nesse vídeo eu mostro como que eu invadi um site que não só vende cartões clonados, ele é um fornecedor para mais de 15 lojas diferentes. Eu também vou te mostrar todo o processo de investigação que aconteceu para literalmente chegar na casa do dono. Foi tão insano que eu precisei até de uma vulnerabilidade na Lagazine Muía, se é que vocês me entendem. Bem-vindos a mais um episódio
+
+de Hackeando Golpes. Como eu falei, o site que a gente vai analisar é uma loja e um fornecedor de cartão clonado. E sem enrolação, vamos direto ver como é que ele funciona. Olhando as requisições, a primeira coisa que dá para perceber é que tudo ali é uma chamada pro super base. E isso é maravilhoso porque é cheio de falha para quem não sabe configurar direito. Só que
+
+tem um pequeno detalhe. Em vez de ser uma chamada normal, direto pelo nome da tabela, a maioria das requisições aqui eram via RPC, o que complica bastante. Eu fiquei analisando as respostas da API para ver se vazava alguma informação, usuário, token, qualquer coisa, mas nesse primeiro momento não teve nada. E como analisar chamada RPC é um pouquinho mais complicado, vamos dar um passo para trás e seguir o caminho mais fácil, tentar achar o nome das tabelas, que geralmente é onde as vulnerabilidades aparecem. Antigamente, para fazer isso era só chamar o end point Rash V1, que o Super Base devolvia o nome de todas as tabelas do banco. Só que isso foi
+
+desapelitado por padrão desde abril desse ano. Mas ainda tem algumas técnicas para encontrar as tabelas e uma delas é a gente chutando o nome. Se eu tento colocar, por exemplo, profile, retornou 200, ou seja, foi encontrado, só que não veio nenhum dado. Provavelmente tem rs configurado nessa tabela. Aí eu tentei logs, só que retornou 404, not found. Mas olha a
+
+mensagem de erro que aparece. Será que você quis dizer a tabela login items? Aí eu testei, retornou 200, só que de novo, sem nenhum dado. Eu continuei chutando tudo que vinha na cabeça, só que não tinha nada de útil. Tem outro caminho para achar o nome da tabela, o próprio frontend. O site tem React, então toda a
+
+lógica de chamada ao banco fica exposta no cliente. Procurando pelo texto from, que é o nome da função do Super Base responsável por apontar para uma tabela, aparecem várias usadas ali no frontend e eram coisas que poderiam ser impossíveis de encontrar só chutando os nomes. Eu fui testando uma por uma, a maioria voltava um array vazio até chegar na tabela resellers, revendedores. E essa sim trouxe algumas coisas interessantes: o ID do dono, nome da loja e o melhor, o WhatsApp de contato de cada revendedor. E também tem a mesma coisa na tabela reseller clients, nome de usuário, telefone e a senha. Só que a senha tava
+
+em bript, então nem vou tentar fazer brot force nisso. Mas ainda tem o campo mais interessante ali no meio, o admin. E depois de mais alguns testes no Super Base, não encontrei mais nada exposto. E muito tempo depois, o Nightbur que estava em cal explorando comigo, solta a pergunta: onde que o token tá salvo? Na hora eu só achei que ele não tinha procurado direito. Eu fui olhar o local
+
+storage e não tinha token nenhum, só as informações do meu usuário que pode muito bem ser cash. Depois eu olhei os cookies e também nada. Se você não entendeu o que que isso significa, o sistema não tem nenhuma forma de garantir que eu sou realmente eu. A autenticação na prática é falsa. Então bora confirmar isso. Eu dei um F5 na
+
+página para ver o que acontece e entre várias requisições, uma chamou minha atenção, o Get Profile by user ID. Você passa o ID do seu usuário e ele te devolver as informações dele, telefone, nome, saldo e se admin ou não. E tem outra, update user session, que atualiza a sessão do usuário. E o único parâmetro que importa ali é o user ID, ou seja, você gera uma sessão só passando o ID de alguém. E para confirmar, eu troquei user ID por um ID que não existe e voltou um erro. Então, sim, a sessão é
+
+completamente manipulável. E se você tá pensando que o token usado é o do Super Base, não. Esses tokens aí são todos anons sem nenhuma identificação de usuário. Resumindo, eu consigo acessar a conta de qualquer pessoa só sabendo o ID dela. E lembra que na tabela resellers tinha um campo chamado o user ID? Então
+
+eu passei esse ID pro end point de perfil e voltou os dados completos, incluindo o IS admin marcado como true. Só que tem um detalhe, parece que essa conta tem dois FA ativo, mas isso aí é um problema para daqui a pouco. E como que eu vou efetivamente acessar a conta dele só para ele d fácil? Vamos fazer o login normal com a minha própria conta e interceptar todas as requisições que aparecem. E assim que chegar em authenticate user, eu troco o user ID que vem na resposta. E só de fazer isso,
+
+a gente já entra na conta dele sem senha, sem nada. E agora é só acessar o barra de mim, mas aparece verificação do 2FA. E aí dá para pensar duas coisas. Ou essa validação não tem limite de tentativa, ou ela é só client site. Eu testei mandando um código aleatório para ver a resposta e tem limit. Inclusive,
+
+eu fui bloqueado de tentar de novo. Mas tá, e se a validação do front só olha o status cod. Eu troquei 401 por 200 na resposta e também não foi. Abrindo o Dev Tools e procurando por Verify 2FA, que é a rota chamada para validar o código, ela retorna duas coisas, um token e um expire Z. E se ela retorna um token, é bem provável que a validação não seja só client site. Mas vocês lembram que entre
+
+as informações do usuário tem o campo TFA enabled, que tá marcado como verdadeiro? E se a gente recarregar a página e forjar a resposta para ser falsa, o que que será que acontece? Abrindo o match replace, eu configurei essa alteração e assim que eu recarreguei a página, apareceu uma mensagem para eu cadastrar o meu 2FA. Calma que eu sei que você tá pensando que a chance disso realmente funcionar é baixa. Com certeza o servidor deve validar se já existe um 2FA antes de sobrescrever ele, né? Cliquei para gerar
+
+e interceptando a requisição, a resposta incrivelmente volta com sucesso junto com o novo secret do 2FA. Então eu peguei esse secret, gerei um código com um site que faz isso para mim e parece que realmente foi habilitado com sucesso. E finalmente coloquei o código de novo agora para fazer o login e entrei no painel admin. Tem muita coisa que dá para fazer aqui dentro. Tem um histórico de atividades, tem como enviar aviso para toda a plataforma, manipular o estoque da loja e, principalmente dá para ver todos os compradores com número de telefone e método de pagamento. E
+
+esse total de compras, esse saldo todo que aparece aí, pode ignorar. Eu sei que ele não teve essa quantidade de movimentação. É bem provável que ele tenha inflado os números. Mas tá bom, chega só de olhar. Vamos atrapalhar esse site o máximo possível. A primeira coisa
+
+foi deletar todos os cartões que estavam à venda para zerar o estoque e ninguém conseguiu comprar mais nada. Eu tentei deletar os usuários também, só que a função RPC responsável por isso parece que não foi implementada de verdade, ela não fazia nada. Tem também uma aba chamada Gates, que pelo que eu entendi, são os checkers, ferramentas que testam se o cartão ainda tá funcionando pra compra. Então eu deletei tudo e criei vários spamans só para bagunçar mesmo, já que eles não tinham nenhum tipo de rate limit. Mas o estrago não é ficar só para esse golpista. Lembra dos
+
+revendedores que eu mostrei antes? Pois é, todos eles estão cadastrados aqui dentro. Tentei deletar um revendedor para ver se a função funcionava e de novo não funcionou. Então eu fui editar os dados da loja e quando eu faço a alteração, a mudança é persistida. Então agora a ideia é simples. Sobrescrever os
+
+dados de todos os revendedores e causar um calizado. E depois de alguns minutos tudo ficou assim. E para fechar com chave de ouro, eu deixei uma mensagem que vai aparecer em todas as lojas ao mesmo tempo. E agora todo mundo que acessava aquele site via essa mensagem assim. Mas agora eu quero mostrar um outro processo que geralmente não mostro nos vídeos. Depois de eu conseguir com
+
+sucesso invadir um golpe e extrair informações, eu geralmente faço o Cint para encontrar o responsável. Se você não sabe, OCINT é a sigla para open source intelligence. É basicamente coletar informações sobre alguém só usando informações públicas. E dessa vez a forma que eu encontrei foi muito divertida. Mas antes de continuar, se você quer um hacker elégético e ter certificações que realmente abrem portas, a Solid One tem o caminho certo para você. São mais de 600 horas de
+
+conteúdo onde você vê desde o básico, desenvolvimento web, penteste em diferentes ambientes, segurança Wi-Fi, mars, exploração de A e muito mais. E ao se inscrever, você passa a fazer parte do Solid Hunter, que é o banco de talentos que conecta os hackers a vagas exclusivas em empresas do mundo inteiro. Link no primeiro comentário fixado. Indo por lá, você ganha um desconto para sua assinatura. Agora vamos voltar pro vídeo que vai ficar interessante. Pesquisando
+
+o nome do site no Google, apareceram dois resultados bem interessantes, um Link Tree e um TikTok. Vamos começar pelo TikTok dele. Ele tem 13 vídeos no perfil e eu passei por cada um deles tentando coletar o máximo de informação possível. No primeiro aparece alguém em uma chamada de vídeo aprovando uma compra pelo celular. Tá vendo esse teclado RGB e esse mouse pad gamer? Pois
+
+é. Se isso realmente for dele, já dá para ter uma noção de quantos anos ele tem. O próximo post é basicamente a mesma cena, mesmo teclado, mesmo mousepad e o mesmo celular. Mas aí no terceiro post as coisas começaram a mudar. Eram um compilado de fotos onde a primeira era um pedido com Galaxy A7 feito na Lagazine Muiza, depois o suposto pacote já em mãos, um pedido na Amazon, o suposto pedido da Amazon também em mãos e o celular do cara, o mesmo da primeira postagem com o site dele aberto na tela. Na quarta postagem
+
+é a primeira vez que a gente pode afirmar que aquele ali é o setup real do golpista. ele acessando o site direto do PC dele. Só que repara numa coisa, o teclado, monitor, mesa são todos diferentes dos vídeos anteriores. Ou seja, é bem provável que aqueles primeiros posts eram de outra pessoa e ele só repostou. E no sexto post, bingo, a logo da loja aparecendo na tela do celular e o mesmo teclado de antes, o mesmo monitor e o ponto chave, uma caixa de um Galaxy A7. E se a gente deixa o
+
+vídeo rolar mais um pouco, o gênio teve a brilhante ideia de mostrar o comprovante da compra do celular. E nesse comprovante aparece o número do pedido. Sim, o mesmo número que a gente já tinha visto lá no terceiro post. Agora com o número do pedido em mãos, dá para tentar rastrear para onde que ele foi entregue. Entrando no site da Maria Lu, ele pede mais um dado para liberar as informações, os quatro primeiros dígitos do CPF. Como que a gente vai
+
+descobrir esses quatro dígitos? Não vamos, a gente vai chutar todos eles, porque quatro dígitos numéricos dão só 10.000 possibilidades. E se a Maria Lu não tiver proteção contra Brot Force, dá para testar todos eles em poucos segundos. Eu abri o burp e joguei a requisição no Intruder, configurando para testar todos os números de 0 até 9999. Agora rodando e esperando alguns
+
+segundos, aparece uma resposta de sucesso. Retornou todos os dados do pedido. Editando isso no site da Maria Lu, ele retorna os dados e principalmente o CEP de entrega. Olhando as requisições por trás, aparecem alguns detalhes a mais, como os itens comprados, que batem exatamente com o print que a gente já tinha visto antes. O único problema é que o status do pedido tá como retirado, ou seja, ele foi pessoalmente buscar, não foi entregue no endereço dele. Mas
+
+agora eu quero voltar pro Link Tree porque tem uma outra descoberta bem interessante por lá. Entrando nele, aparecem três links, um WhatsApp de vendas, um grupo de clientes e um tal de referências e mídias. Clicando lá, fui redirecionado para um Dropbox com 10 vídeos e fotos. Tem material de venda de dinheiro falso ali também, o que é um pouco curioso porque eu achei que ele só vendiam um cartão, mas então eu baixei tudo porque eu queria checar os metadados de cada arquivo. Só que olha que curioso, a primeira imagem é de 2024, 2 anos atrás, a segunda também, a terceira também. Todas as fotos são de
+
+dois anos atrás, o que é bem estranho. E com esse em mente, olha o que acontece quando pesquiso o nome da loja no Instagram. Aparecem dois perfis com o mesmo nome. O primeiro perfil tem mais de 1000 seguidores e tem o link tr na bill que a gente acabou de ver. E olhando os vídeos postados, aparece todo aquele esquema de dinheiro falso e o melhor, todos postados em 2024, que é o mesmo ano que apareceu nos metadados das imagens que a gente acabou de coletar. E
+
+o segundo perfil tem absolutamente zero seguidores, zero postagens, mas ele tem uma republicação de um vídeo postado em maio com 160 likes, ou seja, não é alguma coisa que viralizou para muita gente. Então isso aqui pode ser muito bem um amigo dele. E uma outra coisa é a foto desse segundo perfil. Ela tá completamente descentralizada. Parece que foi um print mal feito do primeiro perfil. E se a gente comparar as duas
+
+imagens dos perfis, dá para encontrar algumas coisas interessantes. Por exemplo, o design da foto e os textos são idênticos. Só que no primeiro perfil aparece o número de WhatsApp que não aparece na segunda. E a melhor parte, enquanto a primeira tem cinco estrelas, a segunda tem quatro. Isso é claramente alucinação de A. A hipótese é que esse
+
+cara criou uma segunda loja se passando por uma marca desse público já conhecida. Mas chega de enrolação, eu vou te contar como eu cheguei mais perto do responsável. Voltando pro vídeo que foi publicado e entrando nesse perfil, tem dois stories fixados e passando por eles, a gente encontra uma selfie de uma pessoa com um banner aparecendo no fundo. E esse banner tem o número de telefone com DDD62, coincidindo com o lugar que a gente já tinha conseguido identificar pelo rastreio da Maria Lu. Só que cuidado, isso não significa que esse cara é o golpista. Ele pode ter
+
+alguma relação com ele, amizade, parceria e qualquer coisa. Mas não dá para afirmar nada com isso. E só para garantir que eu não perdi nada, eu pesquisei mais uma vez o nome da loja no TikTok e eu acabei encontrando o perfil que eu não tinha visto antes, onde uma das postagens é aquele compilado de fotos onde a primeira aparece uma compra na Amazon, só que acaba vazando o final do endereço dele, alguma coisa dark no bloco 55. E a próxima foto é aquela que a gente já tinha visto da Lagazine Muiza. E por fim aparece uma nova compra agora do Mercado Livre, feita do mesmo celular que a gente pode confirmar pelo trincado da tela, só que com porém. Eu
+
+acho que ele esqueceu de censurar alguma coisa. E juntando todas as informações, a gente forma um único endereço, rua Dark Block 55. E agora sabemos exatamente onde ele mora. Mas ainda tem uma coisa mexendo na minha cabeça. No Instagram dele só tem um repostatória, só que ainda falta encontrar uma informação mais pessoal dele, um nome completo ou um CPF para fazer uma busca mais aprofundada. E como ele gosta
+
+bastante de moto, com certeza ele já deixou vazar a placa dele. Então, analisando um pouco mais os stories, sim, aparece claramente pra gente. E usando um programa completamente legalizado, baseado em dados públicos, a gente encontra o CPF dele. E se a gente tenta buscar onde que ele já morou, com programas completamente legalizados, baseado em dados públicos, a gente não encontra em nenhum endereço, o que é normal, porque ele é jovem ainda e deve morar com os pais. Então, encontrando a mãe dele e vendo onde ela já morou, vocês não vão acreditar, bate perfeitamente o lugar que a gente tinha encontrado. A teoria é que ele é só um
+
+amigo muito próximo do dono do site. Por motivos legais, eu não posso falar o nome do suspeito principal, mas pela quantidade de informação que ele deixou vazado, é impressionante. Mas se vocês quiserem saber o que que desenrolou dessa história, me segue nas outras redes sociais para acompanhar. Aproveita e vai na nossa comunidade do Discord, que é um lugar para vocês aprenderem e tirarem suas dúvidas. E é isso. Espero
+
+que tenham gostado do vídeo. Não esquece de deixar o like e se inscrever no canal. Valeus,

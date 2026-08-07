@@ -1,0 +1,103 @@
+---
+video_title: "H4CK3ANDO A BL4ZE (matematicamente)"
+video_id: EArOXaMl3Pg
+channel_name: "YuriRDev"
+channel_id: UCXULpQFgZB8IMYVR2vsaGCQ
+channel_category: "Entertainment"
+url: https://www.youtube.com/watch?v=EArOXaMl3Pg
+video_date: 2026-07-18T14:30:26+00:00
+video_description: |
+  Nesse vídeo eu treino alguns modelos de machine learning pra encontrar padrões dentro dos jogos de cassino... E no final, eu te revelo uma verdade não muito legal. 
+  
+  ---
+  Se você quer se tornar um hacker ético e conquistar certificações que abrem portas, a Solyd One tem o caminho certo pra você!
+  
+  CLIQUE e inscreva-se AGORA! 
+  👉 https://solyd.link/yuri
+  ---
+  
+  👉 Nosso servidor do Discord: https://discord.gg/websec
+  👉 Me segue no X/Twitter: https://x.com/yurirdev
+  👉 Thumb feita por https://www.behance.net/nez6vi
+  
+  
+  
+  Índice
+  00:00 Introdução
+  00:40 Vídeo Educacional 
+  00:51 Coletando partidas antigas
+  02:00 A SOLYD
+  02:24 Regressão Linear
+  03:49 Decision Tree
+  04:36 Random Forest
+  05:09 LSTM
+  06:00 Transformer
+  06:39 Rodando os modelos
+  07:28 O ALGORITMO
+  09:47 Fim
+---
+Blaze, uma das maiores bets do Brasil que com certeza você conhece. Divulgado pelo Neymar, Felipe Neto e mais um monte de nome grande de internet. Já teve muita polêmica, mas o vídeo não é sobre isso. Um dos boatos que tem por aí é que existe um super algoritmo por trás do jogo feito especificamente para entender o seu comportamento e fazer você perder dinheiro. E também você encontra várias pessoas vendendo os padrões secretos do jogo. Então hoje vamos hackear a Blaze
+
+matematicamente, mas especificamente o jogo Crash, aquele lá do aviãozinho. Eu treinei vários modelos de A e dei R$ 100 para cada uma delas apostar. Vamos ver se alguma realmente consegue ganhar dinheiro em cima disso. E fica até o final do vídeo porque eu vou te mostrar o verdadeiro código fonte por trás desse jogo e como nunca mais perder. É sério.
+
+Antes de continuar esse vídeo educacional, não tô incentivando ninguém a apstar. A ideia aqui é técnica. Eu quero testar com modelo de machine learning a detecção de padrão desse jogo. Isso foi uma grande mentira que sempre foi contada. Beleza? Então a
+
+primeira coisa que a gente tem que fazer é coletar todas as partidas anteriores a Blaze. Essa é a matéria prima de tudo isso. É com jogos anteriores que eu treino nos modelos. E por sorte, isso fica disponível aqui mesmo no site, cada rodada do crash com o multiplicador exato que terminou. E vendo a requisição que foi feita, tem uma coisa interessante. Cada partida retorna crash
+
+point, ID e um tal de server city. Ele é um hash Shad256 e é a semente para gerar o resultado. Fica disponível só depois que a partida acaba. Eu deixei um script que baixa esses dados rodando por um tempo e demorou um pouco, mas no final a gente conseguiu um dataset de 1.8 milhões de partidas que vão desde janeiro de 2025. E com essa quantidade
+
+de dados em mão, agora sim dá para começar a treinar as IA de verdade. Os modelos que eu vou treinar aqui não são tipo cloud, GPT, de PSIC, nada disso. Esses aí são LLMs. O objetivo deles é ler texto, entender o contexto e gerar uma resposta que faça sentido. Só que o resultado do crash é uma sequência de números. E para esse tipo de problema,
+
+um Llmista é igual usar um avião beluga para entregar só uma carta. Até funciona, mas não é a ferramenta certa. Os modelos que eu vou usar aqui são modelos estatísticos feito especificamente para encontrar padrões. E eu vou passar por cada um deles para vocês entenderem como é que funciona. Mas antes de continuar, se você quer se tornar um hacker e ter certificações que realmente abrem portas, a Solid One tem o caminho certo para você. São mais de
+
+600 horas de conteúdo onde você vê desde o básico, desenvolvimento web, penteste em diferentes ambientes, segurança Wi-Fi, malers e exploração de A e muito mais. E ao se inscrever, você passa a fazer parte do Solid Hunter, que é o banco de talentos que conecta os hackers a vagas exclusivas em empresas do mundo inteiro. Link no primeiro comentário fixado. Indo por lá, você ganha um desconto para sua assinatura. Começando pela regressão linear. Imagina esse
+
+gráfico cheio de ponto que parece aleatório. A regressão linear tenta traçar uma linha reta que melhor passa no meio de todos eles. É tipo uma régua que você ajeita até representar a tendência. Para você ver onde é que isso funciona bem de verdade, vamos pegar a temperatura média global. Se a gente pega o histórico dos últimos 100 anos e joga em um gráfico ano no eixo X e temperatura no eixo Y, os pontos praticamente desenham uma linha subindo.
+
+Isso é uma relação linear de verdade. Agora vamos aplicar a mesma lógica no histórico do Crash. Diferente da temperatura, você tá vendo que não tem nenhuma relação sistemática entre um resultado e o próximo? Vou até colocar mais alguns gráficos aqui mostrando nas últimas 60 partidas. A nuvem de pontos não tem tendência nenhuma, fica tudo espalhado, sem direção. Talvez nós
+
+humanos não conseguimos encontrar padrão só de olhar. Então, mesmo assim, eu treinei o modelo duas vezes com duas configurações diferentes. E olha só o resultado. O primeiro zerou todos os parâmetros. Ele basicamente falou que nada lá importa. E isso não foi um erro.
+
+Ele detectou que não existe nenhuma relação entre uma partida e a outra, então desistiu de usar qualquer resultado anterior para prever o próximo. Mas na segunda configuração, o modelo enxergou umas coincidências no meio dos dados. Até dá para ver que ele acertou algumas previsões, só que ele também errou muitas. Isso chama treinar em cima de ruído. Quando você tem milhões de números aleatórios, sempre vai aparecer uma coincidência só pela quantidade de dados. Só que como
+
+coincidência não se repete, quando chegou uma nova rodada, o que ele decorou errou. A regressão linear basicamente desistiu. Então vamos pros próximos modelos. O segundo é a árvore de decisão. Ela funciona como um fluxo de perguntas de sim ou não, uma atrás a outra, até chegar em uma resposta. No
+
+nosso caso, o modelo pega o dataset e divide em blocos, por exemplo, as últimas 30 partidas antes de cada rodada que ele tenta prever. E é dentro desses blocos que ele começa a fazer as perguntas. Vamos pegar essas 10 janelas de exemplo. Você tá vendo um padrão aqui em oito das 10 janelas, toda vez que o resultado de 11 rodadas atrás veio abaixo de 1.20, o último resultado veio acima de 12. E é exatamente isso que a
+
+árvore de decisão enxerga. Para ela, isso virou uma regra. Se a 11ª posição atrás foi menor do que 1.20, então a próxima é maior do que 12. Claro que esses dados aqui eu fiz para vocês entenderem. Isso não acontece no jogo
+
+real. A ideia é que no dataset de 1.8 milhões de rodadas vai ter que aparecer alguma combinação que se repete, fazendo a árvore entender como um padrão. O terceiro modelo é o random forest. Ela é diretamente ligada à árvore de decisão que a gente acabou de ver. Só que em vez
+
+de confiar em uma única árvore, a gente cria centenas delas e deixa elas votarem. É literalmente como uma banca de jurados. Se você pergunta para uma pessoa só, ela pode estar envieszada ou ter visto só uma parte dos casos. Mas se você junta 200 jurados diferentes, cada um analisando um pedacinho diferente, a decisão final tem de ser mais equilibrada. E é isso que o Rain Forest faz, cria várias árvores de decisão e no final pega o voto majoritário de todas elas. A ideia é reduzir aquele exagero
+
+de achar padrão em tudo que uma árvore sozinha tem. O quarto modelo é o LSTM, Long Short termy. Antes de eu explicar como é que ele funciona, eu vou te contar o por que eu escolhi ele. A árvore de decisão e o Rand Forest tem uma janela fixa, tipo as últimas 30, 50 ou 100 rodadas. Eles são cegos para qualquer coisa que aconteceu antes disso. Mas isso a relação que a gente tá
+
+procurando não tá nas últimas 30 rodadas, mas sim lá no início, centenas de milhares de rodadas antes. Um comportamento bem sutil, raro, que aparece a cada 50.000 jogos. Eu precisava de um modelo que na teoria pudesse carregar informação por uma sequência gigante, sem limite de quanto tempo atrás ela lembra. E é exatamente para isso que o LSTM foi criado. Imagina
+
+uma pessoa lendo um livro de 1000 páginas, ela não consegue guardar cada frase, ela resume mentalmente o que que é importante. A pergunta que ele vai responder é: será que o jogo de Crash se comporta como uma série temporal de verdade, com informações valiosas no passado ou se é só ruído em todas as partidas? E por fim, o último modelo é o Transformer. E esse aqui com certeza você conhece, só não sabia o nome. Sabe esse carinha aqui, o chat GPT? GPT
+
+significa generative pretrain transformer. Em vez de ele uma sequência de números um por um igual LSTM, ele deixa qualquer rodada comparar diretamente com qualquer outra rodada da sequência. Não importa a distância. Só que Transformer é uma arquitetura, não é um modelo pronto. Então, só passando rapidinho a pipeline de como realmente funciona para quem tiver interessado. Eu
+
+peguei cada resultado anterior e converti numa classe onde cada uma delas passou por um embeding virando vetor. Eu somei um position beding em cima para criar uma ordem. Isso passo pela camada de transformer em coder layer, que é o setion logo seguida de uma rede fewert com dropout. E no final um pulo em seguido de uma camada linear que costa a probabilidade do próximo resultado. Agora sim, cinco abordagens diferentes treinadas várias e várias vezes. Vamos
+
+ver o que acontece quando eu boto dinheiro neles. Eu vai poder essa página onde eu escolho quais modelos eu quero colocar para jogar. Eu dou R$ 100 para cada um deles e em cada rodada eles apostam R$ 5. O jogo acaba quando todo mundo fica sem dinheiro ou quando acaba as rodadas. E essas aqui são as últimas 300 partidas da Blaze. Vamos ver se eles
+
+acertam. Pera aí. Funcionou. O modelo fechou com R$ 20 de lucro. E esse aqui chegou a bater mais de R$ 300, só que perdeu tudo no final. Conseguimos? Obviamente não dá
+
+para confiar em só uma rodada, então eu rodei mais de 20 vezes e o resultado foi exatamente o que eu tava esperando. Às vezes ganha muito, às vezes perde rápido sem nenhum padrão, ou seja, completamente aleatório. Teve até uma rodada isolada que um modelo fechou com quase R$ 900, só que na mesma leva de testes, a maioria zerou o saldo inteiro. Aá não conseguiu prever nada consistente. Então agora prepara que eu vou te mostrar o algoritmo real usado pela Blaz. E a forma que eu consegui ele
+
+foi muito complicado, é literalmente aberto. E aqui embaixo tem um code níped de como eles calculam o crash point. Repara que não é um algoritmo gigante cheio de regras, é basicamente um cálculo que acontece a partir de um resto 56, no caso a sid. Então eu posso literalmente pegar uma sid qualquer, vou pegar esse multiplicador de 50 e se eu rodo o código por cima dele, retorno o mesmo resultado. Beleza? Mas como é que eles
+
+escolhem esse hash? É claramente manipulado. É aqui que fica a parte mais legal do sistema. Eles não usam uma C aleatória por rodada. Eles criaram uma lista encadeada de 10 milhões de hash Shadow 56. Basicamente, a partir de uma
+
+C secreta, eles geraram um Shadow 56 e a partir dela um outro Shadow 56. E de novo, e de novo, milhares de vezes, criando essa corrente que vocês estão vendo aqui. E a parte mais inteligente é que essa corrente é revelada de trás para frente. Ou seja, o último resto gerado é o primeiro a ser usado, o penúltimo é o próximo e por aí vai até chegar na última partida da Blaze, que vai ser o primeiro rash gerado. Isso cria duas garantias matemáticas ao mesmo tempo. Primeiro, você consegue auditar
+
+todo o histórico. Quando uma partida nova termina, a sí dela é liberado. E se você pega ela e aplica o Shadow 56 uma vez, você consegue conferir se bate com sid da rodada anterior, o que prova que já estava definido sem manipulação. E também fica impossível prever o próximo hash, porque o Shadow 56 é uma função de mão única. É fácil girar um hash, mas é impossível descobrir o que gerou ele.
+
+Você pode até tentar fazer uma força bruta, onde testa todos os hash chada 56 para encontrar qual gerou a partida atual. O único problema é que nós temos 2 elevado a 256 possibilidades. Ele é maior do que a quantidade de átomos do universo. Não existe um IF ganhou muito perde tudo escondido no meio do código. Não tem controle manual do resultado, é só isso. Desculpa, mas eu acabei de te
+
+provar que o algoritmo do Crash usado pela Blaze é matematicamente justo e impossível de manipular sem ninguém perceber. Mas calma que eu não tô defendendo o Bet. Isso não significa que a Blaze é segura só porque não manipula o resultado. Ela é perigosa porque manipula a mente das pessoas. Viés cognitivo, a sensação de quase acertar, promessa de ganho fácil. Isso tudo é
+
+muito mais perigoso do que qualquer linha de código. Esse vídeo foi só para desmentir uma mentira contada mil vezes. Todo mundo fala que o algoritmo sabe quando você vai botar dinheiro para fazer você perder, mas a verdade é que você só é burro por jogar. Eu falei que eu ia dizer como faço para nunca mais perder. Simples, é só não jogar. E é
+
+isso. Espero que tenham gostado do vídeo. Me segue nas outras redes sociais e não esquece de deixar o like e se inscrever no canal. Valeus.
