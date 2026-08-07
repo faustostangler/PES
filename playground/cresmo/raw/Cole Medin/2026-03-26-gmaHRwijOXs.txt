@@ -1,0 +1,128 @@
+---
+video_title: "Everything You Thought About Building AI Agents is Wrong"
+video_id: gmaHRwijOXs
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=gmaHRwijOXs
+video_date: 2026-03-26T00:00:46+00:00
+video_description: |
+  A year ago, building AI agents meant picking a framework like Pydantic AI or LangChain, defining your tools, setting up RAG, and writing a lot of glue code. That entire playbook has been rewritten. For starters, coding agent SDKs give us agents with built-in tools, skills replaced hardcoded functions, and a lot of RAG is being questioned.
+  
+  And here's the thing - Pydantic AI, LangChain, and LangGraph aren't going anywhere. They're actually more important than ever for production agents. But the way you think about when to use what has fundamentally shifted.
+  
+  In this video, I'll break down exactly how building AI agents has changed, when to use a batteries-included SDK versus a traditional framework, and give you my rule of thumb for making that decision.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Neon is my go to database for RAG - serverless Postgres with instant database branching, autoscaling, and scale-to-zero:
+  https://get.neon.com/XcaDCCx
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Want a complete AI transformation? Come to the free AI Transformation Workshop I'm hosting with Lior Weinstein on April 28th: 
+  https://dynamous.ai/ai-transformation-workshop
+  
+  - If you're interested in building your own AI second brain to save yourself hours every week, check out the Dynamous community and upcoming 4 hour second brain workshop: 
+  https://dynamous.ai
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - GitHub repo with the examples I show in this video:
+  https://github.com/coleam00/evolution-of-ai-agents
+  
+  - Claude Agent SDK:
+  https://platform.claude.com/docs/en/agent-sdk/overview
+  
+  - Pydantic AI:
+  https://ai.pydantic.dev/
+  
+  - LlamaIndex Filesystem vs RAG Benchmark:
+  https://www.llamaindex.ai/blog/did-filesystem-tools-kill-vector-search
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 The AI Agent Narrative Shift
+  1:41 The Old Way of Building AI Agents
+  3:39 Shifting to Batteries-Included SDKs
+  6:53 Key Limitations of Agent SDKs
+  9:34 Adding Modern Skills to Frameworks
+  11:41 Decision Framework: SDK vs Framework
+  13:08 The Evolution of RAG
+  15:22 Final Summary
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Atualmente, os únicos agentes de IA que parecem interessar às pessoas são os assistentes de programação de IA. Parece que ninguém mais está abordando a construção de agentes com LangChain, n8n ou Pydantic AI. Se você acompanha o YouTube ou o LinkedIn, parece que essas estruturas simplesmente não importam mais. E, honestamente, eu meio que me incluo nesse grupo. Eu costumava passar o tempo todo criando agentes com Pydantic AI, n8n e o SDK de agentes da OpenAI, além de desenvolver agentes de IA locais. Eu adorava
+
+isso, mas meu canal definitivamente mudou muito mais para o uso eficaz de assistentes de programação com IA . Isso é simplesmente o que é mais relevante neste momento. E muitos desses agentes de codificação lançaram SDKs, então podemos construir nossos próprios agentes com base em todo o poder que eles nos oferecem prontos para uso . Então, existe essa grande narrativa agora de que não precisamos mais dessas estruturas. Vamos construir tudo com base no SDK do agente Claude . E isso é realmente verdade
+
+em alguns casos de uso. Para isso, tudo o que você pensou sobre a construção de agentes de IA precisa ser descartado. Mas, para outros casos de uso, isso não é verdade. Portanto, há muitas nuances que precisamos abordar aqui. Se analisarmos todos os casos de uso de negócios existentes, com os bilhões de agentes que estão sendo criados, muitos deles, talvez até a maioria, ainda estão sendo construídos com base nesses casos de uso mais clássicos. Mas alguns estão em
+
+processo de transição. Faz mais sentido construí-los diretamente sobre esses SDKs. Então, quero abordar essa nuance com vocês. Quando faz sentido construir em cima dos SDKs, quando faz sentido usar um framework. Há também outras evoluções importantes que precisamos abordar, como a maior dependência da habilidade e as diferentes maneiras de executar o ragtime. Quero abordar tudo isso
+
+e facilitar ao máximo as suas decisões . Muito bem, então vamos começar falando sobre o método antigo de construção de agentes de IA. Muitas dessas regras ainda se aplicam, mas todos os agentes foram construídos dessa forma em 2024 e 2025. Portanto, você começaria escolhendo sua estrutura. Todas essas opções são válidas.
+
+Existem opções demais, sinceramente, mas você deve escolher aquela com a qual se sente mais confortável ou aquela que sua organização utiliza. Em seguida, você define as ferramentas para o seu agente, todas as funcionalidades, como pesquisar em um sistema de arquivos, acessar sua caixa de entrada, esse tipo de coisa. E a partir daí, isso não é um requisito obrigatório, mas a maioria dos agentes de IA, especialmente naquela época, tinha algum tipo de pano. Assim, você define sua estratégia de fragmentação, incorporação e recuperação para que seu agente pesquise em uma base de conhecimento. E, finalmente, você configuraria o loop do agente, incluindo o gerenciamento de estado e memória , coisas como memória de curto prazo , e a capacidade de armazenar todas as suas conversas em um banco de dados. E,
+
+claro, tenho alguns exemplos aqui para acompanhar tudo o que estou falando no diagrama. Então, vou incluir o link para este repositório na descrição. Quero começar por aqui com o agente de trapaça mais clássico de todos os tempos . Não que essas ideias tenham desaparecido, mas é assim que veríamos praticamente todos os agentes definidos em 2024 e 2025. Portanto, você começaria definindo seu agente usando uma estrutura como o Pydantic AI. Você define seu modelo, o
+
+prompt do sistema, as ferramentas, como esta é uma ferramenta para pesquisar nossa base de conhecimento com rag, porque rag estava em quase todos os agentes. Assim, você teria sua estratégia de fragmentação, sua estratégia de incorporação e seu pipeline de ingestão. Havia muito código aqui. E assim, dentro do nosso banco de dados, como eu adoro usar o Neon para meu banco de dados Postgres. Ainda faço isso por muitos dos meus agentes. Temos aqui os nossos documentos
+
+e depois temos os nossos blocos, muitos blocos. Nós gerenciaríamos todas as nossas mensagens e sessões. Tudo o que era necessário para o nosso agente era gerenciado em nosso próprio banco de dados. Era assim que se fazia antes, o tempo todo. O que estou tentando dizer é que, muitas vezes, isso ainda é necessário, mas ainda assim, precisamos criar a infraestrutura do agente por conta própria. Há muita
+
+complexidade envolvida. Por isso, muitas pessoas estão migrando para o uso de SDKs que já vêm com tudo incluído. Portanto, é possível criar agentes que não exigem programação sobre uma base de agentes que exigem programação, utilizando ferramentas como o SDK de agentes Claude ou o SDK Codex. E a vantagem de usar isso como ponto de partida é que já existem diversas ferramentas e sugestões integradas à solução . E eles gerenciam o histórico de conversas para nós. Assim, nem
+
+precisamos armazenar essa parte em nosso banco de dados. Isso nos dá uma plataforma de lançamento. Oferecemos suporte para servidores de habilidades e MCP. Essas são também as novas maneiras de integrar ferramentas aos nossos agentes. Portanto, não é que você vá usar isso o tempo todo. E
+
+abordarei isso em instantes, mas é muito mais fácil criar agentes com base nesses SDKs do que da maneira antiga, usando um desses frameworks. Veja como isso é simples e poderoso. Agora tenho todo o meu agente de IA usando o SDK do agente Claude em um único arquivo TypeScript. Em vez de definir meu próprio agente de IA, eu simplesmente chamo o código do Claude e defino todas as minhas opções, como as ferramentas que ele pode usar, de forma que aquelas que eu quero aproveitar já estejam integradas ao SDK. Além disso, tenho subagentes que defini aqui. Portanto,
+
+estamos adicionando muito mais recursos do que tínhamos nos outros servidores de agentes e MCP . Posso construir minhas próprias ferramentas personalizadas. Assim, em vez de definirmos as ferramentas diretamente em nosso agente, podemos criá- las como servidores MCP, o que as torna muito mais reutilizáveis. Podemos fazer o mesmo com habilidades. Eu também tenho habilidades integradas a esse agente, então ele pode gerar apresentações em PowerPoint para mim. Na verdade,
+
+esse agente possui mais funcionalidades integradas e, no geral, requer menos código. Nem precisamos do pipeline rag e tudo mais, porque para muitos desses agentes do SDK do Claude, você simplesmente vai depender dos recursos de pesquisa de arquivos integrados ao SDK. Podemos ter ganchos (hooks), podemos definir as permissões, podemos criar nosso próprio prompt de sistema. Temos tudo o que tínhamos antes e muito mais. E se eu realmente quisesse continuar usando o Ragnarok, e talvez queiramos, falarei sobre isso daqui a pouco também, podemos simplesmente incluir isso por meio de habilidades e servidores MCP. Espero que você consiga perceber o
+
+quão poderoso é usar esses SDKs. Isso simplifica muito as coisas para nós, porque estamos construindo em cima dessas ferramentas poderosas. Há um motivo para tanta atenção voltada para esses agentes de codificação . E é exatamente isso que estou usando como meu segundo cérebro. Então, estou usando o SDK do agente Claude para todo o sistema de pulsação que construí para meu próprio segundo cérebro, inspirado no Open Claw. Ele
+
+gerencia todas as minhas integrações e tudo o que eu queria que ele fizesse. Isso cria memórias ao longo do tempo. Realiza reflexões diárias para, basicamente, aprender com seu trabalho e com minhas solicitações ao longo do tempo. Tudo isso utiliza o SDK do agente Claude , que, aliás, se você estiver interessado em aprender como construí meu segundo cérebro usando o SDK do agente Claude e o código Claude, estou oferecendo um workshop de 4 horas na minha comunidade Dynamis. Sexta-feira, 3 de abril, às 11h00, horário central. Então, se você quer [risos]
+
+economizar horas e horas toda semana construindo um segundo cérebro em cima do código Claude, definitivamente venha fazer parte da comunidade e participe deste workshop comigo. E construir um segundo cérebro com o SDK do agente Claude é apenas um dos muitos casos de uso extremamente poderosos. No entanto, existem algumas limitações importantes com esses SDKs incluídos. É isso que nos levará à importância de continuarmos a construir grande parte dos nossos agentes com essas estruturas. Portanto, há três limitações principais que quero destacar com vocês agora. A primeira
+
+é que esses SDKs são significativamente mais lentos do que o que você pode construir com essas estruturas. E a razão para isso é que há muita sobrecarga de raciocínio porque esses SDKs já vêm com muita coisa integrada e pronta para uso. Portanto, a conveniência de ter todas essas ferramentas e suporte para coisas como subagentes, habilidades e prompts já disponíveis torna muito fácil trabalhar com essas ferramentas, mas significa que você está começando a construir seu agente com algo que já está um pouco inchado. E isso também faz com que o jogo dependa mais de tokens. Portanto, essas duas coisas estão intimamente ligadas . E também é um pouco mais
+
+não determinístico, porque muitas coisas são gerenciadas automaticamente. Portanto, é não determinístico no sentido de que você não consegue definir exatamente como seu agente opera. Quando construímos usando uma estrutura pré-definida, estamos mais construindo do zero. Portanto, em qualquer caso de uso em que velocidade, custo ou máxima flexibilidade sejam extremamente importantes, é aí que você deve construir sua solução utilizando uma estrutura como o Pydantic AI. Continuo usando o Pydantic AI o tempo todo. Construir com essas estruturas é
+
+o que permitirá criar agentes com tempos de resposta inferiores a um segundo e a maior flexibilidade possível, pois você controla tudo, inclusive o histórico da conversa. Para muitos desses agentes de produção que exigem muita observabilidade e controle, como a capacidade de armazenar e gerenciar o histórico de mensagens por conta própria , usar algo como o SDK do agente Claude não é uma opção viável. Além da óbvia diferença de velocidade entre os frameworks e os SDKs, existe outro grande motivo pelo qual, na maioria das vezes, quando um agente é implantado em produção, ele utiliza um framework em vez do SDK. E tudo se resume ao custo. Como já mencionamos, esses SDKs dependem muito de tokens . Portanto, na maioria das vezes em que você
+
+os utilizar, estará usando sua assinatura, como sua assinatura da Anthropic ou sua assinatura da OpenAI. Mas você só pode usar sua assinatura quando for apenas você interagindo com o agente. Caso contrário, isso constitui uma violação dos termos de serviço de qualquer uma dessas plataformas SDK. Portanto, se várias pessoas estiverem usando seu agente em produção, você precisará usar sua chave de API. Você precisa pagar uma quantia obscena pelos custos da API.
+
+Essa é, portanto, mais uma limitação desses SDKs. Por isso, geralmente uso um framework. Vai ser muito mais econômico. Você pode realmente usá- lo em grande escala sem se preocupar em queimar milhões e milhões de tokens. E, utilizando essas estruturas, você ainda tem a possibilidade de incluir todas essas técnicas modernas, como skills e servidores MCP. Pode ser que dê um pouco mais de trabalho
+
+para configurar, mas ainda assim é muito realista. E deixe-me mostrar isso com um exemplo. Uma das coisas que você pode achar que falta nesses frameworks de agentes é o suporte a habilidades. Portanto, essa é a principal maneira de dar funcionalidades aos nossos agentes de programação atualmente, e estamos começando a ver isso sendo adicionado a essas estruturas de agentes. Então, o que eu fiz, e vou colocar o link para um vídeo aqui onde explico isso com mais detalhes, foi criar um agente de IA Pydantic no qual adicionei meu próprio suporte para habilidades. Então, você tem
+
+aqui o diretório de habilidades com todos os seus arquivos skill.md. Tudo funciona exatamente da mesma forma que no Claude Code, mas agora temos nosso próprio agente personalizado, no qual temos controle total. Vai ser muito mais rápido e com uma utilização de tokens muito maior . Assim, essa configuração parece bastante semelhante ao primeiro exemplo de agente RAG que eu apresentei. Definimos o
+
+modelo, o prompt do sistema, o conjunto de ferramentas aqui, mas as ferramentas servem mais para carregar as habilidades agora. Esta é a forma mais moderna de adicionar funcionalidades ao nosso agente de IA. Então, temos um prompt dinâmico do sistema onde basicamente descrevo ao agente: "Aqui estão suas habilidades disponíveis." E eu o carrego dinamicamente a partir do diretório de habilidades, e então o restante do prompt do sistema apenas descreve ao agente como utilizar essas habilidades. Então, por exemplo, entrando no agente aqui, eu tenho apenas uma CLI simples. Posso perguntar: "Qual é a previsão do tempo em
+
+Nova York?" Assim como Claude Code, esse agente também consegue chamar uma ferramenta para carregar a habilidade. Então, ele importa o arquivo skill.md, que fornece instruções sobre como fazer as chamadas à API, e então obtemos a previsão do tempo atual em Nova York. Mas veja só a rapidez com que isso aconteceu. Isso
+
+levaria pelo menos 10 segundos para obter uma resposta do SDK asiático do Claude, devido ao seu tamanho excessivo. Assim, é muito fácil incorporar qualquer funcionalidade que você precise em seus próprios agentes, especialmente com a ajuda da programação de IA atualmente. Às vezes, você só quer algo pronto para usar, e o SDK asiático da Claude é ótimo. Outras vezes, você precisa dessa velocidade e escalabilidade, e não será tão difícil usar um agente de codificação para ajudá-lo a construir tudo isso sozinho. Eu utilizo o Claude Code para me ajudar a construir este agente de IA Pydantic.
+
+Então, com todo esse contexto estabelecido , agora quero abordar a estrutura de decisão super simples para vocês. Você deve optar por um SDK ou por um framework? Então, falaremos sobre isso, e depois abordarei o RAG, porque esse é realmente o último componente que eu não mencionei muito e que, como eu disse, fazia parte do método antigo. Ainda é relevante, mas também existem estratégias com ferramentas já existentes que o substituem. Falaremos sobre isso daqui a pouco. Mas,
+
+para a estrutura de decisão aqui apresentada, tudo se resume a duas perguntas que você deve se fazer . Quem vai usar seu agente e qual é a sua tolerância a fatores como velocidade e escala? Se for apenas você usando o agente e um pequeno atraso não for um problema, e você não precisar de escalabilidade, então eu recomendo fortemente o uso do SDK Claude Asian ou do SDK Code X. Algo inovador que oferece muita potência e com menos preocupações em relação à infraestrutura. Mas, se muitas outras pessoas estiverem usando seu agente, se você estiver implantando-o em uma plataforma de produção e ele precisar ser escalável e rápido, então você ainda deve optar pelo método clássico de usar um framework como o Pydantic AI ou o LangGraph. E, no final das contas, o ideal é
+
+começar com a implementação mais simples . Então, você não fará o caminho inverso, mas às vezes começará com o SDK Claude Asian apenas para testar algumas ferramentas por meio de habilidades ou MCP e, em seguida, fará a transição para um agente Pydantic AI quando precisar de escalabilidade. Então, você pode tentar usar as duas opções, mas geralmente essa decisão ficará bem óbvia para você logo no início, quando você estiver considerando seu caso de uso. Espero que essa estrutura de decisão seja útil para você. A última coisa sobre a qual quero falar é o que aconteceu com o RAG? Por que tantos agentes de programação e
+
+outros agentes não estão mais usando o RAG tradicional como playbook padrão? Muita gente está dizendo que o RAG está morto. Quero esclarecer isso para você agora mesmo. Então, em 2024, ninguém realmente questionou o RAG. Praticamente todos os agentes utilizavam a busca semântica como forma de acessar informações externas. Mas aí, em 2025,
+
+as pessoas começaram a questionar isso porque estávamos dependendo muito mais da busca em arquivos. Os agentes de codificação, em particular, deixaram de usar bancos de dados vetoriais e agora utilizam ferramentas como o grep. É por isso que vemos tudo isso integrado diretamente nos SDKs. Para conjuntos de conhecimento menores, foi comprovado no ano passado que a busca em arquivos supera a busca RAG ou a busca semântica clássica. A Llama Index fez um estudo, Claude Code, e muitos desses agentes de codificação estão migrando para outras plataformas. Muitas dessas informações
+
+apontavam na direção de que a RAG estava morta. Mas há muito mais nuances nisso do que as pessoas imaginam, porque para bases de conhecimento maiores, com milhares de documentos, a busca semântica ainda é mais precisa e muito, muito mais barata. Então, neste ano, chegamos a uma espécie de meio-termo com o RAG agentivo. Conferimos ao nosso agente a capacidade de realizar tanto buscas semânticas quanto outros tipos de buscas, como grep e busca por palavra-chave. O Graph RAG também é muito popular, especialmente para bases de código enormes ou projetos com muitas bases de código diferentes. Assim, em
+
+nível empresarial, o RAG ainda é usado para codificação de IA. E, para a maioria dos agentes de IA, ainda precisamos do RAG para acessar nossas bases de conhecimento. A busca por arquivos não é suficiente. É um bom ponto de partida e funciona melhor para bases de conhecimento menores, mas você ainda precisará disso para muitos dos seus agentes. Para muitos dos meus agentes de IA, ainda passo bastante tempo no meu banco de dados testando diferentes estratégias RAG, com foco em busca semântica. Mesmo com o SDK Claude Asian, é possível
+
+construir uma busca semântica por meio de habilidades e servidores MCP. E o Second Brains é um bom exemplo disso. Eu construí o meu com base no SDK Claude Asian, mas utilizo as duas funcionalidades integradas e também tenho a minha própria configuração RAG, inspirada no OpenClaude, também integrada para pesquisa semântica. Resumindo, escolha a ferramenta mais adequada ao seu caso de uso. Existem inúmeros casos de uso excelentes para os SDKs, e muitos outros, ou até mais, em que você deseja usar um framework e construir tudo praticamente do zero. E espero que essa
+
+estrutura de decisão tenha facilitado bastante para você pensar nisso para seus próprios agentes de IA. Então, se você achou isso útil e está ansioso por mais conteúdo sobre criação de agentes de IA e programação orientada a agentes, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo.

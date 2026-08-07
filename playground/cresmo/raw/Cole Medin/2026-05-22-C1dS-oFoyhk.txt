@@ -1,0 +1,662 @@
+---
+video_title: "Plan with Claude Opus, Build with Kimi K2.6? LIVE Mixed-Provider Benchmark"
+video_id: C1dS-oFoyhk
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=C1dS-oFoyhk
+video_date: 2026-05-22T03:36:08+00:00
+video_description: |
+  Last Monday I added Opus into the Dark Factory's workflows for deep reasoning while keeping Kimi K2.6 as the workhorse for everything else. It works - the factory shipped its first mixed-provider PR cleanly. But I never measured WHICH mix was actually optimal. Should Opus plan and Kimi implement? Or Kimi plan and Opus implement?
+  
+  Today I'm answering that with data. Using Archon, I built a benchmark matrix that runs the same coding workflow four different ways - varying which provider handles planning and which handles implementation - against three real GitHub issues. After all 12 PRs land, an Opus-based evaluator scores each one on seven dimensions (root cause, scope discipline, subtle correctness, code quality, test discipline, plan-to-impl fidelity, solves-the-issue).
+  
+  🔗 Archon: https://archon.diy
+  🔗 Dark Factory: https://github.com/coleam00/dark-factory-experiment
+  🔗 Dynamous community: https://dynamous.ai
+  
+  Livestreams Mon/Thu/Sat at 9 AM CT. New YouTube video every Wednesday at 7 PM CT.
+---
+Estamos ao vivo. Hora de fazer mais alguns experimentos com nossa fábrica escura. Então, na última transmissão ao vivo eu estava testando alguns provedores de mixagem. Então, estamos usando o Arkon como nossa ferramenta para construir fluxos de trabalho que combinam Opus e Kimi K 2.6 para lidar com algo de ponta a ponta, mas sem depender, você sabe, do modelo principal para tudo. Poder usar o Kimi
+
+para grande parte da nossa pesquisa e validação de implementação e o Opus para o planejamento, certo? Então, é como aquela etapa que exige mais raciocínio. É aí que nos apoiamos no modelo mais amplo. Mas, para sermos muito eficientes em termos de tokens no restante do fluxo de trabalho, usamos o Kimi. Então, deixe-me mostrar isso aqui.
+
+Mas eu tenho a assinatura Kimi para programação, ou melhor, a assinatura Kimi para programação, que é a que estou usando. Então, tenho minha assinatura da Anthropic quando uso o Opus e minha assinatura do Kimi Code para todas as outras partes do fluxo de trabalho, exceto o planejamento em si. Bem, desculpe, esta é a página errada. Console de código Uh Kimi. Preciso do meu console de código Kimi porque quero tê-lo disponível também para a transmissão. É só
+
+isso? Às vezes, por algum motivo, é difícil encontrar o lugar certo na interface do usuário do Kimi. Mas, enfim, voltarei a esse assunto. Então, o que vou fazer hoje é realizar alguns testes de desempenho ao vivo. Então, deixe-me apresentar os detalhes corretos aqui.
+
+Ok, sim. Pronto. Então, o que vou fazer hoje é testar diferentes combinações de Opus e Kimi para esses fluxos de trabalho do Arkon. Assim, como preparação para a nossa transmissão de hoje, já criei vários fluxos de trabalho no Arkon. Hum, deixe-me mencionar isso aqui. Então, eu tenho isso
+
+bem aqui. Então, este é o meu repositório para a fábrica escura. Esta é a base de código que se constrói de forma autônoma. Nenhum ser humano tem permissão para escrever ou revisar o código. E eu estou usando o Arkon como orquestrador, certo? Assim, esses fluxos de trabalho são o que
+
+orientam toda a evolução da base de código. Então, desde a triagem de problemas e a realização de todos os testes, até o tratamento de cada um deles e a integração com a produção, tenho agentes que cuidam de cada etapa do processo com fluxos de trabalho do Arkon. Então, criei quatro fluxos de trabalho aqui. Então, um KK, KO, OK e OO. Deixa eu explicar isso rapidinho. Então, vou abrir
+
+aqui meu guia de benchmarks. Assim, para cada um desses fluxos de trabalho, estou usando uma combinação diferente de Kimmy e Opus. Então, para testes de OO de referência, basicamente estou usando o Opus tanto para planejamento quanto para implementação. E então, para o OK, usa-se o Opus para o planejamento e o Kimmy para a implementação, basicamente para o restante do fluxo de trabalho. E aí eu viro, né? Então, tipo, só a
+
+Kimmy para o planejamento e o Opus para todo o resto. Então, o que eu realmente quero testar aqui é qual a melhor maneira de combinar fornecedores. E a razão pela qual isso é tão incrivelmente importante agora é porque os limites de taxa estão ficando realmente ruins para todos os modelos de fronteira. Nossos planos de assinatura estão ficando cada vez mais limitados em termos de quantidade de acessos. Está ficando cada vez mais caro manter os modelos mais potentes em funcionamento . Mas não queremos simplesmente descartá-
+
+los por completo. Em vez disso, o que podemos fazer é optar pelos modelos mais baratos sempre que possível, usando os mais caros apenas quando realmente precisarmos. E o Arkon é perfeito para isso porque nos permite criar fluxos de trabalho que combinam os provedores de forma muito integrada. Por exemplo, este é o fluxo de trabalho OK. Então, estamos usando o Opus para o planejamento e o Kimmy para a implementação. Assim, o funcionamento
+
+desse fluxo de trabalho é baseado em uma issue do GitHub como contexto. Por exemplo, aqui está a tarefa em que queremos trabalhar, o recurso que queremos implementar ou o bug que queremos corrigir. Então, ele busca o contexto do problema e o alimenta em nosso primeiro modelo aqui, que fará a exploração. Então, vamos usar o Sonnet apenas para exploração, porque, na verdade, o benchmarking aqui é especificamente para o planejamento e a implementação , certo? Então, aqui está o nosso pedido. Você está analisando como vamos
+
+lidar com essa questão. E então passamos para a fase de planejamento. Assim, com base no contexto do problema e na análise do código-fonte que realizamos, vamos agora criar um artefato de planejamento. Portanto, um documento em Markdown que descreve todo o escopo do trabalho para a correção deste problema. Portanto, estamos usando o Opus para o planejamento. E então passamos esse plano para a fase de
+
+implementação. Assim, para este fluxo de trabalho, esta versão, estamos usando o Kimi K 2.6 para nossa implementação, utilizando o Pi como nosso agente de codificação. Então, sempre que acessamos o Anthropic, estamos usando o código Claude. Sempre que usamos o Kimi, estamos usando o Pi. E eu vou usar meu
+
+código de assinatura Kimi 4. Então, eu já configurei minhas credenciais para ambos no meu computador. Então, para nossa transmissão ao vivo de hoje, vamos direto ao assunto. Vamos fazer alguns testes comparativos. Na verdade, vou executar todos esses fluxos de trabalho em alguns problemas diferentes que tenho no repositório do Dark Factory.
+
+Então, trabalho de verdade, e vou comparar os resultados em várias ou algumas questões diferentes. Então, na verdade, teremos 12 fluxos de trabalho sendo executados exatamente ao mesmo tempo. Espero que minha taxa de assinaturas não seja afetada, pois teremos quatro fluxos de trabalho diferentes e quero executar cada um deles em três problemas. Portanto, temos essa matriz de 12 fluxos de trabalho do Arkon que serão executados exatamente ao mesmo tempo. E também fazemos uma pequena autoavaliação antes de criarmos o pull request. Cada um dos
+
+quatro fluxos de trabalho que apresento aqui segue exatamente a mesma configuração. Trata-se apenas de usar modelos diferentes em etapas diferentes. Então, como esta, que usa Kimmy para planejamento e implementação. Este é o Opus para tudo. E então, esta aqui...
+
+Desculpe, não, aquela do nocaute que eu ainda não mostrei . Este usa Kimmy para planejamento e Opus para implementação. E a parte realmente incrível dos fluxos de trabalho do Archon é a possibilidade de combinar provedores; alternar entre provedores e modelos individuais é muito fácil, pois podemos fazer isso no nível de cada nó individualmente. Assim como posso especificar para a etapa de planejamento neste fluxo de trabalho, estou usando o Pi com o Kimmy. E então a implementação usando Claude com Opus. Portanto, na verdade, a única diferença
+
+entre esses fluxos de trabalho é apenas a troca de alguns desses parâmetros. Eu só queria que todos fossem fluxos de trabalho separados, para que tivéssemos um artefato para cada um dos testes que estamos executando aqui. E outra coisa que tenho aqui é que já tenho alguns problemas selecionados. Então, para que não precisássemos passar por esse processo juntos, identifiquei três problemas na base de código neste momento. E cada um deles... Bem, um deles é bem
+
+fácil. Então, eu quero ter um tipo de controle que seja super fácil. Mas há algumas outras questões que identifiquei que exigem um bom raciocínio. Agora, não é necessário alterar muito o código em si, pois não quero que esses fluxos de trabalho demorem muito para a transmissão ao vivo. Mas isso exige um conhecimento bastante profundo da base de código, como ter um bom planejamento e saber como validar as coisas após a implementação. Então, dediquei
+
+um bom tempo para garantir que tivéssemos bons casos de uso e bons problemas para nossos testes de hoje. Então, agora tudo o que preciso fazer é executar esses 12 fluxos de trabalho. Vamos entrar no conteúdo principal da transmissão ao vivo muito em breve, o que me deixa animado. Então, tudo o que vou fazer é, dentro da minha segunda conversa cerebral aqui, perguntar: " Certo." Então, você já tem todos os fluxos de trabalho prontos para serem executados nas três questões? E você tem o contexto completo das
+
+questões envolvidas na corrida pelo dinheiro, na incompatibilidade de portas e no determinismo do RRF? Ok, então vou apenas preparar o terreno um pouco com meu segundo cérebro antes de usá-lo para invocar os fluxos de trabalho do Archon. Só quero ter certeza de que ele tem o contexto necessário para invocá- los, certo? Porque esses fluxos de trabalho estão hospedados no repositório de experimentos da Dark Factory . Então, eu só preciso garantir que ele entenda isso.
+
+Então, sim, eu também tenho o Markdown para as minhas propostas de problemas. Então, acho que vai ler isso, se ainda não leu . Sim , tudo bem. Portanto, é necessário fazer uma pequena exploração primeiro. Então, ok, encontrou o repositório. Deixe-me
+
+investigar. Deixe-me fazer um levantamento dos fluxos de trabalho de referência. Leia os candidatos da questão. OK, bom. Então, está explorando isso agora.
+
+E então, acho que outra coisa que eu não mencionei, enquanto esperamos o contexto carregar, é que precisamos falar sobre o placar. Então, como vamos avaliar a eficácia da implementação para resolver o problema? E, na verdade, meu plano é simplesmente usar meu segundo cérebro. Então, meu segundo cérebro, ao avaliar o resultado de cada uma dessas execuções de fluxo de trabalho , analisará a solicitação de pull request. E vai avaliar alguns parâmetros de referência diferentes para homens. Então,
+
+temos aqui o arquivo YAML do avaliador. Portanto, use isso ao avaliar uma solicitação de pull request de referência em relação a sete dimensões. Então, as sete dimensões...
+
+vamos ver se consigo encontrar onde fica . Vamos lá. Então, vamos avaliar cada uma das solicitações de pull request em uma escala de 1 a 10. Ela realmente resolveu o problema que solicitamos ? E quanto à causa raiz, trata-se de uma solução estruturalmente sólida ou apenas um paliativo que mascara o sintoma?
+
+E também a questão do escopo, porque percebi que muitos modelos não se saem bem com isso, como a Kimmy e a MiniMax, às vezes eles extrapolam os limites e acabam tocando em mais coisas do que o necessário. Então, sabe, uma nota 10, nota 10, é algo muito preciso, não é? Parece que só abordou os pontos realmente necessários para resolver o problema. E depois, uma delas é a sua extensão, com uma infinidade de alterações não relacionadas. E então, também estamos avaliando a correção sutil, como a forma como lida com casos extremos e operações assíncronas, garantindo que não haja pegadinhas.
+
+Qualidade geral do código. Quer dizer, definitivamente há alguma sobreposição aqui, mas estou apenas tentando fazer com que a avaliação seja realmente muito detalhada, porque senão, se eu deixar para o agente de codificação descrever de forma muito geral o quão boa é a implementação , eu não tenho muita confiança nisso . Então, embora haja um pouco de sobreposição aqui, estou permitindo isso porque estou tentando ser extremamente específico nas minhas instruções sobre como vamos avaliar isso. E então, sabe, quão bons somos em adicionar testes? E então, a fidelidade da implementação do plano . Então, é aqui que
+
+o avaliador analisa o plano criado pela Opus ou pela Kimmy e o compara com o que a equipe de avaliação realmente entregou, certo? Porque estamos analisando a solicitação de pull request, as diferenças finais no GitHub e comparando com o que temos no plano. Porque isso vai nos mostrar se, tipo, o Opus fez um bom trabalho planejando, mas a Kimmy simplesmente estragou tudo, ou vice-versa, certo? Queremos ter certeza de que estamos avaliando corretamente o plano em relação à implementação. Assim, temos uma saída estruturada neste fluxo de trabalho do Arkon que nos fornece o JSON para cada uma das pontuações. Assim, teremos uma pontuação final
+
+somando tudo. Portanto, a pontuação máxima que uma única execução de fluxo de trabalho pode obter é 70 de 70. E, em alguns dos meus testes iniciais , muitas dessas execuções de fluxo de trabalho estavam obtendo algo em torno de 60 de 70 . Hum, mas eu não fiz o teste completo com todos os 12 fluxos de trabalho. Então, vou explorar isso em tempo real com vocês aqui.
+
+Então, deixe-me voltar ao meu segundo cérebro e ver onde estamos. Ah, ok, a única issue aberta no repositório é a de 2020. Sim, então ainda precisamos criar a issue. Então, tudo bem. Não sei por que ainda está carregando o contexto, mas vou deixar continuar carregando para preparar tudo. E vou dar uma olhada
+
+no chat enquanto espero . Então, de qualquer forma, é um bom momento para fazer uma pausa. Tudo bem. Que bom ter todos vocês aqui. Ei, ei.
+
+Tudo bem. Hum, vejamos. Ei, Cole, o que usamos para substituir o servidor de documentos Archon que tínhamos como MCP? Recebi muita documentação da API. Então, honestamente, hoje em dia os agentes de codificação conseguem pesquisar na web muito, muito bem para obter qualquer tipo de documentação. Se for algo relacionado às
+
+suas próprias APIs, eu simplesmente usaria Markdown. Por exemplo, extrair a documentação em Markdown que você acabou de inserir na camada de IA para o seu agente de codificação. Sim, o motivo de eu ter descartado toda aquela coisa de pano da versão anterior do Archon é que os agentes de programação não precisam mais disso. No fim das contas, é isso que importa . Certo? É por isso que a nova
+
+versão do Archon, como construtor de harnesses, tem o poder de ser a camada acima do agente de codificação, em vez da versão antiga do Archon ser apenas uma ferramenta para o agente. Assim, as ferramentas são substituídas, mas a camada de orquestração não. Ok, então o que está escrito aqui? Os fluxos de trabalho estão prontos, mas os problemas não. OK. Três questões não foram registradas.
+
+Nunca houve um período de pré-corrida durante a noite. Bem, eu não preciso disso. Sei que não tenho o contexto completo de dois dos três. Ok, então vamos lá e vamos dizer para ele ler isso aqui. Então, vou copiar o caminho e colar aqui.
+
+Isso fornece todo o contexto necessário para os problemas que precisamos registrar. Então, não quero que você faça isso ainda, mas me avise quando estiver pronto para registrar os três problemas e, em seguida, executar todos os 12 fluxos de trabalho para lidar com esses problemas usando os diferentes fluxos de trabalho que temos. Tudo bem. Legal. Cole, você está aqui fazendo a obra de Deus. Eu
+
+agradeço. Sim, estou animado com isso. Vamos resolver a questão principal que vamos resolver agora. Isso surgiu na minha última transmissão ao vivo. Se você deseja combinar provedores para otimizar a utilização de tokens, é melhor usar o modelo mais robusto durante a implementação ou o planejamento?
+
+Então, na minha última transmissão ao vivo, decidi que vou usar o Opus para planejamento. A ideia é que, se o plano estruturado for realmente completo e detalhar todas as partes da base de código que você precisa modificar, como será a estratégia de validação e tudo mais, então você não precisa de um modelo tão robusto para a implementação em si, porque ela já estará seguindo um projeto bem especificado que inclui toda a validação, a lista de tarefas e os critérios de sucesso. Certo? Essa é uma maneira de pensar sobre isso. Mas também se poderia argumentar que ainda é melhor ter o modelo mais poderoso escrevendo as alterações de código, porque você não quer nenhum tipo de erro, como não seguir um plano à risca. E mesmo que o
+
+plano não seja tão bom porque você usa um modelo mais barato, pelo menos o modelo mais poderoso vai detectar esses problemas durante a autoavaliação, a implementação e coisas do tipo. Então, é isso que estou tentando descobrir aqui, na verdade. E, bem, essa transmissão ao vivo não é só para enfeitar. Eu realmente quero descobrir como isso funciona, porque estou começando a usar o Arkon para muitos desses fluxos de trabalho com provedores mistos. E mesmo que você não esteja misturando provedores, tipo, se você ainda quiser usar o Anthropic para tudo ou o Codex para tudo, essa ideia ainda se aplica a diferentes modelos, certo? Por exemplo, quando
+
+devemos usar Sonnet em vez de Opus, ou GPT 5.4 Nano em vez de algum modelo GPT Codex? É esse tipo de coisa que estou procurando. Ok, vou apenas copiar esta informação. Desculpe, percebi que estava resolvendo um problema diferente. Então, vou copiar isso.
+
+Aqui estão os assuntos que vamos abordar. Então, fiz um pouco de preparação fora das câmeras, o que acho que deixou tudo um pouco sem graça. Este é o arquivo markdown dos candidatos a problemas, por isso estou enviando-o aqui dentro do contexto daquela conversa . Tudo bem. Venho pensando nesse tipo de abordagem há algum tempo. Eu ainda não experimentei.
+
+Bom, espero que esta transmissão ao vivo possa inspirá-lo(a) a experimentar. Porque é muito fácil configurar isso no Archon. Tudo bem. Essa funcionalidade de suporte a múltiplos provedores está disponível nas versões 0.3 e 0.12 do Archon? Sim, é verdade. Sim, já temos
+
+suporte para múltiplos provedores há bastante tempo. Então, desde que a autenticação esteja configurada na máquina onde os fluxos de trabalho do Archon estão sendo executados,
+
+basta especificar o provedor e o modelo em cada nó individual do fluxo de trabalho. Então, tipo, Pi com Gemini para programação e aí, tipo, aqui usando Claude com Opus. E, obviamente, a grande ressalva aqui é que, se você estiver alternando entre provedores, não poderá continuar a mesma conversa. O que, muitas vezes, mantém seus agentes focados, algo que você não deseja de qualquer forma. Mas, como vocês verão aqui, quando faço meu planejamento com Claude ou com Opus, estou com o contexto renovado. Portanto, trata-se de uma
+
+sessão de agente de codificação totalmente nova. E depois, na fase de implementação, a mesma coisa. Agora, eles ainda estão se comunicando entre si porque a etapa de planejamento cria o arquivo Markdown do plano, e então eu instruo a etapa de implementação a lê-lo. Então, não é como se estivéssemos perdendo totalmente o contexto, mas não é a mesma sessão contextual que estamos continuando. Não há como fazer isso quando se está misturando fornecedores.
+
+Mas, sim, como eu disse, a maioria dos fluxos de trabalho do Arcan são construídos em torno dessa ideia . Tudo bem. O problema é que o desempenho do Claude está se degradando notavelmente desde a janela de contexto de 1 milhão, e com a versão 4.7 continua a se degradar. Neste momento, estou usando o Opus 4.7, na melhor das hipóteses, como máquina para escrever código
+
+. Sim, esse é outro ponto: além dos limites de taxa estarem ficando mais rigorosos, a qualidade da saída do modelo literalmente piora com o tempo. Porque nossas assinaturas são subsidiadas. É uma pena. Portanto, continuo considerando o Opus o melhor em programação em geral, mesmo com algumas das deficiências que, como eu, concordo que existem até certo ponto. Ainda é o
+
+melhor, mas definitivamente parece que a situação está piorando cada vez mais, a ponto de não podermos mais confiar nele. Por isso , precisamos explorar outros modelos, como o Kimmy e todos esses outros modelos de código aberto que estão sendo lançados. Tudo bem. Legal. Então, vamos ver em que ponto estamos.
+
+Aqui está o relatório de prontidão. Ainda não vou embora porque a segunda questão é um problema real que precisa da sua atenção. Certo, então vamos tentar descobrir isso. Resultados da verificação: arquivo pronto, arquivo pronto, não existe na incompatibilidade de porta, não existe no código. OK. Ah,
+
+tudo bem. Bom, se a segunda questão não funcionar, vamos procurar outra. Portanto, preciso que você investigue a fundo e encontre outro problema. Avise-me quando estiver pronto para tratar disso, para que possamos iniciar todos os 12 fluxos de trabalho. Tudo bem. Bem
+
+, para ser honesto, eu não dediquei muito tempo a definir os problemas certos a serem abordados porque achei que o Claude daria conta disso, mas acho que a sessão inicial que eu planejei para isso foi uma alucinação, e isso não é um problema real. Sim, tipo, eu passei muito tempo analisando diferentes problemas, mas não os avaliei porque não queria executá-los de ponta a ponta. Bem, vamos encontrar outro problema aqui. Ok, o melhor candidato para controle provavelmente é um pequeno defeito mecânico real e as fontes mais confiáveis ​​são os documentos da equipe sobre problemas. Bem, na verdade eu não sei o que significa "equipe documentada", porque não há nenhuma equipe administrando a fábrica sombria, mas enfim, vamos ver o que acontece.
+
+E enquanto isso, quero tentar configurar meu console Kimi for Code. Ah, sim, ok, era isso que eu estava procurando. Console, ok. kimi.com/code/console.
+
+Certo, vou me lembrar disso. Então, até agora eu usei... Então, na última transmissão ao vivo , eu usei 5% do meu limite semanal com a Kimi, que foi o que eu usei em milhões de tokens na última transmissão ao vivo. Então,
+
+isso não é nada mal. Tipo, você consegue um uso bem alto com a assinatura do código Kimi . Então, eu assino o plano de assinatura de 40 dólares por mês . É muito mais barato que o código do Claude e te dá muitos tokens. E então, quanto à minha assinatura da Anthropic, vamos ver como está o meu consumo. Vou
+
+postar isso rapidinho. Então, claude.ai, deixe-me verificar meu uso, porque vou mostrar ambos enquanto executamos os fluxos de trabalho aqui, e só quero monitorar isso para garantir que não estamos nos prejudicando . OK. Vamos ver. Isso é bom.
+
+OK. Então, este é o meu uso atual. Então, usei 11% dentro do meu período de 5 horas e depois 60% para o meu limite semanal. Isso significa que o sistema reiniciará amanhã, o que na verdade não é ruim. Na semana passada, meu limite de produtividade foi atingido muito mais rápido, e eu fiz praticamente a mesma quantidade de trabalho esta semana, e estou apenas em 60%, enquanto que na terça-feira passada cheguei a 100% . Então, por algum motivo, eles realmente
+
+relaxaram os limites de tarifa esta semana . Na semana passada foi pior . Não sei se vocês também passaram por isso, mas não está tão ruim quanto na semana passada. Então, não estou reclamando. É que na semana passada eu não precisei comprar uma assinatura, mas tive que comprar uma segunda assinatura da Anthropologie, o que foi realmente lamentável.
+
+Tudo bem.
+
+Vamos ver onde estamos agora. Ok, ainda está tentando encontrar. Sim, esse tipo de coisa irritante precisa encontrar um problema, mas vamos deixar que encontre. Tudo bem. Vou fazer uma pausa para beber um gole.
+
+[Limpa a garganta] Vamos voltar. Vou esperar que termine por aqui.
+
+Tudo bem. Jeff disse: "Acho que eles fizeram alguma coisa na última quinta-feira. Percebi que meu limite semanal foi zerado na quinta-feira." Realmente? O meu não reiniciou na quinta-feira.
+
+Certo, mas acho que é um pouco diferente para cada pessoa. Não sei. Mas, quer dizer, que bom que você reiniciou mais cedo. Muito legal. Tudo bem. Vamos lá, encontre um problema para
+
+mim. Só preciso de alguma coisa aqui. Vamos voltar aos fluxos de trabalho . Porque eu meio que quero mostrar como isso funciona com mais detalhes enquanto esperamos. Portanto, cada um desses fluxos de trabalho que eu criei é uma versão mais simplificada do fluxo de trabalho para corrigir problemas no GitHub.
+
+Portanto, este é o fluxo de trabalho principal da Dark Factory que lida com qualquer problema que lhe apresentarmos. Assim, o funcionamento da fábrica obscura, ou seja, a entrada para que a fábrica funcione, é sempre uma questão no GitHub. Se houver um bug que eu queira corrigir ou uma nova funcionalidade que eu queira desenvolver, eu sempre crio uma issue. E também cria problemas por si só quando eu o configuro para realizar testes de regressão uma vez por semana. Então, uma vez por semana, eu executo um fluxo de trabalho super abrangente para testar todas as jornadas do usuário, casos extremos e tudo mais, e depois crio problemas no GitHub para qualquer coisa que seja encontrada durante os testes de regressão.
+
+Assim, quando um problema é criado, existe um orquestrador que eu tenho rodando em um VPS na nuvem. E a cada meia hora é acionado para analisar esses problemas e classificá-los. Basicamente, o sistema faz a triagem, definindo a prioridade e a complexidade, e depois processa cada tarefa individualmente . Assim, ele executará o fluxo de trabalho Arcan para ir desde a criação do problema até a solicitação de pull request. Como vocês podem ver, eu fiz alguns testes aqui enquanto me preparava para a transmissão ao vivo de hoje. Então,
+
+para simplificar, já que não tenho muitos, vou executar 12 fluxos de trabalho aqui. Quero que sejam rápidos. Quero que sejam eficientes em termos de tokens. Elaborei uma versão bastante simplificada desse fluxo de trabalho para cada um dos quatro que temos aqui. Assim, obtemos o contexto da questão e depois a exploramos. Certo? Assim, a
+
+forma como comunicamos entre os nós no Arcan é acessando o campo de saída. Então, pegamos o ID do nó do fluxo de trabalho Arcan aqui mesmo. E então fazemos a saída em ponto. Isso nos dará a última parte da saída desse nó, que neste caso será o contexto do problema. Certo? Na
+
+visualização de problemas do GitHub, obtemos o número do problema, o título, o corpo do texto, o rótulo e o autor. Assim, isso é enviado como contexto. Então, agora vamos explorar o repositório para procurar arquivos e módulos envolvidos no problema, padrões e convenções existentes a serem seguidos, reunindo todo esse contexto inicial que será enviado para nossa etapa de planejamento. Então, explore e depois transforme isso em um plano estruturado. Então, no Arkon, a forma como os nós se comunicam entre si é simplesmente observando a saída do nó anterior ou consultando o diretório de artefatos.
+
+Assim, cada árvore de trabalho criada para um fluxo de trabalho Arkon sempre tem um espaço dedicado para sua área de trabalho. Portanto, é aqui que podemos gerar quaisquer documentos Markdown que desejamos que os nós futuros leiam. Então, aqui, estamos apenas fornecendo um resumo da nossa exploração, sabe, tipo, aqui está o que o problema pede, aqui estão os arquivos relevantes, os padrões relevantes, os riscos e os casos extremos, colocando tudo isso em um documento Markdown, para que o próximo nó possa ler. Então, ele busca novamente o contexto do problema, apenas a saída daquele primeiro nó, lendo o markdown de exploração, e com base nisso, ele vai gerar um plano com a abordagem, os arquivos a serem alterados, as alterações específicas, certo? Então, aqui vamos entrar em detalhes bem maiores.
+
+Tipo, a exploração inicial serve para , ok, agora vamos elaborar um plano concreto. E, sinceramente, esse desafio poderia ser muito maior, porque talvez haja uma abordagem mais específica que eu queira seguir para criar esse plano. Mas, novamente, quero ser bem conciso aqui, porque se os prompts do fluxo de trabalho não estiverem otimizados, tudo bem, já que o objetivo da nossa transmissão é comparar diferentes modelos, não criar um fluxo de trabalho ideal. Tipo, com certeza meu planejamento habitual costuma ser bem mais longo do que isso. Mas espero que você entenda a ideia aqui, que é mais sobre ter algo simples, fácil e rápido de testar, que seja bom o suficiente para ainda ser um fluxo de trabalho legítimo, mas que se concentre mais nos diferentes modelos que usamos para as mesmas solicitações.
+
+Então, vamos voltar e ver onde estamos agora. Ok, então os três foram verificados, então podemos prosseguir. Fila de vídeos órfãos. Ok, então temos uma solução super fácil novamente e depois duas soluções semelhantes, porém mais complexas. OK.
+
+Então, assim que eu disser "iniciar", o sistema registrará os três problemas com a etiqueta para que a fábrica saiba que precisamos trabalhar nisso imediatamente. Em seguida, enviaremos ondas de quatro. Portanto, a primeira onda consistirá nas quatro células contra a questão número um. Em seguida, a segunda onda na edição número dois, a terceira onda na edição número três, e um bloco entre as ondas. Após a aprovação de todas as 12 solicitações de pull request, executaremos o fluxo de trabalho do avaliador de benchmark em cada uma delas.
+
+Então, é isso que avalia em relação aos sete critérios que mostrei anteriormente. Eu mostrei isso no enunciado. E então, quem despacha? O manual diz para executar o loop de ondas a partir de um terminal simples, não dentro de um código na nuvem. Bem, na verdade eles não se importam com isso. Uma folha em branco. Vamos ver. Então,
+
+sim, você vai despachar esses fluxos de trabalho aqui. Então, não tenho muita certeza do porquê de dizer para executar em um terminal simples. Quero que você passe por todas as ondas. Quero que você execute o avaliador depois que todas as solicitações de pull forem aceitas. E eu não me importo com a ideia de começar do zero. Então,
+
+não estou preocupado com isso. Então, sim, quero que você prossiga e inicie nossos testes aqui. Certo, legal. Então, meu segundo cérebro vai gerenciar todo esse processo. E como eu disse, como os fluxos de trabalho são mais simples, espero que não demore muito por aqui. Mas vai ser
+
+legal ver como eles funcionam, porque conforme os fluxos de trabalho são executados, podemos ver os problemas sendo criados. Eventualmente, também veremos as solicitações de pull request sendo criadas . E também tenho a interface web do Archon aberta para que possamos, sabe, acompanhar o status dos fluxos de trabalho em execução e ver quais estão sendo iniciados assim que são colocados em execução. Portanto, é claro que ele precisa gastar seu tempo pensando antes que possamos iniciar a execução do fluxo de trabalho. A
+
+Anthropic tinha um grande contrato de computação com a SpaceX, então eles alteraram os limites. Sim, provavelmente isso faz parte do problema. O problema é que eles anunciaram a parceria com a SpaceX na mesma semana em que os limites de taxa de transferência estavam péssimos. Então, eu realmente não sei porquê. Imagino que talvez haja um pequeno atraso na configuração de mais equipamentos ou algo do tipo. Mas sim,
+
+provavelmente é por isso que está melhor agora. Tudo bem. Então, sim, deixe-me voltar ao meu segundo cérebro, veja... Ok, ainda estamos
+
+pensando. Sinceramente, haverá um período de inatividade considerável enquanto aguardamos o início dos fluxos de trabalho . Então, uma coisa que eu estava interessado em fazer era experimentar a nova tecnologia antigravidade. Acho que seria legal fazer isso enquanto esperamos. A menos que vocês tenham mais perguntas ou assuntos para discutir no chat, eu ainda não testei o novo modo antigravidade com o novo flash Gemini 3.5, e
+
+ficaria muito interessado em fazê-lo. Bem, na verdade, faz um bom tempo que não uso antigravidade, para ser sincero. Então, eu nem sei como verificar se há alguma atualização. Ah, talvez eu já tenha atualizado. Estou atualizado?
+
+Como faço para verificar? Configurações do editor. Será que eu poderia perguntar qual versão do Antigravity estou usando? Ah, não, está baixando a atualização agora. Ok, sim. Então,
+
+acho que ainda preciso atualizar isso. [risos] Tudo bem. Vamos atualizar isso. Vamos testar isso ao mesmo tempo, aqui. Ok, instale minha atualização. Legal.
+
+Hoje foi divulgada a notícia de que eles estão se aproximando de Oh. Eles também estão entrando em contato com a Microsoft para obter soluções de computação. Ah, que legal. OK. Eu realmente não sabia disso. Aguarde um instante. Deixe-me dar uma
+
+olhada. Uma parceria entre a Anthropic e a Microsoft. Vamos ver. Bem, eles firmaram uma parceria no final do ano passado para obter mais poder computacional. Vamos ver. Hum,
+
+não estou vendo nada em específico. Ah, aqui está. Pode ser isso. A Anthropic está em negociações para usar chips de IA da Microsoft. 2 horas atrás. Ah, mas eu preciso assinar
+
+para ler. OK. Bem, tem algo aqui, mas não consigo ler agora. Porque eu não sou assinante do information.com.
+
+Não estou muito interessado em pagar por isso. Acho que é praticamente tudo o que existe agora. Interessante. Legal. Tudo bem. Hum, em que ponto estamos com a
+
+antigravidade? Download. Ok, legal. Bem, porque eu ouvi dizer que o novo sistema antigravidade é insano. Tão incrivelmente rápido.
+
+Tudo bem. Então, deixe-me entrar na minha conta do Google aqui. Sim. Vamos experimentar. Antigravidade aberta.
+
+Droga. Tudo bem. Bem, na verdade, eu também deveria verificar meu segundo cérebro e ver como estamos . Três processos foram instaurados. Deixe-me verificar os três e corrigir.
+
+OK. Então, acho que vamos começar invocando a questão número 229. Ok. Então, vamos dar uma olhada, atualizar. Sim , tudo bem. Então, temos esses problemas aqui.
+
+A recuperação híbrida não é determinística. Primeiro resolvemos o bug mais fácil, e depois nos deparamos com o problema de cache de vídeo. Então, vamos garantir que realmente invoquemos um fluxo de trabalho Arcano. Então, acho que começa com 229.
+
+Certo. Bem, vou deixar isso continuar por aqui. Então, vamos voltar a falar sobre antigravidade. Hum, vou desmarcar essa opção. Não minta. Eu
+
+não quero. Hum, tema escuro. Os plugins são conjuntos de habilidades agrupadas no MCP para auxiliar o agente e a antigravidade. Sim, é isso mesmo. Sim.
+
+Sim. Claro. Vamos fazer isso. OK. Legal. Nossa!
+
+Agora a situação está bem diferente.
+
+Será que não existe mais nem mesmo uma IDE clássica? É simplesmente assim: você gerencia seus projetos em forma de conversa. Isso é muito legal. Quer dizer, eu agradeço. Porque eu sei que a IDE precisa mudar. Sim
+
+, tipo, se eu clicar em uma conversa. OK. Criar um HTML. Bem, aqui vou mencionar uma pesquisa em arkon.diy e github.
+
+Oh. Acesse github.com/callme016/arkon e, em seguida, crie um único arquivo HTML que forneça uma visão geral abrangente do Arkon. Vamos tentar isso. Eu só quero fazer um teste bem rápido aqui.
+
+Então, aparentemente é incrivelmente rápido. Veremos.
+
+Tudo bem. Então, enquanto isso acontece, vamos voltar ao assunto . OK. Portanto, a primeira onda foi despachada e está em andamento. Eis onde estamos. Então,
+
+os arquivos que temos são os problemas criados. A primeira onda está em andamento. Então, temos quatro fluxos de trabalho em execução para a tarefa número 227. Agora, se eu acessar nossa interface de usuário aqui, podemos ver. E não é que temos KK, KO, OK e OO todos funcionando? Portanto, diferentes
+
+combinações de Opus e Kimmy resolvem exatamente o mesmo problema. Assim que esses itens forem criados, o processo seguirá para a segunda fase, que lidará com o segundo problema, e em seguida, para o terceiro. E então teremos 12 solicitações de pull no final para avaliar e ver qual obteve a melhor pontuação. E se eu quisesse ser extremamente abrangente, provavelmente teria mais do que apenas três questões, mas acho que isso já ultrapassaria meus limites de taxa aqui. Então, para começar, vou ficar feliz com isso. E talvez
+
+eu continue fazendo esses testes de desempenho se achar que são úteis. Sim, isso é muito legal. Então, que comece a corrida! Então, agora podemos continuar explorando outras coisas, como antigravidade, enquanto esperamos que esses fluxos de trabalho sejam concluídos. Espero que, no geral, não demore muito tempo .
+
+O texto diz que a onda leva apenas de 3 a 5 minutos para terminar, com base nos testes de fumaça que fiz ontem para me preparar para a transmissão ao vivo. Mas eu não confio muito nisso. Acho que pode demorar mais , mas veremos. Tudo bem. Ok, então nos deu uma ferramenta. Ah,
+
+isso é legal. Então, pesquisei sobre Archon e, infelizmente, não consigo dar zoom. O atalho Ctrl+ não está funcionando. Nossa! Certo, então eu consigo diminuir o zoom, mas não consigo aumentá-lo. Então, tenho que clicar
+
+manualmente. A combinação Control + não está funcionando para mim. Então, eu só quero dar um zoom para vocês. Pronto. Então, pesquisei sobre o Archon e criei uma visão geral completa em um único arquivo HTML . Elaborei o
+
+plano de implementação e peço que o revise para aprovação. OK. Nossa, isso parece muito legal. Ok, então, um estilo moderno e sofisticado com uma leve tonalidade índigo no modo escuro, com detalhes em roxo vibrante e ciano. Vamos usar roxo. Vamos usar rosa e verde,
+
+como no logotipo dos Archons. Quero mudar isso. Acho que ficaria muito melhor assim. Construtor de ferramentas para agentes de IA. Isso também não me agrada muito. Bem, para ser
+
+honesto, sua capacidade de raciocínio não é lá muito impressionante . Porque é o "It". É o construtor de Harness de código aberto, não o Harness Builder para agentes de IA. Então, acho que o título estava um pouco errado. Ok, mensagem pendente. Então, está funcionando nisso
+
+. OK. Sim, quero dizer, a experiência do usuário aqui é muito boa. OK. Sim, é rápido. Uau.
+
+Legal. A antigravidade é muito ruim e ainda não está finalizada. O flash Gemini 3.5 é muito ruim pelo preço, mas o Composer 2.5 é excelente.
+
+Ok, interessante. Bom saber. Sim, vou dar minha opinião sobre isso também. Hum, eu não experimentei o Composer 2.5.
+
+O recurso antigravidade resolveu o problema da sandbox do Windows? Acredito que sim. Mas não tenho 100% de certeza disso. A notícia foi publicada em todos os lugares em X há uma hora. Basta pesquisar "Microsoft Anthropic". Oh, tudo bem. Sim, deixe-me
+
+fazer isso então. Um x.com. Veja, acho que estou conectado à minha conta X aqui. Sim. OK.
+
+Uh Microsoft Antrópico. Ah, sim, ok. Sim, é isso aí.
+
+Estou em negociações para alugar chips de servidor de IA da Microsoft . Startup busca aumentar a capacidade computacional para atender à demanda por seus serviços. Ok, então, Bloomberg oficial. Isso é legal. Tudo bem. Aceitar. Nossa, cara. Bem, isto
+
+é uma confusão. Ok, deixa pra lá. Acho que não consigo ler isso. [risos] Tudo bem, mas enfim, sim, isso é legal. É oficial. É oficial.
+
+Tudo bem. O que eu acho da entrada de Andre na Anthropic? Acho isso legal. Na verdade, estou meio surpreso porque ele trabalhava na Eureka Labs e era tão...
+
+entusiasmado com a educação. E no tweet dele, ele simplesmente diz algo como " voltaremos a isso". Onde... onde foi que
+
+ele disse isso? Um Andrej Karpathy. Acho que sim. Deixa eu abrir isso de novo. Sim, veja minha atualização pessoal: entrei para a Anthropic. Continuo profundamente apaixonado
+
+pela educação e pretendo retomar meu trabalho nessa área em breve. Tão vago. É meio engraçado. Eu entendo, porque a Anthropic é uma empresa impressionante no momento, por mais que seja, de certa forma, frustrante a direção que eles estão tomando com o modelo de assinatura. No geral, eles ainda são uma empresa impressionante. É ótimo
+
+vê-lo se juntar à equipe, porque sei que ele vai ajudá-los muito. Mas sim, é meio engraçado que ele simplesmente diga "tudo bem, essa é a Eureka Labs". Voltaremos a isso mais tarde. Tenho certeza de que ele já removeu isso da sua biografia. Ah, sim, ele já removeu isso da biografia dele .
+
+[risos] [suspiros] Hum, será que ele ainda fala sobre isso no site dele? Se eu pesquisar por Eureka You're, nem me lembro como se escrevia. Sim, não está mais lá. É uma pena. Acabou de ir. Adeus.
+
+Eu pensei que isso ia acontecer porque ele basicamente estava construindo uma espécie de plataforma educacional focada em agentes . Seria basicamente como você... é como o Coursera. Ok, não sei
+
+ao certo se era exatamente isso, mas acho que era parecido com o Coursera, só que cada aluno tinha seu próprio tutor pessoal que o guiava pelos cursos, o ajudava a absorver todas as informações e a fazer exercícios e coisas do tipo. Isso ia ser muito legal. Hum , acho que sim. Vejo Eureka Labs. Então ele tem isso aqui.
+
+É apenas uma imagem. Mas ele não construiu a plataforma de fato. Certo? Tipo, ele estava fazendo um pouco de conteúdo educativo no YouTube para começar, mas agora está abandonando isso por enquanto. Tudo bem.
+
+Então, sim, vamos voltar e ver onde estamos. Ok, então a primeira onda ainda está em andamento. Aliás, deixe-me ver se consigo visualizar os registros aqui. Tenho curiosidade em saber em que ponto estamos agora. Nossa , que incrível. Tem
+
+algo muito errado com os registros aqui. Que estranho. Ok, talvez a Kimmy tenha estragado alguma coisa desta vez . Interessante. Certo, vamos ver como isso se desenrola . Isso vale para todos
+
+eles aqui se eu abrir? Ok, sim. Então, acho que algo deu errado com a chamada da ferramenta com a Kimmy, porque ocorreu uma falha. Veremos. Mas isso pode comprometer os parâmetros de avaliação.
+
+Hum, em que pé estamos com o KO? Sim, aconteceu a mesma coisa. Ok, tem algo estranho acontecendo com a Kimmy. Ou talvez seja algum bug na forma como Kimmy interage com Arcon. Não tenho muita certeza.
+
+Mas isso não é problema para este caso. Utilizando Kimmy para implantes. Interessante. Ok, vamos deixar isso terminar aqui. Deixe-me voltar à antigravidade.
+
+Ok, tudo bem. Concluí a pesquisa e elaborei a página única em HTML que descreve a visão geral da Arcon, em conformidade com as diretrizes da sua marca . O arquivo do projeto foi criado em um subdiretório proposto. Aqui está. Então, posso abrir isto?
+
+Porque eu pensei que havia uma maneira de visualizar coisas em antigravidade. Assim, eu pude visualizar o site ao vivo. Isso não existe ?
+
+Nos deram uma demonstração completa e tudo mais. Isso é legal. É , parece que não consigo abrir diretamente aqui. Mas enfim, posso copiar o caminho. E então eu vou simplesmente para um novo terminal aqui.
+
+Ah, espere aí.
+
+Tudo bem. Vamos abrir isso. Abra com o Google Chrome. [risos] Nossa, isso parece muito legal. Nossa Senhora!
+
+Sem nenhuma orientação, exceto por duas coisinhas minúsculas, isso é bom. Parece bom. Olha só isso. Recebemos os comandos de instalação. Parece legal. Impondo o
+
+determinismo estrutural. Os assistentes de IA em sua forma bruta são infinitamente capazes, mas altamente variáveis. Arkon resolve essa variação atuando como um suporte rígido e portátil em torno dos modelos cognitivos. Essa não é exatamente a forma como eu explicaria, então talvez não seja a linguagem que o Gemini 3.5 Flash usou da melhor maneira, mas em termos de criar um site com boa aparência, este está bom.
+
+Arkon é o Docker para IA. É o CICD para mestrados em Direito. Novamente, talvez não seja a melhor explicação, mas, nossa! [risos] É muito bom. Planejar, implementar, executar.
+
+Legal. Criação de fluxos de trabalho personalizados. Sim, quer dizer, é impressionante a quantidade de contexto que foi necessária para criar esses exemplos, passando por tudo isso em apenas alguns minutos. Projetado para velocidade e confiança. Obtenha isolamento de árvore de trabalho, combinação de nós componíveis , loops de autorrecuperação, interface de usuário multicanal, TypeScript e Bun Core, além do marketplace de fluxos de trabalho em que estávamos trabalhando na última transmissão ao vivo, que você pode conferir no meu canal.
+
+Muito legal. Integração interativa. Que bom. Arkon é bom? Perguntas frequentes. É bem legal que tenham
+
+adicionado isso. Arkon é uma alternativa a Claude ou Cursor? Não, o Arkon está uma camada acima do assistente de programação, como eu disse antes. Considere ferramentas como Claude, Coder e Cursor como o mecanismo de execução ou o trabalhador cognitivo do seu pipeline. Arkon atua como orquestrador do gerenciamento de produtos , mantendo esses modelos dentro de limites estruturados. Sim.
+
+Quais modelos são suportados nativamente? Conecta-se nativamente a qualquer provedor de modelo compatível. Ok, isso mesmo, imaginei isso. Isso é realmente terrível, porque não temos nada a ver com o SDK de IA da Vercel em Arkon. Ah, isso é engraçado. Então, uau,
+
+parece que... Ok, e esse é o consenso geral que tenho ouvido de outras pessoas, é que o Gemini 3.5 Flash é realmente bom para construir interfaces.
+
+Gostei do design, é bom. Não parece um site criado por alguém com mestrado em Direito. Bem, quero dizer, algumas coisas, como este componente específico aqui, meio que fazem isso. Tenho a impressão de que todos os sites da Lovable e da Bolt têm esse tipo de quadradinho arredondado no topo da página principal. Mas, na maior parte dos casos, não parece tão gerado por LLM como normalmente acontece com Claude ou GPT.
+
+Mas, ao mesmo tempo, o Gemini 3.5 Flash não é tão inteligente quanto algo como o Opus ou o GPT Codex. É como se a pessoa tivesse alucinações desse tipo, o que é realmente inaceitável. Isso é ridículo. Hum, mas sim, é por isso que...
+
+Aqui está outro bom exemplo. Na verdade, isso poderia ser outra transmissão ao vivo muito legal, ou talvez algo que eu faça agora, se tiver tempo, seja criar um fluxo de trabalho Arkon que use o Gemini 3.5 Flash para projetar a interface e depois o Opus ou algo parecido com o Kimmy para criar o conteúdo, certo? Portanto, não tem alucinações desse tipo. Isso seria muito legal.
+
+Como fazer o isolamento de árvores de trabalho funcionar na prática? Ao executar o comando `Arkon run`, o mecanismo executa o comando `Git work tree add`, apontando para um branch específico. Todos os scripts bash subsequentes , regras de linter e reescritas cognitivas de código ocorrem dentro do diretório completamente isolado. Assim que o fluxo de trabalho estiver concluído, o Arkon envia a ramificação para o seu repositório remoto, abre uma solicitação de pull e exclui a estrutura da árvore de trabalho de forma limpa. Isso é verdade, mas depende do fluxo de trabalho. Nem todo fluxo de trabalho do Arkon
+
+envolve alterações de código e termina em um pull request, mas, em geral, sim, é assim que se usa o Arkon. É, mas definitivamente não são as informações mais precisas aqui. Isso é muito bom. Link para a documentação, isso funciona. Repositório GitHub, central de fluxo de trabalho.
+
+Bem, não ficou exatamente como esperado. É o fluxo de trabalho. Então, mais uma alucinação. Então, é, tipo, design é bom, informação é ruim. Mais ou menos ruim .
+
+[bufa] Mas isso é bem legal. Estou tentando pensar se, caso eu quisesse, eu poderia usar um Raspberry Pi com a memória flash Gemini 3.5? Essa seria a questão.
+
+Eu teria que perguntar. Ok, porque infelizmente não podemos usar a CLI do Gemini com o Arkon, já que eles não têm um SDK. E [bufa] o Anti-Gravity tem um SDK, mas é apenas para Python. Portanto, também não podemos usar isso com Arkon. Então, se eu quiser usar o Gemini 3.5 Flash em um
+
+fluxo de trabalho Arkon, acredito que teria que ser através do Raspberry Pi . Ou talvez eu pudesse sobrescrever o código de Claude para apontar para ele. Não tenho certeza absoluta. Mas também não quero interromper isso quando... bem,
+
+eu tenho o nosso outro teste de referência em andamento aqui. Ok, [bufa] então dê uma atualização sobre o status da primeira onda. Acho que vamos ter que esperar essas ondas terminarem por aqui. Talvez eu tente construir esse fluxo de trabalho. Isso seria legal. Muito bem
+
+, vamos ver. Então, vou apenas pedir para que ele faça a atualização. Vou verificar a interface do usuário ao mesmo tempo. Ah, ok, então parece que dois deles estão prontos. Portanto, se observarmos o benchmark 00, podemos ver que ele foi concluído.
+
+[bufa] Ok.
+
+Criar erro padrão de PR. Falha ao criar uma solicitação de pull request. Ah, não, ele criou sim uma solicitação de pull request. Ok, acho que só precisei fazer mais uma iteração ou algo assim. Mas já criamos a solicitação de pull request. banco 00 implementar
+
+endereço número da questão 231
+
+Ok. Ok, estamos quase lá. Estamos quase lá . Então, está funcionando. Está funcionando.
+
+Vamos ver o que meu segundo cérebro diz. Primeira onda concluída. Deixe-me ler o resumo de conclusão e verificar todos os quatro PRs. OK. Chegou mesmo a terminar? Porque diz que
+
+esses dois ainda estão em execução, o que é meio estranho. Ok, está criando a solicitação de pull request. Mas sim, na verdade, o pull request foi enviado. Nós temos k o o k k. Certo, está faltando um. Estamos
+
+sem... Ok, estamos sem... ok. Estamos sentindo falta de
+
+Opus para o planejamento e de Kimmy para a implementação. Mas já estamos quase lá . Não sei por que apareceu " Porque talvez eu precise fechar esta". Vou encerrar esta questão por aqui. Você pode ver que também temos a pontuação aqui. Mas, sim,
+
+vou fechar esta solicitação de pull request. Essa é a de ontem, quando eu estava apenas testando algumas coisas. Então, na verdade, só temos três neste momento. Então, não sei por que meu segundo cérebro disse "
+
+Ok". Ok, sim, então a nova tentativa agora está sendo executada sozinha. Por que tivemos que tentar novamente? Tenho curiosidade em saber se houve alguma falha intermitente ou algo do tipo. Ah, ok, o subprocesso do Opus travou.
+
+Arcan tentou novamente e acertou o guarda, sem PR. Hum, isso parece uma falha temporária. OK. Infelizmente, isso acontece com o SDK do agente em nuvem. Isso acontece de vez em quando, o programa simplesmente trava. Então, eu tenho
+
+mecanismos de repetição integrados ao Archon, como vocês podem ver aqui, mas é uma pena. Isso acontece com praticamente tudo, exceto com o Codex. Assim como Kimmy Kimmy faz, às vezes fica travado. Então, sim, o SDK do agente simplesmente trava e você precisa tentar novamente um nó ou um fluxo de trabalho, mas estamos resolvendo isso. Sabe o que eu talvez faça aqui?
+
+Subprocesso Opus. OK. Vamos começar a segunda e a terceira ondas em paralelo. Só quero terminar tudo isso. Portanto, quero que você execute todos os fluxos de trabalho em paralelo.
+
+Portanto, deveríamos ter nove funcionando ao mesmo tempo aqui. E depois, quero que você execute os testes de desempenho assim que todos estiverem concluídos. Então, vou acelerar um pouco as coisas. O único motivo de eu ter dividido em ondas diferentes aqui é para poder acompanhar as coisas mais de perto e para não atingir os limites de taxa por precaução, mas acho que vai ficar tudo bem. É que, tipo, no geral são comunicados de imprensa bem pequenos. Então, como você pode ver, com o
+
+fluxo de trabalho Archon, mesmo passando por todo o planejamento, implementação e validação, eu ainda não utilizei grande parte do meu limite. E então, se atualizarmos o console da Kimmy, veremos que usei apenas 3% da minha janela de 5 horas . Então, vamos, vamos nos preparar para analisar tudo isso aqui. Então, vamos fazer isso. Tudo bem.
+
+Legal. Um modelo de configurações antigravidade mostra o uso do modelo. Certo, deixe-me tentar isso. Arquivo antigravidade. Espera, onde? Ah, configurações aqui.
+
+Um modelo de demonstração de uso.
+
+Espera, sério? Eu já usei 20% do meu flash Gemini 3.5? Isso é meio ridículo. Eu criei apenas uma página e ela consumiu 20%.
+
+Uau. Que pena. Isso é ridículo. Criei um único arquivo e ele utilizou 20%. Homem.
+
+Tudo bem. Adicionada uma funcionalidade sequencial ao servidor MCP e ao palácio de memória antigravidade. Isso é legal. Legal. Tudo bem. Nossa, não acredito que tenha
+
+usado 20%. [risos] Ok, vou tentar, vou deixar iterar aqui e ver se conseguimos melhorar. Então, tudo bem, o design do site parece fantástico, mas as informações estão espalhadas por vários lugares diferentes, como usando o SDK de IA da Vercel, presumindo que todo fluxo de trabalho do Archon termine em uma solicitação de pull request. Preciso que você faça uma pesquisa extremamente detalhada do código- fonte do Archon para garantir que está validando cada uma das afirmações e, em seguida, atualize a página de acordo. Então, eu provavelmente poderia ser mais específico, mas só quero ver o que acontece quando deixo passar por algo maior.
+
+Quero ver quão rápido é. Ok, permita executar um clone do Git. Não. Eu já tenho o Archon clonado localmente. Então, basta encontrar isso.
+
+Não preciso cloná-lo novamente, mas entendo por que alguém gostaria. Ok, sim, vou permitir sempre. OK. Eu realmente não sei como ativar o modo YOLO ou algo do tipo. Então, acho que vou ter que continuar aprovando coisas por aqui.
+
+Mas tudo bem, ele encontrou a base de código. Então, está tudo bem. Então, acho que da primeira vez explorou apenas cinco... Sim, então ficou restrito à
+
+web e agora está realmente analisando a base de código. Assim, isso ficará melhor. Então, talvez o flash Gemini 3.5 não seja tão ruim assim. Eu simplesmente não fui clara ou específica o suficiente no meu pedido.
+
+Veremos. Aguarde até eu usar um modelo do Claude. Nossa! [risos] Nossa! Tudo bem.
+
+Ok, uma bandeira honesta e então eu prossigo. O paralelismo de nove vias representa uma disputa de processo maior do que o de quatro vias. Portanto, espere uma probabilidade maior de uma ou mais células falharem. Isso é bom. Eu realmente não me importo.
+
+Hum, vou receber notificações assim que cada tarefa for concluída. Portanto, nove fluxos de trabalho estão sendo executados simultaneamente. Ok, então temos tudo o que precisamos para funcionar neste momento . Legal. Ok, legal.
+
+Então, estamos lidando com os problemas 229 e 228. E temos o problema 227, que estamos tentando resolver novamente.
+
+Ok, muito bem. Bom. Vamos ver como nossos limites de taxa progridem aqui. Então, em que pé está a situação da Kimmy agora? Hum, 5%. Sim, com certeza vamos ficar
+
+bem. Vamos resolver tudo isso rapidinho. Legal. Então, deixe-me voltar à antigravidade aqui. Tudo bem. Isso é divertido. Estou apenas experimentando a
+
+antigravidade, mais ou menos ao mesmo tempo . Realizei uma auditoria completa de vários pacotes no repositório local. Identifiquei diversas áreas cruciais onde a documentação foi distorcida. Assim como a referência do SDK de IA da Vercel. Sim.
+
+Ok, então, provedores de IA e SDKs, modalidades de fluxo de trabalho , tipo de nó do mecanismo, blá blá blá. Parece bom. Provavelmente vou apenas aprovar isso e ver o que acontece. Sim, é. Ok, sim, está bem melhor. Ok, também consegui os
+
+elementos básicos para os fluxos de trabalho do Archon . Hum, demonstração de um switcher YAML de nível de produção . Legal. Banco de dados relacional. Ok, sim, isso parece bom.
+
+Agora está com uma aparência melhor. Muito bem, vamos em frente. Vamos ver a velocidade com que o arquivo index.html é gerado aqui. Uau. Veja quantos tokens estão sendo
+
+gerados aqui. Isso é realmente impressionante. Mas depois que isso for gerado, vamos analisar os limites de taxa novamente, porque provavelmente vai ser algo como: "Tenho, sabe, 30% do meu uso restante para a semana inteira." Não tenho o plano de 100 dólares por mês que o Google acabou de lançar. Então, definitivamente eu poderia aumentar muito meus limites de taxa com isso. Acho que estou pagando US$ 20 por
+
+mês pelo Antigravity agora, ou algo parecido com o valor da assinatura inicial que eles lançaram quando a versão 1 do Antigravity foi disponibilizada. Tudo bem. Sim, e sempre permita selecionar a string, com certeza. Eu gostaria de não ter que ficar aprovando coisas o tempo todo. Eu realmente não sei como mudar isso. Presumo que seja algo nas
+
+minhas configurações que eu possa ajustar em relação às permissões. Vamos ver. Sim, provavelmente eu poderia ajustar isso. Mas enfim, eu poderia verificar meu limite de taxa agora, mas quero esperar até que esteja concluído e então ver o que temos. Ok, acho que já está feito.
+
+Ok, sim, é isso mesmo. Então, vamos copiar este caminho. Espere, acho que é a mesma coisa. Isso foi atualizado? Sim, ok, isso foi atualizado há pouco tempo.
+
+Certo, aqui está o que temos agora. Construtor de código aberto determinístico de estruturas de IA. Ah, então acho que essa parte não mudou. O que mudou? Tentando enxergar. Bom, com certeza temos
+
+aquela alucinação do SDK de IA da Vercel lá embaixo. Vamos ver. Sim, agora está muito melhor. [risos] Quais provedores e modelos são suportados? O Arkon integra-se diretamente com os SDKs nativos dos fornecedores para máxima velocidade e controle. Os principais fornecedores de software prontos para uso
+
+são Claude, Codex e PaLM. Exponha um conjunto unificado para 20 LLMs por meio de um modelo de provedor simples (ref.). Incrível. Os fluxos de trabalho têm... Ok, é meio
+
+estranho que tenha decidido adicionar isso. Então, parece que eles levaram em consideração meu feedback e acabaram adaptando demais o site. Não, os fluxos de trabalho do Argon são tags completamente genéricas . E eu também não quero simplesmente chamá-las de tags, porque as pessoas nem sabem direito o que isso significa, né? Gráfico acíclico direto. As pessoas não sabem
+
+disso. Eles não se importam com isso. Eles só querem que o Argon funcione. Embora possam executar árvores de trabalho isoladas e enviar solicitações de pull com scripts, também podem ser executadas diretamente em um branch ativo. Eu também não formularia a questão dessa maneira.
+
+Então, ok, no geral ainda não estou super impressionado com o poder de raciocínio do Gemini 3.5 Flash, mas o design é realmente incrível. Ok, vamos dar uma olhada no limite de taxa agora. Então, modelos [risos] Usou mais 20% só para editar aquele único arquivo. Nossa Senhora!
+
+Uau. Uau. Ok, então vamos tentar o Opus agora porque, sim, tenho certeza de que ficarei ainda mais decepcionado. Certo, o que eu poderia fazer agora? Ok, agora vou fazer uma análise mais aprofundada da base de código para garantir que você esteja abordando todas as diferentes maneiras pelas quais podemos usar o Argon, porque uma coisa que o site não menciona muito bem agora é como podemos usar o Argon para transformar qualquer processo de codificação de IA em um fluxo de trabalho mais determinístico e confiável . E podemos usar o Argon para muito
+
+mais do que apenas programação de IA. Podemos realmente usá-lo para criar fluxos de trabalho para qualquer processo de agente que tenhamos para qualquer caso de uso de negócios, fluxo de trabalho de codificação de IA, qualquer coisa mesmo. Tudo bem. Então, agora com o Opus, vamos ver o quanto conseguimos ultrapassar esse limite aqui. [risos] Não estou muito animado para ver isso, mas vai ser engraçado.
+
+Tudo bem. E enquanto esperamos por isso, podemos também... Com licença . Vamos voltar ao meu segundo
+
+cérebro e ver como estão os fluxos de trabalho . Então, me dê uma atualização sobre o status de ambas as ondas. E então, espera-se que o fluxo de trabalho da primeira fase, que precisou ser repetido, também seja concluído. Vamos dar uma olhada. Então, vamos atualizar os limites de taxa de atualização e ver como estamos.
+
+Bem, aparentemente, não usamos mais o Opus, o que é meio estranho. Mas temos usado mais a Kimmy. Ok, isso é meio estranho. Espere, por que isso acontece? Que estranho. O fluxo de trabalho está concluído
+
+e meu limite de taxa não aumentou para Claude. Que estranho. Espero que não esteja usando meus créditos da API. Talvez eu precise verificar isso rapidinho. Nossa!
+
+Ah, isso seria péssimo. Console de Claude. Preciso verificar meu consumo muito rapidamente. Preciso fazer isso fora das câmeras. Vamos ver. Não, e estou bem. Na
+
+verdade, não faço ideia de por que meu limite de taxa não funcionou. Só aumentei 1% agora. Então, estou usando alguma coisa. Que estranho. Não sei.
+
+Desative o uso excessivo para garantir. Quer dizer, eu poderia desativar o uso extra, mas você pode ver aqui que eu realmente não estou usando . Eu tenho um limite de gastos e não usei um único por cento dele esta semana ou neste mês. Quer dizer, acho que os fluxos de trabalho estão funcionando. Vamos ver. Se eu atualizar a página,
+
+devo ver as solicitações de pull request. Sim, quer dizer, eu consegui todos os RPs. Isso está funcionando.
+
+Ok, sim. Parece bom. Não sei. Que estranho. Talvez seja porque eu simplifiquei demais as coisas.
+
+Sinceramente, eu provavelmente deveria ter abordado questões mais complexas. Não consumiu muito do meu limite porque é um teste muito simples. Porque, né? Tipo, eu não quero ter que ficar 30 minutos executando cada um desses fluxos de trabalho. Vai consumir muito mais do que deveria. Vai
+
+ser muito lento para essa transmissão. Então, se eu quiser fazer uma espécie de segunda rodada de testes comparativos, farei o mesmo processo, mas com fluxos de trabalho mais elaborados e questões mais complexas , é basicamente isso. Então, isso é só uma forma de testar a minha capacidade inicial de fazer testes de benchmark com vocês. E, com sorte, ainda conseguiremos, sabe, algum tipo de resposta no final sobre qual combinação é a melhor . Então, temos mais uma coisa para fazer. Todos os
+
+12 estarão presentes, e eu iniciarei imediatamente a avaliação em todas as dimensões do PR 7 Opus e agregarei a pontuação, aguardando a notificação final de conclusão. Quão perto estamos de concluir esse fluxo de trabalho ? Já faz um tempo, porque ainda está travado naquele primeiro fluxo de trabalho que teve que ser repetido, o que eu não gosto. Porque, em que situação nos encontramos agora? Se eu consultar os registros, veremos que estamos em fase de implementação ou que ainda estamos a 10 minutos do início da implementação. Sim, a ferramenta de edição
+
+falhou. Infelizmente, isso acontece muito com a Kimmy. Onde a ferramenta de edição falhará. É como se a API simplesmente travasse. Acho que é exatamente isso que está acontecendo com esse fluxo de trabalho aqui: ele está travando porque a API do Kimmy apresentou uma falha inesperada. Isso acontece em cerca de um em cada
+
+quatro fluxos de trabalho, ou talvez um em cada oito fluxos de trabalho que eu executo com a Kimmy. Isso meio que se tornou um problema, é meio decepcionante. Bem, existem muitos outros modelos de código aberto com esse mesmo nível de dificuldade que eu também tenho interesse em experimentar. Qwen 3.6 seria outra ótima opção.
+
+Sinceramente, eu poderia simplesmente acessar o OpenRouter e dar uma olhada nos modelos mais populares . Então, sim, quero dizer, o Gemini 3.5 Flash, claro, também seria legal experimentar . Não é muito barato. Vamos ver o que mais existe.
+
+O que é? nem sequer sei o que é Recraft. Ah, é geração de imagens. Yeah, yeah. Se eu quisesse...
+
+Ah, sim. Preciso de ajuda. Desculpe, preciso ir para o mais popular. OK. Vamos ver. Sim, então o Deep Seek poderia ser
+
+outro que eu gostaria de testar com esse arnês. Um Coruja Alfa. Isso é novo? Ah, isso não é novidade. Nunca ouvi falar disso . Modelo fundamental de alto desempenho
+
+para cargas de trabalho com agentes. Essa também pode ser uma opção interessante para experimentar. Hum, o que mais temos? Flash 3.5 estável , talvez. É isto que estou usando
+
+agora. Eu também experimentei isso com a Dark Factory, e funciona bem. O Minimax é mais confiável do que a API Kimi. É como se você fosse diretamente às APIs do provedor, mas não é tão poderoso em termos de saída bruta quanto o Kimi K 2.6.
+
+Hum, esse modelo não me interessa muito . Eu também gostaria de experimentar o GLM 5.1. Hum, estou surpreso. Sim, então Qwen 3.6
+
+Plus, mais uma que eu gostaria de experimentar. Não tenho muito interesse em experimentar as super pequenas, como a Gemma, por exemplo. Não acho que isso vá ter um bom desempenho. Ah, sim, acho que essa é basicamente a lista do que tenho interesse em experimentar. Então, temos mais quatro ou cinco modelos que seriam legais de testar com esse benchmark, experimentando fluxos de trabalho do Arkon em geral. Então,
+
+posso configurar o Raspberry Pi para acessar diretamente provedores como o Kimi quando possível, ou se precisar usar o OpenRouter, como o Gemini 3.5 Flash, também posso fazer isso. Certo, então sim, estamos aumentando gradualmente nossos limites de taxa aqui. Tudo bem. Hum, onde estamos?
+
+Implemente a finalização imediata e faça uma autoavaliação. Ok, então está quase pronto. Implementar registro de nós para seis edições de ferramentas com falha e avisos de nova tentativa . Mais do que um único transiente comum, mas completou com uma diferença produzida. Então, Kimmy resistiu um pouco às edições, o que é coerente com o motivo pelo qual essa célula estava lenta.
+
+Certo. Então, é, a Kimmy não é lá muito confiável. Tudo bem. Tudo bem. Hum, a Kimmy tem um recurso chamado " reset" que falha quando o gancho trava, assim como o Claude?
+
+Acredito que sim. Mas, por outro lado, muitas vezes essas falhas podem ocorrer simplesmente porque a API do Kimmy trava. Portanto, na verdade, ele não retorna ao arnês. Ele simplesmente fica ali parado, aguardando que a API da Kimmy retorne os tokens. Então, acho que isso pode ser parcialmente o motivo da lentidão também. Não sei. Sim, a Kimmy
+
+está muito estranha aqui porque dá para ver tipo "falha na edição da ferramenta, falha na edição da ferramenta, falha na edição da ferramenta". E aí, de repente, aparece um texto muito estranho com um monte de linhas em branco. Pode haver um bug também no Arcan, mas nunca vi isso acontecer com nenhum outro modelo antes. Por exemplo, se analisarmos outros registros relacionados ao Opus, como você, não encontraremos isso em lugar nenhum. Então, é, eu não sei o que está acontecendo.
+
+Tudo bem. Mas, enfim, estamos na etapa de autoavaliação. Então, estamos quase lá . Talvez eu simplesmente peça para ele seguir em frente. E se simplesmente finalizássemos com um pull request e encerrássemos o fluxo de trabalho? Tipo, eu
+
+não quero passar por toda a autoavaliação e esperar por isso agora. Então, quero que você simplesmente entre lá, crie a solicitação de pull request, assuma que a revisão é boa e, em seguida, finalize o fluxo de trabalho. E depois passe para a avaliação comparativa e a revisão. Tudo bem. Porque, caso haja mais fracassos da Kimmy, eu não quero me envolver com isso agora. Só quero
+
+chegar aos resultados. Tudo bem. Olá, bate-papo sobre cólon. E aí, Leon, que bom te ver por aqui, cara. Tudo bem. Tive que mudar de Kimmy
+
+para GLM. Hum, o Mimo 2.5 Pro pode ser uma boa opção. Eu não tinha considerado essa opção. Deixe- me voltar a abrir o roteador aqui.
+
+Mimo 2.5 Mimo Este aqui mesmo. É um modelo de referência. Hum, bem barato. É mais ou menos tão barato quanto o Kimikate 2.6,
+
+né? Deixa eu dar uma olhada nos preços aqui porque acho que já defini os preços corretamente, mas tenho tantos modelos em mente agora. Ah, sim, é mais ou menos isso. É um pouco mais caro para tokens de entrada e um pouco mais barato para tokens de saída, eu acho. Isso é legal. Sim
+
+. Vamos ver. Parece estar em boas condições nos testes de desempenho. Bem, isso é bem baixo. Ok, sim, eu também toparia experimentar esse.
+
+O legal dos roteadores abertos é que eu posso simplesmente apontar o Pie para o roteador aberto e testar qualquer modelo que eu quiser. Provavelmente não farei isso hoje. Acho que especialmente porque estamos nos aproximando do momento em que vamos publicar nossa análise. Estamos quase lá. Mas enfim, vamos voltar à antigravidade enquanto esperamos por isso e veremos.
+
+Certo, então Claude lançou dois subagentes de pesquisa para pesquisar a documentação e os exemplos do mecanismo de fluxo de trabalho. Ah, e então, e então, deu erro. [risos] Ocorreu um erro, nossos servidores estão com alto tráfego no momento. Por favor, tente novamente em um minuto. Nossa!
+
+Hum, os subagentes atingiram os limites de capacidade. Bem, isso não é um bom presságio para a antigravidade. Hum, e se analisarmos o nosso consumo, nossa! [Risos e exclamações de surpresa] O quê? O que?
+
+Temos 20% restantes e, mesmo tendo mudado o modelo para Opus, ele não utilizou meu limite de taxa do Opus. Tipo, o que está acontecendo? Isso é incrível. E acho que isso deve ser um bug na antigravidade. Ou talvez seja como se não me permitisse [risos] eu atingisse meu limite. Pronto. Essa é a
+
+experiência antigravidade no momento. Uau. Talvez o Antigravity não permita trocar de modelo no meio de uma conversa, mas com certeza deveria me avisar se for esse o caso, porque eu mudei para o Opus e ele ainda estava usando meu limite de taxa do Gemini. E isso também me informa que ainda estou com 20% , mas a própria conversa diz que minha cota foi atingida. Nossa, isso é bem frustrante.
+
+Nossa, que experiência ruim. Ok, mas enfim, continuo impressionado com a interface de usuário que a Gemini conseguiu criar. Mas é uma pena que eu já tenha atingido o limite, especialmente considerando que, tipo, atingimos nosso limite muito rapidamente, mas ao mesmo tempo este modelo não é tão caro assim. Assim como vimos no OpenRouter. É muito mais barato que Sonnet e Opus. É como o sistema de preços Haiku, mas
+
+o limite de taxa continua péssimo em antigravidade. Isso não me parece certo. De qualquer forma. Qual braço de compatibilidade devo usar para executar o Kimmy? OpenAI ou antropogênico? Então, estou
+
+usando Kimmy através do Pi. Acredito que eles utilizam a compatibilidade antrópica. E quando eu estava usando o Kimmy K 2.6 com meu código Dark inicialmente. Então, eu estava usando o endpoint compatível com Anthropic que o cara da API Kimmy nos fornece.
+
+A gravidade funciona através da antigravidade. Isso mesmo, Jeffrey. Sim. Você apareceu de repente no meu feed, quero ver o que você anda fazendo. Você é o melhor, Cole. Agradeço, Leon. Você
+
+também. Agradecemos sua valiosa contribuição para a comunidade de desenvolvimento de IA . É um prazer, meu amigo. Continue assim, cara, com o seu canal também. Tudo bem. Antigravidade, faz isso com
+
+frequência. Sim, quero dizer, muito do que estou mostrando a vocês aqui é a experiência geral que ouvi de outras pessoas também. Ok , então, recapitulando rapidamente. Antigravidade, os limites de taxa são péssimos. O flash Gemini 3.5 é realmente bom para interface de usuário
+
+e design, mas ruim para todo o resto. Pelo menos dentro dos limites que você tem. É basicamente isso que importa . E então, por algum motivo, não consegui usar meu Opus ou minha parte do limite de taxa do Claude. Ah, não, acho que sim. Desmoronou. Mas aí, por
+
+algum motivo, mesmo eu usando aquilo, ainda assim , de repente, vocês viram aquele clarão diante dos seus olhos. Tipo, eu não estava interagindo com isso nos últimos 10 minutos e, de repente, bum, sumiu. É tipo, nossa, isso é de dar vergonha alheia . Então, ok, aparentemente ele realmente começou a usar meu limite de taxa do Opus. Mas há um atraso enorme nesta aba aqui, o que é bastante frustrante porque nunca tive esse problema com nenhum outro provedor. Por exemplo, se eu for ao
+
+Claude aqui, posso atualizar a página e ela fica atualizada a cada 10 segundos, se eu quiser. O mesmo acontece com o console Kimmy. Então, é, no geral não foi a melhor experiência. Muito bem, de qualquer forma, vamos voltar e ver onde estamos agora. Ah, já está funcionando. Como você quer
+
+lidar com isso? Ah, acabe com isso agora e faça a divulgação. Sim, sim, eu só quero... Bem, na
+
+verdade, pode ser que já tenha terminado agora que eu estava esperando... Ah, já terminou mesmo. Certo, espere um pouco. Permita-me
+
+interromper. Ok, deixa pra lá. Bem, quando terminei de responder à sua pergunta, o fluxo de trabalho já havia sido concluído. Agora, temos todos os pull requests prontos para vocês testarem e analisarem. E também podemos validar isso na interface do usuário .
+
+Vamos voltar aos pull requests do Dark Factory, atualizar a página e, sim, lá estavam 12. Pronto. Então, temos três OKs. Temos três KKs. Temos três OOs e depois três KOs.
+
+[risos] Ótimo visual . Muito bem, então tivemos aprovações e nocautes. E então nós... E então nós conseguimos alguns O's e
+
+alguns K's. Tudo bem. Então, vamos ver o que acontece com as avaliações agora. Na verdade, não sei quanto tempo a análise vai levar. Então, talvez a gente... Como eu disse,
+
+eu ia dizer que a gente ia continuar mexendo com a antigravidade enquanto espera, mas não dá porque eu já atingi meu limite de produção. Então, essa é a exploração. É meio engraçado. Na verdade, estou muito feliz por ter feito isso, porque estava pensando em usar isso na minha transmissão ao vivo de sábado, já que atualmente faço transmissões ao vivo todas as segundas, quintas e sábados às 9h da manhã, horário central. Então, para a transmissão ao vivo deste fim de semana, eu estava pensando em fazer alguma exploração antigravitacional. Mas mesmo se eu tivesse contratado o plano de 100 dólares
+
+por mês com antigravidade, acho que os limites de taxa não durariam uma transmissão ao vivo normal. Mesmo que eu fizesse uma transmissão ao vivo mais curta, de 1 ou 1 hora e meia . Então, fico feliz por ter explorado isso agora, pois sei que não posso fazer isso durante toda uma transmissão ao vivo. Os limites nem sequer duram o suficiente. O que é bastante decepcionante.
+
+Hum, acho que não sei exatamente quais são os limites de taxa entre os planos. Então, talvez eu deva pesquisar isso. Um plano antigravidade do Google. Porque se for tipo, sei lá, 10 vezes mais usado ou algo assim, talvez. Bem, para ser sincero, talvez eu esteja usando o plano gratuito agora .
+
+Então, eu realmente não sei. Nem sei como verificar. Talvez...
+
+Deixe-me tentar verificar isso agora mesmo . Como faço isso? Gerencie sua conta. Ok, diz que posso gerenciar meu plano aqui, mas não há onde realmente gerenciá-lo . Isso é meio frustrante.
+
+Como eu sei? Eu vou entrar no meu navegador aqui e ver.
+
+Ok, olhem só isso, pessoal. O que é isso? A mensagem diz que minha conta não é elegível para os benefícios antigravidade do Google . O que? O que? O quê?
+
+Ok, eu terminei. Ah, adeus antigravidade. Acho que cansei de você. Isso é ridículo. Muito bem, fechem, fechem .
+
+[risos] [suspiros e engasgos] Muito bem, chega disso. Portanto, todos os 12 foram confirmados, um pull request por célula por problema. Iniciando agora a avaliação em todos os 12 . Pontuação opus de sete dimensões por PR, executando-as em lotes de quatro, especificamente para evitar a disputa de subprocessos opus. Na verdade, pode executar todos eles agora mesmo . Eles são rápidos o suficiente para que não tenhamos problemas
+
+. Porque eu só quero ver os resultados finais para termos essa impressão final da transmissão ao vivo aqui. Então, se eu vir "Sim", então tenho quatro avaliadores em execução agora. Certo, então depois de expulsar todos eles , quero que me dê um relatório dos quatro primeiros que você já executou. E então, com base nos pequenos testes que fiz ontem, quanto tempo posso esperar que cada um deles leve?
+
+Tudo bem. OK. Estou trabalhando com o modelo denso Quinn 3.6 27B no Archon e ele funciona muito bem para tarefas de implementação. Isso é legal.
+
+Portanto, planejamento e revisões para a implementação de Claude e Codex com um modelo Quinn reduzido. Que legal! Que legal! Eu só uso antigravidade para ativar meu bônus Claude. Eu uso o Gemini através da linha de comando. Sim, isso é inteligente. Sim
+
+. Bem, eventualmente mudará para o modelo Claude . Sim, aconteceu. Sim, aconteceu. Você precisa usar sua conta principal do Google em vez de uma conta de e-mail alternativa . Mas essa é a minha conta principal do Gmail
+
+. Não sei. Tenho certeza de que pode ter havido algum erro do usuário, mas mesmo assim, usar o antigravity na última hora foi uma experiência frustrante, mesmo desconsiderando os limites de taxa. Tudo bem. Ah, Christian disse isso porque uma boa xícara de café sempre ajuda. Oh,
+
+muito obrigado Christian pelo apoio. Isso significa muito. Eu vou... vou levar
+
+minha esposa para tomar um café de novo. Obrigado. Tudo bem. É, e o Claude ainda está pensando aqui. É isso aí. Começou a fazer isso recentemente,
+
+para o bem ou para o mal. Antes de gerarmos nosso primeiro token, o sistema sempre realiza muitas tarefas de processamento. Ou pelo menos, em várias ocasiões durante uma conversa, a pessoa fica ali parada por alguns minutos, pensando. E agora, ok, finalmente, aqui está. Claro, alternando para tudo de uma vez.
+
+Primeiro dia. Ah, droga. Eu não queria que parasse. Nossa Senhora! OK.
+
+Ok, não, eu não queria que você interrompesse o processamento em lote. Ou então, espere aí. Ah, espere. Espere. Eu entendo. Eu entendo. Não, tudo bem. Então,
+
+quero que você mantenha os outros quatro funcionando. Basta disparar os próximos oito. E depois me informe o status. Ok, talvez seja tarde demais e talvez já tenha acontecido...
+
+Oh, meu Deus. Hum, qual é o status? Isso pode já ter impedido. Veremos. Hum, pode falar. Sim, acho que sim.
+
+A menos que o avaliador tenha corrido de ponta a ponta. Oh não. Não. Não. Na verdade, já funcionou.
+
+OK. Sim, então é isso. Então, ler, escrever, produzir resultados estruturados. Atribuiu uma pontuação. e depois foi publicado no PR.
+
+OK. Yeah, yeah. Então, vamos ver. Na verdade, os quatro primeiros já terminaram. Então, você só precisa executar os últimos oito.
+
+OK. Pronto. Então, podemos finalmente dar uma olhada nos resultados aqui. Não tenho certeza de qual solicitação de pull request exatamente. Número 240. Ok, então vamos dar uma olhada no
+
+número 240. O número 240 é Opus para planejamento e Kimmy para implementação. Tudo bem. Então, o ponto de referência...
+
+Ok, talvez... talvez meus problemas tenham sido um pouco simplistas demais aqui. Mas também acho que essa foi a questão mais simples de todas.
+
+Mas deu uma nota de 67 em 70. Portanto, resolve o problema de forma muito direta. Causa raiz: bom. O escopo é bom. É uma mudança muito, muito, mínima. Tipo,
+
+exatamente, não há nenhum aumento de escopo. Uma correção sutil. O desempate utiliza a chave primária de texto ascendente, que é consistente entre os caminhos SQL e Python . Inverte a pontuação corretamente. Blá blá blá . Uma pequena ressalva: depende de o ID
+
+não ser nulo e ser único, o que é o caso, já que se trata de uma chave primária. Bem, sinceramente, esse feedback é estúpido. Então, provavelmente deveria ser 10 de 10. Porque, afinal, por que um ID seria nulo ou não único se isso é imposto no nível do esquema? Mas enfim. Ok
+
+. Então, a qualidade do código, uh, o novo lambda é ligeiramente menos conciso, uh, mas o padrão é o padrão para chave composta. Tá bom , tanto faz. Bom, no geral, o feedback foi meio indiferente. Acho que provavelmente gostaria de refinar mais a forma como ele realmente avalia as coisas. E eu deveria ter executado
+
+isso com problemas mais complexos. Mas enfim, veremos quando tivermos os resultados finais de tudo. Então, terei meu segundo cérebro aqui. Ah , diz que tudo já foi pontuado. Espere.
+
+Espere, então você está me dizendo que todos os fluxos de trabalho já foram executados? Então, talvez seja realmente bom. Para que conste, todas as 12 foram pontuadas. Deixe-me criar um trabalho completo. Sim, ok.
+
+OK. Talvez tenhamos realmente terminado. Eu não tinha percebido que já estava em execução. Então, essas ondas iniciais, como aquelas que percorreram a região, acho que realmente conseguiram atravessar tudo. Eu não tinha percebido. Eu não sabia que o
+
+fluxo de trabalho era tão rápido. Ok, houve duas fases, ambas concluídas integralmente. Ah, ok, ótimo. Sim, então eu quero que você construa o placar e me diga onde o Opus Premium compensa em comparação com onde o Kimiko se equipara, e qual o custo por leitura de qualidade. Então, me dê isso em resumo. Muito
+
+bem, então temos o resultado final. Estamos prestes a receber o resultado final, o que é um bom momento para nossa transmissão ao vivo. Bem, eu diria que, se eu fosse fazer isso de novo, com certeza escolheria temas mais complexos . Então, provavelmente farei isso em outra transmissão ao vivo mais tarde. Pode ser algo para este sábado, veremos.
+
+Ou então terei que executar o teste fora da transmissão e compartilhar os resultados mais tarde. Eu preferi ser cauteloso e escolher questões mais simples para não ficarmos aqui em uma transmissão ao vivo de 3 horas e meia enquanto as coisas passam por uma implementação e avaliação realmente complexas. Mas, sim, acho que ainda assim será interessante de se ver. Tudo bem. Primeiro, preciso de... Ok, então vamos deixar que isso aconteça
+
+. E enquanto isso acontece, vamos voltar ao bate-papo. A propósito, Cole, talvez você possa criar um alternador de plano de API com troca a quente para alterar a assinatura quando a cota for atingida. Essa é uma boa ideia. Pode ser que já exista algo assim. Ficaria
+
+surpreso se não houvesse. Mas se não houver, seria algo legal de construir. Claude, você precisa ter uma conta corporativa do Google para conseguir essa oferta da Gravity? Talvez. Pode ser isso mesmo, John. Não tenho
+
+muita certeza. Vou ter que verificar isso. Que tal personalizar sua linha de status do Claude ? Você poderia ter uma infinidade de limites de uso de contexto. Claude poderia puxar todas as estatísticas para a barra de status para você. Eu já
+
+experimentei com eles antes. Sinceramente, não tenho nenhum motivo para não tê-lo agora. Provavelmente deveria. Porque sim, concordo. São úteis, sem dúvida.
+
+Um roteador de nove portas. Então, pelo que o Chris disse, nove roteadores. GitHub. Programação de IA gratuita e ilimitada. Conecte Claude, Codex, Cursor, etc. gratuitamente
+
+através de mais de 40 provedores. Ah, que interessante. Então, talvez não seja bem isso. Não sei se é exatamente o que o Chris queria, mas ficou muito legal, na verdade.
+
+Huh. Que legal! Vou ter que dar uma olhada nisso . Que legal. Tudo bem. Bem, de qualquer forma, vamos ao
+
+momento da verdade. Certo . Então, acho que ainda não o produziu. Tudo bem. Então, estamos quase lá. Estamos quase chegando ao
+
+ponto em que ele nos dirá, tipo, aqui é onde devemos usar o Opus, aqui é onde devemos usar a Kimmy. E se houver algo que não esteja perfeito aqui, terei que executar o teste de desempenho novamente, mas posso fazer exatamente o mesmo processo, só que com problemas mais complexos . Então, vejamos. Acho que teremos um pequeno rufar de tambores aqui, enquanto Claude pensa. Vamos lá, Claude. Vamos.
+
+[bufa] Cara . Se apresse .
+
+[risos] É claro que quando você quer que seja rápido, ele fica super lento. Ah, está se desfazendo. Pare de se desfazer. Está quase terminando de pensar. Isso é uma loucura. É como um
+
+pedido simples. Estou surpreso que esteja demorando .
+
+[risos] Ok, pronto. Tudo bem. Muito bem, vamos lá . Aqui está o texto completo. É pensar. Bem, está gerando
+
+tokens. Vai acontecer. Vai acontecer.
+
+Vamos. Quase lá. Uau. Acho que hoje está um dia fraco para tokens. OK.
+
+[risos] Tudo bem. Oh, isto parece ótimo. Parece bom. Então, a melhor pontuação que aparece é... Ok, isso parece
+
+ótimo. Em resumo, a Opus teve seu melhor desempenho quando era apenas Opus. Mas usar o Opus para o planejamento e o Kimmy para a implementação foi quase tão bom. E aí, de alguma forma, ficou pior quando era a Kimmy que planejava e o Opus que implementava. Intr- Isso é realmente interessante. Talvez usar
+
+o mesmo modelo, mesmo que seja mais fraco, seja melhor em todos os aspectos. Um comparado ao uso do mais fraco para planejamento. Acho que isso nos mostra a importância de termos um modelo de planejamento mais robusto. A maneira mais clara de ler isso é marginal. O que, na prática, se ganha ao atualizar cada nó ?
+
+Então, se atribuirmos o planejamento ao Opus, obteremos mais 14 pontos, certo? Portanto, atualizar o planejador para o Opus representa um aumento médio de nove pontos no preço. Aparentemente, atualizar o implementador para Opus resulta em uma desvantagem de um ponto. Então, novamente, pode não ser o parâmetro ideal, já que eu deveria ter um processo mais detalhado e questões mais complexas, mas ainda acho isso interessante porque o Kimmy se equipara ao Opus em termos de implementação, desde que estejamos usando o Opus para o planejamento. Então, basicamente, a conclusão é que o raciocínio importa na fase de planejamento, e não na fase de construção. Dedique tempo da Opus ao
+
+planejamento e deixe a Kimmy executar. Então, é isso , senhoras e senhores. Essa é a minha opinião final, e provavelmente vou executar exatamente a mesma coisa com algo mais complexo só para ter certeza. Mas isso definitivamente coincide com a minha intuição e com a experiência de outras pessoas . E tipo, sim, é isso que eu já tenho para a fábrica escura.
+
+E então, sim, a ressalva é que a resolução do problema está saturada em 10 de 10. Então, tipo, sim, talvez sejam um pouco simples demais, como nós... Quer dizer, continuo me repetindo. Vocês
+
+sabem do que estou falando. OK. Então, é isso. Esse é o resultado final da nossa análise comparativa. O ideal é ter o modelo mais robusto para o planejamento, o que permite usar uma solução mais barata e rápida para o restante do fluxo de trabalho, se desejar. Por exemplo, o fluxo de trabalho que estou
+
+usando para minha dark factory agora é o seguinte: Kimmy para explorar, Opus para planejar e, em seguida, Kimmy novamente para a implementação, validação e todas as autocorreções que queremos que sejam feitas no final do fluxo de trabalho, antes do pull request. Muito legal. Os resultados fazem sentido. Um bom planejamento resulta em um bom resultado. Como diz o velho ditado: "Lixo entra, lixo sai". Isso mesmo
+
+. Sim. Sim. Legal. Bom, então, outra coisa legal que eu gostaria de tentar é usar um modelo ainda mais fraco para a implementação, certo? Por exemplo,
+
+qual a velocidade e o custo de produção que podemos alcançar, considerando que tenhamos uma configuração realmente bem elaborada com o Opus? Então, talvez seja algo para experimentar em outra transmissão ao vivo. Mas, sim, vou iniciar a transmissão ao vivo aqui, pois já concluímos os testes de desempenho. É muito divertido construir isso e, sabe, experimentar todos os diferentes fluxos de trabalho do Archon que eu criei para esta transmissão. Ah, muito legal. Então, sim. Espero ver
+
+vocês na próxima transmissão ao vivo neste sábado, às 9h da manhã, horário central. Se você faz parte da comunidade Dynamis, espero ver vocês por lá . E, é, experimente a antigravidade pelos 2 segundos que você tiver, porque é bem legal ver as estruturas que ela consegue construir. E, claro, tente Archon. Basta acessar archon.diy.
+
+E, bem, temos o repositório do GitHub aqui com instruções para instalá-lo de forma super fácil. Você pode empacotar qualquer processo de codificação de IA , qualquer processo agentivo, como um fluxo de trabalho Archon. Isso torna extremamente fácil executá-los em paralelo e aumenta sua confiabilidade. Bem , é isso, espero que vocês tenham um ótimo resto de dia e nos vemos na comunidade Dynamis ou na próxima transmissão ao vivo. Calma, pessoal.

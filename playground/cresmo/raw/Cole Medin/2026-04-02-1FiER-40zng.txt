@@ -1,0 +1,162 @@
+---
+video_title: "Full Guide - Build Your Own AI Second Brain with Claude Code"
+video_id: 1FiER-40zng
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=1FiER-40zng
+video_date: 2026-04-02T00:00:03+00:00
+video_description: |
+  For the past few months I've been building something that completely changed how I work - an AI second brain that knows my schedule, my projects, my preferences, and anticipates my needs better and better over time. It checks my email, calendar, and tasks every 30 minutes, drafts replies in my voice, searches through months of context to answer questions, and I can talk to it through Slack from my phone.
+  
+  And here's the thing - it's all built on top of Claude Code and the Claude Agent SDK. No massive framework, no complicated infrastructure. Just markdown files, Python scripts, and an Obsidian vault. In this video I'll show you exactly how it works, walk through the architecture, and explain the key decisions that make it incredibly useful.
+  
+  If you want to go deeper and build your own, I'm running a full 4-hour hands-on workshop in the Dynamous community this week where I walk you through building this from scratch (link below).
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - If you're interested in building your own AI second brain to save yourself hours every week, check out the Dynamous community and upcoming 4 hour second brain workshop: 
+  https://dynamous.ai/second-brain-bootcamp
+  
+  - I'm doing a livestream showing how I use my second brain for agentic coding!
+  https://youtube.com/live/hdCZUNQ40VY
+  
+  - My second brain starter repo (includes the diagram from this video!):
+  https://github.com/coleam00/second-brain-starter
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Introduction the AI Second Brain
+  3:21 Why Build Your Own Second Brain?
+  8:58 Architecture Overview
+  9:41 The Memory Layer
+  11:48 Daily Reflection & Memory Search
+  13:48 Skills and Integrations
+  17:17 Proactive Agent Heartbeat
+  19:01 Getting Started with Templates
+  22:15 Live PRD Creation Demo
+  24:45 Workshop & Wrap-Up
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Venho construindo meu segundo cérebro com código Claude nos últimos 3 meses e cheguei ao ponto em que ele me economiza pelo menos uma dúzia de horas de trabalho, e prometo que não estou exagerando para este vídeo. Então, agora mesmo, quero mostrar a vocês todos os componentes do meu segundo cérebro, falar sobre as habilidades e os casos de uso, as coisas que estou automatizando. Tenho gerido um negócio muito semelhante durante o último ano e meio, por isso sei quanto tempo levo para fazer muitas destas coisas que comecei a automatizar com a ajuda do meu segundo cérebro, e existe um contraste gritante em muitas partes do negócio entre o tempo que demorava naquela altura e o tempo que demora agora. Então, eu não uso meu segundo cérebro para trabalhar menos, mas ele me livra de algumas tarefas para que eu possa impulsionar meu negócio mais rapidamente, focando mais nas atividades de alto impacto. O principal objetivo de construir um segundo cérebro é liberar parte da sua capacidade para que você possa dedicá-la a coisas que realmente importam. Então, estou aqui no meu Slack,
+
+que é um dos lugares onde uso meu segundo cérebro, assim como uso o de um amigo ou colega de trabalho. Muitos dos exemplos aqui são coisas que eu faço com meu segundo cérebro. Uso essa ferramenta para me ajudar a gerar ideias para meu conteúdo, criar roteiros para o YouTube com base no meu tom de voz e no meu calendário de conteúdo, gerenciar minha caixa de entrada, pesquisar e me manter atualizado sobre todas as novidades do setor de IA no momento, além de recursos específicos para os meus interesses. Isso me ajuda até mesmo na geração de imagens e diagramas , como criar miniaturas, gerenciando meus hábitos para me manter no caminho certo todos os dias com as coisas que quero realizar. Utilizo meu segundo cérebro para me ajudar a gerar ideias, pesquisar e manter meus negócios e minha vida em geral muito organizados. E meu segundo cérebro, que
+
+construí com base no código Claude e no Obsidian, tem sido o fator mais importante para o meu negócio desde que comecei a usar o próprio código Claude. E a melhor parte de toda essa arquitetura, que explicarei a vocês, é que tudo se complementa. À medida que você usa seu segundo cérebro com mais frequência, ele se torna mais sintonizado com você, antecipando suas necessidades. Ele reúne exemplos de como você se comunica e trabalha, que serão referenciados posteriormente. Toda a aplicação evolui ao longo do tempo e você constrói toda essa base de conhecimento. É por isso que eu integro
+
+com o Obsidian, porque é onde armazeno todo o meu conhecimento e onde meu agente o desenvolve ao longo do tempo. Cada documento que você vê aqui no meu gráfico do Obsidian faz parte do meu segundo cérebro. Ao longo do tempo, ele cria um índice de todos os meus e-mails, anúncios e roteiros do YouTube. É literalmente um cérebro que se expande com o tempo à medida que o utilizo. Muito bem, então aqui está o que vamos abordar hoje. Primeiro, vou abordar o assunto que está todos ignorando
+
+. Por que construir seu próprio segundo cérebro de IA quando já existem ferramentas como o Openclaw disponíveis? Em seguida, abordaremos a arquitetura. Vou mostrar exatamente o que compõe cada um dos componentes aqui, como incorporamos habilidades e casos de uso para o nosso segundo cérebro e como o fazemos evoluir ao longo do tempo. E depois que você entender a arquitetura central do segundo cérebro, então vamos abordar algo especial que tenho para você aqui. Este é um repositório do GitHub cujo
+
+link incluirei na descrição. Vamos analisar essa habilidade de código Claude que irá guiá-lo na criação do seu PRD para o seu segundo cérebro. Então, não vou revelar todo o código do meu segundo cérebro, mas a ideia é que você construa o seu próprio em primeiro lugar, e é assim que você começa. Então, no final do vídeo, vou explicar tudo ao vivo para vocês, criando um documento que descreve todo o escopo do trabalho para criar o seu segundo cérebro em fases, de forma simples e fácil de entender. Muito bem , então vou direto ao ponto e responder à grande questão.
+
+Por que nos preocuparíamos em construir nosso próprio segundo cérebro quando podemos simplesmente usar o Openclaw? Para começar, preciso explicar a vocês a tríade letal. E isso é realmente importante para os agentes em geral entenderem. A ideia por trás do "trio letal" é que há um aumento significativo na preocupação com nosso agente de IA se todos os três critérios forem atendidos, pois isso significa que nosso agente ficará muito suscetível a riscos de segurança, como injeção imediata. Você provavelmente já ouviu falar muito sobre isso se configurou o Openclaw e pesquisou sobre o assunto por conta própria. Assim, temos acesso a dados privados
+
+, conteúdo não confiável e um vetor de exfiltração. Deixe-me explicar cada um desses três pontos muito rapidamente. Eles são extremamente importantes. Em primeiro lugar , temos acesso a dados privados. Se o seu agente tiver acesso a algo como um e-mail ou calendário, esse é o primeiro passo para o sucesso do projeto, e para nossos " segundos cérebros", isso sempre se aplica.
+
+Caso contrário, não nos seria realmente muito útil. E o segundo pilar aqui é o conteúdo não confiável. Se houver qualquer tipo de entrada que possa chegar ao nosso agente de IA e que não seja proveniente de nós, como e-mails recebidos ou mesmo conteúdo de páginas da web, tudo isso poderia, teoricamente, conter instruções maliciosas para um ataque de injeção de prompt . E por último, mas não menos importante, temos o vetor de exfiltração. Na verdade, não importa se o seu agente consegue acessar informações privadas e receber informações se não houver como enviar seus dados confidenciais para o invasor malicioso; seu agente será muito mais difícil de ser comprometido.
+
+No entanto, para o nosso segundo cérebro, sim, ele sempre terá a capacidade de enviar uma mensagem ou fazer uma postagem em um endpoint de API. Estamos dando muito poder às nossas ferramentas, especialmente a algo como o Openclaw, sobre o qual falarei em breve. Assim, o argumento a favor da tríade letal é que, na verdade, todos os três precisam estar presentes. Por exemplo, se houver uma maneira de enviar informações confidenciais para um usuário malicioso e, em seguida, acessar nossas informações privadas. Mas na verdade não existe uma maneira de receber um ataque de injeção imediata. Como não podemos
+
+receber nenhuma outra entrada, então não há realmente nenhum risco aqui. Se apenas esses dois fatores se aplicassem, a preocupação com a segurança seria muito menor. Ou, se houver conteúdo não confiável sendo recebido e tivermos um vetor de exfiltração, mas não houver informações privadas para o agente acessar, então, novamente, o risco para o nosso agente diminui significativamente. Mas, como já disse, todos os três sempre se aplicarão ao nosso segundo cérebro. Eles têm os três por padrão.
+
+É muito difícil criar um segundo cérebro funcional sem estar exposto à combinação letal dos três fatores. Ok, que legal. Qual é o seu objetivo com isso? Bem, ouça o que tenho a dizer . Se formos realmente forçados a nos expor à tríade letal com nosso segundo cérebro porque essa é a única maneira pela qual ele é útil, então o que isso significa é que precisamos ser muito cuidadosos com a nossa implementação, pois queremos limitar cada um desses pilares o máximo possível. Sinceramente, o Openclaw e
+
+outras soluções já existentes não são muito eficazes em limitar, principalmente, o acesso a dados privados e os vetores de exfiltração. Assim como a Openclaw, eles têm se esforçado bastante recentemente para lidar com ataques de injeção de prompts, e devo reconhecer o trabalho deles. Alguns dos riscos de segurança e outros problemas que inicialmente representavam grande preocupação foram resolvidos. Assim, o Openclaw está em constante evolução, mas ainda apresenta muitos problemas de segurança e o principal problema, mesmo além dos problemas no próprio código-fonte, é que se trata de um código-fonte enorme e difícil de entender. Você está gerenciando algo que é difícil para você se adaptar . É difícil para você
+
+entender. Você está dando muito controle a um agente de IA e, na verdade, não sabe de que maneiras está realmente concedendo esse controle. Parece que você não entende como essa combinação letal realmente te afeta. Assim, quando você constrói o seu próprio, você realmente controla o que constrói. Você define as permissões antecipadamente. Você cria a
+
+base para poder adicionar funcionalidades à medida que desenvolve seu segundo cérebro, em vez de simplesmente usar algo que funcione e faça muito mais do que o necessário logo de cara. E sim, isso significa que dá mais trabalho criarmos nosso próprio segundo cérebro em vez de simplesmente usarmos algo pronto. Mas, no final, você vai criar algo personalizado exatamente para o que precisa e será muito mais simples, seguindo o conselho clássico que sempre tivemos para construir agentes de IA. Você só quer trabalhar com padrões simples e combináveis . E sim, grande parte do segundo cérebro que vou mostrar aqui é simplesmente código Claude com habilidades que impulsionam a maior parte da capacidade aqui. É
+
+uma coisa linda. E, em relação a grande parte do restante da arquitetura que abordarei daqui a pouco, o interessante é que não estamos construindo tudo do zero. Apesar de eu ter criticado o Openclaw por representar um risco de segurança, trata-se de um aplicativo muito bem desenvolvido. Não me interpretem mal, o Openclaw é realmente impressionante e há um motivo para ter feito tanto sucesso na internet. Portanto, não vamos ignorá-lo, mas também não vamos executá-lo diretamente. Em vez disso, vamos nos
+
+inspirar no Openclaw. Então, literalmente, enquanto eu construía meu segundo cérebro em cima do código do Claude, eu o direcionei para o repositório do Openclaw no GitHub, porque é totalmente de código aberto, e disse: "Veja aqui como eles implementam a camada de memória com o soul.md e o user.md. Quero que você veja como eles implementam o heartbeat para a parte proativa do agente." E me
+
+inspirei bastante nessa base de código e incorporei os aspectos que mais gostei na minha própria versão, mas ainda consigo manter o controle e definir as permissões e capacidades exatas que concedo ao meu agente ao longo do tempo. Essa é a grande chave do quebra-cabeça. Então, nós mesmos o construímos, mas nos inspiramos no que já existe para que possamos nos apoiar nos ombros de gigantes. Então, dito isso, vamos agora analisar a arquitetura. Vou mostrar, em linhas gerais, como construí cada um desses componentes. Bem,
+
+levaria muito tempo para construir tudo isso do zero com você. É por isso também que uso o modelo como ponto de partida. Mas se você quiser me ver construir todo esse segundo cérebro do zero, vou ministrar um workshop especial de 4 horas na comunidade Dynamis nesta sexta-feira, 3 de abril, às 11h ( horário central), onde usarei este modelo inicial que estou mostrando agora e demonstrarei como é construir tudo ao vivo, inspirando-me em soluções como o Openclaw. Assim, ao final deste processo, você terá seu próprio segundo cérebro funcionando, com tudo o que vou abordar com você. Então, dê uma olhada se tiver interesse. Caso
+
+contrário, vamos direto ao assunto da arquitetura. Então, a primeira grande coisa que me inspirou no Openclaw foi a camada de memória. Portanto, se você já viu o Openclaw antes, reconhecerá alguns desses arquivos, como o soul.md, o user.md e o memory.md.
+
+Essa arquitetura é genial e tão simples. Parte do poder do nosso segundo cérebro reside no fato de gerenciarmos tudo apenas com documentos Markdown, e é por isso que o Obsidian é uma ferramenta tão poderosa para usar em conjunto com o Claude Code para o seu segundo cérebro. Então, eu converso com meu cérebro usando o Claude Code, mas o Obsidian é minha tela para visualizar coisas como os diagramas que ele gera para mim, como estamos vendo aqui, todos os meus diferentes documentos, então eu posso, por exemplo, carregar o user.md, como estamos vendo aqui. Então, conforme isso evolui ao longo do tempo, posso observar e até mesmo corrigir algumas coisas que forem necessárias. Então, dentro da minha pasta de memória
+
+que está aqui no meu cofre do Obsidian, tenho tudo o que vamos abordar agora. Na verdade, muitas coisas. Agora eu administro minha vida inteira com meu segundo cérebro. Então, temos o arquivo user.md que acabei de mostrar, o memory.md, que registra todas as minhas
+
+decisões importantes que tomo todos os dias. Essas são algumas das principais decisões que tomei ao construir meu segundo cérebro personalizado. E então temos o soul.md, que é a personalidade que atribuo ao meu segundo cérebro. E, mais uma vez, estou copiando isso diretamente do Open Claw porque adoro essa abordagem. Não há problemas de segurança
+
+com esta parte do Open Claw, então estou simplesmente a adotar sem hesitar . E todos esses arquivos principais que temos em nossa camada de memória, inspirados pelo Open Claw, estamos trazendo-os diretamente para o contexto do nosso código Claude, logo no início, por meio de um gancho de inicialização de sessão. Assim, carregamos automaticamente os arquivos soul, user e memory.md no contexto do nosso código Claude. E os ganchos são, na verdade, uma parte bastante importante do nosso segundo cérebro do Código Claude, além disso, porque também temos um gancho pré-compacto. Então,
+
+sempre que nossa conversa ficar muito, muito longa, e precisarmos compactar a memória ou passar para outra conversa, precisamos garantir que salvemos essa conversa em nosso registro diário, porque queremos que nosso segundo cérebro aprenda com cada conversa. Assim, vamos construindo esse registro diário bastante extenso todos os dias. E então temos esse processo diário de reflexão. Então, isso acontece simplesmente por meio de uma tarefa cron. Eu faço isso uma vez por dia. Isso utiliza o
+
+SDK do Claude Agent internamente, e simplesmente executa esse processo de promoção porque temos um registro diário bruto muito extenso de todas as nossas conversas. Precisamos descobrir o que realmente importa lembrar o tempo todo, certo? Por exemplo, o que devemos promover no arquivo memory.md que é sempre carregado no contexto do nosso código Claude? Assim, ele extrai informações como decisões importantes, lições aprendidas e fatos relevantes. Esta
+
+é uma das partes mais importantes do nosso sistema, que permite que nosso agente evolua ao longo do tempo. E fazemos o mesmo sempre que terminamos uma conversa. Quer dizer, principalmente porque nem sempre estamos compactando, né? Sempre que encerramos uma sessão do Claude Code, temos aqui o mesmo recurso que faz a mesma coisa. Então, o registro diário é onde despejamos tudo, e então fazemos nosso processo de promoção para, você sabe, este arquivo principal. Este é provavelmente
+
+o arquivo mais importante de todo o segundo cérebro. E outra coisa importante aqui é o arquivo memory.md, porque ele é uma versão mais concisa dos nossos registros diários, mas nem sempre contém todas as informações que gostaríamos de consultar posteriormente. Portanto, também permitimos que nosso agente execute o ragtime. Então, indexamos todos os nossos registros diários em um banco de dados SQLite, mas você também poderia usar o Postgres , não faz muita diferença. O importante é que a
+
+indexação seja feita para que nosso agente possa pesquisar em todos os registros diários. Se quisermos encontrar algo realmente específico que talvez não tenha sido importante o suficiente para entrar no memory.md, mas que ainda assim possamos querer mencionar em uma conversa posterior. Assim, quando nosso agente executa o comando `rag`, ele tem acesso a todos os documentos que você vê aqui na visualização gráfica do Obsidian, tudo em nossa pasta de registros diários. Quer dizer, dê uma olhada nisso. Tenho um arquivo
+
+para cada dia desde que comecei a usar meu segundo cérebro. Bem, comecei pela camada da memória porque ela é realmente a parte central do nosso segundo cérebro. Mas também precisamos dar braços ao nosso segundo cérebro. Eles precisam ser capazes de fazer coisas em nosso nome, e é aí que entram as habilidades. E Claude Code mais habilidades é tudo o que precisamos para nossas capacidades. Voltando ao nosso
+
+outro diagrama, queremos nos concentrar em padrões composíveis simples. É assim que você deve construir agentes o tempo todo, e é tudo o que precisamos. Não precisamos de outros aplicativos rodando em nosso segundo cérebro. Nem precisamos de servidores MCP. Eu literalmente uso minhas habilidades para tudo. Então, vou mostrar a vocês o que há dentro
+
+do ventre da fera, bem aqui. Este é o meu repositório para o meu segundo cérebro. Está bem bagunçado porque é aqui que eu trabalho todos os dias. Mas se olharmos no diretório .claude/skills, vejamos isto. Existem muitas habilidades
+
+que eu utilizo. Eu uso todos esses produtos pelo menos uma vez por semana. Já abordei muitos desses tópicos no meu canal, como a habilidade de diagramação com o Excalidraw. O link para o vídeo está aqui. Adoro usar isso o tempo todo para gerar diagramas como este que você está vendo aqui. E a questão é que,
+
+para a habilidade de diagramação no Excalidraw, todas as habilidades que tenho para gerar apresentações em PowerPoint e me ajudar a criar roteiros para o YouTube, como todas essas, são alimentadas pela camada de memória, certo? É como se a habilidade fosse criar um diagrama muito genérico ou um roteiro genérico para o YouTube, a menos que consiga acessar a memória aqui, entendendo como eu criei roteiros para vídeos semelhantes no passado ou simplesmente voltando ao meu arquivo memory.md ou user.md. Assim, as habilidades são personalizadas para mim por meio de, você sabe, alguns dos estímulos presentes na própria habilidade, mas principalmente porque, em cada conversa, a memória alimenta todas as capacidades que utilizo por meio dessas habilidades. E uma das
+
+principais habilidades que tenho para o meu segundo cérebro é explicar todas as minhas integrações diretas e exatamente como usar as APIs que configurei para funcionar com meus serviços, como Gmail, Asana, Circle (onde tenho minha comunidade Dynamis AI) e Slack. Onde quer que eu esteja trabalhando, meu segundo cérebro também tem acesso a ele . E eu tenho uma habilidade que explica todas as capacidades que ela possui, bem aqui. O importante diferencial em relação ao Open Claw padrão é que, na minha camada de API Python, sou muito cuidadoso com as diferentes funcionalidades às quais concedo acesso por meio dessas APIs. Portanto, ele só consegue ler meu Slack. Na verdade, não consegue publicar
+
+mensagens. Não é possível criar documentos no Google Docs. Não consegue gerenciar meu calendário, mas pode me informar sobre os eventos que tenho. Mas, às vezes, quando necessário, eu permito o acesso correto. Embora possa criar rascunhos no Gmail, não consegue enviar e-mails. Posso configurá-lo para gerenciar
+
+tarefas do Asana, mas apenas em projetos específicos. E assim, como este é o meu segundo cérebro, tenho controle total. Posso [risos] ser muito, muito exigente quanto às permissões que estou concedendo, e posso evoluir isso com o tempo se quiser, mas estou começando com uma mentalidade de confiança zero. Vamos começar apenas com permissão de leitura e, em seguida, adicionar funcionalidades e controlar isso de perto . E para todas as minhas integrações diretas, eu as implementei com um padrão muito comum. E isso
+
+significa que posso fazer com que meu segundo cérebro evolua por si só, criando novas integrações, simplesmente executando-as uma única vez com o Código Claude. É muito fácil porque pode consultar integrações existentes e sua memória de como construiu coisas no passado para basicamente realizar toda a parte de planejamento do fluxo de trabalho de codificação de IA por conta própria. E foi assim também que construí minha interface de bate-papo . Assim, o Slack foi criado de uma forma que eu poderia simplesmente copiar para qualquer outra plataforma que eu quisesse integrar, como o Telegram ou o Discord. Assim, a capacidade do seu segundo cérebro de se referenciar, bem como outras soluções como o Open Claw, significa que é incrivelmente fácil construir em cima do seu segundo cérebro. Muito bem, a
+
+última coisa que quero abordar com meu segundo cérebro antes de apresentar o modelo para vocês é o batimento cardíaco. E isso realmente une tudo, porque é aqui que construímos a natureza proativa do nosso segundo cérebro. Ela pode começar a antecipar nossas necessidades e fazer coisas em nosso nome que desejamos, sem que precisemos sequer pedir. Então, temos todas essas integrações diretas com serviços como o Gmail e meu gerenciador de tarefas, mas nem sempre quero ser eu quem pede para o programa fazer as coisas por mim. E se eu quisesse, por exemplo, redigir automaticamente respostas para vários dos meus e-mails? É aí que
+
+entra o heartbeat. Ele vai coletar informações por meio de todas as APIs com as integrações diretas. Então, temos essa parte determinística antes mesmo de entrarmos no Código de Claude, onde estamos reunindo um contexto sobre a minha vida que está acontecendo agora. E então enviamos todas essas informações pertinentes para o Claude Code. Portanto, estamos usando o SDK do Agente porque estamos invocando o Claude Code programaticamente. Eu não estou incentivando isso.
+
+Então, eu tenho um prompt pré-configurado que inclui isso, além de todas as informações das APIs enviadas para o Claude Code, para que ele possa raciocinar sobre coisas como: "Ok, deixe-me redigir essas respostas. Deixe-me lidar com essa solicitação de pull no GitHub. Com o que eu preciso ajudar o Claude Code agora?" Pensa em tudo isso . Isso funciona. E então, ele
+
+me envia uma notificação no Slack para me manter informado sobre tudo o que está acontecendo na minha vida e as maneiras pelas quais ele está me ajudando proativamente. Então, preciso desfocar bastante coisa aqui porque são informações bem sensíveis , mas estou apenas mostrando um exemplo de como é para o meu segundo cérebro me enviando esses alertas. E se eu quiser, posso sempre responder a uma dessas mensagens em uma conversa no Slack para continuar o assunto, algo que já aconteceu comigo. Portanto, este é apenas um ponto de partida, mas é um belo ponto de partida. De tudo que existe no segundo cérebro, o batimento cardíaco é o que me poupa mais tempo .
+
+Muito bem, agora que você sabe como meu segundo cérebro funciona, quero te ajudar a construí-lo. Como eu disse no início do vídeo, não vou simplesmente disponibilizar todo o meu código-fonte, pois isso também anularia o propósito de você criar o seu próprio. Caso contrário, terei que construir outro Open Claw. Quero que você crie a base para si mesmo, mas ainda assim lhe darei um ponto de partida. E pensei muito sobre como fazer isso. Como posso ajudá-lo a definir o escopo do
+
+trabalho sem lhe fornecer um modelo e simplesmente mais um Open Claw? Então, o que eu desenvolvi aqui foi um sistema. Então, eu tenho este documento de requisitos que você pode preencher e, em seguida, usar como contexto para o seu agente de codificação para criar o PRD. Este é o seu escopo de trabalho inicial. Terá todas as fases para construir tudo no segundo cérebro que eu expliquei para você. E
+
+tudo o que você está vendo aqui está no repositório do GitHub, cujo link estarei na descrição. Então, basta clonar o repositório, encontrar este meu segundo documento Markdown de requisitos cerebrais e, em seguida, você pode editar tudo aqui. Então, você preenche todos os campos em branco para descrever exatamente como deseja que seu segundo cérebro o ajude, o nível de permissão e proatividade que deseja. E depois de preencher isso, você abre o seu código Claude ou o OpenCore, ou qualquer outro, e executa essa habilidade, o PRD "Create Second Brain". Basta indicar o caminho para os requisitos que você preencheu.
+
+Então, clique com o botão direito, copie o caminho relativo, cole-o e pronto, é só isso que você precisa fazer. E vou mostrar um exemplo disso ao vivo em um instante. Mas isso vai gerar um documento de requisitos que contém todas as fases para desenvolver tudo o que eu expliquei para você com meu segundo cérebro. Então você está usando o que eu construí como ponto de partida, mas como é um PRD e não uma base de código, é muito fácil editar tudo. Ajuste-o ao seu gosto para personalizá-lo completamente antes de escrever uma única linha de código. E para facilitar ainda mais
+
+para você, tenho um exemplo dos requisitos já preenchidos que você pode usar como referência, se quiser. E é isso que vou mostrar para vocês agora. Então, eu inventei uma pessoa aleatória aqui. Basta compartilhar algumas informações sobre você para que o sistema saiba seu nome, seu fuso horário e coisas do tipo . Você seleciona as plataformas com as quais deseja que seu segundo cérebro se integre . Portanto, onde quer que você trabalhe, é importante que
+
+seu segundo cérebro também esteja presente. E depois, liste todas as tarefas que você deseja que ele execute. Eu até tenho exemplos para cada parte do modelo para você usar como base. E depois acrescente o que quiser. O nível de proatividade também é muito importante. Então, faça o que for mais
+
+confortável para você. Você quer que seu agente seja um observador, de forma que ele execute apenas ações de leitura em todas as instâncias? Ou talvez você queira ir tão longe a ponto de ser um parceiro. Ele pode agir de forma autônoma, inclusive enviando e-mails em seu nome. Você pode escolher o seu nível. Geralmente, o que eu faço é ser
+
+consultor. É para isso que serve meu segundo cérebro . E quanto aos limites de segurança, o que você não quer que seu agente faça de jeito nenhum? Queremos dar grande ênfase à segurança em nosso planejamento e implementação. Categorias de memória, que tipos de conhecimento queremos que ela rastreie, mantenha e pesquise ao longo do tempo. A infraestrutura, então onde
+
+queremos implantá-la? Talvez você queira que seu segundo cérebro funcione apenas no seu computador. Outras vezes, você pode querer que ele seja executado remotamente para que esteja acessível 24 horas por dia, 7 dias por semana. Então, hospedado em algum tipo de droplet, como na Digital Ocean ou na Hostinger, e você pode acessá-lo remotamente pelo Slack. Eu também tenho isso configurado .
+
+E então, basta definir suas prioridades para integrações, porque isso determinará exatamente como as fases serão criadas no PRD (Process Rule Design). Então, você preenche tudo exatamente como eu fiz aqui. E então, na verdade, farei isso agora mesmo. Vou criar um segundo PRD cerebral. Vou passar o caminho para este exemplo aqui.
+
+E vai demorar um pouco porque vai exigir muita pesquisa. Levará em consideração todas as personalizações que você deseja especificar. É aqui também que você poderia apontar para um repositório como o Open Claw e dizer: " Quero me inspirar em como o Open Claw fez isso ou como o Nemo Claw fez aquilo." Portanto, já existem muitos recursos disponíveis que você pode usar como entrada para seu agente de codificação. Essa é a grande vantagem de usar um agente de codificação: você pode personalizar tudo o que quiser.
+
+Então, voltarei assim que tiver o PRD criado. Vou te mostrar como isso se parece também. E pronto. Nosso PRD foi criado. Portanto, por padrão, a saída é salva na pasta de planos do tipo ".agents". Na verdade, não importa
+
+onde isso aconteça, mas o importante é que cada uma das fases que definimos neste PRD corresponde a tudo o que mostrei neste diagrama. E está organizado de forma que possamos construí- los um de cada vez. Assim, você pode começar criando a base da memória e já terá pelo menos uma parte de um segundo cérebro que é bastante útil. E então você criará os mecanismos para persistência de contexto e para carregá-los em suas sessões. Você começará a desenvolver a busca na memória e, em seguida, começará a trabalhar nas integrações, nas habilidades e na adição de recursos.
+
+Você constrói isso com o tempo. Não queremos que nosso agente de programação tente construir seu segundo cérebro inteiro de uma só vez. Isso não vai funcionar e será muito difícil manter o controle exato do que você está construindo. Por isso, fazemos em fases. Então, literalmente, o que você pode fazer neste ponto, depois de ter seu PRD, é iniciar uma nova sessão de código Claude.
+
+Você pode direcioná-lo para o PRD. É como se eu fosse copiar esse caminho, colar aqui e dizer: "Vamos construir a fase um". Certo? Ou, se você já construiu as primeiras fases, pode dizer: "Vamos construir a fase quatro". E então você pode iniciar uma sessão de planejamento, descobrir exatamente o que deseja construir e se deseja ajustar algo em relação ao PRD. Você entra,
+
+cria o código, testa e, dessa forma, pode criar todo o seu segundo cérebro em apenas alguns dias. Não demora muito para chegar ao ponto de ter algo tão poderoso quanto uma garra aberta, mas que é inteiramente seu, muito mais simples de manter e mais seguro. Por isso, eu recomendo que você experimente. Tenho o modelo e este diagrama, ambos no repositório do GitHub cujo link está na descrição. Mesmo que você já tenha um segundo cérebro, passe por esse processo para se inspirar e aprimorar o que você já possui. E
+
+lembre-se, junte-se à Dynamis para participar do workshop de quatro horas sobre o segundo cérebro, que acontecerá nesta sexta-feira, 3 de abril. Vou construir tudo do zero, explicando cada detalhe minuciosamente . Então, espero te ver lá. E espero que este vídeo tenha sido um bom ponto de partida para você, mesmo que apenas mostrando o que compõe um segundo cérebro poderoso que pode economizar horas e horas todas as semanas. Então, se você gostou deste vídeo e está ansioso por mais conteúdo sobre a criação de agentes e segundos cérebros, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos
+
+no próximo vídeo.

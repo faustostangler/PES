@@ -1,0 +1,160 @@
+---
+video_title: "I Built Self-Evolving Claude Code Memory w/ Karpathy's LLM Knowledge Bases"
+video_id: 7huCP6RkcY4
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=7huCP6RkcY4
+video_date: 2026-04-06T20:47:12+00:00
+video_description: |
+  Andrej Karpathy posted about using LLMs to build personal knowledge bases - raw articles go in, an LLM compiles them into an interconnected wiki, and health checks keep everything consistent. It went massively viral. 
+  
+  But here's the thing: the most valuable raw data isn't external articles. It's your own conversations with your agents.
+  
+  Every time you work with Claude Code, you make decisions, discover gotchas, learn patterns, and build up context that vanishes when the session ends or the context window compacts. What if instead of losing all of that, every conversation automatically compiled into a structured knowledge base that gets smarter over time? 
+  
+  That's what I built and in this video I'll show you how to use it!
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Try InsForge - the open source platform that gives your coding agent a database, auth, storage, AI model routing, and hosting all in one. Free to get started, use code InsForgePromo for a free month of Pro:
+  https://insforge.dev/
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - If you're interested in building your own AI second brain to save yourself hours every week, check out the Dynamous community and the new 4 hour second brain bootcamp: 
+  https://dynamous.ai/second-brain-bootcamp
+  
+  - Karpathy inspired Claude Code memory system repo:
+  https://github.com/coleam00/claude-memory-compiler
+  
+  - Karpathy's original Tweet:
+  https://x.com/karpathy/thread/2039805659525644595
+  
+  - Gist to build your own Karpathy LLM knowledge base:
+  https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Karpathy LLM Knowledge Bases
+  2:32 How it Works
+  6:01 Data Flow and Architecture
+  8:40 My Claude Code Memory System
+  9:19 InsForge
+  10:43 Setting Up the System
+  11:04 Obsidian Setup and Vault Configuration
+  12:16 Claude Code Hooks
+  16:51 The Compounding Knowledge Loop
+  18:35 Outro
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Vamos ser sinceros, toda semana você e eu estamos jogando o jogo de descobrir qual é a última novidade no mundo da IA, certo? Muda toda semana e agora todo mundo está focado nas bases de conhecimento do LLM , que surgiram deste tweet do Andrej Karpathy, e tem muita ideia legal aqui que eu quero discutir com vocês. Eu criei meu próprio sistema de memorização baseado nisso, acho que vocês vão gostar bastante. É simples, mas extremamente eficaz. Então, falaremos mais sobre isso daqui a pouco, mas vamos começar pelo contexto. Então, Karpathy começa
+
+dizendo que algo que tenho achado muito útil recentemente é usar os LLMs para construir bases de conhecimento pessoal sobre vários tópicos de interesse de pesquisa. Assim, captamos informações externas, incorporamos essas informações ao nosso sistema e as organizamos da melhor forma para que os agentes possam consultá-las. E este é um grande caso de uso para segundos cérebros de IA atualmente, algo em que tenho me concentrado bastante recentemente, e adoro ver que ele está usando o Obsidian como parte fundamental de sua estrutura. Eu sempre chamo isso de minha tela para trabalhar com as coisas usando meu segundo cérebro. Que legal ver isso. E ele
+
+realmente nos revela todo o seu plano de jogo aqui. É simples e agradável. Então, ele fala sobre como ele coleta informações, a ingestão de dados, como ele os visualiza, como ele os consulta, como ele os formata, e também sobre as verificações de integridade que ele incorporou. Portanto, quero abordar toda essa arquitetura aqui, o que nos guiará até a solução personalizada que desenvolvi . Estou animado para mostrar isso a vocês porque é o seguinte: tudo o que ele está apresentando funciona com dados externos, e existem muitos casos de uso para isso. Mas o que eu construí aqui
+
+trabalha com dados internos. Assim, o código Claude passa a ter uma memória que evolui com a sua base de código. Assim, toda a base de conhecimento do LLM será fundamentada em nossas conversas com nosso agente de codificação ou segundo cérebro, em vez de importarmos dados externos. Mas estruturei tudo exatamente da mesma maneira. Todas as otimizações de como indexamos e criamos sistemas para que nosso agente explore as informações. É
+
+muito legal. Então, vamos começar pela infraestrutura e depois mostrarei como você pode usá-la para evoluir qualquer base de código. Sim, o Claude Code já possui um sistema de memória integrado e já existem soluções de código aberto para memória de longo prazo no Claude Code, mas eu queria construir isso especificamente porque estou seguindo à risca tudo o que Karpathy descreveu aqui, só que para uso interno em vez de externo. É muito mais simples do que outras abordagens já existentes e eu diria que é ainda mais eficaz. Você vai entender o que eu quero dizer quando começarmos . Então, algo realmente interessante
+
+que ele diz aqui em cima é que ele está gastando mais de seus tokens com seus agentes manipulando conhecimento como Markdown e Obsidian, em vez de manipular código. Mas ele trabalha com o conhecimento de uma forma muito semelhante à maneira como nós trabalhamos com o código. Isso nos leva à analogia do compilador. Esta é a maneira mais simples de explicar tudo o que ele construiu neste sistema, porque a forma como lidamos com o conhecimento é muito semelhante à maneira como transformamos o código-fonte em um aplicativo final para o usuário executar com um compilador. Então, vamos começar do início. Então,
+
+começamos com nosso código-fonte, que, no caso de nossas bases de conhecimento pessoal do LLM , são nossos artigos, trabalhos, qualquer coisa que encontramos online e que queremos incorporar ao nosso sistema. Então, vou até o cofre da Obsidian, porque é isso que Karpathy usa. É isso que eu uso como meu segundo cérebro de IA. Temos a pasta com os arquivos brutos aqui. Este é o ponto de entrada do nosso sistema, onde vamos inserir qualquer coisa: artigos, trabalhos, transcrições, tudo em formato Markdown puro. E
+
+então pegaremos isso e o passaremos para a fase de compilação. É aqui que temos um grande modelo de linguagem que processa todas essas informações brutas. Então, criar resumos, conectar documentos, em geral, descobrir como estruturar nosso conhecimento. E para o sistema que Karpathy projetou aqui para o compilador, nós de fato temos scripts. Temos um código que pega nossas informações brutas e as passa para um LLM para gerar o wiki aqui. Isso nos leva
+
+ao próximo passo. O compilador acessa o arquivo executável. É isto que executamos ou, no caso da nossa base de conhecimento pessoal , é isto que consultamos. Então, ele chama isso de wiki. Aqui temos nossos artigos compilados, tudo o que foi produzido a partir do modelo de linguagem abrangente, e também os backlinks. Estamos
+
+conectando fragmentos de conhecimento. Então, voltando ao Obsidian, temos nossa visualização em gráfico. Essa é uma das partes mais interessantes do Obsidian, onde podemos ver como nossos diferentes conhecimentos, nossos diferentes documentos em Markdown, estão conectados por meio de backlinks. E isso é poderoso porque dá ao nosso agente a capacidade de percorrer o grafo, pesquisar melhor e até mesmo conectar diferentes informações para nos dar uma resposta mais completa. Então, é isso que fazemos . É isto que procuramos. Mas
+
+antes de chegarmos à etapa final com o ambiente de execução, também temos um conjunto de testes. Continuando com a analogia do código, estamos realizando a verificação de código (linting). Ele chama isso de "fiapos" em nossos documentos. Então, estamos encontrando lacunas onde talvez precisemos pesquisar mais, qualquer tipo de dado desatualizado, coisas que talvez tenhamos em nossa pasta de dados brutos que ainda não estão em nossa wiki, e precisamos corrigir essa discrepância, qualquer tipo de link quebrado, como se tivermos um documento que aponta para outro que não existe, vamos cuidar de tudo isso. E assim, estamos indo tão longe neste sistema a ponto de garantir que nossos dados tenham integridade. E isso é muito
+
+importante. Queremos ter uma base de conhecimento pessoal precisa. E finalmente, chegamos à última etapa, onde executamos as consultas, certo? Este é o ambiente de execução, onde aproveitamos nossa wiki, fazendo com que nosso agente pesquise nela para encontrar informações sobre o que estamos trabalhando no momento. E o mais interessante aqui é o que Karpathy disse: "Pensei que teria que recorrer a um método sofisticado, mas o modelo de linguagem abrangente tem se saído muito bem na manutenção automática dos arquivos de índice." Assim, um dos
+
+arquivos mais importantes em toda essa configuração, dentro da wiki, é o índice. Portanto, este arquivo descreve para o agente: "Aqui estão todas as diferentes pastas e recursos aos quais você tem acesso." Então, ele usa isso como ponto de partida, e nem precisamos fazer um ragtime sofisticado. O agente pode simplesmente navegar por todos os arquivos que temos registrados em nosso cofre Obsidian. Não precisa realizar nenhuma busca semântica. Não existe
+
+banco de dados de vetores aqui. É simples e agradável. É uma das belezas dessa estratégia que realmente me motivou a desenvolvê-la ainda mais . Certo, então vamos agora passar da analogia do compilador para o fluxo de dados exato . Acho que isso vai te convencer de vez . Em seguida, abordaremos a
+
+implementação que desenvolvi a partir dessa base. Vou falar sobre como isso se relaciona com todas essas ideias aqui. Então, tudo bem. Começamos com as nossas informações externas. E Karpathy menciona especificamente o cortador de teias Obsidian . É uma extensão muito bacana do
+
+Obsidian que nos permite pegar qualquer coisa da internet e trazê-la diretamente para o nosso cofre ou, neste caso, diretamente para a nossa pasta de arquivos brutos. A fonte da verdade, como discutimos anteriormente, é o Markdown não processado. Em seguida, inserimos essas informações no modelo de linguagem abrangente para criar nossa wiki. Assim, elaborei aqui um exemplo simples para demonstração. Minha pasta de arquivos brutos contém apenas alguns artigos diversos sobre tópicos de IA.
+
+E então, dentro da wiki, é isso que é processado. É isso que o nosso agente realmente consulta. Temos esta pasta de conceitos, e é nela que reunimos tudo. Estamos extraindo ideias e conceitos de nossos documentos brutos. E também temos conexões, como coisas diferentes se relacionam entre si. E depois,
+
+claro, temos o índice. Este é o arquivo principal ao qual queremos que nosso agente sempre tenha acesso, para que ele tenha uma ideia geral de onde começar a procurar com base em nossa pergunta. E por último, temos aqui o arquivo agents.md. Então, isso é como regras globais para o seu agente de codificação, certo?
+
+Então, na verdade, o que fazemos em nossas regras globais aqui é descrever todo o sistema para bases de conhecimento LLM, para que o agente entenda: aqui é de onde vêm minhas informações, aqui está a versão compilada que vou pesquisar, aqui estão o índice e o arquivo de log, certo? Assim como todo o sistema que explicamos ao agente, ele possui esse meta-raciocínio. Ele entende em que foi inserido. Quando você inicia uma nova sessão com seu segundo cérebro ou agente de codificação, seja lá o que for. E a melhor parte é que, se você quiser construir todo esse sistema de base de conhecimento LLM por conta própria, tudo o que precisa fazer é enviar essa instrução para o seu agente de codificação. Não poderia ser
+
+mais simples. Então, isso veio diretamente de Karpathy. Ele tinha um tweet de acompanhamento onde ele incluiu um link para isso. Isso é basicamente um PRD, certo? Um documento de requisitos do produto que descreve tudo o que precisamos construir para que você possa incluir este sistema em seu próprio agente de codificação ou segundo cérebro. Então, basta inserir
+
+isso, sem nenhum outro contexto, e tudo será executado de uma só vez . E foi isso que eu também incluí na minha versão. Se você consultar o arquivo readme aqui para obter um guia rápido, verá que nem precisa clonar o repositório . Basta enviar essa mensagem para o seu código Claude. Clone o projeto e configure tudo com os hooks de código do Claude , tudo o que preciso para criar esta base de conhecimento pessoal LLM, mas para informações internas em vez de externas. Então, inspirado por toda a
+
+arquitetura que acabamos de abordar aqui, a principal diferença é que agora o código Claude recebe uma memória que evolui com a sua base de código. Então, em vez de pegar informações da internet, vamos capturar automaticamente os registros de sessão com hooks. Assim, os registros de sessão são como uma pasta onde simplesmente inserimos nossas conversas, e então usaremos o SDK do agente Claude nos bastidores para extrair tudo automaticamente e transformá-lo em artigos de conhecimento estruturados com referências cruzadas. Então, seu agente de codificação, por exemplo, permite que você faça isso por base de código. Com o tempo, ele ficará cada vez mais inteligente, pois se lembrará das decisões que você tomou e de como seu projeto evoluiu. O patrocinador do vídeo de hoje é a
+
+Inspo Forge. O Inspo Forge é uma plataforma de código aberto que fornece ao seu agente de codificação tudo o que ele precisa para lançar aplicativos full stack. Imagine se você tivesse Vercel, Superbase e Open Router, tudo em uma única plataforma. Então, temos um banco de dados, temos autenticação e armazenamento. Podemos rotear para 50 modelos de linguagem grandes diferentes . Também oferecemos serviços de hospedagem. É
+
+tudo o que você precisa e damos aos nossos agentes a capacidade de gerenciar tudo isso por meio de uma interface de linha de comando (CLI) e uma habilidade de agente. E dê uma olhada nisso. A instalação do In Forge CLI e da skill em qualquer base de código leva literalmente menos de 5 minutos, e depois posso acessar o Claude Code e solicitar a criação de um aplicativo. Então, aqui, vou criar tanto um back-end quanto um front-end e estou especificamente pedindo para usar o InForge para criar minha tabela de banco de dados, configurar a autenticação e hospedá-la também. Após passar por todo esse processo, teremos um aplicativo hospedado. O que estou
+
+mostrando aqui é um URL ativo e configurei a autenticação para poder fazer uma demonstração aqui mesmo. Criei uma conta fora do alcance da câmera. Vou fazer login. Temos acesso ao nosso banco de dados nos bastidores. Portanto, não se trata apenas de armazenamento local, mas sim de um aplicativo hospedado, um banco de dados em tempo real. Posso até usar um modelo de IA para
+
+me recomendar uma tarefa aqui. Então, também estou mostrando a parte de IA do In Forge. Conseguimos colocar tudo em funcionamento e não precisamos configurar nada por conta própria. O In Forge é de código aberto e gratuito para começar. Além disso, você pode usar o código promocional In Forge promo para ganhar um mês grátis da versão Pro. Vou colocar um link na
+
+descrição. Sério, você deveria experimentar isso agora mesmo. Abra o Claude Code em qualquer base de código em que você esteja trabalhando no momento, seu segundo cérebro, abra o Claude, o que for, e simplesmente envie este comando. Isso irá aprimorar imediatamente a memória de longo prazo do seu agente de codificação quando ele estiver trabalhando especificamente nesse projeto . Estamos compilando lições e pontos-chave para esta base de código. Então,
+
+eu clonei o repositório localmente. Vou trabalhar diretamente com ele para dar um exemplo aqui, mas você usará esse prompt para integrá-lo ao seu trabalho atual. Então você não precisa fazer isso, mas eu recomendo começar com um cofre de obsidiana. É a nossa tela para visualizar todas as memórias em toda a wiki que criamos com o Claude Code. Assim, você abrirá uma pasta como um cofre.
+
+Depois de instalar o Obsidian, ele é gratuito e super fácil de instalar. Então, vou abrir aqui e você só precisa indicar o caminho para onde está o código-fonte que você importou para este sistema. Então, vou selecionar esta pasta aqui. Isso criará um cofre Obsidian totalmente novo. Eu geralmente gosto de deixar tudo com uma aparência agradável quando crio um cofre pela primeira vez. Então, vou acessar
+
+as configurações no canto inferior esquerdo. Vou acessar as configurações de aparência e então conseguirei selecionar um tema. Eles têm muitos modelos realmente incríveis. Noite de obsidiana é a minha favorita. Então, vou clicar em instalar e usar. E geralmente também gosto de mudar
+
+para o tema escuro. Pronto. Agora está igual ao outro cofre que te mostrei antes, na demonstração. Portanto, é aqui que vamos gerenciar os registros diários. Falarei sobre isso daqui a pouco. E aqui está também o nosso
+
+equivalente wiki, onde temos o nosso índice. Quer dizer, tudo isso é exatamente o que Karpathy estabeleceu com os conceitos e conexões. Tudo o que usamos para processar a partir de nossa entrada bruta é feito por meio de um modelo de linguagem complexo . Portanto, todo esse sistema é controlado exclusivamente por meio de hooks de código do Claude. Então, essa é a parte maravilhosamente simples da coisa. Por isso, tudo o que você precisa fazer é
+
+enviar essa solicitação para configurar tudo na sua base de código onde você executa o código Claude. Não precisamos instalar mais nada . Não precisamos configurar nenhuma integração. Então, acessando o arquivo settings.json, é aqui que você sempre define os hooks para o código Claude.
+
+Quero mostrar, pelo menos em linhas gerais, como tudo funciona aqui. Acho que você vai entender perfeitamente. Então, começamos com um gancho de início de sessão. Portanto, este comando será executado sempre que iniciarmos uma nova sessão de código Claude. E tudo o que estamos fazendo com esse script simples em Python é carregar o arquivo agents.md. Já abordamos
+
+esse assunto anteriormente. Isso é para que nosso código Claude entenda o sistema que inserimos nele. E também carrega informações se acessarmos a base de conhecimento, que é o nosso equivalente a uma wiki. Estamos carregando nosso arquivo index.md. Você já viu isso
+
+também. Esta é a nossa lista de arquivos, que mantemos atualizada constantemente, para que nosso agente possa realizar consultas com mais eficiência. Assim, sempre que iniciamos uma nova sessão de código Claude, ela já possui essas duas coisas. Então, agora posso fazer uma pergunta. Apenas para fins de demonstração, já possuo uma base de conhecimento construída para um projeto. Portanto, estou perguntando
+
+algo que o sistema não saberia por si só sem realizar uma análise profunda do código-fonte. Mas, neste caso , tudo vai depender diretamente do que temos em nossa base de conhecimento. Dê uma olhada nisso. Com base no seu conhecimento, aqui estão os principais pontos a serem observados. Em seguida, alguns detalhes técnicos que você não precisa abordar aqui, mas que são mencionados nos artigos específicos da Base de Conhecimento que foram consultados para chegar a essa resposta. Assim, o índice
+
+indicou para onde apontar. O sistema executou algumas consultas, sobre as quais falaremos daqui a pouco, e extraiu informações do nosso conhecimento. Assim, mais uma vez, temos o equivalente à nossa pasta de dados brutos com nossos registros diários. Aqui vamos registrar resumos de todas as conversas com o código Claude. Vou mostrar como fazemos isso com os outros ganchos daqui a pouco. Então, os registros diários são o nosso
+
+equivalente bruto. E então, temos nossa wiki. Aqui temos os itens que estão melhor formatados e interligados. Temos a visualização completa do gráfico aqui no Obsidian. É isto que o nosso agente está a analisar. Eu sei que este é
+
+um exemplo bem básico, mas pense por um segundo em quão poderoso isso realmente é. Se eu fizesse essa pergunta sem todo esse sistema integrado, ele teria que analisar o log do Git, e mesmo assim talvez não tivesse as lições sobre o que observar. Seria necessário criar subagentes para analisar a base de código, o que seria extremamente lento, especialmente se a base de código fosse grande. Mas, como estamos anotando as principais informações de todas as nossas conversas com o Claude Code, consegui obter essa resposta em cerca de 10 segundos. Você viu acontecer ao vivo. Assim,
+
+a outra parte realmente poderosa de todo esse sistema são os outros dois ganchos. Temos um pré-compacto e um fim de sessão. E, na verdade, ambos estão fazendo algo muito parecido. Sempre que estivermos prestes a perder o contexto, seja ao encerrar uma sessão ou ao compactar a memória, queremos enviar as mensagens mais recentes do código Claude para outro modelo de linguagem grande para processá-las e criar o resumo. E esse resumo é o que vamos colocar no arquivo de registro diário. Então, este
+
+é um resumo de uma conversa, sabe, as decisões que foram tomadas, as lições aprendidas, os itens de ação, e então passamos para a próxima sessão. Aqui temos um formato bastante padronizado para lidar com cada sessão de código Claude . E o funcionamento disso é o seguinte: esse gancho, na verdade ambos os ganchos, vão chamar o SDK do agente Claude internamente. Então, temos um processo Claude separado em execução, que recebe a transcrição da conversa e resume os pontos principais aqui. Então, estamos realizando essa camada inicial de processamento de dados. E sem entrar em muitos detalhes
+
+técnicos, outra parte realmente poderosa disso é o processo de limpeza (flush). Então, uma vez por dia, vamos recolher os troncos. Vamos extrair os conceitos e as conexões deles e, em seguida, é isso que vamos inserir na wiki. E então nossa busca se concentrará aqui no conhecimento, mas também poderá examinar os registros diários, se quisermos. Portanto, temos aqui informações completas sobre tudo, lições aprendidas e decisões tomadas. Se você
+
+quiser personalizar isso, pode até acessar os scripts aqui. Você pode acessar o processo de flush ou o de compilação e, na verdade, pode alterar o prompt que enviamos para o SDK do agente Claude nos bastidores. Outra vantagem fantástica de toda essa configuração, ao contrário do sistema de memória do código Claude, é que você pode personalizá-la à vontade . E o código Claude pode até mesmo orientá-lo na realização das personalizações, pois tem acesso ao arquivo agents.md.
+
+Sabe como tudo funciona. Sabe onde estão os comandos. Sabe como funciona o processo de promoção da memória. Sabe onde estão os registros diários. Portanto, é um sistema muito autossuficiente que pode se aprimorar. E por falar em se
+
+aprimorar, esse é justamente o último ponto importante que quero abordar com vocês. Quero falar sobre o ciclo de capitalização composta. Pense nisso comigo por um segundo. Sempre começaremos fazendo algum tipo de pergunta. Queremos aproveitar nossa base de conhecimento.
+
+Com nosso agente pesquisando em diversos artigos da wiki, conseguiremos obter algum tipo de resposta. Então, ele estende seu alcance por toda a nossa base de conhecimento, sintetizando informações, mas depois vai arquivar essa única resposta. Assim, estamos constantemente conectando informações entre nossas conversas e salvando-as. E assim, nossa Wiki cresce com o tempo por causa disso. E também todas as novas informações que virão de todas as nossas futuras sessões de código Claude.
+
+E assim vamos construindo nossa base de conhecimento ao longo do tempo. Com o tempo, à medida que fizermos mais perguntas, o agente conseguirá analisar melhor nossas informações . Fica cada vez melhor . E nós realmente não precisamos fazer nada para manter isso. Por exemplo, se eu estender a conversa, a partir da qual faço nossa primeira pergunta, para incluir mais pesquisas na web, terei mais informações relevantes. Tudo o que preciso
+
+fazer é encerrar a sessão ou realizar uma compactação de memória. E então, automaticamente, podemos ver que os registros... Eu acabei de ver isso aparecer aqui.
+
+Já temos o SDK do agente Claude em execução em segundo plano. Ele pode usar sua assinatura da Anthropic da mesma forma que o código Claude. Assim, você não precisa configurar nenhuma chave de API nem nada do tipo. E automaticamente irá extrair as principais conclusões e inseri-las em nossos registros diários. Vamos analisar isso agora mesmo, pois acredito que já esteja concluído. Pronto
+
+. Dê uma olhada nisso. Esta foi a nossa sessão que acabou de ser executada. Estávamos explorando as melhores práticas para lidar com dados de serviços externos. E então temos essas trocas importantes, lições aprendidas com nossa pesquisa adicional na web. Estamos construindo
+
+isso gradualmente. Eventualmente, será promovido à nossa Wiki aqui. Não precisamos fazer nada. E as perguntas que fazemos ao nosso agente vão receber respostas cada vez melhores com o tempo. Muito, muito poderoso. Pronto, aí está. Trata-se de
+
+bases de conhecimento LLM para dados internos, memória de longo prazo para nossos segundos cérebros, em vez de dados externos como na implementação de Karpathy. Mas, claro, agradeço a ele por toda a inspiração aqui presente. E os hooks de código do Claude são algo que venho incorporando ao meu segundo cérebro há muito tempo. Então, recentemente ministrei um workshop de 4 horas na comunidade Dynamis, onde mostrei tudo. Na verdade, reconstruí meu segundo cérebro do zero. Portanto,
+
+não deixe de conferir a comunidade Dynamis, cujo link está na descrição, e fixe o comentário se tiver interesse em criar seu próprio segundo cérebro usando o código Claude e o SDK do agente Claude. Caso contrário, se você gostou deste vídeo e deseja ver mais conteúdo sobre a criação de agentes e segundos cérebros, agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo.

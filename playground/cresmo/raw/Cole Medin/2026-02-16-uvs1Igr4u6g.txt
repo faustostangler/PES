@@ -1,0 +1,322 @@
+---
+video_title: "How to Properly Use Claude Code Agent Teams (FULL LIVE BUILD)"
+video_id: uvs1Igr4u6g
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=uvs1Igr4u6g
+video_date: 2026-02-16T15:35:09+00:00
+video_description: |
+  Agent Teams in Claude Code let you spin up multiple agents that work in parallel AND communicate with each other - and that changes everything about how you build with AI. But here's the thing: if you just throw a vague prompt at an agent team, you're going to get a mess - guaranteed.
+  
+  In this video, I do a full live build of a Chargebee payment integration on top of an existing app using Claude Code Agent Teams. I walk through the entire process - priming the agent on the codebase, having it ask me questions to reduce its assumptions, creating a structured plan, and then sending that plan into a team of 3 agents working in parallel. Plus I show you the contract-first approach that makes agent teams actually reliable, and end-to-end browser validation that catches every issue before control passes back to you.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  If you're looking to build a payment integration into your applications, check out Chargebee!
+  
+  https://tinyurl.com/chargebee-payments
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - The Dynamous Agentic Coding Course is now FULLY released - learn how to build reliable and repeatable systems for AI coding: 
+  https://dynamous.ai/agentic-coding-course
+  
+  - Here is the branch with my final implementation:
+  https://github.com/coleam00/agentic-chat-application-template/tree/feature/chargebee-token-billing
+  
+  - Claude Code Agent Teams documentation:
+  https://code.claude.com/docs/en/agent-teams
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Introduction to Claude Code Agent Teams
+  3:49 What We're Building Today
+  7:50 The Planning and Priming Process
+  11:22 Getting Our Agent to Ask Questions (Very Powerful)
+  18:12 Creating the Structured Plan
+  31:01 Implementing with Parallel Agents (Our Team)
+  40:45 End-to-End Browser Validation
+  48:00 Final Demo
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Então, tenho uma divertida para vocês hoje. Acabei de concluir uma transmissão ao vivo onde realizei uma compilação completa ao vivo com uma nova equipe de agentes do Cloud Code. Assim, desenvolvi uma funcionalidade completa com base em um código existente, passando por todo o processo de planejamento, fazendo com que a Cloud Code me fizesse perguntas para que estivéssemos alinhados, enviando isso para uma equipe de agentes como um plano estruturado e realizando testes de automação de navegador de ponta a ponta. Então, o que eu fiz foi pegar um aplicativo de chat baseado em agentes bem básico que eu criei como base para esse fluxo de trabalho e incorporei o sistema de pagamento ao aplicativo usando o Chargeb como plataforma. Portanto, é um aplicativo de bate-papo muito básico, mas o que eu desenvolvi foi a possibilidade de comprar tokens e, em seguida, usar esses tokens um de cada vez para conversar com o agente. Portanto, é um
+
+ótimo exemplo de uma implementação que precisa interagir com o front- end e o back-end do banco de dados. Assim, utiliza-se uma equipe de agentes para trabalhar em todas essas áreas em paralelo e comunicar-se entre si de forma autônoma durante esse processo. E vocês verão neste vídeo que conseguimos concluir a implementação muito rapidamente, mesmo com algumas dificuldades técnicas que eu tive. Muito legal. Acho que as equipes de agentes são um pouco instáveis ​​no momento, mas certamente estão nos mostrando como será o futuro do desenvolvimento baseado em agentes. Ter uma frota inteira de
+
+agentes trabalhando para nós, comunicando-se entre si sem que precisemos intermediar isso. Então, sem mais delongas, vamos ao vídeo da transmissão ao vivo. Essa é uma funcionalidade que foi lançada recentemente no Cloud Code com o lançamento do Opus 4.6. Então, acho que isso foi lançado para o mundo há cerca de uma semana e meia. E eu
+
+quero falar sobre isso com vocês porque é um recurso experimental. Neste momento, não funciona extremamente bem. Falaremos sobre isso à medida que o utilizarmos ao vivo. Mas eu realmente acredito que é para aí que a engenharia de agentes está caminhando, porque o que temos aqui com as equipes de agentes é a capacidade de criar vários agentes trabalhando em paralelo, mas que na verdade se comunicam entre si. Essa é a grande distinção em relação aos subents. Já temos subentidades há algum tempo, que
+
+podemos invocar em paralelo. Mas o problema com os subents é que eles não se comunicam entre si, certo? Assim como temos nosso agente principal que gera subagentes. Eles realizam algum trabalho. Eles obtêm algum tipo de resultado e o reportam ao agente principal, mas não há coordenação. Mas com
+
+equipes de agentes, temos o agente principal que gera todos esses companheiros de equipe, e todos eles compartilham uma lista de tarefas e se comunicam entre si. Assim, o primeiro colega de equipe pode enviar uma mensagem para o terceiro colega de equipe. O segundo membro da equipe pode enviar uma mensagem de volta para o agente principal enquanto ele estiver trabalhando. Eles podem dividir as tarefas e se coordenar uns com os outros, tipo: "Eu vou cuidar dessas duas tarefas e você cuida dessas três". É muito, muito poderoso. Agora, as duas
+
+desvantagens das equipes de agentes são: primeiro, elas são muito não determinísticas. Você está dando muito controle ao agente principal para descobrir como se coordenar com a equipe de agentes, e com isso você certamente perde um pouco do controle. E a segunda desvantagem é que o sistema exige muitos tokens quando todos esses agentes estão em execução ao mesmo tempo. Existe uma grande sobrecarga em termos de uso de tokens apenas para que esses agentes se comuniquem entre si . Portanto, definitivamente existem alguns pontos que precisam ser trabalhados com as equipes asiáticas até que a plataforma esteja realmente pronta para que se possa desenvolver software de nível de produção com ela. Mas
+
+o motivo pelo qual quero abordar esse assunto com vocês é que acredito que chegaremos lá provavelmente dentro dos próximos seis meses. Acredito que construir com equipes de agentes será a norma. Então, quero mostrar a vocês, agora mesmo, como fazer uma versão de produção realmente útil com equipes de agentes. E como eu disse antes, ao mesmo tempo, quero fazer uma versão bem divertida de construção com equipes de agentes, onde vamos tentar ver quantos agentes conseguimos ter trabalhando exatamente ao mesmo tempo. Então, estou pronto para gastar muitos créditos com Claude Code agora mesmo. Construindo com
+
+equipes de agentes. Então, aqui está o que eu tenho para vocês. Para a primeira versão, a versão mais realista, tenho este aplicativo de bate-papo com agentes que desenvolvi no início desta semana. É uma aplicação muito básica onde podemos simplesmente enviar uma mensagem para o agente. Tipo, eu poderia simplesmente dizer "oi", por exemplo. Ah,
+
+tudo bem. Obviamente, não se trata de um aplicativo de produção totalmente perfeito, pois eu o construí apenas como uma base para um aplicativo de bate-papo. Você pode pensar nisso como uma versão bem simplificada do chat GPT ou do claw.ai. E o que vou fazer com este aplicativo é usar equipes de agentes para criar uma integração de pagamento, para que os usuários possam comprar tokens e usar esses tokens para se comunicar com o agente. E
+
+para fazer isso, vou integrar com o ChargeB. É como um aplicativo semelhante ao Stripe, onde você pode integrar a monetização aos seus produtos e plataformas. Portanto, vamos construir isso com o ChargeB. É uma solução que tenho apreciado bastante ultimamente. para integrar a monetização às plataformas, e eles têm uma habilidade, uma integração de cobrança, onde podemos incorporar essa habilidade em nossa base de código. Assim, o Claude Code
+
+tem acesso imediato à compreensão de como construir de forma eficaz com o ChargeBy para garantir que você evite alucinações devido ao limite de treinamento que os LLMs possuem. Então, vamos construir com esse "u" e, portanto, teremos que mexer no back-end, no front-end e no banco de dados. Teremos que alterar o esquema do banco de dados para suportar transações e tokens de usuários. E teremos que implementar a autenticação de usuários. Vou usar o Superbase para isso. E então, obviamente, precisamos mexer na interface do usuário
+
+para ter uma página de faturamento. Precisamos acessar o back-end para trabalhar com os tokens quando interagimos com o agente. Portanto, temos muito o que fazer aqui. Assim, poderemos usar uma equipe de agentes para trabalhar em paralelo no front-end, no back-end e no banco de dados. Portanto, é um caso de uso realmente muito bom. Já participei de
+
+workshops no ano passado onde desenvolvi uma integração de pagamentos para um aplicativo de chat com agentes, e quero fazer isso novamente porque é um ótimo exemplo de algo que não é trivial. Não é exatamente fácil integrar um processador de pagamentos a um aplicativo, mas definitivamente consigo fazer isso com apenas uma equipe de agentes. Portanto, esse é o nível perfeito de complexidade. Então, vamos abordar esse assunto. Vamos usar equipes de agentes aqui. Portanto, meu plano é começar
+
+criando um plano com o agente de codificação. Então, vou usar código na nuvem para isso. É óbvio que seria legal usar o Curo, mas equipes de agentes não são suportadas no Curo. Então, vou usar código na nuvem aqui. Então, vou trabalhar em cima dessa aplicação já existente. Então eu simplesmente digo: "Ei,
+
+Claude, com base neste aplicativo, quais são suas ideias de como eu posso criar uma integração de pagamento?" E então eu o identificarei comigo. Vou mostrar-lhe como é esse processo, porque o processo de planeamento é tão importante quanto a implementação em si, senão mais. Então, recentemente desenvolvi algumas novas estratégias para planejar de forma eficaz com agentes de programação e gostaria de mostrá-las a vocês . E então, assim que tiver o plano, enviarei para o Cloud Code para criar uma equipe de agentes e executá-lo. E
+
+enquanto isso acontece em paralelo, é aí que eu vou dar um exemplo mais divertido, onde vamos tentar ver quantos agentes poderíamos ter rodando ao mesmo tempo com equipes de agentes. Espero que isso soe bem para vocês. Estou muito animado com isso. Então, vou mostrar rapidamente mais uma demonstração deste aplicativo para vocês, só para mostrar em que estamos construindo aqui. Então, vou acessar meu código Claude e vamos começar nosso processo de planejamento aqui. Então, vou fazer o
+
+Claude. E para que esta transmissão seja breve e tudo corra bem rápido, vou entrar no modo "yolo" (você só vive uma vez). Então, o que vou mostrar a vocês é um ótimo exemplo de revitalização de terrenos abandonados . Já temos um aplicativo em funcionamento e agora vou planejar, utilizando código na nuvem, a criação de um recurso abrangente que será adicionado ao nosso aplicativo existente. E o processo de planejamento, o processo de planejamento é muito importante.
+
+E o que eu geralmente faço para começar é o que chamamos de "prime" (ponto inicial). Então eu tenho um comando para isso, simplesmente slashprime. E o que ele faz é guiar o agente de codificação por um processo passo a passo de compreensão da base de código. Certo? É super, super simples aqui. O que eu quero dizer é que existem
+
+muitas versões diferentes de comandos prime que você pode compilar. Mas o objetivo aqui é estabelecer o contexto antecipadamente para a conversa. Aqui estão todos os arquivos principais do código-fonte para que você entenda o que precisa fazer para pesquisar esse novo recurso que vou pedir para você desenvolver. E geralmente meus comandos principais não são do tipo "aqui está este arquivo, este arquivo, este arquivo". Configurei assim para ser bem breve. Mas
+
+geralmente é mais dinâmico. Peço que ele procure no código-fonte, entenda todos os arquivos principais, os leia e depois me envie um relatório de tudo o que entendeu sobre o código-fonte. Então, vou deixar que termine seu auge aqui e depois passaremos ao planejamento. Portanto, mais uma vez, executarei um comando "prime" no início de cada nova conversa sempre que quiser construir algo novo. Ok, então sim, a preparação está concluída aqui. Então, digamos que estou buscando
+
+integrar um sistema de pagamento ao meu aplicativo. Especificamente, tenho interesse em integrar com o ChargeB. Então, quero abordar o front-end e o back-end do banco de dados aqui. Portanto, teremos que planejar bastante para construir a integração de pagamentos do ChargeB . Quero que os usuários possam comprar tokens para conversar com o agente que já configurei neste aplicativo. Portanto, teremos que
+
+configurar alguns pacotes no ChargeB. E então teremos que integrar tudo isso. Precisamos criar uma página de faturamento no front-end. E então teremos que configurar o sistema para que os usuários comprem tokens. E então, um token é deduzido por interação com o agente. E teremos que
+
+pensar em outras funcionalidades, como o reembolso do token caso o agente apresente um erro, e coisas do gênero. Portanto, há muita coisa que precisamos identificar por aqui. Então, quero que você analise o código-fonte e me ajude a entender como posso integrar um sistema de pagamento com o ChargeBy a este aplicativo. Depois de pesquisar um pouco, também quero que você pesquise bastante na internet para entender como usar o ChargeBy. Você também pode usar a habilidade chargeb que integrei aqui. Bem, sim
+
+, esta é a habilidade Charge B, aliás. Então, depois que você entender como trabalhar com meu código-fonte e integrar o Charge, quero que você me faça várias perguntas. Este é o ponto crucial, pois vamos esclarecer qualquer confusão e garantir que todos estejam alinhados em relação a todas as formas de integrar esse novo recurso à base de código. Então, façam-me muitas perguntas sobre coisas como o funcionamento do prédio, a aparência da interface e como vamos gerenciar os tokens, entre outras coisas. Tudo bem. Sei que acabei de despejar muita informação
+
+aqui, mas é assim que eu planejo: começo de forma bem desestruturada. Eu simplesmente faço um grande desabafo sobre tudo o que eu queria pesquisar . Pesquisando no código-fonte, pesquisando na web. Também está usando a habilidade de integração "cobrar" que mostrei anteriormente. Dessa forma, ele saberá que possui documentação praticamente perfeita sobre como integrar o Charge à minha aplicação Nex.js.
+
+E o ponto principal que quero destacar com vocês aqui é a importância de fazer perguntas. Então, eu instruí especificamente o programa a me fazer perguntas depois de explorar a base de código, porque o principal objetivo do planejamento é reduzir o número de suposições que o assistente de codificação de IA faz ao construir o novo recurso. Deixe-me repetir: vale a pena repetir. O principal objetivo do planejamento é reduzir o número de suposições que o agente de codificação faz, pois existem dois tipos de erros que um agente de codificação pode cometer. E tecnicamente, ambos os casos são culpa sua. Isso pode acontecer
+
+porque seu plano não está claro o suficiente, ou porque você não fez validações suficientes, ou simplesmente porque o código se desvia do que você queria que ele construísse. Talvez seja apenas uma questão de desalinhamento com a forma como você pretende desenvolver essa funcionalidade. Então, algo que comecei a fazer bastante e que estou mostrando para vocês aqui é literalmente pedir para ele me fazer um monte de perguntas. Tipo, eu só fico feliz se me fizer pelo menos 10 perguntas aqui. Como você gostaria de configurar a página de faturamento ou como devemos estruturar os pacotes para a compra dos tokens? Como devemos apresentar a
+
+página de pagamento do Chargeb? Tipo, vou pedir para ele me perguntar todas essas coisas e, se tiver alguma coisa que eu ache que ele não perguntou, eu simplesmente vou dizer para ele perguntar . E eu comecei a preferir essa abordagem em vez de simplesmente tentar especificar tudo nos prompts. Tipo, claro, eu poderia simplesmente dizer: "Quero que a fatura seja exibida assim". Os preços dos pacotes devem ser 10, uh, 15 e 25 dólares, certo? Tipo, você pode especificar tudo
+
+isso no chat. Mas o motivo pelo qual gosto que ele me faça perguntas é que, muitas vezes, ele faz perguntas que eu nem imaginava precisar fazer. Tipo, está fazendo algum tipo de suposição que eu nem percebi que precisava especificar. E o Claude Code tem esse novo recurso integrado. Acho que já tem mais ou menos um mês, mas ele tem essa ferramenta de perguntas ao usuário, que pode exibir uma opção de múltipla escolha, o que também torna tudo muito mais rápido. Tipo, eu posso, contanto que esteja de acordo
+
+comigo, e posso simplesmente seguir a opção recomendada. Assim, posso navegar pelas coisas muito rapidamente e, se precisar, também posso digitar minha própria resposta na caixa de texto. Assim, posso ser bem específico se quiser, ou, se já houver uma boa recomendação, posso simplesmente pressionar Enter e passar para a próxima pergunta. Você verá isso daqui a pouco. Tudo bem. Para garantir a segurança dos webhooks, como
+
+devemos verificar as solicitações de webhook de cobrança recebidas? Bem, vou dizer que tenho um nome de usuário e senha configurados no ENB. Tudo bem. Devemos lidar com eventos duplicados de potência de itens de webhook ? O método "Cobrança" pode enviar eventos várias vezes.
+
+Não, melhor manter a simplicidade. Sinceramente, não acho que teremos condições de corrida de verdade com isso. para o histórico de transações da página de faturamento. Que informações cada linha deve exibir? Vamos supor que seja uma lista simples. Eu quero que algumas coisas sejam...
+
+Não preciso ser muito abrangente. Ok, vamos lá. Isso é bom. Então, você mencionou o uso da CLI do navegador do agente Versell para testes de ponta a ponta. O plano deve incluir cenários de teste específicos de ponta a ponta? Sim,
+
+você sempre deve definir sua validação antecipadamente. Outro ponto muito importante a ter em mente é que, como parte do plano de estruturação, diremos ao agente: "Aqui estão as tarefas de linting e verificação de tipos que queremos que você execute." Certifique-se de escrever testes unitários e executá-los . E depois, os testes de ponta a ponta, essa é a parte mais poderosa. Também tenho produzido bastante conteúdo recentemente no meu canal do YouTube usando a CLI do navegador do agente Verscell. É uma
+
+ferramenta de automação de navegador muito poderosa que permite ao agente iniciar um navegador e testar o site exatamente como um usuário faria. E é uma grande melhoria em relação a outras ferramentas que usei no passado, como os servidores Playright ou Puppeteer MCP. Sim, quero que isso seja uma parte importante do plano para que o agente possa se autovalidar. Dessa forma, quando o resultado final chegar até mim, tudo já terá sido testado. O processo foi concluído, os tokens foram comprados com a Chargeby, houve interação com o agente e os tokens foram deduzidos. Quero que ele faça toda
+
+essa validação. Quero dar a ele o poder de fazer isso antes mesmo de escrever uma única linha de código. Bem , ok, nossa, são tantas perguntas . Os itens de cobrança devem ser criados manualmente no painel de controle do Chargeb? Hum, quero que você configure os itens de responsabilidade B como parte da implementação. Portanto, inclua isso no
+
+plano. E eu diria que isso acontecerá assim que criarmos o plano, porque no momento ainda não estou trabalhando ativamente na criação do plano . Vou pedir para fazer isso depois de ter analisado tudo o que acho necessário aqui. Então, para que haja uma relação entre a conversa e o usuário, já que o chat atualmente não possui um ID de usuário, as conversas devem ser vinculadas a usuários autenticados? Sim, isso é importante. Qual
+
+deve ser o valor da cobrança e qual o ID do cliente? Uh superbase. Isso mesmo. Ok, muito bom. Então, cara, já fizemos muitas perguntas até agora. Espero sinceramente que
+
+estejamos chegando ao fim disso em breve e que possamos encerrar a próxima rodada de perguntas dizendo algo como: "Ei, acho que já temos tudo o que precisamos." OK. Tudo bem. Algumas perguntas finais para esclarecimento. Então, estamos quase lá, mas isso é realmente muito bom e não são tantos tokens no total. Portanto,
+
+isso tem um valor altíssimo, sem depender muito de tokens. Hum, você disse que a página de faturamento deveria estar em faturamento instantâneo. Essa informação deve estar localizada no layout do painel de controle, na seção de faturamento, ou em uma página separada? Hum, claro. Acho que podemos fazer isso. Para
+
+configurar o item de cobrança. Deve ser um script independente ou parte de um já existente? Hum, faremos de forma independente. A página de bate-papo deve redirecionar para a página de login caso o usuário não esteja autenticado? Sim.
+
+OK. Enviar respostas. OK. Acho que neste momento temos o que precisamos. Então, enfim, agora vamos entrar no modo de planejamento, porque ele tem tudo o que precisamos e vai criar o plano. Aliás, vou
+
+interromper aqui porque tenho meu próprio trabalho e quero que ele faça isso do meu jeito. Uma coisa que eu realmente gosto de usar, e que abordo bastante no curso de programação da Aenta, é o meu comando de planejamento. Isso funciona melhor para mim do que o modo de planejamento e o processo de planejamento integrados ao código do Claude. É um comando em que eu simplesmente descrevo o que quero construir e ele cria um plano bem estruturado. Então, a forma como sempre planejo meu processo de codificação de agentes é começando de forma não estruturada, como vocês já viram.
+
+Eu simplesmente faço um esboço do que pretendo construir. Eu configurei para pesquisar na web e no código-fonte. Faça-me perguntas. E agora vou formalizar tudo isso em um plano estruturado. E é exatamente isso que este comando faz. Então, vou
+
+criar um plano de implementação. E então, bem, na verdade, uma coisa que percebi, que é meio que um bug do Opus 4.6, é que eu chamei esse comando de planejamento da mesma forma que o comando de planejamento interno da nuvem . Então, normalmente, eu simplesmente peço para ele analisar esse caminho. Então, espere um pouco, deixe-me copiar este caminho e, em seguida, usar este comando. Agora, vamos criar o
+
+plano estruturado ou esta integração de pagamento Chargeb, que, aliás, é como você usa comandos para qualquer agente de codificação que não os suporte diretamente, como o Cloud Code. Essa é apenas uma pequena solução alternativa que preciso usar porque o nome do comando de planejamento é inadequado, já que é o mesmo que o comando interno. Como você verá, se eu fizer um plano de barra, haverá duas versões e Claude Koga ficará confuso. Eu simplesmente esqueci de mudar o nome antes. Então eu simplesmente digo para procurar ali e, como os comandos são apenas Markdown, ele consegue ler isso e é o mesmo que se eu simplesmente usasse "plano" com o comando correto. E assim,
+
+já estamos fazendo perguntas muito boas aqui. Então vamos analisar isso. Portanto, a versão anterior tinha uma implementação totalmente funcional. Obviamente, testei isso antes da transmissão ao vivo para garantir que tudo estivesse funcionando perfeitamente. Mas mesmo assim quero construir tudo do zero com vocês.
+
+Então, quero ignorar isso completamente. Então, vou construir algo do zero para mostrar realmente essa implementação completa, do início ao fim. O chat não está autenticado no momento . Deveríamos... deveríamos
+
+agora exigir o superbase O para que possamos rastrear o saldo de tokens por usuário? Sim, será necessária autenticação. Qual pacote de tokens? Três níveis é bom para mim. Os usuários devem receber tokens gratuitos ao se cadastrarem? Sim, 10 fichas.
+
+Então, dei um bom exemplo de como, na maioria das vezes, eu simplesmente fico respondendo às perguntas de múltipla escolha, selecionando as opções. Veja como isso me permite responder às perguntas do agente rapidamente. E aí, bem no final, teve um exemplo em que eu quis escrever algo mais original, algo mais clássico, tipo, deixar eu dar uma resposta mais livre para o agente. Então, vou enviar minhas respostas. E o código Claude é programado de forma a fazer apenas algumas perguntas de cada vez, mas vai me fazer mais perguntas daqui a pouco. Então, ele vai analisar
+
+o que eu forneci e, em seguida, daqui a pouco, devemos ver mais opções de múltipla escolha aparecerem. Pronto. Perfeito. OK. Então, o que define o consumo de tokens? Quando
+
+um token deve ser deduzido? Então, estamos sendo bem específicos aqui, mas é exatamente isso que estou procurando. Novamente, reduzindo as suposições que o agente de codificação está fazendo. Então, direi por turno de conversa. Assim, um token é deduzido por cada viagem de ida e volta completa. Então, mensagem do usuário
+
+mais resposta da IA. Então, se a chamada LLM falhar, o que deve acontecer? Sim, eu quero que o token seja reiniciado automaticamente. Em que parte da navegação do aplicativo a página de faturamento deve ficar ? Vamos fazer o painel de controle/faturamento. Ou então,
+
+posso simplesmente fazer uma redução na cobrança aqui. Acho que vou manter as coisas simples. O que deve acontecer na interface de chat quando um usuário tiver zero tokens? Então, vamos desativar a entrada e exibir um botão para comprar tokens. Sim, isso me parece ótimo. Então, envie
+
+essas respostas. Muito bom. E então veremos se continuam surgindo mais novidades. E então, neste ponto, eu também quero me perguntar: que outras perguntas deveria estar sendo feita e que ainda não foi? Porque o código na nuvem muitas vezes nunca será perfeito em termos de compreensão exata de tudo o que vamos construir. Talvez haja
+
+outras coisas que eu tenha planejado com antecedência. Como já tenho uma conta Chargeb, provavelmente vou querer informá- la também durante o planejamento. Então, estou tentando pensar em absolutamente tudo o que for possível para eliminar essas suposições. Então, ok, ainda mais perguntas. Bom. Continue enviando,
+
+Clyde. Continuem enviando. Para os três primeiros níveis de pacotes de fichas, quais quantidades e preços você deseja? Então, vejamos aqui. 50 fichas para " vamos fazer assim". Então, eu diria que são
+
+5 dólares por 100 fichas. E então faremos 10 dólares por 250 fichas. Então, queremos que você tenha um melhor custo-benefício ao longo do tempo. E depois, 25 dólares por 500 fichas. Não é isso? Ah, espere. Não, isso não é
+
+bom porque daria uns 600. Pronto . Certo, aqui está. Tudo bem. Então, como deve ser a página de faturamento? Quais
+
+componentes você deseja? Então, eu quero uma página de faturamento completa? Token, cartão de saldo , três cartões de compra, histórico de transações ou apenas uma página de compra minimalista . Sabe de uma coisa? Vamos nessa . Vamos acessar a página de faturamento completa.
+
+Devemos usar a página de finalização de compra hospedada da Chargeb ? Redireciona para o ChargeB e depois retorna, ou é uma experiência integrada no aplicativo? Ah, sim, vamos fazer um checkout online. Com certeza, isso vai significar menos custos de manutenção para nós. Em seguida, será redirecionado para a página de faturamento concluído e o saldo de tokens será atualizado. Isso é
+
+perfeito. Bom. E existem muitas maneiras diferentes de se integrar com o ChargeB. E por isso, fico muito feliz que esteja fazendo todas as perguntas certas . O Quad Code é excelente em fazer as perguntas certas.
+
+Sinceramente, provavelmente não há muitas outras coisas que eu precise especificar neste momento. Deseja que o saldo de tokens seja visível no cabeçalho do chat? Sempre visível durante o bate-papo. Sim , é exatamente isso que estou procurando. E era exatamente isso que eu estava dizendo antes: voltar à interface do usuário. Eu
+
+gostaria que houvesse algo aqui mostrando meu saldo de tokens e também um link para a página de faturamento, algo que provavelmente preciso especificar aqui. Na verdade, não perguntou sobre isso. É como, por exemplo, como o usuário chegaria à página de faturamento a partir da página inicial do site, onde estamos conversando com o atendente. Então, provavelmente especificarei isso caso não pergunte daqui a pouco. Assim, no banco de dados, os saldos de tokens devem ser armazenados como um saldo único por linha ou como um registro de todas as transações? Ah, sim, o balanço e o
+
+livro-razão estão bons. Hum, os tokens devem ser deduzidos antes do envio da mensagem? Sim, é verdade . E você já possui uma conta ChargeB configurada? Ah, sim. Sim.
+
+Então, é aqui que eu gostaria de especificar mais algumas coisas. Então, vou dizer que sim , eu já configurei o ChargeB. E eu até tenho um Ingro instalado aqui, pronto para usar. Então, eu já tenho o webhook do Chargeb configurado para enviar requisições para slashi/webhooks/chargeb e todas as variáveis ​​de ambiente do Chargeb já estão definidas no meu arquivo my.env.
+
+Portanto, assim que tivermos todo o código para a integração com o Chargeb, poderemos iniciar nossos testes de ponta a ponta com a CLI do agente Versel no navegador. Portanto, é muito importante que você tenha isso em mente ao elaborar o plano que criarei com você daqui a pouco. Então, fiz algum trabalho antecipadamente para deixar tudo pronto e agilizar nossa compilação, nossa compilação ao vivo aqui. Então, eu já tenho uma conta Charge V configurada. Vou te mostrar isso aqui. E é assim que todas as
+
+plataformas de pagamento funcionam, aliás, elas têm um webhook. Assim, sempre que você fizer uma compra na plataforma, será enviada uma solicitação para esse webhook para que possamos processar o pagamento. Assim como no nosso caso, vamos adicionar os tokens ao registro do usuário em nosso banco de dados Superbase. E podemos até testar esse webhook para garantir. Ah, parece que preciso fazer login novamente porque minha página ficou desatualizada. Mas vou entrar novamente
+
+e então poderemos testar o webhook, que, bem, acho que vai falhar agora. Sim, vai falhar agora porque ainda não implementamos o endpoint. Mas nos testes que fiz ontem para garantir que esta versão em produção funcionasse sem problemas, obviamente criei o webhook, testei e tudo correu bem . Então, configuramos tudo no lado do Chargeb para que esteja pronto para enviar as solicitações para cá. Agora, tudo o que precisamos que nosso agente de codificação faça é implementar esse endpoint da API que lida com as transações bem-sucedidas para que possamos atualizar os tokens do usuário no banco de dados. Então, estou usando isso porque
+
+é a minha maneira de obter uma URL HTTPS para que eu possa expô-la à internet e, assim, possamos lidar com as solicitações vindas do ChargeB. Muito legal. Tudo bem. Dito isso, vou encerrar por aqui . Volte ao agente e eu enviarei isso. Então, para webhooks e
+
+desenvolvimento local, você tem alguma ferramenta de tunelamento configurada? Sim, eu já configurei o Ingro como expliquei na resposta anterior. Uma coisa que o código Claude não faz aqui é tornar as perguntas dinâmicas com base nas suas respostas anteriores. Então, como eu já expliquei, ele ainda não sabe disso, e é por isso que preciso enviar essa informação . Mas acho que é também por isso que o Cloud Code faz apenas algumas perguntas por vez, porque assim ele garante que não vai te enviar umas 20 perguntas seguidas e, aí, sua resposta para a segunda pergunta fizer com que ele tenha que te fazer um conjunto completamente diferente de 18 perguntas em seguida. Então, eu gosto do
+
+que isso faz aqui. Sinceramente, acho que está fazendo mais perguntas do que eu gostaria neste momento, mas tudo bem, porque não devo reclamar. Quanto mais perguntas, melhor, sinceramente, porque isso vai gerar bastante contexto ao me fazerem essas perguntas. Mas, assim que eu criar o plano, vou iniciar uma sessão de contexto totalmente nova, uma sessão completamente nova com o agente de codificação, porque o plano estruturado, naquele momento, é o único contexto de que preciso para concluir o trabalho. Um dos pontos principais que ensino no curso de programação de agentes do Dynamis é que, depois de criar o plano, esse é todo o contexto de que o agente precisa.
+
+Agora você pode redefinir a janela de contexto e, em seguida, prosseguir para a implementação. Certo, então temos nosso plano aqui. Muito bom. Muito bom. Então, vou falar sobre os planos. Então, o arquivo foi salvo na
+
+pasta de planos dos meus agentes. Vamos ver uma prévia aqui. Por isso, sempre recomendo, e não vou me alongar muito aqui por uma questão de brevidade, que você faça uma revisão muito detalhada do plano antes de implementá-lo. E a razão para isso é bastante simples. Seu plano tem um alto nível de alavancagem, certo? Assim como um único erro no
+
+seu planejamento pode levar a centenas de linhas de código ruim. Mas uma linha de código ruim é apenas uma linha de código ruim. Portanto, você precisa garantir que seu plano esteja bem estruturado e realmente alinhado com o que você deseja construir. Agora que o sistema me fez tantas perguntas para esclarecer dúvidas, não devo ter nenhum problema com o meu plano. Esse é o objetivo principal. Reduzir as suposições
+
+iniciais, incluindo perguntas e respostas, é importante, mas ainda assim, revisar e verificar tudo. Então, você não precisa analisar cada linha individualmente, e eu definitivamente não farei isso em uma transmissão ao vivo aqui, mas pelo menos quero fazer uma rápida verificação para garantir que tudo esteja estruturado, certo? Quer dizer, tudo isso está seguindo exatamente a estrutura do plano que eu descrevi no meu comando de planejamento, certo? Por exemplo, quero começar com um resumo, a história do usuário, as principais decisões que estamos tomando aqui. Aliás, tudo isso se baseia nas perguntas que me fizeram . Assim, podemos ver diretamente todo o
+
+nosso trabalho sendo incorporado a esse plano. E então temos os diferentes padrões que ele seguirá com base no que já temos no código-fonte. Isso é muito importante para o desenvolvimento de áreas já urbanizadas. Precisamos garantir que estamos seguindo as convenções que já definimos na base de código. Caso contrário, nossa base de código se tornará uma bagunça impossível de manter à medida que adicionarmos mais funcionalidades, se elas não seguirem a mesma convenção. E depois
+
+temos a lista de tarefas. Isso nos ajudou bastante a entender o que precisávamos alterar no banco de dados. a parte traseira e a parte frontal. E outra coisa à qual quero dar especial atenção aqui é a validação. Quero garantir que seja bem completo, com a validação de ponta a ponta usando a CLI do navegador do agente . Aqui estão, portanto, todas as
+
+jornadas do usuário que serão testadas. Sim, é muita coisa, mas é realmente importante. Para mim, vale a pena gastar tokens extras durante a validação para garantir que estamos testando todas as maneiras possíveis de um usuário utilizar o novo recurso que desenvolvemos. E isso me parece fantástico. Na verdade, vou pegar isso e colocar em prática imediatamente. Então,
+
+eu vou fazer isso e é ótimo porque nós nem precisamos compactar nossa conversa. Fizemos tudo o que precisávamos para o planejamento dentro da janela de contexto única para os códigos Claude. Isso é ótimo. Então, vou abrir uma nova instância. Vou manter isso aberto caso precise ajustar algo no plano ou fazer alguma pergunta sobre ele . Vou acessar o T-Mox
+
+aqui para poder usar as equipes de agentes. E dentro deste repositório, eu já o tenho ativado. Se eu acessar a pasta thecloud, você poderá ver no arquivo settings.local.json que a equipe de agentes experimentais do Cloud Code está definida como um. Então, já o ativamos
+
+. Só preciso acessar a nuvem aqui. E então, obviamente, mais uma vez, vou usar permissões de forma imprudente para que as coisas sejam rápidas. Não quero aprovar nada no meio da transmissão ao vivo . E então, o que farei a seguir é usar um comando. Então, construa com a
+
+equipe de agentes. Este é um comando que abordei recentemente no meu canal do YouTube. Então, deixe- me voltar ao meu canal aqui. Quero mostrar isso rapidinho para quem tiver curiosidade. Bem, porque o código em nuvem por si só não é tão bom em usar equipes de agentes em nuvem, já que é um recurso experimental. O problema de
+
+construir em paralelo é que existem muitos obstáculos, como a necessidade de definir o esquema do banco de dados antes que o agente de backend possa realmente fazer qualquer coisa, e coisas do gênero. Assim, desenvolvi um comando que basicamente orienta o código na nuvem sobre como usar equipes de agentes de forma mais eficaz. Portanto, não se trata de tentar fazer literalmente tudo em paralelo. Existem algumas coisas que podemos fazer em paralelo, mas meu comando implementa o que eu chamo de abordagem "contrato primeiro". O agente principal define os contratos entre a interface do usuário, o backend, o banco de dados e qualquer outro elemento similar. E então envia
+
+isso como parte do comando para cada um dos agentes que estão sendo executados na equipe. Assim, eles podem trabalhar em paralelo, mas ainda assim têm esse tipo de coordenação definida antecipadamente. E isso tem funcionado muito, muito bem para mim. Então, eu abordo esse assunto neste vídeo aqui. Se você tiver curiosidade, se quiser se aprofundar nesse assunto no meu canal, eu tenho conteúdo sobre isso. Então,
+
+o que o comando "build with Asian teams" faz é incluir todas essas instruções. Portanto, tudo o que preciso fazer é seguir o caminho até o plano. Então, vou copiar o caminho relativo aqui. E então, o segundo parâmetro que tenho com essa habilidade, vou mostrar rapidinho. Então, eu vou...
+
+onde fica? Desenvolvimento de habilidades com a equipe de agentes. O segundo parâmetro aqui é o número de agentes. Portanto, se você não especificar isso, estará permitindo que o código na nuvem decida o número de agentes que você terá na equipe. Assim, ele consegue calcular isso com base no seu plano.
+
+É realmente dinâmico porque o que esse comando faz é pegar o plano, descobrir como dividir o trabalho entre diferentes agentes da equipe e, em seguida, como definir o que é paralelo e o que precisa ser definido como contratos antecipadamente, certo? como nós temos a abordagem de primeiro contrato. Defina os contratos, mapeie-os antes de começar a ativar todos os agentes, certo? É só na quinta etapa que realmente criamos todos os agentes em paralelo. Portanto, ainda estamos realizando a maior parte do trabalho em paralelo, mas estamos fazendo todas essas coisas realmente importantes antecipadamente, para que os agentes não precisem interferir tanto no trabalho uns dos outros. Então,
+
+neste caso, para manter o resultado mais determinístico, vou dizer que quero três agentes. Então, na verdade, vou definir isso por mim mesmo. Tudo bem. Certo. Então, vou enviar isso. E também gostaria de
+
+lembrar de usar a habilidade de carga B ao executar o ataque. É muito importante que os agentes de back-end e front-end façam isso. Então, é algo que eu provavelmente deveria ter incluído no meu plano, mas vou ser bem explícito aqui porque isso será extremamente importante para garantir que não haja nenhum tipo de alucinação de código com o ChargeB. Então, vou aproveitar essa habilidade. Isso é algo que eu realmente aprecio no ChargeB e na maioria das plataformas SAS: a possibilidade de incorporá-las como uma ferramenta em sua base de código, uma biblioteca ou simplesmente algum tipo de funcionalidade pela qual você está pagando. É muito importante.
+
+Acredito que esse também seja o futuro da programação de agentes: cada plataforma integrada terá alguma funcionalidade que poderá ser incorporada ao agente de programação, para que ele saiba como aproveitar ao máximo o SDK. Certo? Este é um guia sobre como podemos usar o SDK da Chargeb para construir as coisas corretamente logo na primeira tentativa em nosso código Next.js, e isso realmente faz uma diferença. Eu testei a criação sem a skill e com ela, e é muito útil dar contexto aos agentes, porque muitas vezes, devido ao seu nível de treinamento, os agentes não conhecem a documentação correta dessas bibliotecas ou talvez nem a conheçam, por ser uma plataforma mais recente.
+
+Portanto, poder dar a eles acesso fácil a informações atualizadas é algo em que trabalhei bastante no ano passado com o Archon, mas agora muitas dessas ferramentas já incluem isso, como o que temos aqui com a skill Charge. Muito legal, podemos ver que temos primeiro o agente principal. Acho que nosso agente principal decidiu criar um agente central para nossa implementação do Charge V. Muito, muito legal. Então, começa por reivindicar a tarefa número um nessa lista de tarefas compartilhada. E enquanto isso
+
+, nosso agente principal está ativando os outros dois agentes em paralelo. Então, ok, conseguimos fazer com que nossos três agentes de cobrança funcionassem ao mesmo tempo. Então, temos um núcleo, uma interface e um agente de backend. Presumo que o agente principal esteja trabalhando mais com o esquema do banco de dados e com as questões de autorização. Na verdade, não tenho certeza absoluta. Mas
+
+você sempre pode perguntar, não é? Uh, WSL-desligado. Às vezes você precisa fazer isso. Infelizmente, o WSL às vezes é um problema . Certo, então volte aos meus terminais. Vou iniciar uma nova WSL.
+
+Preciso fazer isso porque as equipes asiáticas não trabalham apenas no Windows. Se eu quiser ter os diferentes terminais T-Mux. Então, vou recomeçar tudo aqui. Ignorar permissões de forma perigosa. Muito bem , ótimo. E depois farei a construção com a
+
+equipe. E então passarei o plano novamente. Então, copie o caminho relativo. Pronto. E então, com sorte, não teremos problemas desta vez, porque não estamos iniciando 12 sessões, 12 agentes ou, na verdade, 13 no total. Muito bem
+
+, aqui está. Então, sim, agora voltaremos ao assunto assim que todos os agentes iniciarem. Imagino que os agentes estivessem, na verdade, rodando em paralelo. Nós simplesmente não conseguimos aproveitar. Então, o sistema travou.
+
+O sistema falhou, mas todos os agentes estavam, na verdade, trabalhando nos bastidores. Era exatamente como se o terminal estivesse com defeito. Então, na verdade, fizemos com que todos os agentes trabalhassem em paralelo. Agora só precisamos que nosso agente principal volte e resolva as coisas. Muito interessante . Portanto, ele corrigirá os
+
+erros de linting e, em seguida, executará a validação final. Então, de uma forma indireta, fizemos a equipe de agentes trabalhar. Sei que talvez não tenha sido a melhor demonstração porque meu WSL travou, mas os agentes realmente compilaram tudo. Isso é muito legal. Simplesmente não conseguimos ver todos os registros, o que, considerando os terminais pequenos do T-Mux, normalmente não aconteceria de fato, já que não veríamos muita coisa acontecendo. Mas isso é legal. Então, foi acionado
+
+mais um agente na equipe para lidar com as correções de backend. Então, ok, isso é bem legal. Tudo bem. E voltando à sua pergunta, Sean. Vou mostrar isso novamente. Como podemos rastrear a comunicação do agente pelo interfone
+
+? Então, na verdade não podemos. A única coisa que posso dizer é que podemos falar com o agente responsável aqui. Por exemplo, posso usar o Ctrl+B para voltar ao agente principal e perguntar: "Como os agentes têm se comunicado entre si?" E eu não vou fazer isso. Vou deixar
+
+isso continuar por aqui. Isso é bem legal. Isso gerou a criação de uma equipe completamente nova para resolver esses problemas. Então, tínhamos avançado bastante com a equipe de agentes anterior, mas depois tudo deu errado. Agora, estamos de volta à fase de validação e realizando os testes finais de ponta a ponta. Bem
+
+, não há realmente outra maneira além de perguntar como você tem se comunicado com os agentes. Você obterá uma resposta razoável se fizer isso. Então, existe esse meta- raciocínio de saber como os agentes têm se comunicado entre si, mas não há um painel que mostre, por exemplo, qual agente reivindicou essa tarefa e enviou essas mensagens para esses outros agentes. Acho que você provavelmente conseguiria construir isso com ganchos ou algo do tipo. Não me surpreenderia se a Anthropic melhorasse o desempenho das equipes asiáticas em um futuro próximo, adicionando mais recursos de observabilidade, mas, no momento, isso está claramente ausente da ferramenta, na minha opinião .
+
+Por que as equipes asiáticas custam mais do que contratar subagentes? Pergunta pertinente. Portanto, o principal motivo é toda a sobrecarga de comunicação. Gerenciar a lista de tarefas compartilhadas e enviar mensagens uns aos outros. Muita coisa ainda não está otimizada, mas não é nada tão absurdo.
+
+Na verdade, vamos analisar isso agora mesmo. Então, enquanto isso está em execução, vamos acessar as configurações do meu arquivo de uso. Então, eu gosto de usar o Cloud Desktop apenas para verificar meu consumo de nuvem referente à minha assinatura. E dê uma olhada nisso. Não é tão ruim assim. Utilizei apenas 16% da minha
+
+sessão atual e ela será reiniciada em 37 minutos. E nós fizemos uma implementação completa. Eu sei que houve uma falha e, por isso, tivemos que reiniciar tudo. Mas, mesmo assim, usamos equipes asiáticas durante toda a implementação, e isso representou apenas 16%. E eu só usei 11% do meu limite semanal. E isso é muita coisa que eu estava
+
+fazendo ontem e anteontem também, ou acho que recomeça toda sexta-feira. Então, era o mesmo trabalho que eu estava fazendo ontem . Não é tão ruim assim. Estou um pouco surpreso com as reclamações sobre o consumo de tokens, porque com os planos de Claude que custam no máximo 100 ou 200 dólares por mês, você poderá criar equipes o tempo todo sem atingir os limites. Está tudo bem. É como se eles
+
+provavelmente pudessem fazer muitas otimizações, mas ainda não está tão ruim assim. Hum, legal. Assim, os três agentes trabalharam em paralelo. Já corrigimos os problemas no backend, na página de faturamento e nos testes. Então, diz que tudo está perfeito. Agora,
+
+uma coisa que faltou no Opus 4.6. Infelizmente, o Opus 4.6, em particular, parece falhar bastante nesse aspecto para mim, pois sempre ignora os testes de ponta a ponta que eu desejo realizar com a CLI do navegador asiático. Então, vou acessar o AquaVoice e exigir que ele faça os testes completos, porque quero que, como disse antes, ele percorra todas as jornadas do usuário e garanta que tudo esteja funcionando perfeitamente antes de me devolver o controle. Então, vou
+
+dizer: "Muito bem, preciso que você execute os testes de ponta a ponta com a CLI do navegador do agente. Você perdeu essa parte completamente. Precisamos percorrer todas as jornadas do usuário, e não quero que você pare. Você não pode parar até ter testado cada jornada do usuário e ter certeza de que o aplicativo está funcionando perfeitamente. Então, inicie o aplicativo. Certifique-se de
+
+percorrer cada uma das jornadas do usuário que definimos no plano de estrutura. Você pode ler o plano de estrutura novamente, se precisar, o que não deveria ser necessário, pois nem precisamos redefinir a janela de contexto. Então, provavelmente eu nem precisava dizer isso. Mas, de qualquer forma, estou sendo bem claro aqui que você não pode pular esta etapa. Não sei por que, especificamente com o Opus 4.6
+
+, isso começou a acontecer comigo. Não é o fim do mundo, porque posso simplesmente reiniciar tudo e retomar os testes que não foram concluídos, mas é irritante ter que fazer isso. Muito bem, então vamos lá." Veja. Eu não gosto que o curl esteja fazendo isso diretamente, tipo, "Ok, você precisa usar a CLI do navegador do agente Verscell".
+
+Honestamente, fiquei mais impressionado com o Opus 4.5 do que com o Opus 4.6. Eu tenho a skill aqui. Você tem a capacidade de usar o navegador asiático.
+
+Com o Opus 4.5, ele costumava ir automaticamente para os cenários de ponta a ponta sem que eu precisasse pedir. Ok, aqui está. Então, agora está usando a skill. Então, estamos bem agora. Estamos no caminho certo. Mas
+
+eu não gosto de ter que pedir isso. Parece que está bem consistente agora. Hum, isso provavelmente significa que há uma oportunidade para eu melhorar meu plano ou meu comando para que fique mais claro que ele precisa ir direto ao ponto . Mas, hum, é meio irritante quando um novo modelo é lançado. Às vezes você precisa ajustar seus prompts e comandos para funcionar com esse modelo mais recente. Pode ser um É um
+
+modelo mais poderoso, mas interpreta seus comandos de forma diferente. E isso já aconteceu várias vezes, principalmente ao alternar entre diferentes provedores. Mesmo que haja uma versão atualizada de um LLM de outro provedor, a interpretação da entrada é diferente. É só isso . Mas é muito legal ver como funciona com o navegador asiático. Eu poderia ter feito
+
+isso também no modo headless. Aliás, vamos fazer isso. Vamos usar o modo headless para podermos acompanhar a validação, já que tudo está sendo feito nos bastidores com um navegador sem interface gráfica . Mas seria muito interessante acompanhar a jornada do usuário, como a compra de tokens e a interação com o agente. Então, vou fechar o navegador atual e abrir novamente no modo headless para que você possa assistir.
+
+Acho que isso será bom para a transmissão, assim podemos acompanhar o processo. Ele está encontrando problemas conforme avança, o que é normal. Eu esperava isso. Não é necessariamente culpa do uso de servidores asiáticos, mas é por isso que eu uso o modo de teste de ponta a ponta. Testes. Não importa o quão claro seja meu plano,
+
+sempre haverá pequenos problemas no código que precisam ser resolvidos, e esses problemas serão encontrados quando o usuário tentar usar o site como faria. Então, isso é bom. É isso que estamos procurando . Sim, é exatamente isso que já vi antes. Aparece uma mensagem dizendo que todos os testes foram concluídos na parte inferior, mas depois há um bloco de texto com algo oculto, como: "Ah, o teste X não funcionou. Bem, isso aconteceu por causa
+
+de algum outro problema que já existia." Nossa, isso me irrita profundamente. Essa mesma coisa acontece o tempo todo. E definitivamente existem maneiras de melhorar isso, sendo específico em suas regras globais ou comandos para não dizer isso, certo? Você pode incluir nas instruções: "Não ignore um teste com falha só porque você acha que é devido a algo que aconteceu antes", certo? Às
+
+vezes isso ajuda, mas ainda é da natureza dos LLMs fazer isso. É muito irritante. Enfim, deixa eu ver se consigo aumentar o tamanho da janela. Ok, não consigo. O tamanho da janela é meio limitado aqui. Então talvez seja difícil
+
+para vocês lerem as letras miúdas do que está acontecendo, mas vamos lá, vamos deixar passar. Está registrando uma nova conta no Superbase. Obviamente, há um problema com o navegador, então ele precisa determinar isso. Sempre tem essas coisas que ele precisa descobrir que estão erradas primeiro, e aí ele corrige esses probleminhas bobos e o teste de ponta a ponta fica muito mais tranquilo. Então, vai dar certo . Vai dar certo. Mas isso não
+
+me surpreende. É por isso que fazemos isso de forma autônoma, porque não me importo que tenha esses probleminhas bobos no começo, porque quando volta para mim, está tudo ótimo. Mas, certo, vamos ver como está indo. Estamos analisando. Então, tudo bem, tirando uma captura de tela do login. Parece
+
+bom. Certo, então, finalmente nosso agente descobriu esses problemas no back-end. Mas é legal, né? Tipo, esta é uma ótima demonstração. Mesmo que seja chato que tenha levado uns 10 minutos para encontrar esses problemas, ele consegue resolver tudo nos bastidores porque consegue testar exatamente como eu faria se eu mesmo executasse o aplicativo. Mas agora eu não preciso
+
+ser o único a dizer: "Ei, Claude, o agente não me respondeu aqui." Você precisa investigar isso." Parece que ele resolve tudo sozinho. Ele testa novamente automaticamente. Tudo é resolvido automaticamente. Essa é a
+
+beleza do teste de ponta a ponta. Teoricamente, eu poderia usar equipes de agentes aqui para fazer mais testes de ponta a ponta em paralelo. Então, talvez eu não esteja usando equipes asiáticas tanto quanto poderia, mas normalmente prefiro usar as equipes para a implementação em si, escrevendo todo o código, e depois deixo para o agente líder fazer a validação no final. Acontece que a validação de ponta a ponta geralmente leva um tempo, mas ainda é muito trabalho sendo feito em paralelo antecipadamente. Vocês viram que levou apenas de 5 a 10 minutos para concluir toda a implementação e, sim, há algumas correções que precisam ser feitas aqui, mas ele conseguiu concluir essa compilação muito rapidamente.
+
+Levaria uns 30 minutos só com o Claude . Então foi muito legal ver isso. Agora só precisamos resolver os pequenos problemas que surgirem, o que aconteceria mesmo se não estivéssemos usando agentes. Equipes. Então, isso é ótimo.
+
+Muito bem, agora chegamos ao ponto em que tudo está funcionando com o chat do Agentic. Conseguimos consumir tokens corretamente. Agora estamos passando para a parte do Chargeb, que está tentando comprar tokens. Já encontramos alguns erros, o que já esperávamos, pois tivemos alguns problemas durante nossos testes, mas agora todos eles serão resolvidos. E esse é o tema que temos observado aqui: sim, com o Agentic, a implementação não foi perfeita, talvez isso tivesse acontecido mesmo sem ele, mas não importa, porque quando chegamos à validação de ponta a ponta, todos esses problemas serão encontrados e corrigidos automaticamente. E eu
+
+realmente não acho que seja culpa do Agentic, porque esta é uma implementação mais complexa que estamos fazendo aqui, integrando com o Chargeb, mas estou apenas mostrando que, com a validação de ponta a ponta, conseguimos superar todos os problemas, e essa é a beleza disso . E pronto. Encontrou e corrigiu. todos os problemas durante o teste de ponta a ponta. E então, temos o hot reload ativado. Então, Mona Truth só precisa
+
+trazer a aba do navegador para cá. Ok, temos 318 tokens porque alguns foram comprados para nós durante o teste, eu acho. Deixa eu ver. Vou clicar aqui e ok, ótimo. Estamos na nossa página de faturamento. Temos 318
+
+tokens. Vamos comprar. Vamos comprar 250 aqui. Isso é apenas usando uma conta de teste no ChargeB. Então, não estou inserindo informações reais de cartão de crédito aqui, mas está simulando o fluxo completo de compra em produção. Então,
+
+configurei informações de cartão de crédito falsas aqui, endereço falso. Vou pagar. Ok, processando pagamento. Aguardando seus tokens serem creditados. E aqui está. Tokens adicionados à sua
+
+conta. 568. Nossa, isso está funcionando perfeitamente. Temos o histórico de transações aqui também. Nossa, isso é incrível. Ok, então vou voltar para o
+
+chat aqui. E então, vamos testar tudo de ponta a ponta novamente. Então, vou dizer... quanto é 2 + 2? Não me
+
+importo muito. Uma mensagem aleatória aqui. De 568 para 567 tokens. Recebemos uma resposta. Muito legal. Ok, cara. Isso está
+
+funcionando perfeitamente. Então, novamente, tivemos que esperar um pouco para que o teste de ponta a ponta encontrasse todos os problemas que surgiram da versão da equipe asiática, mas acho que isso aconteceria de qualquer maneira e conseguiu resolver tudo. Então, agora eu consideraria isso quando o controle fosse devolvido para mim e o aplicativo estivesse perfeito para uma implementação bastante complexa com toda essa integração de pagamento com o ChargeMe. Então, isso é fantástico. Certo, então aqui estou eu, fora da transmissão ao vivo, apenas fazendo uma breve despedida do vídeo. Espero que vocês tenham gostado de
+
+acompanhar todo o processo de desenvolvimento brownfield com o novo recurso de equipe de agentes do Claude Code. Realmente parece o futuro da engenharia genética. Vocês viram a velocidade desses agentes paralelos? Achei que fosse uma falha, mas na verdade funcionou. Durante todo o processo, em apenas cinco minutos, tudo foi construído. Foi
+
+a validação de ponta a ponta que levou mais tempo. Mas espero que tenha sido útil para você ver como o agente pode percorrer as jornadas do usuário da mesma forma que nós faríamos e validar tudo, substituindo grande parte da validação manual que precisamos fazer. Portanto, é esse planejamento inicial e a validação no final que realmente garantem implementações estáveis ​​com nossos agentes de programação. Se você gostou deste vídeo e deseja ver mais conteúdo sobre engenharia de agentes, agradeceria muito um like e uma inscrição no canal.

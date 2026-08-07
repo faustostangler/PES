@@ -1,0 +1,162 @@
+---
+video_title: "Is Kimi K3 Really That Good?! (Don't Just Believe The Hype)"
+video_id: SA3TxPLLB08
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=SA3TxPLLB08
+video_date: 2026-07-24T14:00:36+00:00
+video_description: |
+  Kimi K3 is the most powerful open weight model ever released, and the benchmarks make it look like it's beating Opus 4.8 and almost matching the very best closed models. After spending millions of tokens putting it up against Opus 4.8 and Kimi K2.7 on real engineering tasks, I'm not buying it, and I don't think you should either.
+  
+  Kimi K3 is genuinely impressive, and sometimes the raw output is even better than Opus. But open weight models have reliability failure modes that the public benchmarks don't seem to account for. In this video I show you exactly where Kimi K3 breaks down, why it's still useful as the workhorse in a mixed-model workflow, and how to build your own benchmarks that actually reflect real world coding instead of a leaderboard.
+  
+  Everything is open source so you can run these tests yourself, even with other models!
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - QA.tech, the AI testing tool with autonomous QA agents that test your app like a real user:
+  http://qa.tech/cole
+  
+  - Past the Bottleneck - free guide to releasing quality products in the AI-SDLC, for teams that ship fast and want to stay safe:
+  http://qa.tech/cole-book
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Join my free live workshop on July 29th, where I show you how to become an AI native engineering organization - building a reliable standard for how teams use AI coding agents:
+  https://dynamous.ai/ai-native-engineering-org
+  
+  - Benchmark repo (workflows, rubric, and every exact prompt):
+  https://github.com/coleam00/kimi-k3-reliability-benchmark
+  
+  - Archon (the open source harness builder I used):
+  https://github.com/coleam00/archon
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 The Kimi K3 Hype vs Reality
+  1:41 The Benchmark Suite I Built
+  3:43 Why Open Weight Models Are Worth It
+  4:47 Mixing Models for a Cheaper Workflow
+  5:50 Benchmark 1: Real Engineering Tasks
+  8:16 Sponsor: QA.tech
+  10:19 How the Scoring Works (7 Dimensions)
+  10:56 Simple Tasks: K3 Basically Ties Opus
+  12:28 Complex Tasks: Opus Pulls Ahead
+  14:17 Why Public Benchmarks Can't Be Trusted
+  15:33 The Trap Tasks Explained
+  17:00 The Results: 8% vs 36% Failure Rate
+  18:58 Why Opus Thinks for Itself
+  20:12 The Takeaway: Plan Big, Build Cheap
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+A KimikoK3 foi lançada na semana passada e é o modelo de peso livre mais potente já lançado. Analisando os indicadores de desempenho, você poderia pensar que este é um dos mestrados em Direito (LLM) mais poderosos de todos os tempos. É melhor que o GPT 5.5 e o Opus 4.8, e quase tão bom quanto o Fable 5 e o GPT 5.6 Soul, pelo menos para
+
+tarefas de programação agentiva. Mas estou aqui para dizer que não acredito nisso, e você também não deveria. Agora, não me interpretem mal, KimikoK3 é um modelo realmente impressionante. Você pode realizar tarefas de agentes muito, muito longas com ele. Mas o KimikoK3, e na verdade muitos desses modelos de peso livre como o GLM e o MiniMax, têm certos modos de falha, digamos assim, com os quais não precisamos lidar em outros modelos como o GPT e o Opus. É isso que
+
+quero abordar neste vídeo com vocês. Quero mostrar a vocês o quão poderoso é o KimikoK3 . Na verdade, às vezes a qualidade da saída bruta é melhor que a do Opus 4.8, mas existem esses modos de falha com os quais temos que lidar, o que faz com que o KimikoK3 não seja tão confiável assim. Aspectos que você precisa levar em consideração e até mesmo planejar ao utilizá-lo em seu fluxo de trabalho de codificação agentiva . Então, vamos abordar tudo isso
+
+aqui. E seguindo a mesma linha de raciocínio , esses problemas de confiabilidade que temos com os modelos de peso aberto nunca aparecem nos testes de desempenho. E tenho certeza de que você chegará à mesma conclusão, de que os benchmarks não representam com precisão o quão bem o modelo funcionará para você quando o estiver usando no mundo real em seus fluxos de trabalho de codificação agentiva. Precisamos desenvolver nossos próprios testes para realmente explorar os limites desses modelos. Eu jamais usarei o KimikoK3 como meu sistema operacional principal em vez do Opus 4.8, mesmo que tenham
+
+a mesma velocidade e preço. Portanto, quero que os testes reflitam realmente o que vou usar. E foi exatamente isso que eu construí aqui e que estou compartilhando com vocês: uma solução abrangente de benchmarking que eu criei e usei para comparar o Opus 4.8, o KimikoK3 e o KimikoK 2.7, seu antecessor. E eu o
+
+submeti a uma série de tarefas reais de engenharia em um dos meus repositórios, bem como ao que chamo de tarefas-armadilha, que projetei para esclarecer os modos de falha com esses modelos como o Kimik3. Os tipos de situações que você encontrará em seus fluxos de trabalho de programação de IA e para as quais precisará se preparar. E eu gastei literalmente milhões de tokens fazendo esses testes de desempenho. Há muitas informações importantes para compartilhar. Tenho opiniões bastante fortes sobre o Kimik3. Apesar de eu adorar
+
+este modelo por ser leve e mais barato que o Opus, ele definitivamente não é tão bom. Então, vou mostrar a vocês os resultados das tarefas reais de engenharia que realizei primeiro. Então, eu estava percorrendo os fluxos de trabalho de codificação de IA, desde o planejamento, implementação e validação, dezenas de vezes para cada um dos modelos aqui. E, dando uma olhada rápida, você pode ver que o Kimik3 é quase tão bom quanto o Opus, o que é muito legal de se ver, mas definitivamente não é melhor como os benchmarks indicavam. Então vamos abordar isso, e depois vamos falar sobre algumas das tarefas-armadilha que eu preparei.
+
+Então, dediquei muito tempo à engenharia desses modelos para demonstrar os problemas de confiabilidade de modelos como o Kimik3. Então, vou analisar todas as diferentes tarefas, os diferentes prompts que tenho e os problemas que isso está apresentando para esses modelos. E podemos ver os resultados aqui. Mais uma prévia. A taxa de falha em todos os testes que realizei aqui para o Opus é de 8%. E então, para o Kimik3, esse valor sobe
+
+para 36%. Esse não é um bom número. Agora, desenvolvi soluções para explorar especificamente as fraquezas do Kimik3. Portanto, trata-se definitivamente de uma diferença exagerada em termos de confiabilidade. Mas fiz isso de propósito, porque quero conversar com vocês sobre essas questões e como podemos, de fato, abordá-las quando estivermos usando o modelo na prática.
+
+Porque esses são os tipos de problemas que podem surgir de repente em seus fluxos de trabalho de codificação de agendas . Você precisa estar ciente disso se quiser usar modelos de peso livre. E o motivo pelo qual você deve usar esses modelos de peso livre é porque eles geralmente são muito mais baratos do que os equivalentes de laboratório de modelos de vanguarda. Por exemplo, no caso do Kimik3, analisando o OpenRouter aqui, o custo é de US$ 3 para cada 1 milhão de tokens de entrada e US$ 15 para cada 1 milhão de tokens de saída. E aí, olhando para o Opus, por exemplo, ele é quase duas vezes mais caro. Sim, temos
+
+esses problemas de confiabilidade que abordaremos mais adiante , mas muitas vezes esses modelos serão comparados diretamente. Assim, você pode adquirir um modelo por quase metade do preço e ainda utilizá-lo por meio de uma assinatura, tal como o Opus. Assim, aqui está o meu código de assinatura Kimi para usar o Kimi K3. E, infelizmente, atingi meu limite de uso semanal, pois tenho feito muitos testes de desempenho, como mostro neste vídeo. Mas na maioria das vezes eu não atinjo meus limites. Com o Kimi, você consegue ir muito além do que
+
+com o Fable ou o Opus. E o Kimi K3 é também o modelo OpenWave mais caro atualmente. Existem muitos outros modelos realmente poderosos , como o GLM 5.2 e o MiniMax M3, que podem dar conta do recado em diversas tarefas. Então, o que estou experimentando, e que muita gente está fazendo agora, é misturar modelos para um fluxo de trabalho maior, como usar o Fable, o Opus ou o GPT 5.6 Soul
+
+para o planejamento, e depois, para a parte principal, que envolve grande parte da implementação e validação, usar um modelo como o Kimi K3 ou o GLM 5.2. Portanto, vale a pena testar esses modelos, entender como funcionam e quais são suas limitações, para que você possa criar fluxos de trabalho mais eficientes e não fique sempre atingindo os limites de taxa em ferramentas como o Claude Code. Muito bem, então, dito isso, vamos direto aos parâmetros de avaliação. Para ser totalmente transparente, eu mesmo criei todos esses benchmarks para explorar, por meu próprio benefício e, espero, por seu também, para descobrir o quão bom o Kimi K3 realmente é. E quero
+
+criar isso para poder usar como teste para outros modelos no futuro também. Então, eu realmente tentei focar nos pontos fracos dos modelos OpenWave que observei quando os utilizei em situações reais. Assim, esses parâmetros de referência ficam um pouco mais específicos, especialmente na última parte do que vou mostrar a vocês. Então talvez você faça as coisas de maneira diferente. Talvez você ache que meus critérios de avaliação apresentem algumas falhas. É só me avisar. Não estou
+
+dizendo que é perfeito, mas definitivamente tirei algumas conclusões muito boas que estou animado para compartilhar com vocês aqui. Muito bem, então vamos começar com os primeiros benchmarks. Estas são as tarefas reais de engenharia que eu orientei a executar com Kimmy K3, Opus 4.8 e Kimmy K2.7 . E realizei dezenas de execuções de fluxo de trabalho
+
+para chegar às médias que estamos vendo aqui. Falaremos sobre os números daqui a pouco, mas deixe-me mostrar o que estou realmente testando aqui. Tenho uma série de problemas relatados no GitHub que criei em um projeto real, não apenas uma demonstração que fiz para os testes de desempenho aqui, mas algo em que tenho trabalhado bastante e até compartilhado no meu canal. Portanto, essas são tarefas reais de engenharia pelas quais eu pedi que cada um dos modelos passasse. Portanto, variam em complexidade, desde coisas realmente simples até recursos mais complexos e bugs que precisam ser corrigidos. E sempre
+
+tem gente que me diz que, quando quer comparar modelos, gostaria de ter tempo para executar os diferentes modelos exatamente na mesma tarefa, em vez de simplesmente fazer tarefas diferentes e tentar descobrir, meio que por instinto, qual é o melhor. Então, reservei um tempo para fazer isso aqui. De nada. Usei muitos tokens, mas executei exatamente o mesmo procedimento no GitHub em cada um dos três modelos, seguindo os fluxos de trabalho que orientam todo o processo. Então, para que tudo isso aconteça, estou usando o Arkon, meu construtor de chicotes elétricos de código aberto. Vou colocar aqui o link para um
+
+vídeo onde explico isso. Não preciso entrar em muitos detalhes agora. Não é extremamente importante que você entenda, mas basicamente o Arkon me permite construir fluxos de trabalho maiores que interligam várias sessões de agentes de codificação, porque eu quero realizar um processo completo de planejamento, implementação e validação, e você não pode colocar tudo isso em uma única sessão de agente de codificação, ou você obterá resultados terríveis, independentemente do modelo que estiver usando. Certo? Então, quero dizer aqui, para a etapa de planejamento, que estou usando a linguagem de programação Kimmy K3. Então, este é o meu fluxo de trabalho Arkon
+
+para os testes da Kimmy K3. Então, eu planejo com a Kimmy, eu gero um documento aqui que será lido pela etapa de implementação, também usando a Kimmy. E depois disso, o modelo realmente não importa. Basicamente, estou apenas comparando o uso de um determinado modelo para planejamento e implementação, certo? Então, Kimmy K3 bem aqui. E
+
+se eu analisar o outro fluxo de trabalho, este é o Kimmy K2.7, tanto para o planejamento quanto para a implementação. E depois acontece o mesmo com o Opus. Portanto, o fluxo de trabalho é exatamente o mesmo. A única coisa que mudou foi a minha configuração para o modelo de linguagem grande que estou usando.
+
+Tudo que estou mostrando aqui estará disponível no repositório do GitHub, cujo link estará na descrição. Então, isso inclui todos os fluxos de trabalho. Ele contém os mesmos prompts que mostrarei para os outros testes de desempenho que realizei. Portanto, estou documentando tudo isso publicamente para vocês, caso queiram executar esses testes de desempenho exatamente como eu fiz. O patrocinador do vídeo de hoje é a QA Tech, que está resolvendo um dos maiores problemas da programação de IA atualmente. Na realidade, escrever o
+
+código deixou de ser o gargalo. Confiar nisso é o que importa. Porque seu agente consegue entregar três ou mais funcionalidades no tempo que antes levava para escrever apenas uma. Portanto, não é realista para nós clicar em tudo para confirmar se nossos fluxos estão funcionando enquanto realizamos nossos testes manuais e de regressão. E os dados comprovam isso. A maioria dos desenvolvedores não
+
+confia totalmente no código gerado por IA, mas apenas cerca de metade verifica tudo antes de publicar o produto. É exatamente essa lacuna que a QA Tech preenche. É uma ferramenta de teste de IA com agentes de controle de qualidade autônomos que testam seu aplicativo como um usuário faria. Portanto, você não tem seletores nem scripts frágeis. Então, tenho todos os meus casos de teste aqui. E para adicionar um novo teste,
+
+por exemplo, basta descrever em linguagem simples o que quero testar, e o agente descobrirá os passos e se adaptará conforme meu site for alterado, para que os testes não apresentem erros. Então, tenho criado vários testes diferentes para minha página inicial principal do Dynamis, como você pode ver aqui. E então eu posso até mesmo conversar diretamente com o agente no painel dele para criar vários testes ao mesmo tempo. Eles também incluem um servidor MCP para que eu possa criar e editar meus testes diretamente com meu agente de codificação, como o Claude Code, sem precisar sair do meu editor. Você também pode criar um túnel para o seu servidor de desenvolvimento local para verificar as alterações antes de confirmá-las. Além disso, eles também
+
+possuem integração com o GitHub por meio do GitHub Actions. Dessa forma, meus agentes de controle de qualidade podem revisar minhas solicitações de pull request assim que eu as abro . Então, a forma como a equipe de controle de qualidade (QA Tech) explicou isso é que os scripts verificam os cliques, mas os agentes verificam a intenção. E isso é poderoso. Seus clientes já estão vendo resultados reais. Assim como o UpLead Sales
+
+substituiu 320 horas de testes manuais todos os meses. A ideia principal é que seu agente de codificação escreva o código, e a equipe de controle de qualidade (QA Tech) forneça o agente para verificar o código. Eles também oferecem essa prova de conceito guiada, que ajuda você a configurar todos os seus fluxos principais. Vou incluir um link para isso na descrição. Então, de qualquer forma, para cada um desses fluxos de trabalho do Archon pelos quais os modelos foram analisados, a issue do GitHub é a entrada e, em seguida, há uma solicitação de pull do GitHub como saída. Em seguida, essa
+
+solicitação de pull request entra em um fluxo de trabalho separado do Archon para avaliação, que utiliza uma rubrica de sete dimensões para julgar o desempenho. Assim, são de um a dez para cada uma das sete coisas. Por isso, a pontuação máxima por execução do fluxo de trabalho é 70. Então, está avaliando coisas como, sabe, quão boa é a implementação no geral? Será que não seria possível reduzir o excesso de engenharia?
+
+Existe alguma documentação e testes adequados acompanhando o PR? Esse tipo de coisa. E também monitora os custos. Portanto, temos muitos dados para analisar aqui. Então, em primeiro lugar, temos duas categorias porque peguei os problemas do GitHub e os dividi em simples e mais complicados. Porque, para os
+
+problemas mais simples do GitHub, você verá que realmente podemos usar os modelos mais baratos, o que nos permite ser mais eficientes no desenvolvimento em geral. Assim, com o Opus 4.8, obteve uma pontuação média de 64,3 em 70 no tratamento desses problemas do GitHub. Muito bom. Bem, está longe de ser perfeito, mas eu deixei o avaliador bastante exigente. Portanto, esta é
+
+uma pontuação bastante sólida. É como quando um filme tem uma classificação de 8,5 no IMDb e é considerado um dos melhores filmes de todos os tempos, certo? Não é nota 10, mas ainda assim é muito bom. Assim, o custo médio por tarefa também foi de US$ 1,60 . E para Kimi K3, a disputa é muito, muito acirrada. Temos uma
+
+diferença média de 0,2, o que é apenas um erro de arredondamento. Basicamente, teve um desempenho tão bom quanto o Opus, e foi mais barato por tarefa. Na verdade, o preço está mais próximo do que você imagina, o que indica que a Opus conseguiu resolver o problema com menos tokens no geral, já que o preço é quase o dobro em geral, mas não o dobro para esta tarefa específica. Então, acho que o Opus ainda lidou melhor com as coisas, mas a qualidade bruta das solicitações de pull no final é praticamente a mesma. E o Kimi K2.7 ainda é muito bom no
+
+geral, e é significativamente mais barato, mas sim, você definitivamente vai querer passar para o Kimi K3, e pelo menos estar nesse nível. Portanto, em geral, eu não recomendaria usar o Kimi K2.7 para gerenciar todo um fluxo de trabalho, mesmo para tarefas mais simples. E agora, é aqui que as coisas realmente ficam interessantes. Ao analisarmos as construções complexas aqui, percebemos uma discrepância real que está se formando. Portanto, a
+
+pontuação está, obviamente, caindo em todas as categorias. O Opus 4.8 agora tem uma pontuação de 62,2 em 70. Portanto, ainda é uma pontuação muito boa no geral, mas também está bem mais caro. Dê uma olhada nisso. A diferença de preço é
+
+absurda. Precisei gastar muito mais tokens para conseguir enviar a solicitação de pull request para cada fluxo de trabalho. Eu te disse, gastei muitos tokens nessa análise comparativa. E o Kimi K3 também continua sendo uma opção bastante sólida. Pelo menos está acima de 60 em 70, mas agora há uma discrepância real aqui. Não se trata
+
+mais apenas de um erro de arredondamento. Neste momento, é significativamente mais barato que o Opus. Então, isso é realmente interessante. Eu realmente não sei por que o teste de desempenho produziu esses resultados, mas ele também mostra que, quando você realmente quer ser eficiente, provavelmente deve usar os modelos mais baratos em pelo menos parte do seu fluxo de trabalho, certo? A configuração ideal geralmente envolve um modelo mais robusto para planejamento, enquanto a ferramenta principal de trabalho costuma ser algo como o K3, e isso fica bem evidente nos testes comparativos.
+
+E aí, claro, o Kimi K 2.7 continua caindo ainda mais e, sim, para construções mais complexas, você definitivamente não vai querer usar um modelo menor como esse e, sim, é legal que seja ainda mais barato, mas, de qualquer forma, você vai ter que gastar mais tokens corrigindo as coisas no pull request. E assim, realmente vemos o Opus começar a brilhar aqui para construções mais complexas. Definitivamente não era o que os indicadores de desempenho nos mostravam. E essa discrepância aqui, ou seja, os problemas que eu tive, pode se tornar muito mais complicada do que isso. Para quem
+
+trabalha de verdade, Kimi K 3 definitivamente não vai ser tão bom quanto o Opus 4.8. E a razão para isso, e a razão pela qual temos essa discrepância aqui, são esses problemas de confiabilidade. É isso que eu quero abordar com você agora. Vamos passar para o outro conjunto de parâmetros de referência. Muito bem, então
+
+vamos agora passar para o nosso segundo conjunto de parâmetros de avaliação. Isso é muito mais parecido com o que você vê nos testes de desempenho online. Mas, como já estabelecemos, não se pode confiar em parâmetros públicos. É por isso que quero construir meu próprio conjunto de dados e realmente identificar e esclarecer alguns dos problemas que temos com modelos como o Kimi K 3. E sim, esses benchmarks públicos contêm muitas informações interessantes sobre por que não devemos confiar neles. O mais
+
+interessante, porém, é que os grandes modelos de linguagem são treinados com base em muitas das respostas para as perguntas que temos nesses benchmarks. Portanto, eles estão realmente muito treinados e focados nesses tipos de perguntas e tarefas de referência. E além disso, nem sempre concordo com a forma como os critérios de avaliação são utilizados . Como você sabe, o ser humano escolher um entre dois aplicativos gerados, quando na verdade isso não tem nada a ver com a qualidade do código. Não concordo muito com coisas assim, e é por isso que quis construir meu próprio conjunto aqui. E eu tenho três conjuntos
+
+de testes. Tenho o controle fácil e todos os modelos passaram em todos os testes aqui. Isso serve apenas para estabelecer a base e garantir que minha configuração de teste esteja funcionando corretamente. Depois, tenho as tarefas mais difíceis, as armadilhas que projetei para modelos de peso livre e também algumas mais avançadas. Na verdade, só para ver se consigo explorar os limites desses modelos. Assim, para facilitar o nosso controle, trata-se
+
+apenas de tarefas simples de codificação e depuração, e concluímos que todos os modelos se saíram excepcionalmente bem . Então, isso é bom, mas vamos agora às armadilhas mais difíceis . Dediquei muito tempo ao design destes modelos para descobrir as fragilidades de modelos de peso livre como o Kimmy K3. Bem, leva um tempo para explicar tudo isso. Então, vou me concentrar mais naqueles que realmente levaram ao fracasso de Kimmy K3. Mas
+
+há algumas bem interessantes por aqui. São os tipos de coisas que você legitimamente terá que pensar ao usá- las para programação agentiva. Assim, por exemplo, por design, sintoma. É aqui que você informa ao agente de codificação que há um problema em sua base de código, mas na verdade você não entendeu que ela está funcionando conforme o esperado. Assim, às vezes, os agentes de programação tentarão corrigir algo mesmo quando deveriam perceber que se trata, na verdade, de um mal-entendido seu. Certo? Porque
+
+às vezes você simplesmente não vai entender completamente um problema. Não queremos depender da perfeição do nosso entendimento para evitar que o agente de codificação cometa erros drásticos. Outro ponto em que Kimmy K3 realmente não se saiu bem, e em que todos os modelos de peso livre tendem a falhar, é a premissa falsa. E é aí que pedimos para corrigir um problema que nem sequer existe na base de código. Então, é meio parecido com o que foi projetado, mas não é como se estivesse funcionando conforme o esperado. O problema simplesmente
+
+não existe. Assim, os agentes de codificação inventam uma solução para algo e a tratam como se o problema realmente existisse, quando na verdade seria de esperar que o modelo de linguagem principal fosse inteligente o suficiente para descobrir, ao percorrer a base de código, que, opa, o usuário está errado. Isso não é, na verdade, um problema. Talvez haja algum outro problema que eles estejam percebendo ou algum outro sintoma. Muito bem, dito isso, vamos aos resultados em si.
+
+Essa é a principal conclusão. Há muitos assuntos interessantes para abordar. Assim, para cada uma das tarefas, fiz o modelo executá-la cinco vezes. Muitos tokens. O Opus falhou apenas duas vezes em dezenas de tarefas que testamos aqui. Kimmy K3 e, principalmente, a versão 2.7
+
+não se saíram muito bem, pois estamos identificando problemas com modelos de linguagem grandes em geral. É interessante notar que os únicos dois testes em que o Opus falhou foram os de premissa falsa. Mais uma vez, dizemos ao agente que existe um problema que, na verdade, não existe. Assim, o LLM fica patinando tentando identificar onde está o problema e, muitas vezes, acaba imaginando uma localização quando, na verdade, o problema simplesmente não existe . E assim, é interessante notar que a mesma prova em que Opus falhou é também aquela em que Kimmy se saiu pior.
+
+Então, na verdade, parece que todos os grandes modelos de linguagem sofrem dos mesmos problemas. É apenas mais exagerado em modelos como Kimmy K3, pelo menos em alguns aspectos. Mas, por outro lado, definitivamente há alguns aspectos em que Kimmy K3 é meio decepcionante, enquanto Opus arrasou completamente . Como, por exemplo, um invariante oculto. Este é um teste onde o agente edita um arquivo, mas existem regras definidas em outro contexto que indicam como ele deve trabalhar com esse arquivo. E às vezes os
+
+agentes de codificação ignoram essas coisas, mesmo que sejam arquivos essenciais como o nosso mission.md ou o rules.md, e deveriam ser capazes de identificar, como o Opus faria sempre, "Ok, antes de editar este arquivo, deixe-me ter uma visão geral da base de código e entender outros contextos que possam afetar a forma como edito este arquivo." Kimmy nem sempre fazia isso. E então, é algo semelhante com a restrição da baga aqui, onde temos uma regra que precisamos que o agente de codificação siga, mas temos isso bem antes na conversa.
+
+Assim, vemos isso com frequência em modelos com deterioração de contexto, onde eles começam a ignorar instruções que demos anteriormente na conversa. E modelos de peso livre como a Kimmy K3, isso parece afetá- las muito mais. E então, mais uma aqui. Eles são mais propensos à bajulação. Então, cometer um erro porque eles estão apenas tentando te agradar, o que também é um tanto semelhante à ideia de uma premissa falsa.
+
+Portanto, vemos claramente um padrão aqui, em que esses modelos não têm um desempenho tão bom quanto os maiores, como o Opus ou o GPT. Parece que o Opus 4.8 consegue pensar por si próprio com mais facilidade e ser mais explorador. Acho que é assim que eu realmente explicaria, que o sistema consegue te avisar quando acha que você está errado, como identificar uma premissa falsa. Ele consegue explorar mais e entender, tipo, ok, aqui está o contexto que eu preciso antes de simplesmente editar este arquivo. Então, ele consegue entender
+
+invariantes ocultas, enquanto o Kimi K3 simplesmente vai mergulhar de cabeça, certo? Parece que modelos como o Kimi K3 são mais diretos, fazem exatamente o que você manda e não pensam por si mesmos ou exploram algo mais que possa auxiliar na tarefa atual. Assim, quando você tem essas tarefas bem definidas, o Kimi K3 vai executá-las tão bem quanto o Opus 4.8, ou até melhor. É isso que observamos em grande parte nesses indicadores públicos.
+
+Mas para o trabalho real, onde talvez não tenhamos total confiança, talvez não tenhamos a orientação correta ou haja muito mais contexto que o agente precise explorar do que teríamos nesses benchmarks, é aí que o Opus 4.8 e outros modelos como o GPT 5.6 Soul são simplesmente melhores. Então, eu nem preciso abordar os assuntos mais avançados aqui. É sempre a mesma história. O problema aqui é
+
+que, sim, o K3 é incrivelmente impressionante, mas é apenas uma questão de confiabilidade. Portanto, não se trata necessariamente da capacidade, mas sim da saída bruta, especialmente para tarefas realmente limitadas, que às vezes é até melhor que a do Opus. Mas precisamos de um modelo que realmente consiga pensar por si próprio e compreender todo o contexto necessário para carregar os dados, sem que tenhamos de o orientar em cada etapa do fluxo de trabalho. É aí que o Opus se destaca. Assim, isso continua a reforçar a ideia que venho tentando apresentar aqui, de que é preciso usar o modelo mais eficaz para o planejamento. Porque é durante o planejamento que
+
+você identifica qualquer tipo de premissa falsa, quaisquer outras invariantes que precisem ser identificadas, e então você envia a implementação para o programa principal assim que tiver identificado e corrigido todos esses problemas. Porque é aí que você vai detonar uma implementação muito sólida. Então, eu sei que demorou um pouco para chegarmos a essa conclusão , mas espero que tenha sido útil, assim como ver todo o processo e todos os testes comparativos que estou realizando, pois continuarei fazendo isso para novos modelos à medida que forem lançados, para ajudar você a identificar quais modelos são relevantes e onde eles se encaixam no seu fluxo de trabalho de programação de IA. Então, se você gostou e está ansioso por mais conteúdo sobre benchmarking e fluxos de trabalho de programação de IA em geral, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo.

@@ -1,0 +1,116 @@
+---
+video_title: "Why the Best AI Coding Tools Abandoned RAG (And What They Use Instead)"
+video_id: 60G93MXT4DI
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=60G93MXT4DI
+video_date: 2026-02-19T01:00:11+00:00
+video_description: |
+  Claude Code, Cline, Aider, Codex CLI - every top AI coding tool has abandoned traditional RAG and embeddings. But for enterprise knowledge bases, RAG is a $2B market growing 50% per year, and it's ~100x cheaper per query than full context loading.
+  
+  So is RAG dead or not? Both sides are right - they're just talking about different problems. Code is structured and perfectly searchable with grep. Business documents aren't. In this video I break down where the line is and what to use on each side.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  The best way to learn to code is with Scrimba - start free and get 20% off the Pro plan:
+  
+  - Fullstack Developer Path (featured in this video): https://scrimba.com/fullstack-path-c0fullstack?via=colemedin
+  
+  - All Scrimba coding courses (many free): 
+  https://scrimba.com/courses?via=colemedin
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - The Dynamous Agentic Coding Course is now FULLY released - learn how to build reliable and repeatable systems for AI coding: 
+  https://dynamous.ai/agentic-coding-course
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Sources:
+  
+  - Boris Cherny / Claude Code on agentic search:
+  https://smartscope.blog/en/ai-development/practices/rag-debate-agentic-search-code-exploration/
+  
+  - Why Cline doesn't use RAG for AI coding:
+  https://pashpashpash.substack.com/p/why-i-no-longer-recommend-rag-for
+  
+  - LlamaIndex - Agentic Retrieval:
+  https://www.llamaindex.ai/blog/rag-is-dead-long-live-agentic-retrieval
+  
+  - Aider repo map (Tree-sitter approach):
+  https://aider.chat/docs/repomap.html
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Is RAG Dead?
+  0:55 All Search is RAG (but not Semantic Search)
+  1:52 Structured vs. Unstructured Data
+  4:09 Why RAG Fails for Code
+  6:22 Scrimba
+  7:29 Agentic Search in Practice
+  11:05 When to Use Traditional RAG
+  13:12 Bridging Both Retrieval Strategies
+  14:35 Final Thoughts
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Rag está morto. Ou pelo menos é o que muita gente na internet diz, principalmente no LinkedIn e em outras redes sociais. E, pessoalmente, tenho produzido muito menos conteúdo de baixa qualidade. É algo que eu costumava abordar toda semana. Mas a narrativa de que o trapo está morto e sendo substituído por outras coisas. Isso simplesmente
+
+não é verdade. Isso ocorre em alguns casos de uso específicos, e abordaremos esse assunto, mas definir exatamente o que é um "rag" é algo muito mais complexo. Atualmente, existem alguns casos de uso, especialmente na área de programação, em que os agentes se tornaram tão poderosos com suas capacidades de busca e janelas de contexto que simplesmente não precisamos mais do tradicional rag. Mas, embora isso domine a internet atualmente, especialmente a assistência de codificação por IA, ainda é minoria em relação a todos os casos de uso de agentes. O Rag ainda é fundamental para a maioria das aplicações que você cria com IA generativa. Então, quero abordar
+
+quando isso acontece e quando o ragtime está morto. Antes de prosseguirmos, há uma distinção fundamental que precisamos fazer juntos. Quando as pessoas dizem que o rag está morto, elas estão se referindo especificamente ao que eu gosto de chamar de rag tradicional ou busca semântica, onde extraímos trechos de nossos documentos e os incorporamos em um banco de dados vetorial. Este é o pipeline super clássico. Agora, rag é a abreviação de retrieval augmented generation (geração aumentada de recuperação). Portanto, você pode estender a
+
+definição de "rag" para praticamente qualquer tipo de busca que um agente possa realizar, porque, na verdade, "rag" nada mais é do que capturar qualquer tipo de informação externa e trazê-la para a janela de contexto do LLM, para que possamos complementar sua resposta e fornecer mais dados para análise. Portanto, tudo o que abordarei neste vídeo sobre a tendência dos agentes de codificação é, na verdade, um tipo diferente de "rag" em relação à nossa busca clássica por similaridade semântica. Muita gente diz que isso está morto, mas na verdade não está para a maioria dos casos de uso. Então a pergunta é: o pano está morto? A resposta para você depende inteiramente dos seus dados. Quão estruturado ele é? Portanto, o código é um
+
+bom exemplo de dados altamente estruturados. Abordaremos isso daqui a pouco, mas como eu disse, na maioria dos casos de uso, ainda lidamos com dados muito não estruturados, porque temos um oceano de conhecimento armazenado no Google Drive, SharePoint, nosso banco de dados SQL, seja lá o que for, e queremos ter todo esse texto em nosso banco de dados vetorial para podermos pesquisá-lo. E o importante aqui é que, ao pesquisarmos dados não estruturados, diferentemente de algo como código, temos a linguagem natural ambígua. Queremos ser capazes de encontrar sinônimos e textos semelhantes com base no significado conceitual. Esses são os tipos de coisas com as quais o modelo de incorporação no banco de dados vetorial pode nos ajudar. Não importa o quão
+
+poderoso um agente seja em suas buscas, seja com suas próprias ferramentas ou com sua janela de contexto. Quando temos bases de conhecimento massivas de dados não estruturados, precisamos de alguma forma de encontrar sinônimos e conceitos semelhantes que podem estar ocultos em milhares ou até milhões de documentos. É aí que o ragtime tradicional ainda está muito vivo. Certo, deixe-me dar meu exemplo favorito aqui. Digamos que queremos encontrar todas as referências a naves espaciais de Star Wars em nossa base de conhecimento.
+
+Bem, se eu simplesmente pesquisar por naves espaciais de Star Wars, usando algum tipo de expressão regular ou busca por palavra-chave, como veremos aqui, não há como obter todas as referências ao X-wing, ao TIE fighter ou à Millennium Falcon, porque conceitualmente é semelhante à nossa busca por naves espaciais de Star Wars. Portanto, não há correspondência de palavras-chave nesse caso. É improvável que o parágrafo diga explicitamente que se trata de uma nave espacial de Star Wars. Talvez haja uma referência a isso mais acima no documento, mas provavelmente não no parágrafo que estamos tentando extrair. Portanto, estamos utilizando o modelo de incorporação para capturar essa similaridade semântica.
+
+Sei que este é apenas um exemplo bobo e divertido , mas tenho certeza de que você consegue pensar em inúmeros tipos de buscas em seus próprios documentos nas quais você usaria algo assim. Só quando chegamos aos identificadores e à sintaxe exatos é que conseguimos organizar os arquivos diretamente por meio dos caminhos. É aqui que começamos a lidar com dados altamente estruturados, onde não precisamos de busca semântica e podemos confiar nas ferramentas integradas a esses agentes, especialmente os agentes de codificação. É isso que eu quero abordar com você agora. Então, por um instante, pensem comigo no ambiente em que um agente de codificação opera. A primeira coisa a fazer é garantir que
+
+todo o código dentro da sua base de código esteja perfeitamente escrito. Claro, você pode ter um erro de digitação e um nome de função incorreto, mas isso apenas significa que seu código está quebrado. Então, supondo que seu código esteja funcionando, isso significa que tudo está perfeitamente escrito e que temos exatamente esses identificadores e sintaxe. Assim, a busca por expressões regulares, a busca por palavras-chave, tudo isso funcionará muito bem. Não dependemos da ambiguidade da linguagem natural nem precisamos encontrar coisas com base em sinônimos e significados conceituais. É por isso que
+
+não dependemos da indexação semântica de uma base de código para inseri-la em um banco de dados vetorial. Pense também nisto. Temos organização intrínseca devido à estrutura de arquivos e à arquitetura do nosso código-fonte. Assim, o agente pode usar ferramentas de navegação de arquivos para percorrer diferentes pastas e localizar exatamente onde encontrará a resposta, como um arquivo que você deseja editar ou uma documentação que você deseja que ele leia. E, por fim, o último ponto sobre os agentes de codificação é que eles residem no terminal. Assim, eles
+
+têm acesso a todas essas ferramentas de busca bastante poderosas, integradas diretamente ao sistema operacional, como Rip, Grep e Glob. E é nisso que todos esses agentes de codificação se baseiam. Agora temos alguns exemplos de código em nuvem que começaram com o método tradicional de indexação e depois migraram para outro, e outros que simplesmente nunca implementaram nenhum tipo de indexação de base de código. Aliás, se você não precisa de um índice para uma base de código, isso é ótimo, porque esse pipeline de recuperação é apenas mais uma coisa que temos que manter com o agente de codificação, e é um problema muito difícil manter a base de código indexada sincronizada com as alterações reais que você está fazendo no código, porque o código muda com muito mais frequência do que a maioria dos dados não estruturados que temos em uma base de conhecimento. Na maioria das vezes, quando temos uma grande quantidade de documentos, muito poucos deles são alterados, mesmo diariamente. Assim, fica muito mais fácil manter
+
+tudo sincronizado. Espero que esteja claro neste ponto que o rag, ou melhor, o rag tradicional, está praticamente morto para código, mas para a maioria dos outros casos de uso, ele continua muito vivo. Mas não acredite apenas na minha palavra. Vamos analisar o que alguns dos líderes do setor têm dito sobre esses agentes de codificação, à medida que se afastam do uso de softwares tradicionais. O patrocinador do vídeo de hoje é a Scribba, uma plataforma de ensino de programação que funciona de uma maneira completamente diferente de tudo o que existe no mercado . Assim, em vez de apenas assistir ao
+
+vídeo e depois ir para o seu próprio editor para testar o conceito, você pode editar o código do instrutor ao vivo e ver as suas alterações em tempo real. É como programar em dupla com seu instrutor. Então, vou pausar o vídeo e mostrar isso rapidinho. Portanto, temos nossa renderização no canto superior direito. Posso ir, digamos, ao cabeçalho e mudar de "chef claw" para "chef cole", depois executar o comando e pronto, veja só. Podemos
+
+explorar as ideias à medida que assistimos ao vídeo. E essa é simplesmente a melhor maneira de aprender a programar, o que, aliás, é muito importante para que você possa construir a base necessária para trabalhar com agentes de programação e resolver os problemas que surgem quando eles têm alucinações. E a Scrimbo lançou recentemente seu programa de desenvolvimento full stack. Mais de cem horas de conteúdo para backend e frontend, incluindo frameworks como o Nex.js. Então, como eu disse, essa é a
+
+base para você construir qualquer software, mesmo usando assistência de codificação por IA . E a Scribba oferece muitos cursos gratuitos para iniciantes. Além disso, através do link na descrição, você pode obter um desconto de 20% na assinatura profissional deles . O melhor exemplo disso é o Código Claude. Boris Churnney é um dos responsáveis ​​pela manutenção do Claude Code. Muita gente leva os tweets dele como
+
+verdade absoluta. Então, quando alguém perguntou por que Claude não usava modelos de embedding ou o tradicional rag, ele disse que as primeiras versões do código em nuvem realmente usavam rag com um banco de dados vetorial local, mas descobriram rapidamente que uma busca genética geralmente funciona melhor. A busca genética é o que eu estava mencionando no diagrama do Excal. Estamos fornecendo ao nosso agente essas ferramentas diretamente no terminal para que ele possa navegar pela nossa estrutura de arquivos e visualizar nosso código. Então, tecnicamente, isso ainda é um banco de dados ragtime, como eu estava dizendo, mas não tem nada a ver com um banco de dados vetorial. Então, vou mostrar isso a vocês com
+
+um exemplo prático de código na nuvem. O Cloud Code implementou recentemente essa ferramenta de busca que oculta as chamadas bash subjacentes que são feitas. Então, estou pedindo para que não use uma ferramenta de busca e, em seguida, examine meu código-fonte para me ajudar a entender como minhas respostas de erro são construídas. E assim podemos ver aqui que está usando o GP (Gerenciamento de Políticas Públicas). Está usando uma ferramenta chamada said. Está usando o comando `cat` para visualizar o
+
+conteúdo de arquivos específicos. Há muito trabalho sendo feito aqui, mas não há banco de dados vetorial, nem um rag tradicional, e isso me dá uma visão geral fantástica no final. E como eu estava dizendo antes, Claude Code está longe de ser o único. Nick Pash, um dos criadores originais do Klein, publicou este artigo explicando por que não recomendo mais o Rag para agentes de codificação autônomos. E é uma opinião meio polêmica, porque ele chega a dizer que a narrativa da revista "rag" é um vírus mental. O que ele quer dizer com isso é que
+
+existe uma ideia geral, especialmente em 2023 e no início de 2024, de que sempre que você precisar que seu agente pesquise algo, você precisará de uma pesquisa tradicional baseada em similaridade semântica. E assim as pessoas o encaixavam em qualquer tipo de caso de uso que exigisse interação com agentes . Seria um exagero completo. É esse vírus mental de que ele está falando. Portanto, se você estiver criando um agente de codificação, pense duas vezes antes de usar o Rag, pois ele representa uma enorme distração tanto para sua equipe quanto para o próprio agente. E eu vi isso em
+
+primeira mão porque trabalhei bastante com a Archon no ano passado. Rag para programação de IA, que, aliás, é o motivo pelo qual estou mudando a visão e trabalhando em algumas coisas para o Archon nos bastidores. Mas já vi casos em que os fragmentos de informação retornados da sua base de conhecimento para o seu código acabam confundindo o LLM mais do que ajudando. E veja bem, você poderia até argumentar que ferramentas como o RIP GREP são, na verdade, buscas mais direcionadas e focadas, o que é definitivamente melhor ao trabalhar com um código-fonte. E Ader é outro agente de codificação que fez algo muito interessante. O que eles fizeram foi
+
+implementar um "tree sitter", o que soa muito sofisticado, mas basicamente significa que eles estão fornecendo um índice da base de código antecipadamente para o agente de codificação como parte do seu prompt do sistema. Assim, aproveitamos a estrutura de arquivos que temos, a arquitetura com nossas bases de código. Assim, fornecemos ao agente uma visão geral imediata. Aqui estão os arquivos. Aqui estão as classes e funções principais.
+
+Dessa forma, o agente passa a ter essencialmente um índice da base de código. Não se trata de um índice em um banco de dados vetorial, mas sim de uma visão geral simplificada dos diferentes arquivos que você pode querer analisar com base no que o usuário está solicitando. Sim, existem muitas estratégias realmente interessantes que esses agentes de programação estão implementando para evitar o uso de gambiarras tradicionais, e eles estão compartilhando isso com o mundo, como acabamos de ver. E é isso que alimenta essa narrativa falsa de que o ragtime está morto, porque sim, ele ainda é útil para programação, mas as pessoas veem isso e não entendem essa distinção fundamental. A única razão pela qual o uso tradicional de linguagens de programação não é mais relevante para a codificação de IA é a estrutura complexa de nossas bases de código. Mas sim,
+
+você provavelmente consegue pensar em um milhão de casos de uso em que você tem dados muito não estruturados e não pode simplesmente confiar nessas ferramentas que vimos antes. Suporte ao cliente, conformidade e assuntos jurídicos. Quero dizer, você pode imaginar um milhão de casos de uso com qualquer tipo de base de conhecimento interna onde precisamos depender dessas coisas e precisamos desse tipo de pipeline para busca semântica. Outra coisa que mencionei muito brevemente antes é que existe uma certa sobrecarga na criação e manutenção do pipeline de recuperação. até mesmo um pequeno custo para nosso processo de fragmentação e incorporação para armazenamento em nosso banco de dados vetorial. Mas, honestamente, isso é
+
+mais uma vantagem do que um custo em si, porque, ao fragmentarmos nossos documentos, estamos dividindo-os em porções de informação menores e mais fáceis de assimilar. Assim, quando recuperamos um fragmento, temos apenas uma pequena quantidade de informação que, idealmente, contém exatamente o que nosso agente precisa. Dessa forma, reduziu-se o custo da nossa busca orientada a agentes em larga escala. Esta é uma estimativa muito, muito aproximada, mas é cerca de cem vezes mais barato para essas bases de conhecimento realmente grandes quando realizamos a busca em blocos menores em vez de ler documentos inteiros, muito mais do que faríamos se tivéssemos outras versões de busca agética. Portanto, para bases de conhecimento menores, às vezes pode ser difícil justificar a manutenção de um pipeline, mas quando realmente começamos a escalar, nossa busca tradicional e a manutenção desse pipeline se tornam uma necessidade. Agora, vamos
+
+voltar rapidamente ao exemplo do código em forma de garra . Se eu fosse executar todos esses comandos GP, said e cat, pesquisando em uma enorme base de conhecimento de texto não estruturado, isso seria absurdamente lento e caro. Até mesmo esta busca aqui foi bem lenta para mim, o que é bom porque estamos dando ao agente muita flexibilidade em como ele encontra a resposta para nós. Mas simplesmente não é realista aplicar isso a uma base de conhecimento muito grande . Precisamos de algo mais direcionado, como extrair alguns blocos de dados aqui e ali, e isso deve conter as informações que procuramos. Obviamente, isso é um pouco
+
+idealista, mas existem muitas estratégias de RAG que já abordei no meu canal. Quero abordar mais especificamente o RAG hierárquico para tornar o RAG realmente preciso, de forma que possamos confiar em apenas algumas informações extraídas de alguns blocos para obter o que nosso agente precisa, em vez de passar por um processo massivo como vimos com o CloudCode. E isso nos leva rapidamente ao último ponto que quero abordar com vocês: a ponte. Como eu disse, existem prós e contras no RAG tradicional e em outros tipos de busca agética. Assim, em alguns casos de uso, a estratégia que nosso agente deve seguir dependerá da consulta específica na base de conhecimento, pois podemos dar ao nosso agente de IA a capacidade não apenas de descobrir o que pesquisar, mas também como fazê-lo, com base na tarefa específica.
+
+Assim, podemos seguir qualquer um desses caminhos. Fornecemos ao agente ferramentas para fazer ambas as coisas. Então, isso ainda é um trapo, certo? Todo esse vídeo, tudo ainda é rag, mas é uma recuperação mais inteligente porque talvez descubra, tipo, ok, posso usar uma expressão regular para encontrar exatamente o que o usuário quer aqui. Então vamos seguir um caminho diferente, que não seja o pano tradicional, e usar alguma outra ferramenta. Ou talvez seja algo como, ok,
+
+definitivamente precisamos combinar os conceitos aqui. Então, vamos seguir o caminho de incorporar a consulta do usuário, enviando-a para uma busca no banco de dados de vetores. E isto, meus amigos, é o que tenho explorado bastante ultimamente. Portanto, certamente tenho interesse em produzir mais conteúdo sobre isso, criando uma ponte entre os dois mundos, pois isso proporciona flexibilidade máxima aos agentes de IA para que eles descubram como realizar a busca. Isso está se tornando cada vez mais viável à medida que os grandes modelos de linguagem e as estruturas que os suportam se tornam cada vez melhores. Pronto, aí está. Essa é a sua
+
+resposta para a pergunta "o pano está morto?". Para programação, sim. Para praticamente todo o resto, definitivamente não. Então, se você gostou deste vídeo e quer ver mais conteúdo sobre Ragnarok e programação com IA, eu agradeceria muito um like e uma inscrição no canal.

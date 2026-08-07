@@ -1,0 +1,134 @@
+---
+video_title: "Harness Engineering: What Separates Top Agentic Engineers Right Now"
+video_id: ulNsa0sD8N0
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=ulNsa0sD8N0
+video_date: 2026-05-28T00:00:02+00:00
+video_description: |
+  Everyone says "harness engineering" is the most important skill in AI coding for 2026, but almost nobody can tell you what it actually is.
+  
+  A coding agent is the model plus the harness around it, and the harness is the part that's more important! One teardown of Claude Code found roughly 98% of it is the harness, not the model.
+  
+  It has two levels. The first is the AI layer around a single session: your rules, skills, hooks, subagents, etc. And here it's all about using every LLM mistake as an opportunity to evolve your AI layer (your harness).
+  
+  The second, where the real leverage is, is orchestrating multiple coding agent sessions into one workflow, each with a focused job. This makes it possible to reliably take on larger tasks and is how you really scale coding agents.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Check out the new Google Cloud Agents CLI! I've been using their new Agents CLI to scaffold and deploy production agents straight from my terminal with the model-agnostic ADK, no cloud console required:
+  https://fandf.co/3PsygXP
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - The Dynamous Agentic Coding Course is now FULLY released - learn how to build reliable and repeatable systems for AI coding: 
+  https://dynamous.ai/agentic-coding-course
+  
+  - Companion repo (the harness, built):
+  https://github.com/coleam00/harness-engineering-demo
+  
+  - Harness Engineering article 1: https://addyosmani.com/blog/agent-harness-engineering/
+  
+  - Harness Engineering article 2: https://martinfowler.com/articles/harness-engineering.html
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 What is Harness Engineering?
+  0:47 Defining the Agent Wrapper
+  1:55 The Three Layers of AI
+  4:39 Harness vs. Context Engineering
+  5:46 The Harness Engineering Mindset
+  7:45 Sponsor: Google Cloud Agents CLI
+  9:25 Components of the AI Layer
+  12:52 Orchestrating Coding Agent Sessions
+  14:34 Automating with the Ralph Loop
+  16:34 Final Thoughts
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Um termo que está surgindo cada vez mais no espaço da IA ​​atualmente é engenharia de aproveitamento de recursos . É a grande novidade deste ano, assim como a engenharia de contexto foi no ano passado. E isso é realmente importante, mas, assim como a engenharia de contexto, está começando a se tornar uma palavra da moda que as pessoas usam sem realmente saber o que significa. Isso levanta a questão: será que essa habilidade, ou mesmo essa mentalidade, que abordarei daqui a pouco, vale a pena aprender ou adotar? E a resposta é sim. E é por isso que
+
+quero falar sobre isso com vocês hoje. Ajudando você a entender o que é engenharia de chicotes elétricos. Existem alguns detalhes importantes nisso que vale a pena conhecer. Então, vou explicar isso de forma bem simples para você em menos de 15 minutos. E claro, como de costume, tenho alguns exemplos e demonstrações para tornar tudo ainda mais concreto. Muito bem,
+
+então vamos direto ao assunto. A engenharia de chicotes elétricos consiste basicamente em construir a estrutura que envolve o modelo. Portanto, qualquer agente é a combinação de um modelo de linguagem subjacente de grande porte, como o GPT ou o Claude, e uma camada que o envolve, fornecendo o contexto e definindo seus processos. Portanto, neste vídeo, vou me concentrar principalmente em assistentes de programação de IA , mas, na verdade, essa ideia de engenharia de aproveitamento pode ser extrapolada para qualquer agente que você crie para qualquer finalidade . E, na verdade, a engenharia de chicotes elétricos tem duas partes . Temos
+
+uma sessão individual de assistente de codificação de IA , e depois temos a verdadeira evolução, na qual estou mais focado agora. Isso consiste em combinar várias sessões de agentes de codificação em um fluxo de trabalho maior para lidar com uma tarefa mais complexa. E assim chegaremos lá, mas quero começar pelos fundamentos. E uma coisa muito importante a entender é que essa primeira ideia de engenharia de chicotes elétricos em uma única sessão, muitas das ideias aqui são muito semelhantes à engenharia de contexto. Esta é uma evolução direta da engenharia de contexto. Como podemos
+
+fornecer o ecossistema de contexto adequado ao nosso agente de codificação? Mas existem algumas diferenças importantes aqui que eu gostaria de destacar. Mas, antes de mais nada, acho que este diagrama explica tudo muito bem. Começamos com o modelo de linguagem subjacente de grande escala . Este é o raciocínio do nosso agente. E então, o primeiro invólucro
+
+em torno disso não é algo que você constrói sozinho. Na verdade, é a ferramenta que você usa, o agente de codificação que você escolhe. E assim, Claude Code, Codex, Py, e muitos outros agentes de codificação existem por aí. Na verdade, todos eles são arneses que uma empresa projetou em torno de seu modelo. Então, isso pode não parecer engenharia de chicotes elétricos porque você não está definindo nada, mas você está escolhendo o chicote quando escolhe a ferramenta. Algumas pessoas acham que o Claude Code é
+
+a melhor ferramenta para programação. Algumas pessoas acham que o Codex é... Há muita discussão em curso neste momento . Mas, mais
+
+importante ainda do que o agente de codificação que você escolher é a camada de IA. Esta é a camada definitiva que envolve qualquer sessão de agente de codificação, e é isto que você realmente poderá construir. Assim, quando pensamos no que compõe a camada de IA, estamos realmente definindo todos os contextos e processos para o nosso agente de codificação. Então, nossas regras globais, nossas habilidades e servidores MCP, todas as capacidades que oferecemos, buscas baseadas em código como LSP ou grafos de conhecimento, nossos hooks e nossos subagentes. Gosto muito destes seis componentes que, praticamente, estão integrados em todos os assistentes de codificação de IA e agora compõem a sua camada de IA. Portanto,
+
+independentemente de como você queira inserir seu processo ou suas regras, você fará isso por meio de uma dessas seis opções. Então, existem alguns artigos que eu realmente gostaria de destacar aqui para ajudar você a entender a engenharia de chicotes elétricos. Vou incluir os links na descrição. Esta primeira possui uma analogia que eu gostaria de analisar mais detalhadamente aqui. Eu amo isto. Assim, no
+
+lado esquerdo, temos uma representação do que o modelo pode fazer por si só, como Claude ou GPT. E, atenção para o spoiler, não é muita coisa . Consideramos como garantidas todas as funcionalidades que assistentes de codificação com IA, como Claude Code e Codex, oferecem ao modelo logo de início. Um LLM por si só não tem como acessar um sistema de arquivos, o Git ou executar quaisquer comandos. Isso inclui tudo o que vem com a primeira camada de chicote de fios, já incorporada às ferramentas que baixamos e usamos imediatamente. Portanto, é isso que essas
+
+pontes superiores representam aqui. São todas as capacidades que essas ferramentas conferem ao modelo que o tornam capaz de realmente funcionar como um assistente de programação com IA, certo? São as funcionalidades, somadas aos comandos do sistema, que estão integradas a essas ferramentas. E então, à medida que chegamos às pontes inferiores, é aqui que começamos a entrar na camada de IA de nível superior, onde definimos coisas como os servidores MCP que usamos, as habilidades que desenvolvemos ou incorporamos, regras e coisas do gênero. Mesmo chegando ao nível dos loops de Ralph, como abordaremos no final deste vídeo, quando falarmos sobre como conectar várias sessões de agentes de codificação, o que representa o ápice da engenharia de compatibilidade. Portanto, fiquem atentos para mais novidades.
+
+Mas o ponto principal é que cada uma dessas pontes são ferramentas que permitem que o modelo de linguagem em larga escala funcione e atue como um assistente de codificação de IA. Certo, legal. Então, com essa definição em mente, quero agora abordar a questão crucial que todos estão ignorando . A pergunta que você pode estar se fazendo é: "Cole, mas grande parte disso aqui não é apenas engenharia de contexto? Tipo, eu pensei que iríamos abordar isso em 2025."
+
+E a resposta é, na verdade, sim, até certo ponto. E é por isso que acho que a engenharia de chicotes elétricos está se tornando uma expressão tão popular atualmente. A maioria das pessoas não entende realmente como isso representa uma evolução da engenharia de contexto. É exatamente isso que eu quero discutir com você agora. Assim, existem duas distinções importantes. Então, em primeiro lugar
+
+, a maior parte da infraestrutura em torno do modelo, como este artigo descreve, é apenas engenharia de contexto. Sua injeção de contexto, suas ações por meio de ferramentas e MCPs, persistência, observabilidade. A única coisa que realmente faz a diferença é o controle. Assim como os loops de Ralph, que orquestram diferentes sessões de agentes de codificação e subagentes, acredito que isso seja uma verdadeira evolução dos subagentes. Então, falaremos sobre isso a seguir. Mas a
+
+outra distinção realmente importante que este artigo destaca é a reformulação da questão da habilidade . Como mencionei no início do vídeo, a engenharia de chicotes elétricos não é apenas uma habilidade, mas também uma espécie de mentalidade, certo? Uma reformulação. Então, o autor diz aqui: "Há um padrão que observo os engenheiros seguirem. O agente faz algo estúpido, o engenheiro culpa o modelo e a culpa é arquivada como 'esperar pela próxima versão'." Tipo, sabe, se o Claude
+
+fizer besteira aqui, é melhor esperarmos pelo Opus 5. Ou se o GPT der problema, vamos esperar pelo GPT 6. E, sabe, pessoalmente, eu vejo isso o tempo todo também. Eu também tenho essa tendência , e provavelmente você também. Mas a mentalidade da engenharia de chicotes elétricos rejeita essa premissa padrão. Aliás, eu chamo esse
+
+sistema de evolução. Está muito em sintonia com algo em que tenho me concentrado bastante ultimamente. Então, aqui está o que ele diz: "A falha geralmente é identificável. O agente não conhecia uma convenção, então você a adiciona ao agents.md. Ou o agente
+
+executou um comando destrutivo, então você adiciona um gancho que o bloqueia." Basicamente, a ideia aqui é que todo erro se torna uma regra. Ou, como eu gosto de dizer, cada erro se torna uma oportunidade para aprimorar sua estrutura, melhorando a segurança por meio de seus pontos de contato, seus processos por meio da atualização de suas habilidades, qualquer coisa em sua estrutura, para que na próxima sessão de codificação do agente aquele problema encontrado tenha menos probabilidade de ocorrer. E isso é extremamente poderoso. Essa evolução do sistema significa que você está assumindo o controle e melhorando o desempenho do seu agente de codificação ao longo do tempo com a camada de IA que você controla sobre o assistente de codificação que escolheu. Na
+
+verdade, a engenharia de aproveitamento de recursos consiste em reivindicar essa autonomia, assumir o controle do seu sistema, para que, quando algo der errado, você não culpe apenas seu assistente de programação de IA e se sinta impotente. Porque imprevistos vão acontecer. Assim como ao trabalhar com desenvolvedores humanos, haverá problemas. Mas precisamos garantir que tenhamos uma maneira de aprender com isso e não ficar à mercê da próxima sessão, esperando que o problema não se repita. Queremos ser o ser humano que guia o sistema, alimentando o progresso. Assim, na
+
+geração inicial, temos nossos princípios e outros tipos de contexto que inserimos, e depois temos nossos sensores para feedback, nossos mecanismos de controle, nossos agentes de revisão, as habilidades que lhes damos para essa autocorreção, evoluindo nossa camada de IA ao longo do tempo. O patrocinador do vídeo de hoje é o Google Cloud, especificamente sua nova CLI para agências. E estou animado com isso porque hoje em dia é ideal construir seus agentes com outros agentes, certo? Utilizando seus assistentes de codificação com IA, como Cloud Code e Codex. A parte fácil é ter a ideia de um agente, mas de fato construí-lo e implantá- lo em produção é outra história. Mas o Google tornou isso
+
+incrivelmente fácil agora com sua CLI para agências. É um conjunto de habilidades que posso incorporar ao meu agente de programação, fornecendo instruções completas e claras sobre como criar agentes com o SDK do Google Agent e até mesmo implantá-los em produção e monitorá-los. Assim, aqui mesmo no meu Cloud Code, por exemplo, posso dizer para usar a CLI da agência para criar um agente de pesquisa que busca na web. Obviamente, este é um exemplo simples, mas as instruções servirão de base para ajudá-lo a construir qualquer agente que desejar. Então, com a ajuda dessas habilidades, seu agente de codificação criará todo o código. É uma
+
+tentativa única em vários testes diferentes que eu apliquei aqui. E também temos o nosso ambiente de desenvolvimento local . Podemos iniciar o agente aqui para que possamos testar tudo localmente com um aplicativo de bate-papo completo antes de implantarmos nosso agente. E quando você estiver pronto para levar seu agente para produção, basta um único comando para implantar seu agente do SDK do Google Agent no Google Cloud. Super fácil. E seu
+
+agente obtém sua própria identidade na nuvem. Você tem aqui o ambiente ideal para testar ao vivo, e tem acesso a registros e total observabilidade. Portanto, tudo o que você precisa para uma implantação em produção está incluído, mas não é extremamente difícil configurar tudo isso como era antigamente. E a melhor parte é que a CLI da agência é gratuita e de código aberto. Você pode usar essas habilidades, aplicá-las em qualquer agente de programação e ver como é fácil criar qualquer agente de IA atualmente . Vou colocar um link na
+
+descrição. Recomendo muito que você dê uma olhada . Eu também tenho este repositório complementar para o nosso vídeo, que oferece uma ideia bem concreta de como uma camada de IA pode ser. E esta é uma representação muito boa de tudo aqui presente na camada de IA que irei incorporar e desenvolver em cada uma das minhas bases de código. Quero abordar isso rapidamente antes de entrarmos na última evolução da engenharia de harnesses, a parte realmente poderosa: a criação de fluxos de trabalho onde reunimos e orquestramos várias sessões de agentes de codificação. E eu tenho
+
+exemplos disso, como o loop Ralph neste repositório também. Como prometido, este vídeo seria mais curto, então não vou me aprofundar muito em cada um dos componentes da camada de IA. Mas tenho um vídeo, cujo link vou compartilhar aqui, onde abordo com mais detalhes as regras, habilidades, LSP e ganchos, cada um desses componentes. Quero manter um nível bem geral, dar algumas dicas valiosas aqui, e então você pode, claro, entregar este repositório ao seu agente de programação para que ele o ajude a implementar as coisas e a entender tudo aqui. Na verdade, a base da sua camada de IA são todas as regras, restrições e convenções que você deseja que seu agente de codificação siga, seus padrões. Então,
+
+essas são as suas regras globais e quaisquer outros tipos de contextos sob demanda que você tenha, como Markdown, documentos do Confluence e coisas do tipo . E então, suas habilidades, esses são os fluxos de trabalho que você tem para seu agente de codificação. É assim que você quer que seja o planejamento, a implementação e a validação. E eu tenho uma habilidade separada para cada uma, porque o que eu realmente quero fazer, e recomendo muito isso, é que você faça o planejamento, a implementação e a validação em sessões de agentes de codificação separadas para manter cada uma delas eficiente em termos de tokens e focada. [bufa] Então, cada uma dessas habilidades vai gerar algum tipo de artefato que você pode usar como uma transição para a próxima sessão. Então, estamos começando a
+
+encadear sessões de agentes de codificação, mas ainda estamos falando de fazer isso manualmente, certo? Por exemplo, você executará o plano e criará o plano com o agente de codificação com uma habilidade. E então você pegará esse código Markdown e o entregará para a próxima sessão de agentes de codificação para a implementação da habilidade, certo? Você passa por isso sistematicamente por conta própria. Então, daqui a pouco, falaremos sobre como podemos realmente juntar tudo isso.
+
+E, falando em anzóis, estes são honestamente muito subutilizados. Adoro usar ganchos para diversas finalidades. Em primeiro lugar, por questões de segurança. Então eu uso um gancho como ferramenta prévia. Basicamente, trata-se de um trecho de código que será acionado antes que o agente de codificação execute qualquer chamada de ferramenta, como escrever em um arquivo ou executar qualquer tipo de comando. Portanto, é aqui que
+
+podemos incorporar recursos de segurança, como não ler arquivos .env, pois realmente não queremos isso no contexto do LLM, ou remover diretórios de forma muito destrutiva, por exemplo. Eu também gosto de ter algum tipo de gancho de validação de parada . Portanto, quando o agente de codificação disser que terminou a implementação, quero executar deterministicamente um conjunto de testes. Por exemplo, os testes unitários, a verificação de código, a verificação de tipos, tudo isso está realmente passando? Porque, se não for, quero
+
+forçar o agente de codificação a iterar até que seja. E é exatamente isso que esse anzol faz. E por último, mas não menos importante, executar uma verificação rápida de lint após cada edição de arquivo é uma ótima maneira de manter sua base de código limpa e organizada, o que também contribui para tornar seus agentes de codificação mais confiáveis ​​no futuro. Então, é isso . Apenas algumas dicas valiosas para a camada de IA que temos aqui. E
+
+eu até incluí instruções no arquivo readme para executar uma biblioteca pip super básica. Essa é a abordagem fundamental da engenharia de agentes. Então você planeja com a habilidade de planejamento, simplesmente enviando o recurso que deseja. Você itera sobre o plano, produz o documento Markdown e o entrega para a equipe de implementação em uma sessão separada com o agente de codificação. Você também tem sua estratégia de validação para que o agente verifique seu próprio trabalho em Markdown . Então, fique à vontade para experimentar você
+
+mesmo. Mas agora, finalmente, quero chegar ao ápice da evolução da engenharia de chicotes elétricos. Então, vou voltar ao diagrama. Vamos falar sobre como orquestrar sessões de agentes de codificação. É nesse momento que realmente conseguimos ampliar a quantidade de trabalho que realizamos com agentes de codificação. Então, a ideia principal aqui é que
+
+você não deve simplesmente pegar uma tarefa enorme ou um PRD e entregá-lo a uma única sessão de agente de codificação. Não será eficiente em termos de tokens, e o modelo de linguagem subjacente, de grande porte, ficará completamente sobrecarregado. Não importa o quão boa seja a camada de IA que você criou aqui com elementos como suas habilidades e regras. Se você investir muito tempo e recursos no LLM de uma só vez, ele vai fracassar miseravelmente. Então, o que estamos fazendo aqui, orquestrando várias sessões de agentes de codificação em conjunto, é atribuir a cada agente de codificação uma tarefa muito específica . Portanto, esses também podem ser subagentes
+
+, mas, como você verá no loop do Ralph, são as sessões reais de agentes de codificação que estão passando as tarefas uns para os outros. Assim, podemos explorar a implementação que surge de um requisito do usuário, ter um agente que escreve o plano, enviar esse artefato de plano para uma implementação e, por exemplo, este é apenas um exemplo de estrutura, mas poderíamos ter vários agentes de revisão de código sendo executados em paralelo. Este foca-se na segurança, este na correção da implementação e este em garantir que seja o mais simples possível. E então, se tudo correr bem, você cria o pull request; caso contrário, você itera e continua trabalhando na implementação. E você pode fazer tudo isso manualmente, como eu mencionei antes. Podemos acessar o
+
+código Claude uma vez e criar o plano, e depois abrir outro código Claude e fazer a implementação, mas o verdadeiro poder da engenharia de chicotes elétricos aqui é que podemos automatizar tudo isso. Podemos criar um sistema que conecte automaticamente todas essas sessões de agentes de codificação com os documentos de transferência, criando a solicitação de pull request e tudo mais . E é isso que o loop Ralph faz. Então, vamos voltar ao nosso repositório de exemplo. Quero mostrar a vocês como isso realmente é. Assim, o circuito de Ralph
+
+é apenas um exemplo de um sistema de controle de agentes. Mas Jeffrey Huntley, o criador de Ralph, é realmente um dos pioneiros aqui. Este é um dos primeiros exemplos que mostram, de forma muito básica, como podemos automatizar a junção de várias instâncias do código Claude, Codex. Quer dizer, você poderia fazer isso com qualquer assistente de programação, porque basicamente, não vou entrar em muitos detalhes técnicos aqui, mas só quero mostrar um pouquinho, é que temos um script simples. Pode ser um script em Python ou um script em bash. Não vou entrar em detalhes sobre o
+
+código aqui, mas basicamente você define um escopo de trabalho maior, como um PRD enorme, e ele será responsável por dividir isso em tarefas individuais e, em seguida, executar sessões do agente de codificação para lidar com elas uma de cada vez até que tudo esteja concluído. Então você dá um comando. Aqui está a entrada do usuário . Esses são os diferentes itens que eu quero construir na especificação, e então isso vai gerar um plano aqui. Este é o plano fixo. Então, é isso que
+
+vai acontecer na primeira iteração do loop, na segunda iteração e na terceira iteração. Vai continuar funcionando, como que criando um registro à medida que as diferentes sessões de código Claude forem executadas. E então, quando decidir que terminou, vai produzir algum tipo de indicador disso. Assim como aqui, estou usando um done.text. Então, é aqui que ele
+
+decide, tipo, muito bem, todos os oito itens de especificação do prompt original estão concluídos. Estamos satisfeitos. Agora podemos sair do loop. E essa é a única condição, a única maneira de sairmos do loop while principal aqui é se tivermos esse done.text e o agente de codificação estiver confiante de que a implementação está concluída e toda a validação foi feita. Então, estou apenas tentando
+
+mostrar a vocês o Ralph Loop para dar um exemplo de um arnês. Mas você pode ver a ideia aqui: estamos usando várias sessões de agentes de codificação para manter cada uma delas muito, muito focada. Mas também estamos automatizando o processo, então não precisamos ficar monitorando nosso agente de codificação enquanto lidamos com essas tarefas mais longas. E este é realmente o futuro da engenharia de agentes: construir essas estruturas para lidar com escopos de trabalho maiores, à medida que os modelos e as ferramentas subjacentes se tornam mais poderosos. Assim é. Então,
+
+aproveite isso aqui. Quero dizer, existem muitos recursos disponíveis sobre engenharia de chicotes elétricos. E depois, há o Archon, meu construtor de chicotes elétricos de código aberto, de uso gratuito. Esta é a maneira mais fácil de começar com engenharia de agentes, construindo seus próprios dispositivos como o Ralph Loop, mas de forma mais personalizada para você, seu processo específico e ciclo de vida de desenvolvimento de software. Portanto, recomendo muito que você dê uma olhada nisso. De resto, espero que
+
+este vídeo tenha sido útil para você em geral, para entender o que é engenharia de chicotes elétricos, o que é supérfluo e o que realmente vale a pena saber. Se você achou isso útil de alguma forma, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo.

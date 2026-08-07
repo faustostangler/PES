@@ -1,0 +1,1032 @@
+---
+video_title: "Archon + Jira: Drag a Ticket, Get a Pull Request (Live Build)"
+video_id: qyB52HIiou8
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qyB52HIiou8
+video_date: 2026-05-24T04:41:55+00:00
+video_description: |
+  Archon already triggers AI coding workflows from GitHub, Slack, Telegram, and Discord - but enterprises run their work out of Jira. So today I'm building a Jira adapter for Archon, live: a ticket comes in, Archon fixes the bug, opens a pull request, and posts the PR link back on the ticket.
+  
+  The fun part is the architecture. Each ticket in Jira will get a dedicated conversation with Archon and can run any workflow. I'll build the whole thing against a real Jira board and fix an actual ticket live!
+  
+  Archon: https://github.com/coleam00/Archon
+  Archon docs: https://archon.diy
+  Dynamous community: https://dynamous.ai
+  
+  Livestreams Mon/Thu/Sat at 9 AM CT. New YouTube video every Wednesday at 7 PM CT.
+---
+Hoje estamos integrando o Archon com o Jira. A promessa aqui é que poderemos enviar um ticket para o Jira e, em seguida, finalizar com uma solicitação de enquete. Então, isso é algo que eu já vinha querendo fazer há um bom tempo. Na verdade, tenho usado o Jira cada vez mais nos últimos meses, principalmente porque tenho ministrado mais treinamentos de nível empresarial sobre a adoção de assistentes de codificação com IA, como o Claude Code. Então, eu queria incorporar isso ao Archon porque é uma parte crucial do ciclo de desenvolvimento para, eu diria, cerca de 80% das organizações e indivíduos atualmente. Então, houve uma
+
+pesquisa do Stack Overflow que eu dei uma olhada nos últimos dois meses. Eu até gostaria de ter conseguido transmitir isso aqui, mas está uma loucura. Por exemplo, no que diz respeito a ferramentas de desenvolvimento, o Jira, assim como o Confluence dentro do pacote Atlassian, é praticamente tão popular quanto qualquer outra ferramenta no mercado, como o GitHub e todas as outras grandes que praticamente todo mundo usa. Parece que todo mundo usa o Jira. Então, temos algo como um quadro de avisos e uma lista de pendências. É tipo um
+
+quadro de avisos, né? Então, tipo, eu consigo pegar coisas e arrastá-las comigo. O que eu quero fazer com o Archon é permitir que, dentro de cada ticket individual que temos no Jira Epics, possamos ter uma conversa separada com um agente de programação. Basicamente, temos um agente para cada bilhete. E à medida que planejamos, construímos e validamos isso, contamos com esse mesmo agente, com os fluxos de trabalho do Archon, nos auxiliando ao longo do processo e sendo capazes até mesmo de realizar tarefas completamente de ponta a ponta.
+
+E assim, com o Archon, já existem muitas plataformas que integramos à ferramenta. Nós os chamamos de nossos adaptadores. É assim que se fala com o Arconte. Então, se você for ao arquivo readme aqui e rolar para baixo, nós listamos todos os que suportamos. Então, temos uma interface web e posso abri-la aqui mesmo . Já mostrei isso bastante nas
+
+últimas transmissões ao vivo que fiz. Então, a interface web é como uma forma padrão, ou melhor, uma maneira personalizada de iniciar e visualizar os registros dos fluxos de trabalho do Archon. E depois temos a CLI (linha de comando). É isso que usamos com o código na nuvem, ou seu segundo cérebro, para invocar coisas diretamente na linha de comando. Assim, você pode basicamente encaminhar seu trabalho para fluxos de trabalho do Archon usando a CLI. Além disso,
+
+também oferecemos suporte ao Telegram, Slack, GitHub e Discord. Assim como no Slack, por exemplo, podemos ter várias conversas diferentes acontecendo ao mesmo tempo. Cada tópico no Slack gera uma conversa dedicada com o Archon, e você pode invocar qualquer fluxo de trabalho da mesma forma que faria na interface web e na linha de comando. Então agora eu quero adicionar o Jira, e vou chamar isso de adaptador de comunidade. Outra coisa que temos vindo a desenvolver no Archon é o suporte para dois tipos diferentes de adaptadores. Temos as
+
+versões oficiais com suporte da equipe de manutenção. Essas são as que nós, como responsáveis ​​pela manutenção, vamos nos encarregar de manter atualizadas e em funcionamento. E também temos um conjunto de adaptadores comunitários. Essas são as contribuições das pessoas, que não queremos necessariamente manter, mas queremos permitir que as pessoas adicionem mais e, potencialmente, deem suporte a elas mesmas. Então, se olharmos para a pasta da comunidade aqui mesmo, para os adaptadores no Archon, temos o GY e o GitLab como alternativas ao GitHub para nossos adaptadores do Forge. É como os
+
+adaptadores de controle de versão. E então, o Discord, eu acho que sim, o Discord, nós meio que o construímos como um exemplo de adaptador da comunidade, mas na verdade é algo que nós, como mantenedores, realmente construímos. Mas, no que diz respeito a estas duas aqui, elas foram construídas por pessoas da comunidade, não por nós, os responsáveis ​​pela manutenção. Então, vamos adicionar outro adaptador do Jira aqui. E quero dizer, sim, estou construindo isso como um mantenedor, mas também quero fazer isso como algo da comunidade, porque não necessariamente serei eu quem vai mantê-lo no futuro. Hum, talvez... vamos
+
+ver como corre hoje. Então, estou realmente explorando isso pela primeira vez com vocês. Nunca tentei integrar o Jira ao Archon antes. Então, não tenho certeza exatamente de como vai funcionar ter cada ticket mapeado para uma conversa com um Arconte. Imagino que será como as conversas do Slack.
+
+Veremos. Mas acho que isso vai ser muito legal porque, como eu disse, todo mundo está usando o Jira e poder ter um agente dedicado a cada ticket, ajudando você durante todo o processo, acho que vai ser extremamente útil. Estou muito animado para começar isso aqui. Então, recorrendo ao meu segundo cérebro, tenho o plano de transmissão ao vivo aberto. Então, esta é a conversa que vamos iniciar para dar começo ao fluxo de trabalho do Archon e, assim, construir o adaptador do Jira. Então, estamos usando Archon e Jira.
+
+Seu backlog agora é entregue automaticamente. Sim, você sabe, o Archon já funciona nessas plataformas. Agora vamos construir o adaptador para o Jira. Assim, um ticket é aberto, a Archon pode analisá-lo, corrigir o bug e abrir uma solicitação de pesquisa no GitHub. Então, quero dizer, existem basicamente duas maneiras diferentes de trabalhar com o Jira.
+
+Ou a gente conversa no ticket, ou o Archon pode simplesmente pegar o chamado e resolver tudo automaticamente. Na verdade, estou mais interessado na primeira opção. Gostaria de poder clicar aqui e, ao inserir um comentário, a resposta apareceria diretamente no ticket. É mais isso que eu estou procurando. Então, vou começar criando um problema no GitHub no repositório do Archon. Esse será o
+
+nosso contexto inicial para esta construção. E o mais interessante em construir qualquer tipo de adaptador no Archon é que podemos usar os adaptadores já existentes no código-fonte como exemplo. Portanto, é muito fácil usar esses adaptadores de uma só vez . Espero que possamos instalar este adaptador do Jira de primeira, mesmo que ele não seja exatamente igual aos outros adaptadores que temos aqui. Não é um sistema de controle de versão como o GitHub, portanto não é uma plataforma de compilação. Hum,
+
+mas ainda acho que haverá muitas semelhanças com o Slack e o GitHub. Assim, podemos nos apoiar nisso e incorporar esse contexto à medida que o construímos aqui. Então, esse é o plano para hoje. Mas vou dar uma olhadinha no chat antes de entrar direto no prédio. Tudo bem. Olá, Eric. Que bom te ver por
+
+aqui. A transmissão ao vivo é perfeita para equipes empresariais. Sim, honestamente, esse é o objetivo. Quero explorar mais o Jira e integrar ferramentas como o Archon ao Jira, porque tenho muito interesse em levar meus treinamentos para equipes de nível empresarial . Tenho começado a fazer isso com mais frequência ultimamente. Por isso
+
+já venho utilizando o Jira e, consequentemente, faz todo o sentido integrar também os grandes projetos de código aberto em que estou trabalhando com a ferramenta. E provavelmente também vou querer integrar o Confluence em outro momento. Bem, não tenho muita certeza se isso seria realmente um adaptador ou mais uma fonte de contexto, mas enfim, isso é assunto para outra hora. Então, tudo bem. Ah, legal. Então, para
+
+começarmos, vou simplesmente criar uma issue no GitHub. Então, vou usar minha ferramenta de conversão de voz em texto aqui. Eu adoro usar o Aqua Voice. E eu direi, tudo bem, vamos criar um problema no GitHub no código-fonte do Archon. Então, o que me interessa é poder conversar com a Archon em tickets individuais, assim como conseguimos ter várias conversas em paralelo no Slack por meio de diferentes tópicos. Portanto,
+
+não é necessariamente o caso de um ingresso que chega ao Ajira e o Archon o processa automaticamente. É mais como se estivesse dentro do próprio bilhete. Podemos conversar com o Archon para executar fluxos de trabalho para lidar com o ticket e movê-lo automaticamente usando apenas a skill do Jira. Certo? Então, é como se o Jira, o adaptador que estamos construindo agora, fosse o ponto de partida para a conversa, não para lidar com o processo de ponta a ponta; isso ficaria restrito aos próprios fluxos de trabalho que criamos. Então, eu quero que você dê uma
+
+olhada no código-fonte do Archon agora mesmo para entender como os adaptadores do GitHub e do Slack funcionam atualmente, para que você tenha todo o contexto necessário para criar a issue no GitHub. Quero que você seja bastante completo aqui. Muito bem, pois este problema no GitHub será o ponto de partida para toda a nossa implementação. E quanto à forma como construímos isso hoje, o interessante é que se eu for...
+
+vou abrir um repositório diferente aqui. Algo que eu construí ontem na comunidade Dynamus. Ministrei um workshop na comunidade Dynamis onde construí ao vivo um fluxo de trabalho Archon chamado Pivystem Evolution. E esse fluxo de trabalho engloba literalmente todo o processo que eu ensino, pelo menos a parte fundamental do processo que ensino no meu curso de programação Aenta . Então, eu tenho um diagrama aqui. Acho que ainda tenho isso aqui. Hum,
+
+ah, não, não está mais disponível. Deixa eu abrir rapidinho o vídeo fora do campo de visão da câmera e trazer pra cá. Evolução do sistema PIV. Sim, é essa mesmo. Sim , então, esse fluxo de trabalho...
+
+eu construí tudo ontem. Foi muito legal. Este workshop foi muito divertido . Então, fazemos o carregamento do contexto e, em seguida, planejamos a implementação com base em alguma issue do GitHub, como a que criamos aqui. E então fazemos a implementação. Fazemos toda a
+
+validação, como verificação de tipos, linting, revisão manual, revisão de código e tudo mais. E, no final, também temos uma evolução do sistema. Portanto, quaisquer problemas que surjam durante a implementação representam uma oportunidade para nós, sabe, evoluirmos nossa camada de IA. Assim, podemos aprimorar nossas regras e habilidades ao longo do tempo, aprendendo com os erros que cometemos nas iterações anteriores para que cada iteração posterior seja mais bem-sucedida. Eu chamo isso de circuito PIV, certo? Assim, estruturei
+
+todo esse processo como um fluxo de trabalho Archon de 12 etapas. Assim, ele usa um problema do GitHub como contexto e, em seguida, gera uma solicitação de pull request no final. Esse é o artefato final da implementação, as alterações no código-fonte e na camada de IA, agrupadas em um conjunto de diffs do Git que posso revisar e mesclar. Então, vamos usar isso para construir o adaptador. E existem mecanismos de aprovação humana integrados aqui, para que eu não esteja simplesmente enviando essa implementação e, sabe, apenas analisando a solicitação de votação quando ela estiver concluída. Como se eu estivesse
+
+lá, revisando o plano, revisando a implementação e, potencialmente, fazendo qualquer tipo de evolução do sistema, o que, aliás, provavelmente estará fora do escopo da nossa transmissão ao vivo de hoje. Mas pelo menos eu quero analisar o plano e a implementação e realmente fazer parte disso, porque isso também tornará a transmissão ao vivo mais envolvente, certo? Quando conseguimos ver que o fluxo de trabalho está progredindo e não apenas "disparar e esquecer", voltando apenas quando estiver concluído. Este é o fluxo de trabalho que vamos executar aqui. E também, para este fluxo de trabalho, não estou usando provedores diferentes como fiz nas últimas transmissões ao vivo. Vou usar o Cloud
+
+Code para tudo, mas utilizarei o Sonnet na maior parte do fluxo de trabalho para torná- lo mais rápido e muito mais eficiente em termos de tokens. E a única parte em que estou usando o Opus é na etapa de planejamento. Então, essa é a coisa legal que fizemos na minha última transmissão ao vivo na quinta-feira: eu fiz alguns testes comparativos para tentar descobrir se é melhor usar o Opus para planejamento ou implementação, certo? Por exemplo, se quisermos um fluxo de trabalho que combine provedores porque queremos ser mais eficientes no uso de tokens e não simplesmente usar o Opus em tudo. Em que situações podemos usar um modelo menor ou mais barato como o Kimmy e ainda obter resultados tão bons quanto ? E o que descobrimos na
+
+transmissão ao vivo de ontem ou de quinta-feira é que, se usarmos o Opus para o planejamento, isso é tudo o que precisamos para obter os melhores resultados, ou pelo menos resultados muito próximos dos melhores. Podemos então usar um modelo menor para literalmente tudo o resto. Então, estou usando o soneto para praticamente tudo nesse fluxo de trabalho. E na verdade estou usando o Kimmy para a programação, mais especificamente o Kimmy K 2.6 para a implementação.
+
+Então, sim, nem sempre precisamos da maior capacidade de raciocínio para realizar o trabalho . Precisamos disso apenas para o planejamento. Então, foi isso que eu construí aqui. Então, vamos executar esse fluxo de trabalho aqui. Ok, então criamos a issue no GitHub. Então vou dar
+
+uma olhada nisso. E então, daremos início ao fluxo de trabalho com isso como contexto. Então, deixe-me ler isto primeiro. E então, conforme o fluxo de trabalho estiver em execução e estivermos construindo isso, também configurarei tudo no Jira. Portanto, existe a oportunidade de resolver algumas coisas em paralelo, por uma questão de tempo.
+
+Muito bem, estamos adicionando um adaptador da plataforma Jira ao Archon para que cada problema no Jira se torne uma conversa ativa e persistente com o Archon. Exatamente o que eu queria. OK, bom. Exatamente como hoje em dia, cada tópico do Slack é uma conversa independente . Então, você menciona o Archon em um ticket, interage com ele, ele executa fluxos de trabalho e responde como comentários nesse mesmo ticket. Tantos ingressos disponíveis ao
+
+mesmo tempo. Muitas conversas paralelas. Tudo bem. A motivação parece boa. Reformulação central. Sim. Existem, portanto, duas maneiras de se
+
+construir um sistema Jira mais Archon. Então, ou é o ponto de conversa ou a captura automática de ponta a ponta, e o motivo pelo qual não estou interessado nisso é porque podemos construir um fluxo de trabalho do Archon para lidar com isso, certo? Por exemplo, se eu quiser construir algum tipo de sistema que aceite um ticket ou que monitore novos tickets e tente resolvê-los de ponta a ponta. Eu construiria isso como um fluxo de trabalho Archon, não como um adaptador, porque é literalmente como o que eu fiz na minha fábrica sombria. Então, este é o meu código-fonte que evolui por si só. Você
+
+envia uma solicitação ao GitHub e ela é processada automaticamente, resultando em uma solicitação de pull request. Não tenho a fábrica funcionando agora porque estava trabalhando nos testes de desempenho, então a desliguei. Mas sim, quando estiver funcionando, ele aceita automaticamente uma solicitação e a finaliza com um pull request. E tudo isso é feito através dos fluxos de trabalho do Archon. Eu não preciso de nenhum adaptador específico para isso. Essa é a
+
+motivação. Ah, e também fornece algum contexto sobre como os adaptadores existentes funcionam, o que é ótimo porque posso incluir isso no início do fluxo de trabalho. Hum, temos um projeto proposto. Então, é exatamente isso que vamos colocar no chat da comunidade e no Jira. É um adaptador de categoria de bate-papo semelhante ao Discord, com o qual eu não sei se concordo totalmente . Talvez eu queira criar uma seção
+
+separada, em vez de um chat, talvez algo como um gerenciador de tarefas. Hum, poderíamos usar gerenciamento de tarefas em vez de chat para esta categoria? Então, uma nova pasta. Acho que, tirando isso, concordo com todo o contexto e com a questão aqui, porque talvez em algum momento adicionemos adaptadores da comunidade para, você sabe, Asana, Monday.com ou LinearU.
+
+Então, eu gostaria de organizar tudo isso junto. Acho que isso faz muito sentido. Tudo bem. Hum, ok. Assim, o gancho da teia da alça espelha o formato da forja. Sim. Então,
+
+outra coisa que terei que fazer é configurar minha autenticação com a Atlassian. Então, eu já tenho o servidor MCP configurado , mas acho que não posso usá-lo para o adaptador, obviamente. Bem, terei que configurar isso conforme for construindo. Mas isso é apenas mais uma coisa que posso fazer em paralelo enquanto esperamos que meu fluxo de trabalho de loop piv termine por completo. OK. Tudo bem. Isso parece ótimo.
+
+Então, vamos voltar aqui.
+
+Atualizando o problema. Bom. Bem, na verdade, uma coisa que eu quero fazer é iniciar uma nova conversa. Enquanto aguardamos isso, vou perguntar sobre a autenticação. Então, se eu for criar um adaptador do Jira para o Archon, como preciso me autenticar com a Atlassian? Porque
+
+agora estou usando o servidor MCP para dar acesso através das minhas habilidades e outros fluxos de trabalho, mas eu precisaria de uma conexão mais direta, como tenho com os adaptadores do GitHub e do Slack e com o Archon. Então, quero que você dê uma olhada nisso e me diga como eu configuraria a autenticação. Quero abordar esse assunto em uma conversa separada porque desejo poder realizar essas coisas em paralelo aqui. OK. Portanto, o problema foi atualizado. O
+
+adaptador Jira agora é uma categoria de gerenciamento de tarefas . Perfeito. Tudo bem. Ótimo. Agora, quero que você invoque o fluxo de trabalho Archon de evolução do sistema PIV que temos aqui em nosso repositório, usando este problema como contexto. Vamos
+
+analisar a implementação completa. Resolva isso. Tudo bem. Então, acho que isso é bom. Trilha de gerenciamento de tarefas. OK. Portanto, está
+
+considerando algumas alternativas. Problemas com o rastreador. Quer dizer, eu acho que gerenciamento de tarefas é bom. Então, sim, vamos colocar o fluxo de trabalho do Archcom em funcionamento. E este aqui está a descobrir como autenticar o nosso sistema. OK, bom. Então, vou
+
+garantir que tudo comece bem. E então criaremos o espaço Jira em paralelo. Ah, droga, não, eu quis dizer evolução do sistema PIV . Então, o programa achou que eu disse pi, e não piv. Então, quero garantir que o fluxo de trabalho esteja correto. Foi mal. Bem,
+
+acho que a culpa é da Aqua Voice. Tudo bem. OK. Deixe-me ler a definição do fluxo de trabalho . OK. Bom. Então, ele encontrou.
+
+Tudo bem. Bom. E enquanto isso acontece em paralelo, vou criar um novo espaço no Jira. Então, antes da transmissão, eu estava pensando em que deveria trabalhar para testar esse adaptador. E eu acho que seria legal pegar a Dark Factory e fazer uma versão dela, tipo uma versão do Jira. Assim, podemos fazer com que não
+
+apenas gerenciemos nossas solicitações de suporte por meio de issues no GitHub, mas também por meio de tickets no Jira. Então, esta é a base de código na qual quero operar. Vou criar um novo espaço aqui e usar o Scrum. Para o nome, vou chamá-lo de " Experimento da Fábrica Escura" e, em seguida, executarei "Gerenciar equipe, acessar, abrir df em seguida". E então, aceitarei os valores padrão para todos eles. Isso não
+
+importa muito aqui. Vou omitir os nomes. E quanto ao espaço de confluência, eu realmente não preciso de um espaço de confluência agora. Então vou pular essa parte. Tudo bem. Bom. Então, aí está o nosso
+
+espaço. Hum, vou criar coisas aqui assim que começarmos . Então, onde estamos agora? Tudo bem. O alvo é o branch base dev do Archon.
+
+O fluxo de trabalho é uma evolução interativa do sistema PIV de 4 portas . A entrada é a issue 1750 do GitHub. Ah, vou usar a habilidade arconte. fluxos de trabalho. Confirme a disponibilidade antes do envio. Há
+
+um problema sério. Bem, o padrão de despacho de habilidades é "dispare e esqueça". OK. Não sei bem por que está travado nisso agora, mas espero que chegue ao ponto em que o fluxo de trabalho seja acionado em breve. É meio estranho. OK. Bem, de
+
+qualquer forma, vamos esperar por isso e depois veremos o que diz sobre a autenticação aqui. Tudo bem. Então, para um adaptador de backend do Jira , use o token da API da Atlassian mais o HTTP básico, que é o equivalente no Jira Cloud ao seu token de acesso pessoal do GitHub ou ao token do bot do Slack. É uma credencial estática não interativa que você adiciona à sua variável de ambiente e usa em todas as solicitações. Certo, então seus adaptadores leem os segredos diretamente do processo enviado por ararconenv.
+
+Ok, então o Jira segue o mesmo formato. Vou precisar do meu domínio, e-mail, API e token. Então, vou criar um token aqui. Copie imediatamente. Ah, armazene as três variáveis. No mesmo lugar onde ficam os segredos dos seus outros adaptadores
+
+. OK. Ah, bom. Então, sim, definitivamente posso configurar isso em paralelo aqui. Ah, eles têm validade de um ano, ok, um ano . Não me importo muito com isso no
+
+momento. Clássico versus com escopo. Provavelmente vou criar um modelo clássico para simplificar . Ah, ok. Então, sim, voltarei a isso mais tarde, mas deixe-me garantir que o fluxo de trabalho esteja funcionando corretamente aqui.
+
+Hum, vamos ver o que diz sobre portões humanos. Confirme o entendimento. Aprovar o plano. Essas questões exigem seu julgamento. Portanto, não consigo controlá-los automaticamente em segundo plano a partir de dentro do sistema. O código na nuvem ficará parado
+
+no portão um. Hum, ok. Você pode ignorar o aviso do código na nuvem . Na verdade, você pode invocar isso diretamente na CLI, pois assim, quando houver uma etapa de aprovação humana, você poderá me repassar as informações e eu lhe darei a resposta. Depois disso, você aprovará o fluxo de trabalho e o continuará. É
+
+, eu realmente não sei do que se trata agora. Nunca vi isso acontecer , mas vou deixar o fluxo de trabalho ser iniciado e tudo ficará bem. Tudobem. Bom dia, John. Que bom ter você aqui. Bem
+
+, eu uso o Jerro com o Teams há muito tempo . Isso é ouro. Obrigado, Cole. Sim, de nada. É legal.
+
+Ei, Runfish. Hum, uma limitação real do reconhecimento de voz. Calcanhar de Aquiles antropogênico. Sim. Tudobem.
+
+Veja bem, o Jira funciona melhor com a API. Preciso do domínio do usuário Jira, do e-mail do Jira e da API. Foi exatamente isso que me disse . Sim. Bem, isso adicionará as variáveis ​​de ambiente ou segredos, dependendo de como você configurou o seu. Sim. Quer dizer, praticamente tudo o que você
+
+disse aqui está exatamente de acordo com o que me disseram. Então, está com boa aparência. Tudo bem. Hum, execute o comando CLI relay e retornarei o contato com você. OK. Sim, não
+
+sei por que demorou tanto para chegarmos a esse ponto, mas obrigado. Era isso que eu estava procurando. Então, deixe-me garantir que o fluxo de trabalho seja iniciado e depois voltarei para configurar as credenciais . Essa vai ser a parte meio chata. Obviamente, terei que fazer algumas dessas coisas fora das câmeras, mas deixe-me chegar ao ponto em que meu ENB esteja aberto.
+
+Tudo bem. Hum, usuários me.arch env. Hum, na verdade não. Se eu abrir este arquivo agora, pode ser que apareça imediatamente. Talvez eu precise desativar o
+
+compartilhamento de tela por um segundo e... posicionar a imagem no lugar certo. Então, deixe-me fazer isso.
+
+Vou trocar para o meu quadro. Ah, deixa eu recuperar meu rosto para que vocês possam vê-lo. Certo, aqui está. Então, deixe- me abrir este arquivo porque eu realmente não sei onde ele vai abrir. OK. Ok, está tudo bem. Muito bem, voltemos. Muito bem
+
+. Então, sim, vocês não conseguem ver isso, mas está pronto para eu adicionar tudo o que preciso. Veja, uh, execute o lançamento. Vou criar uma tarefa de rastreamento de portão e registrar o despacho. Ok, vamos ver o que ele executou.
+
+Hum, nosso fluxo de trabalho de chamadas executa a evolução do sistema pip . Ok, parece bom. Sim, parece bom. Ok, legal. E se acessarmos a interface web, também deveremos conseguir ver isso.
+
+Pronto. Então, já está funcionando . Então, começará pelo primeiro nó, que é o número primo. Portanto, o programa carregará algum contexto do código-fonte relacionado ao problema. Estou apenas fazendo essa exploração inicial com Claude Sonnet.
+
+Então é isso que faremos inicialmente e, enquanto isso, podemos cuidar das credenciais aqui. Tudo bem. Então vamos voltar. Então me mandou ir para onde está o link? Isso me forneceu um link anteriormente.
+
+Sim, esta aqui mesmo. OK. Então, copie. Volte. Obviamente, terei que fazer algumas dessas coisas fora das câmeras.
+
+Hum, deixa eu preparar meu Obsidian para salvar isso também.
+
+OK. Ah, ótimo. Recebi um código de verificação. OK. Tudo bem. Tudo bem.
+
+Hum, na verdade eu ainda não recebi o e-mail . Deixe-me verificar minha pasta de spam. Olá. Ok, aqui está. Muito bem, aqui está meu código.
+
+Bom. Ok, então eu ainda não tenho nenhum token de API porque, até agora, eu literalmente só usei a Atlassian através do MCP. Então, acho que terei que fazer essa parte fora das câmeras. Então, deixe-me mover isso. Vamos acompanhar os registros aqui enquanto tudo acontece. Correr faz bem à saúde. OK,
+
+bom. Criar token de API. Vamos chamar isso de experimento da fábrica escura e vai expirar no final deste mês. Não sei, vou deixar expirar daqui a duas semanas, talvez. Claro.
+
+Qualquer que seja. OK. Cópia. Feito. e então, a chave da API do experimento Jira Dark Factory . Ok, legal. Então, eu tenho isso e
+
+vou trazer de volta para você ver. Certo, então, o que eu tenho que fazer agora? Então, deixe-me voltar à conversa. Muito bem, volte quando o portão um estiver aberto. Ok, então o fluxo de trabalho está funcionando bem e aqui precisamos inserir o token da API do nosso domínio do Jira.
+
+Certo, então vou copiar e adicionar esses textos . Certo , vamos usar o Jira. Então, obviamente, estou fazendo essa parte fora das câmeras . Deixe-me copiar o token da API. Bom. E depois preciso do meu domínio Jira.
+
+Então, como faço para conseguir isso? Acho que é simplesmente " Sim". Certo. É só isso aqui. OK. Bom.
+
+Hum, uma coisa que não tenho certeza é se preciso do HTTPS ou não? Então, vou perguntar rapidinho. Isso funciona ou preciso do HTTPS nas barras M? Caso contrário, se não for esse o caso, então já está tudo certo para mim, o que é ótimo. Tudobem.
+
+E ainda estou trabalhando na preparação. OK. Use o domínio raiz. Ih, rapaz. Assim, o código que eu esboço precede o próprio esquema. OK. Sim. Então, está tudo bem.
+
+Tudo bem. Hum, acho que está tudo bem. Acho que posso testar isso agora. Tudo bem. Então, eu configurei as credenciais dentro do global.arch.env.
+
+Portanto, não leia o arquivo de variáveis ​​de ambiente, nem faça listagens nem nada do tipo. Na verdade, você receberá erros de permissão se tentar. Hum, mas eu quero que você crie algum tipo de script de teste em Python ou algo assim que carregue os dados do ambiente e verifique se a conexão está funcionando. Tudo bem. Então, certifique-se de que configurei tudo corretamente e, em seguida, ok, então a primeira etapa de aprovação foi concluída. Então,
+
+isso é bom. Então, se voltarmos à interface web do Archon, podemos ver que ele está pausado neste momento. Analise o entendimento dos agentes acima. Então, estamos apenas nos certificando de que haja uma boa compreensão por meio da preparação aqui. OK. E
+
+também levanta algumas questões em aberto. Então, essas informações serão apresentadas a nós por meio do meu segundo cérebro, que está executando o fluxo de trabalho. Então, vamos apenas aguardar a saída aqui. É apenas pensar. Claude Claude programa tanto ultimamente que parece que trava com frequência, mas acho que está apenas trabalhando em segundo plano ou algo assim.
+
+Porque você pode ver que uma conversa fiada fica presa no pensamento. Tudo bem. E então, sim, a outra coisa que eu quero fazer é... deixa eu encerrar por aqui
+
+. Obviamente, terei que criar alguns tickets nesse novo espaço GRS para fins de teste. Então, essa é outra coisa que podemos fazer em paralelo. Mas vamos voltar atrás, porque podemos fazer isso assim que passarmos por esta próxima etapa de aprovação. Então temos que esperar que o resultado seja exibido.
+
+OK. Portanto, está criando um script independente. Parece bom. Tudo bem. Vamos lá.
+
+A análise do Prime já está disponível. A fase principal termina em 4 minutos. Pausa. Aguardamos seu retorno. O que ele vai construir e as referências nas quais se baseou, como o adaptador do GitLab Community Forge.
+
+Ok, isso é ótimo. OK. Então, surgem apenas algumas perguntas de acompanhamento. Caso o bot do Jira mencione outros bots, será necessário solicitar o ID da sua conta na inicialização.
+
+Claro. Como o gancho de teia que Jurus compartilhou como segredo deve ser transportado?
+
+Ah, sim, quero dizer, por enquanto eu só quero que seja simples . E eu não tinha me dado conta de que precisaríamos de algo assim. Corresponde à forma como o Jercloud entrega nativamente um segredo de webhook. Sim, vou seguir a recomendação daqui. Eu pensei: "É, estou meio confuso com isso." Como o
+
+bot deve detectar que isso foi mencionado em um comentário? Sim, com certeza isso deve resolver o problema do webhook buscando comentários recentes em tickets como contexto da conversa, assim como o Slack busca o histórico de tópicos. Sim, com certeza queremos obter os comentários recentes para termos um histórico completo da conversa. Certo, aqui está. Legal. Então veremos meu segundo
+
+cérebro retomar o fluxo de trabalho e começar a criar o plano abrangente, e enquanto isso, vejamos... sim. OK. Uh, O foi verificado e a
+
+aproximação está bloqueada. As credenciais funcionam. Fiação ambiental confirmada. Uh, o script de teste está ativo. O próximo passo natural é construir a estrutura de suporte do próprio adaptador. Sim, é isso que estamos
+
+fazendo na outra conversa. OK. Então, acho que está tudo bem. Legal. Então, veremos o fluxo de trabalho ser retomado em instantes. Sim
+
+. Então, ainda está pausado porque o código na nuvem está muito lento agora. Vamos lá. Apresse-se . Não é preciso muito raciocínio para simplesmente retomar o fluxo de trabalho.
+
+Meus Arcontes estão realmente fazendo o trabalho pesado aqui. Não sei por que está demorando tanto. Tudo bem. Bom, de qualquer forma, está quase pronto aqui e então sim, posso começar a configurar o Jira. Tudobem.
+
+Então, acho que farei isso em uma conversa separada, porque preciso analisar o experimento da fábrica escura, identificar alguns bons problemas para então criar aqui, para que tenhamos um ponto de partida. Então, deixe-me fazer isso agora. Vou iniciar uma nova conversa. Então, criei um novo espaço no Jira. Gostaria que você desse uma olhada no experimento Dark Factory no Jira Space com o servidor Atlastian MCP. Ainda não há problemas
+
+, mas quero criar alguns para fins de teste. Então, quero que você crie um projeto épico e um conjunto de, digamos, 10 tarefas para gerar uma espécie de backlog para o experimento da fábrica sombria. Agora, para que servem exatamente os bilhetes, é aí que eu quero que você me ajude a descobrir. Quero que você dê uma olhada no repositório de experimentos da Dark Factory. Procure oportunidades para corrigir alguns erros ou adicionar novas funcionalidades simples. Criei
+
+aqui uma espécie de lista de 10 itens para fins de demonstração, pois estou trabalhando na integração do adaptador do Jira ao Archon. Então, carregue o contexto completo para tudo o que estou lhe dizendo aqui. E então eu quero que você crie a épica e as 10 edições vinculadas a ela e me informe os IDs delas quando terminar. Tudo bem. Boom. Pronto. Então, como estamos
+
+? Então,
+
+acho que está se prendendo a alguma bobagem agora. Falhou. Hum, Sr. Say, o que aconteceu aqui? Acho que tive uma alucinação.
+
+Hum, a aprovação foi gravada. Oh sim. Ele alucinou com o comando errado. Bate-papo Arconte. É, cara, isso é frustrante.
+
+OK. Não, você só precisa usar a aprovação do Arconte. Você não usa o chat dos Arcontes. Então, você precisa refazer. O fluxo de trabalho falha. Você precisa reiniciar
+
+para garantir que reiniciemos e passemos da etapa de inicialização, pois já a realizamos . Quero começar logo o planejamento. Tudobem. Isso já me aconteceu uma vez, quando tive alucinações. Não sei por que isso acontece, mas talvez seja algo que precisemos corrigir na própria habilidade.
+
+Então, provavelmente farei isso depois da transmissão ao vivo aqui. É apenas uma questão de habilidade. Isso é bom. Tudo bem. Vamos ver onde estamos agora. Então, encontrei o repositório.
+
+Encontrei a Atlassian. Encontrei o projeto Dark Factory . Bom. Tudobem. Não há muito mais que eu possa fazer neste momento .
+
+Temos que esperar. Volte ao chat aqui. Tudo bem. Se você tiver vários projetos e diferentes projetos JAR, também precisará adicionar um ID de projeto à variável de ambiente. Configure também as atualizações, ou isso afetará vários projetos. Bem, eu
+
+quero que funcione com qualquer projeto. Então, espero que esteja tudo bem. Veremos. E quando eu testar aqui, talvez a gente encontre algo assim . Mas eu quero poder trabalhar em qualquer projeto que eu tenha, se eu mencionar , quero ter uma conversa porque presumo que você esteja falando sobre espaços diferentes, certo? Tipo, se eu tiver,
+
+quero que funcione em todos os meus diferentes espaços. Veremos. Sim . Eu acessei o chat do Archon quando deveria ter usado o comando de aprovação correto. Meu erro. Não sei porquê. Qualquer que seja. Hum,
+
+a execução pausada saiu do estado ativo, o que está de acordo com o que você viu. A CLI não lista nenhum comando aprovado. Oh, tudo bem . Então, que droga. Isso é algo que precisamos corrigir no Archon. Então
+
+acho que isso explica por que teve alucinações. OK. Bem, isso é algo que vou guardar na minha mente para depois da transmissão ao vivo aqui. Precisamos definitivamente corrigir isso, porque o programa simplesmente não sabia que tinha acesso ao comando que eu realmente precisava que ele usasse. Isso é interessante. Já deve haver
+
+um problema registrado no GitHub para isso no Archon. Que estranho. OK. Hum, já encontrei uma inconsistência. Hum, ok. Claro. Agora vou enviar um
+
+agente de pesquisa real para catalogar oportunidades concretas em toda a base de código. OK. Então, isso vai demorar um pouco, mas está fazendo exatamente o que eu quero. Consiste em analisar e identificar diferentes problemas que podemos transformar em chamados no Jurro. Bom.
+
+Tudobem.
+
+Hum, agir rápido e quebrar coisas é o meu paradigma atualmente. É isso que estou fazendo aqui. Sim. Legal. Tudo bem. Hum,
+
+ok. O que eu ia fazer? Ah, droga. Eu ia dar uma olhada em algo aqui e já perdi o fio da meada. Hum, era algo relacionado a " Ah, sim". Eu ia apenas verificar o
+
+fluxo de trabalho para garantir que ele fosse retomado. Hum, ou melhor, ainda não. Ainda está a tentar perceber como fazer isto. O comando correto é o ID de execução aprovado pelo fluxo de trabalho Archon . Sim. Então, ele encontrou. Sim, vou
+
+continuar essa conversa depois da transmissão e resolver isso porque é muito irritante. E isso é, na verdade, um bug no Archon que encontramos. Às vezes, no meio de transmissões ao vivo, você encontra erros na sua ferramenta e precisa corrigi-los. Certo, então deixe-me ler o erro e reiniciar usando o método de retomada. A única coisa que me assusta é que isso vai exigir uma reformulação completa do fluxo de trabalho, mas nesse caso, tudo bem. Quer dizer, nós acabamos de
+
+começar com isso, mas seria meio chato. Tudo bem. Hum, o que mais podemos fazer enquanto isso? Acho que poderíamos pensar em coisas reais que talvez gostaríamos de corrigir na plataforma. Por exemplo, se eu for em... Então, o mais legal é que
+
+o experimento da fábrica escura é um aplicativo que eu realmente tenho em produção. Como eu disse, vou colocar um link para isso no chat agora mesmo. Os tokens são por minha conta. Eu configurei para usar o Open Router com o Gemini Flash instalado, mas você pode acessar este site e criar uma conta. Se você faz parte da comunidade Dynamis, contanto que se inscreva com o mesmo e-mail que usa na Dynamis, você também terá acesso a mais conteúdo aqui. Portanto, esse
+
+agente consegue pesquisar em todos os meus vídeos do YouTube. Então, basicamente, é como um agente de limpeza muito poderoso. É um pouco lento porque a busca é muito abrangente. Bem, se você faz parte da comunidade Dynamis, a busca não só funciona no meu conteúdo do YouTube, como também em todo o meu conteúdo do Dynamus, incluindo workshops, cursos e tudo mais. É muito legal. Bem,
+
+este é o aplicativo em que estamos trabalhando agora. E atualmente, como você acabou de ver, estou usando o Cloud Code, meu segundo cérebro, para analisar e identificar oportunidades de inclusão como problemas aqui. Mas seria legal ter algumas coisas reais que eu gostaria de abordar. Hum, vejamos. Então, o que poderíamos fazer aqui? É
+
+, uma coisa é que a biblioteca de vídeos não tem um sistema de classificação muito bom. Então, essa poderia ser uma oportunidade. Outra questão é que, sempre que envio uma solicitação, ela não é muito interativa. É que demora um pouco porque está fazendo muita busca em segundo plano, mas se tivéssemos atualizações em tempo real conforme ele fosse encontrando coisas, seria legal. Então, acho que essas são algumas coisas que eu gostaria de construir. Então, deixe-me voltar
+
+aqui. Nossa, isso é irritante. Retomando a partir do interior da árvore de trabalho. Deverá encontrar a execução que falhou. Ignore a fase prima já concluída . É, isso não está funcionando,
+
+cara. Estou muito irritado com a lentidão do código do Claude. Está tudo incrivelmente lento ultimamente. É difícil também para uma transmissão ao vivo. OK. Então, vamos
+
+voltar à outra conversa. Tudo bem. Então, além dos outros problemas que você criou aqui, há mais dois que eu quero que você crie, alguns problemas reais que tenho na plataforma agora. A primeira é a biblioteca de vídeos voltada para o usuário. Portanto, não a biblioteca de vídeos na visualização do administrador, mas sim a voltada para o usuário. Não há nenhuma triagem em andamento no
+
+momento. Tipo, tem a busca. Então, temos filtragem, mas não há ordenação. Além disso, a opção padrão... parece que não existe
+
+realmente uma opção padrão de ordenação, porque eu tenho uma lista bem variada com meus workshops do Dynamus, vídeos do YouTube e conteúdo de cursos. Então, eu gostaria que a ordenação fosse feita, tipo, em ordem alfabética, o que seria bom como padrão. E também seria
+
+bom poder classificar por ordem alfabética inversa e por data de publicação ou algo assim. Então, crie também um ticket no Jira para isso. E o outro problema que tenho na plataforma é que parece muito lento obter uma resposta inicial do agente. Isso nos informa qual pesquisa está sendo realizada. Assim, obtemos feedback em tempo real sobre a ferramenta que está solicitando a entrada. Mas o que não obtemos é
+
+feedback em tempo real sobre a saída da ferramenta que está sendo chamada . Então seria legal se, enquanto o agente estivesse pesquisando e processando nossa solicitação, ele tivesse algum tipo de exibição concisa dos fragmentos que está recebendo como resposta. Então, teríamos apenas o registro de data e hora e o título, como temos com as fontes citadas, mas eles seriam listados à medida que as informações fossem sendo buscadas, e obviamente desapareceriam assim que tivéssemos a resposta final. mas ter algo mais em tempo real assim. Então, crie também um ticket no Jira para isso.
+
+OK. E então também criou todo o resto. Então, temos os bugs e também novos recursos, como adicionar um botão "copiar para a área de transferência" para as mensagens do assistente. Isso é realmente muito legal. Sim, encontrei algumas coisas reais.
+
+E então, hum... Tudo bem. Tão bom. OK.
+
+Sim. Então, o sistema percebeu que a execução que falhou não podia ser retomada com segurança porque havia falhado completamente. Ah, sim . Então, ele reiniciou e agora vai calcular o número primo e preencher as minhas respostas automaticamente. Então, vamos concluir a fase inicial e depois passaremos para o planejamento.
+
+Tudo bem. Então, é isso aí. Estamos correndo agora. Bom. Então, deixe-me voltar e ver em que ponto estamos no processo de criação. OK. Então, vamos ver o que
+
+já criamos no Jira. Então, se eu atualizar a página, devemos ter tempo de espera. Oh sim. Vamos lá. Então, aqui está o nosso bate-papo descontraído no YouTube. Aqui estão os bugs. E
+
+aqui estão as funcionalidades que queremos desenvolver. E seria muito legal tê-los também no tabuleiro. Normalmente, eu simplesmente trabalho com a lista. É, acho que vou ficar por aqui mesmo. Então, sim. De qualquer forma, isso está praticamente pronto
+
+agora, então é só conversar quando estiver tudo construído. Infelizmente, esse loop piv vai demorar bastante. Tudo bem. Então vamos providenciar isso. OK. Estou tentando
+
+pensar se há algo mais interessante que eu possa fazer enquanto esperamos por isso aqui. Antigravidade. Eu estava testando a antigravidade na minha última transmissão ao vivo e atingi meus limites de taxa imediatamente . Quero ver como isso está agora. Sua cota de Gêmeos foi zerada para esta semana e triplicada daqui para frente. Ah, eles realmente corrigiram as
+
+cotas. Isso é legal. Certo, espere um pouco. Muito legal. Deixa eu dar um zoom. Deixa eu ver
+
+qual é a minha cota agora, porque acho que estou pagando os 20 dólares por mês. Tenho quase certeza. Ah, não. É provavelmente por isso que estou tendo problemas. OK. Acho que vou
+
+comprar agora mesmo. Primeiro, vou reiniciar a atualização, porque seria interessante explorar mais o Gemini 3.5 Flash, já que fiquei realmente impressionado com as interfaces gráficas que ele conseguiu criar.
+
+Vamos dar uma olhada no meu navegador. Ah, planos antigravidade do Google. Vamos fazer...
+
+onde fica o plano de preços? Eu tive esse problema na semana passada. Sim. Que diabos? Esta conta não é elegível para os benefícios antigravidade do Google, incluindo o plano de IA do Google. Não sei
+
+por que está escrito isso. Isso se deve a um problema de sincronização no sistema ou a uma incompatibilidade de contas, e não a um problema com sua assinatura. O Google Antigravity requer uma conta atgmail. Contas escolares ou gerenciadas do Workspace geralmente causam esse erro de elegibilidade. Interessante.
+
+OK. Hum, acho que vou ter que usar meu e-mail pessoal. Isso é bom. Entrar. Talvez eu já esteja pagando por isso , na verdade. Deixe-me ver.
+
+Hum, vamos atravessar a escuridão. Sim , é verdade. Sim. Sim . Terminar. Aumente o zoom
+
+. A combinação de teclas Ctrl+Shift ... É por isso que estou clicando aqui várias vezes . E agora, se eu for às configurações da minha
+
+conta, modelos, uh, será uma verdadeira atualização periódica. Não existe realmente uma maneira de verificar em qual nível estou. Acho que continuo sem gostar da interface do usuário para antigravidade. É meio irritante. Bem, de qualquer forma, antes de voltar a esse assunto, deixe-me ver como está nosso fluxo de trabalho no momento.
+
+Aprovação submetida. A fase de planejamento dura agora de dois a quatro minutos. Sim, acho que estamos indo bem. Vamos voltar à interface do Archon e verificar se é esse o caso. Certo , atualize os registros de visualização. Atualmente estamos assim. Ok, está tudo
+
+bem. Estamos na fase de planejamento agora. Então, terminamos o período principal. Está ótimo. Muito bem, agora está tudo certo.
+
+E, para nossa outra conversa, vamos ver como estão os tickets do Jira. Ah, ok. Certo, então vamos adicionar a opção de ordenação à biblioteca de vídeos visível ao usuário. O streaming recebe os fragmentos em tempo real durante o processamento do agente e, em seguida, garante que eles sejam registrados no Jira. Vamos voltar.
+
+Sim. Sim. Ok, isso é bom. Incrível. E então teremos o contexto completo e a questão em si. Este é o contexto
+
+que teremos para a conversa com o fluxo de trabalho Archon assim que o adaptador estiver pronto e pudermos começar a testá-lo. Muito bem , perfeito. Bem, tudo bem, vamos voltar à antigravidade enquanto esperamos, porque isso obviamente levará um tempo considerável para passar por uma etapa de planejamento abrangente. Bem, sim, uma coisa que eu fiz foi atingir minha cota nesta conversa. Uma coisa em que eu estava trabalhando e que achei que ficou muito boa foi essa espécie de visão geral de Archon. Deixe-me
+
+abrir isso novamente em seguida. Tudobem. Então, isto aqui, nós construímos isto na quinta-feira durante a transmissão ao vivo de quinta-feira e é realmente impressionante. Construtor de código aberto e determinístico para agentes de codificação de IA. Esta é uma visão geral de Archon. Ele contém os
+
+comandos de instalação e uma visão geral da plataforma como um todo. Parece muito bom. Possui essas diferentes abas, por exemplo, para fluxos de trabalho no Archon. Muito legal . Então, o Gemini 3.5 Flash compilou isso em
+
+cerca de 2 minutos, mas durante a transmissão ao vivo eu também atingi meus limites de taxa extremamente rápido e foi meio frustrante. Mas, além do Gemini 3.5 Flash não ser o modelo mais inteligente, apresentando alucinações em muitos textos, ele impressionava pela interface de usuário que conseguia gerar. Então, estamos tentando pensar no que mais poderíamos fazer aqui, só para explorar um pouco. Bem , tive uma ideia. Tenho uma boa
+
+ideia. Então, deixe-me trocar o modelo para o flash Gemini 3.5. Hum, ah, eu peguei médio ou alto. Não sei. Acho que vou ficar chapado mesmo. Quero que
+
+não haja alucinações textuais. Portanto, quero que você se aprofunde bastante no código-fonte do Archon para entender o processo exato de configuração e como ele funciona para criar fluxos de trabalho personalizados e incorporá-los ao seu próprio código-fonte. Bem, os diferentes nós e elementos primitivos, e como adicionamos o fator humano ao processo. Quero que você observe os diferentes adaptadores e como os configuramos. Hum, quero que você dê uma olhada na habilidade Arconte. Quero que você entenda
+
+todo o contexto e depois crie um segundo documento HTML aqui, como um guia rápido de início rápido para o Archon, um guia passo a passo com uma aparência agradável, um fluxo intuitivo e simples, que oriente o usuário desde a instalação até a execução de fluxos de trabalho padrão e a criação de fluxos de trabalho personalizados, usando o agente de codificação com a habilidade Archon para criar seus próprios fluxos de trabalho. Aproveitar os processos existentes, inclusive as habilidades já adquiridas, e adaptá-los aos fluxos de trabalho do Archon. Tudo bem. Então vamos ver a velocidade disso aqui, porque a mágica do Gemini é justamente a rapidez, o que é ótimo, já que o Cloud Code está muito frustrante no momento por ser tão lento . Então, é... é revigorante ter isso acontecendo
+
+ao mesmo tempo. E então, veja onde estamos aqui. Ainda aguardando. OK, bom. Bom, aparentemente Gêmeos também está lento agora. Que diabos? Simplesmente não
+
+funciona. Pode ser que a conversa tenha sido interrompida devido aos limites de taxa de transferência que eu atingi ou algo assim. Será que isso estraga tudo? Veremos.
+
+homem. Veja, disse Eric, "As transcrições de vídeo extraídas pelo Gemini são incorporadas em um banco de dados gráfico ou vetorial, ou são armazenadas como arquivos de texto ou MD ?" Eric, você está falando do aplicativo Dino Chat? Ou talvez você pudesse esclarecer.
+
+Nossa, está emperrado. O quê? Hum, ok. Agora, agora está funcionando. É muito estranho como foi lento. OK.
+
+Leia os arquivos "leia-me" dos pacotes. Blá blá blá . OK. Para alguns, agora não parece tão rápido . Quer dizer, é razoavelmente rápido.
+
+Acho que sou mimado. Tudo bem. Sim, é bem rápido. OK. Você está se referindo ao aplicativo de bate-papo Dino .
+
+Então, sim, eu usei o Gemini para extrair as transcrições dos vídeos e configurei o pipeline para sincronizar diariamente, ou algo assim, não me lembro se era diariamente ou a cada meio dia, e as armazenei não em um banco de dados de grafos, mas em um banco de dados vetorial. Então, eu extraio todas as transcrições de workshops e cursos do YouTube. Eu extraio os dados para documentos Markdown que armazeno localmente, depois os divido em partes e os coloco em um banco de dados vetorial. Então, estou usando o PostgreSQL com o vetor PG para o rag. Não usar um banco de dados gráfico, porque isso provavelmente seria um exagero para o que estamos fazendo aqui, já que estou usando uma estratégia hierárquica de grafos para o aplicativo Dinoat. Então, quando carrega um trecho ou
+
+quando pesquisa e encontra um trecho, ele lê uma porção maior ou até mesmo o vídeo inteiro, se for curto o suficiente. Então, eu tenho uma espécie de carregamento de contexto dinâmico baseado na duração do vídeo. Então, para este vídeo, eu montei aqui mesmo a minha equipe dos sonhos de subagentes de código na nuvem. O sistema encontrou esse trecho e, em seguida, leu o vídeo inteiro para fornecer uma compreensão mais abrangente . Subagentes, código de garra, instruções especializadas para executar partes específicas, desenvolver fluxo de trabalho, blá blá blá. Tipo, eu
+
+consegui tudo isso só com esse vídeo que ele recuperou, e a gente pode até ver que eu consigo abrir no YouTube se eu quiser assistir tudo. E este é o timestamp específico que a consulta rag encontrou, mas como eu disse, ela usa uma espécie de rag hierárquico para expandir e ler tudo . Muito legal. Obrigado pela informação. De nada . Sim, fico feliz que tenha gostado.
+
+Dediquei muita reflexão e esforço às estratégias de preenchimento de lacunas para esta aplicação. Hum, mas isso também foi construído com a fábrica escura. Então, literalmente, como eu disse ao Claude Co., eu informei à Dark Factory, através do GitHub Issues, as diferentes estratégias que eu queria incorporar e deixei que ela construísse tudo sozinha, o que é muito diferente de como eu construía aplicativos Aentic Rag anteriormente. Quer dizer, para ambientes de produção, você definitivamente precisa garantir que as estratégias sejam exatamente o que você procura. Mas funcionou muito bem
+
+porque, você sabe, eu pedi para ele analisar meu conteúdo do YouTube. Eu literalmente o fiz pesquisar em sua própria base de conhecimento para construir as estratégias. Isso fazia parte do contexto que eu forneci nas questões do GitHub. Muito bem, então vamos ver onde estamos agora. Ah, ok, então o portão do plano está de volta.
+
+Muito legal. Então, a aprovação adequada funcionou para retomar o processo de aprovação inicial na fase de planejamento. Bom. Então, aqui está o escopo. Nove tarefas, oito arquivos. Tudo bem. Me
+
+indique o caminho e então eu analisarei e aprovarei. Então, voltaremos à antigravidade daqui a pouco, mas quero garantir que continuemos com esse fluxo de trabalho, porque quando eu terminar a transmissão, quero ter uma demonstração. Tudo bem. Hum, leia o resultado do plano. Deixe-me obter o caminho exato adicional. Portanto, isso ficará registrado
+
+na árvore de trabalho do fluxo de trabalho do Archon. Então, acho que vou colocar isso aqui no meu IDE . Sim. OK. Só estou me certificando de que não havia nenhum segredo escondido atrás do terminal. Tudo bem.
+
+Bom. Então, vamos aguardar. Bem, acho que podemos dar uma passada na seção de antigravidade agora mesmo . uh concluiu um plano de implementação de pesquisa completo. OK.
+
+Sim, uma coisa que eu acho muito legal na antigravidade é que eles têm um sistema de aprovação humana integrado, né? Gostei da ideia de sugerir um plano de implementação para eu analisar antes de criar o arquivo de início rápido, que, neste caso, eu quero que seja criado logo . Então, vou simplesmente dizer: vá em frente. Então vamos deixar rolar solto por aqui. Vamos recapitular e ver em que pé estão as aprovações.
+
+Nossa, é muito irritante como é lento. O processo fica travado por um minuto ao executar um comando determinístico. Isso me incomoda. Não sei porquê. Tipo, geralmente eu digo que a velocidade não importa muito quando você está usando assistência de programação por IA, porque no final das contas você só se importa em obter o melhor resultado possível, já que muitas vezes você envia uma solicitação, executa e esquece, passa para a próxima coisa ou vai dar uma volta lá fora, enfim. Mas
+
+quando está tão lento assim, é meio frustrante. Por que está travado nesse comando? Isso ocorre porque está executando um comando find, mas com escopo em um diretório muito específico. Não deveria demorar tanto. Não sei por que isso acontece . Tipo, o comando definitivamente
+
+não demorou tanto para ser executado, né? Tipo, eu poderia copiar isso e executar agora mesmo. Tipo, veja só isso.
+
+Talvez seja por isso que está demorando tanto? Aguentar. O que está fazendo? Acho que foi apenas uma alucinação com um comando errado, porque uma busca nunca deveria demorar tanto. Sim, isso é frustrante. Muito bem,
+
+pare. Certo, então aqui está o plano. Muito bem, agora entendemos. Muito bem, então vamos dar uma olhada. Então, em um documento de planejamento, estamos adicionando o adaptador JER, a declaração do problema, a declaração da solução, os metadados, o contexto, as referências e os padrões a serem seguidos. Portanto, é assim que fazemos
+
+em nossos outros adaptadores, que já temos como ponto de referência. Bem, também vamos... Ok, então, existem algumas variáveis ​​de ambiente que precisamos adicionar e que ainda não adicionamos. Então teremos que
+
+cuidar disso . Já definimos esses três primeiros, mas vamos ter que cuidar dessas outras coisas. Então, na verdade, vou copiar isso para a outra conversa. Bem, temos nossa lista de tarefas passo a passo. E então temos a estratégia de validação na parte inferior.
+
+OK. Validação. Sim. OK. Parece bom. Sinceramente, vou
+
+aprovar isso imediatamente. Não preciso de mais nada além disso. Então, uh, parece ótimo. Prossiga. Legal.
+
+E então, enquanto isso, posso voltar a esta conversa, na verdade, a esta aqui, e direi, hum, Claude está me dizendo que também preciso que estas duas variáveis ​​de ambiente estejam definidas para a implementação. O segredo do webhook é como qualquer outro segredo hexadecimal que eu crie, assim como os outros segredos de webhook, como no GitHub. Já para a menção ao bot do Jira, acho que é tipo o nome de usuário que eu mencionaria em um ticket do Jira. Mas eu gostaria que você confirmasse isso para mim. Tudobem. Ops,
+
+executei isso no modo bash. Deixe-me copiar isto. Ok, agora o código do Claude está colando coisas duas vezes. Vamos lá, Claude. Que estranho. OK. Tudo bem. Então, o projeto principal está
+
+concluído, o plano está concluído. Já estamos implementando. Está ótimo. Então, estamos quase lá . Deixe-me voltar aos registros e garantir que tudo esteja funcionando corretamente.
+
+Sim. Bom. Tudo bem. Legal. E enquanto esperamos isso rodar, vamos dar uma olhada na antigravidade aqui.
+
+Vamos dar uma olhada no arquivo que foi criado. Muito bem, aqui está nosso guia rápido para começar. Então, deixe-me copiar o caminho e abri-lo. Ok, estou realmente curioso para ver o que vai aparecer aqui. Introdução rápida ao Arconte. Aliás, tudo isso foi bastante rápido
+
+. Isso parece incrível! Então, aqui está a nossa instalação. Podemos usar o Homebrew para criar um binário independente ou compilar a partir do código-fonte com um único comando para praticamente qualquer configuração e credencial. Tudo bem. Então temos o escopo do projeto
+
+e depois temos o escopo global.raron. Aviso sobre isolamento de segurança. OK. Sinceramente, este provavelmente não é o melhor guia. Parece muito legal,
+
+mas está se tornando algo muito complexo rapidamente. Não é assim que eu instruiria alguém a configurar o Archon. Hum, sim, tudo bem, porque é mais o design que me deixa curioso, algo que eu gostaria de explorar. Acho que minha próxima transmissão ao vivo será sobre a criação de um fluxo de trabalho Archon específico para o design de front-ends. E funcionaria da seguinte forma: haveria uma combinação de fornecedores. Usaríamos o Gemini 3.5
+
+Flash para o design, mas antes de construir o site, usaríamos algo como o Opus para analisar o texto e as informações que queremos apresentar. O Gemini 3.5 Flash não fez um bom trabalho com a apresentação das informações, ou melhor, com o que o texto mostra, mas o layout parece muito bom, eu acho, é o que importa no final das contas. Adaptador de plataforma. É muito legal como eu posso clicar entre essas coisas, tipo, ver um leão na web, tipo, um Slackbot. Sim, é
+
+alucinante. É uma coisa aleatória, mas até que fica legal. Essa é a história da minha vida com Gêmeos neste momento. Tem alucinações aleatórias, mas pelo menos tem uma boa aparência. Ah, ok . Mas sim, executar os
+
+fluxos de trabalho padrão do pacote é muito legal. Tem todas as opções padrão aqui e eu até consigo pesquisar por elas. Que legal! Tudo bem. Estrutura da base de código.
+
+E aqui estão os sete nós primitivos do DAG. Prompt, comando, bash, script, loop, aprovação, cancelamento, intervenção humana , orquestração, e tem um exemplo completo. Cara, isso é muito legal. Isso é bom. Tipo, eu quero começar a construir nossa documentação para que fique mais parecida com isso, porque é assim que temos agora, o que é razoável. Hum, e tem um
+
+aspecto um pouco mais profissional, mas não sei. Acho isso muito legal. Também estou curioso para saber a opinião de vocês. Criando fluxos de trabalho personalizados com a habilidade Arconte. Ah, tive alucinações aleatórias de novo . Isso é meio bobo, cara.
+
+Ok, mas a mensagem estava correta. Você instrui o programa a usar a habilidade Arconte para ajudá-lo a criar um fluxo de trabalho personalizado. Parece muito bom. Adaptação do modelo de processo existente. OK. E
+
+esse é o fim. OK. Muito legal. Legal. Tudo bem. Hum, vou fazer um pequeno
+
+ajuste aqui. Então, use o logotipo real do Arconte em vez do logotipo provisório que você tem. Procure isso no meu sistema. Quero ver se consigo mesmo encontrá-lo. Enquanto isso, vou verificar meus limites de taxa aqui.
+
+Hum, atualizar. Ah, espere. Estou usando o Opus agora? Ah, então é por isso que está lento? Aguentar.
+
+Não, diz que estou usando o flash Gemini 3.5. Por que será que é a única coisa? Ok, agora baixou. Oh. Nossa! Só me
+
+restam 60% do meu limite de crédito. Sim, definitivamente não estou no plano pago como pensava. Talvez eu tenha cancelado em algum momento. Eu não tenho certeza. Mas enfim, vamos voltar e ver em que ponto estamos com Archon agora.
+
+Ok, então a implementação ainda está em andamento. Posso dizer, sabe, me dê uma atualização sobre o status. E então, hum, vejamos o que está escrito aqui. Então, uh, webhook J, sim, qualquer hexadecimal aleatório, igual ao GitHub. Então, eu simplesmente digo "Sim, posso executar esse comando assim..." e "
+
+Bem, acho que devo fazer isso fora da câmera." Então, vou usar o bash e gerar isso eu mesmo. E então o bot do Jira mencionou que não era um nome de usuário do Jira. É uma sequência de gatilho. É aqui que seu modelo mental precisa ser ajustado.
+
+OK. Bem, deixe-me gerar o hexadecimal rapidinho primeiro. Vou providenciar isso. Então, abra SSL rand-hex32. OK. E eu vou copiar isso. Obviamente,
+
+tenho que fazer essa parte fora das câmeras. Copie e depois vá para as minhas variáveis ​​de ambiente aqui para o Jira e é Jira webhook secret, cole isso e depois o outro aqui é Jiraabotmention Jira botmention ok e então este,
+
+o adaptador atualmente autentica na sua conta pessoal. Não há nenhum arconte separado no usuário duradouro para mencionar. Então, "gatilho" em texto simples é apenas uma palavra que você digita literalmente, como "arconte" ou " arconte barra". Quer dizer, sim, eu vou escolher Arconte.
+
+Talvez eu precise pensar sobre isso, porque acho que deveria haver uma configuração padrão. Uma das coisas que especifiquei na configuração inicial é que eu queria que a variável precisasse ser definida, mas acho que o bot mencionado deveria ser apenas "archon" se não estiver definida. Então talvez eu precise corrigir isso. Mas enfim, vamos ver como as coisas estão agora. Então, sim, a implementação está em andamento há 5,5 minutos. O Opus está compilando tudo.
+
+Uau! Por que está usando o Opus para a implementação? Aguentar. Achei que tinha configurado o Opus apenas para o planejamento. Deixe-me dar uma olhada nisso. Pode ter sido uma
+
+alucinação. Hum, ah sim, pode falar. Estou usando uma versão um pouco mais antiga do fluxo de trabalho que utilizava o Opus para implementação, não para planejamento. Ah, quer dizer, no fim das contas não deveria importar muito , mas é uma pena. Ah, bem, vou deixar continuar. Não é nada demais. Mas,
+
+como parte da minha preparação para a transmissão ao vivo, copiei o fluxo de trabalho e acidentalmente copiei uma versão um pouco mais antiga do que a que eu havia criado ontem, porque quando o criei inicialmente ontem, eu estava usando o Opus para implementação e o Sonnet para planejamento. Mas mudei isso depois do meu workshop sobre Dynamus, porque queria acertar tudo com base nos meus testes e na avaliação comparativa da última transmissão ao vivo. É melhor usar o modelo mais robusto para o planejamento do que para a implementação. Se você deseja combinar modelos ou provedores para ser mais eficiente em termos de tokens. Ok,
+
+legal. Sean, eu gosto do tema de manga picante. Obrigado, Sean. Sim, bem, na verdade, são as cores de Archon, certo? O rosa e o verde.
+
+Mas sim, parece mesmo manga apimentada. E aí, como está indo o chat do canal Dark Factory no YouTube ? Ultimamente, tenho vontade de usar isso para alinhar meu desenvolvimento de software às revisões do Archon. Então, você está falando de usar o aplicativo em si ou está falando de usar a Dark Factory como referência, Stuart? Eu ficaria curioso.
+
+Você tem pensado em usar isso ultimamente para alinhar meu desenvolvimento de software para as revisões do Archon, ou você quer dizer apenas para ter uma conversa com ele? Porque Stuart, é grátis para experimentar. Simplesmente vá em frente e experimente . Envie seus pedidos, faça suas perguntas, e o sistema usará meus vídeos como ponto de referência para respondê-las. Então, não custa tentar. Você não precisa
+
+pagar nada.
+
+Vamos ver. Hum, se me permite sugerir, poderíamos dar um passo atrás no desenvolvimento do Archon e talvez fazer uma sessão retrospectiva com o chat, para ver o que eles notaram e coisas do tipo. Não é exatamente algo que deva ser aberto em um issue do GitHub. Então, você está sugerindo que, em uma das minhas lives, eu pare de construir, construir, construir e simplesmente tenha um tempo para conversar com vocês ? É isso que você quer dizer?
+
+Porque, na verdade, eu faço isso toda semana na comunidade Dynamus. Teremos uma sessão de feedback para o Archon. E, quer dizer, sim, provavelmente seria bom fazer isso ao vivo para todos, inclusive para quem não é fã do Dynamus, mas eu só estou dizendo que eu já faço isso. Hum, e aí, tipo, sim, de forma geral para uma transmissão ao vivo, ter uma sessão de feedback. Acho que isso seria muito bom. Sim, agradeço a ideia. É
+
+, era isso mesmo. Onde fica isso? Oh sim. Sim. Então, Stuart, vou colocar o link novamente no chat, caso você queira experimentar.
+
+Portanto, totalmente grátis. As fichas são por minha conta. Bem, obviamente existe um limite de preço, porque se não houver um, pode ficar caro . Mas sim, fique à vontade para explorar e fazer suas perguntas. Tenha em mente que é lento porque é muito abrangente e está realizando buscas.
+
+Mas sim, vamos testar aqui. Hum, espere um pouco. Deixe-me confirmar se ainda estamos na fase de implementação. Sim, somos. OK, bom.
+
+OK. Então, se eu fizer uma pergunta como "hum, o que Cole recomenda fazer para criar uma camada de IA para um código-fonte existente e já existente?" Tudo bem. Assim, podemos ver o que está sendo pesquisado aqui. E uma das questões que criei como um ticket no Jira é para tornar a exibição dos blocos de dados recebidos um pouco mais em tempo real, porque isso fará com que o processo não pareça tão lento, já que está analisando muito conteúdo. Eu tenho um recurso de expansão,
+
+como se eu tivesse um recurso de consulta múltipla, que recebe uma solicitação e pesquisa de diferentes maneiras para obter mais contexto. Configurei para expandir os vídeos principais encontrados para que ele leia o conteúdo completo. Parece que há muito contexto acontecendo nos bastidores. E o modelo que estou usando é o Gemini. A lanterna Gemini 3.1 é, creio eu,
+
+o modelo que estou usando. Já não me lembro bem, mas é bastante barato e bastante rápido, embora ainda demore um pouco para carregar todo o contexto . E então, sim, considerando quanto eu gasto por dia, não é tão ruim. Mas, se eu olhar para o último mês, na verdade é mais do que eu pensava. Gastei 60 dólares em créditos de roteador aberto no último mês. Isso
+
+é realmente mais do que eu imaginava. Quer dizer, não é muito mais do que eu pensava. Eu pensei que fosse mais como 40-30-40, mas sim, é muita coisa... Ok. Sim.
+
+Acredito que o Gemini 3 flash seja o modelo que estou usando, porque o restante do uso do roteador aberto é para outras coisas que estou fazendo para o meu segundo cérebro, tipo, ah, sim, tem um enorme acúmulo de coisas para o meu segundo cérebro que consumiu US $ 7 em créditos SONET 4.5 em um único dia. Foi uma pena. Sim . E depois fazendo umas coisas da Kimmy.
+
+Quanto gastei na última semana? OK. $17 na última semana. Sim . Principalmente Gêmeos, alguns sonetos. OK. Sim.
+
+Tudo bem. O que aconteceu no dia 27? Espere, deixe-me voltar um pouco. O dia 27. Hum, acho que esse foi o primeiro dia em que lancei o tutor de IA. Sim. Então,
+
+tem muita gente experimentando pela primeira vez. É por isso que os tokens disparam tanto. Quase 8 milhões de usuários experimentaram o aplicativo aqui, o que é muito legal. Nossa, que coisa! Nossa, que pena. Deu uma
+
+resposta terrível. Não recomendo o uso do BMAD. Nossa, não acredito que disse isso. Isso é muito ruim. Para ser sincero, eu só obtive boas respostas com isso. Como esta
+
+aqui. Como faço para usar subagentes? Quais estratégias de limpeza Cole recomenda? Nossa, isso é realmente decepcionante.
+
+Cole observou que, embora a otimização de código existente por IA possa ser fundamentalmente difícil, frameworks como o BMAD são bons, especificados e guiados. Uau. Cole. Nossa, isso é terrível. Cole não recomenda o uso do BMAD porque é um framework complexo e pesado. Existem muitas
+
+boas ideias das quais se pode tirar inspiração, mas ele sempre recomenda construir sua própria camada de IA. Então, quero que você investigue isso a fundo . Cara, é muito estranho que tenha sugerido isso. De onde dizia que tinha tirado isso ? O curso de programação de agentes. Sim
+
+. Então, como mencionei em um dos workshops, o BMAD é uma ótima estrutura para extrair ideias e aplicá-las. Se você realmente quer algo fora do comum, é bom, mas definitivamente é complexo demais. Que pena que isso tenha acontecido. Fiquei surpreso que tenha acontecido.
+
+Interessante. Talvez eu precise rever minhas estratégias com panos, mas até agora só obtive bons resultados com elas. Que estranho. De qualquer forma, vamos ver como está o andamento da implementação. Acho que ainda vamos continuar .
+
+Hum, dê uma atualização sobre o status. E há outro bug estúpido com o código da garra. O que é isso? Qualquer que seja. Tudo bem. Me dê
+
+uma atualização sobre o status. E sim, todas essas conversas estão à espera. Bom. Tudo bem.
+
+OK. Concordo com o que alguém acabou de dizer sobre a importância da comunidade poder ajudar, porque este produto que vocês estão desenvolvendo parece incrível. Muito obrigado , David. Sim, e obrigado por reforçar a ideia. Sim, é. Eu
+
+adoraria ter mais conteúdo como uma sessão de perguntas e respostas ao vivo para o Archon. Acho que seria bom. Legal. Ah, pano de consulta múltipla. Lembro-me de que, no início do Langchain, esse diagrama era incrível . Queria ter certeza de que tinha todos
+
+os padrões. Sim, o padrão Rag com múltiplas consultas é um clássico, com certeza. Pegue um enunciado e use um modelo de regressão logística para dividi-lo em várias perguntas, apenas para garantir que você esteja abordando todos os tópicos relevantes da base de conhecimento. OK. Hum, validar, passar em tudo, exceto nos testes. Certo, então o que está
+
+acontecendo? Esses dois problemas não são culpa do adaptador do Jira. Eles estão em testes de validação de fluxos de trabalho e a causa raiz é ambiental. Um fluxo de trabalho piv instala seus próprios arquivos de comando piv em seus comandos globais, e esses arquivos vazam para um teste que assume que se trata de um diretório temporário isolado. Ok, então não é algo que realmente me preocupe aqui. Bem,
+
+eu trago o resultado completo quando pausar no portão 3. Então, agora está no meio da autoavaliação. A implementação está concluída. Agora é só uma questão de validação. Então, na verdade, chegaremos muito em breve ao ponto em que poderemos testá-lo. Agora,
+
+quanto a tudo isso, se eu voltar ao meu diagrama aqui, tudo o que temos aqui com a evolução do sistema no final, como eu disse no início da transmissão, acho que isso está fora do escopo desta transmissão. Então, vou esperar chegar ao ponto em que seja minha vez de validar e, em seguida, testarei o adaptador. Então, as variáveis ​​de ambiente já estão configuradas. Vou iniciar o Archon nesta árvore de trabalho e depois faremos alguns testes . Hum, ok. Vamos ver onde estamos
+
+agora. Está funcionando. Acho que vou dar uma olhada em antigravidade por enquanto. Vamos dar uma olhada no guia de início rápido. Na verdade, deixe-me atualizar a página.
+
+Oh sim. Legal. Na verdade, agora está usando o logotipo do Archon, como eu pedi. Que legal! E então, sim, legal. É isso aí, cara. O design é realmente muito
+
+bom. Com certeza vou adotar um fluxo de trabalho Archon, usando o Gemini para a interface do usuário e o Opus para o planejamento ou o texto propriamente dito do site. Legal. Tudo bem. Então, bem, enquanto esperamos isso rodar aqui, uh... Oh, espere. Sim. OK. Portanto,
+
+ainda não foi pausado. Vou dar uma paradinha rápida para ir ao banheiro. Então, vou silenciar e desligar a câmera e volto em alguns minutos. Espero que esteja tudo pronto para testarmos até lá. Então, sim, já volto. Muito bem
+
+, estou de volta. Vamos ver onde estamos agora. Vou pedir para me dar outra atualização de status. Legal. Stuart disse: "Preciso redefinir minha senha." Sim
+
+. Bem, a fábrica escura não foi uma prioridade para mim no O, então não tenho como redefinir a senha agora. Então, você poderia simplesmente criar uma nova conta. Quer dizer, essa seria a maneira de fazer isso atualmente. Bem, sim, se você quiser, pode me avisar por mensagem e eu excluo sua conta para que você possa recriá-la se desejar. Mas ainda preciso implementar isso.
+
+Aliás, isso seria algo para adicionar como um ticket. Aqui está a opção para redefinir sua senha. Eu simplesmente não quero pagar por um sistema completo de e-mail, como um sistema SMTP. Então, não tenho isso agora. Tudo bem. Hum, vamos ver onde estamos
+
+agora. Bem , temos algumas coisas menores que não importam muito. Ah, a revisão de código. Portanto, a correção automática está em execução. A revisão do código indicou que está pronto. Apenas
+
+alguns pequenos detalhes para corrigir. Estamos quase chegando ao ponto em que temos a próxima etapa de aprovação. Voltando ao diagrama, estamos quase chegando lá, e peço desculpas por esses ícones não estarem carregando agora, mas estamos quase nesse ponto, certo? Assim como fazemos, estamos realizando a validação. Vamos chegar a este ponto e é aqui que podemos executar o adaptador da árvore de trabalho e testar tudo de ponta a ponta. Vamos ver
+
+se conseguimos o grande retorno aqui. Não sei se vai funcionar perfeitamente na primeira tentativa, mas, com sorte, talvez
+
+eu consiga configurar tudo. Ok, já que as coisas estão praticamente funcionando agora, eu gostaria que você me ajudasse a testar isso enquanto esperamos a correção automática terminar. Então, atualmente já existe um Archon em execução a partir da branch de desenvolvimento. Então, quero que você encerre o processo que está rodando agora e utilizando as portas padrão do Archon. E então, quero que você o inicie na árvore de trabalho, porque quero testar o adaptador do Jira em produção agora mesmo . Então, quero que você
+
+invoque o Arconte. Eu já configurei as variáveis ​​de ambiente para o Jira no arquivo global.conf/env. Eu tenho o domínio Jirro, o e-mail Jira, o token da API Jira, o Jira web hookseker e a menção do bot Jira configurados. A menção ao Jirrobot está definida como archon com A maiúsculo.
+
+Portanto, quero que você inicie o archon e, em seguida, terá acesso aos serviços Atlassian e MCP. Você pode testar o envio de uma mensagem em algum ticket que temos no ambiente experimental da Dark Factory, no Jira Space. Assim, você pode testar isso de ponta a ponta para mim, para garantir que esteja funcionando. E se surgir algum problema , quero que você analise o que seria necessário para resolvê-lo, para que tenhamos a demonstração completa funcionando aqui, conversando com o Archon em um ticket do Jura. Boom. Muito bem, vamos ver o que acontece. É
+
+ótimo podermos usar o Atlassian MCP para testar isso de ponta a ponta. Estamos prestes a ter a grande recompensa aqui. E é sempre difícil em transmissões ao vivo porque tenho que mostrar uma demo bem pequena, já que passo muito tempo construindo tudo. Então, seria legal, tipo, eu trabalho nisso durante o fim de semana e depois consigo deixar em um ponto estável onde eu poderia até fazer uma solicitação de votação para incorporar isso em uma versão de desenvolvimento, para termos um novo adaptador da comunidade e aí poderíamos usar isso em uma das minhas próximas transmissões ao vivo. Então, uma ideia que tenho para uma futura transmissão ao vivo é usar uma combinação de provedores. Então, eu usei o
+
+Gemini para criar o design do site e o Opus para o texto e o planejamento, e depois pude configurar tudo como um projeto no Jira. Assim, podemos usar o adaptador do Jira para desenvolver e iterar no site em tempo real. Acho que essa seria uma ideia legal para outra transmissão ao vivo, porque combinaria algumas coisas que quero fazer aqui, como continuar mostrando esse adaptador. Então, na verdade, esta transmissão ao vivo é sobre construí-lo, não apenas mostrá-lo, certo? Então, mostrá-lo em outra transmissão ao vivo e depois fazer algo realmente concreto com ele, com o fluxo de trabalho do provedor de mixagem que eu queria construir esta semana, desde que o flash Gemini 3.5 foi lançado com a nova
+
+versão do antigravity. Muito bem, estou pensando bastante novamente. Está sempre demorando. E então, ok, quero que vocês me avisem. Você também está com esse problema?
+
+Algo que acontece em Claude é que ele tem personagens muito confusos, e isso só se corrige se eu selecionar o texto aqui no início e depois aqui para o MCP. É muito irritante. Não sei se isso acontece só comigo, mas acontece em todo lugar. Tipo, isso acontece aqui. E a parte mais estranha é que, quanto mais tempo dura a conversa com o código Claw, mais texto confuso eu recebo. E
+
+chegou ao ponto em que todo o meu texto está super enigmático e eu preciso passar o cursor sobre ele ou selecioná-lo para conseguir lê-lo. Assim mesmo aqui. Fica assim. Vocês estão vendo isso? Parece tão ridículo. E então eu tenho que
+
+destacar. Não sei se isso acontece só comigo ou com mais alguém. É muito estranho. Tudobem.
+
+Acho que são bugs super aleatórios. E então, como se estivesse bem aqui. Até na barra de status, é tudo muito aleatório. Não sei. Hum...
+
+Ah, preciso construir um túnel público. Espere. Certo, espere um pouco.
+
+Entendi. Então, é como o GitHub.
+
+OK. Então, é como no GitHub, onde eu preciso configurar o Enro com um perfil público e uma URL para o webhook ser acionado. Faz muito sentido, na verdade. E então o bot do Jira mencionou que isso também é algo que precisamos abordar. O adaptador foi desenvolvido para tratar esse valor como o ID da conta de um bot, o que é inaceitável. Não precisamos configurar uma
+
+conta no Jira ou um bot para isso. Portanto, acho que também teremos que corrigir isso. O Eric já viu isso antes também. Percebi essa falha estranha mesmo durante o raciocínio da garra dele . Eu também tenho o mesmo problema com os caracteres, eles simplesmente aparecem errados. Basta
+
+pressionar Ctrl +. Oh, tudo bem. OK. Então, se eu der zoom in ou zoom out, o problema se resolve imediatamente. Oh sim. Ah, legal. Bom, obrigado, Bam.
+
+Agradeço. Isso é realmente muito conveniente. Sim. OK. Aconteceu com você também. Aproximar e afastar o zoom. Ok,
+
+legal. Redimensione a largura do terminal. Sim, imagino que seja devido a algum mecanismo que eles usam para fazer o 'g' funcionar corretamente. Acho que estou me expressando corretamente. O progresso da tecla de solicitação aleatória. E é aí que
+
+símbolos aleatórios são inseridos por cima. Sim, isso faz todo o sentido. Sim. Nossa, cara. Anomalia na interface do usuário. É
+
+possível alterar a família de fontes no VS Code. Bem, quer dizer, agora que sei que posso simplesmente aumentar e diminuir o zoom, não me importo muito em mexer nisso, mas certamente seria uma boa ideia se fosse um problema mais permanente. Ok, legal. Hum, vamos ver como estamos com isso. Então, as correções automáticas foram implementadas.
+
+Confirmei dois problemas de configuração no código. Então, a detecção de menções, vamos ter que mudar isso. Um, auto-proteção contra gatilhos comment.author.ac ID da conta. Portanto, também precisa de um ID de conta real,
+
+caso contrário o bot não reconhecerá seus próprios comentários. Hum, sim, interessante. Sim, vamos ter que mudar isso. OK. Sim. Preciso que você altere isso
+
+aqui. Nós nunca criaremos um ID de conta de bot nem esperaremos que alguém crie um ID de conta de bot. Quero que seja apenas uma sequência de caracteres. Se estiver em archon ou em qualquer outro nível, e se a variável de ambiente não estiver definida, então ficará em archon mesmo. Por exemplo, por padrão, usamos "archon" com "A" maiúsculo como nome.
+
+Hum, e então, um "a" minúsculo também deve funcionar. Sinceramente, deveria ser algo que ignorasse maiúsculas e minúsculas. Mas sim, podemos manter o nome da variável de ambiente como o bot mencionou, mas será apenas o nome. Não será o ID de uma conta de bot. Preciso que você verifique se não temos nada aqui com um ID de conta para o bot.
+
+OK. Então, vamos corrigir isso. E outra coisa que precisamos abordar aqui é o webhook, para o qual acho que posso usar o Ingrok. Não sei se precisarei saber a porta exata. Vamos ver. Porque eu consigo fazer ingro http
+
+tipo, sabe, 3000,
+
+mas, é, eu preciso da porta porque essa pode não ser a porta certa.
+
+Então vamos deixar que continue a devastar tudo . O problema é que ele faz isso com tanta frequência que acaba travando nesses comandos. Cara, isso é frustrante. Tudo bem, vamos deixar isso para lá . Tudo bem.
+
+Também estou tendo problemas com o PowerShell do Terminal do Windows, que está esquecendo minha variável de ambiente PATH. Que estranho. Isso nem parece algo relacionado ao código Claude . Que aleatório, né? Tudobem.
+
+Vamos lá, Claude. O comando ainda está sendo executado .
+
+Será que isso é um problema do Windows? Porque está travado tentando encontrar os processos para encerrar ou algo assim. Bom, pelo menos agora está feito. Ou peraí, o quê? Ao clicar, aparece como verde, mas depois continua indicando que está em execução.
+
+Ok, eu vou simplesmente escapar daqui. Lá. Tudo bem. Não sei. Acho que na verdade foi uma falha no código do Claude, porque o comando foi executado, mas mesmo assim ficou travado. Encontramos cerca de
+
+10 falhas no código da nuvem hoje. É meio ridículo. Tudobem.
+
+Você pode, inclusive, pedir ao Cloud Code para corrigir isso para você. Quer dizer, é verdade. Sim. Assim como o código na nuvem, qualquer tipo de configuração na sua máquina pode definitivamente te ajudar. Sim.
+
+Tudo bem. Tudo bem? E então eu direi: "Ok". E quanto à questão do webhook, posso executar o Inrock localmente, como já fiz para testar o adaptador do GitHub com o Archon , mas preciso que você me diga o comando exato a ser executado, pois não sei a porta. Não sei exatamente como as coisas estão conectadas aqui.
+
+Então, vou enviar. Tenho tanta coisa na fila agora. Eu só preciso que ele se mova. Por favor. Hum, acho que o WSL é bom para reduzir falhas, talvez. Sim, mas o problema é que o WSL é
+
+muito lento. Parece que tudo simplesmente leva mais tempo. Sim, eu me recuso a usar o WSL com código na nuvem porque há atrasos na minha digitação, a menos que eu abra um diretório nativo do WSL. Mas se precisar acessar a unidade C do meu Windows, fica extremamente lento digitar qualquer coisa. Estou usando a API. Por que preciso do
+
+webhook? Essa é uma pergunta pertinente. Sim, sabe, eu também estou curioso para saber por que decidiram fazer as duas coisas. E também, já que temos a API configurada para o Jira, por que estamos usando o webhook em primeiro lugar? Bem, na verdade, sabe de uma coisa?
+
+Acho que sei porquê. Acho que é porque precisamos do webhook para receber eventos, como uma mensagem do usuário, para ser enviada ao Archon, que então usaria a API para enviar a resposta, provavelmente. Acho que vamos ver se algum dia receberemos uma resposta. Nossa Senhora! Nossa! Fico feliz em ver que todos nós temos os
+
+mesmos problemas e falhas com o código na nuvem. Sim, com certeza são universais. Isso é meio frustrante. Tipo, não seria tão ruim se eu não estivesse fazendo transmissões ao vivo. Tipo, essa transmissão ao vivo está demorando mais do que deveria porque o Claude está se atrapalhando com essas coisas. Tipo, antes não era tão
+
+lento assim. Tenho certeza absoluta. Sim . Eventos em tempo real com webhook, certo? Sim. Então, quando enviamos uma mensagem, ela
+
+precisa ser encaminhada para o Archon para ser processada imediatamente. Tudobem. homem.
+
+Hum, que projeto é esse? Sim. Então, acho que posso dar um breve resumo do que estamos fazendo aqui para aqueles que acabaram de entrar, enquanto aguardamos o processamento das informações. Então, uma visão geral do que estou fazendo aqui na transmissão. Estou integrando ao Jira uma ferramenta de código aberto na qual estou trabalhando, chamada Archon. Então, uma apresentação super, super
+
+rápida do Archon. Archon é um construtor de código aberto para programação de IA . Isso permite que você pegue qualquer tipo de processo que tenha para desenvolvimento de software, trabalhando com assistentes de codificação de IA , e o empacote em um fluxo de trabalho que torna sua codificação de IA mais determinística e repetível. Então, em vez de construir todo o seu sistema como um conjunto de instruções que você insere em um agente muito frágil e não confiável, com o Archon, estamos meio que invertendo a lógica. Em vez de integrar o sistema ao agente, estamos integrando nossos agentes ao sistema.
+
+Então, definimos fluxos de trabalho como este, onde temos diferentes nós que estamos interligando. E cada nó pode ser um agente que está operando, realizando algum tipo de raciocínio por nós, ou pode ser um conjunto de comandos ou scripts que queremos executar. E assim podemos adicionar o determinismo, certo? É como se ainda estivéssemos usando o agente de codificação quando precisamos dessa capacidade de raciocínio para criar um plano ou executar algum tipo de implementação. Mas, para outros tipos de tarefas que temos no fluxo de trabalho, podemos executá-las como comandos determinísticos. Portanto, o
+
+poder aqui reside em retirar ao máximo a decisão do agente, porque se você pedir a um agente para executar algum tipo de validação após uma implementação, ele pode se esquecer de fazê-lo ou simplesmente não o fazer exatamente como você deseja. Existem, portanto, certas etapas em um fluxo de trabalho de codificação de IA em que você deseja extrair determinado contexto ou executar determinados comandos de validação. Você quer garantir que seja executado dessa maneira todas as vezes. Assim, podemos combinar esses nós determinísticos e não determinísticos para tornar nosso processo mais repetível. E então, com o Archon, nesses fluxos de trabalho, oferecemos suporte a árvores de trabalho e isolamento nos bastidores. Assim, você pode
+
+executar várias dessas tarefas em paralelo, simultaneamente, na mesma base de código, ou executar fluxos de trabalho diferentes em bases de código distintas. Assim, isso também aumenta muito a sua produtividade. Também podemos misturar modelos e provedores para tornar as coisas mais eficientes em termos de tokens e, sabe, experimentar certas estratégias, como usar o Opus para planejamento e o Kim K 2.6 ICS para implementação, por exemplo, como eu estava explorando na minha transmissão ao vivo na quinta-feira. O Archon, como um todo, permite que você se comunique com ele em várias plataformas diferentes, como Telegram, Slack e GitHub. Assim, você
+
+conversa como se estivesse com um colega de equipe, funcionário ou qualquer outra pessoa, mas é o agente de codificação que consegue executar esses fluxos de trabalho do Archon. Então, você pode dizer: "Ei, Archon, aqui está este problema que eu quero que você corrija" ou "aqui está esta solicitação de pesquisa que eu quero que você revise". Estou integrando agora mesmo no Jira. Assim, isso nos permite essencialmente ter uma conversa com a Archon para cada ticket. Então eu posso entrar aqui e dizer tipo, "Certo, em que pé está esse ticket agora? Tipo,
+
+temos uma solicitação de pull request para ele? Quero que você vá e resolva isso agora mesmo." Certo? Podemos enviar todas essas solicitações e o sistema escolherá o fluxo de trabalho Archon correto para lidar com a tarefa, dependendo do que estamos solicitando. E então, estou quase chegando ao ponto. Na verdade, utilizei um
+
+fluxo de trabalho do Archon para construir esse adaptador, ou melhor, essa conexão entre o Jira e o Archon. Então podemos conversar com ele ao vivo em qualquer um desses tickets, certo? Por exemplo, aqui nos comentários, eu posso dizer algo como "Archon, por favor, analise este ticket" ou "Archon, em que pé está este ticket?". Temos um PR (Pull Request) para isso? E você pode usar a
+
+CLI do GitHub para analisar isso, sabe? Essas são as coisas que em breve seremos capazes de fazer, mas ainda estamos chegando ao ponto de configurar tudo. É nisso que estou trabalhando agora. OK. É a decisão certa.
+
+A menção ao bot do Jira se transforma em uma simples sequência de nome. Então, usaremos o comando at@ archon para acioná-lo. Então, enviamos a solicitação de alteração para o ponto 3. E agora estamos em fase de iteração. Então, dentro do fluxo de trabalho do Archon, voltamos aqui para implementar as correções que havíamos fornecido com nosso portal. Então, nós
+
+fornecemos o feedback e o fluxo de trabalho do Archon está lidando com isso. Tudo bem. Então, sim, era exatamente isso que eu estava dizendo. Por que usar um webhook se já temos a API do Jira? Eles fazem o percurso oposto. Portanto, a API do Jira é de saída. É isso
+
+que o Archon usa para postar a resposta e recuperar o histórico de comentários. É uma solicitação-resposta. O webhook é de entrada. É a notificação de que alguém acabou de postar um comentário mencionando o bot com o nome Archon ou algo do tipo. É por isso que precisamos de ambos.
+
+OK. E parece que Claude está preso novamente executando um comando. Nossa! Hum, estamos quase lá. Ok, estamos quase lá. Está pensando
+
+novamente. OK. Quando você marca uma menção em uma issue do Jira, como por exemplo, na branch de correção de problemas do Archon , isso envia um webhook para o endpoint da API do Archon para acionar um determinado fluxo de trabalho. Sim, exatamente. Sim. Portanto, trata-se de um endpoint da API de webhook
+
+que inicia o Archon para lidar com a solicitação e usa a API JER para carregar o histórico de comentários e outras informações, e depois enviar a resposta. OK. Então, é isso aí . OK.
+
+Então, eu simplesmente executei o comando `enrog http 3000`. É o que eu estava fazendo antes, então vou fazer de novo. OK. Então, meu comando enro, que eu inicio agora com suporte a túnel 3000, quando troco o servidor de desenvolvimento pela árvore de trabalho, continua apontando para o local correto. Assim que o Enro lhe fornecer um URL, o destino do webhook Jirro será este. Então, no Jira,
+
+preciso registrar um webhook do sistema. OK. Sim, é isso mesmo
+
+. Bom. Sim. Então, vou acessar as configurações do sistema Jurro, na seção de webhooks
+
+. Você pesquisa por webhook. Ganchos da web. OK. Então, isso é exatamente o que eu fiz no GitHub também. Então, isso vai disparar agora.
+
+Então crie um webhook, tipo uma fábrica escura, ou eu vou chamar de arconte. Archon e então, para o URL,
+
+acho que é só copiar isso aqui. Deixa eu só me certificar de que farei essa parte fora das câmeras.
+
+Webhooks de barra Jira
+
+e, para o segredo, acho que pego o que está na minha variável de ambiente.
+
+Ok.
+
+Tudo bem. E então eu tenho que selecionar os eventos relacionados ao Jira. Na verdade, só me importo com a questão ou o comentário que é criado. Quero dizer, talvez atualizado também. Acho que vou fazer isso mesmo. Eu vou simplesmente
+
+criar algo. Sim . Portanto, se você deixar a consulta JQL vazia, ela corresponderá a todos os problemas de todos os projetos. E é isso que eu quero. Gostaria de poder conversar com qualquer Archon dentro de qualquer projeto.
+
+Ah, sim, isso é bom. É algo com que você provavelmente deveria ter cuidado se tiver muitos clientes com diferentes contas Jer às quais você tem acesso. No ambiente em que estou trabalhando, são apenas projetos com fins educacionais. Então, para mim, está tudo bem . OK. Então eu vou criar
+
+isso e aí tudo deve ficar bem. Estamos quase no ponto em que podemos testar isso completamente. Hum, parece que ficou pendurado. Atualizar. Você realmente criou isso? Sim. OK.
+
+OK. Acho que estamos bem. Acho que estamos bem. Tudo se encaixou perfeitamente. Eis a situação.
+
+O que posso fazer agora? Posso configurar em paralelo. Sim. Quando estou executando o gate 3, o agente está reescrevendo o adaptador e fará um commit. Serei notificado quando a alteração for concluída.
+
+Encerrei o servidor de desenvolvimento, iniciei a árvore de trabalho e o GRA continua apontando para lá. Um detalhe a observar: o webhook nativo de comentários criados do Jira pode enviar um corpo de comentário como uma string em vez de JSON do ADF. O adaptador percorre o ADF, que sabe encontrar o Archon, então o Jira envia um corpo que não é do ADF. A menção não corresponderá. Ok, teremos que trabalhar nisso se acontecer. Hum...
+
+Ok, temos dois shells em execução agora. Certo, você testou tudo para garantir que está funcionando corretamente? Eu configurei o URL do webhook e tudo mais. Portanto, você já deve conseguir testar isso de ponta a ponta enquanto aguardamos a conclusão da implementação. Achei que tinha dito isso, mas acho que não disse.
+
+Vamos ver. Sim, acho que ainda não testaram . Alvo de teste alinhado. Hum, deixe-me acompanhar o trabalho de teste. Eis a situação e o que você pode fazer agora.
+
+Ah, estava apenas nos preparando para testar assim que a implementação estivesse concluída. Mas acho que pode fazer isso agora mesmo, enquanto esperamos. Bem, talvez. Bem, talvez eu esteja me precipitando um pouco . Veremos.
+
+Infelizmente, porém, uh... Ok, agora não está mais congelado. Fica congelado por um segundo.
+
+É basicamente uma estrutura de pipeline para agentes? Sim, essa é outra boa maneira de descrever um arconte. Sim. Hum, tenho alguma habilidade meta de arconte ou alguma prática recomendada para melhorar a fábrica escura de MCP e ingerir o arnês? Então, temos uma habilidade Archon que informa ao Archon ou ao seu agente de codificação como construir fluxos de trabalho Archon e executá-los para a própria Dark Factory. Não tenho nenhuma
+
+melhoria específica em relação ao fluxo de trabalho em si, mas sim em relação à base de código. Então, toda semana eu tenho um fluxo de trabalho Archon que realiza testes de regressão completos na Dark Factory para descobrir se há algo que não está funcionando corretamente. Assim, ele testará cada jornada do usuário, cada caso extremo, tudo, e então criará problemas no GitHub para qualquer coisa que encontrar. Dessa forma, a fábrica obscura evolui com o tempo e corrige automaticamente quaisquer problemas que surjam, qualquer tipo de regressão decorrente das novas construções que está desenvolvendo. Tudo bem.
+
+Ah, legal. Então, vamos ver onde estamos agora. Então, ainda não. Existe uma razão de sequenciamento. Os dois bloqueadores estão sendo testados neste momento. O servidor está funcionando
+
+corretamente no momento. Sim. Portanto, teremos que aguardar a conclusão da edição. Sinceramente, não consigo realizar um teste de ponta a ponta. O segundo agente do portão 3 está editando ativamente a árvore de trabalho neste momento. Sim. Então, temos que
+
+esperar. Preciso ter paciência, mesmo que o código na nuvem esteja extremamente lento. Bem, minha configuração de webhook está correta e pronta. O que está faltando é o servidor workree. OK.
+
+Hum, você poderia testar o webhook rapidinho primeiro para garantir que está tudo certo? Porque eu acho que... deixa eu ver se chegou alguma solicitação.
+
+Então, ainda não tem nada, mas eu acho que consigo testar isso agora mesmo. Tipo, se eu entrar em qualquer lugar aleatório, vou duplicar isso. Portanto, isto ainda está em aberto. E se eu entrar em qualquer tópico aleatório e colocar um comentário agora, isso deve ser acionado. Tipo, vou entrar nessa sem pensar duas vezes . DFE8 e
+
+eu direi olá. Isso deve ativar o mecanismo. Vamos ver se conseguimos um "Sim". OK, bom. Então, estamos recebendo um erro 404 (página não encontrada), mas isso acontece porque, como o Claude acabou de me dizer, ainda estamos usando a versão de desenvolvimento . Então, precisamos esperar que a
+
+iteração u seja concluída para que o nó de implementação reitere nosso feedback e, em seguida, meu segundo cérebro reiniciará as coisas e executará a partir do branch. Mas o webhook está funcionando porque ele enviou e disparou a solicitação aqui. Então, estamos indo bem. Então, vou apagar isso. Nossa, que ótimo! OK.
+
+Inteligente. Ah, ok. Eu mesmo verifiquei e está funcionando. Isso me dá um pouco de tranquilidade. Assim que a implementação estiver pronta, teremos o webhook configurado. Tudo
+
+bem. Meu objetivo é aprimorar minha codificação de vibrações com Vunda Radical e NN. Nunca ouvi falar da Vundra ou da Radical, então se eu criar uma consultoria, posso elaborar um plano semanal, mas depois preciso da ferramenta real para o trabalho em si. Legal. Sim, na verdade nunca ouvi falar dessas duas primeiras ferramentas.
+
+Então, eu não tenho muita certeza do que você está fazendo, mas parece legal. Tudo bem. Quais MCPs e habilidades estou usando para streaming? Bem , se você está falando da produção em si da minha transmissão ao vivo, eu uso o OBS, bem simples. Não tenho nada sofisticado para isso. Bem, no que diz respeito à
+
+preparação das minhas transmissões ao vivo, eu tenho várias habilidades, ou melhor, algumas habilidades diferentes, integradas ao meu segundo cérebro para me ajudar com coisas como gerar a miniatura e pensar em bons títulos. E também habilidades que me ajudem a roteirizar minhas transmissões ao vivo e a planejar as coisas. E também tenho outra habilidade que dá ao meu segundo cérebro uma visão de todos os meus repositórios e de como eu uso o Archon para eles. Assim, posso, sabe, navegar pelas diferentes bases de código para planejar como vou usar a fábrica escura nesta transmissão ao vivo. Eis como pretendo usar o Archon. Na verdade,
+
+são várias habilidades que me ajudam a preparar meu conteúdo. Mas para a produção ao vivo em si, eu não uso nada específico para isso, se é isso que você está perguntando. Certo, legal. Então, vejamos. Confirme a alteração de estado. O agente de mudança ainda está em
+
+fase de validação. Hum, não devemos iniciar o servidor da árvore de trabalho ainda. Os arquivos ainda estão sendo alterados. Ok, então basicamente está me dizendo que estamos chegando lá, mas ainda não chegamos. No momento em que for retomado, eu receberei o sinal. Vou desativar o
+
+servidor de desenvolvimento. Inicie a árvore de trabalho. Confirmar. Blá blá blá. OK. Então, estamos
+
+quase lá. Quase lá. Tudobem.
+
+Claude está muito lento. Vive programando uma integração completa da plataforma em poucas horas. É, eu não sei por que está tão lento. Quer dizer, pelo menos está fazendo um bom trabalho. Tipo, eu sinto que não tive nenhuma alucinação muito forte com o Opus na nossa transmissão ao vivo aqui. É um processo lento, mas
+
+posso aceitar desde que os resultados sejam bons. Mas, cara, eu só queria chegar logo ao ponto em que estivesse pronto para poder mostrar a vocês o resultado final e, obviamente, será uma demonstração bem pequena, porque o foco da transmissão é mesmo a construção do prédio. Mas pelo menos quero mostrar a vocês como executar esse fluxo de trabalho no Archon, para que possamos chegar lá e, então, estaremos prontos para a transmissão. Muito bem, o agente de mudança terminou. Deixe-me ler o relatório. Certo, e então,
+
+sim, aposto que esse comando vai demorar uns dois minutos. Claro, veremos. Hum, sim, acho que há outra falha aqui, tipo, "Ah, espere, um momento." Veja, tipo, por que aparece que está rodando, mas quando eu clico, aparece que terminou? Aparentemente, falhou. É assim que
+
+eu acho que funciona o código na nuvem, sendo esse um grande problema. Acho que esse é um dos motivos. Sim, é. OK.
+
+E agora, pelo menos, está ficando um pouco mais rápido . OK. Deixe-me ler o relatório do agente. Confirme o representante.
+
+Bem, quando os EUA estão dormindo, na verdade é mais rápido. Eles limitam o uso dependendo de quantos usuários estão utilizando o serviço. Ah, infelizmente faz sentido. Sim. Nossa! Sim
+
+. Acho que então eu deveria me tornar uma pessoa noturna, né? Tudo bem. Sim. Portanto, o fluxo de trabalho está atualmente pausado, que é exatamente o que queremos, porque o que aconteceu aqui foi que fizemos a implementação e depois recebemos nosso feedback, certo? Não queríamos que
+
+o bot fosse um ID de conta. Queremos que seja apenas uma sequência de caracteres. Então, fizemos essas implementações e agora voltamos à nossa fase de revisão. Então, é aí que estamos agora novamente . Tudobem.
+
+Agora, basta reiniciarmos o servidor depois que ele passar dois minutos lendo um único arquivo por algum motivo. Na verdade, eu gostaria de saber qual é o meu consumo de CLA. Provavelmente devo dar uma olhada nisso. Hum, deixe-me fazer isso. Mostre isso fora do campo de visão da câmera aqui.
+
+Mostrarei isso em um instante. Vamos ver. Configurações. Uso. Na verdade, não é tão ruim assim.
+
+Então, reiniciou ontem, mas estou apenas com 11%. Nas últimas 30 horas, mais ou menos. Não é tão ruim assim. Eu aceito. Utilizei apenas 17% da minha janela de 5 horas para tudo o que temos feito aqui. E eu uso o Cloud Code para
+
+literalmente tudo. Não estou trabalhando com diferentes fornecedores como fiz na quinta e na segunda-feira. Então, é, não é nada mal. Parece que a Anthropic realmente relaxou as restrições de taxas. Os limites de taxa não são tão rígidos agora.
+
+Ah, o que é bem legal. Então, estava muito, muito ruim algumas semanas atrás, mas na semana passada melhorou um pouco e esta semana está ainda melhor, eu acho. Quer dizer, eu só tive um dia de testes, mas já é alguma coisa. Ok, estamos quase lá. Estamos tão perto.
+
+Portanto, a mudança está confirmada. A sequência é reiniciada sem problemas. estábulo workree. Então, ele vai encerrar o servidor antigo e reiniciar o servidor. Então, na verdade, temos a versão em execução a partir da árvore de trabalho, não na branch de desenvolvimento que eu iniciei antes da nossa transmissão ao vivo aqui, e então poderemos testá-la aqui.
+
+Nossa, estamos tão perto. Já temos o webhook funcionando. Muito bem, como vocês podem ver, a lista de tarefas aqui inclui a evolução do sistema, mas definitivamente não faremos isso na transmissão ao vivo. Ok, o servidor está inicializando. Deixe-me esperar até que esteja pronto. O servidor
+
+registra alguma coisa. Deixe-me verificar o adaptador e a porta JER. Hum, por que eu não considero usar codecs em vez disso? Estou pensando em usar o Codeex em vez disso. É que o problema é o que eu sei. Ah, e eu realmente
+
+testo codecs de vez em quando. Como faço todos os meses, eu o instalo. Eu tenho uma assinatura. Não é tão bom quanto o Opus. Ainda não. Talvez eu chegue lá
+
+em algum momento. Mas também estou sendo pressionado a usá-lo cada vez mais por causa desses bugs no código em nuvem, da velocidade e do custo, e também pelo fato de terem anunciado recentemente que, a partir de 15 de junho, não será mais permitido usar o SDK do agente Claude ou o código Claude sem interface gráfica com a assinatura Anthropic. Haverá um crédito separado de US$ 200 por mês que você receberá por usar qualquer tipo de acesso programático ao código na nuvem. E isso é uma pena, porque meu segundo cérebro e o Archon usam bastante o SDK do Clawed Agent . Então, talvez eu mude essas coisas, pelo menos em parte, ou pelo menos experimente usar o SDK Codeex, já que o Archon já suporta codecs. Na verdade, seria
+
+extremamente fácil substituir tudo o que tenho feito nesta transmissão ao vivo por codec em vez de código na nuvem. Uma das vantagens do Archon é a facilidade com que se pode alternar entre fornecedores dentro do mesmo fluxo de trabalho ou até mesmo alterar o fluxo de trabalho por completo. Então, definitivamente estou considerando essa possibilidade. Acho que o Codeex é uma boa ferramenta. Minha experiência com ele não tem sido tão boa quanto com o código em nuvem em geral.
+
+Tudo bem. O servidor carregou a web, o GitHub, o Slack e o Telegram, mas não o Jira. Isso significa que não foram encontradas todas as quatro variáveis ​​Jira necessárias no ambiente. A mensagem dizia: " Eles carregaram do ambiente ENV quando o ambiente ENV do próprio trabalho não existe." Portanto, as barras do Jira não estão sendo inseridas no arquivo que o servidor lê. Deixe-me explicar melhor. Bem,
+
+infelizmente temos um problema aqui. Vamos ver. Esperamos poder corrigir isso. Ah, Jira, bem, é porque... Espere aí
+
+. Acho que entendi o problema. Portanto, a URL base do Jira não é uma variável de ambiente que eu defini, pois estou apenas colando esses valores do meu ambiente. Essas são as que nós realmente definimos. Estas são as variáveis ​​de ambiente que eu defini e as que quero usar. Acho que pode ter ocorrido uma
+
+alucinação aqui, onde está procurando a URL base do Jira quando deveria ser o domínio do Jira. Então preciso que você corrija isso. Não retome o fluxo de trabalho porque quero fazer isso muito rápido. Você está muito lento hoje e isso é muito irritante. Então, eu quero que você resolva isso rapidinho.
+
+Reinicie tudo muito rapidamente. Seja extremamente conciso, pois é algo simples de qualquer forma. Não quero que fique pensando muito sobre isso.
+
+Essa tarefa é muito complexa e demora muito para ser executada. Quer dizer, normalmente não aconteceria. Não sei por que Claude está demorando tanto, mas, no geral, estamos construindo algo bastante grande e complexo. Então, entendo que isso está levando um tempo considerável, e é por isso que estou fazendo uma transmissão ao vivo, porque transmissões ao vivo são feitas para durar mais tempo. Hum, mas ainda assim é mais longo do que eu esperava. Quer
+
+dizer, não é uma diferença absurda, no entanto. Estamos quase lá. Só precisamos corrigir esse pequeno bug depois que ele passa dois minutos pensando sem motivo aparente. Mas estamos a caminho disso.
+
+E também diz que ainda está aguardando a aprovação da implementação , o que também não é verdade. Então, mesmo a mensagem de status parece distorcida e com bugs. OK. Ah, entendi. Corrigindo o nome da variável de ambiente no servidor.
+
+Em seguida, reinicie. Ok, vamos editar diretamente. Então, ocorreu um erro ao editar o arquivo, acho que foi porque primeiro tivemos que lê-lo . OK. Sim. Então, houve um
+
+pequeno bug que fez com que o programa interpretasse erroneamente o nome da variável de ambiente, o que é meio estranho, já que o processo de planejamento havia definido tudo corretamente. É, eu não tenho muita certeza. Ou talvez a culpa tenha sido minha. Talvez eu tenha deixado passar alguma coisa, mas de qualquer forma, está tudo bem. Eu penso. Sim
+
+. OK. Sim. Eu estava apenas observando essa mudança de linha, pedindo desculpas. Parece bom.
+
+OK. Relançamento. Estamos quase lá. Talvez Andre Karpathy tenha aumentado os limites das taxas. Talvez. Sim, eles têm sido gentis
+
+ultimamente, na verdade. Bem, chegou a hora de falarmos sobre o chicote de garras ruim . Você já viu nas redes sociais aquele vídeo em que o usuário sacode o terminal? Não, eu não vi isso. Você está dizendo isso só para falar mal e depois melhorar, ou o que você quer dizer exatamente? O
+
+chicote de garras ruim. É engraçado. OK. Tudo bem. E está tudo bem.
+
+Agora, o teste será realizado de ponta a ponta. Vamos lá. Portanto, o adaptador Jira já está em funcionamento. A inicialização estava correta. E então, está na lista de plataformas ativas. A normalização do domínio do barão
+
+funcionou. OK. Então, executando o teste final agora. Portanto, será utilizado o servidor Atlassian MCP para publicar o comentário no DFE7. Então, se formos para o DFE7.
+
+Vamos dar uma olhada. Certo. Vamos voltar à nossa lista. Chegou a hora da verdade, senhoras e senhores. DF7.
+
+Veja se foi publicado. Sim. Então, na Archon, o que esse ticket está solicitando e qual é a solução mais simples? Seja breve. OK, bom. Este é o
+
+teste perfeito, pois não preciso executar um fluxo de trabalho complexo ou algo do tipo. Eu só quero conversar com o Archon sobre o assunto. Hum, ok. Bom, isso não é bom. Parece que não encontramos nenhum resultado para webhooks. Talvez eu tenha
+
+configurado algo incorretamente. Então, vejamos . Agora estou monitorando os registros do servidor para que o webhook chegue e responda à postagem. Talvez eu tenha feito algo errado porque , se aparecer "404 não encontrado", pode ser que isso adicione webhooks do Jira. Então eu não escrevi nada errado. Bem,
+
+aqui vou dar, vou dar aqui mesmo . Recebi este erro do Ingro. Acho que tem algo errado com o caminho. Você me disse para usar /webhook/jira, mas talvez não seja exatamente isso que temos no código. Quero que você investigue isso.
+
+Muito bem, só temos que esperar. Eu vou para lá . Eu simplesmente vou fugir disso . Estou farto desses comandos demorarem uns 3 minutos para serem executados. Tudo bem.
+
+Ah, é um chicote de verdade. Google BadClaude. Ok, vou verificar isso . Estou curioso. De qualquer forma, temos tempo enquanto esperamos que isso seja corrigido . Hum, ok. Que feio, Claude.
+
+OK. Sim, acho que é isso mesmo, no X. Um aplicativo Electron leve do GitHub. Executar o trem do sistema permite que os usuários enviem uma interrupção de controle C para processos lentos na nuvem. É exatamente isso que eu tenho agora. É
+
+lento. Completo com animações de chicote em estilo desenho animado . O que? Isso parece muito engraçado. Mais rápido. Uau. E nós temos o
+
+insulto racial para um robô. Isso é engraçado. Isso é muito meme, mas é engraçado. É assim que me
+
+sinto neste momento. Estou me controlando para a transmissão ao vivo, mas nos bastidores, ou melhor, nos bastidores mesmo, estou pensando: é isso que eu quero fazer agora com o Claude porque ele está muito lento. Sim, isso é engraçado. Muito obrigado por compartilhar isso.
+
+Certo, vamos ver onde estamos agora.
+
+O erro 404 é um erro de digitação no URL do webhook, não no código. Ah, de jeito nenhum. Eu coloquei três "O"s nisso. Oh meu Deus, isso é hilário. Ah, foi totalmente culpa minha. OK.
+
+Editar.
+
+Salvar. Ok, isso foi totalmente erro do usuário. Ok, já consertei. Faça o teste novamente. Nossa, que engraçado.
+
+Então, meu comentário de teste anterior encontrou um erro de digitação, por isso é um erro 404. Ah, que engraçado. Ok, executando o teste novamente. Postando um novo comentário de arconte. Então, posso apagar o outro aqui.
+
+Sim, aí está. 200. Ok. Tudo bem. Portanto, acho que agora está sendo tratado da maneira correta. Então, vamos ver se recebemos uma
+
+resposta aqui em tempo real dentro do próximo minuto, mais ou menos. O processamento disso não deve demorar muito. OK. Então, bem, isso na verdade terminou rápido. Bem, eu não sei.
+
+Veja, olhe. Eu clico nele e aparece um ponto verde. Eu fecho a janela e aparece a mensagem de que o programa ainda está em execução. Decida-se, Claude. O
+
+caminho foi corrigido. O webhook alcançou o adaptador, mas falhou na verificação seguinte. Hum, o prefixo secreto significa que o parâmetro de consulta secreto chegou vazio. O URL do seu webhook está incompleto ou a parte secreta está faltando. Hum, ok.
+
+Então, acho que esse é outro problema de configuração da minha parte. Então, vou fazer isso fora das câmeras. Então, "secret" é igual a,
+
+portanto, existe uma maneira diferente de definir o segredo no Jira. Então, achei que tinha feito certo, mas acho que é só uma questão de processo, não é processado da mesma forma. Então, hum, faça o teste novamente e apague os outros comentários. Ah, na verdade, não, não vou fazer isso porque vai levar tempo. Então, vou apagar tudo isso eu mesmo para que tenhamos uma página em branco aqui. Então, apague,
+
+apague novamente e depois faça o teste de novo. Ok, então o webhook está configurado. Vou verificar isso rapidinho. Ah, ok. Portanto, o comentário está publicando um webhook.
+
+Sim. Ok, chegamos a 200. Ok. De novo. Vamos ver se funciona.
+
+Atualizar. Veja se recebemos o comentário. OK. Sim. Tudo bem. Está ótimo. Chegou a
+
+hora da verdade. Espero que finalmente o tenhamos agora. Veremos. Segundo
+
+as notícias, Karpathy pretende utilizar a Enthropics Claw para ajudar a treinar a próxima geração de modelos fundamentais. Hum, utilize. Então, ele está usando o Claw para treinar outros modelos ou está trabalhando na próxima versão do Claude? Hum, você poderia dar mais detalhes sobre o assunto da troca de provedores no Archon? Entendo que esse não seja o tema da transmissão ao vivo de hoje, mas você poderia, por favor, considerá-lo? Sim, é.
+
+Hum, um segundo, porque quero ver em que ponto estamos com isso aqui. Deixe-me ler isto. Veja, tudo bem, então, hum, sim. Então, eu diria que minha transmissão ao vivo na quinta-feira seria um ótimo recurso para conferir. Não gostaria de me alongar muito sobre isso agora. Mas o
+
+problema que temos com modelos maiores atualmente, como o Claude Opus, por exemplo, é que ele é muito caro e os limites de taxa estão piorando. Parece que está escrito na parede que em breve chegaremos ao ponto em que não será possível simplesmente usar o melhor modelo para tudo. Então, no fim das contas, precisamos descobrir onde, em nosso fluxo de trabalho mais amplo, precisamos de mais raciocínio e onde podemos usar modelos mais baratos e rápidos , de código aberto, como o Quen, o Kimmy ou o Miniax, e ainda obter resultados quase tão bons ou tão bons quanto os anteriores. Assim, o que o Archon nos permite fazer é ter um fluxo de trabalho onde podemos combinar fornecedores. Então, podemos fazer um planejamento mais abrangente, implementando um processo de validação, mas estamos usando o Kimmy para o planejamento, implementação e validação, e o Opus para o planejamento, por exemplo. E
+
+isso é algo que eu estava testando bastante: queria ver se era melhor usar o Opus, o modelo mais poderoso, para o planejamento ou para a implementação, porque, no final, não queremos usá-lo para ambos se quisermos realmente otimizar os tokens. E descobri, através dos meus testes de benchmark na quinta-feira, que usar o Opus para o planejamento, o modelo mais poderoso para planejamento, na verdade, oferece resultados muito melhores do que usar o modelo mais poderoso para a implementação, porque criar essa especificação da melhor maneira possível é o que proporciona os melhores resultados. Certo, então vamos ver o que aconteceu. Portanto, nenhum novo registro do servidor apareceu para esse comentário. O webhook ainda é o mesmo webhook inválido da tentativa anterior. Isso significa uma das
+
+duas coisas mencionadas no último comentário. A mensagem nunca chegou ao servidor. O comando alcançou o servidor com a chave secreta válida, mas o arconte mencionado não foi detectado. A maneira mais rápida de diferenciá-los. Abra o expectorador enro. Procure a
+
+solicitação mais recente. Me diga, existe alguma postagem no Jira? Sim . Então, foi isso que eu consegui. Então, 200 indica que está chegando sem problemas. O problema mencionado refere-se
+
+à detecção no payload do Jira. Vou adicionar um breve registro para capturar a descrição exata do corpo. Cara, estamos tão perto. Estamos tão perto. Nós vamos chegar lá. Nós
+
+chegaremos lá. Vou continuar até conseguirmos isso aqui. Nossa! Certo, preciso verificar algo fora da câmera. Já faz mais tempo que estou fazendo transmissões ao vivo do que imaginava , mas nós vamos chegar lá.
+
+Nossa, cara. Tudo bem.
+
+Certo, então está chegando com um segredo válido, mas não gerando nenhum webhook, o que significa que a menção não está sendo detectada. Então, na verdade, dizia que isso era um risco. Então, é, eu preciso resolver isso.
+
+Archon é principalmente Typescript. Sim, é de fato quase tudo em Typescript. 97,5% e o outro mais comum é o Astro, apenas para a página de documentação, e depois o shell, apenas para os comandos padrão do pacote que temos em scripts. Não sabia nada sobre o bom Claude. Sim, eu vi isso por um segundo quando estava pesquisando "Claude mau" no Google.
+
+O que é isso? Não dê ouvidos ao mau Claude, meu filho. Você é um anjo. Você é perfeito(a). Você está fazendo o seu melhor.
+
+Ah, isso é engraçado.
+
+Bom. O código na nuvem trabalha arduamente para nós. Este aplicativo permite que você envie mensagens de incentivo com uma varinha mágica, mas com amor em vez de chicotes. É engraçado. Clique no ícone da bandeja do sistema. Invoque sua varinha mágica. Agite-o no ar
+
+. Uma varinha dourada com uma estrela cintilante segue o cursor, espalhando brilho. Isso é engraçado. Nossa! OK.
+
+Bom. Claude, isso é engraçado.
+
+Bem, provavelmente não tenho muito interesse em usar nenhuma dessas opções, mas, mesmo assim, é engraçado. Tudo bem. Sugiro que você use o aplicativo Cloud Code para desktop para evitar problemas com a linha de comando. Isso realmente resolveria todos esses problemas? Gosto de toda essa lentidão porque tenho a impressão de que usa o mesmo chicote de fios debaixo do capô. Eu estaria
+
+disposto a experimentar, mas me acostumei tanto a usar a CLI que acho que seria um choque muito grande para mim tentar migrar tudo . Seria mais fácil para mim acessar o Codeex do que ir da linha de comando para o aplicativo de desktop do Cloud Code. Não sei. O webhook do Jirro envia o comentário. O corpo da mensagem é texto simples, não... Certo, então era exatamente
+
+o risco que eu imaginava. Então, precisamos fazer algumas mudanças. Deixe-me ler os dois métodos e adaptá- los para reconhecer strings. Ok, então estamos finalmente chegando ao que interessa . Estamos quase lá porque a autenticação está funcionando. O URL está funcionando. O Jira é
+
+um adaptador habilitado que está sendo executado com o Archon neste momento. Só temos mais uma coisa a fazer: garantir que ele consiga processar a mensagem. Muito bem, tornando ambas as strings conscientes. Ah, bom. Então, tudo bem, ótimo. Na
+
+verdade, está sendo bem rápido agora. Vocês pretendem lançar essa implementação como um pacote independente? Muitos grupos teriam interesse em uma ferramenta de aprovação de grupos isolada e segura para integração com o Jira. Bem, quero dizer, potencialmente com certeza, embora eu queira continuar usando o Archon por enquanto, porque mesmo que você queira usar o Archon apenas para conversar no Jira, você pode. Assim como o Archon, que na verdade é muito leve por dentro . Sim, existem muitos
+
+outros adaptadores, plataformas e provedores , mas você não precisa habilitar nenhum deles. Ao configurar o Archon, você pode deixá-lo bem básico . Baixe a CLI, configure o adaptador do Jira e pronto. Então, não sei se realmente precisaria fazer disso algo separado. Se você deseja apenas isso, pode ativar apenas isso.
+
+Não é como outras ferramentas que vêm com um aplicativo Electron enorme e uma instalação gigantesca de vários gigabytes ou algo do tipo . OK, bom. Então, ambas as correções foram implementadas. Agora, só precisamos esperar que outro comando extremamente longo seja executado. Ok, então inicie o servidor executando o comando de teste. Vamos
+
+ver. Certo, então recebemos outra chamada aqui e, voltando ao assunto... Ok, então, aguardando a resposta completa dos arcontes de detecção de menção. Vamos trazer
+
+o navegador de volta. Tudobem. Ok, teste rápido. Em uma ou duas frases, qual é a solução mais simples para este problema? Certo, legal. Então, vou simplesmente
+
+apagar isso. Não precisamos mais disso. Isso também não acionará o webhook . Tudobem. Por favor, por favor, trabalhe agora.
+
+O computador é fácil de usar. Você simplesmente não precisa movê-lo sobre nada. É simplesmente uma interface de usuário melhor. OK. Quer dizer, talvez eu pudesse ser convencido a experimentar. Eu
+
+simplesmente adoro usar a CLI. Eu gosto da abordagem minimalista porque assim tudo fica ali, na minha IDE, para eu analisar por conta própria. Quer dizer, acho que isso também existe na interface do usuário, mas é , acho que estou sendo muito resistente. Eu adoraria experimentar. OK. Está fazendo aquela coisa idiota de
+
+travar de novo. Então, você está realmente dizendo que, se eu usasse a interface web ou o aplicativo para desktop, não teria esses travamentos nos comandos bash? Certo, o que isso está fazendo aqui exatamente? Então, tudo bem. Então, quer dizer, eu consigo entender o porquê desse comando, porque é como executar um GP 120 vezes.
+
+Então, eu consigo entender por que esse comando demoraria um pouco. Eu acredito que isso esteja funcionando de forma legítima. Mas o problema maior é: por que Claude decidiu que essa é uma maneira tão idiota de monitorar algo? Isso é tão irritante porque, tipo, é claro que isso vai demorar. Bem, ok. Acho que é como dormir por um
+
+segundo de cada vez. Isso vai levar alguns minutos. Então acho que já estamos quase terminando. Mas é um comando tão estranho e complicado só para monitorar alguma coisa, porque eu achava que o código do Claude já tinha comandos de monitoramento integrados. Tipo, eles adicionaram alguma funcionalidade recentemente e agora parece que regrediu.
+
+Ah, mas tudo bem, agora já terminamos. Então, levou dois minutos. É pensar sobre isso. Bem, você poderá ler o texto que a CLI corrompeu. Claro. Justo
+
+. Ah, espere, acho que agora pode estar funcionando. Aguentar.
+
+O problema é que essa é, na verdade, uma pergunta um tanto capciosa. Sabe, qual é a solução mais simples para esse problema? É preciso definitivamente explorar esse aspecto. Portanto, faz sentido que ainda não tenha respondido. O observador terminou. Deixe-me ler os
+
+resultados. Certo, veremos. Hum, indefinido. Nossa! Uh issue.fill label.join os webhooks
+
+issue fields include label same class of issue o adapter assume a fuller payload that Jira sends. Permita-me abordar a questão da construção de um contexto defensivo. Ok,
+
+reiniciando e executando novamente. Estamos quase lá . Eu agradeço. Parece que agora está funcionando um pouco mais rápido, o que é bom. Mas sim, definitivamente é uma das coisas, e, novamente, isso é algo que provavelmente não teria acontecido se eu não estivesse em uma transmissão ao vivo. Se eu tivesse dedicado
+
+mais tempo ao planejamento e lido a documentação da API do Jira para realmente entender os parâmetros, teria me deparado com esse problema . A lição aqui é que, ao trabalhar com um serviço externo, é melhor garantir que ele conheça os parâmetros e saiba como interpretar o contexto obtido por meio de chamadas de API como essa. Esse é realmente o problema que temos aqui, e por isso eu simplesmente não planejei o suficiente antecipadamente. Então, o sistema fez algumas suposições, e a culpa é realmente minha. Então, se eu fosse abordar a evolução do sistema, o que não farei nesta transmissão ao vivo, eu diria que, como parte do processo de planejamento, eu incorporaria isso ao comando de planejamento do meu fluxo de trabalho. Como parte do
+
+seu processo de planejamento, sempre que você estiver trabalhando com qualquer tipo de API externa ou integração, você deve consultar a documentação. Certifique-se de entender os parâmetros e o corpo JSON que você recebe como resposta, e coisas do tipo, porque se tivéssemos feito isso mais antecipadamente, não teríamos tido esse problema. E se eu tivesse usado o Opus para o planejamento, provavelmente também teria evitado esse problema. Mas, como eu disse antes, eu estava usando uma versão um pouco desatualizada do fluxo de trabalho. Tudo bem, mas chegaremos lá. Bem,
+
+nós publicamos outro comentário aqui. Vou apagar esta. Então, basta esperar dois minutos para que o sistema rastreie as informações. E aí? Construção e envio durante o feriado prolongado. Sim. Então, provavelmente
+
+não farei lives na segunda-feira, porque é feriado, mas continuarei ativo neste fim de semana fazendo várias coisas legais com a Archon. Bem, eu recomendaria que você adquirisse a Carpathy Claw. Médico. Eu o utilizo. Tenho menos problemas com Claude. Eu não sabia que ele tinha
+
+um site dedicado, o claw.md. É interessante. Carpathy, você tem um link. Seria legal. Karpathy Claude
+
+MD.
+
+OK. Sim . Simplicidade em primeiro lugar. Alterações cirúrgicas. Execução orientada a objetivos. Simples e
+
+direto. Quer dizer, sim, você poderia realmente integrar isso a quaisquer regras globais que você tenha. Isso é bom. Isso é legal. Tudobem. A velha e engraçada
+
+prateleira agora está ansiosa para a festa. Adoro passar esses fins de semana prolongados cozinhando sem parar. Legal. Alguém mais usa o GPT 5.5 em vez do Opus para programação? Então, quer dizer, no momento
+
+ainda estou usando mais o Opus, mas com certeza tenho interesse em explorar mais o Codeex e usar o GPT 5.5. Sim . Tudo bem. Em que ponto estamos agora?
+
+Está executando um shell em segundo plano. OK. Sim. OK. Quão perto estamos agora? Qual é o
+
+problema desta vez, Claude? Cara, o mais legal é que se eu não estivesse fazendo isso em uma transmissão ao vivo, eu deixaria o sistema resolver isso sozinho. Hum, mas não houve resposta. O orquestrador pode ainda estar raciocinando ou pode ter parado. Deixe-me verificar. Ok,
+
+acho que agora está funcionando, porque faz sentido que isso demore um pouco, já que é uma pergunta um tanto complexa, não é? Estamos apenas perguntando como você lidaria com essa solicitação. Hum, então, estamos indo bem. Bem, o problema é que pode não ter o contexto completo do próprio código-fonte. Isso pode ser um problema. Vamos ver.
+
+Eu não tenho certeza. Talvez a resposta não seja a melhor, mas eu só quero chegar ao ponto em que tenhamos uma resposta.
+
+Sim, porque não funciona. Bem, talvez consiga descobrir isso. Bem, na verdade não tenho certeza. Sim, porque acredito que, devido ao nome do projeto no GitHub, ele reconhecerá a base de código sobre a qual estamos perguntando neste ticket. Então, acho que tudo vai correr bem, mas veremos.
+
+Lendo os registros, provavelmente ainda está em execução. Grande progresso. OK. O sistema de tubulação completo funciona. Menção detectada. Resposta do gerador Orchestrator.
+
+Tentei enviar a resposta, mas a chamada de saída da minha API falhou. O problema não existe. OK. A autenticação básica falhou porque o adaptador não está autenticando. Adicionar inicialização rápida a. OK. Cara, estamos tão
+
+perto. Nós já tínhamos a resposta gerada. O problema é que a API não funcionou. Então, talvez a culpa seja minha. Acho que vou ter que verificar...
+
+Deixa eu... onde é que eu encontro isso mesmo ? Desculpe. Estou fazendo isso fora das
+
+câmeras. Bom, acho que não preciso fazer isso fora das câmeras. Só preciso ir... Estou
+
+esquecendo onde configurei a chave da API. Uma API. Onde foi que eu fiz isso antes? Eu consegui minha chave de API. Eram generais? Não. É
+
+, eu já estou esquecendo. Vou ter que perguntar de novo. Bem, o próprio adaptador agora funciona de ponta a ponta. Da minha parte, preciso fazer meu e-mail do Jira, o que está correto. token atual.
+
+Sim, o problema é que eu já fiz isso. Não sei por que está dizendo que é inválido, mas fora isso, está tudo bem. Como se fosse a única coisa. Ok . Ah, está fazendo aquela coisa de precisar do meu código de verificação.
+
+OK. Boom. Ok, faça isso fora das câmeras. Portanto, o último acesso foi há duas horas. Ah, talvez eu tenha colado errado,
+
+porque diz que a chave da API não foi acessada.
+
+Vamos ver. Termina com 31. Não, acho que esse é o
+
+token correto. Ok, então eu verifiquei e a chave da API está configurada corretamente nas variáveis ​​de ambiente. Portanto, não está sendo usado corretamente de alguma forma. Mas é o token da API do Jira . Eu sei que está certo. E eu até
+
+testei a autenticação. Hum, sim, acho que vou adicionar uma nova chave aqui. Então, quero que você teste isso. Vou gerar uma nova chave, mas, caso contrário, você terá que descobrir isso, pois é algo no código. Então, deixe-me criar um novo token de API. Vou chamá-lo de
+
+arconte. Vai expirar em algumas semanas. Cópia.
+
+Ok, então eu atualizei.
+
+Vou atualizar isso nas minhas anotações aqui.
+
+OK. Então, vamos ver onde estaremos depois deste ponto. Traga isso de volta e nós podemos... apagar este comentário.
+
+Tudobem. Vamos ver. Não há como verificar em que Archon está trabalhando. Ah não, nós temos a interface web. Assim, você pode acompanhar todos os seus fluxos de trabalho e, se tiver seu código na nuvem, Second Brain, codecs ou qualquer outro recurso que invoque os fluxos de trabalho do Archon, poderá solicitar a verificação dos logs e obter uma atualização de status, proporcionando visibilidade completa por meio dessa ferramenta ou da interface web.
+
+Ainda estou usando o Opus para os planos de implementação e o Codeex para codificar os componentes principais. Flash Gemini 3.5 para a interface do usuário. Essa é uma boa combinação. Adoro isso.
+
+Sim, misturar fornecedores é a melhor opção. 3.5 Flash é uma máquina potente e rápida, mas use com cautela, pois ela tende a pular obstáculos. Sim, pelo que vi, a justificativa não é das melhores . Legal.
+
+Tudo bem. Ah, acabei de fazer isso, aliás. Você precisa que um agente supervisor forneça a chave da API por meio do seu gerenciador de segredos ao abrir um chamado. Espera, o quê? O agente supervisor envia a chave da API através do seu gerenciador de segredos. Nossa!
+
+O supervisor entrega a chave ao agente do Jira para que ele possa abrir o chamado. O que você quer dizer com supervisor ? É como se fosse algo primitivo ou algo do tipo, algo que eu nunca ouvi falar. Isso me deixa muito confuso. É, porque vai ficar dando voltas em círculos, sabe? Está prestes a começar a dar voltas em
+
+círculos. Nossa, cara. Não tenho certeza a que você está se referindo. É que tipo, ok. OK. Então, a autenticação
+
+no Jira não está funcionando corretamente no Archon neste momento. Eu simplesmente fiz a implementação em uma sessão separada do agente de codificação. Então, você conseguiu verificar as coisas agora mesmo . Mas eles estão dizendo que precisamos de algum tipo de supervisor que dê ao agente do Jira a chave para fornecer ao Jira. Não sei o que eles querem dizer com isso. Então, quero que você dê uma olhada nisso
+
+e veja se estou deixando passar alguma coisa . Porque neste momento o webhook está funcionando. Temos tudo. O adaptador Archon Jira está funcionando, mas ainda não consegue enviar uma resposta. Algo não está funcionando corretamente com a API do Jira, mesmo eu sabendo que tenho a chave de API correta.
+
+É um agente supervisor. Acabei de perguntar ao Claude. OK. Sim. Bem, estou perguntando agora. Então, veremos. Vamos
+
+ver. OK. Então, o O agora funciona. Devolvido. O formato do cred é limpo.
+
+OK. Sua nova chave está sendo reconhecida corretamente. A versão anterior, 401, era a chave antiga. OK. Então, talvez esteja funcionando agora. Talvez eu tenha colado algo
+
+errado. Ou talvez você tenha razão. Então, é bom que eu esteja perguntando isso em paralelo aqui. Então, vamos dar um tempo para pensar. Então, publicamos outro comentário. Então, se eu
+
+atualizar a página, o que acontece? Oh, meu Deus. Oh sim. Funcionou. Funcionou. Pronto
+
+. Foi publicado como se fosse eu. Por isso, fiquei confuso por um segundo. Em uma ou duas frases, qual é a solução mais simples? Divida a URL usando um hash e mantenha apenas a parte que vem antes dele. Pronto.
+
+Finalmente funcionou. E uma coisa que talvez fosse boa de se fazer é criar um usuário separado ou algum tipo de cabeçalho que mostre a resposta do Archon, certo? Existem algumas maneiras diferentes de fazer isso, mas essa funcionou. Portanto, a versão inicial, ou seja, a versão zero do adaptador Archon Jira, está concluída. Com base no meu comentário, fez uma boa recomendação. Se eu fizer isso
+
+, posso testar isso pessoalmente no Archon. Como vai, amigo? Envie isso. Você deve receber uma resposta bem rápido por aqui. Respondeu em menos de um minuto para esta aqui.
+
+Não sei se é em tempo real. Talvez eu precise atualizar a página para ver a resposta. Não tenho certeza absoluta, mas...
+
+isso parece bom. Finalmente conseguimos. E, bem, vamos ver. Então, acho que ainda nem tinha verificado. Então, meu segundo cérebro ainda nem processou o fato de que já temos a resposta.
+
+Certo, vamos ver. Pronto. Você está ótimo, Cole. Preparar? Aproveite o momento, onde quer que você esteja. Quer que eu inicie um
+
+fluxo de trabalho para implementar a correção ou tem algo mais em mente? Bom. Portanto, o contexto também está funcionando para a questão. Histórico da conversa. Ok, entendemos. Finalmente conseguimos
+
+, cara. Vamos. Tudo bem. Legal. Então, sim. Por enquanto, isso é apenas local,
+
+mas vou disponibilizar esse adaptador comunitário durante o fim de semana. Hum, seria legal incluir isso na próxima versão do Archon, mas já é bem bacana. Tudo bem. Ah, entrei na transmissão atrasado para saber o que você está fazendo com o Jira, mas eu uso o Atlassian MCP para interagir com o Jira e o Confluence. Sim, eu ainda uso o Atlassian MCP. Se eu quisesse gerenciar
+
+uma tarefa de ponta a ponta com o Archon, mas desejasse especificamente conversar com o Archon diretamente de um ticket do Jira, eu teria que usar a API e o webhook. Então é isso que estou fazendo, integrando-o ao Archon. Ah, obrigado pela resposta. Os tokens de código na nuvem têm um custo bastante elevado. Hum, sua empresa cobre isso? Ah, desculpe. Essa
+
+era a pergunta para os outros senhores, mas sim, agradeço por compartilhar sobre suas tecnologias e tudo mais. Ok, está tudo bem. Então, vou iniciar a transmissão ao vivo ali. Com certeza foi uma transmissão um pouco mais longa, mas eu estava determinado a fazer funcionar e finalmente conseguimos. O problema maior foi a lentidão do Claude, que fez com que as coisas demorassem um pouco, mas perseveramos. E outra coisa legal é que,
+
+se eu não estivesse aqui em uma transmissão ao vivo, eu poderia simplesmente deixar o programa iterar de forma autônoma. Como se tivesse resolvido tudo sozinho, com o fluxo de trabalho Archon para o loop PIV. Então é isso, pessoal. É isso, é tudo o que temos. O adaptador está funcionando. Vou
+
+publicar na próxima semana. Então, sim, vou iniciar a transmissão ao vivo aqui. Espero que esse tenha sido um bom exemplo para vocês, mostrando como lidar com um fluxo de trabalho Archon mais amplo e criar um adaptador Archon. Construímos um adaptador completo neste fluxo. Então, agradeço a todos por assistirem. Não haverá transmissão ao vivo na segunda-feira. Na
+
+verdade, vou mudar a minha programação de transmissões ao vivo na próxima semana. Portanto, fiquem atentos para mais novidades. Mas definitivamente quero continuar fazendo transmissões ao vivo pelo menos aos sábados, porque eu realmente gosto delas todos os fins de semana. Então, obrigado a todos por estarem aqui. Espero que vocês tenham um ótimo fim de semana. Para quem está nos
+
+EUA, um bom feriado prolongado também. Caso contrário, nos vemos por aí. Então, relaxe .

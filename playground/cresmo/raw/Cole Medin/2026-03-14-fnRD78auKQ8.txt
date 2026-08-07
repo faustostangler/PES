@@ -1,0 +1,30 @@
+---
+video_title: "Stripe's Coding Agents Ship 1,300 PRs EVERY Week - Here's How They Do It"
+video_id: fnRD78auKQ8
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=fnRD78auKQ8
+video_date: 2026-03-14T15:36:07+00:00
+video_description: |
+  Stripe merges over 1,300 AI-written pull requests every single week. Zero human-written code. But here's what most people are missing - the real lesson is in the agent harness they have built around their coding agents.
+  
+  Stripe calls them "blueprints" - workflows that alternate between deterministic steps (linting, type checking, CI) and agentic steps (where the AI reasons and writes code). The walls constrain the AI. The AI does the creative work. And together, they produce production-quality code at a pace most companies can't match with human developers.
+  
+  And Stripe isn't the only one. Shopify independently built the same architecture (Roast). Amazon used the same pattern to save 4,500 developer-years. Airbnb migrated 3,500 test files in 6 weeks with it. Every company succeeding with AI coding at scale is converging on the same hybrid deterministic-agentic workflow.
+  
+  In this video, I'll break down the pattern and explain what it means for how you should be thinking about AI coding.
+---
+Algumas semanas atrás, a Stripe nos surpreendeu com uma notícia bombástica. Atualmente, eles enviam mais de 1.300 solicitações de pull request por semana, todas escritas inteiramente por IA. Portanto, os humanos ainda revisam o código, mas não escrevem uma única linha dele. E para uma organização dessa escala, é preciso muita confiabilidade para que isso seja possível. Então, eles criaram sua própria
+
+estrutura de agentes internos chamada Minions e publicaram alguns posts no blog explicando exatamente como isso funciona. Então, sim, é uma manchete chamativa, mas quando entrarmos nesses posts do blog, e é isso que faremos hoje, encontraremos muitas lições valiosíssimas. Então, pense nisso. O Stripe possui uma base de código muito complexa . Eles possuem um sistema de back-end escrito em Ruby. É uma combinação incomum. Eles possuem
+
+um grande número de bibliotecas próprias que geralmente são desconhecidas para grandes modelos de linguagem. Além disso, sendo a Stripe, eles têm muito a perder, pois movimentam mais de US$ 1 trilhão em volume de pagamentos por ano. Portanto, com uma base de código complexa, tudo precisa ser perfeito. Portanto, se eles construíram um sistema suficientemente confiável para ser produzido em larga escala, praticamente qualquer empresa, inclusive você, seria capaz de fazer o mesmo. Então, é isso que eu quero abordar hoje. Como o
+
+Stripe tornou isso possível e como você pode pegar essas ideias que vamos abordar e aplicá-las por conta própria. E isso é ainda mais importante do que você imagina, porque muitas dessas grandes empresas estão começando a construir suas próprias estruturas de agentes para tornar a programação de IA mais determinística e confiável. Então, a Shopify criou seu próprio mecanismo de fluxo de trabalho de IA estruturado, chamado Roast. Eles realmente disponibilizaram isso como código aberto . Vou colocar o link na descrição. O Airbnb está fazendo o mesmo
+
+, especialmente para ajudar com suas migrações de teste. Além disso, a AWS também possui suas próprias ferramentas internas, sobre as quais começou a compartilhar informações em uma postagem no blog. Portanto, todas essas empresas estão construindo mecanismos de fluxo de trabalho de IA estruturados. Mas o que isso significa exatamente? Vamos ser mais específicos agora. E, claro, para
+
+deixar tudo bem claro para você, preparei um diagrama bem prático. Então, vamos começar com o padrão de alto nível. Como funcionam todos esses fluxos de trabalho estruturados de IA ? Em seguida, vamos abordar especificamente os Stripe Minions. Vou consultar a postagem do blog novamente e selecionar muitas das informações principais ao longo deste texto . E, sinceramente, o mais
+
+importante é que quero abordar como você pode extrapolar essas ideias para construir seu próprio fluxo de trabalho. Como você pode aproveitar essas ideias? Você pode construir algo como o Stripe Minions por conta própria, honestamente, muito rapidamente. Essa combinação de nós agentes e nós mais determinísticos define nosso fluxo de trabalho, tornando as coisas mais confiáveis ​​para nossos agentes de codificação. Vou entrar em detalhes muito mais específicos conforme formos explicando o padrão aqui.

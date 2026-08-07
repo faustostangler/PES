@@ -1,0 +1,174 @@
+---
+video_title: "I'm Building an AI Dark Factory That Ships Its Own Code (Public Experiment)"
+video_id: 6woc6ii-zoE
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=6woc6ii-zoE
+video_date: 2026-04-16T00:00:14+00:00
+video_description: |
+  The Dark Factory is the wildest and most powerful idea in AI coding right now - a codebase that writes, reviews, tests, and merges itself with zero human code in between. The pattern is tough to make reliable, but the power is real and I'm running my own public experiment!
+  
+  I'm handing an entire codebase over to AI. The target is a real application - a RAG-powered agent that answers questions about my YouTube content - and I won't write a line of its code. I (or you!) file the feature requests, Archon (my open source AI coding workflow engine) runs the triage, implement, validate, and fix workflows, and the factory ships the code. The repo is live, the PRs are public, you can watch every merge come in.
+  
+  In this video I break down what a Dark Factory actually is, why it's finally working now, the anti-patterns we need to know about, and the exact setup I'm running with Archon.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - If you're interested in building your own AI second brain to save yourself hours every week, check out the Dynamous community and the new second brain course:
+  https://dynamous.ai/second-brain-bootcamp
+  
+  - Archon (my open-source harness builder - the Dark Factory orchestrator):
+  https://github.com/coleam00/Archon
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Dan Shapiro - The Dark Factory Era of Software Development:
+  https://glowforge.com/blog/the-dark-factory-era-of-software-development/
+  
+  - Article on StrongDM's dark factory:
+  https://factory.strongdm.ai/
+  
+  - StrongDM Attractor (32K lines of Rust shipped by AI):
+  https://github.com/strongdm/attractor
+  
+  - Spotify Honk write-up (Part 1 - 1,500+ merged agent PRs):
+  https://engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Building an AI Dark Factory
+  2:01 Origins of the Dark Factory
+  2:34 Levels of AI Coding Autonomy
+  9:07 My Dark Factory Architecture & Core Systems
+  11:54 The Governance Layer
+  15:20 Orchestrating Workflows with Archon
+  17:19 The Continuous Factory Loop
+  21:27 Reliable Validation Strategies
+  23:47 Project Roadmap and Wrap-up
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Estou iniciando um experimento público onde irei explorar os limites do que é possível com a assistência de programação por IA, construindo o que é conhecido como uma fábrica clandestina. Parece muito sinistro, eu sei, mas é super legal. Ainda não é 100% prático para código de produção. Falaremos sobre isso. Por isso se chama experimento. Mas isto é realmente uma
+
+amostra do que será possível com nossas bases de código em algum momento, graças à IA. O que estamos fazendo com uma fábrica escura é construir um sistema inteiro onde entregamos o controle de uma base de código completamente à IA. Assim, nosso agente de codificação irá gerenciar o planejamento, a implementação e o envio de todas as alterações e solicitações de pull diretamente para a produção. Não há intervenção humana no processo. E no meu canal, é engraçado porque na minha bio eu sempre digo: "Junte-se a mim enquanto eu exploro os limites do que é possível com IA." Literalmente, desde que comecei
+
+meu canal em 2024, tenho essa frase. E sinto que tenho feito um bom trabalho à altura disso nos últimos dois anos. E agora, este é apenas mais um exemplo de como continuo fazendo coisas que, aliás, não são novidade. A fábrica escura não é exatamente uma novidade, mas ninguém nunca realizou um experimento público antes, e é por isso que estou tão animado para começar isso. Então, na verdade, eu já fiz algumas transmissões ao vivo onde mostrei como construir o sistema usando Arkon, código Claude e Minimax M2.7.
+
+Também vou fazer muito mais transmissões ao vivo, construindo isso em público. Isso é parte do que faz com que seja uma experiência pública. Então, neste vídeo, quero falar sobre as origens da fábrica escura e depois detalhar minha arquitetura, exatamente como estou construindo um sistema para tornar essa ideia maluca pelo menos um pouco confiável. Vamos ver como o experimento se desenvolve à medida que eu o construo. Vou chegar ao ponto em que esta aplicação será implantada na nuvem. Você pode visitá-lo, experimentá-lo
+
+você mesmo e, em seguida, registrar problemas que serão tratados automaticamente pela dark factory. Vai ser uma configuração muito legal. Ainda não terminei, mas quero mostrar publicamente no que estou trabalhando e o que já construí. O termo "fábrica escura" foi cunhado há mais de duas décadas, quando começamos a usar o que chamamos de manufatura sem luzes. Então, essas instalações físicas onde não precisamos de luzes porque só existem robôs, certo? Por que a empresa deveria
+
+pagar a conta de luz para manter as luzes acesas se não há nada lá dentro que realmente precise ser visto? Já existem robôs construindo robôs desde aproximadamente 2001. É isso que estamos vendo aqui. Então, sim, o conceito de fábrica escura inicialmente se referia a instalações físicas, e foi Dan Shapiro quem aplicou isso a bases de código e IA generativa. E antes de entrarmos na minha arquitetura para a fábrica escura, que eu acho que vocês acharão fascinante, eu realmente quero abordar os diferentes níveis de uso de IA generativa para programação, que obviamente culminam na fábrica escura. Este é o uso definitivo da
+
+IA ​​generativa, entregando completamente o controle de nossa base de código a ela. Então, quero falar sobre como evoluímos até este estágio, onde estamos agora em relação ao código de produção e para onde pretendo levar este experimento. E eu adorei o post do Dan no blog, porque ele faz uma analogia muito boa comparando os diferentes níveis de carros autônomos com o uso de IA generativa para programação. Assim, ele começa com o nível zero, que ele chama de autocompletar picante. Não sei bem por que ele chama isso de picante, mas, ei, eu topo. É aqui que a
+
+IA serve como ferramenta de referência ou para aprimorar a busca. Então, tipo um Stack Overflow mais inteligente. Se você tem formação em engenharia, provavelmente já usou o Stack Overflow demais e agora está usando e dependendo ainda mais de ferramentas de programação com inteligência artificial. Mas a questão aqui é que o desenvolvedor ainda escreve o código manualmente. Você está usando a IA apenas como consultora. Tipo, "Ei, como devo
+
+resolver esse problema? Talvez me dê essa função para que eu possa copiá-la para minha base de código, como você fez com o Stack Overflow antes." Então, no que diz respeito à condução, você ainda tem as mãos no volante, e talvez seja um sistema tão manual que ainda seja de câmbio manual, por exemplo. Acho que é isso que esta imagem está tentando transmitir. E isso nos leva ao nível um, o estagiário de programação. Então, agora você está
+
+começando a depender da IA ​​generativa para coisas muito básicas, como código repetitivo ou sem importância. É como ter controle de cruzeiro no seu veículo. Você ainda controla a direção do carro, mas pelo menos agora ele mantém uma certa velocidade sem que você precise pisar no acelerador ou no freio. E então passamos para o nível dois, o desenvolvedor júnior. Então, quando você realmente começa a aproveitar a assistência de codificação por IA e a codificação autônoma, este é o seu nível introdutório, o de desenvolvedor júnior. Nesse ponto, você só
+
+tem uma mão no volante em vez de duas, porque vocês estão em uma parceria interativa de programação em pares. Você está começando a ceder completamente o controle para o assistente de programação com IA em determinadas tarefas. Mas você ainda está escrevendo parte do código por conta própria. E então, obviamente, a próxima evolução é chegar ao ponto em que a IA gera a maior parte da base de código. Portanto, é exatamente aqui que eu recomendaria que você estivesse quando quiser lançar software de nível de produção com IA da forma mais confiável possível.
+
+Porque você está lhe entregando as rédeas, mas, como mostra esta imagem com a analogia da direção, você ainda mantém os olhos na estrada. Você está pronto para corrigir o rumo a qualquer momento. Quando se deseja resultados realmente confiáveis ​​com agentes de codificação, é necessário ter um humano envolvido para revisar cada plano e cada trecho de código escrito. Então, é isso que está escrito aqui, certo? Assim como você ainda é o gargalo para a verificação anterior, e os agentes de codificação ainda não chegaram ao ponto em que podemos ultrapassar esse nível sem sacrificar pelo menos algum nível de confiabilidade. Então, esse é o nível
+
+que eu ensino no meu curso de programação agentiva na comunidade Dynamis. É um bom ponto de partida, mas se você quiser ir além e tiver um arnês, um sistema construído para ser confiável, então poderá começar a avançar para o nível quatro. E acho que este é o ano em que veremos isso se tornar mais comum para equipes que realmente estão lançando código em nível de produção . Portanto, é aqui que você está construindo uma espécie de estrutura para que a IA execute tarefas não supervisionadas por longos períodos de tempo. Então, quando pensamos em ferramentas de execução, como o Anthropic, que oferece código aberto, o Relf Loop e o GSD, como todas essas estruturas que permitem que várias sessões de agentes de codificação diferentes sejam encadeadas para lidar com PRDs inteiros, como conjuntos de trabalho muito grandes. E assim,
+
+agora finalmente podemos dormir ao volante. Certo? Muitas pessoas usam essas ferramentas para que agentes de codificação trabalhem durante toda a noite e, em seguida, revisam o trabalho no final. Portanto, o importante aqui, e esta é a grande distinção entre o nível quatro e a fábrica escura, é que ainda estamos verificando os resultados finais muito mais tarde. Ainda haverá etapas como: "Vamos analisar esse pull request, revisar e testar manualmente antes de enviá-lo diretamente para produção." Então,
+
+entrando agora, obviamente, na fábrica escura, nível cinco, é aqui que nem sequer revisamos o código antes de ele entrar em produção. É uma ideia maluca. Até eu me sinto um pouco desconfortável com isso. Como eu disse, é por isso que estou chamando isso de experimento. Isso é realmente emocionante. Assim,
+
+o engenheiro continua gerenciando o objetivo e o sistema. Como mostrei brevemente antes, estou investindo muito trabalho na construção do meu sistema desde o início, para que ele siga meus princípios, meu fluxo de trabalho e minhas diretrizes gerais. Assim, fornecemos descrições em linguagem simples do que queremos construir e das regras que queremos que seja seguido, mas então a IA define a implementação, escreve o código, testa, corrige erros e envia as coisas para produção. E, continuando a nos vangloriar dessa analogia, ainda temos um volante no nível quatro. Assim, mesmo enquanto dormimos, podemos acordar e corrigir o rumo se percebermos que estamos indo totalmente na direção errada. Mas agora, com este veículo,
+
+que, aliás, eu adoraria que meu veículo fosse assim um dia, nós nem sequer temos um volante. Certo? Ainda existe algum tipo de console aqui para podermos inserir nossas próprias instruções, mas não temos realmente a oportunidade de corrigir o curso em um nível microscópico. Então, é isso que é a fábrica escura, e é isso que estou construindo. E como eu disse antes, mesmo além da postagem do blog do Dan, a ideia de uma fábrica escura não é nova. A Strong DM é uma
+
+empresa que viralizou há alguns meses por estar implementando uma espécie de "fábrica clandestina" para distribuir milhares de linhas de código de produção que eles nunca escrevem ou revisam. E vou incluir um link para esta postagem do blog na descrição. É uma leitura realmente interessante acompanhar a jornada deles até chegarem ao ponto em que agora não utilizam mais código de software escrito manualmente. Essa é a regra que eles têm para a equipe. Inicialmente, foi apenas um palpite. Foi uma experiência, assim como o que
+
+estou fazendo. Até onde podemos chegar sem escrever nenhum código manualmente? Eles não achavam que poderiam ir muito longe, mas compartilham sua jornada na construção de um sistema que torna tudo bastante confiável. É exatamente nisso que estou trabalhando. Mas o problema é que, embora eles estejam escrevendo muito sobre isso e tenham de fato disponibilizado o código-fonte da especificação, de forma que seja possível ver as especificações para construir o sistema, eles não a disponibilizaram como um experimento público, como eu estou fazendo. E existem
+
+outras empresas trabalhando em algo semelhante a uma fábrica clandestina também, como o Spotify. Eles têm seu agente de codificação em segundo plano. Mas, novamente, nada aqui é de código aberto. Portanto, até agora não existe nada que permita observar um sistema internamente, vê-lo funcionar de forma autônoma e até mesmo enviar problemas para contribuir com o experimento. É por isso que estou tão animado com isso. Bem, eu sei que passei muito
+
+tempo falando sobre o que outras pessoas têm a dizer sobre fábricas escuras antes mesmo de mostrar minha arquitetura, mas fiz isso de propósito, pois prepara o terreno muito bem para este experimento que estou realizando. Assim, você pode compreender o que é uma fábrica sombria e de onde vêm todas as ideias que me inspiraram. Porque acredite, eu pesquisei e planejei bastante antes de fazer qualquer coisa aqui. O sistema precisa ser realmente bom para que este experimento seja bem-sucedido. É nisso que estou me dedicando ao máximo agora. Então, ainda
+
+não terminei de construir tudo e conectar todos os pontos, mas vou incluir o link para este repositório na descrição. Estou quase conseguindo executar isso de ponta a ponta. Já configurei meus fluxos de trabalho do Arkon . Falarei sobre Arkon daqui a pouco . Já configurei todo o sistema de etiquetagem e meu servidor, onde ele ficará hospedado, está funcionando 24 horas por dia, 7 dias por semana.
+
+Então, estou quase lá, e farei outro vídeo quando isso for público, e vocês puderem até criar problemas para contribuir. Mas agora, eu só quero mostrar a vocês como o sistema funciona em sua essência. Então, temos a camada de governança. Isso é realmente importante. Vou falar sobre isso, sobre como estou usando o Arkon para orquestrar todo o fluxo, todos os fluxos de trabalho, e depois falar sobre o loop, e até mesmo sobre algumas estratégias que tenho para coisas como testes de regressão. E enquanto explico tudo
+
+aqui, também ficarei alternando entre esse diagrama e o repositório, para que eu possa mostrar os artefatos reais que estou usando e como eles se parecem em nossos problemas e solicitações de pull. Então, vamos começar pela camada de governança. Então, voltando à postagem do blog do Dan, temos esta imagem do carro para a Dark Factory. A camada de governança é como o console, onde ainda inserimos as instruções de alto nível, como aonde queremos chegar, ou seja, qual é a missão da nossa base de código aqui. Então, temos a nossa missão. documento md. Isso descreve ao
+
+agente de codificação exatamente o que queremos construir, o que está dentro do escopo e o que está fora do escopo. Temos nossas regras de fábrica, que orientam como operamos na implementação, revisão e fusão de processos, e também nosso arquivo clan.md. Assim, temos as regras globais em torno de nossa pilha de tecnologia e arquitetura, garantindo que nosso agente de codificação tenha todo o contexto necessário sobre a própria base de código. Então, contexto do código-fonte e depois contexto da Dark Factory, certo? E então, acho que o mission.md acaba sendo uma mistura dos
+
+dois. E isso é realmente muito importante, porque se vamos entregar as rédeas completamente à IA, mas esperamos que ela esteja alinhada com a nossa missão, é melhor garantirmos que sejamos bem específicos. Portanto, não quero que esses arquivos sejam muito grandes, mas quero que sejam bastante abrangentes, descrevendo exatamente os tipos de problemas que eu aceitaria, como quero validar minhas solicitações de pull request e coisas do tipo. E cada fluxo de trabalho que executamos para implementar, planejar e validar irá carregar esses três arquivos no contexto. Assim, nosso sistema sempre compreende nossa missão e as regras que precisa seguir. Então,
+
+voltando ao nosso repositório aqui, tenho meus três arquivos na raiz. Assim, começando pelo arquivo mission.md, começamos perguntando: qual é a aplicação? Na verdade, ainda não expliquei isso para você, mas estou muito animado não só com a Dark Factory, mas também com o aplicativo subjacente que estamos desenvolvendo. Será uma aplicação com agentes que utiliza tecnologia rag. Isso permitirá que você faça perguntas a
+
+um agente que poderá realizar buscas em meus vídeos do YouTube. Então, é como se fosse seu próprio tutor de IA, treinado com o meu conteúdo. E como eu disse, meu objetivo é tornar este aplicativo acessível ao público . Obviamente, terei que implementar algum tipo de limitação de taxa, pois usará minha chave de API do OpenRouter internamente, mas será uma forma de vocês simplesmente fazerem perguntas através do meu conteúdo. Estou muito animado com isso. Assim, também
+
+definimos para quem se destina e as principais funcionalidades. Esses são os itens que estão dentro do escopo. Portanto, se eu criar uma solicitação no GitHub relacionada a um desses recursos, isso significa que a Dark Factory aprovará essa solicitação e, em seguida, a implementará por meio de todo o processo de fábrica. E depois temos também, provavelmente ainda mais importante, o que está fora do escopo, o que a fábrica jamais deve construir. Portanto, estamos sendo muito claros aqui quanto aos limites. Não
+
+queremos que nossa aplicação saia completamente dos trilhos por conta de problemas públicos que são totalmente aleatórios. Portanto, queremos especificar os tipos de coisas com as quais não concordamos. Tipo, eu quero que isso pelo menos comece como uma plataforma ativa focada no meu canal do YouTube, algo para promover meu canal. Portanto, não há suporte para outros canais, nem conteúdo que não seja do YouTube. Não quero trocar o modelo nem nada do tipo. Isso simplesmente
+
+quebraria o aplicativo. Não quero adicionar nenhum tipo de pagamento, assinatura ou aplicativo para celular, certo? Tipo, mantenha simples, mantenha o foco. Assim, sempre que fazemos o que eu chamo de triagem de nossos problemas, ou seja, descobrimos, dentre todos esses problemas, quais queremos abordar, o mission.md realmente nos dará a orientação necessária.
+
+E depois há coisas que a fábrica não tem permissão para alterar, como, por exemplo, não queremos que ela altere a sua própria declaração de missão. Portanto, é importante deixar isso bem claro também. E depois temos as regras da fábrica. Isso se refere mais ao funcionamento das operações na fábrica. É assim que priorizamos os problemas, como funciona com o nosso sistema de etiquetas que eu criei. Assim,
+
+usamos etiquetas para nossos problemas e solicitações de pull para realmente orientar todo o processo. E também como isso se traduz na implementação, coisas que não permitimos, requisitos que temos para cada solicitação de pull request. Quero que cada solicitação de pull request seja bem concisa. Uma maneira realmente ruim de quebrar seu sistema é permitir que ele crie solicitações de pull com milhares e milhares de linhas. Você não vai receber uma boa avaliação se fizer isso.
+
+Critérios de qualidade para a fusão automática, itens obrigatórios para nossos testes, como o uso de ferramentas de automação de navegador, para que possamos testar o aplicativo da mesma forma que um usuário o testaria. Não preciso detalhar todo o documento aqui, mas você entendeu a ideia de como estamos sendo muito, muito específicos em nosso processo. E este documento é bastante extenso. Quer dizer, são 311 linhas no total. Portanto, é conciso o suficiente para se encaixar perfeitamente no início do contexto do nosso agente de codificação, mas também é bastante abrangente, porque se não fossem as regras da fábrica e o arquivo mission.md, eu realmente não teria como me
+
+alinhar com a Dark Factory. E por último, mas não menos importante, temos o nosso claw.md. Então, isso é mais como as regras globais clássicas para um agente de codificação, sabe, sua pilha de tecnologia e o layout do repositório, então tem uma espécie de índice da sua base de código, os comandos que você tem para testar e executar coisas e seus padrões de teste, convenções de código. Temos tudo isso em nosso site claw.md. Assim,
+
+esses três arquivos eram carregados juntos no início de cada conversa. E agora vem a parte emocionante. Então, falamos sobre o contexto carregado em cada fluxo de trabalho, e agora vamos falar sobre os fluxos de trabalho em si. É aqui que eu uso o Archon. Assim, Archon é um projeto de código aberto que lancei recentemente. Vou deixar o link para
+
+o vídeo de introdução aqui mesmo, caso você queira mesmo aprender a usá-lo. É o primeiro construtor de colheitas de código aberto do mundo . Assim, você pega seu processo de codificação de IA , seja ele qual for, e pode agrupá-lo em fluxos de trabalho de codificação de IA determinísticos e repetíveis. Muito emocionante. É a solução perfeita para ser a espinha dorsal da fábrica escura, porque eu defini o processo. Aqui estão os passos que
+
+desejo executar para triagem de problemas, implementação e validação, e posso realizar todos eles como fluxos de trabalho do Archon. Então, passando para as três camadas aqui, a colheita é Arconte, certo? Tipo, é o motor do fluxo de trabalho. E então, o agente de codificação, estou usando o Claude Code nos bastidores, mas o detalhe é que não estou usando modelos antrópicos. Configurei o código Claude para usar o MiniMax M2.7 como modelo que controla toda a
+
+fábrica escura. Então, Claude Code, caso você não soubesse, é possível usar variáveis ​​de ambiente para rotear o tráfego para outros provedores como GLM, MiniMax e Open Router. Quero usar o M2.7, e é uma decisão puramente econômica, porque para a capacidade de processamento que teremos nesta fábrica clandestina, especialmente quando eu começar a aceitar problemas públicos, não há como eu usar minha assinatura da Anthropic. Eu atingiria os limites de taxa muito rapidamente. Então, o MiniMax M 2.7
+
+é um modelo bastante potente. É muito barato e rápido. Assim, poderemos executar o experimento continuamente, sem precisar limitar a capacidade após um certo número de problemas todos os dias. Então, provavelmente terei que pagar uma boa quantia em créditos de API para que isso funcione, mas, além disso, o Archon nos permite especificar modelos diferentes para fluxos de trabalho diferentes e executar tarefas com código em vez de programar agentes. Então, estou trabalhando para tornar todo o processo bastante eficiente em termos de tokens. Então, vou
+
+explicar os fluxos de trabalho do Archon começando diretamente pelo loop de fábrica. Acho que isso faz mais sentido. Portanto, o ponto de partida para qualquer trabalho que realizaremos na fábrica é uma issue no GitHub. Ou nós criaremos uma issue no GitHub, ou a Dark Factory criará uma issue por conta própria caso encontre algum problema adicional durante seus testes de regressão. Em seguida, entramos no fluxo de trabalho de triagem.
+
+Isso será executado de forma programada . Então, ele analisará todos os problemas recentes que ainda não foram priorizados e determinará o que fazer com eles. Então, vou mostrar a vocês como isso fica . Se eu consultar a lista de problemas aqui, tenho alguns exemplos de quando comecei a testar a Dark Factory . E você pode ver que a fábrica aceitou e que temos baixa prioridade. Então, estamos atribuindo prioridades
+
+e definindo se vamos ou não lidar com cada caso durante esse fluxo de trabalho de triagem do Archon. E se eu for em "fechado", veremos também os que foram rejeitados. E sempre que rejeitar uma solicitação, também publicará um comentário aqui informando, tipo: "Ei, por que estamos rejeitando isso em primeiro lugar?" Então, foi rejeitado por ser duplicado do número 19. Sei que há muitos outros comentários aqui também, mas isso se deve à bagunça que estou fazendo testando tudo agora. E
+
+todo esse processo de triagem é executado como um fluxo de trabalho Archon. Então, deixe-me mostrar os fluxos de trabalho do Archon e como eles funcionam. Portanto, dentro da pasta .archon, é onde temos os fluxos de trabalho personalizados definidos para o Archon. E, mais uma vez, confira o vídeo que mencionei anteriormente, caso queira se aprofundar no universo dos Arcontes. Mas, deixe-me explicar
+
+aqui o fluxo de trabalho de triagem. Resumindo, é bastante conciso. São principalmente os scripts que tornam este arquivo extenso. Mas, na verdade, é um processo de três etapas. Então, esse fluxo de trabalho começa buscando todos os problemas recentes, e não está usando um agente de IA para fazer isso, certo? Por exemplo,
+
+podemos ter um script bash que extraia todas as edições recentes. Em seguida, enviaremos isso para um agente para que ele determine quais deles realmente queremos abordar, com base no arquivo mission.md e nas regras de fábrica. Então, também incluímos esses itens no fluxo de trabalho. E é aqui que realizamos a etapa de classificação. Então, eu especifico o modelo
+
+como Sonic, mas na verdade ele está sendo roteado para o Minimax M2.7 internamente. E este comando aqui é apenas um documento Markdown que descreve o processo de triagem e, claro, como aproveitar esses dois arquivos também. E então aplicamos nossas decisões. Então, temos aqui uma saída estruturada, que dirá algo como: "Ok, vamos priorizar esta questão como baixa, esta como média, e vamos rejeitar esta." Geramos esse JSON,
+
+e ele vai acabar neste arquivo de decisão aqui. Vamos analisar isso e criar um script bash simples que execute todas as tarefas do GitHub, fechando os problemas e fazendo tudo isso de forma automática. E é interessante porque também podemos dar uma olhada na interface web do Arkon para ver como esse fluxo de trabalho funciona . Então, estamos reunindo todos os nossos contextos em paralelo, como o mission.md, as regras de fábrica e todos os problemas, enviando-os para o agente de codificação que decide quais devemos fechar e quais devemos abordar. E então, nesta última
+
+etapa, fazemos toda a rotulagem. Então, esse é o fluxo de trabalho de triagem. É bastante simples, mas é realmente poderoso e demonstra a capacidade do Arkon de combinar etapas determinísticas e não determinísticas para realizar uma única tarefa maior. E então, o próximo fluxo de trabalho que temos é o que precisamos implementar. Assim, para cada problema de trabalho que priorizamos e que desejamos resolver, iniciaremos fluxos de trabalho do Arkon em paralelo para implementação. Nem precisamos fazer
+
+isso sequencialmente, porque o Arkon nos fornece a árvore de trabalho e o suporte a isolamento, de forma que podemos gerenciar todas essas implementações diferentes exatamente ao mesmo tempo. E esse fluxo de trabalho é um pouco mais elaborado. Vou mostrar como isso aparece na interface web do Arkon aqui. Temos muitos passos a seguir, porque para cada problema precisamos pesquisar e classificar se é um bug a ser corrigido ou um novo recurso que planejamos implementar. Então, vamos planejar o novo recurso ou investigar o bug, dependendo do que for, depois partir para a implementação, criando a solicitação de pull request e, em seguida, validando tudo em paralelo. Portanto, bastante
+
+abrangente. Você não precisa se aprofundar em tudo, mas pode sempre acessar a pasta de fluxos de trabalho aqui e dar uma olhada, pois terei tudo linkado na descrição. Mas esse é o nosso passo de implementação. E depois tenho um processo separado para validação. E eu criei isso intencionalmente como um fluxo de trabalho separado porque quero seguir o padrão de validação cruzada do StrongDM. Este é
+
+um dos aspectos mais importantes para a confiabilidade neste caso. Então, gostaria de abordar esse assunto por um minuto. Portanto, um dos maiores problemas da IA ​​atualmente é a bajulação. Os mestres em Direito (LLMs) são muito propensos a concordar com nossas ideias, mesmo quando elas são estúpidas. E eles desenvolvem uma enorme parcialidade em relação às suas próprias opiniões ao longo de uma conversa. Por isso é tão
+
+importante ter uma separação clara aqui. Um agente para realizar a implementação e outro para realizar a validação. E eu chego ao ponto de ter fluxos de trabalho separados para o Archon, a fim de deixar essa distinção bem clara. Não queremos que nenhum preconceito seja mantido. Assim, o padrão holdout faz o seguinte: fornecemos ao nosso agente de validação a jornada do usuário que corrigimos ou criamos, e então as diferenças exatas no código que acabou de ser implementado. Mas não
+
+contextualizamos isso no processo de desenvolvimento. Não queremos nem sequer considerar essa possibilidade como uma forma de viés que possa surgir a partir disso. Assim, o que a StrongDM afirma aqui, retomando o artigo deles, é que um teste armazenado em uma base de código pode ser reescrito de forma preguiçosa para corresponder ao código. Existem muitos outros problemas relacionados a isso também. Basicamente, os agentes de codificação podem dizer que as coisas estão bem quando na verdade não estão, e podem simplesmente reescrever os testes para simular o sucesso mesmo quando existem problemas que estão sendo escondidos . Assim, estamos
+
+passando de testes simples para cenários, agora para a satisfação, testando jornadas completas do usuário e não nos prendendo ao contexto da implementação em si. Portanto, não quero me aprofundar muito no fluxo de trabalho de validação aqui. Na verdade, é bastante abrangente. Realizamos muitos testes de ponta a ponta com automação de navegador, para que possamos realmente testar a jornada do usuário da mesma forma que ele navegaria pelo site. Portanto, há muitos fatores envolvidos nesse fluxo de trabalho.
+
+Mas a questão é que, uma vez concluída a validação neste fluxo de trabalho, teoricamente temos confiança para mesclar diretamente com o fluxo principal, pois esta é uma fábrica automatizada, sem aprovação humana . E assim, agora isso simplesmente funciona em um loop contínuo. Basicamente, temos uma tarefa cron, certo? Temos uma tarefa agendada que será executada a cada hora, ou algo assim, para lidar com esses problemas. Então, fazemos triagem, implementamos e validamos em um ciclo infinito e indefinidamente. Essa é a
+
+ideia que temos com essa fábrica escura. E esse é praticamente todo o sistema. A única outra coisa em que estou trabalhando agora, e que ainda não consegui implementar, é um processo maior que seja executado talvez uma vez por semana para realizar testes de regressão em todo o sistema. Então, de alguma forma, tenho um documento que descreve cada jornada do usuário. Aqui estão todas as maneiras pelas quais podemos interagir com o agente e visualizar as fontes do pipeline Rag, e tudo mais. E então
+
+criará problemas no GitHub para qualquer coisa que encontrar que não esteja perfeita. Então, essa é outra parte em que ainda estou trabalhando aqui. Falarei mais sobre isso depois. Mas, sim, esta é a minha fábrica sombria em alto nível. Então, espero que vocês consigam perceber o esforço que dediquei à construção do sistema até este ponto. Na
+
+verdade, é bastante coisa para explicar, um pouco complexo, mas é o que é preciso para construir algo em que eu possa confiar minimamente para levar agentes de programação tão longe com uma fábrica obscura. Espero que tenha achado isso interessante. Espero que você me acompanhe nessa jornada enquanto eu construo isso. Vou publicar muito mais conteúdo e fazer transmissões ao vivo, à medida que construo esses fluxos de trabalho e conecto tudo. Dentro de uma ou duas semanas, quero que isto esteja funcionando. Assim, haverá uma aplicação completa implantada
+
+que você poderá testar. Você pode adicionar problemas por conta própria e ver se a Dark Factory os aceita. Neste momento, estou no meio do processo de instalação e conexão de todos os componentes. Então, sim, mais informações sobre isso em breve. Então, se você gostou deste vídeo e quer ver mais conteúdo sobre como usar IA para auxiliar na programação e construir essa fábrica secreta, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos
+
+no próximo vídeo.

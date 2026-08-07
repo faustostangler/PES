@@ -1,0 +1,1138 @@
+---
+video_title: "I Taught My Second Brain to Run Multi-Agent Coding Workflows (Live Session)"
+video_id: hdCZUNQ40VY
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=hdCZUNQ40VY
+video_date: 2026-04-02T16:41:55+00:00
+video_description: |
+  So I've been working on something for a while now that I haven't really talked about publicly yet. It's the next evolution of Archon - an AI tool that orchestrates coding agents in a way you've never seen before - and today I'm going to give you the first real look at it by actually using it live!
+  
+  But here's what makes this different from a normal coding stream. I'm not just coding with AI - I'm coding with my AI second brain. It knows my codebase, it knows my decisions, it knows context from weeks ago. And Archon is basically an extension of that. So what you're going to see today is what AI coding actually looks like when everything is connected - your memory, your agents, your workflows, all working together.
+  
+  Anthropic just published this really cool paper on how they structure agents for long-running tasks, so I'm going to take that concept and build it live using this setup!
+---
+Muito bem, estamos ao vivo. Sejam todos bem-vindos! para uma apresentação aqui de Archon e meu segundo cérebro. Então, eu vou ser Fazendo uma sessão de programação ao vivo com vocês. Vou falar um pouco sobre Archon e Como funciona. Vai haver muita coisa.
+
+Mais informações na próxima semana. Então, eu vou estar criando conteúdo fazendo outra coisa Transmissão ao vivo também no próximo sábado. Onde eu realmente explicarei Archon, Libere para todos e mostre a vocês como. para colocá-lo em funcionamento. Esta transmissão ao vivo A transmissão será cada vez mais...
+
+Que tal construirmos juntos? Vou mostrar fora do meu fluxo de trabalho de codificação de IA, como eu estou Estou trabalhando neste momento. É muito diferente. do que como eu estava trabalhando, mesmo que fosse apenas um par de meses antes. Então, eu ainda gosto de todos os princípios fundamentais que abordei no meu canal e na minha comunidade Dynamis, eu sou Ainda estou usando todos eles, mas eu tenho Empacotei-os como fluxos de trabalho no Archon.
+
+Vou te mostrar como isso fica em a transmissão de hoje também. E eu mostrarei você sabe como eu uso meu segundo cérebro para realmente como orquestrar todo o trabalho que eu faço isso em meus diferentes projetos usando Archon como motor para executar meus fluxos de trabalho. para coisas como planejamento e Implementação e revisão de código. Doente Vou te dar exemplos de vários tipos de hoje. Então, antes de eu realmente começar a falar sobre...
+
+Vou dar um tempinho para as coisas. pessoas para se juntarem aqui. E talvez responder a algumas perguntas no bater papo. Teremos muito tempo para Sessão de perguntas e respostas hoje. Vai ser uma coisa bem legal Transmissão ao vivo informal.
+
+Então, uma coisa que eu vou dizer é... aqui É... eu não estou planejando... tipo, mais de
+
+Explicando o conceito de Archon nesta transmissão ao vivo. Vai haver mais disso, como eu disse na próxima semana. Então, eu vou fazer algo um pouco diferente onde em vez de explicar literalmente Tudo o que estou fazendo, eu simplesmente...
+
+Vai ser construído. E então, você Os caras meio que conseguem perceber como eu operar através de uma demonstração ao vivo. Então, obviamente, vou explicar as coisas. conforme eu vou, mas vai ser menos tipo, sabe, vamos mergulhar em como Tudo funciona por 20 minutos e depois construir. É mais como, vamos fazer direito entrem nisso e então vocês verão que Espero que ao menos a beleza disso seja preservada.
+
+se desdobram diante de seus olhos. Então, é isso. plano. E, bem, então, deixe-me ir para o Converse aqui. Joe perguntou: "Quando é o "Liberação pública do novo Arconte?" Meu
+
+O plano é fazer isso na próxima quarta-feira. Esse é o meu objetivo. E então, transmissão ao vivo No próximo sábado, onde... bem, eu vou...
+
+mostrar mais detalhes sobre como fica para Você pode incorporá-lo por conta própria. Então, Isso é mais como uma prévia. Tipo, deixa me deixar mergulhar fundo e mostrar a você o que meu O fluxo de trabalho atual se parece com isto: Vamos fazer isso. Vamos construir algumas coisas bem divertidas. hoje.
+
+E então sábado será mais um Transmissão ao vivo em formato de tutorial com foco em por conseguir que todos vocês se levantem e correndo com essa coisa que tem sido Mudou bastante a minha vida. Tudo bem. E sim, para todos que estão em...
+
+Dynamis, bem-vindo(a) à transmissão. Aqueles de Vocês que não estão na Dynamis, é claro, Seja bem-vindo(a) também. Mas, é, eu Agradeço a presença de todos vocês. Então, sim, vou começar com algo como um...
+
+Uma pequena introdução ao Archon e depois Vamos direto ao assunto e começar a transmissão ao vivo. prédio. Mais uma transmissão ao vivo informal. aqui. Então, Archon, será lançado publicamente em breve.
+
+semana, tem sido um projeto no qual tenho estado construção dentro da comunidade Dynamis já faz algum tempo. Então, este repositório tem esteve disponível para a comunidade por Já faz um bom tempo e eu definitivamente tenho estado Tenho feito muitas evoluções nele recentemente. Então, Bem, vou dar uma breve apresentação de elevador. para Arconte. E, para que fique bem claro, eu sou Ainda estou trabalhando no meu discurso de elevador. Doente
+
+Obviamente, preciso que esteja tudo finalizado até a semana que vem. Mas o objetivo principal de Archon é tornar a codificação de IA determinística e repetível. Ou melhor, eu deveria dizer como tão determinístico quanto possível. isto. Então, pense nisso desta maneira. Nós temos
+
+Nosso fluxo de trabalho completo para desenvolvimento de software, Trabalhando com assistentes de codificação de IA, e Está dividido entre muitas coisas diferentes. comandos que executamos e diferentes, você Conhecemos as habilidades que usamos com nosso agente. Nosso fluxo de trabalho possui diferentes etapas. onde estamos usando agentes de maneiras diferentes caminhos. E o Archon permite que você faça o empacotamento.
+
+Tudo isso junto. Então, é o Mecanismo de fluxo de trabalho para codificação de IA. Você pode Pense nisso como o n8n, só que em formato de software. desenvolvimento. Então, vou te dar um Exemplo aqui. Um dos meus favoritos
+
+Os fluxos de trabalho são uma das soluções que criamos para resolver problemas. Problemas do GitHub. Então você simplesmente dá Archon para ele. um problema no GitHub e passa por isso O processo completo está aqui. E sim, parece.
+
+Muito abrangente, mas é muito, muito completo. poderoso. Eu uso isso dezenas de vezes. Literalmente todos os dias. E há vários outros fluxos de trabalho que eu uso quase com a mesma frequência também.
+
+E o poder aqui reside na combinação de fatores. determinístico e não determinístico nós. Portanto, é muito semelhante ao Stripe. Minions. Se você já ouviu falar do Stripe Minions, é o processo deles. Eles têm
+
+basicamente construíram algo parecido com Archon, mas não é de código aberto. Mas O que quero dizer com determinístico é Às vezes, existem comandos que nós Quero correr, não importa o que aconteça. Tipo, nós quero fazer algum tipo de curadoria de contexto ou você quer impor algum tipo de validação após um agente concluir sua implementação. Não queremos depender de o agente deve sempre executar esses passos Porque ele se esquece, não é? Seu O agente de codificação às vezes não fará o seguinte: Validação que você indicar. Então, com
+
+Na Archon, construímos fluxos de trabalho onde nós Faça cumprir isso. Então, temos alguns nós. onde é o agente que executa um comando ou usando uma habilidade e depois outros nós Onde é um comando bash, certo? Como, Estamos garantindo que isso Vai ser administrado de uma determinada maneira. Então, esse é o poder do Arconte. Isto
+
+nos permite empacotar não apenas comandos individuais, mas inteiros fluxos de trabalho. Todo o seu software O ciclo de vida do desenvolvimento pode ser agrupado em pacotes. transformando-o em um fluxo de trabalho que você pode invocar. repetidamente. Então, eu tenho isso muito prompt complexo ou este muito complexo fluxo de trabalho que posso executar em qualquer repositório sempre que eu quiser endereçar Qualquer problema. E Archon também nos fornece isso.
+
+Apoio a árvores de trabalho e isolamento. Assim, podemos executar esses fluxos de trabalho em paralelizar tudo no mesmo repositório ou até mesmo trabalhando em diferentes repositórios no exatamente ao mesmo tempo. E assim, leva o que é recurso integrado em ferramentas como Claude Code levado a um novo patamar. E você Você pode pensar nisso como a camada acima. Código Claude ou Codex, porque é orquestrando fluxos de trabalho usando estes agentes de codificação. E agora mesmo com
+
+Archon, na verdade, damos suporte à execução. Codex e Claude Code sob o capô porque está usando o Agente Claude. SDK e SDK Codex. E há um monte de configuração semelhante que você pode fazer para definir o modelo e o provedor em cada etapa do fluxo de trabalho. Então, é isso.
+
+Minha breve explicação sobre o que é Archon. é. Mais novidades sobre isso em breve. próxima semana. Meu objetivo aqui não é fazer Tudo extremamente claro para quê?
+
+O que é um Arconte e como você pode usá-lo. Eu mais Só quero mostrar fazendo e acertar. em algumas coisas legais que eu consegui Loja para vocês, pessoal, para a nossa transmissão aqui. Então, a primeira coisa que eu quero falar é...
+
+sobre o fluxo de trabalho que eu quero construir. Então, achei que seria muito legal. para exibir Archon não apenas curtindo usando fluxos de trabalho que eu já tenho, mas Construindo uma completamente nova. E então Então, vamos construir isso ao vivo e Vamos testar ao vivo. E então, hum, de É claro que dou grande ênfase aqui ao meu segundo cérebro. Vou te mostrar o que é
+
+Parece que para invocar fluxos de trabalho a partir do meu também um segundo cérebro. Então, eu gosto do meu estação de comando principal onde estou Envio de fluxos de trabalho do Archon. Tipo, todos Certo, segundo cérebro, quero que você conserte um Problema no GitHub neste repositório e então Corrija dois problemas neste repositório e depois faça Uma revisão de código neste repositório. Como você pode ir até certo ponto. É realmente muito legal.
+
+Então, vou te dar uma breve explicação. demonstração disso agora mesmo. Então, eu tenho um...
+
+Sessão do Código Claude que foi aberta em meu segundo cérebro. Então, meu motor Dynamis, Eu digo isso. Esse é o meu segundo cérebro. Isso é Semelhante ao OpenClaw. Na verdade, eu tirei uma Me inspirei bastante no OpenClaw quando eu Construí isto. E eu tenho acesso ao Archon.
+
+aqui. Então, eu posso simplesmente dizer para carregar o Arconte. habilidade e isso vai instantaneamente Entender como o Archon funciona, o diferentes fluxos de trabalho aos quais tem acesso e como ele pode usá-los. E então, agora O que eu posso fazer é apontá-lo para um repositório e eu posso até listar o projetos que tenho carregados no momento em Arconte. Então, por exemplo, eu posso dizer, Sabe, use a CLI do Archon para me dizer.
+
+os projetos que eu carreguei em Arconte. Então, sempre que você executar um pela primeira vez Fluxo de trabalho Archon em um projeto, Na verdade, é assim que funciona essa gravata. Então, agora Esse projeto está associado à Archon. Então, é isso que eu posso fazer aqui. É que eu posso simplesmente listar rapidamente, você Sei quais projetos tenho disponíveis.
+
+Então, vamos deixar a CLI rodar. Arconte é configurado como uma CLI com uma habilidade para ajudar seu segundo cérebro ou qualquer que seja a codificação O agente entende como aproveitar o Archon e como usar esses fluxos de trabalho. Então, Esses são os dois projetos que eu tenho. Carregado em Archon neste momento. Então, por exemplo, o que eu posso fazer Aqui, isso é apenas por conveniência.
+
+de uma demonstração, é... eu vou...
+
+voltar à minha ferramenta de conversão de voz em texto e Eu direi, "Quero que você analise o pano do YouTube base de código de bate-papo. Quero que você descubra algum tipo de problema que temos com o Leia o arquivo README apenas para fins de demonstração rápida. aqui." E então eu quero que você faça um Este é um problema relatado no GitHub. Então, eu quero você para executar a correção de problemas do GitHub Archon Fluxo de trabalho para corrigir isso em segundo plano.
+
+E então quero que você monitore o fluxo de trabalho. Também podemos ter nosso Código Claude ou nosso segundo cérebro ou qualquer outro monitor o fluxo de trabalho conforme está sendo executado. Então, apenas por Para fins de demonstração, eu meio que...
+
+como criar um problema artificialmente aqui. Então, estou fazendo com que ele encontre um, faça esse problema e, em seguida, execute o fluxo de trabalho. Mas você pode imaginar isso em um mundo real. projeto, você vai ter esse enorme acúmulo de problemas. Tipo, nós Temos 35 problemas que criamos neste momento.
+
+no próprio código-fonte do Archon. E assim, O que você pode fazer com Archon é... literalmente, é só começar a listar uma coisa Um monte de números para o seu segundo cérebro.
+
+Tipo, ei, nós temos as edições 963, 961, 957, 955. Vá e crie quatro issues no GitHub. Corrija os fluxos de trabalho para solucionar todos esses problemas em paralelo. E sim, quero dizer, isso vai acontecer para pegar uma boa quantidade de fichas porque Vai consumir bastante tempo. Claude Code, tudo de uma vez. Mas cara, o
+
+quantidade de trabalho que você pode fazer em Paralelismo é loucura. Tipo, minha programação de IA Quando comecei a usar o WinSurf E o Código Claude, foi como se fosse 10 vezes melhor. O que eu fazia quando programava manualmente ou Basta usar a função de autocompletar com a tecla Tab. E agora Arconte Parece que é 10 vezes mais do que eu já tinha. já fiz isso. Então eu tenho isso
+
+Ponto: estou programando 100 vezes mais rápido. do que eu era até mesmo alguns anos atrás agora ou há uns 3 anos. É muito bonito. É incrível o que essa ferramenta possibilita. E assim Vou voltar aqui para aquele meu segundo cérebro.
+
+Então, tudo bem. Então, o que fizemos foi encontrar um Problema com o arquivo readme. Isso gerou a seguinte issue no GitHub: E depois de criar o problema, ele Executou o fluxo de trabalho Archon. Assim você pode ver que mencionou a correção do Archon no GitHub fluxo de trabalho de problemas. E eu vou me exibir.
+
+explicando um pouco sobre esses fluxos de trabalho na verdade, parecem. Mas ele executa o fluxo de trabalho. E agora isso é apenas um tarefa de fundo que temos em nosso segunda sessão cerebral. E então eu posso meio que ou simplesmente continue verificando isso. E de novo, né? Como se eu sempre pudesse
+
+Pergunte como se soubesse, verifique o status do nosso fluxo de trabalho. Ou porque está em execução. Em segundo plano, podemos prosseguir e e simplesmente começar outra, como se eu Gostaria de analisar algumas solicitações de pull request que já temos. Portanto, é muito flexível. Como usamos o Archon. Podemos usá-lo exatamente como
+
+Tarefas em segundo plano para realizar uma série de trabalhos. Basta delegar uma série de tarefas através de esse fluxo de trabalho que construímos nós mesmos. Isso é apenas uma observação sobre como temos feito. geralmente usam assistentes de codificação de IA e transformando-se em algo que é repetível e confiável. Então vou deixar isso rodando aqui. E
+
+Enquanto fazemos isso, vou te mostrar rapidamente como realmente é. Então, isto é O repositório Archon acabou de ser clonado localmente. agora mesmo. Se eu acessar os fluxos de trabalho do Archon pasta, se acessarmos as configurações padrão aqui, Esses são todos os fluxos de trabalho que eu utilizo. já vem empacotado por padrão para Archon.
+
+Então, quando eu lançar Archon na próxima semana... a todos, então você vai ter tipo quando Se você mesmo comandar o Archon, você vai...
+
+ter acesso instantâneo a todos esses fluxos de trabalho. E eles são generalistas no perceber onde eles vão trabalhar imediatamente Qualquer repositório, qualquer base de código, qualquer tecnologia pilha. E você pode usar o Código Claude ou Códice. E então nós temos, tipo, um Análise completa de solicitações de pull request. Nós Temos um para te ajudar a criar um problema, uma para ajudar você a resolver problemas do GitHub, Criando PRDs, passando por loops PIV.
+
+Esse é o meu processo principal de construção. Funcionalidades ou correções de erros. Nossa, que cara! Há tantos. Temos tipo um todo como um Ralph, se você quiser executar um Loop de Ralph para construir uma prova completa de Do conceito à conclusão, você consegue fazer isso. Nós
+
+têm muitos fluxos de trabalho padrão para praticamente qualquer coisa que você for fazer o que querem fazer com assistentes de codificação de IA. E Vou te mostrar o que é um destes Os fluxos de trabalho parecem ser muito rápidos. Então obviamente, com a habilidade Arconte, nós Ensine Claude Code ou qualquer outra linguagem de programação. Agente: como criar fluxos de trabalho do Archon. Então Não é como se você tivesse que entender tudo.
+
+dos parâmetros no YAML aqui. Mas Só estou te dando um pouquinho de Uma visão geral de como são esses fluxos de trabalho. como. Então, temos a descrição para o fluxo de trabalho. Isso é algo parecido com as habilidades de Claude Code onde a descrição é carregada no contexto de Archon de antemão para que ele saiba quando deve usar esse fluxo de trabalho. Então eu
+
+nem precisa necessariamente contar isso para usar o problema de correção do Archon no GitHub. EU apenas foi explícito para o bem do demonstração. Mas mesmo se eu dissesse tipo Aqui está um problema que eu quero que você resolva. Como se fosse saber que isso é o fluxo de trabalho que devo usar com base no descrição. Então podemos definir nosso padrão.
+
+Fornecedor de adereços e modelo. Então, se não fizermos isso especifique-o em um nó individual e então É isto que vamos usar. Então Também podemos configurar diferentes modelos. para diferentes nós. Se tivermos alguns nós que são mais simples como fazer pesquisa inicial, então talvez nós apenas Quero usar Haiku. E então, para o
+
+Na implementação, talvez queiramos usar Opus. Portanto, há muita flexibilidade. ali entre as diferentes sessões para Isso realmente ajuda a otimizar os tokens. Especialmente para esses fluxos de trabalho mais longos, Queremos fazer isso. Então, sabe, tipo, primeiro passo nós Extraia o número da issue do GitHub. E
+
+A partir daí, temos um determinístico nó. Portanto, garantimos absolutamente Neste fluxo de trabalho, buscamos o Contexto da questão do GitHub apresentado a seguir. Não que um agente deixasse de fazer isso. Quando você pedir. Mas é simples.
+
+exemplo de apenas um ponto no tempo em um fluxo de trabalho onde precisamos de algo específico para acontecer e não queremos confiar que o agente se lembrará de fazer que. E então executamos um comando Haiku simples para Classificar a questão, certo? Tipo, isso é isso? Uma sugestão de recurso? Será que isso é um bug que estamos enfrentando?
+
+Precisa consertar? Porque com base no classificação, pode lidar com ou mudar a forma como lidamos com a questão específica. E então entramos na fase de pesquisa. onde estamos apenas executando um simples comando. Isso é tipo, sabe, Claude Habilidade de código ou comando de barra. E então nós
+
+Investigar o problema. Nós planejamos o Corrija isso. E então passamos para a implementação e validação. Então é um PIV bem clássico. Repita o processo assim que chegar a este ponto. EU
+
+Sempre chamemos de laço PIV. É o plano, Primeiro, implemente e, em seguida, valide. E então ele cria a solicitação de pull como um rascunho no finalzinho. E então, mesmo Também realiza algumas autoavaliações. Mas o A revisão também está acontecendo em um local diferente.
+
+sessão. Esse é o poder disso. Hum, algo que eu já abordei bastante. recentemente no meu canal aqui. Eu abordei a estrutura de desenvolvimento adversarial.
+
+Este é um sistema de agentes onde nós essencialmente têm um agente implementa o código e então Outro agente avalia o código. E isso É muito importante fazer isso de maneiras diferentes. sessões porque o implementador, isso constrói viés ao longo do tempo em seu histórico da conversa, como é Implementando o código. E então é tipo pedir a um aluno que corrija o próprio trabalho trabalho de casa. Eles podem compartilhar alguns falhas para fazer a avaliação parecer legítima, mas Eles vão abafar as questões importantes.
+
+debaixo do tapete. E é por isso que queremos ter um agente separado que realmente faz a avaliação. E assim, mesmo com agentes de codificação, à medida que começam a lidar com janelas de contexto cada vez maiores, é Ainda é importante manter nossos fluxos de trabalho. que funcionam em diferentes agentes de codificação sessões. Essa é uma das coisas mais importantes.
+
+que Archon nos proporciona. Por isso digo que é a camada acima dos assistentes de codificação de IA porque somos Conectando diferentes sessões e depois adicionando aqueles determinísticos também etapas para orientar o fluxo de trabalho. Nós querem tirar o controle do agente de codificação o máximo possível para que Nós impomos que certas ações aconteçam. Então, o que eu vou construir ao vivo com Vocês, neste momento, é exatamente isso fluxo de trabalho. Então, vou explicar isso brevemente.
+
+Também tem um vídeo que eu fiz sobre o meu canal onde abordei este assunto. Então eu vou Explique brevemente e depois vamos... para construir isso como um fluxo de trabalho Archon e Veja em funcionamento ao vivo. E talvez eu goste
+
+até mesmo executá-lo a partir do meu segundo cérebro como bem. Mas enquanto construímos isso e enquanto Nós o gerenciamos, e obviamente levará algum tempo. muito tempo. E então eu também terei Preciso de bastante tempo para responder a vocês. perguntas e depois se exibir como o outras coisas onde estarei correndo Arconte no meu segundo cérebro.
+
+Então, sim, vou voltar a isso. Muito rápido. Então, está executando o Arconte. Fluxo de trabalho para correção de problemas no GitHub. Então é de meu segundo cérebro executando Archon no meu Base de código separada aqui.
+
+Então, está no meio disso. O fluxo de trabalho continua por um tempo porque há vários nós. É um, você sabe, 21 Fluxo de trabalho do Node aqui. Mas o A classificação foi concluída. Então é Compreende a questão. Agora estamos conseguindo
+
+na pesquisa e correção do emitir. E sabe, outra coisa que seria É muito legal demonstrar isso aqui. Aplicativo no qual estou trabalhando aqui, meu Bate-papo aleatório do YouTube. Eu poderia, na verdade, descobrir algo. Alguns bugs com vocês ao vivo. Eu penso
+
+Isso seria muito divertido. eu pudesse Descubra alguns bugs e viva com o nosso Candidatura aqui. Posso arquivá-los como Problemas do GitHub e eu poderia mostrar para vocês como é nocautear um monte deles em paralelo. Então eu acho que há gosto de algumas coisas que eu quero fazer ao mesmo tempo aqui porque nós somos Vai ter que esperar pelo Claude Code. terminar as coisas e executar esses maiores fluxos de trabalho. Então, quero ter certeza.
+
+Sempre tem alguma coisa acontecendo Para assistir à nossa transmissão ao vivo, clique aqui. A única coisa Tenho que ter cuidado, no entanto. Infelizmente, esse é o limite do meu Código Claude. Então eu vou... eu vou voltar para
+
+a tela bastante através do nosso Transmita aqui porque estou quase no meu limite semanal. Reinicia em 22 horas. Então, amanhã serei bonzinho, mas eu Só temos 22% para trabalhar aqui para o nosso projeto. Transmissão ao vivo hoje. Deve ser bom porque Novamente, com esses fluxos de trabalho do Archon, nós É possível especificar o modelo em cada nó. E
+
+Portanto, eles são muito eficientes. Mas existe muitas coisas que vou começar a fazer ao mesmo tempo aqui. E então, quando eu estiver Na verdade, estou criando os fluxos de trabalho, eu Definitivamente quero usar o Opus. Então vai ser um pouco de Uma sessão com muitos tokens aqui. E então eu também ainda tenho, felizmente.
+
+um 64% do meu limite de 5 horas. Isso deve ser suficiente. Vamos ver. Na pior das hipóteses, vocês poderiam...
+
+talvez me vejam comprar meu segundo Claude Assinatura de código no meio disso bem no meio desta transmissão ao vivo aqui. Vamos ver. Enfim, Bem, vou começar. Nossa primeira tarefa aqui. É só fazer uma live Construindo com vocês. E então eu serei
+
+capaz de voltar e responder a algumas perguntas Perguntas também podem ser feitas no chat. Então eu sou Vou adiar a sessão de perguntas e respostas até que eu ter algo funcionando só para tente fazer esta transmissão ao vivo como o mais produtivo possível. Então, sim, deixe-me explicar esse agente. arnês aqui. E eu vou te mostrar o que é Parece que é preciso construir um agente inteiro.
+
+criar uma estrutura do zero como um Arconte fluxo de trabalho. Isso é realmente... Coisa poderosa. Então, tudo bem.
+
+Desenvolvimento adversarial. Existe uma pesquisa Devo dizer que se trata de um artigo ou postagem de blog. Arconte ou aquele Antrópico que se manifestou recentemente. Hum, e é meio que uma evolução de seu longo histórico de agentes aproveitando isso eles compartilharam isso há alguns meses como bem. E assim, a ideia aqui é inspirada por Algo chamado GAN, que eu vou fazer tipo uma busca rápida por GAN então eu consigo encontrar. Sim, então está demorando
+
+inspiração de generativo adversarial redes. E que gerador generativo! rede adversária é, É uma combinação de duas máquinas. modelos de aprendizagem que essencialmente competem uns contra os outros para fazer o gerador Melhora com o tempo. Então eu vou abrir o Imagem aqui. Isso é tipo
+
+Coisas interessantes. É muito legal como A Anthropic aplicou sua codificação de IA, e É nisso que estou me inspirando. eu mesmo. Então, funciona da seguinte maneira: O gerador vai criar, neste caso, imagens. Isso serve para geração de imagens.
+
+melhoria. Então, o gerador cria Imagens falsas. Sabe, tipo, isso gera uma imagem do Taj Mahal ou da Torre Eiffel Torre ou algo assim. E também temos o conjunto de dados de imagens reais. E o trabalho do O objetivo do discriminador é descobrir, você Saiba qual imagem é real e qual é...
+
+falso. Assim, a função do gerador é Essencialmente para enganar o discriminador. Você está colocando-os uns contra os outros. E isso torna o gerador melhor em geral. tempo porque quando fica melhor em enganando o discriminador, é simplesmente significa que está melhorando em Geração de imagens realistas. E assim, o
+
+O objetivo do tricking é torná-lo apenas Melhora muito com o tempo. E nós somos Aplicando isso à programação de IA. Eu não preciso tipo percorrer todo o Antrópico Artigo aqui. Hum, tem um vídeo eu fiz no meu canal do YouTube onde eu Isso foi abordado. Vou mostrar isso agora mesmo.
+
+Se você quiser assistir a isso mais tarde. Uh O vídeo é este aqui. Então, É a minha penúltima. onde eu abordei como criar agentes essencialmente discutem entre si ou Colocá-los uns contra os outros leva a resultados muito melhores. Você não quer um agente avaliando seu próprio estímulo. Então,
+
+É isso que temos com essa configuração. aqui. E assim, tudo começa com um usuário. Rápido, né? Temos que descrever o quê que queremos criar ou o que vem a seguir A funcionalidade que queremos adicionar ao nosso base de código. E então isso é enviado para um
+
+agente de planejamento que vai cuidar do nosso solicite e expanda-o para uma especificação completa. arquivo. Então, agora, este é um prompt que é otimizado para agentes de codificação que possui Mais contexto, contexto expandido para o quê? Queremos construir. E podemos trabalhar com o agente planejador para estabelecer que como Por mais que desejemos.
+
+E então, uma vez que tenhamos nossas especificações, isto é... a entrada inicial em nosso fluxo de trabalho. Vamos percorrer um ciclo aqui.
+
+Então, começamos com a negociação do contrato. Então, antes do gerador e do avaliador são colocados uns contra os outros, eles trabalhar em conjunto para estabelecer critérios testáveis. Então, eles pegam o De acordo com as especificações, eles dividem o trabalho em sprints. Então, Temos trabalhado de forma concentrada, um passo de cada vez. E então vamos estabelecer o quê como é avaliar de fato cada sprint. Então, quando o gerador está
+
+Feito, o avaliador sabe que aqui está exatamente como vou avaliar o sprint para garantir que a qualidade do código seja Ótimo, o aplicativo está funcionando. Então, Eles são muito éticos. Eles concordam em como o avaliador vai julgar o gerador. Em seguida, entramos no ensino fundamental. Implementação aqui. Então, o gerador
+
+Vou escrever o código para um sprint. O O avaliador vai pontuar todos os... critérios individuais.
+
+E então, se houver algo que marque pontos Se funcionar mal, ele retornará ao gerador. a fim de abordar o problema aqui. Se Há várias coisas que precisa ser feito. endereço, seja ele qual for. E então...
+
+retorna ao avaliador para repetir o processo. no máximo três vezes. E assim, recebemos esse pequeno feedback. loop aqui. E então, quando tudo estiver Concluída esta iteração, podemos prosseguir.
+
+para o próximo sprint, certo? Tipo A próxima fase do arquivo de especificação. Então, É um processo bastante complexo. Para todo esse arnês, existem bastante Algumas sessões de agentes estão em execução porque nós Tenha a agenda. E então, para cada um sprint, estamos executando o gerador e avaliador cada vez potencialmente se houver feedback de o avaliador.
+
+Então, este é o tipo de coisa que você Você não pode simplesmente fazer isso com o Código Claude por Ele mesmo, certo? Porque Claude Code, até mesmo embora você tenha subagentes e equipes de agentes, você realmente não pode gostar orquestrar um fluxo de trabalho maior que Lida com muitos agentes de codificação diferentes sessões por si só. Se eu não...
+
+Ter Arkon ou não usar o Agente Claude SDK, então eu teria que executar um. sessão, consiga algum tipo de implementação, e então eu teria que ir e executar outra sessão onde eu avaliar. E lembre-se, isso é importante. Para fazer isso em outra sessão. E então Eu teria que pegar as pontuações e exporte-o para algum tipo de Markdown ou documento JSON que eu enviaria de volta para o gerador e eu teria que ligar outro sessão, certo? Tipo, eu não quero ser
+
+aquele que tem de orquestrar isso diferentes sessões do agente de codificação ou estas diferentes sessões do Código Claude. E assim, Vou te mostrar como é. Criar isso como um fluxo de trabalho do Arkon para que possamos Não precisamos fazer isso nós mesmos. Pudermos Automatize todo esse processo. E mesmo se quiséssemos, eu não iria.
+
+chegar tão longe durante a transmissão ao vivo, mas poderíamos até adicionar humanos ao laço. Então, é como se fosse depois do avaliador. Se isso acontecer, talvez tenhamos nossa chance. também precisamos avaliar antes de retornarmos ao ponto inicial. para o gerador aqui. Então, se nós
+
+querem manter o controle e realmente ainda fazer parte desta série de longa duração Podemos fazer isso com o Arkon. bem. Só quero manter as coisas mais simples, hum mas com certeza vou manter experimentando construir em cima de Isso para adicionar mais elementos humanos ao processo, porque Isso é outra coisa que é realmente...
+
+importante como nós construir esses arneses que permitem para que os agentes trabalhem por períodos cada vez mais longos, nós ainda como se estivéssemos construindo como Queremos um software verdadeiramente pronto para produção. Fazer parte desse processo. Tipo, se eu enviar uma especificação enorme para, você sabe, como um MVP de um produto que eu quero construir, Eu realmente não quero que simplesmente aconteça. através de 10 sprints sozinho. Porque se isso sequer se desviar de um Um pouco sobre o primeiro sprint e o O avaliador não percebe ou algo do tipo, então toda a aplicação pode simplesmente...
+
+começar a sair dos trilhos porque pode não estar alinhado com o que eu realmente Quero construir. Portanto, mesmo que o software está sendo construído corretamente, como em Se o código estiver funcionando teoricamente, pode ser que funcione. Não vai ser o que eu quero, né? Então, é isso. Por que é realmente importante ter seres humanos no loop. E essa é outra grande
+
+foco que tenho construído sobre com Arkon recentemente também. Então, tudo bem. Vamos até Arkon. E vou abrir meu Código Claude. sessão aqui.
+
+E nós vamos simplesmente criar este fluxo de trabalho. Então, geralmente quando eu faço um Novo fluxo de trabalho, gosto de usar como referência. as que eu já tenho porque Isso faz com que seja um ótimo ponto de partida. EU quer dizer, a melhor maneira de se tornar bom O objetivo dos agentes de codificação de IA é proporcionar resultados satisfatórios com essa tecnologia. Isso dá o máximo de exemplos possível.
+
+Então, vou dizer, uh, carregue o Arkon. e fornecer habilidades de fluxo de trabalho para que você ter contexto ao entrar em um novo Arkon Fluxo de trabalho que eu quero construir. Isso é Como eu inicio cada construção de fluxo de trabalho conversa. Então, vamos contextualizar aqui. E sim, está me dando um aviso.
+
+que estou com 78% do meu limite semanal. Ter esperança Isso não é um problema. Hum, e depois? Vou mostrar isso no vídeo do YouTube. onde eu cobri esse arnês, o fluxo de trabalho de desenvolvimento adversarial, como eu o chamo, eu na verdade construí uma versão disso com O SDK do Agente Claude e o SDK do Codex.
+
+Então, eu tive que criar isso sob encomenda. Isto Na verdade, deu muito trabalho construir. isso mesmo com a ajuda de um código agente. Então, vou te mostrar. como é fazer muito versão mais simples que ainda funciona Tudo como um fluxo de trabalho Arkon.
+
+Mas na verdade vou copiar o caminho. para este repositório porque eu vou para Aponte para Arkon olhar aqui e diga algo como, "Ei, quero que você copie exatamente o que nós..." "Construído sob medida como um fluxo de trabalho Arkon."
+
+E terá que pensar bem em como Ele deseja percorrer cada um dos nós. Aqui, certo? Assim como temos o planejador nó, temos o gerador e avaliador, e temos o tipo de...
+
+Aqui está o ciclo de feedback. Há bastante coisa Isso vai entrar no contexto. E assim, Por isso achei que era realmente boa demonstração para construir ao vivo com vocês estão em uma transmissão porque não é trivial. Não é algo trivial. Então, Vamos voltar aqui.
+
+Ok, então ele carrega as habilidades. Sabe como construir fluxos de trabalho e sabe tudo as disponíveis que ele pode referência. Então, vou dar a ele o caminho para o repositório de desenvolvimento adversário. E eu vou fazer só um pouquinho Aqui vai um pequeno desabafo. Então, quero que você leia o arquivo "leia-me" para Este é o repositório para o qual eu te forneci o caminho.
+
+Tenho uma versão Claude e Codex de um arnês que eu quero que você crie como um Fluxo de trabalho Arkon. Então, quero que você gire contratar subagentes para se aprofundarem nisso. base de código para entender como o chicote funciona. E também quero que você explore o fluxos de trabalho disponíveis que temos em Arkon já está pronto, então você pode pegar inspiração de como configuramos os nós lá. E então, pense profundamente sobre Como aplicaríamos isso a este novo Fluxo de trabalho para o desenvolvedor adversário. E
+
+Antes de realmente construirmos o fluxo de trabalho, eu Gostaria que você me desse um resumo do seu plano. de ataque aqui. Como você vai? Como construir esse fluxo de trabalho? Quais são os Como serão os nós? Como vai
+
+haverá um ciclo de feedback entre O gerador e o avaliador? Que tipo de coisa. Muito bem, então é isso. Então, isto é Vamos demorar um pouco aqui porque nós quero que faça bastante pesquisa e raciocínio. E assim, enquanto isso estiver em andamento, Vou voltar ao nosso segundo cérebro.
+
+Porque... vou te mostrar como é. como quando o fluxo de trabalho estiver concluído.
+
+Então, você pode ver aqui que tipo, há bastante produção, exatamente como era. Monitoramento do fluxo de trabalho. Então, meu segundo O cérebro iniciou a correção do problema no GitHub. fluxo de trabalho, e depois é só acompanhar. ao longo do tempo.
+
+Certo? Aqui está uma atualização de status. Segue uma atualização sobre o status. E então Finalmente, o fluxo de trabalho está concluído. E aqui Ele até me informa o pull request final.
+
+que ela criou. E assim, de ponta a ponta, Arkon cuidou de tudo isso. Quer dizer, sim, Eu poderia simplesmente ter meu segundo cérebro. Aborde o problema no meu repositório. em si. Mas o objetivo de Arkon é fazer
+
+Nossos fluxos de trabalho são confiáveis ​​e repetíveis. EU Não preciso pensar em toda a minha vida. processo de classificação do problema e então pesquisar sobre isso e depois implementando-o e criando a demanda solicitar. Tudo isso, como um muito Um fluxo de trabalho abrangente simplesmente acontece. Inteiramente para mim.
+
+Tudo o que meu segundo cérebro precisa saber é Tipo, "Ei, aqui está o meu problema. Use Arkon." Para consertar." Como se fosse tão simples assim. Então, se eu for até o repositório Agora, quando vou aos pull requests, temos esta que foi inaugurada há apenas 11 minutos atrás, pelo fluxo de trabalho Arkon. E foi colocado
+
+Estou em modo rascunho agora, mas eu poderia Abra e diga que está pronto. E Então eu poderia ir lá e juntar tudo aqui. Então, isso, apenas para fins de demonstração, foi Uma mudança super simples que eu queria fazer. para o leia-me. Mas você entendeu a ideia. Como
+
+Obviamente, na maior parte do tempo eu uso o fluxo de trabalho de correção de problemas do GitHub para trabalhar em Algumas coisas bem elaboradas. É, talvez eu mostre isso em um um pouco também, mas poderíamos ir. por meio de um exemplo mais complexo onde Na verdade, vou procurar alguns problemas. Aqui, crie-os como problemas e, em seguida, se Meu orçamento de tokens permite, então vou tentar. Faça alguns em paralelo aqui. Então, se
+
+Usamos apenas 3% do nosso limite de 5 horas. até agora em nossa transmissão. Tipo isso é Isso não é muita coisa. Então, acho que vou ficar bem. Mas, sim, deixe-me começar.
+
+a implementação aqui. Então, ainda é Em meio à exploração. Então, isso vai proporcionar alguma coisa sugestões para mim sobre o fluxo de trabalho em um um pouquinho, e depois vamos começar. Criando e executando aqui. Então, enquanto isso acontece, eu irei para o Converse aqui e responda a algumas perguntas.
+
+Vocês. Então, Sean disse que minha vida agora é um fluxo de trabalho. Eu já joguei com o Archon. Eu também, Sean. Feliz Páscoa! Nos dê um pequeno
+
+Por favor, me informe o código de desconto. Fiquem ligados para Na semana seguinte, Momento. Vou apenas dizer que agora mesmo. Além disso, o aniversário do Dynamis A comunidade está chegando este mês, O que é super emocionante. Então, vou mostrar isso rapidinho. Para
+
+Para aqueles que não sabem, meu Dynamis A comunidade é onde eu tenho encontros semanais. workshops que eu ministro sobre assuntos como Aproveitando assistentes de codificação de IA, Construindo seu segundo cérebro. Eu tenho material didático sobre agentes de construção e utilizando agentes de codificação. E depois outra Uma coisa realmente importante que estou fazendo. Literalmente amanhã. Então amanhã às
+
+11h da manhã, horário central, eu tenho uma bota acampamento, um workshop de 4 horas onde eu estou Ensinando você a construir sua própria IA. segundo cérebro criado do zero. E deixe-me Vou te dizer, isso é melhor que Open Claw. Construindo algo como Open Claw, mas um ferramenta que você realmente possui e pode Evolua a si mesmo. E assim, Sabe, vou colocar um link para...
+
+isso no chat aqui, se vocês estão interessados. Hum, vai ser um explosão. Tipo, vai ser literalmente isso Vou transformar isso no terceiro curso na comunidade Dynamis. Portanto, já existe muito valor em a comunidade. Agora, estou fazendo isso a seguir.
+
+Grande coisa, e obviamente será. gravado, transformado no curso, para que você Você pode visualizar isso a qualquer momento. Mas, o segundo cérebro que eu uso é o meu próprio. Isso me economiza pelo menos uns 12 dólares. horas por semana, estou te mostrando Gente, como eu construo literalmente cada um deles?
+
+parte disso. Então, haverá oito módulos no total. Hum, eu vou te mostrar. Gostei muito do diagrama. Como cada parte do segundo cérebro Vou entrar nisso e depois vou construir.
+
+construir do zero, morar no workshop amanhã. Então, sim, vai acontecer. Vai ser incrível. Bem, vou voltar ao chat. aqui.
+
+Só me dê um segundo. Transfira isso para o meu outro monitor, e então eu vou para Vamos abrir o código Claude novamente, só para termos... pode assistir enquanto explora o fluxo de trabalho aqui.
+
+Tudo bem. Então, o Archon requer uma API ou pode funcionar? Ele usa o GitHub como o Open Code? Então, neste momento, o Archon suporta o uso do SDK do agente Claude e SDK do Codex. E Para ambos, você pode usar o seu assinatura, para que você não precise pagar para custos de API, o que seria bastante Seria caro se tivéssemos que fazer isso.
+
+Agora, houve um pouco de controvérsia recente em torno do uso do seu um Subscrição antrópica com o Claude SDK do agente. Mas, hum, havia um ex postagem que foi feita recentemente que é Estava tudo muito claro. Curta se você for usando apenas o SDK do agente Claude Para uso pessoal e experimentação, então você está autorizado a usar o seu subscrição. Eles simplesmente não te querem. Para usar sua assinatura, se você for construir um negócio em cima do agente SDK. Como se você tivesse outras pessoas que
+
+estão realmente usando sua assinatura. Isso não é permitido. Mas, pelo bem de executar o Archon localmente ou até mesmo Executando seu segundo cérebro, eu uso meu Assinatura antrópica com a minha segunda Seu cérebro também está ótimo, você está totalmente bem. Eles Isso ficou muito, muito claro aqui. Eu não Eles acham que podem voltar atrás no que disseram.
+
+quando eles esclareceram isso depois de terem feito algumas alterações na documentação que começaram a Criar essa controvérsia para as pessoas. Então, Sim, quando eu invoco Archon, como você O que vocês estão vendo aqui é realmente verdade. usando a assinatura Anthropic com O SDK do agente Claude. Hum, ou melhor, acho que este é o exemplo aqui. Quando eu estava usando com meu segundo cérebro, tanto meu segundo cérebro quanto Arconte Ambos estávamos usando o SDK do agente Claude.
+
+Mas é uma boa pergunta. Tudo bem. Mais alguém já recebeu seu mascote de estimação? Uh Eu realmente recebi o meu. Ah, aqui, eu vou Vou te mostrar qual é o meu. Eu fiz
+
+Bem, eles não removeram isso agora porque eu Acho que foi uma pegadinha de 1º de abril. Não era? Posso fazer isso? Ah, posso fazer /amigo ainda. Então, eu entendi.
+
+Um fantasma educado que se materializa em apresenta falhas de segmentação e sugere correções de forma suave. com a paciência de alguém que tem literalmente todo o tempo do mundo, o que os torna insuportáveis ​​durante Prazos apertados. Esse é o meu cara. Então, está ligado ao seu conta. Então, se você entrar no código Claude e execute /buddy, isso lhe dará o mesmo resultado.
+
+sempre dá erro. E então, hum, você Você pode desativá-lo digitando /buddy off. EU Descobri isso ontem porque eu não necessariamente querer essa personalidade orientando todas as minhas sessões de código Claude daqui para frente. Mas é legal. Brinque com isso.
+
+Tudo bem. Legal. Então, sim, vamos encerrar por aqui. esta sessão aqui porque eu vou, você sabe, Claro que voltaremos a conversar sobre isso. de novo hum, quando eu estiver fazendo mais algumas construções, mas voltou para mim com o seu recomendação para construir isto fluxo de trabalho aqui.
+
+[bufa] Então, terminou de fazer tudo o que precisava. exploração com subagentes. Tem um profundo entendimento do arnês que eu Mostrei para vocês anteriormente, da Anthropic, e [bufa] também como construir Fluxos de trabalho com Archon. Tudo bem. Portanto, este é o principal desafio que enfrento aqui.
+
+porque isso é fundamentalmente difícil fluxo de trabalho para construir. Então, existem alguns coisas em que teremos que pensar criativamente sobre aqui para Ah, o fluxo de trabalho Archon. Mas, é claro A solução está aqui. Então, teremos um único loop. com novo contexto verdadeiro onde cada A iteração lê o estado do disco, desempenha uma função, escreve a saída e avanços para o estado. Então, quando ele fala
+
+sobre um papel, está se referindo a ou o avaliador ou o gerador. Então, aqui está a estrutura proposta. Eram Vou entrar no modo de planejamento, então Esse é o nosso planejador. Nós vamos Inicializar o espaço de trabalho, certo? Então, Estamos criando um novo espaço onde ir para adicionar todo o nosso código.
+
+E então passamos pelo cenário adversarial. corrida. Então, é aqui que nós [bufa] quebramos a especificação e depois batemos. coisas em um ciclo, cada uma das sprints que criamos a partir da especificação. Então, ok, este é o adversário sprint, é aqui que eu realmente quero Certifique-se de que tudo esteja em ordem por aqui. Então,
+
+Ah, muito importante, nós temos um parâmetro em Archon onde podemos dizer que para o próximo nó, queremos começar com uma sessão de contexto totalmente nova. Então, nós Na verdade, o Archon oferece flexibilidade. onde podemos ter outro nó continuar a conversa do ponto anterior agente ou começar do zero. Mas, o objetivo principal dessa antagônica é justamente esse. um dev harness aqui é o que queremos o avaliador para começar em um novo sessão, para que não seja transferida para a próxima sessão.
+
+Viés por parte do implementador. Isso mesmo. Por isso, queremos garantir que...
+
+que é esse o caso. Portanto, cada iteração lerá de um arquivo JSON de estado. E este arquivo JSON vai lhe dizer isso. Qual dos papéis estamos lendo? daqui. Então, estamos criando o nosso
+
+sprints da especificação? Estamos atualmente Implementando algo de um dos nossos Sprints, ou somos nós o adversário? Será que estamos? sendo aquele engenheiro de controle de qualidade meticuloso que é avaliando os resultados de um dos sprints, sabe, baseados nos critérios que estabelecemos no negociação? Então, Uma coisa que notei com isso é que estou Não vou ser exigente, aqui está o A negociação não é exatamente como entre dois agentes.
+
+conversando um com o outro. É mais ou menos isso como um nó. Eu vou embora. isso, no entanto. Acho que está tudo bem para Porque, como eu disse, eu quero Crie algumas versões disso aproveitar. Quero começar pelo básico, e
+
+Então eu quero adicionar e fazer isso mais abrangente, como começar a adicionar mais humanos no processo, mas acho que isso É um ótimo ponto de partida aqui. Então, talvez eu peça para ele me perguntar algumas coisas. questões. Veremos. Então, isso vai criar a solicitação de pull no final, e então Para finalizar, elabore um relatório.
+
+Certo, e então temos as vantagens e desvantagens versus o arnês original. Um OK. Hum, para mim parece bom. Então, o que precisamos fazer é...
+
+criar, obviamente precisa criar o YAML para o fluxo de trabalho, assim como eu mostrou com a correção do problema número um do GitHub. Então, isso vai criar algo que Parece mais ou menos com isso, mas vai... seguir exatamente o fluxo de trabalho que Eu escrevi isso neste diagrama aqui.
+
+E então precisa criar o comando. arquivos. Então, cada um dos nós, o A beleza de Archon é como se pudéssemos...
+
+Descrever... não é isso. Eles são tipo Vamos lá. Assim como podemos descrever um
+
+inserir o prompt em linha se for curto o suficiente, ou se você curtiu alguma dessas Em relação às fases, apenas fazemos referência ao comando. Então, ele pode simplesmente usar uma habilidade ou um golpe. comando que armazenamos separadamente para que não precisemos ter grandes quantidades de prompts escritos diretamente no nosso Fluxo de trabalho YAML. Então, se eu for para o comandos aqui, podemos procurar, você Sabe, tipo a busca na web do Archon. Se eu encontrar essa, vai ser...
+
+em direção à parte inferior. Sim, aí está. Então, esse é o comando que é invocado. Então, temos o enunciado completo. É exatamente como os comandos de barra, onde você pode ter argumentos e outras entradas parâmetros que injetamos no comando. Então, vai executar tudo isso.
+
+solicitar como essa etapa no fluxo de trabalho. Então, Quando chegarmos a esse ponto, vamos... para executar o código Claude com isso como o conjunto de instruções, certo? Então, é muito
+
+Muito versátil e fácil de configurar. coisas. Então, é isso que está dizendo aqui. Isso vai apenas criar um comando. arquivos para as diferentes funções que nós aqui estão os diferentes nós que temos no fluxo de trabalho.
+
+Portanto, também precisamos do prompt de loop. Então, Essa é a parte mais complicada porque é essencialmente tudo, o inteiro O loop será gerenciado no estado. arquivo. Isso vai descrever como você é. estão construindo atualmente ou você está Atualmente estou avaliando o segundo sprint.
+
+qualquer que seja. Como se tivéssemos que ficar de olho em Todas essas coisas. Então, é, tipo eu Disse que não é um fluxo de trabalho trivial. Certo, então Na verdade, levanta algumas questões para meu. Então, isso é bom. Então, eu vou
+
+Responda a estas perguntas, e Então, vamos começar a construção. Rápido aqui. Então, o original tem um Negociação em duas etapas no circuito. Combinar esses elementos em uma única iteração é mais simples. Os slots são exatamente iguais.
+
+O que eu mencionei anteriormente. Então, nós poderíamos Divida em duas iterações. O que você faz? Você prefere? Eu vou dizer, em primeiro lugar, eu...
+
+Vamos manter as coisas simples por enquanto. EU Podemos colocar tudo em um único nó. E então, ok, então para o provedor, Isso deve definir apenas Claude como padrão ou nós deve ser projetado para funcionar também com Códice? É, vamos usar o Claude como padrão. para este fluxo de trabalho. É isso que eu sou
+
+usando. Um comportamento de falha de sprint, deveria o O fluxo de trabalho para completamente em caso de falha no sprint. ou continue para os sprints restantes e Relatar resultados parciais? É, vamos parar por aqui quando o sprint falhar. O fluxo de trabalho deve criar automaticamente uma solicitação de compra?
+
+com um aplicativo já pronto ou simplesmente deixe o código. na árvore de trabalho? Bem, estou criando algo a partir de Aqui está um esboço da minha demo. Então, ainda nem teremos um repositório "get". Então, Talvez seja melhor não termos um Etapa de solicitação de pull request. Então, vamos embora.
+
+Vamos deixar o código no trabalho. árvore, e então talvez depois que nós pudéssemos Inicializar um repositório get. Não sei. Essa parte eu teria que Pense um pouco mais sobre isso. Mas eu quero seguir em frente apenas por causa do demonstração. Então, talvez eu não esteja aproveitando ao máximo.
+
+contração ideal ou tomar a decisão mais ideal. Desculpe, eu disse "contorcendo-se" porque li um Comente no chat. Eu posso não ser Tomar as decisões mais adequadas é a melhor escolha. agora porque estou me movendo rápido, mas acho que É um equilíbrio que preciso encontrar. Então, o RunFish disse que meu cotovelo começou contrações. Cole recebeu 312 inscrições desmarcadas.
+
+mudanças. Inspire e expire. Onde eu encontro isso? Onde eu encontro isso? Muitas alterações não confirmadas? Eu acho que
+
+pode estar no repositório que eu estava... Utilizando para demonstração aqui. Onde você viu?
+
+que? Porque eu gosto da base de código do Arkon. Em si, eu já me comprometi com tudo. EU Não sei exatamente onde você viu isso. Enfim, vou deixar a razão me guiar por aqui.
+
+Vou retomar nossa conversa. Vamos ver o que mais temos aqui. Uh Moment disse que voltarei para o Workshop do segundo cérebro, escolha o que eu perdido. Parece ótimo. Agradeço.
+
+Tudo bem.
+
+Tudo bem. Chris disse: "Você pode configurar..." Criar um fluxo de trabalho para tentar algo melhor e mais eficiente.
+
+Modelo caro se o mais barato falhar X vezes?" Ah, sim, você definitivamente poderia. Incorpore isso ao Arkon. E eu já consigo até imaginar como seria isso Parece que no YAML onde teríamos tipo um passo que tem, hum, bem, é basicamente seria um loop porque você iria ter um nó que seria o menor modelo tentando realizar a implementação. Certo? Curtir e você pode definir o modelo
+
+A cada passo do caminho. Assim mesmo, O modelo é Haiku. E então você poderia ter algum tipo de avaliador rápido que executa, e então faz isso em um ciclo de feedback, algo parecido com o que estamos Construindo aqui no desenvolvedor adversário. E então, hum, nós daríamos um número máximo. de novas tentativas, e então, se falhar, se isso O loop falha após X tentativas.
+
+então encaminharíamos para o mais potente modelo para fazer o mesmo que solicita. Ou se for Se de fato funcionar, então simplesmente encaminhamos para Fim do fluxo de trabalho. Então, dentro de Arkon, nós temos esse tipo de coisa. de roteamento condicional aqui. Como em Neste caso, você pode ver que... nós
+
+decidi não seguir por esse caminho. porque não se aplicava a isto. Classificação do problema no GitHub. Então, Acabamos de nos mudar para cá. Então, nós temos roteamento condicional integrado onde o modelo pode gerar alguma palavra-chave que vamos analisar deterministicamente para descobrir como Que rota devemos seguir no fluxo de trabalho. Então, sim, a correção do problema no GitHub.
+
+Na verdade, é "Oh", e só existe "Bem, Na verdade não, existem alguns Exemplos aqui. Então, alguns exemplos. onde temos roteamento condicional como na parte inferior também à direita aqui. Sim, definitivamente posso fazer isso. OK, Tem uma coisa legal sobre o Arkon.
+
+Nosso objetivo, e estamos muito perto disso, é... Chegando aqui. Nosso objetivo com o Arkon é chegar ao ponto em que literalmente não haja nada.
+
+Independentemente do fluxo de trabalho que você deseja criar, Você consegue. E nós temos apoio para O ser humano no processo. Estamos adicionando Bem, na verdade, nós já adicionamos isso. Apoio para MCP e desenvolvimento de habilidades. Então, em etapas individuais no fluxo de trabalho, você Posso dizer algo como "Eu quero o navegador do agente"?
+
+habilidade para testes de ponta a ponta, ou eu quero a habilidade do Zapier para que eu possa trabalhar com o meu uma conta do Gmail no início de fluxo de trabalho. Tipo, literalmente qualquer coisa que você Se você quer fazer isso, será possível. com Arkon. Então você pode jogar estes fora. Ideias malucas. Tipo, tipo... Bem, eu acho que sim
+
+Chris, seu ideias Não é loucura. É uma boa ideia. Mas você pode lançar qualquer ideia aleatória, e É tipo, "Sim, eu já consigo pensar..."
+
+sobre como você integraria isso ao Arkon." E podemos simplesmente pegar qualquer coisa assim. ferramenta de desenvolvimento adversária. Não importa, quero dizer, isso é realmente É bastante complexo, mas não importa. Assim como podemos fazer em Arkon. É realmente
+
+legal. E, hum, eu não estou me concentrando nisso. Mas, sabe, outra coisa com Arkon é a área em que estamos focando em programação de IA. agora mesmo, mas você poderia pensar em algo como qualquer tipo de fluxo de trabalho agentivo para um caso de uso comercial que seria benéfico também por ser um fluxo de trabalho Arkon. Porque uma das coisas que... hum... faz
+
+A maioria das provas de conceito de IA falha em O nível empresarial é que eles estão dando Controle excessivo para o agente. Eles são fazendo Eles querem que o agente Lembre-se de enviar um e-mail de acompanhamento para o fim de uma conversa ou algo do tipo Isso pode ser. Em vez de dar esse poder ao agente ou essa responsabilidade para com o agente, podemos extraí-lo para um Etapa determinística em um fluxo de trabalho Arkon. Assim, podemos tornar qualquer coisa mais confiável. Não se trata apenas de programação de IA. Então, para não estragar a surpresa...
+
+como uma visão de longo prazo para Arkon também muito, mas acho que isso pode até evoluir. ser mais do que apenas uma ferramenta para IA fluxos de trabalho de codificação. Poderia ser algo como Qualquer coisa que você queira fazer com um agente. E nós poderíamos até nos integrar com outras estruturas de agentes e coisas como que. Isso é um pouco exagerado.
+
+mas só para mostrar para vocês... esclarecendo um pouco sobre tipo Até onde realmente poderíamos levar isso? Uh É muito legal. Então, isso é como o
+
+Meu maior projeto de paixão agora Agora, falando sério. Então, sim, vamos voltar ao Tudo bem. Nossa, que incrível. É... na verdade, já construiu o
+
+fluxo de trabalho. Então, eu respondi às suas perguntas, e... Achei isso ótimo. Quer dizer, eu
+
+Acho que não tenho problema nenhum com isso. Talvez eu fizesse queria um Vamos conversar um pouco mais sobre isso antes de... entrou direto na construção, mas também é rápido o suficiente para que realmente não aconteça me incomoda.
+
+Então, é isso. Temos o nosso Arkon Fluxo de trabalho de desenvolvimento adversarial. Vou verificar. Já saio daqui a pouco, mas deixe-me...
+
+Veja o que estava escrito. Então, nós temos o quatro nós com o plano, inicialize o espaço de trabalho e, em seguida, todo o loop aqui com nosso JSON de estado, o relatório em o fim. Removemos a solicitação de pull request. Porque eu vou apenas fazer uma demonstração. Criando uma base de código do zero aqui.
+
+Sim, a outra coisa que eu quero Verifique se o modelo está sendo usado, porque eu Definitivamente quero usar um modelo mais barato. agora mesmo, porque estou perto de atingir meu limite. Então, vamos analisar os fluxos de trabalho. Temos o desenvolvedor adversário Arkon. Vamos Dê uma olhada nisso agora mesmo.
+
+Então, conseguimos nossa descrição. Quando o O usuário deseja construir um completo aplicação do zero usando desenvolvimento adversarial. Então, estes são como os gatilhos. Tipo, se eu gritar algo assim especificamente, então Ele saberá usar esse fluxo de trabalho Arkon. Então, estamos na fase de planejamento. Então, nós
+
+Basta inserir o prompt aqui. Então, com base no que o usuário... fornece como entrada no fluxo de trabalho, Vamos criar a especificação completa.
+
+por aí. Certo? E então vamos para Inicialize o espaço de trabalho. Então, isto é um passo determinístico, certo? Então, nós somos Executando um comando bash. Nós não somos
+
+Na verdade, estou executando o agente de codificação aqui. Então, estamos apenas organizando tudo. acima. Estamos inicializando um repositório Git. fazendo todas essas coisas que o agente pode esquecer de fazer.
+
+Como até mesmo criar o inicial Estrutura básica para o arquivo JSON de estado. Como se não quiséssemos pedir ao agente para Fazemos todas essas coisas quando sabemos o quê Vai ficar igual a todos os outros. tempo. Podemos muito bem levar isso em consideração. nossas próprias mãos e garantimos que é configurado exatamente da mesma maneira, todos os quartos.
+
+tempo. Porque o agente de codificação pode, você sabe, tipo criar o diretório errado ou algo, ou tipo, colocar no lugar errado caminho. E então entramos no nosso ciclo. Esse É algo que eu gosto um pouco nervoso por. Então, veremos. Veremos
+
+Veja como isso se parece. Um momento de Verdade, se isso fosse bem feito. Então, obviamente, dependeríamos do Espaço de trabalho inicializado e concluído. Então, temos dependências semelhantes para os nós. Também em Arkon.
+
+E então temos o... o loop incitar. Então, este é o nosso adversário.
+
+Ciclo de desenvolvimento sprint. Você faz parte de uma iniciativa inspirada em GAN. sistema de desenvolvimento adversarial com três funções distintas. Cada iteração, Você desempenha um papel determinado por fase atual no arquivo estadual. Então, estamos dizendo para ele se tornar o avaliador ou tornar-se o implementador ou negociador dependendo do que acontecer quando ele lê este arquivo. Então, nós contamos isso.
+
+primeiro leia o arquivo e depois pegue seu papel com base nisso. Então, se E e isso não é o ideal porque nós temos basicamente três avisos do sistema reunidos em um único comando. Então, definitivamente poderia fazer isso melhor, mas apenas para o Para termos um ponto de partida realmente simples, Acho que isso é aceitável. Então, tipo se Você é o negociador do contrato, então É isto que você vai fazer. Você é Vou ler o arquivo de especificação e depois A partir do arquivo de especificação, você vai...
+
+Criar todos os sprints. Para que Estamos dividindo o trabalho em blocos gerenciáveis ​​para o loop que o que vamos fazer com o gerador e avaliador. Então, se você é o gerador, você está em na fase de construção, você vai, você Saiba, leia a especificação completa e você saberá, descobrir tipo, "Ok, em qual sprint estou?" Em que estou trabalhando agora?" E se for um tentar novamente, como em você está trabalhando a partir de Com base no feedback do avaliador, certifique-se de...
+
+que você realmente responda ao feedback do avaliador. Caso contrário, prossiga. e fazer a implementação para o um esta fase atual e, em seguida, atualizar o Estado JSON para avaliação. Então, continuando para aproveitar isso e manter o controle. E assim, Obviamente, vamos fazer referência a isso.
+
+em cada uma das perguntas para os papéis. Então, o avaliador, eu acho que é isso. na verdade, a mais complexa. Mas, basicamente, dizendo para, você sabe, Analise o sprint para descobrir o critérios de avaliação, e um Avalie cada critério e resultado. isso em um arquivo de feedback e então Você vai passar ou reprovar.
+
+certo? Então, ou você volta para o construtor. ou passe para o próximo sprint. Muito legal. E então nós simplesmente damos o Relatório final ao final. Então, eu gosto
+
+esse. Uma coisa é certa: nós Não especifique o modelo aqui. Eu só quero usar... na verdade, vamos usar.
+
+Haicai para o nó de relatório, e então eu quero Use Sonnet para os outros. Eu não Acho que estamos preparados para fazer isso agora. Então, eu só quero ter certeza de que estamos claro sobre o modelo que estamos usando. aqui. Então, deixe isso correr.
+
+E então, vamos testar o fluxo de trabalho em Só um segundo, aqui. Então, vou fazer com que ele simplesmente crie algum código. base criada do zero. Tipo, por que não? Um E enquanto isso estiver em execução, é Obviamente, isso vai levar algum tempo.
+
+Então, enquanto estiver funcionando, nós... posso fazer o outro teste onde eu gostaria mostrar-lhe mais como é a aparência de Abordamos as coisas com nosso segundo cérebro. Então, vamos analisar essa aplicação em detalhes.
+
+Encontraremos problemas, criaremos questões, E então falarei com meu segundo cérebro. sobre essas questões, e então comece tudo os fluxos de trabalho em paralelo. Isso será como o teste definitivo que pode ser uma droga muitos dos meus créditos, mas ainda estamos em 42% aqui. Então, estamos numa situação bastante favorável. OK. Então, agora aqui em cima, temos
+
+o modelo padrão de soneto. Então, nós não precisa especificar para nenhum dos esses nós nós mesmos apenas porque isso vai Basta herdar o valor padrão. Mas então, em Aqui termina o relatório, então. Estamos apenas dizendo que queremos usar Haiku. porque também pode ser algo rápido e eficiente em termos de contexto ou um token eficiente porque não é nada complexo o que estamos fazendo neste momento do fluxo de trabalho. Então, tudo bem. Estamos procurando
+
+bom. Então, vou inaugurar um novo uma sessão do Claude Code aqui E eu vou invocar esse fluxo de trabalho. Outro A primeira coisa que eu quero perguntar é...
+
+o espaço de trabalho. Então, quando você inicializa o espaço de trabalho, onde ele ficará? colocar? Porque eu só quero ter certeza de que Não gostamos de verificar isso no Arkon. repositório ou algo assim.
+
+Porque é isso que eu estou tentando pensar. sobre coisas diferentes que poderiam algo deu errado e que eu gostaria de abordar aqui. Para garantir que estejamos bem. Então, o aplicativo já vem integrado, certo? Então, diretório de artefatos. Este é um dos
+
+parâmetros para o nosso fluxo de trabalho. O resultado é algo como .arkon artefatos do repositório do proprietário dos espaços de trabalho. OK. Por exemplo, é aqui que ficaria.
+
+algo. Um sim. Acho que está tudo bem. Qualquer que seja. OK. Faremos isso. Quer dizer, eu
+
+talvez pudesse fazer com que ficasse parecido com um parâmetro entrando no fluxo de trabalho se eu Queria, mas, de novo, estou apenas mantendo assim. Simples assim. Então, sabe, na verdade, o que eu preciso fazer é...
+
+Primeiro preciso descobrir tipo o quê aplicação que eu realmente faria. Porque sim Agora o mundo é nosso para o que quisermos. poderíamos construir. Nós vamos apenas Crie algo do zero aqui. Então, vamos pensar sobre isso. Na verdade,
+
+Gostaria de saber se alguém no chat tem uma sugestão de aplicativo que poderíamos construir. Alguém quer compartilhar? Eu poderia fazer isso, estou disposto a fazer algo gentil. aleatório. O segundo cérebro funcionará com o...
+
+Assinatura Claude? Sim, vai sim, porque É o uso pessoal do Agente Claude. SDK. Sim. Basta garantir que você diga ao Opus para implantar.
+
+Agentes da Opus. Use isso ao máximo cache imediato. Isso mesmo. Sim, pegue Vantagem do armazenamento em cache imediato. [limpa a garganta] Tudo bem.
+
+Isso seria realmente interessante na prática. para um pipeline de aprendizado por reforço. Ahá. Sim. Eu tenho pensado nisso, na verdade.
+
+Pode haver mais sobre isso. Em breve aqui. Hum, para amanhã, eu já dei uma olhada no Agente da Hermès? Sim, então, quer dizer, eu acho que é poderoso. Assim como o Open Claude.
+
+Sabe, tem uma coisa que eu vou dizer. É como se, não importa o quão bom um A solução é que existe algo assim por aí. Pensando fora da caixa, sou fã de Construindo o seu próprio. E uma das coisas que eu vou falar sobre o workshop amanhã é na verdade, por que me importo tanto com Em vez disso, construa seu próprio segundo cérebro. de simplesmente ir por cima de alguma coisa já existem por aí como Open Claude, e Então, obviamente, Hermes é outra.
+
+Um ótimo exemplo. Então, Sim. Eu não quero ficar muito...
+
+Estou completamente imerso nisso agora. Se você já ouviu falar da tríade letal, basicamente como agentes representam um grande risco de segurança se eles ter acesso a dados privados, risco de injeção imediata por meio de fontes não confiáveis conteúdo e algum tipo de exfiltração vetor. Como se houvesse alguma maneira de gostar enviar os dados privados que estamos estimulado por meio de uma injeção imediata ataque direcionado ao usuário malicioso. Segundos cérebros, se você quiser. Serão úteis, eles vão se encontrar com o critérios da tríade letal, que significa que você precisa ter muito cuidado com o poder que você lhes dá, e você realmente quero entender a base de código e ter como verdadeira propriedade do seu base de código.
+
+Então, quando você está executando alguma coisa massivo como Open Claude, você não ter realmente essa responsabilidade, e você Não entendo bem, a menos que você queira. para fazer uma análise extremamente profunda, mas em Nesse caso, você também pode simplesmente gostar inspire-se em Open Claude e construa o seu próprio, porque aí você pode De qualquer forma, personalize-o ainda mais. Mas a menos que Você está fazendo uma análise extremamente profunda. Não entendo bem todo o poder. que você está fornecendo esta ferramenta. E é isso
+
+Tem acesso a muito mais do que você. Realmente necessário para a maioria das coisas. E assim, Sempre que você construir o seu próprio, você pode sempre adicione qualquer uma das funcionalidades. que você realmente precisa, mas é você Comece com confiança zero e adicione as coisas vão acontecendo aos poucos, conforme você for querendo. Desenvolva seu segundo cérebro. É isso que
+
+Eu gosto de fazer coisas. É isso que eu sou Vamos abordar esse assunto no workshop amanhã. Seu sistema, suas regras, seus dados permanecem. Seu, certo? Mas sim, agradeço por ter perguntado.
+
+OK. Vamos ver. Alguém tem Alguma ideia? Um Um chatbot de notícias com inteligência artificial. Ok, isso é bom.
+
+ideia. Um pipeline de aprendizado por reforço. utilizando agentes do Código Claude. OK. Crie um aplicativo Obsidian Vault para Criação de conteúdo. Certo, John. Boa ideia.
+
+Um aplicativo que interage com humanos. ser um local geral para processar solicitações de agentes. Certo, então, mais ou menos...
+
+como uma estação de comando. Tipo, todo agente Os pedidos chegam a um único lugar. Você usaria um sistema de memória como...
+
+Chefe, no seu próprio segundo cérebro? Então, meio que construí minha própria memória. sistema. Então, eu realmente não confiaria em nada. outro. Se você quisesse usar isso como um
+
+Como ponto de partida, você definitivamente poderia, mas Gosto muito de memória, você não precisa Superdimensionar um sistema de memória. Pode ser bastante simples e ainda assim extremamente eficaz. E essa é uma das coisas que vou ensinar no oficina amanhã e na comunidade é como construir seu próprio sistema de memória através de Markdown e até mesmo tendo como uma busca semântica, assim como uma Banco de dados vetorial SQLite rag. Hum, pode ser muito simples e ser o quê? Você precisa. Então,
+
+Eu não dependo de nenhum tipo de... ferramentas de código aberto ou de terceiros sistema para meu segundo cérebro especificamente a menos que você conte como você sabe, SQLite ou o modelo de incorporação. Um verdadeiro gerador de números aleatórios.
+
+Se é que isso é possível, né? Isso é Não sei se isso é realmente verdade. possível a menos que eu aproveite a entropia de o mundo. Um Tudo bem. Um agente redige documentos para um função, a outra age como uma confusa Novo desenvolvedor fazendo perguntas sobre a documentação Não responda.
+
+É uma ideia para construir o Joe ou você está pensando nisso? Dizer isso poderia ser como um fluxo de trabalho. Em Arkon? Porque isso eu poderia construir. Isso como um fluxo de trabalho Arkon, 100%.
+
+Um Ah, muito legal. Estou literalmente correndo seu arnês adversário agora mesmo enquanto Assistindo a isso. Expandiu para quatro arneses em paralelo. Isso é muito bonito legal. Uau, que legal.
+
+Ok, legal. Bem, vamos ver. Preciso pensar sobre O que eu realmente quero construir aqui. Você Sabe o que eu poderia fazer? Eu poderia realmente...
+
+exibir o um Dentro de Arkon, temos o interativo Fluxo de trabalho PRD. Então, nós poderíamos criar o PRD com Arkon, e então poderíamos enviar isso no arnês. Eu acho que sim, na verdade. Seria uma demonstração muito legal. Ah, a ideia é preencher uma lacuna na documentação.
+
+aplicativo de busca. Gostei da ideia, Joe. Sim, o único A questão é que eu provavelmente acabaria construindo. como um fluxo de trabalho Arkon em vez de um aplicação separada. Então, estou tentando pensar em algo.
+
+Isso tem mais a ver com IA do que com qualquer outra coisa. programação e mais sobre um tipo algum tipo de... quer dizer, seria Provavelmente seria legal construir algum tipo de...
+
+Acho que é um aplicativo de front-end.
+
+Para o gerador de números aleatórios, é... Usa uma câmera para observar você dançar. [risada] Isso até que seria divertido. Isso
+
+Seja meio engraçado. Sabe de uma coisa? Talvez eu faça isso. que. Vamos fazer alguma coisa assim aleatório.
+
+[risada] Rasmus disse: construa sua própria reunião. gravador. Isso também seria legal. Sabe de uma coisa? Talvez eu faça isso mesmo.
+
+algo tão engraçado e aleatório assim no entanto. Isso seria divertido. Isso seria diversão. Você sabe o que? Que se dane. Vamos fazer
+
+isto. Quero gerar um número aleatório. gerador que gera um número aleatório usando minha câmera para me observar dançar. Então, vamos usar o Arkon. Fluxo de trabalho PRD interativo para acompanhar.
+
+Criando um PRD para isso. Muito bem, pessoal. Nós vamos fazer isso. [risada] Nunca construí algo tão estranho. em toda a minha vida.
+
+Vamos. Muito bem, então começa por carregando a habilidade Arkon para que ele saiba que o fluxo de trabalho está disponível, E então ele usará a CLI do Arkon. para invocar isso. Então, vamos criar o PRD. junto.
+
+Então, certo. Então, estamos usando o Arkon. fluxo de trabalho. E então, isso de fato tem elementos humanos. laço. Assim, conseguimos ver o ser humano no
+
+loop onde ele vai nos fazer perguntas e construir o PRD, e então enviaremos. que vamos usar esse PRD para então invocar o fluxo de trabalho do chicote que acabamos de... construído. Então, vou tentar explicar isso.
+
+Bem rápido, mas sim, isso será diversão. Quero ver o Cole dançar. Ah, acho que vocês podem. Bem, eu sou Não vou fazer nada muito louco, mas [risada] Tudo bem. Então, Bem, iniciamos o fluxo de trabalho aqui, e Então, cedemos à solicitação inicial. Então,
+
+É nisso que queremos basear nosso PRD (Product Development Director). em volta. Ok, então o fluxo de trabalho está pausado e Estou te esperando. Então, tem que gostar consulte a CLI do Arcaon para descobrir tipo, sabe, quais são os Questões que isso me levanta aqui. Ok, então eu Entendo que você quer construir algo aleatório.
+
+gerador de números que utiliza entrada da câmera para capturar movimentos de dança. Fundação Pergunta: quem tem esse problema? O que Quais são os problemas que eles enfrentam? Por que eles não conseguem resolver isso hoje? [risada] Hum, eu tenho esse problema. Meu problema é que eu
+
+Eu realmente preciso gerar números aleatórios. números, mas não quero fazer isso em Do jeito antigo e chato. Então, não consigo resolver isso. agora mesmo, porque todas as maneiras que eu tenho agora mesmo para gerar números aleatórios Com aplicativos ou scripts Python também são demais tedioso. Então, preciso construir isso agora.
+
+Porque estou ficando muito farto do antigo. maneiras de gerar números aleatórios. Então, é isso. Se estivermos construindo Algo bobo, vou dar a ele Respostas absurdas também. E, bem, acho que não vou fazer isso.
+
+diretamente do meu segundo cérebro, mas o A parte legal é que eu posso invocar qualquer coisa. Fluxo de trabalho Arcaon do meu segundo cérebro. EU poderia criar este PRD a partir do meu segundo cérebro para que eu possa então gostar Lembre-se, assim como isso será salvo no meu Memórias como esta: aqui está o que você decidiu para trabalhar então e nas decisões que você tomou. fabricado em torno do Delta do Rio das Pérolas. Então, na verdade eu faço Recomendo muito construir qualquer tipo de PRD para suas aplicações em seu segundo cérebro porque você quer que ele tipo capture Como você trabalha ao longo do tempo, certo? E então, eu
+
+Eu, na verdade, recomendo muito. você, se começar a usar Arcaon para construir PRDs do seu segundo cérebro. Então, você poderia fazer isso diretamente como meu segundo cérebro Eu o tenho funcionando apenas no Claude Code CLI, como você vê aqui. EU também tenho meu segundo cérebro funcionando hum Essa é a janela errada do navegador. Eu também tenho meu segundo cérebro funcionando.
+
+Slack também. É aqui que muitos As pessoas estão conversando com suas garras abertas em Algo como o Slack ou o Telegram. E Então, vou te mostrar aqui mesmo. Hum, eu tenho a habilidade Arcano carregada em meu segundo cérebro. Você pode fazer isso com Garra aberta da Hermès, tanto faz. E assim,
+
+já sabe, como eu posso dizer, sabe? utilize o fluxo de trabalho de assistência Arcaon para Resumindo o arquivo "Leia-me": o agente de codificação remota. Essa é uma das os projetos que eu carreguei em Arcaon, obviamente. E isso vai demorar um pouco porque Isso vai invocar todo o Arcano. fluxo de trabalho, mas ele lerá o habilidade, e então ele vai... chamar o
+
+Arcaon CLI e depois ler os logs. a partir da execução do fluxo de trabalho, e fornecer Aqui está o resultado final. E assim, completamente à distância, se eu quisesse, eu poderia dar início a 10 Arcanos diferentes Fluxos de trabalho para corrigir 10 problemas diferentes no GitHub todos os problemas dentro do Slack, apenas do meu telefone se eu realmente quisesse. Ou eu poderia Crie um PRD aqui no Slack. Um o o A questão é que eu adoro fazer muitas coisas meu planejamento inicial com minha programação de IA fluxos de trabalho no meu segundo cérebro porque então começa a antecipar como eu Responder a perguntas, e isso torna o PRD (Recursos Públicos Regulatórios) viável.
+
+processo de criação como melhor e melhor com o tempo, porque ele aprende como eu trabalho. Então, é, vamos esperar por isso. Para terminar aqui. Ah, acho que no Entretanto, voltarei e verei onde Estamos com a questão do "humano no circuito". aqui.
+
+Essa é a aba errada. Esta é a resposta correta. um. Ok, então ainda está funcionando. Então, é fazendo pesquisa com base nas minhas respostas para a pergunta. Então, isso vai acontecer.
+
+Volto daqui a pouco, assim que... provavelmente teria gostado do próximo conjunto de perguntas para mim. Veremos o que acontece.
+
+aqui. Bem, vamos lá. Então, este é o resumo para aquele Arcaon produzido a partir de leia-me ou que Arcaon produziu de o fluxo de trabalho de assistência que ele executou. E Posso até perguntar aqui mesmo, tipo: Ah, sim, eu tive que configurar isso. Então, foi...
+
+Na verdade, instalei o Arcaon CLI no VPS. Pronto, aí está. Então, versão Arcaon funciona. Então, legal. Sabe, eu poderia dizer tipo agora.
+
+um use now uh resumo do leia-me para o Outros projetos que tenho em Arcaon. Então, você Sabe, tem mais um tipo de coisa. projeto que eu carreguei no Arcaon Estou entrando no meu Arcano agora mesmo. Enfim, é simplesmente legal. Apenas mostrando Vocês são muito rápidos usando Arcan de O Slack acabou de passar pelo meu segundo cérebro.
+
+E sim, eu sou. Estou construindo algo estranho com Arcaon, 100%, mas Veja o que acontece. Também deve avaliar suas habilidades de dança. em uma escala de 1 a 1.000 e use isso como Sua semente de número aleatório.
+
+[risada] Eu pudesse. Bem, vejamos. Assim que...
+
+Chega-se aqui à próxima etapa do PRD, Vamos ver se isso me dá a chance. Compartilhar algo assim. Isso seria engraçado. Tudo bem. Sabe, isso está demorando muito.
+
+Então, o que eu talvez faça é que eu ainda vá. por meio desse fluxo de trabalho para exibi-lo para vocês, mas eu também posso simplesmente invocar o fluxo de trabalho de arreios imediatamente e apenas Envie uma solicitação simples como eu fiz aqui. em vez de enviar um PRD completo porque o planejador o expande para um especificação de qualquer forma. Só quero ter certeza. que não estamos como que esperando por um Tempo extremamente longo.
+
+Então, vamos lá e vamos fazer isso. Então, eu quero gerar um número aleatório. gerador que gera o número por olhando para minha câmera e me observando. dançar e usar e ok, sim, eu quero Dê uma nota de 1 a 1 para a minha dança. até 1.000 e depois use isso como semente para
+
+gerar um número aleatório a cada tempo. Isso é muito estranho. Então, sim, eu quero você para usar a ferramenta de desenvolvimento adversária que Acabamos de construir um fluxo de trabalho Arcaon em ordem para construir isto. Tudo bem. [risada] Vamos. Sabe, outra coisa que
+
+temos em Arcaon que eu poderia usar é eu Tenho acesso a toda a interface web. Então, eu estava mostrando isso mais cedo, mas também podemos invocar Fluxos de trabalho a partir da interface web. Então, se eu entrar no chat aqui, eu posso É só dizer, sabe, tipo, usar o Arcano. auxiliar o fluxo de trabalho para resumir o arquivo leia-me para o agente de codificação remoto. E isto também nos fornece registros muito melhores do que, tipo, rastreá-lo como um Tarefa em segundo plano no código Claude. Então, é
+
+O principal motivo pelo qual eu criei a interface do usuário aqui, mas tudo o que eu tenho sido mostrando para vocês executando isso no Slack com meu segundo cérebro, executando-o no Claude Code CLI, podemos fazer tudo isso em diretamente pela interface web. Então você pode curtir Veja-o funcionando no meio do trabalho aqui. E, na verdade, só para conseguir mais visibilidade. nas ações que o agente está Escolher, não é? Assim como tudo isso usa O SDK do agente Claude está por trás dos panos. Então,
+
+Está transmitindo todas as chamadas de ferramentas. diretamente para a extremidade frontal aqui, então nós É possível ver o que está acontecendo enquanto está funcionando. É uma das coisas que eu sou. É como trabalhar na linha de comando (CLI). versão. É simplesmente ter um melhor
+
+visibilidade. Isso é muito legal. E Você pode, tipo, invocar, você definitivamente pode. invocar diferentes fluxos de trabalho em paralelo a partir de uma única conversa na interface web. também.
+
+E também podemos ver aqui que... nós se tivéssemos, também poderíamos assistir como você pode. veja que é Classificado como um fluxo de trabalho de linha de comando (CLI). Então, nós podemos
+
+Acompanhe o fluxo de trabalho pela web. interface mesmo que seja invocada de nosso CLI. Então, se eu visualizar os registros para o fluxo de trabalho, Podemos ver que temos o nó de quatro pontas. fluxo de trabalho de desenvolvimento adversarial com o principal um deles sendo o todo o loop que será executado como O terceiro passo aqui. Então, assim que começar Indo, começaremos a ver alguns dos A ferramenta faz chamadas aqui. Não sei por quê.
+
+Estou recebendo erros de uso do MCP. Isso é outra coisa que eu defini no meu garra global que não está relacionada a isso, mas enfim, uma vez que isso cria o plano aqui, Começaremos a ver algumas chamadas de ferramentas em breve. Na verdade, está funcionando. Então, nós chutamos desligá-lo da CLI, certo? Como se estivéssemos executando isso aqui, mas Podemos monitorar isso na interface web.
+
+E então, vamos voltar. OK. Então, é, outra coisa que eu vou...
+
+O que vou te mostrar aqui é se formos para o painel de controle, temos desenvolvedores adversários que está em execução atualmente porque está no fase de planejamento, mas depois o Arcaon No PRD interativo, você pode ver que é Está em pausa no momento porque está aguardando. nosso feedback. E, com certeza, estava certo. Aqui, não há nada funcionando no momento. porque é e aguardamos nosso retorno. Então, nós podemos
+
+até mesmo monitorar o PRD interativo fluxo de trabalho também. E podemos visualizar os registros para ver... tudo. Você pode ver que está funcionando.
+
+todos nós gostamos muito de pesquisas na web, e nós somos Atualmente estou na segunda fase. para que todo esse fluxo de trabalho nos ajude Criar um PRD. E definitivamente há um bug que eu tenho. para corrigir aqui onde as chamadas da ferramenta estão Ainda girando, mas, bem, isso é alguma coisa. Eu já estou ciente disso. Mas enfim, você
+
+Podemos, tipo, analisar tudo isso? ações que realizou aqui, como foi nos ajudando a planejar nosso PRD. E assim, Aqui está nossa próxima pergunta. Bem, na verdade, tem um mergulho profundo. questões. Então, em uma frase,
+
+Qual seria o estado final ideal se isso acontecesse? obtém um sucesso estrondoso? O estado final é que eu posso dançar e simplesmente ver como um Uma série de números aleatórios foi exibida. O usuário principal será simplesmente...
+
+meu. O trabalho a ser feito. Vamos ver. Um Complete isso quando eu puder dançar na frente. da minha câmera e então Posso pegar os números aleatórios ali.
+
+e usá-lo para meus outros aplicativos. EU Não sei, é meio estranho. pergunta. Quem é esse explicitamente não? Qual é o alvo?
+
+Um [risada] Este não é o alvo de uma investigação séria. desenvolvedores. Acho que vamos dizer isso mesmo. Quais são as limitações? Isso Precisa viver dentro da interface web do Arcaon?
+
+Não, este será um projeto independente. aplicação, apenas um aplicativo muito básico Aplicativo independente. A saída precisa ser criptograficamente forte ou é divertido e visualmente interessante suficiente? Sabe de uma coisa? Vamos fazer É criptograficamente forte. Claro. Um
+
+Existe alguma faixa específica para o número? Vamos simplesmente escolher um número aleatório entre 1 e 10. e 1.000. Muito bem, aqui está. Então, eu enviarei
+
+de todas as minhas respostas, e então o que aconteceu? O que acontece é que ele irá retomar ativamente as atividades. O fluxo de trabalho interativo do PRD Archon. Então, Ele pausa sempre que precisa de feedback e Então, o fluxo de trabalho será reiniciado. E então, se voltarmos ao painel de controle, Agora podemos ver que passou da pausa para o estado em que estava parado.
+
+De volta à ativa. Assim, podemos visualizar os registros e ver o operações que está tentando realizar. Então, agora podemos ver que em vez de lá sendo uma marca de seleção aqui para o nó que estava atualmente parado em seu ponto Apareceu o ícone giratório para a próxima etapa. no fluxo de trabalho aqui. Muito legal.
+
+Tudo bem. Hum, o que mais temos aqui? Se eu for Voltando ao desenvolvimento adversarial, ok, então é...
+
+Ainda em funcionamento. Então, estes vão para Obviamente, isso levará algum tempo. E também quero verificar o que meu...
+
+O limite é com "Ok, então estou em 49%". Não é tão ruim assim. Eu estou pensando que estou vai ser possível pressionar isso aqui para Vocês. Tudo bem. Porque a outra coisa que eu queria demonstrar, quer dizer, eu só estou tentando mostrar como tantas coisas diferentes com Arconte agora mesmo. A outra coisa que eu
+
+queria demonstrar que é o mais comum maneira como eu uso o Archon. E isso é Lidar com várias questões em paralelo. Então, eu vou... eu vou...
+
+Na verdade, volte ao meu segundo cérebro. aqui. Então, vou usar meu segundo cérebro para esta demonstração. Então, eu estou dentro esta conversa onde já trabalhando no meu chat do YouTube aplicativo. Então, vou testar um pouco.
+
+bit, encontre alguns bugs e depois trabalhe com meu segundo cérebro para corrigir esses bugs usando Arconte. Então, por exemplo, Vamos enviar uma mensagem, oi. Dê uma olhada. Certo, então o primeiro O problema que vejo é que não há rolagem. até o fim.
+
+E aí, na verdade, meio que... se levanta de forma que a mensagem, como ela A resposta está meio que escondida abaixo. a entrada do chat. Então, isso não parece
+
+Que bom. Na verdade, eu deveria estar usando a fala para Texto aqui. Então, hum Sim, vou entrar nesse meu aqua voz aqui. Eu direi: "Tudo bem, então..."
+
+Há alguns problemas que estou enfrentando. percebendo isso no chat de pano do YouTube aplicativo. A primeira é quando eu envio uma segunda mensagem em uma conversa, não Rolar automaticamente para baixo. Gostei deve rolar automaticamente para baixo sempre que o agente é um Respondendo à minha mensagem ou se eu enviar uma nova. Então, eu só vejo coisas escondidas atrás do meu barra de bate-papo.
+
+O outro problema surge quando o agente na verdade responde, hum, é mais ou menos como Me faz voltar à realidade como se estivesse rolando a página para trás. até minha última mensagem em vez de sua mensagem. E então, eu vejo fontes para a resposta. mesmo quando na verdade não funcionava. pano.
+
+Então, eu acho que não sei tipo onde Está obtendo as fontes de [bufa] ou se for como ser forçado a executar um ragtime Toda vez, mas definitivamente não gosto. que. E também sempre que eu clico em um conversa na lista de conversas, Não rola automaticamente, não é? até o fundo. Então, definitivamente Parece que estamos com alguns problemas de rolagem.
+
+aqui. E então, para responsividade em dispositivos móveis, Nossa, a responsividade em dispositivos móveis é incrível! Na verdade, muito bom. Acho que o único A questão é que o ícone do hambúrguer é mais ou menos isso. "Curtir" cobre parte do novo botão de bate-papo.
+
+Bem, tirando isso, parece muito bom. Ok, isso é muito bom. Hum, e então, sim, acho que tipo mais uma coisa. O problema aqui é que há um pouco demais. muito acolchoamento entre o texto e o topo do chat entrada. Então, parece um pouco torto onde
+
+Parece haver mais espaço abaixo do texto. do que acima ou mais texto acima Oh meu Nossa, tem mais espaço acima do texto abaixo dele na entrada do chat. Parece que o texto não está realmente na vertical. centralizado na caixa de texto. Ah, sim, esses são bons, então Esses são todos os problemas que eu tenho.
+
+Percebi isso por mim mesmo. Então, voltando ao meu segundo cérebro Aqui, quero que você crie problemas no GitHub. no fluxo de trabalho do chat do YouTube ou [bufa] repositório para cada um destes problemas. Então, ok, eu cometi vários deslizes em no que eu estava fazendo lá para o meu cérebro despejar, mas não importa. O ponto Estou despejando um monte de problemas É isso que eu vejo. E em vez de apenas tipo
+
+tipo, sabe, surtando e dizendo algo como: "Ei, Claude, tem tudo aqui." Esses são os problemas com minha inscrição. Por favor, tentem corrigir todos esses problemas. "Agora mesmo." Vou com calma.
+
+Vou dividir isso em questões. Assim posso lidar com eles um de cada vez. A pior coisa que você pode fazer neste caso. é tentar ter um único código Claude a sessão abordará todos os cinco tópicos. problemas. Porque se você realmente quer ser
+
+abrangente em seu planejamento e Implementando e revisando, vai acontecer levar em conta muito o contexto, mesmo que o Os problemas são mais fáceis de resolver, tudo fica mais simples. apropriadamente em uma única sessão. E assim, nós dividimos o código e usamos os problemas do GitHub como...
+
+a maneira de quebrá-lo. E então nós estamos vou uh, resolva isso com um Arconte diferente. fluxos de trabalho executados em paralelo. E pegue Com um olhar, ele até reconhece isso. Como Você quer que eu inicie os fluxos de trabalho do Archon?
+
+Para corrigir qualquer um ou todos esses problemas. Então, posso dizer: "Sim, eu quero que você..." invocar o Archon uh correção de problema do GitHub fluxo de trabalho, cinco deles em paralelo para Lidar com todas essas situações. E então eu quero você
+
+para monitorá-los e [bufa] me avisar uma vez que as solicitações de pull forem criadas para cada um deles." E então, pronto, aí está. Isso é tudo Eu tenho que fazer. E estou fazendo isso do meu segundo cérebro. Portanto, possui contexto completo.
+
+mais ou menos como eu costumo gostar de trabalhar. Talvez poderia até se lembrar com o tempo que eu como, Você sabe, invocando especificamente estes Fluxos de trabalho após a criação de problemas. Então, eu Eu nem precisaria sugerir isso. Tipo, esse é o tipo de coisa que seu O segundo cérebro consegue reter informações ao longo do tempo. E Eu poderia estar fazendo isso pelo Slack, uh, só como estou fazendo no código Claude CLI. Então, meu segundo cérebro que eu tenho
+
+com o código Claude e o agente Claude SDK, sim, eu o tenho rodando em dois lugares. Eu o tenho funcionando localmente. com a CLI do código Claude. E aí, quando converso com ele no Slack, eu Tenho o sistema rodando em um VPS da Digital Ocean. Então, ele está hospedado na nuvem.
+
+Funcionando 24 horas por dia, 7 dias por semana. Então, mesmo quando meu computador está desligado, mas ainda consigo falar com ele no meu telefone. Então, se eu estiver no meio de alguma coisa ligar como se estivesse na estrada ou algo assim e há um problema que foi criado aparente ou semelhante a uma solicitação de recurso para um dos meus projetos ou produtos, então Posso simplesmente mandar uma mensagem rapidinho para o meu segundo cérebro e tipo, "Ei, crie um problema para isso e tente uma prova conceito para corrigir esse bug ou abordar este problema." Então, quando eu chegar De volta ao meu computador, estou na minha mesa agora. Estou trabalhando nisso de verdade, eu já tenho um ponto de partida. Ou talvez o fluxo de trabalho
+
+funcionou bem o suficiente para que realmente assim como um tiro no implementação. Não estou dizendo isso sempre. Acontece, mas definitivamente... pode acontecer.
+
+Às vezes, quero dizer, [bufa] se o seu O fluxo de trabalho é suficientemente confiável e... A questão está suficientemente bem definida, Pode ser que um único tiro seja certeiro. E então você pode Faça o merge do pull request e estará tudo certo.
+
+ir. E tudo aquilo que você acabou de fazer começou pelo seu telefone com o seu segundo cérebro. Essa é a beleza. do que você pode fazer com isso. Então, sim, isso vai ser bem...
+
+token pesado. Um E sim, isso é verdade, Rasmus. Eu não precisa, tipo, pedir especificamente para isso. monitor porque isso vai disparar esses como tarefas em segundo plano aqui. Então, nós podemos até mesmo clicar e ver tudo estes que estão atualmente em execução e então aconteceria automaticamente Me avise quando terminarem. EU
+
+Acho que não precisava, sabe, dizer. que explicitamente. [bufa] Mas enfim, se formos para o Agora, na interface do usuário, podemos ver tudo. Estas estão em execução neste momento. E então, hum Sim, ok, então o interativo Archon O PRD está, na verdade, em pausa. Então, nós devemos ir.
+
+Volte e aborde esse assunto aqui. Eram fazer tantas coisas ao mesmo tempo agora mesmo, mas é isso que você pode fazer. com Archon. Então, ok, primeiro de tudo, Ok, então o Adversarial Dev está rodando. ao fundo. Na verdade, eu quero
+
+Verifique isso rapidinho para ter certeza. Está funcionando bem. Então, desenvolvedor adversário, Vamos analisar os registros. Certo, o que está no meio? O que estou fazendo agora?
+
+OK. Está atualizando o estado. Certo, então Acho que está indo bem. Acho que é Tudo indo bem. Vamos verificar isso em um pouco. Mas eu posso continuar o
+
+fluxo de trabalho PRD interativo enquanto isso aqui. Então, vamos para essa sessão. Certo, então, ele tem algumas perguntas para mim. Qual é o mínimo absoluto para testar se Isso funciona? Uma única página que abre o câmera, mostra uma pré-visualização ao vivo e uma clique de botão que captura 5 segundos de diferenças de quadro. Sim. O que você tem
+
+O que foi descrito aqui é perfeito para o MVP. O que deve conter a versão um? É, vamos ver. A, B e C. Nós definitivamente precisamos deles.
+
+Quanto ao que pode esperar, Claro, sim. O que isso definitivamente pode fazer espere. Hipótese principal. Acreditamos na medição A entropia do movimento proveniente da transmissão de uma câmera irá produzir visualmente convincentes Números aleatórios que inspiram confiança para os usuários que simplesmente desconfiam de geradores de números aleatórios algorítmicos. Saberemos exatamente quando um for gerado.
+
+O número não pode ser previsto apenas observando. Alguém executa a mesma dança duas vezes. Tudo bem. Ótimo. Essa é a chave.
+
+A hipótese parece ótima aqui. Um fora de escopo, você está explicitamente não construindo Agrupamento de entropia no servidor, multiusuário mistura de entropia, qualquer conexão com o Fluxo de trabalho Archon, pipeline de IA ou dispositivo móvel Suporte para câmera? Sim, todas essas coisas. estão definitivamente fora do escopo. [bufa] OK.
+
+A saída deve ser um número inteiro aleatório? em um intervalo, um número de ponto flutuante, um UUID ou hexadecimal bruto bytes? Vamos usar um número inteiro. entre 1 e 1.000.
+
+Hum, isto é para ficar dentro do... Interface web do Archon ou totalmente independente. aplicativo? Eu já te disse, na verdade, isso é...
+
+Um aplicativo completamente independente. Não tenho certeza. Por que você se esqueceu disso? Meio estranho. Uh Qual é o caso de uso? Genuíno
+
+inicialização de chave criptográfica ou diversão demonstração? Quer dizer, sejamos honestos. Esse Por enquanto, é apenas uma demonstração divertida. Porque sim, Os requisitos de entropia são muito diferença entre esses dois. Mas eu, eu faço Quero explorar algumas coisas, sabe?
+
+requisitos de entropia rígidos para isso demonstração divertida. Tudo bem. Legal. Então, enviaremos tudo isso e Em seguida, passaremos para a próxima etapa. aqui. Vamos ver onde... Ok, então, sim.
+
+esta ferramenta de desenvolvimento adversária vai correr por um bom tempo. Sabe, um A coisa que eu posso fazer é... me dê o caminho para esta árvore de trabalho para que eu Pode assistir ao planejamento do sprint e curtir.
+
+observe o JSON do estado conforme ele está sendo editado. Então, quando o Arkon executa um fluxo de trabalho, ele executa-o em uma árvore de trabalho. É isso que nos permite lidar com tantas coisas em paralelo ao que fizemos para todos dos problemas em nosso segundo cérebro para o o aplicativo de bate-papo regular do YouTube. E isso também significa que nem sempre...
+
+tipo, saber exatamente onde está funcionando, certo? Porque cria algo como o aleatório ID da árvore de trabalho. Então, este é o nosso caminho. Então, na verdade, o que eu vou fazer é...
+
+aqui É que vou abrir um novo terminal. Vamos então mudar para este diretório. Doente Basta abrir meu IDE aqui para que possamos ver. O que está acontecendo?
+
+OK. Nossa, que bagunça. Quer dizer, eu meio que Executei isso do lugar errado, então criou a árvore de trabalho de todo o Arkon repositório, mesmo que sejamos apenas Estou trabalhando em um pequeno espaço aqui. Porque ele está localizado no diretório de artefatos. Tudo bem, eu abri a coisa errada.
+
+Foi mal. Certo, então deixe-me copiar. que. Acesse meu terminal aqui. Mude para isso. Ops.
+
+Aguentar. Cola de CD. Não consigo encontrar o caminho. Ih, que estranho. Deixa eu colar isso aqui.
+
+Acho que segui o caminho errado. Precisa para me indicar o caminho certo aqui, em relação a para a árvore de trabalho, não embaixo. Deixe-me encontrar o caminho real. OK. Muito bem, é Chegando lá.
+
+Já utilizei 80% do meu limite. Todos Certo, estou chegando perto demais. Estou um pouco nervoso com isso. Não, eu sou...
+
+Ainda bom. Então, tipo, isso vai acontecer consomem muitos tokens, então estamos provavelmente vai chegar perto do limite até o final da transmissão ao vivo aqui. Contanto que eu não atinja 100%, porque Ainda tenho mais trabalho a fazer para Prepare-se para o segundo workshop sobre o cérebro após a transmissão ao vivo agora mesmo. [suspiros] Nossa, vamos ver. Veremos.
+
+Então, sim, enquanto estamos esperando por que, Só quero destacar isso mais uma vez. tempo aqui. Então, vou colocar um link para isto. novamente no chat do YouTube Porque amanhã é o grande dia. Como a quantidade de trabalho que investi na preparação Este workshop é insano.
+
+4 horas mostrando como construir o seu próprio segundo cérebro de IA completamente de arranhar. Então, você realmente se torna dono do aplique e personalize-o ao seu gosto. à vontade. É isto que estou te mostrando. Eu vou literalmente criar uma versão.
+
+do meu segundo cérebro, criado do zero, que é Gosto exatamente do que estou usando, todos os dias. um dia para me poupar pelo menos 12 horas de trabalho uma semana. E como prometi, eu não sou apenas exagerando por uma questão de...
+
+Transmissão ao vivo aqui. Assim é legítimo e para o bem do oficina. Tipo, é isso mesmo. Isso me poupa muito tempo porque eu o uso para me ajudando a escrever roteiros para vídeos do YouTube, Criação de diagramas, estrutura de poder apresentações, miniaturas, treinamentos, idealizando o conteúdo do curso, idealizando conteúdo para redes sociais, Organizar meus arquivos, redigir e-mails. Isto Ele rascunha como qualquer outro e-mail.
+
+ou uma resposta para curtir cada e-mail. que chega à minha caixa de entrada enquanto o O segundo cérebro considera que vale a pena responder. E eu tenho todo um sistema de dicas. configurado para que ele entenda como exatamente ou parecido com os e-mails que me interessam. Respondendo a algo que é apenas spam.
+
+Obviamente, vocês podem imaginar por mim. Há bastante spam que chega. na minha caixa de entrada. Pessoas que desejam vídeos dedicados a todos os gostos o tempo. Infelizmente, isso acontece.
+
+Muito demais. Mas sim, meu segundo cérebro me ajuda. Gerenciar cada detalhe da minha vida. EU sempre digo que uso meu segundo cérebro para Ajude-me a idealizar, pesquisar e organizar. Portanto, não me substitui no meu trabalho.
+
+Tipo, eu não vou simplesmente aceitar isso. criar um vídeo do YouTube inteiramente ou ter É preciso escrever uma publicação inteira no LinkedIn, certo? Isso não é bom. Mas Está me ajudando. tipo chegar a esse ponto mais rápido, onde tipo Estou dando meu toque especial a Seja lá o que eu estiver oferecendo, estou compartilhando com todos.
+
+Sim, é isso mesmo. Eu serei compartilharei todo o meu código neste workshop aqui. Então, você tem um modelo para usar. inspiração de e até mesmo uso como um ponto de partida para você. Então, sim, coloque o link no chat ali.
+
+Se vocês quiserem se juntar à Dynamis para isso e todas as outras coisas que Eu tenho no Dynamis porque nós temos o workshops semanais, a codificação agencial curso. Bem, nós temos, sabe, tudo, todos os Usuários de IA reunidos aqui, IA inicial adotantes compartilhando as coisas que eles são Em andamento. E na verdade é tipo Dynamis é incrível porque é onde eu guardo em dia com tudo. Assim como vocês ajudam me manter a par de tudo o que está acontecendo sobre. Então, se alguma vez acontecer algo grande Estamos falando sobre o que está acontecendo no espaço da IA.
+
+sobre isso em Dynamis. Então, espero te ver em breve. lá. [bufa] Sim, tudo bem. Vamos voltar aqui.
+
+Um Então, ok, me deu o caminho completo. Então, vou até o meu terminal aqui. Vamos ver. LS. Abra.
+
+Porque eu só quero dar uma olhada em Ok, Vamos lá. Então, este é o nosso estado. Então, dê uma olhada nisso. Nós somos eu Aumente um pouco o zoom. Então, nós somos atualmente avaliando no número do sprint dois. Temos cinco sprints no total, onde
+
+São no máximo três tentativas sempre que nós estão em um dos sprints, assim como eu. conforme mostrado aqui em nosso diagrama. Então, Estamos copiando isso exatamente. Assim Isso está funcionando muito bem. Hum, nós temos Concluí o primeiro sprint, obviamente.
+
+onde está nossa situação atual correndo. Se analisarmos o aplicativo, veremos que ele se aplica a todos os casos. Aqui, você pode ver que já temos um O aplicativo front-end já está funcionando. E aqui estão nossos contratos. Então, tipo Foi isso que combinamos. Então, para o
+
+etapa de negociação quando dividimos o para dividir as especificações em diferentes sprints, nós temos este primeiro sprint concluído e depois o a segunda em que estamos trabalhando agora agora. Então, isso é tudo o que o O implementador constrói e então estes são os critérios para o nosso avaliador. Então, por exemplo, isto é nossos requisitos para nossa configuração. Precisamos garantir que o aplicativo seja renderizado corretamente. um fundo escuro de página inteira.
+
+E então, este é o limite. Então, Atribuirá uma pontuação de um a dez. contanto que seja sete ou mais, então Vamos passar para o próximo sprint. Como contanto que seja sete ou mais para cada apenas um desses critérios. Certo, então, passe a vez e vamos para...
+
+o próximo sprint ou se alguma coisa for menos se for menor que sete, então vamos tentar novamente. uh, volte ao gerador no máximo de três vezes. Então, foi isso que conseguimos. O que está acontecendo aqui. Isso é muito legal. Então,
+
+O processo de inscrição já está em andamento. Ajeite-se aqui. E isto é, aliás, a especificação que ela criou aqui. UM Gerador de números aleatórios baseado em dança. Dança RNG. Acho que vamos chamar isso de...
+
+dança RNG. Eu sei que tivemos alguns sugestões no chat anterior. Um Tango de entrada, o humano no caos. Chris, Adorei essas ideias. Entrada Talvez eu Vou fazer um pequeno loop de pivô depois de um enquanto renomeia coisas no documentação porque eu eu eu realmente como um tango de entrada.
+
+A aleatoriedade da dança também é muito boa. Certo. Você salvou minha vida. Muitas vezes com estes. Isso vai ajudar Resolver muitos problemas. Gosto que você seja
+
+definição de linha de base. Sim, fico feliz em saber disso. Apreciar isto. Sempre um prazer ajudar. Tudo bem.
+
+Sim, aliás, este é o chat. mensagem com as sugestões para o nomes. O ser humano no caos é bastante Bom também. Nossa! Tudo bem. Ah, e dê uma olhada nisso.
+
+Já criamos nosso terceiro sprint. agora também. Então, se formos para o estado aqui, nós estamos Atualmente estou desenvolvendo o terceiro sprint. Então, passamos pela avaliação. já. E deixe-me dar uma olhada.
+
+nos troncos em Arkon aqui. Estou curioso para saber como isso está indo. Então, nós Todos os nossos fluxos de trabalho ainda estão em execução. Estamos processando tokens rapidamente. Estamos agora em 67%. Então, literalmente no
+
+último like 10 a 15 minutos aqui, nós subimos 8% porque estamos correndo, uau, sim, estamos Executando sete fluxos de trabalho simultaneamente. tempo. Então, se eu for para o desenvolvimento adversarial e Veja os registros, Quer dizer, é basicamente um monte de ferramentas. ligações, então não tem muita coisa Olhe bem para o momento atual, mas podemos ver é mais ou menos o que está acontecendo no meio de Está em execução neste momento. Então, o que ele está fazendo?
+
+Então, está instalando alguns pacotes. por meio do NPM. Hum, também Criou-o, criou o nosso botão de gerar. Arquivo TypeScript. Ok, legal.
+
+O que mais está fazendo aqui? Isso é escrever em um visor numérico Arquivo TypeScript. Então, sim, porque Estamos na fase de construção, isso faz senso. Estamos apenas criando um monte de arquivos TypeScript neste momento. Atualmente Executando nossa terceira etapa. Então, sim, isso
+
+Está com um ótimo aspecto. E então o PRD interativo do Arkon é Na verdade, ainda estou aqui. Então, está em Estamos quase terminando de criar nosso PRD aqui. Então, se eu for para essa conversa, É este aqui. Então, sim, Ainda estou no meio da corrida. Então,
+
+Claude Code está fazendo uma coisa em que Vai esperar uns 2 minutos e então... Ele executará a CLI do Arkon para verificar o status. Então, poderíamos colocá-lo em funcionamento.
+
+totalmente como uma tarefa em segundo plano, se quisermos, mas às vezes eu gosto de fazer isso onde eu basta verificar de vez em quando enquanto apenas para garantir que nada esteja dando errado com o Ah, com o fluxo de trabalho. Então, mais ou menos interessante. Se você parar para pensar, Não estamos apenas correndo Claude Code sete vezes. Na verdade, somos Estamos executando isso 10 vezes agora porque nós Temos sete fluxos de trabalho e nós temos três. Sessões com Claude Code. Nós temos o
+
+sessão em que está monitorando o Fluxo de trabalho PRD interativo. Nós temos o aquela que está monitorando a todo o fluxo de trabalho para o desenvolvedor adversário arnês que acabamos de construir. E então nós tenha aquele que está monitorando todos os as questões que estamos abordando para o Bate-papo de registro do YouTube. Então, nós conseguimos muitos coisas que estão acontecendo agora. Obviamente, Esses não estão consumindo muitos tokens.
+
+agora mesmo. São principalmente os sete fluxos de trabalho que estão em execução. Mas tudo isso dizer que o uso do token é realmente Bastante razoável considerando o quanto temos. Está acontecendo agora. Então, estamos recebendo Estamos muito perto de atingir nosso limite. Eu penso
+
+Mas o que podemos fazer agora é... pode simplesmente dizer algo como verificar o status de cada fluxo de trabalho. Assim, a qualquer momento, podemos Sabe, você pode consultar os registros aqui.
+
+para corrigir o problema de inicialização do Arkon. Como nós podemos Veja onde estamos agora. Como se fôssemos Na verdade, já estamos quase terminando. neste fluxo de trabalho. Nós conseguimos Já passei por boa parte disso. E
+
+Você sempre pode simplesmente pedir para verificar. em si. Então, aqui está a situação atual. em todos os cinco fluxos de trabalho. Então, quando você Use seu segundo cérebro para invocar o fluxos de trabalho, você nem precisa ir para a interface web do Archon, se você não quiser.
+
+Você pode simplesmente verificar de vez em quando. e peça para ele analisar os registros e ver onde estamos. Então, essa questão que estamos...
+
+Ainda em fase de implementação. Então, nós não temos um Ainda não fez o pull request. Então, esse é o I Acho que vai demorar mais. Isto Faz todo o sentido. É meio que o O mais complicado de todos.
+
+Mas então quatro dos nossos problemas no GitHub foram corrigidos. Os fluxos de trabalho já criaram uma demanda solicitar. Então, está apenas fazendo sua autoavaliação. agora mesmo. Então, aliás, ele faz a revisão.
+
+em uma sessão separada. Então, é só isso como desenvolvimento adversarial, onde não estamos simplesmente deixando que ele corrija seus próprios trabalhos de casa. Então, agora, se eu entrar no repositório aqui E eu atualizo a página para ver as solicitações de pull request. Pronto, agora temos sete. Então, todos eles estavam abertos no último Alguns minutos aqui.
+
+Sim, então, tipo, filtrar fontes relevantes. por limite de similaridade, apenas um arquivo Isso foi alterado, ficou muito fácil no geral. O único motivo pelo qual está demorando é porque desenvolvemos esse fluxo de trabalho ser muito abrangente em seu planejamento e raciocinando sobre a implementação e também fazer uma autoavaliação. Então, certamente para coisas realmente simples. As correções são demais, mas...
+
+pretendemos que as pessoas usem o nós Pretendo que você use o GitHub do Archon. fluxo de trabalho de correção de problemas para lidar com problemas de forma adequada problemas complexos em sua base de código. Então, como eu disse, você está tentando abra seu aplicativo e você encontrará algo É um grande problema, pergunte ao seu segundo em comando. cérebro para criar um problema, e então tipo, Sabe, aprenda a trabalhar do jeito que você gosta. com o tempo, então pode simplesmente entrar em ação.
+
+Corrigindo isso com um Arconte fluxo de trabalho. Saberá como solicitar isso. Com o tempo, ele aprenderá isso com você. E um, vai se resolver sozinho, Sabe, investigando o problema. Como Não se trata apenas de aceitar isso como verdade absoluta.
+
+e tente fazer um conserto rápido como você O que aconteceria se você simplesmente desse o comando ao Claude? Crie seu próprio código CLI. Assim mesmo através de um grande processo. Então, uma coisa que eu pensei sobre Construindo para Archon, se simplesmente acessarmos os fluxos de trabalho aqui, oh, Os padrões de fluxo de trabalho do Archon, como muitos, são ótimos. Algumas delas são bastante elaboradas. Então, eu
+
+Tenho muito interesse em construir. como um conjunto mais simples de fluxos de trabalho. Como, por exemplo, se você tiver um problema muito básico ou Você está apenas tentando trabalhar em algo como...
+
+documentação ou algo assim e você não preciso passar por isso enorme fluxo de trabalho de várias etapas, mas você ainda quer Algo embalado em Archon. Um Certamente existem muitos outros fluxos de trabalho. que podemos construir. Como se fôssemos para expandindo esta lista padrão de fluxos de trabalho ao longo do tempo para fazer coisas como ajudando você com refatoração e análises de segurança. Há muito oportunidade para fluxos de trabalho para isso como Bem, porque você pode injetar de várias maneiras diferentes.
+
+Servidores MCP como Sneak ou SonarQube em também em certas etapas do processo. Então, nós também quero facilitar bastante para você integrar o seu já existente pilha, ferramentas e frameworks em Fluxos de trabalho Archon. Então, algo que nós Ainda não fizemos muita coisa com isso, mas estamos Interessado em fazer, está tornando isso possível. É possível que você meio que imite...
+
+BMAD ou GSD ou outras estruturas semelhantes e como integrá-los a um processo Arconte. Então, é ainda mais confiável e mais repetível do que simplesmente usar o Claude código com as habilidades e subagentes e coisas nesses outros contextos. E como integrar outras ferramentas como o Beads Para a memória, por exemplo. Então, como eu disse, nosso objetivo com Archon é para que então, não importa o quê Você trabalha com um agente de codificação, qual é o seu O ciclo de vida do desenvolvimento de software analisa Tipo, você vai poder embalar. isso nos fluxos de trabalho do Archon para que funcione.
+
+fácil para você sempre que se deparar com um Tem algum problema ou uma ideia para uma funcionalidade? Você simplesmente conversa com seu segundo cérebro. Você fica tipo, "Ei, vai lá e faz isso!" com Archon. Como funciona neste GitHub problema ou faça isso novo um repositório com o desenvolvedor adversário Utilize o recurso e inicialize-o como um novo Git.
+
+repositório que é privado no GitHub para "Eu." Como se pudesse fazer algo tão definitivo para fim, apenas encadeando o processo que você já possui. Então, Não é como se você tivesse que fazer alguma coisa. Novo, totalmente novo, feito exclusivamente para funcionar com Archon. Tudo bem. Uh
+
+legal. Então, Estamos em uma situação favorável em relação a esses assuntos. E então, vamos ver onde estamos em relação a...
+
+o PRD interativo. Ok, ainda é correndo, na verdade. Tudo bem. Então, tudo continua acontecendo. Qual é o valor do nosso token agora?
+
+Vamos ver. Então, nos últimos 4 minutos Nossa, cara. Estamos quase lá, senhoras e senhores. Isso é... isso é conseguir um
+
+Um pouco estressante. Nós vamos provavelmente entraremos em nosso uso extra um pouquinho, que, hum, sim, os 10 minutos ou 10 dólares que eu tenho para o meu O limite de gastos mensais vai acabar. rápido. Porque, na maior parte das vezes, eu só quero me apoiar no subscrição. Eu não quero começar gastando centenas de dólares ou algo.
+
+Tudo bem. E nós estávamos realmente vendo alguns dos fluxos de trabalho começando a terminar agora. Portanto, dois dos cinco são Feito, feito. Então, mesmo que a avaliação seja A solicitação de pull request já foi concluída. Então, começaremos a ver o uso diminuir.
+
+Um pouquinho aqui. Acho que nós vamos Seja realmente bom. Graças a Deus. Tudo bem. Legal.
+
+Hum, deixa eu voltar ao chat. Vamos ver. Mais como um arnês, sim. Quer dizer, se Você está perguntando como se fosse isso que eu estivesse fazendo. Aqui, então sim. Assim como o que estou construindo.
+
+Com Archon, Archon é como o supremo. agente de contenção Porque é isso que permite construir. qualquer arnês que você quiser, basta passar por um Fluxo de trabalho YAML simples. Como se você não fizesse isso precisam construir um aplicativo complexo que conecta diferentes sessões através de um SDK de agente Claude ou algo parecido que. Então, quando inicialmente abordei o assunto...
+
+todo o conjunto de ferramentas de desenvolvimento adversárias e eu Eu mesmo o construí com o agente Claude. SDK e SDK do Codex, basicamente, eu Criei um aplicativo totalmente novo porque eu teve que criar o avaliador e o gerador. Tive que juntar tudo. com um arnês que conecta todos os pontos. Certo? Como se eu tivesse que fazer um inteiro
+
+Novo aplicativo. E então, o que eu literalmente demonstrei para vocês. Pessoal, essa transmissão ao vivo está acontecendo. esse tipo de aplicação complexa e e depois transformando-o em algo como um single. Fluxo de trabalho em YAML para o Archon. Como
+
+Tudo pode ser transformado em um fluxo de trabalho porque cuidamos de tudo. conectar os pontos nos diferentes maneiras pelas quais você precisa que as sessões do agente funcionem junto. Nós simplesmente cuidamos de tudo isso no O próprio aplicativo. Então, nós somos abstraindo as complexidades do arnês para que você possa realmente construir qualquer coisa O chicote que você deseja como um único arquivo. É muito legal.
+
+Tudo bem. Legal. Sim, e eu sei que há bastante Algumas coisas aconteceram no chat. Eu provavelmente Não conseguiremos dar atenção a tudo. Então, Estou apenas dando uma olhada por aqui.
+
+Nossa, isso é loucura, cara. Isso é. Sim. Ah, estamos nos divertindo muito. Eram Estou me divertindo muito.
+
+Um
+
+Vamos ver. Os fornecedores de tokens colocaram A pressão sobre nós para aprimorarmos nosso sistema. Então, o principal As cargas de trabalho estão na casa dos 120 bilhões. modelos de código aberto. Essas novas mudanças As novidades da Anthropic são apenas a primeira prévia.
+
+espiar. Chato. Sim, então sim, eu tenho algo que...
+
+tenho experimentado com. Bem, você pode ir por qualquer um dos caminhos. Qualquer você usa um modelo menor para o implementação e depois uma maior para a avaliação ou se você usar um modelo maior para a implementação e depois um Modelo menor para avaliação. Tenho tentado mais a segunda opção. recentemente. E essa é uma das coisas
+
+O fato de Archon tão bem se destacar é estar sendo capaz de usar diferentes modelos em diferentes partes do seu fluxo de trabalho. Mas Sim, com o uso de tokens, mais ou menos como Cara, ter esse uso dobrado do Anthropic é demais. fora do horário de expediente nas últimas duas semanas Foi muito bom. Eu definitivamente estava tomando aproveitar isso. Mas sim, é gentil.
+
+É incrível a rapidez com que seu uso pode aumentar atualmente. Então, certamente é bom construir. Incorpore modelos menores em seus fluxos de trabalho, seja usando Haiku ou Soneto ou Como você disse, RunFish, é como ter...
+
+algo que utiliza um software de código aberto Modelo para parte do seu fluxo de trabalho. O que você definitivamente poderia fazer com Arconte também. Bem, embora eu realmente não vá como a demo que está ao vivo agora. Mas isso poderia ser que poderia ser até mesmo como um todo Vídeo do YouTube onde eu poderia te mostrar como executar o código Claude com modelos de código aberto algo como o OpenRouter. Eu já fiz isso antes.
+
+muito parecido com, você sabe, tipo Kimmy K2 ou um MiniMax, um até mesmo tipo Qwen 3 ou 3.5. Portanto, certamente há muitas possibilidades. lá. Sei que muita gente adora usar modelos de código aberto através de algo como o OpenRouter ou, obviamente, como autohospedagem para seu segundo cérebro também. Assim como conectar o OpenClaude a
+
+Código Qwen 3.5 ou Claude para tipo Kimmy K2 ou algo assim. Então, muitos Há conteúdo sobre isso disponível no YouTube. já, claro. Sim.
+
+OK. Mais uma pergunta do Joe. Você pode falar um pouco sobre como o O segundo cérebro que você está usando é tipo Abrir Claude? É tão plenamente capaz de Conseguir concluir o trabalho? Eu ainda não sou um Usuário do OpenClaude por motivos de segurança preocupações.
+
+Sim, então tudo o que eu quero que seja. Capaz de fazer o mesmo que o OpenClaude, ele consegue. Existem algumas coisas específicas que Não adicionei nada ao meu segundo cérebro. mas é de propósito por causa do implicações de implementação de segurança. Então, como uma das coisas que meu segundo O cérebro não tem o que o OpenClaude tem.
+
+é o uso do computador. Porque para meu uso casos, isso não é necessário e há Há muitos riscos inerentes em dar o seu agente a capacidade de simplesmente fazer qualquer coisa em um computador. Mesmo que esteja isolado. em um Mac mini, como muita gente faz. tipo ter, ainda tem muita coisa, uh implicações de segurança que acompanham que. Mas, bem, quanto ao que eu tenho...
+
+inspirado em OpenClaude, Grande parte disso se deve à camada de memória. e o sistema de batimentos cardíacos. Então, não se envolva me enganou. Embora haja muitos implicações de segurança com o OpenClaude, E eu criei todo esse diagrama. É por isso que eu recomendo construir o seu próprio meu próprio segundo cérebro, eu ainda altamente Recomendo buscar inspiração em ferramentas.
+
+que existem por aí, como o OpenClaude, IronClaude, NanoClaude, uh Hermes, tipo Tudo isso é, você sabe, IA pessoal. agentes que são de código aberto disponíveis em GitHub. Você pode direcionar seu agente de codificação. para examinar diretamente o controle de origem e dizer algo como: "Ei, eu gosto muito do sistema de batimentos cardíacos ou eu realmente gosto de como eles coisas com a alma.md e o e o memory.md. Olha só isso!
+
+repositório para ver como funciona e como Eles integraram isso e depois trouxeram Isso consta na minha candidatura. Mas também que te dá a oportunidade de gostar também você o conecta, personaliza-o ainda mais para como você realmente gosta de trabalhar também. Portanto, é mais seguro no sentido de que você realmente consegue controlá-lo e Entenda isso e comece do zero. ponto de vista da confiança. Mas também é Melhor porque você pode ajustar as coisas.
+
+tem mais a ver com a forma como você realmente gosta de trabalhar. E então, definitivamente expandi meu camada de memória para incluir outras coisas. Assim como eu ajudo, na verdade tenho meu segundo. ajuda cerebral para me manter responsável com o hábitos que eu quero alcançar, como todos os dias. E então eu tenho isso.
+
+me ajude a gerenciar coisas na minha vida. casa e meus investimentos. Então isso me ajuda incluindo coisas pessoais. Eu tomei É muito, muito longe. E tipo, sim, você pode adicionar funcionalidades além do aberto tecido através de habilidades para fazer essas coisas, mas eu internalizei isso de uma forma muito mais profunda nível mais profundo e como o agente opera que é exatamente como se eu estivesse apenas fazendo É meu. Então, falarei muito sobre
+
+Esses exemplos serão apresentados no workshop de amanhã. Como eu continuei a refinar Isso acontece muito com o tempo. Tipo, literalmente todos os dias. Isso é Até que é engraçado. Um dos hábitos que tenho todos os dias são para fazer algum tipo de melhoria no meu segundo cérebro. Porque existem muitos
+
+As oportunidades que existiam eram como... Sempre tem alguma coisa. Mesmo que seja um Coisa pequena, eu só faço incrementalmente.
+
+melhorias no meu segundo cérebro ao longo de tempo e é simplesmente porque compensa dividendos incrivelmente bons. Quanto Agora, isso me poupa tempo, mesmo em comparação com... Tipo, um mês atrás é simplesmente inacreditável. Como eu
+
+continue dizendo que dura pelo menos uma dúzia de horas, mas provavelmente são cerca de 20 horas por semana que me salva. Porque eu tenho estado administrar o mesmo negócio por Já faz pouco mais de um ano e meio. Tipo, eu sei quanto tempo leva para eu...
+
+faço muitas dessas coisas que eu sou, você sei, pelo menos parcialmente automatizando com meu segundo cérebro. Assim como gerenciar minha caixa de entrada. e idealização de conteúdo e criação Roteiros e diagramas do YouTube. Especialmente na criação de diagramas e Apresentações em PowerPoint. Isso costumava me levar tanto tempo longo. Hum, e tipo, como este diagrama
+
+eu mesmo construí com um dos como um habilidades que eu possuo. Então o Excalidraw habilidade de diagramação, para a qual eu até fiz um vídeo. no meu canal do YouTube para. Eu uso isso um o tempo todo com meu segundo cérebro. E meu segundo cérebro aprende por conta própria.
+
+O tempo é o que eu gosto de usar para construir meu diagrama. Então É como se a habilidade se desenvolvesse sozinha. ao longo do tempo. Sinceramente, provavelmente terei para fazer outro vídeo do YouTube sobre a mesma habilidade porque eu a desenvolvi muito Melhorou ainda mais nas últimas semanas por aqui. Mas essa é a beleza da segunda.
+
+O cérebro é aquilo que você lhe dá capacidades. e isso melhora as capacidades ao longo do tempo. E utiliza a camada de memória. Para, sabe, impulsionar essa evolução. Tudo bem. Muito legal. Vamos lá, vamos lá
+
+de volta aqui. Dê uma olhada em nossos fluxos de trabalho. Então, este aqui já está pronto. Então nós pode ver como o verde totalmente acabado Marcas de verificação em todos os itens. Parece muito legal.
+
+E então, se formos ao painel de controle aqui, Na verdade, o desenvolvedor adversário é o único uma que está em execução agora. Então isso é muito bom legal. Então, terminamos a criação do PRD. também. Então vamos dar uma olhada nisso.
+
+Então, em primeiro lugar, vou fazer uma olhar. Certo, então estamos realmente construindo para o sprint cinco. E só há cinco sprints. Então Estamos quase terminando a execução do arnês completo. Isso é realmente perfeito.
+
+o momento porque eu estava planejando ter o transmissão ao vivo para, você sabe, mais ou menos o topo do hora aqui. E talvez já tenhamos terminado por por volta desse ponto. Isso é muito legal. Parece que as coisas estão se encaixando. Temos feito muita construção ao vivo.
+
+aqui. É incrível o quanto temos estado prédio. E aí, se eu for lá e olhar, eu só...
+
+tentando meio que espiar ao redor Tudo está aqui. Se formos, deveríamos ver Hum, o que é isso? Oito solicitações de pull que Teremos? Sim. Então, conseguimos oito puxadas.
+
+Solicitações para todas as questões. E geralmente o que eu faço com o meu segundo cérebro, uma vez que eu tenha toda a influência. solicitações criadas e, então, é claro. Existe outro fluxo de trabalho do Arkon que eu É necessário validar a solicitação de pull request. em si.
+
+E assim eu pude voltar ao meu segundo cérebro. Deixe-me encontrar essa sessão no milhões de sessões que tenho aqui. EU posso voltar ao meu segundo cérebro. Então todos Os comunicados de imprensa estão prontos para sua análise. O que eu poderia dizer que agora eu quero que você corra cinco dos fluxos de trabalho de validação de PR em paralelo para cada uma das solicitações de pull que acabamos de criar.
+
+Isso definitivamente vai me levar um tempo. No momento, ultrapassei meu limite. Então, provavelmente não quero executar isso. Isso também levaria mais tempo do que o quê Vou fazer uma transmissão ao vivo porque é muito A análise foi abrangente. Hum, mas tipo...
+
+geralmente é isso que geralmente é meu fluxo de trabalho. Na verdade, às vezes eu como só um. Atirei em tudo. Eu diria, sabe, Ok, segundo cérebro, aqui estão cinco problemas. Eu tenho neste repositório. Eu quero que você
+
+e tipo, isso é exatamente o que Eu dou uma dica. Vou dizer que quero que você... usar cinco fluxos de trabalho Arkon em paralelo para Corrija esses problemas.
+
+Então, depois que todas as solicitações de pull forem criado, quero que você invoque cinco Valide os fluxos de trabalho de RP com o Arkon também em paralelo. E então eu quero que você, quando... a análise revela qualquer coisa que Precisa ser abordado, eu quero que você Abordar o problema e implementar essas mudanças para o solicitações de pull. Então, pelo controle de tempo é
+
+passou-me de volta pela primeira vez tempo, cada um dos GitHub Os problemas foram resolvidos, todos os PRs foram concluídos. foram validados e todos os problemas foram resolvidos. abordado. E o melhor é que podemos fazer tudo isso em uma única sessão cerebral de segundo porque A maior parte dos tokens está sendo gasta em os subfluxos de trabalho, certo? Assim como o Os fluxos de trabalho do Arkon são onde todo o trabalho é realizado.
+
+acontecendo. Então podemos ter isso como se fosse muito processo complexo que estamos elaborando. Mas como tudo é tratado em sessões separadas, nem estamos usando subagentes porque até mesmo subagentes podem poluir nossa conversa com resumos. Basta executar os fluxos de trabalho. Eles relatar de forma muito simples ao nosso segundo em comando principal sessão cerebral e depois passa para O próximo passo. Isso resolve quaisquer problemas.
+
+e me fornece o relatório final no fim. E aí eu ainda terei mais contexto restante para continuar trabalhando se Tenho um feedback positivo para mim mesma que eu queria iterar ou dar início a algo mais Fluxos de trabalho do Arkon para atender ao meu feedback. Sim, você pode levar isso muito longe. em uma única conversa. E então, sim, podemos ver que esse é o nosso limite.
+
+não está subindo tão rápido agora Porque a maior parte dos nossos fluxos de trabalho já está concluída. Na verdade, hum Este vai ser muito próximo de sendo feito aqui. É o último que temos. terei que esperar. A outra coisa que posso mostrar para vocês é o PRD.
+
+Porque aquele [bufa] aquele fluxo de trabalho totalmente finalizado. Então Muito bem, aqui está. O fluxo de trabalho Concluímos e geramos seu PRD corretamente. aqui na dança RNG PRD.md.
+
+Aqui está um breve resumo do que é isso. produzido. Rota de reação de página única que abre sua webcam quando você clica começar. Captura as diferenças entre os frames e as acumula. deltas de movimento de pixel acima de um ruído limiar como entropia.
+
+Muito legal. Uh faz o hash do buffer de entrada com um SHA-256 via API de criptografia web. Um e então exibe o resultado como um número aleatório. número entre 1 e 1.000. Muito legal.
+
+Então, podemos analisar o que realmente é. PRD. Assim, ele nos dá o caminho completo por dentro. a árvore de trabalho. Ou poderíamos simplesmente dizer Tipo, beleza, ótimo. Tome este PRD. EU
+
+Poderia dizer algo como, sabe, pegue este PRD e agora envie para o desenvolvedor adversário. aproveitar. Invoque esse fluxo de trabalho do Arkon para Construa tudo. E claro Isso eu não vou fazer ao vivo. Assista agora mesmo porque eu já tenho!
+
+Vou ir de qualquer jeito. Mas se quiséssemos começar com um PRD mais elaborado e depois vá No fluxo de trabalho, é exatamente isso que Teríamos feito isso. Eu simplesmente tive que fazer isso. ambas em paralelo, por uma questão de tempo. Então, sim, podemos até encadear Integração dos fluxos de trabalho do Arkon. Isso é
+
+Basicamente, o que estou mostrando aqui é... através do PRD interativo onde nós até mesmo ter humanos no circuito Respondendo a perguntas sobre o que queremos. construir e depois enviar isso para tipo, agora crie a especificação e e realizar todo o processo de sprint que nós vimos ou que estávamos, você sabe, ativamente vendo agora como o último fluxo de trabalho em execução.
+
+aqui. Então, espero que isso termine logo porque eu Adoraria fazer uma demonstração disso. Hum, talvez, talvez esteja mesmo em um estado. onde poderíamos simplesmente executá-lo agora mesmo. de qualquer forma. Tenho curiosidade.
+
+Bem, vejamos. Sabe, eu vou Experimentar algo. Vou tentar Na verdade, estou perguntando isso. Então eu vou. Voltar à sessão correta aqui.
+
+Muito bem, quero que você verifique o status deste fluxo de trabalho. Estamos em um ponto exato agora onde eu realmente poderia Executar o aplicativo para fazer uma demonstração rápida? Vamos ver o que diz aqui. Certo, então deixe-me voltar ao...
+
+Converse aqui e responda a algumas perguntas que Vocês têm. Essa é a apresentação resumida. UM arnês que constrói arneses. Quer dizer, isso é realmente bom. Apresentação relâmpago. Eu deveria adicionar isso ao como
+
+Eu explico. Faz sentido. Vamos ver. Isso está se tornando uma religião. Antes de ir embora, quero agradecer por mostrando e explicando tudo isso. Sim,
+
+De nada. Espero que você esteja se referindo à religião em um bom sentido. [risada] Porque isso pode ser interpretado de diferentes maneiras, Mas sim, quero dizer Definitivamente está se tornando como se você quer dizer, no sentido de que é tornando-se algo muito complexo, então, tipo...
+
+Sem dúvida. Muito bem, o que mais temos aqui? Ei, Cole, ficou incrível! Agradeço. [bufa] isso. Com o Dynamis
+
+A adesão nos dá acesso ao... Repositório privado da comunidade também? Então nós podemos Experimente os fluxos de trabalho mais recentes e as novidades.
+
+Apresentamos a nós mesmos. A resposta é... sim. Sim. Então, o repositório que eu estou
+
+Apresentando aqui, está disponível para uh todos na comunidade Dynamis, certo? agora. E então, é claro, faremos isso. Então, o Arkon vai abrir ao público. Fonte na próxima semana. Mas certamente há
+
+Vai ser muito mais parecido com workshops. e uh compartilhando dentro do Dynamis comunidade enquanto eu construo, você sabe, mais como fluxos de trabalho de ponta para adicionar ao Arkon. Assim, você estará sempre no controle de coisas. Então sempre quero, sabe, Possuem a filosofia do código aberto. É realmente importante para mim. Compartilhando tudo, mas
+
+Com certeza estou na vanguarda. com as coisas que estou compartilhando em Dynamis e recebendo muitos feedbacks das coisas novas e legais que eu estou Em andamento. Sim. Então, se você estiver interessado nisso e Você quer fazer parte do corte? borda, certo? Se você estiver interessado em
+
+Arcan construindo seu próprio segundo cérebro, Vou colocar um link para isso no chat. de novo. Eu só quero fazer isso de vez em quando. daqui a pouco, porque isso está acontecendo literalmente amanhã, às 4 horas. Workshop sobre o cérebro mostrando como construir Um segundo cérebro criado do zero. Um
+
+Como eu disse antes, neste ponto meu O Second Brain está me economizando cerca de 20 horas. de trabalho todas as semanas. Não Exagerando, como se eu tivesse feito as contas, e tem melhorado com o tempo, conforme eu tenho continuou a desenvolvê-lo, e como eu vou mostrar-te como será amanhã ter um segundo cérebro praticamente evoluiu. e então as memórias se acumulam ao longo do tempo. também. Então, vou te mostrar exatamente como
+
+Eu construí meu segundo cérebro, todo o componentes, e eu estarei construindo um uma versão feita do zero. E agora estamos apenas esperando pelo [risada] este fluxo de trabalho para concluir. Hum, o que aconteceu? Diga aqui? Vou voltar. Então,
+
+Ok, diz que posso experimentar agora mesmo. Então, eu poderia... eu poderia mesmo tentar. Você
+
+É possível obter a imagem da webcam com a sobreposição. Pontuação de dança em tempo real. Então, o que ainda falta construir ou o quê? Está sendo construído neste momento? Eu só quero Pergunto isso porque estou curioso.
+
+Ih, ok. Acho que já foi dito. exatamente isso. Então, na verdade, não. Preciso disto. Então, eu poderia simplesmente tentar bater.
+
+Execute-o ou tente executá-lo agora mesmo. Mas Enfim, vou deixar que isso responda à pergunta. primeiro aqui. Adoro seu trabalho, é muito inspirador. EU Agradeço muito. Muito obrigado!
+
+muito. Vale muito a pena participar se você ainda não participa. já. Obrigado, Shawn. Obrigado, estou dentro. Ótimo. Bem,
+
+Bem-vindo ao Dynamis, meu amigo. E eu Espero ver você no workshop. amanhã. Mas, novamente, mesmo que você não consiga chegar ao segundo cérebro de 4 horas workshop amanhã, vai ser gravado. Na verdade, todas as oficinas e os eventos em Dynamis são registrados e postado depois.
+
+E então, o segundo workshop sobre o cérebro... Vou transformá-lo no terceiro. Curso para a comunidade. Então, nós temos
+
+atualmente o curso de domínio de agentes de IA, o curso de codificação agentiva, e depois isto Vai ser, sabe, tipo o você saiba, segundo curso de cérebro, construa o seu sua própria garra aberta, construa sua própria segunda cérebro. Então, ainda preciso pensar é mais ou menos o quanto eu quero editar isso versus simplesmente manter como o cru ao vivo sessão. Pode até gostar de ambos, onde eu terei uma versão realmente editada versão reduzida para que você possa simplesmente passar por ela mais rápido e depois tipo ter tudo uma, se você quiser ver todas as perguntas. que todos estão perguntando ao vivo e meu respostas para isso. Tudo bem.
+
+Que música será? Quer dizer, quando eu faço a demonstração aqui, eu não estou Vou fazer alguma loucura. [risos] Eu Não sei. Nossa, cara. Estou saindo da minha zona de conforto.
+
+zona de conforto, mesmo fazendo um pouco de Ah, tanto faz. [risada] Tudo bem. Bom, tudo bem. Então, uh, me dê Bem, tudo bem. Você sabe o que eu vou fazer.
+
+O que dizer aqui? Que tal você simplesmente executar o aplicação por mim mesmo? Então, leia o Leia o arquivo readme e certifique-se de que o compreendeu completamente. como executá-lo, e então eu quero que você Informe-me o porto exato que devo visitar. aplicativo.
+
+Então, eu posso usar o meu como se fosse o meu segundo. Foi o cérebro que deu o pontapé inicial. Vai construir Ou talvez eu tenha feito isso pelo controle remoto. repositório do agente de codificação do repositório Arcan, mas ele consegue olhar e ver exatamente como executá-lo e depois simplesmente fazê-lo para meu. Eu nem preciso me preocupar com lendo a documentação eu mesmo.
+
+Tudo bem. Vamos ver se isso funciona. Chegou a hora da verdade. Ok. E então, onde está "Let me Let me"?
+
+Veja como está a situação agora. Se eu for voltar. Então, tudo bem. Então, estamos atualmente Avaliando o sprint cinco. Então, nós somos tipo Estamos quase no fim. Mas eu acho
+
+Estou ficando um pouco impaciente. Então, Eu vou...
+
+[risada]
+
+[risada]
+
+[risada]
+
+[risada]
+
+[risada]
+
+OK. [risada] E veja só quando eu paro de me mexer. Agora Agora está a baixar. Isso é tipo Na verdade, está funcionando muito bem. Isso é uma loucura.
+
+E eu posso... ok. Então, eu posso gerar um número baseado na semente, e a semente Essa é a nota que eu dou agora. E se
+
+Se eu realmente começar a ir para lá, então o O número aumenta. Eu levantei o teto. Vamos Leve isso para 900. Nossa! OK. Não posso
+
+Espere. [risada] Não consigo chegar a 900. Nossa Senhora! Isso é uma loucura. Nós temos Nós temos um tendência de pontuação, estatísticas da sessão, nós temos o nosso histórico dos números que temos gerado.
+
+Isso é uma loucura. Tipo, isso é tipo Realmente muito bom. Quer dizer, isso é uma loucura. Aqui está apresentando problemas técnicos. Ou talvez seja essa a intenção, não é? Eu eu
+
+Não sei. Mas é assim que é Muito legal. Gostei muito, com certeza. Exatamente o que queríamos, de primeira! aqui. E, honestamente, a instabilidade.
+
+disso pode ser como se tivesse sido construído sobre propósito porque eu disse que vai ser Uma demo divertida e descontraída. Como eu, eu não faria isso necessariamente dizer Ah, porque ele... eu sei, falha grosseira da IA.
+
+Talvez seja uma falha técnica mal executada. Talvez era exatamente essa a intenção. assim. Eu não faço ideia. Um [risada] Eu amo isto.
+
+Nossa, cara. Isso é uma loucura. Tudo bem. Então é isso, pessoal. E construímos tudo com isso.
+
+aproveitar. Então, Nós nos inspiramos na Anthropic, nós transformou-o em um Arcano de fila única fluxo de trabalho que passa pelo planejador, a negociação do contrato, o gerador, o avaliador, percorrendo o feedback, passando por todo esse processo circuito de sprint. Construímos tudo como um fluxo de trabalho Arcan de arquivo único, significando matou um com um só golpe. Aplicação bastante elaborada. Quero dizer, Há muita coisa acontecendo aqui. Não
+
+sei se isto
+
+agente adversário que está constantemente importunando o implementador como você fez Para fazer isso, você precisa fazer isso. Um Uau. Sim, eu realmente não sei qual era a intenção. isso é. Mas Vamos comemorar, porque nós conseguimos!
+
+[risada] [suspiros] Nossa, cara. Quer dizer, ter a rotação em a câmera, isso sim tem que ser intencional porque faz com que demore mais Sinceramente, vale mais a pena se esforçar para fazer isso do que não fazer. Tudo bem. Isso é ouro. É de ouro.
+
+É, eu não sei. Então, eu verifiquei o aba selvagem. Eu realmente não sei o que é O que a aba "wild" está fazendo de fato. Acho que é tipo Está girando mais? É, eu não sei ao certo. EU
+
+Quer dizer, poderíamos perguntar aqui. Bem, vamos ver como está o fluxo de trabalho. Então, tudo bem. Ainda está funcionando. Então, é Ainda estou avaliando. Mas se eu for
+
+De volta e eu digo Ok, duas coisas aqui. Ah, espere. Não, Acabou de terminar. Acabou de terminar. OK.
+
+Então, talvez [bufa] a gente possa até mesmo Tenho isso, hum, legal. Então, nós vimos tudo. também ao final do fluxo de trabalho. Então, se eu for De volta aos registros arcanos. Sim, com certeza.
+
+Chega, está feito. Muito legal. Então, nós podemos Clique aqui e poderemos visualizar os registros. também, e podemos ver que foi feito. feito. Muito legal. Posso voltar atrás e dizer:
+
+"Ok, duas perguntas para você. O quê?" O que o modo selvagem faz? E também me ajude a entender Por que parece tão cheio de falhas técnicas? Assim como meu A câmera parece estar girando constantemente.
+
+em volta. Hum, isso é intencional ou é um bug? Isso precisa ser abordado? Quero você para ativar um subagente para cada um deles e respondê-las." OK. Então, vai demorar um pouco.
+
+para explorar aqui porque lembre-se, o O fluxo de trabalho o constrói. Minha sessão principal, como meu segundo cérebro ou o código Claude ou Seja lá o que for que inicie o fluxo de trabalho, é isso. não tem o contexto completo porque nós temos deleguei isso ao fluxo de trabalho. Então, é Vou ter que descobrir isso. em si.
+
+[bufa] Isso é loucura. Eu nunca pensei que eu executaria um subagente em uma transmissão ao vivo. chamada pesquisa em modo selvagem. Mas aqui estamos são. É isso que estamos fazendo.
+
+hoje. Ok. Rasmus disse que na verdade é girando mais ou menos. Então, sim. Deve ser Seja bastante intencional. Onde foi parar minha conta?
+
+ir? Sim, provavelmente é intencional. O que está fazendo aqui. Porque se eu fizer isso sutil, Quer dizer, talvez seja um pouco mais lento. É meio difícil dizer.
+
+[risada] Isso é uma loucura. Nossa, cara. Eu amo isto. Isso é ótimo. Bom, tudo bem. Então, Chris, obrigado pelo
+
+sugestão. Eu não teria construído. Algo assim jamais aconteceu na minha vida. Sem que você sugerisse isso. [bufa] Então, agradeço.
+
+Isso agora está eternizado. Isto Provavelmente sim. Sim. [risada] É uma viagem de ácido. Que ótimo! Tudo bem.
+
+E sim, obrigado, Shawn. Então, sim, o O segundo workshop sobre o cérebro, amanhã, é Vou trabalhar das 11h às 15h. Horário central ou meio-dia às 16h00 EST. Sim. E ainda tem o trabalho de pés. Não sei
+
+como vou conseguir que meus pés trabalhem a câmera, mas eu aprecio a sugestão. Acho que não importa a distância. Eu volto. para a minha parede atrás de mim, eu não estaria consigo ver meus pés. Ah, me inspirei no TikTok.
+
+[risada] Sim. Nossa! Tudo bem. Legal. Preciso arranjar tempo para me juntar à Dynamis.
+
+Isso é incrível. Agradeço. Sim, eu gostaria. Adoraríamos ter você na Dynamis. Nós não...
+
+Normalmente construo coisas tão malucas quanto esta. Geralmente é mais prático. Espero Isso é, na verdade, um ponto positivo de venda. Dynamis, não é bem uma desvantagem, mas sim, nós Divirta-se muito com várias das nossas opções! oficinas também. Eu nunca construí
+
+Qualquer coisa tão maluca quanto isso, mas talvez eu tenha que fazer mais, assim como demonstrações divertidas, como estamos, sabe, Criando fluxos de trabalho Archon e indo por meio de novas estratégias de decodificação de agentes e coisas do gênero. Porque isso é um Muito do que eu abordo em Dynamis é Ajudando vocês a se manterem atualizados com as últimas novidades. tipo, aqui está a melhor maneira de usar IA assistentes de codificação, você sabe, mostrando fora das coisas com Archon e, uh, apenas como novos fluxos de trabalho que estou criando com e que outros na comunidade estão sendo desenvolvidas para arreios e Revisão e implementação de código. Um Sim, e talvez possamos construir em cima disso. desta aplicação em um Arconte fluxo de trabalho.
+
+Vamos. Energia incrível. Mantem. Manter dança. Nossa, adorei o incentivo aqui. Uh
+
+Ok, vamos voltar. Vamos [risos] voltar ao nosso sub agente e veja se o nosso subagente verifica se eles Voltei com uma resposta aqui. Ok. Então, o modo selvagem é o mais difícil. Ah, ok, então isso significa que é na verdade, me julgando com mais severidade. OK.
+
+E então, oh, [risada] Portanto, o giro é, na verdade, um bug. Não foi intencional. A div de encapsulamento externa é uma animação CSS de rotação todo o recipiente. Quer dizer, isso de fato dá a impressão de que é intencional, porque por que adicionaria o Animação CSS giratória? Sim, aplique a correção. Vamos fazer com que não seja assim.
+
+Com falhas. Eu não sei. Sinceramente, eu Acho que o subagente está errado. Curtir se Acrescentou isso, provavelmente foi Intencional, mas eu não sei. Como Isso torna tudo meio divertido, mas ao mesmo tempo Daqui a pouco vou ter uma convulsão.
+
+Se eu ficar olhando para isso por muito tempo. Então, vou simplesmente fazer com que isso seja resolvido. Muito rápido. E então, hum, ok, então pronto. Então, deixe-me tentar novamente. Se eu atualizar a página,
+
+Ainda girando. Ok, então talvez... vamos lá Veja aqui.
+
+Ainda girando. Ok, então ainda está girando. Então, eu não sei se você realmente consertou. Ou talvez você precise recarregar. Eu sei Você disse que o Vite deveria recarregar a quente, Mas parece que isso não está funcionando.
+
+Certo, porque talvez tenha que fazer isso se for necessário. executei a partir do diretório dist de Para a versão Vite, pode ser necessário... Recompile e depois execute. Então, veremos.
+
+se isso acontecer aqui. Mas esta é apenas a única iteração que teremos. fazer. Não precisamos ficar bisbilhotando. com isso também muito mais, mas eu só quero para conseguir isso. É uma boa observação.
+
+Ok, acho que ele pensa que não era. Na verdade, já está resolvido. Certo, então vamos deixar isso para lá. aqui. Certo, vou voltar ao chat.
+
+enquanto isso acontece aqui. Os encontros casuais são ótimos. Sim, então todas as segundas-feiras no Dynamis comunidade, nós só temos um tempo para um Passando tempo juntos. E, sim, essas são sempre muito...
+
+Bons tempos. Então, estamos apenas falando sobre como as últimas novidades do Espaço de IA e só compartilhando coisas que Estamos trabalhando nisso. Sim, é um explosão. Dynamis vale cada centavo. Agradeço, John. Eu realmente
+
+Agradeço. Um Certo, legal. Então, sim, ok, vamos lá. Vamos verificar agora. Então, diz que é Resolvi o problema.
+
+Ok, então, na verdade, aconteceu. Está quase lá, mas agora há alguns Outra coisa que ainda está girando. Ok, então está melhorando, mas ainda há algum outro elemento que é girando e como se estivesse fazendo a câmera Com falhas. Então, assim como minha câmera vai desaparecem por frações de segundo e depois...
+
+Ainda há algo girando. Tudo bem. Então, neste ponto, se eu fosse fazendo algo de verdade, como se eu pudesse. tipo, sabe, Arconte I poderia criar um problema, invocar Archon para Conserte isso. Estou fazendo isso de forma bem improvisada aqui.
+
+só porque estou tentando superar isso é rápido, mas isso seria quando eu estou tentando fazer algo de verdade, tipo desenvolvimento sério, tipo, vamos mesmo Se eu resolvesse um problema aqui, eu resolveria, sabe? basta ter outro manipulador de fluxo de trabalho Archon Está aqui. Ok, sim, a borda do arco-íris. Sim, O problema é a borda com as cores do arco-íris. Então, isto Hum, eu continuo acessando a aba errada aqui.
+
+Vamos ver se conseguimos resolver isso. Um Entrando no clima. OK. Hum, o que está acontecendo?
+
+Certo, agora aparentemente está resolvido. Vamos ver.
+
+Ah, espere. Ah, está tão perto.
+
+Você estava fazendo um trabalho péssimo. Minha câmera continua desaparecendo. Por um instante, e então vejo o arco-íris. caixa. Eu só quero me livrar disso.
+
+caixa arco-íris. Muito bem, esta é a minha última. tomada. Nós não precisamos gostar Resolver esse pequeno problema. Então, Acho que dá para dizer que somos quase um só.
+
+atirou, mas tem isso tipo Aqui só há um problema, mas todo o resto é bem diferente. Está funcionando perfeitamente. Então, sim, quer dizer, o A lição aqui é que podemos ir muito longe. com esses arreios, mas nunca é Vai ser perfeito, né? Hum, tem Sempre serão esses pequenos detalhes.
+
+de iteração e é por isso que temos tanto Em Archon, grande parte do foco está na criação de Essas correções de problemas do GitHub e revisões de código fluxos de trabalho. Estamos reconhecendo que você não vão simplesmente poder ir através de um laço Ralph ou um arnês semelhante isso e apenas um tiro, mas o homem pode Estamos chegando perto. Ah, ok. Então, diz que já não existe mais. Então, se eu Atualize a página, ligue minha câmera.
+
+Ah, ok, então isso já passou, mas... Ainda parece um pouco instável aqui. Mas estamos a caminho disso.
+
+Então, eu não preciso de [risada] Não preciso corrigir isso agora, mas Tenho certeza de que seria apenas um Fluxo de trabalho de correção de problemas do Archon GitHub e Estaríamos no paraíso. Então, Muito bem, pessoal, aqui está. Que Essa é uma visão geral da construção de Arcontes. em público mostrando para vocês o que é isso Parece que vou usar o Archon como meu segundo cérebro. e além. Construímos um arnês completo.
+
+Essa transmissão ao vivo foi extremamente produtiva. E eu me diverti muito. Então, sim, se alguém Se tiver alguma dúvida sobre Archon, fique à vontade para perguntar. Para participar da comunidade e perguntar. Eu sempre Responda também aos comentários do YouTube. Um e
+
+Vou fazer um vídeo para o YouTube sobre Archon na próxima semana, quando for inaugurado. fonte. Então, se você gostou do que viu aqui, Tudo estará disponível para tente e, como eu disse, esse é o objetivo principal. dessa transmissão ao vivo foi mais como apenas Veja como eu trabalho e... dê uma espiada!
+
+Uma prévia de Archon e das coisas legais que... Posso usar isso. E então, quando eu fizer o meu Vídeo e transmissão ao vivo para Archon Next Esta semana, com certeza será uma...
+
+Muito mais prático. Tipo, é assim que você você pode entrar e começar a usar você mesmo. Terei um guia de configuração, que é muito Aliás, é fácil. Vou falar sobre o diferentes fluxos de trabalho e como você pode Crie o seu próprio. É muito, muito fácil de conseguir.
+
+envolvido em Archon, especialmente porque o O processo de configuração é literalmente como se você tivesse Eu tenho um processo onde sua codificação um agente, por meio de sua habilidade, irá guiá-lo. através da configuração. Então, vamos lá! na próxima semana. Quero pegar vocês para experimentar isso porque eu realmente gosto disso É um divisor de águas.
+
+Tipo, ser realmente capaz de construir qualquer coisa. aproveitar, qualquer fluxo de trabalho, qualquer maneira que você Trabalhe com agentes de codificação agora mesmo, você pode ser empacotado em Archon. Então, eu sou Estou muito animado com isso. Então, tudo bem, vou prosseguir e Ah, ligue para a transmissão ao vivo aqui. Realmente Agradeço a presença de todos vocês aqui, seus Perguntas e sugestões fantásticas e um Sim, especialmente construindo aquilo... aquilo.
+
+gerador de números aleatórios para dança. Foi muito divertido. Então, Muito bem, espero ver vocês em breve! segundo workshop sobre cérebros em Dynamis Acontecerá amanhã. Caso contrário, verei.
+
+vocês todos da comunidade e YouTube. Espero que vocês tenham um Tenha um ótimo resto de dia e nos vemos em breve. Vocês todos ao redor. Tenha um bom dia, todos.

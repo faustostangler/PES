@@ -1,0 +1,205 @@
+---
+video_title: "The Next Evolution of AI Coding Is Harnesses - Here's How to Build Them"
+video_id: qMnClynCAmM
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qMnClynCAmM
+video_date: 2026-04-09T00:01:33+00:00
+video_description: |
+  Prompt engineering. Context engineering. Now harness engineering. That's the evolution for AI coding and it's happening fast!
+  
+  A harness is the system around the coding agent - the thing that turns "manually shepherding an agent through the same 8 steps every day" into "run one command and it handles everything." Deterministic steps where you need precision, AI steps where you need creativity, and loops that iterate until tests actually pass.
+  
+  Archon is the first open-source harness builder for AI coding - encode any workflow as a YAML file in your repo and run it from CLI, Web UI, Slack, GitHub, etc. In this video I break down what harness engineering is, why it matters, and demo Archon end-to-end including building custom workflows from scratch.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - If you're interested in building your own AI second brain to save yourself hours every week, check out the Dynamous community and upcoming 4 hour second brain workshop: 
+  https://dynamous.ai/second-brain-bootcamp
+  
+  - Come to the Archon livestream this Saturday!
+  https://youtube.com/live/srx9iwnjK2M
+  
+  - Archon GitHub repo - the first open-source harness builder for AI coding:
+  https://github.com/coleam00/archon
+  
+  - Archon skill (ask your coding agent to copy it into any repo):
+  https://github.com/coleam00/Archon/tree/main/.claude/skills/archon
+  
+  - Stripe Minions blog post:
+  https://stripe.com/blog/minions-stripe-engineering
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Intro to the New Archon
+  3:07 The Evolution of Harness Engineering
+  5:54 How Archon Orchestrates Coding Agents
+  8:48 Installation and Setup Guide
+  15:03 Running an Archon Workflow End-To-End
+  17:01 Archon Web Dashboard
+  18:47 How Archon Workflows Work
+  25:52 Running Multiple Workflows in Parallel
+  27:40 Building Custom Archon Workflows
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Finalmente, após meses e meses de árduo trabalho nos bastidores, estou revelando o novo Archon, uma reformulação completa do centro de comando de IA no qual trabalhei no ano passado. Agora é o primeiro construtor de estruturas de código aberto para codificação de IA. Portanto, uma visão semelhante, mas um caso de uso muito diferente e poderoso. Os cintos de segurança são o futuro. É a camada que fica acima dos seus agentes de codificação e que orquestra as diferentes sessões. É isso que
+
+torna a codificação de IA determinística e repetível. Vamos conversar sobre o que isso significa. E agora, com o Archon, você pode criar seus próprios arneses personalizados com muita facilidade. Independentemente de como você trabalha atualmente com agentes de codificação de IA, você pode pegar esse processo e agrupá-lo em um fluxo de trabalho do Archon que pode ser executado em todas as suas bases de código, inclusive lidando com diferentes tarefas em paralelo. Archon lida com toda a lógica complexa nos bastidores para tornar isso possível. Então,
+
+neste vídeo, quero falar sobre o que torna Archon tão poderoso. Quero mostrar a vocês como começar a usar e até mesmo dar algumas ideias de coisas que vocês podem fazer com isso. É uma ferramenta muito poderosa. Na verdade, é difícil para mim explicar tudo em apenas um vídeo, mas muito mais conteúdo sobre Archon estará disponível em breve. Assim, a ideia principal do Archon é que você pode codificar seu processo de desenvolvimento como um fluxo de trabalho, independentemente de qual seja. Portanto,
+
+incluirei um link para este repositório na descrição. Recomendo fortemente que você experimente o Archon hoje mesmo. É muito fácil começar a usar. Mostrarei isso a vocês daqui a pouco. Mas eu tenho um exemplo aqui no início do arquivo readme de como é um fluxo de trabalho do Archon. Assim, cada
+
+fluxo de trabalho é apenas uma combinação de nós, onde um nó é um prompt que enviamos para uma sessão de agente de codificação ou um comando determinístico que queremos invocar. Porque às vezes queremos garantir que certas coisas aconteçam, como a criação ou validação de contexto, e não queremos deixar isso a cargo do agente de codificação, pois ele pode se esquecer de fazê-las. Então, queremos planejar, implementar tarefas em um ciclo, executar os testes, fazer uma revisão e até mesmo adicionar uma etapa de aprovação humana para que possamos considerar nosso feedback. Podemos nos integrar aos fluxos de trabalho do Archon, se quisermos, e finalizar com uma solicitação de pull request. E o Archon vem com uma habilidade que explicarei em breve . Então, basta dizermos algo como "use o Archon
+
+para criar esse recurso", ele saberá automaticamente o fluxo de trabalho a ser usado, o invocará para nós e teremos os registros para que possamos monitorar o fluxo de trabalho ao longo do processo . O Archon também vem com uma série de fluxos de trabalho pré-configurados que irão aprimorar imediatamente seu fluxo de trabalho de codificação agentiva. Corrigir problemas no GitHub, criar solicitações de pull request a partir de ideias. Temos comandos de validação e revisão de pull requests, inclusive um para ajudar você a criar PRDs completos com intervenção humana. Portanto, há muitas coisas para você usar e é muito fácil criar seus próprios fluxos de trabalho personalizados também. Vamos abordar tudo isso
+
+neste vídeo. Vou te dar um ponto de partida suficiente para você mergulhar de cabeça no Archon. E se você quiser se aprofundar ainda mais, também farei uma transmissão ao vivo neste sábado, às 9h da manhã, horário central. Então venha fazer parte disso também, porque vamos nos aprofundar bastante na criação de fluxos de trabalho e na execução deles em paralelo, fazendo muitas coisas interessantes. Mas por agora, quero dar a vocês uma boa visão geral do Archon, por que ele é importante, para onde estamos caminhando com os mecanismos de controle de agentes e, em seguida, abordaremos o guia de configuração. Então, quero começar
+
+falando sobre a evolução que vimos e que nos trouxe até a engenharia de aproveitamento de recursos . Então, a engenharia ágil, que estava em alta entre 2022 e 2024, era sobre como incentivar os mestres em Direito a obterem o melhor resultado possível. E então isso evoluiu para a engenharia de contexto, que se concentra em como podemos criar o contexto perfeito para um único agente, para que ele possa lidar com um conjunto maior de tarefas. Fornecemos todo o contexto necessário e nada mais. E agora isso evoluiu para a engenharia de chicotes (harp engineering), onde lidamos com muitas sessões diferentes de agentes de codificação, todas interligadas por meio de um chicote. Portanto, até este ponto,
+
+tudo o que fizemos aqui se refere a um único mestrado em direito (LLM) ou a um único agente. Agora estamos encadeando sessões de agentes de codificação para lidar com conjuntos de trabalho muito maiores . Então, talvez você já tenha ouvido falar do circuito Ralph, ou talvez a Anthropic tenha desenvolvido alguns sistemas de segurança de código aberto. Existem muitos tipos de arreios disponíveis, mas o problema é que eles não são feitos sob medida para você. Talvez seja um bom ponto de partida ou útil para criar uma prova de conceito, mas o que o Archon realmente permite é criar sua própria estrutura personalizada, abrangendo todo o seu ciclo de vida de desenvolvimento de software. E os
+
+cintos de segurança são muito importantes. São as ferramentas, os comandos, o encadeamento de diferentes agentes de codificação, tudo para ampliar as capacidades de um único modelo de linguagem de grande porte. E isso é realmente importante agora porque Claude está prestes a lançar o Mythos, mas ele é voltado para uso corporativo. Assim como nós, consumidores, não temos a menor chance de poder usar o Mythos para tudo. Mas o que podemos fazer é construir um sistema de suporte em torno do Opus para torná-lo mais poderoso do que o Mythos por si só. E isso
+
+está comprovado. Existem estudos que mostram que, se utilizarmos um modelo de linguagem extenso apenas para criar código, a taxa de aceitação de pull requests é de apenas 6,7%. Mas se criarmos um arnês, como o Ralph Loop, mas provavelmente mais personalizado e melhor, podemos atingir uma taxa de aceitação de relações públicas de quase 70%. E eu não quero me aprofundar muito no estudo aqui, mas a questão é que podemos aprimorar os modelos drasticamente criando uma estrutura que incorpora validação e um tipo especial de curadoria de contexto. E foi exatamente isso que a Stripe fez com o Stripe Minion. Eu já falei sobre isso no meu
+
+canal, mas a Stripe envia 1.300 solicitações de pull request geradas exclusivamente por IA toda semana. E eles fizeram isso construindo seu fluxo de trabalho de codificação de IA, sua curadoria de contexto, sua validação, aplicando isso em diferentes etapas do seu fluxo de trabalho. Então eles realmente construíram algo parecido com o Archon, mas não é de código aberto, certo? Você não pode usá-lo da mesma forma que usa o Arconte. E com o vazamento do código-fonte do Claude
+
+, descobrimos que até mesmo a Anthropic está se apoiando muito mais em estruturas com equipes de agentes e em recursos que estão sendo desenvolvidos em torno de subagentes. Atualmente, 40% da base de código deles é composta apenas de código para chicotes de fios . Isso demonstra a importância do assunto no momento . E Archon, ele se sobrepõe ao código de Claude e ao Codex. Assim, o antigo Archon era mais uma ferramenta integrada à codificação de agentes. Foi por isso que se
+
+tornou irrelevante, porque esses agentes de codificação construíram tudo isso sozinhos para gerenciamento de tarefas e recursos. Você sabe do que estou falando se já usou o antigo Archon. Mas agora o novo Arconte está acima dos agentes de codificação e os orquestra. Então o problema é que, antes, você estava lidando com o controle da IA. Sim, você tem suas habilidades e comandos e está executando fluxos de trabalho, mas ainda tem todo o seu processo onde executa diferentes habilidades e comandos, e precisa se lembrar do que vem a seguir, e precisa iniciar a revisão de código após a implementação.
+
+Mas agora você pode agrupar todo o seu processo em um fluxo de trabalho Archon. Defina uma vez, execute para sempre, reutilizável em diversos projetos. Você também pode escolher onde inserir o contexto. Por exemplo, talvez você tenha uma habilidade que só precisa durante a etapa de validação, ou um servidor MCP que só deseja durante o planejamento. Com o Archon, temos esse nível de controle por nó. E, assim como
+
+no exemplo que dei no arquivo readme, aqui está um exemplo de como ir do planejamento até a abertura de um pull request. Este é o tipo de coisa que você pode construir com Archon. E acho que aqui fica bem claro como estamos construindo confiabilidade por meio de etapas determinísticas, aplicando validação em determinadas etapas do processo e aprovações humanas. Então, temos o nosso plano aqui. Podemos até mesmo construir isso em um loop onde o agente cria o plano e então fornecemos feedback, e continuamos em um loop até chegarmos à etapa de codificação. E
+
+fazemos isso em uma nova janela de contexto. É sempre recomendável realizar o planejamento e a implementação em sessões de codificação diferentes para eliminar qualquer viés. E depois da codificação, passamos para os testes, e executamos isso todas as vezes. Novamente, não queremos depender do agente de codificação para se lembrar de fazer os testes o tempo todo . E então tentamos novamente e corrigimos quaisquer problemas que surjam. Caso contrário, passamos
+
+para a etapa final de aprovação humana. Quando tudo parecer bem, abrimos o pedido de pull request. Este é apenas um exemplo de como você pode aplicar a codificação agentiva. Mas haverá diferenças dependendo se você estiver corrigindo bugs, refatorando ou criando um novo recurso. Todas essas coisas você pode incorporar ao Archon. E o grande segredo
+
+aqui é o segredo híbrido. É isso que torna o Stripe Minion tão poderoso. Existem certas etapas do fluxo de trabalho que não queremos que o agente de codificação decida. Às vezes, queremos selecionar o contexto de uma maneira específica ou executar nossos testes de uma maneira específica. Temos nós para isso que podemos integrar aos fluxos de trabalho do Archon. Mas, é claro, a maior parte
+
+do fluxo de trabalho ainda será conduzida por nossos comandos e habilidades, apenas enviando instruções para nossos agentes de codificação. É claro que oferecemos suporte para tudo isso, então você pode pegar seus comandos e habilidades existentes, tudo, e integrar diretamente ao Archon. Espero que você consiga entender por que isso é tão poderoso, construir esse tipo de arnês por conta própria. Então, dito isso, agora quero apresentar o guia para você, mostrando como configurar e executar o Archon usando esses fluxos de trabalho em menos de 5 minutos. Agora, instalar o Archon é incrivelmente fácil, pois podemos usar nosso agente de codificação para nos guiar por todo o processo. Basta
+
+clonar o repositório, abrir o Claude e pedir para ele configurar o Archon. Porque irá carregar automaticamente uma habilidade que temos aqui na base de código, que o guiará por todo o processo. E vou fazer isso agora mesmo com você, só para mostrar como é fácil. Podemos fazer isso em menos de 5 minutos. Então, vou usar este primeiro comando para clonar o repositório e, obviamente, precisamos abrir nosso agente de codificação neste repositório para que possamos carregar a habilidade. Então, vamos mudar de diretório
+
+e depois abrir o Claude. Pronto . Então agora, no código Claude, eu simplesmente digo para configurar o Archon. Isso é tudo o que você precisa fazer. E dê uma olhada nisso. Veremos
+
+em instantes, a habilidade Archon será carregada e, em seguida, iniciará o processo em que nos fará todas as perguntas necessárias para configurar nossas credenciais e validar se o Archon está funcionando em nossa máquina. Primeiro, o Archon vai verificar se temos os pré-requisitos, incluindo o Bun, e o instalará caso ainda não o tenhamos . Em seguida, pergunta com qual repositório queremos usar o Archon inicialmente. Portanto, é importante que você adicione seu próprio projeto, e não o repositório do Archon, porque queremos usar os fluxos de trabalho do Archon em um repositório de destino. E não se preocupe, é super fácil adicionar mais projetos ao Archon depois. Então, apenas para esta
+
+demonstração, tenho um aplicativo de bate-papo do YouTube no qual executarei alguns fluxos de trabalho do Archon. O caminho para este repositório foi clonado localmente e copiado para cá. Então, vou escolher a opção número dois, que é especificar um caminho local. Então, vai me perguntar, sabe, qual é o caminho? Por favor, cole isso. Então, vou colar aqui. E
+
+então, isso será registrado como nosso primeiro projeto registrado no Archon. E, daqui para frente, podemos adicionar qualquer projeto ao Archon simplesmente executando um fluxo de trabalho lá pela primeira vez ou diretamente na interface web. Mostrarei isso a vocês daqui a pouco. Em seguida, pergunta quais plataformas eu quero configurar. Portanto, a CLI está incluída por padrão. Você pode executar o Archon
+
+através da CLI; peça ao seu agente de codificação para fazer isso. Mas também podemos executar no GitHub. E então, poderíamos usar o Telegram, o Slack. Na verdade, vou instalar vários desses agora mesmo . Existem diversas interfaces diferentes para interagir com o Archon.
+
+Em seguida, enviarei minha resposta aqui. Pronto. E agora, vamos aprender a configurar as credenciais para cada uma de nossas plataformas. Em seguida, após o Archon instalar a CLI global, como fez aqui, ele nos guiará por um assistente de configuração para definirmos nossas credenciais para quaisquer outras plataformas que escolhermos, como GitHub ou Slack. Precisamos fazer isso em uma janela diferente, porque não queremos enviar nossas chaves de API diretamente para o Claude Code. Portanto, será
+
+iniciado outro processo de terminal para que possamos inserir nossas chaves, em vez de recorrer a um agente de codificação. Assim, o assistente deverá iniciar automaticamente e abrir outro terminal também automaticamente. No entanto, para determinados sistemas operacionais, ou se você estiver tentando executar o Archon em um VPS, provavelmente terá que abrir uma nova sessão manualmente. Então, basta abrir um novo terminal e executar o comando de configuração do Archon . Portanto, o Archon agora é um comando reconhecido globalmente, porque instalamos a CLI. Então, isso vai funcionar
+
+automaticamente. No meu caso, vou simplesmente voltar ao terminal que apareceu automaticamente. Assim, podemos escolher nosso banco de dados. Por padrão, o SQLite é a opção mais fácil. Ou, se preferir, você pode configurar o Postgres. Então,
+
+vou usar o SQLite. Em seguida, pergunta qual assistente de codificação de IA você deseja usar. Então, neste momento, apoiamos principalmente o Claude. Estamos quase terminando o suporte ao Codex e, posteriormente, queremos adicionar outros assistentes de programação, como o Pi Agent SDK e o Open Code. Então, eu concordo com o Claude. Então, vou
+
+usar a barra de espaço para selecionar e depois pressionar Enter para confirmar. E então, como faço para me autenticar com Claude? Bem, eu só quero usar minha assinatura da Anthropic. Podemos usar nossa assinatura da Anthropic desde que seja um aplicativo executado localmente usando o SDK do Agente Claude. E esse é o caso de Archon. Então, vou usar minha
+
+autenticação global. Vou apenas pressionar Enter aqui. A quais plataformas quero me conectar? Então, vou selecionar GitHub, Telegram e Slack. Então, ele vai me pedir as credenciais para isso. E é aqui que o sistema
+
+irá guiá-lo na obtenção das chaves de API para cada uma delas. Assim, para cada uma das plataformas que você selecionar, haverá instruções que o guiarão na obtenção das suas chaves para cada aplicativo. Então, vou passar por isso rapidamente. Você pode levar o tempo que precisar para pegar as chaves por conta própria.
+
+Tudo bem. Depois de configurar todas as suas credenciais, será perguntado se você deseja instalar a skill Archon no seu projeto. E eu recomendo muito fazer isso, porque então, se abrirmos o Claude Code em nossa outra base de código, podemos usar a CLI do Archon para iniciar fluxos de trabalho automaticamente. Porque aí, se tivermos o Claude aberto, podemos simplesmente dizer: "Use a CLI do Archon para invocar qualquer fluxo de trabalho para lidar com uma solicitação de pull, um problema ou algo do tipo." E saberá imediatamente como carregar a habilidade e saberá exatamente como usar a CLI do Archon. Novamente, é importante que
+
+qualquer CLI tenha uma skill associada, para que nosso agente de programação saiba como usá-la. Então, vou trazer isso para você. Ele pede o caminho. Então, vou simplesmente usar o caminho que copiei anteriormente para o repositório. Basta colar aqui mesmo, para que o programa saiba onde copiar. Em seguida,
+
+perguntará se você deseja um diretório de documentação diferente do padrão . Se você tiver outros documentos que deseja carregar no Archon, provavelmente não precisa se preocupar com isso agora. É algo em que estamos trabalhando atualmente. Então, não farei nada por lá . E pronto. Nossa instalação está
+
+completa. Então, o que fazemos aqui é voltar à primeira sessão, onde dissemos pela primeira vez: "Preparem o Arconte". E isso está escrito aqui. Então, diz, sabe, volte aqui, complete a configuração ali, e me avise quando terminar. Então, eu só vou dizer: "Feito." E então,
+
+agora que configurei todas as minhas credenciais, o programa vai verificar se tudo está funcionando corretamente. Então, ele testará as conexões. Ele testará até mesmo a execução de um fluxo de trabalho por meio da CLI do Archon. Voltarei assim que isso estiver concluído. Tudo bem. Portanto, isso confirma que
+
+nossas credenciais estão em ordem, sem que eu as tenha lido de fato, é claro. Em seguida, listamos todos os fluxos de trabalho padrão do Archon para garantir que estejam disponíveis. Esses são todos os fluxos de trabalho que reunimos e que você pode usar imediatamente para corrigir problemas no GitHub, executar um loop de teste e criar um PRD. Já incorporamos muito valor nisso desde o início . E, claro, também executa um fluxo de trabalho. Então, ele executa nosso comando
+
+básico de assistência do Archon apenas para garantir que a CLI do Archon esteja funcionando e que estejamos prontos para usá-la em qualquer repositório que desejarmos. E então, apresenta um resumo no final. E veja como é fácil para nós começarmos a usar o Archon agora mesmo. Então, basta abrirmos o Claude Code em nosso repositório de destino. Você pode fazer isso em qualquer repositório que desejar, pois, lembre-se, quando executamos a CLI do Archon em um repositório pela primeira vez, ela o registra automaticamente no Archon.
+
+Então, basta copiar a habilidade Archon para o repositório desejado, executar o Claude lá e, em seguida, podemos dizer: "Use Archon para, por exemplo, corrigir este número de problema." Ou, "Ajude-me a criar um PRD." Você pode usar o fluxo de trabalho que preferir e criar o seu próprio, como mostrarei em breve. Então, como escolhi meu aplicativo de bate-papo padrão do YouTube como meu repositório de integração, copiei a skill Archon. Então, ele sabe como usar a CLI do Archon quando eu peço. Então,
+
+vou abrir o Claude Code diretamente neste repositório, e já estamos prontos para usar um fluxo de trabalho. Então, vou usar o Archon para me ajudar a corrigir um problema no GitHub. Assim, ao consultar a lista de problemas do meu repositório, você pode ver que existem várias opções com as quais tenho que trabalhar. Bem, digamos que eu queira lidar apenas com a questão número um. Então, tudo o que eu preciso fazer é dizer: "Use o Archon para corrigir o problema número um no GitHub." É isso aí. Não preciso
+
+fornecer mais contexto, pois o programa saberá carregar a habilidade Arconte, encontrar o fluxo de trabalho correto para a tarefa e, em seguida, invocá-la. E então, nosso código Claude pode simplesmente monitorá-lo em segundo plano. Então, é isso. Ele usou a CLI do GitHub para visualizar o problema e obter contexto, carregou a skill Archon e decidiu: "Ok, devo usar o fluxo de trabalho de correção de problemas do GitHub do Archon." É uma das configurações padrão que incluímos no pacote.
+
+Aliás, é um fluxo de trabalho muito poderoso, pois realiza investigação, correção e validação completas antes de criar a solicitação de pull request. E o resultado final é que teremos uma solicitação de pull request com a implementação final do fluxo de trabalho Archon. Portanto, podemos ver aqui que, no Claude Code, ele está sendo executado como um processo em segundo plano. Assim, podemos rastrear os registros aqui. Podemos sempre pedir ao Claude Code para nos dar uma atualização sobre o andamento do fluxo de trabalho, ou podemos visualizar o fluxo de trabalho na interface web enquanto ele está sendo executado. OK. Portanto, aqui, estamos nos
+
+concentrando em usar a CLI para executar um fluxo de trabalho do Archon. Essa é a maneira mais conveniente. Mas também temos uma interface web. Se você deseja visualizar melhor o que está acontecendo com seus fluxos de trabalho, também podemos visualizar os registros dos fluxos de trabalho executados com mais facilidade por meio da CLI. Então, vou voltar ao terminal onde eu tinha o repositório Archon aberto com o Claude Code. Então, tudo o que eu preciso fazer,
+
+se quiser iniciar o back-end e o front-end do Archon, é pedir ao meu agente de codificação para fazer isso. É muito fácil. Então, posso dizer: "Ligue a parte frontal e a parte traseira do Archon." E , com base na análise, o sistema entenderá os comandos a serem executados e, em seguida, fará com que tudo funcione como processos em segundo plano. Então, dê uma olhada nisso. Se eu acessar o navegador
+
+e digitar a porta 5178, certo? Porque é ali que diz que está rodando agora, eu consigo ver minhas conversas. Consigo ver os fluxos de trabalho que estão ativos no momento. Então, se eu acessar o painel aqui, posso ver que está usando o fluxo de trabalho de correção de problemas do GitHub do Archon. Posso consultar os registros para ver o que está acontecendo no momento. Então, este é o nó que acabamos de
+
+concluir. No momento, estamos investigando o problema. Então, começamos com uma pesquisa na internet e agora estamos investigando. Podemos ver todas as chamadas de ferramentas. Então, todos os registros do Claude Code, caso você queira analisar detalhadamente todas as ações individuais que ele executa ao longo desse fluxo de trabalho do Archon.
+
+Assim, cada um dos nós aqui representa uma ação determinística, como um comando bash, ou uma sessão com o Claude Code. E, novamente, em nossos fluxos de trabalho do Archon, podemos determinar, ao passar de um nó para outro, se queremos iniciar uma nova sessão com Claude Code ou continuar a conversa. Temos muita flexibilidade no gerenciamento de tokens, garantindo que nosso contexto permaneça enxuto quando lidamos com nossos agentes de codificação. Uma das grandes novidades que Archon nos oferece e que nos faltava antes. Tudo bem. Enquanto
+
+aguardamos a conclusão deste fluxo de trabalho, que criará uma solicitação de pull request no final, quero mostrar a vocês como ela se parece no YAML. Porque, lembre-se, todos os fluxos de trabalho no Archon são definidos simplesmente como arquivos YAML. É muito fácil aprimorar os que já temos no Archon, e até mesmo criar os seus próprios. Essa é uma das últimas coisas que vou mostrar neste vídeo. Assim, dentro da pasta .archon no
+
+repositório Archon, temos todos os fluxos de trabalho padrão. Esses recursos também estão incluídos na CLI. Assim, quando você executar a CLI a partir de qualquer outro repositório, ela terá acesso automático a esses repositórios. Então, dê uma olhada nisso. Temos todos esses fluxos de trabalho diferentes. A versão que
+
+estamos usando agora é a Archon fix GitHub issue. E [bufa] então, temos uma descrição do fluxo de trabalho. E isso é importante, porque é exatamente como as habilidades de Claude Code, onde a descrição é o que primeiro damos a Claude Code. Tipo, "Ei, aqui está um fluxo de trabalho do Archon que você pode usar quando o usuário pedir especificamente para você corrigir um problema no GitHub." Certo?
+
+Não queremos carregar todo o fluxo de trabalho no contexto para o agente de codificação. Isso é demais. Basta esta breve descrição inicial. Assim, ele usa isso para determinar se deve analisar e executar todo esse fluxo de trabalho. Podemos definir o fornecedor antecipadamente. Novamente, em breve daremos suporte a mais funcionalidades
+
+, incluindo o modelo padrão usado para cada um dos nós, e então teremos a lista de nós. Este é o passo a passo que vamos seguir. Portanto, exatamente o que defini no documento YAML, podemos ver aqui mesmo na interface web. Vemos a execução completa, todos os diferentes nós que temos, as diferentes ramificações e decisões que podem ser tomadas. Tudo isso é uma visualização direta do que temos aqui no arquivo YAML.
+
+Então, especificamente para este fluxo de trabalho, primeiro vamos extrair o número da ocorrência. Então, com base no comando inserido neste fluxo de trabalho, que é como executar um subagente no Claude Code, vamos obter o número da ocorrência e, em seguida, vamos classificar a ocorrência. Trata-se de um bug que precisa ser corrigido ou de uma funcionalidade que precisamos implementar? Porque isso vai determinar o que vem a seguir, certo? Precisamos investigar o problema ou planejar uma nova funcionalidade? E aqui temos o comando
+
+que estamos enviando para o modelo especificamente para esta etapa. E uma das coisas mais importantes, eu sei que o consumo de tokens é algo muito relevante agora, especialmente por causa dos limites de taxa com a Anthropic. Uma das funcionalidades mais poderosas do Archon é a possibilidade de especificar o modelo que desejamos usar para cada nó individualmente. Assim, certos nós, como os de classificação, não precisam de muita capacidade de raciocínio. Assim, podemos tornar o processo muito mais eficiente em termos de tokens e muito mais barato, simplesmente usando o Haiku em nosso modelo.
+
+E então entramos na fase de pesquisa. Neste caso, vamos usar o modelo padrão. Portanto, não especificamos isso aqui; significa apenas que será usado o modelo padrão do Sonnet. E não temos o prompt na linha, na verdade estamos usando um comando. Assim, para cada fluxo de trabalho presente nesta pasta, os comandos são como extensões que executamos em determinados nós. Por exemplo, temos
+
+aqui o comando de pesquisa na web Archon. Então, vou abrir isso rapidinho. É como comandos ou habilidades no Claude, onde é apenas um prompt mais longo que vamos invocar especificamente para este nó . Então, fazemos nossa pesquisa na web e depois investigamos se é um bug ou se é uma solicitação de recurso. Essa é a primeira decisão que podemos ver aqui. Portanto, no
+
+caso do fluxo de trabalho que acabamos de invocar, ele seguiu o caminho da investigação porque, analisando o problema em questão, trata-se definitivamente de um problema que estamos resolvendo, e não de um novo recurso que estamos adicionando. Então, não que eu precise entrar em detalhes super aprofundados para cada nó aqui, mas estou apenas tentando mostrar a ideia de como podemos pegar um fluxo de trabalho bastante abrangente e transformá- lo neste processo único que executamos com o Archon. É mais do que simplesmente escrever um código. Consiste em classificar, investigar ou planejar, implementar, validar e, por fim, criar a solicitação de pull request, além de realizar revisões adicionais posteriormente. Assim, ao término desse fluxo de trabalho, temos muito mais confiança de que a solicitação de pull request está realmente pronta para revisão e fusão.
+
+Sim, é necessário um bom número de tokens para percorrer todas essas etapas, mas é por isso que priorizamos a possibilidade de especificar o modelo em cada etapa do processo. Aqui, podemos usar o Haiku para muitas dessas coisas . Então, estamos basicamente fornecendo um conjunto de orientações sobre o agente de codificação. É por isso que chamamos de arnês, certo? É como se fosse uma espécie de estrutura que engloba várias sessões diferentes do Claude Code para trabalharem juntas na resolução de um problema no GitHub. E temos muitos
+
+fluxos de trabalho incríveis disponíveis para você usar imediatamente, e qualquer coisa que não esteja aqui, você pode criar por conta própria. Assim, temos a ferramenta de desenvolvimento adversarial como um fluxo de trabalho Archon. Mostrei isso em uma transmissão ao vivo, cujo link vou deixar aqui. Temos um fluxo de trabalho abrangente para revisão de relações públicas. Temos um para te ajudar a criar problemas.
+
+Assim como na investigação de um problema, criando uma issue no GitHub, da ideia ao PR, este processo é bastante abrangente. Temos uma com intervenção humana. Na verdade, temos humanos envolvidos no processo com Archon. Assim, podemos pausar em qualquer nó para solicitar sua contribuição. Então, temos esse PRD interativo, onde você poderá idealizar, com a ajuda de um agente de codificação, a especificação inicial de um novo aplicativo que você deseja criar. Implementamos
+
+o loop Ralph como um fluxo de trabalho Archon. Nossa, já tem tanta coisa aqui. Temos até um fluxo de trabalho Archon para ajudar você a criar mais fluxos de trabalho. Usaremos isso daqui a pouco . Então, sim, literalmente, não importa o que você queira fazer com seus assistentes de codificação de IA, não importa quantas sessões de agentes de codificação você precise, você pode agrupá-las em um fluxo de trabalho Archon, adicionando confiabilidade por meio de nós determinísticos, como quando você sempre quer executar a validação em algum momento ou quando sempre quer organizar o contexto dessa maneira. Com Archon, o céu é o limite para o que
+
+você pode construir. Muito bem, então vou continuar mostrando algumas maneiras bem legais de usar o Archon. Vou continuar usando o fluxo de trabalho de correção de problemas do GitHub porque é o que eu mais uso, mas existem muitos outros fluxos de trabalho incríveis que você pode usar. Aliás, você pode simplesmente perguntar aqui na interface web quais projetos e fluxos de trabalho você tem? Assim, o agente Archon na interface do usuário é, na verdade, algo especial. Ele contém todo
+
+o contexto em torno do Archon, como nossos projetos registrados e fluxos de trabalho, inseridos no início da conversa. Aliás, na interface web, você pode clicar em "Adicionar projeto" para fornecer um URL do GitHub ou um caminho local, caso queira registrar mais projetos. Então, neste momento , este é o meu único projeto registrado, como você pode ver no menu suspenso aqui. E aqui estão todos os fluxos de trabalho disponíveis, incluindo quaisquer fluxos de trabalho personalizados que você criar, mas estes são todos os fluxos padrão fornecidos com o Archon. Então, agora, por exemplo, posso dizer para corrigir um problema no GitHub e, se eu for à lista de problemas aqui, veremos que estamos lidando com este problema e com a outra tela. Então, vamos fazer apenas o
+
+número três. Então, vou fazer o número três para o projeto de bate-papo do YouTube. Portanto, nem precisamos mencionar o nome exato do repositório; o sistema consegue deduzir, com base no que dissemos e no contexto carregado, qual fluxo de trabalho iniciar. Então, dê uma olhada nisso. Ele invocou o fluxo de trabalho de correção de problemas do GitHub do Archon especificamente em nosso aplicativo de bate-papo do YouTube . Portanto, ele realiza todo o
+
+roteamento para nós a partir da interface web. E podemos acessar os registros, a bela tela. Esta é exatamente a mesma visualização que vimos anteriormente, mas desta vez a acessamos a partir da interface web. Muito legal. E outra coisa muito poderosa que quero mostrar rapidamente é que podemos invocar uma infinidade de fluxos de trabalho em paralelo. Então, por exemplo, estou
+
+aqui de volta com o Claude aberto no meu aplicativo de bate-papo do YouTube, e posso simplesmente dizer para usar o Archon para corrigir os problemas 5, 7, 8, 9, 10 e 11 do GitHub. Então, os últimos seis daquela lista que ainda não abordamos, eu só quero resolver todos eles ao mesmo tempo. Assim, podemos invocar o Archon diretamente do nosso projeto, ou podemos ter o Claude Code aberto dentro do nosso repositório Archon, e podemos apontá- lo para qualquer base de código, bastando fornecer o caminho. E lembre-se, o Archon será registrado automaticamente nesse momento. Então, agora ele usa a CLI do Archon. Olha só
+
+isso! Seis vezes seguidas, todas elas estão sendo executadas como processos em segundo plano , então podemos ver isso aqui mesmo, e podemos continuar monitorando para nós, ou até mesmo nos consultar durante o processo, como, por exemplo, nos fornecer uma atualização de status. Assim, podemos visualizá-lo na interface do usuário. Por exemplo, se eu quisesse voltar à interface do usuário agora, poderíamos ver que todos esses fluxos de trabalho estão em execução, ou poderíamos simplesmente deixar o Claude Code verificando constantemente para nós. Poderíamos, por exemplo, usar o comando de loop de barra no Claude Code para dizer, sabe, a cada 10 minutos, verificar os fluxos de trabalho e reiniciá-los se houver alguma falha ou algo do tipo, o que geralmente não acontece. Mas sim, todos os seis
+
+fluxos de trabalho estão em execução, progredindo pelas fases iniciais do DAG. Então, sim, a maioria deles está na etapa de classificação agora, tentando descobrir se o problema é uma nova funcionalidade ou um problema que precisa ser resolvido. Muito legal. Muito bem, estou de volta e temos os pull requests para todas as nossas execuções do fluxo de trabalho Archon. Assim, podemos vê-los todos completos também na interface web . Podemos acessar os registros para
+
+ver o que aconteceu em cada etapa do processo. E, claro, podemos ir ver o resultado final. Ao acessar o repositório pela primeira vez, clico em "pull requests" e pronto, lá está. Temos oito novas solicitações de pull request abertas, cada uma resolvendo um dos problemas que solucionávamos com um fluxo de trabalho Archon. Muito bem, a última coisa que quero mostrar rapidamente aqui, e vou detalhar muito mais isso na transmissão ao vivo do Archon , é como podemos criar nossos próprios fluxos de trabalho personalizados do Archon. Sim,
+
+existem muitos fluxos de trabalho poderosos que oferecemos como padrão , alguns dos quais já mostrei neste vídeo, mas sempre haverá a oportunidade de criar o seu próprio, algo totalmente personalizado . Ou, se preferir, você pode usar outro framework, como GSD ou B-MAD, e integrá-lo ao Archon, ou adotar uma estratégia como Beads para memória. Enfim, você pode criar um fluxo de trabalho personalizado para qualquer coisa que desejar. E você pode aproveitar esse fluxo de trabalho do construtor de fluxos de trabalho que temos. Eu sei que é muito metalinguístico, mas tudo o que você precisa fazer é abrir o Claude Code no repositório do Archon e simplesmente dizer: "use o workflow builder workflow to help me make a Archon workflow". Se eu
+
+ganhasse um centavo cada vez que eu dissesse " fluxo de trabalho" neste vídeo, eu seria um homem rico. Mas basta dizer isso, e a habilidade Arconte será carregada automaticamente e, em seguida, fará perguntas. Isso lhe dará a oportunidade de descrever o fluxo de trabalho que deseja criar e, em seguida, o construtor completo será executado para gerar a estrutura YAML. Assim, você poderá executar o fluxo de trabalho imediatamente em qualquer base de código. Por exemplo, algo divertido que pensei em experimentar agora para este vídeo é criar um fluxo de trabalho Archon que essencialmente se baseia na ideia das contas. Então, miçangas, é bem legal.
+
+É um repositório de código aberto que fornece memória estruturada persistente para agentes de codificação. Então, essencialmente, quero incorporar a ideia que temos aqui em um fluxo de trabalho Archon. Então, vou copiar este repositório, colar aqui, acessar minha ferramenta de reconhecimento de voz e dizer: " Quero criar um fluxo de trabalho Archon que incorpore beads". Basicamente, trata-se de pegar todas as ideias das miçangas de uma forma simples. Então, quero que você pesquise neste repositório, entenda como ele funciona e, em seguida, construa isso como um fluxo de trabalho Archon para que possamos usar beads para criar qualquer novo recurso em qualquer base de código. Então, é isso. Vou enviar isso
+
+, e o programa fará algumas pesquisas e análises para mim, e então, obviamente, invocará este fluxo de trabalho para criar o YAML final. Então, mostrarei isso a você quando estiver pronto. E pronto. Nosso fluxo de trabalho completo já está criado. Começa com a exploração e, em seguida, decompõe a solicitação de recurso em tarefas individuais.
+
+Implementamos isso em um loop com acompanhamento do progresso, validando tudo também no final. Então, peguei muitas ideias do Beads e construí um arnês Archon completo em torno disso. Que legal! Também podemos visualizar todo o fluxo de trabalho na interface do usuário. Estamos trabalhando em um construtor de fluxos de trabalho, algo semelhante ao N8N, mas para programação de IA. Muito legal. Há uma infinidade de
+
+coisas incríveis em que estamos trabalhando ativamente agora com a Archon. Está apenas em fase beta. Provavelmente você encontrará alguns bugs ao testar. Muitas novidades serão adicionadas nos próximos meses . É o projeto que mais me apaixona.
+
+Então, por favor, experimente. Acho que você vai gostar muito. E também, adoraria ver você na transmissão ao vivo do Archon neste sábado, às 9h da manhã, horário central. Vou explorar em detalhes a criação e execução de fluxos de trabalho e mostrar a vocês todos esses recursos incríveis do Archon. Então, espero te ver lá. Caso contrário, se você gostou
+
+deste vídeo e deseja ver mais conteúdo sobre Archon, programação de IA e ferramentas para agentes, agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo.

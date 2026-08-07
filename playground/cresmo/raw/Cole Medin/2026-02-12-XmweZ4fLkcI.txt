@@ -1,0 +1,144 @@
+---
+video_title: "I Built a Safer OpenClaw Alternative Using Claude Code"
+video_id: XmweZ4fLkcI
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XmweZ4fLkcI
+video_date: 2026-02-12T01:00:43+00:00
+video_description: |
+  OpenClaw is the fastest-growing open-source AI project in recent memory - 185,000 GitHub stars already! A legitimately impressive personal AI assistant that can manage your life and you can talk to it anywhere. But it has serious security issues - the docs literally say "there is no perfectly secure setup."
+  
+  So I took the core genius ideas from OpenClaw - the memory system, the proactive heartbeat, the multi-platform adapters, the extensibility through skills - and I built my own version using just Claude Code. It took me two days. 
+  
+  The result is simpler, more secure, and tailored exactly to what I need. I'll introduce you to how I did this now and more content on this coming soon!
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - The Dynamous Agentic Coding Course is now FULLY released - learn how to build reliable and repeatable systems for AI coding: 
+  https://dynamous.ai/agentic-coding-course
+  
+  - The Excalidraw diagram I cover in this video:
+  https://drive.google.com/file/d/1s97vx40pWb2kSH-rfdbzoqIESbX9lKg5/view
+  
+  - Second Brain Skills Collection (open source):
+  https://github.com/coleam00/second-brain-skills
+  
+  - OpenClaw Repository:
+  https://github.com/openclaw/openclaw
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Sources for the OpenClaw security issues:
+  
+  - CVE-2026-25253 - One-click RCE via WebSocket origin bypass (CVSS 8.8, discovered by Mav Levin at depthfirst):
+  https://thehackernews.com/2026/02/openclaw-bug-enables-one-click-remote.html
+  
+  - depthfirst original writeup of the RCE chain:
+  https://depthfirst.com/post/1-click-rce-to-steal-your-moltbot-data-and-keys
+  
+  - CVE-2026-25157 - OS command injection in macOS SSH handling:
+  https://www.securityweek.com/vulnerability-allows-hackers-to-hijack-openclaw-ai-assistant/
+  
+  - 230-414+ malicious skills published to ClawHub registry (76 confirmed malware payloads, 91% used hybrid attacks):
+  https://www.bleepingcomputer.com/news/security/malicious-moltbot-skills-used-to-push-password-stealing-malware/
+  
+  - 42,665 publicly exposed OpenClaw instances (Censys scan: 21,000+):
+  https://www.darkreading.com/application-security/openclaw-ai-runs-wild-business-environments
+  
+  - Cisco AI Defense: "Absolute nightmare" + Skill Scanner released:
+  https://blogs.cisco.com/ai/personal-ai-agents-like-openclaw-are-a-security-nightmare
+  
+  - Researcher hijacked OpenClaw in 1 hour 40 minutes:
+  https://thenewstack.io/openclaw-moltbot-security-concerns/
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 OpenClaw - The Magical AI Assistant
+  2:10 The Major Security Risks
+  5:16 4 Core Components of OpenClaw
+  8:21 Replicating the Memory System
+  10:31 The Heartbeat & Proactive Tasks
+  11:22 Channel Adapters & Interfaces
+  12:17 Building Secure Custom Skills
+  13:38 Step-by-Step Build Process (Simple, High Level)
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Nunca vi um projeto explodir tanto quanto o Open Claw. É o assistente pessoal de IA do momento, e as pessoas estão adorando porque parece ser o primeiro agente que realmente te entende e, com o tempo, cria uma memória do que você está fazendo e das suas preferências. E é uma ferramenta totalmente de código aberto, portanto, este é o repositório do GitHub. Eles explodiram em até 185.000 estrelas. Nunca vi um repositório no
+
+GitHub com tantas estrelas. Agora ele supera até mesmo o N8N, o que para mim é simplesmente inacreditável . Mas não é segredo que existem muitos problemas de segurança com o Open Claw, tanto pela quantidade de controle que damos ao agente subjacente quanto por alguns problemas na própria base de código. Então, isso, somado à vontade de construir algo mais personalizado, me inspirou a basicamente criar minha própria versão do Open Claw, e é sobre isso que quero falar com vocês hoje, porque é mais fácil do que vocês imaginam pegar as ideias que realmente tornam o Open Claw mágico e construí-lo por conta própria. Consegui replicar todos os pontos fortes do Open Claw em apenas alguns dias. Levei apenas algumas
+
+milhares de linhas de código Python e Markdown. Então, vou falar sobre como eu fiz isso. Você pode fazer isso sozinho com bastante facilidade e, sinceramente, eu recomendo que você faça. Penso que o equilíbrio que devemos encontrar aqui é aprender com esses poderosos assistentes de código aberto que já existem, mas também construir algo nós mesmos para que possamos realmente entender e controlar a solução, personalizando-a ao nosso gosto. Já existem algumas soluções de código aberto que são versões leves e seguras do Open Claw, como o Nano Claw, mas elas não atendem a todos os requisitos que eu busco para meu assistente pessoal/segundo cérebro. É por isso que estou
+
+construindo o meu próprio. Eu não tenho um repositório para compartilhar com vocês como o Open Claw, mas isso meio que anularia o propósito deste vídeo de qualquer forma. Estou tentando dizer que você deveria construir o seu próprio. Inspire-se em outras ferramentas como o Open Claw. É isso que eu quero te mostrar como fazer agora. Já
+
+compartilhei algumas das habilidades que possuo para meu segundo cérebro. Então, tem um vídeo que eu fiz no meu canal que vou deixar o link aqui para vocês, caso queiram dar uma olhada . Compartilharei muito mais conteúdo no meu canal nos próximos meses, conforme continuo a desenvolver meu assistente. Portanto, fiquem atentos para mais novidades. Então, de qualquer forma, quero abordar rapidamente alguns desses problemas de segurança do Open Claw. Em seguida,
+
+vamos abordar os aspectos mais interessantes da ferramenta. Como podemos assumir o controle e construir nosso próprio segundo cérebro? Assim, existem dois principais tipos de problemas de segurança com o Open Claw. Primeiramente, vou me concentrar em alguns problemas de arquitetura relacionados à base de código. Recentemente, foi descoberta uma vulnerabilidade de execução remota de código com um único clique, que permite que invasores roubem todos os seus dados e chaves da sua instância do Open Claw. Tudo o que
+
+eles precisam fazer é induzir você a clicar em um único link malicioso, o que é bastante fácil, já que muitas pessoas diferentes podem clicar em links maliciosos. E depois que fizerem isso, enviarão um token de desligamento. O ataque Garra Aberta deles enviará uma ficha de desligamento de volta para o atacante. Eles podem usar isso para acessar o Open Claw da vítima . E como todas as credenciais são armazenadas em texto simples, eles agora terão acesso a todas as chaves de API e tokens dos seus adaptadores de plataforma e outros itens aos quais você concedeu acesso ao seu assistente pessoal. E
+
+também temos o problema com o Claw Hub. Este é um mercado disponível ao público onde as pessoas publicam habilidades que prometem ampliar as capacidades do Open Claw. Mas pesquisas revelaram que existem centenas de pacotes maliciosos. Então, é um conceito bonito que permite às pessoas compartilhar maneiras de tornar o Open Claw mais poderoso, mas na realidade ele se desfaz porque existem muitos sites por aí que simplesmente roubam suas chaves de API, chaves privadas de carteira e credenciais SSH. A lista continua. Porque,
+
+novamente, tudo fica armazenado em texto simples no servidor onde você está hospedando o Open Claw. E também, tenho feito muita pesquisa. Aliás, vou colocar os links para tudo isso na descrição. Mas houve um pesquisador que conseguiu invadir uma instância do Open Claw em menos de 2 horas e obter acesso a tudo que estava dentro dela. Uma coisa que eu posso dizer é que o criador do Open Claw, Peter, está fazendo um ótimo trabalho ao lidar com as questões de segurança e adicionar novos recursos ao Open Claw. Portanto, tenho
+
+esperança de que haja um bom futuro para essa ferramenta. Mas, mesmo que você resolva todos esses problemas de arquitetura, como estou mencionando, acredito que o Open Claw ainda será um pesadelo de segurança, como a Cisco afirma. E isso se deve àquela segunda linha de problemas de segurança da qual estou falando. Existe uma base de código enorme. Open Claw é bem grande. Nós não entendemos, estamos
+
+apenas executando o sistema e confiando nele, mas isso está dando muito poder aos nossos agentes. E isso, eu acho, é muito perigoso. A maioria das pessoas não está preparada para que seu agente exerça todo o poder que o Open Claw lhe confere. Por isso, defendo a criação de sua própria solução, pois assim você realmente entende e controla o que seu agente está fazendo, podendo personalizá-la exatamente para o nível de controle que precisa. Então, não me interpretem mal. Como a Cisco
+
+afirma aqui, em termos de capacidade, o Open Claw é inovador. Por isso, quero usá- lo como ponto de referência para construir o sistema de memória e a parte proativa do agente. É tudo o que os desenvolvedores de sistemas de IA pessoal desejam alcançar há anos . Mas é arriscado demais para mim. Por isso, quero aproveitar os componentes positivos e usá- los como um recurso. Então, é isso que eu quero
+
+abordar com vocês agora. Existem quatro componentes que fazem com que Open Claw pareça tão mágico. E essas são as coisas que eu reproduzi para mim mesmo. E quero manter um nível bastante elevado aqui, porque encorajo você a passar por esse processo por conta própria, e é muito, muito fácil. Assim, dentro do Open Claw, temos o sistema de memória, o heartbeat, que representa a natureza proativa do agente, temos os adaptadores de canal e o registro de habilidades. Esses são os quatro
+
+componentes principais que funcionam tão incrivelmente bem. E a melhor parte do sistema de memória é que ele é elegante, mas também extremamente simples. Tudo é baseado em Markdown. Temos o arquivo soul.md, onde o agente desenvolve sua identidade ao longo do tempo. Isso meio que transforma a
+
+sua identidade no arquivo user.md. As memórias principais são armazenadas e mantidas no arquivo memory.md. Também podemos definir o comportamento do agente em um arquivo agents.md. Isso
+
+é como as regras globais para seus agentes de codificação. E depois ficamos monitorando os registros de sessão todos os dias. E para uma melhor busca em tudo isso, também existe um banco de dados SQLite com uma implementação muito leve do rag integrada. Mais uma vez, super elegante, mas super simples. E então temos os batimentos cardíacos. Então estamos
+
+aproveitando este heartbeat.md. Este é um documento em Markdown que informa ao Open-Assistant que, sempre que for executado de forma autônoma e agendada, ele deve consultar este documento para verificar o que posso fazer por Cole neste momento que ele apreciaria. Assim, ele faz coisas por nós sem que precisemos pedir explicitamente. E este não é um conceito novo. Existem
+
+muitos agentes que implementaram isso no passado, mas o Open-Assistant, pela primeira vez, parece ser o agente que pode fazer coisas por nós que realmente apreciamos. Não se trata apenas de trabalho desperdiçado. Então, sabe, você acorda de manhã e o Open-Assistant te dá um relatório tipo: "Ok, eu redigi este e-mail e criei esta solicitação de pull no seu repositório do GitHub." E repetidamente, as pessoas dizem: "Nossa, isso é realmente muito bom. Fez exatamente o que eu queria que fizesse." E
+
+em seguida temos os adaptadores de canal. É isso que nos permite interagir com o Open-Assistant em qualquer plataforma que desejarmos. WhatsApp, Telegram, Slack, Discord. A grande vantagem é que praticamente tudo o que queremos usar está disponível imediatamente. E oferecemos suporte a threads em muitas dessas plataformas.
+
+Assim, podemos ter várias conversas em andamento com nosso Open-Assistant exatamente ao mesmo tempo. E por último, mas não menos importante, temos o cadastro de habilidades. Sei que existem problemas de segurança, como mencionei anteriormente, mas a grande vantagem é que, mesmo com um único arquivo, podemos adicionar uma nova funcionalidade para abrir o Claw. Tipo, é assim que eu quero construir interfaces de usuário, um guia para isso. Eis como isso pode me ajudar a gerar apresentações em PowerPoint. E então,
+
+podemos usar isso para nós mesmos com muita facilidade, mas também compartilhar com outras pessoas. Assim, tudo isso junto é o que nos proporciona essa experiência mágica de sentir que finalmente temos um agente de IA ultrapersonalizado. É capaz de se lembrar de nossas decisões, preferências e contexto. Ele pode verificar nossos serviços e fazer coisas por nós antes mesmo de pedirmos. Podemos interagir com ele de qualquer lugar e adicionar qualquer funcionalidade com um único arquivo.
+
+Assim, ela pode agir em nosso nome, antecipar nossas necessidades e nos conhece melhor a cada dia. E era isso que eu queria construir para mim. Então, vou mostrar aqui como incorporei cada uma dessas funcionalidades ao meu próprio segundo cérebro, começando pelo sistema de memória. E dê uma olhada nisso. Os arquivos de memória que tenho para o meu sistema são muito semelhantes aos que estão integrados ao OpenClaw.
+
+E isso foi proposital, porque o que eu fiz foi clonar o repositório localmente, peguei meu agente de codificação, que é o código Claude, apontei para lá e disse: "Veja como eles construíram o sistema de memória deles, e eu quero que você construa um para mim, adaptado à minha pilha de tecnologia para o meu segundo cérebro." E prosperou com base nesse exemplo. Deixa eu te contar, os agentes de programação funcionam muito bem quando você lhes dá bons exemplos. Portanto, trabalhar com algo simples, elegante e que funciona muito bem é o estímulo ideal para o agente de codificação. Assim, resolveu tudo para mim de uma só vez e até adaptou ao meu código . Ele usa a mesma estratégia de compatibilidade com
+
+SQLite, o Markdown é o banco de dados, e eu também adicionei o Obsidian para sincronização. Porque algo sobre o qual quero fazer um vídeo no meu canal em breve, e me digam nos comentários se vocês têm interesse , é que peguei meu segundo cérebro e o implantei em um VPS. Mas ainda quero ter uma busca local rápida quando estiver usando a CLI do Claude Code localmente. Então, estou sincronizando meu sistema de memória. Todos esses documentos em Markdown, eu os armazeno no Obsidian.
+
+Portanto, minha pilha de texto é composta por Obsidian para armazenamento, Markdown obviamente para o sistema de memória, SQLite para o banco de dados e Postgres quando faço o deploy remotamente. E então, estou usando o SDK do Agente Claude para a parte proativa do agente, sobre a qual falarei daqui a pouco. Então, essa é a minha maneira de executar código Claude a partir dos meus scripts Python. E, obviamente, o código Claude é minha principal motivação. Quero usar isso porque assim poderei usar minhas assinaturas da Anthropic. Não vou pagar
+
+centenas ou milhares de dólares por créditos de API, que, caso você não saiba, têm levado pessoas a terem suas assinaturas da Anthropic banidas por usá-la com o Open Claude. Isso viola os termos de serviço da Anthropic. Mas se estivermos usando o código do Claude diretamente no SDK do Agente Claude, e estivermos fazendo isso apenas em nosso próprio ambiente, então é totalmente permitido, mesmo que você o implante em um VPS. Portanto, construir seu próprio segundo cérebro também é muito economicamente viável. E, no caso dos batimentos cardíacos, o padrão é muito semelhante . Muito bem, Claude, veja como
+
+o batimento cardíaco foi implementado no Open Claude. Vamos construir isso nós mesmos, com nossas próprias integrações. Portanto, estou usando o SDK do Agente Claude. É uma tarefa agendada que é executada a cada 30 minutos para mim neste momento . E enviamos uma solicitação para o SDK do Agente Claude. Então, estou usando o
+
+código Claude diretamente do meu script Python. E estou instruindo o sistema a analisar minha memória, verificar os e-mails recentes que recebi, os compromissos agendados no meu calendário, minhas tarefas no Asana e, em seguida, me enviar notificações sobre qualquer coisa que precise da minha atenção. E algo em que ainda estou trabalhando é a parte mais proativa, onde o programa poderá até mesmo criar coisas para mim ou redigir e-mails em meu nome. Portanto, podemos levar isso tão longe quanto quisermos, porque temos todo o código de Claude, que está encapsulado em um script que invocamos a cada 30 minutos. Isso dá a sensação de que o agente está constantemente ativo, pensando em como pode fazer coisas por nós.
+
+E para os meus adaptadores, tenho uma versão muito simples do que o Open Claude criou. Uma das coisas que eu não gosto no Open Claude é que, embora seja muito legal a quantidade de adaptadores que temos, na maioria das vezes você só vai encontrar um que funcione para você, e isso é tudo o que você realmente precisa. E foi isso que descobri por mim mesma. Eu gosto muito de conversar com meu segundo cérebro no Slack. Eu até vou te mostrar . Tenho isso aberto agora mesmo. Quer
+
+dizer, fica meio ridículo porque eu tenho mensagens apagadas e outras coisas. Ainda estou testando todo o meu segundo cérebro, mas consigo conversar com ele no Slack de qualquer lugar. É muito legal. E isso é tudo o que eu realmente preciso. Eu realmente não preciso do Discord e do Telegram. Eu só tenho uma
+
+plataforma que funciona para mim. Então, eu uso isso como adaptador e o terminal para quando estou usando o código Claude no meu computador desktop ou laptop. Isso é tudo que preciso para meus adaptadores. Mas, mesmo assim, eu fiz com que copiasse a arquitetura do Open Claude. Então, é muito fácil, usando o código Claude ou qualquer outro agente de codificação, eu posso simplesmente criar outro adaptador se algum dia eu quiser usar algo como o Discord ou o Microsoft Teams.
+
+E, finalmente, quanto às habilidades, como estou usando o SDK do agente Claude e o código do Claude, ambos já vêm com o conceito de habilidades integrado. Então, sempre que quero dar mais instruções, como um registro de habilidades para fazer algo para mim, tipo, gerar o diagrama do Excalidraw ( literalmente este que você está vendo aqui foi criado pelo meu segundo cérebro) ou ter uma ideia de conteúdo, ou me ajudar a criar roteiros para o YouTube, eu só preciso criar uma habilidade. Assim, uma das habilidades que tenho no meu segundo cérebro é a habilidade de criar mais habilidades. Assim, é muito fácil para mim desenvolver as capacidades do meu segundo cérebro simplesmente conversando com ele. E sim, não existe registro público aqui. Portanto, não
+
+posso compartilhar minhas habilidades, pelo menos por enquanto. Estou trabalhando nisso, mas é muito mais seguro porque evita o download de habilidades potencialmente maliciosas. Estou construindo tudo sozinho e é muito fácil fazer isso. Assim, estou conseguindo criar um agente ultra-personalizado usando o Open Claude para construir coisas muito, muito rapidamente. E se alguma vez houver uma atualização do Open Claude que adicione algo novo e absolutamente incrível, bem, então eu simplesmente vou baixar as alterações do repositório, apontar meu código Claude para elas novamente e dizer: "Ei, eles acabaram de adicionar isso. Vamos
+
+compilá-lo nós mesmos." Claro, você não precisa copiar exatamente a minha configuração tecnológica, mas ela está funcionando muito, muito bem para mim, e pretendo publicar mais conteúdo em breve, explicando em detalhes como a construí e compartilhando alguns recursos com vocês. Mas, no geral, você só precisa seguir este processo super simples. Então, só para recapitular rapidamente, você clona o repositório do Open Claw localmente, e ele possui licença MIT. Você pode fazer o que quiser com o código. Então, você aponta seu
+
+agente de codificação para ele e diz: "Ei, explique como o sistema de memória funciona. Agora, incorpore isso ao meu próprio sistema." Você também pode especificar quaisquer personalizações que desejar para torná-lo ainda melhor que o Open Claw, atendendo às suas necessidades específicas. E então, basta repetir esse processo para cada parte da plataforma que você deseja utilizar. É muito fácil. Quer dizer, parece que
+
+estou dizendo algo óbvio, mas realmente não vi ninguém fazer isso, e funciona tão bem para mim que preciso compartilhar com vocês, porque está fazendo uma grande diferença. Eu gosto de Open Claw. Fiz alguns testes hospedando o serviço para mim mesmo quando foi lançado, mas estou realmente aproveitando muito o que estou construindo para mim, e sinto que só vai melhorar com o tempo. Não porque eu esteja projetando algo melhor do que o Peter com o Open Claw, mas porque eu sei exatamente o que quero e posso construir isso. E acho que isso também terá significado para você. Então, mais uma vez, em breve terei
+
+muito mais conteúdo no meu canal sobre meu segundo cérebro. E também estou ministrando muitos workshops na comunidade Dynamist, aprofundando bastante esse assunto. Então, vou deixar um link para o Dynamist na descrição, caso você queira dar uma olhada . É a minha comunidade, onde realizo workshops semanais. Tenho cursos sobre como criar agentes e usar assistentes de programação com IA , e em breve lançarei muitos recursos para você construir seu próprio segundo cérebro. Então, se você gostou
+
+deste vídeo e está ansioso por mais conteúdo sobre segundo cérebro e engenharia agencial, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo.

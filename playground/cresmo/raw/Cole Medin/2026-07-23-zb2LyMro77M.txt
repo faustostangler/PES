@@ -1,0 +1,125 @@
+---
+video_title: "How to Actually Run Your Coding Agent Safely (And Avoid the Horror Stories)"
+video_id: zb2LyMro77M
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=zb2LyMro77M
+video_date: 2026-07-23T00:00:02+00:00
+video_description: |
+  Every coding agent ships a mode that skips the approval prompts, and we all turn it on. The problem is what stands between that agent and your machine, which is nothing. It has your filesystem, your database, your SSH keys. It doesn't take malice or a hack for that to go wrong, just one bad decision, and it has already happened to plenty of builders.
+  
+  Rules aren't enough to keep your agent from going off the rails, and the sandboxes built into the agents are a soft boundary (Anthropic says so themselves). What works is running the agent somewhere it can't reach anything that matters, which is what Docker Sandboxes does: its own microVM right on your machine.
+  
+  Free, local, works with any coding agent. This video is a partnership with Docker but this is genuinely a platform I use myself. Docker has always been a big part of my stack!
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Docker Sandboxes (free, by Docker):
+  https://www.docker.com/products/docker-sandboxes/
+  
+  - Join my free live workshop on July 29th, where I show you how to become an AI native engineering organization - building a reliable standard for how teams use AI coding agents:
+  https://dynamous.ai/ai-native-engineering-org
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 YOLO mode and why you already use it
+  1:53 What your agent can do to your machine
+  4:00 How fast Claude Code folds on risky commands
+  8:14 Real disasters from Claude Code
+  9:52 Why Docker Sandboxes
+  10:37 Install it and run your agent in one command
+  11:40 Docker Sandboxes in action
+  12:27 Network security
+  13:09 Asking Claude to break out of its own sandbox
+  13:56 Direct mount vs clone mode
+  14:48 The four isolation layers
+  16:54 Wrap up
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Claude ignora perigosamente as permissões, também conhecido como modo YOLO. É isso que permite que seu agente de codificação execute qualquer comando em seu computador sem nunca pedir sua permissão. Todo agente de programação tem alguma versão desse modo YOLO, e você provavelmente o usa, talvez até todos os dias como eu. Isso torna seu agente de codificação muito capaz, mas também acarreta alguns riscos significativos. Você não pode simplesmente deixar seu agente de codificação agir livremente no seu computador sem implementar medidas de segurança adequadas. Você provavelmente já ouviu
+
+aquelas histórias de terror sobre Claude, Code, Cursor e Codex apagando bancos de dados inteiros e deletando diretórios. A probabilidade é baixa porque os agentes de codificação são inteligentes, e você pode pensar que isso nunca acontecerá com você até que aconteça. Basta que aconteça uma única vez para que as consequências sejam bastante drásticas . Então, quero abordar todos os riscos com vocês aqui, porque mesmo que vocês achem que os conhecem todos, provavelmente não os conhecem. Existem muitos problemas que podem surgir quando você opera no modo Yolo. Então, vamos abordar todos esses pontos e,
+
+em seguida, chegaremos à nossa solução principal com o sandboxing. Vou te mostrar como isso funciona. Usaremos ambientes de teste Docker porque são gratuitos, super fáceis de configurar e muito eficientes. Portanto, isso norteará todas as nossas demonstrações aqui. Mas, na verdade, a ideia por trás de um sandbox é criar um ambiente isolado para o nosso agente de codificação trabalhar. Assim, podemos dar a ele total autonomia
+
+sem todos os riscos que acompanham a execução direta em nossa máquina. E isso é importante porque, deixe-me dizer, a solução aqui definitivamente não é evitar o uso do modo YOLO. Você não vai querer perder tempo aprovando cada ação que o agente de codificação quiser realizar, porque serão centenas delas. É uma perda de tempo. Seu agente de codificação já nem é mais autônomo. Por isso,
+
+queremos que funcione no modo Yolo, mas precisamos fazer isso de forma segura. E, graças a ferramentas como os sandboxes do Docker, isso já não é tão difícil. Daqui a pouco vou mostrar como é fácil começar a usar isso, para que seu agente possa fazer tudo o que precisa com segurança para concluir o trabalho . Tudo bem. Então, voltando a este diagrama aqui na documentação do Docker sandbox, podemos falar sobre os riscos e sobre o que estamos isolando na VM e no sandbox simultaneamente. E eu simplesmente adoro a forma como o
+
+Docker explicou os diferentes níveis de isolamento, e como isso funciona especificamente em seu ambiente de sandbox. Na verdade, trabalhei com eles neste vídeo para garantir que eu explicasse todos os diferentes níveis de isolamento, porque é possível se aprofundar bastante e vale a pena fazê-lo para que você realmente se sinta seguro. Então, de qualquer forma, o primeiro e mais óbvio risco de executar um agente de codificação diretamente no seu computador é que ele terá acesso a todo o seu sistema de arquivos. Então, sim, existem algumas ressalvas quanto às permissões que você configurou no seu computador, mas, para todos os efeitos práticos, você deve presumir que, se o seu agente de codificação não estiver sendo executado em um ambiente isolado, se houver um arquivo ou pasta no seu computador, o seu agente poderá acessá-lo. Ele pode editá-lo. Ele pode
+
+até mesmo apagá-lo. E, da mesma forma que o sistema de arquivos, isso também se aplica a todo o nosso ambiente e a todos os aplicativos que temos em execução em nosso computador. Assim, seu agente de codificação, como o Claude Code, o Codex ou qualquer outro, pode encerrar processos, editar suas variáveis ​​de ambiente, pode fazer qualquer coisa. E muitas vezes os agentes de codificação se atrapalham ao lidar com coisas como conflitos de porta e, portanto, encerram os aplicativos na tentativa de fazer as coisas funcionarem na sessão atual. Isso envolve muitos riscos . Precisamos de isolamento, onde tenhamos
+
+nosso próprio conjunto de processos, até mesmo nosso próprio mecanismo Docker. Portanto, ele está gerenciando seu próprio conjunto de contêineres, sem destruir contêineres de outras coisas que temos em execução. E mesmo com isolamento de rede, permitimos que as solicitações sejam enviadas apenas para determinados sites. Isso é importante porque, se um ataque de injeção de API atingir seu agente de codificação, ele poderá capturar uma chave de API e enviá-la para um URL onde um invasor estará aguardando essas informações do outro lado. Portanto, ter uma lista de URLs permitidas para que o sistema possa acessar durante a pesquisa e os testes de nossas APIs e coisas do tipo é extremamente importante. E claro,
+
+darei um exemplo de tudo isso daqui a pouco, mas estou apenas tentando dar uma visão geral de alto nível de como, se o seu agente puder acessar todo o seu sistema, muitas coisas podem dar errado. Ok, então, se você estava se perguntando antes por que eu tenho tantas sessões com o Claude disponíveis, você vai descobrir agora. Vamos analisar alguns exemplos do que pode dar errado com um agente de codificação em execução no modo YOLO diretamente no seu computador. Agora, todos os exemplos que vou mostrar aqui são fictícios, feitos apenas para fins da nossa conversa, mas vou mostrar alguns problemas reais que ocorreram com pessoas que usaram o código Claude. É engraçado e lamentável ao mesmo tempo passar por isso. Mas enfim, o
+
+primeiro comando aqui, estou pedindo explicitamente para que ele apague os módulos do Node e o arquivo de bloqueio, reinstale todas as minhas dependências. Isso vai ser lento, exigir muitos tokens e certamente terá algumas consequências negativas. Sim, estou pedindo explicitamente para que faça isso aqui, mas é algo que os agentes de codificação farão sozinhos de vez em quando, quando você está seguindo um longo caminho de depuração, e todas as outras opções se esgotam, e você pensa: "Ok, vou reinstalar as dependências. Há algum problema de dependência aqui." Eu mesmo já vi isso acontecer . É extremamente irritante quando isso
+
+acontece. E nesta conversa aqui, há aquela inteligência mencionada anteriormente, que de fato protesta a princípio. Tipo, ele entende que esta é uma operação arriscada, mas o que assusta é que eu literalmente só dou uma instrução de acompanhamento, tipo: "Não, na verdade, pode continuar." E então, automaticamente, passa a simplesmente limpar tudo. Tipo, é meio louco como um agente de codificação passa facilmente de "Não, isso é muito arriscado". "Ok, vamos em
+
+frente e fazer isso." certo? Por exemplo, quando você tem aquelas conversas mais longas com um agente de codificação e ele recorre àquelas últimas opções, é aí que coisas assim acontecem. E outra coisa que acontece com muita frequência com agentes de codificação é que eles leem chaves privadas ou variáveis ​​de ambiente mesmo que você tenha pedido anteriormente em uma conversa para não fazerem isso, porque eles descobrem, para fins de depuração ou algo do tipo, "Preciso ler esta chave porque algo está errado aqui". Ele simplesmente lerá esse arquivo.
+
+Por exemplo, eu pedi para ler este arquivo, e ele fez isso imediatamente, sem reclamar . E o que realmente torna isso complicado é o fato de ter acessado minha pasta root.ssh. Então, sem nem mesmo ler uma chave no meu código-fonte, estou acessando uma pasta que é totalmente separada do meu ambiente de trabalho atual. Lendo uma chave que eu jamais gostaria que um agente de codificação visse. E esse tipo de coisa
+
+eu já vi acontecer durante a depuração de uma conexão SSH. E outro exemplo clássico é o seu agente de codificação mexendo no seu banco de dados. Algo que já vi acontecer é o seguinte: você tem um bug no seu código, o sistema não consegue detectar esse bug e, por isso, assume que, como o código está acessando o banco de dados, há algo errado com o esquema do banco de dados. Então, isso vai reverter uma migração, criar uma nova migração e vai bagunçar completamente seu banco de dados, podendo até mesmo quebrar totalmente seu aplicativo. Então, aqui mesmo, assim como antes, ele protesta inicialmente, certo? Parece que entende que o que estou pedindo é arriscado
+
+, mas aí, com mais um comando, ele simplesmente faz tudo . Agradeço que tenha feito um backup do meu banco de dados. Assim, ela compreende o risco, protesta e até cria um plano de contingência. É bom, mas não podemos garantir que o agente de codificação sempre tomará essas precauções. O principal que quero comunicar aqui é que podemos ver a inteligência surgindo, mas, principalmente quando as conversas se tornam mais longas , os agentes de programação perdem essa inteligência e fazem coisas realmente estúpidas que te prejudicam. Na verdade, se você já viu um
+
+agente de codificação fazer algo realmente ruim, provavelmente foi perto do limite da janela de contexto do LLM, porque todo modelo de linguagem grande tem uma zona de ineficiência. Nos primeiros duzentos mil tokens, o desempenho é máximo, mas se a conversa for mais longa, especialmente em sessões de resolução de problemas mais demoradas, você ultrapassará os primeiros 200 a 300 mil tokens e chegará ao restante do período em que começará a sobrecarregar totalmente o LLM, fazendo com que ele tome decisões equivocadas, pois se esquece das instruções fornecidas no início da conversa, incluindo até mesmo o prompt do sistema. Assim, todas as salvaguardas que você estabeleceu nas instruções — o que você quer que o programa não faça, os riscos que você quer que ele leve em consideração — são simplesmente ignoradas. É nesse momento que o programa pode potencialmente apagar seu banco de dados, caso você não tenha um backup, excluir pastas e coisas do tipo. Então, o principal que estou tentando dizer aqui é que não podemos confiar em mecanismos de proteção no prompt. O
+
+simples fato de o agente geralmente parecer entender o que deve e o que não deve fazer, não significa que sempre o fará. Por isso, queremos usar um ambiente de teste (sandbox) para aplicar essas proteções, em vez de pedir ao agente que as implemente ou as leve em consideração. E, claro, eu prometi que mostraria alguns exemplos reais disso acontecendo. E você não precisa procurar mais longe do que a lista de problemas no GitHub do código Claude, porque as pessoas adoram compartilhar quando o código Claude as prejudica. Assim como essa pessoa, eles fizeram com que seu código Claude executasse o infame comando rm-rf, apagando todo o seu diretório pessoal. Você não quer que seu
+
+agente de codificação execute esse comando de fato. R é a abreviação de recursivo, que significa excluir todas as pastas e todas as subpastas , e F significa forçar. Então, sim, eles simplesmente apagaram tudo para eles. E então aconteceu de novo com outra pessoa apenas um mês depois. Sim, isso já faz quase um ano.
+
+É menos provável que agentes de codificação façam essas coisas, mas definitivamente ainda é uma possibilidade, certo? Assim como este problema no GitHub foi fechado como não planejado, pois não se trata de um problema com o código do Claude em si, mas sim de situações em que grandes modelos de linguagem decidem que precisam fazer isso. Quando eles chegam ao último recurso, quando você já está bem avançado em uma conversa com aquela deterioração de contexto que mencionei antes, é aí que essas coisas podem acontecer. É como executar um comando destrutivo no banco de dados, apagando um banco de dados de produção, algo que, meu amigo, você nem deveria ter permitido que o código do Claude acessasse . Mas quem sabe, talvez tenha descoberto de alguma forma, analisando a configuração em outro lugar do computador. É por isso que você precisa de
+
+isolamento em sandbox. E aqui temos outro problema muito comum: descartar todo o conteúdo armazenado no Git, ou seja, um monte de trabalho não confirmado que eles tinham no Git. Às vezes, os agentes de codificação ficam muito confusos ao tentar lidar com diferentes branches de acesso ou conflitos de merge, e acabam fazendo esse tipo de coisa. Então, aqui estão alguns exemplos para mostrar por que precisamos desse isolamento. Não deveria ser possível acessar o banco de dados de produção. Não deveria ser possível
+
+editar ou excluir nada no diretório inicial. É por isso que precisamos das caixas de areia. E esperei especificamente até agora para fazer este vídeo porque, na minha opinião, os sandboxes do Docker são a primeira solução que realmente tornou os sandboxes acessíveis. Agora, basta um único comando para instalar. A configuração é muito fácil e eles funcionam com agentes de codificação como o Claude Code sem qualquer necessidade de configuração adicional . E, claro, você também pode
+
+simplesmente fornecer este link ao seu agente de codificação e deixar que ele instale tudo para você. Foi isso que eu fiz. Então, vou colocar o link na descrição. Muito fácil começar. Totalmente gratuito também. Portanto, ele é
+
+executado localmente em sua máquina, assim como o Docker Desktop e todos os seus contêineres Docker. E o Docker é algo que uso há 8 anos , mesmo antes de começar a trabalhar com IA. Então, eu adoro absolutamente todos os produtos que eles lançam e, sim, o Sandbox tem sido fantástico para mim. Assim, depois de executar esse comando no Mac ou no Windows para instalar os ambientes de teste do Docker, colocá-los em funcionamento com um agente de codificação é uma tarefa que requer apenas um comando. SBX, abreviação de sandbox, execute e depois o nome do seu agente de codificação, como por exemplo, vou usar Claude. E tudo parece normal por
+
+aqui. É apenas um terminal Claude Code comum , o que é ótimo, mas por baixo dos panos ele está rodando em uma máquina virtual isolada. Então, agora tenho todas as medidas de segurança e coisas que posso configurar, sobre as quais falarei daqui a pouco. Assim, por exemplo, posso usar o símbolo de cerquilha (#) ou exclamação (*) para obter o diretório atual. Como podem ver, temos aqui a nossa base de código atual em que estou trabalhando, já instalada na nossa máquina virtual. Mas se
+
+eu digitar um "LS" com exclamação e depois acessar a pasta ".ssh" que mostrei na demonstração anterior, você pode ver que ela não é encontrada. Não temos acesso ao resto da nossa máquina. Portanto, temos verdadeiro isolamento. Mas, ao mesmo tempo, pelo menos com essa base de código aqui, podemos trabalhar em tudo como faríamos normalmente.
+
+Não estamos perdendo nada por estarmos em nosso ambiente de testes, mas estamos totalmente protegidos. Então, acabei de carregar aqui algumas conversas para mostrar o que fiz com antecedência. Mas, dentro do meu ambiente de testes, posso instalar dependências. Posso iniciar o servidor de desenvolvimento e criar uma imagem Docker usando o mecanismo Docker isolado. Certo?
+
+Tipo, todo o meu trabalho continua normalmente. Talvez eu precise configurar alguma política para poder acessar recursos externos ao contêiner quando necessário. Então, passando para outra conversa aqui, você pode ver que não consegue ler minha pasta .ssh. Portanto, estamos protegidos lá. Outra
+
+conversa que estou tendo envolve uma tentativa de acessar uma URL que não está na lista de permissões, resultando em um erro 403. Não por parte do servidor, mas sim porque a requisição nunca saiu do servidor, pois o proxy de sandbox a bloqueou. Portanto, temos nossa configuração definida, especificando os diferentes sites que podemos acessar, para que não precisemos nos preocupar com o nosso agente enviando solicitações caso ocorra um ataque de injeção de prompt. E então, podemos definir aqui as políticas para os diferentes sites permitidos. Então, estou verificando se conseguimos acessar este site dentro da nossa máquina virtual.
+
+E então, estou permitindo, e agora podemos ver que temos permissão para acessar este site. Assim, sempre que configurarmos um ambiente de teste ( sandbox) no futuro, poderemos acessar este site. E se isso lhe parecer um pouco intimidante, eu sei que estamos abordando comandos específicos aqui, não se preocupe. Você pode simplesmente fornecer a documentação do Docker sandbox ao seu agente de codificação e deixar que ele configure tudo com a sua ajuda. E até mesmo iniciar o ambiente de testes e experimentar coisas novas. Tipo, quando eu
+
+criei tudo para este vídeo aqui, eu simplesmente pedi para o Claude configurar tudo para mim. Assim, você pode configurar o ambiente de teste e deixar tudo perfeito para que você possa realizar todo o seu desenvolvimento. Então, dê uma olhada nisso. Essa última conversa eu preciso te mostrar aqui. Eu sei que tenho muitas abas abertas. Eu
+
+literalmente disse: "Antes de confiar o trabalho real ao sandbox, quero verificar se o isolamento está configurado corretamente. Então, quero que você execute estas verificações. Você consegue ver algum dos meus arquivos hosts, não importa o quanto tente? Você consegue acessar algum serviço na minha máquina host? Certo? Tipo,
+
+não temos esse isolamento de processo? Você consegue acessar o socket do Docker no host? Você consegue mexer nos meus contêineres no meu computador?" E ele executou tudo isso. Fez vários comandos. E você pode ver
+
+no final: arquivos hosts fora do workspace não estão visíveis. Serviços do host não estão acessíveis. Socket do Docker, é o daemon aninhado, não o nosso host, certo? Temos esse mecanismo Docker separado. Tudo está completamente isolado aqui, mas ainda temos o ambiente completo que precisamos para trabalhar de verdade. E
+
+também podemos trabalhar em uma cópia isolada da base de código na nossa VM sandbox. Então, voltando a este comando aqui, `SBX run` com o nome do nosso agente de codificação. Isso vai montar nosso diretório atual nessa sessão na VM. Então, estamos Podemos editar esses arquivos diretamente em nossa máquina host, mas só temos acesso a esses arquivos. Mas se você quiser isolamento completo, pode adicionar o comando `clone` aqui. Isso
+
+criará uma cópia da base de código e essa cópia será levada para o sandbox. Dessa forma, não mexemos com nosso histórico do Git nem nada do tipo. Não precisamos nos preocupar com o agente executando comandos Git maliciosos . Tudo está totalmente protegido aqui. Então, sim, literalmente, não importa o nível de isolamento e controle que você queira, você pode fazer isso com sandboxes do Docker.
+
+Eu sei que pode parecer muita coisa acontecendo aqui, mas quero que você entenda os riscos e como estamos resolvendo esses problemas com a VM. E a última coisa que quero mostrar aqui, só para deixar tudo bem claro, são as diferentes camadas de isolamento que temos operando com nosso sandbox. Neste caso, sandboxes do Docker. Mas você verá isso em todos os lugares. O Docker simplesmente faz isso melhor. A primeira camada é o
+
+isolamento do hipervisor. O que nos proporciona o isolamento de processos e do sistema de arquivos , impedindo que fechemos processos acidentalmente ou excluamos arquivos em nossa máquina host. E o mais interessante aqui, que eu não mostrei neste comando, é que ele também realiza uma limpeza completa. Portanto, ao remover um sandbox com o SBXRM, a VM e tudo dentro dela são excluídos. Assim, não ocupamos muito espaço em nossa máquina, já que criamos todas essas pequenas instâncias onde executamos nossos sandboxes. Além disso, dentro da VM,
+
+não sei se você percebeu, mas o agente é executado como um usuário com pseudo- privilégios. Portanto, ele pode fazer tudo, pois não nos importamos com o que ele faz dentro da VM. Esse é o objetivo do isolamento. Temos também o isolamento de rede. Isso é o que mostrei anteriormente, onde podemos fazer solicitações a determinados sites e gerenciar as políticas e a lista de permissões.
+
+E, por fim, temos o isolamento do mecanismo do Docker . Este é provavelmente o mais exclusivo do Docker, e é por isso que o aprecio tanto. Mas ter isso Temos um mecanismo Docker separado, o que nos permite manter um conjunto independente de contêineres enquanto desenvolvemos e testamos a aplicação em que estamos trabalhando no ambiente de testes (sandbox) . Adoro isso porque meu desktop Docker pessoal, que fica na minha máquina host, fica muito sobrecarregado com o tempo, conforme vou criando contêineres e testando diferentes aplicações. Gosto muito da ideia de ter um ambiente isolado para cada aplicação em que estou trabalhando. O desktop Docker principal
+
+na minha máquina host é reservado para as aplicações que uso para meu próprio uso, não para desenvolvimento. Além disso, temos o isolamento do espaço de trabalho , que permite fazer uma montagem direta, onde editamos os arquivos apenas para aquela base de código localmente dentro da VM, ou podemos usar o modo de clonagem, com uma cópia completa pronta para edição, sem nenhuma alteração no nosso computador. Com isso, abordamos todos os riscos de executar em modo YOLO e como estamos resolvendo isso com um ambiente de testes (sandbox). É crucial implementar essas medidas de segurança devido a ataques de injeção de código e à codificação inadequada. Agentes apagando bancos de dados e arquivos e obtendo o estado. Há tantas coisas que
+
+podem dar errado, especialmente quando esses agentes de programação entram em longas sessões de depuração e começam a ter alucinações cada vez maiores. Precisamos proteger com um sandbox. Então, eu recomendo que você experimente os sandboxes do Docker hoje mesmo. É muito fácil de instalar e gratuito para começar. E com isso, se você gostou deste vídeo e está ansioso por mais conteúdo sobre programação de IA, eu agradeceria muito um like e uma inscrição. E
+
+com isso, nos vemos no próximo vídeo.

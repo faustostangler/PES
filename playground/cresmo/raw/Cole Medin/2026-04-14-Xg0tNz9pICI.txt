@@ -1,0 +1,1275 @@
+---
+video_title: "Building an AI Dark Factory:  A Codebase That Writes Its Own Code, Live"
+video_id: Xg0tNz9pICI
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Xg0tNz9pICI
+video_date: 2026-04-14T18:51:18+00:00
+video_description: |
+  What happens when you tell an AI coding agent to write a codebase, review its own PRs, merge them, and keep going - with zero human code review along the way? I'm about to find out, in public, with all of you watching.
+  
+  In this livestream I'm building the Dark Factory from the ground up, powered by Archon (my open source AI coding orchestration platform). The target is a real application people can use - a RAG-powered agent platform that answers questions about my YouTube content. But I won't write a line of its code. Neither will anyone else! The factory will.
+  
+  Here's what we're doing live:
+  - Pushing the governance files that define what the factory can and can't do
+  - Running the triage workflow against real GitHub issues and watching AI decide what to accept
+  - Running the implementation workflow and watching a pull request appear from nothing
+  - Running the independent validation workflow — the part designed to stop AI from gaming its own tests
+  - Flipping on the cron orchestrator that makes the whole thing autonomous
+  
+  This is built on top of recent work from StrongDM, Spotify, and Dan Shapiro's Dark Factory concept, and it's the most ambitious thing I've tried to build on stream. Some of it will break. Some of it will be weird. But this is the direction AI coding is heading and I want to be at the forefront with you!
+  
+  Check out Archon: https://github.com/coleam00/Archon
+---
+fábrica escura hoje. E eu sei que soa É meio assustador, mas vou começar. Começando por explicar o que isso realmente significa. Isso vai ser um pouco mais do que...
+
+Uma transmissão ao vivo informal. Então, eu fiz uma live transmissão ao vivo durante o fim de semana onde mergulhei mergulhando fundo em Archon, o novo Construtor de chicotes elétricos de código aberto. Então, na verdade, eu vou ser...
+
+Estou usando muito isso hoje em dia, mas quero... simplesmente faça mais como um prédio vivo sessão. Então, ainda vou garantir que explicar tudo o que estou fazendo e Divirta-se com a sessão de perguntas e respostas e outras atividades, mas Vai ser um pouco mais parecido com...
+
+Vocês só têm a oportunidade de ver o interior de um processo que estou iniciando aqui com um experimento público que estou chamando de fábrica escura. Então, abri meu monitor esquerdo. Aqui estão todos os comentários de vocês. o chat e, em seguida, meu monitor direito. onde tenho meu software de gravação, e então eu coloquei minha tela no meio aqui. Então, quando você me vir olhando
+
+por aí, é isso que estou fazendo. Mas sim, isso vai ser tipo... uma boa, tipo duas, duas horas e meia Estou pensando em fazer streaming de onde eu estiver.
+
+vão construir a fábrica escura em público com vocês, e até mesmo abrindo isso será totalmente divulgado ao público em alguns semanas aqui. Vou falar sobre o que isso significa. também, mas preciso explicar primeiro. Que diabos, uma fábrica escura, afinal? é. Então, vou abordar o básico para
+
+Vocês. Acho que você vai achar muito bom. Muito interessante. Porque isso é como o auge da evolução. de codificação de IA. Não que uma fábrica escura seja
+
+Vou te dar a opção mais confiável. resultados, mas é assim que se consegue o ter o máximo controle possível sobre sua programação de IA assistentes quando eles estão trabalhando em um base de código. Então, a ideia do escuro na fábrica, na verdade, teve origem na Acho que foi no final da década de 1980 ou 1990. Lá Existiam algumas empresas na China que eram executar linhas de produção físicas com Apenas robôs. E assim, o físico O local só tinha robôs, então eles nem precisava acender as luzes, certo? Não há necessidade de pagar por
+
+eletricidade quando não há humanos operando nas instalações. Então, Dan Shapiro, eu acredito que ele seja o primeiro que levou [limpa a garganta] isso ideia da fábrica escura e aplicou-a para bases de código. Então, usando IA generativa para gerenciar completamente uma base de código, todos os caminho da ideação à implementação e ao código revisão, fusão de solicitações de pull, gerenciamento lançamentos, como realmente enviar o código também. É isso que uma escuridão fábrica é. E acho que a melhor maneira de explicar que é preciso ler o artigo dele aqui.
+
+Então, ele divulgou isso bem no final de Janeiro deste ano. E ele fala sobre Os cinco níveis de codificação de IA. Um monte de Estamos no nível três ou quatro, certo? agora. Então, eu acho que gosto de ver onde Você está em quê, e então, até onde podemos ir?
+
+levar as coisas com a fábrica escura com sua analogia irá tipo, realmente te ajuda a entender tipo Afinal, o que diabos é uma fábrica escura? Então, sim, deixe-me compartilhar o meu Veja aqui a tela com este artigo do blog. EU Na verdade, eu queria compartilhar minha tela. antes, então foi mal, mas sim, então Vamos analisar isso juntos aqui. Então, este é o post de Dan Shapiro.
+
+Então, os cinco níveis do carro picante completo até a fábrica escura. Então, nível zero, é assim que eu Comecei a usar IA para me ajudar a programar. Provavelmente o mesmo acontece com muitos de vocês. que veio de uma engenharia fundo. Você estava escrevendo código você mesmo antes, e então você lentamente começar a depender cada vez mais da IA. Então, eu
+
+Não sei por que ele chama isso de carro apimentado completo, mas ei, eu adorei, então eu estou... por isso. Então, e neste [bufa] caso, a analogia que ele usa ao longo do texto diferentes níveis é o nosso controle de um veículo.
+
+Então, no nível zero, ainda estamos dirigindo. Você pode até pensar nisso como um graveto. mudança, certo? Tipo super manual. Nós somos Gerenciando o veículo. E assim, a IA
+
+assistente de codificação ou até mesmo apenas como o Um modelo de linguagem amplo serve como um ferramenta de referência ou uma pesquisa aprimorada. Então, é como um Stack Overflow mais inteligente. Se vocês já usaram o Stack Overflow em o passado. E então, aqui está o desenvolvedor Escreve todo o código manualmente. Nós somos apenas Utilizando IA como consultora. Então, tipo, me ajude
+
+com este trecho de código ou me dê um ideia de como posso implementar isso, mas Ainda somos nós que estamos com as mãos na massa. digitando o código propriamente dito. Então, espero que a maioria de nós não esteja nessa situação. Não dê mais nenhum passo. Hum, eu conheço algumas pessoas ainda são porque é isso que eles são confortável com isso, e isso é totalmente OK. Mas depois passamos para o nível um.
+
+Este é o estagiário de programação. Então, você pode Pense nisso como um controle de cruzeiro. Você ainda com as mãos no volante, mas pelo menos a IA está gerenciando alguma coisa ou como se o carro estivesse conseguindo te manter em uma certa velocidade, como 65 milhas por hora. Então, aqui está A IA escreve o que não é importante ou Código padrão. Então, você ainda está fazendo A maior parte do trabalho você mesmo, mas para o coisas que não exigem muita confiança No modelo de linguagem amplo, você está começando a entregar.
+
+Esse é o estagiário de programação. Aliás, quando chegarmos ao nível Cinco, vou falar sobre como eu realmente sou Estou construindo eu mesmo. Então, nós vamos conseguir lá, mas eu quero meio que dar o base para você aqui. Então, chegamos a Nível dois, o desenvolvedor júnior. Isso é o programador em dupla. Então, começamos a
+
+Relaxa um pouco. Só temos um uma mão no volante em vez de duas. Então, O desenvolvedor e a IA fazem uma troca de controle. Então, existem legitimamente mais alguns. tarefas complexas que estamos delegando a o agente de codificação, mas nem todos os tempo. Ainda somos nós que estamos escrevendo.
+
+programar bastante. E então chegamos ao nível três. E assim, É como, sabe, a direção autônoma. carros agora, né? Como se você tivesse tirado as mãos de você.
+
+a roda, mas você ainda está pagando Atenção à estrada. E assim, a IA é gerando a maior parte da base de código, mas você ainda está revisando tudo. que a IA faz. Como se você estivesse assistindo a estrada constantemente, e você vai para Seja meticuloso. Você vai revisar planos, você vai dar feedback, Você vai revisar o código como o Envie as solicitações de pull antes de mesclá-las.
+
+Você é sempre o gargalo para Verificação antes de prosseguir. Isso é nível três. E honestamente, é aí que...
+
+A maioria de nós é. E você sabe, tipo quando Eu ensino programação de IA no meu canal e em a comunidade Dynamis, O nível três é, na verdade, o que eu geralmente uso. Recomendo. Porque este é o mais distante Você pode pressionar agora mesmo e ainda assim conseguir os resultados mais confiáveis ​​possíveis. Então, no nível quatro, É aqui que entramos no...
+
+equipe de engenharia. Quando entrarmos em Arnês para tarefas de longa duração. E Então, é aqui que você realmente chega a adormecer ao volante. Então você deixa a IA funciona sem supervisão por longos períodos Lidar com tarefas muito complexas. E então, você Pense em arneses como o Rel loop ou O arnês da Anthropic dá ao seu segundo cérebro a capacidade de lidar com problemas e solicitações de pull de ponta a ponta. Então, aqui está você
+
+ainda vão verificar a versão final resultados. Tipo, em algum momento, você... você vai acordar e assim como garantir que o carro esteja realmente te conduzindo ao lugar certo, e você sabe, pegue e coloque as mãos no roda se precisar, mas para a maioria Em parte, você está confiando no agente de codificação.
+
+para lidar com conjuntos de trabalho incrivelmente longos. Então, nível quatro, eu não diria que isso é como a mais confiável neste momento. Se Você quer enviar o produto mais confiável. É possível que o código de produção seja usado, você ainda está no nível três. Porque você ainda vai monitorar tudo e ser o gargalo para verificação, mas você está começando a se afastar de verdade o loop com nível quatro, mas ainda há o volante, certo? Como se ainda existisse o
+
+oportunidade para você intervir e resolver faça as coisas você mesmo ou oriente os agentes em um direção diferente no meio de alguma implementação. E isso nos leva ao nível cinco. E eu adoro a analogia do carro aqui porque você É como se você olhasse para o nível quatro, e lá está...
+
+Ainda o volante, né? Você ainda tem a oportunidade de ter controle, mas no nível cinco, seu O veículo tem esta aparência, que algum dia... Nós chegaremos lá. Isso será isso
+
+Muito legal. O dia em que eu tiver um O veículo tem esta aparência. Mas não há Não há volante neste carro. veículo. Nem sequer existe a opção de nos dar o controle se quisermos. Isso é
+
+Que fábrica sombria. Assim, o engenheiro gerencia o objetivo no sistema, certo? Ainda existe algum tipo do console aqui para fornecer um nível mais alto direção. Ainda vamos escrever os PRDs. Poderíamos conseguir lidar com parte disso.
+
+os lançamentos, mas não estamos gerenciando o código. Portanto, fornecemos linguagem simples. descrições, mas o agente define Implementação, escreve código, testa, Corrige erros e envia atualizações. Isso é sombrio fábrica. E é isso, meu amigo, que vamos fazer.
+
+para construir hoje. Eu tenho um bom quantidade do sistema já configurado Porque eu não quero passar por tudo isso. tipo as partes realmente chatas com você, Mas eu quero trabalhar nos fluxos de trabalho. hoje. Tipo, construir os fluxos de trabalho de verdade.
+
+que vão gerenciar toda a escuridão fábrica. Porque não basta apenas apontar Claude codifica em um repositório do GitHub e diz Gerenciar tudo. Certo? Temos que ensine da maneira que queremos que seja. Lidar com problemas? Que tipos de recursos
+
+Vamos construir algo dentro disso? aplicativo? Como queremos evoluir? isto? Quais são as restrições que nós...
+
+ter? Como vamos revisar o código? certo? Assim como precisamos criar fluxos de trabalho Para definir exatamente como queremos escrever. Então, né? Então, assim como o engenheiro consegue
+
+o objetivo do sistema. Estou falando sobre construir o sistema aqui para isso veículo. E assim, hum, o que eu vou fazer, e isto Esta é a parte mais emocionante para meu, É que vou usar o Archon como alavanca. fluxos de trabalho para gerenciar cada parte de a fábrica escura. Então, Archon é o meu primeiro ou é o primeiro projeto de código aberto de sempre Alavanca para codificação de IA. Primeiro de sempre
+
+Fabricante de arreios, desculpe. Então, você pensa mais ou menos como o seu processo. No momento, para desenvolvimento de software, independentemente de como você trabalha com programação de IA assistentes, Archon permite que você construa fluxos de trabalho para empacotar tudo, então que você pode construir qualquer coisa em qualquer base de código. Você pode invocar qualquer fluxo de trabalho. [limpa a garganta] Com licença. Você pode invocar qualquer fluxo de trabalho.
+
+em paralelo, e você obtém confiabilidade resultados sempre porque você é Você está criando seu processo e fazendo a embalagem. acelere. É isso que Archon nos proporciona. E Então, se você estiver interessado em saber mais sobre Archon, funciona e você não viu meu conteúdo em Ultimamente, tenho colocado muita coisa em prática. Recentemente, publiquei isso no meu canal. Então, existe
+
+algumas transmissões ao vivo que eu fiz, Na verdade, aconteceu há apenas dois dias. Então, eu Fiz isso no sábado passado. E eu também tenho um vídeo no YouTube. Meu vídeo mais recente do YouTube onde eu Arconte coberto. Então, eu não vou conseguir tipo, uma introdução super profunda a Arconte hoje porque eu já tenho isso conteúdo, mas vou usá-lo como uma parte muito crítica do fluxo de trabalho, de todo o sistema para a Fábrica Sombria Porque isso vai ditar o ritmo de tudo.
+
+Vou criar fluxos de trabalho Archon para Gerenciar meus problemas, criar fluxos de trabalho Archon Escrever o código, revisar o código, Gerenciar os lançamentos. Vou falar sobre como isso fica quando eu entro no meu Planeje aqui. Então, eu tenho todo esse documento markdown que descreve todo o meu plano para o Fábrica Sombria. E eu tirei muito inspiração de Você conhece outros exemplos de Dark? Fábricas que já estão em funcionamento a Internet. Então, talvez vocês
+
+Já ouvi falar do caso de uso do Strong DM. Então, a Strong DM é uma empresa que eles de fato gerenciar uma base de código de produção Com uma Fábrica Sombria. Eles estão enviando pull requests o tempo todo que não ter qualquer tipo de revisão humana. E os seus Infelizmente, a Dark Factory não está aberta. Uma fonte como a minha será para você.
+
+pessoal, para ver e acompanhar a evolução disso na vida real. tempo. Mas eles compartilhavam algo parecido com um PRD. Então, eles têm essa especificação de código aberto para Construindo sua Fábrica Sombria. Eles ligam É o Atrator.
+
+Então, não temos a base de código, mas Temos o documento do plano que eu Acho que teoricamente você pode usar para ter seu agente de codificação constrói exatamente o que eles têm para gerenciar sua base de código Sem envolvimento de humanos. E então, eu fiz. na verdade, me inspiro muito em as ideias aqui. Se vocês são Se eu tiver interesse em alguma dessas coisas, estou planejando. sobre publicar um vídeo no YouTube amanhã onde terei algo mais conciso terei uma visão geral de tudo e depois terei tudo isso está relacionado.
+
+É claro que posso colocar links para isso no Conversem também se estiverem curiosos. Então, hum, eu vou Coloque um link para esta postagem do blog aqui mesmo. E então Vou colocar um link para este recurso. cobrindo o Dark the Strong DM Dark Factory. Se você Os caras querem ler isso.
+
+Só quero ter certeza de que vou entregar isso a eles. para vocês, porque isso é muito parecido com o meu pesquisa inicial para a construção de um Dark Fábrica. E isso me fascina profundamente. Então, Ok, deixa eu ser bem claro aqui. EU queremos esclarecer algo e Então explicarei melhor isso.
+
+arquitetura que tenho para o meu Arconte Fábrica Sombria. Eu sei que já disse isso, mas é Vale a pena repetir. Você não vai Obtenha os resultados mais confiáveis ​​com o seu agente de codificação quando você lhe dá essa quantidade autonomia. Recomendo muito quando você estiver Fazendo as coisas de verdade, você se coloca em prática. Estar a par da situação, pelo menos analisando os planos.
+
+e revisão de código. Essas duas etapas de durante o ciclo de desenvolvimento, eu pelo menos gostaria tenho esses. Então, isso é definitivamente público. experimentar. Estou chamando isso de experimento.
+
+porque pode ser um fracasso total. seu rosto. Veremos. Quer dizer, eu vou dedicar muito esforço para tentar fazer É realmente confiável, mas Não tenho ideia de como está indo o código-fonte. para acabar evoluindo quando eu deixar para lá literalmente se autogerencia. E assim, o
+
+A entrada para a Dark Factory será em Pode ser um problema do GitHub. Então, eu, como usuário, vou... Tornar isso público para que vocês possam Literalmente, também é possível enviar problemas para o GitHub.
+
+Vai ser muito divertido quando eu receber isso. correndo mesmo. E a entrada é um problema do GitHub. E assim, Isso é um bug que já identificamos. na plataforma, conforme a testamos como uma usuário ou é um novo recurso que estamos solicitando à Dark Factory que adicione ao a base de código.
+
+Então, criamos um conjunto de problemas no GitHub. tipo, talvez haja uns 20 que sejam, sabe? criado na última hora ou algo assim assim. E então, em um horário agendado Com base nisso, vou executar o primeiro Arconte. fluxo de trabalho. Estou chamando isso de triagem.
+
+fluxo de trabalho. Porque a responsabilidade de este fluxo de trabalho Archon É preciso analisar todos os problemas relatados no GitHub. E irá julgar as questões. contra a camada central de governança que Vou construir no escuro. Repositório de fábrica. Então, nós vamos
+
+temos a nossa missão para o repositório e e depois as diferentes regras. E estes Os arquivos também incluirão o escopo que vamos permitir para o Evolução da base de código. Assim como aqui estão Características que definitivamente não vamos usar. permitir. Aqui estão os tipos de recursos que vamos permitir. Então,
+
+basicamente o fluxo de trabalho de triagem vai avaliar todo o GitHub problemas que foram criados no último hora, sabe, como tudo que Ainda não foi triado e vai... para descobrir como você sabe, com base em Nossa missão e regras, quais são os problemas Caso você saiba, deixe um comentário e fechar e dizer tipo, ei, isso não Candidate-se pelo motivo X, Y ou Z, ou aqui está um questão que vamos abordar Implementar etapa. Então, triagem e depois Teremos um Arconte separado.
+
+fluxo de trabalho que percorre todo o processo. implementação. Então, para cada um deles questão que decidimos que vamos abordar Para acessar o endereço, vamos invocar o Arconte. fluxos de trabalho em paralelo para realizar o trabalho completo implementação. E assim, mais uma vez apoiando-me na beleza de Aqui é o Archon, podemos lidar com qualquer número de problemas em paralelo porque cada um deles As questões serão tratadas em um uma árvore de trabalho. Portanto, temos isolamento total.
+
+Cópia completa do código-fonte de cada um. das questões a serem trabalhadas independentemente, sem pisar em cada um. dedos dos pés de outras pessoas. Então, implementamos e depois para cada um dos problemas que Corrigimos algum bug que abordamos ou que já resolvemos. ou um recurso que criamos, vamos...
+
+ter um Archon separado validando fluxo de trabalho. Então, é aqui que fazemos o trabalho de relações públicas. Revisar antes de fazer a mesclagem com a versão principal. E uma das coisas que o Strong DM implementado em sua Fábrica Negra que é muito poderoso é O que eles chamam de padrão de retenção. Assim, o padrão de retenção é a ideia de que não queremos o viés do A implementação entrará em fase de testes.
+
+E esse é um problema muito comum. com agentes de codificação em geral, eles Fará isso se você pedir para ele verificar por conta própria. trabalho, é como pedir a um aluno para verificar seus próprios trabalhos de casa. Eles podem te Sabe, dê um pequeno feedback, só isso. para parecer que eles estão sendo críticos de si mesmos, mas no final O preconceito deles vai prevalecer e Eles vão encher o maior problemas escondidos debaixo do tapete.
+
+Então, o que fazemos é uma transferência de responsabilidade. Depois Na implementação, passamos por todas as etapas. nossos cenários de teste, mas não contamos. o agente de validação, o que era apenas implementado. Então, basicamente, nós apenas fazemos testes de regressão em toda a sistema. Assim, não há chance.
+
+de parcialidade porque nem sabe tipo era isso que a questão pretendia abordar. [limpa a garganta] E isso parece meio arriscado e tipo Sinceramente, eu mesmo não estou totalmente convencido. disso, mas isso é Strong DM's truque de resistência e vamos tentar construir isso também. É por isso que nós ter um fluxo de trabalho separado para validação e não o temos simplesmente integrado ao implementação. Agora, em Archon, você pode simplesmente gostar de você.
+
+sabe, inicie novas sessões entre nós. Então, acho que poderíamos empacotar isso. como um único fluxo de trabalho e ainda ter o padrão de retenção. Hum, essa é uma das...
+
+Coisas que terei que explorar. enquanto estou construindo junto com vocês. Como se eu fosse Grande parte disso foi construída do zero. É como se fosse uma sessão de programação ao vivo. Como Eu disse: "Não estou apresentando nada".
+
+que eu já construí como fiz com Archon na última transmissão ao vivo. Então, sim, é basicamente isso. fluxo de trabalho aqui. Então, quer dizer, na verdade, é só isso mesmo Em resumo, temos a governança. camada. Esses são fragmentos de contexto que estamos...
+
+sempre vão injetar em cada Arconte fluxo de trabalho. E depois temos o Arconte. fluxos de trabalho para lidar com tudo orquestração aqui. Triagem, implementação, Validar e corrigir. E quanto ao repositório que este vai operar em, Vai ser este aqui, né?
+
+aqui. Então, obviamente, eu não vou usar Arconte para trabalhar em Arconte aqui. Eu não querem transformar Archon em uma Fábrica Sombria repositório. É muito importante que que isso não se torne apenas um experimentar. Então, existe um repositório separado.
+
+um projeto separado que eu vou construir usando os fluxos de trabalho Archon no Fábrica Sombria. E, na verdade, é bem legal... aplicativo. Tipo, isso vai ser um
+
+Grande valor agregado para o meu canal do YouTube Porque, basicamente, vai ser um bate-papo. plataforma, uma plataforma de bate-papo com agentes onde Você pode fazer qualquer tipo de pergunta. em torno da IA ​​e então ela vai funcionar. pano. Vai pesquisar no meu Vídeos do YouTube podem te dar uma resposta.
+
+É como se fosse seu próprio tutor de IA. Com base no meu conteúdo. E então eu também estava pensando em fazer Algo para a comunidade Dynamis. Se Você faz parte da comunidade Dynamis, você você pode conectar sua conta a isto plataforma. Então, não só isso...
+
+pesquisei meu conteúdo do YouTube, mas... também pesquisaria em meus workshops e cursos que ofereço na comunidade. Então, se tornaria a IA definitiva.
+
+tutor. Então, estaria disponível para todo mundo, mas aí seria ainda mais parecido com um Um ótimo complemento para o Dynamis. Então, estou realmente muito animado para construir. isso está resolvido. Então, se a Fábrica Sombria O experimento não funciona, seja lá o que for.
+
+razão, e tipo, eu tenho fé nisso, Mas é muito arriscado. Assim, se for não gosta muito de construir em cima de nada que funciona super, super bem, então Eu só vou, sabe, construir isso. eu mesmo com meu processo habitual de codificação de IA porque quero ter isso até o final de o mês para todos. Mas vamos ver se a Fábrica Sombria consegue. Vou dar um jeito em tudo porque vou trabalhar.
+
+É difícil construir essa camada inicial de IA. Um Deixa eu atualizar aqui porque eu... já criou a fábrica de missões regras em claw.md.
+
+Então, vou trabalhar duro para construir... o a camada de governança [limpa a garganta], Desenvolver os fluxos de trabalho do Archon. Eu quero para tornar isso o mais confiável possível.
+
+Agora, o maior risco que temos é esta Fábrica Sombria É que eu não consigo usar o meu Assinatura antrópica porque eu atingiria meus limites de taxa muito rapidamente. Muito rápido. E se eu quiser tornar isso público? Qualquer pessoa pode criar problemas no GitHub. Para a Fábrica Sombria, acredito que seria contrário aos termos antrópicos de serviço se eu deixar os problemas do GitHub de outras pessoas são consumidos automaticamente no sistema, porque aí é essencialmente outro pessoas podendo usar meu Antrópico assinatura, porque eu não sou o único Iniciando o fluxo de trabalho. É como se
+
+Tecnicamente, acho que é outro usuário. EU Só quero ter cuidado nesse aspecto. E eu De qualquer forma, atingimos nossos limites de taxa muito rapidamente. Então, na verdade não posso usar meu Antrópico. Assinatura para a Dark Factory.
+
+Então, isso significa que eu tenho que pagar. para uma API. Tenho que pagar por ficha por tudo que construí neste lugar, Vou construir nesta Fábrica Escura. E infelizmente, Opus seria muito...
+
+caro. Portanto, terei que recorrer a outros meios. E Na verdade, o que eu imaginei Vou usar o MiniMax M2.7. como o grande modelo de linguagem que impulsiona o Toda a Fábrica das Trevas.
+
+Agora, hum Fiz muita pesquisa para diferentes modelos. Considerei o Qwen 3.5. Programador. Considerei o GLM 5.1. Eu pensei
+
+sobre talvez usar algo como um soneto, mas Sonnet seria muito caro. Hum, eu estava talvez vá usar Sonnet through OpenRouter ou simplesmente a API Anthropic? diretamente. Haiku definitivamente não seria uma opção. Suficientemente potente. Então, eu realmente não consigo.
+
+Usar um modelo antrópico, certo? Porque tipo Opus e Sonnet são muito caros. Haicai É significativamente pior que o MiniMax. M2.7, e na verdade são bem...
+
+Creio que o custo seja semelhante. Sim, porque como Se eu acessar o OpenRouter aqui e eu procuro por Claude Haiku 3 ou 4.5, isso é um US$ 1 para cada 1 milhão de tokens de entrada. Na verdade, é mais caro do que um...
+
+MiniMax M2.7. Isso é menos que um dólar. Sim, custa apenas 30 centavos. a cada 1 milhão de tokens de entrada. Então, é um
+
+um terço do preço de Haiku e caminho melhorar. Então, não há motivo se eu não estiver Vou usar minha assinatura da Anthropic. Não há motivo para eu realmente usar. um modelo antrópico, porque Opus e Um soneto seria demais. Então, sim, eu fiz muita pesquisa.
+
+E foi a esta conclusão que cheguei. E eu posso sempre troque todo o sistema, mas o que eu fiz aqui e isso faz parte da configuração que Eu já cuidei do automat ou Nos bastidores, eu já tenho um Servidor VPS criado onde tenho o Archon. instalado. Eu tenho o chat do YouTube. Aplicativo clonado e configurado.
+
+E então eu tenho meu código Claude. mudou lá para usar MiniMax M2.7 em vez de Antrópico. Então, se eu perguntar assim, dê me envie o comando SSH. Eu vou mostrar mesmo Vocês. Vou acessar a máquina via SSH.
+
+com você e mostrar como fica. como. Então, tudo bem. Vou pegar esse comando aqui. Tudo bem.
+
+Porque dê uma olhada nisso. Se eu entrar em Claude, Eu abro [bufa] o Claude enquanto estou em SSH dentro desta máquina, Você pode ver que está usando o MiniMax. M2.7. E se eu disser, sabe, tipo o quê?
+
+Você é modelo? Tudo parece que eu sou. usando Claude, mas ou que estou usando o código Claude normalmente, mas na verdade está funcionando e usando Minha chave de API do MiniMax e estou executando no M2.7. Aliás, se eu quisesse usar algo como...
+
+Se fosse GLM 5.1, seria super fácil. Tipo, eu poderia trocar em uns 30 minutos. segundos, porque tudo o que você precisa fazer para trocar o O provedor do código Claude é você mesmo. preciso alterar alguns ambientes variáveis ​​internas. Como e
+
+Aliás, esta sessão que eu tenho Abra com o código Claude, isso está no meu computador local onde estou fazendo algumas coisas Configuração local. E o que eu tinha no sessão, eu li toda a minha escuridão Plano de fábrica. Então, como tudo que você Veja aqui, já carregou no contexto atual. Então, eu posso simplesmente perguntar. Aqui, não revele nenhum segredo, mas conte me diga exatamente como eu alterei o código de Claude para Use MiniMax M2.7 em vez de Anthropic.
+
+para o modelo. Então, eu... eu talvez até abra o código-fonte do meu...
+
+Plano completo da Fábrica Sombria. Porque, como eu tenho vêm preparando as coisas nos bastidores cenas, eu tenho estado apenas documentando Tudo aqui é muito grande. Arquivo aqui, incluindo todos os Arcontes. fluxos de trabalho que vou construir com Vocês estão vivendo isso agora. Então, eu tenho um planeje inicialmente para cada um dos esses. Então, vamos construí-los hoje e
+
+teste-os e talvez chegue ao ponto. onde temos toda a Fábrica Sombria correndo. Não tenho certeza se conseguiremos isso. longe, porque vai ser bastante coisa. configurar. Mas sim, você pode ver que...
+
+para trocar de provedor para Claude código, você só precisa configurar estes variáveis ​​de ambiente. Lá Lá Bastante coisa aqui. Então, acho que seria realmente muito bom. É útil compartilhar isso com vocês. Uh porque havia, havia um Foi um pouco mais complicado do que eu imaginava.
+
+pensou que seria para trocar o provedor. Porque então você... o outro A coisa que você precisa fazer para Archon é você é necessário mapear as variáveis ​​de ambiente.
+
+para os diferentes tipos de modelo. Porque em Arconte, sabe, para cada um dos Para fluxos de trabalho, você pode especificar algo como isto. Node, eu quero usar o Sonnet. Ou isto Node.js, quero usar o Haiku. E assim, para
+
+fazer os fluxos de trabalho do Archon funcionarem a partir de a caixa sem ter que alterar estes IDs, você só precisa mapeá-los através de variáveis ​​de ambiente. Então, tipo quando eu especifique Opus em código Claude ou em um Fluxo de trabalho Archon, que corresponde ao MiniMax M2.7. A mesma coisa com soneto. E então, se eu quiser usar Haiku, então ele mapeia para MiniMax M2.7 alto
+
+velocidade, certo? Então, apenas mais rápido e Versão mais barata da 2.7. Então, eu tenho o mesmo efeito em um fluxo de trabalho Archon onde Consigo fazer algumas coisas muito mais rápido, e Depois, há outras coisas em que tenho mais poder. Possivelmente sim.
+
+Tipo, se eu normalmente usasse o Opus ou Talvez um soneto. Então, sim, se você estiver interessado em usar Código Claude com um provedor diferente, Na verdade, é bem fácil de configurar. Então, Você poderia usar o OpenRouter se...
+
+Quero usar os modelos antrópicos ali. Um GLM possui compatibilidade antrópico ponto final. É claro, o MiniMax também. EU Acho que Qwen acha. Qwen tem um Claude.
+
+endpoint compatível com código? E se você Deseja executar modelos locais com Claude? [bufa] código, você pode usar Ollama como bem. Então, Ollama tem uma ligação direta Integração com o código Claude. Então, é É bem legal, porque estamos planejando...
+
+Adicionando suporte ao Raspberry Pi esta semana para o Archon. Assim, você poderá executar todos os seus fluxos de trabalho. por meio de agentes Pi. Mas mesmo agora, você é capaz de imediatamente mudar o código Claude para usar quaisquer modelos, para que você não necessariamente ter que se apoiar em outro provedor, mas você não está preso a usar sua assinatura da Anthropic ou a Chave API antrópica. OK.
+
+Um Vamos ver. Sim, acho que a Qwen não tem "Ok", mas como GLM e MiniMax Possuem pontos finais compatíveis com a antropogênese. Então, é só pedir para o Claude fazer alguma coisa. pesquisa para você. Veja quais você gosta são compatíveis com o código Claude, mas A maioria dos modelos você pode usar diretamente, Assim como configurei com o MiniMax aqui.
+
+Tudo bem. Veja o que está escrito aqui. Sim, até mais. A GLM possui um contrato antropogênico de primeira parte. ponto final compatível. Então, é tipo
+
+literalmente o endpoint da API deles, e então Basta adicionar "Antrópico" no final. Então, É isso que você acerta quando quer para torná-lo compatível com o código Claude. Muito legal. É bem fácil. para configurá-lo.
+
+Tudo bem. Legal. Então, é, eu quero entrar em Construindo com vocês aqui. Deixe-me verificar o contexto. Talvez eu Dedique um tempinho para te responder.
+
+Perguntas dos rapazes. Então, eu sei que não tenho Você já analisou o chat? Com certeza quero fazer isso. Então, eu vou Vou dedicar um tempinho a fazer isso, e então podemos prosseguir diretamente para Construindo nossa fábrica. Então, indo para O diagrama aqui, eu já tenho o Camada de governança implementada. E então, como
+
+Estou criando os fluxos de trabalho, vou mostrar. Vocês querem saber como isso se parece. Então, certo? Agora, preciso basicamente construir o Fluxos de trabalho Archon. E isso é importante para todos os Arcontes.
+
+fluxos de trabalho para realmente ingerir esses documentos aqui. Como se precisasse saber independentemente do fluxo de trabalho que eu tenha. correndo, se eu estiver consertando alguma coisa, validar algo, seja lá o que for, tipo isso tem que sempre conhecer a missão e regras da fábrica, porque é isso que vai acontecer a orientação principal. E então eu quero dizer, claro, o global como o Claude.md também.
+
+Então, sim, estou fazendo tudo através de Código Claude, mas Quer dizer, você poderia facilmente tornar isso sombrio. A fábrica faz como se você usasse o Código X ou Em vez disso, use o OpenCoder Pi, mas Sim, é exatamente o que eu estou usando. Eu gosto usando o código Claude como um recurso, mesmo que Não estou usando modelos antrópicos. Tudo bem. Legal. Então, sim, eu vou embora.
+
+isso aqui, e então eu vou em frente e Respondemos a algumas perguntas do chat aqui. E o futuro começa. Isso mesmo. É isso que estamos construindo. Eram Construindo o futuro aqui. Eu não acho
+
+que a Fábrica Sombria é um padrão Isso é suficientemente confiável neste momento. mas se refinarmos os fluxos de trabalho o suficiente, E se tivermos, provavelmente precisaremos de mais. modelos poderosos também, honestamente, para tipo, realmente deixar essa produção pronta, Mas talvez Mythos seja o desbloquear. Veremos. Tudo bem.
+
+Estou no nível -11 ou -1, não por causa de uma tecnologia. nenhum histórico. Quer dizer, tudo bem, porque com o quê? Assistentes de codificação de IA poderosos estão certos agora, Você pode chegar ao nível três. muito, muito rapidamente.
+
+E, na verdade, se você não tiver um técnico experiência, você provavelmente nunca terá nível zero até nível dois, porque que exige que você escreva o código por conta própria às vezes. E assim, hoje em dia, quando você Aprenda como aproveitar a programação de IA assistentes e você não está vindo de um Se você tem conhecimento técnico, é só pular. direto para o nível três. Minha principal recomendação nesse sentido é que...
+
+é perguntar muito ao seu agente de codificação perguntas enquanto ele cria o código para você, para que você possa começar a ganhar um compreensão e tipo, sabe, tipo de se tornar pelo menos semi-técnico você mesmo enquanto utiliza as ferramentas. Este vídeo será salvo para mais tarde? Ah, com certeza, é do Lennart's. Então, todos uma única transmissão ao vivo no YouTube é transformado automaticamente em gravação depois. Então, eu nem preciso gostar Eu mesmo farei o upload. Então, eu acho que
+
+Leva um pouco de tempo para processar, mas como o que temos aqui, é Diz que está ao vivo agora, e será alterado. em outro vídeo, assim como minha live Transmissão ao vivo neste fim de semana. Então, você só precisa...
+
+Para acessar a aba "Ao vivo". Não está no Aba principal de vídeos para meu conteúdo mais extenso. É só ir para cá. E então estará disponível para você. Tudo bem.
+
+Ainda sinto que preciso testar as coisas. eu mesmo. Ainda não confio na IA para realizar testes e uh, especialmente navio. Concordo plenamente com você. Sim, como eu disse, o nível três é onde É justamente quando você mais se importa.
+
+sobre confiabilidade. A menos que você tenha construído algum tipo de arnês de nível quatro que você Tenho muita fé nisso, eu teria geralmente recomenda-se manter o nível três. E aí o nível cinco é tipo não A gente sabe realmente o quanto isso é importante. Neste momento, vou começar a trabalhar. E isso é É isso que eu quero descobrir com vocês.
+
+Sim, temos exemplos como esse. DM, mas eles não fizeram isso, eles realmente não fizeram. Compartilhamos tudo isso, certo? E como muitos Isso pode ser apenas uma jogada de marketing. Então, é isso que eu quero descobrir para Vocês estão falando sério? Tipo, se nós realmente...
+
+dedicou muito esforço ao uso do Archon e, hum, construindo muita confiabilidade através de uma camada governamental, como por exemplo Será que realmente podemos torná-lo confiável? E eu sou Estou ansioso para descobrir. Vamos fazer junte tudo. Você não confia nisso se for seguro. ou melhor, tudo está funcionando. EU
+
+significar, Ok, desculpe, isto é uma pergunta. continuação do outro. Mas sim, Quer dizer, eu diria pessoalmente que Assim como a segurança é uma grande preocupação para a IA, a IA também se preocupa com isso. assistentes de codificação. Eles introduzem mais problemas de segurança do que... experiente
+
+engenheiros. Eles podem ser válidos, eles podem. Corrija-os também, mas como na primeira versão, Eles introduzem mais. E então, sim, assim como geralmente tudo é Funcionando de verdade. Ok, aqui está o Outro problema com assistentes de codificação de IA.
+
+E então, honestamente, provavelmente o principal É por isso que o nível cinco pode falhar. não necessariamente que o agente de codificação produz código que falha, mas é mais que simplesmente não está alinhado com o que você Quero criar. E é em parte por isso que eu vou ser focar tanto na construção inicial a camada do governo porque eu preciso de Seja muito claro em relação aos guarda-corpos e ao diretrizes para o agente de codificação para que quando identifica um problema e o implementa isto, Bem, em primeiro lugar, quero ter certeza de que...
+
+A questão está, na verdade, alinhada com o que eu desejo pela base de código, pelo evolução disso. E também tipo quando Ele realiza a implementação por conta própria. não entende mal qual é o problema. realmente chegando lá. Tipo, se eu abrir um problema porque quero melhorar o pano pesquisar, eu não quero que mude a parte frontal. Eu quero que seja exatamente assim
+
+Por exemplo, altere o pipeline de rastreamento. Tudo bem. Veja o que mais temos aqui no chat. Hum, presumo que a fábrica escura possa introduzir bugs mais tarde se Testes unitários adequados, linting e correção de bugs. O sistema de regressão está configurado.
+
+corretamente. Então, sim, essa será uma das... os riscos da fábrica escura, bem como Pode haver pequenos problemas que insinua que nossa validação não pegar e eles podem explodir na nossa cara mais tarde. Essa é uma das razões.
+
+A participação humana é fundamental para Analisar as coisas serve para captar essas coisas. pequenos problemas que se tornam um problema maior Problema resolvido mais tarde. Então, a fábrica escura poderia ser...
+
+É como ferver um sapo na água, né? Assim como o sapo, se você colocar um sapo em água fervendo, vai... saltar imediatamente da panela.
+
+Então, a analogia aqui é como se nós Há um problema grave na base de código. logo após a implementação, A validação vai detectar isso. E isso será resolvido. Mas se É algo que escapa por baixo do rachadura porque não é muito óbvio, né? longe, é como o sapo que você colocou dentro água morna e depois ferva.
+
+tempo. E assim, permanece lá até que... morto.
+
+[risada] Certo? Como se isso pudesse acontecer com um escuro fábrica. Você tem esses, esses pequenos Problemas que surgem com o tempo. Não é grande o suficiente para o agente de validação Eles o pegam, mas depois se combinam. para gerar problemas maiores ou é simplesmente...
+
+um problema que se agrava e Você não está por dentro do assunto para descobrir. essas coisas e corrigir essas coisas. Portanto, certamente é possível. E, bem, como tanto quanto pudermos, é por isso que é assim. é importante para nós construir uma base muito sólida.
+
+processo de validação abrangente. Não apenas com testes unitários e linting, mas Vou construir tudo, tipo, completamente. Testes de regressão. Como todos os outros Quando resolvermos um problema, eu quero que...
+
+validação para usar a automação do navegador ferramenta para percorrer o bate-papo de pano O aplicativo funciona exatamente como um usuário faria. E tipo, testar toda essa interface. e ter conversas diferentes e clique nas fontes que ele cita e certifique-se de que isso vá para a parte correta de Um vídeo do YouTube. Como eu, tem que ser. fazendo tudo e constantemente meio que como manter esta lista de recursos que precisa testar sempre que for Realizar testes de regressão adequados.
+
+Então, chegaremos lá. Isso vai ser provavelmente um dos maiores desafios para construir tudo isso.
+
+Tudo bem. Além disso, seria útil se você pudesse Sugira alternativas de código aberto ou gratuitas. se estiverem disponíveis por aí para as ferramentas estamos usando. Como aprendiz, aqueles loucos Contas a pagar me deixam desanimado. Estou com você.
+
+Eu entendo perfeitamente essa dor. Então, eu acho que estou curioso para saber o quê. São exatamente as ferramentas a que você está se referindo. Se Você está falando sobre programação de IA. assistentes, Infelizmente, não existe realmente um alternativa gratuita para algo como Claude Code é tão bom quanto Claude. Como eu estava falando
+
+Antes, eu estava usando o Minimax M2.7. do Opus, porque é muito mais barato. Isso é Ainda assim, não será tão poderoso. E se você realmente quiser IA gratuita?
+
+Se você está pensando em programação, minha recomendação é executar... um modelo em Claude Code através de Ollama. Tipo, você pode executar Gemma 4, um Qwen 3 tem alguns bons modelos menores. Você não está
+
+vai obter resultados quase tão bons como Opus, no entanto. Mas como é possível Para fazer programação de IA gratuitamente. Você só tem o expectativa de que você não possa fazer isso as mesmas coisas que você pode fazer com o Opus ou algum outro modelo mais poderoso como GPT-5.4 Codex em uh Codex, por exemplo. Então.
+
+Tudo bem.
+
+Vamos ver. Temos apenas 1 ano para experimentar. Ah, vejamos. O comentário acima. Eu sou pensando em criar algum tipo de arquitetura para empresas locais aqui Assim posso fornecê-los. Então, tem que ser
+
+seguro, fácil de configurar e gerenciar para eles E eu mesmo não sou processado. Tenho curiosidade em saber que tipo de É da arquitetura que você está falando. Como se for um sistema agentivo ou se for um...
+
+como se fosse um agente de IA ou algo semelhante para IA codificação. Parece legal. Tudo bem. Gemini é uma boa ferramenta de avaliação para executar. contra Claude.
+
+Sim, essa é uma das coisas que eu quero. em breve farei experiências com Archon está criando fluxos de trabalho que combinam provedores para que possamos fazer exatamente o quê Você está descrevendo. Como Claude por implementação e depois Gemini, muita coisa As pessoas gostam de usar o Codex para revisão, pois bem, só para ter um Verifique como está Claude. Então, sim, é isso. Vai chegar em breve para Archon.
+
+Tudo bem. Legal, legal. Um
+
+Era Excalidraw em Obsidian? Sim. Meus diagramas do Excalidraw eu sempre tenho em Obsidian. Então, vou mostrar isso rapidinho. Se Vou às configurações e acesso o meu Plugins da comunidade aqui, Eu uso o plugin Excalidraw.
+
+Por Zsolt. Não sei se estou dizendo Isso mesmo [risos]. Mas sim, eu tenho Já uso isso há bastante tempo. Muito, muito bom. Porque eu só quero ter Tudo junto no meu cofre.
+
+Diagramas, pesquisas, tudo. Então, eu Adoro usar este plugin o tempo todo. Tudo bem. Legal. Então, no fim das contas, estava um pouco bloqueado por assinatura. Vamos
+
+ver. Certo. Para programação de IA, se você quiser obter Os melhores resultados estão atrás de um paywall, certo? agora. E quer dizer, infelizmente, isso faz senso. Assim como esses modelos de fronteira
+
+Opus e GPT-5.4 Codex, eles são Caro, cara. Assim como essas empresas são queimando bilhões de dólares de capital de risco neste momento apenas para ter esses modelos que funcionam para o mundo e Eles estão apenas começando a fazer algumas coisas. lucros de obtê-lo como o maior níveis de acordos empresariais. Porque, acredite em mim, eles não fazem.
+
+Desconto na sua assinatura da Anthropic se você estiver realmente atingindo sua taxa máxima limites para o Código Claude. Onde eles realmente estão ganhando dinheiro é usando você como alavanca para conseguir o acordos empresariais, a empresa interesse. Então, eles são lucrativos. mas é muito subsidiado para nós. Subscrições antrópicas. E essa é parte
+
+do porquê eles são hum reduzindo os limites de taxa, certo? agora. É uma pena. É...
+
+Eu não consigo chegar nem perto disso. muito fora do Código Claude com o meu Subscrição antrópica em comparação com até mesmo como há algumas semanas. Os limites de taxa estão piores agora. infelizmente. E eles levaram embora meu token de 1 milhão.
+
+Código Claude. Isso é outra coisa que Estou um tanto frustrado com isso. Tipo, se eu Se eu fizer o modelo de barra, aparentemente alguns As pessoas ainda têm isso. Então, eu não sei. Por que sou só eu, mas eu não tenho o opção de usar um Opus de 1 milhão ou uh Soneto não mais.
+
+Então, eu ficaria curioso para saber se mais alguém... Também já me deparei com isso. Mas estou preso aos 200.000 tokens novamente.
+
+Isso foi há apenas 3 dias. Não sei porquê. Ou talvez fosse como um semana passada. Mas [suspiro] sim. De qualquer forma.
+
+Então, sim. Vou ter mais tempo para Responda às perguntas enquanto aguardamos. Os fluxos de trabalho a serem construídos aqui. Uma coisa que eu quero colocar no chat "Quick" é apenas um link para Archon. Então, se Você tem interesse em conferir Archon, tipo, tem um conteúdo bom no meu canal.
+
+Consegui acessar a transmissão ao vivo do fim de semana. E também tenho o vídeo do YouTube. que publiquei há apenas 5 dias em Arconte. Então, dê uma olhada nisso se você estiver interessado. Como eu disse, porque eu tenho Já produzi tanto conteúdo, não estou...
+
+vai ser como se estivesse hiperfocado em Explicando Archon. Vou pegar rápido, bem rápido, aqui está apenas começando a fazer [bufa] uma sessão de programação ao vivo criando Os fluxos de trabalho do Archon com vocês. Hum, e também o repositório que eu estou Utilizando a Fábrica Negra para construir, isto é Por enquanto, privado. Bem, na verdade, eu tornei isso público. Mas eu não vou fazer com que isso aconteça.
+
+Você pode entregar qualquer problema ao Dark Ainda não está em fábrica. Então, vou começar deixando apenas Aceite problemas da minha parte. E então eu farei com que seja Disponível para todos depois que eu curtir Testei as coisas por cerca de uma semana, é isso que eu plano. Algo assim. Na verdade, eu talvez queira mesmo fazer Este repositório está privado neste momento.
+
+Construí isso como medida de segurança. Veremos. Talvez eu tenha que mudar. privado até que eu tenha certeza de que é Na verdade, estou apenas resolvendo meus próprios problemas. [risada] Então, teremos que...
+
+Farei isso daqui a pouco. Mas, vamos lá Comece criando os fluxos de trabalho do Archon. aqui. OK. Então, no meu chat, quanto eu tenho?
+
+Ok, já utilizei 40% do meu contexto. Então, Acho que posso continuar por aqui. Então, retomando esta conversa que eu tive, já tem meu plano completo da Dark Factory. carregado. Então, eu posso literalmente perguntar assim: O que devo construir a seguir? Porque eu tenho
+
+tenho mantido um registro de tudo que Eu criei enquanto construía. Então, tipo para Por exemplo, uma coisa que eu já fiz foi Eu criei o documento central sobre governos. documentos de governança. Então, eu gosto do meu mission.md, regras da fábrica. Posso mostrar
+
+isso para vocês é como um pouco de O que foi incluído nesse fluxo de trabalho? está em construção. Eu só quero ser eficiente. com o tempo aqui. Tudo bem.
+
+Então, Então, havia algumas coisas que eu estava fazendo. durante um evento no Dynamis comunidade. E então, aqui está o resto do ponche. listas da seção 14. Eu te disse que é abrangente. Seção 14 do plano.
+
+Ordenado pelo que faz sentido construir Agora e economize para a vida toda. Certo, então acho que há alguns coisas que me recomendou fazer antes da transmissão ao vivo aqui. Mas também estes serão super rápido Para configurar de qualquer forma. Precisamos criar os rótulos do GitHub, né? o problema e o modelo de RP, orquestração script de shell.
+
+Sim, eu vou Sim, vou fazer com que ele passe por cima. Todas essas coisas em paralelo. Então, tudo bem. Os rótulos do GitHub são, na verdade, meio que interessante porque tudo no A Dark Factory será administrada. por meio de rótulos. Então, quando a triagem
+
+O fluxo de trabalho será executado, basicamente Verifique o status dessas etiquetas. Como esta coisa está sendo atualmente Implementado, certo? Tipo, não, não Enviar outro fluxo de trabalho Archon para funcionar sobre isso porque já está em progresso. Ou Na pior das hipóteses, se falhar Implemente o pull request duas vezes em uma fila, Vou etiquetar como "necessidades" humano. Então, talvez eu não esteja fazendo isso completamente.
+
+totalmente Dark Factory, mas eu quero em pelo menos ter uma pequena escapatória, se eu Preciso mesmo resolver uma coisa por conta própria. Então, eu tenho um pequeno sistema. criado para isso. E então, tipo, se eu rejeitar um problema, tipo isso não se encaixa com o nosso missão, ou se eu aprovar e nós estivermos ainda não está sendo implementado, então Vou adicionar essa etiqueta. Hum, e depois o limite de produção da fábrica, eu estou terei que fazer alguma proteção.
+
+Claro que não gasto centenas delas de dólares em créditos Minimax em um dia. Então, se precisarmos esperar pelo próximo dia para que os limites de taxa diminuam que Vou integrar isso ao sistema, então. Também adicionaremos este rótulo. Então, sim. É difícil até mesmo em uma transmissão ao vivo.
+
+para se aprofundar muito em tudo. que eu planejei aqui. Mas eu espero que Você pode ver isso pelo sistema de etiquetas. que tenho para esses problemas do GitHub, Parece que eu pensei muito sobre isso. neste sistema até mesmo lidando com taxas semelhantes limites e fuga humana se eu realmente Preciso muito disso.
+
+Então, sim. Gosto muito do importante A questão aqui é que os problemas do GitHub são Comandando toda a Fábrica Sombria. Porque qualquer tipo de entrada no sistema para um Bug que precisa ser corrigido ou recurso que precisa ser criado, a entrada vem de um problema. Seja isso ou não Eu criando isso ou a Fábrica Sombria ela mesma criando o problema. Porque nós fazemos também temos uma espécie de ciclo de feedback aqui onde, quando o agente de validação executa seu testes de regressão, se encontrar algum problemas que são grandes o suficiente para não apenas será consertado imediatamente, então Isso criará um problema no GitHub e então irá...
+
+através desse ciclo e então abordar isso. E assim, qualquer coisa que ele pegue em A regressão pode ser apenas mais um problema para para que ele possa ser corrigido de forma autônoma. E então, é isso. Quero dizer, tipo, espero que sim Isso não significa que chegaremos ao infinito. ciclos de criação de problemas e problemas e problema após problema, mas pode acontecer.
+
+Isso faz parte da experiência. Nós não Não sabemos o que vai acontecer ou O que poderia dar errado? Mas é por isso que eu Existem medidas de proteção em vigor para garantir que não, hum, que isso é só Jack me coloquem nos créditos. Então, sim. Assim como quando eu tenho meu equilíbrio.
+
+Aqui, eu só coloquei uns 25 dólares. começar. E aí eu usei tipo, você Sei que, nos meus testes até agora, deu 87 centavos. No geral, é bastante eficiente. Mas vou garantir que eu...
+
+Sim, nunca tenho muito tipo, eu sou Estou desativando a cobrança automática. Então, se eu ficar sem créditos, eu simplesmente... tenho que fazer manualmente Ah, adicione os créditos e então eu terei o sistema que detecta quando há problemas não foram processadas devido ao limite de taxa e Basicamente, ele vai retomar o funcionamento normal.
+
+Ok. Então, vou dizer Então, vou ativar meu recurso de ditado por voz. ferramenta e eu direi: "Quero que você crie os rótulos, a issue e o PR do GitHub modelos e orquestração Script shell e entrada cron no VPS. Portanto, resolva tudo isso agora mesmo. Na verdade, estou no meio da transmissão ao vivo.
+
+Assista agora. Então, vou explicar. descreva brevemente os fluxos de trabalho à medida que os realiza. coisas." Muito bem, aqui está.
+
+Ainda acha que eu não estou na transmissão ao vivo. ainda não está disponível. Então, vou dar uma atualizada. de onde eu realmente estou. [risada] O código Claude não faz muito sentido.
+
+de tempo. OK. Então, enquanto isso estiver em andamento, Quem está pagando por todo esse contexto de cotas? Eu estou pagando por isso. Está saindo do bolso, por isso estou usando Algo bem barato como o Minimax M2.7.
+
+Sim. OK. Então, vejamos. Vamos voltar a O plano da Fábrica Sombria. Quero mostrar Vocês sabem um pouco sobre o que é o Arconte.
+
+Os fluxos de trabalho provavelmente terão a seguinte aparência: Então, O que eu tenho aqui, Estas são apenas versões preliminares do Fluxo de trabalho Archon. Então, quando eu realmente Incorpore-os um pouco em nossa transmissão. Aqui, eles podem acabar parecendo bastante diferente. Mas, quando eu estava fazendo meu primeiro Planejamento com o código Claude criando isso Eu também tinha todo o plano da Fábrica Sombria. Carregue a habilidade principal do Arconte. Então, é isso.
+
+Sabe como construir fluxos de trabalho. Sabe os diferentes parâmetros, coisas como Isto é, como usar a CLI do Archon. Então, é isso. Criou o rascunho inicial para eles. Assim, existem quatro fluxos de trabalho que nós...
+
+necessidade total. Temos a triagem. fluxo de trabalho. Isso descobre o que é o GitHub questões que realmente queremos abordar e Ele cuida da rotulagem e coisas do tipo. que.
+
+E então temos a implementação. fluxo de trabalho. Nossa, eu preciso! Role a página um pouco para baixo. Nós temos o uh Implementação. Aguarde.
+
+Eu já passei por essa parte. Onde foi parar? ir? Onde está o cabeçalho aqui? Pode haver algum erro de formatação.
+
+Ah não, aqui está. Um Espere um segundo. Isso também resolve o problema? Classificar Aplicar decisões. Oh. Acho que pode haver um erro de ordem.
+
+aqui. Então, tudo bem. De qualquer forma, também temos o Validar o fluxo de trabalho de RP. Então, é isso que Vamos executar isso, vamos faça todo o padrão de espera para validação. Vamos executar isso em cada solicitação de pull request criada a partir de O fluxo de trabalho que resolve o problema.
+
+Pensei que seria a segunda. É por isso que estou confuso agora. Hum, não tenho certeza disso. Talvez isso Talvez tenha apenas ordenado as coisas incorretamente. Então, oh Ah sim, aconteceu mesmo um problema de ordem incorreta. OK,
+
+Isso é meio estranho. Mas, enfim, isto é... Este deve ser o segundo fluxo de trabalho. EU
+
+Não sei por que Claude incluiu isso no plano. nessa ordem. Mas, nosso próximo fluxo de trabalho É o que realmente precisa ser consertado. Não, não é isso. Isso é Este é um fluxo de trabalho para corrigir problemas que Ocorre durante a validação do PR. Então, se
+
+se houver algum problema que surja para cima ao criar a puxada ou quando Após revisar a solicitação de pull request, executamos o seguinte: isso para resolver as coisas e depois pressionar um Nova alteração para atualizar o pull solicitar. Um E então temos o teste abrangente. Então, este é o Fluxo de trabalho de teste de regressão. E esta vai exigir muito esforço. fichas. Então, estou planejando executar isso.
+
+apenas uma vez por dia ou uma vez por semana porque vai examinar cada detalhe. uma única jornada possível para o usuário. Todo A única maneira pela qual podemos usar o aplicativo é através do aplicativo. testando cada caso extremo, fazendo Tenho certeza de que funciona automaticamente. E então, para qualquer coisa que não funcione, Isso vai gerar um problema no GitHub.
+
+Certo. Então, toda vez que revisamos uma solicitação de pull a pedido, vamos fazer muito testes de regressão, mas vai ser uma versão mais concisa deste fluxo de trabalho porque isso vai ser tipo muito token pesado. E então, sim, acho que a única coisa O que eu não fiz foi criar o Fluxo de trabalho para efetivamente solucionar os problemas. E eu... desculpe, agora me lembro por que isso aconteceu.
+
+o caso. É porque existe um fluxo de trabalho padrão do GitHub para correção de problemas em Arkon que eu vou usar ou talvez fazer uma pequena adaptação para. Mas então, para todos os outros fluxos de trabalho, eles precisam ser criados a partir de arranhar. Então, peço desculpas como Claude gentilmente. Isso me confundiu ou eu esqueci o planejamento que eu fiz com isso, mas Sim, vamos criar o Fluxos de trabalho em um segundo aqui.
+
+OK. Legal. Assim, todas as três tarefas estão concluídas. Nós Criei os rótulos do GitHub e a issue. modelos E então criamos o orquestrador. Então
+
+Nós vamos basicamente criar um tarefa cron que é executada em nosso VPS de tempos em tempos muitas vezes. E sempre que esse trabalho for acionado, Isso vai basicamente provocar o Claude. para usar a CLI do Arkon para invocar o fluxos de trabalho. Tipo, "Ok, chegou a hora de..."
+
+priorizar nossos problemas." Ou então, é hora de... sim, veja, este é o O padrão. Chegou a hora de consertar o GitHub.
+
+problema ou é hora de validar o pull solicitar. Então podemos acessar o repositório do GitHub. Venha aqui e dê uma olhada nisso. Então, se eu atualizar Bem, vamos abordar um problema. E Se eu olhar os rótulos dos problemas, Você pode ver que temos todos esses agora com etiquetas. Aprovado pela fábrica,
+
+Em andamento, precisa de ajustes, precisa de intervenção humana. E Se olharmos na pasta .git, nós É possível visualizar o modelo de solicitação de pull request. Nós quero garantir que, à medida que a escuridão A fábrica está em funcionamento e possui um conjunto padrão para o que compõe cada um deles Descrição do pull request e cada Descrição de um único problema. Porque ser o mais consistente possível é uma das melhores maneiras de realmente fazer Isso é confiável. Então temos um modelo.
+
+para quando estivermos registrando um bug, uma para quando estivermos, você sabe, Solicitar uma funcionalidade. Então, se eu fosse Na verdade, abra uma solicitação agora mesmo. A pergunta é: "Isto é um relatório de erro?" Devo fazer um pedido de recurso ou simplesmente criar um? "Do zero?" E nós só vamos
+
+para permitir que os mantenedores façam isso tipo. Então, se eu clicar em um relatório de erro, então você pode ver que isso acontece automaticamente preenche este formulário que está definido em o modelo que Claude Code acabou de construir para mim. Agora temos alguma estrutura. Estamos aplicando certas medidas porque Queremos ter certeza, tipo, se eu for para que isso se torne um experimento público. onde qualquer pessoa pode abrir uma issue no GitHub, eu Preciso que as expectativas sejam definidas para Que informações você está fornecendo? Então nós
+
+Estes campos são obrigatórios. Então, dessa forma Na verdade, existe contexto suficiente para o Fábrica escura para resolver o problema. E Se não for usado um modelo, então eu simplesmente...
+
+vou instruir a fábrica escura a comentar e fechar automaticamente o emitir. Portanto, seremos bastante rigorosos quanto a isso. que. Tudo bem. Legal. Então, agora queremos realmente
+
+Construa nossos fluxos de trabalho aqui. O problema é que estou com pouco contexto. então eu poderia iniciar uma nova conversa para Faça isso. Então, vou apenas dizer Vou construir os fluxos de trabalho do Arkon. em uma janela de contexto separada. Então simplesmente vá
+
+adiante e atualize o plano com o quê Acabamos de fazer isso aqui. E então eu vou apresentar um novo Código Claude. Sessão para construir os fluxos de trabalho do Arkon. E enquanto isso estiver rodando, eu posso simplesmente abrir um novo Código Claude e faça isso. Então deixe-me Saia daqui, abra um novo Claude, e vou copiar o caminho para o Plano completo.
+
+Vou colocar isso logo no início do aqui. E a outra coisa é... aguentar. Vou encerrar por aqui. O
+
+Outra coisa é que eu quero que Carregue a habilidade Arkon. Porque eu quero que seja a habilidade Arkon que eu tenho, uh, fornece uma referência completa. Para Claude Code, como construir Arkon? fluxos de trabalho e melhores práticas para realizar então. Então, vou dizer Leia todo o plano da fábrica sombria.
+
+que eu te indiquei o caminho. Agora vamos trabalhar na construção do Fluxos de trabalho Arkon. E eu quero começar por Construindo a triagem, a fábrica escura fluxo de trabalho de triagem. Então Eu também quero que você carregue a habilidade Arkon. Então você entendeu tudo da melhor forma.
+
+Práticas para a construção de fluxos de trabalho Arkon. Então, quero que você me dê um resumo de seu plano para o fluxo de trabalho de triagem, tudo os nós, quais modelos vamos usar use, como são os prompts. Eu só quero ter um conversa aqui, reiterando as ideias para o fluxo de trabalho antes de realmente Construa-o. Tudo bem. Então, vamos fazer um pouco de...
+
+laço de pivô. Se você já passou pelo Agentic Curso de Programação em Dynalist, você sabe o quê Estou falando sobre... Vamos fazer Alguma exploração, algum planejamento.
+
+frente, e então vamos criar O fluxo de trabalho e teste-o. Eu nem sei direito como vamos fazer isso. Para testar exatamente, mas eu vou perguntar. pelas suas recomendações, uma vez que as tenhamos. Foi construído. Porque talvez eu precise, de certa forma, de
+
+como Prepare a fábrica escura incrementalmente. Ou talvez eu precise mesmo correr o fluxo de trabalho de triagem nos problemas que eu já ter no repositório aqui e assim como ver que tipo de rótulos adiciona e se Está tudo funcionando. E então eu Provavelmente terei que pedir para ele também curtir. desfazer todo o seu trabalho para que possamos Ainda tenho como que uma folha em branco de problemas. que ainda não foram modelados.
+
+Então veremos o que teremos que fazer quando isso acontecer. Assim que for construído aqui. Tudo bem. O Minimax foi projetado para minimizar esses créditos. Espero que não. Veremos.
+
+Estou disposto a mudar para outra coisa. como o GLM, se eu precisar. Tudo bem. A cobrança automática deu problema no mês passado. Nunca mais farei isso. Ok, isso é demais.
+
+ruim. Provavelmente vou levar isso em consideração. Eu mesmo não faria isso. Use a assinatura Minimax, que oferece Bom custo-benefício. Ok, legal. Sim.
+
+Não sei, provavelmente eu gostaria se realmente... Não quero ampliar esse experimento. Acho que posso usar qualquer tipo de assinatura.
+
+Porque vou atingir os limites de taxa, mas isso é... bom saber. Porque eu posso Estou usando o Minimax no Ollama, estou testando agora.
+
+Ok, isso é muito legal. Sim, quero dizer, estou usando o maior versão do Minimax. Não acho que seria realmente realista autohospedado. Por exemplo, se eu pesquisar Minimax em Ollama, É, eles nem sequer te oferecem...
+
+Instale você mesmo. Tem que funcionar por meio da oferta de nuvem no Ollama. Mas eu acredito que se você olhar para cima, tipo...
+
+Existem hospedagens próprias opções. Você deve estar executando alguma coisa Hospedado por conta própria, certo? Se eu simplesmente pesquisar Minimax, um Ah, sim, então talvez você esteja administrando o A coisa mais importante. Porque você, eu acho que existe algo local. opções.
+
+Isso deve ser algo enorme. Sim, isso é enorme. 140 GB para o arquivo principal. E então, se eu se fôssemos analisar um Quantização Q4, ah, espere, ainda é 150. GB. Isso não me parece certo.
+
+Mas sim, é um parâmetro de 230 bilhões. modelo. Não estou executando isso no meu computador, eu te digo isso. Tudo bem. Estou usando modelos locais para isso? Não,
+
+Estou usando o Minimax. Bem, quero dizer, você pode Hospede o Minimax você mesmo, então é um ambiente aberto. modelo de origem, mas estou usando-o através de A API Minimax. Ah, muito obrigado pela doação. Jared. Agradeço muito. Construindo um
+
+fábrica escura porque até as máquinas Recusa-se a funcionar no modo claro. Certo. Essa é boa. Isso é muito bom. um. E muito obrigado pela doação, eu.
+
+Agradeço muito. Ao usar o Arkon, é necessário... Você tem permissão para acessar o código Claude sem autorização?
+
+Ah, sim, porque você está administrando o Claude. SDK do agente por baixo dos panos. É para ser instalado e esquecido, certo? Como se não devesse. Acompanhar os fluxos de trabalho do Arkon. Há humanos
+
+no loop embutido, mas isso é um coisa diferente. Então eu o usaria. Assim como você pode limitar as permissões de Claude quando Arkon passa correndo pelos ganchos. E se você realmente quiser criar um settings.json para gerenciar permissões Lá, você também pode fazer isso.
+
+Mas, é, geralmente eu só vivo intensamente, sem medo de errar. modo quando estou executando fluxos de trabalho do Arkon E aí eu tenho tipo ganchos que impedem lendo de ambientes ponto e removendo diretórios e trabalhar fora do meu base de código designada, como a árvore de trabalho que Arkon cria. Tudo bem. Temos oito H100, em breve chegarão. H200s. Isso é muito, muito legal. Eu sou
+
+ciúmes. [risos] Eu não tenho um H100. Certamente não oito deles. Isso é incrível. Sim, você vai ser Com certeza, é possível executar o Minimax. Eu penso
+
+Você poderia até executar o GLM. Qual o tamanho do GLM? Nem sei. Um Vamos ver. GLM é 744 bilhões de parâmetros.
+
+Mas se você tiver oito H100, eu... Acho que você seria capaz de correr. É possível executar o GLM 5.1 em oito H100s? EU
+
+Você acha que consegue. Isso deve ser decente. Sim, porque Cada uma possui 80 GB de VRAM. Você é Sentada ali, muito, muito bonita. Bem, você ainda pode precisar de quantizá-lo potencialmente.
+
+12.4 tokens por segundo em HH oito H100s. Então Não é super, super rápido, Mas, mesmo assim, isso é muito legal. Quer dizer, isso é impressionante. Tudo bem.
+
+Eu não tenho nem um centésimo de um H100. Mesmo. Sim. [risada] São caros. Sim, então sim, 640 GB de VRAM. Então, sim, você, você, eu acho que você
+
+Com certeza Quer dizer, você provavelmente ia querer quantizar. Para obter bons resultados, mas ainda assim é uma loucura. Tudo bem. Legal. Então, enfim, vamos voltar ao nosso assunto.
+
+agente de codificação aqui porque retornou com um resumo. OK. Eu li a seção sobre o plano da fábrica escura. 4.2 sobre triagem especificamente e o Guia de oferta de fluxo de trabalho Archon. Aqui está
+
+Minha proposta de design para a fábrica escura. triagem antes de construirmos. Então, nosso objetivo Aqui, isto é importante para todos nós. entender, consiste em classificar em lote os itens não triados do GitHub. questões contrárias à missão e à fábrica.
+
+Portanto, esses são os arquivos principais que orientam o escopo. de trabalho e coisas que vamos fazer realmente nos importamos com coisas que não nos importam. Em seguida, aplique os rótulos e os comentários. deterministicamente. Então Claude toma a decisão, ou eu?
+
+Deveria dizer que a Minimax toma a decisão. mas então teremos um etapas determinísticas no fluxo de trabalho para Rotule e comente automaticamente. Apenas para certifique-se de que tudo funcione da mesma forma sempre que realizamos a triagem. Então, vamos executar o orquestrador. ou é executado quando o orquestrador detecta Problemas em aberto sem etiqueta de fábrica. Então
+
+O orquestrador é a tarefa cron. Isto Executa de vez em quando e quando vê que temos coisas que não têm um Etiqueta de fábrica, isso significa que é um produto novo. problema que nosso fluxo de trabalho de triagem não resolveu Ainda não foi analisado? Então, ok, temos cinco nós. Vamos buscar os problemas em paralelo.
+
+Recupere as regras. Então vamos ler nas regras da missão e da fábrica e Em seguida, dê uma olhada na solicitação de pull request. lista porque isso também nos ajudará a determinar O que já está em andamento. Isso não faz muito sentido. Porque acho que deveríamos ser capazes de depender exclusivamente dos problemas relatados no GitHub para Descubra o que já está em andamento. Mas
+
+talvez isso seja apenas um pouco de verificação de segurança extra, então acho que sim Não faz mal nenhum ter isso. Mas Enfim, então, camada um Faremos nossa classificação. Então diz Soneto aqui, mas lembre-se que nós o temos. configurado para rotear para Minimax quando você Especificamos Soneto Opus ou Haicai no Fluxos de trabalho Archon. Então vai ser classifique cada um dos problemas e então Vamos ter uma etapa de bash. Então um
+
+passo determinístico que será tomado no Matriz JSON de decisões que tomamos. a partir da saída estruturada de Claude código e vamos percorrer o JSON e depois use a CLI do GitHub aplicar os rótulos de forma determinística e também os comentários sobre as questões. também. Ok, então nós temos... etapas de bash. Então
+
+Não estamos usando IA para a camada zero, pois Bem, não é? É como se a gente simplesmente executasse o GitHub. CLI para pesquisar em todas as edições. Buscamos as regras. Obtenha as solicitações de pull request abertas. Diz o seguinte:
+
+Opcional, mas útil. Quer dizer, tudo bem, mas acho que podemos Guarde-o. E então classifique. O plano define explicitamente o escopo. julgamento contra uma missão escrita Requer nuances. Haiku frequentemente tropeça ou
+
+No nosso caso, o Minimax de alta velocidade seria tropeçar. Faz sentido. O custo é baixo já que lidamos com menos de 10 problemas por lote em uma única chamada. Justo. Ok, então Você pode ver que uma das coisas que nós O suporte nos fluxos de trabalho do Archon é determinante.
+
+o resultado exato que exigimos de o modelo. Então, isso é como uma estrutura saída com agentes mais clássicos se você Os caras já lidaram com isso antes. Mas o objetivo aqui é que quando nosso agente de codificação passa pelo No processo de classificação, precisamos de um padrão. Vou continuar dizendo isso. durante nossa transmissão ao vivo aqui.
+
+Tudo se resume a padrões para confiabilidade. Precisamos de um padrão para o agente de codificação. Precisa se comunicar em sempre da mesma maneira, hum, como? Vamos dar um nome ao problema. Então, ele vai exibir um número de problema.
+
+o veredicto, que será ou aceitar, rejeitar ou necessitar de recursos humanos. É verdade, porque precisamos de humanos, isso é o que nos define. à prova de falhas caso não consiga resolver o problema. o pedido de pull request várias vezes. E a prioridade e então a classificação, bug, recurso, aprimoramento, tarefa ou documentos.
+
+Isso me basta. E então temos o esqueleto do prompt como bem. Então, só estou dizendo isso como quando é passa pela classificação o quê Está mesmo acontecendo. E então, qual é o script, o bash? O roteiro vai ficar assim na realidade.
+
+Invoque a CLI do GitHub para rotular e comentar sobre as coisas. E então surgem algumas questões em aberto, como... bem.
+
+Ok. Então vamos lá e respondê-las. questões. Portanto, um tamanho de lote de 10 ou Cinco, vamos fazer um lote de 10. E então me ajude a entender, tipo, se nós temos na verdade, abri cerca de 30 problemas desde então da última vez que o orquestrador foi executado, foi Vai entrar em loop com o Archon ou o quê?
+
+Que tipo de aparência é essa? E então, será que a triagem deveria rotular alguma coisa? Sem fechar em caso de rejeição? O plano diz que o fechamento rejeitou algumas questões, embora Com explicação. Sim, definitivamente devemos fechar.
+
+surgem problemas quando os rejeitamos. Sim. Rótulos de prioridade para necessidades humanas. Atualmente Eu as aplico. Útil para que você possa ver em um observe quais são os problemas de revisão humana urgente.
+
+Sim, acho que definitivamente são. Definitivamente vale a pena aplicar a prioridade. Além disso, me ajude a entender como isso funciona. fluxo de trabalho de triagem Vamos perceber que precisamos de um ser humano, certo? Porque, como conversamos no Planeje como, uma vez que o fluxo de trabalho ou o pull A solicitação falhou duas vezes devido a um problema.
+
+Então diríamos que precisamos de recursos humanos. Tipo assim Como isso se parece exatamente? OK. Cara, essas são difíceis. questões. Devo incluir um asterisco?
+
+rotular ou simplesmente apoiar-se no existente Etiquetas de problemas do GitHub? O plano não Mencione explicitamente os rótulos de tipo. Eu os adicionaria. Sinal barato para mais tarde filtragem. Claro, sim, podemos adicioná-los.
+
+e certifique-se de atualizar o dark plano de fábrica com essa decisão também. Escopo de detecção de duplicados. Neste momento, O classificador vê PRs abertos no uh atual emitir lote. Deveria também ver recentemente Problemas fechados para identificar relatos repetidos? Custa mais contexto, mas capta mais informações.
+
+duplicados. Hum, eu diria que realmente não precisamos disso. porque se rejeitamos um problema antes, Provavelmente vamos rejeitar novamente. Então Não precisamos gastar o contexto para Consulte as edições recentemente encerradas. Um faça mission.md e factory_rules.md
+
+Já existe no repositório de destino? A resposta Sim. Eu realmente os criei. Eles estão no ramo principal. Qual é o caminho do repositório de destino? Qual repositório estamos usando?
+
+Como integrar esse fluxo de trabalho? A escuridão Repositório de aplicativos de fábrica, certo? Não são Dynamos motor. Isso mesmo, e na verdade eu irá fornecer o caminho completo para o código. baseie-se aqui no início do prompt.
+
+OK. Nossa, que nome comprido! Fez muitas perguntas, mas tudo bem. Isso é bom. Isso é bom porque Isso vai dar muito trabalho.
+
+trabalhar. Temos muito trabalho pela frente. quando estamos construindo o sistema desde o início porque cada suposição individual O agente de codificação que ele faz é potencialmente...
+
+Ser drástico quando estamos neste nível de alavancagem na criação de nossos fluxos de trabalho e Documentos de governança apresentados antecipadamente. Assim como nós Tem que ser muito, muito complexo aqui. Então Eu sei que pode parecer que eu estou Estou dedicando muito tempo a isso, mas cara, Isso é importante. Porque se não entender como Rotule as coisas corretamente ou não estará sendo usado. Problemas do GitHub do jeito que eu quero.
+
+Se todo o sistema ruir, ele vai desmoronar. separado. Então, preciso de um tempo. Eu sou realmente Fico feliz que esteja me exigindo muito. Esclarecendo dúvidas aqui.
+
+Tudo bem. Legal. Ainda estou jogando Gemma 4 no meu AMD. 395 para moradores locais. Muito legal. Sim, Gemma 4 é boa. Como
+
+É realmente impressionante. modelo. Ah, sim, sou eu, um dos mais As mais populares no momento no Ollama. Hum, eu nunca ouvi falar disso. um. Cascata forte de Nemo 2.
+
+Isso é legal. Nossa, tem tantos modelos! modelos locais que quero experimentar agora mesmo agora. Uau, os benchmarks realmente parecem...
+
+muito bom. Benchmark de código ao vivo profissional. É melhor que Uau, supera o Quantitative 3,5.397 bilhões. E é quase tão bom quanto Kim K 2.5 a 1
+
+modelo de trilhão de parâmetros. Seriamente? Isso é meio louco.
+
+Interessante. Tenho vontade de experimentar este com o a fábrica escura. Ok, bem, de qualquer forma, estou ficando um pouco distraído aqui. Tudo bem. Sim, exatamente isso.
+
+Um bom trabalho inicial faz toda a diferença. laços estelares e é isso que eu vou fazer para. Muito bem, vamos voltar a falar do Claude. Certo, então deixe-me abordar seus dois pedidos de ajuda. entender perguntas. Não há looping no
+
+Fluxo de trabalho Archon em si. A triagem O fluxo de trabalho não é um nó de loop. É um DAG de execução única que processa um único Em lote e saída. Eis o fluxo real. Certo, então, se tivermos 30 problemas aberto entre execuções do orquestrador, O primeiro ciclo do orquestrador será executado.
+
+Fluxos de triagem, processo 10 e saída. O segundo ciclo do Orchestrator contempla o trabalho em Faixas de alta prioridade primeiro. Somente quando Esses estão vazios, será que cai para...
+
+Os problemas não triados existem e continuam a ser executados. triagem novamente. OK. Ah, ok, isso faz sentido. Então, os 30 O pico do problema se estende por três ciclos do orquestrador. Então, nós temos que ser
+
+cuidadoso porque teoricamente se houver algo como mais de 10 problemas e curtidas criadas a cada hora, Então vai acabar se acumulando. e se acumulam. Mas acho que isto é Na verdade, tudo bem, porque eu não quero Seria lamentável se houvesse Mais de 10 são criados a cada hora. Isso vai dar muito trabalho. Um Certo.
+
+OK. Faz sentido. Nós sempre podemos Podemos alterar o limite se quisermos. Como a triagem sabe se precisa marcar ou não? Precisa marcar necessidades humanas?
+
+Você confundiu duas escaladas distintas. no plano. Quero ter certeza de que estamos Estão na mesma página porque não têm relação nenhuma. O fluxo A é o tempo de triagem que requer intervenção humana. Quando Este fluxo de trabalho lida com o problema em si.
+
+é problemático na admissão. O classificador A marca precisa de intervenção humana quando o problema está em escopo, mas ambíguo, arquitetonicamente arriscado, uma decisão sobre o produto, Claramente, trata-se da decisão do classificador. OK. Na verdade, eu não gosto disso. Não sei se realmente quero que isso seja um Fábrica escura, eu quero que ela feche.
+
+problemas ou como lidar com eles. Eu não quero isso. criar esse cemitério de problemas que Preciso da minha avaliação quando não estou planejando nada. Na verdade, estou analisando-os. Então, OK. Quero deixar isso bem claro. Eu não
+
+quero analisar os problemas, a menos que haja houve várias tentativas frustradas de resolver o problema. eles. Assim, para o fluxo A, nós simplesmente deveríamos Encerre essas questões com um comentário. Como, se for ambíguo ou arquitetonicamente Arriscado ou não, vamos apenas fazer um comente explicando isso e depois feche. a questão.
+
+E então eu quero que você verifique o código. baseie-se para ver se possui ponto arcano. Acredito que sim. E então, ok, um requisito de design I Quero sua aprovação. Para o bash aplicar nó de decisões, eu vou ter que classificar Vou ter que classificar e escrever isso.
+
+Saída JSON para o diretório de artefatos, Faz sentido, como parte da proposta. instruções, então eu apliquei as decisões leem o arquivo com jq em vez disso de confiar na saída de classificação substituição. O motivo é que A string de motivo conterá aspas. apóstrofos, novas linhas e emojis e arcons auto shell citando um em um bash O roteiro é uma bomba-relógio prestes a explodir. Quer dizer, acho que sim. Eu não sei. Isso é mesmo verdade?
+
+Sem problemas? Vou ter que investigar. que separadamente porque isso pode ter apenas identificamos como algo que nós Talvez seja necessário corrigir isso no Arcan. Mas enfim, Escrever em um arquivo ignora todo o processo. problema de citação. É uma linha a mais em
+
+o prompt e uma recursão jq em bash. Parece ótimo. Ah, claro, parece ótimo. para mim. Ok, cara, a coisa está ficando específica, mas isso é bom. Tipo, eu aprecio como em
+
+São as ervas daninhas que são agora. Isso é isso é Do que precisamos. Tudo bem. Legal. Então, acho que este é o É a última coisa de que preciso e então posso Na verdade, construa o fluxo de trabalho.
+
+Legal.
+
+Tudo bem. O que mais conversamos no chat? Obrigado, cara, pelo trabalho em conjunto. De nada. É um prazer.
+
+Adoro fazer isso ao vivo com vocês. pessoal. É muito divertido. Só compartilhando tudo. E sabe, eu estava um pouco... hum... eu sou
+
+Para ser sincera, eu fiquei um pouco... Estou um pouco hesitante em fazer esta transmissão ao vivo. porque é um pouco mais lento do que eu geralmente apareço nos meus vídeos e faço lives transmissões porque estou construindo algo ao vivo e definitivamente estou na fase em que Estou fazendo algo bem devagar.
+
+Tipo, nós não vamos ter, Sabe, pagamentos enormes constantemente aqui. É um processo lento e constante, certo? É uma maratona, não uma corrida. É isso que É quando estamos construindo um sistema como Isso logo de início. OK.
+
+E agora? Isso foi muita informação. Ok, confirme o plano de execução. Certo, faz sentido. Andaime arcon, escreva o fluxo de trabalho, Valide o fluxo de trabalho e corrija quaisquer problemas.
+
+erros de validação e revalidar. Isso é ótimo. Bem, na verdade, Sim, eu só vou dizer que isso é bom. Vá em frente. A outra coisa que eu talvez fosse A pergunta que quero fazer é: qual é o plano?
+
+Para efetivamente invocar o fluxo de trabalho? Porque quando ele realiza a validação do arcon, isso é Só estou verificando se a sintaxe está correta. Então, É algo parecido com a remoção de fiapos do fluxo de trabalho. Ainda não vai executar. e questões de triagem, mas uma vez que isso aconteça, construir, então eu só terei um converse com ele e pergunte o que é O plano é testá-lo de ponta a ponta.
+
+Tudo bem. Legal. Não acho que estejamos com falta de contexto. Sim, devemos conseguir que isso aconteça sem problemas. toda essa situação. Eu gostaria de não ter apenas
+
+Tenho 200.000 fichas, mas tudo bem. Tudo bem.
+
+Legal.
+
+Mal posso esperar para ver as empresas chinesas usarem Os resultados do mito dos mísseis servem para treinar seus modelos para que o código aberto local possa realmente ir para a estratosfera. Sim, eu toparia. Então, sim, se eles usassem Mythos para um geração de dados sintéticos como eles usavam opus, isso sim seria poderoso. Provavelmente vão fazer isso. Que se dane processos judiciais. Eles provavelmente vão apenas
+
+faça isso. [risada] Sim. Tudo bem. Posso fazer uma sessão sobre hermafroditismo? Suponho que sim Você quer dizer Hermès?
+
+tipo o novo tipo tipo garra aberta alternativa. Hum, eu consideraria essa possibilidade. No entanto, eu sou Sou mais adepto de construir o meu próprio. segundo cérebro versus usar algo como Garra aberta ou garra de Hermes. E sabe de uma coisa? Enquanto esperamos,
+
+Para que isso construa o fluxo de trabalho aqui, eu Acho que este é um bom momento para conversarmos sobre Isso é muito rápido. Deixe-me, na verdade... Aguentar. Deixe-me abrir uma página no meu
+
+Navegador rápido.
+
+Acho que este é o link correto. Sim, Vamos lá. Então, uma das coisas realmente muito empolgantes coisas que eu fiz recentemente no comunidade dinâmica Eu fiz um treinamento intensivo de 4 horas. ensinando você a construir sua própria IA segundo cérebro criado do zero. E uma das coisas que eu abordo lá é assim que você pode se inspirar em ferramentas como garra aberta ou Hermes sem ter que construir e executar o sistema você mesmo.
+
+Existem muitos riscos envolvido em administrar seu próprio negócio ou em executar um segundo cérebro que não é o seu aplicação própria. Há muito problemas de segurança com garra aberta e Hermes, não apenas em termos de vulnerabilidades. no próprio código-fonte, mas até mesmo apenas executar algo que você não entenda com permissões para o seu agente que você também não realmente entender. Então, eu sou um grande defensor da construção do seu próprio negócio. um segundo cérebro próprio, construído do zero.
+
+E é exatamente isso que eu abordo neste livro. curso. E depois eu também o recorto. em uma versão mais refinada de 3 horas que ainda tem muita coisa boa Seção de perguntas e respostas. Então, isso está na comunidade.
+
+bem como o terceiro prato para dinamista. Então, se você estiver interessado, curta meu segundo post. Meu cérebro literalmente me poupa 20 horas por dia. semana, sem nenhum exagero. É uma loucura.
+
+Tipo, eu venho administrando meu negócio há Já faz cerca de um ano e meio. Tipo, eu sabe quanto tempo levo para fazer um muitas dessas coisas que são tipo Agora, meu sistema está parcialmente ou totalmente automatizado. E é isso que eu quero para você como bem. É isso que eu abordo no curso. Então, se isso soa...
+
+Interessante, deixa eu colocar um link aqui. para isso no chat do YouTube rápido. Tivemos muitas pessoas Ingressei na comunidade recentemente. Isso é Muito empolgante para o segundo cérebro. e também por causa do arcon. Hum, muitos
+
+As pessoas estão indo ao curso e Eles estão compartilhando seu segundo cérebro, tipo... sua própria arquitetura e como eles são moldando-o para seus casos de uso porque eu um Um dos assuntos que abordo no curso é tipo, é assim que você constrói o fundamento do segundo cérebro, mas então Eu também falo sobre como você pode, sabe, orientá-lo para ajudá-lo a construir o seu próprio integrações, habilidades e outros usos casos que você tem para isso, até mesmo conseguindo tornando isso algo muito proativo para Você, antecipando suas necessidades. Então, sim, As pessoas estão compartilhando seus próprios casos de uso.
+
+e outras coisas. É muito legal de ver. Tipo, estou aprendendo muito com vocês. até mesmo na própria comunidade. Então, além de como estou desenvolvendo isso em A minha própria. Muito, muito legal. Então, sim,
+
+Queria chamar a atenção para isso rapidinho. Vamos ver como está a situação do Claude. agora. OK. Todo mundo quer vender um curso.
+
+Bem, quero dizer, Eu agrego muito valor. Eu mantenho minha posição. O que eu forneço lá. Então, Sim, eu não... eu realmente não aprecio.
+
+que os palavrões na mensagem lá. Mas sim, quer dizer, tipo, eu... Sério, tem muito valor nisso.
+
+tenho e muito trabalho investi em Criando esse campo de treinamento intensivo. Tudo bem. Legal. Então, enfim, aqui está. O que temos para o fluxo de trabalho. Isto
+
+já construíram tudo. Isso é Na verdade, mais rápido do que eu pensava. honestamente. Mas acho que na verdade não. Já foi feita alguma validação?
+
+Vamos ver. Então, nós temos o nosso plano. Atualizado com algumas pequenas alterações. Criamos o sistema de etiquetagem e o mudanças que fizemos em nosso plano para o fluxo de trabalho. Hum, e então Certo, então vamos criar o próprio fluxo de trabalho.
+
+[suspiros] Algumas observações sobre a implementação que estamos destacando. Mas eu não quero gastar muito. Estou lendo isso agora mesmo.
+
+Ok, acho que está tudo bem. O que não é Já terminou? Agente orquestrador. Corrigir adaptação de problemas do GitHub. OK. Então,
+
+sugestão para a próxima etapa. Antes de construir o próximo fluxo de trabalho, eu faria um teste rápido neste final. fim. Crie os rótulos no repositório. arquivar um ou dois problemas de teste, E, hum, ok.
+
+Faz todo o sentido. Mas aqui Eis a questão. Eu adoraria fazer um teste de fumaça, mas...
+
+já tenho alguns problemas que estou enfrentando o repositório. Então, talvez o que nós poderíamos o que poderíamos fazer é executar o fluxo de trabalho para priorizar esses problemas, mas depois apenas apague os rótulos depois para que possamos trazer nos recolocamos do zero. Então, Quero fazer o teste completo, mas eu quero para que volte ao original. estado anterior aos meus testes, se é que Faz sentido. Mas você pode ficar à vontade para iterar, se quiser.
+
+sobre o fluxo de trabalho e tudo o que antecede Você volta à estaca zero. OK. Então, sim, eu queria mesmo correr. mas não deixe uma bagunça de triagem e coisas do tipo. Porque este repositório que eu Tenho aqui, quero manter assim.
+
+puro, certo? Tipo, quando eu realmente Comecem a trabalhar na fábrica escura, como se tivessem tudo os fluxos de trabalho criados. OK. E então alguém me pediu para Compartilhe o link do que eu tinha aberto em Cromo. Este é o link, bem aqui.
+
+Legal. Tudo bem. Obrigado, Cole. Isso é incrível. Agradeço muito. Agradecer
+
+Muito obrigado. Obrigado, Cole. Vou participar Dinamismo. Obrigado. Agradeço muito. Sim,
+
+Terei o maior prazer em tê-lo(a) no comunidade. Assistindo às 5h20 da manhã. Nova Zelândia. Bem, obrigado por sintonizar tão cedo. Agradeço muito.
+
+Legal. Tudo bem. Vamos ver. Eu sei que é uma referência a tiros. você mesmo no pé, mas eu nunca Ouvi o termo "arma de pé". Será que estou sozinho?
+
+Na verdade, sinceramente, Chris, isso é bom. apontar. Então, isso se refere a quê? Claude mencionou isso anteriormente. Hum, acho que nunca ouvi falar de tiro a pé.
+
+qualquer. Não sei. Sim, eu ouvi dizer que...
+
+Ouvi dizer que alguém está atirando no próprio pé. milhões de vezes. Eu uso essa expressão eu mesmo muito, mas sim, acho que é isso. Apenas uma forma mais curta de dizer isso. Legal.
+
+Tudo bem. Hum, definitivamente quero me juntar à Dynamis. mas acabei de comprar uma casa. Justo. Parabéns, Stuart, pelo seu nova casa. Enquanto estou tentando conseguir
+
+tudo funcionando gratuitamente e localmente para uma primeira tentativa. Então, depois de obter o resultado, eu pode pagar por melhorias. Parece bom. Sim, justo. Sim, parabéns pelo casa. Que emocionante!
+
+Você também vai participar? Muito legal. EU Agradeço. Bem-vindo ao Dynamis comunidade. Obrigado, Cole. Isso é muito legal. EU
+
+Agradeço muito. Sim, eu Agradeço a vocês por demonstrarem interesse. em algo que seja como um pouco Um ritmo um pouco mais lento, pois eu realmente preciso gostar disso. Passo meu tempo idealizando e construindo. o sistema na parte frontal.
+
+Sim, ficarei feliz em construir isso em público, por assim dizer. Tudo bem. Legal. Então, Vamos ver. O fluxo de trabalho está atualmente em progresso.
+
+Parece bom. Sabe o que eu meio que quero fazer, porque estou executando este fluxo de trabalho para o Primeira vez, eu adoraria ver. Os registros na interface do usuário do Archon. Então, deixe-me perguntar de fato. Eu não Já iniciei o programa? Reiniciei meu computador.
+
+recentemente, então eu não o tenho instalado e correndo. Comece o back-end e o front-end de Arconte. Aliás, é muito fácil assim. Você Você nem precisa executar o comandos no terminal ou execute o recipientes ou qualquer outra coisa você mesmo. Você Simplesmente deixe para lá.
+
+Então, vamos dar uma olhada. OK. Quer dizer, executar o bun dev não é difícil Lembro, mas eu simplesmente gosto de fazer isso. [risada] Tudo bem. Então, vamos lá para Arconte.
+
+Acesse o painel de controle. Parece que a parte administrativa ainda está... Começando.
+
+Você pode monitorar o back-end e me avisar? Sabe se está com problemas para ligar? Não tenho certeza. Talvez eu esteja no ramo errado. ou algo assim. Oh não. Ok, eu acho
+
+Espere, um momento.
+
+Um Por que meu fluxo de trabalho não está sendo exibido? Eu tenho esses uh Esses fluxos de trabalho datam de muito tempo atrás, Transmissão ao vivo de sábado que eu esqueci de fazer continuam ainda em execução. Isso é engraçado. Então, eles ainda estão em pausa, mas Não está aparecendo. Onde foi que isso aconteceu?
+
+Já terminou de executar? Oh, tudo bem. Na verdade, terminou. Grande vitória e um bug do Windows. Deixe-me fazer anote o que aconteceu. Os três paralelos
+
+Busca de nós concluída. O classificador foi executado em 30 segundos. O arquivo Decision.json foi escrito. Com sucesso.
+
+O nó fetch open PRs se pagou sozinho imediatamente. Pensou que o os classificadores teriam aceitado sete questões que já estão sendo trabalhadas. O que deu errado foi que o JQ falhou no Git. Bash para Windows. Ah, isso faz sentido.
+
+Sim. Certo, então vamos ver. Certo, então é preciso descobrir como consertar. aqui. Peguei outro inseto.
+
+OK. Agora está executando o fluxo de trabalho. de novo. É ótimo que esteja passando por iterações. Como Pequenos pequenos sinais que ele está encontrando, Mas, tipo, desde que seja capaz de iterar, estou satisfeito com isso. Sim,
+
+Ok, pronto. Então, agora podemos ver o fluxo de trabalho. Não está funcionando, mas o um que acabou de falhar, ele... aparece
+
+aqui. Então, você pode dar uma olhada nos registros... do fracasso.
+
+Então, sim, tudo está funcionando como esperado. planejado na interface web do Archon. Nós apenas é preciso corrigir a sintaxe do fluxo de trabalho subjacente em si. Legal. Então, tudo bem. Ah, agora sim
+
+Correndo novamente. Ok, muito bom. Veja o registros. Muito legal. Está ótimo. Tudo bem.
+
+Vamos ver se funciona desta vez.
+
+Tudo bem. Até que "foot gun" signifique isso. Sim, hoje eu também aprendeu. Eric disse que os cursos em Dynamis são de pé. Sou um profissional de desenvolvimento de carreira e vi um muitos cursos. Os cursos Dynamis são
+
+excepcional. Sim, agradeço muito. muito. Eu agradeço a vocês por curtirem isso. compartilhar isso, especialmente depois que alguém entra e simplesmente tem que dizer Algo maldoso sem motivo.
+
+O que quero dizer é que tenho a pele grossa. Como Está tudo bem. Eu entendo. E E por da mesma forma, como para aquela pessoa que que Foi um pouco maldoso, mas eu entendo. Tipo, eu entendo que todo mundo é assim.
+
+Só estou tentando vender um curso. Ah, e eu consigo entender como é essa sensação. é como se eu estivesse simplesmente me encaixando nisso. multidão. Tipo, eu entendo. Tudo bem. Eu sou
+
+não é como viver numa bolha onde eu Acho que você está dizendo isso com toda a certeza. do próprio bolso. Como eu entendi. Mas tipo, ao mesmo tempo, tipo, eu realmente faço Acredito que não sou eu, não estou dizendo Estou esperando que você faça isso, mas tipo se você realmente passasse por isso segundo curso de cérebro, eu me sinto como você Você retiraria o que disse. Como Sinceramente, vou dizer apenas isso.
+
+Hum, mas sim, não é como eu estou pensando. Vou te fazer mudar de ideia ou qualquer coisa. Sim. Tudo bem. Nunca tendo construído nada antes, mas Fiquei impressionado com a facilidade de aprender isso se você Pense logicamente.
+
+Isso mesmo. Sim. E até mesmo assim como diminuindo a velocidade e usando o código Claude para Ajudar você a pensar logicamente. Tipo, quebre-o Para mim, passo a passo. Ou como ajuda Deixe-me planejar isso e me faça perguntas. Como
+
+esse tipo de coisa é... é como você Tire o máximo proveito do código Claude. Porque pode Quero dizer, como grandes modelos de linguagem fazem erros. Eles nunca serão
+
+perfeito, e é por isso que você precisa de alinhar-se com eles. Mas você pode tê-los Vamos orientá-lo(a) durante todo o processo de alinhamento. Porque eles fazem um trabalho muito bom nisso. OK. Ah, legal. Então, parece que foi do início ao fim.
+
+fim, e na verdade encerrou muitas coisas problemas aqui. Assim, três foram aceitos. e então sete foram rejeitados. OK, interessante. Bem, estou curioso para explorar isso a fundo.
+
+agora. Diz que ainda está aguardando aqui. Legal. Smoke dev disse como parte como parte Como aluno do curso, concordo. Dynamis é um divisor de águas absoluto para meu. Excelente custo-benefício. Agradeço muito.
+
+muito. Muito obrigado. Uh Tudo bem. Legal. Então, Hum, parece que está pronto.
+
+Legal. E isso foi rápido, aliás. Isto Não demorou muito. Bem, nós não executamos esse fluxo de trabalho com Minimax. Para que fique bem claro, porque nós não fizemos isso.
+
+Já foi possível executar isso no VPS? Mas nós vamos conseguir. lá. Estamos apenas testando agora. localmente. Na verdade, eu provavelmente deveria testar.
+
+ou verifique meu limite de taxa antrópica. Ih, não é tão ruim assim. OK, Estamos bem. Aqui, vou até compartilhar isso na minha tela. aqui.
+
+Deixe-me duplicar e traga para cá. Então, esses são os meus limites no momento. Olha só isso. Nós só temos Nós temos Até agora, usei apenas 10%. Então, não ruim, especialmente sem a taxa ruim são limites. Um
+
+Espere, o que é isso? Diariamente incluído corridas de rotina? Isso é novo, tipo a partir de Hoje mesmo. Execuções de rotina incluídas a cada 24 horas. horas. Eu realmente acho isso estranho.
+
+Nunca vi isso na página de utilização. antes do aplicativo Claude. E sim, meu limite semanal é de...
+
+Já está em 50% e reinicia na sexta-feira. E nos últimos dois dias, eu tenho estado fazendo tantos testes com o Minimax que Eu nem sequer tenho usado meu Anthropic. isso mesmo. É uma loucura. Eu cheguei a como 40% durante o fim de semana.
+
+Sim. OK. Então, enfim, eu ia dar uma olhada em as classificações que foram feitas aqui. Ah, já desfez tudo. Atirar. Então, na verdade, não consigo ver.
+
+Porque apagou os comentários. Certo, então este é um daqueles que Foi aceito. Assim, podemos ver que o Os rótulos foram removidos porque eu pedi para que fossem removidos. Desfazer alterações após a conclusão dos testes. Mas nós Podemos ver isso pela história aqui apresentada que como esta, adicionou a fábrica Aceito com baixa prioridade.
+
+Se olharmos para... não sei, um que...
+
+Foi rejeitado aqui. Onde fica esse? Este, acrescentou. Rejeitado pela fábrica. Fechamentos não planejados. Isto
+
+teve um problema, comentei aqui em um apontar. Isso é outra coisa que... limpo. Então, sinceramente, eu meio que gostaria
+
+que fez a limpeza depois que eu lhe contei também, mas a culpa é minha, porque eu disse para fazer a limpeza imediatamente depois. Podemos ver aqui que... levou cuidar de toda a limpeza.
+
+Todas as 11 edições estão novamente abertas, sem nenhuma resposta. rótulos. Mas enfim, o fluxo de trabalho Na verdade, funcionou extremamente bem. Ok. Aquilo que não tocou. Sim, isso faz
+
+senso. Pronto para o próximo passo. O O fluxo de trabalho de triagem pode ser confirmado. Próximo Construções lógicas conforme o plano. Uh, obtenha ajuda, etiqueta, configuração única para o corrida real. Já foi feito implicitamente.
+
+Dark Factory valida PR. Bem, o próximo passo não deveria ser... Criar uma adaptação do Arconte Fluxo de trabalho de correção de problemas do GitHub para o Dark Fábrica.
+
+Porque eu acho que... eu não sei por quê. O plano não estava muito claro, como nós...
+
+preciso realmente construir algo para Implementar os pull requests, não apenas validar e corrigir os problemas que suba. Então, vou tentar apontar Aqui, estamos apontando na direção certa. Porque eu quero, acho que seria o próximo. Fluxo de trabalho a ser desenvolvido. Então, nós temos o triagem, que vai descobrir Quais são os assuntos que realmente queremos abordar?
+
+endereço, e então, em paralelo, nós invocar os fluxos de trabalho do Archon para Sabe, transformar isso em um problema resolvido. solicitar. OK. Você tem razão, e eu não tinha percebido isso. De É claro que Claude tem que ser bajulador e Diga-me que estou certo.
+
+Mas sim, eu sou. O fluxo de trabalho de triagem produzirá o dele. rótulos, mas esses rótulos são inertes até Existe um fluxo de trabalho de correção funcional que Sabe como validar. O plano menciona isso implicitamente como um bloqueador implacável. No momento em que uma correção de bug ou O recurso aciona o comando padrão do bun run.
+
+O comando validate ainda apresentará erros no Python. sintaxe. Certo. Então, isto é um pouco um pouco de planejamento nos bastidores, eu estava fazendo. Basicamente, a correção do problema do GitHub trabalhar Obtenha o fluxo de trabalho integrado para corrigir problemas do GitHub.
+
+Archon não é específico o suficiente para minha base de código. Então, eu só preciso pegar isto como exemplo. Este é um dos fluxos de trabalho que são fornecidos por padrão com Arconte, e eu só preciso ajustá-lo para Funciona um pouco melhor com o meu Dark. Fábrica especificamente. Então, será feita alguma pesquisa para meu. Então, entenda a estrutura do
+
+repositório, entender o comando ou o fluxo de trabalho que vamos adaptar, e então veja o que temos para o nosso cenário global. regras já estabelecidas. Tudo bem.
+
+Vamos ver. Tudo bem. Sim, agradeço. Não Tenha cuidado com esses comentários. Você é realmente oferecendo muito valor gratuitamente bem. Acho que todos nós valorizamos muito isso.
+
+Sim, agradeço. E, hum, até mesmo quando eu tenho a comunidade como um você Sabe, coisa paga, eu tento dar um uma quantidade absurda, e de graça. Assim como o que estou fazendo agora. Então, eu Agradeço por reconhecer isso. E Isso é realmente importante para mim. Como não
+
+Não importa o que aconteça, eu sempre quero apenas ser eu mesmo. doar constantemente. É também por isso O Archon é totalmente de código aberto. Esse O repositório não tem nada oculto. Quero dizer, A comunidade Dynamis teve acesso antecipado.
+
+e até consegui ajudar a moldar algumas das a direção para isso. E essa é uma das As partes boas de ter uma comunidade. Uh Mas é para todos. Isso é Esse sempre foi o objetivo. Tudo bem.
+
+Existe algum link para a comunidade? Uh Yeah, yeah. Desculpe, vou enviar isto. Novamente aqui no chat. Então, este é um link para uma espécie de...
+
+Gostei da página que mostra a IA. segundo cérebro, mas você só precisa rolar para baixo. e há muitos botões aqui para juntar. Então, sim. Agradeço.
+
+Tudo bem. Vamos lá. Desculpe, eu vou... Vou acompanhar os registros.
+
+aqui. Tudo bem. Veja, um bom gerente de departamento depende de um ambiente digital. universo gêmeo, que cria comportamento clones de serviços externos como o Okta, Jira e Slack permitirão que os agentes executem milhares de testes realistas. Sim. Ok, se você realmente se aprofundar nisso
+
+A configuração do StrongDM é bastante impressionante. Então, certamente não será um prédio. tudo que o StrongDM tem, pelo menos para agora. Mas, felizmente, minha candidatura foi aprovada. muito mais simples, onde eu não necessariamente precisam ter o mesmo nível de profundidade.
+
+Certo? Assim como um aplicativo mais simples significa que eu Não preciso ir tão fundo, mas ainda assim obtêm praticamente a mesma confiabilidade que eles construído. Ah, sim, se você quiser, tipo...
+
+Leia atentamente o que StrongDM tem a dizer. Construídos, mais uma vez, eles não disponibilizaram o código aberto. Sua Fábrica Sombria. Mas eles têm, você Sabe, disponibilizei o PRD em código aberto, como mostrei. no início da transmissão. E então eu
+
+Acho que eles têm alguns posts de blog como esse. bem, onde eles detalham muito do quê A arquitetura deles se parece com... É muito legal. É... É realmente
+
+Inspirador. Tudo bem. Legal. Uma rotina de exercícios. Isso é análogo a Cronos do OpenClaw?
+
+Quer dizer, provavelmente análogo a algum tipo de tarefa cron. Não sei ao certo. Como Verifiquei meu uso antrópico. todos os dias porque eu não quero ser além da tarifa de 5 horas, em especial. limite. Isso, isso eu literalmente gostei, não era.
+
+Isso não estava lá esta manhã. Então, sim. Eu não sei o quê. É exatamente isso. Talvez, talvez eles tenham Se eu simplesmente pesquisar Claude, é como se estivesse procurando por algo.
+
+A rotina de código é executada. OK. Ah, sim, vamos lá. 47 minutos atrás, Temos uma postagem no subreddit do código Claude. Novidade agora em Prévia da pesquisa, rotinas em Claude.
+
+Configure uma rotina uma vez, um prompt, um repositório, seus conectores, e ele pode ser executado em um cronograma. Rotinas programadas permitem que você dê a Claude um cadência e vá embora. Bem, eu ia dizer exatamente isso, eles já tenho o cronograma de cortes no CLI. Se você tem usado o agendamento de barras Na CLI, essas são agora rotinas. Não há nada para migrar. Certo, isso
+
+Faz sentido. Então, eles estão levando algo que já foi lá, mas agora eles estão apenas construindo. em outras plataformas. Como eu presumo que tipo de cronograma costumava ser um Apenas uma coisa de linha de comando, e agora está como dentro. Claude desktop e coworking e o Aplicativo Claude.
+
+Acho que é isso mesmo. Quer dizer, É muito legal. Então, sim, literalmente isso. são tarefas cron. Só o fato de poder correr já basta.
+
+algo que acontece a cada hora ou dia ou o que for. Isso é muito legal. Tudo bem. Eles estão sempre enviando produtos. Isto É uma loucura.
+
+Mas que bom para eles. OK. Muito legal. Então, agora Ah, ok, há quanto tempo estamos transmitindo? para?
+
+Bem, estamos fazendo transmissões ao vivo há um tempinho. mais de uma hora e meia. Ok, então eu sou Já consigo transmitir? Espera, preciso verificar. meu calendário. Consigo transmitir para 2
+
+e 1 hora e meia. E eu estou adorando o que Estamos construindo neste momento. Então, eu sou Acho que vou até... Sim, eu estou...
+
+Planejamos transmitir ao vivo até 1h30. Horário Central. Então, mais ou menos uma hora. aqui. Vamos ver até onde eu chego.
+
+com todos os nossos fluxos de trabalho. OK. Shh. O que estamos fazendo aqui? OK. Uau,
+
+Há muita produção. Eu sou ficando um pouco parecido um esgotado, tipo esgotado de Toda a produção de Claude está aqui. É muita coisa. para analisar porque é meio que...
+
+É bastante complexo o que estamos fazendo. Por agora mesmo, eu direi. OK. A história de validação do chat do YouTube de Reg é Prescrito, mas não conectado. OK.
+
+As regras globais prescrevem exatamente comandos, mas nenhuma dessas etapas de desenvolvimento ainda não foram instalados. Sem testes, sem makefile, sem CI. Certo. Sim, eu ainda não construí isso. A fábrica deve adicionar estes quando o O primeiro contato com eles é por meio de relações públicas. Na verdade, não.
+
+Concordo com isso. Quero construir isso. antes do tempo. Eu [risos] adoro isso. É bonitinho, mas Isso cria um problema do tipo "quem veio primeiro: o ovo ou a galinha?".
+
+Ah, que engraçado. Uau, Claude Claude Agora ela tem alguma personalidade, devo dizer. É, concordo com o Claude. que essa é uma má decisão a se tomar. as regras globais.
+
+Ok. A correção do problema do GitHub incluída no Archon O fluxo de trabalho é, em grande parte, independente da linguagem. Faz sentido. Então, minha solução cirúrgica é apenas um arquivo. Minha recomendação é a opção B, personalizada.
+
+Substituição de comando. Bem, eis o motivo. OK. Tudo bem. Sim, claro.
+
+Bifurcação completa do fluxo de trabalho. Tudo bem.
+
+Sabe, então está dizendo que eu não preciso de Criar um fluxo de trabalho do zero, e eu Posso simplesmente usar o que já tenho como pacote. fluxo de trabalho. Um Sim. OK. Sim, você tem razão. Nós definitivamente queremos
+
+inicializar as dependências de desenvolvimento manualmente. E então eu realmente quero criar um Fluxo de trabalho totalmente personalizado. Então, sim, eu sei que não há muito que...
+
+precisa alterar a correção do problema no GitHub fluxo de trabalho, mas quero poder evoluir separadamente do padrão De qualquer forma, é o fluxo de trabalho Archon. Então, nós podemos basicamente copiar e depois obviamente apenas alterando o comando de validação, mas sim, Vamos fazer assim mesmo. Um Sim. E então, claro, podemos fazer um teste de fumaça. edição número 26 depois.
+
+OK. Pronto. Ah, droga, temos que executar o compactação agora. Ah, eu tinha me esquecido disso. Provavelmente eu deveria ter simplesmente trabalhado em O fluxo de trabalho em uma conversa separada.
+
+Porque agora que isso cria uma memória compactação, precisa recarregar suas habilidades e outras coisas. Então, Tudo bem. Agora que você acabou de fazer um compactação de memória, preciso que você leia O plano da Fábrica Sombria novamente. Em seguida, carregue a habilidade Arconte. Apenas para Certifique-se de ter o contexto completo antes de prosseguir.
+
+Você começa a construir o segundo fluxo de trabalho. e fazendo o teste de fumaça sobre o problema. número 26. Certifique-se de construir esse fluxo de trabalho a partir de arranhar. E também, eu quero usar a pasta de comandos para todos os Archon Dark Fluxos de trabalho de fábrica. Então, certifique-se de que nós
+
+não têm prompts embutidos para o outro o fluxo de trabalho de triagem que acabamos de construir como bem. Bem, isso é um pouco específico, mas eu Acabei de perceber que... eu queria...
+
+organizar meus fluxos de trabalho um pouco melhor do que Eu fiz isso antecipadamente, caso eu vá fazer a base de código. agora. Temos a triagem da Dark Factory. Bem, este prompt está embutido e é enorme. Então, eu prefiro extrair isso para um comando.
+
+Certo, não temos nenhum comando, certo? agora, mas no Archon, seus fluxos de trabalho podem referenciar um comando, que é exatamente como um documento Markdown separado. Apenas para ter uma maneira melhor de organizar as coisas, então Não precisamos de prompts enormes e feios. em conformidade com o próprio fluxo de trabalho. Eu até poderia querer fazer o mesmo por esse. Este bash de aplicação de decisões é como
+
+muito longo. Sim, Existem muitas otimizações. que eu posso fazer. Apenas por uma questão de Na transmissão ao vivo, estou me movimentando razoavelmente bem. rapidamente.
+
+Então, certamente, continuaremos a iterar sobre as coisas. fora de cena como antes de eu fazer o vídeo do YouTube amanhã, tipo, sabe, contas tudo pronto para a fábrica escura que Estou trabalhando nisso. Tudo bem.
+
+Legal. Eu agradeço. Quem odeia vai continuar odiando. Dynamis é incrível e valoriza o seu As contribuições de Cole são, francamente, incalculável. Agradeço muito.
+
+Isso significa muito. O preço do Dynamis é muito maior razoável em comparação com a maioria dos cursos. Estão sendo oferecidas assinaturas comunitárias. UM Muitas delas parecem ser charlatanismo. Enriqueça rapidamente com milhares de dólares.
+
+Sim, infelizmente há muitos. disso lá fora. Há um ali. tipo de YouTuber em particular que eu Não quero mencionar exatamente ou algo como mencionar nomes, mas ele é um Um cara respeitável. Ele faz muita coisa por aí.
+
+segundos cérebros especificamente como até mesmo Antes da IA ​​generativa. Muitos de vocês podem Sabe de quem estou falando. Então, não estou dizendo que o curso vai ser Ele pode ser mau, mas ele gosta, ele está correndo. essas coortes para construir a sua própria segundo cérebro. E ele está cobrando 2.000 dólares por isso. Isso é
+
+como louco. Como o que? Tipo, 2.000 dólares só para tipo aprender a construir um segundo cérebro. Como eu ensinei isso para em um workshop de 4 horas e você pode simplesmente Junte-se à comunidade para isso. Como
+
+Não custa 2.000 dólares. [risada] Sim. Enfim, existem algumas coisas bem bonitas. Existem coisas caras por aí, com certeza.
+
+Tudo bem. O repositório da Dark Factory estará aberto? Fonte após a transmissão ao vivo? Então não completamente Mas será dentro de uns dois ou três dias. Em algumas semanas, irei torná-lo de código aberto. Então eu
+
+Preciso de mais tempo para validar e realmente aprimorar as coisas, mas o plano é Tornar isso público até o final do mês. Como tudo que é público, onde você pode até mesmo abrir uma solicitação e ver se funciona É para você. Então De quem eu estaria falando? Sim, sim, vocês têm alguns de vocês. saber. Alguns de vocês sabem. E
+
+Novamente, eu o respeito. Bem, acho que eu Diria que tenho uma posição mais neutra. opinião. Não me aprofundei muito nisso. em suas coisas. Então eu não estou tentando
+
+Para zoá-lo ou algo do tipo. Eu sou apenas dizendo que para mim é como se fossem 2.000 dólares para Entrar para um grupo é um pouco ridículo. mas Cada um com a sua. Quero dizer alguns alguns pessoas definitivamente valorizamos ter esse tipo de coorte.
+
+estilo. É, cada um com a sua opinião. Tudo bem. Certo, vejamos aqui. O que mais temos?
+
+O velho você está absolutamente certo. Sim, isso mesmo. Tudo bem. Um pouco fora de contexto, mas Será que poderíamos desenvolver uma habilidade para criar o Claude? código e antigravidade interoperáveis?
+
+Com certeza você poderia. Curta se você quiser antigravidade para invocar Claude como em Modo sem tela, você poderia usar se quisesse. para. Acho que não sei [bufa] se A antigravidade é como um CLI, mas Gemini Obviamente possui uma interface de linha de comando (CLI). Então Você poderia fazer com que eles invocassem um ao outro.
+
+Então você poderia ter um fluxo de trabalho onde É como se Claude implementasse o código e Em seguida, ele chama a CLI do Gemini para fazer o validação. Como se você pudesse fazer esse tipo de coisa. de coisa 100%. Tipo, isso é alguma coisa que eu realmente quero construir tipo diretamente nos fluxos de trabalho do Archon. Como poder ter diferentes provedores em nós diferentes para planejamento e implementação e Em revisão.
+
+Tudo bem. Ok, isso é realmente interessante. O MiniMax com código aberto tem um desempenho muito melhor. Mais rápido e melhor do que em código Claude. Provavelmente o golpe contextual de todos os provocando que vai por baixo do capô em Código Claude.
+
+Então, ok, é bom saber disso porque Sim, talvez eu queira mudar isso. Acessório para usar como Raspberry Pi ou código aberto. em vez de. OK. Vou ter que verificar isso. Como eu
+
+disse, existem tantas maneiras pelas quais eu posso provavelmente melhorar este arnês com o incentivo e a forma como eu organizo os fluxos de trabalho e meu documento de missão e as regras da minha fábrica e até mesmo apenas o Ferramenta que estou usando por baixo do capô. Como Talvez eu queira usar o Raspberry Pi ou código aberto. em vez de. Tudo bem. Vamos ver.
+
+Uma maneira de descobrir se o curso ou A assinatura que você pagou justifica o O custo se aplica se você enviar um produto que outros pagaram para recuperar esse custo. EU Sim, exatamente. É isso mesmo, porque aí é tipo...
+
+Não há discussão possível sobre isso. Curta se você ganhei mais dinheiro graças ao que você aprendido lá E você construiu algo a partir disso. Sim, compensa. Exatamente.
+
+Tudo bem.
+
+Por que temos a sensação de que já estivemos aqui antes? Já faz mais de uma hora e não consegui muita coisa? Quer dizer, isso é algo que eu tenho sido Estou tentando ser o mais transparente possível sobre isso aqui. é que estamos gastando muito planejamento e definição do tempo arquitetura e o sistema para o escuro fábrica na frente. E isso precisa levar tempo. Tem que ser. Não posso apressar as coisas. E
+
+E para ser honesto, eu provavelmente faria o mesmo. vai ficar ainda mais lento Se eu não estivesse em uma transmissão ao vivo aqui Porque no final das contas, se eu quiser isso... coisa para resolver problemas de verdade rapidamente, se eu quiser que a fábrica escura Ser autossustentável e realmente eficiente e confiável, tenho que ir devagar.
+
+frente. É isso que eu sou e isso é gentil. da lição de ensino aqui honestamente também. Então Sim. Até os milagres precisam de tempo.
+
+É uma boa maneira de dizer isso. Eu faria isso Acho que isso seria muito egocêntrico. Podemos chamar isso de milagre. Certamente que não. É apenas uma experiência que veremos.
+
+O que acontece, mas sim, é uma boa maneira. Para resumir. Tudo bem. Que legal, John. Entrei para a Dynamis Há dois meses, nunca escrevi nada.
+
+Uma única linha de código já funciona. segundo cérebro. E sim, isso é incrível, John. EU Agradeço. Quando você chegar a esse ponto ponto em que seu segundo cérebro está ativo e Executando e economizando horas e horas todos os dias Não há sensação melhor durante a semana. Então
+
+bom. Tudo bem. Tudo bem. Uma das regras básicas do marketing é As pessoas estão dispostas a pagar por alta qualidade. bilhete. Quer dizer, isso é justo. Sim, tipo
+
+Essa pessoa que mencionei Quer dizer, talvez eu pudesse simplesmente dizer o nome dele. Porque eu realmente não estou com raiva dele ou qualquer coisa, mas eu só por prazer. Com cuidado. Tenho certeza de que existem pessoas que recebem muito de valor nisso e sim, ele ele tipo é conhecido como tipo o Pessoa de primeira classe. É como se ele estivesse construindo em segunda mão.
+
+cérebros por uma década. Quer dizer, eu gostaria de pensar que tipo Ele está tendo dificuldades para acompanhar tudo. Coisas de IA porque ele é mais tradicional em sua abordagem. Ele provavelmente está bem. Mas enfim, sim, tenho certeza que há Quando você tem algo alto o ingresso, ele sinaliza valor e então você faz atrair esse tipo de pessoa que é disposto a desembolsar E eles só querem ter certeza, assim como eu.
+
+Quer dizer, nem sempre concordo com isso, mas Às vezes as pessoas simplesmente pensam tipo Ei, quanto mais dinheiro, melhor. valor. Definitivamente nem sempre é verdade, mas parece gritar que isso vai acontecer Para ser a opção mais segura, se você tiver o dinheiro para isso. Não sei. Eu não saber. Estou meio que divagando sobre isso, mas
+
+Sim. Uh Dynamis é incrível. Faço parte do comunidade desde que foi lançado. Isso é tão...
+
+legal. Agradeço por você fazer parte de a comunidade por tanto tempo. Aliás, o aniversário de 1 ano! O lançamento do Dynamis será neste mês, dia 26 de abril. Então, haverá algumas coisas emocionantes.
+
+coisas que tenho em andamento para isso. Algumas transmissões ao vivo que farei em YouTube naquela época e também alguns eventos emocionantes em Dynamis e algumas coisas que estou lançando como um Parte das comemorações de aniversário. Também estou falando de coisas que são o que estava acontecendo naquela época, Quero destacar isso muito rapidamente, pois bem. Estou fazendo um... Isso é meio que...
+
+Sem relação direta, mas aproximadamente na mesma época. Estou ministrando um workshop sobre transformação de IA. com um cavalheiro chamado Lior Weinstein em 28 de abril. Então, acredito que seja isso. Terça-feira, às 9h da manhã [bufa] Central tempo.
+
+Isso vai ser muito legal. porque Lior é como um especialista em entrar em uma empresa e ajudando-a a se tornar IA nativo. E assim, é como projetar como um nativo de IA. organograma e como habilitar cada um membro da equipe e da equipe com IA tecnologias para codificação e outras coisas tipo, sabe, as vendas e a equipe de marketing e finanças e todos disso. Então ele vai falar sobre isso.
+
+por uma hora e depois por uma hora eu estou Vou falar sobre como transformar sua organização com codificação agética e como transformar um desenvolvedor equipes. Então, vamos meio que pegar... Junte tudo isso para te dar algo assim.
+
+visão completa de como você se transforma empresas e até você mesmo como um individual. Isso vai ser muito legal. Então Isso está acontecendo no final disto mês aqui. E sim, como você pode ver, estou no meu melhor. Saiba a página de transmissões ao vivo agendadas do meu canal. Tipo, isso vai ser só uma coisa
+
+oficina gratuita apenas [limpa a garganta] Acontecerá em transmissão ao vivo no meu canal. Tudo bem. Legal. Sim, um grande abraço para o Cole. Até o conteúdo que você está disponibilizando gratuitamente Toda semana é uma loucura. Muito obrigado.
+
+Sim, de nada. Sempre meu prazer. Cara, como eu venho fazendo YouTube para Já se passaram quase 2 anos. Comecei tipo bem no início de julho de 2024. E é simplesmente fantástico. Cada um deles
+
+Fazer vídeo é muito divertido e me mantém à frente da curva em tudo também. Simplesmente ser um constantemente nas trincheiras construindo e pesquisando e fazendo o que for preciso para conseguir o Conteúdo para vocês. Tudo bem. O que está acontecendo agora? [risada] Às vezes é estressante vir para cá.
+
+volte e veja como se estivesse no No meio da escrita do package.json. Você Nem sei porquê. Ah, acho que sim. Ah, sim, está se configurando.
+
+as dependências de desenvolvimento que nós conversamos sobre isso. Ok, está tudo bem. Eram bom. Então, ok, o que aconteceu agora? Eu penso Isso tornou todo o fluxo de trabalho possível.
+
+Sim, tudo bem. Correção da Dark Factory no GitHub emitir. OK, bom. Então, conseguimos o nosso segundo. fluxo de trabalho atual.
+
+Tudo bem. Dynamis Ah, não, essa não. Preciso Vá para o chat do YouTube sobre trapos. Quero me abrir o segundo fluxo de trabalho. Certo, então, isso é bom. Então, agora nós
+
+Temos todos os nossos diferentes comandos. Então, em vez do fluxo de trabalho ser simplesmente como um monte de prompts embutidos enormes, uh nós Consegui organizar tudo muito melhor. Ok, então esta é a nossa correção para o problema no GitHub. Aliás, estou pensando em mudar o nome. todo uh rag YouTube chat repo para Dyna chat.
+
+É por isso que faz referência a esse nome. algumas vezes. Bem, enfim, então Vamos começar com este fluxo de trabalho. extraindo o número da edição. Então, isto é baseado principalmente no padrão Corrigir o fluxo de trabalho de problemas do GitHub no Arkon. Então
+
+Classificamos o problema como bug ou funcionalidade. aprimoramento, refatoração, tarefa ou documentação, exatamente como planejamos em no plano da Fábrica Sombria. Então nós Pesquise sobre o assunto. E então, ou fazemos um plano, ou...
+
+Crie um plano se for uma funcionalidade para construir, ou investigamos o problema se É um bug que precisa ser corrigido, certo? Porque problemas vão ser uma das duas. Certo? Então, assim como quando classificamos, é Ou vai ser um bug, e aí eu Sabemos que temos todos esses rótulos diferentes, Mas, basicamente, tudo isso são apenas recursos. acréscimos, certo? Como se fosse uma tarefa árdua.
+
+ou uma refatoração ou uma melhoria, como Todas essas são apenas formas mais específicas de serem usadas. versões de uma funcionalidade. Então talvez o A rotulagem de problemas como um todo não é Otimizado aqui, mas acho que está bom. Na verdade, é bastante comum ter esse tipo de rótulos. E então passamos para a implementação, depois validação, criar a solicitação de pull request e Nós analisamos. Então, eu vou ter um
+
+fluxo de trabalho separado para realizar o pull completo solicitar validação, mas ainda quero ter o fluxo de trabalho é como quando o PR Se for criado, pelo menos faça alguma coisa. Uma pequena resenha, certo? Então, como inicialmente rodada de revisão aqui, e então irá ter um PR de validação mais abrangente Fluxo de trabalho que criarei em seguida. Isso é o plano. Só para dar uma chance de fazer um pouco Um pouco de auto-ajuste antes de dizermos algo como, "Muito bem, aqui está nossa solicitação de pull request para Para você, sabe, próxima fase do Dark Fábrica para revisão."
+
+Tudo bem. Então, vamos voltar ao nosso agente de codificação. aqui. Para onde estou indo? Certo, aqui está.
+
+Ok, situação até o momento. Então, refatoramos. Criou o novo fluxo de trabalho, sete novos comandos. Está ótimo. Já configuramos nossa dependência.
+
+Ah, ok, antes que eu comece a fumar... teste, duas coisas para confirmar. Desenvolvedor As dependências não estão instaladas localmente.
+
+Um Ok, tudo bem. Sim, quero que você instale o dev dependências. E, na verdade, eu gostaria muito Prefiro usar UV para o pacote Python. gestão, então vá em frente e mude isso no repositório. Consiga tudo Instalei e testei tudo.
+
+E um E então sim, prossiga e invoque depois que invocam o fluxo de trabalho do Arkon para executar A Dark Factory corrige o problema no GitHub em Solicitação de pull request ou não, na issue número 26. Ok, sim, isso é bom. Certo, legal. E aí não vamos ter tempo. para isso na transmissão ao vivo aqui, mas hum Você sabe o que eu Estou quase tentado a fazer outra live Transmissão ao vivo amanhã em vez de um vídeo no YouTube.
+
+vídeo. Talvez. Provavelmente eu deveria fazer um Vídeo do YouTube porque vai demorar uma semana. Ah, mas seria legal simplesmente continuar Construindo isso ao vivo. eu sei que É muito tempo, mas é divertido.
+
+para fazer isso, e estamos ficando meio que Quase lá, né? Tipo, nós temos muito disso construído. Só precisamos terminar o último alguns fluxos de trabalho, e então precisamos de transferir tudo para o VPS para que possamos ter toda a Fábrica Sombria funcionando de forma autônoma, e não depende de mim. O computador está ligado. Então, nós somos nós somos Chegando lá. Estamos quase lá.
+
+Nós, nós infelizmente não seremos. capazes de ver tudo rodando em nosso VPS hoje, mas hum Não vai demorar muito assim que tivermos o Fluxos de trabalho criados e validados para copiar tudo acabou porque já temos o Acho que este é o meu diretório, Dark. Fábrica. Yeah, yeah. Então, nós já temos O aplicativo está aqui. Então, nós já temos
+
+tudo como clonado e configurado e Verificado. Então, só precisamos trazer para cá. os fluxos de trabalho e, em seguida, configure o cron. trabalho que vai ser executado a cada hora para fazer a triagem e depois a implementação e tudo mais. Como deveria ser Trabalhamos bem rápido depois que temos o Fluxos de trabalho criados. E foi por isso que eu quis
+
+usar Arkon para isso porque aí eu estou nem sequer criei o arnês eu mesmo Do zero. Estou apenas construindo Arkon fluxos de trabalho, e esse é o chicote de fios. Isso é um exemplo claro do valor de Arkon como um construtor de arreios, que faz parte do O motivo pelo qual eu queria fazer essa Fábrica Sombria, Aliás, é uma utilização muito bacana. caso para demonstrar o poder de Arkon. Como Esses fluxos de trabalho estão definindo processos.
+
+Isso exigiria uma boa quantidade. tempo para arquitetar do zero. Se nós queria gostar, por exemplo, até mesmo só ter esse processo de triagem de problemas e depois enviando MiniMax para lidar com cada um deles em paralelo, como se isso exigisse muito engenharia, se não tivéssemos Arkon como um ponto de partida para introduzir o contexto e lidar com árvores de trabalho para isolamento, então podemos construir cada um deles em paralelo. E então ter o passos determinísticos para, você sabe, Identifique os problemas e encerre-os, como por exemplo...
+
+que dá muito trabalho, mas agora estamos capaz de simplesmente rasgar isso como Muito rápido. Como eu sei que é isso A transmissão já dura umas 2 horas, mas ainda gosto quando você realmente pensa sobre o quanto já desenvolvemos aqui, É muita coisa que construímos. já fizemos isso, e não tivemos pressa. isto. Tudo bem.
+
+Um [risada] Podemos usar Arkon e a Fábrica Sombria como clipe de papel? Sim, então. Você poderia. Porque cada fluxo de trabalho do Arkon poderia ser tipo o Você sabe, o funcionário individual de IA, mais ou menos como você lida com isso com...
+
+clipe de papel. Você poderia. Seria legal. É mais ou menos o que eu sou Estou fazendo isso, eu acho. Assim como cada fluxo de trabalho do Arkon Você poderia pensar nisso como uma espécie de...
+
+funcionário diferente. Quer dizer, nós literalmente Temos aqui o padrão onde estamos fazendo sobre o ponto de resistência onde é tipo Isso precisa ser executado de forma completamente separada. da implementação. Então, é mais ou menos assim. de tipo dois funcionários de IA diferentes que A Dark Factory está delegando trabalho.
+
+para. Suave e rápido. Os erros são 10 vezes mais frequentes. caro devido ao tempo de planejamento. Isso é certo. Compensa dividendos, não tenha pressa.
+
+frente.
+
+Tudo bem.
+
+Vamos ver. Aprendi muito sobre panos. Desde cedo, você me ajudou muito. Sim, eu ainda cubro mais um pouco de pano, não tanto quanto antes, mas Ainda é importante. Muito daquele velho O conteúdo ainda é muito relevante.
+
+Mas sim, eu costumava fazer isso, definitivamente costumava fazer. Seja como o catador de trapos de antigamente, mas especialmente quando comecei meu canal. Sim. A aparência de valor é muito importante. Com certeza, sim. Eu tinha um parente
+
+Produzir arte e vendê-la em feiras de artesanato. Ela passou a se dedicar a exposições de arte e fez uma vivendo disso e tem partes em museus. Que legal! Sim. Certo, Então, de certa forma, isso nos leva de volta ao nosso...
+
+conversa anterior, como quando você tem algo com preço elevado, como se Você tem uma boa aparência de valor, Você pode colocar um preço alto, tipo 100%. Sim. Tudo bem.
+
+Proporcionar valor individual único através de plataformas de vídeo, plataformas de coorte, etc. é a norma do futuro, não o exceção. Sim, quero dizer, as pessoas vão ansiar por atenção individual e personalização cada vez mais ao longo do tempo, à medida que a IA assume o controle. distante em algumas áreas da vida, então Entendo o que você está dizendo. Sim.
+
+Um Talvez Cole tenha um emprego à prova de IA. Quantos As pessoas assistiriam a essa transmissão se ele... O segundo cérebro estava fazendo isso sozinho?
+
+[risada] Ah, esse será o dia. Eu não, eu não Não sei se algum dia gostaria de ter meu próprio filho. O segundo cérebro executa uma transmissão ao vivo. Além disso, eu Não ficaria bem agora. Mas quero dizer, existem pessoas que têm Avatares de IA fazem vídeos, não necessariamente transmissões ao vivo, mas mesmo isso, tipo isso Simplesmente fica feio. Eu não acho.
+
+que é realmente viável. [bufa] Hum, a menos que tipo Por algum motivo, as pessoas acham isso normal. ser um avatar de IA porque você é tipo Dando a notícia ou algo assim. Eu sei que é geralmente o que a maioria dos avatares de IA fazem Os canais são como a IA. Focado em notícias, certo?
+
+Tudo bem. Se você está pagando 2 mil para aprender a usar Zettelkasten, então você pode precisar de mais do que um segundo cérebro. Uh É engraçado. Sim, eu não... eu não...
+
+Sabe, dá para se aprofundar bastante nisso. Zettelkasten. Eu me conheço pessoalmente, Eu apenas arranhei a superfície. Eu tenho na verdade, me inspirei em Zettelkasten um pouco por como eu tenho Organizei meu cofre Obsidian. Mas sim, definitivamente é algo que eu...
+
+Pessoalmente, eu concordo, eu me sinto como você. você pode descobrir sozinho se Você tem a cabeça no lugar, Mas, novamente, cada um com a sua opinião. Eu sou, eu sou tentando evitar ficar tipo super opinativo sobre coisas que eu gosto. que parece ter valor mas Sim, depende apenas de quanto você quer. apenas para obter as melhores práticas imediatamente versus tipo descobrir você mesmo ao longo do tempo. Acho que é isso mesmo.
+
+Resumindo: Tudo bem. O que mais temos aqui?
+
+Sim, tudo bem. É exatamente por isso que eu Criei meu próprio fluxo de trabalho para resolver o problema de levantar-se. Por enquanto. Os comandos padrão do Archon são muito poucos Centrado em JS e acho que é isso. Algo que queremos melhorar para que se torne realidade.
+
+um pouco mais agnóstico em relação ao idioma ou muito mais agnóstico em relação ao idioma. Consigo imaginar alguém discutindo consigo mesmo para construir. meu aplicativo de jogos de deitar. Sim, então eu recomendaria agora mesmo. EU Em geral, quero dizer que é bom construir.
+
+sua própria dureza. Crie o seu próprio fluxos de trabalho, porque assim você pode personalizá-los. mais. Eu recomendaria construir o seu próprio e usando os que temos como padrão como ponto de partida. Assim você pode apontar seu agente de codificação para o Archon padrão fluxos de trabalho e diga para dar uma olhada neles para um melhores práticas e até mesmo alavancagem a estrutura para resolver problemas ou Criando PRDs ou validando pull solicitações.
+
+E use isso como ponto de partida. e depois personalizá-lo para mim. fluxo de validação ou minha pilha de tecnologia ou meu arquitetura. Sim. Legal.
+
+O co-apresentador de IA. Ok, isso realmente poderia ser. interessante. Se eu tivesse meu segundo cérebro, não correria. o fluxo, mas assim como estar lá como um plateia de amendoim ou algo mais prático, como dar feedback.
+
+em tempo real ou até mesmo respondendo a algumas perguntas. perguntas no chat. Ok, isso realmente poderia ser. Bem legal. Devo pensar nisso.
+
+Como eu poderia ter meu segundo cérebro como co-anfitrião? uma transmissão ao vivo comigo. Isso seria legal. Hum. Certo, vou pensar nisso. Eu vou
+
+Definitivamente, pense nisso. OK. Muito bem, em que ponto estamos agora? Hum, ainda está acontecendo. Nossa!
+
+Tudo bem. Bem, acho que sim, porque nós tínhamos o compactação de memória. Isso acabou por atrasar as coisas. muito para baixo. OK.
+
+[bufa] Eu só queria Ok, vou deixar rodando aqui. Tudo bem. Então você não precisa mais de mim. Não, não, não. Eu ainda quero que pessoas reais Ajude-me a apresentar transmissões ao vivo em conjunto. Então
+
+Thomas, ele é o cara que eu tenho o comentário destacado para e também Rasmus. Eles fizeram muita coisa incrível. trabalho me ajudando em Archon. E eu disse isso como para alguns Transmissões ao vivo de Archon, eu adoraria participar. Eles foram convidados a coapresentar o evento.
+
+E continuo a manter essa posição. Não há Uma maneira seria se eu conseguisse que meu segundo cérebro me ajudasse. Se eu fosse co-apresentador, seria diferente. tipo de coisa e um tipo diferente de proposta de valor para a transmissão ao vivo comparado a ter uma pessoa real como Você ou o Rasmus podem apresentar o programa comigo. Como eu Gostaria de fazer ambos, 100%.
+
+Sim. [risada] Tudo bem. Tudo bem.
+
+Vamos ver. Tudo bem. Recebemos alguns comentários interessantes aqui. Muito bem, vamos dar uma olhada. Assim que você Leve isso para a produção, e será simplesmente...
+
+Ter alucinações de sucesso a cada passo. Mestrados em Direito Dê a resposta mais plausível. Eles Racionalizam tudo aquilo que não conseguem raciocinar. Todo este vídeo é de 2025. Tudo bem, opinião polêmica, mas não, eu Agradeço a resistência.
+
+Porque o que você está dizendo tem algumas validade, e é por isso que estou chamando isso de validade. uma experiência. E é por isso também que eu sou gastar tanto tempo antecipadamente planejando o sistema e a arquitetura. Porque sim, um dos maiores problemas com grandes modelos de linguagem atualmente é que eles são bajuladores. Eles sempre Concordo com tudo o que dizemos e Eles têm um nível absurdo de parcialidade.
+
+em relação às suas próprias opiniões. Eles são vou racionalizar tudo e Há um risco se não construirmos o sistema certo que eles vão dizer que isso está pronto para se fundir e então ele vai mesclar e depois Vamos passar para a próxima questão. E nós passamos por esse ciclo onde cada A única vez que produz resultados de IA ruins. Que é um risco. Mas é exatamente isso que estou tentando projetar.
+
+por aqui. Estou dedicando muito tempo antecipadamente. porque estou fazendo coisas como definir o padrão de retenção para validação. Então que estou levando comigo para parte disso Estou tirando e impedindo algumas coisas. do comportamento bajulador. Porque
+
+Quando iniciarmos nossos testes de regressão, Nem sequer sabemos o que foi construído. Então, vai ser apenas um juiz neutro. Pelo menos esse é o objetivo. do que estamos fazendo aqui. Ainda há um risco para isso, 100%, e é por isso que eu estou muito claro no início da transmissão aqui que quando chegamos a esse nível de Autonomia para nossos agentes de codificação. Como
+
+Voltando aos cinco níveis aqui, o Fábrica escura aqui não é o que eu... Recomendo se você busca a opção mais confiável. software possível. Talvez cheguemos lá às
+
+Em algum momento, e talvez este experimento seja Vai ser um sucesso estrondoso e é Vai ser tipo, uau, caramba. Na verdade Isso pode nos render algo muito bom, sabe? MVP para qualquer aplicação. Talvez. Mas sim, eu não sou... eu não sou...
+
+como se estivesse insensível ao fato de ser bajulador ou a bajulação é um grande problema e nós É preciso ter muito cuidado com isso. Então, eu me sinto bastante confiante no abordagem que tenho aqui. Acho que nós vão evitar grande parte desse viés. e muitas coisas relacionadas ao envio que Dizem que são boas quando na verdade não são. Não vai ser perfeito, mas é isso.
+
+É por isso também que tenho outras estratégias. Como eu ter uma regressão realmente profunda testando que vou executar todos os dias ou toda semana e depois criar mais questões a serem abordadas. Eu ainda vou ter algum ser humano envolvido no processo bem, bem final. Hum, onde eu realmente quero para impulsionar as coisas para uma plataforma que As pessoas estão usando. Então eu vou tomar um pouco É como se eu já tivesse pensado muito sobre isso.
+
+Portanto, agradeço novamente a reação negativa. Mas acredite, estou considerando tudo isso. 100%. Certo, vamos voltar. Ainda em funcionamento. Uau, ok.
+
+Tudo bem. Co-apresentadora de anime. Você nunca me verá faça isso. [risada] É engraçado, no entanto. Tudo bem.
+
+Você precisa verificar os parâmetros para eles mesmos introduzem o específico parâmetros a verificar. Sim, Matemática adicional e tipo de engenharia verificações para atingir esse objetivo. Estou um pouco perdida em relação ao que você quer dizer. lá. Talvez você pudesse dar mais detalhes.
+
+Preciso deixar minha encomenda. Boa sessão, Cole. Eu agradeço. Sim. Tudo bem.
+
+Cole, o vendedor de trapos, mangas apimentadas. Sim, Mangas picantes não são mencionadas há algum tempo. mas terei que levá-lo para outro lugar. Vídeo em breve. Um Um mestrado em Direito (LLM) nem sequer pode participar.
+
+uma sala de bate-papo sem que todos saibam imediatamente que é Uma IA. Sim, isso é verdade. Sim. É por isso que eu nunca faria isso. ter um fluxo de ter um segundo cérebro executar qualquer coisa em breve.
+
+Sim. Tudo bem.
+
+Vamos ver.
+
+Difícil de explicar. Sim, tudo certo. Sim, sem pressa. Tudo bem. Sim, tudo bem. Concordo plenamente. Se
+
+Se um mestre em Direito apresentasse um programa, seria entediante. e insosso e obviamente um mestrado em Direito. Quero dizer Sim, concordo. Tudo bem. Legal. Então, ok, enfim, nossa programação.
+
+O agente terminou aqui. Então eu quero vir volte e dê mais um pouco atenção. Muito bem, terminamos com todos os nossos dependências de desenvolvimento. O teste de fumaça problema. Validação da fábrica escura atualmente Executa verificações em toda a base de código. Se eu chutar
+
+fora do fluxo de trabalho no número 26, o agente vai Corrija o bug de pontuação em uma única linha e, em seguida, valide. atingirá 130 erros preexistentes não criar. Ok. Nossa! Ok, então acho que...
+
+O que aconteceu aqui foi que estamos criando o ambiente de desenvolvimento para o primeiro tempo. Então, existem inúmeros problemas que na verdade não estão relacionados à correção que estaríamos executando o fluxo de trabalho em. Então eu Precisamos abordar essas questões de fato. Um Sim. Vamos fazer o número um. Vamos abordar todos os assuntos.
+
+Os problemas e, em seguida, executar o fluxo de trabalho. Sim, eu só... quero dizer, isso vai levar um tempo.
+
+enquanto. Mas eu só quero fazer isso porque Porque o que eu talvez consiga fazer é criar de fato o próximo fluxo de trabalho em Mais uma sessão de programação do Claude por aqui. Acho que isso faz mais sentido. Vamos fazer isso.
+
+OK. Então, deixe-me voltar ao meu cofre. e copie o caminho novamente ao nosso arquivo de planejamento.
+
+Então, eu diria para ler este arquivo de plano. e também carregar as habilidades de Arconte. Você pode Ajude-me a criar mais fluxos de trabalho do Archon. Acabei de terminar de criar meu desenho sombrio. adaptação de fábrica do equipamento fixo fluxo de trabalho de problemas. Agora quero trabalhar em
+
+o fluxo de trabalho de validação de PR e é muito É importante que isso siga o exemplo do que resistiu. padrão muito semelhante. Acabei de ter alguém na transmissão ao vivo. dizem que não acreditam nisso. abordagem e eu acho que o padrão de retenção é uma das coisas mais importantes para abordar a sua preocupação. Então vamos lá
+
+Concentre-se nisso. Estou sendo um pouco boba, mas sim, eu Acho que é muito importante que nós certifique-se de que estamos tendo aulas. da forte fábrica escura DM porque É muito impressionante.
+
+Tudo bem. Vamos ver. O que mais conversamos no chat? Aqui estou eu enquanto aguardo a execução deste processo. Bem monitora essas duas sessões de alguma forma.
+
+paralelo aqui. Existe alguma maneira de usar o Quen 3.6 plus? com Archon, mesmo que seja através de um sistema aberto. roteador?
+
+Então, uma coisa que aprendi da maneira mais difícil. recentemente com roteador aberto, você não está na verdade, é possível usar o código Claude com roteador aberto para quaisquer modelos fora de os antrópicos porque não tem um ponto final compatível com o Antrópico como MiniMax e GLM. Então, se você quisesse usar o Quen 3.6 mais I Esperaríamos até termos apoio para...
+
+Pi. A Pi será a terceira fornecedora. que adicionaremos esta semana ou na próxima em Arconte. Porque aí você poderá usar outros modela com muita facilidade. Você não vai para ser como o obviamente como agora Temos Claude e Codex e você é um Um pouco mais de restrição de fornecedores. Você pode
+
+faça o que eu fiz no VPS para apontá-lo para outros fornecedores, mas apenas se eles forem Compatível com antropologia, como MiniMax e GLM. Então talvez haja uma maneira, mas eu realmente Experimentei primeiro antes de ir ao MiniMax. diretamente. Tentei acessar o Open. roteador e não funcionou.
+
+Só funcionou quando escolhi um Antrópico. modelo.
+
+Ok. Está confuso aqui porque está tentando para ler meus fluxos de trabalho remotamente máquina, mas na verdade ainda não a utilizei. ainda muito remoto.
+
+Talvez eu precise. Aguentar. Oh não, espere. Ele conseguiu resolver o problema. Eram bom. Estamos bem. Tudo bem.
+
+Preciso de um novo 120B de código aberto. Quer dizer, sim, já faz um tempo desde que nós Com certeza tive um desse tamanho. Sim. Tudo bem. Bem, já que eu amo C O que você acha de Blitzys e Os compiladores C deles?
+
+Hum, eu não... Eu amo C? Eu não tenho Programei em C por muito tempo.
+
+Na verdade, já faz uns 5 anos desde que eu Programado em C. Você quer dizer algo como C, a linguagem de programação? linguagem? Presumo que seja porque você está falando de C. compilador. Faz muito tempo que não uso C.
+
+tempo. Eu também nunca ouvi falar de Blitzy. Eu teria interesse, sim. Um Uma história engraçada ou não engraçada, mas interessante. É um fato para vocês.
+
+Quando eu estava na faculdade, eu era um(a) assistente de professor para uma máquina C curso de aprendizagem. Então eu... eu tenho que... não, desculpe, não é uma máquina.
+
+aprendizado. Bondade. Um C e montagem curso, curso de arquitetura de máquinas. Então Pude ajudar os alunos a depurar código assembly. Programar durante horas e horas por dia.
+
+[risada] Em certo momento, isso foi divertido. Sim.
+
+Tudo bem. Então, certo, o que aconteceu? O que temos? agora? Tenha contexto suficiente. Deixe-me explicar.
+
+O que estou construindo. Então, padrão de retenção Design para a fábrica escura validar PR. Este é o fluxo de trabalho crítico para defendendo a IA escreve código em preocupação supervisionada. Eis como eu vou impor uma retenção rigorosa em cinco áreas. camadas. Certo, então este é o principal
+
+preocupação que estamos abordando aqui com Bajulação da IA ​​em nossa fábrica sombria. Não estou dizendo que isso vai ser perfeito. mas esta é minha primeira tentativa para o experimento público para evitar a codificação O agente fica sempre dizendo que seu trabalho é Bom, e vamos fundi-lo. Portanto, temos um fluxo de trabalho Archon separado. diretório de artefatos separado, separado árvore de trabalho. Não há como isso acontecer.
+
+perscrutar o trabalho do outro agente e potencialmente assumir seu viés. Assim, excluímos comentários e avaliações. Não Código, sem conversa fiada de programador. Nós temos nossos arquivos de governança. Então, vamos interpretar isso como nossa regra.
+
+livro. Cada nó de IA começará com novo contexto. Então, a cada passo do caminho Durante a validação, nem sequer estamos presentes. vai gerar viés na validação ela mesma através dos diferentes nós. O comportamento validação comportamental O comando lidera com uma regra de retenção seção que enumera o que não deve ser feito considerar. Não consegue encontrar nem pesquisar por
+
+planos de implementação, mensagens de compromisso, Justificativa do codificador, comentários da revisão anterior. Responde exatamente a uma pergunta. Faz A diferença resolve o problema no corpo da questão? Muito bom. E então, até mesmo outro padrão de retenção I Eu estava me referindo a isso antes.
+
+como quando fazemos a regressão completa testar todos os dias ou todas as semanas também não terá conhecimento de nada recente implementações de recursos ou problemas que Estamos em meio a uma discussão sobre, certo? Como se fosse responder... a pergunta direta de curtir Este aplicativo funciona com todos os usuários.
+
+jornadas que traçamos na missão Markdown? Bom. Tudo bem. Então agora é hora de escrever. e vamos deixar para lá. Ambos
+
+ambos ainda estão em funcionamento. na verdade. Então Vou reabrir o repositório. Porque eu posso, eu só quero exibir o regras de missão e fábrica, assim como Muito rápido. Aqui está o nosso documento de missão. Então é
+
+É razoavelmente conciso, não muito longo. mas cobre, tipo, o núcleo do aplicativo. O que é o DynaChat? Para quem é isso? Ah, a patente ainda está pendente, aliás. EU
+
+talvez nem mantenha o nome. Bem ver. Veremos. Para quem é isso? O Funcionalidades essenciais das aplicações.
+
+Isso se refere especificamente ao que é no âmbito. Como se eu fosse criar um problema para adicionar o Google OAuth ao plataforma a triagem vai ser como Ah, sim, ótimo. Vamos marcar isso como aceito porque está literalmente no escopo da missão.md. E também abordamos o que está fora de escopo. O que a fábrica nunca deve fazer
+
+construir? Como se não quiséssemos que isso adicionasse algo. outros canais do YouTube. Tipo, se alguém Criamos um problema no GitHub que gostaríamos que fosse resolvido. ser rejeitado porque Pelo menos por enquanto. Quer dizer, eu poderia estender
+
+esta aplicação mais tarde, mas pelo menos por Agora, o objetivo deste aplicativo é para o meu O conteúdo do YouTube pode ser um recurso para você. pessoal. Não queremos, sabe, permitir que alguém...
+
+Abrir uma solicitação para trocar o LLM. Que Isso seria ruim para o meu crédito. Não queremos adicionar pagamentos. ou assinaturas. Como se isto fosse para ser Fique livre. Não queremos
+
+complicar demais com um aplicativo móvel ou um Aplicativo de desktop. Tipo, não, tipo. aplicativo elétron ou Tauri. Então, sim, são coisas que nós...
+
+Não quero construir. Invariantes difíceis. Como coisas que nós temos que, absolutamente temos que manter o O mesmo se aplica a nós, então não podemos permitir problemas que...
+
+tentaria ajustar a limitação de taxa ou os requisitos de autenticação, coisas assim. Bem, maneiras pelas quais estamos permitindo que isso evolua e e então, padrões de qualidade. Certo? Assim é a nossa missão.md.
+
+E então posso desenvolver isso ao longo do tempo. É mais ou menos como se fosse o meu console. Tipo assim Voltando à analogia de "tipo", Você tem um carro que nem sequer tem um volante. Bem, você ainda vai ter algum tipo de console para fornecer instruções de nível superior. Então, se eu quero ajustar a fábrica escura Eu ainda tenho as alavancas para puxar porque Ainda posso alterar as regras da fábrica ou o arquivo mission.md ou posso atualizar o
+
+Fluxos de trabalho Archon. Então, se eu realmente quiser E existe um problema drástico que eu Só preciso mesmo consertar, posso fazer um Eu me dedico diretamente ao principal. filial. Então, quero dizer, há flexibilidade. com isto aqui.
+
+Ah, sim, isso é... E então a fábrica regras. Este arquivo controla como a escuridão A fábrica opera neste repositório. Tipo assim
+
+Eis como lidamos com a triagem: certo? Assim, temos mais contexto. É muito importante alimentar o fluxo de trabalho de triagem. Eis como implementamos as coisas. Aqui estão Nossos requisitos para solicitações de pull. Para
+
+Por exemplo, não quero permitir mais do que 500 linhas porque eu quero todas as edições. Ter um escopo de trabalho pequeno e focado. Essa é uma das coisas mais importantes. para obter confiabilidade de nossos produtos Agentes de codificação aqui. Portões de qualidade para fusão automática. Uh
+
+Estou falando sobre testes de regressão. Quero usar o navegador do agente. especificamente. Esta é a CLI do navegador do agente Vercel. É uma automação de navegador de código aberto.
+
+ferramenta que uso bastante para testar minha frente termina especialmente quando estou trabalhando em O próprio Arconte. Estou usando o agente habilidade de navegação. Então eu quero que isso seja incorporado ao meu teste de regressão mais amplo fluxo de trabalho. Vai ser Arquivos protegidos que não são permitidos Mudar, certo? Eu não quero que isso aconteça.
+
+mudar seus próprios documentos de governança porque Este é o meu console, a alavanca que eu puxo. não é seu. Hum, tipo, quais são as regras, tipo, quando nós...
+
+Deveria rejeitar automaticamente certos itens. Como devemos intensificar o processo, os custos e vazão. Quer dizer, eu não preciso conseguir tipo, super aprofundado em tudo aqui, mas Ah, sim, você pode ver a fábrica. As regras tornam-se mais específicas. Assim é Há várias linhas de código aqui.
+
+Quantos são no total? Ah, desculpe, não é código, são linhas de Markdown. EU Mesmo que isso não seja muito longo, São 320 linhas porque tem bastante coisa. da especificidade que quero fornecer ali para Tenho minhas diretrizes bem definidas. Tudo bem.
+
+Você já tentou usar prompts? que pressupõem fracasso e preguiça? Isto Também consigo racionalizar isso. Bem, eu já experimentei um pouco com...
+
+Esse tipo de coisa acontecia no passado. Um Isso também pode ser racionalizado. Você é Dizer isso desse jeito, na verdade, não funciona. trabalho ou você está dizendo que...
+
+ajuda a racionalizar ou gosta de ajudar problemas de endereço?
+
+Vamos ver. Você pode querer aproveitar todo o seu trabalho. com pano e construa o gráfico de pano como o segundo cérebro. Obsidiana como um segundo cérebro Não chega nem perto de ser um gráfico de pano, mas O Obsidian é menos complexo. Sim, quero dizer, já encontrei obsidiana suficiente.
+
+Para mim, é bom porque é menos Configure como você disse, mas, quer dizer, talvez Em algum momento, construirei um Greg inteiro. Sistema de classificação gráfica para meu cérebro e compartilhamento isto. Poderia ser legal. Eu ainda luto um pouco com essa possibilidade. ser excessivamente técnico.
+
+Dependendo, você sabe, do contexto. Você está armazenando isso no seu cérebro. Mas tenho isso em mente. claro que sim. Ah, funciona sim. Ok, legal. Sim,
+
+sim. Quer dizer, então é uma boa ideia. Assim como no meu processo de validação, eu poderia ter um fluxo de trabalho na fábrica escura que diz algo como: "Ok, preciso que você assuma." ou tipo, nem mesmo, nem conte isso para "Suponha." Eu simplesmente digo algo como: "Este agente" Era preguiçoso. Vá descobrir por que é
+
+preguiçoso, o que poderia ser melhor do que isso? implementação, e então tipo abrir outro problema ou resolvê-lo diretamente." Muito bem, eu gosto dessa ideia. Com certeza, isso será incluído no projeto.
+
+Tudo bem. Será que eu poderia usar a pesquisa automotiva da Karpathy para Melhorar a fábrica escura no futuro? Ah, que reviravolta na trama, ela não para. Em execução, inicia a replicação. Certo. Sim, talvez sim, quem
+
+sabe. Então, sim, eu poderia usar Pesquisa automotiva de Karpathy. Basicamente, se eu fosse aplicar o de Karpathy pesquisa automotiva, seria um assunto à parte. processo que tem controle sobre realmente editando esses três arquivos. Certo? Porque, assim como a ideia por trás dos carros,
+
+pesquisa é você tem um arquivo desse tipo de determina um sistema maior, como um modelo ou repositório. E então esse arquivo você ter um agente de codificação iterando sobre autonomamente com base em lições que são aprendido por meio de um ciclo de feedback. Então, eu poderia construir a pesquisa automotiva da Karpathy para gostamos de evoluir isso ao longo do tempo. Então, tipo agora mesmo dentro da fábrica regras que eu tenho, essa regra rígida onde não é permitido Não é permitido mudar o governo. governança, a constituição. Mas isto
+
+É exclusivo para agentes que atuam no mercado. com os problemas nos pedidos de pull. Então, eu poderia ter um processo separado que tipo sua única função real é evoluir o governança ao longo do tempo. É uma ideia interessante. Não sei Se eu quiser levar a autonomia a esse ponto.
+
+agora mesmo, porque eu realmente quero que isso aconteça. a alavanca que só eu estou puxando atualmente, mas isso poderia ser natural evolução em algum momento. Seria Interessante, sem dúvida. Legal. Sim, agradeço todas as ideias.
+
+Vocês estão compartilhando isso aqui de forma muito séria. Há tanta coisa para se pensar. É por isso que adoro esta experiência. porque como se o mundo se tornasse seu paraíso particular. as maneiras pelas quais você pode desenvolver isso e as coisas que você pode construir com ele como bem. Você pode aplicar isso a qualquer coisa.
+
+fluxo de trabalho e é simplesmente legal poder para usar Archon para guiar todo o coisa também. Tipo, cada linha de código que é O que está escrito aqui foi escrito por um Arconte. fluxo de trabalho. Então, sim. Tudo bem. Hum, vamos voltar.
+
+e veja onde estamos agora. Ok. Assim, construímos nosso terceiro fluxo de trabalho aqui. E qual é este aqui? Este é Ok, então este está no meio de testando de fato o Ah, o segundo fluxo de trabalho que criamos.
+
+Legal. Então, provavelmente teremos que esperar um pouco para... que aconteça. Acho que vou.
+
+siga em frente e ligue para a transmissão aqui. porque teremos que esperar um pouco até Temos aqui a próxima grande novidade. acontecendo. Então, vou continuar trabalhando nisso. depois da transmissão e então eu estarei fazendo Também existe um vídeo no YouTube sobre isso.
+
+Amanhã, o que me deixa muito animado. Então, sim. Tudo bem. Vamos voltar ao modo de tela cheia. Agradeço a presença de todos vocês aqui.
+
+hoje. Esta é uma apresentação ao vivo muito diferente. transmitir para construir e gostar realmente Posso fazer as coisas com calma. Eu não tenho Fiz isso mesmo em uma transmissão ao vivo. antes, então sim, eu agradeço a todos vocês.
+
+Ideias e perguntas dos rapazes também. E, bem, para quem não entendeu... chance de terem suas perguntas respondidas, Como sempre, sintam-se à vontade para comentar em um vídeo, junte-se à comunidade Dynamis como Bem, porque estou ativo lá todos os dias.
+
+dia. Hum, talvez eu mostre só mais uma... tempo Muito rápido aqui.
+
+Vou colocar o link novamente no chat. aqui porque sim, se você quiser construir o seu seu segundo cérebro, revise a agenda Curso de programação, é só fazer qualquer pergunta que você tem. Assim como os Dynamis A comunidade é o lugar certo para isso. Então, eu Adoraria te ver lá. Caso contrário, Vou voltar ao meu enquadramento completo aqui.
+
+Mas sim, mais transmissões ao vivo estão a caminho. bem. Porque eu realmente gosto de fazer lives. faz mais transmissões ao vivo do que vídeos para o YouTube. Gosto de ambos, claro. Eu amo os dois. Mas
+
+Adoro fazer transmissões ao vivo. Eu adoro ser Moro com vocês. Então, sim. Tudo bem. Então, sim, com isso, Agradeço a presença de todos vocês. Uh
+
+Fiquem ligados para o vídeo no YouTube. Amanhã na fábrica escura com Archon E mais transmissões ao vivo em breve. Espero que vocês tenham um ótimo resto de ano. Tenha um bom dia e nos vemos por aí. Tenham um bom dia, pessoal.

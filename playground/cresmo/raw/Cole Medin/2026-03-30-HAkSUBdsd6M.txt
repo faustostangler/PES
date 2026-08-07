@@ -1,0 +1,140 @@
+---
+video_title: "Coding Agent Reliability EXPLODES When They Argue (New Adversarial Dev Technique)"
+video_id: HAkSUBdsd6M
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=HAkSUBdsd6M
+video_date: 2026-03-30T16:30:05+00:00
+video_description: |
+  Your AI coding agents fail on complex tasks not because the model is insufficient, but because you aren't separating the planning, building, and evaluation into distinct roles. The building and evaluation agents essentially have to fight each other to get the best results.
+  
+  Anthropic just published a deep engineering article breaking down exactly how they solved this for multi-hour coding sessions with a GAN-inspired three-agent architecture, and the pattern is something you're going to want to try on your own codebases!
+  
+  But I didn't just want to explain the article. I built my own version of this three-agent harness using the Claude Agent SDK and the Codex SDK, and I'm giving it away.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Want to learn AI engineering? Scrimba's AI Engineer Path is hands-on, project-based, and very effective:
+  https://scrimba.com/learn/aiengineer?via=colemedin
+  
+  - All Scrimba coding courses (many free):
+  https://scrimba.com/courses?via=colemedin
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - If you're interested in building your own AI second brain to save yourself hours every week, check out the Dynamous community and upcoming 4 hour second brain workshop:
+  https://dynamous.ai/second-brain-bootcamp
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Adversarial Dev Harness (my implementation - Claude Agent SDK + Codex SDK):
+  https://github.com/coleam00/adversarial-dev
+  
+  - Anthropic: Harness Design for Long-Running Application Development:
+  https://www.anthropic.com/engineering/harness-design-long-running-apps
+  
+  - Anthropic: Effective Harnesses for Long-Running Agents (companion piece):
+  https://www.anthropic.com/engineering/effective-agent-harnesses
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 AI's Sycophancy Problem
+  1:02 Adversarial Dev Solution
+  2:31 GAN-Inspired AI Harnesses
+  4:23 Harnesses Build Amazing Apps
+  6:49 Scrimba
+  8:07 Harness System Architecture
+  10:39 Sprint Negotiation & Evaluation
+  12:48 Get Started With Harness
+  16:01 Token Cost vs. Value
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+O maior problema na área de IA atualmente pode ser descrito com uma única palavra: bajulação. Você provavelmente já ouviu falar disso, mas significa que os modelos de IA tendem a concordar conosco e a reforçar nossas opiniões e as suas próprias em excesso. Eles têm muito preconceito. E o problema aqui é que a bajulação, na verdade, parece estar piorando à medida que os grandes modelos de linguagem se tornam mais poderosos, e não melhores. Hoje em dia, quando as pessoas falam sobre bajulação e IA, geralmente estão se referindo ao sentido mais amplo de qualquer conversa com um modelo de linguagem complexo. Mas, honestamente, isso
+
+impacta mais a programação com IA, porque a pior coisa que você pode fazer é ter um agente de programação avaliando o próprio trabalho. Sabe, aquela conversa em que você simplesmente despeja um monte de opiniões suas e acaba criando um grande viés enquanto o agente escrevia o código. Vai se autoavaliar com uma estrela dourada todas as vezes, porque é como um aluno corrigindo a própria lição de casa. Eles podem apontar algumas falhas para dar credibilidade à avaliação, mas no fim das contas os problemas maiores são escondidos e causarão grandes transtornos quando você estiver usando seu código de verdade. Bom, isso é uma pena. Que legal! Qual é a solução
+
+aqui? Bem, se você nunca tentou dar ao seu agente de codificação um parceiro de treino, com certeza vai querer fazer isso depois de assistir a este vídeo. Estou falando de um agente de codificação totalmente separado, com sua própria sessão de contexto, cuja única função é desmontar a implementação do agente principal. Eu chamo isso de desenvolvimento adversarial porque você está criando um segundo agente para ser meticuloso, para fazer o papel de advogado do diabo e questionar até mesmo as decisões mais profundas tomadas na base de código. Sim, a transição de um sistema com um único agente para um sistema com múltiplos agentes acarreta algumas sobrecargas.
+
+Também falaremos sobre isso, mas, nossa, os resultados que obtemos com isso falam por si só. Então, se você está se perguntando, sim, neste vídeo vou mostrar de forma bem prática exatamente como criar essa arquitetura de desenvolvimento adversária. Vamos nos inspirar bastante na Anthropic, e por isso vou abordar este novo post do blog deles. Uma pena, porém, é que eles compartilham muita coisa boa aqui, mas não disponibilizaram nada em código aberto, como fizeram em artigos anteriores do blog, como este . Então, assumi a responsabilidade de criar tudo do zero.
+
+Criei uma versão desses mecanismos para Claude e outra para Codex , e você pode até mesmo misturá-las para que Claude seja o implementador e Codex o avaliador. Então, vou mostrar como construí isso e, claro, tenho um diagrama aqui para explicar tudo. Então, vou explicar de forma bem simples, e na verdade, este é o futuro da programação de IA. Ter agentes de codificação independentes trabalhando juntos para realizar tarefas maiores de forma mais confiável. Então, vamos começar.
+
+Então, se você tem acompanhado as pesquisas da Anthropic , sabe que eles têm se esforçado bastante para aprimorar o Claude na criação de interfaces e melhorar sua plataforma de agentes de codificação, respondendo à pergunta: "Até onde podemos levar os limites dos agentes de codificação?" Assim, eles têm desenvolvido muito em cima do arnês que abordaram nesta postagem do blog. Eu abordo esse assunto em um vídeo que vou linkar aqui, mas, com a evolução atual, eles têm se inspirado bastante em redes generativas adversárias. E é aqui que a coisa fica realmente interessante. Se você não está familiarizado com GANs, trata-se de uma abordagem de aprendizado de máquina em que um modelo gera imagens e outro modelo atua como discriminador. A
+
+única função do discriminador é descobrir quais imagens são reais, a partir de um conjunto de dados reais que fornecemos, e quais foram geradas pelo outro modelo. Assim, a única função do gerador é enganar o discriminador. E, ao se tornar cada vez melhor em enganar o discriminador, acaba produzindo imagens cada vez mais realistas com o passar do tempo. Portanto, é uma abordagem muito interessante treiná-lo para produzir imagens precisas. Assim, estamos nos inspirando nisso e aplicando agora a grandes modelos de linguagem e ferramentas de agentes de codificação . Então, estamos extrapolando
+
+essa ideia para termos um agente gerador e um agente avaliador, exatamente como eu estava dizendo antes. Portanto, este artigo é uma leitura muito interessante. É claro que vou colocar o link na descrição. Eles discutem por que as implementações ingênuas falham, como ter apenas uma única sessão de agente de codificação, e então explicam sua abordagem. Na verdade, eles têm três agentes aqui. Então, eles têm o planejador
+
+para ajudar a criar a especificação inicial, e então passamos pelo ciclo do gerador e do avaliador. Eu poderia simplesmente ler todo este artigo, mas queria facilitar ao máximo a sua compreensão de tudo aqui. Então, criei um diagrama para explicar tudo. Então, chegaremos a isso em um instante, mas outra coisa que quero mostrar aqui são os tipos de coisas que podemos construir com esse chicote de fios. Vou mostrar a vocês tanto Anthropic quanto a mim mesmo. Assim, para os
+
+testes, eles tentaram usar tanto o agente único quanto essa estrutura para construir um criador de jogos retrô. Assim, você pode definir seus próprios sprites e até mesmo jogar o jogo depois. Portanto, o que estamos analisando aqui é o que o agente único produziu. No geral, parece bem legal, mas quando chegou a hora de jogar de verdade, nada funcionava. Então, no que diz respeito à primeira versão, a primeira iteração, foi bastante decepcionante. Portanto, é
+
+claro que você pode iterar, mas a vantagem de um arnês é que você não precisa fazer isso. Você pode simplesmente enviar uma tarefa e ela passará pelo processo de iteração automaticamente. E foi exatamente isso que eles fizeram. Esta é a segunda versão construída com o framework, onde o avaliador foi muito exigente, basicamente entrando em conflito com o implementador. Então, temos nossa tela inicial, o editor de sprites, que parece ainda mais elaborado, o design do jogo, para construir seus diferentes níveis, e então a jogabilidade, desta vez realmente funcionou. Então,
+
+não se trata de um vídeo que possamos assistir ou algo do tipo, mas eles conseguiram jogar o jogo. E muito legal. Não quero aceitar o artigo como verdade absoluta, então, com toda essa estrutura que desenvolvi para você, também a executei integralmente para criar um aplicativo bastante complexo . Criei este aplicativo que importa meu conteúdo do YouTube e possui um pipeline completo de processamento de dados funcionando nos bastidores, e temos aqui uma interface onde podemos fazer qualquer pergunta que quisermos. Então, posso enviar isso. Isso
+
+realmente funciona com um modelo de linguagem complexo por baixo dos panos. Possui uma interface de usuário muito, muito refinada. Tipo, no geral estou super impressionado. Temos streaming de tokens e tudo mais. Tipo, muito, muito legal. Então, este é o tipo de
+
+coisa que até mostra as fontes aqui embaixo. Tipo, eu sei que uma única sessão de agente de codificação não teria sido capaz de criar algo tão elaborado. Mas eu consegui de primeira, né? É claro que há muitos outros agentes trabalhando nos bastidores, mas a questão é que, para mim, eu enviei uma única solicitação para este aplicativo e ela foi processada em cerca de 4 horas, iterando sobre o assunto. E, cara, é impressionante demais. Tipo, esse
+
+é o tipo de coisa que podemos fazer quando deixamos os agentes trabalharem juntos e simplesmente darem o seu melhor . E sim, 4 horas realmente significam muitos tokens, mas a questão é que esses chicotes elétricos nos permitem começar a usar modelos mais rápidos e baratos e ainda obter resultados muito bons. Além disso, a confiabilidade compensa o custo adicional para mim. Então, falaremos mais sobre isso no final do vídeo. Mas, agora, quero mostrar o diagrama do chicote de fios aqui e explicar exatamente como ele funciona, e como você também pode executar meu exemplo. O
+
+patrocinador do vídeo de hoje é a Scrimba. Já falei sobre o curso deles para desenvolvedores full stack, mas não sobre a especialização em engenharia de IA. E, além disso, oferece um excelente custo-benefício. Abrange a criação de agentes de IA, rag, protocolo de contexto de modelo, engenharia de prompts, tudo o que você precisa. E eles o construíram em parceria com a Hugging Face e a LangChain. E você tem a oportunidade
+
+de construir coisas durante todo o curso. Portanto, este não é um curso comum de ciência de dados ou aprendizado de máquina. É feito para desenvolvedores web que desejam criar aplicativos genéticos. E o que diferencia o Scrimba de todas as outras plataformas de aprendizado de programação é que podemos pausar a lição a qualquer momento, como aqui, e editar o código do instrutor . Então, é super fácil aprender fazendo . Assim, por exemplo, posso alterar o
+
+modelo GPT aqui. E, neste exemplo, também posso alterar o prompt do sistema para o agente . E então posso executar o aplicativo e testar as coisas ao vivo. Dê uma olhada nisso. Vou cumprimentá-lo(a) . E agora vamos receber uma resposta em
+
+linguagem pirata. Muito legal. As aulas também incluem desafios com inteligência artificial para feedback instantâneo, garantindo que você nunca fique apenas assistindo passivamente. Você está sempre construindo. A Scrimba também oferece alguns cursos gratuitos para você experimentar, mas eu recomendo fortemente que você tente a área de engenharia de IA. Vou incluir um link
+
+na descrição para um desconto de 20% no plano Pro, que desbloqueia tudo no Scrimba. Assim, todo o sistema começa com a sua solicitação de usuário. De forma bem simples, basta especificar o que você deseja construir. E o melhor de tudo é que o planejador vai expandir sua solicitação para uma especificação completa otimizada para o arnês, então você não precisa se preocupar em ser muito específico. Assim, dentro do repositório que vou linkar na descrição, onde tenho os harnesses Claude e Codex, também tenho o prompt de exemplo. Foi exatamente isso que
+
+enviei para ambos os sistemas para criar versões do aplicativo Rag que compartilhei anteriormente. Então, sim, crie um aplicativo Rag completo que tenha a aparência e a funcionalidade de uma plataforma de bate-papo com IA premium, como o ChatGPT ou o Claude.ai, blá blá blá. Descrevo meu conjunto de tecnologias, basicamente incluindo todas as opiniões que quero, mas você pode ser tão específico ou genérico quanto desejar. Então, você usa isso como sua sugestão inicial e depois envia para o planejador. E
+
+a única função do planejador, vou mostrar aqui como é. Tanto no arnês Claude quanto no Codex, temos o planejador aqui. Sua única função é receber a solicitação do usuário e, em seguida, gerar a especificação. E isso vai guiar o resto do nosso projeto. Então, como vocês podem ver, tanto na versão Claude quanto na versão Codex, temos o avaliador, certo? Temos o gerador, temos o
+
+chicote de fios que conecta tudo, o planejador. Configurei tudo isso propositalmente da mesma maneira para mostrar que não precisamos nos ater à antropologia só porque nos inspiramos em um artigo antropológico. E então, dentro da pasta compartilhada aqui, tenho todos os prompts para as diferentes etapas. Então, este é o nosso planejador aqui. Você é um arquiteto de produto. Sua tarefa é pegar uma breve
+
+descrição do usuário. Essa é a nossa sintaxe Markdown. Em seguida, elabore uma especificação completa do produto. E todo o resto no prompt aqui serve apenas para descrever a estrutura que queremos para nossas especificações, para que possamos torná-las confiáveis ​​e repetíveis em todas as nossas diferentes implementações de chicote de fios. Muito, muito organizado. E então, uma vez que tenhamos nossas
+
+especificações, é aqui que entramos no nosso ciclo de sprint. E essa é a parte mais fascinante de todo o sistema. Porque, antes de escrevermos uma única linha de código, vamos fazer com que o gerador e o avaliador negociem um contrato. Então, eles vão decidir antecipadamente quais são as diferentes fases pelas quais vamos passar para detalhar a especificação. E aqui está como vamos avaliar cada fase. Sim, é uma
+
+relação de confronto, certo? É como se o avaliador fosse desmontar a implementação do gerador , mas eles já estão de acordo sobre como será essa batalha. Portanto, é algo muito ético. Há algumas normas de etiqueta a serem estabelecidas aqui, levando em consideração como será essa construção. Então, deixe-me voltar à base de código e mostrar meu exemplo disso. O que
+
+você está vendo aqui é a especificação final que o agente de planejamento produziu ao construir meu aplicativo de bate-papo do YouTube. Então, você pode consultar o arquivo harness.ts se quiser ver o fluxo de trabalho completo e como isso foi codificado. Mas, assim que tivermos as especificações do planejador, encaminhamos isso para negociação. Tanto o agente implementador quanto o avaliador concordarão sobre como dividirão a especificação maior em partes gerenciáveis ​​ao longo dessas diferentes sprints. Definitivamente,
+
+não queremos enviar tudo isso para o agente resolver de uma vez. Então, vamos dividir o trabalho. Aqui está, então, nosso primeiro sprint. Aqui estão as diferentes funcionalidades que precisamos que nosso implementador construa. E aqui estão os critérios que nosso agente avaliador usará para julgar. E você pode ver
+
+que temos uma descrição do que o avaliador irá julgar. E então temos o limiar. Será atribuída uma pontuação de 1 a 10 para cada um desses critérios. Então, desde que atinja o limite ou o ultrapasse, o implementador fez um bom trabalho, certo? Assim, podemos seguir em frente e deixar de lado esse único critério. Se tudo
+
+correr bem aqui, podemos passar para o próximo sprint. Então, voltando à ideia das GANs, certo? Porque este é um arnês inspirado na tecnologia GAN. Essencialmente, o gerador está tentando, por assim dizer, enganar o avaliador, fazendo-o pensar que o aplicativo está funcionando. E se o avaliador estiver julgando corretamente, então não se trata realmente de um engano. Parece que
+
+o aplicativo é realmente bom. Mas você entendeu a ideia de como estamos relacionando isso com esses agentes adversários que estão se enfrentando, assim como na antiga abordagem de aprendizado de máquina. Basicamente, o gerador, depois de receber o feedback do avaliador e tentar novamente no máximo três vezes, tem como única função agradar ao avaliador. Assim, nos baseamos no critério de que o aplicativo realmente está funcionando corretamente. Mas, enquanto isso for verdade, se estiver fazendo tudo ao seu alcance para agradar ou enganar o avaliador, então o aplicativo está funcionando. Passamos por iterações em todos
+
+os sprints e, no final, temos um aplicativo funcional. Então, sim, isso não vai ser perfeito. Os agentes de codificação nunca serão perfeitos. Mas a ideia aqui é que, em vez de termos que orientar esses diferentes sprints e lidar com toda a complexidade da IA, fornecendo todo o feedback por conta própria, estamos configurando um sistema onde grande parte disso é feito automaticamente para nós. E isso é algo belíssimo. Portanto,
+
+recomendo que você baixe este repositório e experimente o framework Claude ou o Codex. Você vai precisar de apenas 5 minutos para começar a usar e poderá construir coisas incríveis muito rapidamente. Não que você vá usar essa ferramenta para criar algo que esteja imediatamente pronto para produção, mas sim para ajudá-lo a criar provas de conceito rapidamente, dando início ao seu próximo projeto. É para isso que eu uso esse tipo de arnês o tempo todo. E então, sim, em algum momento, essa será a maneira de construir qualquer coisa com a ajuda da programação por IA. Portanto, vale a
+
+pena participar agora mesmo. Então, dentro do arquivo readme, eu tenho um guia rápido para começar. Super fácil. Podemos usar tanto o código Claude quanto o Codex. E, pelo que sei, você pode usar sua assinatura da Anthropic ou da Codex com o arnês. Assim, você não precisa pagar por
+
+créditos de API. Sei que houve muita controvérsia recentemente sobre se podemos usar nossa assinatura com o SDK do Agente. Até mesmo alguns documentos antrópicos afirmavam que não era possível. Mas, bem, Threek, que é um dos membros da equipe da Anthropic, esclareceu que podemos usar nossa assinatura com o SDK do Agente ou o modo headless do Claude, desde que seja para desenvolvimento e experimentação local. Portanto, se você estiver construindo um negócio com base no SDK do Agente, ou seja, se outras pessoas estiverem usando sua assinatura de script, isso viola os termos de serviço e você deve usar sua chave de API. Então, para o que estamos fazendo
+
+aqui, quando você executa o programa localmente, pode usar sua assinatura para qualquer um dos dois. Assim, você não precisa pagar por créditos de API. Isso obviamente seria bastante caro para um arnês de longa duração . Portanto, basta configurar a autenticação com um destes, qualquer um que você queira usar. Em seguida, você clona o repositório, instala as dependências e, depois disso, basta um único comando para iniciar qualquer uma das funcionalidades. E a melhor parte é que
+
+você também pode usar seu agente de codificação para ajudar com isso. Então, você pode dizer, sabe, eu quero construir XYZ. Aqui você pode descrever sua aplicação, sua pilha de tecnologias e coisas do gênero. E então, isso pode te ajudar a criar o arquivo prompt.md que temos como ponto de partida. E você pode até mesmo usar o arquivo
+
+que eu incluí no repositório, se quiser apenas um ponto de partida, certo? Assim como a estrutura geral que usei para minha proposta. E então, seu agente de codificação pode ler o arquivo readme para saber como iniciar o processo para você. Eu nunca executei esse comando pessoalmente. Enquanto preparava este vídeo, construía este sistema e realizava todos os meus testes, eu sempre usava o Claude Coder Codex para executar este comando "bun" para iniciar todo o processo.
+
+Portanto, é muito fácil começar e fazer isso você mesmo. Você só precisa criar esse prompt inicial, mas todos os outros prompts para o planejador, e temos o prompt do sistema gerador para o engenheiro de software, e o avaliador, você é um engenheiro de controle de qualidade cético , como todos os outros prompts, já estão integrados ao sistema aqui, então você só precisa deixar como está. E ele irá recriar isso, criar os sprints e executá-los automaticamente, enviando um relatório quando você tiver o aplicativo final. É muito divertido simplesmente observar o processo e depois voltar para este aplicativo funcionando perfeitamente . Então, a última coisa que eu quero abordar rapidamente aqui é a desvantagem desses arneses.
+
+Obviamente, será um custo simbólico, certo? Quando você tem esse processo completo de especificação com o ciclo de implementação, avaliação e iteração, ele vai levar muito tempo. Quer dizer, é por isso que esses dispositivos são chamados de arneses para agentes de longa duração . Mas a verdade é que, para mim, isso vale muito a pena. Quer dizer, veja só o que eu consegui construir aqui em apenas uma tomada. Quer dizer, sim, gastamos muitos
+
+tokens aqui, mas levaria um tempo para chegar a este ponto se eu estivesse trabalhando com um único agente. E o mais surpreendente é que eu uso o Claude Sonnet 4.6 para construir tudo. Você pode ver na configuração que tenho para o modelo que uso tanto para Claude quanto para Codex. E posso lhe dizer, Opus 4.6 é
+
+muito melhor que Soneto 4.6. Usei ambos extensivamente, e o Opus 4.6 não teria conseguido gravar isso de uma só vez sem o chicote de fios, e o Claude Sonnet conseguiu com o chicote de fios. Então, você pode experimentar isso você mesmo, com modelos menores, e verá que podemos economizar tokens com esses mecanismos, porque agora estamos nos apoiando mais no sistema que construímos para codificação de IA, em vez de sempre depender do máximo poder de raciocínio possível com esses modelos de linguagem maiores e mais complexos. Então,
+
+definitivamente vale a pena. E isso é tudo que eu tenho para vocês sobre este arnês aqui. E eu digo, em breve vou produzir muito mais conteúdo sobre esses arneses e mostrar até onde você pode levá-los. Então, se você gostou deste vídeo e está ansioso por mais conteúdo sobre programação de IA e essas ferramentas, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo.

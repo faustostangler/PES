@@ -1,0 +1,133 @@
+---
+video_title: "AI Agents Can Now Build Their Own UI in Real Time (Personalized to You)"
+video_id: MD8VQzvMVek
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=MD8VQzvMVek
+video_date: 2026-02-05T01:00:24+00:00
+video_description: |
+  What if your AI agent didn't just respond in a chat box, but actually built the entire interface you interact with? That's generative UI - and it changes how we think about building AI applications.
+  
+  In this video, I built an application where you paste in research markdown and an AI agent dynamically generates a personalized dashboard. Not from a template - the agent analyzes your content and decides on the fly what components to render. Key findings, action items, resources, visualizations - all surfaced automatically.
+  
+  The tech stack is CopilotKit with AG-UI on the frontend, Pydantic AI on the backend, and Google's new A2UI spec powering the generative UI layer. I'll walk you through the full architecture, how these pieces fit together, and why generative UI matters way beyond just dashboards.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - CopilotKit, the platform that makes it easy to build frontend apps that interact with your agents (this is what powered the frontend for my application here):
+  https://github.com/CopilotKit/CopilotKit
+  
+  - CopilotKit's generative UI repo:
+  https://github.com/CopilotKit/generative-ui
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - The Dynamous Agentic Coding Course is now FULLY released - learn how to build reliable and repeatable systems for AI coding: 
+  https://dynamous.ai/agentic-coding-course
+  
+  - GitHub Repo for My AI Research Dashboard Generator:
+  https://github.com/coleam00/second-brain-research-dashboard
+  
+  - My Generative UI Excalidraw Diagram:
+  https://github.com/coleam00/second-brain-research-dashboard/blob/main/GenerativeUIDiagram.png
+  
+  - My video on AG-UI:
+  https://youtu.be/BFWviieMyGw
+  
+  - AG-UI Protocol Documentation:
+  https://www.copilotkit.ai/ag-ui
+  
+  - Pydantic AI:
+  https://ai.pydantic.dev
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Introduction to Generative UI
+  0:27 What is Generative UI?
+  2:12 My Generative UI Tech Stack
+  3:24 Why Generative UI is Powerful
+  4:59 The Generative UI Spectrum
+  7:43 Architecture and Example Use Case
+  11:57 High Level Code Walkthrough
+  14:08 Final Demo and Conclusion
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Deixa eu te mostrar uma coisa rapidinho. O que você está vendo aqui é um painel personalizado que foi gerado para mim com base em uma série de pesquisas feitas pelo meu segundo cérebro. Nada aqui está pré-configurado. O programa gerou todo o layout e selecionou todos os componentes completamente em tempo real. Portanto, estamos usando um agente para ultra personalização. Tudo isso graças à
+
+interface de usuário generativa, que, se você nunca ouviu falar ou usou antes, meu amigo, vai adorar. Em termos mais simples, a interface de usuário generativa consiste em dar ao nosso agente a capacidade de decidir o layout e os componentes da nossa interface. E, considerando o poder que os agentes estão adquirindo atualmente, essa é definitivamente a direção que estamos seguindo. Tenho quase certeza de que, num futuro próximo, quando você acessar amazon.com ou google.com, o que você verá
+
+será muito diferente do que outra pessoa verá, porque será personalizado de acordo com a forma como você usa o aplicativo e seus interesses. Por exemplo, com este aplicativo que eu criei para demonstrar a interface de usuário generativa para vocês, tudo o que eu preciso fazer é colar qualquer tipo de pesquisa que meu agente tenha realizado. Em seguida, o sistema definirá o layout e os componentes que considera ideais para compartilhar essas informações comigo de forma mais concisa, extraindo também insights . Além de ter uma aparência realmente muito bonita, a parte mais interessante é que, cada vez que um painel é gerado, ele será personalizado de acordo com a entrada específica. E aqui está outro exemplo. Este painel de controle tem uma
+
+aparência completamente diferente porque está otimizado para o que o sistema acha que eu quero ver. E isso é algo que também posso otimizar nas mensagens para o agente . E o importante a ter em mente aqui é que isso que eu criei para você é apenas um exemplo de uso para mostrar o poder da interface de usuário generativa. Este é realmente o futuro do software. Então, vamos entender por que isso acontece e como exatamente funciona a interface de usuário generativa. Vou até
+
+explicar a arquitetura que desenvolvi para esta aplicação, para que você possa ver como incorporá-la por conta própria. E eu sei que há muita coisa envolvida na pilha tecnológica aqui, mas vou explicar de forma bem simples para você. E, claro, este projeto para demonstrar a interface de usuário generativa estará disponível como um repositório no GitHub, cujo link estará na descrição. É um ótimo ponto de partida para você entender a interface de usuário generativa e até mesmo usar isso como base para criar seu próprio aplicativo. Eu me dediquei bastante a projetar uma infraestrutura tecnológica realmente sólida aqui. Então, vou falar mais sobre isso daqui a
+
+pouco, mas temos o nosso agente de IA Pantic . Este é o agente que roda em segundo plano, responsável por selecionar os componentes e projetar o layout. E para o nosso protocolo de interface de usuário generativa, estamos usando o A2UI do Google. Esta é a especificação que define exatamente como o agente define os componentes que vamos renderizar em nossa interface. Então, enviamos isso para nossa interface de usuário usando o protocolo AGUI. Já falei sobre
+
+isso no meu canal antes, mas essa é a nossa maneira de conectar facilmente nosso agente ao nosso front-end. Então, eu sei que isso pode ser um pouco confuso, porque temos dois protocolos. A2UI serve para especificar os componentes e o padrão neles. AGUI serve para conectar nosso agente, que opera por meio de uma API, com nossa interface de usuário. E estamos usando o Copilot Kit porque ele torna extremamente fácil criar esses aplicativos de front-end realmente interativos e se integra diretamente com todas as outras partes da nossa infraestrutura tecnológica. Assim, recebemos as
+
+solicitações do agente. É isso que queremos renderizar e, em seguida, criamos esses elementos como componentes React para formar o belo painel que exibimos ao usuário no final. Então, vamos nos aprofundar em como isso funciona, mas a primeira coisa que quero abordar com vocês é a interface de usuário generativa em um nível mais alto . Por que isso é tão poderoso e como exatamente você pode usar isso a seu favor? Então, já abordamos a definição mais básica de interface de usuário generativa, certo? Isso
+
+permite que os agentes desempenhem um papel na determinação do que aparece na tela, como as informações são estruturadas e, em alguns casos, como no nosso, até mesmo como o layout é composto. Estamos dando muito mais controle ao agente do que à maioria dos aplicativos baseados em agentes atualmente, em que o agente apenas atribui informações para exibição em um layout pré-configurado. Assim, isso eleva as coisas a um novo patamar. Existem muitos casos de uso para isso. Até mesmo aplicativos de bate-papo, como os bots do Slack e do Discord. Ao
+
+conversarmos com um atendente, muitas vezes é mais útil para entendermos o que ele está nos dizendo se tivermos recursos visuais, e não apenas respostas em texto. Então, ser capaz de renderizar componentes no meio de uma conversa com interface de usuário generativa e personalizá-la para nossa conversa. Isso sim é poderoso. E então temos a ideia de espaços de trabalho de cocriação. Isso se parece mais com o que eu construí para o meu caso de uso. Então, é aqui que
+
+você trabalha com um agente. Assim, a tela exibe as saídas e as pré-visualizações. Isso se torna um espaço de trabalho compartilhado onde nossa interface de usuário gerada por IA aparece e evolui, e os painéis de controle, por exemplo, são exatamente isso que eu construí. Estou apenas tentando te dar algumas ideias sobre os tipos de aplicativos que você pode criar com isso. Acho que as lojas de comércio eletrônico são outro ótimo exemplo disso, onde você tem algoritmos de recomendação que aprendem sobre cada usuário e não apenas recomendam determinados produtos, mas também alteram todo o layout para focar no que acham que o usuário deveria comprar. Veremos muito disso no
+
+futuro. E outra coisa muito importante para entender sobre interfaces de usuário generativas é que existe, na verdade, um espectro de controle que damos ao agente em comparação com o programador. Portanto, temos três categorias aqui. Temos interfaces de usuário estáticas, interfaces de usuário declarativas e interfaces de usuário de código aberto. Eu sei que isso pode soar um pouco confuso agora, mas não se preocupe, vamos abordar isso, e é importante. E a
+
+interface de usuário declarativa, é nisso que estou mais interessado . Acho que é a mais inovadora e está realmente alinhada com a especificação A2 UI do Google, onde o agente seleciona componentes de uma biblioteca e os envia para o front-end exibir dinamicamente. Começando pela interface de usuário generativa estática, esta é a mais clássica e a que vemos o tempo todo na web atualmente. Então, estamos usando o agente basicamente para decidir quais informações exibir. Portanto, não se trata de selecionar os componentes a serem renderizados.
+
+Não está definindo o layout. É como se dissesse: "Ok, esta é a temperatura na cidade de Nova York neste momento." Portanto, o agente está buscando essas informações, mas não está tomando nenhuma outra decisão em nossa interface de usuário. Por outro lado, no extremo oposto do espectro, temos a interface de usuário generativa de final aberto. E é aqui que o agente decide não apenas os componentes e layouts, mas também gera todo o código HTML, CSS, JSX e o que mais for necessário, em tempo real, para renderizar no front-end. E por isso é o mais
+
+flexível. Mas, obviamente, segurança e desempenho são uma grande preocupação aqui, porque, na verdade, estamos apenas renderizando conteúdo completamente arbitrário. Não sei quanto a vocês, mas eu não me sentiria muito confortável com meu agente gerando toda a interface do usuário dinamicamente para meus usuários em um aplicativo. E é isso que nos leva à opção intermediária, a interface de usuário generativa declarativa. E é exatamente isso que me interessa. É a ideia de
+
+termos uma biblioteca de componentes pré-configurada que o agente pode escolher . Assim, ele pode dizer: "Eu quero este, este, este". Vamos colocar neste layout e aqui estão os parâmetros. Estes são os dados exatos, os números e o texto a serem exibidos. Assim, ainda temos muita liberdade em relação ao tipo de interface que geramos, mas dentro de limites que podemos controlar por meio da biblioteca de componentes e das solicitações ao nosso agente. E eu diria que
+
+definitivamente existem vantagens e desvantagens nesses diferentes tipos de interface de usuário generativa. Por isso, é importante para nós escolhermos uma pilha de tecnologias que seja independente da interface de usuário Gen UI . Por algum motivo, isso é um trava-línguas para mim . Mas sim, temos o AGUI como nosso protocolo. Como eu disse, para conectar nossos agentes à nossa interface de usuário, funcionará independentemente de ser uma interface GenUI estática, aberta ou declarativa. E então, o Copilot Kit como nossa
+
+estrutura de front-end para renderizar tudo e trabalhar com nosso agente. Isso também vai funcionar independentemente do que aconteça. Portanto, o caso de uso que estou mostrando a vocês, e o que mais me interessa, é que no meio do processo estamos selecionando componentes de uma biblioteca, mas na verdade podemos construir qualquer tipo de aplicação com essa pilha de texto. Tudo bem. Agora que você já sabe como a interface generativa funciona em linhas gerais, quero me aprofundar no meu caso de uso e explicar detalhadamente a pilha de texto e como cada camada se comunica com as outras, pois isso ajudará você a entender exatamente como a interface generativa funciona.
+
+E então, prometo que não vou me aprofundar muito nos detalhes, mas quero mostrar pelo menos um pouco do código para ajudar você a entender como nosso agente tem essa biblioteca de componentes para escolher e como temos esse contrato com o front- end. Assim, ele sabe que tipo de componentes pode esperar e exatamente como os renderiza. Então, a primeira coisa a fazer aqui, claro, é dar a nossa contribuição. Esta é a pesquisa de IA que realizamos com um agente, do qual queremos extrair insights e o resumo (TLDDR). Então, vou mostrar um exemplo rapidinho aqui. Esta é a página inicial do meu
+
+segundo painel de pesquisa sobre o cérebro. Naturalmente, tenho acompanhado todos os desenvolvimentos do OpenClaw, também conhecido ou anteriormente conhecido como Claudebot. E por isso tenho feito muita pesquisa com agentes. Este é um exemplo de um documento em Markdown que eu tinha. Então posso simplesmente enviar isso. Pronto. Aí está a entrada. E
+
+agora temos instantaneamente o processo acionado, com um agente trabalhando nos bastidores neste exato momento, selecionando os componentes e o layout. E dê uma olhada nisso. Agora estamos 40% completos porque o documento foi classificado . E é assim que estamos definindo o layout. E agora, depois disso, ele selecionará os componentes individuais da biblioteca.
+
+Então, voltando ao nosso diagrama, vamos deixar isso continuar sendo gerado em segundo plano. O motivo pelo qual me interesso por esse caso de uso, em primeiro lugar, é que tenho sofrido bastante ultimamente, o que eu chamaria de fadiga de Markdown. Eu sei que é uma coisa realmente boba, mas como estou usando meu segundo cérebro para fazer muita pesquisa com meus agentes, sempre tem esses blocos de texto que eu tenho que analisar. Por mais que eu tente manter meus agentes concisos em suas gerações, simplesmente me cansei de ler Markdown. Foi isso que realmente me inspirou a desenvolver esse caso de uso, para que eu pudesse ter esses painéis e extrair insights muito mais rapidamente. Assim, a
+
+interface de usuário generativa resolve o problema aqui porque também adapta o conteúdo ao que eu preciso saber. E se eu achar que o painel não me fornece as informações que eu deveria saber, basta ajustar as configurações solicitadas pelo agente. Portanto, é realmente muito flexível e posso evoluir o sistema ao longo do tempo. É exatamente como os princípios que ensino para programação agentiva. Assim, temos nosso agente podântico na retaguarda. Ele recebe
+
+essa entrada e define o layout e os componentes, exatamente como vimos começar a fazer em nosso navegador. Assim, sempre que decidir gerar um componente, irá produzir um JSON específico. Isso está de acordo com o protocolo de interface de usuário A2. Então, eu já falei um pouco sobre isso, mas basicamente define, tipo, ok, aqui está o ID do componente. Aqui está o nome do componente. Assim, a
+
+interface sabe o que renderizar. E depois temos as crianças. Isso também ajuda a definir o layout. E outra coisa que não estou mostrando aqui são os adereços. Assim, para qualquer componente que tenhamos na interface, existem certos números de texto que precisamos exibir. Portanto,
+
+o agente também está decidindo essas coisas, da mesma forma que faria com uma interface de usuário generativa estática. Assim, o agente irá gerar uma série dessas configurações JSON, com todos os componentes que deseja enviar, e então transmitiremos isso para nossa interface de usuário através do AGUI. Portanto, o que temos aqui é um padrão para os eventos que o agente emitirá para manter essa sincronização em tempo real entre nosso backend e nosso frontend. E vimos agora mesmo no painel de controle que a porcentagem subiu de zero para 40%, porque o agente disse: "Ei, iniciei minha execução. Estou começando a gerar o painel de controle." Então, exibimos
+
+isso em nossa interface. Em seguida, define o layout e passa a gerar os componentes. Assim, atualizamos o progresso na interface do usuário. E eu não estou fazendo isso aqui, mas teoricamente também poderíamos transmitir esses componentes. Assim, acompanhamos a construção do painel de controle em tempo real. No meu caso,
+
+estou apenas esperando tudo terminar e exibindo tudo de uma vez, mas isso também seria possível. Graças ao AGUI, temos essa sincronização realmente dinâmica. E, claro, o Copilot Kit torna tudo muito fácil de renderizar. E também possui integração direta com AGUI e Pideantic AI. Assim, tudo isso junto proporciona uma experiência realmente perfeita, permitindo que a interface do usuário se conecte diretamente ao agente. E isso representaria centenas ou
+
+até milhares de linhas de código se eu não estivesse usando o Copilot Kit, o AGUI e a IA Pideantic. E vamos analisar o código um pouquinho aqui. Prometo que me manterei em alto nível. Só quero mostrar como temos esse tipo de contrato entre o backend e o frontend. Então, estamos dando opções ao agente. Aqui
+
+estão todos os diferentes componentes que você pode renderizar. Assim, como parte do nosso prompt do sistema para o agente, estamos descrevendo quando queremos usar esses diferentes componentes e exatamente como definir coisas como as propriedades, quais são os textos e números que você deseja exibir em cada componente. Assim, informando a que ele tem acesso, além do prompt do sistema, é como orientamos o agente na geração desses componentes. E, como parte da solicitação do sistema, também estamos descrevendo a especificação da interface do usuário A2. É exatamente assim que você gera um componente com o nome, as propriedades, o ID e tudo mais.
+
+E então temos o mesmo tipo de contrato na interface principal. Assim, todos os mesmos componentes são mencionados aqui, mas no front-end, temos o JSX que será renderizado quando o agente escolher esse componente, bem como as propriedades dos dados que ele deseja exibir. Assim, para cada um dos componentes aqui presentes, eu o defini nesta pasta AGUI, mantendo tudo bem organizado. E obviamente não vou mostrar todos eles, mas tenho um deles bem aqui. E só para mostrar como é simples, trata-se realmente de um componente React básico, mas é o agente que decide quando renderizá-lo. E é isso que define todos os
+
+valores. Por exemplo, neste componente de tabela, ele define os cabeçalhos, as linhas, o título e o subtítulo. E é até opcional. É como se isso decidisse tudo. É responsabilidade do front- end receber o layout e as solicitações de componentes e, em seguida, mapeá-los para todos os componentes que serão gerados. E não é como se
+
+precisássemos absolutamente do Pantank AI ou do Copilot Kit para fazer isso. Eu poderia usar uma estrutura de agente diferente. Você nem precisa usar o AGUI. Não preciso do kit C-Pilot . Eu poderia até usar uma especificação diferente da A2UI. Mas, nossa,
+
+esse texto empilhado facilita muito a criação desses aplicativos. Tenho estado a trabalhar em outras provas de conceito, desenvolvendo esta em particular. Tem sido fantástico e funciona incrivelmente bem. Então, eu sei que temos várias coisas acontecendo aqui, mas juntas elas formam aplicações realmente poderosas, e eu realmente vejo isso como o futuro do software. Então, vamos voltar ao nosso painel de controle . Então, foi isso que vimos no início desta
+
+geração, e agora vamos em frente. Isso é gerado dinamicamente para nós. Vimos isso acontecer em tempo real. E eu sei que o espaçamento e outras coisas não são perfeitos. Isso é mais uma demonstração para você. Mas continuo impressionado
+
+com o tipo de coisas que conseguimos gerar aqui. Está com uma aparência ótima . Aliás, isso me ajudou bastante na minha pesquisa sobre o Claudebot, ou melhor, sobre o OpenClaw. E também essa alternativa chamada Nano Claw, que talvez eu aborde em um vídeo no meu canal em breve. Essa é, portanto, outra alternativa realmente interessante ao OpenClaw. Mas
+
+enfim, estou divagando. Você pode ver como é fácil se deixar envolver pela pesquisa que está realizando com seus agentes. Mas, para este vídeo aqui, espero sinceramente que tenha sido útil para você entender a interface generativa, como ela funciona, por que é tão poderosa e como você pode criar projetos com ela . E eu realmente recomendo que você pegue o modelo que eu linkei na descrição e dê uma olhada por si mesmo. E vou produzir mais conteúdo sobre interfaces de usuário generativas. Então, se
+
+você está ansioso por isso ou por mais conteúdo sobre criação de agentes em geral, eu agradeceria muito um like e uma inscrição. E com isso, nos vemos na próxima!

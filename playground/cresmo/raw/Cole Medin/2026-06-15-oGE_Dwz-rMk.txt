@@ -1,0 +1,110 @@
+---
+video_title: "Omnigent: The New Meta-Harness for EVERY Coding Agent - Claude Code, Codex, Pi, More"
+video_id: oGE_Dwz-rMk
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=oGE_Dwz-rMk
+video_date: 2026-06-15T14:42:51+00:00
+video_description: |
+  The way the best engineers use AI is shifting fast. Instead of committing to a single provider, they use the right model for each job - like using Claude for implementation, and Codex for reviewing, and Kimi/Minimax for simple tasks. The piece we have been missing is a clean way to orchestrate all of those models together. That is exactly what Omnigent is: a meta-harness that runs Claude Code, Codex, and Pi as interchangeable workers under one roof!
+  
+  In this video I show you how to get it running and put it to work live. One AI agent plans a coding task, hands the implementation to Claude Code in its own git worktree, then routes the finished diff to a different provider, Codex, for review. You also get a governance layer for human in the loop, and sessions that follow you from terminal to browser to phone. And since I build my own agent engine, Archon, every day, I will give you a straight take on where a meta-harness fits.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Omnigent is open source, try it out now! It's so easy to get set up:
+  https://github.com/omnigent-ai/omnigent
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - The Dynamous Agentic Coding Course is now FULLY released - learn how to build reliable and repeatable systems for AI coding: 
+  https://dynamous.ai/agentic-coding-course
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Introduction
+  1:23 Why Meta-Harnesses Matter
+  3:19 Getting Started
+  5:51 Polly: Claude Implements, Codex Reviews
+  7:56 Anatomy of an Orchestrator
+  10:07 Custom Agents & Guardrails
+  11:54 Debby: Multi-Model Debate
+  13:11 Same Session Across Devices
+  14:18 Wrap-Up
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Uma nova ferramenta de código aberto foi lançada durante o último fim de semana. Chama-se OmniAgent, e vamos analisá-lo hoje porque é uma ferramenta meta muito poderosa e gratuita. Um meta harness é uma ferramenta que permite executar fluxos de trabalho de codificação de IA mais longos, combinando assistentes de codificação de IA. Assim, o exemplo mais clássico que as pessoas realmente gostam agora é usar o Claude Code para a implementação em um fluxo de trabalho e, em seguida, revisar esse código com o Codex. Atualmente, os melhores engenheiros não dependem mais de um único modelo ou mesmo de uma única estrutura para seus fluxos de trabalho, pois queremos aproveitar os diferentes pontos fortes dos diversos assistentes de codificação de IA e também ter essas diferentes sessões para otimizar o contexto e os tokens, o que é mais importante do que nunca. E o
+
+OmniAgent é a camada acima do assistente de codificação de IA que torna essa orquestração realmente simples, porque se não tivermos uma ferramenta como essa, bastaria uma sessão para gerenciar todos os nossos agentes de codificação, e podemos criar agentes personalizados. Vamos abordar tudo isso aqui. Se não tivermos algo assim, precisamos ficar alternando entre diferentes terminais e criando todos esses documentos de transferência. Na verdade, não é tão simples assim. Assim, a ideia de um meta-arnês representa o auge da engenharia de arneses. Então, eu quero falar
+
+sobre por que os meta-arneses são tão importantes agora. Em seguida, veremos como é fácil usar o OmniAgent para impulsionar nossos fluxos de trabalho de codificação de IA, inclusive criando uma configuração personalizada na plataforma. Legal. Então, vamos começar falando sobre por que os meta-arneses são tão importantes agora. Portanto, antes de mais nada, se há uma lição que podemos aprender este ano sobre programação de IA, é que a estrutura de suporte é tão importante quanto, ou talvez até mais, do que o modelo. E isso fica ainda
+
+mais evidente agora com a recente proibição de Fable 5. Não podemos nem contar com as melhores ferramentas de gerenciamento de linguagem (LLMs) para nossos fluxos de trabalho de programação de IA, ou conseguir ferramentas melhores. Assim, se quisermos tornar nossa codificação de IA mais confiável, isso nos leva de volta ao chicote de fios. Se o LLM não puder ser aprimorado, então é melhor tornarmos o sistema que o sustenta mais poderoso. Portanto, o seu conjunto de ferramentas inclui tudo, como prompts do sistema, ferramentas, habilidades, fluxos de trabalho, regras; tudo isso junto e integrado forma o nosso conjunto de ferramentas para tornar um assistente de codificação de IA único mais confiável para nós. E o
+
+meta-arnês, é nisso que muita gente está começando a se concentrar agora. Essa é a próxima grande novidade em programação de IA. Em vez de aprimorar um único agente de codificação, e se tivéssemos uma camada superior que orquestrasse vários assistentes de codificação de IA trabalhando juntos em tarefas maiores? É exatamente isso que um meta arnês é. Estou desenvolvendo algo relacionado à engenharia de meta-arranjos com Archon. E, na
+
+verdade, há muitas ideias do Omni Agent que vou incorporar à minha ferramenta e nas quais também vou trabalhar. Isso é simplesmente muito impactante neste momento. E o agente Omni tornou tão fácil para nós executar essa meta estrutura praticamente sem precisar de nenhuma configuração adicional . Como veremos neste vídeo , você pode colocar tudo isso em funcionamento em apenas alguns minutos. Você também pode trabalhar nele em diferentes dispositivos no mesmo ambiente. É claro que podemos conectar
+
+todos os assistentes de programação de IA mais populares, como Claude, Code, Codex e Pi, usando diversos modelos diferentes. Podemos compartilhar nossas sessões com outras pessoas, o que é outra coisa que os agentes de programação realmente não têm no momento. E, claro, eles têm muitas coisas relacionadas a políticas, diretrizes e execução de agentes em ambientes de teste (sandboxes). Portanto, isto está realmente configurado para um ambiente de produção também. Estou realmente impressionado com tudo o que eles construíram aqui, e estou simplesmente extasiado por tudo isso ser de código aberto para que possamos experimentar agora mesmo . Para começar a usar o
+
+agente Omni, basta copiar o link deste repositório do GitHub, passá-lo para o seu assistente de programação com IA e pedir que ele configure tudo. E, claro, incluirei um link para este repositório na descrição. E mesmo que você queira fazer isso sozinho, basta um único comando para configurar tudo. É muito fácil. Eu recomendo que você experimente isso agora mesmo . Você nem precisa se
+
+autenticar novamente, porque, usando Claude, Codex ou até mesmo Pi, ele simplesmente usará as credenciais da linha de comando na qual você já está conectado, já que o agente Omni é executado diretamente na sua máquina. E assim, ele vem até com Polly e Debbie, dois exemplos de agentes orquestradores que fazem a ponte entre Claude e Codex. Neste vídeo, vou mostrar como isso funciona e até mesmo como você pode criar seus próprios agentes e orquestradores. Então, antes de começarmos, um pouco de contexto. Acho isso bastante interessante. O
+
+Omni Agent é um software de código aberto da empresa Databricks. E assim, uma empresa enorme. Este é um projeto liderado pelo diretor de tecnologia (CTO) da empresa. Eles já estão usando isso internamente de forma bastante abrangente, certo? Eles são como cães alimentando a própria plataforma. Eles estão usando isso em suas atividades
+
+diárias de engenharia. E, claro, eles estão tendo muito sucesso com isso. É realmente uma ferramenta impressionante. Porque você pode escolher qualquer agente. Você pode construir versões personalizadas, como mostrarei em breve. E então você executa o programa em um ambiente isolado (
+
+sandbox). Portanto, é confiável. É seguro. E depois você tem o orquestrador principal que contém seu histórico, todas as suas políticas, como as diretrizes, seus servidores MCP e habilidades. Assim, a camada de IA que você personaliza reside no servidor. E isso pode se aplicar a qualquer um
+
+dos assistentes de codificação de IA que você utiliza. Portanto, não é como se você precisasse de uma configuração específica para o Raspberry Pi e outra específica para o código Claude. Tudo funciona no nível mais alto. Podemos acessá-lo de diversas maneiras. Eles têm seu próprio aplicativo nativo. Temos a
+
+API REST se você quiser fazer as coisas programaticamente, o terminal se você se sentir confortável com isso, como o código Claude, e uma interface web que já vimos. Portanto, existem muitas maneiras diferentes de acessá-lo. Assim que o Omni Agent estiver instalado e em funcionamento, você terá uma interface web com a seguinte aparência . É bonito, simples e elegante. Isso me lembra muito o aplicativo Codex. Então,
+
+é só o agente em primeiro lugar. Você tem sua sessão de bate-papo aqui e diz o que deseja construir. Podemos alternar entre os diferentes agentes de codificação e os exemplos de orquestração que eles forneceram. E também algumas personalizadas que vou mostrar para vocês aqui. E para a versão personalizada, podemos escolher entre os diferentes modelos de arnês. Portanto, se eu
+
+quisesse usar o Raspberry Pi com o Ollama para algum desenvolvimento local, eu poderia fazer isso até mesmo com o Omni Agent. Portanto, é muito flexível. Posso escolher meu diretório de trabalho, assim como no meu aplicativo AI Tutor. E eu consigo até mesmo criar árvores de trabalho, que são muito importantes para o desenvolvimento paralelo. E então eu simplesmente envio minha solicitação. Obviamente,
+
+não vamos ficar aqui assistindo tinta secar, então vou passar para uma conversa que já terminou. Então, escolhi o Poly como meu orquestrador aqui. Possui habilidades para executar esses fluxos de trabalho maiores entre diferentes agentes de codificação e, em seguida, tem acesso para acionar as diferentes ferramentas. Então, você pode criar uma issue no GitHub ou simplesmente fazer uma solicitação informal, como eu fiz aqui. E estou dizendo especificamente para delegar a implementação a Claude Code e a revisão ao Codex. Assim, ele
+
+carrega o contexto do nosso trabalho e, em seguida, carrega a habilidade que o Poly possui, para que ele conheça nosso fluxo de trabalho, nosso fluxo de trabalho repetível para esse fluxo específico. E então damos início à implementação do Claude Code . Então, temos o comando que estamos enviando para o Claude Code. Este é um subprocesso que você pode executar em um ambiente isolado (sandbox) ou não; você pode configurar tudo isso, e falaremos sobre isso também. Assim, a Poly irá monitorar, garantir que Claude Code conclua a implementação e, em seguida, enviará a revisão para a Codex. Então, nem precisei
+
+configurar a autenticação novamente. Ele simplesmente usou as credenciais do Codex e do Claude Code que eu já possuía. Então, eu consegui colocar tudo para funcionar em menos de 10 minutos. Consegui executar esse fluxo de trabalho alternando entre Claude e Codex com muita facilidade. E eu sei que este é um exemplo bastante simples de como orquestrar um fluxo de trabalho de codificação de IA mais amplo, mas é muito importante, pelo menos em um nível fundamental, fazer a revisão de código em uma sessão de agente de codificação separada da sua implementação.
+
+Caso contrário, o LLM acumula muito viés. E isso não é uma verdade absoluta, mas muita gente acha que o Codex é melhor em revisão e o Claude é melhor em implementação. Portanto, se você não utiliza um fluxo de trabalho como este, recomendo que experimente, principalmente devido à facilidade com que o Omni Agent permite executar esse tipo de tarefa atualmente. Assim, finalizamos com a implementação apenas localmente em nossa árvore de trabalho. E, claro, podemos dar seguimento como qualquer assistente de programação com IA faria e dizer, por exemplo, para criar um PR para isso. Então, seja qual for a maneira que
+
+você escolher para levar o produto até o ponto em que o revisamos e o enviamos, você pode fazer tudo isso com o Omni Agent. Possui todas as funcionalidades que qualquer assistente de codificação com IA teria, além da capacidade de também acionar agentes de codificação individuais. Então, não quero perder muito tempo com a configuração aqui, mas pelo menos quero mostrar como isso funciona em linhas gerais. Eles fizeram um ótimo trabalho criando elementos básicos simples para que possamos construir todos os agentes e orquestradores personalizados no Omni Agent. E, claro, está tudo configurado para que nossos assistentes de programação com IA nos ajudem a criar nossos próprios agentes personalizados, se quisermos, dentro da plataforma. Assim, cada
+
+orquestrador é composto por três partes. Temos a configuração, e depois temos todas as funcionalidades, como a de revisão cruzada que vimos sendo usada na interface web, e também temos os agentes que podem ser acionados ao orquestrar um fluxo de trabalho maior. Então, Claude Code e Codex, como vimos, e se quiséssemos usar nossa assinatura Kimmy, MiniMax, Local Models ou Ollama. Polly, a versão padrão aqui, também consegue executar o Raspberry Pi. Assim, dentro da nossa configuração, temos o executor, como no caso do nosso orquestrador, quando ele não está chamando um agente.
+
+Qual é o assistente de codificação que estamos usando? Então, está usando Claude no nível mais alto. Temos o prompt do sistema, que é bastante longo, mas os prompts do sistema podem ser bem longos hoje em dia. Temos a configuração de sandbox, que pode ser executada sem sandbox ou em algo como o Docker ou uma dessas plataformas de produção como o E2B, por exemplo. Sim , há muitas diferenças por aqui, como os guarda-corpos. Então,
+
+existe toda uma funcionalidade no Omni Agent, que mostrarei daqui a pouco, onde podemos ter certas ações que nós, como humanos, precisamos aprovar. Assim, temos um fator humano no processo, que aguarda nossa aprovação antes de prosseguir no fluxo de trabalho, como, por exemplo, ações que exigem forçar a obtenção de um item. E depois temos as ferramentas às quais ele tem acesso. Portanto, é aqui que indicamos quais são os agentes aos quais você pode delegar tarefas ao orquestrar as coisas em um nível mais alto. E depois, as habilidades, quero dizer, são as habilidades clássicas que temos com o Claude Code, o Codex, todos os assistentes de programação com IA . Este é o fluxo de trabalho que ele
+
+pode executar sozinho. E então, cada um dos agentes individuais possui exatamente a mesma configuração. Então, mesmo prompt de sistema, executor, como este que usa Claude, obviamente o do Codex usa Codex, o do Pi usa Pi, as ferramentas às quais ele tem acesso, as salvaguardas. Assim, podemos personalizar tudo para cada agente individual que estamos orquestrando. Muito legal.
+
+Então, tenho aqui um exemplo interessante que mostra como criar agentes personalizados no Omnigen e também como podemos definir políticas e restrições. Então, este agente aqui, eu fiz algo muito simples, certo? Tipo um prompt de sistema super simples usando código Claude, sem sandbox nem nada do tipo. Mas eu tenho uma proteção personalizada aqui, onde permito que o código do Claude execute qualquer comando de forma autônoma, exceto qualquer tipo de push do Git que esteja usando a flag `force`, certo? Essa é uma das ações mais perigosas que você deve ter cuidado ao executar seu agente, pois ele pode sobrescrever as alterações feitas no seu repositório. Então, a política
+
+aqui fica bem ao lado da configuração do agente, e é apenas código Python, que eu também não escrevi , certo? Assim como em todo esse processo, pedi ao meu assistente de programação de IA para criar esse agente personalizado para mim, com base apenas na minha solicitação. Tipo, eu literalmente só disse para o programa olhar para Polly e Debbie como exemplo de como toda a configuração está definida e, em seguida, construir isso para mim. Portanto, ele solicitará minha aprovação sempre que eu executar qualquer tipo de comando ` git push` forçado. Então, deixe-me mostrar isso aqui para você. Então, vou voltar
+
+a falar da Omnigen. Vou alternar para o meu agente personalizado protegido que já carreguei e, em seguida, vou simplesmente colar um comando. Estou apenas instruindo o programa a executar este comando para obter o recurso de login de origem push . E também, outra coisa que eu não mostrei porque ainda não mostrei uma execução ao vivo , é que é muito legal como, depois que o repositório carrega, podemos ver todos os arquivos no espaço de trabalho. Podemos ver os agentes que estamos usando se estivermos orquestrando muitos deles. É realmente
+
+incrível a experiência do usuário (UX) e a interface do usuário (UI) que temos aqui na plataforma. E aqui você pode ver que eu mandei executar o comando e agora ele está pedindo minha aprovação. Assim, podemos personalizar bastante as funcionalidades que permitimos ao nosso agente de codificação, em vez de apenas aprová-las. Sim, você pode fazer isso com hooks e código Claude, por exemplo, mas a vantagem aqui é que podemos aplicar isso independentemente do agente de codificação que estivermos usando ou orquestrando no Omnigen. E podemos usar o Omnigen para muito mais do que apenas programação de IA . Debbie, o outro exemplo que eles
+
+enviam junto com Polly, é um ótimo exemplo disso. Porque este é um orquestrador que coloca dois agentes de programação um contra o outro para discutirem uma questão ou um tópico e, em seguida, chegarem a uma conclusão juntos, com Debbie orquestrando tudo. Então eu faço a minha pergunta e o sistema deixa o Claude raciocinar sobre ela e adotar uma perspectiva, enquanto o GPT adota a outra perspectiva. Também podemos clicar na visualização para ver o raciocínio deles e todos os tokens de cada um dos agentes individuais e, em seguida, voltar para Debbie para ver como tudo está sendo orquestrado. Basicamente, o processo passa por duas rodadas, ou pelo menos foi isso que eu configurei para ele fazer. Então, o sistema envia o
+
+feedback do GPT para Claude e vice-versa para mais uma rodada, e então concluímos o debate com Debbie sintetizando o que ambos os agentes disseram, dando-nos uma resposta final. Então, novamente, assim como no meu teste com Polly, este é um exemplo bastante simples, mas quero mostrar rapidamente como esses fluxos de trabalho podem ser e tenho certeza de que sua imaginação pode começar a voar alto aqui com as maneiras pelas quais você pode construir esses fluxos de trabalho maiores, combinando agentes de codificação, quando se torna tão incrivelmente fácil fazer isso, até mesmo configurando seus próprios orquestradores personalizados, como mostrei anteriormente. Muito bem, até agora mostrei a vocês todos os recursos, pelo menos em linhas gerais, do Omnigen, exceto a colaboração. Então, o que eu quero mostrar rapidamente é como podemos trabalhar na mesma sessão tanto em nossos celulares quanto em nossos computadores. E você pode fazer isso pela internet, podendo assim trabalhar com pessoas do mundo todo . Mas a configuração mais simples é
+
+trabalhar com diferentes dispositivos na mesma rede Wi-Fi. Então, se você rolar para baixo no arquivo "Leia-me", encontrará instruções sobre como fazer isso, implantar em um servidor e usar o aplicativo no seu celular. Então, pessoalmente, eu não fiz isso por conta própria. Eu simplesmente pedi para meu agente de programação configurar tudo para mim. Obviamente, esse é um tema recorrente em qualquer tipo de configuração atualmente. Mas sim, é muito
+
+fácil colocar isso em funcionamento. Então, se voltarmos ao agente Omni aqui, apenas para aquela outra conversa que mostrei anteriormente com o humano no circuito. Vou enviar uma mensagem pelo meu celular. Então, vou apenas dizer olá aqui, enviar e pronto, aí está. Você pode vê-lo aparecer imediatamente em nossa área de trabalho aqui. É muito legal
+
+poder manter a conversa rolando entre diferentes dispositivos enquanto me desloco entre os cômodos da minha casa. E como eu disse, você também pode hospedar isso, então pode até trabalhar com outras pessoas. Aqui está tudo o que você precisa saber para começar a usar o Omni Agent. E os cintos de meta-equipamento são extremamente importantes atualmente. Você não quer ficar preso a apenas um modelo ou fornecedor para todo o seu fluxo de trabalho de codificação de IA. Essa simplesmente não é a melhor
+
+maneira de fazer as coisas hoje em dia. Por isso, recomendo fortemente que você experimente o Omni Agent. É muito fácil começar a usar. E é tudo o que tenho para lhe dizer agora. Se você gostou deste vídeo e quer ver mais conteúdo sobre engenharia de chicotes elétricos e programação de IA, agradeceria muito um like e uma inscrição no canal. E com isso, nos
+
+vemos no próximo vídeo.

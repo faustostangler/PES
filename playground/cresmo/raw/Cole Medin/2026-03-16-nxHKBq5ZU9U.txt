@@ -1,0 +1,161 @@
+---
+video_title: "I've Used Claude Code for 2,000+ Hours - Here's How I Build Anything With It"
+video_id: nxHKBq5ZU9U
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=nxHKBq5ZU9U
+video_date: 2026-03-16T19:15:03+00:00
+video_description: |
+  I've used Claude Code for over 2,000 hours now. And if there's one thing I've learned, it's that about 80% of the time your coding agent messes up, it's not the model - it's how you're managing context. That problem is called context rot, and it gets worse the bigger your codebase gets!
+  
+  So I bundled up all of my battle-tested strategies into what I call the WISC framework - Write, Isolate, Select, Compress. Four strategies that keep your context window lean while still giving the agent everything it needs. I walk through each one with live demos on a real, complicated codebase so you can see exactly how they work in practice.
+  
+  These strategies work on any codebase, even massive ones, and they apply to any AI coding assistant. If you already know the basics and you're ready to actually get reliable results from AI coding, this is it my friend.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Want a complete AI transformation? Come to the free AI Transformation Workshop I'm hosting with Lior Weinstein on April 28th:
+  https://dynamous.ai/ai-transformation-workshop
+  
+  - If you want to dive even deeper into building reliable and repeatable systems for AI coding, check out the Dynamous Community and Agentic Coding Course:
+  https://dynamous.ai/agentic-coding-course
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - GitHub repo with all the commands/resources I share in this video:
+  https://github.com/coleam00/context-engineering-intro/tree/main/use-cases/ai-coding-wisc-framework
+  
+  - Context Rot Research (Chroma):
+  https://research.trychroma.com/context-rot
+  
+  - Anthropic Context Engineering Guide:
+  https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Intro
+  2:04 Why Context Management Matters
+  5:26 W: Git Log as Long-Term Memory
+  8:45 W: Separate Planning & Implementation Sessions
+  10:02 W: Progress Files & Decision Logs
+  11:42 I: Subagents for Research
+  14:04 I: The Scout Pattern
+  15:33 S: Layered Context Selection
+  19:28 C: Compression Strategies
+  21:31 Conclusion
+  22:09 Free Workshop Announcement!
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Claude Code foi lançado oficialmente em 22 de maio do ano passado, juntamente com Claude 4. No entanto, também houve uma versão de teste anterior. E assim, tenho usado essa ferramenta há pouco mais de um ano. E eu realmente fiz as contas. Se você somar todo o tempo que levei para orientar o Claude, revisar o código e monitorá-lo, já utilizei a ferramenta por mais de 2.000 horas. Pois é, tenho uma
+
+ou duas coisas para te ensinar. É isso que eu quero fazer neste vídeo. Então, agora mesmo, quero compartilhar com vocês todas as minhas estratégias testadas e aprovadas que levarão vocês de um usuário básico do Código Claude até um usuário avançado. Eu reuni tudo no que chamo de estrutura WHISK. E aqui está o ponto: essas estratégias são legítimas. Eu
+
+não sou um desses criadores de conteúdo de IA que simplesmente aderiu à onda do Claude Code nos últimos meses. Como eu disse, venho usando essa ferramenta diariamente há mais de um ano. Assim, essas estratégias funcionarão em qualquer base de código, mesmo as enormes, até mesmo em projetos que possuem múltiplas bases de código. Já vi tudo isso aplicado em nível empresarial. Portanto, independentemente do que você esteja fazendo, isto é para você. Isso também funciona muito bem
+
+para qualquer assistente de programação com IA. Estou focado apenas em Claude Code porque é o melhor no momento. Portanto, estou partindo do princípio de que você já possui pelo menos um conhecimento básico do Código Claude e agora deseja dar o próximo passo. Se você quiser aprender o básico sobre como construir um sistema para programação de IA, vou disponibilizar um vídeo com o link aqui. Todas essas estratégias são importantes quando trabalhamos com bases de código reais que ficam complexas, pois temos várias estratégias relacionadas ao gerenciamento de contexto. Isso é importante porque a
+
+perda de contexto é o maior problema dos assistentes de codificação de IA atualmente. Não importa que tenhamos o novo limite de 1 milhão de tokens para o Claude Code, ainda precisamos tratar nosso contexto como o recurso mais precioso, que deve ser projetado com muito cuidado por nossos assistentes de codificação de IA. Assim, para a estrutura WISC, todas essas estratégias se aplicam a ela. E essas são todas coisas que você pode pegar e aplicar imediatamente aos seus projetos. Então, vou explicar tudo de forma bem simples para você aqui. Agora, a pergunta que você pode estar se
+
+fazendo é: "Cole, por que estamos nos concentrando tanto no gerenciamento de contexto? Mais de 2.000 horas usando código Claude, e é nisso que você quer se concentrar?" E minha resposta é sim. Sei que isso é muito específico, mas precisamos nos concentrar agora na deterioração do contexto e em como evitá- la. Eu diria que em
+
+cerca de 80% das vezes em que seu agente de codificação apresenta problemas em sua base de código, é porque você não está gerenciando seu contexto adequadamente. Então, quero começar com o problema da deterioração do contexto e, em seguida, partiremos rapidamente para a prática, analisando cada parte da estrutura WISK. Mas quero começar abordando a deterioração do contexto como um fator precursor para que você possa realmente entender o porquê. Ao aplicar o framework WISK, você perceberá imediatamente um aumento na confiabilidade da sua programação de IA, mesmo em bases de código mais complexas. E continuo enfatizando bases de código maiores e mais desorganizadas porque é aí que vemos a deterioração do contexto se tornar um problema cada vez maior. Atualmente,
+
+existem muitas pesquisas na indústria sobre a deterioração do contexto, mas a minha favorita, que por sinal é a mais prática e provavelmente a mais popular, é o Relatório Técnico da Chroma, que aborda como o aumento do número de tokens de entrada impacta o desempenho do LLM (Learning Learning Machine). E a ideia principal aqui é que só porque você consegue inserir uma certa quantidade de tokens na janela de contexto de um LLM, não significa que você deva fazê-lo. E sim, isso também se aplica ao código Claude com o novo limite de 1 milhão de tokens . Porque uma língua extensa pode ficar sobrecarregada de informações, assim como as pessoas. É o chamado problema da agulha no palheiro. Portanto, quando você
+
+tem uma informação muito específica , ou, no caso de agentes de codificação, um arquivo específico que foi lido e que precisa ser recuperado, o sistema fará um bom trabalho ao recuperar essa informação em sua memória de curto prazo, mas somente se a janela de contexto não estiver sobrecarregada. Quando você começa a ter uma quantidade enorme de contexto sobrecarregado, começam a surgir os chamados elementos de distração. Portanto, essas são informações próximas ou semelhantes ao que você precisa que o mestre em Direito (LLM) se lembre, mas não exatamente iguais. E vemos isso com frequência na programação de IA, especialmente em bases de código maiores. Estamos seguindo os mesmos padrões em toda a nossa base de código. Temos muitas
+
+semelhanças na forma como diferentes partes da nossa base de código são implementadas. Assim, grandes modelos de linguagem podem extrair informações incorretas e ter muita confiança em sua correção ou implementação. Tenho certeza de que você já viu isso muitas vezes. Esse problema de "encontrar uma agulha no palheiro" se aplica o tempo todo à programação de IA. Essa é a ideia de deterioração do contexto. Quanto
+
+maior for a nossa janela, mais difícil será para o modelo de linguagem grande extrair exatamente o que precisamos para a interação atual com o nosso agente de codificação. Então, voltando ao diagrama, deixe-me ser bem específico para você. O que estamos abordando com todas essas estratégias é a questão de como manter nossa janela de contexto o mais enxuta possível, ao mesmo tempo em que fornecemos ao agente de codificação todo o contexto de que ele precisa. Essa é a engenharia de contexto que estamos aplicando aqui. Então, vou analisar cada estratégia individualmente e até tenho um exemplo para cada uma delas, que demonstrarei ao vivo com vocês em uma base de código complexa.
+
+Todos os comandos, regras e documentos que uso como exemplo estão nesta pasta, cujo link estará na descrição. Assim, você pode usar todas essas estratégias conceitualmente, mas também com esses comandos como exemplo, que estão na pasta ".cloud" aqui. Muito bem, então vamos analisar as estratégias individuais agora. Portanto, W significa isolar, S significa selecionar e C significa comprimir. E,
+
+claro, começaremos com o W aqui, que é a escrita, externalizando ao máximo a memória do nosso agente. Queremos registrar as principais decisões e o trabalho realizado pelo agente, para que, em sessões futuras, possamos atualizá-lo muito mais rapidamente e gastar menos tokens inicialmente, garantindo que ele entenda o que realmente precisamos que faça . Assim, a primeira estratégia aqui é usar o log do Git como memória de longo prazo . E eu adoro isso porque há muitas pessoas que gostam de complicar demais e criar frameworks de memória super complexos para seus agentes de programação, mas na verdade todo mundo já usa Git e GitHub para controle de versão, então podemos aproveitar uma ferramenta que já usamos para fornecer memória de longo prazo ao nosso agente. Vamos analisar nosso código-fonte e eu mostrarei o que quero dizer. Portanto, a base de código que
+
+usarei em todos os exemplos aqui é a nova Arkon. E tenho me dedicado muito a isso nos bastidores nos últimos meses. Este é o seu centro de comando de IA, onde você pode criar, gerenciar e executar fluxos de trabalho de codificação de IA de longa duração. Estamos até trabalhando em um construtor de fluxos de trabalho. Vai ser como o N8N para programação de IA. Assim,
+
+podemos iniciar fluxos de trabalho, visualizar os registros e monitorá-los em nosso centro de controle. Podemos analisar as corridas anteriores para ver exatamente o que aconteceu. É um fluxo de trabalho muito longo, no qual preciso validar solicitações de pull completas em minha base de código. Então, sim, olhando para isso, dá para perceber que muito mais sobre Arkon está por vir, aliás, mas também dá para ver que há muitas coisas acontecendo ao mesmo tempo. Este é um código-fonte muito complexo, por isso serve como um bom exemplo para tudo o que vou abordar aqui, todas as estratégias. Então, usando o Git como
+
+memória de longo prazo, vou mostrar aqui um exemplo de uma única linha de comando para todas as minhas mensagens de commit recentes. E o que eu quero destacar aqui é que temos uma maneira muito padronizada de criar essas mensagens de commit. Então temos as nossas fusões, mas também temos todas essas implementações de recursos e correções. Então, eu mantenho tudo bem padronizado, porque dessa forma posso confiar nas mensagens de commit para informar ao meu agente de codificação no que trabalhei recentemente, já que muitas vezes isso nos guia em relação ao que queremos trabalhar em seguida. E a razão pela qual tenho isso tão padronizado é porque existe um comando de commit que eu executo. Executar
+
+um commit no Git é muito fácil, mas se quisermos padronizar a mensagem e contar com a ajuda do agente de codificação, ter um comando específico é muito útil. Então, tenho aqui toda essa implementação que fiz em uma única janela de contexto com o agente de codificação. Cheguei ao final e agora estou pronto para executar meu commit. Então, se eu simplesmente executar {slash} commit, é só isso que preciso fazer. É a execução desse comando que padroniza a forma como documento todo o trabalho que realizo, bem como qualquer ação que tome para aprimorar minhas regras ou comandos. Portanto, é um comando em duas partes
+
+. Eis o que construímos. Eis como aprimoramos a camada de IA. Então, ele vai executar esse commit e eu mostrarei como ficará depois. Tudo bem. Analisando agora nossa
+
+mensagem de commit, podemos ver que fizemos algumas melhorias de teste na CLI. Então, um prefixo muito bom, e depois entrando nos detalhes. E também, para que o agente de codificação saiba como suas próprias regras e comandos estão evoluindo ao longo do tempo, incluímos isso na mensagem de commit. Sempre que encontrarmos uma oportunidade de melhoria, digamos, em nosso comando de planejamento, por exemplo. E, claro, este comando de commit é um dos recursos que disponibilizei no repositório, caso queira usá-lo como ponto de partida, mas também recomendo que você personalize a aparência das suas mensagens de commit. O
+
+importante aqui é que padronizamos as mensagens, tornando-as muito detalhadas para que possamos usá-las como memória de longo prazo. Tudo bem. Assim, a segunda estratégia de escrita é sempre iniciar uma nova janela de contexto ao escrever qualquer código. Independentemente do que eu esteja trabalhando, meu fluxo de trabalho é sempre o mesmo: tenho uma conversa para planejar com o agente de codificação. Vou criar uma espécie de documento em Markdown com meu plano estruturado e, em seguida, enviarei isso como o único contexto para uma nova sessão de implementação. Portanto, é muito
+
+importante que sua especificação contenha todo o contexto necessário para que o agente escreva o código e realize a validação. Então, por exemplo, nesta conversa, estou apenas planejando. Então, eu executo minha inicialização preparada. Falarei sobre isso daqui a pouco . Eu carrego o contexto e, em seguida, crio meu plano com este comando. Então,
+
+essa é mais uma ferramenta que tenho como recurso para você. Basicamente, isso orienta o agente de codificação, mostrando a estrutura exata que queremos criar para nosso documento Markdown único. Então, passando da nossa memória de curto prazo para um único documento, encerramos a sessão aqui. Vamos para uma janela de contexto totalmente nova e seguimos com a nossa implementação. Então, eu tenho meu comando de execução, e é aqui que posso especificar o caminho para o meu plano de estrutura.
+
+Não é necessário nenhum outro contexto, pois isto já deve conter tudo o que é preciso. Isso é muito importante, pois mantém nosso agente de codificação extremamente focado na tarefa em questão. Pode haver muita pesquisa e outras coisas que simplesmente confundem o contexto se implementarmos isso no mesmo lugar em que planejamos. Portanto, a última estratégia W que tenho para externalizar a memória do agente são os arquivos de progresso e os registros de decisão. Você verá isso o tempo todo com estruturas de codificação de IA mais elaboradas, onde você tem arquivos como handoff.md ou todo.md
+
+comunicando-se entre diferentes subagentes ou equipes de agentes, ou mesmo apenas entre diferentes sessões de agentes quando o contexto está acabando. Muitas vezes, você quer criar um resumo do que acabou de ser feito para poder iniciar uma nova sessão, porque começa a perceber que o contexto está se deteriorando com o agente tendo alucinações durante essas conversas mais longas. Obviamente, o ideal seria evitar essas conversas mais longas , mas às vezes elas são necessárias . Por exemplo, algo que faço bastante com o Arcon é usar a CLI do agente Vercel no navegador para realizar testes de ponta a ponta diretamente no navegador. Então, eu o submeto a uma série de diferentes jornadas de usuário e testes de casos extremos. É preciso muito contexto. Então, como
+
+você pode ver aqui embaixo, eu executei um contexto {barra} e já estamos em 200.000 do novo limite de 1 milhão. Isso se esgota muito rapidamente. E quando você começa a ter algumas centenas de milhares de tokens na janela de contexto, é aí que você vê o desempenho do agente começar a se degradar. Então, eu posso simplesmente executar uma transferência {barra}. Este comando
+
+criará um resumo que agora posso passar para outra sessão, para que o agente possa continuar o trabalho. Mas agora, não tem centenas de milhares de registros de chamadas de ferramentas e coisas do gênero ocupando espaço na sua janela. E esse comando de transferência nada mais é do que um guia passo a passo sobre o que exatamente queremos incluir neste documento, para que o próximo agente tenha o que precisa. Muito bem, isso conclui nossa análise do W. E cada uma dessas estratégias é muito importante, porque estamos registrando decisões importantes para que as sessões futuras do agente possam aplicá-las rapidamente . Sei que estou sendo breve, então
+
+deixem nos comentários se há alguma dessas estratégias sobre a qual vocês gostariam que eu fizesse um vídeo completo, porque eu definitivamente poderia fazer um para cada uma delas. E agora vamos abordar o "I" de isolar usando um subagente. Adoro usar subagentes para todas as minhas pesquisas, utilizando- os praticamente em todas as sessões. O importante aqui é manter o contexto principal limpo. Podemos usar subagentes para realizar dezenas ou até centenas de milhares de buscas em nossa base de código ou na web e, em seguida, simplesmente fornecer o resumo necessário para a janela principal do contexto de código do Claude. Assim,
+
+em vez de carregar dezenas de milhares de tokens de pesquisa em nossa janela de contexto principal, agora são apenas cerca de 500 tokens. Assim, ainda obtemos as informações essenciais de que precisamos, mas temos uma melhoria de 90,2%, de acordo com algumas pesquisas da área de antropologia, ao utilizarmos subagentes para carregar o contexto antecipadamente para nossa pesquisa, em vez de deixarmos nosso agente principal cuidar de tudo. Então, deixe-me dar um exemplo disso muito rapidamente. Isso sempre acontece no início da conversa ou antes daquele plano estruturado que mencionei anteriormente. É como se eu estivesse na fase de planejamento . É aí que eu uso subagentes com muita
+
+frequência. Veja isto. Quero integrar um construtor de fluxos de trabalho ao Arkon. Então, quero que você crie dois subagentes. Uma delas é realizar uma pesquisa extensa na base de código para ver como poderíamos construir um construtor de fluxo de trabalho e o que isso significa para o Arkon. Em seguida, crie
+
+outro subagente para realizar pesquisas na web sobre as melhores práticas para o conjunto de tecnologias. Por exemplo, se eu quiser usar React, quais bibliotecas devo usar? E, de forma geral, como construímos ferramentas de fluxo de trabalho como o Dify ou o N8N? Então, estou usando minha ferramenta de conversão de texto em fala aqui. Envie a solicitação. Pronto.
+
+Assim, não só obtemos o benefício do isolamento, como também da velocidade, porque os subagentes serão usados ​​em paralelo, retornarão com um resumo e, em seguida, meu agente principal sintetizará tudo isso e me dará a palavra final. Pronto, aí está. Ambos os subagentes estão operando em paralelo nos bastidores. Também podemos acessar e visualizar os registros de cada um deles . E então voltará ao assunto no final, quando terminarem o relatório final. Muito bem, nossos subagentes
+
+terminaram e, em vez de usar centenas de milhares de tokens em nossa janela de contexto principal, que é o quanto os subagentes fizeram com sua pesquisa. Utilizamos apenas 44.000 tokens, o que corresponde a apenas 4% da nossa janela de tempo até o momento. Esse é o poder dos subagentes. Não os recomendo para implementação, pois geralmente é necessário ter todo o contexto do que foi feito, mas para pesquisa são muito úteis. Sim, o
+
+isolamento e os subagentes são muito importantes no seu processo de planejamento. Outra forma de utilizarmos subagentes é com o que eu gosto de chamar de padrão de reconhecimento. Queremos enviar batedores à frente antes de você definir seu contexto principal. Pode haver partes do seu código-fonte ou documentação que você queira que os subagentes explorem para verificar se é relevante carregá-las na sua sessão principal do Claude . Assim, é possível tomar uma decisão antecipadamente, como por exemplo, se devemos incluir isso em nosso planejamento geral ou se devemos ignorar, pois não é relevante. Por exemplo, com o Arkon,
+
+tenho alguns documentos em Markdown que são análises muito detalhadas de certas partes da base de código. Não é o tipo de contexto que queremos em nossas regras, pois não precisamos dele o tempo todo, mas às vezes você pode querer carregar isso. E você pode imaginar isso sendo algo no Confluence ou no Google Drive, onde quer que você armazene seu contexto. Então, voltando à conversa principal, posso simplesmente dizer para criar um subagente para pesquisar tudo no meu arquivo .claud/docs.
+
+Há algum documento aqui que seja importante incluirmos em nosso contexto principal de planejamento? E eu posso enviar isso, o sistema tomará a decisão e depois carregará o que me interessa . Então, aqui mesmo, iniciamos um subagente de exploração. Encontrou toda a nossa documentação, recomendou carregar uma delas, e então eu disse: "Sim, pode carregar . Isso é realmente importante para o que estamos planejando aqui." Assim, em vez de
+
+apenas criarmos subagentes para pesquisa, às vezes temos documentos inteiros que consideramos cruciais para nossa janela de contexto principal. É aí que entra o padrão de reconhecimento. Então, isso é tudo sobre o isolamento. Lembre-se de utilizar subagentes de forma extensiva em suas pesquisas e planejamento. E isso nos leva ao S4 Select. Carregue o contexto no momento certo,
+
+não apenas por precaução. O que quero dizer com isso é que, se você não tiver 100% de certeza de que uma informação é importante para o seu agente de codificação neste momento, então não se preocupe em carregá-la. E temos uma abordagem em camadas para ajudar com isso. Assim, começamos com as nossas regras globais. Estas são as nossas restrições e convenções que sempre queremos que o nosso agente de codificação conheça. Portanto, você
+
+quer que este arquivo seja bastante conciso. Normalmente, opto por textos com entre 500 e 700 linhas . Muitas pessoas defendem ainda menos. Mas você tem coisas como sua arquitetura, os comandos a serem executados, coisas como sua estratégia de teste e registro de logs. Este é um exemplo meu do Archon, mas estas são as coisas que você quer que seu agente de codificação saiba o tempo todo. E então
+
+temos a nossa segunda camada. Então, o nosso contexto sob demanda , como eu o chamo. Essas são regras que se aplicam apenas a partes específicas da base de código. Por exemplo, se estivermos trabalhando no front-end, o que nem sempre acontece, mas se acontecer, aqui estão as regras globais para o front-end. Ou aqui estão as regras globais para a criação de endpoints de API.
+
+Assim, adicionamos isso às nossas regras globais para tipos de tarefas específicos. Porque nem sempre estaremos trabalhando na parte de desenvolvimento front-end, por exemplo. Para mostrar um exemplo disso, temos a referência YAML do fluxo de trabalho que acabei de obter com o subagente do explorador . Portanto, quando estamos trabalhando nos fluxos de trabalho, é isso que nos preocupamos. Mas não queremos isso em nossas regras globais, porque na maioria das vezes, quando estamos trabalhando no Archon, não estamos trabalhando especificamente nessa parte do código. Portanto, é um contexto sob demanda
+
+. A terceira camada que temos aqui são as habilidades. Isso está fazendo muito sucesso entre Claude Code e outros atualmente. Temos aqui diferentes etapas em que o agente irá explorar as instruções e capacidades da habilidade conforme julgar necessário . Então, vamos começar com a descrição.
+
+Trata-se de uma quantidade muito pequena de tokens carregados antecipadamente de acordo com nossas regras globais. Se o agente decidir usar essa habilidade, ele carregará o arquivo skill.md completo, que também pode apontar para outros scripts ou documentos de referência que gostaríamos de carregar caso queiramos nos aprofundar ainda mais na habilidade. E assim, como exemplo disso, tenho minha habilidade de navegador de agentes. É isso que eu uso para a automação do navegador em todos os meus testes de ponta a ponta que mostrei anteriormente. Eu uso isso todos os
+
+dias. Assim, sempre que realizo meus testes de ponta a ponta, carrego esse conjunto de instruções para que o agente entenda como usar o navegador do agente. E, finalmente, para a quarta camada aqui, tenho comandos primos. Portanto, tudo o que abordei aqui é documentação estática que atualizaremos de tempos em tempos. Mas, às vezes, precisamos que nosso agente explore nossa base de código em produção.
+
+Precisamos garantir que todas as informações estejam completamente atualizadas e estamos dispostos a investir alguns tokens com subagentes antecipadamente para que isso aconteça. É isso que o comando prime faz: exploramos nossa base de código no início do processo de planejamento, para que ele entenda nossa base de código antes de construirmos o que queremos fazer em seguida. Como você pode ver na minha pasta de comandos, tenho vários comandos Prime diferentes, pois existem diferentes partes da base de código que eu quero que o agente entenda, dependendo do que eu quero construir. Portanto, meu comando primo genérico é este que estamos vendo aqui. Eu só conto isso para ter uma compreensão geral do código-fonte do Arkon. Então,
+
+passo a passo, aqui está o que eu quero que ele leia, incluindo o log do Git, porque isso é importante para usarmos o log do Git como memória de longo prazo. Eu também tenho um especializado, o "prime workflows", para quando sei que estou trabalhando no mecanismo de fluxo de trabalho do Arkon. Portanto, um comando muito semelhante, porém mais especializado. Então, eu uso isso no início da conversa para que meu agente possa carregar rapidamente tudo o que precisa. Posso confirmar que ele entende minha base de código.
+
+Em seguida, entro no processo de planejamento que mostrei a vocês anteriormente. Resumindo rapidamente, as regras globais são sempre carregadas. Contexto sob demanda quando você sabe que vai trabalhar em uma parte do código que está documentada separadamente; habilidades quando você precisa de diferentes funcionalidades, como, por exemplo, "ok, é hora de fazer testes de ponta a ponta, vamos carregar a habilidade para o navegador do agente". E então, normalmente, uso os comandos principais logo no início de uma conversa para preparar o terreno para o meu planejamento. Então, isso é tudo para o Select. Agora
+
+vamos à compressão, e esta é na verdade a seção mais rápida de se concluir. Porque você não precisa comprimir com frequência se estiver isolando e selecionando corretamente. Se estivermos aplicando todas as outras estratégias para manter nosso contexto enxuto, estaremos evitando isso, o que é bom porque o ideal é evitar ao máximo a compressão. Se você precisar comprimir, existem algumas estratégias que podemos abordar aqui. E essas duas estratégias são a transferência de responsabilidade e a compactação do foco. Então, vamos analisar o
+
+código Claude e dar uma olhada nisso. Então, a transição já foi abordada. Essa é uma das nossas estratégias corretas. Resumimos tudo o que acabamos de fazer para passar a tarefa para outro agente ou para o mesmo agente após a compactação da memória. E então temos o comando compacto integrado no código Claude.
+
+Isso irá resumir nossa conversa, depois apagá-la e colocar o resumo no topo da nossa janela de contexto. Agora, a transferência de informações é realmente poderosa porque é aí que definimos nosso próprio fluxo de trabalho sobre como memorizamos as informações. Mas o formato compacto {slash} também é muito útil, especialmente porque podemos fornecer, opcionalmente, instruções de resumo. Quando eu precisar compactar algo, usarei isso sempre. Por exemplo, vamos nos concentrar nos casos extremos que acabamos de testar, certo? Portanto, agora, ao
+
+criar esse resumo, o sistema prestará mais atenção a essa parte de sua memória de curto prazo . Não escrevi certo, mas está ótimo assim. A compactação será feita aqui. Assim, o handoff e o {slash} compact são meio que uma coisa ou outra, mas definitivamente encontro momentos em que quero usar ambos. A transferência de responsabilidade, especialmente quando ocorre uma compactação mais de duas vezes, geralmente indica que a conversa está ficando muito extensa, então é melhor iniciar uma nova sessão com a transferência.
+
+Mas, se eu for fazer isso apenas uma vez, muitas vezes não tenho problema em executar um slash compact uma única vez. Mas, geralmente, após um acordo preliminar, ainda peço ao agente que resuma o que se lembra, para garantir que ele realmente entendeu, certo? Tipo, "O que você se lembra aqui?" Algo assim . Então, sim, realmente não é o ideal. Evite a compactação do solo tanto quanto
+
+possível. A melhor estratégia de compressão não é precisar de compressão. Tudo bem. Então, essa é a estrutura do Whisk. Eu sei que foi muita coisa. Espero que tenha
+
+achado isso útil e me avise se houver alguma estratégia que você gostaria que eu explorasse mais a fundo, pois eu poderia fazer um vídeo inteiro sobre qualquer uma delas . Mas este é o framework Whisk. Espero que você possa usar isso para alcançar um nível superior em Cloud Code, ou em qualquer assistente de programação com IA. Então, se você achou este vídeo útil e está ansioso por mais conteúdo sobre programação de IA e como aplicar esses tipos de frameworks na prática, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo. Ei,
+
+tenho uma última coisinha para você rapidinho que você não vai querer perder. No dia 2 de abril, vou apresentar um workshop gratuito sobre transformação da IA, transmitido ao vivo no meu canal do YouTube, juntamente com Lior Weinstein, fundador da CTO.ai. E isso é muito importante. Lior vai nos ensinar como reestruturar toda a nossa organização para a IA. E então, vou te
+
+ensinar como dominar a metodologia de programação de IA que eu uso para construir sistemas confiáveis ​​e repetíveis para meus agentes de programação. Portanto, incluirei um link para esta página na descrição. Vai ser transmitido ao vivo no meu canal do YouTube, então você pode ativar as notificações clicando neste botão aqui. Te vejo lá.

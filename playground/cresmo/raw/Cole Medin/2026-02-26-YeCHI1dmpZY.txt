@@ -1,0 +1,155 @@
+---
+video_title: "This One Command Makes Coding Agents Find All Their Mistakes (Use it Now)"
+video_id: YeCHI1dmpZY
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=YeCHI1dmpZY
+video_date: 2026-02-26T01:00:44+00:00
+video_description: |
+  AI coding agents write a lot of code very quickly, and that's what makes them so powerful. But it creates a problem nobody talks about enough - reviewing all that code is exhausting. You end up skimming, missing things, or just trusting the output and hoping for the best. Neither option is great.
+  
+  What if the agent could test its own code - comprehensively? I built a single command that kicks off end-to-end testing on any codebase. It guides the coding agent on testing the entire app just as a user would use it. Frontend, backend, and database all validated automatically. 
+  
+  By the time control passes back to you, the agent has already caught and fixed most of its own mistakes. That's what I'll show you in this video! Plus the command is open-source and you can use it now - grab it from the repo linked below.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Bright Data - Give your AI agents reliable, real-time web access at scale (web scraping, search, CAPTCHA solving, and more):
+  https://brdta.com/colemedin
+  
+  I also use Neon in this video - Serverless Postgres with instant database branching, autoscaling, and scale-to-zero:
+  https://neon.plug.dev/tcbs3LL
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - If you want to dive even deeper into building reliable and repeatable systems for AI coding, check out the Dynamous Community and Agentic Coding Course:
+  https://dynamous.ai/agentic-coding-course
+  
+  - Here is the full end to end testing command (use with any coding agent)!
+  https://github.com/coleam00/link-in-bio-page-builder/blob/main/.claude/skills/e2e-test/SKILL.md
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Self-Healing AI Coding Workflow
+  3:18 The 6-Step Automation Framework
+  5:37 Testing User Journeys and UI
+  8:33 The E2E Report
+  9:26 Bright Data
+  11:05 Live Demo and Validation
+  15:00 Database Branching for Testing
+  17:02 Using this with Feature Development
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Assistentes de codificação com IA. Nós os adoramos, mas na verdade eles são péssimos em validar o próprio trabalho, a menos que você lhes dê uma estrutura para seguir. E é com isso que tenho experimentado durante centenas de horas , aprofundando-me nos detalhes do agente de codificação. Portanto, não se trata de economizar na validação. Isso acontece o tempo todo. Assim,
+
+o aplicativo é testado da mesma forma que um usuário faria. Assim, compilei todo o meu processo de validação, que utilizo para a maior parte do meu código gerado por IA. E eu coloquei tudo em um único comando. Este diagrama que você está vendo aqui resume tudo o que eu preparei para você. E o melhor de tudo é que isso é bastante geral. Portanto,
+
+incluirei um link para esse comando na descrição. Você poderia literalmente executar isso em qualquer base de código agora mesmo, desde que ela tenha um frontend. Portanto, quero explicar agora mesmo como esse comando funciona e ajudar você a entender algumas das ideias por trás dele, para que você possa aprimorar seus próprios fluxos de trabalho para que seus agentes de codificação validem o próprio trabalho. Tem muita coisa valiosa aqui para você. Tenho estado a trabalhar muito nisto. E
+
+a razão pela qual isso é tão importante é que os agentes de codificação agora estão gerando código tão incrivelmente rápido que é quase impossível para nós acompanharmos a validação. E o código gerado por IA continua sendo de sua responsabilidade. Então você precisa validar. Não vou ser um defensor da programação com Vive. Na verdade, o que esse fluxo de trabalho faz é delegar o máximo possível da validação ao agente de codificação. Este é
+
+o fluxo de trabalho que mostrarei daqui a pouco, apenas uma prévia . Portanto, queremos que ele corrija o máximo de problemas possível logo de início, inclusive nos indicando onde devemos resolver as coisas por conta própria, para que, quando o controle voltar para nós, haja muito menos daquela carga mental, daquele peso de ter que revisar centenas ou até milhares de linhas de código geradas nos últimos 20 minutos. E cara, deixa eu te contar , sinto como se um peso tivesse sido tirado dos meus ombros usando esse tipo de processo, especialmente considerando a fase de evolução em que estou atualmente. É por isso que estou tão animado para mostrar isso a vocês agora. É por isso que estou chamando isso de fluxo de trabalho de codificação de IA com autorreparação. Não que os
+
+agentes de codificação sejam perfeitos nisso, mas chegam bem perto. Tenho ficado realmente impressionado com os resultados recentes. Então, vou mostrar rapidamente cada pequeno componente desse fluxo de trabalho e como ele funciona. Veremos isso em ação. E também falarei sobre como você pode incorporar algo assim em seus próprios fluxos de trabalho de programação de IA. Então, aqui
+
+está o comando ou a habilidade de código Claude que vamos usar agora. Então, vou incluir o link para este arquivo skill.md na descrição, caso você queira usar este comando em qualquer código-fonte imediatamente. Funciona sem qualquer necessidade de configuração . Ele instala até mesmo automaticamente a CLI do navegador do agente Verscel.
+
+Esta é a ferramenta de automação de navegador que tenho usado bastante ultimamente. Eu também já fiz um vídeo sobre isso, que vou deixar o link aqui. Portanto, essa é uma parte importante do processo, mas também funcionará para praticamente qualquer agente de codificação. Você também pode adaptar isso para funcionar com qualquer outra ferramenta de automação de navegador, como o Chrome DevTools, MCP, ou qualquer outra que desejar usar. E isso realmente oferece muita especificidade, uma estrutura para o agente de codificação sobre como realizar pesquisas, como deve ser o fluxo para a autovalidação. E eu imaginei que, em vez de
+
+analisar todo esse documento em Markdown, seria muito melhor explicar as coisas de forma mais visual. Por isso, preparei este diagrama, que vou explicar rapidamente para que vocês possam entender todos os componentes que incluí. Assim, para sua própria engenharia de agentes, existem duas maneiras de usar esse fluxo de trabalho. Você pode usá-lo sempre que quiser, fora do contexto de desenvolvimento de novas funcionalidades. Então, talvez você queira, em determinado momento, executar testes completos de ponta a ponta em sua base de código. É isso que abordarei primeiro
+
+em uma demonstração ao vivo. E a outra maneira, que abordarei mais perto do final do vídeo, é que você pode construir esse fluxo de trabalho diretamente no seu processo de implementação de recursos. Assim, depois que o agente de codificação escrever qualquer tipo de funcionalidade, ele irá imediatamente iniciar os testes de regressão para garantir que o que acabou de construir esteja funcionando corretamente. Primeiramente, como se trata de um comando, vamos invocá-lo com /2e test. E isso dará início ao fluxo de trabalho de seis etapas que temos aqui. Começando
+
+com nossa verificação prévia. Como utilizamos uma ferramenta de automação de navegador de forma intensiva neste processo, preciso que você tenha um frontend para seu código-fonte, o que, para mim, é o caso da maioria dos meus aplicativos e provavelmente também será para você. É por isso que digo que podemos usar este comando em praticamente qualquer código-fonte. Se você deseja realizar qualquer tipo de teste para aplicativos de backend, definitivamente precisa de um fluxo de trabalho diferente, que abordarei em conteúdos futuros. Outra verificação importante é se você está usando o Windows, pois, nesse caso, não poderá usar a CLI do navegador do agente Verscell, mas poderá usar o WSL. É exatamente isso que estou fazendo
+
+neste vídeo. Então, verificamos todos os prerex. Se tudo correr bem, passamos para a primeira fase, a nossa fase de pesquisa. Portanto, o objetivo desta fase é nos familiarizarmos com a aplicação. Quais são todas as maneiras pelas quais os usuários realmente usariam este aplicativo, para que possamos testar tudo isso? Além disso, precisamos entender nosso
+
+esquema de dados e como estamos trabalhando com o banco de dados em geral, porque quase todos os aplicativos full stack trabalham com um banco de dados. E o mais interessante é que temos três subagentes que são executados em paralelo. Isso já está integrado diretamente ao fluxo de trabalho. Assim, um agente irá compreender a estrutura da base de código e como os usuários a utilizarão. Uma pessoa entende o esquema do banco de dados e a outra faz a revisão do código, que faz parte da nossa validação. Então, o restante deste processo consiste em
+
+analisar o aplicativo como um usuário faria. Mas esta subentidade vai encontrar coisas como erros de lógica que temos em nosso código. Assim, todos os três subents funcionam em paralelo. E então a pesquisa é compilada no contexto do nosso agente principal. E então, nesse ponto, estamos prontos para iniciar nossos testes completos de ponta a ponta. Assim,
+
+instruímos o agente a iniciar o servidor de desenvolvimento. Assim, toda a aplicação será iniciada. Então está pronto para ser acessado pelo URL. E então, aqui será definida uma lista de tarefas. Assim, cada uma das tarefas representará uma das jornadas do usuário que queremos testar.
+
+Garantir que possamos fazer login, garantir que possamos editar nosso perfil ou muitas outras coisas que serão bastante específicas para sua base de código. Mas ele descobrirá isso em tempo real com base no que entendeu aqui. Certo, quais são as tarefas que precisamos definir? E vai dedicar bastante tempo a cada um deles. Então, em seguida, no nosso fluxo de trabalho, temos praticamente um loop "for" integrado, porque vamos analisar essa lista de tarefas e extrair cada uma das jornadas do usuário, concluindo-as uma de cada vez de forma bem completa. Então, estou apenas dando
+
+uma pequena demonstração aqui de como a linha do tempo se parece. É isso que nosso agente de codificação vai passar. Portanto, será utilizada uma combinação da CLI do navegador do agente para navegar no site e consultas ao banco de dados para garantir que tudo esteja funcionando corretamente no back-end enquanto criamos, atualizamos e excluímos registros. Estou me referindo especificamente ao PostgreSQL porque atualmente estou usando o Neon com PostgreSQL, mas você pode usar qualquer banco de dados e o comando se adaptará automaticamente. Assim, por exemplo, o agente irá tirar uma foto instantânea. É
+
+assim que o sistema entende o que temos atualmente na página. Em seguida, consultará o banco de dados para garantir que tudo esteja correto. Interage com um determinado elemento e verifica, por exemplo, se existe um registro que deveria ter sido criado, e também tira capturas de tela durante o processo. Assim, não só é possível verificar se os fluxos estão funcionando corretamente, mas também se a interface do usuário está com boa aparência, pois os agentes de codificação atuais conseguem analisar imagens. Assim, teremos uma série de PGs que serão criadas ao longo do processo e armazenadas em um diretório para revisarmos posteriormente. Assim, as capturas de tela são
+
+ótimas para o agente revisar por si mesmo, mas também para nós validarmos posteriormente que o teste de ponta a ponta está realmente completo. Nesse ponto, o agente de codificação vai verificar seu trabalho e identificar se há algum problema grave que precise ser resolvido . Se houver algo que esteja impedindo completamente o agente de codificação de validar a jornada do usuário, ele corrigirá o código, testará novamente, fará novas capturas de tela e validará novamente, repetindo esse processo em um loop até que a jornada do usuário esteja completa. Agora, a distinção realmente importante a ser feita aqui é que ainda haverá problemas remanescentes após os testes de ponta a ponta. Na verdade, geralmente restam mais problemas do que são resolvidos, porque instruí especificamente o agente de codificação a corrigir apenas os principais obstáculos. Então, para
+
+todos os outros problemas mais moderados ou menores, quero trabalhar com o agente de codificação para descobrir se quero abordar isso e como quero fazer isso. Portanto, o objetivo é corrigir esses problemas para que seja possível testar toda a jornada do usuário. E depois disso, o sistema retomará do início e seguirá para a próxima etapa da jornada do usuário que temos na lista de tarefas. Então, estou eliminando essas tarefas sistematicamente, uma de cada vez, fazendo alguns testes de responsividade no final, algo mais leve, como revisar as páginas e garantir que fiquem boas em dispositivos móveis, tablets e computadores. E então, ao final, ele nos fornece o relatório completo de ponta a ponta. E
+
+isto é muito importante. Não estou simplesmente dizendo para compartilhar com o usuário o que aconteceu de forma aleatória. Tenho muita estrutura construída na parte inferior do prompt, na parte inferior do arquivo skill.md. Então, o resultado que recebo é sempre exatamente o mesmo, todas as vezes. Eis o que
+
+corrigimos. Eis aqui as questões que ainda restavam. E aqui está tudo o que eu passei. Portanto, o objetivo aqui é que, com o relatório combinado com as capturas de tela, eu possa analisar tudo muito rapidamente e garantir que o agente realmente fez um bom trabalho identificando e percorrendo todas as jornadas do usuário . E, opcionalmente, pode gerar um relatório em Markdown. Nesse ponto,
+
+a janela de contexto ficará bastante sobrecarregada com o agente de codificação executando todos esses testes. Portanto, se houver algo mais que eu queira discutir e abordar com o agente, quero fazer isso em uma nova janela de contexto. Então, vou pegar o relatório da saída aqui e enviá-lo para uma nova sessão com meu agente de codificação. O patrocinador do vídeo de hoje é a Bright Data, a plataforma que desbloqueia a web para seus agentes de IA e foi criada para lidar com centenas de agentes que você pode estar executando em paralelo. Neste vídeo, focamos na automação do navegador para o host local.
+
+Não existe proteção anti-bot. Mas quando seus agentes precisam acessar a internet real, coisas como perfis do LinkedIn, sites de comércio eletrônico, todos esses sites estão ativamente tentando bloquear o acesso do seu agente. É por isso que você precisa de dados claros. E o modo como funciona é realmente impressionante. As solicitações dos seus agentes são encaminhadas por meio de 150 milhões de endereços IP residenciais. As legendas são geradas
+
+automaticamente. As impressões digitais do navegador são rotacionadas. Seu agente se torna uma pessoa real. E a Bright Data possui um servidor MCP que torna o processo inicial extremamente fácil. Eles também possuem uma API. É isso que
+
+estou usando nesta demonstração rápida para mostrar o poder do Bright Data em obter dados públicos estruturados sob demanda. Por exemplo, posso dizer que estou procurando 10 engenheiros de software em Minneapolis. E observe, examine todos os registros. O problema de captura foi resolvido automaticamente. Está extraindo informações do LinkedIn. Então, eu tenho todos os
+
+perfis deles. Posso pesquisar sobre uma pessoa específica. Bem, isto é apenas uma demonstração. Existem milhões de coisas diferentes que você pode fazer com dados brilhantes. Extrair qualquer tipo de informação, mesmo de fontes como o LinkedIn, que geralmente são muito difíceis de rastrear. Atualmente, 14 dos 20 principais laboratórios de IA
+
+já estão utilizando dados de alta qualidade em seus agentes. Mais de 100 milhões de interações passam pela plataforma deles todos os dias. Portanto, elas são realmente a solução mais confiável quando você precisa de acesso à web em tempo real para seus agentes. Além disso, você pode usar o código Cole Medine. Também incluí um link na descrição para você ganhar seus primeiros 20 dólares em créditos gratuitamente.
+
+Portanto, definitivamente dê uma olhada na Bright Data. Muito bem, então vamos fazer uma demonstração ao vivo agora que entendemos como o comando funciona e todos os seus componentes. Então, eu tenho o arquivo skill.md aqui no meu repositório local para um aplicativo que eu desenvolvi no último vídeo do meu canal. Então, eu criei este construtor de páginas com links e biografias . É parecido com o Linkree,
+
+onde você pode criar seu próprio site e colocar todos os seus links. Você pode enviar isso para pessoas como: "Dê uma olhada nisso." Aqui você pode ver todas as minhas redes sociais e coisas do tipo. Então, este é o aplicativo que estamos testando aqui. Há muitas funcionalidades integradas para autenticação, gerenciamento de diferentes temas e criação de links personalizados. Portanto,
+
+teremos vários percursos de usuário para analisar aqui. Então, vou executar o teste /e2 . Sem parâmetros nem nada do tipo. E se você estiver usando um agente de codificação que não suporta comandos, você pode simplesmente apontá-lo para o arquivo skill.md, instruí-lo a lê-lo como seu prompt e executar essas instruções. Então, vou
+
+enviar isso e o processo começará imediatamente verificando esses prerexs. Assim, ele garantirá que eu tenha a CLI do agente RCell no navegador, que estou executando no Linux ou, neste caso, no WSL, e logo em seguida iniciará os subagentes para pesquisa. Então, dê uma olhada nisso . É o primeiro passo para entender a estrutura e os fluxos de usuários do aplicativo. Agora, o próximo passo é entender o esquema do banco de dados e, em seguida, daqui a pouco, veremos o passo a passo da revisão de código . Pronto. Análise do código de caça ao beliche
+
+. Então, obviamente, não vou explicar tudo isso para você. Então, vou fazer uma pausa e volto quando passarmos para a próxima etapa. Então, vou mostrar a vocês todas as coisas importantes aqui. Muito bem , ótimo. Podemos ver que
+
+todas as três subentidades terminaram e agora o processo passa para a próxima etapa, que é iniciar toda a nossa aplicação. O sistema sabe exatamente como fazer isso, inclusive o comando a ser executado, pois essa é uma das informações que essa subentidade encontra para nós. Portanto, mesmo que seu aplicativo tenha algumas etapas, como a criação de contêineres Docker, ele ainda conseguirá lidar com tudo isso. E, de vez em quando, ele até se depara com alguns desses problemas que exigem autocorreção. Portanto, não se preocupe, você poderá encontrar muitos erros ao longo de todo o processo. Como aqui, por exemplo, ele
+
+tentou acessar o site antes de ser compilado e iniciado como um aplicativo Nex.js. E assim se corrige. Ele espera um pouco. Finalmente, o servidor está online. Agora
+
+estamos usando a CLI do navegador do agente para acessá- lo. Também estou tirando uma captura de tela daqui. Já poderíamos dar uma olhada nisso, se quisermos acompanhar seu progresso durante o processo de validação. E aqui está nossa lista de tarefas. Então, inicialmente, ele visitou o site apenas para obter seus gráficos. Agora está
+
+percorrendo todas as jornadas do usuário. E essa é certamente a parte que leva mais tempo, porque temos esse loop "for". Estamos nos empenhando bastante para validar cada uma das tarefas que temos aqui. Assim, veremos uma combinação do navegador do agente e quaisquer chamadas que ele fizer para acessar o banco de dados e validar nossos registros. Tudo bem. Certo. Agora
+
+estamos chegando a algumas das partes interessantes da validação, onde ela precisa realizar operações de escrita a partir da interface do usuário. Assim, por exemplo, atualizando nosso perfil neste site. Assim, o sistema irá salvar e verificar a atualização do banco de dados. Então vemos o programa tirar uma foto para que ele entenda. Ok, aqui está o botão de salvar. Agora deixe-me clicar
+
+nisso. Agora, deixe-me tirar uma captura de tela. Leia a captura de tela para garantir que temos uma boa experiência do usuário ao salvar o jogo. Diz que estamos economizando. Temos um sistema pop-up para tudo. Em
+
+seguida, faça uma chamada ao banco de dados. Assim, é criada uma consulta aqui para garantir que o registro seja confirmado. O perfil foi atualizado com o novo nome de exibição, biografia e URL do avatar. Portanto, está tudo bem na interface e também no nosso banco de dados. Então, vamos dar uma olhada rápida no console Neon aqui.
+
+Tenho apenas algumas tabelas para esta aplicação. Então, perfis, foi aqui que fizemos uma atualização, certo? Como podem ver aqui, temos alguns desses usuários de teste E2E que foram criados. Assim, o agente de codificação cria um usuário totalmente novo , garantindo que ele possa atualizar perfis e, em seguida, criar itens de link para esse perfil, vinculados ao perfil correto. Muita coisa acontece nos bastidores do banco de dados, e se houver algum problema ali, isso pode não se refletir necessariamente na interface do usuário. É por isso que é tão importante
+
+realizarmos esse nível de validação também. E já que estamos no painel do Neon, uma coisa que eu quero mencionar rapidamente é que, quando fazemos esse tipo de teste de ponta a ponta e criamos todos esses perfis e links falsos, além de entradas de banco de dados em geral, isso acaba inchando nosso banco de dados. Mesmo com um banco de dados de desenvolvimento, talvez não queiramos que todos esses registros fiquem simplesmente armazenados. Uma das coisas que gosto de fazer com o Neon é criar uma ramificação. Isso é algo específico do Neon e de como ele funciona com o PostgreSQL.
+
+Podemos criar essas ramificações que essencialmente tiram um instantâneo dos nossos dados atuais e nos fornecem esse banco de dados secundário com o qual podemos fazer o que quisermos. Depois, podemos excluí-lo e voltar à nossa ramificação principal quando quisermos. Dessa forma, posso criar um teste de ponta a ponta e esse é o banco de dados ao qual estou conectado para o meu teste de ponta a ponta. Você pode até integrar isso diretamente ao fluxo de trabalho, se quiser. Não estou fazendo isso agora porque quero que seja um fluxo de trabalho mais geral, que funcione independentemente do banco de dados. Mas existem algumas
+
+coisas muito poderosas que você pode fazer para manter seu teste isolado, mantendo seu banco de dados limpo, enquanto ainda dá ao seu agente total controle sobre o banco de dados para criar e validar registros, tudo o que ele precisa fazer. Muito bem, dê uma olhada nisso. Nossa validação foi concluída e, de fato, corrigiu vários problemas durante os testes de ponta a ponta, além de algumas outras questões que precisaremos resolver posteriormente com nosso agente. Assim, foram encontrados alguns bugs nos testes de ponta a ponta e também alguns na sub-rotina de busca de bugs que foi executada no início do projeto. Temos nossa pasta com capturas de tela de ponta a ponta. Assim,
+
+também podemos validar muitas dessas coisas para garantir que realmente realizou todos os testes que esperávamos. Mas sim, isto está a parecer muito, muito bom. E também nos pergunta se gostaríamos de criar um arquivo Markdown para enviar a outro agente de codificação para resolver esses problemas. A partir daqui, você pode interpretar como quiser. Você pode abordar cada uma dessas questões individualmente. Você poderia simplesmente
+
+enviar todo esse código Markdown para outro agente de codificação. A decisão é inteiramente sua. Mas o importante aqui é que descobrimos que até mesmo pequenos detalhes como esse são extremamente minuciosos. Adoro a especificidade que esse fluxo de trabalho proporciona aos nossos agentes de codificação. São coisas que o agente nunca vai detectar sozinho, ou pelo menos muito raramente. Então, uma última
+
+dica valiosa que quero abordar rapidamente é como podemos usar essa habilidade de teste de ponta a ponta diretamente no desenvolvimento de nossas funcionalidades. Então, no último vídeo do meu canal, que eu já mencionei, expliquei todo o meu processo de programação de IA para desenvolvimento do zero. E o circuito PIV é a estrutura central aqui. Planejar, implementar e validar. E o que eu sempre faço no meu planejamento é criar um documento estruturado em Markdown que descreve tudo o que precisamos construir e toda a estratégia de validação antes de entrarmos na implementação. E
+
+esta é a nossa oportunidade de especificar. Podemos simplesmente dizer ao agente: " Quero que você use a habilidade de teste de ponta a ponta depois de escrever o código para testar tudo de forma bem abrangente." Portanto, para a habilidade que mencionei no repositório do GitHub, desativei a invocação do modelo. Você pode fazer isso com todas as suas habilidades em programação Claude. Então, se eu remover essa linha, você mesmo poderá fazer isso.
+
+Em seguida, o agente pode usar a habilidade de teste de ponta a ponta. Isso é uma espécie de medida de segurança, porque na maioria das vezes você pode querer invocar isso por conta própria. Mas você remove essa linha e então, e eu abordei isso no último curso em vídeo. Então, eu tenho o comando de recurso do meu plano. Aqui eu descrevo a estrutura exata dos meus planos que quero enviar para implementação. Então
+
+podemos simplesmente adicionar uma linha aqui. Então, eu tenho os comandos de validação. Tenho uma seção para qualquer validação adicional. Este é exatamente o modelo que usei no último vídeo. Então poderíamos simplesmente mudar isso e dizer para usar a habilidade de teste E2E para realizar testes abrangentes. Certo?
+
+Literalmente, é simples assim. É só isso que temos que fazer. Então, agora, basicamente, isso será usado como uma sub-habilidade. Portanto, trata-se de uma espécie de subfluxo de trabalho que faz parte de um fluxo de trabalho de implementação maior, no qual é preciso ter cuidado com o uso de tokens . E esse é realmente o último aviso que tenho para você em relação a todo esse processo. É um projeto que depende bastante de
+
+tokens e vai demorar um pouco. Então, definitivamente é o tipo de coisa que você quer enviar e depois trabalhar em outra coisa. Afastar-se do computador, seja ele qual for. Simplesmente deixe isso para lá. Mas o objetivo não é ser rápido. O objetivo é ser
+
+abrangente. Portanto, o tempo que tenho que esperar para que isso termine e os tokens que tenho que gastar, valem a pena para mim. Na verdade, acho que isso acaba me economizando tokens, porque encontra todos esses problemas que, de outra forma, eu teria que resolver com meus agentes de programação mais tarde. E eu executei isso dezenas de vezes na última semana e nem sequer atingi o limite de requisições da minha assinatura do Claude Code Max . Portanto, no geral, é bastante eficiente em termos de tokens. O principal motivo da
+
+demora é que precisamos esperar por todas essas interações da página. Às vezes, o processo entra em modo de espera após cliques em botões, aguardando o carregamento de elementos. No geral, ele é bastante eficiente em termos de tokens. Portanto, recomendo que você utilize essa habilidade e esse comando em algum código com um front-end agora mesmo. Acho que você ficará impressionado com os tipos de problemas que ele consegue encontrar e apontar.
+
+Se você gostou deste vídeo e deseja ver mais conteúdo sobre programação com IA e fluxos de trabalho de programação com IA autorreparadora, inscreva-se! Agradeceria muito um like e uma inscrição. E com isso, nos vemos no próximo vídeo.

@@ -1,0 +1,519 @@
+---
+video_title: "Pushing My AI Dark Factory to Its Limits with Opus + Kimi Combined"
+video_id: qGm6gtHpJq0
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=qGm6gtHpJq0
+video_date: 2026-05-19T03:35:08+00:00
+video_description: |
+  My AI Dark Factory - the self-building codebase that ships its own code through a custom agent harness (Archon workflows) - currently runs entirely on Kimi K2.6. And it works. But as I scale up how much the factory takes on, I'm hitting a ceiling: the hardest steps need more reasoning power than one fast model can give me.
+  
+  So today I'm rebuilding the factory's workflows live to combine two providers. Opus comes in for the deep reasoning and planning - the steps where stronger reasoning actually changes the outcome - while Kimi K2.6 stays the workhorse for implementation, validation, and research. The point is to add reasoning power exactly where it matters without putting everything on an expensive model, so the factory stays token-efficient as it scales.
+  
+  - Dynamous community: https://dynamous.ai
+  - Archon (open-source AI coding harness buildering): https://github.com/coleam00/Archon
+  
+  Livestreams run Mondays, Thursdays, and Saturdays at 9 AM CT, and the weekly long-form video drops Wednesdays at 7 PM CT.
+---
+Sejam todos bem-vindos à próxima transmissão ao vivo sobre a fábrica escura. Já faz um tempinho . Estou ansioso para voltar à fábrica escura. Há algumas semanas, fiz algumas transmissões ao vivo seguidas na Dark Factory. A ideia por trás disso é que se trata de uma base de código que evolui por si só.
+
+Proibida a entrada de humanos. Então, conforme fui desenvolvendo este aplicativo, e explicarei um pouco daqui a pouco para darmos início a tudo isso. Eu não escrevi uma única linha de código e nem sequer revisei o código. Tenho um processo completo nos bastidores, no qual envio uma solicitação para qualquer novo recurso que eu queira implementar ou qualquer bug que eu queira corrigir e que tenha notado enquanto testo o aplicativo em produção. E os fluxos de trabalho que são executados nos bastidores são, na verdade, fluxos de trabalho do Arcon que priorizam automaticamente os problemas, determinando a ordem de prioridade e como resolvê-los um de cada vez.
+
+E então eu executo um fluxo de trabalho Arcon para cada problema. Para que possamos realizar a implementação completa com validação, finalizando com uma solicitação de pull request. Mas não se trata de uma solicitação de pull request para nós analisarmos, e sim de uma solicitação de pull request para outro agente analisar. Assim, ele analisa o PR, responde a qualquer feedback que surja e, em seguida, o mescla, e então temos automaticamente uma implantação em produção. E assim, passamos da identificação do problema até a implementação da funcionalidade ou correção do bug, sem que eu tenha olhado ou escrito absolutamente nada. Essa é
+
+a ideia por trás da fábrica escura, e é algo muito experimental. Tipo, eu literalmente chamo o repositório de experimento da fábrica escura . Porque, quando se deseja obter os resultados mais confiáveis ​​possíveis com a assistência de codificação por IA, estar a par de tudo é fundamental. Para que você possa validar a especificação, valide o código no final, como se faz com o pull request, antes de mesclá-lo. Eu ainda recomendo muito que você faça isso. Este é o nível final
+
+de autonomia que acredito que alcançaremos com o tempo, à medida que os modelos e dispositivos evoluírem a ponto de podermos realmente confiar neles o suficiente, mas definitivamente ainda não chegamos lá. Assim, surgiram alguns problemas interessantes enquanto eu construía essa fábrica sombria. Muitas coisas que mostrei ao vivo, sabe, construindo essa fábrica sombria ao vivo com vocês em algumas das transmissões que fiz no meu canal no mês passado. Portanto, estou animado para trabalhar novamente na fábrica escura hoje. E o grande tema de hoje é a criação de fluxos de trabalho que combinam Opus e Gemini K 2.6. E existem
+
+alguns motivos pelos quais quero construir isso hoje. O primeiro grande motivo, e talvez o elefante na sala que quero abordar aqui, é que os limites de taxa antropogênicos não têm sido os melhores ultimamente. E muita gente tem sentido na pele o impacto de atingir o limite de uso de 5 horas, mesmo depois de terem dobrado a franquia. E parece que esses limites semanais pioraram bastante ultimamente. Portanto, existe essa tendência geral no setor atualmente. Ah
+
+, e vocês estão dizendo que há um eco. OK. Ah, deve ser " Sim, ok". Então, eu fiz isso. Desculpem, pessoal. Eu faço
+
+isso sempre que tenho áudio tocando no meu computador, mas, sim, espero que esteja tudo bem agora. Mas enfim, existe uma tendência geral na indústria atualmente, em que muitos desses agentes de codificação , ou melhor, esses fornecedores, como a OpenAI e a Anthropic, entre outros, estão enfrentando algumas limitações reais de hardware no momento. Então, temos muitas dessas assinaturas subsidiadas que nos dão muito tempo de uso, meio que nos mimando, e elas estão começando a tirar isso com o tempo. Assim, muitas pessoas estão começando a se inclinar para essa ideia de que não devemos usar sempre o modelo mais poderoso. Porque, do ponto de vista de custos, não é realista usar o Opus ou o GPT 5.4 para
+
+toda a pesquisa, planejamento, exploração, implementação e validação, certo? O processo fica muito pesado em termos de tokens quando você tem fluxos de trabalho mais complexos, como o que eu tenho no experimento da fábrica escura. Porque outro dos fluxos de trabalho que tenho aqui, e que ainda nem mencionei, é um para testes de regressão. Então, conforme vou desenvolvendo este aplicativo ao longo do tempo, através de todos os problemas que envio, obviamente existe um grande risco de que o agente de codificação, especialmente porque não estou revisando nada, acabe quebrando coisas diferentes enquanto cria novos recursos. Então, tenho um fluxo de trabalho que é executado uma vez por semana e que testa literalmente toda a aplicação. Então, é isso que eu
+
+chamo de meu tutor de IA. É um agente que teve uma atuação desastrosa em todo o meu canal do YouTube. Então, você faz uma pergunta como "Quais estratégias de trapaça o Cole aborda no conteúdo dele?" e a ferramenta pesquisa em todo o meu conteúdo para fornecer uma resposta bem completa. Então, há muita coisa envolvida nisso, como o pipeline de rastreamento, as estratégias de busca, o agente e a conexão com o LLM, além de toda a biblioteca de vídeos que tenho aqui. Muitas
+
+coisas podem quebrar enquanto estamos construindo coisas novas. Portanto, ter esse fluxo de trabalho de teste de regressão que testa tudo e, em seguida, cria problemas de forma autônoma e, de certa forma, permite que a fábrica evolua automaticamente, é uma parte muito importante do que construí aqui. Mas, todos os fluxos de trabalho que utilizo com a Dark Factory dependem muito de tokens. Assim, desde o início, quando construí esta fábrica sombria do zero, eu sabia que não usaria modelos antrópicos com minha assinatura do Claude. Assim, iniciei a Dark Factory usando o MiniMax M 2.7 como
+
+modelo de linguagem principal para todas as execuções do fluxo de trabalho. E então, também fiz alguns testes com a Kimmy K 2.6 . E é exatamente assim que funciona o fluxo de trabalho da Dark Factory atualmente. Então, eu queria fazer isso apenas por uma questão de eficiência de tokens e também para experimentar. Vamos ver se, ao
+
+construirmos um sistema realmente bom com esses fluxos de trabalho do Archon, qual o resultado que podemos obter com esses modelos, digamos, mais fracos, em comparação com os grandes nomes do mercado, como o Claude Opus, por exemplo? E, bem, obviamente não quero me aprofundar muito nisso, porque já falei sobre isso em outras transmissões ao vivo, mas meu consenso geral é que esses outros modelos que temos, como o Qwen 3.6, o Kimiko 2.6, o MiniMax M2.7, todos esses modelos maiores de código aberto que as pessoas estão tentando usar como alternativa para esses modelos maiores, são decentes. Tipo, você consegue
+
+resultados muito bons, mas sempre fica um pouco decepcionado no final, quando você tem aquele último pull request e as coisas não estão tão boas quanto estariam se você tivesse implementado com, sei lá, Claude Code, Codex , GPT ou Opus. Então, sim, minha recomendação geral agora é que, se você quiser obter os melhores resultados possíveis, ainda vai precisar usar o Opus ou o GPT. Mas o que podemos fazer, e é isso que quero experimentar na transmissão de hoje, é misturar provedores. Então, quero pegar os fluxos de trabalho do Archon que tenho rodando na dark factory aqui e ajustá-los. Assim, em vez de usarmos o Kimiko 2.6 para tudo, usamos o
+
+Kimiko para a maioria das coisas, mas eu quero usar o Opus para parte do fluxo de trabalho. Provavelmente para o planejamento, e talvez a gente até troque ideias sobre isso na nossa transmissão aqui. Vou trabalhar com o código do Claude e mostrar como é analisar um fluxo de trabalho do Archon, descobrir onde é mais oportuno injetar o Opus e, em seguida, adicioná- lo ao fluxo de trabalho. Depois, espero que tenhamos tempo na nossa transmissão de hoje para testar em alguns problemas reais. Então, vamos aprimorar os fluxos de trabalho, implantar tudo na dark factory, para que tenhamos os provedores mistos prontos para serem executados, e então criaremos uma ou duas issues para construir algo novo ou talvez corrigir alguns bugs. Vou descobrir isso também
+
+com vocês, no nosso aplicativo de tutoria de IA . Então, vai ser como sempre, uma transmissão mais informal. Não tenho coisas como ultra preparadas aqui. Tipo, eu não sei exatamente como vou mudar os fluxos de trabalho ou no que vou trabalhar no aplicativo, porque eu só quero mostrar para vocês como eu trabalho no dia a dia. Não que eu faça isso todos os dias, mas, de forma geral, estou observando como trabalho com código na nuvem para aprimorar nossos fluxos de trabalho de comunicação, executá-los e evoluí-los ao longo do tempo.
+
+Então, esse é o plano para hoje. Aliás, este aplicativo chat.dynamis.ai já está disponível para vocês usarem. Vou colocar um link para isso aqui no chat .
+
+Mas você pode criar sua conta e usar isso gratuitamente. Obviamente, preciso ter um limite de taxa de requisições razoável aqui, já que isso está usando meus créditos da API. Na verdade, estou usando o OpenRouter. Então, isso é algo que eu realmente esqueci. Acho que o agente por trás disso é o Gemini 3 Flash. Assim, o
+
+modelo de linguagem principal por trás de toda essa aplicação é o Gemini 3 flash através do Open Router. Mas você pode usar isso gratuitamente. E se você for membro da comunidade Dynamis, este agente não só pesquisa meus vídeos do YouTube, como também todo o conteúdo de cursos e workshops da comunidade. Portanto, se você faz parte da comunidade, certifique-se de se cadastrar com o mesmo e-mail que você usa no Dynamis. Dessa forma, a conexão é estabelecida e o agente recebe permissão para pesquisar no Dynamis em seu nome.
+
+De resto, continua sendo muito útil, mesmo que você não seja membro do Dynamis, pois pesquisa em todo o meu conteúdo do YouTube. Então, vamos começar. Então, vou abrir meu IDE. Tudo bem. Pronto. Então, eu tenho uma conversa
+
+pronta com meu segundo cérebro, onde meio que o preparei para o que vou fazer na transmissão ao vivo de hoje. Então, nós obtivemos a base de código de autoconstrução da fábrica obscura de IA . No momento, está totalmente baseado no Kimiko 2.6. O resultado de hoje é que optamos pelo Opus para uma análise e planejamento mais aprofundados.
+
+E então, o Kimiko 2.6 permanece como a ferramenta principal para implementação e validação. E essa foi uma das decisões que tomei antecipadamente, antes da transmissão ao vivo. Mas as pessoas vão para qualquer lado. Ao combinar diferentes fornecedores, como usar o Opus com o Kimiko, algumas pessoas usam o Opus apenas para o planejamento. Certo?
+
+A ideia é que, se usarmos o modelo mais robusto para criar o plano abrangente, estaremos simplesmente confiando que Kimiko seguirá o plano, em vez de termos que descobrir como implementar algo do zero. Essa é uma maneira de fazer isso. A outra corrente de pensamento atual defende o uso do modelo mais fraco para o planejamento e do modelo mais robusto para a implementação. A ideia é que o planejamento ainda não afeta o código , então não tem problema se o plano não for perfeito, porque quando aplicarmos o modelo mais robusto para a implementação, ele detectará quaisquer pequenos problemas que estejam no plano, já que o modelo menos eficiente não era tão bom durante o processo de planejamento. E, sinceramente, ainda não sei qual dos dois lados é o melhor. Certo? Afinal,
+
+onde é que um raciocínio melhor realmente importa? É o momento em que efetivamente escrevemos o código ou é o planejamento que dita o código? Então, neste momento, estou inclinado a pensar que devemos fazer o melhor plano possível. É aí que eu quero usar o Opus. Mas também estou curioso para saber a opinião de vocês. Se quiser, pode me
+
+dizer no chat o que você acha melhor. Por exemplo, devemos usar o modelo mais robusto para implementação ou para planejamento? Ou talvez você tenha algo totalmente diferente e acredite que, para validação, o melhor seja usar o Opus. Hum, sinceramente, sou bastante flexível. Talvez eu experimente algumas variações desse fluxo de trabalho. Assim que eu tiver tudo
+
+configurado para provedores mistos, vai ser muito fácil ajustar o fluxo de trabalho do Archon. Tipo, eu literalmente nem preciso mudar os prompts nem nada. Basta alterar o provedor para cada nó. E essa é uma das partes mais interessantes da construção dos fluxos de trabalho do Archon: cada nó que temos é único. É aqui que fazemos nosso planejamento. É aqui que realizamos a
+
+implementação. Basta alterar alguns parâmetros, como o modelo e o provedor, e desde que a autenticação esteja configurada onde quer que eu esteja executando o fluxo de trabalho do Archon, posso fazer essa alteração num instante. Então, é isso que faremos hoje: vamos conectar tudo na instância em nuvem onde estou executando o Dark Factory, para que tenhamos conexão tanto com o Anthropic quanto com o Kimi. E eu vou usar minha assinatura para ambos. Uma das coisas que eu já tenho configurada, porque obviamente já uso o Kimi no Dark Factory, é a minha assinatura do código Kimi. Então são apenas 40 dólares
+
+por mês. Estou no nível LA Grotto. E isso te dá limites de taxa muito melhores em comparação com a análise antropogênica. Tipo, 40 dólares por mês e eu tenho usado, mas obviamente não usei muito esta semana. Mas quando eu o estava usando com mais frequência para construir a fábrica escura inicialmente, quando usava o Kimi K 2.6, eu nem chegava perto
+
+de atingir meus limites de taxa de 5 horas ou semanais . Tipo, eu chego perto do resultado final toda semana com a Anthropic. Assim, você ganha muitos tokens por isso. Obviamente não tão potente. O modelo principal deles não é tão poderoso quanto os modelos principais da Anthropic ou da OpenAI , mas é por isso que vamos usá-lo como nossa ferramenta principal aqui, em conjunto com o Opus.
+
+Tudo bem. Energia para o plano, modelo de energia diferente para a implantação. O Open Router Fusion é interessante. Nunca ouvi falar de Open Router Fusion. Não sei se você está se referindo a algum projeto específico de código aberto , mas sim, é isso que eu quero dizer: poder para o plano.
+
+Opus para planejamento, Kimi para implementação. Certo, sim, é exatamente isso que estou fazendo. Que bom que estamos em sintonia, Sean. Para testes de regressão, você deve conseguir usar um modelo mais fraco. Sim, então provavelmente não vamos mexer no fluxo de trabalho de teste de regressão que tenho na fábrica escura hoje, mas isso é outra coisa que provavelmente vou manter como a Kimmy faz. Então,
+
+basicamente, é isso que você disse, Jeff. Na verdade, não precisamos do Opus para os testes de regressão. Seu plano deve ser bom o suficiente para que um modelo menos sofisticado possa implementá-lo. Essa é exatamente a ideia aqui. Sim. Hoje à noite, vamos comparar o
+
+plano de avaliação comparativa com a implementação. Acabei de escrever o pipeline. Ok, legal. Sim, me avise como foi. Estou curioso porque...
+
+Essa é uma ideia muito legal, que é a de benchmarking. Eu não cheguei a fazer isso com fluxos de trabalho do Arkon, mas se criássemos um fluxo de trabalho que usa o Opus para planejamento e o Kimmy para implementação, e depois outro fluxo de trabalho que inverte essa ordem, e então executássemos esse mesmo fluxo de trabalho em uma série de issues do GitHub, por exemplo, e depois tivéssemos alguém, seja nós mesmos ou terceiros, revisando as diferentes solicitações de pull para descobrir qual fluxo de trabalho teve o melhor desempenho. Isso seria realmente interessante. Tipo, na verdade, essa poderia ser a próxima transmissão ao vivo que eu farei. Hum, essa é uma ideia muito legal.
+
+Porque aí, de certa forma, isso resolve o problema ou nos dá a resposta final. Tipo, agora mesmo, enquanto estou dizendo isso para vocês, eu realmente não sei o que é melhor. Então, vamos ficar com apenas uma. Quer dizer, estou razoavelmente confiante. Ah, não devia dizer super confiante. Eu definitivamente
+
+estou mais inclinado para o modelo de planejamento mais robusto, mas veremos. Procuro utilizar os sonetos. Procuro configurar o Opus para que o modelo Sonnet realize o processamento e redija os relatórios, e o Opus para implementar com subagentes. Onde estão as saídas? Certo, sim, faz sentido. E
+
+quanto aos subagentes, onde estão as saídas, eles enviam um resumo de volta para o agente principal, se é isso que você está perguntando. Assim, sempre que você despacha uma tarefa, os subagentes podem gerar um arquivo Markdown para que seu processo subsequente o leia posteriormente, ou podem simplesmente enviar um resumo de volta para a sessão principal onde você está executando seu agente de codificação. [bufa] É, tudo bem. Então, é legal ouvir que os caras estão mais ou menos na mesma sintonia que eu nesse aspecto. Então, vamos começar.
+
+Resumindo, preciso começar adicionando os diferentes provedores aos fluxos de trabalho do Archon. Então, vou usar minha ferramenta de conversão de voz em texto de forma bem livre para dar um resumo inicial do que quero fazer nos fluxos de trabalho do Archon. E eu vou mostrá-los na tela enquanto falo também. Então, eu tenho o repositório Dark Factory clonado localmente. Não que eu esteja trabalhando nisso localmente, mas apenas para mostrar a vocês os fluxos de trabalho aqui. Então, se falarmos em
+
+fluxos de trabalho, aqui estão os quatro que eu tenho. Então, tenho a triagem de problemas, tenho que lidar com cada problema individualmente, validar cada solicitação de pull request individualmente e, por fim, aquele teste de regressão que provavelmente não vamos abordar hoje . Então, vou usar o recurso de fala para texto e dizer: "Certo. Quero que você crie uma nova ramificação no repositório de experimentos da Dark Factory que temos localmente, porque quero trabalhar na reformulação dos fluxos de trabalho do Archon para usar uma combinação de provedores." E, por agora, vamos mudar o fluxo de trabalho para corrigir problemas no GitHub, porque neste caso eu quero usar uma combinação de Opus e Kimmy.
+
+Portanto, no fluxo de trabalho atual na Dark Factory, estamos usando a Kimmy para absolutamente tudo. Mas também quero usar o Opus para o planejamento. Então, ainda usaremos a Kimmy para pesquisa e investigação, como em todas essas etapas aqui. Bem, então, ok, sim, mas para a etapa de planejamento, quando executarmos o comando `Archon create plan`, é aí que eu quero usar o Opus, com minha assinatura Anthropic. Agora, uma coisa realmente importante que teremos que reformular com esse fluxo de trabalho é que, atualmente, quando executo o Kimiko 2.6 no VPS, estou usando o Claude como meu
+
+provedor, mas redirecionei o tráfego por meio de variáveis ​​de ambiente para apontar para minha assinatura do Kimiko Code e para o Kimiko 2.6. Mas agora terá que ser diferente. Não consigo substituir o Claude globalmente porque preciso usar o Opus agora com minha assinatura para um dos nós. Portanto, isso significa que precisamos usar o Pi como nosso provedor para usar o Kimiko.
+
+E então use Claude para Opus. Portanto, você terá que mudar fundamentalmente todo o fluxo de trabalho para usar o Pi para tudo com o Kimiko 2.6 e, em seguida, apenas o Opus com o Anthropic para o planejamento. Portanto, preciso que você entenda como o Pi funciona em Arcan. Veja alguns fluxos de trabalho de referência que utilizam o Raspberry Pi. Trabalhamos nisso
+
+recentemente. Assim, você também pode consultar suas memórias, já que meu segundo cérebro também funciona. E também gostaria que você confirmasse como configuramos as credenciais para Kimiko e Anthropic. Assim que o fluxo de trabalho estiver reformulado e pronto para ser implantado no VPS, você poderá me fornecer instruções precisas para configurar minha chave de API do código Kimiko para o Raspberry Pi e ativar minha assinatura da Anthropic. E então teremos que alterar também as variáveis ​​de ambiente para que não precisemos mais usar o Kimiko para o código Claude no fluxo de trabalho Arcan.
+
+Tudo bem. Foi um verdadeiro desabafo. Então, espero que vocês consigam entender o que eu estou tentando fazer aqui. Se quisermos misturar fornecedores, não poderei usar o código Claude para tudo como fazia antes. Eu literalmente tinha o código do Claude configurado como o código de segurança apontando para a Kimiko. Mas agora
+
+temos que usar Pi misturado com Claude. O que é ótimo, porque tenho trabalhado com Raspberry Pi. Tipo, foi nisso que me concentrei na minha última transmissão ao vivo também, eu estava trabalhando em algumas coisas relacionadas ao Raspberry Pi e construindo, na verdade, foi bem legal. Construímos algo como uma extensão Arcana para o Raspberry Pi. Então, caso você não esteja familiarizado, o Pie é um agente de código aberto e com o mínimo de programação.
+
+E o objetivo do Pie é tornar muito fácil a criação do seu próprio sistema no agente de codificação e o uso de qualquer modelo ou provedor que você desejar, e é por isso que vamos usá-lo no Kimiko 2.6. Então, vou ter que desabafar agora. Então, vamos começar editando o fluxo de trabalho localmente. Então, como estamos vendo neste arquivo aqui, vamos editá-lo localmente.
+
+Em seguida, trabalharemos na implantação e na configuração de todas as credenciais no VPS. Portanto, espera-se que não demore muito tempo no geral. E então poderemos chegar ao ponto em que poderemos testá-lo em alguns problemas reais. Então, também estou com o terminal aberto porque provavelmente terei que acessar o VPS via SSH onde o Dark Factory está instalado para configurar as credenciais. Tudo bem.
+
+Vamos voltar e verificar se está funcionando. OK. [bufa] Ótimo. Ok, então parece que vou interromper por um segundo. Minha ferramenta de conversão de voz em texto disse "py" em vez de " pi". O agente de codificação é pi, não
+
+pi. Deixe-me fazer essa correção. Caso contrário, pode ficar extremamente confuso. OK. Aliás, para a Aqua Voice, uma coisa que eu deveria fazer e ainda não fiz é simplesmente adicionar ao dicionário.
+
+Portanto, é uma palavra personalizada. Então, agora, quando eu disser pi, ele saberá do que estou falando . Então, isso é uma coisa legal para evitar erros de pronúncia, tipo meu nome e Dynamis, e outras ferramentas que eu uso, como o Pydantic AI, por exemplo. Então, é isso. Tudo bem. Isso
+
+não acontecerá mais daqui para frente. Legal. Enquanto isso acontece, vou dar uma passadinha no chat novamente. Vejam o que vocês andam dizendo. Hum, na minha experiência, acho que Kimiko é melhor que MiniMax? Sim, boa
+
+pergunta. Assim, o Kimiko 2.6 apresenta melhor qualidade de saída em comparação com o MiniMax. Além disso, custa três vezes mais. Quer dizer, ambos são muito baratos, tipo, bem mais baratos que sauna e Opus. Mas sim, Kimiko é
+
+um pouco melhor. O problema que tenho tido com o Kimiko, infelizmente, é que a API deles não é das mais confiáveis. Às vezes, quando estou usando o Kimiko com o Pie ou dentro de um fluxo de trabalho do Archon, a API simplesmente trava indefinidamente. E não é como se houvesse um erro, então meu fluxo de trabalho Archon nem sequer tenta novamente. Fica simplesmente travado aguardando a API do Kimiko.
+
+Isso já aconteceu comigo umas três ou quatro vezes, o que é bem frustrante. E no caso do MiniMax, isso só aconteceu uma vez. E para Claude, acontece muito raramente , é algo extremamente raro. Assim como a API deles, enquanto não houver uma interrupção ativa, a API deles é muito confiável. Então, acho que é meio irônico chamar a API da Anthropic de confiável, já que ela apresenta tantas interrupções . Por exemplo, o tempo de atividade deles é de 98,66%
+
+para o Claude.ai. Assim como isso. E a API Claude deles também é inferior a 99%. É bastante ridículo. Por exemplo, para uma
+
+aplicação implantada na nuvem, geralmente se deseja um tempo de atividade de pelo menos 99,9%. Por exemplo, se você acessar um site como o status.um superbase, o tempo de atividade deles é de 99,95%, 99,9%. Certo, assim ficou muito melhor. Portanto, eu também não os chamaria de estáveis.
+
+Mas acho que, assim como Kimiko e MiniMax, mesmo quando não há nenhuma interrupção, quando as coisas estão teoricamente operacionais, ainda assim, às vezes, ocorrem travamentos na API. E Kimiko é simplesmente pior nisso. Portanto, algo para se ter em mente. Espero que eles trabalhem nisso com o tempo. Porque, à medida que começamos a adotar esses modelos mais baratos e de código aberto, definitivamente não queremos ter problemas de confiabilidade incorporados aos nossos fluxos de trabalho. Então, essa é uma
+
+desvantagem atual, mas ainda quero trabalhar nisso agora porque o problema em torno dos limites de taxa e do gerenciamento de tokens é real neste exato momento. Tudo bem. Tenho um componente de julgamento adversarial com IA onde as IAs verificam o trabalho umas das outras? Sim eu faço. Então, para a fábrica escura aqui, se eu abrir os fluxos de trabalho novamente, terei uma espécie de processo duplo.
+
+Portanto, dentro do próprio fluxo de trabalho de problemas fixos do GitHub, após a implementação, realizo uma validação. E o importante aqui é que eu tenha um contexto claro entre essas duas sessões. Eu não dou continuidade à conversa, então é realmente um agente de codificação separado que valida o trabalho antes de criarmos a solicitação de pull request. E depois que criamos a solicitação de pull request, eu tenho um fluxo de trabalho secundário que realiza uma revisão mais completa, certo? Assim como a validação que fazemos aqui no fluxo de trabalho de correção de problemas do GitHub, esta é mais uma primeira análise. Em seguida, fazemos uma
+
+revisão mais abrangente que também mescla automaticamente a solicitação de pull request na branch principal e realiza a implantação completa se considerar a PR pronta para uso. Caso contrário, o processo continua até atingir esse ponto. Certo, então, independentemente do que aconteça, esse fluxo de trabalho terminará com algo incorporado ao principal, a menos que haja algum problema muito grave que não possa ser corrigido por algum motivo. É como se eu tivesse um limite máximo de tentativas definido nisso. Mas sim, eu meio que incorporei um desenvolvimento adversarial nesse fluxo de trabalho de validação de PR, onde ele é instruído especificamente a ser muito crítico em relação à implementação. E outra
+
+coisa é que esse fluxo de trabalho de validação de PR não leva em consideração o contexto da implementação. Portanto, ele conhece o problema no GitHub e conhece o resultado final. Por exemplo, aqui estão as diferenças obtidas no PR, mas isso não leva em consideração o processo intermediário. Assim, não há nenhum viés embutido na sessão do agente de codificação para validação que venha de qualquer parte da especificação ou do processo de implementação em si. E assim, mantemos isso intencionalmente no escuro. Por exemplo, ele conhece o
+
+problema no GitHub, como eu disse, ele conhece o problema no GitHub e a diferença final, mas não sabe como o agente anterior chegou a essa conclusão . Você sabe o que eu quero dizer? Tipo, é muito importante que ele não entenda isso. Tudo bem. Às vezes uso o Opus para orquestração e planejamento, mas não como parte da estrutura de agentes que escreve o código.
+
+Tenho um fluxo de trabalho específico para fazer planos, incluindo a definição de interfaces. Sim, eu adoro isso. É exatamente isso que eu quero alcançar aqui. Legal. Devo assinar o plano de US$ 19 do Kimiko? É uma
+
+boa opção para tarefas de programação pesada? Portanto, eu definitivamente recomendo começar por aí se você não quiser ir direto para o plano de US$ 40 por mês, como eu fiz. Mesmo com o plano de 20 dólares por mês, acho que você não vai atingir os limites de tarifa. Tipo, a única razão pela qual eu pulei direto para o segundo nível foi por causa da escala da Fábrica Sombria. Tipo, eu só queria estar preparado para enviar dezenas e dezenas de edições para isso. Bem, você provavelmente
+
+deveria se dar bem com o plano de 20 dólares por mês . Então, com o Kimiko, você ganha cinco vezes mais créditos com US$ 40 em comparação com US$ 20. Portanto, sim, eu diria para começar com US$ 20 e, conforme seu uso aumentar, você pode perceber que precisa fazer um upgrade, mas eu só faria isso quando realmente precisasse. E então, sim, uma vez que você... Então, o
+
+custo... Então, é duas vezes mais caro ir disso para isso com cinco vezes mais uso. E, além disso, tudo custa mais que o dobro para obter apenas três vezes mais uso. Então, para mim, não faz muito sentido
+
+aumentar a mensalidade para 100 dólares. Tipo, se eu começar a atingir limites de taxa absurdos mesmo com a Kimmy, o que eu nem consigo imaginar, então eu provavelmente tentaria usar a assinatura MiniMax porque ela dá ainda mais tokens em comparação com a assinatura Kimmy. Então, na verdade, o preço do modelo também determina a quantidade de créditos que você recebe com a assinatura, já que a MiniMax também oferece assinaturas, assim como a Kimmy, a Codex e a Anthropic. Muito bem, vamos ver onde estamos agora. Hum, vejamos. Então, criamos a ramificação que explica
+
+como o Pi funciona no Arkon e desenvolvemos um entendimento sobre isso. Regras principais da fonte do fornecedor. As credenciais de premiação são completamente separadas dos códigos de Claude. Portanto, este é o arquivo off.json que teremos que configurar no VPS.
+
+Então, neste momento a configuração tem uma variável de ambiente que define Anthropic para apontar para Kimmy, certo? Então, quer dizer, vocês já sabem disso pelo meu desabafo, mas estou apenas confirmando que Claude entende exatamente o que está acontecendo aqui. Assim, ele sequestra todos os subprocessos de código Claude do provedor Claude no repositório. Não consigo adicionar um nó Opus real enquanto essa alteração estiver ativa. Hum, existe uma segunda armadilha. O
+
+provedor Anthropic integrado do Raspberry Pi também lê a chave da API do Anthropic, então rotear a solicitação para Kimmy através do Anthropic causaria um novo conflito . A solução é um provedor Pi personalizado que não compartilha o nome de uma variável de ambiente com o código Claude. Na verdade, essa parte não me interessa. Talvez eu precise corrigir isso aqui, pois não estou usando modelos antrópicos com Pi. Então, no arquivo workflow.yaml,
+
+vamos alterá-lo para Pi e, em seguida, usar Kimmy como modelo padrão para codificação. E então, para o nó do plano, vamos adicionar o provedor Claude e o modelo Opus. Portanto, por padrão, Kimmy executará tudo no fluxo de trabalho, e então nós o substituiremos no nível de nó individual quando executarmos o comando de criação de plano do Archon. E então, para classificar o problema e revisar a classificação, vamos descartar o modelo high-ku porque não temos nenhuma alternativa mais rápida em... Kimmy. Tipo,
+
+quando você usa o Kimmy, você está sempre usando o Kimmy para programar, e eu tenho quase certeza de que isso está rodando o Kimmy K 2.6 por baixo dos panos. Eles simplesmente chamam de Kimmy para codificação porque isso direciona a solicitação através da assinatura. Ah, ok, então, para as credenciais, precisamos registrar um provedor personalizado no VPS com a chave de API do Kimmy para código. Assim, a configuração do Pi fica invisível para o código de Claude. E então, para o código Claude com
+
+Opus, precisamos remover as variáveis ​​de ambiente Kimmy e autenticar o código Claude no VPS em relação à nossa assinatura real. OK. Então , eu vou dizer que sim. Então, ele quer que eu acesse o VPS via SSH e inspecione a instalação do Raspberry Pi em execução. Assim, posso escrever a configuração personalizada do provedor . Ok, sim. Então, vou deixar que aconteça isso
+
+. Acho que isso vai levar em conta que ainda não temos nada configurado para o Raspberry Pi. Então, vamos deixar rolar. E perceba isso, e então configuraremos nossas credenciais. Então, deixe-me fazer isso.
+
+Vou acessar o VPS via SSH também, só para mostrar a vocês o que já temos lá. Tudo bem. Então, se eu fizer um LS...
+
+Sinceramente, eu esqueci. Eu esqueci o caminho que tem tudo. Hum, acho que era barra opt. Sim, aqui. Fábrica Sombria.
+
+Hum,
+
+acho que é isso. Yeah, yeah. Certo, é isso. O gato saiu do "leia-me". Certo. OK. Então, sim. Então, este é o
+
+aplicativo. Se eu fizer isso, dê uma olhada nisso. Se eu executar um Claude aqui mesmo na fábrica escura, agora, você pode ver que ele está usando Kimmy para programação. Então, eu sobrescrevi o próprio código do Claude. Tipo, obviamente, isso não é aceitável. Então, teremos que
+
+mudar isso aqui. Então, é nisso que vamos pedir ao nosso Claude, que está aqui na região, para nos ajudar agora. Tudo bem. E então, na última transmissão ao vivo, foi meio engraçado. Minha chave de API da Kimmy ficou exposta, o que foi realmente péssimo. Então, tive que girá-lo ao vivo na
+
+transmissão. Tomara que isso não aconteça desta vez. Veremos. Bem, sim , atualmente, meu segundo cérebro tem alguns recursos de segurança para bloquear o acesso a variáveis ​​de ambiente. Então, ele terá que perceber isso e depois me dizer o que eu posso fazer por conta própria. É por isso que também estou acessando via SSH
+
+, porque vai me dizer algo como: "Ok, agora é aqui que você precisa ir para configurar sua chave de API do Kimmy." E então, irei lá e farei isso. Tudo bem. E se usássemos o SDK do Claude com as chaves da API do Kimmy? É exatamente isso que estou fazendo aqui. Até então, nos
+
+meus fluxos de trabalho antrópicos, eu vinha usando o SDK asiático do Claude, simplesmente roteado para a Kimmy. É exatamente isso que estou mostrando aqui com a sobreposição. Isso afeta o código do Claude e, obviamente, também o SDK asiático do Claude, que é o que os fluxos de trabalho do Arkon usam internamente quando eu direciono o provedor para o Claude. Preciso corrigir isso agora porque talvez seja uma limitação do meu próprio conhecimento, mas não sei como usar o SDK do Claude com o Kimmy e o Opus simultaneamente. Porque Claude teria que se autenticar de forma diferente ou ser encaminhado de forma diferente dependendo do modelo que eu estiver usando. Então, é por isso que
+
+estou mudando o Claude. Estou removendo a configuração de sobreposição agora mesmo e depois usando o Pi para a Kimmy. [bufa] Tudo bem. Então, você diria que Kimmy é melhor que MiniMax ? Sim. Sim. Então, talvez
+
+você tenha sido a mesma pessoa que fez a pergunta antes de eu responder, mas sim, Kimmy é um pouco melhor. Infelizmente, não é tão confiável. Que tal experimentar um modelo local? Esta semana, consegui fazer o Raspberry Pi funcionar com o Qwen 3.6 na minha placa de vídeo 4090. Que legal,
+
+Jeff! Não farei nenhum teste com modelos locais porque demora um pouco para baixar e meu computador está com alguns problemas estranhos para executá-los, chegando a travar. É realmente uma pena, mesmo eu tendo duas 3090. E também, uma versão local da Qwen provavelmente não será poderosa o suficiente para o que estou fazendo na Fábrica das Trevas. Sim, eu uso modelos de código aberto como Kimmy e MiniMax, mas o Kimmy tem mais de um, são 1,1 trilhão de parâmetros. Então, é de
+
+código aberto e você poderia executá-lo localmente, mas eu não consigo executá-lo localmente. Por isso, estou usando apenas a API no VPS aqui. Tudo bem. Onde o serviço de mixagem ao vivo deve ser executado, visto que o VPS ainda não está pronto? Então, sim, quero atualizar o VPS e executar o comando lá. Então, vamos atualizá-
+
+lo para que, tipo, eu vou... Ok, então vamos criar o fluxo de trabalho e depois configurar tudo no VPS com autenticação e executá-lo lá. Como você deseja gerenciar a assinatura do código Claude ?
+
+Hum, vou fazer um login com o Claude. Sim, então, eu mesmo farei o login com o Claude depois que você limpar as variáveis ​​de ambiente , para que não precisemos mais sobrescrever nada . Preciso que você se certifique de que temos um ambiente limpo para o Claude, para que eu possa fazer o login. Também quero que você configure o Raspberry Pi e me informe onde posso adicionar a chave da API do Kimmy. OK.
+
+Enviar. Muito bom. Então, acho que ainda não resolveu o problema. Acho que posso fazer o teste agora mesmo. E se eu fizer o Claude?
+
+Sim, então ainda não foi sobrescrito. Portanto, ainda precisa fazer isso. E, além disso, não acho que tenha alterado o fluxo de trabalho ainda. Talvez tenha acontecido mesmo. Aguentar. Desculpe,
+
+eu estava olhando o chat, então não estava realmente acompanhando. Ok, sim. Portanto, o fluxo de trabalho também ainda não foi atualizado . Certo, então vamos deixar rolar . Ok
+
+. Diz que minha transmissão será às 9h da manhã, horário central, hoje. Atualizar tudo é um risco. Talvez eu diga depois que estou no meio de uma transmissão ao vivo neste momento. O sistema acha que ainda estou me preparando para isso, o que é culpa minha. No fim das contas, isso não importa
+
+muito. Tudo bem.
+
+[suspiros] Ok, então o Jeff disse que usaria modelos locais para uma etapa de processo de fluxo de trabalho mais leve . Sim, quero dizer, o máximo que você puder. Ok, é o seguinte. Em muitos dos seus fluxos de trabalho de programação de IA, haverá etapas que realmente não exigem muita capacidade de raciocínio. Como costumo fazer em haicais, geralmente envolvo várias etapas de pesquisa ou exploração do código-fonte. Qualquer coisa para a qual você queira
+
+usar um subagente, geralmente pode ser feita com o Haiku. E o Qwen 3.6, que o Jeff está usando localmente, eu diria que é tão bom quanto o Haiku. Portanto, existem alguns casos de uso reais para a utilização de modelos locais. Você não paga absolutamente nada e não tem limites de preço para determinadas etapas de qualquer tipo de pesquisa ou exploração na web ou em bases de código que você esteja realizando.
+
+Então, eu vou... eu vou para Ollama. Vou deixar isso aqui rapidinho porque o Qwen 3.6 é um que estou muito
+
+interessado em testar mais a fundo em breve. Mas eles têm 27 bilhões e 35 bilhões de parâmetros para o Qwen 3.6. Então, provavelmente, se você tiver uma placa de vídeo como a 3090 ou a 5080, ou algo parecido , você conseguirá rodar um desses jogos. Provavelmente você só precisará quantizá-lo um pouco, tipo em um Q4, e aí poderá executá-lo. Então, se eu
+
+fosse executar isso agora, provavelmente usaria este. 35 E porque também são apenas 3 bilhões de parâmetros ativos. Então, desde que caiba no espaço , vai ser bem rápido. É muito legal. Mas não farei isso nesta transmissão ao vivo. Definitivamente fora do escopo, mas também
+
+seria legal mostrar isso. Tudo bem. Estou obtendo resultados ruins com subagentes realizando a implementação. São adequados para tarefas como pesquisa, criação de mapas rodoviários a partir de plantas e assim por diante. Portanto, isso definitivamente está de acordo com a minha experiência também. Na verdade, eu sempre
+
+recomendo o uso de subagentes para pesquisa ou qualquer tipo de exploração, mas não para implementação. E a principal razão para isso é que, sempre que você está fazendo qualquer tipo de pesquisa, tudo o que realmente importa é o resumo no final. E é exatamente isso que os subagentes fornecem à sessão do seu agente de codificação principal: apenas um resumo. Então, quando você pede para ele fazer uma pesquisa extensa sobre algo, ele vai gastar dezenas ou talvez até centenas de milhares de tokens com pesquisas na web ou lendo arquivos que você tem localmente, seja qual for a tarefa, mas geralmente você está procurando apenas por uma pequena informação. Qual é, afinal, o que é a arquitetura? Ou, por exemplo,
+
+onde está o arquivo que eu preciso? Ou, por exemplo, onde está o endereço URL dessa página da web? Então, essa é a única coisinha que você precisa enviar de volta para o seu agente principal. Mas, para a implementação, você realmente precisa que seu agente principal tenha uma noção de cada arquivo que foi criado ou editado e de tudo o que foi alterado. Porque se você não tiver o contexto completo disso, então, quando você entrar na fase de validação ou algo do tipo, você vai se deparar com alucinações, porque o agente não tem o contexto completo do que foi alterado no subagente.
+
+Portanto, sempre existe uma grande desconexão aí. Então, na verdade, você só deve usar subagentes para situações em que um resumo seja aceitável. E eu jamais diria que um resumo é aceitável para fazer alterações na sua base de código . Você precisa do contexto completo. Assim como quando você abre uma solicitação de pull request, você tem a opção de obter as diferenças, certo? Assim como eu, você
+
+tem todo o contexto necessário para a próxima etapa de validação no fluxo de trabalho do Archon. Espero que isso faça sentido. Espero que isso ajude. Mas você certamente não está sozinho. Tudo bem. Pelo visto, continua
+
+funcionando normalmente por aqui. Legal. Na verdade, a implementação local ainda é um campo fértil para revisão. Uau, isso é impressionante. Nunca utilizei um modelo local para implementar algo em uma das minhas bases de código reais .
+
+Isso é legal. Com todo esse texto aqui, como o curso de mestrado em Direito (LLM) vai saber qual texto você destacou, como você disse? Certo, essa é uma pergunta justa. Então você está se referindo àquela época em que eu fiz meu brainstorming inicial e estava destacando algumas coisas. Então, isso era para vocês, não para o agente de codificação. Na
+
+verdade, não tem como saber quais itens estou destacando. É sempre um pouco estranho usar a função de ditado por voz em uma transmissão ao vivo, porque eu meio que quero que vocês consigam acompanhar meu raciocínio da melhor forma possível. Às vezes, eu digo algo que é mais para você saber do que estou falando enquanto aponto algo na minha tela, não porque o Aqua Voice realmente consiga ler o que estou destacando. Mas essa é uma boa pergunta. [risos] É, isso seria muito legal.
+
+Uma coisa que o Aqua Voice tem, se eu voltar às configurações aqui, é o maldito Malwarebytes. Certo, eles têm algo chamado contexto profundo. Assim como podemos usar o contexto da nossa tela para aumentar a precisão. Hum, não me cite, mas acredito que isso só acontece depois que eu envio a mensagem; aí sim, o sistema processa a mensagem e o que está sendo exibido na minha tela. Mas, enquanto falo, acho que ele não consegue ler as coisas, ver o que estou destacando e processar isso também. Talvez realmente aconteça, mas
+
+pelo que tenho visto, acho que não. [bufa] Porque , na verdade, como ferramenta de conversão de fala em texto, tudo o que ela faz é produzir um pouco de texto. Portanto, não há nenhuma compreensão visual associada a isso. Ou como se não estivesse enviando informações de compreensão de imagem para Claude. Ele simplesmente usa o que lê na tela no momento em que envio a minha solicitação para ajudá-lo com a ortografia e coisas do tipo .
+
+Portanto, não é tão elaborado quanto poderia ser. Isso seria legal . Tudo bem. Chegando lá. Legal.
+
+Hum, por que não estou usando o Type Whisper ou o Spokenly para conversão de texto em fala? Então, para ser honesto, eu não experimentei nenhuma dessas duas ferramentas. E o principal motivo pelo qual uso o AquaVoice é porque já o utilizo há mais de um ano e não tenho qualquer queixa a fazer. Bem, quase. Quer dizer, não é sempre perfeito, mas acho que nenhuma ferramenta de conversão de voz em texto jamais será.
+
+E aí, de vez em quando, eu transcrevo alguma coisa e simplesmente não funciona. Então eu tenho que clicar em "Executar transcrição novamente" e depois copiar o texto de volta para a minha caixa de texto. Mas isso é bastante raro. No geral, essa ferramenta funciona muito bem para mim. Por isso não uso outra coisa.
+
+É como se eu estivesse usando isso desde, tipo, 28 de abril de 2025. É muito bom. Bem , dito isso, não estou tentando empurrar o AquaVoice para vocês. Como eu tenho certeza, o comando "Digite Sussurro" ou, falando, " Sussurro" flui como outro. O Epicenter Whispering é uma alternativa gratuita e de código aberto . Existem muitas
+
+ferramentas boas por aí, mas talvez não sejam tão boas quanto o Aqua Voice. Talvez sejam melhores. Eu realmente não sei, mas a questão é que ter uma dessas ferramentas de conversão de fala em texto é muito útil para qualquer coisa com modelos complexos em inglês, mesmo além da programação de IA. Qualquer coisa em que você tenha uma ideia na cabeça e queira colocá-la no papel de forma bem completa, mas sem ficar digitando por 10 minutos. Certo? Tipo, eu falo muito mais rápido do que
+
+digito. Não sei quanto a vocês, mas eu não consigo digitar a 224 palavras por minuto. E isso é apenas uma média, considerando que muitas vezes, quando abro o Aqua Voice assim, fico pensando, né? Como se eu não estivesse realmente digitando. E é por isso que isso é levado em consideração nas estatísticas.
+
+Tudo bem. Legal. Você já experimentou todas, incluindo a Aqua? OK. É, talvez seja hora de eu experimentar outra ferramenta. Eu topo totalmente.
+
+Como se eu não fosse casado com a ferramenta. Simplesmente funciona bem para mim, então eu realmente não reconsiderei, porque geralmente, tipo, não se mexe em time que está ganhando, né? Não que a voz da Aqua não esteja completamente quebrada, mas sei lá, não sei. Pessoalmente, não tenho interesse em experimentar novas ferramentas, pois as que já tenho me atendem perfeitamente . Então, não sei.
+
+Tudo bem. Com base no recente anúncio da Anthropic, isso significa que a partir de 15 de junho o Archon não funcionará mais com a assinatura da Anthropic ? Além do crédito de 200 dólares que eles vão dar. Isso é verdade. Sim. Infelizmente,
+
+isso inclui todo o uso programático do Claude por meio do modo headless do Claude e com o SDK do agente Claude. Essa é mais uma razão pela qual estou muito interessado em explorar outros modelos com fluxos de trabalho Archon e usar o Raspberry Pi com ferramentas como o Kimmy. Porque sim, você recebe os 200 dólares por mês que podemos usar com o Anthropic ou com o Archon, e isso é ótimo. Mas isso provavelmente vai acontecer bem rápido. Os 200 dólares em créditos da Opus acabam muito rápido. Então,
+
+sim, principalmente usarei o código Claude interativamente e o Archon para fluxos de trabalho mais voltados à exploração, e depois farei algumas implementações com o Opus, mas sim, isso consumirá os créditos de 200 dólares muito rapidamente. E outra coisa que estou considerando, especialmente por causa deste problema aqui, é mudar para o Codex. Estou pensando nisso . Porque assim eu ainda posso usar minha assinatura com os fluxos de trabalho do Archon e continuar usando os fluxos de trabalho do Archon para literalmente tudo na minha vida. Sim, então, definitivamente pretendo continuar usando algum código Claude, mas talvez até migrar todos os meus fluxos de trabalho do Archon e meu segundo cérebro para o Codex.
+
+Porque meu segundo cérebro é como um sistema que tem todo o contexto sobre meu negócio e guarda memórias de tudo em que estamos trabalhando. Como se eu pudesse fazer com que ele se lembrasse de um plano para qualquer coisa, como cursos na comunidade Dynamis, a transmissão ao vivo de hoje. Mas quando eu não estou falando diretamente com ele no código Claude, como estou fazendo aqui, então estou falando com ele no Slack. Então, configurei meu segundo cérebro para que eu possa conversar com ele no Slack, mas ele também está usando o SDK do agente Claude, assim como o Archon. Então, essa mudança antrópica está me prejudicando de algumas maneiras diferentes. Então, preciso me
+
+adaptar ao uso do Codex, ou, sabe, algo como minha assinatura do Kimmy pelo Raspberry Pi. Então, ainda estou tentando descobrir isso. Felizmente, essa mudança ocorre no dia 15 de junho, então tenho quase um mês para fazer isso. Sim, definitivamente preciso fazer algumas mudanças no meu fluxo de trabalho. OK.
+
+Legal. Então, vamos ver onde estamos agora. Tudo bem. O trabalho de infraestrutura está concluído. Então, criamos a branch de funcionalidade. O orquestrador
+
+está pausado no VPS, então podemos fazer alterações sem que as coisas estejam em execução. Atualizamos o VPS para que tenhamos a nova versão do fluxo de trabalho Archon. Sim, dê uma olhada nisso. Eu editei localmente, então podemos ver que o provedor é o Pi com codificação Kimi como padrão. Mas quando analisamos o plano, é aí que usamos Claude com Opus.
+
+Ok, perfeito. E então temos o provedor Pi instalado no VPS. A configuração agora está definida para não sobrescrever o código de Claude. Então, isso também é bom. Na verdade, quero testar isso.
+
+O que acontece se eu executar Claude aqui? Ainda diz Kimi para programação. Ah, ok, talvez eu ainda precise editar alguma coisa . Então, vejamos. Sim, o Raspberry Pi tem um provedor de codificação Kimi nativo, então não precisei configurar nada personalizado.
+
+Certo, o que eu preciso fazer? O ambiente ENV está bloqueado para mim pelo gancho de segredos, então preciso limpar a sobreposição do Kimi. Ok, então vou fazer uma cópia. Provavelmente vou fazer isso fora das câmeras, só para garantir. Ih , espera aí. Só preciso garantir que
+
+não revele nada como fiz na minha última transmissão ao vivo. Foi engraçado, mas acho que ainda não quero fazer isso. Muito bem, então vou copiar este comando. Tudo bem. Lar.
+
+Desculpe, há um pequeno problema de formatação aqui. Copiar coisas do Claude é irritante. Pronto. OK. Em seguida, adicionei a API Kimi.
+
+Ok, vamos copiar isso. É interessante notar que, embora eu não queira que o Claude gerencie minhas credenciais, geralmente não é uma boa prática ter variáveis ​​de ambiente inseridas diretamente em uma sessão do Frontier Model. É bom que eu ainda possa ter acesso ao passo a passo. Então, eu ainda preciso copiar arquivos e acessar a instância via SSH, mas não preciso me preocupar em como fazer isso . Isso soa muito mal, na verdade. Estou
+
+usando um agente de codificação para não precisar pensar. Mas você entendeu o que eu quis dizer. Todo esse processo é mais rápido porque não preciso me lembrar de diferentes comandos nem digitar tudo manualmente. Obviamente, isso levaria um tempo para digitar. Então, mesmo que eu seja mais técnico e consiga fazer todas essas atualizações sozinho, ainda é mais rápido do que ter que entrar no nano e editar essas coisas. Ele simplesmente me dá os
+
+comandos muito rapidamente. Então, tudo bem. Vou sair de cena novamente. Continuo dizendo " fora das câmeras". Vou usar outro monitor além do meu principal para pegar minha chave de API do Kimmy. Então eu vou
+
+configurar isso e depois trago as coisas de volta. Ok, então, entendido. Colar. Pronto. E então vou analisar o conteúdo do arquivo .env para garantir que esteja tudo correto. Sim
+
+. OK. Legal. Parece bom. Faça uma limpeza.
+
+OK. Então, está me pedindo para redefinir minha configuração. OK. E então faço login no Claude com minha assinatura da Anthropic. OK. Então, acho que agora está tudo bem. Certo,
+
+então deixe-me trazer meu terminal de volta para cá. Vamos tentar isso. Então, agora, se eu executar o Claude, ele deveria me pedir para fazer login. Mas não pediu. Talvez eu precise reiniciar meu VPS.
+
+Sim, acho que vou fazer isso. Então, vou sair e entrar novamente via SSH. E usar a opção dark factory. Pronto. Certo, então vamos tentar novamente. Sim
+
+, pronto. Incrível. Então, agora estamos usando o Claude. Então, se você não estiver logado, execute {slash} login. Então, vamos fazer isso. Então, vou manter minha
+
+assinatura ativa pelo maior tempo possível e, em seguida, prepararei meu navegador para aceitar a solicitação. Ok, então vai... Ah, na verdade não, não consigo abrir o navegador porque isso está no meu VPS. Então, eu só preciso copiar
+
+o link e abri-lo aqui, e isso me dará um código que eu vou colar. Vou fazer isso fora da câmera também. Não que isso realmente importe, já que é um código temporário, mas mesmo assim vou fazer isso. Então, copie o código e cole-o aqui. Digitar. Login efetuado com sucesso. Pronto.
+
+Ok, perfeito. Então, agora estamos prontos aqui. Então, se eu disser {barra} modelo, posso alternar. Ok, então temos o Opus. E então, esforço. Então eu posso definir o
+
+nível de esforço {barra} esforço. Hum, acho que vou optar pelo nível mais alto. Não sei. Na verdade, não importa. Então, vou dizer " alto", para ter certeza de que está funcionando.
+
+E então, qual modelo você é? Certifique-se de que esteja escrito "Opus" e não "Kimmy". Ok, muito bom. Então, estamos tranquilos nesse ponto. E então, nós também temos... Então, eu executei esses
+
+comandos a partir do monitor também. Então, estamos preparados também para a Kimmy. Então, acho que chegamos ao ponto em que podemos de fato testar o fluxo de trabalho. Então, eu fiz isso. Eu fiz isso. Transfira o
+
+fluxo de trabalho para o VPS. As alterações foram feitas em uma ramificação local. O aplicativo VPS está no servidor principal; faça um commit push ou reconstruiremos o YAML. Certo, então provavelmente vou fazer o push e depois reativar o orquestrador. Você quer que eu confirme a alteração do fluxo de trabalho no branch e faça o push?
+
+Sim, então configurei minha assinatura do Claude e a chave da API do Kimmy. Então, aqui está o que eu quero que você faça para validar tudo. Sim, quero que você primeiro confirme o fluxo de trabalho, envie-o e depois faça o pull no VPS para que tenhamos tudo atualizado no VPS. E depois quero que você faça uma corrida de fumaça com o Claude e com o Pi. Então, crie um fluxo de trabalho temporário no Arkon que basicamente imite o uso do Opus para uma coisa e do Kimmy para outra. Em seguida,
+
+execute o programa e verifique se ele funciona corretamente, garantindo que a autenticação esteja configurada para que o Arkon funcione com provedores diferentes. Quero garantir que tudo esteja pronto antes de criar algumas issues no GitHub no ambiente de testes e reativar o orquestrador para testarmos tudo de ponta a ponta. Ok, então estamos quase chegando à recompensa. Isto está a decorrer bastante rápido, o que é bom. É, então, bem, acho que já estou transmitindo há uma hora. O tempo
+
+voa quando a gente se diverte, não é? Tudo bem. Legal. Então, sim, vamos criar um fluxo de trabalho Arkon bem pequeno. O que eu tenho feito bastante ultimamente . Por exemplo, se você observar
+
+os fluxos de trabalho do Arkon para a fábrica escura, verá que tenho esse teste de fumaça do MiniMax. Então eu construí isso [bufa] quando estava executando o MiniMax M2.7 pela primeira vez para a fábrica escura, onde defini o provedor como Claude e o modelo como Sonnet, mas isso foi quando eu estava substituindo o código do Claude para ir direto para a API do MiniMax. Então eu simplesmente envio uma mensagem bem simples só para garantir que a conexão esteja funcionando. Então, basicamente, vou fazer algo assim para garantir que tudo esteja perfeito para Kimmy e Claude, e para usá-los juntos. Em seguida,
+
+vamos testá-lo no fluxo de trabalho real, na correção do problema do GitHub que reformulamos aqui. Tudo bem.
+
+OK. Se Opus 4.7 vale 95 de 100, qual é a nota de Kimmy em 100? Haha. Essa é uma boa pergunta. Eu diria que é tipo 80 ou
+
+85. Tipo, Kimmy K2.6 provavelmente é tão bom quanto Sonnet na minha opinião. E o MiniMax é um pouco pior. Ainda melhor que haicai.
+
+[limpa a garganta] Então, tipo, Sonnet Sonnet seria 85 de 100 e Kimmy ficaria entre 80 e 85. Sabe, tipo 82 ou 83. O mais específico que eu consigo ser. Sim . Tudo bem. Hum, tive algum
+
+problema com alucinações de IA no VPS? Devo usar um monitor de arquivos para procurar problemas? Hum, para ser sincera, não. Se você está falando de algum tipo de alucinação enquanto uso meu segundo cérebro para trabalhar no VPS, eu realmente não tive nenhuma. Então, é isso aí, não sei se vocês já perceberam, mas uma das coisas que fiz com meu segundo cérebro foi dar a ele todo o contexto das máquinas que implantei na nuvem. É
+
+como se eu tivesse um segundo cérebro rodando no VPS. Eu tenho algo parecido com o que estamos discutindo aqui rodando no VPS. Assim, posso interagir com ele no Slack mesmo quando meu computador estiver desligado. E então ele também sabe o endereço IP do VPS da Dark Factory, o usuário que eu preciso para fazer login e o caminho da chave SSH. Está lá o contexto completo. Assim,
+
+posso essencialmente tratar minhas máquinas na nuvem como uma extensão do meu sistema de arquivos local. Então, para todos os efeitos práticos , o segundo cérebro sabe que se eu quiser operar no VPS, como alterar algo com um cron job ou implantar algumas alterações do Git, seja lá o que for, ele só precisa prefixar o comando com isso para que possamos acessar via SSH, e então ele pode executar qualquer um dos comandos usuais que você executaria com a ferramenta bash do Claude Code, certo? Então, posso executar um CD, editar um arquivo, executar comandos Git, qualquer coisa que eu possa fazer localmente, desde que eu tenha essas ferramentas instaladas no VPS. E também, como parte do sistema de memória que construí no meu segundo cérebro, ele conhece as ferramentas e capacidades que temos em cada um dos meus VPS e, você sabe, o que eu estou fazendo com cada um deles. Então, é muito legal. Bem, eu
+
+basicamente consigo usá-los como uma extensão. Então, dessa forma, sim, às vezes ainda preciso acessar via SSH para executar algumas das coisas que estava fazendo aqui com minhas credenciais, como qualquer coisa que eu não queira que o agente de codificação tenha em sua sessão, ainda preciso fazer manualmente, mas na maioria das vezes, quando estou depurando e configurando coisas no VPS, nunca preciso acessar via SSH e gerenciar nada em um terminal separado. É incrivelmente conveniente porque, antes de termos agentes de programação fazendo tudo isso por nós, às vezes era complicado lembrar, tipo, "ok, onde está minha chave SSH mesmo?". Ou, por exemplo, qual era o nome de usuário que eu tinha para aquele VPS? Ou, por exemplo, qual é o comando para copiar
+
+arquivos entre máquinas? Tipo, se você estiver familiarizado, tipo SCP, por exemplo, eu sempre esqueço como se faz. Então, eu gostaria de voltar constantemente ao Stack Overflow. Se vocês se lembram dos tempos do Stack Overflow, quando era preciso executar um comando SCP em um VPS via SSH, nossa , você não precisa mais fazer nada disso. É ótimo que você simplesmente peça ao agente de codificação para fazer isso, e ele simplesmente faz.
+
+Como podemos executar modelos locais em um VPS? Acho que não podemos. Bem, quero dizer, certamente para meu VPS, eu tenho um bem barato que com certeza não consegue rodar um modelo local. Você precisaria de uma instância com GPU, pela qual obviamente não estou pagando agora. Hum, esses são muito, muito caros.
+
+Mas se você estiver disposto a investir uma boa grana em um VPS com GPU, então certamente poderá executar modelos locais nele. Se você estiver interessado em executar modelos locais na nuvem, o Google Colab é a maneira mais barata de fazer isso. Porque no Google Colab, você pode basicamente executar notebooks Jupyter, e eles oferecem suporte à execução em instâncias de GPU. Assim, você obtém acesso a poder computacional de GPU praticamente gratuito. É muito bom, mas a máquina não é sua .
+
+Se você realmente quer ser dono da máquina, o RunPod é uma opção. Quer dizer, existem inúmeras opções por aí. Bem, o RunPod é bem acessível em termos de preço, mas ainda assim não será barato. Como o Jeff disse antes, ele tinha uma 4090. Se você quiser uma máquina com uma 4090, custa 69 centavos por hora. Quer dizer, isso faz muita diferença
+
+. Então, 69 centavos e 24 horas em um dia, e digamos que um mês tenha 30 dias, isso dá 500 dólares por mês. Portanto, se você quiser ter uma máquina na nuvem funcionando 24 horas por dia, 7 dias por semana, para modelos locais, é extremamente caro. E isso é, na verdade, algo bem barato. Por exemplo, se você usa o DigitalOcean, ou se quer usar um H100 ou algo parecido, é muito caro. Portanto, definitivamente existe um
+
+apelo em ter a placa ou placas gráficas para executar os modelos você mesmo e, em seguida, pagar apenas pela eletricidade para manter sua máquina ligada, em vez de hospedar algo na nuvem. Tudo bem. Vamos ver. O fluxo de trabalho Smoke é validado. Está em execução agora.
+
+Ok, legal. Hum, na verdade estou curioso para saber o que foi construído. Vou ver se consigo encontrar isso na mistura de fumaça temporária. Ok, vou mudar meu diretório. Quero abrir isso rapidinho e dar uma olhada.
+
+Fumo misto. Ah, e eles não são realmente... Espere.
+
+Onde está o fluxo de trabalho?
+
+Oh, eu vejo. OK. Opções fábrica escura Archon Eu preciso espirrar. Com licença . Tudo bem. Hum, vejamos.
+
+Tenho uma pasta com ponto e vírgula (.archon)? Sim. Em seguida, acesse os fluxos de trabalho. São fluxos de trabalho de teste.
+
+[bufa] Fim fim pi fumaça Qual deles acabou de rodar? Uh, fornecedor misto de fumaça.
+
+Espere, onde está aquele? Eu não sei exatamente onde fica. Deixa eu só descrever a fumaça do pi de ponta a ponta. Acho que não é essa que está em execução. Mas isto é parecido com aquele que mostrei aqui perto.
+
+Fluxo de trabalho super simples onde definimos o provedor como pi e usamos um modelo aleatório, como o Haiku, por exemplo, e então enviamos uma solicitação. Ok, teste de fumaça aprovado. O provedor de mixagem confirmou que está funcionando. Legal . Portanto, ambos os provedores foram autenticados. Fluxo
+
+de trabalho concluído com sucesso. Tudo bem. Portanto, os nós Claude usando globalmente desligado mais cinco são eventos de limitação de taxa, o que confirma que estão em uma assinatura antrópica real . Os arquivos temporários foram limpos. Duas coisas a destacar antes de prosseguirmos de ponta a ponta. O único
+
+problema de inicialização corrigido é o provedor de mixagem. O que, portanto, é verdade. Esse é o único fluxo de trabalho que realmente alteramos em nossa transmissão aqui. Para os outros que gerenciam a fábrica sombria, como triagem e validação das missões de puxador. Essas pessoas vão usar minha assinatura.
+
+Isso é bom. Isso é ótimo, na verdade. Então é só estético, não me importo muito com isso. Portanto, o próximo passo é criar as issues no GitHub, marcá-las como aceitas pela fábrica para enviá-las diretamente ao provedor do Mix. Corrigir problema no GitHub.
+
+Certo, então sim, vamos em frente e fazemos isso. Vamos criar um problema agora mesmo. Certo, então quero que você reative o orquestrador e depois revise o plano da transmissão ao vivo que preparei com antecedência e me diga qual é o problema que devemos criar. Acredito que haja algo relacionado a tornar o feedback mais em tempo real para o agente implantado no chat.dynamix.ai.
+
+Então, analise isso e sugira o que você criaria para a issue no GitHub. Concordo que, assim que a criarmos, devemos rotulá-la imediatamente para pular o fluxo de triagem e podermos ver a issue do provedor Mix em ação. OK. Muito legal. E enquanto isso estiver em andamento, quero ver se consigo encontrar o teste de fumaça que foi realizado.
+
+Eu sei o nome, mas não sei onde foi colocado, porque pode ter sido no diretório global do Archon ou no diretório do aplicativo. Se eu acessar o site do Archon, em fluxos de trabalho, e depois... Não, também não está lá. É, eu não
+
+sei. Na verdade, isso não importa muito. Tudo bem. Vou deixar isso continuar por aqui. Muito bem, vamos ver o que mais temos no chat.
+
+Tudo bem. Isso também se aplica às equipes de agentes T-mux ? Então, se você está perguntando sobre as mudanças no limite de taxa, não, não houve mudanças. Assim, você ainda poderá usar sua assinatura da Anthropic com equipes de agentes T-mux. Tudo bem. Bem, a
+
+versão um do GSD delega praticamente tudo para subagentes. Bem, na verdade, não sou muito fã de Pastores Alemães por esse motivo. Ao tentar transmitir todo o contexto necessário para cada um deles, percebe-se que isso é lento e pouco otimizado. A segunda versão foi desenvolvida em torno do Raspberry Pi. Ah, eu não sabia disso. Isso é muito legal. O
+
+GSD está sendo desenvolvido em torno do Raspberry Pi. Sem chance. Deixe- me verificar isso aqui. GSD versão dois. Oh, isso é novinho em folha?
+
+Aguentar. Que legal! A evolução, agora um verdadeiro agente de codificação. Nossa! Ok, então não são mais apenas como um arnês. Eles não estão simplesmente
+
+recomendando o Pi. Eles são construídos, na verdade, com base no Raspberry Pi. O GSD agora é uma CLI independente construída sobre o SDK do Raspberry Pi, o que lhe dá acesso direto via TypeScript ao próprio ambiente do agente. Isso significa que o GSD pode realmente fazer o que antes só era possível pedir à versão LLM para fazer. Contexto claro entre as tarefas. Ok,
+
+isso é realmente muito legal. Uau. Nossa, como isso é novo! Vou analisar o histórico de commits. Que legal!
+
+Ok, já faz um tempo. Espera aí. Ah, tem muita coisa. Nossa Senhora! [risos] Ok, deixa eu tentar encontrar, porque eu... eu... eu estou meio que com a cabeça a mil
+
+aqui. Como saber a idade real de um repositório? Acho que posso dar uma olhada nos lançamentos. Deslize para baixo. Ah, acho que está tudo bem, é GSD. Então, só tem um
+
+lançamento aqui. Ah, espere. Não. Eu preciso clicar em liberar.
+
+Bem, talvez não seja. Desculpem, pessoal, talvez o GSD2 já exista há algum tempo, mas eu não sabia que eles o transformaram em um agente de codificação de fato, em vez de apenas um framework. Isso é muito legal. Legal. Tudo bem.
+
+Ah, sim, deixe-me voltar aqui e ver como estamos. OK. O Orchestrator está de volta. A funcionalidade de feedback em tempo real já existe em grande parte. OK.
+
+Então, o chat.db.ai já transmite a atividade das ferramentas em tempo real. Portanto, o indicador básico em tempo real está pronto, mas apresenta duas arestas a serem aparadas e que merecem ser aprimoradas. OK. E um polimento é uma
+
+melhoria de funcionalidade limpa, o que significa que ele é roteado através do nó de plano Opus. É exatamente o nó que você deseja que seja acionado no fluxo. Ok, legal. Portanto, faça com que o indicador de atividade da ferramenta ao vivo seja usado continuamente no corpo. Ok, legal. Basicamente, vamos
+
+tornar a interface mais responsiva. Então, quando enviamos uma solicitação, sabe, tipo, quais estratégias de jornalismo investigativo o Cole aborda no conteúdo dele? Neste momento, parece que está funcionando em tempo real, mas ainda está muito lento. E esse agente é lento no geral porque estou priorizando respostas mais abrangentes e muita pesquisa em vez de obter respostas rápidas. Então, não é super rápido como se você fosse ao chat do GPT ou do Gemini.
+
+É mais ao estilo de Claude. Parece que realmente não tem pressa para fazer as coisas. Então, ter um feedback mais em tempo real seria ótimo. Então, é isso que eu quero. OK.
+
+Isso é ótimo. Então, sim, pode criar a issue no GitHub. E então eu quero que você volte ao VPS e execute o orquestrador. Certifique-se de que está gerenciando o fluxo de trabalho corretamente. Quero que você monitore o fluxo de trabalho. Certifique-
+
+se de que o Opus seja realmente usado para o planejamento. Kimmy serve para tudo o resto. Certifique-se de que o fluxo de trabalho esteja progredindo bem. Envie-me atualizações de status a cada dois minutos. Portanto, quero que você monitore o fluxo de trabalho de perto.
+
+Tudo bem. Pronto. Legal. E então voltando [bufa] para o que você pode ver aqui que agora finalmente está respondendo. Leva uns 10 a 20 segundos para obter uma resposta, dependendo, obviamente, de que esta é uma pergunta super abrangente, então há muita pesquisa envolvida, mas sim, não é um aplicativo extremamente rápido e não foi feito para ser, mas eu deveria ter tentado tornar o feedback o mais em tempo real possível. Estou
+
+apenas tentando proporcionar a melhor experiência de usuário possível para um aplicativo que foi projetado dessa forma. Tudo bem. Então, sim, vamos voltar para a fábrica escura. Acesse a seção de problemas. Ainda não temos um. Ok, acho que ainda está pensando
+
+. Então, vamos criar uma em um instante. OK. Experimente o Type Whisper. Estou disposto a experimentar outra ferramenta. Quer dizer,
+
+não na transmissão ao vivo aqui, obviamente, porque quero me concentrar no que estou fazendo aqui, mas estaria aberto à possibilidade. Ah, sim, então essa é a pergunta que eu também estava pensando. Você está promovendo seu próprio aplicativo? Porque eu não gostaria muito que você promovesse seu próprio aplicativo em uma transmissão ao vivo, mas se for realmente uma ferramenta que você usa e não apenas uma forma de promover seu próprio produto, então tudo bem. Mas é, eu não [risos].
+
+Este não é um lugar apenas para fazer marketing. Sim . Sinceramente, eu estaria muito inclinado a não experimentar se você estivesse apenas promovendo seu próprio produto. Vou apenas dizer isso. Tudo bem.
+
+Ah, ok, sem problemas por enquanto. Ah, e agora acho que vou ficar pensando um pouco. Tudo bem. E sim, outra coisa é que dentro do Cloud Code também temos o recurso de voz (barra). Então, o motivo pelo qual ainda gosto de usar uma ferramenta externa como o AquaVoice é principalmente porque posso usá-la em qualquer lugar, não apenas na nuvem, para transferir ideias para o Cloud Code; agora ela está integrada, o que é ótimo.
+
+Tudo bem. Legal. Aguarde a abertura do problema aqui.
+
+Só me dê um segundo. Tudo bem. Esclareça isso. Ainda estou pensando nisso, eu acho. Ah, não, eis o problema. OK, bom. Bom. Então, a
+
+fábrica aceitou. Torne a ferramenta indicadora de atividade em tempo real consciente e contínua. Portanto, já transmitimos eventos durante a fase de recuperação da ferramenta. Duas arestas ásperas tornam o produto menos útil. Os IDs brutos vazam para a interface do usuário. O indicador
+
+pisca. Assim, entre o término de uma chamada de ferramenta e o início da próxima, a interface do usuário retorna à exibição genérica de pontos para digitação. Sim , eu realmente notei isso aqui. Isso seria bom. Na verdade, estamos apenas fazendo algumas melhorias aqui.
+
+Então, vamos ver se já iniciamos o fluxo de trabalho. Quase. Então, acho que é só uma questão de pensar sobre isso. Tudo bem.
+
+Bem, você pode continuar pensando nisso. OK. Iniciando o orquestrador. Bom. Então, conseguimos acessar novamente via SSH.
+
+E, uh, ok, legal. Como o fluxo de trabalho do Archon está sendo executado no orquestrador, infelizmente não consigo abrir a interface do usuário do Archon e mostrar o progresso como fiz em algumas das minhas transmissões ao vivo mais recentes, onde eu visualizava o fluxo de trabalho no painel de controle. Porque não está rodando localmente, certo? E eu não tenho a interface web do Archon rodando remotamente. Então, vamos ter que confiar no meu segundo cérebro para monitorar continuamente e nos fornecer atualizações sobre o fluxo de trabalho.
+
+E o fluxo de trabalho vai demorar bastante tempo. Então, não sei se, para a minha transmissão ao vivo aqui, eu realmente quero esperar que ela termine do início ao fim. Quero ter certeza de que chegaremos ao ponto em que o plano com a Opus esteja definido e a exploração com a Kimmy tenha sido concluída. Porque o mais importante agora é provar que eu consegui otimizar o fluxo de trabalho, combinando provedores, demonstrando o poder do Archon e realmente evoluindo nossa fábrica de recursos avançados . Esse é o meu objetivo final para esta transmissão. E então, sabe,
+
+passaremos mais algum tempo conversando com vocês no chat enquanto esperamos por isso. Só um segundo. Quero ver onde estamos. Então, hum, ok. Precisei adicionar uma tag. Ok, então precisei
+
+adicionar uma tag à issue do GitHub para que ela fosse acionada. Agora estamos enviando a solicitação de correção para o problema da fábrica escura no GitHub. Legal. Ok, então, conforme isso for acontecendo, eu só quero dizer que acho que até o final deste ano, praticamente todo mundo estará usando provedores de mixagem para sua codificação de IA. Talvez não seja sempre necessário misturar fornecedores, mas definitivamente nunca usar o mesmo modelo para tudo. Muita
+
+gente usa o Opus para tudo. E como diz o ditado, a situação está bem clara agora, senhoras e senhores. Até o final deste ano, você não poderá mais usar apenas Opus ou GPT-5.4 para tudo. Assim como para subagentes e diferentes nós, como nos fluxos de trabalho do Archon, para obter tokens, você precisará usar provedores ou modelos diferentes. É por isso que
+
+me importo tanto em trabalhar nisso agora. E estamos quase lá. Vamos esperar até que essa transmissão ao vivo funcione, contanto que isso funcione. Assim que configuramos tudo, conseguimos migrar a Dark Factory para os provedores de mixagem em apenas uma hora e meia. E , obviamente, outra coisa que eu ainda não fiz, mas gostaria de fazer, é talvez incorporar esse tipo de provedor de mixagem em alguns dos outros fluxos de trabalho. Então, por exemplo,
+
+para o fluxo de trabalho de validação de PR, talvez eu queira ter uma etapa que use o Opus, assim como tenho uma etapa no fluxo de trabalho de correção de problemas do GitHub. Então, ainda tenho muita coisa para fazer por aqui, mas isso fica para a próxima transmissão ao vivo. E outra coisa que eu gostaria de fazer na próxima transmissão ao vivo é justamente essa análise comparativa. Acho que isso seria um tópico realmente incrível, tipo, vamos pegar um fluxo de trabalho que usa o Opus para planejamento e o Kimmy para implementação, e um fluxo de trabalho que é o oposto, executar os dois em paralelo em uma série de problemas diferentes, mas cada um focado nos mesmos problemas, e ver qual se destaca . Como se tivéssemos algum tipo de processo de revisão posterior para realizar a avaliação comparativa propriamente dita. Então,
+
+respondendo à pergunta sobre se faz mais sentido concentrar os esforços no planejamento ou na implementação, a resposta é: Porque, na verdade, não queremos fazer as duas coisas ao mesmo tempo, visando a eficiência dos tokens. Isso seria muito legal. Hum, vejamos. Sim, podemos ter um perfil do Claude com a Anthropic e outro, digamos, Claude K com a Kimmy, e executar o provedor Claude e o provedor Claude K? Então, quer dizer, não é mais ou menos isso que estou fazendo com o Pi?
+
+Certo? Por exemplo, eu tenho meu provedor de Claude através da minha assinatura Anthropic e meu provedor de Pi através da minha assinatura Kimmy. Ou talvez você esteja dizendo que gostaríamos de encaminhar ambos através do código Claude? Porque não sei se isso é possível. Mas acho que o que você está descrevendo aqui é exatamente o que eu configurei. Porque dentro do
+
+meu [bufa] fluxo de trabalho Archon, eu tenho meu fornecedor Kimmy e depois meu fornecedor Claude. Como se abríssemos isso aqui. Talvez você pudesse elaborar um pouco mais a sua pergunta, certo? Mas eu tenho meu fornecedor de Raspberry Pi. Eu poderia chamá-lo de Claude K, se quisesse. Acho que o que
+
+você está querendo dizer é se poderíamos substituir o Claude para ir para um ou outro ? E é isso que eu não sei se você consegue fazer. Potencialmente. Pode ser necessário configurar variáveis ​​de ambiente em cada nó individual no Archon. Acho que ainda não apoiamos isso. Eu teria que pedir ajuda ao Rasmus,
+
+que trabalha bastante, para desenvolver o Archon. Tudo bem. Estou atualizando a documentação do Archon atual com base nas informações que descubro nesses casos de uso nas transmissões ao vivo? Então, eu gostaria de saber o que vocês acham que eu deveria atualizar. Porque, obviamente, à medida que continuamos a trabalhar no Archon, atualizamos a documentação. Assim como quando adicionamos novos
+
+provedores ou novos fluxos de trabalho padrão, coisas desse tipo. As coisas que aprendo sobre o Archon à medida que o utilizo, não sei exatamente onde as atualizaria na documentação. Mas eu entendo o que você está dizendo. Como estou usando o Archon durante essas transmissões ao vivo, me deparo com várias situações e acabo desenvolvendo boas práticas para mim mesmo. Com certeza, poderia haver uma seção de guias na documentação onde eu pudesse compartilhar mais dessas informações.
+
+Acho que essa é uma sugestão muito boa. Ok, então isso é legal. Deixe-me ver onde estamos agora. Ok, o fluxo de trabalho em execução com Kimmy foi confirmado como a ferramenta principal. Portanto, temos o fluxo de trabalho ativo na tarefa número 223. E
+
+se olharmos para a lista de tarefas aqui, devemos ver isso. Sim, a fábrica está em construção. Então, o status mudou de "aceito" para "em andamento" porque o orquestrador o aceitou. O fluxo de trabalho padrão para codificação é Kimmy . Então, sim, Kimmy correu para extrair o número da edição, para buscar a edição, para classificar e também para a web. Então,
+
+considerando toda a pesquisa inicial, estamos usando o modelo mais barato, o que faz sentido. E depois, quando chegarmos à fase de planejamento, veremos se usaremos o Opus ou não. Ok, sim, o nó do plano Opus está ativo. Este é o momento crucial. Portanto, o modelo de raciocínio do provedor Claude Opus agora está em execução na minha assinatura Anthropic.
+
+Legal. E se voltarmos ao console da Kimmy, deixe-me fechar essa janela. Se eu atualizar a página, veremos que temos algumas solicitações mais recentes. Se eu verificar o histórico de uso aqui, de fato, temos. Dê uma olhada nisso . Nos últimos minutos
+
+, recebemos uma enxurrada de solicitações usando minha chave de API do Dark Factory Prod. Tudo bem. Legal. Legal. Então, isto está funcionando muito, muito bem. Ah, tudo bem. E
+
+se eu analisar meu uso do Claude, podemos verificar isso também. Hum, deixe-me abrir isso. Então, eu tenho isso aberto no meu outro navegador, então preciso copiar para cá. Este é o meu consumo antropogênico desta semana . O que, na verdade, não é tão ruim. Na
+
+semana passada, atingi meus limites de taxa muito mais rápido. Pelo visto, a Anthropic tem sido um pouco mais amigável com o uso do termo esta semana. Ou talvez seja só impressão minha. Não sei. Mas enfim, devemos ver esse número aumentar conforme o nó Opus estiver em execução.
+
+Dê outra atualização de status. Quero ter certeza de que a etapa de planejamento ainda está sendo executada. Ou, tudo bem, me desculpe. O monitor está sendo acionado automaticamente, então não preciso digitar manualmente. OK. O
+
+plano ainda está em andamento. Sem falhas. Aguardando a conclusão. Legal. Então, vamos ver se o número ultrapassou os 35%. Ah, ok
+
+. Bem, aquele número não aumentou, mas este aqui subiu um pouco. Então, quer dizer, eu acabei de verificar em cerca de 30 segundos, mas parece que está tudo bem. Porque se eu voltar para a Kimmy, não deve haver nenhum pedido novo, certo? O último foi às 15h30.
+
+Deveria ser tudo igual. Sim , tudo bem. Bom. Portanto, na verdade, não estamos usando Kimmy para o que está sendo executado no fluxo de trabalho do Archon neste momento. E depois voltamos ao uso antrópico.
+
+Hum, acho que ainda não foi atualizado. OK. Bem, preciso ter paciência. Preciso aguardar alguns minutos . Mas está parecendo promissor.
+
+Tudo bem. Bem, tenho usado o Hermes, o Kiro, o Pi, o Open Code e o Claude com minhas variáveis ​​de ambiente apontando para outro provedor, e não tive nenhum problema conhecido ao executar um WSL com acesso ao Windows. OK. Muito legal. Então, acho que eu poderia usar o Claude como um suporte para tudo. Vou ter que
+
+verificar isso. Porque eu pensei que, se você definisse as variáveis ​​de ambiente para sobrescrever o comportamento de Claude e fazer com que ele fosse até Kimi, como você faria para que ele fosse até Anthropic? Acho que é isso que me deixaria curioso. OK. Tentei isso há algum tempo, mas o segundo método cerebral continuava a falhar e a apresentar problemas de memória, alternando entre Claude, Anthropic, Pi, Minimax e as minhas próprias memórias de serviço de laboratório doméstico . Interessante. É, isso parece
+
+difícil. Tudo bem. Estou ansioso para ter uma configuração limpa assim que encontrar uma solução de memória determinística. Muito bom, Stuart. Tudo bem.
+
+Hum, eu alugo servidores dedicados com GPUs. Geralmente acaba sendo mais barato do que pagar por hora se você estiver executando cargas de trabalho 24 horas por dia, 7 dias por semana. Concordo. Sim. Tenho sistemas com RTX 5090 e 5080 , e o pacote de IA local funciona perfeitamente neles. Ei, legal. Que ótimo que
+
+você está usando o pacote de IA local. Adoraria ouvir isso. Legal. Tudo bem. De qualquer forma, o plano ainda está em andamento com o Opus aqui, então devemos ver nosso limite aumentar.
+
+Provavelmente terei que... Sim, ainda preciso ter paciência. Muito bem, mas está com um bom aspecto.
+
+Tudo bem. Será que usar um número X de fornecedores ainda pode acabar sendo vantajoso a longo prazo? Bem, quero dizer, todos os provedores vão aumentar o uso de tokens, mas a ideia é que alguns provedores usem menos tokens. Por exemplo, Kimi e Minimax são muito mais baratos e têm uma eficiência de tokens muito maior do que Opus . E se você está perguntando sobre a sobrecarga mental, e sobre ter tantos [limpa a garganta] profissionais para gerenciar, bem, sim, você precisa ter cuidado com a quantidade de profissionais que você introduz no seu sistema, porque isso pode dificultar o gerenciamento.
+
+Então, eu recomendaria ficar com apenas dois ou três fornecedores. Por exemplo, agora mesmo estou usando Kimmy com Pi, Opus com Anthropic e estou satisfeito com isso. Nem sinto necessidade de apresentar um terceiro agora. Tudo bem. Muito bem, o Opus ainda está funcionando. Vamos
+
+ver, quero atingir 36% para mostrar que está realmente sendo usado. Não sei por que não está subindo. Acho que, desta vez, eu queria que o Anthropic estivesse funcionando rapidamente, mas não está. Tudo bem. Esse é o problema dos fluxos de trabalho do Archon serem eficientes em termos de tokens.
+
+Tudo bem. Bem, acho que vou continuar esperando aqui. Eu uso modelos Claude com o Kiro em vez da CLI do Claude. Ah, sim. OK. Que bom.
+
+Sim, imagino que você esteja usando a assinatura do Kiro, certo? Tudo bem. Bem, de qualquer forma, acho que chegamos a um bom ponto de parada aqui. Porque nós comprovamos que o fluxo de trabalho está funcionando com Kimmy e Opus agora. Então, é bem legal e provavelmente levará mais uns 15 minutos para explicar todo o fluxo de trabalho do Archon, porque eu o fiz bem completo. É um processo que envolve
+
+muitas etapas, pois se eu quero que uma fábrica de sistemas complexos funcione de forma confiável em todas essas questões diferentes, é melhor ter um sistema de gerenciamento de sistemas muito abrangente que controle tudo nos bastidores. Sim, mas é legal que praticamente tudo, exceto o planejamento, esteja sendo gerenciado pela Kimmy. Então, para mim, não é tão caro assim, mesmo tendo um fluxo de trabalho Archon de longa duração para lidar com cada problema do GitHub que publico aqui no Dark Factory. E vamos ver se chegamos a 36%. Ainda não funcionou, mas sabemos que está usando o Opus porque isso foi confirmado pelas chamadas à API aqui no VPS.
+
+Muito legal. Então é isso, pessoal. É assim que se parece a reformulação de um fluxo de trabalho Archon e de todo um sistema para ser de provedor misto. E vai ser muito rápido para mim mudar qualquer outra coisa agora, até mesmo experimentar modelos diferentes com nós diferentes entre Anthropic e Kimmy. E, sabe, eu poderia adicionar o MiniMax à mistura com muita facilidade agora.
+
+Agora que tenho a base estabelecida, é muito fácil experimentar outros fornecedores e ajustar os fluxos de trabalho individuais do Archon. Então, falaremos mais sobre isso na próxima transmissão ao vivo, juntamente com alguns dos testes de desempenho que mencionei . Adoraria testar diferentes fluxos de trabalho do Archon nas mesmas tarefas do GitHub e ver que tipo de resultados obtemos. Ah, então, é isso aí. Isso é tudo por hoje. E sim,
+
+finalmente chegamos a 36%. Então, na verdade, estamos usando o Opus. Pronto. Legal. [risos] Tudo bem. Legal. Então, é isso
+
+para a nossa transmissão ao vivo de hoje. E, só para lembrar, você pode acessar chat.dymus.ai e testar esse agente você mesmo, se tiver curiosidade. É um recurso muito bom no qual tenho trabalhado .
+
+Que legal! Muito bem , pessoal. Agradeço a presença de todos vocês . Essa transmissão ao vivo foi incrível . Nós seguimos em frente com as coisas muito bem. E sim, mais
+
+transmissões ao vivo estão a caminho. Só para lembrar, atualmente faço transmissões ao vivo todas as segundas, quintas e sábados às 9h da manhã, horário central . E estou apenas testando essa nova programação de transmissões ao vivo por um tempinho. Eu disse que faria isso por algumas semanas, e já estamos chegando ao fim desse período. Então, vamos ver por quanto tempo eu continuo, porque talvez eu volte a fazer mais vídeos para o YouTube, e não transmissões ao vivo. Então, veremos.
+
+Tomarei essa decisão esta semana, mas sim, gosto muito de fazer isso. Então, obrigado a todos por estarem aqui. Espero que vocês tenham gostado e que tenham aproveitado bastante . Estou apenas criando fluxos de trabalho do Archon e mostrando como é combinar provedores para diferentes processos de codificação de agentes. Espero que vocês tenham um ótimo resto de dia e nos vemos por aí. Cuidem-se todos.

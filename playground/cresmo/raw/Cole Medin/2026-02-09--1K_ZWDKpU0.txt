@@ -1,0 +1,148 @@
+---
+video_title: "Claude Code's Agent Teams Are Insane - Multiple AI Agents Coding Together in Real Time"
+video_id: -1K_ZWDKpU0
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=-1K_ZWDKpU0
+video_date: 2026-02-09T15:00:00+00:00
+video_description: |
+  Claude just shipped Agent Teams and it changes the game of AI coding. Instead of one agent doing everything sequentially, you can now spin up multiple agents that communicate with each other in real time, share a task list, and coordinate their work.
+  
+  This is fundamentally different from subagents. Subagents work in isolation and report back. Agent Teams actually talk to each other, divide work intelligently, and you can interact with each agent directly. I'll show you exactly how it works, how to set it up (Windows, Mac, and Linux), and the use cases where it absolutely dominates traditional coding workflows.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Join me at the Sonar Summit (free global virtual event) on March 3rd! I'll be speaking on building self-validation and guardrails into AI coding systems.
+  https://fandf.co/4rjEkz0
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - The Dynamous Agentic Coding Course is now FULLY released - learn how to build reliable and repeatable systems for AI coding: 
+  https://dynamous.ai/agentic-coding-course
+  
+  - Agent team skill to tackle any plan (my resource for you):
+  https://github.com/coleam00/context-engineering-intro/tree/main/use-cases/build-with-agent-team
+  
+  - Excalidraw diagram (subagents vs. agent teams):
+  https://github.com/coleam00/context-engineering-intro/blob/main/use-cases/build-with-agent-team/AgentTeamsVsSubagents.png
+  
+  - Agent Teams docs: 
+  https://code.claude.com/docs/en/agent-teams
+  
+  - C compiler blog post: 
+  https://www.anthropic.com/engineering/building-c-compiler
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Intro to Claude Code Agent Teams
+  3:14 Get Started Quick
+  5:15 Demo: Creating an Agent Team
+  8:16 Sonar Summit
+  9:52 Agent Teams vs. Subagents
+  14:12 Limitations of Agent Teams
+  15:41 My Custom Agent Team Skill
+  17:34 Advanced Building Demo
+  19:39 Final Thoughts
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Dê uma olhada nisso. Tenho quatro instâncias do código Claude funcionando simultaneamente para realizar uma revisão de código na minha base de código. E tudo isso graças ao novo recurso de equipes de agentes que a Enthropic incorporou ao código na nuvem. E, cara, deixa eu te contar, parece mesmo que estou vislumbrando o futuro da engenharia de agentes quando a utilizo. Portanto, temos nosso principal agente de liderança no lado esquerdo. E
+
+em tempo real, eu vi cada um desses terminais T-Mux ser inicializado para criar esses agentes e permitir que colaborassem na mesma tarefa. Bem, já faz um tempo que as pessoas usam esse tipo de configuração de terminal com várias janelas divididas. Então, não é exatamente uma novidade, mas há alguns detalhes que a tornam super original. A primeira é que nosso agente principal, na verdade, decidiu a equipe a ser formada com base na solicitação que eu lhe dei. E o outro fator que torna isso tão poderoso é que, nos bastidores, cada um desses agentes está trabalhando exatamente na mesma lista de tarefas. Isso
+
+vai muito além dos subagentes. Esses agentes chegam a conversar entre si do tipo: "Ah, deixe-me terminar isso antes de você trabalhar naquilo." Eles possuem um tipo de comunicação que nos permite levar essa ideia de agentes paralelos muito mais longe. Neste vídeo, quero abordar como as equipes de agentes trabalham com você. É um novo recurso experimental que você precisa ativar. Vamos falar sobre como
+
+configurá-lo. Eu também quero muito abordar a diferença entre equipes de agentes e subagentes. Muita gente está confusa com isso agora porque funcionam de maneira muito semelhante. A principal diferença é que temos colaboração versus isolamento. Existem vantagens e desvantagens que eu gostaria de abordar. O sistema de equipes de agentes é realmente poderoso,
+
+mas não é perfeito. Então vamos abordar esse assunto, que também nos levará a um modelo que preparei para vocês. Este é um comando que eu desenvolvi. Basicamente, você pode usar isso para dar instruções ao Cloud Code sobre como usar melhor as equipes de agentes, porque, acredite ou não, embora esse seja um recurso integrado ao Cloud Code, ele não é muito eficiente em utilizá-lo. Então, vou mostrar a vocês como realmente aproveitar esse novo recurso para fazer coisas incríveis. Agora, esta demonstração de revisão de código
+
+que preparei para vocês é apenas um exemplo bem simples do que podemos fazer com equipes de agentes. A revista Anthropic publicou alguns artigos mostrando até onde podemos levar essa ideia. Por exemplo, a Anthropic usou 16 agentes executando em conjunto com esse novo recurso de equipes de agentes para construir um compilador C completo . E deixe-me dizer-lhe, construir um compilador do zero não é fácil. Se você fosse contratar uma equipe de desenvolvimento para fazer isso, provavelmente custaria centenas de milhares de dólares. Mas eles conseguiram
+
+fazer isso com apenas US$ 20.000 em custos de API, o que, sim, ainda é uma quantia absurda de dinheiro. O sistema de equipes de agentes depende muito de tokens, o que é uma das desvantagens que abordaremos em breve. Mas ainda é muito legal ver até onde eles conseguiram levar o que é possível com agentes de programação simplesmente trabalhando juntos, colaborando de forma autônoma. Eles simplesmente jogaram isso em um loop RA, onde forçaram o programa a escrever, acredito, centenas de milhares de linhas de código para criar isso. É realmente incrível.
+
+O tipo de coisa que eles dizem mais adiante neste artigo, não há como um único agente ter sido capaz de fazer, mesmo se você desse toda essa tarefa para, você sabe, o Opus 4.6, por exemplo. Muito bem, então, rapidinho, quero mostrar como você pode colocar sua primeira equipe de agentes em funcionamento em apenas alguns minutos, e depois vamos falar sobre a diferença entre isso e os subagentes, porque é muito importante entender. Então, incluirei um link para esta página na descrição. Este é o guia oficial da Anthropic sobre equipes de agentes.
+
+No entanto, há muita informação aqui. É muita informação para absorver, então quero explicar de uma forma bem simples para você agora. Então, a primeira coisa que você precisa fazer, porque este é um recurso experimental que está longe de ser perfeito, acredite em mim, é habilitá- lo. Portanto, você pode definir essa variável de ambiente no seu computador, em uma sessão de terminal ou adicioná-la ao seu arquivo settings.json. Então, este
+
+é um dos arquivos de configuração para código na nuvem. Você provavelmente já trabalhou com isso antes, pois é onde você configura coisas como seus servidores MCP e seus hooks. Assim, podemos definir isso no nível do global.cloud ou no diretório do projeto docloud. Assim, você pode habilitar equipes de agentes apenas para projetos específicos, se desejar. Então, outra coisa que você
+
+precisa configurar se quiser o modo de painel dividido, onde você pode ver todos os terminais ao mesmo tempo, é instalar o T-Mox ou o iTerm 2. Esses são aplicativos de terminal que suportam o modo de painel dividido e são os dois que o Claude Code suporta atualmente. Portanto, se você instalar o T-Mox, que é a minha recomendação, ou o iTerm 2, o Claude Code poderá utilizá- lo diretamente para criar esses terminais, e você poderá vê-los aparecer em tempo real. Veremos isso em um instante. É muito, muito legal. Assim, as
+
+instruções variam um pouco dependendo do seu sistema operacional. Mas, na verdade, no recurso de habilidades da equipe de agentes que preparei para você, há um arquivo readme com as instruções de instalação. Muito, muito fácil. Lembre-se apenas que para usar o Windows você precisa do WSL. E então, na verdade, eu tenho isso.
+
+Então, consegui instalar meu subsistema Linux aqui no Windows. Estou usando o Windows neste momento. Portanto, a primeira coisa que você precisa fazer é definir essa variável de ambiente. Então, seja assim ou naquele arquivo settings.json. Então,
+
+equipes de agentes experimentais de código em nuvem. Boom. Pronto . Assim, da próxima vez que eu acessar o Claude Agent Teams, essa opção estará disponível para mim. Então agora, assim como acontece com os subagentes, tudo o que precisamos fazer é dizer ao Claude que queremos usar o recurso de equipe de agentes, e ele saberá exatamente o que queremos dizer.
+
+Então, para dar um exemplo bem simples, vou enviar esta solicitação aqui. Então, estou pedindo para criarem uma equipe de agentes para revisar meu código-fonte. Semelhante à demonstração que mostrei anteriormente, essa também foi uma solicitação bem mais longa. Mas, para simplificar, vou dizer apenas que um agente deve se concentrar na segurança, outro na qualidade do código e o terceiro na documentação. Bem, também poderíamos usar subagentes para isso , mas a colaboração que temos aqui, mesmo em um exemplo simples como este, é realmente poderosa porque, por exemplo, a revisão de segurança pode afetar a forma como vemos a documentação. Talvez precisemos garantir que
+
+documentemos quaisquer problemas de segurança potenciais que existam na base de código. Acho que você entendeu a ideia de como essa colaboração, mesmo para uma revisão, mas especialmente quando estamos realmente começando a escrever o código, é realmente muito necessária. Assim, o agente principal fará sua análise inicial, pensará na equipe a ser formada e, em seguida, desenvolverá esses agentes . Então, farei uma pausa e voltarei quando chegarmos a esse ponto. Então vamos lá . Normalmente, o indicador é algo
+
+como: "Deixe-me criar as tarefas e iniciar todos os três agentes de revisão", pois ele define a lista de tarefas que é compartilhada entre todos os agentes quando eles começam a colaborar. E daqui a pouco , veremos o primeiro painel girar no lado direito. E então fará as três coisas uma de cada vez. E pronto, aí está . Já temos o nosso analista de segurança para começar. E você pode ver o comando que
+
+o agente principal executa. É apenas o início de uma nova sessão de código na nuvem, mas o prompt é passado para fornecer o contexto sobre sua função. É o revisor de segurança. E então, fornecer a lista de tarefas e o acesso para gerenciá-la com os outros agentes. E sim, muita coisa está acontecendo por aqui. Há muita informação na minha
+
+tela, mas os três agentes começaram a funcionar muito rapidamente e cada um está focado em sua tarefa individual, mas logo começarão a se comunicar entre si. Uma coisa que eu gostaria de ressaltar é que você precisa observar os registros com muita atenção para ter uma ideia de quando os agentes estão realmente se comunicando entre si. Talvez essa seja uma das minhas queixas em relação às equipes de agentes atualmente: não há muita visibilidade da colaboração em si. E assim, tenho visto exemplos enquanto venho testando as coisas. E se você perguntar ao agente líder posteriormente como os agentes colaboraram, ele lhe dará uma boa resposta, mas, em grande parte, eu simplesmente confio que os agentes estão realmente trabalhando juntos na lista de tarefas. Não existe uma maneira realmente boa
+
+de começar a falar sobre isso. Uma coisa que você pode fazer é pressionar Ctrl+B e, em seguida, uma tecla de seta para navegar entre os diferentes terminais T-Mox. Assim, posso conversar com qualquer um dos agentes aqui e perguntar, por exemplo, em que estão trabalhando atualmente? Como você está colaborando com esse agente? Também é muito eficaz ir até o agente principal e perguntar isso. Isso me fornece uma
+
+atualização sobre o status da lista de tarefas e sobre o que os agentes estão trabalhando. Aliás, assim que todos os agentes da equipe terminarem, o agente líder encerrará todos esses terminais e você retornará à visualização simplificada aqui, onde poderá continuar trabalhando com o agente principal do Cloud Code ou iniciar outra equipe, se desejar. Então, quero fazer uma pausa um pouco diferente dos vídeos do que costumo fazer. Vou participar de um evento em março, e estou super animada para contar para vocês. Trata-se do Sonar Summit, o primeiro evento virtual global da Sonar. E vou dar
+
+uma palestra informal sobre como incorporar autovalidação e mecanismos de proteção em sistemas de codificação de IA . E esse tem sido um dos meus principais focos, porque a verdade é que a IA já está escrevendo de 30 a 40% dos novos códigos nas principais empresas de tecnologia. Portanto, a adoção é praticamente universal. Mas as equipes estão percebendo que entregar código mais rapidamente não significa necessariamente entregar qualidade mais rapidamente. Os tempos de revisão estão aumentando, os incidentes estão em alta e as vulnerabilidades de segurança simplesmente passam despercebidas. Então,
+
+na minha sessão, abordarei o que chamo de pirâmide de validação de IA. Trata-se de uma estrutura que nos permite definir os requisitos de validação antes mesmo de escrevermos uma única linha de código. Portanto, faz parte do nosso plano. E nós deixamos que nosso agente cuide da infraestrutura, de todas as coisas fáceis como verificação de tipos, análise de código e nossa rodada inicial de testes. E então nós, como seres humanos, controlamos as camadas que mais importam. E
+
+além do meu evento, há muito mais acontecendo no Sonar Summit. Ao todo, são quatro trilhas com palestras sobre o futuro do desenvolvimento de software na era da IA, análises aprofundadas do Sonar Cube, sessões sobre a integração da qualidade de código em pipelines de CI/CD e muitos outros eventos incríveis para participar. Aliás, a participação no Sonar Summit é gratuita e eles estão realizando este evento virtual em praticamente todos os fusos horários. Portanto, se você quer saber como entregar qualidade com rapidez, e não apenas código com rapidez, recomendo fortemente que dê uma olhada. O link estará na descrição.
+
+Espero que o valor das equipes de agentes e como gerenciá-las esteja claro para você. Agora quero falar sobre como eles são diferentes dos subents. E essa é uma distinção realmente importante, porque agora, sempre que você quiser realizar trabalho paralelo com código Claude, terá que tomar essa decisão. Devo pedir ao Claude para usar subagentes ou devo pedir ao Claude para formar uma equipe de agentes? E, atenção para o spoiler, ainda existem muitas situações em que você vai querer usar subagentes, especialmente por causa de alguns problemas com equipes de agentes que vou mencionar e que se encaixam perfeitamente na habilidade que eu desenvolvi para você. Isso torna Claude muito melhor
+
+em usar equipes de agentes. Então, estou muito animado para mostrar isso a vocês, mas primeiro, vamos falar sobre subents. Assim, a ideia principal com os subagentes é o isolamento de contexto. Queremos uma forma de poder enviar uma solicitação que possa exigir dezenas ou até centenas de milhares de tokens, mas que nos seja retornado apenas um resumo. Assim, nosso agente principal sabe, de forma geral, o que aconteceu, mas essa percepção não precisa ser influenciada pelo contexto de toda a tarefa. E isso é importante
+
+porque o contexto é o recurso mais valioso quando você está usando um assistente de codificação com IA . Mas esse isolamento contextual tem desvantagens, pois não há coordenação entre os agentes secundários e todo o processo é como uma caixa preta, já que apenas o resumo, o resultado final, é devolvido ao nosso agente principal. Por isso, digo que os subartigos são geralmente usados ​​para tarefas específicas, como pesquisas, porque tudo o que nos interessa é o resultado, o resumo ao final da pesquisa. Se estivermos fazendo algo como programação e tivermos um subagente escrevendo o código, não teremos ideia do processo realizado pelo subagente e, portanto, o agente principal perderá muito do contexto sobre o que foi realmente implementado. É por isso que defendo a pesquisa em vez da implementação. Não há nenhuma
+
+coordenação. Esses subagentes trabalham de forma completamente isolada, o que os torna muito eficientes em termos de recursos, pois estão focados em uma única tarefa e comunicam-se apenas minimamente com o agente principal. Mas às vezes você precisa de muito mais do que isso. Às vezes, você precisa que seus agentes se coordenem , gerenciem uma lista de tarefas em conjunto, e é aí que entram as equipes de agentes. Com as equipes de agentes, ainda temos um agente principal que executa esses subprocessos, mas a diferença é que eles realmente se comunicam entre si.
+
+Então, eles têm essa lista de tarefas compartilhada. Eles estão se atualizando mutuamente sobre o progresso, comunicando-se também com o agente principal. E você pode instruir o Cloud Code de várias maneiras diferentes sobre como essa comunicação realmente ocorre. Falaremos sobre isso daqui a pouco . Assim, temos uma verdadeira coordenação ponto a ponto . E isso é extremamente útil
+
+para a implementação, porque, por exemplo, nosso agente de back-end pode alterar algo em um endpoint da API e, nesse caso, precisaria informar ao agente de front-end: " Ei, eu alterei esta API". Certifique-se também de atualizar o componente de front-end que utiliza a API. E de fato consegue fazer isso. Quando tínhamos subagentes fazendo esse tipo de implementação no passado, essas coisas davam errado o tempo todo porque eles não se comunicavam entre si. Então, eles acabavam pisando nos calos um do outro , sem nem perceber.
+
+Assim, coube ao agente principal encontrar todos esses erros e corrigi-los. E foi uma completa bagunça. Assim, equipes de agentes são muito melhores para a implementação. Mas você precisa ter em mente que os subagentes são muito mais eficientes em termos de tokens. São necessários muitos tokens para configurar essa lista de tarefas, manter a colaboração e a comunicação entre o agente líder e todos os outros agentes da equipe.
+
+Então, esta é uma estimativa bem aproximada, mas sim, muitas vezes, quando você usa equipes de agentes, o uso de tokens é de duas a quatro vezes maior em comparação com o uso do Cloud Code isoladamente ou de subagentes, e, portanto, muitas vezes você precisa da colaboração para a codificação. Em geral, eu diria que, se você quer uma regra prática bem simples agora, deve usar subents para qualquer tipo de pesquisa, como analisar um código-fonte ou pesquisar na web, e usar equipes de agentes para a implementação propriamente dita. Assim, muitas vezes, quando se trabalha com uma única conversa de código na nuvem, pode-se começar com uma pesquisa de subagentes, como analisar a base de código, e então criar uma lista de tarefas e mobilizar a equipe de agentes para executar o plano que foi criado a partir da pesquisa. Então, novamente, são subagentes para pesquisa, que alimentam um plano com essas informações e, em seguida, enviam esse plano para uma equipe de agentes. Agora, por mais fortes que sejam as equipes asiáticas, há mais duas questões que quero abordar com vocês, e depois entraremos no modelo que venho começando a usar para resolver isso e experimentar algumas coisas para tornar as equipes asiáticas mais confiáveis. Então, o primeiro
+
+problema que encontrei ao realizar muitos testes tanto no Linux quanto no Mac é que, muitas vezes, você precisa ser muito específico com o Claude. Como você deve dizer, crie uma equipe de agentes com quatro membros para fazer isso, isso e isso. Se você não for muito específico, acaba sendo uma espécie de alucinação. Isso vai formar equipes estranhas. Às vezes, ele não sabe como lidar com os terminais T-Mux . Na maioria das vezes,
+
+funcionará. Mas houve alguns casos isolados em que simplesmente não funcionou . E o outro problema que encontrei é que, às vezes, mesmo com os agentes se comunicando entre si, eles não conseguem funcionar em paralelo de verdade. Por exemplo, já aconteceu de meu banco de dados e agente de backend estarem sendo executados ao mesmo tempo. O agente de banco de dados definiu grande parte do esquema e, quando finalmente informou ao agente de backend qual era o esquema de fato, o agente de backend já estava quase terminando seu trabalho. Assim, criou todo esse backend
+
+com base em um esquema completamente incorreto. Então teve que voltar e fazer muito trabalho. Então, sim, a comunicação estava lá para que o problema se resolvesse sozinho, mas teria sido muito mais eficiente em termos de tokens se tivéssemos implementado primeiro o agente de banco de dados e depois o agente de backend. E assim, tenho trabalhado arduamente, através de muita experimentação, para abordar essas duas questões com a habilidade que, obviamente, incluirei links na descrição. Este documento fornece instruções para código em nuvem sobre como criar equipes de agentes de forma mais confiável e lidar com a questão de, às vezes, as tarefas não poderem ser totalmente paralelas, sendo bastante específico sobre como usar os terminais e como criar boas equipes.
+
+Então, tenho esse clone localmente pronto para criar um projeto totalmente novo. Aliás, você pode usar essa habilidade, e eu mostrarei como daqui a pouco, para criar projetos ou recursos totalmente novos em bases de código existentes. Portanto, tudo é regido por estas instruções aqui, nas quais não vou me aprofundar muito agora, mas essencialmente tudo o que precisamos fazer é elaborar um plano, algo que criamos com base em pesquisa ou algo do tipo. Aqui está o próximo recurso que queremos desenvolver. Então, fornecemos o plano e ele usará essas instruções para descobrir qual é a equipe ideal para executar esse plano.
+
+Devemos criar um agente de back-end, front-end e banco de dados para a equipe? Como assim ? Também inclui instruções sobre como gerenciar os terminais de forma eficaz para reduzir algumas dessas alucinações. E, o mais importante, tenho esse processo chamado " geração inicial de contrato". Portanto, não estamos fazendo tudo em paralelo. Estávamos
+
+preparando o terreno antecipadamente para parte do trabalho que precisa ser feito antes de podermos simplesmente ativar todos os agentes, como por exemplo, aqui está o nosso esquema de banco de dados. Em seguida, enviamos os agentes para trabalharem em paralelo. E isso tem me proporcionado resultados muito mais confiáveis ​​do que simplesmente dizer ao Claude: "Monte uma equipe asiática para fazer XYZ" sem nenhuma instrução adicional. E executar isso é super fácil. Então, tudo o que você precisa fazer é seguir as instruções no arquivo readme. E, como
+
+mostrei anteriormente, tenho até instruções sobre como instalar o T-Mux e ativar o recurso experimental. Copie este conteúdo para o diretório de habilidades, seja global ou específico do seu projeto. E então isso lhe dará o comando. Assim, você pode executar o comando /build com a equipe de agentes. Você fornece o caminho para o plano que já criou e, em seguida, pode definir o número de agentes para a equipe ou deixar que o código na nuvem determine isso com base no seu plano. Portanto,
+
+pode ser muito, muito dinâmico. Então, tenho um exemplo aqui no terminal da minha equipe. Apontei para um plano de um projeto totalmente novo . Então, estou começando algo do zero e terei uma equipe de três agentes. Então, vou enviar isso e será muito semelhante à demonstração que mostrei anteriormente para a revisão de código, mas esta é muito mais complexa. Estamos construindo um
+
+projeto inteiro. A empresa precisa pensar muito bem na equipe de agentes que irá criar. E veremos isso acontecer daqui a pouco . Tudo bem. Então, dê uma olhada nisso. É um projeto novo e
+
+definiu a cadeia de contratos. Portanto, precisamos que algumas coisas estejam configuradas, pelo menos parcialmente, no banco de dados, antes mesmo de podermos acessar o back-end. E o mesmo acontece com o backend antes de passarmos para o frontend. Então, a decisão foi tomada aqui. Tudo isso é dinâmico, baseado apenas nas instruções que dei para iniciar o agente do banco de dados primeiro. Portanto, é o ponto mais a
+
+montante na cadeia de contratos. Então, esse foi meu primeiro emprego... ah, me perdi nessa parte. Sua
+
+primeira tarefa é construir a camada de banco de dados e depois me enviar o contrato. Então não precisa ser feito. Basta enviar o contrato e, em seguida, o agente de backend pode ser ativado. Portanto, ainda teremos algum trabalho paralelo, mas primeiro é preciso estabelecer algumas bases. E pronto . O agente de banco de dados enviou o
+
+contrato de volta para o agente principal. Assim, o trabalho de base estava feito. O agente principal sabia disso. E assim também foi iniciado o agente de back-end . E então iniciei outro pedido. Portanto, o agente de banco de dados
+
+continua funcionando normalmente. E assim, continuamos vendo tudo isso acontecer em paralelo , mas tínhamos um fluxo muito mais inteligente. E, portanto, veremos a interface do usuário começar a funcionar em breve também. Não vou mostrar o exemplo completo aqui porque o objetivo principal é demonstrar a inteligência desde o início. E eu realmente recomendo que você experimente esse comando por si mesmo. Basta observar a
+
+consistência na criação dessas equipes com base nos planos e na gestão dos terminais. É extremamente poderoso quando você recebe algumas instruções para criar código que mostre exatamente como você deseja usar as equipes de agentes. Portanto, também recomendo que você ajuste a habilidade e o comando conforme for usando. Faça com que se adapte ao seu caso de uso e à forma como deseja trabalhar com essas equipes, pois há muitas opções de personalização para a coordenação específica. É como se eu estivesse adotando uma abordagem de contrato primeiro. Você
+
+pode fazer tudo o que seu coração desejar. Então, meu amigo, isso é tudo que tenho para te dizer agora sobre o novo recurso de equipe de agentes. Coisa superpoderosa. Como eu disse no início do vídeo, sinto que estou realmente vislumbrando o futuro do desenvolvimento orientado a agentes. Mas, como já discutimos , está longe de ser perfeito neste momento.
+
+Portanto, certamente abordarei esse assunto no futuro, conforme a Anthropic continuar a aprimorá-lo, assim que deixar de ser um recurso experimental, e também conforme eu trabalhar na habilidade e continuar a usar equipes de agentes de forma cada vez melhor. Então, se você gostou deste vídeo e quer ver mais conteúdo sobre equipes de agentes e programação de agentes, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos na próxima!

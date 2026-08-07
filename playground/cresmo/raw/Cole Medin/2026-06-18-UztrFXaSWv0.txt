@@ -1,0 +1,169 @@
+---
+video_title: "The Creators of Claude Code and OpenClaw don't Prompt Their Agents Anymore?!"
+video_id: UztrFXaSWv0
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=UztrFXaSWv0
+video_date: 2026-06-18T00:00:08+00:00
+video_description: |
+  The best AI engineers barely prompt their agents anymore. Sounds crazy I know! They build a loop that does the prompting for them and let it run for hours while they step away. The head of Claude Code at Anthropic put it bluntly: he doesn't prompt Claude, he has loops running that prompt Claude for him.
+  
+  The only problem is this gets expensive (and hallucinations compound) - you need a harness with observability that can run reliably not always using the expensive frontier models.
+  
+  So I built one! It's a TypeScript app that runs Pi (on Kimi) in a loop, stores every run in a database, and shows it all in a dashboard. And the loop isn't one agent on repeat, it's agents prompting agents: an orchestrator decides the next tasks and spins up workers to run them in parallel. Think of it like an advanced Ralph loop with more control!
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - Build and deploy your AI built applications easily with Retool - plus when you sign up now you get free app imports till July 1st and bonus AI credits on all paid plans!
+  https://fandf.co/4uh4uDD
+  
+  - Neon, my favorite Postgres platform:
+  https://get.neon.com/LqufgGN
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - The Dynamous Agentic Coding Course is now FULLY released - learn how to build reliable and repeatable systems for AI coding: 
+  https://dynamous.ai/agentic-coding-course
+  
+  - Agent Control Plane (my open-source Pi loop dashboard):
+  https://github.com/coleam00/agent-control-plane
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 The Loop Engineering Buzzword
+  1:42 The Core Concept of Loops
+  5:52 Downsides and Token Costs
+  8:34 Deterministic Workflows with Archon
+  13:18 Orchestrating Parallel Coding Agents
+  17:29 My Pi Loop Engineering Dashboard
+  21:11 Deploying Control Systems to Production
+  23:58 Outro
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Aparentemente, nem sequer devemos mais dar dicas aos nossos assistentes de programação com IA. A verdadeira habilidade está em projetar ciclos de treinamento que incentivem seus agentes a trabalhar para você 24 horas por dia, 7 dias por semana. E devo dizer que, no momento, não estou convencido dessa ideia. Parece que alguns dos grandes nomes na área de IA, como Peter Steinberger, o criador do OpenClaw, e Boris Cherney, líder da Claude Code, também estão fazendo isso . Eles estão promovendo essa nova moda, quer queiram ou não, de engenharia de circuitos integrados. Está se tornando a próxima
+
+palavra da moda e prometo que não vou exagerar na engenharia de loops aqui. Há algumas boas lições a serem aprendidas com o que está vindo à tona, mas também com loops, e você provavelmente já viu isso com fluxos de trabalho dinâmicos no código Claude, por exemplo; eles nem sempre são os mais confiáveis ​​e consomem muitos tokens . Então, a menos que você tenha um orçamento infinito como o Peter, é preciso ter muito cuidado com esse tipo de sistema. Nem sempre são práticas. E é isso que eu quero abordar com vocês neste vídeo.
+
+Quero ser bem sincera e bem prática com você. Vamos abordar três pontos. Vamos abordar os loops de uma forma bem simples. Na verdade, não é tão complicado assim. Então, quero mostrar a vocês como executar esses comandos e depois falar sobre as vantagens e desvantagens e, em seguida, sobre as soluções para isso. Tudo muito bem
+
+organizado aqui. E, no que diz respeito a algumas das soluções que abordaremos no final do vídeo, quero mostrar como podemos construir um sistema onde podemos realmente observar os loops, os orquestradores e os trabalhadores, como podemos otimizar os custos com os fluxos de trabalho que criamos e usando diferentes provedores como o Raspberry Pi. Então, na verdade, é assim que você pode executar loops. Eis as desvantagens. Eis como podemos resolvê- los e realmente chegar ao ponto de construir sistemas de automação para essas tarefas de longa duração, porque isso é realmente poderoso para certas coisas, mas também considerando as compensações necessárias . Certo, então vimos o que Peter
+
+disse. Agora vejamos o que Boris, o criador do código Claude, disse, e é realmente muito semelhante. Ele disse: "Eu não dou mais dicas ao Claude. Eu escrevo loops e os loops fazem o trabalho. Meu trabalho é escrever loops." Certo, Boris, acho que entendemos
+
+. Como eu disse, engenharia de loops é uma espécie de palavra da moda, mas também há algumas lições muito valiosas a serem aprendidas quando você se aprofunda nesse assunto. Assim como Boris, que compartilhou seu fluxo de trabalho em diversas entrevistas e podcasts . Podemos ter uma ideia de como funciona. Grande parte disso foi construído em torno dos recursos mais recentes do Claude Code. Assim como o laço {barra} é o
+
+exemplo mais básico. E eu disse que íamos simplificar as coisas por aqui. A engenharia de loops não é tão complicada assim. Nem sei se isso merece um termo próprio. Assim, com o loop {slash} definimos um intervalo para executar um prompt. Por exemplo, a
+
+cada 5 minutos vou verificar se há novos problemas relatados no GitHub neste repositório e resolver qualquer um que aparecer. É bem interessante. Configuramos o Claude para que ele basicamente acorde sozinho a cada 5 minutos e, claro, você pode ajustar isso, e ele buscará entradas em um sistema externo como o GitHub, por exemplo. Assim, desde que nosso terminal esteja funcionando corretamente com o Claude Code, ele será capaz de lidar com isso de forma autônoma. Basicamente, é um processo que se repete a cada 5 minutos, verificando os problemas relatados no GitHub.
+
+Também existe o objetivo {slash} que temos no Claude Code e no Codex. Então, definimos alguns critérios, como por exemplo, como saber se o processo terminou, e então forçamos o agente de codificação a trabalhar até que a tarefa seja concluída. É tipo aqueles vídeos do Ralph que viralizaram alguns meses atrás. E por último temos as rotinas {slash}. E essas são as tarefas programadas. A
+
+cada hora, quero que você acorde, dê uma olhada em um documento de especificações mais extenso e, em seguida, execute a próxima tarefa. Assim, na verdade, a engenharia de circuitos consiste em combinar ou criar um sistema em torno de todas essas coisas. Rotinas, {slash} loop para que possamos fornecer um escopo de trabalho maior como entrada para um assistente de codificação de IA e fazê-lo trabalhar incrementalmente, certo? Porque nunca queremos que um agente de codificação tente lidar com muita coisa ao mesmo tempo, ou ele ficará completamente sobrecarregado. E a ideia principal da engenharia de loops é ter um agente orquestrador principal com o qual possamos nos comunicar. Nós fazemos o mínimo de
+
+instruções, apenas dizendo o que queremos em alto nível, e ele descobre como configurar o loop e todo o sistema. E é muito fácil fazer isso em Claude Code. Isso é muito legal. Basta instruí-lo a usar a habilidade de loop. Portanto, existe uma funcionalidade integrada na ferramenta que permite configurar esses sistemas de loop com base no que solicitamos. Então, eu incluí aqui uma espécie de
+
+documento de especificação simples, como por exemplo, isto aqui. Essas são as tarefas que queremos que sejam executadas gradualmente. Portanto, meu comando está dizendo para carregar a habilidade para que ela saiba como configurar o loop. E então, a cada ciclo, ele executará a primeira tarefa não verificada, fará a validação e, em seguida, o ciclo será concluído. E então, na próxima iteração, ele executará a próxima tarefa. Então, eventualmente, todas as
+
+tarefas serão concluídas e nossa sessão principal do Claude Code, que configurou tudo, nos enviará um relatório , certo? Então, aqui o código do Claude é uma espécie de orquestrador, mas também os trabalhadores, porque ele configura o próprio loop. Mas é muito legal assistir a essa corrida. Então, vou enviar uma solicitação aqui e esperar que ela seja processada por um instante. Voltarei e mostrarei mais ou menos como funciona. Mas, como você pode
+
+ver, ele carrega a habilidade de loop como a primeira coisa. Então, ele sabe como orquestrar as coisas e fará o loop {barra} por si só, que acabei de mostrar como você pode fazer manualmente. Ok, então voltei alguns minutos depois e as duas primeiras tarefas já estavam concluídas. Portanto, já passou por duas iterações do loop. Assim, se subirmos até o topo, podemos ver que está escrito que esta é uma lista de tarefas sequenciais.
+
+Vai executar a primeira tarefa e depois vai agendar um despertar rápido. Assim, ele configura o loop {barra} por si só. E se rolarmos um pouco para baixo depois que ele fizer e validar a primeira tarefa, podemos ver que ele está retomando com um despertar de loop {slash}. E veja só. Eu não elaborei esse tema . Eu sei que este é um
+
+exemplo muito, muito básico, mas quero manter a simplicidade de propósito, embora tenha escrito o prompt. {slash} loop execute o plan.md uma tarefa de cada vez. Portanto, os tipos de sistemas que Boris está construindo obviamente serão muito mais elaborados em relação à forma como instruímos o sistema a executar os loops, criar rotinas e descrever como queremos que ele interaja e funcione em nosso contexto, mas, em essência, é tudo o que é necessário. Então, agora vai continuar resolvendo as coisas uma de cada vez.
+
+Então, essa é a engenharia de malhas na sua forma mais básica possível. Mas agora quero abordar algumas das desvantagens, algumas das quais já são bastante óbvias para você. Problema número um: não há como você me convencer de que a engenharia de loops é a maneira de obter os melhores resultados possíveis com a assistência de programação por IA. Ora, vamos lá , isso deve ser um exagero. Boris Journey afirma que sua IA, Daisy, gerencia dezenas de milhares de agentes de IA simultaneamente. Tipo, sério? Isso é
+
+realmente viável? Isso será escalável? Tipo, vocês estão mesmo desenvolvendo código Claude com dezenas de milhares de agentes por dia? Quer dizer, talvez isso explique alguns dos bugs que temos no código do Claude. Tenho a impressão de que sempre tem um ou dois irritantes. Mas,
+
+sim, no geral, eu gosto de construir esse tipo de circuito, se conseguirmos criar um sistema bem controlado, que é o que vou abordar daqui a pouco, acho que é bom. E para construir provas de conceito e explorar ideias, acho que é realmente muito bom. Mas não é como se eu quisesse usar esses dispositivos para toda a minha programação de IA . E o segundo grande problema é o custo, porque com a engenharia de loops, dependemos de algum tipo de orquestrador para configurar o sistema e realmente determinar como chegar ao objetivo final. Então, ele calcula quantos trabalhadores alocar, quantos ciclos executar, e isso se torna extremamente caro. Então,
+
+o painel que eu construí, e que mostrarei no final deste vídeo, tem um recurso de rastreamento de custos integrado. Assim, para uma única execução, como por exemplo, aqui estão todos os loops pelos quais o orquestrador passou, custou-me mais de um milhão de tokens apenas para construir uma aplicação relativamente simples . E sim, tenho certeza de que há muitas otimizações que posso fazer aqui. Mas, acho que você pode ver só de olhar para isso, quer dizer, isso é parte do motivo pelo qual eu construí o painel de controle, você pode ver por que ele seria tão caro. Porque enviamos nossa especificação inicial para o orquestrador, e ele precisa raciocinar sobre isso e então descobrir quantos trabalhadores devem ser criados, depois precisa solicitar informações a todos eles, e cada um gasta tokens, e então os resultados retornam, o orquestrador precisa raciocinar sobre isso novamente e então enviar a próxima onda. Independentemente de
+
+como você projete o sistema, há muita troca de contexto e raciocínio envolvidos para fazer tudo funcionar de forma distribuída. Portanto, é um sistema realmente poderoso e é incrível o quão longe você pode levar esse tipo de coisa com a autovalidação. Mas, nossa, como isso fica caro! E então, muito rapidamente, o terceiro problema com a engenharia de loops é que, pelo menos em muitas configurações, você não está realmente trabalhando entre diferentes sessões de agentes de codificação. Por exemplo, quando você usa um loop de barra no código Claude, como o Boris menciona bastante, é basicamente uma continuação na mesma sessão do agente de codificação. Portanto, se você ficar
+
+repetindo o mesmo processo por muito tempo, vai inflar completamente o contexto do seu LLM e sobrecarregá-lo. Portanto, precisamos de um sistema que nos permita distribuir o trabalho entre diferentes sessões de agentes de codificação, possibilitando que todos se comuniquem entre si e tenham uma noção de seu papel no objetivo maior. Então, é isso que quero abordar no restante deste vídeo. Então, quero falar sobre como eu trabalho no dia a dia, porque isso vai mostrar como podemos resolver muitos dos problemas que temos com a engenharia de loops. Então, eu uso minha ferramenta Arkon, mas não estou tentando te empurrar o Arkon aqui. Eu só quero falar
+
+sobre como eu o utilizo de uma forma que resolve os problemas de custo, confiabilidade e como orquestramos, de fato, várias sessões diferentes de agentes de codificação. Então, vamos analisar isso comigo. Então, Arkon é o fabricante dos meus arreios. Isso nos permite criar fluxos de trabalho que orquestram várias sessões de agentes de codificação para lidar com tarefas maiores. Assim, por exemplo, um fluxo de trabalho clássico de programação em IA é o seguinte: você faz o planejamento, implementa o código e, em seguida, faz a revisão ou os testes. Assim,
+
+podemos construir isso como um único fluxo de trabalho Arkon. Tem muito conteúdo sobre Arkon no meu canal. Vou deixar aqui o link para um vídeo que pode te ajudar a começar, caso tenha interesse. Mas, novamente, quero me concentrar em como uso isso no dia a dia para fazer loops. Assim como você pode fazer engenharia de loops com o Arkon. Você pode construir um
+
+loop do Ralph com o Arkon. Então, vou mostrar um exemplo de fluxo de trabalho aqui. Se eu acessar os fluxos de trabalho padrão, há uma infinidade deles que já vêm com o Arkon. Vamos analisar, por exemplo, como corrigir um problema no GitHub. Então, não quero entrar em muitos detalhes , mas quero mostrar rapidamente, de forma geral, como esse fluxo de trabalho funciona. E outra
+
+coisa muito importante sobre Arkon é que não estamos deixando o agente conduzir tudo . É mais determinístico porque configuramos o processo neste arquivo de fluxo de trabalho e, além disso, temos até mesmo certas etapas que são determinísticas. Assim como o agente não está no comando, garantimos que isso vai acontecer. Portanto, ao construirmos esses loops e tarefas maiores que nosso agente de codificação executa, queremos, na verdade, tirar o poder de decisão do agente de codificação o máximo possível, aplicando o raciocínio do LLM somente quando realmente precisamos dele para escrever o código, por exemplo. Por exemplo, podemos querer que nosso agente escreva o código, mas não que decida quais testes executar, porque sabemos o que é necessário para que nossos testes sejam aprovados.
+
+Assim, para este fluxo de trabalho, primeiro extraímos o número da ocorrência. Portanto, a entrada aqui é um problema do GitHub que queremos corrigir ou resolver. Então, extraímos o contexto, obtemos o contexto do problema e, em seguida, o classificamos. Então, temos um modelo de linguagem complexo que decide inicialmente se estamos corrigindo um bug ou implementando um novo recurso. E então o fluxo de trabalho será dinâmico, baseado nessa decisão. Então, o tipo de coisa que
+
+seu orquestrador normalmente decidiria, aqui estamos mais impondo o processo. É esse tipo de coisa que eu quero adicionar como uma camada extra à engenharia de loops. Quero estar a par de tudo, quero saber como o fluxo de trabalho pode progredir. Então, pesquisamos o problema, investigamos e depois fazemos a implementação e a validação, e criamos o pull request, certo? Passo a passo, em cada uma das etapas, utilizamos documentos Markdown como contexto. Então, estamos transferindo
+
+informações entre as etapas, mas cada etapa é executada em sua própria sessão de agente de codificação. Portanto, se estivermos lidando com um problema maior no GitHub, não é como se todo o processo estivesse sendo executado com um código Claude de loops de barra invertida, ficando totalmente sobrecarregado com cada uma das tarefas que estamos realizando durante o planejamento, a implementação e a validação. E a forma como consigo controlar os custos aqui é que, em cada nó desse fluxo de trabalho do Arkon, posso decidir qual modelo vou usar. Assim, por exemplo, na etapa de classificação aqui no topo, quando estamos descobrindo, você sabe, que tipo de problema precisamos abordar no restante do fluxo de trabalho? Isso é algo parecido com a decisão do orquestrador. Podemos
+
+usar um modelo pequeno, como talvez o Haiku ou o MiniMax M3 Kimmy K2.7, por exemplo, certo? Assim como podemos fazer no Arkon, também podemos misturar provedores. Assim, podemos usar o código Claude para a implementação, o Codex para a revisão e, para todo o carregamento e exploração de contexto inicial, podemos usar um modelo menor como o Kimmy K2.7.
+
+Então, esse é um dos outros grandes problemas que vejo ao usar metas de barra, rotinas ou loops no código Claude: você está usando um único modelo para praticamente tudo. Esse é um dos motivos pelos quais é tão caro. Porque quando estamos realizando grandes volumes de trabalho como este, é claro que você terá que gastar mais tokens, mas nem sempre precisa gastar o máximo por token em cada etapa do seu fluxo de trabalho. E eu sei que estou insistindo muito nisso agora, mas mais um motivo para querer algum tipo de arnês como o que você pode construir com Arkon é a durabilidade que ele oferece. Então, este é o meu banco de dados Neon. Estou armazenando todos os meus logs e
+
+execuções no Postgres para poder retomar um fluxo de trabalho mesmo se minha máquina falhar ou se eu cancelar alguma coisa. Independentemente do que eu faça, sempre consigo retomar exatamente do ponto em que estava naquele loop maior ou naquele fluxo de trabalho maior. Então, tenho todas as minhas conversas, as bases de código com as quais estou trabalhando no Arkon. Tudo é durável e é super fácil retomar qualquer trabalho que eu esteja fazendo. Ok, legal. Então,
+
+agora quero mostrar a vocês como eu realmente uso o Arkon no dia a dia. Podemos traçar muitos paralelos com a engenharia de loops e com coisas que eu realmente consertei com ela, não é? Assim, em termos muito, muito básicos, um dos fluxos de trabalho mais clássicos que utilizo com o Argon é a correção de problemas no GitHub. A maior parte das informações que utilizo no meu trabalho diário são problemas relatados em um repositório. Ou eu os criarei, ou outra pessoa o fará. Assim, podemos usar o
+
+Argon para enviar fluxos de trabalho para serem executados em paralelo, lidando com várias tarefas do GitHub simultaneamente. E isso se assemelha muito à engenharia de loops, porque temos nosso código Claude principal aqui como orquestrador, e ele está determinando, com base na minha solicitação de nível superior, como criar os prompts e despachar os fluxos de trabalho. As árvores de trabalho também são uma parte muito importante da engenharia de loops. Boris também fala sobre isso. Se tivermos muitos agentes diferentes executando tarefas em um loop, precisamos garantir que eles estejam funcionando isoladamente para que não interfiram uns nos outros. É
+
+assim que escalamos nossa produção com a ajuda da programação por IA. Assim, temos aqui o nosso código Claude acionando quatro fluxos de trabalho para lidar com problemas do GitHub. O sistema irá validar os PRs (Pull Requests) para garantir que eles foram de fato criados. E é aqui que podemos entrar com o fator humano também. Em seguida, serão executados mais quatro fluxos de trabalho para validação, como a realização de uma revisão de código em cada um dos problemas. Então, é bem abrangente, uma
+
+espécie de ciclo no sentido de que consiste em lidar com os problemas, validar e depois fazer uma revisão de código. E outra coisa que torna isso mais confiável é que, com os fluxos de trabalho do Argon, também podemos incorporar a intervenção humana em qualquer nó individual do fluxo de trabalho. Assim, podemos sempre fazer com que o programa pause para validarmos algo antes de continuar, o que é um dos maiores problemas da engenharia de loops atualmente: muitas vezes, as pessoas configuram esses sistemas para simplesmente funcionarem sem parar. Aí você deixa rodando por um dia e, quando volta, só tem lixo. Eu mesmo já passei por isso, pois testei muitas coisas no código do Claude, como rotinas e loops de barra. Então, vou enviar isso aqui
+
+e farei uma pausa. Voltarei quando terminar para que possamos analisar tudo o que foi realizado. E a melhor parte de tudo isso é que temos nove sessões de agentes de codificação para todo esse ciclo, ou como você quiser chamar, toda essa estrutura, certo? Como um por correção de problema no GitHub, um por revisão, e então temos nosso orquestrador principal. Então, estamos trabalhando muito, mas ao mesmo tempo, conseguimos ser bastante enxutos em cada sessão individual. Na verdade, preciso me
+
+corrigir: são mais do que apenas nove sessões, pois mesmo dentro de cada fluxo de trabalho individual do Arkon, executamos sessões separadas do agente de codificação, onde podemos ter modelos diferentes. Podemos otimizar em termos de custos. Há muita engenharia envolvida nos bastidores aqui. Muito bem, estou de volta depois que tudo terminou. Só quero mostrar o quão abrangentes podemos ser aqui. Então,
+
+temos quatro fluxos de trabalho para corrigir os problemas, e o Cloud Code está monitorando e orquestrando tudo, certo? Então, conforme as diferentes tarefas são concluídas, o sistema entra e verifica o andamento delas. E então, finalmente, conseguimos fazer tudo juntos. Portanto, todos os quatro fluxos de trabalho fixos estão concluídos. E então inicia as revisões de código porque confirmou que todas as solicitações de pull request estão prontas para serem revisadas.
+
+E você pode até solicitar uma atualização de status. Então, enquanto os fluxos de trabalho do Arkon estão em execução, se quisermos ver em que ponto estamos, podemos, é claro, verificar os registros na interface web do Arkon. Eu também tenho isso. Mas também podemos simplesmente perguntar ao nosso orquestrador, certo? Porque realmente controla toda a nossa situação aqui.
+
+E então, finalmente, todas as revisões estão concluídas e isso nos indica os itens que precisam da nossa atenção agora. Então, podemos realmente intervir e dirigir as coisas a partir daqui. Então, é o chicote de fios que controla tudo, mas ainda podemos estar no circuito onde quisermos. E eu sei que há muitos fatores envolvidos na orquestração eficaz de agentes de codificação paralela. Então, tem bastante conteúdo no meu canal onde eu abordo esse tipo de coisa. Por exemplo, uma coisa que
+
+você precisa fazer muito é criar ramificações no seu banco de dados, certo? Por exemplo, se cada agente de programação estiver trabalhando em algo em paralelo, você não quer que eles interfiram no trabalho um do outro, não apenas com alterações no código, mas também com alterações no banco de dados . Então, as árvores de trabalho no Neon são algo extremamente poderoso. Há muitas coisas diferentes, como conflitos de portas, que também queremos resolver. Então, vou colocar o link aqui para um vídeo onde eu explico isso . E, de forma geral, como podemos
+
+tornar a codificação paralela de IA mais confiável. Então, supondo que você cuide de tudo isso, você pode realmente deixar o Arkon trabalhar em quantas tarefas do GitHub ou o que for necessário em paralelo. Muito legal ver até onde podemos levar nossa produção aqui. Muito bem, já abordamos muita coisa neste vídeo. Conceitos básicos de engenharia de loops, suas desvantagens e como estou usando o Arkon para extrair as partes úteis e integrá-las a fluxos de trabalho mais determinísticos. Mas, por último,
+
+quero abordar um sistema que desenvolvi para engenharia de loops em sua forma mais pura. Porque eu apresentei essas questões a vocês, mas vejo muito potencial nisso . Quero tentar construir um sistema que resolva esses problemas. Então, eu criei este painel que estou muito animado para mostrar a vocês agora. Na verdade, o código-fonte está disponível gratuitamente no GitHub, e o link para ele está na descrição. E eu
+
+construí isso para resolver muitos dos problemas que temos atualmente com a engenharia de loops. Em primeiro lugar, temos a durabilidade. Assim como no Arkon, todos os loops que executamos, os diferentes eventos e registros, estou armazenando tudo aqui para que possamos sempre retomar o fluxo de trabalho posteriormente. Portanto, estamos gerenciando todo o nosso estado em um banco de dados externo, então não dependemos que ele permaneça em nenhuma sessão do agente de codificação. Então, nosso orquestrador principal vai analisar esse estado aqui e então descobrir: "Ok, qual é a próxima coisa que precisamos fazer?" Assim, será necessário que
+
+os trabalhadores realizem tudo isso. Tipo, criar uma nova funcionalidade, fazer algum tipo de validação, o que for necessário. E então esses funcionários voltarão e atualizarão as informações que temos em nosso banco de dados. Como já disse, estou usando o Neon para Postgres aqui. Então, esse é o nosso ciclo, certo?
+
+Porque na próxima vez que o orquestrador for executado, ele obterá esse estado atualizado dos nós de trabalho e então determinará quais nós de trabalho devem ser invocados em seguida. E existem alguns problemas que estou resolvendo construindo algo assim. E eu quero começar dizendo que isso é mais experimental. Estou apenas mostrando algo em que estou trabalhando e que estou transformando em algo semelhante a um segundo cérebro. Mas antes de mais nada, estou controlando tudo com o Raspberry Pi. Então,
+
+na verdade estou usando minha Kimmy, agora Kimmy K 2.7, para gerenciar todos esses fluxos de trabalho. Sim, são muitos tokens, mas não estou usando o Opus para tudo, e mesmo assim estou obtendo resultados muito bons graças ao suporte que construí aqui para elevar a miniatura. Além disso, incorporei muitos recursos de observabilidade a este painel. Quer dizer, obviamente, sendo um painel de controle, ele resolve parte do problema de confiabilidade, no qual ainda estou trabalhando, mas só o fato de poder ver exatamente as decisões que estão sendo tomadas aqui significa que é mais fácil para mim analisar isso, até mesmo fazer com que meu agente de codificação analise as execuções no banco de dados e, em seguida, descobrir como melhorar o loop, como melhorar a estrutura aqui.
+
+Então, tenho estado a analisar muitos exemplos realmente simples, mas suficientemente complexos para que seja necessário passar por várias etapas para os construir . Então, assim como na criação de um quadro Kanban de página única como um aplicativo web estático, eu simplesmente pego essa instrução e vou mostrar como ele funciona ao vivo agora mesmo. Tipo, eu só vou enviar isso e iniciar um loop. E é muito legal. Podemos ver que é como se o orquestrador estivesse decidindo como dividir o trabalho neste momento. E
+
+também temos aqui o histórico completo da execução . É muito legal. Tipo, é super fácil colocar isso em funcionamento, basta dar uma olhada no repositório do GitHub que está linkado na descrição. Mas, depois de um tempo, o orquestrador decidirá: "É assim que vou criar essa primeira onda." E então, veremos os trabalhadores serem enviados. Então, é isso
+
+. O orquestrador gastou 6.000 tokens com esse planejamento inicial e, em seguida, acionou nossos três primeiros trabalhadores na primeira rodada. Então, não precisamos ficar olhando a tinta secar enquanto isso é concluído, mas você entendeu a ideia. Vimos anteriormente nos registros a execução completa de como o processo se repete, realizando validações a cada vez, e podemos até mesmo ter um humano no circuito para que possamos verificar o que aconteceu na primeira rodada antes que o orquestrador passe para a próxima. Esse
+
+é o tipo de confiabilidade que eu acho que realmente precisamos ter agora para construir algo além de simples demonstrações com esse tipo de configuração de engenharia de loop . Então, sim, eu encorajaria você a simplesmente experimentar esse tipo de ideia. Criar um painel de controle para gerenciar tarefas mais autônomas em algo que funcione como um segundo cérebro é algo importante em que estou me concentrando agora. E podemos até pegar esse tipo de painel e implantá-lo na nuvem também, para que possamos acessá-lo de qualquer lugar. Talvez até possamos começar a compartilhar nossa configuração de loop com nossos colegas de equipe. E hoje em dia é
+
+muito fácil pegar aplicativos que você desenvolve localmente para esses tipos de sistemas de controle e implantá-los em produção, para que você possa usá-los remotamente ou para que uma equipe os utilize. O Retool é uma ferramenta que tenho usado bastante para esse tipo de implantação. Portanto, é muito fácil criar um aplicativo aqui e, em seguida, podemos importar o código React. Então, pedi ao Claude para criar todo o painel de controle em React com a ideia de implantá-lo aqui. É incrivelmente fácil. Então eu simplesmente entro,
+
+pego o arquivo zip da interface que acabei de te mostrar, e o agente vai configurar tudo . Assim, ele se conectará ao servidor usando a API que estou executando no Raspberry Pi. Isso fará com que tudo seja implantado em um URL real que eu possa usar. É muito legal. Por exemplo, aqui, ao conectar-me ao meu banco de dados Neon, onde armazeno todas as corridas para durabilidade, ele me pede para configurar uma conexão aqui. Assim, posso
+
+criar um novo recurso. Posso selecionar o Postgres porque é o que o Neon está executando internamente, e então configurar todas as minhas informações de conexão aqui. Então, é muito fácil fazer essa conexão. Então, estou apenas implantando a interface aqui e conectando-a ao servidor Raspberry Pi que hospeda meu aplicativo e que está rodando em segundo plano. Então, vou conectar tudo isso fora da câmera e depois mostrarei o resultado final aqui. E pronto.
+
+Tudo está implantado. Podemos ver nosso aplicativo hospedado na nuvem da mesma forma que estava sendo executado localmente. Muito legal. Agora temos um URL onde podemos compartilhar isso. Há também muitas outras coisas legais que você pode fazer no Retool. É possível
+
+configurar grupos de permissões e, assim, controlar determinadas ações por meio de um endpoint de API, exigindo aprovação e as permissões adequadas para executá-las. Por exemplo, poder pausar o fluxo de trabalho e depois retomá-lo. Se eu clicar aqui, você poderá ver a opção de aprovar e retomar, e poderá ver a identidade que eu identifiquei através do Retool. Isso me dá permissão para realmente fazer isso. Além disso, editar este aplicativo é muito fácil. Posso continuar
+
+fazendo alterações aqui na nuvem conforme necessário, adicionando novos recursos à interface, o que quer que eu precise à medida que evoluo meu painel de controle. Então, sim, tenho me dedicado bastante a isso, como implantar painéis de controle para observabilidade e auxiliar em todos os meus sistemas para meu segundo cérebro e minha programação de IA. Material muito impactante. E um rápido agradecimento à equipe da Retool. Desde que comecei a usar a plataforma deles, tenho trabalhado com eles e até colaborei para trazer essa integração para o vídeo de hoje.
+
+É uma ótima plataforma porque você pode criar seus aplicativos diretamente no Retool ou importá-los, como mostrei anteriormente. Mas, dessa forma, sua equipe, independentemente de tudo, terá um único caminho controlado para a produção, com trilhas de auditoria. É muito fácil fazer alterações usando o chat, como mostrei aqui, e o sistema de revisão com intervenção humana. Tudo o que você precisa para enviar seus aplicativos para produção. E vou colocar um link na descrição. Se você assinar agora, receberá
+
+importações de aplicativos gratuitas até 1º de julho e créditos de IA bônus em todos os planos pagos. Isso é tudo que eu tinha para abordar sobre engenharia de malha fechada. Os conceitos básicos, os problemas que enfrenta e como estou resolvendo-os, porque realmente quero incorporar a engenharia de loops. Eu gosto da ideia e quero controlar o nível de autonomia dos meus agentes de programação, mas é preciso ter o sistema certo. Caso contrário, as coisas vão desmoronar completamente, como já discutimos.
+
+Espero ter inspirado algumas ideias para vocês, como por exemplo, como usar o Arcan ou começar a construir esse tipo de arnês por conta própria. Na verdade, eu simplesmente incorporaria a engenharia de circuitos em circuitos à engenharia de chicotes elétricos. Não chega a merecer um termo da moda só para isso, né? Mas há algumas boas ideias aqui. Espero que tenha achado isto útil. Se você gostou, eu
+
+agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo.

@@ -1,0 +1,147 @@
+---
+video_title: "Pi Coding Agent + Archon: Build ANY AI Coding Workflow (No Claude Code Bloat)"
+video_id: XSmI7OYd7iM
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=XSmI7OYd7iM
+video_date: 2026-04-20T21:00:28+00:00
+video_description: |
+  Archon workflow masterclass this Friday in Dynamous: https://dynamous.ai
+  
+  Claude Code used to be simple, predictable, and easy to mold to your own workflow. Then Anthropic kept shipping. Now it is huge, the system prompt changes every release, and your context is not really your context anymore. I still use it and love it, but honestly the bloat is real - and that is exactly the problem Pi was built to fix.
+  
+  Pi is an open source coding agent built on one philosophy - a minimal foundational core, and everything else is an extension. There is a growing marketplace of third-party extensions, and because Pi is so simple under the hood, building your own features is super easy. I have been using it non-stop with Archon and I love it!
+  
+  In this video I walk through why Pi matters right now, how to install it in one command, and then I show you how I added Pi as the third supported coding agent in Archon. I even walk you through an Archon + Pi workflow I've been building recently at the end of the video!
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Archon repo (open source AI coding harness builder):
+  https://github.com/coleam00/Archon
+  
+  Archon workflow from this video (with Pi + Plannotator):
+  https://github.com/coleam00/GitHubIssueTriager/blob/main/.archon/workflows/archon-plannotator-piv.yaml
+  
+  Pi coding-agent README (install + extension docs):
+  https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent
+  
+  Pi extension marketplace (directly on npm):
+  https://www.npmjs.com/search?q=keywords%3Api-package
+  
+  Mario Zechner - "Building Pi in a World of Slop":
+  https://www.youtube.com/watch?v=RjfbvDXpFls
+  
+  Plannotator Pi extension:
+  https://www.npmjs.com/package/@plannotator/pi-extension
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Introduction to the Pi Coding Agent
+  1:53 Why Pi is so Important
+  6:08 How to Install Pi
+  7:20 Extending Pi
+  8:32 Using Archon and Pi
+  9:23 The Pi Plannotator PIV Workflow
+  13:28 Full Archon Workflow in Action
+  17:04 Final Thoughts
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Se você ainda não experimentou o agente de codificação Pie , está na hora, meu amigo, de experimentá-lo . Pie é um agente de codificação minimalista de código aberto, e o minimalismo é realmente importante aqui porque o Pie está combatendo o excesso de recursos que vemos em muitos outros agentes de codificação atualmente, especialmente o Claude Code. Agora, não me interpretem mal. Eu ainda adoro o código do Claude, mas, principalmente nos últimos tempos, têm surgido muitos problemas com o uso excessivo de tokens e bugs na plataforma, devido à rapidez com que estão lançando novidades. Portanto, eu realmente me identifico com a filosofia por trás do Pie, que é criar a estrutura fundamental e depois torná- la muito fácil de expandir. Então, tenho
+
+usado bastante o Pie ultimamente, e estou muito animado em dizer que o adicionamos oficialmente como o terceiro agente de codificação compatível com o Arkon. Arkon é meu construtor de interfaces de código aberto para programação de IA. Isso permite que você pegue todo o seu processo de engenharia de agentes, seja qual for , e o empacote em fluxos de trabalho reutilizáveis ​​que podem ser executados em paralelo para lidar com todas as suas tarefas de codificação de IA em escala. E quanto aos agentes de codificação que você pode usar diretamente nesses fluxos de trabalho do Arkon, nos harnesses que você cria, inicialmente lançamos o produto com suporte para Claude e Codex, e agora adicionamos o Pie. E eu tenho adorado a combinação de Pie e Arkon, especialmente porque, se voltarmos ao arquivo readme do Pie e consultarmos os modelos suportados, podemos usar praticamente qualquer modelo de linguagem grande que desejarmos no Pie. Assim, o Pie também torna
+
+extremamente fácil criar fluxos de trabalho onde você usa diferentes modelos e diferentes provedores. Agora temos tudo isso incluído em Arkon. Então, neste vídeo , quero abordar como começar a usar o Pie, por que ele é tão importante, especialmente agora, e depois quero explicar como você pode usá-lo com o Arkon. Vou compartilhar algumas ideias de fluxos de trabalho que venho desenvolvendo. Há tantas coisas legais que tenho experimentado, aproveitando todo o ecossistema de extensões do Pie. Muito
+
+bem, então vamos começar falando sobre por que a torta é tão importante agora. Está se tornando rapidamente meu melhor amigo, e pode ser que aconteça o mesmo com você em breve. Então, aqui está Mario Zechner. Ele é o criador do Pi. E ele deu uma palestra na conferência AI Engineer recentemente, intitulada " Construindo o Pi em um mundo de desordem". Então,
+
+ele apresenta aqui essa narrativa sobre por que acabou criando sua própria ferramenta, mesmo já existindo soluções muito poderosas como o Claude Code. E no princípio, havia Claude Code. Ele, como muitos de nós, usou isso como o primeiro agente de codificação que considerou suficientemente poderoso para realmente lidar com tarefas complexas de engenharia de agentes de ponta a ponta . E uma das maiores vantagens iniciais do Claude Code era a sua simplicidade, previsibilidade e facilidade de adaptação aos nossos fluxos de trabalho. Essa é uma das razões pelas quais eles o lançaram como uma CLI muito simplista, competindo com o que costumavam chamar de "desleixo" de outras ferramentas de IDE como Windsurf e Cursor, e tudo o que veio antes.
+
+Mas o problema é que a Anthropic não parou de lançar novas funcionalidades. E assim, chegamos ao ponto em que Claude Code está assim agora. Há tantas funcionalidades e tantos bugs sendo introduzidos o tempo todo. A plataforma está muito sobrecarregada agora porque há muita coisa para manter. Portanto, eles definitivamente se desviaram da missão inicial que tinham com a ferramenta. E eu entendo. É importante
+
+lançar funcionalidades para que qualquer plataforma se mantenha relevante, mas parece que eles estão fazendo demais no momento. E depois temos outros problemas que, honestamente, são ainda maiores. É como se o seu contexto não fosse realmente o seu contexto. É difícil, e em alguns aspectos impossível, controlar o prompt do sistema para o Claude Code, e ele muda constantemente a cada nova versão. Assim, você fica dependendo desse mecanismo onde o estímulo subjacente está sempre mudando, é difícil de controlar e vai afetar os resultados que você obtém, sem que você sequer saiba o porquê. Você provavelmente está passando por isso também
+
+. É claro que, antes de Mario simplesmente construir o Pi, criar algo do zero, ele explorou diversas opções que já existiam. Então, sabe, Amp, CodeX Factory, Open Code, ele experimentou bastante o Open Code porque também é de código aberto , se encaixa em um ecossistema muito semelhante , mas ele encontrou problemas com isso, certo? Ele queria criar algo tão fundamental e fácil de estender porque a base de código em si seria pequena e muito neutra em relação às opiniões dos usuários. E foi isso que o levou a construir o seu próprio. Então ele decidiu: vamos
+
+remover tudo, construir um núcleo mínimo extensível e fazer com que o agente se modifique sozinho. É aí que reside o grande trunfo do Pi. Para qualquer funcionalidade que você queira criar, basta pedir ao Raspberry Pi para incorporá-la nele. Então, qualquer coisa que inclua o código Claude, como o recurso de barra invertida, por exemplo, você pode simplesmente ir ao Raspberry Pi e dizer: "Ei, código Claude, inclua isso. Eu gosto desse recurso. Compile-o para mim." E
+
+vai fazer isso. Assim, você não perde nenhuma das funcionalidades que o código Claude oferece, mas também não precisa lidar com toda a complexidade desnecessária e as constantes alterações no prompt do sistema. Então, propositalmente, existem muitas coisas que não estão integradas ao Raspberry Pi, como o MCP, subagentes, modo de planejamento, coisas que o próprio Mario não usa . E eu uso o modo de planejamento, uso subagentes, mas você pode integrar tudo isso diretamente. E existe todo um ecossistema de extensões com habilidades, prompts, temas e outras extensões.
+
+Falaremos sobre isso hoje. Então, praticamente tudo o que você quiser, você pode construir você mesmo ou até mesmo usar implementações de terceiros que podem ser integradas ao seu agente de programação Raspberry Pi com um único comando. E eu tenho estado a experimentar muitas destas extensões no Raspberry Pi. Existe todo um mercado online de terceiros, cujo link estarei na descrição. Coisas incríveis por aqui. E,
+
+claro, é muito fácil construir o seu próprio em Raspberry Pi, como eu estava dizendo. Então, praticamente não importa a capacidade, habilidade ou modelo de solicitação que você queira, você encontrará aqui ou será muito fácil criar o seu próprio. Um dos fluxos de trabalho do Archon com o Raspberry Pi que tenho experimentado é um fluxo de trabalho de planejamento, implementação e validação usando a extensão Planotator para Raspberry Pi. Assim, quando o seu Codex, MiniMax, GLM ou qualquer outro programa no Raspberry Pi cria um plano, ele fornece esse site onde tudo é exibido e você pode adicionar seus comentários diretamente na linha de comando. Tudo será corrigido automaticamente assim que você enviar seu feedback. Assim, você tem toda essa
+
+iteração acontecendo dentro do próprio site, e é muito fácil mencionar coisas individuais em vez de ter que entrar em uma sessão separada e dizer: "este número de linha altera isso, este número de linha altera aquilo". Precisamos explicar muito menos. Isso é muito legal. Mostrarei isso melhor daqui a pouco, mas primeiro quero [bufa] falar sobre como é fácil colocar o Pi em funcionamento. Então, rolando a página para baixo no arquivo leia-me, você verá que é um único comando NPM para instalar o Pi. Então, vou executar este programa e mostrar a
+
+vocês a instalação do zero no meu computador agora mesmo. Então eu desinstalei e vou reinstalar. Muito bem, depois de instalado, basta executar o comando Pi para abrir o terminal do agente de codificação, assim como você faz com o Claude ou o Codex. E então você faz login com a tecla {slash} para configurar qualquer uma de suas assinaturas. Eu tenho o Anthropic, o GitHub Copilot, o Anti-Gravity e o Codex; esse é o que eu estou usando. Portanto, meu modelo é GPT
+
+5.3 Codex Spark. Atenção: acredito que usar sua assinatura com o Pi viole os termos de serviço da Anthropic . É a mesma coisa que o Raspberry Pi usa com o OpenClaw por baixo dos panos. Portanto, esteja ciente disso, mas você pode usar o Codex. É isso que
+
+eu estou usando. E, claro, se você quiser usar suas chaves de API para qualquer coisa, eles têm instruções para isso. Assim, você pode usar praticamente qualquer modelo que imaginar, como Mistral, Grok, Kimiko 2 ou MiniMax M2.7. O mundo é seu. E depois de
+
+configurar sua chave de API ou fazer login na sua assinatura , basta usar {slash} model para escolher entre os disponíveis com base na sua configuração. Então, neste momento, com base na minha configuração, posso usar modelos Gemini ou posso usar GPT. Começar é muito fácil. E quanto à extensão do Pi, esse é o ponto principal , certo? Temos a base sobre a qual construímos o agente de codificação. Já tenho algumas das minhas
+
+extensões favoritas instaladas. Então, encontrei essas extensões aqui na loja de extensões. É um único comando. Você pode clicar em qualquer um deles com um único comando para instalá-los. Outra coisa que você pode fazer é simplesmente pedir para o programa pesquisar na internet pela extensão XYZ e instalá-la. Assim, ele pode executar
+
+o comando sozinho para instalar essas extensões. E, claro, se você não encontrar o que procura ou quiser criar algo personalizado porque não confia em um mercado de terceiros, basta dizer: "Ei, não temos suporte para MCP no momento. Integre isso ao Raspberry Pi." Certo? Tipo, é literalmente assim tão fácil expandir o Raspberry Pi. Você não precisa se preocupar
+
+muito com a engenharia de contexto, porque ele entende sua própria estrutura internamente, já que é muito simples e, portanto, muito fácil de construir em cima dele. Portanto, repito, não importa o que você queira, você pode integrar isso ao Raspberry Pi. Fora isso, Pi é como qualquer outro agente de codificação. Vai ser tão impactante quanto. Mario comprova isso com exemplos práticos em sua palestra na conferência. Oferece suporte a habilidades prontas para uso, seguindo
+
+regras globais. Tipo, você pode ver que meu arquivo claw.md foi carregado automaticamente. Portanto, possui essa compatibilidade caso você esteja migrando do código Claude. Coisas muito, muito legais . Muito bem, então, dito isso, vamos
+
+começar a usar o Archon e o Pi juntos. Essa combinação está se tornando rapidamente a minha favorita para programação de IA. Então, se você nunca usou ou ouviu falar do Archon, definitivamente dê uma olhada neste vídeo que vou linkar aqui. Eu apresento uma introdução completa, um guia de configuração, como usar o programa e como criar fluxos de trabalho. É um construtor de chicotes elétricos de código aberto, certo? Então,
+
+você está pegando seu processo de planejamento, implementação e validação, seja lá o que você faça com agentes de codificação, e está integrando tudo em uma estrutura que você mesmo está criando. E essa é realmente a evolução que temos visto recentemente na programação de IA. Não se trata mais apenas de engenharia de contexto. Trata-se de como encadear várias sessões de agentes de codificação para que possamos ter tarefas de longa duração, sem sobrecarregar um único agente de codificação. É isso que estamos fazendo com o Archon, e tenho me divertido muito usando o Raspberry Pi para executar tudo, inclusive integrando muitas dessas extensões aos fluxos de trabalho do Archon. Anteriormente, mencionei
+
+esse fluxo de trabalho do Planotator que desenvolvi com o Raspberry Pi e o Archon. Este é o YAML correspondente . Então, vou colocar o link na descrição. Se você quiser usar o Raspberry Pi e o Archon e seguir exatamente o fluxo de trabalho que venho desenvolvendo recentemente, pode fazê- lo. Você pode integrar isso ao seu ambiente Archon e simplesmente dizer ao seu agente de codificação: "Ei, aqui está um novo fluxo de trabalho do Archon. Quero que você me ajude a
+
+configurar tudo com o Raspberry Pi, a integrar a extensão Planotator e, em seguida, a executá-la em qualquer repositório para compilar o que for necessário ." Então, ele percorre todo o ciclo Pi V, como eu o chamo. Então, você planeja uma nova funcionalidade ou uma correção de bug, e depois parte para a implementação e validação com o agente de codificação. O Planotator envolve a participação humana no planejamento. Assim, ele te guia por todo o processo, mas também te mantém informado . Então, quanto à forma como eu
+
+realmente construí esse fluxo de trabalho, é muito simples no Archon. Então, onde quer que você tenha o Archon configurado (e, claro, as instruções de instalação estão no arquivo README), ou diretamente no repositório do Archon, abra seu agente de codificação e diga: "Quero criar um novo fluxo de trabalho do Archon. Especificamente, quero criar um fluxo de trabalho de planejamento, implementação e validação usando a extensão Planotator para Pi. Quero usar o agente de codificação do Pi para todos os meus nós. Minha assinatura do Codex já está configurada. Fiz o login no Pi.
+
+Quero usar o GPT 5.4 como modelo para tudo. Quero usar a extensão Planotator. Portanto, certifique-se de que ela esteja instalada, caso ainda não esteja . Quero ter um nó onde eu possa percorrer as iterações do plano na interface web e, em seguida, a implementação ocorrerá no próximo nó."
+
+Então, sim, obviamente isso é uma pequena simplificação do que eu realmente fiz, mas você entendeu a ideia. Ah, aliás, estava escrito "agente de codificação Python" em vez de "Pi", então, se você estiver usando uma ferramenta de conversão de fala em texto, certifique-se de que a grafia esteja correta. Ele sempre erra o cálculo do Pi para mim. Mas sim, basicamente é tudo o que você precisa fazer para criar um fluxo de trabalho Archon, pois ele possui a habilidade de código Claude para Archon. Ele sabe como criar e executar fluxos de trabalho e orientá- lo durante todo o processo de definição . E assim, tudo isso junto é
+
+o que levou a esse fluxo de trabalho que estamos analisando aqui. Muito bem, então deixe- me mostrar rapidinho como isso funciona e depois, claro, mostrarei para vocês na prática. Então, a primeira coisa que estou fazendo aqui é definir o Claude Code como provedor principal. Estou usando esse fluxo de trabalho para mostrar que no Archon podemos combinar provedores entre diferentes nós. Muitas pessoas adoram usar o Claude para implementação e o Codex para validação, ou, como estamos fazendo aqui, o Pi para planejamento. Assim, podemos combinar e misturar
+
+à vontade, tanto com modelos quanto com fornecedores. Então, começo com uma fase de esclarecimento. Então, queremos apenas pedir ao agente de codificação que nos faça algumas perguntas, para garantir que ele entenda nossa solicitação ao entrar neste loop de pivô aqui. Então, vamos usar o Claude para isso e depois passamos para a sessão do Pi. Então mudamos o provedor para Pi. Estamos substituindo
+
+isso no nível de cada nó individual e, em seguida, estamos usando o OpenAI Codex com o GPT-5.4 Mini. Não é necessário realizar nenhuma autenticação separada com o Pi no Archon. Se você instalou o Pi e executou o comando {slash}login e seguiu o processo que mostrei anteriormente, então o Archon poderá usar essas mesmas credenciais. Portanto, não precisamos configurar mais nada aqui.
+
+Então, estou apenas dizendo que você está no modo de planejamento Planotator. Sua única tarefa agora é escrever um bom plano (plan.md) e enviá-lo para aprovação humana por meio desta ferramenta que acompanha a extensão Planotator para Raspberry Pi. Então, fiz uma pequena pesquisa para elaborar essa proposta com a ajuda de Claude Code. Mas sim, basicamente ele vai criar este documento Markdown e depois renderizá-lo aqui no site para que possamos fornecer feedback em tempo real. Vou mostrar
+
+isso na prática daqui a pouco. Assim, o sistema criará essas tarefas e aprimorará o plano conforme recebermos feedback. Assim que aprovarmos, voltamos à fase de implementação com Claude . Então, basicamente, ele vai executar um loop Ralph, concluindo as tarefas uma a uma, criando um commit para cada uma, e então temos a validação no final, fazendo uma espécie de varredura completa, como uma revisão de pull request , certo? Agora que temos todos os commits, vamos fazer uma revisão de tudo. No geral, o fluxo de trabalho é bem simples
+
+, mas mostra o uso do Raspberry Pi, extensões, diferentes provedores e o loop pivô, que é a minha metodologia para programação de IA. Sim, esse é um ótimo fluxo de trabalho. Ok, então chegou a hora de finalizar mostrando esse fluxo de trabalho em ação. Então, serei bem breve aqui. Então, eu tenho este aplicativo de exemplo que desenvolvi para fins de demonstração, um sistema de triagem de problemas do GitHub.
+
+Então, é apenas um painel que me ajuda a gerenciar meus problemas em um repositório. Uma coisa que não tenho aqui é uma opção para alternar entre temas. Não existe tema claro, nem como mudar para um tema claro. Então podemos construir isso com este fluxo de trabalho Pi Planotator Piv Loop. Então, vou enviar essa solicitação aqui mesmo. Então, estou
+
+instruindo-o a usar a CLI do Arkon para executar esse fluxo de trabalho, fornecendo o caminho para o repositório para que ele possa executar a CLI lá, e estou descrevendo rapidamente o que quero construir: uma opção para alternar entre os temas claro e escuro . Assim, você pode executar isso em qualquer lugar onde o Arkon esteja instalado. Será utilizada a habilidade Arkon para que o sistema saiba como executar a CLI do Arkon e iniciar esse fluxo de trabalho. Portanto, o primeiro passo aqui será responder às perguntas de esclarecimento. Veremos isso aparecer daqui a pouco. Muito
+
+bem, aqui estão nossas três perguntas para esclarecimento. Vamos responder a essas perguntas rapidinho e depois passamos para a etapa do Planotator. Então, em primeiro lugar, claro, vamos migrar para propriedades personalizadas do CSS . Para as cores do tema claro, quero que você simplesmente descubra o que é razoável. E para a interface de alternância, vamos fazer um botão com um ícone de sol e lua. Pronto
+
+. Então, a conversão de voz em texto é a solução, envie isso. Agora, o fluxo de trabalho do Arkon será retomado. Então, trata-se essencialmente de uma etapa de aprovação humana, certo, para essas perguntas de esclarecimento. Agora, vamos iniciar o processo de planejamento. Portanto, ele voltará a ser abordado
+
+assim que tivermos a interface do Planotator para revisarmos o plano e realizarmos iterações. Muito bem, então aqui estamos. Acabei de pedir uma atualização de status e recebi o URL informando que o plano está pronto para ser revisado . Como tudo funciona internamente nesse nó do Raspberry Pi, ele não nos envia relatórios automaticamente quando o site está online. Portanto, podemos simplesmente solicitar uma atualização de status ou verificar isso de vez em quando. Então, aqui está o
+
+nosso plano finalizado, e agora podemos dar feedback livremente durante todo o processo. Então, apenas para fins de demonstração, vou dizer que a maior parte disso está boa, mas digamos, por exemplo, que queremos fazer mais validações aqui. Assim, posso destacar tudo isso. Posso adicionar um comentário aqui e dizer: "A validação não é suficientemente boa. Também quero fazer testes de automação do navegador com o Agent Browser CLI. Adoro usar essa
+
+ferramenta para navegar pelo site como um usuário faria, para garantir que possamos, por exemplo, alternar o tema, visualizar o tema claro e verificar se tudo está funcionando corretamente." Então, posso adicionar meu comentário. Posso adicionar mais se quiser . E então, envio meu feedback. Assim, o nó Arcan PI será retomado. Isso resultará em um novo plano, ou
+
+melhor, em um plano atualizado. E então, poderei revisar novamente. Tudo bem. Então, solicitei outra atualização de status, e agora meu feedback foi considerado e o plano foi revisado. Então, agora, indo para o navegador, com certeza , na validação, temos um novo item na lista para usar o Agent Browser CLI para testes de automação do navegador com o aplicativo em execução.
+
+Então, tudo bem. Acho que isso é muito bom. Então, agora vou clicar em aprovar. E você pode passar por mais iterações, se quiser. Mas eu vou aprovar. Em seguida,
+
+o fluxo de trabalho do Arcan continuará, passando para as etapas de implementação e validação. Tudo bem. E então, depois do planejamento, obviamente, não há mais nenhum ser humano envolvido. Assim, o fluxo de trabalho passa por todas as etapas de implementação e validação, concluindo todas as tarefas. Nosso trabalho está organizado em uma árvore de trabalho. Então, para que eu pudesse
+
+testar por mim mesmo, simplesmente copiei o arquivo .env para a minha pasta de trabalho, onde ficam as variáveis ​​de ambiente, e depois iniciei a interface. E então, ao acessarmos nosso navegador, vejam só isso. Agora temos a opção de alternar entre temas, e o tema claro está ficando muito bom. Assim, utilizamos o PI para o planejamento com a extensão Planator. É incrível como é fácil
+
+trazer extensões do PI para o ecossistema e integrá-las diretamente aos nossos fluxos de trabalho do Arcan. Então, é isso. Isso é Arcan e PI. Adoro usar o Raspberry Pi como base e construir coisas em cima disso. E, claro, você sempre pode usar o mercado de plugins do Cloud Code para adicionar mais recursos. Mas a pergunta
+
+que quero fazer é: por que você quer continuar adicionando mais recursos a algo que já está sobrecarregado? Por isso gosto de usar o Raspberry Pi como ponto de partida minimalista , adicionando as funcionalidades de que preciso. E eu adoro fazer isso, adicionar essas extensões e depois integrar tudo nesses fluxos de trabalho do Archon. Portanto, eu o encorajaria a fazer isso você mesmo. Vou incluir o link para o fluxo de trabalho que acabei de explicar para você na descrição, caso queira experimentar.
+
+Então, se você gostou deste vídeo e está ansioso por mais conteúdo sobre programação de IA e Archon, eu agradeceria muito um like e uma inscrição no canal. E com isso, nos vemos no próximo vídeo.

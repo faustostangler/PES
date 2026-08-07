@@ -1,0 +1,627 @@
+---
+video_title: "Building the App Store for Agentic Engineering"
+video_id: 4azVjKhqDzw
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=4azVjKhqDzw
+video_date: 2026-05-12T04:02:35+00:00
+video_description: |
+  Today I'm working on what might be the most important addition to Archon yet: the workflow marketplace. The app store for agentic engineering - a place where the world's best AI coding workflows live, get shared, and compound on each other.
+  
+  Archon already lets you define YAML workflows that run in isolated git worktrees with any model provider - but every Archon user is currently rebuilding the same workflows in private. The marketplace fixes that: one-click install of workflows other people have already battle-tested.
+  
+  We'll be building this live, in public, on Archon itself!
+  
+  🔗 Archon: https://archon.diy
+  🔗 Dynamous community: https://dynamous.ai
+  🔗 GitHub: https://github.com/coleam00/Archon
+  
+  Livestreams every Monday, Thursday, and Saturday at 9 AM CT.
+  New YouTube video every Wednesday at 7 PM CT.
+---
+Tudo bem. Sejam todos bem-vindos à próxima transmissão ao vivo, onde continuaremos fazendo coisas incríveis com o Argon. Portanto, tudo isso se resumirá a desenvolver o mercado de fluxos de trabalho para o Argon. Então, o Workflow ou Argon é minha plataforma de código aberto para criação de estruturas de IA. Assim, permite que você pegue qualquer que seja o seu processo de engenharia de agentes e o empacote em fluxos de trabalho que podem ser executados de forma confiável e repetível em paralelo em todas as suas bases de código. E, no momento,
+
+não existe uma maneira muito fácil de compartilhar os fluxos de trabalho que você cria. Portanto, temos muitos fluxos de trabalho que são fornecidos com o Argon. Mas, além disso, a principal forma que recomendo para usar o Argon é criar seus próprios fluxos de trabalho. Por isso é um construtor de arreios, e não apenas um arreio. Portanto, quero facilitar ao máximo o compartilhamento dos fluxos de trabalho que você cria com outras pessoas e vice-versa, permitindo que você utilize fluxos de trabalho nos quais outras pessoas investiram muito esforço. Assim,
+
+você pode usá-los para si mesmo e personalizá-los de acordo com seus casos de uso . Então, esta é a prova de conceito inicial na qual trabalhei na minha última transmissão ao vivo. Portanto, esta transmissão ao vivo tem como objetivo aprimorá-la e torná-la extremamente fácil para que seja possível submeter fluxos de trabalho a este mercado. Quero criar um fluxo de trabalho no Argon que revise as solicitações de pull request para submetê-las e aprová-las automaticamente. Então, será essencialmente um sistema de autoevolução, onde você cria um fluxo de trabalho e envia uma solicitação de pull request para o repositório para adicioná-lo a este marketplace aqui. E então, terei um
+
+processo de revisão automatizado com código Claude rodando por trás de um fluxo de trabalho Argon que vamos construir hoje. Então, esse é o plano para a transmissão de hoje. E eu tenho o meu chat aberto aqui do lado esquerdo. E então, tenho meu software de gravação no lado direito. Então, essa é a minha configuração atual. Então, quando você
+
+me vê olhando de um monitor para o outro, é isso que estou fazendo. E esta é a segunda transmissão ao vivo que estou fazendo com essa nova cadência, que vou experimentar pelo menos por algumas semanas. Todas as segundas, quintas e sábados, às 9h da manhã, horário central. Estou muito animado para fazer isso. Continuarei trabalhando em Arcaon.
+
+Nem todas as transmissões serão sobre Arcaon, mas definitivamente é o meu projeto de maior paixão no momento. Então, quero fazer muita coisa com isso. Então, tudo bem. Estou muito animado com isso. Vamos ver. Cole, estou atrasado. Talvez eu estivesse um
+
+minuto atrasado, mas eram 9h quando cliquei em iniciar. Talvez meu computador esteja lento ou algo assim. Tudo bem. Só queria dizer: " Obrigado por nos darem Arcaon. Também adoro esses formatos de transmissão ao vivo." De nada,
+
+e eu agradeço. Eu me divirto muito fazendo transmissões ao vivo. Deixa eu contar uma coisa para vocês. É claro que gosto de fazer vídeos regulares para o YouTube e continuarei fazendo isso pelo menos uma vez por semana, mas fazer essas transmissões ao vivo é muito empolgante. É como estar aqui com vocês ao vivo e poder mostrar mais como é o meu processo real de programação de IA, porque mostrar como eu trabalho no dia a dia é muito mais fácil em uma transmissão ao vivo do que em um vídeo do YouTube, onde precisa ser algo bem produzido e editado, e as pessoas esperam que seja conciso. Então, há
+
+espaço para isso. Vou continuar fazendo isso. É valioso, mas cara, eu também adoro fazer transmissões ao vivo. Então, sim. Vamos começar logo o que interessa hoje.
+
+Não quero perder tempo. Quero começar a construir imediatamente. Na verdade, eu já tenho uma pequena parte preparada aqui. Então, tenho duas sessões do Claude Code abertas no meu segundo cérebro. Esta é a plataforma na qual trabalharemos principalmente hoje, enquanto desenvolvemos o mercado. E também
+
+tenho uma em que acabei de iniciar a página de documentação na árvore de trabalho da última transmissão ao vivo. Por isso, podemos ver uma pequena prévia de como será o mercado de fluxos de trabalho. Então, agora vamos continuar desenvolvendo a segunda fase, onde eu crio esse fluxo de trabalho do Archon para revisar automaticamente as solicitações de pull. Ao final da transmissão ao vivo, não acho que isso seja ambicioso demais. Acho que conseguiremos fazer isso na próxima hora e meia.
+
+O que eu quero fazer é criar o fluxo de trabalho e configurá-lo para ser executado automaticamente em qualquer solicitação de pull request que adicione um fluxo de trabalho aqui. E então, quero fazer um teste ao vivo com vocês, onde crio um novo fluxo de trabalho ou talvez utilize um já existente para agilizar o processo. E eu quero criar uma solicitação de pull request, passando por todo o processo de contribuição, desde o envio de um fluxo de trabalho até a criação da solicitação. Então, vocês poderão ver ao vivo e nós poderemos testar para garantir que tudo esteja funcionando perfeitamente, porque se tudo estiver funcionando, provavelmente até o final do dia, isso estará disponível para todos. O produto será enviado integralmente. Agora, obviamente,
+
+teremos que esperar pelo próximo lançamento do Archon para que isso realmente entre em vigor. Neste momento, por exemplo, está rodando em localhost. Se você acessar archon.diy/workflows agora, obviamente, verá um erro 404. Portanto, não sei se estará disponível publicamente até o final do dia. Vamos
+
+enviar a atualização para a branch de desenvolvimento, deixando-a pronta para o próximo lançamento do Archon. Esse é o objetivo que tenho para hoje. E se vocês me acompanharem, poderão ver como eu trabalho no dia a dia . Como são, na prática, meus fluxos de trabalho de codificação de agentes . Vamos executar mais um loop pip no Archon para desenvolver esse fluxo de trabalho e finalizar de fato esse novo recurso, esse novo mercado de fluxos de trabalho.
+
+E eu estou realmente muito animada com isso. Eu não tenho grandes expectativas. Tipo, não acho que teremos dezenas e dezenas de fluxos de trabalho inundando o mercado na primeira semana. Mas estou torcendo para que muitos de vocês compartilhem alguns fluxos de trabalho interessantes que vêm desenvolvendo, porque, no momento, estou meio por fora de como vocês têm usado o Archon. É claro que, no YouTube e especialmente no Dynamis, as pessoas têm compartilhado seus fluxos de trabalho e, de modo geral, como estão usando o Archon, mas eu nunca cheguei a ver o arquivo YAML dos seus fluxos de trabalho , além de alguns exemplos. Tipo,
+
+estou muito animado para ver o que vocês realmente vão publicar, além da ideia em si. É legal ouvir falar da ideia, mas ver o fluxo de trabalho e, sabe, executar alguns deles eu mesmo, estou realmente empolgado. Então, tudo bem. Tenho essa sessão com o Claude só para nos prepararmos bem para a transmissão ao vivo. Tenho uma sessão onde carreguei o plano que usei na última transmissão ao vivo. Atualizei com os
+
+itens em que trabalhamos da última vez. E agora está tudo pronto, só falta preparar para a próxima implementação. E se você não estava na última transmissão ao vivo, não se preocupe, isso não importa. Tipo, você ainda pode acompanhar o que estou fazendo aqui porque eu já mostrei a prova de conceito dessa interface de usuário. Agora, vamos construir o fluxo de trabalho e veremos tudo em ação. Portanto, mesmo que
+
+você chegue aqui sem nenhuma experiência prévia, ainda acho que encontrará muito valor aqui. Então, a primeira coisa que precisamos fazer é abrir uma solicitação de pull request para o marketplace inicial. E foi exatamente isso que mostrei aqui. Agora, para que possamos construir em cima disso com mais facilidade , está me dizendo que preciso fazer o merge para o branch de desenvolvimento. Então, vou fazer isso mesmo. Eu não
+
+fiz uma revisão super completa e abrangente da solicitação de pull request, mas apenas para o bem da transmissão, vou fazer o merge e, obviamente, farei os ajustes necessários conforme formos testando em produção. Então, indo até a lista de pull requests aqui, este é o PR que precisamos mesclar no dev. Isso é o que criamos na transmissão ao vivo que fiz no sábado, durante o fim de semana. Portanto, não há muito risco neste pull request, e é por isso que me sinto particularmente confortável em mesclá-lo agora, porque basicamente temos apenas uma remoção. Temos muitas novidades porque estamos adicionando uma nova página ao site de documentação. E toda a
+
+funcionalidade de submeter fluxos de trabalho e atualizar um arquivo que atualiza esta página por meio de uma solicitação pull. Portanto, não há realmente nada que estejamos mudando que possa causar algum problema . Então, sim, vamos prosseguir e mesclar essa solicitação de pull request. Então, deixe-me voltar a falar com Claude e ver como as coisas estão por aqui. Parece que houve um pequeno conflito de mesclagem, pois também adicionamos recentemente o roteiro ao site de documentação.
+
+Essa é outra coisa em que trabalhei em algumas transmissões ao vivo anteriores. Com um roteiro definido, isso também estará disponível na próxima versão do Arcan. Um roteiro que mostra as funcionalidades prioritárias que temos para os próximos meses. Bem, isso é algo que continuarei a desenvolver à medida que moldamos a visão da comunidade para o Arcan como ferramenta. Tudo bem. Então, vamos aguardar.
+
+Ok, estou prestes a enviar uma solicitação de pull request com a atualização. Isso executará novamente o CI (Integração Contínua) agora. OK, bom. Então, estamos chegando ao ponto em que o pull request é mesclado. E provavelmente teremos algum tempo em nossa transmissão ao vivo aqui em que ficaremos apenas aguardando a execução dos fluxos de trabalho do Arcan.
+
+Então, existem algumas outras coisas que posso fazer em paralelo enquanto trabalhamos nisso. Na verdade, uma das coisas que posso fazer, e acho que isso realmente ajudará a manter a transmissão ao vivo fluindo sem problemas. Uma coisa que posso fazer enquanto esperamos que toda essa versão V1 seja desenvolvida é criar um fluxo de trabalho Arcan para enviar diretamente para o mercado de fluxos de trabalho. Então, como eu disse, eu meio que tenho que descobrir... talvez vocês possam
+
+compartilhar no chat. Preciso decidir se devo simplesmente empacotar um fluxo de trabalho existente ou se devo criar um totalmente novo para mostrar de ponta a ponta como é construir um fluxo de trabalho Arcan, hospedá-lo em um repositório do GitHub e, em seguida, enviar a solicitação de pull aqui para adicioná-lo ao marketplace. Isso seria legal. Mas aí eu teria que descobrir, tipo, ok, qual fluxo de trabalho eu realmente construo ao vivo com vocês? Quer dizer , claro que tenho um milhão de ideias, mas às vezes é difícil escolher uma sólida que não demore muito para ser construída. Mas veremos. Vou
+
+deixar o Claude rodando enquanto isso, e talvez eu dê uma passadinha no chat rapidinho para ver o que vocês disseram até agora enquanto esperamos terminar. Então, ok, como eu quero proceder com a mesclagem enquanto a CI está em execução? Vamos ver. Sim, vou fazer a fusão agora mesmo . Eu realmente não me importo.
+
+Tudo bem. Vou criar um fluxo de trabalho que revise os fluxos de trabalho enviados? Sim, é isso que estamos fazendo hoje. É exatamente isso que estamos fazendo hoje. Dessa forma, não será um grande fardo para os responsáveis ​​pela manutenção adicionar esses fluxos de trabalho ao marketplace.
+
+Transmissões ao vivo são as melhores. Concordo. Concordo. Estou muito animado com isso. Menos trabalho para você significa mais valor para nós. Não precisamos de polimento. Você
+
+já tem um nível de performance ao vivo bastante apurado. Eu agradeço. Sim, eu me esforço ao máximo. Bem , às vezes eu me atrapalho com as palavras e corto essa parte do vídeo, mas obviamente ela está lá na transmissão ao vivo. No fim das contas, acho que não faz muita diferença. Sabe, um dos
+
+motivos pelos quais prefiro fazer transmissões ao vivo em vez de gravar vídeos para o YouTube é que sou muito exigente comigo mesmo. Tipo, se eu tropeçar, mesmo que seja só um pouquinho, eu simplesmente regravo aquele trecho inteiro. Então, acaba demorando um pouco para gravar. Tipo, um vídeo de 20 minutos leva umas 2 horas para gravar. Cara, então, tipo, com as lives, existe uma expectativa de que você não vai ser perfeito, então eu consigo improvisar e dar a vocês praticamente a mesma quantidade de conteúdo de qualidade por uma fração do tempo, se você considerar a quantidade de conteúdo que eu consigo produzir em uma live.
+
+Então, sim, acho que essa é a principal razão pela qual eu gosto tanto de transmissões ao vivo . Tudo bem. Adoro começar a entender como o Arcan pode ser minha ferramenta, e não apenas uma ferramenta pronta para uso. Agradeço, Shawn, e fico feliz. Sim, e uma das coisas mais importantes em que quero continuar trabalhando é tornar tudo o mais fácil possível, tanto por meio da documentação quanto do próprio aplicativo, para que você possa usá-lo como se fosse seu. Como eu disse, Arcan é um
+
+fabricante de arreios, não um arreio em si. Não é algo que você simplesmente usa assim que tira da caixa, embora seja possível. A melhor maneira de usá- lo é criar seus próprios fluxos de trabalho, adaptando-os ao seu processo, à forma como você deseja trabalhar e personalizando-os para suas bases de código e pilha de texto. Então, fico feliz que você esteja fazendo isso, Shawn. Certo, legal. Então,
+
+integramos nossa versão V0 do marketplace à branch de desenvolvimento. Então, agora estamos executando o fluxo de trabalho Arcan do circuito de pit stop. Isso vai lidar com a criação do fluxo de trabalho Arcan que revisa e mescla automaticamente as solicitações de pull para novos fluxos de trabalho adicionados ao marketplace. É um nome um tanto complicado. Então, deixe-me explicar isso novamente.
+
+O que estamos fazendo agora é executar um fluxo de trabalho Arcan. É chamado de fluxo de trabalho em circuito de boxes. Sabe, na verdade, o que vou fazer aqui é mostrar isso para que fique bem claro o que estou fazendo. Então, deixe-me explicar o fluxo de trabalho do loop do Poço Arcano. Este é o meu fluxo de trabalho de desenvolvimento principal que utilizo com o Arcan.
+
+Sempre que quero me envolver de verdade no desenvolvimento, uso isso porque existem algumas etapas de aprovação humana nesse fluxo de trabalho. Então, veremos daqui a pouco que, após a exploração inicial , o sistema voltará a nos fazer perguntas para esclarecer o ocorrido. Na verdade, você pode ver aqui mesmo que o processo acabou de ser finalizado. Então, o fluxo de trabalho no Archon chegou a um ponto de aprovação. Basicamente, o que ele faz inicialmente é explorar as possibilidades com base na funcionalidade que pretendemos desenvolver.
+
+Neste caso, estou buscando construir outro fluxo de trabalho Archon. E então volta a acontecer. Você pode ver que o loop de pivô do Archon, aqui mesmo no painel do Archon, está pausado. Está aguardando minha contribuição. E se voltarmos a Claude, podemos ver que isso levanta algumas questões esclarecedoras para nós. Essa é uma das
+
+coisas mais importantes que você pode fazer ao planejar com um assistente de codificação de IA . Você sempre quer que ele te faça perguntas, ou que te interrogue, certo? Porque você não necessariamente conhece as suposições que ele está fazendo, mas é realmente importante reduzir o número de suposições que o agente de codificação está fazendo. Portanto, fazer com que o programa lhe faça perguntas é uma das melhores maneiras de fazer isso. Então, vamos chegar a isso em um segundo, mas quero explicar esse fluxo de trabalho rapidamente, porque é esse o processo que vamos seguir. Este
+
+é o meu processo central de codificação agética. É isso que eu ensino no curso de programação agentiva do Dynamis: o loop pivô. É um ciclo de planejamento, implementação e validação. Com a participação humana no final do processo de criação do plano e no final da validação, garantimos que estamos realmente alinhados com o agente de codificação para o que estamos construindo. Então, não preciso explicar cada nó individualmente, mas vamos começar com a exploração, como eu disse.
+
+E isso é como um grande comando que indica como explorar, e então nós iteramos. Então, é aqui que ele volta, nos faz perguntas, permite que especifiquemos qualquer outra coisa que ele precise antes de criar o plano. E depois de criar o plano com o formato exato que especificamos, ele o gera em um documento Markdown que podemos revisar e fornecer o feedback que desejarmos. Assim, conseguimos trabalhar com o agente de codificação antes mesmo de escrevermos uma única linha de código, para garantir que ele realmente entenda o que queremos construir. E, finalmente, configurará a implementação, instalando todas as dependências na árvore de trabalho para que nossa cópia isolada da base de código do fluxo de trabalho esteja pronta para implementação e validação. Então, implementamos.
+
+Fazemos com que o agente de codificação realize algumas iterações por conta própria. Assim, quando o controle voltar para nós, poderemos dar feedback e corrigir os problemas, mas esperamos que a maioria dos problemas de implementação já tenha sido solucionada. E então, ao final, realizamos uma revisão de código completa em uma sessão separada do agente de codificação e corrigimos qualquer feedback que surgir da sua própria verificação, bem como qualquer feedback que lhe fornecermos. Certo? Portanto, ele aceita feedback humano para esse tipo de último loop que temos no fluxo de trabalho do Arkon. Portanto, é
+
+um fluxo de trabalho muito, muito abrangente, pois engloba todo o meu processo, desde o planejamento até a implementação, pelo menos para uma única funcionalidade. Como neste caso, estou criando um fluxo de trabalho único. Então, eu sei que é um pouco metalinguístico, mas estou usando um fluxo de trabalho do Arkon para construir outro fluxo de trabalho do Arkon, o que, na verdade, faço com bastante frequência porque não quero simplesmente construir tudo do zero. É realmente muito útil ter o Arkon me ajudando a criar o YAML, assim eu não preciso ficar me lembrando da sintaxe exata, de como configurar os prompts, dos parâmetros e tudo mais. Então, é , vamos ver as perguntas que ele tem para mim agora. Vamos
+
+ver. [Suspiro] Então, isso levanta nossas dúvidas. Localização independente. Script independente versus YAML embutido. Um Standalone. Ok, buscando os dados originais.
+
+Script de busca independente versus auxiliares de linha de comando para extração. OK. Nó de validação Uh. Fornecedor de avaliações por IA. Pi minimax versus Claude Sonnet. Recomenda Claude
+
+Sonnet. Um conjunto de textos. Ok, claro. Então, sim, quer dizer, honestamente, estou bastante satisfeito com as recomendações. Então o Archon Piv Lou fez uma pausa e enviou essas perguntas de volta para meu segundo cérebro, porque meu segundo cérebro está executando o fluxo de trabalho do Archon. E agora meu segundo cérebro está
+
+me repassando as perguntas com suas próprias recomendações. O que, na verdade, é bastante sólido. Acho que a única coisa que eu talvez faria diferente seria usar o Haicai de Claude em vez do Soneto, apenas por uma questão de eficiência em termos de tokens. Se muitas pessoas estiverem enviando fluxos de trabalho para o Archon, isso pode ficar um pouco caro. Então, tudo bem.
+
+Vamos seguir todas as suas recomendações, exceto a do provedor de avaliações por IA . Vamos usar o Claude Haiku como exemplo, pois provavelmente teremos que revisar muitos fluxos de trabalho. Certo, legal. Então, vou enviar isso e depois tudo voltará ao normal. Então, meu segundo cérebro, que está executando o código Claude, vai retomar o fluxo de trabalho do Archon, enviando o feedback, que é basicamente as recomendações do meu segundo cérebro mais meu único tweet para responder à quarta pergunta.
+
+Tudo bem. Então, suponho que ele executou alguns comandos de ajuda apenas para ver como usar o Archon. É meio estranho, mas tudo bem. Certo , então está enviando o pacote de respostas para aprovação do fluxo de trabalho Archon. Tudo bem. Legal
+
+. Então, na verdade, estou confuso sobre por que usou o chat Archon. Normalmente, ele simplesmente usa o comando de aprovação do fluxo de trabalho Archon. É um pouco estranho. Talvez eu precise corrigir isso aqui, mas vamos ver se ainda está funcionando.
+
+Bem, na verdade falhou. Sim, acho que é porque meu código Claude meio que alucinou alguma coisa aqui. Então, vou sair por aqui. Não é para usar o chat do Archon, é para usar a aprovação do fluxo de trabalho do Archon . Além disso, o fluxo de trabalho do Archon falhou, então preciso que você o retome. Não se esqueça
+
+de enviar o feedback. Ok, na verdade, isso nunca... literalmente nunca me aconteceu antes. Foi como se tivesse
+
+alucinado um comando errado. Então, vamos ver o que acontece se executarmos o programa . Vamos ver. Vou atualizar. Ah, mesmo assim falhou. Onde? Em que
+
+falhou? Acho que não consigo enxergar agora. Certo, enviando o feedback via Arkon workflow approved. OK. Sim
+
+, tudo bem. Então, ótimo. Ele detecta que falhou. Então, agora vai ser retomado. Vamos ver se estamos em uma situação melhor agora.
+
+Ah, mesmo assim falhou. Talvez eu precise refazer. Não sei por que isso acontece, nunca me ocorreu antes. É claro que, quando se trata de uma transmissão ao vivo, isso precisa acontecer. Não, espera. Aguentar.
+
+Não, mesmo assim falhou. Você não conseguiu retomar a operação com sucesso. Você talvez precise refazer isso também. Vou enviar. Ok.
+
+Bom. Bom. Você deve adicionar tags ao fluxo de trabalho para que ele possa ser pesquisado e filtrado com mais facilidade. Concordo. Eu concordo plenamente. Acho que já temos um
+
+pouco de marcação. Certo? Assim como desenvolvimento, revisão, automação e planejamento. Sim, tenho isso em mente. 100%.
+
+Quando você está trabalhando em um projeto com vários repositórios, envolvendo dezenas deles , como você utiliza o fluxo de trabalho PIV? Você tem alguma sugestão para fazer o Arkon funcionar nesses cenários? Sim, o principal é que, na medida do possível, você deve isolar um loop PIV em um único repositório. Porque você quer que seu agente de codificação esteja muito atento ao contexto . Não importa se você está usando o loop PIV, se está usando o Arkon ou se não está, você está usando algo completamente diferente. O ideal é sempre trabalhar, na medida do
+
+possível, em um único repositório, ou pelo menos tentar trabalhar em apenas alguns repositórios. Quando você tem uma dúzia de repositórios, é realmente melhor evitar que seu agente tenha que vasculhar todos eles . Agora, se você realmente não tem como evitar, então a solução é ter um sistema de subagentes, pois você precisa meio que explorar as bases de código para descobrir as partes que precisa carregar no contexto do seu agente de codificação principal. Então, existe uma parte do meu processo que, neste fluxo de trabalho da Arcon, chamei de fase de exploração. Assim, quando o loop de pivô é executado pela primeira vez, ele realiza a fase de exploração.
+
+Eu também a chamo, assim como no curso de agente de codificação, de fase primordial. Trata-se de carregar o código no contexto correto para o seu agente de codificação. Assim, quando você tem uma base de código realmente muito grande, é aí que você deve fazer muita engenharia de contexto em torno do seu priming, garantindo que você tenha um processo realmente elaborado que use subagentes para encontrar as partes da base de código às quais você precisa prestar atenção e, em seguida, concentrar o restante do ciclo de pivô nisso. Assim como na fase de exploração do fluxo de trabalho do ciclo de pivô do Arcon, é isso que você deve pegar e moldar para o seu próprio caso de uso. Como mencionei anteriormente, a melhor forma de usar o Arcon é para integrar seu fluxo de trabalho de codificação de IA. Então você pode usar o
+
+fluxo de trabalho de loop pivot que eu forneço com o Arcon como ponto de partida, mas depois você precisaria editá-lo. Você faria com que a exploração funcionasse mais como subagentes, percorrendo diferentes bases de código, talvez até mesmo fazendo com que o nó de exploração conhecesse todas as bases de código antecipadamente. Assim, você adicionaria isso ao prompt para personalizá-lo de acordo com sua arquitetura específica. Essa seria a minha recomendação. Tudo bem. Então vamos voltar a Claude,
+
+porque parece que a situação foi retomada. Uh, o pivot re dispatch e o explore estão em execução. Ok, então teve que reiniciar, o que é meio lamentável. Eu realmente não sei por que teve essa alucinação, foi algo super aleatório, mas tudo bem, porque ela vai voltar para mim com perguntas e nós vamos esclarecer tudo o que fizemos antes e qualquer outra coisa que precisarmos. Certo, então vamos deixar rodar.
+
+Legal. E também tive alucinações disso. Ok, o código Claude tem sido um pouco frustrante ultimamente com todos esses despertares programados que ele fica fazendo, porque aí ele fica se ativando sozinho quando você não quer . Mas está tudo bem. Isso não afeta o fluxo de trabalho aqui. Ele
+
+simplesmente carrega tokens ou usa tokens que não precisa. A exploração foi concluída e o fluxo de trabalho agora está na fase de criação de plano. OK, bom. Então, enviamos nosso feedback. Agora estamos criando o plano estruturado. E também podemos ver
+
+os registros do fluxo de trabalho no Archon aqui. Então, se eu clicar novamente... Acho que não preciso atualizar a página, mas se eu clicar, podemos ver as ações enquanto elas acontecem.
+
+Podemos ver a etapa em que nos encontramos atualmente . Portanto, estamos elaborando o plano. Isso criará um documento Markdown que descreve tudo o que envolve a construção deste fluxo de trabalho Archon para mesclar automaticamente essas solicitações de pull request e adicioná-las ao marketplace de fluxos de trabalho. Muito legal. E enquanto esperamos que isso seja executado, vou iniciar uma nova sessão de código Claude porque quero trabalhar no fluxo de trabalho que irei submeter aqui.
+
+Uma outra coisa que preciso fazer é verificar meus limites de tarifa. Ultimamente, também tenho ficado bastante decepcionado com os limites de taxa de código do Claude. Eles têm sido muito difíceis. Dê uma olhada nisso. Portanto, o limite de cinco horas é bastante generoso agora. A
+
+Anthropic fez uma atualização recentemente. Acho que foi tipo semana passada que eles aumentaram o limite de uso para o dobro a cada cinco horas. Mas o limite semanal está muito pior agora. Meu limite só é zerado na sexta-feira de manhã e eu já estou com 73%, e é segunda-feira, caramba! Como eu provavelmente vou ter que mudar para o Codex no meio desta semana ou comprar outra assinatura do Claude Code. E eu
+
+experimentei o Codex com bastante frequência, pelo menos uma vez por mês, só para ver como se compara ao Claude, e sempre me decepciono. Então, provavelmente vou acabar comprando outra assinatura do Claude Code para esta semana, porque não tem como 27% de desconto me sustentar hoje e no resto da semana. Tipo, provavelmente vou conseguir entrar nos 80% só por causa da nossa transmissão ao vivo de hoje. Então , sim, vou ter que ficar de olho nisso. Por sorte, ainda tenho uns 58% do meu limite de 5 horas . Isso deve ser suficiente para
+
+nos ajudar com a transmissão ao vivo aqui. Sim , tudo bem. Mas, cara, é bem difícil. Então, tudo bem, vamos voltar aqui e trocar o modelo. Ok, o código do Claude também tem feito isso comigo ultimamente. Ele continua alternando o modelo de
+
+volta para Sonnet 4.6, mesmo que eu o altere em cada sessão individual. Não sei o que causa isso, porque se eu abrir outro, dá para ver que é o Opus 4.7, mas de vez em quando ele volta ao normal. Então, eu preciso verificar constantemente para ter certeza de que estou usando o Opus 4.7, porque
+
+definitivamente não quero fazer esse tipo de trabalho complexo com o Sonnet. [bufa] Tudo bem. Então, ok, o que eu preciso fazer agora é criar um fluxo de trabalho para realmente enviar o produto ao marketplace. Você sabe o que? Hum .
+
+Eu meio que tenho uma ideia porque há uma coisa em que tenho trabalhado. Eu também mostrei isso em uma transmissão ao vivo algumas semanas atrás, mas tenho trabalhado nisso com a ajuda de Thomas e Rasmus. Tenho trabalhado nisso porque são pessoas que me ajudaram. São dois caras incríveis que me ajudaram muito com várias coisas para a Dynamis. Eles têm me ajudado a trabalhar nesse fluxo de trabalho de geração de vídeo. Então, é um
+
+fluxo de trabalho Arcan em que você fornece algum tipo de tópico, URL ou repositório do GitHub e ele cria um vídeo de remotion com voz e animação . E também temos a intervenção humana no processo, para que possamos direcionar o roteiro e o que vamos gerar antes que o vídeo completo seja produzido. Mas é muito legal porque gera a minha voz e usa 11 laboratórios. Ele gera toda a animação de forma semelhante ao Remotion, sincroniza tudo e adiciona transições e efeitos sonoros. É realmente fantástico. Então, seria interessante adotar
+
+esse fluxo de trabalho. Ainda não está totalmente finalizado . Isso seria apenas para fins de teste. Mas seria interessante pegar esse fluxo de trabalho e submetê-lo como nosso teste, criando uma solicitação de pull request para implementá-lo. Então, acho que quero fazer isso...
+
+bem, talvez eu converse com o Claude e pergunte como faríamos isso em paralelo. Então, enquanto aguardamos que este loop de pivô seja concluído. Teremos que continuar voltando a este assunto. Então poderei trabalhar para deixar esse fluxo de trabalho pronto para ser enviado como uma solicitação de pull request . Então, sim, faremos isso em um instante.
+
+Parece que o loop de pivô foi pausado novamente. Portanto, se voltarmos à interface web, podemos ver que está atualmente pausado. Então, isso criou o plano. Então, aqui está o plano. Está lendo agora. Eu também posso clicar deste
+
+lado. Basta clicar com o botão direito do mouse (ou Control + clique) para abrir o arquivo no meu VS Code. O motivo de ser um caminho um tanto peculiar aqui é que cada fluxo de trabalho do Arkon é executado em uma árvore de trabalho do Git. Dessa forma, temos uma cópia isolada da base de código, permitindo executar qualquer número de fluxos de trabalho do Arkon em qualquer base de código em paralelo. Então, sim, mas eu posso simplesmente abrir o projeto no VS Code como normalmente faço quando trabalho com código Claude e posso dar uma olhada no resumo aqui. Portanto, é muito importante que, ao realizar
+
+um ciclo de pivotagem ou qualquer tipo de planejamento com o agente de codificação, você dedique bastante tempo à revisão do plano, pois essa é uma ferramenta de grande impacto. Uma linha mal elaborada em um plano pode levar a mil linhas mal elaboradas de código. Precisamos garantir que estejamos alinhados com o agente de codificação em todos os aspectos . Resumindo, nosso ciclo de pivô, quando entrarmos na fase de implementação, adicionará um fluxo de trabalho Arcan para o mantenedor que revisará automaticamente os PRs de submissão ao marketplace, verificando o escopo, buscando o código- fonte do pin, validando o esquema, etc. , executando uma revisão com o Haiku AI e, em seguida, mesclando ou rejeitando automaticamente.
+
+Certo, então, critérios de sucesso, o que está dentro do escopo e o que está fora do escopo. Vamos ver. Estou prestes a espirrar. Com licença . [limpa a garganta] Ok, [bufa] então a automação de promoção de remetentes confiáveis codifica apenas a constante Cole M 00 .
+
+Acho que na verdade vou querer mudar isso, porque está dizendo que vai ficar fixo no código, de forma que só eu possa enviar PRs, mas definitivamente quero que vocês possam escrever à vontade. Porque, na verdade, não há muito risco, certo? Como podemos ver no banner aqui, diz que , sabe, não auditamos todos os fluxos de trabalho. Os próprios responsáveis ​​pela manutenção não o fizeram. Vamos pedir para o Claude fazer a auditoria. Então, nós temos essa
+
+faixa. Portanto, estamos permitindo que qualquer pessoa envie algo sem que seja como se um ser humano tivesse realmente aprovado. Então, para mim está tudo bem . Vou ter que mudar isso. Embora, além disso, vou dar uma olhada e garantir que todo o resto esteja em ordem. Estamos utilizando o
+
+Claude Haiku para otimização de custos. Aqui está nossa lista de tarefas. Portanto, estamos criando os scripts que o fluxo de trabalho Arcan usará para suas etapas determinísticas. Validando o esquema. Ah, a verificação de segurança do mercado.
+
+Quer dizer, provavelmente há muita coisa que eu poderia aprimorar aqui para garantir que a verificação de segurança seja a mais otimizada possível, mas acho que é algo que vou desenvolver com o tempo e tentar concluir isso rapidamente para a transmissão. Mas, no geral, parece muito bom . Apenas implementando algumas verificações determinísticas para identificar coisas que poderiam levar a fluxos de trabalho maliciosos do Arcon. Dispositivos de teste. Ok, então temos a análise de relações públicas do marketplace. Certo, então é aqui que
+
+realmente construímos o YAML para o fluxo de trabalho do Arcon. Então, vamos buscar os metadados da solicitação de pull request para termos contexto sobre o fluxo de trabalho que está sendo submetido, verificar o escopo, analisá-lo, fazer nossa verificação de código no fluxo de trabalho, validar o esquema e realizar uma varredura de segurança. Depois disso, teremos acesso à revisão com o CloudCode e, então, tomaremos uma decisão. Então, em relação à saída estruturada, vamos rejeitar esta solicitação de pull request, este fluxo de trabalho, ou vamos mesclá-lo automaticamente e adicioná-lo ao marketplace? OK.
+
+Sim, parece muito bom. Legal. Quer dizer, não vou perder muito tempo com isso agora. Ah, legal . Então, tudo bem, aqui estão alguns riscos. A
+
+mitigação do tipo de retorno do fluxo de trabalho de análise lê a assinatura real. OK. Muito bem, então [suspiro] vamos ver. Vamos voltar à conversa. No geral, sólido. Duas
+
+lacunas importantes que precisam ser abordadas antes da aprovação. O scanner não detecta padrões maliciosos específicos do Arcon . OK. Claro. Observe os quatro itens acima.
+
+Fluxo de trabalho Arcon aprovado com feedback a ser abordado. As taxas de pivô criam um novo plano . OK. Sim, então eu quero que você envie feedback sobre o fluxo de trabalho em relação às duas lacunas que você mencionou aqui. E também quero que o plano dê conta de todos os riscos médios e altos que possam ser superados com as medidas de mitigação atuais. Assim como no caso de incompatibilidade do tipo de retorno do fluxo de trabalho de análise sintática
+
+, ele pode ler a assinatura real da função. Então, para as coisas que ele pode cuidar, quero que ele cuide disso agora e atualize o plano de acordo. E outra coisa que notei enquanto lia o plano, e que definitivamente não é boa, é que eu não quero que meu nome de usuário do GitHub seja uma constante fixa no código. No momento, não temos nada a ver com a promoção de colaboradores confiáveis. Qualquer pessoa pode criar uma solicitação de pull request que será revisada automaticamente por este fluxo de trabalho do Arca. Não quero que nada seja
+
+codificado de forma rígida, que nada seja bloqueado neste momento. Tudo bem. Legal. Então, enviaremos todo o nosso feedback aqui e, em seguida, o comando de aprovação do fluxo de trabalho Arca será executado . Não é exatamente uma aprovação, mas é como se dissesse: "Ok, continue com o próximo loop, certo?" Porque
+
+vamos fornecer feedback para que o plano seja ajustado e, em seguida, ele nos retornará com o plano atualizado para que possamos garantir que tudo foi abordado corretamente antes de prosseguirmos com a configuração e implementação.
+
+Tudo bem. Tenho usado o B mad, mas vou migrar meus fluxos de trabalho para o Arca porque essa plataforma parece mais completa, com suporte para Postgres, SQLite, Docker, DAG, loops, etc. Parece ótimo. Eu agradeço . Sim, e você pode literalmente pegar o B mad e integrá-lo aos fluxos de trabalho do Arca, simplesmente fazendo com que o Claude Code analise o repositório do B mad e extraia essas ideias para construir os fluxos de trabalho do Arca com a ajuda da skill do Arca, obviamente.
+
+[bufa] Então, B mad é um bom exemplo de que é um arnês, não um construtor de arneses, certo? Tipo, você pode construir um B louco com Arca. O And B mad é fantástico, mas também é bastante complexo e é muito difícil adaptá-lo à forma como você realmente deseja trabalhar. É muito opinativo e você é praticamente obrigado a usar a estrutura deles sem qualquer adaptação. E essa é a beleza do Arca: você realmente pode definir seu próprio processo, inspirando-se até mesmo nas partes que você gosta do B mad, mas sem ser obrigado a usá-lo integralmente.
+
+Assim, você pode até mesmo misturar e combinar elementos, como pegar algumas coisas do seu próprio processo, algumas coisas do B mad, algumas coisas do GitHub Spec Kit e, em seguida, criar fluxos de trabalho do Archon que funcionem exatamente como você deseja e otimizados para sua pilha de tecnologia e arquitetura. Tudo bem. Então, sim, parece que o fluxo de trabalho está funcionando novamente, atendendo ao nosso feedback. Podemos ver que a funcionalidade foi retomada também na interface web. Atualmente estou trabalhando em diversas alterações no plano.
+
+Muito legal. Sim, estou editando o arquivo plan.md agora mesmo. Muito bem, ótimo. O Joseph também tem usado o BDD Mad, mas eu prefiro muito mais o Archon.
+
+Sim, e para que fique bem claro. Tipo, eu sei que meio que já expliquei isso, mas Archon não é concorrente da BDD Mad. Isso meio que cria um concorrente porque permite que você construa seu próprio chicote de fios, o que substituiria o BDD Mad. Mas, por si só, não é um concorrente. Espero que esteja claro, certo?
+
+Tipo, Archon é um nível acima, pois permite construir qualquer tipo de arreio. Por exemplo, teoricamente, o autor de BDD Mad poderia ter usado Archon para criar BDD Mad. Você sabe o que eu quero dizer? Espero que faça sentido. Tem algum servidor no Discord ou algo parecido? Então,
+
+não existe um servidor do Discord para Archon. Bem, geralmente, sempre que você quiser conversar sobre um novo recurso, um problema ou algo do tipo, basta enviar uma issue no GitHub. E na comunidade Dynamis, há muita conversa sobre Archon e workshops que eu ministro toda semana. Bem, eu ministro workshops semanais no Dynamis, e muitos deles agora são sobre Archon. Então, vou colocar um link para a comunidade Dynamis caso você tenha interesse em se envolver de verdade. Não é como algo gratuito
+
+como o Discord. É uma comunidade privada de IA , mas é lá que temos muitas discussões acontecendo sobre o Archon. E, como eu disse, você sempre pode enviar solicitações de pull request e relatar problemas. Então, a comunidade é como a do próprio GitHub. Tudo bem.
+
+Vejamos aqui. Nenhum agente está revisando os pedidos de informação. Temos agentes que revisam os pedidos de informação. Então, eu configurei o Code Rabbit para o Archon. Além disso, tenho vários fluxos de trabalho do Archon configurados para revisão de código. Então,
+
+acredite, estamos realizando revisões completas das solicitações de pull request. Por exemplo, se eu acessar os fluxos de trabalho e configurações padrão do Archon, como alguns que já lançamos, como a revisão completa de PR. Esse é um comando que eu costumo executar sempre que uma solicitação de pull request é criada. Usarei isso até mesmo para repositórios fora do Archon. Sim, é absolutamente crucial que, sempre que uma solicitação de pull request for criada a partir de um agente de codificação, haja uma sessão separada desse agente que revise a solicitação e, idealmente, realize testes de ponta a ponta.
+
+Como faço para controlar envios como spam? Então, isso é algo que terei que descobrir conforme formos avançando. Mas o principal é que, nesse fluxo de trabalho de revisão, se ele detectar que alguém está enviando muitos documentos, simplesmente rejeitará todos. Isso faz parte do sistema de avisos que vou adicionar. E, obviamente, podemos proibir que pessoas façam solicitações de pull.
+
+E, de forma geral, desde que a verificação de segurança ou a análise do Haiku esteja avaliando a qualidade do fluxo de trabalho, se alguém estiver enviando vários fluxos de trabalho em excesso, não conseguirá produzir fluxos de trabalho de alta qualidade. Assim, poderei sinalizar isso automaticamente. [bufa] Mas, com certeza, é algo que terei que continuar a desenvolver com o tempo. Tenho certeza de que, inicialmente, alguns fluxos de trabalho ruins vão acabar passando. Não que seja necessariamente malicioso, mas simplesmente não é um fluxo de trabalho muito impressionante.
+
+Provavelmente vai acontecer. Então, será algo em que teremos que continuar trabalhando. É por isso que isto é como uma versão 0 que estou fazendo. Estou chamando isso de V0 do mercado de fluxos de trabalho, ou V1, se for o caso. Tudo bem.
+
+Hum, vejamos. Piv Ok, então ainda está funcionando. Então, temos que esperar até que eles considerem todos os nossos comentários e nos digam que o fizeram. Então, tudo bem. Continue respondendo a algumas perguntas aqui. Estamos
+
+adicionando tags ao fluxo de trabalho para que possamos classificar e rotular melhor. Sim, acho que alguém já perguntou sobre isso. Estou planejando cuidar disso. Um fluxo de trabalho totalmente novo que utiliza hiperframes para criar vídeos. Sim, Thomas também criou um fluxo de trabalho Arcan que alterna entre hyperframes e Remotion. Vou
+
+testar isso ainda hoje. Ih, é mesmo, e aí o Thomas disse que tinha acabado de fazer isso. Sim, estou ansioso para experimentar, Thomas. Sim , parece que o Hyperframes é melhor que o Remotion para geração de vídeo com IA . O Arcan precisa ou possui uma segunda IA ​​de avaliação para confirmar o trabalho realizado?
+
+Então, isso é algo que você incorporaria ao próprio fluxo de trabalho do Arcan. Certo? Assim como no fluxo de trabalho do Piv Loop, e me corrija se você estiver falando de outra coisa, mas assim como no fluxo de trabalho do Piv Loop, por exemplo, eu tenho a etapa de implementação. Tipo, é aqui que... ok, desculpe, essa é
+
+a configuração. Eu tenho a etapa de implementação. É aqui que realizamos a implementação com base em um plano que elaboramos anteriormente no fluxo de trabalho, que incluía a etapa de aprovação humana. Após a implementação, realizo a validação. Então, em uma sessão totalmente nova do agente de codificação, ou seja, o próximo nó no fluxo de trabalho do Arcan, eu a configurei para uma sessão completamente nova com o contexto atualizado e pedi ao Sonnet para realizar uma revisão de código.
+
+Portanto, trata-se realmente de uma sessão de agente de codificação separada. Não tem nenhum contexto em relação à implementação anterior, além de analisar o plano e o que acabou de ser construído, certo? É como se dissesse: "Ok, aqui está, Claude. Aqui está , Sonnet. Aqui está o plano. Veja
+
+o 'get diff' para saber o que foi construído a partir do plano e faça sua revisão de código. Certifique-se de que seguimos o plano. Certifique-se de que o código está funcionando, faça testes de ponta a ponta, o que você quiser fazer." É realmente um segundo juiz de IA integrado ao fluxo de trabalho do Archon. Então, não é como se tivéssemos algo integrado ao Archon que, após a conclusão do seu fluxo de trabalho, executaria automaticamente algum processo separado.
+
+É sua responsabilidade integrá-lo ao fluxo de trabalho como esse segundo juiz. E a razão pela qual queremos que seja assim é porque queremos que você tenha controle total sobre como essa revisão será feita. Sabe, não queremos que ele simplesmente imponha algo, porque aí nos tornaríamos uma ferramenta, não um construtor de ferramentas. Certo.
+
+[limpa a garganta] Vamos ver. Parece que qualquer falha pode rapidamente se tornar uma vulnerabilidade na cadeia de suprimentos . Vocês estão fazendo testes de intrusão na distribuição? O que vocês estão usando? Então, eu Quer dizer, estamos fazendo o máximo de autoavaliações possível com agentes de codificação. Esse é o fluxo de trabalho que estou
+
+criando aqui. Mas, no geral, haverá riscos nesses fluxos de trabalho. É por isso que coloquei o aviso de que este fluxo de trabalho foi enviado pela comunidade. A Archon não auditou todos os fluxos de trabalho, ou seja, os mantenedores não os auditaram. Portanto, eles não serão perfeitos. É
+
+recomendável que você execute os fluxos de trabalho de um remetente confiável, como alguém que você conhece, um amigo que diga: "Enviei o fluxo de trabalho para o marketplace, experimente aqui". Ou, se você realmente quiser fazer uma revisão completa por conta própria, pode. Então, faremos o máximo possível para evitar problemas com os fluxos de trabalho por meio deste fluxo de trabalho da Archon em que estamos trabalhando agora, mas ele nunca será perfeito, certo? Deixamos essa expectativa clara desde o início: ele não será perfeito. Mas continuaremos a evoluir o sistema o máximo possível para evitar esses problemas. Mas qualquer sistema impulsionado pela comunidade é assim.
+
+Mercados, como o Open Claw, o Claw Hub ou o skills.sh, que é o mercado da Vercel para habilidades de agentes. Qualquer coisa que seja impulsionada pela comunidade nunca será totalmente segura. Então, é algo que você precisa ter em mente. Quero que este seja um espaço para as pessoas compartilharem e, principalmente se você confiar no autor, terá total liberdade para baixar e usar o que quiser. Mas, se for algo que você
+
+não conhece, tenha cuidado. Certo. Fluxos de trabalho são apenas uma habilidade? Essa é uma boa pergunta. Deixe-me verificar rapidamente com o Claude para ver como estamos.
+
+Depois, volto. Só quero garantir que tudo continue funcionando. Sim, ok. Parece que ainda está tudo bem. Ok.
+
+Deixe-me falar sobre isso. Deixe-me abrir o repositório aqui. [bufa] Então, a resposta curta é não. Fluxos de trabalho não são apenas habilidades. Teoricamente, qualquer coisa que você possa fazer em um fluxo de trabalho Arkon, você também pode criar como uma habilidade, mas o problema é que as habilidades não são determinísticas e são frágeis.
+
+Se você realmente quiser pegar todo o processo do loop PID, por exemplo, você poderia teoricamente empacotá-lo como uma habilidade. Certo? Poderia ser apenas um prompt do tipo " Ok, Claude, quero que você explore esta ideia" quando o usuário a enviar, e então você [bufa] cria um plano e trabalha com o usuário para iterar sobre o plano. E então você parte para a implementação. Após a implementação, você quer fazer uma revisão. Talvez você crie
+
+subagentes para fazer algum tipo de revisão e peça ao humano para revisar também, e então trabalhe em qualquer uma dessas etapas. Você poderia construir isso como uma habilidade inteira, mas essa é uma habilidade enorme. Não há como o agente de codificação percorrer todas essas etapas de forma confiável. Ele vai pular algumas coisas entre diferentes execuções ou simplesmente não vai conseguir concluir tudo. Siga as instruções, pois são muitas.
+
+O objetivo do Arkon não é construir algo muito diferente das skills, mas sim tornar a codificação de IA o mais determinística e repetível possível. Em vez de tentar concentrar todo o seu fluxo de trabalho em uma skill, agora você pode criar um conjunto de nós que distribuem o trabalho. Assim, você tem diferentes sessões do agente de codificação lidando com tarefas diferentes, permitindo que você faça sua revisão em uma sessão separada da implementação, por exemplo. E em diferentes etapas do fluxo de trabalho, você pode reforçar seu processo por meio de nós determinísticos. Por exemplo, você executa seus comandos de validação exatos em vez de pedir ao agente de codificação para fazê-lo, pois tenho certeza de que vocês já passaram por isso: o agente de codificação não obedece às suas instruções, certo? Principalmente quando se trata de uma
+
+skill maior, que executa os testes unitários, mas não os testes de integração, por exemplo. Aqui, podemos garantir isso. Outro recurso muito poderoso dos fluxos de trabalho do Arkon é a capacidade de encadear diferentes sessões do agente de codificação . Com uma skill, você não consegue fazer isso porque uma skill é apenas um prompt direcionado a um agente de codificação. Você pode usar subagentes, mas isso não é suficiente para o que queremos aqui, porque queremos uma sessão totalmente isolada que faça a revisão, por exemplo, ou uma que faça o planejamento, certo? Tipo, temos um
+
+agente de codificação fazendo o planejamento e, em seguida, temos outro agente de codificação analisando o plano em uma nova sessão e fazendo a implementação. E podemos ter etapas de aprovação humana e coisas do tipo, então também estamos reforçando a presença humana no circuito de uma forma que uma skill não consegue garantir. Na verdade, o problema é que o sistema de prompts é frágil. O Arkon nos permite realmente reforçar o processo. E temos muitas outras coisas no Arkon , como suporte para árvores de trabalho e isolamento, para que você possa executar tarefas em paralelo. Você pode incorporar isso em uma
+
+skill, mas isso é mais um exemplo de como ela acaba fazendo cada vez mais coisas , e começa a falhar à medida que as instruções ficam mais longas. Não importa o quão poderoso seja o modelo de linguagem, sempre haverá o risco de ele perder detalhes quando houver um processo que você esteja fazendo com que ele execute automaticamente . A maneira como sempre explico, em uma frase, é a seguinte: quando você cria uma habilidade para o seu fluxo de trabalho de codificação de IA, você está integrando o sistema ao agente de codificação. Quando você cria um fluxo de trabalho Archon, você está integrando agentes de codificação a um sistema, formando um sistema confiável. Então, é o inverso, certo? Uma
+
+habilidade integra o sistema ao agente. No Archon, os agentes integram o sistema. E isso inerentemente torna tudo muito mais confiável, porque você consegue impor seu processo passo a passo. Essa é definitivamente uma explicação mais longa para a sua pergunta, mas é uma ótima pergunta. Eu queria garantir que dedicaria um tempo para explicá-la, porque se você realmente entender essa explicação, por que o Archon não é apenas uma habilidade, por que os fluxos de trabalho não são apenas habilidades, então você poderá entender de verdade, pelo menos espero que faça sentido para você o porquê do Archon. É tão poderoso, por isso me importo tanto em
+
+construir esta plataforma agora, por isso estou fazendo todas essas transmissões ao vivo e vídeos no YouTube e passando horas e horas nisso toda semana.
+
+Certo, legal. Então, vamos ver como estamos agora. Uh, parece que...
+
+Ah, espere. Acho que está parado para minha aprovação. Deixe-me ver. Hum...
+
+Ah, droga. Droga, foi pausado e eu não percebi. Hum, ok. Qual é o feedback? Ou quando você chama isso de cronograma de atualização do documento do plano de transmissão ao vivo ?
+
+Deixe-me abrir o plano novamente. Estou um pouco confuso com o que meu segundo cérebro está me dizendo aqui. Será que realmente...
+
+Ah, sim, sim. Ok. Então, mudou o plano. Então, você pode ver que não está mais codificando meu nome de usuário do GitHub. Então, acho que está tudo bem. Se eu
+
+olhar os riscos aqui embaixo, sim, então reduziu os riscos também. Ok, acho que está tudo bem. Então, posso aprovar. plano. Obviamente, se eu estivesse fora da transmissão, passaria muito mais tempo validando o plano, mas acho que está tudo bem.
+
+Ok. Sim, o plano parece bom. Posso simplesmente dizer para prosseguir e retomar o fluxo de trabalho para a implementação. Ótimo. Legal
+
+, então está verificando o status e... Deixa eu só garantir que execute a aprovação. Certo
+
+. Pronto . Então, estou só verificando uma coisa rapidamente fora da câmera para me preparar para a próxima. Ok.
+
+Ok. O plano de refinamento com o feedback está pausado, aguardando aprovação final, enviando aprovado, movido para implementação . Ótimo. Sim, basicamente o que ele fez foi aplicar as alterações ao plano. Mas antes de prosseguir para a implementação, não queremos que ele simplesmente assuma que nosso feedback é suficiente. Podemos querer enviar algum
+
+feedback e depois enviar mais, ou talvez ele não tenha abordado nosso feedback adequadamente. Então, ele pausou mais uma vez, o que é perfeito. Só para garantir que está tudo bem. Eu disse que está tudo bem. Agora, está prosseguindo. para a implementação.
+
+Então, podemos ver isso nos logs também. Vou atualizar aqui. Não sei. Não preciso atualizar, mas enfim, vou clicar em "ver logs" e podemos ver que estamos na fase de implementação. Ok, pode haver um pequeno bug para corrigir no Arkon, porque ele não salva a etapa aqui como costuma fazer. Então,
+
+vou anotar isso. Mas podemos ver que está funcionando ativamente. Agora mesmo, está trabalhando na busca da fonte de dados do marketplace. Então, está trabalhando no primeiro script que especificamos no plano. Parece bom.
+
+Sim, parece que há um pequeno bug para corrigir, porque não parece que uma etapa esteja sendo executada. Enfim, vou ter que investigar isso. Estamos descobrindo bugs em tempo real, e é por isso que quero continuar monitorando. Usar o Arkon ao vivo serve para encontrar e corrigir esses problemas. Então, vou criar uma issue no GitHub para isso. Provavelmente
+
+farei isso depois da transmissão. Quero me manter focado aqui, porque outra coisa que precisamos fazer em paralelo é preparar o pull request para o fluxo de trabalho que queremos adicionar. Então, vamos fazer isso agora. Vou voltar ao teste de vídeo do Remotion e copiar este caminho. Pronto, copiei o caminho. Vou entrar
+
+aqui, teste de vídeo do Remotion. Vou usar minha ferramenta de reconhecimento de voz, AquaVoice, para explicar brevemente o que quero fazer. Então, tenho este caminho para um fluxo de trabalho do Arkon que criei para geração de vídeo por IA. Quero que vocês leiam todos os arquivos principais aqui, o fluxo de trabalho do Arkon, o arquivo README, para entender o contexto completo de como ele funciona. Outra coisa em que tenho trabalhado no Arkon, e que quero que vocês vejam, é a minha segunda sugestão. Cérebro, vasculhe suas
+
+memórias para ter o contexto completo sobre isso. Eu tenho trabalhado no marketplace de fluxos de trabalho para que as pessoas possam compartilhar fluxos de trabalho publicamente. Então, você precisa hospedar o fluxo de trabalho em seu próprio repositório do GitHub e, em seguida, criar uma solicitação de pull request atualizando um arquivo de manifesto, como um arquivo TypeScript que usamos na base de código do Archon, para adicionar seu fluxo de trabalho ao marketplace público. E o que eu quero fazer aqui é adicionar este fluxo de trabalho de teste de remoção de vídeo apenas para fins de teste, porque estou apenas começando a trabalhar no marketplace. Quero adicioná-lo, quero criar uma solicitação de pull request para adicioná-lo ao marketplace para que possamos ver como ele funciona de ponta a ponta.
+
+Então, o que você precisa fazer é ir para a branch dev do Archon. Certifique-se de estar na branch dev e, em seguida, se você olhar o contributing.md lá, e eu mesmo vou verificar para confirmar, o contributing.md deve ter orientações sobre como podemos adicionar novos fluxos de trabalho ao marketplace. Sim, então eu quero que você leia e siga essas instruções.
+
+Este é o lugar para onde as pessoas devem direcionar seus agentes de codificação sempre que quiserem contribuir para o marketplace. Então, entendam tudo isso, entendam o fluxo de trabalho de teste de vídeo de remoção e, em seguida, eu quero que vocês não criem o pull request ainda, mas que cheguem ao ponto em que tenham tudo pronto para criar o pull request. Porque eu quero criar o pull request assim que isso for mesclado, para que possamos executar o fluxo de trabalho automaticamente e revisar esta implementação. Ok, então, sim, estamos atualmente na fase de implementação, o que é bem legal. O fluxo de trabalho do Archon, o loop PIT, na verdade, faz um mini loop Ralph. Ele cria
+
+a lista de tarefas com base no plano estruturado e, em seguida, executa várias sessões diferentes do agente de codificação para lidar com cada uma delas. Dessa forma, podemos usar esse loop PIT para lidar com trabalhos bastante grandes. Certo. Legal
+
+. Então, enquanto esperamos que isso seja executado, vou voltar ao chat aqui.
+
+Certo. O Archon não é uma ferramenta de automação? Do que aprendemos no seu último workshop em vídeo sobre IA, no qual você explicou o comando `prime implement` que mostrou ao criar o QR Code para o seu aplicativo de enquetes? Sim, você está se referindo ao workshop que fiz com Lior Weinstein, onde mostrei todo o meu processo de desenvolvimento. E muito do que ensinei lá foi o que compilei neste fluxo de trabalho Archon.
+
+Então, para ser bem específico ao responder à sua pergunta, Archon não é o meu processo de codificação de IA. Archon permite que você crie fluxos de trabalho para o seu processo de codificação de IA . Eu construí todo o meu processo de loop de pivô como um único fluxo de trabalho Archon, mas você pode usar o Archon para praticamente qualquer fluxo de trabalho agentivo que você possa imaginar, mesmo aqueles que não são apenas para codificação, como o de geração de vídeo que mostrei anteriormente. Mas sim, certamente a maioria dos princípios, como o `prime` (que chamo de exploração) neste fluxo de trabalho, e o comando `plan` e o comando `implement`, tudo isso, eu agrupei neste fluxo de trabalho Archon. Agora, o motivo pelo qual não ensinei Archon naquele workshop com Lior é simplesmente porque não quero.
+
+Sabe, meio que empurro minha ferramenta para vocês e digo que, se quiserem usar minha abordagem, precisam usar o Archon. É de código aberto e gratuito, então eu realmente recomendo que vocês o experimentem, pois é muito poderoso, já que vocês podem encapsular qualquer processo de codificação agética como um fluxo de trabalho do Archon. Mas não espero que vocês o usem. Eu ainda quero ensinar, de forma geral, no YouTube e no Dynamis, princípios mais universais. Certo? Como é o processo
+
+de preparação? Como é o planejamento? E como criamos planos estruturados para enviar à implementação? Como lidamos com tokens e contexto para um agente de codificação? Quero abordar tudo isso fora do Archon, mas também ter muito conteúdo sobre como podemos usar o Archon e traduzir essas ideias em fluxos de trabalho do Archon. E é basicamente isso que
+
+estou fazendo com vocês agora nesta transmissão ao vivo. Certo. Vocês podem, por exemplo, fazer enquetes deterministicamente primeiro para extrair metacontexto do texto e treinar um agente. Treinar mônadas, díades ou micro LLMs para identificar corretamente fluxos de trabalho inseguros e ruins, caso você estivesse procurando por isso. Ok, desculpe. Estou um
+
+pouco perdido na sua formulação da pergunta, mas acho que o que você está querendo dizer é ter um processo mais refinado para identificar problemas de segurança em fluxos de trabalho. Gostei da sua ideia . Quer dizer, definitivamente está fora do escopo desta transmissão ao vivo agora abordar a fundo a verificação de segurança, mas ela será uma parte importante das revisões automatizadas, garantindo que tenhamos a proteção de segurança o máximo possível. Então, isso mais o aviso, tipo, "ei, não está totalmente verificado", é tudo o que precisamos para o mercado público. Certo .
+
+Vamos ver.
+
+Parece que o gargalo inerente para os fluxos de trabalho será a paralelização. Existe uma camada de orquestração? Então, seu agente de codificação ou seu segundo cérebro é realmente a camada de orquestração para o Archon? fluxos de trabalho. Então, eu não mostrei isso nesta transmissão ao vivo, mas definitivamente mostrei em algumas das últimas transmissões ao vivo no meu canal.
+
+Executei muitos fluxos de trabalho do Archon em paralelo. Graças às árvores de trabalho e ao isolamento do Archon, você pode executar cada fluxo de trabalho em seu próprio ambiente. Então, você pode fazer dezenas deles ao mesmo tempo, se quiser. E quanto à camada de orquestração, para mim agora, é o meu segundo cérebro. Tenho o código do Claude aberto no meu repositório do segundo cérebro agora. Então,
+
+ele tem o contexto completo do trabalho que estou fazendo e dos diferentes repositórios que tenho. Então, posso dizer algo como, por exemplo, "vá em frente e lide com as issues número um e dois do GitHub para este repositório e a issue número 17 para este outro repositório e use o Arkon". Obviamente, não vou enviar isso agora, mas você entendeu a ideia de que o segundo cérebro é o meu orquestrador. Então, ele agora usa a CLI do Arkon como seu braço de agente de codificação, despachando as tarefas. fluxos de trabalho para lidar com problemas, revisar pull requests ou qualquer outra coisa que eu queira fazer.
+
+Então, sim, não temos uma camada de orquestração integrada ao Arkon, a menos que você esteja usando a interface web. Certo? Se você estiver usando a interface web (eu também não mostrei isso), temos o chat aqui, onde posso dizer a mesma coisa: "Quero que você inicie este fluxo de trabalho para fazer isso, este outro para fazer aquilo", e você pode fazer tudo isso usando o chat da interface web como orquestrador. Mas minha maior recomendação é usar algo como seu segundo cérebro, que tenha contexto sobre como você gosta de trabalhar, como orquestrador para os fluxos de trabalho do Arkon. Certo.
+
+Deixe-me voltar e ver onde estamos agora. Ok, então a implementação ainda está em execução. Então, posso dizer: "Me dê uma atualização de status para a implementação". Certo, então vamos voltar e ver onde estamos agora na outra conversa. Aqui estamos criando o fluxo de trabalho para enviar como um pull request.
+
+A estrutura do repositório Remotion não corresponde exatamente ao que... A convenção de instalação do diretório do marketplace espera isso. Então, como devo definir o escopo da entrada de teste?
+
+Hum,
+
+vamos ver.
+
+Ok, na verdade, sim, eu meio que entendi o que está dizendo aqui. Basicamente, quando criamos um pull request para adicionar um repositório ao marketplace, obviamente precisa haver uma convenção para onde compartilhamos os comandos e scripts que o arquivo YAML principal do fluxo de trabalho usa. Então, vou dizer, agora quero que você crie uma branch no repositório para fazer a reestruturação. E então, criaremos o pull request a partir dessa branch reestruturada. Então, sim, porque obviamente, quando criamos este fluxo de trabalho inicialmente...
+
+opa, isso está errado. Deixe- me voltar ao Remotion. Blá blá... quando criamos isso
+
+inicialmente, obviamente não o construímos para... na verdade, não o construímos para enviar ao marketplace de fluxos de trabalho. E, portanto, seja qual for o estado atual dos seus fluxos de trabalho Arcan, você provavelmente terá que fazer alguma refatoração para que estejam prontos para serem enviados. Mas o A
+
+melhor parte é que você simplesmente direciona seu código Claude para consultar o arquivo contributing.md. Dessa forma, ele sabe exatamente como estruturar as coisas. Você não precisa pensar ou se preocupar com isso . Basta permitir que seu agente de codificação percorra o processo depois que o fluxo de trabalho do Arcan já estiver configurado.
+
+É exatamente o que estamos buscando. fazendo aqui. Então, estou apenas pedindo para que se reestruture. Tudo bem. Bem, acho que ainda tem mais coisas para me dizer, mas enfim, vamos ver onde estamos agora.
+
+Então, solicitei uma atualização sobre o status. Atualmente estamos na quinta iteração. Ok, então, aqui estão os arquivos que foram gravados até o momento. Sim, tudo bem. Então, está meio que levando o seu tempo.
+
+Dediquei tempo à leitura de padrões existentes antes de qualquer escrita. O Workflow YAML é o primeiro script que escrevo e que espero que seja usado nas iterações 6 a 12 para gerar os scripts. Ok, então esse fluxo de trabalho é um pouco lento por natureza, pois utiliza uma inversão de trilho. Portanto, cada iteração do loop realiza apenas uma pequena quantidade de trabalho, o que inerentemente faz com que o processo demore mais. É meio chato, mas eu acho legal. Eu sei que talvez seja
+
+um pouco lento, mas sim, isso é intencional. Quero que leve o tempo que for necessário, porque a questão com os fluxos de trabalho do Archon é que eles são feitos para você simplesmente executar e esquecer. Certo? Assim que você pega seu processo de codificação de IA , você o empacota como um fluxo de trabalho Archon e provavelmente precisa gastar algum tempo inicialmente iterando sobre ele e observando-o atentamente, e é para isso que serve a interface web. Mas quando você chega ao ponto de realmente confiar nele, é só usar e esquecer. Portanto, permito que meus fluxos de trabalho do Archon
+
+demorem um pouco porque estou usando diferentes modelos e provedores para otimizar a utilização de tokens. Então, na verdade não é tão caro assim, e eu posso simplesmente enviar e ir trabalhar em outras coisas, certo? É como se eu estivesse usando meu segundo cérebro como orquestrador, para poder, sabe, invocar mais fluxos de trabalho do Archon em outras coisas, continuando a trabalhar no que preciso enquanto espero que outros fluxos de trabalho do Archon terminem. Então, vou deixar isso rodando enquanto volto aqui para responder algumas perguntas sobre a criação deste pull request. Então, mover o animal para cima... Sim, isso parece
+
+bom. Ok, então acho que já está tudo resolvido nesse aspecto. Bom. OK. Legal.
+
+Hum, diz que estou trabalhando com o Sonnet no meu código Claude. Isso é um bug ou é real? Então, estou usando o Opus. Não sei onde você viu Sonnet, mas uma coisa que às vezes me acontece, e eu já falei disso antes na transmissão ao vivo, é que às vezes eu começo a tocar Claude. Sim, veja, aconteceu de novo . Não sei por que isso continua
+
+acontecendo. Às vezes, ele me muda de volta para Sonnet, mesmo que eu tenha selecionado Opus na conversa anterior. E, como eu tentei, defini isso como padrão. Então, veja só, se eu abrir outra sessão do Claude Code em outro terminal... opa,
+
+acho que aconteceu de novo. Às vezes é muito irritante. Às vezes, quando mudo para o Opus e depois vou para outra sessão, ele permanece como Opus. Pronto. Veja, simplesmente continuou sendo Opus. Mas aí, por algum
+
+motivo, como acontece outras vezes, volta a ser Soneto. Eu não faço ideia. É extremamente irritante. Então, isso é apenas um bug no Claude neste momento. Mas tudo bem. Preciso ter muito
+
+cuidado com isso para não usar "Sonnet" acidentalmente em uma obra maior. Atualização Claude. Hum, será que eu realmente tenho alguma atualização agora? Talvez sim . Aguentar.
+
+Atualização de barra.
+
+Ou não, acho que tenho que fazer isso fora do Claude, certo? Claude atualiza a versão atual, verificando se há atualizações para a versão mais recente. Não, eu já estou atualizado. Então, eu... sim, eu... não sei.
+
+Ok, a árvore de trabalho do teste de vídeo remoto possui edições não confirmadas. Como devo lidar com isso ao criar a branch de reestruturação? Guarde agora, abra depois que eu disser sim. Claro, vamos fazer isso mesmo. Só quero que continue, por favor.
+
+OK. Então, eu gostaria de receber outra atualização sobre o andamento da nossa implementação aqui. Vou voltar ao chat. Tudo bem. Você poderia revisar o contexto à medida que avançamos e me dar uma ideia melhor de onde você quer chegar? Sim, se você está falando sobre o meu
+
+uso, definitivamente posso. Então vamos voltar. Então, agora estou com 57% do meu limite de 5 horas. Então, na última hora, passei de 41% para 57%, o que não é nada mal. Então, esses são os fluxos de trabalho atuais, como esse fluxo de trabalho principal de loop de pivô que tenho usado. É um
+
+processo demorado, mas na verdade é bastante eficiente em termos de recursos, considerando o tempo que leva para ser concluído e a quantidade de trabalho que realiza. Como estamos pesquisando com Haiku, vamos revisar com Soneto. Como se estivéssemos usando o modelo certo para a tarefa. Então, na verdade, eu só ultrapassei 3% do meu limite semanal durante a hora inteira que estivemos trabalhando aqui, e estávamos com algumas sessões de código Claude acontecendo ao mesmo tempo. Ok, então, uma grande correção a uma declaração anterior. Não me dei conta de que Phil estava
+
+executando cada tarefa de forma atômica. Cada uma das seis tarefas foi concluída. Se você não confirmar, todos os arquivos do planejador serão salvos no disco. Ok, então a implementação está concluída. Agora, o projeto foi encaminhado para a revisão de código aqui.
+
+E eu posso executar um {slash} context para ver em que ponto esta conversa está. Então, temos trabalhado bastante nessa conversa, mas como temos nos concentrado principalmente em fluxos de trabalho do Archon, nosso contexto principal de segundo cérebro aqui representa apenas 21%. Então, outra coisa muito legal de usar o Archon é que podemos usá-lo como nosso braço de agente de codificação, conseguimos ter uma única conversa com nosso segundo cérebro, ou código Claude, ou o que for, que pode durar muito tempo, porque a maior parte do consumo de tokens ocorre nos fluxos de trabalho individuais do Archon. Nosso segundo cérebro, como orquestrador, é basicamente responsável por trabalhar conosco para descobrir exatamente o que queremos construir, enviar isso para o Archon e revisar tudo no final. Mas mesmo a própria revisão não consome muitos tokens, porque, idealmente, você já tem muita autoavaliação e intervenção humana incorporadas ao próprio fluxo de trabalho do Archon. Então,
+
+é mais ou menos como fazer o planejamento inicial, bem inicial mesmo, com você. Como é que fazemos para iniciar o fluxo de trabalho do Archon e, depois, garantir que tudo funciona perfeitamente no final? Tudo bem. Hum, shh, shh, shh, shh, shh, shh, shh, shh, shh, shh, shh, shh, shh, empurre . Sim, claro. Eu vou
+
+insistir. Tá bom, tanto faz. Desculpe. Sinto que preciso dedicar um tempo para entender essas coisas, mas quero avançar rapidamente por aqui. Então, vou simplesmente deixar fluir e criar.
+
+OK.
+
+Estoque restaurado. Agora, a responsabilidade é da Archon para adicionar a entrada no mercado. OK, bom. Portanto, agora continua a seguir as diretrizes para colaboradores. Então, o fluxo de trabalho está configurado. Temos a
+
+estrutura de repositório correta. Agora precisamos editar aquele arquivo TypeScript que contém a lista completa de fluxos de trabalho para o marketplace. Para que você possa ver que o arquivo marketplace.ts foi atualizado. Temos o slug, a descrição e a URL de origem.
+
+E eu posso copiar isso e dar uma olhada aqui. Vou fazer isso. Então, vamos abrir isso e ver o que Claude criou para compartilhar esse fluxo de trabalho. Então, temos a instalação do marketplace. Esta é a ramificação para a qual mudei apenas para fins de demonstração aqui.
+
+Temos o fluxo de trabalho do Arkon em dólares que possui o arquivo generic.yaml de vídeo. Este é, portanto, o fluxo de trabalho completo. É um fluxo de trabalho muito grande. Entendemos isso. Temos os comandos que estamos
+
+usando como algumas das diferentes etapas do fluxo de trabalho. E também temos os scripts que estamos executando. Para coisas como gerar a locução, tipo o que realmente faz a ligação para a 11 Labs, por exemplo. Assim . Certo, legal. Parece bom.
+
+Vamos ver o que está acontecendo agora. Certo, só quero ter certeza de que isso ainda não foi enviado como pull request. Porque, como eu disse, quero que isso aconteça assim que a implementação estiver concluída. Então, vou apenas pedir que me dê outra atualização de status. Quer dizer, você não precisa ficar perguntando para o Arkon ou para o seu segundo cérebro sobre atualizações de status dos fluxos de trabalho do Arkon, mas pode, se quiser.
+
+Então vou deixar acontecer. Tudo bem.
+
+Tudo bem. Vamos ver o que mais temos aqui no chat. Então, sim, peço desculpas, pessoal. Há muitos comentários no chat, e eu agradeço a todos pela participação ativa, mas isso significa que não necessariamente conseguirei curtir tudo aqui. Então, eu tento fazer o meu melhor quando tenho pequenos períodos de inatividade, tipo, só esperando os agentes terminarem, mas sim, definitivamente é difícil dar conta de tudo. Hum, mas
+
+parece que estamos prontos para começar. Então, já configuramos a filial. Temos um commit local em um branch pronto para ser enviado. Então, ok, está tudo bem. Então, quando você estiver pronto, o próximo passo é criarmos a solicitação de pull request. Legal.
+
+Ok, revisão de código concluída e tela de confirmação pronta para revisão. Então, todas as seis tarefas foram concluídas. Assim, o scanner possui nove categorias para revisar os fluxos de trabalho. Ok . Então, agora eu gostaria de perguntar, uma vez que isso esteja concluído e integrado ao ambiente de desenvolvimento, o que eu preciso fazer para configurar o fluxo de trabalho para ser executado automaticamente? Ou
+
+você já configurou isso com a ação do GitHub? Tipo, assim que isso for integrado ao ambiente de desenvolvimento, já podemos começar a revisar os pull requests para os fluxos de trabalho? Ou precisamos primeiro incorporá-lo ao arquivo principal? Como isso funciona? Eu quero... Sinceramente, estou com
+
+um pouco de névoa mental porque estou alternando entre várias coisas aqui, mas enfim, eu só queria dar um resumo de como estaremos preparados depois que terminarmos isso? E então podemos encerrar esta conversa, pois estamos prontos para criar a solicitação de pull request. Então, tudo ficará bem quando isso terminar. E então vamos verificar o fluxo de trabalho na interface web aqui. Ver registos.
+
+Sim, como você pode ver, estamos quase no fim. Já concluímos todos esses nós e agora ele está apenas realizando sua autoavaliação, acredito. Sim, estou revisando o código agora mesmo. Legal. Tudo bem.
+
+OK. Não basta apenas realizar a fusão para que tudo funcione perfeitamente. Hum, o que está conectado exatamente? Ações do GitHub são acionadas por solicitações de pull. O instalador do Bun, a execução do fluxo de trabalho de revisão e mesclagem de PRs do Marketplace estão disponíveis aqui, se estiverem no repositório do mantenedor, que é o local correto, então está tudo bem. Eu só preciso disso no ambiente de desenvolvimento.
+
+A branch padrão do Arcon é a dev. OK, bom. Dois gráficos que irei analisar. Uh Claude autoriza e CI. Localmente, o Arcon autentica com minhas credenciais, certo? Utiliza minha
+
+assinatura. Preciso adicionar a chave da API da Anthropic e depois atualizar o ambiente de ações do GitHub para que ela seja repassada. Um acesso secreto ao pull request. Os eventos de pull request não expõem segredos do repositório. Pull requests provenientes de forks. Isso
+
+significa que, mesmo com o segredo configurado, os PRs de fork ainda falhariam. Alterar gatilho para destino da solicitação de pull. Ok . OK, bom. Basicamente, precisamos garantir que nossa configuração esteja correta. Então vou
+
+verificar isso fora da câmera aqui e me certificar de que... porque eu... eu
+
+acredito que... Não, acho que já sei. Eu nem preciso fazer isso. Eu sei que já tinha a
+
+chave da API da Anthropic configurada para CI no Arcon, porque uma das coisas que fazemos com o Arcon, e que é bem legal, é executar testes de fumaça em cada commit, tanto no repositório de desenvolvimento quanto no principal. Então, na verdade, eu utilizo um fluxo de trabalho Arcon completo. É algo muito, muito simples, mas eu uso um fluxo de trabalho Arcon com Claude, com Codex, e também um que combina vários provedores. Então, ele tem um nó que executa uma instância real do código Claude com o Haiku. E depois tem um que roda Codex, acho que com GPT 5.2 ou
+
+algo parecido. E assim funciona como um verdadeiro teste. Então, eu sei que meu CI com GitHub Actions já possui a chave da API da Anthropic. Então, na verdade, vou dizer o seguinte. Então, a chave da API Anthropic já está configurada no Claude CI. E então, quero que você
+
+faça o que recomendou para o acesso secreto ao PR do fork. Eu só quero que, assim que isso for integrado ao ambiente de desenvolvimento, eu possa criar imediatamente uma solicitação de pull request para um fluxo de trabalho que eu queira adicionar ao marketplace, e a revisão seja executada automaticamente, rejeitando ou aprovando com um comentário, e a solicitação de pull request seja integrada automaticamente. Quero que isso aconteça completamente, do início ao fim. Não quero configurar mais nada depois de integrarmos este trabalho ao branch de desenvolvimento. Tudo bem. Legal. Vamos
+
+ver.
+
+Portanto, parece que o fluxo de trabalho está em estado de pausa neste momento. Em que situação nos encontramos atualmente? Sim, então acho que só precisamos fazer isso e aí pode até já existir um pull request. Deixe-me dar uma olhada na lista de solicitações de pull. Não.
+
+Ainda não. Ok, então... Ainda não temos o comunicado de imprensa. Acho que vai
+
+aguardar nossa aprovação para então criar a solicitação de pull request. Mas, primeiro vou deixar que ele lide com essa solicitação aqui. Tudo bem. E enquanto esperamos por isso, vou dar uma paradinha rápida para ir ao banheiro. Então, vou desligar a câmera e silenciar o microfone por alguns minutos.
+
+E então eu volto para poder continuar e não ficar só dançando por aí enquanto estou aqui parada. Então, já volto em alguns minutos. Muito
+
+bem, vamos voltar ao assunto. Então, estamos praticamente no ponto em que temos o pedido de pull request. Estaremos prontos para realizar essa fusão muito em breve. Tudo bem. Sim, claro, claro que essa pergunta tinha que surgir quando eu fazia uma pausa rápida. Mas vamos
+
+superar isso. Então, confirme e enviarei isso como um feedback corrigido para a equipe de desenvolvimento. Alguma sugestão de ajuste? Enviar conforme proposto. Eu agrupei os itens de um a seis acima.
+
+OK. Ah,
+
+claro. Sim, vamos fazer isso mesmo. Vou ser um pouco breve porque quero terminar logo com isso. Então, o que isso vai fazer? Na verdade, deixe-me ler isso com atenção para entender enquanto está sendo processado.
+
+Portanto, altere o gatilho da ação do GitHub de solicitação de pull para destino da solicitação de pull . Por que essa é a decisão correta neste caso? E não se trata da habitual arma de segurança a pé. O destino da solicitação de pull é executado no contexto do repositório base com acesso total aos segredos, incluindo a chave da API Anthropic. Ele sempre utiliza o arquivo de ação do branch base. Um PR malicioso não consegue enviar um arquivo
+
+YAML adulterado para sequestrar a revisão. Isso é realmente muito bom. O perigo típico com o destino de solicitações de pull é que o fluxo de trabalho extrai o código não confiável da solicitação e o executa. Este fluxo de trabalho não funciona. Ele realiza apenas chamadas à API do GitHub para buscar a diferença no registro e enviar o código-fonte do fluxo de trabalho submetido no SHA fixado. Portanto, ambas as abordagens, por meio da
+
+API do GitHub, nunca executam o código fornecido pelo PR no runner. Ok, isso faz muito sentido. Os arquivos de fluxo de trabalho de desenvolvimento da branch base são o que é executado. É exatamente isso que queremos. Portanto, o PR não será executado . Será executado o ambiente de desenvolvimento, no qual o
+
+fluxo de trabalho Arcan analisará o código da solicitação de pull, em vez de executá- lo diretamente. Ah , isso é realmente muito bom. Então, com esse feedback, estamos retomando o fluxo de trabalho do Arcan. Isso vai resolver os problemas, validar as informações e, em seguida, criaremos a solicitação de pull request a partir daí. Legal.
+
+Qual é o endereço URL do marketplace? Portanto, ainda não foi publicado. É nisso que estou trabalhando agora. Mas assim que publicarmos isso na próxima versão do Arcan ainda esta semana, estará em arcan.diy/workflows.
+
+Obviamente, um erro 404 até que consigamos publicar isso. Então, ainda estou trabalhando nisso, mas é por isso que quero construir isso ao vivo com vocês aqui, publicamente. Não que isso precise ser publicado ainda. Opiniões sobre Remotion versus Hyperframes. Vou fazer mais testes com isso esta semana, mas o Hyperframes parece ser melhor.
+
+Sim, pode ser complicado, porque um fluxo de trabalho do Remotion e também o Hyperframes precisam de pastas e arquivos adicionais, como modelos. Não sei se isso funciona facilmente, mas veja. Sim, acho que, com esse fluxo de trabalho sendo um pouco mais complexo, Thomas, definitivamente existe o risco de não conseguirmos enviar tudo, mas acho que, para fins de teste, está bom para o que preciso agora. Tudo bem. Olá Cole, ótimo produto.
+
+Agradeço, mas por que o comando `pie` não está funcionando na configuração do Archon? Existem comunicados de imprensa sobre isso. Então, tem algo que eu enviei hoje mesmo para que faça parte da configuração. Se ainda houver algo com defeito depois de hoje, me avise. Fique à vontade para criar uma solicitação para isso. E se já houver
+
+solicitações de pull request, fique tranquilo, estamos analisando- as, mas é muita coisa para filtrar porque há muitas pessoas criando pull requests e issues, especialmente com a facilidade que isso tem hoje em dia graças aos agentes de codificação, mas estamos trabalhando duro para dar conta de tudo . Quer dizer, obviamente você pode ver que há muitos pull requests abertos, mas também há muitos fechados e muitos problemas resolvidos. Então, estamos trabalhando nisso. Ah, obrigado, vou conferir seu vídeo em breve, anônimo. Parece ótimo, agradeço.
+
+Muito bem, assinar o certificado pode ser uma boa ideia. Confirmação do hash na instalação para evitar ameaças de ataque man-in-the-middle (MITM). Sabe, na verdade eu não sei o que é MITM, mas tirando isso, concordo. Qual aplicativo ele está usando para comandos de voz? Sim, estou usando um programa chamado AquaVoice. Custa apenas 10 dólares por mês.
+
+Adoro usá-lo. Existem também muitas opções gratuitas e de código aberto, mas o AquaVoice funciona muito bem para mim. Já falei mais de um milhão de palavras com o AquaVoice. E eu falo a uma média de 224 palavras por minuto, o que é definitivamente mais do que consigo digitar. Eu digito a uma velocidade de 110 a 120, então é tipo duas vezes mais rápido. É simplesmente incrível.
+
+Então, sim, eu definitivamente recomendo quando você estiver usando um agente de codificação, justamente por causa da quantidade de "despejo de ideias" que você geralmente faz com seus agentes de codificação, ter uma ferramenta de conversão de fala em texto é realmente útil. Tudo bem. Portanto, o fluxo de trabalho ainda está em execução. Na verdade, enquanto esperamos que isso seja executado, seria divertido fazer outro teste de digitação. Assim, consigo ver qual é a minha média de palavras por minuto . Vamos
+
+ver. Teste de digitação. Muito bem, vamos lá. Vou fazer outro teste de 1 minuto. Tudo bem.
+
+Nossa, não estou me sentindo bem agora.
+
+E está
+
+bem. Uh 106. Eu estava errando muito no começo. [risos] Mas é isso, eu... Sim, geralmente
+
+digito entre 110 e 120 . Então, de qualquer forma, o Aqua Voice é muito mais rápido. Acho que é divertido fazer testes de digitação de vez em quando. Apesar de eu ter travado completamente na transmissão ao vivo . [risos] Muito bem, então me dê notícias .
+
+Tudo bem. Vamos ver. Sim, o que eu quero fazer é... bem, o problema
+
+é que eu não quero usar o Cloud Code, mas adoro o Pi Agent. Mas Pi não quer ser usado. Quer dizer, eu já usei o Pie com o Archon com sucesso. Se você se deparar com algum problema, por favor, me avise . Se você pudesse ser mais específico, isso sempre seria útil.
+
+Tudo bem. Portanto, a segunda iteração de feedback para correção do feed está concluída. A PIV confirmou as alterações. Ok, então é uma pausa aguardando a correção da entrada da terceira iteração. Quer que eu inspecione ou apenas envie aprovado?
+
+Sim, basta enviar aprovado. Vamos então criar o PR (Publicidade de Reserva). Ok, então estamos quase lá . Bom. Estou muito confuso(a) neste momento. Sim, desculpe.
+
+Fiz uma pequena pausa para fazer um teste de digitação porque... sei lá. Por algum motivo, sempre quero fazer isso depois de mostrar a velocidade com que falo, porque quero mostrar a velocidade com que digito, já que é muito mais rápido falar do que digitar.
+
+Mas enfim, tudo bem. Sim, assim que tivermos acesso ao Mythos, tudo ficará perfeito. Certo. Sim, qualquer problema que tivermos no fluxo de trabalho de codificação de IA agora será resolvido com o Mythos, certo? 100% totalmente.
+
+[risos] Tudo bem.
+
+Já temos suporte para a CLI do Gemini? Infelizmente, a resposta é não, porque a CLI do Gemini não possui um SDK e precisamos de um SDK para trabalhar com o Archon. Então, poderíamos usar o modo headless do Gemini CLI, mas o Archon não está configurado para funcionar com isso porque não é tão confiável. Queremos usar, queremos chamar o agente de codificação programaticamente. Portanto, só daremos suporte aos fornecedores que disponibilizarem um SDK para isso.
+
+Então, isso inclui, você sabe, o que já temos com Claude, Codex e Pie. AMP e Open Code poderiam ser adicionados, assim como provedores com suporte da comunidade. Gemini CLI, estamos apenas aguardando o SDK, mas muitas pessoas estão solicitando. Espero que eles construam isso em algum momento. É estranho que o padrão seja Soneto. Para
+
+mim, é Opus. Sim, não faço ideia. É muito irritante que o código do Claude tenha começado a fazer isso comigo, porque eu já estou com a versão mais recente e tenho que ficar trocando de versão o tempo todo. Veja, acabou de acontecer de novo . Não faço a mínima ideia. É muito estranho. Bem
+
+, está escrito que se aplica a esta sessão e a futuras sessões do Cloud Code. Deveria permanecer como padrão, mas não está obedecendo. Eu não faço a mínima ideia. Mas enfim, a assessoria de imprensa está concluída. A solicitação de pull request está aberta como rascunho, direcionada à versão de desenvolvimento. Então, deixamos o programa rodando por 70 minutos, mas no
+
+geral o consumo não foi tão alto. Então, podemos ver que eu cheguei a 62%. Então, usamos 21% do nosso limite de 5 horas durante esta transmissão ao vivo, o que não é tão ruim considerando a quantidade de trabalho que realizamos. Então, vamos dar uma olhada na solicitação de pull request agora. Vamos lá. Adicionar
+
+fluxo de trabalho automático de revisão e fusão de comunicados de imprensa no marketplace. São apenas adições, pois na verdade se trata apenas de criar todo o fluxo de trabalho e a ação do GitHub para executá-lo. Portanto, sempre que houver uma edição na solicitação de pull para marketplace.ts, isso significa que alguém está tentando adicionar um novo fluxo de trabalho. Então, é aí que queremos executar isso.
+
+Então, vamos testar isso na prática. Hum, eu vou... eu vou mesclar isso agora mesmo. Farei
+
+mais análises depois, mas antes de encerrarmos a transmissão, quero mostrar a vocês uma demonstração . Então, estou pronto para a revisão. Tudo bem. Então, ainda está executando parte da CI aqui, mas vou compactar e mesclar agora. Tudo bem.
+
+Tudo bem. Bom. Estamos fundidos. Então, agora, se eu for para a branch de desenvolvimento, olhar em .github, olhar em workflows, ir em maintainer, uh, aí está. Revisão e fusão de relações públicas do Marketplace
+
+. Incrível. Então, isso vai...
+
+Deixe-me garantir que está usando a chave da API da Anthropic.
+
+Tudo bem. Assim, ele obtém o contexto da solicitação de pull e verifica o escopo. A alteração deve afetar apenas o arquivo marketplace.ts. Certo? Por exemplo, se você estiver enviando um
+
+fluxo de trabalho, esse fluxo de trabalho estará em outro repositório, e sua solicitação de pull request deverá modificar apenas esse arquivo. Essa é outra boa medida de segurança. Então, isso é bom. Analise a entrada e obtenha a fonte. Não sei por que estou olhando para isso depois de já ter revisado a solicitação de pull request, mas enfim.
+
+Então, estamos executando o script aqui. Um validar o esquema. É aqui que fazemos a análise de IA. Devo definir o modelo para Haiku? Sim, tudo bem.
+
+Então, eu defini o modelo para Haiku na parte superior, e isso é bom. Hum, árvore de trabalho. Não estamos executando isso em uma árvore de trabalho porque estamos apenas fazendo uma revisão. Não estamos escrevendo nenhum código. Não precisamos criar uma árvore de trabalho, então estou apenas verificando todas as coisas que sei que precisam ser verificadas. E então
+
+tomamos a decisão. Então, com base na análise da IA, vamos apresentar um resultado do tipo "sim" ou " não". E então vamos agir. Então, temos aqui um script que irá mesclar ou rejeitar automaticamente, com um comentário para cada caso. Ok, sim, isso é bom.
+
+OK. Ok, legal. Hum, acho que talvez eu queira estruturar a saída de forma um pouco diferente. Com certeza vou aprimorar esse fluxo de trabalho, mas este é um ótimo ponto de partida. Então, temos isso integrado. Então, agora posso
+
+voltar à outra sessão aqui e dizer: prossiga. Vou criar o pedido de pull request aqui. E devemos ver a ação do GitHub ser acionada automaticamente para revisar tudo. Então, vamos dar uma olhada no modelo de solicitação de pull . Muito bem, assim mesmo. Crie
+
+a solicitação de pull request. Empurre até a origem. Ok, claro.
+
+Muito bem, acho que vamos esperar isso rodar aqui. Hum, o que você acha? Por que não pedir à comunidade Dynamis para revisar os fluxos de trabalho antes de serem submetidos? Quer dizer, se vocês quisessem ajudar a manter o Archon dessa forma, seria muito legal. Sim, eu estaria aberto a isso. Eu teria que
+
+pensar em como isso ficaria , mas seria ótimo. Há planos para oferecer suporte a código aberto no Archon? Então, sim, temos algumas solicitações de pull request abertas para adicionar código aberto como um provedor com suporte da comunidade. E nós vamos abordar esses assuntos em algum momento. Espero que nas próximas semanas. Quer dizer, é
+
+difícil dizer a eles porque há muitos pedidos de pull request e muitas prioridades, mas sim, não será um provedor com suporte de mantenedores, mas sim com suporte da comunidade. Porque eu sei que muita gente gosta de usar Archon. Tudo bem. Será que é uma variável de ambiente que está anulando a seleção do modelo de Claude? Sinceramente, pode ser. Só um momento, deixe-me dar uma olhada
+
+rápida no meu arquivo claude.settings.json. Uh, tire isso daqui. Ok, desculpe.
+
+Deixe-me acessar o arquivo settings.json. Acho que não, a menos que seja o meu arquivo settings.local. Ah, espere aí, desculpe, este arquivo está uma bagunça.
+
+Deixe-me dar uma olhada rápida. Não, não é. Eu não tenho nenhuma variável de ambiente que esteja fazendo isso. Não faço ideia de por que continuo sendo rebaixado para Sonnet. É muito estranho.
+
+OK. Portanto, o pedido de pull request está aberto. Vamos dar uma olhada.
+
+Adicionar fluxo de trabalho genérico de vídeo. Portanto, atualizamos apenas o arquivo marketplace.ts. Isso é bom. E então, parece que a integração contínua já falhou.
+
+OK. Falhou.
+
+O executável "bund" da entrada de análise do nó de script não foi encontrado no caminho. OK. Então, vou enviar isso.
+
+Recebi esse erro na primeira vez que tentei executar o fluxo de trabalho em uma solicitação de pull request. Então, vá em frente e... na verdade, eu quero que você corrija esse erro. Em seguida, quero que você
+
+execute novamente o fluxo de trabalho na solicitação de pull mais recente que eu tenho, adicionando um fluxo de trabalho ao marketplace.tx. Quero que você então observe os registros. Certifique-se de que desta vez deu certo. Se surgirem outros erros durante a execução do fluxo de trabalho da ação do GitHub, quero que você faça o mesmo: corrija o erro, itere, monitore e continue iterando até que esteja funcionando.
+
+Tudo bem. Então, é, acho que não posso esperar que fique perfeito na primeira tentativa. Como eu disse, se não fosse pela transmissão ao vivo, com certeza teria dedicado mais tempo à validação antes de aceitar o pull request e executar o código de verdade. Mas, de qualquer forma, como isso afeta apenas as novidades, não altera em nada a base de código existente do Arcan. Por isso, estou confiante em experimentar isso diretamente na branch de desenvolvimento agora mesmo.
+
+Para um fluxo de trabalho de ações do GitHub, às vezes é exatamente isso que você precisa fazer de qualquer maneira. Tudo bem. Legal. Tive a oportunidade de explorar Arcan, uma arquitetura incrível. Eu agradeço.
+
+Implementando uma solução Kanban e trabalhando em um registro de serviços para extrair LLMs e gateways locais, a fim de disponibilizá-los para os fluxos de trabalho do Argon. Isso é muito legal. Adoro isso. E uma solicitação de pull request que temos aberta, e que talvez já tenhamos incorporado, adiciona suporte para sobrescrever a URL base, para que você possa usar o Argon de forma mais conveniente com modelos locais. E, claro, você sempre pode fazer com que o código de Claude aponte para um modelo local.
+
+Como sempre faço com meu experimento na fábrica escura. Já fiz muita coisa, como executar o MiniMax M2.7 e o MiK 2.6 diretamente com o código do Claude. Então, eu simplesmente sobrescrevo as variáveis ​​de ambiente para que o código do Claude acesse diretamente esses modelos. Você poderia fazer o mesmo para um
+
+Ollama, um LLM leve ou qualquer outro modelo, se quisesse criar um modelo totalmente local.
+
+Tudo bem. Sean também adoraria que membros da Dynamis ajudassem na revisão. Seria legal. Uma coisa que eu poderia fazer com vocês é manter esse processo de mesclagem automática, mas aí a comunidade Dynamis, ou quem quiser ajudar, poderia monitorar isso para garantir que os fluxos de trabalho mesclados automaticamente sejam realmente úteis e seguros. Isso seria legal. Vou ter que
+
+pensar em como seria, mas eu toparia. Tudo bem. Vamos ver. Eric disse: "Eu realmente adoro a possibilidade de definir o modelo para cada nó no fluxo de trabalho do Argon." Eu agradeço.
+
+Sim, eu também adoro. Isso tornou meus fluxos de trabalho no Argon muito mais eficientes em termos de tokens. Sim, e modelos e fornecedores. Porque, assim como o Codex, você pode usar o Codex para revisão e o Claude para implementação. Muita gente também adora fazer isso. Sim
+
+, fico feliz que você esteja gostando. Transmissão ao vivo, cara, isso é demais. Eu agradeço. Sim, tenho feito muitas transmissões ao vivo ultimamente. Planejo realizá-los todas as segundas, quintas e sábados às 9h da manhã, horário central. Uma coisa que preciso
+
+melhorar nas transmissões ao vivo, no entanto, é fazer um resumo a cada meia hora. Eu estabeleci isso como uma meta, ou melhor, quero começar a fazer isso para que as pessoas que não estão acompanhando desde o início ainda assim saibam, de forma geral, o que estou fazendo. Então, se você está chegando agora, o que estou fazendo neste momento é construir o mercado de fluxos de trabalho para o Archon. O Archon é meu construtor de harnesses de código aberto, que permite pegar qualquer processo de codificação de IA e encapsulá-lo em um fluxo de trabalho que une diferentes etapas determinísticas na sessão do agente de codificação, para que você possa impor um processo mais confiável para a codificação de IA. E agora estou construindo o mercado para permitir que as pessoas compartilhem fluxos de trabalho entre si e para que haja um processo de revisão automático, para que você possa enviar fluxos de trabalho aqui.
+
+Eu tenho um fluxo de trabalho Archon que revisa o seu fluxo de trabalho antes de ele ser mesclado. É algo bem metalinguístico, mas basicamente usa um fluxo de trabalho Archon para validar o seu fluxo de trabalho Archon quando você o submete. E eu já estou quase terminando aqui. Só preciso continuar aprimorando o fluxo de trabalho que realiza a revisão. Então, temos isso configurado como uma ação do GitHub que é executada. Então, sempre que há
+
+uma solicitação de pull request que adiciona um fluxo de trabalho, ela passa por um processo de revisão bastante extenso, e há alguns erros no fluxo de trabalho no momento que estou fazendo o código do Claude corrigir automaticamente. Vai ser muito legal ver como isso vai continuar evoluindo. Assim, foi encontrada a causa raiz do problema. Então, o trabalho nisso continua. Certo, então chegaremos lá.
+
+Não sei se você viu minha postagem, mas aqui está o cadastro no Workflow Marketplace via GitHub. Isso seria legal. Sim. Isso seria incrível.
+
+OK. Vamos ver. Aprimorei o agente da Hermes para que ele consiga lidar tranquilamente com mais de 800 habilidades. Uau, isso é impressionante. Mas tenho pensado em usar o Archon com o Hermes para fluxos de trabalho mais confiáveis. Será que isso é uma boa ideia? Sim
+
+, é verdade. Porque você definitivamente pode usar muitas habilidades com um agente de codificação, Hermes ou qualquer outra ferramenta semelhante. Mas usar um fluxo de trabalho Archon sempre será mais confiável, para que você não precise simplesmente tentar encaixar todo o seu processo em um prompt instável. Por mais elaborado que seja o seu prompt, ele ainda será mais frágil do que um fluxo de trabalho Archon, porque você tem etapas determinísticas e a necessidade de encadear diferentes sessões de agentes de codificação, entre outras coisas. Então, com certeza eu daria uma chance.
+
+Tudo bem. Então, acho que isso gerou uma solicitação de pull request. A administração está mesclando com o ambiente de desenvolvimento agora, para que a próxima execução do fluxo de trabalho a inclua. Ok, então foi criado um PR (Pull Request), que será mesclado para corrigir o fluxo de trabalho do GitHub Actions. E então, presumo que será exibido novamente aqui. Vamos garantir que isso realmente aconteça
+
+. Aguarde um instante.
+
+Tudo bem. Enquanto isso, veja o que mais temos no chat. Vamos ver.
+
+Veja bem, meu objetivo é fazer com que o Archon ou algo similar impulsione fluxos de trabalho repetíveis na empresa. Sabe, Archon é perfeito para isso. Na verdade, deixe-me lhe dizer uma coisa. Uma coisa que tenho pensado em fazer é realizar um workshop gratuito. Vai ser gratuito no meu canal do YouTube. Um workshop gratuito sobre
+
+programação de nível empresarial com Archon. Então, é como analisar o que significa pegar um ciclo de vida de desenvolvimento de software já existente, adotado por toda uma equipe, e torná-lo compatível com codificação de IA e nativo do Archon. Então, estou curioso para saber se vocês teriam interesse em algo assim. Então, eu mostraria, tipo, como uma equipe está funcionando atualmente. Eu, por exemplo, criaria uma equipe fictícia bem realista ou usaria uma empresa real como exemplo. É assim que eles trabalham com
+
+Jira, Confluence e pull requests, e é assim que fazem revisões de código, e é assim que a equipe de controle de qualidade deles funciona. É como fazer todo esse processo, mostrar como fica e depois explicá-lo sistematicamente, mostrando como eu construo fluxos de trabalho do Archon para lidar com diferentes situações. Assim como para os gerentes de produto, os desenvolvedores e a equipe de controle de qualidade. Então, todo o ciclo de vida do desenvolvimento de software, tornando-o nativo de IA , pode ser abordado em um workshop de aproximadamente duas horas . Eu teria muito interesse em fazer isso.
+
+Então, sim. Gostaria de saber a opinião de vocês sobre algo assim. Isso talvez seja algo que eu faça no próximo mês ou em julho. Certo, então o processo continua aqui. Hum, não tenho certeza de quanto tempo vai levar para que isso funcione corretamente. Então,
+
+talvez eu inicie a transmissão ao vivo antes de termos isso funcionando de ponta a ponta, mas vou continuar deixando rodar em segundo plano. E talvez na próxima transmissão ao vivo que eu fizer na quinta-feira, eu mostre os resultados finais da adição do fluxo de trabalho ao marketplace. Teremos o próximo lançamento do Archon nesse momento. Então, meu objetivo para a próxima transmissão ao vivo é fazer com que vocês possam acessar, sabe, {slash} fluxos de trabalho aqui. Você pode visualizar os fluxos de trabalho. Vou mostrar o
+
+exemplo final completo da criação da solicitação de pull request com o fluxo de trabalho Archon, revisando-a de ponta a ponta. Acho que isso vai ser legal. Então, sim, porque eu realmente não sei quanto tempo vai levar para chegar a esse ponto agora. E normalmente, minhas transmissões ao vivo costumam durar cerca de uma hora e meia. Então, acho que vou encerrar por aqui, mas fomos muito longe na transmissão ao vivo de hoje. Finalizamos o
+
+fluxo de trabalho do Archon e todo o sistema em torno do mercado. E nós até criamos nossa solicitação de pull request para o primeiro fluxo de trabalho adicionado ao marketplace. Agora só precisamos, sabe, aprimorar o fluxo de trabalho de revisão e fazê-lo funcionar de ponta a ponta, mas já estamos praticamente lá. Portanto, acho que esta transmissão ao vivo foi um sucesso. Com certeza, na minha próxima transmissão ao vivo na quinta-feira, isso será publicado e teremos o primeiro fluxo de trabalho pronto para uso. E eu vou mostrar como fica a
+
+integração e como isso atualiza o marketplace e tudo mais. Então esse é o plano para a próxima transmissão ao vivo. Então, espero ver vocês lá. Mas sim, vou iniciar a transmissão ao vivo aqui. Para todos que acompanharam esta transmissão hoje, agradeço muito, pessoal. Isso foi incrível.
+
+Adoro construir Archon em público com vocês . Estou apenas documentando minha jornada e mostrando como é para mim construir com Coding Agents no dia a dia. Sim , eu me diverti bastante. Espero ver vocês também na próxima transmissão ao vivo . De resto, espero que vocês tenham uma ótima segunda-feira. Fiquem
+
+bem, pessoal, e a gente se vê por aí .

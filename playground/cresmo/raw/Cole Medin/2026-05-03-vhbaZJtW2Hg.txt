@@ -1,0 +1,558 @@
+---
+video_title: "🔴LIVE - Full AI Video Generation Workflow Using Claude Code + Remotion + Archon"
+video_id: vhbaZJtW2Hg
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=vhbaZJtW2Hg
+video_date: 2026-05-03T03:33:47+00:00
+video_description: |
+  I've been workshopping a workflow that takes a single URL and produces a fully rendered video using Claude Code + Remotion! You give it a Hacker News story, an article, or a product page, and the system fetches the source, plans the scenes, generates the voiceover, music, and sound effects, writes the TypeScript composition, runs a quality pass, auto-fixes critical issues, and renders the MP4. 
+  
+  Today I'm running it live for the first time on stream and walking through every node so you can see what an actual production-grade AI workflow looks like end-to-end.
+  
+  Under the hood it's a 14 step running in Archon, with Claude doing the planning, building, and QA, plus Cartesia and ElevenLabs handling voice, music, and SFX. The Remotion side is built from a 39-rule best-practices skill that gets injected into the build node, so the generated compositions actually use real transitions, dynamic durations, and proper hooks instead of looking like AI slop.
+  
+  Repo: https://github.com/coleam00/archon-video-generation-workflow
+  Archon: https://archon.diy
+  Remotion: https://www.remotion.dev
+---
+viver de verdade. Certo, aqui está. Eu não estava ao vivo de verdade. Ok, então eu fiz toda uma introdução e depois ainda não estava ao vivo. Então, tudo bem, voltando ao início. Então, vamos
+
+mergulhar na criação de vídeos com IA usando o Archon. Portanto, usaremos o Archon para o construtor de arneses. Vamos usar a 11 Labs para a voz de IA. E então, o Remotion será o que usaremos para a geração de vídeo. E o mais legal disso é que eu já mostrei bastante o Archon no meu canal do YouTube, mas apenas para fluxos de trabalho de programação de IA.
+
+Então, algo que muitas pessoas têm percebido ao começar a usar o Archon é que elas pensam: "Espere um segundo, Cole. Você poderia usar isso para muito mais do que apenas programação de IA, não é ?" Porque você pode criar um fluxo de trabalho para fazer praticamente qualquer coisa com agentes. Porque todos os nossos agentes de codificação, como Claude Code, Codex e Pi, podem ser usados para muito mais do que apenas programação. Assim como nossos segundos cérebros e fluxos de trabalho como o que vou mostrar a vocês hoje. Assim, podemos
+
+usar o Archon para criar um fluxo de trabalho que agrupe cada etapa da criação de um vídeo com IA. Assim, podemos fornecer uma única saída, como por exemplo, "quero fazer um vídeo sobre este tópico", "este artigo" ou qualquer outra coisa. E ao final do fluxo de trabalho do Archon, ele produzirá um vídeo lindamente elaborado para nós. E agora, eu só tenho conteúdo de formato bem curto que ele está produzindo, mas teoricamente você poderia usar isso para fazer qualquer vídeo. Não que a IA seja perfeita. Assim como a
+
+geração de voz, mesmo com a 11 Labs, que é boa, mas não é perfeita. O Remotion sempre vai apresentar pequenas falhas nos arquivos que gera e coisas do tipo, mas ainda assim é muito, muito legal de ver. Então, para demonstrar algo rapidamente, vou mostrar um vídeo que já criei. E então eu vou trabalhar com vocês ao vivo, mostrando como é construir um novo. Em seguida, explicarei o fluxo de trabalho e como ele funciona na prática. Porque leva um
+
+tempo para gerar, obviamente, já que está criando um vídeo inteiro. Normalmente, leva cerca de 15 minutos para gerar um vídeo de alguns minutos. Então, para o vídeo de hoje, ou melhor, para a primeira pequena demonstração que tenho aqui, escolhi algo meio bobo. Foi lançada uma nova calculadora e, por algum motivo, ela chegou ao topo do Hacker News. Então, pensei em escolher isso apenas como um exemplo aleatório e engraçado. Eu
+
+queria escolher algo meio aleatório porque depois faremos algo mais concreto para o vídeo que criaremos ao vivo juntos. Então, não sei quanto a vocês, mas as calculadoras Evo foram uma parte importante do meu ensino médio e da minha faculdade. Então, é um pouco como voltar ao passado, sabe, quando eu fazia cálculo e coisas do tipo, usando calculadoras o tempo todo. Então, não sei se mais alguém aqui já usou essas calculadoras antes, mas não sei onde eu estaria agora sem elas. Então, pelo que entendi, eles lançaram uma nova TI-84 Evo.
+
+Hum, sinceramente não me lembro qual eu usava na faculdade e no ensino médio, mas usei exatamente a mesma calculadora por uns [limpa a garganta] 6 ou 7 anos seguidos. Ah, sim. Enfim, a nova calculadora que foi lançada de alguma forma chegou ao topo do Hacker News. Então, pensei que, como um exemplo aleatório e meio bobo, eu poderia criar um vídeo sobre essa calculadora. Então , foi isso que eu fiz. Então, deixe-me
+
+abrir. Então, todos os recursos que ele gera, o fluxo de trabalho do Arcan ao criar o vídeo, você pode ver aqui. Então, tipo, ele puxa o artigo, cria a narração, cria efeitos sonoros e cria a voz. O projeto planeja o vídeo antes de gerá-lo com Remotion e ElevenLabs. Tipo, existe um fluxo de trabalho de agentes muito abrangente que o Arcan está orquestrando aqui. Então, liguei o
+
+áudio do meu computador. Então, acredito que assim que eu começar a tocar, vocês conseguirão ouvir. Você terá que me avisar no chat se não conseguir ouvir. Tenho o chat aberto no meu monitor da esquerda. E como de costume, posso exibir as mensagens de vocês.
+
+Então, é, bom dia, Shawn. Bom dia, Joe. Isso vai ser interessante. Ah, eu realmente espero que sim. Obrigado novamente pela transmissão incrível.
+
+Sim, de nada. Muito bem, vamos tentar isso aqui. Então, vou abrir o vídeo. Deixe um comentário se você não conseguir ouvir, porque acho que nunca mostrei o áudio do computador em uma transmissão ao vivo antes. Então, espero que funcione exatamente como no meu vídeo. Então, estou usando o OBS para fazer
+
+transmissões ao vivo. Sim, vamos tentar . Então, este é o... E lembre-se, é um
+
+exemplo meio bobo. Faremos algo mais legal na nossa apresentação ao vivo, mas vamos lá . A TI-84, a calculadora que milhões de estudantes levam para todos os exames, acaba de receber sua atualização de hardware mais significativa em anos. O Evo possui um processador três vezes mais rápido e uma tela 50% maior, com resolução de 320 por 240 pixels e cores de 16 bits. A porta USB-C substitui a antiga e uma interface mais limpa, baseada em ícones, reduz a desordem [musical]. Um novo
+
+recurso de rastreamento de pontos de interesse sinaliza automaticamente os valores-chave enquanto você analisa as funções. O aplicativo atualizado de linhas e cônicas adiciona modelos de equações e rastreamento direto de interseções [música] de Áries, e uma barra de ajuda amarela oferece orientação contextual sem revelar as respostas. O Evo é aprovado para os exames [de música] SAT, ACT, AP e IB. [música] Cada compra no varejo inclui uma licença gratuita de 4 anos para a calculadora online arrows, [música] um valor de US$ 80 incluso. [risos] Ok, então isso foi... foi ok.
+
+Quer dizer, há algumas falhas na voz e, no geral, é um tema meio bobo para o vídeo, para começo de conversa. Espero que vocês consigam ouvir isso. Não vejo nenhum comentário no chat que diga o contrário. Então, acho que estamos bem. Mas sim, isso é apenas uma demonstração rápida. Aliás, essa
+
+foi a primeira tentativa. Não fiz nenhuma iteração . Então, você definitivamente pode melhorar muito se der feedback ao Claude e disser como gostaria de mudar algumas coisas no vídeo, pois ele pode iterar sobre o vídeo como parte do fluxo de trabalho. [bufa] Então é muito bom. Com certeza faremos coisas melhores morando aqui. Então é isso que
+
+podemos fazer. Mas na verdade a ideia que eu tive... Ok, você podia ouvir. Bom. Bom. Tudo
+
+bem. Obrigado, pessoal. Então, a ideia que eu tive aqui, para uma espécie de vídeo metalinguístico, é usar esse fluxo de trabalho do Arkon para criar um vídeo que explique o Arkon. Algo que você talvez imagine ter na página inicial do nosso repositório no GitHub. Então poderíamos ter vídeos gerados por IA . Poderíamos dizer algo como: "Ei, usamos o
+
+Arkon para criar este vídeo explicativo." Acho que isso seria muito legal. Então é isso que vamos fazer hoje, apenas para uma pequena demonstração. E outra coisa que quero dizer antes de começar a falar sobre essa construção é que Thomas e Rasmus, da minha equipe, têm me ajudado a criá-la. Portanto, o repositório que mencionei na descrição para este fluxo de trabalho do Arkon está, na verdade, na conta do GitHub do Thomas . Por isso, não é um
+
+AM00 legal para a URL do GitHub aqui. Sim, o link está na descrição. Temos um guia de instalação aqui. É muito simples. Na verdade, tudo o que você precisa configurar com antecedência é uma chave de API da Cartesia ou da 11 Labs para o recurso de voz. De resto,
+
+tudo é gratuito. Obviamente, além do custo de execução do agente de codificação que você estiver usando, como o Claude Code, o Code X ou qualquer outro com Arkon. Sim , um guia de configuração muito fácil. Se você tiver interesse em fazer isso você mesmo, pode até participar da transmissão ao vivo comigo aqui, pois a configuração leva apenas 5 minutos. E então você pode fazer com que seu agente de codificação execute o fluxo de trabalho. Certo? Então, se você tiver a
+
+habilidade Arconte carregada, que está localizada no diretório de habilidades do Claude aqui, você terá a habilidade Arconte. Assim, quando o código de Claude carrega isso, ele sabe como usar o Archon imediatamente. E então, supondo que você tenha o Archon instalado e sua chave de API do 11 Labs ou do Cartesia configurada, agora você pode simplesmente pedir ao código do Claude para gerar um vídeo para qualquer coisa e ele poderá invocar o fluxo de trabalho do Archon para fazer isso. O Archon funciona da seguinte forma: ele fornece fluxos de trabalho por padrão e você também pode criar fluxos de trabalho personalizados e armazená-los em um repositório. Assim, todo esse processo foi reunido em um único arquivo YAML para todo o fluxo de trabalho de geração de vídeo. Já
+
+falei bastante sobre o Archon no meu canal, mas vou dar uma breve explicação sobre o que ele realmente é antes de entrarmos no fluxo de trabalho. É o primeiro construtor de chicotes elétricos de código aberto já criado. Isso permite que você pegue qualquer processo de codificação de IA, e como estamos descobrindo aqui, um processo realmente agente, e o codifique como um único arquivo YAML, para que você possa adotar qualquer abordagem e torná-la realmente confiável e repetível. Porque agora isso se torna uma vantagem. Assim, esse fluxo de trabalho é definido como um recurso na minha base de código que posso usar para gerar um vídeo, corrigir problemas no GitHub ou trabalhar em solicitações de pull, e oferecemos suporte a recursos como isolamento e árvores de trabalho nos bastidores. Portanto, também é muito fácil
+
+executar fluxos de trabalho paralelos com o Archon. Então você pega o seu processo e constrói um fluxo de trabalho nó por nó que se parece mais ou menos com isso. Portanto, tudo é codificado de forma muito simples como arquivos YAML e oferecemos suporte a praticamente qualquer recurso primitivo que você possa imaginar, como loops e diferentes parâmetros, como a forma como gerenciamos o contexto e os modelos e provedores que utilizamos. Você pode combinar provedores, como sabe, você poderia usar o Claude para a implementação e depois o código X para a validação. Temos o fator humano envolvido .
+
+Assim como nós, você pode especificar "interativo" como verdadeiro para que precise aprovar os planos ou validar o código e dar sinal verde para o agente de codificação criar o PR (Pull Request). Seja o que for, literalmente qualquer processo que você possa imaginar que dependa de agentes de alguma forma, você pode criar um fluxo de trabalho Arkon. E outra coisa realmente poderosa que temos aqui é a capacidade de adicionar etapas determinísticas ao longo do processo. Então, às vezes existem decisões que você quer que sejam aplicadas nos seus fluxos de trabalho, mas que você não quer deixar para o agente se lembrar, certo? Não queremos simplesmente ter um conjunto enorme de instruções em Markdown para todos os comandos que queremos que nosso agente execute. Assim como queremos que
+
+ele extraia o contexto, assim como queremos que ele valide. Às vezes temos um processo que queremos garantir que seja executado. Assim como no final da implementação, queremos executar nosso conjunto de comandos de validação e não queremos dar ao agente a chance de esquecer isso ou cometer erros. E assim, outra parte do poder do Arkon é como podemos construir fluxos de trabalho que... bem
+
+, você sabe, misturam código com agentes. Então, o que precisamos, basicamente, como eu gosto de dizer, é que o Arkon permite integrar os agentes aos fluxos de trabalho, em vez de integrar os fluxos de trabalho aos agentes. Porque muita gente tenta criar frameworks de agentes realmente abrangentes com documentos Markdown e subagentes especializados super sofisticados. E eles têm todo esse sistema de Markdown, onde é como se estivessem tentando incorporar todo o seu fluxo de trabalho como habilidades. Mas, na verdade, isso só torna as coisas extremamente instáveis, especialmente quando esses fluxos de trabalho são maiores. Assim, o Arkon permite que
+
+você crie fluxos de trabalho maiores que ainda sejam confiáveis. E você pode tornar as coisas muito eficientes em termos de tokens, porque não depende do agente para cada etapa, e também pode especificar o modelo e o provedor por etapa. Então, esse é o Arkon em linhas gerais, e veremos como ele se apresenta concretamente quando eu analisar o arquivo YAML do nosso fluxo de trabalho. Não vou explicar cada linha e cada comando em detalhes, mas vou mostrar de forma geral como funciona, porque há bastante coisa envolvida na criação deste vídeo. Eu sei que este vídeo não é o melhor exemplo. Só queria saber qual é o meu 84?
+
+Algo bobo que eu criei aqui. Mas você ainda pode imaginar o trabalho que isso envolve. Assim como temos que pesquisar todas as funcionalidades mais recentes. Precisamos planejar como sincronizar a voz com o vídeo e os diferentes recursos que queremos gerar, porque o código do Claude está criando tudo isso literalmente do zero com o fluxo de trabalho Archon. Cada palavra dita, cada slide que temos aqui, todas as animações, todos os ícones, tudo foi gerado completamente do zero. É necessária muita coordenação
+
+entre o áudio e o vídeo. É realmente impressionante tudo o que está acontecendo aqui, nos bastidores. Muito legal podermos codificar todo esse processo como um fluxo de trabalho Archon. Hum, eu tenho links de repositório que retornam erro 404. Ah, sabe de uma coisa? Talvez seja um
+
+repositório privado, não é? Caramba. Ok, eu preciso... preciso mesmo fazer um fork disso e
+
+torná-lo público. Vídeo de remoção. Espere um pouco. Remoção do Arconte. Geração de vídeo Archon. Vou ter que
+
+mudar isso aqui. Fluxo de trabalho Archon Archon. Vou publicar isso para vocês agora mesmo. Fluxo de trabalho Archon para gerar vídeos de IA com remoção plus um 11 labs / Cartesia. Tudo bem. Vou
+
+criar o fork. E depois também tornarei isso público. Acho que tenho a capacidade de torná-lo público. Espero. Mudar. Sim, não consigo alterar a visibilidade
+
+de um fork. Atirar. Ok . Eis o que vou fazer. Vou pedir ao Claude que cuide disso para mim agora mesmo .
+
+Então, deixe-me acessar meu segundo cérebro. Inicie uma nova sessão do Claude. E vou colar esse caminho aqui. Vamos ver. Sim.
+
+Tudo bem. Então, quero que você clone este repositório. Em seguida, quero que você copie tudo para uma nova pasta chamada Archon-Video-Generation-Workflow. Como se trata de um fork que não posso tornar público, preciso torná-lo público. Por isso, quero que você copie todo o repositório para uma nova pasta, inicialize-a como um repositório Git e publique-a no GitHub como um repositório público. Depois, me envie o link
+
+. Você pode simplesmente usar a pasta de código aberto que eu tenho na raiz do usuário. Tudo bem. Vamos disponibilizar isso para vocês agora mesmo. É muito legal a rapidez com que você consegue resolver problemas com a nuvem hoje em dia. Assim, de repente, pronto
+
+. Agora, daqui a pouco, teremos o que vocês precisam. Então, minhas desculpas, pessoal. Eu não tinha me dado conta de que aquele era um repositório privado que o Thomas havia criado, pois estávamos trabalhando nisso internamente há algum tempo. Faz sentido, mas sim, eu queria mostrar para vocês pelo menos uma versão beta disso.
+
+Outra coisa muito legal é que, embora tenhamos investido bastante tempo desenvolvendo esse fluxo de trabalho até agora, ainda não otimizamos muito a parte de solicitar informações. Então, o que vocês viram foi um exemplo bobo. Eu não fiz nenhuma alteração no vídeo em si, e nem mesmo no fluxo de trabalho ainda, e mesmo assim o resultado ficou muito bom. E veremos outro exemplo quando gerarmos algo relacionado a Archon daqui a pouco, mas primeiro vou me certificar de que está tudo certo para vocês . Ok . Inicializar vazio. Conseguimos. Já estamos
+
+quase lá. Isso é muito legal. Tudo bem. Bem, deixe-me abrir isso na minha conta do GitHub aqui. Então, vou acessar meus repositórios.
+
+Lá vamos nós [limpa a garganta]. Legal. Tudo bem. Hum, vou descartar as sugestões. Copie isto e depois eu atualizo o link do repositório.
+
+Salvar. Pronto. Ah, Thomas está aqui. Olá, Thomas. Ok, Thomas já tornou o repositório público. Obrigado por fazer isso.
+
+Eu já atualizei o link. Então, esta é a que vocês podem usar. Eu simplesmente coloco o link ou o envio pelo chat. Sim, obrigado por fazer isso, Thomas. Então, eu não sabia que você estava aqui, por isso não queria depender de você para fazer isso, mas aqui está. Então, agora
+
+acho que ambos estão disponíveis para vocês, caso queiram conferir. Então, é, definitivamente não é sua culpa, Thomas. É como se a culpa fosse minha. Eu não disse que estava pronto para compartilhar isso, mas estou compartilhando com vocês agora e também pretendo fazer um vídeo no meu canal do YouTube na quarta-feira mostrando mais detalhes conforme formos aprimorando o projeto. Mas vocês ficam sabendo em primeira mão de como testar e aprimorar o produto inicialmente.
+
+Então, vamos ver se existem oportunidades para melhorar o fluxo de trabalho . Também mostrarei como é a evolução de um fluxo de trabalho Arcan ao vivo, caso algo dê errado. Então, veremos. E outra coisa legal que eu talvez queira fazer com vocês na live de hoje é brincar um pouco com as vozes da 11 Labs, porque eu tentei clonar a minha própria voz e ficou tipo, ok. Mas, para ser sincero, não fiquei muito impressionado.
+
+Por exemplo, isto é como um pequeno trecho de texto de uma novidade que foi publicada no Codex. Vamos ver se consigo jogar isso agora mesmo . Limpo, simples, de primeira classe. O problema é que essa é também a maior parte da descrição. O padrão de loop até o orçamento leva você ao que eu chamaria de autonomia de nível 4. O agente continua avançando sem que
+
+você precise ficar guiando-o a cada passo. Mas, sem um plano estruturado {slash} implementar {slash} validar conjunto Não me parece muito com o que eu faria. Tipo, eu não acho que seja tão agudo assim. Não sei. Hum, precisa usar a versão 2, a versão 3 é ruim. Bem, sabe,
+
+Thomas, o negócio é o seguinte: eu tentei a versão 2 e não funcionou muito bem. Deixe-me tentar novamente. Eu estava tentando testar alguns desses parâmetros aqui. Tipo, eles sempre usam 50% como padrão e mesmo assim não era o ideal. Hum, deixe-me tentar novamente. Vamos
+
+ver as semelhanças. Eu diria que é 80% exagero no estilo. Vou baixar para uns 25. Deixa eu tentar isso. E se vocês tiverem sugestões de parâmetros, seria ótimo. Porque quero ter certeza de que os
+
+parâmetros estão configurados corretamente antes de gerar o próximo vídeo. Quero usar minha voz de verdade e o modelo certo da 11 Labs. Então, deixe-me tentar regenerar isso aqui. Veremos como será. A OpenAI acaba de lançar o objetivo {slash} no Codex CLI 0.128.0.
+
+bom. E é realmente um passo útil em frente para a programação autônoma. Você define uma meta, o agente executa um loop até avaliar o trabalho concluído, e um orçamento simbólico impede que ele seja executado indefinidamente. Limpo, simples, de primeira classe. O problema é que essa é também a maior parte da descrição. O
+
+padrão de loop-até-o-orçamento leva você ao que eu chamaria de autonomia de nível 4. O agente continua funcionando sem que você precise guiá-lo a cada passo, mas sem uma separação estruturada entre planejamento, implementação e validação , você acaba com desvios de implementação, ausência de verificações de regressão e nenhuma barreira real antes que as alterações entrem em vigor. Uau. Esse padrão falha em tarefas tão simples quanto adicionar paginação a esse endpoint. O Codex termina, declara vitória e os testes existentes são anulados. Caramba, até as
+
+inflexões da minha voz são iguais às que eu costumo usar para dizer "Codex termina, declara vitória e os testes existentes estão quebrados". Isso soou exatamente como eu. Isso é muito bom. Ok, eu vou com essa. A única coisa é com o fluxo de trabalho do Archon, e na verdade é muito bom você estar aqui, Thomas, porque você contribuiu muito para construir isso, talvez você possa me dizer.
+
+Posso alterar a similaridade de estabilidade de velocidade e a exacerbação de estilo no fluxo de trabalho Archon? Quer dizer, isso é algo que eu também poderia perguntar . Então, deixe-me ir para a minha sessão aqui. Então, basicamente, eu estava trabalhando bastante para deixar tudo pronto para a transmissão ao vivo e criei um pequeno guia introdutório que enviei. Assim, iniciamos uma conversa completamente nova, já com o fluxo de trabalho definido. Então, uma coisa que eu posso
+
+perguntar é se no console do 11 Labs eu consigo alterar a velocidade, a estabilidade, a similaridade e a ênfase no estilo da minha voz. Mas não sei se consigo alterar isso no fluxo de trabalho do Archon. Então, quero que você dê uma olhada nisso e também que atualize a variável de ambiente para que eu esteja usando o modelo multilíngue V2 em vez do V3, porque eu já havia alterado a variável de ambiente para usar o V3 na minha geração. OK. Então, descobriremos em instantes .
+
+Ok, Thomas disse velocidade 11 Labs. Ok, então pelo menos tem um parâmetro que eu posso ajustar para a velocidade. Deixe-me dar uma olhada também no arquivo dot ENV.example. Vamos lá .
+
+Vamos ver. ponto ENV Onde está? Aqui está . Ok, certifique-se de que isso não contenha nenhum segredo. Sim, tudo bem.
+
+Certo, então parece que isso pode não estar documentado aqui. Como eu disse, começamos a trabalhar neste projeto esta semana como uma demonstração bem interessante de como usar o Archon para algo além da programação de IA. Portanto, definitivamente há muitas coisas a serem aprimoradas na documentação. Não parece que a velocidade esteja documentada aqui. Mas quando meu segundo cérebro analisar o código-fonte, ele será capaz de identificar isso. Ok
+
+. O que está disponível atualmente em geração de locução? Ok, então está codificado diretamente no código agora. Esses são recursos fixos do 11 Labs que suportam habilidade, similaridade e estilo. Para torná-los configuráveis ​​através do ponto ENV, preciso adicionar variáveis ​​de ambiente escritas no script.
+
+Então você poderá configurá-los. OK. Sabe de uma coisa? Acho que quero fazer isso agora mesmo. Acho que vale a pena, porque eu fiquei tão impressionado com isso que quero copiar exatamente agora mesmo .
+
+Sim, pode configurar isso. Para os valores padrão, vamos usar uma velocidade de um, uma estabilidade de 50%, ou seja, 0,5, uma similaridade de 80%, ou seja, 0,8, e uma exageração de estilo de 0,25. E então, acho que você também pode definir esses valores no meu arquivo .env, caso eu altere os valores padrão mais tarde. E, aliás, Thomas, estou fazendo isso apenas na minha cópia local. Talvez eu
+
+faça isso, talvez não, ou talvez faça. Mas agora, vou editar as coisas localmente e depois veremos o que realmente queremos importar. Então, vamos em frente e deixar isso rolar. Tudo bem. E enquanto isso, tudo bem, vejamos aqui.
+
+Ok, enquanto isso, vamos falar sobre o fluxo de trabalho ou o vídeo que vamos gerar agora. Então, estou pensando em algo bem básico, onde simplesmente fornecemos o repositório do Arkon e pedimos para gerar um vídeo explicativo sobre o Arkon. E, na verdade, estou muito animado para fazer isso porque, por mais legal que Arkon seja, é um pouco complicado explicar seu valor. Como um elevador... sempre que digo que
+
+vou fazer um discurso de elevador sobre Arkon, acaba levando um ou dois minutos, em vez dos 30 segundos que eu gostaria. Porque quando eu digo algo como um construtor de ferramentas de código aberto para programação de IA, muitas pessoas não entendem imediatamente o que isso realmente significa. Bem, a proposta de valor é clara: tornar a codificação de IA determinística e repetível, mas o porquê disso, ou o como fazer isso, é a parte um pouco mais difícil de explicar. Porque quando falo sobre codificar um fluxo de trabalho em YAML, preciso explicar como temos as diferentes primitivas para loops, gerenciamento de contexto e passagem de informações entre nós, e como podemos ter fluxos determinísticos e não determinísticos, mas também preciso explicar o que isso significa. Quer dizer, é como se fosse a bênção e a maldição ao construir algo como o Archon, já que é um aplicativo muito complexo internamente devido ao seu poder . É mais difícil de explicar e
+
+um pouco mais técnico, mas para quem realmente se envolve com o uso e entende o valor disso, todo mundo adora. Vocês deram um feedback incrivelmente bom. Já estamos com 20 mil e quinhentas estrelas, o que é surreal, aliás. Sou muito grato por isso. Mas não é tão simples quanto uma garra aberta, certo? Não posso
+
+simplesmente dizer que este é o seu agente pessoal, que você pode usá-lo para tudo. Parece que não tem aquele tipo de discurso de elevador, ou pelo menos talvez eu ainda não o tenha. Aliás, se alguém aqui tiver alguma sugestão para um breve discurso de elevador sobre Archon, fique à vontade. Mas estou animado para produzir este vídeo porque talvez isso me ajude a chegar a uma explicação mais simples do Archon, que ainda transmita a proposta de valor e explique por que e como ele entrega esse valor de forma rápida e eficiente. Ah, então, ok, vamos voltar ao " Tudo bem". Pronto. Ambas as alterações foram implementadas.
+
+Para ajustar a configuração para uma execução específica, basta editar as variáveis ​​de ambiente. Tudo bem. Roteiro: Sim, atualizado. Bem, na verdade...
+
+Precisamos atualizar agora ou podemos usar as configurações padrão? Se gerarmos um vídeo com as configurações padrão agora mesmo . Porque, de qualquer forma, não sei se quero mexer com a atualização do meu arquivo .env agora . Ah, já está configurado com seu script padrão. Tudo bem. Ok, basta executar o
+
+processo de indicação para que eles sejam selecionados automaticamente. Ok, ótimo. Tudo bem. Então, vamos gerar um fluxo de trabalho agora. Ou gere um vídeo. Então, vou
+
+colar o caminho para o repositório do Archon e perguntar o que você faria se eu quisesse gerar um vídeo explicativo ou, melhor ainda, um vídeo de marketing para o Archon. Então, eu não quero que execute o comando ainda, mas quero que salve o comando que seria executado. E também estou fornecendo o caminho para o repositório. Então, isso deve ser apenas um " Sim, aqui está". Então, o fluxo de trabalho do Arkon é executado e, em seguida, o fluxo de trabalho é chamado de remoção do Hacker News. Dizemos isso com base
+
+no Hacker News porque esse é o nosso teste padrão, no qual selecionamos o artigo mais popular do Hacker News e o executamos no processo. Então, estamos adotando um estilo de marketing, o que eu acho que tornará tudo mais interessante do que um vídeo explicativo. E porque é mais como um discurso de elevador, que é o que eu estou buscando , certo? Em seguida, forneceremos o caminho para o repositório. Então, um aplicativo de marketing busca a página do GitHub, extrai o resumo do produto (que será obtido do arquivo "leia-me") e cria um vídeo de apresentação que aborda o problema, descreve as funcionalidades do Arkon e termina com uma chamada para ação direcionando para o URL do repositório. Sim
+
+. Então, vamos começar logo. Portanto, ele sabe imediatamente como fazer isso porque tem acesso à habilidade Arkon. E pelo menos nesta sessão do Cloud Code, já lemos o arquivo "leia-me" tanto do Arkon quanto de todo o
+
+repositório do fluxo de trabalho do Hacker News. Certo? Como se tivesse, tem todo o contexto a partir disto aqui. Portanto, ele sabe como executar tudo. O problema é que hoje em dia ninguém lê mais um arquivo "leia-me".
+
+Basta instruir seu agente de codificação a fazer isso e ajudá-lo a configurar e executar tudo. É exatamente isso que estamos fazendo aqui. Tudo bem. Portanto, o fluxo de trabalho está em execução. E então acho que consegui colocar o Arkon para funcionar. Eu faço. Certo, então também podemos
+
+visualizar isso a partir da interface web . E enquanto esperamos a transmissão terminar , responderei às perguntas no chat. Só vamos conversar por lá. E depois vou mostrar para vocês um pouco como funciona o fluxo de trabalho. Isso não é bom.
+
+Esquisito.
+
+OK. Acho que meu computador inteiro travou por uns 10 segundos. Não faço ideia do porquê. Espero voltar para vocês. Isso foi muito estranho. Nossa!
+
+Veja a duração em 29 de maio. Ok, diz que este já está concluído. OK. Aconteceu uma coisa muito estranha no meu computador agora mesmo, que travou tudo. [risos] Isso é muito estranho. Certo, vamos dar uma
+
+olhada e ver o que aconteceu. O fluxo de trabalho já foi encerrado. Ok, verificando os registros. Certo, vocês podem me avisar no chat quando eu voltar? Porque diz que a transmissão ainda está em andamento, mas meu computador inteiro está congelado.
+
+Isso foi muito estranho. OK. Leia os registros e me diga o que aconteceu. Algo no meu computador travou completamente . Tudo bem.
+
+Isso até causou uma falha no sistema. Ok, estou de volta . OK, bom. Sim, isso é muito estranho. Muito bem, de qualquer forma, vamos tentar novamente aqui e, com sorte, não travar desta vez.
+
+Cara, eu investi numa máquina muito boa e ela me decepcionou. Tipo, ok, agora eu odeio o Windows. Vou dizer logo. Eu não gosto mais do Windows. Ele se comporta muito mal com Docker e WSL, travando meu computador, e aí temos problemas como esse, e minha barra de tarefas trava com frequência.
+
+Tipo, a barra de tarefas aqui simplesmente congela para mim, e aí, se meu computador fica ligado por mais de 12 horas, o explorador de arquivos fica muito lento. Isso me irrita profundamente, e eu tenho uma máquina absurdamente boa com uns 120 GB de RAM e... hum, não me lembro exatamente do processador, mas é bom, e tem duas placas de vídeo, e é tudo...
+
+É tão estúpido. OK. Vamos ver. O driver Slug expirou e matou tudo. Esse é o nó que converte o título para o formato Pascal. A
+
+causa raiz, barra invertida, foi transmitida. Blá, blá, blá. Bem , acho que foi só uma pequena falha, porque meu computador travou. Então, simplesmente tente o fluxo de trabalho novamente. Porque eu executei isso algumas vezes antes da transmissão ao vivo, e não tive nenhum problema de travamento ou algo do tipo.
+
+Vamos ver se meu computador trava de novo, mas acho que foi apenas uma falha momentânea . Sim . Tudo bem. Legal, legal. Ah, tá, vocês também não gostam do Windows . Eu uso um sistema operacional cativante.
+
+Interessante. Quer dizer, provavelmente eu só gosto de inicializar o Linux. Tipo, ter um sistema de inicialização dupla para Linux ou algo assim. É bem provável que seja isso que eu acabe fazendo. E ele se foi. Eu não fui embora agora. Meu
+
+computador não está travado. Nossa, cara. Espero que não. Chegou a hora de usar Linux? Sim. Sim
+
+, John. Eu tenho duas GPUs no meu computador. Então, posso mostrar rapidinho se eu abrir o gerenciador de tarefas. Vá para a apresentação. Então, eu tenho duas placas de vídeo RTX 3090.
+
+Assim, isso me dá a capacidade, pelo menos com a quantização Q4, de executar modelos com até 72 bilhões de parâmetros a uma velocidade razoável. Então, eu consigo executar um modelo quantitativo de 70 bilhões de parâmetros no quarto trimestre a cerca de 10 ou 15 tokens por segundo. É muito bom. E então, especialmente se eu tiver um modelo local quantizado Q4 com 32 bilhões de parâmetros, ou se for o novo quant 3.6, acho que são 36 bilhões de parâmetros, posso executá-lo em uma única GPU 3090. É muito legal.
+
+Então, essa é a minha configuração, mas sim, o Windows faz com que o computador não pareça tão potente quanto realmente é. É muito frustrante. [risos] Sim. Ok, então, de qualquer forma, já passamos da etapa que travou antes. Então, estamos indo bem. Então, se eu acessar
+
+agora, podemos ver que o fluxo de trabalho do Archon está em execução na interface web. Se eu consultar os registros, podemos ver em que ponto estamos atualmente. E podemos dar uma olhada na saída do código Claude enquanto ele é executado nos bastidores entre os diferentes nós do fluxo de trabalho Archon. Portanto, concluímos nossas etapas iniciais aqui. Neste momento, estamos a executar o vídeo do plano.
+
+Então, isso se relaciona com o que eu estava mostrando antes: quando temos esse diretório de trabalho para o vídeo, ele gera vários recursos antes do vídeo em si. E agora, está trabalhando naquele documento Markdown onde vai planejar o vídeo. Por exemplo, aqui está todo o texto que precisamos para gerar a fala com o 11 Labs, e aqui estão todas as cenas que precisamos gerar com o re motion. E, aliás, uma coisa que me interessa fazer é trocar o ReMotion por... Há outra
+
+ferramenta gratuita de geração de vídeos que se integra ao Claude. O Thomas poderia me lembrar o nome, mas ele está interessado em mudar todo o equipamento de remobilização dele para isso também. Não sei exatamente o quanto melhor é, mas sim, definitivamente tenho interesse em explorar diferentes ferramentas. Tipo, obviamente, o re motion é o que está super em alta agora. Mas, cara, me deu um branco total no nome da ferramenta agora. E há um pequeno
+
+atraso na transmissão, então se o Thomas estiver compartilhando isso, eu não vou conseguir ver por um segundo.
+
+Mas sim, parece que estamos progredindo bem. Então, já está construindo a composição. Então, é aqui que realmente trabalhamos com o ReMotion para construir as camadas. Ah, sim , HyperFrames. É isso. Isso mesmo
+
+. HyperFrames é a alternativa ao Remotion que, na minha opinião, muitas pessoas estão a gostar mais. Então, sim, nós poderíamos... quero dizer,
+
+a beleza dos fluxos de trabalho do Arcan é que não é como se o Arcan precisasse criar algum tipo de integração direta com nenhuma dessas coisas. É que o Arcan usa código na nuvem internamente, então podemos simplesmente injetar a habilidade para Remoção. E, na verdade, vou explicar um pouco como o fluxo de trabalho funciona na prática. Mas vou mostrar rapidinho. Por exemplo, se eu clicar no fluxo de trabalho e depois pesquisar por "Remoção". Hum, existem
+
+51 instâncias disso, mas se rolarmos para baixo até um dos nós aqui, onde está o parâmetro? Habilidade de remoção. Eu só quero mostrar onde a habilidade Remotion é injetada. Ou talvez seja um pouco diferente para este fluxo de trabalho. Cara, tem tantos exemplos de " É isso aí, vamos lá". Então, no que diz respeito às habilidades
+
+que inserimos na composição da build, essa é exatamente a etapa que está sendo executada agora no fluxo de trabalho Arcan. Nesta etapa, estamos implementando a skill de melhores práticas do Remotion. Essa é uma habilidade personalizada que criamos com base na habilidade padrão do Remotion, que vem com o repositório de código aberto deles . Isso descreve exatamente como queremos usar o Remotion para criar esses vídeos. E também há outra habilidade que incorporamos, que engloba a geração de diagramas visuais em geral, caso os tenhamos em alguns dos slides do próprio vídeo.
+
+Portanto, se quiséssemos mudar para HyperFrames, bastaria criar uma skill para HyperFrames e injetá- la no lugar. Basicamente, não precisamos alterar nada no fluxo de trabalho do Arcan se você quiser mudar para uma ferramenta diferente. Contanto que possamos usar a ferramenta de maneira semelhante. Quer dizer, obviamente você pode querer renomear o comando e tal, mas, no fim das contas, não precisamos reintegrar nada com o Arcan. É muito flexível. Então, outra
+
+coisa muito legal do Archon é que muita gente diz: "Quero criar meu fluxo de trabalho no Archon, mas quero integrá-lo com meu Jira, Linear, Confluence, SharePoint ou Google Drive". E perguntam: " Vocês precisam criar suporte para isso no Archon?". E a resposta é sempre não. Porque você só precisa criar a skill ou o servidor MCP e injetá-lo no fluxo de trabalho do Archon nos nós onde você realmente precisa. Então,
+
+não precisamos criar suporte para isso, além, é claro, dos agentes e adaptadores de codificação subjacentes. Mas para qualquer outra funcionalidade no seu fluxo de trabalho, você pode injetá-la em um fluxo de trabalho do Archon da mesma forma que a injetaria em seu agente de codificação usando o terminal, como o Codex ou o Clock Code. Certo, vamos ver como está agora. Ainda estamos construindo a composição, o que faz sentido, já que isso vai levar um tempo. Então, acho que podemos explorar o fluxo de trabalho enquanto esperamos terminar. Aqui.
+
+Ah, você já migrou para o Hyperframes. Que legal, Thomas. Os vídeos mais recentes foram feitos com o Hyperframes. Ótimo. Sim, eu teria interesse em reformular esse fluxo de trabalho para usar o Hyperframes.
+
+Na verdade, estou curioso para saber como se compara no Google Trends. Se eu pesquisar por "Remotion versus Hyperframes", qual é o mais popular agora? O interesse no último mês, por exemplo. Ok, sim. O Remotion ainda é mais popular.
+
+Então, para fazer uma transmissão ao vivo e um vídeo para o YouTube, por mais importante que seja usar uma ferramenta poderosa, e geralmente você queira usar a ferramenta mais poderosa, para o conteúdo em si, você precisa equilibrar isso com o que é mais popular. Eu gosto que estejamos usando o Remotion agora. Mas eu definitivamente teria interesse, depois de abordar esse assunto pela primeira vez, em migrar para o Hyperframes ou até mesmo fazer algum conteúdo comparando os dois. Acho que sim. Seria muito legal fazer um vídeo de acompanhamento ou uma transmissão ao vivo onde eu fizesse um teste comparativo, tipo, vamos gerar o mesmo vídeo com esse fluxo de trabalho do Archon, mas uma versão do fluxo de trabalho usando Hyperframes e a outra usando Remotion. Porque, de novo, vai
+
+ser extremamente fácil alternar. A maior dificuldade é descobrir as nuances de como trabalhar de forma diferente com Hyperframes, mas o fluxo de trabalho em si não precisa mudar muito, porque ainda vamos planejar o vídeo da mesma forma. Ainda vamos usar o 11 Labs para sincronizar com o vídeo da mesma forma. E no final, vai ser só uma skill diferente que você vai inserir e talvez um processo de iteração um pouco diferente. Legal. Então, é isso, vou falar
+
+um pouquinho sobre o fluxo de trabalho enquanto esperamos ele rodar e depois respondo algumas perguntas que vocês têm no chat. Os fluxos de trabalho do Archon funcionam de forma muito parecida com skills, onde a descrição no topo do fluxo de trabalho vai... Descrever para o Claude Code ou qualquer outro agente de codificação aqui é um fluxo de trabalho ao qual você tem acesso e quando você gostaria de usá-lo.
+
+E então, de forma geral, ajudá-lo a entender os diferentes parâmetros e coisas que ele pode especificar ao invocar o fluxo de trabalho. Então, vamos fazer algumas verificações prévias para garantir que temos as habilidades necessárias para as melhores práticas do Remotion. E então vamos buscar a fonte. No meu caso, são os fluxos de trabalho do Archon. Ele lê o arquivo README e cria o vídeo com base nele, mas você também pode usar qualquer tipo de artigo, se quiser. É por isso que usamos o
+
+Hacker News para muitos dos nossos testes, porque é um bom recurso para artigos sobre IA. Esse exemplo da calculadora é meio aleatório. Normalmente, é algo mais relacionado à IA, mas sim, qualquer coisa do Hacker News é algo que temos testado bastante . E temos um formato de saída aqui. Ele vai analisar o artigo e obter as informações para que Temos, sabe, o tipo, o título, a URL, tudo isso. E então vamos
+
+obter o slug para podermos buscar as informações. Certifique-se de que o Remotion esteja configurado. O legal desse fluxo de trabalho é que ele configura o Remotion para você, caso ainda não o tenha instalado. É por isso que ele não é uma das dependências. Então, você só precisa configurar o 11 Labs, instalar o Arkon, ter seu agente de codificação pronto e executar o comando. É muito fácil configurar tudo
+
+em uns 5 minutos, principalmente usando um agente de codificação para ajudar. E então criamos o documento Markdown para o próprio plano. Basicamente, é como enviar um prompt bem longo para o Claude, que diz algo como: "Com base em todas as informações que já buscamos, como o corpo do artigo, o título e a fonte, crie um plano para um vídeo." Planejando as diferentes cenas e o que vamos mostrar. na tela e, você sabe, o que realmente queremos dizer também, para que possamos gerar o texto a ser enviado para o 11 Labs.
+
+E o interessante do Arkon é que existem duas maneiras diferentes de passar informações entre os nós. Temos o diretório de artefatos. Assim, para cada execução do fluxo de trabalho do Arkon, haverá um diretório de artefatos dedicado onde podemos colocar os documentos Markdown que estamos passando entre os nós. Então, o nó anterior, quando buscou o recurso, o incorporou ao corpo do artigo. E, por exemplo, meu diretório de artefatos para a geração do vídeo da calculadora é este aqui. Então, temos o corpo do artigo
+
+e agora todos os nós subsequentes sabem que "Aqui está meu diretório de artefatos para a execução do fluxo de trabalho". Aqui estão os documentos aos quais tenho acesso . E também podemos acessar diretamente a saída dos nós anteriores. Cada nó do Arcan irá gerar a última mensagem enviada pelo agente de codificação executado nesse nó, caso seja um nó não determinístico. Podemos acessar, por exemplo, a saída `derive slug {dot}`. `
+
+derive slug` é o ID de um dos nós anteriores executados no Arcan neste fluxo de trabalho. Acho que já passei por ele sem ver. Sim, este aqui. O ID é `derive slug`. Quando usamos `id` para a saída do nó ` {dot}`, obtemos a última saída deste nó. E, pelo que entendi,
+
+este é um nó determinístico. Estamos obtendo a saída final, seja ela a saída padrão do agente ou do script executado para esta etapa do fluxo de trabalho do Arcan. Portanto, é muito fácil passar contexto entre os nós. Seria muito difícil usar o Arcan se não fosse possível. Geramos o plano.
+
+Depois de gerar o plano, que é um prompt bem longo, vamos gerar o áudio. Aqui, temos um script chamado ` generate voiceover.py`. Basicamente, estamos apenas passando o script como parâmetro. Vamos obtê-lo do diretório de artefatos. Lemos o script
+
+e o geramos com a API do 11 Labs ou o Cartesia, se você o tiver configurado. O áudio também é gerado no diretório de artefatos. Geramos a música e os efeitos sonoros também. Temos três processos diferentes que podemos executar em paralelo. Geramos áudio e efeitos sonoros em paralelo e a geração da música depende do áudio estar sendo processado . Geramos tudo isso e,
+
+em seguida, construímos a composição. Esta é a etapa que leva mais tempo, pois estamos construindo e gerando os recursos para cada uma das cenas. E é aqui que inserimos as habilidades para remoção e para criar a composição desejada. diagramas visualmente. E então regeneramos o registro.
+
+Este é apenas mais um comando bash . O root.tsx detecta todas as composições sem precisar de neglob vital. Muito legal. E então, desculpe, este aqui... na
+
+verdade, não me lembro deste nó. Eu estava olhando isso antes e pensei: "Espere um segundo, qual é este?". Sim, regenerar o registro de composições. Como eu disse, Thomas e Rasmus me ajudaram a construir isso. Então, este
+
+nó, eu não sei exatamente o que ele faz. Encontra todos os diretórios em "source" que contêm um índice. Sim, vou perguntar ao Claude o que isso faz daqui a pouco. Revisão de controle de qualidade. Temos uma parte do processo no final que revisa o vídeo gerado, verificando se o áudio está sincronizado com o vídeo e coisas assim, verificações de qualidade da animação. Uma das melhores
+
+partes dos fluxos de trabalho Arcan é que é muito fácil adicionar... Nós para validação no final de qualquer processo, seja geração de código, geração de vídeos, etc. E então temos a opção de iterar.
+
+Se o nó de revisão estiver configurado para gerar uma saída estruturada, como uma das características da etapa de revisão, ele produzirá um resultado estruturado. Assim, após revisar as animações, a sincronização de áudio e vídeo e tudo mais, ele gerará um veredito: aprovado ou necessita de iteração. Se necessitar de iteração, executaremos a etapa de iteração. Em uma nova janela de contexto, passaremos o feedback para este comando para que ele possa editar o vídeo. Ele está fazendo uma pequena autocorreção aqui. E então temos a verificação
+
+no final, a renderização e um resumo final. Esse é o fluxo de trabalho completo. Sei que muita coisa está acontecendo aqui, mas esse é o objetivo. É isso que os fluxos de trabalho do Arcan nos permitem: a capacidade de simplificar um processo bastante complexo. que queremos não apenas construir como uma habilidade. Teoricamente, você poderia pegar
+
+todo esse fluxo de trabalho e transformá-lo em uma habilidade no Archon. Mas o problema é que não seria muito confiável, porque há muitas etapas pelas quais precisamos guiar o Archon. E, por exemplo, [bufa] você não quer validar e iterar no vídeo na mesma sessão em que está fazendo a implementação, porque, primeiro, você sobrecarregaria o contexto do agente de codificação e, segundo, você não quer pedir a um agente de codificação que revise o próprio trabalho o tempo todo. É como pedir a uma criança para corrigir a própria lição de casa. Então, podemos permitir que ele faça um pouco de autocorreção, mas essa revisão final queremos fazer em uma sessão separada do agente de codificação. E essa é uma das
+
+coisas que o Archon nos permite fazer: encadear várias sessões do agente de codificação em uma única execução do fluxo de trabalho. Então, nós simplesmente despachamos esse trabalho, fornecemos o vídeo que queremos gerar e ele percorre todo o processo de ponta a ponta. Então, nem precisamos pensar nisso até revisarmos o vídeo final, que já foi revisado também. É uma coisa muito bonita. Ok, então ainda estamos criando uma composição. Vamos
+
+deixar o programa fazer isso com calma . Deixa eu atualizar. Verificar se não há nada desatualizado. Ah, não há nada. Certo, sim. Então, está apenas escrevendo
+
+tudo isso agora. Ok , legal. Então, vou voltar para o chat aqui. Certo. Vamos ver.
+
+Certo. Funcionou bem com a minha voz, mas depois de um tempo comecei a desenvolver um sotaque britânico. Que engraçado. Bem, espero que isso não aconteça comigo. Sabe, uma coisa que o 11 Labs tem agora, quando você cria uma voz, é que você especifica o sotaque. Então, espero que isso não aconteça com você
+
+agora. Veremos. Certo. Qual é a ferramenta que você usa para gravar a voz e enviar para o Claude Code? Ah, sim, é a minha ferramenta de conversão de fala em texto que eu uso. Aqui na minha
+
+região, chama-se Aqua Voice. Então, é tipo, uns 10 dólares por mês. Também existem várias ferramentas similares gratuitas por aí. Mas eu uso o Aqua Voice o tempo todo. É incrível. Há uns dois anos, ou
+
+melhor, uns dias atrás, eu alcancei a marca de um milhão de palavras faladas com o Aqua Voice. Muito louco. [risos] Então, me economizou 12 dias de digitação. Acho que isso se baseia na média de palavras por minuto digitadas em comparação com a minha velocidade de fala. Eu falo a 225 palavras por minuto, o que é definitivamente mais rápido do que eu consigo digitar.
+
+Eu queria digitar tão rápido assim. Seria legal. Mas acho que estou em torno de 120 ou algo assim. Vamos tentar agora. Vou fazer um teste de 1 minuto para ver o quão rápido eu consigo digitar.
+
+Ok. Anos, saúde. Nossa. Espera, esse não é o tipo de...
+
+Este não... Deixa eu te mostrar o que você está fazendo. Ah, interessante. Eu nunca
+
+fiz esse teste de digitação antes. Ok. Nossa, que estranho. Nossa
+
+.
+
+Essas palavras são difíceis.
+
+Quanto tempo isso dura?
+
+Nossa. Ok. Pronto. Esse foi um teste muito difícil. Meu Deus.
+
+Minha velocidade foi de 112 palavras por minuto com 98% de precisão. Mas também foi um teste muito difícil comparado à maioria dos testes de digitação. Geralmente, você recebe palavras muito mais fáceis. Enfim, uma resposta bem longa para sua pergunta: eu uso o AquaVoice e digito ou falo cerca de duas vezes mais rápido do que digito. É incrível. E também
+
+significa que você não precisa ficar o tempo todo ali no teclado. Eu gosto de andar enquanto penso e falo, então posso ficar andando pelo meu escritório. Eu gosto muito de fazer isso quando estou fazendo brainstorming. Enfim , nossa , isso foi difícil. Certo.
+
+Legal. [limpa a garganta] Então, onde estamos? Agora? Então, renderizamos tudo e agora estamos na fase de controle de qualidade. Ok, isso é bem legal. Na verdade, já estamos
+
+quase terminando a geração de palavras . O 11 Labs chama a API e recebe o áudio de volta. Certo. Então, temos esse script em uma única etapa para chamar a API. Certo .
+
+Archon, dando a você uma vantagem injusta no cenário de IA em constante mudança. Isso mesmo. Sim, quero dizer. Ok, aqui está o ponto. Essa é uma boa apresentação de elevador para uma frase.
+
+Mas não explica o que o Archon faz ou por que ele é capaz de fazer o que faz. Mas isso é como um slogan, por assim dizer. Certo. Posso mostrar a série Archon que criei, ainda não publicada, para você ver como ela pode ficar. Se você quiser me enviar o link, Thomas, eu posso, com certeza.
+
+Só não me lembro do link exato. Mas se você quiser me mandar uma mensagem no Slack, eu posso mostrar, se quiser. Seria legal mostrar, porque eu sei que...
+
+Não acho que você tenha usado exatamente esse fluxo de trabalho, mas usou um similar. Certo. A questão é que precisamos de pessoas usando Windows para testar as coisas. Sim, então, se eu desligar o Windows porque estou muito frustrado com ele agora, eu faria dual boot com Linux, mas não me livraria do Windows. Assim, eu ainda conseguiria testar as coisas do Arcon no Windows, porque sei que isso é muito importante.
+
+Sim. Hum, eu comparei o desempenho do código Claude com Opus 4.7 versus Codex com GPT 5.5 usando o Arcon? Qual deles se saiu melhor?
+
+Ainda não. Não, mas quero fazer uma transmissão ao vivo/vídeo onde farei esse teste de desempenho. Então, fiquem ligados. Sim, definitivamente tenho interesse em fazer isso. Nossa! [limpa a garganta] Caramba, isso aqui embaixo é
+
+muito ousado. Não sei se você está falando do meu teste de digitação ou da voz do Aqua, mas... obrigado.
+
+[risos] Certo. Vamos ver. Estou executando o Arcon localmente? Sim. Isso está rodando localmente.
+
+Então, eu o tenho rodando, como se eu abrisse o repositório aqui. Eu o tenho rodando em localhost tanto para o back-end quanto para o front-end. Eu geralmente recomendo executar o Arcon localmente. Então, onde quer que você esteja desenvolvendo, é onde eu gosto de manter o Arcon. Certo. O
+
+Thomas está fazendo os dois, rodando em um VPS com Docker e uma URL personalizada. Sim, nós oferecemos suporte para a execução em produção, se você quiser que o Arcon esteja disponível 24 horas por dia, 7 dias por semana, em um VPS, para que você possa acessar a interface web ou interagir com ele no Slack, GitHub ou qualquer outro meio, pois oferecemos suporte a todos esses adaptadores. Além disso, já oferecemos suporte a uma configuração Docker robusta para produção. Então, se você estiver curioso sobre isso, e quiser implantá-lo na nuvem, pode dar uma olhada no arquivo README. Temos um guia de implantação aqui. O
+
+link está no README e leva você a... A documentação completa está aqui. E, claro, você sempre pode pedir para o seu agente de programação dar uma olhada e orientá-lo na implantação do Archon para garantir que você consiga fazer isso de forma rápida e eficiente.
+
+Pessoalmente, eu o uso localmente , porque é mais conveniente para mim. Certo. Quanta RAM ele usa? Bem, Thomas, você saberia melhor do que eu sobre o contêiner do Archon. Eu não sei exatamente quanta RAM o contêiner consome, mas não será muita. Em
+
+repouso, provavelmente serão apenas algumas centenas de megabytes . E quando o Archon estiver em execução, como ao invocar fluxos de trabalho, ele será muito eficiente. Porque o Archon é um construtor de harnesses, certo? Você cria um fluxo de trabalho com o Archon que serve como harness para codificação de IA, geração de vídeo ou o que for. Ele não consome muita memória, além das ferramentas subjacentes que utiliza. Então, na
+
+verdade, a quantidade de memória que o Archon consome é mínima. O consumo de memória será praticamente o mesmo que o código Claude utiliza durante a execução. Isso porque o fluxo de trabalho do Archon simplesmente executa diferentes sessões de código e script do Claude entre os diferentes nós do fluxo de trabalho. Não há muita sobrecarga em termos de uso de tokens, RAM ou qualquer outra coisa. Otimizamos bastante a execução em si.
+
+Portanto, seus fluxos de trabalho do Archon ainda podem consumir muita memória se você tiver habilidades complexas, como renderizar vídeos de remoção ou realizar testes de automação de navegador com o Playwright ou o CLI do navegador do agente Versel, certo? Então, se os recursos que você normalmente atribui ao código Claude também consomem muita RAM, sim, o Archon também consumirá. Mas tudo depende do seu fluxo de trabalho e das habilidades e outros recursos que você atribui ao fluxo de trabalho subjacente. Na verdade, é o mesmo que executar o código Claude. Ah, certo.
+
+Você também pode usar... Ah, meu computador travou de novo? Ok, não, acho que voltei. Quase
+
+travou por um segundo. Achei que tinha travado de novo. De novo, deu problema. Você também pode usar serviços gratuitos de conversão de fala em texto, como o Kokoro, se quiser . O Kokoro é o padrão para o Hyperframes. Ok,
+
+eu não sabia, que legal, Thomas. É, existem muitas opções disponíveis de ferramentas gratuitas de conversão de fala em texto. Se você não quiser pagar US$ 10 por mês por algo como o AquaVoice. Não sou patrocinado por eles nem nada. Eu só gosto muito da ferramenta e da praticidade dela. Não precisar
+
+hospedar por conta própria. Eles têm alguns recursos, como um dicionário integrado, então não bagunça as palavras como as ferramentas de conversão de fala em texto costumam fazer. Então, é, eu gosto de usar. Certo. Legal . Então, obrigado, Thomas,
+
+por responder às perguntas sobre a hospedagem do Archon. Vamos ver onde estamos agora. Ok, estamos na iteração. Basicamente, o que aconteceu aqui foi que a validação decidiu que realmente precisamos de iteração. Então, dê uma olhada nisso. Esta é a
+
+parte interessante do fluxo de trabalho do Archon. Ele valida as coisas. Ele percebe: "Ok, algumas correções precisam ser feitas." E então ele até gera um resumo do feedback, certo? Então, todo esse feedback será enviado para a nova sessão do Claude Code com a habilidade de reprocessamento para fazer essas alterações e, em seguida, ele irá validar novamente.
+
+E é isso que ele está fazendo agora. Estamos quase chegando ao ponto em que temos o vídeo final. Na verdade, já temos algo que podemos ver, porque ele foi gerado agora. Então, se eu voltar aqui, o Claude Code está monitorando. Basicamente, o que fizemos na interface web, o Claude Code também está fazendo. Aliás, o Claude
+
+Code tem me parecido meio instável ultimamente. A nova ferramenta de monitoramento é muito estranha, porque parece aleatória, como se decidisse quando... Para verificar algo novamente. E então, ele
+
+simplesmente começa a gerar um monte de logs enquanto monitora, monitora e monitora. Não sei se acontece o mesmo com vocês, mas o código do Claude parece mais intuitivo com o tempo. Ainda é o agente de codificação mais poderoso para mim, eu adoro e ainda o uso diariamente, mas, sei lá, ele tem muitas peculiaridades estranhas agora. Enfim, vou dizer: "Ok, ótimo que estamos no meio da iteração, mas também temos o vídeo gerado, ou melhor, não o final, certo?" Então, você poderia me dar o caminho para isso?
+
+Talvez possamos dar uma olhada e ver o que realmente muda quando a iteração termina. Ou talvez eu deva apenas ser paciente e esperar. Tanto faz. Veremos. Estamos quase terminando.
+
+Ok. Então, estou no meio de algumas edições aqui. Está mudando... O que exatamente está
+
+mudando? scene.tsx. Ok, então está gerando... Está
+
+mudando os arquivos TypeScript que o Remotion usa para gerar as coisas. Ok. Legal. Certo . Qual foi a última coisa que você fez com o Kimi K 2.6? Qual LLM você vai
+
+experimentar em seguida? Qwen 3.6 Max ou Plus? Eu estava fazendo muitas transmissões ao vivo recentemente na minha Dark Factory. Era lá que eu estava usando o Kimi K 2.6. Onde fica minha Dark Factory?
+
+Sim. Então, este foi um experimento muito divertido. Ainda está em andamento. Estou dando uma pausa nisso para fazer mais coisas com o Arkon. e estou trabalhando no Arkon. Faz cinco
+
+dias que não trabalho nele, mas vou retomá-lo e fazer mais lives novamente. A ideia por trás da Dark Factory é ter uma base de código onde eu apenas descrevo o que quero. Eu não escrevo nenhum código. Nem mesmo valido o código. Nunca li ou escrevi uma única linha de código aqui. Quer dizer,
+
+eu vi as alterações, mas não instruí o sistema a corrigir algo com base no código que li. Basicamente, é uma base de código que o agente de codificação é responsável por evoluir sozinho. Tudo o que faço é enviar issues no GitHub para os diferentes bugs que quero corrigir ou os recursos que quero implementar. A Dark Factory tem um conjunto de fluxos de trabalho do Archon que rodam em segundo plano para fazer a triagem, como rotular todas as issues e determinar as prioridades e a classificação. E então tenho outro fluxo de trabalho do Archon que implementa as issues e as transforma em pull requests. E então tenho
+
+outro Archon... Tenho um fluxo de trabalho que realiza uma revisão completa de pull requests. E então, tenho um quarto e último fluxo de trabalho Archon que é executado uma vez por semana para realizar testes de regressão. Porque se
+
+eu vou ter uma base de código que evolui completamente por si só, é melhor ter um processo para garantir que cada novo pull request não quebre funcionalidades antigas, o núcleo da aplicação. Então, o Kimiko 2.6 foi o último modelo que usei para esta Dark Factory. Deixei todos os fluxos de trabalho Archon usarem código Claude, mas roteados para o Kimiko 2.6.
+
+E a qualidade do código de saída é realmente muito boa. Mas, o Kimiko 2.6 definitivamente tem alguns problemas de confiabilidade com a API travando e a estrutura e saída não funcionando tão bem quanto algo como o Minimax M2.7 ou, claro, os próprios modelos antrópicos como o Opus. Mas, no geral, foi um bom programador .
+
+Então, fiquei bastante impressionado. E se eu abrisse um problema agora, ele seria tratado automaticamente. Minha Dark Factory ainda está em execução ativa em um droplet da Digital Ocean. E está usando Kimiko 2.2... Kimiko 2.6. Quanto
+
+ao próximo modelo que eu gostaria de testar , provavelmente seria o Quen, como você disse. Hum, vamos ao modelo mais popular. Existem tantos modelos Quen agora. É difícil lembrar o exato. O mais popular, acho que é o 2.6 Max.
+
+Deixa eu ver... Será que ele não está tão no topo da lista de popularidade? Qual é este?
+
+Então, sim, Kimiko 2.6 é o que estou usando atualmente. Hum, eu também estaria interessado em testar mais o GPT 5.5, só porque ainda não testei o suficiente com o Codex. Mas eu estaria interessado em trocar temporariamente minha Dark Factory para usar o Codex com o GPT 5.5.
+
+E o Minimax M 2.7 era o modelo original que alimentava a Dark Factory. Era muito bom no geral, mas eu só queria experimentar outros. Hum, o GLM 5.1 seria o outro que eu...
+
+Talvez tente. Hum, onde está o Wow, por quê? Ok, vamos lá. Qwen 3.6 Plus. Na verdade, não é tão bom
+
+quanto eu pensava que seria. [bufa] Mas sim, este é outro. Este provavelmente será o próximo que eu experimentaria. É bem barato. É tão barato quanto o Minimax M 2.7, bem mais barato que o
+
+Kimiko 2.6. E então este, o Hi 3 da Tencent, nunca ouvi falar. Foi lançado recentemente e está gratuito no OpenRouter agora. Ah, ok, interessante. Eu
+
+não sei o quão bom este modelo é. Se alguém já experimentou, eu gostaria de saber. Mas eu sei que o Qwen 3.6 Plus é muito bom. Certo . Legal.
+
+Vamos ver onde estamos agora. Então, voltando aos logs. Ok, fluxo de trabalho concluído. Pronto. Terminamos de gerar o vídeo.
+
+Certo. Então, agora se eu voltar para o meu Claude Ok, o vídeo de marketing do ArKham está aqui. Certo, pessoal, prontos? Este é o momento da verdade. Este é o fluxo de trabalho que criamos juntos, ao vivo, e, com sorte, com o modelo ideal da 11 Labs e a minha voz. Então, deve soar
+
+como eu. Espero mesmo. Veremos. Este é o momento da verdade. Então, vou parar por aqui e reproduzir o vídeo. Certo, vamos lá.
+
+Seu agente de codificação de IA faz algo diferente a cada vez. O ArKham muda isso. O ArKham é um mecanismo de fluxo de trabalho de código aberto que também possui arquivos YAML que definem cada fase da codificação assistida por IA: planejamento, implementação, validação e criação de PRs. Pense em arquivos Docker para codificação de IA. O mesmo fluxo de trabalho, a mesma sequência a cada execução. Combine
+
+etapas bash determinísticas com nós com IA. Escolha entre 17 fluxos de trabalho integrados: IA para correção de problemas de software, revisão de PRs, desenvolvimento de recursos e muito mais. Acione a partir da CLI, Slack, Discord, Telegram ou webhooks do GitHub. Licença MIT, sem restrições. Instalação em 30 segundos no Arkon DIY.
+
+[risos] Ok, foi muito bom. Tinha uma coisa que ficava repetindo de um jeito muito estranho, e os efeitos sonoros eu não gostei muito, mas a música estava boa, os gráficos são muito sólidos, a explicação geral foi muito boa. Tipo, sem nenhuma iteração e com todo o fluxo de trabalho do Arkon , isso é realmente muito bom. Gerou tudo do zero. Todos os gráficos, todos os ícones, todo o áudio, toda a sincronização, fazendo toda a validação também. Esse é o
+
+resultado final que obtivemos aqui. É bem legal. É, eu concordo com o Thomas, os efeitos sonoros estavam ruins, [risos] mas é algo que podemos melhorar, certo? Então, eu poderia ir até o Claude e dizer: "Ei, eu não gostei muito dos efeitos sonoros aqui." Hum, eu não sei o quão boa é a nossa iteração, ou o quão fácil é iterar. Estou
+
+curioso. Eu não gostei dos efeitos sonoros para Este vídeo está em desenvolvimento. O que podemos fazer para continuar aprimorando-o? Você teria que carregar as habilidades manualmente e iterar? Imagino que você não reiniciaria o fluxo de trabalho do Arkon, certo? Estou curioso para saber como
+
+esse passo funcionaria aqui. Mas, sim, está muito bom. Foi um ótimo ponto de partida para algo que, presumo, após algumas iterações, ficaria realmente bom, bom o suficiente para eu postar como um curta no YouTube, por exemplo. E, honestamente, levaria muito tempo para construir tudo do zero. Todos esses gráficos e tudo mais.
+
+Ok. Então, não há necessidade de reiniciar todo o fluxo de trabalho. Algumas opções, dependendo do caso. Posso eliminar completamente os efeitos sonoros, regenerar os efeitos sonoros para obter novos ou editar a composição diretamente. Sim, então eu quero que você edite a composição diretamente. Quero que você
+
+analise os efeitos sonoros que temos atualmente e veja como eles são ruins. Depois, quero que você regenere alguns melhores e valide o resultado. Vídeo novamente. Então, acho que para a iteração, basicamente fazemos isso fora do fluxo de trabalho do Archon, mas como todas as habilidades que foram inseridas nesse fluxo de trabalho do Archon estão disponíveis aqui, é possível aproveitá-las e editar as coisas fora dele. Então, talvez fosse legal criar um segundo fluxo de trabalho do Archon para iterar ou [bufa] eu poderia pegar o primeiro fluxo de trabalho do Archon e adicionar um humano no loop. Assim, eu poderia retomar
+
+o fluxo de trabalho para continuar iterando e ainda estaria no mesmo arquivo YAML. Eu também poderia fazer isso. Mas aqui, funciona convenientemente para eu mesmo editar ou, basicamente, para o Claude editar o código fora de um fluxo de trabalho do Archon. Ok. Ok , acho que esses efeitos sonoros estavam codificados. É, talvez seja
+
+algo que precisamos tornar mais dinâmico desde o início, mas vamos deixar regenerar aqui. Veremos. E havia outra coisa que continuava dando problema. Vocês ouviram isso? Eu... eu... eu nem
+
+sei exatamente o que foi. Mas vou dar uma olhada no planejamento do vídeo aqui para ver. É interessante ver o planejamento por trás do vídeo. Então, aqui está a cena número um. Hum...
+
+eu nem sei que palavra é essa. Vou reproduzir de novo e tentaremos ouvir. Vamos ver. Seu agente de edição de IA faz algo diferente a cada vez. O Archon muda isso. O Archon é um
+
+mecanismo de fluxo de trabalho de código aberto. Hum... Ah, droga, travou porque estava no meio da edição do vídeo. Mas
+
+vocês ouviram aquela palavra no final. Disse algo como "all swa" ou algo muito estranho. Eu...
+
+eu não sei o que está tentando dizer. Hum, "all swa". O que poderia soar como "all swa"? Eu realmente não sei. Mas eu gostaria de corrigir isso também, porque é muito estranho.
+
+Hum, pode ser... Ok, pode ser. Pode ser YAML.
+
+É, talvez seja YAML. Pode ser isso. Então talvez eu só precise explicar melhor como pronunciar. Vamos tentar . Então, é, está com muita dificuldade para dizer YAML, Y A M L. Parece que diz "all swa"
+
+ou algo parecido. Então precisamos corrigir isso no áudio também. [risos] " All all swa". É engraçado como o AlphaVoice transformou isso em palavras. [risos] O comentário tem um problema de texto para fala. O
+
+Eleven Labs não sabe pronunciar acrônimos como YAML. O que até faz sentido. Então, este é um bom exemplo de como, quando você está trabalhando com qualquer tipo de geração de voz por IA, você sempre precisa ser muito específico sobre essas grafias e acrônimos incomuns. Então vamos ver o que podemos fazer aqui. E é legal porque eu não sei exatamente como eu corrigiria isso ou como eu poderia refazer o comando ou corrigir o Eleven. Laboratórios, mas
+
+vou deixar o código do Claude resolver isso e iterar, certo? Então, não importa o que dê errado no fluxo de trabalho, eu simplesmente passo o problema para o Claude e deixo ele resolver. Certo, ataque. É, soou mesmo como um ataque. [risos] Com certeza. É. Certo. O
+
+vídeo está muito bom. IA legal. Isso mesmo. Sim, estou a caminho de fazer com que todos os meus vídeos sejam gerados por IA agora. Não, estou brincando. Não vou fazer
+
+isso de verdade. Certo. E se o Archon suportasse nativamente um modo de nuvem profunda? O Deep Seek lida com a codificação em massa. A nuvem faz o raciocínio e a revisão. Melhor modelo para cada tarefa diretamente no
+
+YAML. Então, você meio que já pode fazer isso porque pode alterar o provedor por nó no Archon. Então, podemos fazer com que um nó use o Pi com o Deep Seek ou você pode simplesmente redirecionar o código da nuvem para o Deep Seek apenas para esse nó. E então você... Vamos passar a
+
+usar o Cloud com o Opus para a implementação, por exemplo. Isso já é possível com o Archon. E se você quiser configurar isso, basta instalar o Archon, abrir seu código Cloud onde está a skill do Archon e descrever exatamente o que você fez. Tipo, " Quero criar um fluxo de trabalho do Archon que use o Deep Seek com código Cloud para este nó e o Opus para outro nó". E ele pode te ajudar a configurar isso.
+
+Ok, então está atualizado. Diz YAML. Então,
+
+agora temos a pronúncia fonética integrada à chamada para o 11 Labs. Vamos testar. Alteramos os efeitos sonoros e também iteramos na voz. Vamos ver como fica. Seu agente de IA faz algo diferente a cada vez. O Archon
+
+muda isso. O Archon é um mecanismo de fluxo de trabalho de código aberto. Uau, arquivos YAML que definem cada fase do assistente de IA [risos]: codificação, planejamento, implementação, validação. Não gostei. Disse algo como "Uau, arquivos YAML".
+
+Hum, e eu ainda não gostei dos efeitos sonoros. Os efeitos sonoros estão muito altos e exagerados. Eu ainda não gosto deles. Vocês não resolveram o problema principal: os efeitos sonoros são mais irritantes do que úteis. Hum, e então...
+
+Ok, a voz está super distorcida agora porque diz algo como "Uau, YAML". E diz isso muito devagar. Então, acho que precisamos regenerar isso. Certo. Bem, é assim que acontece com qualquer programação de IA, né? Às vezes
+
+não resolve o problema. Mas vimos que pelo menos mudou. Pronunciou o YAML corretamente, mas aí ficou aquele "Uau" lento e estranho que dizia antes, por algum motivo. E os efeitos sonoros estavam claramente diferentes. Hum, mas no fim das contas, acho que discordo das mudanças feitas.
+
+Inicialização do sistema de IA futurista com energia digital. Quer dizer, Só de ler isso, já sei que vai ser irritante. Um zumbido elétrico crescente, cheio de energia. Tipo, não, obrigado. Mas tudo está funcionando como deveria.
+
+Só precisamos iterar porque o modelo de linguagem principal não tem a ideia certa das coisas agora. E Sean, concordo que está rápido demais. Aliás, sim, vamos mudar isso também. No momento, tudo está rápido demais, principalmente no início do áudio, estou falando de algo muito rápido. Então, vamos iterar nisso também.
+
+Certo. Acho que isso seria uma boa adição tanto para o Archon quanto para o Dark Factory. Obter o Nexus. Nunca ouvi falar do Obter o Nexus. Obter o Nexus no GitHub. Não consigo copiar um
+
+link. Ok, ótimo, então o Google apareceu aqui. Sistema de inteligência de código de servidor Zero. Criador de grafo de conhecimento do lado do cliente que roda inteiramente... Ah, não, já ouvi falar
+
+disso. Já ouvi falar disso. É tipo uma coisa de memória de longo prazo, certo? É engraçado que eles tenham um aviso de criptografia no topo. Construir o Sistema nervoso para contexto do agente. Indexa qualquer base de código em um
+
+grafo de conhecimento. Cada fluxo de execução de cluster de cadeia de chamadas de dependência. Ok, isso é muito legal. Mas isso realmente nos leva ao que eu estava falando antes. Sempre que você quiser integrar algo a um fluxo de trabalho do Archon, como, por exemplo, gerenciar sua base de código com o Git Nexus e poder consultá-lo em um fluxo de trabalho do Archon, não precisaríamos criar suporte direto para o Git Nexus no Archon.
+
+Você poderia simplesmente criar uma skill ou um servidor MCP em torno do Git Nexus e injetá- lo nos nós do fluxo de trabalho do Archon onde deseja usar o Git Nexus. E então, obviamente, para o comando ou prompt desse nó, você descreve como deseja usar o Git Nexus. Por exemplo, você pode pesquisar no grafo de conhecimento para entender a base de código antes de criar o plano para lidar com este problema do GitHub, esta ideia ou o que for. Aliás, eu não me surpreenderia se eles tivessem uma skill do Git Nexus. Eles têm a skill para a CLI, certo?
+
+Você pode injetá-la como uma skill no Archon. O fluxo de trabalho é exatamente como mostrei antes. Habilidades, certo? Podemos inserir qualquer habilidade. Então, não precisamos de uma integração direta do Archon para você usar o Git Nexus. E acho que este
+
+é um ótimo exemplo do que eu estava falando antes. Sim, o Git Nexus é gráfico, mas especialmente voltado para bases de código. Faz sentido. Sim, é muito legal. Talvez haja alguma oportunidade de integrá-lo mais diretamente ao Archon, mas eu prefiro recomendar que você aproveite a flexibilidade do Archon. Tudo o que você pode inserir no
+
+código Claude por meio de uma habilidade, MCP ou prompt, você pode fazer com o Archon. E você pode especificar os nós individuais onde isso acontece, porque às vezes você só quer certas capacidades ou contexto carregados no código Claude em determinados estágios do fluxo. Outro benefício do Archon é que ele não só divide as sessões do agente de codificação para otimizar o contexto e a eficiência dos tokens, mas também nos permite fornecer diferentes capacidades em momentos diferentes, dependendo se estamos planejando, implementando ou validando algo. Por exemplo, temos todas essas etapas no fluxo de trabalho do Archon para gerar um vídeo. Planejamos o vídeo, o áudio, o texto e tudo mais, depois geramos, validamos e iteramos, se necessário.
+
+Certo. Então, vamos voltar e ver onde estamos agora. A entrega foi feita mais lentamente, sem efeitos sonoros. Acho que decidiu não usar efeitos sonoros, o que, honestamente, talvez seja melhor. E então temos uma correção de erro. Ok, então vamos dar uma
+
+olhada em como está agora. Aqui vamos nós. Seu agente de codificação de IA faz algo diferente a cada vez. O Archon muda isso. O Archon é um mecanismo de fluxo de trabalho de código aberto. Arquivos YAML
+
+que definem [risos] cada fase da codificação assistida por IA. Arquivos YAML que definem cada primeiro mecanismo de fluxo de trabalho. Arquivos YAML que definem cada. Ok, há algo antes do YAML que está realmente atrapalhando. Não consigo dizer o que é exatamente. Arquivos
+
+YAML que definem cada. Arquivos YAML que definem cada fase da codificação, planejamento, implementação e validação assistidas por IA, além da criação de PRs. Pense em arquivos Docker para codificação de IA. O mesmo fluxo de trabalho, a mesma sequência a cada execução. É algo diferente a cada vez. Eu vou...
+
+vou travar. Estou só esperando. Uh, ok, acho que está tudo bem. Ok, agora está tudo bem. Bem, eu odeio o Windows. Detesto ele
+
+agora. Não sei o que está dando errado. Este é um problema com o 11, não com o Archon ou com o meu fluxo de trabalho. Ok, tem algo bem antes de "YAML" que está dando muito errado. Então, quero que você dê uma olhada no script e descubra o que é. Além disso,
+
+agora está escrito "YAML" de um jeito estranho. E outra coisa: quando você diminuiu a velocidade, você a deixou muito lenta e aí eu perdi minhas inflexões de voz nem nada. Então, acho que...
+
+É, só volte a velocidade normal. para um, e acho que só a renderização adicional já vai ajudar com isso. Não sei, isso é geração de vídeo. Quer dizer, o Thomas me avisou. Quando você usa IA para gerar vídeos, ela faz um bom trabalho, mas chegar de 90% a 100% é a parte mais difícil. E
+
+essa é a limitação realista dessas ferramentas no momento. Meu fluxo de trabalho do Archon está funcionando perfeitamente. Hum, é mesmo o maldito M- dash que está estragando tudo? Que loucura. Que frustrante.
+
+Tipo [bufa] Ok, o fluxo de trabalho do Archon está funcionando perfeitamente. Quer dizer, talvez pudéssemos melhorar a validação. Porque isso talvez detectasse alguns desses problemas. É só a limitação que o 11 Labs faz. Hum, e não conheço nada melhor que o 11 Labs . Quer dizer, talvez o Cartesius
+
+seja melhor. Eu poderia tentar usar, mas provavelmente não faria isso para a transmissão ao vivo agora. Eu tenho Uma ideia. Vá ao 11 Labs e configure para exibir YAML. Bem, sim, outra coisa é que eu poderia simplesmente...
+
+Sim. Me dê a parte inicial do script para que eu possa colar isso no console do 11 Labs e ver como fica. [bufa] Então, vou copiar isso para lá. Boa ideia. Vamos fazer isso. Então, vou me preparar para
+
+colar... vou regenerar te. OK.
+
+Hum, vou apenas copiar. Ou espere. Isso nem sequer menciona YAML em lugar nenhum. Me deu a coisa errada. Ah, ok, o que você me deu aqui nem sequer especifica YAML em lugar nenhum. Por exemplo,
+
+preciso que você me forneça o texto, incluindo algumas frases antes e depois de onde eu escrevo YAML. E simplesmente envie como uma única saída aqui. Tipo, não tem cenas diferentes. Quero copiar e colar. Muito bem, vamos tentar isso.
+
+E a renderização foi refeita. Então, vamos verificar isso em um instante, mas... espere, não está escrito YAML aqui. O quê?
+
+O que é isso? Vamos lá, Claude. Que decepção. Bem, vamos tentar isso. Espere, pelo menos aqui está escrito YAML. Certo, então vou
+
+colar isso aqui. Vamos tentar. Archon é um mecanismo de fluxo de trabalho de código aberto . Os arquivos YAML definem cada fase da codificação, planejamento, implementação, validação e criação de PRs (Pull Requests) assistidos por IA. Pense em arquivos Docker para programação de IA. Mesmo fluxo de trabalho, mesma sequência em
+
+todas as execuções. Fico pensando se a API da ElevenLabs é pior por algum motivo, ou se talvez os parâmetros não estejam sendo usados ​​corretamente, porque aquilo soou muito bem. Interessante. Vamos ver. Vamos tentar isso agora. Vamos
+
+assistir ao vídeo. Seu agente de codificação de IA faz algo diferente a cada vez. Archon muda isso. Archon é um mecanismo de fluxo de trabalho de código aberto. Arquivos de configuração simples definem cada fase da codificação, planejamento, implementação, validação e criação de PRs (Publicidade de Requisição) assistidos por IA. Pense em arquivos Docker para
+
+programação de IA. Mesmo fluxo de trabalho, mesma sequência em todas as execuções. Combine etapas bash determinísticas com nós baseados em IA. Escolha entre 17 opções integradas. Agora o som está ótimo. Correção de problemas, revisão de relações públicas
+
+, desenvolvimento de funcionalidades e muito mais. Acione a partir da linha de comando (CLI), Slack, Discord, Telegram ou webhooks do GitHub. Licenciado pelo MIT, sem vínculo contratual. Instale em 30 segundos em archon.diy.
+
+Ok, quer dizer, meio que ficou preguiçoso e resolveu o problema simplesmente não dizendo YAML, mas ainda soa bem. Agora não há mais nenhum problema. Não há efeitos sonoros irritantes. Então, sinceramente, eu provavelmente faria mais ajustes nisso , mas vocês entenderam a ideia. É uma daquelas coisas realmente complicadas.
+
+Quer dizer, é a mesma coisa quando estou trabalhando com código Claude para gerar apresentações e diagramas, por exemplo. Quase chega lá, mas não completamente, e aí você tem aqueles pequenos detalhes irritantes. Mas, quer dizer, olha, aquilo foi muito bom. E é muito legal como conseguimos gerar tudo isso de ponta a ponta com um único fluxo de trabalho guiando tudo. E sim, reformular é porque descrever o Archon como um fluxo de trabalho YAML não é lá muito bom, já que algumas pessoas nem sabem o que é YAML ou, sabe, simplesmente não se importam. Certo? Então, se eu digo arquivos de configuração simples
+
+em vez de YAML, quero dizer que, no fim das contas, acho que isso é melhor. Então, eu aceito. Acho que conseguimos produzir um vídeo muito bom . Tivemos uma execução bem-sucedida com algumas iterações. Isso é muito legal. É muito bom. Isso foi
+
+muito melhor, incrível. Sim, agradeço. Acho que o fluxo de trabalho do Arkon fez um ótimo trabalho aqui. Muito legal. Também seria interessante testar a execução desse fluxo de trabalho com o GPT 5.5 ou algo semelhante
+
+. Bem, veremos. Com certeza vou continuar explorando isso e compartilhar mais informações, porque, como eu disse, tenho um vídeo no YouTube que será lançado na quarta-feira, onde falarei mais sobre o assunto. Hum, mas é como uma versão mais refinada do que estamos fazendo aqui, e depois provavelmente farei testes com alguns modelos diferentes. Vamos ver o que preparei para vocês, mas provavelmente haverá mais transmissões ao vivo sobre isso também. É
+
+um ótimo exemplo de como usar o Arkon. Uma das coisas em que tenho trabalhado e continuarei trabalhando é não apenas continuar aprimorando o Arkon, porque, é claro, é muito importante para mim continuar trabalhando neste projeto de código aberto e evoluindo-o. Temos muitos planos para Arkon. Mas também quero construir coisas com Arkon. Só para continuar dando exemplos, inspiração e orientações sobre como vocês podem usar o Arkon em seus fluxos de trabalho de programação de IA. E o
+
+principal motivo para fazer a transmissão ao vivo hoje é dar a vocês um exemplo de como usar o Arkon para algo que vai além da programação de IA. Bem, como eu disse, definitivamente existe a possibilidade de criar tudo aqui como uma única habilidade, mas isso seria muito instável, já que se trata de uma única sessão do agente de codificação, nada é determinístico. É por isso que você deve agrupar esses fluxos de agentes mais longos em um fluxo de trabalho Arkon. Sim, você poderia criar seu próprio sistema de automação fora do Arkon, mas é muito fácil criar fluxos de trabalho no Arkon porque é apenas um único arquivo e você tem a habilidade Arkon, então você simplesmente diz: "Ei, Arkon, eu quero criar isso, isso e isso como um fluxo de trabalho." E então ele simplesmente processará tudo, validará, você poderá executar e testar, e poderá reutilizar no futuro, inclusive em paralelo, porque o Arkon, como mecanismo de execução, também suporta árvores de trabalho isoladas.
+
+Então, sim. Isso é basicamente tudo que eu tinha para vocês hoje. Bem, esta transmissão ao vivo foi um pouco mais curta, mas ainda assim durou quase uma hora e meia. Bem , acho que vou iniciar a transmissão ao vivo aqui. Espero que vocês tenham gostado da demonstração ao vivo e da construção.
+
+Ótimas perguntas também. Agradeço a contribuição de vocês em relação a alguns dos pequenos contratempos que tivemos. Mas, no fim das contas, acho que isso acabou sendo um grande sucesso. Então, eu me diverti muito fazendo isso. Com certeza, haverá muito mais conteúdo no meu canal do YouTube e transmissões ao vivo sobre Archon, incluindo mais informações sobre a Dark Factory e outros casos de uso que descobri. Assim como os
+
+guias gerais que publicarei em breve sobre como usar o Archon e criar fluxos de trabalho com ele. E sim, também na comunidade Dynamis, na sexta-feira, vou realizar um workshop mostrando como usar o Archon com seu segundo cérebro. Então, sim. Com certeza, adicionarei um link para o Dynamis e para o especial de aniversário que está rolando agora na minha bio, caso você tenha interesse. Mas é isso. Tem muito mais conteúdo
+
+sobre Archon vindo por aí, porque é realmente meu xodó no momento, né? Este é como o meu grande projeto de código aberto, no qual estou investindo uma quantia absurda. Então, sim. Com certeza gostei. Aqui, vou colocar um link para o Archon. Se vocês
+
+ainda não experimentaram o Archon, deem uma chance com certeza. Você está aqui na transmissão ao vivo, você dedicou um tempo para conferir isso . Definitivamente, vale a pena tentar. É muito fácil de configurar, pois você pode usar o Cloud Code para configurar todo o Archon, incluindo a CLI, a interface web e tudo mais, em apenas alguns minutos. Então.
+
+Tudo bem. Legal, pessoal. Sim, agradeço por ter assistido ao conteúdo. Muito obrigado . Ah, muito obrigado a todos por estarem aqui.
+
+Espero que vocês tenham um ótimo resto de fim de semana e nos vemos em breve!

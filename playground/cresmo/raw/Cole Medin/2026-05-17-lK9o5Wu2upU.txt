@@ -1,0 +1,697 @@
+---
+video_title: "Pi is INCREDIBLE - Building a Custom Coding Agent Live"
+video_id: lK9o5Wu2upU
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=lK9o5Wu2upU
+video_date: 2026-05-17T03:42:53+00:00
+video_description: |
+  Pi is a minimalist coding agent with a tiny core - read, write, edit, bash - and everything beyond that is an extension you write or install. The pitch is "there are many agent harnesses, but this one is yours".
+  
+  Plus you can use it with pretty much any model like Kimi K2.6, MiniMax M2.7, Qwen 3.6, etc! Very relevant right now with the increasingly harsh rate limits from the frontier models.
+  
+  Today I'm building a full custom Pi setup from a clean install: picking models, installing extensions off npm and git, writing one from scratch, dropping in skills, and tuning prompt templates. By the end of the stream I'll have a coding agent that actually fits the way I work and doesn't cost an arm and a leg.
+  
+  Pi: https://pi.dev
+  Join Dynamous and master AI with 1,400+ other early AI adopters: https://dynamous.ai
+  
+  Livestreams Mon/Thu/Sat at 9 AM CT! New YouTube video every Wednesday at 7 PM CST.
+---
+Chegou a hora de mergulhar no universo de Pi. Este é um agente de codificação. Já existe há algum tempo, pelo menos alguns meses, mas só agora comecei a prestar muita atenção, principalmente por causa dos limites de taxa tão altos que outros agentes de codificação têm imposto ultimamente. Assim, a ideia por trás do Pi é que ele seja um agente de codificação minimalista. Ele foi projetado para ser um agente de codificação que você aprimora, em vez de pegar uma ferramenta enorme e complexa e tentar adaptá-la à sua maneira de programar. A ideia aqui é que
+
+nós adaptemos o Raspberry Pi aos nossos fluxos de trabalho, em vez do contrário . E se você acompanha meu canal, sabe que isso está totalmente alinhado com meus princípios, certo? Eu geralmente gosto de construir meus próprios sistemas porque assim posso realmente assumir o controle, moldá-los e personalizá-los de acordo com minha forma de trabalhar. Portanto, muito do trabalho que tenho desenvolvido com o Argon e, de modo geral, ministrado cursos sobre engenharia de chicotes elétricos recentemente, se encaixa muito, muito bem com o Raspberry Pi. Sinceramente, é meio louco que eu não tenha abordado isso mais a fundo até agora. Então, fiz um
+
+vídeo no meu canal onde usei o Raspberry Pi com o Argon e mostrei a integração que construí com o Pi e o Argon. Então, se você der uma olhada nos provedores que suportamos no Argon, deixe-me explicar melhor no arquivo leia-me aqui. Bom , aí está. Certo, então, para clientes de assistentes de IA, oferecemos suporte ao Claude, Codex e Pi. O Argon é a minha ferramenta de código aberto que ajuda você a construir seus próprios chicotes elétricos. Isso está muito alinhado
+
+com o Raspberry Pi, porque ambos se baseiam em criar seu próprio processo, construir seus próprios fluxos de trabalho, em vez de simplesmente usar algo pronto que pode ser bem difícil de trabalhar . Então, sim, vou fazer várias coisas com o Raspberry Pi na nossa transmissão ao vivo de hoje. E pretendo manter a transmissão bem informal no geral. Acho que uma coisa que tenho observado nas transmissões ao vivo que venho fazendo nas últimas semanas é que tenho me esforçado demais para explicar tudo detalhadamente enquanto estou fazendo. E assim, o fluxo de água fica um pouco lento. Então, acho que meu conteúdo
+
+mais extenso, sabe, o conteúdo do YouTube, os vídeos que publico, é onde eu realmente deveria explicar as coisas. Mas aqui, eu só quero construir uma vida com você. Então vamos explorar o Pi. Obviamente, já explorei bastante o programa, principalmente durante a integração com o Arkon e os testes iniciais, mas nunca criei uma extensão personalizada antes. Essa é uma das coisas que eu quero fazer com o Pi.
+
+E eu não explorei as diferentes extensões disponíveis tanto quanto poderia. E é isso que também faremos. Então, nesta transmissão ao vivo , vamos ter uma visão geral super completa de como o Raspberry Pi funciona, como podemos construir em cima dele e aproveitar ao máximo o fato de ser uma plataforma de programação minimalista. E outra coisa que vou testar com isso é rodar o Raspberry Pi com alguns modelos diferentes. Outro grande diferencial do Pi é que ele oferece suporte a uma infinidade de provedores diferentes, sem necessidade de configuração adicional . Assim, você não
+
+precisa recorrer a soluções alternativas, como o código Claude, para usar sua assinatura Kimmy ou Minimax. Podemos usar o Qwen através do OpenRouter. Existem muitas possibilidades de modelos que podemos usar. Também podemos usar nossa assinatura do Codex. Até o momento, tenho usado o Raspberry Pi principalmente dessa forma. Tecnicamente, você pode
+
+usar sua assinatura Anthropic Claude Pro ou Max , mas isso viola os termos de serviço da Anthropic. Portanto, eu não recomendo de forma alguma fazer isso com o Raspberry Pi. Estou surpreso que o arquivo readme deles ainda diga que isso é possível. Bem, você também pode usar o GitHub Copilot, se preferir. Eu sei que é mais uma ferramenta voltada para empresas, mas sim, no que diz respeito às chaves de API que você pode configurar, existem muitos provedores disponíveis. E a
+
+Kimmy, para programação, é a que eu quero testar aqui. Ah, Kimmy, para console de codificação. Eu ainda não tenho isso configurado, mas tenho uma assinatura da Kimmy que queria testar usando no Raspberry Pi. Então, vamos experimentar isso também. Eu tenho o plano de US$ 40 por mês com a Kimi porque assinei quando estava trabalhando na Dark Factory, que, aliás, terá mais transmissões ao vivo em breve, mas agora eu só queria passar o sábado aqui brincando com o Raspberry Pi.
+
+Aliás, talvez eu até mude a execução do Dark Factory para um Raspberry Pi, porque assim consigo adaptá-lo aos fluxos de trabalho que preciso para o Dark Factory, que é essa base de código autoevolutiva que tenho abordado mais recentemente. Mas sim, existem muitos modelos diferentes que podemos adicionar. E se olharmos para as extensões do Raspberry Pi, eles têm praticamente um mercado inteiro aqui. Acho que esta é a página "Não, não esta". Acho que é o catálogo de pacotes. Então, eles
+
+têm uma espécie de mercado. É algo parecido com o marketplace de fluxos de trabalho Arcan, no qual eu estava trabalhando em algumas transmissões ao vivo recentemente. Assim, todas as extensões do Pi que as pessoas criaram para si mesmas também têm a oportunidade de serem compartilhadas. Portanto, com o Raspberry Pi, você realmente não obtém tantos recursos prontos para uso quanto com o código Claude. Existem certos itens que não são enviados, como subagentes, por exemplo.
+
+Eles não vêm instalados nativamente com o Raspberry Pi porque ele foi projetado para ser bem minimalista, e você instala ou adiciona os componentes que precisa. Assim, existe, por exemplo, uma extensão para subagentes Pi . Adaptador MCP, que permite o acesso à internet. Na verdade, existem algumas opções diferentes para isso. Então, tem apenas alguns com os quais quero brincar aqui, e definitivamente existem alguns muito, muito interessantes que podem levar um tempo para configurar e colocar em funcionamento, mas quero experimentar pelo menos um ou dois hoje, e depois criar minha própria extensão também.
+
+Então, sim, esse é basicamente o plano para a transmissão ao vivo: explorar bastante o Raspberry Pi juntos. Deixa eu dar uma passadinha no chat aqui e ver o que as pessoas estão dizendo. E aí , Dynamis? Ei, Shawn. Que bom te ver por aqui. Que
+
+bom te ver também, Eric. Que bom que você vai fazer essa sessão. Obrigado, James. Sim, estou animado com isso. Principalmente porque tenho estado bastante frustrado com a Anthropic ultimamente. Tipo,
+
+não me entendam mal, eu ainda adoro Claude Code, mas, cara, meus limites de leitura têm sido difíceis. Eles parecem estar melhores esta semana em comparação com a semana passada. Por algum motivo, as coisas estão melhorando em comparação com a semana passada, quando eu estava realmente muito pessimista. Atingi meu limite de taxa em cerca de 3 dias, tipo meu limite semanal em 3 dias. Eu nunca cheguei nem perto disso antes.
+
+Mas eu acho que a indústria está caminhando para um ponto em que os modelos estão ficando cada vez mais caros. Essas assinaturas com as quais fomos tão bem servidos inicialmente com a Codex e a Anthropic estão piorando com o tempo, tanto na qualidade dos modelos gerados quanto na quantidade de tokens que recebemos semanalmente ou dentro dos limites de 5 horas. Então, acho que haverá uma grande mudança no setor, que já está começando a acontecer, em que usaremos apenas os modelos mais poderosos para determinadas partes do nosso ciclo de vida de desenvolvimento de software. Por exemplo, você pode usar o Opus para criar um plano bem abrangente, mas toda a sua pesquisa, implementação e validação serão feitas usando modelos menores, mais baratos e mais rápidos. Nesse caso, o mais importante é que seja mais barato . Assim, o Pi é excelente porque é
+
+realmente esse agente minimalista que nos permite usar qualquer modelo que possamos imaginar. Podemos usar a Kimmy K 2.6, por exemplo, como eu vou usar na transmissão de hoje. Mas também podemos moldar o fluxo de trabalho e otimizar para que, mesmo usando um modelo mais fraco, ainda possamos obter resultados muito bons. E essa é a ideia da engenharia de chicotes elétricos: o chicote é, na verdade, mais importante do que o modelo quando se trata de obter bons resultados com a assistência de codificação por IA. E,
+
+ultimamente, temos sido muito privilegiados por poder usar o Opus ou o GPT 5.4 para tudo. Mas quando chegar a hora em que isso não for mais realista, ainda podemos obter resultados tão bons quanto se trabalharmos na engenharia do chicote de fios. E é exatamente nisso que eu quero que meu canal se concentre daqui para frente, pelo menos no futuro próximo. E então eu acho que o Pi, pelo menos agora eu quero explorar a possibilidade de que ele seja a ferramenta principal que eu vou usar para a engenharia de chicotes elétricos. Conforme
+
+vou testando diferentes modelos, e basicamente o que eu quero fazer, e acho que isso é uma boa ideia para conteúdo nos próximos meses, é tentar aprimorar o Raspberry Pi a ponto de conseguir resultados de nível Opus com o Kimi K 2.6 de forma confiável. Ou talvez, você sabe, alguns outros modelos como Mini Max ou Kwen ou algo assim. Quer dizer, estou aberto a esse modelo, mas quero algo barato, algo de código aberto que eu possa usar através do Open Router ou de uma assinatura como a do Kimi. E então eu posso testar, porque tenho uma base de código muito complexa. Eu tenho Arkon. Então,
+
+já estou trabalhando bastante na engenharia de interfaces para lidar com problemas e solicitações de pull request, e continuo aprimorando o Arkon, como tenho mostrado nas transmissões ao vivo. Então, por assim dizer, tenho muita carne para canhão . É como ter bastante combustível para testar esses fluxos de trabalho enquanto trabalho no chicote de fios e faço comparações entre o Opus e alguns desses outros modelos à medida que construo as coisas com o Raspberry Pi. Então é isso que eu estou tentando alcançar aqui. Tudo bem.
+
+Então, vamos lá, vou mostrar o que já configurei no meu ambiente. Então, eu já tenho o Raspberry Pi instalado, obviamente, porque já andei mexendo nele. Mas como eu disse, não configurei para usar minha assinatura Kimi. Eu não tenho muitas extensões instaladas. Tipo, eu experimentei algumas delas que mostrei nos fluxos de trabalho do Arkon naquele vídeo que fiz para o YouTube. Mas
+
+quero experimentar outras. Tipo, essas são as que eu tenho agora. E então quero tentar criar minha própria extensão pela primeira vez. E a ideia por trás do Pi é que ele possui um raciocínio meta muito bom. Parece que entende como evoluir por si só . Então, se eu disser que quero,
+
+sabe, nossa, não consigo digitar hoje. Quero trabalhar no Wow, trabalhar em uma extensão do Pie. Isso daria início a uma conversa em que a empresa analisaria sua própria base de código internamente, e acho que existe até uma habilidade integrada para isso. Não tenho certeza exatamente de como explicar o processo de evolução em si. Então, a torta sabe como te guiar através de sua própria evolução.
+
+Então, é isso que eu quero tentar. Bem, na verdade, a primeira coisa que eu quero fazer é configurar o Pie para usar minha assinatura do código Kimmy. E como eu disse, esta transmissão ao vivo é apenas uma exploração casual em conjunto. Vou tentar algo que não sei bem se vai funcionar. Mas vou usar a minha voz Aqua aqui, o meu recurso de fala para texto.
+
+E vou aproveitar isso para meio que despejar meus pensamentos. Vou fazer isso algumas vezes durante a transmissão. Então, vou entrar aqui e dizer que quero alterar o agente de codificação que você está usando agora para usar minha assinatura do Kimmy Code em vez do Codex. É isso que estou usando agora. Então, eu não sei se você tem acesso à sua própria documentação ou algo assim, mas quero que você dê uma olhada em como eu poderia fazer isso. Ah, e isso também é
+
+útil para mim, para ver de forma geral como ele consegue raciocinar sobre seu próprio processo. Então, vejamos. Diz que está analisando a torta. Hum, ok. Oh sim. OK. Portanto, ele
+
+tem acesso para ler sua própria documentação. Legal. Então, isso deve ser fácil. E aí eu já tenho minha chave de API pronta para usar. Então, posso simplesmente copiar isso. Deixa eu copiar
+
+isso daqui a pouco. Mas eu já deixei isso pronto em outro monitor aqui, para quando ele me disser onde preciso colocar minha chave de API. Então, é um pouco diferente da Anthropologie com a assinatura da Kimmy. Você ainda possui uma chave de API. Bem, assim como acontece com a assinatura da Anthropic e do Codex, você simplesmente entra na sua conta. Então, você usa
+
+o OAuth do Google ou algo parecido. Então, com o Kimmi, você precisa de uma chave de API, mas não é como se eu pagasse por token como na maioria das APIs. Você sabe o que eu quero dizer? Então, eu ainda consigo usar minha assinatura. Você pode ver que tenho meu limite de 5 horas e meu consumo semanal, assim como você teria com o código Claude, por exemplo. Acho que é assim que
+
+funciona a assinatura do MiniMax também. Hum, eu não quero comprar isso agora, mas é outro que tenho interesse em testar. Eu só quero fazer muitos testes com esses modelos menores e mais rápidos para ver que tipo de resultados consigo. OK. Sim, o Raspberry Pi pode usar o Kimmi, mas a documentação mostra uma limitação importante.
+
+Não, não como um provedor de assinatura de login. Sim, então acho que não entende muito bem. Veja, o sistema acha que vai ser pagamento por token, mas não é. Se a sua assinatura lhe fornecer uma chave de API, você poderá usá-la diretamente no Raspberry Pi. Configuração mais fácil. Vamos
+
+ver. Se você quer que Kimmi seja sua opção padrão, vamos ver. Adicionar um provedor personalizado. Sim, eu quero que você atualize o arquivo models.json e me passe o caminho para que eu possa adicionar a chave da API lá. Além disso
+
+, na verdade, acho que deveria usar meu recurso de ditado por voz aqui. Além disso , mesmo que eu precise configurar uma chave de API, acredito que esteja usando minha assinatura em vez de pagar por token. Então, quero que você confirme isso com a Kimmi e também pesquise na internet. Porque eu acho que dei isso para a extensão de pesquisa na web. Certo? Não.
+
+Certo, então pode ser que não consiga pesquisar na web até que eu instale essa extensão. E talvez eu faça isso agora mesmo. Isso poderia ser muito útil. Então, deixe-me acessar o catálogo de pacotes. Se eu acessar o painel de controle do Raspberry Pi pela web, verá que é bem interessante. Pesquisa na web,
+
+obtenção de URLs, clonagem de repositórios do GitHub, extração de PDFs, compreensão de vídeos do YouTube e análise de vídeos locais. Nossa, isso é muito legal. Literalmente, tudo o que você precisa fazer para instalar isso é executar o comando `pie install` e depois o ID do pacote NPM. Então eu posso copiar isso porque acho que vai dar errado. Sim, sim, veja, para fazer pesquisa na web, isso é extremamente improvisado. Criou
+
+scripts em Python para, basicamente, fazer requisições, como enviar solicitações para a web. Isso não é o ideal. Tudo bem. Vou deixar rodar agora mesmo. Bem, na verdade, enquanto isso, o que eu posso fazer é simplesmente instalar isso. Então,
+
+instale o NPM e acesse o site do Pie. Assim, pelo menos na próxima sessão, terá acesso a isto. Dá uma olhada nisso. Então, se eu fizer "pie", vai demorar um pouco para carregar. Ok, então, ocorreu um erro porque o processo de configuração ainda está em andamento , mas de qualquer forma, podemos ver que a extensão agora tem acesso à web do Pie. Então, se
+
+eu disser algo como "pesquisar na web as últimas notícias sobre o código Claude", agora ele deveria ser capaz de criar algo além de um simples script Python. Sim, aí está. Agora sim, agora está bem melhor. Essa também é uma demonstração rápida e interessante de como é fácil estender o Pie, desde que você confie na extensão. Outro ponto a ter em mente é que este mercado não é oficialmente verificado. É preciso ter
+
+cuidado com o que você instala. Acho que, neste caso, estou apenas confiando no fato de que, sabe, tem quase 45.000 instalações por mês, então provavelmente é bom, porque as pessoas já teriam relatado se não fosse. Pelo menos, é o que espero. Veremos.
+
+Tudo bem. Sim , foi muito eficiente. Isso também foi super rápido. Outra coisa muito legal sobre o Pie é que ele é muito mais rápido do que qualquer outro agente de codificação pesado disponível . Uma das vantagens de ser minimalista, além de ser altamente personalizável, é também ser rápido.
+
+Então, conseguimos a nova visualização do agente no código Claude. Uh {barra} gol foi adicionado. Sim , parece muito preciso. Legal. OK.
+
+Então, agora ele criou o arquivo models.json. Tem um campo para eu colar minha chave de API. Não posso confirmar a afirmação de que o Pi consumiria sua assinatura do Chemix em vez da cobrança da API. Bem, quer dizer, eu sei que vai dar certo . Eu só pensei que
+
+encontraria isso. Provavelmente não funcionou simplesmente porque não tinha a ferramenta de busca na web adequada . Ok, então o próximo passo é abrir este arquivo e adicionar minha chave de API. Então, vamos em frente e fazer isso. Obviamente, vou fazer isso fora das câmeras, porque lá está minha chave de API.
+
+Então, deixe-me abrir isso. Minha outra câmera, ou melhor, continuo dizendo "câmera", meu outro monitor, nossa. Uh model.json Ok. Então, deixe-me pegar minha chave.
+
+Tudo bem. Onde está minha chave do Chemix? Aqui está. Ok, entendido. E depois cole.
+
+Tudo bem. OK. Bom. Feito. Agora verifique. Tenho curiosidade em saber se será
+
+possível verificar ou se terei que reiniciar a sessão. Hum [risos] Uau, simplesmente... simplesmente... simplesmente escreveu
+
+a chave inteira em texto simples. Bom, que pena. Então, [risos] eu vou ter que... eu vou ter que
+
+apagar a chave agora mesmo. Isso é hilário. [risos] Uau. Muito bem, vou criar uma nova chave de API. Factory V2 Isso é insano. Porque acabei de
+
+compartilhar isso com o mundo. Ok, uh, uh, pronto. Exclua a chave antiga. Excluir. Ok, foi apagado. Então, vocês
+
+não podem usar isso para nada agora. Mas, nossa, isso ficou bem claro para o mundo todo ver. Muito obrigado. Eu te amo muito, Pi. Quer dizer, acho que qualquer agente de codificação poderia ter feito isso. É engraçado como simplesmente não tem problema
+
+. Tudo bem. Muito bem, isso é ótimo. Então, conseguimos redefinir a chave do Raspberry Pi. Por que colei a chave na câmera? Eu
+
+não colei isso na câmera. É que... Pi Pi mostrou isso quando... quando leu.
+
+[risos] Alguém criou uma ferramenta bacana para ocultar informações privadas no Raspberry Pi. Isso é muito legal. Sinceramente, eu gostaria de usar isso agora mesmo . [risos] Ah, cara. Tudo bem.
+
+Cole, eu adoro a comunidade Dynalist. Agradeço muito. Muito obrigado . E agradeço também a doação . Muito generoso da sua parte.
+
+Tudo bem. OK. Então, enfim, eu preciso... preciso reiniciar isso.
+
+Que pena. Então, hum, ok. O Kimiko atual não é aceito pela API do Kimiko. Vamos ver. Ah, aparentemente preciso editar o arquivo auth.json agora. Deixe-me abrir
+
+isso. Chave Kimiko Ok. Então, configurei a chave. Então, vamos lá, vamos tentar isso. Vou tentar uma nova sessão aqui. Vou
+
+limpar. Vou voltar a estudar o Pi. E então farei um modelo {slash}. Posso, Kimiko? Tenho todos os modelos Gemini. Ok, sim,
+
+sim, Kimmi pela programação. Oi. Vamos ver se isso funciona. Em vez de perguntar, vou testar eu mesmo. Ok, sim, sim, então está tudo bem. Estamos bem.
+
+Ah, muito legal. Então, nossa Kimmi está trabalhando agora. Foi apenas uma pequena falha boba em que mostrou minha chave. Então, ok, voltando ao navegador . Já criei o novo. Você
+
+não consegue ver a coisa toda. E, se eu olhar o histórico de uso, devemos ver algumas solicitações que foram recebidas. Pronto. Sim, sim. Certo, legal.
+
+Então, está funcionando. Estamos usando Kimmi.
+
+Graças a Deus. Ah, isso foi irritante. Então, enfim, nós conseguimos resolver isso. Então, agora estamos usando a Kimmi, o que é muito legal. Que legal. Então, também não preciso me preocupar
+
+em ultrapassar meu limite de taxa antropogênica para nossa transmissão ao vivo de hoje. Muito bem , então vou fechar esta torta aqui. Não preciso mais deste. Então, agora estamos trabalhando na Kimmi. Temos uma janela de contexto de 262.000 tokens, o que é muito bom. E
+
+agora, qual é o próximo passo? Bem, na verdade, em seguida eu quero experimentar algumas extensões aqui. Então, voltando ao mercado, havia outra conversa que eu estava tendo com meu segundo cérebro, apenas me preparando para nossa transmissão ao vivo de hoje. Hum, quais extensões eu queria experimentar hoje? Eu esqueci o que era, porque eu estava tipo fazendo um trabalho com... digamos,
+
+meu segundo cérebro, sabe, pensando em algumas extensões legais para experimentar. Então, vou apenas pedir um lembrete rapidinho. Ok, então, extensão do agente Pie e depois extensões do Pie. Ah, ok, vamos experimentar. Então, vou fazer esta primeiro.
+
+O que tudo isso me proporciona? Muito bem, então vou voltar para a minha torta. E então espere, tenha paciência. Deixe-me verificar uma coisa. Certo, aqui está.
+
+Legal. E cole isso aqui. Certo, agora preciso fazer isso em um novo terminal. Então, instale a extensão do agente Pie. E então veremos.
+
+O que é isso? Ok, então ainda não tem o resumo. Então, vou esperar por isso. Vamos instalar isso. Então, essa extensão tem muitas coisas diferentes integradas, e foi por isso que a escolhi.
+
+Então, se formos falar de torta agora, vamos ver. Certifique-se de que esteja instalado. Aliás, este é apenas um dos que encontrei no mercado. Qual era o nome mesmo? Extensões, uh, extensão do agente torta.
+
+Era algo como "nós conseguimos o modo lento", " notificar", "portas de permissão", "questionário", " linha de status". Há muita coisa que foi instalada. Então, por exemplo, se eu pesquisar por " linha de status", deveríamos conseguir encontrar exatamente aquela que eu acabei de instalar. Acho que é isso. Um rodapé fixo de duas linhas para gráfico de pizza com contexto de pensamento modelado, obtendo token ou obtendo árvore de trabalho e indicadores de habilidade.
+
+OK. Sim, com certeza podemos ver que temos uma linha de status atualizada aqui. Então, isto está funcionando. Isso é bom. E o que mais temos aqui? Esconder,
+
+modo lento, notificar. Vou voltar ao meu segundo cérebro e ver se temos um resumo. Vamos ver. O adaptador Pie MCP também é útil. Sim, caso eu queira usar servidores MCP em 100% dos casos. Eu não estava realmente planejando
+
+usar nenhum na transmissão ao vivo de hoje, mas, talvez, se tivermos tempo. Veremos até onde chegamos. Ah, ok . Hum, hum , vamos ver. Faça-me um resumo. Assim, a
+
+linha de status nos fornece a barra de status. Então, nós já vimos isso. Portão de permissão, portão de comando de perigo configurável. Então, eu realmente adorei isso. Normalmente, com o Claude, você precisa fazer isso com hooks, mas ter isso como uma extensão integrada é realmente ótimo. Portanto, ser capaz de controlar as
+
+ações que não queremos que nosso agente Pi execute. O modo lento é uma etapa de revisão para chamadas de ferramentas de edição de gravação. Aprovar ou rejeitar a diferença antes que ela seja gravada em disco. Uh, esconder, salvar, restaurar, editor de texto. Ok, notifique a área de trabalho quando o agente terminar. Isso é muito legal.
+
+Bem, na verdade não conseguimos ver isso porque, quando faço uma transmissão ao vivo, o OBS desativa as notificações do Windows, mas enfim, é apenas uma das muitas extensões que temos aqui. Uma ferramenta de múltipla escolha para o mestrado em Direito (LLM) com interface de usuário em abas. Isso é muito legal. É algo parecido com a ferramenta de perguntas ao usuário do código Claude. Como você pode ver, muitas dessas extensões estão criando funcionalidades que já existem em outras ferramentas como o Claude Code e o Codex, mas o grande diferencial é a possibilidade de personalização.
+
+Poderíamos até mesmo construir em cima dessas extensões, se quiséssemos. Ah, o comando `fetch dur- env` carrega automaticamente as variáveis ​​de ambiente `envrc` em cada chamada do bash. Ok, isso é estranhamente específico. Obrigado por exibir o filtro e ativar/desativar todas as extensões dos seus pacotes instalados. Ok, tudo bem. Assim
+
+como a qualidade de vida. E então, faça o mesmo para a outra lista de extensões, porque havia aquela segunda também. Bem, isso nos fornece um painel de controle com widget de token e custo em tempo real, pré-visualização visual de arquivos de artefatos e ferramenta de perguntas interativa. Acho que não preciso instalar esse também, principalmente porque este já está instalado. Mas vamos testar isso agora mesmo.
+
+Então, eu vou entrar aqui e dizer, tipo, me façam algumas perguntas sobre, hum, diferentes modelos que eu quero experimentar com o Raspberry Pi. Use a extensão. Espero não precisar dizer explicitamente para usar a extensão, mas só quero testar aqui para garantir que o que instalamos esteja realmente carregado. Ok, no entanto, a extensão provavelmente se refere ao planejamento de dados. Ok, então acho que houve uma confusão aqui.
+
+Nenhuma dessas opções parece ser diretamente aplicável. Bem,
+
+sim, eu queria usar um questionário. Acho que está tudo muito confuso. Vou editar aqui apenas para usar o questionário. Tudo bem. É uma pena que eu tenha que...
+
+Ok, então agora está funcionando, mas acho que o Pie por si só não entendeu completamente as extensões às quais tenho acesso, o que é meio lamentável. Então talvez haja algo nas minhas regras globais onde eu precise especificar, por exemplo, quando quero que me façam perguntas; estou me referindo especificamente ao uso da extensão de questionário. Ok, sim, isso realmente parece ótimo. Isso parece exatamente com código na nuvem. Quais fornecedores de LM você tem mais interesse em experimentar?
+
+Vou usar o OpenRouter e o Kimmy e o MiniMax por meio da assinatura. Muito bem , prioridade máxima. Qual é a sua melhor qualidade de código? Assistência geral em codificação. Na verdade, todas essas.
+
+Compare vários modelos lado a lado. OK, bom. Sim, isso está funcionando muito bem. Muito legal.
+
+Tudo bem. Vamos ver. Vamos ver o que mais. Estou apenas dando uma olhada rápida no chat. Hum, eu estive mergulhando na fábrica escura. Estou
+
+curioso para saber como uma torta poderia ajudar. Então, o motivo pelo qual o Pie pode ser realmente útil para a Dark Factory é porque eu tenho um fluxo de trabalho muito específico para a forma como o agente de codificação evolui a base de código, certo? Eu tenho um método específico para priorizar meus problemas, lidar com cada um deles e validar a solicitação de pull request. Depois, realizo testes de regressão semanais para garantir que o agente de codificação não tenha causado problemas significativos com todas as alterações que está fazendo. Então, acho que o Pi poderia se adaptar melhor ao meu fluxo de trabalho, em vez de eu simplesmente tentar forçar o código do Claude a percorrer tudo. Quer
+
+dizer, não tenho uma ideia super concreta de como isso vai ser na prática , mas uma das coisas que quero explorar hoje é criar uma extensão personalizada para o Raspberry Pi, basicamente uma extensão para gerenciar o Archon, e acho que isso também seria muito legal para a Dark Factory. Tudo bem. Pi versus código J. Na verdade, nunca ouvi falar de código J. Ah, vamos lá. Sim, vou pesquisar rapidinho no Google. Tenho
+
+curiosidade. Código J. Eu nunca ouvi falar disso. Uma estrutura de agente de codificação. OK.
+
+Ah, então isso foi lançado recentemente, né? Uma ferramenta de codificação de última geração projetada para elevar o nível de habilidade, ideal para fluxos de trabalho com múltiplas sessões, personalização infinita e alto desempenho. Então, funciona, quer dizer, parece semelhante. A proposta de valor inicial está no topo do repositório. O código Uh J foi desenvolvido para ser o mais eficiente possível em termos de desempenho e recursos.
+
+Cada métrica é otimizada ao máximo. OK. Um código J, claro. Então, tipo, ok. Portanto, você pode ver que o Pi é o segundo melhor, mas aparentemente o código J é melhor com os embeddings locais desativados.
+
+Não me importo muito com a velocidade. É o seguinte. Agentes de codificação, a maior preocupação para vocês é com a qualidade do resultado, acima de tudo, e depois, obviamente, com o gerenciamento de tokens e o custo. Mas eu não me importo muito com a velocidade. Por exemplo, quando tenho um fluxo de trabalho que quero que meu agente de codificação execute, só quero que ele faça o melhor trabalho possível e, nesse caso, eu simplesmente o executo e esqueço. Tipo,
+
+eu envio para escrever o plano e/ ou fazer a implementação, validar o pull request, seja lá o que for. E eu realmente não me importo com quanto tempo leve, contanto que não seja algo absurdamente longo que consuma uma tonelada de tokens. Mas é, o tempo até o primeiro frame para codificação de IA simplesmente não importa para mim. Eu realmente não me importo. Hora de começar a inserir dados, tipo, quem se importa se são 50 milissegundos em vez de 500? Se for menos de um segundo,
+
+então está tudo bem. Aparentemente, o código de Claude dura 3 segundos e meio , o que é uma loucura. Então, quero dizer, isso importa até certo ponto. Eu aprecio isso, mas não sei se me importaria tanto com uma ferramenta que se concentra apenas em proporcionar a experiência de usuário mais rápida. Eu só quero os melhores resultados, certo?
+
+Mas é interessante. Tudo bem. Ah, existe um comando para recarregar extensões. Oh, tudo bem. Que bom saber disso. Com
+
+certeza usarei isso quando instalar mais coisas, em vez de simplesmente reiniciar a sessão. OK. Legal. Vamos ver qual foi o resultado . Diz que o Soneto 4 de Claude é o melhor.
+
+Eu realmente não quero usar o Sonnet agora, mas, fora isso, Deep Seek Chat, Gemini 2.5 e Kimiko 2. Parece que... É
+
+, eu não gosto muito da pesquisa que ele faz aqui, porque, quer dizer, a culpa é minha, já que preciso ser mais específico sobre os modelos, mas ele está analisando alguns modelos bem desatualizados . Assim como Kimiko 2, que obviamente é muito mais antiga que Kimiko 2.6. E nós temos Gêmeos 3, então por que estão falando de Gêmeos 2.5? Enfim, eu
+
+estava apenas explorando a extensão do questionário. Eu não estava realmente me importando com os resultados que obtivemos aqui. Então, tudo bem. Recarregar. Sim , tudo bem. Então, este é o comando.
+
+Recarregue as configurações de teclas, extensões, habilidades, comandos e temas. Ok, que bom. Sim, isso é conveniente. Com certeza vou usar isso daqui para frente. Ok, legal. Então,
+
+o que mais temos aqui? Uma das coisas que eu queria tentar fazer era executar um fluxo de trabalho Archon com o próprio Raspberry Pi. Então, eu queria perguntar aqui, hum, você tem acesso a essas habilidades? Porque eu realmente não sei, tipo, dentro do repositório Archon, eu tenho minhas habilidades na pasta "habilidades do Claude". Não sei se isso é compatível com o Raspberry Pi ou se eu precisaria movê-lo para outro lugar.
+
+É, parece que não sabe. E acho que isso faz sentido, porque se eu olhar aqui em cima, ou para onde foi? Sim, funciona. Podemos ver que não está carregando nenhuma das habilidades da pasta .Claude. Portanto, só tem acesso a
+
+estes. Então, basicamente, vou apontar para isto. Vou copiar o caminho completo e dizer: "Se eu quiser que você também tenha acesso a essas habilidades , o que precisamos fazer?" Porque eu quero que ele tenha acesso à habilidade Arconte. Na verdade, isso realmente chamou a atenção para algo aqui. Espere, o que é isso? Está
+
+completamente dito: "Habilidades em Pi são arquivos .MD e habilidades em Agent são habilidades em Claude." Ah, então aparentemente, deveria ser capaz de ler isso automaticamente, mas não conseguiu. Então, isso é meio estranho. Hum, ok, eu me perdi no terminal porque, por algum motivo, ele me levou direto para o topo. Ah, ok, então o que
+
+estava escrito aqui? "O Pi carrega em sua janela de contexto. Eu não uso essas. Eu uso o sistema de habilidades definido acima." OK. OK. Ah, ele continua me trazendo de volta para
+
+o topo do meu terminal. Então, acho que vai... na verdade, olhando a documentação, eles falam sobre a capacidade do Raspberry Pi.
+
+Ok, então deveria... deveria pesquisar aqui, mas por algum motivo não está. Não possui mecanismo de carregamento automático de habilidades .
+
+Ah, espera aí, sério? É... por que diz que não possui um sistema automático de carregamento de habilidades? Isso é
+
+meio estranho. Hum. OK. Leia a descrição da habilidade de desenvolvimento Arconte e me diga o que ela abrange. Crie um fluxo de trabalho em formato de pizza que utilize a habilidade de liberação.
+
+Certo, mas eu pensei que o Pie tivesse carregamento automático de habilidades. Ou precisamos de uma prorrogação para isso? E qual é a sua lista atual de habilidades ? Porque acho que talvez haja alguma configuração global do Pie que precisamos definir aqui. Eu realmente pensei que tivesse carregamento automático de habilidades. Vou voltar ao
+
+repositório e dar uma olhada. Analisamos as habilidades. Certo, então foi invocado através do nome da habilidade. Colocado em Ok, então sim, foi uma alucinação. Não há suporte para habilidades do tipo Claude (ponto), mas há suporte para habilidades do tipo agentes (ponto/barra) .
+
+Então, teoricamente, se pegássemos a pasta "dot Claude", eu simplesmente tentaria isso. Vou pegar a pasta ".Claude", copiar literalmente tudo e depois colar como uma pasta ".agents". E então, se eu iniciar uma nova sessão aqui, sei que poderia fazer {slash} reload, mas os agentes estão em execução no momento, então vou apenas fazer pie em um novo terminal aqui. Então temos
+
+agentes pontuais. Sim , tudo bem. Sim, sim, agora está tudo bem. Como você pode ver, agora ele possui a habilidade Arconte. A descrição é extensa. Ok, não me
+
+importo muito com esses avisos. Então, vou dizer algo como usar a CLI do Archon para executar o fluxo de trabalho do Archon Assist, resumindo assim o arquivo Leia-me do Archon. Quer dizer, é só um teste aleatório que eu quero fazer aqui, mas quero mesmo ver como ele funciona no fluxo de trabalho do Archon.
+
+Bem, não sei por que decidi fugir. Ok, vamos lá, vamos correr. Yeah, yeah. Ok, está funcionando. Está funcionando.
+
+Bom. Isso é muito legal. Quer dizer, parece muito com usar o Codex. Assim como executar um Raspberry Pi, toda a experiência do usuário lembra muito o Codex. Não é ruim. No
+
+geral, é muito bom. Hum, não sei por que decidi ler o arquivo "leia-me" primeiro. É meio aleatório, mas pelo menos está fazendo o que eu mandei. Sim, veja, continua dizendo que o Pi já descobre automaticamente o diretório .claud/skills. Então,
+
+acho que a Kimmy está tendo alucinações. Eu realmente não sei, porque sabemos com certeza que não, senão esta conversa teria esses avisos e, obviamente, isso também estaria escrito no arquivo "leia-me" . Porque se eu pesquisar por .claud vai aparecer. Sim, não há nenhuma menção a isso no arquivo leia-me. Ou se eu for ao doc
+
+skills.md... Ah, ok. Então, você precisa alterar isso. Você
+
+precisa adicionar essa alteração no arquivo settings.json. Ok, mas na verdade é muito legal que eles tenham isso. Então, se você não quiser renomear ou reorganizar os arquivos, pode alterar a configuração do Raspberry Pi para que ele carregue automaticamente a partir dali. Assim, você não precisa renomear os arquivos para .agents e
+
+depois manter uma cópia para quando quiser usar o Claude novamente. Você ainda pode ter tudo em uma pasta .claud, que é provavelmente o que eu faria, porque, novamente, o principal que quero começar a explorar é usar o código Claude para todas as tarefas de raciocínio mais complexo, como qualquer planejamento que eu esteja fazendo, e então simplesmente delegar todo o resto para o Raspberry Pi para que eu possa usar modelos mais simples como o Kimmy. É isso que eu pretendo alcançar aqui. Então, deixe-me voltar ao meu terminal.
+
+E vejamos. Assim, o fluxo de trabalho foi concluído. O Arkon Assist foi executado com sucesso. Segue um resumo do que foi produzido. E obtivemos o resumo do arquivo readme. Ok, isto está
+
+parecendo muito bom.
+
+Tudo bem. Descobri que Pi funciona melhor com linguagem simples. Peça para importar a habilidade de garras. Então, se eu pedir para importar a habilidade de garra, o que me preocupa é que ela simplesmente a leia manualmente. Quero que seja carregado automaticamente.
+
+A menos que você esteja se referindo a algo como atualizar a configuração. Certo? Uma coisa que eu poderia testar aqui é se você realmente carrega as habilidades de garra de ponto automaticamente. Você precisa alterar a configuração do Raspberry Pi. É preciso atualizar o JSON de configuração para carregar especificamente as habilidades dot clawed {slash}. Então, pesquise na
+
+documentação do Raspberry Pi para entender o que precisa ser atualizado e depois faça essa atualização para mim. Certo? Acho que algo assim seria a forma ideal para nos prepararmos para o sucesso no futuro. Tudo bem. Legal. Mas enfim, outra coisa
+
+que eu queria fazer aqui e que estou muito animado para experimentar é criar minha própria extensão. Então, vamos voltar ao meu segundo cérebro, porque eu tenho essa conversa sobre isso. Então, outra coisa que eu queria fazer nesta transmissão ao vivo era criar minha própria extensão para o Arkon. Então, quero que você carregue essa parte do plano. E então, quero que você me dê um comando para enviar ao Raspberry Pi para que ele crie essa extensão para mim. Você pode
+
+presumir que ele já possui a habilidade Arkon carregada, então sabe como Arkon funciona em geral. Agora, queremos apenas criar uma extensão para gerenciar os fluxos de trabalho do Arkon e tudo o que discutimos em nosso plano anterior. Legal. Sinceramente, não me lembro de todos os detalhes do que planejei, por isso estou deixando isso vir à tona agora. Eu gosto muito de fazer isso. Como sempre faço antes de uma transmissão ao vivo
+
+com vocês, eu gosto de criar um plano sobre o que quero abordar. É só um plano bem vago, porque assim eu não fico me atrapalhando enquanto tento me lembrar das coisas ou pensando de improviso. Assim, posso usar isso como referência ao analisar as coisas. Ele pode atualizar sua própria configuração. Sim, eu imaginei que pudesse. É isso que espero que aconteça
+
+aqui. Então, deixe-me voltar e ver o que aconteceu. Certo . Então, o que mudou? Criei o arquivo settings.json do .pi.
+
+Vamos dar uma olhada nisso. Sim . Comandos de habilidade ativados skills.dot habilidades na nuvem. Sim, tudo bem. Então, isso parece
+
+bom. Então, teoricamente, o que eu poderia fazer é excluir a pasta "dot agents" que acabei de criar. E então, quando eu iniciar outro Raspberry Pi, por exemplo, se eu fizer um "recarregar" aqui, ele deverá carregar todas as habilidades no .cloud. Sim, aí está.
+
+Legal. Ok, legal. É muito fácil. Eu simplesmente adoro como ele tem essa compreensão abrangente e consegue criar qualquer extensão, baixar qualquer extensão, alterar qualquer configuração e configurar qualquer provedor de modelo para mim. Que legal!
+
+Tudo bem. Então, vamos voltar ao segundo cérebro. E veremos o plano aqui. OK. Então, é isso que estamos construindo aqui.
+
+Vamos criar uma extensão chamada arcon dispatch. É uma extensão que transforma o Raspberry Pi no painel de controle para tarefas em segundo plano do Arcon. Então, temos um portal de confirmação, uma linha de status em tempo real, um acompanhamento longo para o progresso, um loop de conclusão, para notificar e informar o agente, além de comandos arcon e arcon status . A habilidade reside no conhecimento, a extensão está nas mãos. Essa é uma maneira interessante de dizer isso. OK.
+
+Então, aqui está o comando que posso simplesmente colar diretamente no Pi. Quero criar uma extensão personalizada para o Raspberry Pi. Eu já tenho a skill Archon instalada, então entendo a CLI do Archon, como lidar com nomes, etc. Portanto, vamos aprender a API de extensão antes de escrever qualquer código e compilar a extensão na minha pasta global do Raspberry Pi. Acho que esse é um bom lugar para isso.
+
+Porque presumo que você possa criar suas extensões tanto para bases de código individuais quanto para o seu Raspberry Pi como um todo, como o arquivo global que fica no meu diretório de usuário raiz, assim como temos o global.claud. E depois, faça também alguma validação. Ok, legal. Então, onde termina exatamente o prompt ?
+
+Instrui Pi. Sim, tudo bem. Quando o arquivo estiver pronto, me diga: "Ok, sim, sim." OK, bom. Então, vamos copiar essa mensagem aqui.
+
+E então voltaremos à nossa outra conversa aqui, onde testamos a execução de uma CLI do Archon, já que foi aqui também que carregamos a skill. Então, vamos colar isso aqui. Ok. Legal. Então, não tenho ideia de como isso vai correr ou se vai acabar causando um monte de problemas, principalmente porque estou usando a Kimmy. Estamos realizando toda essa
+
+transmissão ao vivo sem usar, de fato, Claude Hum ou modelos antrópicos. Mas sim, podemos ver que está lendo sua própria documentação de extensões. Ah, estou adorando. Certo, legal. Então, espero que isso não demore muito tempo. Provavelmente não será
+
+muito, muito rápido. Está tudo bem. Tudo bem. Oh sim. Então, enquanto esperamos por isso, vou conversar com vocês aqui no chat. Certo
+
+.
+
+Shawn disse: "Não consigo encontrar nenhuma informação sobre desfoque na loja do Raspberry Pi." Quer dizer, talvez exista uma palavra-chave específica que você precise usar na busca. Não sei. Quer dizer, vamos dar uma olhada. Tipo, se eu olhar, tipo, se eu pesquisar por " desfoque", por exemplo, sei lá . Não.
+
+Bem, eu me pergunto se eu simplesmente pesquisar no Google por uma extensão do Raspberry Pi para ocultar chaves de API. Um filtro de saída. Talvez seja simplesmente chamado de saída de filtro. Vamos procurar isso. Não , não é isso. Eu também não encontrei isso
+
+. Bem, não sei. Talvez Gemini tenha tido uma alucinação durante a busca no Google. É , eu também não vejo isso .
+
+Mas existem tantas extensões legais aqui. Ah, talvez seja isso. Hum, acho que não é bem isso que estamos buscando aqui. Mas mesmo assim é legal . Uma extensão do Raspberry Pi que oculta informações pessoais e segredos antes de enviá-los ao LLM e, em seguida, os restaura nas respostas. Então,
+
+não é bem o que estamos buscando, porque isso é para o agente, não para o que vemos no nosso terminal, mas ainda assim é bem legal. Tudo bem. Legal. Sean acabou de quebrar o Pi. Falha ao carregar a extensão. Não foi possível encontrar o
+
+módulo Pi TUI. Sabe o que você provavelmente deveria fazer, Sean? É entregar isso para o Raspberry Pi e pedir para ele consertar. Ou, se isso realmente impedir o Pi de funcionar, você pode passar esse erro para o Claude e pedir para ele pesquisar sobre o Pi e corrigir o problema. Tenho certeza de que isso pode ser resolvido para você muito rapidamente.
+
+Hum, estou configurando uma pilha LLM local completa em um DGX Spark. Muito legal. Acho que conseguir executar o Raspberry Pi nele e invocar fluxos de trabalho do Archon seria incrivelmente útil. Sim, com certeza. Você terá um orçamento ilimitado de tokens, o que é realmente ótimo. Bem, pessoalmente, eu
+
+não tenho um DGX Spark, então não consigo executar modelos tão grandes quanto os seus, mas existem alguns modelos bastante impressionantes que são razoavelmente pequenos para programação de IA e que eu teria interesse em testar com alguns fluxos de trabalho do Archon. Um Qwen, acho que era 3. Bem, não, 3,6 é... Não,
+
+sim, é 3,6. Assim, o Qwen 3.6 possui opções de parâmetros de 27 e 35 bilhões. Isso poderia rodar no meu hardware. Então, eu tenho duas placas de vídeo 3090, Nvidia 3090, e pelo menos uma versão quantizada delas que caberia até mesmo em uma única 3090.
+
+Eu estava querendo testar, e você pode ver que existem até algumas otimizadas especificamente para programação. Então, se eu fosse experimentar um, provavelmente escolheria este aqui. Mas também são apenas 3 bilhões de parâmetros ativos, então vai ser bem rápido. É, não vou tentar isso na transmissão ao vivo agora. Obviamente, preciso instalar isso, mas provavelmente seria esse que eu tentaria rodar em uma 3090.
+
+Mas sim, os benchmarks são incrivelmente bons. Isso é uma comparação, quer dizer, é uma comparação com outros modelos locais. Mas, assim como no caso do banco de terminais, você pode ver que ele supera todos os outros modelos locais. Então, se analisarmos os benchmarks do Qwen 3.6 , quero ver se consigo compará-lo com outros modelos maiores, porque ele se sai muito bem , até mesmo com o Sonic, talvez um pouco mais do que isso .
+
+Sim, vamos lá. Então, se olharmos para... quero dizer, eu sei que os benchmarks não são tudo, mas ainda assim é divertido analisá-los. Então, deixe-me
+
+ampliar mais uma vez. Então, se olharmos para o Qwen 3.6, como o 35B com 3 bilhões de parâmetros ativos, quero dizer, ele obviamente não chega muito perto do Opus 4.5, mas é algo parecido. Quer dizer, isso é muito bom.
+
+Isso é muito, muito impressionante para o seu tamanho, porque, quer dizer, nós não sabemos exatamente o tamanho do Claude Opus 4.6, mas com certeza tem mais de um trilhão de parâmetros. Quantos parâmetros tem o Opus? Vamos fazer 4,6. Com base em dados do setor, estima-se que existam cerca de 100 bilhões de parâmetros ativos.
+
+Uh, potencialmente cerca de 5 trilhões no total. Cara, isso é loucura. Sim, geralmente se trata de adicionar uma arquitetura MOE, mas mesmo assim é algo enorme. Nossa Senhora! Bom, enfim, vamos voltar aqui.
+
+[Limpa a garganta] Veja onde está.
+
+Uau, quanta informação aqui! Nossa Senhora! Está funcionando. Está funcionando. Quanto contexto utilizamos? Ok, isso é
+
+muito legal. Então, temos uma extensão que nos informa que estamos usando 54 dos 262.000 tokens disponíveis neste momento. E então, com sorte, poderemos ver essa atualização. Ainda não atualizou, embora esteja funcionando, mas presumo que seja porque atualiza periodicamente. Cara, a coisa
+
+tá fervendo agora. Simplesmente não está a abrandar. Uau.
+
+[Limpa a garganta] Estou esperando isso atualizar e não está atualizando. É meio estranho. Acho que só me resta esperar que termine de funcionar e então isso provavelmente será atualizado. Tudo bem. Melhor que o código Claude e o Codex. Já faz
+
+algum tempo que quero começar a fazer isso, mas ainda não o fiz. Então, sim, para que fique bem claro. Não acho que o Raspberry Pi, sem nenhuma configuração adicional, seja melhor que o código Claude ou o Codex. Na verdade, vai ser pior porque é mais complexo, mas o objetivo é que sirva de base para você construir seus próprios fluxos de trabalho. Assim como você pode escolher as extensões, crie a sua própria, como estou mostrando aqui.
+
+Você tem um controle mais granular porque é apenas um repositório de código aberto menor que você pode, sabe, ajustar para seus próprios casos de uso. E assim você pode melhorá-lo. Mas chegar lá exige algum trabalho. Mas isso é algo que me interessa muito fazer. Então, voltando à página inicial do Pi, o slogan deles é: "Existem muitas ferramentas para agentes, mas esta é sua." Certo? Ou, como costumavam
+
+dizer, existem muitos agentes de codificação por aí , mas este é o meu. Porque você realmente consegue assumir o controle disso . Sim, o Codex é de código aberto, mas a base de código é enorme. É praticamente impossível criar algo do zero . Claude Code nem sequer é de código aberto. Portanto, são as
+
+ferramentas mais poderosas logo de início, mas é muito difícil adaptar seu próprio processo a elas. Certo? Assim como a ideia do Raspberry Pi é que você adapte o Pi aos seus fluxos de trabalho, e não o contrário. Portanto, você não está apenas moldando seus fluxos de trabalho por meio de habilidades, comandos, regras e coisas do gênero, mas também, fundamentalmente, o próprio agente de codificação , como ele opera com o loop principal, o loop while principal do agente. Assim como você pode mudar até isso. Você pode
+
+personalizar o prompt do sistema, adicionando extensões para o funcionamento da interface do usuário, como estou fazendo aqui para me ajudar a gerenciar meus fluxos de trabalho do Archon. É algo que eu não conseguiria construir com nenhuma outra plataforma além do Raspberry Pi. Ou talvez seja como qualquer uma dessas ferramentas inchadas que já existem por aí. E parece que já está pronto. Muito legal. Eu nem sequer usei 100.000
+
+tokens para construir esta extensão completa aqui. E se formos verificar, podemos ver meus limites de taxa para Kimmy aqui. Então, se eu atualizar a página, hum, vamos ver. Então, na verdade, não é tão ruim. Utilizamos apenas 4% do nosso limite de 5 horas para construir isto aqui.
+
+E depois 1% do nosso limite semanal. Isso não é nada mal. Porque recebemos muitos pedidos aqui. Então, tudo bem. O que temos?
+
+Temos a ferramenta de despacho Arcano. Um usa o nó spawn com o shell definido como verdadeiro. OK. Os portões de confirmação interceptam todos os eventos de chamada da ferramenta. Se a ferramenta for o Arcan Dispatch, uma caixa de diálogo de confirmação será exibida, mostrando o nome do fluxo de trabalho, a ramificação e uma pré-visualização truncada da mensagem. A
+
+linha de status ao vivo mantém um registro em memória . Isso é muito legal. Os filtros executam fluxos de trabalho e definem um status para as chamadas. Mostra a linha de log mais recente de N fluxos de trabalho em execução . Ah, eu adoro isso. O comando `
+
+Um` limpa a chave de status quando nenhuma outra está em execução. Estamos acompanhando o progresso. Assim, ele rastreia a posição para nunca ler dados antigos. Ok, não preciso ler tudo aqui. O loop de conclusão atualiza o status quando o processo é finalizado .
+
+Dispara uma notificação na área de trabalho. Que legal! O que, novamente, não veremos na transmissão, pois meu OBS desativa esses recursos. Um insere uma mensagem de conclusão na conversa. Viu? Que legal! Na
+
+verdade, ele não funciona apenas como um processo em segundo plano que o Raspberry Pi precisa consultar posteriormente. Atualizamos a conversa principal em tempo real. Então, temos essa sincronização bidirecional, algo parecido com as equipes de agentes no Cloud Code. Que legal! Com a entrega configurada como instruções, não envie mensagens ao usuário. Portanto, não força uma
+
+virada LLM. Cara, isso é muito legal. Então, ele envia uma resposta, mas também não busca provocar uma resposta. Não queremos necessariamente que o Pi gere uma resposta só porque estamos compartilhando o resultado de um fluxo de trabalho. Porque talvez o Pi já esteja fazendo outra coisa agora mesmo. Então,
+
+não queremos que isso interrompa. Nossa! OK. Isso é realmente muito legal. Então, tudo bem.
+
+Então, agora, se eu fizer um {slash} reload com o Pi, terei isso como outra extensão, certo? Ou será que precisamos fazer algo mais para instalá-lo? E então, agora você está dizendo que eu posso pedir ao Pi para carregar a habilidade Arcan, executar um fluxo de trabalho Arcan, e tudo isso acontecerá automaticamente. Isso é verdade? A única coisa que me preocupa é que, com a habilidade atual de Arconte, ela dá muita importância ao uso da CLI (Interface de Linha de Comando). Portanto, não acho que
+
+isso possa causar confusão e fazer com que as pessoas não saibam como usar a nova extensão que criamos. Então, essa é uma coisa que vou observar, mas veremos quando receber uma resposta aqui. Espero que isto seja publicado. Parece ótimo. Bem, eu também espero que sim.
+
+Veremos. Quer dizer, agora estou apenas explorando. Novamente, o objetivo principal desta transmissão ao vivo é explorar as capacidades do Raspberry Pi e como podemos personalizá-lo. Então, não prometo nada sobre o quão bom isso vai ser, o quão bem vai funcionar ou se eu realmente vou publicar, mas talvez a gente chegue lá. Veremos. Quer dizer, isso está
+
+ficando muito legal. Tudo bem. Sim , exatamente. Com o Raspberry Pi, isso não polui o prompt do sistema. Portanto, é muito enxuto e personalizável. Sim.
+
+Então, estou violando a licença antrópica se usar o Raspberry Pi com minha assinatura do Claude Code ? Eu acredito que a resposta seja sim, porque é considerado um daqueles cintos de segurança de terceiros que foram proibidos. Bem , obviamente também poderíamos confirmar isso. Tipo, se eu for "Deixa eu ver aqui". Quero que você pesquise na internet.
+
+Posso usar minha assinatura da Anthropic com o Pi, ou isso viola os termos de serviço da Anthropic? Vamos obter uma resposta para você aqui, mas acho que a resposta é sim, porque já fiz algumas pesquisas antes. Eu meio que esqueço, sabe, que existe uma espécie de lista permanente de coisas que você não pode fazer ao assinar a Anthropologie. Eu sei que, com código aberto e OpenClaw, com certeza você não pode usar sua assinatura da Anthropic. Mas, tipo, não tenho certeza absoluta.
+
+É uma área cinzenta, porque antes era para uso pessoal, você podia usar sua assinatura. E se outras pessoas estiverem usando o agente, você não poderá. Mas agora é ainda mais complicado do que isso. Exatamente. Veja, observe, sinais contraditórios aqui.
+
+Até o Claude fica confuso ao pesquisar seus próprios termos de serviço estúpidos. Nossa, cara. Veremos qual será o veredicto final, mas eu não confiaria nisso 100%. Está tudo tão cinza.
+
+Você simplesmente usa o uso extra. Certo. Quer dizer, acho que o mais provável é que, se você tentar usar, vai funcionar, mas não vai usar seus limites de taxa. O valor será simplesmente descontado do uso extra que você tem na conta. Tudo bem.
+
+Por que a saída do meu Raspberry Pi via Archon, seja pelo chat do Archon ou pelo Telegram, tem uma nova linha após cada token? Que configuração estou esquecendo? Hum, na verdade não tenho certeza sobre isso. Nunca me aconteceu isso antes, mas pode ser um bug no Archon. Eu não tenho certeza.
+
+Hum, eu nunca passei por isso pessoalmente, mas não conheço nenhuma configuração específica que você precise ajustar para que isso aconteça .
+
+É, talvez você precise criar um bug no Archon, sinceramente. Uma sugestão que tenho para o Archon é que ele implementa um fluxo de trabalho padrão chamado "Archon create issue". Então, se você pedir ao Claude Code, ao Pi ou a qualquer outro programa para executar esse fluxo de trabalho e descrever um problema que você está enfrentando na base de código do Archon , ele tentará reproduzir o problema, fará o que for necessário para isso e, se conseguir reproduzi- lo com sucesso, criará automaticamente uma issue no GitHub com a formatação correta no modelo e tudo mais em seu nome. Então eu recomendo executar isso. E veja se consegue reproduzir o problema aí , mas nunca me aconteceu antes. É interessante.
+
+Mas, com certeza, se isso for um problema real, eu gostaria de resolvê-lo. Tudo bem. Hum, vejamos aqui. Você pode usar sua assinatura da Anthropic com o Pi. Não viola os termos de serviço, mas já não lhe dá direito ao plano de tarifa fixa. Sim, agora
+
+é a hora de usar de fato. Exatamente como alguém disse no chat. E depois diz: "Não fixe o limite de taxa resolvido." Porque eu uso isso como texto de miniatura para a transmissão aqui. Ah, mas não é para a assinatura da Anthropic.
+
+Como eu disse, você pode usar outras assinaturas, como a Kimiko. Assim como estamos fazendo aqui. Mas enfim, vamos voltar. Então, para a nossa conversa aqui, sim, uma recarga é tudo o que você precisa. O Raspberry Pi detecta automaticamente a extensão, então ele receberá nosso despacho de comunicação, mas há alguns esclarecimentos importantes sobre o que acontece a seguir. Assim, após a reinicialização, o Pi
+
+terá a nova ferramenta e os comandos. Não é totalmente automático. O gerente de linha de frente decide quando acionar nossa central de despacho de presos com base na conversa. Assim como decide quando chamar o bash ou ler, certo? Então, se eu disser algo como: "Execute o fluxo de trabalho do Arcon Assist com a correção de ramificação desativada e resuma o arquivo leia-me." O LLM
+
+reconhecerá a intenção e acionará a central de despacho da Arcon, mas com os parâmetros corretos. Mas antes de executar o comando, uma janela de confirmação aparece e pede que você aprove, o que, aliás, é um recurso que implementamos, então é realmente muito bom. OK. Ah, sim, vamos fazer isso. Então, {barra} recarregar.
+
+E então veremos que a extensão deverá aparecer na lista aqui. Espero. Na verdade, não vejo isso. Oh, oh, espere aí. Eu estava pesquisando habilidades.
+
+Hum, onde fica? Arcon Sim, aqui está. Despacho Arcon. Ok, ótimo. Então, agora vou dizer: "Execute o fluxo de trabalho do Arcon Assist."
+
+Bem, na verdade, espere aí. Posso fazer um {slash} clear? Não, não posso. Porque eu meio que quero experimentar isso em uma nova conversa, para que seja um teste real, colocando isso em prática do zero. Porque eu fiz um {slash} recarregamento, mas acredito que ainda mantém todo o mesmo contexto. Então, quero fazer isso do zero
+
+. Então, temos aqui o nosso despacho Arconte. Então, agora vou dizer "Use o Archon. Execute o fluxo de trabalho de assistência do Archon para resumir o arquivo readme da base de código do Archon." Tudo bem. Então vamos ver se
+
+o despacho é executado agora. Dedos cruzados. Pode ser que ele carregue a habilidade e decida usar a CLI, como eu disse, mas veremos. Ok, na verdade sim. Tarefa de linha de comando, então devo usar a ferramenta de despacho Archon.
+
+OK. Hum, acho que devo usar a CLI do Archon. Ok, acho que...
+
+Sim, com base no arquivo de configuração, deve usar a CLI. Então, era exatamente isso que eu imaginava que aconteceria: ele está decidindo. E agora está tentando descobrir: "Ok, espere. O Archon Dispatch serve para executar fluxos de trabalho do Archon. Qual devo usar?"
+
+Hum, deixe-me verificar a assinatura. Isso é perfeito. Ele executa fluxos de trabalho do Archon, então eu deveria usar o despacho do Archon. Certo, então acho que ele se confunde porque carrega a habilidade, depois pensa em usar a CLI, depois pensa em usar o Archon Dispatch e aí finalmente decide...
+
+Ah, pronto. Ok, então, obviamente, todo o processo de raciocínio levou um tempo e não é o ideal, mas acho que se resumiria a especificar nas minhas regras globais ou algo assim: certifique-se de usar a ferramenta de despacho de Arconte quando tiver acesso a ela, ou simplesmente obtenha ou altere a habilidade de Arconte. Sim, isso é muito legal. Então, podemos ver que, antes mesmo de funcionar, esta é uma das coisas que incluímos na extensão: ela me pergunta se vamos executar o dispatch. Este é o nome do fluxo de trabalho. Aqui está a branch em que vamos
+
+executar o teste. E aqui está a mensagem. Este é o comando que estamos enviando para o fluxo de trabalho do Archon. Então, posso dizer sim, prossiga. E abriu um terminal por uma fração de segundo. É meio estranho.
+
+Não sei. OK. Ah , falhou. Interessante. O Dispatch está sendo executado em segundo plano.
+
+Você pode acompanhar a saída aqui. Mas, por algum motivo, falhou. Certo, vamos ver qual é a resposta.
+
+O fluxo de trabalho tem a opção "árvore de trabalho" desativada , o que significa que ele é executado no checkout em tempo real. Não suporta ramificação. Preciso executar o comando sem a flag de ramificação. Ok, sim. Então, foi como se tivesse tido uma alucinação. Kimmy fez isso, o que tanto faz
+
+, já que estamos chegando lá. Mas agora a ferramenta de despacho não está funcionando. Então, vou deixar isso rodando, mas depois vou dizer para usar a ferramenta de despacho novamente, porque quero ver a interface web aparecer, ou qualquer que seja o tipo de interface que eu tenho agora nas extensões para visualizar os fluxos de trabalho.
+
+Ah, /novo. OK. Ok, /novo. Entendi. Iniciar uma nova sessão.
+
+Ok, legal. Obrigado, pessoal. Eu agradeço . Desculpe, só olhei o chat um pouco mais tarde. Tudo bem.
+
+Legal. Então eu vou dizer não, você tem que usar a ferramenta de despacho Archon porque eu quero ver isso em ação agora mesmo. Tudo bem.
+
+OK. Ah, Archon. Bem, acho que pode haver um bug na própria extensão. A operação anterior falhou porque o Archon Assist tinha a árvore de trabalho desativada, o que entra em conflito com a ramificação. OK. Então,
+
+só precisa corrigir alguma coisa aqui.
+
+Nossa, está criando um fluxo de trabalho personalizado. Ok, então vou rejeitar isso. Vou dizer: "Não, em vez de executar um fluxo de trabalho personalizado, preciso que você corrija a extensão." Então, nós simplesmente descobrimos um bug na extensão. É claro que não vai ser perfeito na primeira tentativa. É
+
+uma extensão bastante grande que construíram aqui. Então, acho que será bom mostrar um exemplo de iteração e depois executaremos novamente. Talvez eu consiga até fazer isso nesta conversa, onde usei o comando "slash new" depois que a correção foi feita aqui. Tudo bem. A
+
+Anthropic é simplesmente uma empresa terrível. Você deveria parar de dar dinheiro a eles. Quer dizer, eu não iria tão longe e, honestamente, ainda gosto do código do Claude por ser tão bom, mas...
+
+é frustrante. Tipo, eu concordo com você até certo ponto. O problema são os limites de taxa. E, de modo geral, acho que eles agiram de forma um pouco maliciosa, porque pioraram bastante o limite semanal e, ao mesmo tempo, publicaram um post no blog dizendo que estavam fazendo uma parceria com a SpaceX e que isso significaria limites de taxa melhores, mas, na verdade, apenas o limite de taxa de 5 horas ficou mais flexível. No geral, você ainda recebe menos tokens semanalmente.
+
+Achei isso meio nojento. Vamos lá, pessoal. Mas, no geral, quero dizer, eu ainda uso a ferramenta. Tudo bem. Alguém da comunidade Dynamis poderia criar um guia atualizado para hospedagem Docker, incluindo configurações de banco de dados? Estou tendo alguns
+
+problemas com o funcionamento correto. Isso se refere ao pacote de IA local ou ao Archon? Quer dizer, há muitas opções. Ou será que esta é apenas uma pergunta mais geral? Tenho curiosidade.
+
+Seria útil ter um modelo de roteador local caso Kimi esteja ficando confuso? Definitivamente. Sim, quer dizer, se Kimi... O
+
+problema é que modelos de linguagem grandes nem sempre sabem se estão ficando confusos, então eles não saberiam como recorrer a um modelo diferente. Mas se você quisesse construir um roteador que pudesse dizer: "Muito bem, Kimi, você está ficando confusa. Vamos tentar outro modelo." Com certeza seria uma boa ideia. Uau
+
+, ok. Então, aqui ficou tudo muito confuso. Sabe, eu não deveria ter feito um "novo" com barra, porque eu deveria ter melhorado o que já existia ou continuado a trabalhar na extensão aqui. Posso fazer um currículo com barra ({slash})? Sim, vou retomar a sessão.
+
+Hum, acho que era este. Sim , tudo bem. A extensão não está funcionando porque o fluxo de trabalho do Arco Assist é executado sem uma árvore de trabalho. Portanto, a flag de ramificação {dash} {dash} falha. Preciso que a extensão seja dinâmica. Se
+
+o fluxo de trabalho não tiver uma árvore de trabalho especificada, como é o caso, e eu precisar que você pesquise em Arcos. Você entende como isso funciona? Então não podemos usar o parâmetro de ramificação. Caso contrário, deveríamos. Então, corrija a extensão. Me avise quando estiver
+
+pronto para eu fazer um {slash} recarregar e testar. OK. Então, sim. Infelizmente, durante essa conversa, parece que tive várias alucinações. Portanto, não consegue encontrar uma extensão.
+
+Ele nem sequer sabe do que estou falando quando peço para corrigir a extensão, o que é muito estranho, já que ele acabou de usar a extensão de despacho do Arco . E aparentemente agora não há nada. Ah, sim, por isso retomei a outra conversa, onde de fato criamos a extensão, para continuar aprimorando-a. Então, isso é bom. Ah, a solicitação do Docker é para o Arco.
+
+Ok, entendi. Sim. Então, na verdade, eu não trabalhei com Docker para Arco. Isso é algo em que Thomas tem trabalhado. Então, seria bom entrar em contato com ele na comunidade.
+
+Thomas Ritter. Sim, claro que você também poderia criar uma solicitação para isso. Para que qualquer pessoa pudesse trabalhar nisso. Se você acha que há algum problema ou se está um pouco confuso com a configuração, então, sim, definitivamente sinta-se à vontade para fazer uma postagem na comunidade Dynamis. Vamos te ajudar com isso.
+
+Tudo bem. Depois que eu terminar meu curso de especialização em CI/CD, vou trabalhar com Docker. Parece ótimo, Sean. Sim, com certeza são habilidades muito boas para investir tempo. Legal. Ou então,
+
+comece com algo como um pequeno Quen 3 para chamadas de ferramentas e faça com que ele invoque o Kimmy para realizar o trabalho com contexto. Certo. Sim, isso é muito comum, começar com um modelo menor para a pesquisa inicial e depois passar para um modelo maior. E tem outra coisa que o Pi tem, não sei se consigo encontrar agora de cabeça, mas o Pi tem uma extensão muito legal que basicamente permite chamar um modelo mais poderoso para fazer uma revisão do que acabou de ser construído. Hum, vamos ver se eu... eu quero... não
+
+sei se vou conseguir encontrar. Sim, sim, aqui está. Olha só isso. É chamado de, hum, acho que é isso mesmo, conselheiro RPIV. Isso é muito legal. Assim, um modelo de segunda opinião
+
+pode solicitar a opinião de um modelo de revisão mais robusto antes de agir. Isso é muito legal. Esse é o tipo de coisa que você realmente não encontra no código Claude. Então, você tem um modelo funcional e ele aciona o consultor para obter uma ideia melhor, tipo, o revisor pode ser o Opus e o implementador, ou melhor, o responsável pelo modelo funcional pode ser a Kimmy, a Quen ou qualquer outra pessoa. É uma daquelas coisas que eu tenho muita vontade de experimentar.
+
+Bem, acho que não teremos tempo na nossa transmissão ao vivo hoje, mas eu definitivamente teria interesse em experimentar essa extensão também. Mas é muito fácil de instalar, assim como as outras extensões que eu estava testando. Tudo bem. Então, acho que estamos quase lá. Realizando algumas alterações na própria extensão.
+
+Legal. Tudo bem. Vamos deixar continuar girando aqui. Uma
+
+pergunta curiosa que acabei de descobrir a resposta. O que significa Pi neste contexto? Na verdade, eu não sei. O que isso significa, Jeff? OK. Muito bem, terminamos. A
+
+extensão sempre passa o branch para a execução do nosso fluxo de trabalho comum, mas não precisa de isolamento quando o fluxo de trabalho com pinos de animal desabilitado gera um erro na CLI, certo? Assim, a ferramenta agora suporta três modos mutuamente exclusivos: sem árvore de trabalho, ramificação e nenhum dos dois. Certo, então agora, quando eu disser ao Pi para despachar um fluxo de trabalho do Arcanum, ele saberá como trabalhar com esses novos parâmetros. Muito bem, isso era para ser uma pergunta. Essa é uma pergunta.
+
+Meu recurso de ditado por voz adicionou um ponto final ali. Muito bem, significa intelecto de primeira linha. Ok, tudo bem. Eu não sabia disso. Que legal!
+
+A extensão Salvation também faz algo semelhante . Ok, muito legal. Sim. Hora de fechar o Pi. Não estou vendo nenhuma das extensões que instalei. Retomaremos
+
+amanhã. Sinto muito, Sean. Não faço ideia de por que isso aconteceria. Funcionou perfeitamente para mim assim que tirei da caixa. Eu realmente não sei.
+
+É algo que eu simplesmente pediria para o Claude resolver, porque ele consegue executar o comando Pi e carregar as extensões. Não sei. A Kimmy costuma sair bastante. É , eu mesmo notei isso quando [bufa] estava usando o Kimmy K 2.6 na minha Dark Factory, às vezes meus fluxos de trabalho do Arcanum que rodavam com o Kimmy simplesmente travavam. Sim, eu também já vi isso.
+
+Felizmente, com a configuração que estou usando no Raspberry Pi agora, não observei esse problema, mas acho que esse é mais um motivo pelo qual tenho interesse em explorar outros modelos também, como o Quinn 3.6 e o MiniMax. Entendi que você também disse que teve resultados ruins com o MiniMax. MiniMax Bem, sim, quero dizer, você nunca vai obter o mesmo nível de qualidade do Opus com esses modelos, mas com a dureza certa, chega bem perto. Assim como no meu Factory escuro, tive bastante sucesso com o MiniMax M2.7 e o Kimmy K2.6,
+
+exceto pelo Kimmy ter travado de vez em quando, e o MiniMax ter travado uma ou duas vezes. Então, não é perfeito, mas definitivamente sinto que a diferença entre os modelos mais poderosos da Frontier e esses modelos de código aberto e locais que você pode executar está diminuindo. Ok, então depois de {slash} recarregar, o Pi saberá que a ferramenta existe e verá o esquema de parâmetros atualizado, podendo assim chamar a ferramenta com os parâmetros corretos. Mas há um porém. O Raspberry Pi não saberá automaticamente quais fluxos de trabalho precisam de árvore de trabalho e quais não precisam. Veja bem, esse é o
+
+problema aqui. O sistema reconhece que o Archon Assist é um recurso de perguntas e respostas, mas não possui uma tabela de consulta que indique quais fluxos de trabalho do Archon ele utiliza. Portanto, na prática, uma de duas coisas acontecerá. Eu poderia adicionar uma descoberta automática de fluxo de trabalho à extensão. Verifica se o YAML do fluxo de trabalho está correto.
+
+Ah, sim, adicione isso. Isso parece muito legal. Vamos fazer isso. Isso é muito legal. Estamos nos integrando profundamente ao Archon agora.
+
+Tudo bem.
+
+Então, espero que isso não demore muito, porque eu só quero começar a demonstração logo. [bufa] Vamos ver. Ih , essa conversa não é a ideal. Tudo bem. A extensão de descoberta de fluxo de trabalho não consegue importar facilmente, mas pode ler e analisar arquivos YAML.
+
+Bem, isso talvez seja um pouco exagerado. Não sei. Mas isso está ficando complicado. Permita-me dar um passo atrás. Hum. Sim
+
+. Quer dizer, isso parece um pouco exagerado, mas vou usar mesmo assim só para fins de demonstração. Mas, novamente, estou apenas explorando coisas com torta e extensões agora. Não espero produzir algo como uma extensão Archon Dispatch Pie pronta para produção em nossa transmissão ao vivo aqui. Porque, obviamente, com a habilidade Archon na CLI, não temos essa integração mais profunda, e funciona bem. Então,
+
+acho que estamos potencialmente nos adaptando demais a um problema muito específico que aconteceu uma única vez, mas enfim, quero que isso funcione porque quero que faça isso e depois quero executar isso nesta conversa novamente. E veremos onde isso vai dar. Tudo bem. Estou gostando muito do aplicativo Codex. Sim, o Codex é muito bom. Essa é
+
+mais uma dessas ferramentas, tanto o Pie quanto o Codex, que estou começando a explorar mais agora. Bem, eu tenho ficado frustrado com outros limites de taxa. Então, é muito bom. E é muito bacana o aplicativo Codex, principalmente a forma como você pode gerenciar seus diferentes projetos em paralelo e receber atualizações, que é como a visão do agente que o Claude Code lançou. Onde você pode ver todos os seus agentes em execução, aqueles que precisam da sua intervenção e aqueles que já terminaram, mas ainda estão trabalhando. É muito legal.
+
+Flash DeepSeek V4. Eu realmente não sabia que a DeepSeek tinha um flash V4. Isso é legal. Hum, aqui vou usar o DeepSeek. Eu realmente não sabia.
+
+Ah, não, eu fiz sim. Sim, sim, DeepSeek. Ok, então isso não era exatamente uma novidade.
+
+Uh 284 parâmetros no total, 13 bilhões ativos. E sim, é muito, muito barato. Isso é legal. Legal. Também no rosto ao abraçar.
+
+Vamos dar uma olhada neles.
+
+Isso parece bom demais para ser verdade. Oh, oh, isso não é Flash. Este é o DeepSeek V4 Pro Max. [risos] Os nomes são sempre tão engraçados. DeepSeek V4 Pro Max. Não é apenas Max, não é
+
+apenas Pro, é Pro Max. Legal. Tudo bem. Hum, vejamos. Vamos voltar.
+
+Ok, então ainda estou trabalhando na atualização de uma extensão aqui. Dê algum tempo. Tudo bem.
+
+Tem um preço acessível, um desempenho excelente e é muito bom. Hum, Arkon também tem um modo MCP, certo? Não, não funciona mais. Agora é apenas uma habilidade para Arkon. Na versão antiga do Arkon, havia um servidor MCP.
+
+Mas mudamos bastante as coisas por lá . Foi uma grande reformulação que fizemos.
+
+Tudo bem. Bem, podemos usar a assinatura do Codex no Raspberry Pi sem problemas. Isso é verdade. Sim, eu estava usando. Então, quando fiz meus primeiros testes com o Raspberry Pi, enquanto o explorava no último mês e implementava suporte para ele no Arkon, foi isso que fiz: usei minha assinatura do Codex. Então, o que estamos
+
+fazendo agora aqui com o Kimi para programação, usando o Kimi K2.6, é a primeira vez que o uso no Raspberry Pi, na verdade. Acabei de configurar a assinatura para minha Dark Factory, mas minha Dark Factory usa o código Claude como controlador, sobrescrito para usar os modelos Kimi em vez dos modelos Anthropic. Ok, então agora estamos numa boa situação . Então, se eu entrar aqui, vou começar uma conversa completamente nova . Então, uma tela em branco,
+
+e vou manter isso aberto caso eu ainda precise fazer ajustes aqui. Mas agora eu gostaria que você acionasse o fluxo de trabalho de assistência do Archon para resumir o arquivo README do repositório do Archon. Ok, vamos lá. Este é, esperamos, nosso último teste para fazer o sistema de despacho funcionar. Certo, então devo usar o Archon Dispatch para executá-lo. Isso mesmo.
+
+OK. Espero que isso funcione. Ok, ok. O fluxo de trabalho foi despachado e nenhuma árvore de trabalho foi necessária. Sim, não, nenhuma árvore de trabalho é necessária, então está correto. A mensagem indica que há um fluxo de trabalho Archon
+
+em execução. Legal. E então temos o terminal aqui em cima. Então, já temos os registros do fluxo de trabalho do Archon. Hum, eu pensei que haveria algum tipo de interface para vermos, porque isso fazia parte do que estávamos construindo a extensão, a menos que ela pense que este terminal é isso, talvez.
+
+Isso é muito legal. Além da minha opinião de que a interface do usuário poderia ser um pouco melhor, podemos ver que ela nos informa quantos fluxos de trabalho do Archon estão em execução e, em seguida, recebemos os resultados de volta na conversa, mas não gera outra resposta do LLM, o que é ideal porque posso continuar trabalhando com o Pi em paralelo enquanto os fluxos de trabalho estão em execução e, em seguida, ele insere o contexto desses resultados para que eu possa voltar a eles quando quiser, certo? Então, me dê os resultados. Então eu posso simplesmente pedir. E então, se eu quisesse alterar a extensão ou talvez transformá-la em um sinalizador para que, para cada fluxo de trabalho, eu pudesse determinar se devo lidar com a situação imediatamente ou deixá-la ocorrer em segundo plano, eu poderia fazer isso. O
+
+Um diz que o arquivo de registro está vazio. Isso é interessante. Assim, tudo terminou com sucesso. Mas pode haver um problema na extensão. O arquivo de log pode ser o log do processo. E se estiver
+
+vazio? Talvez a saída real seja enviada de volta por algum outro canal. Ok, interessante. Então, não sei se está realmente funcionando aqui. Hum.
+
+Então talvez haja mais uma coisa para consertar. Sim, então agora está simplesmente decidindo tomar as rédeas da situação. É simplesmente estúpido. Ok, então vamos voltar à outra conversa. Ok, então o fluxo de trabalho foi executado com sucesso desta vez, mas o problema é que os registros estavam vazios. Então,
+
+pedi para que ele enviasse um fluxo de trabalho do Archon para executar o assistente do Archon no arquivo readme e resumi-lo. E o fluxo de trabalho foi executado. Portanto, a barra de status indicava que um fluxo de trabalho do Archon estava em execução. O terminal apareceu, executou todo o fluxo de trabalho e, em seguida, recebemos o resultado no terminal do Pie, informando que o fluxo de trabalho foi executado com sucesso. Mas quando pedi um resumo, ele carregou os registros e informou que tinha zero bytes. Estava completamente
+
+vazio. Portanto, algo está quebrado aqui, pois não conseguimos obter a saída do fluxo de trabalho do Archon da mesma forma que conseguimos quando executamos o Archon pela CLI, e não pela nova ferramenta de despacho que criamos na extensão. Esperamos que este seja o último detalhe que precisamos resolver. Quer dizer, acho que esse fluxo de trabalho é bem interessante. Acho bom que não tenha sido só um tiro, porque isso não faria sentido nenhum. Tipo, eu
+
+definitivamente não esperava que destruísse toda essa extensão de uma vez. Principalmente porque estamos usando a Kimmy. Lembre-se que tudo isso não utiliza o Opus. Portanto, definitivamente não espero que seja perfeito. Tudo bem.
+
+Sim, provavelmente há algum problema na forma como o shell está sendo gerado. É isso que está causando o problema. O problema é que o comando ` detach dispat detach true` no Windows com `shell true` cria uma nova janela de console, mas também temos a opção de ocultar a janela no Windows. OK. Bem, de qualquer forma, agora é hora de repensar as coisas. Vou deixar rolar por
+
+aqui. Tudo bem. Estamos quase lá.
+
+Ah, espere, em letras maiúsculas. Acho que agora entendi. Mensagem completa da nossa extensão para X via mensagem pi.sm, não a saída padrão real do processo arcano. A saída do processo arcano foi para a saída do terminal e se perdeu em nossos canais.
+
+OK. Claro. Está tudo bem. Muito bem, aqui vou iniciar uma nova conversa. Só para me preparar para isso.
+
+OK. Encerre essa discussão. Tudo bem. Parece que um fluxo de trabalho Arcan com extensão para Raspberry Pi poderia ser útil. Não era isso que eu estava construindo agora?
+
+Ou talvez você pudesse explicar melhor a que se refere. Ah, o que você quer dizer com um fluxo de trabalho arcano para criar extensões para Raspberry Pi? Porque sim, isso seria muito legal. Desculpe, não entendi o que você disse da primeira vez. Sim, criar um fluxo de trabalho complexo especificamente para criar sistematicamente uma extensão para o Raspberry Pi seria muito interessante. Ah, sim
+
+. Isso poderia literalmente ser o meu próximo vídeo ao vivo, mostrando como vou desenvolver esse fluxo de trabalho. Isso seria muito legal. Seu trabalho é incrível. Muito obrigado . Na verdade, estou adaptando seu trabalho
+
+para fluxos de trabalho embarcados, como os da Nordic e da STM32. É incrível quando você demonstra isso. Então podemos ter triplo pi. Parece bom. Sim, agradeço muito.
+
+Tudo bem. Nossa, isso está ficando completamente preso num ciclo de raciocínio. Espero que chegue ao fim. Ah, ok, parece que agora está funcionando. Ainda bem que estão a fazer algumas mudanças .
+
+Não sei se é um problema com o Pi, com a Kimmy ou com outra coisa, mas ele passou muito tempo usando os tokens de raciocínio aqui. Quer dizer, como eu disse, não me importo muito com a velocidade, desde que consigamos bons resultados com o agente de codificação. É isso que mais me importa, mas ainda é um pouco irritante ver o jogo distribuir tantos tokens por causa disso. Também estou curioso para saber quais são os limites de taxa aqui para a Kimmy. Vamos fazer mais uma atualização aqui.
+
+Ah, ok, 8%. Não é nada mal. Temos feito muita coisa. E estamos usando apenas 2% do nosso limite semanal e 8% do nosso limite de 5 horas. E este plano custa apenas 40 dólares por mês, então é muito mais barato que o Claude pelo que oferecemos . É muito legal.
+
+Cara, ainda está rolando. OK. Parece que dizia "mais um caso extremo", então espero que estejamos no fim ou perto do fim . Foi isso que
+
+pensei sobre Archon. [risos] Tudo bem.
+
+Ah, qual é! Eu só queria entregar essa demo final. Por que está demorando tanto? [bufa] Ah, a gente chega lá.
+
+Então, no geral, para solicitações simples, o Pi definitivamente parece mais rápido que o código Claude e o Codex. Acho que, no geral, é mais rápido, mas esses estranhos ciclos de raciocínio em que ele fica preso definitivamente fazem com que pareça mais lento às vezes . Mas, novamente, isso pode ser literalmente como Kimmy, e não o próprio Pi. É muito difícil dizer. Acho que quando eu estava fazendo muitos testes com o Raspberry Pi usando o Codex, eu realmente não percebi isso. Então, provavelmente
+
+é mais um problema da Kimmy. Não necessariamente um problema. É apenas uma peculiaridade, eu diria. Bem, desde que esses tokens de raciocínio sejam úteis para se obter o resultado da melhor qualidade, para mim está tudo bem , certo? Não preciso de velocidade.
+
+Tudo bem. Estamos quase lá. Cole está inquieto. Sim, eu sei. Tenho andado meio que às pressas . Bem, quer dizer, é um pouco
+
+demais, mas eu também preciso usar o banheiro agora. [risos] Mas eu só quero terminar essa demo . Ah, tudo bem. Tenho usado o Raspberry Pi com minha assinatura da Copilot. Isso é legal. Sim,
+
+eu nunca testei isso antes. Mas eu também tenho uma assinatura do GitHub Copilot, porque o utilizo para alguns dos treinamentos de engenharia de agentes corporativos que ministro. Porque muitas empresas maiores têm o GitHub Copilot ativado para a organização. Tudo bem. Que bom que você achou isso engraçado, Sean.
+
+Sim. Tudo bem. Hum, o que eu acho do novo Microsoft M? É melhor que o Claude Mythos em testes de segurança cibernética? Sabe, eu ainda não tive muita oportunidade de analisar isso a fundo, então não tenho uma opinião formada.
+
+Hum, mas eu ficaria curioso. Deixa eu abrir aqui mesmo . Microsoft M - É realmente melhor que Claude Mythos? [bufa] Tudo bem. Então, defesa na velocidade da IA. O novo
+
+sistema de segurança multimodelos com agentes da Microsoft supera os principais padrões da indústria. Ah, então nem sequer é um modelo como o Mythos. É um arnês. O que, aliás, é bastante pertinente para a nossa transmissão ao vivo de hoje, ou melhor, muito apropriado. O importante é que o arnês é mais importante do que o próprio modelo. A
+
+nova plataforma de varredura agética multimodelos da Microsoft Security . É um nome bem comprido. Sistema de descoberta e correção de vulnerabilidades baseado em agentes. Parece muita conversa corporativa, mas não, isso é legal. Preparar, digitalizar, validar, eliminar duplicados, comprovar.
+
+Um conjunto de modelos diversos que são gerenciados de forma eficaz por um codinome M - agentes especializados, pipeline de ponta a ponta com plugins extensíveis. Sim, isso é muito legal. Quer dizer, obviamente não é de código aberto, então é difícil realmente se aprofundar e ter uma opinião sobre o quão poderoso ele é, além de simplesmente confiar nos benchmarks, mas com certeza é interessante. OK. Como se pronuncia meu nome corretamente?
+
+Boa pergunta. Sim, então, o primeiro nome é Cole, acho que isso dispensa explicações. Meu sobrenome é Medin. Então, a maioria das pessoas diz Medin, mas é Medin. Então, é um sobrenome sueco.
+
+Pronto. Muito bem , vamos voltar. Hum, acho que terminamos . Ok, então a extensão está pronta. O log vazio foi causado pelo buffering de um pipe do Node.js no Windows com o parâmetro `
+
+detached` definido como `true`. Certo, então a solução é um redirecionamento de descritor de arquivo no nível do sistema operacional. Em vez de usar o Node.js como intermediário, passamos o descritor de arquivo do log diretamente para o processo filho. OK. Muito bem
+
+, vamos tentar isso agora. Então, vou aceitar o mesmo pedido e fazê-lo em uma nova conversa. Então, abra o Pi. Então, ele carregará a versão mais recente da nossa extensão e, em seguida, passaremos o comando. Muito bem, então vamos ver como funciona aqui.
+
+Este, meus amigos, é o momento da verdade. Normalmente, planejo que essas transmissões ao vivo durem cerca de uma hora e meia, então espero que consigamos fazer isso funcionar aqui. Ok, despacho de arquivos, tudo certo. O ramo é gerado automaticamente. Isso pode causar problemas aqui. Aguentar. Porque é que está a
+
+executar uma ramificação? Ah, não, está tudo bem. Estamos bem. OK. OK. Então, um
+
+fluxo de trabalho Arcan em execução. Executando um checkout ao vivo. Sem árvore de trabalho. OK, bom. Então, reconheceu isso novamente. Portanto, não há árvore de trabalho, já que o Arcan
+
+Assist tem o isolamento da árvore de trabalho desativado. Não fazemos isso. Estamos apenas realizando uma operação de leitura, portanto não precisamos criar uma cópia local da base de código. É por isso que não estamos criando uma árvore de trabalho para este fluxo de trabalho. Uh, o processo de finalização da compra foi concluído com sucesso. OK, bom. Então, agora eu deveria
+
+dizer: me dê os resultados. E deveria ser capaz de ler o que foi gerado pelo fluxo de trabalho Arcan. Nem todos os fluxos de trabalho exigem isso, mas esperamos ter algo a oferecer. [risos] Ah, parece estar vazio. Acho que deu errado de novo.
+
+Todos os arquivos de registro estão vazios.
+
+Hum, talvez não tenha gerado um arquivo de saída, mas talvez...
+
+Ok, eu não... Tudo bem, ainda não está funcionando. O que preciso que você faça é alterar fundamentalmente a extensão para que a saída, como a última saída do fluxo de trabalho, retorne diretamente para a sessão do Raspberry Pi.
+
+Pensei que você já tivesse configurado isso, mas obviamente não. É muito importante que incluamos esse último contexto. Você precisa alterar o que for necessário para que não seja apenas um processo em segundo plano que é executado automaticamente , mas sim que a saída seja enviada de volta para o Raspberry Pi. Estou quase tentado a simplesmente mudar para o Opus e resolver isso rapidinho. Porque você sabe que se eu deixar o Opus lidar com isso, ele vai corrigir a extensão.
+
+Sim, é porque você pode ver que está escrito " leia-me novamente", então isso não é bom. Tudo bem. Bem, vou me preparar. Vamos tentar. Mais uma tentativa. Caso contrário, vou pedir para o
+
+Opus corrigir isso depois da transmissão. E talvez eu mostre isso na próxima transmissão ou vídeo que eu fizer. Isso é frustrante. Sim, quer dizer, estamos meio que vendo os limites da Kimi aqui. Parece que funcionou muito bem.
+
+Parece que a extensão está quase pronta. Mas isso meio que se alinha com o que eu estava dizendo, que você pode usar um modelo mais barato para começar algo ou talvez fazer a pesquisa e implementar o projeto depois que o plano estiver consolidado por um modelo mais robusto. Mas você certamente vai querer o modelo mais robusto em algum ponto do fluxo de trabalho. Tipo, eu estou fazendo isso mais para fins de demonstração do que para otimizar a codificação. Usar o Kimi para tudo? Não recomendo
+
+usar o Kimi para tudo. Você deseja usar o modelo mais poderoso para, você sabe, parte ou toda a implementação, ou parte ou todo o planejamento. Não que o Opus garantisse que evitaríamos esse problema na extensão, mas apostaria uma boa quantia que não teríamos nos deparado com isso se estivéssemos usando o Opus 4.7 para essa implementação. Mas, no geral, como já tínhamos a maior parte construída, poderíamos simplesmente aplicar o Opus para corrigir aquele último bug e ainda assim usaríamos muito menos tokens. E podemos construir isso como um
+
+fluxo de trabalho mais completo. Então não é como se tivéssemos que ficar indo e voltando, dizendo tipo, "Ok, agora é hora do Opus ou agora é hora do Kimi." Podemos estruturar isso mais como um processo, que é exatamente o que os fluxos de trabalho do Archon nos permitem, eliminando a necessidade de intervenção humana para alternar entre os modelos. Sim, é isso mesmo, Sean. Nesta transmissão ao vivo, é proibido trapacear. Mas talvez eu trapaceie depois da
+
+transmissão ao vivo. Porque eu quero, eu quero que isso funcione. Tudo bem. Então, sim, no geral, minha opinião geral, depois de testar bastante o MiniMax e o Kimi, é que eles são bons e baratos, mas não tão bons quanto eu gostaria. Sempre fico um pouco decepcionado quando o uso. Bem, sim
+
+, quer dizer, nós realmente não temos tempo para a transmissão ao vivo aqui, mas eu estaria muito interessado em experimentar este assistente de pivoteamento do R. E talvez seja isso que eu farei na próxima transmissão ao vivo ou vídeo que eu fizer para o Raspberry Pi: criarei especificamente um fluxo de trabalho Archon que utilize o RPIV Advisor. Ou talvez nem mesmo o fluxo de trabalho Archon. Talvez eu mostre um processo que aperfeiçoei, que utiliza o RPIV Advisor, onde tenho Kimmy como modelo de trabalho e o Opus 4.7 como revisor.
+
+Isso seria legal. Isso virá a seguir, pois tornará este processo mais confiável aqui. Ok, então o callback completo agora lê a saída do fluxo de trabalho do arquivo de log e a registra diretamente na sessão do Raspberry Pi como uma mensagem do usuário. Ok, então acho que agora funciona mais como a linha de comando, o que é ótimo. Então, é , vamos fazer isso mesmo. Então, tente mais uma
+
+vez. Deixe-me carregar o prompt. Volte para Pi. Pronto, aí está
+
+. Tudo bem. Tomara que agora funcione. Esta é a última tentativa. Então, vou ligar para cá e corrigir com o Opus para mostrar depois. Então.
+
+Ok, ferramenta de despacho Archon. Sim. Ok, estamos correndo. Finalização de compra ao vivo, sem árvore de trabalho. Aqui estão os registros. O fluxo de trabalho já está em execução. Você pode
+
+verificar o arquivo de registro acima para acompanhar o progresso em tempo real ou aguardar um momento que eu posso ler a saída para você, se preferir. Muito bem , vamos ver.
+
+Pronto. Sem chance. Sem chance. Em vez de me mostrar o resultado, ele simplesmente especifica o caminho completo do log. Ah, agora estou realmente frustrada com a Kimmy. Isso é realmente tão ruim que
+
+levou a empresa a fazer isso. Uau, ok. Bem, vamos operar esses modelos, eles ficam muito frustrantes quando você realmente entra nos detalhes mais minuciosos. É tipo, fala sério. Seria legal terminar isso na transmissão, mas eu teria que configurar o Opus e carregar todo o contexto para as extensões. Então, acho que não
+
+vou fazer isso aqui. Mas chegamos perto. Chegamos perto. Temos a extensão funcionando para iniciar os fluxos de trabalho, e não é como se em todos os fluxos de trabalho fosse necessário revisar a saída na sessão principal. Então, para todos os efeitos, parece que chegamos lá, exceto por essa última coisa que é ler a saída. Não consigo acreditar que a
+
+Kimmy tenha decidido fazer isso. Eu literalmente pedi para enviar toda a saída do fluxo de trabalho de volta para a sessão, mas ele ficou preguiçoso e, em vez de fornecer a saída, simplesmente diz: "Aqui estão os registros". Não há saída. Aqui estão os registros. Tipo, não. Não sei se vocês
+
+viram por um segundo, mas quando o terminal terminou, eu vi o resumo ali. O resumo estava lá no terminal. O fluxo de trabalho correu bem. Isso é bastante frustrante. Bom, de qualquer forma, quase chegamos lá.
+
+Vamos considerar um sucesso parcial, mas vou continuar trabalhando nisso com o Opus e apresentar o resultado na próxima transmissão. Porque eu acho que essa função de despacho do Archon, de poder ver os registros e tê-los inseridos de volta no Pilot, é muito legal. Quero continuar trabalhando nisso. Nossa, cara. Fãs do Codex, vamos comer.
+
+Sim, quer dizer, eu meio que quero experimentar . Sabe, espere. Um momento . Desculpe, a mensagem exibida estava incorreta . Deixe-me tentar isto. Será que eu poderia
+
+usar o modelo {slash}? Posso mudar para o Codex no meio de uma conversa? Isso funciona? Vou
+
+tentar isso. Teste. OK. Ah , não é compatível. Aguentar. Qual
+
+deles é compatível?
+
+Teste. Oi. Espera, o quê? Parar. Será que está apenas repetindo tudo o que eu já disse?
+
+O que está fazendo? OK. Bem, de qualquer forma, a extensão ainda não está produzindo nenhuma saída. Preciso que você investigue isso mais a fundo agora que você é GPT em vez de Kimmy. Talvez eu possa enviar isso.
+
+Hum,
+
+acho que não tem o resto do histórico da conversa. Não sei se quero mexer com isso agora. Porque eu acho que quando troquei de modelo, o histórico de conversas se perdeu, já que agora parece estar bem confuso. É , agora está tudo muito confuso. Ok, vou parar por aqui.
+
+Certo, terei que iniciar uma conversa completamente nova para resolver isso. Então, vou iniciar a transmissão aqui. Quase chegamos lá. Mas o que conseguimos fazer durante essa transmissão ao vivo foi explorar o Raspberry Pi. Vimos como era carregar extensões, carregar habilidades e fazer com que o Raspberry Pi atualizasse sua própria configuração. E vimos
+
+todo o processo de construção de uma extensão. Ainda não funciona 100%, mas chegaremos lá. Quer dizer, no geral, o que a Kimmy conseguiu fazer foi muito bom. Mas definitivamente fiquei um pouco decepcionado no final. E acho que isso é uma boa lição para todos. De modo geral,
+
+esses modelos mais fracos são até bons, mas sempre haverá um pouco de decepção com eles. E é por isso que é bom combinar modelos mais potentes com modelos mais baratos . E é basicamente sobre isso que meu conteúdo vai tratar, porque eu definitivamente acho que é para onde a indústria está caminhando. Construir esses sistemas de acoplamento que combinam modelos e os integram permite que você tenha o melhor dos dois mundos sem precisar alternar entre eles manualmente. Então, muito mais conteúdo sobre isso em breve. Então, é isso que
+
+eu tenho para vocês hoje. Portanto, agradeço a presença de todos. Todas as suas perguntas, comentários e interação. Essas transmissões ao vivo são sempre muito divertidas. Então, obrigado a todos por estarem aqui. Espero que vocês tenham um
+
+ótimo resto de fim de semana. Para vocês que estão na Dynamis, nos veremos por aí na comunidade. Caso contrário, nos vemos nos comentários para transmissões ao vivo e vídeos do YouTube. Então, cuidem-se todos. Tenha um bom

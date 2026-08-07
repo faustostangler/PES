@@ -1,0 +1,148 @@
+---
+video_title: "Stripe's Coding Agents Ship 1,300 PRs EVERY Week - Here's How They Do It"
+video_id: NMWgXvm--to
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=NMWgXvm--to
+video_date: 2026-03-12T00:00:32+00:00
+video_description: |
+  Stripe merges over 1,300 AI-written pull requests every single week. Zero human-written code. But here's what most people are missing - the real lesson is in the agent harness they have built around their coding agents.
+  
+  Stripe calls them "blueprints" - workflows that alternate between deterministic steps (linting, type checking, CI) and agentic steps (where the AI reasons and writes code). The walls constrain the AI. The AI does the creative work. And together, they produce production-quality code at a pace most companies can't match with human developers.
+  
+  And Stripe isn't the only one. Shopify independently built the same architecture (Roast). Amazon used the same pattern to save 4,500 developer-years. Airbnb migrated 3,500 test files in 6 weeks with it. Every company succeeding with AI coding at scale is converging on the same hybrid deterministic-agentic workflow.
+  
+  In this video, I'll break down the pattern and explain what it means for how you should be thinking about AI coding.
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Try Postman's New AI-Powered Platform:
+  https://fandf.co/4l1bNwj
+  
+  Postman FastAPI Demo (My GitHub Repo):
+  https://fandf.co/3OY3plf
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  - If you want to dive even deeper into building reliable and repeatable systems for AI coding, check out the Dynamous Community and Agentic Coding Course:
+  https://dynamous.ai/agentic-coding-course
+  
+  - Stripe Minions Blog Post (Part 1):
+  https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents
+  
+  - Stripe Minions Blog Post (Part 2):
+  https://stripe.dev/blog/minions-stripes-one-shot-end-to-end-coding-agents-part-2
+  
+  - Shopify Roast Framework:
+  https://github.com/Shopify/roast
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  0:00 Stripe's 1,300 AI Pull Requests
+  1:56 Structured AI Workflows (The Big Unlock)
+  4:13 Intro to Stripe Minions
+  5:24 Blueprints: Workflows vs Agents
+  7:29 The Minion Workflow Walkthrough
+  8:55 Postman
+  10:56 Back to the Minion Walkthrough
+  11:10 Isolated Dev Boxes and Security
+  13:13 The Importance of Determinism
+  14:44 The PIV Loop Strategy
+  16:34 Tools to Build Your Own
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+  Join me as I push the limits of what is possible with AI. I'll be uploading videos weekly - at least every Wednesday at 7:00 PM CDT!
+---
+Algumas semanas atrás, a Stripe nos surpreendeu com uma notícia bombástica. Atualmente, eles enviam mais de 1.300 solicitações de pull request por semana, todas escritas inteiramente por IA. Portanto, os humanos ainda revisam o código, mas não escrevem uma única linha dele. E para uma organização dessa escala, é preciso muita confiabilidade para que isso seja possível. Então, eles criaram sua própria
+
+estrutura de agentes internos chamada Minions e publicaram alguns posts no blog explicando exatamente como isso funciona. Então, sim, é uma manchete chamativa, mas quando entrarmos nesses posts do blog, e é isso que faremos hoje, encontraremos muitas lições valiosíssimas. Então, pense nisso. O Stripe possui uma base de código muito complexa . Eles têm um back-end escrito em Ruby, é uma pilha de tecnologias incomum. Eles possuem
+
+um grande número de bibliotecas próprias que geralmente são desconhecidas para grandes modelos de linguagem. Além disso, sendo a Stripe, eles têm muito a perder, pois movimentam mais de US$ 1 trilhão em volume de pagamentos por ano. Portanto, com uma base de código complexa, tudo precisa ser perfeito. Portanto, se eles construíssem um sistema suficientemente confiável para ser enviado em grande escala, praticamente qualquer empresa, inclusive você, seria capaz de fazer isso. Então, é isso que eu quero abordar hoje. Como o
+
+Stripe tornou isso possível e como você pode pegar essas ideias que vamos abordar e aplicá-las por conta própria. E isso é ainda mais importante do que você imagina, porque muitas dessas grandes empresas estão começando a construir suas próprias estruturas de agentes para tornar a programação de IA mais determinística e confiável. Então, a Shopify também criou seu próprio mecanismo de fluxo de trabalho de IA estruturado, chamado Roast. Eles realmente tornaram isso de código aberto. Vou colocar o link na descrição. O Airbnb está fazendo o mesmo
+
+, especialmente para ajudar com suas migrações de teste. Além disso, a AWS também possui suas próprias ferramentas internas, sobre as quais começou a compartilhar informações em uma postagem no blog. Portanto, todas essas empresas estão construindo mecanismos de fluxo de trabalho de IA estruturados. Mas o que isso significa exatamente? Vamos ser mais específicos agora. E, claro, para
+
+deixar tudo bem claro para você, preparei um diagrama bem prático. Então, vamos começar com o padrão de alto nível. Como funcionam todos esses fluxos de trabalho estruturados de IA ? Em seguida, vamos abordar especificamente os Stripe Minions. Vou consultar a postagem do blog novamente e selecionar muitas das informações principais ao longo deste texto . E, sinceramente, o mais
+
+importante é que quero abordar como você pode extrapolar essas ideias para construir seu próprio fluxo de trabalho. Como você pode aproveitar essas ideias? Você pode construir algo como o Stripe Minions por conta própria, honestamente, muito rapidamente. Essa combinação de nós agentes e nós mais determinísticos é o que define o fluxo de trabalho, tornando as coisas mais confiáveis ​​para nossos agentes de codificação. Então, vou entrar em mais detalhes sobre isso conforme formos explicando o padrão aqui. Assim
+
+como em qualquer tarefa de engenharia de agentes, temos algum tipo de ponto de entrada. Pode ser a CLI do Claude Code ou qualquer agente de codificação que você normalmente usa. Falaremos sobre isso, mas na Stripe, eles usam o Slack com bastante frequência para se comunicar com seus funcionários. Seja lá o que for, temos um ponto de partida que dará início a um fluxo de trabalho maior. O importante aqui é que temos etapas no fluxo de trabalho que não queremos que o agente execute. Assim, o assistente de codificação por IA
+
+só funciona em partes do fluxo de trabalho. Caso contrário, temos certas etapas que executaremos de forma determinística. Vamos garantir que, depois que o agente de codificação escrever um conjunto de código, executaremos a verificação de sintaxe (linting), a verificação de tipos e os testes unitários. Se houver alguma falha, retornamos ao agente para que ele corrija esses problemas e tente novamente. Portanto, o importante aqui é que o agente não está controlando o sistema.
+
+O sistema está controlando o agente. Temos essas garantias e forçamos o agente a tentar novamente sempre que surgir algum problema. E isso é muito impactante. E, honestamente, é fundamentalmente diferente de muitas das maneiras como normalmente usamos nossos assistentes de codificação. Porque muitas vezes, só temos o agente. Não temos
+
+outras partes no fluxo de trabalho. Então, o agente fará o planejamento, a implementação, a validação, como a criação de testes unitários e a iteração sobre eles. Mas o problema é que isso não garante que o agente executará todas as validações que desejamos e da maneira que desejamos. Assim, reforçamos isso construindo fluxos de trabalho que combinam esses nós não determinísticos, agentes e determinísticos. E é exatamente disso que você precisa quando tem muitas bases de código muito complexas com riscos elevados. E isso nos leva
+
+agora aos Minions. E uma ressalva muito importante aqui é que a Stripe tem mais de 3.400 engenheiros. Eles estão enviando mais de 8.000 solicitações de pull request por semana. Portanto,
+
+essa é apenas uma pequena porcentagem de PRs (reportagens) que são escritas inteiramente por IA neste momento , mas esse número está crescendo rapidamente. Minions está se tornando uma parte essencial de sua estrutura de engenharia. E o objetivo dos Minions é permitir que agentes não supervisionados executem tarefas de forma autônoma. Portanto, isso é fundamentalmente diferente de um engenheiro trabalhando com seu assistente de programação. Portanto, eles ainda utilizam o Claude Code e o Cursor em seu trabalho diário. Mas para
+
+qualquer coisa que eles queiram que o agente resolva, como um problema no GitHub, ou seja, enviar algumas solicitações no Slack, é para isso que serve o Stripe Minions. E é legal porque na postagem do blog eles até mostram um exemplo de como é conversar com um Minion no Slack. Então eles iniciam uma discussão aqui. Então eles mencionam a caixa de desenvolvimento. Falaremos sobre a caixa de desenvolvimento daqui a pouco. Eles estão fornecendo muito
+
+contexto sobre esse problema e até mesmo partes da base de código que o agente pode acessar e analisar imediatamente. Algo que eu realmente aprecio nisso é a quantidade de contexto incluída antecipadamente, para que o agente não precise fazer suposições sobre o trabalho que está prestes a executar de uma só vez. Certo, então a ideia central por trás do Stripe Minions, que também mostrarei no meu diagrama, são os modelos. É assim que criamos nossos fluxos de trabalho que combinam agentes e nós determinísticos. E quero me aprofundar um pouco nisso aqui, porque há algumas ótimas lições para extrair, mesmo só desta seção da postagem do blog. Então, em primeiro lugar, eles
+
+dizem: "O primitivo mais comum para orquestrar o fluxo de um Modelo de Linguagem de Aprendizado (LLM) é um fluxo de trabalho ou um agente. E há uma grande diferença aqui. Um fluxo de trabalho é um sistema LLM que opera por meio de um grafo fixo de etapas. Assim, estamos construindo o modelo no sistema, em vez de ter o sistema como agente, como mencionei anteriormente. Portanto, ainda usamos um modelo de linguagem extenso em certas etapas, mas ainda definimos o processo exato que percorremos a cada vez. É mais
+
+determinístico. Por outro lado, com agentes, é um ciclo mais simples com um padrão de orquestração de ferramentas. Podemos pensar nisso como se o agente estivesse definindo o fluxo de trabalho em tempo real, porque ele decide quais chamadas de ferramentas fazer, quantas fazer e se deve fazer alguma . É assim que geralmente trabalhamos com nossos assistentes de codificação de IA, onde enviamos instruções para um fluxo de trabalho ou uma habilidade que queremos que ele execute, mas ele ainda precisa usar seu poder de raciocínio para descobrir como fazer todas essas chamadas de ferramentas para construir esse fluxo de trabalho na prática." tempo. E isso é realmente
+
+poderoso, mas também perigoso, especialmente quando você é uma empresa como a Stripe e precisa garantir que tenhamos a criação de um determinado contexto e que uma determinada validação ocorra. Então, dentro desses fluxos de trabalho, um determinado nó pode executar código determinístico ou um loop de agente focado em uma tarefa. E é isso que eu realmente adoro. Em essência, um blueprint é como uma coleção de habilidades de agente entrelaçadas com código determinístico para que subtarefas específicas possam ser tratadas de forma mais apropriada. Um pouco complicado de explicar, mas isso é muito poderoso.
+
+Eles até têm um diagrama aqui que mostra como esses fluxos de trabalho funcionam. Então, tudo que está na nuvem aqui é uma tarefa de agente, e tudo que está nos quadrados é uma tarefa determinística. E isso é muito parecido com o que eu tenho no meu diagrama para vocês aqui. Então, vamos começar agora. Começamos com nosso ponto de entrada, como o Slack, que é o mais comum, mas eles também suportam a CLI .
+
+E então, antes mesmo de enviarmos a solicitação do engenheiro para o agente, já temos um nó determinístico no início. do fluxo de trabalho para curadoria de contexto. Então, fazemos duas coisas aqui. Vamos curar a documentação e as ferramentas que o agente precisa. Para isso, usaremos as ferramentas do MCP de forma determinística. Ou seja,
+
+não as entregaremos diretamente ao agente, mas sim dentro do código, pesquisaremos em tickets e documentação, combinando informações relevantes com o prompt do Slack para enviar como contexto ao agente. Além disso, não usaremos as ferramentas do MCP apenas para curadoria de contexto, mas também selecionaremos um subconjunto delas para disponibilizar ao agente, para que ele tenha essas funcionalidades. Esse enorme conjunto de ferramentas do MCP está em um único servidor MCP chamado Tool Shed. Ele possui mais de 400, na verdade cerca de 500 ferramentas do MCP para todos os sistemas internos e plataformas SaaS que eles usam. Precisamos extrair documentação, verificar status de builds, executar testes externos, enfim, o que for necessário . Há um conjunto enorme de
+
+ferramentas, mas não queremos... Sobrecarregar o agente com ferramentas é um erro, então precisamos de uma maneira de descobrir inicialmente, com base na solicitação, qual subconjunto menor de recursos precisamos fornecer ao nosso agente. Essa é a outra parte da curadoria de contexto que estamos fazendo aqui. O patrocinador do
+
+vídeo de hoje é o Postman, e estou realmente empolgado com isso porque uso o Postman há quase uma década, e eles acabaram de lançar uma grande atualização que os tornou a plataforma de API nativa de IA. Até agora, o Postman sempre foi uma ferramenta que você executava junto com sua IDE. Você tinha suas especificações e coleções de APIs rodando na nuvem do Postman, como estamos vendo aqui. E então, você tinha sua base de código localmente. Ou seja, tudo muito separado.
+
+Além disso, você tinha que descobrir como executar seus testes na sua CI. Três fluxos de trabalho diferentes para a mesma API. Mas o novo Postman resolve isso porque agora é nativo do Git, o que é muito poderoso. Deixe-me mostrar o que quero dizer. Dê uma olhada nisso. Agora posso
+
+gerenciar todas as minhas coleções e ambientes do Postman, tudo diretamente no meu código local. E são todos arquivos YAML bem simples que sincronizam com as alterações que faço no aplicativo Postman para desktop. Então, tenho isso configurado localmente agora. Também posso alternar para o Postman na nuvem, onde tudo é sincronizado. E qualquer alteração que eu fizer aqui, por exemplo, uma alteração bem simples , é refletida automaticamente no controle de versão. Então, agora posso ir ao
+
+meu terminal, executar um `git diff`, e você verá como é fácil rastrear as alterações nos nossos testes de API. Podemos controlá-los por versão, assim como fazemos com o nosso código. E aqui está a melhor parte. Veja só. Como tudo agora são apenas arquivos locais no nosso disco, o modo agente consegue coordenar todo o ciclo de vida da sua API. Então, você descreve o que
+
+precisa em linguagem natural, e ele pode criar coleções inteiras, gerar especificações, escrever testes, configurar mocks e manter tudo sincronizado. Ele pode até mesmo escanear seu código e descobrir automaticamente todos os endpoints. Além disso, Você pode escolher o modelo de IA, Claude, GPT, auto-hospedado, o que melhor se adequar à sua infraestrutura. E a mesma coleção que roda na sua máquina rodará no seu pipeline de CI, hooks de pré-commit , ações do GitHub, sem precisar reescrever testes para diferentes ambientes, um fluxo de trabalho único em todos os lugares. O Postman definitivamente deu um salto recentemente. Eu recomendo muito que vocês deem uma olhada
+
+. Vou deixar um link para o Postman e meu repositório de exemplo no GitHub na descrição. Depois da curadoria do contexto, é quando executamos o agente pela primeira vez. O agente realiza a implementação. Temos uma etapa determinística para linting e verificação de tipos com o Sorbet. E então,
+
+resolvemos quaisquer problemas que surgirem com outro nó do agente. E toda essa etapa, tudo que executa o agente, é executado em uma máquina de desenvolvimento isolada . Eles especificamente dizem que, usando árvores de trabalho e contêineres rodando no laptop do desenvolvedor, é muito difícil configurar as permissões corretamente e fazer com que isso seja escalável. Então, o que eles fazem é que cada vez que um minion é executado, ele é executado em uma instância EC2 isolada da AWS. instâncias em execução na nuvem. E essas
+
+instâncias são criadas muito rapidamente. Elas vêm pré-carregadas com as bases de código do Stripe , o cache de lint, tudo o que precisam para serem extremamente rápidas. E eles as chamam de gado, não de animais de estimação. Ou seja, essas instâncias não são importantes. Podemos criá- las e desativá-las à vontade, com base na demanda que temos no momento para os engenheiros que trabalham com minions. E assim, tudo é executado com
+
+permissões completas em um ambiente seguro e isolado que também escala muito bem para execução paralela. Um único engenheiro, como eles também dizem na postagem do blog , muitas vezes tem vários desses minions em execução exatamente ao mesmo tempo. E assim, todo o desenvolvimento real acontece aqui mesmo, na máquina. E também temos uma etapa determinística no final, onde vamos extrair uma parte do conjunto de testes para executar na alteração que acabou de ser feita. Isso é incrível para mim, mas o Stripe tem mais de 3 milhões de testes em sua CI. Então, vamos selecionar
+
+apenas uma pequena parte deles, algo parecido com o servidor MCP. Precisamos apenas de uma pequena parte que vamos executar e, em seguida, fornecer feedback ao agente sobre qualquer falha. Portanto, iteramos aqui no máximo duas vezes antes de encaminhar para um humano, pois não queremos loops infinitos com erros de teste unitário. Caso contrário, assim que o agente concluir suas correções e os testes forem aprovados, passamos para a revisão humana. É importante ressaltar novamente que nunca fazemos programação em tempo real aqui no Stripe, certo?
+
+Eles sempre fazem revisão humana ao final de cada execução do Stripe. Mas a questão é que, com um fluxo de trabalho muito mais confiável, selecionando o contexto correto para o agente com exatamente a validação necessária, podemos ter mais confiança de que, quando a revisão chegar até nós, ou melhor, chegar a um engenheiro do Stripe, ele estará muito mais seguro. A revisão será mais rápida, o código será mais confiável e isso levará a uma fusão muito mais rápida. Certo. Então, quero finalizar falando mais sobre por que nos importamos em adicionar determinismo aos nossos fluxos de trabalho de codificação de IA e como você pode construir isso por conta própria. A grande
+
+questão é... A questão que talvez estejamos nos perguntando agora é: por que nos preocupamos com o fato de os agentes não fazerem tudo? Quero dizer, teoricamente eles podem. Por meio de habilidades e comandos, podemos fazer com que eles
+
+realizem a curadoria de contexto, a implementação e a validação. Mas a Stripe explica isso muito bem em sua postagem no blog. Eles dizem: "Em nossa experiência, escrever código para realizar deterministicamente pequenas decisões que podemos antecipar, como sempre verificar as alterações no final de uma execução, economiza tokens, o que reduz custos em escala e dá ao agente menos chances de errar." Isso é importante. Só porque os agentes de codificação estão se tornando mais poderosos, assim como os Modelos de Linguagem de Grande Porte (LLMs), ainda temos problemas em que grandes modelos de linguagem não fazem exatamente o que dizemos ou pulam etapas completamente. Portanto, no geral,
+
+descobrimos que colocar os LLMs em instâncias independentes, como ter nós separados para o agente, separados para etapas determinísticas, resulta em um ganho de confiabilidade em todo o sistema. E é isso que eles estão fazendo com os blueprints. É isso que todas essas outras empresas também estão fazendo , como a Shopify. com Roast. Eu mesmo estou explorando muitas dessas ideias. Falarei sobre isso daqui a
+
+pouco. Então, o exemplo aqui com o Stripe Minions pode não ser 100% aplicável a você. Provavelmente você não tem um servidor MCP com 400 ferramentas, ou precisa fazer tanta curadoria de contexto. Você também provavelmente não tem 3 milhões ou mais de testes em seu conjunto de testes. Mas a ideia aqui, certamente podemos extrapolar para um fluxo de trabalho que qualquer engenheiro, qualquer pessoa que use assistentes de codificação de IA, estaria interessada em usar. É o que eu chamo
+
+de Loop Piv. Já abordei isso bastante no meu canal, a ideia de planejar, implementar e validar. E você faz isso em várias sessões do assistente de codificação de IA. Assim, podemos criar um fluxo de trabalho determinístico, parcialmente determinístico, semelhante ao que o Stripe fez para o Minions. Então, estou apenas dando um exemplo de algo que podemos construir.
+
+E é bem fácil construir isso você mesmo. E então, meu fluxo de trabalho típico para trabalhar em Para qualquer solicitação de recurso ou correção de bug, começo com a fase de planejamento. Então, tenho algum contexto inicial, como minha solicitação de recurso ou um problema no GitHub, e então o agente planeja a implementação ou a correção. Normalmente, itero com o agente de codificação no plano, garantindo que tudo esteja correto para validação e os critérios de sucesso, coisas assim . Isso gera um único plano estruturado que agora vou cortar a janela de contexto.
+
+Então, uma nova janela de contexto alimenta esse plano em um segundo agente para fazer a implementação. Essa divisão é importante porque quero manter meu agente de implementação bem focado. E depois da implementação, é aqui que posso adicionar um nó determinístico para validação, assim como o Stripe faz com os Minions. Assim, posso executar minha análise de código, verificação de tipos, testes unitários, o que for necessário, independentemente da linguagem de programação, como você pode ver aqui. E então o agente de codificação retorna e corrige qualquer problema que surgir nos testes que executamos. E então temos uma revisão de pull request
+
+no final. final e depois mesclar. Então, um fluxo de trabalho bem similar ao do Stripe, mas muito mais generalizado, permitindo que você o utilize para construir qualquer coisa com assistência de codificação por IA. Temos essas etapas determinísticas de impor um ciclo de revisão humana para o plano, obter uma nova janela de contexto para implementação e executar a validação. Isso é extremamente poderoso. Você pode fazer
+
+isso manualmente em diferentes sessões de codificação e adicionar a validação para o agente executar, mas é muito mais confiável quando configurado dessa forma. Agora, quanto à maneira de construir esses fluxos de trabalho de IA, há três coisas que preciso mencionar rapidamente. Primeiro, use o Roast da Shopify como exemplo. O Stripe Minions infelizmente não é de código aberto, mas a Shopify disponibilizou sua versão de código aberto desses frameworks de fluxo de trabalho de IA estruturados. Um exemplo realmente poderoso . Eles até oferecem alguns guias de
+
+início rápido que mostram como são os fluxos de trabalho com nós determinísticos combinados com nós não determinísticos controlados por agentes. Use isso como ponto de partida se você estiver interessado em construir qualquer coisa. você mesmo, inclusive usando-o como contexto para seu assistente de codificação de IA. Além disso, na comunidade Dynamis, nesta sexta-feira, às 11h ( horário central), realizarei um workshop mostrando exatamente como construir esses fluxos de trabalho de codificação determinística e agética, tanto com a CLI de código Claude quanto com o SDK de agentes Claude. Portanto, junte-se à comunidade se estiver interessado em participar deste e de todos os outros cursos e workshops que ofereço. Há muita coisa acontecendo na Dynamis
+
+e certamente pretendo ter conteúdo no YouTube em breve também sobre este mesmo assunto. Então, não estou apenas tentando fazer com que você se junte à comunidade, embora eu adoraria tê- lo(a) aqui, mas apenas dizendo que é aqui que abordarei o assunto primeiro. E também há muito trabalho que tenho feito com o Archon. Só para dar uma prévia rápida: o Archon é o centro de comando da IA. Tenho feito uma grande reformulação interna nos últimos meses, transformando-o basicamente no que o Shopify Roast e o Stripe Minions são: um lugar para executarmos esses fluxos de trabalho. Em paralelo. Podemos monitorar os
+
+logs e analisar toda a observabilidade necessária. Há até um construtor de fluxos de trabalho que estou desenvolvendo agora. É basicamente como o Minions e o Roast, mas você pode definir seus fluxos de trabalho em uma interface de usuário incrível. Estou chamando de N8N para programação de IA. Há muitas coisas interessantes em que estou trabalhando nos bastidores relacionadas a isso . Tem sido muito gratificante
+
+ver o que essas grandes empresas estão fazendo, porque é muito semelhante ao que estou desenvolvendo. Então, isso é tudo o que tenho agora sobre o Stripe Minions e a criação desses fluxos de trabalho de IA estruturados. Definitivamente, é para onde o setor está caminhando, não para mais poder para os agentes, mas para mais poder para o sistema que controla os agentes. Se você gostou deste vídeo e está ansioso por mais conteúdo sobre programação de IA e criação desses tipos de fluxos de trabalho, eu agradeceria muito um like e uma inscrição. E com isso, nos vemos no próximo vídeo.

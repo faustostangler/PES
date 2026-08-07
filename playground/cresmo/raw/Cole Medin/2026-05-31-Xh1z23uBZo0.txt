@@ -1,0 +1,991 @@
+---
+video_title: "Claude Plans, Gemini Designs: One Workflow for Beautiful Frontends (LIVE)"
+video_id: Xh1z23uBZo0
+channel_name: "Cole Medin"
+channel_id: UCMwVTLZIRRUyyVrkjDpn4pA
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=Xh1z23uBZo0
+video_date: 2026-05-31T04:37:29+00:00
+video_description: |
+  I've been mixing providers across my AI coding workflows lately, and with the new Gemini 3.5 Flash things are getting interesting. Gemini builds the most beautiful frontends by far. Opus is still the best at everything else.
+  
+  So today I'm building an Archon workflow that combines them. Opus plans the app and writes the copy. Gemini designs the UI from that copy. Opus comes back for the integrations and the deploy. Then I run it against a real target and we ship an insanely beautiful frontend, fast.
+  
+  Clerk CLI (big part of the app in this stream): https://go.clerk.com/9BHKl3A
+  Archon: https://github.com/coleam00/Archon
+  Archon docs: https://archon.diy
+  Dynamous community: https://dynamous.ai
+  
+  Livestreams Saturdays at 9 AM CT. New YouTube video every Wednesday at 7 PM CT!
+---
+Muito bem, hoje vamos fazer alguns experimentos. Estive testando o novo flash Gemini 3.5 na última semana e ele cria algumas interfaces gráficas com uma aparência incrível. Mas uma das coisas que não fez tão bem. Então, este é um exemplo de uma interface que o Gemini 3.5 Flash construiu
+
+para mim no novo sistema antigravidade. Mas uma das coisas que não fez muito bem foi meio que alucinar muita informação na própria página, certo? É como se a Gemini fosse ótima em criar interfaces visualmente deslumbrantes, mas quando chega a hora de planejar o conteúdo em si e qualquer tipo de integração com a interface , ela deixa muito a desejar. O desempenho do modelo cai significativamente. Portanto, tudo o que estamos fazendo nesta transmissão ao vivo hoje gira em torno de como combinar vários modelos diferentes em um único fluxo de trabalho, para que possamos extrair as partes do modelo que têm melhor desempenho e, em seguida, minimizar as desvantagens dos diferentes modelos. Então, tenho aqui um diagrama
+
+que descreve o que vamos fazer. Vamos combinar o Opus com o flash Gemini 3.5 para criar interfaces visualmente atraentes e que realmente contenham as informações corretas. Então, uma das coisas que testei com o Gemini 3.5 Flash foi criar uma página de destino que explicasse o Arkon, minha ferramenta, como executá-la e como configurá-la. E simplesmente
+
+errou em tanta coisa. Mas ficou bonito, não é? E se o Opus decidisse quais informações exibir na interface e o Gemini 3.5 Flash criasse a interface do usuário? Além disso, se precisássemos de alguma integração com nossa aplicação, como autenticação ou conexão com algum backend, usaríamos o Opus novamente. Portanto,
+
+estamos combinando fornecedores nesse fluxo de trabalho mais amplo. E, claro, vou usar o Archon para orquestrar tudo isso. Então, todo esse fluxo que estamos vendo aqui, vamos construí-lo como um fluxo de trabalho Archon ao vivo e veremos os tipos de resultados que obtemos. Então, tenho em mente um aplicativo que vou construir completamente do início ao fim. Eu já tenho o enunciado pronto , para que não precisemos ficar esperando a tinta secar enquanto eu elaboro o enunciado para o aplicativo que vamos construir. Mas vamos construir uma
+
+interface completa usando o Opus para o planejamento, o Gemini para criar a interface do usuário e, em termos de integrações, configuraremos a autenticação com o Clerk. Então, pensei que esse seria um ótimo exemplo de algo um tanto complicado que não gostaríamos de deixar para o Gemini configurar, mas que primeiro precisamos da interface e depois adicionamos a autenticação. Então, estamos tentando fazer com que seja uma tarefa bem complexa, algo que esse fluxo de trabalho lide automaticamente para nós. E então, uh, até incluí um soneto aqui para dar um toque de validação, só para ir ainda mais longe. Na verdade, estamos usando três modelos de linguagem grandes diferentes neste fluxo de trabalho.
+
+Bem, usando cada um para, quer dizer, basicamente o Sonnet porque é mais barato e mais rápido, o Opus porque é o melhor em raciocínio, e depois o Gemini por causa da interface do usuário. Então, foi isso que aconteceu hoje. E antes de entrarmos de fato no assunto, vou dar uma olhada no chat aqui e ver se alguém comentou alguma coisa. Ainda não. Legal. Mas, sim, para aqueles que
+
+estão aqui, fico feliz em tê-los aqui. É, eu meio que estraguei tudo. Então, sim, vocês quatro estão aqui agora, o que eu agradeço, mas eu errei e agendei a transmissão para as 21h. Horário Central em vez das 9h da manhã. Então, definitivamente, o fluxo de pessoas que chegam agora é mais lento. Bem, tudo bem,
+
+os números estão aumentando. Que legal! É isso [risos] Foi mal, pessoal, eu marquei para o horário errado. Então, eu agendo a transmissão pelo meu OBS, pelo meu software de transmissão, e aí fica meio mais difícil de ver. Não sei, agendar uma transmissão ao vivo pelo YouTube é mais fácil, mas como eu costumo fazer a transmissão pelo OBS, também configuro tudo lá. Sim,
+
+esse é um erro que nunca mais cometerei. Mas isso é engraçado. Enfim, vamos ao que interessa . Então, é, foi bom ver vocês, Sydney e Eric. Ei pessoal. Agora a mensagem do chat está
+
+chegando. Acho que pode ser apenas devido ao atraso na transmissão. Mas sim, foi bom ver vocês. E, na verdade, estou curioso para saber se, à medida que começo a desenvolver o fluxo de trabalho aqui, vocês já exploraram o Gemini 3.5 Flash?
+
+Tenho curiosidade em saber se vocês já têm alguma opinião sobre isso ou, mais especificamente, se já usaram no novo sistema antigravidade. Porque foi aqui que eu comecei a testar a construção da interface do usuário, como essa que eu mostrei aqui. E, no geral, estou bastante impressionado. Como eu disse, a interface do usuário é boa. A informação é frequentemente alucinada. Então, estou
+
+curioso para saber se essa também é a experiência de vocês . Ou talvez você tenha conseguido fazer com que ele fosse capaz de lidar com tudo de ponta a ponta. Tenho certeza de que poderia ter lidado com as coisas melhor, com um fluxo de trabalho mais planejado, para não ficar apenas imaginando coisas, mas é meio louco, como construir essa única página de destino. Não há muita coisa aqui, e havia uns 10 problemas que estavam completamente errados, como se a ferramenta não a entendesse de jeito nenhum, mesmo eu tendo dado acesso ao repositório para que ela pudesse analisar tudo a fundo . Sim, então, é por isso que quero usar o Opus aqui.
+
+Então, vou acessar meu IDE porque já tenho tudo preparado. Então, trabalhei bastante para me preparar para a transmissão ao vivo aqui. Ainda vamos construir o fluxo de trabalho do zero, mas fiz um teste para garantir que tudo funcione, principalmente com o Clerk. Porque estamos escolhendo o Clerk para construir uma autenticação completa. Há muita coisa envolvida nisso.
+
+E então eu já criei as especificações para o site. Então, no que diz respeito ao que vamos construir de fato, vamos começar construindo o fluxo de trabalho do Arkon. Assim, este diagrama se transformará no arquivo YAML para o fluxo de trabalho do Arkon. E então vamos executar isso em relação a uma especificação que eu já elaborei aqui. Então, na verdade, vou colocar isso aqui rapidinho para você ver. Vou
+
+criar um painel de controle para avaliação comparativa. Então, uma ferramenta para Arkon que nos permite executar diferentes fluxos de trabalho e basicamente comparar os resultados, certo? Então, digamos que temos um fluxo de trabalho que queremos testar com diferentes modelos e, em seguida, podemos executar várias versões desse fluxo de trabalho com modelos diferentes e ter um avaliador que fica no topo para julgar a saída de cada uma delas. Então, isso está relacionado a algumas das outras transmissões ao vivo que eu estava fazendo, onde eu comparava o desempenho do Opus com o do Kimmy e em quais partes do fluxo de trabalho podemos usar o Kimmy para que seja mais rápido e barato, e quando realmente precisamos do Opus para obter esse poder de raciocínio extra? E naquela última transmissão ao vivo que fiz, onde realizei esses testes de desempenho, foi realmente muito interessante. Os resultados mostraram que,
+
+na verdade, a única etapa em um fluxo de trabalho em que você realmente precisa do Opus, ou de um produto similar de alta qualidade, é no planejamento. Portanto, se você usar o Opus para planejamento e o Kimmy para todo o resto, como exploração, implementação e validação, obterá resultados quase tão bons quanto se usasse o Opus para tudo. Acho esse tipo de avaliação comparativa muito interessante . É como tentar descobrir como podemos tornar as coisas realmente eficientes em termos de tokens, especialmente devido ao quão caros os melhores modelos estão ficando atualmente. [Limpa a garganta] Então, pensei que seria legal desenvolver um aplicativo assim e depois adicionar a autenticação com o Clerk .
+
+Então, há bastante coisa envolvida com o Clerk, porque vamos usar uma nova habilidade que eles lançaram e que me deixou ainda mais interessado em incorporá-la aqui. Então, temos uma habilidade para o Clerk que basicamente diz ao código Claude como configurar toda a autenticação para nós. Portanto, usaremos o Opus para lidar com tudo isso depois de construirmos a interface com o Gemini 3.5 Flash. E quanto à forma como vamos usar o flash Gemini 3.5
+
+, vamos usar o OpenRouter. Então, fiz muitos testes acessando diretamente a CLI do Gemini ou a API do Gemini e continuei [limpa a garganta] sendo limitado pela taxa de requisições. Tipo, minha chave de API estava presa no nível gratuito, mesmo depois de eu ter atualizado minha conta do Google para o segundo nível ou algo assim. Foi muito irritante. Então eu estava me preparando bastante . Sabe, ainda bem que fiz a preparação
+
+antes, mas nunca funcionou. Portanto, usar um roteador aberto para acessar a memória flash de 3,5 polegadas através do Raspberry Pi é a melhor opção. E depois temos a integração do Raspberry Pi no Archon. Portanto, não estamos apenas misturando modelos diferentes, mas também fornecedores diferentes. Usaremos o código Claude no fluxo de trabalho Archon para praticamente tudo, exceto quando estivermos usando o Pi para construir a interface do usuário propriamente dita .
+
+Muito legal. Então, sim, no que diz respeito à construção do fluxo de trabalho, deixe-me voltar atrás... Desculpe, esse é o diagrama errado.
+
+Tenho o prompt de compilação aqui mesmo. Então, vou enviar isso para meu segundo cérebro para que ele desenvolva o fluxo de trabalho. E então vou explicar as partes disso à medida que for sendo construído. Então, eu meio que quero fazer as duas coisas em paralelo, porque pode levar um tempinho para o código do Claude construir esse fluxo de trabalho para mim. Então, sim, temos tipo oito etapas aqui.
+
+Dediquei muito [limpa a garganta] trabalho para fazer isso e eu iterei bastante sobre isso . Então, deixe-me copiar isso. E antes de enviar, vou voltar ao chat porque vejo que vocês estão um pouco mais participativos agora. Muito bem, vamos ver. Olá Jason, que bom te ver.
+
+Obrigado por fazer isso. De nada . Sim, estou animado para essa transmissão aqui. Hum, Shawn disse que 3,5 e antigravidade não são tão ruins. Não estou inchado, mas também não estou mal. Sim
+
+. Legal. Ah, olá Victor. De nada . Agradeço. Vamos
+
+ver. Tem alguma recomendação de cursos sobre engenharia e orquestração de chicotes elétricos? E o Ben disse que você não precisa de um curso. Basta aprender o que há para fazer, existem muitos vídeos disponíveis sobre isso. E eu diria que sim, isso é verdade. Pessoalmente,
+
+estou produzindo bastante conteúdo sobre engenharia de chicotes elétricos no meu canal do YouTube atualmente. E eu digo isso literalmente, até mesmo esta transmissão ao vivo está ensinando como construir arneses. Refiro-me mais especificamente ao Arcon, que é meu construtor de chicotes elétricos de código aberto. Este é realmente o grande destaque aqui, que nos permite combinar provedores com tanta facilidade, e é exatamente isso que vamos explorar a seguir. Sim , eu tenho outros conteúdos que publiquei no meu canal sobre engenharia de chicotes elétricos. Os últimos
+
+vídeos foram sobre a criação de arreios. Não conheço nenhum curso completo sobre construção de arneses. Bem, honestamente, a coisa mais próxima que conheço é o curso de programação Agenta que tenho na comunidade Dynamix, mas também não é totalmente focado em engenharia de chicotes elétricos. Embora esse vá ser um foco importante quando eu reformular o curso de programação Agenta no Dynamix neste verão. Então, também estou animado com isso.
+
+Por que [limpa a garganta] continuo com a Kimmi, considerando os problemas que tive? Então, é, o que você está mencionando aqui... Eu falei sobre isso em algumas transmissões ao vivo recentemente: a API Kimmi trava às vezes.
+
+Ficará simplesmente parado ali para sempre, aguardando, ou como se meu fluxo de trabalho Arcon estivesse apenas esperando a API Kimmi enviar uma resposta. Portanto, não é como se houvesse um erro, então pode tentar novamente. Simplesmente trava completamente. E, na verdade, tenho sentido isso com menos frequência. A API deles tem se mostrado mais confiável para mim ultimamente.
+
+E mesmo antes de se tornar realmente confiável, eu queria continuar usando o Kimmi simplesmente porque é o melhor em termos de modelo super barato. Eu definitivamente obtive resultados melhores em comparação com o uso do MiniMax M2.7. Ainda quero fazer mais alguns testes com alguns dos modelos Quen mais recentes. Então, tipo, eu não estou totalmente convencida da Kimmy nem nada do tipo, mas é um modelo barato e muito bom. E também posso usar meu
+
+código de assinatura Kimmy que eu tenho . Bem, sempre que estou executando o Kimmy através do Pie, como em nossos fluxos de trabalho de conferência ou simplesmente usando o Pie no terminal. Qual é o motivo [limpa a garganta] de você ter escolhido o flash Gemini 3.5? É rápido e barato? O motivo é que
+
+ele é excelente na criação de interfaces de usuário. Essa é realmente a única razão. Quero dizer, é rápido e barato. Hum, acho que não sei o preço exato aqui. Na verdade, vamos dar uma olhada no site da OpenRouter para que eu possa mostrar os preços exatos. Então, se olharmos para o Gemini 3.5
+
+flash, o custo é de US$ 1,50 para cada 1 milhão de tokens e US$ 9 para cada 1 milhão de tokens de saída. Então, não é exatamente barato. O flash da Kimmy ainda é mais barato que o da Gemini 3.5, mas se compararmos com o da Opus, por exemplo, a diferença é absurda. É, tipo, 1,50 dólar para entrada e depois 5 e 25 dólares para tokens de saída. Isso nem sequer é o
+
+modo rápido que eles têm. A Anthropic também oferece isso. Então, sim, o preço disso é realmente absurdo. Se você for para o Opus 4.8 rapidamente, são 10 dólares, então é tipo o dobro do preço.
+
+Sim, então, de qualquer forma, é muito, muito caro, mas o flash Gemini 3.5 permite criar interfaces gráficas com melhor aparência do que o Opus. Assim como o que foi construído aqui. Quer dizer, obviamente provavelmente existem milhões de maneiras de desmontar essa interface de usuário que o Gemini 3.5 Flash construiu. Mas isso
+
+parece muito bom. Tenho que dizer. Não fiz nenhuma alteração nesse ponto. Ele destruiu tudo com um único golpe, simplesmente vasculhando meu repositório de Archons. E o mais importante sobre todo este site é que, bem, talvez eu esteja sendo ingênuo, mas isso não parece ter sido gerado por um modelo de linguagem grande. Existem
+
+muitos sites por aí. Bem, acho que algumas coisas, especificamente os mestrados em direito (LLMs), gostam de ter essa caixa arredondada, ou melhor, uma caixa menor, no topo de diferentes seções de um site. Então, ainda existem algumas coisas que são meio que tipo, ah, sim, um mestre em direito fez isso. Mas, no geral, não é tão ruim quanto costumamos ver. Geralmente, quando um modelo de linguagem grande gera um site, parece que eles estão usando a configuração padrão, como a do Tailwind CSS ou a do Material UI .
+
+E você sempre tem as cores roxas. Não sei. Sempre há aqueles sinais reveladores de que tudo foi programado ao vivo aqui. E eu simplesmente não sinto isso com o flash Gemini 3.5 . Dá a impressão de que alguém dedicou
+
+muita atenção à forma de representar todas as informações. E é por isso que estou muito animado para construir esse fluxo de trabalho aqui, onde o Opus planeja o que vamos dizer no site. E então o flash Gemini 3.5 pega o "o quê" e o transforma em "como". Como vamos apresentar tudo isso?
+
+Então, por exemplo, a Opus diria: "Ok, queremos explicar como pode ser um fluxo de trabalho do Archon." Assim que temos o plano, a estrutura de autorrecuperação, executamos os testes. Tanto faz. E então, como a Gemini faria, essa informação seria usada para criar um widget. Então, o Gemini por si só pode fazer isso parecer bom, mas talvez alguns detalhes específicos estejam errados, algo que eu constatei durante a construção. Por isso,
+
+não o usaremos para tudo, mas apenas para a interface do usuário. Espero que faça sentido. Arkon versão manga picante? Sim . Sabe de uma coisa, Shawn? Você ficaria muito
+
+feliz em saber que eu comi mangas apimentadas com limão e pimenta há uns dias, e estavam deliciosas. Hum, deixa eu ver se consigo mesmo fazer manga picante com limão e pimenta . Nossa, eles eram ótimos. Sim, esta é... Ah, não, essa não é a
+
+sacola. Comprei- os na Target. Ah sim, aqui está. Aqui está. Eu comi isso há alguns dias, e estava muito bom. Então, hum
+
+[risos] eu recomendo muito o Fruit. Eles não estão patrocinando este vídeo, eu prometo. Mangas picantes Fruit Riot. Sim, eu bebi o pacote inteiro ao longo de dois dias. [risos] Recomendo muito. Muito bem,
+
+voltando à nossa programação normal. [risos] Aí está. Nossa, junte-se à Dynamis esta semana. Altamente recomendável. Agradeço muito e seja bem-vindo à comunidade. Sim,
+
+temos muitas coisas interessantes acontecendo na Dynamis agora. Tudo bem. O workshop comunitário de ontem no Dynamis valeu a pena, por si só, a minha assinatura do Dynamis. Ei, que legal ouvir isso, Shawn. Que bom que você aproveitou bastante . Ah, sim, nosso workshop de ontem
+
+foi incrível. Então, o Rasmus está na minha equipe. Eu trabalho com ele todas as semanas. Ele basicamente ministrou todo o workshop ontem. É como um workshop para convidados, só que com alguém da minha equipe.
+
+E sim, ele arrasou. Basicamente, ele deu uma aula magistral sobre como criar PRDs (Procedimentos de Definição de Produto) e como realizar esse processo de planejamento com a ajuda de programação de IA (Inteligência Artificial). Ele vem da área de gestão de produtos , então, cara, ele entende muito mais disso do que eu. Era como se fosse uma mina de ouro. Aprendi muito com isso.
+
+Então, sim. Tudo bem. O sabor manga apimentada está disponível no Costco? Vamos ver. Fruit Riot, ou melhor, Costco. Não sei, Eric.
+
+Hum, ah, sim. Parece que sim. [risos] Legal. Sim, eu pessoalmente não compro no Costco, mas sim, quer dizer, eu já estive lá. É uma ótima loja.
+
+Mas, é, enfim, vamos entrar no prédio. Então, deixe-me voltar ao meu segundo cérebro. Acho que vou iniciar uma conversa totalmente nova com o Claude. E, como prometido, vou colar este prompt de compilação inicial. E então explicarei as coisas enquanto estiverem funcionando, para que possamos ser eficientes aqui.
+
+Então, é isso. Tudo bem. Então, a primeira coisa que estou fazendo é instruir o jogo a usar a habilidade Arconte. Então, essa é uma habilidade que vem com o repositório do Archon e que ensina tudo o que ele precisa saber sobre como executar e criar fluxos de trabalho do Archon. Então, com isso, mais as minhas instruções aqui, é praticamente tudo o que precisa. E estou sendo
+
+bem específico aqui. Então, não vou analisar cada linha do nosso enunciado, mas vou descrever em linhas gerais o que estou construindo. E, geralmente, ao criar fluxos de trabalho do Archon, você não precisa de algo muito elaborado. Então, este é o início do prompt aqui. Portanto, nosso objetivo é construir um fluxo de trabalho genérico de provedor misto que entregue um aplicativo web completo, direcionando cada fase para o modelo que gera seus tokens.
+
+Tipo, essa é a que descobrimos ser a melhor para essa tarefa específica. Tudo bem. Então, temos os argumentos que entram no fluxo de trabalho. Então, quando invocamos esse fluxo de trabalho, vamos fornecer a especificação completa do aplicativo que queremos construir ou apenas uma descrição mais livre, certo? No caso dos nossos testes, vamos usar essa especificação que já expliquei para o painel de benchmarks. Então, tipo, essa é a nossa
+
+especificação PRD plus. Quer dizer, é um documento um pouco maior do que os que eu normalmente enviaria, mas eu só quero levar esse fluxo de trabalho ao limite, e é um documento bem extenso que detalha tudo. Tipo, é isso que estamos construindo e é assim que vamos construir. Então, é tipo PRD mais especificação, tudo junto em um único documento . E quanto aos oito nós, o que eu descrevi aqui no enunciado é literalmente tudo o que expliquei no início da transmissão com o nosso diagrama aqui. Então, estou basicamente dizendo que
+
+quero ter uma etapa de exploração inicial usando o Sonnet como modelo, e depois partir para o planejamento com o Opus. É basicamente isso mesmo, certo? Explore o Sonnet, examine o repositório e especifique o artefato. Bem, ou melhor, carregue a especificação e o artefato gerado será um arquivo context.md.
+
+Assim, cada um desses nós no fluxo de trabalho se comunicará com o próximo nó por meio de um documento Markdown. Certo? Assim, este é o artefato resultante de cada etapa. Assim, a etapa de exploração gera o arquivo context.md, e então a etapa de planejamento irá ler o contexto. Assim, isso prepara o
+
+terreno para que o sistema entenda o repositório e a tarefa, e então podemos criar um plano mais específico a partir disso. Então, é como uma exploração para estruturar o plano, e então geramos esse plano, que é então enviado primeiro para o Gemini para construir a interface do usuário. Então, estou dizendo especificamente que quando criarmos a habilidade para este nó, ou o prompt para este nó, ele irá gerar três seções. Vai escrever o escopo da interface do usuário. Isto é o que é enviado para o Gemini através do Pi.
+
+Terá um escopo de integração. E assim, isso é mais uma vez para Opus.
+
+Por exemplo, se estivermos criando conexões com uma API ou usando o Clerk para autenticação, como estou fazendo nesta demonstração. Certo? Tipo, o que eu quero mostrar aqui é algo mais do que uma página de destino super simples. Tipo, vamos realmente criar algum tipo de integração e deixar o Opus cuidar disso. Porque, uma vez que a interface do usuário esteja boa, voltar para o Opus certamente levará a melhores resultados. E também temos uma
+
+implantação no final. Assim, cada uma dessas seções será processada pelos nós subsequentes. Então, tipo, constrói-se a interface do usuário, lê-se a seção A. A seção B é lida pela integração. E então temos o Sonar para fazer algumas validações. Só precisamos garantir que nossos
+
+testes sejam aprovados e tudo mais . E o Opus resolve qualquer problema que surgir. E então faremos a implantação no final. Então, vou adicionar a skill Clerk CLI especificamente, porque preciso dela para o meu exemplo. Mas, tirando as habilidades específicas que estou inserindo no nó, tudo aqui é muito geral. Tipo, não
+
+importa que tipo de integração você precise. Por exemplo, se você estiver tentando integrar com algum outro serviço externo ou alguma outra API, você pode fazer isso com esse fluxo de trabalho. Estou generalizando bastante . O problema é que, se você precisar de um servidor MCP ou de uma habilidade para a integração, não só teria que haver algo mencionado na sua especificação, como eu falo sobre a integração com o Clerk na especificação aqui, mas também seria algo em que você teria que , sabe, atualizar o fluxo de trabalho. Tipo, se vocês quiserem usar o fluxo de trabalho que estou desenvolvendo agora, podem fazer isso sem problemas. Você pode usá-
+
+lo para construir qualquer aplicação front-end que possua qualquer tipo de integração. Certo, legal. Então, eu meio que expliquei a convenção de transferência de responsabilidade aqui. Por exemplo, cada nó precisa gerar um arquivo Markdown no diretório de artefatos. Esta é uma primitiva especial para fluxos de trabalho do Arkon. Sempre que
+
+executamos um fluxo de trabalho do Arkon, ele basicamente utiliza um diretório de trabalho que é resolvido para o caminho especificado. Tipo, essa variável resolve para esse caminho. Então, cada nó no fluxo de trabalho Arkon aponta para o mesmo espaço de trabalho, onde podemos passar contexto entre os nós. Tudo bem. E sim, só mais algumas pegadinhas que eu documentei para o meu teste. Bem, mais uma vez, este é o tipo de
+
+coisa que você vai construindo com o Claude ao longo da conversa, caso não tenha uma descrição muito detalhada de antemão. Então, enfim, vejamos aqui. Então, eu pedi especificamente para que me fizesse algumas perguntas. Apenas mostrando uma pequena demonstração disso. Vamos ver.
+
+Então, pergunta como devo definir o escopo das ferramentas nos nós? Bem, para fins de demonstração, vou permitir todas as ferramentas em todos os nós. A interface de usuário de compilação do nó Pi apresenta algumas limitações ambientais reais, como você listou. Quanto devo capturar como comentários YAML? Vamos ver.
+
+Hum, eu realmente não sei o que isso significa aqui. Não acho que seja necessário documentar as coisas no fluxo de trabalho do Arcan. Então, acho que está tudo bem para nós. Certo, legal. Então, responderei às perguntas dele. Acho que
+
+agora vai entrar direto no prédio em si. E eu volto ao chat enquanto isso acontece. Tudo bem. [limpa a garganta] Bem, o que eu costumo fazer é pedir para o Claude criar o protótipo no Figma para desktop. Ok, legal. Sim, existe um MCP do Figma
+
+que controla a área de trabalho do Figma, permitindo visualizar a interface do usuário antes de trabalhar nela com o código. Sim, isso é inteligente. Eu gosto disso. Quer dizer, talvez o Claude com o Figma seja melhor que o Gemini 3.5 Flash. Mas e se
+
+você usasse o Gemini 3.5 Flash com o Figma? Então pode ser ainda melhor, porque, em geral, acho que é um modelo de linguagem mais criativo. Acho que essa é a maneira mais simples de explicar. O Gemini 3.5 Flash simplesmente
+
+parece o mais criativo. Sim . Você instala o MCP no agente de codificação, como no Claude Code, ou no Arcan? Portanto, ao criar um fluxo de trabalho Arcan, você de fato adiciona o servidor MCP ao fluxo de trabalho Archon. Assim como em qualquer nó onde você queira usar o MCP, basta conectá-lo. Então, você meio que
+
+cria uma configuração dentro do Archon. E se você estiver curioso para saber como fazer isso na prática, basta perguntar ao seu agente de codificação. Se o agente de codificação carregar a habilidade Archon que vem com o repositório, ele saberá exatamente como incorporar servidores MCP, habilidades ou qualquer outra coisa no Archon. Tudo bem. Vamos ver.
+
+Legal. Então, ele respondeu ou criou o fluxo de trabalho aqui. Bem, não parece que tenha sido construído do zero. OK. Bem, acho que sim, então funcionou. É mais ou menos assim:
+
+fizeram um backup da versão de teste e liberaram os arquivos ativos para serem reconstruídos. Ok, então acho que está sendo feita uma grande reformulação, e talvez eu devesse pedir para que construíssem tudo do zero. Bem, acho que sim . Construído do zero, exclusivamente a partir das suas instruções. Valida a limpeza.
+
+Ok, uau. Então, isso se desenvolveu muito rapidamente. Temos, portanto, oito nós: linear, explorar, planejar, construir interface do usuário, integrar, validar, corrigir validação, implantar e finalizar. Legal. Vamos ver. O Sonar é a nossa opção padrão. Sim,
+
+parece bom. Na transferência de artefatos, cada nó subsequente inicia com uma etapa zero, lendo primeiro o arquivo markdown do diretório de artefatos do nó anterior . Parece bom. OK. E então fazemos a implantação com o funcionário.
+
+Assim também durante todo o processo de integração. Então, é , ok. Então, vamos configurar nossa autenticação depois que a interface do usuário estiver pronta. Sim, parece bom. Ok, estou feliz que isso tenha sido compilado tão rápido, porque quero começar a executar o fluxo de trabalho imediatamente. Então
+
+vamos dar uma olhada nisso aqui. Qual o caminho que foi indicado? Quero abrir isso para que possamos dar uma olhada rápida antes de executarmos o programa . Uh, a interface do Archon é mista. OK, bom. Então, vamos abrir isso.
+
+Fluxos de trabalho Archon. Uma construção de front-end mista. OK. Vamos dar uma olhada rápida aqui. Então, é bem longo porque todos os prompts estão em sequência.
+
+Então, vamos fazer nossa exploração. Você está reunindo informações de contexto para um aplicativo web full stack totalmente novo. A mensagem do método de despacho é um caminho para uma especificação ou uma descrição de recurso em formato livre. Então, esse é o argumento que passamos. Se for um arquivo de especificação, leia-o e resuma-o. Caso contrário, se for uma
+
+descrição livre, resuma o que está sendo solicitado. Então, estamos escrevendo um resumo de contexto de uma página. Versões concretas dos caminhos dos arquivos, o que está presente, o que está faltando, basicamente preparando o terreno para nossa compilação. E isso agora entra no Opus para o nosso planejamento aqui. Então, você está planejando um aplicativo web full stack . Antes de mais nada, use a
+
+ferramenta de leitura para abrir o arquivo context.md, certo? Assim, este é o arquivo que o nó anterior gera. É assim que nos comunicamos entre os nossos nós aqui. Assim, no Archon, existem duas maneiras de comunicação entre os nós. Você pode optar por
+
+gravar os dados em um arquivo, como neste exemplo, ou, em nós subsequentes, simplesmente referenciar o ID do nó `node.output`. Então, explore.output será o que quer que tenha sido retornado na última rodada pelo modelo de linguagem grande naquele nó. Mas, para ser mais completo, eu queria apenas um resultado em um documento Markdown, porque isso também nos fornece um registro do contexto à medida que o fluxo de trabalho é executado. Assim, podemos
+
+até visualizar esses arquivos enquanto o fluxo de trabalho está em execução ou posteriormente. Então, é aqui que vamos elaborar o plano com três seções: escopo da interface do usuário para o Gemini, escopo da integração e plano de implantação. E é aqui que usamos o Raspberry Pi com a memória flash Gemini 3.5 para abrir o roteador. Você está construindo a interface do usuário, apenas a superfície da interface do usuário. E aqui está a
+
+parte importante: chamadas de API e SDKs de terceiros pertencem a nós posteriores. Esta é apenas a interface. Então, lemos o plano e estamos dizendo que o trabalho que você deve fazer é apenas o que está na seção A do escopo da interface do usuário. Então, estamos dizendo aqui para ignorar as seções B e C. E, honestamente, se eu quisesse tornar esse fluxo de trabalho ainda mais eficiente, eu poderia ter uma etapa determinística entre esses dois nós que dividiria automaticamente o plano em seções A, B e C e, em seguida, carregaria apenas essas seções como contexto neste segundo nó. Então, como aqui, não
+
+acho que seja um grande problema. Tenho certeza de que tudo ficará bem quando eu pedir para que funcione sozinha, tipo, tirar essa parte do plano. Mas, se seus planos ficarem muito longos, seria até vantajoso que as outras seções nem chegassem a ser carregadas , certo? Portanto, isso é apenas para simplificar. Tipo, deixa eu colocar tudo em um único arquivo, dizer para cada nó ler o arquivo inteiro, mas só aqueles que se importam com uma seção específica. Isso
+
+vai funcionar aqui, mas definitivamente existem maneiras de melhorar esse fluxo de trabalho. Então, é uma questão de equilíbrio entre simplicidade e velocidade da transmissão e o quão abrangente ela realmente será. E então, para a integração, é aqui que usamos o Opus novamente com a skill Clerk CLI. Então, sim, como especifiquei aqui, a habilidade Clerk CLI está carregada como uma capacidade. Utilize esta opção somente se a seção B selecionou "Escriturário" para autenticação. Então,
+
+este é um fluxo de trabalho geral. Por exemplo, se você não tiver nenhum tipo de autenticação , ele simplesmente ignorará essa parte, mas estou criando algo que se encaixe um pouco na finalidade atual. Tudo bem. Então, geramos o resumo da integração, fazemos a validação, blá blá blá, corrigimos a validação, não precisamos passar por tudo isso agora. E também a implantação.
+
+Então, vamos usar a CLI do Clerk novamente para isso. Quer dizer, estamos usando isso em todo esse processo aqui, o que é muito legal. É impressionante como costumava ser difícil criar autenticação em um aplicativo. E agora, assim como os agentes de codificação e o Clerk fazem com que essa habilidade seja disponibilizada usando sua CLI, você pode configurar tudo com muita facilidade. É muito legal. Então,
+
+veremos tudo isso em ação também. Então, deixe-me voltar a falar com Claude. Deslize para baixo. E, bem, deixe-me copiar o caminho para a especificação aqui. Então, vou simplesmente copiar esse caminho do Obsidian.
+
+Vou colar isso aqui. E direi: "Muito bem, esta é a especificação para o aplicativo que quero construir. Quero que você agora despache o fluxo de trabalho Archon que acabamos de construir com este caminho como argumento." Então, estamos analisando todo o processo de construção do front-end com essa especificação para o painel de benchmark do Archon com autenticação Clerk. Vamos organizar tudo. Tudo bem. Legal.
+
+Pronto, aí está. Voltamos a usar a paleta de cores do arco-íris no fluxo de trabalho. Espero que não chegue a ser compilado. Espero que não utilize os subagentes para isso. Eu realmente não quero, só quero que isso inicie o fluxo de trabalho do Archon e pronto .
+
+E outra coisa: seria ótimo ter a interface do usuário funcionando de fato. Então, deixe-me fazer isso aqui para que possamos monitorar. Então, eu vou dizer, hum, sim, carregue a habilidade Arconte. E então, eu quero que você comece o front-end e o back-end do Archon para mim. Assim, podemos deixar que o sistema cuide disso para nós, permitindo que eu acesse a interface web e acompanhe o fluxo de trabalho enquanto ele está em execução. Então, comecei por aqui.
+
+E agora só nos resta esperar. Mas eu quero poder ver em que ponto do processo estamos. OK. Uma observação importante antes de iniciar a compilação: o nó da interface do usuário executa o Pi e o OpenRouter, que precisa do código-fonte R con corrigido. O compilador R com binário ainda é distribuído.
+
+Ok, claro. Isso é bom. Sim, então eu tinha a versão errada do binário, mas o Claude percebeu e corrigiu, o que é muito bom. Então, tudo bem. Ótimo. E depois que o fluxo de trabalho do R con for iniciado
+
+e tivermos um diretório de artefatos, quero que você compartilhe esse diretório comigo para que eu possa acompanhar a chegada dos documentos Markdown à medida que os nós forem concluídos. Tudo bem. Legal. Assim, podemos acompanhar a formação do contexto ao longo de todo o processo . Porque seria legal ver o formulário do site.
+
+Como é a interface do usuário antes da autenticação? Como fica depois que o Clerk está configurado? Ah, ok, então a árvore de trabalho foi criada. Parece que está funcionando. OK.
+
+Encontre o artefato. Muito bem, ótimo. Sim, estamos bem. Tudo bem. O fluxo de água diminuiu?
+
+Espero que não. Acho que ainda estamos aqui. Esse cara de novo mostrando que é gente grande . [risos] Misturar fornecedores é coisa de gente grande. Sim, estou feliz em fazer isso. Certo
+
+. Nossa, muitos de vocês perderam a transmissão? Que pena. Vocês podem confirmar se a transmissão está funcionando neste momento? Porque vejo que muitos de vocês ainda estão aqui.
+
+Talvez tenha sido apenas uma pequena oscilação momentânea . Peçam desculpas, pessoal. Não sei, não sei o que pode ter causado isso.
+
+Atarefado preparando o próximo sucesso, belas frentes, parte dois. Com certeza, pretendo fazer um vídeo no YouTube sobre esse assunto depois da transmissão ao vivo. Ok, houve uma pequena falha. Ah, que pena. Ok, agora está funcionando. OK.
+
+Ah, estava funcionando, mas ficou fora do ar por um tempo. Puxa, desculpe. Não faço ideia de por que isso aconteceria. Que pena. Notei que a audiência caiu um pouco e fiquei meio confuso sobre o motivo, mas enfim, pode ser. Ok, bem, acho que voltamos ao normal
+
+. Eu realmente não sei. Como se não houvesse nenhum aviso da minha parte. Então , é isso, pessoal, peço desculpas se vocês perderam alguma coisa. Tipo, se eu estivesse no meio de uma explicação sobre o enunciado ou algo assim, espero que não haja nada de crítico.
+
+Sinceramente, terei que rever a gravação depois para ver se a transmissão ao vivo no YouTube, ou seja, a gravação postada posteriormente, contém todo o conteúdo ou se a falha técnica também a afetou. Eu ficaria bastante interessado. Tudo bem. Sim, para baixo. Ok, para baixo por alguns minutos. Bom, pelo menos são só
+
+alguns minutos.
+
+Tudo bem. Muito bom. Prestem atenção, espectadores, porque este exercício de front-end pode ensinar muito sobre como trabalhar em sua configuração de agentes. Bem, eu agradeço. Fico feliz que esse fluxo de trabalho esteja lhe parecendo bom.
+
+Sim, quero dizer, o mais importante aqui é o contexto entre os diferentes nós. Enquanto aguardamos a execução deste processo, uma coisa importante que quero explicar aqui é que ter várias etapas diferentes não só é vantajoso , permitindo o uso de modelos distintos, como também nos ajuda a obter melhores resultados no geral. Por serem modelos de linguagem grandes, eles ficam sobrecarregados da mesma forma que as pessoas. Se você tentar sobrecarregá-los com muitas tarefas ao mesmo tempo, eles vão fracassar miseravelmente . Assim, você sempre obterá os melhores resultados, não importa quão bom seja o modelo , se o tornar muito focado em uma tarefa específica. Como se seu trabalho aqui fosse
+
+apenas explorar, planejar ou construir a interface do usuário. Portanto, mesmo que eu estivesse usando o Opus para tudo, ter esse fluxo de trabalho ainda é melhor do que pegar tudo isso e tentar encaixar em um único comando ou em uma única habilidade. Não vai produzir os melhores resultados. Obviamente, para uma interface mais simples com integrações mais fáceis, o Opus provavelmente conseguiria lidar com tudo em um único prompt. Mas tenho interesse em criar fluxos de trabalho que realmente consigam lidar com a complexidade daquilo que estamos construindo. Tipo, esse é um dos
+
+motivos pelos quais eu quero usar o Clerk, por exemplo, para que tenhamos... Não que o Clerk seja fundamentalmente difícil de configurar ou algo assim, mas ter uma integração real para autenticação completa embutida prova que estamos criando algo mais do que uma simples página de destino. Na verdade, este aplicativo é bastante complicado no geral.
+
+Acho que esse painel de benchmarks não vai conseguir resolver tudo de primeira , mas com esse fluxo de trabalho vai chegar muito mais perto do resultado desejado do que se eu simplesmente executasse toda a especificação que mostrei antes em uma única sessão de código do Claude . Isso não vai acabar bem. Certo, legal. Então, vamos ver onde estamos agora. Volte para cá .
+
+OK. Aqui está nosso diretório de artefatos, muito legal. Hum, vou abrir isso em uma nova instância do VS Code para que possamos dar uma olhada. Então, parece que o primeiro nó foi concluído. [bufa] Então, temos nosso context.md.
+
+É um andaime vazio. Não há nada aqui. Estamos começando do zero. Então, na verdade, como neste caso, a exploração não está encontrando muita coisa. É mais uma questão de esclarecer algumas coisas inicialmente.
+
+Então, vamos criar um aplicativo Next.js 15 . Vamos usar o Clerk para nossa autenticação. Assim, ao carregar a habilidade Clerk, ela saberá como inicializar e configurar as coisas em nossa interface. E, hum, o que mais temos aqui?
+
+Integração do Arkon. OK. Sinceramente, não precisa mesmo dessa informação. Então, talvez não seja o contexto mais ideal, mas tudo bem. Porque o que quer que seja passado para o próximo nó, então ele começará a fazer o planejamento para a aplicação propriamente dita.
+
+Então, acho que neste caso é aceitável, certo? Essa é apenas a nossa análise geral de tudo o que temos acontecendo aqui. Então, o fluxo de trabalho está sendo executado agora, na segunda etapa. Então, deixe-me voltar e verificar se nossa interface de usuário está funcionando bem. Sim, tudo bem. Então, vamos abrir isso
+
+aqui. Vamos dar uma olhada no fluxo de trabalho. Então, vou usar localhost:5173 para o Arkon. Tudo bem. Então, aqui estamos. Então, se clicarmos
+
+aqui, terminamos nosso primeiro nó [bufa] para nossa exploração, e agora estamos apenas no meio do planejamento aqui. Legal. Tudo bem. Ah, e enquanto esperamos por isso, uma curiosidade interessante: há um pequeno easter egg no CLI do atendente. Então, atendente, eu pensei que eles tivessem um pouco de ajuda.
+
+Então, aí está. Então, muitas dessas coisas, como a inicialização, a vinculação, a implantação e tudo mais, vamos usar nosso fluxo de trabalho de código Claude ou nosso fluxo de trabalho Arkon para lidar com tudo isso com o Claude. Então, nós não vamos executar nenhum desses nós mesmos, mas eles adicionaram um easter egg ao Clerk. Hum, acho que é o pássaro Clerk. Sim.
+
+Olha só isso. Podemos jogar Flappy Bird em nosso terminal aqui com o Clerk CLI. É o easter egg mais aleatório, mas é até divertido. Então, é isso aí. Vou jogar um pouco de Flappy Bird enquanto esperamos o fluxo de trabalho do Arkon. Aliás, fui eu que planejei
+
+isso. Como eu sabia que eles tinham esse easter egg, eu queria fazer isso, e este é o momento perfeito porque estamos esperando o fluxo de trabalho do Arkon terminar ou pelo menos chegar à próxima etapa, então podemos dar uma olhada melhor no que está sendo planejado. Mas é isso aí, se vocês quiserem instalar o Clerk CLI, tem um link na descrição, e vocês podem jogar Flappy Bird, o que é bem legal porque não dá mais para jogar o Flappy Bird oficial, né? Eles tiraram o aplicativo da App Store tipo, sabe, há um milhão de anos. Provavelmente já faz uns dez anos, para ser sincero. Eu
+
+nunca fui bom. Tipo, provavelmente vou me sair mal agora. Mas, de qualquer forma, eu também não gostaria que isso durasse um milhão de anos. Tem um pouco de lentidão, mas no geral, é muito bom. Ah, sim, tudo bem. Enfim,
+
+existe um pequeno e interessante detalhe escondido, já que estamos usando o Clerk em nosso fluxo de trabalho aqui. OK. Espero que a transmissão ao vivo não caia novamente. Não parece ser. Eu vou ser meio obsessivo com isso agora e ficar de olho constantemente.
+
+[risos] Tudo bem. O Figma é realmente necessário agora que temos o Claude Design? Essa é uma boa pergunta. Então, pessoalmente, eu não tenho muita experiência com o Figma. O design do Claude é realmente muito bom .
+
+Então, acho que depende. Por exemplo, para pessoas que já têm o Figma integrado ao seu fluxo de trabalho, ou seja, que já possuem um processo estabelecido para utilizá-lo, provavelmente será uma experiência melhor. Tipo, eu não acho que o design do Claude seja inerentemente superior, a ponto de você querer mudar para ele. Mas, se você estiver mais interessado em começar a trabalhar com design e codificação de agentes pela primeira vez, o Claude Design provavelmente será mais fácil de usar. Tudo bem. Ah, que saudade dos tempos em que dava para
+
+aprender de verdade no YouTube, só ouvindo um criador compartilhar seu conhecimento. Hoje em dia parece que tudo se resume a ler textos gerados por IA. Sim, eu entendo, cara. Bem, espero que nesta transmissão ao vivo, tipo, sim, estou lendo um texto gerado por IA porque estou explicando como criar um fluxo de trabalho com o Claude, mas ainda estou tentando manter uma abordagem bem objetiva, ajudando vocês a entenderem como estou trabalhando com o Claude. Como eu estou lendo, estou lendo o que está escrito para dar contexto à explicação mais ampla que estou apresentando. Não é
+
+como se a aula inteira nessa transmissão fosse apenas ler o texto, certo? Tipo, estou explicando todo o diagrama, ou melhor, todo o fluxo de trabalho no diagrama que estou criando aqui. E não é como se a IA tivesse inventado tudo isso, né? Este é o fluxo de trabalho que eu desenvolvi. Obviamente, trabalhei com o Claude para me ajudar a elaborar o diagrama e a desenvolver as ideias, mas esta é a minha ideia que estou compartilhando com vocês agora.
+
+Como tudo que envolve esse fluxo de trabalho, exatamente como estamos passando o contexto e outras informações, e o modelo específico que estou escolhendo para cada etapa. É como se tudo isso fosse eu. Como se Claude não tivesse sugerido nada disso. Agora eu entendo que, com tanta preparação antes da transmissão, pode parecer que estou apenas apresentando um monte de coisas que o Claude me jogou, mas acredite, eu dediquei horas e horas preparando tudo isso. Espero que isso faça sentido, mas definitivamente entendo seu ponto de vista.
+
+Mas sim, sempre que faço uma transmissão ao vivo ou um vídeo no YouTube, parece que sempre aparece alguma coisa gerada pelo LLM. Sim, isso me ajuda a planejar. Isso me ajuda a pegar minhas ideias e transformá-las em palavras e diagramas, mas ainda assim são minhas ideias genuínas. Mas eu também estou com você. Assim como quando comecei meu canal no YouTube, eu não usei nenhum tipo de auxílio de programação por IA.
+
+Cada linha de código foi escrita por mim. Tipo, ok. Hum, deixa eu... Desculpa, deixa eu mostrar uma coisinha
+
+rapidinho. Vou abrir meu canal do YouTube rapidinho para mostrar alguns vídeos que eu fazia antigamente . Vamos fazer uma viagem ao passado . Muito rápido. Quer dizer, estamos aguardando a execução do fluxo de trabalho neste momento . Então
+
+, tipo, nós temos algum tempo. Então, vamos relembrar o passado por um segundo . Vou até o fim. Vamos lá, vamos para julho de 2024. Vamos para julho de 2024.
+
+As miniaturas ficam progressivamente piores à medida que descemos aqui. Nossa! [risos] Tudo bem. Então, o primeiro vídeo que eu criei... Uau, este já tem
+
+16.000 visualizações. Nossa Senhora! Então, quando eu estava começando a levar o YouTube a sério . Tipo, obviamente eu já tinha algumas outras coisas antes, mas eu não estava realmente tentando alcançar muita coisa naquela época.
+
+Foi a minha série de masterclasses sobre agentes de IA que eu fiz. E nossa, tem uns vídeos bem engraçados aqui. Mas enfim, como neste vídeo, deixa eu abrir um desses rapidinho. Estou apenas ensinando, tipo, "Aqui está como construir agentes de IA". E naquela época eu estava usando o LangChain. E assim como eu, escrevi cada linha
+
+de código aqui completamente à mão. Bem, sim, este é um agente bem básico , mas depois eu me aprofundo mais em LangGraph e agentes mais complexos com Pydantic AI e LangChain LangGraph. Tipo, eu estou escrevendo tudo à mão. Eu só comecei a usar assistentes de codificação de IA em dezembro de 2024. Então, houve uns quatro ou cinco meses de conteúdo no YouTube em que tudo o que você via era completamente escrito à mão. Mas o
+
+problema é que simplesmente não é mais realista fazer isso. O que eu quero ensinar é como aproveitar o assistente de codificação de IA. Então, é melhor eu usar isso em tudo que estou preparando para vocês e nas demonstrações em si. Mas continuo sempre aplicando meus ensinamentos a isso. Não sou só eu regurgitando coisas geradas pelo LLM.
+
+Então, quer dizer, talvez a resposta seja um pouco mais longa do que você esperava, mas achei que valia a pena explicar. É legal também falar sobre a trajetória. É louco pensar que naquela época, tipo, neste vídeo, quando eu não conseguia usar a tela cheia e vocês não conseguiam ver meu rosto, eu tinha muito espaço na parte superior da minha câmera. Bons tempos, bons tempos. Mas enfim, tudo bem.
+
+Vamos ver. Se isso é uma crítica, então não faz sentido, assim como dizer que alguém que explica como usar um aplicativo é o mesmo que ler o aplicativo. Sim, concordo. Sim. Mas, tipo, eu...
+
+eu concordo que não é a melhor crítica, mas, como eu disse, eu entendo até certo ponto. Então, estou tentando, tipo, preencher essa lacuna. De qualquer forma. Sean perguntou: "O quê? Onde estão seus vídeos de Minecraft?" Achei que você gostaria de
+
+republicar. Meu [risos] Droga, Sean. Não, estou brincando. Sim, então, é algo que eu disse à comunidade Dynamis: este canal do YouTube que eu posto agora eu realmente usava quando era criança. Eu simplesmente removi todos esses vídeos da lista, mas na verdade não criei um novo canal quando comecei meu conteúdo sobre IA. Então, este é o meu
+
+canal original do YouTube, que eu criei quando tinha uns 12 anos. Ou como se tivesse 11 anos. Sim, eu criei meu canal no YouTube quando tinha 11 anos. Sim , eu tinha alguns vídeos de Minecraft. Como qualquer outra criança no planeta, eu tinha alguns vídeos de Minecraft no YouTube.
+
+Eles simplesmente não estão mais listados. Mas, teoricamente, eu poderia tocar uma partida na transmissão ao vivo aqui. Eu simplesmente não vou fazer isso agora. [risos] Oh, eu morreria de vergonha. Isso não seria bom. Nossa!
+
+Tudo bem. Vamos ver em que ponto estamos agora para que eu possa lhe dar uma atualização sobre o status da situação. E ver se houve progresso, e então poderei verificar os registros também. Tudo bem. Vamos ver em que ponto estamos.
+
+Certo, opa, veja os registros. Certo, então agora estamos construindo a interface do usuário. Ok, legal. Então, fizemos todo o nosso planejamento. Estamos construindo a interface do usuário. Parece que tivemos algumas
+
+falhas nas ferramentas. Então, infelizmente, pode haver algo acontecendo ali. É possível que eu esteja atingindo o limite de taxa com o roteador aberto. Hum, preciso verificar isso rapidinho. Talvez eu precise adicionar os créditos.
+
+Hum, deixe-me verificar. Ok, posso mostrar isso porque não vou mostrar uma chave de API nem nada do tipo. Analiso minha atividade. Dê uma olhada nos meus créditos. Não, eu tenho créditos. Estou bem. Mas
+
+pode ser uma limitação da própria chave da API. Não , estou bem. Estou bem. OK. Podem ser apenas falhas aleatórias, já que o flash Gemini 3.5 não me parece
+
+muito confiável em geral. Quer dizer, isso meio que combina com o que eu estava dizendo. Além de ser muito criativo, não é dos melhores em raciocínio. Então, pode ser que sim, então há oito falhas de bash neste nó. Não são acidentes.
+
+As bandeiras de segurança das tortas certamente enviarão comandos de shell como "droga, ok, ok". Então, isso é só uma coisa relacionada a torta. Então, acho que na verdade está tudo bem.
+
+Sim, a interface de compilação está funcionando. Ok, então, na verdade, estamos bem. Então, talvez não seja realmente um problema de Gêmeos. Acho que pode ser apenas um aviso sobre torta. Isso está aparecendo de forma meio estranha em Archon. Provavelmente há algo ali
+
+que podemos melhorar no Archon. Assim, fica melhor apresentado. Não, porque parecia que o modelo estava apresentando vários erros, mas na verdade não era o caso. De qualquer forma. Ei
+
+, não pare no meio da sua história de origem. O que mais vocês querem saber? Senti que meio que contei a história. É sério, se vocês tiverem curiosidade sobre qualquer outra coisa, tipo como eu comecei, me avisem. Eu simplesmente não sei bem o que faria dali em diante . Só estou
+
+falando sobre o meu canal do YouTube. Hum [risos] Então, sim, no meu canal do YouTube, além de Minecraft, quando eu era criança, eu também postava vídeos de Overwatch da época do ensino médio. Então, eu não sei quantos de vocês jogam videogame ou já jogaram Overwatch, mas eu fiquei muito viciado em Overwatch no ensino médio. Bem, na verdade, cheguei ao número 218 na América do Norte. Então, eu tinha, sabe, o status de top 500, que é algo comum em vários jogos de videogame ranqueados.
+
+Ah, sim, foi muita coisa. E aí eu fui para a faculdade e... eu ainda jogava Overwatch no começo da faculdade, mas o problema é que...
+
+quer dizer, vocês provavelmente nem ligam, mas os melhores personagens do Overwatch, o meta, como é chamado, se tornou algo... o jogo desmoronou em 2019. Então, eu parei de jogar.
+
+Ah, sim, mas... quer dizer, na verdade, mais recentemente o jogo voltou a ser divertido . Fazendo isso como se fosse um pouquinho.
+
+[risos] Vamos ver. Então, tudo bem. Quais são as vantagens? E, mais uma vez, me avisem se houver mais alguma coisa sobre a qual vocês queiram que eu fale. Eu sou, eu sou, eu sou um livro aberto.
+
+Quais são as vantagens e desvantagens do Archon em comparação com o fluxo de trabalho dinâmico do Claude Code? Essa é uma boa pergunta. O fluxo de trabalho dinâmico do Claude Code, no entanto, não é exatamente a mesma coisa que o Arkon. Porque se trata mais de orquestrar subagentes. Na verdade, não se trata de definir fluxos de trabalho completos onde você está misturando provedores e passando contexto entre eles.
+
+Não há muita coisa realmente sequencial nisso . Acho que é mais como orquestrar em paralelo. Eu precisaria investigar mais a fundo. Mas, no fim das contas, se a Claude Code algum dia criar algo que seja realmente como Arkon, que tinha uma espécie de recurso "editado". Eles publicaram no registro de alterações algo que realmente se parecia mais com Arkon, e depois removeram.
+
+Provavelmente vai acontecer em algum momento. Mas, independentemente do que Claude Code acabe construindo, a vantagem competitiva do Arkon é que ele é de código aberto e permite a combinação de diferentes fornecedores. Exatamente como o que estou fazendo nesta transmissão aqui, misturando Gemini e Claude. Por exemplo, se você estiver trabalhando em um chicote de fios em Código Claude, você é obrigado a usar o Código Claude. E isso é algo com que muita gente não está confortável agora, por causa do preço exorbitante do Claude Code, da piora constante no custo da assinatura e dos preços absurdos da API.
+
+Tipo, eu tenho interesse específico em usar o Arkon para poder, sabe, usar o Pi para o Kimmy ou o Gemini em certas etapas, e ainda continuar contando com o Claude Code porque acho que o Opus é o melhor. Mas, se eu quiser testar com o GPT 5.5, também posso fazer isso . Eu também posso usar o Codex no Arkon. E, hum, sim, houve muito trabalho envolvido na construção de Arkon, onde, assim como Claude, eles tiveram que fazer com que ficasse tão bom quanto Arkon.
+
+Há muita coisa que gerenciamos com árvores de trabalho e estabilidade, como o diretório de artefatos, a forma como você pode injetar habilidades e os diferentes parâmetros que podem ser ajustados no Arkon, e, bem, o fato de ser um provedor misto. Existem muitos fatores que contribuem para isso, de forma que eu, sinceramente, não conheço outra ferramenta que se compare ao Archon em termos de capacidade de construir qualquer tipo de arreio que você desejar. E construa-o de forma que não seja dependente de fornecedor, certo? Então, sim. Sim, acho que...
+
+Deixa eu programar um fluxo de trabalho dinâmico na nuvem. Talvez possamos dar uma olhada rápida para ver o que realmente é, mas sim, trata-se basicamente de orquestrar subagentes, certo? É assim que funciona , a orquestração de subagentes é uma espécie de ferramenta. Mas isso não é como um arnês para algo parecido com o que Archon pode ser. Assim como o Archon permite que você construa qualquer tipo de arnês.
+
+Assim, um fluxo de trabalho dinâmico é um script JavaScript que orquestra subagentes em escala. Claude escreve o script para a tarefa que você descreveu e um ambiente de execução o executa em segundo plano enquanto sua sessão permanece ativa, o que, honestamente, não parece muito diferente do que já podíamos fazer com a orquestração de subagentes. Acho que é mais pelo fato de poder rodar em segundo plano, sinceramente. Gostei, não se parece nada com Archon. Quer dizer, o Archon, sim, também são fluxos de trabalho que você executa em segundo plano.
+
+Mas isso se aplica a todo um processo de codificação de IA . Assim como a exploração e o planejamento, seguidos da implementação e, por fim, da validação. E outra coisa que isso não tem é qualquer tipo de determinismo. Certo? Uma das coisas que você às vezes quer fazer no Archon é executar um comando. Assim como após
+
+a implementação, você executa os testes. Ou, antes de fazer seu planejamento, você carrega algum contexto de forma determinística. Assim como não há nada disso aqui também. Então, na verdade, você ainda está simplesmente implementando todo o seu sistema nos agentes, em vez de integrar os agentes ao sistema. É como aplicar o raciocínio do modelo de linguagem principal onde você realmente precisa dele.
+
+Ainda acho que essa é uma boa funcionalidade. É realmente ótimo. Já utilizei fluxos de trabalho dinâmicos algumas vezes, principalmente para fins de pesquisa com subagentes. Mas é muito bom poder despachar a mensagem e depois continuar a conversa. E depois que o fluxo de trabalho terminar, você pode meio que voltar a esse ponto na conversa. É bom, sem dúvida. Sim
+
+. Certo, legal. Vamos voltar ao nosso console e ver onde estamos agora. Painel de controle, visualizar registros. Ah , na verdade já construímos a interface do usuário . OK. Ah, legal
+
+. Então, poderíamos verificar isso agora mesmo. Vou esperar um pouco. Vou voltar ao chat por um tempo, mas podemos começar a interface do usuário agora. Eu simplesmente não sei se funcionaria ainda, porque ainda não chegamos à etapa de validação.
+
+Mas sim, posso dar outra atualização de status aqui. Vamos ver se surgiu algum outro problema, mas acho que estamos bem. Com licença
+
+. Estou usando Clerk para tudo agora em vez de Superbase? Portanto, na verdade, elas servem a propósitos diferentes . Com licença . Não é como se você tivesse que compará- los diretamente. O Superbase oferece autenticação mais simples
+
+, mas não é tão robusto. O Clerk é como uma solução de escala empresarial, ou pelo menos a autenticação que pode atingir essa escala empresarial, caso você deseje . Existem muitas outras funcionalidades relacionadas ao gerenciamento de usuários. Sinceramente, é mais fácil. Agora é ainda mais fácil construir do que no Superbase, graças à habilidade de aliança C e à possibilidade de seu agente de programação construir, implantar e configurar todo o ambiente para você, como estamos fazendo aqui.
+
+E é por isso que estou usando agora. Isso se deve à sua integração com agentes de programação que possuem a habilidade da aliança C. Isso proporciona uma demonstração muito melhor no fluxo de trabalho aqui. Então, entrei em contato com eles para trabalharmos nisso. Então, eu disse: "Pessoal, quero incorporar o Clerk aqui. Vamos
+
+adicionar autenticação ao aplicativo." Sim . Mas é, Superbase é tipo, hum, ok, deixa eu explicar melhor. O Superbase é mais simples para que você possa gerenciá-lo de forma geral. Mas é tipo, é mais leve, eu acho.
+
+Mas sim, Clerk é realmente abrangente. Dessa forma, funciona como uma solução de autenticação de nível empresarial. OK. [limpa a garganta] Enfim, então, 3,5 de oito nós. Muito bem, o Integrate está em execução.
+
+Uh, a Gemini criou um aplicativo Next.js de verdade. A interface de compilação terminou com uma mensagem de encerramento, mas o resumo da interface não foi gravado no diretório de artefatos. Ah, interessante. OK.
+
+O Integrate é o Opus e os arquivos de stub de sinal reais estão bem ali. Ah. Veja, é exatamente por isso que não quero depender de Gêmeos para tudo. Falhou completamente em uma etapa importante da instrução que demos. Por exemplo, se analisarmos o fluxo de trabalho atual e olharmos para a etapa "após o planejamento", veremos a interface de usuário de construção.
+
+Estamos instruindo especificamente o sistema a exibir na interface do usuário um resumo listando todos os arquivos criados e os stubs de integração no código-fonte, indicando onde precisamos que o Opus integre a autenticação, as APIs ou qualquer outro elemento. E pulou essa parte. Não existe, na verdade, e nós poderíamos verificar isso. Sim, dê uma olhada nisso . O planejamento ou a construção da interface do usuário foi concluído, mas o documento Markdown não foi gerado. Portanto, o firmware Gemini 3.5
+
+ignorou completamente uma parte das instruções aqui. Que pena. Mas também acabou por construir a interface de utilizador. Então, como temos a interface do usuário. O fluxo de trabalho não está comprometido. Mas, é, isso só
+
+mostra que, no geral, não é o melhor modelo. É um modelo criativo, mas na verdade não é o melhor. Então, sim, vou configurar para me alertar. Continue observando o Integrate, ele me avisará assim que encontrar ou se deparar com o arquivo ausente. Espero que não tropece.
+
+Diz que provavelmente estamos bem, mas é bom ter isso em mente. Isso é realmente uma pena. Sim, é. Tipo, definitivamente, não acho que o flash Gemini 3.5 seja tão bom quanto uma sauna, considerando o raciocínio por trás disso. Tipo,
+
+acho que nem a sauna teria deixado passar uma instrução tão óbvia . Tudo bem. Vamos ver. Continue aprimorando suas excelentes habilidades e materiais de ensino. Vou assistir offline. Parece bom. Eu
+
+agradeço. Quem odeia vai continuar odiando. Hum, agradeço, Sean. A propósito, que bom te ver, Sean. Sabe, o outro comentário de antes, eu nem chamaria de comentário negativo. Tipo, eu acho que
+
+eles têm uma preocupação genuína. Nem acho que seja necessariamente ódio. Acho que não sei ao certo qual era a intenção, mas mesmo assim, agradeço, Sean. De todos os criadores que existem , você é o que melhor divide as coisas em lições fáceis de entender. O processo importa.
+
+Sim, exatamente. Eu só quero ensinar o processo, e às vezes ensinar o processo inclui ler o que o mestrado em Direito me respondeu, mas é assim que tem que ser. O que me levou a largar meu emprego fixo para me dedicar à Dynamis? Na verdade , eu pedi demissão do meu emprego antes de entrar para a Dynamis. Vou dar a vocês um pequeno cronograma enquanto aguardamos a conclusão do fluxo de trabalho.
+
+Então, hum, eu trabalhava para uma empresa de consultoria financeira, a Ameriprise Financial. Quer dizer, é informação pública. Você pode dar uma olhada no meu perfil do LinkedIn. Então, eu não preciso manter segredo sobre a empresa nem nada do tipo. Trabalhei na Ameriprise como engenheiro de software.
+
+Então, eu era desenvolvedor web e engenheiro de nuvem. E, hum, também fiz algumas provas de conceito de IA para a empresa durante meu último ano trabalhando lá. E, hum, eu comecei meu canal no YouTube enquanto ainda trabalhava lá. Para ser mais específico, comecei meu canal lá pelo final de junho ou início de julho de 2024, enquanto ainda trabalhava na Ameriprise. E eu disse para mim mesmo: vou fazer isso meio que como um trabalho paralelo, porque inicialmente eu só queria fazer por diversão. Porque eu
+
+estava ajudando meus amigos a criar agentes para suas startups. Como eu disse, eu estava fazendo alguns trabalhos para a Ameriprise. Então, eu... eu... eu
+
+tinha muita dessa... experiência que eu estava adquirindo muito rapidamente. Não que eu tivesse muita experiência, mas ainda assim era mais do que para todos os outros, porque era tudo muito novo para todos. Então eu pensei:
+
+"Beleza, vou criar um canal no YouTube. Vou começar a ensinar algumas coisas." Porque eu realmente gosto de fazer vídeos e ensinar. E como se eu fosse monitor na faculdade. Eu era treinador de xadrez no ensino médio. Gosto de
+
+ensinar e, como colaborador individual em uma empresa, não tive muitas oportunidades para fazer isso. Então eu pensei: "É por isso que quero criar um canal no YouTube." Eu não achava que fosse conseguir muita renda com isso, porque na época eu não sabia muito bem como funcionavam os patrocínios e, bem, eu não imaginava que tanta gente me procuraria para consultoria e coisas do tipo. Mas, como tudo isso, começou a acontecer. Então, em setembro, literalmente dentro de 3 meses após o início do canal, julho , agosto e setembro, chegou ao ponto de substituir ou igualar minha renda na Ameriprise. Então eu pensei:
+
+"Sabe de uma coisa? É isso que eu realmente quero fazer." O trabalho era ótimo, mas não era exatamente a minha paixão, né? Tipo, é bom, mas não é incrível . Então, eu saí e comecei a me dedicar ao YouTube em tempo integral. E então,
+
+a ideia do Dynamis surgiu, na verdade, em janeiro de 2025. E aí eu me dediquei muito aos módulos iniciais do primeiro curso. Tipo, nossa, eu me esforcei tanto e depois lancei a comunidade em abril. Então, sim, o Dynamis já está no mercado há cerca de 13 meses. E é simplesmente a melhor coisa do mundo. Então,
+
+sim, essa é mais ou menos a linha do tempo. Sim, e quanto ao motivo de eu ter desistido, acho que já disse isso, mas é que lecionar e inteligência artificial generativa são minhas duas maiores paixões. E, para ser sincero, devo dizer que sou provavelmente mais apaixonado por educação em geral do que por inteligência artificial propriamente dita. É claro que também sou extremamente apaixonado por IA, mas se houvesse uma habilidade no mundo inteiro na qual eu pudesse ser o melhor dos melhores, seria ensinar. Gosto ainda mais do que gosto de construir ou usar IA. Ensinar é a
+
+coisa mais importante para mim. Tudo bem. Ah, legal . Então, de qualquer forma, vou continuar analisando o que vocês disseram no chat, mas só queria verificar rapidamente o status aqui. Ok, ainda estou me integrando. Sim, então estamos
+
+superando isso. Tudo bem. Eu te faço sentir velho(a)? Bem, você não é velho. Somos todos jovens, certo?
+
+[risos] Eu entrei nisso muito cedo. Eu diria que muitos caras mais jovens, como eu e o Nate Hurt, por exemplo, entramos nisso muito cedo porque estávamos começando a descobrir nossas carreiras. Qual é exatamente o tema em que vamos nos aprofundar ? Então, antes da IA ​​generativa, eu era meio que um faz- tudo, sabe? Eu trabalhei bastante com engenharia de nuvem, desenvolvimento web, construção de sistemas e coisas do tipo, mas sempre soube que havia uma coisa na qual eu queria me concentrar em algum momento.
+
+Tipo, eu sabia que, sabe, se especializar em um nicho, como eles chamam, é muito importante. E eu realmente não sabia o que seria isso até que a IA generativa se tornasse realidade, sabe, com o Chat GPT 3.0 e o GPT 3.5 Turbo no final de 2022. Foi aí que eu percebi, tipo, ok, novembro ou dezembro de 2022, que isso ia ser algo muito importante. E aí, principalmente por volta de
+
+2023, foi quando eu estava constantemente construindo uma rede de agentes e tudo mais . Especialmente no final do ano. E foi no início de 2024 que realmente comecei a desenvolver as habilidades que me levaram a criar meu canal no YouTube.
+
+Você adorou Overwatch 2. E Marvel Rivals? Nunca joguei Marvel Rivals antes. Mas sim, Overwatch é ótimo. Eu tenho um amigo que é jogador profissional de Marvel's Rivals . Meu... meu velho...
+
+não tão velho amigo. Ele é um amigo atual, mas não mora mais em Minnesota. Mas, se alguém aqui é fã de Marvel Rivals, provavelmente conhece a Kerova. Mas, tipo, aquele cara vinha na minha casa quase todo fim de semana no ensino médio. A gente jogava Overwatch demais.
+
+Então, sim, bom amigo. E é, então, acho que ele nunca vai assistir a uma transmissão ao vivo, mas se você está aqui, Mark, legal te ver, cara. Tudo bem. E então, como você se juntou ao lado negro? Deve haver algo traumático em transmitir Python.
+
+Você precisa dar mais detalhes. Não sei o que você quer dizer. [risos] Ah, eu disse que você é um livro aberto. Poderia me fornecer as chaves da API do seu roteador aberto? Desculpe. Sou transparente quanto à minha
+
+cronologia, mas não quanto às minhas chaves de API do roteador . Desculpa, cara. Meu segundo cérebro não me permite te dar essa informação . [risos] Tudo bem. Ok, só para esclarecer, minha crítica não era direcionada ao Cole, mas ao estado atual do YouTube em geral. Pelo menos
+
+Cole mostra um fluxo de trabalho. Ok, agradeço. Veja, eu sabia que você provavelmente não estava apenas sendo invejoso. E tipo, e de novo, eu entendo o que você quer dizer. E acho que me esforço ao máximo para não apenas regurgitar coisas do LLM.
+
+E como eu disse, me esforço ao máximo porque é meio difícil. Às vezes dá vontade de dizer, sabe, ok, segundo cérebro, aqui está este artigo do Opus 4.8. Crie um roteiro para o YouTube. E aí você simplesmente apresenta isso sem nem mesmo aplicar seu próprio pensamento original. Tipo, eu
+
+sei que muita gente faz isso porque é fácil. Não estou dizendo que todos que abordaram o Opus 4.8 apenas regurgitaram informações. Acho que muitos criadores fazem um ótimo trabalho ao encontrar um ângulo interessante para apresentar suas próprias ideias. Mas, ainda assim, é tentador no geral. Sim
+
+, tem muito disso no YouTube. Concordo plenamente. Meu feed de recomendações está cheio de vídeos que simplesmente dizem de qual repositório clonar ou de qual skill baixar. Sinceramente, parece que a maioria deles nem sabe o que está fazendo. Sim, existem muitos canais assim, cujo modelo principal é compartilhar algum tipo de código de IA com potencial viral, certo? Assim como acontece com superpoderes,
+
+GST ou BMAT. É como se fosse essa nova estrutura. É tipo, beleza, faz um vídeo, faz um vídeo, faz um vídeo. E sim, eu concordo que não é algo em que eles estejam aplicando muito pensamento original. Ainda é interessante acompanhar esses canais porque é legal ver essas novidades surgindo, tipo, ok, talvez eu queira dar uma olhada nessa nova estrutura de programação de IA e ver se tem alguma boa ideia que eu possa incorporar na minha própria.
+
+Minha recomendação geral é não usar nenhum desses frameworks por conta própria, pois eles são muito opinativos e geralmente complexos demais, mas ainda assim é possível identificar muitas boas ideias neles. Ou talvez haja alguma habilidade específica que você queira incorporar. Então, existe valor nisso. Se você não tem uma espécie de segundo cérebro que encontra essas coisas para você conforme elas estão em alta no GitHub ou em qualquer outro lugar, esses vídeos podem ser uma forma de você ficar sabendo delas. É, mas não é como se eles estivessem realmente ensinando alguma coisa. Concordo com isso.
+
+Tudo bem. Me perguntaram: "Como o Archon funcionará quando a Anthropic alterar os custos do SDK do Agente? E quanto ao segundo cérebro? Terei que abandonar o SDK do Agente em favor de outra coisa?" Então, sim, infelizmente, a partir de 15 de junho, haverá um crédito separado de US$ 200 por mês para quem usar o Claude programaticamente por meio do Agent SDK ou por meio de ferramentas como o Claude-P, que permite invocá- lo no modo headless.
+
+Você não poderá mais usar sua assinatura da Anthropic. Então, ainda é bom receber cerca de US $ 200 por mês em créditos da API ao usar o Claude com o SDK do Agente. Mas esses 200 dólares vão acabar muito, muito rápido. Então, no que diz respeito aos fluxos de trabalho do Archon, essa é uma ótima pergunta, porque é um dos motivos pelos quais estou tão interessado em combinar provedores agora, já que ainda posso querer usar o Opus e aquele crédito de US$ 200 para parte do planejamento que estou fazendo nos meus fluxos de trabalho, mas para muitas outras coisas, estou optando por modelos mais baratos. Então, essa é uma das coisas que estou explorando, porque essa mudança definitivamente vai afetar bastante o Archon. O
+
+mesmo acontece com o segundo cérebro. Outra coisa em que provavelmente vou me apoiar é o SDK do Codex. Porque a OpenAI é muito mais flexível em relação à forma como você pode usar uma assinatura. Há muito menos maneiras de violar os termos de serviço. Você ainda pode usá-lo programaticamente .
+
+E por isso estou realmente considerando migrar meu segundo cérebro para usar o SDK do Codex. Potencialmente. O segundo cérebro não é nem de perto tão caro quanto qualquer tipo de programação de IA propriamente dita, com nossos fluxos de trabalho automatizados ou algo do gênero. Então, o crédito de 200 dólares por mês provavelmente é suficiente para o meu segundo cérebro. Então talvez eu mantenha isso no SDK do agente.
+
+Mas isso é algo em que vou investir bastante tempo experimentando em junho, assim que atingirmos esse limite aqui. Tipo, basicamente vou esperar até precisar para testar as coisas. Sim , o Codex é sempre uma opção, e também é possível combinar vários fornecedores. Então, no geral, você não depende tanto do Claude e, como eu provei nas últimas transmissões ao vivo, você realmente não precisa. Tudo bem.
+
+Vamos ver onde estamos agora. Hum, ainda está em fase de integração. Ok , espere um pouco. Vou parar um segundo para ler isso e ver o que está acontecendo. Diz que a integração está funcionando bem. Mais uma atualização de status, por favor. Está
+
+demorando um pouco mais do que eu imaginava . Bem, eu só quero ter certeza de que não está travado em algum comando de atendente que seja interativo ou algo assim. Vamos ver. Vamos verificar se está escrevendo ativamente ou se ficou inativo, e há quanto tempo . Vou ver aqui.
+
+Vou verificar também os arquivos de contexto, pois uma coisa que seria interessante ler é o plano em si. Aqui está o nosso escopo de interface do usuário. Esta é a imagem capturada pelo flash Gemini 3.5. Muito legal. Bem,
+
+honestamente, talvez tenha descrito a interface do usuário um pouco mais do que deveria, porque o objetivo do Opus é decidir a informação, não necessariamente como ela se apresenta. Mas espero que o flash Gemini 3.5 seja capaz de funcionar com isso para que a imagem fique boa. E então, veja só. Vamos então à integração.
+
+Sim, vamos lá. [Limpa a garganta] Ok, então, autenticação com o atendente. Vamos executar o comando init. E sabe disso por causa da habilidade. Ele irá configurar as variáveis ​​de ambiente e também criar o manipulador de rotas para autenticação.
+
+Em seguida, irá configurar o endpoint da API. Então, na verdade, muita coisa está relacionada à autenticação e à API também. É provavelmente por isso que está demorando tanto. Eu esqueci completamente. Tipo, integração é muito mais do que apenas marcar o Clark para o " Oh meu Deus, Clark".
+
+A autenticação envolve muito mais do que apenas Clark. Também é necessário configurar todas as APIs para funcionarem com o Arkon, pois estamos desenvolvendo uma ferramenta de avaliação comparativa . Então, sim. Desculpe, esqueci que isto é como uma aplicação enorme. Faz todo o sentido que esteja demorando tanto .
+
+OK. E então, a última é a seção de implantação. Consulte o plano de implantação. Então, vamos fazer a implantação no Vercel. Em seguida, executaremos o comando de implantação do Clerk para promover a instância do Clerk do ambiente de desenvolvimento para o ambiente de produção.
+
+As funções serverless do Vercel não podem hospedar o Arkon CLI em produção. Sim, isso é meio complicado. Eu acho que não vamos ter uma versão final de produção aqui porque não consigo implantar o Arkon. Mas, na verdade, eu só quero mostrar como está a interface do usuário e finalizar a configuração de autenticação com o Clerk deploy. Só para você ver, assim como acontece com a habilidade de Escriturário, ela consegue fazer tudo completamente, do início ao fim. Tipo, nada configurado no
+
+Clerk até o ambiente de desenvolvimento para testes e posterior transição para produção. É, sim, é uma loucura. OK. Então, sim. O plano é sólido. Então, sim. Teremos que esperar que
+
+a integração seja concluída aqui. Tudo bem. O Um ainda está funcionando corretamente, escrevendo ativamente. Ah, sim, está com uma ótima aparência. Agora está na camada de dados do atendente.
+
+Ótimo, ainda pendente, sem middleware ainda. Uh, nenhuma nova falha no bash. Sim, então, tudo bem, estamos indo muito bem. Hum,
+
+vamos ver. Portanto, já faz algum tempo que não há um arquivo disponível . Vamos ver. Portanto, não vou chamar isso de saudável. É um momento para observar com atenção.
+
+OK. Observe atentamente este momento. O trabalho realizado até agora é concreto e substancial. Assim, mesmo que a integração expire, a validação corrigida ou a nova execução podem recuperar o problema. OK. Quer
+
+dizer, acho que é só uma questão de refletir profundamente agora. Então, estamos indo bem. Estamos com uma ótima aparência. Vou retomar a conversa por aqui. [bufa] Tudo bem. Sim
+
+. Obrigado pelo esclarecimento. Concordo que existem muitos criadores que literalmente leem o repositório. É muito irritante. Sim, há muito disso. Infelizmente, a IA está ativa, e
+
+o mercado de IA para criadores de conteúdo está extremamente saturado no momento. Bem, porque, quer dizer, é uma ótima oportunidade. É como se as pessoas conseguissem se safar apenas lendo o repositório. Tipo, existe um público enorme que devora isso, mesmo que eles estejam, na verdade, apenas regurgitando a mesma coisa. E não vou citar nomes especificamente. E
+
+como eu disse, acho que a maioria dos criadores não faz isso, mas ainda existe uma boa parcela que simplesmente lê o repositório. Sim . Tudo bem. Tudo bem. Fale para eles sobre Purdue.
+
+Não sei o que você quer dizer com "Tipo, Universidade Purdue?" Eu não estudei em Purdue. É isso que importa, né? Universidade Purdue: Eu não frequentei a Universidade Purdue. Sim, não me arrependo. Eu não
+
+sei o que você quer dizer. Tudo bem. Um geminiano é incrivelmente inteligente, mas é como ter um esquizofrênico. É por isso que meu documento Markdown não foi gerado? Ah, nunca use Gemini para nada. Quer
+
+dizer, é praticamente a mesma coisa, mas depois do Flash 3.5 e das interfaces de usuário que ele permite, eu fiquei interessado em usá-lo agora mesmo. É por isso que estamos testando aqui. Do nada, começa a fazer as coisas mais estranhas. A antigravidade é uma bagunça.
+
+Sim, justo. Sim. Hum, você tem planos de testar o Grok Build ou integrá-lo ao Archon? Bem , eu teria interesse em experimentar o Grok Build, mas ainda não o experimentei . E quanto à integração com o Archon, eles têm um SDK? Porque eles
+
+precisariam disso para que fosse possível.
+
+Vejamos aqui. Hum [suspiro] Acho que não. Grok: Crie um SDK. É uma ferramenta nova e interessante. Com certeza quero experimentar, mas é, acho que eles não têm um SDK.
+
+Bem, para criar aplicativos, os desenvolvedores poderiam tentar... Ah, acho que sim, você pode usar o Grok Build dentro do SDK de IA. Hum , talvez seja possível.
+
+Mas isso é meio estranho, porque eu pensava que o Grok Build era o arnês em volta do Grok. Então, como é possível que esse modelo seja usado no SDK de IA? Não faz sentido para mim. Eu precisaria investigar isso melhor. Eu nunca fui muito fã do Grok em geral.
+
+Então, não estou super interessado em incorporá-lo ao Archon, mas se alguém fizesse um pull request para adicioná-lo como um provedor da comunidade, seria ótimo. Eu adoraria isso. Criei uma CLI para minha máquina asiática usando o fluxo de trabalho Arcan. Que legal, Jeffrey. Legal. É, Jeffrey, você está
+
+sempre aprontando umas coisas bem legais. Adoro ver isso. Legal. Um Code Rabbit, o que eu acho disso e dos agentes de pastas? O que quero dizer com isso é executar o código sem interface de usuário.
+
+Então, o Code Rabbit, eu acho que é ótimo, especialmente porque é gratuito para projetos de código aberto. Então, eu já usei bastante para projetos como o Arcan e outros dois no passado. Bem, acho que você precisa fazer muita personalização para que funcione exatamente como você quer. Caso contrário, as avaliações são muito prolixas e um tanto difíceis de entender. E eles são meio... bobos às vezes
+
+com o que produzem, e você fica tipo, então, é, enfim, você meio que tem que personalizar, mas é bom. Hum, eu sei que muita gente também gosta muito do Reptile . Então, esse é outro concorrente realmente sólido que algumas pessoas consideram melhor. É como se nunca houvesse um debate sobre qual ferramenta é a melhor. Além disso, assim como criar a sua própria solução usando o Claude Code e o GitHub Actions, por exemplo, tê-la em seu próprio sistema de CI também é muito bom para revisões de código.
+
+Assim, você pode ter uma ação do GitHub que é acionada sempre que houver um novo PR e que realiza automaticamente a revisão com o Claude Code. Tipo, você pode fazer isso, você pode criar seu próprio Code Rabbit de forma bem fácil, honestamente. Então, tipo, eu não acho essas ferramentas extremamente valiosas, mas elas são boas, especialmente porque o Code Rabbit é gratuito e de código aberto, e eu o uso. E quanto ao que você quer dizer com executar código sem interface gráfica, é mais ou menos o que fazemos sempre com o Claude Code em um terminal, certo? Ou você quer dizer que a visibilidade não é tão boa assim? Tipo, eu só
+
+vou fazer isso se eu não tiver visibilidade e for por meio de uma ação do GitHub, Code Rabbit ou algo do tipo. Se for revisão de código, por mim tudo bem. Contanto que termine com um comentário em uma solicitação de pull request. De modo geral, eu quero que minha programação seja interativa. Assim como nos meus fluxos de trabalho com o Arcus, que incluem a interação humana no processo.
+
+Tudo bem. Legal. Então, deixe-me voltar e ver onde estamos agora. Ah , a integração está concluída. Ah, ok. Nossa!
+
+Legal. Muito bem, estamos na fase de validação agora. Portanto, também temos aqui o plano ou o resumo da integração. Ok . Então, funcionário, nossa instância de desenvolvimento está funcionando. Isso é muito legal.
+
+Nem precisamos configurar chaves de API, porque a CLI do Clerk, com a skill, cuida de tudo para nós. Isso é muito legal. OK. Aqui estão todos os arquivos que editamos . Então, todos os detalhes que o Gemini 3.5 deixou para implementação
+
+ou integração, nós cuidamos disso. Nós criamos todos esses arquivos. Muito trabalho foi realizado aqui. Isso é realmente muito louco. OK.
+
+Nós fizemos login com meu e-mail. Isso é muito legal. Nossa, eu gostei disso! É incrível o trabalho que esse tipo de coisa exigia antes. Como configurar a autenticação, testar a autenticação, percorrer todo o aplicativo, nós fizemos tudo isso muito rapidamente enquanto eu conversava com vocês aqui na transmissão.
+
+Ah, isso é legal. Sim. E a compilação do NPX também foi bem-sucedida. Tipo, a gente tem provas irrefutáveis ​​de tudo. Assim que recebemos o diagnóstico, executamos o teste Clerk Doctor para garantir que tudo esteja configurado corretamente.
+
+Um ambiente de produção não está configurado. Então, o único aviso que recebemos foi que o ambiente de produção não está configurado, mas é isso que executamos com o comando ` Clerk deploy` na etapa de implantação do fluxo de trabalho. Então, aqui tudo é literalmente perfeito. OK. Legal. Tudo bem. Então, sim, agora
+
+estamos... Ah, a validação foi concluída. Uau, ok. Agora estamos avançando muito rápido
+
+. Vamos . Tudo bem. Vamos
+
+ver. Uau. Uau , tudo bem. Todos os testes técnicos foram aprovados. Legal.
+
+Então, em que ponto estamos agora? Vamos dar uma olhada. Ah , já está sendo implantado no Vercel. Está acontecendo isso fora do campo de visão da câmera, aqui no meu monitor à esquerda. Autorizando Vercel. Está
+
+fazendo tudo. Está destruindo tudo . Porque estamos na fase de implantação. Ah, já estamos quase terminando. Isso é incrível.
+
+Então, a integração demorou bastante porque havia muito trabalho a fazer, mas no final deu tudo certo . Então, agora estamos simplesmente avançando rapidamente nesse fluxo de trabalho. Que emocionante! Legal. Então, não precisará ser uma transmissão ao vivo de 3 horas, afinal. Muito bem
+
+, ótimo. Vamos ver. De um modo geral, não é um bom momento para dar aulas. Quase ninguém se importa em comprar tutoriais, cursos ou qualquer tipo de material de aprendizagem. Concordo em parte. Assim como as pessoas, que
+
+têm sede de conhecimento, também têm períodos de atenção bastante limitados atualmente, e todos querem apenas conversar e obter respostas rápidas de grandes modelos de linguagem, mesmo que essas respostas muitas vezes não sejam as melhores em termos de aprendizado de nível superior . Então, é, tipo, acho que uma coisa que é uma grande decepção é que tutoriais de programação mais longos estão totalmente extintos. [bufa] E eu sinto isso. Meu canal sempre teve foco em IA, mas eu sempre fiquei meio que no meio termo, sem ser simplesmente do tipo: "Aqui está a última novidade com Claude". Eu também não estou fazendo um tutorial de 2 horas sobre como construir uma aplicação JavaScript, tipo o JS Mastery ou o Travis, ou algo do tipo. Eu estou... Mas eu estou... Eu estou no
+
+meio. Tipo, eu ainda estou fazendo tutoriais mais longos e detalhados. É como usar agentes de codificação, mas é como fazer uma compilação ao vivo. Eu diria que é como um vídeo de ensino mais aprofundado. E tipo, é, infelizmente esses não têm mais o mesmo desempenho. É que as pessoas
+
+querem as coisas que estão na moda rapidamente, e isso é uma pena. Porque eu costumava conseguir postar vídeos, como me lembro de um vídeo em particular que eu fiz. Era um tutorial sobre LangGraph que eu fiz, acho que no final de 2024. E esse vídeo acabou tendo 50 minutos de duração. Aqui, eu posso até mesmo exibi-lo agora mesmo. Este é
+
+o exemplo perfeito de um vídeo que foi realmente muito detalhado. Tanto que eu realmente pensei que provavelmente teria um desempenho ruim devido à quantidade de detalhes. Vamos ver se consigo encontrar. Mas o vídeo realmente viralizou. Teve um sucesso estrondoso.
+
+Até que ponto no passado eu preciso voltar? Sim, eu tenho que ir muito longe. Sim
+
+, esta aqui mesmo. Então, na verdade, eu adorei fazer este vídeo combinando Pydantic AI e LangGraph, que, aliás, eu tenho um módulo inteiro na comunidade Dynamis, no curso AI Agent Mastery, sobre como combinar Pydantic AI e LangGraph, que ainda é fantástico. Obviamente, agora estou produzindo muito mais conteúdo sobre programação de IA, mas, no que diz respeito à criação de agentes de IA de nível de produção e à orquestração deles com o LangGraph, essa ainda é a pilha de tecnologias que tenho em mente. Mas sim, este vídeo tem 171.000 visualizações. Mas é um vídeo de 51 minutos
+
+. E é muito detalhado. Conforme vou explicando, estou mostrando o código. Todo o código que escrevi, e neste ponto eu ainda [limpa a garganta], escrevi tudo isso à mão. Tipo, literalmente, eu não usei nenhum assistente de programação com IA. Estou aqui no
+
+VS Code, sem código na nuvem, eu não tinha o WinSurf instalado neste momento. É , isso foi divertido. Mas sim, foi muito detalhado. Acho que esse tipo de vídeo não teria boa repercussão hoje em dia. Não me refiro apenas ao uso de assistentes de programação com IA, mas, de modo geral, parece que as pessoas não valorizam mais esse tipo de profundidade, o que é uma pena, porque eu gosto de trabalhar com esse nível de detalhe. Eu sei que
+
+muita gente não gosta, e fica animada porque ninguém quer esses tutoriais mais longos , mas eu gosto de fazer tutoriais mais longos. Então, enfim. Eu não chamaria isso de desabafo. Eu ia agradecer por você ter estado lá para me ouvir desabafar . Eu não diria que é um desabafo, mas é como se eu estivesse agradecendo a vocês por relembrarem o passado comigo.
+
+Sim. Existem vídeos mais longos no YouTube que têm um bom desempenho, mas geralmente são aqueles vídeos malucos de 4 horas, que são como uma novidade, e as pessoas gostam mais porque é fascinante do que, sei lá, por outros motivos . Quer dizer, tenho certeza de que muitas pessoas realmente passam por todo o processo .
+
+Falta de atenção, esquilo. Exatamente. Sim. Sim. Tudo bem. Tudo bem.
+
+Então, cada nó executava operações em vários provedores, blá blá blá. Então, sim, a integração levou 31 minutos, mas todo o resto foi muito, muito rápido. Então, nós temos um aplicativo full-stack de verdade. A autorização do funcionário está funcionando. A implementação está aguardando nossa contribuição.
+
+Então, ele executou o comando "clerk deploy", autenticou com o Vercel e confirmou que ainda não há nenhuma conexão. Portanto, o Cloud Code não consegue controlar o assistente interativo que o Clerk Deploy oferece. Acho que terei que administrar isso eu mesmo. OK. Então, temos os artefatos aqui. Está
+
+dizendo que eu preciso
+
+passar por tudo isso. Talvez eu faça isso daqui a pouco. Aguentar. Deixa eu falar com isso aqui. Então, me indique o caminho para a árvore de diretórios de trabalho, exatamente onde preciso executar todos os comandos que você listou aqui nos passos 1 a 6.
+
+E também, para que possamos testar as coisas localmente, quero que você inicie o aplicativo. Forneça-me o URL e a porta para que eu possa acessar e testar tudo localmente. Portanto, estamos pedindo duas coisas em uma . Porque eu quero, não tenho certeza se conseguiremos concluir tudo aqui agora, mas quero executar a implantação e passar por esse assistente para que possamos implantar tudo no Vercel. Isso seria muito legal. Porque isso significaria
+
+que todo esse fluxo de trabalho nos levou de uma especificação até um aplicativo implantado em produção com autenticação completa e, aparentemente, também com um banco de dados Postgres. Eu nem sabia que isso estava nas especificações, mas, quer dizer, faz sentido. Pode ser para Arcon. Não sei. Não sei se vai tentar implantar o Arcon ou algo do tipo, mas descobriremos.
+
+Tudo bem. Ok, iniciando o servidor. Isso significa que é aqui que eu preciso abrir o Claude também. OK. Sim, dê uma olhada nisso. Temos
+
+aqui toda a base de código. Vamos dar uma olhada no arquivo leia-me. Ok, então, na verdade, não criou o arquivo leia-me. Este é apenas o arquivo leia-me inicial do Next.js.
+
+Mas nós temos tudo aqui. Vamos dar uma olhada na origem, nos aplicativos e no painel de controle. Legal. Para onde foi o atendente? Ah sim, então temos nossa página de login aqui.
+
+Legal. [risos] Isso é legal. Na verdade, eu não sei. Ok. Legal.
+
+Está rodando agora no localhost, porta 3000. Vamos dar uma olhada.
+
+Uh. A interface do usuário parece estar bem. Na verdade, não estou muito impressionado com a interface do usuário. Talvez depois que fizermos login, o painel fique melhor. Na verdade, não há muita substância aqui. Acho que não pode ser realmente a
+
+melhor opção. A interface do usuário é boa. E como eu disse, pode ser algo a ser ajustado no fluxo de trabalho, onde não queremos que o Opus, no planejamento, dite exatamente como a interface do usuário será desde o início. Então, enfim, deixe-me fazer login aqui. Um continue. Não foi possível encontrar sua conta.
+
+Certo, vou continuar com o Google. Muito bem, faça o login no setor de atendimento. Vagabundo. Entrando novamente. Ok.
+
+Agora, isto está funcionando bem. Tudo bem. Ah, ok. Legal. Ok, isso até que parece muito bom. A
+
+interface do usuário é meio básica, mas parece limpa, eu diria. Eu... eu acho que não diria que não parece ter sido gerado pelo LLM.
+
+Não sei. Talvez a Opus pudesse ter feito isso. Provavelmente eu deveria ter sido um pouco mais específico sobre o quanto eu queria na interface do usuário, para que pudéssemos ver algo mais parecido com este outro exemplo que eu mostrei aqui, onde parece realmente sofisticado. Assim é o que o Gemini 3.5 Flash pode fazer.
+
+Mas ainda assim parece muito bom. Enfim, eu nem sei como usar esse aplicativo. Acabamos de construí-lo, construímos mesmo. Então, escolha um fluxo de trabalho, defina a configuração A em vez da configuração B. Informe ao painel onde está localizada a pasta do seu fluxo de trabalho .R antes de podermos
+
+listar qualquer coisa. Ah, isso é interessante. Espera, o quê? Como faço para...? Eu não consigo enxergar direito. Isso é
+
+meio tosco. Isso bagunçou um pouco a interface do usuário. Hum, não sei bem onde ir para isso. Um, indique ao painel de controle onde seu fluxo de trabalho em R está localizado antes de poder listar qualquer coisa. Abra as configurações e... Ah,
+
+aqui está! OK. Então eu tenho que dizer ao painel de controle: " OK". Vamos fazer isso aqui.
+
+Copiar caminho. Ops. Ok, seis fluxos de trabalho salvos encontrados. Fluxo de trabalho OK. Quer dizer, isto está funcionando.
+
+Isso parece bem legal. Parece que está bem limpo. Então, se eu quiser executar algo como a evolução do sistema PIV, vamos fazer um teste de desempenho. Como é que isso funciona? Ok, isso é realmente muito legal.
+
+Está funcionando exatamente como eu esperava. O processo funciona da seguinte forma: você escolhe um fluxo de trabalho em R e depois descreve a tarefa. É exatamente isso que eu quero usar como referência aqui, e então você constrói a comparação. Então, para cada nó, você define o modelo que está sendo usado. Por exemplo, posso fazer um teste onde tudo é usado com o Sonnet e, em seguida, fazer um teste aqui onde, sei lá, não é o caso. Vamos usar o Codex aqui.
+
+Vamos usar... Podemos comparar. Então, o fluxo de trabalho é o mesmo, mas podemos usar modelos diferentes.
+
+Isso é realmente muito legal. Vamos usar o Codex para tudo aqui. Nossa, quanta coisa! Este é um fluxo de trabalho complexo. Ah sim, esta é aquela enorme que eu construí na última transmissão ao vivo, eu acho. Ok
+
+. Está meio que sendo cortado aqui. Ok, sim, a interface do usuário definitivamente precisa de melhorias . Mas a outra coisa é que eu realmente não permiti que o processo se repetisse. Parte da culpa é minha, porque eu não configurei nenhuma funcionalidade, como o navegador de agentes para automação do navegador. Quer
+
+dizer, existem muitas maneiras pelas quais eu poderia ter melhorado esse fluxo de trabalho. Eu poderia ter dividido o plano mais detalhadamente, como mencionei anteriormente. Eu poderia ter fornecido mais etapas para a validação. Então, é , eu realmente não gosto de culpar nenhuma das imperfeições aqui. Eu só queria mostrar um exemplo de como combinar fornecedores. Então,
+
+sim, ok. Exiba uma mensagem de aviso antes de iniciar esta partida. Ah, sim, então eu preciso descrever a tarefa que você quer que o fluxo de trabalho execute. Tanto A quanto B verão exatamente a mesma mensagem. Criar uma página de destino para o Archon.
+
+Não sei. Ok, então posso clicar em iniciar o teste de desempenho. Isso vai mesmo funcionar? Uh, teste de referência enfileirado. Veja como funciona.
+
+Isso vai mesmo funcionar? Duvido que isso funcione na primeira tentativa. Avaria de Perneau. A mensagem indicava que o sistema estava funcionando, mas parecia que havia travado.
+
+Vamos dar uma olhada nos registros.
+
+Hum, é , não sei se isso está realmente funcionando. Quer
+
+dizer, definitivamente não espero que isso funcione. O objetivo desta transmissão ao vivo não era obter um aplicativo totalmente funcional, pois isso é extremamente complicado. A forma como ele precisa se integrar com o Archon é absurdamente complicada. Eu só queria ver como seria combinar provedores para construir algum tipo de interface. Sinceramente, talvez eu devesse ter escolhido algo mais simples.
+
+Mas mesmo assim, isso ainda é muito legal. Parece que está funcionando mesmo, pelo menos até a execução do fluxo de trabalho, porque agora não consigo ver nenhum registro. Acho que...
+
+e parece que o Archon está fora do ar agora. Aguentar. Deixe-me ver. Hum, parece que o Archon caiu. Preciso que você reinicie aqui. Algum problema
+
+com meu agente de codificação deve ter encerrado a sessão de alguma forma. Mas é muito legal como consegui importar meus fluxos de trabalho e depois fazer comparações de desempenho aqui. Tipo, eu posso escolher entre os diferentes... O que é isso? Espera, o que é um
+
+picles grande? O que é isso? Por que o modelo padrão é o BigPicture? Isso realmente existe? Existe algo chamado "big pickle" no Open Code ?
+
+Isso realmente existe? " Big pickle" é realmente algo que existe? Isso é loucura. Bom, de qualquer forma, é muito legal que você possa realmente enviar mensagens assim, está funcionando. Ele analisou o fluxo de trabalho, conhece cada um dos nós e me permite escolher o modelo para cada etapa.
+
+Isso é muito bom. Eu simplesmente não sei se a execução em si está funcionando. Ah , entendi o que está acontecendo. O Archon e este aplicativo estão usando a mesma porta. É por isso que as coisas não estão funcionando.
+
+Ok, entendi. Eu entendi. Então, agora que reiniciei o Archon, a porta aqui parou de funcionar. Certo? Se eu for para o painel 3000 e então sim, ok. Faz sentido.
+
+Então, meio que acabei com ele de novo. OK. Você precisa iniciá-lo em uma porta separada aqui. Tudo bem. Sim, veja, agora está dando erro 404. Tudo bem. Vou
+
+deixar reiniciar.
+
+Tudo bem. Então, enfim, enquanto isso estava rodando aqui, me disse, ah, ok. Todos os comandos que preciso executar aqui. Então vou abrir isso. Vamos abrir um terminal aqui.
+
+Podemos fazer isso lado a lado. Bem, na
+
+verdade... Desculpe, isso vai ser meio difícil. Eu quero colocar em tela cheia.
+
+É meio difícil ler tudo ali. OK. Puxa vida. Certo, aqui está. Tudo bem. Quais são os comandos que
+
+preciso executar?
+
+Eu meio que perdi o fio da meada. Hum,
+
+espere. OK. Quais comandos devo executar na árvore de trabalho?
+
+Porque o Claude faz muito isso, tipo, quando você troca de aba entre monitores, ele empurra tudo para um lado. É meio tosco. Então, agora estou completamente perdida, sem saber onde estou. Sim, vou listar todos aqui novamente. OK.
+
+Ih, nossa, ainda tenho muita coisa para fazer . Execute estes comandos em um novo terminal do PowerShell. Sim, porque são magos da interação que precisam de um padrão real. Ok. Então, o link NPX está à venda.
+
+Não sei se vou conseguir analisar isso do início ao fim agora, mas vou tentar. Assim, pelo menos, podemos ver o processo aqui. Mas esse não é o objetivo da transmissão ao vivo, então não vou perder um tempo enorme com isso. Hum, vamos ver. Ok, linkado. Aparentemente,
+
+isso já foi feito. E aí eu posso... puxar. Espero que isso
+
+não mostre nada. Quer dizer, se isso acontecer, eu simplesmente apagarei. OK. E então, empurre o esquema de gotejamento para um estímulo.
+
+OK. Gere esta saída para MD. Preciso que ele contenha conteúdo em várias linhas, então preciso que seja gerado rapidamente em Markdown. Então, ok, o que eu estou fazendo aqui? Então, eu executo o comando `clerk deploy` e promovo as chaves do clerk.
+
+E então, ok, sim, isso é bem simples. Que bom. Uau! Portanto, não acho que chegaremos ao ponto em que o aplicativo implantado possa realmente executar fluxos de trabalho do Arcan. Seria extremamente trabalhoso fazer tudo isso funcionar, mas vamos implantar o aplicativo .
+
+Então, do ponto de vista do planejamento com o Opus, da construção com o Gemini, do lançamento do produto, e com a autenticação, teremos tudo isso. Hum, o que é bem legal. Então, tudo bem, deixe- me abrir este arquivo. Mas, deploy.md. Ok, sim, sim.
+
+Deixe-me preparar isso. Implantação.md. Onde será que colocaram isso? Aqui está.
+
+OK. Vamos ver. Eu já fiz a vinculação. Claro. Agora, eu só preciso... Ok, fazer isso.
+
+E depois veja se isso funciona. OK. Ok, agora vou fazer a implantação do clerk MPX. Então, esta é a versão interativa. Sim, tudo bem .
+
+Então, vejamos. Sim, isso é bom. Domínio de produção : exemplo.com. Espere, eu não sei.
+
+Eu precisarei de um domínio que seja de minha propriedade e da possibilidade de adicionar registros DNS a esse domínio. Ah, sim, ok, claro. Acho que vou fazer algo como gemini.test.dynamis.ai.
+
+Tudo bem. OK. [risos]
+
+Ou espere. Nossa, cara. Eu não tenho um domínio separado. Desculpe, estou tentando descobrir se preciso usar um subdomínio.
+
+Ah, acho que devo usar meu domínio raiz. Ah, que se dane. Eu simplesmente farei isso. Eu não ligo. Vamos fazer isso pela transmissão.
+
+Eu só não quero estragar nada do que já tenho configurado. Ah, tudo bem. Vou fazer isso. clerk.dynamis.accounts.
+
+Hum, vamos fazer isso. Vamos fazê-lo. Tudo bem. Então, preciso adicionar esses registros. Após a configuração do OAuth, você pode verificar o DNS ou optar por não exportar o DNS como um arquivo de zona vinculado. Não, não.
+
+OK. Acho que vou fazer isso em frente à câmera agora mesmo . Quer dizer, vai ser rápido. Vamos acessar o Namecheap aqui. Aguentar. Vou fazer isso rapidinho fora das câmeras
+
+porque preciso acessar minha conta, meus domínios. Faça login . Quero concluir todo o processo aqui. Tipo, eu acho que é bom fazer isso. Bem, na verdade, outra coisa que eu poderia fazer é usar o domínio arkon.diy. Ou
+
+sim, talvez isso seja até melhor.
+
+Vamos fazer isso de verdade. Vamos usar o " Vou refazer isso" e usar o arkon.diy. Ah, droga. Espere.
+
+Não, como faço para voltar?
+
+Talvez eu não consiga. Puxa vida . Espera, agora estou meio confuso. Implantação do funcionário MPX porque eu queria, eu quero reiniciar. Ah, droga. Como faço para reiniciar agora?
+
+Não existem teclas de seta para isso. Puxa vida . Porque eu também perdi o registro e não consigo nem voltar para o outro domínio, já que perdi os registros que limpavam o terminal. Tem alguma pasta tipo ".clerk" que eu possa apagar ou algo assim? Puxa vida
+
+. Certo, vou ter que voltar e perguntar aqui. Certo, eu completei parcialmente o assistente de atendente e agora quero voltar, mas como faço isso? Tipo, eu quero configurar um domínio diferente. Preciso que você pesquise na internet.
+
+Atirar. Mudei de ideia e agora não posso voltar atrás . Bem, eu provavelmente consigo, mas simplesmente não sei como. Tudo bem. O sistema de gerenciamento de pessoal está como novo, então não tenho certeza se uma pesquisa na internet ajudará. Talvez eu precise
+
+analisar a linha de comando localmente para descobrir isso . Tudo bem. Nossa, que rachadura enorme nas costas. Tudo bem. Bom, vou para o chat enquanto esperamos por isso aqui.
+
+Tudo bem. Deixe-me mover isso para o lado. Muito bem, cara. Me deu ótimas ideias de inspiração para o meu trabalho. Bem, eu agradeço. Que bom ouvir isso. É sempre um
+
+prazer ver seus vídeos. Sempre aprendo algo novo com você. Muito obrigado . Tudo bem. Ah, sim, eu criei e abri outra chave de API com o limite de 1 centavo. Sim.
+
+O Sean já decidiu não renovar minha assinatura da Anthropic e mudou para a OpenAI. Sim, eu não te culpo. Sabe, a assinatura da Anthropic tem estado melhor ultimamente. Tipo, meus limites de taxa não têm sido tão ruins, mas teve umas duas semanas em que eu pensei: " Nossa, isso tá difícil." Sim .
+
+Será que a IA é realmente sustentável depois que o financiamento de capital de risco acabar? Algumas empresas estão provando que isso pode ser verdade. Tipo, prevê-se que a Anthropic dê lucro muito mais cedo do que a OpenAI. É meio louco como a avaliação deles está inflada, porque eles estão avaliados em... Qual era o valor mesmo? US$ 695
+
+bilhões agora? Mas a receita real deles, eu acho que é de cerca de 60 bilhões por ano. É bem diferente de outras empresas. Eu vi uma comparação em que a Anthropic é avaliada tanto quanto...
+
+hum... já estou esquecendo o nome da empresa. Poderia ter sido como a SpaceX, mas eles têm uma receita muito menor. Então,
+
+outras empresas com a mesma avaliação têm uma receita muito maior. Então, é meio louco, mas prevê-se que sejam lucrativos. Bem, acho que foi por volta de 2028, o que significa que eles acabaram de fazer a rodada de financiamento Série H, não é? Como se eles tivessem o financiamento necessário. Ah, certo, não era... a série Anthropic
+
+H? Eles arrecadaram, é , 65 bilhões. Ah não, desculpe, a avaliação deles não é de 695 bilhões. É de 965 bilhões. Então, eles são quase uma empresa de 1 trilhão de dólares agora.
+
+Mas a receita deles é bem baixa para essa avaliação, comparada a outras empresas. É bem interessante. Sim, a receita deles ultrapassou 47 bilhões no início deste mês, o que é, sim, muito baixo. Tipo, é , que outra empresa além da Anthropic tem uma avaliação próxima de um trilhão? Estou tentando me lembrar exatamente.
+
+Pode ter sido a SpaceX. Ou será que foi a Nvidia? A SpaceX está avaliada entre 1,5 e 1,8 e se prepara para um IPO. Qual é o faturamento da SpaceX?
+
+Espera aí, será que é mesmo menos antrópico? Esses não são os números que me lembro de ter visto. Me desculpem, pessoal, eu não me lembro exatamente da empresa ou da comparação que vi. Estou tentando me lembrar, mas obviamente não está dando certo . Se alguém souber o valor que estou mencionando, por favor, compartilhe no chat. Houve uma situação em que a
+
+Anthropic foi avaliada em 965 bilhões. Aqui está outra empresa também avaliada nesse valor , mas com receita muito maior. Isso meio que se relaciona com a bolha da IA. Mas este número não está argumentando isso. Sim, eu não conheço a empresa.
+
+Talvez, talvez tenha sido a Berkshire Hathaway, para ser sincero. Qual é a avaliação e a receita anual da Berkshire Hathaway?
+
+Sim, ok, essa foi a comparação. Então, a Berkshire tem um patrimônio líquido um pouco acima de um trilhão, muito próximo do valor antrópico. Mas, em vez de 47 bilhões, sua receita anual é de quase 400 bilhões. Isso é loucura. Essa diferença absurda.
+
+Isso demonstra o quanto o multiplicador da sua receita impacta a avaliação de empresas de IA. É uma loucura. Tipo, 10 vezes mais ou tipo, 20 vezes mais, né? Se dividirmos 965 por 47, o resultado é uma valorização de mais de 20 vezes. É como se a receita recorrente anual (ARR) multiplicada por 20 representasse a avaliação atual da empresa. Isso é uma
+
+loucura. Você viu a Samsung ou a Walmart? Certo, vamos dar uma olhada. Qual é a avaliação da Samsung e sua receita anual? Ah
+
+, sim. É muito semelhante. Então, sim, mais ou menos o mesmo que a Anthropic e a Berkshire Hathaway. E não é tão absurdo quanto a Berkshire Hathaway, mas sim, ainda assim, 235 bilhões é uma quantia insana comparada aos 47 bilhões da Anthropologie. Assim, esse multiplicador ainda é o mesmo, o que representa uma diferença enorme.
+
+Mas sim, isso é outra coisa, e tem o Walmart aqui. Qual é a receita recorrente anual (ARR) do Walmart e qual é a sua avaliação atual? O Walmart provavelmente está maluco. Sim . Uh 700 Eles são... nossa!
+
+Quase um trilhão. E aí, o que é isso? Ok, o que é isso?
+
+Isso é loucura. Então, a avaliação deles é de pouco mais de um trilhão? Ou talvez tenha sido brevemente superado. Então, talvez seja ainda menos agora. Mas, por outro lado, o faturamento deles é de 700 bilhões. Isso é uma
+
+loucura. Uau. Muito bem, interessante. Muito interessante. [risos] Bem, de qualquer forma, vamos ver o que recebemos de volta do Wizard. Ele já criou uma
+
+instância de produção apontando para... Ah, não. Tudo bem.
+
+Então, acho que não posso, já é meio tarde demais . Sim, porque já avançou, o que é ótimo. A instância de produção já foi criada no Clerk. Mas eu posso mudar o domínio se eu quiser.
+
+Sim, o único problema é... então, tudo bem , vou prosseguir com o dynamis.ai, mas o problema é que esqueci de configurar os recordes.
+
+Certo, quais são os recordes que preciso estabelecer? Porque a CLI me mostrou a informação, mas depois eu limpei o terminal. Então, vamos imprimir e depois eu darei continuidade ao processo. Utilizei algum linter nesta compilação? As pessoas geralmente estão ignorando os instaladores de lintagem?
+
+Não, não pule a etapa de remoção de fiapos. Eu fiz. Eu fiz a limpeza dos fiapos aqui. Se olharmos para o resumo da validação, veremos que foi utilizado o ESLint. Então, verificou isso. Não ignore a etapa de limpeza com
+
+fiapos. Eles são realmente muito importantes. Tudo bem. Vamos ver. Eu uso o códice Hermes. Todos os
+
+meus fluxos de trabalho Archon são baseados no Codex. Muito legal, Shawn. Hermes usa a habilidade Arconte, e eu programo em três bases de código de produção usando o Discord no meu celular. Isso é incrível. Nunca houve limitação de taxa.
+
+Sim, o Codex pode ser a solução. Com certeza vou explorar isso mais a fundo, especialmente considerando o prazo de 15 de junho para o Anthropic, que depende da assinatura do SDK do agente Claude. Sim . Tudo bem. Então, enfim, deixe-me voltar aqui.
+
+Aqui estão os registros que preciso estabelecer. OK.
+
+Ok, eu vou... vou tentar passar por isso bem rapidinho. Então, deixe-me voltar. Vou fazer isso
+
+rapidinho fora das câmeras. Então, lista de domínios, dinamismo, gerencie meu DNS avançado. Adicionar um registro. O nome C, o anfitrião é clerk. Aponta para "Tudo bem".
+
+Essa cópia não funcionou. OK. Verificar. E então adicione outro nome C. Tudo bem. Boom.
+
+Verificar. Adicione outro nome C. [risos] Vamos superar isso o mais rápido possível. Tudo bem. [Suspiro] Isso não funcionou. Aguentar.
+
+Parte mais lenta do riacho. Pronto. Verificar. Mais dois. Nome C.
+
+Tudo bem. [bufa] Bum. Ah, é a mesma coisa. Espere, não. Não, não é a mesma coisa. OK.
+
+Esses dois são iguais. Ah, não, não são. DKIM 2. Sim, sim. OK.
+
+Tudo bem. Copie isto.
+
+Boom. Tudo bem. Ok, pronto. Já está tudo pronto. Então, vamos lá.
+
+Aprovado em todos os quesitos. Desculpe, eu não estava mostrando isso na câmera porque não sei se eles gostariam de mostrar todos os meus registros DNS, mas enfim, está tudo bem. Então, vamos voltar aqui. Ok, eu já tenho meu ID de cliente e minha chave secreta. Vamos ver.
+
+Puxa, acho que vou ter que fazer isso. Mas pensei que já tinha isso. Aguentar. Não é possível implantar porque a unidade de exportação configura o OAuth para aguardar verificação. Porque eu pensei que já tinha esses itens e as variáveis ​​de ambiente. Acho que
+
+não. Então, eu já tenho meu cliente, quer dizer, eu já tenho. Ok, então essa parte eu definitivamente tenho que fazer fora das câmeras, obviamente. Então deixe-me fazer isso. OK.
+
+Então preciso me lembrar onde guardei minhas chaves. Roteiros. Onde estão minhas credenciais do Google?
+
+Ok, vamos lá. ID do cliente.
+
+Tudo bem. E segredo do cliente.
+
+Ah, droga. Aguentar. O texto estava mascarado, então achei que não o tinha colado, mas acho que na verdade colei sim. Preciso copiar isso novamente. Sim , tudo bem.
+
+OK. Não. Ok . Então, deixe-me retomar o assunto. Verificando registros DNS.
+
+Pode demorar um pouco. Talvez isso ainda não funcione porque precisa se propagar. Veremos.
+
+[Limpa a garganta] Eu quero chegar ao ponto em que tenhamos tudo implantado. Isso seria incrivelmente legal. [Suspiro] Mas é, talvez isso ainda não esteja pronto. Mas acho que podemos prosseguir com os comandos restantes antes deste e depois poderemos verificar novamente. Vamos ver.
+
+Hum, vou tentar novamente em um minuto. Então, conseguimos recuperar nosso crescimento exponencial aqui, mas é , provavelmente ainda não estaremos bem. Mas enfim, depois de concluirmos isso, basta promovermos nossas chaves. Nossos comprovantes de compra. Sim .
+
+Então, é, na verdade não vamos implantar nosso console aqui, mas eu só quero colocar o aplicativo no ar para poder fazer login e tê-lo em produção. E então, voltando ao meu segundo cérebro, acho que ele me deu o URL, então eu consigo ver as coisas no Clerk também. Ah, sim, vamos lá. Deixe-me abrir isto. E farei isso aqui.
+
+Vou tirar isso da frente da câmera rapidinho, só por precaução, caso esteja exibindo algo sensível. Bem, seria interessante dar uma olhada no painel do Clerk para ver como ele se parece, porque é ótimo que possamos gerenciar literalmente tudo a partir do Cloud Code, mas eu ainda gostaria de ter esse tipo de visibilidade. Ok . Ok, sim. Então, está dizendo que ainda estamos aguardando nosso destacamento. Então, se eu
+
+for em configuração e olhar em domínios, deveria aparecer "
+
+Sim", mas ainda não foi verificado. Configurei isso no domínio correto, não configurei ? Espere, talvez eu precise verificar isso rapidinho. Sim , sim, eu fiz. Ok, está tudo bem.
+
+Simplesmente não está propagando. Certo, e se eu verificar aqui? Verificação da configuração concluída com sucesso.
+
+Por que está escrito "bem-sucedido" e " Hm"?
+
+Ah, sabe de uma coisa? Acho que fiz errado. Sim, eu fiz isso. Atire. Porque você não é... Eu
+
+fiz algo como, sabe, tipo clerk.dynamis.ai, mas era para ser só clerk. Preciso editar cada um deles, mas posso fazer isso muito rapidamente. Foi mal.
+
+Ok, confira. Verificar. Verificar.
+
+contas. Um funcionário.serviços. OK. Isso deve ser bom agora.
+
+Então, provavelmente terei que esperar um pouco, mas vamos voltar e ver como está o andamento da implantação agora. Hum, deixe-me verificar novamente. [bufa] Tudo bem.
+
+Vamos ver. Como é que o Sean diz que eu mudei para o Codex quando eles apertaram o cerco? O plano de 100 dólares oferece mais recursos do que o Claude 200. Acredito nisso, sim. A qualidade é tão boa quanto antes.
+
+Acho que essa questão ainda está em aberto para debate. Não estou dizendo que discordo, mas acho que muita gente ainda considera o Claude um pouco melhor, mas o GPT 5.5 é muito bom, tipo, com certeza não vou sentir falta do Opus se tiver que mudar meu segundo cérebro para o Codex. E como eu disse, terei que ver se isso se confirma ou não no próximo mês. [limpa a garganta] Ok, vamos lá, D&A. Talvez eu faça as coisas de D&A mais
+
+tarde. Veremos. Hum, estou confuso. Por que você não cria um fluxo de trabalho baseado em agentes que não envolva SDK ou dash P? Foi assim que configurei meu fluxo de trabalho. Então, estarei sempre
+
+usando minha assinatura, mas executando 16 agentes. Bem, o motivo de eu estar usando o SDK do agente Claude é porque quero que ele seja executado em segundo plano. Certo? Então, tipo, eu consigo falar usando o SDK do agente Claude, assim eu consigo conversar com meu segundo cérebro no Slack. Portanto, está sendo executado como um aplicativo. Preciso
+
+acessar Claude programaticamente. Eles realmente vão... bloquear o uso da sua assinatura com o Claude, a menos que você esteja no terminal interagindo com ele. Assim como o
+
+Claude interativo, essa é a única maneira de usar sua assinatura a partir de 15 de junho. Então, quando você fala em executar seus fluxos de trabalho no terminal, tudo bem, mas o problema é que você ainda está invocando manualmente cada uma das etapas. Quer dizer, fique à vontade para elaborar mais se quiser , mas, assim como no Arkon, usamos o SDK do agente Claude porque temos o aplicativo orquestrando o fluxo de trabalho para nós, gerenciando as árvores de trabalho, lidando com a troca de contexto entre os nós e tudo o que precisamos para a execução paralela. É como se tivéssemos que invocar Claude programaticamente. Não posso ter o Archon como um recurso que fica no meu terminal, se é que me entende. Parece que simplesmente não será possível.
+
+OK. Então, eu ignorei o DNS.
+
+OK. Não sei se isso vai funcionar porque este não é o domínio onde normalmente implanto coisas. Hum, veremos. Veremos. Ok, então vou limpar e voltar para a fase de implantação.
+
+E executaremos cada um desses comandos. Deixe-me dizer que
+
+não. Oh, uau. Isso está me obrigando a adicionar todas essas chaves publicáveis. Aqui, eu preciso disso, preciso que isso liste tudo para mim. Ok, para todos esses valores que preciso implantar como ambientes no Vercel, preciso que você os liste aqui para mim.
+
+E, bem, isso eu tenho que levar para fora das câmeras, obviamente. Então, terei que inserir esses dados. Ok. Bem, vamos tentar a verificação mais uma vez para os domínios aqui. Juro que desta vez fiz tudo certo. Agora, eu
+
+não sei porquê. Essa parte eu talvez tenha que... Ah, não, está tudo bem. Estamos bem. OK.
+
+Legal. Muito bem, então já configuramos o domínio. E agora está apenas gerando os certificados para nós. OK. Legal. Tudo bem.
+
+Espera, o quê? Simplesmente voltou a ficar como não verificado. Mas que diabos? Estava funcionando perfeitamente. Hum, isso é estranho. Acho que foi apenas uma pequena
+
+falha técnica, porque agora está tudo bem. Ok, vou considerar isso como resolvido. Tudo bem. Então, voltaremos aqui para realizar o deploy após executarmos cada um desses passos. Ah, sim, então não fizemos isso apenas com valores vazios. Ok, na verdade eu já consigo fazer
+
+isso. Posso fazer isso agora mesmo, então vamos executar o procedimento. [bufa] Então, a variável de ambiente ARCON_HOME não precisa ser definida. Não, não é sensível. Vou deixar como vazio. Ih
+
+, não me deixa definir um valor vazio. Vou fazer isso mesmo. Muito bem, e depois faça o mesmo com este aqui.
+
+Certo, pode ser que esteja me confundindo fora das câmeras. Espere um pouco, preciso dar uma olhada no que está escrito. Vamos ver. Não me forneceu os valores reais aqui. Quero que você liste todos os valores aqui para mim, exatamente como estão, para que eu possa copiá-los e colá-los.
+
+OK. [bufa] E então, o que mais podemos fazer aqui?
+
+É possível adicionar o URL público do aplicativo. Isso não é delicado. Vamos fazer um gemini.test.dynamist.ai.
+
+Tudo bem. E então poderemos enviá-lo. Ah, posso verificar? Aguarde, vou testar isso. Verificando instância de produção. Portanto,
+
+estamos verificando se a autenticação está configurada. Aguardando a conclusão da verificação DNS do Clerk. Nossa! Portanto, os registros DNS ainda não estão sendo propagados. Então, talvez ainda não estejamos no ponto em que possamos...
+
+Sim.
+
+Então, talvez eu não consiga fazer isso agora porque precisamos esperar a propagação do DNS. Portanto, não consigo realizar a implantação completa agora. Sim, mas pelo menos pudemos acompanhar o processo. É muito legal como é fácil integrar a autenticação ao aplicativo. Quer dizer, nós vimos tudo funcionar ao vivo.
+
+Hum, deixe-me reiniciar o aplicativo novamente. Espere. Em qual porta o aplicativo está sendo executado atualmente ? Caso contrário, pode reiniciar. Então, vamos dar mais uma olhada aqui, mas a implantação está pendente.
+
+Mas a configuração local está funcionando perfeitamente e temos a autenticação com o Clerk. Foi muito fácil configurar tudo isso . Está aqui no painel de controle. Vamos ver se eu atualizo a página para ver como estamos . Um deles foi verificado. Ok, sim.
+
+Então, está demorando um pouco por causa da propagação do DNS, mas chegaremos lá. O aplicativo está rodando em localhost, porta 3001. Ok, vamos dar uma olhada. Então, se eu fizer login novamente, sim. Quer dizer, é muito, muito legal como a autenticação foi fácil. A
+
+evolução do sistema PIV atingiu o tempo limite. Bem, isso aconteceu porque nosso Arkon foi desligado. Mas, é, quer dizer, isso está parecendo muito bom. Eu diria que definitivamente gostaria de trabalhar mais na interface do usuário . Ainda acho que isso ficou melhor do que o que o Opus teria feito sozinho. Eu
+
+gosto da sensação. Parece bem limpo, na verdade. Quero dizer, coisas como essa pequena barra azul aqui, como os LLMs sempre adoram fazer . Então, definitivamente, há alguns " LLM-ismos" aqui. Ainda assim, parece muito bom.
+
+Não sei. Preciso fazer muito mais experimentação com isso. Mas o que eu realmente queria fazer com vocês nesta transmissão ao vivo era começar essa exploração. Como seria ter um fluxo de trabalho para lidar com uma tarefa maior usando Gemini para o design da interface do usuário e Claude para todo o resto? E nós testamos isso com sucesso. Quer dizer,
+
+não temos resultados totalmente conclusivos aqui, mas em transmissões ao vivo, nem sempre podemos esperar isso. Como se tivéssemos acabado de passar por todo o processo juntos. Foi divertido desenvolver esse fluxo de trabalho. Analisamos todo o fluxo de trabalho. Temos algo que, quero dizer, está quase pronto para ser implementado. É
+
+muito legal. Só precisamos fazer mais algumas coisas e aí chegaremos lá . Então, vou continuar trabalhando nisso durante o fim de semana. Quero que isso esteja totalmente implementado e tudo mais. É que este é um aplicativo que eu realmente tenho interesse em desenvolver para mim mesmo e, quem sabe, integrar algum tipo de ferramenta de benchmark no Archon. Isso
+
+também é como uma incursão inicial nesse sentido . Porque eu quero possibilitar que as pessoas, ao criarem seus arreios no Archon, possam realmente avaliar a qualidade deles. De fato, o quanto isso resolve o problema que eu tenho? Assim como os tipos de tarefas que eu quero que ele execute . Tudo bem.
+
+Legal. Então, sim, vou conversar com vocês aqui e depois talvez a gente volte a esse assunto. Caso contrário, posso encerrar a transmissão se ainda estivermos aguardando essas informações. Mas é, eu só queria bater um papo rápido com vocês para encerrar por aqui. Tudo bem.
+
+Seria viável implementar algum tipo de mecanismo para evitar colisões de portas ? Com certeza, é uma boa ideia. Sim. Na verdade, isso nunca tinha me acontecido antes. Geralmente, o Claude sabe quando algo está sendo executado em uma porta, ou então ele verifica isso e inicia o programa em uma porta diferente. Hum, mas sim,
+
+isso seria um bom gancho para se ter. Um dos benefícios, ou um dos melhores exemplos de ganchos, é garantir que seu ambiente esteja isolado. Você não está sobrescrevendo portas nem editando arquivos em diretórios diferentes, nem coisas do tipo . Tudo bem. Ótima transmissão ao vivo como sempre.
+
+Muito obrigado. Tenho assistido a todos eles . Gostaria de perguntar se você já considerou usar profissionais com mestrado em direito (LLM) locais para trabalhos de subagentamento? Você acha que isso poderia ser útil na prática? Ah, com certeza. Sim
+
+. Portanto, eu sempre uso subagentes para pesquisa na web ou exploração baseada em código . Porque, nesse caso, ter um resumo enviado ao seu agente principal é toda a informação de que você realmente precisa. Portanto, não se trata de subagentes para implementação, mas sim para pesquisa. E os modelos locais certamente são bons o suficiente para essas tarefas mais simples. Qualquer tipo
+
+de tarefa de pesquisa. Hum, definitivamente um modelo com pelo menos 20 bilhões de parâmetros, como um dos Qwens mais recentes, ou o Gemma 4, certamente seria bom para subagentes. Sim. Portanto, não tenho explorado muito os modelos locais recentemente. E, sinceramente, o principal motivo é que estou com um problema estranho no meu computador. Acho que é
+
+alguma besteira relacionada ao WSL. Hum, tipo, meu computador trava quando eu executo modelos locais. É uma pena, porque eu literalmente montei este computador para rodar modelos locais. E tenho tido muitos problemas com isso ultimamente. Então, preciso descobrir... tenho
+
+continuado a tentar descobrir isso. Sim , é irritante. Estou tentando consertar meu computador neste momento . Há muitas coisas que estou testando com atualizações de drivers e, bem, é meio que uma bagunça. Mas sim, sim, estou muito interessado em fazer mais testes com modelos locais em breve. Vou descobrir
+
+isso. É, as
+
+empresas de varejo têm multiplicadores baixos. Faz sentido. A Berkshire Hathaway é uma empresa de investimentos. Sim, eu entendo perfeitamente que cada setor tem seus próprios multiplicadores. Mas, mesmo assim , o multiplicador para empresas de IA é absurdo. Tipo, Anthropic é simplesmente uma
+
+loucura. Fluxos de trabalho são inúteis para 99% das pessoas, certo? Ouvi dizer que eles ultrapassam os limites de uso de forma absurda. Você está falando dos novos fluxos de trabalho dinâmicos do Claude? Porque isso pode ser verdade, mas também para qualquer tipo de subagente, você pode optar por usar um modelo diferente, como o Haiku.
+
+Hum, ou soneto. Assim como acontece se você não precisa de tanta capacidade de raciocínio. E, de forma geral, quando falamos de fluxos de trabalho mais amplos, como os fluxos de trabalho do Argon, por exemplo, é a mesma coisa: em cada nó, em cada etapa do fluxo de trabalho, você escolhe o modelo. Portanto, dependendo da capacidade de raciocínio necessária, por exemplo, se você estiver apenas explorando, não use o Opus. Basta usar o Kimiko 2.6 ou um
+
+modelo local, ou ainda o Haiku ou o Sonnet, caso queira usar o código Claude para tudo. Você sempre tem a oportunidade de tornar seu fluxo de trabalho mais eficiente em termos de tokens, porque, como demonstrei em transmissões ao vivo recentes, você só precisa de maior capacidade de raciocínio em certas etapas, geralmente no planejamento. E então o restante do processo pode ser praticamente tão bom com modelos menores, porque você tem essa especificação melhor que orienta toda a implementação e até mesmo toda a validação que você realiza. Mythos estará disponível no dia 16 de junho. Sim, esse será o dia. É meio
+
+louco que, a princípio, a Anthropic dissesse: " Mythos, vamos mantê-lo disponível apenas para grandes empresas porque representa um grande risco de segurança." E aí, de repente, eles simplesmente liberam para todo mundo. É estranho. Sim . Mais alguém está adorando a sensação do Opus 4.8? Estou
+
+gostando. Não me parece significativamente melhor do que, sei lá, 4,7, mas uma das coisas que a Anthropologie anunciou, e que as pessoas parecem confirmar, é que realmente funciona, pois causa menos alucinações em geral. Assim como o Opus 4.8, pela primeira vez, existe um modelo que pode realmente admitir, de forma confiável, quando na verdade não sabe algo, em vez de simplesmente inventar informações. Portanto, parece que as alucinações diminuíram bastante com o Opus. Portanto, não é necessariamente que
+
+a qualidade do código seja muito melhor do que a do Opus 4.7. É como a qualidade da saída bruta, mas com menos alucinações, o que, acredito, leva a uma qualidade geral melhor. Portanto, é definitivamente uma melhoria bastante significativa.
+
+Gostaria que o aplicativo Claude tivesse uma barra lateral como o Codex. Sim, seria ótimo. O aplicativo Codex é realmente muito bom. Sim . Hum, estou prevendo uma evolução mais rápida ou mais lenta na área de IA? Qual direção
+
+eu prefiro? Bem, isso depende do que você está falando. Assim como existem diferentes aspectos no campo da IA. Assim como existe regulamentação, existe o poder dos próprios modelos. Obviamente, quero que o poder dos modelos aumente cada vez mais . E parece que estamos meio que num
+
+platô agora, o que é meio lamentável. No que diz respeito à regulamentação, acho que uma coisa que precisa desacelerar é a forma como as empresas estão gastando dinheiro de forma descontrolada, sem se preocuparem com o bem comum . De maneira geral. Tipo, vamos com calma e pensar em como a IA generativa realmente vai impactar a sociedade? E que tipo de proteção lateral precisamos?
+
+Porque acho que existem algumas preocupações reais neste momento em relação à perda de empregos. E grande parte disso é muito exagerado. E eu não sou do tipo que fica lançando um pesadelo total por causa disso. Mas eu acho que a ganância no mundo em geral está meio que descontrolada agora. Acho que simplesmente expressei dessa forma. Quer dizer,
+
+não acho que precisemos nos aprofundar muito nisso agora. Mas eu acho que o mundo precisa desacelerar um pouco, em conjunto, e pensar nos efeitos a longo prazo de algumas dessas coisas. Mas, por causa do capitalismo, da pressão do mercado, da competição, ou como você quiser chamar , ninguém está diminuindo o ritmo. E acho que é um pouco contraditório, já que acabei de dizer que gostaria que o poder dos LLMs aumentasse cada vez mais. Então, é, acho que não dá para ter os dois ao mesmo tempo, mas enfim.
+
+Vamos ver. Vamos ver. Como aquele pequeno brilho no canto superior direito. Parece bom, mas definitivamente é uma expressão típica de quem tem mestrado em Direito. Qual brilho? Acho que me lembro de ter
+
+visto algo parecido. Não me lembro onde era agora, mas sim. Tem algumas coisas aqui que são típicas de mestrado em Direito , mas ainda assim parece ser uma candidatura muito boa. Parece muito limpo para um painel de instrumentos. Sou seu grande fã. Agradeço
+
+muito. Obrigado. Meu WSL2 funciona bem para modelos locais, então pode ser algum problema de configuração. Sim, quero dizer, preciso continuar me aprofundando nisso . É muito irritante.
+
+Porque se eu tentasse carregar um modelo na VRAM agora, provavelmente a transmissão terminaria. Simplesmente travava. É uma pena. Tudo bem. [bufa] Eu gosto de shows ao vivo, mas vou começar a assistir ao nosso mais tarde, em velocidade 2x. Tudo bem
+
+, Jeff. Sim. Agradeço sua presença aqui. Tudo bem. Hum, vamos ver. Oh, oh, você estava respondendo a
+
+alguém chamado Jojo. Eu vejo. Desculpe. Eu simplesmente não conseguia perceber isso. Incrível como sempre. Comecei a assistir em
+
+velocidade 1.2x para acompanhar. Sim, parece ótimo. Legal. Tudo bem. Concordo. Menos alucinações
+
+é uma implementação muito melhor. Os planos também foram pausados ​​para que pudéssemos realizar muito mais sessões de perguntas e respostas. Me interrogue sem pedir que isso aconteça. Sim, está certo. Isso meio que te ajuda a direcionar melhor o processo também. É como se
+
+combinasse mais com... Sim, é mais como se o Opus 4.8 quisesse interagir mais com você, eu acho. Tipo, e tipo, não é só tipo
+
+sair por aí pegando coisas e inventando informações. É bom. Sim. Legal. Tudo bem. Bem, de qualquer forma, acho que
+
+devemos verificar a configuração do Clerk aqui. É, ainda não foi verificado. Portanto, teremos que aguardar a propagação do DNS. Portanto, não poderei concluir totalmente a implantação aqui. Mas chegamos ao ponto em que executamos todas as etapas de autenticação do funcionário.
+
+Isso está integrado ao nosso ambiente local aqui. Então, sim, eu diria que foi um sucesso. Definitivamente preciso experimentar mais com o Gemini em geral, assim como faço com o Opus para planejamento. Quero tentar ajustá-lo mais para que o Opus não tente ditar tanto o layout no projeto e ver se isso ajuda o Gemini a trabalhar de forma mais criativa também. Então, vou continuar fazendo alguns testes. Também tenho interesse em
+
+publicar um vídeo que resuma muitos dos meus testes e aprendizados aqui no meu canal. Então, talvez eu faça isso na segunda ou na quarta-feira da próxima semana. Então , sim, vou continuar trabalhando nisso . Então, essa transmissão ao vivo é sobre construirmos isso ao vivo. Vamos analisar isso com calma e ver como fica a combinação de fornecedores dessa forma. E sim, vou continuar aprimorando
+
+. Então, esse é o plano para esta semana. Então, sim, vou anunciar a transmissão aqui. Mas agradeço a todos por estarem aqui. Isso foi divertido. Esta é uma transmissão
+
+ao vivo longa. Nossa, como o tempo voou! Isso dura 2 horas e meia. Mas, sim, foi divertido. Então, sim, agradeço a todos por estarem aqui, por todas as suas perguntas, comentários e interação. É engraçado que
+
+a transmissão tenha começado tão devagar porque eu acidentalmente a agendei para as 21h. Em vez das 9h da manhã. Isso foi uma loucura. Puxa vida. Mas, mas, mas nós, vocês, apareceram e foi divertido. Então,
+
+tudo bem. Espero que vocês tenham um ótimo resto de fim de semana. Fiquem ligados para o vídeo aqui. Apresentaremos resultados mais refinados para tudo o que estou desenvolvendo aqui. Vou compartilhar o fluxo de trabalho final e outras coisas.
+
+Se vocês também quiserem usar . Então, eu vou me comportar bem. Mas é, vou encerrar por agora. Então, sim. Tenham um ótimo resto de fim de semana, pessoal, e nos vemos por aí . Cuidem-se todos.
