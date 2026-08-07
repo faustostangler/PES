@@ -1,0 +1,71 @@
+---
+video_title: "COMO RESOLVER A FALHA \"COPY FAIL\" NO LINUX!"
+video_id: JZ7d8BZ7ezo
+channel_name: "Código Fonte TV"
+channel_id: UCFuIUoyHB12qpYa8Jpxoxow
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=JZ7d8BZ7ezo
+video_date: 2026-05-07T14:00:28+00:00
+video_description: |
+  Uma falha de apenas 4 bytes no kernel Linux foi suficiente para transformar um usuário comum em root. Essa é a história do "Copy Fail" (CVE-2026-31431), uma vulnerabilidade que mistura _AF_ALG_, _splice()_, page cache e binários _setuid_ para criar um caminho perigoso de escalação de privilégios.
+  
+  📌 NOSSO VPS NA HOSTINGER
+  Cupom: CODIGOFONTE
+  → https://codigofonte.click/vpshostinger 
+  
+  ATENÇÃO: Qualquer alteração realizada em seu Linux deve ser feita com conhecimento. Garanta que você tenha backup caso queira restaurar para uma versão anterior.
+  
+  📌 COMPILADO PODCAST
+  → @CompiladoPodcast 
+  → Newsletter: 
+  https://compilado.codigofonte.com.br
+  
+  📌 LINKS DO CÓDIGO FONTE TV
+  → https://codigofonte.tv
+  
+  📌 USAMOS CADEIRAS HERMAN MILLER 
+  → https://codigofonte.click/hermanmiller
+  
+  #copyfail #linux #cybersecurity
+---
+O assunto é sério. Nesse vídeo e nós vamos te ensinar na prática como solucionar uma falha no Kel do Linux chamada Copy Feil, registrada como CVE 2026 31431, permite que um usuário local comum consiga levar privilégios e virar rute em uma máquina vulnerável. É isso mesmo que você ouviu. Isso significa que se alguém já conseguiu acesso limitado ao servidor por SSH, aplicação comprometida, usuário de hospedagem, CD, contêiner ou ambiente compartilhado, essa pessoa pode transformar esse acesso limitado em controle total do sistema. Olha só que perigo, hein, gente. Essa
+
+vulnerabilidade, ela afeta o módulo ALGIF AED e ela tá ligada aí de criptografia do kernel do Linux e foi classificada como alta severidade com CVSS 7.8. Ela afeta ali muitas distribuições e, por incrível que pareça, ela tá presente no Kernel. Sabe desde quando? Desde 2017.
+
+>> Então, já viu, né? A recomendação é direta. Atualize o kernel e reinicie o servidor o quanto antes. E a gente vai fazer isso contigo agora no vídeo. E antes de nós partirmos pra prática, nós queremos que você entenda o funcionamento do COP Fail. Mas para isso
+
+nós precisamos entender antes três peças do Linux. A primeira é o Kernel, que é o núcleo do sistema operacional. Com ele você controla ali memória, processos, arquivos, permissões, redes, dispositivos e tudo que separa ali o usuário comum do administrador. >> A segunda é o Page Cash. Quando o arquivo é lido do disco, o Linux costuma manter uma cópia desse conteúdo na memória RAM para acelerar justamente leituras futuras. Isso é normal e
+
+melhora muito a performance. E a terceira é o AF ALG, que é uma interface que permite que programas em espaço de usuário acessem algoritmos criptográficos implementados no Kernel. E o problema está no componente a WIF, a, mais especificamente em uma otimização antiga ligada ao uso de operações in place, ou seja, quando kernel tenta processar dados reaproveitando os mesmos buffers de entrada e saída para ganhar desempenho. A correção oficial basicamente reverte esse comportamento de volta a operar o out of place, separando origem e destino. >> E essa falha permite a alteração de apenas 4 bytes. Parece bem pouquinho,
+
+né? Mas em segurança de sistemas, 4 B no lugar certo. Pode mudar ali uma instrução, pode alterar um divide condicional ou corromper um binário como su ou sudo. >> Mas e o detalhe mais perigoso é que essa alteração acontece no cash em memória, não necessariamente no arquivo em disco. Então, ferramentas que verificam apenas cheques san de arquivos simplesmente não percebem a alteração.
+
+>> Então, chegou a hora da gente resolver esse problema. Nós vamos atualizar literalmente todos os VPS na Hostger que nós utilizamos e são vários por aqui. E existem duas formas de resolver. Ou você atualiza o kernel, que é o mais recomendado, mas pode ser que isso não seja possível em alguns casos, >> ou simplesmente desativa o módulo, o Algif, tá? Esse seria só uma solução temporária para você se preparar aí pra atualização. Estou aqui no meu painel da
+
+Hostinger, olhei aqui os meus VPS e vou atualizar todos eles, tá? Vou começar por esse aqui do meio, ó, que eu sei que é um o bunto. E aí eu posso acessar o terminal diretamente por aqui, sem precisar de algum outro programa, tá? Mas e eu eu e ele já loga automaticamente também. Aqui no painel basta você vir aqui no cantinho, ó, no terminal e fazer o acesso. Se você
+
+quiser, dá para fazer via SSH. Você pode usar um terminal próprio também, não tem problema nenhum, né? Ou seja, se você não tem esta facilidade que a Hostger já nos provê aqui, você vai vir SSH que vai dar certo também. >> Então eu inclusive a gente recomenda você utilizar a Hostinger nas suas soluções e tem várias coisas. Você pode registrar domínio, você pode eh hospedar um site simples usando uma hospedagem cloud, se você quiser ter o teu VPS. A
+
+gente tem vários vídeos aqui no canal mostrando OpenCla, N8N, mostrando várias soluções que você consegue instalar num cliquezinho só. E o VPS é o Coringa. Dá para usar para várias coisas aí, né? >> Verdade. Você ainda pode usar o nosso cupom que é Código Fonte para garantir um desconto extra lá na Higger, viu?
+
+Então, se já tiver com desconto lá no site, você coloca o nosso cupom e ainda ganha um um descontinho mais. >> Primeiro eu vou rodar só um apt, isso vai fazer com que ele traga a lista de módulos atualizada. ele não vai atualizar agora nesse momento. Isso é é importante para pra gente saber o que que tem de diferente ali e novo pra gente atualizar no sistema. >> Claro que se você já tá acostumado ali a administrar servidor Linux. Isso aqui é
+
+melzinho da chupeta, né? Super tranquilo. >> Isso é o seu dia a dia, né? Mas tem muita gente que não tá acostumado com isso. >> Claro que isso levou alguns minutinhos.
+
+A gente utilizou a mágica da edição para ser mais rápido, né? Agora sim, eu vou rodar o update. Eu vou colocar o parâmetro - y e aí se tiver algum pacote para atualizar, ele vai fazer automaticamente sem me perguntar. Se você tiver usando uma outra distribuição que não seja o Bunto ou Debian, pode ser o COS, né? >> É. Ou o Hell também da Red Hat, né?
+
+>> Pode ser. Aí você tem que usar o, tá? Ou o gerenciador de pacote que ele tiver lá. Ah, aí eu aqui nesse caso vou usar o aptade e vou usar o - y aí dessa forma, se tiver algum pacote para atualizar, a gente sabe que tem. >> Uhum.
+
+>> Aí ele não vai ficar perguntando, ele vai atualizar automaticamente. OK, [música] atualizado. Mas justamente a gente precisa reiniciar o kernel. Lembrando que nesse caso precisa reiniciar mesmo, tá? Porque a gente atualizou o kernel, que é a base do sistema. Então não adianta só eh
+
+restartar um módulo específico, tem que ser o Linux inteiro. Então a gente pode fazer isso por aqui ou se você quiser fazer pelo painel também dá para fazer. De qualquer forma, se você precisar desativar esse módulo, você pode usar esse comando aqui, ó, o eco. Aí você bota install a ad e aí faz com que toda vez que e tiver que utilizar ele, ele vá pro binal, tá? E aí desativa ele. Só que
+
+depois você tem que rodar um comando que é o RM mod. E aí bota ele também ali para tirar ele da memória. Então se ele tiver já na memória, você tem que descarregar. Lembrando que isso aqui é só uma solução temporária. A solução real de verdade é atualizar o Kernel, né?
+
+>> Aí é importante dizer que essa mudança ela não afeta o SSH, o TLS, o LUs ou mesmo o Open SSL. E mesmo que você utilize contêiners com docker, isso não te protege dessa vulnerabilidade, tá? Os contêiners eles compartilham o kernel do sistema operacional. Então se o kernel es tiver vulnerável todos os contêiners também estarão. O que significa que atualizar apenas a imagem do contêiner não resolve. É obrigatório atualizar o
+
+Kernio do Rolso. >> Aí não tem jeito. Esse caso é um ótimo lembrete. Linux é extremamente robusto, é auditado, é usado em servidores, bancos, nuvens, celulares, supercputadores e praticamente toda a infraestrutura moderna. Mas nenhum sistema complexo é invulnerável, viu?
+
+>> O COP Feio nasceu, olha só, né, de uma otimização de performance que foi introduzida lá em 2017. A intenção era legítima reduzir cópias desnecessárias e tornar operações criptográficas mais eficientes. Só que segurança muitas vezes mora justamente nesses detalhes. Quando você tenta economizar uma cópia de memória, precisa garantir que origem e destino nunca apontem para áreas sensíveis de forma indevida. Bom, espero que você tenha gostado, que tenha dado tudo certo aí na sua atualização também e a gente se vê no próximo vídeo. Ciao.
+
+Ciao.

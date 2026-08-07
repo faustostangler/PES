@@ -1,0 +1,126 @@
+---
+video_title: "O CNPJ VAI MUDAR! NÃO DEIXE SEU CÓDIGO QUEBRAR"
+video_id: PrlLdgwxpdo
+channel_name: "Código Fonte TV"
+channel_id: UCFuIUoyHB12qpYa8Jpxoxow
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=PrlLdgwxpdo
+video_date: 2026-04-07T14:00:42+00:00
+video_description: |
+  Já passou da hora de refatorar seu código para aceitar o *Novo CNPJ Alfanumérico* que passará a valer em 1º de Julho de 2026! Não se assuste pois agora o CNPJ aceitará letras. Nós mostramos como implementar uma solução LIMPA em TypeScript para suportar os 2 formatos sem a necessidade de criar 2 funções diferentes. Esse código é portável facilmente para Java, C#, PHP ou qualquer outra linguagem Orientada a Objetos.
+  
+  📌 CONSTRUA SUA CARREIRA TECH NA ALURA
+  →  https://codigofonte.click/alura 
+  
+  📌 CÓDIGO-FONTE E SIMULADOR CNPJ ALFANUMÉRICO
+  → https://github.com/gabrielfroes/novo-cnpj
+  → https://servicos.receitafederal.gov.br/servico/cnpj-alfa/simular
+  
+  📌 COMPILADO PODCAST
+  → @CompiladoPodcast 
+  → Newsletter: 
+  https://compilado.codigofonte.com.br
+  
+  📌 LINKS DO CÓDIGO FONTE TV
+  → https://codigofonte.tv
+  
+  📌 USAMOS CADEIRAS HERMAN MILLER 
+  → https://codigofonte.click/hermanmiller
+  
+  #cnpj #receitafederal #novocnpj
+---
+Se você tem um sistema de cadastro rodando hoje no Brasil, você tem praticamente 3 meses, até menos, para evitar que ele comece a rejeitar novos clientes. >> Estamos falando aqui de uma mudança estrutural gigantesca. A partir de julho de 2026, o CNPJ vai ganhar letras. Exatamente. O cadastro nacional de pessoa jurídica vai adotar o formato alfa numérico. Se as suas validações,
+
+banco de dados, rejex e máscaras de frontend ainda estão utilizando apenas números, bem, então você precisa muito desse vídeo. >> E se você não tá sabendo de nada disso ainda, sinto dizer que você tá atrasado e definitivamente precisa desse vídeo. Nós vamos mostrar o que deve ser feito a partir de hoje mesmo para se adequar ao modelo novo. >> Eu sou Gabriel Freud. >> Eu sou Vanessa Weber. E o vídeo é
+
+realmente de extrema urgência. A Receita Federal e o Banco Central já deram um aviso final, viu? A partir do dia 1o de julho de 2026, novas empresas já vão nascer com CNPJ misturando números e letras. >> Mas por que isso do nada? Pois é, o sistema atual estava operando no seu limite. O modelo numérico tradicional
+
+que a gente conhece só suportava cerca só, né, 99 milhões de raízes de CNPJ. Com o bundo de aberturas de novas empresas, filiais e ME nos últimos anos, os números literalmente iam acabar. >> Para resolver isso, de uma vez, criaram a nova regra de 14 posições usando letras de A, Z e números. Aí o Brasil dá um salto astronômico e passa por uma capacidade bizarra de mais de um quadrilhão de combinações possíveis. O CPRO até brincou que dá para registrar um quatrilhão de empresas e cada uma ter 1 milhão de filiais.
+
+>> Loucura, né? Mas calma, respira fundo. Antes de você começar aí fazendo alter table aí no seu banco de dados, a gente vai te explicar exatamente o que vai mudar e o que não vai. Até porque os CNPJes antigos continuam exatamente iguais. Por isso, ao longo desse vídeo, vamos te mostrar a matemática por trás do novo dígito verificador, o que muda no seu banco de dados. E claro, vamos
+
+colocar a mão na massa e te mostrar na prática em código como atualizar as suas validações para aceitar um novo formato antes que o prazo estoure e você aí seja cobrado. Bora lá. Mas para entender tudo aí, antes da gente colocar a mão no código, a gente precisa primeiro olhar pra anatomia do CNPJ. Ele continua com exatamente 14 posições. O tamanho não mudou e a formatação com pontos, barra traços, que a gente costuma ver também não.
+
+>> O que muda é o que vai dentro dessas posições. O CNPJ é dividido em três partes. As primeiras oito posições são a raiz. As quatro posições seguintes, depois da barra são o número de ordem, que indica se é matriz ou filial. Aquele famoso 1000 ao contrário. E os dois
+
+últimos são os dígitos verificadores ou deve. A regra a partir de julho de 2026 é que a raiz e a ordem passam aceitar letras maiúsculas e números. Mas atenção, os dois últimos dígitos verificadores continuam sendo exclusivamente numéricos, tá? Então não existe letra no final do CNPJ. >> Ah, Vanessa, mas tem letra no meio. Como
+
+é que eu vou calcular o dígito do verificador? Aquele código, o módulo 11, só funciona com número. Uma excelente pergunta, viu? E é aqui que a Receita Federal foi essa gás e usou um padrão que nós desenvolvedores já conhecemos bem. a tabela ASQ, >> a lógica de multiplicação pelos pesos, aquela sequência de 5 4 3 2 9, quem já fez validação de CNPJ sabe, né? E a
+
+divisão por 11 continuam exatamente iguais. O truque está na conversão. Toda vez que o seu algoritmo encontrar um caracter, seja ele letra ou número, você vai pegar o valor decimal dele na tabela AS e subtrair de 48. >> Então, preste atenção na matemática. O número zero em string zero vale 48 na tabela ASK. Se a gente faz 48 - 48, fica
+
+igual a zero. Então fechou. Agora imagina que a primeira posição do CNPJ é a letra A. O A maiúsculo na tabela ASK tem um valor decimal de 65. A fórmula é a mesma. 65 - 48 fica igual a 17. Ou
+
+seja, pro cálculo do dígito verificador, a letra A tem o valor matemático de 17. O B vai ser 18, o C vai ser 19 e por aí vai. Pois é, ficou simples e elegante. Você não precisa reescrever todo o algoritmo de validação. Você só precisa adicionar um passo de conversão antes de multiplicar pelos pesos. Ah, e tem um
+
+detalhe importante, ó. O novo formato só usa letras do alfabeto tradicional. Nada de usar si de ilha ou caracteres especiais. Por isso, podemos validar também o formato utilizando expressão regular. >> Agora vamos falar aqui do elefante que tá na sala, né, onde vários sistemas podem quebrar de forma feia o banco de dados. Se no passado um DBA ou um
+
+desenvolvedor decidiu salvar a coluna CNPJ usando tipos numéricos como big int, numérico ou number para economizar alguns bytes. Bem, aí chegou a hora de pagar a conta, viu? Um big in não faz a menor ideia do que que é a letra A. >> Espero realmente que isso nunca tenha sido feito por aí, tá? Se esse é seu caso, a sua missão número um na segunda-feira de manhã é planejar uma migration. A coluna que armazena o CNPJ
+
+precisa obrigatoriamente ser um tipo texto. Sempre foi assim, tá? O mais recomendado é alterar aí para varr o char, né, usando 14 como posição. Caso você salve sem máscara, o mais recomendado é justamente alterar para VARChar e Char 14, tá? >> Ah, e também você não esqueça de jeito nenhum de checar os índices, viu? Porque
+
+mudar o tipo de coluna afeta como o banco de dados faz as buscas. Então, garanta ali que as suas queries continuem performáticas depois dessa alteração. >> Uma coisa que a gente aprendeu ao longo da carreira é que aprender bem leva tempo. Nem todo mundo consegue estudar todo dia, nem toda semana é produtiva. E é isso mesmo, tá? É assim que acontece
+
+na vida real. A Lura também entendeu essa dor e tá oferecendo planos de 24 meses que fazem muito mais sentido. É mais tempo para você estudar com calma, revisar os conteúdos, mudar de trilha se precisar, sem aquela pressão de preciso terminar tudo rápido. >> Isso é ótimo, tá? Principalmente para quem tá pensando em mudar de área ou se especializar ou até conciliar estudo com trabalho e vida pessoal. Você consegue
+
+montar um plano de estudos mais realista, encaixar no seu ritmo e ainda ter um custo benefício melhor. Vale muito dar uma olhada nos planos de 24 meses da Lura. O link tá aí na descrição para você conhecer. >> Ó, eu vou te falar, em mais de 30 anos aí fuçando em computadores, escrevendo código, você tem uma coisa que eu aprendi é que gambiar revalidação de documentos sempre volta para assombrar a gente, tá? Por isso, não vamos fazer um IF para um CNPJ velho e um ELS pro novo, tá? Nós vamos criar uma função única,
+
+limpinha, bonitinha e que resolve sempre os dois. >> Mas isso aqui já era óbvio, né? Porque eu e Gabriel, nós nunca jamais fizemos nenhuma gambiarra na vida, Gabriel. Até engasguei na palavra. Mas voltando aqui, ó, como o Gabriel explicou, a sacada da Receita Federal foi usar ali a tabela ASC. Então, subtraindo 48 do valor
+
+decimal de caracteres, os números de zero a 9 vão continuar valendo de zero a 9 e as letras assumem os valores matemáticos corretos pra conta. Então bora ver como isso fica em TypeScript, que você pode usar tanto aí no front end quando quanto no React, no view, no Angular e até no back end no Node JS. >> Como vamos usar aqui orientação objetos, então fica tranquilo, dá para você portar isso aí para C, para Java, para outras linguagens que você quiser. Aliás, o repositório com o código e os testes estão aqui na descrição, tá? Tem um linkzinho no GitHub para você consultar. Qual a ideia aqui? Eu vou
+
+criar uma classe que vai ter alguns métodos, tá? O primeiro é para calcular o dígito, verificador. O segundo é para verificar se o CNPJ é válido. Mas a gente vai fazer algumas coisas aqui bem legais. Por exemplo, para calcular o dígito, eu preciso primeiro calcular o primeiro e depois o segundo. Cada um vai
+
+ter um peso separado. Quem já fez esse tipo de cálculo aí já vai conseguir acompanhar de boa. A gente vai usar também a expressão regular para fazer uma uma máscara, tá? E para evitar também algumas coisas que o pessoal costuma usar, coisas repetidas, né? CNPJ001, essas coisas assim, tá? Uma validação um
+
+pouco mais rebuscada, mas a gente vai colocar no Typecript uma forma também de fechar o nosso tipo CNPJ. A gente não vai definir só ele como um tipo string. Olha só como é que eu vou fazer. Se você nunca viu isso, calma. Daqui a pouco a gente explica em detalhes como é que isso vai funcionar. Então vamos criar a
+
+nossa classe e o nosso primeiro método, que vai ser o método que calcula o dígito verificador. E qual a ideia desse método? Depois a gente vai até fazer testes aqui também, rodar testes, tá? Aí também no repositório, tá? Pra gente poder rodar CNPJ válidos, inválidos, tá?
+
+Fica tranquilo. Ele vai ter dois parâmetros. O primeiro é justamente a string contendo o CNPJ, tá? E depois é o peso. Isso aqui vai ser uma rei de números justamente para calcular cada posição do CNPJ ali de entrada vai ter um peso correspondente para fazer o módulo, né, o cálculo e o módulo. Então
+
+o que a gente faz aqui é percorrer esse essa string, calcular justamente com o -48, como a gente tinha explicado. E aí a partir dali eu já tenho a soma para poder fazer o módulo 11. E aí eu tenho justamente o que voltou ali. E se por acaso esse módulo for com dois dígitos, eu justamente utilizo aqui para ele ficar entre a faixa certa, né, de zero a Então aí eu tenho aqui o cálculo do primeiro. Para calcular o segundo é a mesma coisa. Eu passo a string já
+
+novamente com o o valor cheio e eu coloco um outro arrei com o segundo peso pro segundo dígito. E essa função vai servir para calcular o primeiro e também o segundo. Coloquei inclusive como uma função privada dentro da classe porque ela vai ser consumida justamente pelo método que a gente vai eh utilizar publicamente, que é o is valid, né, que é para verificar se o CNPJ é válido ou não. E aí esse método ele simplesmente retorna um true ou false, né? Ele recebe aqui o CNPJ, retorna um true ou false.
+
+Eu tô colocando aqui unknown, porque se por acaso vier nulo, vier algo assim muito diferente, um tipo diferente que que você tem enviado, às vezes até um Jon, um objeto, alguma coisa assim, vou tratar isso e vou retornar. Pronto, fiz o tratamento aqui. Se não for do tipo string, ele sai. Agora, como a gente disse, o CNPJ vai ter letras maiúsculas, então a gente tem que forçar isso. E para que eu consiga limpar, vamos vamos supor que o CNPJ foi passado com máscara, né? Eu preciso limpar ele
+
+só com os caracteres, né? Os números e as letras. Então eu uso aqui uma expressão regular. Se você não sabe o que que é expressão regular, não tem jeito. A gente sempre precisa usar, né?
+
+>> Precisa. a gente deixa um link, tem um dicionário do programador de pressão regular bem interessante para você aprender o que que é. >> A gente precisa só desse grupo de caracteres pra gente poder limpar. Então tudo que for diferente disso aqui, ele vai colocar e substituir por vazio. E aí a gente tem um CNPJ limpo, né? Então a
+
+gente verifica o tamanho. Se for não for 14, ele já sai da função. Uma outra forma aqui que a gente fez, essa que eu tinha falado, é da gente justamente e colocar as repetições. Se por acaso tiver repetições desses caracteres em sequência, e ele também considera que não, porque muita gente vai validar e usa isso aqui assim, ó. Ah, aí traço uma coisa assim. Então, esse tipo de coisa
+
+ele já vai pegar por aqui, né? Porque acontece às vezes de de passar esse tipo de validação, né? Agora nós criamos o arrei justamente com os pesos para fazer o cálculo de cada posição. E pra gente calcular o primeiro dígo, a gente precisa pegar o CNPJ que a gente tem e forçar que ele que ele vá do zero até a o 12º é o 11º, vamos dizer assim, né? é posição do arrei. E aí a gente tem ali a
+
+base, né, que eu chamei de base string aqui. E eu passo por parâmetro justamente pro pra pro método que vai receber é essa string e o peso, né, esse esse arreio com os pesos. Lembra aqui da primeira o primeiro método tá aqui, ó, já tá prontinho. Então a gente tem o primeiro dígito. Agora a gente faz exatamente a mesma coisa com o segundo.
+
+Sabendo aqui que na fórmula a gente tem outros pesos aqui em sequência, tá? A gente pega o segundo dígito, pega a base que a gente já calculou e adiciona o primeiro dígito que a gente já calculou com esse arrei aqui e já temos o segundo dígito. Agora é fácil, né? Basta a gente retornar a função. E o que eu fiz aqui para retornar foi o seguinte. Eu peguei
+
+a string que a gente tem e forcei aqui usar essa esse método é justamente pegando os dois últimos dígitos. Se a nossa string terminar com esses dois últimos dígitos, essa função retorna true. Senão ela vai retornar. Eu querei mais um método aqui, é o create. Ele também é público e estático e recebe justamente o CNPJ e retorna esse tipo CNPJ que a gente criou aqui em cima. E
+
+aí ele verifica, ó, se o CNPJ não for válido, ele dispara uma exceção aqui, dizendo que ele não é um CNPJ alfaérico. E aí, eh, se não for, né, disparou a sessão, senão a gente retorna esse CNPJ e substitui eh justamente usando a expressão regular que a gente já utilizou, forçando aqui o upper case e eu coloco o scnpj. Isso aqui força esse create a retornar justamente o tipo que a gente criou. >> A gente prometeu que explicar, a gente explica, se você prestou atenção ali na primeira linha do nosso Typecript, você viu uma senta meio alienígena por ali, né? E deve estar se perguntando em que diabos é o Read Only Brand e o Nick Symbol que ele tá ali pendurado no final de uma do que era para ser uma simples string.
+
+>> Pois é, isso que a gente chama de brand type ou tipo opaco no Typecript é um dos truques mais poderosos para garantir a segurança da sua aplicação corporativa. Pensa comigo, se a gente criasse só um type CNPJ string, o Typescript aceitaria qualquer coisa. Se você passasse batata 1 2 3, qualquer função que que pede um CNPJ, né? eh, poderia passar para um compilador, tudo é string e não tem jeito. >> E é justamente aqui que o brand entra. O
+
+que essa linha faz é criar uma interseção. Ela diz ali pro Typeescript algo do estilo de o tipo CNPJ é uma string, mas ele também precisa ter uma propriedade fantasma chamada brand, que é um símbolo único. >> Como nenhuma string comum do JavaScript tem essa propriedade fantasma grudada nela, o Typeescript vai dar um erro se você tentar passar 1 2 3 4 5 6 7 1000 ao contrário, 95, por exemplo, direto para uma variável do tipo CNPJ. A única forma de ganhar esse carimbo e virar o tipo CNPJ é passando pela função de validação, ou seja, olha só, o método create. E então esse método da nossa classe, né? Se a string for um CNPJ
+
+válido, a gente força a tipagem usando o S CNPJ. Tá vendo como é que dá para você criar um tipo que passa por uma validação, que é justamente são esses métodos que a gente criou. Daí a partir do momento que essa variável tem um tipo CNPJ, qualquer deve na sua equipe que for usar essa variável em outra parte do sistema ou salvar no banco de dados, tem ali a garantia absoluta de que aquele dado não é um lixo qualquer, mas sim um CNPJ formatado e validado matematicamente. E aí você tem uma certa paz de espírito ali em forma de código. >> Agora que eu percebi também que eu fiz todo esse código no arquivo de teste, então vamos vamos tirar ele aqui. Éémceu
+
+antes. >> É, [risadas] vamos colocar aqui e aí sim vamos utilizar os nossos testes que eu já tenho ele prontinho aqui. Inclusive não dá para fazer esse tipo de código sem teste, tá? Então, a gente tem uma lista de CNPJ aqui poderiam ser válidos e depois a gente vai validando tudo, eh, vendo se tá formatado direito. Por exemplo, tem aqui também eh tipos inválidos de tamanho, tem tipos inválidos de de tipo mesmo, ó, com boliano, tudo, pra gente ter uma assertividade aqui na hora de rodar o nosso código. E aí, se eu chegar aqui,
+
+vamos ver aqui no terminal. E aqui todos os nossos testes já passaram, ou seja, a nossa função já está prontinha. Lembrando, tá tudo aí no GitHub, tá num link aqui na descrição. >> Eu gostei, viu? Ficou uma solução limpa, tipada corretamente no TypeScript, sem criar ali um espaguete com IF, né?
+
+>> Pois é, a lógica de validação na ponta do código é até tranquila, mas não se engane, o verdadeiro pesadelo não é validar CNPJ no front end, tá? O desafio aqui é garantir que o seu banco de dados, porque pode ter máscara também no banco de dados, às vezes tem muitas regras aí no banco de dados, tá? e a integridade com APIs de terceiros, sistemas de faturamento e aquele RP legado de contabilidade. Eu sei que eu sei que você sabe, tá? Eles sim têm que estar prontos para receber letras também.
+
+>> Pois é, presta bastante atenção aí no calendário, viu? A Receita Federal já falou, vai virar a chave em julho e é pouco tempo aí para você planejar migração, banco de dados, refaturar código, passar ali pelo QA, fazer deploy seguro. Olha, isso é praticamente amanhã, hein? >> Pois é. Mas olha só, eu vou te mostrar também aqui dentro do site da Receita Federal já tem um simulador, tá? Então
+
+você pode até gerar é mais CNPJ, ó, com o formato novo. Se você quiser gerar matrizes também, ó, ele gera isso tudo. Aí você pode usar no seu teste também para validar. Se você quiser olhar, por exemplo, aqui é o formato alfa numérico, aqui é o numérico. Se você quiser validar, ele também já faz esse tipo de validação. Ele até guarda um histórico
+
+de de geração, não sei porquê. Acho que tem um limite aqui, ó, até de 500 que você pode gerar. Então isso aqui é super importante para ver se o que a gente tá implementando tá aí é certinho com que vai rodar depois. >> A gente deixa esse link também na descrição, não esquece de deixar o like e que ajuda demais aqui o canal e ajuda a gente também a continuar trazendo esse tipo de conteúdo que é urgente e extremamente importante, viu? >> Tomara aí que aqueles sistemas legados consigam migrar isso a tempo. Eu acho
+
+que vai ter gente que nem vai ter o código acessível aí para poder mudar esse sistema. Bom, vamos lá. Tem gente ainda que no no padrão CGC ainda não. [risadas] >> Isso, isso vai ser um problemático. >> Esse vai ser problemático. Mas tudo bem.
+
+Espero que dê tudo certo aí. Lembrando, é em julho, tá? Primeiro de julho. Então corre >> logo ali, viu? Corre logo.
+
+>> Grande abraço e até a próxima. Tchau.

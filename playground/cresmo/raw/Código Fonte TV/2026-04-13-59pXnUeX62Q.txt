@@ -1,0 +1,104 @@
+---
+video_title: "Hackearam o Axios: O Ataque que Abalou o Mundo JavaScript!"
+video_id: 59pXnUeX62Q
+channel_name: "Código Fonte TV"
+channel_id: UCFuIUoyHB12qpYa8Jpxoxow
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=59pXnUeX62Q
+video_date: 2026-04-13T15:30:57+00:00
+video_description: |
+  Hackers ligados à Coreia do Norte sequestraram a conta do mantenedor principal do Axios e inseriram uma dependência maliciosa capaz de instalar um Trojan (RAT) em sistemas Windows, macOS e Linux para roubar credenciais sensíveis.
+  Como o malware operou em silêncio durante várias horas nas versões 1.14.1 e 0.30.4, e o que você precisa fazer imediatamente para proteger os seus projetos para futuros ataques.
+  
+  📌 CAFÉ EXCLUSIVO CÓDIGO FONTE
+  → https://cafe.codigofonte.com.br 
+  
+  📌 PESQUISA SALARIAL 2026
+  → https://pesquisa.codigofonte.com.br 
+  
+  📌 COMPILADO PODCAST
+  → @CompiladoPodcast 
+  → Newsletter: 
+  https://compilado.codigofonte.com.br
+  
+  📌 LINKS DO CÓDIGO FONTE TV
+  → https://codigofonte.tv
+  
+  📌 USAMOS CADEIRAS HERMAN MILLER 
+  → https://codigofonte.click/hermanmiller
+  
+  #axios #cybersecurity #npm
+---
+Se você já escreveu qualquer projeto em JavaScript ou TypeScript nos últimos anos, existe uma chance de quase 100% de você ter usado uma biblioteca com mais de 10 milhões de downloads todos os dias. Ela é a ponte invisível que conecta quase todo o front end da internet aos back ends. >> Agora imagina comigo o que que acontece quando essa fundação aí dessa ponte é invadida e controlada por hackers na calada da noite, sem que nenhuma linha de código original seja alterada. Então fica com a gente para entender como um ataque de engenharia social quebrou a biblioteca HTTP mais utilizada da internet, o Waxius. >> Eu posso dizer que esse foi um dos ataques mais assustadores aí dos últimos tempos. Nós também vamos aqui te ajudar
+
+a identificar se você foi infectado e o que deve fazer para se livrar do mal. Esse aqui é o CDF Café, é o quadro aqui do canal, onde a gente mostra algumas tretas, fala sobre mercado e toma um cafezinho também, né? >> Ah, e não é qualquer café, nós tomamos o café do Código Fonte, né, Gabriel? Olha só. >> Olha aqui. É esse aqui. É esse que tá
+
+aqui atrás, ó, que você vê. Esse café é um café gourmet. A gente desenvolveu ele em parceria com Avero. Tem muita gente já tomando esse nosso café. Se você quer quer receber o café do código fonte e ser mais produtivo que inteligência artificial, eu garanto.
+
+>> Olha só [risadas] que responsa, hein? >> Vai lá em café.codigofonte.com.br, tá? Aqui ela vou ter uma página que vai
+
+explicar tudo, tudo que tem no nosso café. Já foi testado aí em várias linguagens, incluindo aí com cloud code, com codex. Pode usar junto que não tem contraindicação. [risadas] >> Olha, aproveitando que você tá falando do café, eu vou falar também da nossa pesquisa salarial que tá aberto o formulário para inscrição, hein? Então você que ainda não participou, preencha lá em pesquisa.codigofone.com.br.
+
+Então você faz aquela participação em torno de 6 minutos para responder ali a pesquisa e muito em breve a gente lança o resultado para você ficar sabendo como anda o mercado de tecnologia aqui no no país. >> A gente pergunta se você tá utilizando inteligência artificial, se você já criou alguma solução, qual é a ferramenta que você mais utiliza, se você já toma aí o cafezinho do código fonte >> e essa pergunta não tem não, mas vou colocar no ano que vem, tá? [risadas] >> Mas não deixa de ir, tá? pesquisa.codigofonte.com.br
+
+responda que é super importante pra gente ter uma visão geral do nosso mercado de desenvolvimento. Para entender o tamanho do problema, vamos então uma cronologia rapidinha, tá? Só para você entender. Cerca de duas semanas antes do dia 31 de março, uma campanha de engenharia social focada mirou no mantenedor principal do Axos, o Jason Simon. >> Os atacantes se passaram ali por fundadores de uma empresa real. Eles
+
+criaram um workspace falso no Slack, cheio de perfis fakes de funcionários e até outros mantenedores open source conhecidos e tudo ali para ganhar a confiança dele. >> Olha só que que louco, hein? Foi agendada então uma reunião no Teams e durante ela foi solicitada uma atualização de ferramenta e era ali que estava o problema. Foi através desse vetor com maler do tipo HT, que é o remote access Trojan, que eles conseguiram roubar as credenciais do npm da máquina do mantenedor do Jason nesse caso. >> E com esse acesso, no dia 30 de março, os invasores publicaram no npm um pacote chamado Play Crypto JS na versão 4.2.0.
+
+Essa primeira versão tava ali limpinha, era inofensiva, viu? Servindo apenas para criar um certo histórico no registro e para evitar suspeitas. A bomba mesmo foi lançada no dia 31 de março à 21. A versão 1.14.1 do Axus foi
+
+publicada e logo em seguida a versão 0.30. Também subiu. Abas com a versão maliciosa desse cripto aí, ó, o 4.2.1 é
+
+daquele pacote de criptografia injetada diretamente como dependência. >> E a comunidade é que foi a salvadora da pátria, porque eles foram super rápidos em perceber esse problema. Por volta de 1 hora da manhã, os desenvolvedores já começaram a relatar anomalias. O atacante até tentou ali apagar as denúncias no GitHub usando a conta comprometida do Jason. >> Felizmente aí a 1:38, um dos colaboradores do projeto abriu um por request para descontinuar as versões afetadas e contatou o npm. Às 3:15 da
+
+manhã, os pacotes maliciosos foram aí finalmente removidos. Mas por mais que tenha sido rápido, foi tempo suficiente para causar um bom estrago, né, e se espalhar assim durante por muitos projetos. >> O próprio Jason aqui no GitHub, ele ele descreveu o que que aconteceu com ele e colocou aqui o o como é que foi as versões, né, que a gente acabou de falar que foram afetadas, mas ele disse que, ó, as versões maliciosas ficaram ativas por 3 horas antes de serem removidas. O problema tudo aí é que mesmo que elas fossem removidas, muita gente e muita automação, não é muita gente, é muita automação aí de esteira, de deploy, e acaba instalando isso. E a gente vai mostrar daqui a pouco porque isso acontece, mas por mais que a gente fala que foi um ataque de engenharia social super sofisticado aí contra o Jason, é um ataque também de vetor de supply chain, ou seja, de cadeia de suprimentos. Por quê? porque ele não
+
+afeta diretamente uma aplicação. Ela não foi eh atacada diretamente uma aplicação de uma empresa que roda um sei lá, um RP. Não foi isso. Na verdade, como eh são 10 milhões de downloads todos os dias aí do Axos, claro que eh muita coisa é feita por via automação e eh com certeza muit muitas aplicações foram afetadas. Então, como ela afeta a cadeia de suplementos, nesse caso as bibliotecas da aplicação, então com certeza isso eh acabou tornando alvo assim milhares, senão milhões aí de aplicações, mesmo com três horinhas só, né?
+
+>> Pois é, o ataque não foi direcionado à biblioteca, tanto é que não mudaram nada no código dela, né? O negócio é o a abertura que ela proporcionava justamente por ser extremamente utilizada, né? todo esse trabalho de engenharia social para no fim mandar um link inválido do Team. Se você a gente reparar lá na URL ali nessa imagem, você vai ver que ele está ele pede até uma atualização dizendo que eh tá desatalizado tá desatualizado, >> desatualizado tudo, mas você olha ali não é uma ORL válida pro Teams. Então isso ludibriou ele e ele acabou e perdendo a atenção por conta disso.
+
+Provavelmente se eles mandassem direto um link para ele já ia perceber de cara que era golpe, né? Até porque você vê, ele relatou ali que essa reunião foi marcada para uma semana depois, né? Então agenda e tudo mais, entram várias pessoas na reunião, você não imagina. Então é é uma engenharia muito bem feita para alguém que é sior cair mesmo, né? >> Tanto é que nessa por request ele responde a várias perguntas, incluindo uma aqui, ó, respondendo a sua pergunta sobre npm. Eles me disseram que uma vez
+
+que o RAT e esteja em sua na sua máquina, ele tem controle total e unilateral de tudo nela. Você pode pesquisar mais sobre isso no Google. Portanto, presumo que ela possa fazer qualquer coisa depois disso. E sim, eu tinha autenticação de dois fatores ativada na minha conta. E uma outra pergunta que ele respondeu foi justamente elecando aqui o que que aconteceu, ó, eles entrando em contato, fingindo ser o fundador de uma empresa, tudo que a gente já contou, né? Em
+
+seguida, me convidaram para um espaço de trabalho real no Slack. E eles agendaram uma reunião comigo para nos conectarmos. A reunião foi no Microsoft Teams. Parecia haver um grupo de pessoas envolvidas na reunião. Na reunião foi dito que algo no meu sistema estava desatualizado. Instalei o item que
+
+faltava, pois presumi que fosse algo relacionado ao Teams. E esse item era o Rat, era justamente esse vetor aí para infectar tudo. Tudo estava extremamente bem coordenado, parecia legítimo, e foi feito de maneira profissional. Pois é, todo mundo pode cair nesse tipo de coisa, né? Até um cara super senior aí.
+
+E olha só, no próprio ex a gente consegue ver como que esse pessoal faz. Eles eles nesse caso aqui, ó, eles começaram pelo Telegram e distribuindo eh pelos contatos do Telegram. E ele diz aqui que eles já eh roubaram mais de 300 milhões usando esse metro, ou seja, o objetivo é roubar dinheiro. Então, uma o Axos não era o objetivo. Ah, vamos ferrar o Axios aí, vão ferrar as aplicações. Não era esse. É justamente
+
+fazer algum, alguma transferência e de dinheiro aí, provavelmente para para transferir para crirypto, que é o que essa essa galera geralmente faz aí. Pois é, eu já vi gente falando até de convite no LinkedIn que parecem ser de uma empresa confiável e tudo mais e que acaba caindo no final nesse golpe onde você instala algo e passa a ter controle da máquina. Então tem que tomar cuidado com tudo hoje em dia, né? >> E olha só um exemplo, mas nesse caso usando o zoom é um outro ataque que fizeram, ó. Eles também é como se tivesse alguma coisa desatualizada no zoom. Quer ver? Uma outra tela aqui, ó,
+
+por cima da tela. Ou seja, é muito difícil até de você desconfiar, né? Verdade. Você pensar muito par. E aí por fim, olha só, as pessoas vão lá e acabam atualizando na hora, né? Porque fica uma
+
+tela por cima. Mas provavelmente aqui também não é o endereço do Zoom. E muitas vezes a gente não se toca porque muitos desses serviços geram endereços temporários também, tudo. E o o simples fato de ter aqui no canto o subdomínio Zoom, a pessoa já fica mais tranquila, né? >> Tem uns que usam um domínio muito similar, né? Microsoft com uma letrinha
+
+trocada, alguma coisa assim, e aí você acha que tá entrando no Teams e não tá. >> Mas vamos ao que interessa, né? Vamos ver como mitigar então ou como não cair nisso com o seu código. >> Agora, nesse momento, eu consigo até escutar aqui os seus pensamentos. Será que eu baixei a versão comprometida?
+
+Como é que eu faço? O que que eu faço agora, Gabriel? >> Primeiro fica calmo, respira, tá? Porque senão você não vai conseguir resolver nada. Depois segue essa checklist pra gente conseguir realmente mitigar o problema. O primeiro passo é
+
+inspeccionar a árvore de dependências exata que foi instalada na máquina ou no servidor de CICD. Para isso, você tem que abrir o arquivo Pack Lockjon Jason, botar o nome na tela aí, com certeza você já viu esse arquivo, tá? Ou oarn lock, se você tiver usando o busca pelas versões comprometidas do Axo, que a gente já falou, é a 1.14.1 ou a 0.30.4.
+
+E busco também pelo pacote malicioso injetado, que é o PL traço crirypto. Tá tudo na tela aí, ó. Plin, traço crypto, traço JS, especialmente a versão 4.2.1, mas não deixa ela em nenhuma versão dentro da sua máquina.
+
+>> Agora, presta atenção, se você encontrar qualquer uma dessas referências no lock file, considera aí a sua máquina ou seu servidor comprometido, tá? Esse script malicioso roda ali silenciosamente no momento da instalação. >> Se o ambiente está comprometendo o malware a baixado, um Trojan de acesso remoto, ele afeta o Windows, macOS e também o Linux, criando aí persistência no sistema. Nesse caso, você precisa rotacionar todos os segredos, tá? Troque imediatamente todas as senhas, chaves de API, tokens do GitHub, npm, chaves SSH e variáveis de ambiente presentes na máquina.
+
+>> Também vai ser preciso isolar um ambiente. O Maware cria ali hooks para tentar se atualizar e se manter no sistema, como chaves de registro no Windows ou tarefas em background no macOS e no Linux. A recomendação padrão de segurança é formatar a máquina. E eu sei, viu? dá vontade de chorar só de ouvir isso ou então destruir ali a instância do servidor container que foi comprometido.
+
+>> Para garantir que o seu projeto não baixe a versão infectada, você precisa travar a versão do Axus em uma release limpa e desativar ali as atualizações automáticas dessa dependência. A gente te ajuda com um passo a passo também. >> Primeiro, exclua ali os arquivos locais do projetos deleta a pasta Node Moduls e também os arquivos de lock, o package lock Jason ou o EARM Lock. >> Depois vai ser preciso fixar a versão do Packet Jason alterando a declaração do Axus. para forçar o uso da última versão segura conhecida. Sabe como é que faz
+
+isso? É só remover os caracteres como o circunflexo ou útil, que permitem atualizações automáticas de minor ou patch. Ou seja, quando você tem lá 1 pon, ah, mas o meu é 1.14.0, zero, mas se você usa ali o tio ali, ele vai atualizar pro ponto um, então você tem que tirar isso.
+
+>> Bom, daí só falta reinstalar de dependências, ou seja, rodar ali o comando npm install ou install e para gerar ali um novo arquivo lock completamente limpo. E é preciso também ter um cuidado redobrado com CCD e NPX, como por exemplo, com invocações dinâmicas. É melhor evitar ali usar o NPX pacote @latestipelines. O NPX ele resolve dependências em tempo real e não deixa rastro ali no lock file. Então se esse pacote depender do Axus, ele pode ter puxado a versão infectada durante a janela do ataque.
+
+>> Vale reforçar a segurança da sua pupeline de build ou de teste para evitar os ataques, vazamento de dados ou até execução de código malicioso, que provavelmente vai acontecer, tá? Tem até um termo bonito para isso, é o hardering deci. Agora, o que eu sugiro é que você configure as pipelines rodando instalações limpas usando o comando npmci. Ele respeita estritamente o packet lock Jason, tá? Em vez do npm install. Isso garante que versões
+
+inesperadas não sejam baixadas no servidor. No fim das contas, a lição mais dolorosa que esse ataque ao Axi os deixa não é sobre uma falha arquitetural ou um bug no código, é sobre o elo mais vulnerável de qualquer sistema de segurança, o ser humano. >> Pois é, a gente acaba sempre sendo culpado. O Jason Seman, ele não teve ali a conta invadida porque programou mal. Ele foi vítima ali de um golpe de altíssimo nível, viu? desenhado sob
+
+medida para ele. E se aconteceu com um mantenedor de uma biblioteca com mais de 10 milhões de downloads diários, pode ter certeza que isso pode acontecer com qualquer um de nós. >> Exatamente. Com a facilidade que a inteligência artificial trouxe para automatizar clonagem de voz, geração de textos persuasivos e criação de identidades falsas, eu digo para vocês, a internet hoje exige que a gente duvide de do que parece perfeito. E tá quase perfeito, né? Um recrutador no LinkedIn
+
+com uma proposta irrecusável, um workspace no Slack profissionalizado ou um simples link para testar um app inovador. Do outro lado da tela pode ter um grupo muito bem financiado, muito organizado, como esse aqui, só esperando pro seu cliquezinho. >> E se esse vídeo abriu seus olhos de alguma forma, deixa aquele like e se inscreve aqui no Código Font TV. Manda também para aquele grupo lá da empresa, viu? Você vai ajudar alguém ali dando um npm stall às cegas que pode não estar pensando nisso aí nesse momento.
+
+[risadas] >> E conta pra gente aqui nos comentários se você já passou por algum tipo de situação em que a engenharia social foi tão bem feita que você quase caiu ou se de repente caiu, né? Ou conhece alguém que já passou por isso. Eu conheço todo mundo, >> eu mesmo, né? A gente quer ler essas histórias de vocês aí para todo mundo poder aprender junto. >> Então, um abraço grande, um beijo no coração, cuidado com os links que você clica e até o próximo vídeo. Ciao Ciao.
+
+>> Ciao.

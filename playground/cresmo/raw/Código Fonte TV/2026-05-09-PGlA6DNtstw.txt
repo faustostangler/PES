@@ -1,0 +1,16 @@
+---
+video_title: "Let's Encrypt CAIU? O que você precisa checar no seu servidor AGORA."
+video_id: PGlA6DNtstw
+channel_name: "Código Fonte TV"
+channel_id: UCFuIUoyHB12qpYa8Jpxoxow
+channel_category: "Science & Technology"
+url: https://www.youtube.com/watch?v=PGlA6DNtstw
+video_date: 2026-05-09T14:39:10+00:00
+video_description: |
+
+---
+E lá vamos nós. Se você usa o Lets encrypt nos seus servidores, presta aí muita atenção. A emissão de certificados SSL parou do nada e a sua automação pode estar em perigo. Basicamente, os engenheiros da Ledsincrypt precisaram acionar aí o botão de pânico e paralisaram totalmente os hands API ACMI em produção e também em staging. Qual foi o motivo?
+
+é uma falha crítica envolvendo certificados CR sign na migração da infraestrutura RUT da geração X paraa nova geração Y. Para quem não se lembra aí, a route da geração X é a âncora de confiança original deles com a famosa ISRG root X1, que é a chave raiz que já vem embutida e validada por padrão em praticamente todos os navegadores e sistemas operacionais do mundo. Para resolver o problema na hora, eles precisaram fazer um rollback completo, tá, da emissão, voltando toda a operação justamente para essa infraestrutura da geração X. Calma, o serviço já voltou. Mas se você usa os profiles ACM TLS Server ou o short lived, isso afeta você diretamente.
+
+É crucial que você abra os logs do seu CBOT, do seu endnex ou Trific hoje mesmo para garantir que a cadeia do certificado gerado não quebrou por causa desse rollback. E o pior, logo mais a Letcrypt planeja diminuir o tempo de vida do profile server de 90 para 45 dias. Com essa instabilidade na geração Y acontecendo agora, o seu auto renew não pode falhar de jeito nenhum. Yeah.
