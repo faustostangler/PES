@@ -1,0 +1,109 @@
+---
+video_title: "CARTEIRA de HARDWARE COLDCARD sofre HACK e $70 BI em BITCOINS são ROUBADOS"
+video_id: -G7PwtSmQ7Q
+channel_name: "ANCAPSU"
+channel_id: UCLTWPE7XrHEe8m_xAmNbQ-Q
+channel_category: "News & Politics"
+url: https://www.youtube.com/watch?v=-G7PwtSmQ7Q
+video_date: 2026-08-01T14:16:15+00:00
+video_description: |
+  VÍDEO mais TÉCNICO no CANAL SAFESRC sobre a COLDCARD: https://youtu.be/0Qkm2H7iWmM
+  
+  CONHEÇA o PALÁCIO ASSOMBRADO: https://www.youtube.com/@PalacioAssombrado
+  
+  Mais informações em nosso site: https://ancap.su 
+  
+  Seja membro do canal: https://www.youtube.com/channel/UCLTWPE7XrHEe8m_xAmNbQ-Q/join
+  
+  Compre camisetas: https://www.pimentanocafe.com.br/visaolibertaria
+  
+  Ajude o canal:
+  
+  16vmNcrA4Mvf7CaRLirAmpnjz1ZH3bWNkQ (Bitcoin)
+  
+  Referências:
+  
+  https://www.coindesk.com/business/2026/07/31/coldcard-s-usd38-million-so-far-exploit-shakes-faith-in-self-custody-may-push-investors-to-etfs
+  https://www.forbes.com/sites/digital-assets/2026/07/31/massive-surprise-bitcoin-attack-sparks-sudden-price-crash-fears/
+  https://www.reddit.com/r/Bitcoin/comments/1vcfl2a/the_coldcard_wallet_exploit_estimates_have_almost/?solution=37394df5bced5fd237394df5bced5fd2&js_challenge=1&token=7afd7253fec22262ff1c52b1703fe9ec68e743264a306aa43260009769545a47&jsc_orig_r=
+  https://cybernews.com/security/ai-suspected-coldcard-bitcoin-wallet-theft/
+  https://coldcard.com/docs/upgrade/
+  https://blog.coinkite.com/coldcard-mk3-seed-generation-warning/
+  https://github.com/Coldcard/firmware
+  https://github.com/Coldcard/firmware/commit/b18723dddb6d751c39978e4364b56b2414f68b47#diff-0b40e13a1f8d0a157dc4db2e973ac743a000ff6917a62a9d25b3f02a7a44d843
+  https://engineering.block.xyz/blog/predictable-rng-fallback-and-32-bit-reseed-in-coldcard-firmware
+  https://www.google.com/search?q=btc+usd&oq=btc+usd&sourceid=chrome&ie=UTF-8
+---
+Houve um hack da Codecard, tá, que muita gente usava para armazenar Bitcoin. Isso é uma hardware wallet, ou seja, uma wallet, né, uma carteira de hardware para você guardar Bitcoin. Supostamente um mecanismo muito seguro para você guardar os seus bitcoins. E por isso mesmo a coisa foi tão trágica. Muita gente confiava na Code Wallet, na Code Card como sendo uma segurança muito alta e acabou perdendo os bitcoins todos num erro extremamente primário, tá? Um erro
+
+tão primário que eu cheguei a pensar num primeiro momento que isso seria uma falha de propósito. O o desenvolvedor colocou isso de propósito no código para roubar o Bitcoin da galera. Isso não seria a primeira vez que isso acontece, tá gente? Mas eh aparentemente não, tá? Dá para ver porque o erro é uma combinação de duas características em uma biblioteca e no próprio código da da carteira, né? O código é aberto, tá? Tá
+
+na no GitHub. A gente vai falar aqui sobre o ponto aqui que tem o problema exato aqui do código dele, mas eu vou falar essa análise mais técnica lá no meu outro canal, no canal Safe Source, que é o canal em que eu faço falo sobre segurança da informação. Então eu vou fazer dois vídeos, na verdade, sobre esse assunto. Esse vídeo aqui no ANCPs eu vou falar sobre as consequências disso daqui, os problemas e no outro vídeo lá no Safe Source eu vou entrar mais a fundo na parte técnica, exatamente qual que foi o problema. Isso pode afetar outras carteiras. Isso, o
+
+que que isso quer dizer no final das contas pro mundo Bitcoin, né? Antes de mais nada, olha só, o pessoal tá colocando isso aqui como ah, o fim do mundo pro Bitcoin. Não, calma aí, não é isso, né? Realmente foi uma falha séria. Não foi a primeira, não vai ser a última. E não foi uma falha do Bitcoin,
+
+não é o Bitcoin que teve uma falha. O Bitcoin continua funcionando muito bem. Eh, lá no Safe Source, né, que esse meu canal especializado em segurança da informação, eu fiz uma série sobre todos os bugs que já teve no Bitcoin, desde o início dele, já teve vários bugs no Bitcoin, mas todos eles foram e eh consertados e resolvidos e nenhum causou nenhuma tragédia. Isso mostra, inclusive a resiliência do Bitcoin, né? O erro aqui foi nessa nesse dispositivo. Se
+
+você não tem esse dispositivo específico, essa Codecard você não afetua em nada, você continua a mesma coisa, né? Agora isso aqui levanta um assunto que eh o pessoal aqui da Coinesc tá levando, o pessoal da investidores institucionais, tá vendo? Esse pessoal fica falando para você tirar o Bitcoin da da corretora. na corretora tá mais seguro. Sempre que eu falo isso, eu aviso para vocês, tem que tomar cuidado, porque também você tem o lado do do da fragilidade de segurança do seu computador. Sua carteira pode ser pode
+
+ser roubada, pode ser, né, o seu computador pode ser hackeado. Então, o ideal, na verdade, é você dividir em vários pontos e nunca guardar tudo, todos os ovos na mesma cesta, né? Mas vamos entender então o que aconteceu aqui. Esse vídeo, portanto, vai ser um vídeo mais genérico sobre o problema da do da do roubo e coisa e tal. E eu vou entrar nos detalhes mais específicos de programação e de hardware lá no no vídeo do do Safe Source, tá? Eu sou Peter
+
+Turgunev, esse é o canal One Capsul. Eu tô gravando esse vídeo no dia 1o de agosto de 2028 às 10 horas da manhã. Essa notícia foi sugerida por Milei Turgunev, Gerhard Sats e várias outras pessoas. Obrigado aí o pessoal que sugeriu notícias lá no nosso site no visãoa.com e obrigado a você que tá assistindo o nosso vídeo. Se você gosta
+
+do nosso conteúdo, por favor, se você deixe seu like, se inscreva aqui no canal, né? Antes de mais nada, se você tem uma Codecard, imediatamente tire os seus bitcoins de lá, pegue uma outra carteira qualquer ou vá para uma corretora ou faça qualquer coisa que seja, transfira os seus bitcoins, a sua Cord Card para essa essa outra carteira, onde quer que seja imediatamente. Por quê? Porque o ataque começou com todo mundo que tinha mais do que 0.15 bitcoins na carteira e agora os atacantes estão de estão fazendo, o ataque tá continuando nesse momento, tá?
+
+Tem gente sendo roubada neste momento. Então, se você tem o Codecard e ainda não foi roubado, transfira o mais rápido possível, vai chegar em você. Agora que que o bug ficou público, vai atingir todo mundo, né? E e lembra, o bug é na geração da carteira e que isso fica é a maior tragédia nesse caso. Ou seja, não adianta você, ah, vou desligar a minha code para ninguém hackear minha cod, não interessa. A sua carteira já foi gerada,
+
+é uma falha na criação da carteira. Eh, a Codecard criava uma carteira fácil de alguém hackear. Então, mesmo que você desligue a Codecard, tira da internet, desligue no computador, não adianta. O que você tem que fazer antes de mais nada, se você tem uma Codecard, tá? é tirar os seus bitcoins de lá, imediatamente passar para um outro lugar qualquer.
+
+A própria Codecard, ela ela eh liberou aqui uma uma um advisor dizendo como é que você tem que fazer, quais são as as versões afetadas e coisa e tal. Mas olha só, é basicamente tudo quanto é versão desde 2021. Então assim, é muita versão afetada, tá? É muita gente afetada. Por isso que eu falo imediatamente, você tem uma carteira dessa, tira os seus bitcoins de lá, o pouco que tiver, porque daqui a pouco vai chegar nos seus bitcoins. E eh eles falam também que já
+
+tem uma versão nova que você pode instalar do firmware e daí corrigir o problema. Mas lembra, corrigir o problema, você tem que regerar sua carteira e transferir os bitcoins da carteira anterior pra nova carteira. O problema era na geração da carteira, né? Lembra o que que é uma carteira Bitcoin? uma carteira Bitcoin é uma chave privada de criptografia RSA. RS não, curvas
+
+elíptica. Eh, eh, é uma uma chave privada de criptografia assimétrica, né, de curvas elípticas e que é codificada na forma de palavras. Eu não sei se no caso da Codecard são 12 ou 24 palavras, mas tem ali o número de palavras que gera a sua a sua chave privada. Então, o problema é que a Coldard gerava uma uma lista de palavras eh pseudo randômicas e não randômicas de verdade, tá? E esse é a origem do problema. Ella
+
+Ela é baseada em no no milisegundo e na na no número de série da sua carteira. Como é que o atacante deve ter feito isso? Deve ter pego todas as listagens de números de série da de carteiras da da Codecard. pegou todos os milissegundos entre 2021 e 2026, que não são tão tantos milis para uma computador ficar fazendo teste, não é tanta coisa assim. E começou a regerar carteiras automaticamente. Quando ele regera a
+
+carteira, ele gera sua chave privada. Então ele consegue tirar os seus bitcoins. Mesmo que a sua, que seu seu aparelho esteja offline, coisa tal. Lembra? O Bitcoin ele é armazenado, na verdade na no consenso, né? Na nuvem de
+
+nodos aí que tem cada nodo conversando um com o outro e coisa e tal. Ele é mantido nessa nuvem de nodos, né? Não é na sua carteira. Não precisa sua carteira tá ligada na internet ou não tá ligada na internet, não interessa. Então se alguém souber a sua chave privada, tira os seus bitcoins. E foi o que
+
+aconteceu aqui. Como a a carteira era frágil, né? A geração randômica era frágil, eles conseguiram fazer uma tentativa e erro e conseguiram gerar todas as carteiras possíveis e nesse coisa e testaram cada uma delas. Ah, sei lá, mas 1 milhão de carteiras possíveis. É, mas para um computador testar 1 milhão de carteiras possíveis é é trivial, né? Então, e esse é o problema
+
+no final das contas, um randômico mal feito foi o que gerou esse problema. E esse randômico foi introduzido numa correção, olha que que ironia das coisas, né? Uma correção de um randômico anterior que também tinha problema. Eh, eu falo isso, eu eu na época que eu trabalhava com inspeção de código, né, um dos problemas mais sérios era esse, era a questão de de pseudo usarem pseudo randômico, porque o pseudo randômico parece randômico. Pra gente que é ser humano, você olha para aquilo, parece randômico. Ih, caramba, realmente
+
+funcionou para caramba. Tudo totalmente randômico esse negócio aqui. Na prática não é assim, tá? A gente tem que superar esse tipo de coisa. Um randômico e pra segurança da informação é diferente.
+
+Randômico para jogo, OK, para joguinho beleza. Tu vai ganhar mais, vai ganhar menos. Randômico para joguinho pode você pode usar pseudo randômico mesmo, não faz diferença. Mas randômico para dispositivo de segurança, você tem que usar um randômico de verdade, né? E o curioso é isso. A a a essa Code card,
+
+ela tem uma função randômica de hardware muito avançada, só que ela não tava sendo usada. Es estavam usando um randômico do Python lá, do Micro Python aqui, que é como é que é o nome do negócio? É, e e aca alguma coisa é não sei o nome dele aqui, mas é é um randômico fácil de ser identificado, né? Ou seja, eles estavam corrigindo um erro na geração de randômico antes e acabaram introduzindo um erro muito maior na geração de randômicos que tá valendo desde 2021 até agora, né? Então, realmente uma coisa assustadora esse tipo de coisa, tá? E bom, eh, eh, como
+
+eu falei, muita gente perdeu dinheiro, muito trágico. Pessoas aqui no Brasil, o Ogeda, que é libertário também, fala muito de Bitcoin, coisa e tal, parece que perdeu uma parte dos bitcoins dele. Muito triste isso. E, eh, enfim, é realmente uma coisa lamentável isso. Mas, mas de novo, não é um problema do Bitcoin, não é? Ó, o Bitcoin foi
+
+hackeado, não. A carteira foi hackeada, a carteira teve problemas, né? E é lamentável, sem dúvida alguma, mas não foi nem o maior ataque no Bitcoin até aqui, né? Enfim, eh o pessoal que tá dizendo que eh eh questão da autocustódia dizendo que talvez o pessoal deve investir em usando ETF, que é melhor usar ETF do que carteira, não sei que lá. Eu discordo completamente.
+
+Eu já expliquei aqui o por que eu discordo do uso de ETF. O valor do Bitcoin está exatamente em você ter a custódia matemática do seu Bitcoin. Eh, é verdade que quando você tem eh eh eh se você tá vendo Bitcoin como um investimento de curto prazo, é, OK, botar em ETF não faz diferença. Mas para aqueles como eu, que acreditam que o Bitcoin é a solução para o problema, quando o estado quebrar, o estado vai quebrar. O estado cada dia que passa tá mais endividado. Todos os estados, o
+
+Brasil, os Estados Unidos, a Europa, todo mundo tá mais endividado. Em algum momento vai quebrar, não tem alternativa. E no momento que quebrar, o que vai restar pra população para poder fazer trocas confiáveis vai ser o Bitcoin. Esse momento vai ser um momento muito crítico. Esse momento você não pode confiar em ETF. Por quê? Porque o
+
+banco que emitiu a sua ETF, ele vai quebrar também. Então ele não vai ter dinheiro para te bancar sua ETF. Então o valor da ETF é diferente, né? O Bitcoin você tem a custódia criptográfica dele. Ah, é difícil, é difícil. Tá vendo aqui, ó? Não é fácil,
+
+não. Tem tem problemas isso daí, realmente, essas codecards, né? E é lógico, isso gerou uma uma desconfiança grande com várias hard wallets aí no mercado. O problema foi nessa hard wallet específico, a Code card, mas o pessoal fica com receio, né? E as outras code cards todas, as outras, as outras hard wallets, né? As outras carteiras em
+
+em de hardware, né? Então, uma coisa que muita gente tá falando é isso. Ah, não vou manter na corretora. O problema é que eu falo para vocês, mantendo a corretora enquanto o mundo tá funcionando mais ou menos razoavelmente, beleza, é verdade, você ganha um pouquinho, pode tirar um pouquinho, não tem problema nenhum. E é e existe o risco de corretora quebrar, já teve várias corretoras que quebraram, então esse é o risco, você manter o seu Bitcoin na corretora. Quebra e quebra
+
+para você receber esse Bitcoin de novo depois é muito complicado, né? Agora você também manter autocustódia também tem esse risco, né? autocustódia é complicado. É uma coisa arriscada de você perder isso daí, de você ter algum algum problema, hackearem a sua máquina, hackearem o celular e coisa e tal. Eu já falei para vocês, eu sou fã do Bitcoin Core. Eu mantenho uma parte dos meus
+
+bitcoins aí, uma parte principal no Bitcoin core. Eu tenho uma máquina com Bitcoin core só para ela. Deixa ali, bota, mantém as coisas ali. A minha lógica por trás disso é que o código mais trabalhado é o código mais seguro no final das contas e é o código do Bitcoin core. Você vê essa Code card, o último atualização dela foi em 2021. O
+
+Bitcoin core teve atualização semana passada, semana anterior, na outra semana também. O tempo todo tá tendo novas versões e novas alterações e o código mais trabalhado é mais seguro, geralmente. Aqui, ó, Bitcoin Core é isso daqui, tá? Você pode rodar no seu Windows, pode rodar no seu Mac, pode rodar numa numa máquina qualquer, eh, cria carteira aqui e recebe bitcoins e manda bitcoins e não sei que lá e tem as transações todas aqui. Tem tudo registrado aqui no seu Bitcoin core, tá?
+
+E a vantagem é que é um código muito só que você tem que ter um computador para isso. E aí, qual que é o risco que você tem? Esse daqui é meu computador de viagem, então eu nunca mantenho muito Bitcoin aqui, não. Só só o que eu preciso mesmo para, né, eventualmente fazer algum pagamento ou fazer receber alguma coisa. Eh, eh, o meu computador principal, eu tenho um computador só para isso, que eu não deixo na na rede normalmente, não fica ligado, fica não uso para nada além de eh ter a carteira de Bitcoin. Eh, muita gente usa isso
+
+também no Talis, que é uma uma distro do Linux que é específica para esse tipo de coisa. Enfim, tem maneiras de você fazer a coisa o mais segura possível, tá? Mas a a hard wallet é uma boa maneira, normalmente é uma maneira razoável de você gerar esse randômico, né? Tá aqui, ó, parece que é começou com uma com um roubo de de 38 milhões, agora já tá em 70 milhões de dólares em 1196 carteiras drenadas em 41 minutos. muito rápido, cara, pro pro computador testar não sei quantas mil endereços é muito fácil, né?
+
+Enfim, eh, esse foi essa foi a tragédia. Então, mais uma vez aqui, tá vendo aqui a gente tá falando 38 milhões, agora já tá se falando em 70 milhões de dólares roubados, né? Então, esse é o ponto. Não foi um hacking do Bitcoin, não foi um hacking da estrutura do Bitcoin, foi um hacking de uma carteira particular. Quem tinha essa carteira se deu mal.
+
+Realmente, realmente é um hack muito, muito surpreendente, porque foi na geração da carteira, né? a geração do randômico. Randômico tem que ser muito randômico para esse tipo de coisa. Tem que ser randômico próprio para isso, né? Enfim, eh, esse é o problema. Eu vou
+
+falar mais tecnicamente sobre isso lá no meu canal e Safe Source. Eu vou deixar o link do outro vídeo aqui na descrição desse vídeo, caso você queira mais informações sobre isso. Obrigado por assistir nosso vídeo até o final. tem alguns links para você nos ajudar aí na tela e também na descrição desse vídeo.
